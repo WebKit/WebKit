@@ -801,6 +801,7 @@ private:
             break;
         }
 
+        case EnumeratorPutByVal:
         case PutByValDirect:
         case PutByVal:
         case PutByValAlias: {
@@ -1463,6 +1464,7 @@ private:
         case PutByVal:
         case PutPrivateName:
         case PutPrivateNameById:
+        case EnumeratorPutByVal:
         case SetPrivateBrand:
         case CheckPrivateBrand:
         case PutClosureVar:

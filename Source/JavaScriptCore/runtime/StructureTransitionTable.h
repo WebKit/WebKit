@@ -35,6 +35,7 @@ namespace JSC {
 class JSCell;
 class Structure;
 
+// In fact, it should be 7 bits. See PropertySlot and Structure definitions.
 using TransitionPropertyAttributes = uint8_t;
 
 // This must be 5 bits (less than 32).

@@ -2589,6 +2589,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         }
         break;
     }
+
+    case EnumeratorPutByVal: {
+        clobberWorld();
+        break;
+    }
+
             
     case ArrayPush:
         switch (node->arrayMode().type()) {

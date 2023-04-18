@@ -2048,6 +2048,7 @@ public:
     {
         switch (op()) {
         case EnumeratorGetByVal:
+        case EnumeratorPutByVal:
         case GetByVal:
         case PutByValDirect:
         case PutByVal:
@@ -2082,6 +2083,7 @@ public:
         case EnumeratorGetByVal:
         case GetByVal:
             return 2;
+        case EnumeratorPutByVal:
         case PutByValDirect:
         case PutByVal:
         case PutByValAlias:
@@ -2383,6 +2385,7 @@ public:
         case PutByValDirect:
         case PutByVal:
         case PutByValAlias:
+        case EnumeratorPutByVal:
         case GetByVal:
         case EnumeratorNextUpdateIndexAndMode:
         case EnumeratorGetByVal:
@@ -2454,6 +2457,7 @@ public:
         case PutByValAlias:
         case PutByValDirect:
         case PutByValWithThis:
+        case EnumeratorPutByVal:
         case PutDynamicVar:
         case ToThis:
             return true;
@@ -2479,6 +2483,7 @@ public:
         case PutByVal:
         case PutByValAlias:
         case PutByValDirect:
+        case EnumeratorPutByVal:
         case PutDynamicVar:
             return ECMAMode::fromByte(m_opInfo2.as<uint8_t>());
         default:

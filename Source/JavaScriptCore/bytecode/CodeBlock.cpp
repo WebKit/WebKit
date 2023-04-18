@@ -507,6 +507,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpInByVal)
         LINK(OpPutByVal)
         LINK(OpPutByValDirect)
+        LINK(OpEnumeratorPutByVal)
         LINK(OpPutPrivateName)
 
         LINK(OpSetPrivateBrand)

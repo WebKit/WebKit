@@ -287,6 +287,7 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
     USES(OpEnumeratorNext, mode, index, base, enumerator)
     USES(OpEnumeratorGetByVal, base, mode, propertyName, index, enumerator)
     USES(OpEnumeratorInByVal, base, mode, propertyName, index, enumerator)
+    USES(OpEnumeratorPutByVal, base, mode, propertyName, index, enumerator, value)
     USES(OpEnumeratorHasOwnProperty, base, mode, propertyName, index, enumerator)
 
     case op_iterator_open: {
@@ -399,6 +400,7 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* inst
     case op_put_setter_by_val:
     case op_put_by_val:
     case op_put_by_val_direct:
+    case op_enumerator_put_by_val:
     case op_put_private_name:
     case op_set_private_brand:
     case op_check_private_brand:

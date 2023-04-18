@@ -523,6 +523,7 @@ namespace JSC { namespace DFG {
     macro(EnumeratorGetByVal, NodeResultJS | NodeHasVarArgs | NodeMustGenerate) \
     macro(EnumeratorInByVal, NodeResultBoolean | NodeHasVarArgs | NodeMustGenerate) \
     macro(EnumeratorHasOwnProperty, NodeResultBoolean | NodeHasVarArgs | NodeMustGenerate) \
+    macro(EnumeratorPutByVal, NodeHasVarArgs | NodeMustGenerate) \
     /* Nodes for JSMap and JSSet */ \
     macro(MapHash, NodeResultInt32) \
     macro(NormalizeMapKey, NodeResultJS) \

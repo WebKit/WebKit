@@ -494,6 +494,7 @@ private:
             break;
         }
 
+        case EnumeratorPutByVal:
         case PutByValDirect:
         case PutByVal: {
             m_graph.varArgChild(node, 0)->mergeFlags(NodeBytecodeUsesAsValue);

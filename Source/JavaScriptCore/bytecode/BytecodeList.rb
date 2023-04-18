@@ -792,6 +792,21 @@ op :enumerator_has_own_property,
         enumeratorMetadata: EnumeratorMetadata,
     }
 
+op :enumerator_put_by_val,
+    args: {
+        base: VirtualRegister,
+        mode: VirtualRegister,
+        propertyName: VirtualRegister,
+        index: VirtualRegister,
+        enumerator: VirtualRegister,
+        value: VirtualRegister,
+        ecmaMode: ECMAMode,
+    },
+    metadata: {
+        arrayProfile: ArrayProfile,
+        enumeratorMetadata: EnumeratorMetadata,
+    }
+
 # Alignment: 1
 op :jneq_ptr,
     args: {

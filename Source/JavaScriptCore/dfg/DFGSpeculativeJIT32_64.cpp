@@ -4266,6 +4266,7 @@ void SpeculativeJIT::compile(Node* node)
     case CallWasm:
     case FunctionBind:
     case NewBoundFunction:
+    case EnumeratorPutByVal:
         DFG_CRASH(m_graph, node, "unexpected node in DFG backend");
         break;
     }

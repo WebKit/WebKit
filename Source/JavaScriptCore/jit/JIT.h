@@ -546,6 +546,11 @@ namespace JSC {
         void emit_op_enumerator_in_by_val(const JSInstruction*);
         void emit_op_enumerator_has_own_property(const JSInstruction*);
 
+        template<typename OpcodeType>
+        void generatePutByValSlowCase(const OpcodeType&, Vector<SlowCaseEntry>::iterator&);
+        void emit_op_enumerator_put_by_val(const JSInstruction*);
+        void emitSlow_op_enumerator_put_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+
         void emitSlow_op_add(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_call(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_tail_call(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
@@ -599,6 +604,7 @@ namespace JSC {
         void emitSlow_op_new_object(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_put_by_id(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_put_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_put_by_val_direct(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_put_private_name(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_sub(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
 

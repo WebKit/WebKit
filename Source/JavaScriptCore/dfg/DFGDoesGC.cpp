@@ -541,6 +541,9 @@ bool doesGC(Graph& graph, Node* node)
         }
         return false;
 
+    case EnumeratorPutByVal:
+        return true;
+
     case MapHash:
         switch (node->child1().useKind()) {
         case BooleanUse:

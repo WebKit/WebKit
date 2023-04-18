@@ -1575,6 +1575,7 @@ public:
     void compileEnumeratorHasProperty(Node*, SlowPathFunctionType);
     void compileEnumeratorInByVal(Node*);
     void compileEnumeratorHasOwnProperty(Node*);
+    void compileEnumeratorPutByVal(Node*);
 
     void compilePutByIdFlush(Node*);
     void compilePutById(Node*);

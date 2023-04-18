@@ -9042,6 +9042,74 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_enumerator_has_own_property);
         }
 
+        case op_enumerator_put_by_val: {
+            auto bytecode = currentInstruction->as<OpEnumeratorPutByVal>();
+            auto& metadata = bytecode.metadata(codeBlock);
+            ArrayMode arrayMode = getArrayMode(metadata.m_arrayProfile, Array::Write);
+
+            Node* base = get(bytecode.m_base);
+            Node* propertyName = get(bytecode.m_propertyName);
+            Node* value = get(bytecode.m_value);
+            Node* index = get(bytecode.m_index);
+            Node* mode = get(bytecode.m_mode);
+            Node* enumerator = get(bytecode.m_enumerator);
+
+            auto seenModes = OptionSet<JSPropertyNameEnumerator::Flag>::fromRaw(metadata.m_enumeratorMetadata);
+            if (!seenModes)
+                addToGraph(ForceOSRExit);
+
+            if (seenModes == JSPropertyNameEnumerator::IndexedMode) {
+                Node* badMode = addToGraph(ArithBitAnd, mode, jsConstant(jsNumber(JSPropertyNameEnumerator::GenericMode | JSPropertyNameEnumerator::OwnStructureMode)));
+
+                // We know the ArithBitAnd cannot have effects so it's ok to exit here.
+                m_exitOK = true;
+                addToGraph(ExitOK);
+
+                addToGraph(CheckIsConstant, OpInfo(m_graph.freezeStrong(jsNumber(0))), badMode);
+
+                addVarArgChild(base);
+                addVarArgChild(index); // Use index so we'll use the normal indexed optimizations.
+                addVarArgChild(value);
+                addVarArgChild(nullptr); // Leave room for property storage.
+                addVarArgChild(nullptr); // Leave room for length.
+                addToGraph(Node::VarArg, PutByVal, OpInfo(arrayMode.asWord()), OpInfo(bytecode.m_ecmaMode));
+
+                addToGraph(Phantom, propertyName);
+                addToGraph(Phantom, enumerator);
+                NEXT_OPCODE(op_enumerator_put_by_val);
+            }
+
+            // FIXME: Checking for a BadConstantValue causes us to always use the Generic variant if we switched from IndexedMode -> IndexedMode + OwnStructureMode even though that might be fine.
+            if (!seenModes.containsAny({ JSPropertyNameEnumerator::GenericMode, JSPropertyNameEnumerator::HasSeenOwnStructureModeStructureMismatch })
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
+                Node* modeTest = addToGraph(SameValue, mode, jsConstant(jsNumber(static_cast<uint8_t>(JSPropertyNameEnumerator::GenericMode))));
+                addToGraph(CheckIsConstant, OpInfo(m_graph.freezeStrong(jsBoolean(false))), modeTest);
+
+                addVarArgChild(base);
+                addVarArgChild(index); // Use index so we'll use the normal indexed optimizations.
+                addVarArgChild(value);
+                addVarArgChild(nullptr); // For property storage to match PutByVal.
+                addVarArgChild(index);
+                addVarArgChild(mode);
+                addVarArgChild(enumerator);
+                addToGraph(Node::VarArg, EnumeratorPutByVal, OpInfo(arrayMode.asWord()), OpInfo(bytecode.m_ecmaMode));
+
+                addToGraph(Phantom, propertyName);
+                NEXT_OPCODE(op_enumerator_put_by_val);
+            }
+
+            addVarArgChild(base);
+            addVarArgChild(propertyName);
+            addVarArgChild(value);
+            addVarArgChild(nullptr); // For property storage to match PutByVal.
+            addVarArgChild(index);
+            addVarArgChild(mode);
+            addVarArgChild(enumerator);
+            addToGraph(Node::VarArg, EnumeratorPutByVal, OpInfo(arrayMode.asWord()), OpInfo(bytecode.m_ecmaMode));
+
+            NEXT_OPCODE(op_enumerator_put_by_val);
+        }
+
         case op_get_internal_field: {
             auto bytecode = currentInstruction->as<OpGetInternalField>();
             set(bytecode.m_dst, addToGraph(GetInternalField, OpInfo(bytecode.m_index), OpInfo(getPrediction()), get(bytecode.m_base)));

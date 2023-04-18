@@ -381,8 +381,9 @@ inline bool Structure::isValid(JSGlobalObject* globalObject, StructureChain* cac
 
 inline void Structure::didReplaceProperty(PropertyOffset offset)
 {
-    if (LIKELY(!hasRareData()))
+    if (LIKELY(!didWatchReplacement()))
         return;
+
     auto* rareData = this->rareData();
     if (LIKELY(rareData->m_replacementWatchpointSets.isNullStorage()))
         return;

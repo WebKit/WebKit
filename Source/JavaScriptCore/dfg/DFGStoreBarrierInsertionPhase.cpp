@@ -330,6 +330,13 @@ private:
                 considerBarrier(m_node->child1(), m_node->child2());
                 break;
             }
+
+            case EnumeratorPutByVal: {
+                Edge child1 = m_graph.varArgChild(m_node, 0);
+                Edge child3 = m_graph.varArgChild(m_node, 2);
+                considerBarrier(child1, child3);
+                break;
+            }
                 
             case MultiPutByOffset:
             case MultiDeleteByOffset: {

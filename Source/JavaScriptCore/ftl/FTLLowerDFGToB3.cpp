@@ -1588,6 +1588,9 @@ private:
         case EnumeratorHasOwnProperty:
             compileEnumeratorHasOwnProperty();
             break;
+        case EnumeratorPutByVal:
+            compileEnumeratorPutByVal();
+            break;
         case CheckStructureImmediate:
             compileCheckStructureImmediate();
             break;
@@ -14505,6 +14508,174 @@ IGNORE_CLANG_WARNINGS_END
     void compileEnumeratorHasOwnProperty()
     {
         compileEnumeratorHasProperty(operationEnumeratorHasOwnProperty);
+    }
+
+    void compileEnumeratorPutByVal()
+    {
+        Edge baseEdge = m_graph.varArgChild(m_node, 0);
+        Edge propertyNameEdge = m_graph.varArgChild(m_node, 1);
+        Edge valueEdge = m_graph.varArgChild(m_node, 2);
+        Edge indexEdge = m_graph.varArgChild(m_node, 4);
+
+        LValue base = DFG::isCell(baseEdge.useKind()) ? lowCell(baseEdge, ManualOperandSpeculation) : lowJSValue(baseEdge);
+
+        // We have to materialize the propertyName here in case it requires boxing since the IC path won't dominate subsequent uses in subsequent nodes.
+        // If it's an Int32 and we use it as such this boxing will be DCE'd by b3 later anyway.
+        lowJSValue(propertyNameEdge, ManualOperandSpeculation);
+        LValue value = lowJSValue(valueEdge);
+
+        LValue index = lowInt32(indexEdge);
+        LValue mode = lowInt32(m_graph.varArgChild(m_node, 5));
+        LValue enumerator = lowCell(m_graph.varArgChild(m_node, 6));
+
+        LBasicBlock checkIsCellBlock = m_out.newBlock();
+        LBasicBlock checkStructureBlock = m_out.newBlock();
+        LBasicBlock checkReplacementSensitiveStructure = m_out.newBlock();
+        LBasicBlock checkInlineOrOutOfLineBlock = m_out.newBlock();
+        LBasicBlock inlineLoadBlock = m_out.newBlock();
+        LBasicBlock outOfLineLoadBlock = m_out.newBlock();
+        LBasicBlock genericICBlock = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+        LBasicBlock genericOrRecover;
+
+        // FIXME: This is not the cleanest way to say we're using IndexedMode+OwnStructureMode mode.
+        bool indexedAndOwnStructureMode = indexEdge.node() == propertyNameEdge.node();
+        if (indexedAndOwnStructureMode)
+            genericOrRecover = m_out.newBlock();
+        else
+            genericOrRecover = genericICBlock;
+
+        LValue isNotNamed = m_out.testNonZero32(mode, m_out.constInt32(JSPropertyNameEnumerator::IndexedMode | JSPropertyNameEnumerator::GenericMode));
+        m_out.branch(isNotNamed, unsure(genericICBlock), unsure(checkIsCellBlock));
+
+        m_out.appendTo(checkIsCellBlock);
+        m_out.branch(isCell(base, provenType(baseEdge)), usually(checkStructureBlock), rarely(genericOrRecover));
+
+        m_out.appendTo(checkStructureBlock);
+        LValue structureID;
+        auto structure = m_state.forNode(baseEdge.node()).m_structure.onlyStructure();
+        if (structure)
+            structureID = m_out.constInt32(structure->id().bits());
+        else
+            structureID = m_out.load32(base, m_heaps.JSCell_structureID);
+
+        LValue hasEnumeratorStructure = m_out.equal(structureID, m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedStructureID));
+        m_out.branch(hasEnumeratorStructure, usually(checkReplacementSensitiveStructure), rarely(genericOrRecover));
+
+        m_out.appendTo(checkReplacementSensitiveStructure);
+        LValue structureValue = decodeNonNullStructure(structureID);
+        LValue hasReplacementSensitiveStructure = m_out.testNonZero32(m_out.constInt32(Structure::s_didWatchReplacementBits), m_out.load32(structureValue, m_heaps.Structure_bitField));
+        m_out.branch(hasReplacementSensitiveStructure, rarely(genericOrRecover), usually(checkInlineOrOutOfLineBlock));
+
+        m_out.appendTo(checkInlineOrOutOfLineBlock);
+        LValue inlineCapacity = nullptr;
+        bool hasNoOutOfLineProperties = false;
+        if (structure) {
+            hasNoOutOfLineProperties = !structure->outOfLineCapacity();
+            inlineCapacity = m_out.constInt32(structure->inlineCapacity());
+        }
+        if (!inlineCapacity)
+            inlineCapacity = m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedInlineCapacity);
+        LValue isInline = hasNoOutOfLineProperties ? m_out.int32One : m_out.below(index, inlineCapacity);
+        m_out.branch(isInline, unsure(inlineLoadBlock), unsure(outOfLineLoadBlock));
+
+        m_out.appendTo(inlineLoadBlock);
+        m_out.store64(value, m_out.baseIndex(m_heaps.properties.atAnyNumber(), base, m_out.zeroExt(index, Int64), ScaleEight, JSObject::offsetOfInlineStorage()));
+        m_out.jump(continuation);
+
+        m_out.appendTo(outOfLineLoadBlock);
+        LValue storage = m_out.loadPtr(base, m_heaps.JSObject_butterfly);
+
+        LValue realIndex = m_out.signExt32To64(
+            m_out.neg(m_out.sub(index, inlineCapacity)));
+        constexpr intptr_t offsetOfFirstProperty = offsetInButterfly(firstOutOfLineOffset) * static_cast<intptr_t>(sizeof(EncodedJSValue));
+        m_out.store64(value, m_out.baseIndex(m_heaps.properties.atAnyNumber(), storage, realIndex, ScaleEight, offsetOfFirstProperty));
+        m_out.jump(continuation);
+
+        m_out.appendTo(genericICBlock);
+
+        PatchpointValue* patchpoint = m_out.patchpoint(Void);
+        patchpoint->appendSomeRegister(base);
+        patchpoint->appendSomeRegister(lowJSValue(propertyNameEdge));
+        patchpoint->appendSomeRegister(value);
+        patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
+        patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
+        patchpoint->numGPScratchRegisters = Options::useDataICInFTL() ? 1 : 0;
+
+        RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
+
+        State* state = &m_ftlState;
+        CodeOrigin nodeSemanticOrigin = m_node->origin.semantic;
+        ECMAMode ecmaMode = m_node->ecmaMode();
+        PutKind putKind = PutKind::NotDirect;
+        patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+
+            CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(nodeSemanticOrigin);
+
+            // This is the direct exit target for operation calls.
+            Box<CCallHelpers::JumpList> exceptions = exceptionHandle->scheduleExitCreation(params)->jumps(jit);
+
+            // This is the exit for call IC's created by the IC for getters. We don't have
+            // to do anything weird other than call this, since it will associate the exit with
+            // the callsite index.
+            exceptionHandle->scheduleExitCreationForUnwind(params, callSiteIndex);
+
+            GPRReg baseGPR = params[0].gpr();
+            GPRReg propertyGPR = params[1].gpr();
+            GPRReg valueGPR = params[2].gpr();
+            GPRReg stubInfoGPR = Options::useDataICInFTL() ? params.gpScratch(0) : InvalidGPRReg;
+
+            auto* stubInfo = state->addStructureStubInfo();
+            auto generator = Box<JITPutByValGenerator>::create(
+                jit.codeBlock(), stubInfo, JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, AccessType::PutByVal,
+                params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), InvalidGPRReg, stubInfoGPR, putKind, ecmaMode, PrivateFieldPutKind::none());
+
+            generator->generateFastPath(jit);
+            CCallHelpers::Label done = jit.label();
+
+            params.addLatePath([=] (CCallHelpers& jit) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                if (!Options::useDataICInFTL())
+                    generator->slowPathJump().link(&jit);
+                CCallHelpers::Label slowPathBegin = jit.label();
+                CCallHelpers::Call slowPathCall;
+                auto operation = ecmaMode.isStrict() ? operationPutByValStrictOptimize : operationPutByValNonStrictOptimize;
+                if (Options::useDataICInFTL()) {
+                    jit.move(CCallHelpers::TrustedImmPtr(generator->stubInfo()), stubInfoGPR);
+                    generator->stubInfo()->m_slowOperation = operation;
+                    slowPathCall = callOperation(
+                        *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
+                        exceptions.get(), CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), InvalidGPRReg,
+                        CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)),
+                        baseGPR, propertyGPR, valueGPR, stubInfoGPR, CCallHelpers::TrustedImmPtr(nullptr)).call();
+                } else {
+                    slowPathCall = callOperation(
+                        *state, params.unavailableRegisters(), jit, nodeSemanticOrigin,
+                        exceptions.get(), operation, InvalidGPRReg,
+                        CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObjectFor(nodeSemanticOrigin)),
+                        baseGPR, propertyGPR, valueGPR, CCallHelpers::TrustedImmPtr(generator->stubInfo()), CCallHelpers::TrustedImmPtr(nullptr)).call();
+                }
+                jit.jump().linkTo(done, &jit);
+
+                generator->reportSlowPathCall(slowPathBegin, slowPathCall);
+
+                jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                    generator->finalize(linkBuffer, linkBuffer);
+                });
+            });
+        });
+        m_out.jump(continuation);
+
+        if (indexedAndOwnStructureMode) {
+            m_out.appendTo(genericOrRecover);
+            vmCall(Void, operationEnumeratorRecoverNameAndPutByVal, weakPointer(m_graph.globalObjectFor(m_origin.semantic)), base, value, m_out.constInt32(ecmaMode.isStrict()), index, enumerator);
+            m_out.jump(continuation);
+        }
+
+        m_out.appendTo(continuation);
     }
     
     void compileCheckStructureImmediate()

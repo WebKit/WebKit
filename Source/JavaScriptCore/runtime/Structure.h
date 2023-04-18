@@ -340,7 +340,7 @@ public:
     {
         return typeInfo().hasStaticPropertyTable() && !staticPropertiesReified();
     }
-    
+
     // Type accessors.
     TypeInfo typeInfo() const { return m_blob.typeInfo(m_outOfLineTypeFlags); }
     bool isObject() const { return typeInfo().isObject(); }
@@ -698,6 +698,11 @@ public:
         return OBJECT_OFFSETOF(Structure, m_previousOrRareData);
     }
 
+    static ptrdiff_t bitFieldOffset()
+    {
+        return OBJECT_OFFSETOF(Structure, m_bitField);
+    }
+
     static Structure* createStructure(VM&);
         
     bool transitionWatchpointSetHasBeenInvalidated() const
@@ -807,6 +812,7 @@ public:
 #define DEFINE_BITFIELD(type, lowerName, upperName, width, offset) \
     static constexpr uint32_t s_##lowerName##Shift = offset;\
     static constexpr uint32_t s_##lowerName##Mask = ((1 << (width - 1)) | ((1 << (width - 1)) - 1));\
+    static constexpr uint32_t s_##lowerName##Bits = s_##lowerName##Mask << s_##lowerName##Shift;\
     static constexpr uint32_t s_bitWidthOf##upperName = width;\
     type lowerName() const { return static_cast<type>((m_bitField >> offset) & s_##lowerName##Mask); }\
     void set##upperName(type newValue) \
@@ -820,8 +826,9 @@ public:
     DEFINE_BITFIELD(bool, hasAnyKindOfGetterSetterProperties, HasAnyKindOfGetterSetterProperties, 1, 3);
     DEFINE_BITFIELD(bool, hasReadOnlyOrGetterSetterPropertiesExcludingProto, HasReadOnlyOrGetterSetterPropertiesExcludingProto, 1, 4);
     DEFINE_BITFIELD(bool, isQuickPropertyAccessAllowedForEnumeration, IsQuickPropertyAccessAllowedForEnumeration, 1, 5);
-    DEFINE_BITFIELD(TransitionPropertyAttributes, transitionPropertyAttributes, TransitionPropertyAttributes, 8, 6);
-    DEFINE_BITFIELD(TransitionKind, transitionKind, TransitionKind, 5, 14);
+    DEFINE_BITFIELD(TransitionPropertyAttributes, transitionPropertyAttributes, TransitionPropertyAttributes, 7, 6);
+    DEFINE_BITFIELD(TransitionKind, transitionKind, TransitionKind, 5, 13);
+    DEFINE_BITFIELD(bool, didWatchReplacement, DidWatchReplacement, 1, 18);
     DEFINE_BITFIELD(bool, mayBePrototype, MayBePrototype, 1, 19);
     DEFINE_BITFIELD(bool, didPreventExtensions, DidPreventExtensions, 1, 20);
     DEFINE_BITFIELD(bool, didTransition, DidTransition, 1, 21);

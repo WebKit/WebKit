@@ -407,8 +407,11 @@ void JIT::emit_op_put_by_val_direct(const JSInstruction* currentInstruction)
     emit_op_put_by_val<OpPutByValDirect>(currentInstruction);
 }
 
-void JIT::emitSlow_op_put_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)
+template<typename OpcodeType>
+void JIT::generatePutByValSlowCase(const OpcodeType&, Vector<SlowCaseEntry>::iterator& iter)
 {
+    ASSERT(hasAnySlowCases(iter));
+
     uint32_t bytecodeOffset = m_bytecodeIndex.offset();
     ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
     JITPutByValGenerator& gen = m_putByVals[m_putByValIndex++];
@@ -425,6 +428,16 @@ void JIT::emitSlow_op_put_by_val(const JSInstruction*, Vector<SlowCaseEntry>::it
     emitNakedNearCall(vm().getCTIStub(slow_op_put_by_val_callSlowOperationThenCheckExceptionGenerator).retaggedCode<NoPtrTag>());
 
     gen.reportSlowPathCall(coldPathBegin, Call());
+}
+
+void JIT::emitSlow_op_put_by_val(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    generatePutByValSlowCase(currentInstruction->as<OpPutByVal>(), iter);
+}
+
+void JIT::emitSlow_op_put_by_val_direct(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    generatePutByValSlowCase(currentInstruction->as<OpPutByValDirect>(), iter);
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_put_by_val_callSlowOperationThenCheckExceptionGenerator(VM& vm)
@@ -2493,6 +2506,102 @@ void JIT::emit_op_enumerator_has_own_property(const JSInstruction* currentInstru
     emit_enumerator_has_propertyImpl(currentInstruction->as<OpEnumeratorHasOwnProperty>(), slow_path_enumerator_has_own_property);
 }
 
+void JIT::emit_op_enumerator_put_by_val(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpEnumeratorPutByVal>();
+    VirtualRegister mode = bytecode.m_mode;
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister index = bytecode.m_index;
+    VirtualRegister propertyName = bytecode.m_propertyName;
+    VirtualRegister value = bytecode.m_value;
+    VirtualRegister enumerator = bytecode.m_enumerator;
+
+    JumpList doneCases;
+
+    constexpr GPRReg valueGPR = BaselineJITRegisters::EnumeratorPutByVal::valueJSR.payloadGPR();
+    constexpr GPRReg baseGPR = BaselineJITRegisters::EnumeratorPutByVal::baseJSR.payloadGPR();
+    constexpr GPRReg propertyGPR = BaselineJITRegisters::EnumeratorPutByVal::propertyJSR.payloadGPR();
+    constexpr GPRReg profileGPR = BaselineJITRegisters::EnumeratorPutByVal::profileGPR;
+    constexpr GPRReg stubInfoGPR = BaselineJITRegisters::EnumeratorPutByVal::stubInfoGPR;
+    constexpr GPRReg scratch1 = BaselineJITRegisters::EnumeratorPutByVal::scratch1;
+
+    // These four registers need to be set up before jumping to SlowPath code.
+    emitGetVirtualRegister(base, baseGPR);
+    emitGetVirtualRegister(value, valueGPR);
+    emitGetVirtualRegister(propertyName, propertyGPR);
+    materializePointerIntoMetadata(bytecode, OpEnumeratorPutByVal::Metadata::offsetOfArrayProfile(), profileGPR);
+
+    emitGetVirtualRegister(mode, stubInfoGPR);
+
+    load8FromMetadata(bytecode, OpEnumeratorPutByVal::Metadata::offsetOfEnumeratorMetadata(), scratch1);
+    or32(stubInfoGPR, scratch1);
+    store8ToMetadata(scratch1, bytecode, OpEnumeratorPutByVal::Metadata::offsetOfEnumeratorMetadata());
+
+    addSlowCase(branchIfNotCell(baseGPR));
+    // This is always an int32 encoded value.
+    Jump isNotOwnStructureMode = branchTest32(NonZero, stubInfoGPR, TrustedImm32(JSPropertyNameEnumerator::IndexedMode | JSPropertyNameEnumerator::GenericMode));
+
+    // Check the structure
+    JumpList structureMismatch;
+    emitGetVirtualRegister(enumerator, scratch1);
+    load32(Address(baseGPR, JSCell::structureIDOffset()), profileGPR);
+    structureMismatch.append(branch32(NotEqual, profileGPR, Address(scratch1, JSPropertyNameEnumerator::cachedStructureIDOffset())));
+    emitNonNullDecodeZeroExtendedStructureID(profileGPR, profileGPR);
+    structureMismatch.append(branchTest32(NonZero, Address(profileGPR, Structure::bitFieldOffset()), TrustedImm32(Structure::s_didWatchReplacementBits)));
+
+    // Compute the offset.
+    emitGetVirtualRegister(index, profileGPR);
+    // If index is less than the enumerator's cached inline storage, then it's an inline access
+    Jump outOfLineAccess = branch32(AboveOrEqual, profileGPR, Address(scratch1, JSPropertyNameEnumerator::cachedInlineCapacityOffset()));
+    signExtend32ToPtr(profileGPR, profileGPR);
+    store64(valueGPR, BaseIndex(baseGPR, profileGPR, TimesEight, JSObject::offsetOfInlineStorage()));
+    doneCases.append(jump());
+
+    // Otherwise it's out of line
+    outOfLineAccess.link(this);
+    loadPtr(Address(baseGPR, JSObject::butterflyOffset()), stubInfoGPR);
+    sub32(Address(scratch1, JSPropertyNameEnumerator::cachedInlineCapacityOffset()), profileGPR);
+    neg32(profileGPR);
+    signExtend32ToPtr(profileGPR, profileGPR);
+    constexpr intptr_t offsetOfFirstProperty = offsetInButterfly(firstOutOfLineOffset) * static_cast<intptr_t>(sizeof(EncodedJSValue));
+    store64(valueGPR, BaseIndex(stubInfoGPR, profileGPR, TimesEight, offsetOfFirstProperty));
+    doneCases.append(jump());
+
+    structureMismatch.link(this);
+    store8ToMetadata(TrustedImm32(JSPropertyNameEnumerator::HasSeenOwnStructureModeStructureMismatch), bytecode, OpEnumeratorPutByVal::Metadata::offsetOfEnumeratorMetadata());
+
+    isNotOwnStructureMode.link(this);
+    Jump isNotIndexed = branchTest32(Zero, stubInfoGPR, TrustedImm32(JSPropertyNameEnumerator::IndexedMode));
+    // Replace the string with the index.
+    emitGetVirtualRegister(index, propertyGPR);
+
+    isNotIndexed.link(this);
+    // Reload profileGPR since it is used for different purpose.
+    materializePointerIntoMetadata(bytecode, OpEnumeratorPutByVal::Metadata::offsetOfArrayProfile(), profileGPR);
+    emitArrayProfilingSiteWithCell(bytecode, baseGPR, scratch1);
+
+    auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
+    ECMAMode ecmaMode = bytecode.m_ecmaMode;
+    JITPutByValGenerator gen(
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::PutByVal, RegisterSetBuilder::stubUnavailableRegisters(),
+        JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), profileGPR, stubInfoGPR, PutKind::NotDirect, ecmaMode, PrivateFieldPutKind::none());
+    gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
+
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
+    resetSP(); // We might OSR exit here, so we need to conservatively reset SP
+    addSlowCase();
+    m_putByVals.append(gen);
+
+    doneCases.link(this);
+
+    emitWriteBarrier(base, ShouldFilterBase);
+}
+
+void JIT::emitSlow_op_enumerator_put_by_val(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    generatePutByValSlowCase(currentInstruction->as<OpEnumeratorPutByVal>(), iter);
+}
+
 #elif USE(JSVALUE32_64)
 
 void JIT::emit_op_get_by_val_with_this(const JSInstruction*)
@@ -2533,6 +2642,17 @@ void JIT::emit_op_enumerator_in_by_val(const JSInstruction*)
 {
     JITSlowPathCall slowPathCall(this, slow_path_enumerator_in_by_val);
     slowPathCall.call();
+}
+
+void JIT::emit_op_enumerator_put_by_val(const JSInstruction*)
+{
+    JITSlowPathCall slowPathCall(this, slow_path_enumerator_put_by_val);
+    slowPathCall.call();
+}
+
+void JIT::emitSlow_op_enumerator_put_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&)
+{
+    UNREACHABLE_FOR_PLATFORM();
 }
 
 void JIT::emit_op_enumerator_has_own_property(const JSInstruction*)

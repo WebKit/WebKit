@@ -151,6 +151,7 @@ namespace JSC { namespace FTL {
     macro(StringImpl_data, StringImpl::dataOffset()) \
     macro(StringImpl_hashAndFlags, StringImpl::flagsOffset()) \
     macro(StringImpl_length, StringImpl::lengthMemoryOffset()) \
+    macro(Structure_bitField, Structure::bitFieldOffset()) \
     macro(Structure_classInfo, Structure::classInfoOffset()) \
     macro(Structure_globalObject, Structure::globalObjectOffset()) \
     macro(Structure_indexingModeIncludingHistory, Structure::indexingModeIncludingHistoryOffset()) \

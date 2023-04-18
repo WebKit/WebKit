@@ -256,6 +256,7 @@ namespace JSC {
         WTF_MAKE_NONCOPYABLE(ForInContext);
     public:
         using GetInst = std::tuple<unsigned, int>;
+        using PutInst = GetInst;
         using InInst = GetInst;
         using HasOwnPropertyJumpInst = std::tuple<unsigned, unsigned>;
 
@@ -272,6 +273,11 @@ namespace JSC {
         void addGetInst(unsigned instIndex, int propertyRegIndex)
         {
             m_getInsts.append(GetInst { instIndex, propertyRegIndex });
+        }
+
+        void addPutInst(unsigned instIndex, int propertyRegIndex)
+        {
+            m_putInsts.append(PutInst { instIndex, propertyRegIndex });
         }
 
         void addInInst(unsigned instIndex, int propertyRegIndex)
@@ -309,6 +315,7 @@ namespace JSC {
         unsigned m_bodyBytecodeStartOffset;
         Vector<InInst> m_inInsts;
         Vector<GetInst> m_getInsts;
+        Vector<PutInst> m_putInsts;
         Vector<HasOwnPropertyJumpInst> m_hasOwnPropertyJumpInsts;
     };
 
@@ -763,6 +770,7 @@ namespace JSC {
         RegisterID* emitPutByVal(RegisterID* base, RegisterID* property, RegisterID* value);
         RegisterID* emitPutByVal(RegisterID* base, RegisterID* thisValue, RegisterID* property, RegisterID* value);
         RegisterID* emitPutByValWithECMAMode(RegisterID* base, RegisterID* thisValue, RegisterID* property, RegisterID* value, ECMAMode);
+        RegisterID* emitEnumeratorPutByVal(ForInContext&, RegisterID* base, RegisterID* property, RegisterID* value);
         RegisterID* emitDirectPutByVal(RegisterID* base, RegisterID* property, RegisterID* value);
         RegisterID* emitDeleteByVal(RegisterID* dst, RegisterID* base, RegisterID* property);
 

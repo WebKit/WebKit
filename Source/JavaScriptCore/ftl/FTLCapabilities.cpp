@@ -304,6 +304,7 @@ inline CapabilityLevel canCompile(Node* node)
     case EnumeratorGetByVal:
     case EnumeratorInByVal:
     case EnumeratorHasOwnProperty:
+    case EnumeratorPutByVal:
     case BottomValue:
     case PhantomNewObject:
     case PhantomNewFunction:

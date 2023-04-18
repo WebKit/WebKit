@@ -149,6 +149,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             break;
         case EnumeratorNextUpdateIndexAndMode:
         case EnumeratorGetByVal:
+        case EnumeratorPutByVal:
         case EnumeratorInByVal:
         case EnumeratorHasOwnProperty:
         case GetIndexedPropertyStorage:
@@ -1220,7 +1221,12 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         RELEASE_ASSERT_NOT_REACHED();
         return;
     }
-        
+
+    case EnumeratorPutByVal: {
+        clobberTop();
+        return;
+    }
+
     case CheckStructureOrEmpty:
     case CheckStructure:
         read(JSCell_structureID);

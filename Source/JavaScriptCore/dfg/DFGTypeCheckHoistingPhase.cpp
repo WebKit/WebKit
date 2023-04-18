@@ -278,6 +278,7 @@ private:
                 case PutByValDirect:
                 case PutByVal:
                 case PutByValAlias:
+                case EnumeratorPutByVal:
                 case GetArrayLength:
                 case GetTypedArrayLengthAsInt52:
                 case CheckArray:
@@ -361,6 +362,7 @@ private:
                 case PutByValDirect:
                 case PutByVal:
                 case PutByValAlias:
+                case EnumeratorPutByVal:
                 case GetArrayLength:
                 case GetTypedArrayLengthAsInt52:
                 case GetIndexedPropertyStorage:

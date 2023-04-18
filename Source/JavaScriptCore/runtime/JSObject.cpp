@@ -4147,6 +4147,9 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, const RefPtr<UniquedStringImpl
 
         // We fall through to the generic case and consume the rest of put operations if batching stopped in the middle.
         i = offsets.size();
+
+        if (mayBePrototype())
+            vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Add);
     }
 
     for (; i < size; ++i) {

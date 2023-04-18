@@ -992,6 +992,7 @@ WatchpointSet* Structure::ensurePropertyReplacementWatchpointSet(VM& vm, Propert
     if (!hasRareData())
         allocateRareData(vm);
     ConcurrentJSLocker locker(m_lock);
+    setDidWatchReplacement(true);
     StructureRareData* rareData = this->rareData();
     auto result = rareData->m_replacementWatchpointSets.add(offset, nullptr);
     if (result.isNewEntry)
