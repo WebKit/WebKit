@@ -568,7 +568,7 @@ TEST(SiteIsolation, GrandchildIframe)
     // (add an onload in the response to /webkit and verify that it is actually called. It is not right now.)
 }
 
-// FIXME: This test times out on the iOS simulator. Investigate and fix.
+// FIXME: These tests time out on the iOS simulator. Investigate and fix.
 #if PLATFORM(MAC)
 TEST(SiteIsolation, MainFrameWithTwoIFramesInTheSameProcess)
 {
@@ -610,6 +610,41 @@ TEST(SiteIsolation, MainFrameWithTwoIFramesInTheSameProcess)
         EXPECT_NE(mainFramePid, childFramePid);
         EXPECT_WK_STREQ(mainFrame.securityOrigin.host, "example.com");
         EXPECT_WK_STREQ(childFrame.securityOrigin.host, "webkit.org");
+        EXPECT_WK_STREQ(otherChildFrame.securityOrigin.host, "webkit.org");
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+TEST(SiteIsolation, IFrameNavigatingToTheSameProcess)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe id='webkit_frame_1' src='https://webkit.org/a'></iframe>"_s } },
+        { "/a"_s, { "<iframe id='webkit_frame_2' src='https://webkit.org/b'></iframe>"_s } },
+        { "/b"_s, { "<script>alert('done')</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    NSString* alert = [webView _test_waitForAlert];
+    EXPECT_WK_STREQ(alert, "done");
+
+    __block bool done { false };
+    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
+        EXPECT_EQ(mainFrame.childFrames.count, 1u);
+        _WKFrameTreeNode *childFrame = mainFrame.childFrames.firstObject;
+        pid_t mainFramePid = mainFrame._processIdentifier;
+        pid_t childFramePid = childFrame._processIdentifier;
+        EXPECT_NE(mainFramePid, 0);
+        EXPECT_NE(childFramePid, 0);
+        EXPECT_NE(mainFramePid, childFramePid);
+        EXPECT_WK_STREQ(mainFrame.securityOrigin.host, "example.com");
         EXPECT_WK_STREQ(childFrame.securityOrigin.host, "webkit.org");
         done = true;
     }];

@@ -1783,7 +1783,7 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& loadParamet
 void WebPage::loadRequestByCreatingNewLocalFrameOrConvertingRemoteFrame(LocalFrameCreationParameters&& localFrameCreationParameters, LoadParameters&& loadParameters)
 {
     RefPtr frame = WebProcess::singleton().webFrame(localFrameCreationParameters.frameIdentifier);
-    if (frame && frame->coreFrame()) {
+    if (frame && is<LocalFrame>(frame->coreAbstractFrame())) {
         loadRequest(WTFMove(loadParameters));
         return;
     }
@@ -1832,6 +1832,8 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
         ASSERT_NOT_REACHED();
         return;
     }
+
+    WTFLogAlways("%d Chirag -- WebPage::loadRequest", getpid());
 
     setLastNavigationWasAppInitiated(loadParameters.request.isAppInitiated());
 
@@ -5723,8 +5725,6 @@ void WebPage::SandboxExtensionTracker::willPerformLoadDragDestinationAction(RefP
 
 void WebPage::SandboxExtensionTracker::beginLoad(WebFrame* frame, SandboxExtension::Handle&& handle)
 {
-    ASSERT_UNUSED(frame, frame->isRootFrame());
-
     setPendingProvisionalSandboxExtension(SandboxExtension::create(WTFMove(handle)));
 }
 
