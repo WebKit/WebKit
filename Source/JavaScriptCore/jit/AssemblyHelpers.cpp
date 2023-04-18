@@ -442,11 +442,9 @@ void AssemblyHelpers::emitNonNullDecodeZeroExtendedStructureID(RegisterID source
     if constexpr (structureHeapAddressSize >= 4 * GB) {
         ASSERT(structureHeapAddressSize == 4 * GB);
         move(source, dest);
-        add64(TrustedImm64(g_jscConfig.startOfStructureHeap), dest);
-    } else {
+    } else
         and32(TrustedImm32(StructureID::structureIDMask), source, dest);
-        add64(TrustedImm64(g_jscConfig.startOfStructureHeap), dest);
-    }
+    or64(TrustedImm64(g_jscConfig.startOfStructureHeap), dest);
 #else // not CPU(ADDRESS64)
     move(source, dest);
 #endif
