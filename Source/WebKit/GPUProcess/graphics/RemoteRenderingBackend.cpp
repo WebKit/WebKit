@@ -30,6 +30,7 @@
 
 #include "BufferIdentifierSet.h"
 #include "GPUConnectionToWebProcess.h"
+#include "GPUProcess.h"
 #include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "PlatformImageBufferShareableBackend.h"
@@ -582,6 +583,22 @@ void RemoteRenderingBackend::lowMemoryHandler(Critical, Synchronous)
 #if HAVE(IOSURFACE)
     m_ioSurfacePool->discardAllSurfaces();
 #endif
+}
+
+void RemoteRenderingBackend::createRemoteGPU(WebGPUIdentifier identifier, IPC::StreamServerConnection::Handle&& connectionHandle)
+{
+    auto addResult = m_remoteGPUMap.ensure(identifier, [&] {
+        return IPC::ScopedActiveMessageReceiveQueue { RemoteGPU::create(identifier, WTFMove(connectionHandle)) };
+    });
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+}
+
+void RemoteRenderingBackend::releaseRemoteGPU(WebGPUIdentifier identifier)
+{
+    bool result = m_remoteGPUMap.remove(identifier);
+    ASSERT_UNUSED(result, result);
+    if (m_remoteGPUMap.isEmpty())
+        gpuConnectionToWebProcess().gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 }
 
 } // namespace WebKit

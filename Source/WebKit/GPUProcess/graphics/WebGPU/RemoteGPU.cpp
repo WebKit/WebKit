@@ -28,13 +28,11 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "GPUConnectionToWebProcess.h"
 #include "RemoteAdapter.h"
 #include "RemoteCompositorIntegration.h"
 #include "RemoteGPUMessages.h"
 #include "RemoteGPUProxyMessages.h"
 #include "RemotePresentationContext.h"
-#include "RemoteRenderingBackend.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <pal/graphics/WebGPU/WebGPU.h>
@@ -48,14 +46,11 @@
 
 namespace WebKit {
 
-RemoteGPU::RemoteGPU(WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackend& renderingBackend, IPC::StreamServerConnection::Handle&& connectionHandle)
-    : m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
-    , m_workQueue(IPC::StreamConnectionWorkQueue::create("WebGPU work queue"))
+RemoteGPU::RemoteGPU(WebGPUIdentifier identifier, IPC::StreamServerConnection::Handle&& connectionHandle)
+    : m_workQueue(IPC::StreamConnectionWorkQueue::create("WebGPU work queue"))
     , m_streamConnection(IPC::StreamServerConnection::create(WTFMove(connectionHandle), workQueue()))
     , m_objectHeap(WebGPU::ObjectHeap::create())
     , m_identifier(identifier)
-    , m_renderingBackend(renderingBackend)
-    , m_webProcessIdentifier(gpuConnectionToWebProcess.webProcessIdentifier())
 {
 }
 
@@ -63,7 +58,6 @@ RemoteGPU::~RemoteGPU() = default;
 
 void RemoteGPU::initialize()
 {
-    assertIsMainRunLoop();
     workQueue().dispatch([protectedThis = Ref { *this }]() mutable {
         protectedThis->workQueueInitialize();
     });
@@ -71,7 +65,6 @@ void RemoteGPU::initialize()
 
 void RemoteGPU::stopListeningForIPC()
 {
-    assertIsMainRunLoop();
     workQueue().dispatch([this]() {
         workQueueUninitialize();
     });

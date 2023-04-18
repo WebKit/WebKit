@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -630,27 +630,6 @@ RemoteRenderingBackend* GPUConnectionToWebProcess::remoteRenderingBackend(Render
     if (it == m_remoteRenderingBackendMap.end())
         return nullptr;
     return it->value.get();
-}
-
-void GPUConnectionToWebProcess::createRemoteGPU(WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle&& connectionHandle)
-{
-    auto it = m_remoteRenderingBackendMap.find(renderingBackendIdentifier);
-    if (it == m_remoteRenderingBackendMap.end())
-        return;
-    auto* renderingBackend = it->value.get();
-
-    auto addResult = m_remoteGPUMap.ensure(identifier, [&] {
-        return IPC::ScopedActiveMessageReceiveQueue { RemoteGPU::create(identifier, *this, *renderingBackend, WTFMove(connectionHandle)) };
-    });
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
-}
-
-void GPUConnectionToWebProcess::releaseRemoteGPU(WebGPUIdentifier identifier)
-{
-    bool result = m_remoteGPUMap.remove(identifier);
-    ASSERT_UNUSED(result, result);
-    if (m_remoteGPUMap.isEmpty())
-        gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 }
 
 void GPUConnectionToWebProcess::clearNowPlayingInfo()

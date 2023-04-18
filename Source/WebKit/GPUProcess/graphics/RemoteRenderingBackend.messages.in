@@ -48,6 +48,9 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
 
     MoveToSerializedBuffer(WebCore::RenderingResourceIdentifier sourceImageBuffer, WebKit::RemoteSerializedImageBufferWriteReference destination)
     MoveToImageBuffer(WebKit::RemoteSerializedImageBufferWriteReference source, WebCore::RenderingResourceIdentifier destinationImageBuffer)
+
+    CreateRemoteGPU(WebKit::WebGPUIdentifier identifier, IPC::StreamServerConnection::Handle serverConnection) AllowedWhenWaitingForSyncReply NotStreamEncodable
+    ReleaseRemoteGPU(WebKit::WebGPUIdentifier identifier) AllowedWhenWaitingForSyncReply
 }
 
 #endif // ENABLE(GPU_PROCESS)
