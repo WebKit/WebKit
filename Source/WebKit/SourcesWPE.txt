@@ -82,6 +82,8 @@ Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.cpp
 
 Shared/cairo/ShareableBitmapCairo.cpp
 
+Shared/freetype/WebCoreArgumentCodersFreeType.cpp
+
 Shared/glib/ArgumentCodersGLib.cpp
 Shared/glib/InputMethodState.cpp
 Shared/glib/ProcessExecutablePathGLib.cpp

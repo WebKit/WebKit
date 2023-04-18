@@ -217,8 +217,6 @@ template<> struct ArgumentCoder<WebCore::FontPlatformData::Attributes> {
 template<> struct ArgumentCoder<WebCore::FontCustomPlatformData> {
     static void encode(Encoder&, const WebCore::FontCustomPlatformData&);
     static std::optional<Ref<WebCore::FontCustomPlatformData>> decode(Decoder&);
-    static void encodePlatformData(Encoder&, const WebCore::FontCustomPlatformData&);
-    static std::optional<Ref<WebCore::FontCustomPlatformData>> decodePlatformData(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::ResourceError> {

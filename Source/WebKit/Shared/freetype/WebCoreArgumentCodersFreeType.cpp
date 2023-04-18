@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2023 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,44 +26,34 @@
 #include "config.h"
 #include "WebCoreArgumentCoders.h"
 
+#if USE(FREETYPE)
+
 #include <WebCore/Font.h>
-#include <WebCore/FontCustomPlatformData.h>
 
 namespace IPC {
 
-using namespace WebCore;
-
-void ArgumentCoder<Font>::encodePlatformData(Encoder& encoder, const Font& font)
+void ArgumentCoder<WebCore::Font>::encodePlatformData(Encoder&, const WebCore::Font&)
 {
     ASSERT_NOT_REACHED();
 }
 
-std::optional<FontPlatformData> ArgumentCoder<Font>::decodePlatformData(Decoder& decoder)
-{
-    ASSERT_NOT_REACHED();
-    return std::nullopt;
-}
-
-void ArgumentCoder<WebCore::FontCustomPlatformData>::encodePlatformData(Encoder& encoder, const WebCore::FontCustomPlatformData& customPlatformData)
-{
-    ASSERT_NOT_REACHED();
-}
-
-std::optional<Ref<WebCore::FontCustomPlatformData>> ArgumentCoder<WebCore::FontCustomPlatformData>::decodePlatformData(Decoder& decoder)
+std::optional<WebCore::FontPlatformData> ArgumentCoder<WebCore::Font>::decodePlatformData(Decoder&)
 {
     ASSERT_NOT_REACHED();
     return std::nullopt;
 }
 
-void ArgumentCoder<WebCore::FontPlatformData::Attributes>::encodePlatformData(Encoder& encoder, const WebCore::FontPlatformData::Attributes& data)
+void ArgumentCoder<WebCore::FontPlatformData::Attributes>::encodePlatformData(Encoder&, const WebCore::FontPlatformData::Attributes&)
 {
     ASSERT_NOT_REACHED();
 }
 
-bool ArgumentCoder<WebCore::FontPlatformData::Attributes>::decodePlatformData(Decoder& decoder, WebCore::FontPlatformData::Attributes& data)
+bool ArgumentCoder<WebCore::FontPlatformData::Attributes>::decodePlatformData(Decoder&, WebCore::FontPlatformData::Attributes&)
 {
     ASSERT_NOT_REACHED();
     return false;
 }
 
 } // namespace IPC
+
+#endif // USE(FREETYPE)

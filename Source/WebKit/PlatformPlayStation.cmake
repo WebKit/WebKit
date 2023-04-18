@@ -70,13 +70,13 @@ list(APPEND WebKit_SOURCES
 
     Shared/curl/WebCoreArgumentCodersCurl.cpp
 
+    Shared/freetype/WebCoreArgumentCodersFreeType.cpp
+
     Shared/libwpe/NativeWebKeyboardEventLibWPE.cpp
     Shared/libwpe/NativeWebMouseEventLibWPE.cpp
     Shared/libwpe/NativeWebTouchEventLibWPE.cpp
     Shared/libwpe/NativeWebWheelEventLibWPE.cpp
     Shared/libwpe/WebEventFactory.cpp
-
-    Shared/playstation/WebCoreArgumentCodersPlayStation.cpp
 
     Shared/unix/AuxiliaryProcessMain.cpp
 

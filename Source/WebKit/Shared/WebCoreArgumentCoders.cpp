@@ -541,24 +541,56 @@ std::optional<Font::Attributes> ArgumentCoder<Font::Attributes>::decode(Decoder&
 
 void ArgumentCoder<WebCore::FontCustomPlatformData>::encode(Encoder& encoder, const WebCore::FontCustomPlatformData& customPlatformData)
 {
-    encodePlatformData(encoder, customPlatformData);
-
+    WebKit::SharedMemory::Handle handle;
+    {
+        auto sharedMemoryBuffer = WebKit::SharedMemory::copyBuffer(customPlatformData.creationData.fontFaceData);
+        if (auto memoryHandle = sharedMemoryBuffer->createHandle(WebKit::SharedMemory::Protection::ReadOnly))
+            handle = WTFMove(*memoryHandle);
+    }
+    encoder << customPlatformData.creationData.fontFaceData->size();
+    encoder << WTFMove(handle);
+    encoder << customPlatformData.creationData.itemInCollection;
     encoder << customPlatformData.m_renderingResourceIdentifier;
 }
 
 std::optional<Ref<FontCustomPlatformData>> ArgumentCoder<FontCustomPlatformData>::decode(Decoder& decoder)
 {
-    auto result = decodePlatformData(decoder);
-    if (result) {
-        std::optional<RenderingResourceIdentifier> renderingResourceIdentifier;
-        decoder >> renderingResourceIdentifier;
-        if (!renderingResourceIdentifier)
-            return std::nullopt;
+    std::optional<uint64_t> bufferSize;
+    decoder >> bufferSize;
+    if (!bufferSize)
+        return std::nullopt;
 
-        (*result)->m_renderingResourceIdentifier = *renderingResourceIdentifier;
-    }
+    std::optional<WebKit::SharedMemory::Handle> handle;
+    decoder >> handle;
+    if (!handle)
+        return std::nullopt;
 
-    return result;
+    auto sharedMemoryBuffer = WebKit::SharedMemory::map(*handle, WebKit::SharedMemory::Protection::ReadOnly);
+    if (!sharedMemoryBuffer)
+        return std::nullopt;
+
+    if (sharedMemoryBuffer->size() < *bufferSize)
+        return std::nullopt;
+
+    auto fontFaceData = sharedMemoryBuffer->createSharedBuffer(*bufferSize);
+
+    std::optional<String> itemInCollection;
+    decoder >> itemInCollection;
+    if (!itemInCollection)
+        return std::nullopt;
+
+    auto fontCustomPlatformData = createFontCustomPlatformData(fontFaceData, *itemInCollection);
+    if (!fontCustomPlatformData)
+        return std::nullopt;
+
+    std::optional<RenderingResourceIdentifier> renderingResourceIdentifier;
+    decoder >> renderingResourceIdentifier;
+    if (!renderingResourceIdentifier)
+        return std::nullopt;
+
+    fontCustomPlatformData->m_renderingResourceIdentifier = *renderingResourceIdentifier;
+
+    return fontCustomPlatformData.releaseNonNull();
 }
 
 void ArgumentCoder<WebCore::FontPlatformData::Attributes>::encode(Encoder& encoder, const WebCore::FontPlatformData::Attributes& data)

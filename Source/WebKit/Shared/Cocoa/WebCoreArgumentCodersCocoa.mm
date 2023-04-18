@@ -578,51 +578,6 @@ std::optional<WebCore::FontPlatformData> ArgumentCoder<WebCore::Font>::decodePla
     return WebCore::FontPlatformData(ctFont.get(), *size, *syntheticBold, *syntheticOblique, *orientation, *widthVariant, *textRenderingMode);
 }
 
-void ArgumentCoder<WebCore::FontCustomPlatformData>::encodePlatformData(Encoder& encoder, const WebCore::FontCustomPlatformData& customPlatformData)
-{
-    WebKit::SharedMemory::Handle handle;
-    {
-        auto sharedMemoryBuffer = WebKit::SharedMemory::copyBuffer(customPlatformData.creationData.fontFaceData);
-        if (auto memoryHandle = sharedMemoryBuffer->createHandle(WebKit::SharedMemory::Protection::ReadOnly))
-            handle = WTFMove(*memoryHandle);
-    }
-    encoder << customPlatformData.creationData.fontFaceData->size();
-    encoder << WTFMove(handle);
-    encoder << customPlatformData.creationData.itemInCollection;
-}
-
-std::optional<Ref<WebCore::FontCustomPlatformData>> ArgumentCoder<WebCore::FontCustomPlatformData>::decodePlatformData(Decoder& decoder)
-{
-    std::optional<uint64_t> bufferSize;
-    decoder >> bufferSize;
-    if (!bufferSize)
-        return std::nullopt;
-
-    std::optional<WebKit::SharedMemory::Handle> handle;
-    decoder >> handle;
-    if (!handle)
-        return std::nullopt;
-
-    auto sharedMemoryBuffer = WebKit::SharedMemory::map(*handle, WebKit::SharedMemory::Protection::ReadOnly);
-    if (!sharedMemoryBuffer)
-        return std::nullopt;
-
-    if (sharedMemoryBuffer->size() < *bufferSize)
-        return std::nullopt;
-
-    auto fontFaceData = sharedMemoryBuffer->createSharedBuffer(*bufferSize);
-
-    std::optional<String> itemInCollection;
-    decoder >> itemInCollection;
-    if (!itemInCollection)
-        return std::nullopt;
-
-    auto fontCustomPlatformData = createFontCustomPlatformData(fontFaceData, *itemInCollection);
-    if (!fontCustomPlatformData)
-        return std::nullopt;
-    return fontCustomPlatformData.releaseNonNull();
-}
-
 void ArgumentCoder<WebCore::FontPlatformData::Attributes>::encodePlatformData(Encoder& encoder, const WebCore::FontPlatformData::Attributes& data)
 {
     encoder << data.m_attributes;
