@@ -4404,6 +4404,7 @@ imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-4.ht
 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-5.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/linear-gradient-currentcolor-first-line.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-color-mix-function.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/disabled-elements/event-propagate-disabled.tentative.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-relative-color.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-relative-color.html [ Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audiobuffersource-connections.html [ Failure ]
