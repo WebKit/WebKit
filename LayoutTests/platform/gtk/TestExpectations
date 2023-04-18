@@ -2158,11 +2158,7 @@ webkit.org/b/234782 imported/w3c/web-platform-tests/css/css-writing-modes/text-s
 imported/w3c/web-platform-tests/css/css-pseudo/selection-background-painting-order.html [ ImageOnlyFailure ]
 
 # Failing preload tests
-imported/w3c/web-platform-tests/preload/link-header-preload-nonce.html [ Failure ]
 imported/w3c/web-platform-tests/preload/onerror-event.html [ Failure ]
-imported/w3c/web-platform-tests/preload/preload-csp.sub.html [ Failure ]
-imported/w3c/web-platform-tests/preload/preload-default-csp.sub.html [ Failure ]
-imported/w3c/web-platform-tests/preload/preload-dynamic-csp.html [ Failure ]
 imported/w3c/web-platform-tests/preload/preload-font-crossorigin.html [ Failure ]
 imported/w3c/web-platform-tests/preload/preload-time-to-fetch.https.html [ Failure ]
 imported/w3c/web-platform-tests/preload/preload-type-match.html [ Failure ]
