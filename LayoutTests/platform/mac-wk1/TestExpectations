@@ -2464,3 +2464,5 @@ fullscreen/fullscreen-iframe-navigation.html [ Skip ]
 # Timeout on WK1
 fullscreen/fullscreen-restore-scroll-position-overflow-auto.html [ Skip ]
 
+# Discrete wheel events don't trigger scroll snapping on the root in WK1
+webkit.org/b/255498 css3/scroll-snap/scroll-snap-discrete-wheel-event-in-mainframe.html [ Skip ]
