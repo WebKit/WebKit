@@ -903,7 +903,6 @@
 		413075B01DE85F580039EC69 /* WebRTCMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 413075A31DE85EE70039EC69 /* WebRTCMonitor.h */; };
 		413075B21DE85F580039EC69 /* LibWebRTCSocketFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 413075A61DE85EE70039EC69 /* LibWebRTCSocketFactory.h */; };
 		413075B41DE85F580039EC69 /* LibWebRTCProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 413075A81DE85EE70039EC69 /* LibWebRTCProvider.h */; };
-		413E5C9029B0CC9B002F4987 /* BackgroundFetchState.serialization.in in Resources */ = {isa = PBXBuildFile; fileRef = 413E5C8F29B0C8EA002F4987 /* BackgroundFetchState.serialization.in */; };
 		413E5C9229B0CF7C002F4987 /* BackgroundFetchStateCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 413E5C9129B0CF7B002F4987 /* BackgroundFetchStateCocoa.mm */; };
 		413E5C9429B15174002F4987 /* CacheStorageCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935BF7FB2936BF1A00B41326 /* CacheStorageCache.cpp */; };
 		4176901422FDD41B00B1576D /* NetworkRTCProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4176901322FDD41B00B1576D /* NetworkRTCProvider.mm */; };
@@ -15899,7 +15898,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				413E5C9029B0CC9B002F4987 /* BackgroundFetchState.serialization.in in Resources */,
 				372EBB412017E64300085064 /* WebContentProcess.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
