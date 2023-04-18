@@ -36,6 +36,7 @@
 namespace PAL::WebGPU {
 
 class ConvertToBackingContext;
+enum class DeviceLostReason : uint8_t;
 
 class DeviceImpl final : public Device {
     WTF_MAKE_FAST_ALLOCATED;
@@ -85,6 +86,7 @@ private:
 
     void pushErrorScope(ErrorFilter) final;
     void popErrorScope(CompletionHandler<void(std::optional<Error>&&)>&&) final;
+    void resolveDeviceLostPromise(CompletionHandler<void(PAL::WebGPU::DeviceLostReason)>&&) final;
 
     void setLabelInternal(const String&) final;
 

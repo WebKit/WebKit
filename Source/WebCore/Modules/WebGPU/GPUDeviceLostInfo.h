@@ -36,14 +36,12 @@ namespace WebCore {
 
 class GPUDeviceLostInfo : public RefCounted<GPUDeviceLostInfo> {
 public:
-    using Reason = std::optional<GPUDeviceLostReason>;
-
     static Ref<GPUDeviceLostInfo> create(Ref<PAL::WebGPU::DeviceLostInfo>&& backing)
     {
         return adoptRef(*new GPUDeviceLostInfo(WTFMove(backing)));
     }
 
-    Reason reason() const;
+    GPUDeviceLostReason reason() const;
     const String& message() const;
 
     PAL::WebGPU::DeviceLostInfo& backing() { return m_backing; }

@@ -158,6 +158,8 @@ Device::Device(Adapter& adapter)
     : m_defaultQueue(Queue::createInvalid(*this))
     , m_adapter(adapter)
 {
+    if (!m_adapter->isValid())
+        makeInvalid();
 }
 
 Device::~Device()
@@ -165,6 +167,10 @@ Device::~Device()
 #if PLATFORM(MAC)
     MTLRemoveDeviceObserver(m_deviceObserver);
 #endif
+    if (m_deviceLostCallback) {
+        m_deviceLostCallback(WGPUDeviceLostReason_Destroyed, ""_s);
+        m_deviceLostCallback = nullptr;
+    }
 }
 
 void Device::loseTheDevice(WGPUDeviceLostReason reason)
@@ -179,6 +185,7 @@ void Device::loseTheDevice(WGPUDeviceLostReason reason)
         instance().scheduleWork([deviceLostCallback = WTFMove(m_deviceLostCallback), reason]() {
             deviceLostCallback(reason, "Device lost."_s);
         });
+        m_deviceLostCallback = nullptr;
     }
 
     // FIXME: The spec doesn't actually say to do this, but it's pretty important because
@@ -337,6 +344,10 @@ void Device::pushErrorScope(WGPUErrorFilter filter)
 void Device::setDeviceLostCallback(Function<void(WGPUDeviceLostReason, String&&)>&& callback)
 {
     m_deviceLostCallback = WTFMove(callback);
+    if (m_isLost)
+        loseTheDevice(WGPUDeviceLostReason_Destroyed);
+    else if (!m_adapter->isValid())
+        loseTheDevice(WGPUDeviceLostReason_Undefined);
 }
 
 void Device::setUncapturedErrorCallback(Function<void(WGPUErrorType, String&&)>&& callback)

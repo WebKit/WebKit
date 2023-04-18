@@ -32,6 +32,7 @@ namespace PAL::WebGPU {
 
 enum class DeviceLostReason : uint8_t {
     Destroyed,
+    Unknown,
 };
 
 } // namespace PAL::WebGPU
@@ -41,7 +42,8 @@ namespace WTF {
 template<> struct EnumTraits<PAL::WebGPU::DeviceLostReason> {
     using values = EnumValues<
         PAL::WebGPU::DeviceLostReason,
-        PAL::WebGPU::DeviceLostReason::Destroyed
+        PAL::WebGPU::DeviceLostReason::Destroyed,
+        PAL::WebGPU::DeviceLostReason::Unknown
     >;
 };
 

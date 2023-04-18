@@ -35,19 +35,17 @@ namespace PAL::WebGPU {
 
 class DeviceLostInfo final : public RefCounted<DeviceLostInfo> {
 public:
-    using Reason = std::optional<DeviceLostReason>;
-
-    static Ref<DeviceLostInfo> create(Reason&& reason, String&& message)
+    static Ref<DeviceLostInfo> create(DeviceLostReason reason, String&& message)
     {
-        return adoptRef(*new DeviceLostInfo(WTFMove(reason), WTFMove(message)));
+        return adoptRef(*new DeviceLostInfo(reason, WTFMove(message)));
     }
 
-    const Reason& reason() const { return m_reason; }
+    DeviceLostReason reason() const { return m_reason; }
     const String& message() const { return m_message; }
 
 protected:
-    DeviceLostInfo(Reason&& reason, String&& message)
-        : m_reason(WTFMove(reason))
+    DeviceLostInfo(DeviceLostReason reason, String&& message)
+        : m_reason(reason)
         , m_message(WTFMove(message))
     {
     }
@@ -58,7 +56,7 @@ private:
     DeviceLostInfo& operator=(const DeviceLostInfo&) = delete;
     DeviceLostInfo& operator=(DeviceLostInfo&&) = delete;
 
-    Reason m_reason;
+    DeviceLostReason m_reason;
     String m_message;
 };
 

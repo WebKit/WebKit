@@ -31,6 +31,6 @@
     SecureContext
 ]
 interface GPUDeviceLostInfo {
-    readonly attribute GPUDeviceLostReason? reason; // FIXME: This is supposed to be (GPUDeviceLostReason or undefined)
+    readonly attribute GPUDeviceLostReason reason;
     readonly attribute DOMString message;
 };

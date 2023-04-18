@@ -59,6 +59,7 @@
 #include "GPUTextureDescriptor.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSGPUComputePipeline.h"
+#include "JSGPUDeviceLostInfo.h"
 #include "JSGPUInternalError.h"
 #include "JSGPUOutOfMemoryError.h"
 #include "JSGPUPipelineError.h"
@@ -109,6 +110,23 @@ Ref<GPUQueue> GPUDevice::queue() const
 void GPUDevice::destroy()
 {
     m_backing->destroy();
+}
+
+GPUDevice::LostPromise& GPUDevice::lost()
+{
+    if (m_waitingForDeviceLostPromise)
+        return m_lostPromise;
+
+    m_waitingForDeviceLostPromise = true;
+    m_backing->resolveDeviceLostPromise([weakThis = WeakPtr { *this }] (PAL::WebGPU::DeviceLostReason reason) {
+        if (!weakThis)
+            return;
+
+        auto ref = GPUDeviceLostInfo::create(PAL::WebGPU::DeviceLostInfo::create(reason, ""_s));
+        weakThis->m_lostPromise->resolve(WTFMove(ref));
+    });
+
+    return m_lostPromise;
 }
 
 Ref<GPUBuffer> GPUDevice::createBuffer(const GPUBufferDescriptor& bufferDescriptor)
