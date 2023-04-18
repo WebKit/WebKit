@@ -73,8 +73,10 @@ ScrollingEffectsController::~ScrollingEffectsController()
 
 void ScrollingEffectsController::stopAllTimers()
 {
-    if (m_discreteSnapTransitionTimer)
+    if (m_discreteSnapTransitionTimer) {
         m_discreteSnapTransitionTimer->stop();
+        m_client.didStopScrollSnapAnimation();
+    }
 
 #if ASSERT_ENABLED
     m_timersWereStopped = true;
@@ -395,6 +397,9 @@ bool ScrollingEffectsController::isScrollSnapInProgress() const
     if (m_inScrollGesture || m_momentumScrollInProgress || m_isAnimatingScrollSnap)
         return true;
 
+    if (m_discreteSnapTransitionTimer && m_discreteSnapTransitionTimer->isActive())
+        return true;
+
     return false;
 }
 
@@ -640,8 +645,10 @@ void ScrollingEffectsController::discreteSnapTransitionTimerFired()
 
     if (shouldStartScrollSnapAnimation)
         startScrollSnapAnimation();
-    else
+    else {
         stopDeferringWheelEventTestCompletion(WheelEventTestMonitor::ScrollSnapInProgress);
+        m_client.didStopScrollSnapAnimation();
+    }
 }
 
 bool ScrollingEffectsController::processWheelEventForScrollSnap(const PlatformWheelEvent& wheelEvent)

@@ -89,6 +89,18 @@ void RemoteScrollingCoordinatorProxyMac::hasNodeWithAnimatedScrollChanged(bool h
     drawingArea->setDisplayLinkWantsFullSpeedUpdates(hasAnimatedScrolls);
 }
 
+void RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeDidBeginScrollSnapping(ScrollingNodeID nodeID)
+{
+    m_uiState.addNodeWithActiveScrollSnap(nodeID);
+    sendUIStateChangedIfNecessary();
+}
+
+void RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeDidEndScrollSnapping(ScrollingNodeID nodeID)
+{
+    m_uiState.removeNodeWithActiveScrollSnap(nodeID);
+    sendUIStateChangedIfNecessary();
+}
+
 void RemoteScrollingCoordinatorProxyMac::connectStateNodeLayers(ScrollingStateTree& stateTree, const RemoteLayerTreeHost& layerTreeHost)
 {
     using PlatformLayerID = GraphicsLayer::PlatformLayerID;
