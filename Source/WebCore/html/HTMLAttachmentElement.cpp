@@ -470,15 +470,15 @@ void HTMLAttachmentElement::attributeChanged(const QualifiedName& name, const At
     switch (name.nodeName()) {
     case AttributeNames::actionAttr:
         if (m_actionTextElement)
-            m_actionTextElement->setTextContent(String(newValue.string()));
+            m_actionTextElement->setTextContent(String(attachmentActionForDisplay()));
         break;
     case AttributeNames::titleAttr:
         if (m_titleElement)
-            m_titleElement->setTextContent(String(newValue.string()));
+            m_titleElement->setTextContent(attachmentTitleForDisplay());
         break;
     case AttributeNames::subtitleAttr:
         if (m_subtitleElement)
-            m_subtitleElement->setTextContent(String(newValue.string()));
+            m_subtitleElement->setTextContent(String(attachmentSubtitleForDisplay()));
         break;
     case AttributeNames::progressAttr:
         updateProgress(newValue);
@@ -535,6 +535,7 @@ String HTMLAttachmentElement::attachmentTitleForDisplay() const
         firstStrongIsolate,
         StringView(title).left(indexOfLastDot),
         popDirectionalIsolate,
+        zeroWidthSpace,
         StringView(title).substring(indexOfLastDot)
     );
 }

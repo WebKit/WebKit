@@ -81,7 +81,7 @@ layer at (142,324) size 230x17
   RenderDeprecatedFlexibleBox {DIV} at (0,17) size 230x17 [color=#000000]
     RenderBlock (anonymous) at (0,0) size 230x17
       RenderText {#text} at (0,0) size 52x17
-        text run at (0,0) width 52: "Title.txt"
+        text run at (0,0) width 52: "\x{200E}\x{2068}Title\x{2069}\x{200B}.txt"
 layer at (142,341) size 230x13
   RenderDeprecatedFlexibleBox {DIV} at (0,34) size 230x13 [color=#3C3C4399]
     RenderBlock (anonymous) at (0,0) size 230x13
@@ -93,6 +93,6 @@ layer at (130,410) size 118x24 backgroundClip at (130,410) size 117x24 clip at (
   RenderDeprecatedFlexibleBox {DIV} at (0,7) size 118x26 [color=#000000]
     RenderBlock (anonymous) at (0,0) size 118x17
       RenderText {#text} at (0,0) size 56x17
-        text run at (0,0) width 56: "Title.pdf"
+        text run at (0,0) width 56: "\x{200E}\x{2068}Title\x{2069}\x{200B}.pdf"
 layer at (130,434) size 118x8 backgroundClip at (130,434) size 117x8 clip at (130,434) size 117x8
   RenderDeprecatedFlexibleBox {DIV} at (0,32) size 118x8 [color=#3C3C4399]
