@@ -2410,8 +2410,10 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
     // The range could span nodes with different writing modes.
     // If this is the case, we use the writing mode of the common ancestor.
     if (containsDifferentWritingModes) {
-        if (auto ancestor = commonInclusiveAncestor<ComposedTree>(range))
-            hasFlippedWritingMode = ancestor->renderer()->style().isFlippedBlocksWritingMode();
+        if (auto ancestor = commonInclusiveAncestor<ComposedTree>(range)) {
+            if (auto* renderer = ancestor->renderer())
+                hasFlippedWritingMode = renderer->style().isFlippedBlocksWritingMode();
+        }
     }
 
     auto numberOfGeometries = geometries.size();
