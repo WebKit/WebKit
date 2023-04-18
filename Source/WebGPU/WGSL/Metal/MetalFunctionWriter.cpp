@@ -508,6 +508,7 @@ void FunctionDefinitionWriter::visit(AST::UnaryExpression& unary)
 
 void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
 {
+    m_stringBuilder.append("(");
     visit(binary.leftExpression());
     switch (binary.operation()) {
     case AST::BinaryOperation::Add:
@@ -567,6 +568,7 @@ void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
         break;
     }
     visit(binary.rightExpression());
+    m_stringBuilder.append(")");
 }
 
 void FunctionDefinitionWriter::visit(AST::PointerDereferenceExpression& pointerDereference)
