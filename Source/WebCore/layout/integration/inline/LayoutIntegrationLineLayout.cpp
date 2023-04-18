@@ -819,21 +819,17 @@ std::optional<size_t> LineLayout::lastLineIndexForContentHeight() const
         ASSERT_NOT_REACHED();
         return lines.size() - 1;
     }
-    auto visibleLines = layoutState->visibleLineCountForLineClamp();
     // Previous block containers may have already produced some lines.
-    auto remainingNumberOfLines = maximumLines - visibleLines.value_or(0);
-    if (!remainingNumberOfLines) {
-        // This block is fully collapsed.
-        return { };
-    }
-    if (remainingNumberOfLines > 0) {
+    auto visibleLines = layoutState->visibleLineCountForLineClamp().value_or(0);
+    if (visibleLines < maximumLines) {
+        auto remainingNumberOfLines = maximumLines - visibleLines;
         auto lastLineIndex = std::min(lines.size(), remainingNumberOfLines) - 1;
         // FIXME: Clamped line is supposed to have trailing ellipsis. Assert on lines[lastLineIndex].hasEllipsis() when we have some means to clear
         // line content after probing layout.
         return lastLineIndex;
     }
-    ASSERT_NOT_REACHED();
-    return lines.size() - 1;
+    // This block is fully collapsed.
+    return { };
 }
 
 bool LineLayout::isPaginated() const
