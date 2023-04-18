@@ -6307,7 +6307,7 @@ TextAutosizingUsesIdempotentMode:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(IOS_FAMILY)": defaultTextAutosizingUsesIdempotentMode()
+      "PLATFORM(IOS_FAMILY) && !HAVE(UIKIT_WEBKIT_INTERNALS)": defaultTextAutosizingUsesIdempotentMode()
       default: false
     WebCore:
       default: false
