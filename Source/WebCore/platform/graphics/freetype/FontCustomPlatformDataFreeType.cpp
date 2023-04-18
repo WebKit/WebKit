@@ -45,11 +45,13 @@ static void releaseCustomFontData(void* data)
 
 static cairo_user_data_key_t freeTypeFaceKey;
 
-FontCustomPlatformData::FontCustomPlatformData(FT_Face freeTypeFace, FragmentedSharedBuffer& buffer)
+FontCustomPlatformData::FontCustomPlatformData(FT_Face freeTypeFace, FontPlatformData::CreationData&& data)
     : m_fontFace(adoptRef(cairo_ft_font_face_create_for_ft_face(freeTypeFace, FT_LOAD_DEFAULT)))
+    , creationData(WTFMove(data))
+    , m_renderingResourceIdentifier(RenderingResourceIdentifier::generate())
 {
-    buffer.ref(); // This is balanced by the buffer->deref() in releaseCustomFontData.
     static cairo_user_data_key_t bufferKey;
+    auto buffer = creationData.fontFaceData;
     cairo_font_face_set_user_data(m_fontFace.get(), &bufferKey, &buffer,
          static_cast<cairo_destroy_func_t>(releaseCustomFontData));
 
@@ -138,7 +140,7 @@ static bool initializeFreeTypeLibrary(FT_Library& library)
     return true;
 }
 
-RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String&)
+RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String& itemInCollection)
 {
     static FT_Library library;
     if (!library && !initializeFreeTypeLibrary(library)) {
@@ -149,7 +151,8 @@ RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer
     FT_Face freeTypeFace;
     if (FT_New_Memory_Face(library, reinterpret_cast<const FT_Byte*>(buffer.data()), buffer.size(), 0, &freeTypeFace))
         return nullptr;
-    return adoptRef(new FontCustomPlatformData(freeTypeFace, buffer));
+    FontPlatformData::CreationData creationData = { buffer, itemInCollection };
+    return adoptRef(new FontCustomPlatformData(freeTypeFace, WTFMove(creationData)));
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)

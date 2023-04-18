@@ -72,7 +72,7 @@ FontPlatformData FontPlatformData::cloneWithSyntheticOblique(const FontPlatformD
 }
 #endif
 
-#if !USE(FREETYPE) && (!USE(CORE_TEXT) || !PLATFORM(COCOA))
+#if !USE(FREETYPE) && !PLATFORM(COCOA)
 // FIXME: Don't other platforms also need to reinstantiate their copy.m_font for scaled size?
 FontPlatformData FontPlatformData::cloneWithSize(const FontPlatformData& source, float size)
 {
@@ -103,11 +103,7 @@ void FontPlatformData::updateSizeWithFontSizeAdjust(const FontSizeAdjust& fontSi
 
 const FontPlatformData::CreationData* FontPlatformData::creationData() const
 {
-#if PLATFORM(WIN) || USE(CORE_TEXT)
     return m_customPlatformData ? &m_customPlatformData->creationData : nullptr;
-#else
-    return nullptr;
-#endif
 }
 
 #if !PLATFORM(COCOA) && !USE(FREETYPE)
