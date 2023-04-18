@@ -625,6 +625,7 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
                 || decoder.messageName() == IPC::MessageName::NetworkProcessProxy_DidReceiveAuthenticationChallenge // NP -> UIP
                 || decoder.messageName() == IPC::MessageName::NetworkProcessProxy_ResourceLoadDidReceiveChallenge // NP -> UIP
                 || decoder.messageName() == IPC::MessageName::NetworkProcessProxy_DataTaskReceivedChallenge // NP -> UIP
+                || decoder.messageName() == IPC::MessageName::NetworkProcessProxy_DataTaskReceivedChallengeReply // UIP -> NP
                 || decoder.messageName() == IPC::MessageName::AuthenticationManager_CompleteAuthenticationChallenge // UIP -> NP
             )
         )
