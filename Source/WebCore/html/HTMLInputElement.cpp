@@ -501,10 +501,10 @@ void HTMLInputElement::resignStrongPasswordAppearance()
         page->chrome().client().inputElementDidResignStrongPasswordAppearance(*this);
 }
 
-void HTMLInputElement::updateType()
+void HTMLInputElement::updateType(const AtomString& typeAttributeValue)
 {
     ASSERT(m_inputType);
-    auto newType = InputType::createIfDifferent(*this, attributeWithoutSynchronization(typeAttr), m_inputType.get());
+    auto newType = InputType::createIfDifferent(*this, typeAttributeValue, m_inputType.get());
     m_hasType = true;
     if (!newType)
         return;
@@ -749,7 +749,8 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
 
     switch (name.nodeName()) {
     case AttributeNames::typeAttr:
-        updateType();
+        if (oldValue != newValue)
+            updateType(newValue);
         break;
     case AttributeNames::valueAttr:
         // Changes to the value attribute may change whether or not this element has a default value.
@@ -895,7 +896,7 @@ RenderPtr<RenderElement> HTMLInputElement::createElementRenderer(RenderStyle&& s
 void HTMLInputElement::willAttachRenderers()
 {
     if (!m_hasType)
-        updateType();
+        updateType(attributeWithoutSynchronization(typeAttr));
 }
 
 void HTMLInputElement::didAttachRenderers()

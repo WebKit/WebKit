@@ -425,7 +425,7 @@ private:
     void requiredStateChanged() final;
 
     void initializeInputType();
-    void updateType();
+    void updateType(const AtomString& typeAttributeValue);
     void runPostTypeUpdateTasks();
 
     void subtreeHasChanged() final;
