@@ -305,8 +305,7 @@ public:
         ASSERT_UNUSED(expected, expected && sf && opc == MoveWideOp_Z && !hw);
         ASSERT(checkMovk<Datasize_64>(address[1], 1, rd));
         ASSERT(checkMovk<Datasize_64>(address[2], 2, rd));
-        if (NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS > 3)
-            ASSERT(checkMovk<Datasize_64>(address[3], 3, rd));
+        ASSERT(checkMovk<Datasize_64>(address[3], 3, rd));
 
         setPointer(address, valuePtr, rd, flush);
     }
@@ -325,8 +324,7 @@ public:
         buffer[0] = moveWideImediate(Datasize_64, MoveWideOp_Z, 0, getHalfword(value, 0), rd);
         buffer[1] = moveWideImediate(Datasize_64, MoveWideOp_K, 1, getHalfword(value, 1), rd);
         buffer[2] = moveWideImediate(Datasize_64, MoveWideOp_K, 2, getHalfword(value, 2), rd);
-        if (NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS > 3)
-            buffer[3] = moveWideImediate(Datasize_64, MoveWideOp_K, 3, getHalfword(value, 3), rd);
+        buffer[3] = moveWideImediate(Datasize_64, MoveWideOp_K, 3, getHalfword(value, 3), rd);
         RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(address) == address);
         performJITMemcpy(address, buffer, sizeof(int) * 4);
 
@@ -356,11 +354,9 @@ public:
         ASSERT_UNUSED(expected, expected && sf && opc == MoveWideOp_K && hw == 2 && rd == rdFirst);
         result |= static_cast<uintptr_t>(imm16) << 32;
 
-        if (NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS > 3) {
-            expected = disassembleMoveWideImediate(address + 3, sf, opc, hw, imm16, rd);
-            ASSERT_UNUSED(expected, expected && sf && opc == MoveWideOp_K && hw == 3 && rd == rdFirst);
-            result |= static_cast<uintptr_t>(imm16) << 48;
-        }
+        expected = disassembleMoveWideImediate(address + 3, sf, opc, hw, imm16, rd);
+        ASSERT_UNUSED(expected, expected && sf && opc == MoveWideOp_K && hw == 3 && rd == rdFirst);
+        result |= static_cast<uintptr_t>(imm16) << 48;
 
         return reinterpret_cast<void*>(result);
     }
@@ -368,12 +364,11 @@ public:
     static void* readCallTarget(void* from)
     {
         constexpr ptrdiff_t callInstruction = 1;
+        static constexpr ptrdiff_t NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS = 4;
         return readPointer(reinterpret_cast<int*>(from) - callInstruction - NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS);
     }
 
-    static constexpr ptrdiff_t MAX_POINTER_BITS = 64;
-    static constexpr ptrdiff_t BITS_ENCODEABLE_PER_INSTRUCTION = 16;
-    static constexpr ptrdiff_t NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS = MAX_POINTER_BITS / BITS_ENCODEABLE_PER_INSTRUCTION;
+    static constexpr ptrdiff_t MAX_POINTER_BITS = 64; // override the one in ARM64Assembler.h.
 };
 
 #undef CHECK_MEMOPSIZE_OF
