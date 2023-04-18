@@ -2785,6 +2785,9 @@ bool Texture::validateLinearTextureData(const WGPUTextureDataLayout& layout, uin
     if (end.hasOverflowed() || end.value() > byteSize)
         return false;
 
+    if (layout.bytesPerRow % blockSize)
+        return false;
+
     return true;
 }
 

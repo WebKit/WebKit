@@ -559,18 +559,32 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
     auto heightForMetal = std::min(copySize.height, logicalSize.height);
     auto depthForMetal = std::min(copySize.depthOrArrayLayers, logicalSize.depthOrArrayLayers);
 
+    id<MTLBuffer> sourceBuffer = fromAPI(source.buffer).buffer();
+    if (widthForMetal > sourceBuffer.length) {
+        m_device->generateAValidationError("Validation failure."_s);
+        return;
+    }
+
     const auto& destinationTexture = fromAPI(destination.texture);
     switch (destinationTexture.dimension()) {
     case WGPUTextureDimension_1D: {
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400771-copyfrombuffer?language=objc
         // "When you copy to a 1D texture, height and depth must be 1."
+        if (!widthForMetal)
+            return;
+
+        if (destination.origin.x + widthForMetal > logicalSize.width) {
+            m_device->generateAValidationError("Validation failure."_s);
+            return;
+        }
+
         auto sourceSize = MTLSizeMake(widthForMetal, 1, 1);
         auto destinationOrigin = MTLOriginMake(destination.origin.x, 0, 0);
         for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
             auto sourceOffset = static_cast<NSUInteger>(source.layout.offset + layer * sourceBytesPerImage);
             NSUInteger destinationSlice = destination.origin.z + layer;
             [m_blitCommandEncoder
-                copyFromBuffer:fromAPI(source.buffer).buffer()
+                copyFromBuffer:sourceBuffer
                 sourceOffset:sourceOffset
                 sourceBytesPerRow:sourceBytesPerRow
                 sourceBytesPerImage:sourceBytesPerImage
@@ -586,13 +600,23 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
     case WGPUTextureDimension_2D: {
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400771-copyfrombuffer?language=objc
         // "When you copy to a 2D texture, depth must be 1."
+        if (!widthForMetal || !heightForMetal)
+            return;
+
+        if (widthForMetal * heightForMetal > sourceBuffer.length 
+            || destination.origin.x + widthForMetal > logicalSize.width 
+            || destination.origin.y + heightForMetal > logicalSize.height) {
+            m_device->generateAValidationError("Validation failure."_s);
+            return;
+        }
+
         auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, 1);
         auto destinationOrigin = MTLOriginMake(destination.origin.x, destination.origin.y, 0);
         for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
             auto sourceOffset = static_cast<NSUInteger>(source.layout.offset + layer * sourceBytesPerImage);
             NSUInteger destinationSlice = destination.origin.z + layer;
             [m_blitCommandEncoder
-                copyFromBuffer:fromAPI(source.buffer).buffer()
+                copyFromBuffer:sourceBuffer
                 sourceOffset:sourceOffset
                 sourceBytesPerRow:sourceBytesPerRow
                 sourceBytesPerImage:sourceBytesPerImage
@@ -606,11 +630,23 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
         break;
     }
     case WGPUTextureDimension_3D: {
+        if (!widthForMetal || !heightForMetal || !depthForMetal)
+            return;
+
+        if (widthForMetal * heightForMetal * depthForMetal > sourceBuffer.length
+            || destination.origin.x + widthForMetal > logicalSize.width
+            || destination.origin.y + heightForMetal > logicalSize.height
+            || destination.origin.z + depthForMetal > logicalSize.depthOrArrayLayers
+            || sourceBytesPerRow > 2048) {
+            m_device->generateAValidationError("Validation failure."_s);
+            return;
+        }
+
         auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, depthForMetal);
         auto destinationOrigin = MTLOriginMake(destination.origin.x, destination.origin.y, destination.origin.z);
         auto sourceOffset = static_cast<NSUInteger>(source.layout.offset);
         [m_blitCommandEncoder
-            copyFromBuffer:fromAPI(source.buffer).buffer()
+            copyFromBuffer:sourceBuffer
             sourceOffset:sourceOffset
             sourceBytesPerRow:sourceBytesPerRow
             sourceBytesPerImage:sourceBytesPerImage
@@ -721,12 +757,21 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
     auto heightForMetal = std::min(copySize.height, logicalSize.height);
     auto depthForMetal = std::min(copySize.depthOrArrayLayers, logicalSize.depthOrArrayLayers);
 
+    id<MTLBuffer> destinationBuffer = fromAPI(destination.buffer).buffer();
+    if (widthForMetal > destinationBuffer.length) {
+        m_device->generateAValidationError("Validation failure."_s);
+        return;
+    }
+
     const auto& sourceTexture = fromAPI(source.texture);
     switch (sourceTexture.dimension()) {
     case WGPUTextureDimension_1D: {
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400756-copyfromtexture?language=objc
         // "When you copy to a 1D texture, height and depth must be 1."
         auto sourceSize = MTLSizeMake(widthForMetal, 1, 1);
+        if (!widthForMetal)
+            return;
+
         auto sourceOrigin = MTLOriginMake(source.origin.x, 0, 0);
         for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
             auto destinationOffset = static_cast<NSUInteger>(destination.layout.offset + layer * destinationBytesPerImage);
@@ -750,6 +795,14 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
         // "When you copy to a 2D texture, depth must be 1."
         auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, 1);
         auto sourceOrigin = MTLOriginMake(source.origin.x, source.origin.y, 0);
+        if (!widthForMetal || !heightForMetal)
+            return;
+
+        if (widthForMetal * heightForMetal > destinationBuffer.length) {
+            m_device->generateAValidationError("Validation failure."_s);
+            return;
+        }
+
         for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
             auto destinationOffset = static_cast<NSUInteger>(destination.layout.offset + layer * destinationBytesPerImage);
             NSUInteger sourceSlice = source.origin.z + layer;
@@ -769,6 +822,15 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
     }
     case WGPUTextureDimension_3D: {
         auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, depthForMetal);
+        if (!widthForMetal || !heightForMetal || !depthForMetal)
+            return;
+
+        if (widthForMetal * heightForMetal * depthForMetal > destinationBuffer.length
+            || destinationBytesPerRow > 2048) {
+            m_device->generateAValidationError("Validation failure."_s);
+            return;
+        }
+
         auto sourceOrigin = MTLOriginMake(source.origin.x, source.origin.y, source.origin.z);
         auto destinationOffset = static_cast<NSUInteger>(destination.layout.offset);
             [m_blitCommandEncoder

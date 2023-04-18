@@ -413,6 +413,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
     if (!temporaryBuffer)
         return;
 
+    id<MTLTexture> destinationTeture = fromAPI(destination.texture).texture();
     auto logicalSize = fromAPI(destination.texture).logicalMiplevelSpecificTextureExtent(destination.mipLevel);
     auto widthForMetal = std::min(size.width, logicalSize.width);
     auto heightForMetal = std::min(size.height, logicalSize.height);
@@ -422,6 +423,14 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
     case WGPUTextureDimension_1D: {
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400771-copyfrombuffer?language=objc
         // "When you copy to a 1D texture, height and depth must be 1."
+        if (!widthForMetal)
+            return;
+
+        if (destination.origin.x + widthForMetal > logicalSize.width) {
+            m_device.generateAValidationError("Validation failure."_s);
+            return;
+        }
+
         auto sourceSize = MTLSizeMake(widthForMetal, 1, 1);
         auto destinationOrigin = MTLOriginMake(destination.origin.x, 0, 0);
         for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
@@ -433,7 +442,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
                 sourceBytesPerRow:bytesPerRow
                 sourceBytesPerImage:bytesPerImage
                 sourceSize:sourceSize
-                toTexture:fromAPI(destination.texture).texture()
+                toTexture:destinationTeture
                 destinationSlice:destinationSlice
                 destinationLevel:destination.mipLevel
                 destinationOrigin:destinationOrigin
@@ -444,18 +453,28 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
     case WGPUTextureDimension_2D: {
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400771-copyfrombuffer?language=objc
         // "When you copy to a 2D texture, depth must be 1."
+        if (!widthForMetal || !heightForMetal)
+            return;
+
+        if (destination.origin.x + widthForMetal > logicalSize.width
+            || destination.origin.y + heightForMetal > logicalSize.height) {
+            m_device.generateAValidationError("Validation failure."_s);
+            return;
+        }
+
         auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, 1);
         auto destinationOrigin = MTLOriginMake(destination.origin.x, destination.origin.y, 0);
         for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
             NSUInteger sourceOffset = layer * bytesPerImage;
             NSUInteger destinationSlice = destination.origin.z + layer;
+
             [m_blitCommandEncoder
                 copyFromBuffer:temporaryBuffer
                 sourceOffset:sourceOffset
                 sourceBytesPerRow:bytesPerRow
                 sourceBytesPerImage:bytesPerImage
                 sourceSize:sourceSize
-                toTexture:fromAPI(destination.texture).texture()
+                toTexture:destinationTeture
                 destinationSlice:destinationSlice
                 destinationLevel:destination.mipLevel
                 destinationOrigin:destinationOrigin
@@ -464,6 +483,17 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
         break;
     }
     case WGPUTextureDimension_3D: {
+        if (!widthForMetal || !heightForMetal || !depthForMetal)
+            return;
+
+        if (destination.origin.x + widthForMetal > logicalSize.width
+            || destination.origin.y + heightForMetal > logicalSize.height
+            || destination.origin.z + depthForMetal > logicalSize.depthOrArrayLayers
+            || bytesPerRow > 2048) {
+            m_device.generateAValidationError("Validation failure."_s);
+            return;
+        }
+
         auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, depthForMetal);
         auto destinationOrigin = MTLOriginMake(destination.origin.x, destination.origin.y, destination.origin.z);
         NSUInteger sourceOffset = 0;
