@@ -458,9 +458,29 @@ Result<Ref<AST::Attribute>> Parser<Lexer>::parseAttribute()
     if (ident.ident == "workgroup_size"_s) {
         CONSUME_TYPE(ParenLeft);
         // FIXME: should more kinds of literals be accepted here?
-        CONSUME_TYPE_NAMED(id, IntegerLiteralUnsigned);
+        PARSE(x, Expression);
+        AST::Expression::Ptr maybeY = nullptr;
+        AST::Expression::Ptr maybeZ = nullptr;
+        if (current().type == TokenType::Comma) {
+            consume();
+            if (current().type != TokenType::ParenRight) {
+                PARSE(y, Expression);
+                maybeY = y.moveToUniquePtr();
+
+                if (current().type == TokenType::Comma) {
+                    consume();
+                    if (current().type != TokenType::ParenRight) {
+                        PARSE(z, Expression);
+                        maybeZ = z.moveToUniquePtr();
+
+                        if (current().type == TokenType::Comma)
+                            consume();
+                    }
+                }
+            }
+        }
         CONSUME_TYPE(ParenRight);
-        RETURN_NODE_REF(WorkgroupSizeAttribute, id.literalValue);
+        RETURN_NODE_REF(WorkgroupSizeAttribute, WTFMove(x), WTFMove(maybeY), WTFMove(maybeZ));
     }
 
     // https://gpuweb.github.io/gpuweb/wgsl/#pipeline-stage-attributes

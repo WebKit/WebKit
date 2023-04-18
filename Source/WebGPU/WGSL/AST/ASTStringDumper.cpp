@@ -131,7 +131,17 @@ void StringDumper::visit(StageAttribute& stage)
 
 void StringDumper::visit(WorkgroupSizeAttribute& workgroupSize)
 {
-    m_out.print("@workgroup_size(", workgroupSize.size(), ")");
+    m_out.print("@workgroup_size(");
+    visit(workgroupSize.x());
+    if (auto* y = workgroupSize.maybeY()) {
+        m_out.print(", ");
+        visit(*y);
+        if (auto* z = workgroupSize.maybeZ()) {
+            m_out.print(", ");
+            visit(*z);
+        }
+    }
+    m_out.print(")");
 }
 
 // Declaration

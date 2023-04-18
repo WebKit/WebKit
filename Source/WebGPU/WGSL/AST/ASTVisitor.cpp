@@ -149,8 +149,11 @@ void Visitor::visit(AST::StageAttribute&)
 {
 }
 
-void Visitor::visit(AST::WorkgroupSizeAttribute&)
+void Visitor::visit(AST::WorkgroupSizeAttribute& attribute)
 {
+    checkErrorAndVisit(attribute.x());
+    maybeCheckErrorAndVisit(attribute.maybeY());
+    maybeCheckErrorAndVisit(attribute.maybeZ());
 }
 
 // Expression
