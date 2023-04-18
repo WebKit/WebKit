@@ -689,6 +689,37 @@ const FeatureSchema& displayMode()
 }
 #endif
 
+const FeatureSchema& overflowBlock()
+{
+    static MainThreadNeverDestroyed<IdentifierSchema> schema {
+        "overflow-block"_s,
+        Vector { CSSValueNone, CSSValueScroll, CSSValuePaged },
+        [](auto& context) {
+            // FIXME: Match none when scrollEnabled is set to false by UIKit.
+            bool usesPaginatedMode = [&] {
+                auto& frame = *context.document.frame();
+                auto* frameView = frame.view();
+                return frameView && frameView->pagination().mode != PaginationMode::Unpaginated;
+            }();
+            return MatchingIdentifiers { usesPaginatedMode ? CSSValuePaged : CSSValueScroll };
+        }
+    };
+    return schema;
+}
+
+const FeatureSchema& overflowInline()
+{
+    static MainThreadNeverDestroyed<IdentifierSchema> schema {
+        "overflow-inline"_s,
+        Vector { CSSValueNone, CSSValueScroll },
+        [](auto&) {
+            // FIXME: Match none when scrollEnabled is set to false by UIKit.
+            return MatchingIdentifiers { CSSValueScroll };
+        }
+    };
+    return schema;
+}
+
 #if ENABLE(DARK_MODE_CSS)
 const FeatureSchema& prefersColorScheme()
 {
@@ -727,6 +758,8 @@ Vector<const FeatureSchema*> allSchemas()
         &hover(),
         &invertedColors(),
         &monochrome(),
+        &overflowBlock(),
+        &overflowInline(),
         &orientation(),
         &pointer(),
         &prefersContrast(),

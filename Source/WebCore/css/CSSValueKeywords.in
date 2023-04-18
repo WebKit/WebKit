@@ -1226,6 +1226,11 @@ interlace
 // none
 active
 
+// (overflow-block/inline:) media feature.
+// none
+// scroll
+paged
+
 // blend modes
 // normal
 multiply

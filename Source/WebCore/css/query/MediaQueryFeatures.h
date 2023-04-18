@@ -49,6 +49,8 @@ const FeatureSchema& hover();
 const FeatureSchema& invertedColors();
 const FeatureSchema& monochrome();
 const FeatureSchema& orientation();
+const FeatureSchema& overflowBlock();
+const FeatureSchema& overflowInline();
 const FeatureSchema& pointer();
 const FeatureSchema& prefersContrast();
 const FeatureSchema& prefersDarkInterface();
