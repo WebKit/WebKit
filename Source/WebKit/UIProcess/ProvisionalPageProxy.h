@@ -81,7 +81,8 @@ public:
     ProvisionalPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, std::unique_ptr<SuspendedPageProxy>, uint64_t navigationID, bool isServerRedirect, const WebCore::ResourceRequest&, ProcessSwapRequestedByClient, bool isProcessSwappingOnNavigationResponse, API::WebsitePolicies*);
     ~ProvisionalPageProxy();
 
-    WebPageProxy& page() const { return m_page; }
+    WebPageProxy& page() { return m_page.get(); }
+    const WebPageProxy& page() const { return m_page.get(); }
     WebCore::PageIdentifier webPageID() const { return m_webPageID; }
     WebFrameProxy* mainFrame() const { return m_mainFrame.get(); }
     WebProcessProxy& process() { return m_process.get(); }
@@ -167,7 +168,7 @@ private:
     void initializeWebPage(RefPtr<API::WebsitePolicies>&&);
     bool validateInput(WebCore::FrameIdentifier, const std::optional<uint64_t>& navigationID = std::nullopt);
 
-    WebPageProxy& m_page;
+    CheckedRef<WebPageProxy> m_page;
     WebCore::PageIdentifier m_webPageID;
     Ref<WebProcessProxy> m_process;
     // Keep WebsiteDataStore alive for provisional page load.

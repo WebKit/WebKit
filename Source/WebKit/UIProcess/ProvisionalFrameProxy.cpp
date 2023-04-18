@@ -59,10 +59,10 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProces
 {
     m_process->markProcessAsRecentlyUsed();
     m_process->addProvisionalFrameProxy(*this);
-    m_process->addMessageReceiver(Messages::WebFrameProxy::messageReceiverName(), m_frame.frameID().object(), *this);
+    m_process->addMessageReceiver(Messages::WebFrameProxy::messageReceiverName(), frame.frameID().object(), *this);
 
-    ASSERT(m_frame.page());
-    auto& page = *m_frame.page();
+    ASSERT(frame.page());
+    auto& page = *frame.page();
     auto* drawingArea = page.drawingArea();
     ASSERT(drawingArea);
 
@@ -104,14 +104,14 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProces
 
 ProvisionalFrameProxy::~ProvisionalFrameProxy()
 {
-    m_process->removeMessageReceiver(Messages::WebFrameProxy::messageReceiverName(), m_frame.frameID().object());
+    m_process->removeMessageReceiver(Messages::WebFrameProxy::messageReceiverName(), m_frame->frameID().object());
     m_process->removeVisitedLinkStoreUser(m_visitedLinkStore.get(), m_webPageID);
     m_process->removeProvisionalFrameProxy(*this);
 }
 
 void ProvisionalFrameProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    if (auto* page = m_frame.page())
+    if (auto* page = m_frame->page())
         page->didReceiveMessage(connection, decoder);
 }
 
@@ -123,7 +123,7 @@ IPC::Connection* ProvisionalFrameProxy::messageSenderConnection() const
 uint64_t ProvisionalFrameProxy::messageSenderDestinationID() const
 {
     // FIXME: This identifier was generated in another process and can collide with identifiers in this frame's process.
-    return m_frame.frameID().object().toUInt64();
+    return m_frame->frameID().object().toUInt64();
 }
 
 }
