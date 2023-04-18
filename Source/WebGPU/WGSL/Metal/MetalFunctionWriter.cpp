@@ -468,10 +468,18 @@ void FunctionDefinitionWriter::visit(AST::CallExpression& call)
             } },
         };
         static constexpr SortedArrayMap builtins { builtinMappings };
-        if (auto mappedBuiltin = builtins.get(downcast<AST::NamedTypeName>(call.target()).name().id())) {
+        const auto& targetName = downcast<AST::NamedTypeName>(call.target()).name().id();
+        if (auto mappedBuiltin = builtins.get(targetName)) {
             mappedBuiltin(this, call);
             return;
         }
+
+        if (AST::ParameterizedTypeName::stringViewToKind(targetName).has_value())
+            visit(call.inferredType());
+        else
+            m_stringBuilder.append(targetName);
+        visitArguments(this, call);
+        return;
     }
 
     visit(call.inferredType());
