@@ -118,6 +118,7 @@ void RewriteGlobalVariables::visit(AST::Function& function)
 void RewriteGlobalVariables::visit(AST::Variable& variable)
 {
     def(variable.name());
+    AST::Visitor::visit(variable);
 }
 
 void RewriteGlobalVariables::visit(AST::IdentifierExpression& identifier)
