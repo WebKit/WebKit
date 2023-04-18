@@ -1470,7 +1470,7 @@ public:
     bool canRunModal();
 
     void beginPrinting(WebFrameProxy*, const PrintInfo&);
-    void endPrinting();
+    void endPrinting(CompletionHandler<void()>&& = [] { });
     IPC::Connection::AsyncReplyID computePagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&&);
     void getPDFFirstPageSize(WebCore::FrameIdentifier, CompletionHandler<void(WebCore::FloatSize)>&&);
 #if PLATFORM(COCOA)

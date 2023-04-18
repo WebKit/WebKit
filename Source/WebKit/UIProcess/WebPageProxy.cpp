@@ -6672,9 +6672,8 @@ void WebPageProxy::printFrame(FrameIdentifier frameID, const String& title, cons
     frame->didChangeTitle(title);
 
     m_uiClient->printFrame(*this, *frame, pdfFirstPageSize, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
-        endPrinting(); // Send a message synchronously while m_isPerformingDOMPrintOperation is still true.
+        endPrinting(WTFMove(completionHandler)); // Send a message synchronously while m_isPerformingDOMPrintOperation is still true.
         m_isPerformingDOMPrintOperation = false;
-        completionHandler();
     });
 }
 
@@ -9561,17 +9560,19 @@ void WebPageProxy::beginPrinting(WebFrameProxy* frame, const PrintInfo& printInf
         send(Messages::WebPage::BeginPrinting(frame->frameID(), printInfo));
 }
 
-void WebPageProxy::endPrinting()
+void WebPageProxy::endPrinting(CompletionHandler<void()>&& callback)
 {
-    if (!m_isInPrintingMode)
+    if (!m_isInPrintingMode) {
+        callback();
         return;
+    }
 
     m_isInPrintingMode = false;
 
     if (m_isPerformingDOMPrintOperation)
-        send(Messages::WebPage::EndPrintingDuringDOMPrintOperation(), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+        sendWithAsyncReply(Messages::WebPage::EndPrintingDuringDOMPrintOperation(), WTFMove(callback), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
     else
-        send(Messages::WebPage::EndPrinting());
+        sendWithAsyncReply(Messages::WebPage::EndPrinting(), WTFMove(callback));
 }
 
 IPC::Connection::AsyncReplyID WebPageProxy::computePagesForPrinting(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&& callback)
