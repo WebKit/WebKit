@@ -77,7 +77,6 @@ private:
     void postTaskToLoader(ScriptExecutionContext::Task&&) final;
     ScriptExecutionContextIdentifier loaderContextIdentifier() const final;
     RefPtr<CacheStorageConnection> createCacheStorageConnection() final;
-    StorageConnection* storageConnection() final;
     RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
 
     void workerThreadCreated(DedicatedWorkerThread&);
