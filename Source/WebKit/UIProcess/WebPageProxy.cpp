@@ -10638,6 +10638,11 @@ void WebPageProxy::setCaretAnimatorType(WebCore::CaretAnimatorType caretType)
     send(Messages::WebPage::SetCaretAnimatorType(caretType));
 }
 
+void WebPageProxy::setCaretBlinkingSuspended(bool suspended)
+{
+    send(Messages::WebPage::SetCaretBlinkingSuspended(suspended));
+}
+
 void WebPageProxy::performImmediateActionHitTestAtLocation(FloatPoint point)
 {
     send(Messages::WebPage::PerformImmediateActionHitTestAtLocation(point));

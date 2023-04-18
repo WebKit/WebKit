@@ -82,15 +82,6 @@
 
 namespace WebCore {
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/RenderBlockAdditions.h>)
-#include <WebKitAdditions/RenderBlockAdditions.h>
-#else
-inline static bool renderCaretInsideContentsClip()
-{
-    return true;
-}
-#endif
-
 using namespace HTMLNames;
 using namespace WTF::Unicode;
 
@@ -1137,9 +1128,6 @@ void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (pushedClip)
         popContentsClip(paintInfo, phase, adjustedPaintOffset);
 
-    if (!renderCaretInsideContentsClip())
-        paintCarets(paintInfo, adjustedPaintOffset);
-
     // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
     // z-index. We paint after we painted the background/border, so that the scrollbars will
     // sit above the background/border.
@@ -1384,8 +1372,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     // 7. paint caret.
     // If the caret's node's render object's containing block is this block, and the paint action is PaintPhase::Foreground,
     // then paint the caret.
-    if (renderCaretInsideContentsClip())
-        paintCarets(paintInfo, paintOffset);
+    paintCarets(paintInfo, paintOffset);
 }
 
 static ContinuationOutlineTableMap* continuationOutlineTable()

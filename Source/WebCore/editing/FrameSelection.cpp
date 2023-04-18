@@ -164,18 +164,11 @@ static inline bool isPageActive(Document* document)
 #import <WebKitAdditions/FrameSelectionAdditions.cpp>
 #else
 
-static UniqueRef<CaretAnimator> createCaretAnimator(FrameSelection* frameSelection)
+static UniqueRef<CaretAnimator> createCaretAnimator(FrameSelection* frameSelection, CaretAnimatorType = CaretAnimatorType::Default)
 {
     return makeUniqueRef<SimpleCaretAnimator>(*frameSelection);
 }
 #endif // USE(APPLE_INTERNAL_SDK)
-
-#if !defined(FRAME_SELECTION_ADDITIONS_CREATE_CARET_ANIMATOR_WITH_TYPE_DEFINED) && PLATFORM(MAC)
-static UniqueRef<CaretAnimator> createCaretAnimator(FrameSelection* frameSelection, CaretAnimatorType)
-{
-    return createCaretAnimator(frameSelection);
-}
-#endif
 
 FrameSelection::FrameSelection(Document* document)
     : m_document(document)
@@ -1918,14 +1911,10 @@ void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const Lay
         caretColor = CaretBase::computeCaretColor(element->renderer()->style(), &node);
 
     auto pixelSnappedCaretRect = snapRectToDevicePixels(caret, node.document().deviceScaleFactor());
-#if !defined(FRAME_SELECTION_ADDITIONS_CREATE_CARET_ANIMATOR_WITH_TYPE_DEFINED) && USE(APPLE_INTERNAL_SDK)
-    fillCaretRect(node, context, pixelSnappedCaretRect, caretColor, caretPresentationProperties);
-#else
     if (caretAnimator)
         caretAnimator->paint(node, context, pixelSnappedCaretRect, caretColor, paintOffset);
     else
         context.fillRect(pixelSnappedCaretRect, caretColor);
-#endif
 #else
     UNUSED_PARAM(node);
     UNUSED_PARAM(context);
@@ -1955,6 +1944,7 @@ void FrameSelection::caretAnimatorInvalidated(CaretAnimatorType caretType)
 {
     m_caretAnimator = createCaretAnimator(this, caretType);
     caretAnimationDidUpdate(m_caretAnimator);
+    updateAppearance();
 }
 #endif
 
@@ -2232,7 +2222,7 @@ void FrameSelection::updateAppearance()
     // If the caret moved, stop the blink timer so we can restart with a
     // black caret in the new location.
     if (caretRectChangedOrCleared || !shouldBlink || shouldStopBlinkingDueToTypingCommand(m_document.get()))
-        caretAnimator().stop();
+        caretAnimator().stop(CaretAnimatorStopReason::CaretRectChanged);
 
     // Start blinking with a black caret. Be sure not to restart if we're
     // already blinking in the right location.

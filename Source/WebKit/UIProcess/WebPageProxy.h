@@ -1047,6 +1047,7 @@ public:
 
 #if PLATFORM(MAC)
     void setCaretAnimatorType(WebCore::CaretAnimatorType);
+    void setCaretBlinkingSuspended(bool);
     void attributedSubstringForCharacterRangeAsync(const EditingRange&, CompletionHandler<void(const WebCore::AttributedString&, const EditingRange&)>&&);
 
     void startWindowDrag();

@@ -39,6 +39,14 @@ Page* CaretAnimator::page() const
     return nullptr;
 }
 
+void CaretAnimator::stop(CaretAnimatorStopReason)
+{
+    if (!m_isActive)
+        return;
+
+    didEnd();
+}
+
 void CaretAnimator::serviceCaretAnimation(ReducedResolutionSeconds timestamp)
 {
     if (!isActive())

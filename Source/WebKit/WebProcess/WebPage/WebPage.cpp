@@ -5856,6 +5856,12 @@ void WebPage::setCaretAnimatorType(WebCore::CaretAnimatorType caretType)
     frame->selection().caretAnimatorInvalidated(caretType);
 }
 
+void WebPage::setCaretBlinkingSuspended(bool suspended)
+{
+    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    frame->selection().setCaretBlinkingSuspended(suspended);
+}
+
 RetainPtr<PDFDocument> WebPage::pdfDocumentForPrintingFrame(LocalFrame* coreFrame)
 {
     PluginView* pluginView = pluginViewForFrame(coreFrame);

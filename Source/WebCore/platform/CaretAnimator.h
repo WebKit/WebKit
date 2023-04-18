@@ -31,11 +31,6 @@
 
 namespace WebCore {
 
-enum class CaretAnimatorType : uint8_t {
-    Default,
-    Alternate
-};
-
 class CaretAnimator;
 class Color;
 class Document;
@@ -43,6 +38,16 @@ class FloatRect;
 class GraphicsContext;
 class Node;
 class Page;
+
+enum class CaretAnimatorType : uint8_t {
+    Default,
+    Alternate
+};
+
+enum class CaretAnimatorStopReason : uint8_t {
+    Default,
+    CaretRectChanged,
+};
 
 class CaretAnimationClient {
 public:
@@ -70,12 +75,7 @@ public:
 
     virtual void start(ReducedResolutionSeconds currentTime) = 0;
 
-    void stop()
-    {
-        if (!m_isActive)
-            return;
-        didEnd();
-    }
+    virtual void stop(CaretAnimatorStopReason = CaretAnimatorStopReason::Default);
 
     bool isActive() const { return m_isActive; }
 
@@ -91,7 +91,10 @@ public:
     PresentationProperties presentationProperties() const { return m_presentationProperties; }
     virtual void paint(const Node&, GraphicsContext&, const FloatRect&, const Color&, const LayoutPoint&) const;
     virtual LayoutRect repaintCaretRectForLocalRect(LayoutRect) const;
+#if defined(__has_include) && __has_include(<WebKitAdditions/RenderBlockAdditions.h>)
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=255602 - Remove staging from CaretAnimator.h
     virtual void addLine(float, float, TextDirection) const { }
+#endif
 
 protected:
     explicit CaretAnimator(CaretAnimationClient& client)
