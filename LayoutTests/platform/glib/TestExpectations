@@ -1356,6 +1356,8 @@ webkit.org/b/212202 fast/scrolling/overflow-scrollable-after-back.html [ Skip ]
 # Previous: webkit.org/b/223729 [ Debug ] css3/scroll-snap/scroll-snap-wheel-event.html [ Pass ]
 webkit.org/b/212202 css3/scroll-snap/scroll-snap-wheel-event.html [ Skip ]
 
+css3/scroll-snap/scroll-snap-discrete-wheel-event-in-mainframe.html [ Skip ]
+
 webkit.org/b/213921 fast/visual-viewport/scroll-event-fired-during-scroll-alone.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
