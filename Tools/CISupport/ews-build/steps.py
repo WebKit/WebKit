@@ -1754,6 +1754,15 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
 
     @defer.inlineCallbacks
     def validate_bugzilla(self, patch_id):
+        if self.getProperty('sensitive', False) and self.getProperty('buildername', '').lower() == 'commit-queue':
+            message = 'Cannot land security changes with Commit-Queue, please use a GitHub PR against a secret remote'
+            self.build.results = FAILURE
+            self.descriptionDone = message
+            self.setProperty('build_finish_summary', message)
+            self.setProperty('comment_text', message)
+            self.build.addStepsAfterCurrentStep([LeaveComment(), SetCommitQueueMinusFlagOnPatch()])
+            return defer.returnValue(FAILURE)
+
         bug_id = self.getProperty('bug_id', '') or self.get_bug_id_from_patch(patch_id)
 
         bug_closed = yield self._is_bug_closed(bug_id) if self.verifyBugClosed else 0

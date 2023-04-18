@@ -5697,6 +5697,21 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(self.getProperty('fast_commit_queue'), None, 'fast_commit_queue is unexpectedly set')
         return rc
 
+    def test_sensative_patch(self):
+        self.setupStep(ValidateChange(verifyBugClosed=False))
+        ValidateChange.get_patch_json = lambda x, patch_id: self.get_patch()
+        self.setProperty('patch_id', '425806')
+        self.setProperty('sensitive', True)
+        self.setProperty('buildername', 'Commit-Queue')
+
+        message = 'Cannot land security changes with Commit-Queue, please use a GitHub PR against a secret remote'
+        self.expectOutcome(result=FAILURE, state_string=message)
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('fast_commit_queue'), None, 'fast_commit_queue is unexpectedly set')
+        self.assertEqual(self.getProperty('build_finish_summary'), message)
+        self.assertEqual(self.getProperty('comment_text'), message)
+        return rc
+
 
 class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
