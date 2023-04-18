@@ -143,7 +143,7 @@ class PrimitiveType
     end
 
     def to_cpp
-        "m_types.#{name.downcase}Type()"
+        "m_types.#{name[0].downcase}#{name[1..]}Type()"
     end
 end
 
@@ -279,6 +279,7 @@ module DSL
         F32 = PrimitiveType.new(:F32)
         Sampler = PrimitiveType.new(:Sampler)
         AbstractInt = PrimitiveType.new(:AbstractInt)
+        AbstractFloat = PrimitiveType.new(:AbstractFloat)
 
 
         S = Variable.new(:S, @TypeVariable)

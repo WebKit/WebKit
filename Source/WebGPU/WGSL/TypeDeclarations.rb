@@ -141,30 +141,6 @@ operator :vec4, {
     end
 end
 
-operator :clamp, {
-    [T < Number].(T, T, T) => T,
-    [T < Number, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
-}
-
-operator :min, {
-    [T < Number].(T, T) => T,
-    [T < Number, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
-}
-
-operator :max, {
-    [T < Number].(T, T) => T,
-    [T < Number, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
-}
-
-# Trigonometric
-["acos", "asin", "atan", "cos", "sin", "tan",
- "acosh", "asinh", "atanh", "cosh", "sinh", "tanh"].each do |op|
-    operator :"#{op}", {
-        [T < Float].(T) => T,
-        [T < Float, N].(Vector[T, N]) => Vector[T, N],
-    }
-end
-
 # 17.3. Logical Built-in Functions (https://www.w3.org/TR/WGSL/#logical-builtin-functions)
 
 # 17.3.1 & 17.3.2
@@ -180,4 +156,302 @@ operator :select, {
     [T < Scalar].(T, T, Bool) => T,
     [T < Scalar, N].(Vector[T, N], Vector[T, N], Bool) => Vector[T, N],
     [T < Scalar, N].(Vector[T, N], Vector[T, N], Vector[Bool, N]) => Vector[T, N],
+}
+
+# 17.5. Numeric Built-in Functions (https://www.w3.org/TR/WGSL/#numeric-builtin-functions)
+
+# Trigonometric
+["acos", "asin", "atan", "cos", "sin", "tan",
+ "acosh", "asinh", "atanh", "cosh", "sinh", "tanh"].each do |op|
+    operator :"#{op}", {
+        [T < Float].(T) => T,
+        [T < Float, N].(Vector[T, N]) => Vector[T, N],
+    }
+end
+
+# 17.5.1
+operator :abs, {
+    [T < Number].(T) => T,
+    [T < Number, N].(Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.2. acos
+# 17.5.3. acosh
+# 17.5.4. asin
+# 17.5.5. asinh
+# 17.5.6. atan
+# 17.5.7. atanh
+# Defined in [Trigonometric]
+
+# 17.5.8
+operator :atan2, {
+    [T < Float].(T, T) => T,
+    [T < Float, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.9
+operator :ceil, {
+    [T < Float].(T) => T,
+    [T < Float, N].(Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.10
+operator :clamp, {
+    [T < Number].(T, T, T) => T,
+    [T < Number, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.11. cos
+# 17.5.12. cosh
+# Defined in [Trigonometric]
+
+# 17.5.13-15 (Bit counting)
+["countLeadingZeros", "countOneBits", "countTrailingZeros"].each do |op|
+    operator :"#{op}", {
+        [T < ConcreteInteger].(T) => T,
+        [T < ConcreteInteger, N].(Vector[T, N]) => Vector[T, N],
+    }
+end
+
+# 17.5.16
+operator :cross, {
+    [T < Float].(Vector[T, 3], Vector[T, 3]) => Vector[T, 3],
+}
+
+# 17.5.17
+operator :degrees, {
+    [T < Float].(T) => T,
+    [T < Float, N].(Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.18
+operator :determinant, {
+    [T < Float, C].(Matrix[T, C, C]) => T,
+}
+
+# 17.5.19
+operator :distance, {
+    [T < Float].(T, T) => T,
+    [T < Float, N].(Vector[T, N], Vector[T, N]) => T,
+}
+
+# 17.5.20
+operator :dot, {
+    [T < Number, N].(Vector[T, N], Vector[T, N]) => T
+}
+
+# 17.5.21 & 17.5.22
+["exp", "exp2"].each do |op|
+    operator :"#{op}", {
+        [T < Float].(T) => T,
+        [T < Float, N].(Vector[T, N]) => Vector[T, N],
+    }
+end
+
+# 17.5.23 & 17.5.24
+operator :extractBits, {
+    # signed
+    [].(I32, U32, U32) => I32,
+    [N].(Vector[I32, N], U32, U32) => Vector[I32, N],
+
+    # unsigned
+    [].(U32, U32, U32) => U32,
+    [N].(Vector[U32, N], U32, U32) => Vector[U32, N],
+}
+
+# 17.5.25
+operator :faceForward, {
+    [T < Float, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.26 & 17.5.27
+operator :firstLeadingBit, {
+    # signed
+    [].(I32) => I32,
+    [N].(Vector[I32, N]) => Vector[I32, N],
+
+    # unsigned
+    [].(U32) => U32,
+    [N].(Vector[U32, N]) => Vector[U32, N],
+}
+
+# 17.5.28
+operator :firstTrailingBit, {
+    [T < ConcreteInteger].(T) => T,
+    [T < ConcreteInteger, N].(Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.29
+operator :floor, {
+    [T < Float].(T) => T,
+    [T < Float, N].(Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.30
+operator :fma, {
+    [T < Float].(T, T, T) => T,
+    [T < Float, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.31
+operator :fract, {
+    [T < Float].(T) => T,
+    [T < Float, N].(Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.32
+operator :frexp, {
+    # FIXME: this needs the special return types __frexp_result_*
+}
+
+# 17.5.33
+operator :insertBits, {
+    [T < ConcreteInteger].(T, T, U32, U32) => T,
+    [T < ConcreteInteger, N].(Vector[T, N], Vector[T, N], U32, U32) => Vector[T, N],
+}
+
+# 17.5.34
+operator :inverseSqrt, {
+    [T < Float].(T) => T,
+    [T < Float, N].(Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.35
+operator :ldexp, {
+    [T < ConcreteFloat].(T, I32) => T,
+    [].(AbstractFloat, AbstractInt) => AbstractFloat,
+    [T < ConcreteFloat, N].(Vector[T, N], Vector[I32, N]) => Vector[T, N],
+    [N].(Vector[AbstractFloat, N], Vector[AbstractInt, N]) => Vector[AbstractFloat, N],
+}
+
+# 17.5.36
+operator :length, {
+    [T < Float].(T) => T,
+    [T < Float, N].(Vector[T, N]) => T,
+}
+
+# 17.5.37 & 17.5.38
+["log", "log2"].each do |op|
+    operator :"#{op}", {
+        [T < Float].(T) => T,
+        [T < Float, N].(Vector[T, N]) => Vector[T, N],
+    }
+end
+
+# 17.5.39
+operator :max, {
+    [T < Number].(T, T) => T,
+    [T < Number, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.40
+operator :min, {
+    [T < Number].(T, T) => T,
+    [T < Number, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.41
+operator :mix, {
+    [T < Float].(T, T, T) => T,
+    [T < Float, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
+    [T < Float, N].(Vector[T, N], Vector[T, N], T) => Vector[T, N],
+}
+
+# 17.5.42
+operator :modf, {
+    # FIXME: this needs the special return types __modf_result_*
+}
+
+# 17.5.43
+operator :normalize, {
+    [T < Float, N].(Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.44
+operator :pow, {
+    [T < Float].(T, T) => T,
+    [T < Float, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.45
+operator :quantizeToF16, {
+    [].(F32) => F32,
+    [N].(Vector[F32, N]) => Vector[F32, N],
+}
+
+# 17.5.46
+operator :radians, {
+    [T < Float].(T) => T,
+    [T < Float, N].(Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.47
+operator :reflect, {
+    [T < Float, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.48
+operator :refract, {
+    [T < Float, N].(Vector[T, N], Vector[T, N], T) => Vector[T, N],
+}
+
+# 17.5.49
+operator :reverseBits, {
+    [T < ConcreteInteger].(T) => T,
+    [T < ConcreteInteger, N].(Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.50
+operator :round, {
+    [T < Float].(T) => T,
+    [T < Float, N].(Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.51
+operator :saturate, {
+    [T < Float].(T) => T,
+    [T < Float, N].(Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.52
+operator :sign, {
+    [T < SignedNumber].(T) => T,
+    [T < SignedNumber, N].(Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.53. sin
+# 17.5.54. sinh
+# Defined in [Trigonometric]
+
+# 17.5.55
+operator :smoothstep, {
+    [T < Float].(T, T, T) => T,
+    [T < Float, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.56
+operator :sqrt, {
+    [T < Float].(T) => T,
+    [T < Float, N].(Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.57
+operator :step, {
+    [T < Float].(T, T) => T,
+    [T < Float, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
+}
+
+# 17.5.58. tan
+# 17.5.59. tanh
+# Defined in [Trigonometric]
+
+# 17.5.60
+operator :transpose, {
+    [T < Float, C, R].(Matrix[T, C, R]) => Matrix[T, R, C],
+}
+
+# 17.5.61
+operator :trunc, {
+    [T < Float].(T) => T,
+    [T < Float, N].(Vector[T, N]) => Vector[T, N],
 }
