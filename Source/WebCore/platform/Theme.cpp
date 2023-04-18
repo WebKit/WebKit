@@ -51,7 +51,8 @@ LengthSize Theme::controlSize(StyleAppearance, const FontCascade&, const LengthS
 LengthSize Theme::minimumControlSize(StyleAppearance appearance, const FontCascade& fontCascade, const LengthSize& zoomedSize, const LengthSize& nonShrinkableZoomedSize, float zoom) const
 {
     auto minSize = minimumControlSize(appearance, fontCascade, zoomedSize, zoom);
-    if (appearance == StyleAppearance::Radio) {
+    // Other StyleAppearance types are composed controls with shadow subtree.
+    if (appearance == StyleAppearance::Radio || appearance == StyleAppearance::Checkbox) {
         if (zoomedSize.width.isIntrinsicOrAuto())
             minSize.width = nonShrinkableZoomedSize.width;
         if (zoomedSize.height.isIntrinsicOrAuto())
