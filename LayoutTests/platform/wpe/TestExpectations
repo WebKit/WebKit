@@ -617,6 +617,7 @@ fast/events/ondrop-text-html.html
 # WTR needs an implementation for eventSender.continuousMouseScrollBy
 # https://bugs.webkit.org/show_bug.cgi?id=69417
 fast/events/wheel/wheelevent-direction-inverted-from-device.html
+css3/scroll-snap/resnap-after-layout.html [ Skip ]
 
 # These are failures that will be enabled once the relevant parts of implementation land.
 webkit.org/b/133122 crypto/workers/subtle/aes-indexeddb.html [ Skip ]

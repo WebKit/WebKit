@@ -1781,6 +1781,7 @@ Bug(GTK) fast/events/wheel/platform-wheelevent-paging-y-in-non-scrolling-div.htm
 Bug(GTK) fast/events/wheel/platform-wheelevent-paging-y-in-non-scrolling-page.html [ Failure ]
 Bug(GTK) fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-div.html [ Failure ]
 Bug(GTK) fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-page.html [ Failure ]
+css3/scroll-snap/resnap-after-layout.html [ Skip ]
 
 # Need to add functionality to DumpRenderTree to handle scrollbar policy changes
 Bug(GTK) fast/overflow/scrollbar-restored-and-then-locked.html [ Failure ]

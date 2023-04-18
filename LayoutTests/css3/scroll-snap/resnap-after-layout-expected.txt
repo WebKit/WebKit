@@ -1,0 +1,6 @@
+layout trigger
+PASS window.scrollY is 1200
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

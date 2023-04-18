@@ -542,7 +542,7 @@ void ScrollableArea::setCurrentVerticalSnapPointIndex(std::optional<unsigned> in
 
 void ScrollableArea::resnapAfterLayout()
 {
-    LOG_WITH_STREAM(ScrollSnap, stream << *this << " updateScrollSnapState: isScrollSnapInProgress " << isScrollSnapInProgress() << " isUserScrollInProgress " << isUserScrollInProgress());
+    LOG_WITH_STREAM(ScrollSnap, stream << *this << " resnapAfterLayout: isScrollSnapInProgress " << isScrollSnapInProgress() << " isUserScrollInProgress " << isUserScrollInProgress());
 
     auto* scrollAnimator = existingScrollAnimator();
     if (!scrollAnimator || isScrollSnapInProgress() || isUserScrollInProgress())
@@ -572,6 +572,7 @@ void ScrollableArea::resnapAfterLayout()
     }
 
     if (correctedOffset != currentOffset) {
+        LOG_WITH_STREAM(ScrollSnap, stream << "ScrollableArea::resnapAfterLayout - adjusting scroll position from " << currentOffset << " to " << correctedOffset << " for snap point at index " << currentVerticalSnapPointIndex());
         auto position = scrollPositionFromOffset(correctedOffset);
         if (scrollAnimationStatus() == ScrollAnimationStatus::NotAnimating)
             scrollToOffsetWithoutAnimation(correctedOffset);
@@ -595,6 +596,8 @@ void ScrollableArea::doPostThumbMoveSnapping(ScrollbarOrientation orientation)
 
     if (newOffset == currentOffset)
         return;
+
+    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollableArea::doPostThumbMoveSnapping - adjusting scroll position from " << currentOffset << " to " << newOffset);
 
     auto position = scrollPositionFromOffset(newOffset);
     scrollAnimator->scrollToPositionWithAnimation(position);
