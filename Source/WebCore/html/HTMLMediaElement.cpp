@@ -8517,7 +8517,7 @@ MediaProducerMediaStateFlags HTMLMediaElement::mediaState() const
     bool streaming = false;
 #if ENABLE(MANAGED_MEDIA_SOURCE)
     RefPtr managedMediasource = is<ManagedMediaSource>(m_mediaSource) ? downcast<ManagedMediaSource>(m_mediaSource.get()) : nullptr;
-    streaming |= managedMediasource && managedMediasource->streaming();
+    streaming |= managedMediasource && managedMediasource->streamingAllowed() && managedMediasource->streaming();
     if (!managedMediasource) {
 #endif
     // We can assume that if we have active source buffers, later networking activity (such as stream or XHR requests) will be media related.
