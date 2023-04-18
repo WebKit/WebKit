@@ -1026,8 +1026,8 @@ No pre-PR checks to run""")
         ), patch(
             'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(
                 self.BUGZILLA,
-                redact={'component:Text': True},
-                redact_exemption={'component:Scrolling': True},
+                redact={'component:Scrolling': True},
+                redact_exemption={'component:Text': True},
             )]
         ), mocks.local.Git(
             self.path, remote='https://{}'.format(remote.remote),
@@ -1063,16 +1063,16 @@ No pre-PR checks to run""")
         self.maxDiff = None
         self.assertEqual(
             captured.stdout.getvalue(),
-            "A commit you are uploading references https://bugs.example.com/show_bug.cgi?id=2\n"
-            "https://bugs.example.com/show_bug.cgi?id=2 matches 'component:Scrolling' and is exempt from redaction\n"
+            "A commit you are uploading references https://bugs.example.com/show_bug.cgi?id=1\n"
+            "https://bugs.example.com/show_bug.cgi?id=1 matches 'component:Text' and is exempt from redaction\n"
             "Created 'PR 1 | [Testing] Existing commit'!\n"
             "Posted pull request link to https://bugs.example.com/show_bug.cgi?id=2\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n",
         )
         self.assertEqual(
             captured.stderr.getvalue(),
-            'Redaction exemption overrides the redaction of https://bugs.example.com/show_bug.cgi?id=1\n'
-            "https://bugs.example.com/show_bug.cgi?id=1 matches 'component:Text' and is thus redacted\n",
+            'Redaction exemption overrides the redaction of https://bugs.example.com/show_bug.cgi?id=2\n'
+            "https://bugs.example.com/show_bug.cgi?id=2 matches 'component:Scrolling' and is thus redacted\n",
         )
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(

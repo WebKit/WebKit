@@ -399,7 +399,7 @@ class PullRequest(Command):
         for candidate in issues:
             if getattr(candidate.redacted, 'exemption', False):
                 redaction_exemption = candidate
-            if candidate.redacted:
+            elif candidate.redacted:
                 redacted_issue = candidate
         if redaction_exemption:
             print('A commit you are uploading references {}'.format(redaction_exemption.link))
