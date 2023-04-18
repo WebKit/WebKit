@@ -37,6 +37,7 @@ from optparse import make_option
 from webkitpy.tool import steps
 
 from webkitcorepy import string_utils
+from webkitscmpy import local
 
 from webkitpy.common.checkout.changelog import parse_bug_id_from_changelog
 from webkitpy.common.config.committers import CommitterList
@@ -60,12 +61,29 @@ class AbstractPatchUploadingCommand(AbstractSequencedCommand):
             bug_id = tool.checkout().bug_id_for_this_commit(options.git_commit, changed_files)
         return bug_id
 
+    def _issues(self, options, args, tool, state):
+        issues = getattr(options, 'issues', None)
+        if issues is not None:
+            return issues
+
+        repository = local.Scm.from_path(self._tool.scm().checkout_root)
+        if not repository:
+            return None
+
+        commit = repository.find(options.git_commit or 'HEAD')
+        if not commit:
+            return None
+        return commit.issues
+
+
     def _prepare_state(self, options, args, tool):
         state = {}
         state["bug_id"] = self._bug_id(options, args, tool, state)
         if not state["bug_id"]:
             _log.error("No bug id passed and no bug url found in ChangeLogs.")
             sys.exit(1)
+
+        state['issues'] = self._issues(options, args, tool, state)
         return state
 
 
@@ -74,6 +92,7 @@ class Post(AbstractPatchUploadingCommand):
     help_text = "Attach the current working directory diff to a bug as a patch file"
     argument_names = "[BUGID]"
     steps = [
+        steps.CheckForRedactedIssue,
         steps.ValidateChangeLogs,
         steps.CheckStyle,
         steps.ConfirmDiff,
@@ -95,6 +114,7 @@ class LandSafely(AbstractPatchUploadingCommand):
     commit by the commit-queue."""
     show_in_main_help = False
     steps = [
+        steps.CheckForRedactedIssue,
         steps.UpdateChangeLogsWithReviewer,
         steps.ValidateChangeLogs,
         steps.ObsoletePatches,
@@ -130,6 +150,7 @@ class Upload(AbstractPatchUploadingCommand):
     argument_names = "[BUGID]"
     show_in_main_help = True
     steps = [
+        steps.CheckForRedactedIssue,
         steps.ValidateChangeLogs,
         steps.CheckStyle,
         steps.PromptForBugOrTitle,
@@ -157,6 +178,7 @@ class Upload(AbstractPatchUploadingCommand):
     def _prepare_state(self, options, args, tool):
         state = {}
         state["bug_id"] = self._bug_id(options, args, tool, state)
+        state['issues'] = self._issues(options, args, tool, state)
         return state
 
 

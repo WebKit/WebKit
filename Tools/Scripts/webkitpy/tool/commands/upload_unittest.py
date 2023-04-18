@@ -1,5 +1,5 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
-# Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -33,6 +33,13 @@ from webkitpy.tool.commands.upload import *
 from webkitpy.tool.mocktool import MockOptions, MockTool
 
 from webkitcorepy import mocks
+from webkitbugspy.tracker import Tracker
+
+
+class MockIssue(object):
+    def __init__(self, link, redacted=False):
+        self.link = link
+        self.redacted = redacted
 
 
 class UploadCommandsTest(CommandsTest):
@@ -48,6 +55,7 @@ class UploadCommandsTest(CommandsTest):
         options.request_commit = False
         options.review = True
         options.suggest_reviewers = False
+        options.issues = []
         expected_logs = """MOCK: user.open_url: file://...
 Was that diff correct?
 Obsoleting 2 old patches on bug 50000
@@ -60,6 +68,7 @@ MOCK: user.open_url: http://example.com/50000
     def test_land_safely(self):
         options = MockOptions()
         options.fast_cq = False
+        options.issues = []
         expected_logs = """Obsoleting 2 old patches on bug 50000
 MOCK reassign_bug: bug_id=50000, assignee=None
 MOCK add_patch_to_bug: bug_id=50000, description=Patch for landing, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=True
@@ -69,6 +78,7 @@ MOCK add_patch_to_bug: bug_id=50000, description=Patch for landing, mark_for_rev
     def test_land_safely_with_fast_cq(self):
         options = MockOptions()
         options.fast_cq = True
+        options.issues = []
         expected_logs = """Obsoleting 2 old patches on bug 50000
 MOCK reassign_bug: bug_id=50000, assignee=None
 MOCK add_patch_to_bug: bug_id=50000, description=[fast-cq] Patch for landing, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=True
@@ -126,6 +136,7 @@ MOCK add_patch_to_bug: bug_id=50000, description=[fast-cq] Patch for landing, ma
         options.submit_to_ews = False
         options.sort_xcode_project = False
         options.suggest_reviewers = False
+        options.issues = []
         expected_logs = """MOCK: user.open_url: file://...
 Was that diff correct?
 Obsoleting 2 old patches on bug 50000
@@ -149,6 +160,7 @@ MOCK: user.open_url: http://example.com/50000
         options.submit_to_ews = False
         options.sort_xcode_project = False
         options.suggest_reviewers = False
+        options.issues = []
         expected_logs = """MOCK: user.open_url: file://...
 Was that diff correct?
 Obsoleting 2 old patches on bug 50000
@@ -172,6 +184,7 @@ MOCK: user.open_url: http://example.com/50000
         options.ews = True
         options.sort_xcode_project = False
         options.suggest_reviewers = False
+        options.issues = []
         expected_logs = """MOCK: user.open_url: file://...
 Was that diff correct?
 Obsoleting 2 old patches on bug 50000
@@ -211,3 +224,60 @@ Committed r9876 (5@main): <https://commits.webkit.org/5@main>
 
     def test_edit_changelog(self):
         self.assert_execute_outputs(EditChangeLogs(), [])
+
+    def test_upload_blocked(self):
+        options = MockOptions()
+        options.cc = None
+        options.check_style = True
+        options.check_style_filter = None
+        options.comment = None
+        options.description = "MOCK description"
+        options.fast_cq = False
+        options.non_interactive = False
+        options.request_commit = False
+        options.review = True
+        options.submit_to_ews = False
+        options.sort_xcode_project = False
+        options.suggest_reviewers = False
+        options.issues = [MockIssue(
+            'https://bugs.webkit.org/show_bug.cgi?id=255559',
+            redacted=Tracker.Redaction(True, 'is a security bug'),
+        )]
+        expected_logs = """The patch you are uploading references https://bugs.webkit.org/show_bug.cgi?id=255559
+https://bugs.webkit.org/show_bug.cgi?id=255559 is a security bug and is thus redacted
+Please use 'git-webkit' to upload this fix. 'webkit-patch' does not support security changes
+"""
+        with self.assertRaises(SystemExit):
+            self.assert_execute_outputs(Upload(), [50000], options=options, expected_logs=expected_logs)
+
+    def test_upload_exempt(self):
+        self.maxDiff = None
+        options = MockOptions()
+        options.cc = None
+        options.check_style = True
+        options.check_style_filter = None
+        options.comment = None
+        options.description = "MOCK description"
+        options.fast_cq = False
+        options.non_interactive = False
+        options.request_commit = False
+        options.review = True
+        options.submit_to_ews = False
+        options.sort_xcode_project = False
+        options.suggest_reviewers = False
+        options.issues = [
+            MockIssue('https://bugs.webkit.org/show_bug.cgi?id=255559',  redacted=Tracker.Redaction(True, 'is a security bug')),
+            MockIssue('rdar://12345', redacted=Tracker.Redaction(True, 'has the public keyword', True)),
+        ]
+        expected_logs = """The patch you are uploading references rdar://12345
+rdar://12345 has the public keyword and is exempt from redaction
+Redaction exemption overrides the redaction of https://bugs.webkit.org/show_bug.cgi?id=255559
+https://bugs.webkit.org/show_bug.cgi?id=255559 is a security bug and is thus redacted
+MOCK: user.open_url: file://...
+Was that diff correct?
+Obsoleting 2 old patches on bug 50000
+MOCK reassign_bug: bug_id=50000, assignee=None
+MOCK add_patch_to_bug: bug_id=50000, description=MOCK description, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False
+MOCK: user.open_url: http://example.com/50000
+"""
+        self.assert_execute_outputs(Upload(), [50000], options=options, expected_logs=expected_logs)
