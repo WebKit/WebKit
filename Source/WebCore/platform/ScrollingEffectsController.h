@@ -204,8 +204,8 @@ private:
 
 #if PLATFORM(MAC)
     bool shouldOverrideMomentumScrolling() const;
-    void statelessSnapTransitionTimerFired();
-    void scheduleStatelessScrollSnap();
+    void discreteSnapTransitionTimerFired();
+    void scheduleDiscreteScrollSnap(const FloatSize& delta);
 
     bool modifyScrollDeltaForStretching(const PlatformWheelEvent&, FloatSize&, bool isHorizontallyStretched, bool isVerticallyStretched);
     bool applyScrollDeltaWithStretching(const PlatformWheelEvent&, FloatSize, bool isHorizontallyStretched, bool isVerticallyStretched);
@@ -277,7 +277,8 @@ private:
     bool m_ignoreMomentumScrolls { false };
     bool m_isRubberBanding { false };
 
-    std::unique_ptr<ScrollingEffectsControllerTimer> m_statelessSnapTransitionTimer;
+    Deque<FloatSize> m_recentDiscreteWheelDeltas;
+    std::unique_ptr<ScrollingEffectsControllerTimer> m_discreteSnapTransitionTimer;
 
 #if HAVE(RUBBER_BANDING)
     RectEdges<bool> m_rubberBandingEdges;
