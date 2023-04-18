@@ -28,27 +28,36 @@
 
 #include "BarcodeDetectorOptions.h"
 #include "BarcodeFormat.h"
+#include "Chrome.h"
 #include "DetectedBarcode.h"
+#include "Document.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDetectedBarcode.h"
-
-#if PLATFORM(COCOA)
-// FIXME: Use the GPU Process.
-#include "BarcodeDetectorImplementation.h"
-#endif
+#include "Page.h"
+#include "ScriptExecutionContext.h"
+#include "WorkerGlobalScope.h"
 
 namespace WebCore {
 
-ExceptionOr<Ref<BarcodeDetector>> BarcodeDetector::create(const BarcodeDetectorOptions& barcodeDetectorOptions)
+ExceptionOr<Ref<BarcodeDetector>> BarcodeDetector::create(ScriptExecutionContext& scriptExecutionContext, const BarcodeDetectorOptions& barcodeDetectorOptions)
 {
-#if PLATFORM(COCOA)
-    // FIXME: Use the GPU Process.
-    auto backing = ShapeDetection::BarcodeDetectorImpl::create(barcodeDetectorOptions.convertToBacking());
-    return adoptRef(*new BarcodeDetector(WTFMove(backing)));
-#else
-    UNUSED_PARAM(barcodeDetectorOptions);
+    if (is<Document>(scriptExecutionContext)) {
+        const auto& document = downcast<Document>(scriptExecutionContext);
+        const auto* page = document.page();
+        if (!page)
+            return Exception { AbortError };
+        auto backing = page->chrome().createBarcodeDetector(barcodeDetectorOptions.convertToBacking());
+        if (!backing)
+            return Exception { AbortError };
+        return adoptRef(*new BarcodeDetector(backing.releaseNonNull()));
+    }
+
+    if (is<WorkerGlobalScope>(scriptExecutionContext)) {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=255380 Make the Shape Detection API work in Workers
+        return Exception { AbortError };
+    }
+
     return Exception { AbortError };
-#endif
 }
 
 
@@ -59,18 +68,27 @@ BarcodeDetector::BarcodeDetector(Ref<ShapeDetection::BarcodeDetector>&& backing)
 
 BarcodeDetector::~BarcodeDetector() = default;
 
-void BarcodeDetector::getSupportedFormats(GetSupportedFormatsPromise&& promise)
+ExceptionOr<void> BarcodeDetector::getSupportedFormats(ScriptExecutionContext& scriptExecutionContext, GetSupportedFormatsPromise&& promise)
 {
-#if PLATFORM(COCOA)
-    // FIXME: Use the GPU Process.
-    ShapeDetection::BarcodeDetectorImpl::getSupportedFormats([promise = WTFMove(promise)](Vector<ShapeDetection::BarcodeFormat>&& barcodeFormats) mutable {
-        promise.resolve(barcodeFormats.map([](auto format) {
-            return convertFromBacking(format);
+    if (is<Document>(scriptExecutionContext)) {
+        const auto& document = downcast<Document>(scriptExecutionContext);
+        const auto* page = document.page();
+        if (!page)
+            return Exception { AbortError };
+        page->chrome().getBarcodeDetectorSupportedFormats(([promise = WTFMove(promise)](Vector<ShapeDetection::BarcodeFormat>&& barcodeFormats) mutable {
+            promise.resolve(barcodeFormats.map([](auto format) {
+                return convertFromBacking(format);
+            }));
         }));
-    });
-#else
-    promise.resolve({ });
-#endif
+        return { };
+    }
+
+    if (is<WorkerGlobalScope>(scriptExecutionContext)) {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=255380 Make the Shape Detection API work in Workers
+        return Exception { AbortError };
+    }
+
+    return Exception { AbortError };
 }
 
 void BarcodeDetector::detect(const ImageBitmap::Source&, DetectPromise&& promise)

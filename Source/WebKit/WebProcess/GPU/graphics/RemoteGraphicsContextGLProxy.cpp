@@ -32,6 +32,7 @@
 #include "GPUProcessConnection.h"
 #include "RemoteGraphicsContextGLMessages.h"
 #include "RemoteGraphicsContextGLProxyMessages.h"
+#include "RemoteRenderingBackendProxy.h"
 #include "RemoteVideoFrameObjectHeapProxy.h"
 #include "WebProcess.h"
 #include <WebCore/BitmapImage.h>

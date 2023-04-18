@@ -26,26 +26,36 @@
 #include "config.h"
 #include "TextDetector.h"
 
+#include "Chrome.h"
 #include "DetectedText.h"
+#include "Document.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDetectedText.h"
-
-#if PLATFORM(COCOA)
-// FIXME: Use the GPU Process.
-#include "TextDetectorImplementation.h"
-#endif
+#include "Page.h"
+#include "ScriptExecutionContext.h"
+#include "WorkerGlobalScope.h"
 
 namespace WebCore {
 
-ExceptionOr<Ref<TextDetector>> TextDetector::create()
+ExceptionOr<Ref<TextDetector>> TextDetector::create(ScriptExecutionContext& scriptExecutionContext)
 {
-#if PLATFORM(COCOA)
-    // FIXME: Use the GPU Process.
-    auto backing = ShapeDetection::TextDetectorImpl::create();
-    return adoptRef(*new TextDetector(WTFMove(backing)));
-#else
+    if (is<Document>(scriptExecutionContext)) {
+        const auto& document = downcast<Document>(scriptExecutionContext);
+        const auto* page = document.page();
+        if (!page)
+            return Exception { AbortError };
+        auto backing = page->chrome().createTextDetector();
+        if (!backing)
+            return Exception { AbortError };
+        return adoptRef(*new TextDetector(backing.releaseNonNull()));
+    }
+
+    if (is<WorkerGlobalScope>(scriptExecutionContext)) {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=255380 Make the Shape Detection API work in Workers
+        return Exception { AbortError };
+    }
+
     return Exception { AbortError };
-#endif
 }
 
 TextDetector::TextDetector(Ref<ShapeDetection::TextDetector>&& backing)

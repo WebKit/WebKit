@@ -23,6 +23,9 @@
 
 #include "AXObjectCache.h"
 #include "AutoplayEvent.h"
+#include "BarcodeDetectorInterface.h"
+#include "BarcodeDetectorOptionsInterface.h"
+#include "BarcodeFormatInterface.h"
 #include "ContactInfo.h"
 #include "Cursor.h"
 #include "DatabaseDetails.h"
@@ -30,6 +33,8 @@
 #include "DisabledAdaptations.h"
 #include "DisplayRefreshMonitor.h"
 #include "DocumentStorageAccess.h"
+#include "FaceDetectorInterface.h"
+#include "FaceDetectorOptionsInterface.h"
 #include "FocusDirection.h"
 #include "FrameLoader.h"
 #include "GraphicsContext.h"
@@ -49,6 +54,7 @@
 #include "ScrollTypes.h"
 #include "ScrollingCoordinator.h"
 #include "SearchPopupMenu.h"
+#include "TextDetectorInterface.h"
 #include "WebCoreKeyboardUIMode.h"
 #include "WorkerClient.h"
 #include <JavaScriptCore/ConsoleTypes.h>
@@ -59,6 +65,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/Seconds.h>
 #include <wtf/URL.h>
+#include <wtf/Vector.h>
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #include "MediaPlaybackTargetContext.h"
@@ -369,6 +376,11 @@ public:
 #endif
 
     virtual RefPtr<PAL::WebGPU::GPU> createGPUForWebGPU() const { return nullptr; }
+
+    virtual RefPtr<ShapeDetection::BarcodeDetector> createBarcodeDetector(const ShapeDetection::BarcodeDetectorOptions&) const { return nullptr; }
+    virtual void getBarcodeDetectorSupportedFormats(CompletionHandler<void(Vector<ShapeDetection::BarcodeFormat>&&)>&& completionHandler) const { completionHandler({ }); }
+    virtual RefPtr<ShapeDetection::FaceDetector> createFaceDetector(const ShapeDetection::FaceDetectorOptions&) const { return nullptr; }
+    virtual RefPtr<ShapeDetection::TextDetector> createTextDetector() const { return nullptr; }
 
     // Pass nullptr as the GraphicsLayer to detatch the root layer.
     virtual void attachRootGraphicsLayer(LocalFrame&, GraphicsLayer*) = 0;

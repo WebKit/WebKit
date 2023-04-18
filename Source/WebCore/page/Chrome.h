@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2012, Samsung Electronics. All rights reserved.
  *
@@ -25,10 +25,12 @@
 #include "DisabledAdaptations.h"
 #include "FocusDirection.h"
 #include "HostWindow.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/RefPtr.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/Vector.h>
 
 #if PLATFORM(COCOA)
 OBJC_CLASS NSView;
@@ -39,6 +41,15 @@ class GPU;
 }
 
 namespace WebCore {
+
+namespace ShapeDetection {
+class BarcodeDetector;
+struct BarcodeDetectorOptions;
+enum class BarcodeFormat : uint8_t;
+class FaceDetector;
+struct FaceDetectorOptions;
+class TextDetector;
+}
 
 enum class TextDirection : bool;
 
@@ -103,6 +114,11 @@ public:
 #endif
 
     RefPtr<PAL::WebGPU::GPU> createGPUForWebGPU() const;
+
+    RefPtr<ShapeDetection::BarcodeDetector> createBarcodeDetector(const ShapeDetection::BarcodeDetectorOptions&) const;
+    void getBarcodeDetectorSupportedFormats(CompletionHandler<void(Vector<ShapeDetection::BarcodeFormat>&&)>&&) const;
+    RefPtr<ShapeDetection::FaceDetector> createFaceDetector(const ShapeDetection::FaceDetectorOptions&) const;
+    RefPtr<ShapeDetection::TextDetector> createTextDetector() const;
 
     PlatformDisplayID displayID() const override;
     void windowScreenDidChange(PlatformDisplayID, std::optional<FramesPerSecond>) override;

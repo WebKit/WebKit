@@ -25,11 +25,10 @@
 
 #pragma once
 
+#include "BarcodeFormatInterface.h"
 #include <wtf/Vector.h>
 
 namespace WebCore::ShapeDetection {
-
-enum class BarcodeFormat : uint8_t;
 
 struct BarcodeDetectorOptions {
     Vector<BarcodeFormat> formats;
