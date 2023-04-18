@@ -1761,7 +1761,7 @@ DNSPrefetchingEnabled:
 
 DOMAudioSessionEnabled:
   type: bool
-  status: testable
+  status: stable
   category: media
   humanReadableName: "AudioSession API"
   humanReadableDescription: "Enable AudioSession API"
@@ -2455,7 +2455,7 @@ FileReaderAPIEnabled:
 
 FileSystemAccessEnabled:
   type: bool
-  status: testable
+  status: stable
   category: dom
   humanReadableName: "File System Access API"
   humanReadableDescription: "Enable File System Access API"
@@ -2637,7 +2637,7 @@ GamepadTriggerRumbleEnabled:
 
 GamepadVibrationActuatorEnabled:
   type: bool
-  status: testable
+  status: stable
   category: dom
   humanReadableName: "Gamepad.vibrationActuator support"
   humanReadableDescription: "Support for Gamepad.vibrationActuator"
@@ -3635,7 +3635,7 @@ LinkPreconnect:
 
 LinkPreconnectEarlyHintsEnabled:
   type: bool
-  status: testable
+  status: stable
   category: networking
   humanReadableName: "Link rel=preconnect via HTTP early hints"
   humanReadableDescription: "Enable link rel=preconnect via early hints"
@@ -3971,7 +3971,7 @@ MediaCapabilitiesEnabled:
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 MediaCapabilitiesExtensionsEnabled:
   type: bool
-  status: testable
+  status: stable
   category: media
   humanReadableName: "Media Capabilities Extensions"
   humanReadableDescription: "Media Capabilities Extensions"
@@ -4558,7 +4558,7 @@ OfflineWebApplicationCacheEnabled:
 
 OffscreenCanvasEnabled:
   type: bool
-  status: testable
+  status: stable
   category: dom
   humanReadableName: "OffscreenCanvas"
   humanReadableDescription: "Support for the OffscreenCanvas APIs"
@@ -4576,7 +4576,7 @@ OffscreenCanvasEnabled:
 
 OffscreenCanvasInWorkersEnabled:
   type: bool
-  status: testable
+  status: stable
   category: dom
   humanReadableName: "OffscreenCanvas in Workers"
   humanReadableDescription: "Support for the OffscreenCanvas APIs in Workers"
@@ -7203,7 +7203,7 @@ WebGLTimerQueriesEnabled:
 
 WebGLUsingMetal:
   type: bool
-  status: testable
+  status: stable
   category: dom
   humanReadableName: "WebGL via Metal"
   humanReadableDescription: "Use the Metal backend for ANGLE"
@@ -7330,7 +7330,7 @@ WebRTCDTMFEnabled:
 
 WebRTCEncodedTransformEnabled:
   type: bool
-  status: testable
+  status: stable
   category: media
   condition: ENABLE(WEB_RTC)
   humanReadableName: "WebRTC Encoded Transform API"
