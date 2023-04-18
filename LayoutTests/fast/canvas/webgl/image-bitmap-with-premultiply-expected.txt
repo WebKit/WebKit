@@ -1,0 +1,17 @@
+Test that createImageBitmap honors premultiplyAlpha settings
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS PASS: Blob
+PASS PASS: HTML Image
+PASS PASS: Canvas
+PASS PASS: ImageData
+PASS PASS: Blob (flipY)
+PASS PASS: HTML Image (flipY)
+PASS PASS: Canvas (flipY)
+PASS PASS: ImageData (flipY)
+

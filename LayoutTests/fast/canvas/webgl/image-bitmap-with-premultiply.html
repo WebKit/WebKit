@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<canvas id="example" width="32" height="32"></canvas>
+<canvas id="webglCanvas" width="32" height="32"></canvas>
+<script>
+description("Test that createImageBitmap honors premultiplyAlpha settings");
+
+const defaultOptions =  {
+  premultiplyAlpha: "premultiply"
+};
+
+const flippedOptions =  {
+  premultiplyAlpha: "premultiply",
+  imageOrientation: "flipY"
+};
+
+const canvas = document.getElementById("example");
+const ctx = canvas.getContext("2d");
+
+const webglCanvas = document.getElementById("webglCanvas");
+const gl = webglCanvas.getContext("webgl2");
+
+async function testImageBitmapAlpha(data, createOptions, testLabel)
+{
+  const imageBitmap = await self.createImageBitmap(data, createOptions);
+	
+  const texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+	
+  gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);	
+  gl.texStorage2D(gl.TEXTURE_2D, 1, gl.RGBA8, 32, 32);
+  gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageBitmap);
+	
+  const fb = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+	
+  if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE)
+    throw new Error("framebuffer incomplete");
+	
+  const resultData = new Uint8Array(32 * 32 * 4);
+  gl.readPixels(0, 0, 32, 32, gl.RGBA, gl.UNSIGNED_BYTE, resultData);
+	
+  const stride = 32 * 4;
+  const pixelOffset = 12 * stride + (12 * 4);
+  const pixelData = [resultData[pixelOffset+0], resultData[pixelOffset+1], resultData[pixelOffset+2], resultData[pixelOffset+3]];
+	
+  if (pixelData[2] === pixelData[3])
+    testPassed("PASS: " + testLabel);
+  else
+    testFailed("FAIL: " + testLabel + ": expected blue and alpha components to match");
+};
+
+async function test() {
+	const imageResponse = await fetch("resources/fuzzy-blue-ball.png");
+	const imageBlob = await imageResponse.blob();
+	
+	const htmlImage = new Image();
+	htmlImage.src = URL.createObjectURL(imageBlob);
+	await new Promise(resolve => htmlImage.onload = resolve);
+	
+	ctx.drawImage(htmlImage, 0, 0, 32, 32);
+	
+	const imageData = ctx.getImageData(0, 0, 32, 32);
+	
+	// Log pixel data at (12, 12)
+	const stride = 32 * 4;
+	const pixelOffset = 12 * stride + 12;
+	const pixelData = [imageData.data[pixelOffset+0], imageData.data[pixelOffset+1], imageData.data[pixelOffset+2], imageData.data[pixelOffset+3]];
+	
+	await testImageBitmapAlpha(imageBlob, defaultOptions, "Blob");
+	await testImageBitmapAlpha(htmlImage, defaultOptions, "HTML Image");
+	await testImageBitmapAlpha(canvas, defaultOptions, "Canvas");
+	await testImageBitmapAlpha(imageData, defaultOptions, "ImageData");
+	await testImageBitmapAlpha(imageBlob, defaultOptions, "Blob (flipY)");
+	await testImageBitmapAlpha(htmlImage, defaultOptions, "HTML Image (flipY)");
+	await testImageBitmapAlpha(canvas, defaultOptions, "Canvas (flipY)");
+	await testImageBitmapAlpha(imageData, defaultOptions, "ImageData (flipY)");
+}
+
+window.testRunner.waitUntilDone();
+
+test().then(() => {
+  window.testRunner.notifyDone();
+}, e => {
+  testFailed(String(e));
+});
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

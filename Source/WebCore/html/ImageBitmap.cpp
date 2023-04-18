@@ -861,13 +861,17 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
         return;
     }
 
+    OptionSet<SerializationState> serializationState = { SerializationState::OriginClean };
+    auto alphaPremultiplication = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha);
+    if (alphaPremultiplication == AlphaPremultiplication::Premultiplied)
+        serializationState.add(SerializationState::PremultiplyAlpha);
+
     // If no cropping, resizing, flipping, etc. are needed, then simply use the
     // resulting ImageBuffer directly.
-    auto alphaPremultiplication = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha);
     if (sourceRectangle.returnValue().location().isZero() && sourceRectangle.returnValue().size() == imageData->size() && sourceRectangle.returnValue().size() == outputSize && options.orientation == ImageBitmapOptions::Orientation::None) {
         bitmapData->putPixelBuffer(imageData->pixelBuffer(), sourceRectangle.releaseReturnValue(), { }, alphaPremultiplication);
-        
-        auto imageBitmap = create(ImageBitmapBacking(WTFMove(bitmapData)));
+
+        auto imageBitmap = create(ImageBitmapBacking(WTFMove(bitmapData), serializationState));
         // The result is implicitly origin-clean, and alpha premultiplication has already been handled.
         promise.resolve(WTFMove(imageBitmap));
         return;
@@ -885,7 +889,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     bitmapData->context().drawImageBuffer(*tempBitmapData, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
 
     // 6.4.1. Resolve p with ImageBitmap.
-    auto imageBitmap = create({ WTFMove(bitmapData) });
+    auto imageBitmap = create(ImageBitmapBacking(WTFMove(bitmapData), serializationState));
     // The result is implicitly origin-clean, and alpha premultiplication has already been handled.
     promise.resolve(WTFMove(imageBitmap));
 }
