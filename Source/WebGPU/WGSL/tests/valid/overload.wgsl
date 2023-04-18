@@ -486,3 +486,90 @@ fn testBitwise()
     let x2 = 0u ^ 1u;
   }
 }
+
+// 17.3. Logical Built-in Functions (https://www.w3.org/TR/WGSL/#logical-builtin-functions)
+
+// 17.3.1
+fn testAll()
+{
+    // [N].(Vector[Bool, N]) => Bool,
+    let x1 = all(vec2(false, true));
+    let x2 = all(vec3(true, true, true));
+    let x3 = all(vec4(false, false, false, false));
+
+    // [N].(Bool) => Bool,
+    let x4 = all(true);
+    let x5 = all(false);
+}
+
+// 17.3.2
+fn testAny()
+{
+    // [N].(Vector[Bool, N]) => Bool,
+    let x1 = any(vec2(false, true));
+    let x2 = any(vec3(true, true, true));
+    let x3 = any(vec4(false, false, false, false));
+
+    // [N].(Bool) => Bool,
+    let x4 = any(true);
+    let x5 = any(false);
+}
+
+// 17.3.3
+fn testSelect()
+{
+    // [T < Scalar].(T, T, Bool) => T,
+    {
+        let x1 = select(13, 42,   false);
+        let x2 = select(13, 42i,  false);
+        let x3 = select(13, 42u,  true);
+        let x4 = select(13, 42f,  true);
+        let x5 = select(13, 42.0, true);
+    }
+
+    // [T < Scalar, N].(Vector[T, N], Vector[T, N], Bool) => Vector[T, N],
+    {
+        let x1 = select(vec2(13), vec2(42),   false);
+        let x2 = select(vec2(13), vec2(42i),  false);
+        let x3 = select(vec2(13), vec2(42u),  true);
+        let x4 = select(vec2(13), vec2(42f),  true);
+        let x5 = select(vec2(13), vec2(42.0), true);
+    }
+    {
+        let x1 = select(vec3(13), vec3(42),   false);
+        let x2 = select(vec3(13), vec3(42i),  false);
+        let x3 = select(vec3(13), vec3(42u),  true);
+        let x4 = select(vec3(13), vec3(42f),  true);
+        let x5 = select(vec3(13), vec3(42.0), true);
+    }
+    {
+        let x1 = select(vec4(13), vec4(42),   false);
+        let x2 = select(vec4(13), vec4(42i),  false);
+        let x3 = select(vec4(13), vec4(42u),  true);
+        let x4 = select(vec4(13), vec4(42f),  true);
+        let x5 = select(vec4(13), vec4(42.0), true);
+    }
+
+    // [T < Scalar, N].(Vector[T, N], Vector[T, N], Vector[Bool, N]) => Vector[T, N],
+    {
+        let x1 = select(vec2(13), vec2(42),   vec2(false));
+        let x2 = select(vec2(13), vec2(42i),  vec2(false));
+        let x3 = select(vec2(13), vec2(42u),  vec2(true));
+        let x4 = select(vec2(13), vec2(42f),  vec2(true));
+        let x5 = select(vec2(13), vec2(42.0), vec2(true));
+    }
+    {
+        let x1 = select(vec3(13), vec3(42),   vec3(false));
+        let x2 = select(vec3(13), vec3(42i),  vec3(false));
+        let x3 = select(vec3(13), vec3(42u),  vec3(true));
+        let x4 = select(vec3(13), vec3(42f),  vec3(true));
+        let x5 = select(vec3(13), vec3(42.0), vec3(true));
+    }
+    {
+        let x1 = select(vec4(13), vec4(42),   vec4(false));
+        let x2 = select(vec4(13), vec4(42i),  vec4(false));
+        let x3 = select(vec4(13), vec4(42u),  vec4(true));
+        let x4 = select(vec4(13), vec4(42f),  vec4(true));
+        let x5 = select(vec4(13), vec4(42.0), vec4(true));
+    }
+}

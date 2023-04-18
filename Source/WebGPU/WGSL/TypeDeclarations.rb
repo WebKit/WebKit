@@ -164,3 +164,20 @@ operator :max, {
         [T < Float, N].(Vector[T, N]) => Vector[T, N],
     }
 end
+
+# 17.3. Logical Built-in Functions (https://www.w3.org/TR/WGSL/#logical-builtin-functions)
+
+# 17.3.1 & 17.3.2
+["all", "any"].each do |op|
+    operator :"#{op}", {
+        [N].(Vector[Bool, N]) => Bool,
+        [N].(Bool) => Bool,
+    }
+end
+
+# 17.3.3
+operator :select, {
+    [T < Scalar].(T, T, Bool) => T,
+    [T < Scalar, N].(Vector[T, N], Vector[T, N], Bool) => Vector[T, N],
+    [T < Scalar, N].(Vector[T, N], Vector[T, N], Vector[Bool, N]) => Vector[T, N],
+}
