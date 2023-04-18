@@ -65,6 +65,9 @@ public:
     void scrollingTreeNodeWillStartScroll(WebCore::ScrollingNodeID) override;
     void scrollingTreeNodeDidEndScroll(WebCore::ScrollingNodeID) override;
 
+    void scrollingTreeNodeDidBeginScrollSnapping(WebCore::ScrollingNodeID) override;
+    void scrollingTreeNodeDidEndScrollSnapping(WebCore::ScrollingNodeID) override;
+
     void currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical) override;
     void reportExposedUnfilledArea(MonotonicTime, unsigned unfilledArea) override;
     void reportSynchronousScrollingReasonsChanged(MonotonicTime, OptionSet<WebCore::SynchronousScrollingReason>) override;

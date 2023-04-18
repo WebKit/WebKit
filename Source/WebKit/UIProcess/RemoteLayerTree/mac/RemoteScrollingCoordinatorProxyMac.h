@@ -53,6 +53,9 @@ private:
     void scrollingTreeNodeWillStartScroll(WebCore::ScrollingNodeID) override;
     void scrollingTreeNodeDidEndScroll(WebCore::ScrollingNodeID) override;
 
+    void scrollingTreeNodeDidBeginScrollSnapping(WebCore::ScrollingNodeID) override;
+    void scrollingTreeNodeDidEndScrollSnapping(WebCore::ScrollingNodeID) override;
+
     void connectStateNodeLayers(WebCore::ScrollingStateTree&, const RemoteLayerTreeHost&) override;
     void establishLayerTreeScrollingRelations(const RemoteLayerTreeHost&) override;
 

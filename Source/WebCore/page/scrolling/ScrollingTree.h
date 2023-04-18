@@ -142,6 +142,9 @@ public:
     virtual void scrollingTreeNodeWillStartScroll(ScrollingNodeID) { }
     virtual void scrollingTreeNodeDidEndScroll(ScrollingNodeID) { }
 
+    virtual void scrollingTreeNodeDidBeginScrollSnapping(ScrollingNodeID) { }
+    virtual void scrollingTreeNodeDidEndScrollSnapping(ScrollingNodeID) { }
+
     WEBCORE_EXPORT TrackingType eventTrackingTypeForPoint(EventTrackingRegions::EventType, IntPoint);
 
     virtual void receivedWheelEventWithPhases(PlatformWheelEventPhase /* phase */, PlatformWheelEventPhase /* momentumPhase */) { }

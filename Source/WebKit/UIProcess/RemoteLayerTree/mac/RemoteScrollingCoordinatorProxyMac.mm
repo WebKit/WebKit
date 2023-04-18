@@ -128,6 +128,18 @@ void RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeDidEndScroll(Scrolling
     sendUIStateChangedIfNecessary();
 }
 
+void RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeDidBeginScrollSnapping(ScrollingNodeID nodeID)
+{
+    m_uiState.addNodeWithActiveScrollSnap(nodeID);
+    sendUIStateChangedIfNecessary();
+}
+
+void RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeDidEndScrollSnapping(ScrollingNodeID nodeID)
+{
+    m_uiState.removeNodeWithActiveScrollSnap(nodeID);
+    sendUIStateChangedIfNecessary();
+}
+
 void RemoteScrollingCoordinatorProxyMac::connectStateNodeLayers(ScrollingStateTree& stateTree, const RemoteLayerTreeHost& layerTreeHost)
 {
     using PlatformLayerID = PlatformLayerIdentifier;
