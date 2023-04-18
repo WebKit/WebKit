@@ -34,6 +34,7 @@ from webkitpy.tool.steps.applypatchwithlocalcommit import ApplyPatchWithLocalCom
 from webkitpy.tool.steps.applywatchlist import ApplyWatchList
 from webkitpy.tool.steps.attachtobug import AttachToBug
 from webkitpy.tool.steps.build import Build
+from webkitpy.tool.steps.checkforredactedissue import CheckForRedactedIssue
 from webkitpy.tool.steps.checkpatchrelevance import CheckPatchRelevance
 from webkitpy.tool.steps.checkstyle import CheckStyle
 from webkitpy.tool.steps.cleanworkingdirectory import CleanWorkingDirectory
