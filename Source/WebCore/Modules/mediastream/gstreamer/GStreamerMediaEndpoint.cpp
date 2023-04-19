@@ -884,7 +884,17 @@ void GStreamerMediaEndpoint::addRemoteStream(GstPad* pad)
     mediaStream.addTrackFromPlatform(track);
     m_peerConnectionBackend.addPendingTrackEvent({ Ref(transceiver->receiver()), Ref(transceiver->receiver().track()), { }, Ref(*transceiver) });
 
-    if (m_pendingIncomingStreams == gst_sdp_message_medias_len(description->sdp)) {
+    unsigned totalAudioVideoMedias = 0;
+    unsigned totalMedias = gst_sdp_message_medias_len(description->sdp);
+    for (unsigned mediaIndex = 0; mediaIndex < totalMedias; mediaIndex++) {
+        const auto* media = gst_sdp_message_get_media(description->sdp, mediaIndex);
+        const char* mediaType = gst_sdp_media_get_media(media);
+        if (!g_str_equal(mediaType, "audio") && !g_str_equal(mediaType, "video"))
+            continue;
+        totalAudioVideoMedias++;
+    }
+
+    if (m_pendingIncomingStreams == totalAudioVideoMedias) {
         GST_DEBUG_OBJECT(m_pipeline.get(), "Incoming streams gathered, now firing track events");
         m_pendingIncomingStreams = 0;
         m_peerConnectionBackend.dispatchPendingTrackEvents(mediaStream);
