@@ -508,7 +508,7 @@ void HTMLInputElement::updateType(const AtomString& typeAttributeValue)
     m_hasType = true;
     if (!newType)
         return;
-    ASSERT(m_inputType->formControlType() != newType->formControlType());
+    ASSERT(m_inputType->type() != newType->type());
 
     removeFromRadioButtonGroup();
     resignStrongPasswordAppearance();

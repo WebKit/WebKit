@@ -179,7 +179,7 @@ RefPtr<InputType> InputType::createIfDifferent(HTMLInputElement& element, const 
                 return factory.second->factoryFunction(element);
         }
     }
-    if (currentInputType && currentInputType->formControlType() == InputTypeNames::text())
+    if (currentInputType && currentInputType->type() == Type::Text)
         return nullptr;
     return adoptRef(*new TextInputType(element));
 }
