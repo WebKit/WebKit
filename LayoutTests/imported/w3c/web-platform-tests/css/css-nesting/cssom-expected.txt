@@ -7,7 +7,6 @@ PASS Simple CSSOM manipulation of subrules 5
 PASS Simple CSSOM manipulation of subrules 6
 PASS Simple CSSOM manipulation of subrules 7
 PASS Simple CSSOM manipulation of subrules 8
-PASS Simple CSSOM manipulation of subrules 9
-PASS Simple CSSOM manipulation of subrules 10
-FAIL Simple CSSOM manipulation of subrules 11 assert_equals: invalid rule containing ampersand is kept in serialization expected ".a {\n  :is(!& .foo, .b) { color: green; }\n}" but got ".a {\n  :is(.b) { color: green; }\n}"
+FAIL Simple CSSOM manipulation of subrules 9 assert_equals: one rule is kept unchanged, the other is changed expected ".a {\n  color: red;\n  & .b { color: green; }\n  .c div.b &, div & { color: blue; }\n}" but got ".a {\n  color: olivedrab;\n  & .b { color: green; }\n  @supports selector(&) {\n}\n  & .c { color: blue; }\n}"
+FAIL Simple CSSOM manipulation of subrules 10 assert_equals: invalid rule containing ampersand is kept in serialization expected ".a {\n  :is(!& .foo, .b) { color: green; }\n}" but got ".a {\n  :is(.b) { color: green; }\n}"
 

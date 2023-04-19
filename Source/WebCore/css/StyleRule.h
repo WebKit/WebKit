@@ -163,7 +163,6 @@ public:
     const Vector<Ref<StyleRuleBase>>& nestedRules() const { return m_nestedRules; }
     Vector<Ref<StyleRuleBase>>& nestedRules() { return m_nestedRules; }
     const CSSSelectorList& originalSelectorList() const { return m_originalSelectorList; }
-    void wrapperAdoptOriginalSelectorList(CSSSelectorList&&);
 
 protected:
     StyleRuleWithNesting(const StyleRuleWithNesting&);
@@ -427,12 +426,6 @@ inline void StyleRule::wrapperAdoptSelectorList(CSSSelectorList&& selectors)
 #if ENABLE(CSS_SELECTOR_JIT)
     m_compiledSelectors = nullptr;
 #endif
-}
-
-inline void StyleRuleWithNesting::wrapperAdoptOriginalSelectorList(CSSSelectorList&& selectors)
-{
-    m_originalSelectorList = CSSSelectorList { selectors };
-    StyleRule::wrapperAdoptSelectorList(WTFMove(selectors));
 }
 
 #if ENABLE(CSS_SELECTOR_JIT)
