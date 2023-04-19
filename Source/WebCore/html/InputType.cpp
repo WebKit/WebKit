@@ -104,6 +104,19 @@ template<typename T> static Ref<InputType> createInputType(HTMLInputElement& ele
     return T::create(element);
 }
 
+template<typename DowncastedType>
+ALWAYS_INLINE bool isInvalidInputType(const InputType& baseInputType, const String& value)
+{
+    auto& inputType = static_cast<const DowncastedType&>(baseInputType);
+    return inputType.typeMismatch()
+        || inputType.stepMismatch(value)
+        || inputType.rangeUnderflow(value)
+        || inputType.rangeOverflow(value)
+        || inputType.patternMismatch(value)
+        || inputType.valueMissing(value)
+        || inputType.hasBadInput();
+}
+
 static InputTypeFactoryMap createInputTypeFactoryMap()
 {
     static const struct InputTypes {
@@ -328,35 +341,10 @@ ExceptionOr<void> InputType::setValueAsDecimal(const Decimal&, TextFieldEventBeh
     return Exception { InvalidStateError };
 }
 
-bool InputType::typeMismatchFor(const String&) const
-{
-    return false;
-}
-
-bool InputType::typeMismatch() const
-{
-    return false;
-}
-
 bool InputType::supportsRequired() const
 {
     // Almost all validatable types support @required.
     return supportsValidation();
-}
-
-bool InputType::valueMissing(const String&) const
-{
-    return false;
-}
-
-bool InputType::hasBadInput() const
-{
-    return false;
-}
-
-bool InputType::patternMismatch(const String&) const
-{
-    return false;
 }
 
 bool InputType::rangeUnderflow(const String& value) const

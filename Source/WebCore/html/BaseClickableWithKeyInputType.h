@@ -41,6 +41,10 @@ public:
     static void handleKeypressEvent(HTMLInputElement&, KeyboardEvent&);
     static void handleKeyupEvent(InputType&, KeyboardEvent&);
     static bool accessKeyAction(HTMLInputElement&, bool sendMouseEvents);
+
+    bool rangeUnderflow(const String&) const { ASSERT(!isSteppable()); return false; }
+    bool rangeOverflow(const String&) const { ASSERT(!isSteppable()); return false; }
+    bool stepMismatch(const String&) const { ASSERT(!isSteppable()); return false; }
     
 protected:
     explicit BaseClickableWithKeyInputType(Type type, HTMLInputElement& element)

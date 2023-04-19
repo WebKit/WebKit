@@ -39,6 +39,10 @@ class BaseCheckableInputType : public InputType {
 public:
     bool canSetStringValue() const final;
 
+    bool rangeUnderflow(const String&) const { ASSERT(!isSteppable()); return false; }
+    bool rangeOverflow(const String&) const { ASSERT(!isSteppable()); return false; }
+    bool stepMismatch(const String&) const { ASSERT(!isSteppable()); return false; }
+
 protected:
     explicit BaseCheckableInputType(Type type, HTMLInputElement& element)
         : InputType(type, element)

@@ -40,6 +40,10 @@ class BaseTextInputType : public TextFieldInputType {
 public:
     bool patternMismatch(const String&) const final;
 
+    bool rangeUnderflow(const String&) const { ASSERT(!isSteppable()); return false; }
+    bool rangeOverflow(const String&) const { ASSERT(!isSteppable()); return false; }
+    bool stepMismatch(const String&) const { ASSERT(!isSteppable()); return false; }
+
 protected:
     explicit BaseTextInputType(Type type, HTMLInputElement& element)
         : TextFieldInputType(type, element)

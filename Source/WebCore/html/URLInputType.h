@@ -35,7 +35,6 @@
 namespace WebCore {
 
 class URLInputType final : public BaseTextInputType {
-    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     static Ref<URLInputType> create(HTMLInputElement& element)
     {
@@ -43,6 +42,7 @@ public:
     }
 
     bool typeMismatchFor(const String&) const final;
+    bool typeMismatch() const final;
 
 private:
     explicit URLInputType(HTMLInputElement& element)
@@ -51,7 +51,6 @@ private:
     }
 
     const AtomString& formControlType() const final;
-    bool typeMismatch() const final;
     String typeMismatchText() const final;
     String sanitizeValue(const String&) const final;
 };

@@ -38,7 +38,6 @@ namespace WebCore {
 class SliderThumbElement;
 
 class RangeInputType final : public InputType {
-    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     static Ref<RangeInputType> create(HTMLInputElement& element)
     {

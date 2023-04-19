@@ -35,12 +35,15 @@
 namespace WebCore {
 
 class HiddenInputType final : public InputType {
-    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     static Ref<HiddenInputType> create(HTMLInputElement& element)
     {
         return adoptRef(*new HiddenInputType(element));
     }
+
+    bool rangeUnderflow(const String&) const { ASSERT(!isSteppable()); return false; }
+    bool rangeOverflow(const String&) const { ASSERT(!isSteppable()); return false; }
+    bool stepMismatch(const String&) const { ASSERT(!isSteppable()); return false; }
 
 private:
     explicit HiddenInputType(HTMLInputElement& element)

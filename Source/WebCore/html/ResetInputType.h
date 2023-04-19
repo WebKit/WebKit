@@ -35,7 +35,6 @@
 namespace WebCore {
 
 class ResetInputType final : public BaseButtonInputType {
-    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     static Ref<ResetInputType> create(HTMLInputElement& element)
     {
