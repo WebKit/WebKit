@@ -240,6 +240,7 @@ public:
 
 protected:
     friend class JSValue;
+    friend class JSCell;
 
     JS_EXPORT_PRIVATE bool equalSlowCase(JSGlobalObject*, JSString* other) const;
     bool isSubstring() const;

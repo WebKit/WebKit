@@ -32,9 +32,19 @@
 namespace JSC {
 
 class JSStringJoiner {
+    WTF_FORBID_HEAP_ALLOCATION;
 public:
-    JSStringJoiner(JSGlobalObject*, StringView separator, size_t stringCount);
+
+    struct Entry {
+        NO_UNIQUE_ADDRESS StringViewWithUnderlyingString m_view;
+        NO_UNIQUE_ADDRESS uint16_t m_additional { 0 };
+    };
+    using Entries = Vector<Entry, 16>;
+
+    JSStringJoiner(StringView separator);
     ~JSStringJoiner();
+
+    void reserveCapacity(JSGlobalObject*, size_t);
 
     void append(JSGlobalObject*, JSValue);
     void appendNumber(VM&, int32_t);
@@ -45,51 +55,74 @@ public:
     JSValue join(JSGlobalObject*);
 
 private:
-    void append(StringViewWithUnderlyingString&&);
+    void append(JSString*, StringViewWithUnderlyingString&&);
     void append8Bit(const String&);
     unsigned joinedLength(JSGlobalObject*) const;
     JSValue joinSlow(JSGlobalObject*);
 
     StringView m_separator;
-    Vector<StringViewWithUnderlyingString> m_strings;
+    Entries m_strings;
     CheckedUint32 m_accumulatedStringsLength;
+    CheckedUint32 m_stringsCount;
     bool m_isAll8Bit { true };
+    JSString* m_lastString { nullptr };
 };
 
-inline JSStringJoiner::JSStringJoiner(JSGlobalObject* globalObject, StringView separator, size_t stringCount)
+inline JSStringJoiner::JSStringJoiner(StringView separator)
     : m_separator(separator)
     , m_isAll8Bit(m_separator.is8Bit())
 {
+}
+
+inline void JSStringJoiner::reserveCapacity(JSGlobalObject* globalObject, size_t count)
+{
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    if (UNLIKELY(!m_strings.tryReserveCapacity(stringCount)))
+    if (UNLIKELY(!m_strings.tryReserveCapacity(count)))
         throwOutOfMemoryError(globalObject, scope);
 }
 
 inline JSValue JSStringJoiner::join(JSGlobalObject* globalObject)
 {
-    if (m_strings.size() == 1)
-        return jsString(globalObject->vm(), m_strings[0].toString());
+    if (m_stringsCount == 1) {
+        if (m_lastString)
+            return m_lastString;
+        return jsString(globalObject->vm(), m_strings[0].m_view.toString());
+    }
     return joinSlow(globalObject);
 }
 
-ALWAYS_INLINE void JSStringJoiner::append(StringViewWithUnderlyingString&& string)
+ALWAYS_INLINE void JSStringJoiner::append(JSString* jsString, StringViewWithUnderlyingString&& string)
 {
+    ++m_stringsCount;
+    if (m_lastString == jsString) {
+        auto& entry = m_strings.last();
+        if (LIKELY(entry.m_additional < UINT16_MAX)) {
+            ++entry.m_additional;
+            m_accumulatedStringsLength += entry.m_view.view.length();
+            return;
+        }
+    }
     m_accumulatedStringsLength += string.view.length();
     m_isAll8Bit = m_isAll8Bit && string.view.is8Bit();
-    m_strings.uncheckedAppend(WTFMove(string));
+    m_strings.append({ WTFMove(string), 0 });
+    m_lastString = jsString;
 }
 
 ALWAYS_INLINE void JSStringJoiner::append8Bit(const String& string)
 {
     ASSERT(string.is8Bit());
+    ++m_stringsCount;
     m_accumulatedStringsLength += string.length();
-    m_strings.uncheckedAppend({ string, string });
+    m_strings.append({ { string, string }, 0 });
+    m_lastString = nullptr;
 }
 
 ALWAYS_INLINE void JSStringJoiner::appendEmptyString()
 {
-    m_strings.uncheckedAppend({ { }, { } });
+    ++m_stringsCount;
+    m_strings.append({ { { }, { } }, 0 });
+    m_lastString = nullptr;
 }
 
 ALWAYS_INLINE bool JSStringJoiner::appendWithoutSideEffects(JSGlobalObject* globalObject, JSValue value)
@@ -109,7 +142,7 @@ ALWAYS_INLINE bool JSStringJoiner::appendWithoutSideEffects(JSGlobalObject* glob
         if (!value.asCell()->isString())
             return false;
         jsString = asString(value);
-        append(jsString->viewWithUnderlyingString(globalObject));
+        append(jsString, jsString->viewWithUnderlyingString(globalObject));
         return true;
     }
 
@@ -150,9 +183,10 @@ ALWAYS_INLINE void JSStringJoiner::append(JSGlobalObject* globalObject, JSValue 
     bool success = appendWithoutSideEffects(globalObject, value);
     RETURN_IF_EXCEPTION(scope, void());
     if (!success) {
-        JSString* jsString = value.toString(globalObject);
+        ASSERT(value.isCell());
+        JSString* jsString = value.asCell()->toStringInline(globalObject);
         RETURN_IF_EXCEPTION(scope, void());
-        RELEASE_AND_RETURN(scope, append(jsString->viewWithUnderlyingString(globalObject)));
+        RELEASE_AND_RETURN(scope, append(jsString, jsString->viewWithUnderlyingString(globalObject)));
     }
 }
 

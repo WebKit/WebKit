@@ -179,6 +179,9 @@ public:
     JS_EXPORT_PRIVATE double toNumber(JSGlobalObject*) const;
     JSObject* toObject(JSGlobalObject*) const;
 
+    JSString* toStringInline(JSGlobalObject*) const;
+    JS_EXPORT_PRIVATE JSString* toStringSlowCase(JSGlobalObject*) const;
+
     void dump(PrintStream&) const;
     JS_EXPORT_PRIVATE static void dumpToStream(const JSCell*, PrintStream&);
 

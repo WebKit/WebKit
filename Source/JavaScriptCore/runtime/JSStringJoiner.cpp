@@ -30,9 +30,7 @@
 
 namespace JSC {
 
-JSStringJoiner::~JSStringJoiner()
-{
-}
+JSStringJoiner::~JSStringJoiner() = default;
 
 template<typename CharacterType>
 static inline void appendStringToData(CharacterType*& data, StringView string)
@@ -46,7 +44,7 @@ static inline void appendStringToData(CharacterType*& data, StringView string)
 }
 
 template<typename CharacterType>
-static inline String joinStrings(const Vector<StringViewWithUnderlyingString>& strings, StringView separator, unsigned joinedLength)
+static inline String joinStrings(const JSStringJoiner::Entries& strings, StringView separator, unsigned joinedLength)
 {
     ASSERT(joinedLength);
 
@@ -55,28 +53,60 @@ static inline String joinStrings(const Vector<StringViewWithUnderlyingString>& s
     if (UNLIKELY(result.isNull()))
         return result;
 
-    appendStringToData(data, strings[0].view);
-
     unsigned size = strings.size();
 
     switch (separator.length()) {
-    case 0:
-        for (unsigned i = 1; i < size; ++i)
-            appendStringToData(data, strings[i].view);
-        break;
-    case 1: {
-        CharacterType separatorCharacter = separator[0];
-        for (unsigned i = 1; i < size; ++i) {
-            *data++ = separatorCharacter;
-            appendStringToData(data, strings[i].view);
+    case 0: {
+        for (unsigned i = 0; i < size; ++i) {
+            const auto& entry = strings[i];
+            unsigned count = entry.m_additional;
+            do {
+                appendStringToData(data, entry.m_view.view);
+            } while (count--);
         }
         break;
     }
-    default:
-        for (unsigned i = 1; i < size; ++i) {
-            appendStringToData(data, separator);
-            appendStringToData(data, strings[i].view);
+    case 1: {
+        CharacterType separatorCharacter = separator[0];
+        {
+            const auto& entry = strings[0];
+            unsigned count = entry.m_additional;
+            appendStringToData(data, entry.m_view.view);
+            while (count--) {
+                *data++ = separatorCharacter;
+                appendStringToData(data, entry.m_view.view);
+            }
         }
+        for (unsigned i = 1; i < size; ++i) {
+            const auto& entry = strings[i];
+            unsigned count = entry.m_additional;
+            do {
+                *data++ = separatorCharacter;
+                appendStringToData(data, entry.m_view.view);
+            } while (count--);
+        }
+        break;
+    }
+    default: {
+        {
+            const auto& entry = strings[0];
+            unsigned count = entry.m_additional;
+            appendStringToData(data, entry.m_view.view);
+            while (count--) {
+                appendStringToData(data, separator);
+                appendStringToData(data, entry.m_view.view);
+            }
+        }
+        for (unsigned i = 1; i < size; ++i) {
+            const auto& entry = strings[i];
+            unsigned count = entry.m_additional;
+            do {
+                appendStringToData(data, separator);
+                appendStringToData(data, entry.m_view.view);
+            } while (count--);
+        }
+        break;
+    }
     }
     ASSERT(data == result.characters<CharacterType>() + joinedLength);
 
@@ -88,12 +118,11 @@ inline unsigned JSStringJoiner::joinedLength(JSGlobalObject* globalObject) const
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    unsigned numberOfStrings = m_strings.size();
-    if (!numberOfStrings)
+    if (!m_stringsCount)
         return 0;
 
     CheckedInt32 separatorLength = m_separator.length();
-    CheckedInt32 totalSeparatorsLength = separatorLength * (numberOfStrings - 1);
+    CheckedInt32 totalSeparatorsLength = separatorLength * (m_stringsCount - 1);
     CheckedInt32 totalLength = totalSeparatorsLength + m_accumulatedStringsLength;
     if (totalLength.hasOverflowed()) {
         throwOutOfMemoryError(globalObject, scope);

@@ -2669,8 +2669,14 @@ JSString* JSObject::toString(JSGlobalObject* globalObject) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue primitive = toPrimitive(globalObject, PreferString);
+
+    JSValue primitive = callToPrimitiveFunction<CachedSpecialPropertyKey::ToPrimitive>(globalObject, this, vm.propertyNames->toPrimitiveSymbol, PreferString);
     RETURN_IF_EXCEPTION(scope, jsEmptyString(vm));
+    if (LIKELY(!primitive)) {
+        primitive = ordinaryToPrimitive(globalObject, PreferString);
+        RETURN_IF_EXCEPTION(scope, jsEmptyString(vm));
+    }
+
     RELEASE_AND_RETURN(scope, primitive.toString(globalObject));
 }
 

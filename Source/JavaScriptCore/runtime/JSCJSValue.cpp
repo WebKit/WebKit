@@ -35,8 +35,6 @@
 
 namespace JSC {
 
-const ASCIILiteral SymbolCoercionError { "Cannot convert a symbol to a string"_s };
-
 double JSValue::toIntegerPreserveNaN(JSGlobalObject* globalObject) const
 {
     if (isInt32())
@@ -405,27 +403,9 @@ JSString* JSValue::toStringSlowCase(JSGlobalObject* globalObject, bool returnEmp
         return jsNontrivialString(vm, vm.numericStrings.add(integer));
     }
 #endif
-    if (isHeapBigInt()) {
-        JSBigInt* bigInt = asHeapBigInt();
-        // FIXME: we should rather have two cases here: one-character string vs jsNonTrivialString for everything else.
-        auto string = bigInt->toString(globalObject, 10);
-        RETURN_IF_EXCEPTION(scope, errorValue());
-        JSString* returnString = JSString::create(vm, string.releaseImpl().releaseNonNull());
-        RETURN_IF_EXCEPTION(scope, errorValue());
-        return returnString;
-    }
-    if (isSymbol()) {
-        throwTypeError(globalObject, scope, SymbolCoercionError);
-        return errorValue();
-    }
-
-    ASSERT(isObject()); // String, Symbol, and HeapBigInt are already handled.
-    JSValue value = asObject(asCell())->toPrimitive(globalObject, PreferString);
+    JSString* returnString = asCell()->toStringInline(globalObject);
     RETURN_IF_EXCEPTION(scope, errorValue());
-    ASSERT(!value.isObject());
-    JSString* result = value.toString(globalObject);
-    RETURN_IF_EXCEPTION(scope, errorValue());
-    return result;
+    return returnString;
 }
 
 String JSValue::toWTFStringSlowCase(JSGlobalObject* globalObject) const
