@@ -143,6 +143,8 @@ private:
     void addRemoteStream(GstPad*);
     void removeRemoteStream(GstPad*);
 
+    int pickAvailablePayloadType();
+
     ExceptionOr<Backends> createTransceiverBackends(const String& kind, const RTCRtpTransceiverInit&, GStreamerRtpSenderBackend::Source&&);
     GStreamerRtpSenderBackend::Source createSourceForTrack(MediaStreamTrack&);
 
@@ -164,7 +166,6 @@ private:
 #endif
 
     HashMap<String, RealtimeMediaSource::Type> m_mediaForMid;
-    RealtimeMediaSource::Type mediaTypeForMid(const char* mid);
 
     GStreamerPeerConnectionBackend& m_peerConnectionBackend;
     GRefPtr<GstElement> m_webrtcBin;
@@ -175,7 +176,6 @@ private:
     Ref<GStreamerStatsCollector> m_statsCollector;
 
     unsigned m_requestPadCounter { 0 };
-    int m_ptCounter { 96 };
     unsigned m_pendingIncomingStreams { 0 };
     uint32_t m_negotiationNeededEventId { 0 };
 

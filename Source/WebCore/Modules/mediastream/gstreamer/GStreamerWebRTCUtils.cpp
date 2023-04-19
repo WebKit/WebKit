@@ -472,6 +472,20 @@ uint32_t UniqueSSRCGenerator::generateSSRC()
     return std::numeric_limits<uint32_t>::max();
 }
 
+std::optional<int> payloadTypeForEncodingName(const char* encodingName)
+{
+    static HashMap<String, int> staticPayloadTypes = {
+        { "PCMU"_s, 0 },
+        { "PCMA"_s, 8 },
+        { "G722"_s, 9 },
+    };
+
+    auto key = String::fromLatin1(encodingName);
+    if (staticPayloadTypes.contains(key))
+        return staticPayloadTypes.get(key);
+    return { };
+}
+
 GRefPtr<GstCaps> capsFromRtpCapabilities(RefPtr<UniqueSSRCGenerator> ssrcGenerator, const RTCRtpCapabilities& capabilities, Function<void(GstStructure*)> supplementCapsCallback)
 {
     auto caps = adoptGRef(gst_caps_new_empty());
@@ -493,6 +507,10 @@ GRefPtr<GstCaps> capsFromRtpCapabilities(RefPtr<UniqueSSRCGenerator> ssrcGenerat
 
         if (codec.channels && *codec.channels > 1)
             gst_structure_set(codecStructure, "encoding-params", G_TYPE_STRING, makeString(*codec.channels).ascii().data(), nullptr);
+
+        const char* encodingName = gst_structure_get_string(codecStructure, "encoding-name");
+        if (auto payloadType = payloadTypeForEncodingName(encodingName))
+            gst_structure_set(codecStructure, "payload", G_TYPE_INT, *payloadType, nullptr);
 
         supplementCapsCallback(codecStructure);
 

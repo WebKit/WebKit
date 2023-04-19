@@ -651,10 +651,15 @@ void GStreamerMediaEndpoint::configureAndLinkSource(RealtimeOutgoingMediaSourceG
 GRefPtr<GstPad> GStreamerMediaEndpoint::requestPad(std::optional<unsigned> mLineIndex, const GRefPtr<GstCaps>& allowedCaps, const String& mediaStreamID)
 {
     auto caps = adoptGRef(gst_caps_copy(allowedCaps.get()));
-    int payloadType = 96;
+    int availablePayloadType = pickAvailablePayloadType();
     for (unsigned i = 0; i < gst_caps_get_size(caps.get()); i++) {
         auto* structure = gst_caps_get_structure(caps.get(), i);
-        gst_structure_set(structure, "payload", G_TYPE_INT, payloadType++, nullptr);
+        if (gst_structure_has_field(structure, "payload"))
+            continue;
+        auto payloadType = payloadTypeForEncodingName(gst_structure_get_string(structure, "encoding-name"));
+        if (!payloadType)
+            payloadType = availablePayloadType++;
+        gst_structure_set(structure, "payload", G_TYPE_INT, *payloadType, nullptr);
     }
 
     auto requestPad = [&](const String& padId) -> GRefPtr<GstPad> {
@@ -915,6 +920,40 @@ void GStreamerMediaEndpoint::removeRemoteStream(GstPad*)
     notImplemented();
 }
 
+struct PayloadTypeHolder {
+    int payloadType { 95 };
+};
+WEBKIT_DEFINE_ASYNC_DATA_STRUCT(PayloadTypeHolder);
+
+int GStreamerMediaEndpoint::pickAvailablePayloadType()
+{
+    auto* holder = createPayloadTypeHolder();
+    GRefPtr<GArray> transceivers;
+    g_signal_emit_by_name(m_webrtcBin.get(), "get-transceivers", &transceivers.outPtr());
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Looking for unused payload type in %u transceivers", transceivers->len);
+    for (unsigned i = 0; i < transceivers->len; i++) {
+        GstWebRTCRTPTransceiver* current = g_array_index(transceivers.get(), GstWebRTCRTPTransceiver*, i);
+
+        GRefPtr<GstCaps> codecPreferences;
+        g_object_get(current, "codec-preferences", &codecPreferences.outPtr(), nullptr);
+        gst_caps_foreach(codecPreferences.get(), reinterpret_cast<GstCapsForeachFunc>(+[](GstCapsFeatures*, GstStructure* structure, gpointer data) -> gboolean {
+            int payloadType;
+            if (!gst_structure_get_int(structure, "payload", &payloadType))
+                return TRUE;
+
+            auto* holder = reinterpret_cast<PayloadTypeHolder*>(data);
+            holder->payloadType = std::max(holder->payloadType, payloadType);
+            return TRUE;
+        }), holder);
+    }
+
+    int payloadType = holder->payloadType;
+    destroyPayloadTypeHolder(holder);
+    payloadType++;
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Next available payload type is %d", payloadType);
+    return payloadType;
+}
+
 ExceptionOr<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::createTransceiverBackends(const String& kind, const RTCRtpTransceiverInit& init, GStreamerRtpSenderBackend::Source&& source)
 {
     if (!m_webrtcBin)
@@ -959,8 +998,10 @@ ExceptionOr<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::createTran
             codecs = registryScanner.audioRtpCapabilities(GStreamerRegistryScanner::Configuration::Decoding).codecs;
     }
 
-    auto caps = capsFromRtpCapabilities(m_ssrcGenerator, { .codecs = codecs, .headerExtensions = rtpExtensions }, [this](GstStructure* structure) {
-        gst_structure_set(structure, "payload", G_TYPE_INT, m_ptCounter++, nullptr);
+    int payloadType = pickAvailablePayloadType();
+    auto caps = capsFromRtpCapabilities(m_ssrcGenerator, { .codecs = codecs, .headerExtensions = rtpExtensions }, [&payloadType](GstStructure* structure) {
+        if (!gst_structure_has_field(structure, "payload"))
+            gst_structure_set(structure, "payload", G_TYPE_INT, payloadType++, nullptr);
     });
 
 #ifndef GST_DISABLE_GST_DEBUG
