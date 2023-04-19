@@ -526,15 +526,6 @@ inline void nextCharacter(UChar& currentCharacter, UChar& lastCharacter, UChar& 
     lastCharacter = currentCharacter;
 }
 
-// FIXME: Don't let counters mark themselves as needing pref width recalcs during layout
-// so we don't need this hack.
-inline void updateCounterIfNeeded(RenderText& renderText)
-{
-    if (!renderText.preferredLogicalWidthsDirty() || !is<RenderCounter>(renderText))
-        return;
-    downcast<RenderCounter>(renderText).updateCounter();
-}
-
 inline float measureHyphenWidth(RenderText& renderer, const FontCascade& font, HashSet<const Font*>* fallbackFonts = 0)
 {
     const RenderStyle& style = renderer.style();
@@ -715,7 +706,6 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     }
 
     if (m_renderTextInfo.text != &renderer) {
-        updateCounterIfNeeded(renderer);
         m_renderTextInfo.text = &renderer;
         m_renderTextInfo.font = &font;
         m_renderTextInfo.layout = font.createLayout(renderer, m_width.currentWidth(), m_collapseWhiteSpace);

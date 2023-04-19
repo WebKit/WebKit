@@ -445,9 +445,6 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
         if (m_internalMovesType == RenderObject::IsInternalMove::No) {
             if (auto* fragmentedFlow = newChild->enclosingFragmentedFlow(); is<RenderMultiColumnFlow>(fragmentedFlow))
                 multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*fragmentedFlow), *newChild);
-
-            if (is<RenderElement>(*newChild))
-                RenderCounter::rendererSubtreeAttached(downcast<RenderElement>(*newChild));
         }
     }
 
@@ -976,11 +973,6 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
     // This is needed to avoid race conditions where willBeRemovedFromTree() would dirty the tree's structure
     // and the code running here would force an untimely rebuilding, leaving |child| dangling.
     auto childToTake = parent.detachRendererInternal(child);
-
-    // rendererRemovedFromTree() walks the whole subtree. We can improve performance
-    // by skipping this step when destroying the entire tree.
-    if (!parent.renderTreeBeingDestroyed() && is<RenderElement>(*childToTake))
-        RenderCounter::rendererRemovedFromTree(downcast<RenderElement>(*childToTake));
 
     if (!parent.renderTreeBeingDestroyed()) {
         if (AXObjectCache* cache = parent.document().existingAXObjectCache())

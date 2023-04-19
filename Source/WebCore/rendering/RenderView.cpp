@@ -40,6 +40,7 @@
 #include "LocalFrameView.h"
 #include "NodeTraversal.h"
 #include "Page.h"
+#include "RenderCounter.h"
 #include "RenderDescendantIterator.h"
 #include "RenderGeometryMap.h"
 #include "RenderImage.h"
@@ -1105,6 +1106,16 @@ void RenderView::registerContainerQueryBox(const RenderBox& box)
 void RenderView::unregisterContainerQueryBox(const RenderBox& box)
 {
     m_containerQueryBoxes.remove(box);
+}
+
+void RenderView::addCounterNeedingUpdate(RenderCounter& renderer)
+{
+    m_countersNeedingUpdate.add(renderer);
+}
+
+WeakHashSet<RenderCounter> RenderView::takeCountersNeedingUpdate()
+{
+    return std::exchange(m_countersNeedingUpdate, { });
 }
 
 } // namespace WebCore

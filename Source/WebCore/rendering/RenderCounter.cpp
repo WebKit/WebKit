@@ -414,7 +414,7 @@ RenderCounter::RenderCounter(Document& document, const CounterContent& counter)
     : RenderText(document, emptyString())
     , m_counter(counter)
 {
-    view().addRenderCounter();
+    view().addCounterNeedingUpdate(*this);
 }
 
 RenderCounter::~RenderCounter()
@@ -424,8 +424,6 @@ RenderCounter::~RenderCounter()
 
 void RenderCounter::willBeDestroyed()
 {
-    view().removeRenderCounter();
-
     if (m_counterNode) {
         m_counterNode->removeRenderer(*this);
         ASSERT(!m_counterNode);
@@ -446,21 +444,9 @@ bool RenderCounter::isCounter() const
 
 String RenderCounter::originalText() const
 {
-    if (!m_counterNode) {
-        RenderElement* beforeAfterContainer = parent();
-        while (true) {
-            if (!beforeAfterContainer)
-                return String();
-            if (!beforeAfterContainer->isAnonymous() && !beforeAfterContainer->isPseudoElement())
-                return String(); // RenderCounters are restricted to before and after pseudo elements
-            PseudoId containerStyle = beforeAfterContainer->style().styleType();
-            if ((containerStyle == PseudoId::Before) || (containerStyle == PseudoId::After))
-                break;
-            beforeAfterContainer = beforeAfterContainer->parent();
-        }
-        makeCounterNode(*beforeAfterContainer, m_counter.identifier(), true)->addRenderer(const_cast<RenderCounter&>(*this));
-        ASSERT(m_counterNode);
-    }
+    if (!m_counterNode)
+        return emptyString();
+
     CheckedPtr child = m_counterNode;
     int value = child->actsAsReset() ? child->value() : child->countInParent();
 
@@ -482,21 +468,22 @@ String RenderCounter::originalText() const
 
 void RenderCounter::updateCounter()
 {
-    computePreferredLogicalWidths(0);
-}
+    if (!m_counterNode) {
+        RenderElement* beforeAfterContainer = parent();
+        while (true) {
+            if (!beforeAfterContainer)
+                return;
+            if (!beforeAfterContainer->isAnonymous() && !beforeAfterContainer->isPseudoElement())
+                return;
+            auto containerStyle = beforeAfterContainer->style().styleType();
+            if (containerStyle == PseudoId::Before || containerStyle == PseudoId::After)
+                break;
+            beforeAfterContainer = beforeAfterContainer->parent();
+        }
+        makeCounterNode(*beforeAfterContainer, m_counter.identifier(), true)->addRenderer(const_cast<RenderCounter&>(*this));
+    }
 
-void RenderCounter::computePreferredLogicalWidths(float lead, bool forcedMinMaxWidthComputation)
-{
-    // FIXME: We shouldn't be modifying the tree in computePreferredLogicalWidths.
-    // Instead, we should properly hook the appropriate changes in the DOM and modify
-    // the render tree then. When that's done, we also won't need to override
-    // computePreferredLogicalWidths at all.
-    // https://bugs.webkit.org/show_bug.cgi?id=104829
-    SetLayoutNeededForbiddenScope layoutForbiddenScope(*this, false);
-
-    setRenderedText(originalText());
-
-    RenderText::computePreferredLogicalWidths(lead, forcedMinMaxWidthComputation);
+    setText(originalText(), true);
 }
 
 static void destroyCounterNodeWithoutMapRemoval(const AtomString& identifier, CounterNode& node)
@@ -537,79 +524,6 @@ void RenderCounter::destroyCounterNode(RenderElement& owner, const AtomString& i
     // a style change for the renderer involving removal of all counter
     // directives must occur, in which case, RenderCounter::destroyCounterNodes()
     // will be called.
-}
-
-void RenderCounter::rendererRemovedFromTree(RenderElement& renderer)
-{
-    if (!renderer.view().hasRenderCounters())
-        return;
-    RenderObject* currentRenderer = renderer.lastLeafChild();
-    if (!currentRenderer)
-        currentRenderer = &renderer;
-    while (true) {
-        if (is<RenderElement>(*currentRenderer)) {
-            auto& counterNodeRenderer = downcast<RenderElement>(*currentRenderer);
-            if (counterNodeRenderer.hasCounterNodeMap())
-                destroyCounterNodes(counterNodeRenderer);
-        }
-        if (currentRenderer == &renderer)
-            break;
-        currentRenderer = currentRenderer->previousInPreOrder();
-    }
-}
-
-static void updateCounters(RenderElement& renderer)
-{
-    auto* directiveMap = renderer.style().counterDirectives();
-    if (!directiveMap)
-        return;
-    if (!renderer.hasCounterNodeMap()) {
-        for (auto& key : directiveMap->keys())
-            makeCounterNode(renderer, key, false);
-        return;
-    }
-    ASSERT(counterMaps().contains(renderer));
-    auto* counterMap = counterMaps().find(renderer)->value.get();
-    for (auto& key : directiveMap->keys()) {
-        RefPtr<CounterNode> node = counterMap->get(key);
-        if (!node) {
-            makeCounterNode(renderer, key, false);
-            continue;
-        }
-        auto place = findPlaceForCounter(renderer, key, node->hasResetType());
-        if (node != counterMap->get(key))
-            continue;
-        CounterNode* parent = node->parent();
-        if (place.parent == parent && place.previousSibling == node->previousSibling())
-            continue;
-        if (parent)
-            parent->removeChild(*node);
-        if (place.parent)
-            place.parent->insertAfter(*node, place.previousSibling.get(), key);
-    }
-}
-
-void RenderCounter::rendererSubtreeAttached(RenderElement& renderer)
-{
-    if (!renderer.view().hasRenderCounters())
-        return;
-    Element* element = renderer.element();
-    if (element && !element->isPseudoElement())
-        element = element->parentElement();
-    else
-        element = renderer.generatingElement();
-    if (element && !element->renderer())
-        return; // No need to update if the parent is not attached yet
-
-    bool crossedStyleContainmentBoundary = false;
-    for (RenderObject* descendant = &renderer; descendant; descendant = descendant->nextInPreOrder(&renderer)) {
-        if (!is<RenderElement>(descendant))
-            continue;
-
-        crossedStyleContainmentBoundary = crossedStyleContainmentBoundary || downcast<RenderElement>(*descendant).shouldApplyStyleContainment();
-        if (crossedStyleContainmentBoundary)
-            updateCounters(downcast<RenderElement>(*descendant));
-    }
 }
 
 void RenderCounter::rendererStyleChangedSlowCase(RenderElement& renderer, const RenderStyle* oldStyle, const RenderStyle& newStyle)

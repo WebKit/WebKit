@@ -38,8 +38,6 @@ public:
 
     static void destroyCounterNodes(RenderElement&);
     static void destroyCounterNode(RenderElement&, const AtomString& identifier);
-    static void rendererSubtreeAttached(RenderElement&);
-    static void rendererRemovedFromTree(RenderElement&);
     static void rendererStyleChanged(RenderElement&, const RenderStyle* oldStyle, const RenderStyle& newStyle);
 
     void updateCounter();
@@ -53,8 +51,6 @@ private:
     bool isCounter() const override;
     String originalText() const override;
     
-    void computePreferredLogicalWidths(float leadWidth, bool forcedMinMaxWidthComputation = false) override;
-
     RefPtr<CSSCounterStyle> counterStyle() const;
 
     CounterContent m_counter;
