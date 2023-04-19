@@ -324,6 +324,7 @@ class Bugzilla(object):
             from mechanize import Browser
             self._browser = Browser()
             self._browser.set_handle_robots(False)
+            self._browser.addheaders = [('User-agent', 'org.webkit.webkit-patch')]
         return self._browser
 
     def _set_browser(self, value):

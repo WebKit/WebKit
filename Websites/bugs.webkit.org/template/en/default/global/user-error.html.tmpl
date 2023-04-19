@@ -1947,6 +1947,10 @@
     [% END %]
     with the External Login ID "[% extern_id FILTER html %]".
 
+  [% ELSIF error == "invalid_user_agent" %]
+    [% title = "Invalid User Agent" %]
+    The WebKit project uses GitHub pull-requests to propose changes. Patches must be uploaded by 'Tools/Scripts/webkit-patch'.
+
   [% ELSE %]
 
     [%# Try to find hooked error messages %]
