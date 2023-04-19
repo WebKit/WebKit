@@ -120,7 +120,7 @@ void DrawingAreaWC::setLayerTreeStateIsFrozen(bool isFrozen)
     }
 }
 
-void DrawingAreaWC::updateGeometry(uint64_t backingStoreStateID, IntSize viewSize)
+void DrawingAreaWC::updateGeometryWC(uint64_t backingStoreStateID, IntSize viewSize)
 {
     m_backingStoreStateID = backingStoreStateID;
     m_webPage.setSize(viewSize);

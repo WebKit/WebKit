@@ -55,7 +55,10 @@ private:
     void deviceOrPageScaleFactorChanged() override { }
     void setLayerTreeStateIsFrozen(bool) override;
     bool layerTreeStateIsFrozen() const override { return m_isRenderingSuspended; }
-    void updateGeometry(uint64_t, WebCore::IntSize) override;
+#if USE(GRAPHICS_LAYER_TEXTURE_MAPPER)    
+    void updateGeometry(const WebCore::IntSize&, CompletionHandler<void()>&&) override { }
+#endif
+    void updateGeometryWC(uint64_t, WebCore::IntSize) override;
     void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) override;
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) override;
     void updatePreferences(const WebPreferencesStore&) override;
