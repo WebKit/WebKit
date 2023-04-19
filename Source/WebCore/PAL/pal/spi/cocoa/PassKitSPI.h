@@ -346,7 +346,7 @@ typedef void(^PKCanMakePaymentsCompletion)(BOOL isValid, NSError *);
 
 // FIXME: rdar://107955442 Remove staging code.
 
-typedef NS_ENUM(NSUInteger, PKApplePayLaterAvailability);
+typedef NS_ENUM(NSInteger, PKApplePayLaterAvailability);
 
 @interface PKPaymentRequest (Staging_107259773)
 @property (nonatomic, assign) PKApplePayLaterAvailability applePayLaterAvailability;
