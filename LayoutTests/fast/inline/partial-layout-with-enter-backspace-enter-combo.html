@@ -1,0 +1,25 @@
+<style>
+textarea {
+  width: 40px;
+  height: 500px;
+}
+</style>
+<pre>
+1. Move caret to the end of the editable content.
+2. Hit enter-backspace-enter combo.
+PASS if caret moves. 
+</pre>
+<textarea id=focus_this>ABC ABC ABC</textarea>
+<pre id=result></pre>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+focus_this.focus();
+document.execCommand('selectAll', false, null);
+document.getSelection().collapseToEnd();
+document.execCommand('insertText', false, "\n");
+window.getSelection().modify("extend", "backward", "character");
+document.execCommand('forwardDelete');
+document.execCommand('insertText', false, "\nPASS");
+result.innerText = focus_this.value;
+</script>

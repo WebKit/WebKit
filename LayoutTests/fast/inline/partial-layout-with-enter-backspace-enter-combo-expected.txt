@@ -1,0 +1,6 @@
+1. Move caret to the end of the editable content.
+2. Hit enter-backspace-enter combo.
+PASS if caret moves.
+
+ABC ABC ABC
+PASS
