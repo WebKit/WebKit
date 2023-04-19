@@ -40,7 +40,7 @@ public:
     virtual ~TextDetectorImpl();
 
 private:
-    TextDetectorImpl();
+    WEBCORE_EXPORT TextDetectorImpl();
 
     TextDetectorImpl(const TextDetectorImpl&) = delete;
     TextDetectorImpl(TextDetectorImpl&&) = delete;

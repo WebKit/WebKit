@@ -36,10 +36,11 @@ namespace WebCore {
 
 struct FaceDetectorOptions;
 struct DetectedFace;
+class ScriptExecutionContext;
 
 class FaceDetector : public RefCounted<FaceDetector> {
 public:
-    static ExceptionOr<Ref<FaceDetector>> create(const FaceDetectorOptions&);
+    static ExceptionOr<Ref<FaceDetector>> create(ScriptExecutionContext&, const FaceDetectorOptions&);
 
     ~FaceDetector();
 
