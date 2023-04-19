@@ -193,6 +193,7 @@ void GStreamerElementHarness::pushStickyEvents(GRefPtr<GstCaps>&& inputCaps)
 {
     if (!m_inputCaps || !gst_caps_is_equal(inputCaps.get(), m_inputCaps.get())) {
         m_inputCaps = WTFMove(inputCaps);
+        GST_DEBUG_OBJECT(m_element.get(), "Signaling downstream with caps %" GST_PTR_FORMAT, m_inputCaps.get());
         pushEvent(adoptGRef(gst_event_new_caps(m_inputCaps.get())));
     } else if (m_stickyEventsSent.load()) {
         GST_DEBUG_OBJECT(m_element.get(), "Input caps have not changed, not pushing sticky events again");
@@ -256,8 +257,11 @@ GStreamerElementHarness::Stream::Stream(GRefPtr<GstPad>&& pad, RefPtr<GStreamerE
 
     gst_pad_set_chain_function_full(m_targetPad.get(), reinterpret_cast<GstPadChainFunction>(+[](GstPad* pad, GstObject*, GstBuffer* buffer) -> GstFlowReturn {
         auto& stream = *reinterpret_cast<GStreamerElementHarness::Stream*>(pad->chaindata);
-        if (stream.m_downstreamHarness)
-            return stream.m_downstreamHarness->pushBufferFull(buffer);
+        if (auto downstreamHarness = stream.downstreamHarness()) {
+            if (!downstreamHarness->isStarted())
+                downstreamHarness->start(GRefPtr<GstCaps>(stream.outputCaps()));
+            return downstreamHarness->pushBufferFull(adoptGRef(buffer));
+        }
         return stream.chainBuffer(buffer);
     }),  this, nullptr);
     gst_pad_set_event_function_full(m_targetPad.get(), reinterpret_cast<GstPadEventFunction>(+[](GstPad* pad, GstObject*, GstEvent* event) -> gboolean {

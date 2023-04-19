@@ -94,6 +94,38 @@ ImageDecoderGStreamer::ImageDecoderGStreamer(FragmentedSharedBuffer& data, const
         GST_DEBUG_CATEGORY_INIT(webkit_image_decoder_debug, "webkitimagedecoder", 0, "WebKit image decoder");
     });
 
+    static Atomic<uint32_t> decoderId;
+    GRefPtr<GstElement> parsebin = gst_element_factory_make("parsebin", makeString("image-decoder-parser-", decoderId.exchangeAdd(1)).utf8().data());
+    m_parserHarness = GStreamerElementHarness::create(WTFMove(parsebin), [](auto&, const auto&) { }, [this](auto& pad) -> RefPtr<GStreamerElementHarness> {
+        auto caps = adoptGRef(gst_pad_query_caps(pad.get(), nullptr));
+        auto identityHarness = GStreamerElementHarness::create(GRefPtr<GstElement>(gst_element_factory_make("identity", nullptr)), [](auto&, const auto&) { });
+        GST_DEBUG_OBJECT(pad.get(), "Caps on parser source pad: %" GST_PTR_FORMAT, caps.get());
+        if (!caps || !doCapsHaveType(caps.get(), "video")) {
+            GST_WARNING_OBJECT(m_decoderHarness->element(), "Ignoring non-video track");
+            return identityHarness;
+        }
+
+        if (m_decoderHarness) {
+            GST_WARNING_OBJECT(m_decoderHarness->element(), "Decoder already configured, ignoring additional video track");
+            return identityHarness;
+        }
+
+        auto& scanner = GStreamerRegistryScanner::singleton();
+        auto lookupResult = scanner.areCapsSupported(GStreamerRegistryScanner::Configuration::Decoding, caps, false);
+        if (!lookupResult) {
+            GST_WARNING_OBJECT(m_parserHarness->element(), "No decoder found for caps %" GST_PTR_FORMAT, caps.get());
+            return identityHarness;
+        }
+
+        GRefPtr<GstElement> element = gst_element_factory_create(lookupResult.factory.get(), nullptr);
+        configureVideoDecoderForHarnessing(element);
+        m_decoderHarness = GStreamerElementHarness::create(WTFMove(element), [this](auto& stream, const auto& outputBuffer) {
+            auto outputCaps = stream.outputCaps();
+            storeDecodedSample(adoptGRef(gst_sample_new(outputBuffer.get(), outputCaps.get(), nullptr, nullptr)));
+        }, { });
+        return m_decoderHarness;
+    });
+
     pushEncodedData(data);
 }
 
@@ -128,6 +160,9 @@ bool ImageDecoderGStreamer::canDecodeType(const String& mimeType)
 
 EncodedDataStatus ImageDecoderGStreamer::encodedDataStatus() const
 {
+    if (m_error)
+        return EncodedDataStatus::Error;
+
     if (m_eos)
         return EncodedDataStatus::Complete;
     if (m_size)
@@ -241,6 +276,7 @@ void ImageDecoderGStreamer::pushEncodedData(const FragmentedSharedBuffer& shared
     auto bytes = data->createGBytes();
     auto buffer = adoptGRef(gst_buffer_new_wrapped_bytes(bytes.get()));
     m_eos = false;
+    m_error = false;
 
     auto scopeExit = makeScopeExit([&] {
         callOnMainThreadAndWait([&] {
@@ -249,56 +285,39 @@ void ImageDecoderGStreamer::pushEncodedData(const FragmentedSharedBuffer& shared
         });
     });
 
-    static Atomic<uint32_t> decoderId;
-    GRefPtr<GstElement> parsebin = gst_element_factory_make("parsebin", makeString("image-decoder-parser-", decoderId.exchangeAdd(1)).utf8().data());
-    auto parserHarness = GStreamerElementHarness::create(WTFMove(parsebin), [](auto&, const auto&) { }, [this](auto& pad) -> RefPtr<GStreamerElementHarness> {
-        auto caps = adoptGRef(gst_pad_query_caps(pad.get(), nullptr));
-        if (!caps || !doCapsHaveType(caps.get(), "video"))
-            return nullptr;
-
-        if (m_decoderHarness) {
-            GST_WARNING_OBJECT(m_decoderHarness->element(), "The media has more than one video track, only the first one will be decoded");
-            return nullptr;
-        }
-
-        auto& scanner = GStreamerRegistryScanner::singleton();
-        auto lookupResult = scanner.areCapsSupported(GStreamerRegistryScanner::Configuration::Decoding, caps, false);
-        if (!lookupResult)
-            return nullptr;
-
-        GRefPtr<GstElement> element = gst_element_factory_create(lookupResult.factory.get(), nullptr);
-        configureVideoDecoderForHarnessing(element);
-        m_decoderHarness = GStreamerElementHarness::create(WTFMove(element), [this](auto& stream, const auto& outputBuffer) {
-            auto outputCaps = stream.outputCaps();
-            auto sample = adoptGRef(gst_sample_new(outputBuffer.get(), outputCaps.get(), nullptr, nullptr));
-            storeDecodedSample(WTFMove(sample));
-        }, { });
-        m_decoderHarness->start(WTFMove(caps));
-        return m_decoderHarness;
-    });
-
-    auto caps = adoptGRef(gst_type_find_helper_for_buffer(GST_OBJECT_CAST(parserHarness->element()), buffer.get(), nullptr));
-    GST_DEBUG_OBJECT(parserHarness->element(), "Caps typefind result: %" GST_PTR_FORMAT, caps.get());
+    auto caps = adoptGRef(gst_type_find_helper_for_buffer(GST_OBJECT_CAST(m_parserHarness->element()), buffer.get(), nullptr));
+    GST_DEBUG_OBJECT(m_parserHarness->element(), "Caps typefind result: %" GST_PTR_FORMAT, caps.get());
     if (!caps) {
-        GST_WARNING_OBJECT(parserHarness->element(), "Typefinding failed");
+        GST_WARNING_OBJECT(m_parserHarness->element(), "Typefinding failed");
+        m_error = true;
         return;
     }
 
-    parserHarness->start(WTFMove(caps));
-    parserHarness->pushBuffer(WTFMove(buffer));
+    if (!m_parserHarness->pushSample(adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr)))) {
+        GST_WARNING_OBJECT(m_parserHarness->element(), "Parser or downstream decoder failed to process data");
+        m_error = true;
+        return;
+    }
 
     if (!m_decoderHarness) {
-        GST_WARNING_OBJECT(parserHarness->element(), "Parsing failed");
+        GST_WARNING_OBJECT(m_parserHarness->element(), "Parsing failed");
+        m_error = true;
         return;
     }
 
-    for (auto& stream : parserHarness->outputStreams()) {
+    for (auto& stream : m_parserHarness->outputStreams()) {
         while (auto event = stream->pullEvent())
             m_decoderHarness->pushEvent(WTFMove(event));
     }
 
+    for (auto& stream : m_decoderHarness->outputStreams()) {
+        while (auto event = stream->pullEvent()) {
+            if (GST_EVENT_TYPE(event.get()) == GST_EVENT_EOS)
+                m_eos = true;
+        }
+    }
+
     m_decoderHarness->flush();
-    m_eos = true;
 }
 
 } // namespace WebCore

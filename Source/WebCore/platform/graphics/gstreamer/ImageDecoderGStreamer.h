@@ -84,9 +84,11 @@ private:
     DecodeOrderSampleMap::iterator m_cursor;
     Lock m_sampleGeneratorLock;
     bool m_eos { false };
+    bool m_error { false };
     std::optional<IntSize> m_size;
     String m_mimeType;
 
+    RefPtr<GStreamerElementHarness> m_parserHarness;
     RefPtr<GStreamerElementHarness> m_decoderHarness;
 };
 

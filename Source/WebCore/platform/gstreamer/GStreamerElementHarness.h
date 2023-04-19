@@ -86,6 +86,7 @@ public:
     ~GStreamerElementHarness();
 
     void start(GRefPtr<GstCaps>&&);
+    bool isStarted() const { return m_playing.loadRelaxed(); }
 
     bool pushSample(GRefPtr<GstSample>&&);
     bool pushBuffer(GRefPtr<GstBuffer>&&);
