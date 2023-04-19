@@ -1,4 +1,33 @@
 ================
+WebKitGTK 2.40.1
+================
+
+What's new in WebKitGTK 2.40.1?
+
+  - The Bubblewrap sandbox no longer requires setting an application
+    identifier via GApplication to operate correctly. Using GApplication
+    is still recommended, but optional.
+  - Adjust the scrolling speed for mouse wheels to make it feel more natural.
+  - Allow pasting content using the Asynchronous Clipboard API when the
+    origin is the same as the clipboard contents.
+  - Improvements to the GStreamer multimedia playback, in particular
+    around MSE, WebRTC, and seeking.
+  - Make all supported image types appear in the Accept HTTP header.
+  - Fix text caret blinking when blinking is disabled in the GTK settings.
+  - Fix default database quota size definition.
+  - Fix application of all caps tags listed in the font-feature-settings
+    CSS property.
+  - Fix the build with journald support enabled when using elogind
+    instead of the systemd libraries.
+  - Fix the build when libgcrypt provides a libgcrypt-config script
+    instead of a pkg-config module file.
+  - Fix font height calculations for the font-size-adjust CSS property.
+  - Fix the build when ccache is used in certain setups.
+  - Fix the build for RISC-V 64-bit targets.
+  - Fix the build with GCC 13.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.40.0
 ================
 
