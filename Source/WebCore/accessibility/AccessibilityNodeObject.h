@@ -63,7 +63,6 @@ public:
     bool isNativeImage() const;
     bool isNativeTextControl() const override;
     bool isSecureField() const override;
-    bool isProgressIndicator() const override;
     bool isSearchField() const override;
 
     bool isChecked() const override;

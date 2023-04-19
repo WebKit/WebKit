@@ -32,6 +32,7 @@
 #include "IntPoint.h"
 #include "LayoutRect.h"
 #include "Path.h"
+#include "RenderStyleConstants.h"
 #include <variant>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -119,7 +120,6 @@ private:
     bool isSecureField() const override { return boolAttributeValue(AXPropertyName::IsSecureField); }
     bool isAttachment() const override { return boolAttributeValue(AXPropertyName::IsAttachment); }
     bool isInputImage() const override { return boolAttributeValue(AXPropertyName::IsInputImage); }
-    bool isProgressIndicator() const override { return boolAttributeValue(AXPropertyName::IsProgressIndicator); }
     bool isControl() const override { return boolAttributeValue(AXPropertyName::IsControl); }
 
     bool isList() const override { return boolAttributeValue(AXPropertyName::IsList); }
@@ -172,7 +172,7 @@ private:
     bool isSelected() const override { return boolAttributeValue(AXPropertyName::IsSelected); }
     bool isFocused() const override { return boolAttributeValue(AXPropertyName::IsFocused); }
     bool isMultiSelectable() const override { return boolAttributeValue(AXPropertyName::IsMultiSelectable); }
-    bool isVisited() const override { return boolAttributeValue(AXPropertyName::IsVisited); }
+    InsideLink insideLink() const final { return propertyValue<InsideLink>(AXPropertyName::InsideLink); }
     bool isRequired() const override { return boolAttributeValue(AXPropertyName::IsRequired); }
     bool supportsRequiredAttribute() const override { return boolAttributeValue(AXPropertyName::SupportsRequiredAttribute); }
     bool isExpanded() const override { return boolAttributeValue(AXPropertyName::IsExpanded); }
@@ -433,7 +433,6 @@ private:
     bool isOnScreen() const override;
     bool isOffScreen() const override;
     bool isPressed() const override;
-    bool isUnvisited() const override { return boolAttributeValue(AXPropertyName::IsUnvisited); }
     bool isVisible() const override { return boolAttributeValue(AXPropertyName::IsVisible); }
     bool isSelectedOptionActive() const override;
     bool hasBoldFont() const override { return boolAttributeValue(AXPropertyName::HasBoldFont); }

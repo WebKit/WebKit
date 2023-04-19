@@ -876,7 +876,7 @@ public:
     bool isMenuButton() const { return roleValue() == AccessibilityRole::MenuButton; }
     bool isMenuItem() const;
     virtual bool isInputImage() const = 0;
-    virtual bool isProgressIndicator() const = 0;
+    bool isProgressIndicator() const { return roleValue() == AccessibilityRole::ProgressIndicator || roleValue() == AccessibilityRole::Meter; }
     bool isSlider() const { return roleValue() == AccessibilityRole::Slider; }
     virtual bool isControl() const = 0;
     // lists support (l, ul, ol, dl)
@@ -979,8 +979,9 @@ public:
     virtual bool isOnScreen() const = 0;
     virtual bool isOffScreen() const = 0;
     virtual bool isPressed() const = 0;
-    virtual bool isUnvisited() const = 0;
-    virtual bool isVisited() const = 0;
+    virtual InsideLink insideLink() const = 0;
+    bool isUnvisited() const { return insideLink() == InsideLink::InsideUnvisited; }
+    bool isVisited() const { return insideLink() == InsideLink::InsideVisited; }
     virtual bool isRequired() const = 0;
     virtual bool supportsRequiredAttribute() const = 0;
     virtual bool isExpanded() const = 0;

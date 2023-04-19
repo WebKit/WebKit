@@ -126,7 +126,6 @@ public:
     bool isMediaTimeline() const { return false; }
     bool isFileUploadButton() const;
     bool isInputImage() const override { return false; }
-    bool isProgressIndicator() const override { return false; }
     virtual bool isSliderThumb() const { return false; }
     bool isControl() const override { return false; }
     virtual bool isLabel() const { return false; }
@@ -211,8 +210,7 @@ public:
     bool isMultiSelectable() const override { return false; }
     bool isOffScreen() const override { return false; }
     bool isPressed() const override { return false; }
-    bool isUnvisited() const final;
-    bool isVisited() const final;
+    InsideLink insideLink() const final;
     bool isRequired() const override { return false; }
     bool supportsRequiredAttribute() const override { return false; }
     virtual bool isLinked() const { return false; }

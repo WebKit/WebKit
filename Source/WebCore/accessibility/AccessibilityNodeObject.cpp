@@ -695,11 +695,6 @@ bool AccessibilityNodeObject::isInputImage() const
     return false;
 }
 
-bool AccessibilityNodeObject::isProgressIndicator() const
-{
-    return roleValue() == AccessibilityRole::ProgressIndicator || roleValue() == AccessibilityRole::Meter;
-}
-
 bool AccessibilityNodeObject::isEnabled() const
 {
     // ARIA says that the disabled status applies to the current element and all descendant elements.
