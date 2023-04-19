@@ -120,6 +120,9 @@ bool GStreamerMediaEndpoint::initializePipeline()
     g_signal_connect_swapped(m_webrtcBin.get(), "notify::ice-gathering-state", G_CALLBACK(+[](GStreamerMediaEndpoint* endPoint) {
         endPoint->onIceGatheringChange();
     }), this);
+    g_signal_connect_swapped(m_webrtcBin.get(), "notify::signaling-state", G_CALLBACK(+[](GStreamerMediaEndpoint* endPoint) {
+        endPoint->onSignalingStateChange();
+    }), this);
     g_signal_connect_swapped(m_webrtcBin.get(), "on-negotiation-needed", G_CALLBACK(+[](GStreamerMediaEndpoint* endPoint) {
         endPoint->onNegotiationNeeded();
     }), this);
@@ -1256,6 +1259,19 @@ void GStreamerMediaEndpoint::resume()
 
     GST_DEBUG_OBJECT(m_pipeline.get(), "Resuming");
     gst_element_set_state(m_pipeline.get(), GST_STATE_PLAYING);
+}
+
+void GStreamerMediaEndpoint::onSignalingStateChange()
+{
+    GstWebRTCSignalingState state;
+    g_object_get(m_webrtcBin.get(), "signaling-state", &state, nullptr);
+#ifndef GST_DISABLE_GST_DEBUG
+    GUniquePtr<char> desc(g_enum_to_string(GST_TYPE_WEBRTC_SIGNALING_STATE, state));
+    GST_DEBUG_OBJECT(m_webrtcBin.get(), "Signaling state changed to %s", desc.get());
+#endif
+    callOnMainThreadAndWait([state, protectedThis = Ref(*this), this] {
+        m_peerConnectionBackend.connection().setSignalingState(toSignalingState(state));
+    });
 }
 
 void GStreamerMediaEndpoint::onNegotiationNeeded()
