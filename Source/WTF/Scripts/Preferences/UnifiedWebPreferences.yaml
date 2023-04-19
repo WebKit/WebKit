@@ -3760,7 +3760,7 @@ LoadsSiteIconsIgnoringImageLoadingPreference:
 
 LocalFileContentSniffingEnabled:
   type: bool
-  status: stable
+  status: internal
   category: networking
   humanReadableName: "Local File Content Sniffing"
   humanReadableDescription: "Enable Local File Content Sniffing"
