@@ -52,6 +52,7 @@ GStreamerRtpSenderBackend::GStreamerRtpSenderBackend(GStreamerPeerConnectionBack
     , m_initData(WTFMove(initData))
 {
     ensureDebugCategoryIsRegistered();
+    GST_DEBUG_OBJECT(m_rtcSender.get(), "constructed without associated source");
 }
 
 GStreamerRtpSenderBackend::GStreamerRtpSenderBackend(GStreamerPeerConnectionBackend& backend, GRefPtr<GstWebRTCRTPSender>&& rtcSender, Source&& source, GUniquePtr<GstStructure>&& initData)
@@ -61,6 +62,29 @@ GStreamerRtpSenderBackend::GStreamerRtpSenderBackend(GStreamerPeerConnectionBack
     , m_initData(WTFMove(initData))
 {
     ensureDebugCategoryIsRegistered();
+    GST_DEBUG_OBJECT(m_rtcSender.get(), "constructed with associated source");
+}
+
+void GStreamerRtpSenderBackend::clearSource()
+{
+    ASSERT(hasSource());
+    GST_DEBUG_OBJECT(m_rtcSender.get(), "Clearing source");
+    m_source = nullptr;
+}
+
+void GStreamerRtpSenderBackend::setSource(Source&& source)
+{
+    ASSERT(!hasSource());
+    GST_DEBUG_OBJECT(m_rtcSender.get(), "Setting source");
+    m_source = WTFMove(source);
+    ASSERT(hasSource());
+}
+
+void GStreamerRtpSenderBackend::takeSource(GStreamerRtpSenderBackend& backend)
+{
+    ASSERT(backend.hasSource());
+    GST_DEBUG_OBJECT(m_rtcSender.get(), "Taking source from %" GST_PTR_FORMAT, backend.rtcSender());
+    setSource(WTFMove(backend.m_source));
 }
 
 template<typename Source>
@@ -169,6 +193,9 @@ void GStreamerRtpSenderBackend::setMediaStreamIds(const FixedVector<String>&)
 
 std::unique_ptr<RTCDtlsTransportBackend> GStreamerRtpSenderBackend::dtlsTransportBackend()
 {
+    if (!m_rtcSender)
+        return nullptr;
+
     GRefPtr<GstWebRTCDTLSTransport> transport;
     g_object_get(m_rtcSender.get(), "transport", &transport.outPtr(), nullptr);
     return transport ? makeUnique<GStreamerDtlsTransportBackend>(transport) : nullptr;
