@@ -84,7 +84,7 @@ private:
     CallGraph& m_callGraph;
     PrepareResult& m_result;
     HashMap<String, Global> m_globals;
-    IndexMap<IndexMap<Global*>> m_groupBindingMap;
+    IndexMap<Vector<std::pair<unsigned, Global*>>> m_groupBindingMap;
     IndexMap<Type*> m_structTypes;
     HashSet<String> m_defs;
     HashSet<String> m_reads;
@@ -164,8 +164,8 @@ void RewriteGlobalVariables::collectGlobals()
 
         if (resource.has_value()) {
             Global& global = result.iterator->value;
-            auto result = m_groupBindingMap.add(resource->group, IndexMap<Global*>());
-            result.iterator->value.add(resource->binding, &global);
+            auto result = m_groupBindingMap.add(resource->group, Vector<std::pair<unsigned, Global*>>());
+            result.iterator->value.append({ resource->binding, &global });
         }
     }
 }
@@ -232,14 +232,11 @@ void RewriteGlobalVariables::insertStructs()
         AST::Identifier structName = argumentBufferStructName(group);
         AST::StructureMember::List structMembers;
 
-        for (auto& bindingGlobal : bindingGlobalMap) {
-            unsigned binding = bindingGlobal.key;
-            auto& global = *bindingGlobal.value;
+        for (auto [binding, global] : bindingGlobalMap) {
+            ASSERT(global->declaration->maybeTypeName());
+            auto span = global->declaration->span();
 
-            ASSERT(global.declaration->maybeTypeName());
-            auto span = global.declaration->span();
-
-            auto* type = global.declaration->maybeTypeName()->resolvedType();
+            auto* type = global->declaration->maybeTypeName()->resolvedType();
             bool shouldBeReference = true;
             if (std::get_if<Types::Texture>(type))
                 shouldBeReference = false;
@@ -248,12 +245,12 @@ void RewriteGlobalVariables::insertStructs()
                     shouldBeReference = false;
             }
 
-            AST::TypeName::Ref memberType = *global.declaration->maybeTypeName();
+            AST::TypeName::Ref memberType = *global->declaration->maybeTypeName();
             if (shouldBeReference)
                 memberType = adoptRef(*new AST::ReferenceTypeName(span, WTFMove(memberType)));
             structMembers.append(makeUniqueRef<AST::StructureMember>(
                 span,
-                AST::Identifier::make(global.declaration->name()),
+                AST::Identifier::make(global->declaration->name()),
                 WTFMove(memberType),
                 AST::Attribute::List {
                     adoptRef(*new AST::BindingAttribute(span, binding))
