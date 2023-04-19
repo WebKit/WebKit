@@ -346,7 +346,6 @@ public:
     void paintCompositedResultsToCanvas(ImageBuffer&) override;
 
     RefPtr<PixelBuffer> readRenderingResultsForPainting();
-    RefPtr<PixelBuffer> readCompositedResultsForPainting();
 
     virtual void withDrawingBufferAsNativeImage(Function<void(NativeImage&)>);
     virtual void withDisplayBufferAsNativeImage(Function<void(NativeImage&)>);

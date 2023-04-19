@@ -3258,15 +3258,6 @@ RefPtr<PixelBuffer> GraphicsContextGLANGLE::readRenderingResultsForPainting()
     return readRenderingResults();
 }
 
-RefPtr<PixelBuffer> GraphicsContextGLANGLE::readCompositedResultsForPainting()
-{
-    if (!makeContextCurrent())
-        return nullptr;
-    if (getInternalFramebufferSize().isEmpty())
-        return nullptr;
-    return readCompositedResults();
-}
-
 void GraphicsContextGLANGLE::addError(GCGLErrorCode errorCode)
 {
     m_errors.add(errorCode);
