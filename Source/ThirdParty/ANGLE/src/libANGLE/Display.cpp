@@ -342,7 +342,7 @@ rx::DisplayImpl *CreateDisplayFromAttribs(EGLAttrib displayType,
             impl = new rx::DisplayWGL(state);
             break;
 
-#    elif defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_APPLE_EMBEDDED)
+#    elif ANGLE_ENABLE_CGL || ANGLE_ENABLE_EAGL
             impl = rx::CreateDisplayCGLOrEAGL(state);
             break;
 

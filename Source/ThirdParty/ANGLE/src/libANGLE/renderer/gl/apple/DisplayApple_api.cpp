@@ -10,6 +10,7 @@
 #ifndef LIBANGLE_RENDERER_GL_APPLE_DISPLAYAPPLE_API_H_
 #define LIBANGLE_RENDERER_GL_APPLE_DISPLAYAPPLE_API_H_
 
+#include "common/platform.h"
 #include "gpu_info_util/SystemInfo.h"
 #include "libANGLE/renderer/DisplayImpl.h"
 
