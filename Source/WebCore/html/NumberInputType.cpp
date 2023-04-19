@@ -295,6 +295,7 @@ void NumberInputType::attributeChanged(const QualifiedName& name)
                 renderer->setNeedsLayoutAndPrefWidthsRecalc();
         }
         break;
+    case AttributeNames::classAttr:
     case AttributeNames::stepAttr:
         if (auto* element = this->element()) {
             if (auto* renderer = element->renderer())

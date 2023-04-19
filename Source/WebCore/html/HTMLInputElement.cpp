@@ -743,6 +743,9 @@ inline void HTMLInputElement::initializeInputType()
 
 void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    if (oldValue == newValue)
+        return;
+
     ASSERT(m_inputType);
     Ref protectedInputType { *m_inputType };
 
@@ -750,8 +753,7 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
 
     switch (name.nodeName()) {
     case AttributeNames::typeAttr:
-        if (oldValue != newValue)
-            updateType(newValue);
+        updateType(newValue);
         break;
     case AttributeNames::valueAttr:
         // Changes to the value attribute may change whether or not this element has a default value.
