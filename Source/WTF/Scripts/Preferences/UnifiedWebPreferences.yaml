@@ -1843,6 +1843,16 @@ DOMTimersThrottlingEnabled:
     WebCore:
       default: true
 
+DataDetectorAndPassKitStrictDecoding:
+  type: bool
+  status: internal
+  humanReadableName: "Enable strict decoding of DataDetector and PassKit classes"
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+
 DataDetectorTypes:
   type: uint32_t
   refinedType: WebCore::DataDetectorType
