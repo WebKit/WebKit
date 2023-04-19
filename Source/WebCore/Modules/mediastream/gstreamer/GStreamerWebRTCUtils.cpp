@@ -206,8 +206,10 @@ std::optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
 {
     ensureDebugCategoryInitialized();
     GST_TRACE("Parsing ICE Candidate: %s", sdp.utf8().data());
-    if (!sdp.startsWith("candidate:"_s))
+    if (!sdp.startsWith("candidate:"_s)) {
+        GST_WARNING("Invalid SDP ICE candidate format, must start with candidate: prefix");
         return { };
+    }
 
     String foundation;
     unsigned componentId = 0;
@@ -232,8 +234,10 @@ std::optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
         case 1:
             if (auto value = parseInteger<unsigned>(token))
                 componentId = *value;
-            else
+            else {
+                GST_WARNING("Invalid SDP candidate component ID: %s", token.ascii().data());
                 return { };
+            }
             break;
         case 2:
             transport = token;
@@ -241,8 +245,10 @@ std::optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
         case 3:
             if (auto value = parseInteger<unsigned>(token))
                 priority = *value;
-            else
+            else {
+                GST_WARNING("Invalid SDP candidate priority: %s", token.ascii().data());
                 return { };
+            }
             break;
         case 4:
             address = token;
@@ -250,12 +256,16 @@ std::optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
         case 5:
             if (auto value = parseInteger<unsigned>(token))
                 port = *value;
-            else
+            else {
+                GST_WARNING("Invalid SDP candidate port: %s", token.ascii().data());
                 return { };
+            }
             break;
         default:
-            if (it + 1 == tokens.end())
+            if (it + 1 == tokens.end()) {
+                GST_WARNING("Incomplete SDP candidate");
                 return { };
+            }
 
             it++;
             if (token == "typ"_s)
@@ -272,8 +282,10 @@ std::optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
         }
     }
 
-    if (type.isEmpty())
+    if (type.isEmpty()) {
+        GST_WARNING("Unable to parse candidate type");
         return { };
+    }
 
     RTCIceCandidate::Fields fields;
     fields.foundation = foundation;
