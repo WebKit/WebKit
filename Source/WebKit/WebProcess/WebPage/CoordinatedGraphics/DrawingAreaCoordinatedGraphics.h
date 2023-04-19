@@ -145,7 +145,6 @@ private:
 
     bool m_alwaysUseCompositing { false };
     bool m_supportsAsyncScrolling { true };
-    bool m_forceRepaintAfterBackingStoreStateUpdate { false };
     bool m_shouldSendEnterAcceleratedCompositingMode { false };
 
     RunLoop::Timer m_displayTimer;
