@@ -634,7 +634,7 @@ fast/canvas/toDataURL-supportedTypes.html [ Failure ] # [ Skip ]
 fast/canvas/canvas-toDataURL-case-insensitive-mimetype.html [ Failure ] # [ Skip ]
 
 # resizeTO, resizeBy
-fast/images/animated-gif-window-resizing.html [ Timeout ]
+fast/images/animated-gif-window-resizing.html [ Skip ] # Timeout
 
 http/wpt/css/css-images-4/conic-gradient-parsing.html [ Pass ]
 fast/gradients/conic-repeating.html [ Pass ]
@@ -1426,7 +1426,35 @@ fast/borders [ Skip ]
 fast/cookies [ Skip ]
 fast/encoding [ Skip ]
 fast/files [ Skip ]
-fast/flexbox [ Skip ]
+
+fast/flexbox/001.html [ Skip ] # Failure
+fast/flexbox/002.html [ Skip ] # Failure
+fast/flexbox/003.html [ Skip ] # Failure
+fast/flexbox/004.html [ Skip ] # Failure
+fast/flexbox/005.html [ Skip ] # Failure
+fast/flexbox/006.html [ Skip ] # Failure
+fast/flexbox/007.html [ Skip ] # Failure
+fast/flexbox/008.html [ Skip ] # Failure
+fast/flexbox/009.html [ Skip ] # Failure
+fast/flexbox/010.html [ Skip ] # Failure
+fast/flexbox/011.html [ Skip ] # Failure
+fast/flexbox/012.html [ Skip ] # Failure
+fast/flexbox/013.html [ Skip ] # Failure
+fast/flexbox/014.html [ Skip ] # Failure
+fast/flexbox/015.html [ Skip ] # Failure
+fast/flexbox/016.html [ Skip ] # Failure
+fast/flexbox/017.html [ Skip ] # Failure
+fast/flexbox/018.html [ Skip ] # Failure
+fast/flexbox/019.html [ Skip ] # Failure
+fast/flexbox/020.html [ Skip ] # Failure
+fast/flexbox/022.html [ Skip ] # Failure
+fast/flexbox/023.html [ Skip ] # Failure
+fast/flexbox/024.html [ Skip ] # Failure
+fast/flexbox/025.html [ Skip ] # Failure
+fast/flexbox/026.html [ Skip ] # Failure
+fast/flexbox/clear-overflow-before-scroll-update.html [ Skip ] # Failure
+fast/flexbox/line-clamp-with-anchor-content-only.html [ Skip ] # ImageOnlyFailure
+
 fast/forms/001.html [ Skip ]
 fast/forms/003.html [ Skip ]
 fast/forms/004.html [ Skip ]
@@ -1654,10 +1682,54 @@ fast/forms/validation-message-maxLength.html [ Skip ]
 fast/forms/validation-message-minimum-font-size.html [ Skip ]
 fast/forms/validation-messages.html [ Skip ]
 fast/forms/visual-hebrew-text-field.html [ Skip ]
+
 fast/frames [ Skip ]
 fast/hidpi [ Skip ]
 fast/history [ Skip ]
-fast/images [ Skip ]
+
+fast/images/animated-avif.html [ Skip ] # Timeout
+fast/images/animated-gif-iframe-webkit-transform.html [ Skip ] # Timeout
+fast/images/animated-gif-webkit-transform.html [ Skip ] # Timeout
+fast/images/animated-gif-with-offsets.html [ Skip ] # Failure
+fast/images/animated-gif-zooming.html [ Skip ] # Timeout
+fast/images/animated-image-mp4-crash.html [ Skip ] # Timeout
+fast/images/animated-image-mp4.html [ Skip ] # Timeout
+fast/images/animated-png.html [ Skip ] # ImageOnlyFailure
+fast/images/async-image-background-image-repeated.html [ Skip ] # Timeout
+fast/images/async-image-body-background-image.html [ Skip ] # Timeout
+fast/images/async-image-multiple-clients-repaint.html [ Skip ] # Timeout
+fast/images/avif-as-image.html [ Skip ] # ImageOnlyFailure
+fast/images/avif-heif-container-as-image.html [ Skip ] # ImageOnlyFailure
+fast/images/avif-image-decoding.html [ Skip ] # Failure
+fast/images/avif-image-document.html [ Skip ] # ImageOnlyFailure
+fast/images/decode-animated-image.html [ Skip ] # ImageOnlyFailure
+fast/images/displaced-non-cached-pdf.html [ Skip ] # ImageOnlyFailure
+fast/images/embed-image.html [ Skip ] # Failure
+fast/images/exif-orientation-border-image.html [ Skip ] # ImageOnlyFailure
+fast/images/favicon-as-image.html [ Skip ] # Failure
+fast/images/hidpi-image-position-on-device-pixels-with-border-radius.html [ Skip ] # ImageOnlyFailure
+fast/images/image-in-map.html [ Skip ] # Failure
+fast/images/image-map-anchor-children.html [ Skip ] # Failure
+fast/images/image-map-outline-in-positioned-container.html [ Skip ] # ImageOnlyFailure
+fast/images/image-map-outline-with-paint-root-offset.html [ Skip ] # ImageOnlyFailure
+fast/images/image-map-outline-with-scale-transform.html [ Skip ] # ImageOnlyFailure
+fast/images/imagemap-circle-focus-ring.html [ Skip ] # Failure
+fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html [ Skip ] # Failure
+fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html [ Skip ] # Failure
+fast/images/imagemap-focus-ring-outline-color.html [ Skip ] # Failure
+fast/images/imagemap-focus-ring-zero-outline-width.html [ Skip ] # Failure
+fast/images/imagemap-focus-ring-zoom.html [ Skip ] # Failure
+fast/images/imagemap-focus-ring.html [ Skip ] # Failure
+fast/images/imagemap-polygon-focus-ring.html [ Skip ] # Failure
+fast/images/low-memory-decode.html [ Skip ] # Timeout
+fast/images/missing-content-image-crash.html [ Skip ] # Failure
+fast/images/object-image.html [ Skip ] # Failure
+fast/images/pdf-as-image-landscape.html [ Skip ] # Failure
+fast/images/pdf-as-image-with-annotations.html [ Skip ] # ImageOnlyFailure
+fast/images/pdf-in-canvas.html [ Skip ] # Timeout
+fast/images/pixel-crack-image-background-webkit-transform-scale.html [ Skip ] # Failure
+fast/images/sprite-sheet-image-draw.html [ Skip ] # Timeout
+
 fast/inline [ Skip ]
 fast/invalid [ Skip ]
 fast/layers [ Skip ]
@@ -1690,36 +1762,31 @@ fast/xpath [ Skip ]
 fast/xsl [ Skip ]
 fullscreen [ Skip ]
 html5lib [ Skip ]
-http/wpt/2dcontext [ Skip ]
 http/wpt/audio-output [ Skip ]
 http/wpt/beacon [ Skip ]
 http/wpt/cache-storage [ Skip ]
-http/wpt/common [ Skip ]
 http/wpt/credential-management [ Skip ]
 http/wpt/cross-origin-opener-policy [ Skip ]
 http/wpt/cross-origin-resource-policy [ Skip ]
 http/wpt/crypto [ Skip ]
-http/wpt/css [ Skip ]
-http/wpt/cssom [ Skip ]
+http/wpt/css/css-highlight-api [ Skip ]
 http/wpt/entries-api [ Skip ]
 http/wpt/geometry [ Skip ]
-http/wpt/html [ Skip ]
-http/wpt/images [ Skip ]
-http/wpt/loading [ Skip ]
+
+http/wpt/loading/redirect-headers.html [ Skip ] # Failure
+
 http/wpt/mediarecorder [ Skip ]
 http/wpt/notifications [ Skip ]
 http/wpt/offscreen-canvas [ Skip ]
 http/wpt/prefetch [ Skip ]
 http/wpt/preload [ Skip ]
 http/wpt/resource-timing [ Skip ]
-http/wpt/resources [ Skip ]
 http/wpt/selection-live-range [ Skip ]
 http/wpt/webaudio [ Skip ]
 http/wpt/webauthn [ Skip ]
 http/wpt/webcodecs [ Skip ]
 http/wpt/webrtc [ Skip ]
 http/wpt/webxr [ Skip ]
-http/wpt/workers [ Skip ]
 imported/blink [ Skip ]
 imported/mozilla [ Skip ]
 imported/w3c/IndexedDB-private-browsing [ Skip ]
