@@ -59,8 +59,8 @@ namespace WebCore { class TimingFunction; }
 #if ENABLE(TEST_FEATURE)
 namespace Namespace { class ConditionalCommonClass; }
 #endif
-namespace Namesapce { class CommonClass; }
-namespace Namesapce { class AnotherCommonClass; }
+namespace Namespace { class CommonClass; }
+namespace Namespace { class AnotherCommonClass; }
 
 namespace IPC {
 
@@ -144,14 +144,14 @@ template<> struct ArgumentCoder<Namespace::ConditionalCommonClass> {
 };
 #endif
 
-template<> struct ArgumentCoder<Namesapce::CommonClass> {
-    static void encode(Encoder&, const Namesapce::CommonClass&);
-    static std::optional<Namesapce::CommonClass> decode(Decoder&);
+template<> struct ArgumentCoder<Namespace::CommonClass> {
+    static void encode(Encoder&, const Namespace::CommonClass&);
+    static std::optional<Namespace::CommonClass> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<Namesapce::AnotherCommonClass> {
-    static void encode(Encoder&, const Namesapce::AnotherCommonClass&);
-    static std::optional<Namesapce::AnotherCommonClass> decode(Decoder&);
+template<> struct ArgumentCoder<Namespace::AnotherCommonClass> {
+    static void encode(Encoder&, const Namespace::AnotherCommonClass&);
+    static std::optional<Ref<Namespace::AnotherCommonClass>> decode(Decoder&);
 };
 
 } // namespace IPC

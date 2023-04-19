@@ -45,6 +45,8 @@ public:
 private:
     TestReportBody(String&& message);
 
+    ViolationReportType reportBodyType() const final { return ViolationReportType::Test; }
+
     const String m_bodyMessage;
 };
 

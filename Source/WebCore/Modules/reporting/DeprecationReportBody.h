@@ -53,6 +53,8 @@ public:
 private:
     DeprecationReportBody(String&& id, WallTime anticipatedRemoval, String&& message, String&& sourceFile, std::optional<unsigned> lineNumber, std::optional<unsigned> columnNumber);
 
+    ViolationReportType reportBodyType() const final { return ViolationReportType::Deprecation; }
+
     const String m_id;
     const WallTime m_anticipatedRemoval;
     const String m_message;

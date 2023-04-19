@@ -64,6 +64,8 @@ private:
     CSPViolationReportBody(Init&&);
     CSPViolationReportBody(String&& documentURL, String&& referrer, String&& blockedURL, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition, unsigned short statusCode, unsigned long lineNumber, unsigned long columnNumber);
 
+    ViolationReportType reportBodyType() const final { return ViolationReportType::ContentSecurityPolicy; }
+
     const String m_documentURL;
     const String m_referrer;
     const String m_blockedURL;

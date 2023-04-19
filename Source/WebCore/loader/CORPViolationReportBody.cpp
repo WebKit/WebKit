@@ -38,8 +38,7 @@ Ref<CORPViolationReportBody> CORPViolationReportBody::create(COEPDisposition dis
 }
 
 CORPViolationReportBody::CORPViolationReportBody(COEPDisposition disposition, const URL& blockedURL, FetchOptions::Destination destination)
-    : ReportBody(ViolationReportType::CORPViolation)
-    , m_disposition(disposition)
+    : m_disposition(disposition)
     , m_blockedURL(blockedURL)
     , m_destination(destination)
 {

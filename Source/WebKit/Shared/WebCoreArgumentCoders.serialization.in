@@ -468,6 +468,7 @@ struct WebCore::ShareData {
     String title;
     String text;
     String url;
+    [NotSerialized] Vector<RefPtr<WebCore::File>> files;
 };
 
 enum class WebCore::ShareDataOriginator : bool
@@ -562,7 +563,8 @@ class WebCore::PrivateClickMeasurement {
     std::optional<WebCore::RegistrableDomain> sourceRegistrableDomain;
     std::optional<WebCore::PCM::EphemeralNonce> ephemeralDestinationNonce;
     std::optional<WebCore::RegistrableDomain> destinationSite;
-# destinationUnlinkableToken and destinationSecretToken are not serialized.
+    [NotSerialized] std::optional<WebCore::PCM::DestinationUnlinkableToken> destinationUnlinkableToken;
+    [NotSerialized] std::optional<WebCore::PCM::DestinationSecretToken> destinationSecretToken;
 }
 
 [CustomHeader] struct WebCore::PCM::AttributionTimeToSendData {
@@ -995,6 +997,7 @@ struct WebCore::WebLockManagerSnapshot {
 
 [LegacyPopulateFromEmptyConstructor] struct WebCore::AuthenticationExtensionsClientInputs {
     String appid;
+    [NotSerialized] bool credProps;
     std::optional<WebCore::AuthenticationExtensionsClientInputs::LargeBlobInputs> largeBlob;
 }
 
@@ -1080,6 +1083,7 @@ struct WebCore::PublicKeyCredentialRequestOptions {
     Vector<WebCore::PublicKeyCredentialDescriptor> allowCredentials;
     WebCore::UserVerificationRequirement userVerification;
     std::optional<WebCore::AuthenticationExtensionsClientInputs> extensions;
+    [NotSerialized] std::optional<WebCore::AuthenticatorAttachment> authenticatorAttachment;
 #endif // ENABLE(WEB_AUTHN)
 };
 
@@ -1423,6 +1427,10 @@ struct WebCore::WindowFeatures {
 
     bool fullscreen;
     bool dialog;
+    [NotSerialized] bool noopener;
+    [NotSerialized] bool noreferrer;
+
+    [NotSerialized] Vector<String> additionalFeatures;
 };
 
 [Nested] enum class WebCore::CompositionUnderlineColor : bool
@@ -1976,6 +1984,7 @@ header: <WebCore/KeyboardScroll.h>
 };
 
 [RefCounted] class WebCore::IdentityTransformOperation {
+    [NotSerialized] WebCore::TransformOperation::Type type();
 }
 
 [RefCounted] class WebCore::TranslateTransformOperation {
@@ -2106,6 +2115,7 @@ struct WebCore::GraphicsContextGLAttributes {
     bool xrCompatible;
 #endif
     bool failPlatformContextCreationForTesting;
+    [NotSerialized] unsigned remoteIPCBufferSizeLog2ForTesting;
 };
 #endif // ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
@@ -4395,6 +4405,8 @@ header: <WebCore/SVGFilterExpressionReference.h>
     bool madeHTTPS;
     bool blockedCookies;
     bool hasNotifications;
+    [NotSerialized] Vector<WebCore::ContentExtensions::ModifyHeadersAction> modifyHeadersActions;
+    [NotSerialized] Vector<std::pair<WebCore::ContentExtensions::RedirectAction, URL>> redirectActions;
 };
 
 struct WebCore::ContentRuleListResults {

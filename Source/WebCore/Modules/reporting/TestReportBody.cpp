@@ -34,8 +34,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(TestReportBody);
 
 TestReportBody::TestReportBody(String&& message)
-    : ReportBody(ViolationReportType::Test)
-    , m_bodyMessage(WTFMove(message))
+    : m_bodyMessage(WTFMove(message))
 {
 }
 

@@ -47,6 +47,8 @@ private:
     friend struct IPC::ArgumentCoder<CORPViolationReportBody, void>;
     CORPViolationReportBody(COEPDisposition, const URL& blockedURL, FetchOptions::Destination);
 
+    ViolationReportType reportBodyType() const final { return ViolationReportType::CORPViolation; }
+
     COEPDisposition m_disposition;
     URL m_blockedURL;
     FetchOptions::Destination m_destination;

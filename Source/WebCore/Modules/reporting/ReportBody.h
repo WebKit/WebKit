@@ -38,13 +38,7 @@ public:
     virtual ~ReportBody();
 
     virtual const String& type() const = 0;
-    ViolationReportType reportBodyType() const;
-
-protected:
-    ReportBody(ViolationReportType);
-
-private:
-    ViolationReportType m_reportBodyType;
+    virtual ViolationReportType reportBodyType() const = 0;
 };
 
 } // namespace WebCore
