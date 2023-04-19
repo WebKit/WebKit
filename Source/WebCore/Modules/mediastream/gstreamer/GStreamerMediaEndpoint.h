@@ -89,8 +89,8 @@ public:
         std::unique_ptr<GStreamerRtpReceiverBackend> receiverBackend;
         std::unique_ptr<GStreamerRtpTransceiverBackend> transceiverBackend;
     };
-    std::optional<Backends> addTransceiver(const String& trackKind, const RTCRtpTransceiverInit&);
-    std::optional<Backends> addTransceiver(MediaStreamTrack&, const RTCRtpTransceiverInit&);
+    ExceptionOr<Backends> addTransceiver(const String& trackKind, const RTCRtpTransceiverInit&);
+    ExceptionOr<Backends> addTransceiver(MediaStreamTrack&, const RTCRtpTransceiverInit&);
     std::unique_ptr<GStreamerRtpTransceiverBackend> transceiverBackendFromSender(GStreamerRtpSenderBackend&);
 
     GStreamerRtpSenderBackend::Source createLinkedSourceForTrack(MediaStreamTrack&);
@@ -142,7 +142,7 @@ private:
     void addRemoteStream(GstPad*);
     void removeRemoteStream(GstPad*);
 
-    std::optional<Backends> createTransceiverBackends(const String& kind, const RTCRtpTransceiverInit&, GStreamerRtpSenderBackend::Source&&);
+    ExceptionOr<Backends> createTransceiverBackends(const String& kind, const RTCRtpTransceiverInit&, GStreamerRtpSenderBackend::Source&&);
     GStreamerRtpSenderBackend::Source createSourceForTrack(MediaStreamTrack&);
 
     void processSDPMessage(const GstSDPMessage*, Function<void(unsigned index, const char* mid, const GstSDPMedia*)>);
