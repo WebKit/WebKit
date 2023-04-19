@@ -58,8 +58,6 @@ public:
     
     bool isAttachment() const override;
     bool isOffScreen() const override;
-    bool isUnvisited() const override;
-    bool isVisited() const override;
     bool isLinked() const override;
     bool hasBoldFont() const override;
     bool hasItalicFont() const override;

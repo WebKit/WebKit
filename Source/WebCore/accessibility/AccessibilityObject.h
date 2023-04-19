@@ -211,8 +211,8 @@ public:
     bool isMultiSelectable() const override { return false; }
     bool isOffScreen() const override { return false; }
     bool isPressed() const override { return false; }
-    bool isUnvisited() const override { return false; }
-    bool isVisited() const override { return false; }
+    bool isUnvisited() const final;
+    bool isVisited() const final;
     bool isRequired() const override { return false; }
     bool supportsRequiredAttribute() const override { return false; }
     virtual bool isLinked() const { return false; }

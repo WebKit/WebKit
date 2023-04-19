@@ -1700,24 +1700,6 @@ URL AccessibilityRenderObject::url() const
     return URL();
 }
 
-bool AccessibilityRenderObject::isUnvisited() const
-{
-    if (!m_renderer)
-        return true;
-
-    // FIXME: Is it a privacy violation to expose unvisited information to accessibility APIs?
-    return m_renderer->style().isLink() && m_renderer->style().insideLink() == InsideLink::InsideUnvisited;
-}
-
-bool AccessibilityRenderObject::isVisited() const
-{
-    if (!m_renderer)
-        return false;
-
-    // FIXME: Is it a privacy violation to expose visited information to accessibility APIs?
-    return m_renderer->style().isLink() && m_renderer->style().insideLink() == InsideLink::InsideVisited;
-}
-
 void AccessibilityRenderObject::setSelectedRows(AccessibilityChildrenVector& selectedRows)
 {
     // Setting selected only makes sense in trees and tables (and tree-tables).

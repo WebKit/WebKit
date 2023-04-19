@@ -1636,6 +1636,18 @@ VisiblePosition AccessibilityObject::previousParagraphStartPosition(const Visibl
     return startOfParagraph(position.previous());
 }
 
+bool AccessibilityObject::isUnvisited() const
+{
+    auto* style = this->style();
+    return style && style->isLink() && style->insideLink() == InsideLink::InsideUnvisited;
+}
+
+bool AccessibilityObject::isVisited() const
+{
+    auto* style = this->style();
+    return style && style->isLink() && style->insideLink() == InsideLink::InsideVisited;
+}
+
 // If you call node->hasEditableStyle() since that will return true if an ancestor is editable.
 // This only returns true if this is the element that actually has the contentEditable attribute set.
 bool AccessibilityObject::hasContentEditableAttributeSet() const
