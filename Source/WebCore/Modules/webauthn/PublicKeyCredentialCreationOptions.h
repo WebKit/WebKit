@@ -62,11 +62,14 @@ struct PublicKeyCredentialCreationOptions {
     };
 
     struct AuthenticatorSelectionCriteria {
-        std::optional<AuthenticatorAttachment> authenticatorAttachment;
+        String authenticatorAttachmentString;
+        WEBCORE_EXPORT std::optional<AuthenticatorAttachment> authenticatorAttachment() const;
         // residentKey replaces requireResidentKey, see: https://www.w3.org/TR/webauthn-2/#dictionary-authenticatorSelection
-        std::optional<ResidentKeyRequirement> residentKey;
+        String residentKeyString;
+        WEBCORE_EXPORT std::optional<ResidentKeyRequirement> residentKey() const;
         bool requireResidentKey { false };
-        UserVerificationRequirement userVerification { UserVerificationRequirement::Preferred };
+        String userVerificationString { "preferred"_s };
+        WEBCORE_EXPORT UserVerificationRequirement userVerification() const;
     };
 
     RpEntity rp;
@@ -78,7 +81,8 @@ struct PublicKeyCredentialCreationOptions {
     std::optional<unsigned> timeout;
     Vector<PublicKeyCredentialDescriptor> excludeCredentials;
     std::optional<AuthenticatorSelectionCriteria> authenticatorSelection;
-    AttestationConveyancePreference attestation;
+    String attestationString;
+    WEBCORE_EXPORT AttestationConveyancePreference attestation() const;
     mutable std::optional<AuthenticationExtensionsClientInputs> extensions;
 #endif // ENABLE(WEB_AUTHN)
 };

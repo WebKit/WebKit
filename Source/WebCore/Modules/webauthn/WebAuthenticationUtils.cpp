@@ -31,6 +31,9 @@
 #include "CBORReader.h"
 #include "CBORWriter.h"
 #include "FidoConstants.h"
+#include "JSAuthenticatorAttachment.h"
+#include "JSResidentKeyRequirement.h"
+#include "JSUserVerificationRequirement.h"
 #include "WebAuthenticationConstants.h"
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/JSONValues.h>
@@ -194,6 +197,21 @@ Vector<uint8_t> encodeRawPublicKey(const Vector<uint8_t>& x, const Vector<uint8_
     rawKey.appendVector(x);
     rawKey.appendVector(y);
     return rawKey;
+}
+
+String toString(AuthenticatorAttachment attachment)
+{
+    return convertEnumerationToString(attachment);
+}
+
+String toString(UserVerificationRequirement requirement)
+{
+    return convertEnumerationToString(requirement);
+}
+
+String toString(ResidentKeyRequirement requirement)
+{
+    return convertEnumerationToString(requirement);
 }
 
 } // namespace WebCore

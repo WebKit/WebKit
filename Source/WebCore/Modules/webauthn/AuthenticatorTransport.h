@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+
 #if ENABLE(WEB_AUTHN)
 
 namespace WebCore {
@@ -38,6 +40,10 @@ enum class AuthenticatorTransport : uint8_t {
     Hybrid,
     SmartCard
 };
+
+WEBCORE_EXPORT std::optional<AuthenticatorTransport> toAuthenticatorTransport(const String& transport);
+
+WEBCORE_EXPORT String toString(AuthenticatorTransport);
 
 } // namespace WebCore
 

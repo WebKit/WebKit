@@ -1024,10 +1024,10 @@ struct WebCore::AuthenticationExtensionsClientOutputs {
 };
 
 [Nested] struct WebCore::PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria {
-    std::optional<WebCore::AuthenticatorAttachment> authenticatorAttachment;
-    std::optional<WebCore::ResidentKeyRequirement> residentKey;
+    String authenticatorAttachmentString;
+    String residentKeyString;
     bool requireResidentKey;
-    WebCore::UserVerificationRequirement userVerification;
+    String userVerificationString;
 };
 
 [Nested] struct WebCore::PublicKeyCredentialCreationOptions::Entity {
@@ -1047,7 +1047,7 @@ struct WebCore::AuthenticationExtensionsClientOutputs {
 struct WebCore::PublicKeyCredentialDescriptor {
     WebCore::PublicKeyCredentialType type;
     WebCore::BufferSource id;
-    Vector<WebCore::AuthenticatorTransport> transports;
+    Vector<String> transports;
 };
 #endif // ENABLE(WEB_AUTHN)
 
@@ -1071,7 +1071,7 @@ struct WebCore::PublicKeyCredentialCreationOptions {
     std::optional<unsigned> timeout;
     Vector<WebCore::PublicKeyCredentialDescriptor> excludeCredentials;
     std::optional<WebCore::PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria> authenticatorSelection;
-    WebCore::AttestationConveyancePreference attestation;
+    String attestationString;
     std::optional<WebCore::AuthenticationExtensionsClientInputs> extensions;
 #endif // ENABLE(WEB_AUTHN)
 };
@@ -1082,9 +1082,9 @@ struct WebCore::PublicKeyCredentialRequestOptions {
     std::optional<unsigned> timeout;
     String rpId;
     Vector<WebCore::PublicKeyCredentialDescriptor> allowCredentials;
-    WebCore::UserVerificationRequirement userVerification;
+    String userVerificationString;
     std::optional<WebCore::AuthenticationExtensionsClientInputs> extensions;
-    [NotSerialized] std::optional<WebCore::AuthenticatorAttachment> authenticatorAttachment;
+    String authenticatorAttachmentString;
 #endif // ENABLE(WEB_AUTHN)
 };
 

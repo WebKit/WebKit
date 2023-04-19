@@ -1510,7 +1510,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMinimum)
     EXPECT_EQ(result.timeout, std::nullopt);
     EXPECT_EQ(result.excludeCredentials.size(), 0lu);
     EXPECT_EQ(result.authenticatorSelection, std::nullopt);
-    EXPECT_EQ(result.attestation, AttestationConveyancePreference::None);
+    EXPECT_EQ(result.attestation(), AttestationConveyancePreference::None);
     EXPECT_TRUE(result.extensions->appid.isNull());
 }
 
@@ -1559,11 +1559,11 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximumDefault)
     EXPECT_EQ(result.excludeCredentials[0].id.length(), sizeof(identifier));
     EXPECT_EQ(memcmp(result.excludeCredentials[0].id.data(), identifier, sizeof(identifier)), 0);
 
-    EXPECT_EQ(result.authenticatorSelection->authenticatorAttachment, std::nullopt);
+    EXPECT_EQ(result.authenticatorSelection->authenticatorAttachment(), std::nullopt);
     EXPECT_EQ(result.authenticatorSelection->requireResidentKey, false);
-    EXPECT_EQ(result.authenticatorSelection->userVerification, UserVerificationRequirement::Preferred);
+    EXPECT_EQ(result.authenticatorSelection->userVerification(), UserVerificationRequirement::Preferred);
 
-    EXPECT_EQ(result.attestation, AttestationConveyancePreference::None);
+    EXPECT_EQ(result.attestation(), AttestationConveyancePreference::None);
     EXPECT_TRUE(result.extensions->appid.isNull());
 }
 
@@ -1627,16 +1627,16 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum1)
     EXPECT_EQ(result.excludeCredentials[0].id.length(), sizeof(identifier));
     EXPECT_EQ(memcmp(result.excludeCredentials[0].id.data(), identifier, sizeof(identifier)), 0);
     EXPECT_EQ(result.excludeCredentials[0].transports.size(), 4lu);
-    EXPECT_EQ(result.excludeCredentials[0].transports[0], AuthenticatorTransport::Usb);
-    EXPECT_EQ(result.excludeCredentials[0].transports[1], AuthenticatorTransport::Nfc);
-    EXPECT_EQ(result.excludeCredentials[0].transports[2], AuthenticatorTransport::Internal);
-    EXPECT_EQ(result.excludeCredentials[0].transports[3], AuthenticatorTransport::Hybrid);
+    EXPECT_EQ(*toAuthenticatorTransport(result.excludeCredentials[0].transports[0]), AuthenticatorTransport::Usb);
+    EXPECT_EQ(*toAuthenticatorTransport(result.excludeCredentials[0].transports[1]), AuthenticatorTransport::Nfc);
+    EXPECT_EQ(*toAuthenticatorTransport(result.excludeCredentials[0].transports[2]), AuthenticatorTransport::Internal);
+    EXPECT_EQ(*toAuthenticatorTransport(result.excludeCredentials[0].transports[3]), AuthenticatorTransport::Hybrid);
 
-    EXPECT_EQ(result.authenticatorSelection->authenticatorAttachment, AuthenticatorAttachment::Platform);
+    EXPECT_EQ(result.authenticatorSelection->authenticatorAttachment(), AuthenticatorAttachment::Platform);
     EXPECT_EQ(result.authenticatorSelection->requireResidentKey, true);
-    EXPECT_EQ(result.authenticatorSelection->userVerification, UserVerificationRequirement::Required);
+    EXPECT_EQ(result.authenticatorSelection->userVerification(), UserVerificationRequirement::Required);
 
-    EXPECT_EQ(result.attestation, AttestationConveyancePreference::Direct);
+    EXPECT_EQ(result.attestation(), AttestationConveyancePreference::Direct);
 }
 
 TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum2)
@@ -1698,15 +1698,15 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum2)
     EXPECT_EQ(result.excludeCredentials[0].id.length(), sizeof(identifier));
     EXPECT_EQ(memcmp(result.excludeCredentials[0].id.data(), identifier, sizeof(identifier)), 0);
     EXPECT_EQ(result.excludeCredentials[0].transports.size(), 3lu);
-    EXPECT_EQ(result.excludeCredentials[0].transports[0], AuthenticatorTransport::Usb);
-    EXPECT_EQ(result.excludeCredentials[0].transports[1], AuthenticatorTransport::Nfc);
-    EXPECT_EQ(result.excludeCredentials[0].transports[2], AuthenticatorTransport::Internal);
+    EXPECT_EQ(*toAuthenticatorTransport(result.excludeCredentials[0].transports[0]), AuthenticatorTransport::Usb);
+    EXPECT_EQ(*toAuthenticatorTransport(result.excludeCredentials[0].transports[1]), AuthenticatorTransport::Nfc);
+    EXPECT_EQ(*toAuthenticatorTransport(result.excludeCredentials[0].transports[2]), AuthenticatorTransport::Internal);
 
-    EXPECT_EQ(result.authenticatorSelection->authenticatorAttachment, AuthenticatorAttachment::CrossPlatform);
+    EXPECT_EQ(result.authenticatorSelection->authenticatorAttachment(), AuthenticatorAttachment::CrossPlatform);
     EXPECT_EQ(result.authenticatorSelection->requireResidentKey, true);
-    EXPECT_EQ(result.authenticatorSelection->userVerification, UserVerificationRequirement::Discouraged);
+    EXPECT_EQ(result.authenticatorSelection->userVerification(), UserVerificationRequirement::Discouraged);
 
-    EXPECT_EQ(result.attestation, AttestationConveyancePreference::Indirect);
+    EXPECT_EQ(result.attestation(), AttestationConveyancePreference::Indirect);
 }
 
 TEST(WebAuthenticationPanel, MakeCredentialSPITimeout)
@@ -1856,7 +1856,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMinimun)
     EXPECT_EQ(result.timeout, std::nullopt);
     EXPECT_TRUE(result.rpId.isNull());
     EXPECT_EQ(result.allowCredentials.size(), 0lu);
-    EXPECT_EQ(result.userVerification, UserVerificationRequirement::Preferred);
+    EXPECT_EQ(result.userVerification(), UserVerificationRequirement::Preferred);
     EXPECT_TRUE(result.extensions->appid.isNull());
 }
 
@@ -1881,7 +1881,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMaximumDefault)
     EXPECT_EQ(result.allowCredentials[0].id.length(), sizeof(identifier));
     EXPECT_EQ(memcmp(result.allowCredentials[0].id.data(), identifier, sizeof(identifier)), 0);
 
-    EXPECT_EQ(result.userVerification, UserVerificationRequirement::Preferred);
+    EXPECT_EQ(result.userVerification(), UserVerificationRequirement::Preferred);
     EXPECT_TRUE(result.extensions->appid.isNull());
 }
 
@@ -1915,11 +1915,11 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMaximum)
     EXPECT_EQ(result.allowCredentials[0].id.length(), sizeof(identifier));
     EXPECT_EQ(memcmp(result.allowCredentials[0].id.data(), identifier, sizeof(identifier)), 0);
     EXPECT_EQ(result.allowCredentials[0].transports.size(), 3lu);
-    EXPECT_EQ(result.allowCredentials[0].transports[0], AuthenticatorTransport::Usb);
-    EXPECT_EQ(result.allowCredentials[0].transports[1], AuthenticatorTransport::Nfc);
-    EXPECT_EQ(result.allowCredentials[0].transports[2], AuthenticatorTransport::Internal);
+    EXPECT_EQ(*toAuthenticatorTransport(result.allowCredentials[0].transports[0]), AuthenticatorTransport::Usb);
+    EXPECT_EQ(*toAuthenticatorTransport(result.allowCredentials[0].transports[1]), AuthenticatorTransport::Nfc);
+    EXPECT_EQ(*toAuthenticatorTransport(result.allowCredentials[0].transports[2]), AuthenticatorTransport::Internal);
 
-    EXPECT_EQ(result.userVerification, UserVerificationRequirement::Required);
+    EXPECT_EQ(result.userVerification(), UserVerificationRequirement::Required);
     EXPECT_WK_STREQ(result.extensions->appid, "https//www.example.com/fido");
 }
 

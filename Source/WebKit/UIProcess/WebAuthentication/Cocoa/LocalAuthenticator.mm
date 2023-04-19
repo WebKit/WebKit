@@ -29,11 +29,11 @@
 #if ENABLE(WEB_AUTHN)
 
 #import "Logging.h"
-#import "AuthenticationServicesCoreSoftLink.h"
 #import <Security/SecItem.h>
 #import <WebCore/AuthenticatorAssertionResponse.h>
 #import <WebCore/AuthenticatorAttachment.h>
 #import <WebCore/AuthenticatorAttestationResponse.h>
+#import <WebCore/AuthenticatorTransport.h>
 #import <WebCore/CBORReader.h>
 #import <WebCore/CBORWriter.h>
 #import <WebCore/ExceptionData.h>
@@ -51,6 +51,7 @@
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/StringHash.h>
+#import "AuthenticationServicesCoreSoftLink.h"
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/LocalAuthenticatorAdditions.h>
@@ -89,9 +90,9 @@ const uint8_t aaguid[] = { 0xF2, 0x4A, 0x8E, 0x70, 0xD0, 0xD3, 0xF8, 0x2C, 0x29,
 
 const char kLargeBlobMapKey[] = "largeBlob";
 
-static inline bool emptyTransportsOrContain(const Vector<AuthenticatorTransport>& transports, AuthenticatorTransport target)
+static inline bool emptyTransportsOrContain(const Vector<String>& transports, AuthenticatorTransport target)
 {
-    return transports.isEmpty() ? true : transports.contains(target);
+    return transports.isEmpty() ? true : transports.contains(toString(target));
 }
 
 // A Base64 encoded string of the Credential ID is used as the key of the hash set.
@@ -547,7 +548,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
     auto flags = authDataFlags(ClientDataType::Create, verification, shouldUpdateQuery());
     // Step 12.
     // Skip Apple Attestation for none attestation.
-    if (creationOptions.attestation == AttestationConveyancePreference::None) {
+    if (creationOptions.attestation() == AttestationConveyancePreference::None) {
         auto authData = buildAuthData(*creationOptions.rp.id, flags, counter, buildAttestedCredentialData(Vector<uint8_t>(aaguidLength, 0), credentialId, cosePublicKey));
         auto attestationObject = buildAttestationObject(WTFMove(authData), String { emptyString() }, { }, AttestationConveyancePreference::None);
 
@@ -597,7 +598,7 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(Vector<uint8_t>&& c
             cborArray.append(cbor::CBORValue(vectorFromNSData((NSData *)adoptCF(SecCertificateCopyData((__bridge SecCertificateRef)certificates[i])).get())));
         attestationStatementMap[cbor::CBORValue("x5c")] = cbor::CBORValue(WTFMove(cborArray));
     }
-    auto attestationObject = buildAttestationObject(WTFMove(authData), "apple"_s, WTFMove(attestationStatementMap), creationOptions.attestation);
+    auto attestationObject = buildAttestationObject(WTFMove(authData), "apple"_s, WTFMove(attestationStatementMap), creationOptions.attestation());
 
     finishMakeCredential(WTFMove(credentialId), WTFMove(attestationObject), std::nullopt);
 }
