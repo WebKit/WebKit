@@ -26,37 +26,28 @@
 #include "config.h"
 #include "FaceDetector.h"
 
-#include "Chrome.h"
 #include "DetectedFace.h"
-#include "Document.h"
 #include "FaceDetectorOptions.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDetectedFace.h"
-#include "Page.h"
-#include "ScriptExecutionContext.h"
-#include "WorkerGlobalScope.h"
+
+#if PLATFORM(COCOA)
+// FIXME: Use the GPU Process.
+#include "FaceDetectorImplementation.h"
+#endif
 
 namespace WebCore {
 
-ExceptionOr<Ref<FaceDetector>> FaceDetector::create(ScriptExecutionContext& scriptExecutionContext, const FaceDetectorOptions& faceDetectorOptions)
+ExceptionOr<Ref<FaceDetector>> FaceDetector::create(const FaceDetectorOptions& faceDetectorOptions)
 {
-    if (is<Document>(scriptExecutionContext)) {
-        const auto& document = downcast<Document>(scriptExecutionContext);
-        const auto* page = document.page();
-        if (!page)
-            return Exception { AbortError };
-        auto backing = page->chrome().createFaceDetector(faceDetectorOptions.convertToBacking());
-        if (!backing)
-            return Exception { AbortError };
-        return adoptRef(*new FaceDetector(backing.releaseNonNull()));
-    }
-
-    if (is<WorkerGlobalScope>(scriptExecutionContext)) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=255380 Make the Shape Detection API work in Workers
-        return Exception { AbortError };
-    }
-
+#if PLATFORM(COCOA)
+    // FIXME: Use the GPU Process.
+    auto backing = ShapeDetection::FaceDetectorImpl::create(faceDetectorOptions.convertToBacking());
+    return adoptRef(*new FaceDetector(WTFMove(backing)));
+#else
+    UNUSED_PARAM(faceDetectorOptions);
     return Exception { AbortError };
+#endif
 }
 
 FaceDetector::FaceDetector(Ref<ShapeDetection::FaceDetector>&& backing)

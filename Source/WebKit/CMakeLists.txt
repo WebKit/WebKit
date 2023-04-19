@@ -9,7 +9,6 @@ set(WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WebKit_DERIVED_SOURCES_DIR}/include"
     "${WEBKIT_DIR}"
     "${WEBKIT_DIR}/GPUProcess"
-    "${WEBKIT_DIR}/GPUProcess/ShapeDetection"
     "${WEBKIT_DIR}/GPUProcess/graphics"
     "${WEBKIT_DIR}/GPUProcess/graphics/WebGPU"
     "${WEBKIT_DIR}/GPUProcess/media"
@@ -86,7 +85,6 @@ set(WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/Gamepad"
     "${WEBKIT_DIR}/WebProcess/Geolocation"
     "${WEBKIT_DIR}/WebProcess/GPU"
-    "${WEBKIT_DIR}/WebProcess/GPU/ShapeDetection"
     "${WEBKIT_DIR}/WebProcess/GPU/graphics"
     "${WEBKIT_DIR}/WebProcess/GPU/graphics/WebGPU"
     "${WEBKIT_DIR}/WebProcess/GPU/media"
@@ -131,10 +129,6 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
 set(WebKit_MESSAGES_IN_FILES
     GPUProcess/GPUConnectionToWebProcess
     GPUProcess/GPUProcess
-
-    GPUProcess/ShapeDetection/RemoteBarcodeDetector
-    GPUProcess/ShapeDetection/RemoteFaceDetector
-    GPUProcess/ShapeDetection/RemoteTextDetector
 
     GPUProcess/graphics/RemoteDisplayListRecorder
     GPUProcess/graphics/RemoteGraphicsContextGL

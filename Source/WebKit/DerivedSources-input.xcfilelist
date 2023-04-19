@@ -34,9 +34,6 @@ $(PROJECT_DIR)/DerivedSources.make
 $(PROJECT_DIR)/GPUProcess/GPUConnectionToWebProcess.messages.in
 $(PROJECT_DIR)/GPUProcess/GPUProcess.messages.in
 $(PROJECT_DIR)/GPUProcess/GPUProcessSessionParameters.serialization.in
-$(PROJECT_DIR)/GPUProcess/ShapeDetection/RemoteBarcodeDetector.messages.in
-$(PROJECT_DIR)/GPUProcess/ShapeDetection/RemoteFaceDetector.messages.in
-$(PROJECT_DIR)/GPUProcess/ShapeDetection/RemoteTextDetector.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/InlinePathData.serialization.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteDisplayListRecorder.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteGraphicsContext.messages.in
@@ -109,8 +106,8 @@ $(PROJECT_DIR)/GPUProcess/webrtc/RemoteMediaRecorder.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteMediaRecorderManager.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.messages.in
-$(PROJECT_DIR)/Modules/OSX_Private.modulemap
 $(PROJECT_DIR)/Modules/iOS_Private.modulemap
+$(PROJECT_DIR)/Modules/OSX_Private.modulemap
 $(PROJECT_DIR)/NetworkProcess/Cookies/WebCookieManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkBroadcastChannelRegistry.messages.in

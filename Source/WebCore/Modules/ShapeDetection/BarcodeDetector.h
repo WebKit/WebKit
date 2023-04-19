@@ -37,16 +37,15 @@ namespace WebCore {
 struct BarcodeDetectorOptions;
 enum class BarcodeFormat : uint8_t;
 struct DetectedBarcode;
-class ScriptExecutionContext;
 
 class BarcodeDetector : public RefCounted<BarcodeDetector> {
 public:
-    static ExceptionOr<Ref<BarcodeDetector>> create(ScriptExecutionContext&, const BarcodeDetectorOptions&);
+    static ExceptionOr<Ref<BarcodeDetector>> create(const BarcodeDetectorOptions&);
 
     ~BarcodeDetector();
 
     using GetSupportedFormatsPromise = DOMPromiseDeferred<IDLSequence<IDLEnumeration<BarcodeFormat>>>;
-    static ExceptionOr<void> getSupportedFormats(ScriptExecutionContext&, GetSupportedFormatsPromise&&);
+    static void getSupportedFormats(GetSupportedFormatsPromise&&);
 
     using DetectPromise = DOMPromiseDeferred<IDLSequence<IDLDictionary<DetectedBarcode>>>;
     void detect(const ImageBitmap::Source&, DetectPromise&&);

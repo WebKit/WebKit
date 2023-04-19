@@ -1,20 +1,4 @@
 set(WebCore_PRIVATE_FRAMEWORK_HEADERS
-    Modules/ShapeDetection/Implementation/Cocoa/BarcodeDetectorImplementation.h
-    Modules/ShapeDetection/Implementation/Cocoa/FaceDetectorImplementation.h
-    Modules/ShapeDetection/Implementation/Cocoa/TextDetectorImplementation.h
-
-    Modules/ShapeDetection/Interfaces/BarcodeDetectorInterface.h
-    Modules/ShapeDetection/Interfaces/BarcodeDetectorOptionsInterface.h
-    Modules/ShapeDetection/Interfaces/BarcodeFormatInterface.h
-    Modules/ShapeDetection/Interfaces/DetectedBarcodeInterface.h
-    Modules/ShapeDetection/Interfaces/DetectedFaceInterface.h
-    Modules/ShapeDetection/Interfaces/DetectedTextInterface.h
-    Modules/ShapeDetection/Interfaces/FaceDetectorInterface.h
-    Modules/ShapeDetection/Interfaces/FaceDetectorOptionsInterface.h
-    Modules/ShapeDetection/Interfaces/LandmarkInterface.h
-    Modules/ShapeDetection/Interfaces/LandmarkTypeInterface.h
-    Modules/ShapeDetection/Interfaces/TextDetectorInterface.h
-
     Modules/WebGPU/GPU.h
     Modules/WebGPU/GPUAdapter.h
     Modules/WebGPU/GPUAddressMode.h

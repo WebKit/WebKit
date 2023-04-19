@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -254,11 +254,6 @@ private:
 #endif
 
     RefPtr<PAL::WebGPU::GPU> createGPUForWebGPU() const final;
-
-    RefPtr<WebCore::ShapeDetection::BarcodeDetector> createBarcodeDetector(const WebCore::ShapeDetection::BarcodeDetectorOptions&) const final;
-    void getBarcodeDetectorSupportedFormats(CompletionHandler<void(Vector<WebCore::ShapeDetection::BarcodeFormat>&&)>&&) const final;
-    RefPtr<WebCore::ShapeDetection::FaceDetector> createFaceDetector(const WebCore::ShapeDetection::FaceDetectorOptions&) const final;
-    RefPtr<WebCore::ShapeDetection::TextDetector> createTextDetector() const final;
 
     void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&&) final;
 

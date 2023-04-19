@@ -35,11 +35,10 @@
 namespace WebCore {
 
 struct DetectedText;
-class ScriptExecutionContext;
 
 class TextDetector : public RefCounted<TextDetector> {
 public:
-    static ExceptionOr<Ref<TextDetector>> create(ScriptExecutionContext&);
+    static ExceptionOr<Ref<TextDetector>> create();
 
     ~TextDetector();
 

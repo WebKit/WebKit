@@ -41,12 +41,9 @@
 #include "NetworkProcessConnection.h"
 #include "PageBanner.h"
 #include "PluginView.h"
-#include "RemoteBarcodeDetectorProxy.h"
-#include "RemoteFaceDetectorProxy.h"
 #include "RemoteGPUProxy.h"
 #include "RemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendProxy.h"
-#include "RemoteTextDetectorProxy.h"
 #include "SharedBufferReference.h"
 #include "UserData.h"
 #include "WebColorChooser.h"
@@ -103,12 +100,6 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 #import <pal/graphics/WebGPU/Impl/WebGPUCreateImpl.h>
-#endif
-
-#if HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)
-#import <WebCore/BarcodeDetectorImplementation.h>
-#import <WebCore/FaceDetectorImplementation.h>
-#import <WebCore/TextDetectorImplementation.h>
 #endif
 
 #if ENABLE(APPLE_PAY_AMS_UI)
@@ -992,54 +983,6 @@ RefPtr<PAL::WebGPU::GPU> WebChromeClient::createGPUForWebGPU() const
     return PAL::WebGPU::create([](PAL::WebGPU::WorkItem&& workItem) {
         callOnMainRunLoop(WTFMove(workItem));
     });
-#else
-    return nullptr;
-#endif
-}
-
-RefPtr<WebCore::ShapeDetection::BarcodeDetector> WebChromeClient::createBarcodeDetector(const WebCore::ShapeDetection::BarcodeDetectorOptions& barcodeDetectorOptions) const
-{
-#if ENABLE(GPU_PROCESS)
-    auto& remoteRenderingBackendProxy = m_page.ensureRemoteRenderingBackendProxy();
-    return ShapeDetection::RemoteBarcodeDetectorProxy::create(remoteRenderingBackendProxy.streamConnection(), remoteRenderingBackendProxy.renderingBackendIdentifier(), ShapeDetectionIdentifier::generate(), barcodeDetectorOptions);
-#elif HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)
-    return WebCore::ShapeDetection::BarcodeDetectorImpl::create(barcodeDetectorOptions);
-#else
-    return nullptr;
-#endif
-}
-
-void WebChromeClient::getBarcodeDetectorSupportedFormats(CompletionHandler<void(Vector<WebCore::ShapeDetection::BarcodeFormat>&&)>&& completionHandler) const
-{
-#if ENABLE(GPU_PROCESS)
-    auto& remoteRenderingBackendProxy = m_page.ensureRemoteRenderingBackendProxy();
-    ShapeDetection::RemoteBarcodeDetectorProxy::getSupportedFormats(remoteRenderingBackendProxy.streamConnection(), remoteRenderingBackendProxy.renderingBackendIdentifier(), WTFMove(completionHandler));
-#elif HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)
-    WebCore::ShapeDetection::BarcodeDetectorImpl::getSupportedFormats(WTFMove(completionHandler));
-#else
-    completionHandler({ });
-#endif
-}
-
-RefPtr<WebCore::ShapeDetection::FaceDetector> WebChromeClient::createFaceDetector(const WebCore::ShapeDetection::FaceDetectorOptions& faceDetectorOptions) const
-{
-#if ENABLE(GPU_PROCESS)
-    auto& remoteRenderingBackendProxy = m_page.ensureRemoteRenderingBackendProxy();
-    return ShapeDetection::RemoteFaceDetectorProxy::create(remoteRenderingBackendProxy.streamConnection(), remoteRenderingBackendProxy.renderingBackendIdentifier(), ShapeDetectionIdentifier::generate(), faceDetectorOptions);
-#elif HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)
-    return WebCore::ShapeDetection::FaceDetectorImpl::create(faceDetectorOptions);
-#else
-    return nullptr;
-#endif
-}
-
-RefPtr<WebCore::ShapeDetection::TextDetector> WebChromeClient::createTextDetector() const
-{
-#if ENABLE(GPU_PROCESS)
-    auto& remoteRenderingBackendProxy = m_page.ensureRemoteRenderingBackendProxy();
-    return ShapeDetection::RemoteTextDetectorProxy::create(remoteRenderingBackendProxy.streamConnection(), remoteRenderingBackendProxy.renderingBackendIdentifier(), ShapeDetectionIdentifier::generate());
-#elif HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)
-    return WebCore::ShapeDetection::TextDetectorImpl::create();
 #else
     return nullptr;
 #endif

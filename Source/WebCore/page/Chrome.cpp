@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2012, Samsung Electronics. All rights reserved.
  *
@@ -23,13 +23,11 @@
 #include "Chrome.h"
 
 #include "AppHighlight.h"
-#include "BarcodeDetectorInterface.h"
 #include "ChromeClient.h"
 #include "ContactInfo.h"
 #include "ContactsRequestData.h"
 #include "Document.h"
 #include "DocumentType.h"
-#include "FaceDetectorInterface.h"
 #include "FileList.h"
 #include "FloatRect.h"
 #include "FrameLoaderClient.h"
@@ -52,7 +50,6 @@
 #include "ShareData.h"
 #include "StorageNamespace.h"
 #include "StorageNamespaceProvider.h"
-#include "TextDetectorInterface.h"
 #include "WindowFeatures.h"
 #include "WorkerClient.h"
 #include <JavaScriptCore/VM.h>
@@ -569,26 +566,6 @@ RefPtr<GraphicsContextGL> Chrome::createGraphicsContextGL(const GraphicsContextG
 RefPtr<PAL::WebGPU::GPU> Chrome::createGPUForWebGPU() const
 {
     return m_client->createGPUForWebGPU();
-}
-
-RefPtr<ShapeDetection::BarcodeDetector> Chrome::createBarcodeDetector(const ShapeDetection::BarcodeDetectorOptions& barcodeDetectorOptions) const
-{
-    return m_client->createBarcodeDetector(barcodeDetectorOptions);
-}
-
-void Chrome::getBarcodeDetectorSupportedFormats(CompletionHandler<void(Vector<ShapeDetection::BarcodeFormat>&&)>&& completionHandler) const
-{
-    return m_client->getBarcodeDetectorSupportedFormats(WTFMove(completionHandler));
-}
-
-RefPtr<ShapeDetection::FaceDetector> Chrome::createFaceDetector(const ShapeDetection::FaceDetectorOptions& faceDetectorOptions) const
-{
-    return m_client->createFaceDetector(faceDetectorOptions);
-}
-
-RefPtr<ShapeDetection::TextDetector> Chrome::createTextDetector() const
-{
-    return m_client->createTextDetector();
 }
 
 PlatformDisplayID Chrome::displayID() const

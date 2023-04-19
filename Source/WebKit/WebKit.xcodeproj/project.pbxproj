@@ -3614,24 +3614,6 @@
 		1C9DD99C28FA19A30093BDB0 /* WebExtensionAPIRuntime.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPIRuntime.idl; sourceTree = "<group>"; };
 		1C9DD9A428FA19A30093BDB0 /* WebExtensionAPINamespace.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPINamespace.idl; sourceTree = "<group>"; };
 		1C9EBA5B2087E74E00054429 /* NativeWebMouseEventIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NativeWebMouseEventIOS.mm; path = ios/NativeWebMouseEventIOS.mm; sourceTree = "<group>"; };
-		1C9F4BFA29E51D530015819E /* RemoteBarcodeDetector.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteBarcodeDetector.cpp; sourceTree = "<group>"; };
-		1C9F4BFB29E51D530015819E /* RemoteBarcodeDetector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteBarcodeDetector.h; sourceTree = "<group>"; };
-		1C9F4BFC29E51D650015819E /* RemoteFaceDetector.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteFaceDetector.cpp; sourceTree = "<group>"; };
-		1C9F4BFD29E51D650015819E /* RemoteFaceDetector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteFaceDetector.h; sourceTree = "<group>"; };
-		1C9F4BFE29E51D720015819E /* RemoteTextDetector.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteTextDetector.cpp; sourceTree = "<group>"; };
-		1C9F4BFF29E51D720015819E /* RemoteTextDetector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteTextDetector.h; sourceTree = "<group>"; };
-		1C9F4C0029E51D890015819E /* RemoteBarcodeDetector.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteBarcodeDetector.messages.in; sourceTree = "<group>"; };
-		1C9F4C0129E51D940015819E /* RemoteFaceDetector.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteFaceDetector.messages.in; sourceTree = "<group>"; };
-		1C9F4C0229E51D9D0015819E /* RemoteTextDetector.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteTextDetector.messages.in; sourceTree = "<group>"; };
-		1C9F4C0B29E5202B0015819E /* ShapeDetectionIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShapeDetectionIdentifier.h; sourceTree = "<group>"; };
-		1C9F4C0C29E524190015819E /* ShapeDetectionObjectHeap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ShapeDetectionObjectHeap.cpp; sourceTree = "<group>"; };
-		1C9F4C0D29E524190015819E /* ShapeDetectionObjectHeap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShapeDetectionObjectHeap.h; sourceTree = "<group>"; };
-		1C9F4C2629E538410015819E /* RemoteBarcodeDetectorProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteBarcodeDetectorProxy.cpp; sourceTree = "<group>"; };
-		1C9F4C2729E538410015819E /* RemoteBarcodeDetectorProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteBarcodeDetectorProxy.h; sourceTree = "<group>"; };
-		1C9F4C2829E5384D0015819E /* RemoteFaceDetectorProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteFaceDetectorProxy.cpp; sourceTree = "<group>"; };
-		1C9F4C2929E5384D0015819E /* RemoteFaceDetectorProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteFaceDetectorProxy.h; sourceTree = "<group>"; };
-		1C9F4C2A29E538550015819E /* RemoteTextDetectorProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteTextDetectorProxy.cpp; sourceTree = "<group>"; };
-		1C9F4C2B29E538550015819E /* RemoteTextDetectorProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteTextDetectorProxy.h; sourceTree = "<group>"; };
 		1CA8B935127C774E00576C2B /* WebInspectorUIProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspectorUIProxyMac.mm; sourceTree = "<group>"; };
 		1CA8B943127C882A00576C2B /* WebInspectorUIProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorUIProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		1CA8B944127C882A00576C2B /* WebInspectorUIProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorUIProxyMessages.h; sourceTree = "<group>"; };
@@ -8031,7 +8013,6 @@
 				1AFDE6571954A42B00C48FFA /* SessionState.cpp */,
 				1AFDE6581954A42B00C48FFA /* SessionState.h */,
 				5C03D5DD28F765F800D096AF /* SessionState.serialization.in */,
-				1C9F4C0B29E5202B0015819E /* ShapeDetectionIdentifier.h */,
 				1A6420E212DCE2FF00CAAE2C /* ShareableBitmap.cpp */,
 				1A6420E312DCE2FF00CAAE2C /* ShareableBitmap.h */,
 				861A646128F5A37300E23C8F /* ShareableBitmap.serialization.in */,
@@ -8678,37 +8659,6 @@
 				3302293F2938263E001F00FA /* WebExtensionAPIWebNavigationEvent.idl */,
 			);
 			path = Interfaces;
-			sourceTree = "<group>";
-		};
-		1C9F4BF929E51D300015819E /* ShapeDetection */ = {
-			isa = PBXGroup;
-			children = (
-				1C9F4BFA29E51D530015819E /* RemoteBarcodeDetector.cpp */,
-				1C9F4BFB29E51D530015819E /* RemoteBarcodeDetector.h */,
-				1C9F4C0029E51D890015819E /* RemoteBarcodeDetector.messages.in */,
-				1C9F4BFC29E51D650015819E /* RemoteFaceDetector.cpp */,
-				1C9F4BFD29E51D650015819E /* RemoteFaceDetector.h */,
-				1C9F4C0129E51D940015819E /* RemoteFaceDetector.messages.in */,
-				1C9F4BFE29E51D720015819E /* RemoteTextDetector.cpp */,
-				1C9F4BFF29E51D720015819E /* RemoteTextDetector.h */,
-				1C9F4C0229E51D9D0015819E /* RemoteTextDetector.messages.in */,
-				1C9F4C0C29E524190015819E /* ShapeDetectionObjectHeap.cpp */,
-				1C9F4C0D29E524190015819E /* ShapeDetectionObjectHeap.h */,
-			);
-			path = ShapeDetection;
-			sourceTree = "<group>";
-		};
-		1C9F4C2529E538150015819E /* ShapeDetection */ = {
-			isa = PBXGroup;
-			children = (
-				1C9F4C2629E538410015819E /* RemoteBarcodeDetectorProxy.cpp */,
-				1C9F4C2729E538410015819E /* RemoteBarcodeDetectorProxy.h */,
-				1C9F4C2829E5384D0015819E /* RemoteFaceDetectorProxy.cpp */,
-				1C9F4C2929E5384D0015819E /* RemoteFaceDetectorProxy.h */,
-				1C9F4C2A29E538550015819E /* RemoteTextDetectorProxy.cpp */,
-				1C9F4C2B29E538550015819E /* RemoteTextDetectorProxy.h */,
-			);
-			path = ShapeDetection;
 			sourceTree = "<group>";
 		};
 		1CB7461927436DE300F19874 /* WebGPU */ = {
@@ -9460,7 +9410,6 @@
 			children = (
 				5506409C240715AA00AAE045 /* graphics */,
 				0792312F239B3B0C009598E2 /* media */,
-				1C9F4C2529E538150015819E /* ShapeDetection */,
 				4172198823B6126100AE5686 /* webrtc */,
 				2D7E43C023752CD900EA5CA0 /* GPUProcessConnection.cpp */,
 				2D7E43C323752CD900EA5CA0 /* GPUProcessConnection.h */,
@@ -9479,7 +9428,6 @@
 				2D9FB2042375209D0049F936 /* ios */,
 				2D9FB2062375209D0049F936 /* mac */,
 				07C75C172399A3DB0088E65B /* media */,
-				1C9F4BF929E51D300015819E /* ShapeDetection */,
 				4172198E23B633CA00AE5686 /* webrtc */,
 				2D9FB20C2375209D0049F936 /* GPUConnectionToWebProcess.cpp */,
 				2D9FB2002375209D0049F936 /* GPUConnectionToWebProcess.h */,

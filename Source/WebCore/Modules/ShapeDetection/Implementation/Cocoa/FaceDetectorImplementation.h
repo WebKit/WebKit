@@ -42,7 +42,7 @@ public:
     virtual ~FaceDetectorImpl();
 
 private:
-    WEBCORE_EXPORT FaceDetectorImpl(const FaceDetectorOptions&);
+    FaceDetectorImpl(const FaceDetectorOptions&);
 
     FaceDetectorImpl(const FaceDetectorImpl&) = delete;
     FaceDetectorImpl(FaceDetectorImpl&&) = delete;

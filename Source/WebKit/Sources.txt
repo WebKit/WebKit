@@ -25,10 +25,6 @@ GPUProcess/GPUProcess.cpp
 GPUProcess/GPUConnectionToWebProcess.cpp
 GPUProcess/GPUProcessCreationParameters.cpp
 GPUProcess/GPUProcessPreferences.cpp
-GPUProcess/ShapeDetection/RemoteBarcodeDetector.cpp
-GPUProcess/ShapeDetection/RemoteFaceDetector.cpp
-GPUProcess/ShapeDetection/RemoteTextDetector.cpp
-GPUProcess/ShapeDetection/ShapeDetectionObjectHeap.cpp
 GPUProcess/graphics/ImageBufferShareableAllocator.cpp
 GPUProcess/graphics/RemoteDisplayListRecorder.cpp
 GPUProcess/graphics/RemoteGraphicsContextGL.cpp
@@ -691,9 +687,6 @@ WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp
 WebProcess/Model/WebModelPlayerProvider.cpp
 
 WebProcess/GPU/GPUProcessConnection.cpp
-WebProcess/GPU/ShapeDetection/RemoteBarcodeDetectorProxy.cpp
-WebProcess/GPU/ShapeDetection/RemoteFaceDetectorProxy.cpp
-WebProcess/GPU/ShapeDetection/RemoteTextDetectorProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteAdapterProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteBindGroupLayoutProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteBindGroupProxy.cpp
@@ -879,7 +872,6 @@ RemoteGraphicsContextGLProxyMessageReceiver.cpp
 PlatformXRSystemMessageReceiver.cpp
 PlatformXRSystemProxyMessageReceiver.cpp
 RemoteAdapterMessageReceiver.cpp
-RemoteBarcodeDetectorMessageReceiver.cpp
 RemoteBindGroupMessageReceiver.cpp
 RemoteBindGroupLayoutMessageReceiver.cpp
 RemoteBufferMessageReceiver.cpp
@@ -890,7 +882,6 @@ RemoteComputePassEncoderMessageReceiver.cpp
 RemoteComputePipelineMessageReceiver.cpp
 RemoteDeviceMessageReceiver.cpp
 RemoteExternalTextureMessageReceiver.cpp
-RemoteFaceDetectorMessageReceiver.cpp
 RemoteGPUMessageReceiver.cpp
 RemoteGPUProxyMessageReceiver.cpp
 RemoteVideoFrameObjectHeapMessageReceiver.cpp
@@ -905,7 +896,6 @@ RemoteRenderPassEncoderMessageReceiver.cpp
 RemoteRenderPipelineMessageReceiver.cpp
 RemoteSamplerMessageReceiver.cpp
 RemoteShaderModuleMessageReceiver.cpp
-RemoteTextDetectorMessageReceiver.cpp
 RemoteTextureMessageReceiver.cpp
 RemoteTextureViewMessageReceiver.cpp
 RemoteWebLockRegistryMessageReceiver.cpp

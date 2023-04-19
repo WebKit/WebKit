@@ -29,7 +29,7 @@ from webkit import parser
 from webkit.model import BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE, MAINTHREADCALLBACK_ATTRIBUTE, STREAM_ATTRIBUTE, CALL_WITH_REPLY_ID_ATTRIBUTE, MessageReceiver, Message
 
 _license_header = """/*
- * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -299,7 +299,6 @@ def serialized_identifiers():
         'WebKit::RenderingUpdateID',
         'WebKit::RetrieveRecordResponseBodyCallbackIdentifier',
         'WebKit::SampleBufferDisplayLayerIdentifier',
-        'WebKit::ShapeDetectionIdentifier',
         'WebKit::StorageAreaIdentifier',
         'WebKit::StorageAreaImplIdentifier',
         'WebKit::StorageAreaMapIdentifier',
@@ -788,12 +787,6 @@ def headers_for_type(type):
         'WebCore::ServiceWorkerRegistrationIdentifier': ['<WebCore/ServiceWorkerTypes.h>'],
         'WebCore::ServiceWorkerRegistrationState': ['<WebCore/ServiceWorkerTypes.h>'],
         'WebCore::ServiceWorkerState': ['<WebCore/ServiceWorkerTypes.h>'],
-        'WebCore::ShapeDetection::BarcodeDetectorOptions': ['<WebCore/BarcodeDetectorOptionsInterface.h>'],
-        'WebCore::ShapeDetection::BarcodeFormat': ['<WebCore/BarcodeFormatInterface.h>'],
-        'WebCore::ShapeDetection::DetectedBarcode': ['<WebCore/DetectedBarcodeInterface.h>'],
-        'WebCore::ShapeDetection::DetectedFace': ['<WebCore/DetectedFaceInterface.h>'],
-        'WebCore::ShapeDetection::DetectedText': ['<WebCore/DetectedTextInterface.h>'],
-        'WebCore::ShapeDetection::FaceDetectorOptions': ['<WebCore/FaceDetectorOptionsInterface.h>'],
         'WebCore::ShareDataWithParsedURL': ['<WebCore/ShareData.h>'],
         'WebCore::ShouldContinuePolicyCheck': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::ShouldNotifyWhenResolved': ['<WebCore/ServiceWorkerTypes.h>'],

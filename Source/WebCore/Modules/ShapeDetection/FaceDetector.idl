@@ -49,6 +49,6 @@ typedef (CanvasImageSource or Blob or ImageData) ImageBitmapSource;
     SecureContext
 ]
 interface FaceDetector {
-    [CallWith=CurrentScriptExecutionContext] constructor(optional FaceDetectorOptions faceDetectorOptions = {});
+    constructor(optional FaceDetectorOptions faceDetectorOptions = {});
     Promise<sequence<DetectedFace>> detect(ImageBitmapSource image);
 };

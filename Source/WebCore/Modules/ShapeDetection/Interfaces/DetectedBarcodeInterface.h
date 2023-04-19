@@ -25,11 +25,14 @@
 
 #pragma once
 
-#include "BarcodeFormatInterface.h"
-#include "FloatPoint.h"
+#include "BarcodeFormat.h"
 #include "FloatRect.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
+
+namespace WebCore {
+class FloatPoint;
+}
 
 namespace WebCore::ShapeDetection {
 

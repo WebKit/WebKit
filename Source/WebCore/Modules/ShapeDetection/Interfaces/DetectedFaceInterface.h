@@ -26,11 +26,12 @@
 #pragma once
 
 #include "FloatRect.h"
-#include "LandmarkInterface.h"
 #include <optional>
 #include <wtf/Vector.h>
 
 namespace WebCore::ShapeDetection {
+
+struct Landmark;
 
 struct DetectedFace {
     FloatRect boundingBox;

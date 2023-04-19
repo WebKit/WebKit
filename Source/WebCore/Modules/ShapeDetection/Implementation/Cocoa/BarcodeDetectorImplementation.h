@@ -41,10 +41,10 @@ public:
 
     virtual ~BarcodeDetectorImpl();
 
-    WEBCORE_EXPORT static void getSupportedFormats(CompletionHandler<void(Vector<BarcodeFormat>&&)>&&);
+    static void getSupportedFormats(CompletionHandler<void(Vector<BarcodeFormat>&&)>&&);
 
 private:
-    WEBCORE_EXPORT BarcodeDetectorImpl(const BarcodeDetectorOptions&);
+    BarcodeDetectorImpl(const BarcodeDetectorOptions&);
 
     BarcodeDetectorImpl(const BarcodeDetectorImpl&) = delete;
     BarcodeDetectorImpl(BarcodeDetectorImpl&&) = delete;
