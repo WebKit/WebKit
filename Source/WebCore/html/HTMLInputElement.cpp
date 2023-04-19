@@ -75,6 +75,7 @@
 #include "StepRange.h"
 #include "StyleGradientImage.h"
 #include "TextControlInnerElements.h"
+#include "TextInputType.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
@@ -112,7 +113,7 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document& docum
     , m_parsingInProgress(createdByParser)
     // m_inputType is lazily created when constructed by the parser to avoid constructing unnecessarily a text inputType,
     // just to destroy them when the |type| attribute gets set by the parser to something else than 'text'.
-    , m_inputType(createdByParser ? nullptr : RefPtr { InputType::createText(*this) })
+    , m_inputType(createdByParser ? nullptr : RefPtr { TextInputType::create(*this) })
 {
     ASSERT(hasTagName(inputTag));
 }
@@ -727,7 +728,7 @@ inline void HTMLInputElement::initializeInputType()
 
     auto& type = attributeWithoutSynchronization(typeAttr);
     if (type.isNull()) {
-        m_inputType = InputType::createText(*this);
+        m_inputType = TextInputType::create(*this);
         updateWillValidateAndValidity();
         return;
     }

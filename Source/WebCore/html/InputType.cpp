@@ -99,9 +99,9 @@ struct InputTypeFactory {
 
 typedef MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, InputTypeFactory> InputTypeFactoryMap;
 
-template<class T> static Ref<InputType> createInputType(HTMLInputElement& element)
+template<typename T> static Ref<InputType> createInputType(HTMLInputElement& element)
 {
-    return adoptRef(*new T(element));
+    return T::create(element);
 }
 
 static InputTypeFactoryMap createInputTypeFactoryMap()
@@ -181,12 +181,7 @@ RefPtr<InputType> InputType::createIfDifferent(HTMLInputElement& element, const 
     }
     if (currentInputType && currentInputType->type() == Type::Text)
         return nullptr;
-    return adoptRef(*new TextInputType(element));
-}
-
-Ref<InputType> InputType::createText(HTMLInputElement& element)
-{
-    return adoptRef(*new TextInputType(element));
+    return TextInputType::create(element);
 }
 
 InputType::~InputType() = default;

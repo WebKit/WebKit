@@ -38,13 +38,19 @@ namespace WebCore {
 class NumberInputType final : public TextFieldInputType {
     template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
+    static Ref<NumberInputType> create(HTMLInputElement& element)
+    {
+        return adoptRef(*new NumberInputType(element));
+    }
+
+    bool typeMismatchFor(const String&) const final;
+
+private:
     explicit NumberInputType(HTMLInputElement& element)
         : TextFieldInputType(Type::Number, element)
     {
     }
-    bool typeMismatchFor(const String&) const final;
 
-private:
     const AtomString& formControlType() const final;
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
     double valueAsDouble() const final;

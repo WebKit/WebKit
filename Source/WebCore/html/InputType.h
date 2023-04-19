@@ -155,7 +155,7 @@ public:
     };
 
     static RefPtr<InputType> createIfDifferent(HTMLInputElement&, const AtomString&, InputType* currentInputType = nullptr);
-    static Ref<InputType> createText(HTMLInputElement&);
+
     virtual ~InputType();
 
     void detachFromElement() { m_element = nullptr; }
