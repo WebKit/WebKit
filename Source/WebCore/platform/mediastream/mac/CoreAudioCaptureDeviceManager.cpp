@@ -375,10 +375,8 @@ void CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices(NotifyIfDevicesHa
             m_speakerDevices.append(device);
     }
 
-    if (notify == NotifyIfDevicesHaveChanged::Notify) {
+    if (notify == NotifyIfDevicesHaveChanged::Notify)
         deviceChanged();
-        CoreAudioCaptureSourceFactory::singleton().devicesChanged(m_captureDevices);
-    }
 }
 
 } // namespace WebCore

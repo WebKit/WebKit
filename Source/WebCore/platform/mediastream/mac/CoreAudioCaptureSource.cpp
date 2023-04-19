@@ -176,11 +176,6 @@ const Vector<CaptureDevice>& CoreAudioCaptureSourceFactory::speakerDevices() con
 #endif
 }
 
-void CoreAudioCaptureSourceFactory::devicesChanged(const Vector<CaptureDevice>& devices)
-{
-    CoreAudioSharedUnit::unit().devicesChanged(devices);
-}
-
 void CoreAudioCaptureSourceFactory::registerSpeakerSamplesProducer(CoreAudioSpeakerSamplesProducer& producer)
 {
     CoreAudioSharedUnit::unit().registerSpeakerSamplesProducer(producer);

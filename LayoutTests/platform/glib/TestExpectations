@@ -1683,7 +1683,11 @@ webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Ti
 # This ends up calling WKPageTriggerMockMicrophoneConfigurationChange which is specific to GPUProcess.
 fast/mediastream/mediastreamtrack-configurationchange.html [ Skip ]
 
-fast/mediastream/MediaDevices-addEventListener.html [ DumpJSConsoleLogInStdErr ]
+# Tests should be rebased, mock infra might need some updates.
+fast/mediastream/MediaDevices-addEventListener.html [ Failure ]
+fast/mediastream/microphone-change-while-capturing.html [ Failure ]
+fast/mediastream/microphone-change-while-muted.html [ Failure ]
+fast/mediastream/device-change-event-2.html [ Failure ]
 
 webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
 

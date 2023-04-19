@@ -505,7 +505,7 @@ void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    if (m_isCaptureTrack && m_private->source().captureDidFail())
+    if (m_isCaptureTrack && m_private->source().captureDidFail() && m_readyState != State::Ended)
         scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "A MediaStreamTrack ended due to a capture failure"_s);
 
     // http://w3c.github.io/mediacapture-main/#life-cycle
