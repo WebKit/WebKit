@@ -1,0 +1,6 @@
+
+PASS Should have a feature for `applePayLaterAvailability`.
+PASS Should throw `TypeError` when invalid `applePayLaterAvailability` is set.
+PASS Should not have a default value for `applePayLaterAvailability`.
+PASS Should propagate `applePayLaterAvailability` if provided.
+

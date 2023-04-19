@@ -48,5 +48,5 @@
 
     [Conditional=APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE] ApplePayShippingContactEditingMode shippingContactEditingMode;
 
-    [Conditional=APPLE_PAY_LATER_MODE] ApplePayLaterMode applePayLaterMode;
+    [Conditional=APPLE_PAY_LATER_AVAILABILITY] ApplePayLaterAvailability applePayLaterAvailability;
 };

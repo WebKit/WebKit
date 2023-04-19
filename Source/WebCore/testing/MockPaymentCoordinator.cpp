@@ -29,7 +29,7 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePayCouponCodeUpdate.h"
-#include "ApplePayLaterMode.h"
+#include "ApplePayLaterAvailability.h"
 #include "ApplePayPaymentAuthorizationResult.h"
 #include "ApplePayPaymentMethodUpdate.h"
 #include "ApplePaySessionPaymentRequest.h"
@@ -136,8 +136,8 @@ bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const
 #if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
     m_deferredPaymentRequest = request.deferredPaymentRequest();
 #endif
-#if ENABLE(APPLE_PAY_LATER_MODE)
-    m_applePayLaterMode = request.applePayLaterMode();
+#if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
+    m_applePayLaterAvailability = request.applePayLaterAvailability();
 #endif
 
     ASSERT(showCount == hideCount);

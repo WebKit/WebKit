@@ -40,7 +40,7 @@ JSApplePayInstallmentConfiguration.cpp
 JSApplePayInstallmentItem.cpp
 JSApplePayInstallmentItemType.cpp
 JSApplePayInstallmentRetailChannel.cpp
-JSApplePayLaterMode.cpp
+JSApplePayLaterAvailability.cpp
 JSApplePayLineItem.cpp
 JSApplePayMerchantCapability.cpp
 JSApplePayModifier.cpp

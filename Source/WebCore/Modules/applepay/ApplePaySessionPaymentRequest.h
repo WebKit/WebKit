@@ -30,7 +30,7 @@
 #include "ApplePayAutomaticReloadPaymentRequest.h"
 #include "ApplePayDeferredPaymentRequest.h"
 #include "ApplePayError.h"
-#include "ApplePayLaterMode.h"
+#include "ApplePayLaterAvailability.h"
 #include "ApplePayLineItem.h"
 #include "ApplePayPaymentTokenContext.h"
 #include "ApplePayRecurringPaymentRequest.h"
@@ -162,9 +162,9 @@ public:
     void setDeferredPaymentRequest(std::optional<ApplePayDeferredPaymentRequest>&& deferredPaymentRequest) { m_deferredPaymentRequest = WTFMove(deferredPaymentRequest); }
 #endif
 
-#if ENABLE(APPLE_PAY_LATER_MODE)
-    const std::optional<ApplePayLaterMode>& applePayLaterMode() const { return m_applePayLaterMode; }
-    void setApplePayLaterMode(const std::optional<ApplePayLaterMode>& applePayLaterMode) { m_applePayLaterMode = applePayLaterMode; }
+#if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
+    const std::optional<ApplePayLaterAvailability>& applePayLaterAvailability() const { return m_applePayLaterAvailability; }
+    void setApplePayLaterAvailability(const std::optional<ApplePayLaterAvailability>& applePayLaterAvailability) { m_applePayLaterAvailability = applePayLaterAvailability; }
 #endif
     
 private:
@@ -222,8 +222,8 @@ private:
     std::optional<ApplePayDeferredPaymentRequest> m_deferredPaymentRequest;
 #endif
 
-#if ENABLE(APPLE_PAY_LATER_MODE)
-    std::optional<ApplePayLaterMode> m_applePayLaterMode;
+#if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
+    std::optional<ApplePayLaterAvailability> m_applePayLaterAvailability;
 #endif
 };
 

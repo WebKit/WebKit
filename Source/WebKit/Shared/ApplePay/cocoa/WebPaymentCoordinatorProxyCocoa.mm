@@ -58,6 +58,17 @@
 @property (nonatomic, strong) NSURL *thumbnailURL;
 @end
 
+#if HAVE(PASSKIT_APPLE_PAY_LATER_AVAILABILITY)
+
+// FIXME: rdar://107955442 Remove staging code.
+
+#define PKApplePayLaterAvailable 0
+#define PKApplePayLaterUnavailableMerchantIneligible 1
+#define PKApplePayLaterUnavailableItemIneligible 2
+#define PKApplePayLaterUnavailableRecurringTransaction 3
+
+#endif
+
 namespace WebKit {
 
 WebPaymentCoordinatorProxy::WebPaymentCoordinatorProxy(WebPaymentCoordinatorProxy::Client& client)
@@ -246,26 +257,27 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #endif // HAVE(PASSKIT_SHIPPING_CONTACT_EDITING_MODE)
 
-#if HAVE(PASSKIT_APPLE_PAY_LATER_MODE)
+#if HAVE(PASSKIT_APPLE_PAY_LATER_AVAILABILITY)
 
-static PKApplePayLaterMode toPKApplePayLaterMode(WebCore::ApplePayLaterMode applePayLaterMode)
+static PKApplePayLaterAvailability toPKApplePayLaterAvailability(WebCore::ApplePayLaterAvailability applePayLaterAvailability)
 {
-    switch (applePayLaterMode) {
-    case WebCore::ApplePayLaterMode::Enabled:
-        return PKApplePayLaterModeEnabled;
+    // FIXME: rdar://107955442 Remove staging code.
+    switch (applePayLaterAvailability) {
+    case WebCore::ApplePayLaterAvailability::Available:
+        return (PKApplePayLaterAvailability)PKApplePayLaterAvailable;
 
-    case WebCore::ApplePayLaterMode::DisabledMerchantIneligible:
-        return PKApplePayLaterModeDisabledMerchantIneligible;
+    case WebCore::ApplePayLaterAvailability::UnavailableMerchantIneligible:
+        return (PKApplePayLaterAvailability)PKApplePayLaterUnavailableMerchantIneligible;
 
-    case WebCore::ApplePayLaterMode::DisabledItemIneligible:
-        return PKApplePayLaterModeDisabledItemIneligible;
+    case WebCore::ApplePayLaterAvailability::UnavailableItemIneligible:
+        return (PKApplePayLaterAvailability)PKApplePayLaterUnavailableItemIneligible;
 
-    case WebCore::ApplePayLaterMode::DisabledRecurringTransaction:
-        return PKApplePayLaterModeDisabledRecurringTransaction;
+    case WebCore::ApplePayLaterAvailability::UnavailableRecurringTransaction:
+        return (PKApplePayLaterAvailability)PKApplePayLaterUnavailableRecurringTransaction;
     }
 }
 
-#endif // HAVE(PASSKIT_APPLE_PAY_LATER_MODE)
+#endif // HAVE(PASSKIT_APPLE_PAY_LATER_AVAILABILITY)
 
 static RetainPtr<NSSet> toNSSet(const Vector<String>& strings)
 {
@@ -371,9 +383,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [result setShippingContactEditingMode:toPKShippingContactEditingMode(*shippingContactEditingMode)];
 #endif
 
-#if HAVE(PASSKIT_APPLE_PAY_LATER_MODE)
-    if (auto& applePayLaterMode = paymentRequest.applePayLaterMode())
-        [result setApplePayLaterMode:toPKApplePayLaterMode(*applePayLaterMode)];
+#if HAVE(PASSKIT_APPLE_PAY_LATER_AVAILABILITY)
+    if (auto& applePayLaterAvailability = paymentRequest.applePayLaterAvailability()) {
+        // FIXME: rdar://107955442 Remove staging code.
+        if ([result respondsToSelector:@selector(setApplePayLaterAvailability:)])
+            [result setApplePayLaterAvailability:toPKApplePayLaterAvailability(*applePayLaterAvailability)];
+    }
 #endif
 
 #if HAVE(PASSKIT_RECURRING_PAYMENTS)

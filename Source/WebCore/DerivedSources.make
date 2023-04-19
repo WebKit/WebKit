@@ -231,7 +231,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/applepay/ApplePayInstallmentItemType.idl \
     $(WebCore)/Modules/applepay/ApplePayInstallmentRetailChannel.idl \
     $(WebCore)/Modules/applepay/ApplePayLineItem.idl \
-    $(WebCore)/Modules/applepay/ApplePayLaterMode.idl \
+    $(WebCore)/Modules/applepay/ApplePayLaterAvailability.idl \
     $(WebCore)/Modules/applepay/ApplePayMerchantCapability.idl \
     $(WebCore)/Modules/applepay/ApplePayPayment.idl \
     $(WebCore)/Modules/applepay/ApplePayPaymentAuthorizationResult.idl \
