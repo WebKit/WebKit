@@ -57,12 +57,13 @@
 #import "TypedElementDescendantIteratorInlines.h"
 #import "VisiblePosition.h"
 #import "VisibleUnits.h"
-#import <pal/spi/ios/DataDetectorsUISPI.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/StringToIntegerConversion.h>
+
 #import <pal/cocoa/DataDetectorsCoreSoftLink.h>
 #import <pal/mac/DataDetectorsSoftLink.h>
+#import <pal/spi/ios/DataDetectorsUISoftLink.h>
 
 #if PLATFORM(MAC)
 template<> struct WTF::CFTypeTrait<DDResultRef> {
@@ -445,7 +446,7 @@ void DataDetection::removeDataDetectedLinksInDocument(Document& document)
 
 std::optional<double> DataDetection::extractReferenceDate(NSDictionary *context)
 {
-    if (auto date = dynamic_objc_cast<NSDate>([context objectForKey:getkDataDetectorsReferenceDateKey()]))
+    if (auto date = dynamic_objc_cast<NSDate>([context objectForKey:PAL::get_DataDetectorsUI_kDataDetectorsReferenceDateKey()]))
         return [date timeIntervalSince1970];
     return std::nullopt;
 }

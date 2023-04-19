@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #if PLATFORM(IOS_FAMILY) && ENABLE(DATA_DETECTION)
 
 #import <UIKit/UIKit.h>
-#import <wtf/SoftLinking.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 
@@ -81,16 +80,5 @@
 - (void)interactionDidStartForURL:(NSURL *)url;
 - (BOOL)shouldImmediatelyLaunchDefaultActionForURL:(NSURL *)url;
 @end
-
-SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectorsUI)
-#if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
-SOFT_LINK_CLASS(DataDetectorsUI, DDContextMenuAction);
-SOFT_LINK_CLASS(DataDetectorsUI, DDContextMenuConfiguration);
-#endif
-SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
-SOFT_LINK_CONSTANT(DataDetectorsUI, kDataDetectorsLeadingText, const NSString *)
-SOFT_LINK_CONSTANT(DataDetectorsUI, kDataDetectorsReferenceDateKey, const NSString *)
-SOFT_LINK_CONSTANT(DataDetectorsUI, kDataDetectorsSourceRectKey, const NSString *)
-SOFT_LINK_CONSTANT(DataDetectorsUI, kDataDetectorsTrailingText, const NSString *)
 
 #endif

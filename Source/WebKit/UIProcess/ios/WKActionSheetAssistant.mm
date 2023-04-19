@@ -42,6 +42,7 @@
 #import <WebCore/FloatRect.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/PathUtilities.h>
+#import <pal/spi/ios/DataDetectorsUISoftLink.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/Vector.h>
@@ -312,7 +313,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!targetURL)
         return;
 
-    auto *controller = [getDDDetectionControllerClass() sharedController];
+    auto *controller = [PAL::getDDDetectionControllerClass() sharedController];
     if ([controller respondsToSelector:@selector(interactionDidStartForURL:)])
         [controller interactionDidStartForURL:targetURL];
 #endif
@@ -749,7 +750,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     auto retainedSelf = retainPtr(self);
     _WKElementAction *elementAction = [_WKElementAction elementActionWithTitle:action.localizedName actionHandler:^(_WKActivatedElementInfo *actionInfo) {
         retainedSelf->_isPresentingDDUserInterface = action.hasUserInterface;
-        [[getDDDetectionControllerClass() sharedController] performAction:action fromAlertController:retainedSelf->_interactionSheet.get() interactionDelegate:retainedSelf.get()];
+        [[PAL::getDDDetectionControllerClass() sharedController] performAction:action fromAlertController:retainedSelf->_interactionSheet.get() interactionDelegate:retainedSelf.get()];
     }];
     elementAction.dismissalHandler = ^BOOL {
         return !action.hasUserInterface;
@@ -774,7 +775,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!targetURL)
         return;
 
-    DDDetectionController *controller = [getDDDetectionControllerClass() sharedController];
+    DDDetectionController *controller = [PAL::getDDDetectionControllerClass() sharedController];
     NSDictionary *context = nil;
     NSString *textAtSelection = nil;
 
@@ -900,7 +901,7 @@ static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr
 {
 #if ENABLE(DATA_DETECTION)
     if (interaction == _dataDetectorContextMenuInteraction) {
-        DDDetectionController *controller = [getDDDetectionControllerClass() sharedController];
+        DDDetectionController *controller = [PAL::getDDDetectionControllerClass() sharedController];
         NSDictionary *context = nil;
         NSString *textAtSelection = nil;
 
@@ -918,7 +919,7 @@ static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr
         else
             sourceRect = _positionInformation->bounds;
 
-        auto ddContextMenuActionClass = getDDContextMenuActionClass();
+        auto ddContextMenuActionClass = PAL::getDDContextMenuActionClass();
         auto finalContext = [ddContextMenuActionClass updateContext:newContext withSourceRect:sourceRect];
 
         if (ddResult)

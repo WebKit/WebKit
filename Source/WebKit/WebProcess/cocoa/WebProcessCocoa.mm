@@ -161,7 +161,7 @@
 #endif
 
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
-#import <pal/spi/ios/DataDetectorsUISPI.h>
+#import <pal/spi/ios/DataDetectorsUISoftLink.h>
 #endif
 
 #import <WebCore/MediaAccessibilitySoftLink.h>
@@ -240,7 +240,7 @@ static void softlinkDataDetectorsFrameworks()
 #if ENABLE(DATA_DETECTION)
     PAL::isDataDetectorsCoreFrameworkAvailable();
 #if PLATFORM(IOS_FAMILY)
-    DataDetectorsUILibrary();
+    PAL::isDataDetectorsUIFrameworkAvailable();
 #endif // PLATFORM(IOS_FAMILY)
 #endif // ENABLE(DATA_DETECTION)
 }

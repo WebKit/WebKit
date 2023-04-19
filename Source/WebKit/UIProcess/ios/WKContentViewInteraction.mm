@@ -143,7 +143,6 @@
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/ios/BarcodeSupportSPI.h>
-#import <pal/spi/ios/DataDetectorsUISPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
 #import <wtf/BlockObjCExceptions.h>
@@ -189,6 +188,7 @@
 #import <pal/cocoa/TranslationUIServicesSoftLink.h>
 #import <pal/ios/ManagedConfigurationSoftLink.h>
 #import <pal/ios/QuickLookSoftLink.h>
+#import <pal/spi/ios/DataDetectorsUISoftLink.h>
 
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
 static NSString * const webkitShowLinkPreviewsPreferenceKey = @"WebKitShowLinkPreviews";
@@ -8372,9 +8372,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(DATA_DETECTION)
     if (!positionInformation.textBefore.isEmpty())
-        context.get()[getkDataDetectorsLeadingText()] = positionInformation.textBefore;
+        context.get()[PAL::get_DataDetectorsUI_kDataDetectorsLeadingText()] = positionInformation.textBefore;
     if (!positionInformation.textAfter.isEmpty())
-        context.get()[getkDataDetectorsTrailingText()] = positionInformation.textAfter;
+        context.get()[PAL::get_DataDetectorsUI_kDataDetectorsTrailingText()] = positionInformation.textAfter;
 
     CGRect sourceRect;
     if (positionInformation.isLink)
@@ -8385,7 +8385,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         sourceRect = positionInformation.bounds;
 
     CGRect frameInContainerViewCoordinates = [self convertRect:sourceRect toView:self.containerForContextMenuHintPreviews];
-    return [getDDContextMenuActionClass() updateContext:context.get() withSourceRect:frameInContainerViewCoordinates];
+    return [PAL::getDDContextMenuActionClass() updateContext:context.get() withSourceRect:frameInContainerViewCoordinates];
 #else
     return context.autorelease();
 #endif
@@ -12078,7 +12078,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         // Previously, UIPreviewItemController would detect the case where there was no previewViewController
         // and create one. We need to replicate this code for the new API.
         if (!previewViewController || [(NSURL *)url iTunesStoreURL]) {
-            auto ddContextMenuActionClass = getDDContextMenuActionClass();
+            auto ddContextMenuActionClass = PAL::getDDContextMenuActionClass();
             BEGIN_BLOCK_OBJC_EXCEPTIONS
             NSDictionary *context = [self dataDetectionContextForPositionInformation:_positionInformation];
             RetainPtr<UIContextMenuConfiguration> dataDetectorsResult = [ddContextMenuActionClass contextMenuConfigurationForURL:url identifier:_positionInformation.dataDetectorIdentifier selectedText:self.selectedText results:_positionInformation.dataDetectorResults.get() inView:self context:context menuIdentifier:nil];
@@ -12397,7 +12397,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)continueContextMenuInteractionWithDataDetectors:(void(^)(UIContextMenuConfiguration *))continueWithContextMenuConfiguration
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    auto ddContextMenuActionClass = getDDContextMenuActionClass();
+    auto ddContextMenuActionClass = PAL::getDDContextMenuActionClass();
     auto context = retainPtr([self dataDetectionContextForPositionInformation:_positionInformation]);
     RetainPtr<UIContextMenuConfiguration> configurationFromDataDetectors;
 
@@ -12478,7 +12478,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (_UIContextMenuStyle *)_contextMenuInteraction:(UIContextMenuInteraction *)interaction styleForMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
 {
 #if defined(DD_CONTEXT_MENU_SPI_VERSION) && DD_CONTEXT_MENU_SPI_VERSION >= 2
-    if ([configuration isKindOfClass:getDDContextMenuConfigurationClass()]) {
+    if ([configuration isKindOfClass:PAL::getDDContextMenuConfigurationClass()]) {
         DDContextMenuConfiguration *ddConfiguration = static_cast<DDContextMenuConfiguration *>(configuration);
 
         if (ddConfiguration.prefersActionMenuStyle) {
@@ -12545,7 +12545,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
 #if defined(DD_CONTEXT_MENU_SPI_VERSION) && DD_CONTEXT_MENU_SPI_VERSION >= 2
-    if ([configuration isKindOfClass:getDDContextMenuConfigurationClass()]) {
+    if ([configuration isKindOfClass:PAL::getDDContextMenuConfigurationClass()]) {
         DDContextMenuConfiguration *ddConfiguration = static_cast<DDContextMenuConfiguration *>(configuration);
 
         BOOL shouldExpandPreview = NO;
@@ -12707,7 +12707,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             if ([uiDelegate respondsToSelector:@selector(_dataDetectionContextForWebView:)])
                 context = [uiDelegate _dataDetectionContextForWebView:self.webView];
 
-            DDDetectionController *controller = [getDDDetectionControllerClass() sharedController];
+            DDDetectionController *controller = [PAL::getDDDetectionControllerClass() sharedController];
             NSDictionary *newContext = nil;
             RetainPtr<NSMutableDictionary> extendedContext;
             DDResultRef ddResult = [controller resultForURL:dataForPreview.get()[UIPreviewDataLink] identifier:_positionInformation.dataDetectorIdentifier selectedText:[self selectedText] results:_positionInformation.dataDetectorResults.get() context:context extendedContext:&newContext];
@@ -12715,8 +12715,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 dataForPreview.get()[UIPreviewDataDDResult] = (__bridge id)ddResult;
             if (!_positionInformation.textBefore.isEmpty() || !_positionInformation.textAfter.isEmpty()) {
                 extendedContext = adoptNS([@{
-                    getkDataDetectorsLeadingText() : _positionInformation.textBefore,
-                    getkDataDetectorsTrailingText() : _positionInformation.textAfter,
+                    PAL::get_DataDetectorsUI_kDataDetectorsLeadingText() : _positionInformation.textBefore,
+                    PAL::get_DataDetectorsUI_kDataDetectorsTrailingText() : _positionInformation.textAfter,
                 } mutableCopy]);
                 
                 if (newContext)
