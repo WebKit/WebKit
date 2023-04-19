@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+console.log("Tests that MessageEvent.data works as expected from isolated worlds.");
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+testRunner.evaluateScriptInIsolatedWorld(1,
+    "window.onmessage = (ev) => {" +
+    "    if (ev.data && ev.data.port instanceof MessagePort)" +
+    "        console.log('PASS: The isolated world was able to read the MessagePort sent via postMessage()');" +
+    "    else" +
+    "        console.log('FAIL: The isolated world was not able to read the MessagePort sent via postMessage()');" +
+    "    window.onmessage = null;" +
+    "};"
+);
+
+onmessage = (ev) => {
+    if (ev.data === "DONE") {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+};
+
+const ch = new MessageChannel();
+const port = ch.port2;
+window.postMessage({ port }, "*", [port]);
+window.postMessage("DONE", "*");
+</script>
+</body>
+</html>
