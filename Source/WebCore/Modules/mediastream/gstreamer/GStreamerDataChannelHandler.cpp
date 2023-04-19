@@ -38,10 +38,12 @@ GST_DEBUG_CATEGORY(webkit_webrtc_data_channel_debug);
 #define DC_DEBUG(...) GST_DEBUG_ID(m_channelId.ascii().data(), __VA_ARGS__)
 #define DC_TRACE(...) GST_TRACE_ID(m_channelId.ascii().data(), __VA_ARGS__)
 #define DC_WARNING(...) GST_WARNING_ID(m_channelId.ascii().data(), __VA_ARGS__)
+#define DC_MEMDUMP(...) GST_MEMDUMP_ID(m_channelId.ascii().data(), __VA_ARGS__)
 #else
 #define DC_DEBUG(...) GST_DEBUG(__VA_ARGS__)
 #define DC_TRACE(...) GST_TRACE(__VA_ARGS__)
 #define DC_WARNING(...) GST_WARNING(__VA_ARGS__)
+#define DC_MEMDUMP(...) GST_MEMDUMP(__VA_ARGS__)
 #endif
 
 namespace WebCore {
@@ -164,7 +166,9 @@ void GStreamerDataChannelHandler::setClient(RTCDataChannelHandlerClient& client,
     for (auto& message : m_pendingMessages) {
         switchOn(message, [&](Ref<FragmentedSharedBuffer>& data) {
             DC_DEBUG("Notifying queued raw data (size: %zu)", data->size());
-            client.didReceiveRawData(data->makeContiguous()->data(), data->size());
+            const auto* rawData = data->makeContiguous()->data();
+            DC_MEMDUMP("Notifying raw data", rawData, data->size());
+            client.didReceiveRawData(rawData, data->size());
         }, [&](String& text) {
             DC_DEBUG("Notifying queued string of size %d", text.sizeInBytes());
             DC_TRACE("Notifying queued string %s", text.ascii().data());
@@ -192,6 +196,7 @@ bool GStreamerDataChannelHandler::sendStringData(const CString& text)
 bool GStreamerDataChannelHandler::sendRawData(const uint8_t* data, size_t length)
 {
     DC_DEBUG("Sending raw data of length: %zu", length);
+    DC_MEMDUMP("Sending raw data", data, length);
     auto bytes = adoptGRef(g_bytes_new(data, length));
     g_signal_emit_by_name(m_channel.get(), "send-data", bytes.get());
     return true;
@@ -328,11 +333,12 @@ void GStreamerDataChannelHandler::onMessageData(GBytes* bytes)
     if (!*m_client)
         return;
 
-    postTask([client = m_client, bytes = GRefPtr<GBytes>(bytes)] {
+    postTask([this, client = m_client, bytes = GRefPtr<GBytes>(bytes)] {
         if (!*client)
             return;
         gsize size = 0;
         const auto* data = reinterpret_cast<const uint8_t*>(g_bytes_get_data(bytes.get(), &size));
+        DC_MEMDUMP("Incoming raw data", data, size);
         client.value()->didReceiveRawData(data, size);
     });
 }
