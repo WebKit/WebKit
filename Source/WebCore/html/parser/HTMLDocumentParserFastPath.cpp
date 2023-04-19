@@ -123,6 +123,15 @@ template<typename CharacterType> static inline bool isCharAfterUnquotedAttribute
     return character == ' ' || character == '>' || isHTMLSpace(character);
 }
 
+template<typename T> static bool insertInUniquedSortedVector(Vector<T>& vector, const T& value)
+{
+    auto it = std::lower_bound(vector.begin(), vector.end(), value);
+    if (UNLIKELY(it != vector.end() && *it == value))
+        return false;
+    vector.insert(it - vector.begin(), value);
+    return true;
+}
+
 #define FOR_EACH_SUPPORTED_TAG(APPLY) \
     APPLY(a, A)                       \
     APPLY(b, B)                       \
@@ -160,7 +169,6 @@ template<typename CharacterType> static inline bool isCharAfterUnquotedAttribute
 // - Wrong nesting of HTML elements (for example nested <p>) leads to bailout
 //   instead of fix-up.
 // - No custom elements, no "is"-attribute.
-// - No duplicate attributes. This restriction could be lifted easily.
 // - Unquoted attribute names are very restricted.
 // - Many tags are unsupported, but we could support more. For example, <table>
 //   because of the complex re-parenting rules
@@ -234,7 +242,7 @@ private:
     Vector<UChar> m_ucharBuffer;
     // The inline capacity matches HTMLToken::AttributeList.
     Vector<Attribute, 10> m_attributeBuffer;
-    Vector<StringImpl*> m_attributeNames;
+    Vector<AtomStringImpl*> m_attributeNames;
 
 
     enum class PermittedParents : uint8_t {
@@ -701,8 +709,10 @@ private:
 
     void parseAttributes(HTMLElement& parent)
     {
-        ASSERT(m_attributeBuffer.isEmpty());
-        ASSERT(m_attributeNames.isEmpty());
+        m_attributeBuffer.resize(0);
+        m_attributeNames.resize(0);
+
+        bool hasDuplicateAttributes = false;
         while (true) {
             auto attributeName = scanAttributeName();
             if (attributeName == nullQName()) {
@@ -727,17 +737,15 @@ private:
                 attributeValue = scanAttributeValue();
                 skipWhile<isHTMLSpace>(m_parsingBuffer);
             }
-            m_attributeNames.append(attributeName.localName().impl());
+            if (UNLIKELY(!insertInUniquedSortedVector(m_attributeNames, attributeName.localName().impl()))) {
+                hasDuplicateAttributes = true;
+                continue;
+            }
             m_attributeBuffer.append(Attribute { WTFMove(attributeName), WTFMove(attributeValue) });
         }
-        std::sort(m_attributeNames.begin(), m_attributeNames.end());
-        if (std::adjacent_find(m_attributeNames.begin(), m_attributeNames.end()) != m_attributeNames.end()) {
-            // Found duplicate attributes. We would have to ignore repeated attributes, but leave this to the general parser instead.
-            return didFail(HTMLFastPathResult::FailedParsingAttributes);
-        }
         parent.parserSetAttributes(m_attributeBuffer);
-        m_attributeBuffer.resize(0);
-        m_attributeNames.resize(0);
+        if (UNLIKELY(hasDuplicateAttributes))
+            parent.setHasDuplicateAttribute(true);
     }
 
     template<typename... Tags> RefPtr<HTMLElement> parseSpecificElements()
