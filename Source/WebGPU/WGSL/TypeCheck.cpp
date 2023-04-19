@@ -302,7 +302,7 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
         return;
     }
 
-    if (!unify(index, m_types.i32Type()) && !unify(index, m_types.u32Type()) && !unify(index, m_types.abstractIntType())) {
+    if (!unify(m_types.i32Type(), index) && !unify(m_types.u32Type(), index) && !unify(m_types.abstractIntType(), index)) {
         typeError(access.span(), "index must be of type 'i32' or 'u32', found: '", *index, "'");
         return;
     }
@@ -311,6 +311,13 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
         // FIXME: check bounds if index is constant
         auto& array = std::get<Types::Array>(*base);
         inferred(array.element);
+        return;
+    }
+
+    if (std::holds_alternative<Types::Vector>(*base)) {
+        // FIXME: check bounds if index is constant
+        auto& vector = std::get<Types::Vector>(*base);
+        inferred(vector.element);
         return;
     }
 
