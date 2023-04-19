@@ -244,6 +244,9 @@ void ShaderModule::setLabel(String&& label)
 
 id<MTLFunction> ShaderModule::getNamedFunction(const String& originalName, const HashMap<String, double>& keyValueReplacements) const
 {
+    if (!m_library)
+        return nil;
+
     const auto* information = entryPointInformation(originalName);
     const String& name = information ? information->mangledName : originalName;
     auto originalFunction = [m_library newFunctionWithName:name];
