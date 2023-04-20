@@ -35,7 +35,7 @@ typedef WebKitPermissionRequestIface WebKitPermissionRequestInterface;
  * A permission request for reading clipboard contents.
  *
  * WebKitClipboardPermissionRequest represents a request for
- * permission to decide whether WebKit can access the clibpard to read
+ * permission to decide whether WebKit can access the clipboard to read
  * its contents through the Async Clipboard API.
  *
  * When a WebKitClipboardPermissionRequest is not handled by the user,
