@@ -158,9 +158,11 @@ void NameManglerVisitor::visit(AST::Structure& structure)
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-void NameManglerVisitor::visit(AST::Variable& variable)
+void NameManglerVisitor::visit(AST::Variable&)
 {
-    visitVariableDeclaration(variable, MangledName::Global);
+    // FIXME: we need to notify the API about these renames
+    // https://bugs.webkit.org/show_bug.cgi?id=250441
+    // visitVariableDeclaration(variable, MangledName::Global);
 }
 
 void NameManglerVisitor::visit(AST::VariableStatement& variable)

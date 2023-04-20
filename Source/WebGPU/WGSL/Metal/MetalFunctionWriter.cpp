@@ -96,6 +96,8 @@ public:
 
 private:
     void visit(const Type*);
+    void visitGlobal(AST::Variable&);
+    void serializeVariable(AST::Variable&);
 
     StringBuilder& m_stringBuilder;
     CallGraph& m_callGraph;
@@ -103,12 +105,15 @@ private:
     std::optional<AST::StructureRole> m_structRole;
     std::optional<AST::StageAttribute::Stage> m_entryPointStage;
     std::optional<String> m_suffix;
+    unsigned m_functionConstantIndex { 0 };
 };
 
 void FunctionDefinitionWriter::write()
 {
     for (auto& structure : m_callGraph.ast().structures())
         visit(structure);
+    for (auto& variable : m_callGraph.ast().variables())
+        visitGlobal(variable);
     for (auto& entryPoint : m_callGraph.entrypoints())
         visit(entryPoint.function);
 }
@@ -181,6 +186,22 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
 
 void FunctionDefinitionWriter::visit(AST::Variable& variable)
 {
+    serializeVariable(variable);
+    m_stringBuilder.append(";\n");
+}
+
+void FunctionDefinitionWriter::visitGlobal(AST::Variable& variable)
+{
+    if (variable.flavor() != AST::VariableFlavor::Override)
+        return;
+
+    m_stringBuilder.append("constant ");
+    serializeVariable(variable);
+    m_stringBuilder.append(" [[function_constant(", m_functionConstantIndex++, ")]];\n");
+}
+
+void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
+{
     if (variable.maybeTypeName())
         visit(*variable.maybeTypeName());
     else {
@@ -193,7 +214,6 @@ void FunctionDefinitionWriter::visit(AST::Variable& variable)
         m_stringBuilder.append(" = ");
         visit(*variable.maybeInitializer());
     }
-    m_stringBuilder.append(";\n");
 }
 
 void FunctionDefinitionWriter::visit(AST::Attribute& attribute)
