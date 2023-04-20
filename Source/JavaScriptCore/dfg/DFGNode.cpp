@@ -353,6 +353,22 @@ void Node::convertToRegExpTestInline(FrozenValue* globalObject, FrozenValue* reg
     m_opInfo2 = regExp;
 }
 
+void Node::convertToGetById(Graph& graph, CacheableIdentifier identifier)
+{
+    ASSERT(op() == GetByVal);
+    Edge base = graph.varArgChild(this, 0);
+    ASSERT(base.useKind() == ObjectUse);
+    for (unsigned i = 0; i < numChildren(); ++i) {
+        Edge& edge = graph.varArgChild(this, i);
+        edge = Edge();
+    }
+    setOpAndDefaultFlags(GetById);
+    children.child1() = Edge(base.node(), CellUse);
+    children.child2() = Edge();
+    children.child3() = Edge();
+    m_opInfo = identifier;
+}
+
 String Node::tryGetString(Graph& graph)
 {
     if (hasConstant())
