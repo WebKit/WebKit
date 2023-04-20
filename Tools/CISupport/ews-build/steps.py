@@ -1345,7 +1345,8 @@ class FindModifiedLayoutTests(AnalyzeChange):
     def start(self):
         patch = self._get_patch()
         if not patch:
-            self.finished(SUCCESS)
+            self._addToLog('stdio', 'Unable to access the patch/PR content.')
+            self.finished(WARNINGS)
             return None
 
         tests = self.find_test_names_from_patch(patch)
