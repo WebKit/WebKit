@@ -334,6 +334,7 @@ void GStreamerDataChannelHandler::onMessageData(GBytes* bytes)
         return;
 
     postTask([this, client = m_client, bytes = GRefPtr<GBytes>(bytes)] {
+        UNUSED_VARIABLE(this); // Conditionally used in DC_MEMDUMP.
         if (!*client)
             return;
         gsize size = 0;
