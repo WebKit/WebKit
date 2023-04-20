@@ -58,6 +58,7 @@ private:
     using IndexMap = HashMap<unsigned, Value, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
 
     using IndexSet = HashSet<unsigned, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
+    using UsedGlobals = IndexMap<IndexSet>;
 
     struct Global {
         struct Resource {
@@ -76,10 +77,10 @@ private:
     Global* read(const String&);
 
     void collectGlobals();
-    void insertStructs();
     void visitEntryPoint(AST::Function&, AST::StageAttribute::Stage, PipelineLayout&);
-    IndexSet requiredGroups(PipelineLayout&, AST::StageAttribute::Stage);
-    void insertParameters(AST::Function&, const IndexSet& requiredGroups);
+    UsedGlobals determineUsedGlobals(PipelineLayout&, AST::StageAttribute::Stage);
+    void insertStructs(const UsedGlobals&);
+    void insertParameters(AST::Function&, const UsedGlobals&);
 
     CallGraph& m_callGraph;
     PrepareResult& m_result;
@@ -93,7 +94,6 @@ private:
 void RewriteGlobalVariables::run()
 {
     collectGlobals();
-    insertStructs();
     for (auto& entryPoint : m_callGraph.entrypoints()) {
         PipelineLayout pipelineLayout;
         visitEntryPoint(entryPoint.function, entryPoint.stage, pipelineLayout);
@@ -174,20 +174,22 @@ void RewriteGlobalVariables::visitEntryPoint(AST::Function& function, AST::Stage
 {
     m_reads.clear();
     m_defs.clear();
+    m_structTypes.clear();
 
     visit(function);
     if (m_reads.isEmpty())
         return;
 
-    auto groupsToGenerate = requiredGroups(pipelineLayout, stage);
+    auto usedGlobals = determineUsedGlobals(pipelineLayout, stage);
+    insertStructs(usedGlobals);
     // FIXME: not all globals are parameters
-    insertParameters(function, groupsToGenerate);
+    insertParameters(function, usedGlobals);
 }
 
 
-auto RewriteGlobalVariables::requiredGroups(PipelineLayout& pipelineLayout, AST::StageAttribute::Stage stage) -> IndexSet
+auto RewriteGlobalVariables::determineUsedGlobals(PipelineLayout& pipelineLayout, AST::StageAttribute::Stage stage) -> UsedGlobals
 {
-    IndexSet groups;
+    UsedGlobals usedGlobals;
     for (const auto& globalName : m_reads) {
         auto it = m_globals.find(globalName);
         RELEASE_ASSERT(it != m_globals.end());
@@ -195,7 +197,8 @@ auto RewriteGlobalVariables::requiredGroups(PipelineLayout& pipelineLayout, AST:
         if (!global.resource.has_value())
             continue;
         auto group = global.resource->group;
-        groups.add(group);
+        auto result = usedGlobals.add(group, IndexSet());
+        result.iterator->value.add(global.resource->binding);
 
         if (pipelineLayout.bindGroupLayouts.size() <= group)
             pipelineLayout.bindGroupLayouts.grow(group + 1);
@@ -220,19 +223,28 @@ auto RewriteGlobalVariables::requiredGroups(PipelineLayout& pipelineLayout, AST:
             { }
         });
     }
-    return groups;
+    return usedGlobals;
 }
 
-void RewriteGlobalVariables::insertStructs()
+void RewriteGlobalVariables::insertStructs(const UsedGlobals& usedGlobals)
 {
     for (auto& groupBinding : m_groupBindingMap) {
         unsigned group = groupBinding.key;
+
+        auto usedGlobal = usedGlobals.find(group);
+        if (usedGlobal == usedGlobals.end())
+            continue;
+
         const auto& bindingGlobalMap = groupBinding.value;
+        const IndexSet& usedBindings = usedGlobal->value;
 
         AST::Identifier structName = argumentBufferStructName(group);
         AST::StructureMember::List structMembers;
 
         for (auto [binding, global] : bindingGlobalMap) {
+            if (!usedBindings.contains(binding))
+                continue;
+
             ASSERT(global->declaration->maybeTypeName());
             auto span = global->declaration->span();
 
@@ -269,10 +281,11 @@ void RewriteGlobalVariables::insertStructs()
     }
 }
 
-void RewriteGlobalVariables::insertParameters(AST::Function& function, const IndexSet& requiredGroups)
+void RewriteGlobalVariables::insertParameters(AST::Function& function, const UsedGlobals& usedGlobals)
 {
     auto span = function.span();
-    for (unsigned group : requiredGroups) {
+    for (auto& it : usedGlobals) {
+        unsigned group = it.key;
         auto type = adoptRef(*new AST::NamedTypeName(span, argumentBufferStructName(group)));
         type->m_resolvedType = m_structTypes.get(group);
         m_callGraph.ast().append(function.parameters(), adoptRef(*new AST::Parameter(
