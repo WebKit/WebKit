@@ -1,4 +1,27 @@
 ================
+WebKitGTK 2.38.6
+================
+
+What's new in WebKitGTK 2.38.6?
+
+  - Enable the Asynchronous Clipboard API to make certain pages work
+    (e.g. GithHub started recently requiring it).
+  - Support :has() CSS selectors in content filters.
+  - Apply basic font properties as font variation settings.
+  - The Bubblewrap sandbox no longer requires setting an application
+    identifier via GApplication to operate correctly. Using GApplication
+    is still recommended, but optional.
+  - Improvements to the GStreamer multimedia playback, in particular
+    around MSE, WebRTC, and seeking.
+  - Fix the build with journald support enabled when using elogind
+    instead of the systemd libraries.
+  - Fix the build with Link-Time Optimization enabled (-flto=auto).
+  - Fix context menus not working in the remote Web Inspector.
+  - Fix usage of the remote Web Inspector over HTTP.
+  - Fix debug logs not being emitted in release builds.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.38.5
 ================
 
