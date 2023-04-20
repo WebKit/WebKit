@@ -521,7 +521,7 @@ std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
 static inline std::optional<Layout::BlockLayoutState::LineClamp> lineClamp(const RenderBlockFlow& rootRenderer)
 {
     auto& layoutState = *rootRenderer.view().frameView().layoutContext().layoutState();
-    if (layoutState.hasLineClamp()) {
+    if (auto lineClamp = layoutState.lineClamp()) {
         // FIXME: This is a rather odd behavior when we let line-clamp place ellipsis on a line and still
         // continue with constructing subsequent, visible lines on the block (other browsers match this exoctic behavior).
         auto isLineClampRootOverflowHidden = true;
@@ -531,7 +531,7 @@ static inline std::optional<Layout::BlockLayoutState::LineClamp> lineClamp(const
                 break;
             }
         }
-        return Layout::BlockLayoutState::LineClamp { *layoutState.maximumLineCountForLineClamp(), layoutState.visibleLineCountForLineClamp().value_or(0), isLineClampRootOverflowHidden };
+        return Layout::BlockLayoutState::LineClamp { lineClamp->maximumLineCount, lineClamp->currentLineCount, isLineClampRootOverflowHidden };
     }
     return { };
 }
@@ -811,19 +811,16 @@ std::optional<size_t> LineLayout::lastLineIndexForContentHeight() const
         return { };
     }
     auto* layoutState = flow().view().frameView().layoutContext().layoutState();
-    if (!layoutState || !layoutState->hasLineClamp())
+    if (!layoutState)
         return lines.size() - 1;
 
-    auto maximumLines = *layoutState->maximumLineCountForLineClamp();
-    if (!maximumLines) {
-        ASSERT_NOT_REACHED();
+    auto lineClamp = layoutState->lineClamp();
+    if (!lineClamp)
         return lines.size() - 1;
-    }
-    // Previous block containers may have already produced some lines.
-    auto visibleLines = layoutState->visibleLineCountForLineClamp().value_or(0);
-    if (visibleLines < maximumLines) {
-        auto remainingNumberOfLines = maximumLines - visibleLines;
-        auto lastLineIndex = std::min(lines.size(), remainingNumberOfLines) - 1;
+
+    // Let's see if previous block containers have already produced enough lines.
+    if (lineClamp->currentLineCount < lineClamp->maximumLineCount) {
+        auto lastLineIndex = std::min(lines.size(), lineClamp->maximumLineCount - lineClamp->currentLineCount) - 1;
         // FIXME: Clamped line is supposed to have trailing ellipsis. Assert on lines[lastLineIndex].hasEllipsis() when we have some means to clear
         // line content after probing layout.
         return lastLineIndex;

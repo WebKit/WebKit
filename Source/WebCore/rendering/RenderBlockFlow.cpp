@@ -4110,8 +4110,8 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
     updateRepaintTopAndBottomIfNeeded();
 
     setLogicalHeight(newBorderBoxBottom);
-    if (layoutState.hasLineClamp())
-        layoutState.setVisibleLineCountForLineClamp(layoutState.visibleLineCountForLineClamp().value_or(0) + layoutFormattingContextLineLayout.lineCount());
+    if (auto lineClamp = layoutState.lineClamp())
+        layoutState.setLineClamp(RenderLayoutState::LineClamp { lineClamp->maximumLineCount, lineClamp->currentLineCount + layoutFormattingContextLineLayout.lineCount() });
 }
 
 #if ENABLE(TREE_DEBUGGING)

@@ -1038,15 +1038,9 @@ bool RenderDeprecatedFlexibleBox::applyModernLineClamp(FlexBoxIterator& iterator
         return false;
 
     auto& layoutState = *view().frameView().layoutContext().layoutState();
-    auto ancestorLineClamp = std::optional<std::pair<size_t, size_t>> { };
-    if (layoutState.hasLineClamp())
-        ancestorLineClamp = { *layoutState.maximumLineCountForLineClamp(), layoutState.visibleLineCountForLineClamp().value_or(0) };
-
+    auto ancestorLineClamp = layoutState.lineClamp();
     auto restoreAncestorLineClamp = makeScopeExit([&] {
-        if (!ancestorLineClamp)
-            return layoutState.resetLineClamp();
-        layoutState.setMaximumLineCountForLineClamp(ancestorLineClamp->first);
-        layoutState.setVisibleLineCountForLineClamp(ancestorLineClamp->second);
+        layoutState.setLineClamp(ancestorLineClamp);
     });
 
     auto lineCountForLineClamp = [&]() -> size_t {
@@ -1068,8 +1062,7 @@ bool RenderDeprecatedFlexibleBox::applyModernLineClamp(FlexBoxIterator& iterator
         return std::max<size_t>(1, (numberOfLines + 1) * lineClamp.value() / 100.f);
     };
 
-    layoutState.setMaximumLineCountForLineClamp(lineCountForLineClamp());
-    layoutState.setVisibleLineCountForLineClamp({ });
+    layoutState.setLineClamp(RenderLayoutState::LineClamp { lineCountForLineClamp(), { } });
     for (auto* child = iterator.first(); child; child = iterator.next()) {
         if (childDoesNotAffectWidthOrFlexing(child))
             continue;

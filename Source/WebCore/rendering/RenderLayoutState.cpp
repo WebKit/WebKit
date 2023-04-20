@@ -62,7 +62,7 @@ RenderLayoutState::RenderLayoutState(RenderElement& renderer, IsPaginated isPagi
     }
 }
 
-RenderLayoutState::RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged, std::optional<size_t> maximumLineCountForLineClamp, std::optional<size_t> visibleLineCountForLineClamp, std::optional<LeadingTrim> leadingTrim)
+RenderLayoutState::RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged, std::optional<LineClamp> lineClamp, std::optional<LeadingTrim> leadingTrim)
     : m_clipped(false)
     , m_isPaginated(false)
     , m_pageLogicalHeightChanged(false)
@@ -70,8 +70,7 @@ RenderLayoutState::RenderLayoutState(const LocalFrameViewLayoutContext::LayoutSt
     , m_layoutDeltaXSaturated(false)
     , m_layoutDeltaYSaturated(false)
 #endif
-    , m_maximumLineCountForLineClamp(maximumLineCountForLineClamp)
-    , m_visibleLineCountForLineClamp(visibleLineCountForLineClamp)
+    , m_lineClamp(lineClamp)
     , m_leadingTrim(leadingTrim)
 #if ASSERT_ENABLED
     , m_renderer(&renderer)

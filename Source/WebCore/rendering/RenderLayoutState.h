@@ -47,6 +47,10 @@ public:
         bool trimFirstFormattedLine { false };
         WeakPtr<const RenderBlockFlow> trimLastFormattedLineOnTarget;
     };
+    struct LineClamp {
+        size_t maximumLineCount { 0 };
+        size_t currentLineCount { 0 };
+    };
 
     RenderLayoutState()
         : m_clipped(false)
@@ -58,7 +62,7 @@ public:
 #endif
     {
     }
-    RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<size_t> maximumLineCountForLineClamp, std::optional<size_t> visibleLineCountForLineClamp, std::optional<LeadingTrim>);
+    RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<LineClamp>, std::optional<LeadingTrim>);
     enum class IsPaginated : bool { No, Yes };
     explicit RenderLayoutState(RenderElement&, IsPaginated = IsPaginated::No);
 
@@ -94,12 +98,8 @@ public:
     bool layoutDeltaMatches(LayoutSize) const;
 #endif
 
-    bool hasLineClamp() const { return m_maximumLineCountForLineClamp.has_value(); }
-    void resetLineClamp();
-    void setMaximumLineCountForLineClamp(size_t maximumLineCount) { m_maximumLineCountForLineClamp = maximumLineCount; }
-    std::optional<size_t> maximumLineCountForLineClamp() { return m_maximumLineCountForLineClamp; }
-    void setVisibleLineCountForLineClamp(size_t visibleLineCount) { m_visibleLineCountForLineClamp = visibleLineCount; }
-    std::optional<size_t> visibleLineCountForLineClamp() const { return m_visibleLineCountForLineClamp; }
+    void setLineClamp(std::optional<LineClamp> lineClamp) { m_lineClamp = lineClamp; }
+    std::optional<LineClamp> lineClamp() const { return m_lineClamp; }
 
     std::optional<LeadingTrim> leadingTrim() { return m_leadingTrim; }
     bool hasLeadingTrimStart() const { return m_leadingTrim && m_leadingTrim->trimFirstFormattedLine; }
@@ -151,8 +151,7 @@ private:
     LayoutSize m_pageOffset;
     LayoutSize m_lineGridOffset;
     LayoutSize m_lineGridPaginationOrigin;
-    std::optional<size_t> m_maximumLineCountForLineClamp;
-    std::optional<size_t> m_visibleLineCountForLineClamp;
+    std::optional<LineClamp> m_lineClamp;
     std::optional<LeadingTrim> m_leadingTrim;
 #if ASSERT_ENABLED
     RenderElement* m_renderer { nullptr };
@@ -224,12 +223,6 @@ inline void RenderLayoutState::addLeadingTrimEnd(const RenderBlockFlow& targetIn
         return;
     }
     m_leadingTrim = { false, &targetInlineFormattingContext };
-}
-
-inline void RenderLayoutState::resetLineClamp()
-{
-    m_maximumLineCountForLineClamp = { };
-    m_visibleLineCountForLineClamp = { };
 }
 
 } // namespace WebCore
