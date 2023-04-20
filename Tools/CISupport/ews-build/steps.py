@@ -2807,8 +2807,10 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
         if self.getProperty('group') == 'jsc':
             self.compile_webkit_step = CompileJSC.name
         yield self.getResults(self.compile_webkit_step)
-        defer.returnValue(self.analyzeResults())
+        rc = yield self.analyzeResults()
+        defer.returnValue(rc)
 
+    @defer.inlineCallbacks
     def analyzeResults(self):
         compile_without_patch_step = CompileWebKitWithoutChange.name
         if self.getProperty('group') == 'jsc':
@@ -2823,13 +2825,13 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
                 message = 'Unable to build WebKit without PR, please check manually'
                 self.descriptionDone = message
                 self.build.buildFinished([message], FAILURE)
-                return FAILURE
+                return defer.returnValue(FAILURE)
 
             message = 'Unable to build WebKit without {}, retrying build'.format('PR' if pr_number else 'patch')
             self.descriptionDone = message
-            self.send_email_for_preexisting_build_failure()
+            yield self.send_email_for_preexisting_build_failure()
             self.build.buildFinished([message], RETRY)
-            return FAILURE
+            return defer.returnValue(FAILURE)
 
         self.build.results = FAILURE
         sha = self.getProperty('github.head.sha')
@@ -2837,7 +2839,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
             message = 'Hash {} for PR {} does not build'.format(sha[:HASH_LENGTH_TO_DISPLAY], pr_number)
         else:
             message = 'Patch {} does not build'.format(patch_id)
-        self.send_email_for_new_build_failure()
+        yield self.send_email_for_new_build_failure()
 
         self.descriptionDone = message
         self.setProperty('build_finish_summary', message)
@@ -2851,7 +2853,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
         else:
             self.build.addStepsAfterCurrentStep([BlockPullRequest()])
 
-        return FAILURE
+        return defer.returnValue(FAILURE)
 
     @defer.inlineCallbacks
     def getResults(self, name):
@@ -2960,6 +2962,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
         except Exception as e:
             yield self._addToLog('stdio', f'Error in sending email for new build failure: {e}')
 
+    @defer.inlineCallbacks
     def send_email_for_preexisting_build_failure(self):
         try:
             builder_name = self.getProperty('buildername', '')
@@ -2980,7 +2983,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
             reference = 'preexisting-build-failure-{}-{}'.format(builder_name, date.today().strftime("%Y-%d-%m"))
             send_email_to_bot_watchers(email_subject, email_text, builder_name, reference)
         except Exception as e:
-            print('Error in sending email for build failure: {}'.format(e))
+            yield self._addToLog('stdio', f'Error in sending email for build failure: {e}')
 
 
 class CompileJSC(CompileWebKit):
