@@ -1,0 +1,4 @@
+popover
+
+FAIL Changing the popover attribute should always update the auto/manual behavior. assert_false: The popover should light dismiss because it is in the auto state. expected false got true
+

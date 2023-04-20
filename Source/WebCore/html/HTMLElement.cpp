@@ -1237,9 +1237,9 @@ ExceptionOr<Ref<ElementInternals>> HTMLElement::attachInternals()
     return ElementInternals::create(*this);
 }
 
-static ExceptionOr<void> checkPopoverValidity(Element& element, PopoverVisibilityState expectedState)
+static ExceptionOr<void> checkPopoverValidity(HTMLElement& element, PopoverVisibilityState expectedState)
 {
-    if (!element.hasAttributeWithoutSynchronization(HTMLNames::popoverAttr))
+    if (element.popoverState() == PopoverState::None)
         return Exception { NotSupportedError, "Element does not have the popover attribute"_s };
 
     if (!element.isConnected())
@@ -1474,7 +1474,7 @@ ExceptionOr<void> HTMLElement::togglePopover(std::optional<bool> force)
 
 void HTMLElement::popoverAttributeChanged(const AtomString& value)
 {
-    auto newPopoverState = [](const AtomString& value) -> PopoverState {
+    auto computePopoverState = [](const AtomString& value) -> PopoverState {
         if (!value || value.isNull())
             return PopoverState::None;
 
@@ -1482,7 +1482,9 @@ void HTMLElement::popoverAttributeChanged(const AtomString& value)
             return PopoverState::Auto;
 
         return PopoverState::Manual;
-    }(value);
+    };
+
+    auto newPopoverState = computePopoverState(value);
 
     auto oldPopoverState = popoverState();
     if (newPopoverState == oldPopoverState)
@@ -1490,8 +1492,10 @@ void HTMLElement::popoverAttributeChanged(const AtomString& value)
 
     Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassPopoverOpen, false);
 
-    if (oldPopoverState != PopoverState::None)
-        hidePopoverInternal(FocusPreviousElement::Yes, FireEvents::No);
+    if (popoverData() && popoverData()->visibilityState() == PopoverVisibilityState::Showing) {
+        hidePopoverInternal(FocusPreviousElement::Yes, FireEvents::Yes);
+        newPopoverState = computePopoverState(attributeWithoutSynchronization(popoverAttr));
+    }
 
     if (newPopoverState == PopoverState::None)
         clearPopoverData();
