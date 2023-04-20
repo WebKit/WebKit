@@ -4415,3 +4415,5 @@ webaudio/ScriptProcessor/scriptprocessor-offlineaudiocontext.html [ Failure ]
 # webkit.org/b/255631 REGRESSION(262632@main?): [ iOS ] 2X imported/w3c/web-platform-tests/screen-orientation (layout-tests) are consistent text failures
 imported/w3c/web-platform-tests/screen-orientation/nested-documents.html [ Pass Failure ]
 imported/w3c/web-platform-tests/screen-orientation/unlock.html [ Pass Failure ]
+
+webkit.org/b/255704 [ Debug ] editing/inserting/insert-img-uneditable-canonical-position-crash.html [ Skip ]
