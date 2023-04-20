@@ -1316,6 +1316,8 @@ webkit.org/b/173419 fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.
 webkit.org/b/173419 fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/wheelevent-mousewheel-interaction.html [ Timeout Pass ]
 
+webkit.org/b/212202 fast/scrolling/sync-scroll-overscroll-behavior-unscrollable-iframe.html [ Failure ]
+
 webkit.org/b/186879 fast/events/open-window-from-another-frame.html [ Timeout ]
 webkit.org/b/186879 fast/events/popup-allowed-from-gesture-initiated-event.html [ Timeout ]
 webkit.org/b/186879 fast/events/popup-blocked-from-fake-user-gesture.html [ Timeout ]
