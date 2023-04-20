@@ -16,12 +16,14 @@
         await waitFor(video, 'canplaythrough');
 
         testExpected('internals.categoryAtMostRecentPlayback(video)', 'None');
+        testExpected('internals.modeAtMostRecentPlayback(video)', 'Default');
 
         run('video.play()');
         await waitFor(video, 'playing');
         await sleepFor(500);
 
         testExpected('internals.categoryAtMostRecentPlayback(video)', 'None');
+        testExpected('internals.modeAtMostRecentPlayback(video)', 'Default');
 
         run('video.pause()');
         await waitFor(video, 'pause');
@@ -31,6 +33,7 @@
         await waitFor(video, 'playing');
         await sleepFor(500);
         testExpected('internals.categoryAtMostRecentPlayback(video)', 'MediaPlayback');
+        testExpected('internals.modeAtMostRecentPlayback(video)', 'MoviePlayback');
 
         endTest();
     });

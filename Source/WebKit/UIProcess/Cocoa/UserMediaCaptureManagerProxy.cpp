@@ -93,7 +93,7 @@ public:
 
     void audioUnitWillStart() final
     {
-        AudioSession::sharedSession().setCategory(AudioSession::CategoryType::PlayAndRecord, RouteSharingPolicy::Default);
+        AudioSession::sharedSession().setCategory(AudioSession::CategoryType::PlayAndRecord, AudioSession::Mode::VideoChat, RouteSharingPolicy::Default);
         AudioSession::sharedSession().tryToSetActive(true);
     }
 

@@ -162,22 +162,21 @@ void AudioSessionIOS::setPresentingProcesses(Vector<audit_token_t>&& auditTokens
 #endif
 }
 
-void AudioSessionIOS::setCategory(CategoryType newCategory, RouteSharingPolicy policy)
+void AudioSessionIOS::setCategory(CategoryType newCategory, Mode newMode, RouteSharingPolicy policy)
 {
 #if !HAVE(ROUTE_SHARING_POLICY_LONG_FORM_VIDEO)
     if (policy == RouteSharingPolicy::LongFormVideo)
         policy = RouteSharingPolicy::LongFormAudio;
 #endif
 
-    LOG(Media, "AudioSession::setCategory() - category = %s", convertEnumerationToString(newCategory).ascii().data());
+    LOG(Media, "AudioSession::setCategory() - category = %s mode = %s", convertEnumerationToString(newCategory).ascii().data(), convertEnumerationToString(newMode).ascii().data());
 
-    if (categoryOverride() !=  CategoryType::None && categoryOverride() != newCategory) {
+    if (categoryOverride() != CategoryType::None && categoryOverride() != newCategory) {
         LOG(Media, "AudioSession::setCategory() - override set, NOT changing");
         return;
     }
 
     NSString *categoryString;
-    NSString *categoryMode = AVAudioSessionModeDefault;
     AVAudioSessionCategoryOptions options = 0;
 
     switch (newCategory) {
@@ -195,7 +194,6 @@ void AudioSessionIOS::setCategory(CategoryType newCategory, RouteSharingPolicy p
         break;
     case CategoryType::PlayAndRecord:
         categoryString = AVAudioSessionCategoryPlayAndRecord;
-        categoryMode = AVAudioSessionModeVideoChat;
         options |= AVAudioSessionCategoryOptionAllowBluetooth | AVAudioSessionCategoryOptionAllowBluetoothA2DP | AVAudioSessionCategoryOptionDefaultToSpeaker | AVAudioSessionCategoryOptionAllowAirPlay;
         break;
     case CategoryType::AudioProcessing:
@@ -203,6 +201,19 @@ void AudioSessionIOS::setCategory(CategoryType newCategory, RouteSharingPolicy p
         break;
     case CategoryType::None:
         categoryString = AVAudioSessionCategoryAmbient;
+        break;
+    }
+
+    NSString *modeString = AVAudioSessionModeDefault;
+    switch (newMode) {
+    case Mode::Default:
+        modeString = AVAudioSessionModeDefault;
+        break;
+    case Mode::MoviePlayback:
+        modeString = AVAudioSessionModeMoviePlayback;
+        break;
+    case Mode::VideoChat:
+        modeString = AVAudioSessionModeVideoChat;
         break;
     }
 
@@ -218,16 +229,17 @@ void AudioSessionIOS::setCategory(CategoryType newCategory, RouteSharingPolicy p
 
     AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
     auto *currentCategory = [session category];
+    auto *currentMode = [session mode];
     auto currentOptions = [session categoryOptions];
     auto currentPolicy = [session routeSharingPolicy];
-    auto needSessionUpdate = ![currentCategory isEqualToString:categoryString] || currentOptions != options || currentPolicy != static_cast<AVAudioSessionRouteSharingPolicy>(policy);
+    auto needSessionUpdate = ![currentCategory isEqualToString:categoryString] || ![currentMode isEqualToString:modeString] || currentOptions != options || currentPolicy != static_cast<AVAudioSessionRouteSharingPolicy>(policy);
 
     if (!needSessionUpdate && !needDeviceUpdate)
         return;
 
     if (needSessionUpdate) {
         NSError *error = nil;
-        [session setCategory:categoryString mode:categoryMode routeSharingPolicy:static_cast<AVAudioSessionRouteSharingPolicy>(policy) options:options error:&error];
+        [session setCategory:categoryString mode:modeString routeSharingPolicy:static_cast<AVAudioSessionRouteSharingPolicy>(policy) options:options error:&error];
 #if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
         ASSERT(!error);
 #endif
@@ -259,6 +271,17 @@ AudioSession::CategoryType AudioSessionIOS::category() const
     if ([categoryString isEqual:AVAudioSessionCategoryAudioProcessing])
         return CategoryType::AudioProcessing;
     return CategoryType::None;
+}
+
+AudioSession::Mode AudioSessionIOS::mode() const
+{
+    AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
+    NSString *modeString = [session mode];
+    if ([modeString isEqual:AVAudioSessionModeVideoChat])
+        return Mode::VideoChat;
+    if ([modeString isEqual:AVAudioSessionModeMoviePlayback])
+        return Mode::MoviePlayback;
+    return Mode::Default;
 }
 
 RouteSharingPolicy AudioSessionIOS::routeSharingPolicy() const

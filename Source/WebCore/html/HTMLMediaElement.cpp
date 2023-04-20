@@ -481,6 +481,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_opaqueRootProvider([this] { return opaqueRoot(); })
 #if USE(AUDIO_SESSION)
     , m_categoryAtMostRecentPlayback(AudioSessionCategory::None)
+    , m_modeAtMostRecentPlayback(AudioSessionMode::Default)
 #endif
 #if !RELEASE_LOG_DISABLED
     , m_logger(&document.logger())
@@ -5999,6 +6000,7 @@ void HTMLMediaElement::playPlayer()
 
 #if USE(AUDIO_SESSION)
     m_categoryAtMostRecentPlayback = AudioSession::sharedSession().category();
+    m_modeAtMostRecentPlayback = AudioSession::sharedSession().mode();
 #endif
 
 #if ENABLE(MEDIA_SESSION) && ENABLE(MEDIA_SESSION_COORDINATOR)

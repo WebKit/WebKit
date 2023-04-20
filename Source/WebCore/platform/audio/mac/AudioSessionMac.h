@@ -68,7 +68,7 @@ private:
     RouteSharingPolicy routeSharingPolicy() const { return m_policy; }
     void audioOutputDeviceChanged() final;
     void setIsPlayingToBluetoothOverride(std::optional<bool>) final;
-    void setCategory(CategoryType, RouteSharingPolicy) final;
+    void setCategory(CategoryType, Mode, RouteSharingPolicy) final;
     float sampleRate() const final;
     size_t bufferSize() const final;
     size_t numberOfOutputChannels() const final;

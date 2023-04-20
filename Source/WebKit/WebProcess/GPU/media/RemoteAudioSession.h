@@ -65,8 +65,9 @@ private:
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
     // AudioSession
-    void setCategory(CategoryType, WebCore::RouteSharingPolicy) final;
+    void setCategory(CategoryType, Mode, WebCore::RouteSharingPolicy) final;
     CategoryType category() const final;
+    Mode mode() const final;
 
     WebCore::RouteSharingPolicy routeSharingPolicy() const final { return m_routeSharingPolicy; }
     String routingContextUID() const final { return configuration().routingContextUID; }
@@ -102,6 +103,7 @@ private:
 
     WeakHashSet<ConfigurationChangeObserver> m_configurationChangeObservers;
     CategoryType m_category { CategoryType::None };
+    Mode m_mode { Mode::Default };
     WebCore::RouteSharingPolicy m_routeSharingPolicy { WebCore::RouteSharingPolicy::Default };
     bool m_isPlayingToBluetoothOverrideChanged { false };
     std::optional<RemoteAudioSessionConfiguration> m_configuration;

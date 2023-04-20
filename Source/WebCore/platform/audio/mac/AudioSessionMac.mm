@@ -283,7 +283,7 @@ void AudioSessionMac::setIsPlayingToBluetoothOverride(std::optional<bool> value)
 #endif
 }
 
-void AudioSessionMac::setCategory(CategoryType category, RouteSharingPolicy policy)
+void AudioSessionMac::setCategory(CategoryType category, Mode, RouteSharingPolicy policy)
 {
 #if ENABLE(ROUTING_ARBITRATION)
     bool playingToBluetooth = defaultDeviceTransportIsBluetooth();

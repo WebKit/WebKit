@@ -5927,6 +5927,15 @@ auto Internals::audioSessionCategory() const -> AudioSessionCategory
 #endif
 }
 
+auto Internals::audioSessionMode() const -> AudioSessionMode
+{
+#if USE(AUDIO_SESSION)
+    return AudioSession::sharedSession().mode();
+#else
+    return AudioSessionMode::Default;
+#endif
+}
+
 auto Internals::routeSharingPolicy() const -> RouteSharingPolicy
 {
 #if USE(AUDIO_SESSION)
@@ -5944,6 +5953,17 @@ auto Internals::categoryAtMostRecentPlayback(HTMLMediaElement& element) const ->
 #else
     UNUSED_PARAM(element);
     return AudioSessionCategory::None;
+#endif
+}
+
+auto Internals::modeAtMostRecentPlayback(HTMLMediaElement& element) const -> AudioSessionMode
+{
+#if USE(AUDIO_SESSION)
+    WTFLogAlways("Internals::modeAtMostRecentPlayback");
+    return element.modeAtMostRecentPlayback();
+#else
+    UNUSED_PARAM(element);
+    return AudioSessionMode::Default;
 #endif
 }
 #endif

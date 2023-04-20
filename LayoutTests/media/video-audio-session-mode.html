@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>video-audio-session-category</title>
+    <script src='video-test.js'></script>
+    <script src='media-file.js'></script>
+    <script>
+
+        async function waitForCategory(category, duration, message)
+        {
+            consoleWrite(message);
+
+            const maxTries = duration * 1000 / 10;
+            let counter = 0;
+            while (++counter < maxTries) {
+                if (internals.audioSessionCategory() == category)
+                    break;
+                await new Promise(resolve => setTimeout(resolve, 10));
+            }
+
+            testExpected('internals.audioSessionCategory()', category);
+        }
+
+        async function testVideoElement()
+        {
+            consoleWrite('<br><br>** &lt;video> element test **');
+            await waitForCategory('None', 10, '<br>** Check category before anything has loaded.');
+
+            consoleWrite('<br>** Check category when a muted, paused, element has loaded.');
+            video.src = findMediaFile('video', 'content/test');
+
+            await waitFor(video, 'canplaythrough');
+            testExpected('internals.audioSessionCategory()', 'None');
+            testExpected('internals.audioSessionMode()', 'Default');
+
+            consoleWrite('<br>** Check category when a muted element is playing.');
+            runWithKeyDown(() => { run('video.play()') });
+            await waitFor(video, 'playing');
+            testExpected('internals.audioSessionCategory()', 'None');
+            testExpected('internals.audioSessionMode()', 'Default');
+            testExpected('internals.routeSharingPolicy()', 'Default');
+
+            consoleWrite('<br>** Check category when an unmuted element is playing.');
+            runWithKeyDown(() => { run('video.muted = false') });
+            await waitFor(video, 'volumechange');
+            await waitForCategory('MediaPlayback', 1, '');
+            testExpected('internals.audioSessionMode()', 'MoviePlayback');
+            testExpected('internals.routeSharingPolicy()', 'LongFormAudio');
+
+            consoleWrite('<br>** Mute the element, check again after 500ms.');
+            run('video.pause()');
+            runWithKeyDown(() => { run('video.muted = true') });
+            await sleepFor(500);
+            testExpected('internals.audioSessionCategory()', 'MoviePlayback');
+            testExpected('internals.audioSessionMode()', 'Default');
+            testExpected('internals.routeSharingPolicy()', 'LongFormAudio');
+
+            await waitForCategory('None', 3, '<br>** And check again after 3 seconds.');
+            testExpected('internals.routeSharingPolicy()', 'Default');
+
+            video.src = '';
+            video.load();
+        }
+
+        window.addEventListener('load', async event => {
+            if (!window.internals) {
+                failTest(`<br>This test requires internals!`);
+                return;
+            }
+
+            internals.settings.setShouldManageAudioSessionCategory(true);
+
+            video = document.getElementsByTagName('video')[0];
+
+            failTestIn(20000);
+            await testVideoElement();
+
+            endTest();
+        });
+    </script>
+</head>
+<body>
+    <video muted controls></video>
+</body>
+</html>

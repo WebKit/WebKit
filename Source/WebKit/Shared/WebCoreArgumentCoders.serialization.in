@@ -3622,6 +3622,12 @@ enum class WebCore::AudioSessionCategory : uint8_t {
     AudioProcessing,
 };
 
+enum class WebCore::AudioSessionMode : uint8_t {
+    Default,
+    VideoChat,
+    MoviePlayback,
+};
+
 [Nested] enum class WebCore::AudioSession::MayResume : bool;
 
 enum class WebCore::AudioSessionRoutingArbitrationError : uint8_t {

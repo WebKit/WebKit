@@ -51,7 +51,8 @@ public:
 private:
     // AudioSession
     CategoryType category() const final;
-    void setCategory(CategoryType, RouteSharingPolicy) final;
+    Mode mode() const final;
+    void setCategory(CategoryType, Mode, RouteSharingPolicy) final;
     float sampleRate() const final;
     size_t bufferSize() const final;
     size_t numberOfOutputChannels() const final;

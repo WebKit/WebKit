@@ -74,12 +74,13 @@ RemoteAudioSessionConfiguration RemoteAudioSessionProxy::configuration()
     };
 }
 
-void RemoteAudioSessionProxy::setCategory(AudioSession::CategoryType category, RouteSharingPolicy policy)
+void RemoteAudioSessionProxy::setCategory(AudioSession::CategoryType category, AudioSession::Mode mode, RouteSharingPolicy policy)
 {
-    if (m_category == category && m_routeSharingPolicy == policy && !m_isPlayingToBluetoothOverrideChanged)
+    if (m_category == category && m_mode == mode && m_routeSharingPolicy == policy && !m_isPlayingToBluetoothOverrideChanged)
         return;
 
     m_category = category;
+    m_mode = mode;
     m_routeSharingPolicy = policy;
     m_isPlayingToBluetoothOverrideChanged = false;
     audioSessionManager().updateCategory();

@@ -56,6 +56,13 @@ enum class AudioSessionCategory : uint8_t {
     AudioProcessing,
 };
 
+enum class AudioSessionMode : uint8_t {
+    // FIXME: This is not exhaustive.
+    Default,
+    VideoChat,
+    MoviePlayback,
+};
+
 class AudioSessionRoutingArbitrationClient;
 
 class WEBCORE_EXPORT AudioSession {
@@ -74,8 +81,10 @@ public:
     virtual ~AudioSession();
 
     using CategoryType = AudioSessionCategory;
-    virtual void setCategory(CategoryType, RouteSharingPolicy);
     virtual CategoryType category() const;
+    using Mode = AudioSessionMode;
+    virtual Mode mode() const;
+    virtual void setCategory(CategoryType, Mode, RouteSharingPolicy);
 
     virtual void setCategoryOverride(CategoryType);
     virtual CategoryType categoryOverride() const;
@@ -177,6 +186,7 @@ public:
 
 WEBCORE_EXPORT String convertEnumerationToString(RouteSharingPolicy);
 WEBCORE_EXPORT String convertEnumerationToString(AudioSession::CategoryType);
+WEBCORE_EXPORT String convertEnumerationToString(AudioSession::Mode);
 WEBCORE_EXPORT String convertEnumerationToString(AudioSessionRoutingArbitrationClient::RoutingArbitrationError);
 WEBCORE_EXPORT String convertEnumerationToString(AudioSessionRoutingArbitrationClient::DefaultRouteChanged);
 
@@ -200,6 +210,14 @@ struct LogArgument<WebCore::AudioSession::CategoryType> {
     static String toString(const WebCore::AudioSession::CategoryType category)
     {
         return convertEnumerationToString(category);
+    }
+};
+
+template <>
+struct LogArgument<WebCore::AudioSession::Mode> {
+    static String toString(const WebCore::AudioSession::Mode mode)
+    {
+        return convertEnumerationToString(mode);
     }
 };
 

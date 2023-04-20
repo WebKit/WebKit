@@ -3,14 +3,17 @@ RUN(video.muted = true)
 RUN(video.src = findMediaFile("video", "content/audio-tracks"))
 EVENT(canplaythrough)
 EXPECTED (internals.categoryAtMostRecentPlayback(video) == 'None') OK
+EXPECTED (internals.modeAtMostRecentPlayback(video) == 'Default') OK
 RUN(video.play())
 EVENT(playing)
 EXPECTED (internals.categoryAtMostRecentPlayback(video) == 'None') OK
+EXPECTED (internals.modeAtMostRecentPlayback(video) == 'Default') OK
 RUN(video.pause())
 EVENT(pause)
 RUN(video.muted = false)
 RUN(video.play())
 EVENT(playing)
 EXPECTED (internals.categoryAtMostRecentPlayback(video) == 'MediaPlayback') OK
+EXPECTED (internals.modeAtMostRecentPlayback(video) == 'MoviePlayback') OK
 END OF TEST
 

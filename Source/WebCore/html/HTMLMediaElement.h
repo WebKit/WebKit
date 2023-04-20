@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO)
 
 #include "ActiveDOMObject.h"
+#include "AudioSession.h"
 #include "AudioTrackClient.h"
 #include "AutoplayEvent.h"
 #include "CaptionUserPreferences.h"
@@ -619,7 +620,8 @@ public:
     WEBCORE_EXPORT bool mediaPlayerRenderingCanBeAccelerated() final;
 
 #if USE(AUDIO_SESSION)
-    WEBCORE_EXPORT AudioSessionCategory categoryAtMostRecentPlayback() const { return m_categoryAtMostRecentPlayback; }
+    AudioSessionCategory categoryAtMostRecentPlayback() const { return m_categoryAtMostRecentPlayback; }
+    AudioSessionMode modeAtMostRecentPlayback() const { return m_modeAtMostRecentPlayback; }
 #endif
 
     void updateMediaPlayer(IntSize, bool);
@@ -1295,6 +1297,7 @@ private:
 
 #if USE(AUDIO_SESSION)
     AudioSessionCategory m_categoryAtMostRecentPlayback;
+    AudioSessionMode m_modeAtMostRecentPlayback;
 #endif
     bool m_wasInterruptedForInvisibleAutoplay { false };
 
