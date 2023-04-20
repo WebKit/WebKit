@@ -25,6 +25,7 @@
 #include "LayoutIntegrationLineLayout.h"
 #include "RenderCounter.h"
 #include "RenderElement.h"
+#include "RenderView.h"
 #include <stdio.h>
 
 namespace WebCore {

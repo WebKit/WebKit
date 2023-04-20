@@ -30,6 +30,7 @@
 #include "FormDataReference.h"
 #include "LoadedWebArchive.h"
 #include "Logging.h"
+#include "MessageSenderInlines.h"
 #include "NetworkCache.h"
 #include "NetworkCacheSpeculativeLoadManager.h"
 #include "NetworkConnectionToWebProcess.h"

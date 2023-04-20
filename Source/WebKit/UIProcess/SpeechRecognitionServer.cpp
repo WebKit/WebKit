@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SpeechRecognitionServer.h"
 
+#include "MessageSenderInlines.h"
 #include "UserMediaProcessManager.h"
 #include "WebProcessProxy.h"
 #include "WebSpeechRecognitionConnectionMessages.h"

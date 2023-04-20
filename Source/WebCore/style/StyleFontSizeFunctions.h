@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FontSizeAdjust.h"
 #include "Settings.h"
 
 namespace WebCore {

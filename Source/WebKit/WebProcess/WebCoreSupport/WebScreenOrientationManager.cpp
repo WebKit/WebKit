@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebScreenOrientationManager.h"
 
+#include "MessageSenderInlines.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include "WebScreenOrientationManagerMessages.h"

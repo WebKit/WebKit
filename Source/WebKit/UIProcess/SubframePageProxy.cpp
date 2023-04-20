@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SubframePageProxy.h"
 
+#include "FrameInfoData.h"
+#include "HandleMessage.h"
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"

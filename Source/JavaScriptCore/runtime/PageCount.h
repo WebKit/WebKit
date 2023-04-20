@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <limits.h>
 
 namespace WTF {

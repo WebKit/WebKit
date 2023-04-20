@@ -28,6 +28,7 @@
 #include "ReadableStreamSink.h"
 
 #include "DOMException.h"
+#include "JSDOMGlobalObject.h"
 #include "ReadableStream.h"
 #include "SharedBuffer.h"
 #include <JavaScriptCore/Uint8Array.h>

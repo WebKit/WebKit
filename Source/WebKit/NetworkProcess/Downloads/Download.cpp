@@ -33,6 +33,7 @@
 #include "DownloadMonitor.h"
 #include "DownloadProxyMessages.h"
 #include "Logging.h"
+#include "MessageSenderInlines.h"
 #include "NetworkDataTask.h"
 #include "NetworkProcess.h"
 #include "NetworkSession.h"

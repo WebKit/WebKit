@@ -29,6 +29,7 @@
 #if ENABLE(FULLSCREEN_API)
 
 #include "APIFullscreenClient.h"
+#include "MessageSenderInlines.h"
 #include "WebAutomationSession.h"
 #include "WebFullScreenManagerMessages.h"
 #include "WebFullScreenManagerProxyMessages.h"

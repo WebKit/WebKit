@@ -36,6 +36,7 @@
 #include "InjectedBundle.h"
 #include "InjectedBundleDOMWindowExtension.h"
 #include "Logging.h"
+#include "MessageSenderInlines.h"
 #include "NavigationActionData.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"

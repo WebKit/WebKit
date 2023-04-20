@@ -27,6 +27,7 @@
 #include "WorkerStorageConnection.h"
 
 #include "ClientOrigin.h"
+#include "Document.h"
 #include "StorageEstimate.h"
 #include "WorkerFileSystemStorageConnection.h"
 #include "WorkerGlobalScope.h"

@@ -27,6 +27,7 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 
 namespace IPC {
@@ -35,11 +36,28 @@ class Decoder;
 class Encoder;
 }
 
+namespace WebCore {
+enum class FrameLoadType : uint8_t;
+enum class HasInsecureContent : bool;
+enum class MouseEventPolicy : uint8_t;
+
+class CertificateInfo;
+class ResourceResponse;
+class ResourceRequest;
+
+struct PolicyCheckIdentifierType;
+
+using PolicyCheckIdentifier = ProcessQualified<ObjectIdentifier<PolicyCheckIdentifierType>>;
+}
+
 namespace WebKit {
 
+class UserData;
 class WebFrameProxy;
 class WebPageProxy;
 class WebProcessProxy;
+
+struct FrameInfoData;
 
 class SubframePageProxy : public IPC::MessageReceiver, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;

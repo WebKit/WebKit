@@ -28,6 +28,7 @@
 
 #include "APIDebuggableInfo.h"
 #include "APINavigation.h"
+#include "MessageSenderInlines.h"
 #include "RemoteWebInspectorUIMessages.h"
 #include "RemoteWebInspectorUIProxyMessages.h"
 #include "WebInspectorUIProxy.h"

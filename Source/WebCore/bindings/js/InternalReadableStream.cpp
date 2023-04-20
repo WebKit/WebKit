@@ -26,9 +26,12 @@
 #include "config.h"
 #include "InternalReadableStream.h"
 
+#include "JSDOMConvertObject.h"
+#include "JSDOMConvertSequences.h"
 #include "JSDOMException.h"
 #include "JSReadableStreamSink.h"
 #include "WebCoreJSClientData.h"
+#include <JavaScriptCore/JSObjectInlines.h>
 
 namespace WebCore {
 
@@ -164,7 +167,7 @@ void InternalReadableStream::pipeTo(ReadableStreamSink& sink)
     auto* clientData = static_cast<JSVMClientData*>(globalObject->vm().clientData);
     auto& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().readableStreamPipeToPrivateName();
 
-    MarkedArgumentBuffer arguments;
+    JSC::MarkedArgumentBuffer arguments;
     arguments.append(guardedObject());
     arguments.append(toJS(globalObject, globalObject, sink));
     ASSERT(!arguments.hasOverflowed());
@@ -270,7 +273,7 @@ JSC::JSValue InternalReadableStream::tee(JSC::JSGlobalObject& globalObject, bool
 
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(guardedObject());
-    arguments.append(shouldClone ? JSValue(JSC::JSValue::JSTrue) : JSValue(JSC::JSValue::JSFalse));
+    arguments.append(shouldClone ? JSC::JSValue(JSC::JSValue::JSTrue) : JSC::JSValue(JSC::JSValue::JSFalse));
     ASSERT(!arguments.hasOverflowed());
 
     auto result = invokeReadableStreamFunction(globalObject, privateName, arguments);

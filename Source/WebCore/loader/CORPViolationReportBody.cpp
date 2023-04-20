@@ -27,6 +27,7 @@
 #include "CORPViolationReportBody.h"
 
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

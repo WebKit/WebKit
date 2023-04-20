@@ -28,6 +28,7 @@
 
 #include "JSReadableStream.h"
 #include "JSReadableStreamSource.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 

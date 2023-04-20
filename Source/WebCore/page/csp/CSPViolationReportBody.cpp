@@ -31,6 +31,7 @@
 #include "SecurityPolicyViolationEvent.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/JSONValues.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
