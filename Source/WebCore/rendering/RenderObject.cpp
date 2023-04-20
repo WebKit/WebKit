@@ -2348,7 +2348,7 @@ static inline void adjustLineHeightOfSelectionGeometries(Vector<SelectionGeometr
         --i;
         if (geometries[i].lineNumber())
             break;
-        if (geometries[i].behavior() == SelectionRenderingBehavior::UseIndividualQuads && geometries[i].isHorizontal())
+        if (geometries[i].behavior() == SelectionRenderingBehavior::UseIndividualQuads)
             continue;
         geometries[i].setLineNumber(lineNumber);
         geometries[i].setLogicalTop(lineTop);
@@ -2507,7 +2507,7 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
     for (size_t j = 1; j < numberOfGeometries; ++j) {
         if (geometries[j].lineNumber() != geometries[j - 1].lineNumber())
             continue;
-        if (geometries[j].behavior() == SelectionRenderingBehavior::UseIndividualQuads && geometries[j].isHorizontal())
+        if (geometries[j].behavior() == SelectionRenderingBehavior::UseIndividualQuads)
             continue;
         auto& previousRect = geometries[j - 1];
         bool previousRectMayNotReachRightEdge = (previousRect.direction() == TextDirection::LTR && previousRect.containsEnd()) || (previousRect.direction() == TextDirection::RTL && previousRect.containsStart());
@@ -2525,7 +2525,7 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
         auto& selectionGeometry = geometries[i];
         if (!selectionGeometry.isLineBreak() && selectionGeometry.lineNumber() >= maxLineNumber)
             continue;
-        if (selectionGeometry.behavior() == SelectionRenderingBehavior::UseIndividualQuads && selectionGeometry.isHorizontal())
+        if (selectionGeometry.behavior() == SelectionRenderingBehavior::UseIndividualQuads)
             continue;
         if (selectionGeometry.direction() == TextDirection::RTL && selectionGeometry.isFirstOnLine()) {
             selectionGeometry.setLogicalWidth(selectionGeometry.logicalWidth() + selectionGeometry.logicalLeft() - selectionGeometry.minX());
@@ -2548,11 +2548,34 @@ static bool coalesceSelectionGeometryWithAdjacentQuadsIfPossible(SelectionGeomet
         return (first - second).diagonalLengthSquared() <= maxDistanceBetweenBoundaryPoints * maxDistanceBetweenBoundaryPoints;
     };
 
+    auto leadingAndTrailingEdgesOverlap = [](const FloatQuad& first, const FloatQuad& second) {
+        bool intersects = false;
+
+        for (const auto& p : { first.p1(), first.p2(), first.p3(), first.p4() }) {
+            if (second.containsPoint(p))
+                intersects = true;
+        }
+
+        for (const auto& p : { second.p1(), second.p2(), second.p3(), second.p4() }) {
+            if (first.containsPoint(p))
+                intersects = true;
+        }
+
+        if (!intersects)
+            return false;
+
+        auto isTrailingSideOverlapping = (first.p1() - first.p2()).diagonalLength() + (second.p1() - second.p2()).diagonalLength() > (first.p1() - second.p2()).diagonalLength();
+        auto isLeadingSideOverlapping = (first.p3() - first.p4()).diagonalLength() + (second.p3() - second.p4()).diagonalLength() > (first.p3() - second.p4()).diagonalLength();
+
+        return isTrailingSideOverlapping && isLeadingSideOverlapping;
+    };
+
     auto currentQuad = current.quad();
-    if (!areCloseEnoughToCoalesce(currentQuad.p2(), nextQuad.p1()) || !areCloseEnoughToCoalesce(currentQuad.p3(), nextQuad.p4()))
-        return false;
 
     if (std::abs(rotatedBoundingRectWithMinimumAngleOfRotation(currentQuad).angleInRadians - rotatedBoundingRectWithMinimumAngleOfRotation(nextQuad).angleInRadians) > radiansPerDegreeFloat)
+        return false;
+
+    if ((!areCloseEnoughToCoalesce(currentQuad.p2(), nextQuad.p1()) || !areCloseEnoughToCoalesce(currentQuad.p3(), nextQuad.p4())) && !leadingAndTrailingEdgesOverlap(currentQuad, nextQuad) && !leadingAndTrailingEdgesOverlap(nextQuad, currentQuad))
         return false;
 
     currentQuad.setP2(nextQuad.p2());
@@ -2577,7 +2600,7 @@ Vector<SelectionGeometry> RenderObject::collectSelectionGeometries(const SimpleR
     IntRect interiorUnionRect;
     for (size_t i = 0; i < numberOfGeometries; ++i) {
         auto& currentGeometry = result.geometries[i];
-        if (currentGeometry.behavior() == SelectionRenderingBehavior::UseIndividualQuads && currentGeometry.isHorizontal()) {
+        if (currentGeometry.behavior() == SelectionRenderingBehavior::UseIndividualQuads) {
             if (currentGeometry.quad().isEmpty())
                 continue;
 
