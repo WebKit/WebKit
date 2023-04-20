@@ -35,7 +35,6 @@
 namespace WebCore {
 
 class CheckboxInputType final : public BaseCheckableInputType {
-    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     static Ref<CheckboxInputType> create(HTMLInputElement& element)
     {

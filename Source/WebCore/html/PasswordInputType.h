@@ -35,7 +35,6 @@
 namespace WebCore {
 
 class PasswordInputType final : public BaseTextInputType {
-    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     static Ref<PasswordInputType> create(HTMLInputElement& element)
     {

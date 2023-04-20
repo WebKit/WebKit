@@ -37,7 +37,6 @@
 namespace WebCore {
 
 class DateTimeLocalInputType final : public BaseDateAndTimeInputType {
-    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     static Ref<DateTimeLocalInputType> create(HTMLInputElement& element)
     {

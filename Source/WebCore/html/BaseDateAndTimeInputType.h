@@ -51,6 +51,7 @@ class BaseDateAndTimeInputType : public InputType, private DateTimeChooserClient
 public:
     bool typeMismatchFor(const String&) const final;
     bool valueMissing(const String&) const final;
+    bool typeMismatch() const final;
 
 protected:
     enum class DateTimeFormatValidationResults : uint8_t {
@@ -78,8 +79,6 @@ protected:
 
     bool shouldHaveSecondField(const DateComponents&) const;
     bool shouldHaveMillisecondField(const DateComponents&) const;
-
-    bool typeMismatch() const final;
 
 private:
     class DateTimeFormatValidator final : public DateTimeFormat::TokenHandler {

@@ -45,7 +45,6 @@ class FileList;
 class Icon;
 
 class FileInputType final : public BaseClickableWithKeyInputType, private FileChooserClient, private FileIconLoaderClient, public CanMakeWeakPtr<FileInputType> {
-    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     static Ref<FileInputType> create(HTMLInputElement& element)
     {

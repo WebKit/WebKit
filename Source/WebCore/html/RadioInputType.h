@@ -36,7 +36,6 @@
 namespace WebCore {
 
 class RadioInputType final : public BaseCheckableInputType {
-    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     static Ref<RadioInputType> create(HTMLInputElement& element)
     {

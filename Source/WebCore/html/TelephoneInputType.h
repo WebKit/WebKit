@@ -35,7 +35,6 @@
 namespace WebCore {
 
 class TelephoneInputType final : public BaseTextInputType {
-    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     static Ref<TelephoneInputType> create(HTMLInputElement& element)
     {

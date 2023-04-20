@@ -39,7 +39,6 @@ namespace WebCore {
 class SearchFieldResultsButtonElement;
 
 class SearchInputType final : public BaseTextInputType {
-    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     static Ref<SearchInputType> create(HTMLInputElement& element)
     {

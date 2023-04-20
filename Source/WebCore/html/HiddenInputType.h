@@ -35,7 +35,6 @@
 namespace WebCore {
 
 class HiddenInputType final : public InputType {
-    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     static Ref<HiddenInputType> create(HTMLInputElement& element)
     {
