@@ -57,6 +57,14 @@ RecursiveLock& cairoFontLock()
 }
 #endif
 
+#if !PLATFORM(GTK)
+const cairo_font_options_t* getDefaultCairoFontOptions()
+{
+    static NeverDestroyed<cairo_font_options_t*> options = cairo_font_options_create();
+    return options;
+}
+#endif
+
 void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr)
 {
     cairo_set_antialias(dstCr, cairo_get_antialias(srcCr));
