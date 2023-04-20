@@ -275,6 +275,10 @@ typedef NS_ENUM(NSInteger, ASCredentialRequestStyle) {
 @property (nonatomic) ASCredentialRequestStyle requestStyle;
 
 @property (nonatomic, nullable, copy) ASGlobalFrameIdentifier *globalFrameID;
+
+#if TARGET_OS_IOS
+@property (nonatomic, copy) NSString *windowSceneIdentifier;
+#endif
 @end
 
 @protocol ASCCredentialProtocol <NSObject, NSSecureCoding>
