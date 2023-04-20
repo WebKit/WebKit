@@ -192,8 +192,7 @@ struct EntryPointInformation {
     String mangledName;
     std::optional<PipelineLayout> defaultLayout; // If the input PipelineLayout is nullopt, the compiler computes a layout and returns it. https://gpuweb.github.io/gpuweb/#default-pipeline-layout
     HashMap<std::pair<size_t, size_t>, size_t> bufferLengthLocations; // Metal buffer identity -> offset within helper buffer where its size needs to lie
-    HashMap<size_t, SpecializationConstant> specializationConstants;
-    HashMap<String, size_t> specializationConstantIndices; // Points into specializationConstantsByIndex
+    HashMap<String, SpecializationConstant> specializationConstants;
     std::variant<Vertex, Fragment, Compute> typedEntryPoint;
 };
 

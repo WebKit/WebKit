@@ -79,6 +79,7 @@ private:
     void collectGlobals();
     void visitEntryPoint(AST::Function&, AST::StageAttribute::Stage, PipelineLayout&);
     UsedGlobals determineUsedGlobals(PipelineLayout&, AST::StageAttribute::Stage);
+    void usesOverride(AST::Variable&);
     void insertStructs(const UsedGlobals&);
     void insertParameters(AST::Function&, const UsedGlobals&);
 
@@ -89,6 +90,7 @@ private:
     IndexMap<Type*> m_structTypes;
     HashSet<String> m_defs;
     HashSet<String> m_reads;
+    Reflection::EntryPointInformation* m_entryPointInformation { nullptr };
 };
 
 void RewriteGlobalVariables::run()
@@ -96,11 +98,13 @@ void RewriteGlobalVariables::run()
     collectGlobals();
     for (auto& entryPoint : m_callGraph.entrypoints()) {
         PipelineLayout pipelineLayout;
+        auto it = m_result.entryPoints.find(entryPoint.function.name());
+        RELEASE_ASSERT(it != m_result.entryPoints.end());
+        m_entryPointInformation = &it->value;
+
         visitEntryPoint(entryPoint.function, entryPoint.stage, pipelineLayout);
 
-        auto it = m_result.entryPoints.find(entryPoint.function.name());
-        ASSERT(it != m_result.entryPoints.end());
-        it->value.defaultLayout = WTFMove(pipelineLayout);
+        m_entryPointInformation->defaultLayout = WTFMove(pipelineLayout);
     }
 }
 
@@ -194,8 +198,21 @@ auto RewriteGlobalVariables::determineUsedGlobals(PipelineLayout& pipelineLayout
         auto it = m_globals.find(globalName);
         RELEASE_ASSERT(it != m_globals.end());
         auto& global = it->value;
-        if (!global.resource.has_value())
-            continue;
+        AST::Variable& variable = *global.declaration;
+        switch (variable.flavor()) {
+        case AST::VariableFlavor::Override:
+            usesOverride(variable);
+            break;
+        case AST::VariableFlavor::Var:
+        case AST::VariableFlavor::Let:
+            if (!global.resource.has_value())
+                continue;
+            break;
+        case AST::VariableFlavor::Const:
+            // Constants must be resolved at an earlier phase
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
         auto group = global.resource->group;
         auto result = usedGlobals.add(group, IndexSet());
         result.iterator->value.add(global.resource->binding);
@@ -224,6 +241,41 @@ auto RewriteGlobalVariables::determineUsedGlobals(PipelineLayout& pipelineLayout
         });
     }
     return usedGlobals;
+}
+
+void RewriteGlobalVariables::usesOverride(AST::Variable& variable)
+{
+    Reflection::SpecializationConstantType constantType;
+    const Type* type = nullptr;
+    if (auto* typeName = variable.maybeTypeName())
+        type = typeName->resolvedType();
+    else {
+        auto* initializer = variable.maybeInitializer();
+        ASSERT(initializer);
+        type = initializer->inferredType();
+    }
+    ASSERT(std::holds_alternative<Types::Primitive>(*type));
+    const auto& primitive = std::get<Types::Primitive>(*type);
+    switch (primitive.kind) {
+    case Types::Primitive::Bool:
+        constantType = Reflection::SpecializationConstantType::Boolean;
+        break;
+    case Types::Primitive::F32:
+        constantType = Reflection::SpecializationConstantType::Float;
+        break;
+    case Types::Primitive::I32:
+        constantType = Reflection::SpecializationConstantType::Int;
+        break;
+    case Types::Primitive::U32:
+        constantType = Reflection::SpecializationConstantType::Unsigned;
+        break;
+    case Types::Primitive::Void:
+    case Types::Primitive::AbstractInt:
+    case Types::Primitive::AbstractFloat:
+    case Types::Primitive::Sampler:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    m_entryPointInformation->specializationConstants.add(variable.name(), Reflection::SpecializationConstant { String(), constantType });
 }
 
 void RewriteGlobalVariables::insertStructs(const UsedGlobals& usedGlobals)

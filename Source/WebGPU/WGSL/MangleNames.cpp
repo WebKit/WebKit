@@ -158,11 +158,37 @@ void NameManglerVisitor::visit(AST::Structure& structure)
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-void NameManglerVisitor::visit(AST::Variable&)
+void NameManglerVisitor::visit(AST::Variable& variable)
 {
-    // FIXME: we need to notify the API about these renames
-    // https://bugs.webkit.org/show_bug.cgi?id=250441
-    // visitVariableDeclaration(variable, MangledName::Global);
+    String originalName = variable.name();
+    for (auto& attribute : variable.attributes()) {
+        if (is<AST::IdAttribute>(attribute)) {
+            unsigned value;
+            auto expression = downcast<AST::IdAttribute>(attribute).value();
+            if (is<AST::AbstractIntegerLiteral>(expression))
+                value = downcast<AST::AbstractIntegerLiteral>(expression).value();
+            else if (is<AST::Signed32Literal>(expression))
+                value = downcast<AST::Signed32Literal>(expression).value();
+            else if (is<AST::Unsigned32Literal>(expression))
+                value = downcast<AST::Unsigned32Literal>(expression).value();
+            else {
+                // Constants must be resolved at an earlier phase
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            originalName = String::number(value);
+            break;
+        }
+    }
+
+    visitVariableDeclaration(variable, MangledName::Global);
+
+    const String& mangledName = variable.name();
+
+    for (auto& entry : m_result.entryPoints) {
+        auto it = entry.value.specializationConstants.find(originalName);
+        if (it != entry.value.specializationConstants.end())
+            it->value.mangledName = mangledName;
+    }
 }
 
 void NameManglerVisitor::visit(AST::VariableStatement& variable)
