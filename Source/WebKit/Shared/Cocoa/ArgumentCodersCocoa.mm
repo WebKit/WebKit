@@ -602,6 +602,9 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
 #if ENABLE(REVEAL)
         || (supportsRevealCore && [allowedClasses containsObject:PAL::getRVItemClass()]) // rdar://107553310 - relying on NSMutableArray re-write, don't re-introduce rdar://107673064
 #endif // ENABLE(REVEAL)
+#if ENABLE(APPLE_PAY)
+        || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentInstallmentConfigurationClass()]) // Don't reintroduce rdar://108281584
+#endif
     ) {
         return false;
     }
@@ -615,7 +618,6 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
         || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentSetupFeatureClass()]) // rdar://107553409
         || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentMerchantSessionClass()]) // rdar://107553452
         || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentClass()] && isInWebProcess())
-        || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentInstallmentConfigurationClass()] && isInWebProcess())
         || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentMethodClass()]) // rdar://107553480
 #endif // ENABLE(APPLE_PAY)
         || (
