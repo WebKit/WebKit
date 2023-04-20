@@ -124,7 +124,10 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
-    m_styleRule->wrapperAdoptSelectorList(WTFMove(*selectorList));
+    if (m_styleRule->isStyleRuleWithNesting())
+        downcast<StyleRuleWithNesting>(m_styleRule.get()).wrapperAdoptOriginalSelectorList(WTFMove(*selectorList));
+    else
+        m_styleRule->wrapperAdoptSelectorList(WTFMove(*selectorList));
 
     if (hasCachedSelectorText()) {
         selectorTextCache().remove(this);
