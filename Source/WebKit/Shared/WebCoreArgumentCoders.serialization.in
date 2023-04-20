@@ -905,6 +905,7 @@ struct WebCore::NotificationData {
     PAL::SessionID sourceSession;
     MonotonicTime creationTime;
     Vector<uint8_t> data;
+    std::optional<bool> silent;
 };
 
 struct WebCore::PermissionDescriptor {

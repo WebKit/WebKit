@@ -30,12 +30,12 @@ namespace WebCore {
 
 NotificationData NotificationData::isolatedCopy() const &
 {
-    return { title.isolatedCopy(), body.isolatedCopy(), iconURL.isolatedCopy(), tag.isolatedCopy(), language.isolatedCopy(), direction, originString.isolatedCopy(), serviceWorkerRegistrationURL.isolatedCopy(), notificationID, contextIdentifier, sourceSession, creationTime, data };
+    return { title.isolatedCopy(), body.isolatedCopy(), iconURL.isolatedCopy(), tag.isolatedCopy(), language.isolatedCopy(), direction, originString.isolatedCopy(), serviceWorkerRegistrationURL.isolatedCopy(), notificationID, contextIdentifier, sourceSession, creationTime, data, silent };
 }
 
 NotificationData NotificationData::isolatedCopy() &&
 {
-    return { WTFMove(title).isolatedCopy(), WTFMove(body).isolatedCopy(), WTFMove(iconURL).isolatedCopy(), WTFMove(tag).isolatedCopy(), WTFMove(language).isolatedCopy(), direction, WTFMove(originString).isolatedCopy(), WTFMove(serviceWorkerRegistrationURL).isolatedCopy(), notificationID, contextIdentifier, sourceSession, creationTime, WTFMove(data) };
+    return { WTFMove(title).isolatedCopy(), WTFMove(body).isolatedCopy(), WTFMove(iconURL).isolatedCopy(), WTFMove(tag).isolatedCopy(), WTFMove(language).isolatedCopy(), direction, WTFMove(originString).isolatedCopy(), WTFMove(serviceWorkerRegistrationURL).isolatedCopy(), notificationID, contextIdentifier, sourceSession, creationTime, WTFMove(data), silent };
 }
 
 } // namespace WebCore
