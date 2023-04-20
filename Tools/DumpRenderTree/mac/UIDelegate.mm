@@ -34,6 +34,7 @@
 #import "EventSendingController.h"
 #import "MockWebNotificationProvider.h"
 #import "TestRunner.h"
+#import "WPTFunctions.h"
 
 #import <WebKit/WebApplicationCache.h>
 #import <WebKit/WebFramePrivate.h>
@@ -176,7 +177,7 @@ static NSString *addLeadingSpaceStripTrailingSpaces(NSString *string)
         return nil;
 
     // Make sure that waitUntilDone has been called.
-    ASSERT(gTestRunner->waitToDump());
+    ASSERT(gTestRunner->waitToDump() || WTR::hasTestWaitAttribute(mainFrame.globalContext));
 
     auto webView = createWebViewAndOffscreenWindow();
     [webView setPreferences:[sender preferences]];
