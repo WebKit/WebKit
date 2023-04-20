@@ -114,3 +114,8 @@ void WKPageConfigurationSetBackgroundCPULimit(WKPageConfigurationRef configurati
 {
     toImpl(configuration)->setCPULimit(cpuLimit);
 }
+
+void WKPageConfigurationSetAllowTestOnlyIPC(WKPageConfigurationRef configuration, bool allowTestOnlyIPC)
+{
+    toImpl(configuration)->setAllowTestOnlyIPC(allowTestOnlyIPC);
+}
