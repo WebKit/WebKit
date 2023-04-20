@@ -266,7 +266,9 @@ void RemoteScrollingCoordinatorProxyIOS::adjustTargetContentOffsetForSnapping(CG
 
     if (shouldSnapForMainFrameScrolling(WebCore::ScrollEventAxis::Vertical)) {
         float potentialSnapPosition;
-        std::tie(potentialSnapPosition, m_currentVerticalSnapPointIndex) = closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis::Vertical, currentContentOffset.y + topInset, FloatPoint(*targetContentOffset), velocity.y);
+        FloatPoint projectedOffset { *targetContentOffset };
+        projectedOffset.move(0, topInset);
+        std::tie(potentialSnapPosition, m_currentVerticalSnapPointIndex) = closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis::Vertical, currentContentOffset.y + topInset, WTFMove(projectedOffset), velocity.y);
         if (m_currentVerticalSnapPointIndex)
             potentialSnapPosition -= topInset;
 

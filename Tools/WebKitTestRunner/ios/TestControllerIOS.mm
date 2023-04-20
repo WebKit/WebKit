@@ -335,12 +335,17 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         [scrollView setZoomScale:1 animated:NO];
         scrollView.firstResponderKeyboardAvoidanceEnabled = YES;
 
-        auto currentContentInset = scrollView.contentInset;
         auto contentInsetTop = options.contentInsetTop();
-        if (currentContentInset.top != contentInsetTop) {
-            currentContentInset.top = contentInsetTop;
-            scrollView.contentInset = currentContentInset;
-            scrollView.contentOffset = CGPointMake(-currentContentInset.left, -currentContentInset.top);
+        if (auto contentInset = scrollView.contentInset; contentInset.top != contentInsetTop) {
+            contentInset.top = contentInsetTop;
+            scrollView.contentInset = contentInset;
+            scrollView.contentOffset = CGPointMake(-contentInset.left, -contentInset.top);
+        }
+
+        auto obscuredInsetTop = options.obscuredInsetTop();
+        if (auto obscuredInset = webView._obscuredInsets; obscuredInset.top != obscuredInsetTop) {
+            obscuredInset.top = obscuredInsetTop;
+            webView._obscuredInsets = obscuredInset;
         }
 
         if (webView.interactingWithFormControl) {
