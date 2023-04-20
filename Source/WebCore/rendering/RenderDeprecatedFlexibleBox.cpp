@@ -26,6 +26,7 @@
 #include "RenderDeprecatedFlexibleBox.h"
 
 #include "FontCascade.h"
+#include "InlineIteratorLineBox.h"
 #include "LayoutRepainter.h"
 #include "RenderDescendantIterator.h"
 #include "RenderIterator.h"
