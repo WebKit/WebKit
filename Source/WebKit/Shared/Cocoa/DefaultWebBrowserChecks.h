@@ -43,7 +43,7 @@ bool isRunningTest(const String& bundleID);
 void determineTrackingPreventionState();
 bool doesAppHaveTrackingPreventionEnabled();
 bool doesParentProcessHaveTrackingPreventionEnabled(AuxiliaryProcess&, bool hasRequestedCrossWebsiteTrackingPermission);
-bool isFullWebBrowser();
+bool isFullWebBrowserOrRunningTest();
 bool isParentProcessAFullWebBrowser(AuxiliaryProcess&);
 
 } // namespace WebKit

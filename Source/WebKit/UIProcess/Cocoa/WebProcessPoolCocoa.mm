@@ -500,16 +500,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if HAVE(VIDEO_RESTRICTED_DECODING)
 #if PLATFORM(MAC)
-    if (!isFullWebBrowser() || isRunningTest(WebCore::applicationBundleIdentifier())) {
-        if (auto trustdExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.trustd.agent"_s, std::nullopt))
-            parameters.trustdExtensionHandle = WTFMove(*trustdExtensionHandle);
-        parameters.enableDecodingHEIC = true;
-        parameters.enableDecodingAVIF = true;
-    }
-#else
+    // FIXME: this will not be needed when rdar://74144544 is fixed.
+    if (auto trustdExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.trustd.agent"_s, std::nullopt))
+        parameters.trustdExtensionHandle = WTFMove(*trustdExtensionHandle);
+#endif
     parameters.enableDecodingHEIC = true;
     parameters.enableDecodingAVIF = true;
-#endif // PLATFORM(MAC)
 #endif // HAVE(VIDEO_RESTRICTED_DECODING)
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(CFPREFS_DIRECT_MODE)

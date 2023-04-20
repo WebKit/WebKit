@@ -43,7 +43,7 @@
 
 namespace WebKit {
 
-static bool isFullWebBrowser(const String&);
+static bool isFullWebBrowserOrRunningTest(const String&);
 
 bool isRunningTest(const String& bundleID)
 {
@@ -99,10 +99,15 @@ static bool determineTrackingPreventionStateInternal(bool appWasLinkedOnOrAfter,
     ASSERT(!RunLoop::isMain());
     ASSERT(!isInWebKitChildProcess());
 
-    if (!appWasLinkedOnOrAfter && !isFullWebBrowser(bundleIdentifier))
+#if ENABLE(APP_BOUND_DOMAINS)
+    bool isFullWebBrowser = isFullWebBrowserOrRunningTest(bundleIdentifier);
+#else
+    bool isFullWebBrowser = isRunningTest(bundleIdentifier);
+#endif
+    if (!appWasLinkedOnOrAfter && !isFullWebBrowser)
         return false;
 
-    if (!isFullWebBrowser(bundleIdentifier) && !hasRequestedCrossWebsiteTrackingPermission())
+    if (!isFullWebBrowser && !hasRequestedCrossWebsiteTrackingPermission())
         return true;
 
     TCCAccessPreflightResult result = kTCCAccessPreflightDenied;
@@ -243,21 +248,37 @@ bool isParentProcessAFullWebBrowser(AuxiliaryProcess& auxiliaryProcess)
     return fullWebBrowser || isRunningTest(WebCore::applicationBundleIdentifier());
 }
 
-static bool isFullWebBrowser(const String& bundleIdentifier)
+bool isFullWebBrowserOrRunningTest(const String& bundleIdentifier)
 {
     ASSERT(!isInWebKitChildProcess());
 
+#if ENABLE(APP_BOUND_DOMAINS)
     static bool fullWebBrowser = WTF::processHasEntitlement("com.apple.developer.web-browser"_s);
+#elif PLATFORM(MAC)
+    static bool fullWebBrowser;
+    static std::once_flag once;
+    std::call_once(once, [] {
+        NSURL *currentURL = [[NSBundle mainBundle] bundleURL];
+        NSArray<NSURL *> *httpURLs = [[NSWorkspace sharedWorkspace] URLsForApplicationsToOpenURL:[NSURL URLWithString:@"http:"]];
+        bool canOpenHTTP = [httpURLs containsObject:currentURL];
+        NSArray<NSURL *> *httpsURLs = [[NSWorkspace sharedWorkspace] URLsForApplicationsToOpenURL:[NSURL URLWithString:@"https:"]];
+        bool canOpenHTTPS = [httpsURLs containsObject:currentURL];
+        fullWebBrowser = canOpenHTTPS && canOpenHTTP;
+    });
+#else
+    ASSERT_NOT_REACHED();
+    static bool fullWebBrowser = false;
+#endif
 
     return fullWebBrowser || isRunningTest(bundleIdentifier);
 }
 
-bool isFullWebBrowser()
+bool isFullWebBrowserOrRunningTest()
 {
     ASSERT(!isInWebKitChildProcess());
     ASSERT(RunLoop::isMain());
 
-    return isFullWebBrowser(WebCore::applicationBundleIdentifier());
+    return isFullWebBrowserOrRunningTest(WebCore::applicationBundleIdentifier());
 }
 
 } // namespace WebKit
