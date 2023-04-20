@@ -1,3 +1,637 @@
+diff --git a/doc/ExtensionSupport.md b/doc/ExtensionSupport.md
+index ccc210fb2a86eb84d194ea19c1345314381f5de0..747a987bfaf63264f1b193f37c3fa46ac09da249 100644
+--- a/doc/ExtensionSupport.md
++++ b/doc/ExtensionSupport.md
+@@ -250,6 +250,7 @@ using data from registry_xml.py and gl.xml.
+ | [GL_CHROMIUM_texture_filtering_hint](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/CHROMIUM_texture_filtering_hint.txt) |  |  |  |  | &#x2714; |  |  |
+ | [GL_ANGLE_texture_multisample](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_texture_multisample.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+ | [GL_ANGLE_texture_rectangle](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_texture_rectangle.txt) |  |  |  |  |  |  |  |
++| [GL_ANGLE_variable_rasterization_rate_metal](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_variable_rasterization_rate_metal.txt) |  |  |  |  |  |  |  |
+ | [GL_ANGLE_vulkan_image](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_vulkan_image.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+ | [GL_ANGLE_webgl_compatibility](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_webgl_compatibility.txt) |  |  |  |  |  |  |  |
+ | [GL_ANGLE_yuv_internal_format](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_yuv_internal_format.txt) | &#x2714; |  | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+diff --git a/extensions/ANGLE_variable_rasterization_rate_metal.txt b/extensions/ANGLE_variable_rasterization_rate_metal.txt
+new file mode 100644
+index 0000000000000000000000000000000000000000..661d204d57d74dcc1613114d315c0f7da93b66a6
+--- /dev/null
++++ b/extensions/ANGLE_variable_rasterization_rate_metal.txt
+@@ -0,0 +1,95 @@
++Name
++
++    ANGLE_variable_rasterization_rate_metal
++
++Name Strings
++
++    GL_ANGLE_variable_rasterization_rate_metal
++
++Contributors
++
++    Dan Glastonbury, Apple Inc.
++
++Contact
++
++    Dan Glastonbury, Apple Inc. (djg 'at' apple 'dot' com)
++
++Status
++
++    Incomplete
++
++Version
++
++    Last Modified Date: May 5, 2023
++    Author Revision: 1
++
++Number
++
++    OpenGL ES Extension XX
++
++Dependencies
++
++Overview
++
++IP Status
++
++    No known IP claims.
++
++New Types
++
++    /*
++     * GLMTLRasterizationRateMapANGLE is an opaque handle to an id<MTLRasterizationRateMap>
++     */
++    typedef void* GLMTLRasterizationRateMapANGLE;
++
++New Procedures and Functions
++
++    void BindMetalRasterizationRateMapANGLE(GLMTLRasterizationRateMapANGLE map);
++
++New Tokens
++
++    Accepted by the <cap> parameter of Enable, Disable, and IsEnabled, by the
++    <target> parameter of Enablei, Disablei, IsEnabledi, GetBooleani_v, GetIntegeri_v, GetInteger64i_v, and by the <pname> parameter
++    of GetBooleanv, GetIntegerv, GetInteger64v, GetFloatv, 
++
++        VARIABLE_RASTERIZATION_RATE_ANGLE            0x96BC
++
++    Accepted by the <pname> parameter of GetPointerv:
++
++        METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE   0x96BD
++
++Issues
++
++    1) Specify behavior of BindMetalRaterizationRateMap(...)
++
++        - Though this extension's incomplete and being prototyped, would you
++          like to mention anything about the semantics of this new binding
++          point?
++
++        - Should this define ownership of the MTLRasterizationRateMap?
++
++        - MTLRasterizationRateMap needs to define multiple layer maps if
++          performing layered rendering - which I assume would mean using
++          multiple draw buffers in OpenGL ES semantics.
++
++        - Should this mention errors, for example that subsequent draw calls
++          will fail with INVALID_OPERATION if the number of color attachments on
++          the bound framebuffer doesn't match the number of layer maps in the
++          rasterization rate map?
++
++        - Does passing nullptr restore the GL state to its original value?
++
++        - Does binding a rasterization rate map created with a different Metal
++          device to that of ANGLE cause an error? If not, should it?
++
++    2) Specify behavior of glEnable(GL_VARIABLE_RASTERIZATION_RATE_ANGLE)
++
++        - What happens if GL_VARIABLE_RASTERIZATION_RATE_ANGLE is enabled, but
++          no rasterization rate map is bound?
++
++        In the current implementation, if the feature is enable but no map is
++        bound the GL renders as normal and no error is generated.
++
++    3) Does this feature require a GLSL extension to allow access to
++       rasterization_rate_map_decoder when rendering with an enabled map? Should
++       gl_FragCoord automatically be adjusted when rendering with a map?
+diff --git a/include/GLES2/gl2ext_angle.h b/include/GLES2/gl2ext_angle.h
+index cef3f5167ef47b3bfb7362c94d89b0188c766c62..7a22b47d3671439e87e4c9f607fba26ad08bee0a 100644
+--- a/include/GLES2/gl2ext_angle.h
++++ b/include/GLES2/gl2ext_angle.h
+@@ -736,4 +736,16 @@ GL_APICALL void GL_APIENTRY glLogicOpANGLE (GLenum);
+ #endif
+ #endif /* GL_ANGLE_logic_op */
+ 
++#ifndef GL_ANGLE_variable_rasterization_rate_metal
++#define GL_ANGLE_variable_rasterization_rate_metal 1
++
++#define GL_VARIABLE_RASTERIZATION_RATE_ANGLE            0x96BC
++#define GL_METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE   0x96BD
++typedef void *GLMTLRasterizationRateMapANGLE;
++typedef void (GL_APIENTRYP PFNGLBINDMETALRASTERIZATIONRATEMAPANGLEPROC) (GLMTLRasterizationRateMapANGLE);
++#ifdef GL_GLEXT_PROTOTYPES
++GL_APICALL void GL_APIENTRY glBindMetalRasterizationRateMapANGLE(GLMTLRasterizationRateMapANGLE map);
++#endif
++#endif /* GL_ANGLE_variable_rasterization_rate_metal */
++
+ #endif  // INCLUDE_GLES2_GL2EXT_ANGLE_H_
+diff --git a/include/platform/autogen/FeaturesMtl_autogen.h b/include/platform/autogen/FeaturesMtl_autogen.h
+index 6d416641d2a49ae253032d38c87f84574c021a1c..36e6d11a19ce3dd47f54e83912960c169e885ce8 100644
+--- a/include/platform/autogen/FeaturesMtl_autogen.h
++++ b/include/platform/autogen/FeaturesMtl_autogen.h
+@@ -83,6 +83,13 @@ struct FeaturesMtl : FeatureSetBase
+         &members,
+     };
+ 
++    FeatureInfo hasVariableRasterizationRate = {
++        "hasVariableRasterizationRate",
++        FeatureCategory::MetalFeatures,
++        "The renderer supports variable rasterization rate",
++        &members,
++    };
++
+     FeatureInfo allowInlineConstVertexData = {
+         "allowInlineConstVertexData",
+         FeatureCategory::MetalFeatures,
+diff --git a/include/platform/mtl_features.json b/include/platform/mtl_features.json
+index 4f6b635533771834675c02aebb34e68a112b332c..4b9ac8bcb2ba5a18d666cc11546f241ff6f7cd1b 100644
+--- a/include/platform/mtl_features.json
++++ b/include/platform/mtl_features.json
+@@ -70,6 +70,13 @@
+                 "The renderer supports MTL(Shared)Event"
+             ]
+         },
++        {
++            "name": "has_variable_rasterization_rate",
++            "category": "Features",
++            "description": [
++                "The renderer supports variable rasterization rate"
++            ]
++        },
+         {
+             "name": "allow_inline_const_vertex_data",
+             "category": "Features",
+diff --git a/scripts/code_generation_hashes/Extension_files.json b/scripts/code_generation_hashes/Extension_files.json
+index 39019b0594ed683c3421bce65f8571aa445e1d51..e04e4636010c5ea068ee917d7650a3fe0b6e4334 100644
+--- a/scripts/code_generation_hashes/Extension_files.json
++++ b/scripts/code_generation_hashes/Extension_files.json
+@@ -1,6 +1,6 @@
+ {
+   "doc/ExtensionSupport.md":
+-    "95d3899d5d322d0c28a39bcf033fd31a",
++    "6da8c44a4b7a2612dea8b46fcb8424eb",
+   "scripts/egl_angle_ext.xml":
+     "89e7586fbfed61f7b1500f2dd90c1a2e",
+   "scripts/extension_data/intel_630_linux.json":
+@@ -20,15 +20,15 @@
+   "scripts/extension_data/swiftshader_win10_gles1.json":
+     "bea8e2106d62e1ea0e8938f150865a37",
+   "scripts/gl_angle_ext.xml":
+-    "3d6d9529c6d0da797652c366ddaa9087",
++    "4289031553649285f7922c1a3fbc3094",
+   "scripts/registry_xml.py":
+-    "47ea795fada7b13232c7c9445ccfadb6",
++    "a891c356fdd76cf28320760fcd67dba3",
+   "src/libANGLE/gen_extensions.py":
+     "6ea1cb1733c4df98b527bbf2752e118b",
+   "src/libANGLE/gles_extensions_autogen.cpp":
+-    "950a6f60a7e0886a5a6e41d21cc53eb9",
++    "327049b66833dec35f1e5321a8c38347",
+   "src/libANGLE/gles_extensions_autogen.h":
+-    "a30c1a9423cb0a52cbf4ed742e612df9",
++    "c92bb6db672d03295ad0932f6b76fd10",
+   "third_party/EGL-Registry/src/api/egl.xml":
+     "2056d54ea07156f1988ca1366bdee21a",
+   "third_party/OpenCL-Docs/src/xml/cl.xml":
+diff --git a/scripts/code_generation_hashes/GL_EGL_WGL_loader.json b/scripts/code_generation_hashes/GL_EGL_WGL_loader.json
+index ae8297b804706fdffb9c4eb8e5c94ecec52a27e3..f36a0d83926702df614292aa42e23d5c4d15e79a 100644
+--- a/scripts/code_generation_hashes/GL_EGL_WGL_loader.json
++++ b/scripts/code_generation_hashes/GL_EGL_WGL_loader.json
+@@ -4,9 +4,9 @@
+   "scripts/generate_loader.py":
+     "93c78a8d11323fa311fed5118fbcf083",
+   "scripts/gl_angle_ext.xml":
+-    "3d6d9529c6d0da797652c366ddaa9087",
++    "4289031553649285f7922c1a3fbc3094",
+   "scripts/registry_xml.py":
+-    "47ea795fada7b13232c7c9445ccfadb6",
++    "a891c356fdd76cf28320760fcd67dba3",
+   "src/libEGL/egl_loader_autogen.cpp":
+     "a41c368dc25edc7ceda29b17cb45b854",
+   "src/libEGL/egl_loader_autogen.h":
+@@ -26,17 +26,17 @@
+   "util/capture/trace_egl_loader_autogen.h":
+     "690441996af48344dbd32a4dc1274d52",
+   "util/capture/trace_gles_loader_autogen.cpp":
+-    "dbb04b96a4d4926d79c6d02c7ba1c015",
++    "7ed5046ae7ac5d5968c8b429e00cddc1",
+   "util/capture/trace_gles_loader_autogen.h":
+-    "f659109a6f3f721d1949be769abcb79f",
++    "9fee7ffc4fece2cb57379ce56acb4ba0",
+   "util/egl_loader_autogen.cpp":
+     "a84edfc15d612b824a177ee62dc798d8",
+   "util/egl_loader_autogen.h":
+     "953916ce1947d7a08b5afd2a67e5096b",
+   "util/gles_loader_autogen.cpp":
+-    "d45d5d1a9f2570ced062e7f2130aec7d",
++    "5b21acc4a138e64ba6d53328b5662bd0",
+   "util/gles_loader_autogen.h":
+-    "2a2bfe6b51c19e92ae821ed278ffde67",
++    "550052762d989d9792ffa028964bda14",
+   "util/windows/wgl_loader_autogen.cpp":
+     "373b062587eab8a163121255f54597dc",
+   "util/windows/wgl_loader_autogen.h":
+diff --git a/scripts/code_generation_hashes/GL_EGL_entry_points.json b/scripts/code_generation_hashes/GL_EGL_entry_points.json
+index f43dc7cab0d0ad85566e56736866224d5cf0dd1c..e5db0534c7d57ce069c4030d0fa4518379f509e5 100644
+--- a/scripts/code_generation_hashes/GL_EGL_entry_points.json
++++ b/scripts/code_generation_hashes/GL_EGL_entry_points.json
+@@ -6,19 +6,19 @@
+   "scripts/entry_point_packed_gl_enums.json":
+     "1c6b036918aabb9822a638fbf33f87f4",
+   "scripts/generate_entry_points.py":
+-    "8db6ef15dfcbba2d6dcd38014a87eb96",
++    "ba979875becc8d128f8d547cff075b65",
+   "scripts/gl_angle_ext.xml":
+-    "3d6d9529c6d0da797652c366ddaa9087",
++    "4289031553649285f7922c1a3fbc3094",
+   "scripts/registry_xml.py":
+-    "47ea795fada7b13232c7c9445ccfadb6",
++    "a891c356fdd76cf28320760fcd67dba3",
+   "src/common/entry_points_enum_autogen.cpp":
+-    "1c7b8562eebccb8c980dbb664bb9ff3b",
++    "a5150291132a65e0bcb6de15fa386f31",
+   "src/common/entry_points_enum_autogen.h":
+-    "4f1fc20116d6e5d3a5c23f2e2d2c09fc",
++    "7c402599513b354cee80c79cb49ac79d",
+   "src/common/frame_capture_utils_autogen.cpp":
+-    "1984fe7b49b4d8fce4decbca540f71e0",
++    "ff20a12bd572e67d323c55d8e016a719",
+   "src/common/frame_capture_utils_autogen.h":
+-    "48a21fd19220368da07e3e211ac8a188",
++    "98029ea5bc9cfeaaf21374d9f323c968",
+   "src/libANGLE/Context_gl_1_autogen.h":
+     "47775529739b839b2e58db334050cfb0",
+   "src/libANGLE/Context_gl_2_autogen.h":
+@@ -38,7 +38,7 @@
+   "src/libANGLE/Context_gles_3_2_autogen.h":
+     "cf9900e0067812fc6773e8ae4664da33",
+   "src/libANGLE/Context_gles_ext_autogen.h":
+-    "b0c882fbdb59cbb5a70443cc97508562",
++    "bc48291e89904c97769f85c25ed32550",
+   "src/libANGLE/capture/capture_egl_autogen.cpp":
+     "13734e23717732184a23fe7c872a0016",
+   "src/libANGLE/capture/capture_egl_autogen.h":
+@@ -80,9 +80,9 @@
+   "src/libANGLE/capture/capture_gles_3_2_autogen.h":
+     "74ed7366af3a46c0661397cfa29ec6fc",
+   "src/libANGLE/capture/capture_gles_ext_autogen.cpp":
+-    "158bce866c1a96f27602c6869401c299",
++    "89661545ce4012cb5cd75f32efe40af8",
+   "src/libANGLE/capture/capture_gles_ext_autogen.h":
+-    "937cc0195111a894f32c5423b2918516",
++    "d9792923b19294ff801072b6c4aead7a",
+   "src/libANGLE/context_private_call_gl_autogen.h":
+     "40c4fa88e0947ed35a04f2b112b6d708",
+   "src/libANGLE/context_private_call_gles_autogen.h":
+@@ -102,7 +102,7 @@
+   "src/libANGLE/validationES3_autogen.h":
+     "29b3f384a582a4ffd45a898a481839fd",
+   "src/libANGLE/validationESEXT_autogen.h":
+-    "44ce386575af7dbe3ddcf902d704b15b",
++    "ea9571c65ef0850f3dfc902f3ce2c534",
+   "src/libANGLE/validationGL1_autogen.h":
+     "6024574ab4afbee4462d4a1f0c897c9a",
+   "src/libANGLE/validationGL2_autogen.h":
+@@ -174,17 +174,17 @@
+   "src/libGLESv2/entry_points_gles_3_2_autogen.h":
+     "647f932a299cdb4726b60bbba059f0d2",
+   "src/libGLESv2/entry_points_gles_ext_autogen.cpp":
+-    "595d6fcaeb5e0c0ee2f93105989effee",
++    "fa0f89ebce1f68551c65818ea9aed31d",
+   "src/libGLESv2/entry_points_gles_ext_autogen.h":
+-    "f1895ec530403d4a5cee26a2a1637854",
++    "3f8087342b939e83fc5b622b13785edd",
+   "src/libGLESv2/libGLESv2_autogen.cpp":
+-    "1f9e135e10493da8f7a495b014b17111",
++    "ebb6bb0e8a6f4b6c100d8aeeec2c7959",
+   "src/libGLESv2/libGLESv2_autogen.def":
+-    "51d7215acec8b53aa7ea107c235a8f76",
++    "d47e9907fb32838f866518df3172624c",
+   "src/libGLESv2/libGLESv2_no_capture_autogen.def":
+-    "8c09d706e4c2dba8ca77eb2c08491bff",
++    "dce3a1d08a87ed5a8e23914fe3571be7",
+   "src/libGLESv2/libGLESv2_with_capture_autogen.def":
+-    "0d4959936fedaa3d829fe5c61e6e26ab",
++    "d25128e4ffe174b122be2ab7585f4026",
+   "src/libOpenCL/libOpenCL_autogen.cpp":
+     "10849978c910dc1af5dd4f0c815d1581",
+   "third_party/EGL-Registry/src/api/egl.xml":
+@@ -198,5 +198,5 @@
+   "third_party/OpenGL-Registry/src/xml/wgl.xml":
+     "eae784bf4d1b983a42af5671b140b7c4",
+   "util/capture/frame_capture_replay_autogen.cpp":
+-    "d2da61e3c43d91abadada2e2ba103cd9"
++    "6271df41fd8e71cbfde71eee29935c62"
+ }
+diff --git a/scripts/code_generation_hashes/GLenum_value_to_string_map.json b/scripts/code_generation_hashes/GLenum_value_to_string_map.json
+index 97be7806fcb471099d94adcb6b38b9f68d6999bb..54cf04f6ab0476e013c6280e1803f98fbdd91efb 100644
+--- a/scripts/code_generation_hashes/GLenum_value_to_string_map.json
++++ b/scripts/code_generation_hashes/GLenum_value_to_string_map.json
+@@ -2,11 +2,11 @@
+   "scripts/gen_gl_enum_utils.py":
+     "3ec60ab12923f4825b57fe183f2152b2",
+   "scripts/gl_angle_ext.xml":
+-    "3d6d9529c6d0da797652c366ddaa9087",
++    "4289031553649285f7922c1a3fbc3094",
+   "scripts/registry_xml.py":
+-    "47ea795fada7b13232c7c9445ccfadb6",
++    "a891c356fdd76cf28320760fcd67dba3",
+   "src/common/gl_enum_utils_autogen.cpp":
+-    "034602dc70b0ddb2325bc8b9b13de233",
++    "126092cca14f6eeb9771c773e67e8e92",
+   "src/common/gl_enum_utils_autogen.h":
+     "e7205a4b257e250bcf843374ee2a90d4",
+   "third_party/OpenGL-Registry/src/xml/gl.xml":
+diff --git a/scripts/code_generation_hashes/interpreter_utils.json b/scripts/code_generation_hashes/interpreter_utils.json
+index 4b24a66b5781a638e687bb55a7ee079d8f0302c7..60cdc6295a321a62eb6c5d27ddaa42193123c342 100644
+--- a/scripts/code_generation_hashes/interpreter_utils.json
++++ b/scripts/code_generation_hashes/interpreter_utils.json
+@@ -4,9 +4,9 @@
+   "scripts/gen_interpreter_utils.py":
+     "10ba16ee78604763fc883525dd275de8",
+   "scripts/gl_angle_ext.xml":
+-    "3d6d9529c6d0da797652c366ddaa9087",
++    "4289031553649285f7922c1a3fbc3094",
+   "scripts/registry_xml.py":
+-    "47ea795fada7b13232c7c9445ccfadb6",
++    "a891c356fdd76cf28320760fcd67dba3",
+   "third_party/EGL-Registry/src/api/egl.xml":
+     "2056d54ea07156f1988ca1366bdee21a",
+   "third_party/OpenCL-Docs/src/xml/cl.xml":
+@@ -20,5 +20,5 @@
+   "util/capture/trace_fixture.h":
+     "fe8478ae6ac1cab26554ac3100a48399",
+   "util/capture/trace_interpreter_autogen.cpp":
+-    "62f6b14ee2ee6ba56a048dfe53b9169b"
++    "b171840067679abbf1e57ca9d9170469"
+ }
+diff --git a/scripts/code_generation_hashes/proc_table.json b/scripts/code_generation_hashes/proc_table.json
+index 71c4c1c715e005d7008586689681b92757912a13..45a600799e363f542ef6235a045519049d2ffcdf 100644
+--- a/scripts/code_generation_hashes/proc_table.json
++++ b/scripts/code_generation_hashes/proc_table.json
+@@ -4,17 +4,17 @@
+   "scripts/gen_proc_table.py":
+     "073351265b085943f816498cecaa281c",
+   "scripts/gl_angle_ext.xml":
+-    "3d6d9529c6d0da797652c366ddaa9087",
++    "4289031553649285f7922c1a3fbc3094",
+   "scripts/registry_xml.py":
+-    "47ea795fada7b13232c7c9445ccfadb6",
++    "a891c356fdd76cf28320760fcd67dba3",
+   "src/libGLESv2/proc_table_cl_autogen.cpp":
+     "ed003b0f041aaaa35b67d3fe07e61f91",
+   "src/libGLESv2/proc_table_egl_autogen.cpp":
+-    "7cee2f8fe19761aa65ae5408dbb5f351",
++    "8ddc021e79a0e6f715c704b2e5ab4175",
+   "src/libGLESv2/proc_table_glx_autogen.cpp":
+-    "3fe21c3983062e232a773e666566490e",
++    "cbd5aec0027698e7cf4d92c29ff44d86",
+   "src/libGLESv2/proc_table_wgl_autogen.cpp":
+-    "9bdd0c682bb8c9f31e1edbd7036920e6",
++    "12ca8d985c660c15488f7a9e9471e816",
+   "src/libOpenCL/libOpenCL_autogen.map":
+     "bc5f5cf48227149ed321258a16eff1d7",
+   "third_party/EGL-Registry/src/api/egl.xml":
+diff --git a/scripts/generate_entry_points.py b/scripts/generate_entry_points.py
+index 3e6e33a26b18776222de40bdcefc582694663bb9..0b5466e42198f5271c0b67f053ff302c851e46ae 100755
+--- a/scripts/generate_entry_points.py
++++ b/scripts/generate_entry_points.py
+@@ -963,6 +963,7 @@ FORMAT_DICT = {
+     "GLfloat": "%f",
+     "GLint": "%d",
+     "GLintptr": UNSIGNED_LONG_LONG_FORMAT,
++    "GLMTLRasterizationRateMapANGLE": POINTER_FORMAT,
+     "GLshort": "%d",
+     "GLsizei": "%d",
+     "GLsizeiptr": UNSIGNED_LONG_LONG_FORMAT,
+diff --git a/scripts/gl_angle_ext.xml b/scripts/gl_angle_ext.xml
+index 914c5075b24994b30ee16dc24512e8728ef351f1..1e0c3807cae087cc3c25ce407ef57a06934aa236 100644
+--- a/scripts/gl_angle_ext.xml
++++ b/scripts/gl_angle_ext.xml
+@@ -9,6 +9,11 @@
+         Includes data used to auto-generate ANGLE classes.
+     </comment>
+ 
++    <!-- SECTION: GL type definitions. -->
++    <types>
++        <type>typedef void *<name>GLMTLRasterizationRateMapANGLE</name>;</type>
++    </types>
++
+     <!-- SECTION: GL parameter class type definitions. -->
+     <groups>
+         <group name="CreateFlagMask">
+@@ -1036,6 +1041,10 @@
+             <proto>void <name>glLogicOpANGLE</name></proto>
+             <param group="LogicOp"><ptype>GLenum</ptype> <name>opcode</name></param>
+         </command>
++        <command>
++            <proto>void <name>glBindMetalRasterizationRateMapANGLE</name></proto>
++            <param><ptype>GLMTLRasterizationRateMapANGLE</ptype> <name>map</name></param>
++        </command>
+     </commands>
+ 
+     <!-- SECTION: ANGLE extension interface definitions -->
+@@ -1348,6 +1357,13 @@
+                 <command name="glLogicOpANGLE"/>
+             </require>
+         </extension>
++        <extension name="GL_ANGLE_variable_rasterization_rate_metal" supported="gles2">
++            <require>
++                <enum name="GL_VARIABLE_RASTERIZATION_RATE_ANGLE"/>
++                <enum name="GL_METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE"/>
++                <command name="glBindMetalRasterizationRateMapANGLE"/>
++            </require>
++        </extension>
+     </extensions>
+ 
+     <!-- SECTION: GL enumerant (token) definitions. -->
+@@ -1473,4 +1489,9 @@
+     <enums namespace="GL" start="0x0BF2" end="0x0BF2" vendor="ANGLE">
+         <enum value="0x0BF2" name="GL_COLOR_LOGIC_OP_ANGLE"/>
+     </enums>
++
++    <enums namespace="GL" start="0x96BC" end="0x96BD" vendor="ANGLE">
++        <enum value="0x96BC" name="GL_VARIABLE_RASTERIZATION_RATE_ANGLE"/>
++        <enum value="0x96BD" name="GL_METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE"/>
++    </enums>
+ </registry>
+diff --git a/scripts/registry_xml.py b/scripts/registry_xml.py
+index f97e32bcb37628f8910fb2ea53bf570cfdd48dec..ccf6f49d96259492d1d49b9e757f2944b7c31c97 100644
+--- a/scripts/registry_xml.py
++++ b/scripts/registry_xml.py
+@@ -73,6 +73,7 @@ angle_requestable_extensions = [
+     "GL_ANGLE_texture_compression_dxt5",
+     "GL_ANGLE_texture_external_update",
+     "GL_ANGLE_texture_multisample",
++    "GL_ANGLE_variable_rasterization_rate_metal",
+     "GL_ANGLE_vulkan_image",
+     "GL_ANGLE_yuv_internal_format",
+     "GL_CHROMIUM_color_buffer_float_rgb",
+diff --git a/src/common/entry_points_enum_autogen.cpp b/src/common/entry_points_enum_autogen.cpp
+index 377ed61bb94ecce50fcba4af0c54ca7c6b9a2a78..86451c3ddc729ba7b39500da67cf04d725b22782 100644
+--- a/src/common/entry_points_enum_autogen.cpp
++++ b/src/common/entry_points_enum_autogen.cpp
+@@ -538,6 +538,8 @@ const char *GetEntryPointName(EntryPoint ep)
+             return "glBindImageTexture";
+         case EntryPoint::GLBindImageTextures:
+             return "glBindImageTextures";
++        case EntryPoint::GLBindMetalRasterizationRateMapANGLE:
++            return "glBindMetalRasterizationRateMapANGLE";
+         case EntryPoint::GLBindProgramPipeline:
+             return "glBindProgramPipeline";
+         case EntryPoint::GLBindProgramPipelineEXT:
+diff --git a/src/common/entry_points_enum_autogen.h b/src/common/entry_points_enum_autogen.h
+index cd1628b58b193cb36d7aa2d32b30b45d4c0cfb8f..a54dda53f438eef5fd90fba7a33c1eeabeb4a439 100644
+--- a/src/common/entry_points_enum_autogen.h
++++ b/src/common/entry_points_enum_autogen.h
+@@ -275,6 +275,7 @@ enum class EntryPoint
+     GLBindFramebufferOES,
+     GLBindImageTexture,
+     GLBindImageTextures,
++    GLBindMetalRasterizationRateMapANGLE,
+     GLBindProgramPipeline,
+     GLBindProgramPipelineEXT,
+     GLBindRenderbuffer,
+diff --git a/src/common/frame_capture_utils_autogen.cpp b/src/common/frame_capture_utils_autogen.cpp
+index f356982285bc9bed6469571d6c2f0ef9ea7cc940..9f601fc824eae7e78da8e8f9b3fe6576b0d7e76c 100644
+--- a/src/common/frame_capture_utils_autogen.cpp
++++ b/src/common/frame_capture_utils_autogen.cpp
+@@ -222,6 +222,10 @@ void WriteParamCaptureReplay(std::ostream &os, const CallCapture &call, const Pa
+             WriteParamValueReplay<ParamType::TGLDEBUGPROCKHR>(os, call,
+                                                               param.value.GLDEBUGPROCKHRVal);
+             break;
++        case ParamType::TGLMTLRasterizationRateMapANGLE:
++            WriteParamValueReplay<ParamType::TGLMTLRasterizationRateMapANGLE>(
++                os, call, param.value.GLMTLRasterizationRateMapANGLEVal);
++            break;
+         case ParamType::TGLbitfield:
+             WriteParamValueReplay<ParamType::TGLbitfield>(os, call, param.value.GLbitfieldVal);
+             break;
+@@ -768,6 +772,8 @@ const char *ParamTypeToString(ParamType paramType)
+             return "GLDEBUGPROC";
+         case ParamType::TGLDEBUGPROCKHR:
+             return "GLDEBUGPROCKHR";
++        case ParamType::TGLMTLRasterizationRateMapANGLE:
++            return "GLMTLRasterizationRateMapANGLE";
+         case ParamType::TGLbitfield:
+             return "GLbitfield";
+         case ParamType::TGLboolean:
+diff --git a/src/common/frame_capture_utils_autogen.h b/src/common/frame_capture_utils_autogen.h
+index e68affb0e0773ce2c83439ca9c188066cc225d34..88a18830e8037a5cf2c23d60b94f2910c6edf136 100644
+--- a/src/common/frame_capture_utils_autogen.h
++++ b/src/common/frame_capture_utils_autogen.h
+@@ -74,6 +74,7 @@ enum class ParamType
+     TFramebufferIDPointer,
+     TGLDEBUGPROC,
+     TGLDEBUGPROCKHR,
++    TGLMTLRasterizationRateMapANGLE,
+     TGLbitfield,
+     TGLboolean,
+     TGLbooleanConstPointer,
+@@ -191,7 +192,7 @@ enum class ParamType
+     TvoidPointerPointer,
+ };
+ 
+-constexpr uint32_t kParamTypeCount = 172;
++constexpr uint32_t kParamTypeCount = 173;
+ 
+ union ParamValue
+ {
+@@ -252,6 +253,7 @@ union ParamValue
+     gl::FramebufferID *FramebufferIDPointerVal;
+     GLDEBUGPROC GLDEBUGPROCVal;
+     GLDEBUGPROCKHR GLDEBUGPROCKHRVal;
++    GLMTLRasterizationRateMapANGLE GLMTLRasterizationRateMapANGLEVal;
+     GLbitfield GLbitfieldVal;
+     GLboolean GLbooleanVal;
+     const GLboolean *GLbooleanConstPointerVal;
+@@ -745,6 +747,14 @@ inline GLDEBUGPROCKHR GetParamVal<ParamType::TGLDEBUGPROCKHR, GLDEBUGPROCKHR>(
+     return value.GLDEBUGPROCKHRVal;
+ }
+ 
++template <>
++inline GLMTLRasterizationRateMapANGLE
++GetParamVal<ParamType::TGLMTLRasterizationRateMapANGLE, GLMTLRasterizationRateMapANGLE>(
++    const ParamValue &value)
++{
++    return value.GLMTLRasterizationRateMapANGLEVal;
++}
++
+ template <>
+ inline GLbitfield GetParamVal<ParamType::TGLbitfield, GLbitfield>(const ParamValue &value)
+ {
+@@ -1629,6 +1639,8 @@ T AccessParamValue(ParamType paramType, const ParamValue &value)
+             return GetParamVal<ParamType::TGLDEBUGPROC, T>(value);
+         case ParamType::TGLDEBUGPROCKHR:
+             return GetParamVal<ParamType::TGLDEBUGPROCKHR, T>(value);
++        case ParamType::TGLMTLRasterizationRateMapANGLE:
++            return GetParamVal<ParamType::TGLMTLRasterizationRateMapANGLE, T>(value);
+         case ParamType::TGLbitfield:
+             return GetParamVal<ParamType::TGLbitfield, T>(value);
+         case ParamType::TGLboolean:
+@@ -2227,6 +2239,14 @@ inline void SetParamVal<ParamType::TGLDEBUGPROCKHR>(GLDEBUGPROCKHR valueIn, Para
+     valueOut->GLDEBUGPROCKHRVal = valueIn;
+ }
+ 
++template <>
++inline void SetParamVal<ParamType::TGLMTLRasterizationRateMapANGLE>(
++    GLMTLRasterizationRateMapANGLE valueIn,
++    ParamValue *valueOut)
++{
++    valueOut->GLMTLRasterizationRateMapANGLEVal = valueIn;
++}
++
+ template <>
+ inline void SetParamVal<ParamType::TGLbitfield>(GLbitfield valueIn, ParamValue *valueOut)
+ {
+@@ -3149,6 +3169,9 @@ void InitParamValue(ParamType paramType, T valueIn, ParamValue *valueOut)
+         case ParamType::TGLDEBUGPROCKHR:
+             SetParamVal<ParamType::TGLDEBUGPROCKHR>(valueIn, valueOut);
+             break;
++        case ParamType::TGLMTLRasterizationRateMapANGLE:
++            SetParamVal<ParamType::TGLMTLRasterizationRateMapANGLE>(valueIn, valueOut);
++            break;
+         case ParamType::TGLbitfield:
+             SetParamVal<ParamType::TGLbitfield>(valueIn, valueOut);
+             break;
+diff --git a/src/common/gl_enum_utils_autogen.cpp b/src/common/gl_enum_utils_autogen.cpp
+index 99f7331f1d16ed6c828ac00a4810094fd1a8fe02..18c68160385445c9f843d432f2644984f0b99b42 100644
+--- a/src/common/gl_enum_utils_autogen.cpp
++++ b/src/common/gl_enum_utils_autogen.cpp
+@@ -2744,6 +2744,10 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
+                     return "GL_SHADING_RATE_4X2_PIXELS_QCOM";
+                 case 0x96AE:
+                     return "GL_SHADING_RATE_4X4_PIXELS_QCOM";
++                case 0x96BC:
++                    return "GL_VARIABLE_RASTERIZATION_RATE_ANGLE";
++                case 0x96BD:
++                    return "GL_METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE";
+                 case 0x96E0:
+                     return "GL_MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE";
+                 case 0x96E1:
+@@ -21922,6 +21926,7 @@ static StringEnumEntry g_stringEnumTable[] = {
+     {"GL_MESH_SUBROUTINE_UNIFORM_NV", 0x957E},
+     {"GL_MESH_VERTICES_OUT_NV", 0x9579},
+     {"GL_MESH_WORK_GROUP_SIZE_NV", 0x953E},
++    {"GL_METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE", 0x96BD},
+     {"GL_MIN", 0x8007},
+     {"GL_MINMAX", 0x802E},
+     {"GL_MINMAX_EXT", 0x802E},
+@@ -24556,6 +24561,7 @@ static StringEnumEntry g_stringEnumTable[] = {
+     {"GL_VARIABLE_E_NV", 0x8527},
+     {"GL_VARIABLE_F_NV", 0x8528},
+     {"GL_VARIABLE_G_NV", 0x8529},
++    {"GL_VARIABLE_RASTERIZATION_RATE_ANGLE", 0x96BC},
+     {"GL_VARIANT_ARRAY_EXT", 0x87E8},
+     {"GL_VARIANT_ARRAY_POINTER_EXT", 0x87E9},
+     {"GL_VARIANT_ARRAY_STRIDE_EXT", 0x87E6},
 diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
 index 34826b47554d0d89e8b9619d46828177b2c1b873..2e03a110de26a7cb888d8e9a5997deaf3745c12c 100644
 --- a/src/common/utilities.cpp
@@ -67,8 +701,38 @@ index d5a48edd40f382359db76acf1a1ce75b6a6dc6d5..907c62e0bb659292b391270790498186
  /* Bison interface for Yacc-like parsers in C
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
+diff --git a/src/libANGLE/Context.cpp b/src/libANGLE/Context.cpp
+index d5ee272bcca77e278a82d879798373b3ef96333a..b553570c5fdec1de5f4c65b2326c2a5c6badfef5 100644
+--- a/src/libANGLE/Context.cpp
++++ b/src/libANGLE/Context.cpp
+@@ -9768,6 +9768,12 @@ void Context::drawPixelLocalStorageEXTDisable(const PixelLocalStoragePlane plane
+     ANGLE_CONTEXT_TRY(mImplementation->drawPixelLocalStorageEXTDisable(this, planes, storeops));
+ }
+ 
++void Context::bindMetalRasterizationRateMap(GLMTLRasterizationRateMapANGLE map)
++{
++    ANGLE_CONTEXT_TRY(mImplementation->bindMetalRasterizationRateMap(this, map));
++    getMutablePrivateState()->setVariableRasterizationRateMap(map);
++}
++
+ // ErrorSet implementation.
+ ErrorSet::ErrorSet(Debug *debug,
+                    const angle::FrontendFeatures &frontendFeatures,
+diff --git a/src/libANGLE/Context_gles_ext_autogen.h b/src/libANGLE/Context_gles_ext_autogen.h
+index 5fcb3e4b1d0cb648744771199408bb4cd6070a89..60161f988c7a1d033e74ea32bbb623f8c7d5e013 100644
+--- a/src/libANGLE/Context_gles_ext_autogen.h
++++ b/src/libANGLE/Context_gles_ext_autogen.h
+@@ -606,6 +606,8 @@
+     void invalidateTexture(TextureType targetPacked);                                              \
+     /* GL_ANGLE_texture_multisample */                                                             \
+     /* GL_ANGLE_texture_rectangle */                                                               \
++    /* GL_ANGLE_variable_rasterization_rate_metal */                                               \
++    void bindMetalRasterizationRateMap(GLMTLRasterizationRateMapANGLE map);                        \
+     /* GL_ANGLE_vulkan_image */                                                                    \
+     void acquireTextures(GLuint numTextures, const TextureID *texturesPacked,                      \
+                          const GLenum *layouts);                                                   \
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index f72bf7949554c89c830822c9d395179908e190d8..16935eafa62ee9f234cfaa43b49237b723e88957 100644
+index f72bf7949554c89c830822c9d395179908e190d8..53d043e9007f02967f9a3d6c652d707f963449ac 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -81,6 +745,149 @@ index f72bf7949554c89c830822c9d395179908e190d8..16935eafa62ee9f234cfaa43b49237b7
  #include "libANGLE/State.h"
  
  #include <string.h>
+@@ -370,6 +373,8 @@ PrivateState::PrivateState(const EGLenum clientType,
+       mLogicOp(LogicalOperation::Copy),
+       mPatchVertices(3),
+       mPixelLocalStorageActivePlanes(0),
++      mVariableRasterizationRateEnabled(false),
++      mVariableRasterizationRateMap(nullptr),
+       mNoSimultaneousConstantColorAndAlphaBlendFunc(false),
+       mSetBlendIndexedInvoked(false),
+       mSetBlendFactorsIndexedInvoked(false),
+@@ -1238,6 +1243,26 @@ void PrivateState::setLogicOp(LogicalOperation opcode)
+     }
+ }
+ 
++void PrivateState::setVariableRasterizationRateEnabled(bool enabled)
++{
++    if (mVariableRasterizationRateEnabled != enabled)
++    {
++        mVariableRasterizationRateEnabled = enabled;
++        mDirtyBits.set(state::DIRTY_BIT_EXTENDED);
++        mExtendedDirtyBits.set(state::EXTENDED_DIRTY_BIT_VARIABLE_RASTERIZATION_RATE);
++    }
++}
++
++void PrivateState::setVariableRasterizationRateMap(GLMTLRasterizationRateMapANGLE map)
++{
++    if (mVariableRasterizationRateMap != map)
++    {
++        mVariableRasterizationRateMap = map;
++        mDirtyBits.set(state::DIRTY_BIT_EXTENDED);
++        mExtendedDirtyBits.set(state::EXTENDED_DIRTY_BIT_VARIABLE_RASTERIZATION_RATE);
++    }
++}
++
+ void PrivateState::setVertexAttribf(GLuint index, const GLfloat values[4])
+ {
+     ASSERT(static_cast<size_t>(index) < mVertexAttribCurrentValues.size());
+@@ -1367,6 +1392,9 @@ void PrivateState::setEnableFeature(GLenum feature, bool enabled)
+         case GL_FETCH_PER_SAMPLE_ARM:
+             mFetchPerSample = enabled;
+             return;
++        case GL_VARIABLE_RASTERIZATION_RATE_ANGLE:
++            setVariableRasterizationRateEnabled(enabled);
++            return;
+         default:
+             break;
+     }
+@@ -1531,6 +1559,8 @@ bool PrivateState::getEnableFeature(GLenum feature) const
+             return mShadingRatePreserveAspectRatio;
+         case GL_FETCH_PER_SAMPLE_ARM:
+             return mFetchPerSample;
++        case GL_VARIABLE_RASTERIZATION_RATE_ANGLE:
++            return mVariableRasterizationRateEnabled;
+     }
+ 
+     ASSERT(mClientVersion.major == 1);
+@@ -3397,6 +3427,9 @@ void State::getPointerv(const Context *context, GLenum pname, void **params) con
+                                           context->vertexArrayIndex(ParamToVertexArrayType(pname))),
+                                       GL_VERTEX_ATTRIB_ARRAY_POINTER, params);
+             return;
++        case GL_METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE:
++            *params = privateState().getVariableRasterizationRateMap();
++            break;
+         default:
+             UNREACHABLE();
+             break;
+diff --git a/src/libANGLE/State.h b/src/libANGLE/State.h
+index fe7c6d39e970de13f1b6b2c996025beebc39be5a..9e32003cee7820070d276a807420a5d31a7163f5 100644
+--- a/src/libANGLE/State.h
++++ b/src/libANGLE/State.h
+@@ -179,6 +179,7 @@ enum ExtendedDirtyBitType
+     EXTENDED_DIRTY_BIT_SHADING_RATE,                  // QCOM_shading_rate
+     EXTENDED_DIRTY_BIT_LOGIC_OP_ENABLED,              // ANGLE_logic_op
+     EXTENDED_DIRTY_BIT_LOGIC_OP,                      // ANGLE_logic_op
++    EXTENDED_DIRTY_BIT_VARIABLE_RASTERIZATION_RATE,   // ANGLE_variable_rasterization_rate_metal
+ 
+     EXTENDED_DIRTY_BIT_INVALID,
+     EXTENDED_DIRTY_BIT_MAX = EXTENDED_DIRTY_BIT_INVALID,
+@@ -471,6 +472,15 @@ class PrivateState : angle::NonCopyable
+     void setPixelLocalStorageActivePlanes(GLsizei n);
+     GLsizei getPixelLocalStorageActivePlanes() const { return mPixelLocalStorageActivePlanes; }
+ 
++    // GL_ANGLE_variable_rasterization_rate_metal
++    void setVariableRasterizationRateEnabled(bool enabled);
++    bool isVariableRasterizationRateEnabled() const { return mVariableRasterizationRateEnabled; }
++    void setVariableRasterizationRateMap(GLMTLRasterizationRateMapANGLE map);
++    GLMTLRasterizationRateMapANGLE getVariableRasterizationRateMap() const
++    {
++        return mVariableRasterizationRateMap;
++    }
++
+     // Line width state setter
+     void setLineWidth(GLfloat width);
+     float getLineWidth() const { return mLineWidth; }
+@@ -688,6 +698,10 @@ class PrivateState : angle::NonCopyable
+     // GL_ANGLE_shader_pixel_local_storage
+     GLsizei mPixelLocalStorageActivePlanes;
+ 
++    // GL_ANGLE_variable_rasterization_rate_metal
++    bool mVariableRasterizationRateEnabled;
++    GLMTLRasterizationRateMapANGLE mVariableRasterizationRateMap;
++
+     // GLES1 emulation: state specific to GLES1
+     GLES1State mGLES1State;
+ 
+diff --git a/src/libANGLE/capture/capture_gles_ext_autogen.cpp b/src/libANGLE/capture/capture_gles_ext_autogen.cpp
+index b554803c271c54308fd995a2acde27a68faa2193..520e317c42bb0f52bb8bb4424d3700447b593473 100644
+--- a/src/libANGLE/capture/capture_gles_ext_autogen.cpp
++++ b/src/libANGLE/capture/capture_gles_ext_autogen.cpp
+@@ -5164,6 +5164,18 @@ CallCapture CaptureGetTranslatedShaderSourceANGLE(const State &glState,
+     return CallCapture(angle::EntryPoint::GLGetTranslatedShaderSourceANGLE, std::move(paramBuffer));
+ }
+ 
++CallCapture CaptureBindMetalRasterizationRateMapANGLE(const State &glState,
++                                                      bool isCallValid,
++                                                      GLMTLRasterizationRateMapANGLE map)
++{
++    ParamBuffer paramBuffer;
++
++    paramBuffer.addValueParam("map", ParamType::TGLMTLRasterizationRateMapANGLE, map);
++
++    return CallCapture(angle::EntryPoint::GLBindMetalRasterizationRateMapANGLE,
++                       std::move(paramBuffer));
++}
++
+ CallCapture CaptureAcquireTexturesANGLE(const State &glState,
+                                         bool isCallValid,
+                                         GLuint numTextures,
+diff --git a/src/libANGLE/capture/capture_gles_ext_autogen.h b/src/libANGLE/capture/capture_gles_ext_autogen.h
+index 3c5f022fcb43e1b6b64fde7500f5d0eb23ba1163..73507d5cf43d795745fc5d2fb7fd682fd415534e 100644
+--- a/src/libANGLE/capture/capture_gles_ext_autogen.h
++++ b/src/libANGLE/capture/capture_gles_ext_autogen.h
+@@ -975,6 +975,11 @@ angle::CallCapture CaptureGetTranslatedShaderSourceANGLE(const State &glState,
+                                                          GLsizei *length,
+                                                          GLchar *source);
+ 
++// GL_ANGLE_variable_rasterization_rate_metal
++angle::CallCapture CaptureBindMetalRasterizationRateMapANGLE(const State &glState,
++                                                             bool isCallValid,
++                                                             GLMTLRasterizationRateMapANGLE map);
++
+ // GL_ANGLE_vulkan_image
+ angle::CallCapture CaptureAcquireTexturesANGLE(const State &glState,
+                                                bool isCallValid,
 diff --git a/src/libANGLE/features.h b/src/libANGLE/features.h
 index a6fe076c72d043dba3fc347bf020ebf8ec895f51..add46e99c91d19bbd790d2de0d8768b8953d633e 100644
 --- a/src/libANGLE/features.h
@@ -111,6 +918,79 @@ index 5de0e3cd46989f2cdb31a63b0b4a230c5fa2d874..5f88309ab2d299890a7e34ac84886544
      {
          return GL_RGBA8;
      }
+diff --git a/src/libANGLE/gles_extensions_autogen.cpp b/src/libANGLE/gles_extensions_autogen.cpp
+index 963f6b07ed5584582acac451532ebbb558a0dfa8..5484e91a90ede3445f824a0a094eb309cbe05afe 100644
+--- a/src/libANGLE/gles_extensions_autogen.cpp
++++ b/src/libANGLE/gles_extensions_autogen.cpp
+@@ -262,6 +262,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
+         map["GL_CHROMIUM_texture_filtering_hint"] = enableableExtension(&Extensions::textureFilteringHintCHROMIUM);
+         map["GL_ANGLE_texture_multisample"] = enableableExtension(&Extensions::textureMultisampleANGLE);
+         map["GL_ANGLE_texture_rectangle"] = enableableDisablableExtension(&Extensions::textureRectangleANGLE);
++        map["GL_ANGLE_variable_rasterization_rate_metal"] = enableableExtension(&Extensions::variableRasterizationRateMetalANGLE);
+         map["GL_ANGLE_vulkan_image"] = enableableExtension(&Extensions::vulkanImageANGLE);
+         map["GL_ANGLE_webgl_compatibility"] = esOnlyExtension(&Extensions::webglCompatibilityANGLE);
+         map["GL_ANGLE_yuv_internal_format"] = enableableExtension(&Extensions::yuvInternalFormatANGLE);
+diff --git a/src/libANGLE/gles_extensions_autogen.h b/src/libANGLE/gles_extensions_autogen.h
+index 2c9545f1ba8b6376d06b89b6f820197775a1d0e1..9ec6c66aa7822e5ed9d2715dd08a2fd7e8c09916 100644
+--- a/src/libANGLE/gles_extensions_autogen.h
++++ b/src/libANGLE/gles_extensions_autogen.h
+@@ -743,6 +743,9 @@ struct Extensions
+     // GL_ANGLE_texture_rectangle
+     bool textureRectangleANGLE = false;
+ 
++    // GL_ANGLE_variable_rasterization_rate_metal
++    bool variableRasterizationRateMetalANGLE = false;
++
+     // GL_ANGLE_vulkan_image
+     bool vulkanImageANGLE = false;
+ 
+diff --git a/src/libANGLE/renderer/ContextImpl.cpp b/src/libANGLE/renderer/ContextImpl.cpp
+index 502091fecf7ad7cf9e909a6801d57228010fac57..cc34f638dc4eeca2f4d4e0d9f26367c9fe5a46cf 100644
+--- a/src/libANGLE/renderer/ContextImpl.cpp
++++ b/src/libANGLE/renderer/ContextImpl.cpp
+@@ -110,4 +110,12 @@ angle::Result ContextImpl::drawPixelLocalStorageEXTDisable(gl::Context *,
+     UNREACHABLE();
+     return angle::Result::Stop;
+ }
++
++angle::Result ContextImpl::bindMetalRasterizationRateMap(gl::Context *,
++                                                         GLMTLRasterizationRateMapANGLE map)
++{
++    UNREACHABLE();
++    return angle::Result::Stop;
++}
++
+ }  // namespace rx
+diff --git a/src/libANGLE/renderer/ContextImpl.h b/src/libANGLE/renderer/ContextImpl.h
+index c00229303417c21fc54fdf0b06b8ad12949006ba..575c42c23194c33962583f52a9fe8ef971d2b94c 100644
+--- a/src/libANGLE/renderer/ContextImpl.h
++++ b/src/libANGLE/renderer/ContextImpl.h
+@@ -287,6 +287,10 @@ class ContextImpl : public GLImplFactory
+                                                           const gl::PixelLocalStoragePlane[],
+                                                           const GLenum storeops[]);
+ 
++    // GL_ANGLE_variable_rasterization_rate_metal
++    virtual angle::Result bindMetalRasterizationRateMap(gl::Context *,
++                                                        GLMTLRasterizationRateMapANGLE map);
++
+   protected:
+     const gl::State &mState;
+     gl::MemoryProgramCache *mMemoryProgramCache;
+diff --git a/src/libANGLE/renderer/gl/StateManagerGL.cpp b/src/libANGLE/renderer/gl/StateManagerGL.cpp
+index 0d6a3304f5072a8f032b678682d5cc3e8fd242c2..347db5b914b2340b4e52e48c4b58913344a20f00 100644
+--- a/src/libANGLE/renderer/gl/StateManagerGL.cpp
++++ b/src/libANGLE/renderer/gl/StateManagerGL.cpp
+@@ -2417,6 +2417,10 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
+                         case gl::state::EXTENDED_DIRTY_BIT_SHADING_RATE:
+                             // Unimplemented extensions.
+                             break;
++                        case gl::state::EXTENDED_DIRTY_BIT_VARIABLE_RASTERIZATION_RATE:
++                            // Nothing to do until ANGLE_variable_rasterization_rate_metal is
++                            // implemented.
++                            break;
+                         default:
+                             UNREACHABLE();
+                             break;
 diff --git a/src/libANGLE/renderer/metal/BufferMtl.mm b/src/libANGLE/renderer/metal/BufferMtl.mm
 index 746823ce009702c2e49d1397a4159570838ebc9e..7976bcadedd832cabfda3f37b69ca4577e50bdf4 100644
 --- a/src/libANGLE/renderer/metal/BufferMtl.mm
@@ -124,11 +1004,50 @@ index 746823ce009702c2e49d1397a4159570838ebc9e..7976bcadedd832cabfda3f37b69ca457
          }
      }
  
+diff --git a/src/libANGLE/renderer/metal/ContextMtl.h b/src/libANGLE/renderer/metal/ContextMtl.h
+index 70e0cc40a54ebe8252216593998f9c24bedcf62a..32118d10b3d8d364d8730cdfff32d41597e918d6 100644
+--- a/src/libANGLE/renderer/metal/ContextMtl.h
++++ b/src/libANGLE/renderer/metal/ContextMtl.h
+@@ -271,6 +271,9 @@ class ContextMtl : public ContextImpl, public mtl::Context
+     angle::Result memoryBarrier(const gl::Context *context, GLbitfield barriers) override;
+     angle::Result memoryBarrierByRegion(const gl::Context *context, GLbitfield barriers) override;
+ 
++    angle::Result bindMetalRasterizationRateMap(gl::Context *context,
++                                                GLMTLRasterizationRateMapANGLE map) override;
++
+     // override mtl::ErrorHandler
+     void handleError(GLenum error,
+                      const char *message,
+@@ -551,6 +554,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
+         DIRTY_BIT_RENDER_PIPELINE,
+         DIRTY_BIT_UNIFORM_BUFFERS_BINDING,
+         DIRTY_BIT_RASTERIZER_DISCARD,
++        DIRTY_BIT_VARIABLE_RASTERIZATION_RATE,
+ 
+         DIRTY_BIT_INVALID,
+         DIRTY_BIT_MAX = DIRTY_BIT_INVALID,
+@@ -641,6 +645,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
+     IncompleteTextureSet mIncompleteTextures;
+     ProvokingVertexHelper mProvokingVertexHelper;
+ 
++    mtl::RasterizationRateMapRef mRasterizationRateMap;
++
+     mtl::ContextDevice mContextDevice;
+ };
+ 
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.mm b/src/libANGLE/renderer/metal/ContextMtl.mm
-index 406e0fd426e02ccb06c8572a2dce3c3224ecfabf..4830efdf6cad751046e209159871492178243e40 100644
+index 406e0fd426e02ccb06c8572a2dce3c3224ecfabf..b5570ba480d9f4ed8a13381e5c98728ae2b3ee5b 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.mm
 +++ b/src/libANGLE/renderer/metal/ContextMtl.mm
-@@ -1068,6 +1068,13 @@ angle::Result ContextMtl::multiDrawElementsInstancedBaseVertexBaseInstance(
+@@ -261,6 +261,7 @@ void ContextMtl::onDestroy(const gl::Context *context)
+     mIncompleteTextures.onDestroy(context);
+     mProvokingVertexHelper.onDestroy(this);
+     mDummyXFBRenderTexture = nullptr;
++    mRasterizationRateMap.reset();
+ 
+     mContextDevice.reset();
+ }
+@@ -1068,6 +1069,13 @@ angle::Result ContextMtl::multiDrawElementsInstancedBaseVertexBaseInstance(
  // Device loss
  gl::GraphicsResetStatus ContextMtl::getResetStatus()
  {
@@ -142,7 +1061,37 @@ index 406e0fd426e02ccb06c8572a2dce3c3224ecfabf..4830efdf6cad751046e2091598714921
      return gl::GraphicsResetStatus::NoError;
  }
  
-@@ -2475,8 +2482,22 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
+@@ -1390,6 +1398,9 @@ void ContextMtl::updateExtendedState(const gl::State &glState,
+             case gl::state::EXTENDED_DIRTY_BIT_POLYGON_OFFSET_LINE_ENABLED:
+                 mDirtyBits.set(DIRTY_BIT_DEPTH_BIAS);
+                 break;
++            case gl::state::EXTENDED_DIRTY_BIT_VARIABLE_RASTERIZATION_RATE:
++                mDirtyBits.set(DIRTY_BIT_VARIABLE_RASTERIZATION_RATE);
++                break;
+             default:
+                 break;
+         }
+@@ -1640,6 +1651,19 @@ angle::Result ContextMtl::memoryBarrierByRegion(const gl::Context *context, GLbi
+     return angle::Result::Stop;
+ }
+ 
++angle::Result ContextMtl::bindMetalRasterizationRateMap(gl::Context *context,
++                                                        GLMTLRasterizationRateMapANGLE map)
++{
++    id<MTLRasterizationRateMap> rateMap = (__bridge id<MTLRasterizationRateMap>)(map);
++    if (rateMap && rateMap.device != mContextDevice.get())
++    {
++        return angle::Result::Stop;
++    }
++
++    mRasterizationRateMap = std::move(rateMap);
++    return angle::Result::Continue;
++}
++
+ // override mtl::ErrorHandler
+ void ContextMtl::handleError(GLenum glErrorCode,
+                              const char *message,
+@@ -2475,8 +2499,22 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
              return angle::Result::Continue;
          }
          // Setup with flushed state should either produce a working encoder or fail with an error
@@ -167,8 +1116,43 @@ index 406e0fd426e02ccb06c8572a2dce3c3224ecfabf..4830efdf6cad751046e2091598714921
      }
      return angle::Result::Continue;
  }
+@@ -2588,7 +2626,7 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
+                 mRenderEncoder.setViewport(mViewport);
+                 break;
+             case DIRTY_BIT_SCISSOR:
+-                mRenderEncoder.setScissorRect(mScissorRect);
++                mRenderEncoder.setScissorRect(mScissorRect, mRasterizationRateMap);
+                 break;
+             case DIRTY_BIT_DRAW_FRAMEBUFFER:
+                 // Already handled.
+@@ -2613,6 +2651,13 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
+             case DIRTY_BIT_RASTERIZER_DISCARD:
+                 // Already handled.
+                 break;
++            case DIRTY_BIT_VARIABLE_RASTERIZATION_RATE:
++                if (getState().privateState().isVariableRasterizationRateEnabled() &&
++                    mRasterizationRateMap)
++                {
++                    mRenderEncoder.setRasterizationRateMap(mRasterizationRateMap);
++                }
++                break;
+             default:
+                 UNREACHABLE();
+                 break;
+diff --git a/src/libANGLE/renderer/metal/DisplayMtl.h b/src/libANGLE/renderer/metal/DisplayMtl.h
+index ce444a435c09eccd4ed7ffe7e8297e0692fd8013..4b059225b7173eab9a70968ec2ed30af8fc665f3 100644
+--- a/src/libANGLE/renderer/metal/DisplayMtl.h
++++ b/src/libANGLE/renderer/metal/DisplayMtl.h
+@@ -142,6 +142,7 @@ class DisplayMtl : public DisplayImpl
+     bool supportsMetal2_2() const;
+     bool supportsDepth24Stencil8PixelFormat() const;
+     bool supports32BitFloatFiltering() const;
++    bool supportsVariableRasterizationRate() const;
+     bool isAMD() const;
+     bool isAMDBronzeDriver() const;
+     bool isAMDFireProDevice() const;
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index 3fe659430421b3b9f90aa6d4eae726ac445a9c6f..57f5271d6a5793b49b5cc1ef24b85b3914df2527 100644
+index 3fe659430421b3b9f90aa6d4eae726ac445a9c6f..baf44a0fee59b619e181f0cdbb28deff9c8c7a62 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
 @@ -184,12 +184,22 @@ void DisplayMtl::terminate()
@@ -194,7 +1178,28 @@ index 3fe659430421b3b9f90aa6d4eae726ac445a9c6f..57f5271d6a5793b49b5cc1ef24b85b39
  }
  
  std::string DisplayMtl::getRendererDescription()
-@@ -1430,8 +1440,7 @@ bool DisplayMtl::supportsMetal2_2() const
+@@ -1180,6 +1190,11 @@ void DisplayMtl::initializeExtensions() const
+             mNativeCaps.maxImageUnits = gl::IMPLEMENTATION_MAX_PIXEL_LOCAL_STORAGE_PLANES;
+         }
+     }
++
++    // GL_ANGLE_variable_rasterization_rate_metal
++    mNativeExtensions.variableRasterizationRateMetalANGLE =
++        mFeatures.hasVariableRasterizationRate.enabled;
++
+     // "The GPUs in Apple3 through Apple8 families only support memory barriers for compute command
+     // encoders, and for vertex-to-vertex and vertex-to-fragment stages of render command encoders."
+     mHasFragmentMemoryBarriers = !supportsAppleGPUFamily(3);
+@@ -1252,6 +1267,8 @@ void DisplayMtl::initializeFeatures()
+                             supportsMetal2_1() && (isOSX || isCatalyst) && !isARM);
+     ANGLE_FEATURE_CONDITION((&mFeatures), hasDepthAutoResolve, supportsEitherGPUFamily(3, 2));
+     ANGLE_FEATURE_CONDITION((&mFeatures), hasStencilAutoResolve, supportsEitherGPUFamily(5, 2));
++    ANGLE_FEATURE_CONDITION((&mFeatures), hasVariableRasterizationRate,
++                            supportsVariableRasterizationRate());
+     ANGLE_FEATURE_CONDITION((&mFeatures), allowMultisampleStoreAndResolve,
+                             supportsEitherGPUFamily(3, 1));
+ 
+@@ -1430,8 +1447,7 @@ bool DisplayMtl::supportsMetal2_2() const
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) || \
@@ -204,6 +1209,24 @@ index 3fe659430421b3b9f90aa6d4eae726ac445a9c6f..57f5271d6a5793b49b5cc1ef24b85b39
      if (@available(ios 14.0, macOS 11.0, *))
      {
          return [mMetalDevice supports32BitFloatFiltering];
+@@ -1451,6 +1467,17 @@ bool DisplayMtl::supportsDepth24Stencil8PixelFormat() const
+     return false;
+ #endif
+ }
++
++bool DisplayMtl::supportsVariableRasterizationRate() const
++{
++    if (@available(ios 13.0, macOS 10.15.4, macCatalyst 13.4, tvOS 16.0, *))
++    {
++        return [mMetalDevice supportsRasterizationRateMapWithLayerCount:1];
++    }
++
++    return false;
++}
++
+ bool DisplayMtl::isAMD() const
+ {
+     return angle::IsAMD(mMetalDeviceVendorId);
 diff --git a/src/libANGLE/renderer/metal/FrameBufferMtl.mm b/src/libANGLE/renderer/metal/FrameBufferMtl.mm
 index 5f3f10a86f707290bcad9f823dec0a9126425fde..860f798cf68bb4fad87bee1ea9cd507d95767fd1 100644
 --- a/src/libANGLE/renderer/metal/FrameBufferMtl.mm
@@ -268,7 +1291,7 @@ index 13affb4ac934d779280a4f1885b92452af3adf05..1b3d3cf1b03b5d91492dcb763fdc0eba
      params.srcDefaultAlphaData  = convertedFormat.defaultAlpha;
  
 diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.h b/src/libANGLE/renderer/metal/mtl_command_buffer.h
-index 2b0ef5ddfe906ba09ad818dadeb41dd444c55f07..5a6d64e0d58fa4e976e16d1fd03b98be9033603f 100644
+index 2b0ef5ddfe906ba09ad818dadeb41dd444c55f07..1925a2a573345b968644ed55e98fd3aee9e3ddaf 100644
 --- a/src/libANGLE/renderer/metal/mtl_command_buffer.h
 +++ b/src/libANGLE/renderer/metal/mtl_command_buffer.h
 @@ -87,6 +87,8 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
@@ -289,7 +1312,26 @@ index 2b0ef5ddfe906ba09ad818dadeb41dd444c55f07..5a6d64e0d58fa4e976e16d1fd03b98be
  };
  
  class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::NonCopyable
-@@ -538,6 +542,7 @@ class RenderCommandEncoder final : public CommandEncoder
+@@ -382,7 +386,8 @@ class RenderCommandEncoder final : public CommandEncoder
+     RenderCommandEncoder &setStencilRefVal(uint32_t ref);
+ 
+     RenderCommandEncoder &setViewport(const MTLViewport &viewport);
+-    RenderCommandEncoder &setScissorRect(const MTLScissorRect &rect);
++    RenderCommandEncoder &setScissorRect(const MTLScissorRect &rect,
++                                         id<MTLRasterizationRateMap> map);
+ 
+     RenderCommandEncoder &setBlendColor(float r, float g, float b, float a);
+ 
+@@ -531,6 +536,8 @@ class RenderCommandEncoder final : public CommandEncoder
+     RenderCommandEncoder &setDepthLoadAction(MTLLoadAction action, double clearValue);
+     RenderCommandEncoder &setStencilLoadAction(MTLLoadAction action, uint32_t clearValue);
+ 
++    RenderCommandEncoder &setRasterizationRateMap(id<MTLRasterizationRateMap> map);
++
+     void setLabel(NSString *label);
+ 
+     void pushDebugGroup(NSString *label) override;
+@@ -538,6 +545,7 @@ class RenderCommandEncoder final : public CommandEncoder
  
      const RenderPassDesc &renderPassDesc() const { return mRenderPassDesc; }
      bool hasDrawCalls() const { return mHasDrawCalls; }
@@ -298,7 +1340,7 @@ index 2b0ef5ddfe906ba09ad818dadeb41dd444c55f07..5a6d64e0d58fa4e976e16d1fd03b98be
      uint64_t getSerial() const { return mSerial; }
  
 diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.mm b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
-index 145400aec715ddfadcf33dc941201e1064d33ca0..106cdcbb6fcc2ec5fd24e86026a419cb7a84d8c2 100644
+index 145400aec715ddfadcf33dc941201e1064d33ca0..7fe4ef26a38f3652ec7edc6f346fda1ccc4750d3 100644
 --- a/src/libANGLE/renderer/metal/mtl_command_buffer.mm
 +++ b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
 @@ -373,12 +373,20 @@ inline void SetVisibilityResultModeCmd(id<MTLRenderCommandEncoder> encoder,
@@ -351,8 +1393,84 @@ index 145400aec715ddfadcf33dc941201e1064d33ca0..106cdcbb6fcc2ec5fd24e86026a419cb
      if (timeElapsedEntry != 0)
      {
          // Record this command buffer's elapsed time.
+@@ -1729,12 +1752,20 @@ RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &viewp
+     return *this;
+ }
+ 
+-RenderCommandEncoder &RenderCommandEncoder::setScissorRect(const MTLScissorRect &rect)
++RenderCommandEncoder &RenderCommandEncoder::setScissorRect(const MTLScissorRect &rect,
++                                                           id<MTLRasterizationRateMap> map)
+ {
++    auto maxScissorRect =
++        MTLCoordinate2DMake(mRenderPassMaxScissorRect.width, mRenderPassMaxScissorRect.height);
++    if (map)
++    {
++        maxScissorRect = [map mapPhysicalToScreenCoordinates:maxScissorRect forLayer:0];
++    }
++
+     NSUInteger clampedWidth =
+-        rect.x > mRenderPassMaxScissorRect.width ? 0 : mRenderPassMaxScissorRect.width - rect.x;
++        rect.x > maxScissorRect.x ? 0 : (NSUInteger)ceilf(maxScissorRect.x) - rect.x;
+     NSUInteger clampedHeight =
+-        rect.y > mRenderPassMaxScissorRect.height ? 0 : mRenderPassMaxScissorRect.height - rect.y;
++        rect.y > maxScissorRect.y ? 0 : (NSUInteger)ceilf(maxScissorRect.y) - rect.y;
+ 
+     MTLScissorRect clampedRect = {rect.x, rect.y, std::min(rect.width, clampedWidth),
+                                   std::min(rect.height, clampedHeight)};
+@@ -1746,6 +1777,22 @@ RenderCommandEncoder &RenderCommandEncoder::setScissorRect(const MTLScissorRect
+ 
+     mStateCache.scissorRect = clampedRect;
+ 
++    if (map)
++    {
++        auto adjustedOrigin =
++            [map mapPhysicalToScreenCoordinates:MTLCoordinate2DMake(clampedRect.x, clampedRect.y)
++                                       forLayer:0];
++        auto adjustedSize =
++            [map mapPhysicalToScreenCoordinates:MTLCoordinate2DMake(clampedRect.width,
++                                                                    clampedRect.height)
++                                       forLayer:0];
++
++        clampedRect.x      = (NSUInteger)floorf(adjustedOrigin.x);
++        clampedRect.y      = (NSUInteger)floorf(adjustedOrigin.y);
++        clampedRect.width  = (NSUInteger)ceilf(adjustedSize.x);
++        clampedRect.height = (NSUInteger)ceilf(adjustedSize.y);
++    }
++
+     mCommands.push(CmdType::SetScissorRect).push(clampedRect);
+ 
+     return *this;
+@@ -2247,6 +2294,15 @@ RenderCommandEncoder &RenderCommandEncoder::setStencilLoadAction(MTLLoadAction a
+     return *this;
+ }
+ 
++RenderCommandEncoder &RenderCommandEncoder::setRasterizationRateMap(id<MTLRasterizationRateMap> map)
++{
++    if (mCachedRenderPassDescObjC.get().rasterizationRateMap != map)
++    {
++        mCachedRenderPassDescObjC.get().rasterizationRateMap = map;
++    }
++    return *this;
++}
++
+ void RenderCommandEncoder::setLabel(NSString *label)
+ {
+     mLabel.retainAssign(label);
+diff --git a/src/libANGLE/renderer/metal/mtl_common.h b/src/libANGLE/renderer/metal/mtl_common.h
+index 3f3978e79547128183e74451eb1e23a0037c2c0a..26bc8542148dc74b11b85680441201c3bfcc5243 100644
+--- a/src/libANGLE/renderer/metal/mtl_common.h
++++ b/src/libANGLE/renderer/metal/mtl_common.h
+@@ -411,6 +411,8 @@ using SharedEventRef = AutoObjCPtr<id<MTLSharedEvent>>;
+ using SharedEventRef = AutoObjCObj<NSObject>;
+ #endif
+ 
++using RasterizationRateMapRef = AutoObjCPtr<id<MTLRasterizationRateMap>>;
++
+ // The native image index used by Metal back-end,  the image index uses native mipmap level instead
+ // of "virtual" level modified by OpenGL's base level.
+ using MipmapNativeLevel = gl::LevelIndexWrapper<uint32_t>;
 diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-index 29a85687c003abfc9c4ef7aa731541acd6990975..564e12e03a8e024f62b8f2d593c32bfababa7fce 100644
+index 29a85687c003abfc9c4ef7aa731541acd6990975..16c94e79cab4a58809ac9a329d33344f4150012a 100644
 --- a/src/libANGLE/renderer/metal/mtl_render_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_render_utils.mm
 @@ -603,7 +603,8 @@ void DispatchCompute(ContextMtl *contextMtl,
@@ -365,6 +1483,27 @@ index 29a85687c003abfc9c4ef7aa731541acd6990975..564e12e03a8e024f62b8f2d593c32bfa
      MTLSize threadsPerThreadgroup = MTLSizeMake(w, 1, 1);
  
      if (contextMtl->getDisplay()->getFeatures().hasNonUniformDispatch.enabled)
+@@ -677,8 +678,10 @@ void SetupCommonBlitWithDrawStates(const gl::Context *context,
+         GetViewport(params.dstRect, params.dstTextureSize.height, params.dstFlipY);
+     MTLScissorRect scissorRectMtl =
+         GetScissorRect(params.dstScissorRect, params.dstTextureSize.height, params.dstFlipY);
++    // TODO(djg): Should the rasterization rate map affect blit operations?
++    // Would this require changes to the shader to apply transformation
+     cmdEncoder->setViewport(viewportMtl);
+-    cmdEncoder->setScissorRect(scissorRectMtl);
++    cmdEncoder->setScissorRect(scissorRectMtl, nil);
+ 
+     if (params.src)
+     {
+@@ -1207,7 +1210,7 @@ angle::Result ClearUtils::setupClearWithDraw(const gl::Context *context,
+     scissorRect = GetScissorRect(params.clearArea, params.dstTextureSize.height, params.flipY);
+ 
+     cmdEncoder->setViewport(viewport);
+-    cmdEncoder->setScissorRect(scissorRect);
++    cmdEncoder->setScissorRect(scissorRect, nil);
+ 
+     // uniform
+     ClearParamsUniform uniformParams;
 diff --git a/src/libANGLE/renderer/metal/mtl_resource_spi.h b/src/libANGLE/renderer/metal/mtl_resource_spi.h
 index 3eaa9a64e79af26faa786102ece3f0bdea84d090..7ecb6db9d993df8985fcb6f701dfe7ca75857cae 100644
 --- a/src/libANGLE/renderer/metal/mtl_resource_spi.h
@@ -599,3 +1738,731 @@ index 0000000000000000000000000000000000000000..23e8295bcc16412d3aef3fc8e85748fa
 +
 +if __name__ == '__main__':
 +    sys.exit(main())
+diff --git a/src/libANGLE/renderer/vulkan/ContextVk.cpp b/src/libANGLE/renderer/vulkan/ContextVk.cpp
+index 7c102088b5f9a0b51efbb632041aca13b7efacdc..00ddc238589cbfde739587bf35da8410308d6b6b 100644
+--- a/src/libANGLE/renderer/vulkan/ContextVk.cpp
++++ b/src/libANGLE/renderer/vulkan/ContextVk.cpp
+@@ -5794,6 +5794,10 @@ angle::Result ContextVk::syncState(const gl::Context *context,
+                                 mGraphicsDirtyBits.set(DIRTY_BIT_DYNAMIC_FRAGMENT_SHADING_RATE);
+                             }
+                             break;
++                        case gl::state::EXTENDED_DIRTY_BIT_VARIABLE_RASTERIZATION_RATE:
++                            // Nothing to do until ANGLE_variable_rasterization_rate_metal is
++                            // implemented.
++                            break;
+                         default:
+                             UNREACHABLE();
+                     }
+diff --git a/src/libANGLE/validationES2.cpp b/src/libANGLE/validationES2.cpp
+index b1282d2eb08e666c30bb71ef759fb72cec7885ce..f7eeb0de55edcc194ef5a7c2d0bacb059abe0d68 100644
+--- a/src/libANGLE/validationES2.cpp
++++ b/src/libANGLE/validationES2.cpp
+@@ -683,6 +683,10 @@ bool ValidCap(const PrivateState &state, ErrorSet *errors, GLenum cap, bool quer
+         case GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM:
+             return queryOnly && state.getExtensions().shaderFramebufferFetchARM;
+ 
++        // GL_ANGLE_variable_rasterization_rate_metal
++        case GL_VARIABLE_RASTERIZATION_RATE_ANGLE:
++            return state.getExtensions().variableRasterizationRateMetalANGLE;
++
+         default:
+             break;
+     }
+@@ -6395,6 +6399,18 @@ bool ValidateMaxShaderCompilerThreadsKHR(const Context *context,
+     return true;
+ }
+ 
++bool ValidateBindMetalRasterizationRateMapANGLE(const Context *context,
++                                                angle::EntryPoint entryPoint,
++                                                GLMTLRasterizationRateMapANGLE map)
++{
++    if (!context->getExtensions().variableRasterizationRateMetalANGLE)
++    {
++        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
++        return false;
++    }
++    return true;
++}
++
+ bool ValidateMultiDrawArraysANGLE(const Context *context,
+                                   angle::EntryPoint entryPoint,
+                                   PrimitiveMode mode,
+diff --git a/src/libANGLE/validationES32.cpp b/src/libANGLE/validationES32.cpp
+index 5065cbffbd8cf459a5c066ad6369a370b30e1390..ba07725d056a698132f6e59f776ec7b58e105157 100644
+--- a/src/libANGLE/validationES32.cpp
++++ b/src/libANGLE/validationES32.cpp
+@@ -450,6 +450,9 @@ bool ValidateGetPointerv(const Context *context,
+             case GL_DEBUG_CALLBACK_FUNCTION:
+             case GL_DEBUG_CALLBACK_USER_PARAM:
+                 return true;
++            // GL_ANGLE_variable_rasterization_rate_metal
++            case GL_METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE:
++                return context->getExtensions().variableRasterizationRateMetalANGLE;
+             default:
+                 ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidPointerQuery);
+                 return false;
+@@ -457,9 +460,16 @@ bool ValidateGetPointerv(const Context *context,
+     }
+     else
+     {
++        switch (pname)
++        {
++            // GL_ANGLE_variable_rasterization_rate_metal
++            case GL_METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE:
++                return context->getExtensions().variableRasterizationRateMetalANGLE;
++            default:
+                 ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES1or32Required);
+                 return false;
+         }
++    }
+ }
+ 
+ bool ValidateGetSamplerParameterIiv(const Context *context,
+diff --git a/src/libANGLE/validationESEXT_autogen.h b/src/libANGLE/validationESEXT_autogen.h
+index 4f813fe4e2469d9fc47c69d9f914fa9dd69d13a0..41b487d38d7a1f38bee35c353456e8f54a56ac8c 100644
+--- a/src/libANGLE/validationESEXT_autogen.h
++++ b/src/libANGLE/validationESEXT_autogen.h
+@@ -977,6 +977,11 @@ bool ValidateGetTranslatedShaderSourceANGLE(const Context *context,
+                                             const GLsizei *length,
+                                             const GLchar *source);
+ 
++// GL_ANGLE_variable_rasterization_rate_metal
++bool ValidateBindMetalRasterizationRateMapANGLE(const Context *context,
++                                                angle::EntryPoint entryPoint,
++                                                GLMTLRasterizationRateMapANGLE map);
++
+ // GL_ANGLE_vulkan_image
+ bool ValidateAcquireTexturesANGLE(const Context *context,
+                                   angle::EntryPoint entryPoint,
+diff --git a/src/libGLESv2/entry_points_gles_ext_autogen.cpp b/src/libGLESv2/entry_points_gles_ext_autogen.cpp
+index 78e4cc71f743be966c5ba0514b56d8887b7411fe..9edc49ef06a9b0dd303b657448c561143d4fc4ae 100644
+--- a/src/libGLESv2/entry_points_gles_ext_autogen.cpp
++++ b/src/libGLESv2/entry_points_gles_ext_autogen.cpp
+@@ -4623,6 +4623,36 @@ void GL_APIENTRY GL_GetTranslatedShaderSourceANGLE(GLuint shader,
+     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+ }
+ 
++// GL_ANGLE_variable_rasterization_rate_metal
++void GL_APIENTRY GL_BindMetalRasterizationRateMapANGLE(GLMTLRasterizationRateMapANGLE map)
++{
++    Context *context = GetValidGlobalContext();
++    EVENT(context, GLBindMetalRasterizationRateMapANGLE, "context = %d, map = 0x%016" PRIxPTR "",
++          CID(context), (uintptr_t)map);
++
++    if (context)
++    {
++        SCOPED_SHARE_CONTEXT_LOCK(context);
++        bool isCallValid =
++            (context->skipValidation() ||
++             (ValidatePixelLocalStorageInactive(
++                  context->getPrivateState(), context->getMutableErrorSetForValidation(),
++                  angle::EntryPoint::GLBindMetalRasterizationRateMapANGLE) &&
++              ValidateBindMetalRasterizationRateMapANGLE(
++                  context, angle::EntryPoint::GLBindMetalRasterizationRateMapANGLE, map)));
++        if (isCallValid)
++        {
++            context->bindMetalRasterizationRateMap(map);
++        }
++        ANGLE_CAPTURE_GL(BindMetalRasterizationRateMapANGLE, isCallValid, context, map);
++    }
++    else
++    {
++        GenerateContextLostErrorOnCurrentGlobalContext();
++    }
++    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
++}
++
+ // GL_ANGLE_vulkan_image
+ void GL_APIENTRY GL_AcquireTexturesANGLE(GLuint numTextures,
+                                          const GLuint *textures,
+diff --git a/src/libGLESv2/entry_points_gles_ext_autogen.h b/src/libGLESv2/entry_points_gles_ext_autogen.h
+index 1e65cf197b484502bf78492b35d848ed26807bfb..b7a7b83618364bf031310ef7b60edba03b244973 100644
+--- a/src/libGLESv2/entry_points_gles_ext_autogen.h
++++ b/src/libGLESv2/entry_points_gles_ext_autogen.h
+@@ -720,6 +720,10 @@ ANGLE_EXPORT void GL_APIENTRY GL_GetTranslatedShaderSourceANGLE(GLuint shader,
+                                                                 GLsizei *length,
+                                                                 GLchar *source);
+ 
++// GL_ANGLE_variable_rasterization_rate_metal
++ANGLE_EXPORT void GL_APIENTRY
++GL_BindMetalRasterizationRateMapANGLE(GLMTLRasterizationRateMapANGLE map);
++
+ // GL_ANGLE_vulkan_image
+ ANGLE_EXPORT void GL_APIENTRY GL_AcquireTexturesANGLE(GLuint numTextures,
+                                                       const GLuint *textures,
+diff --git a/src/libGLESv2/libGLESv2_autogen.cpp b/src/libGLESv2/libGLESv2_autogen.cpp
+index b7d6e22aa9d7b572f625319fcc93a4fde7e6ae33..b410d2bd108ab6e76e1e80d827a99081ee419c6f 100644
+--- a/src/libGLESv2/libGLESv2_autogen.cpp
++++ b/src/libGLESv2/libGLESv2_autogen.cpp
+@@ -3924,6 +3924,12 @@ void GL_APIENTRY glGetTranslatedShaderSourceANGLE(GLuint shader,
+     return GL_GetTranslatedShaderSourceANGLE(shader, bufSize, length, source);
+ }
+ 
++// GL_ANGLE_variable_rasterization_rate_metal
++void GL_APIENTRY glBindMetalRasterizationRateMapANGLE(GLMTLRasterizationRateMapANGLE map)
++{
++    return GL_BindMetalRasterizationRateMapANGLE(map);
++}
++
+ // GL_ANGLE_vulkan_image
+ void GL_APIENTRY glAcquireTexturesANGLE(GLuint numTextures,
+                                         const GLuint *textures,
+diff --git a/src/libGLESv2/libGLESv2_autogen.def b/src/libGLESv2/libGLESv2_autogen.def
+index 22b6e2092fb55c458849e1e74695d2b241ee81fd..3caf0d14c825914bc3c07d58a22cc10861b3e211 100644
+--- a/src/libGLESv2/libGLESv2_autogen.def
++++ b/src/libGLESv2/libGLESv2_autogen.def
+@@ -650,6 +650,9 @@ EXPORTS
+     ; GL_ANGLE_translated_shader_source
+     glGetTranslatedShaderSourceANGLE
+ 
++    ; GL_ANGLE_variable_rasterization_rate_metal
++    glBindMetalRasterizationRateMapANGLE
++
+     ; GL_ANGLE_vulkan_image
+     glAcquireTexturesANGLE
+     glReleaseTexturesANGLE
+diff --git a/src/libGLESv2/libGLESv2_no_capture_autogen.def b/src/libGLESv2/libGLESv2_no_capture_autogen.def
+index e2b8471cf119e6bf57ed1c77a7f1ed4d2d51ffd6..1575bae874bd94806fa09fc4aa9ff0c1c3960784 100644
+--- a/src/libGLESv2/libGLESv2_no_capture_autogen.def
++++ b/src/libGLESv2/libGLESv2_no_capture_autogen.def
+@@ -650,6 +650,9 @@ EXPORTS
+     ; GL_ANGLE_translated_shader_source
+     glGetTranslatedShaderSourceANGLE
+ 
++    ; GL_ANGLE_variable_rasterization_rate_metal
++    glBindMetalRasterizationRateMapANGLE
++
+     ; GL_ANGLE_vulkan_image
+     glAcquireTexturesANGLE
+     glReleaseTexturesANGLE
+diff --git a/src/libGLESv2/libGLESv2_vulkan_secondaries_autogen.def b/src/libGLESv2/libGLESv2_vulkan_secondaries_autogen.def
+index 6742ff8783d07e6c3722a29fb44828e9c1b49caf..203c40ccc6485502afaeb576f6e111709c330f46 100644
+--- a/src/libGLESv2/libGLESv2_vulkan_secondaries_autogen.def
++++ b/src/libGLESv2/libGLESv2_vulkan_secondaries_autogen.def
+@@ -650,6 +650,9 @@ EXPORTS
+     ; GL_ANGLE_translated_shader_source
+     glGetTranslatedShaderSourceANGLE
+ 
++    ; GL_ANGLE_variable_rasterization_rate_metal
++    glBindMetalRasterizationRateMapANGLE
++
+     ; GL_ANGLE_vulkan_image
+     glAcquireTexturesANGLE
+     glReleaseTexturesANGLE
+diff --git a/src/libGLESv2/libGLESv2_with_capture_autogen.def b/src/libGLESv2/libGLESv2_with_capture_autogen.def
+index b387cb8f4ff22b235d5c5ee348dc3454c61112aa..4d058022c68037ed83e4aeddca26bfdda7c125c2 100644
+--- a/src/libGLESv2/libGLESv2_with_capture_autogen.def
++++ b/src/libGLESv2/libGLESv2_with_capture_autogen.def
+@@ -650,6 +650,9 @@ EXPORTS
+     ; GL_ANGLE_translated_shader_source
+     glGetTranslatedShaderSourceANGLE
+ 
++    ; GL_ANGLE_variable_rasterization_rate_metal
++    glBindMetalRasterizationRateMapANGLE
++
+     ; GL_ANGLE_vulkan_image
+     glAcquireTexturesANGLE
+     glReleaseTexturesANGLE
+diff --git a/src/libGLESv2/opengl32_autogen.def b/src/libGLESv2/opengl32_autogen.def
+index afd40e264391a4993e85ca60402c3496c1468870..5a419ad5ff02aac19e9f9548c194bb963d317206 100644
+--- a/src/libGLESv2/opengl32_autogen.def
++++ b/src/libGLESv2/opengl32_autogen.def
+@@ -650,6 +650,9 @@ EXPORTS
+     ; GL_ANGLE_translated_shader_source
+     glGetTranslatedShaderSourceANGLE
+ 
++    ; GL_ANGLE_variable_rasterization_rate_metal
++    glBindMetalRasterizationRateMapANGLE
++
+     ; GL_ANGLE_vulkan_image
+     glAcquireTexturesANGLE
+     glReleaseTexturesANGLE
+diff --git a/src/libGLESv2/opengl32_with_wgl_autogen.def b/src/libGLESv2/opengl32_with_wgl_autogen.def
+index 23409eeb73e57bb74d549ce9f644719b6b5c7861..7aca6aefb5317647d15a8da7a30a3f8c504b5273 100644
+--- a/src/libGLESv2/opengl32_with_wgl_autogen.def
++++ b/src/libGLESv2/opengl32_with_wgl_autogen.def
+@@ -650,6 +650,9 @@ EXPORTS
+     ; GL_ANGLE_translated_shader_source
+     glGetTranslatedShaderSourceANGLE
+ 
++    ; GL_ANGLE_variable_rasterization_rate_metal
++    glBindMetalRasterizationRateMapANGLE
++
+     ; GL_ANGLE_vulkan_image
+     glAcquireTexturesANGLE
+     glReleaseTexturesANGLE
+diff --git a/src/libGLESv2/proc_table_egl_autogen.cpp b/src/libGLESv2/proc_table_egl_autogen.cpp
+index a9235e525b48d8992aff94bdf4c66de8030d8805..a4d6d7c999643855c838aad972f63cbac0ca4768 100644
+--- a/src/libGLESv2/proc_table_egl_autogen.cpp
++++ b/src/libGLESv2/proc_table_egl_autogen.cpp
+@@ -189,6 +189,7 @@ const ProcEntry g_procTable[] = {
+     {"glBindFramebufferOES", P(GL_BindFramebufferOES)},
+     {"glBindImageTexture", P(GL_BindImageTexture)},
+     DESKTOP_ONLY("glBindImageTextures", GL_BindImageTextures)
++    {"glBindMetalRasterizationRateMapANGLE", P(GL_BindMetalRasterizationRateMapANGLE)},
+     {"glBindProgramPipeline", P(GL_BindProgramPipeline)},
+     {"glBindProgramPipelineEXT", P(GL_BindProgramPipelineEXT)},
+     {"glBindRenderbuffer", P(GL_BindRenderbuffer)},
+diff --git a/src/libGLESv2/proc_table_glx_autogen.cpp b/src/libGLESv2/proc_table_glx_autogen.cpp
+index f3496a77c3a78bb6aae9851d9a1f59d5e500d42f..07e031a605ae3e1768adf40a2343f9bdab2b628e 100644
+--- a/src/libGLESv2/proc_table_glx_autogen.cpp
++++ b/src/libGLESv2/proc_table_glx_autogen.cpp
+@@ -67,6 +67,7 @@ const ProcEntry g_procTable[] = {
+     {"glBindFramebufferOES", P(GL_BindFramebufferOES)},
+     {"glBindImageTexture", P(GL_BindImageTexture)},
+     {"glBindImageTextures", P(GL_BindImageTextures)},
++    {"glBindMetalRasterizationRateMapANGLE", P(GL_BindMetalRasterizationRateMapANGLE)},
+     {"glBindProgramPipeline", P(GL_BindProgramPipeline)},
+     {"glBindProgramPipelineEXT", P(GL_BindProgramPipelineEXT)},
+     {"glBindRenderbuffer", P(GL_BindRenderbuffer)},
+diff --git a/src/libGLESv2/proc_table_wgl_autogen.cpp b/src/libGLESv2/proc_table_wgl_autogen.cpp
+index d20b8d6204e64594edab41117bf33b7feb45ef87..259d92b62a26c57a1f123597471556a1f404ed00 100644
+--- a/src/libGLESv2/proc_table_wgl_autogen.cpp
++++ b/src/libGLESv2/proc_table_wgl_autogen.cpp
+@@ -67,6 +67,7 @@ const ProcEntry g_procTable[] = {
+     {"glBindFramebufferOES", P(GL_BindFramebufferOES)},
+     {"glBindImageTexture", P(GL_BindImageTexture)},
+     {"glBindImageTextures", P(GL_BindImageTextures)},
++    {"glBindMetalRasterizationRateMapANGLE", P(GL_BindMetalRasterizationRateMapANGLE)},
+     {"glBindProgramPipeline", P(GL_BindProgramPipeline)},
+     {"glBindProgramPipelineEXT", P(GL_BindProgramPipelineEXT)},
+     {"glBindRenderbuffer", P(GL_BindRenderbuffer)},
+diff --git a/src/tests/angle_end2end_tests.gni b/src/tests/angle_end2end_tests.gni
+index 044cc9d4302512115580a37196cad0c211e5afa8..abde0c670350544ecb5f745c9838ad58b55126b0 100644
+--- a/src/tests/angle_end2end_tests.gni
++++ b/src/tests/angle_end2end_tests.gni
+@@ -221,6 +221,7 @@ angle_end2end_tests_mac_sources = [
+   "egl_tests/EGLSyncTestMetalSharedEvent.mm",
+   "egl_tests/EGLWaitUntilWorkScheduledTest.cpp",
+   "gl_tests/ImageTestMetal.mm",
++  "gl_tests/VariableRasterizationRateTestMetal.mm",
+ ]
+ angle_end2end_tests_win_sources = [
+   "egl_tests/EGLDeviceTest.cpp",
+diff --git a/src/tests/gl_tests/VariableRasterizationRateTestMetal.mm b/src/tests/gl_tests/VariableRasterizationRateTestMetal.mm
+new file mode 100644
+index 0000000000000000000000000000000000000000..4affa480bec9aad69615a449e468e70774ca8d6d
+--- /dev/null
++++ b/src/tests/gl_tests/VariableRasterizationRateTestMetal.mm
+@@ -0,0 +1,276 @@
++//
++// Copyright 2023 The ANGLE Project Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++//
++// ImageTestMetal:
++//   Tests the correctness of eglImage with native Metal texture extensions.
++//
++
++#include "test_utils/ANGLETest.h"
++
++#include "common/mathutil.h"
++#include "test_utils/gl_raii.h"
++#include "util/EGLWindow.h"
++
++#include <CoreFoundation/CoreFoundation.h>
++#include <Metal/Metal.h>
++
++namespace angle
++{
++namespace
++{
++constexpr int kTileSize                        = 32;
++constexpr int kWindowWidth                     = 8 * kTileSize;
++constexpr int kWindowHeight                    = kWindowWidth;
++constexpr int kZones                           = 7;
++constexpr float kQuality[kZones]               = {0.24f, 0.24f, 0.24f, 0.24f, 0.49f, 0.49f, 0.49f};
++constexpr int kViewportWidth                   = 3 * kTileSize;
++constexpr int kViewportHeight                  = 3 * kTileSize;
++constexpr char kVariableRasterizationRateExt[] = "GL_ANGLE_variable_rasterization_rate_metal";
++constexpr char kVS[]                           = R"(precision highp float;
++attribute vec4 position;
++varying vec2 texcoord;
++
++void main()
++{
++    gl_Position = position;
++    texcoord = (position.xy * 0.5) + 0.5;
++})";
++constexpr char kCheckerBoardFS[]               = R"(
++precision highp float;
++varying vec2 texcoord;
++uniform vec2 u_resolution;
++uniform float u_checkCount;
++
++void main()
++{
++    vec2 uv = texcoord * u_checkCount;
++
++    float u = 1.0 - floor(mod(uv.x, 2.0));
++    float v = 1.0 - floor(mod(uv.y, 2.0));
++    vec3 col = vec3(1.0);
++
++    if(u == 1.0 && v < 1.0 || v == 1.0 && u < 1.0) {
++        col = vec3(0.);
++    }
++    gl_FragColor = vec4(col,1.0);
++})";
++}  // anonymous namespace
++
++class ScopeMetalRasterizationRateMapRef : angle::NonCopyable
++{
++  public:
++    explicit ScopeMetalRasterizationRateMapRef(id<MTLRasterizationRateMap> &&map) : mMap(map) {}
++
++    ~ScopeMetalRasterizationRateMapRef()
++    {
++        if (mMap)
++        {
++            release();
++            mMap = nil;
++        }
++    }
++
++    operator GLMTLRasterizationRateMapANGLE() const
++    {
++        return reinterpret_cast<GLMTLRasterizationRateMapANGLE>(mMap);
++    }
++
++    NSUInteger layerCount() const { return mMap.layerCount; }
++    MTLSize screenSize() const { return mMap.screenSize; }
++    MTLSize physicalGranularity() const { return mMap.physicalGranularity; }
++    MTLSize viewportSize() const { return [mMap physicalSizeForLayer:0]; }
++    MTLCoordinate2D mapScreenToView(MTLCoordinate2D screenCoord)
++    {
++        return [mMap mapScreenToPhysicalCoordinates:screenCoord forLayer:0];
++    }
++    MTLCoordinate2D mapViewToScreen(MTLCoordinate2D viewCoord)
++    {
++        return [mMap mapPhysicalToScreenCoordinates:viewCoord forLayer:0];
++    }
++
++  private:
++    void release()
++    {
++#if !__has_feature(objc_arc)
++        [mMap release];
++#endif
++    }
++
++    id<MTLRasterizationRateMap> mMap = nil;
++};
++
++ScopeMetalRasterizationRateMapRef CreateMetalRasterizationRateMap(id<MTLDevice> deviceMtl,
++                                                                  int width,
++                                                                  int height,
++                                                                  int horizontalCount,
++                                                                  const float *horizontal,
++                                                                  int verticalCount,
++                                                                  const float *vertical)
++{
++    @autoreleasepool
++    {
++        MTLRasterizationRateLayerDescriptor *rrLayer = [[MTLRasterizationRateLayerDescriptor alloc]
++            initWithSampleCount:MTLSizeMake(horizontalCount, verticalCount, 0)
++                     horizontal:horizontal
++                       vertical:vertical];
++        MTLRasterizationRateMapDescriptor *rrDesc    = [MTLRasterizationRateMapDescriptor
++            rasterizationRateMapDescriptorWithScreenSize:MTLSizeMake(width, height, 0)
++                                                   layer:rrLayer];
++        rrDesc.label                                 = @"Test RasterizationRate";
++
++        return ScopeMetalRasterizationRateMapRef(
++            [deviceMtl newRasterizationRateMapWithDescriptor:rrDesc]);
++    }
++}
++
++class VariableRasterizationRateTestMetal : public ANGLETest<>
++{
++  protected:
++    VariableRasterizationRateTestMetal()
++    {
++        setWindowWidth(kWindowWidth);
++        setWindowHeight(kWindowHeight);
++        setConfigRedBits(8);
++        setConfigGreenBits(8);
++        setConfigBlueBits(8);
++        setConfigAlphaBits(8);
++        setConfigDepthBits(24);
++    }
++
++    void testSetUp() override
++    {
++        mProgram = CompileProgram(kVS, kCheckerBoardFS);
++        if (!mProgram)
++        {
++            FAIL() << "shader compilation failed.";
++        }
++        mUniformResolutionLocation = glGetUniformLocation(mProgram, "u_resolution");
++        mUniformCheckCountLocation = glGetUniformLocation(mProgram, "u_checkCount");
++
++        ASSERT_GL_NO_ERROR();
++    }
++
++    void testTearDown() override {}
++
++    id<MTLDevice> getMtlDevice()
++    {
++        EGLAttrib angleDevice = 0;
++        EGLAttrib device      = 0;
++        EXPECT_EGL_TRUE(
++            eglQueryDisplayAttribEXT(getEGLWindow()->getDisplay(), EGL_DEVICE_EXT, &angleDevice));
++
++        EXPECT_EGL_TRUE(eglQueryDeviceAttribEXT(reinterpret_cast<EGLDeviceEXT>(angleDevice),
++                                                EGL_METAL_DEVICE_ANGLE, &device));
++
++        return (__bridge id<MTLDevice>)reinterpret_cast<void *>(device);
++    }
++
++    template <size_t W, size_t H>
++    ScopeMetalRasterizationRateMapRef createMetalRasterizationRateMap(int width,
++                                                                      int height,
++                                                                      const float (&horizontal)[W],
++                                                                      const float (&vertical)[H])
++    {
++        id<MTLDevice> device = getMtlDevice();
++
++        return CreateMetalRasterizationRateMap(device, width, height, W, horizontal, H, vertical);
++    }
++
++    GLuint mProgram;
++    GLint mUniformResolutionLocation;
++    GLint mUniformCheckCountLocation;
++};
++
++TEST_P(VariableRasterizationRateTestMetal, Basic)
++{
++    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kVariableRasterizationRateExt));
++
++    // Default is disabled
++    EXPECT_FALSE(glIsEnabled(GL_VARIABLE_RASTERIZATION_RATE_ANGLE));
++
++    glEnable(GL_VARIABLE_RASTERIZATION_RATE_ANGLE);
++    EXPECT_GL_NO_ERROR();
++    EXPECT_TRUE(glIsEnabled(GL_VARIABLE_RASTERIZATION_RATE_ANGLE));
++
++    glDisable(GL_VARIABLE_RASTERIZATION_RATE_ANGLE);
++    EXPECT_GL_NO_ERROR();
++    EXPECT_FALSE(glIsEnabled(GL_VARIABLE_RASTERIZATION_RATE_ANGLE));
++}
++
++TEST_P(VariableRasterizationRateTestMetal, Binding)
++{
++    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kVariableRasterizationRateExt));
++
++    auto rateMapMtl =
++        createMetalRasterizationRateMap(kWindowWidth, kWindowHeight, kQuality, kQuality);
++    glBindMetalRasterizationRateMapANGLE(rateMapMtl);
++    EXPECT_GL_NO_ERROR();
++
++    GLMTLRasterizationRateMapANGLE rateMapBinding = nullptr;
++    glGetPointerv(GL_METAL_RASTERIZATION_RATE_MAP_BINDING_ANGLE, &rateMapBinding);
++    EXPECT_GL_NO_ERROR();
++    EXPECT_EQ(rateMapMtl, rateMapBinding);
++}
++
++TEST_P(VariableRasterizationRateTestMetal, Rendering)
++{
++    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(kVariableRasterizationRateExt));
++    EXPECT_GL_NO_ERROR();
++
++    auto rateMapMtl =
++        createMetalRasterizationRateMap(kWindowWidth, kWindowHeight, kQuality, kQuality);
++    auto screenSize = rateMapMtl.screenSize();
++    EXPECT_EQ(screenSize.width, static_cast<NSUInteger>(kWindowWidth));
++    EXPECT_EQ(screenSize.height, static_cast<NSUInteger>(kWindowHeight));
++    auto viewportSize = rateMapMtl.viewportSize();
++    EXPECT_EQ(viewportSize.width, static_cast<NSUInteger>(kViewportWidth));
++    EXPECT_EQ(viewportSize.height, static_cast<NSUInteger>(kViewportHeight));
++
++    GLTexture rbColor;
++    glBindTexture(GL_TEXTURE_2D, rbColor);
++    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, viewportSize.width, viewportSize.height, 0, GL_RGBA,
++                 GL_UNSIGNED_BYTE, nullptr);
++
++    GLFramebuffer fbo;
++    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
++    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, rbColor, 0);
++    EXPECT_GL_NO_ERROR();
++
++    glBindMetalRasterizationRateMapANGLE(rateMapMtl);
++    glEnable(GL_VARIABLE_RASTERIZATION_RATE_ANGLE);
++
++    glScissor(0, 0, screenSize.width, screenSize.height);
++    glViewport(0, 0, screenSize.width, screenSize.height);
++
++    glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
++    glClear(GL_COLOR_BUFFER_BIT);
++    EXPECT_GL_NO_ERROR();
++
++    glUseProgram(mProgram);
++    if (mUniformResolutionLocation != -1)
++        glUniform2f(mUniformResolutionLocation, viewportSize.width, viewportSize.height);
++    if (mUniformCheckCountLocation != -1)
++        glUniform1f(mUniformCheckCountLocation, 9.0f);
++    drawQuad(mProgram, "position", 0.5f);
++
++    // Sample a selection of pixels to confirm the expected warped checkerboard rendering
++    for (int o : std::array{6, 38, 67})
++    {
++        EXPECT_PIXEL_COLOR_NEAR(o + 0, o + 0, GLColor::white, 1.0);
++        EXPECT_PIXEL_COLOR_NEAR(o + 1, o + 0, GLColor::black, 1.0);
++        EXPECT_PIXEL_COLOR_NEAR(o + 0, o + 1, GLColor::black, 1.0);
++        EXPECT_PIXEL_COLOR_NEAR(o + 1, o + 1, GLColor::white, 1.0);
++    }
++}
++
++// FIXME: Add test to verify behavior of VRR map created with a Metal device
++// different to the one used by ANGLE.
++
++// Use this to select which configurations (e.g. which renderer, which GLES major version) these
++// tests should be run against.
++ANGLE_INSTANTIATE_TEST(VariableRasterizationRateTestMetal, ES2_METAL(), ES3_METAL());
++
++GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ImageTestMetal);
++}  // namespace angle
+diff --git a/util/autogen/angle_features_autogen.cpp b/util/autogen/angle_features_autogen.cpp
+index b8522446b278da0286678ae50f73ccc5b87a4e38..8326f053c320c82c4a3bd5b6f94c6c4f9459d8ac 100644
+--- a/util/autogen/angle_features_autogen.cpp
++++ b/util/autogen/angle_features_autogen.cpp
+@@ -186,6 +186,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
+     {Feature::HasShaderStencilOutput, "hasShaderStencilOutput"},
+     {Feature::HasStencilAutoResolve, "hasStencilAutoResolve"},
+     {Feature::HasTextureSwizzle, "hasTextureSwizzle"},
++    {Feature::HasVariableRasterizationRate, "hasVariableRasterizationRate"},
+     {Feature::InitFragmentOutputVariables, "initFragmentOutputVariables"},
+     {Feature::InitializeCurrentVertexAttributes, "initializeCurrentVertexAttributes"},
+     {Feature::IntelDisableFastMath, "intelDisableFastMath"},
+diff --git a/util/autogen/angle_features_autogen.h b/util/autogen/angle_features_autogen.h
+index 916d002217abf9be3a6dfff63b9d2ab6965b7396..9799df87f0a1bfe241233e7474500fc7091c488b 100644
+--- a/util/autogen/angle_features_autogen.h
++++ b/util/autogen/angle_features_autogen.h
+@@ -186,6 +186,7 @@ enum class Feature
+     HasShaderStencilOutput,
+     HasStencilAutoResolve,
+     HasTextureSwizzle,
++    HasVariableRasterizationRate,
+     InitFragmentOutputVariables,
+     InitializeCurrentVertexAttributes,
+     IntelDisableFastMath,
+diff --git a/util/capture/frame_capture_replay_autogen.cpp b/util/capture/frame_capture_replay_autogen.cpp
+index 35274a44c43b10c51832b8d5e29fbbb55be41613..40fe4f24609b133550af602cdb972ea9d2f2c795 100644
+--- a/util/capture/frame_capture_replay_autogen.cpp
++++ b/util/capture/frame_capture_replay_autogen.cpp
+@@ -105,6 +105,10 @@ void ReplayTraceFunctionCall(const CallCapture &call, const TraceFunctionMap &cu
+                                captures[3].value.GLbooleanVal, captures[4].value.GLintVal,
+                                captures[5].value.GLenumVal, captures[6].value.GLenumVal);
+             break;
++        case angle::EntryPoint::GLBindMetalRasterizationRateMapANGLE:
++            glBindMetalRasterizationRateMapANGLE(
++                captures[0].value.GLMTLRasterizationRateMapANGLEVal);
++            break;
+         case angle::EntryPoint::GLBindProgramPipeline:
+             glBindProgramPipeline(gProgramPipelineMap[captures[0].value.GLuintVal]);
+             break;
+diff --git a/util/capture/trace_gles_loader_autogen.cpp b/util/capture/trace_gles_loader_autogen.cpp
+index 2327064e26ffc0c29bb3abaa875f8bb61cbcf671..c66caad6290535ce1039b4ef5012a36c1dd7dbeb 100644
+--- a/util/capture/trace_gles_loader_autogen.cpp
++++ b/util/capture/trace_gles_loader_autogen.cpp
+@@ -630,6 +630,8 @@ ANGLE_TRACE_LOADER_EXPORT PFNGLSAMPLEMASKIANGLEPROC t_glSampleMaskiANGLE;
+ ANGLE_TRACE_LOADER_EXPORT PFNGLTEXSTORAGE2DMULTISAMPLEANGLEPROC t_glTexStorage2DMultisampleANGLE;
+ ANGLE_TRACE_LOADER_EXPORT PFNGLGETTRANSLATEDSHADERSOURCEANGLEPROC
+     t_glGetTranslatedShaderSourceANGLE;
++ANGLE_TRACE_LOADER_EXPORT PFNGLBINDMETALRASTERIZATIONRATEMAPANGLEPROC
++    t_glBindMetalRasterizationRateMapANGLE;
+ ANGLE_TRACE_LOADER_EXPORT PFNGLACQUIRETEXTURESANGLEPROC t_glAcquireTexturesANGLE;
+ ANGLE_TRACE_LOADER_EXPORT PFNGLRELEASETEXTURESANGLEPROC t_glReleaseTexturesANGLE;
+ ANGLE_TRACE_LOADER_EXPORT PFNGLBINDUNIFORMLOCATIONCHROMIUMPROC t_glBindUniformLocationCHROMIUM;
+@@ -1829,6 +1831,9 @@ void LoadTraceGLES(LoadProc loadProc)
+         loadProc("glTexStorage2DMultisampleANGLE"));
+     t_glGetTranslatedShaderSourceANGLE = reinterpret_cast<PFNGLGETTRANSLATEDSHADERSOURCEANGLEPROC>(
+         loadProc("glGetTranslatedShaderSourceANGLE"));
++    t_glBindMetalRasterizationRateMapANGLE =
++        reinterpret_cast<PFNGLBINDMETALRASTERIZATIONRATEMAPANGLEPROC>(
++            loadProc("glBindMetalRasterizationRateMapANGLE"));
+     t_glAcquireTexturesANGLE =
+         reinterpret_cast<PFNGLACQUIRETEXTURESANGLEPROC>(loadProc("glAcquireTexturesANGLE"));
+     t_glReleaseTexturesANGLE =
+diff --git a/util/capture/trace_gles_loader_autogen.h b/util/capture/trace_gles_loader_autogen.h
+index 2f98e889a72adf0dff23fa3e38f82194bcea06c0..d17b987c5e34a35aac9e81494a7bed69693f2e11 100644
+--- a/util/capture/trace_gles_loader_autogen.h
++++ b/util/capture/trace_gles_loader_autogen.h
+@@ -595,6 +595,7 @@
+ #define glSampleMaskiANGLE t_glSampleMaskiANGLE
+ #define glTexStorage2DMultisampleANGLE t_glTexStorage2DMultisampleANGLE
+ #define glGetTranslatedShaderSourceANGLE t_glGetTranslatedShaderSourceANGLE
++#define glBindMetalRasterizationRateMapANGLE t_glBindMetalRasterizationRateMapANGLE
+ #define glAcquireTexturesANGLE t_glAcquireTexturesANGLE
+ #define glReleaseTexturesANGLE t_glReleaseTexturesANGLE
+ #define glBindUniformLocationCHROMIUM t_glBindUniformLocationCHROMIUM
+@@ -1502,6 +1503,8 @@ ANGLE_TRACE_LOADER_EXPORT extern PFNGLTEXSTORAGE2DMULTISAMPLEANGLEPROC
+     t_glTexStorage2DMultisampleANGLE;
+ ANGLE_TRACE_LOADER_EXPORT extern PFNGLGETTRANSLATEDSHADERSOURCEANGLEPROC
+     t_glGetTranslatedShaderSourceANGLE;
++ANGLE_TRACE_LOADER_EXPORT extern PFNGLBINDMETALRASTERIZATIONRATEMAPANGLEPROC
++    t_glBindMetalRasterizationRateMapANGLE;
+ ANGLE_TRACE_LOADER_EXPORT extern PFNGLACQUIRETEXTURESANGLEPROC t_glAcquireTexturesANGLE;
+ ANGLE_TRACE_LOADER_EXPORT extern PFNGLRELEASETEXTURESANGLEPROC t_glReleaseTexturesANGLE;
+ ANGLE_TRACE_LOADER_EXPORT extern PFNGLBINDUNIFORMLOCATIONCHROMIUMPROC
+diff --git a/util/capture/trace_interpreter_autogen.cpp b/util/capture/trace_interpreter_autogen.cpp
+index f258e2b6671c86b2f231e428c1eb7e10a8797ac5..5c3da7b257facdba20f49ccda080cf1f497d5ad0 100644
+--- a/util/capture/trace_interpreter_autogen.cpp
++++ b/util/capture/trace_interpreter_autogen.cpp
+@@ -889,6 +889,13 @@ CallCapture ParseCallCapture(const Token &nameToken,
+             paramTokens, strings);
+         return CallCapture(EntryPoint::GLBindImageTexture, std::move(params));
+     }
++    if (strcmp(nameToken, "glBindMetalRasterizationRateMapANGLE") == 0)
++    {
++        ParamBuffer params =
++            ParseParameters<std::remove_pointer<PFNGLBINDMETALRASTERIZATIONRATEMAPANGLEPROC>::type>(
++                paramTokens, strings);
++        return CallCapture(EntryPoint::GLBindMetalRasterizationRateMapANGLE, std::move(params));
++    }
+     if (strcmp(nameToken, "glBindProgramPipeline") == 0)
+     {
+         ParamBuffer params =
+diff --git a/util/gles_loader_autogen.cpp b/util/gles_loader_autogen.cpp
+index c2d42feff97921876c7b9caa60a1a12807b91264..bd97a5da248d55dbd125b1024e54b1733085d865 100644
+--- a/util/gles_loader_autogen.cpp
++++ b/util/gles_loader_autogen.cpp
+@@ -607,6 +607,8 @@ ANGLE_UTIL_EXPORT PFNGLGETMULTISAMPLEFVANGLEPROC l_glGetMultisamplefvANGLE;
+ ANGLE_UTIL_EXPORT PFNGLSAMPLEMASKIANGLEPROC l_glSampleMaskiANGLE;
+ ANGLE_UTIL_EXPORT PFNGLTEXSTORAGE2DMULTISAMPLEANGLEPROC l_glTexStorage2DMultisampleANGLE;
+ ANGLE_UTIL_EXPORT PFNGLGETTRANSLATEDSHADERSOURCEANGLEPROC l_glGetTranslatedShaderSourceANGLE;
++ANGLE_UTIL_EXPORT PFNGLBINDMETALRASTERIZATIONRATEMAPANGLEPROC
++    l_glBindMetalRasterizationRateMapANGLE;
+ ANGLE_UTIL_EXPORT PFNGLACQUIRETEXTURESANGLEPROC l_glAcquireTexturesANGLE;
+ ANGLE_UTIL_EXPORT PFNGLRELEASETEXTURESANGLEPROC l_glReleaseTexturesANGLE;
+ ANGLE_UTIL_EXPORT PFNGLBINDUNIFORMLOCATIONCHROMIUMPROC l_glBindUniformLocationCHROMIUM;
+@@ -1798,6 +1800,9 @@ void LoadUtilGLES(LoadProc loadProc)
+         loadProc("glTexStorage2DMultisampleANGLE"));
+     l_glGetTranslatedShaderSourceANGLE = reinterpret_cast<PFNGLGETTRANSLATEDSHADERSOURCEANGLEPROC>(
+         loadProc("glGetTranslatedShaderSourceANGLE"));
++    l_glBindMetalRasterizationRateMapANGLE =
++        reinterpret_cast<PFNGLBINDMETALRASTERIZATIONRATEMAPANGLEPROC>(
++            loadProc("glBindMetalRasterizationRateMapANGLE"));
+     l_glAcquireTexturesANGLE =
+         reinterpret_cast<PFNGLACQUIRETEXTURESANGLEPROC>(loadProc("glAcquireTexturesANGLE"));
+     l_glReleaseTexturesANGLE =
+diff --git a/util/gles_loader_autogen.h b/util/gles_loader_autogen.h
+index 3429484bde95b447efe27320dc669209b8bd696c..d88ee01561d22fb226148cd03a91a41af226c7f4 100644
+--- a/util/gles_loader_autogen.h
++++ b/util/gles_loader_autogen.h
+@@ -595,6 +595,7 @@
+ #define glSampleMaskiANGLE l_glSampleMaskiANGLE
+ #define glTexStorage2DMultisampleANGLE l_glTexStorage2DMultisampleANGLE
+ #define glGetTranslatedShaderSourceANGLE l_glGetTranslatedShaderSourceANGLE
++#define glBindMetalRasterizationRateMapANGLE l_glBindMetalRasterizationRateMapANGLE
+ #define glAcquireTexturesANGLE l_glAcquireTexturesANGLE
+ #define glReleaseTexturesANGLE l_glReleaseTexturesANGLE
+ #define glBindUniformLocationCHROMIUM l_glBindUniformLocationCHROMIUM
+@@ -1467,6 +1468,8 @@ ANGLE_UTIL_EXPORT extern PFNGLGETMULTISAMPLEFVANGLEPROC l_glGetMultisamplefvANGL
+ ANGLE_UTIL_EXPORT extern PFNGLSAMPLEMASKIANGLEPROC l_glSampleMaskiANGLE;
+ ANGLE_UTIL_EXPORT extern PFNGLTEXSTORAGE2DMULTISAMPLEANGLEPROC l_glTexStorage2DMultisampleANGLE;
+ ANGLE_UTIL_EXPORT extern PFNGLGETTRANSLATEDSHADERSOURCEANGLEPROC l_glGetTranslatedShaderSourceANGLE;
++ANGLE_UTIL_EXPORT extern PFNGLBINDMETALRASTERIZATIONRATEMAPANGLEPROC
++    l_glBindMetalRasterizationRateMapANGLE;
+ ANGLE_UTIL_EXPORT extern PFNGLACQUIRETEXTURESANGLEPROC l_glAcquireTexturesANGLE;
+ ANGLE_UTIL_EXPORT extern PFNGLRELEASETEXTURESANGLEPROC l_glReleaseTexturesANGLE;
+ ANGLE_UTIL_EXPORT extern PFNGLBINDUNIFORMLOCATIONCHROMIUMPROC l_glBindUniformLocationCHROMIUM;
