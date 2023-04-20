@@ -31,6 +31,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestWKWebView.h"
+#import "UserMediaCaptureUIDelegate.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegate.h>
 #import <WebKit/WKWebView.h>
@@ -189,7 +190,7 @@ TEST(WebKit, DeviceIdHashSaltsRemoval)
         auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
         initializeMediaCaptureConfiguration(configuration.get());
         auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
-        auto delegate = adoptNS([[NavigationWhileGetUserMediaPromptDisplayedUIDelegate alloc] init]);
+        auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
         [webView setUIDelegate:delegate.get()];
 
         NSString *htmlString = @"<script> \
