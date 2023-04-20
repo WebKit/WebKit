@@ -40,6 +40,11 @@ using WTF::StringBuilder;
 
 namespace JSC {
 
+// X11 headers define macro 'Bool' interfering with the enum defined below.
+#if defined(Bool)
+#undef Bool
+#endif
+
 class Options {
 public:
     enum class DumpLevel : uint8_t {
