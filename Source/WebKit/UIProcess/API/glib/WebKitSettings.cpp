@@ -1740,12 +1740,16 @@ void webkit_settings_set_auto_load_images(WebKitSettings* settings, gboolean ena
  * Get the #WebKitSettings:load-icons-ignoring-image-load-setting property.
  *
  * Returns: %TRUE If site icon can be loaded irrespective of image loading preference or %FALSE otherwise.
+ *
+ * Deprecated: TBA
  */
 gboolean webkit_settings_get_load_icons_ignoring_image_load_setting(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
-    return settings->priv->preferences->loadsSiteIconsIgnoringImageLoadingPreference();
+    g_warning("webkit_settings_get_load_icons_ignoring_image_load_setting is deprecated and always returns FALSE.");
+
+    return FALSE;
 }
 
 /**
@@ -1754,18 +1758,15 @@ gboolean webkit_settings_get_load_icons_ignoring_image_load_setting(WebKitSettin
  * @enabled: Value to be set
  *
  * Set the #WebKitSettings:load-icons-ignoring-image-load-setting property.
+ *
+ * Deprecated: TBA
  */
 void webkit_settings_set_load_icons_ignoring_image_load_setting(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
-    WebKitSettingsPrivate* priv = settings->priv;
-    bool currentValue = priv->preferences->loadsSiteIconsIgnoringImageLoadingPreference();
-    if (currentValue == enabled)
-        return;
-
-    priv->preferences->setLoadsSiteIconsIgnoringImageLoadingPreference(enabled);
-    g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_LOAD_ICONS_IGNORING_IMAGE_LOAD_SETTING]);
+    if (enabled)
+        g_warning("webkit_settings_set_load_icons_ignoring_image_load_setting is deprecated and does nothing.");
 }
 
 /**

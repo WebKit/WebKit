@@ -3741,23 +3741,6 @@ LoadsImagesAutomatically:
     WebCore:
       default: false
 
-# This preference only affects site icon image loading if the LoadsImagesAutomatically preference is false and
-# this preference is true. All other permutations still heed LoadsImagesAutomatically preference.
-LoadsSiteIconsIgnoringImageLoadingPreference:
-  type: bool
-  status: stable
-  category: networking
-  humanReadableName: "Load site icons ignoring image loading preference"
-  webKitLegacyPreferenceKey: WebKitLoadSiteIconsKey
-  webcoreName: loadsSiteIconsIgnoringImageLoadingSetting
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 LocalFileContentSniffingEnabled:
   type: bool
   status: internal

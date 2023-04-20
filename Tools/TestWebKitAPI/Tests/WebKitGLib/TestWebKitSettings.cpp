@@ -52,10 +52,10 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_auto_load_images(settings, FALSE);
     g_assert_false(webkit_settings_get_auto_load_images(settings));
 
-    // load-icons-ignoring-image-load-setting is false by default.
+    // load-icons-ignoring-image-load-setting is deprecated and always false.
     g_assert_false(webkit_settings_get_load_icons_ignoring_image_load_setting(settings));
     webkit_settings_set_load_icons_ignoring_image_load_setting(settings, TRUE);
-    g_assert_true(webkit_settings_get_load_icons_ignoring_image_load_setting(settings));
+    g_assert_false(webkit_settings_get_load_icons_ignoring_image_load_setting(settings));
     
     // Offline application cache is true by default.
     g_assert_true(webkit_settings_get_enable_offline_web_application_cache(settings));
@@ -396,7 +396,8 @@ void testWebKitSettingsNewWithSettings(Test* test, gconstpointer)
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(settings.get()));
     g_assert_false(webkit_settings_get_enable_javascript(settings.get()));
     g_assert_false(webkit_settings_get_auto_load_images(settings.get()));
-    g_assert_true(webkit_settings_get_load_icons_ignoring_image_load_setting(settings.get()));
+    // load-icons-ignoring-image-load-setting is deprecated and always false.
+    g_assert_false(webkit_settings_get_load_icons_ignoring_image_load_setting(settings.get()));
 }
 
 #if PLATFORM(GTK)

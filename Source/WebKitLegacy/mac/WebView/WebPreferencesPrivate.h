@@ -184,7 +184,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL fullScreenEnabled;
 @property (nonatomic) BOOL asynchronousSpellCheckingEnabled;
 @property (nonatomic) BOOL usePreHTML5ParserQuirks;
-@property (nonatomic) BOOL loadsSiteIconsIgnoringImageLoadingPreference;
 @property (nonatomic, getter=isAVFoundationEnabled) BOOL AVFoundationEnabled;
 @property (nonatomic, getter=isAVFoundationNSURLSessionEnabled) BOOL AVFoundationNSURLSessionEnabled;
 @property (nonatomic) BOOL backspaceKeyNavigationEnabled;
@@ -366,6 +365,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic, getter=isXSSAuditorEnabled) BOOL XSSAuditorEnabled;
 @property (nonatomic) BOOL subpixelAntialiasedLayerTextEnabled;
 @property (nonatomic) BOOL webGL2Enabled;
+@property (nonatomic) BOOL loadsSiteIconsIgnoringImageLoadingPreference;
 
 - (void)setDiskImageCacheEnabled:(BOOL)enabled;
 

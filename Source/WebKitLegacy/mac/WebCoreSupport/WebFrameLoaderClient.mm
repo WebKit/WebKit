@@ -2052,7 +2052,7 @@ void WebFrameLoaderClient::getLoadDecisionForIcons(const Vector<std::pair<WebCor
 #endif
 
     bool disallowedDueToImageLoadSettings = false;
-    if (!frame->settings().loadsImagesAutomatically() && !frame->settings().loadsSiteIconsIgnoringImageLoadingSetting())
+    if (!frame->settings().loadsImagesAutomatically())
         disallowedDueToImageLoadSettings = true;
 
     if (disallowedDueToImageLoadSettings || !frame->isMainFrame() || !documentLoader->url().protocolIsInHTTPFamily() || ![WebView _isIconLoadingEnabled]) {
