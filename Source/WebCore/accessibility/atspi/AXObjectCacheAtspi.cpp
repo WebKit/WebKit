@@ -76,7 +76,6 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
         if (coreObject->isCheckboxOrRadio() || coreObject->isSwitch())
             wrapper->stateChanged("checked", coreObject->isChecked());
         break;
-    case AXSelectedCellChanged:
     case AXSelectedStateChanged:
         wrapper->stateChanged("selected", coreObject->isSelected());
         break;
@@ -87,6 +86,7 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
             wrapper->stateChanged("selected", coreObject->isSelected());
         break;
     }
+    case AXSelectedCellsChanged:
     case AXSelectedChildrenChanged:
         wrapper->selectionChanged();
         break;

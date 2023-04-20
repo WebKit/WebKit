@@ -366,7 +366,7 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotificatio
         else
             macNotification = NSAccessibilitySelectedChildrenChangedNotification;
         break;
-    case AXSelectedCellChanged:
+    case AXSelectedCellsChanged:
         macNotification = NSAccessibilitySelectedCellsChangedNotification;
         break;
     case AXSelectedTextChanged:

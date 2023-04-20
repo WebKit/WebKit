@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content">
+<table tabindex=0 id="grid" role="grid" aria-labelledby="grid-1-header" border="1" aria-activedescendant="cell1">
+<thead>
+    <tr ca="tr" role="row" aria-level="1" id="row1">
+        <th id="grid-1-isbn_id">Book Name / ISBN</th><th id="grid-1-author_id">Author</th><th id="grid-1-price_id" class="numeric" >Price ($)</th>
+    </tr>
+</thead>
+<tbody>
+    <tr ca="to" role="row" aria-level="1" aria-expanded="true">
+         <td headers="grid-1-title_id" id="table_entry" role="gridcell" colspan="3"  tabindex="0">
+         <span class="expand">+</span> A Question of Love</td>                  
+     </tr>
+     <tr ca="ti" role="row"  aria-level="2" aria-expanded="true">
+         <td headers="grid-1-isbn_id" role="gridcell" id="cell1">978-3-453-40540-0</td>
+         <td headers="grid-1-author_id" role="gridcell" id="cell2">Nora Roberts</td>
+         <td headers="grid-1-price_id" class="numeric" role="gridcell" ca="te"><div>9.99</div></td>
+     </tr>
+</tbody>
+</table>
+</div>
+
+<script>
+
+description("This tests that the ARIA grids will return and post selected cells.");
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true
+
+    var output = "";
+    var grid, selectedCelll;
+    var notificationCount = 0;
+    accessibilityController.addNotificationListener(function(element, notification) {
+        if (notification == "AXSelectedCellsChanged") {
+            output += "Received notification: " + notification + "\n";
+            notificationCount++;
+            if (notificationCount == 2) {
+                document.getElementById("content").style.visibility = 'hidden';
+                debug(output);
+                finishJSTest();
+            }
+        }
+    });
+
+    // Focus the grid so it can handle active descendants.
+    document.getElementById("grid").focus();
+    setTimeout(function() {
+        grid = accessibilityController.accessibleElementById("grid");
+        selectedCell = grid.childAtIndex(2).childAtIndex(0);
+        output += expect("grid.isAttributeSupported('AXSelectedCells')", "true");
+        output += expect("grid.selectedCells()[0].isEqual(selectedCell)", "true");
+
+        // Now change the selected cell to trigger the notification.
+        document.getElementById("grid").setAttribute("aria-activedescendant", "cell2");
+
+        // Now change with aria-selected to ensure we also get the right notification.
+        document.getElementById("cell1").setAttribute("aria-selected", "true");
+        output += expect("grid.selectedCells()[0].isEqual(accessibilityController.accessibleElementById('cell1'))", "true");
+        output += expect("grid.selectedCells()[1].isEqual(accessibilityController.accessibleElementById('cell2'))", "true");
+    }, 0);
+}
+</script>
+
+</body>
+</html>

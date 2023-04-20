@@ -180,6 +180,7 @@
     object columnHeaders();
     object rowHeaders();
     readonly attribute DOMString customContent;
+    object selectedCells();
 
     object detailsElements();
     object errorMessageElements();

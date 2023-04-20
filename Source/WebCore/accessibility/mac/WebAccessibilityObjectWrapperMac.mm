@@ -1079,6 +1079,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityRowCountAttribute];
         [tempArray addObject:NSAccessibilityARIAColumnCountAttribute];
         [tempArray addObject:NSAccessibilityARIARowCountAttribute];
+        [tempArray addObject:NSAccessibilitySelectedCellsAttribute];
         return tempArray;
     }();
     static NeverDestroyed tableRowAttrs = [] {
@@ -1820,10 +1821,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return makeNSArray(selectedChildrenCopy);
         }
 
-        // HTML tables don't support these attributes.
-        if ([attributeName isEqualToString:NSAccessibilitySelectedColumnsAttribute]
-            || [attributeName isEqualToString:NSAccessibilitySelectedCellsAttribute])
+        // HTML tables don't support this attribute yet.
+        if ([attributeName isEqualToString:NSAccessibilitySelectedColumnsAttribute])
             return nil;
+
+        if ([attributeName isEqualToString:NSAccessibilitySelectedCellsAttribute])
+            return makeNSArray(backingObject->selectedCells());
 
         if ([attributeName isEqualToString:NSAccessibilityColumnHeaderUIElementsAttribute])
             return makeNSArray(backingObject->columnHeaders());

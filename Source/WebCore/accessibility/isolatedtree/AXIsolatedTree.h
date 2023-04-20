@@ -199,6 +199,7 @@ enum class AXPropertyName : uint16_t {
     RowHeaders,
     RowIndex,
     RowIndexRange,
+    SelectedCells,
     SelectedChildren,
     SessionID,
     SetSize,

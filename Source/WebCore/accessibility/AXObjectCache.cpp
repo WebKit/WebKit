@@ -1455,7 +1455,7 @@ static bool isARIATableCell(Node* node)
 void AXObjectCache::onSelectedChanged(Node* node)
 {
     if (isARIATableCell(node))
-        postNotification(node, AXSelectedCellChanged);
+        postNotification(node, AXSelectedCellsChanged);
     else if (is<HTMLOptionElement>(node))
         postNotification(node, AXSelectedStateChanged);
     else if (auto* axObject = getOrCreate(node)) {
@@ -1974,6 +1974,14 @@ void AXObjectCache::handleActiveDescendantChanged(Element& element)
 #endif
 
         postPlatformNotification(target, AXNotification::AXActiveDescendantChanged);
+        
+        // Table cell active descendant changes should trigger selected cell changes.
+        if (target->isTable() && activeDescendant->isTableCell()) {
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+            updateIsolatedTree(target, AXNotification::AXSelectedCellsChanged);
+#endif
+            postPlatformNotification(target, AXSelectedCellsChanged);
+        }
     }
 }
 
@@ -3748,7 +3756,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXRowIndexChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::AXRowIndex);
             break;
-        case AXSelectedCellChanged:
+        case AXSelectedCellsChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::SelectedCells);
+            break;
         case AXSelectedStateChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsSelected);
             break;

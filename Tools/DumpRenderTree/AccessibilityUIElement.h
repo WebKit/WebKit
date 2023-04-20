@@ -203,7 +203,8 @@ public:
     int columnCount();
     void rowHeaders(Vector<AccessibilityUIElement>& elements) const;
     void columnHeaders(Vector<AccessibilityUIElement>& elements) const;
-    
+    JSValueRef selectedCells(JSContextRef) const;
+
     // Tree/Outline specific attributes
     AccessibilityUIElement selectedRowAtIndex(unsigned);
     AccessibilityUIElement disclosedByRow();
@@ -344,9 +345,10 @@ public:
     JSRetainPtr<JSStringRef> mathPostscriptsDescription() const;
     JSRetainPtr<JSStringRef> mathPrescriptsDescription() const;
 #endif
-    
-private:
+
     static JSClassRef getJSClass();
+
+private:
 
 #if !PLATFORM(COCOA)
     PlatformUIElement m_element;

@@ -235,6 +235,9 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
         setObjectVectorProperty(AXPropertyName::SelectedChildren, selectedChildren);
     }
 
+    if (object.canHaveSelectedCells())
+        setObjectVectorProperty(AXPropertyName::SelectedCells, object.selectedCells());
+
     if (object.isImage())
         setProperty(AXPropertyName::EmbeddedImageDescription, object.embeddedImageDescription().isolatedCopy());
 

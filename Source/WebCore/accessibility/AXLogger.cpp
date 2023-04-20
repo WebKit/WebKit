@@ -529,8 +529,8 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXSelectedChildrenChanged:
         stream << "AXSelectedChildrenChanged";
         break;
-    case AXObjectCache::AXNotification::AXSelectedCellChanged:
-        stream << "AXSelectedCellChanged";
+    case AXObjectCache::AXNotification::AXSelectedCellsChanged:
+        stream << "AXSelectedCellsChanged";
         break;
     case AXObjectCache::AXNotification::AXSelectedStateChanged:
         stream << "AXSelectedStateChanged";

@@ -897,6 +897,7 @@ public:
     virtual AccessibilityChildrenVector columnHeaders() = 0;
     virtual AccessibilityChildrenVector rowHeaders() = 0;
     virtual AccessibilityChildrenVector visibleRows() = 0;
+    virtual AccessibilityChildrenVector selectedCells() = 0;
     // Returns an object that contains, as children, all the objects that act as headers.
     virtual AXCoreObject* headerContainer() = 0;
     virtual int axColumnCount() const = 0;
@@ -1249,6 +1250,7 @@ public:
     virtual bool isDetachedFromParent() = 0;
 
     bool canHaveSelectedChildren() const;
+    bool canHaveSelectedCells() const;
     virtual void selectedChildren(AccessibilityChildrenVector&) = 0;
     virtual void setSelectedChildren(const AccessibilityChildrenVector&) = 0;
     virtual AccessibilityChildrenVector visibleChildren() = 0;
@@ -1576,6 +1578,19 @@ inline bool AXCoreObject::supportsLiveRegion(bool excludeIfOff) const
 {
     auto liveRegionStatusValue = liveRegionStatus();
     return excludeIfOff ? liveRegionStatusIsEnabled(AtomString { liveRegionStatusValue }) : !liveRegionStatusValue.isEmpty();
+}
+
+inline bool AXCoreObject::canHaveSelectedCells() const
+{
+    switch (roleValue()) {
+    case AccessibilityRole::Grid:
+    case AccessibilityRole::Table:
+    case AccessibilityRole::Tree:
+    case AccessibilityRole::TreeGrid:
+        return true;
+    default:
+        return false;
+    }
 }
 
 inline bool AXCoreObject::canHaveSelectedChildren() const

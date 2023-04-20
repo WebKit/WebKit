@@ -326,7 +326,7 @@ public:
         AXRowIndexChanged,
         AXRowSpanChanged,
         AXSelectedChildrenChanged,
-        AXSelectedCellChanged,
+        AXSelectedCellsChanged,
         AXSelectedStateChanged,
         AXSelectedTextChanged,
         AXSetSizeChanged,

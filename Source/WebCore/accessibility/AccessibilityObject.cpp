@@ -2913,6 +2913,25 @@ AXCoreObject* AccessibilityObject::focusedUIElement() const
     return page && axObjectCache ? axObjectCache->focusedObjectForPage(page) : nullptr;
 }
 
+AXCoreObject::AccessibilityChildrenVector AccessibilityObject::selectedCells()
+{
+    if (!isTable())
+        return { };
+
+    AXCoreObject::AccessibilityChildrenVector selectedCells;
+    for (auto& cell : cells()) {
+        if (cell->isSelected())
+            selectedCells.append(cell);
+    }
+
+    if (auto* activeDescendant = this->activeDescendant()) {
+        if (activeDescendant->isTableCell() && !selectedCells.contains(activeDescendant))
+            selectedCells.append(activeDescendant);
+    }
+
+    return selectedCells;
+}
+
 void AccessibilityObject::setFocused(bool focus)
 {
     if (focus) {

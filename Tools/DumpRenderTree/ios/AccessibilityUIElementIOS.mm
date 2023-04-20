@@ -1271,6 +1271,11 @@ void AccessibilityUIElement::rowHeaders(Vector<AccessibilityUIElement>&) const
 {
 }
 
+JSValueRef AccessibilityUIElement::selectedCells(JSContextRef) const
+{
+    return nullptr;
+}
+
 unsigned AccessibilityUIElement::selectedChildrenCount() const
 {
     return 0;

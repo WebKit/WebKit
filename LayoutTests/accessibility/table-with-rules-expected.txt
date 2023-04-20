@@ -47,6 +47,7 @@ AXColumnCount: 2
 AXRowCount: 1
 AXARIAColumnCount: 0
 AXARIARowCount: 0
+AXSelectedCells: <array of size 0>
 AXElementBusy: 0
 
 
@@ -92,6 +93,7 @@ AXColumnCount: 2
 AXRowCount: 1
 AXARIAColumnCount: 0
 AXARIARowCount: 0
+AXSelectedCells: <array of size 0>
 AXElementBusy: 0
 
 
@@ -137,6 +139,7 @@ AXColumnCount: 2
 AXRowCount: 1
 AXARIAColumnCount: 0
 AXARIARowCount: 0
+AXSelectedCells: <array of size 0>
 AXElementBusy: 0
 
 

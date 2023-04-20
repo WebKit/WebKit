@@ -460,6 +460,11 @@ JSValueRef AccessibilityUIElement::rowHeaders() const
     return nullptr;
 }
 
+JSValueRef AccessibilityUIElement::selectedCells() const
+{
+    return nullptr;
+}
+
 JSValueRef AccessibilityUIElement::columnHeaders() const
 {
     return nullptr;
