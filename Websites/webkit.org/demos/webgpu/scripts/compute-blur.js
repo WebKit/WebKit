@@ -68,36 +68,40 @@ function setUpCompute() {
     imageSize = originalData.data.length;
 
     // Buffer creation
-    let originalArrayBuffer;
-    [originalBuffer, originalArrayBuffer] = device.createBufferMapped({ size: imageSize, usage: GPUBufferUsage.STORAGE });
-    const imageWriteArray = new Uint8ClampedArray(originalArrayBuffer);
+    originalBuffer = device.createBuffer({
+        size: imageSize,
+        usage: GPUBufferUsage.STORAGE,
+        mappedAtCreation: true,
+    });
+    const imageWriteArray = new Uint8ClampedArray(originalBuffer.getMappedRange());
     imageWriteArray.set(originalData.data);
     originalBuffer.unmap();
 
     storageBuffer = device.createBuffer({ size: imageSize, usage: GPUBufferUsage.STORAGE });
-    resultsBuffer = device.createBuffer({ size: imageSize, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.MAP_READ });
-    uniformsBuffer = device.createBuffer({ size: maxUniformsSize, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.MAP_WRITE });
+    resultsBuffer = device.createBuffer({ size: imageSize, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+    outputBuffer = device.createBuffer({ size: imageSize, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+    uniformsBuffer = device.createBuffer({ size: maxUniformsSize, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
 
     // Bind buffers to kernel   
     const bindGroupLayout = device.createBindGroupLayout({
-        bindings: [{
+        entries: [{
             binding: sourceBufferBindingNum,
             visibility: GPUShaderStage.COMPUTE,
-            type: "storage-buffer"
+            buffer: { type: "storage" },
         }, {
             binding: outputBufferBindingNum,
             visibility: GPUShaderStage.COMPUTE,
-            type: "storage-buffer"
+            buffer: { type: "storage" },
         }, {
             binding: uniformsBufferBindingNum,
             visibility: GPUShaderStage.COMPUTE,
-            type: "uniform-buffer"
+            buffer: { type: "storage" },
         }]
     });
 
     horizontalBindGroup = device.createBindGroup({
         layout: bindGroupLayout,
-        bindings: [{
+        entries: [{
             binding: sourceBufferBindingNum,
             resource: {
                 buffer: originalBuffer,
@@ -120,7 +124,7 @@ function setUpCompute() {
 
     verticalBindGroup = device.createBindGroup({
         layout: bindGroupLayout,
-        bindings: [{
+        entries: [{
             binding: sourceBufferBindingNum,
             resource: {
                 buffer: storageBuffer,
@@ -148,7 +152,7 @@ function setUpCompute() {
 
     horizontalPipeline = device.createComputePipeline({ 
         layout: pipelineLayout, 
-        computeStage: {
+        compute: {
             module: shaderModule,
             entryPoint: "horizontal"
         }
@@ -156,7 +160,7 @@ function setUpCompute() {
 
     verticalPipeline = device.createComputePipeline({
         layout: pipelineLayout,
-        computeStage: {
+        compute: {
             module: shaderModule,
             entryPoint: "vertical"
         }
@@ -168,14 +172,9 @@ async function computeBlur(radius) {
         context2d.drawImage(image, 0, 0, width, width);
         return;
     }
-    const setUniformsPromise = setUniforms(radius);
-    const uniformsMappingPromise = uniformsBuffer.mapWriteAsync();
-
-    const [uniforms, uniformsArrayBuffer] = await Promise.all([setUniformsPromise, uniformsMappingPromise]);
-
-    const uniformsWriteArray = new Float32Array(uniformsArrayBuffer);
-    uniformsWriteArray.set(uniforms);
-    uniformsBuffer.unmap();
+    console.log(radius);
+    const uniforms = await setUniforms(radius);
+    device.queue.writeBuffer(uniformsBuffer, 0, uniforms);
 
     // Run horizontal pass first
     const commandEncoder = device.createCommandEncoder();
@@ -183,24 +182,26 @@ async function computeBlur(radius) {
     passEncoder.setBindGroup(0, horizontalBindGroup);
     passEncoder.setPipeline(horizontalPipeline);
     const numXGroups = Math.ceil(image.width / threadsPerThreadgroup);
-    passEncoder.dispatch(numXGroups, image.height, 1);
-    passEncoder.endPass();
+    passEncoder.dispatchWorkgroups(numXGroups, image.height, 1);
+    passEncoder.end();
 
     // Run vertical pass
     const verticalPassEncoder = commandEncoder.beginComputePass();
     verticalPassEncoder.setBindGroup(0, verticalBindGroup);
     verticalPassEncoder.setPipeline(verticalPipeline);
     const numYGroups = Math.ceil(image.height / threadsPerThreadgroup);
-    verticalPassEncoder.dispatch(image.width, numYGroups, 1);
-    verticalPassEncoder.endPass();
+    verticalPassEncoder.dispatchWorkgroups(image.width, numYGroups, 1);
+    verticalPassEncoder.end();
 
-    device.getQueue().submit([commandEncoder.finish()]);
+    commandEncoder.copyBufferToBuffer(resultsBuffer, 0, outputBuffer, 0, imageSize);
 
-    // Draw resultsBuffer as imageData back into context2d
-    const resultArrayBuffer = await resultsBuffer.mapReadAsync();
-    const resultArray = new Uint8ClampedArray(resultArrayBuffer);
+    device.queue.submit([commandEncoder.finish()]);
+
+    // Draw outputBuffer as imageData back into context2d
+    await outputBuffer.mapAsync(GPUMapMode.READ);
+    const resultArray = new Uint8ClampedArray(outputBuffer.getMappedRange());
     context2d.putImageData(new ImageData(resultArray, image.width, image.height), 0, 0);
-    resultsBuffer.unmap();
+    outputBuffer.unmap();
 }
 
 window.addEventListener("load", init);
@@ -218,12 +219,13 @@ async function setUniforms(radius)
     const sigma = radius / 2.0;
     const twoSigma2 = 2.0 * sigma * sigma;
 
-    uniforms = [radius];
+    uniforms = new Float32Array(34);
+    uniforms[0] = radius;
     let weightSum = 0;
 
     for (let i = 0; i <= radius; ++i) {
         const weight = Math.exp(-i * i / twoSigma2);
-        uniforms.push(weight);
+        uniforms[i+1] = weight;
         weightSum += (i == 0) ? weight : weight * 2;
     }
 
@@ -242,110 +244,123 @@ const byteMask = (1 << 8) - 1;
 
 function createShaderCode(image) {
     return `
-uint getR(uint rgba)
+fn getR(rgba: u32) -> u32
 {
     return rgba & ${byteMask};
 }
 
-uint getG(uint rgba)
+fn getG(rgba: u32) -> u32
 {
     return (rgba >> 8) & ${byteMask};
 }
 
-uint getB(uint rgba)
+fn getB(rgba: u32) -> u32
 {
     return (rgba >> 16) & ${byteMask};
 }
 
-uint getA(uint rgba)
+fn getA(rgba: u32) -> u32
 {
     return (rgba >> 24) & ${byteMask};
 }
 
-uint makeRGBA(uint r, uint g, uint b, uint a)
+fn makeRGBA(r: u32, g: u32, b: u32, a: u32) -> u32
 {
     return r + (g << 8) + (b << 16) + (a << 24);
 }
 
-void accumulateChannels(thread uint[] channels, uint startColor, float weight)
+var<private> channels : array<u32, 4>;
+fn accumulateChannels(startColor: u32, weight: f32)
 {
-    channels[0] += uint(float(getR(startColor)) * weight);
-    channels[1] += uint(float(getG(startColor)) * weight);
-    channels[2] += uint(float(getB(startColor)) * weight);
-    channels[3] += uint(float(getA(startColor)) * weight);
+    channels[0] += u32(f32(getR(startColor)) * weight);
+    channels[1] += u32(f32(getG(startColor)) * weight);
+    channels[2] += u32(f32(getB(startColor)) * weight);
+    channels[3] += u32(f32(getA(startColor)) * weight);
 
     // Compensate for brightness-adjusted weights.
-    if (channels[0] > 255)
+    if (channels[0] > 255) {
         channels[0] = 255;
+    }
 
-    if (channels[1] > 255)
+    if (channels[1] > 255) {
         channels[1] = 255;
+    }
 
-    if (channels[2] > 255)
+    if (channels[2] > 255) {
         channels[2] = 255;
+    }
 
-    if (channels[3] > 255)
+    if (channels[3] > 255) {
         channels[3] = 255;
+    }
 }
 
-uint horizontallyOffsetIndex(uint index, int offset, int rowStart, int rowEnd)
+fn horizontallyOffsetIndex(index: u32, offset: i32, rowStart: i32, rowEnd: i32) -> u32
 {
-    int offsetIndex = int(index) + offset;
+    let offsetIndex = i32(index) + offset;
 
-    if (offsetIndex < rowStart || offsetIndex >= rowEnd)
+    if (offsetIndex < rowStart || offsetIndex >= rowEnd) {
         return index;
+    }
     
-    return uint(offsetIndex);
+    return u32(offsetIndex);
 }
 
-uint verticallyOffsetIndex(uint index, int offset, uint length)
+fn verticallyOffsetIndex(index: u32, offset: i32, length: u32) -> u32
 {
-    int realOffset = offset * ${image.width};
-    int offsetIndex = int(index) + realOffset;
+    let realOffset = offset * ${image.width};
+    let offsetIndex = i32(index) + realOffset;
 
-    if (offsetIndex < 0 || offsetIndex >= int(length))
+    if (offsetIndex < 0 || offsetIndex >= i32(length)) {
         return index;
+    }
     
-    return uint(offsetIndex);
+    return u32(offsetIndex);
 }
 
-[numthreads(${threadsPerThreadgroup}, 1, 1)]
-compute void horizontal(constant uint[] source : register(u${sourceBufferBindingNum}),
-                        device uint[] output : register(u${outputBufferBindingNum}),
-                        constant float[] uniforms : register(b${uniformsBufferBindingNum}),
-                        float3 dispatchThreadID : SV_DispatchThreadID)
+@group(0) @binding(${sourceBufferBindingNum}) var<storage, read_write> source : array<u32>;
+@group(0) @binding(${outputBufferBindingNum}) var<storage, read_write> output : array<u32>;
+@group(0) @binding(${uniformsBufferBindingNum}) var<storage, read_write> uniforms : array<f32>;
+
+@workgroup_size(${threadsPerThreadgroup}, 1, 1)
+@compute
+fn horizontal(@builtin(global_invocation_id) dispatchThreadID: vec3<u32>)
 {
-    int radius = int(uniforms[0]);
-    int rowStart = ${image.width} * int(dispatchThreadID.y);
-    int rowEnd = ${image.width} * (1 + int(dispatchThreadID.y));
-    uint globalIndex = uint(rowStart) + uint(dispatchThreadID.x);
+    let radius = i32(uniforms[0]);
+    let rowStart = ${image.width} * i32(dispatchThreadID.y);
+    let rowEnd = ${image.width} * (1 + i32(dispatchThreadID.y));
+    let globalIndex = u32(rowStart) + u32(dispatchThreadID.x);
 
-    uint[4] channels;
+    var i = -radius;
+    loop {
+        if i > radius { break; }
 
-    for (int i = -radius; i <= radius; ++i) {
-        uint startColor = source[horizontallyOffsetIndex(globalIndex, i, rowStart, rowEnd)];
-        float weight = uniforms[uint(abs(i) + 1)];
-        accumulateChannels(@channels, startColor, weight);
+        let startColor = source[horizontallyOffsetIndex(globalIndex, i, rowStart, rowEnd)];
+        let weight = uniforms[u32(abs(i) + 1)];
+        accumulateChannels(startColor, weight);
+
+        i++;
     }
 
     output[globalIndex] = makeRGBA(channels[0], channels[1], channels[2], channels[3]);
 }
 
-[numthreads(1, ${threadsPerThreadgroup}, 1)]
-compute void vertical(constant uint[] source : register(u${sourceBufferBindingNum}),
-                        device uint[] output : register(u${outputBufferBindingNum}),
-                        constant float[] uniforms : register(b${uniformsBufferBindingNum}),
-                        float3 dispatchThreadID : SV_DispatchThreadID)
+@workgroup_size(1, ${threadsPerThreadgroup}, 1)
+@compute
+fn vertical(@builtin(global_invocation_id) dispatchThreadID: vec3<u32>)
 {
-    int radius = int(uniforms[0]);
-    uint globalIndex = uint(dispatchThreadID.x) * ${image.height} + uint(dispatchThreadID.y);
+    let radius = i32(uniforms[0]);
+    let globalIndex = u32(dispatchThreadID.x) * ${image.height} + u32(dispatchThreadID.y);
 
-    uint[4] channels;
+    var i = -radius;
+    loop {
+        if i > radius { break; }
 
-    for (int i = -radius; i <= radius; ++i) {
-        uint startColor = source[verticallyOffsetIndex(globalIndex, i, source.length)];
-        float weight = uniforms[uint(abs(i) + 1)];
-        accumulateChannels(@channels, startColor, weight);
+        let startColor = source[verticallyOffsetIndex(globalIndex, i, arrayLength(&source))];
+        let weight = uniforms[u32(abs(i) + 1)];
+        accumulateChannels(startColor, weight);
+
+        i++;
     }
 
     output[globalIndex] = makeRGBA(channels[0], channels[1], channels[2], channels[3]);
