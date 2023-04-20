@@ -101,7 +101,7 @@ async function helloCube() {
         sampleCount: 1,
         dimension: "2d",
         format: preferredBackingFormat,
-        usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST
+        usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,
     };
     const texture = device.createTexture(textureDescriptor);
     
@@ -118,16 +118,100 @@ async function helloCube() {
         minFilter: "linear"
     });
 
-    /*** Shader Setup ***/
+    const shader = `
+                struct VertexIn {
+                   @location(0) position: vec4<f32>,
+                   @location(1) color: vec4<f32>,
+                   @location(2) uv: vec2<f32>,
+                };
     
-    const uniformBindGroupLayout = device.createBindGroupLayout({ entries: [
-        { binding: 0, visibility: GPUShaderStage.VERTEX, buffer: {} },
-        { binding: 1, visibility: GPUShaderStage.FRAGMENT, texture: {} },
-        { binding: 2, visibility: GPUShaderStage.FRAGMENT, sampler: {} },
-    ] });
+                struct VertexOut {
+                   @builtin(position) position: vec4<f32>,
+                   @location(0) color: vec4<f32>,
+                   @location(1) uv: vec2<f32>,
+                };
+    
+                @group(0) @binding(0) var<uniform> time : vec3<f32>;
+                @group(0) @binding(1) var colorTexture: texture_2d<f32> ;
+                @group(0) @binding(2) var textureSampler : sampler;
+    
+                @vertex
+                fn vsmain(@builtin(vertex_index) VertexIndex: u32, vin: VertexIn) -> VertexOut
+                {
+                    let alpha = time[0];
+                    let beta = time[1];
+                    let gamma = time[2];
+                    let cA = cos(alpha);
+                    let sA = sin(alpha);
+                    let cB = cos(beta);
+                    let sB = sin(beta);
+                    let cG = cos(gamma);
+                    let sG = sin(gamma);
+    
+                    let m = mat4x4(cA * cB,  sA * cB,   -sB, 0,
+                                   cA*sB*sG - sA*cG,  sA*sB*sG + cA*cG,   cB * sG, 0,
+                                   cA*sB*cG + sA*sG, sA*sB*cG - cA*sG, cB * cG, 0,
+                                   0,     0,     0, 1);
 
+                    var vout : VertexOut;
+                    vout.position = vin.position * m;
+                    vout.position.z = (vout.position.z + 0.5) * 0.5;
+                    vout.color = vin.color;
+                    vout.uv = vin.uv;
+                    return vout;
+                }
+
+                @fragment
+                fn fsmain(in: VertexOut) -> @location(0) vec4<f32>
+                {
+                    return 0.5 * in.color + 0.5 * textureSample(colorTexture, textureSampler, in.uv);
+                }
+    `;
+
+    const shaderModule = device.createShaderModule({ code: shader });
+    
+    /* GPUPipelineStageDescriptors */
+    const vertexStageDescriptor = {
+        module: shaderModule,
+        entryPoint: "vsmain",
+        buffers: [{
+            arrayStride: vertexStride,
+            stepMode: "vertex",
+            attributes: [{
+                format: "float32x4",
+                offset: 0,
+                shaderLocation: 0,
+            }, {
+                format: "float32x4",
+                offset: 4 * 4,
+                shaderLocation: 1,
+            }, {
+                format: "float32x2",
+                offset: 8 * 4,
+                shaderLocation: 2,
+            }],
+        }]
+    };
+
+    const fragmentStageDescriptor = { module: shaderModule, entryPoint: "fsmain", targets: [ {format: preferredBackingFormat }, ],  };
+
+    /* GPURenderPipelineDescriptor */
+
+    const renderPipelineDescriptor = {
+        layout: "auto",
+        vertex: vertexStageDescriptor,
+        fragment: fragmentStageDescriptor,
+        primitive: {
+            topology: "triangle-list",
+            cullMode: "back"
+        },
+    };
+    /* GPURenderPipeline */
+    const renderPipeline = device.createRenderPipeline(renderPipelineDescriptor);
+
+    /*** Shader Setup ***/
     const uniformBindGroup = device.createBindGroup({
-        layout: uniformBindGroupLayout,
+        layout: renderPipeline.getBindGroupLayout(0),
         entries: [
           {
             binding: 0,
@@ -147,82 +231,6 @@ async function helloCube() {
         ],
       });
 
-    const mslSource = `
-                #define vertexInputPackedFloatSize 10
-                #include <metal_stdlib>
-                using namespace metal;
-                struct VertexIn {
-                   float4 position;
-                   float4 color;
-                   float2 uv;
-                };
-    
-                struct VertexOut {
-                   float4 position [[position]];
-                   float4 color;
-                   float2 uv;
-                };
-    
-                struct VertexShaderArguments {
-                    device float *time [[id(0)]];
-                };
-    
-                struct FragmentShaderArguments {
-                    texture2d<half> colorTexture;
-                    sampler textureSampler;
-                };
-    
-                vertex VertexOut vsmain(const device float *vertices [[buffer(0)]], const device VertexShaderArguments &values [[buffer(8)]], unsigned VertexIndex [[vertex_id]])
-                {
-                    VertexOut vout;
-                    float alpha = values.time[0];
-                    float beta = values.time[1];
-                    float gamma = values.time[2];
-                    float cA = cos(alpha);
-                    float sA = sin(alpha);
-                    float cB = cos(beta);
-                    float sB = sin(beta);
-                    float cG = cos(gamma);
-                    float sG = sin(gamma);
-    
-                    float4x4 m = float4x4(cA * cB,  sA * cB,   -sB, 0,
-                                          cA*sB*sG - sA*cG,  sA*sB*sG + cA*cG,   cB * sG, 0,
-                                          cA*sB*cG + sA*sG, sA*sB*cG - cA*sG, cB * cG, 0,
-                                          0,     0,     0, 1);
-                    VertexIn vin = *(device VertexIn*)(vertices + VertexIndex * vertexInputPackedFloatSize);
-                    vout.position = vin.position * m;
-                    vout.position.z = (vout.position.z + 0.5) * 0.5;
-                    vout.color = vin.color;
-                    vout.uv = vin.uv;
-                    return vout;
-                }
-
-                fragment float4 fsmain(VertexOut in [[stage_in]], device FragmentShaderArguments &values [[buffer(0)]])
-                {
-                    return 0.5 * in.color + 0.5 * float4(values.colorTexture.sample(values.textureSampler, in.uv));
-                }
-    `;
-
-    const shaderModule = device.createShaderModule({ code: mslSource, isWHLSL: false, hints: [ {layout: "auto" }, ] });
-    
-    /* GPUPipelineStageDescriptors */
-    const vertexStageDescriptor = { module: shaderModule, entryPoint: "vsmain" };
-
-    const fragmentStageDescriptor = { module: shaderModule, entryPoint: "fsmain", targets: [ {format: preferredBackingFormat }, ],  };
-
-    /* GPURenderPipelineDescriptor */
-
-    const renderPipelineDescriptor = {
-        layout: "auto",
-        vertex: vertexStageDescriptor,
-        fragment: fragmentStageDescriptor,
-        primitive: {
-            topology: "triangle-list",
-            cullMode: "back"
-        },
-    };
-    /* GPURenderPipeline */
-    const renderPipeline = device.createRenderPipeline(renderPipelineDescriptor);
     
     /*** Swap Chain Setup ***/
     function frameUpdate() {
@@ -254,10 +262,10 @@ async function helloCube() {
         
         /* GPURenderPassColorATtachmentDescriptor */
         const colorAttachmentDescriptor = {
-        view: renderAttachment,
-        loadOp: "clear",
-        storeOp: "store",
-        clearColor: darkBlue
+            view: renderAttachment,
+            loadOp: "clear",
+            storeOp: "store",
+            clearColor: darkBlue
         };
         
         /* GPURenderPassDescriptor */
