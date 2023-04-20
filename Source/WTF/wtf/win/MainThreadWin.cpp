@@ -43,6 +43,7 @@ void initializeMainThreadPlatform()
 {
     s_mainThread = Thread::currentID();
     Thread::initializeCurrentThreadInternal("Main Thread");
+    RunLoop::registerRunLoopMessageWindowClass();
 }
 
 bool isMainThread()

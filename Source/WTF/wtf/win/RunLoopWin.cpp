@@ -90,20 +90,16 @@ void RunLoop::stop()
 
 void RunLoop::registerRunLoopMessageWindowClass()
 {
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        WNDCLASS windowClass = { };
-        windowClass.lpfnWndProc     = RunLoop::RunLoopWndProc;
-        windowClass.cbWndExtra      = sizeof(RunLoop*);
-        windowClass.lpszClassName   = kRunLoopMessageWindowClassName;
-        bool result = ::RegisterClass(&windowClass);
-        RELEASE_ASSERT(result);
-    });
+    WNDCLASS windowClass = { };
+    windowClass.lpfnWndProc = RunLoop::RunLoopWndProc;
+    windowClass.cbWndExtra = sizeof(RunLoop*);
+    windowClass.lpszClassName = kRunLoopMessageWindowClassName;
+    bool result = ::RegisterClass(&windowClass);
+    RELEASE_ASSERT(result);
 }
 
 RunLoop::RunLoop()
 {
-    registerRunLoopMessageWindowClass();
     m_runLoopMessageWindow = ::CreateWindow(kRunLoopMessageWindowClassName, nullptr, 0,
         CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, HWND_MESSAGE, nullptr, nullptr, this);
     RELEASE_ASSERT(::IsWindow(m_runLoopMessageWindow));
