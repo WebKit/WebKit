@@ -378,6 +378,9 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
             return RenderPipeline::createInvalid(*this);
 
         const auto& vertexModule = WebGPU::fromAPI(descriptor.vertex.module);
+        if (!vertexModule.isValid())
+            return RenderPipeline::createInvalid(*this);
+
         const auto& vertexFunctionName = String::fromLatin1(descriptor.vertex.entryPoint);
 
         auto vertexFunction = vertexModule.getNamedFunction(vertexFunctionName, buildKeyValueReplacements(descriptor.vertex));
@@ -399,6 +402,9 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
             return RenderPipeline::createInvalid(*this);
 
         const auto& fragmentModule = WebGPU::fromAPI(fragmentDescriptor.module);
+        if (!fragmentModule.isValid())
+            return RenderPipeline::createInvalid(*this);
+
         const auto& fragmentFunctionName = String::fromLatin1(fragmentDescriptor.entryPoint);
 
         auto fragmentFunction = fragmentModule.getNamedFunction(fragmentFunctionName, buildKeyValueReplacements(fragmentDescriptor));

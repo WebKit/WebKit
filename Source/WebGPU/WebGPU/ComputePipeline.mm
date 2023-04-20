@@ -66,6 +66,9 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
         return ComputePipeline::createInvalid(*this);
 
     ShaderModule& shaderModule = WebGPU::fromAPI(descriptor.compute.module);
+    if (!shaderModule.isValid())
+        return ComputePipeline::createInvalid(*this);
+
     const PipelineLayout& pipelineLayout = WebGPU::fromAPI(descriptor.layout);
     auto label = fromAPI(descriptor.label);
 
