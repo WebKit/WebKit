@@ -1598,7 +1598,7 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant c
         auto oldStackTop = m_inlineStackTop;
         m_inlineStackTop = stackEntry;
         static_assert(OpcodeIDWidthBySize<JSOpcodeTraits, OpcodeSize::Wide32>::opcodeIDSize == 1);
-        m_currentIndex = BytecodeIndex(opcodeLengths[op_enter] + 1);
+        m_currentIndex = BytecodeIndex(opcodeLengths[op_enter]);
         m_exitOK = true;
         processSetLocalQueue();
         m_currentIndex = oldIndex;
