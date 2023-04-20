@@ -36,6 +36,8 @@
 #import <wtf/RetainPtr.h>
 
 static bool decidedPolicy;
+static bool shouldDenyCrossSitePopup;
+static bool crossSitePopupDenied;
 static bool finishedNavigation;
 static RetainPtr<WKNavigationAction> action;
 static RetainPtr<WKWebView> newWebView;
@@ -51,6 +53,13 @@ static RetainPtr<WKWebView> newWebView;
 
     action = navigationAction;
     decidedPolicy = true;
+}
+
+- (void)_webView:(WKWebView *)webView requestCrossSitePopupForDomain:(NSString *)requestingDomain underCurrentDomain:(NSString *)currentDomain completionHandler:(void (^)(BOOL result))completionHandler
+{
+    completionHandler(!shouldDenyCrossSitePopup);
+    if (shouldDenyCrossSitePopup)
+        crossSitePopupDenied = true;
 }
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
@@ -71,6 +80,8 @@ static RetainPtr<WKWebView> newWebView;
 
 TEST(WebKit, ShouldOpenExternalURLsInWindowOpen)
 {
+    // User-initiated window.open to the same host should allow popup.
+    shouldDenyCrossSitePopup = true;
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
     auto window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
@@ -110,7 +121,21 @@ TEST(WebKit, ShouldOpenExternalURLsInWindowOpen)
 
     [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
     [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    // User-initiated window.open to different host should not allow cross-site popup if requestCrossSitePopupForDomain is denied.
+    TestWebKitAPI::Util::run(&crossSitePopupDenied);
+    ASSERT_FALSE(didCreateWebView);
+    crossSitePopupDenied = false;
+    shouldDenyCrossSitePopup = false;
+
+    [webView loadHTMLString:@"<body onclick=\"window.open('http://apple.com/destination')\">" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    TestWebKitAPI::Util::run(&finishedNavigation);
+    finishedNavigation = false;
+
+    [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+
     TestWebKitAPI::Util::run(&didCreateWebView);
+    ASSERT_FALSE(crossSitePopupDenied);
     didCreateWebView = false;
 
     // User-initiated window.open to different host should allow external schemes and App Links.
