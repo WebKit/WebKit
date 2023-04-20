@@ -609,6 +609,18 @@ class Git(Scm):
             return sorted(result.get(remote, []))
         return result
 
+    def _is_on_default_branch(self, hash):
+        branches = self.branches_for(remote=None)
+        remote_keys = [None] + self.source_remotes()
+        default_branch = self.default_branch
+        for key in remote_keys:
+            if default_branch in branches.get(key, []):
+                return run([
+                    self.executable(), 'merge-base', '--is-ancestor', hash,
+                    'remotes/{}/{}'.format(key, default_branch) if key else default_branch,
+                ], cwd=self.root_path, capture_output=True, encoding='utf-8').returncode == 0
+        return default_branch in self.branches_for(hash)
+
     def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True, include_identifier=True):
         # Only git-svn checkouts can convert revisions to fully qualified commits, unless we happen to have a SVN cache built
         if revision:
@@ -677,7 +689,7 @@ class Git(Scm):
                 baseline = branch or 'HEAD'
                 is_default = baseline == default_branch
                 if baseline == 'HEAD':
-                    is_default = default_branch in self.branches_for(baseline)
+                    is_default = self._is_on_default_branch(baseline)
 
                 if is_default and parsed_branch_point:
                     raise self.Exception('Cannot provide a branch point for a commit on the default branch')
@@ -733,6 +745,8 @@ class Git(Scm):
 
         branch_point = None
         # A commit is often on multiple branches, the canonical branch is the one with the highest priority
+        if self._is_on_default_branch(hash):
+            branch = default_branch
         if branch != default_branch:
             branch = self.prioritize_branches(self.branches_for(hash), self.branch)
 
