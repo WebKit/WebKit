@@ -116,7 +116,7 @@ ExceptionOr<Ref<Notification>> Notification::createForServiceWorker(ScriptExecut
 
 Ref<Notification> Notification::create(ScriptExecutionContext& context, NotificationData&& data)
 {
-    Options options { data.direction, WTFMove(data.language), WTFMove(data.body), WTFMove(data.tag), WTFMove(data.iconURL), JSC::jsNull() };
+    Options options { data.direction, WTFMove(data.language), WTFMove(data.body), WTFMove(data.tag), WTFMove(data.iconURL), JSC::jsNull(), data.silent };
 
     auto notification = adoptRef(*new Notification(context, data.notificationID, WTFMove(data.title), WTFMove(options), SerializedScriptValue::createFromWireBytes(WTFMove(data.data))));
     notification->suspendIfNeeded();
@@ -134,6 +134,7 @@ Notification::Notification(ScriptExecutionContext& context, UUID identifier, Str
     , m_body(WTFMove(options.body).isolatedCopy())
     , m_tag(WTFMove(options.tag).isolatedCopy())
     , m_dataForBindings(WTFMove(dataForBindings))
+    , m_silent(options.silent)
     , m_state(Idle)
 {
     if (context.isDocument())
@@ -419,7 +420,8 @@ NotificationData Notification::data() const
         context.identifier(),
         *sessionID,
         MonotonicTime::now(),
-        m_dataForBindings->wireBytes()
+        m_dataForBindings->wireBytes(),
+        m_silent
     };
 }
 

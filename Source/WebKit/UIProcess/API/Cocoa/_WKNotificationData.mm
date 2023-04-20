@@ -47,6 +47,10 @@ static NSString *dataKey = @"data";
     _origin = [(NSString *)coreData.originString retain];
     _identifier = [(NSString *)coreData.notificationID.toString() retain];
     _userInfo = [coreData.dictionaryRepresentation() retain];
+    if (coreData.silent == std::nullopt)
+        _alert = _WKNotificationAlertDefault;
+    else
+        _alert = *coreData.silent ? _WKNotificationAlertSilent : _WKNotificationAlertEnabled;
 
     return self;
 }

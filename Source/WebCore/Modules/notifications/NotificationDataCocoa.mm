@@ -40,8 +40,17 @@ static NSString * const WebNotificationUUIDStringKey = @"WebNotificationUUIDStri
 static NSString * const WebNotificationContextUUIDStringKey = @"WebNotificationContextUUIDStringKey";
 static NSString * const WebNotificationSessionIDKey = @"WebNotificationSessionIDKey";
 static NSString * const WebNotificationDataKey = @"WebNotificationDataKey";
+static NSString * const WebNotificationSilentKey = @"WebNotificationSilentKey";
 
 namespace WebCore {
+
+static std::optional<bool> nsValueToOptionalBool(id value)
+{
+    if (![value isKindOfClass:[NSNumber class]])
+        return std::nullopt;
+
+    return [(NSNumber *)value boolValue];
+}
 
 std::optional<NotificationData> NotificationData::fromDictionary(NSDictionary *dictionary)
 {
@@ -78,7 +87,7 @@ std::optional<NotificationData> NotificationData::fromDictionary(NSDictionary *d
         return std::nullopt;
     }
 
-    NotificationData data { title, body, iconURL, tag, language, direction, originString, URL { String { serviceWorkerRegistrationURL } }, *uuid, contextIdentifier, PAL::SessionID { sessionID.unsignedLongLongValue }, { }, { static_cast<const uint8_t*>(notificationData.bytes), notificationData.length } };
+    NotificationData data { title, body, iconURL, tag, language, direction, originString, URL { String { serviceWorkerRegistrationURL } }, *uuid, contextIdentifier, PAL::SessionID { sessionID.unsignedLongLongValue }, { }, { static_cast<const uint8_t*>(notificationData.bytes), notificationData.length }, nsValueToOptionalBool(dictionary[WebNotificationSilentKey]) };
     return WTFMove(data);
 }
 
@@ -96,7 +105,8 @@ NSDictionary *NotificationData::dictionaryRepresentation() const
         WebNotificationUUIDStringKey : (NSString *)notificationID.toString(),
         WebNotificationContextUUIDStringKey : (NSString *)contextIdentifier.toString(),
         WebNotificationSessionIDKey : @(sourceSession.toUInt64()),
-        WebNotificationDataKey: [NSData dataWithBytes:data.data() length:data.size()]
+        WebNotificationDataKey: [NSData dataWithBytes:data.data() length:data.size()],
+        WebNotificationSilentKey: silent == std::nullopt ? [NSNull null] : [NSNumber numberWithBool:*silent]
     };
 }
 
