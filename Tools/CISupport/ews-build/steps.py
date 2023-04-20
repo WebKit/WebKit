@@ -2297,6 +2297,7 @@ class Trigger(trigger.Trigger):
             'platform',
             'fullPlatform',
             'architecture',
+            'additionalArguments'
         ]
         if patch:
             property_names += ['patch_id', 'bug_id', 'owner']
