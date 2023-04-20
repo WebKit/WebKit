@@ -2660,6 +2660,9 @@ bool AXObjectCache::shouldSkipBoundary(const CharacterOffset& previous, const Ch
 
 TextMarkerData AXObjectCache::textMarkerDataForNextCharacterOffset(const CharacterOffset& characterOffset)
 {
+    if (characterOffset.isNull())
+        return { };
+
     TextMarkerData data;
     auto next = characterOffset;
     auto previous = characterOffset;
@@ -2667,8 +2670,14 @@ TextMarkerData AXObjectCache::textMarkerDataForNextCharacterOffset(const Charact
     do {
         shouldContinue = false;
         next = nextCharacterOffset(next, false);
+        if (next.isNull())
+            return { };
+
         if (shouldSkipBoundary(previous, next))
             next = nextCharacterOffset(next, false);
+        if (next.isNull() || next.isEqual(previous))
+            return { };
+
         data = textMarkerDataForCharacterOffset(next);
 
         // We should skip next CharacterOffset if it's visually the same.
@@ -2688,6 +2697,9 @@ AXTextMarker AXObjectCache::nextTextMarker(const AXTextMarker& marker)
 
 TextMarkerData AXObjectCache::textMarkerDataForPreviousCharacterOffset(const CharacterOffset& characterOffset)
 {
+    if (characterOffset.isNull())
+        return { };
+
     TextMarkerData data;
     auto previous = characterOffset;
     auto next = characterOffset;
@@ -2695,6 +2707,9 @@ TextMarkerData AXObjectCache::textMarkerDataForPreviousCharacterOffset(const Cha
     do {
         shouldContinue = false;
         previous = previousCharacterOffset(previous, false);
+        if (previous.isNull() || previous.isEqual(next))
+            return { };
+
         data = textMarkerDataForCharacterOffset(previous);
 
         // We should skip previous CharacterOffset if it's visually the same.
