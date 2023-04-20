@@ -34,6 +34,7 @@
 namespace WGSL {
 
 class ShaderModule;
+struct PipelineLayout;
 
 class CallGraph {
     friend class CallGraphBuilder;
@@ -61,6 +62,6 @@ private:
     HashMap<AST::Function*, Vector<Callee>> m_callees;
 };
 
-CallGraph buildCallGraph(ShaderModule&);
+CallGraph buildCallGraph(ShaderModule&, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts);
 
 } // namespace WGSL

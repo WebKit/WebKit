@@ -39,8 +39,9 @@ CallGraph::CallGraph(ShaderModule& shaderModule)
 
 class CallGraphBuilder : public AST::Visitor {
 public:
-    CallGraphBuilder(ShaderModule& shaderModule)
+    CallGraphBuilder(ShaderModule& shaderModule, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
         : m_callGraph(shaderModule)
+        , m_pipelineLayouts(pipelineLayouts)
     {
     }
 
@@ -54,6 +55,7 @@ private:
 
     CallGraph m_callGraph;
     AST::Function* m_currentFunction;
+    const HashMap<String, std::optional<PipelineLayout>>& m_pipelineLayouts;
 };
 
 CallGraph CallGraphBuilder::build()
@@ -76,6 +78,9 @@ void CallGraphBuilder::initializeMappings()
             ASSERT_UNUSED(result, result.isNewEntry);
         }
 
+        if (!m_pipelineLayouts.contains(name))
+            continue;
+
         for (auto& attribute : functionDecl.attributes()) {
             if (is<AST::StageAttribute>(attribute)) {
                 auto stage = downcast<AST::StageAttribute>(attribute).stage();
@@ -93,9 +98,9 @@ void CallGraphBuilder::visit(AST::Function& functionDecl)
     m_currentFunction = nullptr;
 }
 
-CallGraph buildCallGraph(ShaderModule& shaderModule)
+CallGraph buildCallGraph(ShaderModule& shaderModule, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
 {
-    return CallGraphBuilder(shaderModule).build();
+    return CallGraphBuilder(shaderModule, pipelineLayouts).build();
 }
 
 } // namespace WGSL
