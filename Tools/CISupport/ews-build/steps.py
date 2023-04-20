@@ -1539,16 +1539,17 @@ class BugzillaMixin(AddToLogMixin):
             return defer.returnValue(1)
         return defer.returnValue(0)
 
+    @defer.inlineCallbacks
     def should_send_email_for_patch(self, patch_id):
         patch_json = self.get_patch_json(patch_id)
         if not patch_json:
-            self._addToLog('stdio', 'Unable to fetch patch {}'.format(patch_id))
-            return True
+            yield self._addToLog('stdio', 'Unable to fetch patch {}'.format(patch_id))
+            return defer.returnValue(True)
 
         obsolete = patch_json.get('is_obsolete')
         if obsolete == 1:
-            self._addToLog('stdio', 'Skipping email since patch {} is obsolete'.format(patch_id))
-            return False
+            yield self._addToLog('stdio', 'Skipping email since patch {} is obsolete'.format(patch_id))
+            return defer.returnValue(False)
 
         review_denied = False
         for flag in patch_json.get('flags', []):
@@ -1556,9 +1557,9 @@ class BugzillaMixin(AddToLogMixin):
                 review_denied = True
 
         if review_denied:
-            self._addToLog('stdio', 'Skipping email since patch {} is marked r-'.format(patch_id))
-            return False
-        return True
+            yield self._addToLog('stdio', 'Skipping email since patch {} is marked r-'.format(patch_id))
+            return defer.returnValue(False)
+        return defer.returnValue(True)
 
     def send_email_for_infrastructure_issue(self, infrastructure_issue_text):
         try:
@@ -2900,8 +2901,10 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
             pr_number = self.getProperty('github.number', '')
             sha = self.getProperty('github.head.sha', '')[:HASH_LENGTH_TO_DISPLAY]
 
-            if patch_id and not self.should_send_email_for_patch(patch_id):
-                return
+            if patch_id:
+                should_send_email = yield self.should_send_email_for_patch(patch_id)
+                if not should_send_email:
+                    return
             if pr_number:
                 should_send_email = yield self.should_send_email_for_pr(pr_number, self.getProperty('repository'))
                 if not should_send_email:
@@ -3880,8 +3883,10 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
             pr_number = self.getProperty('github.number', '')
             sha = self.getProperty('github.head.sha', '')[:HASH_LENGTH_TO_DISPLAY]
 
-            if patch_id and not self.should_send_email_for_patch(patch_id):
-                return
+            if patch_id:
+                should_send_email = yield self.should_send_email_for_patch(patch_id)
+                if not should_send_email:
+                    return
             if pr_number:
                 should_send_email = yield self.should_send_email_for_pr(pr_number, self.getProperty('repository'))
                 if not should_send_email:
