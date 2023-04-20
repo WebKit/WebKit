@@ -1023,6 +1023,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPU.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPU.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUAdapter.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUAdapter.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUAdapterInfo.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUAdapterInfo.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUAddressMode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUAddressMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUAutoLayoutMode.cpp

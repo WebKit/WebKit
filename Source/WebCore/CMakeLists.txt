@@ -1620,6 +1620,7 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/ShapeDetection/TextDetector.idl
     Modules/WebGPU/GPU.idl
     Modules/WebGPU/GPUAdapter.idl
+    Modules/WebGPU/GPUAdapterInfo.idl
     Modules/WebGPU/GPUAddressMode.idl
     Modules/WebGPU/GPUAutoLayoutMode.idl
     Modules/WebGPU/GPUBindGroup.idl

@@ -3391,6 +3391,7 @@ JSFontFaceSet.cpp
 JSFormDataEvent.cpp
 JSGPU.cpp
 JSGPUAdapter.cpp
+JSGPUAdapterInfo.cpp
 JSGPUAddressMode.cpp
 JSGPUAutoLayoutMode.cpp
 JSGPUBindGroup.cpp

@@ -45,6 +45,7 @@ $(PROJECT_DIR)/Modules/ShapeDetection/Point2D.idl
 $(PROJECT_DIR)/Modules/ShapeDetection/TextDetector.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPU.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUAdapter.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUAdapterInfo.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUAddressMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUAutoLayoutMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUBindGroup.idl

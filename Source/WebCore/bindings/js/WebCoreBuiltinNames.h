@@ -191,6 +191,7 @@ namespace WebCore {
     macro(GainNode) \
     macro(GPU) \
     macro(GPUAdapter) \
+    macro(GPUAdapterInfo) \
     macro(GPUBindGroup) \
     macro(GPUBindGroupLayout) \
     macro(GPUBuffer) \
