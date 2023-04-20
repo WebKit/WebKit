@@ -40,7 +40,7 @@ Segment::Ptr Segment::create(std::optional<I32InitExpr> offset, uint32_t sizeInB
     totalBytesChecked += sizeof(Segment);
     if (totalBytesChecked.hasOverflowed())
         return Ptr(nullptr, &Segment::destroy);
-    auto allocated = tryFastCalloc(totalBytesChecked, 1);
+    auto allocated = tryFastCalloc(1, totalBytesChecked);
     Segment* segment;
     if (!allocated.getValue(segment))
         return Ptr(nullptr, &Segment::destroy);
