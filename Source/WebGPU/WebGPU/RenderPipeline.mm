@@ -367,6 +367,12 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=249345 don't unconditionally set this to YES
     mtlRenderPipelineDescriptor.supportIndirectCommandBuffers = YES;
 
+    const PipelineLayout* pipelineLayout = nullptr;
+    if (descriptor.layout) {
+        if (auto& layout = WebGPU::fromAPI(descriptor.layout); layout.numberOfBindGroupLayouts())
+            pipelineLayout = &layout;
+    }
+
     {
         if (descriptor.vertex.nextInChain)
             return RenderPipeline::createInvalid(*this);
@@ -376,7 +382,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
 
         auto vertexFunction = vertexModule.getNamedFunction(vertexFunctionName, buildKeyValueReplacements(descriptor.vertex));
         if (!vertexFunction) {
-            auto libraryCreationResult = createLibrary(m_device, vertexModule, nullptr, vertexFunctionName, label);
+            auto libraryCreationResult = createLibrary(m_device, vertexModule, pipelineLayout, vertexFunctionName, label);
             if (!libraryCreationResult)
                 return RenderPipeline::createInvalid(*this);
 
@@ -398,7 +404,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         auto fragmentFunction = fragmentModule.getNamedFunction(fragmentFunctionName, buildKeyValueReplacements(fragmentDescriptor));
 
         if (!fragmentFunction) {
-            auto libraryCreationResult = createLibrary(m_device, fragmentModule, nullptr, fragmentFunctionName, label);
+            auto libraryCreationResult = createLibrary(m_device, fragmentModule, pipelineLayout, fragmentFunctionName, label);
             if (!libraryCreationResult)
                 return RenderPipeline::createInvalid(*this);
 
@@ -471,12 +477,6 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
     auto mtlCullMode = cullMode(descriptor.primitive.cullMode);
 
     MTLRenderPipelineReflection *reflection;
-    const PipelineLayout* pipelineLayout = nullptr;
-    if (descriptor.layout) {
-        if (auto& layout = WebGPU::fromAPI(descriptor.layout); layout.numberOfBindGroupLayouts())
-            pipelineLayout = &layout;
-    }
-
     id<MTLRenderPipelineState> renderPipelineState = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor options: pipelineLayout ? MTLPipelineOptionNone : MTLPipelineOptionArgumentInfo reflection:&reflection error:nil];
     if (!renderPipelineState)
         return RenderPipeline::createInvalid(*this);

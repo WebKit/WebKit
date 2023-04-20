@@ -93,7 +93,7 @@ SuccessfulCheck::SuccessfulCheck(Vector<Warning>&& messages, UniqueRef<ShaderMod
 
 SuccessfulCheck::~SuccessfulCheck() = default;
 
-inline PrepareResult prepareImpl(ShaderModule& ast, const HashMap<String, PipelineLayout>& pipelineLayouts)
+inline PrepareResult prepareImpl(ShaderModule& ast, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
 {
     PhaseTimes phaseTimes;
     PrepareResult result;
@@ -120,16 +120,15 @@ inline PrepareResult prepareImpl(ShaderModule& ast, const HashMap<String, Pipeli
     return result;
 }
 
-PrepareResult prepare(ShaderModule& ast, const HashMap<String, PipelineLayout>& pipelineLayouts)
+PrepareResult prepare(ShaderModule& ast, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
 {
     return prepareImpl(ast, pipelineLayouts);
 }
 
 PrepareResult prepare(ShaderModule& ast, const String& entryPointName, const std::optional<PipelineLayout>& pipelineLayout)
 {
-    HashMap<String, PipelineLayout> pipelineLayouts;
-    if (pipelineLayout.has_value())
-        pipelineLayouts.add(entryPointName, *pipelineLayout);
+    HashMap<String, std::optional<PipelineLayout>> pipelineLayouts;
+    pipelineLayouts.add(entryPointName, pipelineLayout);
     return prepareImpl(ast, pipelineLayouts);
 }
 

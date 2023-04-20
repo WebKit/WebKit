@@ -206,7 +206,7 @@ struct PrepareResult {
 
 // These are not allowed to fail.
 // All failures must have already been caught in check().
-PrepareResult prepare(ShaderModule&, const HashMap<String, PipelineLayout>&);
+PrepareResult prepare(ShaderModule&, const HashMap<String, std::optional<PipelineLayout>>&);
 PrepareResult prepare(ShaderModule&, const String& entryPointName, const std::optional<PipelineLayout>&);
 
 } // namespace WGSL

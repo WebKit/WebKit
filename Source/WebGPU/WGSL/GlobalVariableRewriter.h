@@ -33,6 +33,6 @@ class CallGraph;
 struct PipelineLayout;
 struct PrepareResult;
 
-void rewriteGlobalVariables(CallGraph&, const HashMap<String, PipelineLayout>&, PrepareResult&);
+void rewriteGlobalVariables(CallGraph&, const HashMap<String, std::optional<PipelineLayout>>&, PrepareResult&);
 
 } // namespace WGSL

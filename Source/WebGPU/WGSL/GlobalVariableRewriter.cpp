@@ -39,7 +39,7 @@ namespace WGSL {
 
 class RewriteGlobalVariables : public AST::Visitor {
 public:
-    RewriteGlobalVariables(CallGraph& callGraph, const HashMap<String, PipelineLayout>& pipelineLayouts, PrepareResult& result)
+    RewriteGlobalVariables(CallGraph& callGraph, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts, PrepareResult& result)
         : AST::Visitor()
         , m_callGraph(callGraph)
         , m_result(result)
@@ -326,7 +326,7 @@ AST::Identifier RewriteGlobalVariables::argumentBufferStructName(unsigned group)
     return AST::Identifier::make(makeString("__ArgumentBuferT_", String::number(group)));
 }
 
-void rewriteGlobalVariables(CallGraph& callGraph, const HashMap<String, PipelineLayout>& pipelineLayouts, PrepareResult& result)
+void rewriteGlobalVariables(CallGraph& callGraph, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts, PrepareResult& result)
 {
     RewriteGlobalVariables(callGraph, pipelineLayouts, result).run();
 }
