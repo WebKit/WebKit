@@ -517,6 +517,8 @@ public:
     void convertToIdentity();
     void convertToIdentityOn(Node*);
 
+    void convertToGetById(Graph&, CacheableIdentifier);
+
     bool mustGenerate() const
     {
         return m_flags & NodeMustGenerate;

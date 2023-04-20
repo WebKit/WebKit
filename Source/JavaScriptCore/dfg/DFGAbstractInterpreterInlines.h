@@ -2397,6 +2397,21 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
             if (didFold)
                 break;
+
+            if (m_graph.child(node, 0).useKind() == ObjectUse && node->arrayMode().type() == Array::Generic) {
+                AbstractValue& property = forNode(m_graph.child(node, 1));
+                if (JSValue constant = property.value()) {
+                    if (constant.isString()) {
+                        JSString* string = asString(constant);
+                        if (CacheableIdentifier::isCacheableIdentifierCell(string) && !parseIndex(CacheableIdentifier::createFromCell(string).uid())) {
+                            m_state.setShouldTryConstantFolding(true);
+                            didFoldClobberWorld();
+                            makeHeapTopForNode(node);
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         if (node->op() != GetByVal) {
