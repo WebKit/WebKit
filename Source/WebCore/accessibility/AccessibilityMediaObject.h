@@ -42,7 +42,6 @@ public:
     void enterFullscreen() const;
     void toggleMute();
     
-    bool hasControlsAttributeSet() const;
     String interactiveVideoDuration() const;
     bool isPlaying() const;
     bool isAutoplayEnabled() const;

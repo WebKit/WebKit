@@ -3904,6 +3904,44 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::relatedObjects(AX
     return cache->objectsForIDs(*relatedObjectIDs);
 }
 
+bool AccessibilityObject::shouldFocusActiveDescendant() const
+{
+    switch (ariaRoleAttribute()) {
+    case AccessibilityRole::ApplicationGroup:
+    case AccessibilityRole::ListBox:
+    case AccessibilityRole::Menu:
+    case AccessibilityRole::MenuBar:
+    case AccessibilityRole::RadioGroup:
+    case AccessibilityRole::Row:
+    case AccessibilityRole::PopUpButton:
+    case AccessibilityRole::Meter:
+    case AccessibilityRole::ProgressIndicator:
+    case AccessibilityRole::Toolbar:
+    case AccessibilityRole::Outline:
+    case AccessibilityRole::Tree:
+    case AccessibilityRole::Grid:
+    /* FIXME: replace these with actual roles when they are added to AccessibilityRole
+    composite
+    alert
+    alertdialog
+    status
+    timer
+    */
+        return true;
+    default:
+        return false;
+    }
+}
+
+AccessibilityObject* AccessibilityObject::activeDescendant() const
+{
+    auto activeDescendants = relatedObjects(AXRelationType::ActiveDescendant);
+    ASSERT(activeDescendants.size() <= 1);
+    if (!activeDescendants.isEmpty())
+        return dynamicDowncast<AccessibilityObject>(activeDescendants[0].get());
+    return nullptr;
+}
+
 bool AccessibilityObject::isActiveDescendantOfFocusedContainer() const
 {
     auto containers = activeDescendantOfObjects();

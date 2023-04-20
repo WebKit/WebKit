@@ -127,15 +127,6 @@ bool AccessibilityMediaObject::press()
     return true;
 }
 
-bool AccessibilityMediaObject::hasControlsAttributeSet() const
-{
-    HTMLMediaElement* element = mediaElement();
-    if (!element)
-        return false;
-    
-    return element->controls();
-}
-    
 bool AccessibilityMediaObject::isPlaying() const
 {
     HTMLMediaElement* element = mediaElement();

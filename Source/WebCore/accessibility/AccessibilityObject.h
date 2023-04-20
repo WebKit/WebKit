@@ -213,7 +213,6 @@ public:
     InsideLink insideLink() const final;
     bool isRequired() const override { return false; }
     bool supportsRequiredAttribute() const override { return false; }
-    virtual bool isLinked() const { return false; }
     bool isExpanded() const override;
     bool isVisible() const override { return true; }
     virtual bool isCollapsed() const { return false; }
@@ -511,8 +510,8 @@ public:
     void selectedChildren(AccessibilityChildrenVector&) override { }
     void setSelectedChildren(const AccessibilityChildrenVector&) override { }
     AccessibilityChildrenVector visibleChildren() override { return { }; }
-    virtual bool shouldFocusActiveDescendant() const { return false; }
-    AccessibilityObject* activeDescendant() const override { return nullptr; }
+    bool shouldFocusActiveDescendant() const;
+    AccessibilityObject* activeDescendant() const final;
 
     WEBCORE_EXPORT static AccessibilityRole ariaRoleToWebCoreRole(const String&);
     virtual bool hasAttribute(const QualifiedName&) const;

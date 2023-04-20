@@ -2452,44 +2452,6 @@ AXCoreObject* AccessibilityRenderObject::accessibilityHitTest(const IntPoint& po
     return result;
 }
 
-bool AccessibilityRenderObject::shouldFocusActiveDescendant() const
-{
-    switch (ariaRoleAttribute()) {
-    case AccessibilityRole::ApplicationGroup:
-    case AccessibilityRole::ListBox:
-    case AccessibilityRole::Menu:
-    case AccessibilityRole::MenuBar:
-    case AccessibilityRole::RadioGroup:
-    case AccessibilityRole::Row:
-    case AccessibilityRole::PopUpButton:
-    case AccessibilityRole::Meter:
-    case AccessibilityRole::ProgressIndicator:
-    case AccessibilityRole::Toolbar:
-    case AccessibilityRole::Outline:
-    case AccessibilityRole::Tree:
-    case AccessibilityRole::Grid:
-    /* FIXME: replace these with actual roles when they are added to AccessibilityRole
-    composite
-    alert
-    alertdialog
-    status
-    timer
-    */
-        return true;
-    default:
-        return false;
-    }
-}
-
-AccessibilityObject* AccessibilityRenderObject::activeDescendant() const
-{
-    auto activeDescendants = relatedObjects(AXRelationType::ActiveDescendant);
-    ASSERT(activeDescendants.size() <= 1);
-    if (!activeDescendants.isEmpty())
-        return downcast<AccessibilityObject>(activeDescendants[0].get());
-    return nullptr;
-}
-
 bool AccessibilityRenderObject::renderObjectIsObservable(RenderObject& renderer) const
 {
     // AX clients will listen for AXValueChange on a text control.
@@ -2520,7 +2482,7 @@ AccessibilityObject* AccessibilityRenderObject::observableObject() const
                 return cache->getOrCreate(renderer);
         }
     }
-    
+
     return nullptr;
 }
 
@@ -2530,7 +2492,7 @@ String AccessibilityRenderObject::expandedTextValue() const
         if (parent->hasTagName(abbrTag) || parent->hasTagName(acronymTag))
             return parent->getAttribute(titleAttr);
     }
-    
+
     return String();
 }
 
@@ -3126,18 +3088,6 @@ String AccessibilityRenderObject::stringValueForMSAA() const
     }
 
     return stringValue();
-}
-
-bool AccessibilityRenderObject::isLinked() const
-{
-    if (!isLinkable(*this))
-        return false;
-
-    Element* anchor = anchorElement();
-    if (!is<HTMLAnchorElement>(anchor))
-        return false;
-
-    return !downcast<HTMLAnchorElement>(*anchor).href().isEmpty();
 }
 
 bool AccessibilityRenderObject::hasBoldFont() const

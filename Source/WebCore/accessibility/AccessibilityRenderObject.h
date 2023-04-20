@@ -58,7 +58,6 @@ public:
     
     bool isAttachment() const override;
     bool isOffScreen() const override;
-    bool isLinked() const override;
     bool hasBoldFont() const override;
     bool hasItalicFont() const override;
     bool hasPlainText() const override;
@@ -128,8 +127,6 @@ public:
     void addChildren() override;
     bool canHaveChildren() const override;
     void selectedChildren(AccessibilityChildrenVector&) override;
-    bool shouldFocusActiveDescendant() const override;
-    AccessibilityObject* activeDescendant() const override;
 
     VisiblePositionRange visiblePositionRange() const override;
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const override;
