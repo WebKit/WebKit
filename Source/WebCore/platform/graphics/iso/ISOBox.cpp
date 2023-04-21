@@ -108,6 +108,11 @@ bool ISOFullBox::parse(DataView& view, unsigned& offset)
     if (!ISOBox::parse(view, offset))
         return false;
 
+    return parseVersionAndFlags(view, offset);
+}
+
+bool ISOFullBox::parseVersionAndFlags(DataView& view, unsigned& offset)
+{
     uint32_t versionAndFlags = 0;
     if (!checkedRead<uint32_t>(versionAndFlags, view, offset, BigEndian))
         return false;

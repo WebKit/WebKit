@@ -40,8 +40,11 @@ public:
     Vector<uint8_t> defaultKID() const { return m_defaultKID; }
     Vector<uint8_t> defaultConstantIV() const { return m_defaultConstantIV; }
 
+    bool parseWithoutTypeAndSize(JSC::DataView&);
+
 private:
     bool parse(JSC::DataView&, unsigned& offset) override;
+    bool parsePayload(JSC::DataView&, unsigned& offset);
 
     std::optional<int8_t> m_defaultCryptByteBlock;
     std::optional<int8_t> m_defaultSkipByteBlock;

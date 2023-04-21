@@ -1172,12 +1172,12 @@ void SourceBufferPrivateAVFObjC::keyStatusesChanged()
 bool SourceBufferPrivateAVFObjC::canEnqueueSample(uint64_t trackID, const MediaSampleAVFObjC& sample)
 {
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    // If sample buffers don't support AVContentKeySession: enqueue sample
-    if (!sampleBufferRenderersSupportKeySession())
+    // if sample is unencrytped: enqueue sample
+    if (!sample.isProtected())
         return true;
 
-    // if sample is unencrytped: enqueue sample
-    if (sample.keyIDs().isEmpty())
+    // If sample buffers don't support AVContentKeySession: enqueue sample
+    if (!sampleBufferRenderersSupportKeySession())
         return true;
 
     // if sample is encrypted, but we are not attached to a CDM: do not enqueue sample.
@@ -1216,7 +1216,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
         return;
 
     Ref<MediaSampleAVFObjC> sampleAVFObjC = static_reference_cast<MediaSampleAVFObjC>(WTFMove(sample));
-    if (!sampleAVFObjC->keyIDs().isEmpty() && !canEnqueueSample(trackID, sampleAVFObjC)) {
+    if (!canEnqueueSample(trackID, sampleAVFObjC)) {
         m_blockedSamples.append({ trackID, WTFMove(sampleAVFObjC) });
         return;
     }

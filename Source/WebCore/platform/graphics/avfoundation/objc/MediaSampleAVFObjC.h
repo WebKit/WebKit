@@ -81,7 +81,7 @@ protected:
     WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef, uint64_t trackID);
     WEBCORE_EXPORT virtual ~MediaSampleAVFObjC();
     
-    void initializeTimes();
+    void commonInit();
 
     RetainPtr<CMSampleBufferRef> m_sample;
     AtomString m_id;
