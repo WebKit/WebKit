@@ -535,4 +535,8 @@ class GitHub(bmocks.GitHub):
         if method == 'POST' and auth and stripped_url == '{}/graphql'.format(self.api_remote.split('/')[0]):
             return self.graphql(url, auth=auth, json=json)
 
+        # Update fork
+        if method == 'POST' and auth and stripped_url.endswith('/merge-upstream'):
+            return mocks.Response.fromJson({}, url=url)
+
         return super(GitHub, self).request(method, url, data=data, params=params, auth=auth, json=json, **kwargs)
