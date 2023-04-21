@@ -40,6 +40,7 @@
 
 namespace WebCore {
 class PlatformCALayer;
+class RunLoopObserver;
 class ThreadSafeImageBufferFlusher;
 class TiledBacking;
 }
@@ -159,7 +160,7 @@ private:
 
     std::optional<WebCore::FloatRect> m_viewExposedRect;
 
-    WebCore::Timer m_updateRenderingTimer;
+    std::unique_ptr<WebCore::RunLoopObserver> m_renderingUpdateRunLoopObserver;
     bool m_isRenderingSuspended { false };
     bool m_hasDeferredRenderingUpdate { false };
     bool m_inUpdateRendering { false };

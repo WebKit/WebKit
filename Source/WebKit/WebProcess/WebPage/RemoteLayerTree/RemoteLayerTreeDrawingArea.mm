@@ -49,9 +49,11 @@
 #import <WebCore/PageOverlayController.h>
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>
+#import <WebCore/RunLoopObserver.h>
 #import <WebCore/ScrollView.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TiledBacking.h>
+#import <WebCore/WindowEventLoop.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/SetForScope.h>
@@ -74,18 +76,25 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
     : DrawingArea(DrawingAreaType::RemoteLayerTree, parameters.drawingAreaIdentifier, webPage)
     , m_remoteLayerTreeContext(makeUnique<RemoteLayerTreeContext>(webPage))
     , m_rootLayers({ RootLayerInfo { GraphicsLayer::create(graphicsLayerFactory(), *this), nullptr, nullptr, initialRootFrame(webPage, parameters) } })
-    , m_updateRenderingTimer(*this, &RemoteLayerTreeDrawingArea::updateRendering)
 {
     webPage.corePage()->settings().setForceCompositingMode(true);
     m_rootLayers[0].layer->setName(MAKE_STATIC_STRING_IMPL("drawing area root"));
 
     m_commitQueue = adoptOSObject(dispatch_queue_create("com.apple.WebKit.WebContent.RemoteLayerTreeDrawingArea.CommitQueue", nullptr));
 
+    m_renderingUpdateRunLoopObserver = makeUnique<RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::RenderingUpdate), [this]() {
+        updateRendering();
+    });
+
     if (auto viewExposedRect = parameters.viewExposedRect)
         setViewExposedRect(viewExposedRect);
 }
 
-RemoteLayerTreeDrawingArea::~RemoteLayerTreeDrawingArea() = default;
+RemoteLayerTreeDrawingArea::~RemoteLayerTreeDrawingArea()
+{
+    if (m_renderingUpdateRunLoopObserver->isScheduled())
+        m_renderingUpdateRunLoopObserver->invalidate();
+}
 
 void RemoteLayerTreeDrawingArea::setNeedsDisplay()
 {
@@ -299,9 +308,12 @@ void RemoteLayerTreeDrawingArea::setExposedContentRect(const FloatRect& exposedC
 
 void RemoteLayerTreeDrawingArea::startRenderingUpdateTimer()
 {
-    if (m_updateRenderingTimer.isActive())
+    if (m_renderingUpdateRunLoopObserver->isScheduled())
         return;
-    m_updateRenderingTimer.startOneShot(0_s);
+
+    m_renderingUpdateRunLoopObserver->schedule();
+
+    WebCore::WindowEventLoop::breakToAllowRenderingUpdate();
 }
 
 void RemoteLayerTreeDrawingArea::triggerRenderingUpdate()
