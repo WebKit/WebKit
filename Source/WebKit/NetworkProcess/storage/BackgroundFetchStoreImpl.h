@@ -66,6 +66,12 @@ private:
     void storeFetchResponseBodyChunk(const WebCore::ServiceWorkerRegistrationKey&, const String&, size_t, const WebCore::SharedBuffer&, CompletionHandler<void(StoreResult)>&&) final;
     void retrieveResponseBody(const WebCore::ServiceWorkerRegistrationKey&, const String&, size_t, RetrieveRecordResponseBodyCallback&&) final;
 
+    void initializeFetchesInternal(const WebCore::ClientOrigin&, CompletionHandler<void(Vector<std::pair<RefPtr<WebCore::SharedBuffer>, String>>&&)>&&);
+    void clearFetchInternal(const WebCore::ClientOrigin&, const String&, CompletionHandler<void()>&&);
+    void clearAllFetchesInternal(const WebCore::ClientOrigin&, const Vector<String>&, CompletionHandler<void()>&&);
+    void storeFetchInternal(const WebCore::ClientOrigin&, const String&, uint64_t, uint64_t, std::optional<size_t>, Vector<uint8_t>&&, CompletionHandler<void(StoreResult)>&&);
+    void storeFetchResponseBodyChunkInternal(const WebCore::ClientOrigin&, const String&, size_t index, const WebCore::SharedBuffer&, CompletionHandler<void(StoreResult)>&&);
+
     String getFilename(const WebCore::ServiceWorkerRegistrationKey&, const String&);
     void registerFetch(const WebCore::ClientOrigin&, const WebCore::ServiceWorkerRegistrationKey&, const String& backgroundFetchIdentifier, String&& fetchStorageIdentifier);
     void loadAllFetches(CompletionHandler<void()>&&);

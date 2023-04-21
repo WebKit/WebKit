@@ -84,7 +84,7 @@ void BackgroundFetchStoreImpl::initializeFetches(const ServiceWorkerRegistration
     initializeFetches({ key.topOrigin(), SecurityOriginData::fromURL(key.scope()) }, WTFMove(callback));
 }
 
-void BackgroundFetchStoreImpl::initializeFetches(const ClientOrigin& origin, CompletionHandler<void()>&& callback)
+void BackgroundFetchStoreImpl::initializeFetches(const WebCore::ClientOrigin& origin, CompletionHandler<void()>&& callback)
 {
     if (!m_manager) {
         callback();
@@ -98,7 +98,8 @@ void BackgroundFetchStoreImpl::initializeFetches(const ClientOrigin& origin, Com
     }
 
     addResult.iterator->value.initializationCallbacks.append(WTFMove(callback));
-    auto internalCallback = [origin, weakEngine = WeakPtr { m_server->backgroundFetchEngine() }, protectedThis = Ref { *this }, manager = m_manager](Vector<std::pair<RefPtr<WebCore::SharedBuffer>, String>>&& fetches) {
+
+    initializeFetchesInternal(origin, [origin, weakEngine = WeakPtr { m_server->backgroundFetchEngine() }, protectedThis = Ref { *this }, manager = m_manager](Vector<std::pair<RefPtr<WebCore::SharedBuffer>, String>>&& fetches) {
         if (weakEngine && manager) {
             for (auto& fetch : fetches) {
                 weakEngine->addFetchFromStore({ fetch.first->data(), fetch.first->size() }, [&](auto& key, auto& identifier) {
@@ -122,8 +123,11 @@ void BackgroundFetchStoreImpl::initializeFetches(const ClientOrigin& origin, Com
         auto callbacks = std::exchange(iterator->value.initializationCallbacks, { });
         for (auto& callback : callbacks)
             callback();
-    };
+    });
+}
 
+void BackgroundFetchStoreImpl::initializeFetchesInternal(const WebCore::ClientOrigin& origin, CompletionHandler<void(Vector<std::pair<RefPtr<WebCore::SharedBuffer>, String>>&&)>&& internalCallback)
+{
     m_manager->dispatchTaskToBackgroundFetchManager(origin, [internalCallback = WTFMove(internalCallback)](auto* backgroundFetchManager) mutable {
         if (!backgroundFetchManager) {
             callOnMainRunLoop([internalCallback = WTFMove(internalCallback)]() mutable {
@@ -160,12 +164,15 @@ void BackgroundFetchStoreImpl::clearFetch(const ServiceWorkerRegistrationKey& ke
     }
     m_filenameToFetch.remove(fetchStorageIdentifier);
 
-    auto internalCallback = [protectedThis = Ref { *this }, fetchStorageIdentifier, callback = WTFMove(callback)]() mutable {
+    clearFetchInternal(origin, fetchStorageIdentifier, [protectedThis = Ref { *this }, fetchStorageIdentifier, callback = WTFMove(callback)]() mutable {
         if (protectedThis->m_manager)
             protectedThis->m_manager->notifyBackgroundFetchChange(fetchStorageIdentifier, BackgroundFetchChange::Removal);
         callback();
-    };
+    });
+}
 
+void BackgroundFetchStoreImpl::clearFetchInternal(const WebCore::ClientOrigin& origin, const String& fetchStorageIdentifier, CompletionHandler<void()>&& internalCallback)
+{
     m_manager->dispatchTaskToBackgroundFetchManager(origin, [fetchStorageIdentifier = crossThreadCopy(fetchStorageIdentifier), internalCallback = WTFMove(internalCallback)](auto* backgroundFetchManager) mutable {
         if (!backgroundFetchManager) {
             callOnMainRunLoop(WTFMove(internalCallback));
@@ -200,15 +207,18 @@ void BackgroundFetchStoreImpl::clearAllFetches(const ServiceWorkerRegistrationKe
         return true;
     });
 
-    auto internalCallback = [protectedThis = Ref { *this }, fetchStorageIdentifiers, callback = WTFMove(callback)]() mutable {
+    clearAllFetchesInternal(origin, fetchStorageIdentifiers, [protectedThis = Ref { *this }, fetchStorageIdentifiers, callback = WTFMove(callback)]() mutable {
         if (protectedThis->m_manager) {
             for (auto& fetchStorageIdentifier : fetchStorageIdentifiers)
                 protectedThis->m_manager->notifyBackgroundFetchChange(fetchStorageIdentifier, BackgroundFetchChange::Removal);
         }
         callback();
-    };
+    });
+}
 
-    m_manager->dispatchTaskToBackgroundFetchManager(origin, [fetchStorageIdentifiers = crossThreadCopy(WTFMove(fetchStorageIdentifiers)), internalCallback = WTFMove(internalCallback)](auto* backgroundFetchManager) mutable {
+void BackgroundFetchStoreImpl::clearAllFetchesInternal(const WebCore::ClientOrigin& origin, const Vector<String>& fetchStorageIdentifiers, CompletionHandler<void()>&& internalCallback)
+{
+    m_manager->dispatchTaskToBackgroundFetchManager(origin, [fetchStorageIdentifiers = crossThreadCopy(fetchStorageIdentifiers), internalCallback = WTFMove(internalCallback)](auto* backgroundFetchManager) mutable {
         if (!backgroundFetchManager) {
             callOnMainRunLoop(WTFMove(internalCallback));
             return;
@@ -238,15 +248,18 @@ void BackgroundFetchStoreImpl::storeFetch(const ServiceWorkerRegistrationKey& ke
     if (isNewFetchStorageIdentifier)
         fetchStorageIdentifier = BackgroundFetchStoreManager::createNewStorageIdentifier();
 
-    auto internalCallback = [protectedThis = Ref { *this }, origin, key, identifier, fetchStorageIdentifier, isNewFetchStorageIdentifier, callback = WTFMove(callback)](StoreResult result) mutable {
+    storeFetchInternal(origin, fetchStorageIdentifier, downloadTotal, uploadTotal, responseBodyIndexToClear, WTFMove(fetch), [protectedThis = Ref { *this }, origin, key, identifier, fetchStorageIdentifier, isNewFetchStorageIdentifier, callback = WTFMove(callback)](StoreResult result) mutable {
         if (result == StoreResult::OK) {
             if (protectedThis->m_manager)
                 protectedThis->m_manager->notifyBackgroundFetchChange(fetchStorageIdentifier, isNewFetchStorageIdentifier ? BackgroundFetchChange::Addition : BackgroundFetchChange::Update);
             protectedThis->registerFetch(origin, key, identifier, WTFMove(fetchStorageIdentifier));
         }
         callback(result);
-    };
+    });
+}
 
+void BackgroundFetchStoreImpl::storeFetchInternal(const WebCore::ClientOrigin& origin, const String& fetchStorageIdentifier, uint64_t downloadTotal, uint64_t uploadTotal, std::optional<size_t> responseBodyIndexToClear, Vector<uint8_t>&& fetch, CompletionHandler<void(StoreResult)>&& internalCallback)
+{
     m_manager->dispatchTaskToBackgroundFetchManager(origin, [fetchStorageIdentifier = crossThreadCopy(fetchStorageIdentifier), downloadTotal, uploadTotal, responseBodyIndexToClear, fetch = WTFMove(fetch), internalCallback = WTFMove(internalCallback)](auto* backgroundFetchManager) mutable {
         if (!backgroundFetchManager) {
             callOnMainRunLoop([internalCallback = WTFMove(internalCallback)]() mutable {
@@ -282,12 +295,15 @@ void BackgroundFetchStoreImpl::storeFetchResponseBodyChunk(const ServiceWorkerRe
         return;
     }
 
-    auto internalCallback = [protectedThis = Ref { *this }, fetchStorageIdentifier, callback = WTFMove(callback)](StoreResult result) mutable {
+    storeFetchResponseBodyChunkInternal(origin, fetchStorageIdentifier, index, data, [protectedThis = Ref { *this }, fetchStorageIdentifier, callback = WTFMove(callback)](StoreResult result) mutable {
         if (result == StoreResult::OK && protectedThis->m_manager)
             protectedThis->m_manager->notifyBackgroundFetchChange(fetchStorageIdentifier, BackgroundFetchChange::Update);
         callback(result);
-    };
+    });
+}
 
+void BackgroundFetchStoreImpl::storeFetchResponseBodyChunkInternal(const WebCore::ClientOrigin& origin, const String& fetchStorageIdentifier, size_t index, const SharedBuffer& data, CompletionHandler<void(StoreResult)>&& internalCallback)
+{
     m_manager->dispatchTaskToBackgroundFetchManager(origin, [fetchStorageIdentifier = crossThreadCopy(fetchStorageIdentifier), index, data = Ref { data }, internalCallback = WTFMove(internalCallback)](auto* backgroundFetchManager) mutable {
         if (!backgroundFetchManager) {
             callOnMainRunLoop([internalCallback = WTFMove(internalCallback)]() mutable {
