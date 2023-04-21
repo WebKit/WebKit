@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Constraints.h"
 #include "TypeStore.h"
 
 namespace WGSL {
@@ -36,33 +37,8 @@ struct NumericVariable {
 using AbstractValue = std::variant<NumericVariable, unsigned>;
 
 struct TypeVariable {
-    enum Constraint : uint8_t {
-        None = 0,
-
-        Bool          = 1 << 0,
-        AbstractInt   = 1 << 1,
-        I32           = 1 << 2,
-        U32           = 1 << 3,
-        AbstractFloat = 1 << 4,
-        F32           = 1 << 5,
-        F16           = 1 << 6,
-
-        ConcreteFloat = F16 | F32,
-        Float = ConcreteFloat | AbstractFloat,
-
-        ConcreteInteger = I32 | U32,
-        Integer = ConcreteInteger | AbstractInt,
-        SignedInteger = I32 | AbstractInt,
-
-        Scalar = Bool | Integer | Float,
-        ConcreteScalar = Bool | ConcreteInteger | ConcreteFloat,
-
-        SignedNumber = Float | SignedInteger,
-        Number = Float | Integer,
-    };
-
     unsigned id;
-    Constraint constraints { None };
+    Constraint constraints { Constraints::None };
 };
 
 struct AbstractVector;

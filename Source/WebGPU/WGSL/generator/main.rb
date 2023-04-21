@@ -14,7 +14,7 @@ class Constraint
     end
 
     def to_cpp
-        "TypeVariable::#{self}"
+        "Constraints::#{self}"
     end
 end
 
