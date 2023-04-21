@@ -18,7 +18,7 @@
 
       // Go full screen
       await test_driver.bless("request full screen");
-      await iframe.contentDocument.documentElement.requestFullscreen();
+      await document.body.requestFullscreen();
 
       // Lock the orientation from the iframe
       const opposite = getOppositeOrientation();
@@ -48,7 +48,11 @@
       const iframes = [outerIframe, innerIframe];
 
       // Go full screen
-      await test_driver.bless("request full screen");
+      await test_driver.bless(
+        "request full screen",
+        null,
+        innerIframe.contentWindow
+      );
       await innerIframe.contentDocument.documentElement.requestFullscreen();
       const opposite = getOppositeOrientation();
 

@@ -58,8 +58,8 @@
     ).wait_for("change");
 
     // Lock from the iframe
-    await test_driver.bless("request fullscreen");
-    await document.documentElement.requestFullscreen();
+    await test_driver.bless("request fullscreen", null, iframe.contentWindow);
+    await iframe.contentDocument.documentElement.requestFullscreen();
     const lockPromise = iframe.contentWindow.screen.orientation.lock(opposite);
 
     const winningEvent = await Promise.race([
