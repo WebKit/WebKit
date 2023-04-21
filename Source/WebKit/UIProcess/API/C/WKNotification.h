@@ -32,6 +32,14 @@
 extern "C" {
 #endif
 
+
+enum {
+    kWKNotificationAlertDefault = 1 << 0,
+    kWKNotificationAlertSilent = 1 << 1,
+    kWKNotificationAlertEnabled = 1 << 2
+};
+typedef uint32_t WKNotificationAlert;
+
 WK_EXPORT WKTypeID WKNotificationGetTypeID();
 
 WK_EXPORT WKStringRef WKNotificationCopyTitle(WKNotificationRef notification);
@@ -45,6 +53,7 @@ WK_EXPORT uint64_t WKNotificationGetID(WKNotificationRef notification);
 WK_EXPORT WKStringRef WKNotificationCopyDataStoreIdentifier(WKNotificationRef notification);
 WK_EXPORT WKDataRef WKNotificationCopyCoreIDForTesting(WKNotificationRef notification);
 WK_EXPORT bool WKNotificationGetIsPersistent(WKNotificationRef notification);
+WK_EXPORT WKNotificationAlert WKNotificationGetAlert(WKNotificationRef notification);
 
 #ifdef __cplusplus
 }
