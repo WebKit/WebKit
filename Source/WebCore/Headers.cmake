@@ -1,8 +1,4 @@
 set(WebCore_PRIVATE_FRAMEWORK_HEADERS
-    Modules/ShapeDetection/Implementation/Cocoa/BarcodeDetectorImplementation.h
-    Modules/ShapeDetection/Implementation/Cocoa/FaceDetectorImplementation.h
-    Modules/ShapeDetection/Implementation/Cocoa/TextDetectorImplementation.h
-
     Modules/ShapeDetection/Interfaces/BarcodeDetectorInterface.h
     Modules/ShapeDetection/Interfaces/BarcodeDetectorOptionsInterface.h
     Modules/ShapeDetection/Interfaces/BarcodeFormatInterface.h

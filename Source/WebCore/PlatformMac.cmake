@@ -445,6 +445,10 @@ list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
 )
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    Modules/ShapeDetection/Implementation/Cocoa/BarcodeDetectorImplementation.h
+    Modules/ShapeDetection/Implementation/Cocoa/FaceDetectorImplementation.h
+    Modules/ShapeDetection/Implementation/Cocoa/TextDetectorImplementation.h
+
     Modules/airplay/WebMediaSessionManager.h
     Modules/airplay/WebMediaSessionManagerClient.h
 
