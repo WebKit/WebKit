@@ -48,7 +48,6 @@ namespace WebCore {
 class SharedBuffer;
 class FontDescription;
 class FontCreationContext;
-class FragmentedSharedBuffer;
 
 template <typename T> class FontTaggedSettings;
 typedef FontTaggedSettings<int> FontFeatureSettings;
