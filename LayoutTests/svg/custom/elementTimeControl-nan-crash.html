@@ -2,14 +2,15 @@
 <html>
 <head>
 <script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
     function crash() {
         var animate = document.getElementById('animate');
         var svg = document.getElementById('svg');
-        animate.endElementAt(NaN);
-        animate.beginElementAt(NaN);
+        try { animate.endElementAt(NaN); } catch (e) {}
+        try { animate.beginElementAt(NaN); } catch (e) {}
         svg.setCurrentTime(2);
-        if (window.testRunner)
-            testRunner.dumpAsText();
     }
 </script>
 </head>
