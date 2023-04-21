@@ -5592,7 +5592,12 @@ void testStoreBaseIndex()
     {
         auto test = compile([=](CCallHelpers& jit) {
             emitFunctionPrologue(jit);
-            jit.storeDouble(FPRInfo::argumentFPR0, CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::TimesEight, -8));
+#if OS(WINDOWS)
+            constexpr FPRReg inputFPR = FPRInfo::argumentFPR2;
+#else
+            constexpr FPRReg inputFPR = FPRInfo::argumentFPR0;
+#endif
+            jit.storeDouble(inputFPR, CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::TimesEight, -8));
             emitFunctionEpilogue(jit);
             jit.ret();
         });
@@ -5603,7 +5608,12 @@ void testStoreBaseIndex()
     {
         auto test = compile([=](CCallHelpers& jit) {
             emitFunctionPrologue(jit);
-            jit.storeDouble(FPRInfo::argumentFPR0, CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::TimesEight, 8));
+#if OS(WINDOWS)
+            constexpr FPRReg inputFPR = FPRInfo::argumentFPR2;
+#else
+            constexpr FPRReg inputFPR = FPRInfo::argumentFPR0;
+#endif
+            jit.storeDouble(inputFPR, CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::TimesEight, 8));
             emitFunctionEpilogue(jit);
             jit.ret();
         });
@@ -5616,7 +5626,12 @@ void testStoreBaseIndex()
     {
         auto test = compile([=](CCallHelpers& jit) {
             emitFunctionPrologue(jit);
-            jit.storeFloat(FPRInfo::argumentFPR0, CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::TimesFour, -4));
+#if OS(WINDOWS)
+            constexpr FPRReg inputFPR = FPRInfo::argumentFPR2;
+#else
+            constexpr FPRReg inputFPR = FPRInfo::argumentFPR0;
+#endif
+            jit.storeFloat(inputFPR, CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::TimesFour, -4));
             emitFunctionEpilogue(jit);
             jit.ret();
         });
@@ -5627,7 +5642,12 @@ void testStoreBaseIndex()
     {
         auto test = compile([=](CCallHelpers& jit) {
             emitFunctionPrologue(jit);
-            jit.storeFloat(FPRInfo::argumentFPR0, CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::TimesFour, 4));
+#if OS(WINDOWS)
+            constexpr FPRReg inputFPR = FPRInfo::argumentFPR2;
+#else
+            constexpr FPRReg inputFPR = FPRInfo::argumentFPR0;
+#endif
+            jit.storeFloat(inputFPR, CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::TimesFour, 4));
             emitFunctionEpilogue(jit);
             jit.ret();
         });
