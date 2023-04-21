@@ -49,9 +49,11 @@
 #import <WebCore/PageOverlayController.h>
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>
+#import <WebCore/RunLoopObserver.h>
 #import <WebCore/ScrollView.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TiledBacking.h>
+#import <WebCore/WindowEventLoop.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/SetForScope.h>
@@ -74,18 +76,24 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
     : DrawingArea(DrawingAreaType::RemoteLayerTree, parameters.drawingAreaIdentifier, webPage)
     , m_remoteLayerTreeContext(makeUnique<RemoteLayerTreeContext>(webPage))
     , m_rootLayers({ RootLayerInfo { GraphicsLayer::create(graphicsLayerFactory(), *this), nullptr, nullptr, initialRootFrame(webPage, parameters) } })
-    , m_updateRenderingTimer(*this, &RemoteLayerTreeDrawingArea::updateRendering)
 {
     webPage.corePage()->settings().setForceCompositingMode(true);
     m_rootLayers[0].layer->setName(MAKE_STATIC_STRING_IMPL("drawing area root"));
 
     m_commitQueue = adoptOSObject(dispatch_queue_create("com.apple.WebKit.WebContent.RemoteLayerTreeDrawingArea.CommitQueue", nullptr));
 
+    m_renderingUpdateRunLoopObserver = makeUnique<RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::RenderingUpdate), [this]() {
+        updateRendering();
+    });
+
     if (auto viewExposedRect = parameters.viewExposedRect)
         setViewExposedRect(viewExposedRect);
 }
 
-RemoteLayerTreeDrawingArea::~RemoteLayerTreeDrawingArea() = default;
+RemoteLayerTreeDrawingArea::~RemoteLayerTreeDrawingArea()
+{
+    invalidateRenderingUpdateObserver();
+}
 
 void RemoteLayerTreeDrawingArea::setNeedsDisplay()
 {
@@ -243,9 +251,11 @@ void RemoteLayerTreeDrawingArea::setLayerTreeStateIsFrozen(bool isFrozen)
 
     m_isRenderingSuspended = isFrozen;
 
-    if (!m_isRenderingSuspended && m_hasDeferredRenderingUpdate) {
+    if (m_isRenderingSuspended)
+        invalidateRenderingUpdateObserver();
+    else if (m_hasDeferredRenderingUpdate) {
         m_hasDeferredRenderingUpdate = false;
-        startRenderingUpdateTimer();
+        startRenderingUpdateObserver();
     }
 }
 
@@ -297,11 +307,19 @@ void RemoteLayerTreeDrawingArea::setExposedContentRect(const FloatRect& exposedC
     triggerRenderingUpdate();
 }
 
-void RemoteLayerTreeDrawingArea::startRenderingUpdateTimer()
+void RemoteLayerTreeDrawingArea::startRenderingUpdateObserver()
 {
-    if (m_updateRenderingTimer.isActive())
+    if (m_renderingUpdateRunLoopObserver->isScheduled())
         return;
-    m_updateRenderingTimer.startOneShot(0_s);
+
+    m_renderingUpdateRunLoopObserver->schedule();
+
+    WebCore::WindowEventLoop::breakToAllowRenderingUpdate();
+}
+
+void RemoteLayerTreeDrawingArea::invalidateRenderingUpdateObserver()
+{
+    m_renderingUpdateRunLoopObserver->invalidate();
 }
 
 void RemoteLayerTreeDrawingArea::triggerRenderingUpdate()
@@ -311,7 +329,7 @@ void RemoteLayerTreeDrawingArea::triggerRenderingUpdate()
         return;
     }
 
-    startRenderingUpdateTimer();
+    startRenderingUpdateObserver();
 }
 
 void RemoteLayerTreeDrawingArea::setNextRenderingUpdateRequiresSynchronousImageDecoding()
@@ -426,6 +444,8 @@ void RemoteLayerTreeDrawingArea::updateRendering()
             }
         });
     }).get());
+
+    invalidateRenderingUpdateObserver();
 }
 
 void RemoteLayerTreeDrawingArea::didCompleteRenderingUpdateDisplay()
@@ -505,7 +525,7 @@ void RemoteLayerTreeDrawingArea::activityStateDidChange(OptionSet<WebCore::Activ
     if (activityStateChangeID != ActivityStateChangeAsynchronous) {
         m_remoteLayerTreeContext->setNextRenderingUpdateRequiresSynchronousImageDecoding();
         m_activityStateChangeID = activityStateChangeID;
-        startRenderingUpdateTimer();
+        startRenderingUpdateObserver();
     }
 
     // FIXME: We may want to match behavior in TiledCoreAnimationDrawingArea by firing these callbacks after the next compositing flush, rather than immediately after
