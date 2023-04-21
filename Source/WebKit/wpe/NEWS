@@ -1,4 +1,30 @@
 =================
+WPE WebKit 2.40.2
+=================
+
+What's new in WPE WebKit 2.40.2?
+
+  - Properly handle the modifier value when exporting/importing DMA-BUF buffers.
+  - Don't require GApplication for bubblewrap sandbox.
+  - The Bubblewrap sandbox no longer requires setting an application
+    identifier via GApplication to operate correctly. Using GApplication
+    is still recommended, but optional.
+  - Show DRM device and render node if available in webkit://gpu.
+  - Long touch presses no longer generate mouse click events, to align with
+    other web engines and WebKit ports.
+  - New build options to fine-tune WPE for certain hardware platforms
+    (Westeros, Broadcom, Broadcom Nexus, Amlogic, Raspberry Pi).
+  - Ensure that the correct GPU device is used for WebGL when using GBM.
+  - Fix touchmove events not being produced.
+  - Fix cap height calculation in font metrics.
+  - Fix the build on i386.
+  - Fix the build with libgbm disabled.
+  - Fix the build with USE_WPE_VIDEO_PLANE_DISPLAY_DMABUF enabled.
+  - Translation updates: Swedish.
+  - Add WebKitClipboardPermissionRequest to handle DOM paste access requests.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.39.4
 =================
 
