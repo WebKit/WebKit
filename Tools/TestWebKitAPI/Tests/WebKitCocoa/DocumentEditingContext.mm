@@ -937,7 +937,8 @@ TEST(DocumentEditingContext, RequestRectsInTextAreaInsideIFrame)
     }
 }
 
-TEST(DocumentEditingContext, RequestRectsInTextAreaInsideScrolledIFrame)
+// FIXME when rdar://107850452 is resolved
+TEST(DocumentEditingContext, DISABLED_RequestRectsInTextAreaInsideScrolledIFrame)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     // Use "padding: 0" for the <textarea> as the default user-agent stylesheet can effect text wrapping.
