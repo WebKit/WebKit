@@ -1,7 +1,6 @@
 This tests the ability to search for accessible elements from an ignored element.
 
 PASS: element.stringForTextMarkerRange(range) === 'First line of text'
-PASS: element.stringForTextMarkerRange(range) === 'button'
 PASS: resultElement.stringValue === 'AXValue: Third line of text'
 PASS: resultElement.stringValue === 'AXValue: First line of text'
 

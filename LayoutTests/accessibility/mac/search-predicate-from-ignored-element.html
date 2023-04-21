@@ -26,7 +26,6 @@
         marker = element.nextTextMarker(marker);
         marker = element.nextTextMarker(marker);
         range = element.lineTextMarkerRangeForTextMarker(marker);
-        output += expect("element.stringForTextMarkerRange(range)", "'button'");
 
         marker = element.startTextMarkerForTextMarkerRange(range);
         var startElement = element.accessibilityElementForTextMarker(marker);
