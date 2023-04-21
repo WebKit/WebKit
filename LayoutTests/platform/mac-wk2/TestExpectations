@@ -22,9 +22,9 @@ fast/speechsynthesis/mac [ Pass ]
 fast/visual-viewport/tiled-drawing [ Pass ]
 fast/web-share [ Pass ]
 imported/w3c/web-platform-tests/web-share [ Pass ]
-[ BigSur+ ] media/modern-media-controls/overflow-support [ Pass ]
+[ Monterey+ ] media/modern-media-controls/overflow-support [ Pass ]
 http/tests/media/modern-media-controls/overflow-support [ Pass ]
-[ BigSur+ ] media/modern-media-controls/tracks-support [ Pass ]
+[ Monterey+ ] media/modern-media-controls/tracks-support [ Pass ]
 remote-layer-tree [ Pass ]
 remote-layer-tree/ios [ Skip ]
 scrollingcoordinator [ Pass ]
@@ -341,7 +341,7 @@ webkit.org/b/96438 fast/spatial-navigation
 # rdar://76434263 ([ Monterey wk2 ] 4 http/wpt/mediarecorder/ layout-tests are flakey timing out)
 [ Monterey+ ] http/wpt/mediarecorder/mute-tracks.html [ Pass Failure Timeout ]
 http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html [ Pass Failure Timeout ]
-[ BigSur+ ] http/wpt/mediarecorder/video-rotation.html [ Pass Failure Timeout ]
+[ Monterey+ ] http/wpt/mediarecorder/video-rotation.html [ Pass Failure Timeout ]
 
 # On Monterey+, CFNetwork does full NSURLSession partitioning based on first-party domains and ITP session partitioning is thus disabled.
 [ Monterey+ ] http/tests/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction.py [ Skip ]
@@ -539,7 +539,7 @@ webkit.org/b/125996 accessibility/mac/search-predicate-visible-button.html [ Fai
 
 webkit.org/b/162999 accessibility/mac/wk1-set-selected-text-marker-range-input-element.html [ Skip ]
 
-webkit.org/b/162999 [ BigSur+ Debug ] accessibility/mac/native-text-control-set-selected-textmarker-range.html [ Pass Failure ]
+webkit.org/b/162999 [ Monterey+ Debug ] accessibility/mac/native-text-control-set-selected-textmarker-range.html [ Pass Failure ]
 
 # testRunner.setUseDeferredFrameLoading is not implemented.
 webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Skip ]
@@ -899,13 +899,13 @@ http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Pas
 http/tests/resourceLoadStatistics/enforce-samesite-strict-based-on-top-frame-unique-redirects-to.html [ Pass ]
 
 # The CNAME and cookie transform SPIs are only available in macOS Big Sur and above.
-[ BigSur+ ] http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-1p-cname.html [ Pass ]
-[ BigSur+ ] http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-3p-cname.html [ Pass ]
-[ BigSur+ ] http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-matching-cname.html [ Pass ]
-[ BigSur+ ] http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-no-cname.html [ Pass ]
-[ BigSur+ ] http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-1p-cname.html [ Pass ]
-[ BigSur+ ] http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-3p-cname.html [ Pass ]
-[ BigSur+ ] http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-no-cname.html [ Pass ]
+[ Monterey+ ] http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-1p-cname.html [ Pass ]
+[ Monterey+ ] http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-3p-cname.html [ Pass ]
+[ Monterey+ ] http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-matching-cname.html [ Pass ]
+[ Monterey+ ] http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-no-cname.html [ Pass ]
+[ Monterey+ ] http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-1p-cname.html [ Pass ]
+[ Monterey+ ] http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-3p-cname.html [ Pass ]
+[ Monterey+ ] http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-no-cname.html [ Pass ]
 
 # Skipped in general expectations since they only work on iOS and Mac, WK2.
 media/deactivate-audio-session.html [ Pass ]
@@ -1161,20 +1161,20 @@ media/modern-media-controls/scrubber-support/scrubber-support-media-api.html [ P
 
 # <rdar://problem/63554249> [20A279] DQ bots are seeing http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html and http/tests/cache/disk-cache/disk-cache-validation-no-body.html are timing out
 webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html [ Pass Failure Timeout ]
-[ BigSur+ Release ] http/tests/cache/disk-cache/disk-cache-validation-no-body.html [ Pass Timeout ]
+[ Monterey+ Release ] http/tests/cache/disk-cache/disk-cache-validation-no-body.html [ Pass Timeout ]
 
 # <rdar://problem/63547191> webrtc/h265.html consistently times out on several Mac models
-[ BigSur+ Release ] webrtc/h265.html [ Pass Timeout ]
+[ Monterey+ Release ] webrtc/h265.html [ Pass Timeout ]
 
 # <rdar://problem/64547962> REGRESSION: fast/multicol/newmulticol/ tests are flaky failing.
-[ BigSur+ ] fast/multicol/newmulticol/adjacent-spanners.html [ Pass Failure ]
-[ BigSur+ ] fast/multicol/newmulticol/insert-spanner4.html [ Pass Failure ]
-[ BigSur+ ] fast/multicol/newmulticol/remove-row-content2.html [ Pass Failure ]
-[ BigSur+ ] fast/multicol/newmulticol/remove-row-content8.html [ Pass Failure ]
-[ BigSur+ ] fast/multicol/newmulticol/spanner-last.html [ Pass Failure ]
+[ Monterey+ ] fast/multicol/newmulticol/adjacent-spanners.html [ Pass Failure ]
+[ Monterey+ ] fast/multicol/newmulticol/insert-spanner4.html [ Pass Failure ]
+[ Monterey+ ] fast/multicol/newmulticol/remove-row-content2.html [ Pass Failure ]
+[ Monterey+ ] fast/multicol/newmulticol/remove-row-content8.html [ Pass Failure ]
+[ Monterey+ ] fast/multicol/newmulticol/spanner-last.html [ Pass Failure ]
 
 # <rdar://problem/64700658> imported/w3c/web-platform-tests/css/css-font-loading/idlharness.https.html is a flaky timeout and flaky failure
-[ BigSur+ ] imported/w3c/web-platform-tests/css/css-font-loading/idlharness.https.html [ Pass Failure Timeout ]
+[ Monterey+ ] imported/w3c/web-platform-tests/css/css-font-loading/idlharness.https.html [ Pass Failure Timeout ]
 
 # rdar://66703773 (REGRESSION (20A2316-20A2348b): http/tests/security/contentSecurityPolicy/plugin-blocked-in-about-blank-window.html is a constant failure)
 [ arm64 ] http/tests/security/contentSecurityPolicy/plugin-blocked-in-about-blank-window.html [ Skip ]
@@ -1189,17 +1189,17 @@ webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navig
 [ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.shape.3.html [ Failure ]
 [ arm64 ] inspector/canvas/memory.html [ Failure ]
 
-webkit.org/b/229671 [ BigSur+ Debug arm64 ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/svg-embedded-sizing/svg-in-img-auto.html [ Pass Crash ]
+webkit.org/b/229671 [ Monterey+ Debug arm64 ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/svg-embedded-sizing/svg-in-img-auto.html [ Pass Crash ]
 
-webkit.org/b/230105 [ BigSur+ Debug arm64 ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/svg-embedded-sizing/svg-in-iframe-percentage.html [ Pass Crash ]
+webkit.org/b/230105 [ Monterey+ Debug arm64 ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/svg-embedded-sizing/svg-in-iframe-percentage.html [ Pass Crash ]
 
-webkit.org/b/230105 [ BigSur+ Debug arm64 ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/svg-embedded-sizing/svg-in-img-fixed.html [ Pass Crash ]
+webkit.org/b/230105 [ Monterey+ Debug arm64 ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/svg-embedded-sizing/svg-in-img-fixed.html [ Pass Crash ]
 
-webkit.org/b/230105 [ BigSur+ Debug arm64 ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/svg-embedded-sizing/svg-in-img-percentage.html [ Pass Crash ]
+webkit.org/b/230105 [ Monterey+ Debug arm64 ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/svg-embedded-sizing/svg-in-img-percentage.html [ Pass Crash ]
 
 webkit.org/b/230691 [ Release ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-unsafe-none.https.html [ Pass Failure ]
 
-webkit.org/b/230113 [ BigSur+ Debug arm64 ] svg/animations/animate-elem-14-t-drt.html [ Pass Crash ]
+webkit.org/b/230113 [ Monterey+ Debug arm64 ] svg/animations/animate-elem-14-t-drt.html [ Pass Crash ]
 
 # rdar://66806059 (REGRESSION (20A2321a-20A2348b): 4 fast hidpi tests are a flaky image failure)
 [ arm64 ] fast/flexbox/hidpi-simple-line-layout-with-flexbox-and-transition.html [ ImageOnlyFailure ]
@@ -1212,8 +1212,8 @@ webkit.org/b/230696 imported/w3c/web-platform-tests/webrtc/RTCDataChannel-close.
 webkit.org/b/215611 [ Debug ] fast/scrolling/mac/scrollbars/overflow-overlay-scrollbar-hovered.html [ Pass Timeout ]
 
 # rdar://65269589 ([ macOS and iOS ] media/vp9.html is failing consistently.)
-[ BigSur+ ] media/vp9.html [ Pass ]
-[ BigSur+ ] webrtc/vp9-vtb.html [ Pass ]
+[ Monterey+ ] media/vp9.html [ Pass ]
+[ Monterey+ ] webrtc/vp9-vtb.html [ Pass ]
 
 webkit.org/b/215700 fast/scrolling/mac/scrollbars/overlay-scrollbar-hovered.html [ Pass Failure Timeout ]
 
@@ -1232,7 +1232,7 @@ http/tests/resourceLoadStatistics/exemptDomains/ [ Skip ]
 fast/selectors/text-field-selection-window-inactive-stroke-color.html [ Pass ImageOnlyFailure ]
 
 #<rdar://68952824> [ macOS iOS wk2 ] media/media-continues-playing-after-replace-source.html is a flaky failure
-[ BigSur+ ] media/media-continues-playing-after-replace-source.html [ Pass Failure ]
+[ Monterey+ ] media/media-continues-playing-after-replace-source.html [ Pass Failure ]
 
 webkit.org/b/217001 fast/scrolling/latching/latched-scroll-into-nonfast-region.html [ Pass Failure ]
 
@@ -1317,7 +1317,7 @@ webkit.org/b/221930 media/media-fragments/TC0034.html [ Skip ]
 
 webkit.org/b/222209 inspector/debugger/async-stack-trace-basic.html [ Pass Timeout ]
 
-webkit.org/b/222183 [ BigSur+ ] imported/w3c/web-platform-tests/media-source/mediasource-seek-during-pending-seek.html [ Pass Failure ]
+webkit.org/b/222183 [ Monterey+ ] imported/w3c/web-platform-tests/media-source/mediasource-seek-during-pending-seek.html [ Pass Failure ]
 
 webkit.org/b/222365 inspector/dom/attributeModified.html [ Pass Timeout ]
 
@@ -1359,8 +1359,8 @@ webkit.org/b/223292 [ arm64 ] fast/table/multiple-captions-crash4.html [ Pass Im
 
 webkit.org/b/223293 media/media-fullscreen-return-to-inline.html [ Pass Failure Timeout ]
 
-# webkit.org/b/223385 Two imported webrtc tests are flakey text failing on Release for BigSur+ and iOS 14
-[ BigSur+ Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-connectionSetup.html [ Pass Failure ]
+# webkit.org/b/223385 Two imported webrtc tests are flakey text failing on Release for Monterey+ and iOS 14
+[ Monterey+ Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-connectionSetup.html [ Pass Failure ]
 
 webkit.org/b/223462 [ Debug arm64 ] imported/w3c/web-platform-tests/mediacapture-streams/GUM-optional-constraint.https.html [ Pass Crash ]
 
@@ -1428,7 +1428,7 @@ webkit.org/b/227273 fast/css-custom-paint/out-of-memory-while-adding-worklet-mod
 
 webkit.org/b/227467 [ arm64 Release ] fast/css/sticky/sticky-left.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/227504 [ BigSur+ Debug ] accessibility/table-title.html [ Pass Timeout ]
+webkit.org/b/227504 [ Monterey+ Debug ] accessibility/table-title.html [ Pass Timeout ]
 
 webkit.org/b/227536 [ BigSur ] imported/w3c/web-platform-tests/webrtc/simplecall-no-ssrcs.https.html [ Pass Failure ]
 
@@ -1454,7 +1454,7 @@ webkit.org/b/230366 [ Release ] fast/canvas/canvas-composite-text-alpha.html [ P
 
 webkit.org/b/230413 fast/canvas/canvas-drawImage-detached-leak.html [ Pass Failure ]
 
-webkit.org/b/226828 [ BigSur+ ] media/modern-media-controls/overflow-support/chapters.html [ Pass Failure Timeout ]
+webkit.org/b/226828 [ Monterey+ ] media/modern-media-controls/overflow-support/chapters.html [ Pass Failure Timeout ]
 
 webkit.org/b/227922 inspector/canvas/setShaderProgramDisabled.html [ Pass Failure Timeout ]
 
@@ -1493,11 +1493,11 @@ webkit.org/b/228528 [ BigSur Debug arm64 ] fast/text/emoji-overlap.html [ Pass I
 
 webkit.org/b/228591 fast/scrolling/mac/programmatic-scroll-overrides-rubberband.html [ Pass Failure ]
 
-webkit.org/b/229156 [ BigSur+ ] webrtc/video-addTrack.html [ Pass Failure ]
+webkit.org/b/229156 [ Monterey+ ] webrtc/video-addTrack.html [ Pass Failure ]
 
 webkit.org/b/229015 [ BigSur ] webgl/2.0.0/conformance2/textures/image_bitmap_from_video/tex-2d-rgb565-rgb-unsigned_short_5_6_5.html [ Pass Timeout Failure ]
 
-webkit.org/b/229158 [ BigSur+ ] webrtc/video-setDirection.html [ Pass Failure ]
+webkit.org/b/229158 [ Monterey+ ] webrtc/video-setDirection.html [ Pass Failure ]
 
 webkit.org/b/229163 webrtc/video-addTransceiver.html [ Pass Failure ]
 
@@ -1506,7 +1506,7 @@ webkit.org/b/229614 [ BigSur ] webrtc/video-mediastreamtrack-stats.html [ Pass C
 webkit.org/b/229166 webrtc/utf8-sdp.html [ Pass Failure ]
 
 #rdar://82032946 ([Mac wk2] webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html is a flaky image-only fail)
-[ BigSur+ ] webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Pass Failure ]
+[ Monterey+ ] webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Pass Failure ]
 
 # webkit.org/b/228200 Setting multiple test expectations for Monetery on OpenSource:
 [ Monterey ] model-element/model-element-source.html [ Pass Crash ]
@@ -1564,7 +1564,7 @@ webkit.org/b/230117 [ BigSur Debug ] http/tests/inspector/network/intercept-requ
 webkit.org/b/230117 [ BigSur Debug ] http/tests/inspector/network/intercept-request-with-response.html [ Pass Failure ]
 webkit.org/b/230117 [ BigSur Debug ] http/tests/inspector/target/pause-on-inline-debugger-statement.html [ Pass Failure ]
 
-webkit.org/b/230504 [ BigSur+ Release ] css3/masking/reference-clip-path-animate-transform-repaint.html [ Pass Failure ]
+webkit.org/b/230504 [ Monterey+ Release ] css3/masking/reference-clip-path-animate-transform-repaint.html [ Pass Failure ]
 
 webkit.org/b/230514 [ BigSur Release ] imported/w3c/web-platform-tests/html/webappapis/structured-clone/structured-clone.any.html [ Pass Crash ]
 
@@ -1740,23 +1740,23 @@ webkit.org/b/255407 [ Monterey x86_64 ] imported/w3c/web-platform-tests/html/sem
 [ Ventura+ x86_64 ] svg/gradients/spreadMethodAlpha.svg [ ImageOnlyFailure ]
 [ Ventura+ x86_64 ] scrollbars/scrolling-by-page-accounting-oversized-fixed-elements-on-keyboard-spacebar.html [ Pass Failure ]
 [ Ventura+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute.https.sub.html [ Pass Failure ]
-[ BigSur+ x86_64 ] imported/mozilla/svg/blend-color.svg [ ImageOnlyFailure ]
+[ Monterey+ x86_64 ] imported/mozilla/svg/blend-color.svg [ ImageOnlyFailure ]
 [ Monterey+ Debug arm64 ] imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-frame.https.html [ Crash ]
-[ BigSur+ x86_64 ] imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-2.html [ ImageOnlyFailure ]
-[ BigSur+ x86_64 ] imported/mozilla/svg/blend-luminosity.svg [ ImageOnlyFailure ]
+[ Monterey+ x86_64 ] imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-2.html [ ImageOnlyFailure ]
+[ Monterey+ x86_64 ] imported/mozilla/svg/blend-luminosity.svg [ ImageOnlyFailure ]
 [ Ventura+ Debug x86_64 ] fast/visual-viewport/viewport-dimensions-exclude-custom-scrollbars.html [ Pass Failure ]
 [ Ventura+ Debug x86_64 ] fast/text/international/system-language/han-text-style.html [ ImageOnlyFailure ]
 [ Ventura+ Debug x86_64 ] fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolled-down-then-up.html [ Failure ]
 [ Ventura+ Debug x86_64 ] fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolled-down.html [ Failure ]
 [ Ventura+ Debug x86_64 ] fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolling-layers-state.html [ Failure ]
-[ BigSur+ ] fast/speechrecognition/start-recognition-then-stop.html [ Pass Failure ]
-[ BigSur+ x86_64 ] fast/scrolling/keyboard-scrolling-distance-downArrow.html [ Pass Timeout Crash ]
-[ BigSur+ x86_64 ] fast/frames/message-port-postMessage-unload-event.html [ Pass Failure ]
-[ BigSur+ x86_64 ] fast/mediastream/getUserMedia-to-canvas-1.html [ Pass Timeout ]
-[ BigSur+ x86_64 ] fast/mediastream/getUserMedia-to-canvas-2.html [ Pass Timeout ]
+[ Monterey+ ] fast/speechrecognition/start-recognition-then-stop.html [ Pass Failure ]
+[ Monterey+ x86_64 ] fast/scrolling/keyboard-scrolling-distance-downArrow.html [ Pass Timeout Crash ]
+[ Monterey+ x86_64 ] fast/frames/message-port-postMessage-unload-event.html [ Pass Failure ]
+[ Monterey+ x86_64 ] fast/mediastream/getUserMedia-to-canvas-1.html [ Pass Timeout ]
+[ Monterey+ x86_64 ] fast/mediastream/getUserMedia-to-canvas-2.html [ Pass Timeout ]
 [ Monterey+ ] fast/borders/border-painting-correctness-dashed.html [ ImageOnlyFailure ]
 [ Monterey+ ] fast/borders/border-painting-correctness-dotted.html [ ImageOnlyFailure ]
-[ BigSur+ x86_64 ] css3/blending/background-blend-mode-body-image.html [ ImageOnlyFailure ]
+[ Monterey+ x86_64 ] css3/blending/background-blend-mode-body-image.html [ ImageOnlyFailure ]
 [ BigSur Monterey ] fast/images/animated-heics-draw.html [ Skip ]
 [ Ventura+ ] fast/images/animated-heics-draw.html [ Pass Timeout ]
 [ Ventura+ ] model-element/model-element-ready.html [ Pass Failure ]
@@ -1765,35 +1765,35 @@ webkit.org/b/255407 [ Monterey x86_64 ] imported/w3c/web-platform-tests/html/sem
 [ Ventura+ ] http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html [ Failure ]
 [ Ventura+ ]  http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js.html [ Failure ]
 [ Monterey+ ] http/tests/media/video-webm-stall.html  [ Failure ]
-[ BigSur+ ] streams/readable-stream-default-controller-error.html [ Pass Crash ]
-[ BigSur+ ] fast/mediastream/mediastreamtrack-video-clone.html [ Pass Failure ]
-[ BigSur+ ] fast/repaint/fixed-move-after-keyboard-scroll.html [ Pass Failure ]
-[ BigSur+ x86_64 ] http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html [ Pass Failure ]
+[ Monterey+ ] streams/readable-stream-default-controller-error.html [ Pass Crash ]
+[ Monterey+ ] fast/mediastream/mediastreamtrack-video-clone.html [ Pass Failure ]
+[ Monterey+ ] fast/repaint/fixed-move-after-keyboard-scroll.html [ Pass Failure ]
+[ Monterey+ x86_64 ] http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html [ Pass Failure ]
 [ Monterey+ x86_64 ] http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers.html [ Pass Failure ]
-[ Bigsur+ x86_64 ] http/wpt/mediarecorder/pause-recording.html [ Pass Failure ]
-[ BigSur+ x86_64 ] http/wpt/webrtc/audiovideo-script-transform.html [ Pass Failure ]
+[ Monterey+ x86_64 ] http/wpt/mediarecorder/pause-recording.html [ Pass Failure ]
+[ Monterey+ x86_64 ] http/wpt/webrtc/audiovideo-script-transform.html [ Pass Failure ]
 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/block-local-documents-inheriting-none.https.html [ Pass Failure ]
 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_no_argument.html [ Pass Failure ]
-[ BigSur+ x86_64 ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/resume-timer-on-history-back.html [ Pass Failure ]
-[ BigSur+ x86_64 ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https.html [ Pass Failure ]
-[ BigSur+ x86_64 ] scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html [ Pass Failure ]
-[ BigSur+ x86_64 ] scrollbars/scrolling-by-page-ignoring-transparent-fixed-elements-on-keyboard-spacebar.html [ Pass Failure ]
-[ BigSur+ x86_64 ] scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Pass Failure ]
+[ Monterey+ x86_64 ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/resume-timer-on-history-back.html [ Pass Failure ]
+[ Monterey+ x86_64 ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https.html [ Pass Failure ]
+[ Monterey+ x86_64 ] scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html [ Pass Failure ]
+[ Monterey+ x86_64 ] scrollbars/scrolling-by-page-ignoring-transparent-fixed-elements-on-keyboard-spacebar.html [ Pass Failure ]
+[ Monterey+ x86_64 ] scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Pass Failure ]
 [ Ventura+ ] platform/mac-wk2/plugins/asynchronous-destroy-before-initialization.html [ Pass Failure ]
 [ Monterey+ x86_64 ] media/restricted-audio-playback-with-multiple-settimeouts.html [ Pass Failure ]
-[ BigSur+ ] imported/w3c/web-platform-tests/workers/SharedWorker_dataUrl.html [ Pass Failure ]
-[ Bigsur+ x86_64 ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Pass Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/workers/SharedWorker_dataUrl.html [ Pass Failure ]
+[ Monterey+ x86_64 ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Pass Failure ]
 [ Monterey+ Debug x86_64 ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-so.https.html [ Pass Failure ]
 [ Ventura+ Debug x86_64 ] webrtc/datachannel/bufferedAmountLowThreshold-default.html [ Pass Failure ]
 [ Ventura Debug x86_64 ] editing/caret/color-span-inside-editable-background.html [ Pass ImageOnlyFailure ]
 [ Ventura+ x86_64 ] fast/css/text-overflow-input-focus-placeholder.html [ Pass ImageOnlyFailure ]
-[ BigSur+ x86_64 ] webrtc/captureCanvas-webrtc-software-h264-high.html [ Pass Failure Timeout ]
+[ Monterey+ x86_64 ] webrtc/captureCanvas-webrtc-software-h264-high.html [ Pass Failure Timeout ]
 [ Ventura+ x86_64 Debug ] webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rg32f-rg-float.html [ Pass Timeout ]
 [ Ventura+ Debug x86_64 ] webgl/2.0.0/conformance/state/gl-object-get-calls.html [ Pass Timeout ]
 [ Monterey+ Debug x86_64 ] webgl/2.0.0/conformance/context/context-release-with-workers.html [ Pass Timeout ]
-[ BigSur+ x86_64 ] resize-observer/resize-observer-with-zoom.html [ Pass Timeout ]
+[ Monterey+ x86_64 ] resize-observer/resize-observer-with-zoom.html [ Pass Timeout ]
 [ Monterey+ Debug x86_64 ] storage/indexeddb/request-with-null-open-db-request.html [ Pass Crash ]
-[ BigSur+ ] imported/w3c/web-platform-tests/service-workers/cache-storage/cross-partition.https.tentative.html [ Pass Failure Crash ]
+[ Monterey+ ] imported/w3c/web-platform-tests/service-workers/cache-storage/cross-partition.https.tentative.html [ Pass Failure Crash ]
 
 # WebGL in OffscreenCanvas requires the GPUP.
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.getcontext.worker.html [ Skip ]

@@ -902,7 +902,7 @@ webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.
 fast/canvas/canvas-draw-canvas-on-canvas-shadow.html [ Pass Failure ]
 fast/canvas/canvas-fillRect-gradient-shadow.html [ Pass Failure ]
 
-webkit.org/b/230313 [ BigSur+ ] fast/canvas/canvas-draw-canvas-on-canvas-flushing-order.html [ Pass ImageOnlyFailure ]
+webkit.org/b/230313 [ Monterey+ ] fast/canvas/canvas-draw-canvas-on-canvas-flushing-order.html [ Pass ImageOnlyFailure ]
 
 # SVG gradients are not bit-for-bit equivalent through a scale.
 webkit.org/b/142192 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
@@ -1723,7 +1723,7 @@ http/tests/in-app-browser-privacy/ [ Skip ]
 imported/w3c/web-platform-tests/css/css-sizing/percentage-height-in-flexbox.html [ Pass Failure ]
 
 # <rdar://problem/61948094>
-[ BigSur+ ] imported/w3c/web-platform-tests/dom/events/Event-dispatch-redispatch.html [ Pass Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/dom/events/Event-dispatch-redispatch.html [ Pass Failure ]
 
 # rdar://66841102 ([AS Layout Tests] REGRESSION (r264522): [ MacOS wk1 ] 2 css-logical/parsing tests are a flaky failure)
 imported/w3c/web-platform-tests/css/css-logical/parsing/margin-block-inline-computed.html [ Pass Failure ]
@@ -1740,92 +1740,92 @@ imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implici
 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-without-codecs-parameter.html [ Pass Failure ]
 
 # WebP images
-[ BigSur+ ] fast/images/webp-as-image.html [ Pass ImageOnlyFailure ]
-[ BigSur+ ] fast/images/animated-webp-as-image.html [ Pass ]
+[ Monterey+ ] fast/images/webp-as-image.html [ Pass ImageOnlyFailure ]
+[ Monterey+ ] fast/images/animated-webp-as-image.html [ Pass ]
 
 # <rdar://problem/59015708>
-[ BigSur+ ] fast/images/animated-webp.html [ Skip ]
+[ Monterey+ ] fast/images/animated-webp.html [ Skip ]
 
 # <rdar://problem/59605703> REGRESSION: crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-private.html is failing
-[ BigSur+ ] crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-private.html [ Pass Failure ]
-[ BigSur+ ] crypto/workers/subtle/rsa-postMessage-worker.html [ Pass Failure ]
+[ Monterey+ ] crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-private.html [ Pass Failure ]
+[ Monterey+ ] crypto/workers/subtle/rsa-postMessage-worker.html [ Pass Failure ]
 
 # <rdar://problem/59607934> REGRESSION: [ 20A184-20A211 ] 3 fast/mediastream tests are failing after updating the bots
-[ BigSur+ ] fast/mediastream/MediaStream-video-element-displays-buffer.html [ Pass Failure Timeout ]
-[ BigSur+ ] fast/mediastream/resize-trim.html [ Pass Failure ]
-[ BigSur+ ] fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html [ Pass Timeout ]
+[ Monterey+ ] fast/mediastream/MediaStream-video-element-displays-buffer.html [ Pass Failure Timeout ]
+[ Monterey+ ] fast/mediastream/resize-trim.html [ Pass Failure ]
+[ Monterey+ ] fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html [ Pass Timeout ]
 
 # <rdar://problem/60349279> [ wk2 ] fast/replaced/frame-removed-during-resize-smaller.html is flaky crashing.
-[ BigSur+ ] fast/replaced/frame-removed-during-resize-smaller.html [ Pass Crash ]
+[ Monterey+ ] fast/replaced/frame-removed-during-resize-smaller.html [ Pass Crash ]
 
 # <rdar://problem/60512303> [ wk2 ] imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-eventsource-allowed.sub.html is flaky timing out.
 imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-eventsource-allowed.sub.html [ Pass Timeout Failure ]
 
 # <rdar://problem/60501497> REGRESSION (r258080) fast/history/history-back-while-pdf-in-pagecache.html is timing out.
-[ BigSur+ ] fast/history/history-back-while-pdf-in-pagecache.html [ Pass ImageOnlyFailure Crash Timeout ]
+[ Monterey+ ] fast/history/history-back-while-pdf-in-pagecache.html [ Pass ImageOnlyFailure Crash Timeout ]
 
 # Certain versions of macOS use different text security characters.
-webkit.org/b/209692 [ BigSur+ ] platform/mac/fast/text/text-security-disc-bullet-pua-mac.html [ Pass ]
-webkit.org/b/209692 [ BigSur+ ] fast/text/text-security-disc-bullet-pua.html [ ImageOnlyFailure ]
+webkit.org/b/209692 [ Monterey+ ] platform/mac/fast/text/text-security-disc-bullet-pua-mac.html [ Pass ]
+webkit.org/b/209692 [ Monterey+ ] fast/text/text-security-disc-bullet-pua.html [ ImageOnlyFailure ]
 
 # rdar://63094384 (REGRESSION: (r261413): [ Guard-Malloc ] webgl/2.0.0/conformance2/textures/misc/tex-unpack-params.html is crashing consistently with - libGLImage.dylib: void glgConvertTo_32<GLGConverter_RGB8_ARGB8, (GLGMemory)1>)
 [ Guard-Malloc ] webgl/2.0.0/conformance2/textures/misc/tex-unpack-params.html [ Skip ]
 
 # <rdar://problem/63399079> [ Debug ] imported/w3c/web-platform-tests/xhr/access-control-basic-post-success-no-content-type.htm is a flaky failure
-[ BigSur+ ] imported/w3c/web-platform-tests/xhr/access-control-basic-post-success-no-content-type.htm [ Pass Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/xhr/access-control-basic-post-success-no-content-type.htm [ Pass Failure ]
 
 # <rdar://problem/63448168> [ Debug ] media/video-source-moved.html is a super flkay timeout
-[ BigSur+ Debug ] media/video-source-moved.html [ Pass Timeout ]
+[ Monterey+ Debug ] media/video-source-moved.html [ Pass Timeout ]
 
 # <rdar://problem/63461530> [ Debug ] media/media-fragments/TC0090.html is failing very rarely
-[ BigSur+ Debug ] media/media-fragments/TC0090.html [ Pass Failure ]
+[ Monterey+ Debug ] media/media-fragments/TC0090.html [ Pass Failure ]
 
 # <rdar://problem/63495500> REGRESSION: imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-audio-is-silence.https.html is a flaky failure
-[ BigSur+ ] imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-audio-is-silence.https.html [ Pass Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-audio-is-silence.https.html [ Pass Failure ]
 
 # <rdar://problem/63546844> [20A279] DQ is seeing editing/pasteboard/5478250.html failing
-[ BigSur+ ] editing/pasteboard/5478250.html [ Pass Failure ]
+[ Monterey+ ] editing/pasteboard/5478250.html [ Pass Failure ]
 
 # rdar://66784420
-[ BigSur+ ] imported/mozilla/svg/filters/feImage-1.svg [ Pass ImageOnlyFailure ]
+[ Monterey+ ] imported/mozilla/svg/filters/feImage-1.svg [ Pass ImageOnlyFailure ]
 
 # rdar://66788673 (REGRESSION (20A2316-20A2348b): imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiosource-time-limits.html is a flaky failure)
-[ BigSur+ ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiosource-time-limits.html [ Pass Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiosource-time-limits.html [ Pass Failure ]
 
 # <rdar://problem/63545884> [20A279] DQ bots have editing/mac/spelling/accept-misspelled-candidate.html and editing/mac/spelling/autocorrection-contraction.html failing
-[ BigSur+ ] editing/mac/spelling/accept-misspelled-candidate.html [ Pass Failure ]
+[ Monterey+ ] editing/mac/spelling/accept-misspelled-candidate.html [ Pass Failure ]
 
 # <rdar://problem/63554876> [20A279] DQ is seeing media/video-currentTime.html flaky failing
-[ BigSur+ ] media/video-currentTime.html [ Pass Failure ]
+[ Monterey+ ] media/video-currentTime.html [ Pass Failure ]
 
 # <rdar://problem/63554557> [20A279] DQ is seeing media/media-source/media-source-unnecessary-seek-seeked.html failing
-[ BigSur+ ] media/media-source/media-source-unnecessary-seek-seeked.html [ Pass Failure ]
+[ Monterey+ ] media/media-source/media-source-unnecessary-seek-seeked.html [ Pass Failure ]
 
 # <rdar://problem/64170117> REGRESSION(20A296a-20A301a): fast/text/arabic-zwj-and-zwnj.html is a constant failure
-[ BigSur+ ] fast/text/arabic-zwj-and-zwnj.html [ Pass ImageOnlyFailure ]
+[ Monterey+ ] fast/text/arabic-zwj-and-zwnj.html [ Pass ImageOnlyFailure ]
 
 # <rdar://problem/64166412> REGRESSION(20A296a-20A301a): fast/text/arabic-blocked-fonts.html is a constant failure
-[ BigSur+ ] fast/text/arabic-blocked-fonts.html [ Pass ImageOnlyFailure ]
+[ Monterey+ ] fast/text/arabic-blocked-fonts.html [ Pass ImageOnlyFailure ]
 
 # <rdar://problem/64546452> mathml/opentype/munderover-stretch-width.html is flaky failing.
-[ BigSur+ ] mathml/opentype/munderover-stretch-width.html [ Pass Failure ]
+[ Monterey+ ] mathml/opentype/munderover-stretch-width.html [ Pass Failure ]
 
 # imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001.html is flaky
 webkit.org/b/228094 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-stretch-properties-dynamic-001.html [ Pass Failure ]
 
 # <rdar://problem/64043254> REGRESSION(20A279-20A301a): platform/mac/fast/text/ligature-subdivision.html is a constant failure
-[ BigSur+ ] platform/mac/fast/text/ligature-subdivision.html [ Pass Failure ]
+[ Monterey+ ] platform/mac/fast/text/ligature-subdivision.html [ Pass Failure ]
 
-[ BigSur+ ] media/media-source/media-source-webm-vp8-malformed-header.html [ Pass ]
+[ Monterey+ ] media/media-source/media-source-webm-vp8-malformed-header.html [ Pass ]
 
 # rdar://66641405 (REGRESSION (20A2327-20A2348b?): 7 http/tests/media/hls/ tests are timing out)
-[ BigSur+ ] http/tests/media/hls/hls-accessiblity-describes-video.html [ Skip ]
-[ BigSur+ ] http/tests/media/hls/hls-audio-tracks-has-audio.html [ Skip ]
-[ BigSur+ ] http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Skip ]
-[ BigSur+ ] http/tests/media/hls/hls-audio-tracks.html [ Skip ]
-[ BigSur+ ] http/tests/media/hls/hls-webvtt-tracks.html [ Skip ]
-[ BigSur+ ] http/tests/media/hls/range-request.html [ Skip ]
-[ BigSur+ ] http/tests/media/hls/video-cookie.html [ Skip ]
+[ Monterey+ ] http/tests/media/hls/hls-accessiblity-describes-video.html [ Skip ]
+[ Monterey+ ] http/tests/media/hls/hls-audio-tracks-has-audio.html [ Skip ]
+[ Monterey+ ] http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Skip ]
+[ Monterey+ ] http/tests/media/hls/hls-audio-tracks.html [ Skip ]
+[ Monterey+ ] http/tests/media/hls/hls-webvtt-tracks.html [ Skip ]
+[ Monterey+ ] http/tests/media/hls/range-request.html [ Skip ]
+[ Monterey+ ] http/tests/media/hls/video-cookie.html [ Skip ]
 
 webkit.org/b/228189 http/tests/media/hls/hls-webvtt-seek-backwards.html [ Pass Timeout ]
 
@@ -1834,7 +1834,7 @@ webkit.org/b/230411 http/tests/media/hls/video-controller-getStartDate.html [ Pa
 webkit.org/b/227891 http/tests/appcache/fail-on-update.html [ Pass Timeout DumpJSConsoleLogInStdErr ]
 
 # Remove this once <rdar://problem/66734187> hits the bots
-[ BigSur+ ] fast/text/locale-shaping.html [ Pass ImageOnlyFailure ]
+[ Monterey+ ] fast/text/locale-shaping.html [ Pass ImageOnlyFailure ]
 
 # rdar://65641563 ([WebGL2] vector-dynamic-indexing is failing a subtest on iOS (214393))
 [ arm64 ] webgl/2.0.0/conformance2/glsl3/vector-dynamic-indexing.html [ Failure ]
@@ -1868,8 +1868,8 @@ imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-saturat
 # rdar://66861801 ([AS Layout Tests] REGRESSION (r265487): svg/W3C-I18N/tspan-direction-rtl.svg is a constant failure)
 [ arm64 ] svg/W3C-I18N/tspan-direction-rtl.svg [ Failure ]
 
-webkit.org/b/223002 [ BigSur+ arm64 ] webgl/1.0.3/conformance/textures/texture-copying-feedback-loops.html [ Skip ]
-webkit.org/b/223002 [ BigSur+ arm64 ] webgl/2.0.0/conformance/textures/misc/texture-copying-feedback-loops.html [ Skip ]
+webkit.org/b/223002 [ Monterey+ arm64 ] webgl/1.0.3/conformance/textures/texture-copying-feedback-loops.html [ Skip ]
+webkit.org/b/223002 [ Monterey+ arm64 ] webgl/2.0.0/conformance/textures/misc/texture-copying-feedback-loops.html [ Skip ]
 
 webkit.org/b/215506 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-events-onerror.html [ Pass Failure ]
 
@@ -1885,13 +1885,13 @@ webkit.org/b/191627 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-
 webkit.org/b/215817 [ Release ] webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgb32f-rgb-float.html [ Pass Failure ]
 
 # <rdar://problem/60780398> REGRESSION: (258729?) imported/w3c/web-platform-tests/websockets/opening-handshake/003.html is failing.
-[ BigSur+ ] imported/w3c/web-platform-tests/websockets/opening-handshake/003.html [ Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/websockets/opening-handshake/003.html [ Failure ]
 
-# <rdar://problem/66351394> [ BigSur+ ] imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html is failing
-[ BigSur+ ] imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html [ ImageOnlyFailure ]
+# <rdar://problem/66351394> [ Monterey+ ] imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html is failing
+[ Monterey+ ] imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html [ ImageOnlyFailure ]
 
 # rdar://68364365 [ Big Sur ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framerate.html is a flaky failure/timeout)
-[ BigSur+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framerate.html [ Pass Failure Timeout ]
+[ Monterey+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framerate.html [ Pass Failure Timeout ]
 
 webkit.org/b/216298 imported/w3c/web-platform-tests/IndexedDB/blob-valid-after-deletion.any.html [ Pass Failure ]
 
@@ -1899,10 +1899,10 @@ webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-values/vh_not_refres
 webkit.org/b/186045 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/cross-domain-iframe.sub.html [ Skip ]
 
 # <rdar://63026283> [ macOS iOS ] media/modern-media-controls/playback-support/playback-support-autoplay.html is a flaky failure/timeout
-[ BigSur+ ] media/modern-media-controls/playback-support/playback-support-autoplay.html [ Pass Failure ]
+[ Monterey+ ] media/modern-media-controls/playback-support/playback-support-autoplay.html [ Pass Failure ]
 
 # rdar://68736735 (REGRESSION: [ BigSur < 20A2374 ] fast/images/animated-gif-loop-count.html is a constant image failure)
-[ BigSur+ ] fast/images/animated-gif-loop-count.html [ ImageOnlyFailure ]
+[ Monterey+ ] fast/images/animated-gif-loop-count.html [ ImageOnlyFailure ]
 
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/extend-20.html [ Slow ]
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/extend-00.html [ Slow ]
@@ -1932,7 +1932,7 @@ webkit.org/b/219555 inspector/animation/effectChanged.html [ Pass Timeout ]
 
 webkit.org/b/219225 http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html [ Pass Failure ]
 
-webkit.org/b/219965 [ BigSur+ ] imported/w3c/web-platform-tests/fetch/content-type/script.window.html [ Pass Failure ]
+webkit.org/b/219965 [ Monterey+ ] imported/w3c/web-platform-tests/fetch/content-type/script.window.html [ Pass Failure ]
 
 webkit.org/b/217621 media/video-buffering-allowed.html [ Pass Timeout ]
 
@@ -1950,11 +1950,11 @@ webkit.org/b/221152 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 
 webkit.org/b/221491 animations/keyframe-pseudo-shadow.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/221973 [ BigSur+ ] media/media-webm-no-duration.html [ Failure ]
+webkit.org/b/221973 [ Monterey+ ] media/media-webm-no-duration.html [ Failure ]
 
 webkit.org/b/221935 media/webaudio-background-playback.html [ Pass Failure ]
 
-webkit.org/b/221218 [ BigSur+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Pass Failure ]
+webkit.org/b/221218 [ Monterey+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Pass Failure ]
 
 webkit.org/b/221100 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-channel-count.https.html [ Pass Failure ]
 
@@ -2053,7 +2053,7 @@ js/dom/Promise-reject-large-string.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/225670 webaudio/AudioContext/audiocontext-close-basic.html [ Slow ]
 
-webkit.org/b/223645 [ BigSur+ ] media/video-played-ranges-1.html [ Pass Failure ]
+webkit.org/b/223645 [ Monterey+ ] media/video-played-ranges-1.html [ Pass Failure ]
 
 # rdar://80345970 ([ Mac ] imported/w3c/web-platform-tests/workers/Worker-terminate-forever-during-evaluation.html is a flaky failure)
 imported/w3c/web-platform-tests/workers/Worker-terminate-forever-during-evaluation.html [ Pass Failure Crash ]
@@ -2267,7 +2267,7 @@ fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
 # Was in LayoutTests/Expectations, now only happening on Mac
 imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure ]
 
-webkit.org/b/237166 [ BigSur+ ] webgl/pending/conformance/textures/misc/tex-image-video-repeated.html [ Pass Timeout ]
+webkit.org/b/237166 [ Monterey+ ] webgl/pending/conformance/textures/misc/tex-image-video-repeated.html [ Pass Timeout ]
 
 http/tests/webgpu/webgpu/idl/constants/flags.html [ Pass ]
 http/tests/webgpu/webgpu/idl/exposed.https.html [ Skip ]
@@ -2590,7 +2590,7 @@ webkit.org/b/240989 http/tests/media/hls/hls-webvtt-flashing.html [ Pass Failure
 
 webkit.org/b/241253 fast/text/bulgarian-system-language-shaping.html [ Pass ]
 
-webkit.org/b/242249 [ BigSur+ ] webanimations/accelerated-animation-after-forward-filling-animation.html [ Pass ImageOnlyFailure ]
+webkit.org/b/242249 [ Monterey+ ] webanimations/accelerated-animation-after-forward-filling-animation.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/242481 fast/css/direct-adjacent-style-sharing-3.html [ Pass ImageOnlyFailure ]
 
@@ -2693,49 +2693,49 @@ imported/w3c/web-platform-tests/websockets/unload-a-document/005.html?wpt_flags=
 # Timing out since its import.
 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-pointerevent.html?touch [ Skip ]
 
-# webkit.org/b/243681  Newly imported tests that fail on BigSur+
-[ BigSur+ Debug ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ Failure ]
-[ BigSur+ Release ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ Pass Failure ]
-[ BigSur+ Debug ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Failure ]
-[ BigSur+ Release ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Pass Failure ]
+# webkit.org/b/243681  Newly imported tests that fail on Monterey+
+[ Monterey+ Debug ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ Failure ]
+[ Monterey+ Release ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ Pass Failure ]
+[ Monterey+ Debug ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Failure ]
+[ Monterey+ Release ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Pass Failure ]
 
 # These tests have been flaky on macOS since their import.
 imported/w3c/web-platform-tests/websockets/cookies/005.html?wss&wpt_flags=https [ Pass Failure ]
 imported/w3c/web-platform-tests/websockets/cookies/007.html?wss&wpt_flags=https [ Pass Failure ]
 
 #webkit.org/b/248537 Batch mark expectations for Ventura test failures
-[ BigSur+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-disabled-by-feature-policy.https.sub.html [ Pass Failure ]
-[ BigSur+ Debug ] inspector/css/pseudo-element-matches-for-pseudo-element-node.html [ Pass Crash ]
-[ BigSur+ ] imported/w3c/web-platform-tests/web-animations/interfaces/Animation/onremove.html [ Pass Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-disabled-by-feature-policy.https.sub.html [ Pass Failure ]
+[ Monterey+ Debug ] inspector/css/pseudo-element-matches-for-pseudo-element-node.html [ Pass Crash ]
+[ Monterey+ ] imported/w3c/web-platform-tests/web-animations/interfaces/Animation/onremove.html [ Pass Failure ]
 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html [ Pass Failure Timeout ]
 [ Ventura+ x86_64 ] http/tests/media/now-playing-info.html [ Pass Failure ]
-[ BigSur+ x86_64 ] animations/stop-animation-on-suspend.html [ Pass Failure ]
-[ BigSur+ ] fast/images/animated-avif.html [ Pass ImageOnlyFailure Timeout Crash ]
+[ Monterey+ x86_64 ] animations/stop-animation-on-suspend.html [ Pass Failure ]
+[ Monterey+ ] fast/images/animated-avif.html [ Pass ImageOnlyFailure Timeout Crash ]
 [ Ventura+ ] animations/animation-events-not-cancelable.html [ Pass Failure ]
-[ Bigsur+ ] animations/remove-syncing-animation.html [ Pass Failure ]
-[ BigSur+ ] css3/scroll-snap/scroll-padding-mainframe-paging.html [ Pass Failure ]
-[ BigSur+ ] css3/scroll-snap/scroll-padding-overflow-paging.html [ Pass Failure ]
+[ Monterey+ ] animations/remove-syncing-animation.html [ Pass Failure ]
+[ Monterey+ ] css3/scroll-snap/scroll-padding-mainframe-paging.html [ Pass Failure ]
+[ Monterey+ ] css3/scroll-snap/scroll-padding-overflow-paging.html [ Pass Failure ]
 [ Ventura+ ] fast/events/before-unload-navigate-different-window.html [ Pass Failure ]
-[ Bigsur+ ] http/tests/media/fairplay/fps-mse-unmuxed-key-rotation.html [ Pass Failure ]
+[ Monterey+ ] http/tests/media/fairplay/fps-mse-unmuxed-key-rotation.html [ Pass Failure ]
 [ Monterey+ x86_64 ] imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-video.html [ Pass Failure Timeout ]
 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_undefined.html [ Pass Failure ]
-[ BigSur+ x86_64 ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/javascript-url-security-check-failure.sub.html [ Pass Failure ]
+[ Monterey+ x86_64 ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/javascript-url-security-check-failure.sub.html [ Pass Failure ]
 [ Monterey+ x86_64 ] media/media-fragments/TC0086.html [ Pass Failure ]
 [ Monterey+ x86_64 ] media/media-fragments/TC0088.html [ Pass Failure ]
 [ Monterey+ x86_64 ] media/media-fragments/TC0089.html [ Pass Failure ]
 [ Monterey+ x86_64 ] media/media-fragments/TC0091.html [ Pass Failure ]
-[ BigSur+ x86_64 ] media/track/track-cues-enter-exit.html [ Pass Failure ]
+[ Monterey+ x86_64 ] media/track/track-cues-enter-exit.html [ Pass Failure ]
 [ Monterey+ x86_64 ] inspector/animation/lifecycle-css-transition.html [ Pass Failure ]
-[ BigSur+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute-redirect-on-load.https.sub.html [ Pass Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute-redirect-on-load.https.sub.html [ Pass Failure ]
 [ Ventura+ ] fast/text/synthetic-bold-transformed.html [ Pass ImageOnlyFailure ]
 [ Monterey+ x86_64 ] media/track/track-cues-cuechange.html [ Pass Timeout Failure ]
-[ BigSur+ x86_64 ] js/promises-tests/promises-tests-2-3-3.html [ Pass Timeout ]
+[ Monterey+ x86_64 ] js/promises-tests/promises-tests-2-3-3.html [ Pass Timeout ]
 
 webkit.org/b/254637 fast/text/web-font-load-invisible-during-loading.html [ Pass Failure ]
 
 webkit.org/b/242804 media/track/track-forced-subtitles-in-band.html [ Pass Failure ]
 
-webkit.org/b/251051 [ BigSur+ Debug ] storage/indexeddb/modern/deleteindex-4-private.html [ Crash ]
+webkit.org/b/251051 [ Monterey+ Debug ] storage/indexeddb/modern/deleteindex-4-private.html [ Crash ]
 
 webkit.org/b/245686 [ Ventura+ ] fast/text/system-font-fallback.html [ ImageOnlyFailure ]
 
