@@ -1547,17 +1547,17 @@ void WebPageProxy::setScreenIsBeingCaptured(bool captured)
 
 void WebPageProxy::willOpenAppLink()
 {
-    if (m_openingAppLinkActivity && m_openingAppLinkActivity->isValid())
+    if (m_processActivityState.hasValidOpeningAppLinkActivity())
         return;
 
     // We take a background activity for 25 seconds when switching to another app via an app link in case the WebPage
     // needs to run script to pass information to the native app.
     // We chose 25 seconds because the system only gives us 30 seconds and we don't want to get too close to that limit
     // to avoid assertion invalidation (or even termination).
-    m_openingAppLinkActivity = process().throttler().backgroundActivity("Opening AppLink"_s).moveToUniquePtr();
+    m_processActivityState.takeOpeningAppLinkActivity();
     WorkQueue::main().dispatchAfter(25_s, [weakThis = WeakPtr { *this }] {
         if (weakThis)
-            weakThis->m_openingAppLinkActivity = nullptr;
+            weakThis->m_processActivityState.dropOpeningAppLinkActivity();
     });
 }
 

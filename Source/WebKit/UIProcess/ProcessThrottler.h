@@ -82,27 +82,14 @@ private:
     ProcessThrottlerActivityType m_type;
 };
 
-class ProcessThrottler : public CanMakeWeakPtr<ProcessThrottler> {
-public:
-    ProcessThrottler(ProcessThrottlerClient&, bool shouldTakeUIBackgroundAssertion);
-    ~ProcessThrottler();
-
+class ProcessThrottlerTimedActivity {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(ProcessThrottlerTimedActivity);
     using Activity = ProcessThrottlerActivity;
-
-    using ForegroundActivity = Activity;
-    UniqueRef<Activity> foregroundActivity(ASCIILiteral name);
-
-    using BackgroundActivity = Activity;
-    UniqueRef<Activity> backgroundActivity(ASCIILiteral name);
-
     using ActivityVariant = std::variant<std::nullptr_t, UniqueRef<Activity>>;
-    static bool isValidBackgroundActivity(const ActivityVariant&);
-    static bool isValidForegroundActivity(const ActivityVariant&);
-
-    class TimedActivity {
     public:
-        explicit TimedActivity(Seconds timeout, ActivityVariant&& = nullptr);
-        TimedActivity& operator=(ActivityVariant&&);
+        explicit ProcessThrottlerTimedActivity(Seconds timeout, ActivityVariant&& = nullptr);
+        ProcessThrottlerTimedActivity& operator=(ActivityVariant&&);
 
     private:
         void activityTimedOut();
@@ -111,7 +98,26 @@ public:
         RunLoop::Timer m_timer;
         Seconds m_timeout;
         ActivityVariant m_activity;
-    };
+};
+
+class ProcessThrottler : public CanMakeWeakPtr<ProcessThrottler> {
+public:
+    ProcessThrottler(ProcessThrottlerClient&, bool shouldTakeUIBackgroundAssertion);
+    ~ProcessThrottler();
+
+    using Activity = ProcessThrottlerActivity;
+    using ActivityVariant = std::variant<std::nullptr_t, UniqueRef<Activity>>;
+
+    using ForegroundActivity = Activity;
+    UniqueRef<Activity> foregroundActivity(ASCIILiteral name);
+
+    using BackgroundActivity = Activity;
+    UniqueRef<Activity> backgroundActivity(ASCIILiteral name);
+
+    static bool isValidBackgroundActivity(const ActivityVariant&);
+    static bool isValidForegroundActivity(const ActivityVariant&);
+
+    using TimedActivity = ProcessThrottlerTimedActivity;
 
     void didConnectToProcess(ProcessID);
     void didDisconnectFromProcess();
