@@ -60,7 +60,7 @@ public:
         Eight = 8
     };
 
-    GBMBufferSwapchain(BufferSwapchainSize);
+    explicit GBMBufferSwapchain(BufferSwapchainSize);
     ~GBMBufferSwapchain();
 
     struct BufferDescription {

@@ -81,6 +81,10 @@
 #include <WebCore/ScreenCaptureKitCaptureSource.h>
 #endif
 
+#if USE(GBM)
+#include <WebCore/GBMDevice.h>
+#endif
+
 namespace WebKit {
 
 // We wouldn't want the GPUProcess to repeatedly exit then relaunch when under memory pressure. In particular, we need to make sure the
@@ -258,6 +262,10 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 #if HAVE(CGIMAGESOURCE_WITH_SET_ALLOWABLE_TYPES)
     auto emptyArray = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, &kCFTypeArrayCallBacks));
     CGImageSourceSetAllowableTypes(emptyArray.get());
+#endif
+
+#if USE(GBM)
+    WebCore::GBMDevice::singleton().initialize(parameters.renderDeviceFile);
 #endif
 
     m_applicationVisibleName = WTFMove(parameters.applicationVisibleName);

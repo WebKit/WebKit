@@ -48,7 +48,11 @@
 #include <wpe/wpe.h>
 #endif
 
-#if PLATFORM(GTK) && USE(GBM)
+#if USE(GBM)
+#include <WebCore/GBMDevice.h>
+#endif
+
+#if PLATFORM(GTK)
 #include <WebCore/PlatformDisplayGBM.h>
 #include <WebCore/PlatformDisplaySurfaceless.h>
 #endif
@@ -124,10 +128,14 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     }
 #endif
 
+#if USE(GBM)
+    WebCore::GBMDevice::singleton().initialize(parameters.renderDeviceFile);
+#endif
+
 #if PLATFORM(GTK) && USE(GBM)
     if (parameters.useDMABufSurfaceForCompositing) {
-        if (!parameters.renderDeviceFile.isEmpty())
-            m_displayForCompositing = WebCore::PlatformDisplayGBM::create(parameters.renderDeviceFile);
+        if (auto* device = WebCore::GBMDevice::singleton().device())
+            m_displayForCompositing = WebCore::PlatformDisplayGBM::create(device);
         else
             m_displayForCompositing = WebCore::PlatformDisplaySurfaceless::create();
     }

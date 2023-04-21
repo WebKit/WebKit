@@ -45,7 +45,9 @@ GBMBufferSwapchain::~GBMBufferSwapchain() = default;
 
 RefPtr<GBMBufferSwapchain::Buffer> GBMBufferSwapchain::getBuffer(const BufferDescription& description)
 {
-    auto& device = GBMDevice::singleton();
+    auto* device = GBMDevice::singleton().device();
+    if (!device)
+        return nullptr;
 
     // If the description of the requested buffers has changed, update the description to the new one and wreck the existing buffers.
     // This should handle changes in format or dimension of the buffers.
@@ -105,7 +107,7 @@ RefPtr<GBMBufferSwapchain::Buffer> GBMBufferSwapchain::getBuffer(const BufferDes
             // over the software-decoded video data), but might not be required for backing e.g. ANGLE rendering.
             for (unsigned i = 0; i < buffer->m_description.format.numPlanes; ++i) {
                 auto& plane = buffer->m_planes[i];
-                plane.bo = gbm_bo_create(device.device(), plane.width, plane.height, uint32_t(plane.fourcc), boFlags);
+                plane.bo = gbm_bo_create(device, plane.width, plane.height, uint32_t(plane.fourcc), boFlags);
                 plane.stride = gbm_bo_get_stride(plane.bo);
             }
 

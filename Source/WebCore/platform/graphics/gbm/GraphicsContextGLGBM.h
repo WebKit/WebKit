@@ -95,7 +95,7 @@ public:
     const EGLExtensions& eglExtensions() { return m_eglExtensions; }
 
 protected:
-    GraphicsContextGLGBM(WebCore::GraphicsContextGLAttributes&&);
+    explicit GraphicsContextGLGBM(WebCore::GraphicsContextGLAttributes&&);
 
 private:
     void allocateDrawBufferObject();

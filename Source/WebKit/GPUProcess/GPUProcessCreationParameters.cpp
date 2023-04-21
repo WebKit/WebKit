@@ -64,6 +64,10 @@ void GPUProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << mobileGestaltExtensionHandle;
 
     encoder << applicationVisibleName;
+
+#if USE(GBM)
+    encoder << renderDeviceFile;
+#endif
 }
 
 bool GPUProcessCreationParameters::decode(IPC::Decoder& decoder, GPUProcessCreationParameters& result)
@@ -121,6 +125,14 @@ bool GPUProcessCreationParameters::decode(IPC::Decoder& decoder, GPUProcessCreat
 
     if (!decoder.decode(result.applicationVisibleName))
         return false;
+
+#if USE(GBM)
+    std::optional<String> renderDeviceFile;
+    decoder >> renderDeviceFile;
+    if (!renderDeviceFile)
+        return false;
+    result.renderDeviceFile = WTFMove(*renderDeviceFile);
+#endif
 
     return true;
 }

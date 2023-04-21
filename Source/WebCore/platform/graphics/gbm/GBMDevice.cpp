@@ -33,12 +33,12 @@
 #include <gbm.h>
 #include <mutex>
 #include <unistd.h>
+#include <wtf/SafeStrerror.h>
 #include <wtf/StdLibExtras.h>
-#include <xf86drm.h>
 
 namespace WebCore {
 
-const GBMDevice& GBMDevice::singleton()
+GBMDevice& GBMDevice::singleton()
 {
     static std::unique_ptr<GBMDevice> s_device;
     static std::once_flag s_onceFlag;
@@ -49,39 +49,28 @@ const GBMDevice& GBMDevice::singleton()
     return *s_device;
 }
 
-GBMDevice::GBMDevice()
-{
-    [&] {
-        drmDevicePtr devices[64];
-        memset(devices, 0, sizeof(devices));
-
-        int numDevices = drmGetDevices2(0, devices, std::size(devices));
-        if (numDevices <= 0)
-            return;
-
-        for (int i = 0; i < numDevices; ++i) {
-            drmDevice* device = devices[i];
-            if (!(device->available_nodes & (1 << DRM_NODE_RENDER)))
-                continue;
-
-            m_fd = open(device->nodes[DRM_NODE_RENDER], O_RDWR | O_CLOEXEC);
-            if (m_fd >= 0)
-                break;
-        }
-
-        drmFreeDevices(devices, numDevices);
-    }();
-
-    if (m_fd >= 0)
-        m_device = gbm_create_device(m_fd);
-}
-
 GBMDevice::~GBMDevice()
 {
-    if (m_device)
-        gbm_device_destroy(m_device);
-    if (m_fd >= 0)
-        close(m_fd);
+    if (m_device.has_value() && m_device.value())
+        gbm_device_destroy(m_device.value());
+}
+
+void GBMDevice::initialize(const String& deviceFile)
+{
+    RELEASE_ASSERT(!m_device.has_value());
+    if (!deviceFile.isEmpty()) {
+        m_fd = UnixFileDescriptor { open(deviceFile.utf8().data(), O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
+        if (m_fd) {
+            m_device = gbm_create_device(m_fd.value());
+            if (m_device.value())
+                return;
+
+            WTFLogAlways("Failed to create GBM device for render device: %s: %s", deviceFile.utf8().data(), safeStrerror(errno).data());
+            m_fd = { };
+        } else
+            WTFLogAlways("Failed to open DRM render device %s: %s", deviceFile.utf8().data(), safeStrerror(errno).data());
+    }
+    m_device = nullptr;
 }
 
 } // namespace WebCore

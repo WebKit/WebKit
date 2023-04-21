@@ -29,45 +29,26 @@
 #if USE(EGL) && USE(GBM)
 #include "GLContext.h"
 #include <epoxy/egl.h>
-#include <fcntl.h>
 #include <gbm.h>
-#include <unistd.h>
-#include <wtf/SafeStrerror.h>
-#include <wtf/StdLibExtras.h>
-#include <wtf/unix/UnixFileDescriptor.h>
 
 namespace WebCore {
 
-std::unique_ptr<PlatformDisplayGBM> PlatformDisplayGBM::create(const String& deviceFile)
+std::unique_ptr<PlatformDisplayGBM> PlatformDisplayGBM::create(struct gbm_device* device)
 {
-    auto fd = UnixFileDescriptor { open(deviceFile.utf8().data(), O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
-    if (!fd) {
-        WTFLogAlways("Failed to open DRM render device %s: %s", deviceFile.utf8().data(), safeStrerror(errno).data());
-        return nullptr;
-    }
-
-    auto* device = gbm_create_device(fd.value());
-    if (!device) {
-        WTFLogAlways("Failed to create GBM device for render device: %s: %s", deviceFile.utf8().data(), safeStrerror(errno).data());
-        return nullptr;
-    }
-
-    return std::unique_ptr<PlatformDisplayGBM>(new PlatformDisplayGBM(WTFMove(fd), device));
+    return std::unique_ptr<PlatformDisplayGBM>(new PlatformDisplayGBM(device));
 }
 
-PlatformDisplayGBM::PlatformDisplayGBM(UnixFileDescriptor&& fd, struct gbm_device* device)
+PlatformDisplayGBM::PlatformDisplayGBM(struct gbm_device* device)
 {
 #if PLATFORM(GTK)
     PlatformDisplay::setSharedDisplayForCompositing(*this);
 #endif
 
-    m_gbm = { WTFMove(fd), device };
-
     const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
     if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base"))
-        m_eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_KHR, m_gbm.device.value(), nullptr);
+        m_eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_KHR, device, nullptr);
     else if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
-        m_eglDisplay = eglGetPlatformDisplay(EGL_PLATFORM_GBM_KHR, m_gbm.device.value(), nullptr);
+        m_eglDisplay = eglGetPlatformDisplay(EGL_PLATFORM_GBM_KHR, device, nullptr);
 
     PlatformDisplay::initializeEGLDisplay();
 }

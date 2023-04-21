@@ -32,11 +32,11 @@ namespace WebCore {
 
 class PlatformDisplayGBM final : public PlatformDisplay {
 public:
-    static std::unique_ptr<PlatformDisplayGBM> create(const String&);
+    static std::unique_ptr<PlatformDisplayGBM> create(struct gbm_device*);
 
     virtual ~PlatformDisplayGBM();
 private:
-    PlatformDisplayGBM(UnixFileDescriptor&&, struct gbm_device*);
+    explicit PlatformDisplayGBM(struct gbm_device*);
 
     Type type() const override { return PlatformDisplay::Type::GBM; }
 };

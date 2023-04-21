@@ -37,7 +37,6 @@ typedef void *EGLDisplay;
 typedef void *EGLImage;
 typedef unsigned EGLenum;
 #if USE(GBM)
-#include <wtf/unix/UnixFileDescriptor.h>
 typedef void *EGLDeviceEXT;
 struct gbm_device;
 #endif
@@ -156,10 +155,6 @@ protected:
 #if USE(GBM)
     std::optional<String> m_drmDeviceFile;
     std::optional<String> m_drmRenderNodeFile;
-    struct {
-        WTF::UnixFileDescriptor deviceFD;
-        std::optional<struct gbm_device*> device;
-    } m_gbm;
 #endif
 #endif
 

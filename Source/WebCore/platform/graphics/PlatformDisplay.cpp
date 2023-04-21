@@ -81,11 +81,7 @@
 #endif
 
 #if USE(EGL) && USE(GBM)
-#include <fcntl.h>
-#include <gbm.h>
-#include <unistd.h>
-#include <wtf/SafeStrerror.h>
-#include <wtf/StdLibExtras.h>
+#include "GBMDevice.h"
 #include <xf86drm.h>
 #ifndef EGL_DRM_RENDER_NODE_FILE_EXT
 #define EGL_DRM_RENDER_NODE_FILE_EXT 0x3377
@@ -233,10 +229,6 @@ PlatformDisplay::~PlatformDisplay()
 #if PLATFORM(GTK)
     if (m_sharedDisplay)
         g_signal_handlers_disconnect_by_data(m_sharedDisplay.get(), this);
-#endif
-#if USE(EGL) && USE(GBM)
-    if (m_gbm.device.has_value() && m_gbm.device.value())
-        gbm_device_destroy(m_gbm.device.value());
 #endif
     if (s_sharedDisplayForCompositing == this)
         s_sharedDisplayForCompositing = nullptr;
@@ -497,25 +489,12 @@ const String& PlatformDisplay::drmRenderNodeFile()
 
 struct gbm_device* PlatformDisplay::gbmDevice()
 {
-    if (!m_gbm.device.has_value()) {
+    auto& device = GBMDevice::singleton();
+    if (!device.isInitialized()) {
         const char* envDeviceFile = getenv("WEBKIT_WEB_RENDER_DEVICE_FILE");
-        String deviceFile = envDeviceFile && *envDeviceFile ? String::fromUTF8(envDeviceFile) : drmRenderNodeFile();
-        if (!deviceFile.isEmpty()) {
-            m_gbm.deviceFD = UnixFileDescriptor { open(deviceFile.utf8().data(), O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
-            if (m_gbm.deviceFD) {
-                m_gbm.device = gbm_create_device(m_gbm.deviceFD.value());
-                if (m_gbm.device.value())
-                    return m_gbm.device.value();
-
-                WTFLogAlways("Failed to create GBM device for render device: %s: %s", deviceFile.utf8().data(), safeStrerror(errno).data());
-                m_gbm.deviceFD = { };
-            } else
-                WTFLogAlways("Failed to open DRM render device %s: %s", deviceFile.utf8().data(), safeStrerror(errno).data());
-        }
-        m_gbm.device = nullptr;
+        device.initialize(envDeviceFile && *envDeviceFile ? String::fromUTF8(envDeviceFile) : drmRenderNodeFile());
     }
-
-    return m_gbm.device.value();
+    return device.device();
 }
 #endif
 

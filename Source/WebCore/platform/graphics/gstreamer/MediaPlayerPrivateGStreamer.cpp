@@ -125,7 +125,6 @@
 #include "DMABufObject.h"
 #include "DMABufVideoSinkGStreamer.h"
 #include "GBMBufferSwapchain.h"
-#include "GBMDevice.h"
 #include "TextureMapperPlatformLayerProxyDMABuf.h"
 #include <gbm.h>
 #include <gst/allocators/gstdmabuf.h>

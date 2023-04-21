@@ -227,9 +227,12 @@ struct WebProcessCreationParameters {
     String contentSizeCategory;
 #endif
 
+#if USE(GBM)
+    String renderDeviceFile;
+#endif
+
 #if PLATFORM(GTK)
     bool useDMABufSurfaceForCompositing { false };
-    String renderDeviceFile;
     bool useSystemAppearanceForScrollbars { false };
     GtkSettingsState gtkSettings;
 #endif

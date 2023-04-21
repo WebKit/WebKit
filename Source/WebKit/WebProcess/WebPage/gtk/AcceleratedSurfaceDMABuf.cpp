@@ -32,6 +32,7 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/DMABufFormat.h>
+#include <WebCore/GBMDevice.h>
 #include <WebCore/PlatformDisplay.h>
 #include <array>
 #include <epoxy/egl.h>
@@ -100,7 +101,7 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
 
     auto& display = WebCore::PlatformDisplay::sharedDisplayForCompositing();
     auto createImage = [&]() -> std::pair<UnixFileDescriptor, EGLImage> {
-        auto* device = display.gbmDevice();
+        auto* device = WebCore::GBMDevice::singleton().device();
         if (!device) {
             WTFLogAlways("Failed to create GBM buffer of size %dx%d: no GBM device found", size.width(), size.height());
             return { };
