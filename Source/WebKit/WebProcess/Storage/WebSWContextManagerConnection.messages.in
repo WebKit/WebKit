@@ -37,7 +37,7 @@ messages -> WebSWContextManagerConnection {
     FireBackgroundFetchClickEvent(WebCore::ServiceWorkerIdentifier identifier, struct WebCore::BackgroundFetchInformation info) -> (bool result)
 
     TerminateWorker(WebCore::ServiceWorkerIdentifier identifier)
-#if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
+#if ENABLE(SHAREABLE_RESOURCE)
     DidSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::ScriptBuffer script, HashMap<URL, WebCore::ScriptBuffer> importedScripts);
 #endif
     MatchAllCompleted(uint64_t matchAllRequestIdentifier, Vector<WebCore::ServiceWorkerClientData> clientsData)

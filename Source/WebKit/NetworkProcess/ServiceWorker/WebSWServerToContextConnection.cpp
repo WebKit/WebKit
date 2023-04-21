@@ -204,7 +204,7 @@ void WebSWServerToContextConnection::terminateWorker(ServiceWorkerIdentifier ser
 
 void WebSWServerToContextConnection::didSaveScriptsToDisk(ServiceWorkerIdentifier serviceWorkerIdentifier, const ScriptBuffer& script, const MemoryCompactRobinHoodHashMap<URL, ScriptBuffer>& importedScripts)
 {
-#if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
+#if ENABLE(SHAREABLE_RESOURCE)
     // Send file-mapped ScriptBuffers over to the ServiceWorker process so that it can replace its heap-allocated copies and save on dirty memory.
     auto scriptToSend = script.containsSingleFileMappedSegment() ? script : ScriptBuffer();
     HashMap<URL, ScriptBuffer> importedScriptsToSend;
