@@ -29,6 +29,7 @@
 
 #if ENABLE(RESOURCE_USAGE) && OS(LINUX)
 
+#include "MemoryCache.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/GCActivityCallback.h>
 #include <JavaScriptCore/SamplingProfiler.h>
@@ -312,6 +313,13 @@ void ResourceUsageThread::platformCollectMemoryData(JSC::VM* vm, ResourceUsageDa
     data.categories[MemoryCategory::GCHeap].dirtySize = currentGCHeapCapacity;
     data.categories[MemoryCategory::GCOwned].dirtySize = currentGCOwnedExtra - currentGCOwnedExternal;
     data.categories[MemoryCategory::GCOwned].externalSize = currentGCOwnedExternal;
+
+    int imagesDecodedSize = 0;
+    callOnMainThreadAndWait([&imagesDecodedSize] {
+        imagesDecodedSize = MemoryCache::singleton().getStatistics().images.decodedSize;
+    });
+    data.categories[MemoryCategory::Images].dirtySize = imagesDecodedSize;
+
     size_t categoriesTotalSize = 0;
     for (auto& category : data.categories)
         categoriesTotalSize += category.totalSize();
