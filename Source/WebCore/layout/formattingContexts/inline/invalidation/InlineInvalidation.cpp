@@ -340,10 +340,10 @@ bool InlineInvalidation::applyFullDamageIfNeeded(const Box& layoutBox)
     return false;
 }
 
-void InlineInvalidation::textInserted(const InlineTextBox& newOrDamagedInlineTextBox, std::optional<size_t> offset)
+bool InlineInvalidation::textInserted(const InlineTextBox& newOrDamagedInlineTextBox, std::optional<size_t> offset)
 {
     if (applyFullDamageIfNeeded(newOrDamagedInlineTextBox))
-        return;
+        return false;
 
     auto damagedLine = std::optional<DamagedLine> { };
     if (offset) {
@@ -360,27 +360,23 @@ void InlineInvalidation::textInserted(const InlineTextBox& newOrDamagedInlineTex
     }
 
     updateInlineDamage(!damagedLine ? InlineDamage::Type::Invalid : InlineDamage::Type::NeedsContentUpdateAndLineLayout, damagedLine, offset ? ShouldApplyRangeLayout::No : ShouldApplyRangeLayout::Yes);
+    return damagedLine.has_value();
 }
 
-void InlineInvalidation::textWillBeRemoved(UniqueRef<Box>&& inlineTextBox)
-{
-    InlineInvalidation::textWillBeRemoved(downcast<InlineTextBox>(inlineTextBox.get()), { });
-    m_inlineDamage.addDetachedBox(WTFMove(inlineTextBox));
-}
-
-void InlineInvalidation::textWillBeRemoved(const InlineTextBox& damagedInlineTextBox, std::optional<size_t> offset)
+bool InlineInvalidation::textWillBeRemoved(const InlineTextBox& damagedInlineTextBox, std::optional<size_t> offset)
 {
     if (applyFullDamageIfNeeded(damagedInlineTextBox))
-        return;
+        return false;
 
     auto damagedLine = leadingInlineItemPositionByDamagedBox({ damagedInlineTextBox, offset.value_or(0), DamagedContent::Type::Removal }, m_inlineItems, displayBoxes());
     updateInlineDamage(!damagedLine ? InlineDamage::Type::Invalid : InlineDamage::Type::NeedsContentUpdateAndLineLayout, damagedLine, ShouldApplyRangeLayout::Yes);
+    return damagedLine.has_value();
 }
 
-void InlineInvalidation::inlineLevelBoxInserted(const Box& layoutBox)
+bool InlineInvalidation::inlineLevelBoxInserted(const Box& layoutBox)
 {
     if (applyFullDamageIfNeeded(layoutBox))
-        return;
+        return false;
 
     auto damagedLine = std::optional<DamagedLine> { };
     if (!layoutBox.nextInFlowSibling()) {
@@ -393,16 +389,17 @@ void InlineInvalidation::inlineLevelBoxInserted(const Box& layoutBox)
             damagedLine = leadingInlineItemPositionByDamagedBox({ *previousSibling }, m_inlineItems, displayBoxes());
     }
     updateInlineDamage(!damagedLine ? InlineDamage::Type::Invalid : InlineDamage::Type::NeedsContentUpdateAndLineLayout, damagedLine, ShouldApplyRangeLayout::Yes);
+    return damagedLine.has_value();
 }
 
-void InlineInvalidation::inlineLevelBoxWillBeRemoved(UniqueRef<Box>&& layoutBox)
+bool InlineInvalidation::inlineLevelBoxWillBeRemoved(const Box& layoutBox)
 {
     if (applyFullDamageIfNeeded(layoutBox))
-        return;
+        return false;
 
     auto damagedLine = leadingInlineItemPositionByDamagedBox({ layoutBox, { }, DamagedContent::Type::Removal }, m_inlineItems, displayBoxes());
-    m_inlineDamage.addDetachedBox(WTFMove(layoutBox));
     updateInlineDamage(!damagedLine ? InlineDamage::Type::Invalid : InlineDamage::Type::NeedsContentUpdateAndLineLayout, damagedLine, ShouldApplyRangeLayout::Yes);
+    return damagedLine.has_value();
 }
 
 void InlineInvalidation::horizontalConstraintChanged()

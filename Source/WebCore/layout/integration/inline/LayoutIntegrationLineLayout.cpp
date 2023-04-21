@@ -1230,20 +1230,11 @@ void LineLayout::removedFromTree(const RenderElement& parent, RenderObject& chil
         return;
     }
 
-    auto childLayoutBox = m_boxTree.remove(parent, child);
-    if (is<Layout::InlineTextBox>(childLayoutBox.get())) {
-        auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState.inlineItems(), m_inlineContent->displayContent() };
-        invalidation.textWillBeRemoved(WTFMove(childLayoutBox));
-        return;
-    }
-
-    if (childLayoutBox->isLineBreakBox()) {
-        auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState.inlineItems(), m_inlineContent->displayContent() };
-        invalidation.inlineLevelBoxWillBeRemoved(WTFMove(childLayoutBox));
-        return;
-    }
-
-    ASSERT_NOT_IMPLEMENTED_YET();
+    auto& childLayoutBox = m_boxTree.layoutBoxForRenderer(child);
+    auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState.inlineItems(), m_inlineContent->displayContent() };
+    auto boxIsInvalidated = is<Layout::InlineTextBox>(childLayoutBox) ? invalidation.textWillBeRemoved(downcast<Layout::InlineTextBox>(childLayoutBox)) : childLayoutBox.isLineBreakBox() ? invalidation.inlineLevelBoxWillBeRemoved(childLayoutBox) : false;
+    if (boxIsInvalidated)
+        m_lineDamage->addDetachedBox(m_boxTree.remove(parent, child));
 }
 
 void LineLayout::updateTextContent(const RenderText& textRenderer, size_t offset, int delta)
