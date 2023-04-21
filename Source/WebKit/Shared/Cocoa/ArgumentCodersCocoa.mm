@@ -604,21 +604,21 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
 #endif // ENABLE(REVEAL)
 #if ENABLE(APPLE_PAY)
         || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentInstallmentConfigurationClass()]) // Don't reintroduce rdar://108281584
+        || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentMethodClass()]) // rdar://107553480 Don't reintroduce rdar://108235706
 #endif
+        || ([allowedClasses containsObject:NSMutableURLRequest.class]) // rdar://107553194 Don't reintroduce rdar://108339450
     ) {
         return false;
     }
 
     if (
-        [allowedClasses containsObject:NSMutableURLRequest.class] // rdar://107553194
-        || [allowedClasses containsObject:NSParagraphStyle.class] // rdar://107553230
+        [allowedClasses containsObject:NSParagraphStyle.class] // rdar://107553230
         || [allowedClasses containsObject:NSShadow.class] // rdar://107553244
         || [allowedClasses containsObject:NSTextAttachment.class] // rdar://107553273
 #if ENABLE(APPLE_PAY)
         || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentSetupFeatureClass()]) // rdar://107553409
         || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentMerchantSessionClass()]) // rdar://107553452
         || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentClass()] && isInWebProcess())
-        || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentMethodClass()]) // rdar://107553480
 #endif // ENABLE(APPLE_PAY)
         || (
             [allowedClasses containsObject:NSURLCredential.class] // rdar://107553367 relying on NSMutableDictionary re-write
