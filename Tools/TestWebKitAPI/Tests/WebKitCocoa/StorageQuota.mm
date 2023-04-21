@@ -249,6 +249,9 @@ TEST(WebKit, QuotaDelegateHidden)
     done = false;
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     [storeConfiguration setPerOriginStorageQuota:1024 * 400];
+    // Ensure quota is not calculated by ratio.
+    [storeConfiguration.get() setTotalQuotaRatio:nil];
+    [storeConfiguration.get() setOriginQuotaRatio:nil];
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
     [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
@@ -307,6 +310,9 @@ TEST(WebKit, QuotaDelegate)
     done = false;
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     [storeConfiguration setPerOriginStorageQuota:1024 * 400];
+    // Ensure quota is not calculated by ratio.
+    [storeConfiguration.get() setTotalQuotaRatio:nil];
+    [storeConfiguration.get() setOriginQuotaRatio:nil];
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
     [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
@@ -366,6 +372,9 @@ TEST(WebKit, QuotaDelegateReload)
     done = false;
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     [storeConfiguration setPerOriginStorageQuota:1024 * 400];
+    // Ensure quota is not calculated by ratio.
+    [storeConfiguration.get() setTotalQuotaRatio:nil];
+    [storeConfiguration.get() setOriginQuotaRatio:nil];
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
     [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
@@ -417,6 +426,9 @@ TEST(WebKit, QuotaDelegateNavigateFragment)
     done = false;
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     [storeConfiguration setPerOriginStorageQuota:1024 * 400];
+    // Ensure quota is not calculated by ratio.
+    [storeConfiguration.get() setTotalQuotaRatio:nil];
+    [storeConfiguration.get() setOriginQuotaRatio:nil];
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
     [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;

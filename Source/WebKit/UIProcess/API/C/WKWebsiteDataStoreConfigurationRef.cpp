@@ -203,3 +203,23 @@ void WKWebsiteDataStoreConfigurationSetPCMMachServiceName(WKWebsiteDataStoreConf
 {
     WebKit::toImpl(configuration)->setPCMMachServiceName(name ? WebKit::toImpl(name)->string() : String());
 }
+
+bool WKWebsiteDataStoreConfigurationHasOriginQuotaRatio(WKWebsiteDataStoreConfigurationRef configuration)
+{
+    return !!WebKit::toImpl(configuration)->originQuotaRatio();
+}
+
+void WKWebsiteDataStoreConfigurationClearOriginQuotaRatio(WKWebsiteDataStoreConfigurationRef configuration)
+{
+    WebKit::toImpl(configuration)->setOriginQuotaRatio(std::nullopt);
+}
+
+bool WKWebsiteDataStoreConfigurationHasTotalQuotaRatio(WKWebsiteDataStoreConfigurationRef configuration)
+{
+    return !!WebKit::toImpl(configuration)->totalQuotaRatio();
+}
+
+void WKWebsiteDataStoreConfigurationClearTotalQuotaRatio(WKWebsiteDataStoreConfigurationRef configuration)
+{
+    WebKit::toImpl(configuration)->setTotalQuotaRatio(std::nullopt);
+}

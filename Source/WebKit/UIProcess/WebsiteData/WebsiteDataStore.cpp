@@ -2173,6 +2173,16 @@ void WebsiteDataStore::removeRecentSearches(WallTime, CompletionHandler<void()>&
     completionHandler();
 }
 
+std::optional<double> WebsiteDataStore::defaultOriginQuotaRatio()
+{
+    return std::nullopt;
+}
+
+std::optional<double> WebsiteDataStore::defaultTotalQuotaRatio()
+{
+    return std::nullopt;
+}
+
 #endif // !PLATFORM(COCOA)
 
 void WebsiteDataStore::renameOriginInWebsiteData(WebCore::SecurityOriginData&& oldOrigin, WebCore::SecurityOriginData&& newOrigin, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void()>&& completionHandler)

@@ -62,6 +62,11 @@
 
 namespace WebKit {
 
+static constexpr double defaultBrowserTotalQuotaRatio = 0.8;
+static constexpr double defaultBrowserOriginQuotaRatio = 0.6;
+static constexpr double defaultAppTotalQuotaRatio = 0.2;
+static constexpr double defaultAppOriginQuotaRatio = 0.15;
+
 static HashSet<WebsiteDataStore*>& dataStores()
 {
     static NeverDestroyed<HashSet<WebsiteDataStore*>> dataStores;
@@ -845,6 +850,16 @@ void WebsiteDataStore::reinitializeManagedDomains()
 bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String& entitlement)
 {
     return WTF::hasEntitlement(networkProcess().connection()->xpcConnection(), entitlement);
+}
+
+std::optional<double> WebsiteDataStore::defaultOriginQuotaRatio()
+{
+    return isFullWebBrowserOrRunningTest() ? defaultBrowserOriginQuotaRatio : defaultAppOriginQuotaRatio;
+}
+
+std::optional<double> WebsiteDataStore::defaultTotalQuotaRatio()
+{
+    return isFullWebBrowserOrRunningTest() ? defaultBrowserTotalQuotaRatio : defaultAppTotalQuotaRatio;
 }
 
 UnifiedOriginStorageLevel WebsiteDataStore::defaultUnifiedOriginStorageLevel()

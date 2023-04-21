@@ -441,13 +441,13 @@ void NetworkStorageManager::donePrepareForEviction(const std::optional<HashMap<W
     HashMap<WebCore::SecurityOriginData, AccessRecord> originRecords;
     uint64_t totalUsage = 0;
     for (auto& origin : getAllOrigins()) {
-        auto usage = originStorageManager(origin, ShouldWriteOriginFile::No).quotaManager().usage();
+        auto usage = originStorageManager(origin).quotaManager().usage();
         totalUsage += usage;
         WallTime accessTime;
         if (domainsWithLastAccessedTime)
             accessTime = domainsWithLastAccessedTime->get(WebCore::RegistrableDomain { origin.topOrigin });
         else
-            accessTime = lastModificationTimeForOrigin(origin, originStorageManager(origin, ShouldWriteOriginFile::No));
+            accessTime = lastModificationTimeForOrigin(origin, originStorageManager(origin));
 
         auto& record = originRecords.ensure(origin.topOrigin, [&] {
             return AccessRecord { };
@@ -494,7 +494,7 @@ void NetworkStorageManager::performEviction(HashMap<WebCore::SecurityOriginData,
 
         for (auto& clientOrigin : record.clientOrigins) {
             auto origin = WebCore::ClientOrigin { topOrigin, clientOrigin };
-            originStorageManager(origin, ShouldWriteOriginFile::No).deleteData(allManagedTypes(), -WallTime::infinity());
+            originStorageManager(origin).deleteData(allManagedTypes(), -WallTime::infinity());
             removeOriginStorageManagerIfPossible(origin);
         }
 
@@ -1035,7 +1035,7 @@ bool NetworkStorageManager::evictDataByTopOrigin(const WebCore::SecurityOriginDa
     }
 
     for (auto& origin : originsToEvict) {
-        originStorageManager(origin, ShouldWriteOriginFile::No).deleteData(allManagedTypes(), -WallTime::infinity());
+        originStorageManager(origin).deleteData(allManagedTypes(), -WallTime::infinity());
         removeOriginStorageManagerIfPossible(origin);
     }
     return true;
@@ -1047,7 +1047,7 @@ void NetworkStorageManager::getOriginDirectory(WebCore::ClientOrigin&& origin, W
     ASSERT(!m_closed);
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, type, origin = crossThreadCopy(WTFMove(origin)), completionHandler = WTFMove(completionHandler)]() mutable {
-        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), directory = crossThreadCopy(originStorageManager(origin, ShouldWriteOriginFile::No).resolvedPath(type))]() mutable {
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), directory = crossThreadCopy(originStorageManager(origin).resolvedPath(type))]() mutable {
             completionHandler(WTFMove(directory));
         });
         removeOriginStorageManagerIfPossible(origin);

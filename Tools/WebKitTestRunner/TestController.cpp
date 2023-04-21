@@ -681,6 +681,9 @@ void TestController::configureWebsiteDataStoreTemporaryDirectories(WKWebsiteData
         WKWebsiteDataStoreConfigurationSetCookieStorageFile(configuration, toWK(makeString(temporaryFolder, pathSeparator, "cookies", pathSeparator, randomNumber, pathSeparator, "cookiejar.db")).get());
 #endif
         WKWebsiteDataStoreConfigurationSetPerOriginStorageQuota(configuration, 400 * 1024);
+        // Clear quota ratio so WebKit does not calculate quota based on disk space.
+        WKWebsiteDataStoreConfigurationClearOriginQuotaRatio(configuration);
+        WKWebsiteDataStoreConfigurationClearTotalQuotaRatio(configuration);
         WKWebsiteDataStoreConfigurationSetNetworkCacheSpeculativeValidationEnabled(configuration, true);
         WKWebsiteDataStoreConfigurationSetStaleWhileRevalidateEnabled(configuration, true);
         WKWebsiteDataStoreConfigurationSetTestingSessionEnabled(configuration, true);

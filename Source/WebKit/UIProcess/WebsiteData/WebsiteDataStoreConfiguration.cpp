@@ -36,6 +36,8 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPers
     : m_isPersistent(isPersistent)
     , m_unifiedOriginStorageLevel(WebsiteDataStore::defaultUnifiedOriginStorageLevel())
     , m_perOriginStorageQuota(WebsiteDataStore::defaultPerOriginQuota())
+    , m_originQuotaRatio(WebsiteDataStore::defaultOriginQuotaRatio())
+    , m_totalQuotaRatio(WebsiteDataStore::defaultTotalQuotaRatio())
 {
     if (isPersistent == IsPersistent::Yes && shouldInitializePaths == ShouldInitializePaths::Yes) {
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -62,6 +64,8 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const UUID& identif
     , m_baseCacheDirectory(WebsiteDataStore::defaultWebsiteDataStoreDirectory(identifier))
     , m_baseDataDirectory(WebsiteDataStore::defaultWebsiteDataStoreDirectory(identifier))
     , m_perOriginStorageQuota(WebsiteDataStore::defaultPerOriginQuota())
+    , m_originQuotaRatio(WebsiteDataStore::defaultOriginQuotaRatio())
+    , m_totalQuotaRatio(WebsiteDataStore::defaultTotalQuotaRatio())
 #if PLATFORM(IOS)
     , m_pcmMachServiceName("com.apple.webkit.adattributiond.service"_s)
 #endif
@@ -80,6 +84,8 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const String& baseC
     , m_baseCacheDirectory(baseCacheDirectory)
     , m_baseDataDirectory(baseDataDirectory)
     , m_perOriginStorageQuota(WebsiteDataStore::defaultPerOriginQuota())
+    , m_originQuotaRatio(WebsiteDataStore::defaultOriginQuotaRatio())
+    , m_totalQuotaRatio(WebsiteDataStore::defaultTotalQuotaRatio())
 {
     initializePaths();
 }

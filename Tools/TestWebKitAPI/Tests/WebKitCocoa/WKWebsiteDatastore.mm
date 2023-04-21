@@ -715,9 +715,8 @@ TEST(WKWebsiteDataStoreConfiguration, OriginQuotaRatio)
 {
     auto uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]);
     auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
-    EXPECT_NULL([websiteDataStoreConfiguration.get() originQuotaRatio]);
     [websiteDataStoreConfiguration.get() setVolumeCapacityOverride:[NSNumber numberWithInteger:2 * MB]];
-    auto ratioNumber = [NSNumber numberWithFloat:0.5];
+    auto ratioNumber = [NSNumber numberWithDouble:0.5];
     [websiteDataStoreConfiguration.get() setOriginQuotaRatio:ratioNumber];
     EXPECT_TRUE([[websiteDataStoreConfiguration.get() originQuotaRatio] isEqualToNumber:ratioNumber]);
     auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
@@ -750,6 +749,20 @@ TEST(WKWebsiteDataStoreConfiguration, OriginQuotaRatio)
     EXPECT_WK_STREQ(@"QuotaExceededError", [lastScriptMessage body]);
 }
 
+TEST(WKWebsiteDataStoreConfiguration, OriginQuotaRatioInvalidValue)
+{
+    bool hasException = false;
+    @try {
+        auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+        [websiteDataStoreConfiguration.get() setOriginQuotaRatio:[NSNumber numberWithDouble:-1.0]];
+    } @catch (NSException *exception) {
+        EXPECT_WK_STREQ(NSInvalidArgumentException, exception.name);
+        EXPECT_WK_STREQ(@"OriginQuotaRatio must be in the range [0.0, 1]", exception.reason);
+        hasException = true;
+    }
+    EXPECT_TRUE(hasException);
+}
+
 TEST(WKWebsiteDataStoreConfiguration, TotalQuotaRatio)
 {
     done = false;
@@ -773,8 +786,7 @@ TEST(WKWebsiteDataStoreConfiguration, TotalQuotaRatio)
         }); \
     </script>";
     auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
-    EXPECT_NULL([websiteDataStoreConfiguration.get() totalQuotaRatio]);
-    [websiteDataStoreConfiguration.get() setTotalQuotaRatio:[NSNumber numberWithFloat:0.5]];
+    [websiteDataStoreConfiguration.get() setTotalQuotaRatio:[NSNumber numberWithDouble:0.5]];
     [websiteDataStoreConfiguration.get() setVolumeCapacityOverride:[NSNumber numberWithInteger:100000]];
     auto handler = adoptNS([[WKWebsiteDataStoreMessageHandler alloc] init]);
     auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
@@ -854,9 +866,8 @@ TEST(WKWebsiteDataStoreConfiguration, TotalQuotaRatioWithResourceLoadStatisticsE
         }); \
     </script>";
     auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
-    EXPECT_NULL([websiteDataStoreConfiguration.get() totalQuotaRatio]);
-    [websiteDataStoreConfiguration.get() setTotalQuotaRatio:[NSNumber numberWithFloat:0.5]];
-    [websiteDataStoreConfiguration.get() setVolumeCapacityOverride:[NSNumber numberWithFloat:100000]];
+    [websiteDataStoreConfiguration.get() setTotalQuotaRatio:[NSNumber numberWithDouble:0.5]];
+    [websiteDataStoreConfiguration.get() setVolumeCapacityOverride:[NSNumber numberWithDouble:100000]];
     auto handler = adoptNS([[WKWebsiteDataStoreMessageHandler alloc] init]);
     auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
     [websiteDataStore _setResourceLoadStatisticsEnabled:YES];
@@ -905,4 +916,29 @@ TEST(WKWebsiteDataStoreConfiguration, TotalQuotaRatioWithResourceLoadStatisticsE
     TestWebKitAPI::Util::run(&done);
     done = false;
 }
+
+TEST(WKWebsiteDataStoreConfiguration, TotalQuotaRatioInvalidValue)
+{
+    bool hasException = false;
+    @try {
+        auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+        [websiteDataStoreConfiguration.get() setTotalQuotaRatio:[NSNumber numberWithDouble:2.0]];
+    } @catch (NSException *exception) {
+        EXPECT_WK_STREQ(NSInvalidArgumentException, exception.name);
+        EXPECT_WK_STREQ(@"TotalQuotaRatio must be in the range [0.0, 1]", exception.reason);
+        hasException = true;
+    }
+    EXPECT_TRUE(hasException);
+}
+
+TEST(WKWebsiteDataStoreConfiguration, QuotaRatioDefaultValue)
+{
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    EXPECT_TRUE([websiteDataStoreConfiguration.get() originQuotaRatio]);
+    EXPECT_EQ([[websiteDataStoreConfiguration.get() originQuotaRatio] doubleValue], 0.6);
+
+    EXPECT_TRUE([websiteDataStoreConfiguration.get() totalQuotaRatio]);
+    EXPECT_EQ([[websiteDataStoreConfiguration.get() totalQuotaRatio] doubleValue], 0.8);
+}
+
 } // namespace TestWebKitAPI
