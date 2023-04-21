@@ -9,38 +9,44 @@
 <div id="dropeffect-div" tabindex=0 aria-dropeffect="copy move" role="button" aria-label="drop">drop</div>
 <div id="initially-grabbed-div" tabindex=0 aria-grabbed=true role="button" aria-label="grab1">grab</div>
 <div id="initially-ungrabbed-div" tabindex=0 aria-grabbed=false role="button" aria-label="grab2">grab</div>
+<div id="display-contents-div" tabindex="0" aria-dropeffect="copy move" aria-grabbed="true" role="button" aria-label="grab3" style="display:contents">display:contents grab</div>
 
 <script>
-    var testOutput = "This tests that the ARIA drag and drop attributes work as intended.\n\n";
+var testOutput = "This tests that the ARIA drag and drop attributes work as intended.\n\n";
 
-    if (window.accessibilityController) {
-        window.jsTestIsAsync = true;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-        var dropeffectDiv = accessibilityController.accessibleElementById("dropeffect-div");
-        testOutput += expect("dropeffectDiv.ariaDropEffects", "'copy,move'");
+    var dropeffectDiv = accessibilityController.accessibleElementById("dropeffect-div");
+    testOutput += expect("dropeffectDiv.ariaDropEffects", "'copy,move'");
 
-        var initiallyGrabbedDiv = accessibilityController.accessibleElementById("initially-grabbed-div");
-        var initiallyUngrabbedDiv = accessibilityController.accessibleElementById("initially-ungrabbed-div");
-        testOutput += expect("initiallyGrabbedDiv.ariaIsGrabbed", "true");
-        testOutput += expect("initiallyUngrabbedDiv.ariaIsGrabbed", "false");
-        testOutput += expect("initiallyGrabbedDiv.isAttributeSettable('AXGrabbed')", "true");
-        testOutput += expect("initiallyUngrabbedDiv.isAttributeSettable('AXGrabbed')", "true");
+    var initiallyGrabbedDiv = accessibilityController.accessibleElementById("initially-grabbed-div");
+    var initiallyUngrabbedDiv = accessibilityController.accessibleElementById("initially-ungrabbed-div");
+    var displayContentsDiv = accessibilityController.accessibleElementById("display-contents-div");
+    testOutput += expect("initiallyGrabbedDiv.ariaIsGrabbed", "true");
+    testOutput += expect("initiallyUngrabbedDiv.ariaIsGrabbed", "false");
+    testOutput += expect("initiallyGrabbedDiv.isAttributeSettable('AXGrabbed')", "true");
+    testOutput += expect("initiallyUngrabbedDiv.isAttributeSettable('AXGrabbed')", "true");
 
-        testOutput += "\nSetting aria-grabbed false for element #initially-grabbed-div.\n";
-        document.getElementById("initially-grabbed-div").setAttribute("aria-grabbed", "false");
-        setTimeout(async function() {
-            await waitFor(() => !initiallyGrabbedDiv.ariaIsGrabbed);
-            testOutput += expect("initiallyGrabbedDiv.ariaIsGrabbed", "false");
+    testOutput += expect("displayContentsDiv.ariaIsGrabbed", "true");
+    testOutput += expect("displayContentsDiv.isAttributeSettable('AXGrabbed')", "true");
+    testOutput += expect("displayContentsDiv.ariaDropEffects", "'copy,move'");
 
-            testOutput += "\nSetting aria-dropeffect of #dropeffect-div to 'move'.\n";
-            document.getElementById("dropeffect-div").setAttribute("aria-dropeffect", "move");
-            await waitFor(() => dropeffectDiv.ariaDropEffects === "move");
-            testOutput += expect("dropeffectDiv.ariaDropEffects", "'move'");
+    testOutput += "\nSetting aria-grabbed false for element #initially-grabbed-div.\n";
+    document.getElementById("initially-grabbed-div").setAttribute("aria-grabbed", "false");
+    setTimeout(async function() {
+        await waitFor(() => !initiallyGrabbedDiv.ariaIsGrabbed);
+        testOutput += expect("initiallyGrabbedDiv.ariaIsGrabbed", "false");
 
-            debug(testOutput);
-            finishJSTest();
-        }, 0);
-    }
+        testOutput += "\nSetting aria-dropeffect of #dropeffect-div to 'move'.\n";
+        document.getElementById("dropeffect-div").setAttribute("aria-dropeffect", "move");
+        await waitFor(() => dropeffectDiv.ariaDropEffects === "move");
+        testOutput += expect("dropeffectDiv.ariaDropEffects", "'move'");
+
+        debug(testOutput);
+        finishJSTest();
+    }, 0);
+}
 </script>
 </body>
 </html>

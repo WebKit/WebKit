@@ -42,7 +42,6 @@
 #include "Editor.h"
 #include "EditorClient.h"
 #include "ElementAncestorIteratorInlines.h"
-#include "EventHandler.h"
 #include "FloatRect.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
@@ -1071,45 +1070,6 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::linkedObjec
     linkedObjects.appendVector(controlledObjects());
 
     return linkedObjects;
-}
-
-bool AccessibilityRenderObject::supportsDropping() const 
-{
-    return determineDropEffects().size();
-}
-
-bool AccessibilityRenderObject::supportsDragging() const
-{
-    const AtomString& grabbed = getAttribute(aria_grabbedAttr);
-    return equalLettersIgnoringASCIICase(grabbed, "true"_s) || equalLettersIgnoringASCIICase(grabbed, "false"_s) || hasAttribute(draggableAttr);
-}
-
-bool AccessibilityRenderObject::isGrabbed()
-{
-#if ENABLE(DRAG_SUPPORT)
-    if (mainFrame() && mainFrame()->eventHandler().draggingElement() == element())
-        return true;
-#endif
-
-    return elementAttributeValue(aria_grabbedAttr);
-}
-
-Vector<String> AccessibilityRenderObject::determineDropEffects() const
-{
-    // Order is aria-dropeffect, dropzone, webkitdropzone
-    const AtomString& dropEffects = getAttribute(aria_dropeffectAttr);
-    if (!dropEffects.isEmpty())
-        return makeStringByReplacingAll(dropEffects.string(), '\n', ' ').split(' ');
-    
-    auto dropzone = getAttribute(dropzoneAttr);
-    if (!dropzone.isEmpty())
-        return Vector<String> { dropzone };
-    
-    auto webkitdropzone = getAttribute(webkitdropzoneAttr);
-    if (!webkitdropzone.isEmpty())
-        return Vector<String> { webkitdropzone };
-    
-    return { };
 }
 
 #if ENABLE(APPLE_PAY)

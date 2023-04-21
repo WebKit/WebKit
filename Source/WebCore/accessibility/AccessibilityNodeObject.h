@@ -73,6 +73,11 @@ public:
     bool supportsARIAOwns() const final;
     bool supportsRequiredAttribute() const override;
 
+    bool supportsDropping() const override;
+    bool supportsDragging() const override;
+    bool isGrabbed() override;
+    Vector<String> determineDropEffects() const override;
+
     bool canSetSelectedAttribute() const override;
 
     void setNode(Node*);

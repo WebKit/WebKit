@@ -5,6 +5,9 @@ PASS: initiallyGrabbedDiv.ariaIsGrabbed === true
 PASS: initiallyUngrabbedDiv.ariaIsGrabbed === false
 PASS: initiallyGrabbedDiv.isAttributeSettable('AXGrabbed') === true
 PASS: initiallyUngrabbedDiv.isAttributeSettable('AXGrabbed') === true
+PASS: displayContentsDiv.ariaIsGrabbed === true
+PASS: displayContentsDiv.isAttributeSettable('AXGrabbed') === true
+PASS: displayContentsDiv.ariaDropEffects === 'copy,move'
 
 Setting aria-grabbed false for element #initially-grabbed-div.
 PASS: initiallyGrabbedDiv.ariaIsGrabbed === false
@@ -18,3 +21,5 @@ TEST COMPLETE
 drop
 grab
 grab
+display:contents grab
+

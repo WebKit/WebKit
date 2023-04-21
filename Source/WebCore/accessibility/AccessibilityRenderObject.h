@@ -132,11 +132,6 @@ public:
     void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override;
     bool isVisiblePositionRangeInDifferentDocument(const VisiblePositionRange&) const;
 
-    bool supportsDropping() const override;
-    bool supportsDragging() const override;
-    bool isGrabbed() override;
-    Vector<String> determineDropEffects() const override;
-    
     VisiblePosition visiblePositionForPoint(const IntPoint&) const override;
     VisiblePosition visiblePositionForIndex(unsigned indexValue, bool lastIndexOK) const override;
     int index(const VisiblePosition&) const override;

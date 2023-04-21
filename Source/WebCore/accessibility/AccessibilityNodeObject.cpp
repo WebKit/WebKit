@@ -41,6 +41,7 @@
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementChildIteratorInlines.h"
 #include "Event.h"
+#include "EventHandler.h"
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "FrameLoader.h"
@@ -815,6 +816,45 @@ String AccessibilityNodeObject::accessKey() const
 {
     auto* element = this->element();
     return element ? element->attributeWithoutSynchronization(accesskeyAttr) : String();
+}
+
+bool AccessibilityNodeObject::supportsDropping() const
+{
+    return determineDropEffects().size();
+}
+
+bool AccessibilityNodeObject::supportsDragging() const
+{
+    const AtomString& grabbed = getAttribute(aria_grabbedAttr);
+    return equalLettersIgnoringASCIICase(grabbed, "true"_s) || equalLettersIgnoringASCIICase(grabbed, "false"_s) || hasAttribute(draggableAttr);
+}
+
+bool AccessibilityNodeObject::isGrabbed()
+{
+#if ENABLE(DRAG_SUPPORT)
+    if (mainFrame() && mainFrame()->eventHandler().draggingElement() == element())
+        return true;
+#endif
+
+    return elementAttributeValue(aria_grabbedAttr);
+}
+
+Vector<String> AccessibilityNodeObject::determineDropEffects() const
+{
+    // Order is aria-dropeffect, dropzone, webkitdropzone
+    const AtomString& dropEffects = getAttribute(aria_dropeffectAttr);
+    if (!dropEffects.isEmpty())
+        return makeStringByReplacingAll(dropEffects.string(), '\n', ' ').split(' ');
+
+    auto dropzone = getAttribute(dropzoneAttr);
+    if (!dropzone.isEmpty())
+        return Vector<String> { dropzone };
+
+    auto webkitdropzone = getAttribute(webkitdropzoneAttr);
+    if (!webkitdropzone.isEmpty())
+        return Vector<String> { webkitdropzone };
+
+    return { };
 }
 
 bool AccessibilityNodeObject::supportsARIAOwns() const
