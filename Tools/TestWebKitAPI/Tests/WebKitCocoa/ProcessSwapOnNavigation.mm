@@ -7946,6 +7946,7 @@ static void configureLockdownWKWebViewConfiguration(WKWebViewConfiguration *conf
     [config.preferences _setMediaDevicesEnabled:YES];
     config.preferences._mediaCaptureRequiresSecureConnection = NO;
     [config.preferences _setNotificationsEnabled:YES];
+    [config.preferences _setPushAPIEnabled: YES];
 
     // Turn on testable and preview features to confirm they are properly turned off in Lockdown Mode.
     for (_WKFeature *feature in [WKPreferences _features]) {

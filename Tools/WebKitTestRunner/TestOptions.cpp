@@ -121,6 +121,7 @@ const TestFeatures& TestOptions::defaults()
             { "PageVisibilityBasedProcessSuppressionEnabled", false },
             { "PdfJSViewerEnabled", false },
             { "PluginsEnabled", true },
+            { "PushAPIEnabled", true },
             { "RequiresUserGestureForAudioPlayback", false },
             { "RequiresUserGestureForMediaPlayback", false },
             { "RequiresUserGestureForVideoPlayback", false },

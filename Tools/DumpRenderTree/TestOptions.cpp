@@ -91,6 +91,7 @@ const TestFeatures& TestOptions::defaults()
             { "NeedsStorageAccessFromFileURLsQuirk", false },
             { "OfflineWebApplicationCacheEnabled", true },
             { "PaintTimingEnabled", true },
+            { "PushAPIEnabled", true },
             { "ReferrerPolicyAttributeEnabled", true },
             { "RemotePlaybackEnabled", true },
             { "RequiresUserGestureForAudioPlayback", false },

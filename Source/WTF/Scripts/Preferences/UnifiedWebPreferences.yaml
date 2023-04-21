@@ -5023,7 +5023,7 @@ PunchOutWhiteBackgroundsInDarkMode:
 
 PushAPIEnabled:
   type: bool
-  status: testable
+  status: embedder
   category: dom
   condition: ENABLE(SERVICE_WORKER)
   humanReadableName: "Push API"
