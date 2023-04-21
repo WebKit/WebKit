@@ -250,64 +250,6 @@ void ShaderModule::setLabel(String&& label)
         m_library.label = label;
 }
 
-id<MTLFunction> ShaderModule::getNamedFunction(const String& originalName, const HashMap<String, double>& keyValueReplacements) const
-{
-    if (!m_library)
-        return nil;
-
-    const auto* information = entryPointInformation(originalName);
-    const String& name = information ? information->mangledName : originalName;
-    auto originalFunction = [m_library newFunctionWithName:name];
-
-    if (!keyValueReplacements.size())
-        return originalFunction;
-
-    NSDictionary<NSString *, MTLFunctionConstant *> *originalFunctionConstants = [originalFunction functionConstantsDictionary];
-    MTLFunctionConstantValues *constantValues = [MTLFunctionConstantValues new];
-    for (auto& kvp : keyValueReplacements) {
-        auto it = m_constantIdentifiersToNames.find(kvp.key);
-        auto& constantName = it != m_constantIdentifiersToNames.end() ? it->value : kvp.key;
-
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250444 - it would be preferable
-        // to get the type information from the WGSL compiler so we don't have to call
-        // -[MTLLibrary newFunctionWithName:] twice
-        MTLDataType dataType = [originalFunctionConstants objectForKey:constantName].type;
-        union {
-            bool b;
-            int32_t i;
-            uint32_t u;
-            float f;
-            __fp16 h;
-        } v;
-        if (dataType == MTLDataTypeFloat)
-            v.f = static_cast<decltype(v.f)>(kvp.value);
-        else if (dataType == MTLDataTypeHalf)
-            v.h = static_cast<decltype(v.h)>(kvp.value);
-        else if (dataType == MTLDataTypeInt)
-            v.i = static_cast<decltype(v.i)>(kvp.value);
-        else if (dataType == MTLDataTypeUInt)
-            v.u = static_cast<decltype(v.u)>(kvp.value);
-        else if (dataType == MTLDataTypeBool)
-            v.b = static_cast<decltype(v.b)>(kvp.value);
-        else {
-            ASSERT_NOT_REACHED("Unsupported MTLFunctionConstant data type");
-            return nil;
-        }
-
-        [constantValues setConstantValue:&v type:dataType withName:constantName];
-    }
-
-    NSError *error;
-    id<MTLFunction> result = [m_library newFunctionWithName:name constantValues:constantValues error:&error];
-
-    if (error) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250442
-        WTFLogAlways("MSL compilation error: %@", error);
-    }
-
-    return result;
-}
-
 static auto wgslBindingType(WGPUBufferBindingType bindingType)
 {
     switch (bindingType) {

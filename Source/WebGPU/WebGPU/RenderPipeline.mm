@@ -382,16 +382,12 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
             return RenderPipeline::createInvalid(*this);
 
         const auto& vertexFunctionName = String::fromLatin1(descriptor.vertex.entryPoint);
+        auto libraryCreationResult = createLibrary(m_device, vertexModule, pipelineLayout, vertexFunctionName, label);
+        if (!libraryCreationResult)
+            return RenderPipeline::createInvalid(*this);
 
-        auto vertexFunction = vertexModule.getNamedFunction(vertexFunctionName, buildKeyValueReplacements(descriptor.vertex));
-        if (!vertexFunction) {
-            auto libraryCreationResult = createLibrary(m_device, vertexModule, pipelineLayout, vertexFunctionName, label);
-            if (!libraryCreationResult)
-                return RenderPipeline::createInvalid(*this);
-
-            const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
-            vertexFunction = createFunction(libraryCreationResult->library, entryPointInformation, descriptor.vertex.constantCount, descriptor.vertex.constants, label);
-        }
+        const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
+        auto vertexFunction = createFunction(libraryCreationResult->library, entryPointInformation, descriptor.vertex.constantCount, descriptor.vertex.constants, label);
         mtlRenderPipelineDescriptor.vertexFunction = vertexFunction;
     }
 
@@ -407,16 +403,12 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
 
         const auto& fragmentFunctionName = String::fromLatin1(fragmentDescriptor.entryPoint);
 
-        auto fragmentFunction = fragmentModule.getNamedFunction(fragmentFunctionName, buildKeyValueReplacements(fragmentDescriptor));
+        auto libraryCreationResult = createLibrary(m_device, fragmentModule, pipelineLayout, fragmentFunctionName, label);
+        if (!libraryCreationResult)
+            return RenderPipeline::createInvalid(*this);
 
-        if (!fragmentFunction) {
-            auto libraryCreationResult = createLibrary(m_device, fragmentModule, pipelineLayout, fragmentFunctionName, label);
-            if (!libraryCreationResult)
-                return RenderPipeline::createInvalid(*this);
-
-            const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
-            fragmentFunction = createFunction(libraryCreationResult->library, entryPointInformation, fragmentDescriptor.constantCount, fragmentDescriptor.constants, label);
-        }
+        const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
+        auto fragmentFunction = createFunction(libraryCreationResult->library, entryPointInformation, fragmentDescriptor.constantCount, fragmentDescriptor.constants, label);
         mtlRenderPipelineDescriptor.fragmentFunction = fragmentFunction;
 
         for (uint32_t i = 0; i < fragmentDescriptor.targetCount; ++i) {

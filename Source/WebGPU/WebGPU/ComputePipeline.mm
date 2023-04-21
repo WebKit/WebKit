@@ -71,25 +71,18 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
 
     const PipelineLayout& pipelineLayout = WebGPU::fromAPI(descriptor.layout);
     auto label = fromAPI(descriptor.label);
+    auto libraryCreationResult = createLibrary(m_device, shaderModule, &pipelineLayout, fromAPI(descriptor.compute.entryPoint), label);
+    if (!libraryCreationResult)
+        return ComputePipeline::createInvalid(*this);
 
-    const auto& computeFunctionName = String::fromLatin1(descriptor.compute.entryPoint);
-    id<MTLFunction> function = shaderModule.getNamedFunction(computeFunctionName, buildKeyValueReplacements(descriptor.compute));
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=251171 - this should come from the WGSL compiler
-    WGSL::Reflection::Compute computeInformation { .workgroupSize = { .width = 1, .height = 1, .depth = 1 } };
-    if (!function) {
-        auto libraryCreationResult = createLibrary(m_device, shaderModule, &pipelineLayout, fromAPI(descriptor.compute.entryPoint), label);
-        if (!libraryCreationResult)
-            return ComputePipeline::createInvalid(*this);
+    auto library = libraryCreationResult->library;
+    const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
 
-        auto library = libraryCreationResult->library;
-        const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
+    if (!std::holds_alternative<WGSL::Reflection::Compute>(entryPointInformation.typedEntryPoint))
+        return ComputePipeline::createInvalid(*this);
+    WGSL::Reflection::Compute computeInformation = std::get<WGSL::Reflection::Compute>(entryPointInformation.typedEntryPoint);
 
-        if (!std::holds_alternative<WGSL::Reflection::Compute>(entryPointInformation.typedEntryPoint))
-            return ComputePipeline::createInvalid(*this);
-        computeInformation = std::get<WGSL::Reflection::Compute>(entryPointInformation.typedEntryPoint);
-
-        function = createFunction(library, entryPointInformation, descriptor.compute.constantCount, descriptor.compute.constants, label);
-    }
+    auto function = createFunction(library, entryPointInformation, descriptor.compute.constantCount, descriptor.compute.constants, label);
 
     MTLComputePipelineReflection *reflection;
     bool hasBindGroups = pipelineLayout.numberOfBindGroupLayouts() > 0;
