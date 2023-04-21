@@ -72,7 +72,6 @@ platform/graphics/cairo/BackingStoreBackendCairoX11.cpp @no-unify
 
 platform/graphics/egl/GLContext.cpp @no-unify
 platform/graphics/egl/GLContextLibWPE.cpp @no-unify
-platform/graphics/egl/GLContextWayland.cpp @no-unify
 platform/graphics/egl/GLContextX11.cpp @no-unify
 platform/graphics/egl/PlatformDisplaySurfaceless.cpp @no-unify
 

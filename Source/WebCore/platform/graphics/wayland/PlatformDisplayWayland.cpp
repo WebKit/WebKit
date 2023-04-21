@@ -47,34 +47,19 @@
 
 namespace WebCore {
 
-const struct wl_registry_listener PlatformDisplayWayland::s_registryListener = {
-    // globalCallback
-    [](void* data, struct wl_registry*, uint32_t name, const char* interface, uint32_t) {
-        static_cast<PlatformDisplayWayland*>(data)->registryGlobal(interface, name);
-    },
-    // globalRemoveCallback
-    [](void*, struct wl_registry*, uint32_t)
-    {
-    }
-};
-
 std::unique_ptr<PlatformDisplay> PlatformDisplayWayland::create()
 {
     struct wl_display* display = wl_display_connect(nullptr);
     if (!display)
         return nullptr;
 
-    auto platformDisplay = std::unique_ptr<PlatformDisplayWayland>(new PlatformDisplayWayland(display));
-    platformDisplay->initialize();
-    return platformDisplay;
+    return makeUnique<PlatformDisplayWayland>(display);
 }
 
 #if PLATFORM(GTK)
 std::unique_ptr<PlatformDisplay> PlatformDisplayWayland::create(GdkDisplay* display)
 {
-    auto platformDisplay = std::unique_ptr<PlatformDisplayWayland>(new PlatformDisplayWayland(display));
-    platformDisplay->initialize();
-    return platformDisplay;
+    return makeUnique<PlatformDisplayWayland>(display);
 }
 #endif
 
@@ -99,11 +84,8 @@ PlatformDisplayWayland::~PlatformDisplayWayland()
     bool nativeDisplayOwned = true;
 #endif
 
-    if (nativeDisplayOwned && m_display) {
-        m_compositor = nullptr;
-        m_registry = nullptr;
+    if (nativeDisplayOwned && m_display)
         wl_display_disconnect(m_display);
-    }
 }
 
 #if PLATFORM(GTK)
@@ -114,14 +96,10 @@ void PlatformDisplayWayland::sharedDisplayDidClose()
 }
 #endif
 
-void PlatformDisplayWayland::initialize()
+void PlatformDisplayWayland::initializeEGLDisplay()
 {
     if (!m_display)
         return;
-
-    m_registry.reset(wl_display_get_registry(m_display));
-    wl_registry_add_listener(m_registry.get(), &s_registryListener, this);
-    wl_display_roundtrip(m_display);
 
     const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
     if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
@@ -134,20 +112,6 @@ void PlatformDisplayWayland::initialize()
         m_eglDisplay = eglGetDisplay(m_display);
 
     PlatformDisplay::initializeEGLDisplay();
-}
-
-void PlatformDisplayWayland::registryGlobal(const char* interface, uint32_t name)
-{
-    if (!std::strcmp(interface, "wl_compositor"))
-        m_compositor.reset(static_cast<struct wl_compositor*>(wl_registry_bind(m_registry.get(), name, &wl_compositor_interface, 1)));
-}
-
-WlUniquePtr<struct wl_surface> PlatformDisplayWayland::createSurface() const
-{
-    if (!m_compositor)
-        return nullptr;
-
-    return WlUniquePtr<struct wl_surface>(wl_compositor_create_surface(m_compositor.get()));
 }
 
 } // namespace WebCore

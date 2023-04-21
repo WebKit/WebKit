@@ -260,21 +260,20 @@ std::unique_ptr<GLContext> GLContext::createWindowContext(GLNativeWindowType win
         surface = createWindowSurfaceX11(display, config, window);
         break;
 #endif
-#if PLATFORM(WAYLAND)
-    case PlatformDisplay::Type::Wayland:
-        surface = createWindowSurfaceWayland(display, config, window);
-        break;
-#endif
 #if USE(WPE_RENDERER)
     case PlatformDisplay::Type::WPE:
         surface = createWindowSurfaceWPE(display, config, window);
         break;
 #endif // USE(WPE_RENDERER)
+#if PLATFORM(WAYLAND)
+    case PlatformDisplay::Type::Wayland:
+#endif
 #if USE(GBM)
     case PlatformDisplay::Type::GBM:
 #endif
     case PlatformDisplay::Type::Surfaceless:
         RELEASE_ASSERT_NOT_REACHED();
+        break;
     }
 
     if (surface == EGL_NO_SURFACE) {
@@ -348,6 +347,9 @@ std::unique_ptr<GLContext> GLContext::createSurfacelessContext(PlatformDisplay& 
 
 std::unique_ptr<GLContext> GLContext::create(GLNativeWindowType window, PlatformDisplay& platformDisplay)
 {
+    if (!window)
+        return GLContext::createOffscreen(platformDisplay);
+
     if (!initializeOpenGLShimsIfNeeded())
         return nullptr;
 
@@ -362,47 +364,7 @@ std::unique_ptr<GLContext> GLContext::create(GLNativeWindowType window, Platform
     }
 
     EGLContext eglSharingContext = platformDisplay.sharingGLContext() ? static_cast<GLContext*>(platformDisplay.sharingGLContext())->m_context : EGL_NO_CONTEXT;
-    if (platformDisplay.type() == PlatformDisplay::Type::Surfaceless) {
-        auto context = createSurfacelessContext(platformDisplay, eglSharingContext);
-        if (!context)
-            WTFLogAlways("Could not create EGL surfaceless context: %s.", lastErrorString());
-        return context;
-    }
-
-    auto context = window ? createWindowContext(window, platformDisplay, eglSharingContext) : nullptr;
-    if (!context)
-        context = createSurfacelessContext(platformDisplay, eglSharingContext);
-    if (!context) {
-        switch (platformDisplay.type()) {
-#if PLATFORM(X11)
-        case PlatformDisplay::Type::X11:
-            context = createPixmapContext(platformDisplay, eglSharingContext);
-            break;
-#endif
-#if PLATFORM(WAYLAND)
-        case PlatformDisplay::Type::Wayland:
-            context = createWaylandContext(platformDisplay, eglSharingContext);
-            break;
-#endif
-#if USE(WPE_RENDERER)
-        case PlatformDisplay::Type::WPE:
-            context = createWPEContext(platformDisplay, eglSharingContext);
-            break;
-#endif
-#if USE(GBM)
-        case PlatformDisplay::Type::GBM:
-#endif
-        case PlatformDisplay::Type::Surfaceless:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-    }
-    if (!context) {
-        RELEASE_LOG_INFO(Compositing, "Could not create platform context: %s. Using Pbuffer as fallback.", lastErrorString());
-        context = createPbufferContext(platformDisplay, eglSharingContext);
-        if (!context)
-            RELEASE_LOG_INFO(Compositing, "Could not create Pbuffer context: %s.", lastErrorString());
-    }
-
+    auto context = createWindowContext(window, platformDisplay, eglSharingContext);
     if (!context)
         WTFLogAlways("Could not create EGL context.");
     return context;
@@ -413,7 +375,50 @@ std::unique_ptr<GLContext> GLContext::createOffscreen(PlatformDisplay& platformD
     if (!initializeOpenGLShimsIfNeeded())
         return nullptr;
 
-    return create(0, platformDisplay);
+    if (platformDisplay.eglDisplay() == EGL_NO_DISPLAY) {
+        WTFLogAlways("Cannot create EGL context: invalid display (last error: %s)\n", lastErrorString());
+        return nullptr;
+    }
+
+    if (eglBindAPI(gEGLAPIVersion) == EGL_FALSE) {
+        WTFLogAlways("Cannot create EGL context: error binding %s API (%s)\n", gEGLAPIName, lastErrorString());
+        return nullptr;
+    }
+
+    EGLContext eglSharingContext = platformDisplay.sharingGLContext() ? static_cast<GLContext*>(platformDisplay.sharingGLContext())->m_context : EGL_NO_CONTEXT;
+    auto context = createSurfacelessContext(platformDisplay, eglSharingContext);
+    if (!context) {
+        switch (platformDisplay.type()) {
+#if PLATFORM(X11)
+        case PlatformDisplay::Type::X11:
+            context = createPixmapContext(platformDisplay, eglSharingContext);
+            break;
+#endif
+#if USE(WPE_RENDERER)
+        case PlatformDisplay::Type::WPE:
+            context = createWPEContext(platformDisplay, eglSharingContext);
+            break;
+#endif
+#if PLATFORM(WAYLAND)
+        case PlatformDisplay::Type::Wayland:
+#endif
+#if USE(GBM)
+        case PlatformDisplay::Type::GBM:
+#endif
+        case PlatformDisplay::Type::Surfaceless:
+            // Do not fallback to pbuffers.
+            WTFLogAlways("Could not create EGL surfaceless context: %s.", lastErrorString());
+            return nullptr;
+        }
+    }
+    if (!context) {
+        RELEASE_LOG_INFO(Compositing, "Could not create platform context: %s. Using Pbuffer as fallback.", lastErrorString());
+        context = createPbufferContext(platformDisplay, eglSharingContext);
+        if (!context)
+            RELEASE_LOG_INFO(Compositing, "Could not create Pbuffer context: %s.", lastErrorString());
+    }
+
+    return context;
 }
 
 std::unique_ptr<GLContext> GLContext::createSharing(PlatformDisplay& platformDisplay)
@@ -439,21 +444,21 @@ std::unique_ptr<GLContext> GLContext::createSharing(PlatformDisplay& platformDis
             context = createPixmapContext(platformDisplay);
             break;
 #endif
-#if PLATFORM(WAYLAND)
-        case PlatformDisplay::Type::Wayland:
-            context = createWaylandContext(platformDisplay);
-            break;
-#endif
 #if USE(WPE_RENDERER)
         case PlatformDisplay::Type::WPE:
             context = createWPEContext(platformDisplay);
             break;
 #endif
+#if PLATFORM(WAYLAND)
+        case PlatformDisplay::Type::Wayland:
+#endif
 #if USE(GBM)
         case PlatformDisplay::Type::GBM:
 #endif
         case PlatformDisplay::Type::Surfaceless:
-            break;
+            // Do not fallback to pbuffers.
+            WTFLogAlways("Could not create EGL surfaceless context: %s.", lastErrorString());
+            return nullptr;
         }
     }
     if (!context) {
@@ -493,9 +498,6 @@ GLContext::~GLContext()
     if (m_surface)
         eglDestroySurface(display, m_surface);
 
-#if PLATFORM(WAYLAND)
-    destroyWaylandWindow();
-#endif
 #if USE(WPE_RENDERER)
     destroyWPETarget();
 #endif
