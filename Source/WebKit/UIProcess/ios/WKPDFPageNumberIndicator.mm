@@ -142,7 +142,9 @@ const NSTimeInterval indicatorMoveDuration = 0.3;
     point.y += indicatorMargin;
 
     void (^animations)() = ^{
-        self.frameOrigin = point;
+        CGRect frame = self.frame;
+        frame.origin = point;
+        self.frame = frame;
     };
     if (animated)
         [UIView animateWithDuration:indicatorMoveDuration animations:animations];
@@ -152,7 +154,7 @@ const NSTimeInterval indicatorMoveDuration = 0.3;
 
 - (CGSize)sizeThatFits:(CGSize)size
 {
-    CGSize labelSize = [_label sizeThatFits:[_label size]];
+    CGSize labelSize = [_label sizeThatFits:[_label bounds].size];
     labelSize.width += 2 * indicatorHorizontalPadding;
     labelSize.height += 2 * indicatorVerticalPadding;
     return labelSize;

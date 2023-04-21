@@ -429,7 +429,7 @@ static constexpr CGFloat kFullScreenWindowCornerRadius = 12;
 @implementation WKFullScreenPlaceholderView
 - (void)willMoveToSuperview:(UIView *)newSuperview
 {
-    [super viewWillMoveToSuperview:newSuperview];
+    [super willMoveToSuperview:newSuperview];
     [self.parent placeholderWillMoveToSuperview:newSuperview];
 }
 @end
