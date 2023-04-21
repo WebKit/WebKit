@@ -68,7 +68,7 @@ protected:
 
     void setSupportedPresets(Vector<VideoPreset>&&);
     void setSupportedPresets(Vector<VideoPresetData>&&);
-    const Vector<VideoPreset>& presets();
+    virtual const Vector<VideoPreset>& presets();
 
     bool frameRateRangeIncludesRate(const FrameRateRange&, double);
 

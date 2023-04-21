@@ -166,7 +166,7 @@ public:
     WEBCORE_EXPORT void addVideoFrameObserver(VideoFrameObserver&);
     WEBCORE_EXPORT void removeVideoFrameObserver(VideoFrameObserver&);
 
-    const IntSize size() const;
+    virtual const IntSize size() const;
     void setSize(const IntSize&);
 
     IntSize intrinsicSize() const;
