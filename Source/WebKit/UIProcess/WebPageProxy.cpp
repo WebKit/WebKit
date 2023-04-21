@@ -460,6 +460,93 @@ Ref<WebPageProxy> WebPageProxy::create(PageClient& pageClient, WebProcessProxy& 
     return adoptRef(*new WebPageProxy(pageClient, process, WTFMove(configuration)));
 }
 
+WebPageProxy::ProcessActivityState::ProcessActivityState(WebPageProxy& page)
+    : m_page(page)
+#if PLATFORM(MAC)
+    , m_wasRecentlyVisibleActivity(makeUniqueRef<ProcessThrottlerTimedActivity>(8_min))
+#endif
+{
+}
+
+void WebPageProxy::ProcessActivityState::takeVisibleActivity()
+{
+    m_isVisibleActivity = m_page.process().throttler().foregroundActivity("View is visible"_s).moveToUniquePtr();
+#if PLATFORM(MAC)
+    *m_wasRecentlyVisibleActivity = nullptr;
+#endif
+}
+void WebPageProxy::ProcessActivityState::takeAudibleActivity()
+{
+    m_isAudibleActivity = m_page.process().throttler().foregroundActivity("View is playing audio"_s).moveToUniquePtr();
+}
+void WebPageProxy::ProcessActivityState::takeCapturingActivity()
+{
+    m_isCapturingActivity = m_page.process().throttler().foregroundActivity("View is capturing media"_s).moveToUniquePtr();
+}
+
+void WebPageProxy::ProcessActivityState::reset()
+{
+    m_isVisibleActivity = nullptr;
+#if PLATFORM(MAC)
+    *m_wasRecentlyVisibleActivity = nullptr;
+#endif
+    m_isAudibleActivity = nullptr;
+    m_isCapturingActivity = nullptr;
+#if PLATFORM(IOS_FAMILY)
+    m_openingAppLinkActivity = nullptr;
+#endif
+}
+
+void WebPageProxy::ProcessActivityState::dropVisibleActivity()
+{
+#if PLATFORM(MAC)
+    *m_wasRecentlyVisibleActivity = m_page.process().throttler().foregroundActivity("View was recently visible"_s);
+#endif
+    m_isVisibleActivity = nullptr;
+}
+
+void WebPageProxy::ProcessActivityState::dropAudibleActivity()
+{
+    m_isAudibleActivity = nullptr;
+}
+
+void WebPageProxy::ProcessActivityState::dropCapturingActivity()
+{
+    m_isCapturingActivity = nullptr;
+}
+
+bool WebPageProxy::ProcessActivityState::hasValidVisibleActivity() const
+{
+    return m_isVisibleActivity && m_isVisibleActivity->isValid();
+}
+
+bool WebPageProxy::ProcessActivityState::hasValidAudibleActivity() const
+{
+    return m_isAudibleActivity && m_isAudibleActivity->isValid();
+}
+
+bool WebPageProxy::ProcessActivityState::hasValidCapturingActivity() const
+{
+    return m_isCapturingActivity && m_isCapturingActivity->isValid();
+}
+
+#if PLATFORM(IOS_FAMILY)
+void WebPageProxy::ProcessActivityState::takeOpeningAppLinkActivity()
+{
+    m_openingAppLinkActivity = m_page.process().throttler().backgroundActivity("Opening AppLink"_s).moveToUniquePtr();
+}
+
+void WebPageProxy::ProcessActivityState::dropOpeningAppLinkActivity()
+{
+    m_openingAppLinkActivity = nullptr;
+}
+
+bool WebPageProxy::ProcessActivityState::hasValidOpeningAppLinkActivity() const
+{
+    return m_openingAppLinkActivity && m_openingAppLinkActivity->isValid();
+}
+#endif
+
 WebPageProxy::Internals::Internals(WebPageProxy& page)
     : page(page)
     , audibleActivityTimer(RunLoop::main(), &page, &WebPageProxy::clearAudibleActivity)
@@ -510,6 +597,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 #if ENABLE(FULLSCREEN_API)
     , m_fullscreenClient(makeUnique<API::FullscreenClient>())
 #endif
+    , m_processActivityState(*this)
     , m_initialCapitalizationEnabled(m_configuration->initialCapitalizationEnabled())
     , m_cpuLimit(m_configuration->cpuLimit())
     , m_backForwardList(WebBackForwardList::create(*this))
@@ -1298,10 +1386,7 @@ void WebPageProxy::close()
     m_configuration->setRelatedPage(nullptr);
 
     // Make sure we don't hold a process assertion after getting closed.
-    m_isVisibleActivity = nullptr;
-    m_isAudibleActivity = nullptr;
-    m_isCapturingActivity = nullptr;
-    m_openingAppLinkActivity = nullptr;
+    m_processActivityState.reset();
     internals().audibleActivityTimer.stop();
 
     stopAllURLSchemeTasks();
@@ -2466,23 +2551,23 @@ void WebPageProxy::updateThrottleState()
 
 #if USE(RUNNINGBOARD)
     if (isViewVisible()) {
-        if (!m_isVisibleActivity || !m_isVisibleActivity->isValid()) {
+        if (!m_processActivityState.hasValidVisibleActivity()) {
             WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess is taking a foreground assertion because the view is visible");
-            m_isVisibleActivity = m_process->throttler().foregroundActivity("View is visible"_s).moveToUniquePtr();
+            m_processActivityState.takeVisibleActivity();
         }
-    } else if (m_isVisibleActivity) {
+    } else if (m_processActivityState.hasValidVisibleActivity()) {
         WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess is releasing a foreground assertion because the view is no longer visible");
-        m_isVisibleActivity = nullptr;
+        m_processActivityState.dropVisibleActivity();
     }
 
     bool isAudible = internals().activityState.contains(ActivityState::IsAudible);
     if (isAudible) {
-        if (!m_isAudibleActivity || !m_isAudibleActivity->isValid()) {
+        if (!m_processActivityState.hasValidAudibleActivity()) {
             WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess is taking a foreground assertion because we are playing audio");
-            m_isAudibleActivity = m_process->throttler().foregroundActivity("View is playing audio"_s).moveToUniquePtr();
+            m_processActivityState.takeAudibleActivity();
         }
         internals().audibleActivityTimer.stop();
-    } else if (m_isAudibleActivity) {
+    } else if (m_processActivityState.hasValidAudibleActivity()) {
         WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess will release a foreground assertion in %g seconds because we are no longer playing audio", audibleActivityClearDelay.seconds());
         if (!internals().audibleActivityTimer.isActive())
             internals().audibleActivityTimer.startOneShot(audibleActivityClearDelay);
@@ -2490,13 +2575,13 @@ void WebPageProxy::updateThrottleState()
 
     bool isCapturingMedia = internals().activityState.contains(ActivityState::IsCapturingMedia);
     if (isCapturingMedia) {
-        if (!m_isCapturingActivity || !m_isCapturingActivity->isValid()) {
+        if (!m_processActivityState.hasValidCapturingActivity()) {
             WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess is taking a foreground assertion because media capture is active");
-            m_isCapturingActivity = m_process->throttler().foregroundActivity("View is capturing media"_s).moveToUniquePtr();
+            m_processActivityState.takeCapturingActivity();
         }
-    } else if (m_isCapturingActivity) {
+    } else if (m_processActivityState.hasValidCapturingActivity()) {
         WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess is releasing a foreground assertion because media capture is no longer active");
-        m_isCapturingActivity = nullptr;
+        m_processActivityState.dropCapturingActivity();
     }
 #endif
 }
@@ -2504,7 +2589,7 @@ void WebPageProxy::updateThrottleState()
 void WebPageProxy::clearAudibleActivity()
 {
     WEBPAGEPROXY_RELEASE_LOG(ProcessSuspension, "updateThrottleState: UIProcess is releasing a foreground assertion because we are no longer playing audio");
-    m_isAudibleActivity = nullptr;
+    m_processActivityState.dropAudibleActivity();
 }
 
 void WebPageProxy::updateHiddenPageThrottlingAutoIncreases()
@@ -2540,7 +2625,7 @@ void WebPageProxy::waitForDidUpdateActivityState(ActivityStateChangeID activityS
 #if USE(RUNNINGBOARD)
     // Hail Mary check. Should not be possible (dispatchActivityStateChange should force async if not visible,
     // and if visible we should be holding an assertion) - but we should never block on a suspended process.
-    if (!m_isVisibleActivity) {
+    if (!m_processActivityState.hasValidVisibleActivity()) {
         ASSERT_NOT_REACHED();
         return;
     }
@@ -8815,10 +8900,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement = false;
 #endif
 
-    m_isVisibleActivity = nullptr;
-    m_isAudibleActivity = nullptr;
-    m_isCapturingActivity = nullptr;
-    m_openingAppLinkActivity = nullptr;
+    m_processActivityState.reset();
 
     internals().pageIsUserObservableCount = nullptr;
     internals().visiblePageToken = nullptr;

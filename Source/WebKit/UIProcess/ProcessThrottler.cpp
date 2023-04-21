@@ -343,28 +343,28 @@ void ProcessThrottler::delaySuspension()
         m_dropSuspendedAssertionTimer.startOneShot(removeAllAssertionsTimeout);
 }
 
-ProcessThrottler::TimedActivity::TimedActivity(Seconds timeout, ProcessThrottler::ActivityVariant&& activity)
-    : m_timer(RunLoop::main(), this, &TimedActivity::activityTimedOut)
+ProcessThrottlerTimedActivity::ProcessThrottlerTimedActivity(Seconds timeout, ProcessThrottler::ActivityVariant&& activity)
+    : m_timer(RunLoop::main(), this, &ProcessThrottlerTimedActivity::activityTimedOut)
     , m_timeout(timeout)
     , m_activity(WTFMove(activity))
 {
     updateTimer();
 }
 
-auto ProcessThrottler::TimedActivity::operator=(ProcessThrottler::ActivityVariant&& activity) -> TimedActivity&
+auto ProcessThrottlerTimedActivity::operator=(ProcessThrottler::ActivityVariant&& activity) -> ProcessThrottlerTimedActivity&
 {
     m_activity = WTFMove(activity);
     updateTimer();
     return *this;
 }
 
-void ProcessThrottler::TimedActivity::activityTimedOut()
+void ProcessThrottlerTimedActivity::activityTimedOut()
 {
-    RELEASE_LOG_ERROR(ProcessSuspension, "%p - TimedActivity::activityTimedOut:", this);
+    RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessThrottlerTimedActivity::activityTimedOut:", this);
     m_activity = nullptr;
 }
 
-void ProcessThrottler::TimedActivity::updateTimer()
+void ProcessThrottlerTimedActivity::updateTimer()
 {
     if (std::holds_alternative<std::nullptr_t>(m_activity))
         m_timer.stop();

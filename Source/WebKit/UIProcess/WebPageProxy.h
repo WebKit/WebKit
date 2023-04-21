@@ -331,6 +331,7 @@ class PageLoadStateObserverBase;
 class PlatformXRSystem;
 class PlaybackSessionManagerProxy;
 class ProcessThrottlerActivity;
+class ProcessThrottlerTimedActivity;
 class ProvisionalPageProxy;
 class RemoteLayerTreeHost;
 class RemoteLayerTreeNode;
@@ -2781,6 +2782,42 @@ private:
     Internals& internals() { return m_internals; }
     const Internals& internals() const { return m_internals; }
 
+    class ProcessActivityState {
+    public:
+        explicit ProcessActivityState(WebPageProxy&);
+        void takeVisibleActivity();
+        void takeAudibleActivity();
+        void takeCapturingActivity();
+
+        void reset();
+        void dropVisibleActivity();
+        void dropAudibleActivity();
+        void dropCapturingActivity();
+
+        bool hasValidVisibleActivity() const;
+        bool hasValidAudibleActivity() const;
+        bool hasValidCapturingActivity() const;
+
+#if PLATFORM(IOS_FAMILY)
+        void takeOpeningAppLinkActivity();
+        void dropOpeningAppLinkActivity();
+        bool hasValidOpeningAppLinkActivity() const;
+#endif
+
+    private:
+        WebPageProxy& m_page;
+
+        std::unique_ptr<ProcessThrottlerActivity> m_isVisibleActivity;
+#if PLATFORM(MAC)
+        UniqueRef<ProcessThrottlerTimedActivity> m_wasRecentlyVisibleActivity;
+#endif
+        std::unique_ptr<ProcessThrottlerActivity> m_isAudibleActivity;
+        std::unique_ptr<ProcessThrottlerActivity> m_isCapturingActivity;
+#if PLATFORM(IOS_FAMILY)
+        std::unique_ptr<ProcessThrottlerActivity> m_openingAppLinkActivity;
+#endif
+    };
+
     UniqueRef<Internals> m_internals;
 
     WeakPtr<PageClient> m_pageClient;
@@ -2917,10 +2954,8 @@ private:
     bool m_isListeningForUserFacingStateChangeNotification { false };
 #endif
     bool m_allowsMediaDocumentInlinePlayback { false };
-    std::unique_ptr<ProcessThrottlerActivity> m_isVisibleActivity;
-    std::unique_ptr<ProcessThrottlerActivity> m_isAudibleActivity;
-    std::unique_ptr<ProcessThrottlerActivity> m_isCapturingActivity;
-    std::unique_ptr<ProcessThrottlerActivity> m_openingAppLinkActivity;
+
+    ProcessActivityState m_processActivityState;
 
     bool m_initialCapitalizationEnabled { false };
     std::optional<double> m_cpuLimit;
