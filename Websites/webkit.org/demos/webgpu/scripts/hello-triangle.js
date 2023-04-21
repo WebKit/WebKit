@@ -23,11 +23,6 @@ async function helloTriangle() {
     const vertexBuffer = device.createBuffer(vertexDataBufferDescriptor);
     
     /*** Shader Setup ***/
-    
-    const uniformBindGroupLayout = device.createBindGroupLayout({ entries: [{binding: 0, visibility: GPUShaderStage.VERTEX, buffer: {}}] });
-    const pipelineLayoutDesc = { bindGroupLayouts: [uniformBindGroupLayout] };
-    const layout = device.createPipelineLayout(pipelineLayoutDesc);
-
     const wgslSource = `
                      struct Vertex {
                          @builtin(position) Position: vec4<f32>,
@@ -52,7 +47,7 @@ async function helloTriangle() {
                          return in.color;
                      }
     `;
-    const shaderModule = device.createShaderModule({ code: wgslSource, isWHLSL: false, hints: [ {layout: layout }, ] });
+    const shaderModule = device.createShaderModule({ code: wgslSource });
     
     /* GPUPipelineStageDescriptors */
     const vertexStageDescriptor = { module: shaderModule, entryPoint: "vsmain" };
@@ -62,7 +57,7 @@ async function helloTriangle() {
     /* GPURenderPipelineDescriptor */
 
     const renderPipelineDescriptor = {
-        layout: layout,
+        layout: 'auto',
         vertex: vertexStageDescriptor,
         fragment: fragmentStageDescriptor,
         primitive: {topology: "triangle-list" },
