@@ -318,7 +318,7 @@ void PageConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Ref
     String dataURL;
     JSC::JSValue target;
 
-    auto timestamp = m_page.inspectorController().executionStopwatch().elapsedTime();
+    auto timestamp = WallTime::now();
 
     if (arguments->argumentCount()) {
         auto possibleTarget = arguments->argumentAt(0);
