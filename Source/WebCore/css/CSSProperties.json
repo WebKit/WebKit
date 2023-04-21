@@ -10104,6 +10104,11 @@
             "longname": "CSS Fonts Module Level 4",
             "url": "https://drafts.csswg.org/css-fonts-4"
         },
+        "css-fonts-5": {
+            "shortname": "CSS Fonts Level 5",
+            "longname": "CSS Fonts Module Level 5",
+            "url": "https://www.w3.org/TR/css-fonts-5"
+        },
         "css-grid": {
             "shortname": "CSS Grid Layout",
             "longname": "CSS Grid Layout Module",
