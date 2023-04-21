@@ -3,6 +3,8 @@
 <?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
 <moduleset>
 
+  <include href="../gstreamer/jhbuild.modules"/>
+
   <metamodule id="webkitgtk-minimal-dependencies">
     <dependencies>
       <dep package="wpebackend-fdo"/>
@@ -14,6 +16,7 @@
       <dep package="glib-networking"/>
       <dep package="atk"/>
       <dep package="at-spi2-atk"/>
+      <dep package="webkit-gstreamer-testing-dependencies"/>
     </dependencies>
   </metamodule>
 
@@ -28,6 +31,7 @@
       <dep package="glib-networking"/>
       <dep package="atk"/>
       <dep package="at-spi2-atk"/>
+      <dep package="webkit-gstreamer-testing-dependencies"/>
     </dependencies>
   </metamodule>
 
