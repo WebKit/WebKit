@@ -554,6 +554,23 @@ class PullRequest(Command):
         push_env = os.environ.copy()
         push_env["VERBOSITY"] = str(args.verbose)
 
+        if target.endswith('fork') and repository.config().get('webkitscmpy.update-fork', 'false') == 'true':
+            # If our remote is a GitHub repository, we can use the API and save ourselves a push
+            fork_remote = repository.remote(name=target)
+            if isinstance(fork_remote, remote.GitHub):
+                log.info("Updating '{}' on '{}'".format(branch_point.branch, fork_remote.url))
+                fork_remote.request(
+                    method='POST', path='merge-upstream',
+                    json=dict(branch=branch_point.branch),
+                    authenticated=True,
+                )
+                if run([repository.executable(), 'fetch', target, branch_point.branch], cwd=repository.root_path, capture_output=True).returncode:
+                    sys.stderr.write("Failed to fetch '{}' for '{}.' Error is non fatal, continuing...\n".format(target, branch_point.branch))
+            elif rebasing:
+                log.info("Syncing '{}' to remote '{}'".format(branch_point.branch, target))
+                if run([repository.executable(), 'push', target, '{branch}:{branch}'.format(branch=branch_point.branch)], cwd=repository.root_path, env=push_env).returncode:
+                    sys.stderr.write("Failed to sync '{}' to '{}.' Error is non fatal, continuing...\n".format(branch_point.branch, target))
+
         log.info("Pushing '{}' to '{}'...".format(repository.branch, target))
         if run(
             [repository.executable(), "push", "-f"]
@@ -566,11 +583,6 @@ class PullRequest(Command):
             sys.stderr.write("Your checkout may be mis-configured, try re-running 'git-webkit setup' or\n")
             sys.stderr.write("your checkout may not have permission to push to '{}'\n".format(repository.url(name=target)))
             return 1
-
-        if rebasing and target.endswith('fork') and repository.config().get('webkitscmpy.update-fork', 'false') == 'true':
-            log.info("Syncing '{}' to remote '{}'".format(branch_point.branch, target))
-            if run([repository.executable(), 'push', target, '{branch}:{branch}'.format(branch=branch_point.branch)], cwd=repository.root_path, env=push_env).returncode:
-                sys.stderr.write("Failed to sync '{}' to '{}.' Error is non fatal, continuing...\n".format(branch_point.branch, target))
 
         if args.history or (target != source_remote and args.history is None and args.technique == 'overwrite'):
             regex = re.compile(r'^{}-(?P<count>\d+)$'.format(repository.branch))
