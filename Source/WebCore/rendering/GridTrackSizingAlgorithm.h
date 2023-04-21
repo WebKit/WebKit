@@ -119,9 +119,6 @@ public:
 
     // Required by RenderGrid. Try to minimize the exposed surface.
     const Grid& grid() const { return m_grid; }
-    // FIXME (jfernandez): We should remove any public getter for this attribute
-    // and encapsulate any access in the algorithm class.
-    Grid& mutableGrid() const { return m_grid; }
 
     const RenderGrid* renderGrid() const { return m_renderGrid; };
 
