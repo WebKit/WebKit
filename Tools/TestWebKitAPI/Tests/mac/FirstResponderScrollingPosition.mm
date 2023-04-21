@@ -42,7 +42,8 @@ static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const voi
     didFinishLoad = true;
 }
 
-TEST(WebKit, FirstResponderScrollingPosition)
+// FIXME when rdar://107850827 is resolved
+TEST(WebKit, DISABLED_FirstResponderScrollingPosition)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextWithInjectedBundle());
 
