@@ -1,4 +1,17 @@
 ================
+WebKitGTK 2.41.3
+================
+
+What's new in WebKitGTK 2.41.3?
+
+  - Ensure the same GPU device is used by GBM in all processes.
+  - Fix memory corruption causing glitches in several web sites.
+  - Use more reliable generated application ID.
+  - Show DRM device and render node files when available in webkit://gpu.
+  - Fix the build on i386.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.41.2
 ================
 
