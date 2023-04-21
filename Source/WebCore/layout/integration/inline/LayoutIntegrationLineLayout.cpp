@@ -521,18 +521,8 @@ std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
 static inline std::optional<Layout::BlockLayoutState::LineClamp> lineClamp(const RenderBlockFlow& rootRenderer)
 {
     auto& layoutState = *rootRenderer.view().frameView().layoutContext().layoutState();
-    if (auto lineClamp = layoutState.lineClamp()) {
-        // FIXME: This is a rather odd behavior when we let line-clamp place ellipsis on a line and still
-        // continue with constructing subsequent, visible lines on the block (other browsers match this exoctic behavior).
-        auto isLineClampRootOverflowHidden = true;
-        for (const RenderBlock* ancestor = &rootRenderer; ancestor; ancestor = ancestor->containingBlock()) {
-            if (!ancestor->style().lineClamp().isNone()) {
-                isLineClampRootOverflowHidden = ancestor->style().overflowY() == Overflow::Hidden;
-                break;
-            }
-        }
-        return Layout::BlockLayoutState::LineClamp { lineClamp->maximumLineCount, lineClamp->currentLineCount, isLineClampRootOverflowHidden };
-    }
+    if (auto lineClamp = layoutState.lineClamp())
+        return Layout::BlockLayoutState::LineClamp { lineClamp->maximumLineCount, lineClamp->currentLineCount };
     return { };
 }
 

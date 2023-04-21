@@ -36,9 +36,8 @@ class BlockFormattingContext;
 class BlockLayoutState {
 public:
     struct LineClamp {
-        size_t maximumNumberOfLines { 0 };
-        size_t numberOfVisibleLines { 0 };
-        bool isLineClampRootOverflowHidden { true };
+        size_t maximumLineCount { 0 };
+        size_t currentLineCount { 0 };
     };
     enum class LeadingTrimSide : uint8_t {
         Start = 1 << 0,
