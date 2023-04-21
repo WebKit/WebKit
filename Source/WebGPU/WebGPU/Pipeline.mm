@@ -96,12 +96,12 @@ MTLFunctionConstantValues *createConstantValues(uint32_t constantCount, const WG
     return constantValues;
 }
 
-id<MTLFunction> createFunction(id<MTLLibrary> library, const WGSL::Reflection::EntryPointInformation& entryPointInformation, const WGPUProgrammableStageDescriptor* compute, NSString *label)
+id<MTLFunction> createFunction(id<MTLLibrary> library, const WGSL::Reflection::EntryPointInformation& entryPointInformation, unsigned constantCount, const WGPUConstantEntry* constants, NSString *label)
 {
     auto functionDescriptor = [MTLFunctionDescriptor new];
     functionDescriptor.name = entryPointInformation.mangledName;
-    if (compute && compute->constantCount) {
-        auto constantValues = createConstantValues(compute->constantCount, compute->constants, entryPointInformation);
+    if (constantCount) {
+        auto constantValues = createConstantValues(constantCount, constants, entryPointInformation);
         if (!constantValues)
             return nullptr;
         functionDescriptor.constantValues = constantValues;

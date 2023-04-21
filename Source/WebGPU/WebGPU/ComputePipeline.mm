@@ -88,7 +88,7 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
             return ComputePipeline::createInvalid(*this);
         computeInformation = std::get<WGSL::Reflection::Compute>(entryPointInformation.typedEntryPoint);
 
-        function = createFunction(library, entryPointInformation, &descriptor.compute, label);
+        function = createFunction(library, entryPointInformation, descriptor.compute.constantCount, descriptor.compute.constants, label);
     }
 
     MTLComputePipelineReflection *reflection;

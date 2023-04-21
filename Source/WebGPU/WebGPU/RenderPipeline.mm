@@ -390,7 +390,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
                 return RenderPipeline::createInvalid(*this);
 
             const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
-            vertexFunction = createFunction(libraryCreationResult->library, entryPointInformation, nullptr, label);
+            vertexFunction = createFunction(libraryCreationResult->library, entryPointInformation, descriptor.vertex.constantCount, descriptor.vertex.constants, label);
         }
         mtlRenderPipelineDescriptor.vertexFunction = vertexFunction;
     }
@@ -415,7 +415,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
                 return RenderPipeline::createInvalid(*this);
 
             const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
-            fragmentFunction = createFunction(libraryCreationResult->library, entryPointInformation, nullptr, label);
+            fragmentFunction = createFunction(libraryCreationResult->library, entryPointInformation, fragmentDescriptor.constantCount, fragmentDescriptor.constants, label);
         }
         mtlRenderPipelineDescriptor.fragmentFunction = fragmentFunction;
 
