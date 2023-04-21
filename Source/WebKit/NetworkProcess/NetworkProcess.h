@@ -174,7 +174,7 @@ public:
     void forEachNetworkStorageSession(const Function<void(WebCore::NetworkStorageSession&)>&);
     WebCore::NetworkStorageSession* storageSession(PAL::SessionID) const;
     std::unique_ptr<WebCore::NetworkStorageSession> newTestingSession(PAL::SessionID);
-    void addStorageSession(PAL::SessionID, bool shouldUseTestingNetworkSession, const Vector<uint8_t>& uiProcessCookieStorageIdentifier, const SandboxExtension::Handle&);
+    void addStorageSession(PAL::SessionID, const WebsiteDataStoreParameters&);
 
     void processWillSuspendImminentlyForTestingSync(CompletionHandler<void()>&&);
     void prepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime, CompletionHandler<void()>&&);

@@ -106,6 +106,11 @@ public:
     CurlRequestScheduler& scheduler() { return *m_scheduler; }
     WEBCORE_EXPORT CurlStreamScheduler& streamScheduler();
 
+    // Alt-Svc
+    const String& alternativeServicesStorageFile() const { return m_alternativeServicesStorageFile; }
+    void setAlternativeServicesStorageFile(const String& cacheFile) { m_alternativeServicesStorageFile = cacheFile; }
+    void clearAlternativeServicesStorageFile();
+
     // Proxy
     const CurlProxySettings& proxySettings() const { return m_proxySettings; }
     void setProxySettings(const CurlProxySettings& settings) { m_proxySettings = settings; }
@@ -116,7 +121,8 @@ public:
     // SSL
     CurlSSLHandle& sslHandle() { return m_sslHandle; }
 
-    // HTTP/2
+    // Supported features
+    bool isAltSvcEnabled() const;
     bool isHttp2Enabled() const;
 
     // Timeout
@@ -141,6 +147,8 @@ private:
     Seconds m_dnsCacheTimeout { Seconds::fromMinutes(5) };
     Seconds m_connectTimeout { 30.0 };
     Seconds m_defaultTimeoutInterval { 60.0 };
+
+    String m_alternativeServicesStorageFile;
 
 #ifndef NDEBUG
     FILE* m_logFile { nullptr };
@@ -258,6 +266,7 @@ public:
 
     void enableAcceptEncoding();
     void enableAllowedProtocols();
+    void enableAltSvc();
 
     void setHttpAuthUserPass(const String&, const String&, long authType = CURLAUTH_ANY);
 

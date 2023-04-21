@@ -59,6 +59,11 @@ NetworkSessionCurl::~NetworkSessionCurl()
 
 }
 
+void NetworkSessionCurl::clearAlternativeServices(WallTime)
+{
+    networkStorageSession()->clearAlternativeServices();
+}
+
 std::unique_ptr<WebSocketTask> NetworkSessionCurl::createWebSocketTask(WebPageProxyIdentifier, NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, const String& protocol, const WebCore::ClientOrigin&, bool, bool, OptionSet<WebCore::NetworkConnectionIntegrity>)
 {
     return makeUnique<WebSocketTask>(channel, request, protocol);

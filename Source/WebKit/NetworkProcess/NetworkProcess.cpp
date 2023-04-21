@@ -458,23 +458,23 @@ bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier proce
     return result;
 }
 
-void NetworkProcess::addStorageSession(PAL::SessionID sessionID, bool shouldUseTestingNetworkSession, const Vector<uint8_t>& uiProcessCookieStorageIdentifier, const SandboxExtension::Handle& cookieStoragePathExtensionHandle)
+void NetworkProcess::addStorageSession(PAL::SessionID sessionID, const WebsiteDataStoreParameters& parameters)
 {
     auto addResult = m_networkStorageSessions.add(sessionID, nullptr);
     if (!addResult.isNewEntry)
         return;
 
-    if (shouldUseTestingNetworkSession) {
+    if (parameters.networkSessionParameters.shouldUseTestingNetworkSession) {
         addResult.iterator->value = newTestingSession(sessionID);
         return;
     }
 
 #if PLATFORM(COCOA)
     RetainPtr<CFHTTPCookieStorageRef> uiProcessCookieStorage;
-    if (!sessionID.isEphemeral() && !uiProcessCookieStorageIdentifier.isEmpty()) {
-        SandboxExtension::consumePermanently(cookieStoragePathExtensionHandle);
+    if (!sessionID.isEphemeral() && !parameters.uiProcessCookieStorageIdentifier.isEmpty()) {
+        SandboxExtension::consumePermanently(parameters.cookieStoragePathExtensionHandle);
         if (sessionID != PAL::SessionID::defaultSessionID())
-            uiProcessCookieStorage = cookieStorageFromIdentifyingData(uiProcessCookieStorageIdentifier);
+            uiProcessCookieStorage = cookieStorageFromIdentifyingData(parameters.uiProcessCookieStorageIdentifier);
     }
 
     auto identifierBase = makeString(uiProcessBundleIdentifier(), '.', sessionID.toUInt64());
@@ -492,7 +492,12 @@ void NetworkProcess::addStorageSession(PAL::SessionID sessionID, bool shouldUseT
     }
 
     addResult.iterator->value = makeUnique<NetworkStorageSession>(sessionID, WTFMove(storageSession), WTFMove(uiProcessCookieStorage));
-#elif USE(CURL) || USE(SOUP)
+#elif USE(CURL)
+    if (!parameters.networkSessionParameters.alternativeServiceDirectory.isEmpty())
+        SandboxExtension::consumePermanently(parameters.networkSessionParameters.alternativeServiceDirectoryExtensionHandle);
+
+    addResult.iterator->value = makeUnique<NetworkStorageSession>(sessionID, parameters.networkSessionParameters.alternativeServiceDirectory);
+#elif USE(SOUP)
     addResult.iterator->value = makeUnique<NetworkStorageSession>(sessionID);
 #endif
 }
@@ -511,7 +516,7 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
         SandboxExtension::consumePermanently(*handle);
 #endif
 
-    addStorageSession(sessionID, parameters.networkSessionParameters.shouldUseTestingNetworkSession, parameters.uiProcessCookieStorageIdentifier, parameters.cookieStoragePathExtensionHandle);
+    addStorageSession(sessionID, parameters);
 
     auto& session = m_networkSessions.ensure(sessionID, [&]() {
         return NetworkSession::create(*this, parameters.networkSessionParameters);
@@ -1563,7 +1568,7 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
         }
     }
 
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
     if (websiteDataTypes.contains(WebsiteDataType::AlternativeServices) && session) {
         for (auto& origin : session->hostNamesWithAlternativeServices())
             callbackAggregator->m_websiteData.entries.append({ origin, WebsiteDataType::AlternativeServices, 0 });
@@ -1652,7 +1657,7 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
     if (websiteDataTypes.contains(WebsiteDataType::PrivateClickMeasurements) && session)
         session->clearPrivateClickMeasurement([clearTasksHandler] { });
 
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
     if (websiteDataTypes.contains(WebsiteDataType::AlternativeServices) && session)
         session->clearAlternativeServices(modifiedSince);
 #endif
@@ -1722,7 +1727,7 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
         deleteHSTSCacheForHostNames(sessionID, HSTSCacheHostNames);
 #endif
 
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
     if (websiteDataTypes.contains(WebsiteDataType::AlternativeServices) && session) {
         auto hosts = originDatas.map([](auto& originData) {
             return originData.host();
@@ -1894,7 +1899,7 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
     }
 #endif
 
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
     if (websiteDataTypes.contains(WebsiteDataType::AlternativeServices) && session) {
         auto registrableDomainsToDelete = domainsToDeleteAllScriptWrittenStorageFor.map([](auto& domain) {
             return domain.string();

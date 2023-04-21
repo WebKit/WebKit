@@ -47,7 +47,7 @@ enum class WebsiteDataType : uint32_t {
     DOMCache = 1 << 15,
     DeviceIdHashSalt = 1 << 16,
     PrivateClickMeasurements = 1 << 17,
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
     AlternativeServices = 1 << 18,
 #endif
     FileSystem = 1 << 19,

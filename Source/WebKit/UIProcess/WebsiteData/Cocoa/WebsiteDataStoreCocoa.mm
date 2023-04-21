@@ -179,7 +179,7 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     if (!httpsProxy.isValid() && (isSafari || isMiniBrowser))
         httpsProxy = URL { [defaults stringForKey:(NSString *)WebKit2HTTPSProxyDefaultsKey] };
 
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
     SandboxExtension::Handle alternativeServiceStorageDirectoryExtensionHandle;
     String alternativeServiceStorageDirectory = resolvedAlternativeServicesStorageDirectory();
     createHandleFromResolvedPathIfPossible(alternativeServiceStorageDirectory, alternativeServiceStorageDirectoryExtensionHandle);
@@ -193,7 +193,7 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     parameters.networkSessionParameters.shouldLogCookieInformation = shouldLogCookieInformation;
     parameters.networkSessionParameters.httpProxy = WTFMove(httpProxy);
     parameters.networkSessionParameters.httpsProxy = WTFMove(httpsProxy);
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
     parameters.networkSessionParameters.alternativeServiceDirectory = WTFMove(alternativeServiceStorageDirectory);
     parameters.networkSessionParameters.alternativeServiceDirectoryExtensionHandle = WTFMove(alternativeServiceStorageDirectoryExtensionHandle);
 #endif

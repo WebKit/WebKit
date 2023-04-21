@@ -1427,7 +1427,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, const N
     if (!m_sourceApplicationSecondaryIdentifier.isEmpty())
         configuration._sourceApplicationSecondaryIdentifier = m_sourceApplicationSecondaryIdentifier;
 
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
     if (!parameters.alternativeServiceDirectory.isEmpty()) {
         SandboxExtension::consumePermanently(parameters.alternativeServiceDirectoryExtensionHandle);
         configuration._alternativeServicesStorage = adoptNS([[_NSHTTPAlternativeServicesStorage alloc] initPersistentStoreWithURL:[[NSURL fileURLWithPath:parameters.alternativeServiceDirectory isDirectory:YES] URLByAppendingPathComponent:@"AlternativeService.sqlite" isDirectory:NO]]).get();
@@ -1998,7 +1998,7 @@ size_t NetworkSessionCocoa::countNonDefaultSessionSets() const
 
 Vector<WebCore::SecurityOriginData> NetworkSessionCocoa::hostNamesWithAlternativeServices() const
 {
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
     Vector<WebCore::SecurityOriginData> origins;
     _NSHTTPAlternativeServicesStorage* storage = m_defaultSessionSet->sessionWithCredentialStorage.session.get().configuration._alternativeServicesStorage;
     NSArray<_NSHTTPAlternativeServiceEntry *> *entries = [storage HTTPServiceEntriesWithFilter:_NSHTTPAlternativeServicesFilter.emptyFilter];
@@ -2044,7 +2044,7 @@ void NetworkSessionCocoa::donateToSKAdNetwork(WebCore::PrivateClickMeasurement&&
 
 void NetworkSessionCocoa::deleteAlternativeServicesForHostNames(const Vector<String>& hosts)
 {
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
     _NSHTTPAlternativeServicesStorage* storage = m_defaultSessionSet->sessionWithCredentialStorage.session.get().configuration._alternativeServicesStorage;
     for (auto& host : hosts)
         [storage removeHTTPAlternativeServiceEntriesWithRegistrableDomain:host];
@@ -2055,7 +2055,7 @@ void NetworkSessionCocoa::deleteAlternativeServicesForHostNames(const Vector<Str
 
 void NetworkSessionCocoa::clearAlternativeServices(WallTime modifiedSince)
 {
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
     _NSHTTPAlternativeServicesStorage* storage = m_defaultSessionSet->sessionWithCredentialStorage.session.get().configuration._alternativeServicesStorage;
     NSTimeInterval timeInterval = modifiedSince.secondsSinceEpoch().seconds();
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:timeInterval];

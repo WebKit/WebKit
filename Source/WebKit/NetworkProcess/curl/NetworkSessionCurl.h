@@ -40,6 +40,8 @@ public:
     NetworkSessionCurl(NetworkProcess&, const NetworkSessionCreationParameters&);
     ~NetworkSessionCurl();
 
+    void clearAlternativeServices(WallTime) override;
+
 private:
     std::unique_ptr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool, bool, OptionSet<WebCore::NetworkConnectionIntegrity>) final;
 };

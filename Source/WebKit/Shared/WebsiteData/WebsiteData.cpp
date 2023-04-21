@@ -75,7 +75,7 @@ WebsiteDataProcessType WebsiteData::ownerProcess(WebsiteDataType dataType)
         return WebsiteDataProcessType::UI;
     case WebsiteDataType::PrivateClickMeasurements:
         return WebsiteDataProcessType::Network;
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
     case WebsiteDataType::AlternativeServices:
         return WebsiteDataProcessType::Network;
 #endif

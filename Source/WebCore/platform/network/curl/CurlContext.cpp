@@ -36,6 +36,7 @@
 #include "HTTPHeaderMap.h"
 #include <NetworkLoadMetrics.h>
 #include <mutex>
+#include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
@@ -155,10 +156,22 @@ CurlStreamScheduler& CurlContext::streamScheduler()
     return sharedInstance;
 }
 
+void CurlContext::clearAlternativeServicesStorageFile()
+{
+    if (!m_alternativeServicesStorageFile.isEmpty())
+        FileSystem::deleteFile(m_alternativeServicesStorageFile);
+}
+
+bool CurlContext::isAltSvcEnabled() const
+{
+    auto info = curl_version_info(CURLVERSION_NOW);
+    return info->features & CURL_VERSION_ALTSVC;
+}
+
 bool CurlContext::isHttp2Enabled() const
 {
-    curl_version_info_data* data = curl_version_info(CURLVERSION_NOW);
-    return data->features & CURL_VERSION_HTTP2;
+    auto info = curl_version_info(CURLVERSION_NOW);
+    return info->features & CURL_VERSION_HTTP2;
 }
 
 // CurlShareHandle --------------------------------------------
@@ -295,8 +308,9 @@ CurlHandle::CurlHandle()
     curl_easy_setopt(m_handle, CURLOPT_COOKIEFILE, nullptr);
 
     enableShareHandle();
-    enableAllowedProtocols();
     enableAcceptEncoding();
+    enableAllowedProtocols();
+    enableAltSvc();
 
     setDnsCacheTimeout(CurlContext::singleton().dnsCacheTimeout());
     setConnectTimeout(CurlContext::singleton().connectTimeout());
@@ -542,6 +556,21 @@ void CurlHandle::enableAllowedProtocols()
         CURLPROTO_HTTP | CURLPROTO_HTTPS;
 
     curl_easy_setopt(m_handle, CURLOPT_PROTOCOLS, allowedProtocols);
+}
+
+void CurlHandle::enableAltSvc()
+{
+    if (!CurlContext::singleton().isAltSvcEnabled())
+        return;
+
+    if (CurlContext::singleton().alternativeServicesStorageFile().isEmpty())
+        return;
+
+    long altSvcCtrl = CURLALTSVC_H1;
+    altSvcCtrl |= CurlContext::singleton().isHttp2Enabled() ? CURLALTSVC_H2 : 0;
+
+    curl_easy_setopt(m_handle, CURLOPT_ALTSVC, CurlContext::singleton().alternativeServicesStorageFile().utf8().data());
+    curl_easy_setopt(m_handle, CURLOPT_ALTSVC_CTRL, altSvcCtrl);
 }
 
 void CurlHandle::setHttpAuthUserPass(const String& user, const String& password, long authType)

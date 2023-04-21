@@ -386,7 +386,7 @@ TEST(WebKit, AlternativeServicesDefaultDirectoryCreation)
     auto webView1 = adoptNS([[TestWKWebView alloc] init]);
     [webView1 synchronouslyLoadHTMLString:@"start auxiliary processes" baseURL:nil];
 
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
     // We always create the path, even if HTTP/3 is turned off.
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultDirectory.path]);
 
@@ -398,7 +398,7 @@ TEST(WebKit, AlternativeServicesDefaultDirectoryCreation)
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultDirectory.path]);
     [[NSFileManager defaultManager] removeItemAtURL:defaultDirectory error:nil];
 
-#endif // HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#endif // HAVE(ALTERNATIVE_SERVICE)
 }
 
 TEST(WebKit, WebsiteDataStoreEphemeralViaConfiguration)
@@ -651,7 +651,7 @@ TEST(WebKit, ApplicationCacheDirectories)
     EXPECT_FALSE(error);
 }
 
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
 
 static void checkUntilEntryFound(WKWebsiteDataStore *dataStore, void(^completionHandler)(NSArray<WKWebsiteDataRecord *> *))
 {
@@ -717,7 +717,7 @@ TEST(WebKit, DISABLED_AlternativeService)
     // We delete it before running this test the next time.
 }
 
-#endif // HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#endif // HAVE(ALTERNATIVE_SERVICE)
 
 static void respondToRangeRequests(const TestWebKitAPI::Connection& connection, const RetainPtr<NSData>& data)
 {

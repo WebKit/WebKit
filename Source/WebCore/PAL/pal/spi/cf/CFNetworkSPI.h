@@ -239,7 +239,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 };
 #endif
 
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
 @class _NSHTTPAlternativeServicesStorage;
 #endif
 
@@ -275,7 +275,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 #if HAVE(LOGGING_PRIVACY_LEVEL)
 @property nw_context_privacy_level_t _loggingPrivacyLevel;
 #endif
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
 @property (nullable, retain) _NSHTTPAlternativeServicesStorage *_alternativeServicesStorage;
 @property (readwrite, assign) BOOL _allowsHTTP3;
 #endif
@@ -338,7 +338,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 #endif
 @end
 
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
 
 @interface _NSHTTPAlternativeServiceEntry : NSObject <NSCopying>
 @property (readwrite, nonatomic, retain) NSString *host;
@@ -358,7 +358,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 - (void)removeHTTPAlternativeServiceEntriesCreatedAfterDate:(NSDate *)date;
 @end
 
-#endif // HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#endif // HAVE(ALTERNATIVE_SERVICE)
 
 extern NSString * const NSURLAuthenticationMethodOAuth;
 
