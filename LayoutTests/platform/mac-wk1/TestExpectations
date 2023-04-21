@@ -812,6 +812,7 @@ accessibility/progress-indeterminate-value.html [ Skip ]
 accessibility/mac/date-input-increment-decrement.html [ Skip ]
 
 accessibility/display-contents-dynamically-added-children.html [ Skip ]
+accessibility/display-contents-aria-owns.html [ Skip ]
 
 # DOM paste access requests are not implemented in WebKit1.
 editing/async-clipboard/clipboard-change-data-while-reading.html [ Skip ]

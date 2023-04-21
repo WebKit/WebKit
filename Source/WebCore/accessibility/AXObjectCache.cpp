@@ -2110,8 +2110,9 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
 #if !LOG_DISABLED
         updateIsolatedTree(get(element), AXIdAttributeChanged);
 #endif
-    }
-#endif
+    } else if (attrName == accesskeyAttr)
+        updateIsolatedTree(get(element), AXAccessKeyChanged);
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     else if (attrName == openAttr && is<HTMLDialogElement>(*element)) {
         deferModalChange(element);
         recomputeIsIgnored(element->parentNode());
@@ -3705,6 +3706,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             continue;
 
         switch (notification.second) {
+        case AXAccessKeyChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::AccessKey);
+            break;
         case AXAutofillTypeChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::ValueAutofillButtonType);
             break;

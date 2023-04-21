@@ -1,6 +1,7 @@
 Initial
 Normal
 Spellout
+Spellout (display:contents)
 Digits
 Literal
 No punctuation
@@ -17,6 +18,8 @@ PASS element.childAtIndex(0).speakAs is "normal"
 Testing #speech-normal
 PASS element.childAtIndex(0).speakAs is "normal"
 Testing #speech-spellout
+PASS element.childAtIndex(0).speakAs is "spell-out"
+Testing #speech-spellout-display-contents
 PASS element.childAtIndex(0).speakAs is "spell-out"
 Testing #speech-digits
 PASS element.childAtIndex(0).speakAs is "normal, digits"

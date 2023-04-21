@@ -18,6 +18,7 @@ div.spell-and-literal { speak-as: spell-out literal-punctuation; }
 <div tabindex="0" id="initial" >Initial</div>
 <div tabindex="0" id="speech-normal" class="speech-normal">Normal</div>
 <div tabindex="0" id="speech-spellout" class="speech-spellout">Spellout</div>
+<div tabindex="0" id="speech-spellout-display-contents" class="speech-spellout" style="display:contents">Spellout (display:contents)</div>
 <div tabindex="0" id="speech-digits" class="speech-digits">Digits</div>
 <div tabindex="0" id="speech-literalpunc" class="speech-literalpunc">Literal</div>
 <div tabindex="0" id="speech-nopunc" class="speech-nopunc">No punctuation</div>
@@ -50,6 +51,7 @@ div.spell-and-literal { speak-as: spell-out literal-punctuation; }
         expectValueForId("initial", "normal");
         expectValueForId("speech-normal", "normal");
         expectValueForId("speech-spellout", "spell-out");
+        expectValueForId("speech-spellout-display-contents", "spell-out");
         expectValueForId("speech-digits", "normal, digits");
         expectValueForId("speech-literalpunc", "normal, literal-punctuation");
         expectValueForId("speech-nopunc", "normal, no-punctuation");

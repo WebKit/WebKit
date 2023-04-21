@@ -8,6 +8,7 @@
 
 <input id="input" type="image" src="url-test1.html"><BR>
 <a id="anchor" href="#url-test2.html">test</a><BR>
+<a id="anchor-display-contents" href="#url-test2-display-contents.html" style="display:contents">test</a><BR>
 <img id="img" src="url-test3.png" width=100 height=100 alt="test"><BR>
 
 <script>
@@ -18,6 +19,7 @@
 
         testOutput += expect("accessibilityController.accessibleElementById('input').url.indexOf('url-test1.html') !== -1", "true");
         testOutput += expect("accessibilityController.accessibleElementById('anchor').url.indexOf('url-test2.html') !== -1", "true");
+        testOutput += expect("accessibilityController.accessibleElementById('anchor-display-contents').url.indexOf('url-test2-display-contents.html') !== -1", "true");
         testOutput += expect("accessibilityController.accessibleElementById('img').url.indexOf('url-test3.png') !== -1", "true");
 
         testOutput += "\nChanging href of #anchor to 'foobar.html'\n";

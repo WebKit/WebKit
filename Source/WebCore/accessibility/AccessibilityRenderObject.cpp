@@ -1024,14 +1024,6 @@ AccessibilityObject* AccessibilityRenderObject::internalLinkElement() const
     return firstAccessibleObjectFromNode(linkedNode);
 }
 
-OptionSet<SpeakAs> AccessibilityRenderObject::speakAsProperty() const
-{
-    if (!m_renderer)
-        return AccessibilityObject::speakAsProperty();
-    
-    return m_renderer->style().speakAs();
-}
-    
 void AccessibilityRenderObject::addRadioButtonGroupChildren(AXCoreObject* parent, AccessibilityChildrenVector& linkedUIElements) const
 {
     for (const auto& child : parent->children()) {
@@ -1523,17 +1515,6 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     return true;
 }
 
-double AccessibilityRenderObject::loadingProgress() const
-{
-    if (!m_renderer)
-        return 0;
-    
-    if (isLoaded())
-        return 1.0;
-    
-    return m_renderer->page().progress().estimatedProgress();
-}
-    
 int AccessibilityRenderObject::layoutCount() const
 {
     if (!m_renderer || !is<RenderView>(*m_renderer))
@@ -1565,18 +1546,6 @@ String AccessibilityRenderObject::selectedText() const
     }
     
     return doAXStringForRange(documentBasedSelectedTextRange());
-}
-
-String AccessibilityRenderObject::accessKey() const
-{
-    if (!m_renderer)
-        return String();
-
-    Node* node = m_renderer->node();
-    if (!is<Element>(node))
-        return String();
-
-    return downcast<Element>(*node).attributeWithoutSynchronization(accesskeyAttr);
 }
 
 VisibleSelection AccessibilityRenderObject::selection() const
@@ -1679,25 +1648,9 @@ void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range
 
 URL AccessibilityRenderObject::url() const
 {
-    auto* node = this->node();
-    if (isLink() && is<HTMLAnchorElement>(node))
-        return downcast<HTMLAnchorElement>(node)->href();
-
     if (m_renderer && isWebArea())
         return m_renderer->document().url();
-
-    if (isImage() && is<HTMLImageElement>(node))
-        return downcast<HTMLImageElement>(node)->src();
-
-    if (isInputImage() && is<HTMLInputElement>(node))
-        return downcast<HTMLInputElement>(node)->src();
-
-#if ENABLE(VIDEO)
-    if (isVideo() && is<HTMLVideoElement>(node))
-        return downcast<HTMLVideoElement>(node)->currentSrc();
-#endif
-
-    return URL();
+    return AccessibilityNodeObject::url();
 }
 
 void AccessibilityRenderObject::setSelectedRows(AccessibilityChildrenVector& selectedRows)
@@ -1747,15 +1700,6 @@ bool AccessibilityRenderObject::setValue(const String& string)
     return false;
 }
 
-bool AccessibilityRenderObject::supportsARIAOwns() const
-{
-    if (!m_renderer)
-        return false;
-    const AtomString& ariaOwns = getAttribute(aria_ownsAttr);
-
-    return !ariaOwns.isEmpty();
-}
-    
 RenderView* AccessibilityRenderObject::topRenderer() const
 {
     Document* topDoc = topDocument();
@@ -3069,27 +3013,6 @@ void AccessibilityRenderObject::setAccessibleName(const AtomString& name)
         downcast<Element>(*node).setAttribute(aria_labelAttr, name);
 }
 
-static bool isLinkable(const AccessibilityRenderObject& object)
-{
-    if (!object.renderer())
-        return false;
-
-    // See https://wiki.mozilla.org/Accessibility/AT-Windows-API for the elements
-    // Mozilla considers linkable.
-    return object.isLink() || object.isImage() || object.renderer()->isText();
-}
-
-String AccessibilityRenderObject::stringValueForMSAA() const
-{
-    if (isLinkable(*this)) {
-        Element* anchor = anchorElement();
-        if (is<HTMLAnchorElement>(anchor))
-            return downcast<HTMLAnchorElement>(*anchor).href().string();
-    }
-
-    return stringValue();
-}
-
 bool AccessibilityRenderObject::hasBoldFont() const
 {
     if (!m_renderer)
@@ -3169,101 +3092,6 @@ bool AccessibilityRenderObject::hasUnderline() const
         return false;
     
     return m_renderer->style().textDecorationsInEffect().contains(TextDecorationLine::Underline);
-}
-
-String AccessibilityRenderObject::nameForMSAA() const
-{
-    if (m_renderer && m_renderer->isText())
-        return textUnderElement();
-
-    return title();
-}
-
-static bool shouldReturnTagNameAsRoleForMSAA(const Element& element)
-{
-    return element.hasTagName(abbrTag) || element.hasTagName(acronymTag)
-        || element.hasTagName(blockquoteTag) || element.hasTagName(ddTag)
-        || element.hasTagName(dlTag) || element.hasTagName(dtTag)
-        || element.hasTagName(formTag) || element.hasTagName(frameTag)
-        || element.hasTagName(h1Tag) || element.hasTagName(h2Tag)
-        || element.hasTagName(h3Tag) || element.hasTagName(h4Tag)
-        || element.hasTagName(h5Tag) || element.hasTagName(h6Tag)
-        || element.hasTagName(iframeTag) || element.hasTagName(qTag)
-        || element.hasTagName(tbodyTag) || element.hasTagName(tfootTag)
-        || element.hasTagName(theadTag);
-}
-
-String AccessibilityRenderObject::stringRoleForMSAA() const
-{
-    if (!m_renderer)
-        return String();
-
-    Node* node = m_renderer->node();
-    if (!is<Element>(node))
-        return String();
-
-    Element& element = downcast<Element>(*node);
-    if (!shouldReturnTagNameAsRoleForMSAA(element))
-        return String();
-
-    return element.tagName();
-}
-
-String AccessibilityRenderObject::positionalDescriptionForMSAA() const
-{
-    // See "positional descriptions",
-    // https://wiki.mozilla.org/Accessibility/AT-Windows-API
-    if (isHeading())
-        return makeString('L', headingLevel());
-
-    // FIXME: Add positional descriptions for other elements.
-    return String();
-}
-
-String AccessibilityRenderObject::descriptionForMSAA() const
-{
-    String description = positionalDescriptionForMSAA();
-    if (!description.isEmpty())
-        return description;
-
-    description = this->description();
-    if (!description.isEmpty()) {
-        // From the Mozilla MSAA implementation:
-        // "Signal to screen readers that this description is speakable and is not
-        // a formatted positional information description. Don't localize the
-        // 'Description: ' part of this string, it will be parsed out by assistive
-        // technologies."
-        return "Description: " + description;
-    }
-
-    return { };
-}
-
-static AccessibilityRole msaaRoleForRenderer(const RenderObject* renderer)
-{
-    if (!renderer)
-        return AccessibilityRole::Unknown;
-
-    if (is<RenderText>(*renderer))
-        return AccessibilityRole::EditableText;
-
-    if (is<RenderListItem>(*renderer))
-        return AccessibilityRole::ListItem;
-
-    return AccessibilityRole::Unknown;
-}
-
-AccessibilityRole AccessibilityRenderObject::roleValueForMSAA() const
-{
-    if (m_roleForMSAA != AccessibilityRole::Unknown)
-        return m_roleForMSAA;
-
-    m_roleForMSAA = msaaRoleForRenderer(renderer());
-
-    if (m_roleForMSAA == AccessibilityRole::Unknown)
-        m_roleForMSAA = roleValue();
-
-    return m_roleForMSAA;
 }
 
 String AccessibilityRenderObject::secureFieldValue() const

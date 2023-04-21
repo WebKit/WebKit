@@ -1,28 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 
-<a href="http://www.webkit.org" id='link1' accesskey="w">webkit</a><br>
-<input type='text' id='text1' accesskey='q'>
-
-<p id="description"></p>
-<div id="console"></div>
+<a href="http://www.webkit.org" id="link" accesskey="w">webkit</a><br>
+<a href="http://www.webkit.org" id="link-display-contents" accesskey="z" style="display:contents">webkit</a><br>
+<input type="text" id="input" accesskey="q">
 
 <script>
-    description("This test makes sure that elements return their accesskeys.");
+var output = "This test makes sure that elements return their accesskeys.\n\n";
 
-    if (window.accessibilityController) {
-        var link = window.accessibilityController.accessibleElementById("link1");
-        var linkAccessKey = "AXAccessKey: w";
-        shouldBeTrue("link.allAttributes().indexOf(linkAccessKey) != -1")
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-        var text = window.accessibilityController.accessibleElementById("text1");
-        var inputAccessKey = "AXAccessKey: q";
-        shouldBeTrue("text.allAttributes().indexOf(inputAccessKey) != -1");
-    }
+    var link = accessibilityController.accessibleElementById("link");
+    output += expect("link.allAttributes().indexOf('AXAccessKey: w') !== -1", "true");
+
+    var linkDisplayContents = accessibilityController.accessibleElementById("link-display-contents");
+    output += expect("linkDisplayContents.allAttributes().indexOf('AXAccessKey: z') !== -1", "true");
+
+    var input = accessibilityController.accessibleElementById("input");
+    output += expect("input.allAttributes().indexOf('AXAccessKey: q') !== -1", "true");
+
+    output += "\nUpdating #link accesskey to 'u'.\n";
+    document.getElementById("link").setAttribute("accesskey", "u");
+    setTimeout(async function() {
+        await waitFor(() => link.allAttributes().indexOf("AXAccessKey: u") !== -1);
+        output += "PASS: accesskey AX attribute was updated correctly.\n";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
+

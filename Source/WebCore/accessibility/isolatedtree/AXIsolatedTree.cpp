@@ -393,6 +393,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const Vector<A
     AXPropertyMap propertyMap;
     for (const auto& property : properties) {
         switch (property) {
+        case AXPropertyName::AccessKey:
+            propertyMap.set(AXPropertyName::AccessKey, axObject.accessKey().isolatedCopy());
+            break;
         case AXPropertyName::ARIATreeItemContent:
             propertyMap.set(AXPropertyName::ARIATreeItemContent, axIDs(axObject.ariaTreeItemContent()));
             break;

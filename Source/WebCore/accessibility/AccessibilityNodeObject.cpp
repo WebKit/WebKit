@@ -811,6 +811,17 @@ bool AccessibilityNodeObject::isRequired() const
     return false;
 }
 
+String AccessibilityNodeObject::accessKey() const
+{
+    auto* element = this->element();
+    return element ? element->attributeWithoutSynchronization(accesskeyAttr) : String();
+}
+
+bool AccessibilityNodeObject::supportsARIAOwns() const
+{
+    return !getAttribute(aria_ownsAttr).isEmpty();
+}
+
 bool AccessibilityNodeObject::supportsRequiredAttribute() const
 {
     switch (roleValue()) {
@@ -1915,6 +1926,26 @@ String AccessibilityNodeObject::helpText() const
     }
 
     return { };
+}
+
+URL AccessibilityNodeObject::url() const
+{
+    auto* node = this->node();
+    if (isLink() && is<HTMLAnchorElement>(node))
+        return downcast<HTMLAnchorElement>(node)->href();
+
+    if (isImage() && is<HTMLImageElement>(node))
+        return downcast<HTMLImageElement>(node)->src();
+
+    if (isInputImage() && is<HTMLInputElement>(node))
+        return downcast<HTMLInputElement>(node)->src();
+
+#if ENABLE(VIDEO)
+    if (isVideo() && is<HTMLVideoElement>(node))
+        return downcast<HTMLVideoElement>(node)->currentSrc();
+#endif
+
+    return URL();
 }
 
 unsigned AccessibilityNodeObject::hierarchicalLevel() const

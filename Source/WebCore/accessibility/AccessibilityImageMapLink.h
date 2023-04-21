@@ -58,9 +58,6 @@ public:
     String description() const override;
     AccessibilityObject* parentObject() const override;
     
-    String stringValueForMSAA() const override;
-    String nameForMSAA() const override;
-
     LayoutRect elementRect() const override;
 
 private:

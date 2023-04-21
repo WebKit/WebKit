@@ -271,7 +271,7 @@ public:
     virtual float stepValueForRange() const { return 0.0f; }
     AccessibilityObject* selectedListItem();
     int layoutCount() const override { return 0; }
-    double loadingProgress() const override { return 0; }
+    double loadingProgress() const final;
     WEBCORE_EXPORT static bool isARIAControl(AccessibilityRole);
     bool supportsCheckedState() const override;
 
@@ -585,12 +585,6 @@ public:
 
     String computedRoleString() const override;
 
-    virtual String stringValueForMSAA() const { return String(); }
-    virtual String stringRoleForMSAA() const { return String(); }
-    virtual String nameForMSAA() const { return String(); }
-    virtual String descriptionForMSAA() const { return String(); }
-    virtual AccessibilityRole roleValueForMSAA() const { return roleValue(); }
-
     virtual String secureFieldValue() const { return String(); }
     bool isValueAutofillAvailable() const override;
     AutoFillButtonType valueAutofillButtonType() const override;
@@ -620,7 +614,7 @@ public:
     bool supportsARIAAttributes() const;
 
     // CSS3 Speech properties.
-    virtual OptionSet<SpeakAs> speakAsProperty() const { return OptionSet<SpeakAs> { }; }
+    OptionSet<SpeakAs> speakAsProperty() const;
 
     // Make this object visible by scrolling as many nested scrollable views as needed.
     void scrollToMakeVisible() const override;

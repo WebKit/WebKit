@@ -70,6 +70,7 @@ public:
     bool isIndeterminate() const override;
     bool isPressed() const override;
     bool isRequired() const override;
+    bool supportsARIAOwns() const final;
     bool supportsRequiredAttribute() const override;
 
     bool canSetSelectedAttribute() const override;
@@ -95,6 +96,7 @@ public:
 
     AccessibilityButtonState checkboxOrRadioValue() const override;
 
+    URL url() const override;
     unsigned hierarchicalLevel() const override;
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override;
     String accessibilityDescriptionForChildren() const;
@@ -137,7 +139,6 @@ protected:
     void detachRemoteParts(AccessibilityDetachmentType) override;
 
     AccessibilityRole m_ariaRole { AccessibilityRole::Unknown };
-    mutable AccessibilityRole m_roleForMSAA { AccessibilityRole::Unknown };
 #ifndef NDEBUG
     bool m_initialized { false };
 #endif
@@ -172,6 +173,7 @@ protected:
     const String liveRegionRelevant() const override;
     bool liveRegionAtomic() const override;
 
+    String accessKey() const final;
     bool isLabelable() const;
     AccessibilityObject* correspondingControlForLabelElement() const override;
     AccessibilityObject* correspondingLabelForControlElement() const override;

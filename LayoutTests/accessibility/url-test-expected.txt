@@ -2,6 +2,7 @@ This test ensures that we can retrieve URLs for appropriate elements.
 
 PASS: accessibilityController.accessibleElementById('input').url.indexOf('url-test1.html') !== -1 === true
 PASS: accessibilityController.accessibleElementById('anchor').url.indexOf('url-test2.html') !== -1 === true
+PASS: accessibilityController.accessibleElementById('anchor-display-contents').url.indexOf('url-test2-display-contents.html') !== -1 === true
 PASS: accessibilityController.accessibleElementById('img').url.indexOf('url-test3.png') !== -1 === true
 
 Changing href of #anchor to 'foobar.html'
@@ -11,6 +12,7 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 
+test
 test
 
 

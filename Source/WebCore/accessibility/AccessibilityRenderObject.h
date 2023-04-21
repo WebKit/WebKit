@@ -72,7 +72,6 @@ public:
     AccessibilityObjectInclusion defaultObjectInclusion() const override;
     
     int layoutCount() const override;
-    double loadingProgress() const override;
     
     AccessibilityObject* firstChild() const override;
     AccessibilityObject* lastChild() const override;
@@ -84,8 +83,6 @@ public:
     AccessibilityChildrenVector linkedObjects() const override;
     AccessibilityObject* titleUIElement() const override;
 
-    bool supportsARIAOwns() const override;
-    
     // Should be called on the root accessibility object to kick off a hit test.
     AXCoreObject* accessibilityHitTest(const IntPoint&) const override;
 
@@ -112,7 +109,6 @@ public:
     String helpText() const override;
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override;
     String selectedText() const override;
-    String accessKey() const override;
 
     bool isWidget() const override;
     Widget* widget() const override;
@@ -155,12 +151,6 @@ public:
     IntRect doAXBoundsForRange(const PlainTextRange&) const override;
     IntRect doAXBoundsForRangeUsingCharacterOffset(const PlainTextRange&) const override;
     
-    String stringValueForMSAA() const override;
-    String stringRoleForMSAA() const override;
-    String nameForMSAA() const override;
-    String descriptionForMSAA() const override;
-    AccessibilityRole roleValueForMSAA() const override;
-
     String secureFieldValue() const override;
     void titleElementText(Vector<AccessibilityText>&) const override;
 
@@ -186,7 +176,6 @@ private:
     bool isAccessibilityRenderObject() const final { return true; }
     void ariaListboxSelectedChildren(AccessibilityChildrenVector&);
     bool isAllowedChildOfTree() const;
-    String positionalDescriptionForMSAA() const;
     PlainTextRange documentBasedSelectedTextRange() const;
     Element* rootEditableElementForPosition(const Position&) const;
     bool nodeIsTextControl(const Node*) const;
@@ -231,8 +220,6 @@ private:
     void updateRoleAfterChildrenCreation();
     
     void ariaSelectedRows(AccessibilityChildrenVector&);
-    
-    OptionSet<SpeakAs> speakAsProperty() const override;
     
     bool inheritsPresentationalRole() const override;
 

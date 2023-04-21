@@ -1636,6 +1636,13 @@ VisiblePosition AccessibilityObject::previousParagraphStartPosition(const Visibl
     return startOfParagraph(position.previous());
 }
 
+OptionSet<SpeakAs> AccessibilityObject::speakAsProperty() const
+{
+    if (auto* style = this->style())
+        return style->speakAs();
+    return { };
+}
+
 InsideLink AccessibilityObject::insideLink() const
 {
     auto* style = this->style();
@@ -3143,7 +3150,19 @@ bool AccessibilityObject::supportsExpanded() const
         return false;
     }
 }
-    
+
+double AccessibilityObject::loadingProgress() const
+{
+    if (isLoaded())
+        return 1.0;
+
+    auto* page = this->page();
+    if (!page)
+        return 0.0;
+
+    return page->progress().estimatedProgress();
+}
+
 bool AccessibilityObject::isExpanded() const
 {
     if (is<HTMLDetailsElement>(node()))
