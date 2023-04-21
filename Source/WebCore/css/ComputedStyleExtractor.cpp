@@ -4179,6 +4179,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertySrc:
     case CSSPropertyUnicodeRange:
     case CSSPropertyFontDisplay:
+    case CSSPropertySizeAdjust:
         return nullptr;
 
     // Unimplemented @font-palette-values properties

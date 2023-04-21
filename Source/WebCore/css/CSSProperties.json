@@ -9923,6 +9923,16 @@
                     "url": "https://www.w3.org/TR/css-fonts-4/#src-desc"
                 }
             },
+            "size-adjust": {
+                "codegen-properties": {
+                    "settings-flag": "cssFontFaceSizeAdjustEnabled",
+                    "parser-grammar": "<percentage [0,inf]>"
+                },
+                "specification": {
+                    "category": "css-fonts-5",
+                    "url": "https://www.w3.org/TR/css-fonts-5/#size-adjust-desc"
+                }
+            },
             "unicode-range": {
                 "codegen-properties": {
                     "parser-function": "consumeFontFaceUnicodeRange",

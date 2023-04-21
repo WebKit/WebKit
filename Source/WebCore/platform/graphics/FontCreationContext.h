@@ -35,14 +35,19 @@ namespace WebCore {
 
 class FontCreationContextRareData : public RefCounted<FontCreationContextRareData> {
 public:
-    static Ref<FontCreationContextRareData> create(const FontFeatureSettings& fontFaceFeatures, const FontPaletteValues& fontPaletteValues, RefPtr<FontFeatureValues> fontFeatureValues)
+    static Ref<FontCreationContextRareData> create(const FontFeatureSettings& fontFaceFeatures, const FontPaletteValues& fontPaletteValues, RefPtr<FontFeatureValues> fontFeatureValues, float sizeAdjust)
     {
-        return adoptRef(*new FontCreationContextRareData(fontFaceFeatures, fontPaletteValues, fontFeatureValues));
+        return adoptRef(*new FontCreationContextRareData(fontFaceFeatures, fontPaletteValues, fontFeatureValues, sizeAdjust));
     }
 
     const FontFeatureSettings& fontFaceFeatures() const
     {
         return m_fontFaceFeatures;
+    }
+
+    float sizeAdjust() const
+    {
+        return m_sizeAdjust;
     }
 
     const FontPaletteValues& fontPaletteValues() const
@@ -59,7 +64,8 @@ public:
     {
         return m_fontFaceFeatures == other.m_fontFaceFeatures
             && m_fontPaletteValues == other.m_fontPaletteValues
-            && m_fontFeatureValues.get() == other.m_fontFeatureValues.get();
+            && m_fontFeatureValues.get() == other.m_fontFeatureValues.get()
+            && m_sizeAdjust == other.m_sizeAdjust;
     }
 
     bool operator!=(const FontCreationContextRareData& other) const
@@ -68,32 +74,39 @@ public:
     }
 
 private:
-    FontCreationContextRareData(const FontFeatureSettings& fontFaceFeatures, const FontPaletteValues& fontPaletteValues, RefPtr<FontFeatureValues> fontFeatureValues)
+    FontCreationContextRareData(const FontFeatureSettings& fontFaceFeatures, const FontPaletteValues& fontPaletteValues, RefPtr<FontFeatureValues> fontFeatureValues, float sizeAdjust)
         : m_fontFaceFeatures(fontFaceFeatures)
         , m_fontPaletteValues(fontPaletteValues)
         , m_fontFeatureValues(fontFeatureValues)
+        , m_sizeAdjust(sizeAdjust)
     {
     }
 
     FontFeatureSettings m_fontFaceFeatures;
     FontPaletteValues m_fontPaletteValues;
     RefPtr<FontFeatureValues> m_fontFeatureValues;
+    float m_sizeAdjust;
 };
 
 class FontCreationContext {
 public:
     FontCreationContext() = default;
 
-    FontCreationContext(const FontFeatureSettings& fontFaceFeatures, const FontSelectionSpecifiedCapabilities& fontFaceCapabilities, const FontPaletteValues& fontPaletteValues, RefPtr<FontFeatureValues> fontFeatureValues)
+    FontCreationContext(const FontFeatureSettings& fontFaceFeatures, const FontSelectionSpecifiedCapabilities& fontFaceCapabilities, const FontPaletteValues& fontPaletteValues, RefPtr<FontFeatureValues> fontFeatureValues, float sizeAdjust)
         : m_fontFaceCapabilities(fontFaceCapabilities)
     {
-        if (!fontFaceFeatures.isEmpty() || fontPaletteValues || (fontFeatureValues && !fontFeatureValues->isEmpty()))
-            m_rareData = FontCreationContextRareData::create(fontFaceFeatures, fontPaletteValues, fontFeatureValues);
+        if (!fontFaceFeatures.isEmpty() || fontPaletteValues || (fontFeatureValues && !fontFeatureValues->isEmpty()) || sizeAdjust != 1.0)
+            m_rareData = FontCreationContextRareData::create(fontFaceFeatures, fontPaletteValues, fontFeatureValues, sizeAdjust);
     }
 
     const FontFeatureSettings* fontFaceFeatures() const
     {
         return m_rareData ? &m_rareData->fontFaceFeatures() : nullptr;
+    }
+
+    float sizeAdjust() const
+    {
+        return m_rareData ? m_rareData->sizeAdjust() : 1.0;
     }
 
     const FontSelectionSpecifiedCapabilities& fontFaceCapabilities() const
@@ -136,6 +149,8 @@ inline void add(Hasher& hasher, const FontCreationContext& fontCreationContext)
         add(hasher, *fontCreationContext.fontPaletteValues());
     if (fontCreationContext.fontFeatureValues())
         add(hasher, *fontCreationContext.fontFeatureValues());
+    if (fontCreationContext.sizeAdjust())
+        add(hasher, fontCreationContext.sizeAdjust());
 }
 
 }

@@ -67,6 +67,7 @@ public:
     void setStyle(CSSValue&);
     void setWeight(CSSValue&);
     void setStretch(CSSValue&);
+    void setSizeAdjust(CSSValue&);
     void setUnicodeRange(CSSValueList&);
     void setFeatureSettings(CSSValue&);
     void setDisplay(CSSPrimitiveValue&);
@@ -78,6 +79,7 @@ public:
     String unicodeRange() const;
     String featureSettings() const;
     String display() const;
+    String sizeAdjust() const;
 
     // Pending => Loading  => TimedOut
     //              ||  \\    //  ||
@@ -186,6 +188,8 @@ private:
 
     FontFeatureSettings m_featureSettings;
     FontLoadingBehavior m_loadingBehavior { FontLoadingBehavior::Auto };
+
+    float m_sizeAdjust { 1.0 };
 
     Vector<std::unique_ptr<CSSFontFaceSource>, 0, CrashOnOverflow, 0> m_sources;
     WeakHashSet<Client> m_clients;
