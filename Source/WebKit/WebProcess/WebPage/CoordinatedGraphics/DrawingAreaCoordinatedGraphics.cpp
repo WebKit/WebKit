@@ -404,6 +404,7 @@ void DrawingAreaCoordinatedGraphics::updateGeometry(const IntSize& size, Complet
 {
     SetForScope inUpdateGeometry(m_inUpdateGeometry, true);
     m_webPage.setSize(size);
+    m_webPage.layoutIfNeeded();
 
     if (!m_layerTreeHost)
         m_dirtyRegion = IntRect(IntPoint(), size);
