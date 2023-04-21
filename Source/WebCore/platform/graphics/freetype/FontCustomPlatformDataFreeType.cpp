@@ -38,11 +38,6 @@
 
 namespace WebCore {
 
-static void releaseCustomFontData(void* data)
-{
-    static_cast<FragmentedSharedBuffer*>(data)->deref();
-}
-
 static cairo_user_data_key_t freeTypeFaceKey;
 
 FontCustomPlatformData::FontCustomPlatformData(FT_Face freeTypeFace, FontPlatformData::CreationData&& data)
@@ -50,11 +45,6 @@ FontCustomPlatformData::FontCustomPlatformData(FT_Face freeTypeFace, FontPlatfor
     , creationData(WTFMove(data))
     , m_renderingResourceIdentifier(RenderingResourceIdentifier::generate())
 {
-    static cairo_user_data_key_t bufferKey;
-    auto buffer = creationData.fontFaceData;
-    cairo_font_face_set_user_data(m_fontFace.get(), &bufferKey, &buffer,
-         static_cast<cairo_destroy_func_t>(releaseCustomFontData));
-
     // Cairo doesn't do FreeType reference counting, so we need to ensure that when
     // this cairo_font_face_t is destroyed, it cleans up the FreeType face as well.
     cairo_font_face_set_user_data(m_fontFace.get(), &freeTypeFaceKey, freeTypeFace,
