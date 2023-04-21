@@ -119,7 +119,9 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
 
 void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, ImageBitmapOptions&& options, ImageBitmap::Promise&& promise)
 {
-    createCompletionHandler(scriptExecutionContext, WTFMove(source), WTFMove(options), [promise = WTFMove(promise)](ExceptionOr<Ref<ImageBitmap>> result) mutable {
+    createCompletionHandler(scriptExecutionContext, WTFMove(source), WTFMove(options), [scriptExecutionContext = WeakPtr { scriptExecutionContext }, promise = WTFMove(promise)](ExceptionOr<Ref<ImageBitmap>> result) mutable {
+        if (!scriptExecutionContext || scriptExecutionContext->activeDOMObjectsAreStopped())
+            return;
         if (result.hasException())
             promise.reject(result.releaseException());
         else
@@ -717,6 +719,12 @@ public:
         auto pendingImageBitmap = new PendingImageBitmap(scriptExecutionContext, WTFMove(blob), WTFMove(options), WTFMove(rect), WTFMove(completionHandler));
         pendingImageBitmap->suspendIfNeeded();
         pendingImageBitmap->start(scriptExecutionContext);
+    }
+
+    ~PendingImageBitmap()
+    {
+        if (m_completionHandler)
+            m_completionHandler(Exception { InvalidStateError, "PendingImageBitmap is being destroyed"_s });
     }
 
 private:
