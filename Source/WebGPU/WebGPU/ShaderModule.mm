@@ -31,6 +31,7 @@
 #import "PipelineLayout.h"
 
 #import <WebGPU/WebGPU.h>
+#import <wtf/DataLog.h>
 
 namespace WebGPU {
 
@@ -114,15 +115,19 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
 
     auto checkResult = WGSL::staticCheck(fromAPI(shaderModuleParameters->wgsl.code), std::nullopt, { maxBuffersPlusVertexBuffersForVertexStage() });
 
-    if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult) && shaderModuleParameters->hints && descriptor.hintCount) {
-        // FIXME: re-enable early compilation later on once deferred compilation is fully implemented
-        // https://bugs.webkit.org/show_bug.cgi?id=254258
-        UNUSED_PARAM(earlyCompileShaderModule);
+    if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult)) {
+        if (shaderModuleParameters->hints && descriptor.hintCount) {
+            // FIXME: re-enable early compilation later on once deferred compilation is fully implemented
+            // https://bugs.webkit.org/show_bug.cgi?id=254258
+            UNUSED_PARAM(earlyCompileShaderModule);
+        }
     } else {
-        // FIXME: remove shader library generation from MSL after compiler bringup
-        auto library = ShaderModule::createLibrary(device(), String::fromUTF8(shaderModuleParameters->wgsl.code), fromAPI(descriptor.label));
-        if (library)
-            return ShaderModule::create(WTFMove(checkResult), { }, { }, library, *this);
+        auto& failedCheck = std::get<WGSL::FailedCheck>(checkResult);
+        for (const auto& error : failedCheck.errors) {
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250442
+            dataLogLn(error);
+        }
+        return ShaderModule::createInvalid(*this);
     }
 
     return ShaderModule::create(WTFMove(checkResult), { }, { }, nil, *this);
