@@ -1061,7 +1061,7 @@ String HTMLImageElement::fetchPriorityForBindings() const
 
 RequestPriority HTMLImageElement::fetchPriorityHint() const
 {
-    if (document().settings().priorityHintsEnabled())
+    if (document().settings().fetchPriorityEnabled())
         return parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto);
     return RequestPriority::Auto;
 }

@@ -2454,6 +2454,20 @@ FetchMetadataEnabled:
     WebKitLegacy:
       default: true
 
+FetchPriorityEnabled:
+  type: bool
+  status: testable
+  category: networking
+  humanReadableName: "Fetch Priority"
+  humanReadableDescription: "Enable Fetch Priority support"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 FileReaderAPIEnabled:
   type: bool
   status: embedder
@@ -4940,20 +4954,6 @@ PreferSandboxedMediaParsing:
       default: true
     WebKit:
       default: true
-
-PriorityHintsEnabled:
-  type: bool
-  status: testable
-  category: networking
-  humanReadableName: "Priority hints"
-  humanReadableDescription: "Enable priority hints support"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
 
 PrivateClickMeasurementDebugModeEnabled:
   type: bool

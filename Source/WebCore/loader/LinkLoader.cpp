@@ -121,7 +121,7 @@ void LinkLoader::loadLinksFromHeader(const String& headerValue, const URL& baseU
             continue;
 
         RequestPriority fetchPriorityHint = RequestPriority::Auto;
-        if (document.settings().priorityHintsEnabled())
+        if (document.settings().fetchPriorityEnabled())
             fetchPriorityHint = parseEnumerationFromString<RequestPriority>(header.fetchPriorityHint()).value_or(RequestPriority::Auto);
 
         LinkLoadParameters params { relAttribute, url, header.as(), header.media(), header.mimeType(), header.crossOrigin(), header.imageSrcSet(), header.imageSizes(), header.nonce(),

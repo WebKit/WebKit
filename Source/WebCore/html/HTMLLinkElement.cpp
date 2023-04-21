@@ -694,7 +694,7 @@ String HTMLLinkElement::fetchPriorityForBindings() const
 
 RequestPriority HTMLLinkElement::fetchPriorityHint() const
 {
-    if (document().settings().priorityHintsEnabled())
+    if (document().settings().fetchPriorityEnabled())
         return parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto);
     return RequestPriority::Auto;
 }
