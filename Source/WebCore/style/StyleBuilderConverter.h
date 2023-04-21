@@ -738,15 +738,23 @@ inline RefPtr<PathOperation> BuilderConverter::convertPathOperation(BuilderState
         return RayPathOperation::create(rayValue.angle()->computeDegrees(), size, rayValue.isContaining());
     }
 
-    auto referenceBox = CSSBoxType::BoxMissing;
     RefPtr<PathOperation> operation;
-    for (auto& currentValue : downcast<CSSValueList>(value)) {
-        if (!currentValue.isValueID()) {
+    auto referenceBox = CSSBoxType::BoxMissing;
+    auto processSingleValue = [&](const CSSValue& singleValue) {
+        ASSERT(!is<CSSValueList>(singleValue));
+        if (!singleValue.isValueID()) {
             operation = ShapePathOperation::create(basicShapeForValue(builderState.cssToLengthConversionData(),
-                currentValue, builderState.style().effectiveZoom()));
+                singleValue, builderState.style().effectiveZoom()));
         } else
-            referenceBox = fromCSSValue<CSSBoxType>(currentValue);
-    }
+            referenceBox = fromCSSValue<CSSBoxType>(singleValue);
+    };
+
+    if (is<CSSValueList>(value)) {
+        for (auto& currentValue : downcast<CSSValueList>(value))
+            processSingleValue(currentValue);
+    } else
+        processSingleValue(value);
+
     if (operation)
         downcast<ShapePathOperation>(*operation).setReferenceBox(referenceBox);
     else {
