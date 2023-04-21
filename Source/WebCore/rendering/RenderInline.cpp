@@ -882,6 +882,11 @@ LayoutSize RenderInline::offsetForInFlowPositionedInline(const RenderBox* child)
         inlinePosition = LayoutUnit::fromFloatRound(firstLineBox()->logicalLeft());
         blockPosition = firstLineBox()->logicalTop();
     } else if (LayoutIntegration::LineLayout::containing(*this)) {
+        if (!layoutBox()) {
+            // Repaint may be issued on subtrees during content mutation with newly inserted renderers.
+            ASSERT(needsLayout());
+            return LayoutSize();
+        }
         if (auto inlineBox = InlineIterator::firstInlineBoxFor(*this)) {
             inlinePosition = LayoutUnit::fromFloatRound(inlineBox->logicalLeftIgnoringInlineDirection());
             blockPosition = inlineBox->logicalTop();
