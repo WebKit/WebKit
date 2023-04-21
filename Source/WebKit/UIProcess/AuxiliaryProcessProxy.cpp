@@ -41,7 +41,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
-#import <pal/spi/ios/MobileGestaltSPI.h>
+#import <pal/spi/cocoa/MobileGestaltSPI.h>
 #endif
 
 namespace WebKit {

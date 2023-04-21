@@ -27,8 +27,6 @@
 
 #import <wtf/Platform.h>
 
-#if PLATFORM(IOS_FAMILY)
-
 #include <CoreFoundation/CoreFoundation.h>
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -98,5 +96,3 @@ Float32 MGGetFloat32Answer(CFStringRef question, Float32 defaultValue);
 bool _MGCacheValid();
 
 WTF_EXTERN_C_END
-
-#endif

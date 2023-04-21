@@ -323,8 +323,8 @@
 #import <WebCore/WebSQLiteDatabaseTrackerClient.h>
 #import <WebCore/WebVideoFullscreenControllerAVKit.h>
 #import <libkern/OSAtomic.h>
+#import <pal/spi/cocoa/MobileGestaltSPI.h>
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
-#import <pal/spi/ios/MobileGestaltSPI.h>
 #import <wtf/FastMalloc.h>
 #endif
 
