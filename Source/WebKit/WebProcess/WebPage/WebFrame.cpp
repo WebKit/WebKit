@@ -152,7 +152,11 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const At
 
 Ref<WebFrame> WebFrame::createLocalSubframeHostedInAnotherProcess(WebPage& page, WebFrame& parent, WebCore::FrameIdentifier frameID, WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier, std::optional<ScopeExit<Function<void()>>>&& invalidator)
 {
-    auto frame = create(page);
+    RefPtr<WebFrame> frame;
+    if (invalidator)
+        frame = WebProcess::singleton().webFrame(frameID);
+    else
+        frame = create(page);
     RELEASE_ASSERT(page.corePage());
     RELEASE_ASSERT(parent.coreAbstractFrame());
 
@@ -160,18 +164,18 @@ Ref<WebFrame> WebFrame::createLocalSubframeHostedInAnotherProcess(WebPage& page,
     // addition in the constructor and removal in the destructor.
     if (invalidator)
         WebProcess::singleton().removeMessageReceiver(Messages::WebFrame::messageReceiverName(), frameID.object());
-    auto coreFrame = LocalFrame::createSubframeHostedInAnotherProcess(*page.corePage(), makeUniqueRef<WebFrameLoaderClient>(frame.get(), WTFMove(invalidator)), frameID, *parent.coreAbstractFrame());
+    auto coreFrame = LocalFrame::createSubframeHostedInAnotherProcess(*page.corePage(), makeUniqueRef<WebFrameLoaderClient>(*frame, WTFMove(invalidator)), frameID, *parent.coreAbstractFrame());
     frame->m_coreFrame = coreFrame.get();
     frame->setLayerHostingContextIdentifier(layerHostingContextIdentifier);
 
     ASSERT(!frame->m_frameID);
     frame->m_frameID = coreFrame->frameID();
-    WebProcess::singleton().addWebFrame(frameID, frame.ptr());
-    WebProcess::singleton().addMessageReceiver(Messages::WebFrame::messageReceiverName(), frameID.object(), frame.get());
+    WebProcess::singleton().addWebFrame(frameID, frame.get());
+    WebProcess::singleton().addMessageReceiver(Messages::WebFrame::messageReceiverName(), frameID.object(), *frame);
 
     // FIXME: Pass in a name and call FrameTree::setName here.
     coreFrame->init();
-    return frame;
+    return *frame;
 }
 
 Ref<WebFrame> WebFrame::createRemoteSubframe(WebPage& page, WebFrame& parent, WebCore::FrameIdentifier frameID, WebCore::ProcessIdentifier remoteProcessIdentifier)
