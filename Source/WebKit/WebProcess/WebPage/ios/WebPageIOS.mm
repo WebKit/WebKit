@@ -253,7 +253,7 @@ static void computeEditableRootHasContentAndPlainText(const VisibleSelection& se
     }
 
     auto* root = selection.rootEditableElement();
-    if (!root)
+    if (!root || editingIgnoresContent(*root))
         return;
 
     auto startInEditableRoot = firstPositionInNode(root);
