@@ -110,6 +110,7 @@ enum class TokenType: uint32_t {
     Slash,
     Star,
     Tilde,
+    Underbar,
     Xor,
     // FIXME: add all the other special tokens
 };

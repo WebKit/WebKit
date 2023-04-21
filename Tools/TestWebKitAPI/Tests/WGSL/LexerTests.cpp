@@ -182,6 +182,7 @@ TEST(WGSLLexerTests, SpecialTokens)
     checkSingleToken("||"_s, TokenType::OrOr);
     checkSingleToken("^"_s, TokenType::Xor);
     checkSingleToken("~"_s, TokenType::Tilde);
+    checkSingleToken("_"_s, TokenType::Underbar);
 }
 
 TEST(WGSLLexerTests, ComputeShader)

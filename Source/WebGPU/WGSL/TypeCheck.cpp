@@ -55,6 +55,7 @@ public:
     // Statements
     void visit(AST::AssignmentStatement&) override;
     void visit(AST::IfStatement&) override;
+    void visit(AST::PhonyAssignmentStatement&) override;
     void visit(AST::ReturnStatement&) override;
     void visit(AST::CompoundStatement&) override;
     void visit(AST::ForStatement&) override;
@@ -240,6 +241,13 @@ void TypeChecker::visit(AST::IfStatement& statement)
     AST::Visitor::visit(statement.trueBody());
     if (statement.maybeFalseBody())
         AST::Visitor::visit(*statement.maybeFalseBody());
+}
+
+void TypeChecker::visit(AST::PhonyAssignmentStatement& statement)
+{
+    infer(statement.rhs());
+    // There is nothing to unify with since result of the right-hand side is
+    // discarded.
 }
 
 void TypeChecker::visit(AST::ReturnStatement& statement)

@@ -86,6 +86,7 @@ public:
     void visit(AST::AssignmentStatement&) override;
     void visit(AST::CompoundStatement&) override;
     void visit(AST::IfStatement&) override;
+    void visit(AST::PhonyAssignmentStatement&) override;
     void visit(AST::ReturnStatement&) override;
     void visit(AST::ForStatement&) override;
 
@@ -702,6 +703,13 @@ void FunctionDefinitionWriter::visit(AST::IfStatement& statement)
         m_stringBuilder.append(m_indent, "else ");
         visit(*statement.maybeFalseBody());
     }
+}
+
+void FunctionDefinitionWriter::visit(AST::PhonyAssignmentStatement& statement)
+{
+    m_stringBuilder.append("(void)(");
+    visit(statement.rhs());
+    m_stringBuilder.append(");\n");
 }
 
 void FunctionDefinitionWriter::visit(AST::ReturnStatement& statement)

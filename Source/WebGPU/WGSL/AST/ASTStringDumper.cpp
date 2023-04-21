@@ -333,6 +333,14 @@ void StringDumper::visit(IfStatement& statement)
     }
 }
 
+void StringDumper::visit(PhonyAssignmentStatement& statement)
+{
+    m_out.print(m_indent);
+    m_out.print("_ = ");
+    visit(statement.rhs());
+    m_out.print(";");
+}
+
 void StringDumper::visit(ReturnStatement& statement)
 {
     m_out.print(m_indent, "return");

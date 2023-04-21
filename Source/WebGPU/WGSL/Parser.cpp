@@ -830,6 +830,13 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
         PARSE(forStmt, ForStatement);
         return { makeUniqueRef<AST::ForStatement>(WTFMove(forStmt)) };
     }
+    case TokenType::Underbar : {
+        consume();
+        CONSUME_TYPE(Equal);
+        PARSE(rhs, Expression);
+        CONSUME_TYPE(Semicolon);
+        RETURN_NODE_UNIQUE_REF(PhonyAssignmentStatement, WTFMove(rhs));
+    }
     default:
         FAIL("Not a valid statement"_s);
     }

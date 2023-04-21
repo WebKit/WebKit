@@ -270,13 +270,14 @@ Token Lexer<T>::lex()
         } else if (isIdentifierStart(m_current)) {
             const T* startOfToken = m_code;
             shift();
-            while (isValidIdentifierCharacter(m_current))
+            while (isIdentifierContinue(m_current))
                 shift();
             // FIXME: a trie would be more efficient here, look at JavaScriptCore/KeywordLookupGenerator.py for an example of code autogeneration that produces such a trie.
             String view(StringImpl::createWithoutCopying(startOfToken, currentTokenLength()));
             // FIXME: I don't think that true/false/f32/u32/i32/bool need to be their own tokens, they could just be regular identifiers.
 
             static constexpr std::pair<ComparableASCIILiteral, TokenType> wordMappings[] {
+                { "_", TokenType::Underbar },
                 { "array", TokenType::KeywordArray },
                 { "asm", TokenType::ReservedWord },
                 { "bf16", TokenType::ReservedWord },

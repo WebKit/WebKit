@@ -1,368 +1,368 @@
 fn testAdd() {
   {
-    let x1 = 1 + 2;
-    let x2 = 1i + 1;
-    let x3 = 1 + 1i;
-    let x4 = 1u + 1;
-    let x5 = 1 + 1u;
-    let x6 = 1.0 + 2;
-    let x7 = 1 + 2.0;
-    let x8 = 1.0 + 2.0;
+    _ = 1 + 2;
+    _ = 1i + 1;
+    _ = 1 + 1i;
+    _ = 1u + 1;
+    _ = 1 + 1u;
+    _ = 1.0 + 2;
+    _ = 1 + 2.0;
+    _ = 1.0 + 2.0;
   }
 
 
   {
-    let v1 = vec2<f32>(0, 0) + 1;
-    let v2 = vec3<f32>(0, 0, 0) + 1;
-    let v3 = vec4<f32>(0, 0, 0, 0) + 1;
+    _ = vec2<f32>(0, 0) + 1;
+    _ = vec3<f32>(0, 0, 0) + 1;
+    _ = vec4<f32>(0, 0, 0, 0) + 1;
   }
 
   {
-    let v1 = 1 + vec2<f32>(0, 0);
-    let v2 = 1 + vec3<f32>(0, 0, 0);
-    let v3 = 1 + vec4<f32>(0, 0, 0, 0);
+    _ = 1 + vec2<f32>(0, 0);
+    _ = 1 + vec3<f32>(0, 0, 0);
+    _ = 1 + vec4<f32>(0, 0, 0, 0);
   }
 
   {
-    let v1 = vec2<f32>(0, 0) + vec2<f32>(1, 1);
-    let v2 = vec3<f32>(0, 0, 0) + vec3<f32>(1, 1, 1);
-    let v3 = vec4<f32>(0, 0, 0, 0) + vec4<f32>(1, 1, 1, 1);
+    _ = vec2<f32>(0, 0) + vec2<f32>(1, 1);
+    _ = vec3<f32>(0, 0, 0) + vec3<f32>(1, 1, 1);
+    _ = vec4<f32>(0, 0, 0, 0) + vec4<f32>(1, 1, 1, 1);
   }
 
   {
-    let m1 = mat2x2<f32>(0, 0, 0, 0) + mat2x2<f32>(1, 1, 1, 1);
-    let m2 = mat2x3<f32>(0, 0, 0, 0, 0, 0) + mat2x3<f32>(1, 1, 1, 1, 1, 1);
-    let m3 = mat2x4<f32>(0, 0, 0, 0, 0, 0, 0, 0) + mat2x4<f32>(1, 1, 1, 1, 1, 1, 1, 1);
+    _ = mat2x2<f32>(0, 0, 0, 0) + mat2x2<f32>(1, 1, 1, 1);
+    _ = mat2x3<f32>(0, 0, 0, 0, 0, 0) + mat2x3<f32>(1, 1, 1, 1, 1, 1);
+    _ = mat2x4<f32>(0, 0, 0, 0, 0, 0, 0, 0) + mat2x4<f32>(1, 1, 1, 1, 1, 1, 1, 1);
   }
 }
 
 fn testMultiply() {
   {
-    let x = 0 * 0;
-    let x1 = 0i * 0i;
-    let x2 = 0u * 0u;
-    let x3 = 0.0 * 0.0;
-    let x4 = 0.0f * 0.0f;
+    _ = 0 * 0;
+    _ = 0i * 0i;
+    _ = 0u * 0u;
+    _ = 0.0 * 0.0;
+    _ = 0.0f * 0.0f;
   }
 
   let v2 = vec2<f32>(0, 0);
   let v4 = vec4<f32>(0, 0, 0, 0);
   let m = mat2x4<f32>(0, 0, 0, 0, 0, 0, 0, 0);
-  let r1 = m * v2;
-  let r2 = v4 * m;
-  let r3 = vec2(1, 1) * 1;
-  let r4 = 1 * vec2(1, 1);
-  let r5 = vec2(1, 1) * vec2(1, 1);
+  _ = m * v2;
+  _ = v4 * m;
+  _ = vec2(1, 1) * 1;
+  _ = 1 * vec2(1, 1);
+  _ = vec2(1, 1) * vec2(1, 1);
 
-  let x0 = mat2x2(0, 0, 0, 0) * mat2x2(0, 0, 0, 0);
-  let x1 = mat2x2(0, 0, 0, 0) * mat3x2(0, 0, 0, 0, 0, 0);
-  let x2 = mat2x2(0, 0, 0, 0) * mat4x2(0, 0, 0, 0, 0, 0, 0, 0);
+  _ = mat2x2(0, 0, 0, 0) * mat2x2(0, 0, 0, 0);
+  _ = mat2x2(0, 0, 0, 0) * mat3x2(0, 0, 0, 0, 0, 0);
+  _ = mat2x2(0, 0, 0, 0) * mat4x2(0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 fn testDivision() {
-   let x = 0 / 1;
-   let x1 = 0i / 1i;
-   let x2 = 0u / 1u;
-   let x3 = 0.0 / 1.0;
-   let x4 = 0.0f / 1.0f;
-   let x5 = vec2(0.0) / 1.0;
-   let x6 = 0.0 / vec2(1.0, 1.0);
-   let x7 = vec2(0.0, 0.0) / vec2(1.0, 1.0);
+   _ = 0 / 1;
+   _ = 0i / 1i;
+   _ = 0u / 1u;
+   _ = 0.0 / 1.0;
+   _ = 0.0f / 1.0f;
+   _ = vec2(0.0) / 1.0;
+   _ = 0.0 / vec2(1.0, 1.0);
+   _ = vec2(0.0, 0.0) / vec2(1.0, 1.0);
 }
 
 fn testModulo() {
-   let x = 0 % 1;
-   let x1 = 0i % 1i;
-   let x2 = 0u % 1u;
-   let x3 = 0.0 % 1.0;
-   let x4 = 0.0f % 1.0f;
-   let x5 = vec2(0.0) % 1.0;
-   let x6 = 0.0 % vec2(1.0, 1.0);
-   let x7 = vec2(0.0, 0.0) % vec2(1.0, 1.0);
+   _ = 0 % 1;
+   _ = 0i % 1i;
+   _ = 0u % 1u;
+   _ = 0.0 % 1.0;
+   _ = 0.0f % 1.0f;
+   _ = vec2(0.0) % 1.0;
+   _ = 0.0 % vec2(1.0, 1.0);
+   _ = vec2(0.0, 0.0) % vec2(1.0, 1.0);
 }
 
 fn testTextureSample() {
   {
     let t: texture_1d<f32>;
     let s: sampler;
-    let r = textureSample(t, s, 1);
+    _ = textureSample(t, s, 1);
   }
 
   {
     let t: texture_2d<f32>;
     let s: sampler;
-    let r = textureSample(t, s, vec2<f32>(0, 0));
+    _ = textureSample(t, s, vec2<f32>(0, 0));
   }
 
   {
     let t: texture_2d<f32>;
     let s: sampler;
-    let r = textureSample(t, s, vec2<f32>(0, 0), vec2<i32>(1, 1));
+    _ = textureSample(t, s, vec2<f32>(0, 0), vec2<i32>(1, 1));
   }
 
   {
     let t: texture_2d_array<f32>;
     let s: sampler;
-    let r = textureSample(t, s, vec2<f32>(0, 0), 0);
+    _ = textureSample(t, s, vec2<f32>(0, 0), 0);
   }
 
   {
     let t: texture_2d_array<f32>;
     let s: sampler;
-    let r = textureSample(t, s, vec2<f32>(0, 0), 0, vec2<i32>(1, 1));
+    _ = textureSample(t, s, vec2<f32>(0, 0), 0, vec2<i32>(1, 1));
   }
 
   {
     let t: texture_3d<f32>;
     let s: sampler;
-    let r = textureSample(t, s, vec3<f32>(0, 0, 0));
+    _ = textureSample(t, s, vec3<f32>(0, 0, 0));
   }
 
   {
     let t: texture_cube<f32>;
     let s: sampler;
-    let r = textureSample(t, s, vec3<f32>(0, 0, 0));
+    _ = textureSample(t, s, vec3<f32>(0, 0, 0));
   }
 
   {
     let t: texture_3d<f32>;
     let s: sampler;
-    let r = textureSample(t, s, vec3<f32>(0, 0, 0), vec3<i32>(0, 0, 0));
+    _ = textureSample(t, s, vec3<f32>(0, 0, 0), vec3<i32>(0, 0, 0));
   }
 
   {
     let t: texture_cube_array<f32>;
     let s: sampler;
-    let r = textureSample(t, s, vec3<f32>(0, 0, 0), 0);
+    _ = textureSample(t, s, vec3<f32>(0, 0, 0), 0);
   }
 }
 
 fn testVec2() {
-  let v = vec2<f32>(0);
-  let v0 = vec2<f32>(0, 0);
-  let v1 = vec2<i32>(vec2(0, 0));
-  let v2 = vec2(vec2(0, 0));
-  let v3 = vec2(0, 0);
+  _ = vec2<f32>(0);
+  _ = vec2<f32>(0, 0);
+  _ = vec2<i32>(vec2(0, 0));
+  _ = vec2(vec2(0, 0));
+  _ = vec2(0, 0);
 }
 
 fn testVec3() {
-  let v = vec3<f32>(0);
-  let v0 = vec3<f32>(0, 0, 0);
-  let v1 = vec3<i32>(vec3(0, 0, 0));
-  let v2 = vec3(vec3(0, 0, 0));
-  let v3 = vec3(0, 0, 0);
-  let v4 = vec3(vec2(0, 0), 0);
-  let v5 = vec3(0, vec2(0, 0));
+  _ = vec3<f32>(0);
+  _ = vec3<f32>(0, 0, 0);
+  _ = vec3<i32>(vec3(0, 0, 0));
+  _ = vec3(vec3(0, 0, 0));
+  _ = vec3(0, 0, 0);
+  _ = vec3(vec2(0, 0), 0);
+  _ = vec3(0, vec2(0, 0));
 }
 
 fn testVec4() {
-  let v = vec4<f32>(0);
-  let v0 = vec4<f32>(0, 0, 0, 0);
-  let v1 = vec4<i32>(vec4(0, 0, 0, 0));
-  let v2 = vec4(vec4(0, 0, 0, 0));
-  let v3 = vec4(0, 0, 0, 0);
-  let v4 = vec4(0, vec2(0, 0), 0);
-  let v5 = vec4(0, 0, vec2(0, 0));
-  let v6 = vec4(vec2(0, 0), 0, 0);
-  let v7 = vec4(vec2(0, 0), vec2(0, 0));
-  let v8 = vec4(vec3(0, 0, 0), 0);
-  let v9 = vec4(0, vec3(0, 0, 0));
+  _ = vec4<f32>(0);
+  _ = vec4<f32>(0, 0, 0, 0);
+  _ = vec4<i32>(vec4(0, 0, 0, 0));
+  _ = vec4(vec4(0, 0, 0, 0));
+  _ = vec4(0, 0, 0, 0);
+  _ = vec4(0, vec2(0, 0), 0);
+  _ = vec4(0, 0, vec2(0, 0));
+  _ = vec4(vec2(0, 0), 0, 0);
+  _ = vec4(vec2(0, 0), vec2(0, 0));
+  _ = vec4(vec3(0, 0, 0), 0);
+  _ = vec4(0, vec3(0, 0, 0));
 }
 
 fn testMatrixConstructor() {
   {
     // FIXME: overload resolution should support explicitly instantiating variables
     // let m1 = mat2x2<f32>(mat2x2(0.0, 0.0, 0.0, 0.0));
-    let m2 = mat2x2(mat2x2(0.0, 0.0, 0.0, 0.0));
-    let m3 = mat2x2(0.0, 0.0, 0.0, 0.0);
-    let m4 = mat2x2(vec2(0.0, 0.0), vec2(0.0, 0.0));
+    _ = mat2x2(mat2x2(0.0, 0.0, 0.0, 0.0));
+    _ = mat2x2(0.0, 0.0, 0.0, 0.0);
+    _ = mat2x2(vec2(0.0, 0.0), vec2(0.0, 0.0));
   }
 
   {
     // FIXME: overload resolution should support explicitly instantiating variables
     // let m1 = mat2x3<f32>(mat2x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    let m2 = mat2x3(mat2x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    let m3 = mat2x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    let m4 = mat2x3(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0));
+    _ = mat2x3(mat2x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat2x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    _ = mat2x3(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0));
   }
 
   {
     // FIXME: overload resolution should support explicitly instantiating variables
     // let m1 = mat2x4<f32>(mat2x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    let m2 = mat2x4(mat2x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    let m3 = mat2x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    let m4 = mat2x4(vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0));
+    _ = mat2x4(mat2x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat2x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    _ = mat2x4(vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0));
   }
 
   {
     // FIXME: overload resolution should support explicitly instantiating variables
     // let m1 = mat3x2<f32>(mat3x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    let m2 = mat3x2(mat3x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    let m3 = mat3x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    let m4 = mat3x2(vec2(0.0, 0.0), vec2(0.0, 0.0), vec2(0.0, 0.0));
+    _ = mat3x2(mat3x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat3x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    _ = mat3x2(vec2(0.0, 0.0), vec2(0.0, 0.0), vec2(0.0, 0.0));
   }
 
   {
     // FIXME: overload resolution should support explicitly instantiating variables
     // let m1 = mat3x3<f32>(mat3x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    let m2 = mat3x3(mat3x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    let m3 = mat3x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    let m4 = mat3x3(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0));
+    _ = mat3x3(mat3x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat3x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    _ = mat3x3(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0));
   }
 
   {
     // FIXME: overload resolution should support explicitly instantiating variables
     // let m1 = mat3x4<f32>(mat3x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    let m2 = mat3x4(mat3x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    let m3 = mat3x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    let m4 = mat3x4(vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0));
+    _ = mat3x4(mat3x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat3x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    _ = mat3x4(vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0));
   }
 
   {
     // FIXME: overload resolution should support explicitly instantiating variables
     // let m1 = mat4x2<f32>(mat4x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    let m2 = mat4x2(mat4x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    let m3 = mat4x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    let m4 = mat4x2(vec2(0.0, 0.0), vec2(0.0, 0.0), vec2(0.0, 0.0), vec2(0.0, 0.0));
+    _ = mat4x2(mat4x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat4x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    _ = mat4x2(vec2(0.0, 0.0), vec2(0.0, 0.0), vec2(0.0, 0.0), vec2(0.0, 0.0));
   }
 
   {
     // FIXME: overload resolution should support explicitly instantiating variables
     // let m1 = mat4x3<f32>(mat4x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    let m2 = mat4x3(mat4x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    let m3 = mat4x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    let m4 = mat4x3(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0));
+    _ = mat4x3(mat4x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat4x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    _ = mat4x3(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0));
   }
 
   {
     // FIXME: overload resolution should support explicitly instantiating variables
     // let m1 = mat4x4<f32>(mat4x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    let m2 = mat4x4(mat4x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    let m3 = mat4x4(mat4x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-    let m4 = mat4x4(vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0));
+    _ = mat4x4(mat4x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat4x4(mat4x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat4x4(vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0));
   }
 }
 
 fn testUnaryMinus() {
   let x = 1;
-  let x1 = -x;
-  let x2 = -vec2(1, 1);
+  _ = -x;
+  _ = -vec2(1, 1);
 }
 
 fn testBinaryMinus() {
-  let x1 = vec2(1, 1) - 1;
-  let x2 = 1 - vec2(1, 1);
-  let x3 = vec2(1, 1) - vec2(1, 1);
+  _ = vec2(1, 1) - 1;
+  _ = 1 - vec2(1, 1);
+  _ = vec2(1, 1) - vec2(1, 1);
 }
 
 fn testComparison() {
   {
-    let x = false == true;
-    let x1 = 0 == 1;
-    let x2 = 0i == 1i;
-    let x3 = 0u == 1u;
-    let x4 = 0.0 == 1.0;
-    let x5 = 0.0f == 1.0f;
-    let x6 = vec2(false) == vec2(true);
-    let x7 = vec2(0) == vec2(1);
-    let x8 = vec2(0i) == vec2(1i);
-    let x9 = vec2(0u) == vec2(1u);
-    let x10 = vec2(0.0) == vec2(1.0);
-    let x11 = vec2(0.0f) == vec2(1.0f);
+    _ = false == true;
+    _ = 0 == 1;
+    _ = 0i == 1i;
+    _ = 0u == 1u;
+    _ = 0.0 == 1.0;
+    _ = 0.0f == 1.0f;
+    _ = vec2(false) == vec2(true);
+    _ = vec2(0) == vec2(1);
+    _ = vec2(0i) == vec2(1i);
+    _ = vec2(0u) == vec2(1u);
+    _ = vec2(0.0) == vec2(1.0);
+    _ = vec2(0.0f) == vec2(1.0f);
   }
 
   {
-    let x = false != true;
-    let x1 = 0 != 1;
-    let x2 = 0i != 1i;
-    let x3 = 0u != 1u;
-    let x4 = 0.0 != 1.0;
-    let x5 = 0.0f != 1.0f;
-    let x6 = vec2(false) != vec2(true);
-    let x7 = vec2(0) != vec2(1);
-    let x8 = vec2(0i) != vec2(1i);
-    let x9 = vec2(0u) != vec2(1u);
-    let x10 = vec2(0.0) != vec2(1.0);
-    let x11 = vec2(0.0f) != vec2(1.0f);
+    _ = false != true;
+    _ = 0 != 1;
+    _ = 0i != 1i;
+    _ = 0u != 1u;
+    _ = 0.0 != 1.0;
+    _ = 0.0f != 1.0f;
+    _ = vec2(false) != vec2(true);
+    _ = vec2(0) != vec2(1);
+    _ = vec2(0i) != vec2(1i);
+    _ = vec2(0u) != vec2(1u);
+    _ = vec2(0.0) != vec2(1.0);
+    _ = vec2(0.0f) != vec2(1.0f);
   }
 
   {
-    let x = 0 > 1;
-    let x1 = 0i > 1i;
-    let x2 = 0u > 1u;
-    let x3 = 0.0 > 1.0;
-    let x4 = 0.0f > 1.0f;
-    let x5 = vec2(0) > vec2(1);
-    let x6 = vec2(0i) > vec2(1i);
-    let x7 = vec2(0u) > vec2(1u);
-    let x8 = vec2(0.0) > vec2(1.0);
-    let x9 = vec2(0.0f) > vec2(1.0f);
+    _ = 0 > 1;
+    _ = 0i > 1i;
+    _ = 0u > 1u;
+    _ = 0.0 > 1.0;
+    _ = 0.0f > 1.0f;
+    _ = vec2(0) > vec2(1);
+    _ = vec2(0i) > vec2(1i);
+    _ = vec2(0u) > vec2(1u);
+    _ = vec2(0.0) > vec2(1.0);
+    _ = vec2(0.0f) > vec2(1.0f);
   }
 
   {
-    let x = 0 >= 1;
-    let x1 = 0i >= 1i;
-    let x2 = 0u >= 1u;
-    let x3 = 0.0 >= 1.0;
-    let x4 = 0.0f >= 1.0f;
-    let x5 = vec2(0) >= vec2(1);
-    let x6 = vec2(0i) >= vec2(1i);
-    let x7 = vec2(0u) >= vec2(1u);
-    let x8 = vec2(0.0) >= vec2(1.0);
-    let x9 = vec2(0.0f) >= vec2(1.0f);
+    _ = 0 >= 1;
+    _ = 0i >= 1i;
+    _ = 0u >= 1u;
+    _ = 0.0 >= 1.0;
+    _ = 0.0f >= 1.0f;
+    _ = vec2(0) >= vec2(1);
+    _ = vec2(0i) >= vec2(1i);
+    _ = vec2(0u) >= vec2(1u);
+    _ = vec2(0.0) >= vec2(1.0);
+    _ = vec2(0.0f) >= vec2(1.0f);
   }
 
   {
-    let x = 0 < 1;
-    let x1 = 0i < 1i;
-    let x2 = 0u < 1u;
-    let x3 = 0.0 < 1.0;
-    let x4 = 0.0f < 1.0f;
-    let x5 = vec2(0) < vec2(1);
-    let x6 = vec2(0i) < vec2(1i);
-    let x7 = vec2(0u) < vec2(1u);
-    let x8 = vec2(0.0) < vec2(1.0);
-    let x9 = vec2(0.0f) < vec2(1.0f);
+    _ = 0 < 1;
+    _ = 0i < 1i;
+    _ = 0u < 1u;
+    _ = 0.0 < 1.0;
+    _ = 0.0f < 1.0f;
+    _ = vec2(0) < vec2(1);
+    _ = vec2(0i) < vec2(1i);
+    _ = vec2(0u) < vec2(1u);
+    _ = vec2(0.0) < vec2(1.0);
+    _ = vec2(0.0f) < vec2(1.0f);
   }
 
   {
-    let x = 0 <= 1;
-    let x1 = 0i <= 1i;
-    let x2 = 0u <= 1u;
-    let x3 = 0.0 <= 1.0;
-    let x4 = 0.0f <= 1.0f;
-    let x5 = vec2(0) <= vec2(1);
-    let x6 = vec2(0i) <= vec2(1i);
-    let x7 = vec2(0u) <= vec2(1u);
-    let x8 = vec2(0.0) <= vec2(1.0);
-    let x9 = vec2(0.0f) <= vec2(1.0f);
+    _ = 0 <= 1;
+    _ = 0i <= 1i;
+    _ = 0u <= 1u;
+    _ = 0.0 <= 1.0;
+    _ = 0.0f <= 1.0f;
+    _ = vec2(0) <= vec2(1);
+    _ = vec2(0i) <= vec2(1i);
+    _ = vec2(0u) <= vec2(1u);
+    _ = vec2(0.0) <= vec2(1.0);
+    _ = vec2(0.0f) <= vec2(1.0f);
   }
 }
 
 fn testBitwise()
 {
   {
-    let x = ~0;
-    let x1 = ~0i;
-    let x2 = ~0u;
+    _ = ~0;
+    _ = ~0i;
+    _ = ~0u;
   }
 
   {
-    let x = 0 & 1;
-    let x1 = 0i & 1i;
-    let x2 = 0u & 1u;
+    _ = 0 & 1;
+    _ = 0i & 1i;
+    _ = 0u & 1u;
   }
 
   {
-    let x = 0 | 1;
-    let x1 = 0i | 1i;
-    let x2 = 0u | 1u;
+    _ = 0 | 1;
+    _ = 0i | 1i;
+    _ = 0u | 1u;
   }
 
   {
-    let x = 0 ^ 1;
-    let x1 = 0i ^ 1i;
-    let x2 = 0u ^ 1u;
+    _ = 0 ^ 1;
+    _ = 0i ^ 1i;
+    _ = 0u ^ 1u;
   }
 }
 
@@ -372,26 +372,26 @@ fn testBitwise()
 fn testAll()
 {
     // [N].(Vector[Bool, N]) => Bool,
-    let x1 = all(vec2(false, true));
-    let x2 = all(vec3(true, true, true));
-    let x3 = all(vec4(false, false, false, false));
+    _ = all(vec2(false, true));
+    _ = all(vec3(true, true, true));
+    _ = all(vec4(false, false, false, false));
 
     // [N].(Bool) => Bool,
-    let x4 = all(true);
-    let x5 = all(false);
+    _ = all(true);
+    _ = all(false);
 }
 
 // 17.3.2
 fn testAny()
 {
     // [N].(Vector[Bool, N]) => Bool,
-    let x1 = any(vec2(false, true));
-    let x2 = any(vec3(true, true, true));
-    let x3 = any(vec4(false, false, false, false));
+    _ = any(vec2(false, true));
+    _ = any(vec3(true, true, true));
+    _ = any(vec4(false, false, false, false));
 
     // [N].(Bool) => Bool,
-    let x4 = any(true);
-    let x5 = any(false);
+    _ = any(true);
+    _ = any(false);
 }
 
 // 17.3.3
@@ -399,57 +399,57 @@ fn testSelect()
 {
     // [T < Scalar].(T, T, Bool) => T,
     {
-        let x1 = select(13, 42,   false);
-        let x2 = select(13, 42i,  false);
-        let x3 = select(13, 42u,  true);
-        let x4 = select(13, 42f,  true);
-        let x5 = select(13, 42.0, true);
+        _ = select(13, 42,   false);
+        _ = select(13, 42i,  false);
+        _ = select(13, 42u,  true);
+        _ = select(13, 42f,  true);
+        _ = select(13, 42.0, true);
     }
 
     // [T < Scalar, N].(Vector[T, N], Vector[T, N], Bool) => Vector[T, N],
     {
-        let x1 = select(vec2(13), vec2(42),   false);
-        let x2 = select(vec2(13), vec2(42i),  false);
-        let x3 = select(vec2(13), vec2(42u),  true);
-        let x4 = select(vec2(13), vec2(42f),  true);
-        let x5 = select(vec2(13), vec2(42.0), true);
+        _ = select(vec2(13), vec2(42),   false);
+        _ = select(vec2(13), vec2(42i),  false);
+        _ = select(vec2(13), vec2(42u),  true);
+        _ = select(vec2(13), vec2(42f),  true);
+        _ = select(vec2(13), vec2(42.0), true);
     }
     {
-        let x1 = select(vec3(13), vec3(42),   false);
-        let x2 = select(vec3(13), vec3(42i),  false);
-        let x3 = select(vec3(13), vec3(42u),  true);
-        let x4 = select(vec3(13), vec3(42f),  true);
-        let x5 = select(vec3(13), vec3(42.0), true);
+        _ = select(vec3(13), vec3(42),   false);
+        _ = select(vec3(13), vec3(42i),  false);
+        _ = select(vec3(13), vec3(42u),  true);
+        _ = select(vec3(13), vec3(42f),  true);
+        _ = select(vec3(13), vec3(42.0), true);
     }
     {
-        let x1 = select(vec4(13), vec4(42),   false);
-        let x2 = select(vec4(13), vec4(42i),  false);
-        let x3 = select(vec4(13), vec4(42u),  true);
-        let x4 = select(vec4(13), vec4(42f),  true);
-        let x5 = select(vec4(13), vec4(42.0), true);
+        _ = select(vec4(13), vec4(42),   false);
+        _ = select(vec4(13), vec4(42i),  false);
+        _ = select(vec4(13), vec4(42u),  true);
+        _ = select(vec4(13), vec4(42f),  true);
+        _ = select(vec4(13), vec4(42.0), true);
     }
 
     // [T < Scalar, N].(Vector[T, N], Vector[T, N], Vector[Bool, N]) => Vector[T, N],
     {
-        let x1 = select(vec2(13), vec2(42),   vec2(false));
-        let x2 = select(vec2(13), vec2(42i),  vec2(false));
-        let x3 = select(vec2(13), vec2(42u),  vec2(true));
-        let x4 = select(vec2(13), vec2(42f),  vec2(true));
-        let x5 = select(vec2(13), vec2(42.0), vec2(true));
+        _ = select(vec2(13), vec2(42),   vec2(false));
+        _ = select(vec2(13), vec2(42i),  vec2(false));
+        _ = select(vec2(13), vec2(42u),  vec2(true));
+        _ = select(vec2(13), vec2(42f),  vec2(true));
+        _ = select(vec2(13), vec2(42.0), vec2(true));
     }
     {
-        let x1 = select(vec3(13), vec3(42),   vec3(false));
-        let x2 = select(vec3(13), vec3(42i),  vec3(false));
-        let x3 = select(vec3(13), vec3(42u),  vec3(true));
-        let x4 = select(vec3(13), vec3(42f),  vec3(true));
-        let x5 = select(vec3(13), vec3(42.0), vec3(true));
+        _ = select(vec3(13), vec3(42),   vec3(false));
+        _ = select(vec3(13), vec3(42i),  vec3(false));
+        _ = select(vec3(13), vec3(42u),  vec3(true));
+        _ = select(vec3(13), vec3(42f),  vec3(true));
+        _ = select(vec3(13), vec3(42.0), vec3(true));
     }
     {
-        let x1 = select(vec4(13), vec4(42),   vec4(false));
-        let x2 = select(vec4(13), vec4(42i),  vec4(false));
-        let x3 = select(vec4(13), vec4(42u),  vec4(true));
-        let x4 = select(vec4(13), vec4(42f),  vec4(true));
-        let x5 = select(vec4(13), vec4(42.0), vec4(true));
+        _ = select(vec4(13), vec4(42),   vec4(false));
+        _ = select(vec4(13), vec4(42i),  vec4(false));
+        _ = select(vec4(13), vec4(42u),  vec4(true));
+        _ = select(vec4(13), vec4(42f),  vec4(true));
+        _ = select(vec4(13), vec4(42.0), vec4(true));
     }
 }
 
@@ -459,90 +459,90 @@ fn testSelect()
 fn testTrigonometric()
 {
   {
-    let x = acos(0.0);
-    let x1 = acos(vec2(0.0, 0.0));
-    let x2 = acos(vec3(0.0, 0.0, 0.0));
-    let x3 = acos(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = acos(0.0);
+    _ = acos(vec2(0.0, 0.0));
+    _ = acos(vec3(0.0, 0.0, 0.0));
+    _ = acos(vec4(0.0, 0.0, 0.0, 0.0));
   }
 
   {
-    let x = asin(0.0);
-    let x1 = asin(vec2(0.0, 0.0));
-    let x2 = asin(vec3(0.0, 0.0, 0.0));
-    let x3 = asin(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = asin(0.0);
+    _ = asin(vec2(0.0, 0.0));
+    _ = asin(vec3(0.0, 0.0, 0.0));
+    _ = asin(vec4(0.0, 0.0, 0.0, 0.0));
   }
 
   {
-    let x = atan(0.0);
-    let x1 = atan(vec2(0.0, 0.0));
-    let x2 = atan(vec3(0.0, 0.0, 0.0));
-    let x3 = atan(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = atan(0.0);
+    _ = atan(vec2(0.0, 0.0));
+    _ = atan(vec3(0.0, 0.0, 0.0));
+    _ = atan(vec4(0.0, 0.0, 0.0, 0.0));
   }
 
   {
-    let x = cos(0.0);
-    let x1 = cos(vec2(0.0, 0.0));
-    let x2 = cos(vec3(0.0, 0.0, 0.0));
-    let x3 = cos(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = cos(0.0);
+    _ = cos(vec2(0.0, 0.0));
+    _ = cos(vec3(0.0, 0.0, 0.0));
+    _ = cos(vec4(0.0, 0.0, 0.0, 0.0));
   }
 
   {
-    let x = sin(0.0);
-    let x1 = sin(vec2(0.0, 0.0));
-    let x2 = sin(vec3(0.0, 0.0, 0.0));
-    let x3 = sin(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = sin(0.0);
+    _ = sin(vec2(0.0, 0.0));
+    _ = sin(vec3(0.0, 0.0, 0.0));
+    _ = sin(vec4(0.0, 0.0, 0.0, 0.0));
   }
 
   {
-    let x = tan(0.0);
-    let x1 = tan(vec2(0.0, 0.0));
-    let x2 = tan(vec3(0.0, 0.0, 0.0));
-    let x3 = tan(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = tan(0.0);
+    _ = tan(vec2(0.0, 0.0));
+    _ = tan(vec3(0.0, 0.0, 0.0));
+    _ = tan(vec4(0.0, 0.0, 0.0, 0.0));
   }
 }
 
 fn testTrigonometricHyperbolic()
 {
   {
-    let x = acosh(0.0);
-    let x1 = acosh(vec2(0.0, 0.0));
-    let x2 = acosh(vec3(0.0, 0.0, 0.0));
-    let x3 = acosh(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = acosh(0.0);
+    _ = acosh(vec2(0.0, 0.0));
+    _ = acosh(vec3(0.0, 0.0, 0.0));
+    _ = acosh(vec4(0.0, 0.0, 0.0, 0.0));
   }
 
   {
-    let x = asinh(0.0);
-    let x1 = asinh(vec2(0.0, 0.0));
-    let x2 = asinh(vec3(0.0, 0.0, 0.0));
-    let x3 = asinh(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = asinh(0.0);
+    _ = asinh(vec2(0.0, 0.0));
+    _ = asinh(vec3(0.0, 0.0, 0.0));
+    _ = asinh(vec4(0.0, 0.0, 0.0, 0.0));
   }
 
   {
-    let x = atanh(0.0);
-    let x1 = atanh(vec2(0.0, 0.0));
-    let x2 = atanh(vec3(0.0, 0.0, 0.0));
-    let x3 = atanh(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = atanh(0.0);
+    _ = atanh(vec2(0.0, 0.0));
+    _ = atanh(vec3(0.0, 0.0, 0.0));
+    _ = atanh(vec4(0.0, 0.0, 0.0, 0.0));
   }
 
   {
-    let x = cosh(0.0);
-    let x1 = cosh(vec2(0.0, 0.0));
-    let x2 = cosh(vec3(0.0, 0.0, 0.0));
-    let x3 = cosh(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = cosh(0.0);
+    _ = cosh(vec2(0.0, 0.0));
+    _ = cosh(vec3(0.0, 0.0, 0.0));
+    _ = cosh(vec4(0.0, 0.0, 0.0, 0.0));
   }
 
   {
-    let x = sinh(0.0);
-    let x1 = sinh(vec2(0.0, 0.0));
-    let x2 = sinh(vec3(0.0, 0.0, 0.0));
-    let x3 = sinh(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = sinh(0.0);
+    _ = sinh(vec2(0.0, 0.0));
+    _ = sinh(vec3(0.0, 0.0, 0.0));
+    _ = sinh(vec4(0.0, 0.0, 0.0, 0.0));
   }
 
   {
-    let x = tanh(0.0);
-    let x1 = tanh(vec2(0.0, 0.0));
-    let x2 = tanh(vec3(0.0, 0.0, 0.0));
-    let x3 = tanh(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = tanh(0.0);
+    _ = tanh(vec2(0.0, 0.0));
+    _ = tanh(vec3(0.0, 0.0, 0.0));
+    _ = tanh(vec4(0.0, 0.0, 0.0, 0.0));
   }
 }
 
@@ -552,27 +552,27 @@ fn testAbs()
 {
     // [T < Float].(T) => T,
     {
-        let x1 = abs(0);
-        let x2 = abs(1i);
-        let x3 = abs(1u);
-        let x4 = abs(0.0);
-        let x5 = abs(1f);
+        _ = abs(0);
+        _ = abs(1i);
+        _ = abs(1u);
+        _ = abs(0.0);
+        _ = abs(1f);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        let x1 = abs(vec2(0, 1));
-        let x2 = abs(vec2(1i, 2i));
-        let x3 = abs(vec2(1u, 2u));
-        let x4 = abs(vec2(0.0, 1.0));
-        let x5 = abs(vec2(1f, 2f));
+        _ = abs(vec2(0, 1));
+        _ = abs(vec2(1i, 2i));
+        _ = abs(vec2(1u, 2u));
+        _ = abs(vec2(0.0, 1.0));
+        _ = abs(vec2(1f, 2f));
     }
     {
-        let x1 = abs(vec3(-1, 0, 1));
-        let x2 = abs(vec3(-1i, 1i, 2i));
-        let x3 = abs(vec3(0u, 1u, 2u));
-        let x4 = abs(vec3(-1.0, 0.0, 1.0));
-        let x5 = abs(vec3(-1f, 1f, 2f));
+        _ = abs(vec3(-1, 0, 1));
+        _ = abs(vec3(-1i, 1i, 2i));
+        _ = abs(vec3(0u, 1u, 2u));
+        _ = abs(vec3(-1.0, 0.0, 1.0));
+        _ = abs(vec3(-1f, 1f, 2f));
     }
 }
 
@@ -588,25 +588,25 @@ fn testAbs()
 fn testAtan2() {
     // [T < Float].(T, T) => T,
     {
-        let x1 = atan2(0, 1);
-        let x2 = atan2(0, 1.0);
-        let x3 = atan2(1, 2f);
+        _ = atan2(0, 1);
+        _ = atan2(0, 1.0);
+        _ = atan2(1, 2f);
     }
     // [T < Float, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
-        let x1 = atan2(vec2(0), vec2(0));
-        let x2 = atan2(vec2(0), vec2(0.0));
-        let x3 = atan2(vec2(0), vec2(0f));
+        _ = atan2(vec2(0), vec2(0));
+        _ = atan2(vec2(0), vec2(0.0));
+        _ = atan2(vec2(0), vec2(0f));
     }
     {
-        let x1 = atan2(vec3(0), vec3(0));
-        let x2 = atan2(vec3(0), vec3(0.0));
-        let x3 = atan2(vec3(0), vec3(0f));
+        _ = atan2(vec3(0), vec3(0));
+        _ = atan2(vec3(0), vec3(0.0));
+        _ = atan2(vec3(0), vec3(0f));
     }
     {
-        let x1 = atan2(vec4(0), vec4(0));
-        let x2 = atan2(vec4(0), vec4(0.0));
-        let x3 = atan2(vec4(0), vec4(0f));
+        _ = atan2(vec4(0), vec4(0));
+        _ = atan2(vec4(0), vec4(0.0));
+        _ = atan2(vec4(0), vec4(0f));
     }
 }
 
@@ -615,26 +615,26 @@ fn testCeil()
 {
     // [T < Float].(T) => T,
     {
-        let x1 = ceil(0);
-        let x2 = ceil(0.0);
-        let x3 = ceil(1f);
+        _ = ceil(0);
+        _ = ceil(0.0);
+        _ = ceil(1f);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        let x1 = ceil(vec2(0, 1));
-        let x2 = ceil(vec2(0.0, 1.0));
-        let x3 = ceil(vec2(1f, 2f));
+        _ = ceil(vec2(0, 1));
+        _ = ceil(vec2(0.0, 1.0));
+        _ = ceil(vec2(1f, 2f));
     }
     {
-        let x1 = ceil(vec3(-1, 0, 1));
-        let x2 = ceil(vec3(-1.0, 0.0, 1.0));
-        let x3 = ceil(vec3(-1f, 1f, 2f));
+        _ = ceil(vec3(-1, 0, 1));
+        _ = ceil(vec3(-1.0, 0.0, 1.0));
+        _ = ceil(vec3(-1f, 1f, 2f));
     }
     {
-        let x1 = ceil(vec4(-1, 0, 1, 2));
-        let x2 = ceil(vec4(-1.0, 0.0, 1.0, 2.0));
-        let x3 = ceil(vec4(-1f, 1f, 2f, 3f));
+        _ = ceil(vec4(-1, 0, 1, 2));
+        _ = ceil(vec4(-1.0, 0.0, 1.0, 2.0));
+        _ = ceil(vec4(-1f, 1f, 2f, 3f));
     }
 }
 
@@ -643,33 +643,33 @@ fn testClamp()
 {
     // [T < Number].(T, T, T) => T,
     {
-        let x1 = clamp(-1, 0, 1);
-        let x2 = clamp(-1, 1, 2i);
-        let x3 = clamp(0, 1, 2u);
-        let x4 = clamp(-1, 0, 1.0);
-        let x5 = clamp(-1, 1, 2f);
+        _ = clamp(-1, 0, 1);
+        _ = clamp(-1, 1, 2i);
+        _ = clamp(0, 1, 2u);
+        _ = clamp(-1, 0, 1.0);
+        _ = clamp(-1, 1, 2f);
     }
     // [T < Number, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
-        let x1 = clamp(vec2(0), vec2(0), vec2(0));
-        let x2 = clamp(vec2(0), vec2(0), vec2(0i));
-        let x3 = clamp(vec2(0), vec2(0), vec2(0u));
-        let x4 = clamp(vec2(0), vec2(0), vec2(0.0));
-        let x5 = clamp(vec2(0), vec2(0), vec2(0f));
+        _ = clamp(vec2(0), vec2(0), vec2(0));
+        _ = clamp(vec2(0), vec2(0), vec2(0i));
+        _ = clamp(vec2(0), vec2(0), vec2(0u));
+        _ = clamp(vec2(0), vec2(0), vec2(0.0));
+        _ = clamp(vec2(0), vec2(0), vec2(0f));
     }
     {
-        let x1 = clamp(vec3(0), vec3(0), vec3(0));
-        let x2 = clamp(vec3(0), vec3(0), vec3(0i));
-        let x3 = clamp(vec3(0), vec3(0), vec3(0u));
-        let x4 = clamp(vec3(0), vec3(0), vec3(0.0));
-        let x5 = clamp(vec3(0), vec3(0), vec3(0f));
+        _ = clamp(vec3(0), vec3(0), vec3(0));
+        _ = clamp(vec3(0), vec3(0), vec3(0i));
+        _ = clamp(vec3(0), vec3(0), vec3(0u));
+        _ = clamp(vec3(0), vec3(0), vec3(0.0));
+        _ = clamp(vec3(0), vec3(0), vec3(0f));
     }
     {
-        let x1 = clamp(vec4(0), vec4(0), vec4(0));
-        let x2 = clamp(vec4(0), vec4(0), vec4(0i));
-        let x3 = clamp(vec4(0), vec4(0), vec4(0u));
-        let x4 = clamp(vec4(0), vec4(0), vec4(0.0));
-        let x5 = clamp(vec4(0), vec4(0), vec4(0f));
+        _ = clamp(vec4(0), vec4(0), vec4(0));
+        _ = clamp(vec4(0), vec4(0), vec4(0i));
+        _ = clamp(vec4(0), vec4(0), vec4(0u));
+        _ = clamp(vec4(0), vec4(0), vec4(0.0));
+        _ = clamp(vec4(0), vec4(0), vec4(0f));
     }
 }
 
@@ -682,35 +682,35 @@ fn testBitCounting()
 {
     // [T < ConcreteInteger].(T) => T,
     {
-        let x1 = countLeadingZeros(1);
-        let x2 = countLeadingZeros(1i);
-        let x3 = countLeadingZeros(1u);
+        _ = countLeadingZeros(1);
+        _ = countLeadingZeros(1i);
+        _ = countLeadingZeros(1u);
     }
     {
-        let x1 = countOneBits(1);
-        let x2 = countOneBits(1i);
-        let x3 = countOneBits(1u);
+        _ = countOneBits(1);
+        _ = countOneBits(1i);
+        _ = countOneBits(1u);
     }
     {
-        let x1 = countTrailingZeros(1);
-        let x2 = countTrailingZeros(1i);
-        let x3 = countTrailingZeros(1u);
+        _ = countTrailingZeros(1);
+        _ = countTrailingZeros(1i);
+        _ = countTrailingZeros(1u);
     }
     // [T < ConcreteInteger, N].(Vector[T, N]) => Vector[T, N],
     {
-        let x1 = countLeadingZeros(vec2(1, 1));
-        let x2 = countLeadingZeros(vec2(1i, 1i));
-        let x3 = countLeadingZeros(vec2(1u, 1u));
+        _ = countLeadingZeros(vec2(1, 1));
+        _ = countLeadingZeros(vec2(1i, 1i));
+        _ = countLeadingZeros(vec2(1u, 1u));
     }
     {
-        let x1 = countOneBits(vec3(1, 1, 1));
-        let x2 = countOneBits(vec3(1i, 1i, 1i));
-        let x3 = countOneBits(vec3(1u, 1u, 1u));
+        _ = countOneBits(vec3(1, 1, 1));
+        _ = countOneBits(vec3(1i, 1i, 1i));
+        _ = countOneBits(vec3(1u, 1u, 1u));
     }
     {
-        let x1 = countTrailingZeros(vec4(1, 1, 1, 1));
-        let x2 = countTrailingZeros(vec4(1i, 1i, 1i, 1i));
-        let x3 = countTrailingZeros(vec4(1u, 1u, 1u, 1u));
+        _ = countTrailingZeros(vec4(1, 1, 1, 1));
+        _ = countTrailingZeros(vec4(1i, 1i, 1i, 1i));
+        _ = countTrailingZeros(vec4(1u, 1u, 1u, 1u));
     }
 }
 
@@ -718,9 +718,9 @@ fn testBitCounting()
 fn testCross()
 {
     // [T < Float].(Vector[T, 3], Vector[T, 3]) => Vector[T, 3],
-    let x1 = cross(vec3(1, 1, 1), vec3(1f, 2f, 3f));
-    let x2 = cross(vec3(1.0, 1.0, 1.0), vec3(1f, 2f, 3f));
-    let x3 = cross(vec3(1f, 1f, 1f), vec3(1f, 2f, 3f));
+    _ = cross(vec3(1, 1, 1), vec3(1f, 2f, 3f));
+    _ = cross(vec3(1.0, 1.0, 1.0), vec3(1f, 2f, 3f));
+    _ = cross(vec3(1f, 1f, 1f), vec3(1f, 2f, 3f));
 }
 
 // 17.5.17
@@ -728,25 +728,25 @@ fn testDegress()
 {
     // [T < Float].(T) => T,
     {
-        let x1 = degrees(0);
-        let x2 = degrees(0.0);
-        let x3 = degrees(1f);
+        _ = degrees(0);
+        _ = degrees(0.0);
+        _ = degrees(1f);
     }
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        let x1 = degrees(vec2(0, 1));
-        let x2 = degrees(vec2(0.0, 1.0));
-        let x3 = degrees(vec2(1f, 2f));
+        _ = degrees(vec2(0, 1));
+        _ = degrees(vec2(0.0, 1.0));
+        _ = degrees(vec2(1f, 2f));
     }
     {
-        let x1 = degrees(vec3(-1, 0, 1));
-        let x2 = degrees(vec3(-1.0, 0.0, 1.0));
-        let x3 = degrees(vec3(-1f, 1f, 2f));
+        _ = degrees(vec3(-1, 0, 1));
+        _ = degrees(vec3(-1.0, 0.0, 1.0));
+        _ = degrees(vec3(-1f, 1f, 2f));
     }
     {
-        let x1 = degrees(vec4(-1, 0, 1, 2));
-        let x2 = degrees(vec4(-1.0, 0.0, 1.0, 2.0));
-        let x3 = degrees(vec4(-1f, 1f, 2f, 3f));
+        _ = degrees(vec4(-1, 0, 1, 2));
+        _ = degrees(vec4(-1.0, 0.0, 1.0, 2.0));
+        _ = degrees(vec4(-1f, 1f, 2f, 3f));
     }
 }
 
@@ -754,9 +754,9 @@ fn testDegress()
 fn testDeterminant()
 {
     // [T < Float, C].(Matrix[T, C, C]) => T,
-    let x1 = determinant(mat2x2(1, 1, 1, 1));
-    let x2 = determinant(mat3x3(1, 1, 1, 1, 1, 1, 1, 1, 1));
-    let x3 = determinant(mat4x4(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
+    _ = determinant(mat2x2(1, 1, 1, 1));
+    _ = determinant(mat3x3(1, 1, 1, 1, 1, 1, 1, 1, 1));
+    _ = determinant(mat4x4(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
 }
 
 // 17.5.19
@@ -764,37 +764,37 @@ fn testDistance()
 {
     // [T < Float].(T, T) => T,
     {
-        let x1 = distance(0, 1);
-        let x2 = distance(0, 1.0);
-        let x3 = distance(0, 1f);
-        let x4 = distance(0.0, 1.0);
-        let x5 = distance(1.0, 2f);
-        let x6 = distance(1f, 2f);
+        _ = distance(0, 1);
+        _ = distance(0, 1.0);
+        _ = distance(0, 1f);
+        _ = distance(0.0, 1.0);
+        _ = distance(1.0, 2f);
+        _ = distance(1f, 2f);
     }
     // [T < Float, N].(Vector[T, N], Vector[T, N]) => T,
     {
-        let x1 = distance(vec2(0),   vec2(1)  );
-        let x2 = distance(vec2(0),   vec2(0.0));
-        let x3 = distance(vec2(0),   vec2(1f) );
-        let x4 = distance(vec2(0.0), vec2(0.0));
-        let x5 = distance(vec2(0.0), vec2(0f) );
-        let x6 = distance(vec2(1f),  vec2(1f) );
+        _ = distance(vec2(0),   vec2(1)  );
+        _ = distance(vec2(0),   vec2(0.0));
+        _ = distance(vec2(0),   vec2(1f) );
+        _ = distance(vec2(0.0), vec2(0.0));
+        _ = distance(vec2(0.0), vec2(0f) );
+        _ = distance(vec2(1f),  vec2(1f) );
     }
     {
-        let x1 = distance(vec3(0),   vec3(1)  );
-        let x2 = distance(vec3(0),   vec3(0.0));
-        let x3 = distance(vec3(0),   vec3(1f) );
-        let x4 = distance(vec3(0.0), vec3(0.0));
-        let x5 = distance(vec3(0.0), vec3(0f) );
-        let x6 = distance(vec3(1f),  vec3(1f) );
+        _ = distance(vec3(0),   vec3(1)  );
+        _ = distance(vec3(0),   vec3(0.0));
+        _ = distance(vec3(0),   vec3(1f) );
+        _ = distance(vec3(0.0), vec3(0.0));
+        _ = distance(vec3(0.0), vec3(0f) );
+        _ = distance(vec3(1f),  vec3(1f) );
     }
     {
-        let x1 = distance(vec4(0),   vec4(1)  );
-        let x2 = distance(vec4(0),   vec4(0.0));
-        let x3 = distance(vec4(0),   vec4(1f) );
-        let x4 = distance(vec4(0.0), vec4(0.0));
-        let x5 = distance(vec4(0.0), vec4(0f) );
-        let x6 = distance(vec4(1f),  vec4(1f) );
+        _ = distance(vec4(0),   vec4(1)  );
+        _ = distance(vec4(0),   vec4(0.0));
+        _ = distance(vec4(0),   vec4(1f) );
+        _ = distance(vec4(0.0), vec4(0.0));
+        _ = distance(vec4(0.0), vec4(0f) );
+        _ = distance(vec4(1f),  vec4(1f) );
     }
 }
 
@@ -803,40 +803,40 @@ fn testDot()
 {
     // [T < Number, N].(Vector[T, N], Vector[T, N]) => T,
     {
-        let x1 = dot(vec2(0),   vec2(1)  );
-        let x2 = dot(vec2(0),   vec2(1f) );
-        let x3 = dot(vec2(0),   vec2(1i) );
-        let x4 = dot(vec2(0),   vec2(1u) );
-        let x5 = dot(vec2(1i),  vec2(1i) );
-        let x6 = dot(vec2(1u),  vec2(1u) );
-        let x7 = dot(vec2(0),   vec2(0.0));
-        let x8 = dot(vec2(0.0), vec2(0.0));
-        let x9 = dot(vec2(0.0), vec2(0f) );
-        let x0 = dot(vec2(1f),  vec2(1f) );
+        _ = dot(vec2(0),   vec2(1)  );
+        _ = dot(vec2(0),   vec2(1f) );
+        _ = dot(vec2(0),   vec2(1i) );
+        _ = dot(vec2(0),   vec2(1u) );
+        _ = dot(vec2(1i),  vec2(1i) );
+        _ = dot(vec2(1u),  vec2(1u) );
+        _ = dot(vec2(0),   vec2(0.0));
+        _ = dot(vec2(0.0), vec2(0.0));
+        _ = dot(vec2(0.0), vec2(0f) );
+        _ = dot(vec2(1f),  vec2(1f) );
     }
     {
-        let x1 = dot(vec3(0),   vec3(1)  );
-        let x2 = dot(vec3(0),   vec3(1f) );
-        let x3 = dot(vec3(0),   vec3(1i) );
-        let x4 = dot(vec3(0),   vec3(1u) );
-        let x5 = dot(vec3(1i),  vec3(1i) );
-        let x6 = dot(vec3(1u),  vec3(1u) );
-        let x7 = dot(vec3(0),   vec3(0.0));
-        let x8 = dot(vec3(0.0), vec3(0.0));
-        let x9 = dot(vec3(0.0), vec3(0f) );
-        let x0 = dot(vec3(1f),  vec3(1f) );
+        _ = dot(vec3(0),   vec3(1)  );
+        _ = dot(vec3(0),   vec3(1f) );
+        _ = dot(vec3(0),   vec3(1i) );
+        _ = dot(vec3(0),   vec3(1u) );
+        _ = dot(vec3(1i),  vec3(1i) );
+        _ = dot(vec3(1u),  vec3(1u) );
+        _ = dot(vec3(0),   vec3(0.0));
+        _ = dot(vec3(0.0), vec3(0.0));
+        _ = dot(vec3(0.0), vec3(0f) );
+        _ = dot(vec3(1f),  vec3(1f) );
     }
     {
-        let x1 = dot(vec4(0),   vec4(1)  );
-        let x2 = dot(vec4(0),   vec4(1f) );
-        let x3 = dot(vec4(0),   vec4(1i) );
-        let x4 = dot(vec4(0),   vec4(1u) );
-        let x5 = dot(vec4(1i),  vec4(1i) );
-        let x6 = dot(vec4(1u),  vec4(1u) );
-        let x7 = dot(vec4(0),   vec4(0.0));
-        let x8 = dot(vec4(0.0), vec4(0.0));
-        let x9 = dot(vec4(0.0), vec4(0f) );
-        let x0 = dot(vec4(1f),  vec4(1f) );
+        _ = dot(vec4(0),   vec4(1)  );
+        _ = dot(vec4(0),   vec4(1f) );
+        _ = dot(vec4(0),   vec4(1i) );
+        _ = dot(vec4(0),   vec4(1u) );
+        _ = dot(vec4(1i),  vec4(1i) );
+        _ = dot(vec4(1u),  vec4(1u) );
+        _ = dot(vec4(0),   vec4(0.0));
+        _ = dot(vec4(0.0), vec4(0.0));
+        _ = dot(vec4(0.0), vec4(0f) );
+        _ = dot(vec4(1f),  vec4(1f) );
     }
 }
 
@@ -844,47 +844,47 @@ fn testDot()
 fn testExpAndExp2() {
     // [T < Float].(T) => T,
     {
-        let x1 = exp(0);
-        let x2 = exp(0.0);
-        let x3 = exp(1f);
+        _ = exp(0);
+        _ = exp(0.0);
+        _ = exp(1f);
     }
     {
-        let x1 = exp2(0);
-        let x2 = exp2(0.0);
-        let x3 = exp2(1f);
+        _ = exp2(0);
+        _ = exp2(0.0);
+        _ = exp2(1f);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        let x1 = exp(vec2(0, 1));
-        let x2 = exp(vec2(0.0, 1.0));
-        let x3 = exp(vec2(1f, 2f));
+        _ = exp(vec2(0, 1));
+        _ = exp(vec2(0.0, 1.0));
+        _ = exp(vec2(1f, 2f));
     }
     {
-        let x1 = exp(vec3(-1, 0, 1));
-        let x2 = exp(vec3(-1.0, 0.0, 1.0));
-        let x3 = exp(vec3(-1f, 1f, 2f));
+        _ = exp(vec3(-1, 0, 1));
+        _ = exp(vec3(-1.0, 0.0, 1.0));
+        _ = exp(vec3(-1f, 1f, 2f));
     }
     {
-        let x1 = exp(vec4(-1, 0, 1, 2));
-        let x2 = exp(vec4(-1.0, 0.0, 1.0, 2.0));
-        let x3 = exp(vec4(-1f, 1f, 2f, 3f));
+        _ = exp(vec4(-1, 0, 1, 2));
+        _ = exp(vec4(-1.0, 0.0, 1.0, 2.0));
+        _ = exp(vec4(-1f, 1f, 2f, 3f));
     }
 
     {
-        let x1 = exp2(vec2(0, 1));
-        let x2 = exp2(vec2(0.0, 1.0));
-        let x3 = exp2(vec2(1f, 2f));
+        _ = exp2(vec2(0, 1));
+        _ = exp2(vec2(0.0, 1.0));
+        _ = exp2(vec2(1f, 2f));
     }
     {
-        let x1 = exp2(vec3(-1, 0, 1));
-        let x2 = exp2(vec3(-1.0, 0.0, 1.0));
-        let x3 = exp2(vec3(-1f, 1f, 2f));
+        _ = exp2(vec3(-1, 0, 1));
+        _ = exp2(vec3(-1.0, 0.0, 1.0));
+        _ = exp2(vec3(-1f, 1f, 2f));
     }
     {
-        let x1 = exp2(vec4(-1, 0, 1, 2));
-        let x2 = exp2(vec4(-1.0, 0.0, 1.0, 2.0));
-        let x3 = exp2(vec4(-1f, 1f, 2f, 3f));
+        _ = exp2(vec4(-1, 0, 1, 2));
+        _ = exp2(vec4(-1.0, 0.0, 1.0, 2.0));
+        _ = exp2(vec4(-1f, 1f, 2f, 3f));
     }
 }
 
@@ -894,50 +894,50 @@ fn testExtractBits()
     // signed
     // [].(I32, U32, U32) => I32,
     {
-        let x1 = extractBits(0, 1, 1);
-        let x2 = extractBits(0i, 1, 1);
-        let x3 = extractBits(0i, 1u, 1u);
+        _ = extractBits(0, 1, 1);
+        _ = extractBits(0i, 1, 1);
+        _ = extractBits(0i, 1u, 1u);
     }
     // [N].(Vector[I32, N], U32, U32) => Vector[I32, N],
     {
-        let x1 = extractBits(vec2(0), 1, 1);
-        let x2 = extractBits(vec2(0i), 1, 1);
-        let x3 = extractBits(vec2(0i), 1u, 1u);
+        _ = extractBits(vec2(0), 1, 1);
+        _ = extractBits(vec2(0i), 1, 1);
+        _ = extractBits(vec2(0i), 1u, 1u);
     }
     {
-        let x1 = extractBits(vec3(0), 1, 1);
-        let x2 = extractBits(vec3(0i), 1, 1);
-        let x3 = extractBits(vec3(0i), 1u, 1u);
+        _ = extractBits(vec3(0), 1, 1);
+        _ = extractBits(vec3(0i), 1, 1);
+        _ = extractBits(vec3(0i), 1u, 1u);
     }
     {
-        let x1 = extractBits(vec4(0), 1, 1);
-        let x2 = extractBits(vec4(0i), 1, 1);
-        let x3 = extractBits(vec4(0i), 1u, 1u);
+        _ = extractBits(vec4(0), 1, 1);
+        _ = extractBits(vec4(0i), 1, 1);
+        _ = extractBits(vec4(0i), 1u, 1u);
     }
 
     // unsigned
     // [].(U32, U32, U32) => U32,
     {
-        let x1 = extractBits(0, 1, 1);
-        let x2 = extractBits(0u, 1, 1);
-        let x3 = extractBits(0u, 1u, 1u);
+        _ = extractBits(0, 1, 1);
+        _ = extractBits(0u, 1, 1);
+        _ = extractBits(0u, 1u, 1u);
     }
 
     // [N].(Vector[U32, N], U32, U32) => Vector[U32, N],
     {
-        let x1 = extractBits(vec2(0), 1, 1);
-        let x2 = extractBits(vec2(0u), 1, 1);
-        let x3 = extractBits(vec2(0u), 1u, 1u);
+        _ = extractBits(vec2(0), 1, 1);
+        _ = extractBits(vec2(0u), 1, 1);
+        _ = extractBits(vec2(0u), 1u, 1u);
     }
     {
-        let x1 = extractBits(vec3(0), 1, 1);
-        let x2 = extractBits(vec3(0u), 1, 1);
-        let x3 = extractBits(vec3(0u), 1u, 1u);
+        _ = extractBits(vec3(0), 1, 1);
+        _ = extractBits(vec3(0u), 1, 1);
+        _ = extractBits(vec3(0u), 1u, 1u);
     }
     {
-        let x1 = extractBits(vec4(0), 1, 1);
-        let x2 = extractBits(vec4(0u), 1, 1);
-        let x3 = extractBits(vec4(0u), 1u, 1u);
+        _ = extractBits(vec4(0), 1, 1);
+        _ = extractBits(vec4(0u), 1, 1);
+        _ = extractBits(vec4(0u), 1u, 1u);
     }
 }
 
@@ -946,19 +946,19 @@ fn testFaceForward()
 {
     // [T < Float, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
-        let x1 = faceForward(vec2(0), vec2(1),   vec2(2));
-        let x2 = faceForward(vec2(0), vec2(1),   vec2(2.0));
-        let x3 = faceForward(vec2(0), vec2(1.0), vec2(2f));
+        _ = faceForward(vec2(0), vec2(1),   vec2(2));
+        _ = faceForward(vec2(0), vec2(1),   vec2(2.0));
+        _ = faceForward(vec2(0), vec2(1.0), vec2(2f));
     }
     {
-        let x1 = faceForward(vec3(0), vec3(1),   vec3(2));
-        let x2 = faceForward(vec3(0), vec3(1),   vec3(2.0));
-        let x3 = faceForward(vec3(0), vec3(1.0), vec3(2f));
+        _ = faceForward(vec3(0), vec3(1),   vec3(2));
+        _ = faceForward(vec3(0), vec3(1),   vec3(2.0));
+        _ = faceForward(vec3(0), vec3(1.0), vec3(2f));
     }
     {
-        let x1 = faceForward(vec4(0), vec4(1),   vec4(2));
-        let x2 = faceForward(vec4(0), vec4(1),   vec4(2.0));
-        let x3 = faceForward(vec4(0), vec4(1.0), vec4(2f));
+        _ = faceForward(vec4(0), vec4(1),   vec4(2));
+        _ = faceForward(vec4(0), vec4(1),   vec4(2.0));
+        _ = faceForward(vec4(0), vec4(1.0), vec4(2f));
     }
 }
 
@@ -968,42 +968,42 @@ fn testFirstLeadingBit()
     // signed
     // [].(I32) => I32,
     {
-        let x1 = firstLeadingBit(0);
-        let x2 = firstLeadingBit(0i);
+        _ = firstLeadingBit(0);
+        _ = firstLeadingBit(0i);
     }
     // [N].(Vector[I32, N]) => Vector[I32, N],
     {
-        let x1 = firstLeadingBit(vec2(0));
-        let x2 = firstLeadingBit(vec2(0i));
+        _ = firstLeadingBit(vec2(0));
+        _ = firstLeadingBit(vec2(0i));
     }
     {
-        let x1 = firstLeadingBit(vec3(0));
-        let x2 = firstLeadingBit(vec3(0i));
+        _ = firstLeadingBit(vec3(0));
+        _ = firstLeadingBit(vec3(0i));
     }
     {
-        let x1 = firstLeadingBit(vec4(0));
-        let x2 = firstLeadingBit(vec4(0i));
+        _ = firstLeadingBit(vec4(0));
+        _ = firstLeadingBit(vec4(0i));
     }
 
     // unsigned
     // [].(U32) => U32,
     {
-        let x1 = firstLeadingBit(0);
-        let x2 = firstLeadingBit(0u);
+        _ = firstLeadingBit(0);
+        _ = firstLeadingBit(0u);
     }
 
     // [N].(Vector[U32, N]) => Vector[U32, N],
     {
-        let x1 = firstLeadingBit(vec2(0));
-        let x2 = firstLeadingBit(vec2(0u));
+        _ = firstLeadingBit(vec2(0));
+        _ = firstLeadingBit(vec2(0u));
     }
     {
-        let x1 = firstLeadingBit(vec3(0));
-        let x2 = firstLeadingBit(vec3(0u));
+        _ = firstLeadingBit(vec3(0));
+        _ = firstLeadingBit(vec3(0u));
     }
     {
-        let x1 = firstLeadingBit(vec4(0));
-        let x2 = firstLeadingBit(vec4(0u));
+        _ = firstLeadingBit(vec4(0));
+        _ = firstLeadingBit(vec4(0u));
     }
 }
 
@@ -1012,26 +1012,26 @@ fn testFirstTrailingBit()
 {
     // [T < ConcreteInteger].(T) => T,
     {
-        let x1 = firstTrailingBit(0);
-        let x2 = firstTrailingBit(0i);
-        let x3 = firstTrailingBit(0u);
+        _ = firstTrailingBit(0);
+        _ = firstTrailingBit(0i);
+        _ = firstTrailingBit(0u);
     }
 
     // [T < ConcreteInteger, N].(Vector[T, N]) => Vector[T, N],
     {
-        let x1 = firstTrailingBit(vec2(0));
-        let x2 = firstTrailingBit(vec2(0i));
-        let x3 = firstTrailingBit(vec2(0u));
+        _ = firstTrailingBit(vec2(0));
+        _ = firstTrailingBit(vec2(0i));
+        _ = firstTrailingBit(vec2(0u));
     }
     {
-        let x1 = firstTrailingBit(vec3(0));
-        let x2 = firstTrailingBit(vec3(0i));
-        let x3 = firstTrailingBit(vec3(0u));
+        _ = firstTrailingBit(vec3(0));
+        _ = firstTrailingBit(vec3(0i));
+        _ = firstTrailingBit(vec3(0u));
     }
     {
-        let x1 = firstTrailingBit(vec4(0));
-        let x2 = firstTrailingBit(vec4(0i));
-        let x3 = firstTrailingBit(vec4(0u));
+        _ = firstTrailingBit(vec4(0));
+        _ = firstTrailingBit(vec4(0i));
+        _ = firstTrailingBit(vec4(0u));
     }
 }
 
@@ -1040,26 +1040,26 @@ fn testFloor()
 {
     // [T < Float].(T) => T,
     {
-        let x1 = floor(0);
-        let x2 = floor(0.0);
-        let x3 = floor(1f);
+        _ = floor(0);
+        _ = floor(0.0);
+        _ = floor(1f);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        let x1 = floor(vec2(0, 1));
-        let x2 = floor(vec2(0.0, 1.0));
-        let x3 = floor(vec2(1f, 2f));
+        _ = floor(vec2(0, 1));
+        _ = floor(vec2(0.0, 1.0));
+        _ = floor(vec2(1f, 2f));
     }
     {
-        let x1 = floor(vec3(-1, 0, 1));
-        let x2 = floor(vec3(-1.0, 0.0, 1.0));
-        let x3 = floor(vec3(-1f, 1f, 2f));
+        _ = floor(vec3(-1, 0, 1));
+        _ = floor(vec3(-1.0, 0.0, 1.0));
+        _ = floor(vec3(-1f, 1f, 2f));
     }
     {
-        let x1 = floor(vec4(-1, 0, 1, 2));
-        let x2 = floor(vec4(-1.0, 0.0, 1.0, 2.0));
-        let x3 = floor(vec4(-1f, 1f, 2f, 3f));
+        _ = floor(vec4(-1, 0, 1, 2));
+        _ = floor(vec4(-1.0, 0.0, 1.0, 2.0));
+        _ = floor(vec4(-1f, 1f, 2f, 3f));
     }
 }
 
@@ -1068,25 +1068,25 @@ fn testFma()
 {
     // [T < Float].(T, T, T) => T,
     {
-        let x1 = fma(-1, 0, 1);
-        let x4 = fma(-1, 0, 1.0);
-        let x5 = fma(-1, 1, 2f);
+        _ = fma(-1, 0, 1);
+        _ = fma(-1, 0, 1.0);
+        _ = fma(-1, 1, 2f);
     }
     // [T < Float, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
-        let x1 = fma(vec2(0), vec2(0), vec2(0));
-        let x2 = fma(vec2(0), vec2(0), vec2(0.0));
-        let x3 = fma(vec2(0), vec2(0), vec2(0f));
+        _ = fma(vec2(0), vec2(0), vec2(0));
+        _ = fma(vec2(0), vec2(0), vec2(0.0));
+        _ = fma(vec2(0), vec2(0), vec2(0f));
     }
     {
-        let x1 = fma(vec3(0), vec3(0), vec3(0));
-        let x2 = fma(vec3(0), vec3(0), vec3(0.0));
-        let x3 = fma(vec3(0), vec3(0), vec3(0f));
+        _ = fma(vec3(0), vec3(0), vec3(0));
+        _ = fma(vec3(0), vec3(0), vec3(0.0));
+        _ = fma(vec3(0), vec3(0), vec3(0f));
     }
     {
-        let x1 = fma(vec4(0), vec4(0), vec4(0));
-        let x2 = fma(vec4(0), vec4(0), vec4(0.0));
-        let x3 = fma(vec4(0), vec4(0), vec4(0f));
+        _ = fma(vec4(0), vec4(0), vec4(0));
+        _ = fma(vec4(0), vec4(0), vec4(0.0));
+        _ = fma(vec4(0), vec4(0), vec4(0f));
     }
 }
 
@@ -1095,26 +1095,26 @@ fn testFract()
 {
     // [T < Float].(T) => T,
     {
-        let x1 = fract(0);
-        let x2 = fract(0.0);
-        let x3 = fract(1f);
+        _ = fract(0);
+        _ = fract(0.0);
+        _ = fract(1f);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        let x1 = fract(vec2(0));
-        let x2 = fract(vec2(0.0));
-        let x3 = fract(vec2(1f));
+        _ = fract(vec2(0));
+        _ = fract(vec2(0.0));
+        _ = fract(vec2(1f));
     }
     {
-        let x1 = fract(vec3(-1));
-        let x2 = fract(vec3(-1.0));
-        let x3 = fract(vec3(-1f));
+        _ = fract(vec3(-1));
+        _ = fract(vec3(-1.0));
+        _ = fract(vec3(-1f));
     }
     {
-        let x1 = fract(vec4(-1));
-        let x2 = fract(vec4(-1.0));
-        let x3 = fract(vec4(-1f));
+        _ = fract(vec4(-1));
+        _ = fract(vec4(-1.0));
+        _ = fract(vec4(-1f));
     }
 }
 
@@ -1129,28 +1129,28 @@ fn testInsertBits()
 {
     // [T < ConcreteInteger].(T, T, U32, U32) => T,
     {
-        let x1 = insertBits(0, 0, 0, 0);
-        let x2 = insertBits(0, 0i, 0, 0);
+        _ = insertBits(0, 0, 0, 0);
+        _ = insertBits(0, 0i, 0, 0);
         // FIXME: fails to resolve overload resolution
         // let x3 = insertBits(0, 0u, 0, 0);
     }
 
     // [T < ConcreteInteger, N].(Vector[T, N], Vector[T, N], U32, U32) => Vector[T, N],
     {
-        let x1 = insertBits(vec2(0), vec2(0), 0, 0);
-        let x2 = insertBits(vec2(0), vec2(0i), 0, 0);
+        _ = insertBits(vec2(0), vec2(0), 0, 0);
+        _ = insertBits(vec2(0), vec2(0i), 0, 0);
         // FIXME: fails to resolve overload resolution
         // let x3 = insertBits(vec2(0), vec2(0u), 0, 0);
     }
     {
-        let x1 = insertBits(vec3(0), vec3(0), 0, 0);
-        let x2 = insertBits(vec3(0), vec3(0i), 0, 0);
+        _ = insertBits(vec3(0), vec3(0), 0, 0);
+        _ = insertBits(vec3(0), vec3(0i), 0, 0);
         // FIXME: fails to resolve overload resolution
         // let x3 = insertBits(vec3(0), vec3(0u), 0, 0);
     }
     {
-        let x1 = insertBits(vec4(0), vec4(0), 0, 0);
-        let x2 = insertBits(vec4(0), vec4(0i), 0, 0);
+        _ = insertBits(vec4(0), vec4(0), 0, 0);
+        _ = insertBits(vec4(0), vec4(0i), 0, 0);
         // FIXME: fails to resolve overload resolution
         // let x3 = insertBits(vec4(0), vec4(0u), 0, 0);
     }
@@ -1161,26 +1161,26 @@ fn testInverseSqrt()
 {
     // [T < Float].(T) => T,
     {
-        let x1 = inverseSqrt(0);
-        let x2 = inverseSqrt(0.0);
-        let x3 = inverseSqrt(1f);
+        _ = inverseSqrt(0);
+        _ = inverseSqrt(0.0);
+        _ = inverseSqrt(1f);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        let x1 = inverseSqrt(vec2(0));
-        let x2 = inverseSqrt(vec2(0.0));
-        let x3 = inverseSqrt(vec2(1f));
+        _ = inverseSqrt(vec2(0));
+        _ = inverseSqrt(vec2(0.0));
+        _ = inverseSqrt(vec2(1f));
     }
     {
-        let x1 = inverseSqrt(vec3(-1));
-        let x2 = inverseSqrt(vec3(-1.0));
-        let x3 = inverseSqrt(vec3(-1f));
+        _ = inverseSqrt(vec3(-1));
+        _ = inverseSqrt(vec3(-1.0));
+        _ = inverseSqrt(vec3(-1f));
     }
     {
-        let x1 = inverseSqrt(vec4(-1));
-        let x2 = inverseSqrt(vec4(-1.0));
-        let x3 = inverseSqrt(vec4(-1f));
+        _ = inverseSqrt(vec4(-1));
+        _ = inverseSqrt(vec4(-1.0));
+        _ = inverseSqrt(vec4(-1f));
     }
 }
 
@@ -1189,28 +1189,28 @@ fn testLdexp()
 {
     // [T < ConcreteFloat].(T, I32) => T,
     {
-        let x1 = ldexp(0f, 1);
+        _ = ldexp(0f, 1);
     }
     // [].(AbstractFloat, AbstractInt) => AbstractFloat,
     {
-        let x1 = ldexp(0, 1);
-        let x2 = ldexp(0.0, 1);
+        _ = ldexp(0, 1);
+        _ = ldexp(0.0, 1);
     }
     // [T < ConcreteFloat, N].(Vector[T, N], Vector[I32, N]) => Vector[T, N],
     {
-        let x1 = ldexp(vec2(0f), vec2(1));
-        let x2 = ldexp(vec3(0f), vec3(1));
-        let x3 = ldexp(vec4(0f), vec4(1));
+        _ = ldexp(vec2(0f), vec2(1));
+        _ = ldexp(vec3(0f), vec3(1));
+        _ = ldexp(vec4(0f), vec4(1));
     }
     // [N].(Vector[AbstractFloat, N], Vector[AbstractInt, N]) => Vector[AbstractFloat, N],
     {
-        let x1 = ldexp(vec2(0), vec2(1));
-        let x2 = ldexp(vec3(0), vec3(1));
-        let x3 = ldexp(vec4(0), vec4(1));
+        _ = ldexp(vec2(0), vec2(1));
+        _ = ldexp(vec3(0), vec3(1));
+        _ = ldexp(vec4(0), vec4(1));
 
-        let x4 = ldexp(vec2(0.0), vec2(1));
-        let x5 = ldexp(vec3(0.0), vec3(1));
-        let x6 = ldexp(vec4(0.0), vec4(1));
+        _ = ldexp(vec2(0.0), vec2(1));
+        _ = ldexp(vec3(0.0), vec3(1));
+        _ = ldexp(vec4(0.0), vec4(1));
     }
 }
 
@@ -1219,26 +1219,26 @@ fn testLength()
 {
     // [T < Float].(T) => T,
     {
-        let x1 = length(0);
-        let x2 = length(0.0);
-        let x3 = length(1f);
+        _ = length(0);
+        _ = length(0.0);
+        _ = length(1f);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        let x1 = length(vec2(0));
-        let x2 = length(vec2(0.0));
-        let x3 = length(vec2(1f));
+        _ = length(vec2(0));
+        _ = length(vec2(0.0));
+        _ = length(vec2(1f));
     }
     {
-        let x1 = length(vec3(-1));
-        let x2 = length(vec3(-1.0));
-        let x3 = length(vec3(-1f));
+        _ = length(vec3(-1));
+        _ = length(vec3(-1.0));
+        _ = length(vec3(-1f));
     }
     {
-        let x1 = length(vec4(-1));
-        let x2 = length(vec4(-1.0));
-        let x3 = length(vec4(-1f));
+        _ = length(vec4(-1));
+        _ = length(vec4(-1.0));
+        _ = length(vec4(-1f));
     }
 }
 
@@ -1247,26 +1247,26 @@ fn testLog()
 {
     // [T < Float].(T) => T,
     {
-        let x1 = log(0);
-        let x2 = log(0.0);
-        let x3 = log(1f);
+        _ = log(0);
+        _ = log(0.0);
+        _ = log(1f);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        let x1 = log(vec2(0));
-        let x2 = log(vec2(0.0));
-        let x3 = log(vec2(1f));
+        _ = log(vec2(0));
+        _ = log(vec2(0.0));
+        _ = log(vec2(1f));
     }
     {
-        let x1 = log(vec3(-1));
-        let x2 = log(vec3(-1.0));
-        let x3 = log(vec3(-1f));
+        _ = log(vec3(-1));
+        _ = log(vec3(-1.0));
+        _ = log(vec3(-1f));
     }
     {
-        let x1 = log(vec4(-1));
-        let x2 = log(vec4(-1.0));
-        let x3 = log(vec4(-1f));
+        _ = log(vec4(-1));
+        _ = log(vec4(-1.0));
+        _ = log(vec4(-1f));
     }
 }
 
@@ -1274,26 +1274,26 @@ fn testLog()
 fn testLog2() {
     // [T < Float].(T) => T,
     {
-        let x1 = log2(0);
-        let x2 = log2(0.0);
-        let x3 = log2(1f);
+        _ = log2(0);
+        _ = log2(0.0);
+        _ = log2(1f);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        let x1 = log2(vec2(0));
-        let x2 = log2(vec2(0.0));
-        let x3 = log2(vec2(1f));
+        _ = log2(vec2(0));
+        _ = log2(vec2(0.0));
+        _ = log2(vec2(1f));
     }
     {
-        let x1 = log2(vec3(-1));
-        let x2 = log2(vec3(-1.0));
-        let x3 = log2(vec3(-1f));
+        _ = log2(vec3(-1));
+        _ = log2(vec3(-1.0));
+        _ = log2(vec3(-1f));
     }
     {
-        let x1 = log2(vec4(-1));
-        let x2 = log2(vec4(-1.0));
-        let x3 = log2(vec4(-1f));
+        _ = log2(vec4(-1));
+        _ = log2(vec4(-1.0));
+        _ = log2(vec4(-1f));
     }
 }
 
@@ -1302,33 +1302,33 @@ fn testMax()
 {
     // [T < Number].(T, T) => T,
     {
-        let x1 = max(-1, 0);
-        let x2 = max(-1, 1);
-        let x3 = max(0, 1);
-        let x4 = max(-1, 0);
-        let x5 = max(-1, 1);
+        _ = max(-1, 0);
+        _ = max(-1, 1);
+        _ = max(0, 1);
+        _ = max(-1, 0);
+        _ = max(-1, 1);
     }
     // [T < Number, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
-        let x1 = max(vec2(0), vec2(0));
-        let x2 = max(vec2(0), vec2(0i));
-        let x3 = max(vec2(0), vec2(0u));
-        let x4 = max(vec2(0), vec2(0.0));
-        let x5 = max(vec2(0), vec2(0f));
+        _ = max(vec2(0), vec2(0));
+        _ = max(vec2(0), vec2(0i));
+        _ = max(vec2(0), vec2(0u));
+        _ = max(vec2(0), vec2(0.0));
+        _ = max(vec2(0), vec2(0f));
     }
     {
-        let x1 = max(vec3(0), vec3(0));
-        let x2 = max(vec3(0), vec3(0i));
-        let x3 = max(vec3(0), vec3(0u));
-        let x4 = max(vec3(0), vec3(0.0));
-        let x5 = max(vec3(0), vec3(0f));
+        _ = max(vec3(0), vec3(0));
+        _ = max(vec3(0), vec3(0i));
+        _ = max(vec3(0), vec3(0u));
+        _ = max(vec3(0), vec3(0.0));
+        _ = max(vec3(0), vec3(0f));
     }
     {
-        let x1 = max(vec4(0), vec4(0));
-        let x2 = max(vec4(0), vec4(0i));
-        let x3 = max(vec4(0), vec4(0u));
-        let x4 = max(vec4(0), vec4(0.0));
-        let x5 = max(vec4(0), vec4(0f));
+        _ = max(vec4(0), vec4(0));
+        _ = max(vec4(0), vec4(0i));
+        _ = max(vec4(0), vec4(0u));
+        _ = max(vec4(0), vec4(0.0));
+        _ = max(vec4(0), vec4(0f));
     }
 }
 
@@ -1337,33 +1337,33 @@ fn testMin()
 {
     // [T < Number].(T, T) => T,
     {
-        let x1 = min(-1, 0);
-        let x2 = min(-1, 1);
-        let x3 = min(0, 1);
-        let x4 = min(-1, 0);
-        let x5 = min(-1, 1);
+        _ = min(-1, 0);
+        _ = min(-1, 1);
+        _ = min(0, 1);
+        _ = min(-1, 0);
+        _ = min(-1, 1);
     }
     // [T < Number, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
-        let x1 = min(vec2(0), vec2(0));
-        let x2 = min(vec2(0), vec2(0i));
-        let x3 = min(vec2(0), vec2(0u));
-        let x4 = min(vec2(0), vec2(0.0));
-        let x5 = min(vec2(0), vec2(0f));
+        _ = min(vec2(0), vec2(0));
+        _ = min(vec2(0), vec2(0i));
+        _ = min(vec2(0), vec2(0u));
+        _ = min(vec2(0), vec2(0.0));
+        _ = min(vec2(0), vec2(0f));
     }
     {
-        let x1 = min(vec3(0), vec3(0));
-        let x2 = min(vec3(0), vec3(0i));
-        let x3 = min(vec3(0), vec3(0u));
-        let x4 = min(vec3(0), vec3(0.0));
-        let x5 = min(vec3(0), vec3(0f));
+        _ = min(vec3(0), vec3(0));
+        _ = min(vec3(0), vec3(0i));
+        _ = min(vec3(0), vec3(0u));
+        _ = min(vec3(0), vec3(0.0));
+        _ = min(vec3(0), vec3(0f));
     }
     {
-        let x1 = min(vec4(0), vec4(0));
-        let x2 = min(vec4(0), vec4(0i));
-        let x3 = min(vec4(0), vec4(0u));
-        let x4 = min(vec4(0), vec4(0.0));
-        let x5 = min(vec4(0), vec4(0f));
+        _ = min(vec4(0), vec4(0));
+        _ = min(vec4(0), vec4(0i));
+        _ = min(vec4(0), vec4(0u));
+        _ = min(vec4(0), vec4(0.0));
+        _ = min(vec4(0), vec4(0f));
     }
 }
 
@@ -1372,41 +1372,41 @@ fn testMix()
 {
     // [T < Float].(T, T, T) => T,
     {
-        let x1 = mix(-1, 0, 1);
-        let x2 = mix(-1, 0, 1.0);
-        let x3 = mix(-1, 1, 2f);
+        _ = mix(-1, 0, 1);
+        _ = mix(-1, 0, 1.0);
+        _ = mix(-1, 1, 2f);
     }
     // [T < Float, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
-        let x1 = mix(vec2(0), vec2(0), vec2(0));
-        let x2 = mix(vec2(0), vec2(0), vec2(0.0));
-        let x3 = mix(vec2(0), vec2(0), vec2(0f));
+        _ = mix(vec2(0), vec2(0), vec2(0));
+        _ = mix(vec2(0), vec2(0), vec2(0.0));
+        _ = mix(vec2(0), vec2(0), vec2(0f));
     }
     {
-        let x1 = mix(vec3(0), vec3(0), vec3(0));
-        let x2 = mix(vec3(0), vec3(0), vec3(0.0));
-        let x3 = mix(vec3(0), vec3(0), vec3(0f));
+        _ = mix(vec3(0), vec3(0), vec3(0));
+        _ = mix(vec3(0), vec3(0), vec3(0.0));
+        _ = mix(vec3(0), vec3(0), vec3(0f));
     }
     {
-        let x1 = mix(vec4(0), vec4(0), vec4(0));
-        let x2 = mix(vec4(0), vec4(0), vec4(0.0));
-        let x3 = mix(vec4(0), vec4(0), vec4(0f));
+        _ = mix(vec4(0), vec4(0), vec4(0));
+        _ = mix(vec4(0), vec4(0), vec4(0.0));
+        _ = mix(vec4(0), vec4(0), vec4(0f));
     }
     // [T < Float, N].(Vector[T, N], Vector[T, N], T) => Vector[T, N],
     {
-        let x1 = mix(vec2(0), vec2(0), 0);
-        let x2 = mix(vec2(0), vec2(0), 0.0);
-        let x3 = mix(vec2(0), vec2(0), 0f);
+        _ = mix(vec2(0), vec2(0), 0);
+        _ = mix(vec2(0), vec2(0), 0.0);
+        _ = mix(vec2(0), vec2(0), 0f);
     }
     {
-        let x1 = mix(vec3(0), vec3(0), 0);
-        let x2 = mix(vec3(0), vec3(0), 0.0);
-        let x3 = mix(vec3(0), vec3(0), 0f);
+        _ = mix(vec3(0), vec3(0), 0);
+        _ = mix(vec3(0), vec3(0), 0.0);
+        _ = mix(vec3(0), vec3(0), 0f);
     }
     {
-        let x1 = mix(vec4(0), vec4(0), 0);
-        let x2 = mix(vec4(0), vec4(0), 0.0);
-        let x3 = mix(vec4(0), vec4(0), 0f);
+        _ = mix(vec4(0), vec4(0), 0);
+        _ = mix(vec4(0), vec4(0), 0.0);
+        _ = mix(vec4(0), vec4(0), 0f);
     }
 }
 
@@ -1421,19 +1421,19 @@ fn testNormalize()
 {
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        let x1 = normalize(vec2(0));
-        let x2 = normalize(vec2(0.0));
-        let x3 = normalize(vec2(1f));
+        _ = normalize(vec2(0));
+        _ = normalize(vec2(0.0));
+        _ = normalize(vec2(1f));
     }
     {
-        let x1 = normalize(vec3(-1));
-        let x2 = normalize(vec3(-1.0));
-        let x3 = normalize(vec3(-1f));
+        _ = normalize(vec3(-1));
+        _ = normalize(vec3(-1.0));
+        _ = normalize(vec3(-1f));
     }
     {
-        let x1 = normalize(vec4(-1));
-        let x2 = normalize(vec4(-1.0));
-        let x3 = normalize(vec4(-1f));
+        _ = normalize(vec4(-1));
+        _ = normalize(vec4(-1.0));
+        _ = normalize(vec4(-1f));
     }
 }
 
@@ -1442,37 +1442,37 @@ fn testPow()
 {
     // [T < Float].(T, T) => T,
     {
-        let x1 = pow(0, 1);
-        let x2 = pow(0, 1.0);
-        let x3 = pow(0, 1f);
-        let x4 = pow(0.0, 1.0);
-        let x5 = pow(1.0, 2f);
-        let x6 = pow(1f, 2f);
+        _ = pow(0, 1);
+        _ = pow(0, 1.0);
+        _ = pow(0, 1f);
+        _ = pow(0.0, 1.0);
+        _ = pow(1.0, 2f);
+        _ = pow(1f, 2f);
     }
     // [T < Float, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
-        let x1 = pow(vec2(0),   vec2(1)  );
-        let x2 = pow(vec2(0),   vec2(0.0));
-        let x3 = pow(vec2(0),   vec2(1f) );
-        let x4 = pow(vec2(0.0), vec2(0.0));
-        let x5 = pow(vec2(0.0), vec2(0f) );
-        let x6 = pow(vec2(1f),  vec2(1f) );
+        _ = pow(vec2(0),   vec2(1)  );
+        _ = pow(vec2(0),   vec2(0.0));
+        _ = pow(vec2(0),   vec2(1f) );
+        _ = pow(vec2(0.0), vec2(0.0));
+        _ = pow(vec2(0.0), vec2(0f) );
+        _ = pow(vec2(1f),  vec2(1f) );
     }
     {
-        let x1 = pow(vec3(0),   vec3(1)  );
-        let x2 = pow(vec3(0),   vec3(0.0));
-        let x3 = pow(vec3(0),   vec3(1f) );
-        let x4 = pow(vec3(0.0), vec3(0.0));
-        let x5 = pow(vec3(0.0), vec3(0f) );
-        let x6 = pow(vec3(1f),  vec3(1f) );
+        _ = pow(vec3(0),   vec3(1)  );
+        _ = pow(vec3(0),   vec3(0.0));
+        _ = pow(vec3(0),   vec3(1f) );
+        _ = pow(vec3(0.0), vec3(0.0));
+        _ = pow(vec3(0.0), vec3(0f) );
+        _ = pow(vec3(1f),  vec3(1f) );
     }
     {
-        let x1 = pow(vec4(0),   vec4(1)  );
-        let x2 = pow(vec4(0),   vec4(0.0));
-        let x3 = pow(vec4(0),   vec4(1f) );
-        let x4 = pow(vec4(0.0), vec4(0.0));
-        let x5 = pow(vec4(0.0), vec4(0f) );
-        let x6 = pow(vec4(1f),  vec4(1f) );
+        _ = pow(vec4(0),   vec4(1)  );
+        _ = pow(vec4(0),   vec4(0.0));
+        _ = pow(vec4(0),   vec4(1f) );
+        _ = pow(vec4(0.0), vec4(0.0));
+        _ = pow(vec4(0.0), vec4(0f) );
+        _ = pow(vec4(1f),  vec4(1f) );
     }
 }
 
@@ -1480,26 +1480,26 @@ fn testPow()
 fn testQuantizeToF16() {
     // [].(F32) => F32,
     {
-        let x1 = quantizeToF16(0);
-        let x2 = quantizeToF16(0.0);
-        let x3 = quantizeToF16(0f);
+        _ = quantizeToF16(0);
+        _ = quantizeToF16(0.0);
+        _ = quantizeToF16(0f);
     }
 
     // [N].(Vector[F32, N]) => Vector[F32, N],
     {
-        let x1 = quantizeToF16(vec2(0));
-        let x2 = quantizeToF16(vec2(0.0));
-        let x3 = quantizeToF16(vec2(0f));
+        _ = quantizeToF16(vec2(0));
+        _ = quantizeToF16(vec2(0.0));
+        _ = quantizeToF16(vec2(0f));
     }
     {
-        let x1 = quantizeToF16(vec3(0));
-        let x2 = quantizeToF16(vec3(0.0));
-        let x3 = quantizeToF16(vec3(0f));
+        _ = quantizeToF16(vec3(0));
+        _ = quantizeToF16(vec3(0.0));
+        _ = quantizeToF16(vec3(0f));
     }
     {
-        let x1 = quantizeToF16(vec4(0));
-        let x2 = quantizeToF16(vec4(0.0));
-        let x3 = quantizeToF16(vec4(0f));
+        _ = quantizeToF16(vec4(0));
+        _ = quantizeToF16(vec4(0.0));
+        _ = quantizeToF16(vec4(0f));
     }
 }
 
@@ -1508,26 +1508,26 @@ fn testRadians()
 {
     // [T < Float].(T) => T,
     {
-        let x1 = radians(0);
-        let x2 = radians(0.0);
-        let x3 = radians(1f);
+        _ = radians(0);
+        _ = radians(0.0);
+        _ = radians(1f);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        let x1 = radians(vec2(0));
-        let x2 = radians(vec2(0.0));
-        let x3 = radians(vec2(1f));
+        _ = radians(vec2(0));
+        _ = radians(vec2(0.0));
+        _ = radians(vec2(1f));
     }
     {
-        let x1 = radians(vec3(-1));
-        let x2 = radians(vec3(-1.0));
-        let x3 = radians(vec3(-1f));
+        _ = radians(vec3(-1));
+        _ = radians(vec3(-1.0));
+        _ = radians(vec3(-1f));
     }
     {
-        let x1 = radians(vec4(-1));
-        let x2 = radians(vec4(-1.0));
-        let x3 = radians(vec4(-1f));
+        _ = radians(vec4(-1));
+        _ = radians(vec4(-1.0));
+        _ = radians(vec4(-1f));
     }
 }
 
@@ -1536,28 +1536,28 @@ fn testReflect()
 {
     // [T < Float, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
-        let x1 = reflect(vec2(0),   vec2(1)  );
-        let x2 = reflect(vec2(0),   vec2(0.0));
-        let x3 = reflect(vec2(0),   vec2(1f) );
-        let x4 = reflect(vec2(0.0), vec2(0.0));
-        let x5 = reflect(vec2(0.0), vec2(0f) );
-        let x6 = reflect(vec2(1f),  vec2(1f) );
+        _ = reflect(vec2(0),   vec2(1)  );
+        _ = reflect(vec2(0),   vec2(0.0));
+        _ = reflect(vec2(0),   vec2(1f) );
+        _ = reflect(vec2(0.0), vec2(0.0));
+        _ = reflect(vec2(0.0), vec2(0f) );
+        _ = reflect(vec2(1f),  vec2(1f) );
     }
     {
-        let x1 = reflect(vec3(0),   vec3(1)  );
-        let x2 = reflect(vec3(0),   vec3(0.0));
-        let x3 = reflect(vec3(0),   vec3(1f) );
-        let x4 = reflect(vec3(0.0), vec3(0.0));
-        let x5 = reflect(vec3(0.0), vec3(0f) );
-        let x6 = reflect(vec3(1f),  vec3(1f) );
+        _ = reflect(vec3(0),   vec3(1)  );
+        _ = reflect(vec3(0),   vec3(0.0));
+        _ = reflect(vec3(0),   vec3(1f) );
+        _ = reflect(vec3(0.0), vec3(0.0));
+        _ = reflect(vec3(0.0), vec3(0f) );
+        _ = reflect(vec3(1f),  vec3(1f) );
     }
     {
-        let x1 = reflect(vec4(0),   vec4(1)  );
-        let x2 = reflect(vec4(0),   vec4(0.0));
-        let x3 = reflect(vec4(0),   vec4(1f) );
-        let x4 = reflect(vec4(0.0), vec4(0.0));
-        let x5 = reflect(vec4(0.0), vec4(0f) );
-        let x6 = reflect(vec4(1f),  vec4(1f) );
+        _ = reflect(vec4(0),   vec4(1)  );
+        _ = reflect(vec4(0),   vec4(0.0));
+        _ = reflect(vec4(0),   vec4(1f) );
+        _ = reflect(vec4(0.0), vec4(0.0));
+        _ = reflect(vec4(0.0), vec4(0f) );
+        _ = reflect(vec4(1f),  vec4(1f) );
     }
 }
 
@@ -1566,19 +1566,19 @@ fn testRefract()
 {
     // [T < Float, N].(Vector[T, N], Vector[T, N], T) => Vector[T, N],
     {
-        let x1 = refract(vec2(0), vec2(0), 1);
-        let x2 = refract(vec2(0), vec2(0), 0.0);
-        let x3 = refract(vec2(0), vec2(0), 1f);
+        _ = refract(vec2(0), vec2(0), 1);
+        _ = refract(vec2(0), vec2(0), 0.0);
+        _ = refract(vec2(0), vec2(0), 1f);
     }
     {
-        let x1 = refract(vec3(0), vec3(0), 1);
-        let x2 = refract(vec3(0), vec3(0), 0.0);
-        let x3 = refract(vec3(0), vec3(0), 1f);
+        _ = refract(vec3(0), vec3(0), 1);
+        _ = refract(vec3(0), vec3(0), 0.0);
+        _ = refract(vec3(0), vec3(0), 1f);
     }
     {
-        let x1 = refract(vec4(0), vec4(0), 1);
-        let x2 = refract(vec4(0), vec4(0), 0.0);
-        let x3 = refract(vec4(0), vec4(0), 1f);
+        _ = refract(vec4(0), vec4(0), 1);
+        _ = refract(vec4(0), vec4(0), 0.0);
+        _ = refract(vec4(0), vec4(0), 1f);
     }
 }
 
@@ -1587,25 +1587,25 @@ fn testReverseBits()
 {
     // [T < ConcreteInteger].(T) => T,
     {
-        let x1 = reverseBits(0);
-        let x2 = reverseBits(0i);
-        let x3 = reverseBits(0u);
+        _ = reverseBits(0);
+        _ = reverseBits(0i);
+        _ = reverseBits(0u);
     }
     // [T < ConcreteInteger, N].(Vector[T, N]) => Vector[T, N],
     {
-        let x1 = reverseBits(vec2(0));
-        let x2 = reverseBits(vec2(0i));
-        let x3 = reverseBits(vec2(0u));
+        _ = reverseBits(vec2(0));
+        _ = reverseBits(vec2(0i));
+        _ = reverseBits(vec2(0u));
     }
     {
-        let x1 = reverseBits(vec3(0));
-        let x2 = reverseBits(vec3(0i));
-        let x3 = reverseBits(vec3(0u));
+        _ = reverseBits(vec3(0));
+        _ = reverseBits(vec3(0i));
+        _ = reverseBits(vec3(0u));
     }
     {
-        let x1 = reverseBits(vec4(0));
-        let x2 = reverseBits(vec4(0i));
-        let x3 = reverseBits(vec4(0u));
+        _ = reverseBits(vec4(0));
+        _ = reverseBits(vec4(0i));
+        _ = reverseBits(vec4(0u));
     }
 }
 
@@ -1614,26 +1614,26 @@ fn testRound()
 {
     // [T < Float].(T) => T,
     {
-        let x1 = round(0);
-        let x2 = round(0.0);
-        let x3 = round(1f);
+        _ = round(0);
+        _ = round(0.0);
+        _ = round(1f);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        let x1 = round(vec2(0));
-        let x2 = round(vec2(0.0));
-        let x3 = round(vec2(1f));
+        _ = round(vec2(0));
+        _ = round(vec2(0.0));
+        _ = round(vec2(1f));
     }
     {
-        let x1 = round(vec3(-1));
-        let x2 = round(vec3(-1.0));
-        let x3 = round(vec3(-1f));
+        _ = round(vec3(-1));
+        _ = round(vec3(-1.0));
+        _ = round(vec3(-1f));
     }
     {
-        let x1 = round(vec4(-1));
-        let x2 = round(vec4(-1.0));
-        let x3 = round(vec4(-1f));
+        _ = round(vec4(-1));
+        _ = round(vec4(-1.0));
+        _ = round(vec4(-1f));
     }
 }
 
@@ -1642,26 +1642,26 @@ fn testSaturate()
 {
     // [T < Float].(T) => T,
     {
-        let x1 = saturate(0);
-        let x2 = saturate(0.0);
-        let x3 = saturate(1f);
+        _ = saturate(0);
+        _ = saturate(0.0);
+        _ = saturate(1f);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        let x1 = saturate(vec2(0));
-        let x2 = saturate(vec2(0.0));
-        let x3 = saturate(vec2(1f));
+        _ = saturate(vec2(0));
+        _ = saturate(vec2(0.0));
+        _ = saturate(vec2(1f));
     }
     {
-        let x1 = saturate(vec3(-1));
-        let x2 = saturate(vec3(-1.0));
-        let x3 = saturate(vec3(-1f));
+        _ = saturate(vec3(-1));
+        _ = saturate(vec3(-1.0));
+        _ = saturate(vec3(-1f));
     }
     {
-        let x1 = saturate(vec4(-1));
-        let x2 = saturate(vec4(-1.0));
-        let x3 = saturate(vec4(-1f));
+        _ = saturate(vec4(-1));
+        _ = saturate(vec4(-1.0));
+        _ = saturate(vec4(-1f));
     }
 }
 
@@ -1670,30 +1670,30 @@ fn testSign()
 {
     // [T < SignedNumber].(T) => T,
     {
-        let x1 = sign(0);
-        let x2 = sign(0i);
-        let x3 = sign(0.0);
-        let x4 = sign(1f);
+        _ = sign(0);
+        _ = sign(0i);
+        _ = sign(0.0);
+        _ = sign(1f);
     }
 
     // [T < SignedNumber, N].(Vector[T, N]) => Vector[T, N],
     {
-        let x1 = sign(vec2(0));
-        let x2 = sign(vec2(0i));
-        let x3 = sign(vec2(0.0));
-        let x4 = sign(vec2(1f));
+        _ = sign(vec2(0));
+        _ = sign(vec2(0i));
+        _ = sign(vec2(0.0));
+        _ = sign(vec2(1f));
     }
     {
-        let x1 = sign(vec3(-1));
-        let x2 = sign(vec3(-1i));
-        let x3 = sign(vec3(-1.0));
-        let x4 = sign(vec3(-1f));
+        _ = sign(vec3(-1));
+        _ = sign(vec3(-1i));
+        _ = sign(vec3(-1.0));
+        _ = sign(vec3(-1f));
     }
     {
-        let x1 = sign(vec4(-1));
-        let x2 = sign(vec4(-1i));
-        let x3 = sign(vec4(-1.0));
-        let x4 = sign(vec4(-1f));
+        _ = sign(vec4(-1));
+        _ = sign(vec4(-1i));
+        _ = sign(vec4(-1.0));
+        _ = sign(vec4(-1f));
     }
 }
 
@@ -1706,25 +1706,25 @@ fn testSmoothstep()
 {
     // [T < Float].(T, T, T) => T,
     {
-        let x1 = smoothstep(-1, 0, 1);
-        let x2 = smoothstep(-1, 0, 1.0);
-        let x3 = smoothstep(-1, 1, 2f);
+        _ = smoothstep(-1, 0, 1);
+        _ = smoothstep(-1, 0, 1.0);
+        _ = smoothstep(-1, 1, 2f);
     }
     // [T < Float, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
-        let x1 = smoothstep(vec2(0), vec2(0), vec2(0));
-        let x2 = smoothstep(vec2(0), vec2(0), vec2(0.0));
-        let x3 = smoothstep(vec2(0), vec2(0), vec2(0f));
+        _ = smoothstep(vec2(0), vec2(0), vec2(0));
+        _ = smoothstep(vec2(0), vec2(0), vec2(0.0));
+        _ = smoothstep(vec2(0), vec2(0), vec2(0f));
     }
     {
-        let x1 = smoothstep(vec3(0), vec3(0), vec3(0));
-        let x2 = smoothstep(vec3(0), vec3(0), vec3(0.0));
-        let x3 = smoothstep(vec3(0), vec3(0), vec3(0f));
+        _ = smoothstep(vec3(0), vec3(0), vec3(0));
+        _ = smoothstep(vec3(0), vec3(0), vec3(0.0));
+        _ = smoothstep(vec3(0), vec3(0), vec3(0f));
     }
     {
-        let x1 = smoothstep(vec4(0), vec4(0), vec4(0));
-        let x2 = smoothstep(vec4(0), vec4(0), vec4(0.0));
-        let x3 = smoothstep(vec4(0), vec4(0), vec4(0f));
+        _ = smoothstep(vec4(0), vec4(0), vec4(0));
+        _ = smoothstep(vec4(0), vec4(0), vec4(0.0));
+        _ = smoothstep(vec4(0), vec4(0), vec4(0f));
     }
 }
 
@@ -1733,26 +1733,26 @@ fn testSqrt()
 {
     // [T < Float].(T) => T,
     {
-        let x1 = sqrt(0);
-        let x2 = sqrt(0.0);
-        let x3 = sqrt(1f);
+        _ = sqrt(0);
+        _ = sqrt(0.0);
+        _ = sqrt(1f);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        let x1 = sqrt(vec2(0));
-        let x2 = sqrt(vec2(0.0));
-        let x3 = sqrt(vec2(1f));
+        _ = sqrt(vec2(0));
+        _ = sqrt(vec2(0.0));
+        _ = sqrt(vec2(1f));
     }
     {
-        let x1 = sqrt(vec3(-1));
-        let x2 = sqrt(vec3(-1.0));
-        let x3 = sqrt(vec3(-1f));
+        _ = sqrt(vec3(-1));
+        _ = sqrt(vec3(-1.0));
+        _ = sqrt(vec3(-1f));
     }
     {
-        let x1 = sqrt(vec4(-1));
-        let x2 = sqrt(vec4(-1.0));
-        let x3 = sqrt(vec4(-1f));
+        _ = sqrt(vec4(-1));
+        _ = sqrt(vec4(-1.0));
+        _ = sqrt(vec4(-1f));
     }
 }
 
@@ -1761,25 +1761,25 @@ fn testStep()
 {
     // [T < Float].(T, T) => T,
     {
-        let x1 = step(0, 1);
-        let x2 = step(0, 1.0);
-        let x3 = step(1, 2f);
+        _ = step(0, 1);
+        _ = step(0, 1.0);
+        _ = step(1, 2f);
     }
     // [T < Float, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
-        let x1 = step(vec2(0), vec2(0));
-        let x2 = step(vec2(0), vec2(0.0));
-        let x3 = step(vec2(0), vec2(0f));
+        _ = step(vec2(0), vec2(0));
+        _ = step(vec2(0), vec2(0.0));
+        _ = step(vec2(0), vec2(0f));
     }
     {
-        let x1 = step(vec3(0), vec3(0));
-        let x2 = step(vec3(0), vec3(0.0));
-        let x3 = step(vec3(0), vec3(0f));
+        _ = step(vec3(0), vec3(0));
+        _ = step(vec3(0), vec3(0.0));
+        _ = step(vec3(0), vec3(0f));
     }
     {
-        let x1 = step(vec4(0), vec4(0));
-        let x2 = step(vec4(0), vec4(0.0));
-        let x3 = step(vec4(0), vec4(0f));
+        _ = step(vec4(0), vec4(0));
+        _ = step(vec4(0), vec4(0.0));
+        _ = step(vec4(0), vec4(0f));
     }
 }
 
@@ -1793,39 +1793,39 @@ fn testTranspose()
     // [T < Float, C, R].(Matrix[T, C, R]) => Matrix[T, R, C],
     {
         const x = 1;
-        let x1 = transpose(mat2x2(0, 0, 0, x));
-        let x2 = transpose(mat2x3(0, 0, 0, 0, 0, x));
-        let x3 = transpose(mat2x4(0, 0, 0, 0, 0, 0, 0, x));
-        let x4 = transpose(mat3x2(0, 0, 0, 0, 0, x));
-        let x5 = transpose(mat3x3(0, 0, 0, 0, 0, 0, 0, 0, x));
-        let x6 = transpose(mat3x4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, x));
-        let x7 = transpose(mat4x2(0, 0, 0, 0, 0, 0, 0, x));
-        let x8 = transpose(mat4x3(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, x));
-        let x9 = transpose(mat4x4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, x));
+        _ = transpose(mat2x2(0, 0, 0, x));
+        _ = transpose(mat2x3(0, 0, 0, 0, 0, x));
+        _ = transpose(mat2x4(0, 0, 0, 0, 0, 0, 0, x));
+        _ = transpose(mat3x2(0, 0, 0, 0, 0, x));
+        _ = transpose(mat3x3(0, 0, 0, 0, 0, 0, 0, 0, x));
+        _ = transpose(mat3x4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, x));
+        _ = transpose(mat4x2(0, 0, 0, 0, 0, 0, 0, x));
+        _ = transpose(mat4x3(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, x));
+        _ = transpose(mat4x4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, x));
     }
     {
         const x = 1.0;
-        let x1 = transpose(mat2x2(0, 0, 0, x));
-        let x2 = transpose(mat2x3(0, 0, 0, 0, 0, x));
-        let x3 = transpose(mat2x4(0, 0, 0, 0, 0, 0, 0, x));
-        let x4 = transpose(mat3x2(0, 0, 0, 0, 0, x));
-        let x5 = transpose(mat3x3(0, 0, 0, 0, 0, 0, 0, 0, x));
-        let x6 = transpose(mat3x4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, x));
-        let x7 = transpose(mat4x2(0, 0, 0, 0, 0, 0, 0, x));
-        let x8 = transpose(mat4x3(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, x));
-        let x9 = transpose(mat4x4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, x));
+        _ = transpose(mat2x2(0, 0, 0, x));
+        _ = transpose(mat2x3(0, 0, 0, 0, 0, x));
+        _ = transpose(mat2x4(0, 0, 0, 0, 0, 0, 0, x));
+        _ = transpose(mat3x2(0, 0, 0, 0, 0, x));
+        _ = transpose(mat3x3(0, 0, 0, 0, 0, 0, 0, 0, x));
+        _ = transpose(mat3x4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, x));
+        _ = transpose(mat4x2(0, 0, 0, 0, 0, 0, 0, x));
+        _ = transpose(mat4x3(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, x));
+        _ = transpose(mat4x4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, x));
     }
     {
         const x = 1f;
-        let x1 = transpose(mat2x2(0, 0, 0, x));
-        let x2 = transpose(mat2x3(0, 0, 0, 0, 0, x));
-        let x3 = transpose(mat2x4(0, 0, 0, 0, 0, 0, 0, x));
-        let x4 = transpose(mat3x2(0, 0, 0, 0, 0, x));
-        let x5 = transpose(mat3x3(0, 0, 0, 0, 0, 0, 0, 0, x));
-        let x6 = transpose(mat3x4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, x));
-        let x7 = transpose(mat4x2(0, 0, 0, 0, 0, 0, 0, x));
-        let x8 = transpose(mat4x3(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, x));
-        let x9 = transpose(mat4x4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, x));
+        _ = transpose(mat2x2(0, 0, 0, x));
+        _ = transpose(mat2x3(0, 0, 0, 0, 0, x));
+        _ = transpose(mat2x4(0, 0, 0, 0, 0, 0, 0, x));
+        _ = transpose(mat3x2(0, 0, 0, 0, 0, x));
+        _ = transpose(mat3x3(0, 0, 0, 0, 0, 0, 0, 0, x));
+        _ = transpose(mat3x4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, x));
+        _ = transpose(mat4x2(0, 0, 0, 0, 0, 0, 0, x));
+        _ = transpose(mat4x3(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, x));
+        _ = transpose(mat4x4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, x));
     }
 }
 
@@ -1834,25 +1834,25 @@ fn testTrunc()
 {
     // [T < Float].(T) => T,
     {
-        let x1 = trunc(0);
-        let x2 = trunc(0.0);
-        let x3 = trunc(1f);
+        _ = trunc(0);
+        _ = trunc(0.0);
+        _ = trunc(1f);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        let x1 = trunc(vec2(0));
-        let x2 = trunc(vec2(0.0));
-        let x3 = trunc(vec2(1f));
+        _ = trunc(vec2(0));
+        _ = trunc(vec2(0.0));
+        _ = trunc(vec2(1f));
     }
     {
-        let x1 = trunc(vec3(-1));
-        let x2 = trunc(vec3(-1.0));
-        let x3 = trunc(vec3(-1f));
+        _ = trunc(vec3(-1));
+        _ = trunc(vec3(-1.0));
+        _ = trunc(vec3(-1f));
     }
     {
-        let x1 = trunc(vec4(-1));
-        let x2 = trunc(vec4(-1.0));
-        let x3 = trunc(vec4(-1f));
+        _ = trunc(vec4(-1));
+        _ = trunc(vec4(-1.0));
+        _ = trunc(vec4(-1f));
     }
 }

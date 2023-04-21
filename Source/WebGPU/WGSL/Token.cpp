@@ -167,6 +167,8 @@ String toString(TokenType type)
         return "*"_s;
     case TokenType::Tilde:
         return "~"_s;
+    case TokenType::Underbar:
+        return "_"_s;
     case TokenType::Xor:
         return "^"_s;
     }
