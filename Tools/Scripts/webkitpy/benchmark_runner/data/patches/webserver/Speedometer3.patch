@@ -59,15 +59,3 @@ index 4a71c5a..b85d066 100644
  (function () {
      if (!window.testRunner && location.search !== "?webkit" && location.hash !== "#webkit")
          return;
-diff --git a/resources/todomvc/architecture-examples/angular/dist/index.html b/resources/todomvc/architecture-examples/angular/dist/index.html
-index 6cf8576..af6fdaf 100644
---- a/resources/todomvc/architecture-examples/angular/dist/index.html
-+++ b/resources/todomvc/architecture-examples/angular/dist/index.html
-@@ -3,7 +3,6 @@
- <head>
-   <meta charset="utf-8">
-   <title>Angular</title>
--  <base href="/resources/todomvc/architecture-examples/angular/dist/">
-   <meta name="viewport" content="width=device-width, initial-scale=1">
-   <link rel="icon" type="image/x-icon" href="favicon.ico">
- <link rel="stylesheet" href="styles.5fd101737c0aaaef.css"></head>
