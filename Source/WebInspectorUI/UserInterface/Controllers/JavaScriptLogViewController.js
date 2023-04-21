@@ -161,10 +161,10 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
 
         var previousIgnoredCount = this._previousMessageView[WI.JavaScriptLogViewController.IgnoredRepeatCount] || 0;
         var previousVisibleCount = this._previousMessageView.repeatCount;
-        this._previousMessageView.timestamp = timestamp;
 
         if (!this._repeatCountWasInterrupted) {
             this._previousMessageView.repeatCount = count - previousIgnoredCount;
+            this._previousMessageView.timestamp = timestamp;
             return true;
         }
 
@@ -172,6 +172,7 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
         var duplicatedConsoleMessageView = new WI.ConsoleMessageView(consoleMessage);
         duplicatedConsoleMessageView[WI.JavaScriptLogViewController.IgnoredRepeatCount] = previousIgnoredCount + previousVisibleCount;
         duplicatedConsoleMessageView.repeatCount = 1;
+        duplicatedConsoleMessageView.timestamp = timestamp;
         this._appendConsoleMessageView(duplicatedConsoleMessageView);
 
         return true;
