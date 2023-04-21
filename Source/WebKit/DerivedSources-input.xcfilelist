@@ -176,6 +176,7 @@ $(PROJECT_DIR)/Shared/BackgroundFetchState.serialization.in
 $(PROJECT_DIR)/Shared/CallbackID.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CacheStoragePolicy.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/DataDetectionResult.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/LogData.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/RevealItem.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in
 $(PROJECT_DIR)/Shared/Databases/IndexedDB/WebIDBResult.serialization.in

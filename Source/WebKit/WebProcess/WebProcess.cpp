@@ -305,6 +305,9 @@ WebProcess::WebProcess()
 #if PLATFORM(IOS_FAMILY)
     , m_webSQLiteDatabaseTracker([this](bool isHoldingLockedFiles) { parentProcessConnection()->send(Messages::WebProcessProxy::SetIsHoldingLockedFiles(isHoldingLockedFiles), 0); })
 #endif
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    , m_logFlushTimer(RunLoop::main(), this, &WebProcess::logFlushTimerFired)
+#endif
 {
     // Initialize our platform strategies.
     WebPlatformStrategies::initialize();

@@ -107,9 +107,11 @@
 #import <wtf/FileSystem.h>
 #import <wtf/Language.h>
 #import <wtf/LogInitialization.h>
+#import <wtf/MallocPtr.h>
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/SystemMalloc.h>
 #import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -654,7 +656,7 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void deliberateCrashForTesting()
 #endif
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-static void registerLogHook()
+void WebProcess::registerLogHook()
 {
     if (os_trace_get_mode() != OS_TRACE_MODE_DISABLE && os_trace_get_mode() != OS_TRACE_MODE_OFF)
         return;
@@ -663,36 +665,65 @@ static void registerLogHook()
         if (msg->buffer_sz > 1024)
             return;
 
-        CString logFormat(msg->format);
-        CString logChannel(msg->subsystem);
-        CString logCategory(msg->category);
+        auto logItem = LogData {
+            CString(),
+            CString(msg->subsystem),
+            CString(msg->category),
+            type,
+            CString(msg->format),
+            Vector<uint8_t>(msg->buffer, msg->buffer_sz),
+            Vector<uint8_t>(msg->privdata, msg->privdata_sz)
+        };
 
-        Vector<uint8_t> buffer(msg->buffer, msg->buffer_sz);
-        Vector<uint8_t> privdata(msg->privdata, msg->privdata_sz);
+        Locker lock { m_logDataLock };
+
+        if (!m_logFlushTimer.isActive())
+            m_logFlushTimer.startOneShot(10_s);
+
+        m_logs.append(WTFMove(logItem));
+        constexpr unsigned maxLogSize = 32;
+        if (m_logs.size() < maxLogSize)
+            return;
 
         static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("Log Queue", WorkQueue::QOS::Background));
 
-        queue.get()->dispatch([logFormat = WTFMove(logFormat), logChannel = WTFMove(logChannel), logCategory = WTFMove(logCategory), type = type, buffer = WTFMove(buffer), privdata = WTFMove(privdata)] {
+        queue.get()->dispatch([logs = WTFMove(m_logs)]() mutable {
             os_log_message_s msg = { 0 };
 
-            msg.format = logFormat.data();
-            msg.buffer = buffer.data();
-            msg.buffer_sz = buffer.size();
-            msg.privdata = privdata.data();
-            msg.privdata_sz = privdata.size();
+            for (auto& log : logs) {
+                msg.format = log.format.data();
+                msg.buffer = log.buffer.data();
+                msg.buffer_sz = log.buffer.size();
+                msg.privdata = log.privdata.data();
+                msg.privdata_sz = log.privdata.size();
 
-            char* messageString = os_log_copy_message_string(&msg);
-            if (!messageString)
-                return;
-            IPC::DataReference logString(reinterpret_cast<uint8_t*>(messageString), strlen(messageString) + 1);
+                auto messageString = adoptMallocPtr<char, SystemMalloc>(os_log_copy_message_string(&msg));
+                if (!messageString)
+                    continue;
+
+                log.logString = CString(messageString.get());
+
+                std::exchange(log.format, {});
+                std::exchange(log.buffer, {});
+                std::exchange(log.privdata, {});
+            }
 
             auto connectionID = WebProcess::singleton().networkProcessConnectionID();
-            if (connectionID)
-                IPC::Connection::send(connectionID, Messages::NetworkConnectionToWebProcess::LogOnBehalfOfWebContent(logChannel.bytesInludingNullTerminator(), logCategory.bytesInludingNullTerminator(), logString, type, getpid()), 0);
-
-            free(messageString);
+            if (!connectionID)
+                return;
+            IPC::Connection::send(connectionID, Messages::NetworkConnectionToWebProcess::LogOnBehalfOfWebContent(logs, getCurrentProcessID()), 0);
         });
     });
+}
+
+void WebProcess::logFlushTimerFired()
+{
+    Locker lock { m_logDataLock };
+
+    auto connectionID = networkProcessConnectionID();
+    if (!connectionID)
+        return;
+    IPC::Connection::send(connectionID, Messages::NetworkConnectionToWebProcess::LogOnBehalfOfWebContent(std::exchange(m_logs, { }), getCurrentProcessID()), 0);
 }
 #endif
 
