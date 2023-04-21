@@ -31,6 +31,7 @@
 #include "ASTStringDumper.h"
 #include "ASTVisitor.h"
 #include "CallGraph.h"
+#include "Constraints.h"
 #include "Types.h"
 #include "WGSLShaderModule.h"
 
@@ -529,6 +530,19 @@ void FunctionDefinitionWriter::visit(AST::UnaryExpression& unary)
 
 void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
 {
+    if (binary.operation() == AST::BinaryOperation::Modulo) {
+        auto* leftType = binary.leftExpression().inferredType();
+        auto* rightType = binary.rightExpression().inferredType();
+        if (satisfies(leftType, Constraints::Float) || satisfies(rightType, Constraints::Float)) {
+            m_stringBuilder.append("fmod(");
+            visit(binary.leftExpression());
+            m_stringBuilder.append(", ");
+            visit(binary.rightExpression());
+            m_stringBuilder.append(")");
+            return;
+        }
+    }
+
     m_stringBuilder.append("(");
     visit(binary.leftExpression());
     switch (binary.operation()) {
