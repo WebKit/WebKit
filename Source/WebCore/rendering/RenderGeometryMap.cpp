@@ -111,7 +111,7 @@ FloatPoint RenderGeometryMap::mapToContainer(const FloatPoint& p, const RenderLa
         TransformState transformState(m_useCSS3DTransformInterop, TransformState::ApplyTransformDirection, p);
         mapToContainer(transformState, container);
         result = transformState.lastPlanarPoint();
-        ASSERT(areEssentiallyEqual(rendererMappedResult, result));
+        ASSERT(m_accumulatedOffsetMightBeSaturated ||  areEssentiallyEqual(rendererMappedResult, result));
     }
 
     return result;
