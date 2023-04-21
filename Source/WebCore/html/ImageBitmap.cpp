@@ -732,6 +732,12 @@ private:
         m_createImageBitmapTimer.suspendIfNeeded();
     }
 
+    ~PendingImageBitmap()
+    {
+        if (m_completionHandler)
+            std::exchange(m_completionHandler, std::nullopt).value()(Exception { InvalidStateError, "PendingImageBitmap is being destroyed"_s });
+    }
+
     void start(ScriptExecutionContext& scriptExecutionContext)
     {
         m_blobLoader.start(&scriptExecutionContext, *m_blob);
@@ -782,19 +788,22 @@ private:
             delete this;
         });
 
+        auto completionHandler = std::exchange(m_completionHandler, std::nullopt);
+        ASSERT(completionHandler);
+
         if (!m_arrayBufferToProcess) {
-            m_completionHandler(Exception { InvalidStateError, "An error occured reading the Blob argument to createImageBitmap"_s });
+            completionHandler.value()(Exception { InvalidStateError, "An error occured reading the Blob argument to createImageBitmap"_s });
             return;
         }
 
-        ImageBitmap::createFromBuffer(*scriptExecutionContext(), m_arrayBufferToProcess.releaseNonNull(), m_blob->type(), m_blob->size(), m_blobLoader.url(), WTFMove(m_options), WTFMove(m_rect), WTFMove(m_completionHandler));
+        ImageBitmap::createFromBuffer(*scriptExecutionContext(), m_arrayBufferToProcess.releaseNonNull(), m_blob->type(), m_blob->size(), m_blobLoader.url(), WTFMove(m_options), WTFMove(m_rect), WTFMove(completionHandler.value()));
     }
 
     FileReaderLoader m_blobLoader;
     RefPtr<Blob> m_blob;
     ImageBitmapOptions m_options;
     std::optional<IntRect> m_rect;
-    ImageBitmap::ImageBitmapCompletionHandler m_completionHandler;
+    std::optional<ImageBitmap::ImageBitmapCompletionHandler> m_completionHandler;
     SuspendableTimer m_createImageBitmapTimer;
     RefPtr<ArrayBuffer> m_arrayBufferToProcess;
 };
