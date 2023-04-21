@@ -57,6 +57,7 @@ public:
     void visit(AST::IfStatement&) override;
     void visit(AST::ReturnStatement&) override;
     void visit(AST::CompoundStatement&) override;
+    void visit(AST::ForStatement&) override;
 
     // Expressions
     void visit(AST::Expression&) override;
@@ -254,6 +255,23 @@ void TypeChecker::visit(AST::CompoundStatement& statement)
 {
     ContextScope blockScope(this);
     AST::Visitor::visit(statement);
+}
+
+void TypeChecker::visit(AST::ForStatement& statement)
+{
+    if (auto* initializer = statement.maybeInitializer())
+        AST::Visitor::visit(*initializer);
+
+    if (auto* test = statement.maybeTest()) {
+        auto* testType = infer(*test);
+        if (!unify(m_types.boolType(), testType))
+            typeError(test->span(), "for-loop condition must be bool, got ", *testType);
+    }
+
+    if (auto* update = statement.maybeUpdate())
+        AST::Visitor::visit(*update);
+
+    visit(statement.body());
 }
 
 // Expressions

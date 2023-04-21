@@ -825,6 +825,11 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
         CONSUME_TYPE(Semicolon);
         RETURN_NODE_UNIQUE_REF(AssignmentStatement, WTFMove(lhs), WTFMove(rhs));
     }
+    case TokenType::KeywordFor: {
+        // FIXME: Handle attributes attached to statement.
+        PARSE(forStmt, ForStatement);
+        return { makeUniqueRef<AST::ForStatement>(WTFMove(forStmt)) };
+    }
     default:
         FAIL("Not a valid statement"_s);
     }
@@ -880,6 +885,43 @@ Result<AST::IfStatement> Parser<Lexer>::parseIfStatementWithAttributes(AST::Attr
     }
 
     RETURN_NODE(IfStatement, WTFMove(testExpr), WTFMove(thenStmt), WTFMove(maybeElseStmt), WTFMove(attributes));
+}
+
+template<typename Lexer>
+Result<AST::ForStatement> Parser<Lexer>::parseForStatement()
+{
+    START_PARSE();
+
+    CONSUME_TYPE(KeywordFor);
+
+    AST::Statement::Ptr maybeInitializer = nullptr;
+    AST::Expression::Ptr maybeTest = nullptr;
+    AST::Statement::Ptr maybeUpdate = nullptr;
+
+    CONSUME_TYPE(ParenLeft);
+
+    if (current().type != TokenType::Semicolon) {
+        // FIXME: this should be for_init
+        PARSE(variable, Variable);
+        maybeInitializer = makeUnique<AST::VariableStatement>(CURRENT_SOURCE_SPAN(), WTFMove(variable));
+    }
+    CONSUME_TYPE(Semicolon);
+
+    if (current().type != TokenType::Semicolon) {
+        PARSE(test, Expression);
+        maybeTest = test.moveToUniquePtr();
+    }
+    CONSUME_TYPE(Semicolon);
+
+    if (current().type != TokenType::ParenRight) {
+        // FIXME: this should be for_update
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    CONSUME_TYPE(ParenRight);
+
+    PARSE(body, CompoundStatement);
+
+    RETURN_NODE(ForStatement, WTFMove(maybeInitializer), WTFMove(maybeTest), WTFMove(maybeUpdate), WTFMove(body));
 }
 
 template<typename Lexer>

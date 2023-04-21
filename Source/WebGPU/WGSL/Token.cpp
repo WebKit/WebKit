@@ -59,6 +59,8 @@ String toString(TokenType type)
         return "struct"_s;
     case TokenType::KeywordFn:
         return "fn"_s;
+    case TokenType::KeywordFor:
+        return "for"_s;
     case TokenType::KeywordFunction:
         return "function"_s;
     case TokenType::KeywordIf:

@@ -86,6 +86,7 @@ public:
     void visit(AST::CompoundStatement&) override;
     void visit(AST::IfStatement&) override;
     void visit(AST::ReturnStatement&) override;
+    void visit(AST::ForStatement&) override;
 
     void visit(AST::TypeName&) override;
 
@@ -697,6 +698,21 @@ void FunctionDefinitionWriter::visit(AST::ReturnStatement& statement)
         visit(*statement.maybeExpression());
     }
     m_stringBuilder.append(";\n");
+}
+
+void FunctionDefinitionWriter::visit(AST::ForStatement& statement)
+{
+    m_stringBuilder.append("for (");
+    if (auto* initializer = statement.maybeInitializer())
+        visit(*initializer);
+    m_stringBuilder.append(";");
+    if (auto* test = statement.maybeTest())
+        visit(*test);
+    m_stringBuilder.append(";");
+    if (auto* update = statement.maybeUpdate())
+        visit(*update);
+    m_stringBuilder.append(")");
+    visit(statement.body());
 }
 
 void emitMetalFunctions(StringBuilder& stringBuilder, CallGraph& callGraph)

@@ -126,6 +126,7 @@ TEST(WGSLLexerTests, KeywordTokens)
     checkSingleToken("else"_s, TokenType::KeywordElse);
     checkSingleToken("f32"_s, TokenType::KeywordF32);
     checkSingleToken("fn"_s, TokenType::KeywordFn);
+    checkSingleToken("for"_s, TokenType::KeywordFor);
     checkSingleToken("function"_s, TokenType::KeywordFunction);
     checkSingleToken("i32"_s, TokenType::KeywordI32);
     checkSingleToken("if"_s, TokenType::KeywordIf);

@@ -53,6 +53,7 @@ enum class TokenType: uint32_t {
     KeywordConst,
     KeywordElse,
     KeywordFn,
+    KeywordFor,
     KeywordFunction,
     KeywordIf,
     KeywordLet,

@@ -349,6 +349,21 @@ void StringDumper::visit(VariableStatement& statement)
     visit(statement.variable());
 }
 
+void StringDumper::visit(ForStatement& statement)
+{
+    m_out.print("for (");
+    if (auto* initializer = statement.maybeInitializer())
+        visit(*initializer);
+    m_out.print(";");
+    if (auto* test = statement.maybeTest())
+        visit(*test);
+    m_out.print(";");
+    if (auto* update = statement.maybeUpdate())
+        visit(*update);
+    m_out.print(")");
+    visit(statement.body());
+}
+
 // Types
 void StringDumper::visit(ArrayTypeName& type)
 {

@@ -290,6 +290,7 @@ Token Lexer<T>::lex()
                 { "f64", TokenType::ReservedWord },
                 { "false", TokenType::LiteralFalse },
                 { "fn", TokenType::KeywordFn },
+                { "for", TokenType::KeywordFor },
                 { "function", TokenType::KeywordFunction },
                 { "handle", TokenType::ReservedWord },
                 { "i16", TokenType::ReservedWord },

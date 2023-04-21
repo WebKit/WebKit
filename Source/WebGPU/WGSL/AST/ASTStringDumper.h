@@ -81,6 +81,7 @@ public:
     void visit(IfStatement&) override;
     void visit(ReturnStatement&) override;
     void visit(VariableStatement&) override;
+    void visit(ForStatement&) override;
 
     // Types
     void visit(ArrayTypeName&) override;
