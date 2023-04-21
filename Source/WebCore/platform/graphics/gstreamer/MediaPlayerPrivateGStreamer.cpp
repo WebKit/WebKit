@@ -3990,29 +3990,7 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
         g_signal_connect_swapped(m_videoSink.get(), "repaint-cancelled", G_CALLBACK(repaintCancelledCallback), this);
     }
 
-    GstElement* videoSink = nullptr;
-    if (!webkitGstCheckVersion(1, 18, 0)) {
-        m_fpsSink = makeGStreamerElement("fpsdisplaysink", "sink");
-        if (m_fpsSink) {
-            g_object_set(m_fpsSink.get(), "silent", TRUE , nullptr);
-
-            // Turn off text overlay unless tracing is enabled.
-            if (gst_debug_category_get_threshold(webkit_media_player_debug) < GST_LEVEL_TRACE)
-                g_object_set(m_fpsSink.get(), "text-overlay", FALSE , nullptr);
-
-            if (gstObjectHasProperty(m_fpsSink.get(), "video-sink")) {
-                g_object_set(m_fpsSink.get(), "video-sink", m_videoSink.get(), nullptr);
-                videoSink = m_fpsSink.get();
-            } else
-                m_fpsSink = nullptr;
-        }
-    }
-
-    if (!m_fpsSink)
-        videoSink = m_videoSink.get();
-
-    ASSERT(videoSink);
-    return videoSink;
+    return m_videoSink.get();
 }
 
 void MediaPlayerPrivateGStreamer::setStreamVolumeElement(GstStreamVolume* volume)
@@ -4038,26 +4016,16 @@ void MediaPlayerPrivateGStreamer::setStreamVolumeElement(GstStreamVolume* volume
 
 bool MediaPlayerPrivateGStreamer::updateVideoSinkStatistics()
 {
-    if (!webkitGstCheckVersion(1, 18, 0) && !m_fpsSink)
-        return false;
-
     uint64_t totalVideoFrames = 0;
     uint64_t droppedVideoFrames = 0;
-    if (webkitGstCheckVersion(1, 18, 0)) {
-        GUniqueOutPtr<GstStructure> stats;
-        g_object_get(m_videoSink.get(), "stats", &stats.outPtr(), nullptr);
+    GUniqueOutPtr<GstStructure> stats;
+    g_object_get(m_videoSink.get(), "stats", &stats.outPtr(), nullptr);
 
-        if (!gst_structure_get_uint64(stats.get(), "rendered", &totalVideoFrames))
-            return false;
+    if (!gst_structure_get_uint64(stats.get(), "rendered", &totalVideoFrames))
+        return false;
 
-        if (!gst_structure_get_uint64(stats.get(), "dropped", &droppedVideoFrames))
-            return false;
-    } else if (m_fpsSink) {
-        unsigned renderedFrames, droppedFrames;
-        g_object_get(m_fpsSink.get(), "frames-rendered", &renderedFrames, "frames-dropped", &droppedFrames, nullptr);
-        totalVideoFrames = renderedFrames;
-        droppedVideoFrames = droppedFrames;
-    }
+    if (!gst_structure_get_uint64(stats.get(), "dropped", &droppedVideoFrames))
+        return false;
 
     // Caching is required so that metrics queries performed after EOS still return valid values.
     if (totalVideoFrames)

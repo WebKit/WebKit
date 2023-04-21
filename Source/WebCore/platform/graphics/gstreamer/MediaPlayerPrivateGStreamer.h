@@ -580,7 +580,6 @@ private:
     uint64_t m_networkReadPosition { 0 };
     mutable uint64_t m_readPositionAtLastDidLoadingProgress { 0 };
 
-    GRefPtr<GstElement> m_fpsSink { nullptr };
     uint64_t m_totalVideoFrames { 0 };
     uint64_t m_droppedVideoFrames { 0 };
     uint64_t m_decodedVideoFrames { 0 };

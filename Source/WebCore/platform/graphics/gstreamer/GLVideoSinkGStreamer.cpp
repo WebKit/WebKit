@@ -186,13 +186,12 @@ static void webKitGLVideoSinkGetProperty(GObject* object, guint propertyId, GVal
     WebKitGLVideoSink* sink = WEBKIT_GL_VIDEO_SINK(object);
 
     switch (propertyId) {
-    case PROP_STATS:
-        if (webkitGstCheckVersion(1, 18, 0)) {
-            GUniqueOutPtr<GstStructure> stats;
-            g_object_get(sink->priv->appSink.get(), "stats", &stats.outPtr(), nullptr);
-            gst_value_set_structure(value, stats.get());
-        }
+    case PROP_STATS: {
+        GUniqueOutPtr<GstStructure> stats;
+        g_object_get(sink->priv->appSink.get(), "stats", &stats.outPtr(), nullptr);
+        gst_value_set_structure(value, stats.get());
         break;
+    }
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, paramSpec);
         RELEASE_ASSERT_NOT_REACHED();

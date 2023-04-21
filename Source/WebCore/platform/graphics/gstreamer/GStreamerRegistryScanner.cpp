@@ -807,13 +807,8 @@ GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::isAVC1Code
         return checkH264Caps(makeString("video/x-h264, level=(string)", maxLevelString).utf8().data());
     }
 
-    if (webkitGstCheckVersion(1, 18, 0)) {
-        GST_DEBUG("Checking video decoders for constrained caps");
-        return checkH264Caps(makeString("video/x-h264, level=(string)", level, ", profile=(string)", profile).utf8().data());
-    }
-
-    GST_DEBUG("Falling back to unconstrained caps");
-    return checkH264Caps("video/x-h264");
+    GST_DEBUG("Checking video decoders for constrained caps");
+    return checkH264Caps(makeString("video/x-h264, level=(string)", level, ", profile=(string)", profile).utf8().data());
 }
 
 const char* GStreamerRegistryScanner::configurationNameForLogging(Configuration configuration) const
