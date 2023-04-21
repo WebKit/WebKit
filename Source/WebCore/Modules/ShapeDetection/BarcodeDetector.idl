@@ -52,5 +52,5 @@ interface BarcodeDetector {
     [CallWith=CurrentScriptExecutionContext] constructor(optional BarcodeDetectorOptions barcodeDetectorOptions = {});
     [CallWith=CurrentScriptExecutionContext] static Promise<sequence<BarcodeFormat>> getSupportedFormats();
 
-    Promise<sequence<DetectedBarcode>> detect(ImageBitmapSource image);
+    [CallWith=CurrentScriptExecutionContext] Promise<sequence<DetectedBarcode>> detect(ImageBitmapSource image);
 };

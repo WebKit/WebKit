@@ -34,7 +34,7 @@ TextDetectorImpl::TextDetectorImpl() = default;
 
 TextDetectorImpl::~TextDetectorImpl() = default;
 
-void TextDetectorImpl::detect(CompletionHandler<void(Vector<DetectedText>&&)>&& completionHandler)
+void TextDetectorImpl::detect(Ref<ImageBuffer>&&, CompletionHandler<void(Vector<DetectedText>&&)>&& completionHandler)
 {
     completionHandler({ });
 }

@@ -30,6 +30,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
+namespace WebCore {
+class ImageBuffer;
+}
+
 namespace WebCore::ShapeDetection {
 
 enum class BarcodeFormat : uint8_t;
@@ -39,7 +43,7 @@ class BarcodeDetector : public RefCounted<BarcodeDetector> {
 public:
     virtual ~BarcodeDetector() = default;
 
-    virtual void detect(CompletionHandler<void(Vector<DetectedBarcode>&&)>&&) = 0;
+    virtual void detect(Ref<ImageBuffer>&&, CompletionHandler<void(Vector<DetectedBarcode>&&)>&&) = 0;
 
 protected:
     BarcodeDetector() = default;

@@ -29,22 +29,32 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "ArgumentCoders.h"
+#include "RemoteResourceCache.h"
+#include <WebCore/DetectedTextInterface.h>
 #include <WebCore/TextDetectorInterface.h>
 
 namespace WebKit {
 
-RemoteTextDetector::RemoteTextDetector(Ref<WebCore::ShapeDetection::TextDetector>&& textDetector, ShapeDetection::ObjectHeap& objectHeap, ShapeDetectionIdentifier identifier)
+RemoteTextDetector::RemoteTextDetector(Ref<WebCore::ShapeDetection::TextDetector>&& textDetector, ShapeDetection::ObjectHeap& objectHeap, RemoteResourceCache& remoteResourceCache, ShapeDetectionIdentifier identifier, WebCore::ProcessIdentifier webProcessIdentifier)
     : m_backing(WTFMove(textDetector))
     , m_objectHeap(objectHeap)
+    , m_remoteResourceCache(remoteResourceCache)
     , m_identifier(identifier)
+    , m_webProcessIdentifier(webProcessIdentifier)
 {
 }
 
 RemoteTextDetector::~RemoteTextDetector() = default;
 
-void RemoteTextDetector::detect(CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedText>&&)>&& completionHandler)
+void RemoteTextDetector::detect(RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedText>&&)>&& completionHandler)
 {
-    m_backing->detect(WTFMove(completionHandler));
+    auto imageBuffer = m_remoteResourceCache.cachedImageBuffer({ renderingResourceIdentifier, m_webProcessIdentifier });
+    if (!imageBuffer) {
+        completionHandler({ });
+        return;
+    }
+
+    m_backing->detect(*imageBuffer, WTFMove(completionHandler));
 }
 
 } // namespace WebKit

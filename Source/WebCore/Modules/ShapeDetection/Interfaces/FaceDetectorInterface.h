@@ -30,6 +30,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
+namespace WebCore {
+class ImageBuffer;
+}
+
 namespace WebCore::ShapeDetection {
 
 struct DetectedFace;
@@ -38,7 +42,7 @@ class FaceDetector : public RefCounted<FaceDetector> {
 public:
     virtual ~FaceDetector() = default;
 
-    virtual void detect(CompletionHandler<void(Vector<DetectedFace>&&)>&&) = 0;
+    virtual void detect(Ref<ImageBuffer>&&, CompletionHandler<void(Vector<DetectedFace>&&)>&&) = 0;
 
 protected:
     FaceDetector() = default;

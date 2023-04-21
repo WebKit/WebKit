@@ -44,7 +44,7 @@ public:
     ~TextDetector();
 
     using DetectPromise = DOMPromiseDeferred<IDLSequence<IDLDictionary<DetectedText>>>;
-    void detect(const ImageBitmap::Source&, DetectPromise&&);
+    void detect(ScriptExecutionContext&, ImageBitmap::Source&&, DetectPromise&&);
 
 private:
     TextDetector(Ref<ShapeDetection::TextDetector>&&);

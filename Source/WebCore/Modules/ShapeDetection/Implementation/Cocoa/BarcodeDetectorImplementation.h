@@ -51,7 +51,7 @@ private:
     BarcodeDetectorImpl& operator=(const BarcodeDetectorImpl&) = delete;
     BarcodeDetectorImpl& operator=(BarcodeDetectorImpl&&) = delete;
 
-    void detect(CompletionHandler<void(Vector<DetectedBarcode>&&)>&&) final;
+    void detect(Ref<ImageBuffer>&&, CompletionHandler<void(Vector<DetectedBarcode>&&)>&&) final;
 };
 
 } // namespace WebCore::ShapeDetection

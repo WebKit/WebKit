@@ -30,6 +30,8 @@
 #include "Connection.h"
 #include "ShapeDetectionIdentifier.h"
 #include "StreamMessageReceiver.h"
+#include <WebCore/ProcessIdentifier.h>
+#include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
@@ -40,6 +42,7 @@ class FaceDetector;
 }
 
 namespace WebKit {
+class RemoteResourceCache;
 
 namespace ShapeDetection {
 class ObjectHeap;
@@ -49,15 +52,15 @@ class RemoteFaceDetector : public IPC::StreamMessageReceiver {
 public:
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteFaceDetector> create(Ref<WebCore::ShapeDetection::FaceDetector>&& faceDetector, ShapeDetection::ObjectHeap& objectHeap, ShapeDetectionIdentifier identifier)
+    static Ref<RemoteFaceDetector> create(Ref<WebCore::ShapeDetection::FaceDetector>&& faceDetector, ShapeDetection::ObjectHeap& objectHeap, RemoteResourceCache& remoteResourceCache, ShapeDetectionIdentifier identifier, WebCore::ProcessIdentifier webProcessIdentifier)
     {
-        return adoptRef(*new RemoteFaceDetector(WTFMove(faceDetector), objectHeap, identifier));
+        return adoptRef(*new RemoteFaceDetector(WTFMove(faceDetector), objectHeap, remoteResourceCache, identifier, webProcessIdentifier));
     }
 
     virtual ~RemoteFaceDetector();
 
 private:
-    RemoteFaceDetector(Ref<WebCore::ShapeDetection::FaceDetector>&&, ShapeDetection::ObjectHeap&, ShapeDetectionIdentifier);
+    RemoteFaceDetector(Ref<WebCore::ShapeDetection::FaceDetector>&&, ShapeDetection::ObjectHeap&, RemoteResourceCache&, ShapeDetectionIdentifier, WebCore::ProcessIdentifier);
 
     RemoteFaceDetector(const RemoteFaceDetector&) = delete;
     RemoteFaceDetector(RemoteFaceDetector&&) = delete;
@@ -68,11 +71,13 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
-    void detect(CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedFace>&&)>&&);
+    void detect(WebCore::RenderingResourceIdentifier, CompletionHandler<void(Vector<WebCore::ShapeDetection::DetectedFace>&&)>&&);
 
     Ref<WebCore::ShapeDetection::FaceDetector> m_backing;
     ShapeDetection::ObjectHeap& m_objectHeap;
-    ShapeDetectionIdentifier m_identifier;
+    RemoteResourceCache& m_remoteResourceCache;
+    const ShapeDetectionIdentifier m_identifier;
+    const WebCore::ProcessIdentifier m_webProcessIdentifier;
 };
 
 } // namespace WebKit
