@@ -1039,5 +1039,10 @@ bool RenderListBox::scrolledToRight() const
     // that we are at the full extent of the scroll.
     return true;
 }
+
+float RenderListBox::deviceScaleFactor() const
+{
+    return page().deviceScaleFactor();
+}
     
 } // namespace WebCore

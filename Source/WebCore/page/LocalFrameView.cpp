@@ -5939,6 +5939,7 @@ Display::View* LocalFrameView::existingDisplayView() const
 
 Display::View& LocalFrameView::displayView()
 {
+    ASSERT(m_frame->settings().layoutFormattingContextEnabled());
     if (!m_displayView)
         m_displayView = makeUnique<Display::View>(*this);
     return *m_displayView;
@@ -6309,6 +6310,13 @@ LayoutRect LocalFrameView::getPossiblyFixedRectToExpose(const LayoutRect& visibl
     requiredVisualViewport.scale(frameScaleFactor());
     requiredVisualViewport.move(0, headerHeight());
     return requiredVisualViewport;
+}
+
+float LocalFrameView::deviceScaleFactor() const
+{
+    if (auto* page = m_frame->page())
+        return page->deviceScaleFactor();
+    return 1;
 }
 
 } // namespace WebCore

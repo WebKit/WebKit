@@ -921,6 +921,8 @@ private:
     void scrollRectToVisibleInTopLevelView(const LayoutRect& absoluteRect, bool insideFixed, const ScrollRectToVisibleOptions&);
     LayoutRect getPossiblyFixedRectToExpose(const LayoutRect& visibleRect, const LayoutRect& exposeRect, bool insideFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY) const;
 
+    float deviceScaleFactor() const final;
+
     const Ref<LocalFrame> m_frame;
     LocalFrameViewLayoutContext m_layoutContext;
 

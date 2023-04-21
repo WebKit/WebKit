@@ -3815,7 +3815,7 @@ void RenderLayerCompositor::resetTrackedRepaintRects()
 
 float RenderLayerCompositor::deviceScaleFactor() const
 {
-    return m_renderView.document().deviceScaleFactor();
+    return page().deviceScaleFactor();
 }
 
 float RenderLayerCompositor::pageScaleFactor() const

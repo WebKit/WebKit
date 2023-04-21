@@ -1971,4 +1971,9 @@ void RenderLayerScrollableArea::animatedScrollDidEnd()
     }
 }
 
+float RenderLayerScrollableArea::deviceScaleFactor() const
+{
+    return m_layer.renderer().document().deviceScaleFactor();
+}
+
 } // namespace WebCore

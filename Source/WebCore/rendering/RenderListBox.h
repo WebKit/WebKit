@@ -179,6 +179,8 @@ private:
 
     std::optional<int> optionRowIndex(const HTMLOptionElement&) const;
 
+    float deviceScaleFactor() const final;
+
     void paintScrollbar(PaintInfo&, const LayoutPoint&);
     void paintItemForeground(PaintInfo&, const LayoutPoint&, int listIndex);
     void paintItemBackground(PaintInfo&, const LayoutPoint&, int listIndex);

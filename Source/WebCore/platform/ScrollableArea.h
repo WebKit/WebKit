@@ -389,6 +389,8 @@ public:
         return 1.0f;
     }
 
+    virtual float deviceScaleFactor() const { return 1; }
+
     virtual void didStartScrollAnimation() { }
     
     bool horizontalOverscrollBehaviorPreventsPropagation() const { return horizontalOverscrollBehavior() != OverscrollBehavior::Auto; }

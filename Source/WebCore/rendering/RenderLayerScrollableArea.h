@@ -277,6 +277,8 @@ private:
     void updateScrollbarPresenceAndState(std::optional<bool> hasHorizontalOverflow = std::nullopt, std::optional<bool> hasVerticalOverflow = std::nullopt);
     void registerScrollableAreaForAnimatedScroll();
 
+    float deviceScaleFactor() const final;
+
 private:
     bool m_scrollDimensionsDirty { true };
     bool m_inOverflowRelayout { false };

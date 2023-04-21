@@ -27,7 +27,6 @@
 #include "Scrollbar.h"
 
 #include "DeprecatedGlobalSettings.h"
-#include "DisplayView.h"
 #include "GraphicsContext.h"
 #include "LocalFrameView.h"
 #include "PlatformMouseEvent.h"
@@ -509,9 +508,7 @@ NativeScrollbarVisibility Scrollbar::nativeScrollbarVisibility(const Scrollbar* 
 
 float Scrollbar::deviceScaleFactor() const
 {
-    if (RefPtr root = this->root())
-        return root->displayView().deviceScaleFactor();
-    return 1;
+    return m_scrollableArea.deviceScaleFactor();
 }
 
 } // namespace WebCore
