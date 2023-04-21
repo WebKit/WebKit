@@ -34,6 +34,10 @@
 
 struct gbm_device;
 
+namespace WTF {
+class String;
+}
+
 namespace WebCore {
 
 class GBMDevice {
@@ -46,7 +50,7 @@ public:
     ~GBMDevice();
 
     bool isInitialized() const { return m_device.has_value(); }
-    void initialize(const String&);
+    void initialize(const WTF::String&);
     struct gbm_device* device() const { RELEASE_ASSERT(m_device.has_value()); return m_device.value(); }
 
 private:

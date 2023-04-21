@@ -35,6 +35,7 @@
 #include <unistd.h>
 #include <wtf/SafeStrerror.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

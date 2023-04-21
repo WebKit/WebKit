@@ -69,6 +69,7 @@
 #include "NodeList.h"
 #include "NodeTraversal.h"
 #include "Page.h"
+#include "ProgressTracker.h"
 #include "Range.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
