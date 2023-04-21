@@ -612,6 +612,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 return @selector(tertiaryLabelColor);
             case CSSValueAppleSystemQuaternaryLabel:
                 return @selector(quaternaryLabelColor);
+#if HAVE(NSCOLOR_FILL_COLOR_HIERARCHY)
+            case CSSValueAppleSystemTertiaryFill:
+                // FIXME: Remove selector check when AppKit without tertiary-fill is not used anymore; see rdar://108340604.
+                if ([NSColor respondsToSelector:@selector(tertiarySystemFillColor)])
+                    return @selector(tertiarySystemFillColor);
+                // Handled below.
+                return nullptr;
+#endif
             case CSSValueAppleSystemGrid:
                 return @selector(gridColor);
             case CSSValueAppleSystemSeparator:
@@ -715,6 +723,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             ASSERT(alternateColors.count >= 2);
             return semanticColorFromNSColor(alternateColors[1]);
         }
+
+        // FIXME: Remove this fallback when AppKit without tertiary-fill is not used anymore; see rdar://108340604.
+        case CSSValueAppleSystemTertiaryFill:
+            if (localAppearance.usingDarkAppearance())
+                return { SRGBA<uint8_t> { 255, 255, 255, 13 }, Color::Flags::Semantic };
+            return { SRGBA<uint8_t> { 0, 0, 0, 13 }, Color::Flags::Semantic };
 
         case CSSValueBackground:
             // Use platform-independent value returned by base class.

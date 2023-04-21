@@ -4,7 +4,7 @@ layer at (0,0) size 800x126
   RenderBlock {HTML} at (0,0) size 800x126
     RenderBody {BODY} at (8,8) size 784x110
       RenderBlock {ATTACHMENT} at (0,0) size 266x110
-        RenderGrid {DIV} at (0,0) size 266x80 [bgcolor=#F2F2F2]
+        RenderGrid {DIV} at (0,0) size 266x80 [bgcolor=#0000000D]
           RenderGrid {DIV} at (0,0) size 68x80
             RenderAttachment {ATTACHMENT} at (8,14) size 52x52
           RenderGrid {DIV} at (68,0) size 198x80

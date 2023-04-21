@@ -63,3 +63,10 @@ typedef NS_ENUM(NSInteger, NSUserAccentColor) {
 extern "C" NSUserAccentColor NSColorGetUserAccentColor(void);
 
 #endif
+
+// FIXME: Remove staging when AppKit without tertiary-fill is not used anymore; see rdar://108340604.
+#if HAVE(NSCOLOR_FILL_COLOR_HIERARCHY)
+@interface NSColor (Staging_104764768)
+@property (class, strong, readonly) NSColor *tertiarySystemFillColor;
+@end
+#endif

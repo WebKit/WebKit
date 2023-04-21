@@ -34,7 +34,7 @@ div#attachment-container {
     grid-template-columns: 68px auto;
     width: 266px;
     height: 80px;
-    background-color: rgb(242, 242, 242); /* FIXME: Use quinary-fill when available, see rdar://105252500 depending on rdar://104844460 */
+    background-color: -apple-system-tertiary-fill;
 #endif
     border-radius: 8px;
     font: caption;
