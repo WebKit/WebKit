@@ -116,7 +116,7 @@ std::optional<InterpolationQuality> ImageQualityController::interpolationQuality
 InterpolationQuality ImageQualityController::chooseInterpolationQuality(GraphicsContext& context, RenderBoxModelObject* object, Image& image, const void* layer, const LayoutSize& size)
 {
     // If the image is not a bitmap image, then none of this is relevant and we just paint at high quality.
-    if (!(image.isBitmapImage() || image.isPDFDocumentImage()) || context.paintingDisabled())
+    if (!image.isBitmapImage() || context.paintingDisabled())
         return InterpolationQuality::Default;
 
     if (std::optional<InterpolationQuality> styleInterpolation = interpolationQualityFromStyle(object->style()))
