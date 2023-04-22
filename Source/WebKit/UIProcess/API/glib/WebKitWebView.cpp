@@ -4889,7 +4889,7 @@ void webkit_web_view_get_snapshot(WebKitWebView* webView, WebKitSnapshotRegion r
         snapshotOptions |= SnapshotOptionsTransparentBackground;
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
-    getPage(webView).takeSnapshot({ }, { }, snapshotOptions, [task = WTFMove(task)](const ShareableBitmapHandle& handle) {
+    getPage(webView).takeSnapshot({ }, { }, snapshotOptions, [task = WTFMove(task)](const ShareableBitmap::Handle& handle) {
         if (!handle.isNull()) {
             if (auto bitmap = ShareableBitmap::create(handle, SharedMemory::Protection::ReadOnly)) {
                 if (auto surface = bitmap->createCairoSurface()) {

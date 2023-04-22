@@ -133,9 +133,9 @@ private:
     void getPixelBufferForImageBufferWithNewMemory(WebCore::RenderingResourceIdentifier, SharedMemory::Handle&&, WebCore::PixelBufferFormat&& destinationFormat, WebCore::IntRect&& srcRect, CompletionHandler<void()>&&);
     void destroyGetPixelBufferSharedMemory();
     void putPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier, Ref<WebCore::PixelBuffer>&&, WebCore::IntRect&& srcRect, WebCore::IntPoint&& destPoint, WebCore::AlphaPremultiplication destFormat);
-    void getShareableBitmapForImageBuffer(WebCore::RenderingResourceIdentifier, WebCore::PreserveResolution, CompletionHandler<void(ShareableBitmapHandle&&)>&&);
-    void getFilteredImageForImageBuffer(WebCore::RenderingResourceIdentifier, Ref<WebCore::Filter>, CompletionHandler<void(ShareableBitmapHandle&&)>&&);
-    void cacheNativeImage(const ShareableBitmapHandle&, WebCore::RenderingResourceIdentifier);
+    void getShareableBitmapForImageBuffer(WebCore::RenderingResourceIdentifier, WebCore::PreserveResolution, CompletionHandler<void(ShareableBitmap::Handle&&)>&&);
+    void getFilteredImageForImageBuffer(WebCore::RenderingResourceIdentifier, Ref<WebCore::Filter>, CompletionHandler<void(ShareableBitmap::Handle&&)>&&);
+    void cacheNativeImage(const ShareableBitmap::Handle&, WebCore::RenderingResourceIdentifier);
     void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&);
     void cacheGradient(Ref<WebCore::Gradient>&&, WebCore::RenderingResourceIdentifier);
     void cacheFont(const WebCore::Font::Attributes&, WebCore::FontPlatformData::Attributes, std::optional<WebCore::RenderingResourceIdentifier>);
@@ -151,8 +151,8 @@ private:
     
     // Received messages translated to use QualifiedRenderingResourceIdentifier.
     void createImageBufferWithQualifiedIdentifier(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, QualifiedRenderingResourceIdentifier);
-    void getShareableBitmapForImageBufferWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier, WebCore::PreserveResolution, CompletionHandler<void(ShareableBitmapHandle&&)>&&);
-    void cacheNativeImageWithQualifiedIdentifier(const ShareableBitmapHandle&, QualifiedRenderingResourceIdentifier);
+    void getShareableBitmapForImageBufferWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier, WebCore::PreserveResolution, CompletionHandler<void(ShareableBitmap::Handle&&)>&&);
+    void cacheNativeImageWithQualifiedIdentifier(const ShareableBitmap::Handle&, QualifiedRenderingResourceIdentifier);
     void cacheDecomposedGlyphsWithQualifiedIdentifier(Ref<WebCore::DecomposedGlyphs>&&, QualifiedRenderingResourceIdentifier);
     void cacheGradientWithQualifiedIdentifier(Ref<WebCore::Gradient>&&, QualifiedRenderingResourceIdentifier);
     void releaseRenderingResourceWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier);

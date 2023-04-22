@@ -196,7 +196,7 @@ Logger& RemoteMediaPlayerManagerProxy::logger()
 }
 #endif
 
-ShareableBitmapHandle RemoteMediaPlayerManagerProxy::bitmapImageForCurrentTime(WebCore::MediaPlayerIdentifier identifier)
+ShareableBitmap::Handle RemoteMediaPlayerManagerProxy::bitmapImageForCurrentTime(WebCore::MediaPlayerIdentifier identifier)
 {
     auto player = mediaPlayer(identifier);
     if (!player)

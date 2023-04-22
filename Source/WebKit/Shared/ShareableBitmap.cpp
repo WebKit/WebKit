@@ -116,7 +116,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::createFromImageDraw(NativeImage& image)
     return bitmap;
 }
 
-RefPtr<ShareableBitmap> ShareableBitmap::create(const ShareableBitmapHandle& handle, SharedMemory::Protection protection)
+RefPtr<ShareableBitmap> ShareableBitmap::create(const Handle& handle, SharedMemory::Protection protection)
 {
     auto sharedMemory = SharedMemory::map(handle.m_handle, protection);
     if (!sharedMemory)
@@ -125,7 +125,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const ShareableBitmapHandle& han
     return create(handle.m_configuration, sharedMemory.releaseNonNull());
 }
 
-std::optional<Ref<ShareableBitmap>> ShareableBitmap::createReadOnly(const std::optional<ShareableBitmapHandle>& handle)
+std::optional<Ref<ShareableBitmap>> ShareableBitmap::createReadOnly(const std::optional<Handle>& handle)
 {
     if (!handle)
         return std::nullopt;
@@ -137,20 +137,20 @@ std::optional<Ref<ShareableBitmap>> ShareableBitmap::createReadOnly(const std::o
     return adoptRef(*new ShareableBitmap(handle->m_configuration, sharedMemory.releaseNonNull()));
 }
 
-std::optional<ShareableBitmapHandle> ShareableBitmap::createHandle(SharedMemory::Protection protection) const
+auto ShareableBitmap::createHandle(SharedMemory::Protection protection) const -> std::optional<Handle>
 {
     auto memoryHandle = m_sharedMemory->createHandle(protection);
     if (!memoryHandle)
         return std::nullopt;
-    ShareableBitmapHandle handle;
+    Handle handle;
     handle.m_handle = WTFMove(*memoryHandle);
     handle.m_configuration = m_configuration;
     return { WTFMove(handle) };
 }
 
-std::optional<ShareableBitmapHandle> ShareableBitmap::createReadOnlyHandle() const
+auto ShareableBitmap::createReadOnlyHandle() const -> std::optional<Handle>
 {
-    ShareableBitmapHandle handle;
+    Handle handle;
     auto memoryHandle = m_sharedMemory->createHandle(SharedMemory::Protection::ReadOnly);
     if (!memoryHandle)
         return std::nullopt;

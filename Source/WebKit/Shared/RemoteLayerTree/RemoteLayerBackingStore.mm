@@ -129,7 +129,7 @@ void RemoteLayerBackingStore::Buffer::encode(IPC::Encoder& encoder) const
 static bool hasValue(const ImageBufferBackendHandle& backendHandle)
 {
     return WTF::switchOn(backendHandle,
-        [&] (const ShareableBitmapHandle& handle) {
+        [&] (const ShareableBitmap::Handle& handle) {
             return !handle.isNull();
         },
         [&] (const MachSendRight& machSendRight) {
@@ -622,7 +622,7 @@ RetainPtr<id> RemoteLayerBackingStoreProperties::layerContentsBufferFromBackendH
 {
     RetainPtr<id> contents;
     WTF::switchOn(backendHandle,
-        [&] (ShareableBitmapHandle& handle) {
+        [&] (ShareableBitmap::Handle& handle) {
             if (auto bitmap = ShareableBitmap::create(handle))
                 contents = bridge_id_cast(bitmap->makeCGImageCopy());
         },

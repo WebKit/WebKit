@@ -727,7 +727,7 @@ void VideoFullscreenManager::setVideoLayerFrameFenced(PlaybackSessionContextIden
         model->setVideoInlineSizeFenced(bounds.size(), machSendRight);
 }
 
-void VideoFullscreenManager::updateTextTrackRepresentationForVideoElement(WebCore::HTMLVideoElement& videoElement, const ShareableBitmapHandle& textTrack)
+void VideoFullscreenManager::updateTextTrackRepresentationForVideoElement(WebCore::HTMLVideoElement& videoElement, const ShareableBitmap::Handle& textTrack)
 {
     if (!m_page)
         return;

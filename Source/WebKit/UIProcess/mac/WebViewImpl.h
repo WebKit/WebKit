@@ -507,7 +507,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     void startWindowDrag();
 
-    void startDrag(const WebCore::DragItem&, const ShareableBitmapHandle& image);
+    void startDrag(const WebCore::DragItem&, const ShareableBitmap::Handle& image);
     void setFileAndURLTypes(NSString *filename, NSString *extension, NSString *uti, NSString *title, NSString *url, NSString *visibleURL, NSPasteboard *);
     void setPromisedDataForImage(WebCore::Image&, NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, WebCore::FragmentedSharedBuffer* archiveBuffer, NSString *pasteboardName, NSString *pasteboardOrigin);
     void pasteboardChangedOwner(NSPasteboard *);
@@ -602,7 +602,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     bool shouldRequestCandidates() const;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    void requestTextRecognition(const URL& imageURL, const ShareableBitmapHandle& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
+    void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
     void computeHasVisualSearchResults(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&&);
 #endif
 
@@ -689,7 +689,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     void didFinishPresentation(WKRevealItemPresenter *);
 #endif
 
-    void beginTextRecognitionForVideoInElementFullscreen(const ShareableBitmapHandle&, WebCore::FloatRect);
+    void beginTextRecognitionForVideoInElementFullscreen(const ShareableBitmap::Handle&, WebCore::FloatRect);
     void cancelTextRecognitionForVideoInElementFullscreen();
 
 private:

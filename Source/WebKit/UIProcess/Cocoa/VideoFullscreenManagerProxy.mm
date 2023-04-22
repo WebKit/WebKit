@@ -523,7 +523,7 @@ void VideoFullscreenManagerProxy::forEachSession(Function<void(VideoFullscreenMo
     }
 }
 
-void VideoFullscreenManagerProxy::requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier identifier, CompletionHandler<void(const ShareableBitmapHandle&)>&& completionHandler)
+void VideoFullscreenManagerProxy::requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier identifier, CompletionHandler<void(const ShareableBitmap::Handle&)>&& completionHandler)
 {
     auto* gpuProcess = GPUProcessProxy::singletonIfCreated();
     if (!gpuProcess) {
@@ -859,7 +859,7 @@ void VideoFullscreenManagerProxy::preparedToExitFullscreen(PlaybackSessionContex
     ensureInterface(contextId).preparedToExitFullscreen();
 }
 
-void VideoFullscreenManagerProxy::textTrackRepresentationUpdate(PlaybackSessionContextIdentifier contextId, const ShareableBitmapHandle& textTrack)
+void VideoFullscreenManagerProxy::textTrackRepresentationUpdate(PlaybackSessionContextIdentifier contextId, const ShareableBitmap::Handle& textTrack)
 {
     auto bitmap = ShareableBitmap::create(textTrack);
     if (!bitmap)

@@ -92,7 +92,7 @@ void RemoteResourceCacheProxy::recordImageBufferUse(WebCore::ImageBuffer& imageB
     ASSERT_UNUSED(iterator, iterator != m_imageBuffers.end());
 }
 
-inline static std::optional<ShareableBitmapHandle> createShareableBitmapFromNativeImage(NativeImage& image)
+inline static std::optional<ShareableBitmap::Handle> createShareableBitmapFromNativeImage(NativeImage& image)
 {
     RefPtr<ShareableBitmap> bitmap;
     PlatformImagePtr platformImage;

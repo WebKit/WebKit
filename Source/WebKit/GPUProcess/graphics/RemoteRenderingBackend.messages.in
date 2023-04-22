@@ -28,9 +28,9 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
     GetPixelBufferForImageBufferWithNewMemory(WebCore::RenderingResourceIdentifier imageBuffer, WebKit::SharedMemory::Handle handle, struct WebCore::PixelBufferFormat outputFormat, WebCore::IntRect srcRect) -> () Synchronous NotStreamEncodable
     DestroyGetPixelBufferSharedMemory()
     PutPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, Ref<WebCore::PixelBuffer> pixelBuffer,  WebCore::IntRect srcRect, WebCore::IntPoint destPoint, enum:uint8_t WebCore::AlphaPremultiplication destFormat)
-    GetShareableBitmapForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, enum:bool WebCore::PreserveResolution preserveResolution) -> (WebKit::ShareableBitmapHandle handle) Synchronous NotStreamEncodableReply
-    GetFilteredImageForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, Ref<WebCore::Filter> filter) -> (WebKit::ShareableBitmapHandle handle) Synchronous NotStreamEncodableReply
-    CacheNativeImage(WebKit::ShareableBitmapHandle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
+    GetShareableBitmapForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, enum:bool WebCore::PreserveResolution preserveResolution) -> (WebKit::ShareableBitmap::Handle handle) Synchronous NotStreamEncodableReply
+    GetFilteredImageForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, Ref<WebCore::Filter> filter) -> (WebKit::ShareableBitmap::Handle handle) Synchronous NotStreamEncodableReply
+    CacheNativeImage(WebKit::ShareableBitmap::Handle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
     CacheFont(WebCore::Font::Attributes data, WebCore::FontPlatformData::Attributes platformData, std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifier) NotStreamEncodable
     CacheFontCustomPlatformData(Ref<WebCore::FontCustomPlatformData> customPlatformData) NotStreamEncodable
     CacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs> decomposedGlyphs) NotStreamEncodable

@@ -387,7 +387,7 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
         if (!parameters)
             return false;
 
-        ShareableBitmapHandle handle;
+        ShareableBitmap::Handle handle;
         if (!decoder.decode(handle))
             return false;
 

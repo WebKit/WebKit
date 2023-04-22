@@ -66,7 +66,7 @@ void WebDragClient::startDrag(DragItem item, DataTransfer& dataTransfer, LocalFr
 {
     auto& dragImage = item.image;
     RefPtr<ShareableBitmap> bitmap = convertCairoSurfaceToShareableBitmap(dragImage.get().get());
-    ShareableBitmapHandle handle;
+    ShareableBitmap::Handle handle;
 
     if (bitmap) {
         if (auto imageHandle = bitmap->createHandle())

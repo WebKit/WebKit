@@ -116,14 +116,14 @@ void RemoteImageDecoderAVFProxy::setData(ImageDecoderIdentifier identifier, cons
     completionHandler(frameCount, imageDecoder->size(), imageDecoder->hasTrack(), WTFMove(frameInfos));
 }
 
-void RemoteImageDecoderAVFProxy::createFrameImageAtIndex(ImageDecoderIdentifier identifier, size_t index, CompletionHandler<void(std::optional<WebKit::ShareableBitmapHandle>&&)>&& completionHandler)
+void RemoteImageDecoderAVFProxy::createFrameImageAtIndex(ImageDecoderIdentifier identifier, size_t index, CompletionHandler<void(std::optional<WebKit::ShareableBitmap::Handle>&&)>&& completionHandler)
 {
     ASSERT(m_imageDecoders.contains(identifier));
 
-    ShareableBitmapHandle imageHandle;
+    ShareableBitmap::Handle imageHandle;
 
     auto invokeCallbackAtScopeExit = makeScopeExit([&] {
-        auto handle = !imageHandle.isNull() ? WTFMove(imageHandle) : std::optional<ShareableBitmapHandle> { };
+        auto handle = !imageHandle.isNull() ? WTFMove(imageHandle) : std::optional<ShareableBitmap::Handle> { };
         completionHandler(WTFMove(handle));
     });
 

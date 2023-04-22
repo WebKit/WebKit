@@ -37,7 +37,7 @@ messages -> VideoFullscreenManagerProxy {
     PreparedToExitFullscreen(WebKit::PlaybackSessionContextIdentifier contextId)
     ExitFullscreenWithoutAnimationToMode(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode)
 
-    TextTrackRepresentationUpdate(WebKit::PlaybackSessionContextIdentifier contextId, WebKit::ShareableBitmapHandle textTrack)
+    TextTrackRepresentationUpdate(WebKit::PlaybackSessionContextIdentifier contextId, WebKit::ShareableBitmap::Handle textTrack)
     TextTrackRepresentationSetContentsScale(WebKit::PlaybackSessionContextIdentifier contextId, float scale)
     TextTrackRepresentationSetHidden(WebKit::PlaybackSessionContextIdentifier contextId, bool hidden)
 }

@@ -1054,7 +1054,7 @@ IPC::Connection::AsyncReplyID WebPageProxy::drawToPDFiOS(FrameIdentifier frameID
     return sendWithAsyncReply(Messages::WebPage::DrawToPDFiOS(frameID, printInfo, pageCount), WTFMove(completionHandler));
 }
 
-IPC::Connection::AsyncReplyID WebPageProxy::drawToImage(FrameIdentifier frameID, const PrintInfo& printInfo, size_t pageCount, CompletionHandler<void(WebKit::ShareableBitmapHandle&&)>&& completionHandler)
+IPC::Connection::AsyncReplyID WebPageProxy::drawToImage(FrameIdentifier frameID, const PrintInfo& printInfo, size_t pageCount, CompletionHandler<void(WebKit::ShareableBitmap::Handle&&)>&& completionHandler)
 {
     if (!hasRunningProcess()) {
         completionHandler({ });

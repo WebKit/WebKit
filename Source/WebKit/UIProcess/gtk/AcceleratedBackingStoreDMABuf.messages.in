@@ -22,6 +22,6 @@
 
 messages -> AcceleratedBackingStoreDMABuf NotRefCounted {
     Configure(UnixFileDescriptor backFD, UnixFileDescriptor frontFD, WebCore::IntSize size, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier)
-    ConfigureSHM(WebKit::ShareableBitmapHandle backBufferHandle, WebKit::ShareableBitmapHandle frontBufferHandle)
+    ConfigureSHM(WebKit::ShareableBitmap::Handle backBufferHandle, WebKit::ShareableBitmap::Handle frontBufferHandle)
     Frame() -> ()
 }

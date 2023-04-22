@@ -224,7 +224,7 @@ struct IPCCallbackContext {
     IPC::Connection::AsyncReplyID callbackID;
 };
 
-static void pageDidDrawToImage(const WebKit::ShareableBitmapHandle& imageHandle, IPCCallbackContext* context)
+static void pageDidDrawToImage(const WebKit::ShareableBitmap::Handle& imageHandle, IPCCallbackContext* context)
 {
     ASSERT(RunLoop::isMain());
 
@@ -539,7 +539,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 _webFrame->page()->beginPrinting(_webFrame.get(), WebKit::PrintInfo([_printOperation.get() printInfo]));
 
                 IPCCallbackContext* context = new IPCCallbackContext;
-                auto callback = [context](const WebKit::ShareableBitmapHandle& imageHandle) {
+                auto callback = [context](const WebKit::ShareableBitmap::Handle& imageHandle) {
                     std::unique_ptr<IPCCallbackContext> contextDeleter(context);
                     pageDidDrawToImage(imageHandle, context);
                 };

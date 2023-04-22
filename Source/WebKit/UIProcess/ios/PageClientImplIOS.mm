@@ -478,7 +478,7 @@ void PageClientImpl::doneDeferringTouchEnd(bool preventNativeGestures)
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-void PageClientImpl::requestTextRecognition(const URL& imageURL, const ShareableBitmapHandle& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(TextRecognitionResult&&)>&& completion)
+void PageClientImpl::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(TextRecognitionResult&&)>&& completion)
 {
     [m_contentView requestTextRecognition:imageURL imageData:imageData sourceLanguageIdentifier:sourceLanguageIdentifier targetLanguageIdentifier:targetLanguageIdentifier completionHandler:WTFMove(completion)];
 }
@@ -932,7 +932,7 @@ void PageClientImpl::didHandleAdditionalDragItemsRequest(bool added)
     [m_contentView _didHandleAdditionalDragItemsRequest:added];
 }
 
-void PageClientImpl::startDrag(const DragItem& item, const ShareableBitmapHandle& image)
+void PageClientImpl::startDrag(const DragItem& item, const ShareableBitmap::Handle& image)
 {
     auto bitmap = ShareableBitmap::create(image);
     if (!bitmap)
@@ -1088,7 +1088,7 @@ String PageClientImpl::sceneID()
     return [m_contentView window].windowScene._sceneIdentifier;
 }
 
-void PageClientImpl::beginTextRecognitionForFullscreenVideo(const ShareableBitmapHandle& imageHandle, AVPlayerViewController *playerViewController)
+void PageClientImpl::beginTextRecognitionForFullscreenVideo(const ShareableBitmap::Handle& imageHandle, AVPlayerViewController *playerViewController)
 {
     [m_contentView beginTextRecognitionForFullscreenVideo:imageHandle playerViewController:playerViewController];
 }
@@ -1104,7 +1104,7 @@ bool PageClientImpl::isTextRecognitionInFullscreenVideoEnabled() const
 }
 
 #if ENABLE(VIDEO)
-void PageClientImpl::beginTextRecognitionForVideoInElementFullscreen(const ShareableBitmapHandle& bitmapHandle, FloatRect bounds)
+void PageClientImpl::beginTextRecognitionForVideoInElementFullscreen(const ShareableBitmap::Handle& bitmapHandle, FloatRect bounds)
 {
     [m_contentView beginTextRecognitionForVideoInElementFullscreen:bitmapHandle bounds:bounds];
 }

@@ -214,7 +214,7 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
     return makeUnique<RenderTargetSHMImage>(pageID, size, Ref { *backBuffer }, WTFMove(*backBufferHandle), Ref { *frontBuffer }, WTFMove(*frontBufferHandle));
 }
 
-AcceleratedSurfaceDMABuf::RenderTargetSHMImage::RenderTargetSHMImage(WebCore::PageIdentifier pageID, const WebCore::IntSize& size, Ref<ShareableBitmap>&& backBitmap, ShareableBitmapHandle&& backBitmapHandle, Ref<ShareableBitmap>&& frontBitmap, ShareableBitmapHandle&& frontBitmapHandle)
+AcceleratedSurfaceDMABuf::RenderTargetSHMImage::RenderTargetSHMImage(WebCore::PageIdentifier pageID, const WebCore::IntSize& size, Ref<ShareableBitmap>&& backBitmap, ShareableBitmap::Handle&& backBitmapHandle, Ref<ShareableBitmap>&& frontBitmap, ShareableBitmap::Handle&& frontBitmapHandle)
     : RenderTarget(pageID, size)
     , m_backBitmap(WTFMove(backBitmap))
     , m_frontBitmap(WTFMove(frontBitmap))

@@ -169,7 +169,7 @@ public:
 
     void forEachSession(Function<void(VideoFullscreenModelContext&, PlatformVideoFullscreenInterface&)>&&);
 
-    void requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier, CompletionHandler<void(const ShareableBitmapHandle&)>&&);
+    void requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier, CompletionHandler<void(const ShareableBitmap::Handle&)>&&);
 
 #if PLATFORM(IOS_FAMILY)
     AVPlayerViewController *playerViewController(PlaybackSessionContextIdentifier) const;
@@ -213,7 +213,7 @@ private:
     void preparedToExitFullscreen(PlaybackSessionContextIdentifier);
     void exitFullscreenWithoutAnimationToMode(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void setPlayerIdentifier(PlaybackSessionContextIdentifier, std::optional<WebCore::MediaPlayerIdentifier>);
-    void textTrackRepresentationUpdate(PlaybackSessionContextIdentifier, const ShareableBitmapHandle& textTrack);
+    void textTrackRepresentationUpdate(PlaybackSessionContextIdentifier, const ShareableBitmap::Handle& textTrack);
     void textTrackRepresentationSetContentsScale(PlaybackSessionContextIdentifier, float scale);
     void textTrackRepresentationSetHidden(PlaybackSessionContextIdentifier, bool hidden);
 

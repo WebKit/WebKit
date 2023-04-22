@@ -351,7 +351,7 @@ void AcceleratedBackingStoreDMABuf::configure(UnixFileDescriptor&& backFD, UnixF
         m_pendingSource = createSource();
 }
 
-void AcceleratedBackingStoreDMABuf::configureSHM(ShareableBitmapHandle&& backBufferHandle, ShareableBitmapHandle&& frontBufferHandle)
+void AcceleratedBackingStoreDMABuf::configureSHM(ShareableBitmap::Handle&& backBufferHandle, ShareableBitmap::Handle&& frontBufferHandle)
 {
     m_isSoftwareRast = true;
     m_surface.backBitmap = ShareableBitmap::create(backBufferHandle, SharedMemory::Protection::ReadOnly);
