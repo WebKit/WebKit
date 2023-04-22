@@ -303,6 +303,15 @@ void StringDumper::visit(AssignmentStatement& statement)
     m_out.print(";");
 }
 
+void StringDumper::visit(CompoundAssignmentStatement& statement)
+{
+    m_out.print(m_indent);
+    visit(statement.leftExpression());
+    m_out.print(" ", statement.operation(), "= ");
+    visit(statement.rightExpression());
+    m_out.print(";");
+}
+
 void StringDumper::visit(CompoundStatement& block)
 {
     m_out.print(m_indent, "{");

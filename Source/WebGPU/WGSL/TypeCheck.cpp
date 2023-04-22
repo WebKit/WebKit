@@ -54,6 +54,7 @@ public:
 
     // Statements
     void visit(AST::AssignmentStatement&) override;
+    void visit(AST::CompoundAssignmentStatement&) override;
     void visit(AST::IfStatement&) override;
     void visit(AST::PhonyAssignmentStatement&) override;
     void visit(AST::ReturnStatement&) override;
@@ -229,6 +230,14 @@ void TypeChecker::visit(AST::AssignmentStatement& statement)
     auto* rhs = infer(statement.rhs());
     if (!unify(lhs, rhs))
         typeError(InferBottom::No, statement.span(), "cannot assign value of type '", *rhs, "' to '", *lhs, "'");
+}
+
+void TypeChecker::visit(AST::CompoundAssignmentStatement& statement)
+{
+    // FIXME: Implement type checking - infer is called to avoid ASSERT in
+    // TypeChecker::visit(AST::Expression&)
+    infer(statement.leftExpression());
+    infer(statement.rightExpression());
 }
 
 void TypeChecker::visit(AST::IfStatement& statement)

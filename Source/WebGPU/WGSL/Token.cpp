@@ -103,6 +103,8 @@ String toString(TokenType type)
         return "&"_s;
     case TokenType::AndAnd:
         return "&&"_s;
+    case TokenType::AndEq:
+        return "&="_s;
     case TokenType::Arrow:
         return "->"_s;
     case TokenType::Attribute:
@@ -133,26 +135,38 @@ String toString(TokenType type)
         return ">="_s;
     case TokenType::GtGt:
         return ">>"_s;
+    case TokenType::GtGtEq:
+        return ">>="_s;
     case TokenType::Lt:
         return "<"_s;
     case TokenType::LtEq:
         return "<="_s;
     case TokenType::LtLt:
         return "<<"_s;
+    case TokenType::LtLtEq:
+        return "<<="_s;
     case TokenType::Minus:
         return "-"_s;
     case TokenType::MinusMinus:
         return "--"_s;
+    case TokenType::MinusEq:
+        return "-="_s;
     case TokenType::Modulo:
         return "%"_s;
+    case TokenType::ModuloEq:
+        return "%="_s;
     case TokenType::Or:
         return "|"_s;
     case TokenType::OrOr:
         return "||"_s;
+    case TokenType::OrEq:
+        return "|="_s;
     case TokenType::Plus:
         return "+"_s;
     case TokenType::PlusPlus:
         return "++"_s;
+    case TokenType::PlusEq:
+        return "+="_s;
     case TokenType::Period:
         return "."_s;
     case TokenType::ParenLeft:
@@ -163,14 +177,20 @@ String toString(TokenType type)
         return ";"_s;
     case TokenType::Slash:
         return "/"_s;
+    case TokenType::SlashEq:
+        return "/="_s;
     case TokenType::Star:
         return "*"_s;
+    case TokenType::StarEq:
+        return "*="_s;
     case TokenType::Tilde:
         return "~"_s;
     case TokenType::Underbar:
         return "_"_s;
     case TokenType::Xor:
         return "^"_s;
+    case TokenType::XorEq:
+        return "^="_s;
     }
 }
 

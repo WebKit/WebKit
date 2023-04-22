@@ -213,10 +213,30 @@ static bool canContinueShortCircuitOrExpression(const Token& token)
     return token.type == TokenType::OrOr;
 }
 
+static bool canContinueCompoundAssignmentStatement(const Token& token)
+{
+    switch (token.type) {
+    case TokenType::PlusEq:
+    case TokenType::MinusEq:
+    case TokenType::StarEq:
+    case TokenType::SlashEq:
+    case TokenType::ModuloEq:
+    case TokenType::AndEq:
+    case TokenType::OrEq:
+    case TokenType::XorEq:
+    case TokenType::GtGtEq:
+    case TokenType::LtLtEq:
+        return true;
+    default:
+        return false;
+    }
+}
+
 static AST::BinaryOperation toBinaryOperation(const Token& token)
 {
     switch (token.type) {
     case TokenType::And:
+    case TokenType::AndEq:
         return AST::BinaryOperation::And;
     case TokenType::AndAnd:
         return AST::BinaryOperation::ShortCircuitAnd;
@@ -229,28 +249,37 @@ static AST::BinaryOperation toBinaryOperation(const Token& token)
     case TokenType::GtEq:
         return AST::BinaryOperation::GreaterEqual;
     case TokenType::GtGt:
+    case TokenType::GtGtEq:
         return AST::BinaryOperation::RightShift;
     case TokenType::Lt:
         return AST::BinaryOperation::LessThan;
     case TokenType::LtEq:
         return AST::BinaryOperation::LessEqual;
     case TokenType::LtLt:
+    case TokenType::LtLtEq:
         return AST::BinaryOperation::LeftShift;
     case TokenType::Minus:
+    case TokenType::MinusEq:
         return AST::BinaryOperation::Subtract;
     case TokenType::Modulo:
+    case TokenType::ModuloEq:
         return AST::BinaryOperation::Modulo;
     case TokenType::Or:
+    case TokenType::OrEq:
         return AST::BinaryOperation::Or;
     case TokenType::OrOr:
         return AST::BinaryOperation::ShortCircuitOr;
     case TokenType::Plus:
+    case TokenType::PlusEq:
         return AST::BinaryOperation::Add;
     case TokenType::Slash:
+    case TokenType::SlashEq:
         return AST::BinaryOperation::Divide;
     case TokenType::Star:
+    case TokenType::StarEq:
         return AST::BinaryOperation::Multiply;
     case TokenType::Xor:
+    case TokenType::XorEq:
         return AST::BinaryOperation::Xor;
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -820,9 +849,18 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
     case TokenType::Identifier: {
         // FIXME: there will be other cases here eventually for function calls
         PARSE(lhs, LHSExpression);
-        CONSUME_TYPE(Equal);
+        std::optional<AST::BinaryOperation> maybeOp;
+        if (canContinueCompoundAssignmentStatement(current())) {
+            maybeOp = toBinaryOperation(current());
+            consume();
+        } else
+            CONSUME_TYPE(Equal);
         PARSE(rhs, Expression);
         CONSUME_TYPE(Semicolon);
+
+        if (maybeOp)
+            RETURN_NODE_UNIQUE_REF(CompoundAssignmentStatement, WTFMove(lhs), WTFMove(rhs), *maybeOp);
+
         RETURN_NODE_UNIQUE_REF(AssignmentStatement, WTFMove(lhs), WTFMove(rhs));
     }
     case TokenType::KeywordFor: {

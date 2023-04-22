@@ -77,6 +77,7 @@ public:
 
     // Statement
     void visit(AssignmentStatement&) override;
+    void visit(CompoundAssignmentStatement&) override;
     void visit(CompoundStatement&) override;
     void visit(IfStatement&) override;
     void visit(PhonyAssignmentStatement&) override;

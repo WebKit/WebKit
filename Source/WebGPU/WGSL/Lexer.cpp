@@ -52,13 +52,22 @@ Token Lexer<T>::lex()
         return makeToken(TokenType::Bang);
     case '%':
         shift();
-        return makeToken(TokenType::Modulo);
+        switch (m_current) {
+        case '=':
+            shift();
+            return makeToken(TokenType::ModuloEq);
+        default:
+            return makeToken(TokenType::Modulo);
+        }
     case '&':
         shift();
         switch (m_current) {
         case '&':
             shift();
             return makeToken(TokenType::AndAnd);
+        case '=':
+            shift();
+            return makeToken(TokenType::AndEq);
         default:
             return makeToken(TokenType::And);
         }
@@ -104,7 +113,13 @@ Token Lexer<T>::lex()
             return makeToken(TokenType::GtEq);
         case '>':
             shift();
-            return makeToken(TokenType::GtGt);
+            switch (m_current) {
+            case '=':
+                shift();
+                return makeToken(TokenType::GtGtEq);
+            default:
+                return makeToken(TokenType::GtGt);
+            }
         default:
             return makeToken(TokenType::Gt);
         }
@@ -116,7 +131,13 @@ Token Lexer<T>::lex()
             return makeToken(TokenType::LtEq);
         case '<':
             shift();
-            return makeToken(TokenType::LtLt);
+            switch (m_current) {
+            case '=':
+                shift();
+                return makeToken(TokenType::LtLtEq);
+            default:
+                return makeToken(TokenType::LtLt);
+            }
         default:
             return makeToken(TokenType::Lt);
         }
@@ -125,11 +146,23 @@ Token Lexer<T>::lex()
         return makeToken(TokenType::Attribute);
     case '*':
         shift();
-        // FIXME: Report unbalanced block comments, such as "this is an unbalanced comment. */"
-        return makeToken(TokenType::Star);
+        switch (m_current) {
+        case '=':
+            shift();
+            return makeToken(TokenType::StarEq);
+        default:
+            // FIXME: Report unbalanced block comments, such as "this is an unbalanced comment. */"
+            return makeToken(TokenType::Star);
+        }
     case '/':
         shift();
-        return makeToken(TokenType::Slash);
+        switch (m_current) {
+        case '=':
+            shift();
+            return makeToken(TokenType::SlashEq);
+        default:
+            return makeToken(TokenType::Slash);
+        }
     case '.': {
         shift();
         unsigned offset = currentOffset();
@@ -152,31 +185,49 @@ Token Lexer<T>::lex()
     }
     case '-':
         shift();
-        if (m_current == '>') {
+        switch (m_current) {
+        case '>':
             shift();
             return makeToken(TokenType::Arrow);
-        }
-        if (m_current == '-') {
+        case '-':
             shift();
             return makeToken(TokenType::MinusMinus);
+        case '=':
+            shift();
+            return makeToken(TokenType::MinusEq);
+        default:
+            return makeToken(TokenType::Minus);
         }
-        return makeToken(TokenType::Minus);
     case '+':
         shift();
-        if (m_current == '+') {
+        switch (m_current) {
+        case '+':
             shift();
             return makeToken(TokenType::PlusPlus);
+        case '=':
+            shift();
+            return makeToken(TokenType::PlusEq);
+        default:
+            return makeToken(TokenType::Plus);
         }
-        return makeToken(TokenType::Plus);
     case '^':
         shift();
-        return makeToken(TokenType::Xor);
+        switch (m_current) {
+        case '=':
+            shift();
+            return makeToken(TokenType::XorEq);
+        default:
+            return makeToken(TokenType::Xor);
+        }
     case '|':
         shift();
         switch (m_current) {
         case '|':
             shift();
             return makeToken(TokenType::OrOr);
+        case '=':
+            shift();
+            return makeToken(TokenType::OrEq);
         default:
             return makeToken(TokenType::Or);
         }
