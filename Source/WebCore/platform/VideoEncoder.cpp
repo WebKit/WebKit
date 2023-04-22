@@ -74,6 +74,8 @@ void VideoEncoder::createLocalEncoder(const String& codecName, const Config& con
     return;
 #else
     UNUSED_PARAM(codecName);
+    UNUSED_PARAM(config);
+    UNUSED_PARAM(descriptionCallback);
     UNUSED_PARAM(outputCallback);
     UNUSED_PARAM(postCallback);
 #endif
