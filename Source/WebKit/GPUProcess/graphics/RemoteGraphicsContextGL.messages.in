@@ -48,7 +48,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
     void SetSharedVideoFrameMemory(WebKit::SharedMemory::Handle storageHandle) NotStreamEncodable
 #endif
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     void PaintCompositedResultsToVideoFrame() -> (std::optional<WebKit::RemoteVideoFrameProxy::Properties> properties) Synchronous
 #endif
     void SimulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting event)
