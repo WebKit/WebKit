@@ -91,7 +91,10 @@ static Vector<WebKitTestRunnerWindow *> allWindows;
     [super dealloc];
 }
 
+// FIXME: <https://webkit.org/b/255832> Is this override really necessary?
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)setFrameOrigin:(CGPoint)point
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     _fakeOrigin = point;
 }
