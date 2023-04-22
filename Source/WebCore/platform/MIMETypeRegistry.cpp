@@ -630,17 +630,6 @@ bool MIMETypeRegistry::isXMLEntityMIMEType(StringView mimeType)
         || equalLettersIgnoringASCIICase(mimeType, "application/xml-external-parsed-entity"_s);
 }
 
-bool MIMETypeRegistry::isJavaAppletMIMEType(const String& mimeType)
-{
-    // Since this set is very limited and is likely to remain so we won't bother with the overhead
-    // of using a hash set.
-    // Any of the MIME types below may be followed by any number of specific versions of the JVM,
-    // which is why we use startsWith()
-    return startsWithLettersIgnoringASCIICase(mimeType, "application/x-java-applet"_s)
-        || startsWithLettersIgnoringASCIICase(mimeType, "application/x-java-bean"_s)
-        || startsWithLettersIgnoringASCIICase(mimeType, "application/x-java-vm"_s);
-}
-
 bool MIMETypeRegistry::isPDFMIMEType(const String& mimeType)
 {
     static constexpr SortedArraySet set { pdfMIMETypeArray };
