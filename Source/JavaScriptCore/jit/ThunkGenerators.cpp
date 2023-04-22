@@ -735,12 +735,13 @@ MacroAssemblerCodeRef<JITThunkPtrTag> stringGetByValGenerator(VM& vm)
     jit.tagReturnAddress();
 
     // Load string length to regT2, and start the process of loading the data pointer into regT0
-    jit.loadPtr(JSInterfaceJIT::Address(stringGPR, JSString::offsetOfValue()), stringGPR);
-    failures.append(jit.branchIfRopeStringImpl(stringGPR));
-    jit.load32(JSInterfaceJIT::Address(stringGPR, StringImpl::lengthMemoryOffset()), scratchGPR);
+    jit.loadPtr(JSInterfaceJIT::Address(stringGPR, JSString::offsetOfFiberAndLengthAndFlag()), stringGPR);
+    jit.expandJSStringLength(stringGPR, scratchGPR);
 
     // Do an unsigned compare to simultaneously filter negative indices as well as indices that are too large
     failures.append(jit.branch32(JSInterfaceJIT::AboveOrEqual, indexGPR, scratchGPR));
+    failures.append(jit.branchIfRopeStringImpl(stringGPR));
+    jit.loadJSStringImpl(stringGPR, stringGPR);
 
     // Load the character
     JSInterfaceJIT::JumpList cont8Bit;
@@ -773,15 +774,18 @@ static void stringCharLoad(SpecializedThunkJIT& jit)
     jit.loadJSStringArgument(SpecializedThunkJIT::ThisArgument, SpecializedThunkJIT::regT0);
 
     // Load string length to regT2, and start the process of loading the data pointer into regT0
-    jit.loadPtr(MacroAssembler::Address(SpecializedThunkJIT::regT0, JSString::offsetOfValue()), SpecializedThunkJIT::regT0);
+    jit.loadPtr(MacroAssembler::Address(SpecializedThunkJIT::regT0, JSString::offsetOfFiberAndLengthAndFlag()), SpecializedThunkJIT::regT0);
     jit.appendFailure(jit.branchIfRopeStringImpl(SpecializedThunkJIT::regT0));
-    jit.load32(MacroAssembler::Address(SpecializedThunkJIT::regT0, StringImpl::lengthMemoryOffset()), SpecializedThunkJIT::regT2);
+    jit.expandJSStringLength(SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT2);
 
     // load index
     jit.loadInt32Argument(0, SpecializedThunkJIT::regT1); // regT1 contains the index
 
     // Do an unsigned compare to simultaneously filter negative indices as well as indices that are too large
     jit.appendFailure(jit.branch32(MacroAssembler::AboveOrEqual, SpecializedThunkJIT::regT1, SpecializedThunkJIT::regT2));
+
+    // Expand the StringImpl*
+    jit.loadJSStringImpl(SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT0);
 
     // Load the character
     SpecializedThunkJIT::JumpList is16Bit;
@@ -860,15 +864,16 @@ MacroAssemblerCodeRef<JITThunkPtrTag> stringPrototypeCodePointAtThunkGenerator(V
     jit.loadJSStringArgument(SpecializedThunkJIT::ThisArgument, GPRInfo::regT0);
 
     // Load string length to regT3, and start the process of loading the data pointer into regT2
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, JSString::offsetOfValue()), GPRInfo::regT0);
-    jit.appendFailure(jit.branchIfRopeStringImpl(GPRInfo::regT0));
-    jit.load32(CCallHelpers::Address(GPRInfo::regT0, StringImpl::lengthMemoryOffset()), GPRInfo::regT3);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, JSString::offsetOfFiberAndLengthAndFlag()), GPRInfo::regT0);
+    jit.expandJSStringLength(GPRInfo::regT0, GPRInfo::regT3);
 
     // load index
     jit.loadInt32Argument(0, GPRInfo::regT1); // regT1 contains the index
 
     // Do an unsigned compare to simultaneously filter negative indices as well as indices that are too large
     jit.appendFailure(jit.branch32(CCallHelpers::AboveOrEqual, GPRInfo::regT1, GPRInfo::regT3));
+    jit.appendFailure(jit.branchIfRopeStringImpl(GPRInfo::regT0));
+    jit.loadJSStringImpl(GPRInfo::regT0, GPRInfo::regT0);
 
     // Load the character
     CCallHelpers::JumpList done;

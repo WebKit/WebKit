@@ -324,6 +324,18 @@ public:
     void storePtr(LValue value, LValue base, const AbstractHeap& field) { storePtr(value, address(base, field)); }
     void storeDouble(LValue value, LValue base, const AbstractHeap& field) { storeDouble(value, address(base, field)); }
 
+    template<typename T>
+    LValue compressCompactPtr(LValue value)
+    {
+        if constexpr (sizeof(typename T::CompactPtrTypeTraits::StorageType) < sizeof(void*)) {
+            value = castToInt32(lShr(value, constInt32(4)));
+            if (T::CompactPtrTypeTraits::additionalMask)
+                value = bitAnd(constInt32(T::CompactPtrTypeTraits::additionalMask), value);
+            return value;
+        } else
+            return value;
+    }
+
     // FIXME: Explore adding support for value range constraints to B3. Maybe it could be as simple as having
     // a load instruction that guarantees that its result is non-negative.
     // https://bugs.webkit.org/show_bug.cgi?id=151458

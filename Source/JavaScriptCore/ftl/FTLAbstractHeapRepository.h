@@ -124,10 +124,8 @@ namespace JSC { namespace FTL {
     macro(JSPropertyNameEnumerator_endStructurePropertyIndex, JSPropertyNameEnumerator::endStructurePropertyIndexOffset()) \
     macro(JSPropertyNameEnumerator_indexLength, JSPropertyNameEnumerator::indexedLengthOffset()) \
     macro(JSPropertyNameEnumerator_flags, JSPropertyNameEnumerator::flagsOffset()) \
-    macro(JSRopeString_flags, JSRopeString::offsetOfFlags()) \
-    macro(JSRopeString_length, JSRopeString::offsetOfLength()) \
-    macro(JSRopeString_fiber0, JSRopeString::offsetOfFiber0()) \
-    macro(JSRopeString_fiber1, JSRopeString::offsetOfFiber1()) \
+    macro(JSString_fiber0, JSString::offsetOfFiberAndLengthAndFlag()) \
+    macro(JSRopeString_fiber1, JSRopeString::offsetOfFiber1AndFlags()) \
     macro(JSRopeString_fiber2, JSRopeString::offsetOfFiber2()) \
     macro(JSScope_next, JSScope::offsetOfNext()) \
     macro(JSSymbolTableObject_symbolTable, JSSymbolTableObject::offsetOfSymbolTable()) \
@@ -238,7 +236,6 @@ public:
     FOR_EACH_NUMBERED_ABSTRACT_HEAP(NUMBERED_ABSTRACT_HEAP_DECLARATION)
 #undef NUMBERED_ABSTRACT_HEAP_DECLARATION
 
-    AbstractHeap& JSString_value;
     AbstractHeap& JSWrapperObject_internalValue;
 
     AbsoluteAbstractHeap absolute;

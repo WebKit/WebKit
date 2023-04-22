@@ -67,14 +67,15 @@ void JSString::dumpToStream(const JSCell* cell, PrintStream& out)
 {
     const JSString* thisObject = jsCast<const JSString*>(cell);
     out.printf("<%p, %s, [%u], ", thisObject, thisObject->className().characters(), thisObject->length());
-    uintptr_t pointer = thisObject->fiberConcurrently();
-    if (pointer & isRopeInPointer) {
-        if (pointer & JSRopeString::isSubstringInPointer)
+    auto data = thisObject->fiberConcurrently();
+    if (data.isRope()) {
+        bool isSubstring = static_cast<const JSRopeString*>(thisObject)->m_fiber1AndFlags & JSRopeString::isSubstringInPointer;
+        if (isSubstring)
             out.printf("[substring]");
         else
             out.printf("[rope]");
     } else {
-        if (WTF::StringImpl* ourImpl = bitwise_cast<StringImpl*>(pointer)) {
+        if (WTF::StringImpl* ourImpl = data.fiberAs<StringImpl>()) {
             if (ourImpl->is8Bit())
                 out.printf("[8 %p]", ourImpl->characters8());
             else
@@ -92,10 +93,10 @@ bool JSString::equalSlowCase(JSGlobalObject* globalObject, JSString* other) cons
 size_t JSString::estimatedSize(JSCell* cell, VM& vm)
 {
     JSString* thisObject = asString(cell);
-    uintptr_t pointer = thisObject->fiberConcurrently();
-    if (pointer & isRopeInPointer)
+    auto data = thisObject->fiberConcurrently();
+    if (data.isRope())
         return Base::estimatedSize(cell, vm);
-    return Base::estimatedSize(cell, vm) + bitwise_cast<StringImpl*>(pointer)->costDuringGC();
+    return Base::estimatedSize(cell, vm) + data.fiberAs<StringImpl>()->costDuringGC();
 }
 
 template<typename Visitor>
@@ -105,9 +106,10 @@ void JSString::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     
-    uintptr_t pointer = thisObject->fiberConcurrently();
-    if (pointer & isRopeInPointer) {
-        if (pointer & JSRopeString::isSubstringInPointer) {
+    auto data = thisObject->fiberConcurrently();
+    if (data.isRope()) {
+        bool isSubstring = static_cast<const JSRopeString*>(thisObject)->m_fiber1AndFlags & JSRopeString::isSubstringInPointer;
+        if (isSubstring) {
             visitor.appendUnbarriered(static_cast<JSRopeString*>(thisObject)->fiber1());
             return;
         }
@@ -115,7 +117,7 @@ void JSString::visitChildrenImpl(JSCell* cell, Visitor& visitor)
             JSString* fiber = nullptr;
             switch (index) {
             case 0:
-                fiber = bitwise_cast<JSString*>(pointer & JSRopeString::stringMask);
+                fiber = data.fiberAs<JSRopeString>();
                 break;
             case 1:
                 fiber = static_cast<JSRopeString*>(thisObject)->fiber1();
@@ -132,9 +134,8 @@ void JSString::visitChildrenImpl(JSCell* cell, Visitor& visitor)
             visitor.appendUnbarriered(fiber);
         }
         return;
-    }
-    if (StringImpl* impl = bitwise_cast<StringImpl*>(pointer))
-        visitor.reportExtraMemoryVisited(impl->costDuringGC());
+    } else
+        visitor.reportExtraMemoryVisited(data.fiberAs<StringImpl>()->costDuringGC());
 }
 
 DEFINE_VISIT_CHILDREN(JSString);
@@ -174,7 +175,7 @@ AtomString JSRopeString::resolveRopeToAtomString(JSGlobalObject* globalObject) c
             atomString = AtomString(buffer, length());
         }
     } else
-        atomString = StringView { substringBase()->valueInternal() }.substring(substringOffset(), length()).toAtomString();
+        atomString = StringView { substringBase()->fiberConcurrently().fiberAs<StringImpl>() }.substring(substringOffset(), length()).toAtomString();
 
     // If we resolved a string that didn't previously exist, notify the heap that we've grown.
     if (atomString.impl()->hasOneRef())
@@ -214,7 +215,7 @@ RefPtr<AtomStringImpl> JSRopeString::resolveRopeToExistingAtomString(JSGlobalObj
             existingAtomString = AtomStringImpl::lookUp(buffer, length());
         }
     } else
-        existingAtomString = StringView { substringBase()->valueInternal() }.substring(substringOffset(), length()).toExistingAtomString().releaseImpl();
+        existingAtomString = StringView { substringBase()->fiberConcurrently().fiberAs<StringImpl>() }.substring(substringOffset(), length()).toExistingAtomString().releaseImpl();
 
     if (existingAtomString)
         convertToNonRope(*existingAtomString);
@@ -222,16 +223,17 @@ RefPtr<AtomStringImpl> JSRopeString::resolveRopeToExistingAtomString(JSGlobalObj
 }
 
 template<typename Function>
-const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobalObjectForOOM, Function&& function) const
+const String JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobalObjectForOOM, Function&& function) const
 {
     ASSERT(isRope());
     
     VM& vm = this->vm();
     if (isSubstring()) {
         ASSERT(!substringBase()->isRope());
-        auto newImpl = substringBase()->valueInternal().substringSharingImpl(substringOffset(), length());
+        auto value = String(substringBase()->fiberConcurrently().fiberAs<StringImpl>());
+        auto newImpl = value.substringSharingImpl(substringOffset(), length());
         convertToNonRope(function(newImpl.releaseImpl().releaseNonNull()));
-        return valueInternal();
+        return fiberConcurrently().fiberAs<StringImpl>();
     }
     
     if (is8Bit()) {
@@ -245,7 +247,7 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
 
         resolveRopeInternalNoSubstring(buffer);
         convertToNonRope(function(newImpl.releaseNonNull()));
-        return valueInternal();
+        return fiberConcurrently().fiberAs<StringImpl>();
     }
     
     UChar* buffer;
@@ -258,10 +260,10 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
     
     resolveRopeInternalNoSubstring(buffer);
     convertToNonRope(function(newImpl.releaseNonNull()));
-    return valueInternal();
+    return fiberConcurrently().fiberAs<StringImpl>();
 }
 
-const String& JSRopeString::resolveRope(JSGlobalObject* nullOrGlobalObjectForOOM) const
+const String JSRopeString::resolveRope(JSGlobalObject* nullOrGlobalObjectForOOM) const
 {
     return resolveRopeWithFunction(nullOrGlobalObjectForOOM, [] (Ref<StringImpl>&& newImpl) {
         return WTFMove(newImpl);

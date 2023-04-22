@@ -323,6 +323,7 @@ end
 if GIGACAGE_ENABLED
     const GigacagePrimitiveBasePtrOffset = constexpr Gigacage::offsetOfPrimitiveGigacageBasePtr
     const GigacageJSValueBasePtrOffset = constexpr Gigacage::offsetOfJSValueGigacageBasePtr
+    const GigacageSmallHeapBasePtrOffset = constexpr Gigacage::offsetOfSmallHeapGigacageBasePtr
 end
 
 # Opcode offsets
@@ -627,6 +628,7 @@ const LLIntReturnPC = ArgumentCountIncludingThis + TagOffset
 
 # String flags.
 const isRopeInPointer = constexpr JSString::isRopeInPointer
+const fiberAndLengthAndFlagLengthMask = constexpr JSString::fiberAndLengthAndFlagLengthMask
 const HashFlags8BitBuffer = constexpr StringImpl::s_hashFlag8BitBuffer
 
 # Copied from PropertyOffset.h

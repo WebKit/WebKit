@@ -41,7 +41,7 @@ protected:
 public:
 #if ENABLE(SMALL_HEAP)
     using AllocatorInfo = Gigacage::SmallHeapAllocatorInfo;
-    using CompactPtrTypeTraits = WTF::BigHeapTypeTraits<UniquedStringImpl>;
+    using CompactPtrTypeTraits = WTF::SmallHeapTypeTraits<UniquedStringImpl>;
 #else
     using CompactPtrTypeTraits = WTF::BigHeapTypeTraits<UniquedStringImpl>;
 #endif

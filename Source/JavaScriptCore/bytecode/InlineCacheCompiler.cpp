@@ -388,8 +388,10 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
 
         if (accessCase.uid()->isSymbol())
             jit.loadPtr(MacroAssembler::Address(propertyGPR, Symbol::offsetOfSymbolImpl()), scratchGPR);
-        else
-            jit.loadPtr(MacroAssembler::Address(propertyGPR, JSString::offsetOfValue()), scratchGPR);
+        else {
+            jit.loadPtr(MacroAssembler::Address(propertyGPR, JSString::offsetOfFiberAndLengthAndFlag()), scratchGPR);
+            jit.loadJSStringImpl(scratchGPR, scratchGPR);
+        }
         fallThrough.append(jit.branchPtr(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImmPtr(accessCase.uid())));
     }
 
@@ -754,11 +756,12 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
         ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(
             jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
-        jit.loadPtr(CCallHelpers::Address(baseGPR, JSString::offsetOfValue()), scratch2GPR);
+        jit.loadPtr(CCallHelpers::Address(baseGPR, JSString::offsetOfFiberAndLengthAndFlag()), scratch2GPR);
         failAndIgnore.append(jit.branchIfRopeStringImpl(scratch2GPR));
-        jit.load32(CCallHelpers::Address(scratch2GPR, StringImpl::lengthMemoryOffset()), scratchGPR);
+        jit.expandJSStringLength(scratch2GPR, scratchGPR);
 
         failAndIgnore.append(jit.branch32(CCallHelpers::AboveOrEqual, propertyGPR, scratchGPR));
+        jit.loadJSStringImpl(scratch2GPR, scratch2GPR);
 
         jit.load32(CCallHelpers::Address(scratch2GPR, StringImpl::flagsOffset()), scratchGPR);
         jit.loadPtr(CCallHelpers::Address(scratch2GPR, StringImpl::dataOffset()), scratch2GPR);
@@ -1282,8 +1285,9 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
             slowCases.append(jit.branchIfNotString(propertyGPR));
         }
 
-        jit.loadPtr(CCallHelpers::Address(propertyGPR, JSString::offsetOfValue()), scratch5GPR);
+        jit.loadPtr(CCallHelpers::Address(propertyGPR, JSString::offsetOfFiberAndLengthAndFlag()), scratch5GPR);
         slowCases.append(jit.branchIfRopeStringImpl(scratch5GPR));
+        jit.loadJSStringImpl(scratch5GPR, scratch5GPR);
         slowCases.append(jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch5GPR, StringImpl::flagsOffset()), CCallHelpers::TrustedImm32(StringImpl::flagIsAtom())));
 
         slowCases.append(jit.loadMegamorphicProperty(vm, baseGPR, scratch5GPR, nullptr, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR, scratch4GPR));
@@ -1378,8 +1382,9 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
             slowCases.append(jit.branchIfNotString(propertyGPR));
         }
 
-        jit.loadPtr(CCallHelpers::Address(propertyGPR, JSString::offsetOfValue()), scratch5GPR);
+        jit.loadPtr(CCallHelpers::Address(propertyGPR, JSString::offsetOfFiberAndLengthAndFlag()), scratch5GPR);
         slowCases.append(jit.branchIfRopeStringImpl(scratch5GPR));
+        jit.loadJSStringImpl(scratch5GPR, scratch5GPR);
         slowCases.append(jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch5GPR, StringImpl::flagsOffset()), CCallHelpers::TrustedImm32(StringImpl::flagIsAtom())));
 
         slowCases.append(jit.storeMegamorphicProperty(vm, baseGPR, scratch5GPR, nullptr, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR, scratch4GPR));
@@ -2124,15 +2129,8 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
     }
 
     case AccessCase::StringLength: {
-        jit.loadPtr(CCallHelpers::Address(baseGPR, JSString::offsetOfValue()), scratchGPR);
-        auto isRope = jit.branchIfRopeStringImpl(scratchGPR);
-        jit.load32(CCallHelpers::Address(scratchGPR, StringImpl::lengthMemoryOffset()), valueRegs.payloadGPR());
-        auto done = jit.jump();
-
-        isRope.link(&jit);
-        jit.load32(CCallHelpers::Address(baseGPR, JSRopeString::offsetOfLength()), valueRegs.payloadGPR());
-
-        done.link(&jit);
+        jit.loadPtr(CCallHelpers::Address(baseGPR, JSString::offsetOfFiberAndLengthAndFlag()), scratchGPR);
+        jit.expandJSStringLength(scratchGPR, valueRegs.payloadGPR());
         jit.boxInt32(valueRegs.payloadGPR(), valueRegs);
         succeed();
         return;
@@ -3083,7 +3081,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                     notString.append(jit.branchIfNotString(propertyGPR));
                 }
 
-                jit.loadPtr(MacroAssembler::Address(propertyGPR, JSString::offsetOfValue()), m_scratchGPR);
+                jit.loadPtr(MacroAssembler::Address(propertyGPR, JSString::offsetOfFiberAndLengthAndFlag()), m_scratchGPR);
 
                 m_failAndRepatch.append(jit.branchIfRopeStringImpl(m_scratchGPR));
 

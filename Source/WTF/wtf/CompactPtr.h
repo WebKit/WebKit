@@ -35,6 +35,45 @@
 
 namespace WTF {
 
+#if ENABLE_SMALL_HEAP
+template <typename T>
+struct SmallHeapTypeTraits {
+    using StorageType = uint32_t;
+
+    static constexpr uint32_t bitsShift = 4;
+#if HAVE(36BIT_ADDRESS)
+    static constexpr uint32_t additionalMask = 0;
+#else
+    static constexpr uint32_t additionalMask = T::AllocatorInfo::heapAddressMask >> bitsShift;
+#endif
+    static constexpr uintptr_t alignmentMask = (1ull << bitsShift) - 1;
+
+    static ALWAYS_INLINE StorageType encode(const T* ptr)
+    {
+        uintptr_t intPtr = bitwise_cast<uintptr_t>(ptr);
+        static_assert(alignof(T) >= (1ULL << bitsShift));
+        ASSERT(!(intPtr & alignmentMask));
+        StorageType encoded = static_cast<StorageType>((intPtr >> bitsShift) & additionalMask);
+        ASSERT(!ptr || decode(encoded) == ptr);
+        return encoded;
+    }
+
+    static ALWAYS_INLINE T* decode(StorageType ptr)
+    {
+        static_assert(alignof(T) >= (1ULL << bitsShift));
+#if HAVE(36BIT_ADDRESS)
+        return bitwise_cast<T*>(static_cast<uintptr_t>(ptr) << bitsShift);
+#else
+        uintptr_t intPtr = static_cast<uintptr_t>(ptr);
+        if (!intPtr)
+            return nullptr;
+        intPtr = (intPtr << bitsShift) | T::AllocatorInfo::baseAddress();
+        return bitwise_cast<T*>(intPtr);
+#endif
+    }
+};
+#endif
+
 template <typename T>
 struct BigHeapTypeTraits {
 #if HAVE(36BIT_ADDRESS)

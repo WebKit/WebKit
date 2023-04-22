@@ -486,7 +486,7 @@ public: \
     WTF_MAKE_SMALLHEAP_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(className) \
     static constexpr uint8_t numberOfLowerTierCells = 0; \
     using AllocatorInfo = Gigacage::SmallHeapAllocatorInfo; /* change DebugHeap.h too */ \
-    using CompactPtrTypeTraits = WTF::BigHeapTypeTraits<className>; \
+    using CompactPtrTypeTraits = WTF::SmallHeapTypeTraits<className>; \
 using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 
 #else

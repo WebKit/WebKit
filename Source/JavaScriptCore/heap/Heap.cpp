@@ -267,6 +267,11 @@ private:
     Heap& m_heap;
 };
 
+#define ASSERT_SMALLHEAP_ISO_SUBSPACE(name, heapCellType, type) \
+    static_assert(!type::numberOfLowerTierCells, "Precise Allocation is not supported");
+FOR_EACH_JSC_SMALLHEAP_ISO_SUBSPACE(ASSERT_SMALLHEAP_ISO_SUBSPACE);
+#undef ASSERT_SMALLHEAP_ISO_SUBSPACE
+
 #define INIT_SERVER_ISO_SUBSPACE(name, heapCellType, type) \
     , name ISO_SUBSPACE_INIT(*this, heapCellType, type)
 

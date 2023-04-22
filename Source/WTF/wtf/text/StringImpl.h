@@ -640,12 +640,12 @@ template<> struct DefaultHash<CompactPtr<StringImpl>>;
 
 template<> ALWAYS_INLINE Ref<StringImpl> StringImpl::constructInternal<LChar>(StringImpl& string, unsigned length)
 {
-    return adoptRef(*new (NotNull, &string) StringImpl { length, Force8BitConstructor });
+    return adoptRef(*new (&string) StringImpl { length, Force8BitConstructor });
 }
 
 template<> ALWAYS_INLINE Ref<StringImpl> StringImpl::constructInternal<UChar>(StringImpl& string, unsigned length)
 {
-    return adoptRef(*new (NotNull, &string) StringImpl { length });
+    return adoptRef(*new (&string) StringImpl { length });
 }
 
 template<> ALWAYS_INLINE const LChar* StringImpl::characters<LChar>() const

@@ -35,14 +35,16 @@ inline JSString::~JSString()
 {
     if (isRope())
         return;
-    valueInternal().~String();
+    auto* impl = fiberConcurrently().fiberAs<StringImpl>();
+    if (impl)
+        impl->deref();
 }
 
 bool JSString::equal(JSGlobalObject* globalObject, JSString* other) const
 {
     if (isRope() || other->isRope())
         return equalSlowCase(globalObject, other);
-    return WTF::equal(*valueInternal().impl(), *other->valueInternal().impl());
+    return WTF::equal(*fiberConcurrently().fiberAs<StringImpl>(), *other->fiberConcurrently().fiberAs<StringImpl>());
 }
 
 ALWAYS_INLINE bool JSString::equalInline(JSGlobalObject* globalObject, JSString* other) const
@@ -106,10 +108,16 @@ inline void JSRopeString::convertToNonRope(String&& string) const
     // store-store barrier here to ensure concurrent compiler threads see initialized String.
     ASSERT(JSString::isRope());
     WTF::storeStoreFence();
-    new (&uninitializedValueInternal()) String(WTFMove(string));
+    auto data = fiberConcurrently();
+    ASSERT(data.length() == string.length());
+    data.setFiber(string.releaseImpl().leakRef());
+    data.unsetIsRope();
+    const_cast<JSRopeString*>(this)->setFiberConcurrently(data);
     static_assert(sizeof(String) == sizeof(RefPtr<StringImpl>), "JSString's String initialization must be done in one pointer move.");
-    // We do not clear the trailing fibers and length information (fiber1 and fiber2) because we could be reading the length concurrently.
     ASSERT(!JSString::isRope());
+    // Any concurrent reader should only be reading the length, which is stored atomically above.
+    const_cast<JSRopeString*>(this)->m_fiber1AndFlags = 0;
+    const_cast<JSRopeString*>(this)->m_fiber2OrOffset.fiber = nullptr;
 }
 
 class JSStringFibers {
@@ -156,7 +164,7 @@ void JSRopeString::resolveToBufferSlow(Fibers* fibers, CharacterType* buffer, un
             JSRopeString* currentFiberAsRope = static_cast<JSRopeString*>(currentFiber);
             if (currentFiberAsRope->isSubstring()) {
                 ASSERT(!currentFiberAsRope->substringBase()->isRope());
-                StringView view = *currentFiberAsRope->substringBase()->valueInternal().impl();
+                StringView view = *currentFiberAsRope->substringBase()->fiberConcurrently().fiberAs<StringImpl>();
                 unsigned offset = currentFiberAsRope->substringOffset();
                 unsigned length = currentFiberAsRope->length();
                 position -= length;
@@ -168,7 +176,7 @@ void JSRopeString::resolveToBufferSlow(Fibers* fibers, CharacterType* buffer, un
             continue;
         }
 
-        StringView view = *currentFiber->valueInternal().impl();
+        StringView view = *currentFiber->fiberConcurrently().fiberAs<StringImpl>();
         position -= view.length();
         view.getCharacters(position);
     }
@@ -194,7 +202,7 @@ inline void JSRopeString::resolveToBuffer(Fibers* fibers, CharacterType* buffer,
         JSString* fiber = fibers->fiber(i);
         if (!fiber)
             break;
-        StringView view = fiber->valueInternal().impl();
+        StringView view = fiber->fiberConcurrently().fiberAs<StringImpl>();
         view.getCharacters(position);
         position += view.length();
     }
@@ -214,18 +222,20 @@ inline JSString* jsAtomString(JSGlobalObject* globalObject, VM& vm, JSString* st
 
     if (!string->isRope()) {
         auto createFromNonRope = [&](VM& vm, auto&) {
-            AtomString atom(string->valueInternal());
-            if (!string->valueInternal().impl()->isAtom())
+            auto* impl = string->fiberConcurrently().fiberAs<StringImpl>();
+            AtomString atom(impl);
+            if (!impl->isAtom())
                 string->swapToAtomString(vm, RefPtr { atom.impl() });
             return string;
         };
 
-        if (string->valueInternal().is8Bit()) {
-            WTF::HashTranslatorCharBuffer<LChar> buffer { string->valueInternal().characters8(), length, string->valueInternal().hash() };
+        auto value = String(string->fiberConcurrently().fiberAs<StringImpl>());
+        if (value.is8Bit()) {
+            WTF::HashTranslatorCharBuffer<LChar> buffer { value.characters8(), length, value.hash() };
             return vm.keyAtomStringCache.make(vm, buffer, createFromNonRope);
         }
 
-        WTF::HashTranslatorCharBuffer<UChar> buffer { string->valueInternal().characters16(), length, string->valueInternal().hash() };
+        WTF::HashTranslatorCharBuffer<UChar> buffer { value.characters16(), length, value.hash() };
         return vm.keyAtomStringCache.make(vm, buffer, createFromNonRope);
     }
 
@@ -253,7 +263,7 @@ inline JSString* jsAtomString(JSGlobalObject* globalObject, VM& vm, JSString* st
         return vm.keyAtomStringCache.make(vm, buffer, createFromRope);
     }
 
-    auto view = StringView { ropeString->substringBase()->valueInternal() }.substring(ropeString->substringOffset(), length);
+    auto view = StringView { ropeString->substringBase()->fiberConcurrently().fiberAs<StringImpl>() }.substring(ropeString->substringOffset(), length);
     if (view.is8Bit()) {
         WTF::HashTranslatorCharBuffer<LChar> buffer { view.characters8(), length };
         return vm.keyAtomStringCache.make(vm, buffer, createFromRope);

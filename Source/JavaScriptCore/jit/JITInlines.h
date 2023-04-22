@@ -74,9 +74,11 @@ ALWAYS_INLINE JSValue JIT::getConstantOperand(VirtualRegister src)
 ALWAYS_INLINE void JIT::emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures)
 {
     failures.append(branchIfNotString(src));
-    loadPtr(MacroAssembler::Address(src, JSString::offsetOfValue()), dst);
+    loadPtr(MacroAssembler::Address(src, JSString::offsetOfFiberAndLengthAndFlag()), dst);
+    expandJSStringLength(dst, regT1);
+    failures.append(branch32(NotEqual, regT1, TrustedImm32(1)));
     failures.append(branchIfRopeStringImpl(dst));
-    failures.append(branch32(NotEqual, MacroAssembler::Address(dst, StringImpl::lengthMemoryOffset()), TrustedImm32(1)));
+    loadJSStringImpl(dst, dst);
     loadPtr(MacroAssembler::Address(dst, StringImpl::dataOffset()), regT1);
 
     auto is16Bit = branchTest32(Zero, Address(dst, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit()));

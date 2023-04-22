@@ -1188,14 +1188,29 @@ public:
         return branchDouble(DoubleEqualAndOrdered, fpr, fpr);
     }
 
-    Jump branchIfRopeStringImpl(GPRReg stringImplGPR)
+#if USE(JSVALUE64)
+    void expandJSStringLength(GPRReg fiberAndLengthAndFlag, GPRReg dest)
     {
-        return branchTestPtr(NonZero, stringImplGPR, TrustedImm32(JSString::isRopeInPointer));
+        move(fiberAndLengthAndFlag, dest);
+        and64(TrustedImm32(JSString::fiberAndLengthAndFlagLengthMask), dest);
     }
 
-    Jump branchIfNotRopeStringImpl(GPRReg stringImplGPR)
+    void loadJSStringImpl(GPRReg fiberAndLengthAndFlag, GPRReg dest)
     {
-        return branchTestPtr(Zero, stringImplGPR, TrustedImm32(JSString::isRopeInPointer));
+        move(fiberAndLengthAndFlag, dest);
+        rshift64(MacroAssembler::TrustedImm32(32), dest);
+        expandCompactPtr<StringImpl>(dest);
+    }
+#endif
+
+    Jump branchIfRopeStringImpl(GPRReg fiberGPR)
+    {
+        return branchTestPtr(NonZero, fiberGPR, TrustedImm32(JSString::isRopeInPointer));
+    }
+
+    Jump branchIfNotRopeStringImpl(GPRReg fiberGPR)
+    {
+        return branchTestPtr(Zero, fiberGPR, TrustedImm32(JSString::isRopeInPointer));
     }
 
 #if USE(JSVALUE64)
@@ -1971,8 +1986,25 @@ public:
         load32(address, dest);
         lshift64(TrustedImm32(4), dest);
 #else
-        static_assert(sizeof(typename T::CompactPtrTypeTraits::StorageType) == sizeof(void*));
-        loadPtr(address, dest);
+        if constexpr (sizeof(typename T::CompactPtrTypeTraits::StorageType) < sizeof(void*)) {
+            load32(address, dest);
+            expandCompactPtr<T>(dest);
+        } else
+            loadPtr(address, dest);
+#endif
+    }
+
+    template<typename T>
+    void expandCompactPtr(GPRReg srcDst)
+    {
+#if HAVE(36BIT_ADDRESS)
+        lshift64(TrustedImm32(4), srcDst);
+#else
+        if constexpr (sizeof(typename T::CompactPtrTypeTraits::StorageType) < sizeof(void*)) {
+            lshift64(TrustedImm32(4), srcDst);
+            orPtr(TrustedImmPtr(T::AllocatorInfo::baseAddress()), srcDst);
+        } else
+            UNUSED_PARAM(srcDst);
 #endif
     }
 
@@ -1990,6 +2022,30 @@ public:
         UNUSED_PARAM(scratch);
         return branchPtr(cond, left, right);
 #endif
+    }
+
+    template<typename T>
+    void compressCompactPtr(GPRReg src, GPRReg dest)
+    {
+        if constexpr (sizeof(typename T::CompactPtrTypeTraits::StorageType) < sizeof(void*)) {
+            move(src, dest);
+            rshift64(TrustedImm32(4), dest);
+            if (T::CompactPtrTypeTraits::additionalMask)
+                and32(TrustedImm32(T::CompactPtrTypeTraits::additionalMask), dest);
+            else
+                and32(TrustedImm32(0xFFFFFFFF), dest);
+        } else
+            move(src, dest);
+    }
+
+    template<typename T>
+    void storeCompactPtr(GPRReg src, Address address, GPRReg scratch)
+    {
+        if constexpr (sizeof(typename T::CompactPtrTypeTraits::StorageType) < sizeof(void*)) {
+            compressCompactPtr<T>(src, scratch);
+            store32(scratch, address);
+        } else
+            storePtr(src, address);
     }
 
 #if USE(JSVALUE64)
