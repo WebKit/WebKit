@@ -2,7 +2,8 @@
  * Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,6 +42,7 @@ FEDiffuseLighting::FEDiffuseLighting(const Color& lightingColor, float surfaceSc
 
 bool FEDiffuseLighting::setDiffuseConstant(float diffuseConstant)
 {
+    diffuseConstant = std::max(diffuseConstant, 0.0f);
     if (m_diffuseConstant == diffuseConstant)
         return false;
     m_diffuseConstant = diffuseConstant;

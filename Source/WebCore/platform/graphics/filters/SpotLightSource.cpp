@@ -6,7 +6,8 @@
  * Copyright (C) 2010 Zoltan Herczeg <zherczeg@webkit.org>
  * Copyright (C) 2011 University of Szeged
  * Copyright (C) 2011 Renata Hodovan <reni@webkit.org>
- * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,7 +53,7 @@ SpotLightSource::SpotLightSource(const FloatPoint3D& position, const FloatPoint3
     : LightSource(LS_SPOT)
     , m_position(position)
     , m_pointsAt(pointsAt)
-    , m_specularExponent(specularExponent)
+    , m_specularExponent(clampTo<float>(specularExponent, 1.0f, 128.0f))
     , m_limitingConeAngle(limitingConeAngle)
 {
 }
@@ -84,14 +85,6 @@ void SpotLightSource::initPaintingData(const Filter& filter, const FilterImage& 
         paintingData.coneCutOffLimit = cosf(deg2rad(180.0f - limitingConeAngle));
         paintingData.coneFullLight = paintingData.coneCutOffLimit - antialiasThreshold;
     }
-
-    // Optimization for common specularExponent values
-    if (!m_specularExponent)
-        paintingData.specularExponent = 0;
-    else if (m_specularExponent == 1.0f)
-        paintingData.specularExponent = 1;
-    else // It is neither 0.0f nor 1.0f
-        paintingData.specularExponent = 2;
 }
 
 LightSource::ComputedLightingData SpotLightSource::computePixelLightingData(const PaintingData& paintingData, int x, int y, float z) const
@@ -111,17 +104,10 @@ LightSource::ComputedLightingData SpotLightSource::computePixelLightingData(cons
 
     // Set the color of the pixel
     float lightStrength;
-    switch (paintingData.specularExponent) {
-    case 0:
-        lightStrength = 1.0f; // -cosineOfAngle ^ 0 == 1
-        break;
-    case 1:
+    if (1.0f == m_specularExponent)
         lightStrength = -cosineOfAngle; // -cosineOfAngle ^ 1 == -cosineOfAngle
-        break;
-    default:
+    else
         lightStrength = powf(-cosineOfAngle, m_specularExponent);
-        break;
-    }
 
     if (cosineOfAngle > paintingData.coneFullLight)
         lightStrength *= (paintingData.coneCutOffLimit - cosineOfAngle) / (paintingData.coneCutOffLimit - paintingData.coneFullLight);
@@ -186,6 +172,7 @@ bool SpotLightSource::setPointsAtZ(float pointsAtZ)
 
 bool SpotLightSource::setSpecularExponent(float specularExponent)
 {
+    specularExponent = clampTo<float>(specularExponent, 1.0f, 128.0f);
     if (m_specularExponent == specularExponent)
         return false;
     m_specularExponent = specularExponent;
