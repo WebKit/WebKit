@@ -42,17 +42,17 @@ class LineBox;
 
 class InlineDisplayContentBuilder {
 public:
-    InlineDisplayContentBuilder(const InlineFormattingContext&, InlineFormattingState&);
+    InlineDisplayContentBuilder(const InlineFormattingContext&, InlineFormattingState&, const InlineDisplay::Line&, size_t lineIndex);
 
-    InlineDisplay::Boxes build(const LineBuilder::LineContent&, const LineBox&, const InlineDisplay::Line&, const size_t lineIndex);
+    InlineDisplay::Boxes build(const LineBuilder::LineContent&, const LineBox&);
 
 private:
-    void processNonBidiContent(const LineBuilder::LineContent&, const LineBox&, const InlineDisplay::Line&, InlineDisplay::Boxes&);
-    void processBidiContent(const LineBuilder::LineContent&, const LineBox&, const InlineDisplay::Line&, InlineDisplay::Boxes&);
+    void processNonBidiContent(const LineBuilder::LineContent&, const LineBox&, InlineDisplay::Boxes&);
+    void processBidiContent(const LineBuilder::LineContent&, const LineBox&, InlineDisplay::Boxes&);
     void processFloatBoxes(const LineBuilder::LineContent&);
     void collectInkOverflowForInlineBoxes(InlineDisplay::Boxes&);
-    void collectInkOverflowForTextDecorations(InlineDisplay::Boxes&, const InlineDisplay::Line&);
-    void truncateForEllipsisPolicy(LineEndingEllipsisPolicy, const LineBuilder::LineContent&, const InlineDisplay::Line&, InlineDisplay::Boxes&);
+    void collectInkOverflowForTextDecorations(InlineDisplay::Boxes&);
+    void truncateForEllipsisPolicy(LineEndingEllipsisPolicy, const LineBuilder::LineContent&, InlineDisplay::Boxes&);
 
     void appendTextDisplayBox(const Line::Run&, const InlineRect&, InlineDisplay::Boxes&);
     void appendSoftLineBreakDisplayBox(const Line::Run&, const InlineRect&, InlineDisplay::Boxes&);
@@ -64,15 +64,15 @@ private:
     void appendInlineDisplayBoxAtBidiBoundary(const Box&, InlineDisplay::Boxes&);
 
     void setInlineBoxGeometry(const Box&, const InlineRect&, bool isFirstInlineBoxFragment);
-    void adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& accumulatedOffset, InlineLayoutUnit lineBoxLogicalTop, const DisplayBoxTree&, InlineDisplay::Boxes&, const InlineDisplay::Line&, const LineBox&, const HashMap<const Box*, IsFirstLastIndex>&);
+    void adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& accumulatedOffset, InlineLayoutUnit lineBoxLogicalTop, const DisplayBoxTree&, InlineDisplay::Boxes&, const LineBox&, const HashMap<const Box*, IsFirstLastIndex>&);
     size_t ensureDisplayBoxForContainer(const ElementBox&, DisplayBoxTree&, AncestorStack&, InlineDisplay::Boxes&);
 
     InlineRect flipLogicalRectToVisualForWritingModeWithinLine(const InlineRect& logicalRect, const InlineRect& lineLogicalRect, WritingMode) const;
-    InlineRect flipRootInlineBoxRectToVisualForWritingMode(const InlineRect& rootInlineBoxLogicalRect, const InlineDisplay::Line&, WritingMode) const;
+    InlineRect flipRootInlineBoxRectToVisualForWritingMode(const InlineRect& rootInlineBoxLogicalRect, WritingMode) const;
     void setLeftForWritingMode(InlineDisplay::Box&, InlineLayoutUnit logicalRight, WritingMode) const;
     void setRightForWritingMode(InlineDisplay::Box&, InlineLayoutUnit logicalRight, WritingMode) const;
     InlineLayoutPoint movePointHorizontallyForWritingMode(const InlineLayoutPoint& topLeft, InlineLayoutUnit horizontalOffset, WritingMode) const;
-    InlineLayoutUnit outsideListMarkerVisualPosition(const ElementBox&, const InlineDisplay::Line&) const;
+    InlineLayoutUnit outsideListMarkerVisualPosition(const ElementBox&) const;
 
     const ElementBox& root() const { return formattingContext().root(); }
     const RenderStyle& rootStyle() const { return m_lineIndex ? root().style() : root().firstLineStyle(); }
@@ -82,7 +82,8 @@ private:
 
     const InlineFormattingContext& m_formattingContext;
     InlineFormattingState& m_formattingState;
-    size_t m_lineIndex { 0 };
+    const InlineDisplay::Line& m_displayLine;
+    const size_t m_lineIndex { 0 };
     bool m_contentHasInkOverflow { false };
 };
 
