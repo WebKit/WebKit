@@ -41,7 +41,12 @@ void AXIsolatedObject::initializePlatformProperties(const Ref<const Accessibilit
 
     RetainPtr<NSAttributedString> attributedText;
     if (object->hasAttributedText()) {
-        if (auto range = object->simpleRange()) {
+        std::optional<SimpleRange> range;
+        if (isTextControl())
+            range = rangeForPlainTextRange({ 0, object->text().length() });
+        else
+            range = object->simpleRange();
+        if (range) {
             if ((attributedText = object->attributedStringForRange(*range, SpellCheck::Yes)))
                 setProperty(AXPropertyName::AttributedText, attributedText);
         }
@@ -163,27 +168,23 @@ unsigned AXIsolatedObject::textLength() const
 
 RetainPtr<NSAttributedString> AXIsolatedObject::attributedStringForTextMarkerRange(AXTextMarkerRange&& markerRange, SpellCheck spellCheck) const
 {
-    if (NSAttributedString *cachedString = cachedAttributedStringForTextMarkerRange(markerRange, spellCheck))
-        return cachedString;
+    if (!markerRange)
+        return nil;
 
-    return Accessibility::retrieveValueFromMainThread<RetainPtr<NSAttributedString>>([markerRange = WTFMove(markerRange), &spellCheck, this] () mutable -> RetainPtr<NSAttributedString> {
-        if (RefPtr axObject = associatedAXObject())
-            return axObject->attributedStringForTextMarkerRange(WTFMove(markerRange), spellCheck);
-        return { };
-    });
-}
-
-NSAttributedString *AXIsolatedObject::cachedAttributedStringForTextMarkerRange(const AXTextMarkerRange& markerRange, SpellCheck spellCheck) const
-{
     // At the moment we are only handling ranges that are contained in a single object, and for which we cached the AttributeString.
     // FIXME: Extend to cases where the range expands multiple objects.
 
+    auto attributedText = propertyValue<RetainPtr<NSAttributedString>>(AXPropertyName::AttributedText);
+    if (!attributedText) {
+        return Accessibility::retrieveValueFromMainThread<RetainPtr<NSAttributedString>>([markerRange = WTFMove(markerRange), &spellCheck, this] () mutable -> RetainPtr<NSAttributedString> {
+            if (RefPtr axObject = associatedAXObject())
+                return axObject->attributedStringForTextMarkerRange(WTFMove(markerRange), spellCheck);
+            return { };
+        });
+    }
+
     auto nsRange = markerRange.nsRange();
     if (!nsRange)
-        return nil;
-
-    auto attributedText = propertyValue<RetainPtr<NSAttributedString>>(AXPropertyName::AttributedText);
-    if (!attributedText)
         return nil;
 
     if (!attributedStringContainsRange(attributedText.get(), *nsRange))

@@ -151,7 +151,7 @@ public:
     AXTextMarkerRange(AXID treeID, AXID objectID, unsigned offset, unsigned length);
     AXTextMarkerRange() = default;
 
-    operator bool() const { return !m_start.isNull() && !m_end.isNull(); }
+    operator bool() const { return m_start && m_end; }
     operator VisiblePositionRange() const;
     std::optional<SimpleRange> simpleRange() const;
 

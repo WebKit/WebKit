@@ -473,7 +473,6 @@ private:
     unsigned textLength() const override;
 #if PLATFORM(COCOA)
     RetainPtr<NSAttributedString> attributedStringForTextMarkerRange(AXTextMarkerRange&&, SpellCheck) const override;
-    NSAttributedString *cachedAttributedStringForTextMarkerRange(const AXTextMarkerRange&, SpellCheck) const;
 #endif
     AXObjectCache* axObjectCache() const override;
     Element* actionElement() const override;

@@ -217,7 +217,19 @@ AXTextMarkerRange AccessibilityObject::textMarkerRangeForNSRange(const NSRange& 
 {
     if (range.location == NSNotFound)
         return { };
-    return { visiblePositionForIndex(range.location), visiblePositionForIndex(range.location + range.length) };
+
+    if (!isTextControl())
+        return { visiblePositionForIndex(range.location), visiblePositionForIndex(range.location + range.length) };
+
+    if (range.location + range.length > text().length())
+        return { };
+
+    if (auto* cache = axObjectCache()) {
+        auto start = cache->characterOffsetForIndex(range.location, this);
+        auto end = cache->characterOffsetForIndex(range.location + range.length, this);
+        return cache->rangeForUnorderedCharacterOffsets(start, end);
+    }
+    return { };
 }
 
 // NSAttributedString support.

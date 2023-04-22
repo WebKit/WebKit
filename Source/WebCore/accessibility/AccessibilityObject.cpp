@@ -2846,7 +2846,12 @@ std::optional<String> AccessibilityObject::textContent() const
     if (!hasTextContent())
         return std::nullopt;
 
-    if (auto range = simpleRange())
+    std::optional<SimpleRange> range;
+    if (isTextControl())
+        range = rangeForPlainTextRange({ 0, text().length() });
+    else
+        range = simpleRange();
+    if (range)
         return stringForRange(*range);
     return std::nullopt;
 }
