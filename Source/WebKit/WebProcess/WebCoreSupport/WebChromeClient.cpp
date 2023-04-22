@@ -309,8 +309,8 @@ OptionSet<WebEventModifier> modifiersForNavigationAction(const NavigationAction&
 Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& windowFeatures, const NavigationAction& navigationAction)
 {
 #if ENABLE(FULLSCREEN_API)
-    if (frame.document() && frame.document()->fullscreenManager().currentFullscreenElement())
-        frame.document()->fullscreenManager().cancelFullscreen();
+    if (auto* document = frame.document())
+        document->fullscreenManager().cancelFullscreen();
 #endif
 
     auto& webProcess = WebProcess::singleton();

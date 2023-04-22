@@ -1,0 +1,20 @@
+<p>To test manually, click the "Open window" button - the page should exit fullscreen mode.</p>
+<script src="full-screen-test.js"></script>
+<script>
+function runTest() {
+    waitForEventOnce(document, 'fullscreenchange', function() {
+        test("document.fullscreenElement===document.body")
+        waitForEventOnce(document, 'fullscreenchange', function() {
+            test("document.fullscreenElement===null")
+            endTest();
+        });
+        document.getElementById("frame").contentWindow.exitFullscreen();
+    });
+
+    runWithKeyDown(function() {
+        document.body.requestFullscreen();
+    });
+}
+</script>
+<iframe id="frame" src="resources/window-open-iframe.html" width="300" height="100" onload="runTest()">
+</iframe>

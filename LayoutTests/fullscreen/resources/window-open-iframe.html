@@ -1,0 +1,11 @@
+<script>
+window.exitFullscreen = function(args) {
+    if (!window.internals)
+        return;
+
+    internals.withUserGesture(function() {
+        window.open('about:blank');
+    });
+}
+</script>
+<button onclick="window.open('about:blank')">Open window</button>
