@@ -85,6 +85,9 @@ private:
     void scrollingTreeNodeWillStartScroll(WebCore::ScrollingNodeID) override;
     void scrollingTreeNodeDidEndScroll(WebCore::ScrollingNodeID) override;
 
+    void scrollingTreeNodeDidBeginScrollSnapping(ScrollingNodeID) override;
+    void scrollingTreeNodeDidEndScrollSnapping(ScrollingNodeID) override;
+
     Ref<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) override;
 
     HashMap<WebCore::ScrollingNodeID, WebCore::RequestedScrollData> m_nodesWithPendingScrollAnimations; // Guarded by m_treeLock but used via call chains that can't be annotated.

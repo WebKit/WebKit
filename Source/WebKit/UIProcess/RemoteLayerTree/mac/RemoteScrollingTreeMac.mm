@@ -73,15 +73,29 @@ void RemoteScrollingTreeMac::displayDidRefresh(PlatformDisplayID)
 
 void RemoteScrollingTreeMac::scrollingTreeNodeWillStartScroll(ScrollingNodeID nodeID)
 {
-    RunLoop::main().dispatch([this, nodeID] {
+    RunLoop::main().dispatch([protectedThis = Ref { *this }, this, nodeID] {
         RemoteScrollingTree::scrollingTreeNodeWillStartScroll(nodeID);
     });
 }
 
 void RemoteScrollingTreeMac::scrollingTreeNodeDidEndScroll(ScrollingNodeID nodeID)
 {
-    RunLoop::main().dispatch([this, nodeID] {
+    RunLoop::main().dispatch([protectedThis = Ref { *this }, this, nodeID] {
         RemoteScrollingTree::scrollingTreeNodeDidEndScroll(nodeID);
+    });
+}
+
+void RemoteScrollingTreeMac::scrollingTreeNodeDidBeginScrollSnapping(ScrollingNodeID nodeID)
+{
+    RunLoop::main().dispatch([protectedThis = Ref { *this }, this, nodeID] {
+        RemoteScrollingTree::scrollingTreeNodeDidBeginScrollSnapping(nodeID);
+    });
+}
+
+void RemoteScrollingTreeMac::scrollingTreeNodeDidEndScrollSnapping(ScrollingNodeID nodeID)
+{
+    RunLoop::main().dispatch([protectedThis = Ref { *this }, this, nodeID] {
+        RemoteScrollingTree::scrollingTreeNodeDidEndScrollSnapping(nodeID);
     });
 }
 
