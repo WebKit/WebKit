@@ -23,6 +23,7 @@
 #include <new>
 #include <stdlib.h>
 #include <wtf/DebugHeap.h>
+#include <wtf/Gigacage.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
@@ -271,6 +272,22 @@ struct FastFree<T[]> {
     }
 };
 
+struct SmallHeapMalloc {
+    static void* malloc(size_t size) { return Gigacage::malloc(::Gigacage::SmallHeap, size); }
+    
+    static void* tryMalloc(size_t size)
+    {
+        return ::Gigacage::tryMalloc(::Gigacage::SmallHeap, size);
+    }
+
+    static void* tryRealloc(void* p, size_t size)
+    {
+        return ::Gigacage::tryRealloc(::Gigacage::SmallHeap, p, size);
+    }
+    
+    static void free(void* p) { ::Gigacage::free(::Gigacage::SmallHeap, p); }
+};
+
 } // namespace WTF
 
 #if !defined(NDEBUG)
@@ -353,6 +370,64 @@ using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 
 #define WTF_MAKE_STRUCT_FAST_ALLOCATED \
     WTF_MAKE_FAST_ALLOCATED_IMPL \
+using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
+
+#define WTF_MAKE_SMALLHEAP_ALLOCATED_IMPL \
+    void* operator new(size_t, void* p) { return p; } \
+    void* operator new[](size_t, void* p) { return p; } \
+    \
+    void* operator new(size_t size) \
+    { \
+        return ::Gigacage::tryMalloc(::Gigacage::SmallHeap, size); \
+    } \
+    \
+    void operator delete(void* p) \
+    { \
+        ::Gigacage::free(::Gigacage::SmallHeap, p); \
+    } \
+    \
+    void* operator new[](size_t size) \
+    { \
+        return ::Gigacage::tryMalloc(::Gigacage::SmallHeap, size); \
+    } \
+    \
+    void operator delete[](void* p) \
+    { \
+        ::Gigacage::free(::Gigacage::SmallHeap, p); \
+    } \
+    void* operator new(size_t, NotNullTag, void* location) \
+    { \
+        ASSERT(location); \
+        return location; \
+    } \
+    static void freeAfterDestruction(void* p) \
+    { \
+        ::Gigacage::free(::Gigacage::SmallHeap, p); \
+    } \
+    using webkitFastMalloced = int; \
+
+#define WTF_MAKE_SMALLHEAP_ALLOCATED \
+public: \
+    WTF_MAKE_SMALLHEAP_ALLOCATED_IMPL \
+private: \
+using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
+
+#define WTF_MAKE_SMALLHEAP_FAST_ALLOCATED \
+    WTF_MAKE_SMALLHEAP_ALLOCATED_IMPL \
+using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
+
+#define WTF_MAKE_SMALLHEAP_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(classname) \
+    WTF_MAKE_SMALLHEAP_ALLOCATED_IMPL
+
+#define WTF_MAKE_SMALLHEAP_ALLOCATED_WITH_HEAP_IDENTIFIER(classname) \
+public: \
+    WTF_MAKE_SMALLHEAP_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(classname) \
+private: \
+using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
+
+#define WTF_MAKE_STRUCT_SMALLHEAP_ALLOCATED_WITH_HEAP_IDENTIFIER(className) \
+public: \
+    WTF_MAKE_SMALLHEAP_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(className) \
 using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)

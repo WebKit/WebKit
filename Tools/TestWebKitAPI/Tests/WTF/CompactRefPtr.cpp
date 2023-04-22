@@ -450,6 +450,7 @@ TEST(WTF_CompactRefPtr, Const)
 }
 
 struct CompactRefPtrCheckingAlignedRefLogger : AlignedRefLogger {
+    using CompactPtrTypeTraits = WTF::BigHeapTypeTraits<CompactRefPtrCheckingAlignedRefLogger>;
     CompactRefPtrCheckingAlignedRefLogger(const char* name);
     void ref();
     void deref();

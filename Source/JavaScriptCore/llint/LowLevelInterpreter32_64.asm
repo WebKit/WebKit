@@ -2241,7 +2241,7 @@ llintOpWithJump(op_switch_char, OpSwitchChar, macro (size, get, jump, dispatch)
     addp t3, t2
     bineq t1, CellTag, .opSwitchCharFallThrough
     bbneq JSCell::m_type[t0], StringType, .opSwitchCharFallThrough
-    loadp JSString::m_fiber[t0], t1
+    loadp JSString::m_value[t0], t1
     btpnz t1, isRopeInPointer, .opSwitchOnRope
     bineq StringImpl::m_length[t1], 1, .opSwitchCharFallThrough
     loadp StringImpl::m_data8[t1], t0
@@ -2263,7 +2263,7 @@ llintOpWithJump(op_switch_char, OpSwitchChar, macro (size, get, jump, dispatch)
     jump(m_defaultOffset)
 
 .opSwitchOnRope:
-    bineq JSRopeString::m_compactFibers + JSRopeString::CompactFibers::m_length[t0], 1, .opSwitchCharFallThrough
+    bineq JSString::m_length[t0], 1, .opSwitchCharFallThrough
 
 .opSwitchOnRopeChar:
     callSlowPath(_llint_slow_path_switch_char)

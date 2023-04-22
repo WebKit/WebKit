@@ -108,7 +108,7 @@ struct Config {
 constexpr size_t startSlotOfGigacageConfig = 2;
 constexpr size_t startOffsetOfGigacageConfig = startSlotOfGigacageConfig * sizeof(WebConfig::Slot);
 
-constexpr size_t reservedSlotsForGigacageConfig = 12;
+constexpr size_t reservedSlotsForGigacageConfig = 20;
 constexpr size_t reservedBytesForGigacageConfig = reservedSlotsForGigacageConfig * sizeof(WebConfig::Slot);
 
 constexpr size_t alignmentOfGigacageConfig = std::alignment_of<Gigacage::Config>::value;

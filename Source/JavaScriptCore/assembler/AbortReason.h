@@ -55,6 +55,7 @@ enum AbortReason {
     DFGIsNotCell                                      = 180,
     DFGIneffectiveWatchpoint                          = 190,
     DFGNegativeStringLength                           = 200,
+    DFGInvalidStringLength                            = 205,
     DFGSlowPathGeneratorFellThrough                   = 210,
     DFGUnreachableBasicBlock                          = 220,
     DFGUnreachableNode                                = 225,

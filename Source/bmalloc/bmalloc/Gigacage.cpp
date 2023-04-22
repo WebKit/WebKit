@@ -99,6 +99,7 @@ size_t runwaySize(Kind kind)
     case Kind::Primitive:
         return gigacageRunway;
     case Kind::JSValue:
+    case Kind::SmallHeap:
         return 0;
     case Kind::NumberOfKinds:
         RELEASE_BASSERT_NOT_REACHED();
@@ -154,6 +155,8 @@ void ensureGigacage()
             size_t maxAlignment = 0;
             
             for (Kind kind : shuffledKinds) {
+                if (!hasCapacityToUseLargeGigacage && !maxSize(kind))
+                    continue;
                 totalSize = bump(kind, alignTo(kind, totalSize));
                 totalSize += runwaySize(kind);
                 maxAlignment = std::max(maxAlignment, alignment(kind));
@@ -172,6 +175,12 @@ void ensureGigacage()
 
             size_t nextCage = 0;
             for (Kind kind : shuffledKinds) {
+                if (!hasCapacityToUseLargeGigacage && !maxSize(kind)) {
+                    g_gigacageConfig.setBasePtr(kind, 0);
+                    g_gigacageConfig.setAllocBasePtr(kind, 0);
+                    g_gigacageConfig.setAllocSize(kind, 0);
+                    continue;
+                }
                 nextCage = alignTo(kind, nextCage);
                 void* gigacageBasePtr = reinterpret_cast<char*>(base) + nextCage;
                 g_gigacageConfig.setBasePtr(kind, gigacageBasePtr);

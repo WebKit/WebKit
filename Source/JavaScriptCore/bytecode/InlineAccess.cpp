@@ -56,15 +56,8 @@ void InlineAccess::dumpCacheSizesAndCrash()
             CCallHelpers::Address(base, JSCell::typeInfoTypeOffset()),
             CCallHelpers::TrustedImm32(StringType));
 
-        jit.loadPtr(CCallHelpers::Address(base, JSString::offsetOfValue()), scratchGPR);
-        auto isRope = jit.branchIfRopeStringImpl(scratchGPR);
-        jit.load32(CCallHelpers::Address(scratchGPR, StringImpl::lengthMemoryOffset()), regs.payloadGPR());
-        auto done = jit.jump();
-
-        isRope.link(&jit);
-        jit.load32(CCallHelpers::Address(base, JSRopeString::offsetOfLength()), regs.payloadGPR());
-
-        done.link(&jit);
+        jit.loadPtr(CCallHelpers::Address(base, JSString::offsetOfFiberAndLengthAndFlag()), scratchGPR);
+        jit.expandJSStringLength(scratchGPR, regs.payloadGPR());
         jit.boxInt32(regs.payloadGPR(), regs);
 
         dataLog("string length size: ", jit.m_assembler.buffer().codeSize(), "\n");
@@ -366,15 +359,8 @@ bool InlineAccess::generateStringLength(CodeBlock* codeBlock, StructureStubInfo&
         CCallHelpers::Address(base, JSCell::typeInfoTypeOffset()),
         CCallHelpers::TrustedImm32(StringType));
 
-    jit.loadPtr(CCallHelpers::Address(base, JSString::offsetOfValue()), scratch);
-    auto isRope = jit.branchIfRopeStringImpl(scratch);
-    jit.load32(CCallHelpers::Address(scratch, StringImpl::lengthMemoryOffset()), value.payloadGPR());
-    auto done = jit.jump();
-
-    isRope.link(&jit);
-    jit.load32(CCallHelpers::Address(base, JSRopeString::offsetOfLength()), value.payloadGPR());
-
-    done.link(&jit);
+    jit.loadPtr(CCallHelpers::Address(base, JSString::offsetOfFiberAndLengthAndFlag()), scratch);
+    jit.expandJSStringLength(scratch, value.payloadGPR());
     jit.boxInt32(value.payloadGPR(), value);
 
     bool linkedCodeInline = linkCodeInline("string length", jit, stubInfo, [&] (LinkBuffer& linkBuffer) {

@@ -1187,14 +1187,29 @@ public:
         return branchDouble(DoubleEqualAndOrdered, fpr, fpr);
     }
 
-    Jump branchIfRopeStringImpl(GPRReg stringImplGPR)
+#if USE(JSVALUE64)
+    void expandJSStringLength(GPRReg fiberAndLengthAndFlag, GPRReg dest)
     {
-        return branchTestPtr(NonZero, stringImplGPR, TrustedImm32(JSString::isRopeInPointer));
+        move(fiberAndLengthAndFlag, dest);
+        and64(TrustedImm32(JSString::fiberAndLengthAndFlagLengthMask), dest);
     }
 
-    Jump branchIfNotRopeStringImpl(GPRReg stringImplGPR)
+    void loadJSStringImpl(GPRReg fiberAndLengthAndFlag, GPRReg dest, GPRReg scratch)
     {
-        return branchTestPtr(Zero, stringImplGPR, TrustedImm32(JSString::isRopeInPointer));
+        move(fiberAndLengthAndFlag, dest);
+        rshift64(MacroAssembler::TrustedImm32(32), dest);
+        expandCompactPtr<StringImpl>(dest, scratch);
+    }
+#endif
+
+    Jump branchIfRopeStringImpl(GPRReg fiberGPR)
+    {
+        return branchTestPtr(NonZero, fiberGPR, TrustedImm32(JSString::isRopeInPointer));
+    }
+
+    Jump branchIfNotRopeStringImpl(GPRReg fiberGPR)
+    {
+        return branchTestPtr(Zero, fiberGPR, TrustedImm32(JSString::isRopeInPointer));
     }
 
 #if USE(JSVALUE64)
@@ -1962,16 +1977,47 @@ public:
         emitFillStorageWithJSEmpty(butterflyGPR, initialOffset, outOfLineCapacity, scratchGPR);
     }
 
-    void loadCompactPtr(Address address, GPRReg dest)
+    template<typename T>
+    void loadCompactPtr(Address address, GPRReg dest, GPRReg scratch = InvalidGPRReg)
     {
 #if HAVE(36BIT_ADDRESS)
+        UNUSED_PARAM(scratch);
         load32(address, dest);
         lshift64(TrustedImm32(4), dest);
-#else
+#else 
+#if USE(JSVALUE64)
+    if constexpr (sizeof(typename T::CompactPtrTypeTraits::StorageType) <= 4) {
+        ASSERT(scratch);
+        ASSERT(scratch != dest);
+        load32(address, dest);
+        expandCompactPtr<T>(dest, scratch);
+    } else
+#endif // USE(JSVALUE64)
         loadPtr(address, dest);
 #endif
     }
 
+    template<typename T>
+    void expandCompactPtr(GPRReg srcDst, GPRReg scratch)
+    {
+#if HAVE(36BIT_ADDRESS)
+        UNUSED_PARAM(scratch);
+        lshift64(TrustedImm32(4), srcDst);
+#else
+#if USE(JSVALUE64)
+        if constexpr (sizeof(typename T::CompactPtrTypeTraits::StorageType) <= 4) {
+            ASSERT(srcDst != scratch);
+            move(TrustedImmPtr(T::AllocatorInfo::baseAddress()), scratch);
+            lshift64(TrustedImm32(4), srcDst);
+            addPtr(scratch, srcDst);
+        } else
+#endif // USE(JSVALUE64)
+        UNUSED_PARAM(scratch);
+        UNUSED_PARAM(srcDst);
+#endif
+    }
+
+    template<typename T>
     Jump branchCompactPtr(RelationalCondition cond, GPRReg left, Address right, GPRReg scratch)
     {
 #if HAVE(36BIT_ADDRESS)
@@ -1980,9 +2026,38 @@ public:
         lshift64(TrustedImm32(4), scratch);
         return branchPtr(cond, left, Address(scratch));
 #else
+        static_assert(sizeof(typename T::CompactPtrTypeTraits::StorageType) > 4); // Not yet supported.
         UNUSED_PARAM(scratch);
         return branchPtr(cond, left, right);
 #endif
+    }
+
+    template<typename T>
+    void compressCompactPtr(GPRReg src, GPRReg dest, GPRReg scratch)
+    {
+#if USE(JSVALUE64)
+        if constexpr (sizeof(typename T::CompactPtrTypeTraits::StorageType) <= 4) {
+            move(src, scratch);
+            rshift64(TrustedImm32(4), scratch);
+            if (T::CompactPtrTypeTraits::additionalMask)
+                and32(TrustedImm32(T::CompactPtrTypeTraits::additionalMask), scratch);
+            else
+                and32(TrustedImm32(0xFFFFFFFF), scratch);
+            move(scratch, dest);
+        } else
+#endif // USE(JSVALUE64)
+            move(src, dest);
+        UNUSED_PARAM(scratch);
+    }
+
+    template<typename T>
+    void storeCompactPtr(GPRReg src, Address address, GPRReg scratch)
+    {
+        if constexpr (sizeof(typename T::CompactPtrTypeTraits::StorageType) <= 4) {
+            compressCompactPtr<T>(src, scratch, scratch);
+            store32(scratch, address);
+        } else
+            storePtr(src, address);
     }
 
 #if USE(JSVALUE64)

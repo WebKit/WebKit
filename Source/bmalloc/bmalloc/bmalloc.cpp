@@ -43,11 +43,13 @@ namespace bmalloc { namespace api {
 namespace {
 static const bmalloc_type primitiveGigacageType = BMALLOC_TYPE_INITIALIZER(1, 1, "Primitive Gigacage");
 static const bmalloc_type jsValueGigacageType = BMALLOC_TYPE_INITIALIZER(1, 1, "JSValue Gigacage");
+static const bmalloc_type smallHeapGigacageType = BMALLOC_TYPE_INITIALIZER(1, 1, "Small Heap Gigacage");
 } // anonymous namespace
 
 pas_primitive_heap_ref gigacageHeaps[Gigacage::NumberOfKinds] = {
     BMALLOC_AUXILIARY_HEAP_REF_INITIALIZER(&primitiveGigacageType),
-    BMALLOC_AUXILIARY_HEAP_REF_INITIALIZER(&jsValueGigacageType)
+    BMALLOC_AUXILIARY_HEAP_REF_INITIALIZER(&jsValueGigacageType),
+    BMALLOC_AUXILIARY_HEAP_REF_INITIALIZER(&smallHeapGigacageType)
 };
 #endif
 

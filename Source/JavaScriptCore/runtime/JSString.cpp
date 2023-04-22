@@ -67,14 +67,15 @@ void JSString::dumpToStream(const JSCell* cell, PrintStream& out)
 {
     const JSString* thisObject = jsCast<const JSString*>(cell);
     out.printf("<%p, %s, [%u], ", thisObject, thisObject->className().characters(), thisObject->length());
-    uintptr_t pointer = thisObject->fiberConcurrently();
-    if (pointer & isRopeInPointer) {
-        if (pointer & JSRopeString::isSubstringInPointer)
+    auto data = thisObject->fiberConcurrently();
+    if (data.isRope()) {
+        bool isSubstring = static_cast<const JSRopeString*>(thisObject)->m_fiber1AndFlags & JSRopeString::isSubstringInPointer;
+        if (isSubstring)
             out.printf("[substring]");
         else
             out.printf("[rope]");
     } else {
-        if (WTF::StringImpl* ourImpl = bitwise_cast<StringImpl*>(pointer)) {
+        if (WTF::StringImpl* ourImpl = data.fiberAs<StringImpl>()) {
             if (ourImpl->is8Bit())
                 out.printf("[8 %p]", ourImpl->characters8());
             else
@@ -92,10 +93,10 @@ bool JSString::equalSlowCase(JSGlobalObject* globalObject, JSString* other) cons
 size_t JSString::estimatedSize(JSCell* cell, VM& vm)
 {
     JSString* thisObject = asString(cell);
-    uintptr_t pointer = thisObject->fiberConcurrently();
-    if (pointer & isRopeInPointer)
+    auto data = thisObject->fiberConcurrently();
+    if (data.isRope())
         return Base::estimatedSize(cell, vm);
-    return Base::estimatedSize(cell, vm) + bitwise_cast<StringImpl*>(pointer)->costDuringGC();
+    return Base::estimatedSize(cell, vm) + data.fiberAs<StringImpl>()->costDuringGC();
 }
 
 template<typename Visitor>
@@ -105,9 +106,10 @@ void JSString::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     
-    uintptr_t pointer = thisObject->fiberConcurrently();
-    if (pointer & isRopeInPointer) {
-        if (pointer & JSRopeString::isSubstringInPointer) {
+    auto data = thisObject->fiberConcurrently();
+    if (data.isRope()) {
+        bool isSubstring = static_cast<const JSRopeString*>(thisObject)->m_fiber1AndFlags & JSRopeString::isSubstringInPointer;
+        if (isSubstring) {
             visitor.appendUnbarriered(static_cast<JSRopeString*>(thisObject)->fiber1());
             return;
         }
@@ -115,7 +117,7 @@ void JSString::visitChildrenImpl(JSCell* cell, Visitor& visitor)
             JSString* fiber = nullptr;
             switch (index) {
             case 0:
-                fiber = bitwise_cast<JSString*>(pointer & JSRopeString::stringMask);
+                fiber = data.fiberAs<JSRopeString>();
                 break;
             case 1:
                 fiber = static_cast<JSRopeString*>(thisObject)->fiber1();
@@ -132,9 +134,8 @@ void JSString::visitChildrenImpl(JSCell* cell, Visitor& visitor)
             visitor.appendUnbarriered(fiber);
         }
         return;
-    }
-    if (StringImpl* impl = bitwise_cast<StringImpl*>(pointer))
-        visitor.reportExtraMemoryVisited(impl->costDuringGC());
+    } else
+        visitor.reportExtraMemoryVisited(data.fiberAs<StringImpl>()->costDuringGC());
 }
 
 DEFINE_VISIT_CHILDREN(JSString);
@@ -153,7 +154,7 @@ void JSRopeString::resolveRopeInternalNoSubstring(CharacterType* buffer) const
 
     CharacterType* position = buffer;
     for (size_t i = 0; i < s_maxInternalRopeLength && fiber(i); ++i) {
-        StringView view = *fiber(i)->valueInternal().impl();
+        StringView view = *fiber(i)->fiberConcurrently().fiberAs<StringImpl>();
         view.getCharacters(position);
         position += view.length();
     }
@@ -189,7 +190,7 @@ AtomString JSRopeString::resolveRopeToAtomString(JSGlobalObject* globalObject) c
             atomString = AtomString(buffer, length());
         }
     } else
-        atomString = StringView { substringBase()->valueInternal() }.substring(substringOffset(), length()).toAtomString();
+        atomString = StringView { substringBase()->fiberConcurrently().fiberAs<StringImpl>() }.substring(substringOffset(), length()).toAtomString();
 
     // If we resolved a string that didn't previously exist, notify the heap that we've grown.
     if (atomString.impl()->hasOneRef())
@@ -206,7 +207,12 @@ inline void JSRopeString::convertToNonRope(String&& string) const
     // store-store barrier here to ensure concurrent compiler threads see initialized String.
     ASSERT(JSString::isRope());
     WTF::storeStoreFence();
-    new (&uninitializedValueInternal()) String(WTFMove(string));
+    string.impl()->ref();
+    auto data = fiberConcurrently();
+    data.setFiber(string.impl());
+    data.unsetIsRope();
+    ASSERT(data.length() == string.length());
+    const_cast<JSRopeString*>(this)->setFiberConcurrently(data);
     static_assert(sizeof(String) == sizeof(RefPtr<StringImpl>), "JSString's String initialization must be done in one pointer move.");
     // We do not clear the trailing fibers and length information (fiber1 and fiber2) because we could be reading the length concurrently.
     ASSERT(!JSString::isRope());
@@ -241,7 +247,7 @@ RefPtr<AtomStringImpl> JSRopeString::resolveRopeToExistingAtomString(JSGlobalObj
             existingAtomString = AtomStringImpl::lookUp(buffer, length());
         }
     } else
-        existingAtomString = StringView { substringBase()->valueInternal() }.substring(substringOffset(), length()).toExistingAtomString().releaseImpl();
+        existingAtomString = StringView { substringBase()->fiberConcurrently().fiberAs<StringImpl>() }.substring(substringOffset(), length()).toExistingAtomString().releaseImpl();
 
     if (existingAtomString)
         convertToNonRope(*existingAtomString);
@@ -249,16 +255,17 @@ RefPtr<AtomStringImpl> JSRopeString::resolveRopeToExistingAtomString(JSGlobalObj
 }
 
 template<typename Function>
-const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobalObjectForOOM, Function&& function) const
+const String JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobalObjectForOOM, Function&& function) const
 {
     ASSERT(isRope());
     
     VM& vm = this->vm();
     if (isSubstring()) {
         ASSERT(!substringBase()->isRope());
-        auto newImpl = substringBase()->valueInternal().substringSharingImpl(substringOffset(), length());
+        auto value = String(substringBase()->fiberConcurrently().fiberAs<StringImpl>());
+        auto newImpl = value.substringSharingImpl(substringOffset(), length());
         convertToNonRope(function(newImpl.releaseImpl().releaseNonNull()));
-        return valueInternal();
+        return fiberConcurrently().fiberAs<StringImpl>();
     }
     
     if (is8Bit()) {
@@ -272,7 +279,7 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
 
         resolveRopeInternalNoSubstring(buffer);
         convertToNonRope(function(newImpl.releaseNonNull()));
-        return valueInternal();
+        return fiberConcurrently().fiberAs<StringImpl>();
     }
     
     UChar* buffer;
@@ -285,10 +292,10 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
     
     resolveRopeInternalNoSubstring(buffer);
     convertToNonRope(function(newImpl.releaseNonNull()));
-    return valueInternal();
+    return fiberConcurrently().fiberAs<StringImpl>();
 }
 
-const String& JSRopeString::resolveRope(JSGlobalObject* nullOrGlobalObjectForOOM) const
+const String JSRopeString::resolveRope(JSGlobalObject* nullOrGlobalObjectForOOM) const
 {
     return resolveRopeWithFunction(nullOrGlobalObjectForOOM, [] (Ref<StringImpl>&& newImpl) {
         return WTFMove(newImpl);
@@ -322,7 +329,7 @@ void JSRopeString::resolveRopeSlowCase(CharacterType* buffer) const
             JSRopeString* currentFiberAsRope = static_cast<JSRopeString*>(currentFiber);
             if (currentFiberAsRope->isSubstring()) {
                 ASSERT(!currentFiberAsRope->substringBase()->isRope());
-                StringView view = *currentFiberAsRope->substringBase()->valueInternal().impl();
+                StringView view = *currentFiberAsRope->substringBase()->fiberConcurrently().fiberAs<StringImpl>();
                 unsigned offset = currentFiberAsRope->substringOffset();
                 unsigned length = currentFiberAsRope->length();
                 position -= length;
@@ -334,7 +341,7 @@ void JSRopeString::resolveRopeSlowCase(CharacterType* buffer) const
             continue;
         }
 
-        StringView view = *currentFiber->valueInternal().impl();
+        StringView view = *currentFiber->fiberConcurrently().fiberAs<StringImpl>();
         position -= view.length();
         view.getCharacters(position);
     }

@@ -29,6 +29,8 @@
 #include <wtf/CompactPtr.h>
 #include <wtf/DebugHeap.h>
 #include <wtf/Expected.h>
+#include <wtf/Gigacage.h>
+#include <wtf/IsoMalloc.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Packed.h>
 #include <wtf/StdLibExtras.h>
@@ -54,11 +56,7 @@ typedef const struct __CFString * CFStringRef;
 @class NSString;
 #endif
 
-#if HAVE(36BIT_ADDRESS)
 #define STRING_IMPL_ALIGNMENT alignas(16)
-#else
-#define STRING_IMPL_ALIGNMENT
-#endif
 
 namespace JSC {
 namespace LLInt { class Data; }
@@ -177,10 +175,10 @@ protected:
 // Or we could say that "const" doesn't make sense at all and use "StringImpl&" and "StringImpl*" everywhere.
 // Right now we use a mix of both, which makes code more confusing and has no benefit.
 
-DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringImpl);
+DECLARE_SMALLHEAP_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringImpl);
 class StringImpl : private StringImplShape {
     WTF_MAKE_NONCOPYABLE(StringImpl);
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StringImpl);
+    WTF_MAKE_STRUCT_SMALLHEAP_ALLOCATED_WITH_HEAP_IDENTIFIER(StringImpl);
 
     friend class AtomStringImpl;
     friend class JSC::LLInt::Data;
@@ -202,6 +200,14 @@ class StringImpl : private StringImplShape {
     template<typename> friend struct WTF::HashAndCharactersTranslator;
 
 public:
+    static constexpr uint8_t numberOfLowerTierCells = 0;
+#if HAVE(36BIT_ADDRESS) or !USE(JSVALUE64)
+    using CompactPtrTypeTraits = WTF::BigHeapTypeTraits<StringImpl>;
+#else
+    using AllocatorInfo = Gigacage::SmallHeapAllocatorInfo;
+    using CompactPtrTypeTraits = WTF::SmallHeapTypeTraits<StringImpl, AllocatorInfo>;
+#endif
+
     enum BufferOwnership { BufferInternal, BufferOwned, BufferSubstring, BufferExternal };
 
     static constexpr unsigned MaxLength = StringImplShape::MaxLength;
@@ -278,6 +284,7 @@ public:
         ASSERT(charactersAreAllASCII(bitwise_cast<const LChar*>(characters), length));
         return createStaticStringImpl(bitwise_cast<const LChar*>(characters), length);
     }
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> createStaticStringImplInternal(const LChar*, unsigned length);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createStaticStringImpl(const LChar*, unsigned length);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createStaticStringImpl(const UChar*, unsigned length);
 
@@ -648,12 +655,12 @@ template<> struct DefaultHash<CompactPtr<StringImpl>>;
 
 template<> ALWAYS_INLINE Ref<StringImpl> StringImpl::constructInternal<LChar>(StringImpl& string, unsigned length)
 {
-    return adoptRef(*new (NotNull, &string) StringImpl { length, Force8BitConstructor });
+    return adoptRef(*new (&string) StringImpl { length, Force8BitConstructor });
 }
 
 template<> ALWAYS_INLINE Ref<StringImpl> StringImpl::constructInternal<UChar>(StringImpl& string, unsigned length)
 {
-    return adoptRef(*new (NotNull, &string) StringImpl { length });
+    return adoptRef(*new (&string) StringImpl { length });
 }
 
 template<> ALWAYS_INLINE const LChar* StringImpl::characters<LChar>() const

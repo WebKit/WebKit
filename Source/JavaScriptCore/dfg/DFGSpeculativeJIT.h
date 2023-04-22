@@ -1768,7 +1768,7 @@ public:
     void speculateDataViewObject(Edge, GPRReg cell);
     void speculateObjectOrOther(Edge);
     void speculateString(Edge edge, GPRReg cell);
-    void speculateStringIdentAndLoadStorage(Edge edge, GPRReg string, GPRReg storage);
+    void speculateStringIdentAndLoadStorage(Edge edge, GPRReg string, GPRReg storage, GPRReg scratch);
     void speculateStringIdent(Edge edge, GPRReg string);
     void speculateStringIdent(Edge);
     void speculateString(Edge);

@@ -591,6 +591,19 @@ macro cagedPrimitiveMayBeNull(ptr, length, scratch, scratch2)
     end
 end
 
+macro expandCompactPtrJSString(source, dest, scratch)
+    if HAVE_36BIT_ADDRESS
+        move source, dest
+        lshiftp 4, dest
+    else
+        loadp GigacageConfig + Gigacage::Config::basePtrs + GigacageSmallHeapBasePtrOffset, scratch
+        urshiftp 4, scratch
+        orp source, scratch
+        lshiftp 4, scratch
+        move scratch, dest
+    end
+end
+
 macro loadCagedJSValue(source, dest, scratchOrLength)
     loadp source, dest
     if GIGACAGE_ENABLED
@@ -2465,9 +2478,12 @@ llintOpWithJump(op_switch_char, OpSwitchChar, macro (size, get, jump, dispatch)
     addp t3, t2
     btqnz t1, notCellMask, .opSwitchCharFallThrough
     bbneq JSCell::m_type[t1], StringType, .opSwitchCharFallThrough
-    loadp JSString::m_fiber[t1], t0
-    btpnz t0, isRopeInPointer, .opSwitchOnRope
-    bineq StringImpl::m_length[t0], 1, .opSwitchCharFallThrough
+    loadp JSString::m_fiberAndLength[t1], t0
+    andp t0, fiberAndLengthAndFlagLengthMask, t1
+    bineq t1, 1, .opSwitchCharFallThrough
+    btpnz t0, isRopeInPointer, .opSwitchOnRopeChar
+    urshiftp 32, t0
+    expandCompactPtrJSString(t0, t0, t1)
     loadp StringImpl::m_data8[t0], t1
     btinz StringImpl::m_hashAndFlags[t0], HashFlags8BitBuffer, .opSwitchChar8Bit
     loadh [t1], t0
@@ -2485,9 +2501,6 @@ llintOpWithJump(op_switch_char, OpSwitchChar, macro (size, get, jump, dispatch)
 
 .opSwitchCharFallThrough:
     jump(m_defaultOffset)
-
-.opSwitchOnRope:
-    bineq JSRopeString::m_compactFibers + JSRopeString::CompactFibers::m_length[t1], 1, .opSwitchCharFallThrough
 
 .opSwitchOnRopeChar:
     callSlowPath(_llint_slow_path_switch_char)

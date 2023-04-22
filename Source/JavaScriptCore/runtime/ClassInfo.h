@@ -179,6 +179,7 @@ struct MethodTable {
 
 struct CLASS_INFO_ALIGNMENT ClassInfo {
     using CheckJSCastSnippetFunctionPtr = Ref<Snippet> (*)(void);
+    using CompactPtrTypeTraits = WTF::BigHeapTypeTraits<ClassInfo>;
 
     // A string denoting the class name. Example: "Window".
     ASCIILiteral className;

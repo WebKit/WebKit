@@ -73,7 +73,6 @@ AbstractHeapRepository::AbstractHeapRepository()
     FOR_EACH_NUMBERED_ABSTRACT_HEAP(NUMBERED_ABSTRACT_HEAP_INITIALIZATION)
 #undef NUMBERED_ABSTRACT_HEAP_INITIALIZATION
 
-    , JSString_value(JSRopeString_fiber0)
     , JSWrapperObject_internalValue(const_cast<AbstractHeap&>(JSInternalFieldObjectImpl_internalFields[static_cast<unsigned>(JSWrapperObject::Field::WrappedValue)]))
 
     , absolute(&root, "absolute")
@@ -93,8 +92,6 @@ AbstractHeapRepository::AbstractHeapRepository()
     JSCell_typeInfoType.changeParent(&JSCell_usefulBytes);
     JSCell_typeInfoFlags.changeParent(&JSCell_usefulBytes);
     JSCell_cellState.changeParent(&JSCell_usefulBytes);
-    JSRopeString_flags.changeParent(&JSRopeString_fiber0);
-    JSRopeString_length.changeParent(&JSRopeString_fiber1);
 
     RELEASE_ASSERT(!JSCell_freeListNext.offset());
 }

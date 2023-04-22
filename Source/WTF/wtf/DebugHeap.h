@@ -94,6 +94,12 @@ private:
 #define DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Type) \
     struct MakeDebugHeapMallocedImplMacroSemicolonifier##Type { }
 
+#define DECLARE_SMALLHEAP_ALLOCATOR_WITH_HEAP_IDENTIFIER(Type) \
+    using Type##Malloc = SmallHeapMalloc
+
+#define DEFINE_SMALLHEAP_ALLOCATOR_WITH_HEAP_IDENTIFIER(Type) \
+    struct MakeDebugHeapMallocedImplMacroSemicolonifier##Type { }
+
 #endif
 
 } // namespace WTF

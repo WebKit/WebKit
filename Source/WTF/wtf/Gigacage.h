@@ -60,6 +60,8 @@ ALWAYS_INLINE const char* name(Kind kind)
         return "Primitive";
     case JSValue:
         return "JSValue";
+    case SmallHeap:
+        return "SmallHeap";
     case NumberOfKinds:
         break;
     }

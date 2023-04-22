@@ -34,14 +34,16 @@ inline JSString::~JSString()
 {
     if (isRope())
         return;
-    valueInternal().~String();
+    auto* impl = fiberConcurrently().fiberAs<StringImpl>();
+    if (impl)
+        impl->deref();
 }
 
 bool JSString::equal(JSGlobalObject* globalObject, JSString* other) const
 {
     if (isRope() || other->isRope())
         return equalSlowCase(globalObject, other);
-    return WTF::equal(*valueInternal().impl(), *other->valueInternal().impl());
+    return WTF::equal(*fiberConcurrently().fiberAs<StringImpl>(), *other->fiberConcurrently().fiberAs<StringImpl>());
 }
 
 ALWAYS_INLINE bool JSString::equalInline(JSGlobalObject* globalObject, JSString* other) const
