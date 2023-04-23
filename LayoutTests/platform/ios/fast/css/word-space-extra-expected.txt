@@ -660,9 +660,8 @@ layer at (0,0) size 800x2440
             text run at (0,240) width 57: "elements"
             text run at (76,240) width 18: " to"
             text run at (113,240) width 31: " too)"
-            text run at (163,240) width 5: " "
         RenderText {#text} at (0,0) size 0x0
-        RenderBR {BR} at (167,240) size 1x19
+        RenderBR {BR} at (143,240) size 1x19
         RenderBR {BR} at (0,260) size 0x19
         RenderBR {BR} at (0,280) size 0x19
       RenderBlock {H2} at (0,772) size 784x31
@@ -1104,9 +1103,9 @@ layer at (0,0) size 800x2440
               text run at (449,225) width 167: " elements too"
           RenderText {#text} at (615,220) size 693x39
             text run at (615,220) width 78: ". (with"
-            text run at (0,240) width 433: "monospace font from elements to too) "
+            text run at (0,240) width 424: "monospace font from elements to too)"
         RenderText {#text} at (0,0) size 0x0
-        RenderBR {BR} at (432,240) size 1x19
+        RenderBR {BR} at (423,240) size 1x19
         RenderBR {BR} at (0,260) size 0x19
         RenderBR {BR} at (0,280) size 0x19
       RenderBlock {H2} at (0,1578) size 784x31

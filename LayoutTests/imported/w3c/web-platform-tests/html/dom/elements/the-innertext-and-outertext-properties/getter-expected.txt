@@ -8,7 +8,7 @@ PASS Internal whitespace compressed ("<div>abc  def")
 PASS \n converted to space ("<div>abc\ndef")
 PASS \r converted to space ("<div>abc\rdef")
 PASS \t converted to space ("<div>abc\tdef")
-FAIL Trailing whitespace before hard line break removed ("<div>abc <br>def") assert_equals: innerText expected "abc\ndef" but got "abc \ndef"
+PASS Trailing whitespace before hard line break removed ("<div>abc <br>def")
 PASS Leading whitespace after hard line break removed ("<div>abc<br> def")
 PASS Leading whitespace preserved ("<pre> abc")
 PASS Trailing whitespace preserved ("<pre>abc ")

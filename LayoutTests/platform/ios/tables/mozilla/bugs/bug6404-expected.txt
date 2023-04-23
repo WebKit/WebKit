@@ -3,12 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x105
+      RenderBlock (anonymous) at (0,0) size 784x100
         RenderImage {IMG} at (0,0) size 220x100
-        RenderText {#text} at (220,85) size 4x19
-          text run at (220,85) width 4: " "
-        RenderBR {BR} at (224,85) size 0x19
-      RenderTable {TABLE} at (0,105) size 784x190
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (220,85) size 0x19
+      RenderTable {TABLE} at (0,100) size 784x190
         RenderTableSection {TBODY} at (0,0) size 784x190
           RenderTableRow {TR} at (0,2) size 784x22
             RenderTableCell {TD} at (2,2) size 149x22 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]

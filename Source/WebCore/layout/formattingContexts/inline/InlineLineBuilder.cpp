@@ -580,17 +580,10 @@ InlineItemRange LineBuilder::close(const InlineItemRange& needsLayoutRange, cons
         auto lineHasOverflow = [&] {
             return horizontalAvailableSpace < m_line.contentLogicalWidth();
         };
-        auto lineEndsWithLineBreak = [&] {
-            return !m_line.runs().isEmpty() && m_line.runs().last().isLineBreak();
-        };
         auto isLineBreakAfterWhitespace = [&] {
             return (!isLastLine || lineHasOverflow()) && rootStyle.lineBreak() == LineBreak::AfterWhiteSpace;
         };
-        auto shouldApplyPreserveTrailingWhitespaceQuirk = [&] {
-            return quirks.shouldPreserveTrailingWhitespace(isInIntrinsicWidthMode(), m_line.contentNeedsBidiReordering(), horizontalAvailableSpace < m_line.contentLogicalWidth(), lineEndsWithLineBreak());
-        };
-
-        m_line.handleTrailingTrimmableContent(shouldApplyPreserveTrailingWhitespaceQuirk() || isLineBreakAfterWhitespace() ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove);
+        m_line.handleTrailingTrimmableContent(isLineBreakAfterWhitespace() ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove);
         if (quirks.trailingNonBreakingSpaceNeedsAdjustment(isInIntrinsicWidthMode(), lineHasOverflow()))
             m_line.handleOverflowingNonBreakingSpace(isLineBreakAfterWhitespace() ? Line::TrailingContentAction::Preserve : Line::TrailingContentAction::Remove, m_line.contentLogicalWidth() - horizontalAvailableSpace);
 

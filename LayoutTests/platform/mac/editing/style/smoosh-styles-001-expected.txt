@@ -27,16 +27,16 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x184 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x84
-          RenderText {#text} at (0,0) size 66x28
-            text run at (0,0) width 66: "Tests: "
-          RenderBR {BR} at (65,0) size 1x28
+          RenderText {#text} at (0,0) size 60x28
+            text run at (0,0) width 60: "Tests:"
+          RenderBR {BR} at (59,0) size 1x28
           RenderText {#text} at (0,28) size 718x56
             text run at (0,28) width 718: "Pasting black (document default color) text into a block of text with a non-"
             text run at (0,56) width 127: "default color."
         RenderBlock {DIV} at (14,114) size 756x56
-          RenderText {#text} at (0,0) size 190x28
-            text run at (0,0) width 190: "Expected Results: "
-          RenderBR {BR} at (189,0) size 1x28
+          RenderText {#text} at (0,0) size 184x28
+            text run at (0,0) width 184: "Expected Results:"
+          RenderBR {BR} at (183,0) size 1x28
           RenderText {#text} at (0,28) size 438x28
             text run at (0,28) width 438: "Should see this content in the red box below: "
           RenderInline {SPAN} at (0,0) size 77x28 [color=#FF0000]

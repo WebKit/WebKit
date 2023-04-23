@@ -18,30 +18,29 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,74) size 784x20
         RenderText {#text} at (0,0) size 301x19
           text run at (0,0) width 301: "The text on both buttons should like this: \x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
-      RenderBlock (anonymous) at (0,110) size 784x42
-        RenderButton {BUTTON} at (0,2) size 51x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+      RenderBlock (anonymous) at (0,110) size 784x40
+        RenderButton {BUTTON} at (0,0) size 51x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
           RenderBlock (anonymous) at (12,2) size 27x16
             RenderText {#text} at (0,0) size 27x14
               text run at (0,0) width 27: "\x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
-        RenderText {#text} at (50,0) size 5x19
-          text run at (50,0) width 5: " "
-        RenderBR {BR} at (54,0) size 1x19
-        RenderButton {INPUT} at (0,22) size 51x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (50,-2) size 1x19
+        RenderButton {INPUT} at (0,20) size 51x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
           RenderBlock (anonymous) at (12,2) size 27x16
             RenderText at (0,0) size 27x14
               text run at (0,0) width 27 RTL: "\x{5DB}\x{5E4}\x{5EA}\x{5D5}\x{5E8}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,178) size 784x20
+      RenderBlock {P} at (0,176) size 784x20
         RenderText {#text} at (0,0) size 255x19
           text run at (0,0) width 255: "The following lines should be identical:"
-      RenderBlock {P} at (0,214) size 784x20
+      RenderBlock {P} at (0,212) size 784x20
         RenderText {#text} at (0,0) size 64x19
           text run at (0,0) width 16: "21"
           text run at (16,0) width 48 RTL: "\x{5D4}\x{5DE}\x{5D0}\x{5D4} \x{5D4}-"
-      RenderBlock {P} at (0,250) size 784x20
+      RenderBlock {P} at (0,248) size 784x20
         RenderText {#text} at (0,0) size 64x19
           text run at (0,0) width 64: "21-\x{5D4} \x{5D4}\x{5D0}\x{5DE}\x{5D4}"
 layer at (8,64) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,56) size 784x2 [border: (1px inset #000000)]
-layer at (8,168) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,160) size 784x2 [border: (1px inset #000000)]
+layer at (8,166) size 784x2 clip at (0,0) size 0x0
+  RenderBlock {HR} at (0,158) size 784x2 [border: (1px inset #000000)]

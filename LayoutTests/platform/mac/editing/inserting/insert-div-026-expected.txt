@@ -24,9 +24,9 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x212 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x112
-          RenderText {#text} at (0,0) size 66x28
-            text run at (0,0) width 66: "Tests: "
-          RenderBR {BR} at (65,0) size 1x28
+          RenderText {#text} at (0,0) size 60x28
+            text run at (0,0) width 60: "Tests:"
+          RenderBR {BR} at (59,0) size 1x28
           RenderText {#text} at (0,28) size 714x56
             text run at (0,28) width 714: "Inserting blocks for paragraphs should do a better job of finding a block to"
             text run at (0,56) width 114: "insert after. "
@@ -37,9 +37,9 @@ layer at (0,0) size 800x600
             text run at (370,56) width 356: " Insert paragraph command puts new"
             text run at (0,84) width 546: "block in wrong place, creating difficult-to-handle HTML"
         RenderBlock {DIV} at (14,142) size 756x56
-          RenderText {#text} at (0,0) size 190x28
-            text run at (0,0) width 190: "Expected Results: "
-          RenderBR {BR} at (189,0) size 1x28
+          RenderText {#text} at (0,0) size 184x28
+            text run at (0,0) width 184: "Expected Results:"
+          RenderBR {BR} at (183,0) size 1x28
           RenderText {#text} at (0,28) size 438x28
             text run at (0,28) width 438: "Should see this content in the red box below: "
           RenderInline {B} at (0,0) size 21x28

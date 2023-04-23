@@ -24,9 +24,9 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x297 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x90
-          RenderText {#text} at (0,1) size 66x28
-            text run at (0,1) width 66: "Tests: "
-          RenderBR {BR} at (65,1) size 1x28
+          RenderText {#text} at (0,1) size 60x28
+            text run at (0,1) width 60: "Tests:"
+          RenderBR {BR} at (59,1) size 1x28
           RenderText {#text} at (0,31) size 162x28
             text run at (0,31) width 162: "Fix for this bug: "
           RenderInline {A} at (0,0) size 551x28 [color=#0000EE]
@@ -36,9 +36,9 @@ layer at (0,0) size 800x600
             text run at (0,61) width 721: "Text transformed with text-transform does not copy with transform applied"
         RenderBlock {DIV} at (14,120) size 756x163
           RenderBlock (anonymous) at (0,0) size 756x60
-            RenderText {#text} at (0,1) size 190x28
-              text run at (0,1) width 190: "Expected Results: "
-            RenderBR {BR} at (189,1) size 1x28
+            RenderText {#text} at (0,1) size 184x28
+              text run at (0,1) width 184: "Expected Results:"
+            RenderBR {BR} at (183,1) size 1x28
             RenderText {#text} at (0,31) size 201x28
               text run at (0,31) width 201: "Should see the string"
           RenderBlock {PRE} at (0,84) size 756x25

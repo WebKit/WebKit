@@ -9,7 +9,7 @@ This test ensures we compute the relative frame of table objects correctly.
 
 { AXRole: AXStaticText AXValue: Ruritanian } has AXRelativeFrame: NSRect: {{191, 33}, {77, 18}}
 
-{ AXRole: AXStaticText AXValue: Population  } has AXRelativeFrame: NSRect: {{190, 51}, {80, 18}}
+{ AXRole: AXStaticText AXValue: Population } has AXRelativeFrame: NSRect: {{192, 51}, {76, 18}}
 
 { AXRole: AXStaticText AXValue: Survey } has AXRelativeFrame: NSRect: {{205, 69}, {49, 18}}
 
@@ -101,7 +101,7 @@ Moving the table down by 3000px and scrolling down 500px.
 
 { AXRole: AXStaticText AXValue: Ruritanian } has AXRelativeFrame: NSRect: {{184, 2525}, {77, 18}}
 
-{ AXRole: AXStaticText AXValue: Population  } has AXRelativeFrame: NSRect: {{182, 2543}, {80, 18}}
+{ AXRole: AXStaticText AXValue: Population } has AXRelativeFrame: NSRect: {{184, 2543}, {76, 18}}
 
 { AXRole: AXStaticText AXValue: Survey } has AXRelativeFrame: NSRect: {{198, 2561}, {49, 18}}
 

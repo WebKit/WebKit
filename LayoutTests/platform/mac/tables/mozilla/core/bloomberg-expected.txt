@@ -257,18 +257,17 @@ layer at (0,0) size 785x669
                         text run at (12,300) width 151: "Financial Market Update"
                       RenderBR {BR} at (162,300) size 1x15
                 RenderText {#text} at (0,0) size 0x0
-                RenderInline {FONT} at (0,0) size 83x11
+                RenderInline {FONT} at (0,0) size 81x11
                   RenderInline {A} at (0,0) size 33x11
-                    RenderText {#text} at (46,315) size 33x11
-                      text run at (46,315) width 33: "AUDIO"
-                  RenderText {#text} at (78,315) size 17x11
-                    text run at (78,315) width 17: "  |   "
+                    RenderText {#text} at (47,315) size 33x11
+                      text run at (47,315) width 33: "AUDIO"
+                  RenderText {#text} at (79,315) size 18x11
+                    text run at (79,315) width 18: "  |   "
                   RenderInline {A} at (0,0) size 32x11
-                    RenderText {#text} at (94,315) size 32x11
-                      text run at (94,315) width 32: "VIDEO"
-                  RenderText {#text} at (125,315) size 4x11
-                    text run at (125,315) width 4: " "
-                RenderBR {BR} at (128,310) size 1x18
+                    RenderText {#text} at (96,315) size 32x11
+                      text run at (96,315) width 32: "VIDEO"
+                  RenderText {#text} at (0,0) size 0x0
+                RenderBR {BR} at (127,310) size 1x18
                 RenderBR {BR} at (87,326) size 1x18
                 RenderBR {BR} at (87,344) size 1x18
                 RenderInline {A} at (0,0) size 125x18
@@ -287,8 +286,8 @@ layer at (0,0) size 785x669
                   RenderText {#text} at (4,40) size 278x54
                     text run at (4,40) width 268: "Looking for a new approach to investing?"
                     text run at (4,58) width 278: "How about a portfolio where every holding"
-                    text run at (4,76) width 212: "has a word for its stock symbol? "
-              RenderBR {BR} at (215,76) size 1x18
+                    text run at (4,76) width 208: "has a word for its stock symbol?"
+              RenderBR {BR} at (211,76) size 1x18
               RenderInline {SPAN} at (0,0) size 47x18
                 RenderInline {A} at (0,0) size 47x18
                   RenderText {#text} at (4,94) size 47x18
