@@ -9,8 +9,9 @@
 <div id="content">
 <h1 id="heading1">Small heading</h1>
 <h1 id="heading2"><a href="#">A heading that is just a little bit wider</a></h1>
+<h1 id="heading3" style="display:contents"><a href="#">A heading that is just a little bit wider and has display:contents</a></h1>
 
-<h1 id="heading3"><a href="#">Small heading</a> <a href="#">Small heading</a></h1>
+<h1 id="heading4"><a href="#">Small heading</a> <a href="#">Small heading</a></h1>
 </div>
 
 <script>
@@ -27,8 +28,12 @@
         output += expect("heading2.clickPointY", "heading2.childAtIndex(0).clickPointY");
 
         var heading3 = accessibilityController.accessibleElementById("heading3");
+        output += expect("heading3.clickPointX", "heading3.childAtIndex(0).clickPointX");
+        output += expect("heading3.clickPointY", "heading3.childAtIndex(0).clickPointY");
+
+        var heading4 = accessibilityController.accessibleElementById("heading4");
         // If there is more than one child, the click point should be the middle again, which means X point will be different.
-        output += expect("heading3.clickPointX == heading3.childAtIndex(0).clickPointX", "false");
+        output += expect("heading4.clickPointX == heading4.childAtIndex(0).clickPointX", "false");
 
         debug(output);
         document.getElementById("content").style.visibility = "hidden";

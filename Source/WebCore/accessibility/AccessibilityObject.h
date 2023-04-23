@@ -429,7 +429,8 @@ public:
     FloatPoint screenRelativePosition() const final { return convertFrameToSpace(elementRect(), AccessibilityConversionSpace::Screen).location(); }
 #endif
     IntSize size() const final { return snappedIntRect(elementRect()).size(); }
-    IntPoint clickPoint() override;
+    IntPoint clickPoint() final;
+    IntPoint clickPointFromElementRect() const;
     static IntRect boundingBoxForQuads(RenderObject*, const Vector<FloatQuad>&);
     Path elementPath() const override { return Path(); }
     bool supportsPath() const override { return false; }
@@ -439,7 +440,7 @@ public:
     int insertionPointLineNumber() const override { return -1; }
 
     URL url() const override { return URL(); }
-    VisibleSelection selection() const override { return VisibleSelection(); }
+    VisibleSelection selection() const final;
     String selectedText() const override { return String(); }
     String accessKey() const override { return nullAtom(); }
     String localizedActionVerb() const override;
@@ -552,7 +553,7 @@ public:
     static String stringForVisiblePositionRange(const VisiblePositionRange&);
     String stringForRange(const SimpleRange&) const override;
     IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const override { return IntRect(); }
-    IntRect boundsForRange(const SimpleRange&) const override { return IntRect(); }
+    IntRect boundsForRange(const SimpleRange&) const final;
     void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override { }
 
     VisiblePosition visiblePositionForPoint(const IntPoint&) const override { return VisiblePosition(); }
@@ -798,6 +799,9 @@ private:
     bool accessibilityIsIgnoredWithoutCache(AXObjectCache*) const;
     void setLastKnownIsIgnoredValue(bool);
     void ariaTreeRows(AccessibilityChildrenVector& rows, AccessibilityChildrenVector& ancestors);
+
+    // Special handling of click point for links.
+    IntPoint linkClickPoint();
 
 protected: // FIXME: Make the data members private.
     AccessibilityChildrenVector m_children;

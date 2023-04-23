@@ -90,8 +90,7 @@ public:
     
     LayoutRect boundingBoxRect() const override;
     LayoutRect elementRect() const override;
-    IntPoint clickPoint() override;
-    
+
     RenderObject* renderer() const override { return m_renderer.get(); }
     RenderBoxModelObject* renderBoxModelObject() const;
     Node* node() const override;
@@ -104,7 +103,6 @@ public:
     URL url() const override;
     PlainTextRange selectedTextRange() const override;
     int insertionPointLineNumber() const override;
-    VisibleSelection selection() const override;
     String stringValue() const override;
     String helpText() const override;
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override;
@@ -127,7 +125,6 @@ public:
     VisiblePositionRange visiblePositionRange() const override;
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const override;
     IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const override;
-    IntRect boundsForRange(const SimpleRange&) const override;
     VisiblePositionRange selectedVisiblePositionRange() const override;
     void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override;
     bool isVisiblePositionRangeInDifferentDocument(const VisiblePositionRange&) const;
@@ -227,8 +224,6 @@ private:
 #endif
 
     bool canHavePlainText() const;
-    // Special handling of click point for links.
-    IntPoint linkClickPoint();
 };
 
 } // namespace WebCore

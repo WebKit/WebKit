@@ -45,7 +45,6 @@
 #include "FloatRect.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
-#include "GeometryUtilities.h"
 #include "HTMLAreaElement.h"
 #include "HTMLBRElement.h"
 #include "HTMLDetailsElement.h"
@@ -961,41 +960,6 @@ Path AccessibilityRenderObject::elementPath() const
     return Path();
 }
 
-IntPoint AccessibilityRenderObject::linkClickPoint()
-{
-    ASSERT(isLink());
-    /* A link bounding rect can contain points that are not part of the link.
-     For instance, a link that starts at the end of a line and finishes at the
-     beginning of the next line will have a bounding rect that includes the
-     entire two lines. In such a case, the middle point of the bounding rect
-     may not belong to the link element and thus may not activate the link.
-     Hence, return the middle point of the first character in the link if exists.
-     */
-    if (auto range = simpleRange()) {
-        auto start = VisiblePosition { makeContainerOffsetPosition(range->start) };
-        auto end = start.next();
-        if (contains<ComposedTree>(*range, makeBoundaryPoint(end)))
-            return { boundsForRange(*makeSimpleRange(start, end)).center() };
-    }
-    return AccessibilityObject::clickPoint();
-}
-
-IntPoint AccessibilityRenderObject::clickPoint()
-{
-    // Headings are usually much wider than their textual content. If the mid point is used, often it can be wrong.
-    if (isHeading() && children().size() == 1)
-        return children().first()->clickPoint();
-
-    if (isLink())
-        return linkClickPoint();
-
-    // use the default position unless this is an editable web area, in which case we use the selection bounds.
-    if (!isWebArea() || !canSetValueAttribute())
-        return AccessibilityObject::clickPoint();
-    
-    return boundsForVisiblePositionRange(selection()).center();
-}
-    
 AccessibilityObject* AccessibilityRenderObject::internalLinkElement() const
 {
     auto element = anchorElement();
@@ -1508,11 +1472,6 @@ String AccessibilityRenderObject::selectedText() const
     return doAXStringForRange(documentBasedSelectedTextRange());
 }
 
-VisibleSelection AccessibilityRenderObject::selection() const
-{
-    return m_renderer ? m_renderer->frame().selection().selection() : VisibleSelection();
-}
-
 PlainTextRange AccessibilityRenderObject::selectedTextRange() const
 {
     ASSERT(isTextControl());
@@ -1891,74 +1850,6 @@ bool AccessibilityRenderObject::nodeIsTextControl(const Node* node) const
     }
 
     return false;
-}
-
-static IntRect boundsForRects(const LayoutRect& rect1, const LayoutRect& rect2, const SimpleRange& dataRange)
-{
-    LayoutRect ourRect = rect1;
-    ourRect.unite(rect2);
-
-    // If the rectangle spans lines and contains multiple text characters, use the range's bounding box intead.
-    if (rect1.maxY() != rect2.maxY() && characterCount(dataRange) > 1) {
-        if (auto boundingBox = unionRect(RenderObject::absoluteTextRects(dataRange)); !boundingBox.isEmpty())
-            ourRect = boundingBox;
-    }
-
-    return snappedIntRect(ourRect);
-}
-
-IntRect AccessibilityRenderObject::boundsForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const
-{
-    if (visiblePositionRange.isNull())
-        return IntRect();
-    
-    // Create a mutable VisiblePositionRange.
-    VisiblePositionRange range(visiblePositionRange);
-    LayoutRect rect1 = range.start.absoluteCaretBounds();
-    LayoutRect rect2 = range.end.absoluteCaretBounds();
-    
-    // readjust for position at the edge of a line.  This is to exclude line rect that doesn't need to be accounted in the range bounds
-    if (rect2.y() != rect1.y()) {
-        VisiblePosition endOfFirstLine = endOfLine(range.start);
-        if (range.start == endOfFirstLine) {
-            range.start.setAffinity(Affinity::Downstream);
-            rect1 = range.start.absoluteCaretBounds();
-        }
-        if (range.end == endOfFirstLine) {
-            range.end.setAffinity(Affinity::Upstream);
-            rect2 = range.end.absoluteCaretBounds();
-        }
-    }
-    
-    return boundsForRects(rect1, rect2, *makeSimpleRange(range));
-}
-
-IntRect AccessibilityRenderObject::boundsForRange(const SimpleRange& range) const
-{
-    auto cache = axObjectCache();
-    if (!cache)
-        return { };
-
-    auto start = cache->startOrEndCharacterOffsetForRange(range, true);
-    auto end = cache->startOrEndCharacterOffsetForRange(range, false);
-
-    auto rect1 = cache->absoluteCaretBoundsForCharacterOffset(start);
-    auto rect2 = cache->absoluteCaretBoundsForCharacterOffset(end);
-
-    // Readjust for position at the edge of a line. This is to exclude line rect that doesn't need to be accounted in the range bounds.
-    if (rect2.y() != rect1.y()) {
-        auto endOfFirstLine = cache->endCharacterOffsetOfLine(start);
-        if (start.isEqual(endOfFirstLine)) {
-            start = cache->nextCharacterOffset(start, false);
-            rect1 = cache->absoluteCaretBoundsForCharacterOffset(start);
-        }
-        if (end.isEqual(endOfFirstLine)) {
-            end = cache->previousCharacterOffset(end, false);
-            rect2 = cache->absoluteCaretBoundsForCharacterOffset(end);
-        }
-    }
-
-    return boundsForRects(rect1, rect2, range);
 }
 
 bool AccessibilityRenderObject::isVisiblePositionRangeInDifferentDocument(const VisiblePositionRange& range) const
