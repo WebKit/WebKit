@@ -40,6 +40,8 @@
 #include <EGL/egl.h>
 #endif
 
+#include <wtf/text/StringToIntegerConversion.h>
+
 namespace WebCore {
 
 ExtensionsGLOpenGLES::ExtensionsGLOpenGLES(GraphicsContextGLOpenGL* context, bool useIndexedGetString)
@@ -253,23 +255,41 @@ void ExtensionsGLOpenGLES::vertexAttribDivisorANGLE(GCGLuint index, GCGLuint div
 bool ExtensionsGLOpenGLES::platformSupportsExtension(const String& name)
 {
     if (name == "GL_ANGLE_instanced_arrays"_s) {
+#if HAVE(OPENGL_ES_3)
         auto majorVersion = []() {
+            // Loosely inspired by GLContext::version()
             GLint version = 0;
-            ::glGetIntegerv(GL_MAJOR_VERSION, &version);
-            return version;
-        };
+            auto versionString = String::fromLatin1(reinterpret_cast<const char*>(::glGetString(GL_VERSION)));
+            Vector<String> versionStringComponents = versionString.split(' ');
 
+            Vector<String> versionDigits;
+            if (versionStringComponents[0] == "OpenGL"_s) {
+                // If the version string starts with "OpenGL" it can be GLES 1 or 2. In GLES1 version string starts
+                // with "OpenGL ES-<profile> major.minor" and in GLES2 with "OpenGL ES major.minor". Version is the
+                // third component in both cases.
+                versionDigits = versionStringComponents[2].split('.');
+            } else {
+                // Version is the first component. The version number is always "major.minor" or
+                // "major.minor.release". Ignore the release number.
+                versionDigits = versionStringComponents[0].split('.');
+            }
+            return parseIntegerAllowingTrailingJunk<GLint>(versionDigits[0]).value_or(0);
+        };
+#endif
         if (m_availableExtensions.contains(name)) {
             m_glVertexAttribDivisorANGLE = reinterpret_cast<PFNGLVERTEXATTRIBDIVISORANGLEPROC>(eglGetProcAddress("glVertexAttribDivisorANGLE"));
             m_glDrawArraysInstancedANGLE = reinterpret_cast<PFNGLDRAWARRAYSINSTANCEDANGLEPROC >(eglGetProcAddress("glDrawArraysInstancedANGLE"));
             m_glDrawElementsInstancedANGLE = reinterpret_cast<PFNGLDRAWELEMENTSINSTANCEDANGLEPROC >(eglGetProcAddress("glDrawElementsInstancedANGLE"));
             m_supportsANGLEinstancedArrays = true;
-        } else if (majorVersion() >= 3 || (m_availableExtensions.contains("GL_EXT_instanced_arrays"_s) && m_availableExtensions.contains("GL_EXT_draw_instanced"_s))) {
+        }
+#if HAVE(OPENGL_ES_3)
+        else if (majorVersion() >= 3 || (m_availableExtensions.contains("GL_EXT_instanced_arrays"_s) && m_availableExtensions.contains("GL_EXT_draw_instanced"_s))) {
             m_glVertexAttribDivisorANGLE = ::glVertexAttribDivisor;
             m_glDrawArraysInstancedANGLE = ::glDrawArraysInstanced;
             m_glDrawElementsInstancedANGLE = ::glDrawElementsInstanced;
             m_supportsANGLEinstancedArrays = true;
         }
+#endif
         return m_supportsANGLEinstancedArrays;
     }
     
