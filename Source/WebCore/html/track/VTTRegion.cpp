@@ -38,7 +38,6 @@
 #include "DOMTokenList.h"
 #include "ElementChildIteratorInlines.h"
 #include "HTMLDivElement.h"
-#include "HTMLParserIdioms.h"
 #include "Logging.h"
 #include "RenderElement.h"
 #include "ShadowPseudoIds.h"
@@ -173,7 +172,7 @@ void VTTRegion::setRegionSettings(const String& inputString)
 
         // Verify that we're looking at a ':'.
         if (name == None || !input.scan(':')) {
-            input.skipUntil<isHTMLSpace<UChar>>();
+            input.skipUntil<isASCIIWhitespace<UChar>>();
             continue;
         }
 
@@ -207,7 +206,7 @@ static inline bool parsedEntireRun(const VTTScanner& input, const VTTScanner::Ru
 
 void VTTRegion::parseSettingValue(RegionSetting setting, VTTScanner& input)
 {
-    VTTScanner::Run valueRun = input.collectUntil<isHTMLSpace<UChar>>();
+    VTTScanner::Run valueRun = input.collectUntil<isASCIIWhitespace<UChar>>();
 
     switch (setting) {
     case Id: {

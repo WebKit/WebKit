@@ -373,7 +373,7 @@ bool equalRespectingNullity(StringView a, StringView b)
 
 StringView StringView::stripWhiteSpace() const
 {
-    return stripLeadingAndTrailingMatchedCharacters(isASCIISpace<UChar>);
+    return stripLeadingAndTrailingMatchedCharacters(isUnicodeCompatibleASCIIWhitespace<UChar>);
 }
 
 size_t StringView::reverseFind(StringView matchString, unsigned start) const

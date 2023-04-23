@@ -27,7 +27,6 @@
 #include "DisplayListReplayer.h"
 #include "FilterOperations.h"
 #include "GraphicsContext.h"
-#include "HTMLParserIdioms.h"
 #include "InlineIteratorTextBox.h"
 #include "LayoutIntegrationInlineContent.h"
 #include "LegacyInlineTextBox.h"
@@ -110,7 +109,7 @@ void TextPainter::paintTextOrEmphasisMarks(const FontCascade& font, const TextRu
     ASSERT(startOffset < endOffset);
 
     if (m_context.detectingContentfulPaint()) {
-        if (!textRun.text().isAllSpecialCharacters<isHTMLSpace>())
+        if (!textRun.text().isAllSpecialCharacters<isASCIIWhitespace>())
             m_context.setContentfulPaintDetected();
         return;
     }

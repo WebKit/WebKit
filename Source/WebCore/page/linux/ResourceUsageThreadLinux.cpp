@@ -173,7 +173,7 @@ static bool threadCPUUsage(pid_t id, float period, ThreadInfo& info)
     // Skip ppid, pgrp, sid, tty_nr, tty_pgrp, flags, min_flt, cmin_flt, maj_flt, cmaj_flt.
     unsigned tokensToSkip = 10;
     while (tokensToSkip--) {
-        while (!isASCIISpace(position[0]))
+        while (!isUnicodeCompatibleASCIIWhitespace(position[0]))
             position++;
         position++;
     }

@@ -31,7 +31,6 @@
 #include "ComposedTreeIterator.h"
 #include "Document.h"
 #include "Element.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLSlotElement.h"
 #include "LayoutState.h"
 #include "LayoutTreeBuilder.h"
@@ -163,7 +162,7 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
             auto& text = downcast<Text>(node);
             auto* textUpdate = m_styleUpdate->textUpdate(text);
             bool didCreateParent = parent().update && parent().update->change == Style::Change::Renderer;
-            bool mayNeedUpdateWhitespaceOnlyRenderer = renderingParent().didCreateOrDestroyChildRenderer && text.data().isAllSpecialCharacters<isHTMLSpace>();
+            bool mayNeedUpdateWhitespaceOnlyRenderer = renderingParent().didCreateOrDestroyChildRenderer && text.data().isAllSpecialCharacters<isASCIIWhitespace>();
             if (didCreateParent || textUpdate || mayNeedUpdateWhitespaceOnlyRenderer)
                 updateTextRenderer(text, textUpdate);
 
@@ -443,7 +442,7 @@ bool RenderTreeUpdater::textRendererIsNeeded(const Text& textNode)
         return true;
     if (!textNode.length())
         return false;
-    if (!textNode.data().isAllSpecialCharacters<isHTMLSpace>())
+    if (!textNode.data().isAllSpecialCharacters<isASCIIWhitespace>())
         return true;
     if (is<RenderText>(renderingParent.previousChildRenderer))
         return true;

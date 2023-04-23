@@ -1037,7 +1037,7 @@ std::optional<SRGBA<uint8_t>> HTMLElement::parseLegacyColorValue(StringView stri
     if (string.isEmpty())
         return std::nullopt;
 
-    string = string.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
+    string = string.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>);
     if (string.isEmpty())
         return Color::black;
 

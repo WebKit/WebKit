@@ -49,8 +49,12 @@ template<typename CharacterType> constexpr bool isASCIIHexDigit(CharacterType);
 template<typename CharacterType> constexpr bool isASCIILower(CharacterType);
 template<typename CharacterType> constexpr bool isASCIIOctalDigit(CharacterType);
 template<typename CharacterType> constexpr bool isASCIIPrintable(CharacterType);
-template<typename CharacterType> constexpr bool isASCIISpace(CharacterType);
+template<typename CharacterType> constexpr bool isASCIIWhitespace(CharacterType);
+template<typename CharacterType> constexpr bool isUnicodeCompatibleASCIIWhitespace(CharacterType);
 template<typename CharacterType> constexpr bool isASCIIUpper(CharacterType);
+
+// Inverse of isASCIIWhitespace for predicates
+template<typename CharacterType> constexpr bool isNotASCIIWhitespace(CharacterType);
 
 template<typename CharacterType> CharacterType toASCIILower(CharacterType);
 template<typename CharacterType> CharacterType toASCIIUpper(CharacterType);
@@ -128,8 +132,24 @@ template<typename CharacterType> constexpr bool isASCIIPrintable(CharacterType c
     return character >= ' ' && character <= '~';
 }
 
+// Infra's "ASCII whitespace" <https://infra.spec.whatwg.org/#ascii-whitespace>
+template<typename CharacterType> constexpr bool isASCIIWhitespace(CharacterType character)
+{
+    // Histogram from Apple's page load test combined with some ad hoc browsing some other test suites.
+    //
+    //     82%: 216330 non-space characters, all > U+0020
+    //     11%:  30017 plain space characters, U+0020
+    //      5%:  12099 newline characters, U+000A
+    //      2%:   5346 tab characters, U+0009
+    //
+    // No other characters seen. No U+000C or U+000D, and no other control characters.
+    // Accordingly, we check for non-spaces first, then space, then newline, then tab, then the other characters.
+
+    return character <= ' ' && (character == ' ' || character == '\n' || character == '\t' || character == '\r' || character == '\f');
+}
+
 /*
-    Statistics from a run of Apple's page load test for callers of isASCIISpace:
+    Statistics from a run of Apple's page load test for callers of isUnicodeCompatibleASCIIWhitespace:
 
     character          count
     ---------          -----
@@ -141,17 +161,21 @@ template<typename CharacterType> constexpr bool isASCIIPrintable(CharacterType c
     0C  \f             0
     0B  \v             0
 
-    Because of those, we first check to quickly return false for non-control characters,
-    then check for space itself to quickly return true for that case, then do the rest.
+    As these are compatible with those for isASCIIWhitespace we let that do most of the work.
 */
-template<typename CharacterType> constexpr bool isASCIISpace(CharacterType character)
+template<typename CharacterType> constexpr bool isUnicodeCompatibleASCIIWhitespace(CharacterType character)
 {
-    return character <= ' ' && (character == ' ' || (character <= 0xD && character >= 0x9));
+    return isASCIIWhitespace(character) || character == '\v';
 }
 
 template<typename CharacterType> constexpr bool isASCIIUpper(CharacterType character)
 {
     return character >= 'A' && character <= 'Z';
+}
+
+template<typename CharacterType> constexpr bool isNotASCIIWhitespace(CharacterType character)
+{
+    return !isASCIIWhitespace(character);
 }
 
 template<typename CharacterType> inline CharacterType toASCIILower(CharacterType character)
@@ -244,8 +268,10 @@ using WTF::isASCIIHexDigit;
 using WTF::isASCIILower;
 using WTF::isASCIIOctalDigit;
 using WTF::isASCIIPrintable;
-using WTF::isASCIISpace;
+using WTF::isASCIIWhitespace;
+using WTF::isUnicodeCompatibleASCIIWhitespace;
 using WTF::isASCIIUpper;
+using WTF::isNotASCIIWhitespace;
 using WTF::lowerNibbleToASCIIHexDigit;
 using WTF::lowerNibbleToLowercaseASCIIHexDigit;
 using WTF::toASCIIHexValue;

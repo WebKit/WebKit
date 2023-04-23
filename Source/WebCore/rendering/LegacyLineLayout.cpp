@@ -30,7 +30,6 @@
 #include "BreakingContext.h"
 #include "DocumentInlines.h"
 #include "FloatingObjects.h"
-#include "HTMLParserIdioms.h"
 #include "InlineIteratorBox.h"
 #include "InlineIteratorTextBox.h"
 #include "InlineTextBoxStyle.h"
@@ -271,7 +270,7 @@ LegacyInlineFlowBox* LegacyLineLayout::createLineBoxes(RenderObject* obj, const 
 template<typename CharacterType> static inline bool endsWithHTMLSpaces(const CharacterType* characters, unsigned position, unsigned end)
 {
     for (unsigned i = position; i < end; ++i) {
-        if (!isHTMLSpace(characters[i]))
+        if (!isASCIIWhitespace(characters[i]))
             return false;
     }
     return true;

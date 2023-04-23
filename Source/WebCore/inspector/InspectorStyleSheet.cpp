@@ -52,7 +52,6 @@
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLHeadElement.h"
 #include "HTMLNames.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLStyleElement.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorDOMAgent.h"
@@ -321,7 +320,7 @@ void StyleSheetHandler::startRuleHeader(StyleRuleType type, unsigned offset)
 template <typename CharacterType> inline void StyleSheetHandler::setRuleHeaderEnd(const CharacterType* dataStart, unsigned listEndOffset)
 {
     while (listEndOffset > m_currentRuleDataStack.last()->ruleHeaderRange.start) {
-        if (isHTMLSpace<CharacterType>(*(dataStart + listEndOffset - 1)))
+        if (isASCIIWhitespace<CharacterType>(*(dataStart + listEndOffset - 1)))
             --listEndOffset;
         else
             break;
@@ -429,7 +428,7 @@ static inline void fixUnparsedProperties(const CharacterType* characters, CSSRul
         else
             propertyEnd = styleStart + nextData->range.start - 1;
         
-        while (isHTMLSpace<CharacterType>(characters[propertyEnd]))
+        while (isASCIIWhitespace<CharacterType>(characters[propertyEnd]))
             --propertyEnd;
         
         // propertyEnd points at the last property text character.
@@ -444,7 +443,7 @@ static inline void fixUnparsedProperties(const CharacterType* characters, CSSRul
             if (valueStart < propertyEnd)
                 ++valueStart;
 
-            while (valueStart < propertyEnd && isHTMLSpace<CharacterType>(characters[valueStart]))
+            while (valueStart < propertyEnd && isASCIIWhitespace<CharacterType>(characters[valueStart]))
                 ++valueStart;
             
             // Need to exclude the trailing ';' from the property value.

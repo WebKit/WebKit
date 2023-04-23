@@ -49,7 +49,6 @@
 #include "HTMLNames.h"
 #include "HTMLOListElement.h"
 #include "HTMLParagraphElement.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLSelectElement.h"
 #include "HTMLSpanElement.h"
 #include "HTMLUListElement.h"
@@ -115,12 +114,12 @@ template<typename CharacterType> static inline bool isValidAttributeNameChar(Cha
 
 template<typename CharacterType> static inline bool isCharAfterTagNameOrAttribute(CharacterType character)
 {
-    return character == ' ' || character == '>' || isHTMLSpace(character) || character == '/';
+    return character == ' ' || character == '>' || isASCIIWhitespace(character) || character == '/';
 }
 
 template<typename CharacterType> static inline bool isCharAfterUnquotedAttribute(CharacterType character)
 {
-    return character == ' ' || character == '>' || isHTMLSpace(character);
+    return character == ' ' || character == '>' || isASCIIWhitespace(character);
 }
 
 template<typename T> static bool insertInUniquedSortedVector(Vector<T>& vector, const T& value)
@@ -533,11 +532,11 @@ private:
             }
             if (m_parsingBuffer.atEnd() || !isCharAfterTagNameOrAttribute(*m_parsingBuffer))
                 return didFail(HTMLFastPathResult::FailedParsingTagName, ElementName::Unknown);
-            skipWhile<isHTMLSpace>(m_parsingBuffer);
+            skipWhile<isASCIIWhitespace>(m_parsingBuffer);
             return findHTMLElementName({ m_charBuffer.data(), m_charBuffer.size() });
         }
         auto tagName = findHTMLElementName({ start, static_cast<size_t>(m_parsingBuffer.position() - start) });
-        skipWhile<isHTMLSpace>(m_parsingBuffer);
+        skipWhile<isASCIIWhitespace>(m_parsingBuffer);
         return tagName;
     }
 
@@ -583,7 +582,7 @@ private:
 
     AtomString scanAttributeValue()
     {
-        skipWhile<isHTMLSpace>(m_parsingBuffer);
+        skipWhile<isASCIIWhitespace>(m_parsingBuffer);
         auto* start = m_parsingBuffer.position();
         size_t length = 0;
         if (m_parsingBuffer.hasCharactersRemaining() && isQuoteCharacter(*m_parsingBuffer)) {
@@ -614,7 +613,7 @@ private:
     // as '&' and '\r'.
     AtomString scanEscapedAttributeValue()
     {
-        skipWhile<isHTMLSpace>(m_parsingBuffer);
+        skipWhile<isASCIIWhitespace>(m_parsingBuffer);
         m_ucharBuffer.resize(0);
         if (UNLIKELY(!m_parsingBuffer.hasCharactersRemaining() || !isQuoteCharacter(*m_parsingBuffer)))
             return didFail(HTMLFastPathResult::FailedParsingUnquotedEscapedAttributeValue, emptyAtom());
@@ -723,7 +722,7 @@ private:
                     }
                     if (*m_parsingBuffer == '/') {
                         m_parsingBuffer.advance();
-                        skipWhile<isHTMLSpace>(m_parsingBuffer);
+                        skipWhile<isASCIIWhitespace>(m_parsingBuffer);
                         if (m_parsingBuffer.atEnd() || m_parsingBuffer.consume() != '>')
                             return didFail(HTMLFastPathResult::FailedParsingAttributes);
                         break;
@@ -731,11 +730,11 @@ private:
                 }
                 return didFail(HTMLFastPathResult::FailedParsingAttributes);
             }
-            skipWhile<isHTMLSpace>(m_parsingBuffer);
+            skipWhile<isASCIIWhitespace>(m_parsingBuffer);
             AtomString attributeValue { emptyAtom() };
             if (skipExactly(m_parsingBuffer, '=')) {
                 attributeValue = scanAttributeValue();
-                skipWhile<isHTMLSpace>(m_parsingBuffer);
+                skipWhile<isASCIIWhitespace>(m_parsingBuffer);
             }
             if (UNLIKELY(!insertInUniquedSortedVector(m_attributeNames, attributeName.localName().impl()))) {
                 hasDuplicateAttributes = true;
@@ -827,7 +826,7 @@ private:
             if (!skipLettersExactlyIgnoringASCIICase(m_parsingBuffer, Tag::tagNameCharacters))
                 return didFail(HTMLFastPathResult::FailedEndTagNameMismatch, element);
         }
-        skipWhile<isHTMLSpace>(m_parsingBuffer);
+        skipWhile<isASCIIWhitespace>(m_parsingBuffer);
 
         if (m_parsingBuffer.atEnd() || m_parsingBuffer.consume() != '>')
             return didFail(HTMLFastPathResult::FailedUnexpectedTagNameCloseState, element);

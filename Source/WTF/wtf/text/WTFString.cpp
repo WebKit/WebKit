@@ -574,7 +574,7 @@ template<typename CharacterType, TrailingJunkPolicy policy>
 static inline double toDoubleType(const CharacterType* data, size_t length, bool* ok, size_t& parsedLength)
 {
     size_t leadingSpacesLength = 0;
-    while (leadingSpacesLength < length && isASCIISpace(data[leadingSpacesLength]))
+    while (leadingSpacesLength < length && isUnicodeCompatibleASCIIWhitespace(data[leadingSpacesLength]))
         ++leadingSpacesLength;
 
     double number = parseDouble(data + leadingSpacesLength, length - leadingSpacesLength, parsedLength);

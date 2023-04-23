@@ -1748,7 +1748,7 @@ static String canonicalizedTitle(Document& document, const String& title)
 
     bool previousCharacterWasHTMLSpace = false;
     for (auto character : StringView { title }.codeUnits()) {
-        if (isHTMLSpace(character))
+        if (isASCIIWhitespace(character))
             previousCharacterWasHTMLSpace = true;
         else {
             if (character == '\\')
@@ -4159,12 +4159,12 @@ static void processColorSchemeString(StringView colorScheme, const Function<void
     unsigned length = colorScheme.length();
     for (unsigned i = 0; i < length; ) {
         // Skip to first non-separator.
-        while (i < length && isHTMLSpace(colorScheme[i]))
+        while (i < length && isASCIIWhitespace(colorScheme[i]))
             ++i;
         unsigned keyBegin = i;
 
         // Skip to first separator.
-        while (i < length && !isHTMLSpace(colorScheme[i]))
+        while (i < length && !isASCIIWhitespace(colorScheme[i]))
             ++i;
         unsigned keyEnd = i;
 

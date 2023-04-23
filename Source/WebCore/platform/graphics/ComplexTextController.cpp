@@ -312,7 +312,7 @@ static bool shouldSynthesize(bool dontSynthesizeSmallCaps, const Font* nextFont,
         return false;
     if (!nextFont || nextFont == Font::systemFallback())
         return false;
-    if (engageAllSmallCapsProcessing && isASCIISpace(baseCharacter))
+    if (engageAllSmallCapsProcessing && isUnicodeCompatibleASCIIWhitespace(baseCharacter))
         return false;
     if (!engageAllSmallCapsProcessing && !capitalizedBase)
         return false;

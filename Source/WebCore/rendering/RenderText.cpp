@@ -33,7 +33,6 @@
 #include "DocumentInlines.h"
 #include "DocumentMarkerController.h"
 #include "FloatQuad.h"
-#include "HTMLParserIdioms.h"
 #include "Hyphenation.h"
 #include "InlineIteratorLineBox.h"
 #include "InlineIteratorLogicalOrderTraversal.h"
@@ -834,7 +833,7 @@ RenderText::Widths RenderText::trimmedPreferredWidths(float leadWidth, bool& str
 
     unsigned length = this->length();
 
-    if (!length || (stripFrontSpaces && text().isAllSpecialCharacters<isHTMLSpace>()))
+    if (!length || (stripFrontSpaces && text().isAllSpecialCharacters<isASCIIWhitespace>()))
         return widths;
 
     widths.min = m_minWidth.value_or(-1);

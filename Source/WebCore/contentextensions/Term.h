@@ -248,7 +248,7 @@ inline String Term::toString() const
         builder.append('[');
         for (UChar c = 0; c < 128; c++) {
             if (m_atomData.characterSet.get(c)) {
-                if (isASCIIPrintable(c) && !isASCIISpace(c))
+                if (isASCIIPrintable(c) && !isUnicodeCompatibleASCIIWhitespace(c))
                     builder.append(c);
                 else
                     builder.append("\\u", c);

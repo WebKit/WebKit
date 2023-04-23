@@ -34,7 +34,6 @@
 #include "CSSParserObserverWrapper.h"
 #include "CSSParserTokenRange.h"
 #include "CSSTokenizerInputStream.h"
-#include "HTMLParserIdioms.h"
 #include "JSDOMConvertStrings.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -677,7 +676,7 @@ CSSParserToken CSSTokenizer::consumeURLToken()
         if (cc == ')' || cc == kEndOfFileMarker)
             return CSSParserToken(UrlToken, registerString(result.toString()));
 
-        if (isHTMLSpace(cc)) {
+        if (isASCIIWhitespace(cc)) {
             m_input.advanceUntilNonWhitespace();
             if (consumeIfNext(')') || m_input.nextInputChar() == kEndOfFileMarker)
                 return CSSParserToken(UrlToken, registerString(result.toString()));
@@ -716,11 +715,11 @@ void CSSTokenizer::consumeBadUrlRemnants()
 
 void CSSTokenizer::consumeSingleWhitespaceIfNext()
 {
-    // We check for \r\n and HTML spaces since we don't do preprocessing
+    // We check for \r\n and ASCII whitespace since we don't do preprocessing
     UChar next = m_input.peek(0);
     if (next == '\r' && m_input.peek(1) == '\n')
         m_input.advance(2);
-    else if (isHTMLSpace(next))
+    else if (isASCIIWhitespace(next))
         m_input.advance();
 }
 

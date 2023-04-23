@@ -30,7 +30,6 @@
 #include "ElementInlines.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
-#include "HTMLParserIdioms.h"
 #include "LocalDOMWindow.h"
 #include "SecurityOrigin.h"
 
@@ -130,7 +129,7 @@ static inline void processOriginItem(Document& document, FeaturePolicy::AllowRul
     if (rule.type == FeaturePolicy::AllowRule::Type::None)
         return;
 
-    item = item.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
+    item = item.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>);
     // FIXME: Support 'src'.
     if (item == "'src'"_s)
         return;
@@ -162,14 +161,14 @@ static inline void updateList(Document& document, FeaturePolicy::AllowRule& rule
     }
 
     while (!value.isEmpty()) {
-        auto position = value.find(isHTMLSpace<UChar>);
+        auto position = value.find(isASCIIWhitespace<UChar>);
         if (position == notFound) {
             processOriginItem(document, rule, value);
             return;
         }
 
         processOriginItem(document, rule, value.left(position));
-        value = value.substring(position + 1).stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
+        value = value.substring(position + 1).stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>);
     }
 }
 
@@ -198,7 +197,7 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
     bool isXRSpatialTrackingInitialized = false;
 #endif
     for (auto allowItem : allowAttributeValue.split(';')) {
-        auto item = allowItem.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
+        auto item = allowItem.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>);
         if (item.startsWith("camera"_s)) {
             isCameraInitialized = true;
             updateList(document, policy.m_cameraRule, item.substring(7));

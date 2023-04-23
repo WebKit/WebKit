@@ -73,9 +73,9 @@ CustomElementConstructionData::~CustomElementConstructionData() = default;
 
 namespace {
 
-inline bool isHTMLSpaceOrReplacementCharacter(UChar character)
+inline bool isASCIIWhitespaceOrReplacementCharacter(UChar character)
 {
-    return isHTMLSpace(character) || character == replacementCharacter;
+    return isASCIIWhitespace(character) || character == replacementCharacter;
 }
 
 }
@@ -87,12 +87,12 @@ static inline TextPosition uninitializedPositionValue1()
 
 static inline bool isAllWhitespace(const String& string)
 {
-    return string.isAllSpecialCharacters<isHTMLSpace>();
+    return string.isAllSpecialCharacters<isASCIIWhitespace>();
 }
 
 static inline bool isAllWhitespaceOrReplacementCharacters(const String& string)
 {
-    return string.isAllSpecialCharacters<isHTMLSpaceOrReplacementCharacter>();
+    return string.isAllSpecialCharacters<isASCIIWhitespaceOrReplacementCharacter>();
 }
 
 #if ASSERT_ENABLED
@@ -172,17 +172,17 @@ public:
 
     void skipLeadingWhitespace()
     {
-        skipLeading<isHTMLSpace>();
+        skipLeading<isASCIIWhitespace>();
     }
 
     String takeLeadingWhitespace()
     {
-        return takeLeading<isHTMLSpace>();
+        return takeLeading<isASCIIWhitespace>();
     }
 
     void skipLeadingNonWhitespace()
     {
-        skipLeading<isNotHTMLSpace>();
+        skipLeading<isNotASCIIWhitespace>();
     }
 
     String takeRemaining()
@@ -204,7 +204,7 @@ public:
         Vector<LChar, 8> whitespace;
         do {
             UChar character = m_text[0];
-            if (isHTMLSpace(character))
+            if (isASCIIWhitespace(character))
                 whitespace.append(character);
             m_text = m_text.substring(1);
         } while (!m_text.isEmpty());

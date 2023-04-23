@@ -461,7 +461,7 @@ template <typename T>
 void Lexer<T>::skipWhitespaceAndComments()
 {
     while (!isAtEndOfFile()) {
-        if (isASCIISpace(m_current)) {
+        if (isUnicodeCompatibleASCIIWhitespace(m_current)) {
             if (shift() == '\n')
                 newLine();
         } else if (peek(0) == '/') {

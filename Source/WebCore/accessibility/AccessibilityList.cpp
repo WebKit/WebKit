@@ -32,7 +32,6 @@
 #include "AXObjectCache.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
-#include "HTMLParserIdioms.h"
 #include "PseudoElement.h"
 #include "RenderListItem.h"
 #include "RenderObject.h"
@@ -110,7 +109,7 @@ bool AccessibilityList::childHasPseudoVisibleListItemMarkers(Node* node)
     // those renderers as "ignored" objects.
 #if USE(ATSPI)
     String text = axBeforePseudo->textUnderElement();
-    return !text.isEmpty() && !text.isAllSpecialCharacters<isHTMLSpace>();
+    return !text.isEmpty() && !text.isAllSpecialCharacters<isASCIIWhitespace>();
 #else
     return false;
 #endif

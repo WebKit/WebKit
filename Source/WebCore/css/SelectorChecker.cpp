@@ -39,7 +39,6 @@
 #include "FrameSelection.h"
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLSlotElement.h"
 #include "InspectorInstrumentation.h"
 #include "LocalFrame.h"
@@ -478,7 +477,7 @@ static bool attributeValueMatches(const Attribute& attribute, CSSSelector::Match
     case CSSSelector::List:
         {
             // Ignore empty selectors or selectors containing spaces.
-            if (selectorValue.isEmpty() || selectorValue.find(isHTMLSpace<UChar>) != notFound)
+            if (selectorValue.isEmpty() || selectorValue.find(isASCIIWhitespace<UChar>) != notFound)
                 return false;
 
             unsigned startSearchAt = 0;
@@ -490,9 +489,9 @@ static bool attributeValueMatches(const Attribute& attribute, CSSSelector::Match
                     foundPos = value.findIgnoringASCIICase(selectorValue, startSearchAt);
                 if (foundPos == notFound)
                     return false;
-                if (!foundPos || isHTMLSpace(value[foundPos - 1])) {
+                if (!foundPos || isASCIIWhitespace(value[foundPos - 1])) {
                     unsigned endStr = foundPos + selectorValue.length();
-                    if (endStr == value.length() || isHTMLSpace(value[endStr]))
+                    if (endStr == value.length() || isASCIIWhitespace(value[endStr]))
                         break; // We found a match.
                 }
 

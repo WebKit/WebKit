@@ -156,7 +156,7 @@ bool SVGAnimationElement::attributeContainsJavaScriptURL(const Attribute& attrib
 
     if (attribute.name() == SVGNames::valuesAttr) {
         for (auto innerValue : StringView(attribute.value()).split(';')) {
-            if (WTF::protocolIsJavaScript(innerValue.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>)))
+            if (WTF::protocolIsJavaScript(innerValue.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>)))
                 return true;
         }
         return false;
@@ -176,7 +176,7 @@ void SVGAnimationElement::attributeChanged(const QualifiedName& name, const Atom
         // http://www.w3.org/TR/SVG11/animate.html#ValuesAttribute
         m_values.clear();
         newValue.string().split(';', [this](StringView innerValue) {
-            m_values.append(innerValue.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>).toString());
+            m_values.append(innerValue.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>).toString());
         });
         updateAnimationMode();
         break;

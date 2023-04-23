@@ -32,7 +32,6 @@
 #include "ChildListMutationScope.h"
 #include "ElementInlines.h"
 #include "ElementTraversal.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLSlotElement.h"
 #if ENABLE(PICTURE_IN_PICTURE_API)
 #include "NotImplemented.h"
@@ -312,13 +311,13 @@ static std::optional<std::pair<AtomString, AtomString>> parsePartMapping(StringV
     const auto end = mappingString.length();
 
     auto skipWhitespace = [&](auto position) {
-        while (position < end && isHTMLSpace(mappingString[position]))
+        while (position < end && isASCIIWhitespace(mappingString[position]))
             ++position;
         return position;
     };
 
     auto collectValue = [&](auto position) {
-        while (position < end && (!isHTMLSpace(mappingString[position]) && mappingString[position] != ':'))
+        while (position < end && (!isASCIIWhitespace(mappingString[position]) && mappingString[position] != ':'))
             ++position;
         return position;
     };

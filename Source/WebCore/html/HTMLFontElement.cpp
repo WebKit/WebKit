@@ -29,7 +29,6 @@
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "HTMLNames.h"
-#include "HTMLParserIdioms.h"
 #include "MutableStyleProperties.h"
 #include "NodeName.h"
 #include "StyleProperties.h"
@@ -66,7 +65,7 @@ static bool parseFontSize(const CharacterType* characters, unsigned length, int&
 
     // Step 3
     while (position < end) {
-        if (!isHTMLSpace(*position))
+        if (!isASCIIWhitespace(*position))
             break;
         ++position;
     }

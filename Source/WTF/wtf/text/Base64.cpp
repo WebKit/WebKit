@@ -193,7 +193,7 @@ template<typename T> static std::optional<Vector<uint8_t>> base64DecodeInternal(
                 if (equalsSignCount)
                     return std::nullopt;
                 destination[destinationLength++] = decodedCharacter;
-            } else if (!options.contains(Base64DecodeOptions::IgnoreSpacesAndNewLines) || (!isLatin1(ch) || !isASCIISpace(ch) || (options.contains(Base64DecodeOptions::DiscardVerticalTab) && ch == '\v'))) {
+            } else if (!options.contains(Base64DecodeOptions::IgnoreSpacesAndNewLines) || (!isLatin1(ch) || !isUnicodeCompatibleASCIIWhitespace(ch) || (options.contains(Base64DecodeOptions::DiscardVerticalTab) && ch == '\v'))) {
                 return std::nullopt;
             }
         }

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "DOMTokenList.h"
 
-#include "HTMLParserIdioms.h"
 #include "SpaceSplitString.h"
 #include <wtf/HashSet.h>
 #include <wtf/SetForScope.h>
@@ -44,7 +43,7 @@ DOMTokenList::DOMTokenList(Element& element, const QualifiedName& attributeName,
 
 static inline bool tokenContainsHTMLSpace(StringView token)
 {
-    return token.find(isHTMLSpace<UChar>) != notFound;
+    return token.find(isASCIIWhitespace<UChar>) != notFound;
 }
 
 ExceptionOr<void> DOMTokenList::validateToken(StringView token)
@@ -228,12 +227,12 @@ void DOMTokenList::updateTokensFromAttributeValue(StringView value)
     HashSet<AtomString> addedTokens;
     // https://dom.spec.whatwg.org/#ordered%20sets
     for (unsigned start = 0; ; ) {
-        while (start < value.length() && isHTMLSpace(value[start]))
+        while (start < value.length() && isASCIIWhitespace(value[start]))
             ++start;
         if (start >= value.length())
             break;
         unsigned end = start + 1;
-        while (end < value.length() && !isHTMLSpace(value[end]))
+        while (end < value.length() && !isASCIIWhitespace(value[end]))
             ++end;
 
         auto tokenView = value.substring(start, end - start);

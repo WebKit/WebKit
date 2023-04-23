@@ -35,7 +35,6 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
-#include "HTMLParserIdioms.h"
 #include "HTTPParsers.h"
 #include "MathMLMathElement.h"
 #include "MathMLNames.h"
@@ -298,7 +297,7 @@ MathMLElement::Length MathMLPresentationElement::parseMathMLLength(const String&
     //   pattern = '\s*((-?[0-9]*([0-9]\.?|\.[0-9])[0-9]*(e[mx]|in|cm|mm|p[xtc]|%)?)|(negative)?((very){0,2}thi(n|ck)|medium)mathspace)\s*'
     //
     // We do not perform a strict verification of the syntax of whitespaces and number.
-    // Instead, we just use isHTMLSpace and toFloat to parse these parts.
+    // Instead, we just use isASCIIWhitespace and toFloat to parse these parts.
 
     // We first skip whitespace from both ends of the string.
     StringView stringView = string;

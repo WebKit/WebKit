@@ -41,7 +41,6 @@
 #include "CSSTransformListValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
-#include "HTMLParserIdioms.h"
 #include "HashTools.h"
 #include "StyleColor.h"
 #include "StylePropertyShorthand.h"
@@ -261,7 +260,7 @@ static std::optional<uint8_t> parseColorIntOrPercentage(const CharacterType*& st
     auto* current = string;
     double localValue = 0;
     bool negative = false;
-    while (current != end && isHTMLSpace<CharacterType>(*current))
+    while (current != end && isASCIIWhitespace<CharacterType>(*current))
         current++;
     if (current != end && *current == '-') {
         negative = true;
@@ -313,7 +312,7 @@ static std::optional<uint8_t> parseColorIntOrPercentage(const CharacterType*& st
     } else
         expect = CSSUnitType::CSS_NUMBER;
 
-    while (current != end && isHTMLSpace<CharacterType>(*current))
+    while (current != end && isASCIIWhitespace<CharacterType>(*current))
         current++;
     if (current == end || *current++ != terminator)
         return std::nullopt;
@@ -341,7 +340,7 @@ static inline bool isTenthAlpha(const CharacterType* string, int length)
 template <typename CharacterType>
 static inline std::optional<uint8_t> parseAlphaValue(const CharacterType*& string, const CharacterType* end, char terminator)
 {
-    while (string != end && isHTMLSpace<CharacterType>(*string))
+    while (string != end && isASCIIWhitespace<CharacterType>(*string))
         string++;
 
     bool negative = false;

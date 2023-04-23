@@ -21,7 +21,6 @@
 #include "config.h"
 #include "SpaceSplitString.h"
 
-#include "HTMLParserIdioms.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomStringHash.h>
@@ -34,12 +33,12 @@ template <typename CharacterType, typename TokenProcessor>
 static inline void tokenizeSpaceSplitString(TokenProcessor& tokenProcessor, const CharacterType* characters, unsigned length)
 {
     for (unsigned start = 0; ; ) {
-        while (start < length && isHTMLSpace(characters[start]))
+        while (start < length && isASCIIWhitespace(characters[start]))
             ++start;
         if (start >= length)
             break;
         unsigned end = start + 1;
-        while (end < length && isNotHTMLSpace(characters[end]))
+        while (end < length && !isASCIIWhitespace(characters[end]))
             ++end;
 
         if (!tokenProcessor.processToken(characters + start, end - start))

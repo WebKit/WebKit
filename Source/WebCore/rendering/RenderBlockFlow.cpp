@@ -31,7 +31,6 @@
 #include "FrameSelection.h"
 #include "HTMLElement.h"
 #include "HTMLInputElement.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLTextAreaElement.h"
 #include "HitTestLocation.h"
 #include "InlineIteratorBox.h"
@@ -4164,7 +4163,7 @@ static inline bool isVisibleRenderText(const RenderObject& renderer)
         return false;
 
     auto& renderText = downcast<RenderText>(renderer);
-    return !renderText.linesBoundingBox().isEmpty() && !renderText.text().isAllSpecialCharacters<isHTMLSpace>();
+    return !renderText.linesBoundingBox().isEmpty() && !renderText.text().isAllSpecialCharacters<isASCIIWhitespace>();
 }
 
 static inline bool resizeTextPermitted(const RenderObject& renderer)

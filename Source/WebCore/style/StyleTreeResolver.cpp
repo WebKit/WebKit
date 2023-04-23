@@ -33,7 +33,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLMeterElement.h"
 #include "HTMLNames.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLProgressElement.h"
 #include "HTMLSlotElement.h"
 #include "LoaderStrategy.h"
@@ -837,7 +836,7 @@ void TreeResolver::resolveComposedTree()
                 m_update->addText(text, parent.element, WTFMove(textUpdate));
             }
 
-            if (!text.data().isAllSpecialCharacters<isHTMLSpace>())
+            if (!text.data().isAllSpecialCharacters<isASCIIWhitespace>())
                 parent.resolvedFirstLineAndLetterChild = true;
 
             text.setHasValidStyle();

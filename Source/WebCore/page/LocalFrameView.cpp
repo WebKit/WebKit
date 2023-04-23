@@ -61,7 +61,6 @@
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLPlugInImageElement.h"
 #include "HighlightRegister.h"
 #include "ImageDocument.h"
@@ -4977,7 +4976,7 @@ void LocalFrameView::incrementVisuallyNonEmptyCharacterCount(const String& inlin
     auto nonWhitespaceLength = [](auto& inlineText) {
         auto length = inlineText.length();
         for (unsigned i = 0; i < inlineText.length(); ++i) {
-            if (isNotHTMLSpace(inlineText[i]))
+            if (!isASCIIWhitespace(inlineText[i]))
                 continue;
             --length;
         }

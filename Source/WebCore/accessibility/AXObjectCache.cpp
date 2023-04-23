@@ -85,7 +85,6 @@
 #include "HTMLNames.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLProgressElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTableElement.h"
@@ -2359,7 +2358,7 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(const SimpleRange& range,
         } else {
             // Ignore space, new line, tag node.
             if (currentLength == 1) {
-                if (isHTMLSpace(iterator.text()[0])) {
+                if (isASCIIWhitespace(iterator.text()[0])) {
                     // If the node has BR tag, we want to set the currentNode to it.
                     Node* childNode = iterator.node();
                     if (childNode && childNode->renderer() && childNode->renderer()->isBR()) {

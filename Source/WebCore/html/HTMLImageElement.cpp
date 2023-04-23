@@ -40,7 +40,6 @@
 #include "HTMLFormElement.h"
 #include "HTMLImageLoader.h"
 #include "HTMLMapElement.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLPictureElement.h"
 #include "HTMLSourceElement.h"
 #include "HTMLSrcsetParser.h"
@@ -239,7 +238,7 @@ static String extractMIMETypeFromTypeAttributeForLookup(const String& typeAttrib
     auto semicolonIndex = typeAttribute.find(';');
     if (semicolonIndex == notFound)
         return stripLeadingAndTrailingHTMLSpaces(typeAttribute);
-    return StringView(typeAttribute).left(semicolonIndex).stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>).toStringWithoutCopying();
+    return StringView(typeAttribute).left(semicolonIndex).stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>).toStringWithoutCopying();
 }
 
 ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()

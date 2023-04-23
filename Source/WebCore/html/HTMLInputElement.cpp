@@ -53,7 +53,6 @@
 #include "HTMLFormElement.h"
 #include "HTMLImageLoader.h"
 #include "HTMLOptionElement.h"
-#include "HTMLParserIdioms.h"
 #include "IdTargetObserver.h"
 #include "KeyboardEvent.h"
 #include "LocalDOMWindow.h"
@@ -1370,7 +1369,7 @@ static Vector<String> parseAcceptAttribute(StringView acceptString, bool (*predi
         return types;
 
     for (auto splitType : acceptString.split(',')) {
-        auto trimmedType = splitType.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
+        auto trimmedType = splitType.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>);
         if (trimmedType.isEmpty())
             continue;
         if (!predicate(trimmedType))
