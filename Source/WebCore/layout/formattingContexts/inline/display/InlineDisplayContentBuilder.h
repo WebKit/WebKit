@@ -74,6 +74,8 @@ private:
     InlineLayoutPoint movePointHorizontallyForWritingMode(const InlineLayoutPoint& topLeft, InlineLayoutUnit horizontalOffset, WritingMode) const;
     InlineLayoutUnit outsideListMarkerVisualPosition(const ElementBox&) const;
 
+    bool isLineFullyTruncatedInBlockDirection() const { return m_lineIsFullyTruncatedInBlockDirection; }
+
     const ElementBox& root() const { return formattingContext().root(); }
     const RenderStyle& rootStyle() const { return m_lineIndex ? root().style() : root().firstLineStyle(); }
     const InlineFormattingContext& formattingContext() const { return m_formattingContext; }
@@ -84,6 +86,7 @@ private:
     InlineFormattingState& m_formattingState;
     const InlineDisplay::Line& m_displayLine;
     const size_t m_lineIndex { 0 };
+    bool m_lineIsFullyTruncatedInBlockDirection { false };
     bool m_contentHasInkOverflow { false };
 };
 

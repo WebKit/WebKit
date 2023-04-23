@@ -85,6 +85,7 @@ InlineDisplayContentBuilder::InlineDisplayContentBuilder(const InlineFormattingC
     , m_formattingState(formattingState)
     , m_displayLine(displayLine)
     , m_lineIndex(lineIndex)
+    , m_lineIsFullyTruncatedInBlockDirection(displayLine.isTruncatedInBlockDirection())
 {
 }
 
@@ -159,6 +160,7 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
     auto& style = !m_lineIndex ? inlineTextBox.firstLineStyle() : inlineTextBox.style();
     auto& content = inlineTextBox.content();
     auto& text = lineRun.textContent();
+    auto isContentful = true;
 
     auto inkOverflow = [&] {
         auto inkOverflow = textRunRect;
@@ -215,6 +217,8 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
             , inkOverflow()
             , lineRun.expansion()
             , InlineDisplay::Box::Text { text->start, 1, objectReplacementCharacterString, content }
+            , isContentful
+            , isLineFullyTruncatedInBlockDirection()
         });
         return;
     }
@@ -230,6 +234,8 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
         , inkOverflow()
         , lineRun.expansion()
         , InlineDisplay::Box::Text { text->start, text->length, content, adjustedContentToRender(), text->needsHyphen }
+        , isContentful
+        , isLineFullyTruncatedInBlockDirection()
     });
 }
 
@@ -239,6 +245,7 @@ void InlineDisplayContentBuilder::appendSoftLineBreakDisplayBox(const Line::Run&
 
     auto& layoutBox = lineRun.layoutBox();
     auto& text = lineRun.textContent();
+    auto isContentful = true;
 
     boxes.append({ m_lineIndex
         , InlineDisplay::Box::Type::SoftLineBreak
@@ -248,12 +255,15 @@ void InlineDisplayContentBuilder::appendSoftLineBreakDisplayBox(const Line::Run&
         , softLineBreakRunRect
         , lineRun.expansion()
         , InlineDisplay::Box::Text { text->start, text->length, downcast<InlineTextBox>(layoutBox).content() }
+        , isContentful
+        , isLineFullyTruncatedInBlockDirection()
     });
 }
 
 void InlineDisplayContentBuilder::appendHardLineBreakDisplayBox(const Line::Run& lineRun, const InlineRect& lineBreakBoxRect, InlineDisplay::Boxes& boxes)
 {
     auto& layoutBox = lineRun.layoutBox();
+    auto isContentful = true;
 
     boxes.append({ m_lineIndex
         , InlineDisplay::Box::Type::LineBreakBox
@@ -262,6 +272,9 @@ void InlineDisplayContentBuilder::appendHardLineBreakDisplayBox(const Line::Run&
         , lineBreakBoxRect
         , lineBreakBoxRect
         , lineRun.expansion()
+        , { }
+        , isContentful
+        , isLineFullyTruncatedInBlockDirection()
     });
 
     auto& boxGeometry = formattingState().boxGeometry(layoutBox);
@@ -275,6 +288,7 @@ void InlineDisplayContentBuilder::appendAtomicInlineLevelDisplayBox(const Line::
 
     auto& layoutBox = lineRun.layoutBox();
     auto& style = !m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style();
+    auto isContentful = true;
     auto inkOverflow = [&] {
         auto inkOverflow = FloatRect { borderBoxRect };
         computeInkOverflowForInlineLevelBox(style, inkOverflow);
@@ -290,6 +304,9 @@ void InlineDisplayContentBuilder::appendAtomicInlineLevelDisplayBox(const Line::
         , borderBoxRect
         , inkOverflow()
         , lineRun.expansion()
+        , { }
+        , isContentful
+        , isLineFullyTruncatedInBlockDirection()
     });
     // Note that inline boxes are relative to the line and their top position can be negative.
     // Atomic inline boxes are all set. Their margin/border/content box geometries are already computed. We just have to position them here.
@@ -324,6 +341,7 @@ void InlineDisplayContentBuilder::appendRootInlineBoxDisplayBox(const InlineRect
         , { }
         , { }
         , linehasContent
+        , isLineFullyTruncatedInBlockDirection()
     });
 }
 
@@ -358,6 +376,7 @@ void InlineDisplayContentBuilder::appendInlineBoxDisplayBox(const Line::Run& lin
         , { }
         , { }
         , inlineBox.hasContent()
+        , isLineFullyTruncatedInBlockDirection()
         , isFirstLastBox(inlineBox)
     });
 }
@@ -394,6 +413,7 @@ void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::
         , { }
         , { }
         , inlineBox.hasContent()
+        , isLineFullyTruncatedInBlockDirection()
         , isFirstLastBox(inlineBox)
     });
 }
@@ -401,6 +421,7 @@ void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::
 void InlineDisplayContentBuilder::appendInlineDisplayBoxAtBidiBoundary(const Box& layoutBox, InlineDisplay::Boxes& boxes)
 {
     // Geometries for inline boxes at bidi boundaries are computed at a post-process step.
+    auto isContentful = true;
     boxes.append({ m_lineIndex
         , InlineDisplay::Box::Type::NonRootInlineBox
         , layoutBox
@@ -408,6 +429,9 @@ void InlineDisplayContentBuilder::appendInlineDisplayBoxAtBidiBoundary(const Box
         , { }
         , { }
         , { }
+        , { }
+        , isContentful
+        , isLineFullyTruncatedInBlockDirection()
     });
 }
 

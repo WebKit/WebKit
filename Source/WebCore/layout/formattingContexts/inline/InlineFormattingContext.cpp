@@ -552,10 +552,11 @@ InlineRect InlineFormattingContext::createDisplayContentForLine(size_t lineIndex
         return { };
     }();
 
-    auto lineBox = LineBoxBuilder { *this, lineContent, blockLayoutState }.build(lineIndex);
-    auto displayLine = InlineDisplayLineBuilder { *this }.build(lineContent, lineBox, constraints);
-    auto boxes = InlineDisplayContentBuilder { *this, formattingState(), displayLine, lineIndex }.build(lineContent, lineBox);
     auto ellipsisPolicy = lineEndingEllipsisPolicy(root().style(), lineIndex, numberOfVisibleLinesAllowed);
+    auto lineIsFullyTruncatedInBlockDirection = numberOfVisibleLinesAllowed && lineIndex + 1 > *numberOfVisibleLinesAllowed;
+    auto lineBox = LineBoxBuilder { *this, lineContent, blockLayoutState }.build(lineIndex);
+    auto displayLine = InlineDisplayLineBuilder { *this }.build(lineContent, lineBox, constraints, lineIsFullyTruncatedInBlockDirection);
+    auto boxes = InlineDisplayContentBuilder { *this, formattingState(), displayLine, lineIndex }.build(lineContent, lineBox);
     if (auto ellipsisRect = InlineDisplayLineBuilder::trailingEllipsisVisualRectAfterTruncation(ellipsisPolicy, displayLine, boxes, lineContent.isLastLineWithInlineContent))
         displayLine.setEllipsisVisualRect(*ellipsisRect);
 

@@ -120,7 +120,7 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
     return { { enclosingTop.value_or(lineBoxRect.top()), enclosingBottom.value_or(lineBoxRect.top()) }, contentOverflowRect };
 }
 
-InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const ConstraintsForInlineContent& constraints) const
+InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const ConstraintsForInlineContent& constraints, bool lineIsFullyTruncatedInBlockDirection) const
 {
     auto& rootInlineBox = lineBox.rootInlineBox();
     auto isLeftToRightDirection = lineContent.inlineBaseDirection == TextDirection::LTR;
@@ -149,6 +149,7 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
         , rootInlineBox.logicalWidth()
         , isLeftToRightDirection
         , lineBox.isHorizontal()
+        , lineIsFullyTruncatedInBlockDirection
     };
 }
 

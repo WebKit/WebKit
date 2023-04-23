@@ -94,7 +94,7 @@ struct Box {
         First = 1 << 0,
         Last  = 1 << 1
     };
-    Box(size_t lineIndex, Type, const Layout::Box&, UBiDiLevel, const FloatRect&, const FloatRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, OptionSet<PositionWithinInlineLevelBox> = { });
+    Box(size_t lineIndex, Type, const Layout::Box&, UBiDiLevel, const FloatRect&, const FloatRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, bool isFullyTruncated = false, OptionSet<PositionWithinInlineLevelBox> = { });
 
     bool isText() const { return m_type == Type::Text || isWordSeparator(); }
     bool isWordSeparator() const { return m_type == Type::WordSeparator; }
@@ -217,7 +217,7 @@ private:
     Text m_text;
 };
 
-inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDiLevel bidiLevel, const FloatRect& physicalRect, const FloatRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent, OptionSet<PositionWithinInlineLevelBox> positionWithinInlineLevelBox)
+inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDiLevel bidiLevel, const FloatRect& physicalRect, const FloatRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent, bool isFullyTruncated, OptionSet<PositionWithinInlineLevelBox> positionWithinInlineLevelBox)
     : m_layoutBox(layoutBox)
     , m_unflippedVisualRect(physicalRect)
     , m_inkOverflow(inkOverflow)
@@ -229,6 +229,7 @@ inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDi
     , m_hasContent(hasContent)
     , m_isFirstForLayoutBox(positionWithinInlineLevelBox.contains(PositionWithinInlineLevelBox::First))
     , m_isLastForLayoutBox(positionWithinInlineLevelBox.contains(PositionWithinInlineLevelBox::Last))
+    , m_isFullyTruncated(isFullyTruncated)
     , m_text(text ? WTFMove(*text) : Text { })
 {
 }

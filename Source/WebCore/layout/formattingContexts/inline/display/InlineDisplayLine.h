@@ -41,7 +41,7 @@ public:
         float top { 0 };
         float bottom { 0 };
     };
-    Line(const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& contentOverflow, EnclosingTopAndBottom, float aligmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isLeftToRightDirection, bool isHorizontal);
+    Line(const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& contentOverflow, EnclosingTopAndBottom, float aligmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isLeftToRightDirection, bool isHorizontal, bool isTruncatedInBlockDirection);
 
     float left() const { return m_lineBoxRect.x(); }
     float right() const { return m_lineBoxRect.maxX(); }
@@ -72,6 +72,8 @@ public:
     FontBaseline baselineType() const { return m_baselineType; }
 
     bool isHorizontal() const { return m_isHorizontal; }
+
+    bool isTruncatedInBlockDirection() const { return m_isTruncatedInBlockDirection; }
 
     bool hasEllipsis() const { return m_ellipsisVisualRect.has_value(); }
     std::optional<FloatRect> ellipsisVisualRect() const { return m_ellipsisVisualRect; }
@@ -122,11 +124,12 @@ private:
     bool m_isLeftToRightDirection : 1 { true };
     bool m_isHorizontal : 1 { true };
     bool m_isFirstAfterPageBreak : 1 { false };
+    bool m_isTruncatedInBlockDirection : 1 { false };
     // This is visual rect ignoring block direction.
     std::optional<FloatRect> m_ellipsisVisualRect { };
 };
 
-inline Line::Line(const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& contentOverflow, EnclosingTopAndBottom enclosingLogicalTopAndBottom, float aligmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isLeftToRightDirection, bool isHorizontal)
+inline Line::Line(const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& contentOverflow, EnclosingTopAndBottom enclosingLogicalTopAndBottom, float aligmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isLeftToRightDirection, bool isHorizontal, bool isTruncatedInBlockDirection)
     : m_lineBoxRect(lineBoxRect)
     , m_lineBoxLogicalRect(lineBoxLogicalRect)
     , m_contentOverflow(contentOverflow)
@@ -138,6 +141,7 @@ inline Line::Line(const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxR
     , m_baselineType(baselineType)
     , m_isLeftToRightDirection(isLeftToRightDirection)
     , m_isHorizontal(isHorizontal)
+    , m_isTruncatedInBlockDirection(isTruncatedInBlockDirection)
 {
 }
 
@@ -156,6 +160,8 @@ inline void Line::moveVertically(float offset)
 
 inline FloatRect Line::visibleRectIgnoringBlockDirection() const
 {
+    if (m_isTruncatedInBlockDirection)
+        return { };
     if (!hasEllipsis())
         return m_inkOverflow;
     if (m_isLeftToRightDirection) {
