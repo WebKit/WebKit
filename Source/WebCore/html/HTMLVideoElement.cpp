@@ -225,18 +225,17 @@ unsigned HTMLVideoElement::videoHeight() const
     return clampToUnsigned(player()->naturalSize().height());
 }
 
-void HTMLVideoElement::scheduleResizeEvent()
+void HTMLVideoElement::scheduleResizeEvent(const FloatSize& naturalSize)
 {
-    m_lastReportedVideoWidth = videoWidth();
-    m_lastReportedVideoHeight = videoHeight();
+    m_lastReportedNaturalSize = naturalSize;
+    ALWAYS_LOG(LOGIDENTIFIER, naturalSize);
     scheduleEvent(eventNames().resizeEvent);
 }
 
-void HTMLVideoElement::scheduleResizeEventIfSizeChanged()
+void HTMLVideoElement::scheduleResizeEventIfSizeChanged(const FloatSize& naturalSize)
 {
-    if (m_lastReportedVideoWidth == videoWidth() && m_lastReportedVideoHeight == videoHeight())
-        return;
-    scheduleResizeEvent();
+    if (m_lastReportedNaturalSize != naturalSize)
+        scheduleResizeEvent(naturalSize);
 }
 
 bool HTMLVideoElement::isURLAttribute(const Attribute& attribute) const

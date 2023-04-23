@@ -2807,7 +2807,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         if (m_readyState >= HAVE_METADATA && oldState < HAVE_METADATA) {
             prepareMediaFragmentURI();
             durationChanged();
-            scheduleResizeEvent();
+            scheduleResizeEvent(m_player->naturalSize());
             scheduleEvent(eventNames().loadedmetadataEvent);
 
             if (m_defaultPlaybackStartPosition > MediaTime::zeroTime()) {
@@ -5568,14 +5568,20 @@ void HTMLMediaElement::mediaPlayerRepaint()
 
 void HTMLMediaElement::mediaPlayerSizeChanged()
 {
-    ALWAYS_LOG(LOGIDENTIFIER);
+    ASSERT(m_player);
+    if (!m_player)
+        return;
 
-    if (is<MediaDocument>(document()) && m_player)
-        downcast<MediaDocument>(document()).mediaElementNaturalSizeChanged(expandedIntSize(m_player->naturalSize()));
+    auto naturalSize = m_player->naturalSize();
+    ALWAYS_LOG(LOGIDENTIFIER, naturalSize);
+
+    if (is<MediaDocument>(document()))
+        downcast<MediaDocument>(document()).mediaElementNaturalSizeChanged(expandedIntSize(naturalSize));
+
 
     beginProcessingMediaPlayerCallback();
     if (m_readyState > HAVE_NOTHING)
-        scheduleResizeEventIfSizeChanged();
+        scheduleResizeEventIfSizeChanged(naturalSize);
     updateRenderer();
     endProcessingMediaPlayerCallback();
 }
