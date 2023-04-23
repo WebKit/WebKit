@@ -979,6 +979,7 @@ http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Skip 
 http/tests/security/module-no-mime-type.html [ Skip ] # Failure
 http/tests/security/sync-xhr-partition.html [ Skip ] # Failure
 http/tests/security/video-cross-origin-accessfailure.html [ Skip ] # Failure
+http/tests/security/video-cross-origin-accesssameorigin.html [ Skip ] # Timeout on Buildbot
 http/tests/security/video-cross-origin-caching.html [ Skip ] # Timeout
 http/tests/security/video-cross-origin-readback.html [ Skip ] # Failure
 http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-redirect.html [ Skip ] # Timeout
@@ -1462,7 +1463,7 @@ webkit.org/b/199186 fonts/use-typo-metrics-1.html [ Skip ]
 
 webkit.org/b/227189 fast/forms/checkbox-and-pseudo.html [ Skip ] # Require expect file for dumped render tree.
 
-webkit.org/b/238491 fast/editing/apply-relative-font-style-change-crash-004.html [ Crash ]
+webkit.org/b/238491 fast/editing/apply-relative-font-style-change-crash-004.html [ Skip ] # Crash
 
 webkit.org/b/238644 fast/events/mouse-click-events.html [ Skip ]
 
