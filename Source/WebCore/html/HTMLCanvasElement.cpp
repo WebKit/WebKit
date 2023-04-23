@@ -103,6 +103,13 @@
 #if PLATFORM(COCOA)
 #include "GPUAvailability.h"
 #include "VideoFrameCV.h"
+#endif
+
+#if ENABLE(WEB_CRYPTO)
+#include <pal/crypto/CryptoDigest.h>
+#endif
+
+#if PLATFORM(COCOA)
 #include <pal/cf/CoreMediaSoftLink.h>
 #endif
 
@@ -121,6 +128,20 @@ HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document& doc
     , CanvasBase(IntSize(defaultWidth, defaultHeight))
     , ActiveDOMObject(document)
 {
+#if ENABLE(WEB_CRYPTO)
+    if (shouldInjectNoiseBeforeReadback()) {
+        constexpr auto contextString { "CanvasContextString"_s };
+        auto digest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
+        if (digest) {
+            const auto hashSalt = *CanvasBase::scriptExecutionContext()->noiseInjectionHashSalt();
+            Vector<uint8_t> message { reinterpret_cast<const uint8_t*>(contextString.characters()), contextString.length() };
+            message.append(reinterpret_cast<const uint8_t*>(&hashSalt), sizeof hashSalt);
+            digest->addBytes(message.data(), message.size());
+            setNoiseInjectionParameters(digest->computeHash());
+        }
+    }
+#endif
+
     ASSERT(hasTagName(canvasTag));
 }
 

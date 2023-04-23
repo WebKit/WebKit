@@ -131,6 +131,7 @@ public:
     virtual void dispatchEvent(Event&) = 0;
 
     bool postProcessPixelBufferResults(Ref<PixelBuffer>&&, const HashSet<uint32_t>&) const;
+    void setNoiseInjectionParameters(Vector<uint8_t>&&);
 
 protected:
     explicit CanvasBase(IntSize);
@@ -145,10 +146,11 @@ protected:
 
     void resetGraphicsContextState() const;
 
+    bool shouldInjectNoiseBeforeReadback() const;
+
     RefPtr<ImageBuffer> allocateImageBuffer(bool usesDisplayListDrawing, bool avoidBackendSizeCheckForTesting) const;
 
 private:
-    bool shouldInjectNoiseBeforeReadback() const;
     void postProcessDirtyCanvasBuffer() const;
     virtual void createImageBuffer() const { }
 
@@ -163,6 +165,7 @@ private:
 #if ASSERT_ENABLED
     bool m_didNotifyObserversCanvasDestroyed { false };
 #endif
+    uint64_t m_noiseInjectionColorSalt { 0 };
     WeakHashSet<CanvasObserver> m_observers;
     WeakHashSet<CanvasDisplayBufferObserver> m_displayBufferObservers;
 };

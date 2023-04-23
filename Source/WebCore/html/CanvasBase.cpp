@@ -373,6 +373,13 @@ bool CanvasBase::shouldInjectNoiseBeforeReadback() const
     return scriptExecutionContext() && scriptExecutionContext()->noiseInjectionHashSalt();
 }
 
+void CanvasBase::setNoiseInjectionParameters(Vector<uint8_t>&& noiseInjectionDigest)
+{
+    if (noiseInjectionDigest.size() < sizeof m_noiseInjectionColorSalt)
+        return;
+    m_noiseInjectionColorSalt = *reinterpret_cast<const uint64_t*>(noiseInjectionDigest.data());
+}
+
 void CanvasBase::postProcessDirtyCanvasBuffer() const
 {
     if (!shouldInjectNoiseBeforeReadback())
@@ -399,13 +406,11 @@ void CanvasBase::postProcessDirtyCanvasBuffer() const
 
 bool CanvasBase::postProcessPixelBufferResults(Ref<PixelBuffer>&& pixelBuffer, const HashSet<uint32_t>& suppliedColors) const
 {
-    if (!shouldInjectNoiseBeforeReadback())
+    if (!shouldInjectNoiseBeforeReadback() || !m_noiseInjectionColorSalt)
         return false;
 
     ASSERT(pixelBuffer->format().pixelFormat == PixelFormat::RGBA8);
 
-    constexpr auto contextString { "Canvas2DContextString"_s };
-    unsigned salt = computeHash<String, uint64_t>(contextString, *scriptExecutionContext()->noiseInjectionHashSalt());
     constexpr int bytesPerPixel = 4;
     auto* bytes = pixelBuffer->bytes();
     HashMap<uint32_t, uint32_t> pixelColorMap;
@@ -431,7 +436,7 @@ bool CanvasBase::postProcessPixelBufferResults(Ref<PixelBuffer>&& pixelBuffer, c
             continue;
         }
 
-        const uint64_t pixelHash = computeHash(salt, redChannel, greenChannel, blueChannel, alphaChannel);
+        const uint64_t pixelHash = computeHash(m_noiseInjectionColorSalt, redChannel, greenChannel, blueChannel, alphaChannel);
         // +/- ~13 is roughly 5% of the 255 max value.
         const auto clampedFivePercent = static_cast<uint32_t>(((pixelHash * 26) / std::numeric_limits<uint32_t>::max()) - 13);
 
