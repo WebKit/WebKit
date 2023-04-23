@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "UIAlertControllerUtilities.h"
+#import "UIKitSPI.h"
 #import "WKContentView.h"
 #import "WKWebViewContentProvider.h"
 #import <WebCore/LocalizedStrings.h>
