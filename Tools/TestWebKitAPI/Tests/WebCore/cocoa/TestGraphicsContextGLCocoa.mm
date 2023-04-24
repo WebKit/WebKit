@@ -40,6 +40,16 @@ namespace TestWebKitAPI {
 
 namespace {
 
+class MockGraphicsContextGLClient final : public WebCore::GraphicsContextGL::Client {
+public:
+    void forceContextLost() final { ++m_contextLostCalls; }
+    void dispatchContextChangedNotification() final { }
+
+    int contextLostCalls() { return m_contextLostCalls; }
+private:
+    int m_contextLostCalls { 0 };
+};
+
 class TestedGraphicsContextGLCocoa : public WebCore::GraphicsContextGLCocoa {
 public:
     static RefPtr<TestedGraphicsContextGLCocoa> create(WebCore::GraphicsContextGLAttributes&& attributes)
@@ -58,7 +68,7 @@ private:
 };
 
 class GraphicsContextGLCocoaTest : public ::testing::Test {
-public:
+protected:
     void SetUp() override // NOLINT
     {
         m_scopedProcessType = ScopedSetAuxiliaryProcessTypeForTesting { WebCore::AuxiliaryProcessType::GPU };
@@ -71,25 +81,51 @@ private:
     std::optional<ScopedSetAuxiliaryProcessTypeForTesting> m_scopedProcessType;
 };
 
-}
+class AnyContextAttributeTest : public testing::TestWithParam<std::tuple<bool, bool, bool>> {
+protected:
+    bool useMetal() const { return std::get<0>(GetParam()); }
+    bool antialias() const { return std::get<1>(GetParam()); }
+    bool preserveDrawingBuffer() const { return std::get<2>(GetParam()); }
+    WebCore::GraphicsContextGLAttributes attributes();
+    RefPtr<TestedGraphicsContextGLCocoa> createTestContext(WebCore::IntSize contextSize);
 
-static const int expectedDisplayBufferPoolSize = 3;
+    void SetUp() override // NOLINT
+    {
+        m_scopedProcessType = ScopedSetAuxiliaryProcessTypeForTesting { WebCore::AuxiliaryProcessType::GPU };
+    }
+    void TearDown() override // NOLINT
+    {
+        m_scopedProcessType = std::nullopt;
+    }
 
-static RefPtr<TestedGraphicsContextGLCocoa> createDefaultTestContext(WebCore::IntSize contextSize)
+private:
+    std::optional<ScopedSetAuxiliaryProcessTypeForTesting> m_scopedProcessType;
+};
+
+WebCore::GraphicsContextGLAttributes AnyContextAttributeTest::attributes()
 {
     WebCore::GraphicsContextGLAttributes attributes;
-    attributes.useMetal = true;
-    attributes.antialias = false;
+    attributes.useMetal = useMetal();
+    attributes.antialias = antialias();
     attributes.depth = false;
     attributes.stencil = false;
     attributes.alpha = true;
-    attributes.preserveDrawingBuffer = false;
-    auto context = TestedGraphicsContextGLCocoa::create(WTFMove(attributes));
+    attributes.preserveDrawingBuffer = preserveDrawingBuffer();
+    return attributes;
+}
+
+RefPtr<TestedGraphicsContextGLCocoa> AnyContextAttributeTest::createTestContext(WebCore::IntSize contextSize)
+{
+    auto context = TestedGraphicsContextGLCocoa::create(attributes());
     if (!context)
         return nullptr;
     context->reshape(contextSize.width(), contextSize.height());
     return context;
 }
+
+}
+
+static const int expectedDisplayBufferPoolSize = 3;
 
 static ::testing::AssertionResult changeContextContents(TestedGraphicsContextGLCocoa& context, int iteration)
 {
@@ -264,9 +300,9 @@ TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsDifferentGPUIDsMetal)
 }
 #endif
 
-TEST_F(GraphicsContextGLCocoaTest, DisplayBuffersAreRecycled)
+TEST_P(AnyContextAttributeTest, DisplayBuffersAreRecycled)
 {
-    auto context = createDefaultTestContext({ 20, 20 });
+    auto context = createTestContext({ 20, 20 });
     ASSERT_NE(context, nullptr);
     RetainPtr<IOSurfaceRef> expectedDisplayBuffers[expectedDisplayBufferPoolSize];
     for (int i = 0; i < 50; ++i) {
@@ -287,9 +323,9 @@ TEST_F(GraphicsContextGLCocoaTest, DisplayBuffersAreRecycled)
 
 // Test that drawing buffers are not recycled if `GraphicsContextGLOpenGL::markDisplayBufferInUse()`
 // is called.
-TEST_F(GraphicsContextGLCocoaTest, DisplayBuffersAreNotRecycledWhenMarkedInUse)
+TEST_P(AnyContextAttributeTest, DisplayBuffersAreNotRecycledWhenMarkedInUse)
 {
-    auto context = createDefaultTestContext({ 20, 20 });
+    auto context = createTestContext({ 20, 20 });
     ASSERT_NE(context, nullptr);
     HashSet<RetainPtr<IOSurfaceRef>> seenSurfaceRefs;
     for (int i = 0; i < 50; ++i) {
@@ -310,9 +346,9 @@ TEST_F(GraphicsContextGLCocoaTest, DisplayBuffersAreNotRecycledWhenMarkedInUse)
 // Test that drawing buffers are not recycled if the use count of the underlying IOSurface
 // changes. Use count is modified for example by CoreAnimation when the IOSurface is attached
 // to the contents.
-TEST_F(GraphicsContextGLCocoaTest, DisplayBuffersAreNotRecycledWhedInUse)
+TEST_P(AnyContextAttributeTest, DisplayBuffersAreNotRecycledWhedInUse)
 {
-    auto context = createDefaultTestContext({ 20, 20 });
+    auto context = createTestContext({ 20, 20 });
     ASSERT_NE(context, nullptr);
     HashSet<RetainPtr<IOSurfaceRef>> seenSurfaceRefs;
     for (int i = 0; i < 50; ++i) {
@@ -332,7 +368,7 @@ TEST_F(GraphicsContextGLCocoaTest, DisplayBuffersAreNotRecycledWhedInUse)
 
 // Test that drawing to GraphicsContextGL and marking the display buffer in use does not leak big
 // amounts of memory for each displayed buffer.
-TEST_F(GraphicsContextGLCocoaTest, UnrecycledDisplayBuffersNoLeaks)
+TEST_P(AnyContextAttributeTest, UnrecycledDisplayBuffersNoLeaks)
 {
     // The test detects the leak by observing memory footprint. However, some of the freed IOSurface
     // memory (130mb) stays resident, presumably by intention of IOKit. The test would originally leak
@@ -340,7 +376,7 @@ TEST_F(GraphicsContextGLCocoaTest, UnrecycledDisplayBuffersNoLeaks)
     size_t footprintError = 150 * 1024 * 1024;
     size_t footprintChange = 0;
 
-    auto context = createDefaultTestContext({ 2048, 2048 });
+    auto context = createTestContext({ 2048, 2048 });
     ASSERT_NE(context, nullptr);
 
     WTF::releaseFastMallocFreeMemory();
@@ -356,6 +392,61 @@ TEST_F(GraphicsContextGLCocoaTest, UnrecycledDisplayBuffersNoLeaks)
     EXPECT_TRUE(memoryFootprintChangedBy(lastFootprint, footprintChange, footprintError));
 }
 
+// Test that failing to allocate a new buffer in Prepare:
+// - Signals context lost
+// - Does not crash, does not crash in subsequent draws
+// - Reading pixels returns zeros
+TEST_P(AnyContextAttributeTest, PrepareFailureWorks)
+{
+    MockGraphicsContextGLClient client;
+    auto context = createTestContext({ 20, 20 });
+    ASSERT_NE(context, nullptr);
+    context->setClient(&client);
+    ASSERT_TRUE(changeContextContents(*context, 0));
+    EXPECT_TRUE(context->getErrors().isEmpty());
+    context->simulateEventForTesting(WebCore::GraphicsContextGLSimulatedEventForTesting::DisplayBufferAllocationFailure);
+    context->prepareForDisplay();
+    EXPECT_NE(context->displayBuffer(), nullptr);
+    EXPECT_EQ(1, client.contextLostCalls());
+    // For documentation purposes how the context behaves afterwards.
+    // For WebGL this is not relevant, as the context is marked as lost, and each new WebGL call will
+    // check for the context loss flag and does not let the call proceed.
+    auto attrs = context->contextAttributes();
+    if (attrs.preserveDrawingBuffer && !attrs.antialias) {
+        ASSERT_TRUE(changeContextContents(*context, 1));
+        EXPECT_TRUE(context->getErrors().isEmpty());
+    } else if (attrs.preserveDrawingBuffer || attrs.antialias) {
+        ASSERT_FALSE(changeContextContents(*context, 1));
+        GCGLErrorCodeSet expectedErrors = GCGLErrorCode::InvalidFramebufferOperation;
+        expectedErrors.add(GCGLErrorCode::InvalidOperation);
+        EXPECT_EQ(expectedErrors, context->getErrors());
+    } else {
+        ASSERT_FALSE(changeContextContents(*context, 1));
+        uint32_t gotValue = 0;
+        context->readnPixels(0, 0, 1, 1, WebCore::GraphicsContextGL::RGBA, WebCore::GraphicsContextGL::UNSIGNED_BYTE, { reinterpret_cast<uint8_t*>(&gotValue), 4 });
+        EXPECT_EQ(0u, gotValue);
+        EXPECT_EQ(GCGLErrorCode::InvalidFramebufferOperation, context->getErrors());
+    }
+    context->prepareForDisplay();
+    context->prepareForDisplay();
+    EXPECT_EQ(1, client.contextLostCalls());
+}
+
+#if PLATFORM(IOS_FAMILY) || PLATFORM(IOS_FAMILY_SIMULATOR)
+#define USE_METAL_TESTING_VALUES testing::Values(true)
+#else
+#define USE_METAL_TESTING_VALUES testing::Values(true, false)
+#endif
+
+INSTANTIATE_TEST_SUITE_P(GraphicsContextGLCocoaTest,
+    AnyContextAttributeTest,
+    testing::Combine(
+        USE_METAL_TESTING_VALUES,
+        testing::Values(true, false),
+        testing::Values(true, false)),
+    TestParametersToStringFormatter());
+
+#undef USE_METAL_TESTING_VALUES
 }
 
 #endif

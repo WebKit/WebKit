@@ -1151,7 +1151,6 @@ public:
     public:
         WEBCORE_EXPORT Client();
         WEBCORE_EXPORT virtual ~Client();
-        virtual void didComposite() = 0;
         virtual void forceContextLost() = 0;
         virtual void dispatchContextChangedNotification() = 0;
     };
@@ -1553,7 +1552,7 @@ public:
 
     // FIXME: these should be removed, caller is interested in buffer clear status and
     // should track that in a variable that the caller holds. Caller should receive
-    // the value from reshape() and didComposite().
+    // the value from reshape().
     bool layerComposited() const;
     void setBuffersToAutoClear(GCGLbitfield);
     GCGLbitfield getBuffersToAutoClear() const;

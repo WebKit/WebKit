@@ -458,7 +458,6 @@ public:
     void vertexAttribDivisor(GCGLuint index, GCGLuint divisor);
 
     // GraphicsContextGL::Client
-    void didComposite() override;
     void forceContextLost() override;
     void dispatchContextChangedNotification() override;
 

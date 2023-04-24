@@ -5989,14 +5989,6 @@ void WebGLRenderingContextBase::activityStateDidChange(OptionSet<ActivityState> 
         m_context->setContextVisibility(newActivityState.contains(ActivityState::IsVisible));
 }
 
-void WebGLRenderingContextBase::didComposite()
-{
-    m_compositingResultsNeedUpdating = false;
-
-    if (UNLIKELY(hasActiveInspectorCanvasCallTracer()))
-        InspectorInstrumentation::didFinishRecordingCanvasFrame(*this);
-}
-
 void WebGLRenderingContextBase::forceContextLost()
 {
     forceLostContext(WebGLRenderingContextBase::RealLostContext);
@@ -6066,6 +6058,11 @@ void WebGLRenderingContextBase::prepareForDisplay()
         return;
 
     m_context->prepareForDisplay();
+
+    m_compositingResultsNeedUpdating = false;
+
+    if (UNLIKELY(hasActiveInspectorCanvasCallTracer()))
+        InspectorInstrumentation::didFinishRecordingCanvasFrame(*this);
 }
 
 void WebGLRenderingContextBase::updateActiveOrdinal()

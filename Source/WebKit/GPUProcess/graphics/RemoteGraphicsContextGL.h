@@ -104,7 +104,6 @@ protected:
     bool send(T&& message) const { return m_streamConnection->send(WTFMove(message), m_graphicsContextGLIdentifier); }
 
     // GraphicsContextGL::Client overrides.
-    void didComposite() final;
     void forceContextLost() final;
     void dispatchContextChangedNotification() final;
 

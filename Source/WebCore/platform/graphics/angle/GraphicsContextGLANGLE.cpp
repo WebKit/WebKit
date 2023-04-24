@@ -3167,7 +3167,7 @@ void GraphicsContextGLANGLE::simulateEventForTesting(SimulatedEventForTesting ev
         dispatchContextChangedNotification();
         return;
     }
-    if (event == SimulatedEventForTesting::GPUStatusFailure) {
+    if (event == SimulatedEventForTesting::GPUStatusFailure || event == SimulatedEventForTesting::DisplayBufferAllocationFailure) {
         m_failNextStatusCheck = true;
         return;
     }

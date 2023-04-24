@@ -502,10 +502,6 @@ bool GraphicsContextGLANGLE::makeContextCurrent()
 {
     if (!m_contextObj)
         return false;
-    // If there is no drawing buffer, we failed to allocate one during preparing for display.
-    // The exception is the case when the context is used before reshaping.
-    if (!m_displayBufferBacking && !getInternalFramebufferSize().isEmpty())
-        return false;
     if (currentContext == this)
         return true;
     // Calling MakeCurrent is important to set volatile platform context. See initializeEGLDisplay().
@@ -583,6 +579,10 @@ void GraphicsContextGLCocoa::setDrawingBufferColorSpace(const DestinationColorSp
 bool GraphicsContextGLCocoa::allocateAndBindDisplayBufferBacking()
 {
     ASSERT(!getInternalFramebufferSize().isEmpty());
+    if (m_failNextStatusCheck) {
+        m_failNextStatusCheck = false;
+        return false;
+    }
     auto backing = IOSurface::create(nullptr, getInternalFramebufferSize(), m_drawingBufferColorSpace, IOSurface::Name::GraphicsContextGL);
     if (!backing)
         return false;
@@ -774,9 +774,12 @@ void GraphicsContextGLCocoa::prepareForDisplay()
     if (recycledBuffer.handle)
         EGL_DestroySurface(m_displayObj, recycledBuffer.handle);
 
-    // Error will be handled by next call to makeContextCurrent() which will notice lack of display buffer.
-    if (!hasNewBacking)
-        allocateAndBindDisplayBufferBacking();
+    if (!hasNewBacking) {
+        if (!allocateAndBindDisplayBufferBacking()) {
+            forceContextLost();
+            return;
+        }
+    }
 
     markLayerComposited();
 

@@ -681,8 +681,6 @@ void GraphicsContextGL::markLayerComposited()
         if (attrs.stencil)
             m_buffersToAutoClear |= GraphicsContextGL::STENCIL_BUFFER_BIT;
     }
-    if (m_client)
-        m_client->didComposite();
 }
 
 void GraphicsContextGL::paintToCanvas(NativeImage& image, const IntSize& canvasSize, GraphicsContext& context)

@@ -156,11 +156,6 @@ void RemoteGraphicsContextGL::workQueueUninitialize()
     m_renderingResourcesRequest = { };
 }
 
-void RemoteGraphicsContextGL::didComposite()
-{
-    assertIsCurrent(workQueue());
-}
-
 void RemoteGraphicsContextGL::forceContextLost()
 {
     assertIsCurrent(workQueue());
