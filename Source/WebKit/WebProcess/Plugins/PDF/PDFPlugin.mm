@@ -425,6 +425,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 @property (assign) WebKit::PDFPlugin* pdfPlugin;
 
+@property (nonatomic) BOOL shouldFlipAnnotations;
+
 - (id)initWithPDFPlugin:(WebKit::PDFPlugin *)plugin;
 
 @end
@@ -439,7 +441,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return nil;
     
     _pdfPlugin = plugin;
-    
     return self;
 }
 
@@ -509,6 +510,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)pdfLayerController:(PDFLayerController *)pdfLayerController didChangeSelection:(PDFSelection *)selection
 {
     _pdfPlugin->notifySelectionChanged(selection);
+}
+
+- (void)pdfLayerController:(PDFLayerController *)pdfLayerController didUpdateLayer:(CALayer *)layer forAnnotation:(PDFAnnotation *)annotation
+{
+    // Due to an issue where the annotations are flipped using UI-side compositing
+    // flip the transform in this case.
+    if (_shouldFlipAnnotations)
+        [layer setAffineTransform:CGAffineTransformMakeScale(1, -1)];
 }
 
 - (void)setMouseCursor:(PDFLayerControllerCursorType)cursorType
@@ -1857,6 +1866,9 @@ void PDFPlugin::setView(PluginView& view)
 {
     ASSERT(!m_view);
     m_view = view;
+
+    if (view.isUsingUISideCompositing())
+        [m_pdfLayerControllerDelegate setShouldFlipAnnotations:YES];
 }
 
 void PDFPlugin::willDetachRenderer()
