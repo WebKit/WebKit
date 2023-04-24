@@ -1672,27 +1672,42 @@ enum class Resolution {
 
 static void promiseWithExecutor(Resolution resolution)
 {
+    NSLog(@"1");
     @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
-
+            NSLog(@"2");
         __block JSValue *resolveCallback;
         __block JSValue *rejectCallback;
         JSValue *promise = [JSValue valueWithNewPromiseInContext:context fromExecutor:^(JSValue *resolve, JSValue *reject) {
+                        NSLog(@"3");
             if (resolution == Resolution::ResolveEager)
+            {
+                                        NSLog(@"4");
                 [resolve callWithArguments:@[@YES]];
+                NSLog(@"5");
+            }
+            
             if (resolution == Resolution::RejectEager)
+            {
+                                NSLog(@"6");
                 [reject callWithArguments:@[@YES]];
+            }
             resolveCallback = resolve;
             rejectCallback = reject;
         }];
 
+                        NSLog(@"7");
         __block bool valueWasResolvedTrue = false;
         __block bool valueWasRejectedTrue = false;
         [promise invokeMethod:@"then" withArguments:@[
-            ^(JSValue *value) { valueWasResolvedTrue = value.isBoolean && [value toBool]; },
-            ^(JSValue *value) { valueWasRejectedTrue = value.isBoolean && [value toBool]; },
+            ^(JSValue *value) { 
+                        NSLog(@"8"); valueWasResolvedTrue = value.isBoolean && [value toBool]; },
+            ^(JSValue *value) { 
+                        NSLog(@"9"); valueWasRejectedTrue = value.isBoolean && [value toBool]; },
         ]];
 
+
+                        NSLog(@"10");
         switch (resolution) {
         case Resolution::ResolveEager:
             checkResult(@"ResolveEager should have set resolve early.", valueWasResolvedTrue && !valueWasRejectedTrue);
@@ -1709,10 +1724,14 @@ static void promiseWithExecutor(Resolution resolution)
         valueWasRejectedTrue = false;
 
         // Run script to make sure reactions don't happen again
+                                NSLog(@"11");
         [context evaluateScript:@"{ };"];
 
-        if (resolution == Resolution::ResolveLate)
+        if (resolution == Resolution::ResolveLate) {
+                                            NSLog(@"12");
             [resolveCallback callWithArguments:@[@YES]];
+                                            NSLog(@"13");
+        }
         if (resolution == Resolution::RejectLate)
             [rejectCallback callWithArguments:@[@YES]];
 
