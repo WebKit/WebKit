@@ -2321,13 +2321,13 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
 
         // The Accname specification states that if the name is being calculated for a combobox
         // or listbox inside a labeling element, return the text alternative of the chosen option.
-        AccessibilityObject::AccessibilityChildrenVector children;
+        AccessibilityObject::AccessibilityChildrenVector selectedChildren;
         if (axObject->isListBox())
-            axObject->selectedChildren(children);
+            selectedChildren = axObject->selectedChildren();
         else if (axObject->isComboBox()) {
             for (const auto& child : axObject->children()) {
                 if (child->isListBox()) {
-                    child->selectedChildren(children);
+                    selectedChildren = child->selectedChildren();
                     break;
                 }
             }
@@ -2335,7 +2335,7 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
 
         StringBuilder builder;
         String childText;
-        for (const auto& child : children)
+        for (const auto& child : selectedChildren)
             appendNameToStringBuilder(builder, accessibleNameForNode(child->node()));
 
         childText = builder.toString();

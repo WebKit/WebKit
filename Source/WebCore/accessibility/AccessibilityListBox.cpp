@@ -101,17 +101,17 @@ void AccessibilityListBox::setSelectedChildren(const AccessibilityChildrenVector
     }
 }
     
-void AccessibilityListBox::selectedChildren(AccessibilityChildrenVector& result)
+AXCoreObject::AccessibilityChildrenVector AccessibilityListBox::selectedChildren()
 {
-    ASSERT(result.isEmpty());
-
     if (!childrenInitialized())
         addChildren();
 
+    AccessibilityChildrenVector result;
     for (const auto& child : m_children) {
         if (downcast<AccessibilityListBoxOption>(*child).isSelected())
             result.append(child.get());
-    }    
+    }
+    return result;
 }
 
 AXCoreObject::AccessibilityChildrenVector AccessibilityListBox::visibleChildren()

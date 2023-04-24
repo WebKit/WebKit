@@ -292,7 +292,7 @@ private:
     AccessibilityOrientation orientation() const override { return static_cast<AccessibilityOrientation>(intAttributeValue(AXPropertyName::Orientation)); }
     unsigned hierarchicalLevel() const override { return unsignedAttributeValue(AXPropertyName::HierarchicalLevel); }
     String language() const override { return stringAttributeValue(AXPropertyName::Language); }
-    void selectedChildren(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::SelectedChildren, children); }
+    AccessibilityChildrenVector selectedChildren() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::SelectedChildren)); }
     void setSelectedChildren(const AccessibilityChildrenVector&) override;
     AccessibilityChildrenVector visibleChildren() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::VisibleChildren)); }
     AccessibilityChildrenVector selectedCells() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::SelectedCells)); }

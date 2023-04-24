@@ -41,7 +41,7 @@ public:
     WEBCORE_EXPORT void setSelectedChildren(const AccessibilityChildrenVector&) override;
     AccessibilityRole roleValue() const override { return AccessibilityRole::ListBox; }
         
-    void selectedChildren(AccessibilityChildrenVector&) override;
+    AccessibilityChildrenVector selectedChildren() final;
     AccessibilityChildrenVector visibleChildren() final;
     
     void addChildren() override;

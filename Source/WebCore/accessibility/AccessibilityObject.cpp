@@ -4029,7 +4029,103 @@ bool AccessibilityObject::isContainedBySecureField() const
     Element* element = node->shadowHost();
     return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(*element).isSecureField();
 }
-    
+
+AXCoreObject::AccessibilityChildrenVector AccessibilityObject::ariaSelectedRows()
+{
+    bool isMulti = isMultiSelectable();
+
+    AccessibilityChildrenVector result;
+    // Prefer active descendant over aria-selected.
+    auto* activeDescendant = this->activeDescendant();
+    if (activeDescendant && (activeDescendant->isTreeItem() || activeDescendant->isTableRow())) {
+        result.append(activeDescendant);
+        if (!isMulti)
+            return result;
+    }
+
+    auto rowsIteration = [&](const auto& rows) {
+        for (auto& rowCoreObject : rows) {
+            auto* row = dynamicDowncast<AccessibilityObject>(rowCoreObject.get());
+            if (!row)
+                continue;
+
+            if (row->isSelected() || row->isActiveDescendantOfFocusedContainer()) {
+                result.append(row);
+                if (!isMulti)
+                    break;
+            }
+        }
+    };
+
+    if (isTree()) {
+        AccessibilityChildrenVector allRows;
+        ariaTreeRows(allRows);
+        rowsIteration(allRows);
+    } else if (auto* axTable = dynamicDowncast<AccessibilityTable>(this)) {
+        if (axTable->supportsSelectedRows() && axTable->isExposable())
+            rowsIteration(axTable->rows());
+    }
+    return result;
+}
+
+AXCoreObject::AccessibilityChildrenVector AccessibilityObject::ariaListboxSelectedChildren()
+{
+    bool isMulti = isMultiSelectable();
+
+    AccessibilityChildrenVector result;
+    for (const auto& child : children()) {
+        auto* axChild = dynamicDowncast<AccessibilityObject>(child.get());
+        // Every child should have aria-role option, and if so, check for selected attribute/state.
+        if (!axChild || axChild->ariaRoleAttribute() != AccessibilityRole::ListBoxOption)
+            continue;
+
+        if (axChild->isSelected() || axChild->isActiveDescendantOfFocusedContainer()) {
+            result.append(axChild);
+            if (!isMulti)
+                return result;
+        }
+    }
+    return result;
+}
+
+AXCoreObject::AccessibilityChildrenVector AccessibilityObject::selectedChildren()
+{
+    if (!canHaveSelectedChildren())
+        return { };
+
+    AccessibilityChildrenVector result;
+    switch (roleValue()) {
+    case AccessibilityRole::ListBox:
+        // native list boxes would be AccessibilityListBoxes, so only check for aria list boxes
+        result = ariaListboxSelectedChildren();
+        break;
+    case AccessibilityRole::Grid:
+    case AccessibilityRole::Tree:
+    case AccessibilityRole::TreeGrid:
+        result = ariaSelectedRows();
+        break;
+    case AccessibilityRole::TabList:
+        if (auto* selectedTab = selectedTabItem())
+            result = { selectedTab };
+        break;
+    case AccessibilityRole::List:
+        if (auto* selectedListItemChild = selectedListItem())
+            result = { selectedListItemChild };
+        break;
+    case AccessibilityRole::Menu:
+    case AccessibilityRole::MenuBar:
+        if (auto* descendant = activeDescendant())
+            result = { descendant };
+        else if (auto* focusedElement = dynamicDowncast<AccessibilityObject>(focusedUIElement()))
+            result = { focusedElement };
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    return result;
+}
+
 AccessibilityObject* AccessibilityObject::selectedListItem()
 {
     for (const auto& child : children()) {

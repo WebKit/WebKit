@@ -2393,8 +2393,7 @@ Ref<Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildObjectForAcc
             role = axObject->computedRoleString();
             selected = axObject->isSelected();
 
-            AXCoreObject::AccessibilityChildrenVector selectedChildren;
-            axObject->selectedChildren(selectedChildren);
+            auto selectedChildren = axObject->selectedChildren();
             if (selectedChildren.size()) {
                 selectedChildNodeIds = JSON::ArrayOf<Protocol::DOM::NodeId>::create();
                 for (auto& selectedChildObject : selectedChildren) {

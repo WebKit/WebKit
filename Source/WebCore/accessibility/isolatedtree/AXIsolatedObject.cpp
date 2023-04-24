@@ -229,11 +229,8 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
             setProperty(AXPropertyName::NameAttribute, nameAttribute->isolatedCopy());
     }
 
-    if (object.canHaveSelectedChildren()) {
-        AccessibilityChildrenVector selectedChildren;
-        object.selectedChildren(selectedChildren);
-        setObjectVectorProperty(AXPropertyName::SelectedChildren, selectedChildren);
-    }
+    if (object.canHaveSelectedChildren())
+        setObjectVectorProperty(AXPropertyName::SelectedChildren, object.selectedChildren());
 
     if (object.canHaveSelectedCells())
         setObjectVectorProperty(AXPropertyName::SelectedCells, object.selectedCells());

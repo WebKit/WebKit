@@ -82,9 +82,7 @@ unsigned AccessibilityObjectAtspi::selectionCount() const
     if (!m_coreObject)
         return 0;
 
-    AccessibilityObject::AccessibilityChildrenVector selectedItems;
-    m_coreObject->selectedChildren(selectedItems);
-    return selectedItems.size();
+    return m_coreObject->selectedChildren().size();
 }
 
 AccessibilityObjectAtspi* AccessibilityObjectAtspi::selectedChild(unsigned index) const
@@ -92,8 +90,7 @@ AccessibilityObjectAtspi* AccessibilityObjectAtspi::selectedChild(unsigned index
     if (!m_coreObject)
         return nullptr;
 
-    AccessibilityObject::AccessibilityChildrenVector selectedItems;
-    m_coreObject->selectedChildren(selectedItems);
+    auto selectedItems = m_coreObject->selectedChildren();
     if (index >= selectedItems.size())
         return nullptr;
 
@@ -121,8 +118,7 @@ bool AccessibilityObjectAtspi::deselectSelectedChild(unsigned index) const
     if (!m_coreObject)
         return false;
 
-    AccessibilityObject::AccessibilityChildrenVector selectedItems;
-    m_coreObject->selectedChildren(selectedItems);
+    auto selectedItems = m_coreObject->selectedChildren();
     if (index >= selectedItems.size())
         return false;
 
@@ -164,9 +160,7 @@ bool AccessibilityObjectAtspi::selectAll() const
         return false;
 
     m_coreObject->setSelectedChildren(children);
-    AccessibilityObject::AccessibilityChildrenVector selectedItems;
-    m_coreObject->selectedChildren(selectedItems);
-    return selectableChildCount == selectedItems.size();
+    return selectableChildCount == m_coreObject->selectedChildren().size();
 }
 
 bool AccessibilityObjectAtspi::clearSelection() const
@@ -178,9 +172,7 @@ bool AccessibilityObjectAtspi::clearSelection() const
         return false;
 
     m_coreObject->setSelectedChildren({ });
-    AccessibilityObject::AccessibilityChildrenVector selectedItems;
-    m_coreObject->selectedChildren(selectedItems);
-    return selectedItems.isEmpty();
+    return m_coreObject->selectedChildren().isEmpty();
 }
 
 void AccessibilityObjectAtspi::selectionChanged()

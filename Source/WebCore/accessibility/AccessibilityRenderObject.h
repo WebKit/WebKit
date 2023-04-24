@@ -120,7 +120,6 @@ public:
 
     void addChildren() override;
     bool canHaveChildren() const override;
-    void selectedChildren(AccessibilityChildrenVector&) override;
 
     VisiblePositionRange visiblePositionRange() const override;
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const override;
@@ -166,7 +165,6 @@ protected:
 
 private:
     bool isAccessibilityRenderObject() const final { return true; }
-    void ariaListboxSelectedChildren(AccessibilityChildrenVector&);
     bool isAllowedChildOfTree() const;
     PlainTextRange documentBasedSelectedTextRange() const;
     Element* rootEditableElementForPosition(const Position&) const;
@@ -210,8 +208,6 @@ private:
     String expandedTextValue() const override;
     bool supportsExpandedTextValue() const override;
     void updateRoleAfterChildrenCreation();
-    
-    void ariaSelectedRows(AccessibilityChildrenVector&);
     
     bool inheritsPresentationalRole() const override;
 

@@ -1605,11 +1605,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attributeName isEqualToString: NSAccessibilitySelectedChildrenAttribute]) {
-        if (backingObject->canHaveSelectedChildren()) {
-            AccessibilityObject::AccessibilityChildrenVector selectedChildrenCopy;
-            backingObject->selectedChildren(selectedChildrenCopy);
-            return makeNSArray(selectedChildrenCopy);
-        }
+        if (backingObject->canHaveSelectedChildren())
+            return makeNSArray(backingObject->selectedChildren());
         return nil;
     }
 
@@ -1815,11 +1812,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             || [attributeName isEqualToString:NSAccessibilityVisibleColumnsAttribute])
             return makeNSArray(backingObject->columns());
 
-        if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute]) {
-            AccessibilityObject::AccessibilityChildrenVector selectedChildrenCopy;
-            backingObject->selectedChildren(selectedChildrenCopy);
-            return makeNSArray(selectedChildrenCopy);
-        }
+        if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute])
+            return makeNSArray(backingObject->selectedChildren());
 
         // HTML tables don't support this attribute yet.
         if ([attributeName isEqualToString:NSAccessibilitySelectedColumnsAttribute])
@@ -1895,11 +1889,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if (backingObject->isTree()) {
-        if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute]) {
-            AccessibilityObject::AccessibilityChildrenVector selectedChildrenCopy;
-            backingObject->selectedChildren(selectedChildrenCopy);
-            return makeNSArray(selectedChildrenCopy);
-        }
+        if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute])
+            return makeNSArray(backingObject->selectedChildren());
+
         if ([attributeName isEqualToString:NSAccessibilityRowsAttribute]) {
             AccessibilityObject::AccessibilityChildrenVector rowsCopy;
             backingObject->ariaTreeRows(rowsCopy);

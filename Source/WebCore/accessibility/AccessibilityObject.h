@@ -509,7 +509,7 @@ public:
 #endif
     bool isDetachedFromParent() override { return false; }
 
-    void selectedChildren(AccessibilityChildrenVector&) override { }
+    AccessibilityChildrenVector selectedChildren() override;
     void setSelectedChildren(const AccessibilityChildrenVector&) override { }
     AccessibilityChildrenVector visibleChildren() override { return { }; }
     bool shouldFocusActiveDescendant() const;
@@ -799,6 +799,8 @@ private:
     bool accessibilityIsIgnoredWithoutCache(AXObjectCache*) const;
     void setLastKnownIsIgnoredValue(bool);
     void ariaTreeRows(AccessibilityChildrenVector& rows, AccessibilityChildrenVector& ancestors);
+    AccessibilityChildrenVector ariaListboxSelectedChildren();
+    AccessibilityChildrenVector ariaSelectedRows();
 
     // Special handling of click point for links.
     IntPoint linkClickPoint();

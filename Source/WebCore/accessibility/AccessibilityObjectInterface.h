@@ -1251,7 +1251,7 @@ public:
 
     bool canHaveSelectedChildren() const;
     bool canHaveSelectedCells() const;
-    virtual void selectedChildren(AccessibilityChildrenVector&) = 0;
+    virtual AccessibilityChildrenVector selectedChildren() = 0;
     virtual void setSelectedChildren(const AccessibilityChildrenVector&) = 0;
     virtual AccessibilityChildrenVector visibleChildren() = 0;
     AccessibilityChildrenVector tabChildren();
