@@ -254,8 +254,66 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(IntRect bounds, Rend
     return false;
 }
 
+// FIXME: switch to `PathUtilities::pathsWithShrinkWrappedRects` once we have rdar://104244712
+void EventRegionContext::shrinkWrapInteractionRegions()
+{
+    for (auto& region : m_interactionRegions) {
+        if (region.type == InteractionRegion::Type::Occlusion)
+            continue;
+
+        auto regionIterator = m_discoveredRegionsByElement.find(region.elementIdentifier);
+        if (regionIterator == m_discoveredRegionsByElement.end())
+            continue;
+
+        auto discoveredRegion = regionIterator->value;
+        if (region.rectInLayerCoordinates == discoveredRegion.bounds())
+            continue;
+
+        auto maskedCorners = region.maskedCorners;
+        // Create a mask with all corners so we can selectively disable them.
+        if (maskedCorners.isEmpty()) {
+            maskedCorners.add(InteractionRegion::CornerMask::MinXMinYCorner);
+            maskedCorners.add(InteractionRegion::CornerMask::MaxXMinYCorner);
+            maskedCorners.add(InteractionRegion::CornerMask::MinXMaxYCorner);
+            maskedCorners.add(InteractionRegion::CornerMask::MaxXMaxYCorner);
+        }
+
+        auto horizontallyInflatedRect = region.rectInLayerCoordinates;
+        horizontallyInflatedRect.inflateX(1);
+        horizontallyInflatedRect.inflateY(-1);
+        auto verticallyInflatedRect = region.rectInLayerCoordinates;
+        verticallyInflatedRect.inflateY(1);
+        verticallyInflatedRect.inflateX(-1);
+
+        bool changedMaskedCorners = false;
+
+        if (discoveredRegion.contains(horizontallyInflatedRect.minXMinYCorner()) || discoveredRegion.contains(verticallyInflatedRect.minXMinYCorner())) {
+            maskedCorners.remove(InteractionRegion::CornerMask::MinXMinYCorner);
+            changedMaskedCorners = true;
+        }
+        if (discoveredRegion.contains(horizontallyInflatedRect.maxXMinYCorner()) || discoveredRegion.contains(verticallyInflatedRect.maxXMinYCorner())) {
+            maskedCorners.remove(InteractionRegion::CornerMask::MaxXMinYCorner);
+            changedMaskedCorners = true;
+        }
+        if (discoveredRegion.contains(horizontallyInflatedRect.minXMaxYCorner()) || discoveredRegion.contains(verticallyInflatedRect.minXMaxYCorner())) {
+            maskedCorners.remove(InteractionRegion::CornerMask::MinXMaxYCorner);
+            changedMaskedCorners = true;
+        }
+        if (discoveredRegion.contains(horizontallyInflatedRect.maxXMaxYCorner()) || discoveredRegion.contains(verticallyInflatedRect.maxXMaxYCorner())) {
+            maskedCorners.remove(InteractionRegion::CornerMask::MaxXMaxYCorner);
+            changedMaskedCorners = true;
+        }
+
+        if (maskedCorners.isEmpty())
+            region.borderRadius = 0;
+        else if (changedMaskedCorners)
+            region.maskedCorners = maskedCorners;
+    }
+}
+
 void EventRegionContext::copyInteractionRegionsToEventRegion()
 {
+    shrinkWrapInteractionRegions();
     m_eventRegion.appendInteractionRegions(m_interactionRegions);
 }
 

@@ -200,13 +200,10 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     if (!isOriginalMatch && !isInlineNonBlock)
         return std::nullopt;
 
-    if (isInlineNonBlock)
-        bounds.inflate(regionRenderer.document().settings().interactionRegionInlinePadding());
-
     float borderRadius = 0;
     OptionSet<InteractionRegion::CornerMask> maskedCorners;
 
-    if (auto* renderBox = dynamicDowncast<RenderBox>(renderer)) {
+    if (auto* renderBox = dynamicDowncast<RenderBox>(regionRenderer)) {
         auto borderRadii = renderBox->borderRadii();
         auto minRadius = borderRadii.minimumRadius();
         auto maxRadius = borderRadii.maximumRadius();
@@ -235,8 +232,14 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
             bounds.expand(IntSize(borderBoxRect.size() - contentBoxRect.size()));
         }
     }
-    borderRadius = std::max<float>(borderRadius, regionRenderer.document().settings().interactionRegionMinimumCornerRadius());
-    
+
+    bool hasNoVisualEdges = regionRenderer.style().borderAndBackgroundEqual(RenderStyle::defaultStyle());
+    if (isInlineNonBlock && hasNoVisualEdges)
+        bounds.inflate(regionRenderer.document().settings().interactionRegionInlinePadding());
+
+    if (hasNoVisualEdges)
+        borderRadius = std::max<float>(borderRadius, regionRenderer.document().settings().interactionRegionMinimumCornerRadius());
+
     return { {
         InteractionRegion::Type::Interaction,
         matchedElement->identifier(),

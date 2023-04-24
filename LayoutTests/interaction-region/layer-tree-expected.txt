@@ -67,14 +67,14 @@
                                   (sublayers
                                     (
                                       (type interaction)
-                                      (layer bounds [x: 0 y: 0 width: 284 height: 192])
-                                      (layer position [x: 152 y: 152])
-                                      (layer cornerRadius 8))
-                                    (
-                                      (type interaction)
                                       (layer bounds [x: 0 y: 0 width: 59 height: 20])
                                       (layer position [x: 29.5 y: 29.5])
                                       (layer cornerRadius 9))
+                                    (
+                                      (type interaction)
+                                      (layer bounds [x: 0 y: 0 width: 284 height: 192])
+                                      (layer position [x: 152 y: 152])
+                                      (layer cornerRadius 8))
                                     (
                                       (layer bounds [x: 0 y: 0 width: 0 height: 0])
                                       (sublayers
