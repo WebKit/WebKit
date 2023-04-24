@@ -93,14 +93,39 @@
     
     return self;
 }
-#endif
 
-- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL location:(const WebCore::IntPoint&)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image imageMIMEType:(NSString *)imageMIMEType
+- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url information:(const WebKit::InteractionInformationAtPosition&)information
 {
-    return [self _initWithType:type URL:url imageURL:imageURL location:location title:title ID:ID rect:rect image:image imageMIMEType:imageMIMEType userInfo:nil];
+    return [self _initWithType:type URL:url imageURL:information.imageURL information:information];
 }
 
-- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL location:(const WebCore::IntPoint&)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image imageMIMEType:(NSString *)imageMIMEType userInfo:(NSDictionary *)userInfo
+- (instancetype)_initWithType:(_WKActivatedElementType)type image:(WebKit::ShareableBitmap*)image information:(const WebKit::InteractionInformationAtPosition&)information
+{
+    return [self _initWithType:type URL:information.url imageURL:information.imageURL image:image userInfo:nil information:information];
+}
+
+- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL information:(const WebKit::InteractionInformationAtPosition&)information
+{
+    return [self _initWithType:type URL:url imageURL:imageURL image:information.image.get() userInfo:nil information:information];
+}
+
+- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url image:(WebKit::ShareableBitmap*)image information:(const WebKit::InteractionInformationAtPosition&)information
+{
+    return [self _initWithType:type URL:url imageURL:information.imageURL image:image userInfo:nil information:information];
+}
+
+- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL userInfo:(NSDictionary *)userInfo information:(const WebKit::InteractionInformationAtPosition&)information
+{
+    return [self _initWithType:type URL:url imageURL:imageURL image:information.image.get() userInfo:userInfo information:information];
+}
+
+- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL image:(WebKit::ShareableBitmap*)image userInfo:(NSDictionary *)userInfo information:(const WebKit::InteractionInformationAtPosition&)information
+{
+    return [self _initWithType:type URL:url imageURL:imageURL location:information.request.point title:information.title ID:information.idAttribute rect:information.bounds image:image imageMIMEType:information.imageMIMEType isAnimatedImage:information.isAnimatedImage isAnimating:information.isAnimating canShowAnimationControls:information.canShowAnimationControls userInfo:userInfo];
+}
+#endif // PLATFORM(IOS_FAMILY)
+
+- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL location:(const WebCore::IntPoint&)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image imageMIMEType:(NSString *)imageMIMEType isAnimatedImage:(BOOL)isAnimatedImage isAnimating:(BOOL)isAnimating canShowAnimationControls:(BOOL)canShowAnimationControls userInfo:(NSDictionary *)userInfo
 {
     if (!(self = [super init]))
         return nil;
@@ -116,7 +141,10 @@
     _ID = ID;
 #if PLATFORM(IOS_FAMILY)
     _userInfo = adoptNS([userInfo copy]);
+    _isAnimating = isAnimating;
+    _canShowAnimationControls = canShowAnimationControls;
 #endif
+    _animatedImage = isAnimatedImage;
 
     return self;
 }

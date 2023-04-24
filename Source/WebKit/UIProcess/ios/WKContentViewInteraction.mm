@@ -2674,7 +2674,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (![uiDelegate respondsToSelector:@selector(_webView:showCustomSheetForElement:)])
         return;
 
-    auto element = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeAttachment URL:(NSURL *)_positionInformation.url imageURL:(NSURL *)_positionInformation.imageURL location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:nil imageMIMEType:_positionInformation.imageMIMEType]);
+    auto element = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeAttachment image:nil information:_positionInformation]);
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [uiDelegate _webView:self.webView showCustomSheetForElement:element.get()];
 ALLOW_DEPRECATED_DECLARATIONS_END
@@ -11825,6 +11825,13 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
     _lastSelectionDrawingInfo.type = WebKit::WKSelectionDrawingInfo::SelectionType::Range;
 }
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+- (BOOL)_allowAnimationControlsForTesting
+{
+    return self.webView._allowAnimationControlsForTesting;
+}
+#endif
+
 #if ENABLE(DATALIST_ELEMENT)
 - (void)_selectDataListOption:(NSInteger)optionIndex
 {
@@ -12732,7 +12739,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         dataForPreview.get()[UIPreviewDataLink] = (NSURL *)_positionInformation.imageURL;
     } else if (canShowAttachmentPreview) {
         *type = UIPreviewItemTypeAttachment;
-        auto element = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeAttachment URL:(NSURL *)linkURL imageURL:(NSURL *)_positionInformation.imageURL location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:nil imageMIMEType:_positionInformation.imageMIMEType]);
+        auto element = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeAttachment URL:(NSURL *)linkURL image:nil information:_positionInformation]);
         NSUInteger index = [uiDelegate _webView:self.webView indexIntoAttachmentListForElement:element.get()];
         if (index != NSNotFound) {
             BOOL sourceIsManaged = NO;
@@ -12769,7 +12776,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
         // Treat animated images like a link preview
         if (isValidURLForImagePreview && _positionInformation.isAnimatedImage) {
-            auto animatedImageElementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL imageURL:nil location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:_positionInformation.image.get() imageMIMEType:_positionInformation.imageMIMEType]);
+            auto animatedImageElementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL imageURL:nil information:_positionInformation]);
 
             if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForAnimatedImageAtURL:defaultActions:elementInfo:imageSize:)]) {
                 RetainPtr<NSArray> actions = [_actionSheetAssistant defaultActionsForImageSheet:animatedImageElementInfo.get()];
@@ -12779,7 +12786,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             }
         }
 
-        auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink URL:targetURL imageURL:nil location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:_positionInformation.image.get() imageMIMEType:_positionInformation.imageMIMEType]);
+        auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink URL:targetURL imageURL:nil information:_positionInformation]);
 
         auto actions = [_actionSheetAssistant defaultActionsForLinkSheet:elementInfo.get()];
         if ([uiDelegate respondsToSelector:@selector(webView:previewingViewControllerForElement:defaultActions:)]) {
@@ -12824,7 +12831,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             imageInfo = userInfo;
         }
 
-        auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:alternateURL.get() imageURL:nil location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:_positionInformation.image.get() imageMIMEType:_positionInformation.imageMIMEType userInfo:imageInfo.get()]);
+        auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:alternateURL.get() imageURL:nil userInfo:imageInfo.get() information:_positionInformation]);
         _page->startInteractionWithPositionInformation(_positionInformation);
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN

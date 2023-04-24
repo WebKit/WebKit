@@ -400,8 +400,7 @@ static bool isJavaScriptURL(NSURL *url)
         NSURL *imageURL = _positionInformation->imageURL;
         if (!targetURL)
             targetURL = alternateURL;
-        auto elementBounds = _positionInformation->bounds;
-        auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL imageURL:imageURL location:_positionInformation->request.point title:_positionInformation->title ID:_positionInformation->idAttribute rect:elementBounds image:_positionInformation->image.get() imageMIMEType:_positionInformation->imageMIMEType userInfo:userInfo]);
+        auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL imageURL:imageURL userInfo:userInfo information:*_positionInformation]);
         if ([delegate respondsToSelector:@selector(actionSheetAssistant:showCustomSheetForElement:)] && [delegate actionSheetAssistant:self showCustomSheetForElement:elementInfo.get()])
             return;
         auto defaultActions = [self defaultActionsForImageSheet:elementInfo.get()];
@@ -531,6 +530,22 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeOpen info:elementInfo assistant:self]];
 }
 
+- (void)_appendAnimationAction:(NSMutableArray *)actions elementInfo:(_WKActivatedElementInfo *)elementInfo
+{
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    if (elementInfo.isAnimatedImage) {
+        // Only show these controls if autoplay of animated images has been disabled.
+        auto* autoplayAnimatedImagesFunction = _AXSReduceMotionAutoplayAnimatedImagesEnabledPtr();
+        BOOL systemAllowsControls = autoplayAnimatedImagesFunction && !autoplayAnimatedImagesFunction();
+        if (!systemAllowsControls && [_delegate respondsToSelector:@selector(_allowAnimationControlsForTesting)])
+            systemAllowsControls = [_delegate _allowAnimationControlsForTesting];
+
+        if (systemAllowsControls && elementInfo.canShowAnimationControls)
+            [actions addObject:[_WKElementAction _elementActionWithType:elementInfo.isAnimating ? _WKElementActionPauseAnimation : _WKElementActionPlayAnimation info:elementInfo assistant:self]];
+    }
+#endif
+}
+
 - (RetainPtr<NSArray<_WKElementAction *>>)defaultActionsForLinkSheet:(_WKActivatedElementInfo *)elementInfo
 {
     NSURL *targetURL = [elementInfo URL];
@@ -567,6 +582,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeRevealImage info:elementInfo assistant:self]];
 #endif
     }
+    [self _appendAnimationAction:defaultActions.get() elementInfo:elementInfo];
 
     return defaultActions;
 }
@@ -601,20 +617,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if ([_delegate respondsToSelector:@selector(actionSheetAssistant:shouldIncludeLookUpImageActionForElement:)] && [_delegate actionSheetAssistant:self shouldIncludeLookUpImageActionForElement:elementInfo])
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeRevealImage info:elementInfo assistant:self]];
 #endif
-
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-    if (elementInfo.isAnimatedImage) {
-        auto* autoplayAnimatedImagesFunction = _AXSReduceMotionAutoplayAnimatedImagesEnabledPtr();
-        // Only show these controls if autoplay of animated images has been disabled.
-        if (autoplayAnimatedImagesFunction && !autoplayAnimatedImagesFunction() && elementInfo.canShowAnimationControls) {
-            if (elementInfo.isAnimating)
-                [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionPauseAnimation info:elementInfo assistant:self]];
-            else
-                [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionPlayAnimation info:elementInfo assistant:self]];
-
-        }
-    }
-#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    [self _appendAnimationAction:defaultActions.get() elementInfo:elementInfo];
 
     return defaultActions;
 }
@@ -640,7 +643,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
 
-    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink URL:targetURL imageURL:(NSURL*)_positionInformation->imageURL location:_positionInformation->request.point title:_positionInformation->title ID:_positionInformation->idAttribute rect:_positionInformation->bounds image:_positionInformation->image.get() imageMIMEType:_positionInformation->imageMIMEType]);
+    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink URL:targetURL information:*_positionInformation]);
     if ([_delegate respondsToSelector:@selector(actionSheetAssistant:showCustomSheetForElement:)] && [_delegate actionSheetAssistant:self showCustomSheetForElement:elementInfo.get()]) {
         _needsLinkIndicator = NO;
         return;

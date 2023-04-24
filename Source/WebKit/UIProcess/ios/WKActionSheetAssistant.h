@@ -89,6 +89,9 @@ typedef NS_ENUM(NSInteger, _WKElementActionType);
 - (BOOL)actionSheetAssistantShouldIncludeCopySubjectAction:(WKActionSheetAssistant *)assistant;
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant copySubject:(UIImage *)image sourceMIMEType:(NSString *)sourceMIMEType;
 #endif
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+- (BOOL)_allowAnimationControlsForTesting;
+#endif
 @end
 
 #if USE(UICONTEXTMENU)

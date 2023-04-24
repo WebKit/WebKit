@@ -35,6 +35,7 @@
 #import "TestWKWebViewController.h"
 #import "UIKitSPI.h"
 #import "UserInterfaceSwizzler.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
@@ -62,6 +63,19 @@
 }
 
 @end
+
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+@interface TestWKWebViewForAnimationControls : TestWKWebView
+- (BOOL)_allowAnimationControlsForTesting;
+@end
+
+@implementation TestWKWebViewForAnimationControls
+- (BOOL)_allowAnimationControlsForTesting
+{
+    return YES;
+}
+@end
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
 namespace TestWebKitAPI {
 
@@ -361,6 +375,85 @@ TEST(ActionSheetTests, CopyLinkWritesURLAndPlainText)
 }
 
 #endif // !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+static bool performLongPressAction(WKWebView *webView, ActionSheetObserver *observer, CGPoint location, _WKElementActionType actionType)
+{
+    // Close any existing open action sheets by pressing outside their bounds.
+    [webView _simulateLongPressActionAtLocation:CGPointMake(10000, 10000)];
+
+    __block RetainPtr<_WKElementAction> copyAction;
+    __block RetainPtr<_WKActivatedElementInfo> copyElement;
+    __block bool done = false;
+    [observer setPresentationHandler:^(_WKActivatedElementInfo *element, NSArray *actions) {
+        copyElement = element;
+        for (_WKElementAction *action in actions) {
+            if (action.type == actionType)
+                copyAction = action;
+        }
+        done = true;
+        if (copyAction)
+            return @[ copyAction.get() ];
+        return @[ ];
+    }];
+    [webView _simulateLongPressActionAtLocation:location];
+    TestWebKitAPI::Util::run(&done);
+
+    if (!copyAction)
+        return false;
+
+    EXPECT_TRUE(!!copyElement);
+    [copyAction runActionWithElementInfo:copyElement.get()];
+    return true;
+}
+
+TEST(ActionSheetTests, PlayPauseAnimationInsideLink)
+{
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    auto webView = adoptNS([[TestWKWebViewForAnimationControls alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration addToWindow:YES]);
+    auto observer = adoptNS([[ActionSheetObserver alloc] init]);
+    [webView setUIDelegate:observer.get()];
+    [webView synchronouslyLoadTestPageNamed:@"img-animation-in-anchor"];
+    [webView stringByEvaluatingJavaScript:@"window.internals.settings.setImageAnimationControlEnabled(true)"];
+
+    // Start the animation.
+    while (!performLongPressAction(webView.get(), observer.get(), CGPointMake(100, 100), _WKElementActionPlayAnimation))
+        TestWebKitAPI::Util::runFor(0.1_s);
+
+    // After the animation begins playing again, expect to have "Pause Animation" in the action sheet.
+    while (!performLongPressAction(webView.get(), observer.get(), CGPointMake(100, 100), _WKElementActionPauseAnimation))
+        TestWebKitAPI::Util::runFor(0.1_s);
+
+    // Wait until we have "Play Animation" again (indicating the animation was successfully paused).
+    while (!performLongPressAction(webView.get(), observer.get(), CGPointMake(100, 100), _WKElementActionPlayAnimation))
+        TestWebKitAPI::Util::runFor(0.1_s);
+}
+
+TEST(ActionSheetTests, PlayPauseAnimationSheetActionsNotPresentByDefault)
+{
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    // Note that this is a TestWKWebView, not a TestWKWebViewForAnimationControls, which has the necessary testing only override.
+    // Without the testing override, the only way "Play Animation" and "Pause Animation" should appear is when a system setting is in a non-default state.
+    // So this test ensures these actions are not available by default.
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration addToWindow:YES]);
+    auto observer = adoptNS([[ActionSheetObserver alloc] init]);
+    [webView setUIDelegate:observer.get()];
+    [webView synchronouslyLoadTestPageNamed:@"img-animation-in-anchor"];
+    [webView stringByEvaluatingJavaScript:@"window.internals.settings.setImageAnimationControlEnabled(true)"];
+
+    __block bool done = false;
+    [observer setPresentationHandler:^(_WKActivatedElementInfo *element, NSArray *actions) {
+        for (_WKElementAction *action in actions) {
+            EXPECT_FALSE(action.type == _WKElementActionPlayAnimation);
+            EXPECT_FALSE(action.type == _WKElementActionPauseAnimation);
+        }
+        done = true;
+        return @[ ];
+    }];
+    [webView _simulateLongPressActionAtLocation:CGPointMake(100, 100)];
+    TestWebKitAPI::Util::run(&done);
+}
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
 } // namespace TestWebKitAPI
 
