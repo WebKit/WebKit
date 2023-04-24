@@ -18,9 +18,9 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 277x26
             text run at (0,0) width 277: "Splitting Mail blockquotes."
         RenderBlock {DIV} at (0,27) size 784x87
-          RenderText {#text} at (0,0) size 189x26
-            text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,0) size 0x26
+          RenderText {#text} at (0,0) size 183x26
+            text run at (0,0) width 183: "Expected Results:"
+          RenderBR {BR} at (183,0) size 0x26
           RenderText {#text} at (0,27) size 370x19
             text run at (0,27) width 370: "Two blockquotes, with an unquoted blank line in between."
           RenderBR {BR} at (370,27) size 0x19

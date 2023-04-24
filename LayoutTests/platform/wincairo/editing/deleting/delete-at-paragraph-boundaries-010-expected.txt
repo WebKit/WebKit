@@ -19,20 +19,20 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x322 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x111
-          RenderText {#text} at (0,0) size 65x26
-            text run at (0,0) width 65: "Tests: "
-          RenderBR {BR} at (65,0) size 0x26
+          RenderText {#text} at (0,0) size 59x26
+            text run at (0,0) width 59: "Tests:"
+          RenderBR {BR} at (59,0) size 0x26
           RenderText {#text} at (0,27) size 743x55
             text run at (0,27) width 743: "Deleting when a selection starts at the beginning of a text following a nested"
-            text run at (0,55) width 691: "block, and extends out of the enclosing block into the following block. "
-          RenderBR {BR} at (691,55) size 0x27
+            text run at (0,55) width 685: "block, and extends out of the enclosing block into the following block."
+          RenderBR {BR} at (685,55) size 0x27
           RenderText {#text} at (0,83) size 553x27
             text run at (0,83) width 267: "FIXME: Currently broken! "
             text run at (267,83) width 286: "See rdar://problem/4099839/."
         RenderBlock {DIV} at (14,141) size 756x167
-          RenderText {#text} at (0,0) size 189x26
-            text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,0) size 0x26
+          RenderText {#text} at (0,0) size 183x26
+            text run at (0,0) width 183: "Expected Results:"
+          RenderBR {BR} at (183,0) size 0x26
           RenderText {#text} at (0,27) size 752x139
             text run at (0,27) width 727: "Should see a total of five lines in the red box, with the third line inside of a"
             text run at (0,55) width 675: "nested red box. First line should be \"one\". Next line should be \"two\". "
