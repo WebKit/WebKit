@@ -681,7 +681,8 @@ void RemoteLayerBackingStoreProperties::applyBackingStoreToLayer(CALayer *layer,
             layer.opaque = m_isOpaque;
         [(WKCompositingLayer *)layer _setWKContents:contents.get() withDisplayList:WTFMove(std::get<CGDisplayList>(*m_displayListBufferHandle)) replayForTesting:replayCGDisplayListsIntoBackingStore];
         return;
-    }
+    } else
+        [layer _web_clearCGDisplayListIfNeeded];
 #else
     UNUSED_PARAM(replayCGDisplayListsIntoBackingStore);
 #endif

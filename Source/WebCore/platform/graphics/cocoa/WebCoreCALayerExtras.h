@@ -41,6 +41,10 @@
 - (BOOL)_web_maskMayIntersectRect:(CGRect)rect;
 - (void)_web_clearContents;
 
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+- (void)_web_clearCGDisplayListIfNeeded;
+#endif
+
 @end
 
 #ifdef __cplusplus
