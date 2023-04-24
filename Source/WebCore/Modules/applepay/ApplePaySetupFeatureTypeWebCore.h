@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-enum class ApplePaySetupFeatureType : uint8_t {
+enum class ApplePaySetupFeatureType : bool {
     ApplePay,
     AppleCard,
 };

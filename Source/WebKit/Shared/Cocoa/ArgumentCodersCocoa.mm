@@ -628,7 +628,6 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
         || (supportsRevealCore && [allowedClasses containsObject:PAL::getRVItemClass()]) // rdar://107553310 - relying on NSMutableArray re-write, don't re-introduce rdar://107673064
 #endif // ENABLE(REVEAL)
 #if ENABLE(APPLE_PAY)
-        || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentInstallmentConfigurationClass()]) // Don't reintroduce rdar://108281584
         || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentMethodClass()]) // rdar://107553480 Don't reintroduce rdar://108235706
         || (!strictSecureDecodingForAllObjCEnabled() && [allowedClasses containsObject:NSMutableURLRequest.class]) // rdar://107553194 Don't reintroduce rdar://108339450
 #endif

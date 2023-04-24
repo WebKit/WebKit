@@ -364,8 +364,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
 #if HAVE(PASSKIT_INSTALLMENTS)
-    if (PKPaymentInstallmentConfiguration *configuration = paymentRequest.installmentConfiguration().platformConfiguration()) {
-        [result setInstallmentConfiguration:configuration];
+    if (auto configuration = paymentRequest.installmentConfiguration().platformConfiguration()) {
+        [result setInstallmentConfiguration:configuration.get()];
         [result setRequestType:PKPaymentRequestTypeInstallment];
     }
 #endif

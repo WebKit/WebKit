@@ -171,7 +171,21 @@ static std::optional<ApplePayInstallmentItem> makeVectorElement(const ApplePayIn
     };
 }
 
-static RetainPtr<PKPaymentInstallmentConfiguration> createPlatformConfiguration(const ApplePayInstallmentConfiguration& coreConfiguration, NSDictionary *applicationMetadata)
+static RetainPtr<NSDictionary> applicationMetadataDictionary(const ApplePayInstallmentConfiguration& configuration)
+{
+    if (NSData *applicationMetadata = [configuration.applicationMetadata dataUsingEncoding:NSUTF8StringEncoding])
+        return dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:applicationMetadata options:0 error:nil]);
+    return { };
+}
+
+static String applicationMetadataString(NSDictionary *dictionary)
+{
+    if (NSData *applicationMetadata = dictionary ? [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingSortedKeys error:nil] : nil)
+        return adoptNS([[NSString alloc] initWithData:applicationMetadata encoding:NSUTF8StringEncoding]).get();
+    return { };
+}
+
+static RetainPtr<PKPaymentInstallmentConfiguration> createPlatformConfiguration(const ApplePayInstallmentConfiguration& coreConfiguration)
 {
     if (!PAL::getPKPaymentInstallmentConfigurationClass())
         return nil;
@@ -194,7 +208,7 @@ static RetainPtr<PKPaymentInstallmentConfiguration> createPlatformConfiguration(
         return configuration;
 
     [configuration setInstallmentItems:createNSArray(coreConfiguration.items).get()];
-    [configuration setApplicationMetadata:applicationMetadata];
+    [configuration setApplicationMetadata:applicationMetadataDictionary(coreConfiguration).get()];
     [configuration setRetailChannel:platformRetailChannel(coreConfiguration.retailChannel)];
 
     return configuration;
@@ -202,64 +216,72 @@ static RetainPtr<PKPaymentInstallmentConfiguration> createPlatformConfiguration(
 
 ExceptionOr<PaymentInstallmentConfiguration> PaymentInstallmentConfiguration::create(const ApplePayInstallmentConfiguration& configuration)
 {
-    NSDictionary *applicationMetadataDictionary = nil;
-    if (!configuration.applicationMetadata.isNull()) {
-        NSData *applicationMetadata = [configuration.applicationMetadata dataUsingEncoding:NSUTF8StringEncoding];
-        applicationMetadataDictionary = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:applicationMetadata options:0 error:nil]);
-        if (!applicationMetadataDictionary)
-            return Exception { TypeError, "applicationMetadata must be a JSON object"_s };
-    }
+    auto dictionary = applicationMetadataDictionary(configuration);
+    if (!configuration.applicationMetadata.isNull() && !dictionary)
+        return Exception { TypeError, "applicationMetadata must be a JSON object"_s };
 
-    return PaymentInstallmentConfiguration(configuration, applicationMetadataDictionary);
+    return PaymentInstallmentConfiguration(ApplePayInstallmentConfiguration(configuration), WTFMove(dictionary));
 }
 
-PaymentInstallmentConfiguration::PaymentInstallmentConfiguration(const ApplePayInstallmentConfiguration& configuration, NSDictionary *applicationMetadata)
-    : m_configuration { createPlatformConfiguration(configuration, applicationMetadata) }
+static ApplePayInstallmentConfiguration addApplicationMetadata(const ApplePayInstallmentConfiguration& input, RetainPtr<NSDictionary>&& applicationMetadata)
+{
+    auto configuration = input;
+    if (applicationMetadata)
+        configuration.applicationMetadata = applicationMetadataString(applicationMetadata.get());
+    return configuration;
+}
+
+PaymentInstallmentConfiguration::PaymentInstallmentConfiguration(const ApplePayInstallmentConfiguration& configuration, RetainPtr<NSDictionary>&& applicationMetadata)
+    : m_configuration { addApplicationMetadata(configuration, WTFMove(applicationMetadata)) }
 {
 }
 
-PaymentInstallmentConfiguration::PaymentInstallmentConfiguration(RetainPtr<PKPaymentInstallmentConfiguration>&& configuration)
+PaymentInstallmentConfiguration::PaymentInstallmentConfiguration(ApplePayInstallmentConfiguration&& configuration)
     : m_configuration { WTFMove(configuration) }
 {
 }
 
-PKPaymentInstallmentConfiguration *PaymentInstallmentConfiguration::platformConfiguration() const
+PaymentInstallmentConfiguration::PaymentInstallmentConfiguration(RetainPtr<PKPaymentInstallmentConfiguration>&& configuration)
+    : m_configuration { applePayInstallmentConfiguration(configuration.get()) }
 {
-    return m_configuration.get();
 }
 
-ApplePayInstallmentConfiguration PaymentInstallmentConfiguration::applePayInstallmentConfiguration() const
+const ApplePayInstallmentConfiguration& PaymentInstallmentConfiguration::applePayInstallmentConfiguration() const
+{
+    return m_configuration;
+}
+
+RetainPtr<PKPaymentInstallmentConfiguration> PaymentInstallmentConfiguration::platformConfiguration() const
+{
+    return createPlatformConfiguration(m_configuration);
+}
+
+ApplePayInstallmentConfiguration PaymentInstallmentConfiguration::applePayInstallmentConfiguration(PKPaymentInstallmentConfiguration *configuration)
 {
     ApplePayInstallmentConfiguration installmentConfiguration;
     if (!PAL::getPKPaymentInstallmentConfigurationClass())
         return installmentConfiguration;
 
-    if (auto featureType = applePaySetupFeatureType([m_configuration feature]))
+    if (auto featureType = applePaySetupFeatureType([configuration feature]))
         installmentConfiguration.featureType = *featureType;
     else
         return installmentConfiguration;
 
-    installmentConfiguration.bindingTotalAmount = fromDecimalNumber([m_configuration bindingTotalAmount]);
-    installmentConfiguration.currencyCode = [m_configuration currencyCode];
-    installmentConfiguration.isInStorePurchase = [m_configuration isInStorePurchase];
-    installmentConfiguration.openToBuyThresholdAmount = fromDecimalNumber([m_configuration openToBuyThresholdAmount]);
+    installmentConfiguration.bindingTotalAmount = fromDecimalNumber([configuration bindingTotalAmount]);
+    installmentConfiguration.currencyCode = [configuration currencyCode];
+    installmentConfiguration.isInStorePurchase = [configuration isInStorePurchase];
+    installmentConfiguration.openToBuyThresholdAmount = fromDecimalNumber([configuration openToBuyThresholdAmount]);
 
-    installmentConfiguration.merchandisingImageData = [[m_configuration merchandisingImageData] base64EncodedStringWithOptions:0];
-    installmentConfiguration.merchantIdentifier = [m_configuration installmentMerchantIdentifier];
-    installmentConfiguration.referrerIdentifier = [m_configuration referrerIdentifier];
+    installmentConfiguration.merchandisingImageData = [[configuration merchandisingImageData] base64EncodedStringWithOptions:0];
+    installmentConfiguration.merchantIdentifier = [configuration installmentMerchantIdentifier];
+    installmentConfiguration.referrerIdentifier = [configuration referrerIdentifier];
 
     if (!PAL::getPKPaymentInstallmentItemClass())
         return installmentConfiguration;
 
-    RetainPtr<NSString> applicationMetadataString;
-    if (NSDictionary *applicationMetadataDictionary = [m_configuration applicationMetadata]) {
-        if (NSData *applicationMetadata = [NSJSONSerialization dataWithJSONObject:applicationMetadataDictionary options:NSJSONWritingSortedKeys error:nil])
-            applicationMetadataString = adoptNS([[NSString alloc] initWithData:applicationMetadata encoding:NSUTF8StringEncoding]);
-    }
-
-    installmentConfiguration.items = makeVector<ApplePayInstallmentItem>([m_configuration installmentItems]);
-    installmentConfiguration.applicationMetadata = applicationMetadataString.get();
-    installmentConfiguration.retailChannel = applePayRetailChannel([m_configuration retailChannel]);
+    installmentConfiguration.items = makeVector<ApplePayInstallmentItem>([configuration installmentItems]);
+    installmentConfiguration.applicationMetadata = applicationMetadataString([configuration applicationMetadata]);
+    installmentConfiguration.retailChannel = applePayRetailChannel([configuration retailChannel]);
 
     return installmentConfiguration;
 }
