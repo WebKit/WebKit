@@ -64,6 +64,9 @@ struct GPUProcessCreationParameters {
     std::optional<SandboxExtension::Handle> mobileGestaltExtensionHandle;
 
     String applicationVisibleName;
+#if PLATFORM(COCOA)
+    bool strictSecureDecodingForAllObjCEnabled { false };
+#endif
 
 #if USE(GBM)
     String renderDeviceFile;

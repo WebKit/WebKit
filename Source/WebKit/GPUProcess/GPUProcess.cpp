@@ -69,6 +69,7 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include "ArgumentCodersCocoa.h"
 #include <WebCore/CoreAudioSharedUnit.h>
 #include <WebCore/VP9UtilitiesCocoa.h>
 #endif
@@ -269,6 +270,9 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 #endif
 
     m_applicationVisibleName = WTFMove(parameters.applicationVisibleName);
+#if PLATFORM(COCOA)
+    IPC::setStrictSecureDecodingForAllObjCEnabled(parameters.strictSecureDecodingForAllObjCEnabled);
+#endif
 
     // Match the QoS of the UIProcess since the GPU process is doing rendering on its behalf.
     WTF::Thread::setCurrentThreadIsUserInteractive(0);

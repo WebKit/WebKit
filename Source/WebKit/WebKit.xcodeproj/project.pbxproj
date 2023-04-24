@@ -5267,7 +5267,6 @@
 		5C121E8B2410306600486F9B /* APIFrameTreeNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIFrameTreeNode.cpp; sourceTree = "<group>"; };
 		5C13024A1FE341A7000D9B31 /* WebsitePoliciesData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsitePoliciesData.h; sourceTree = "<group>"; };
 		5C13559E27E250030022B527 /* AppStoreDaemonSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppStoreDaemonSPI.h; sourceTree = "<group>"; };
-		5C1426E21C23F80500D41183 /* NetworkProcessCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkProcessCreationParameters.cpp; sourceTree = "<group>"; };
 		5C1426E31C23F80500D41183 /* NetworkProcessCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkProcessCreationParameters.h; sourceTree = "<group>"; };
 		5C1426E41C23F80500D41183 /* NetworkProcessSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkProcessSupplement.h; sourceTree = "<group>"; };
 		5C1426E51C23F80500D41183 /* NetworkResourceLoadParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkResourceLoadParameters.cpp; sourceTree = "<group>"; };
@@ -10601,7 +10600,6 @@
 				510CC7DF16138E2900D03ED3 /* NetworkProcess.cpp */,
 				510CC7E016138E2900D03ED3 /* NetworkProcess.h */,
 				51A8A6171627F5BB000D90E9 /* NetworkProcess.messages.in */,
-				5C1426E21C23F80500D41183 /* NetworkProcessCreationParameters.cpp */,
 				5C1426E31C23F80500D41183 /* NetworkProcessCreationParameters.h */,
 				5C4AB4B028BD6EF50059E6CD /* NetworkProcessCreationParameters.serialization.in */,
 				E14A954716E016A40068DE82 /* NetworkProcessPlatformStrategies.cpp */,

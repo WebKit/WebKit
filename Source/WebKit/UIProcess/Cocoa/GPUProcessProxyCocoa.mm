@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "ArgumentCodersCocoa.h"
 #include "GPUProcessCreationParameters.h"
 #include "GPUProcessMessages.h"
 #include "MediaPermissionUtilities.h"
@@ -45,6 +46,7 @@ void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationP
 {
     parameters.mobileGestaltExtensionHandle = createMobileGestaltSandboxExtensionIfNeeded();
     parameters.applicationVisibleName = applicationVisibleName();
+    parameters.strictSecureDecodingForAllObjCEnabled = IPC::strictSecureDecodingForAllObjCEnabled();
 }
 
 #if HAVE(POWERLOG_TASK_MODE_QUERY)

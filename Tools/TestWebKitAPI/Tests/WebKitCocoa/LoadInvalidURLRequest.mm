@@ -137,5 +137,18 @@ TEST(WebKit, LoadNSURLRequestSubclass)
     [webView _test_waitForDidFinishNavigation];
 }
 
+TEST(WebKit, LoadNSURLRequestWithMutablePropertiesAndKeys)
+{
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [NSURLProtocol setProperty:[NSMutableData data] forKey:[NSMutableString stringWithString:@"mutablestring"] inRequest:request];
+    [NSURLProtocol setProperty:[NSMutableArray array] forKey:@"key1" inRequest:request];
+    [NSURLProtocol setProperty:[NSMutableDictionary dictionary] forKey:@"key2" inRequest:request];
+    [NSURLProtocol setProperty:[NSMutableString string] forKey:@"key3" inRequest:request];
+    auto webView = adoptNS([WKWebView new]);
+    auto response = adoptNS([[NSURLResponse alloc] initWithURL:request.URL MIMEType:nil expectedContentLength:0 textEncodingName:nil]);
+    [webView loadSimulatedRequest:request response:response.get() responseData:[NSData data]];
+    [webView _test_waitForDidFinishNavigation];
+}
+
 } // namespace TestWebKitAPI
 

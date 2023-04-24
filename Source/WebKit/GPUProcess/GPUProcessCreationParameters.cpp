@@ -64,6 +64,9 @@ void GPUProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << mobileGestaltExtensionHandle;
 
     encoder << applicationVisibleName;
+#if PLATFORM(COCOA)
+    encoder << strictSecureDecodingForAllObjCEnabled;
+#endif
 
 #if USE(GBM)
     encoder << renderDeviceFile;
@@ -125,6 +128,11 @@ bool GPUProcessCreationParameters::decode(IPC::Decoder& decoder, GPUProcessCreat
 
     if (!decoder.decode(result.applicationVisibleName))
         return false;
+
+#if PLATFORM(COCOA)
+    if (!decoder.decode(result.strictSecureDecodingForAllObjCEnabled))
+        return false;
+#endif
 
 #if USE(GBM)
     std::optional<String> renderDeviceFile;

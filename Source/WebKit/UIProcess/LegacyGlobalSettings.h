@@ -67,4 +67,6 @@ private:
     HashSet<String> m_hostnamesToRegisterAsLocal;
 };
 
+bool experimentalFeatureEnabled(const String& key);
+
 } // namespace WebKit

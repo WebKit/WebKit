@@ -29,6 +29,7 @@
 #import "APINavigation.h"
 #import "AccessibilityPreferences.h"
 #import "AccessibilitySupportSPI.h"
+#import "ArgumentCodersCocoa.h"
 #import "CookieStorageUtilsCF.h"
 #import "DefaultWebBrowserChecks.h"
 #import "LegacyCustomProtocolManagerClient.h"
@@ -481,6 +482,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     parameters.systemHasBattery = systemHasBattery();
     parameters.systemHasAC = cachedSystemHasAC().value_or(true);
+    parameters.strictSecureDecodingForAllObjCEnabled = IPC::strictSecureDecodingForAllObjCEnabled();
 
 #if PLATFORM(IOS_FAMILY)
     parameters.currentUserInterfaceIdiomIsSmallScreen = currentUserInterfaceIdiomIsSmallScreen();
@@ -546,6 +548,7 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
     parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
+    parameters.strictSecureDecodingForAllObjCEnabled = IPC::strictSecureDecodingForAllObjCEnabled();
 
     parameters.shouldSuppressMemoryPressureHandler = [defaults boolForKey:WebKitSuppressMemoryPressureHandlerDefaultsKey];
 

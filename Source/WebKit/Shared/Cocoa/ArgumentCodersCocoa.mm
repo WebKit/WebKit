@@ -30,7 +30,9 @@
 
 #import "ArgumentCodersCF.h"
 #import "CoreTextHelpers.h"
+#import "LegacyGlobalSettings.h"
 #import "MessageNames.h"
+#import "WebPreferencesKeys.h"
 #import <CoreText/CTFont.h>
 #import <CoreText/CTFontDescriptor.h>
 #import <WebCore/ColorCocoa.h>
@@ -254,6 +256,29 @@ static constexpr NSString *innerColorKey = @"WK.CocoaColor";
 
 namespace IPC {
 using namespace WebCore;
+
+static std::optional<bool>& strictSecureDecodingForAllObjCEnabledValue()
+{
+    static std::optional<bool> value;
+    return value;
+}
+
+void setStrictSecureDecodingForAllObjCEnabled(bool enabled)
+{
+    strictSecureDecodingForAllObjCEnabledValue() = enabled;
+}
+
+bool strictSecureDecodingForAllObjCEnabled()
+{
+    if (isInAuxiliaryProcess()) {
+        ASSERT(strictSecureDecodingForAllObjCEnabledValue());
+        return *strictSecureDecodingForAllObjCEnabledValue();
+    }
+    ASSERT(!strictSecureDecodingForAllObjCEnabledValue());
+
+    static bool cachedValue { WebKit::experimentalFeatureEnabled(WebKit::WebPreferencesKey::strictSecureDecodingForAllObjCKey()) };
+    return cachedValue;
+}
 
 #pragma mark - Types
 
@@ -605,14 +630,15 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
 #if ENABLE(APPLE_PAY)
         || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentInstallmentConfigurationClass()]) // Don't reintroduce rdar://108281584
         || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentMethodClass()]) // rdar://107553480 Don't reintroduce rdar://108235706
+        || (!strictSecureDecodingForAllObjCEnabled() && [allowedClasses containsObject:NSMutableURLRequest.class]) // rdar://107553194 Don't reintroduce rdar://108339450
 #endif
-        || ([allowedClasses containsObject:NSMutableURLRequest.class]) // rdar://107553194 Don't reintroduce rdar://108339450
     ) {
         return false;
     }
 
     if (
         [allowedClasses containsObject:NSParagraphStyle.class] // rdar://107553230
+        || (strictSecureDecodingForAllObjCEnabled() && [allowedClasses containsObject:NSMutableURLRequest.class]) // rdar://107553194 Don't reintroduce rdar://108339450
         || [allowedClasses containsObject:NSShadow.class] // rdar://107553244
         || [allowedClasses containsObject:NSTextAttachment.class] // rdar://107553273
 #if ENABLE(APPLE_PAY)
@@ -658,7 +684,14 @@ static std::optional<RetainPtr<id>> decodeSecureCodingInternal(Decoder& decoder,
 
     auto allowedClassSet = adoptNS([[NSMutableSet alloc] initWithArray:allowedClasses]);
 
-    if ([allowedClasses containsObject:NSMutableURLRequest.class] || [allowedClasses containsObject:NSURLRequest.class])
+    if ([allowedClasses containsObject:NSMutableURLRequest.class]) {
+        [allowedClassSet addObject:WKSecureCodingURLWrapper.class];
+        [allowedClassSet addObject:NSMutableString.class];
+        [allowedClassSet addObject:NSMutableArray.class];
+        [allowedClassSet addObject:NSMutableDictionary.class];
+        [allowedClassSet addObject:NSMutableData.class];
+    }
+    if ([allowedClasses containsObject:NSURLRequest.class])
         [allowedClassSet addObject:WKSecureCodingURLWrapper.class];
 
     if (shouldEnableStrictMode(decoder, allowedClasses))

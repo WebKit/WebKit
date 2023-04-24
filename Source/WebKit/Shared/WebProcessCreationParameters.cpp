@@ -175,6 +175,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(COCOA)
     encoder << systemHasBattery;
     encoder << systemHasAC;
+    encoder << strictSecureDecodingForAllObjCEnabled;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -496,6 +497,12 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!systemHasAC)
         return false;
     parameters.systemHasAC = WTFMove(*systemHasAC);
+    
+    std::optional<bool> strictSecureDecodingForAllObjCEnabled;
+    decoder >> strictSecureDecodingForAllObjCEnabled;
+    if (!strictSecureDecodingForAllObjCEnabled)
+        return false;
+    parameters.strictSecureDecodingForAllObjCEnabled = WTFMove(*strictSecureDecodingForAllObjCEnabled);
 #endif
 
 #if PLATFORM(IOS_FAMILY)

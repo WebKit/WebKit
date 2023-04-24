@@ -216,6 +216,7 @@ struct WebProcessCreationParameters {
 #if PLATFORM(COCOA)
     bool systemHasBattery { false };
     bool systemHasAC { false };
+    bool strictSecureDecodingForAllObjCEnabled { false };
 #endif
 
 #if PLATFORM(IOS_FAMILY)

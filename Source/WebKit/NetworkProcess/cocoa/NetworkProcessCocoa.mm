@@ -26,6 +26,7 @@
 #import "config.h"
 #import "NetworkProcess.h"
 
+#import "ArgumentCodersCocoa.h"
 #import "CookieStorageUtilsCF.h"
 #import "Logging.h"
 #import "NetworkCache.h"
@@ -74,6 +75,7 @@ static void initializeNetworkSettings()
 void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters& parameters)
 {
     _CFNetworkSetATSContext(parameters.networkATSContext.get());
+    IPC::setStrictSecureDecodingForAllObjCEnabled(parameters.strictSecureDecodingForAllObjCEnabled);
 
     m_uiProcessBundleIdentifier = parameters.uiProcessBundleIdentifier;
     

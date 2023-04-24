@@ -28,6 +28,7 @@
 
 #import "CookieStorageUtilsCF.h"
 #import "DefaultWebBrowserChecks.h"
+#import "LegacyGlobalSettings.h"
 #import "NetworkProcessProxy.h"
 #import "SandboxUtilities.h"
 #import "UnifiedOriginStorageLevel.h"
@@ -94,13 +95,13 @@ static std::atomic<bool> hasInitializedManagedDomains = false;
 static std::atomic<bool> managedKeyExists = false;
 #endif
 
-static bool experimentalFeatureEnabled(const String& key, bool defaultValue = false)
+bool experimentalFeatureEnabled(const String& key)
 {
     auto defaultsKey = adoptNS([[NSString alloc] initWithFormat:@"WebKitExperimental%@", static_cast<NSString *>(key)]);
     if ([[NSUserDefaults standardUserDefaults] objectForKey:defaultsKey.get()] != nil)
         return [[NSUserDefaults standardUserDefaults] boolForKey:defaultsKey.get()];
 
-    return defaultValue;
+    return false;
 }
 
 static NSString* applicationOrProcessIdentifier()

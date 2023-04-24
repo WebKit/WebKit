@@ -48,7 +48,7 @@ WEBCORE_EXPORT bool checkAuxiliaryProcessType(AuxiliaryProcessType);
 WEBCORE_EXPORT std::optional<AuxiliaryProcessType> processType();
 WEBCORE_EXPORT const char* processTypeDescription(std::optional<AuxiliaryProcessType>);
 
-bool isInAuxiliaryProcess();
+WEBCORE_EXPORT bool isInAuxiliaryProcess();
 inline bool isInWebProcess() { return checkAuxiliaryProcessType(AuxiliaryProcessType::WebContent); }
 inline bool isInNetworkProcess() { return checkAuxiliaryProcessType(AuxiliaryProcessType::Network); }
 inline bool isInGPUProcess()
