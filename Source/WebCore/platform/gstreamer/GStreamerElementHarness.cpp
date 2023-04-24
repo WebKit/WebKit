@@ -586,7 +586,7 @@ String MermaidBuilder::describeCaps(const GRefPtr<GstCaps>& caps)
             GUniquePtr<char> serializedValue(gst_value_serialize(value));
             auto valueString = makeString(serializedValue.get());
             if (valueString.length() > 25)
-                builder->append(valueString.substring(0, 25), "…"_s);
+                builder->append(valueString.substring(0, 25), "…");
             else
                 builder->append(valueString);
             builder->append("<br/>"_s);
