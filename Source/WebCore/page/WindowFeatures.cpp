@@ -42,13 +42,9 @@ static std::optional<bool> boolFeature(const DialogFeaturesMap&, ASCIILiteral ke
 static std::optional<float> floatFeature(const DialogFeaturesMap&, ASCIILiteral key, float min, float max);
 
 // https://html.spec.whatwg.org/#feature-separator
-static bool isSeparator(UChar character, FeatureMode mode)
+static bool isSeparator(UChar character)
 {
-    if (mode == FeatureMode::Viewport)
-        return character == ' ' || character == '\t' || character == '\n' || character == '\r' || character == '=' || character == ',';
-
-    // FIXME: this should be isASCIIWhitespace
-    return isUnicodeCompatibleASCIIWhitespace(character) || character == '=' || character == ',';
+    return isASCIIWhitespace(character) || character == '=' || character == ',';
 }
 
 WindowFeatures parseWindowFeatures(StringView featuresString)
@@ -87,27 +83,27 @@ void processFeaturesString(StringView features, FeatureMode mode, const Function
     unsigned length = features.length();
     for (unsigned i = 0; i < length; ) {
         // Skip to first non-separator.
-        while (i < length && isSeparator(features[i], mode))
+        while (i < length && isSeparator(features[i]))
             ++i;
         unsigned keyBegin = i;
 
         // Skip to first separator.
-        while (i < length && !isSeparator(features[i], mode))
+        while (i < length && !isSeparator(features[i]))
             i++;
         unsigned keyEnd = i;
 
         // Skip to first '=', but don't skip past a ',' or a non-separator.
-        while (i < length && features[i] != '=' && features[i] != ',' && (mode == FeatureMode::Viewport || isSeparator(features[i], mode)))
+        while (i < length && features[i] != '=' && features[i] != ',' && (mode == FeatureMode::Viewport || isSeparator(features[i])))
             ++i;
 
         // Skip to first non-separator, but don't skip past a ','.
-        if (mode == FeatureMode::Viewport || (i < length && isSeparator(features[i], mode))) {
-            while (i < length && isSeparator(features[i], mode) && features[i] != ',')
+        if (mode == FeatureMode::Viewport || (i < length && isSeparator(features[i]))) {
+            while (i < length && isSeparator(features[i]) && features[i] != ',')
                 ++i;
             unsigned valueBegin = i;
 
             // Skip to first separator.
-            while (i < length && !isSeparator(features[i], mode))
+            while (i < length && !isSeparator(features[i]))
                 ++i;
             unsigned valueEnd = i;
             callback(features.substring(keyBegin, keyEnd - keyBegin), features.substring(valueBegin, valueEnd - valueBegin));
