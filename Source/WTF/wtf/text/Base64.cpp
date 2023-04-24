@@ -1,7 +1,7 @@
 /*
    Copyright (C) 2000-2001 Dawit Alemayehu <adawit@kde.org>
    Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
-   Copyright (C) 2007-2021 Apple Inc. All rights reserved.
+   Copyright (C) 2007-2021, 2023 Apple Inc. All rights reserved.
    Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
 
    This program is free software; you can redistribute it and/or modify
@@ -93,12 +93,12 @@ static const char base64URLDecMap[decodeMapSize] = {
     0x31, 0x32, 0x33, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet
 };
 
-template<typename CharacterType> static void base64EncodeInternal(Span<const uint8_t> inputDataBuffer, Span<CharacterType> destinationDataBuffer, Base64EncodeMap map)
+template<typename CharacterType> static void base64EncodeInternal(Span<const uint8_t> inputDataBuffer, Span<CharacterType> destinationDataBuffer, Base64EncodeMode mode)
 {
     ASSERT(destinationDataBuffer.size() > 0);
-    ASSERT(calculateBase64EncodedSize(inputDataBuffer.size(), map) == destinationDataBuffer.size());
+    ASSERT(calculateBase64EncodedSize(inputDataBuffer.size(), mode) == destinationDataBuffer.size());
 
-    auto encodeMap = (map == Base64EncodeMap::URL) ? base64URLEncMap : base64EncMap;
+    auto encodeMap = (mode == Base64EncodeMode::URL) ? base64URLEncMap : base64EncMap;
 
     unsigned sidx = 0;
     unsigned didx = 0;
@@ -122,58 +122,59 @@ template<typename CharacterType> static void base64EncodeInternal(Span<const uin
             destinationDataBuffer[didx++] = encodeMap[ (inputDataBuffer[sidx    ] << 4) & 077];
     }
 
-    ASSERT(map != Base64EncodeMap::URL || didx == destinationDataBuffer.size());
+    ASSERT(mode != Base64EncodeMode::URL || didx == destinationDataBuffer.size());
 
     while (didx < destinationDataBuffer.size())
         destinationDataBuffer[didx++] = '=';
 }
 
-template<typename CharacterType> static void base64EncodeInternal(Span<const std::byte> input, Span<CharacterType> destinationDataBuffer, Base64EncodeMap map)
+template<typename CharacterType> static void base64EncodeInternal(Span<const std::byte> input, Span<CharacterType> destinationDataBuffer, Base64EncodeMode mode)
 {
-    base64EncodeInternal(makeSpan(reinterpret_cast<const uint8_t*>(input.data()), input.size()), destinationDataBuffer, map);
+    base64EncodeInternal(makeSpan(reinterpret_cast<const uint8_t*>(input.data()), input.size()), destinationDataBuffer, mode);
 }
 
-static Vector<uint8_t> base64EncodeInternal(Span<const std::byte> input, Base64EncodeMap map)
+static Vector<uint8_t> base64EncodeInternal(Span<const std::byte> input, Base64EncodeMode mode)
 {
-    auto destinationLength = calculateBase64EncodedSize(input.size(), map);
+    auto destinationLength = calculateBase64EncodedSize(input.size(), mode);
     if (!destinationLength)
         return { };
 
     Vector<uint8_t> destinationVector(destinationLength);
-    base64EncodeInternal(input, makeSpan(destinationVector), map);
+    base64EncodeInternal(input, makeSpan(destinationVector), mode);
     return destinationVector;
 }
 
-void base64Encode(Span<const std::byte> input, Span<UChar> destination, Base64EncodeMap map)
+void base64Encode(Span<const std::byte> input, Span<UChar> destination, Base64EncodeMode mode)
 {
     if (!destination.size())
         return;
-    base64EncodeInternal(input, destination, map);
+    base64EncodeInternal(input, destination, mode);
 }
 
-void base64Encode(Span<const std::byte> input, Span<LChar> destination, Base64EncodeMap map)
+void base64Encode(Span<const std::byte> input, Span<LChar> destination, Base64EncodeMode mode)
 {
     if (!destination.size())
         return;
-    base64EncodeInternal(input, destination, map);
+    base64EncodeInternal(input, destination, mode);
 }
 
-Vector<uint8_t> base64EncodeToVector(Span<const std::byte> input, Base64EncodeMap map)
+Vector<uint8_t> base64EncodeToVector(Span<const std::byte> input, Base64EncodeMode mode)
 {
-    return base64EncodeInternal(input, map);
+    return base64EncodeInternal(input, mode);
 }
 
-String base64EncodeToString(Span<const std::byte> input, Base64EncodeMap map)
+String base64EncodeToString(Span<const std::byte> input, Base64EncodeMode mode)
 {
-    return makeString(base64Encoded(input, map));
+    return makeString(base64Encoded(input, mode));
 }
 
-template<typename T> static std::optional<Vector<uint8_t>> base64DecodeInternal(Span<const T> inputDataBuffer, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
+template<typename T> static std::optional<Vector<uint8_t>> base64DecodeInternal(Span<const T> inputDataBuffer, Base64DecodeMode mode)
 {
     if (!inputDataBuffer.size())
         return Vector<uint8_t> { };
 
-    auto decodeMap = (map == Base64DecodeMap::URL) ? base64URLDecMap : base64DecMap;
+    auto decodeMap = (mode == Base64DecodeMode::URL) ? base64URLDecMap : base64DecMap;
+    auto validatePadding = mode == Base64DecodeMode::DefaultValidatePadding || mode == Base64DecodeMode::DefaultValidatePaddingAndIgnoreWhitespace;
 
     Vector<uint8_t> destination(inputDataBuffer.size());
 
@@ -184,7 +185,7 @@ template<typename T> static std::optional<Vector<uint8_t>> base64DecodeInternal(
         if (ch == '=') {
             ++equalsSignCount;
             // There should never be more than 2 padding characters.
-            if (options.contains(Base64DecodeOptions::ValidatePadding) && equalsSignCount > 2) {
+            if (validatePadding && equalsSignCount > 2) {
                 return std::nullopt;
             }
         } else {
@@ -193,9 +194,8 @@ template<typename T> static std::optional<Vector<uint8_t>> base64DecodeInternal(
                 if (equalsSignCount)
                     return std::nullopt;
                 destination[destinationLength++] = decodedCharacter;
-            } else if (!options.contains(Base64DecodeOptions::IgnoreSpacesAndNewLines) || (!isLatin1(ch) || !isUnicodeCompatibleASCIIWhitespace(ch) || (options.contains(Base64DecodeOptions::DiscardVerticalTab) && ch == '\v'))) {
+            } else if (mode != Base64DecodeMode::DefaultValidatePaddingAndIgnoreWhitespace || !isASCIIWhitespace(ch))
                 return std::nullopt;
-            }
         }
     }
 
@@ -212,7 +212,7 @@ template<typename T> static std::optional<Vector<uint8_t>> base64DecodeInternal(
 
     // The should be no padding if length is a multiple of 4.
     // We use (destinationLength + equalsSignCount) instead of length because we don't want to account for ignored characters (i.e. spaces).
-    if (options.contains(Base64DecodeOptions::ValidatePadding) && equalsSignCount && (destinationLength + equalsSignCount) % 4)
+    if (validatePadding && equalsSignCount && (destinationLength + equalsSignCount) % 4)
         return std::nullopt;
 
     // Valid data is (n * 4 + [0,2,3]) characters long.
@@ -247,19 +247,19 @@ template<typename T> static std::optional<Vector<uint8_t>> base64DecodeInternal(
     return destination;
 }
 
-std::optional<Vector<uint8_t>> base64Decode(Span<const std::byte> input, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
+std::optional<Vector<uint8_t>> base64Decode(Span<const std::byte> input, Base64DecodeMode mode)
 {
     if (input.size() > std::numeric_limits<unsigned>::max())
         return std::nullopt;
-    return base64DecodeInternal(makeSpan(reinterpret_cast<const uint8_t*>(input.data()), input.size()), options, map);
+    return base64DecodeInternal(makeSpan(reinterpret_cast<const uint8_t*>(input.data()), input.size()), mode);
 }
 
-std::optional<Vector<uint8_t>> base64Decode(StringView input, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
+std::optional<Vector<uint8_t>> base64Decode(StringView input, Base64DecodeMode mode)
 {
     unsigned length = input.length();
     if (!length || input.is8Bit())
-        return base64DecodeInternal(makeSpan(input.characters8(), length), options, map);
-    return base64DecodeInternal(makeSpan(input.characters16(), length), options, map);
+        return base64DecodeInternal(makeSpan(input.characters8(), length), mode);
+    return base64DecodeInternal(makeSpan(input.characters16(), length), mode);
 }
 
 } // namespace WTF

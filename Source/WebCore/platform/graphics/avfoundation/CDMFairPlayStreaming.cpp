@@ -114,7 +114,7 @@ static Vector<Ref<SharedBuffer>> extractSinfData(const SharedBuffer& buffer)
         if (!keyID)
             continue;
 
-        auto sinfData = base64Decode(keyID, Base64DecodeOptions::IgnoreSpacesAndNewLines);
+        auto sinfData = base64Decode(keyID, Base64DecodeMode::DefaultValidatePaddingAndIgnoreWhitespace);
         if (!sinfData)
             continue;
 

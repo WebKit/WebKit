@@ -160,7 +160,7 @@ static std::optional<Result> decodeSynchronously(DecodeTask& task)
         return std::nullopt;
 
     if (task.isBase64) {
-        auto decodedData = base64Decode(PAL::decodeURLEscapeSequences(task.encodedData), { Base64DecodeOptions::ValidatePadding, Base64DecodeOptions::IgnoreSpacesAndNewLines, Base64DecodeOptions::DiscardVerticalTab });
+        auto decodedData = base64Decode(PAL::decodeURLEscapeSequences(task.encodedData), Base64DecodeMode::DefaultValidatePaddingAndIgnoreWhitespace);
         if (!decodedData)
             return std::nullopt;
         task.result.data = WTFMove(*decodedData);
