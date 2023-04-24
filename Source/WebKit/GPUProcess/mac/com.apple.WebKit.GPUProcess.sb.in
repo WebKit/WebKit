@@ -1176,6 +1176,8 @@
         SYS_lseek
         SYS_lstat
         SYS_lstat64
+        SYS_mach_eventlink_signal_wait_until
+        SYS_mach_eventlink_wait_until
         SYS_madvise
         SYS_memorystatus_control
         SYS_mincore
