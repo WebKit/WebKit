@@ -102,6 +102,7 @@ localizedStrings["0 Console warnings"] = "0 Console warnings";
 localizedStrings["1 match"] = "1 match";
 localizedStrings["1080p"] = "1080p";
 localizedStrings["2D"] = "2D";
+localizedStrings["2D (Offscreen)"] = "2D (Offscreen)";
 /* Label indicating that network activity is being simulated with 3G connectivity. */
 localizedStrings["3G"] = "3G";
 localizedStrings["720p"] = "720p";
@@ -1129,9 +1130,9 @@ localizedStrings["Observer Callback"] = "Observer Callback";
 localizedStrings["Observer Handlers:"] = "Observer Handlers:";
 localizedStrings["Observers:"] = "Observers:";
 localizedStrings["Off"] = "Off";
-localizedStrings["2D"] = "2D (Offscreen)";
 /* Label for a preference that is turned off. */
 localizedStrings["Off @ User Preferences Overrides"] = "Off";
+localizedStrings["Offscreen2D"] = "Offscreen2D";
 /* Input label for the x-axis of the offset of a CSS box shadow */
 localizedStrings["Offset X @ Box Shadow Editor"] = "Offset X";
 /* Input label for the y-axis of the offset of a CSS box shadow */
@@ -1169,6 +1170,7 @@ localizedStrings["Other Issue"] = "Other Issue";
 localizedStrings["Other Threads"] = "Other Threads";
 localizedStrings["Other filter options\u2026"] = "Other filter options\u2026";
 localizedStrings["Other: %s"] = "Other: %s";
+localizedStrings["Other\u2026"] = "Other\u2026";
 localizedStrings["Outgoing message"] = "Outgoing message";
 localizedStrings["Output: "] = "Output: ";
 localizedStrings["Over 1 ms"] = "Over 1 ms";
