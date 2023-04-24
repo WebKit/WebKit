@@ -97,7 +97,6 @@ WI.OverrideDeviceSettingsPopover = class OverrideDeviceSettingsPopover extends W
                 {name: WI.UIString("Allow media capture on insecure sites"), setting: InspectorBackend.Enum.Page.Setting.MediaCaptureRequiresSecureConnection, value: false},
                 {name: WI.UIString("Disable ICE candidate restrictions"), setting: InspectorBackend.Enum.Page.Setting.ICECandidateFilteringEnabled, value: false},
                 {name: WI.UIString("Use mock capture devices"), setting: InspectorBackend.Enum.Page.Setting.MockCaptureDevicesEnabled, value: true},
-                {name: WI.UIString("Disable encryption"), setting: InspectorBackend.Enum.Page.Setting.WebRTCEncryptionEnabled, value: false},
             ],
         });
 
