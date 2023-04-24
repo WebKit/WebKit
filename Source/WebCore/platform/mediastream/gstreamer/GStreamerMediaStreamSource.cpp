@@ -611,6 +611,10 @@ static void webkitMediaStreamSrcDispose(GObject* object)
         WebKitMediaStreamSrc* self = WEBKIT_MEDIA_STREAM_SRC_CAST(object);
         auto locker = GstObjectLocker(self);
         auto* priv = self->priv;
+
+        for (auto& source : priv->sources)
+            source->stopObserving();
+
         if (priv->stream) {
             priv->stream->removeObserver(*priv->mediaStreamObserver);
             priv->stream = nullptr;
@@ -655,9 +659,9 @@ static GstStateChangeReturn webkitMediaStreamSrcChangeState(GstElement* element,
         break;
     }
     case GST_STATE_CHANGE_READY_TO_NULL: {
-        auto locker = GstObjectLocker(self);
-        for (auto& item : self->priv->sources)
-            item->stopObserving();
+        // Explicitely NOT stopping internal sources observation here because the state transition
+        // can be triggered from a non-main thread, specially when mediastreamsrc is used by
+        // GstTranscoder.
         break;
     }
     default:
