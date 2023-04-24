@@ -71,6 +71,7 @@
 #include "Settings.h"
 #include "ShapeOutsideInfo.h"
 #include <wtf/Assertions.h>
+#include <wtf/Range.h>
 
 namespace WebCore {
 namespace LayoutIntegration {
@@ -790,35 +791,6 @@ void LineLayout::prepareFloatingState()
     }
 }
 
-std::optional<size_t> LineLayout::lastLineIndexForContentHeight() const
-{
-    if (!m_inlineContent)
-        return { };
-
-    auto& lines = m_inlineContent->displayContent().lines;
-    if (lines.isEmpty()) {
-        // Out-of-flow only content (and/or with floats) can produce blank inline content.
-        return { };
-    }
-    auto* layoutState = flow().view().frameView().layoutContext().layoutState();
-    if (!layoutState)
-        return lines.size() - 1;
-
-    auto lineClamp = layoutState->lineClamp();
-    if (!lineClamp)
-        return lines.size() - 1;
-
-    // Let's see if previous block containers have already produced enough lines.
-    if (lineClamp->currentLineCount < lineClamp->maximumLineCount) {
-        auto lastLineIndex = std::min(lines.size(), lineClamp->maximumLineCount - lineClamp->currentLineCount) - 1;
-        // FIXME: Clamped line is supposed to have trailing ellipsis. Assert on lines[lastLineIndex].hasEllipsis() when we have some means to clear
-        // line content after probing layout.
-        return lastLineIndex;
-    }
-    // This block is fully collapsed.
-    return { };
-}
-
 bool LineLayout::isPaginated() const
 {
     return m_inlineContent && m_inlineContent->isPaginated;
@@ -829,14 +801,19 @@ LayoutUnit LineLayout::contentBoxLogicalHeight() const
     if (!m_inlineContent)
         return { };
 
-    auto lastLineIndex = lastLineIndexForContentHeight();
-    if (!lastLineIndex)
+    auto& lines = m_inlineContent->displayContent().lines;
+    auto nonTruncatedRange = [&]() -> WTF::Range<size_t> {
+        for (size_t lineIndex = lines.size(); lineIndex--;) {
+            if (!lines[lineIndex].isTruncatedInBlockDirection())
+                return { 0, lineIndex + 1 };
+        }
+        // Out-of-flow only content (and/or with floats) and line-clamp can produce blank inline content.
+        return { };
+    }();
+    if (!nonTruncatedRange)
         return { };
 
-    auto& firstLine = m_inlineContent->displayContent().lines[0];
-    auto& lastLine = m_inlineContent->displayContent().lines[*lastLineIndex];
-
-    auto lineBoxHeight = lastLine.lineBoxLogicalRect().maxY() - firstLine.lineBoxLogicalRect().y();
+    auto lineBoxHeight = lines[nonTruncatedRange.end() - 1].lineBoxLogicalRect().maxY() - lines[nonTruncatedRange.begin()].lineBoxLogicalRect().y();
     auto additionalHeight = m_inlineContent->firstLinePaginationOffset + m_inlineContent->clearGapBeforeFirstLine + m_inlineContent->clearGapAfterLastLine;
     return LayoutUnit { lineBoxHeight + additionalHeight };
 }
