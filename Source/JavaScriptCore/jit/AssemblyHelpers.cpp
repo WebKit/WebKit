@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -78,7 +78,7 @@ void AssemblyHelpers::decrementSuperSamplerCount()
 {
     sub32(TrustedImm32(1), AbsoluteAddress(bitwise_cast<const void*>(&g_superSamplerCount)));
 }
-    
+
 void AssemblyHelpers::purifyNaN(FPRReg fpr)
 {
     MacroAssembler::Jump notNaN = branchIfNotNaN(fpr);
@@ -152,7 +152,7 @@ void AssemblyHelpers::jitAssertTagsInPlace()
     abortWithReason(AHNumberTagNotInPlace);
     breakpoint();
     ok.link(this);
-    
+
     ok = branch64(Equal, GPRInfo::notCellMaskRegister, TrustedImm64(JSValue::NotCellMask));
     abortWithReason(AHNotCellMaskNotInPlace);
     ok.link(this);
@@ -327,20 +327,20 @@ AssemblyHelpers::Jump AssemblyHelpers::emitExceptionCheck(VM& vm, ExceptionCheck
 
     if (width == FarJumpWidth)
         kind = (kind == NormalExceptionCheck ? InvertedExceptionCheck : NormalExceptionCheck);
-    
+
     Jump result;
 #if USE(JSVALUE64)
     result = branchTest64(kind == NormalExceptionCheck ? NonZero : Zero, AbsoluteAddress(vm.addressOfException()));
 #elif USE(JSVALUE32_64)
     result = branch32(kind == NormalExceptionCheck ? NotEqual : Equal, AbsoluteAddress(vm.addressOfException()), TrustedImm32(0));
 #endif
-    
+
     if (width == NormalJumpWidth)
         return result;
 
     PatchableJump realJump = patchableJump();
     result.link(this);
-    
+
     return realJump.m_jump;
 }
 
@@ -355,7 +355,7 @@ AssemblyHelpers::Jump AssemblyHelpers::emitNonPatchableExceptionCheck(VM& vm)
 #elif USE(JSVALUE32_64)
     result = branch32(NotEqual, AbsoluteAddress(vm.addressOfException()), TrustedImm32(0));
 #endif
-    
+
     return result;
 }
 
@@ -391,21 +391,21 @@ void AssemblyHelpers::emitStoreStructureWithTypeInfo(AssemblyHelpers& jit, Trust
 void AssemblyHelpers::loadProperty(GPRReg object, GPRReg offset, JSValueRegs result)
 {
     Jump isInline = branch32(LessThan, offset, TrustedImm32(firstOutOfLineOffset));
-    
+
     loadPtr(Address(object, JSObject::butterflyOffset()), result.payloadGPR());
     neg32(offset);
     signExtend32ToPtr(offset, offset);
     Jump ready = jump();
-    
+
     isInline.link(this);
     addPtr(
         TrustedImm32(
             static_cast<int32_t>(sizeof(JSObject)) -
             (static_cast<int32_t>(firstOutOfLineOffset) - 2) * static_cast<int32_t>(sizeof(EncodedJSValue))),
         object, result.payloadGPR());
-    
+
     ready.link(this);
-    
+
     loadValue(
         BaseIndex(
             result.payloadGPR(), offset, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)),
@@ -415,21 +415,21 @@ void AssemblyHelpers::loadProperty(GPRReg object, GPRReg offset, JSValueRegs res
 void AssemblyHelpers::storeProperty(JSValueRegs value, GPRReg object, GPRReg offset, GPRReg scratch)
 {
     Jump isInline = branch32(LessThan, offset, TrustedImm32(firstOutOfLineOffset));
-    
+
     loadPtr(Address(object, JSObject::butterflyOffset()), scratch);
     neg32(offset);
     signExtend32ToPtr(offset, offset);
     Jump ready = jump();
-    
+
     isInline.link(this);
     addPtr(
         TrustedImm32(
             static_cast<int32_t>(sizeof(JSObject)) -
             (static_cast<int32_t>(firstOutOfLineOffset) - 2) * static_cast<int32_t>(sizeof(EncodedJSValue))),
         object, scratch);
-    
+
     ready.link(this);
-    
+
     storeValue(value,
         BaseIndex(scratch, offset, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)));
 }
@@ -683,43 +683,114 @@ void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const J
     // - We *can* use RegisterSetBuilder::macroScratchRegisters on ARM.
 
     Jump popPath;
+    Jump zeroPath;
     Jump done;
-    
+
     if (allocator.isConstant())
         move(TrustedImmPtr(allocator.allocator().localAllocator()), allocatorGPR);
 
-    load32(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfRemaining()), resultGPR);
-    popPath = branchTest32(Zero, resultGPR);
+#if CPU(ARM) || CPU(ARM64)
+    auto dataTempRegister = getCachedDataTempRegisterIDAndInvalidate();
+#endif
+
+#if CPU(ARM64)
+    // On ARM64, we can leverage instructions like load-pair and shifted-add to make loading from the free list 
+    // and extracting interval information use less instructions.
+
+    // Assert that we can use loadPairPtr for the interval bounds and nextInterval/secret.
+    RELEASE_ASSERT(FreeList::offsetOfIntervalEnd() - FreeList::offsetOfIntervalStart() == sizeof(uintptr_t)); 
+    RELEASE_ASSERT(FreeList::offsetOfSecret() - FreeList::offsetOfNextInterval() == sizeof(uintptr_t)); 
+
+    // Bump allocation (fast path)
+    loadPairPtr(allocatorGPR, TrustedImm32(LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalStart()), resultGPR, scratchGPR);
+    popPath = branchPtr(RelationalCondition::AboveOrEqual, resultGPR, scratchGPR);
+    auto bumpLabel = label();
     if (allocator.isConstant())
-        add32(TrustedImm32(-allocator.allocator().cellSize()), resultGPR, scratchGPR);
+        addPtr(TrustedImm32(allocator.allocator().cellSize()), resultGPR, scratchGPR);
     else {
-        move(resultGPR, scratchGPR);
-        sub32(Address(allocatorGPR, LocalAllocator::offsetOfCellSize()), scratchGPR);
+        load32(Address(allocatorGPR, LocalAllocator::offsetOfCellSize()), scratchGPR);
+        addPtr(resultGPR, scratchGPR);
     }
-    negPtr(resultGPR);
-    store32(scratchGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfRemaining()));
-    Address payloadEndAddr = Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfPayloadEnd());
-    addPtr(payloadEndAddr, resultGPR);
-
+    storePtr(scratchGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalStart()));
     done = jump();
-        
-    popPath.link(this);
 
-    ASSERT(static_cast<ptrdiff_t>(LocalAllocator::offsetOfFreeList() + FreeList::offsetOfScrambledHead() + sizeof(void*)) == static_cast<ptrdiff_t>(LocalAllocator::offsetOfFreeList() + FreeList::offsetOfSecret()));
-    if constexpr (isARM64()) {
-        loadPairPtr(allocatorGPR, TrustedImm32(LocalAllocator::offsetOfFreeList() + FreeList::offsetOfScrambledHead()), resultGPR, scratchGPR);
-        xorPtr(scratchGPR, resultGPR);
-    } else {
-        loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfScrambledHead()), resultGPR);
-        xorPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfSecret()), resultGPR);
+    // Get next interval (slower path)
+    popPath.link(this);
+    loadPairPtr(allocatorGPR, TrustedImm32(LocalAllocator::offsetOfFreeList() + FreeList::offsetOfNextInterval()), resultGPR, scratchGPR);
+    zeroPath = branchTestPtr(ResultCondition::NonZero, resultGPR, TrustedImm32(1));
+    xor64(Address(resultGPR, FreeCell::offsetOfScrambledBits()), scratchGPR);
+    addSignExtend64(resultGPR, scratchGPR, dataTempRegister);
+    storePtr(dataTempRegister, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfNextInterval()));
+    addUnsignedRightShift64(resultGPR, scratchGPR, TrustedImm32(32), scratchGPR);
+    storePtr(scratchGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalEnd()));
+    jump(bumpLabel);
+#elif CPU(X86_64)
+    // On x86_64, we can leverage better support for memory operands to directly interact with the free 
+    // list instead of relying on registers as much.
+
+    // Bump allocation (fast path)
+    loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalStart()), resultGPR);
+    popPath = branchPtr(RelationalCondition::AboveOrEqual, resultGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalEnd()));
+    auto bumpLabel = label();
+    if (allocator.isConstant())
+        add64(TrustedImm32(allocator.allocator().cellSize()), Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalStart()));
+    else {
+        load32(Address(allocatorGPR, LocalAllocator::offsetOfCellSize()), scratchGPR);
+        add64(scratchGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalStart()));
     }
-    slowPath.append(branchTestPtr(Zero, resultGPR));
-        
-    // The object is half-allocated: we have what we know is a fresh object, but
-    // it's still on the GC's free list.
-    loadPtr(Address(resultGPR, FreeCell::offsetOfScrambledNext()), scratchGPR);
-    storePtr(scratchGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfScrambledHead()));
-        
+    done = jump();
+
+    // Get next interval (slower path)
+    popPath.link(this);
+    loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfNextInterval()), resultGPR);
+    zeroPath = branchTestPtr(ResultCondition::NonZero, resultGPR, TrustedImm32(1));
+    load32(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfSecret()), scratchGPR);
+    xor32(Address(resultGPR, FreeCell::offsetOfScrambledBits()), scratchGPR); // Lower 32 bits -> offset to next interval
+    add64(scratchGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfNextInterval()));
+    load32(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfSecret() + 4), scratchGPR);
+    xor32(Address(resultGPR, FreeCell::offsetOfScrambledBits() + 4), scratchGPR); // Upper 32 bits -> size of interval
+    storePtr(resultGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalStart()));
+    addPtr(resultGPR, scratchGPR);
+    storePtr(scratchGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalEnd()));
+    jump(bumpLabel);
+#else
+    // Otherwise, we have a fairly general case for all other architectures here.
+
+    // Bump allocation (fast path)
+    loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalStart()), resultGPR);
+    loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalEnd()), scratchGPR);
+    popPath = branchPtr(RelationalCondition::AboveOrEqual, resultGPR, scratchGPR);
+    auto bumpLabel = label();
+    if (allocator.isConstant()) {
+        move(resultGPR, scratchGPR);
+        addPtr(TrustedImm32(allocator.allocator().cellSize()), scratchGPR);
+    } else {
+        load32(Address(allocatorGPR, LocalAllocator::offsetOfCellSize()), scratchGPR);
+        addPtr(resultGPR, scratchGPR);
+    }
+    storePtr(scratchGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalStart()));
+    done = jump();
+
+    // Get next interval (slower path)
+    popPath.link(this);
+    loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfNextInterval()), resultGPR);
+    zeroPath = branchTestPtr(ResultCondition::NonZero, resultGPR, TrustedImm32(1));
+    load32(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfSecret()), scratchGPR);
+    xor32(Address(resultGPR, FreeCell::offsetOfScrambledBits()), scratchGPR); // Lower 32 bits -> offset to next interval
+    loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfNextInterval()), dataTempRegister);
+    addPtr(scratchGPR, dataTempRegister);
+    storePtr(dataTempRegister, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfNextInterval()));
+    load32(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfSecret() + 4), scratchGPR);
+    xor32(Address(resultGPR, FreeCell::offsetOfScrambledBits() + 4), scratchGPR); // Upper 32 bits -> size of interval
+    addPtr(resultGPR, scratchGPR);
+    storePtr(scratchGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfIntervalEnd()));
+    jump(bumpLabel);
+#endif
+
+    zeroPath.link(this);
+    xorPtr(resultGPR, resultGPR);
+    slowPath.append(jump());
+
     done.link(this);
 }
 
@@ -738,15 +809,15 @@ void AssemblyHelpers::emitAllocate(GPRReg resultGPR, const JITAllocator& allocat
 void AssemblyHelpers::emitAllocateVariableSized(GPRReg resultGPR, CompleteSubspace& subspace, GPRReg allocationSize, GPRReg scratchGPR1, GPRReg scratchGPR2, JumpList& slowPath)
 {
     static_assert(!(MarkedSpace::sizeStep & (MarkedSpace::sizeStep - 1)), "MarkedSpace::sizeStep must be a power of two.");
-    
+
     unsigned stepShift = getLSBSet(MarkedSpace::sizeStep);
-    
+
     add32(TrustedImm32(MarkedSpace::sizeStep - 1), allocationSize, scratchGPR1);
     urshift32(TrustedImm32(stepShift), scratchGPR1);
     slowPath.append(branch32(Above, scratchGPR1, TrustedImm32(MarkedSpace::largeCutoff >> stepShift)));
     move(TrustedImmPtr(subspace.allocatorForSizeStep()), scratchGPR2);
     loadPtr(BaseIndex(scratchGPR2, scratchGPR1, ScalePtr), scratchGPR1);
-    
+
     emitAllocate(resultGPR, JITAllocator::variable(), scratchGPR1, scratchGPR2, slowPath);
 }
 
@@ -796,7 +867,7 @@ void AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFra
         }
     }
     ASSERT(scratch != InvalidGPRReg);
-    
+
     RegisterSet skipList;
     skipList.merge(dontRestoreRegisters);
 
@@ -1410,7 +1481,7 @@ void AssemblyHelpers::emitRestoreCalleeSavesFor(const RegisterAtOffsetList* call
         JIT_COMMENT(*this, "emitRestoreCalleeSavesFor ", *calleeSaves, " dontSave: ", dontRestoreRegisters);
     else
         JIT_COMMENT(*this, "emitRestoreCalleeSavesFor");
-    
+
     LoadRegSpooler spooler(*this, framePointerRegister);
 
     unsigned i = 0;
