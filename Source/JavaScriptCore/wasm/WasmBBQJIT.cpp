@@ -7629,7 +7629,24 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addSIMDLoadSplat(SIMDLaneOperation op, ExpressionType pointer, uint32_t uoffset, ExpressionType& result)
     {
-        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(Width::Width128));
+        Width width;
+        switch (op) {
+        case SIMDLaneOperation::LoadSplat8:
+            width = Width::Width8;
+            break;
+        case SIMDLaneOperation::LoadSplat16:
+            width = Width::Width16;
+            break;
+        case SIMDLaneOperation::LoadSplat32:
+            width = Width::Width32;
+            break;
+        case SIMDLaneOperation::LoadSplat64:
+            width = Width::Width64;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(width));
         Address address = materializePointer(pointerLocation, uoffset);
 
         result = topValue(TypeKind::V128);
@@ -7665,7 +7682,24 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addSIMDLoadLane(SIMDLaneOperation op, ExpressionType pointer, ExpressionType vector, uint32_t uoffset, uint8_t lane, ExpressionType& result)
     {
-        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(Width::Width128));
+        Width width;
+        switch (op) {
+        case SIMDLaneOperation::LoadLane8:
+            width = Width::Width8;
+            break;
+        case SIMDLaneOperation::LoadLane16:
+            width = Width::Width16;
+            break;
+        case SIMDLaneOperation::LoadLane32:
+            width = Width::Width32;
+            break;
+        case SIMDLaneOperation::LoadLane64:
+            width = Width::Width64;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(width));
         Address address = materializePointer(pointerLocation, uoffset);
 
         Location vectorLocation = loadIfNecessary(vector);
@@ -7699,7 +7733,24 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addSIMDStoreLane(SIMDLaneOperation op, ExpressionType pointer, ExpressionType vector, uint32_t uoffset, uint8_t lane)
     {
-        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(Width::Width128));
+        Width width;
+        switch (op) {
+        case SIMDLaneOperation::StoreLane8:
+            width = Width::Width8;
+            break;
+        case SIMDLaneOperation::StoreLane16:
+            width = Width::Width16;
+            break;
+        case SIMDLaneOperation::StoreLane32:
+            width = Width::Width32;
+            break;
+        case SIMDLaneOperation::StoreLane64:
+            width = Width::Width64;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(width));
         Address address = materializePointer(pointerLocation, uoffset);
 
         Location vectorLocation = loadIfNecessary(vector);
