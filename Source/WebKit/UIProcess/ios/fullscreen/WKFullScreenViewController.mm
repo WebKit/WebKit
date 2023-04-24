@@ -534,8 +534,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         _topConstraint.get(),
         stackViewToTopGuideConstraint,
 #if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
-        [[_banner centerYAnchor] constraintEqualToAnchor:margins.centerYAnchor],
-        [[_banner centerXAnchor] constraintEqualToAnchor:margins.centerXAnchor],
+        [[_banner centerYAnchor] constraintEqualToAnchor:self.view.centerYAnchor],
+        [[_banner centerXAnchor] constraintEqualToAnchor:self.view.centerXAnchor],
 #endif
         [[_stackView leadingAnchor] constraintEqualToAnchor:margins.leadingAnchor],
     ]];
