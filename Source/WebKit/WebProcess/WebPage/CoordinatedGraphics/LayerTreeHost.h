@@ -176,7 +176,7 @@ private:
 };
 
 #if !USE(COORDINATED_GRAPHICS)
-inline LayerTreeHost::LayerTreeHost(WebPage& webPage) : m_webPage(webPage) { }
+inline LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displayID) : m_webPage(webPage), m_displayID(displayID) { }
 inline LayerTreeHost::~LayerTreeHost() { }
 inline void LayerTreeHost::setLayerFlushSchedulingEnabled(bool) { }
 inline void LayerTreeHost::setShouldNotifyAfterNextScheduledLayerFlush(bool) { }
