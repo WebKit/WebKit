@@ -254,6 +254,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     unsigned cellSize = this->cellSize();
 
     VM& vm = this->vm();
+    uint64_t secret = vm.heapRandom().getUint64();
     auto destroy = [&] (void* cell) {
         JSCell* jsCell = static_cast<JSCell*>(cell);
         if (!jsCell->isZapped()) {
@@ -293,9 +294,11 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
                 destroy(cell);
         }
         if (sweepMode == SweepToFreeList) {
-            if (scribbleMode == Scribble)
+            if (UNLIKELY(scribbleMode == Scribble))
                 scribble(payloadBegin, payloadEnd - payloadBegin);
-            freeList->initializeBump(payloadEnd, payloadEnd - payloadBegin);
+            FreeCell* interval = reinterpret_cast_ptr<FreeCell*>(payloadBegin);
+            interval->makeLast(payloadEnd - payloadBegin, secret);
+            freeList->initialize(interval, secret, payloadEnd - payloadBegin);
         }
         if (false)
             dataLog("Quickly swept block ", RawPointer(this), " with cell size ", cellSize, " and attributes ", m_attributes, ": ", pointerDump(freeList), "\n");
@@ -305,10 +308,11 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     // This produces a free list that is ordered in reverse through the block.
     // This is fine, since the allocation code makes no assumptions about the
     // order of the free list.
-    FreeCell* head = nullptr;
-    size_t count = 0;
-    uintptr_t secret = static_cast<uintptr_t>(vm.heapRandom().getUint64());
+    size_t freedBytes = 0;
     bool isEmpty = true;
+    FreeCell* head = nullptr;
+    size_t currentInterval = 0;
+    size_t previousDeadCell = 0;
 
     // We try to allocate the deadCells vector entirely on the stack if possible.
     // Otherwise, we use the maximum permitted space (currently 8kB) to store as
@@ -323,21 +327,46 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
 
     auto handleDeadCell = [&] (size_t i) {
         HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&block.atoms()[i]);
-
         if (destructionMode != BlockHasNoDestructors)
             destroy(cell);
-
         if (sweepMode == SweepToFreeList) {
-            FreeCell* freeCell = reinterpret_cast_ptr<FreeCell*>(cell);
-            if (scribbleMode == Scribble)
-                scribble(freeCell, cellSize);
-            freeCell->setNext(head, secret);
-            head = freeCell;
-            ++count;
+            if (UNLIKELY(scribbleMode == Scribble))
+                scribble(cell, cellSize);
+
+            // The following check passing implies there was at least one live cell
+            // between us and the last dead cell, meaning that the previous dead
+            // cell is the start of its interval.
+            if (i + m_atomsPerCell < previousDeadCell) {
+                size_t intervalLength = currentInterval * atomSize;
+                FreeCell* cell = reinterpret_cast_ptr<FreeCell*>(&block.atoms()[previousDeadCell]);
+                if (LIKELY(head))
+                    cell->setNext(head, intervalLength, secret);
+                else
+                    cell->makeLast(intervalLength, secret);
+                freedBytes += intervalLength;
+                head = cell;
+                currentInterval = 0;
+            }
+            currentInterval += m_atomsPerCell;
+            previousDeadCell = i;
         }
     };
 
-    for (size_t i = m_startAtom; i < endAtom; i += m_atomsPerCell) {
+    auto checkForFinalInterval = [&] () {
+        if (sweepMode == SweepToFreeList && currentInterval) {
+            size_t intervalLength = currentInterval * atomSize;
+            FreeCell* cell = reinterpret_cast_ptr<FreeCell*>(&block.atoms()[previousDeadCell]);
+
+            if (LIKELY(head))
+                cell->setNext(head, intervalLength, secret);
+            else
+                cell->makeLast(intervalLength, secret);
+            freedBytes += intervalLength;
+            head = cell;
+        }
+    };
+
+    for (int i = endAtom - m_atomsPerCell; i >= static_cast<int>(m_startAtom); i -= m_atomsPerCell) {
         if (emptyMode == NotEmpty
             && ((marksMode == MarksNotStale && header.m_marks.get(i))
                 || (newlyAllocatedMode == HasNewlyAllocated && header.m_newlyAllocated.get(i)))) {
@@ -353,6 +382,8 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
         } else
             handleDeadCell(i);
     }
+    if (destructionMode != BlockHasDestructorsAndCollectorIsRunning)
+        checkForFinalInterval(); // We need this to handle the first interval in the block, since it has no dead cells before it.
 
     // We only want to discard the newlyAllocated bits if we're creating a FreeList,
     // otherwise we would lose information on what's currently alive.
@@ -365,10 +396,11 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     if (destructionMode == BlockHasDestructorsAndCollectorIsRunning) {
         for (size_t i : deadCells)
             handleDeadCell(i);
+        checkForFinalInterval();
     }
 
     if (sweepMode == SweepToFreeList) {
-        freeList->initializeList(head, secret, count * cellSize);
+        freeList->initialize(head, secret, freedBytes);
         setIsFreeListed();
     } else if (isEmpty)
         m_directory->setIsEmpty(NoLockingNecessary, this, true);

@@ -360,6 +360,13 @@ public:
         m_assembler.add<64>(dest, dest, dataTempRegister);
     }
 
+    void add64(RegisterID src, Address dest)
+    {
+        load64(dest, getCachedDataTempRegisterIDAndInvalidate());
+        m_assembler.add<64>(src, dataTempRegister, dataTempRegister);
+        store64(dataTempRegister, dest);
+    }
+
     void add64(AbsoluteAddress src, RegisterID dest)
     {
         load64(src.m_ptr, getCachedDataTempRegisterIDAndInvalidate());
