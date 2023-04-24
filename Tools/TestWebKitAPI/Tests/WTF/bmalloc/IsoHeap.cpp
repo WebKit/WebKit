@@ -302,7 +302,7 @@ TEST(bmalloc, ScavengedMemoryShouldBeReused)
         }
 
         // After that, allocating pointers in the upper tier.
-        for (unsigned i = 0; ;i++) {
+        for (;;) {
             void* ptr = heap.allocate();
             EXPECT_TRUE(ptr);
             ptrs.push_back(ptr);
