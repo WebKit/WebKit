@@ -182,7 +182,7 @@ button#attachment-save-button {
 #if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
     width: 40px;
     height: 40px;
-    background-color: -apple-system-opaque-tertiary-fill;
+    background-color: -apple-system-tertiary-fill;
     border: 0;
 #else
     width: 28px;

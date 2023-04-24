@@ -49,7 +49,7 @@ layer at (0,0) size 800x600
             RenderGrid {DIV} at (76,0) size 262x92
               RenderGrid {DIV} at (6,26) size 230x40
                 RenderBlock {DIV} at (190,0) size 40x40
-                  RenderButton {BUTTON} at (0,0) size 40x40 [bgcolor=#EEEEEF]
+                  RenderButton {BUTTON} at (0,0) size 40x40 [bgcolor=#7676801F]
                     RenderBlock (anonymous) at (0,9) size 40x22
                       RenderBlock {DIV} at (9,0) size 22x22
 layer at (128,131) size 230x17

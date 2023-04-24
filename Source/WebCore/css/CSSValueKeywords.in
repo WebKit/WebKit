@@ -273,6 +273,7 @@ accentcolortext
 -apple-system-label enable-if=WTF_PLATFORM_COCOA
 -apple-system-secondary-label enable-if=WTF_PLATFORM_COCOA
 -apple-system-tertiary-label enable-if=WTF_PLATFORM_COCOA
+-apple-system-tertiary-fill enable-if=WTF_PLATFORM_COCOA
 -apple-system-quaternary-label enable-if=WTF_PLATFORM_COCOA
 -apple-system-grid enable-if=WTF_PLATFORM_COCOA
 -apple-system-separator enable-if=WTF_PLATFORM_COCOA
@@ -305,7 +306,6 @@ accentcolortext
 -apple-system-selected-text-background enable-if=WTF_PLATFORM_MAC
 -apple-system-unemphasized-selected-text-background enable-if=WTF_PLATFORM_MAC
 -apple-system-find-highlight-background enable-if=WTF_PLATFORM_MAC
--apple-system-tertiary-fill enable-if=WTF_PLATFORM_MAC
 -apple-system-indigo enable-if=WTF_PLATFORM_IOS_FAMILY
 -apple-system-teal enable-if=WTF_PLATFORM_IOS_FAMILY
 -apple-system-opaque-fill enable-if=WTF_PLATFORM_IOS_FAMILY
