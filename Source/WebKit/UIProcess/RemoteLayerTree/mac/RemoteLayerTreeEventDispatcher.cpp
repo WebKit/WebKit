@@ -113,11 +113,14 @@ RemoteLayerTreeEventDispatcher::~RemoteLayerTreeEventDispatcher()
 // This must be called to break the cycle between RemoteLayerTreeEventDispatcherDisplayLinkClient and this.
 void RemoteLayerTreeEventDispatcher::invalidate()
 {
+    m_displayLinkClient->invalidate();
+
+    stopDisplayLinkObserver();
+
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     m_momentumEventDispatcher = nullptr;
 #endif
-    stopDisplayLinkObserver();
-    m_displayLinkClient->invalidate();
+
     m_displayLinkClient = nullptr;
 }
 
@@ -527,7 +530,8 @@ void RemoteLayerTreeEventDispatcher::stopDisplayDidRefreshCallbacks(PlatformDisp
 {
     ASSERT(m_momentumEventDispatcherNeedsDisplayLink);
     m_momentumEventDispatcherNeedsDisplayLink = false;
-    startOrStopDisplayLink();
+    if (m_momentumEventDispatcher)
+        startOrStopDisplayLink();
 }
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
