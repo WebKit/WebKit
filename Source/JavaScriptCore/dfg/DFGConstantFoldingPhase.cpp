@@ -600,6 +600,7 @@ private:
             case GetByIdDirectFlush:
             case GetById:
             case GetByIdFlush:
+            case GetByIdMegamorphic:
             case GetPrivateNameById: {
                 Edge childEdge = node->child1();
                 Node* child = childEdge.node();

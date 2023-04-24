@@ -1954,7 +1954,11 @@ private:
                 fixEdge<CellUse>(node->child1());
             break;
         }
-        
+
+        case GetByIdMegamorphic:
+            fixEdge<CellUse>(node->child1());
+            break;
+
         case GetByIdWithThis: {
             if (node->child1()->shouldSpeculateCell() && node->child2()->shouldSpeculateCell()) {
                 fixEdge<CellUse>(node->child1());
