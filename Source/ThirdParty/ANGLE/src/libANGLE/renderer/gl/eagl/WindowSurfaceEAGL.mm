@@ -6,23 +6,20 @@
 
 // WindowSurfaceEAGL.cpp: EAGL implementation of egl::Surface
 
+#import "libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.h"
+
+#import <QuartzCore/QuartzCore.h>
+
+#import "common/debug.h"
 #import "common/platform.h"
+#import "libANGLE/Context.h"
+#import "libANGLE/renderer/gl/FramebufferGL.h"
+#import "libANGLE/renderer/gl/RendererGL.h"
+#import "libANGLE/renderer/gl/StateManagerGL.h"
+#import "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
+#import "libANGLE/renderer/gl/eagl/FunctionsEAGL.h"
 
-#if defined(ANGLE_ENABLE_EAGL)
-
-#    import "libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.h"
-
-#    import "common/debug.h"
-#    import "libANGLE/Context.h"
-#    import "libANGLE/renderer/gl/FramebufferGL.h"
-#    import "libANGLE/renderer/gl/RendererGL.h"
-#    import "libANGLE/renderer/gl/StateManagerGL.h"
-#    import "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
-#    import "libANGLE/renderer/gl/eagl/FunctionsEAGL.h"
-
-#    import <QuartzCore/QuartzCore.h>
-
-#    if defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64)
+#if defined(ANGLE_PLATFORM_MACCATALYST)
 
 // TODO(dino): Necessary because CAEAGLLayer is not in the public QuartzCore headers in this
 // configuration.
@@ -31,7 +28,7 @@
 @interface CAEAGLLayer : CALayer
 @end
 
-#    endif
+#endif
 
 @interface SwapLayerEAGL : CAEAGLLayer {
     EAGLContextObj mDisplayContext;
@@ -333,5 +330,3 @@ egl::Error WindowSurfaceEAGL::detachFromFramebuffer(const gl::Context *context,
 }
 
 }  // namespace rx
-
-#endif  // defined(ANGLE_ENABLE_EAGL)

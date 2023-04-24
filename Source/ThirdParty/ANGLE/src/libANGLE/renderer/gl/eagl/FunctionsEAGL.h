@@ -9,23 +9,14 @@
 #ifndef EAGL_FUNCTIONS_H_
 #define EAGL_FUNCTIONS_H_
 
-#include "common/platform.h"
+#include <OpenGLES/EAGL.h>
+#include <OpenGLES/EAGLDrawable.h>
+#include <OpenGLES/EAGLIOSurface.h>
 
-#if defined(ANGLE_ENABLE_EAGL)
-
-// OpenGL ES is technically deprecated on iOS. Silence associated warnings.
-#    define GLES_SILENCE_DEPRECATION
-
-#    import <OpenGLES/EAGL.h>
-#    import <OpenGLES/EAGLDrawable.h>
-#    import <OpenGLES/EAGLIOSurface.h>
-
-#    include "common/apple/SoftLinking.h"
+#include "common/apple/SoftLinking.h"
 
 SOFT_LINK_FRAMEWORK_HEADER(OpenGLES)
 
 SOFT_LINK_CLASS_HEADER(EAGLContext)
 
-#endif  // defined(ANGLE_ENABLE_EAGL)
-
-#endif  // CGL_FUNCTIONS_H_
+#endif  // EAGL_FUNCTIONS_H_

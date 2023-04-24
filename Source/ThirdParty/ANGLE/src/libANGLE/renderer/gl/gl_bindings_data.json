@@ -876,5 +876,10 @@
     "GL_EXT_shader_framebuffer_fetch_non_coherent":
     [
         "FramebufferFetchBarrierEXT"
+    ],
+
+    "GL_MESA_framebuffer_flip_y":
+    [
+        "FramebufferParameteriMESA"
     ]
 }

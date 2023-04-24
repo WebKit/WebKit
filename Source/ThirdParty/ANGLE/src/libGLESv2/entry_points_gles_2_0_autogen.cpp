@@ -1394,8 +1394,7 @@ void GL_APIENTRY GL_GenBuffers(GLsizei n, GLuint *buffers)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLGenBuffers) &&
-              ValidateGenBuffers(context, angle::EntryPoint::GLGenBuffers, n, buffersPacked)));
+             ValidateGenBuffers(context, angle::EntryPoint::GLGenBuffers, n, buffersPacked));
         if (isCallValid)
         {
             context->genBuffers(n, buffersPacked);
@@ -1418,11 +1417,9 @@ void GL_APIENTRY GL_GenFramebuffers(GLsizei n, GLuint *framebuffers)
     {
         FramebufferID *framebuffersPacked = PackParam<FramebufferID *>(framebuffers);
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLGenFramebuffers) &&
-              ValidateGenFramebuffers(context, angle::EntryPoint::GLGenFramebuffers, n,
-                                      framebuffersPacked)));
+        bool isCallValid = (context->skipValidation() ||
+                            ValidateGenFramebuffers(context, angle::EntryPoint::GLGenFramebuffers,
+                                                    n, framebuffersPacked));
         if (isCallValid)
         {
             context->genFramebuffers(n, framebuffersPacked);
@@ -1445,11 +1442,9 @@ void GL_APIENTRY GL_GenRenderbuffers(GLsizei n, GLuint *renderbuffers)
     {
         RenderbufferID *renderbuffersPacked = PackParam<RenderbufferID *>(renderbuffers);
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLGenRenderbuffers) &&
-              ValidateGenRenderbuffers(context, angle::EntryPoint::GLGenRenderbuffers, n,
-                                       renderbuffersPacked)));
+        bool isCallValid = (context->skipValidation() ||
+                            ValidateGenRenderbuffers(context, angle::EntryPoint::GLGenRenderbuffers,
+                                                     n, renderbuffersPacked));
         if (isCallValid)
         {
             context->genRenderbuffers(n, renderbuffersPacked);
@@ -1474,8 +1469,7 @@ void GL_APIENTRY GL_GenTextures(GLsizei n, GLuint *textures)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLGenTextures) &&
-              ValidateGenTextures(context, angle::EntryPoint::GLGenTextures, n, texturesPacked)));
+             ValidateGenTextures(context, angle::EntryPoint::GLGenTextures, n, texturesPacked));
         if (isCallValid)
         {
             context->genTextures(n, texturesPacked);
@@ -1500,8 +1494,7 @@ void GL_APIENTRY GL_GenerateMipmap(GLenum target)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLGenerateMipmap) &&
-              ValidateGenerateMipmap(context, angle::EntryPoint::GLGenerateMipmap, targetPacked)));
+             ValidateGenerateMipmap(context, angle::EntryPoint::GLGenerateMipmap, targetPacked));
         if (isCallValid)
         {
             context->generateMipmap(targetPacked);
@@ -2590,8 +2583,7 @@ void GL_APIENTRY GL_PolygonOffset(GLfloat factor, GLfloat units)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLPolygonOffset) &&
-              ValidatePolygonOffset(context, angle::EntryPoint::GLPolygonOffset, factor, units)));
+             ValidatePolygonOffset(context, angle::EntryPoint::GLPolygonOffset, factor, units));
         if (isCallValid)
         {
             context->polygonOffset(factor, units);

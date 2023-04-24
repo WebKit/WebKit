@@ -53,13 +53,13 @@ bool IsMetalRendererAvailable()
                         gpuFamilySufficient = true;
                     ANGLE_APPLE_ALLOW_DEPRECATED_END
                 }
-#elif defined(ANGLE_PLATFORM_APPLE_EMBEDDED) && !TARGET_OS_SIMULATOR
+#elif ANGLE_PLATFORM_IOS_FAMILY && !ANGLE_PLATFORM_IOS_FAMILY_SIMULATOR
                 // Hardcode constant to sidestep compiler errors. Call will
                 // return false on older macOS versions.
                 const NSUInteger iosFamily3v1 = 4;
                 if ([device supportsFeatureSet:static_cast<MTLFeatureSet>(iosFamily3v1)])
                     gpuFamilySufficient = true;
-#elif defined(ANGLE_PLATFORM_APPLE_EMBEDDED) && TARGET_OS_SIMULATOR
+#elif ANGLE_PLATFORM_IOS_FAMILY && ANGLE_PLATFORM_IOS_FAMILY_SIMULATOR
                 // FIXME: Currently we do not have good simulator query, as it does not support
                 // the whole feature set needed for iOS.
                 gpuFamilySufficient = true;

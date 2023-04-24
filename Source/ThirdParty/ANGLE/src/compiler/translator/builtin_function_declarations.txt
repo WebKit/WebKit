@@ -1221,3 +1221,16 @@ GROUP BEGIN ShaderInvocationGroup
     bool allInvocations(bool);
     bool allInvocationsEqual(bool);
 GROUP END ShaderInvocationGroup
+
+// MSL fragment functions
+GROUP BEGIN MetalFragmentSample
+  DEFAULT METADATA {"essl_level": "ESSL_INTERNAL_BACKEND_BUILTINS", "hasSideEffects": "false"}
+    uint numSamples();
+    vec2 samplePosition(uint);
+GROUP END MetalFragmentSample
+
+// MSL common functions
+GROUP BEGIN MetalCommon
+  DEFAULT METADATA {"essl_level": "ESSL_INTERNAL_BACKEND_BUILTINS", "hasSideEffects": "false"}
+    genType saturate(genType);
+GROUP END MetalCommon

@@ -1305,11 +1305,11 @@ angle::Result TextureStorage11_2D::ensureTextureExists(const gl::Context *contex
 
         if (useLevelZeroTexture)
         {
-            outputTexture->setLabels("TexStorage2D.Level0Texture", &mKHRDebugLabel);
+            outputTexture->setLabels("TexStorage2D.Level0", &mKHRDebugLabel);
         }
         else
         {
-            outputTexture->setLabels("TexStorage2D.Texture", &mKHRDebugLabel);
+            outputTexture->setLabels("TexStorage2D", &mKHRDebugLabel);
         }
     }
 
@@ -1570,7 +1570,7 @@ angle::Result TextureStorage11_2D::getSwizzleTexture(const gl::Context *context,
 
         ANGLE_TRY(mRenderer->allocateTexture(GetImplAs<Context11>(context), desc, format,
                                              &mSwizzleTexture));
-        mSwizzleTexture.setLabels("TexStorage2D.SwizzleTexture", &mKHRDebugLabel);
+        mSwizzleTexture.setLabels("TexStorage2D.Swizzle", &mKHRDebugLabel);
     }
 
     *outTexture = &mSwizzleTexture;
@@ -2039,7 +2039,7 @@ angle::Result TextureStorage11_EGLImage::getSwizzleTexture(const gl::Context *co
 
         ANGLE_TRY(mRenderer->allocateTexture(GetImplAs<Context11>(context), desc, format,
                                              &mSwizzleTexture));
-        mSwizzleTexture.setLabels("TexStorageEGLImage.SwizzleTexture", &mKHRDebugLabel);
+        mSwizzleTexture.setLabels("TexStorageEGLImage.Swizzle", &mKHRDebugLabel);
     }
 
     *outTexture = &mSwizzleTexture;
@@ -2504,7 +2504,7 @@ angle::Result TextureStorage11_Cube::ensureTextureExists(const gl::Context *cont
 
         ANGLE_TRY(mRenderer->allocateTexture(GetImplAs<Context11>(context), desc, mFormatInfo,
                                              outputTexture));
-        outputTexture->setLabels("TexStorageCube.Texture", &mKHRDebugLabel);
+        outputTexture->setLabels("TexStorageCube", &mKHRDebugLabel);
     }
 
     return angle::Result::Continue;
@@ -2815,7 +2815,7 @@ angle::Result TextureStorage11_Cube::getSwizzleTexture(const gl::Context *contex
 
         ANGLE_TRY(mRenderer->allocateTexture(GetImplAs<Context11>(context), desc, format,
                                              &mSwizzleTexture));
-        mSwizzleTexture.setLabels("TexStorageCube.SwizzleTexture", &mKHRDebugLabel);
+        mSwizzleTexture.setLabels("TexStorageCube.Swizzle", &mKHRDebugLabel);
     }
 
     *outTexture = &mSwizzleTexture;
@@ -3045,7 +3045,7 @@ angle::Result TextureStorage11_3D::getResource(const gl::Context *context,
 
         ANGLE_TRY(mRenderer->allocateTexture(GetImplAs<Context11>(context), desc, mFormatInfo,
                                              &mTexture));
-        mTexture.setLabels("TexStorage3D.Texture", &mKHRDebugLabel);
+        mTexture.setLabels("TexStorage3D", &mKHRDebugLabel);
     }
 
     *outResource = &mTexture;
@@ -3245,7 +3245,7 @@ angle::Result TextureStorage11_3D::getSwizzleTexture(const gl::Context *context,
 
         ANGLE_TRY(mRenderer->allocateTexture(GetImplAs<Context11>(context), desc, format,
                                              &mSwizzleTexture));
-        mSwizzleTexture.setLabels("TexStorage3D.SwizzleTexture", &mKHRDebugLabel);
+        mSwizzleTexture.setLabels("TexStorage3D.Swizzle", &mKHRDebugLabel);
     }
 
     *outTexture = &mSwizzleTexture;
@@ -3440,7 +3440,7 @@ angle::Result TextureStorage11_2DArray::getResource(const gl::Context *context,
 
         ANGLE_TRY(mRenderer->allocateTexture(GetImplAs<Context11>(context), desc, mFormatInfo,
                                              &mTexture));
-        mTexture.setLabels("TexStorage2DArray.Texture", &mKHRDebugLabel);
+        mTexture.setLabels("TexStorage2DArray", &mKHRDebugLabel);
     }
 
     *outResource = &mTexture;
@@ -3655,7 +3655,7 @@ angle::Result TextureStorage11_2DArray::getSwizzleTexture(const gl::Context *con
 
         ANGLE_TRY(mRenderer->allocateTexture(GetImplAs<Context11>(context), desc, format,
                                              &mSwizzleTexture));
-        mSwizzleTexture.setLabels("TexStorage2DArray.SwizzleTexture", &mKHRDebugLabel);
+        mSwizzleTexture.setLabels("TexStorage2DArray.Swizzle", &mKHRDebugLabel);
     }
 
     *outTexture = &mSwizzleTexture;
@@ -3829,7 +3829,7 @@ angle::Result TextureStorage11_2DMultisample::ensureTextureExists(const gl::Cont
 
         ANGLE_TRY(mRenderer->allocateTexture(GetImplAs<Context11>(context), desc, mFormatInfo,
                                              &mTexture));
-        mTexture.setLabels("TexStorage2DMS.Texture", &mKHRDebugLabel);
+        mTexture.setLabels("TexStorage2DMS", &mKHRDebugLabel);
     }
 
     return angle::Result::Continue;
@@ -4050,7 +4050,7 @@ angle::Result TextureStorage11_2DMultisampleArray::ensureTextureExists(const gl:
 
         ANGLE_TRY(mRenderer->allocateTexture(GetImplAs<Context11>(context), desc, mFormatInfo,
                                              &mTexture));
-        mTexture.setLabels("TexStorage2DMSArray.Texture", &mKHRDebugLabel);
+        mTexture.setLabels("TexStorage2DMSArray", &mKHRDebugLabel);
     }
 
     return angle::Result::Continue;

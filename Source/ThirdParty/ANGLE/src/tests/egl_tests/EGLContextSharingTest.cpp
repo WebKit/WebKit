@@ -1236,6 +1236,8 @@ TEST_P(EGLContextSharingTestNoFixture, SwapBuffersShared)
         }
         eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         eglReleaseThread();
+
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Finish));
     });
 
     // Render to the texture in the render thread.
@@ -1271,6 +1273,8 @@ TEST_P(EGLContextSharingTestNoFixture, SwapBuffersShared)
         }
         eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         eglReleaseThread();
+
+        threadSynchronization.nextStep(Step::Finish);
     });
 
     swapThread.join();

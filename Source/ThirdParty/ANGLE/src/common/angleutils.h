@@ -151,6 +151,7 @@ struct PerfMonitorTriplet
     FN(commandQueueSubmitCallsPerFrame)            \
     FN(vkQueueSubmitCallsTotal)                    \
     FN(vkQueueSubmitCallsPerFrame)                 \
+    FN(commandQueueWaitSemaphoresTotal)            \
     FN(renderPasses)                               \
     FN(writeDescriptorSets)                        \
     FN(flushedOutsideRenderPassCommandBuffers)     \

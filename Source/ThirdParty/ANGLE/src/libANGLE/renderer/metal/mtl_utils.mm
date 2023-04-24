@@ -14,12 +14,14 @@
 #include <TargetConditionals.h>
 
 #include "common/MemoryBuffer.h"
+#include "common/string_utils.h"
 #include "common/system_utils.h"
-#include "gpu_info_util/SystemInfo.h"
+#include "gpu_info_util/SystemInfo_internal.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
 #include "libANGLE/renderer/metal/RenderTargetMtl.h"
 #include "libANGLE/renderer/metal/mtl_render_utils.h"
+#include "libANGLE/renderer/metal/process.h"
 
 // Compiler can turn on programmatical frame capture in release build by defining
 // ANGLE_METAL_FRAME_CAPTURE flag.
@@ -346,6 +348,47 @@ static angle::Result InitializeCompressedTextureContents(const gl::Context *cont
 
 }  // namespace
 
+bool PreferStagedTextureUploads(const gl::Context *context,
+                                const TextureRef &texture,
+                                const Format &textureObjFormat)
+{
+    // The simulator MUST upload all textures as staged.
+    if (TARGET_OS_SIMULATOR)
+    {
+        return true;
+    }
+
+    ContextMtl *contextMtl             = mtl::GetImpl(context);
+    const angle::FeaturesMtl &features = contextMtl->getDisplay()->getFeatures();
+
+    const gl::InternalFormat &intendedInternalFormat = textureObjFormat.intendedInternalFormat();
+    if (intendedInternalFormat.compressed || textureObjFormat.actualAngleFormat().isBlock)
+    {
+        return false;
+    }
+
+    if (intendedInternalFormat.isLUMA())
+    {
+        return false;
+    }
+
+    if (features.disableStagedInitializationOfPackedTextureFormats.enabled)
+    {
+        switch (intendedInternalFormat.sizedInternalFormat)
+        {
+            case GL_RGB9_E5:
+            case GL_R11F_G11F_B10F:
+                return false;
+
+            default:
+                break;
+        }
+    }
+
+    return (texture->hasIOSurface() && features.uploadDataToIosurfacesWithStagingBuffers.enabled) ||
+           features.alwaysPreferStagedTextureUploads.enabled;
+}
+
 angle::Result InitializeTextureContents(const gl::Context *context,
                                         const TextureRef &texture,
                                         const Format &textureObjFormat,
@@ -358,10 +401,7 @@ angle::Result InitializeTextureContents(const gl::Context *context,
 
     const gl::InternalFormat &intendedInternalFormat = textureObjFormat.intendedInternalFormat();
 
-    bool forceGPUInitialization = false;
-#if TARGET_OS_SIMULATOR
-    forceGPUInitialization = true;
-#endif  // TARGET_OS_SIMULATOR
+    bool preferGPUInitialization = PreferStagedTextureUploads(context, texture, textureObjFormat);
 
     // This function is called in many places to initialize the content of a texture.
     // So it's better we do the initial check here instead of let the callers do it themselves:
@@ -385,7 +425,7 @@ angle::Result InitializeTextureContents(const gl::Context *context,
                                                    startDepth);
     }
     else if (texture->isCPUAccessible() && index.getType() != gl::TextureType::_2DMultisample &&
-             index.getType() != gl::TextureType::_2DMultisampleArray && !forceGPUInitialization)
+             index.getType() != gl::TextureType::_2DMultisampleArray && !preferGPUInitialization)
     {
         const angle::Format &dstFormat = angle::Format::Get(textureObjFormat.actualFormatId);
         const size_t dstRowPitch       = dstFormat.pixelBytes * size.width;
@@ -850,6 +890,75 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
     }
 }
 
+std::string CompileShaderLibraryToFile(const std::string &source,
+                                       const std::map<std::string, std::string> &macros,
+                                       bool enableFastMath)
+{
+    auto tmpDir = angle::GetTempDirectory();
+    if (!tmpDir.valid())
+    {
+        FATAL() << "angle::GetTempDirectory() failed";
+    }
+    // NOTE: metal/metallib seem to require extensions, otherwise they interpret the files
+    // differently.
+    auto metalFileName =
+        angle::CreateTemporaryFileInDirectoryWithExtension(tmpDir.value(), ".metal");
+    auto airFileName = angle::CreateTemporaryFileInDirectoryWithExtension(tmpDir.value(), ".air");
+    auto metallibFileName =
+        angle::CreateTemporaryFileInDirectoryWithExtension(tmpDir.value(), ".metallib");
+    if (!metalFileName.valid() || !airFileName.valid() || !metallibFileName.valid())
+    {
+        FATAL() << "Unable to generate temporary files for compiling metal";
+    }
+    // Save the source.
+    {
+        angle::SaveFileHelper saveFileHelper(metalFileName.value());
+        saveFileHelper << source;
+    }
+
+    // metal -> air
+    std::vector<std::string> metalToAirArgv{"/usr/bin/xcrun",
+                                            "/usr/bin/xcrun",
+                                            "-sdk",
+                                            "macosx",
+                                            "metal",
+                                            "-c",
+                                            metalFileName.value(),
+                                            "-o",
+                                            airFileName.value()};
+    // Macros are passed using `-D key=value`.
+    for (const auto &macro : macros)
+    {
+        metalToAirArgv.push_back("-D");
+        // TODO: not sure if this needs to escape strings or what (for example, might
+        // a space cause problems)?
+        metalToAirArgv.push_back(macro.first + "=" + macro.second);
+    }
+    // TODO: is this right, not sure if enableFastMath is same as -ffast-math.
+    if (enableFastMath)
+    {
+        metalToAirArgv.push_back("-ffast-math");
+    }
+    Process metalToAirProcess(metalToAirArgv);
+    int exitCode = -1;
+    if (!metalToAirProcess.DidLaunch() || !metalToAirProcess.WaitForExit(exitCode) || exitCode != 0)
+    {
+        FATAL() << "Generating air file failed";
+    }
+
+    // air -> metallib
+    const std::vector<std::string> airToMetallibArgv{
+        "xcrun",    "/usr/bin/xcrun",    "-sdk", "macosx",
+        "metallib", airFileName.value(), "-o",   metallibFileName.value()};
+    Process air_to_metallib_process(airToMetallibArgv);
+    if (!air_to_metallib_process.DidLaunch() || !air_to_metallib_process.WaitForExit(exitCode) ||
+        exitCode != 0)
+    {
+        FATAL() << "Ggenerating metallib file failed";
+    }
+    return metallibFileName.value();
+}
+
 AutoObjCPtr<id<MTLLibrary>> CreateShaderLibraryFromBinary(id<MTLDevice> metalDevice,
                                                           const uint8_t *binarySource,
                                                           size_t binarySourceLen,
@@ -929,7 +1038,7 @@ MTLSamplerAddressMode GetSamplerAddressMode(GLenum wrap)
     {
         case GL_CLAMP_TO_EDGE:
             return MTLSamplerAddressModeClampToEdge;
-#if !defined(ANGLE_PLATFORM_WATCH) || !ANGLE_PLATFORM_WATCH
+#if !ANGLE_PLATFORM_WATCHOS
         case GL_MIRROR_CLAMP_TO_EDGE_EXT:
             return MTLSamplerAddressModeMirrorClampToEdge;
 #endif

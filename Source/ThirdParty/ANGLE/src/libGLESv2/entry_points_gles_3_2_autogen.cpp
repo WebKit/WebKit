@@ -240,10 +240,8 @@ void GL_APIENTRY GL_DebugMessageCallback(GLDEBUGPROC callback, const void *userP
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context,
-                                                angle::EntryPoint::GLDebugMessageCallback) &&
-              ValidateDebugMessageCallback(context, angle::EntryPoint::GLDebugMessageCallback,
-                                           callback, userParam)));
+             ValidateDebugMessageCallback(context, angle::EntryPoint::GLDebugMessageCallback,
+                                          callback, userParam));
         if (isCallValid)
         {
             context->debugMessageCallback(callback, userParam);
@@ -277,10 +275,8 @@ void GL_APIENTRY GL_DebugMessageControl(GLenum source,
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context,
-                                                angle::EntryPoint::GLDebugMessageControl) &&
-              ValidateDebugMessageControl(context, angle::EntryPoint::GLDebugMessageControl, source,
-                                          type, severity, count, ids, enabled)));
+             ValidateDebugMessageControl(context, angle::EntryPoint::GLDebugMessageControl, source,
+                                         type, severity, count, ids, enabled));
         if (isCallValid)
         {
             context->debugMessageControl(source, type, severity, count, ids, enabled);
@@ -314,9 +310,8 @@ void GL_APIENTRY GL_DebugMessageInsert(GLenum source,
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLDebugMessageInsert) &&
-              ValidateDebugMessageInsert(context, angle::EntryPoint::GLDebugMessageInsert, source,
-                                         type, id, severity, length, buf)));
+             ValidateDebugMessageInsert(context, angle::EntryPoint::GLDebugMessageInsert, source,
+                                        type, id, severity, length, buf));
         if (isCallValid)
         {
             context->debugMessageInsert(source, type, id, severity, length, buf);
@@ -942,11 +937,9 @@ void GL_APIENTRY GL_ObjectLabel(GLenum identifier, GLuint name, GLsizei length, 
     if (context)
     {
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLObjectLabel) &&
-              ValidateObjectLabel(context, angle::EntryPoint::GLObjectLabel, identifier, name,
-                                  length, label)));
+        bool isCallValid = (context->skipValidation() ||
+                            ValidateObjectLabel(context, angle::EntryPoint::GLObjectLabel,
+                                                identifier, name, length, label));
         if (isCallValid)
         {
             context->objectLabel(identifier, name, length, label);
@@ -969,11 +962,9 @@ void GL_APIENTRY GL_ObjectPtrLabel(const void *ptr, GLsizei length, const GLchar
     if (context)
     {
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLObjectPtrLabel) &&
-              ValidateObjectPtrLabel(context, angle::EntryPoint::GLObjectPtrLabel, ptr, length,
-                                     label)));
+        bool isCallValid = (context->skipValidation() ||
+                            ValidateObjectPtrLabel(context, angle::EntryPoint::GLObjectPtrLabel,
+                                                   ptr, length, label));
         if (isCallValid)
         {
             context->objectPtrLabel(ptr, length, label);
@@ -1020,10 +1011,8 @@ void GL_APIENTRY GL_PopDebugGroup()
     if (context)
     {
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLPopDebugGroup) &&
-              ValidatePopDebugGroup(context, angle::EntryPoint::GLPopDebugGroup)));
+        bool isCallValid = (context->skipValidation() ||
+                            ValidatePopDebugGroup(context, angle::EntryPoint::GLPopDebugGroup));
         if (isCallValid)
         {
             context->popDebugGroup();
@@ -1084,11 +1073,9 @@ void GL_APIENTRY GL_PushDebugGroup(GLenum source, GLuint id, GLsizei length, con
     if (context)
     {
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLPushDebugGroup) &&
-              ValidatePushDebugGroup(context, angle::EntryPoint::GLPushDebugGroup, source, id,
-                                     length, message)));
+        bool isCallValid = (context->skipValidation() ||
+                            ValidatePushDebugGroup(context, angle::EntryPoint::GLPushDebugGroup,
+                                                   source, id, length, message));
         if (isCallValid)
         {
             context->pushDebugGroup(source, id, length, message);

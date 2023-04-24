@@ -1016,9 +1016,8 @@ bool TranslatorVulkan::translateImpl(TIntermBlock *root,
             // attachment variable then create a new one.
             if (getAdvancedBlendEquations().any() &&
                 compileOptions.addAdvancedBlendEquationsEmulation &&
-                !EmulateAdvancedBlendEquations(this, compileOptions, root, &getSymbolTable(),
-                                               driverUniforms, &mUniforms,
-                                               getAdvancedBlendEquations()))
+                !EmulateAdvancedBlendEquations(this, root, &getSymbolTable(), driverUniforms,
+                                               &mUniforms, getAdvancedBlendEquations()))
             {
                 return false;
             }

@@ -119,9 +119,11 @@ struct InterfaceBlock : public ShaderVariableBuffer
     InterfaceBlock(const std::string &nameIn,
                    const std::string &mappedNameIn,
                    bool isArrayIn,
+                   bool isReadOnlyIn,
                    unsigned int arrayElementIn,
                    unsigned int firstFieldArraySizeIn,
                    int bindingIn);
+    InterfaceBlock(const InterfaceBlock &other);
 
     std::string nameWithArrayIndex() const;
     std::string mappedNameWithArrayIndex() const;
@@ -129,6 +131,8 @@ struct InterfaceBlock : public ShaderVariableBuffer
     std::string name;
     std::string mappedName;
     bool isArray;
+    // Only valid for SSBOs, specifies whether it has the readonly qualifier.
+    bool isReadOnly;
     unsigned int arrayElement;
     unsigned int firstFieldArraySize;
 };

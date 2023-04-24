@@ -4009,10 +4009,8 @@ void GL_APIENTRY GL_GenerateTextureMipmap(GLuint texture)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context,
-                                                angle::EntryPoint::GLGenerateTextureMipmap) &&
-              ValidateGenerateTextureMipmap(context, angle::EntryPoint::GLGenerateTextureMipmap,
-                                            texturePacked)));
+             ValidateGenerateTextureMipmap(context, angle::EntryPoint::GLGenerateTextureMipmap,
+                                           texturePacked));
         if (isCallValid)
         {
             context->generateTextureMipmap(texturePacked);
@@ -6847,9 +6845,8 @@ void GL_APIENTRY GL_PolygonOffsetClamp(GLfloat factor, GLfloat units, GLfloat cl
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLPolygonOffsetClamp) &&
-              ValidatePolygonOffsetClamp(context, angle::EntryPoint::GLPolygonOffsetClamp, factor,
-                                         units, clamp)));
+             ValidatePolygonOffsetClamp(context, angle::EntryPoint::GLPolygonOffsetClamp, factor,
+                                        units, clamp));
         if (isCallValid)
         {
             context->polygonOffsetClamp(factor, units, clamp);

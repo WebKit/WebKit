@@ -69,7 +69,7 @@ class IOSurfaceSurfaceEAGL : public SurfaceGL
   private:
     angle::Result initializeAlphaChannel(const gl::Context *context, GLuint texture);
 
-#if defined(ANGLE_PLATFORM_IOS_SIMULATOR)
+#if ANGLE_PLATFORM_IOS_FAMILY_SIMULATOR
     IOSurfaceLockOptions getIOSurfaceLockOptions() const;
 #endif
     // TODO(geofflang): Don't store these, they are potentially specific to a single GL context.
@@ -88,7 +88,7 @@ class IOSurfaceSurfaceEAGL : public SurfaceGL
     int mRowStrideInPixels;
 
     bool mAlphaInitialized;
-#if defined(ANGLE_PLATFORM_IOS_SIMULATOR)
+#if ANGLE_PLATFORM_IOS_FAMILY_SIMULATOR
     GLuint mBoundTextureID;
     bool mUploadFromIOSurface;
     bool mReadbackToIOSurface;

@@ -6,14 +6,10 @@
 
 // DeviceCGL.cpp: CGL implementation of egl::Device
 
-#include "common/platform.h"
+#include "libANGLE/renderer/gl/cgl/DeviceCGL.h"
 
-#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
-
-#    include "libANGLE/renderer/gl/cgl/DeviceCGL.h"
-
-#    include <EGL/eglext.h>
-#    include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
+#include <EGL/eglext.h>
+#include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
 
 namespace rx
 {
@@ -57,5 +53,3 @@ void DeviceCGL::generateExtensions(egl::DeviceExtensions *outExtensions) const
 }
 
 }  // namespace rx
-
-#endif  // defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)

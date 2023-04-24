@@ -884,8 +884,7 @@ GLsync GL_APIENTRY GL_FenceSync(GLenum condition, GLbitfield flags)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLFenceSync) &&
-              ValidateFenceSync(context, angle::EntryPoint::GLFenceSync, condition, flags)));
+             ValidateFenceSync(context, angle::EntryPoint::GLFenceSync, condition, flags));
         if (isCallValid)
         {
             returnValue = context->fenceSync(condition, flags);
@@ -918,10 +917,8 @@ void GL_APIENTRY GL_FlushMappedBufferRange(GLenum target, GLintptr offset, GLsiz
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context,
-                                                angle::EntryPoint::GLFlushMappedBufferRange) &&
-              ValidateFlushMappedBufferRange(context, angle::EntryPoint::GLFlushMappedBufferRange,
-                                             targetPacked, offset, length)));
+             ValidateFlushMappedBufferRange(context, angle::EntryPoint::GLFlushMappedBufferRange,
+                                            targetPacked, offset, length));
         if (isCallValid)
         {
             context->flushMappedBufferRange(targetPacked, offset, length);
@@ -982,8 +979,7 @@ void GL_APIENTRY GL_GenQueries(GLsizei n, GLuint *ids)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLGenQueries) &&
-              ValidateGenQueries(context, angle::EntryPoint::GLGenQueries, n, idsPacked)));
+             ValidateGenQueries(context, angle::EntryPoint::GLGenQueries, n, idsPacked));
         if (isCallValid)
         {
             context->genQueries(n, idsPacked);
@@ -1008,9 +1004,7 @@ void GL_APIENTRY GL_GenSamplers(GLsizei count, GLuint *samplers)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLGenSamplers) &&
-              ValidateGenSamplers(context, angle::EntryPoint::GLGenSamplers, count,
-                                  samplersPacked)));
+             ValidateGenSamplers(context, angle::EntryPoint::GLGenSamplers, count, samplersPacked));
         if (isCallValid)
         {
             context->genSamplers(count, samplersPacked);
@@ -1033,12 +1027,9 @@ void GL_APIENTRY GL_GenTransformFeedbacks(GLsizei n, GLuint *ids)
     {
         TransformFeedbackID *idsPacked = PackParam<TransformFeedbackID *>(ids);
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context,
-                                                angle::EntryPoint::GLGenTransformFeedbacks) &&
-              ValidateGenTransformFeedbacks(context, angle::EntryPoint::GLGenTransformFeedbacks, n,
-                                            idsPacked)));
+        bool isCallValid = (context->skipValidation() ||
+                            ValidateGenTransformFeedbacks(
+                                context, angle::EntryPoint::GLGenTransformFeedbacks, n, idsPacked));
         if (isCallValid)
         {
             context->genTransformFeedbacks(n, idsPacked);
@@ -1061,11 +1052,9 @@ void GL_APIENTRY GL_GenVertexArrays(GLsizei n, GLuint *arrays)
     {
         VertexArrayID *arraysPacked = PackParam<VertexArrayID *>(arrays);
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLGenVertexArrays) &&
-              ValidateGenVertexArrays(context, angle::EntryPoint::GLGenVertexArrays, n,
-                                      arraysPacked)));
+        bool isCallValid = (context->skipValidation() ||
+                            ValidateGenVertexArrays(context, angle::EntryPoint::GLGenVertexArrays,
+                                                    n, arraysPacked));
         if (isCallValid)
         {
             context->genVertexArrays(n, arraysPacked);

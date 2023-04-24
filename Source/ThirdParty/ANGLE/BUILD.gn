@@ -678,11 +678,10 @@ template("translator_lib") {
       _needs_glsl_and_vulkan_base = true
       sources += angle_translator_glsl_sources
       defines += [ "ANGLE_ENABLE_GLSL" ]
-    }
 
-    if (angle_enable_apple_translator_workarounds) {
-      sources += angle_translator_apple_sources
-      defines += [ "ANGLE_ENABLE_APPLE_WORKAROUNDS" ]
+      if (is_apple) {
+        sources += angle_translator_glsl_apple_sources
+      }
     }
 
     if (angle_enable_hlsl || use_fuzzing_engine) {

@@ -320,13 +320,6 @@ void TranslatorGLSL::writeExtensionBehavior(TIntermNode *root,
                  << "\n";
         }
 
-        if (getOutputType() != SH_ESSL_OUTPUT && iter.first == TExtension::OES_sample_variables &&
-            getOutputType() < SH_GLSL_420_CORE_OUTPUT)
-        {
-            sink << "#extension GL_ARB_sample_shading : " << GetBehaviorString(iter.second) << "\n"
-                 << "#extension GL_ARB_gpu_shader5 : " << GetBehaviorString(iter.second) << "\n";
-        }
-
         if ((iter.first == TExtension::OES_texture_cube_map_array ||
              iter.first == TExtension::EXT_texture_cube_map_array) &&
             (iter.second == EBhRequire || iter.second == EBhEnable))

@@ -3357,7 +3357,7 @@ void main()
 TEST_P(ClearTestES3, RepeatedDepthClearWithBlitAfterClearAndDrawInBetween)
 {
     glClearDepthf(0.25f);
-    glClear(GL_DEPTH_BUFFER_BIT);
+    glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     // Make sure clear is flushed.
     GLRenderbuffer depth;
@@ -3407,7 +3407,7 @@ TEST_P(ClearTestES3, RepeatedDepthClearWithBlitAfterClearAndDrawInBetween)
 TEST_P(ClearTestES3, RepeatedStencilClearWithBlitAfterClearAndDrawInBetween)
 {
     glClearStencil(0xE4);
-    glClear(GL_STENCIL_BUFFER_BIT);
+    glClear(GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Make sure clear is flushed.
     GLRenderbuffer stencil;
@@ -3460,16 +3460,19 @@ TEST_P(ClearTestES3, RepeatedStencilClearWithBlitAfterClearAndDrawInBetween)
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     ClearTest,
+    ES3_VULKAN().enable(Feature::ForceFallbackFormat),
     ES3_VULKAN().enable(Feature::PreferDrawClearOverVkCmdClearAttachments));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ClearTestES3);
 ANGLE_INSTANTIATE_TEST_ES3_AND(
     ClearTestES3,
+    ES3_VULKAN().enable(Feature::ForceFallbackFormat),
     ES3_VULKAN().enable(Feature::PreferDrawClearOverVkCmdClearAttachments));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ClearTestES31);
 ANGLE_INSTANTIATE_TEST_ES31_AND(
     ClearTestES31,
+    ES31_VULKAN().enable(Feature::ForceFallbackFormat),
     ES31_VULKAN().enable(Feature::PreferDrawClearOverVkCmdClearAttachments));
 
 ANGLE_INSTANTIATE_TEST_COMBINE_4(MaskedScissoredClearTest,

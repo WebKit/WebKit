@@ -24,7 +24,6 @@ void UpdateResourceMap(GLuint *resourceMap, GLuint id, GLsizei readBufferOffset)
 
 DecompressCallback gDecompressCallback;
 DeleteCallback gDeleteCallback;
-std::string gBinaryDataDir = ".";
 
 void DeleteBinaryData()
 {
@@ -197,6 +196,8 @@ EGLSurface *gSurfaceMap2;
 EGLContext *gContextMap2;
 GLsync *gSyncMap2;
 EGLSync *gEGLSyncMap;
+
+std::string gBinaryDataDir = ".";
 
 void SetBinaryDataDecompressCallback(DecompressCallback decompressCallback,
                                      DeleteCallback deleteCallback)
@@ -402,6 +403,19 @@ void FinishReplay()
 void SetValidateSerializedStateCallback(ValidateSerializedStateCallback callback)
 {
     gValidateSerializedStateCallback = callback;
+}
+
+std::vector<std::string> gTraceFiles;
+std::string gTraceGzPath;
+
+void SetTraceInfo(const std::vector<std::string> &traceFiles)
+{
+    gTraceFiles = traceFiles;
+}
+
+void SetTraceGzPath(const std::string &traceGzPath)
+{
+    gTraceGzPath = traceGzPath;
 }
 
 void UpdateClientArrayPointer(int arrayIndex, const void *data, uint64_t size)

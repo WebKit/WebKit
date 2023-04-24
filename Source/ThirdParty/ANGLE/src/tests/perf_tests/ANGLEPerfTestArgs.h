@@ -35,7 +35,7 @@ extern bool gNoFinish;
 extern bool gRetraceMode;
 extern bool gMinimizeGPUWork;
 extern bool gTraceTestValidation;
-extern bool gTraceInterpreter;
+extern const char *gTraceInterpreter;
 extern const char *gPerfCounters;
 extern const char *gUseANGLE;
 extern const char *gUseGL;

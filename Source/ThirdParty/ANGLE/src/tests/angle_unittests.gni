@@ -172,6 +172,6 @@ if (!angle_enable_desktop_glsl) {
       [ "compiler_tests/ImmutableString_test_autogen.cpp" ]
 }
 
-if (!is_android && !is_fuchsia) {
+if (!is_android && !is_fuchsia && !is_ios) {
   angle_unittests_sources += [ "test_utils/runner/TestSuite_unittest.cpp" ]
 }

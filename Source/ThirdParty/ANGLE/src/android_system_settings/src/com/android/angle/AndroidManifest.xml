@@ -24,10 +24,6 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
 
-    <uses-sdk android:minSdkVersion="26"
-              android:targetSdkVersion="28">
-    </uses-sdk>
-
     <application android:allowBackup="false"
                  android:label="Android System Angle"
                  android:icon="@drawable/icon"
@@ -40,7 +36,8 @@
                   android:description="@string/angle_preferences_summary"
                   android:theme="@style/Theme.Settings"
                   android:visibleToInstantApps="true"
-                  android:launchMode="singleTask">
+                  android:launchMode="singleTask"
+                  android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.INFO"/>

@@ -19,7 +19,7 @@ namespace
 {
 #if defined(ANGLE_PLATFORM_WINDOWS)
 constexpr char kRunAppHelperExecutable[] = "test_utils_unittest_helper.exe";
-#elif (ANGLE_PLATFORM_IOS)
+#elif ANGLE_PLATFORM_IOS_FAMILY
 constexpr char kRunAppHelperExecutable[] =
     "../test_utils_unittest_helper.app/test_utils_unittest_helper";
 #else
@@ -73,6 +73,11 @@ TEST(TestUtils, Sleep)
 #    define MAYBE_RunAppAsyncRedirectStderrToStdout DISABLED_RunAppAsyncRedirectStderrToStdout
 // TODO: fuchsia support. http://anglebug.com/7312
 #elif defined(ANGLE_PLATFORM_FUCHSIA)
+#    define MAYBE_RunApp DISABLED_RunApp
+#    define MAYBE_RunAppAsync DISABLED_RunAppAsync
+#    define MAYBE_RunAppAsyncRedirectStderrToStdout DISABLED_RunAppAsyncRedirectStderrToStdout
+// TODO: iOS simulator support. http://anglebug.com/8116
+#elif ANGLE_PLATFORM_IOS_FAMILY_SIMULATOR
 #    define MAYBE_RunApp DISABLED_RunApp
 #    define MAYBE_RunAppAsync DISABLED_RunAppAsync
 #    define MAYBE_RunAppAsyncRedirectStderrToStdout DISABLED_RunAppAsyncRedirectStderrToStdout

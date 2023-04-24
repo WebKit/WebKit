@@ -26,9 +26,6 @@ namespace
 ANGLE_REQUIRE_CONSTANT_INIT std::atomic<angle::GlobalMutex *> g_Mutex(nullptr);
 static_assert(std::is_trivially_destructible<decltype(g_Mutex)>::value,
               "global mutex is not trivially destructible");
-ANGLE_REQUIRE_CONSTANT_INIT std::atomic<angle::GlobalMutex *> g_SurfaceMutex(nullptr);
-static_assert(std::is_trivially_destructible<decltype(g_SurfaceMutex)>::value,
-              "global mutex is not trivially destructible");
 
 ANGLE_REQUIRE_CONSTANT_INIT gl::Context *g_LastContext(nullptr);
 static_assert(std::is_trivially_destructible<decltype(g_LastContext)>::value,
@@ -111,11 +108,6 @@ void AllocateMutex()
     AllocateGlobalMutex(g_Mutex);
 }
 
-void AllocateSurfaceMutex()
-{
-    AllocateGlobalMutex(g_SurfaceMutex);
-}
-
 }  // anonymous namespace
 
 #if defined(ANGLE_PLATFORM_APPLE)
@@ -156,12 +148,6 @@ angle::GlobalMutex &GetGlobalMutex()
     return *g_Mutex;
 }
 
-angle::GlobalMutex &GetGlobalSurfaceMutex()
-{
-    AllocateSurfaceMutex();
-    return *g_SurfaceMutex;
-}
-
 gl::Context *GetGlobalLastContext()
 {
     return g_LastContext;
@@ -179,7 +165,7 @@ ANGLE_NO_SANITIZE_MEMORY ANGLE_NO_SANITIZE_THREAD Thread *GetCurrentThread()
 #if defined(ANGLE_PLATFORM_APPLE)
     Thread *current = GetCurrentThreadTLS();
 #else
-    Thread *current = gCurrentThread;
+    Thread *current          = gCurrentThread;
 #endif
     return (current ? current : AllocateCurrentThread());
 }
@@ -189,7 +175,7 @@ void SetContextCurrent(Thread *thread, gl::Context *context)
 #if defined(ANGLE_PLATFORM_APPLE)
     Thread *currentThread = GetCurrentThreadTLS();
 #else
-    Thread *currentThread = gCurrentThread;
+    Thread *currentThread    = gCurrentThread;
 #endif
     ASSERT(currentThread);
     currentThread->setCurrent(context);
@@ -250,8 +236,10 @@ namespace
 void DeallocateGlobalMutex(std::atomic<angle::GlobalMutex *> &mutex)
 {
     angle::GlobalMutex *toDelete = mutex.exchange(nullptr);
-    if (!mutex)
+    if (toDelete == nullptr)
+    {
         return;
+    }
     {
         // Wait for toDelete to become released by other threads before deleting.
         std::lock_guard<angle::GlobalMutex> lock(*toDelete);
@@ -269,11 +257,6 @@ void DeallocateMutex()
     DeallocateGlobalMutex(g_Mutex);
 }
 
-void DeallocateSurfaceMutex()
-{
-    DeallocateGlobalMutex(g_SurfaceMutex);
-}
-
 bool InitializeProcess()
 {
     EnsureDebugAllocated();
@@ -284,7 +267,6 @@ bool InitializeProcess()
 void TerminateProcess()
 {
     DeallocateDebug();
-    DeallocateSurfaceMutex();
     DeallocateMutex();
     DeallocateCurrentThread();
 }

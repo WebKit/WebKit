@@ -6,29 +6,25 @@
 
 // DisplayCGL.mm: CGL implementation of egl::Display
 
-#include "common/platform.h"
+#import "libANGLE/renderer/gl/cgl/DisplayCGL.h"
 
-#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
+#import <Cocoa/Cocoa.h>
+#import <EGL/eglext.h>
+#import <dlfcn.h>
 
-#    include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
-
-#    import <Cocoa/Cocoa.h>
-#    include <EGL/eglext.h>
-#    include <dlfcn.h>
-
-#    include "common/debug.h"
-#    include "common/gl/cgl/FunctionsCGL.h"
-#    include "common/system_utils.h"
-#    include "gpu_info_util/SystemInfo.h"
-#    include "libANGLE/Display.h"
-#    include "libANGLE/Error.h"
-#    include "libANGLE/renderer/gl/cgl/ContextCGL.h"
-#    include "libANGLE/renderer/gl/cgl/DeviceCGL.h"
-#    include "libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.h"
-#    include "libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.h"
-#    include "libANGLE/renderer/gl/cgl/RendererCGL.h"
-#    include "libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h"
-#    include "platform/PlatformMethods.h"
+#import "common/debug.h"
+#import "common/gl/cgl/FunctionsCGL.h"
+#import "common/system_utils.h"
+#import "gpu_info_util/SystemInfo_internal.h"
+#import "libANGLE/Display.h"
+#import "libANGLE/Error.h"
+#import "libANGLE/renderer/gl/cgl/ContextCGL.h"
+#import "libANGLE/renderer/gl/cgl/DeviceCGL.h"
+#import "libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.h"
+#import "libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.h"
+#import "libANGLE/renderer/gl/cgl/RendererCGL.h"
+#import "libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h"
+#import "platform/PlatformMethods.h"
 
 namespace
 {
@@ -504,8 +500,9 @@ CGLPixelFormatObj DisplayCGL::getCGLPixelFormat() const
 
 void DisplayCGL::generateExtensions(egl::DisplayExtensions *outExtensions) const
 {
-    outExtensions->iosurfaceClientBuffer = true;
-    outExtensions->surfacelessContext    = true;
+    outExtensions->iosurfaceClientBuffer  = true;
+    outExtensions->surfacelessContext     = true;
+    outExtensions->waitUntilWorkScheduled = true;
 
     // Contexts are virtualized so textures and semaphores can be shared globally
     outExtensions->displayTextureShareGroup   = true;
@@ -533,6 +530,15 @@ egl::Error DisplayCGL::waitClient(const gl::Context *context)
 egl::Error DisplayCGL::waitNative(const gl::Context *context, EGLint engine)
 {
     // TODO(cwallez) UNIMPLEMENTED()
+    return egl::NoError();
+}
+
+egl::Error DisplayCGL::waitUntilWorkScheduled()
+{
+    for (auto context : mState.contextSet)
+    {
+        context->flush();
+    }
     return egl::NoError();
 }
 
@@ -733,5 +739,3 @@ void DisplayCGL::setContextToGPU(uint64_t gpuID, GLint virtualScreen)
 }
 
 }  // namespace rx
-
-#endif  // defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)

@@ -339,7 +339,7 @@ def interpret_traces(args, traces):
                     logging.debug('Using temporary path %s.' % out_path)
                     if upgrade_single_trace(args, trace_binary, trace, out_path, False, True):
                         if restore_single_trace(trace, out_path):
-                            validate_args = ['--trace-interpreter']
+                            validate_args = ['--trace-interpreter=c']
                             if args.verbose:
                                 validate_args += ['--verbose-logging']
                             if validate_single_trace(args, trace_binary, trace, validate_args, {}):

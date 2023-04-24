@@ -229,15 +229,22 @@ def PrepareRestrictedTraces(traces):
     start = time.time()
     total_size = 0
     skipped = 0
-    for trace in traces:
-        path_from_root = 'src/tests/restricted_traces/' + trace + '/' + trace + '.angledata.gz'
-        local_path = '../../' + path_from_root
+
+    def _Push(local_path, path_from_root):
+        nonlocal total_size, skipped
         device_path = '/sdcard/chromium_tests_root/' + path_from_root
         if _CompareHashes(local_path, device_path):
             skipped += 1
         else:
             total_size += os.path.getsize(local_path)
             _AdbRun(['push', local_path, device_path])
+
+    for trace in traces:
+        path_from_root = 'src/tests/restricted_traces/' + trace + '/' + trace + '.angledata.gz'
+        _Push('../../' + path_from_root, path_from_root)
+
+        tracegz = 'gen/tracegz_' + trace + '.gz'
+        _Push(tracegz, tracegz)
 
     logging.info('Synced %d trace files (%.1fMB, %d files already ok) in %.1fs', len(traces),
                  total_size / 1e6, skipped,

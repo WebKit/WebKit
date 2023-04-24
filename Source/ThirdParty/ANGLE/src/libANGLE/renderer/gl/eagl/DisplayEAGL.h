@@ -11,18 +11,14 @@
 
 #include <unordered_set>
 
-#import "common/platform.h"
+#include "libANGLE/renderer/gl/DisplayGL.h"
 
-#if defined(ANGLE_ENABLE_EAGL)
-
-#    include "libANGLE/renderer/gl/DisplayGL.h"
-
-#    ifdef __OBJC__
+#ifdef __OBJC__
 @class EAGLContext;
 typedef EAGLContext *EAGLContextObj;
-#    else
+#else
 typedef void *EAGLContextObj;
-#    endif
+#endif
 
 namespace rx
 {
@@ -102,7 +98,5 @@ class DisplayEAGL : public DisplayGL
 };
 
 }  // namespace rx
-
-#endif  // defined(ANGLE_ENABLE_EAGL)
 
 #endif  // LIBANGLE_RENDERER_GL_EAGL_DISPLAYEAGL_H_

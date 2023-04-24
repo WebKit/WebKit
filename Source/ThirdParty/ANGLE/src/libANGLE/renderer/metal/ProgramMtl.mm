@@ -354,10 +354,10 @@ void InitArgumentBufferEncoder(mtl::Context *context,
     }
 }
 
-constexpr size_t PipelineParametersToFragmentShaderVariantIndex(bool emulateCoverageMask,
+constexpr size_t PipelineParametersToFragmentShaderVariantIndex(bool writeSampleMask,
                                                                 bool allowFragDepthWrite)
 {
-    const size_t index = (allowFragDepthWrite << 1) | emulateCoverageMask;
+    const size_t index = (allowFragDepthWrite << 1) | writeSampleMask;
     ASSERT(index < kFragmentShaderVariants);
     return index;
 }
@@ -938,12 +938,12 @@ angle::Result ProgramMtl::getSpecializedShader(ContextMtl *context,
     else if (shaderType == gl::ShaderType::Fragment)
     {
         // For fragment shader, we need to create 4 variants,
-        // combining sample coverage mask and depth write enabled states.
-        const bool emulateCoverageMask = renderPipelineDesc.emulateCoverageMask;
+        // combining sample mask and depth write enabled states.
+        const bool writeSampleMask = renderPipelineDesc.outputDescriptor.sampleCount > 1;
         const bool allowFragDepthWrite =
             renderPipelineDesc.outputDescriptor.depthAttachmentPixelFormat != 0;
         shaderVariant = &mFragmentShaderVariants[PipelineParametersToFragmentShaderVariantIndex(
-            emulateCoverageMask, allowFragDepthWrite)];
+            writeSampleMask, allowFragDepthWrite)];
         if (shaderVariant->metalShader)
         {
             // Already created.
@@ -953,16 +953,16 @@ angle::Result ProgramMtl::getSpecializedShader(ContextMtl *context,
 
         ANGLE_MTL_OBJC_SCOPE
         {
-            NSString *coverageMaskEnabledStr =
-                [NSString stringWithUTF8String:sh::mtl::kCoverageMaskEnabledConstName];
+            NSString *sampleMaskEnabledStr =
+                [NSString stringWithUTF8String:sh::mtl::kSampleMaskEnabledConstName];
 
             NSString *depthWriteEnabledStr =
                 [NSString stringWithUTF8String:sh::mtl::kDepthWriteEnabledConstName];
 
             funcConstants = mtl::adoptObjCObj([[MTLFunctionConstantValues alloc] init]);
-            [funcConstants setConstantValue:&emulateCoverageMask
+            [funcConstants setConstantValue:&writeSampleMask
                                        type:MTLDataTypeBool
-                                   withName:coverageMaskEnabledStr];
+                                   withName:sampleMaskEnabledStr];
             [funcConstants setConstantValue:&allowFragDepthWrite
                                        type:MTLDataTypeBool
                                    withName:depthWriteEnabledStr];
@@ -1560,13 +1560,13 @@ angle::Result ProgramMtl::setupDraw(const gl::Context *glContext,
         mCurrentShaderVariants[gl::ShaderType::Vertex] =
             &mVertexShaderVariants[pipelineDesc.rasterizationType];
 
-        const bool emulateCoverageMask = pipelineDesc.emulateCoverageMask;
+        const bool writeSampleMask = pipelineDesc.outputDescriptor.sampleCount > 1;
         const bool allowFragDepthWrite =
             pipelineDesc.outputDescriptor.depthAttachmentPixelFormat != 0;
         mCurrentShaderVariants[gl::ShaderType::Fragment] =
             pipelineDesc.rasterizationEnabled()
                 ? &mFragmentShaderVariants[PipelineParametersToFragmentShaderVariantIndex(
-                      emulateCoverageMask, allowFragDepthWrite)]
+                      writeSampleMask, allowFragDepthWrite)]
                 : nullptr;
     }
 

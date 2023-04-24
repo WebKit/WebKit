@@ -70,83 +70,55 @@ using ResetReplayFunc                        = void (*)();
 using FinishReplayFunc                       = void (*)();
 using GetSerializedContextStateFunc          = const char *(*)(uint32_t);
 using SetValidateSerializedStateCallbackFunc = void (*)(ValidateSerializedStateCallback);
+using SetTraceInfoFunc                       = void (*)(const std::vector<std::string> &);
+using SetTraceGzPathFunc                     = void (*)(const std::string &);
 
-class TraceReplayInterface : angle::NonCopyable
+struct TraceInfo;
+
+class TraceLibrary : angle::NonCopyable
 {
   public:
-    virtual ~TraceReplayInterface() {}
+    TraceLibrary(const std::string &traceName, const TraceInfo &traceInfo);
 
-    virtual bool valid() const                                                                = 0;
-    virtual void setBinaryDataDir(const char *dataDir)                                        = 0;
-    virtual void setBinaryDataDecompressCallback(DecompressCallback decompressCallback,
-                                                 DeleteCallback deleteCallback)               = 0;
-    virtual void replayFrame(uint32_t frameIndex)                                             = 0;
-    virtual void setupReplay()                                                                = 0;
-    virtual void resetReplay()                                                                = 0;
-    virtual void finishReplay()                                                               = 0;
-    virtual const char *getSerializedContextState(uint32_t frameIndex)                        = 0;
-    virtual void setValidateSerializedStateCallback(ValidateSerializedStateCallback callback) = 0;
-
-  protected:
-    TraceReplayInterface() {}
-};
-
-class TraceLibrary : public TraceReplayInterface
-{
-  public:
-    TraceLibrary(const char *traceNameIn)
-    {
-        std::stringstream traceNameStr;
-#if !defined(ANGLE_PLATFORM_WINDOWS)
-        traceNameStr << "lib";
-#endif  // !defined(ANGLE_PLATFORM_WINDOWS)
-        traceNameStr << traceNameIn;
-#if defined(ANGLE_PLATFORM_ANDROID) && defined(COMPONENT_BUILD)
-        // Added to shared library names in Android component builds in
-        // https://chromium.googlesource.com/chromium/src/+/9bacc8c4868cc802f69e1e858eea6757217a508f/build/toolchain/toolchain.gni#56
-        traceNameStr << ".cr";
-#endif  // defined(ANGLE_PLATFORM_ANDROID) && defined(COMPONENT_BUILD)
-        std::string traceName = traceNameStr.str();
-        mTraceLibrary.reset(OpenSharedLibrary(traceName.c_str(), SearchType::ModuleDir));
-    }
-
-    bool valid() const override
+    bool valid() const
     {
         return (mTraceLibrary != nullptr) && (mTraceLibrary->getNative() != nullptr);
     }
 
-    void setBinaryDataDir(const char *dataDir) override
+    void setBinaryDataDir(const char *dataDir)
     {
         callFunc<SetBinaryDataDirFunc>("SetBinaryDataDir", dataDir);
     }
 
     void setBinaryDataDecompressCallback(DecompressCallback decompressCallback,
-                                         DeleteCallback deleteCallback) override
+                                         DeleteCallback deleteCallback)
     {
         callFunc<SetBinaryDataDecompressCallbackFunc>("SetBinaryDataDecompressCallback",
                                                       decompressCallback, deleteCallback);
     }
 
-    void replayFrame(uint32_t frameIndex) override
-    {
-        callFunc<ReplayFrameFunc>("ReplayFrame", frameIndex);
-    }
+    void replayFrame(uint32_t frameIndex) { callFunc<ReplayFrameFunc>("ReplayFrame", frameIndex); }
 
-    void setupReplay() override { callFunc<SetupReplayFunc>("SetupReplay"); }
+    void setupReplay() { callFunc<SetupReplayFunc>("SetupReplay"); }
 
-    void resetReplay() override { callFunc<ResetReplayFunc>("ResetReplay"); }
+    void resetReplay() { callFunc<ResetReplayFunc>("ResetReplay"); }
 
-    void finishReplay() override { callFunc<FinishReplayFunc>("FinishReplay"); }
+    void finishReplay() { callFunc<FinishReplayFunc>("FinishReplay"); }
 
-    const char *getSerializedContextState(uint32_t frameIndex) override
+    const char *getSerializedContextState(uint32_t frameIndex)
     {
         return callFunc<GetSerializedContextStateFunc>("GetSerializedContextState", frameIndex);
     }
 
-    void setValidateSerializedStateCallback(ValidateSerializedStateCallback callback) override
+    void setValidateSerializedStateCallback(ValidateSerializedStateCallback callback)
     {
         return callFunc<SetValidateSerializedStateCallbackFunc>(
             "SetValidateSerializedStateCallback", callback);
+    }
+
+    void setTraceGzPath(const std::string &traceGzPath)
+    {
+        callFunc<SetTraceGzPathFunc>("SetTraceGzPath", traceGzPath);
     }
 
   private:
@@ -206,7 +178,6 @@ bool LoadTraceInfoFromJSON(const std::string &traceName,
 using TraceFunction    = std::vector<CallCapture>;
 using TraceFunctionMap = std::map<std::string, TraceFunction>;
 
-void ReplayTraceFunction(const TraceFunction &func, const TraceFunctionMap &customFunctions);
 void ReplayTraceFunctionCall(const CallCapture &call, const TraceFunctionMap &customFunctions);
 void ReplayCustomFunctionCall(const CallCapture &call, const TraceFunctionMap &customFunctions);
 

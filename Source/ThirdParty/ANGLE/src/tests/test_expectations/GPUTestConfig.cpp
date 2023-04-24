@@ -116,7 +116,7 @@ inline bool IsWin10()
 // Check if the OS is any version of iOS
 inline bool IsIOS()
 {
-#if defined(ANGLE_PLATFORM_IOS)
+#if ANGLE_PLATFORM_IOS_FAMILY
     return true;
 #else
     return false;

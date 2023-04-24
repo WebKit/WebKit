@@ -288,7 +288,6 @@ struct alignas(4) RenderPipelineDesc
     // MTLRenderPipelineDescriptor descriptor. These flags should be used by
     // RenderPipelineCacheSpecializeShaderFactory.
     RenderPipelineRasterization rasterizationType : 2;
-    bool emulateCoverageMask : 1;
 };
 
 struct alignas(4) ProvokingVertexComputePipelineDesc

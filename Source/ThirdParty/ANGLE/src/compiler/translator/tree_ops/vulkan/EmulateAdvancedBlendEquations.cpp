@@ -33,13 +33,11 @@ class Builder
 {
   public:
     Builder(TCompiler *compiler,
-            const ShCompileOptions &compileOptions,
             TSymbolTable *symbolTable,
             const DriverUniform *driverUniforms,
             std::vector<ShaderVariable> *uniforms,
             const AdvancedBlendEquations &advancedBlendEquations)
         : mCompiler(compiler),
-          mCompileOptions(compileOptions),
           mSymbolTable(symbolTable),
           mDriverUniforms(driverUniforms),
           mUniforms(uniforms),
@@ -60,7 +58,6 @@ class Builder
     void generateEquationSwitch(TIntermBlock *blendBlock);
 
     TCompiler *mCompiler;
-    const ShCompileOptions &mCompileOptions;
     TSymbolTable *mSymbolTable;
     const DriverUniform *mDriverUniforms;
     std::vector<ShaderVariable> *mUniforms;
@@ -1041,32 +1038,23 @@ TIntermSymbol *Builder::premultiplyAlpha(TIntermBlock *blendBlock,
     TType *vec3Type            = new TType(EbtFloat, precision, EvqTemporary, 3);
 
     // symbol = vec3(0)
-    // If alpha != 0 assign symbol based on precisionSafeDivision compile option.
+    // If alpha != 0, divide by alpha.  Note that due to precision issues, component == alpha is
+    // handled especially.  This precision issue affects multiple vendors, and most drivers seem to
+    // be carrying a similar workaround to pass the CTS test.
     TIntermTyped *alpha            = new TIntermSwizzle(var, {3});
     TIntermSymbol *symbol          = MakeVariable(mSymbolTable, name, vec3Type);
     TIntermTyped *alphaNotZero     = new TIntermBinary(EOpNotEqual, alpha, Float(0));
     TIntermBlock *rgbDivAlphaBlock = new TIntermBlock;
 
     constexpr int kColorChannels = 3;
-    if (mCompileOptions.precisionSafeDivision)
+    // For each component:
+    // symbol.x = (var.x == var.w) ? 1.0 : var.x / var.w
+    for (int index = 0; index < kColorChannels; index++)
     {
-        // For each component:
-        // symbol.x = (var.x == var.w) ? 1.0 : var.x / var.w
-        for (int index = 0; index < kColorChannels; index++)
-        {
-            TIntermTyped *divideNode = divideFloatNode(new TIntermSwizzle(var, {index}), alpha);
-            TIntermBinary *assignDivideNode = new TIntermBinary(
-                EOpAssign, new TIntermSwizzle(symbol->deepCopy(), {index}), divideNode);
-            rgbDivAlphaBlock->appendStatement(assignDivideNode);
-        }
-    }
-    else
-    {
-        // symbol = rgb/alpha
-        TIntermTyped *rgb         = new TIntermSwizzle(var->deepCopy(), {0, 1, 2});
-        TIntermTyped *rgbDivAlpha = new TIntermBinary(EOpDiv, rgb, alpha->deepCopy());
-        rgbDivAlphaBlock->appendStatement(
-            new TIntermBinary(EOpAssign, symbol->deepCopy(), rgbDivAlpha));
+        TIntermTyped *divideNode        = divideFloatNode(new TIntermSwizzle(var, {index}), alpha);
+        TIntermBinary *assignDivideNode = new TIntermBinary(
+            EOpAssign, new TIntermSwizzle(symbol->deepCopy(), {index}), divideNode);
+        rgbDivAlphaBlock->appendStatement(assignDivideNode);
     }
 
     TIntermIfElse *ifBlock = new TIntermIfElse(alphaNotZero, rgbDivAlphaBlock, nullptr);
@@ -1260,15 +1248,13 @@ void Builder::generateEquationSwitch(TIntermBlock *blendBlock)
 }  // anonymous namespace
 
 bool EmulateAdvancedBlendEquations(TCompiler *compiler,
-                                   const ShCompileOptions &compileOptions,
                                    TIntermBlock *root,
                                    TSymbolTable *symbolTable,
                                    const DriverUniform *driverUniforms,
                                    std::vector<ShaderVariable> *uniforms,
                                    const AdvancedBlendEquations &advancedBlendEquations)
 {
-    Builder builder(compiler, compileOptions, symbolTable, driverUniforms, uniforms,
-                    advancedBlendEquations);
+    Builder builder(compiler, symbolTable, driverUniforms, uniforms, advancedBlendEquations);
     return builder.build(root);
 }  // namespace
 

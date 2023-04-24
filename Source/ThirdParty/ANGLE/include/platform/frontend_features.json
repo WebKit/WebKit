@@ -145,6 +145,14 @@
                 "Check the filesystem for shaders to use instead of those provided through glShaderSource"
             ],
             "issue": "http://anglebug.com/7761"
+        },
+        {
+            "name": "disable_program_caching",
+            "category": "Features",
+            "description": [
+                "Disables saving programs to the cache"
+            ],
+            "issue": "http://anglebug.com/1423136"
         }
     ]
 }

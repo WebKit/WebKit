@@ -277,7 +277,7 @@ set(angle_translator_glsl_sources
     "src/compiler/translator/tree_ops/gl/UseInterfaceBlockFields.cpp"
 )
 
-set(angle_translator_apple_sources
+set(angle_translator_glsl_apple_sources
     "src/compiler/translator/tree_ops/apple/AddAndTrueToLoopCondition.cpp"
     "src/compiler/translator/tree_ops/apple/RewriteDoWhile.cpp"
     "src/compiler/translator/tree_ops/apple/RewriteRowMajorMatrices.cpp"

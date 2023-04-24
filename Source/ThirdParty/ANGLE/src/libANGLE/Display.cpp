@@ -53,8 +53,10 @@
 #if defined(ANGLE_ENABLE_OPENGL)
 #    if defined(ANGLE_PLATFORM_WINDOWS)
 #        include "libANGLE/renderer/gl/wgl/DisplayWGL.h"
-#    elif defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_APPLE_EMBEDDED)
-#        include "libANGLE/renderer/gl/apple/DisplayApple_api.h"
+#    elif ANGLE_ENABLE_CGL
+#        include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
+#    elif ANGLE_ENABLE_EAGL
+#        include "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
 #    elif defined(ANGLE_PLATFORM_LINUX)
 #        include "libANGLE/renderer/gl/egl/DisplayEGL.h"
 #        if defined(ANGLE_USE_X11)
@@ -342,8 +344,12 @@ rx::DisplayImpl *CreateDisplayFromAttribs(EGLAttrib displayType,
             impl = new rx::DisplayWGL(state);
             break;
 
-#    elif ANGLE_ENABLE_CGL || ANGLE_ENABLE_EAGL
-            impl = rx::CreateDisplayCGLOrEAGL(state);
+#    elif ANGLE_ENABLE_CGL
+            impl = new rx::DisplayCGL(state);
+            break;
+
+#    elif ANGLE_ENABLE_EAGL
+            impl = new rx::DisplayEAGL(state);
             break;
 
 #    elif defined(ANGLE_PLATFORM_LINUX)
@@ -504,8 +510,7 @@ rx::DisplayImpl *CreateDisplayFromAttribs(EGLAttrib displayType,
 #        error Unsupported Vulkan platform.
 #    endif
 #else
-            // No display available
-            UNREACHABLE();
+            // Vulkan isn't available
             break;
 #endif  // defined(ANGLE_ENABLE_VULKAN)
 
@@ -517,8 +522,7 @@ rx::DisplayImpl *CreateDisplayFromAttribs(EGLAttrib displayType,
                 break;
             }
 #endif
-            // No display available
-            UNREACHABLE();
+            // Metal isn't available.
             break;
 
         case EGL_PLATFORM_ANGLE_TYPE_NULL_ANGLE:
@@ -2050,12 +2054,11 @@ static ClientExtensions GenerateClientExtensions()
     extensions.platformANGLEDeviceTypeEGLANGLE = true;
 #endif
 
-#if (defined(ANGLE_PLATFORM_APPLE_EMBEDDED) && !defined(ANGLE_PLATFORM_MACCATALYST)) || \
-    (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))
+#if defined(ANGLE_ENABLE_EAGL)
     extensions.platformANGLEDeviceContextVolatileEagl = true;
 #endif
 
-#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
+#if defined(ANGLE_ENABLE_CGL)
     extensions.platformANGLEDeviceContextVolatileCgl = true;
 #endif
 

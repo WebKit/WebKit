@@ -204,7 +204,7 @@ angle_test("angle_unittests") {
     ]
   }
 
-  if (!is_android && !is_fuchsia) {
+  if (!is_android && !is_fuchsia && !is_ios) {
     # SystemUtils.RunApp, the only unittest using a helper binary, is not supported on these
     # platforms yet.
     data_deps = [ ":test_utils_unittest_helper" ]
@@ -511,6 +511,7 @@ if (build_angle_trace_tests) {
       "$angle_root:angle_compression",
       "$angle_root/util:angle_frame_capture_test_utils",
       "$angle_root/util:angle_png_utils",
+      "$angle_root/util:angle_trace_interpreter",
       "restricted_traces:angle_restricted_traces",
     ]
 

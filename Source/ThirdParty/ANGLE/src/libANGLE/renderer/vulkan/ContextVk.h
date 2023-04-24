@@ -595,6 +595,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
                                      const vk::PackedClearValuesArray &clearValues,
                                      vk::RenderPassCommandBuffer **commandBufferOut);
 
+    void disableRenderPassReactivation() { mAllowRenderPassToReactivate = false; }
+
     // Only returns true if we have a started RP and we've run setupDraw.
     bool hasActiveRenderPass() const
     {

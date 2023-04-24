@@ -292,6 +292,8 @@ struct InterfaceBlock
     int binding;
     bool staticUse;
     bool active;
+    // Only applied to SSBOs, |isReadOnly| tells if the readonly qualifier is specified.
+    bool isReadOnly;
     BlockType blockType;
     std::vector<ShaderVariable> fields;
 };

@@ -517,6 +517,8 @@ static const char *GetOperatorString(TOperator op,
             return "metal::rint";
         case TOperator::EOpClamp:
             return "metal::clamp";  // TODO fast vs precise namespace
+        case TOperator::EOpSaturate:
+            return "metal::saturate";  // TODO fast vs precise namespace
         case TOperator::EOpMix:
             if (argType2 && argType2->getBasicType() == EbtBool)
                 return "ANGLE_mix_bool";
@@ -643,6 +645,11 @@ static const char *GetOperatorString(TOperator op,
             return "ANGLE_pack_half_2x16";
         case TOperator::EOpUnpackHalf2x16:
             return "ANGLE_unpack_half_2x16";
+
+        case TOperator::EOpNumSamples:
+            return "metal::get_num_samples";
+        case TOperator::EOpSamplePosition:
+            return "metal::get_sample_position";
 
         case TOperator::EOpBitfieldExtract:
         case TOperator::EOpBitfieldInsert:
@@ -829,6 +836,20 @@ void GenMetalTraverser::emitPostQualifier(const EmitVariableDeclarationConfig &e
             if (evdConfig.isMainParameter)
             {
                 mOut << " [[front_facing]]";
+            }
+            break;
+
+        case TQualifier::EvqSampleID:
+            if (evdConfig.isMainParameter)
+            {
+                mOut << " [[sample_id]]";
+            }
+            break;
+
+        case TQualifier::EvqSampleMaskIn:
+            if (evdConfig.isMainParameter)
+            {
+                mOut << " [[sample_mask]]";
             }
             break;
 
@@ -1190,8 +1211,11 @@ void GenMetalTraverser::emitFieldDeclaration(const TField &field,
             break;
 
         case TQualifier::EvqSampleMask:
-            mOut << " [[sample_mask, function_constant(" << sh::mtl::kCoverageMaskEnabledConstName
-                 << ")]]";
+            if (field.symbolType() == SymbolType::AngleInternal)
+            {
+                mOut << " [[sample_mask, function_constant(" << sh::mtl::kSampleMaskEnabledConstName
+                     << ")]]";
+            }
             break;
 
         default:
@@ -1398,6 +1422,12 @@ void GenMetalTraverser::emitOrdinaryVariableDeclaration(
         // The element count is emitted after the post qualifier.
         ASSERT(type.getBasicType() == TBasicType::EbtFloat);
         mOut << "float";
+    }
+    else if (type.getQualifier() == TQualifier::EvqSampleID && evdConfig.isMainParameter)
+    {
+        // Metal's [[sample_id]] must be unsigned
+        ASSERT(type.getBasicType() == TBasicType::EbtInt);
+        mOut << "uint32_t";
     }
     else
     {

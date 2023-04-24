@@ -403,6 +403,7 @@
 		7BCF49C528AD1C8C0090D34A /* apple_platform_utils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BCF49C228AD1C8C0090D34A /* apple_platform_utils.mm */; };
 		7BCF49C628AD1C8C0090D34A /* CircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BCF49C328AD1C8C0090D34A /* CircularBuffer.h */; };
 		7BCF49C728AD1C8C0090D34A /* apple_platform_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BCF49C428AD1C8C0090D34A /* apple_platform_utils.h */; };
+		7BD5BEE929F139F2003F2E53 /* process.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BD5BEE729F139F1003F2E53 /* process.cpp */; };
 		7BDC2D8129E9951900DF385C /* SourcesEAGL2-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BDC2D8029E9951900DF385C /* SourcesEAGL2-mm.mm */; };
 		7BDC8C7D2993A4E000C2BDDF /* mtl_library_cache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BDC8C7A2993A4CB00C2BDDF /* mtl_library_cache.mm */; };
 		7BFF6EDD29E9908A009E1A57 /* SourcesEAGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B037F8F29E98CF100D23E74 /* SourcesEAGL.cpp */; };
@@ -420,7 +421,6 @@
 		A3C49C04255DF719005E8DF7 /* SoftLinking.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C3FE1C255DDE7800B73018 /* SoftLinking.h */; };
 		A3C49C06255DF736005E8DF7 /* FunctionsEAGL.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C49BED255DEA52005E8DF7 /* FunctionsEAGL.h */; };
 		A3C49C1B255DF86F005E8DF7 /* ReplaceArrayOfMatrixVarying.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C3FE11255DDD9200B73018 /* ReplaceArrayOfMatrixVarying.h */; };
-		A3C49C1F255DF88F005E8DF7 /* DisplayApple_api.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C3FE1A255DDE4300B73018 /* DisplayApple_api.h */; };
 		DF83E20F2639FC2D000825EF /* compression_utils_portable.cc in Sources */ = {isa = PBXBuildFile; fileRef = A3C49BF0255DEDC5005E8DF7 /* compression_utils_portable.cc */; };
 		DF83E2102639FC74000825EF /* matrix_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D7142282747600B5BA2C /* matrix_utils.cpp */; };
 		DF83E2112639FC74000825EF /* system_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3C49C20255DF96F005E8DF7 /* system_utils.cpp */; };
@@ -666,7 +666,6 @@
 		DF83E3602639FE92000825EF /* ProgramPipelineGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 315EBDB01FCE44BD00AC7A89 /* ProgramPipelineGL.cpp */; };
 		DF83E3612639FE92000825EF /* TransformFeedbackGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB301101DE39F1A00D2C405 /* TransformFeedbackGL.cpp */; };
 		DF83E3622639FE92000825EF /* StateManagerGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB3010A1DE39F1A00D2C405 /* StateManagerGL.cpp */; };
-		DF83E3642639FE92000825EF /* DisplayApple_api.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3C3FE19255DDE4300B73018 /* DisplayApple_api.cpp */; };
 		DF83E3662639FE92000825EF /* formatutilsgl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB300F11DE39F1A00D2C405 /* formatutilsgl.cpp */; };
 		DF83E3672639FE92000825EF /* RendererGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB301041DE39F1A00D2C405 /* RendererGL.cpp */; };
 		DF83E3682639FE92000825EF /* ShaderGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB301081DE39F1A00D2C405 /* ShaderGL.cpp */; };
@@ -1460,6 +1459,8 @@
 		7BCF49C228AD1C8C0090D34A /* apple_platform_utils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = apple_platform_utils.mm; sourceTree = "<group>"; };
 		7BCF49C328AD1C8C0090D34A /* CircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CircularBuffer.h; sourceTree = "<group>"; };
 		7BCF49C428AD1C8C0090D34A /* apple_platform_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = apple_platform_utils.h; sourceTree = "<group>"; };
+		7BD5BEE729F139F1003F2E53 /* process.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = process.cpp; sourceTree = "<group>"; };
+		7BD5BEE829F139F1003F2E53 /* process.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = process.h; sourceTree = "<group>"; };
 		7BDC2D8029E9951900DF385C /* SourcesEAGL2-mm.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "SourcesEAGL2-mm.mm"; path = "WebKit/SourcesEAGL2-mm.mm"; sourceTree = "<group>"; };
 		7BDC8C792993A4B000C2BDDF /* FixedQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FixedQueue.h; sourceTree = "<group>"; };
 		7BDC8C7A2993A4CB00C2BDDF /* mtl_library_cache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = mtl_library_cache.mm; sourceTree = "<group>"; };
@@ -1588,8 +1589,6 @@
 		A3C3FE14255DDE0200B73018 /* EGLSyncImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EGLSyncImpl.h; sourceTree = "<group>"; };
 		A3C3FE15255DDE0200B73018 /* EGLReusableSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EGLReusableSync.cpp; sourceTree = "<group>"; };
 		A3C3FE16255DDE0200B73018 /* EGLSyncImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EGLSyncImpl.cpp; sourceTree = "<group>"; };
-		A3C3FE19255DDE4300B73018 /* DisplayApple_api.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayApple_api.cpp; sourceTree = "<group>"; };
-		A3C3FE1A255DDE4300B73018 /* DisplayApple_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayApple_api.h; sourceTree = "<group>"; };
 		A3C3FE1C255DDE7800B73018 /* SoftLinking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoftLinking.h; sourceTree = "<group>"; };
 		A3C3FE1F255DDE7900B73018 /* FunctionsCGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionsCGL.h; sourceTree = "<group>"; };
 		A3C3FE20255DDE7900B73018 /* FunctionsCGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionsCGL.cpp; sourceTree = "<group>"; };
@@ -2491,7 +2490,6 @@
 		5CB300DF1DE39F0300D2C405 /* gl */ = {
 			isa = PBXGroup;
 			children = (
-				A3C3FE18255DDE4300B73018 /* apple */,
 				5CB301481DE39F3600D2C405 /* cgl */,
 				313BCE272360F78900FC39E5 /* eagl */,
 				5CB300E01DE39F1A00D2C405 /* BlitGL.cpp */,
@@ -2871,15 +2869,6 @@
 			name = include;
 			sourceTree = "<group>";
 		};
-		A3C3FE18255DDE4300B73018 /* apple */ = {
-			isa = PBXGroup;
-			children = (
-				A3C3FE19255DDE4300B73018 /* DisplayApple_api.cpp */,
-				A3C3FE1A255DDE4300B73018 /* DisplayApple_api.h */,
-			);
-			path = apple;
-			sourceTree = "<group>";
-		};
 		A3C3FE1B255DDE7800B73018 /* apple */ = {
 			isa = PBXGroup;
 			children = (
@@ -3060,6 +3049,8 @@
 				FF81FEA125818D6800894E24 /* mtl_state_cache.mm */,
 				FF81FEC225818D6800894E24 /* mtl_utils.h */,
 				FF81FE9D25818D6800894E24 /* mtl_utils.mm */,
+				7BD5BEE729F139F1003F2E53 /* process.cpp */,
+				7BD5BEE829F139F1003F2E53 /* process.h */,
 				FF81FE8125818D6800894E24 /* ProgramMtl.h */,
 				FF81FECD25818D6800894E24 /* ProgramMtl.mm */,
 				FF582E1526544FC4006DA5B8 /* ProvokingVertexHelper.h */,
@@ -3298,7 +3289,6 @@
 				31CDFF702491849200486F27 /* DirectiveParser.h in Headers */,
 				31CD0014249184E700486F27 /* DispatchTableGL_autogen.h in Headers */,
 				31CD006A249184FC00486F27 /* Display.h in Headers */,
-				A3C49C1F255DF88F005E8DF7 /* DisplayApple_api.h in Headers */,
 				31CD0008249184BB00486F27 /* DisplayEAGL.h in Headers */,
 				31CD0023249184E700486F27 /* DisplayGL.h in Headers */,
 				31CD002F249184F400486F27 /* DisplayImpl.h in Headers */,
@@ -3802,7 +3792,6 @@
 				DF83E23D2639FCD5000825EF /* DiscoverEnclosingFunctionTraverser.cpp in Sources */,
 				DF83E3532639FE92000825EF /* DispatchTableGL_autogen.cpp in Sources */,
 				DF83E3002639FE17000825EF /* Display.cpp in Sources */,
-				DF83E3642639FE92000825EF /* DisplayApple_api.cpp in Sources */,
 				DF83E35D2639FE92000825EF /* DisplayGL.cpp in Sources */,
 				DF83E3982639FED4000825EF /* DisplayImpl.cpp in Sources */,
 				DF83E3762639FEB8000825EF /* DisplayMtl.mm in Sources */,
@@ -3950,6 +3939,7 @@
 				DF83E22C2639FCB0000825EF /* preprocessor_lex_autogen.cpp in Sources */,
 				DF83E2332639FCB0000825EF /* preprocessor_tab_autogen.cpp in Sources */,
 				FFD002B32746E5B2002BE3BC /* proc_table_egl_autogen.cpp in Sources */,
+				7BD5BEE929F139F2003F2E53 /* process.cpp in Sources */,
 				DF83E3052639FE17000825EF /* Program.cpp in Sources */,
 				DF83E3062639FE17000825EF /* ProgramExecutable.cpp in Sources */,
 				DF83E34E2639FE92000825EF /* ProgramGL.cpp in Sources */,

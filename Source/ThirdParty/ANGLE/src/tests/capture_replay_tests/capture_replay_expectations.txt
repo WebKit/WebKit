@@ -201,6 +201,3 @@
 
 # Fails if run after DifferentStencilMasksTest.DrawWithSameEffectiveMask
 8079 : DiscardFramebufferEXTTest.ClearDepthThenDrawWithoutDepthTestThenDiscard/* = SKIP_FOR_CAPTURE
-
-# Sample coverage must not affect single sample render targets
-8102 : SimpleOperationTest.DrawSingleSampleWithCoverage/* = SKIP_FOR_CAPTURE

@@ -830,11 +830,11 @@
             "issue": "http://anglebug.com/3586"
         },
         {
-            "name": "precision_safe_division",
+            "name": "double_depth_bias_constant_factor",
             "category": "Workarounds",
             "description": [
-                "Special case handling for platforms that do not generate 1.0f even when the dividend and ",
-                "divisor have the same value"
+                "Due to a Vulkan spec ambiguity, some drivers interpret depthBiasConstantFactor as half ",
+                "the expected value"
             ]
         },
         {
@@ -943,6 +943,14 @@
                 "sample qualifier"
             ],
             "issue": "http://anglebug.com/6876"
+        },
+        {
+            "name": "explicitly_cast_mediump_float_to_16_bit",
+            "category": "Workarounds",
+            "description": [
+                "Explicitly cast mediump floating point values to 16 bit"
+            ],
+            "issue": "https://issuetracker.google.com/274859104"
         },
         {
             "name": "force_continuous_refresh_on_shared_present",

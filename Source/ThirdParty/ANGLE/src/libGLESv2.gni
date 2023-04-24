@@ -118,13 +118,15 @@ if (is_apple) {
     "src/common/apple/SoftLinking.h",
     "src/common/apple/apple_platform.h",
     "src/common/apple_platform_utils.mm",
-    "src/common/gl/cgl/FunctionsCGL.cpp",
-    "src/common/gl/cgl/FunctionsCGL.h",
     "src/common/system_utils_apple.cpp",
     "src/common/system_utils_posix.cpp",
   ]
   if (is_mac) {
-    libangle_common_sources += [ "src/common/system_utils_mac.cpp" ]
+    libangle_common_sources += [
+      "src/common/gl/cgl/FunctionsCGL.cpp",
+      "src/common/gl/cgl/FunctionsCGL.h",
+      "src/common/system_utils_mac.cpp",
+    ]
   }
   if (is_ios) {
     libangle_common_sources += [ "src/common/system_utils_ios.cpp" ]
@@ -149,6 +151,7 @@ libangle_image_util_headers = [
   "src/image_util/imageformats.h",
   "src/image_util/loadimage.h",
   "src/image_util/loadimage.inc",
+  "src/image_util/storeimage.h",
 ]
 
 libangle_image_util_sources = [
@@ -158,6 +161,7 @@ libangle_image_util_sources = [
   "src/image_util/loadimage_astc.cpp",
   "src/image_util/loadimage_etc.cpp",
   "src/image_util/loadimage_paletted.cpp",
+  "src/image_util/storeimage_paletted.cpp",
 ]
 if (angle_has_astc_encoder) {
   libangle_image_util_sources += [ "src/image_util/AstcDecompressor.cpp" ]
@@ -558,11 +562,7 @@ libangle_cl_sources = [
   "src/libANGLE/validationCL.cpp",
 ]
 
-libangle_mac_sources = [
-  "src/libANGLE/renderer/driver_utils_mac.mm",
-  "src/libANGLE/renderer/gl/apple/DisplayApple_api.cpp",
-  "src/libANGLE/renderer/gl/apple/DisplayApple_api.h",
-]
+libangle_mac_sources = [ "src/libANGLE/renderer/driver_utils_mac.mm" ]
 
 # The frame capture headers are always visible to libANGLE.
 libangle_sources += [

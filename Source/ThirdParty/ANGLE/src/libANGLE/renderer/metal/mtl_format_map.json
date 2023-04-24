@@ -454,7 +454,7 @@
                 "blendable": "display->supportsAppleGPUFamily(1)",
                 "multisample": "display->supportsAppleGPUFamily(1)",
                 "resolve": "display->supportsAppleGPUFamily(1)",
-                "colorRenderable": "display->supportsAppleGPUFamily(1)"
+                "colorRenderable": "display->supportsAppleGPUFamily(1) && !display->isSimulator()"
             },
             "MTLPixelFormatR8Uint":{
                 "filterable": "false",

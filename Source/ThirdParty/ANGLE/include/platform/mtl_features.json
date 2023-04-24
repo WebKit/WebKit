@@ -158,13 +158,6 @@
             ]
         },
         {
-            "name": "rewrite_row_major_matrices",
-            "category": "Features",
-            "description": [
-                "Rewrite row major matrices in shaders as column major."
-            ]
-        },
-        {
             "name": "intel_explicit_bool_cast_workaround",
             "category": "Workarounds",
             "description": [
@@ -191,6 +184,13 @@
             "category": "Features",
             "description": [
                 "Do not create swizzled views of stencil textures"
+            ]
+        },
+        {
+            "name": "emulate_alpha_to_coverage",
+            "category": "Workarounds",
+            "description": [
+                "Some GPUs ignore alpha-to-coverage when [[sample_mask]] is written"
             ]
         },
         {
@@ -289,6 +289,40 @@
                 "Compile MTLLibrary in multiple threads."
             ],
             "issue": "http://crbug.com/1385510"
+        },
+        {
+            "name": "always_prefer_staged_texture_uploads",
+            "category": "Features",
+            "description": [
+                "Always prefer to upload texture data via a staging buffer and avoid MTLTexture::replaceRegion."
+            ],
+            "issue": "http://crbug.com/1380790"
+        },
+        {
+            "name": "disable_staged_initialization_of_packed_texture_formats",
+            "category": "Features",
+            "description": [
+                "Staged GPU upload of some packed texture formats such as RGB9_E5 fail on Intel GPUs."
+            ],
+            "issue": "http://anglebug.com/8092"
+        },
+        {
+            "name": "compile_metal_shaders",
+            "category": "Features",
+            "description": [
+                "Compiles metal shaders using command line tools and saves to BlobCache. ",
+                "Requires using --no-sandbox and disabling enableParallelMtlLibraryCompilation."
+            ],
+            "issue": "http://crbug.com/1423136"
+        },
+        {
+            "name": "load_metal_shaders_from_blob_cache",
+            "category": "Features",
+            "description": [
+                "Loads metal shaders from blob cache. Useful if compile_metal_shaders was used to ",
+                "generate shaders."
+            ],
+            "issue": "http://crbug.com/1423136"
         }
     ]
 }

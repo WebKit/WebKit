@@ -407,13 +407,6 @@ void PixelLocalStoragePlane::bindToImage(Context *context, GLuint unit, bool nee
                 break;
         }
     }
-    if (mTextureRef->getType() != TextureType::_2D)
-    {
-        // TODO(anglebug.com/7279): Texture types other than GL_TEXTURE_2D will take a lot of
-        // consideration to support on all backends. Hold of on fully implementing them until the
-        // other backends are in place.
-        UNIMPLEMENTED();
-    }
     context->bindImageTexture(unit, mTextureRef->id(), mTextureImageIndex.getLevelIndex(), GL_FALSE,
                               mTextureImageIndex.getLayerIndex(), GL_READ_WRITE,
                               imageBindingFormat);

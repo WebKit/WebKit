@@ -7,27 +7,31 @@
 //   Parser and interpreter for the C-based replays.
 //
 
-#define ANGLE_REPLAY_EXPORT
-
 #include "trace_interpreter.h"
 
+#include "anglebase/no_destructor.h"
 #include "common/gl_enum_utils.h"
 #include "common/string_utils.h"
 #include "trace_fixture.h"
+
+#define USE_SYSTEM_ZLIB
+#include "compression_utils_portable.h"
 
 namespace angle
 {
 namespace
 {
-bool ShouldSkipFile(const std::string &file)
+bool ShouldParseFile(const std::string &file)
 {
-    // Skip non-C-source files.
-    if (file.back() != 'c')
-    {
-        return true;
-    }
+    return EndsWith(file, ".c") || EndsWith(file, ".cpp");
+}
 
-    return false;
+void ReplayTraceFunction(const TraceFunction &func, const TraceFunctionMap &customFunctions)
+{
+    for (const CallCapture &call : func)
+    {
+        ReplayTraceFunctionCall(call, customFunctions);
+    }
 }
 
 class Parser : angle::NonCopyable
@@ -57,9 +61,15 @@ class Parser : angle::NonCopyable
                 ASSERT(check("void "));
                 readFunction();
             }
+            else if (peek() == 'c')
+            {
+                ASSERT(check("const "));
+                readMultilineString();
+            }
             else
             {
-                readMultilineString();
+                printf("Unexpected character: '%c'\n", peek());
+                UNREACHABLE();
             }
         }
     }
@@ -127,18 +137,21 @@ class Parser : angle::NonCopyable
             if (peek() == '\\')
             {
                 advance();
-                if (peek() == 'n')
+                switch (peek())
                 {
-                    *stringOut += '\n';
-                }
-                else if (peek() == '\"')
-                {
-                    *stringOut += '\"';
-                }
-                else
-                {
-                    printf("Unrecognized escape character: \\%c\n", peek());
-                    UNREACHABLE();
+                    case 'n':
+                        *stringOut += '\n';
+                        break;
+                    case '\"':
+                        *stringOut += '\"';
+                        break;
+                    case '\\':
+                        *stringOut += '\\';
+                        break;
+                    default:
+                        printf("Unrecognized escape character: \\%c\n", peek());
+                        UNREACHABLE();
+                        break;
                 }
             }
             else
@@ -417,14 +430,16 @@ void PackIntParameter(ParamBuffer &params, ParamType paramType, const Token &tok
     params.addUnnamedParam(paramType, value);
 }
 
+uint32_t GetStringArrayOffset(const Token &token, const char *prefixString)
+{
+    const char *offsetString = &token[strlen(prefixString)];
+    return atoi(offsetString);
+}
+
 template <typename PointerT>
-void PackMemPointer(ParamBuffer &params,
-                    ParamType paramType,
-                    const char *offsetString,
-                    uint8_t *mem)
+void PackMemPointer(ParamBuffer &params, ParamType paramType, uint32_t offset, uint8_t *mem)
 {
     ASSERT(gBinaryData);
-    uint32_t offset = atoi(offsetString);
     params.addUnnamedParam(paramType, reinterpret_cast<PointerT>(&mem[offset]));
 }
 
@@ -438,7 +453,8 @@ void PackMutablePointerParameter(ParamBuffer &params, ParamType paramType, const
     else if (token[0] == '&')
     {
         ASSERT(BeginsWith(token, "&gReadBuffer[") && EndsWith(token, "]"));
-        PackMemPointer<T *>(params, paramType, &token[strlen("&gReadBuffer[")], gReadBuffer);
+        uint32_t offset = GetStringArrayOffset(token, "&gReadBuffer[");
+        PackMemPointer<T *>(params, paramType, offset, gReadBuffer);
     }
     else if (token[0] == 'g')
     {
@@ -462,12 +478,25 @@ void PackConstPointerParameter(ParamBuffer &params, ParamType paramType, const T
     else if (token[0] == '&')
     {
         ASSERT(BeginsWith(token, "&gBinaryData[") && EndsWith(token, "]"));
-        PackMemPointer<const T *>(params, paramType, &token[strlen("&gBinaryData[")], gBinaryData);
+        uint32_t offset = GetStringArrayOffset(token, "&gReadBuffer[");
+        PackMemPointer<const T *>(params, paramType, offset, gBinaryData);
     }
     else if (token[0] == 'g')
     {
-        ASSERT(strcmp(token, "gResourceIDBuffer") == 0);
-        params.addUnnamedParam(paramType, reinterpret_cast<const T *>(gResourceIDBuffer));
+        if (strcmp(token, "gResourceIDBuffer") == 0)
+        {
+            params.addUnnamedParam(paramType, reinterpret_cast<const T *>(gResourceIDBuffer));
+        }
+        else if (BeginsWith(token, "gClientArrays"))
+        {
+            uint32_t offset = GetStringArrayOffset(token, "gClientArrays[");
+            params.addUnnamedParam(paramType, reinterpret_cast<const T *>(gClientArrays[offset]));
+        }
+        else
+        {
+            printf("Unexpected token: %s\n", token);
+            UNREACHABLE();
+        }
     }
     else
     {
@@ -477,31 +506,27 @@ void PackConstPointerParameter(ParamBuffer &params, ParamType paramType, const T
                                reinterpret_cast<const T *>(static_cast<uintptr_t>(offset)));
     }
 }
-}  // anonymous namespace
 
-TraceInterpreter::TraceInterpreter(const TraceInfo &traceInfo,
-                                   const char *testDataDir,
-                                   bool verboseLogging)
-    : mTraceInfo(traceInfo), mTestDataDir(testDataDir), mVerboseLogging(verboseLogging)
-{}
-
-TraceInterpreter::~TraceInterpreter() = default;
-
-bool TraceInterpreter::valid() const
+class TraceInterpreter : angle::NonCopyable
 {
-    return true;
-}
+  public:
+    TraceInterpreter()  = default;
+    ~TraceInterpreter() = default;
 
-void TraceInterpreter::setBinaryDataDir(const char *dataDir)
-{
-    SetBinaryDataDir(dataDir);
-}
+    void replayFrame(uint32_t frameIndex);
+    void setupReplay();
+    void resetReplay();
+    const char *getSerializedContextState(uint32_t frameIndex);
 
-void TraceInterpreter::setBinaryDataDecompressCallback(DecompressCallback decompressCallback,
-                                                       DeleteCallback deleteCallback)
-{
-    SetBinaryDataDecompressCallback(decompressCallback, deleteCallback);
-}
+  private:
+    void runTraceFunction(const char *name) const;
+    void parseTraceUncompressed();
+    void parseTraceGz();
+
+    TraceFunctionMap mTraceFunctions;
+    TraceStringMap mTraceStrings;
+    bool mVerboseLogging = true;
+};
 
 void TraceInterpreter::replayFrame(uint32_t frameIndex)
 {
@@ -510,11 +535,11 @@ void TraceInterpreter::replayFrame(uint32_t frameIndex)
     runTraceFunction(funcName);
 }
 
-void TraceInterpreter::setupReplay()
+void TraceInterpreter::parseTraceUncompressed()
 {
-    for (const std::string &file : mTraceInfo.traceFiles)
+    for (const std::string &file : gTraceFiles)
     {
-        if (ShouldSkipFile(file))
+        if (!ShouldParseFile(file))
         {
             if (mVerboseLogging)
             {
@@ -528,7 +553,7 @@ void TraceInterpreter::setupReplay()
             printf("Parsing functions from %s\n", file.c_str());
         }
         std::stringstream pathStream;
-        pathStream << mTestDataDir << GetPathSeparator() << file;
+        pathStream << gBinaryDataDir << GetPathSeparator() << file;
         std::string path = pathStream.str();
 
         std::string fileData;
@@ -539,6 +564,58 @@ void TraceInterpreter::setupReplay()
 
         Parser parser(fileData, mTraceFunctions, mTraceStrings, mVerboseLogging);
         parser.parse();
+    }
+}
+
+void TraceInterpreter::parseTraceGz()
+{
+    if (mVerboseLogging)
+    {
+        printf("Parsing functions from %s\n", gTraceGzPath.c_str());
+    }
+
+    FILE *fp = fopen(gTraceGzPath.c_str(), "rb");
+    if (fp == 0)
+    {
+        printf("Error loading trace (gz) from: %s\n", gTraceGzPath.c_str());
+        exit(1);
+    }
+
+    fseek(fp, 0, SEEK_END);
+    long size = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+
+    std::vector<uint8_t> compressedData(size);
+    (void)fread(compressedData.data(), 1, size, fp);
+
+    uint32_t uncompressedSize =
+        zlib_internal::GetGzipUncompressedSize(compressedData.data(), compressedData.size());
+
+    std::string uncompressedData(uncompressedSize, 0);
+    uLong destLen = uncompressedSize;
+    int zResult = zlib_internal::GzipUncompressHelper((uint8_t *)uncompressedData.data(), &destLen,
+                                                      compressedData.data(),
+                                                      static_cast<uLong>(compressedData.size()));
+
+    if (zResult != Z_OK)
+    {
+        printf("Failure to decompress gz trace: %s\n", gTraceGzPath.c_str());
+        exit(1);
+    }
+
+    Parser parser(uncompressedData, mTraceFunctions, mTraceStrings, mVerboseLogging);
+    parser.parse();
+}
+
+void TraceInterpreter::setupReplay()
+{
+    if (!gTraceGzPath.empty())
+    {
+        parseTraceGz();
+    }
+    else
+    {
+        parseTraceUncompressed();
     }
 
     if (mTraceFunctions.count("SetupReplay") == 0)
@@ -556,11 +633,6 @@ void TraceInterpreter::resetReplay()
     runTraceFunction("ResetReplay");
 }
 
-void TraceInterpreter::finishReplay()
-{
-    FinishReplay();
-}
-
 const char *TraceInterpreter::getSerializedContextState(uint32_t frameIndex)
 {
     // TODO: Necessary for complete self-testing. http://anglebug.com/7779
@@ -568,18 +640,25 @@ const char *TraceInterpreter::getSerializedContextState(uint32_t frameIndex)
     return nullptr;
 }
 
-void TraceInterpreter::setValidateSerializedStateCallback(ValidateSerializedStateCallback callback)
-{
-    SetValidateSerializedStateCallback(callback);
-}
-
 void TraceInterpreter::runTraceFunction(const char *name) const
 {
     auto iter = mTraceFunctions.find(name);
-    ASSERT(iter != mTraceFunctions.end());
+    if (iter == mTraceFunctions.end())
+    {
+        printf("Cannot find function: %s\n", name);
+        UNREACHABLE();
+    }
     const TraceFunction &func = iter->second;
     ReplayTraceFunction(func, mTraceFunctions);
 }
+
+TraceInterpreter &GetInterpreter()
+{
+    static angle::base::NoDestructor<std::unique_ptr<TraceInterpreter>> sTraceInterpreter(
+        new TraceInterpreter());
+    return *sTraceInterpreter.get()->get();
+}
+}  // anonymous namespace
 
 template <>
 void PackParameter<uint32_t>(ParamBuffer &params, const Token &token, const TraceStringMap &strings)
@@ -739,7 +818,7 @@ void PackParameter<uint8_t>(ParamBuffer &params, const Token &token, const Trace
 template <>
 void PackParameter<float *>(ParamBuffer &params, const Token &token, const TraceStringMap &strings)
 {
-    UNREACHABLE();
+    PackMutablePointerParameter<float>(params, ParamType::TGLfloatPointer, token);
 }
 
 template <>
@@ -845,7 +924,7 @@ void PackParameter<unsigned char *>(ParamBuffer &params,
                                     const Token &token,
                                     const TraceStringMap &strings)
 {
-    UNREACHABLE();
+    PackMutablePointerParameter<GLubyte>(params, ParamType::TGLubytePointer, token);
 }
 
 template <>
@@ -921,4 +1000,62 @@ void PackParameter<unsigned long>(ParamBuffer &params,
     PackIntParameter<uint64_t>(params, ParamType::TGLuint64, token);
 }
 #endif  // defined(ANGLE_PLATFORM_APPLE) || !defined(ANGLE_IS_64_BIT_CPU)
+
+GLuint GetResourceIDMapValue(ResourceIDType resourceIDType, GLuint key)
+{
+    switch (resourceIDType)
+    {
+        case ResourceIDType::Buffer:
+            return gBufferMap[key];
+        case ResourceIDType::FenceNV:
+            return gFenceNVMap[key];
+        case ResourceIDType::Framebuffer:
+            return gFramebufferMap[key];
+        case ResourceIDType::ProgramPipeline:
+            return gProgramPipelineMap[key];
+        case ResourceIDType::Query:
+            return gQueryMap[key];
+        case ResourceIDType::Renderbuffer:
+            return gRenderbufferMap[key];
+        case ResourceIDType::Sampler:
+            return gSamplerMap[key];
+        case ResourceIDType::Semaphore:
+            return gSemaphoreMap[key];
+        case ResourceIDType::ShaderProgram:
+            return gShaderProgramMap[key];
+        case ResourceIDType::Texture:
+            return gTextureMap[key];
+        case ResourceIDType::TransformFeedback:
+            return gTransformFeedbackMap[key];
+        case ResourceIDType::VertexArray:
+            return gVertexArrayMap[key];
+        default:
+            printf("Incompatible resource ID type: %d\n", static_cast<int>(resourceIDType));
+            UNREACHABLE();
+            return 0;
+    }
+}
+
 }  // namespace angle
+
+extern "C" {
+void SetupReplay()
+{
+    angle::GetInterpreter().setupReplay();
+}
+
+void ReplayFrame(uint32_t frameIndex)
+{
+    angle::GetInterpreter().replayFrame(frameIndex);
+}
+
+void ResetReplay()
+{
+    angle::GetInterpreter().resetReplay();
+}
+
+const char *GetSerializedContextState(uint32_t frameIndex)
+{
+    return angle::GetInterpreter().getSerializedContextState(frameIndex);
+}
+}  // extern "C"

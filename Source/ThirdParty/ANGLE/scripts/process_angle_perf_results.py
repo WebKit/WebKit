@@ -740,7 +740,7 @@ def main():
 
     with open(args.summary_json) as f:
         shard_summary = json.load(f)
-    shard_failed = any(int(shard['exit_code']) != 0 for shard in shard_summary['shards'])
+    shard_failed = any(int(shard.get('exit_code', 1)) != 0 for shard in shard_summary['shards'])
 
     output_results_dir = tempfile.mkdtemp('outputresults')
     try:

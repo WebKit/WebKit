@@ -239,23 +239,33 @@ if (angle_has_frame_capture) {
   angle_source_set("angle_frame_capture_test_utils") {
     testonly = true
     sources = [
-      "capture/frame_capture_replay_autogen.cpp",
       "capture/frame_capture_test_utils.cpp",
       "capture/frame_capture_test_utils.h",
+    ]
+    deps = [ "$angle_root/third_party/rapidjson" ]
+
+    public_configs += [ ":angle_frame_capture_test_utils_config" ]
+    public_deps = [
+      "$angle_root:angle_capture_common",
+      "$angle_root:angle_common",
+      "$angle_root:angle_compression",
+    ]
+  }
+
+  angle_shared_library("angle_trace_interpreter") {
+    testonly = true
+    sources = [
+      "capture/frame_capture_replay_autogen.cpp",
       "capture/trace_interpreter.cpp",
       "capture/trace_interpreter.h",
       "capture/trace_interpreter_autogen.cpp",
     ]
     deps = [
+      ":angle_frame_capture_test_utils",
       ":angle_trace_fixture",
       ":angle_trace_loader",
-      "$angle_root:angle_capture_common",
-      "$angle_root:angle_common",
-      "$angle_root:angle_compression",
-      "$angle_root/third_party/rapidjson",
     ]
-
-    public_configs += [ ":angle_frame_capture_test_utils_config" ]
+    defines = [ "ANGLE_REPLAY_IMPLEMENTATION" ]
   }
 }
 

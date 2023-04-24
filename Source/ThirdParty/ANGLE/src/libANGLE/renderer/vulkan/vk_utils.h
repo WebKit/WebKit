@@ -522,12 +522,6 @@ angle::Result InitMappableAllocation(Context *context,
                                      int value,
                                      VkMemoryPropertyFlags memoryPropertyFlags);
 
-angle::Result InitMappableDeviceMemory(Context *context,
-                                       DeviceMemory *deviceMemory,
-                                       VkDeviceSize size,
-                                       int value,
-                                       VkMemoryPropertyFlags memoryPropertyFlags);
-
 angle::Result AllocateBufferMemory(Context *context,
                                    vk::MemoryAllocationType memoryAllocationType,
                                    VkMemoryPropertyFlags requestedMemoryPropertyFlags,

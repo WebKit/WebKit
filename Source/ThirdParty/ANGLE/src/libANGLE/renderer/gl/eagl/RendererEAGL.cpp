@@ -6,12 +6,8 @@
 
 // RendererEAGL.cpp: Implements the class methods for RendererEAGL.
 
-#import "common/platform.h"
-
-#if defined(ANGLE_ENABLE_EAGL)
-
-#    include "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
-#    include "libANGLE/renderer/gl/eagl/RendererEAGL.h"
+#include "libANGLE/renderer/gl/eagl/RendererEAGL.h"
+#include "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
 
 namespace rx
 {
@@ -30,5 +26,3 @@ WorkerContext *RendererEAGL::createWorkerContext(std::string *infoLog)
 }
 
 }  // namespace rx
-
-#endif  // defined(ANGLE_ENABLE_EAGL)

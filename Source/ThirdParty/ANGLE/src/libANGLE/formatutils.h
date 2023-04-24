@@ -205,6 +205,8 @@ struct InternalFormat
     bool isInt() const;
     bool isDepthOrStencil() const;
 
+    GLuint getEGLConfigBufferSize() const;
+
     bool operator==(const InternalFormat &other) const;
     bool operator!=(const InternalFormat &other) const;
 

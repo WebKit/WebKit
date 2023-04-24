@@ -170,13 +170,6 @@ struct FeaturesMtl : FeatureSetBase
         &members,
     };
 
-    FeatureInfo rewriteRowMajorMatrices = {
-        "rewriteRowMajorMatrices",
-        FeatureCategory::MetalFeatures,
-        "Rewrite row major matrices in shaders as column major.",
-        &members,
-    };
-
     FeatureInfo intelExplicitBoolCastWorkaround = {
         "intelExplicitBoolCastWorkaround",
         FeatureCategory::MetalWorkarounds,
@@ -203,6 +196,13 @@ struct FeaturesMtl : FeatureSetBase
         "avoidStencilTextureSwizzle",
         FeatureCategory::MetalFeatures,
         "Do not create swizzled views of stencil textures",
+        &members,
+    };
+
+    FeatureInfo emulateAlphaToCoverage = {
+        "emulateAlphaToCoverage",
+        FeatureCategory::MetalWorkarounds,
+        "Some GPUs ignore alpha-to-coverage when [[sample_mask]] is written",
         &members,
     };
 
@@ -265,6 +265,29 @@ struct FeaturesMtl : FeatureSetBase
     FeatureInfo enableParallelMtlLibraryCompilation = {
         "enableParallelMtlLibraryCompilation", FeatureCategory::MetalFeatures,
         "Compile MTLLibrary in multiple threads.", &members, "http://crbug.com/1385510"};
+
+    FeatureInfo alwaysPreferStagedTextureUploads = {
+        "alwaysPreferStagedTextureUploads", FeatureCategory::MetalFeatures,
+        "Always prefer to upload texture data via a staging buffer and avoid "
+        "MTLTexture::replaceRegion.",
+        &members, "http://crbug.com/1380790"};
+
+    FeatureInfo disableStagedInitializationOfPackedTextureFormats = {
+        "disableStagedInitializationOfPackedTextureFormats", FeatureCategory::MetalFeatures,
+        "Staged GPU upload of some packed texture formats such as RGB9_E5 fail on Intel GPUs.",
+        &members, "http://anglebug.com/8092"};
+
+    FeatureInfo compileMetalShaders = {
+        "compileMetalShaders", FeatureCategory::MetalFeatures,
+        "Compiles metal shaders using command line tools and saves to BlobCache. "
+        "Requires using --no-sandbox and disabling enableParallelMtlLibraryCompilation.",
+        &members, "http://crbug.com/1423136"};
+
+    FeatureInfo loadMetalShadersFromBlobCache = {
+        "loadMetalShadersFromBlobCache", FeatureCategory::MetalFeatures,
+        "Loads metal shaders from blob cache. Useful if compile_metal_shaders was used to "
+        "generate shaders.",
+        &members, "http://crbug.com/1423136"};
 };
 
 inline FeaturesMtl::FeaturesMtl()  = default;

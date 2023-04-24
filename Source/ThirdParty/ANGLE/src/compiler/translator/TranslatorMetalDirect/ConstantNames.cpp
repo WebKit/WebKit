@@ -16,7 +16,7 @@ namespace sh
 namespace mtl
 {
 /** extern */
-const char kCoverageMaskEnabledConstName[]      = "ANGLECoverageMaskEnabled";
+const char kSampleMaskEnabledConstName[]        = "ANGLESampleMaskEnabled";
 const char kRasterizerDiscardEnabledConstName[] = "ANGLERasterizerDisabled";
 const char kDepthWriteEnabledConstName[]        = "ANGLEDepthWriteEnabled";
 }  // namespace mtl

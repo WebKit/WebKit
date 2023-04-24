@@ -127,27 +127,25 @@
 #    include <TargetConditionals.h>
 #    if TARGET_OS_OSX
 #        define ANGLE_PLATFORM_MACOS 1
-#    else
-#        define ANGLE_PLATFORM_APPLE_EMBEDDED 1
+#    elif TARGET_OS_IPHONE
+#        define ANGLE_PLATFORM_IOS_FAMILY 1
+#        if TARGET_OS_SIMULATOR
+#            define ANGLE_PLATFORM_IOS_FAMILY_SIMULATOR 1
+#        endif
 #        if TARGET_OS_IOS
 #            define ANGLE_PLATFORM_IOS 1
 #            if TARGET_OS_MACCATALYST
 #                define ANGLE_PLATFORM_MACCATALYST 1
 #            endif
 #        elif TARGET_OS_WATCH
-#            define ANGLE_PLATFORM_WATCH 1
+#            define ANGLE_PLATFORM_WATCHOS 1
 #        elif TARGET_OS_TV
 #            define ANGLE_PLATFORM_APPLETV 1
 #        endif
 #    endif
-#
-#    if TARGET_OS_SIMULATOR
-#        define ANGLE_PLATFORM_IOS_SIMULATOR 1
-#    endif
-#
 #    // Identify Metal API >= what shipped on macOS Catalina.
-#    if (defined(ANGLE_PLATFORM_MACOS) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101500) || \
-        (defined(ANGLE_PLATFORM_IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000)
+#    if (ANGLE_PLATFORM_MACOS && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101500) || \
+        (ANGLE_PLATFORM_IOS_FAMILY && __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000)
 #        define ANGLE_WITH_MODERN_METAL_API 1
 #    endif
 #endif

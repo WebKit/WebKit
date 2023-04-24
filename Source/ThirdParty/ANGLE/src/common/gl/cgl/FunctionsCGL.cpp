@@ -9,8 +9,6 @@
 #include "common/gl/cgl/FunctionsCGL.h"
 #include "common/platform.h"
 
-#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
-
 SOFT_LINK_FRAMEWORK_SOURCE(OpenGL)
 
 SOFT_LINK_FUNCTION_SOURCE(OpenGL,
@@ -74,5 +72,3 @@ SOFT_LINK_FUNCTION_SOURCE(OpenGL,
                           CGLError,
                           (GLuint display_mask, CGLRendererInfoObj *rend, GLint *nrend),
                           (display_mask, rend, nrend))
-
-#endif  // defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)

@@ -11,7 +11,6 @@
 
 #include "common/frame_capture_utils.h"
 #include "common/string_utils.h"
-#include "trace_fixture.h"
 
 #include <rapidjson/document.h>
 #include <rapidjson/istreamwrapper.h>
@@ -154,46 +153,21 @@ bool LoadTraceInfoFromJSON(const std::string &traceName,
     return true;
 }
 
-void ReplayTraceFunction(const TraceFunction &func, const TraceFunctionMap &customFunctions)
+TraceLibrary::TraceLibrary(const std::string &traceName, const TraceInfo &traceInfo)
 {
-    for (const CallCapture &call : func)
-    {
-        ReplayTraceFunctionCall(call, customFunctions);
-    }
-}
+    std::stringstream libNameStr;
+#if !defined(ANGLE_PLATFORM_WINDOWS)
+    libNameStr << "lib";
+#endif  // !defined(ANGLE_PLATFORM_WINDOWS)
+    libNameStr << traceName;
+#if defined(ANGLE_PLATFORM_ANDROID) && defined(COMPONENT_BUILD)
+    // Added to shared library names in Android component builds in
+    // https://chromium.googlesource.com/chromium/src/+/9bacc8c4868cc802f69e1e858eea6757217a508f/build/toolchain/toolchain.gni#56
+    libNameStr << ".cr";
+#endif  // defined(ANGLE_PLATFORM_ANDROID) && defined(COMPONENT_BUILD)
+    std::string libName = libNameStr.str();
+    mTraceLibrary.reset(OpenSharedLibrary(libName.c_str(), SearchType::ModuleDir));
 
-GLuint GetResourceIDMapValue(ResourceIDType resourceIDType, GLuint key)
-{
-    switch (resourceIDType)
-    {
-        case ResourceIDType::Buffer:
-            return gBufferMap[key];
-        case ResourceIDType::FenceNV:
-            return gFenceNVMap[key];
-        case ResourceIDType::Framebuffer:
-            return gFramebufferMap[key];
-        case ResourceIDType::ProgramPipeline:
-            return gProgramPipelineMap[key];
-        case ResourceIDType::Query:
-            return gQueryMap[key];
-        case ResourceIDType::Renderbuffer:
-            return gRenderbufferMap[key];
-        case ResourceIDType::Sampler:
-            return gSamplerMap[key];
-        case ResourceIDType::Semaphore:
-            return gSemaphoreMap[key];
-        case ResourceIDType::ShaderProgram:
-            return gShaderProgramMap[key];
-        case ResourceIDType::Texture:
-            return gTextureMap[key];
-        case ResourceIDType::TransformFeedback:
-            return gTransformFeedbackMap[key];
-        case ResourceIDType::VertexArray:
-            return gVertexArrayMap[key];
-        default:
-            printf("Incompatible resource ID type: %d\n", static_cast<int>(resourceIDType));
-            UNREACHABLE();
-            return 0;
-    }
+    callFunc<SetTraceInfoFunc>("SetTraceInfo", traceInfo.traceFiles);
 }
 }  // namespace angle

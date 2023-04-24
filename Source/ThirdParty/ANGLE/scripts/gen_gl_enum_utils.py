@@ -57,6 +57,7 @@ template_gl_enums_source = """// GENERATED FILE - DO NOT EDIT.
 #include "common/debug.h"
 #include "common/gl_enum_utils.h"
 
+#include <algorithm>
 #include <cstring>
 
 namespace gl
@@ -92,10 +93,27 @@ const char *GLenumToString(BigGLEnum enumGroup, unsigned int value)
     }}
 }}
 
+namespace
+{{
+using StringEnumEntry = std::pair<const char*, unsigned int>;
+static StringEnumEntry g_stringEnumTable[] = {{
+    {string_to_enum_table}
+}};
+
+const size_t g_numStringEnums = std::size(g_stringEnumTable);
+}}  // anonymous namespace
+
 unsigned int StringToGLenum(const char *str)
 {{
-{string_to_enum_table}
-    printf("Unknown enum string: %s\\n", str);
+    auto it = std::lower_bound(
+        &g_stringEnumTable[0], &g_stringEnumTable[g_numStringEnums], str,
+        [](const StringEnumEntry& a, const char* b) {{ return strcmp(a.first, b) < 0; }});
+
+    if (strcmp(it->first, str) == 0)
+    {{
+        return it->second;
+    }}
+
     UNREACHABLE();
     return 0;
 }}
@@ -162,12 +180,6 @@ def dump_value_to_string_mapping(enum_groups, api_enum):
 
 
 def dump_string_to_value_mapping(enums_and_values):
-    templ = """\
-    if (strcmp(str, "{enum}") == 0)
-    {{
-        return {value};
-    }}
-"""
 
     def f(value):
         if value < 0:
@@ -179,8 +191,7 @@ def dump_string_to_value_mapping(enums_and_values):
         else:
             return "0xFFFFFFFF"
 
-    items = [templ.format(enum=k, value=f(v)) for (k, v) in sorted(enums_and_values)]
-    return ''.join(items)
+    return '\n'.join('{"%s", %s},' % (k, f(v)) for k, v in sorted(enums_and_values))
 
 
 def main(header_output_path, source_output_path):

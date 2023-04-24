@@ -73,6 +73,7 @@ static GraphicsContextGLANGLE* currentContext;
 
 static const char* const disabledANGLEMetalFeatures[] = {
     "enableInMemoryMtlLibraryCache", // This would leak all program binary objects.
+    "alwaysPreferStagedTextureUploads", // This would timeout tests due to excess staging buffer allocations and fail tests on MacPro.
     nullptr
 };
 

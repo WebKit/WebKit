@@ -40,7 +40,8 @@ bool TranslatorESSL::translate(TIntermBlock *root,
 
     int shaderVer = getShaderVersion();  // Frontend shader version.
     if ((shaderVer > 100 &&
-         (getResources().EXT_clip_cull_distance || getResources().ANGLE_clip_cull_distance)) ||
+         (getResources().EXT_clip_cull_distance || getResources().ANGLE_clip_cull_distance ||
+          getResources().OES_shader_multisample_interpolation)) ||
         (hasPixelLocalStorageUniforms() &&
          compileOptions.pls.type == ShPixelLocalStorageType::ImageLoadStore))
     {

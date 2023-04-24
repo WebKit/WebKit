@@ -1,10 +1,317 @@
+diff --git a/WebKit/SourcesCGL-mm.mm b/WebKit/SourcesCGL-mm.mm
+new file mode 100644
+index 0000000000000000000000000000000000000000..9c879aa6e4320ece9d065edcf7e9f9558180ce55
+--- /dev/null
++++ b/WebKit/SourcesCGL-mm.mm
+@@ -0,0 +1,31 @@
++/*
++ * Copyright (C) 2023 Apple Inc. All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
++ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
++ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
++ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
++ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
++ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
++ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#include "common/platform.h"
++
++#if ANGLE_ENABLE_CGL
++#import "libANGLE/renderer/gl/cgl/DisplayCGL.mm"
++#import "libANGLE/renderer/gl/cgl/WindowSurfaceCGL.mm"
++#endif
+diff --git a/WebKit/SourcesCGL.cpp b/WebKit/SourcesCGL.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..a03046c2f9f0857870b8454332300070a23aad43
+--- /dev/null
++++ b/WebKit/SourcesCGL.cpp
+@@ -0,0 +1,35 @@
++/*
++ * Copyright (C) 2023 Apple Inc. All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
++ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
++ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
++ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
++ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
++ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
++ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#include "common/platform.h"
++
++#if ANGLE_ENABLE_CGL
++#include "libANGLE/renderer/gl/cgl/DeviceCGL.cpp"
++#include "libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.cpp"
++#include "libANGLE/renderer/gl/cgl/ContextCGL.cpp"
++#include "libANGLE/renderer/gl/cgl/RendererCGL.cpp"
++#include "libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.cpp"
++#include "common/gl/cgl/FunctionsCGL.cpp"
++#endif
+diff --git a/WebKit/SourcesEAGL.cpp b/WebKit/SourcesEAGL.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..0416a5886c9b7c7917e8da9570ff2e64f52a4f9f
+--- /dev/null
++++ b/WebKit/SourcesEAGL.cpp
+@@ -0,0 +1,33 @@
++/*
++ * Copyright (C) 2023 Apple Inc. All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
++ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
++ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
++ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
++ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
++ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
++ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#include "common/platform.h"
++
++#if ANGLE_ENABLE_EAGL
++#include "libANGLE/renderer/gl/eagl/ContextEAGL.cpp"
++#include "libANGLE/renderer/gl/eagl/DeviceEAGL.cpp"
++#include "libANGLE/renderer/gl/eagl/PbufferSurfaceEAGL.cpp"
++#include "libANGLE/renderer/gl/eagl/RendererEAGL.cpp"
++#endif
+diff --git a/WebKit/SourcesEAGL1-mm.mm b/WebKit/SourcesEAGL1-mm.mm
+new file mode 100644
+index 0000000000000000000000000000000000000000..f9d49b42577306302fbc91e39b56c91713da3aaa
+--- /dev/null
++++ b/WebKit/SourcesEAGL1-mm.mm
+@@ -0,0 +1,32 @@
++/*
++ * Copyright (C) 2023 Apple Inc. All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
++ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
++ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
++ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
++ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
++ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
++ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#import "common/platform.h"
++
++#if ANGLE_ENABLE_EAGL
++#import "libANGLE/renderer/gl/eagl/DisplayEAGL.mm"
++#import "libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.mm"
++#import "libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.mm"
++#endif
+diff --git a/WebKit/SourcesEAGL2-mm.mm b/WebKit/SourcesEAGL2-mm.mm
+new file mode 100644
+index 0000000000000000000000000000000000000000..c2264459a02d65518f000bb1b4b4d1d357345dff
+--- /dev/null
++++ b/WebKit/SourcesEAGL2-mm.mm
+@@ -0,0 +1,30 @@
++/*
++ * Copyright (C) 2023 Apple Inc. All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
++ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
++ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
++ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
++ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
++ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
++ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#import "common/platform.h"
++
++#if ANGLE_ENABLE_EAGL
++#import "libANGLE/renderer/gl/eagl/FunctionsEAGL.mm"
++#endif
+diff --git a/WebKit/SourcesGL.cpp b/WebKit/SourcesGL.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..0412a766f115841dfa9532d5c0cdf48db2177bbe
+--- /dev/null
++++ b/WebKit/SourcesGL.cpp
+@@ -0,0 +1,37 @@
++/*
++ * Copyright (C) 2023 Apple Inc. All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
++ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
++ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
++ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
++ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
++ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
++ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#include "common/platform.h"
++
++#if ANGLE_ENABLE_GLSL && ANGLE_ENABLE_APPLE_WORKAROUNDS
++#include "compiler/translator/tree_ops/apple/AddAndTrueToLoopCondition.cpp"
++#include "compiler/translator/tree_ops/apple/RewriteDoWhile.cpp"
++#include "compiler/translator/tree_ops/apple/RewriteRowMajorMatrices.cpp"
++#include "compiler/translator/tree_ops/apple/RewriteUnaryMinusOperatorFloat.cpp"
++#include "compiler/translator/tree_ops/apple/UnfoldShortCircuitAST.cpp"
++#endif
++#if ANGLE_ENABLE_GLSL
++#include "compiler/translator/tree_ops/gl/RegenerateStructNames.cpp"
++#endif
+\ No newline at end of file
+diff --git a/WebKit/SourcesPlatform-mm.mm b/WebKit/SourcesPlatform-mm.mm
+new file mode 100644
+index 0000000000000000000000000000000000000000..78ca284de371cb97b3a22be96ee2a50d4cce8270
+--- /dev/null
++++ b/WebKit/SourcesPlatform-mm.mm
+@@ -0,0 +1,30 @@
++/*
++ * Copyright (C) 2023 Apple Inc. All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
++ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
++ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
++ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
++ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
++ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
++ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#include "common/platform.h"
++
++#if ANGLE_PLATFORM_MACOS || ANGLE_PLATFORM_MACCATALYST
++#include "gpu_info_util/SystemInfo_macos.mm"
++#endif
+diff --git a/WebKit/SourcesPlatform.cpp b/WebKit/SourcesPlatform.cpp
+new file mode 100644
+index 0000000000000000000000000000000000000000..8b96dc01357fa9a2bdc54e5ddb3bbfd4c3162e5d
+--- /dev/null
++++ b/WebKit/SourcesPlatform.cpp
+@@ -0,0 +1,30 @@
++/*
++ * Copyright (C) 2023 Apple Inc. All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
++ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
++ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
++ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
++ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
++ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
++ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#include "common/platform.h"
++
++#if !(ANGLE_PLATFORM_MACOS || ANGLE_PLATFORM_MACCATALYST)
++#include "gpu_info_util/SystemInfo_ios.cpp"
++#endif
 diff --git a/src/common/ANGLEShaderProgramVersion.h b/src/common/ANGLEShaderProgramVersion.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..624a3e99589c4e5f9c057c8da9f14614cea72719
+index 0000000000000000000000000000000000000000..06407afeb0dd3c254b797ecee28b2a2a91edd4b2
 --- /dev/null
 +++ b/src/common/ANGLEShaderProgramVersion.h
 @@ -0,0 +1,2 @@
-+#define ANGLE_PROGRAM_VERSION "c91f5dc227af66608b352090f9dcfa1c"
++#define ANGLE_PROGRAM_VERSION "a069fe5b0e6792a4ee1b2f07b537c3d7"
 +#define ANGLE_PROGRAM_VERSION_HASH_SIZE 16
 diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
 index 7a0a706519887e596a18e2dbd3489051c78c7ba0..f11469503fd488b856e448c8ed8385d01cc522f1 100644
@@ -82,7 +389,7 @@ index 55e2f8b9717ec73d2d52607d400352f5f4c0c191..4237558526274ea3e643d45ccf574b6b
 +#endif
  }  // namespace sh
 diff --git a/src/compiler/translator/tree_ops/apple/UnfoldShortCircuitAST.h b/src/compiler/translator/tree_ops/apple/UnfoldShortCircuitAST.h
-index 101e04ccdc4a7217be38960dd372878ad4c15472..9ddc681d320550b171a2916cac8e9a4b1c3b7fab 100644
+index cf1d101e072dde3449f44e8da33226f7be1735f3..641d4319b2c9914a7c3738124a0407f68c588e38 100644
 --- a/src/compiler/translator/tree_ops/apple/UnfoldShortCircuitAST.h
 +++ b/src/compiler/translator/tree_ops/apple/UnfoldShortCircuitAST.h
 @@ -12,7 +12,6 @@
@@ -107,6 +414,32 @@ index 19ce708bea32d0ff14670c7af369061c48258b3b..b68b61ee6df8fa58536a5296284709bb
  #include "libANGLE/State.h"
  
  #include <string.h>
+diff --git a/src/libANGLE/renderer/driver_utils.h b/src/libANGLE/renderer/driver_utils.h
+index 744a5b14dbae742db62b06ca4d28314d0f7affdf..f560fa7a45e42b79bd2cfb2d607a7a9ae9276835 100644
+--- a/src/libANGLE/renderer/driver_utils.h
++++ b/src/libANGLE/renderer/driver_utils.h
+@@ -249,7 +249,7 @@ inline bool IsFuchsia()
+ #endif
+ }
+ 
+-inline bool IsIOS()
++inline bool IsAppleEmbedded()
+ {
+ #if ANGLE_PLATFORM_IOS_FAMILY
+     return true;
+diff --git a/src/libANGLE/renderer/gl/renderergl_utils.cpp b/src/libANGLE/renderer/gl/renderergl_utils.cpp
+index 14ceccc3f308105cdedd1f091c32eb64a34d39c0..bf016d3b2d30976f3bf61b60b743444229cf67b6 100644
+--- a/src/libANGLE/renderer/gl/renderergl_utils.cpp
++++ b/src/libANGLE/renderer/gl/renderergl_utils.cpp
+@@ -2287,7 +2287,7 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
+     // crbug.com/1202928
+     ANGLE_FEATURE_CONDITION(features, disableWorkerContexts,
+                             (IsWindows() && (isIntel || isAMD)) || (IsLinux() && isNvidia) ||
+-                                IsIOS() || IsAndroid() || IsAndroidEmulator(functions));
++                                IsAppleEmbedded() || IsAndroid() || IsAndroidEmulator(functions));
+ 
+     bool limitMaxTextureSize = isIntel && IsLinux() && GetLinuxOSVersion() < OSVersion(5, 0, 0);
+     ANGLE_FEATURE_CONDITION(features, limitWebglMaxTextureSizeTo4096,
 diff --git a/src/libANGLE/renderer/metal/BufferMtl.mm b/src/libANGLE/renderer/metal/BufferMtl.mm
 index e261e90255c6de20704e79b01a6575fc120e6f84..dc5a3613d1532a9c6e3162c9fdce996378927a9e 100644
 --- a/src/libANGLE/renderer/metal/BufferMtl.mm
@@ -121,10 +454,10 @@ index e261e90255c6de20704e79b01a6575fc120e6f84..dc5a3613d1532a9c6e3162c9fdce9963
      }
  
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.mm b/src/libANGLE/renderer/metal/ContextMtl.mm
-index 64952d92ffc289bdca8d074e13dcc295fe9daad4..7eee61f7cac71801934f0b44aa486cead862b1d3 100644
+index 0b5efd4a1a68d2168dead6f5b9fe740b628d8cc2..886c25104c770afd8f2d35fbd3e42f25cd03686c 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.mm
 +++ b/src/libANGLE/renderer/metal/ContextMtl.mm
-@@ -2457,8 +2457,21 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
+@@ -2462,8 +2462,21 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
              return angle::Result::Continue;
          }
          // Setup with flushed state should either produce a working encoder or fail with an error
@@ -149,10 +482,10 @@ index 64952d92ffc289bdca8d074e13dcc295fe9daad4..7eee61f7cac71801934f0b44aa486cea
      return angle::Result::Continue;
  }
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index 5033366c2d53433992fa92505e15137db615ea19..ece4e06e3432dfe369c9b0f62e633170683c9656 100644
+index 95b596dfa874c001ff974d83da67fd6c9370e178..3c84b77ef9cb33564e6033a9b3e4035f4ca185bb 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
-@@ -1370,8 +1370,7 @@ bool DisplayMtl::supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) c
+@@ -1381,8 +1381,7 @@ bool DisplayMtl::supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) c
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||        \
@@ -163,10 +496,10 @@ index 5033366c2d53433992fa92505e15137db615ea19..ece4e06e3432dfe369c9b0f62e633170
      {
          return [mMetalDevice supports32BitFloatFiltering];
 diff --git a/src/libANGLE/renderer/metal/FrameBufferMtl.mm b/src/libANGLE/renderer/metal/FrameBufferMtl.mm
-index a74c4e6d9a0b930dd0f8c3c10f5e417f9d033f30..746dd53eee510da93f4498bb301f71e8b401582f 100644
+index 4fbf873140d0911f9c903b2dc9749891c9556f1a..1560806d94b304ecce8b0d6a69eedbdb81b4450f 100644
 --- a/src/libANGLE/renderer/metal/FrameBufferMtl.mm
 +++ b/src/libANGLE/renderer/metal/FrameBufferMtl.mm
-@@ -1666,8 +1666,10 @@ angle::Result FramebufferMtl::readPixelsToPBO(const gl::Context *context,
+@@ -1659,8 +1659,10 @@ angle::Result FramebufferMtl::readPixelsToPBO(const gl::Context *context,
  
      ContextMtl *contextMtl = mtl::GetImpl(context);
  
@@ -179,7 +512,7 @@ index a74c4e6d9a0b930dd0f8c3c10f5e417f9d033f30..746dd53eee510da93f4498bb301f71e8
  
      BufferMtl *packBufferMtl = mtl::GetImpl(packPixelsParams.packBuffer);
 diff --git a/src/libANGLE/renderer/metal/ProgramMtl.mm b/src/libANGLE/renderer/metal/ProgramMtl.mm
-index 2855cbfc1adf69c01b70278e454b68dfdcfca4ae..9d731ac417dc6b7d7adbff8f938c6ee6d448c44c 100644
+index a323c1aa1519902ca8a951ff6378752b6d1ef898..7d9a3a7ec7bcfca994a5a8fc027bd63ce0b980a7 100644
 --- a/src/libANGLE/renderer/metal/ProgramMtl.mm
 +++ b/src/libANGLE/renderer/metal/ProgramMtl.mm
 @@ -1540,7 +1540,7 @@ angle::Result ProgramMtl::setupDraw(const gl::Context *glContext,
@@ -443,7 +776,7 @@ index 3eaa9a64e79af26faa786102ece3f0bdea84d090..2ecf7b40bd5a2edc3fd9d69841e266b6
 +
 +#endif /* LIBANGLE_RENDERER_METAL_RESOURCE_SPI_H_ */
 diff --git a/src/libANGLE/renderer/metal/mtl_state_cache.mm b/src/libANGLE/renderer/metal/mtl_state_cache.mm
-index 558075b21cdcdcac0b9cd4ab8fc915bc032f57f7..b3990a828944bab60e692cdd16019ac26c5d99b3 100644
+index ee5937e7415daa63126373d09a8f4124257d383f..d1df5110ef55a7d8eb83345d7e079f0dd7d1facb 100644
 --- a/src/libANGLE/renderer/metal/mtl_state_cache.mm
 +++ b/src/libANGLE/renderer/metal/mtl_state_cache.mm
 @@ -21,9 +21,16 @@
@@ -463,7 +796,7 @@ index 558075b21cdcdcac0b9cd4ab8fc915bc032f57f7..b3990a828944bab60e692cdd16019ac2
  namespace rx
  {
  namespace mtl
-@@ -1069,23 +1076,10 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
+@@ -1067,23 +1074,10 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
  
          auto objCDesc = CreateMTLRenderPipelineDescriptor(vertShader, fragShader, desc);
  
@@ -489,10 +822,10 @@ index 558075b21cdcdcac0b9cd4ab8fc915bc032f57f7..b3990a828944bab60e692cdd16019ac2
          if (!ValidateRenderPipelineState(objCDesc, context, metalDevice))
          {
 diff --git a/src/libANGLE/renderer/metal/mtl_utils.mm b/src/libANGLE/renderer/metal/mtl_utils.mm
-index 555c891f80f36b1824da1a91cd13db80828f3eae..07f27d7a886db9066153aa00b1870e6b6f6e051a 100644
+index 2d2ee6c966ad1722706fa77079c1aba68768058a..4101d204cb48181579dcafbd708f554fd81c7fad 100644
 --- a/src/libANGLE/renderer/metal/mtl_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_utils.mm
-@@ -1357,6 +1357,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
+@@ -1466,6 +1466,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
  #endif      // TARGET_OS_IOS || TARGET_OS_TV
  }
  
@@ -517,7 +850,7 @@ index 555c891f80f36b1824da1a91cd13db80828f3eae..07f27d7a886db9066153aa00b1870e6b
  bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-@@ -1371,10 +1389,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1480,10 +1498,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  #        if TARGET_OS_MACCATALYST
              ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
              case 1:
@@ -530,7 +863,7 @@ index 555c891f80f36b1824da1a91cd13db80828f3eae..07f27d7a886db9066153aa00b1870e6b
                  break;
                  ANGLE_APPLE_ALLOW_DEPRECATED_END
  #        else   // TARGET_OS_MACCATALYST
-@@ -1397,7 +1415,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1506,7 +1524,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  
      // If device doesn't support [MTLDevice supportsFamily:], then use
      // [MTLDevice supportsFeatureSet:].

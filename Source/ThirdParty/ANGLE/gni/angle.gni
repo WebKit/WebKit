@@ -287,8 +287,7 @@ declare_args() {
   angle_enable_cgl = angle_enable_gl && !angle_enable_eagl && is_apple
 
   angle_enable_apple_translator_workarounds =
-      is_apple &&
-      (angle_enable_glsl || angle_enable_metal || use_fuzzing_engine)
+      is_apple && (angle_enable_glsl || use_fuzzing_engine)
 
   angle_has_histograms = angle_has_build
 
@@ -599,6 +598,10 @@ template("angle_trace") {
       "$angle_root/util:angle_trace_loader",
     ]
 
+    if (defined(invoker.deps)) {
+      deps += invoker.deps
+    }
+
     if (is_android) {
       libs = [ "log" ]
     }
@@ -653,13 +656,27 @@ template("angle_trace_library") {
     } else {
       _target = "${target_name}_$_trace"
     }
+
+    _gen_target = "gen${target_name}_$_trace"
+    action(_gen_target) {
+      script = "//scripts/tracegz.py"
+      args = [
+        _trace,
+        rebase_path(_trace_dir, root_build_dir),
+      ]
+      outputs = [ "$root_gen_dir/tracegz_$_trace.gz" ]
+    }
+
     angle_trace(_target) {
       sources = rebase_path(_trace_data.TraceFiles, ".", _trace_dir)
 
       data = [
         "$_trace_dir/$_trace.json",
         "$_trace_dir/$_trace.angledata.gz",
+        "$root_gen_dir/tracegz_$_trace.gz",
       ]
+
+      deps = [ ":$_gen_target" ]
 
       if (invoker.short_names) {
         output_name = _trace

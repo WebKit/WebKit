@@ -343,7 +343,7 @@ OSVersion GetMacOSVersion()
 }
 #endif
 
-#if !defined(ANGLE_PLATFORM_APPLE_EMBEDDED)
+#if !ANGLE_PLATFORM_IOS_FAMILY
 OSVersion GetiOSVersion()
 {
     // Return a default version

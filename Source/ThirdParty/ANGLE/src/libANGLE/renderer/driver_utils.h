@@ -251,7 +251,7 @@ inline bool IsFuchsia()
 
 inline bool IsAppleEmbedded()
 {
-#if defined(ANGLE_PLATFORM_APPLE_EMBEDDED)
+#if ANGLE_PLATFORM_IOS_FAMILY
     return true;
 #else
     return false;
