@@ -117,6 +117,10 @@ public:
     const String& drmRenderNodeFile();
     struct gbm_device* gbmDevice();
 #endif
+
+#if PLATFORM(GTK)
+    virtual EGLDisplay gtkEGLDisplay() { return nullptr; }
+#endif
 #endif
 
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
@@ -150,6 +154,7 @@ protected:
     virtual void initializeEGLDisplay();
 
     EGLDisplay m_eglDisplay;
+    bool m_eglDisplayOwned { true };
     std::unique_ptr<GLContext> m_sharingGLContext;
 
 #if USE(GBM)

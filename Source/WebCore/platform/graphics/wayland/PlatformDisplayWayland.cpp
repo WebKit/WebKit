@@ -38,6 +38,7 @@
 #include <epoxy/egl.h>
 
 #if PLATFORM(GTK)
+#include <gtk/gtk.h>
 #if USE(GTK4)
 #include <gdk/wayland/gdkwayland.h>
 #else
@@ -94,12 +95,42 @@ void PlatformDisplayWayland::sharedDisplayDidClose()
     PlatformDisplay::sharedDisplayDidClose();
     m_display = nullptr;
 }
+
+EGLDisplay PlatformDisplayWayland::gtkEGLDisplay()
+{
+    if (m_eglDisplay != EGL_NO_DISPLAY)
+        return m_eglDisplayOwned ? EGL_NO_DISPLAY : m_eglDisplay;
+
+    if (!m_sharedDisplay)
+        return EGL_NO_DISPLAY;
+
+#if USE(GTK4)
+    m_eglDisplay = gdk_wayland_display_get_egl_display(m_sharedDisplay.get());
+#else
+    auto* window = gtk_window_new(GTK_WINDOW_POPUP);
+    gtk_widget_realize(window);
+    if (auto context = adoptGRef(gdk_window_create_gl_context(gtk_widget_get_window(window), nullptr))) {
+        gdk_gl_context_make_current(context.get());
+        m_eglDisplay = eglGetCurrentDisplay();
+    }
+    gtk_widget_destroy(window);
+#endif
+
+    if (m_eglDisplay == EGL_NO_DISPLAY)
+        return EGL_NO_DISPLAY;
+
+    m_eglDisplayOwned = false;
+    PlatformDisplay::initializeEGLDisplay();
+    return m_eglDisplay;
+}
 #endif
 
 void PlatformDisplayWayland::initializeEGLDisplay()
 {
-    if (!m_display)
+#if PLATFORM(GTK)
+    if (gtkEGLDisplay() != EGL_NO_DISPLAY)
         return;
+#endif
 
     const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
     if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))

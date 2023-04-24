@@ -216,7 +216,7 @@ PlatformDisplay::PlatformDisplay(GdkDisplay* display)
 void PlatformDisplay::sharedDisplayDidClose()
 {
 #if USE(EGL)
-    clearSharingGLContext();
+    terminateEGLDisplay();
 #endif
 }
 #endif
@@ -224,7 +224,7 @@ void PlatformDisplay::sharedDisplayDidClose()
 PlatformDisplay::~PlatformDisplay()
 {
 #if USE(EGL) && !PLATFORM(WIN)
-    ASSERT(m_eglDisplay == EGL_NO_DISPLAY);
+    ASSERT(!m_eglDisplayOwned || m_eglDisplay == EGL_NO_DISPLAY);
 #endif
 #if PLATFORM(GTK)
     if (m_sharedDisplay)
@@ -316,6 +316,9 @@ void PlatformDisplay::initializeEGLDisplay()
         m_eglExtensions.EXT_image_dma_buf_import_modifiers = findExtension("EGL_EXT_image_dma_buf_import_modifiers"_s);
     }
 
+    if (!m_eglDisplayOwned)
+        return;
+
     eglDisplays().add(this);
 
 #if !PLATFORM(WIN)
@@ -350,8 +353,11 @@ void PlatformDisplay::terminateEGLDisplay()
     ASSERT(m_eglDisplayInitialized);
     if (m_eglDisplay == EGL_NO_DISPLAY)
         return;
-    eglMakeCurrent(m_eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-    eglTerminate(m_eglDisplay);
+
+    if (m_eglDisplayOwned) {
+        eglMakeCurrent(m_eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        eglTerminate(m_eglDisplay);
+    }
     m_eglDisplay = EGL_NO_DISPLAY;
 }
 

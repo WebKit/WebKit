@@ -103,8 +103,35 @@ void PlatformDisplayX11::sharedDisplayDidClose()
 #endif
 
 #if USE(EGL)
+#if PLATFORM(GTK)
+EGLDisplay PlatformDisplayX11::gtkEGLDisplay()
+{
+    if (m_eglDisplay != EGL_NO_DISPLAY)
+        return m_eglDisplayOwned ? EGL_NO_DISPLAY : m_eglDisplay;
+
+    if (!m_sharedDisplay)
+        return EGL_NO_DISPLAY;
+
+#if USE(GTK4)
+    m_eglDisplay = gdk_x11_display_get_egl_display(m_sharedDisplay.get());
+    if (m_eglDisplay != EGL_NO_DISPLAY) {
+        m_eglDisplayOwned = false;
+        PlatformDisplay::initializeEGLDisplay();
+        return m_eglDisplay;
+    }
+#endif
+
+    return EGL_NO_DISPLAY;
+}
+#endif
+
 void PlatformDisplayX11::initializeEGLDisplay()
 {
+#if PLATFORM(GTK)
+    if (gtkEGLDisplay() != EGL_NO_DISPLAY)
+        return;
+#endif
+
     const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
     if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
         m_eglDisplay = eglGetPlatformDisplay(EGL_PLATFORM_X11_KHR, m_display, nullptr);

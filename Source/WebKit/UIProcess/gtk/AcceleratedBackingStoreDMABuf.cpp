@@ -46,24 +46,6 @@
 
 namespace WebKit {
 
-static bool gtkGLContextIsEGL()
-{
-    static bool isEGL = true;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-#if PLATFORM(X11)
-    if (WebCore::PlatformDisplay::sharedDisplay().type() == WebCore::PlatformDisplay::Type::X11) {
-#if USE(GTK4)
-        isEGL = !!gdk_x11_display_get_egl_display(gdk_display_get_default());
-#else
-        isEGL = false;
-#endif
-    }
-#endif
-    });
-    return isEGL;
-}
-
 bool AcceleratedBackingStoreDMABuf::checkRequirements()
 {
     static bool available;
@@ -365,7 +347,7 @@ std::unique_ptr<AcceleratedBackingStoreDMABuf::RenderSource> AcceleratedBackingS
     if (m_isSoftwareRast)
         return makeUnique<Surface>(m_surface.backBitmap, m_surface.frontBitmap, m_webPage.deviceScaleFactor());
 
-    if (!gtkGLContextIsEGL())
+    if (!WebCore::PlatformDisplay::sharedDisplay().gtkEGLDisplay())
         return makeUnique<Surface>(m_surface.backFD, m_surface.frontFD, m_surface.size, m_surface.format, m_surface.offset, m_surface.stride, m_webPage.deviceScaleFactor());
 
     ensureGLContext();
@@ -441,7 +423,7 @@ void AcceleratedBackingStoreDMABuf::ensureGLContext()
 
 bool AcceleratedBackingStoreDMABuf::makeContextCurrent()
 {
-    if (!gtkGLContextIsEGL())
+    if (!WebCore::PlatformDisplay::sharedDisplay().gtkEGLDisplay())
         return false;
 
     if (!gtk_widget_get_realized(m_webPage.viewWidget()))
