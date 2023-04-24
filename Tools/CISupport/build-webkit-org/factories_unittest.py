@@ -484,7 +484,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-Monterey-Release-WK2-Accessibility-Isolated-Tree-Tests': [
+        'Apple-Ventura-Release-WK2-Accessibility-Isolated-Tree-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
