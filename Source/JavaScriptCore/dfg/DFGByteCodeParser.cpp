@@ -3885,6 +3885,8 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
             int index = 0;
             for (; index < argumentCountIncludingThis; ++index)
                 addVarArgChild(get(virtualRegisterForArgumentIncludingThis(index, registerOffset)));
+            for (; index < numChildren - static_cast<int>(JSBoundFunction::maxEmbeddedArgs); ++index)
+                addVarArgChild(jsConstant(jsUndefined()));
             for (; index < numChildren; ++index)
                 addVarArgChild(jsConstant(JSValue()));
             Node* resultNode = addToGraph(Node::VarArg, FunctionBind, OpInfo(0), OpInfo(static_cast<unsigned>(argumentCountIncludingThis >= 2 ? argumentCountIncludingThis - 2 : 0)));
