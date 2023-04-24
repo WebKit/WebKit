@@ -577,6 +577,8 @@ static void postUserInfoForChanges(AXCoreObject& rootWebArea, AXCoreObject& obje
         [userInfo setObject:wrapper forKey:NSAccessibilityTextChangeElement];
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         createIsolatedObjectIfNeeded(object, pageID);
+#else
+        UNUSED_PARAM(pageID);
 #endif
     }
 
