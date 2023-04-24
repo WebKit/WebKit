@@ -667,8 +667,9 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
     /**
      * WebKitSettings:load-icons-ignoring-image-load-setting:
      *
-     * Determines whether a site can load favicons irrespective
-     * of the value of #WebKitSettings:auto-load-images.
+     * Unsupported setting. This property does nothing.
+     *
+     * Deprecated: 2.42
      */
     sObjProperties[PROP_LOAD_ICONS_IGNORING_IMAGE_LOAD_SETTING] =
         g_param_spec_boolean(
@@ -1738,11 +1739,11 @@ void webkit_settings_set_auto_load_images(WebKitSettings* settings, gboolean ena
  * webkit_settings_get_load_icons_ignoring_image_load_setting:
  * @settings: a #WebKitSettings
  *
- * Get the #WebKitSettings:load-icons-ignoring-image-load-setting property.
+ * Setting no longer supported. This function returns %FALSE.
  *
- * Returns: %TRUE If site icon can be loaded irrespective of image loading preference or %FALSE otherwise.
+ * Returns: %FALSE
  *
- * Deprecated: TBA
+ * Deprecated: 2.42
  */
 gboolean webkit_settings_get_load_icons_ignoring_image_load_setting(WebKitSettings* settings)
 {
@@ -1758,9 +1759,9 @@ gboolean webkit_settings_get_load_icons_ignoring_image_load_setting(WebKitSettin
  * @settings: a #WebKitSettings
  * @enabled: Value to be set
  *
- * Set the #WebKitSettings:load-icons-ignoring-image-load-setting property.
+ * Setting no longer supported. This function does nothing.
  *
- * Deprecated: TBA
+ * Deprecated: 2.42
  */
 void webkit_settings_set_load_icons_ignoring_image_load_setting(WebKitSettings* settings, gboolean enabled)
 {
