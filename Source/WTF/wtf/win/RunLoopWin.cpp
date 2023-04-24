@@ -81,11 +81,7 @@ void RunLoop::setWakeUpCallback(WTF::Function<void()>&& function)
 
 void RunLoop::stop()
 {
-    // RunLoop::stop() can be called from threads unrelated to this RunLoop.
-    // We should post a message that call PostQuitMessage in RunLoop's thread.
-    dispatch([] {
-        ::PostQuitMessage(0);
-    });
+    ::PostMessage(m_runLoopMessageWindow, WM_CLOSE, 0, 0);
 }
 
 void RunLoop::registerRunLoopMessageWindowClass()
