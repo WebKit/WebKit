@@ -90,11 +90,7 @@ public:
 
     PresentationProperties presentationProperties() const { return m_presentationProperties; }
     virtual void paint(const Node&, GraphicsContext&, const FloatRect&, const Color&, const LayoutPoint&) const;
-    virtual LayoutRect repaintCaretRectForLocalRect(LayoutRect) const;
-#if defined(__has_include) && __has_include(<WebKitAdditions/RenderBlockAdditions.h>)
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=255602 - Remove staging from CaretAnimator.h
-    virtual void addLine(float, float, TextDirection) const { }
-#endif
+    virtual LayoutRect caretRepaintRectForLocalRect(LayoutRect) const;
 
 protected:
     explicit CaretAnimator(CaretAnimationClient& client)

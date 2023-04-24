@@ -302,6 +302,14 @@ IntRect BifurcatedGraphicsContext::clipBounds() const
     return m_primaryContext.clipBounds();
 }
 
+void BifurcatedGraphicsContext::resetClip()
+{
+    m_primaryContext.resetClip();
+    m_secondaryContext.resetClip();
+
+    VERIFY_STATE_SYNCHRONIZATION();
+}
+
 void BifurcatedGraphicsContext::setLineCap(LineCap lineCap)
 {
     m_primaryContext.setLineCap(lineCap);

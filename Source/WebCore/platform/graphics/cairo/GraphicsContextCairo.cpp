@@ -192,6 +192,11 @@ void GraphicsContextCairo::fillRect(const FloatRect& rect, const Color& color)
     Cairo::fillRect(*this, rect, color, Cairo::ShadowState(state()));
 }
 
+void GraphicsContextCairo::resetClip()
+{
+    ASSERT_NOT_REACHED("resetClip is not supported on Cairo");
+}
+
 void GraphicsContextCairo::clip(const FloatRect& rect)
 {
     Cairo::clip(*this, rect);

@@ -76,6 +76,8 @@ static size_t sizeOfItemInBytes(ItemType type)
         return sizeof(ClipOutToPath);
     case ItemType::ClipPath:
         return sizeof(ClipPath);
+    case ItemType::ResetClip:
+        return sizeof(ResetClip);
     case ItemType::DrawFilteredImageBuffer:
         return sizeof(DrawFilteredImageBuffer);
     case ItemType::DrawGlyphs:
@@ -190,6 +192,7 @@ bool isDrawingItem(ItemType type)
     case ItemType::ClipToImageBuffer:
     case ItemType::ClipOutToPath:
     case ItemType::ClipPath:
+    case ItemType::ResetClip:
     case ItemType::ConcatenateCTM:
     case ItemType::Restore:
     case ItemType::Rotate:
@@ -315,6 +318,7 @@ bool isInlineItem(ItemType type)
     case ItemType::Clip:
     case ItemType::ClipOut:
     case ItemType::ClipToImageBuffer:
+    case ItemType::ResetClip:
     case ItemType::ConcatenateCTM:
     case ItemType::DrawEllipse:
     case ItemType::DrawFilteredImageBuffer:

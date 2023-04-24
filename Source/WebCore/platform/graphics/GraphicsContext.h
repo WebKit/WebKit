@@ -287,6 +287,7 @@ public:
 
     // Clipping
 
+    virtual void resetClip() = 0;
     virtual void clip(const FloatRect&) = 0;
     WEBCORE_EXPORT virtual void clipRoundedRect(const FloatRoundedRect&);
 

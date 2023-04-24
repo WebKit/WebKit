@@ -93,6 +93,7 @@ private:
     void beginTransparencyLayer(float) override;
     void endTransparencyLayer() override;
 
+    void resetClip() override;
     void clip(const WebCore::FloatRect&) override;
     void clipOut(const WebCore::FloatRect&) override;
     void clipOut(const WebCore::Path&) override;

@@ -134,6 +134,11 @@ void RecorderImpl::recordClearShadow()
     append<ClearShadow>();
 }
 
+void RecorderImpl::recordResetClip()
+{
+    append<ResetClip>();
+}
+
 void RecorderImpl::recordClip(const FloatRect& clipRect)
 {
     append<Clip>(clipRect);

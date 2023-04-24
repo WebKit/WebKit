@@ -85,6 +85,7 @@ protected:
     virtual void recordSetLineJoin(LineJoin) = 0;
     virtual void recordSetMiterLimit(float) = 0;
     virtual void recordClearShadow() = 0;
+    virtual void recordResetClip() = 0;
     virtual void recordClip(const FloatRect&) = 0;
     virtual void recordClipOut(const FloatRect&) = 0;
     virtual void recordClipToImageBuffer(ImageBuffer&, const FloatRect& destinationRect) = 0;
@@ -265,6 +266,7 @@ private:
     WEBCORE_EXPORT void beginTransparencyLayer(float opacity) final;
     WEBCORE_EXPORT void endTransparencyLayer() final;
 
+    WEBCORE_EXPORT void resetClip() final;
     WEBCORE_EXPORT void clip(const FloatRect&) final;
     WEBCORE_EXPORT void clipOut(const FloatRect&) final;
     WEBCORE_EXPORT void clipOut(const Path&) final;

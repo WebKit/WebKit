@@ -185,6 +185,11 @@ void RemoteDisplayListRecorderProxy::recordClipPath(const Path& path, WindRule r
     send(Messages::RemoteDisplayListRecorder::ClipPath(path, rule));
 }
 
+void RemoteDisplayListRecorderProxy::recordResetClip()
+{
+    send(Messages::RemoteDisplayListRecorder::ResetClip());
+}
+
 void RemoteDisplayListRecorderProxy::recordDrawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter)
 {
     std::optional<RenderingResourceIdentifier> identifier;

@@ -97,6 +97,7 @@ public:
     void beginTransparencyLayer(float) final;
     void endTransparencyLayer() final;
 
+    void resetClip() final;
     void clip(const FloatRect&) final;
     void clipOut(const FloatRect&) final;
     void clipOut(const Path&) final;

@@ -229,6 +229,11 @@ void RemoteDisplayListRecorder::clipPath(const Path& path, WindRule rule)
     handleItem(DisplayList::ClipPath(path, rule));
 }
 
+void RemoteDisplayListRecorder::resetClip()
+{
+    handleItem(DisplayList::ResetClip());
+}
+
 void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Ref<Filter> filter)
 {
     RefPtr<ImageBuffer> sourceImage;

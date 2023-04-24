@@ -223,6 +223,8 @@ void DisplayList::append(ItemHandle item)
         return append<ClipOutToPath>(item.get<ClipOutToPath>());
     case ItemType::ClipPath:
         return append<ClipPath>(item.get<ClipPath>());
+    case ItemType::ResetClip:
+        return append<ResetClip>(item.get<ResetClip>());
     case ItemType::DrawFilteredImageBuffer:
         return append<DrawFilteredImageBuffer>(item.get<DrawFilteredImageBuffer>());
     case ItemType::DrawGlyphs:

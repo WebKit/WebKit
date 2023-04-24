@@ -661,6 +661,11 @@ public:
     // Repaint a specific subrectangle within a given object.  The rect |r| is in the object's coordinate space.
     WEBCORE_EXPORT void repaintRectangle(const LayoutRect&, bool shouldClipToLayer = true) const;
 
+    enum class ClipRepaintToContainer : bool { No, Yes };
+    enum class ClipRepaintToLayer : bool { No, Yes };
+    enum class ForceRepaint : bool { No, Yes };
+    void repaintRectangle(const LayoutRect&, ClipRepaintToLayer, ForceRepaint, ClipRepaintToContainer) const;
+
     // Repaint a slow repaint object, which, at this time, means we are repainting an object with background-attachment:fixed.
     void repaintSlowRepaintObject() const;
 
@@ -699,7 +704,7 @@ public:
     // Given a rect in the object's coordinate space, compute a rect  in the coordinate space
     // of repaintContainer suitable for the given VisibleRectContext.
     LayoutRect computeRect(const LayoutRect&, const RenderLayerModelObject* repaintContainer, VisibleRectContext) const;
-    LayoutRect computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer) const { return computeRect(rect, repaintContainer, visibleRectContextForRepaint()); }
+    virtual LayoutRect computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer) const { return computeRect(rect, repaintContainer, visibleRectContextForRepaint()); }
     FloatRect computeFloatRectForRepaint(const FloatRect&, const RenderLayerModelObject* repaintContainer) const;
 
     // Given a rect in the object's coordinate space, compute the location in container space where this rect is visible,
@@ -827,9 +832,7 @@ protected:
 
     bool isSetNeedsLayoutForbidden() const;
 
-    enum class ClipRepaintToLayer : bool { No, Yes };
-    enum class ForceRepaint : bool { No, Yes };
-    void issueRepaint(std::optional<LayoutRect> partialRepaintRect = std::nullopt, ClipRepaintToLayer = ClipRepaintToLayer::No, ForceRepaint = ForceRepaint::No) const;
+    void issueRepaint(std::optional<LayoutRect> partialRepaintRect = std::nullopt, ClipRepaintToLayer = ClipRepaintToLayer::No, ForceRepaint = ForceRepaint::No, ClipRepaintToContainer = ClipRepaintToContainer::Yes) const;
 
 private:
     void addAbsoluteRectForLayer(LayoutRect& result);

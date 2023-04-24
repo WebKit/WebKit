@@ -148,6 +148,11 @@ void ClipPath::apply(GraphicsContext& context) const
     context.clipPath(m_path, m_windRule);
 }
 
+void ResetClip::apply(GraphicsContext& context) const
+{
+    context.resetClip();
+}
+
 DrawFilteredImageBuffer::DrawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Filter& filter)
     : m_sourceImageIdentifier(sourceImageIdentifier)
     , m_sourceImageRect(sourceImageRect)
@@ -473,6 +478,7 @@ TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::ClipToImageBuffer: ts << "clip-to-image-buffer"; break;
     case ItemType::ClipOutToPath: ts << "clip-out-to-path"; break;
     case ItemType::ClipPath: ts << "clip-path"; break;
+    case ItemType::ResetClip: ts << "reset-clip"; break;
     case ItemType::DrawFilteredImageBuffer: ts << "draw-filtered-image-buffer"; break;
     case ItemType::DrawGlyphs: ts << "draw-glyphs"; break;
     case ItemType::DrawDecomposedGlyphs: ts << "draw-decomposed-glyphs"; break;
@@ -1068,6 +1074,7 @@ void dumpItemHandle(TextStream& ts, const ItemHandle& item, OptionSet<AsTextFlag
     case ItemType::ApplyFillPattern:
 #endif
     case ItemType::ClearShadow:
+    case ItemType::ResetClip:
         break;
     }
 }

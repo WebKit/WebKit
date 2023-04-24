@@ -60,6 +60,7 @@ private:
     void recordSetLineJoin(LineJoin) final;
     void recordSetMiterLimit(float) final;
     void recordClearShadow() final;
+    void recordResetClip() final;
     void recordClip(const FloatRect&) final;
     void recordClipOut(const FloatRect&) final;
     void recordClipToImageBuffer(ImageBuffer&, const FloatRect& destinationRect) final;

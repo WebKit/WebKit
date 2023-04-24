@@ -537,6 +537,11 @@ void Recorder::drawControlPart(ControlPart& part, const FloatRoundedRect& border
     recordDrawControlPart(part, borderRect, deviceScaleFactor, style);
 }
 
+void Recorder::resetClip()
+{
+    recordResetClip();
+}
+
 void Recorder::clip(const FloatRect& rect)
 {
     appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.

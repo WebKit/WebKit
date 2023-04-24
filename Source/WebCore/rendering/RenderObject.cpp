@@ -999,7 +999,7 @@ static inline bool fullRepaintIsScheduled(const RenderObject& renderer)
     return false;
 }
 
-void RenderObject::issueRepaint(std::optional<LayoutRect> partialRepaintRect, ClipRepaintToLayer clipRepaintToLayer, ForceRepaint forceRepaint) const
+void RenderObject::issueRepaint(std::optional<LayoutRect> partialRepaintRect, ClipRepaintToLayer clipRepaintToLayer, ForceRepaint forceRepaint, ClipRepaintToContainer clipRepaintToContainer) const
 {
     auto repaintContainer = containerForRepaint();
     if (!repaintContainer.renderer)
@@ -1008,7 +1008,12 @@ void RenderObject::issueRepaint(std::optional<LayoutRect> partialRepaintRect, Cl
     if (repaintContainer.fullRepaintIsScheduled && forceRepaint == ForceRepaint::No)
         return;
 
-    auto repaintRect = partialRepaintRect ? computeRectForRepaint(*partialRepaintRect, repaintContainer.renderer) : clippedOverflowRectForRepaint(repaintContainer.renderer);
+    LayoutRect repaintRect;
+    if (partialRepaintRect)
+        repaintRect = clipRepaintToContainer == ClipRepaintToContainer::No ? *partialRepaintRect : computeRectForRepaint(*partialRepaintRect, repaintContainer.renderer);
+    else
+        repaintRect = clippedOverflowRectForRepaint(repaintContainer.renderer);
+
     repaintUsingContainer(repaintContainer.renderer, repaintRect, clipRepaintToLayer == ClipRepaintToLayer::Yes);
 }
 
@@ -1022,6 +1027,11 @@ void RenderObject::repaint() const
 
 void RenderObject::repaintRectangle(const LayoutRect& repaintRect, bool shouldClipToLayer) const
 {
+    return repaintRectangle(repaintRect, shouldClipToLayer ? ClipRepaintToLayer::Yes : ClipRepaintToLayer::No, ForceRepaint::No, ClipRepaintToContainer::Yes);
+}
+
+void RenderObject::repaintRectangle(const LayoutRect& repaintRect, ClipRepaintToLayer shouldClipToLayer, ForceRepaint forceRepaint, ClipRepaintToContainer shouldClipToContainer) const
+{
     // Don't repaint if we're unrooted (note that view() still returns the view when unrooted)
     if (!isRooted() || view().printing())
         return;
@@ -1029,7 +1039,7 @@ void RenderObject::repaintRectangle(const LayoutRect& repaintRect, bool shouldCl
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
     auto dirtyRect = repaintRect;
     dirtyRect.move(view().frameView().layoutContext().layoutDelta());
-    issueRepaint(dirtyRect, shouldClipToLayer ? ClipRepaintToLayer::Yes : ClipRepaintToLayer::No);
+    issueRepaint(dirtyRect, shouldClipToLayer, forceRepaint, shouldClipToContainer);
 }
 
 void RenderObject::repaintSlowRepaintObject() const

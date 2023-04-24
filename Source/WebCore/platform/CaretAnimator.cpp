@@ -66,7 +66,7 @@ void CaretAnimator::paint(const Node&, GraphicsContext& context, const FloatRect
     context.fillRect(caret, color);
 }
 
-LayoutRect CaretAnimator::repaintCaretRectForLocalRect(LayoutRect rect) const
+LayoutRect CaretAnimator::caretRepaintRectForLocalRect(LayoutRect rect) const
 {
     return rect;
 }
