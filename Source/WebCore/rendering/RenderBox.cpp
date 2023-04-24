@@ -2086,6 +2086,14 @@ void RenderBox::incrementVisuallyNonEmptyPixelCountIfNeeded(const IntSize& size)
     setDidContibuteToVisuallyNonEmptyPixelCount();
 }
 
+static LayoutRect rootBackgroundRenderRect(RenderBox* backgroundRenderer, LayoutUnit rw, LayoutUnit rh)
+{
+    return LayoutRect(-backgroundRenderer->marginLeft(),
+        -backgroundRenderer->marginTop(),
+        std::max(backgroundRenderer->width() + backgroundRenderer->horizontalMarginExtent() + backgroundRenderer->borderLeft() + backgroundRenderer->borderRight(), rw),
+        std::max(backgroundRenderer->height() + backgroundRenderer->verticalMarginExtent() + backgroundRenderer->borderTop() + backgroundRenderer->borderBottom(), rh));
+}
+
 bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer& layers, bool drawingBackground)
 {
     LayoutRect rendererRect;
@@ -2097,15 +2105,16 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
             bool drawingRootBackground = drawingBackground && (isDocumentElementRenderer() || (isBody() && !document().documentElement()->renderer()->hasBackground()));
             if (!layerRenderer) {
                 if (drawingRootBackground) {
-                    layerRenderer = &view();
-
-                    LayoutUnit rw = downcast<RenderView>(*layerRenderer).frameView().contentsWidth();
-                    LayoutUnit rh = downcast<RenderView>(*layerRenderer).frameView().contentsHeight();
-
-                    rendererRect = LayoutRect(-layerRenderer->marginLeft(),
-                        -layerRenderer->marginTop(),
-                        std::max(layerRenderer->width() + layerRenderer->horizontalMarginExtent() + layerRenderer->borderLeft() + layerRenderer->borderRight(), rw),
-                        std::max(layerRenderer->height() + layerRenderer->verticalMarginExtent() + layerRenderer->borderTop() + layerRenderer->borderBottom(), rh));
+                    layerRenderer = dynamicDowncast<RenderBox>(view().rendererForRootBackground());
+                    if (layerRenderer)
+                        rendererRect = rootBackgroundRenderRect(layerRenderer, layerRenderer->frameRect().width(), layerRenderer->frameRect().height());
+                    else {
+                        layerRenderer = &view();
+                        
+                        LayoutUnit rw = downcast<RenderView>(*layerRenderer).frameView().contentsWidth();
+                        LayoutUnit rh = downcast<RenderView>(*layerRenderer).frameView().contentsHeight();
+                        rendererRect = rootBackgroundRenderRect(layerRenderer, rw, rh);
+                    }
                 } else {
                     layerRenderer = this;
                     rendererRect = borderBoxRect();
