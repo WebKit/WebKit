@@ -990,7 +990,7 @@ void MacroAssembler::probe(Probe::Function function, void* arg, SavedFPWidth sav
 #endif
     push(RegisterID::eax);
 
-#if CPU(X86_64) && COMPILER(GCC_COMPATIBLE)
+#if CPU(X86_64)
     if (savedFPWidth == SavedFPWidth::SaveVectors)
         move(TrustedImmPtr(reinterpret_cast<void*>(ctiMasmProbeTrampolineSIMD)), RegisterID::eax);
     else

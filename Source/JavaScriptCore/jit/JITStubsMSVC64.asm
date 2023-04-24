@@ -24,6 +24,7 @@
 ;*/
 
 PUBLIC ctiMasmProbeTrampoline
+PUBLIC ctiMasmProbeTrampolineSIMD
 
 _TEXT   SEGMENT
 
@@ -77,7 +78,25 @@ PROBE_CPU_XMM12_OFFSET EQU (PROBE_FIRST_XMM_OFFSET + (12 * XMM_SIZE))
 PROBE_CPU_XMM13_OFFSET EQU (PROBE_FIRST_XMM_OFFSET + (13 * XMM_SIZE))
 PROBE_CPU_XMM14_OFFSET EQU (PROBE_FIRST_XMM_OFFSET + (14 * XMM_SIZE))
 PROBE_CPU_XMM15_OFFSET EQU (PROBE_FIRST_XMM_OFFSET + (15 * XMM_SIZE))
-PROBE_SIZE EQU (PROBE_CPU_XMM15_OFFSET + XMM_SIZE)
+
+; For the case when we want to save 128 bits for each XMM register, the layout is different.
+PROBE_CPU_XMM0_VECTOR_OFFSET EQU (PROBE_FIRST_XMM_OFFSET + (0 * 2 * XMM_SIZE))
+PROBE_CPU_XMM1_VECTOR_OFFSET EQU (PROBE_FIRST_XMM_OFFSET + (1 * 2 * XMM_SIZE))
+PROBE_CPU_XMM2_VECTOR_OFFSET EQU (PROBE_FIRST_XMM_OFFSET + (2 * 2 * XMM_SIZE))
+PROBE_CPU_XMM3_VECTOR_OFFSET EQU (PROBE_FIRST_XMM_OFFSET + (3 * 2 * XMM_SIZE))
+PROBE_CPU_XMM4_VECTOR_OFFSET EQU (PROBE_FIRST_XMM_OFFSET + (4 * 2 * XMM_SIZE))
+PROBE_CPU_XMM5_VECTOR_OFFSET EQU (PROBE_FIRST_XMM_OFFSET + (5 * 2 * XMM_SIZE))
+PROBE_CPU_XMM6_VECTOR_OFFSET EQU (PROBE_FIRST_XMM_OFFSET + (6 * 2 * XMM_SIZE))
+PROBE_CPU_XMM7_VECTOR_OFFSET EQU (PROBE_FIRST_XMM_OFFSET + (7 * 2 * XMM_SIZE))
+PROBE_CPU_XMM8_VECTOR_OFFSET EQU (PROBE_FIRST_XMM_OFFSET + (8 * 2 * XMM_SIZE))
+PROBE_CPU_XMM9_VECTOR_OFFSET EQU (PROBE_FIRST_XMM_OFFSET + (9 * 2 * XMM_SIZE))
+PROBE_CPU_XMM10_VECTOR_OFFSET EQU (PROBE_FIRST_XMM_OFFSET + (10 * 2 * XMM_SIZE))
+PROBE_CPU_XMM11_VECTOR_OFFSET EQU (PROBE_FIRST_XMM_OFFSET + (11 * 2 * XMM_SIZE))
+PROBE_CPU_XMM12_VECTOR_OFFSET EQU (PROBE_FIRST_XMM_OFFSET + (12 * 2 * XMM_SIZE))
+PROBE_CPU_XMM13_VECTOR_OFFSET EQU (PROBE_FIRST_XMM_OFFSET + (13 * 2 * XMM_SIZE))
+PROBE_CPU_XMM14_VECTOR_OFFSET EQU (PROBE_FIRST_XMM_OFFSET + (14 * 2 * XMM_SIZE))
+PROBE_CPU_XMM15_VECTOR_OFFSET EQU (PROBE_FIRST_XMM_OFFSET + (15 * 2 * XMM_SIZE))
+PROBE_SIZE EQU (PROBE_FIRST_XMM_OFFSET + 16 * 2 * XMM_SIZE)
 
 PROBE_EXECUTOR_OFFSET EQU PROBE_SIZE ; Stash the executeProbe function pointer at the end of the ProbeContext.
 
@@ -277,6 +296,201 @@ ctiMasmProbeTrampoline PROC
     pop rbp
     ret
 ctiMasmProbeTrampoline ENDP
+
+ctiMasmProbeTrampolineSIMD PROC
+    pushfq
+
+    ; MacroAssemblerX86Common::probe() has already generated code to store some values.
+    ; Together with the rflags pushed above, the top of stack now looks like this:
+    ;     rsp[0 * ptrSize]: rflags
+    ;     rsp[1 * ptrSize]: return address / saved rip
+    ;     rsp[2 * ptrSize]: saved rbx
+    ;     rsp[3 * ptrSize]: saved rdx
+    ;     rsp[4 * ptrSize]: saved rcx
+    ;     rsp[5 * ptrSize]: saved rax
+    ;
+    ; Incoming registers contain:
+    ;     rcx: Probe::executeProbe
+    ;     rdx: probe function
+    ;     rbx: probe arg
+    ;     rax: scratch (was ctiMasmProbeTrampoline)
+
+    mov rax, rsp
+    sub rsp, PROBE_SIZE + OUT_SIZE
+
+    ; The X86_64 ABI specifies that the worse case stack alignment requirement is 32 bytes.
+    and rsp, not 01fh
+    ; Since sp points to the ProbeContext, we've ensured that it's protected from interrupts before we initialize it.
+
+    mov [PROBE_CPU_EBP_OFFSET + rsp], rbp
+    mov rbp, rsp ; Save the ProbeContext*.
+
+    mov [PROBE_EXECUTOR_OFFSET + rbp], rcx
+    mov [PROBE_PROBE_FUNCTION_OFFSET + rbp], rdx
+    mov [PROBE_ARG_OFFSET + rbp], rbx
+    mov [PROBE_CPU_ESI_OFFSET + rbp], rsi
+    mov [PROBE_CPU_EDI_OFFSET + rbp], rdi
+
+    mov rcx, [0 * PTR_SIZE + rax]
+    mov [PROBE_CPU_EFLAGS_OFFSET + rbp], rcx
+    mov rcx, [1 *  PTR_SIZE + rax]
+    mov [PROBE_CPU_EIP_OFFSET + rbp], rcx
+    mov rcx, [2 * PTR_SIZE + rax]
+    mov [PROBE_CPU_EBX_OFFSET + rbp], rcx
+    mov rcx, [3 * PTR_SIZE + rax]
+    mov [PROBE_CPU_EDX_OFFSET + rbp], rcx
+    mov rcx, [4 * PTR_SIZE + rax]
+    mov [PROBE_CPU_ECX_OFFSET + rbp], rcx
+    mov rcx, [5 * PTR_SIZE + rax]
+    mov [PROBE_CPU_EAX_OFFSET + rbp], rcx
+
+    mov rcx, rax
+    add rcx, 6 * PTR_SIZE
+    mov [PROBE_CPU_ESP_OFFSET + rbp], rcx
+
+    mov [PROBE_CPU_R8_OFFSET + rbp], r8
+    mov [PROBE_CPU_R9_OFFSET + rbp], r9
+    mov [PROBE_CPU_R10_OFFSET + rbp], r10
+    mov [PROBE_CPU_R11_OFFSET + rbp], r11
+    mov [PROBE_CPU_R12_OFFSET + rbp], r12
+    mov [PROBE_CPU_R13_OFFSET + rbp], r13
+    mov [PROBE_CPU_R14_OFFSET + rbp], r14
+    mov [PROBE_CPU_R15_OFFSET + rbp], r15
+
+    vmovaps xmmword ptr [PROBE_CPU_XMM0_VECTOR_OFFSET + rbp], xmm0
+    vmovaps xmmword ptr [PROBE_CPU_XMM1_VECTOR_OFFSET + rbp], xmm1
+    vmovaps xmmword ptr [PROBE_CPU_XMM2_VECTOR_OFFSET + rbp], xmm2
+    vmovaps xmmword ptr [PROBE_CPU_XMM3_VECTOR_OFFSET + rbp], xmm3
+    vmovaps xmmword ptr [PROBE_CPU_XMM4_VECTOR_OFFSET + rbp], xmm4
+    vmovaps xmmword ptr [PROBE_CPU_XMM5_VECTOR_OFFSET + rbp], xmm5
+    vmovaps xmmword ptr [PROBE_CPU_XMM6_VECTOR_OFFSET + rbp], xmm6
+    vmovaps xmmword ptr [PROBE_CPU_XMM7_VECTOR_OFFSET + rbp], xmm7
+    vmovaps xmmword ptr [PROBE_CPU_XMM8_VECTOR_OFFSET + rbp], xmm8
+    vmovaps xmmword ptr [PROBE_CPU_XMM9_VECTOR_OFFSET + rbp], xmm9
+    vmovaps xmmword ptr [PROBE_CPU_XMM10_VECTOR_OFFSET + rbp], xmm10
+    vmovaps xmmword ptr [PROBE_CPU_XMM11_VECTOR_OFFSET + rbp], xmm11
+    vmovaps xmmword ptr [PROBE_CPU_XMM12_VECTOR_OFFSET + rbp], xmm12
+    vmovaps xmmword ptr [PROBE_CPU_XMM13_VECTOR_OFFSET + rbp], xmm13
+    vmovaps xmmword ptr [PROBE_CPU_XMM14_VECTOR_OFFSET + rbp], xmm14
+    vmovaps xmmword ptr [PROBE_CPU_XMM15_VECTOR_OFFSET + rbp], xmm15
+
+    mov rcx, rbp ; the Probe::State* arg.
+    sub rsp, 32 ; shadow space
+    call qword ptr[PROBE_EXECUTOR_OFFSET + rbp]
+    add rsp, 32
+
+    ; Make sure the ProbeContext is entirely below the result stack pointer so
+    ; that register values are still preserved when we call the initializeStack
+    ; function.
+    mov rcx, PROBE_SIZE + OUT_SIZE
+    mov rax, rbp
+    mov rdx, [PROBE_CPU_ESP_OFFSET + rbp]
+    add rax, rcx
+    cmp rdx, rax
+    jge ctiMasmProbeTrampolineProbeContextIsSafeSIMD
+
+    ; Allocate a safe place on the stack below the result stack pointer to stash the ProbeContext.
+    sub rdx, rcx
+    and rdx, not 01fh ; Keep the stack pointer 32 bytes aligned.
+    xor rax, rax
+    mov rsp, rdx
+
+    mov rcx, PROBE_SIZE
+
+    ; Copy the ProbeContext to the safe place.
+    ctiMasmProbeTrampolineCopyLoopSIMD:
+    mov rdx, [rbp + rax]
+    mov [rsp + rax], rdx
+    add rax, PTR_SIZE
+    cmp rcx, rax
+    jg ctiMasmProbeTrampolineCopyLoopSIMD
+
+    mov rbp, rsp
+
+    ; Call initializeStackFunction if present.
+    ctiMasmProbeTrampolineProbeContextIsSafeSIMD:
+    xor rcx, rcx
+    add rcx, [PROBE_INIT_STACK_FUNCTION_OFFSET + rbp]
+    je ctiMasmProbeTrampolineRestoreRegistersSIMD
+
+    mov rdx, rcx
+    mov rcx, rbp ; the Probe::State* arg.
+    sub rsp, 32 ; shadow space
+    call rdx
+    add rsp, 32
+
+    ctiMasmProbeTrampolineRestoreRegistersSIMD:
+
+    ; To enable probes to modify register state, we copy all registers
+    ; out of the ProbeContext before returning.
+
+    mov rdx, [PROBE_CPU_EDX_OFFSET + rbp]
+    mov rbx, [PROBE_CPU_EBX_OFFSET + rbp]
+    mov rsi, [PROBE_CPU_ESI_OFFSET + rbp]
+    mov rdi, [PROBE_CPU_EDI_OFFSET + rbp]
+
+    mov r8, [PROBE_CPU_R8_OFFSET + rbp]
+    mov r9, [PROBE_CPU_R9_OFFSET + rbp]
+    mov r10, [PROBE_CPU_R10_OFFSET + rbp]
+    mov r11, [PROBE_CPU_R11_OFFSET + rbp]
+    mov r12, [PROBE_CPU_R12_OFFSET + rbp]
+    mov r13, [PROBE_CPU_R13_OFFSET + rbp]
+    mov r14, [PROBE_CPU_R14_OFFSET + rbp]
+    mov r15, [PROBE_CPU_R15_OFFSET + rbp]
+
+    vmovaps xmm0, xmmword ptr [PROBE_CPU_XMM0_VECTOR_OFFSET + rbp]
+    vmovaps xmm1, xmmword ptr [PROBE_CPU_XMM1_VECTOR_OFFSET + rbp]
+    vmovaps xmm2, xmmword ptr [PROBE_CPU_XMM2_VECTOR_OFFSET + rbp]
+    vmovaps xmm3, xmmword ptr [PROBE_CPU_XMM3_VECTOR_OFFSET + rbp]
+    vmovaps xmm4, xmmword ptr [PROBE_CPU_XMM4_VECTOR_OFFSET + rbp]
+    vmovaps xmm5, xmmword ptr [PROBE_CPU_XMM5_VECTOR_OFFSET + rbp]
+    vmovaps xmm6, xmmword ptr [PROBE_CPU_XMM6_VECTOR_OFFSET + rbp]
+    vmovaps xmm7, xmmword ptr [PROBE_CPU_XMM7_VECTOR_OFFSET + rbp]
+    vmovaps xmm8, xmmword ptr [PROBE_CPU_XMM8_VECTOR_OFFSET + rbp]
+    vmovaps xmm9, xmmword ptr [PROBE_CPU_XMM9_VECTOR_OFFSET + rbp]
+    vmovaps xmm10, xmmword ptr [PROBE_CPU_XMM10_VECTOR_OFFSET + rbp]
+    vmovaps xmm11, xmmword ptr [PROBE_CPU_XMM11_VECTOR_OFFSET + rbp]
+    vmovaps xmm12, xmmword ptr [PROBE_CPU_XMM12_VECTOR_OFFSET + rbp]
+    vmovaps xmm13, xmmword ptr [PROBE_CPU_XMM13_VECTOR_OFFSET + rbp]
+    vmovaps xmm14, xmmword ptr [PROBE_CPU_XMM14_VECTOR_OFFSET + rbp]
+    vmovaps xmm15, xmmword ptr [PROBE_CPU_XMM15_VECTOR_OFFSET + rbp]
+
+    ; There are 6 more registers left to restore:
+    ;     rax, rcx, rbp, rsp, rip, and rflags.
+
+    ; The restoration process at ctiMasmProbeTrampolineEnd below works by popping
+    ; 5 words off the stack into rflags, rax, rcx, rbp, and rip. These 5 words need
+    ; to be pushed on top of the final esp value so that just by popping the 5 words,
+    ; we'll get the esp that the probe wants to set. Let's call this area (for storing
+    ; these 5 words) the restore area.
+    mov rcx, [PROBE_CPU_ESP_OFFSET + rbp]
+    sub rcx, 5 * PTR_SIZE
+
+    ; rcx now points to the restore area.
+
+    ; Copy remaining restore values from the ProbeContext to the restore area.
+    ; Note: We already ensured above that the ProbeContext is in a safe location before
+    ; calling the initializeStackFunction. The initializeStackFunction is not allowed to
+    ; change the stack pointer again.
+    mov rax, [PROBE_CPU_EFLAGS_OFFSET + rbp]
+    mov [0 * PTR_SIZE + rcx], rax
+    mov rax, [PROBE_CPU_EAX_OFFSET + rbp]
+    mov [1 * PTR_SIZE + rcx], rax
+    mov rax, [PROBE_CPU_ECX_OFFSET + rbp]
+    mov [2 * PTR_SIZE + rcx], rax
+    mov rax, [PROBE_CPU_EBP_OFFSET + rbp]
+    mov [3 * PTR_SIZE + rcx], rax
+    mov rax, [PROBE_CPU_EIP_OFFSET + rbp]
+    mov [4 * PTR_SIZE + rcx], rax
+    mov rsp, rcx
+
+    ; Do the remaining restoration by popping off the restore area.
+    popfq
+    pop rax
+    pop rcx
+    pop rbp
+    ret
+ctiMasmProbeTrampolineSIMD ENDP
 
 _TEXT   ENDS
 
