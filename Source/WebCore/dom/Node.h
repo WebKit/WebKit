@@ -667,7 +667,6 @@ protected:
         DescendantsAffectedByForwardPositionalRules             = 1 << 10,
         ChildrenAffectedByBackwardPositionalRules               = 1 << 11,
         DescendantsAffectedByBackwardPositionalRules            = 1 << 12,
-        ChildrenAffectedByPropertyBasedBackwardPositionalRules  = 1 << 13,
     };
 
     struct StyleBitfields {

@@ -4106,8 +4106,7 @@ bool Element::hasFlagsSetDuringStylingOfChildren() const
         || childrenAffectedByForwardPositionalRules()
         || descendantsAffectedByForwardPositionalRules()
         || childrenAffectedByBackwardPositionalRules()
-        || descendantsAffectedByBackwardPositionalRules()
-        || childrenAffectedByPropertyBasedBackwardPositionalRules();
+        || descendantsAffectedByBackwardPositionalRules();
 }
 
 unsigned Element::rareDataChildIndex() const
@@ -4908,8 +4907,7 @@ void Element::resetChildStyleRelations()
         NodeStyleFlag::ChildrenAffectedByFirstChildRules,
         NodeStyleFlag::ChildrenAffectedByLastChildRules,
         NodeStyleFlag::ChildrenAffectedByForwardPositionalRules,
-        NodeStyleFlag::ChildrenAffectedByBackwardPositionalRules,
-        NodeStyleFlag::ChildrenAffectedByPropertyBasedBackwardPositionalRules
+        NodeStyleFlag::ChildrenAffectedByBackwardPositionalRules
     });
 }
 

@@ -930,7 +930,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
                     if (!matchSelectorList(checkingContext, context, element, *selectorList))
                         return false;
 
-                    addStyleRelation(checkingContext, parentElement, Style::Relation::ChildrenAffectedByPropertyBasedBackwardPositionalRules);
+                    addStyleRelation(checkingContext, parentElement, Style::Relation::ChildrenAffectedByBackwardPositionalRules);
                 } else {
                     auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByBackwardPositionalRules : Style::Relation::DescendantsAffectedByBackwardPositionalRules;
                     addStyleRelation(checkingContext, parentElement, relation);
