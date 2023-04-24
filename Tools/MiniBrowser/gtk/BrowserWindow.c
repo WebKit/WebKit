@@ -738,6 +738,8 @@ static void webViewIsLoadingChanged(WebKitWebView *webView, GParamSpec *paramSpe
     GtkWidget *image = gtk_button_get_image(GTK_BUTTON(window->reloadOrStopButton));
     g_object_set(image, "icon-name", isLoading ? "process-stop-symbolic" : "view-refresh-symbolic", NULL);
 #endif
+    GAction *action = g_action_map_lookup_action(G_ACTION_MAP(window), "stop-load");
+    g_simple_action_set_enabled(G_SIMPLE_ACTION(action), isLoading);
 }
 
 static void zoomInCallback(GSimpleAction *action, GVariant *parameter, gpointer userData)
@@ -850,7 +852,6 @@ static void reloadPageIgnoringCache(GSimpleAction *action, GVariant *parameter, 
 static void stopPageLoad(GSimpleAction *action, GVariant *parameter, gpointer userData)
 {
     BrowserWindow *window = BROWSER_WINDOW(userData);
-    browser_tab_stop_search(window->activeTab);
     WebKitWebView *webView = browser_tab_get_web_view(window->activeTab);
     if (webkit_web_view_is_loading(webView))
         webkit_web_view_stop_loading(webView);
