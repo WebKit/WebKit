@@ -98,7 +98,7 @@ public:
         if (m_src)
             GST_DEBUG_OBJECT(m_src, "renegotiation should happen");
     }
-    void activeStatusChanged() final { }
+    void activeStatusChanged() final;
 
     void didAddTrack(MediaStreamTrackPrivate& track) final
     {
@@ -274,7 +274,10 @@ public:
 
     void trackEnded(MediaStreamTrackPrivate&) final
     {
+        GST_INFO_OBJECT(m_src.get(), "Track ended");
         sourceStopped();
+        m_isEnded = true;
+        webkitMediaStreamSrcEnsureStreamCollectionPosted(WEBKIT_MEDIA_STREAM_SRC(m_parent), true);
     }
 
     void sourceStopped() final
@@ -395,6 +398,8 @@ public:
         return nullptr;
     }
 
+    bool isEnded() const { return m_isEnded; }
+
 private:
     void flush()
     {
@@ -473,7 +478,7 @@ private:
     GRefPtr<GstCaps> m_silentSampleCaps;
     VideoFrame::Rotation m_videoRotation { VideoFrame::Rotation::None };
     bool m_videoMirrored { false };
-
+    bool m_isEnded { false };
     Condition m_eosCondition;
     Lock m_eosLock;
     bool m_eosPending WTF_GUARDED_BY_LOCK(m_eosLock) { false };
@@ -499,6 +504,13 @@ enum {
 };
 
 static void webkitMediaStreamSrcPostStreamCollection(WebKitMediaStreamSrc*);
+
+void WebKitMediaStreamObserver::activeStatusChanged()
+{
+    auto* element = WEBKIT_MEDIA_STREAM_SRC_CAST(m_src);
+    if (!element->priv->stream->active())
+        webkitMediaStreamSrcEnsureStreamCollectionPosted(element, true);
+}
 
 void WebKitMediaStreamObserver::didRemoveTrack(MediaStreamTrackPrivate& track)
 {
@@ -768,13 +780,13 @@ static void webkitMediaStreamSrcPostStreamCollection(WebKitMediaStreamSrc* self)
 
     {
         auto locker = GstObjectLocker(self);
-        if (priv->stream && (!priv->stream->active() || !priv->stream->hasTracks()))
-            return;
-
         auto upstreamId = priv->stream ? priv->stream->id() : createVersion4UUIDString();
         priv->streamCollection = adoptGRef(gst_stream_collection_new(upstreamId.ascii().data()));
-        for (auto& source : priv->sources)
+        for (auto& source : priv->sources) {
+            if (source->isEnded())
+                continue;
             gst_stream_collection_add_stream(priv->streamCollection.get(), webkitMediaStreamNew(source->track()));
+        }
     }
 
     GST_DEBUG_OBJECT(self, "Posting stream collection message");

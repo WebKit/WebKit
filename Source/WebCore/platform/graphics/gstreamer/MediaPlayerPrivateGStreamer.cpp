@@ -390,6 +390,12 @@ void MediaPlayerPrivateGStreamer::prepareToPlay()
 
 void MediaPlayerPrivateGStreamer::play()
 {
+    if (isMediaStreamPlayer()) {
+        m_pausedTime = MediaTime::invalidTime();
+        if (m_startTime.isInvalid())
+            m_startTime = MediaTime::createWithDouble(MonotonicTime::now().secondsSinceEpoch().value());
+    }
+
     if (!m_playbackRate) {
         m_isPlaybackRatePaused = true;
         return;
@@ -407,6 +413,9 @@ void MediaPlayerPrivateGStreamer::play()
 
 void MediaPlayerPrivateGStreamer::pause()
 {
+    if (isMediaStreamPlayer())
+        m_pausedTime = currentMediaTime();
+
     m_isPlaybackRatePaused = false;
     GstState currentState, pendingState;
     gst_element_get_state(m_pipeline.get(), &currentState, &pendingState, 0);
@@ -558,6 +567,9 @@ void MediaPlayerPrivateGStreamer::updatePlaybackRate()
 
 MediaTime MediaPlayerPrivateGStreamer::durationMediaTime() const
 {
+    if (isMediaStreamPlayer())
+        return MediaTime::positiveInfiniteTime();
+
     GST_TRACE_OBJECT(pipeline(), "Cached duration: %s", m_cachedDuration.toString().utf8().data());
     if (m_cachedDuration.isValid())
         return m_cachedDuration;
@@ -573,6 +585,13 @@ MediaTime MediaPlayerPrivateGStreamer::durationMediaTime() const
 
 MediaTime MediaPlayerPrivateGStreamer::currentMediaTime() const
 {
+    if (isMediaStreamPlayer()) {
+        if (m_pausedTime)
+            return m_pausedTime;
+
+        return MediaTime::createWithDouble(MonotonicTime::now().secondsSinceEpoch().value()) - m_startTime;
+    }
+
     if (!m_pipeline || m_didErrorOccur)
         return MediaTime::invalidTime();
 
@@ -1391,26 +1410,29 @@ void MediaPlayerPrivateGStreamer::updateTracks(const GRefPtr<GstObject>& collect
     bool oldHasAudio = m_hasAudio;
     bool oldHasVideo = m_hasVideo;
 
-    // New stream collections override previous ones so in order to keep our internal tracks
-    // consistent with the collection contents, we can't reuse our old tracks.
-#define REMOVE_OLD_TRACKS(type, Type) G_STMT_START {             \
-        for (const auto& trackId : m_##type##Tracks.keys()) {    \
-            auto track = m_##type##Tracks.get(trackId);          \
-            m_player->remove##Type##Track(*track);               \
-        }                                                        \
-        m_##type##Tracks.clear();                                \
-    } G_STMT_END
+    // fast/mediastream/MediaStream-video-element-remove-track.html expects audio tracks gone, not deactivated.
+    for (auto& track : m_audioTracks.values())
+        m_player->removeAudioTrack(track);
+    m_audioTracks.clear();
 
-    REMOVE_OLD_TRACKS(audio, Audio);
-    REMOVE_OLD_TRACKS(video, Video);
-    REMOVE_OLD_TRACKS(text, Text);
+    for (auto& track : m_videoTracks.values())
+        track->setActive(false);
+    for (auto& track : m_textTracks.values())
+        track->setActive(false);
 
     auto scopeExit = makeScopeExit([oldHasAudio, oldHasVideo, protectedThis = WeakPtr { *this }, this] {
         if (!protectedThis)
             return;
 
         m_hasAudio = !m_audioTracks.isEmpty();
-        m_hasVideo = !m_videoTracks.isEmpty();
+        m_hasVideo = false;
+
+        for (auto& track : m_videoTracks.values()) {
+            if (track->selected()) {
+                m_hasVideo = true;
+                break;
+            }
+        }
 
         if (oldHasVideo != m_hasVideo || oldHasAudio != m_hasAudio)
             m_player->characteristicChanged();
@@ -1419,14 +1441,22 @@ void MediaPlayerPrivateGStreamer::updateTracks(const GRefPtr<GstObject>& collect
             m_player->sizeChanged();
 
         m_player->mediaEngineUpdated();
+
+        if (!m_hasAudio && !m_hasVideo)
+            didEnd();
     });
 
     if (!m_streamCollection)
         return;
 
     using TextTrackPrivateGStreamer = InbandTextTrackPrivateGStreamer;
-#define CREATE_TRACK(type, Type) G_STMT_START { \
-        auto track = Type##TrackPrivateGStreamer::create(*this, type##TrackIndex, stream); \
+#define CREATE_OR_SELECT_TRACK(type, Type) G_STMT_START { \
+        if (!m_##type##Tracks.contains(streamId)) { \
+            auto track = Type##TrackPrivateGStreamer::create(*this, type##TrackIndex, stream); \
+            m_player->add##Type##Track(track);                          \
+            m_##type##Tracks.add(streamId, WTFMove(track));             \
+        }                                                               \
+        auto track = m_##type##Tracks.get(streamId);                    \
         auto trackId = track->id();                                     \
         if (!type##TrackIndex) { \
             m_wanted##Type##StreamId = trackId;                         \
@@ -1434,8 +1464,6 @@ void MediaPlayerPrivateGStreamer::updateTracks(const GRefPtr<GstObject>& collect
             track->setActive(true);                                     \
         }                                                               \
         type##TrackIndex++;                                             \
-        m_player->add##Type##Track(track);                              \
-        m_##type##Tracks.add(trackId, WTFMove(track));                  \
     } G_STMT_END
 
     bool useMediaSource = isMediaSource();
@@ -1447,21 +1475,22 @@ void MediaPlayerPrivateGStreamer::updateTracks(const GRefPtr<GstObject>& collect
     for (unsigned i = 0; i < length; i++) {
         auto* stream = gst_stream_collection_get_stream(m_streamCollection.get(), i);
         RELEASE_ASSERT(stream);
-        const char* streamId = gst_stream_get_stream_id(stream);
+        auto streamId = AtomString::fromLatin1(gst_stream_get_stream_id(stream));
         auto type = gst_stream_get_stream_type(stream);
 
-        GST_DEBUG_OBJECT(pipeline(), "#%u %s track with ID %s", i, gst_stream_type_get_name(type), streamId);
+        GST_DEBUG_OBJECT(pipeline(), "#%u %s track with ID %s", i, gst_stream_type_get_name(type), streamId.string().ascii().data());
 
         if (type & GST_STREAM_TYPE_AUDIO) {
-            CREATE_TRACK(audio, Audio);
+            CREATE_OR_SELECT_TRACK(audio, Audio);
             configureMediaStreamAudioTracks();
         } else if (type & GST_STREAM_TYPE_VIDEO && m_player->isVideoPlayer())
-            CREATE_TRACK(video, Video);
+            CREATE_OR_SELECT_TRACK(video, Video);
         else if (type & GST_STREAM_TYPE_TEXT && !useMediaSource)
-            CREATE_TRACK(text, Text);
+            CREATE_OR_SELECT_TRACK(text, Text);
         else
-            GST_WARNING("Unknown track type found for stream %s", streamId);
+            GST_WARNING("Unknown track type found for stream %s", streamId.string().ascii().data());
     }
+#undef CREATE_OR_SELECT_TRACK
 }
 
 void MediaPlayerPrivateGStreamer::videoChangedCallback(MediaPlayerPrivateGStreamer* player)
@@ -2605,6 +2634,15 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
     return false;
 }
 
+bool MediaPlayerPrivateGStreamer::ended() const
+{
+#if ENABLE(MEDIA_STREAM)
+    if (isMediaStreamPlayer())
+        return !m_streamPrivate->active();
+#endif
+    return m_isEndReached;
+}
+
 void MediaPlayerPrivateGStreamer::didEnd()
 {
     invalidateCachedPosition();
@@ -2621,12 +2659,14 @@ void MediaPlayerPrivateGStreamer::didEnd()
         m_player->durationChanged();
     }
 
-    // Synchronize position and duration values to not confuse the
-    // HTMLMediaElement. In some cases like reverse playback the
-    // position is not always reported as 0 for instance.
-    if (!m_isSeeking) {
-        m_cachedPosition = m_playbackRate > 0 ? durationMediaTime() : MediaTime::zeroTime();
-        GST_DEBUG("Position adjusted: %s", currentMediaTime().toString().utf8().data());
+    if (!isMediaStreamPlayer()) {
+        // Synchronize position and duration values to not confuse the
+        // HTMLMediaElement. In some cases like reverse playback the
+        // position is not always reported as 0 for instance.
+        if (!m_isSeeking) {
+            m_cachedPosition = m_playbackRate > 0 ? durationMediaTime() : MediaTime::zeroTime();
+            GST_DEBUG("Position adjusted: %s", currentMediaTime().toString().utf8().data());
+        }
     }
 
     // Now that playback has ended it's NOT a safe time to send a SELECT_STREAMS event. In fact, as of GStreamer 1.16,
