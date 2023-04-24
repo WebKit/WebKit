@@ -646,6 +646,8 @@ public:
 
     virtual bool isUsingUISideCompositing() const { return false; }
     
+    virtual bool isInStableState() const { return true; }
+
     WEBCORE_EXPORT virtual ~ChromeClient();
 
 protected:

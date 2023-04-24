@@ -823,6 +823,7 @@ private:
 #if HAVE(RUBBER_BANDING)
     GraphicsLayer* layerForOverhangAreas() const final;
 #endif
+    bool isInStableState() const final;
     void contentsResized() final;
 
 #if ENABLE(DARK_MODE_CSS)

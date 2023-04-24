@@ -1662,6 +1662,98 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static async pinch(firstStartX, firstStartY, secondStartX, secondStartY, firstEndX, firstEndY, secondEndX, secondEndY)
+    {
+        await UIHelper.sendEventStream({
+            events: [
+                {
+                    interpolate : "linear",
+                    timestep : 0.01,
+                    coordinateSpace : "content",
+                    startEvent : {
+                        inputType : "hand",
+                        timeOffset : 0,
+                        touches : [
+                            { inputType : "finger", phase : "began", id : 1, x : firstStartX, y : firstStartY, pressure : 0 },
+                            { inputType : "finger", phase : "began", id : 2, x : secondStartX, y : secondStartY, pressure : 0 }
+                        ]
+                    },
+                    endEvent : {
+                        inputType : "hand",
+                        timeOffset : 0.01,
+                        touches : [
+                            { inputType : "finger", phase : "began", id : 1, x : firstStartX, y : firstStartY, pressure : 0 },
+                            { inputType : "finger", phase : "began", id : 2, x : secondStartX, y : secondStartY, pressure : 0 }
+                        ]
+                    }
+                },
+                {
+                    interpolate : "linear",
+                    timestep : 0.01,
+                    coordinateSpace : "content",
+                    startEvent : {
+                        inputType : "hand",
+                        timeOffset : 0.01,
+                        touches : [
+                            { inputType : "finger", phase : "moved", id : 1, x : firstStartX, y : firstStartY, pressure : 0 },
+                            { inputType : "finger", phase : "moved", id : 2, x : secondStartX, y : secondStartY, pressure : 0 }
+                        ]
+                    },
+                    endEvent : {
+                        inputType : "hand",
+                        timeOffset : 0.9,
+                        touches : [
+                            { inputType : "finger", phase : "moved", id : 1, x : firstEndX, y : firstEndY, pressure : 0 },
+                            { inputType : "finger", phase : "moved", id : 2, x : secondEndX, y : secondEndY, pressure : 0 }
+                        ]
+                    }
+                },
+                {
+                    interpolate : "linear",
+                    timestep : 0.01,
+                    coordinateSpace : "content",
+                    startEvent : {
+                        inputType : "hand",
+                        timeOffset : 0.9,
+                        touches : [
+                            { inputType : "finger", phase : "stationary", id : 1, x : firstEndX, y : firstEndY, pressure : 0 },
+                            { inputType : "finger", phase : "stationary", id : 2, x : secondEndX, y : secondEndY, pressure : 0 }
+                        ]
+                    },
+                    endEvent : {
+                        inputType : "hand",
+                        timeOffset : 0.99,
+                        touches : [
+                            { inputType : "finger", phase : "stationary", id : 1, x : firstEndX, y : firstEndY, pressure : 0 },
+                            { inputType : "finger", phase : "stationary", id : 2, x : secondEndX, y : secondEndY, pressure : 0 }
+                        ]
+                    }
+                },
+                {
+                    interpolate : "linear",
+                    timestep : 0.01,
+                    coordinateSpace : "content",
+                    startEvent : {
+                        inputType : "hand",
+                        timeOffset : 0.99,
+                        touches : [
+                            { inputType : "finger", phase : "ended", id : 1, x : firstEndX, y : firstEndY, pressure : 0 },
+                            { inputType : "finger", phase : "ended", id : 2, x : secondEndX, y : secondEndY, pressure : 0 }
+                        ]
+                    },
+                    endEvent : {
+                        inputType : "hand",
+                        timeOffset : 1,
+                        touches : [
+                            { inputType : "finger", phase : "ended", id : 1, x : firstEndX, y : firstEndY, pressure : 0 },
+                            { inputType : "finger", phase : "ended", id : 2, x : secondEndX, y : secondEndY, pressure : 0 }
+                        ]
+                    }
+                }
+            ]
+        });
+    }
+
     static setWindowIsKey(isKey)
     {
         const script = `uiController.windowIsKey = ${isKey}`;

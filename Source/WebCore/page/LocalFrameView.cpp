@@ -3051,6 +3051,13 @@ bool LocalFrameView::isRubberBandInProgress() const
     return false;
 }
 
+bool LocalFrameView::isInStableState() const
+{
+    if (auto* page = m_frame->page())
+        return page->chrome().client().isInStableState();
+    return FrameView::isInStableState();
+}
+
 bool LocalFrameView::requestStartKeyboardScrollAnimation(const KeyboardScroll& scrollData)
 {
     if (auto scrollingCoordinator = this->scrollingCoordinator())

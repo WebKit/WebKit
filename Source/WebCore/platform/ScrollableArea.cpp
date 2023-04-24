@@ -545,7 +545,7 @@ void ScrollableArea::resnapAfterLayout()
     LOG_WITH_STREAM(ScrollSnap, stream << *this << " resnapAfterLayout: isScrollSnapInProgress " << isScrollSnapInProgress() << " isUserScrollInProgress " << isUserScrollInProgress());
 
     auto* scrollAnimator = existingScrollAnimator();
-    if (!scrollAnimator || isScrollSnapInProgress() || isUserScrollInProgress())
+    if (!scrollAnimator || isScrollSnapInProgress() || isUserScrollInProgress() || !isInStableState())
         return;
 
     scrollAnimator->resnapAfterLayout();

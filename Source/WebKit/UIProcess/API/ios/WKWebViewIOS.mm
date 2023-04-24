@@ -2347,7 +2347,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (scrollView.isDragging || scrollView.isZooming || scrollView._isInterruptingDeceleration)
         stabilityFlags.add(WebKit::ViewStabilityFlag::ScrollViewInteracting);
 
-    if (scrollView.isDecelerating || scrollView._isAnimatingZoom || scrollView._isScrollingToTop)
+    if (scrollView.isDecelerating || scrollView._isAnimatingZoom || scrollView._isScrollingToTop || scrollView.isZoomBouncing)
         stabilityFlags.add(WebKit::ViewStabilityFlag::ScrollViewAnimatedScrollOrZoom);
 
     if (scrollView == _scrollView.get() && _isChangingObscuredInsetsInteractively)
