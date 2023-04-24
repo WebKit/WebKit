@@ -713,6 +713,7 @@ public:
     void compilePushWithScope(Node*);
     void compileGetById(Node*, AccessType);
     void compileGetByIdFlush(Node*, AccessType);
+    void compileGetByIdMegamorphic(Node*);
     void compileInById(Node*);
     void compileInByVal(Node*);
     void compileHasPrivate(Node*, AccessType);

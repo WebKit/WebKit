@@ -3644,7 +3644,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case GetByIdDirect:
     case GetByIdDirectFlush:
     case GetById:
-    case GetByIdFlush: {
+    case GetByIdFlush:
+    case GetByIdMegamorphic: {
         AbstractValue& value = forNode(node->child1());
 
         if (Options::useAccessInlining()

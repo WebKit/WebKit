@@ -354,15 +354,13 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdMegamorphic, EncodedJSValue, (JSGlobalO
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    stubInfo->tookSlowPath = true;
-
     JSValue baseValue = JSValue::decode(base);
     CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
     auto* uid = identifier.uid();
     PropertySlot slot(baseValue, PropertySlot::InternalMethodType::Get);
 
     if (UNLIKELY(!baseValue.isObject())) {
-        if (stubInfo->considerRepatchingCacheMegamorphic(vm))
+        if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm))
             repatchGetBySlowPathCall(callFrame->codeBlock(), *stubInfo, GetByKind::ById);
         return JSValue::encode(baseValue.get(globalObject, uid, slot));
     }
@@ -372,7 +370,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdMegamorphic, EncodedJSValue, (JSGlobalO
     bool cacheable = true;
     while (true) {
         if (UNLIKELY(TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags()) && object->type() != ArrayType && object->type() != JSFunctionType && object != globalObject->arrayPrototype())) {
-            if (stubInfo->considerRepatchingCacheMegamorphic(vm))
+            if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm))
                 repatchGetBySlowPathCall(callFrame->codeBlock(), *stubInfo, GetByKind::ById);
             if (object->getNonIndexPropertySlot(globalObject, uid, slot))
                 return JSValue::encode(slot.getValue(globalObject, uid));
@@ -389,12 +387,12 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdMegamorphic, EncodedJSValue, (JSGlobalO
                     vm.megamorphicCache()->initAsHit(baseObject->structureID(), uid, slot.slotBase(), slot.cachedOffset(), slot.slotBase() == baseObject);
                 else {
                     if (UNLIKELY(baseObject->structure()->hasBeenFlattenedBefore())) {
-                        if (stubInfo->considerRepatchingCacheMegamorphic(vm))
+                        if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm))
                             repatchGetBySlowPathCall(callFrame->codeBlock(), *stubInfo, GetByKind::ById);
                     }
                 }
             } else {
-                if (stubInfo->considerRepatchingCacheMegamorphic(vm))
+                if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm))
                     repatchGetBySlowPathCall(callFrame->codeBlock(), *stubInfo, GetByKind::ById);
             }
             return JSValue::encode(slot.getValue(globalObject, uid));
@@ -413,7 +411,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdMegamorphic, EncodedJSValue, (JSGlobalO
                 if (LIKELY(!baseObject->structure()->hasBeenFlattenedBefore()))
                     return JSValue::encode(jsUndefined());
             }
-            if (stubInfo->considerRepatchingCacheMegamorphic(vm))
+            if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm))
                 repatchGetBySlowPathCall(callFrame->codeBlock(), *stubInfo, GetByKind::ById);
             return JSValue::encode(jsUndefined());
         }

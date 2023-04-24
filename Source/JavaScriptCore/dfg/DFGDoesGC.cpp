@@ -297,6 +297,7 @@ bool doesGC(Graph& graph, Node* node)
     case GetByIdDirect:
     case GetByIdDirectFlush:
     case GetByIdFlush:
+    case GetByIdMegamorphic:
     case GetByIdWithThis:
     case GetByValWithThis:
     case GetDynamicVar:

@@ -221,6 +221,7 @@ namespace JSC { namespace DFG {
     macro(GetByIdWithThis, NodeResultJS | NodeMustGenerate) \
     macro(GetByIdDirect, NodeResultJS | NodeMustGenerate) \
     macro(GetByIdDirectFlush, NodeResultJS | NodeMustGenerate) \
+    macro(GetByIdMegamorphic, NodeResultJS | NodeMustGenerate) \
     macro(PutById, NodeMustGenerate) \
     macro(PutByIdFlush, NodeMustGenerate) \
     macro(PutByIdDirect, NodeMustGenerate) \
