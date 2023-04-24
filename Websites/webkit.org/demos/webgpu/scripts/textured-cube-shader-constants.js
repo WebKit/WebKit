@@ -73,7 +73,7 @@ async function helloCube() {
     ]);
     vertexBuffer.unmap();
     
-    const uniformBufferSize = 12;
+    const uniformBufferSize = 16;
     const uniformBuffer = device.createBuffer({
         size: uniformBufferSize,
         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
@@ -100,7 +100,7 @@ async function helloCube() {
         sampleCount: 1,
         dimension: "2d",
         format: "bgra8unorm",
-        usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST
+        usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT
     };
     const texture = device.createTexture(textureDescriptor);
     
@@ -117,81 +117,46 @@ async function helloCube() {
         minFilter: "linear"
     });
 
-    /*** Shader Setup ***/
-    
-    const uniformBindGroupLayout = device.createBindGroupLayout({ entries: [
-        { binding: 0, visibility: GPUShaderStage.VERTEX, buffer: {} },
-        { binding: 1, visibility: GPUShaderStage.FRAGMENT, texture: {} },
-        { binding: 2, visibility: GPUShaderStage.FRAGMENT, sampler: {} },
-    ] });
-
-    const uniformBindGroup = device.createBindGroup({
-        layout: uniformBindGroupLayout,
-        entries: [
-          {
-            binding: 0,
-            resource: {
-              buffer: uniformBuffer,
-              offset: 0
-            },
-          },
-          {
-            binding: 1,
-            resource: texture.createView(),
-          },
-          {
-            binding: 2,
-            resource: sampler,
-          },
-        ],
-      });
-
-    const mslSource = `
-                #define vertexInputPackedFloatSize 10
-                #include <metal_stdlib>
-                using namespace metal;
-    
-                constant float alphaMultiplier [[function_constant(0)]];
-                constant float betaMultiplier [[function_constant(1)]];
-                constant float gammaMultiplier [[function_constant(2)]];
-                constant float textureMultiplier [[function_constant(3)]];
-                constant float colorMultiplier [[function_constant(4)]];
+    const shader = `
+                override alphaMultiplier : f32;
+                override betaMultiplier : f32;
+                override gammaMultiplier : f32;
+                override textureMultiplier : f32;
+                override colorMultiplier : f32;
     
                 struct VertexIn {
-                   float4 position [[attribute(0)]];
-                   float4 color [[attribute(1)]];
-                   float2 uv [[attribute(2)]];
+                   @location(0) position: vec4<f32>,
+                   @location(1) color: vec4<f32>,
+                   @location(2) uv: vec2<f32>,
                 };
     
                 struct VertexOut {
-                   float4 position [[position]];
-                   float4 color;
-                   float2 uv;
+                   @builtin(position) position: vec4<f32>,
+                   @location(0) color: vec4<f32>,
+                   @location(1) uv: vec2<f32>,
                 };
     
-                struct VertexShaderArguments {
-                    device float *time [[id(0)]];
+                struct Uniforms {
+                    time: vec4<f32>,
                 };
+                @group(0) @binding(0) var<uniform> uniforms : Uniforms;
+                @group(0) @binding(1) var colorTexture: texture_2d<f32>;
+                @group(0) @binding(2) var textureSampler: sampler;
     
-                struct FragmentShaderArguments {
-                    texture2d<half> colorTexture;
-                    sampler textureSampler;
-                };
-    
-                vertex VertexOut vsmain(VertexIn vin [[stage_in]], const device VertexShaderArguments &values [[buffer(8)]])
+                @vertex fn vsmain(vin: VertexIn) -> VertexOut
                 {
-                    VertexOut vout;
-                    float alpha = values.time[0] * alphaMultiplier;
-                    float beta = values.time[1] * betaMultiplier;
-                    float gamma = values.time[2] * gammaMultiplier;
-                    float cA = cos(alpha);
-                    float sA = sin(alpha);
-                    float cB = cos(beta);
-                    float sB = sin(beta);
-                    float cG = cos(gamma);
-                    float sG = sin(gamma);
+                    var vout : VertexOut;
+                    let alpha = uniforms.time[0] * alphaMultiplier;
+                    let beta = uniforms.time[1] * betaMultiplier;
+                    let gamma = uniforms.time[2] * gammaMultiplier;
+                    let cA = cos(alpha);
+                    let sA = sin(alpha);
+                    let cB = cos(beta);
+                    let sB = sin(beta);
+                    let cG = cos(gamma);
+                    let sG = sin(gamma);
     
-                    float4x4 m = float4x4(cA * cB,  sA * cB,   -sB, 0,
+                    let m = mat4x4(cA * cB,  sA * cB,   -sB, 0,
                                           cA*sB*sG - sA*cG,  sA*sB*sG + cA*cG,   cB * sG, 0,
                                           cA*sB*cG + sA*sG, sA*sB*cG - cA*sG, cB * cG, 0,
                                           0,     0,     0, 1);
@@ -202,13 +167,13 @@ async function helloCube() {
                     return vout;
                 }
 
-                fragment float4 fsmain(VertexOut in [[stage_in]], device FragmentShaderArguments &values [[buffer(0)]])
+                @fragment fn fsmain(in: VertexOut) -> @location(0) vec4<f32>
                 {
-                    return colorMultiplier * in.color + textureMultiplier * float4(values.colorTexture.sample(values.textureSampler, in.uv));
+                    return colorMultiplier * in.color + textureMultiplier * vec4(textureSample(colorTexture, textureSampler, in.uv));
                 }
     `;
 
-    const shaderModule = device.createShaderModule({ code: mslSource, isWHLSL: false, hints: [ {layout: "auto" }, ] });
+    const shaderModule = device.createShaderModule({ code: shader });
 
     const milliseconds = (new Date()).getMilliseconds()
     
@@ -228,13 +193,13 @@ async function helloCube() {
                 },
                 {
                     // color
-                    shaderLocation: 0,
+                    shaderLocation: 1,
                     offset: 4 * 4,
                     format: 'float32x4',
                 },
                 {
                     // uv
-                    shaderLocation: 1,
+                    shaderLocation: 2,
                     offset: 4 * 8,
                     format: 'float32x2',
                 },
@@ -262,7 +227,7 @@ async function helloCube() {
     /* GPURenderPipelineDescriptor */
 
     const renderPipelineDescriptor = {
-        layout: "auto",
+        layout: 'auto',
         vertex: vertexStageDescriptor,
         fragment: fragmentStageDescriptor,
         primitive: {
@@ -272,6 +237,30 @@ async function helloCube() {
     };
     /* GPURenderPipeline */
     const renderPipeline = device.createRenderPipeline(renderPipelineDescriptor);
+
+    /*** Shader Setup ***/
+
+    const uniformBindGroup = device.createBindGroup({
+        layout: renderPipeline.getBindGroupLayout(0),
+        entries: [
+          {
+            binding: 0,
+            resource: {
+              buffer: uniformBuffer,
+              offset: 0
+            },
+          },
+          {
+            binding: 1,
+            resource: texture.createView(),
+          },
+          {
+            binding: 2,
+            resource: sampler,
+          },
+        ],
+      });
+
     
     /*** Swap Chain Setup ***/
     function frameUpdate() {
