@@ -278,7 +278,10 @@ std::unique_ptr<GLContext> GLContext::createWindowContext(GLNativeWindowType win
 
     if (surface == EGL_NO_SURFACE) {
         RELEASE_LOG_INFO(Compositing, "Cannot create EGL window surface: %s. Retrying with fallback.", lastErrorString());
-        surface = eglCreateWindowSurface(display, config, static_cast<EGLNativeWindowType>(window), nullptr);
+        // EGLNativeWindowType changes depending on the EGL implementation, reinterpret_cast
+        // would work for pointers, and static_cast for numeric types only; so use a plain
+        // C cast expression which works in all possible cases.
+        surface = eglCreateWindowSurface(display, config, (EGLNativeWindowType) window, nullptr);
     }
 
     if (surface == EGL_NO_SURFACE) {
