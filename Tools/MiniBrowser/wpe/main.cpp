@@ -51,6 +51,7 @@ static const char* cookiesPolicy;
 static const char* proxy;
 const char* bgColor;
 static char* timeZone;
+static const char* featureList = nullptr;
 static gboolean enableITP;
 static gboolean printVersion;
 static GHashTable* openViews;
@@ -69,6 +70,7 @@ static const GOptionEntry commandLineOptions[] =
     { "bg-color", 0, 0, G_OPTION_ARG_STRING, &bgColor, "Window background color. Default: white", "COLOR" },
     { "enable-itp", 0, 0, G_OPTION_ARG_NONE, &enableITP, "Enable Intelligent Tracking Prevention (ITP)", nullptr },
     { "time-zone", 't', 0, G_OPTION_ARG_STRING, &timeZone, "Set time zone", "TIMEZONE" },
+    { "features", 'F', 0, G_OPTION_ARG_STRING, &featureList, "Enable or disable WebKit features (hint: pass 'help' for a list)", "FEATURE-LIST" },
     { "version", 'v', 0, G_OPTION_ARG_NONE, &printVersion, "Print the WPE version", nullptr },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, nullptr, "[URL]" },
     { nullptr, 0, 0, G_OPTION_ARG_NONE, nullptr, nullptr, nullptr }
@@ -187,6 +189,16 @@ static WebKitWebView* createWebView(WebKitWebView* webView, WebKitNavigationActi
     return newWebView;
 }
 
+static WebKitFeature* findFeature(WebKitFeatureList* featureList, const char* identifier)
+{
+    for (gsize i = 0; i < webkit_feature_list_get_length(featureList); i++) {
+        WebKitFeature* feature = webkit_feature_list_get(featureList, i);
+        if (!g_ascii_strcasecmp(identifier, webkit_feature_get_identifier(feature)))
+            return feature;
+    }
+    return nullptr;
+}
+
 static void activate(GApplication* application, WPEToolingBackends::ViewBackend* backend)
 {
     g_application_hold(application);
@@ -287,6 +299,36 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
         "enable-encrypted-media", TRUE,
         nullptr);
 
+    if (featureList) {
+        g_autoptr(WebKitFeatureList) features = webkit_settings_get_all_features();
+        g_auto(GStrv) items = g_strsplit(featureList, ",", -1);
+        for (gsize i = 0; items[i]; i++) {
+            char* item = g_strchomp(items[i]);
+            gboolean enabled = TRUE;
+            switch (item[0]) {
+            case '!':
+            case '-':
+                enabled = FALSE;
+                [[fallthrough]];
+            case '+':
+                item++;
+                [[fallthrough]];
+            default:
+                break;
+            }
+
+            if (item[0] == '\0') {
+                g_printerr("Empty feature name specified, skipped.");
+                continue;
+            }
+
+            if (auto* feature = findFeature(features, item))
+                webkit_settings_set_feature_enabled(settings, feature, enabled);
+            else
+                g_printerr("Feature '%s' is not available.", item);
+        }
+    }
+
     auto* viewBackend = webkit_web_view_backend_new(backend->backend(), [](gpointer data) {
         delete static_cast<WPEToolingBackends::ViewBackend*>(data);
     }, backend);
@@ -375,6 +417,26 @@ int main(int argc, char *argv[])
         if (g_strcmp0(BUILD_REVISION, "tarball"))
             g_print(" (%s)", BUILD_REVISION);
         g_print("\n");
+        return 0;
+    }
+
+    if (!g_strcmp0(featureList, "help")) {
+        g_print("Multiple feature names may be specified separated by commas. No prefix or '+' enable\n"
+                "features, prefixes '-' and '!' disable features. Names are case-insensitive. Example:\n"
+                "\n    %s --features='!DirPseudo,+WebAnimationsCustomEffects,webgl'\n\n"
+                "Available features (+/- = enabled/disabled by default):\n\n", g_get_prgname());
+        g_autoptr(GEnumClass) statusEnum = static_cast<GEnumClass*>(g_type_class_ref(WEBKIT_TYPE_FEATURE_STATUS));
+        g_autoptr(WebKitFeatureList) features = webkit_settings_get_all_features();
+        for (gsize i = 0; i < webkit_feature_list_get_length(features); i++) {
+            WebKitFeature* feature = webkit_feature_list_get(features, i);
+            g_print("  %c %s (%s)",
+                    webkit_feature_get_default_value(feature) ? '+' : '-',
+                    webkit_feature_get_identifier(feature),
+                    g_enum_get_value(statusEnum, webkit_feature_get_status(feature))->value_nick);
+            if (webkit_feature_get_name(feature))
+                g_print(": %s", webkit_feature_get_name(feature));
+            g_print("\n");
+        }
         return 0;
     }
 

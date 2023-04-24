@@ -34,6 +34,7 @@
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
 #include <WebCore/SoupVersioning.h>
+#include <wtf/HashSet.h>
 #include <wtf/glib/GRefPtr.h>
 
 static WebKitTestServer* gServer;
@@ -400,6 +401,56 @@ void testWebKitSettingsNewWithSettings(Test* test, gconstpointer)
     g_assert_false(webkit_settings_get_load_icons_ignoring_image_load_setting(settings.get()));
 }
 
+void testWebKitFeatures(Test* test, gconstpointer)
+{
+    g_autoptr(WebKitFeatureList) allFeatures = webkit_settings_get_all_features();
+    g_assert_nonnull(allFeatures);
+
+    auto allFeaturesCount = webkit_feature_list_get_length(allFeatures);
+
+    {
+        // Keep a set of identifiers to validate their uniqueness.
+        HashSet<String> featureIdentifiers;
+        featureIdentifiers.reserveInitialCapacity(allFeaturesCount);
+        for (gsize i = 0; i < allFeaturesCount; i++) {
+            auto* feature = webkit_feature_list_get(allFeatures, i);
+            g_assert_nonnull(webkit_feature_get_identifier(feature));
+            g_assert_nonnull(webkit_feature_get_category(feature));
+
+            auto identifier = String::fromUTF8(webkit_feature_get_identifier(feature));
+            g_assert_false(featureIdentifiers.contains(identifier));
+            featureIdentifiers.add(WTFMove(identifier));
+        }
+
+        g_assert_cmpuint(featureIdentifiers.size(), ==, allFeaturesCount);
+    }
+
+    // These are subsets of the list of all features.
+    g_autoptr(WebKitFeatureList) experimentalFeatures = webkit_settings_get_experimental_features();
+    g_assert_nonnull(experimentalFeatures);
+    g_assert_cmpuint(allFeaturesCount, >=, webkit_feature_list_get_length(experimentalFeatures));
+
+    g_autoptr(WebKitFeatureList) developmentFeatures = webkit_settings_get_development_features();
+    g_assert_nonnull(developmentFeatures);
+    g_assert_cmpuint(allFeaturesCount, >=, webkit_feature_list_get_length(developmentFeatures));
+
+    // Try toggling a feature.
+    GRefPtr<WebKitSettings> settings = adoptGRef(webkit_settings_new());
+    auto* feature = webkit_feature_list_get(experimentalFeatures, 0);
+    auto wasEnabled = webkit_settings_get_feature_enabled(settings.get(), feature);
+    webkit_settings_set_feature_enabled(settings.get(), feature, !wasEnabled);
+    g_assert(wasEnabled != webkit_settings_get_feature_enabled(settings.get(), feature));
+
+    // Check that enabled status is the same as the declared default.
+    // FIXME(255779): Some defaults are overriden in code and out of sync with UnifiedWebPreferences.yaml
+#if 0
+    for (gsize i = 0; i < allFeaturesCount; i++) {
+        auto* feature = webkit_feature_list_get(allFeatures, i);
+        g_assert(webkit_settings_get_feature_enabled(settings.get(), feature) == webkit_feature_get_default_value(feature));
+    }
+#endif
+}
+
 #if PLATFORM(GTK)
 static CString convertWebViewMainResourceDataToCString(WebViewTest* test)
 {
@@ -507,6 +558,7 @@ void beforeAll()
 
     Test::add("WebKitSettings", "webkit-settings", testWebKitSettings);
     Test::add("WebKitSettings", "new-with-settings", testWebKitSettingsNewWithSettings);
+    Test::add("WebKitSettings", "features", testWebKitFeatures);
 #if PLATFORM(GTK)
     WebViewTest::add("WebKitSettings", "user-agent", testWebKitSettingsUserAgent);
 #endif

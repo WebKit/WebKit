@@ -32,6 +32,7 @@
 #include "WebKitSettings.h"
 
 #include "WebKitEnumTypes.h"
+#include "WebKitFeaturePrivate.h"
 #include "WebKitInitialize.h"
 #include "WebKitSettingsPrivate.h"
 #include "WebPageProxy.h"
@@ -4031,4 +4032,107 @@ void webkit_settings_set_disable_web_security(WebKitSettings* settings, gboolean
 
     priv->preferences->setWebSecurityEnabled(!disabled);
     g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_DISABLE_WEB_SECURITY]);
+}
+
+/**
+ * webkit_settings_set_feature_enabled:
+ * @settings: a #WebKitSettings
+ * @feature: the feature to toggle.
+ * @enabled: whether the feature will be enabled.
+ *
+ * Enables or disables a feature.
+ *
+ * The current status of the feature can be determined with
+ * [id@webkit_settings_get_feature_enabled]. To reset a feature to its
+ * initial status, pass the value returned by
+ * [id@webkit_feature_get_default_value] as the @enabled parameter.
+ *
+ * Since: 2.42
+ */
+void webkit_settings_set_feature_enabled(WebKitSettings* settings, WebKitFeature* feature, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+    g_return_if_fail(feature);
+
+    settings->priv->preferences->setFeatureEnabled(webkitFeatureGetFeature(feature), !!enabled);
+}
+
+/**
+ * webkit_settings_get_feature_enabled:
+ * @settings: a #WebKitSettings
+ * @feature: the feature to toggle.
+ *
+ * Gets whether a feature is enabled.
+ *
+ * Returns: Whether the feature is enabled.
+ *
+ * Since: 2.42
+ */
+gboolean webkit_settings_get_feature_enabled(WebKitSettings* settings, WebKitFeature* feature)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+    g_return_val_if_fail(feature, FALSE);
+
+    return settings->priv->preferences->isFeatureEnabled(webkitFeatureGetFeature(feature)) ? TRUE : FALSE;
+}
+
+/**
+ * webkit_settings_get_all_features:
+ *
+ * Gets the list of all available WebKit features.
+ *
+ * Features can be toggled with [method@Settings.set_feature_enabled],
+ * and their current state determined with
+ * [method@Settings.get_feature_enabled].
+ *
+ * Note that most applications should use
+ * [func@Settings.get_development_features] and
+ * [func@Settings.get_experimental_features] instead.
+ *
+ * Returns: (transfer full): List of all features.
+ *
+ * Since: 2.42
+ */
+WebKitFeatureList* webkit_settings_get_all_features(void)
+{
+    return webkitFeatureListCreate(WebPreferences::features());
+}
+
+/**
+ * webkit_settings_get_experimental_features:
+ *
+ * Gets the list of available experimental WebKit features.
+ *
+ * The returned features are a subset of those returned by
+ * [func@Settings.get_all_features], and includes those which
+ * certain applications may want to expose to end users; see
+ * [enum@FeatureStatus] for more details.
+ *
+ * Returns: (transfer full): List of experimental features.
+ *
+ * Since: 2.42
+ */
+WebKitFeatureList* webkit_settings_get_experimental_features(void)
+{
+    return webkitFeatureListCreate(WebPreferences::experimentalFeatures());
+}
+
+/**
+ * webkit_settings_get_development_features:
+ *
+ * Gets the list of available development WebKit features.
+ *
+ * The returned features are a subset of those returned by
+ * [func@Settings.get_all_features], and includes those which
+ * web and WebKit developers might find useful, but in general should
+ * *not* be exposed to end users; see [enum@FeatureStatus] for
+ * more details.
+ *
+ * Returns: (transfer full): List of development features.
+ *
+ * Since: 2.42
+ */
+WebKitFeatureList* webkit_settings_get_development_features(void)
+{
+    return webkitFeatureListCreate(WebPreferences::internalDebugFeatures());
 }

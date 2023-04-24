@@ -318,6 +318,13 @@ _PATH_RULES_SPECIFIER = [
      ["-readability/naming/underscores",
       "-whitespace/tab"]),
 
+    ([  # The GTK/WPE MiniBrowser uses public API and GLib-style conventions and indentation.
+     os.path.join('Tools', 'MiniBrowser', 'gtk'),
+     os.path.join('Tools', 'MiniBrowser', 'wpe')],
+     ["-readability/enum_casing",
+      "-readability/naming/underscores",
+      "-whitespace/indent"]),
+
     ([  # MiniBrowser doesn't use WTF, but only public WebKit API.
      os.path.join('Tools', 'MiniBrowser')],
      ["-runtime/wtf_make_unique",

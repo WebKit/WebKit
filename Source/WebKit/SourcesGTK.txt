@@ -144,6 +144,7 @@ UIProcess/API/glib/WebKitDownloadClient.cpp @no-unify
 UIProcess/API/glib/WebKitEditorState.cpp @no-unify
 UIProcess/API/glib/WebKitError.cpp @no-unify
 UIProcess/API/glib/WebKitFaviconDatabase.cpp @no-unify
+UIProcess/API/glib/WebKitFeature.cpp @no-unify
 UIProcess/API/glib/WebKitFileChooserRequest.cpp @no-unify
 UIProcess/API/glib/WebKitFindController.cpp @no-unify
 UIProcess/API/glib/WebKitFormClient.cpp @no-unify

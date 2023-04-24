@@ -136,6 +136,7 @@ set(WebKitGTK_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitEditorState.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitError.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFaviconDatabase.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFeature.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFileChooserRequest.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFindController.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFormSubmissionRequest.h.in
