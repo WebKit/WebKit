@@ -240,6 +240,7 @@ inline CapabilityLevel canCompile(Node* node)
     case TryGetById:
     case GetById:
     case GetByIdFlush:
+    case GetByIdMegamorphic:
     case GetByIdWithThis:
     case GetByIdDirect:
     case GetByIdDirectFlush:

@@ -36,6 +36,7 @@
 #include "DFGSlowPathGenerator.h"
 #include "DateInstance.h"
 #include "HasOwnPropertyCache.h"
+#include "MegamorphicCache.h"
 #include "SetupVarargsFrame.h"
 #include "SpillRegistersMode.h"
 #include "StructureChain.h"
@@ -4394,6 +4395,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case GetByIdMegamorphic: {
+        compileGetByIdMegamorphic(node);
+        break;
+    }
+
     case GetByIdWithThis: {
         if (node->child1().useKind() == CellUse && node->child2().useKind() == CellUse) {
             SpeculateCellOperand base(this, node->child1());
@@ -6561,6 +6567,26 @@ void SpeculativeJIT::compileGetByValWithThis(Node* node)
     addSlowPathGenerator(WTFMove(slowPath));
 
     jsValueResult(resultGPR, node);
+}
+
+void SpeculativeJIT::compileGetByIdMegamorphic(Node* node)
+{
+    SpeculateCellOperand base(this, node->child1());
+    GPRTemporary scratch1(this);
+    GPRTemporary scratch2(this);
+    GPRTemporary scratch3(this);
+    GPRTemporary scratch4(this);
+
+    GPRReg baseGPR = base.gpr();
+    GPRReg scratch1GPR = scratch1.gpr();
+    GPRReg scratch2GPR = scratch2.gpr();
+    GPRReg scratch3GPR = scratch3.gpr();
+    GPRReg scratch4GPR = scratch4.gpr();
+
+    UniquedStringImpl* uid = node->cacheableIdentifier().uid();
+    JumpList slowCases = loadMegamorphicProperty(vm(), baseGPR, uid, scratch3GPR, scratch1GPR, scratch2GPR, scratch3GPR, scratch4GPR);
+    addSlowPathGenerator(slowPathCall(slowCases, this, operationGetByIdMegamorphic, scratch3GPR, LinkableConstant::globalObject(*this, node), TrustedImmPtr(nullptr), baseGPR, node->cacheableIdentifier().rawBits()));
+    jsValueResult(scratch3GPR, node);
 }
 
 void SpeculativeJIT::compileFunctionBind(Node* node)
