@@ -22,6 +22,7 @@
 #pragma once
 
 #include "CallFrame.h"
+#include "JSCast.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/HashSet.h>
