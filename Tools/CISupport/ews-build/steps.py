@@ -462,28 +462,6 @@ class GitHubMixin(object):
             yield self._addToLog('stdio', f"Error in updating PR {pr_number}\n    {e}\n")
             defer.returnValue(False)
 
-    def close_pr(self, pr_number, repository_url=None):
-        api_url = GitHub.api_url(repository_url)
-        if not api_url:
-            return False
-
-        update_url = f'{api_url}/pulls/{pr_number}'
-        try:
-            username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
-            auth = HTTPBasicAuth(username, access_token) if username and access_token else None
-            response = requests.request(
-                'POST', update_url, timeout=60, auth=auth,
-                headers=dict(Accept='application/vnd.github.v3+json'),
-                json=dict(state='closed'),
-            )
-            if response.status_code // 100 != 2:
-                self._addToLog('stdio', f"Failed to close PR {pr_number}. Unexpected response code from GitHub: {response.status_code}\n")
-                return False
-        except Exception as e:
-            self._addToLog('stdio', f"Error in closing PR {pr_number}\n")
-            return False
-        return True
-
 
 class ShellMixin(object):
     WINDOWS_SHELL_PLATFORMS = ['wincairo']
