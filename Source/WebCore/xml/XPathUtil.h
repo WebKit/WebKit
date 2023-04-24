@@ -1,6 +1,7 @@
 /*
  * Copyright 2005 Frerich Raabe <raabe@kde.org>
  * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2019 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +43,9 @@ namespace WebCore {
 
         /* @return whether the given node is a valid context node */
         bool isValidContextNode(Node&);
+
+        // https://www.w3.org/TR/REC-xml/#NT-S
+        bool isXMLSpace(UChar character);
 
     } // namespace XPath
 
