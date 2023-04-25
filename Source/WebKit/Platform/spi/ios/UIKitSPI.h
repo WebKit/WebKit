@@ -1083,11 +1083,6 @@ typedef NS_ENUM(NSInteger, _UIBackdropViewStylePrivate) {
 
 @class BKSAnimationFenceHandle;
 
-@interface UIGestureRecognizer (SPI)
-- (NSSet<UITouch *> *)_activeTouchesForEvent:(UIEvent *)event;
-- (__kindof UIEvent *)_activeEventOfType:(UIEventType)type;
-@end
-
 @interface UIWindow ()
 + (BKSAnimationFenceHandle *)_synchronizedDrawingFence;
 + (mach_port_t)_synchronizeDrawingAcrossProcesses;
@@ -1533,8 +1528,6 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 - (BOOL)_canScrollWithoutBouncingY;
 - (void)_setContentOffsetWithDecelerationAnimation:(CGPoint)contentOffset;
 - (CGPoint)_adjustedContentOffsetForContentOffset:(CGPoint)contentOffset;
-- (void)handlePinch:(UIPinchGestureRecognizer *)gesture;
-- (void)handlePan:(UIPanGestureRecognizer *)gesture;
 
 @property (nonatomic) BOOL tracksImmediatelyWhileDecelerating;
 @property (nonatomic, getter=_avoidsJumpOnInterruptedBounce, setter=_setAvoidsJumpOnInterruptedBounce:) BOOL _avoidsJumpOnInterruptedBounce;

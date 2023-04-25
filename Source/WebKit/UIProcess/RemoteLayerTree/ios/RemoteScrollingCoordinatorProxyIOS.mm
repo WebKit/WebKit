@@ -293,11 +293,10 @@ std::pair<float, std::optional<unsigned>> RemoteScrollingCoordinatorProxyIOS::cl
     auto* rootNode = scrollingTree()->rootNode();
     const auto& snapOffsetsInfo = rootNode->snapOffsetsInfo();
 
-    auto zoomScale = [webPageProxy().cocoaView() scrollView].zoomScale;
-    scrollDestination.scale(1.0 / zoomScale);
-    float scaledCurrentScrollOffset = currentScrollOffset / zoomScale;
+    scrollDestination.scale(1.0 / webPageProxy().displayedContentScale());
+    float scaledCurrentScrollOffset = currentScrollOffset / webPageProxy().displayedContentScale();
     auto [rawClosestSnapOffset, newIndex] = snapOffsetsInfo.closestSnapOffset(axis, rootNode->layoutViewport().size(), scrollDestination, velocity, scaledCurrentScrollOffset);
-    return std::make_pair(rawClosestSnapOffset * zoomScale, newIndex);
+    return std::make_pair(rawClosestSnapOffset * webPageProxy().displayedContentScale(), newIndex);
 }
 
 bool RemoteScrollingCoordinatorProxyIOS::hasActiveSnapPoint() const
@@ -331,14 +330,13 @@ CGPoint RemoteScrollingCoordinatorProxyIOS::nearestActiveContentInsetAdjustedSna
     auto& rootScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(*root);
     const auto& horizontal = rootScrollingNode.snapOffsetsInfo().horizontalSnapOffsets;
     const auto& vertical = rootScrollingNode.snapOffsetsInfo().verticalSnapOffsets;
-    auto zoomScale = [webPageProxy().cocoaView() scrollView].zoomScale;
 
     // The bounds checking with maxScrollOffsets is to ensure that we won't interfere with rubber-banding when scrolling to the edge of the page.
     if (!horizontal.isEmpty() && m_currentHorizontalSnapPointIndex && *m_currentHorizontalSnapPointIndex < horizontal.size())
-        activePoint.x = horizontal[*m_currentHorizontalSnapPointIndex].offset * zoomScale;
+        activePoint.x = horizontal[*m_currentHorizontalSnapPointIndex].offset * webPageProxy().displayedContentScale();
 
     if (!vertical.isEmpty() && m_currentVerticalSnapPointIndex && *m_currentVerticalSnapPointIndex < vertical.size()) {
-        float potentialSnapPosition = vertical[*m_currentVerticalSnapPointIndex].offset * zoomScale;
+        float potentialSnapPosition = vertical[*m_currentVerticalSnapPointIndex].offset * webPageProxy().displayedContentScale();
         potentialSnapPosition -= topInset;
         activePoint.y = potentialSnapPosition;
     }

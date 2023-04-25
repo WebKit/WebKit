@@ -1610,14 +1610,4 @@ const AtomString& WebChromeClient::searchStringForModalContainerObserver() const
 }
 #endif
 
-bool WebChromeClient::isInStableState() const
-{
-#if PLATFORM(IOS_FAMILY)
-    return m_page.isInStableState();
-#else
-    // FIXME (255877): Implement this client hook on macOS.
-    return true;
-#endif
-}
-
 } // namespace WebKit

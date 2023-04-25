@@ -479,8 +479,6 @@ private:
 
     const AtomString& searchStringForModalContainerObserver() const final;
 
-    bool isInStableState() const final;
-
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };
     mutable bool m_cachedMainFrameHasVerticalScrollbar { false };
 

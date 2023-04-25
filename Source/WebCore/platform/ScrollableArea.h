@@ -346,8 +346,6 @@ public:
 
     virtual bool scrollAnimatorEnabled() const { return false; }
 
-    virtual bool isInStableState() const { return true; }
-
     // NOTE: Only called from Internals for testing.
     WEBCORE_EXPORT void setScrollOffsetFromInternals(const ScrollOffset&);
 
