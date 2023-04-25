@@ -3712,7 +3712,7 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=600,
                 logEnviron=False,
                 env=self.ENV,
-                command=['git', 'fetch', 'Contributor', '--prune'],
+                command=['git', 'fetch', 'Contributor', 'eng/pull-request-branch'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=600,
@@ -3764,7 +3764,7 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=600,
                 logEnviron=False,
                 env=self.ENV,
-                command=['git', 'fetch', 'Contributor', '--prune'],
+                command=['git', 'fetch', 'Contributor', 'eng/pull-request-branch'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=600,
@@ -3815,7 +3815,7 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=600,
                 logEnviron=False,
                 env=self.ENV,
-                command=['git', 'fetch', 'Contributor', '--prune'],
+                command=['git', 'fetch', 'Contributor', 'eng/pull-request-branch'],
             ) + 1,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to checkout and rebase branch from PR 1234')
