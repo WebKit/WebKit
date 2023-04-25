@@ -87,7 +87,6 @@ class GLibPort(Port):
         environment['GSETTINGS_BACKEND'] = 'memory'
 
         environment['TEST_RUNNER_INJECTED_BUNDLE_FILENAME'] = self._build_path('lib', 'libTestRunnerInjectedBundle.so')
-        environment['TEST_RUNNER_TEST_PLUGIN_PATH'] = self._build_path('lib', 'plugins')
         environment['WEBKIT_EXEC_PATH'] = self._build_path('bin')
         environment['WEBKIT_FONTS_CONF_DIR'] = self.path_from_webkit_base('Tools', 'WebKitTestRunner', 'gtk', 'fonts')
         environment['LD_LIBRARY_PATH'] = self._prepend_to_env_value(self._build_path('lib'), environment.get('LD_LIBRAY_PATH', ''))

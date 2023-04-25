@@ -1512,7 +1512,6 @@ class VM
 
     unless myLibPath.empty?
         primaryLibPath = myLibPath.first
-        $script.puts "export TEST_RUNNER_TEST_PLUGIN_PATH=#{Shellwords.shellescape(Pathname.new(primaryLibPath).join('plugins').to_s)}"
         $script.puts "export TEST_RUNNER_INJECTED_BUNDLE_FILENAME=#{Shellwords.shellescape(Pathname.new(primaryLibPath).join('libTestRunnerInjectedBundle.so').to_s)}"
     end
 

@@ -105,8 +105,7 @@ void TestController::initializeInjectedBundlePath()
 
 void TestController::initializeTestPluginDirectory()
 {
-    GUniquePtr<char> testPluginPath(getEnvironmentVariableAsUTF8String("TEST_RUNNER_TEST_PLUGIN_PATH"));
-    m_testPluginDirectory.adopt(WKStringCreateWithUTF8CString(testPluginPath.get()));
+    // Plugins are no longer supported in WebKit (see WKContextSetAdditionalPluginsDirectory()).
 }
 
 void TestController::platformInitializeContext()

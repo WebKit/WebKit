@@ -2881,7 +2881,6 @@ sub setupUnixWebKitEnvironment($)
     my ($productDir) = @_;
 
     $ENV{TEST_RUNNER_INJECTED_BUNDLE_FILENAME} = File::Spec->catfile($productDir, "lib", "libTestRunnerInjectedBundle.so");
-    $ENV{TEST_RUNNER_TEST_PLUGIN_PATH} = File::Spec->catdir($productDir, "lib", "plugins");
 }
 
 sub setupIOSWebKitEnvironment($)
