@@ -81,7 +81,7 @@ public:
         }, nullptr);
     }
 
-    static RefPtr<Data> create(const IPC::DataReference&);
+    static Ref<Data> create(const IPC::DataReference&);
     
 #if PLATFORM(COCOA)
     static Ref<Data> createWithoutCopying(RetainPtr<NSData>);
@@ -96,9 +96,6 @@ public:
     size_t size() const { return m_size; }
 
     IPC::DataReference dataReference() const { return IPC::DataReference(m_bytes, m_size); }
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RefPtr<API::Object>&);
 
 private:
     Data(const unsigned char* bytes, size_t size, FreeDataFunction freeDataFunction, const void* context)

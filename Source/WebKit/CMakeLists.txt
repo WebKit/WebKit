@@ -559,12 +559,14 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebEvent.serialization.in
     Shared/WebHitTestResultData.serialization.in
     Shared/WebPopupItem.serialization.in
+    Shared/WebProcessCreationParameters.serialization.in
     Shared/WebProcessDataStoreParameters.serialization.in
     Shared/WebPushDaemonConnectionConfiguration.serialization.in
     Shared/WebPushMessage.serialization.in
     Shared/WebsiteDataStoreParameters.serialization.in
     Shared/WebsitePoliciesData.serialization.in
 
+    Shared/API/APIData.serialization.in
     Shared/API/APIError.serialization.in
     Shared/API/APIFrameHandle.serialization.in
     Shared/API/APIGeometry.serialization.in

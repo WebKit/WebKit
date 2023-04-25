@@ -471,6 +471,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	GPUProcess/media/TrackPrivateRemoteConfiguration.serialization.in \
 	GPUProcess/media/VideoTrackPrivateRemoteConfiguration.serialization.in \
 	NetworkProcess/NetworkProcessCreationParameters.serialization.in \
+	Shared/API/APIData.serialization.in \
 	Shared/API/APIError.serialization.in \
 	Shared/API/APIFrameHandle.serialization.in \
 	NetworkProcess/NetworkResourceLoadParameters.serialization.in \
@@ -522,6 +523,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebExtensionControllerParameters.serialization.in \
 	Shared/WebHitTestResultData.serialization.in \
 	Shared/WebPopupItem.serialization.in \
+	Shared/WebProcessCreationParameters.serialization.in \
 	Shared/WebProcessDataStoreParameters.serialization.in \
 	Shared/WebPushDaemonConnectionConfiguration.serialization.in \
 	Shared/WebPushMessage.serialization.in \

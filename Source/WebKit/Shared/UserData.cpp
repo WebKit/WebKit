@@ -174,7 +174,7 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
         break;
 
     case API::Object::Type::Data:
-        static_cast<const API::Data&>(object).encode(encoder);
+        encoder << static_cast<const API::Data&>(object);
         break;
     
     case API::Object::Type::Dictionary: {
@@ -318,10 +318,13 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
             return false;
         break;
 
-    case API::Object::Type::Data:
-        if (!API::Data::decode(decoder, result))
+    case API::Object::Type::Data: {
+        auto data = decoder.decode<Ref<API::Data>>();
+        if (!data)
             return false;
+        result = WTFMove(*data);
         break;
+    }
 
     case API::Object::Type::Dictionary: {
         uint64_t decodedSize;

@@ -1,0 +1,216 @@
+# Copyright (C) 2023 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+struct WebKit::WebProcessCreationParameters {
+    WebKit::AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
+    String injectedBundlePath;
+    WebKit::SandboxExtension::Handle injectedBundlePathExtensionHandle;
+    Vector<WebKit::SandboxExtension::Handle> additionalSandboxExtensionHandles;
+
+    WebKit::UserData initializationUserData;
+
+#if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
+    Vector<WebKit::SandboxExtension::Handle> enableRemoteWebInspectorExtensionHandles;
+#endif
+#if ENABLE(MEDIA_STREAM)
+    WebKit::SandboxExtension::Handle audioCaptureExtensionHandle;
+#endif
+
+    Vector<String> urlSchemesRegisteredAsEmptyDocument;
+    Vector<String> urlSchemesRegisteredAsSecure;
+    Vector<String> urlSchemesRegisteredAsBypassingContentSecurityPolicy;
+    Vector<String> urlSchemesForWhichDomainRelaxationIsForbidden;
+    Vector<String> urlSchemesRegisteredAsLocal;
+    Vector<String> urlSchemesRegisteredAsNoAccess;
+    Vector<String> urlSchemesRegisteredAsDisplayIsolated;
+    Vector<String> urlSchemesRegisteredAsCORSEnabled;
+    Vector<String> urlSchemesRegisteredAsAlwaysRevalidated;
+    Vector<String> urlSchemesRegisteredAsCachePartitioned;
+    Vector<String> urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest;
+
+    Vector<String> fontAllowList;
+    Vector<String> overrideLanguages;
+#if USE(GSTREAMER)
+    Vector<String> gstreamerOptions;
+#endif
+
+    WebKit::CacheModel cacheModel;
+
+    double defaultRequestTimeoutInterval;
+    unsigned backForwardCacheCapacity;
+
+    bool shouldAlwaysUseComplexTextCodePath;
+    bool shouldEnableMemoryPressureReliefLogging;
+    bool shouldSuppressMemoryPressureHandler;
+    bool disableFontSubpixelAntialiasingForTesting;
+    bool fullKeyboardAccessEnabled;
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
+    bool hasMouseDevice;
+#endif
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
+    bool hasStylusDevice;
+#endif
+    bool memoryCacheDisabled;
+    bool attrStyleEnabled;
+    bool shouldThrowExceptionForGlobalConstantRedeclaration;
+    WebCore::CrossOriginMode crossOriginMode;
+    bool isLockdownModeEnabled;
+
+#if ENABLE(SERVICE_CONTROLS)
+    bool hasImageServices;
+    bool hasSelectionServices;
+    bool hasRichContentServices;
+#endif
+
+    WebKit::TextCheckerState textCheckerState;
+
+#if PLATFORM(COCOA)
+    String uiProcessBundleIdentifier;
+    int latencyQOS;
+    int throughputQOS;
+    String presentingApplicationBundleIdentifier;
+#endif
+
+    ProcessID presentingApplicationPID;
+
+#if PLATFORM(COCOA)
+    WTF::MachSendRight acceleratedCompositingPort;
+
+    String uiProcessBundleResourcePath;
+    WebKit::SandboxExtension::Handle uiProcessBundleResourcePathExtensionHandle;
+
+    bool shouldEnableJIT;
+    bool shouldEnableFTLJIT;
+    bool accessibilityEnhancedUserInterfaceEnabled;
+    
+    RefPtr<API::Data> bundleParameterData;
+#endif // PLATFORM(COCOA)
+
+#if ENABLE(NOTIFICATIONS)
+    HashMap<String, bool> notificationPermissions;
+#endif
+
+#if PLATFORM(COCOA)
+    RetainPtr<CFDataRef> networkATSContext;
+#endif
+
+#if PLATFORM(WAYLAND)
+    String waylandCompositorDisplayName;
+#endif
+
+#if PLATFORM(COCOA)
+    Vector<String> mediaMIMETypes;
+    WebCore::ScreenProperties screenProperties;
+#endif
+
+#if ENABLE(TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
+    bool shouldLogUserInteraction;
+#endif
+
+#if PLATFORM(MAC)
+    bool useOverlayScrollbars;
+#endif
+
+#if USE(WPE_RENDERER)
+    bool isServiceWorkerProcess;
+    UnixFileDescriptor hostClientFileDescriptor;
+    CString implementationLibraryName;
+#endif
+
+    std::optional<WebKit::WebProcessDataStoreParameters> websiteDataStoreParameters;
+    
+#if PLATFORM(IOS)
+    Vector<WebKit::SandboxExtension::Handle> compilerServiceExtensionHandles;
+#endif
+
+    std::optional<WebKit::SandboxExtension::Handle> mobileGestaltExtensionHandle;
+    std::optional<WebKit::SandboxExtension::Handle> launchServicesExtensionHandle;
+#if PLATFORM(MAC) && HAVE(VIDEO_RESTRICTED_DECODING)
+    WebKit::SandboxExtension::Handle trustdExtensionHandle;
+#endif
+#if HAVE(VIDEO_RESTRICTED_DECODING)
+    bool enableDecodingHEIC;
+    bool enableDecodingAVIF;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    Vector<WebKit::SandboxExtension::Handle> dynamicIOKitExtensionHandles;
+#endif
+
+#if PLATFORM(COCOA)
+    bool systemHasBattery;
+    bool systemHasAC;
+    bool strictSecureDecodingForAllObjCEnabled;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    bool currentUserInterfaceIdiomIsSmallScreen;
+    bool supportsPictureInPicture;
+    WebCore::RenderThemeIOS::CSSValueToSystemColorMap cssValueToSystemColorMap;
+    WebCore::Color focusRingColor;
+    String localizedDeviceModel;
+    String contentSizeCategory;
+#endif
+
+#if USE(GBM)
+    String renderDeviceFile;
+#endif
+
+#if PLATFORM(GTK)
+    bool useDMABufSurfaceForCompositing;
+    bool useSystemAppearanceForScrollbars;
+    WebKit::GtkSettingsState gtkSettings;
+#endif
+
+#if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
+    std::pair<int64_t, double> overrideUserInterfaceIdiomAndScale;
+#endif
+
+#if HAVE(IOSURFACE)
+    WebCore::IntSize maximumIOSurfaceSize;
+    size_t bytesPerRowIOSurfaceAlignment;
+#endif
+    
+    WebKit::AccessibilityPreferences accessibilityPreferences;
+#if PLATFORM(IOS_FAMILY)
+    bool applicationAccessibilityEnabled;
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    std::optional<WTF::MemoryPressureHandler::Configuration> memoryPressureHandlerConfiguration;
+    bool disableFontHintingForTesting;
+#endif
+
+#if USE(GLIB)
+    String applicationID;
+    String applicationName;
+#endif
+#if USE(GLIB) && ENABLE(REMOTE_INSPECTOR)
+    CString inspectorServerAddress;
+#endif
+
+#if USE(ATSPI)
+    String accessibilityBusAddress;
+#endif
+
+    String timeZoneOverride;
+};

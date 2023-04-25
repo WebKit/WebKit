@@ -269,7 +269,6 @@ Shared/WebPlatformTouchPoint.cpp
 Shared/WebPopupItem.cpp
 Shared/WebPreferencesDefaultValues.cpp
 Shared/WebPreferencesStore.cpp
-Shared/WebProcessCreationParameters.cpp
 Shared/API/c/WKRenderLayer.cpp
 Shared/API/c/WKRenderObject.cpp
 Shared/WebTouchEvent.cpp

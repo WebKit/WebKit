@@ -5501,6 +5501,7 @@
 		5CC333A3298487A200C7D77F /* PlatformCALayerRemoteHost.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformCALayerRemoteHost.h; sourceTree = "<group>"; };
 		5CC5DB9121488E16006CB8A8 /* SharedBufferReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedBufferReference.h; sourceTree = "<group>"; };
 		5CC8612728CA81FD0076F563 /* WebsiteDataFetchOption.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebsiteDataFetchOption.serialization.in; sourceTree = "<group>"; };
+		5CCE5B5E29F73CDE0086A188 /* APIData.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = APIData.serialization.in; sourceTree = "<group>"; };
 		5CD286491E722F440094FDC8 /* _WKUserContentFilterPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKUserContentFilterPrivate.h; sourceTree = "<group>"; };
 		5CD2864A1E722F440094FDC8 /* WKContentRuleList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContentRuleList.h; sourceTree = "<group>"; };
 		5CD2864B1E722F440094FDC8 /* WKContentRuleList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContentRuleList.mm; sourceTree = "<group>"; };
@@ -6448,7 +6449,7 @@
 		BC3066BC125A442100E71278 /* WebProcessMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebProcessMessageReceiver.cpp; sourceTree = "<group>"; };
 		BC3066BD125A442100E71278 /* WebProcessMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessMessages.h; sourceTree = "<group>"; };
 		BC306822125A6B9400E71278 /* WebProcessCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessCreationParameters.h; sourceTree = "<group>"; };
-		BC306823125A6B9400E71278 /* WebProcessCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebProcessCreationParameters.cpp; sourceTree = "<group>"; };
+		BC306823125A6B9400E71278 /* WebProcessCreationParameters.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebProcessCreationParameters.serialization.in; sourceTree = "<group>"; };
 		BC329D9916ACCE9900316DE2 /* APIWebArchive.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = APIWebArchive.mm; sourceTree = "<group>"; };
 		BC329D9A16ACCE9900316DE2 /* APIWebArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIWebArchive.h; sourceTree = "<group>"; };
 		BC329D9E16ACD47800316DE2 /* APIWebArchiveResource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = APIWebArchiveResource.mm; sourceTree = "<group>"; };
@@ -8137,8 +8138,8 @@
 				7CDE73A01F9DA37B00390312 /* WebPreferencesDefaultValues.h */,
 				BCD598AB112B7FDF00EC8C23 /* WebPreferencesStore.cpp */,
 				BCD598AA112B7FDF00EC8C23 /* WebPreferencesStore.h */,
-				BC306823125A6B9400E71278 /* WebProcessCreationParameters.cpp */,
 				BC306822125A6B9400E71278 /* WebProcessCreationParameters.h */,
+				BC306823125A6B9400E71278 /* WebProcessCreationParameters.serialization.in */,
 				467E43E72243FF6D00B13924 /* WebProcessDataStoreParameters.h */,
 				86D1967429A4E5C80083B077 /* WebProcessDataStoreParameters.serialization.in */,
 				517B5F2D2757382A002DC22D /* WebPushDaemonConnectionConfiguration.h */,
@@ -13105,6 +13106,7 @@
 				1A3DD205125E5A2F004515E6 /* APIClient.h */,
 				1AAB037B185F99D800EDF501 /* APIData.cpp */,
 				51578B821209ECEF00A37C4A /* APIData.h */,
+				5CCE5B5E29F73CDE0086A188 /* APIData.serialization.in */,
 				7C1BA33B1A4A0E600043E249 /* APIDictionary.cpp */,
 				7C1BA33C1A4A0E600043E249 /* APIDictionary.h */,
 				BC575612126E0138006F0F12 /* APIError.cpp */,

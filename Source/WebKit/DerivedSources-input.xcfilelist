@@ -158,6 +158,7 @@ $(PROJECT_DIR)/Scripts/webkit/__init__.py
 $(PROJECT_DIR)/Scripts/webkit/messages.py
 $(PROJECT_DIR)/Scripts/webkit/model.py
 $(PROJECT_DIR)/Scripts/webkit/parser.py
+$(PROJECT_DIR)/Shared/API/APIData.serialization.in
 $(PROJECT_DIR)/Shared/API/APIError.serialization.in
 $(PROJECT_DIR)/Shared/API/APIFrameHandle.serialization.in
 $(PROJECT_DIR)/Shared/API/APIGeometry.serialization.in
@@ -291,6 +292,7 @@ $(PROJECT_DIR)/Shared/WebGPU/WebGPUVertexBufferLayout.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUVertexState.serialization.in
 $(PROJECT_DIR)/Shared/WebHitTestResultData.serialization.in
 $(PROJECT_DIR)/Shared/WebPopupItem.serialization.in
+$(PROJECT_DIR)/Shared/WebProcessCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebProcessDataStoreParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebPushDaemonConnectionConfiguration.serialization.in
 $(PROJECT_DIR)/Shared/WebPushMessage.serialization.in
