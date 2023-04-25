@@ -124,15 +124,6 @@ public:
 
     bool shouldPerformDownload() const { return !m_lastNavigationAction.downloadAttribute.isNull(); }
 
-    bool isSystemPreview() const
-    {
-#if USE(SYSTEM_PREVIEW)
-        return currentRequest().isSystemPreview();
-#else
-        return false;
-#endif
-    }
-
     bool treatAsSameOriginNavigation() const { return m_lastNavigationAction.treatAsSameOriginNavigation; }
     bool hasOpenedFrames() const { return m_lastNavigationAction.hasOpenedFrames; }
     bool openedByDOMWithOpener() const { return m_lastNavigationAction.openedByDOMWithOpener; }

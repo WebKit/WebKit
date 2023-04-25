@@ -1403,16 +1403,7 @@ header: <WebCore/ResourceRequest.h>
 };
 #endif
 
-#if PLATFORM(COCOA) && USE(SYSTEM_PREVIEW)
-[CreateUsing=fromResourceRequestData] class WebCore::ResourceRequest {
-    std::variant<WebCore::ResourceRequest::RequestData, WebCore::ResourceRequestPlatformData> getRequestDataToSerialize();
-    String cachePartition();
-    bool hiddenFromInspector();
-    std::optional<WebCore::SystemPreviewInfo> systemPreviewInfo();
-};
-#endif
-
-#if PLATFORM(COCOA) && !USE(SYSTEM_PREVIEW)
+#if PLATFORM(COCOA)
 [CreateUsing=fromResourceRequestData] class WebCore::ResourceRequest {
     std::variant<WebCore::ResourceRequest::RequestData, WebCore::ResourceRequestPlatformData> getRequestDataToSerialize();
     String cachePartition();

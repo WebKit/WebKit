@@ -60,11 +60,7 @@ ResourceRequest::ResourceRequest(NSURLRequest *nsRequest)
 #endif
 }
 
-ResourceRequest::ResourceRequest(ResourceRequestPlatformData&& platformData, const String& cachePartition, bool hiddenFromInspector
-#if USE(SYSTEM_PREVIEW)
-    , const std::optional<SystemPreviewInfo>& systemPreviewInfo
-#endif
-    )
+ResourceRequest::ResourceRequest(ResourceRequestPlatformData&& platformData, const String& cachePartition, bool hiddenFromInspector)
 {
     if (platformData.m_urlRequest) {
         setRequester(*platformData.m_requester);
@@ -76,9 +72,6 @@ ResourceRequest::ResourceRequest(ResourceRequestPlatformData&& platformData, con
 
     setCachePartition(cachePartition);
     setHiddenFromInspector(hiddenFromInspector);
-#if USE(SYSTEM_PREVIEW)
-    m_systemPreviewInfo = systemPreviewInfo;
-#endif
 }
 
 ResourceRequestData ResourceRequest::getRequestDataToSerialize() const
@@ -88,25 +81,11 @@ ResourceRequestData ResourceRequest::getRequestDataToSerialize() const
     return m_requestData;
 }
 
-ResourceRequest ResourceRequest::fromResourceRequestData(ResourceRequestData requestData, const String& cachePartition, bool hiddenFromInspector
-#if USE(SYSTEM_PREVIEW)
-    , const std::optional<SystemPreviewInfo>& systemPreviewInfo
-#endif
-    )
+ResourceRequest ResourceRequest::fromResourceRequestData(ResourceRequestData requestData, const String& cachePartition, bool hiddenFromInspector)
 {
-    if (std::holds_alternative<RequestData>(requestData)) {
-        
-#if USE(SYSTEM_PREVIEW)
-        return ResourceRequest(WTFMove(std::get<RequestData>(requestData)), cachePartition, hiddenFromInspector, systemPreviewInfo);
-#else
+    if (std::holds_alternative<RequestData>(requestData))
         return ResourceRequest(WTFMove(std::get<RequestData>(requestData)), cachePartition, hiddenFromInspector);
-#endif
-    }
-#if USE(SYSTEM_PREVIEW)
-    return ResourceRequest(WTFMove(std::get<ResourceRequestPlatformData>(requestData)), cachePartition, hiddenFromInspector, systemPreviewInfo);
-#else
     return ResourceRequest(WTFMove(std::get<ResourceRequestPlatformData>(requestData)), cachePartition, hiddenFromInspector);
-#endif
 }
 
 NSURLRequest *ResourceRequest::nsURLRequest(HTTPBodyUpdatePolicy bodyPolicy) const

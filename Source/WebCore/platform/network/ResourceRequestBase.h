@@ -246,13 +246,6 @@ public:
 
     void upgradeToHTTPS();
 
-#if USE(SYSTEM_PREVIEW)
-    WEBCORE_EXPORT bool isSystemPreview() const;
-
-    WEBCORE_EXPORT std::optional<SystemPreviewInfo> systemPreviewInfo() const;
-    WEBCORE_EXPORT void setSystemPreviewInfo(const SystemPreviewInfo&);
-#endif
-
 #if !PLATFORM(COCOA) && !USE(SOUP)
     bool encodingRequiresPlatformData() const { return true; }
 #endif
@@ -310,9 +303,6 @@ protected:
     mutable bool m_resourceRequestBodyUpdated : 1;
     mutable bool m_platformRequestBodyUpdated : 1;
     bool m_hiddenFromInspector : 1;
-#if USE(SYSTEM_PREVIEW)
-    std::optional<SystemPreviewInfo> m_systemPreviewInfo;
-#endif
 
 private:
     const ResourceRequest& asResourceRequest() const;

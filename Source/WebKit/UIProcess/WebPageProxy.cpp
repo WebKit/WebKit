@@ -3872,7 +3872,7 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
 #else
     static const bool forceDownloadFromDownloadAttribute = true;
 #endif
-    if (policyAction == PolicyAction::Use && navigation && (navigation->isSystemPreview() || (forceDownloadFromDownloadAttribute && navigation->shouldPerformDownload())))
+    if (policyAction == PolicyAction::Use && navigation && (forceDownloadFromDownloadAttribute && navigation->shouldPerformDownload()))
         policyAction = PolicyAction::Download;
 
     if (policyAction != PolicyAction::Use

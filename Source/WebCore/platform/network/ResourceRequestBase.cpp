@@ -658,25 +658,6 @@ void ResourceRequestBase::setUseNetworkConnectionIntegrity(bool useNetworkConnec
     m_platformRequestUpdated = false;
 }
 
-#if USE(SYSTEM_PREVIEW)
-
-bool ResourceRequestBase::isSystemPreview() const
-{
-    return m_systemPreviewInfo.has_value();
-}
-
-std::optional<SystemPreviewInfo> ResourceRequestBase::systemPreviewInfo() const
-{
-    return m_systemPreviewInfo;
-}
-
-void ResourceRequestBase::setSystemPreviewInfo(const SystemPreviewInfo& info)
-{
-    m_systemPreviewInfo = info;
-}
-
-#endif
-
 bool equalIgnoringHeaderFields(const ResourceRequestBase& a, const ResourceRequestBase& b)
 {
     if (a.url() != b.url())
