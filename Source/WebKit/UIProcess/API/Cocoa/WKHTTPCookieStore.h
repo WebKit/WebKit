@@ -31,6 +31,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class WKHTTPCookieStore;
 
+/*! @enum WKCookiePolicy
+ @abstract The policy used to determine whether cookies can be accepted and used in loading.
+ @constant WKCookiePolicyAllow  Allow cookies to be used.
+ @constant WKCookiePolicyDisallow   Disallow cookies to be used.
+ */
 typedef NS_ENUM(NSInteger, WKCookiePolicy) {
     WKCookiePolicyAllow,
     WKCookiePolicyDisallow,
