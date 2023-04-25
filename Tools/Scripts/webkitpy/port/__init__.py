@@ -30,4 +30,4 @@
 
 from webkitpy.port.base import Port  # It's possible we don't need to export this virtual baseclass outside the module.
 from webkitpy.port.driver import Driver, DriverInput, DriverOutput
-from webkitpy.port.factory import platform_options, configuration_options
+from webkitpy.port.factory import platform_options, configuration_options, minibrowser_options

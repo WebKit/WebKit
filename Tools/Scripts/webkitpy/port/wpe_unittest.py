@@ -80,7 +80,7 @@ class WPEPortTest(port_testcase.PortTestCase):
 
     def test_browser_name_default(self):
         port = self.make_port()
-        self.assertEqual(port.browser_name(), "minibrowser")
+        self.assertEqual(port._determine_browser_name(), "minibrowser")
 
     def test_browser_name_with_cog_built(self):
         with patch('os.environ', {'WPE_BROWSER': ''}):
@@ -88,7 +88,7 @@ class WPEPortTest(port_testcase.PortTestCase):
             port._filesystem = MockFileSystem({
                 "/mock-build/Tools/cog-prefix/src/cog-build/launcher/cog": "",
             })
-            self.assertEqual(port.browser_name(), "cog")
+            self.assertEqual(port._determine_browser_name(), "cog")
 
     def test_browser_name_override_minibrowser_with_cog_built(self):
         with patch('os.environ', {'WPE_BROWSER': 'MiniBrowser'}):
@@ -96,14 +96,19 @@ class WPEPortTest(port_testcase.PortTestCase):
             port._filesystem = MockFileSystem({
                 "/mock-build/Tools/cog-prefix/src/cog-build/cog": "",
             })
-            self.assertEqual(port.browser_name(), "minibrowser")
+            self.assertEqual(port._determine_browser_name(), "minibrowser")
 
     def test_browser_name_override_cog_without_cog_built(self):
         with patch('os.environ', {'WPE_BROWSER': 'Cog'}):
             port = self.make_port()
-            self.assertEqual(port.browser_name(), "cog")
+            self.assertEqual(port._determine_browser_name(), "cog")
+
+    def test_browser_name_override_minibrowser_via_parameter(self):
+        with patch('os.environ', {'WPE_BROWSER': 'Cog'}):
+            port = self.make_port()
+            self.assertEqual(port._determine_browser_name("Minibrowser"), "minibrowser")
 
     def test_browser_name_override_unknown(self):
         with patch('os.environ', {'WPE_BROWSER': 'Mosaic'}):
             port = self.make_port()
-            self.assertEqual(port.browser_name(), "minibrowser")
+            self.assertEqual(port._determine_browser_name(), "minibrowser")

@@ -107,35 +107,39 @@ class WPEPort(GLibPort):
     def cog_path_to(self, *components):
         return self._build_path('Tools', 'cog-prefix', 'src', 'cog-build', *components)
 
-    def browser_name(self):
+    def _determine_browser_name(self, minibrowser_name=None):
         """Returns the lower case name of the browser to be used (Cog or MiniBrowser)
 
-        Users can select between both with the environment variable WPE_BROWSER
+        Users can select between both with the environment variable WPE_BROWSER or
+        by passing the argument --minibrowser-name to run-minibrowser script.
         """
-        browser = os.environ.get("WPE_BROWSER", "").lower()
-        if browser in ("cog", "minibrowser"):
-            return browser
-
-        if browser:
-            print("Unknown browser {}. Defaulting to Cog and MiniBrowser selection".format(browser))
+        for browser in [minibrowser_name, os.environ.get("WPE_BROWSER")]:
+            if not isinstance(browser, str):
+                continue
+            browser = browser.lower()
+            if browser in ("cog", "minibrowser"):
+                return browser
+            if browser:
+                print("Unknown browser {}. Defaulting to Cog and MiniBrowser selection".format(browser))
 
         if self._filesystem.isfile(self.cog_path_to('launcher', 'cog')):
             return "cog"
         return "minibrowser"
 
-    def setup_environ_for_minibrowser(self):
+    def setup_environ_for_minibrowser(self, minibrowser_name):
         env = super(WPEPort, self).setup_environ_for_minibrowser()
 
-        if self.browser_name() == "cog":
+        if minibrowser_name == "cog":
             env['COG_MODULEDIR'] = self.cog_path_to('platform')
 
         return env
 
-    def run_minibrowser(self, args):
+    def run_minibrowser(self, args, minibrowser_name=None):
         env = None
         miniBrowser = None
 
-        if self.browser_name() == "cog":
+        minibrowser_name = self._determine_browser_name(minibrowser_name)
+        if minibrowser_name == "cog":
             miniBrowser = self.cog_path_to('launcher', 'cog')
             if not self._filesystem.isfile(miniBrowser):
                 print("Cog not found 😢. If you wish to enable it, rebuild with `-DENABLE_COG=ON`. Falling back to good old MiniBrowser")
@@ -158,4 +162,4 @@ class WPEPort(GLibPort):
 
         if self._should_use_jhbuild():
             command = self._jhbuild_wrapper + command
-        return self._executive.run_command(command + args, cwd=self.webkit_base(), stdout=None, return_stderr=False, decode_output=False, env=self.setup_environ_for_minibrowser())
+        return self._executive.run_command(command + args, cwd=self.webkit_base(), stdout=None, return_stderr=False, decode_output=False, env=self.setup_environ_for_minibrowser(minibrowser_name))

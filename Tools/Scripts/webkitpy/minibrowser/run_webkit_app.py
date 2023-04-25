@@ -18,16 +18,20 @@
 
 from __future__ import print_function
 import argparse
+import os
+import shlex
 import sys
 import traceback
 
 from webkitpy.common.host import Host
-from webkitpy.port import configuration_options, platform_options, factory
+from webkitpy.port import configuration_options, platform_options, minibrowser_options, factory
 from webkitcorepy.string_utils import decode
 
 def main(argv):
-    option_parser = argparse.ArgumentParser(usage="%(prog)s [options] [url]", add_help=False)
-    groups = [("Platform options", platform_options()), ("Configuration options", configuration_options())]
+    option_parser = argparse.ArgumentParser(usage="%(prog)s [options] [url]")
+    groups = [("Platform options", platform_options()),
+              ("Configuration options", configuration_options()),
+              ("Minibrowser options", minibrowser_options())]
 
     # Convert options to argparse, so that we can use parse_known_args() which is not supported in optparse.
     # FIXME: Globally migrate to argparse. https://bugs.webkit.org/show_bug.cgi?id=213463
@@ -50,16 +54,21 @@ def main(argv):
     if not options.platform:
         options.platform = "mac"
 
+    browser_args = []
+    extra_minibrowser_args = os.environ.get('WEBKIT_MINI_BROWSER_ARGS', None) if options.minibrowser_args is None else options.minibrowser_args
+    if extra_minibrowser_args is not None:
+        browser_args.extend(shlex.split(extra_minibrowser_args))
     # Convert unregistered command-line arguments to utf-8 and append parsed
     # URL. convert_arg_line_to_args() returns a list containing a single
     # string, so it needs to be split again.
-    browser_args = [decode(s, "utf-8") for s in option_parser.convert_arg_line_to_args(' '.join(args))[0].split()]
+    browser_args.extend([decode(s, "utf-8") for s in option_parser.convert_arg_line_to_args(' '.join(args))[0].split()])
+
     if options.url:
         browser_args.append(options.url)
 
     try:
         port = factory.PortFactory(Host()).get(options.platform, options=options)
-        return port.run_minibrowser(browser_args)
+        return port.run_minibrowser(browser_args, options.minibrowser_name)
     except BaseException as e:
         if isinstance(e, Exception):
             print('\n%s raised: %s' % (e.__class__.__name__, str(e)), file=sys.stderr)

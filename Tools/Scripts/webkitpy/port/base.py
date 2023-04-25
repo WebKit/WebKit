@@ -1357,7 +1357,7 @@ class Port(object):
         """Returns the full path to the default ImageDiff binary, or None if it is not available."""
         return self._build_path('ImageDiff')
 
-    def run_minibrowser(self, args):
+    def run_minibrowser(self, args, minibrowser_name=None):
         # FIXME: Migrate to webkitpy based run-minibrowser. https://bugs.webkit.org/show_bug.cgi?id=213464
         miniBrowser = self.path_to_script("old-run-minibrowser")
         args.append(self._config.flag_for_configuration(self.get_option('configuration')))

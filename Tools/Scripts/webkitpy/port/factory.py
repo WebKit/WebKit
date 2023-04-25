@@ -91,6 +91,14 @@ def configuration_options():
     ]
 
 
+def minibrowser_options():
+    return [
+        optparse.make_option('--minibrowser-args', action="store", default=None, type=str, dest="minibrowser_args",
+                             help='List of arguments to pass to the minibrowser. Specify it inside quotes. Can be defined also via the env var WEBKIT_MINI_BROWSER_ARGS'),
+        optparse.make_option('--minibrowser-name', action='store', default=None, type=str, dest="minibrowser_name",
+                             help='Choose the minibrowser that will be run (only for platforms that have more tha one minibrowser type).'),
+    ]
+
 def _builder_options(builder_name):
     configuration = "Debug" if re.search(r"[d|D](ebu|b)g", builder_name) else "Release"
     is_webkit2 = builder_name.find("WK2") != -1
