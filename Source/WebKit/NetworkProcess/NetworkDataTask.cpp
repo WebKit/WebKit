@@ -28,6 +28,7 @@
 
 #include "AuthenticationManager.h"
 #include "NetworkDataTaskBlob.h"
+#include "NetworkDataTaskDataURL.h"
 #include "NetworkLoadParameters.h"
 #include "NetworkProcess.h"
 #include "NetworkSession.h"
@@ -57,6 +58,8 @@ Ref<NetworkDataTask> NetworkDataTask::create(NetworkSession& session, NetworkDat
     return NetworkDataTaskCocoa::create(session, client, parameters);
 #endif
 #if USE(SOUP)
+    if (parameters.request.url().protocolIsData())
+        return NetworkDataTaskDataURL::create(session, client, parameters);
     return NetworkDataTaskSoup::create(session, client, parameters);
 #endif
 #if USE(CURL)

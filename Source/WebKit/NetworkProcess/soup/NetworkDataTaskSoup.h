@@ -27,7 +27,6 @@
 
 #include "NetworkDataTask.h"
 #include "NetworkLoadParameters.h"
-#include <WebCore/DataURLDecoder.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/PageIdentifier.h>
@@ -179,8 +178,6 @@ private:
     static void enumerateFileChildrenCallback(GFile*, GAsyncResult*, NetworkDataTaskSoup*);
     void didReadFile(GRefPtr<GInputStream>&&);
 
-    void didReadDataURL(std::optional<WebCore::DataURLDecoder::Result>&&);
-
     WebCore::AdditionalNetworkLoadMetricsForWebInspector& additionalNetworkLoadMetricsForWebInspector();
 
     WebCore::FrameIdentifier m_frameID;
@@ -194,7 +191,6 @@ private:
     GRefPtr<SoupMultipartInputStream> m_multipartInputStream;
     GRefPtr<GCancellable> m_cancellable;
     GRefPtr<GAsyncResult> m_pendingResult;
-    std::optional<WebCore::DataURLDecoder::Result> m_pendingDataURLResult;
     WebCore::ProtectionSpace m_protectionSpaceForPersistentStorage;
     WebCore::Credential m_credentialForPersistentStorage;
     WebCore::ResourceRequest m_currentRequest;
