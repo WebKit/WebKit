@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -746,6 +746,13 @@ class TestGitHub(testing.TestCase):
                 ['Source/main.cpp', 'Source/main.h'],
             )
 
+    def test_checkout_url(self):
+        self.assertEqual(remote.GitHub(self.remote).checkout_url(), 'git@github.example.com:WebKit/WebKit.git')
+        self.assertEqual(remote.GitHub(self.remote).checkout_url(http=True), 'https://github.example.com/WebKit/WebKit.git')
+        self.assertEqual(remote.GitHub(self.remote).checkout_url(ssh=True), 'git@github.example.com:WebKit/WebKit.git')
+        with self.assertRaises(ValueError):
+            remote.GitHub(self.remote).checkout_url(http=True, ssh=True)
+
 
 class TestBitBucket(testing.TestCase):
     remote = 'https://bitbucket.example.com/projects/WEBKIT/repos/webkit'
@@ -884,3 +891,10 @@ class TestBitBucket(testing.TestCase):
                 remote.BitBucket(self.remote).files_changed('4@main'),
                 ['Source/main.cpp', 'Source/main.h'],
             )
+
+    def test_checkout_url(self):
+        self.assertEqual(remote.BitBucket(self.remote).checkout_url(), 'git@bitbucket.example.com/WEBKIT/webkit.git')
+        self.assertEqual(remote.BitBucket(self.remote).checkout_url(http=True), 'https://bitbucket.example.com/scm/WEBKIT/webkit.git')
+        self.assertEqual(remote.BitBucket(self.remote).checkout_url(ssh=True), 'git@bitbucket.example.com/WEBKIT/webkit.git')
+        with self.assertRaises(ValueError):
+            remote.BitBucket(self.remote).checkout_url(http=True, ssh=True)
