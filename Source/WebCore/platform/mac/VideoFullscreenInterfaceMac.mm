@@ -333,9 +333,6 @@ enum class PIPState {
         [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
             context.allowsImplicitAnimation = NO;
             [_videoViewContainer setFrame:_returningRect];
-            _videoFullscreenInterfaceMac->videoFullscreenModel()->setVideoLayerFrame([_videoViewContainer bounds]);
-            _videoFullscreenInterfaceMac->videoFullscreenModel()->setVideoLayerGravity(MediaPlayerEnums::VideoGravity::ResizeAspect);
-
             [[_returningWindow contentView] addSubview:_videoViewContainer.get() positioned:NSWindowAbove relativeTo:nil];
         } completionHandler:nil];
     }
