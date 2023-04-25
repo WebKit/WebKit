@@ -635,6 +635,8 @@ public:
     virtual void classifyModalContainerControls(Vector<String>&& texts, CompletionHandler<void(Vector<ModalContainerControlType>&&)>&&) = 0;
 
     virtual void decidePolicyForModalContainer(OptionSet<ModalContainerControlType>, CompletionHandler<void(ModalContainerDecision)>&&) = 0;
+    
+    virtual bool isInStableState() const { return true; }
 
 protected:
     WEBCORE_EXPORT ChromeClient();
