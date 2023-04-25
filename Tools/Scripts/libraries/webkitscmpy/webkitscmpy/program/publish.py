@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import collections
+import getpass
 import os
 import re
 import sys
@@ -47,11 +48,15 @@ class Publish(Command):
             '--remote', dest='remote', type=str, default=None,
             help='Publish content to the specified remote',
         )
+        parser.add_argument(
+            '--user', dest='user', type=str, default=None,
+            help="Run 'git push' as the specified user with https. Program will prompt for a password.",
+        )
 
     @classmethod
     def branches_on(cls, repository, ref):
         output = run(
-            [repository.executable(), 'branch', '-a', '--merged', '--format=%(refname)', ref],
+            [repository.executable(), 'branch', '-a', '--merged', '--format="%(refname)"', ref],
             cwd=repository.root_path,
             capture_output=True,
             encoding='utf-8',
@@ -235,10 +240,23 @@ class Publish(Command):
         push_env = os.environ.copy()
         push_env['VERBOSITY'] = str(args.verbose)
         push_env['PUSH_HOOK_MODE'] = 'publish'
+        remote_arg = args.remote
+
+        if args.user:
+            remote = repository.remote(remote_arg)
+            if not remote or not getattr(remote, 'domain', None):
+                sys.stderr.write("Cannot convert '{}' to an ephemeral HTTP url\n".format(remote_arg))
+                return 1
+            remote_arg = remote.checkout_url(http=True)
+
+            credentials = (args.user, getpass.getpass('API token for {}: '.format(args.user)).strip())
+            tokenized_domain = remote.domain.replace('.', '_').upper()
+            push_env['{}_USERNAME'.format(tokenized_domain)] = credentials[0]
+            push_env['{}_TOKEN'.format(tokenized_domain)] = credentials[1]
 
         return_code = 0
         print('Pushing branches to {}...'.format(args.remote))
-        command = [repository.executable(), 'push', '--atomic', args.remote] + [
+        command = [repository.executable(), 'push', '--atomic', remote_arg] + [
             '{}:refs/heads/{}'.format(commit.hash[:commit.HASH_LABEL_SIZE], branch) for branch, commit in branches_to_publish.items()
         ]
         log.info("Invoking '{}'".format(' '.join(command)))
@@ -251,9 +269,9 @@ class Publish(Command):
             sys.stderr.write('Failed to push branches to {}\n'.format(args.remote))
             return_code += 1
 
-        if tags_to_publish:
+        if not return_code and tags_to_publish:
             print('Pushing tags to {}...'.format(args.remote))
-            command = [repository.executable(), 'push', '--atomic', args.remote] + list(tags_to_publish)
+            command = [repository.executable(), 'push', '--atomic', remote_arg] + list(tags_to_publish)
             log.info("Invoking '{}'".format(' '.join(command)))
             if run(
                 command,

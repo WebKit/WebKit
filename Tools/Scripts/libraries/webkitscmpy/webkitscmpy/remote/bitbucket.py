@@ -347,6 +347,13 @@ class BitBucket(Scm):
     def is_git(self):
         return True
 
+    def checkout_url(self, ssh=False, http=False):
+        if ssh and http:
+            raise ValueError('Cannot specify request both a ssh and http URL')
+        if http:
+            return 'https://{}/scm/{}/{}.git'.format(self.domain, self.project, self.name)
+        return 'git@{}/{}/{}.git'.format(self.domain, self.project, self.name)
+
     def request(self, path=None, params=None, headers=None, api=None, ignore_errors=False):
         headers = {key: value for key, value in headers.items()} if headers else dict()
 

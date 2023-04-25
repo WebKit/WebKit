@@ -382,7 +382,7 @@ class Setup(Command):
         http_remote = local.Git.HTTP_REMOTE.match(repository.url())
         can_push = not http_remote
         rmt = repository.remote()
-        if not can_push and rmt and getattr(rmt, 'credentials', None):
+        if rmt and getattr(rmt, 'credentials', None):
             username, password = rmt.credentials()
             if username and password and not run([
                 repository.executable(), 'config',
