@@ -125,9 +125,70 @@ String filenameForDisplay(const String& string)
 #endif
 }
 
+// Annoyingly, many important methods are not shared by the different GIO classes. Lacking native polymorphism, we have to dispatch the specific methods by hand:
+
+static bool genericGIOFileClose(PlatformFileHandle handle)
+{
+    if (G_IS_INPUT_STREAM(handle))
+        return g_input_stream_close(G_INPUT_STREAM(handle), nullptr, nullptr);
+    if (G_IS_OUTPUT_STREAM(handle))
+        return g_output_stream_close(G_OUTPUT_STREAM(handle), nullptr, nullptr);
+    if (G_IS_IO_STREAM(handle))
+        return g_io_stream_close(G_IO_STREAM(handle), nullptr, nullptr);
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+static GRefPtr<GFileInfo> genericGIOFileQueryInfo(PlatformFileHandle handle, const char* attributes)
+{
+    if (G_IS_FILE_INPUT_STREAM(handle))
+        return adoptGRef(g_file_input_stream_query_info(G_FILE_INPUT_STREAM(handle), attributes, nullptr, nullptr));
+    if (G_IS_FILE_OUTPUT_STREAM(handle))
+        return adoptGRef(g_file_output_stream_query_info(G_FILE_OUTPUT_STREAM(handle), attributes, nullptr, nullptr));
+    if (G_IS_FILE_IO_STREAM(handle))
+        return adoptGRef(g_file_io_stream_query_info(G_FILE_IO_STREAM(handle), attributes, nullptr, nullptr));
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+static GInputStream* genericGIOGetInputStream(PlatformFileHandle handle)
+{
+    if (G_IS_IO_STREAM(handle))
+        return g_io_stream_get_input_stream(G_IO_STREAM(handle));
+    if (G_IS_INPUT_STREAM(handle))
+        return G_INPUT_STREAM(handle);
+    return nullptr; // handle is an incompatible type, i.e. GFileOutputStream
+}
+
+static GOutputStream* genericGIOGetOutputStream(PlatformFileHandle handle)
+{
+    if (G_IS_IO_STREAM(handle))
+        return g_io_stream_get_output_stream(G_IO_STREAM(handle));
+    if (G_IS_OUTPUT_STREAM(handle))
+        return G_OUTPUT_STREAM(handle);
+    return nullptr; // handle is an incompatible type, i.e. GFileInputStream
+}
+
+static GFileDescriptorBased* genericGIOGetFileDescriptorBased(PlatformFileHandle handle)
+{
+    // GFileInputStream and GFileOutputStream implement the GFileDescriptorBased interface.
+    // GFileIOStream does not, but its inner streams do.
+    if (G_IS_FILE_IO_STREAM(handle))
+        return G_FILE_DESCRIPTOR_BASED(g_io_stream_get_input_stream(G_IO_STREAM(handle)));
+    return G_FILE_DESCRIPTOR_BASED(handle);
+}
+
+int posixFileDescriptor(PlatformFileHandle handle)
+{
+    if (!isHandleValid(handle))
+        return -1;
+
+    GFileDescriptorBased* descriptorBased = genericGIOGetFileDescriptorBased(handle);
+    return g_file_descriptor_based_get_fd(descriptorBased);
+}
+
 std::optional<uint64_t> fileSize(PlatformFileHandle handle)
 {
-    GRefPtr<GFileInfo> info = adoptGRef(g_file_io_stream_query_info(handle, G_FILE_ATTRIBUTE_STANDARD_SIZE, nullptr, nullptr));
+
+    GRefPtr<GFileInfo> info = genericGIOFileQueryInfo(handle, G_FILE_ATTRIBUTE_STANDARD_SIZE);
     if (!info)
         return std::nullopt;
 
@@ -137,7 +198,7 @@ std::optional<uint64_t> fileSize(PlatformFileHandle handle)
 std::optional<PlatformFileID> fileID(PlatformFileHandle handle)
 {
     if (isHandleValid(handle)) {
-        auto info = adoptGRef(g_file_io_stream_query_info(handle, G_FILE_ATTRIBUTE_ID_FILE, nullptr, nullptr));
+        auto info = genericGIOFileQueryInfo(handle, G_FILE_ATTRIBUTE_ID_FILE);
         if (info && g_file_info_has_attribute(info.get(), G_FILE_ATTRIBUTE_ID_FILE))
             return { g_file_info_get_attribute_string(info.get(), G_FILE_ATTRIBUTE_ID_FILE) };
     }
@@ -172,7 +233,7 @@ String openTemporaryFile(StringView prefix, PlatformFileHandle& handle, StringVi
     GUniquePtr<gchar> tempPath(g_build_filename(g_get_tmp_dir(), filename.get(), nullptr));
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(tempPath.get()));
 
-    handle = g_file_create_readwrite(file.get(), G_FILE_CREATE_NONE, nullptr, nullptr);
+    handle = G_SEEKABLE(g_file_create_readwrite(file.get(), G_FILE_CREATE_NONE, nullptr, nullptr));
     if (!isHandleValid(handle))
         return String();
     return String::fromUTF8(tempPath.get());
@@ -185,22 +246,48 @@ PlatformFileHandle openFile(const String& path, FileOpenMode mode, FileAccessPer
         return invalidPlatformFileHandle;
 
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(filename.data()));
-    GRefPtr<GFileIOStream> ioStream;
-    GFileCreateFlags permissionFlag = (permission == FileAccessPermission::All) ? G_FILE_CREATE_NONE : G_FILE_CREATE_PRIVATE;
+    GFileCreateFlags creationFlags = (permission == FileAccessPermission::All) ? G_FILE_CREATE_NONE : G_FILE_CREATE_PRIVATE;
 
-    if (failIfFileExists) {
-        ioStream = adoptGRef(g_file_create_readwrite(file.get(), permissionFlag, nullptr, nullptr));
-        return ioStream.leakRef();
+    if (mode == FileOpenMode::Read)
+        return G_SEEKABLE(g_file_read(file.get(), nullptr, nullptr));
+
+    // Embarrasingly, GIO doesn't have an atomic create-or-open function.
+    //
+    // The closest thing to create-or-open in GIO is g_file_replace() and g_file_replace_readwrite(), but they have some problems:
+    // (a) In the case of modifying an existing file, they return a new file in /tmp, doing a move swap when closing.
+    //     Even calling g_output_stream_flush() won't update the original file.
+    // (b) g_file_replace_readwrite() followed by a g_io_stream_close() will truncate the file, but we don't want ReadWrite to truncate.
+    //
+    // There is no pretty way out of this. Two naive solutions are:
+    // (a) We try to create, if it fails we try to open -> If the file is deleted between the two operations we fail.
+    // (b) We try to open, if it fails we try to create -> If the file is created between the two operations we fail.
+    //
+    // The most reliable thing we can do is spinlock retrying the other operation when we get a G_IO_ERROR_NOT_FOUND or G_IO_ERROR_EXISTS.
+    while (true) {
+        GRefPtr<GSeekable> seekable;
+        GError* error = nullptr;
+
+        // Try to create the file
+        if (mode == FileOpenMode::Truncate)
+            seekable = adoptGRef(G_SEEKABLE(g_file_create(file.get(), creationFlags, nullptr, &error)));
+        else
+            seekable = adoptGRef(G_SEEKABLE(g_file_create_readwrite(file.get(), creationFlags, nullptr, &error)));
+
+        if (seekable || failIfFileExists || (error && !g_error_matches(error, G_IO_ERROR, G_IO_ERROR_EXISTS)))
+            return seekable.leakRef();
+
+        // Try to open the file instead.
+        // We need to open the file as readwrite because there is no write-only open in GIO.
+        // We could use g_io_stream_get_output_stream() to get a GFileOutputStream, but that doesn't seem to be well supported:
+        // even if we ref the output stream before closing the IOStream, the latter will still cause the file to be closed and
+        // therefore we would be returning a stream with an invalid file handle.
+        seekable = adoptGRef(G_SEEKABLE(g_file_open_readwrite(file.get(), nullptr, nullptr)));
+        if (seekable && mode == FileOpenMode::Truncate)
+            g_seekable_truncate(seekable.get(), 0, nullptr, nullptr);
+
+        if (seekable || (error && !g_error_matches(error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND)))
+            return seekable.leakRef();
     }
-
-    if (mode == FileOpenMode::Read || mode == FileOpenMode::ReadWrite)
-        ioStream = adoptGRef(g_file_open_readwrite(file.get(), nullptr, nullptr));
-    else {
-        ASSERT(mode == FileOpenMode::Truncate);
-        ioStream = adoptGRef(g_file_replace_readwrite(file.get(), nullptr, FALSE, permissionFlag, nullptr, nullptr));
-    }
-
-    return ioStream.leakRef();
 }
 
 void closeFile(PlatformFileHandle& handle)
@@ -208,7 +295,7 @@ void closeFile(PlatformFileHandle& handle)
     if (!isHandleValid(handle))
         return;
 
-    g_io_stream_close(G_IO_STREAM(handle), 0, 0);
+    genericGIOFileClose(handle);
     g_object_unref(handle);
     handle = invalidPlatformFileHandle;
 }
@@ -230,19 +317,22 @@ long long seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin o
         ASSERT_NOT_REACHED();
     }
 
-    if (!g_seekable_seek(G_SEEKABLE(g_io_stream_get_input_stream(G_IO_STREAM(handle))), offset, seekType, nullptr, nullptr))
+    if (!g_seekable_seek(handle, offset, seekType, nullptr, nullptr))
         return -1;
-    return g_seekable_tell(G_SEEKABLE(g_io_stream_get_input_stream(G_IO_STREAM(handle))));
+    return g_seekable_tell(handle);
 }
 
 bool truncateFile(PlatformFileHandle handle, long long offset)
 {
-    return g_seekable_truncate(G_SEEKABLE(g_io_stream_get_output_stream(G_IO_STREAM(handle))), offset, nullptr, nullptr);
+    return g_seekable_truncate(handle, offset, nullptr, nullptr);
 }
 
 bool flushFile(PlatformFileHandle handle)
 {
-    return g_output_stream_flush(g_io_stream_get_output_stream(G_IO_STREAM(handle)), nullptr, nullptr);
+    GOutputStream* outputStream = genericGIOGetOutputStream(handle);
+    if (!outputStream)
+        return true; // A read-only file needs no flushing.
+    return g_output_stream_flush(outputStream, nullptr, nullptr);
 }
 
 int writeToFile(PlatformFileHandle handle, const void* data, int length)
@@ -250,22 +340,35 @@ int writeToFile(PlatformFileHandle handle, const void* data, int length)
     if (!length)
         return 0;
 
+    GOutputStream* outputStream = genericGIOGetOutputStream(handle);
+    if (!outputStream)
+        return -1; // Attempted to write a read-only file.
+
+    // We're not required by the parent class to enforce that the entire `length` gets written, but
+    // we'll play safe and do it anyway rather than risking a function not handling partial writes.
+    // All GIO backends handle EINTR internally, so we don't need to handle it here.
     gsize bytesWritten;
-    g_output_stream_write_all(g_io_stream_get_output_stream(G_IO_STREAM(handle)),
-        data, length, &bytesWritten, nullptr, nullptr);
+    if (!g_output_stream_write_all(outputStream, data, length, &bytesWritten, nullptr, nullptr))
+        return -1; // Write failed.
     return bytesWritten;
 }
 
 int readFromFile(PlatformFileHandle handle, void* data, int length)
 {
-    GUniqueOutPtr<GError> error;
-    do {
-        gssize bytesRead = g_input_stream_read(g_io_stream_get_input_stream(G_IO_STREAM(handle)),
-            data, length, nullptr, &error.outPtr());
-        if (bytesRead >= 0)
-            return bytesRead;
-    } while (error && error->code == G_FILE_ERROR_INTR);
-    return -1;
+    GInputStream* inputStream = genericGIOGetInputStream(handle);
+    if (!inputStream)
+        return -1; // Attempted to read a write-only file.
+
+    // We're not required by the parent class to enforce that the entire `length` gets read, but
+    // we'll play safe and do it anyway if possible, rather than risking a function not handling
+    // partial reads.
+    // All GIO backends handle EINTR internally, so we don't need to handle it here.
+    gsize bytesRead;
+    if (g_input_stream_read_all(inputStream, data, length, &bytesRead, nullptr, nullptr))
+        return bytesRead; // Complete read succeeded.
+    if (bytesRead > 0)
+        return bytesRead; // Read succeeded partially, then failed: return the bytes successfully read.
+    return -1; // Read failed: nothing was read.
 }
 
 std::optional<int32_t> getFileDeviceId(const String& path)
@@ -293,15 +396,15 @@ bool lockFile(PlatformFileHandle handle, OptionSet<FileLockMode> lockMode)
     static_assert(LOCK_SH == WTF::enumToUnderlyingType(FileLockMode::Shared), "LockSharedEncoding is as expected");
     static_assert(LOCK_EX == WTF::enumToUnderlyingType(FileLockMode::Exclusive), "LockExclusiveEncoding is as expected");
     static_assert(LOCK_NB == WTF::enumToUnderlyingType(FileLockMode::Nonblocking), "LockNonblockingEncoding is as expected");
-    auto* inputStream = g_io_stream_get_input_stream(G_IO_STREAM(handle));
-    int result = flock(g_file_descriptor_based_get_fd(G_FILE_DESCRIPTOR_BASED(inputStream)), lockMode.toRaw());
+    int fd = posixFileDescriptor(handle);
+    int result = flock(fd, lockMode.toRaw());
     return result != -1;
 }
 
 bool unlockFile(PlatformFileHandle handle)
 {
-    auto* inputStream = g_io_stream_get_input_stream(G_IO_STREAM(handle));
-    int result = flock(g_file_descriptor_based_get_fd(G_FILE_DESCRIPTOR_BASED(inputStream)), LOCK_UN);
+    int fd = posixFileDescriptor(handle);
+    int result = flock(fd, LOCK_UN);
     return result != -1;
 }
 #endif // USE(FILE_LOCK)

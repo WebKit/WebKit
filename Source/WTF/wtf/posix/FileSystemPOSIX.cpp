@@ -94,6 +94,11 @@ void closeFile(PlatformFileHandle& handle)
     }
 }
 
+int posixFileDescriptor(PlatformFileHandle handle)
+{
+    return handle;
+}
+
 long long seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin origin)
 {
     int whence = SEEK_SET;

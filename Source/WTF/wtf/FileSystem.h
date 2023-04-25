@@ -54,7 +54,7 @@ typedef void *HANDLE;
 #endif
 
 #if USE(GLIB)
-typedef struct _GFileIOStream GFileIOStream;
+typedef struct _GSeekable GSeekable;
 #endif
 
 namespace WTF {
@@ -63,7 +63,7 @@ namespace FileSystemImpl {
 
 // PlatformFileHandle
 #if USE(GLIB) && !OS(WINDOWS)
-typedef GFileIOStream* PlatformFileHandle;
+typedef GSeekable* PlatformFileHandle;
 const PlatformFileHandle invalidPlatformFileHandle = nullptr;
 #elif OS(WINDOWS)
 typedef HANDLE PlatformFileHandle;
@@ -197,6 +197,10 @@ WTF_EXPORT_PRIVATE String encodeForFileName(const String&);
 WTF_EXPORT_PRIVATE String decodeFromFilename(const String&);
 
 WTF_EXPORT_PRIVATE bool filesHaveSameVolume(const String&, const String&);
+
+#if !OS(WINDOWS)
+WTF_EXPORT_PRIVATE int posixFileDescriptor(PlatformFileHandle);
+#endif
 
 #if USE(CF)
 WTF_EXPORT_PRIVATE RetainPtr<CFURLRef> pathAsURL(const String&);
