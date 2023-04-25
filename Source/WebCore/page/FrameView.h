@@ -259,6 +259,8 @@ public:
 
     FloatSize sizeForCSSDynamicViewportUnits() const;
 
+    bool isInStableState() const final;
+
     IntRect windowClipRect() const final;
     WEBCORE_EXPORT IntRect windowClipRectForFrameOwner(const HTMLFrameOwnerElement*, bool clipToLayerContents) const;
 

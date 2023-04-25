@@ -636,6 +636,8 @@ public:
 
     virtual void decidePolicyForModalContainer(OptionSet<ModalContainerControlType>, CompletionHandler<void(ModalContainerDecision)>&&) = 0;
 
+    virtual bool isInStableState() const { return true; }
+
 protected:
     WEBCORE_EXPORT ChromeClient();
     WEBCORE_EXPORT virtual ~ChromeClient();
