@@ -165,10 +165,9 @@ protected:
         IsNode = 1 << 1,
         // Element bits
         HasDuplicateAttribute = 1 << 2,
-        DisplayContentsChanged = 1 << 3,
-        HasLangAttr = 1 << 4,
-        HasXMLLangAttr = 1 << 5,
-        EffectiveLangKnownToMatchDocumentElement = 1 << 6,
+        HasLangAttr = 1 << 3,
+        HasXMLLangAttr = 1 << 4,
+        EffectiveLangKnownToMatchDocumentElement = 1 << 5,
     };
 
     EventTargetData& ensureEventTargetData()

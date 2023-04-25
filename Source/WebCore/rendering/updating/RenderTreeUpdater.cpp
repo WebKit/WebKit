@@ -325,7 +325,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     bool shouldTearDownRenderers = [&]() {
         if (element.isInTopLayer() && elementUpdate.change == Style::Change::Inherited && elementUpdate.style->effectiveSkipsContent())
             return true;
-        return elementUpdate.change == Style::Change::Renderer && (element.renderer() || element.hasDisplayContents() || element.displayContentsChanged());
+        return elementUpdate.change == Style::Change::Renderer && (element.renderer() || element.hasDisplayContents());
     }();
 
     if (shouldTearDownRenderers) {
@@ -339,8 +339,6 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         tearDownRenderers(element, teardownType, m_builder);
 
         renderingParent().didCreateOrDestroyChildRenderer = true;
-
-        element.setDisplayContentsChanged(false);
     }
 
     bool hasDisplayContents = elementUpdate.style->display() == DisplayType::Contents;

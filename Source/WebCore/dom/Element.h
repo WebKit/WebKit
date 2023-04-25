@@ -730,9 +730,6 @@ public:
     ExplicitlySetAttrElementsMap& explicitlySetAttrElementsMap();
     ExplicitlySetAttrElementsMap* explicitlySetAttrElementsMapIfExists() const;
 
-    bool displayContentsChanged() const;
-    void setDisplayContentsChanged(bool = true);
-
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);
 

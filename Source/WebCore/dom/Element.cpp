@@ -3999,7 +3999,6 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
     // FIXME: This is not as efficient as it could be. For example if an ancestor has a non-inherited style change but
     // the styles are otherwise clean we would not need to re-resolve descendants.
     for (auto& element : makeReversedRange(elementsRequiringComputedStyle)) {
-        bool hadDisplayContents = element->hasDisplayContents();
         auto style = document().styleForElementIgnoringPendingStylesheets(*element, computedStyle);
         computedStyle = style.get();
         ElementRareData& rareData = element->ensureElementRareData();
@@ -4015,8 +4014,6 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
         }
         rareData.setComputedStyle(WTFMove(style));
         element->clearNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
-        if (hadDisplayContents && computedStyle->display() != DisplayType::Contents)
-            element->setDisplayContentsChanged();
 
         if (mode == ResolveComputedStyleMode::RenderedOnly && computedStyle->display() == DisplayType::None)
             return nullptr;
@@ -5350,16 +5347,6 @@ bool Element::hasDuplicateAttribute() const
 void Element::setHasDuplicateAttribute(bool hasDuplicateAttribute)
 {
     setEventTargetFlag(EventTargetFlag::HasDuplicateAttribute, hasDuplicateAttribute);
-}
-
-bool Element::displayContentsChanged() const
-{
-    return hasEventTargetFlag(EventTargetFlag::DisplayContentsChanged);
-}
-
-void Element::setDisplayContentsChanged(bool changed)
-{
-    setEventTargetFlag(EventTargetFlag::DisplayContentsChanged, changed);
 }
 
 } // namespace WebCore
