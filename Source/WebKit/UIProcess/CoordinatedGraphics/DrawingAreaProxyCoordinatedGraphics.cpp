@@ -229,6 +229,10 @@ void DrawingAreaProxyCoordinatedGraphics::updateAcceleratedCompositingMode(const
 void DrawingAreaProxyCoordinatedGraphics::sendUpdateGeometry()
 {
     ASSERT(!m_isWaitingForDidUpdateGeometry);
+
+    if (m_webPageProxy.viewSize().isEmpty() && !m_webPageProxy.useFixedLayout())
+        return;
+
     m_lastSentSize = m_size;
     m_isWaitingForDidUpdateGeometry = true;
 
