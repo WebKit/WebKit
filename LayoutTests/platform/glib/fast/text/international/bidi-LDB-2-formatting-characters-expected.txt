@@ -361,9 +361,8 @@ layer at (0,0) size 785x654
               text run at (69,1) width 24 RTL: "\x{5D3}\x{5D4}\x{5D5}"
               text run at (92,1) width 76: " DEF GHI "
               text run at (167,1) width 26 RTL: "\x{5D6}\x{5D7}\x{5D8}"
-        RenderText {#text} at (657,83) size 5x17
-          text run at (657,83) width 5: " "
-        RenderBR {BR} at (662,83) size 0x17
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (657,83) size 0x17
         RenderBlock {DIV} at (3,188) size 202x46 [border: (1px solid #008000)]
           RenderTable {TABLE} at (4,4) size 194x19
             RenderTableSection {TBODY} at (0,0) size 194x19

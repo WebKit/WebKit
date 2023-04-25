@@ -6,15 +6,14 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 624x17
           text run at (0,0) width 624: "The following textarea elements should all be rendered on the left, with their text aligned to the left."
-      RenderBlock (anonymous) at (0,34) size 784x172
+      RenderBlock (anonymous) at (0,34) size 784x168
         RenderBR {BR} at (471,28) size 0x17
         RenderBR {BR} at (471,70) size 0x17
-        RenderText {#text} at (471,112) size 4x17
-          text run at (471,112) width 4: " "
-        RenderBR {BR} at (475,112) size 0x17
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (471,112) size 0x17
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,206) size 784x42
+      RenderBlock {DIV} at (0,202) size 784x42
 layer at (8,42) size 471x42 clip at (9,43) size 469x40
   RenderTextControl {TEXTAREA} at (0,0) size 471x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 465x18
@@ -30,12 +29,12 @@ layer at (8,126) size 471x42 clip at (9,127) size 469x40
     RenderBlock {DIV} at (3,3) size 465x18
       RenderText {#text} at (0,0) size 250x17
         text run at (0,0) width 250: "This is should be aligned to the left."
-layer at (8,172) size 471x42 clip at (9,173) size 469x40
-  RenderTextControl {TEXTAREA} at (0,130) size 471x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (8,168) size 471x42 clip at (9,169) size 469x40
+  RenderTextControl {TEXTAREA} at (0,126) size 471x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 465x18
       RenderText {#text} at (0,0) size 250x17
         text run at (0,0) width 250: "This is should be aligned to the left."
-layer at (8,214) size 471x42 clip at (9,215) size 469x40
+layer at (8,210) size 471x42 clip at (9,211) size 469x40
   RenderTextControl {TEXTAREA} at (0,0) size 471x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 465x18
       RenderText {#text} at (0,0) size 250x17

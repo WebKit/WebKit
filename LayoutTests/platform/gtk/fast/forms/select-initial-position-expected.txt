@@ -12,9 +12,8 @@ layer at (0,0) size 800x600
         text run at (0,91) width 161: "dynamic selected change:"
       RenderBR {BR} at (161,91) size 0x17
       RenderListBox {SELECT} at (0,109) size 184x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-      RenderText {#text} at (184,161) size 4x17
-        text run at (184,161) width 4: " "
-      RenderBR {BR} at (188,161) size 0x17
+      RenderText {#text} at (0,0) size 0x0
+      RenderBR {BR} at (184,161) size 0x17
       RenderText {#text} at (0,182) size 211x17
         text run at (0,182) width 211: "dynamic insert of selected option:"
       RenderBR {BR} at (211,182) size 0x17
@@ -35,9 +34,8 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (1,1) size 189x28
           RenderText at (5,5) size 163x17
             text run at (5,5) width 163: "this should be selected"
-      RenderText {#text} at (191,345) size 4x17
-        text run at (191,345) width 4: " "
-      RenderBR {BR} at (195,345) size 0x17
+      RenderText {#text} at (0,0) size 0x0
+      RenderBR {BR} at (191,345) size 0x17
       RenderText {#text} at (0,369) size 211x17
         text run at (0,369) width 211: "dynamic insert of selected option:"
       RenderBR {BR} at (211,369) size 0x17

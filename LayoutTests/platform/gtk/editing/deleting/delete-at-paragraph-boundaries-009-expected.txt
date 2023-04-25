@@ -18,16 +18,16 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x233 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x81
-          RenderText {#text} at (0,0) size 65x26
-            text run at (0,0) width 65: "Tests: "
-          RenderBR {BR} at (64,0) size 1x26
+          RenderText {#text} at (0,0) size 59x26
+            text run at (0,0) width 59: "Tests:"
+          RenderBR {BR} at (58,0) size 1x26
           RenderText {#text} at (0,27) size 742x53
             text run at (0,27) width 742: "Deleting when a selection starts at the beginning of a paragraph preceded by"
             text run at (0,54) width 665: "a text element and extends into the middle of a following paragraph."
         RenderBlock {DIV} at (14,111) size 756x108
-          RenderText {#text} at (0,0) size 189x26
-            text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (188,0) size 1x26
+          RenderText {#text} at (0,0) size 183x26
+            text run at (0,0) width 183: "Expected Results:"
+          RenderBR {BR} at (182,0) size 1x26
           RenderText {#text} at (0,27) size 747x80
             text run at (0,27) width 747: "Should see the three lines in the red box. First line should be \"one\". Next one"
             text run at (0,54) width 153: "should be \"ee\". "
