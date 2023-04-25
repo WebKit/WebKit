@@ -208,7 +208,7 @@ private:
     void mapLanguageAttributeToLocale(const AtomString&, MutableStyleProperties&);
 
     void dirAttributeChanged(const AtomString&);
-    void updateEffectiveDirectionality(TextDirection);
+    void updateEffectiveDirectionality(std::optional<TextDirection>);
     void adjustDirectionalityIfNeededAfterChildAttributeChanged(Element* child);
     void adjustDirectionalityIfNeededAfterChildrenChanged(Element* beforeChange, ChildChange::Type);
 

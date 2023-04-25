@@ -886,22 +886,19 @@ void HTMLElement::dirAttributeChanged(const AtomString& value)
         isValid = false;
         if (selfOrPrecedingNodesAffectDirAuto() && (!parent || !parent->selfOrPrecedingNodesAffectDirAuto()) && !is<HTMLBDIElement>(*this))
             setHasDirAutoFlagRecursively(this, false);
-        if (parent && parent->usesEffectiveTextDirection() && !(is<HTMLInputElement>(*this) && downcast<HTMLInputElement>(*this).isTelephoneField())) {
-            setUsesEffectiveTextDirection(true);
+        if (parent && parent->usesEffectiveTextDirection() && !(is<HTMLInputElement>(*this) && downcast<HTMLInputElement>(*this).isTelephoneField()))
             updateEffectiveDirectionality(parent->effectiveTextDirection());
-        } else
-            setUsesEffectiveTextDirection(false);
+        else
+            updateEffectiveDirectionality(std::nullopt);
         break;
     case TextDirectionDirective::LTR:
         if (selfOrPrecedingNodesAffectDirAuto())
             setHasDirAutoFlagRecursively(this, false);
-        setUsesEffectiveTextDirection(true);
         updateEffectiveDirectionality(TextDirection::LTR);
         break;
     case TextDirectionDirective::RTL:
         if (selfOrPrecedingNodesAffectDirAuto())
             setHasDirAutoFlagRecursively(this, false);
-        setUsesEffectiveTextDirection(true);
         updateEffectiveDirectionality(TextDirection::RTL);
         break;
     case TextDirectionDirective::Auto:
@@ -917,11 +914,13 @@ void HTMLElement::dirAttributeChanged(const AtomString& value)
     }
 }
 
-void HTMLElement::updateEffectiveDirectionality(TextDirection direction)
+void HTMLElement::updateEffectiveDirectionality(std::optional<TextDirection> direction)
 {
     Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassDir, Style::PseudoClassChangeInvalidation::AnyValue);
-    setUsesEffectiveTextDirection(true);
-    setEffectiveTextDirection(direction);
+    auto effectiveDirection = direction.value_or(TextDirection::LTR);
+    setUsesEffectiveTextDirection(!!direction);
+    if (direction)
+        setEffectiveTextDirection(effectiveDirection);
     auto updateEffectiveTextDirectionOfShadowRoot = [&](HTMLElement& element) {
         if (RefPtr shadowRootOfElement = element.shadowRoot()) {
             for (auto& element : childrenOfType<HTMLElement>(*shadowRootOfElement))
@@ -937,8 +936,9 @@ void HTMLElement::updateEffectiveDirectionality(TextDirection direction)
         }
         updateEffectiveTextDirectionOfShadowRoot(element);
         Style::PseudoClassChangeInvalidation styleInvalidation(element, CSSSelector::PseudoClassDir, Style::PseudoClassChangeInvalidation::AnyValue);
-        element.setUsesEffectiveTextDirection(true);
-        element.setEffectiveTextDirection(direction);
+        element.setUsesEffectiveTextDirection(!!direction);
+        if (direction)
+            element.setEffectiveTextDirection(effectiveDirection);
         it.traverseNext();
     }
 }
