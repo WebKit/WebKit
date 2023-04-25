@@ -938,11 +938,14 @@ TEST(DocumentEditingContext, RequestRectsInTextAreaInsideIFrame)
 }
 
 // FIXME when rdar://107850452 is resolved
-TEST(DocumentEditingContext, DISABLED_RequestRectsInTextAreaInsideScrolledIFrame)
+TEST(DocumentEditingContext, RequestRectsInTextAreaInsideScrolledIFrame)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     // Use "padding: 0" for the <textarea> as the default user-agent stylesheet can effect text wrapping.
-    [webView synchronouslyLoadHTMLString:applyAhemStyle([NSString stringWithFormat:@"<iframe srcdoc=\"%@\" style='position: absolute; left: 1em; top: 1em; border: none' height='200'></iframe>", applyAhemStyle(@"<body style='height: 1000px'><div style='width: 200px; height: 200px'></div><textarea id='test' style='padding: 0'>The quick brown fox jumps over the lazy dog.</textarea><script>let textarea = document.getElementById('test'); textarea.focus(); textarea.setSelectionRange(0, 0); /* Place caret at the beginning of the field. */ window.scrollTo(0, 200); /* Scroll <textarea> to the top. */</script></body>")])];
+    [webView synchronouslyLoadHTMLString:applyAhemStyle([NSString stringWithFormat:@"<iframe srcdoc=\"%@\" style='position: absolute; left: 1em; top: 1em; border: none' height='200'></iframe>",
+        applyAhemStyle(@"<body style='height: 1000px'><div style='width: 200px; height: 200px'></div><textarea id='test' style='padding: 0'>The quick brown fox jumps over the lazy dog.</textarea>"
+            "<script>let textarea = document.getElementById('test'); textarea.focus({preventScroll: true}); textarea.setSelectionRange(0, 0); /* Place caret at the beginning of the field. */"
+            "window.scrollTo(0, 200, {behavior: 'instant'}); /* Scroll <textarea> to the top. */ </script></body>")])];
 
     auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestRects, UITextGranularityWord, 1)];
     EXPECT_NOT_NULL(context);
@@ -951,11 +954,10 @@ TEST(DocumentEditingContext, DISABLED_RequestRectsInTextAreaInsideScrolledIFrame
     auto *textRects = [context textRects];
     EXPECT_EQ(3U, textRects.count);
 
-#if PLATFORM(MACCATALYST)
     const size_t yPos = 26;
+#if PLATFORM(MACCATALYST)
     const size_t height = 26;
 #else
-    const size_t yPos = 27;
     const size_t height = 25;
 #endif
 
