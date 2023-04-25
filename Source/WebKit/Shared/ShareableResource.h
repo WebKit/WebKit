@@ -55,7 +55,7 @@ public:
 private:
     friend class ShareableResource;
 
-    mutable SharedMemory::Handle m_handle;
+    SharedMemory::Handle m_handle;
     unsigned m_offset { 0 };
     unsigned m_size { 0 };
 };

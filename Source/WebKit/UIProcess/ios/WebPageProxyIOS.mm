@@ -1237,7 +1237,7 @@ void WebPageProxy::didStartLoadForQuickLookDocumentInMainFrame(const String& fil
     m_navigationClient->didStartLoadForQuickLookDocumentInMainFrame(fileName.substring(fileName.reverseFind('/') + 1), uti);
 }
 
-void WebPageProxy::didFinishLoadForQuickLookDocumentInMainFrame(const ShareableResource::Handle& handle)
+void WebPageProxy::didFinishLoadForQuickLookDocumentInMainFrame(ShareableResource::Handle&& handle)
 {
     auto buffer = handle.tryWrapInSharedBuffer();
     if (!buffer)

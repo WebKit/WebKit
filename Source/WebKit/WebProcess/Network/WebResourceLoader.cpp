@@ -326,7 +326,7 @@ void WebResourceLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDeni
 }
 
 #if ENABLE(SHAREABLE_RESOURCE)
-void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& handle)
+void WebResourceLoader::didReceiveResource(ShareableResource::Handle&& handle)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveResource for '%s'", m_coreLoader->url().string().latin1().data());
     WEBRESOURCELOADER_RELEASE_LOG("didReceiveResource:");
