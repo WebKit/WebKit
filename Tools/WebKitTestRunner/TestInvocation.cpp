@@ -1756,10 +1756,10 @@ void TestInvocation::dumpPrivateClickMeasurement()
 
 void TestInvocation::initializeWaitToDumpWatchdogTimerIfNeeded()
 {
-    if (m_waitToDumpWatchdogTimer.isActive())
+    if (m_waitToDumpWatchdogTimer.isActive() || m_timeout == TestController::noTimeout)
         return;
 
-    m_waitToDumpWatchdogTimer.startOneShot(m_timeout);
+    m_waitToDumpWatchdogTimer.startOneShot(m_timeout > 0_s ? m_timeout : TestController::defaultShortTimeout);
 }
 
 void TestInvocation::invalidateWaitToDumpWatchdogTimer()
