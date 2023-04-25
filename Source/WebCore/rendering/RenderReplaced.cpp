@@ -529,8 +529,6 @@ void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, 
 
 LayoutUnit RenderReplaced::computeConstrainedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const
 {
-    if (shouldComputePreferred == ComputePreferred)
-        return computeReplacedLogicalWidthRespectingMinMaxWidth(0_lu, ComputePreferred);
 
     // The aforementioned 'constraint equation' used for block-level, non-replaced
     // elements in normal flow:
