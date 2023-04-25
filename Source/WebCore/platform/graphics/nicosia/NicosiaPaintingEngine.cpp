@@ -36,8 +36,7 @@ namespace Nicosia {
 
 std::unique_ptr<PaintingEngine> PaintingEngine::create()
 {
-#if (ENABLE(DEVELOPER_MODE) && PLATFORM(WPE)) || USE(GTK4)
-#if USE(GTK4)
+#if PLATFORM(WPE) || USE(GTK4)
     unsigned numThreads = 1;
 #else
     unsigned numThreads = 0;
@@ -53,7 +52,6 @@ std::unique_ptr<PaintingEngine> PaintingEngine::create()
 
     if (numThreads)
         return std::unique_ptr<PaintingEngine>(new PaintingEngineThreaded(numThreads));
-#endif
 
     return std::unique_ptr<PaintingEngine>(new PaintingEngineBasic);
 }
