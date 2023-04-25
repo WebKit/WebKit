@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+
+# Copyright (C) 2023 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+import argparse
+import os
+import requests
+import sys
+
+
+def upload(filename, url):
+    if not os.path.isfile(filename):
+        print(f'File not found: {filename}')
+        sys.exit(-1)
+
+    filesize = os.stat(filename).st_size // 1024 ;
+    print(f'Uploading {filename}, size: {filesize} KB')
+
+    with open(filename, 'rb') as f:
+        try:
+            data = f.read()
+            response = requests.put(url, data=data, timeout=180)
+        except Exception as e:
+           print(f'Exception: {e}')
+           sys.exit(-1)
+        print(f'Response: {response}, status_code: {response.status_code}, {response.reason}')
+        if response and response.status_code // 100 == 2:
+            return 0
+        return -1
+
+
+def main():
+    parser = argparse.ArgumentParser(add_help=True)
+    parser.add_argument('--filename', action="store", required=True, help='Path to the file. [path/to/123456.zip]')
+    parser.add_argument('--url', action="store", required=False, help='url to upload to')
+    args = parser.parse_args()
+    url = args.url or os.getenv('UPLOAD_URL')
+    rc = upload(args.filename, url)
+    return rc
+
+
+if __name__ ==  '__main__':
+    sys.exit(main())
