@@ -65,7 +65,7 @@
     bottom: auto;
 }
 
-.media-controls.inline > .controls-bar button {
+.media-controls.inline > .controls-bar button:not(.circular) {
     height: 100% !important;
 }
 
