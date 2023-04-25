@@ -80,7 +80,7 @@ platform/graphics/gbm/GBMDevice.cpp
 platform/graphics/gbm/GraphicsContextGLANGLELinux.cpp
 platform/graphics/gbm/GraphicsContextGLFallback.cpp
 platform/graphics/gbm/GraphicsContextGLGBM.cpp
-platform/graphics/gbm/GraphicsContextGLGBMTextureMapper.cpp
+platform/graphics/gbm/GraphicsContextGLGBMTextureMapper.cpp @no-unify
 platform/graphics/gbm/PlatformDisplayGBM.cpp @no-unify
 
 platform/graphics/gtk/ColorGtk.cpp
