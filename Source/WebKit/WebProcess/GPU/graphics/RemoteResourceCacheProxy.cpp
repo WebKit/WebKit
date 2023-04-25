@@ -150,7 +150,7 @@ void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
     image.addObserver(*this);
 
     // Tell the GPU process to cache this resource.
-    m_remoteRenderingBackendProxy.cacheNativeImage(*handle, image.renderingResourceIdentifier());
+    m_remoteRenderingBackendProxy.cacheNativeImage(WTFMove(*handle), image.renderingResourceIdentifier());
 }
 
 void RemoteResourceCacheProxy::recordFontUse(Font& font)

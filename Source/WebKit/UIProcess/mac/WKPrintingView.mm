@@ -224,7 +224,7 @@ struct IPCCallbackContext {
     IPC::Connection::AsyncReplyID callbackID;
 };
 
-static void pageDidDrawToImage(const WebKit::ShareableBitmap::Handle& imageHandle, IPCCallbackContext* context)
+static void pageDidDrawToImage(WebKit::ShareableBitmap::Handle&& imageHandle, IPCCallbackContext* context)
 {
     ASSERT(RunLoop::isMain());
 
@@ -237,7 +237,7 @@ static void pageDidDrawToImage(const WebKit::ShareableBitmap::Handle& imageHandl
         ASSERT([view _isPrintingPreview]);
 
         if (!imageHandle.isNull()) {
-            auto image = WebKit::ShareableBitmap::create(imageHandle, WebKit::SharedMemory::Protection::ReadOnly);
+            auto image = WebKit::ShareableBitmap::create(WTFMove(imageHandle), WebKit::SharedMemory::Protection::ReadOnly);
 
             if (image)
                 view->_pagePreviews.add(iter->value, image);
@@ -539,9 +539,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 _webFrame->page()->beginPrinting(_webFrame.get(), WebKit::PrintInfo([_printOperation.get() printInfo]));
 
                 IPCCallbackContext* context = new IPCCallbackContext;
-                auto callback = [context](const WebKit::ShareableBitmap::Handle& imageHandle) {
+                auto callback = [context](WebKit::ShareableBitmap::Handle&& imageHandle) {
                     std::unique_ptr<IPCCallbackContext> contextDeleter(context);
-                    pageDidDrawToImage(imageHandle, context);
+                    pageDidDrawToImage(WTFMove(imageHandle), context);
                 };
                 _latestExpectedPreviewCallback = _webFrame->page()->drawRectToImage(_webFrame.get(), WebKit::PrintInfo([_printOperation.get() printInfo]), scaledPrintingRect, imageSize, WTFMove(callback));
                 _expectedPreviewCallbacks.add(_latestExpectedPreviewCallback, scaledPrintingRect);

@@ -230,7 +230,7 @@ RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::getShareableBitmap(Renderin
     if (handle.isNull())
         return { };
     handle.takeOwnershipOfMemory(MemoryLedger::Graphics);
-    return ShareableBitmap::create(handle);
+    return ShareableBitmap::create(WTFMove(handle));
 }
 
 RefPtr<Image> RemoteRenderingBackendProxy::getFilteredImage(RenderingResourceIdentifier imageBuffer, Filter& filter)
@@ -241,16 +241,16 @@ RefPtr<Image> RemoteRenderingBackendProxy::getFilteredImage(RenderingResourceIde
         return { };
 
     handle.takeOwnershipOfMemory(MemoryLedger::Graphics);
-    auto bitmap = ShareableBitmap::create(handle);
+    auto bitmap = ShareableBitmap::create(WTFMove(handle));
     if (!bitmap)
         return { };
 
     return bitmap->createImage();
 }
 
-void RemoteRenderingBackendProxy::cacheNativeImage(const ShareableBitmap::Handle& handle, RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackendProxy::cacheNativeImage(ShareableBitmap::Handle&& handle, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    send(Messages::RemoteRenderingBackend::CacheNativeImage(handle, renderingResourceIdentifier));
+    send(Messages::RemoteRenderingBackend::CacheNativeImage(WTFMove(handle), renderingResourceIdentifier));
 }
 
 void RemoteRenderingBackendProxy::cacheFont(const WebCore::Font::Attributes& fontAttributes, const WebCore::FontPlatformData::Attributes& platformData, std::optional<WebCore::RenderingResourceIdentifier> ident)

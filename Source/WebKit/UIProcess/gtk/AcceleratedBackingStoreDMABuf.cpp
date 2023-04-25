@@ -336,8 +336,8 @@ void AcceleratedBackingStoreDMABuf::configure(UnixFileDescriptor&& backFD, UnixF
 void AcceleratedBackingStoreDMABuf::configureSHM(ShareableBitmap::Handle&& backBufferHandle, ShareableBitmap::Handle&& frontBufferHandle)
 {
     m_isSoftwareRast = true;
-    m_surface.backBitmap = ShareableBitmap::create(backBufferHandle, SharedMemory::Protection::ReadOnly);
-    m_surface.frontBitmap = ShareableBitmap::create(frontBufferHandle, SharedMemory::Protection::ReadOnly);
+    m_surface.backBitmap = ShareableBitmap::create(WTFMove(backBufferHandle), SharedMemory::Protection::ReadOnly);
+    m_surface.frontBitmap = ShareableBitmap::create(WTFMove(frontBufferHandle), SharedMemory::Protection::ReadOnly);
     if (gtk_widget_get_realized(m_webPage.viewWidget()))
         m_pendingSource = createSource();
 }

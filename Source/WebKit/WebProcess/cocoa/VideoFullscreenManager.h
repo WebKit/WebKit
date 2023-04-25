@@ -140,7 +140,7 @@ public:
     void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WTF::CompletionHandler<void(bool)>&& = [](bool) { });
     void exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
 
-    void updateTextTrackRepresentationForVideoElement(WebCore::HTMLVideoElement&, const ShareableBitmapHandle&);
+    void updateTextTrackRepresentationForVideoElement(WebCore::HTMLVideoElement&, ShareableBitmapHandle&&);
     void setTextTrackRepresentationContentScaleForVideoElement(WebCore::HTMLVideoElement&, float scale);
     void setTextTrackRepresentationIsHiddenForVideoElement(WebCore::HTMLVideoElement&, bool hidden);
 

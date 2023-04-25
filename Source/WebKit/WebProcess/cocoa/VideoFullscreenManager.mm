@@ -727,12 +727,12 @@ void VideoFullscreenManager::setVideoLayerFrameFenced(PlaybackSessionContextIden
         model->setVideoInlineSizeFenced(bounds.size(), machSendRight);
 }
 
-void VideoFullscreenManager::updateTextTrackRepresentationForVideoElement(WebCore::HTMLVideoElement& videoElement, const ShareableBitmap::Handle& textTrack)
+void VideoFullscreenManager::updateTextTrackRepresentationForVideoElement(WebCore::HTMLVideoElement& videoElement, ShareableBitmap::Handle&& textTrack)
 {
     if (!m_page)
         return;
     auto contextId = m_videoElements.get(&videoElement);
-    m_page->send(Messages::VideoFullscreenManagerProxy::TextTrackRepresentationUpdate(contextId, textTrack));
+    m_page->send(Messages::VideoFullscreenManagerProxy::TextTrackRepresentationUpdate(contextId, WTFMove(textTrack)));
 }
 
 void VideoFullscreenManager::setTextTrackRepresentationContentScaleForVideoElement(WebCore::HTMLVideoElement& videoElement, float scale)

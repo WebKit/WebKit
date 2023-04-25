@@ -113,7 +113,7 @@ private:
     friend struct IPC::ArgumentCoder<ShareableBitmapHandle, void>;
     friend class ShareableBitmap;
 
-    mutable SharedMemory::Handle m_handle;
+    SharedMemory::Handle m_handle;
     ShareableBitmapConfiguration m_configuration;
 };
 

@@ -71,7 +71,7 @@ void WebTextTrackRepresentationCocoa::update()
     auto handle = bitmap->createHandle();
     if (!handle)
         return;
-    fullscreenManager.updateTextTrackRepresentationForVideoElement(downcast<WebCore::HTMLVideoElement>(*m_mediaElement), *handle);
+    fullscreenManager.updateTextTrackRepresentationForVideoElement(downcast<WebCore::HTMLVideoElement>(*m_mediaElement), WTFMove(*handle));
 }
 
 void WebTextTrackRepresentationCocoa::setContentScale(float scale)

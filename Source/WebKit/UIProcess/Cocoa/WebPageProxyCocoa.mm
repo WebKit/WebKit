@@ -293,9 +293,9 @@ bool WebPageProxy::scrollingUpdatesDisabledForTesting()
 
 #if ENABLE(DRAG_SUPPORT)
 
-void WebPageProxy::startDrag(const DragItem& dragItem, const ShareableBitmap::Handle& dragImageHandle)
+void WebPageProxy::startDrag(const DragItem& dragItem, ShareableBitmap::Handle&& dragImageHandle)
 {
-    pageClient().startDrag(dragItem, dragImageHandle);
+    pageClient().startDrag(dragItem, WTFMove(dragImageHandle));
 }
 
 #endif
@@ -604,7 +604,7 @@ void WebPageProxy::fullscreenVideoTextRecognitionTimerFired()
         return;
 
     auto identifier = *internals().currentFullscreenVideoSessionIdentifier;
-    m_videoFullscreenManager->requestBitmapImageForCurrentTime(identifier, [identifier, weakThis = WeakPtr { *this }](auto& imageHandle) {
+    m_videoFullscreenManager->requestBitmapImageForCurrentTime(identifier, [identifier, weakThis = WeakPtr { *this }](auto&& imageHandle) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || protectedThis->internals().currentFullscreenVideoSessionIdentifier != identifier)
             return;
@@ -615,7 +615,7 @@ void WebPageProxy::fullscreenVideoTextRecognitionTimerFired()
 
 #if PLATFORM(IOS_FAMILY)
         if (RetainPtr controller = fullscreenManager->playerViewController(identifier))
-            protectedThis->pageClient().beginTextRecognitionForFullscreenVideo(imageHandle, controller.get());
+            protectedThis->pageClient().beginTextRecognitionForFullscreenVideo(WTFMove(imageHandle), controller.get());
 #endif
     });
 }

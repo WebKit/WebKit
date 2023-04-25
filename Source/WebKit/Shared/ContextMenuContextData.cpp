@@ -179,7 +179,7 @@ bool ContextMenuContextData::decode(IPC::Decoder& decoder, ContextMenuContextDat
         return false;
 
     if (!handle.isNull())
-        result.m_controlledImage = ShareableBitmap::create(handle, SharedMemory::Protection::ReadOnly);
+        result.m_controlledImage = ShareableBitmap::create(WTFMove(handle), SharedMemory::Protection::ReadOnly);
 
     if (!decoder.decode(result.m_controlledSelectionData))
         return false;
@@ -203,14 +203,14 @@ bool ContextMenuContextData::decode(IPC::Decoder& decoder, ContextMenuContextDat
         return false;
 
     if (!potentialQRCodeNodeSnapshotImageHandle.isNull())
-        result.m_potentialQRCodeNodeSnapshotImage = ShareableBitmap::create(potentialQRCodeNodeSnapshotImageHandle, SharedMemory::Protection::ReadOnly);
+        result.m_potentialQRCodeNodeSnapshotImage = ShareableBitmap::create(WTFMove(potentialQRCodeNodeSnapshotImageHandle), SharedMemory::Protection::ReadOnly);
 
     ShareableBitmap::Handle potentialQRCodeViewportSnapshotImageHandle;
     if (!decoder.decode(potentialQRCodeViewportSnapshotImageHandle))
         return false;
 
     if (!potentialQRCodeViewportSnapshotImageHandle.isNull())
-        result.m_potentialQRCodeViewportSnapshotImage = ShareableBitmap::create(potentialQRCodeViewportSnapshotImageHandle, SharedMemory::Protection::ReadOnly);
+        result.m_potentialQRCodeViewportSnapshotImage = ShareableBitmap::create(WTFMove(potentialQRCodeViewportSnapshotImageHandle), SharedMemory::Protection::ReadOnly);
 #endif
 
     return true;
