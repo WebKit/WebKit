@@ -1089,24 +1089,10 @@ void AccessibilityRenderObject::titleElementText(Vector<AccessibilityText>& text
     
 AccessibilityObject* AccessibilityRenderObject::titleUIElement() const
 {
-    if (!m_renderer || !exposesTitleUIElement())
-        return nullptr;
+    if (m_renderer && isFieldset() && exposesTitleUIElement())
+        return axObjectCache()->getOrCreate(dynamicDowncast<RenderBlock>(m_renderer.get())->findFieldsetLegend(RenderBlock::FieldsetIncludeFloatingOrOutOfFlow));
 
-    // if isFieldset is true, the renderer is guaranteed to be a RenderFieldset
-    if (isFieldset())
-        return axObjectCache()->getOrCreate(downcast<RenderBlock>(*m_renderer).findFieldsetLegend(RenderBlock::FieldsetIncludeFloatingOrOutOfFlow));
-    
-    if (isFigureElement())
-        return captionForFigure();
-    
-    Node* node = m_renderer->node();
-    if (!is<Element>(node))
-        return nullptr;
-    HTMLLabelElement* label = labelForElement(downcast<Element>(node));
-    if (label && label->renderer())
-        return axObjectCache()->getOrCreate(label);
-
-    return nullptr;
+    return AccessibilityNodeObject::titleUIElement();
 }
     
 bool AccessibilityRenderObject::isAllowedChildOfTree() const

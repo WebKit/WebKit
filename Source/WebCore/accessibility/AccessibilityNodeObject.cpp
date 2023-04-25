@@ -1426,7 +1426,7 @@ AccessibilityObject* AccessibilityNodeObject::correspondingLabelForControlElemen
 
 HTMLLabelElement* AccessibilityNodeObject::labelForElement(Element* element) const
 {
-    if (!is<HTMLElement>(*element) || !downcast<HTMLElement>(*element).isLabelable())
+    if (!is<HTMLElement>(element) || !downcast<HTMLElement>(element)->isLabelable())
         return nullptr;
 
     const AtomString& id = element->getIdAttribute();
@@ -1601,6 +1601,17 @@ void AccessibilityNodeObject::titleElementText(Vector<AccessibilityText>& textOr
     AccessibilityObject* titleUIElement = this->titleUIElement();
     if (titleUIElement)
         textOrder.append(AccessibilityText(String(), AccessibilityTextSource::LabelByElement));
+}
+
+AccessibilityObject* AccessibilityNodeObject::titleUIElement() const
+{
+    if (!exposesTitleUIElement())
+        return nullptr;
+
+    if (isFigureElement())
+        return captionForFigure();
+
+    return axObjectCache()->getOrCreate(labelForElement(dynamicDowncast<Element>(node())));
 }
 
 bool AccessibilityNodeObject::exposesTitleUIElement() const

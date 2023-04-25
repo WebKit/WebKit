@@ -38,6 +38,13 @@ figure5 description: AXDescription: Figcaption element
 figure5 helpText: AXHelp: title attribute
 PASS (isIgnored(titleUIElement) && isIgnored(figureCaption)) || titleUIElement.isEqual(figureCaption) is true
 
+Test display:contents figure with figcaption element.
+figure6 role: AXRole: AXGroup
+figure6 roleDescription: AXRoleDescription: figure
+figure6 description: AXDescription: Figcaption element (display:contents)
+figure6 helpText: AXHelp:
+PASS (isIgnored(titleUIElement) && isIgnored(figureCaption)) || titleUIElement.isEqual(figureCaption) is true
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

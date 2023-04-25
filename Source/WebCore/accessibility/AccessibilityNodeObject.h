@@ -197,6 +197,7 @@ protected:
     AccessibilityObject* menuButtonForMenu() const;
     AccessibilityObject* captionForFigure() const;
     virtual void titleElementText(Vector<AccessibilityText>&) const;
+    AccessibilityObject* titleUIElement() const override;
     bool exposesTitleUIElement() const override;
 
 private:

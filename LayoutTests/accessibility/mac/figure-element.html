@@ -35,6 +35,12 @@
 	<figcaption id="figCaption5">Figcaption element</figcaption>
 </figure>
 
+<p id="p6">Test display:contents figure with figcaption element.</p>
+<figure id="figure6" style="display:contents">
+	<img src="" alt="image alt" width="20" height="20"/>
+	<figcaption id="figCaption6">Figcaption element (display:contents)</figcaption>
+</figure>
+
 </div>
 
 <p id="description"></p>
@@ -50,7 +56,7 @@
 
     if (window.accessibilityController) {
 
-        for (var k = 1; k <= 5; k++) {
+        for (var k = 1; k <= 6; k++) {
            var figure = accessibilityController.accessibleElementById("figure" + k);
            var p = document.getElementById("p" + k);
            debug(p.innerText);
