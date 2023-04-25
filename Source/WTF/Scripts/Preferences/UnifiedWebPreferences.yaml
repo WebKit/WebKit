@@ -5352,7 +5352,7 @@ SampleBufferContentKeySessionSupportEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: WebKit::defaultSampleBufferContentKeySessionSupportEnabled()
+      default: false
     WebCore:
       default: false
 
