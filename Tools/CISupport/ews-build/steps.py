@@ -2263,11 +2263,12 @@ class RevertPullRequestChanges(steps.ShellSequence):
 
 
 class Trigger(trigger.Trigger):
-    def __init__(self, schedulerNames, include_revision=True, triggers=None, patch=True, pull_request=False, **kwargs):
+    # By default, set updateSourceStamp=False so that the triggered build uses the sourcestamp of the triggering build.
+    def __init__(self, schedulerNames, include_revision=True, triggers=None, patch=True, pull_request=False, updateSourceStamp=False, **kwargs):
         self.include_revision = include_revision
         self.triggers = triggers
         set_properties = self.propertiesToPassToTriggers(patch=patch, pull_request=pull_request) or {}
-        super().__init__(schedulerNames=schedulerNames, set_properties=set_properties, **kwargs)
+        super().__init__(schedulerNames=schedulerNames, set_properties=set_properties, updateSourceStamp=updateSourceStamp, **kwargs)
 
     def propertiesToPassToTriggers(self, patch=True, pull_request=False):
         property_names = [
@@ -2275,7 +2276,8 @@ class Trigger(trigger.Trigger):
             'platform',
             'fullPlatform',
             'architecture',
-            'additionalArguments'
+            'additionalArguments',
+            'codebase',
         ]
         if patch:
             property_names += ['patch_id', 'bug_id', 'owner']
@@ -2283,7 +2285,7 @@ class Trigger(trigger.Trigger):
             property_names += [
                 'github.base.ref', 'github.head.ref', 'github.head.sha',
                 'github.head.repo.full_name', 'github.number', 'github.title',
-                'repository', 'project', 'owners',
+                'repository', 'project', 'owners', 'classification',
             ]
         if self.triggers:
             property_names.append('triggers')
