@@ -621,7 +621,20 @@ bool LocalFrameViewLayoutContext::pushLayoutState(RenderBox& renderer, const Lay
     
 void LocalFrameViewLayoutContext::popLayoutState()
 {
+    if (!layoutState())
+        return;
+
+    auto currentLineClamp = layoutState()->lineClamp();
+
     m_layoutStateStack.removeLast();
+
+    if (currentLineClamp) {
+        // Propagates the current line clamp state to the parent.
+        if (auto* layoutState = this->layoutState(); layoutState && layoutState->lineClamp()) {
+            ASSERT(layoutState->lineClamp()->maximumLineCount == currentLineClamp->maximumLineCount);
+            layoutState->setLineClamp(currentLineClamp);
+        }
+    }
 }
 
 #ifndef NDEBUG
