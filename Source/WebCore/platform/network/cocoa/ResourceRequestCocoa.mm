@@ -40,6 +40,10 @@
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/CString.h>
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ResourceRequestCocoaAdditions.mm>)
+#import <WebKitAdditions/ResourceRequestCocoaAdditions.mm>
+#endif
+
 namespace WebCore {
 
 ResourceRequest::ResourceRequest(NSURLRequest *nsRequest)
@@ -47,6 +51,12 @@ ResourceRequest::ResourceRequest(NSURLRequest *nsRequest)
 {
 #if ENABLE(APP_PRIVACY_REPORT)
     setIsAppInitiated(nsRequest.attribution == NSURLRequestAttributionDeveloper);
+#endif
+#if HAVE(PRIVACY_PROXY_FAIL_CLOSED_FOR_UNREACHABLE_HOSTS)
+    setPrivacyProxyFailClosedForUnreachableNonMainHosts(nsRequest._privacyProxyFailClosedForUnreachableNonMainHosts);
+#endif
+#if HAVE(SYSTEM_NETWORK_CONNECTION_INTEGRITY_SUPPORT)
+    setUseNetworkConnectionIntegrity(isNetworkConnectionIntegrityEnabled(nsRequest));
 #endif
 }
 
@@ -60,6 +70,8 @@ ResourceRequest::ResourceRequest(ResourceRequestPlatformData&& platformData, con
         setRequester(*platformData.m_requester);
         m_nsRequest = platformData.m_urlRequest;
         setIsAppInitiated(*platformData.m_isAppInitiated);
+        setPrivacyProxyFailClosedForUnreachableNonMainHosts(platformData.m_privacyProxyFailClosedForUnreachableNonMainHosts);
+        setUseNetworkConnectionIntegrity(platformData.m_useNetworkConnectionIntegrity);
     }
 
     setCachePartition(cachePartition);
@@ -128,7 +140,13 @@ ResourceRequestPlatformData ResourceRequest::getResourceRequestPlatformData() co
         [mutableRequest setHTTPBodyStream:nil];
         requestToSerialize = WTFMove(mutableRequest);
     }
-    return ResourceRequestPlatformData { WTFMove(requestToSerialize), isAppInitiated(), requester() };
+    return {
+        WTFMove(requestToSerialize),
+        isAppInitiated(),
+        requester(),
+        privacyProxyFailClosedForUnreachableNonMainHosts(),
+        useNetworkConnectionIntegrity(),
+    };
 }
 
 CFURLRequestRef ResourceRequest::cfURLRequest(HTTPBodyUpdatePolicy bodyPolicy) const
@@ -241,6 +259,24 @@ void ResourceRequest::replacePlatformRequest(HTTPBodyUpdatePolicy policy)
     updatePlatformRequest(policy);
 }
 
+static void configureRequestWithData(NSMutableURLRequest *request, const ResourceRequestBase::RequestData& data)
+{
+#if ENABLE(APP_PRIVACY_REPORT)
+    request.attribution = data.m_isAppInitiated ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
+#else
+    UNUSED_PARAM(request);
+    UNUSED_PARAM(data);
+#endif
+
+#if HAVE(PRIVACY_PROXY_FAIL_CLOSED_FOR_UNREACHABLE_HOSTS)
+    request._privacyProxyFailClosedForUnreachableNonMainHosts = data.m_privacyProxyFailClosedForUnreachableNonMainHosts;
+#endif
+
+#if HAVE(SYSTEM_NETWORK_CONNECTION_INTEGRITY_SUPPORT)
+    setNetworkConnectionIntegrityEnabled(request, data.m_useNetworkConnectionIntegrity);
+#endif
+}
+
 void ResourceRequest::doUpdatePlatformRequest()
 {
     if (isNull()) {
@@ -255,9 +291,7 @@ void ResourceRequest::doUpdatePlatformRequest()
     else
         nsRequest = adoptNS([[NSMutableURLRequest alloc] initWithURL:url()]);
 
-#if ENABLE(APP_PRIVACY_REPORT)
-    nsRequest.get().attribution = m_requestData.m_isAppInitiated ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
-#endif
+    configureRequestWithData(nsRequest.get(), m_requestData);
 
     if (ResourceRequest::httpPipeliningEnabled())
         CFURLRequestSetShouldPipelineHTTP([nsRequest _CFURLRequest], true, true);
@@ -335,9 +369,7 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
     else
         nsRequest = adoptNS([[NSMutableURLRequest alloc] initWithURL:url()]);
 
-#if ENABLE(APP_PRIVACY_REPORT)
-    nsRequest.get().attribution = m_requestData.m_isAppInitiated ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
-#endif
+    configureRequestWithData(nsRequest.get(), m_requestData);
 
     auto formData = httpBody();
     if (formData && !formData->isEmpty())

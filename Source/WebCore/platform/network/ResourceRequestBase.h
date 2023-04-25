@@ -66,7 +66,7 @@ public:
     struct RequestData {
         RequestData() { }
         
-        RequestData(const URL& url, const URL& firstPartyForCookies, double timeoutInterval, const String& httpMethod, const HTTPHeaderMap& httpHeaderFields, const Vector<String>& responseContentDispositionEncodingFallbackArray, const ResourceRequestCachePolicy& cachePolicy, const SameSiteDisposition& sameSiteDisposition, const ResourceLoadPriority& priority, const ResourceRequestRequester& requester, bool allowCookies, bool isTopSite, bool isAppInitiated = true)
+        RequestData(const URL& url, const URL& firstPartyForCookies, double timeoutInterval, const String& httpMethod, const HTTPHeaderMap& httpHeaderFields, const Vector<String>& responseContentDispositionEncodingFallbackArray, const ResourceRequestCachePolicy& cachePolicy, const SameSiteDisposition& sameSiteDisposition, const ResourceLoadPriority& priority, const ResourceRequestRequester& requester, bool allowCookies, bool isTopSite, bool isAppInitiated = true, bool privacyProxyFailClosedForUnreachableNonMainHosts = false, bool useNetworkConnectionIntegrity = false)
             : m_url(url)
             , m_firstPartyForCookies(firstPartyForCookies)
             , m_timeoutInterval(timeoutInterval)
@@ -80,6 +80,8 @@ public:
             , m_isTopSite(isTopSite)
             , m_allowCookies(allowCookies)
             , m_isAppInitiated(isAppInitiated)
+            , m_privacyProxyFailClosedForUnreachableNonMainHosts(privacyProxyFailClosedForUnreachableNonMainHosts)
+            , m_useNetworkConnectionIntegrity(useNetworkConnectionIntegrity)
         {
         }
         
@@ -102,6 +104,8 @@ public:
         bool m_isTopSite : 1 { false };
         bool m_allowCookies : 1 { false };
         bool m_isAppInitiated : 1 { true };
+        bool m_privacyProxyFailClosedForUnreachableNonMainHosts : 1 { false };
+        bool m_useNetworkConnectionIntegrity : 1 { false };
     };
 
     ResourceRequestBase(RequestData&& requestData)
@@ -260,6 +264,12 @@ public:
 
     bool isAppInitiated() const { return m_requestData.m_isAppInitiated; }
     WEBCORE_EXPORT void setIsAppInitiated(bool);
+
+    bool privacyProxyFailClosedForUnreachableNonMainHosts() const { return m_requestData.m_privacyProxyFailClosedForUnreachableNonMainHosts; }
+    WEBCORE_EXPORT void setPrivacyProxyFailClosedForUnreachableNonMainHosts(bool);
+
+    bool useNetworkConnectionIntegrity() const { return m_requestData.m_useNetworkConnectionIntegrity; }
+    WEBCORE_EXPORT void setUseNetworkConnectionIntegrity(bool);
 
 protected:
     // Used when ResourceRequest is initialized from a platform representation of the request

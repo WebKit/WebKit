@@ -41,6 +41,8 @@ struct ResourceRequestPlatformData {
     RetainPtr<NSURLRequest> m_urlRequest;
     std::optional<bool> m_isAppInitiated;
     std::optional<ResourceRequestRequester> m_requester;
+    bool m_privacyProxyFailClosedForUnreachableNonMainHosts { false };
+    bool m_useNetworkConnectionIntegrity { false };
 };
 
 using ResourceRequestData = std::variant<ResourceRequestBase::RequestData, ResourceRequestPlatformData>;

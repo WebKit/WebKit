@@ -97,6 +97,8 @@ void ResourceRequestBase::setAsIsolatedCopy(const ResourceRequest& other)
         setHTTPBody(other.m_httpBody->isolatedCopy());
     setAllowCookies(other.m_requestData.m_allowCookies);
     setIsAppInitiated(other.isAppInitiated());
+    setPrivacyProxyFailClosedForUnreachableNonMainHosts(other.privacyProxyFailClosedForUnreachableNonMainHosts());
+    setUseNetworkConnectionIntegrity(other.useNetworkConnectionIntegrity());
 }
 
 bool ResourceRequestBase::isEmpty() const
@@ -630,7 +632,31 @@ void ResourceRequestBase::setIsAppInitiated(bool isAppInitiated)
     m_requestData.m_isAppInitiated = isAppInitiated;
 
     m_platformRequestUpdated = false;
-};
+}
+
+void ResourceRequestBase::setPrivacyProxyFailClosedForUnreachableNonMainHosts(bool privacyProxyFailClosedForUnreachableNonMainHosts)
+{
+    updateResourceRequest();
+
+    if (m_requestData.m_privacyProxyFailClosedForUnreachableNonMainHosts == privacyProxyFailClosedForUnreachableNonMainHosts)
+        return;
+
+    m_requestData.m_privacyProxyFailClosedForUnreachableNonMainHosts = privacyProxyFailClosedForUnreachableNonMainHosts;
+
+    m_platformRequestUpdated = false;
+}
+
+void ResourceRequestBase::setUseNetworkConnectionIntegrity(bool useNetworkConnectionIntegrity)
+{
+    updateResourceRequest();
+
+    if (m_requestData.m_useNetworkConnectionIntegrity == useNetworkConnectionIntegrity)
+        return;
+
+    m_requestData.m_useNetworkConnectionIntegrity = useNetworkConnectionIntegrity;
+
+    m_platformRequestUpdated = false;
+}
 
 #if USE(SYSTEM_PREVIEW)
 

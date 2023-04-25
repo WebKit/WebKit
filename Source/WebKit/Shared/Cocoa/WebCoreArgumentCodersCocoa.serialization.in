@@ -45,7 +45,9 @@ header: <WebCore/ResourceRequest.h>
 [CustomHeader] struct WebCore::ResourceRequestPlatformData {
     [SecureCodingAllowed=[NSMutableURLRequest.class, NSURLRequest.class]] RetainPtr<NSURLRequest> m_urlRequest;
     std::optional<bool> m_isAppInitiated;
-    std::optional<WebCore::ResourceRequestRequester> m_requester
+    std::optional<WebCore::ResourceRequestRequester> m_requester;
+    bool m_privacyProxyFailClosedForUnreachableNonMainHosts;
+    bool m_useNetworkConnectionIntegrity;
 };
 
 [Nested] struct WebCore::AttributedString::AttributeValue {

@@ -1390,6 +1390,8 @@ header: <WebCore/ResourceRequest.h>
     [BitField] bool m_allowCookies;
     [BitField] bool m_isTopSite;
     [BitField] bool m_isAppInitiated;
+    [BitField] bool m_privacyProxyFailClosedForUnreachableNonMainHosts;
+    [BitField] bool m_useNetworkConnectionIntegrity;
 };
 
 #if USE(SOUP)
