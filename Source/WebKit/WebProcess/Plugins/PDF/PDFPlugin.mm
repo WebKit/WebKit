@@ -796,6 +796,9 @@ void PDFPlugin::receivedNonLinearizedPDFSentinel()
         return;
 
     m_pdfDocument = adoptNS([allocPDFDocumentInstance() initWithData:rawData()]);
+    if (!m_pdfDocument)
+        return;
+
     installPDFDocument();
     tryRunScriptsInPDFDocument();
 }
@@ -1644,7 +1647,8 @@ void PDFPlugin::streamDidFinishLoading()
 #endif
     {
         m_pdfDocument = adoptNS([allocPDFDocumentInstance() initWithData:rawData()]);
-        installPDFDocument();
+        if (m_pdfDocument)
+            installPDFDocument();
     }
 
     tryRunScriptsInPDFDocument();
