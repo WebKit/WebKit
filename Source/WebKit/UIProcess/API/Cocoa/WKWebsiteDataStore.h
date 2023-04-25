@@ -109,11 +109,8 @@ WK_CLASS_AVAILABLE(macos(10.11), ios(9.0))
 */
 + (void)fetchAllDataStoreIdentifiers:(void(^)(NSArray<NSUUID *> *))completionHandler WK_SWIFT_ASYNC_NAME(getter:allDataStoreIdentifiers()) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
-#if __has_include(<Network/proxy_config_private.h>)
-/*! @abstract Sets the proxy configuration to be used for networking in all WKWebViews that use this WKWebsiteDataStore.
- @param proxyConfiguration The proxy configuration to use.
-*/
-- (void)setProxyConfiguration:(nw_proxy_config_t)proxyConfiguration WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT
+#import <WebKitAdditions/WKWebsiteDataStoreAdditions.h>
 #endif
 
 @end
