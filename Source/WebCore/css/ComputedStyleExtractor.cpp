@@ -2292,10 +2292,8 @@ static bool rendererCanHaveTrimmedMargin(const RenderBox& renderer, MarginTrimTy
     // 2.) The block container/flexbox/grid has this margin specified in its margin-trim style
     // If marginTrimType is empty we will check if any of the supported margins are in the style
     auto* containingBlock = renderer.containingBlock();
-    if (!containingBlock || containingBlock->isRenderView()) {
-        ASSERT_NOT_REACHED();
+    if (!containingBlock || containingBlock->isRenderView())
         return false;
-    }
 
     // containingBlock->isBlockContainer() can return true even if the item is in a RenderFlexibleBox
     // (e.g. buttons) so we should explicitly check that the item is not a flex item to catch block containers here
