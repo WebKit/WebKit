@@ -2308,6 +2308,80 @@ static bool rendererCanHaveTrimmedMargin(const RenderBox& renderer, std::optiona
     return false;
 }
 
+using PhysicalDirection = BoxSide;
+using FlowRelativeDirection = LogicalBoxSide;
+
+// Mapping is done according to the table in section 6.4 (Abstract-to-Physical Mappings)
+static FlowRelativeDirection physicalToFlowRelativeDirection(const RenderBox& renderer, PhysicalDirection direction)
+{
+    auto determineFormattingContextRootStyle = [&]() -> const RenderStyle& {
+        if (auto* ancestorToUse = (renderer.isFlexItem() || renderer.isGridItem()) ? renderer.parent() : renderer.containingBlock())
+            return ancestorToUse->style();
+        ASSERT_NOT_REACHED();
+        return renderer.style();
+    };
+    auto& formattingContextRootStyle = determineFormattingContextRootStyle();
+    auto isHorizontalWritingMode = formattingContextRootStyle.isHorizontalWritingMode();
+    auto isLeftToRightDirection = formattingContextRootStyle.isLeftToRightDirection();
+    // vertical-rl and horizontal-bt writing modes
+    auto isFlippedBlocksWritingMode = formattingContextRootStyle.isFlippedBlocksWritingMode();
+
+    switch (direction) {
+    case PhysicalDirection::Top:
+        if (isHorizontalWritingMode)
+            return !isFlippedBlocksWritingMode ? FlowRelativeDirection::BlockStart : FlowRelativeDirection::BlockEnd;
+        return isLeftToRightDirection ? FlowRelativeDirection::InlineStart : FlowRelativeDirection::InlineEnd;
+    case PhysicalDirection::Right:
+        if (isHorizontalWritingMode)
+            return isLeftToRightDirection ? FlowRelativeDirection::InlineEnd : FlowRelativeDirection::InlineStart;
+        return !isFlippedBlocksWritingMode ? FlowRelativeDirection::BlockEnd : FlowRelativeDirection::BlockStart;
+    case PhysicalDirection::Bottom:
+        if (isHorizontalWritingMode)
+            return !isFlippedBlocksWritingMode ? FlowRelativeDirection::BlockEnd : FlowRelativeDirection::BlockStart;
+        return isLeftToRightDirection ? FlowRelativeDirection::InlineEnd : FlowRelativeDirection::InlineStart;
+    case PhysicalDirection::Left:
+        if (isHorizontalWritingMode)
+            return isLeftToRightDirection ? FlowRelativeDirection::InlineStart : FlowRelativeDirection::InlineEnd;
+        return !isFlippedBlocksWritingMode ? FlowRelativeDirection::BlockStart : FlowRelativeDirection::BlockEnd;
+    default:
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+}
+
+static MarginTrimType toMarginTrimType(const RenderBox& renderer, CSSPropertyID propertyID)
+{
+    auto flowRelativeDirectionToMarginTrimType = [](auto direction) {
+        switch (direction) {
+        case FlowRelativeDirection::BlockStart:
+            return MarginTrimType::BlockStart;
+        case FlowRelativeDirection::BlockEnd:
+            return MarginTrimType::BlockEnd;
+        case FlowRelativeDirection::InlineStart:
+            return MarginTrimType::InlineStart;
+        case FlowRelativeDirection::InlineEnd:
+            return MarginTrimType::InlineEnd;
+        default:
+            ASSERT_NOT_REACHED();
+            return MarginTrimType::BlockStart;
+        }
+    };
+
+    switch (propertyID) {
+    case CSSPropertyMarginTop:
+        return flowRelativeDirectionToMarginTrimType(physicalToFlowRelativeDirection(renderer, PhysicalDirection::Top));
+    case CSSPropertyMarginRight:
+        return flowRelativeDirectionToMarginTrimType(physicalToFlowRelativeDirection(renderer, PhysicalDirection::Right));
+    case CSSPropertyMarginBottom:
+        return flowRelativeDirectionToMarginTrimType(physicalToFlowRelativeDirection(renderer, PhysicalDirection::Bottom));
+    case CSSPropertyMarginLeft:
+        return flowRelativeDirectionToMarginTrimType(physicalToFlowRelativeDirection(renderer, PhysicalDirection::Left));
+    default:
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+}
+
 static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style, RenderObject* renderer)
 {
     switch (propertyID) {
@@ -3277,14 +3351,14 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyMarginTop: {
         if (auto* box = dynamicDowncast<RenderBox>(renderer); box
             && rendererCanHaveTrimmedMargin(*box, MarginTrimType::BlockStart) 
-            && box->hasTrimmedMargin(PhysicalDirection::Top))
+            && box->hasTrimmedMargin(toMarginTrimType(*box, propertyID)))
             return zoomAdjustedPixelValue(box->marginTop(), style);
         return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginTop, &RenderBoxModelObject::marginTop>(style, renderer);
     }
     case CSSPropertyMarginRight: {
         if (auto* box = dynamicDowncast<RenderBox>(renderer); box
             && rendererCanHaveTrimmedMargin(*box, MarginTrimType::InlineEnd)
-            && box->hasTrimmedMargin(PhysicalDirection::Right))
+            && box->hasTrimmedMargin(toMarginTrimType(*box, propertyID)))
             return zoomAdjustedPixelValue(box->marginRight(), style);
         Length marginRight = style.marginRight();
         if (marginRight.isFixed() || !is<RenderBox>(renderer))
@@ -3302,13 +3376,13 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyMarginBottom:
         if (auto* box = dynamicDowncast<RenderBox>(renderer); box 
             && rendererCanHaveTrimmedMargin(*box, MarginTrimType::BlockEnd) 
-            && box->hasTrimmedMargin(PhysicalDirection::Bottom))
+            && box->hasTrimmedMargin(toMarginTrimType(*box, propertyID)))
             return zoomAdjustedPixelValue(box->marginBottom(), style);
         return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginBottom, &RenderBoxModelObject::marginBottom>(style, renderer);
     case CSSPropertyMarginLeft: {
         if (auto* box = dynamicDowncast<RenderBox>(renderer);  box 
             && rendererCanHaveTrimmedMargin(*box, MarginTrimType::InlineStart) 
-            && box->hasTrimmedMargin(PhysicalDirection::Left))
+            && box->hasTrimmedMargin(toMarginTrimType(*box, propertyID)))
             return zoomAdjustedPixelValue(box->marginLeft(), style);
         return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginLeft, &RenderBoxModelObject::marginLeft>(style, renderer);
     }
