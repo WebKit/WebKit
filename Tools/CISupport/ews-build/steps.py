@@ -2276,7 +2276,6 @@ class Trigger(trigger.Trigger):
             'platform',
             'fullPlatform',
             'architecture',
-            'additionalArguments',
             'codebase',
         ]
         if patch:
@@ -2647,6 +2646,7 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
     warningPattern = '.*arning: .*'
     haltOnFailure = False
     command = ['perl', 'Tools/Scripts/build-webkit', WithProperties('--%(configuration)s')]
+    VALID_ADDITIONAL_ARGUMENTS_LIST = []  # If additionalArguments is added to config.json for CompileWebKit step, it should be added here as well.
 
     def __init__(self, skipUpload=False, **kwargs):
         self.skipUpload = skipUpload
@@ -2659,20 +2659,16 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
         platform = self.getProperty('platform')
         buildOnly = self.getProperty('buildOnly')
         architecture = self.getProperty('architecture')
-        additionalArguments = self.getProperty('additionalArguments')
 
         if platform in ['wincairo']:
             self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived, searchString='error ', includeRelatedLines=False))
         else:
             self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived))
 
-        if additionalArguments:
-            # FIXME: These arguments are required for iOS layout tests, but don't apply to compliation. We need to
-            # create a separate property to handle these run-webkit-tests specific arguments.
-            for argument in ["--child-processes=6", "--exclude-tests", "imported/w3c/web-platform-tests"]:
-                if argument in additionalArguments:
-                    additionalArguments.remove(argument)
-            self.setCommand(self.command + additionalArguments)
+        additionalArguments = self.getProperty('additionalArguments')
+        for additionalArgument in (additionalArguments or []):
+            if additionalArgument in self.VALID_ADDITIONAL_ARGUMENTS_LIST:
+                self.command += [additionalArgument]
         if platform in ('mac', 'ios', 'tvos', 'watchos'):
             # FIXME: Once WK_VALIDATE_DEPENDENCIES is set via xcconfigs, it can
             # be removed here. We can't have build-webkit pass this by default
@@ -3308,6 +3304,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
     test_failures_log_name = 'test-failures'
     results_db_log_name = 'results-db'
     ENABLE_GUARD_MALLOC = False
+    ENABLE_ADDITIONAL_ARGUMENTS = True
     EXIT_AFTER_FAILURES = '60'
     command = ['python3', 'Tools/Scripts/run-webkit-tests',
                '--no-build',
@@ -3329,7 +3326,6 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
     def setLayoutTestCommand(self):
         platform = self.getProperty('platform')
         self.setCommand(self.command + customBuildFlag(platform, self.getProperty('fullPlatform')))
-        additionalArguments = self.getProperty('additionalArguments')
 
         if self.getProperty('use-dump-render-tree', False):
             self.setCommand(self.command + ['--dump-render-tree'])
@@ -3348,7 +3344,8 @@ class RunWebKitTests(shell.Test, AddToLogMixin):
         if platform in ['gtk', 'wpe']:
             self.setCommand(self.command + ['--enable-core-dumps-nolimit'])
 
-        if additionalArguments:
+        additionalArguments = self.getProperty('additionalArguments')
+        if additionalArguments and self.ENABLE_ADDITIONAL_ARGUMENTS:
             self.setCommand(self.command + additionalArguments)
 
         if self.ENABLE_GUARD_MALLOC:
@@ -3533,6 +3530,7 @@ class RunWebKitTestsInStressMode(RunWebKitTests):
     name = 'run-layout-tests-in-stress-mode'
     suffix = 'stress-mode'
     EXIT_AFTER_FAILURES = '10'
+    ENABLE_ADDITIONAL_ARGUMENTS = False
 
     def __init__(self, num_iterations=100):
         self.num_iterations = num_iterations
@@ -3540,11 +3538,6 @@ class RunWebKitTestsInStressMode(RunWebKitTests):
 
     def setLayoutTestCommand(self):
         RunWebKitTests.setLayoutTestCommand(self)
-
-        # To support stress mode with iOS layout tests in a WPT / no-WPT configuration, we need to remove these arguments.
-        for argument in ["--child-processes=6", "--exclude-tests", "imported/w3c/web-platform-tests"]:
-            if argument in self.command:
-                self.command.remove(argument)
 
         self.setCommand(self.command + ['--iterations', self.num_iterations])
         modified_tests = self.getProperty('modified_tests')
