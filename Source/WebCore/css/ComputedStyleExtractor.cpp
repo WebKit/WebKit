@@ -2412,17 +2412,18 @@ static MarginTrimType toMarginTrimType(const RenderBox& renderer, CSSPropertyID 
     }
 }
 
-static CSSPropertyID toMarginPropertyID(FlowRelativeDirection direction, const RenderBox& renderer)
+enum class PropertyType : bool { Padding, Margin };
+static CSSPropertyID toPaddingOrMarginPropertyID(FlowRelativeDirection direction, const RenderBox& renderer, PropertyType type)
 {
     switch (flowRelativeToPhysicalDirection(renderer, direction)) {
     case PhysicalDirection::Top:
-        return CSSPropertyMarginTop;
+        return type == PropertyType::Padding ? CSSPropertyPaddingTop : CSSPropertyMarginTop;
     case PhysicalDirection::Right:
-        return CSSPropertyMarginRight;
+        return type == PropertyType::Padding ? CSSPropertyPaddingRight : CSSPropertyMarginRight;
     case PhysicalDirection::Bottom:
-        return CSSPropertyMarginBottom;
+        return type == PropertyType::Padding ? CSSPropertyPaddingBottom : CSSPropertyMarginBottom;
     case PhysicalDirection::Left:
-        return CSSPropertyMarginLeft;
+        return type == PropertyType::Padding ? CSSPropertyPaddingLeft : CSSPropertyMarginLeft;
     default:
         ASSERT_NOT_REACHED();
         return { };
@@ -2462,19 +2463,19 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style
         return isLayoutDependent(CSSPropertyMarginInlineStart, style, renderer) || isLayoutDependent(CSSPropertyMarginInlineEnd, style, renderer);
     case CSSPropertyMarginBlockStart:
         if (auto* renderBox = dynamicDowncast<RenderBox>(renderer))
-            return isLayoutDependent(toMarginPropertyID(FlowRelativeDirection::BlockStart, *renderBox), style, renderBox);
+            return isLayoutDependent(toPaddingOrMarginPropertyID(FlowRelativeDirection::BlockStart, *renderBox, PropertyType::Margin), style, renderBox);
         return false;
     case CSSPropertyMarginBlockEnd:
         if (auto* renderBox = dynamicDowncast<RenderBox>(renderer))
-            return isLayoutDependent(toMarginPropertyID(FlowRelativeDirection::BlockEnd, *renderBox), style, renderBox);
+            return isLayoutDependent(toPaddingOrMarginPropertyID(FlowRelativeDirection::BlockEnd, *renderBox, PropertyType::Margin), style, renderBox);
         return false;
     case CSSPropertyMarginInlineStart:
         if (auto* renderBox = dynamicDowncast<RenderBox>(renderer))
-            return isLayoutDependent(toMarginPropertyID(FlowRelativeDirection::InlineStart, *renderBox), style, renderBox);
+            return isLayoutDependent(toPaddingOrMarginPropertyID(FlowRelativeDirection::InlineStart, *renderBox, PropertyType::Margin), style, renderBox);
         return false;
     case CSSPropertyMarginInlineEnd:
         if (auto* renderBox = dynamicDowncast<RenderBox>(renderer))
-            return isLayoutDependent(toMarginPropertyID(FlowRelativeDirection::InlineEnd, *renderBox), style, renderBox);
+            return isLayoutDependent(toPaddingOrMarginPropertyID(FlowRelativeDirection::InlineEnd, *renderBox, PropertyType::Margin), style, renderBox);
         return false;
     case CSSPropertyMarginTop:
         return paddingOrMarginIsRendererDependent<&RenderStyle::marginTop>(style, renderer) || (is<RenderBox>(renderer) && (rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), MarginTrimType::BlockStart)));
@@ -2484,12 +2485,28 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style
         return paddingOrMarginIsRendererDependent<&RenderStyle::marginBottom>(style, renderer) ||  (is<RenderBox>(renderer) && rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), MarginTrimType::BlockEnd));
     case CSSPropertyMarginLeft:
         return paddingOrMarginIsRendererDependent<&RenderStyle::marginLeft>(style, renderer) || (is<RenderBox>(renderer) && rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), MarginTrimType::InlineStart));
-    case CSSPropertyPadding: {
-        if (!renderer || !renderer->isBox())
-            return false;
-        return !(style && style->paddingTop().isFixed() && style->paddingRight().isFixed()
-            && style->paddingBottom().isFixed() && style->paddingLeft().isFixed());
-    }
+    case CSSPropertyPadding:
+        return isLayoutDependent(CSSPropertyPaddingBlock, style, renderer) || isLayoutDependent(CSSPropertyPaddingInline, style, renderer);
+    case CSSPropertyPaddingBlock:
+        return isLayoutDependent(CSSPropertyPaddingBlockStart, style, renderer) || isLayoutDependent(CSSPropertyPaddingBlockEnd, style, renderer);
+    case CSSPropertyPaddingInline:
+        return isLayoutDependent(CSSPropertyPaddingInlineStart, style, renderer) || isLayoutDependent(CSSPropertyPaddingInlineEnd, style, renderer);
+    case CSSPropertyPaddingBlockStart:
+        if (auto* renderBox = dynamicDowncast<RenderBox>(renderer))
+            return isLayoutDependent(toPaddingOrMarginPropertyID(FlowRelativeDirection::BlockStart, *renderBox, PropertyType::Padding), style, renderBox);
+        return false;
+    case CSSPropertyPaddingBlockEnd:
+        if (auto* renderBox = dynamicDowncast<RenderBox>(renderer))
+            return isLayoutDependent(toPaddingOrMarginPropertyID(FlowRelativeDirection::BlockEnd, *renderBox, PropertyType::Padding), style, renderBox);
+        return false;
+    case CSSPropertyPaddingInlineStart:
+        if (auto* renderBox = dynamicDowncast<RenderBox>(renderer))
+            return isLayoutDependent(toPaddingOrMarginPropertyID(FlowRelativeDirection::InlineStart, *renderBox, PropertyType::Padding), style, renderBox);
+        return false;
+    case CSSPropertyPaddingInlineEnd:
+        if (auto* renderBox = dynamicDowncast<RenderBox>(renderer))
+            return isLayoutDependent(toPaddingOrMarginPropertyID(FlowRelativeDirection::InlineEnd, *renderBox, PropertyType::Padding), style, renderBox);
+        return false;
     case CSSPropertyPaddingTop:
         return paddingOrMarginIsRendererDependent<&RenderStyle::paddingTop>(style, renderer);
     case CSSPropertyPaddingRight:
