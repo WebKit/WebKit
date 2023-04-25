@@ -623,6 +623,10 @@ messages -> WebPageProxy {
     AbortApplePayAMSUISession()
 #endif
 
+#if USE(SYSTEM_PREVIEW)
+    HandleSystemPreview(URL url, struct WebCore::SystemPreviewInfo systemPreviewInfo)
+#endif
+
     RequestCookieConsent() -> (enum:uint8_t WebCore::CookieConsentDecisionResult result)
     ClassifyModalContainerControls(Vector<String> texts) -> (Vector<WebCore::ModalContainerControlType> types)
     DecidePolicyForModalContainer(OptionSet<WebCore::ModalContainerControlType> types) -> (enum:uint8_t WebCore::ModalContainerDecision decision)

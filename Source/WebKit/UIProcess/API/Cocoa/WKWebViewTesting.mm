@@ -577,6 +577,13 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 #endif
 }
 
+- (void)_setSystemPreviewCompletionHandlerForLoadTesting:(void(^)(bool))completionHandler
+{
+#if USE(SYSTEM_PREVIEW)
+    _page->setSystemPreviewCompletionHandlerForLoadTesting(makeBlockPtr(completionHandler));
+#endif
+}
+
 - (void)_createMediaSessionCoordinatorForTesting:(id <_WKMediaSessionCoordinator>)privateCoordinator completionHandler:(void(^)(BOOL))completionHandler
 {
 #if ENABLE(MEDIA_SESSION_COORDINATOR)

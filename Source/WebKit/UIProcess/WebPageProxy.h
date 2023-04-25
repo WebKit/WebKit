@@ -2156,6 +2156,11 @@ public:
     void clearNotifications(const Vector<UUID>& notificationIDs);
     void didDestroyNotification(const UUID& notificationID);
 
+#if USE(SYSTEM_PREVIEW)
+    void handleSystemPreview(const URL&, const WebCore::SystemPreviewInfo&);
+    void setSystemPreviewCompletionHandlerForLoadTesting(CompletionHandler<void(bool)>&&);
+#endif
+
     void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&&);
     void classifyModalContainerControls(Vector<String>&& texts, CompletionHandler<void(Vector<WebCore::ModalContainerControlType>&&)>&&);
     void decidePolicyForModalContainer(OptionSet<WebCore::ModalContainerControlType>, CompletionHandler<void(WebCore::ModalContainerDecision)>&&);

@@ -31,12 +31,15 @@
 #import "APIUIClient.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import "_WKDataTaskDelegate.h"
+#import "_WKDataTaskInternal.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <QuickLook/QuickLook.h>
 #import <UIKit/UIViewController.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/UTIUtilities.h>
 #import <pal/ios/QuickLookSoftLink.h>
+#import <pal/spi/cocoa/FoundationSPI.h>
 #import <pal/spi/ios/QuickLookSPI.h>
 #import <wtf/WeakObjCPtr.h>
 
@@ -253,7 +256,201 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
 
 @end
 
+@interface _WKSystemPreviewDataTaskDelegate : NSObject <_WKDataTaskDelegate> {
+    WebKit::SystemPreviewController* _previewController;
+    long long _expectedContentLength;
+    RetainPtr<NSMutableData> _data;
+    RetainPtr<NSString> _suggestedFilename;
+};
+@end
+
+@implementation _WKSystemPreviewDataTaskDelegate
+
+- (id)initWithSystemPreviewController:(WebKit::SystemPreviewController*)previewController
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _previewController = previewController;
+    return self;
+}
+
+- (BOOL)isValidMIMEType:(NSString *)MIMEType
+{
+    return WebCore::MIMETypeRegistry::isUSDMIMEType(MIMEType);
+}
+
+- (void)dataTask:(_WKDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response decisionHandler:(void (^)(_WKDataTaskResponsePolicy))decisionHandler
+{
+    if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+        NSHTTPURLResponse *HTTPResponse = (NSHTTPURLResponse *)response;
+        if ([NSHTTPURLResponse isErrorStatusCode:HTTPResponse.statusCode]) {
+            RELEASE_LOG(SystemPreview, "cancelling subresource load due to error status code: %ld", (long)HTTPResponse.statusCode);
+            decisionHandler(_WKDataTaskResponsePolicyCancel);
+            _previewController->loadFailed();
+            return;
+        }
+    }
+
+    if (![self isValidMIMEType:response.MIMEType]) {
+        RELEASE_LOG(SystemPreview, "cancelling subresource load due to unhandled MIME type: \"%@\"", response.MIMEType);
+        decisionHandler(_WKDataTaskResponsePolicyCancel);
+        _previewController->loadFailed();
+        return;
+    }
+
+    _expectedContentLength = response.expectedContentLength;
+    if (_expectedContentLength == NSURLResponseUnknownLength)
+        _expectedContentLength = 0;
+
+    _data = adoptNS([[NSMutableData alloc] initWithCapacity:_expectedContentLength]);
+    _suggestedFilename = adoptNS([response.suggestedFilename copy]);
+    decisionHandler(_WKDataTaskResponsePolicyAllow);
+}
+
+- (void)dataTask:(_WKDataTask *)dataTask didReceiveData:(NSData *)data
+{
+    ASSERT(_data);
+    [_data appendData:data];
+    if (_expectedContentLength)
+        _previewController->updateProgress((float)_data.get().length / _expectedContentLength);
+}
+
+- (void)dataTask:(_WKDataTask *)dataTask didCompleteWithError:(NSError *)error
+{
+    if (error) {
+        _previewController->loadFailed();
+        return;
+    }
+
+    [self completeLoad];
+}
+
+- (void)completeLoad
+{
+    FileSystem::PlatformFileHandle fileHandle;
+    auto filePath = FileSystem::openTemporaryFile("SystemPreview"_s, fileHandle, ".usdz"_s);
+    ASSERT(FileSystem::isHandleValid(fileHandle));
+
+    size_t byteCount = FileSystem::writeToFile(fileHandle, [_data bytes], [_data length]);
+    FileSystem::closeFile(fileHandle);
+
+    if (byteCount != _data.get().length) {
+        _previewController->loadFailed();
+        return;
+    }
+
+    _previewController->loadCompleted(URL::fileURLWithFileSystemPath(filePath));
+}
+
+@end
+
 namespace WebKit {
+
+void SystemPreviewController::begin(const URL& url, const WebCore::SystemPreviewInfo& systemPreviewInfo)
+{
+    ASSERT(!m_qlPreviewController);
+    if (m_qlPreviewController)
+        return;
+
+    UIViewController *presentingViewController = m_webPageProxy.uiClient().presentingViewController();
+
+    if (!presentingViewController)
+        return;
+
+    m_systemPreviewInfo = systemPreviewInfo;
+
+    RELEASE_LOG(SystemPreview, "SystemPreview began on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
+
+    auto request = WebCore::ResourceRequest(url);
+    WeakPtr weakThis { *this };
+    m_webPageProxy.dataTaskWithRequest(WTFMove(request), [weakThis] (Ref<API::DataTask>&& task) {
+        if (!weakThis)
+            return;
+
+        auto strongThis = weakThis.get();
+
+        _WKDataTask *dataTask = wrapper(task);
+        strongThis->m_wkSystemPreviewDataTaskDelegate = adoptNS([[_WKSystemPreviewDataTaskDelegate alloc] initWithSystemPreviewController:strongThis]);
+        [dataTask setDelegate:strongThis->m_wkSystemPreviewDataTaskDelegate.get()];
+        strongThis->takeActivityToken();
+    });
+
+    m_qlPreviewController = adoptNS([PAL::allocQLPreviewControllerInstance() init]);
+
+    m_qlPreviewControllerDelegate = adoptNS([[_WKPreviewControllerDelegate alloc] initWithSystemPreviewController:this]);
+    [m_qlPreviewController setDelegate:m_qlPreviewControllerDelegate.get()];
+
+    m_qlPreviewControllerDataSource = adoptNS([[_WKPreviewControllerDataSource alloc] initWithSystemPreviewController:this MIMEType:@"model/vnd.usdz+zip" originatingPageURL:url]);
+    [m_qlPreviewController setDataSource:m_qlPreviewControllerDataSource.get()];
+
+    [presentingViewController presentViewController:m_qlPreviewController.get() animated:YES completion:nullptr];
+}
+
+void SystemPreviewController::loadCompleted(const URL& downloadedFile)
+{
+    RELEASE_LOG(SystemPreview, "SystemPreview load has finished on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
+
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+    ASSERT(equalIgnoringFragmentIdentifier(m_destinationURL, url));
+    NSURL *nsurl = (NSURL *)url;
+    if ([getASVLaunchPreviewClass() respondsToSelector:@selector(launchPreviewApplicationWithURLs:completion:)])
+        [getASVLaunchPreviewClass() launchPreviewApplicationWithURLs:@[nsurl] completion:^(NSError *error) { }];
+#else
+    if (m_qlPreviewControllerDataSource)
+        [m_qlPreviewControllerDataSource finish:downloadedFile];
+#endif
+    releaseActivityTokenIfNecessary();
+
+    if (m_testingCallback)
+        m_testingCallback(true);
+}
+
+void SystemPreviewController::loadFailed()
+{
+    RELEASE_LOG(SystemPreview, "SystemPreview failed on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
+
+#if !HAVE(UIKIT_WEBKIT_INTERNALS)
+    if (m_qlPreviewControllerDataSource)
+        [m_qlPreviewControllerDataSource.get() failWithError:nil];
+
+    if (m_qlPreviewController)
+        [m_qlPreviewController.get() dismissViewControllerAnimated:YES completion:nullptr];
+
+    m_qlPreviewControllerDelegate = nullptr;
+    m_qlPreviewControllerDataSource = nullptr;
+    m_qlPreviewController = nullptr;
+    m_wkSystemPreviewDataTaskDelegate = nullptr;
+#endif
+    releaseActivityTokenIfNecessary();
+
+    if (m_testingCallback)
+        m_testingCallback(false);
+}
+
+void SystemPreviewController::takeActivityToken()
+{
+#if USE(RUNNINGBOARD)
+    RELEASE_LOG(ProcessSuspension, "%p - UIProcess is taking a background assertion because it is downloading a system preview", this);
+    ASSERT(!m_activity);
+    m_activity = page().process().throttler().backgroundActivity("System preview download"_s).moveToUniquePtr();
+#endif
+}
+
+void SystemPreviewController::releaseActivityTokenIfNecessary()
+{
+#if USE(RUNNINGBOARD)
+    if (m_activity) {
+        RELEASE_LOG(ProcessSuspension, "%p UIProcess is releasing a background assertion because a system preview download completed", this);
+        m_activity = nullptr;
+    }
+#endif
+}
+
+void SystemPreviewController::setCompletionHandlerForLoadTesting(CompletionHandler<void(bool)>&& handler)
+{
+    m_testingCallback = WTFMove(handler);
+}
 
 void SystemPreviewController::start(URL originatingPageURL, const String& mimeType, const WebCore::SystemPreviewInfo& systemPreviewInfo)
 {
@@ -285,7 +482,7 @@ void SystemPreviewController::start(URL originatingPageURL, const String& mimeTy
 
     m_originatingPageURL = originatingPageURL;
 
-    RELEASE_LOG(SystemPreview, "SystemPreview began on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
+    RELEASE_LOG(SystemPreview, "SystemPreview started on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
 }
 
 void SystemPreviewController::setDestinationURL(URL url)

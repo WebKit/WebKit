@@ -611,6 +611,10 @@ void HTMLAnchorElement::handleClick(Event& event)
         systemPreviewInfo.element.webPageIdentifier = valueOrDefault(document().frame()->loader().pageID());
         if (auto* child = firstElementChild())
             systemPreviewInfo.previewRect = child->boundsInRootViewSpace();
+
+        if (auto* page = document().page())
+            page->handleSystemPreview(WTFMove(completedURL), WTFMove(systemPreviewInfo));
+        return;
     }
 #endif
 

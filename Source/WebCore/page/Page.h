@@ -601,6 +601,10 @@ public:
     void abortApplePayAMSUISession(ApplePayAMSUIPaymentHandler&);
 #endif
 
+#if USE(SYSTEM_PREVIEW)
+    void handleSystemPreview(const URL&, const SystemPreviewInfo&);
+#endif
+
 #if ENABLE(WEB_AUTHN)
     AuthenticatorCoordinator& authenticatorCoordinator() { return m_authenticatorCoordinator.get(); }
 #endif

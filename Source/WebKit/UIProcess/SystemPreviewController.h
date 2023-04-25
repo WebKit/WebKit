@@ -27,30 +27,40 @@
 
 #if USE(SYSTEM_PREVIEW)
 
+#include "ProcessThrottler.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/ResourceError.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/URL.h>
+#include <wtf/WeakPtr.h>
 
 OBJC_CLASS NSString;
 #if USE(QUICK_LOOK)
 OBJC_CLASS QLPreviewController;
 OBJC_CLASS _WKPreviewControllerDataSource;
 OBJC_CLASS _WKPreviewControllerDelegate;
+OBJC_CLASS _WKSystemPreviewDataTaskDelegate;
 #endif
 
 namespace WebKit {
 
 class WebPageProxy;
 
-class SystemPreviewController {
+class SystemPreviewController : public CanMakeWeakPtr<SystemPreviewController> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SystemPreviewController(WebPageProxy&);
 
     bool canPreview(const String& mimeType) const;
 
+    // New methods that use WKDataTask.
+    void begin(const URL&, const WebCore::SystemPreviewInfo&);
+    void loadCompleted(const URL& downloadedFile);
+    void loadFailed();
+    void end();
+
+    // Old methods that use LegacyDownloadClient.
     void start(URL originatingPageURL, const String& mimeType, const WebCore::SystemPreviewInfo&);
     void setDestinationURL(URL);
     void updateProgress(float);
@@ -64,8 +74,13 @@ public:
     void triggerSystemPreviewAction();
 
     void triggerSystemPreviewActionWithTargetForTesting(uint64_t elementID, NSString* documentID, uint64_t pageID);
+    void setCompletionHandlerForLoadTesting(CompletionHandler<void(bool)>&&);
 
 private:
+
+    void takeActivityToken();
+    void releaseActivityTokenIfNecessary();
+
     WebPageProxy& m_webPageProxy;
     WebCore::SystemPreviewInfo m_systemPreviewInfo;
     URL m_destinationURL;
@@ -74,7 +89,12 @@ private:
     RetainPtr<QLPreviewController> m_qlPreviewController;
     RetainPtr<_WKPreviewControllerDelegate> m_qlPreviewControllerDelegate;
     RetainPtr<_WKPreviewControllerDataSource> m_qlPreviewControllerDataSource;
+    RetainPtr<_WKSystemPreviewDataTaskDelegate> m_wkSystemPreviewDataTaskDelegate;
 #endif
+
+    std::unique_ptr<ProcessThrottler::BackgroundActivity> m_activity;
+    CompletionHandler<void(bool)> m_testingCallback;
+
 };
 
 }

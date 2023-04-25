@@ -1682,6 +1682,13 @@ void WebChromeClient::abortApplePayAMSUISession()
 
 #endif // ENABLE(APPLE_PAY_AMS_UI)
 
+#if USE(SYSTEM_PREVIEW)
+void WebChromeClient::handleSystemPreview(const URL& url, const SystemPreviewInfo& systemPreviewInfo)
+{
+    m_page.send(Messages::WebPageProxy::HandleSystemPreview(WTFMove(url), WTFMove(systemPreviewInfo)));
+}
+#endif
+
 void WebChromeClient::requestCookieConsent(CompletionHandler<void(CookieConsentDecisionResult)>&& completion)
 {
     m_page.sendWithAsyncReply(Messages::WebPageProxy::RequestCookieConsent(), WTFMove(completion));

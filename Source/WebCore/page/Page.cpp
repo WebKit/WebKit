@@ -3903,6 +3903,13 @@ void Page::abortApplePayAMSUISession(ApplePayAMSUIPaymentHandler& paymentHandler
 
 #endif // ENABLE(APPLE_PAY_AMS_UI)
 
+#if USE(SYSTEM_PREVIEW)
+void Page::handleSystemPreview(const URL& url, const SystemPreviewInfo& systemPreviewInfo)
+{
+    chrome().client().handleSystemPreview(url, systemPreviewInfo);
+}
+#endif
+
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 void Page::setMediaSessionCoordinator(Ref<MediaSessionCoordinatorPrivate>&& mediaSessionCoordinator)
 {

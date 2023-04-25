@@ -192,6 +192,8 @@
 		3128A81323763FAC00D90D40 /* link-with-image.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 3128A81223763F0B00D90D40 /* link-with-image.html */; };
 		3128A8152376413300D90D40 /* image.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 3128A814237640FD00D90D40 /* image.html */; };
 		313C3A0221E567C300DBA86E /* SystemPreviewBlobNaming.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 313C3A0121E5677A00DBA86E /* SystemPreviewBlobNaming.html */; };
+		31727A5329F7518C00A7FB0F /* system-preview.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 31727A4A29F7338C00A7FB0F /* system-preview.html */; };
+		31727A5429F7519400A7FB0F /* UnitBox.usdz in Copy Resources */ = {isa = PBXBuildFile; fileRef = 31727A5229F733D300A7FB0F /* UnitBox.usdz */; };
 		31903C912765077400363472 /* color-scheme.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 31903C902764FE1400363472 /* color-scheme.html */; };
 		31B76E4523299BDC007FED2C /* system-preview-trigger.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 31B76E4423299BA3007FED2C /* system-preview-trigger.html */; };
 		31E9BDA1247F4C62002E51A2 /* WebGLPrepareDisplayOnWebThread.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31E9BDA0247F4C62002E51A2 /* WebGLPrepareDisplayOnWebThread.mm */; };
@@ -1833,6 +1835,7 @@
 				9BD6D3A51F7B218300BD4962 /* sunset-in-cupertino-600px.jpg in Copy Resources */,
 				1CC4C74D28890D3700A3B23D /* SVGFont.html in Copy Resources */,
 				31B76E4523299BDC007FED2C /* system-preview-trigger.html in Copy Resources */,
+				31727A5329F7518C00A7FB0F /* system-preview.html in Copy Resources */,
 				313C3A0221E567C300DBA86E /* SystemPreviewBlobNaming.html in Copy Resources */,
 				51C234CF2970E13500E35C4B /* test-mse-audio.webm in Copy Resources */,
 				CD59F53519E9110D00CF1835 /* test-mse.mp4 in Copy Resources */,
@@ -1852,6 +1855,7 @@
 				4952BE5F257816F800B0AEF1 /* try-text-select-with-disabled-text-interaction.html in Copy Resources */,
 				F4451C761EB8FD890020C5DA /* two-paragraph-contenteditable.html in Copy Resources */,
 				1D67BFDD2433EE66006B5047 /* two-videos.html in Copy Resources */,
+				31727A5429F7519400A7FB0F /* UnitBox.usdz in Copy Resources */,
 				1C51534C261596D700FBC4FE /* UserInstalledAhem.html in Copy Resources */,
 				C540F784152E5A9A00A40C8C /* verboseMarkup.html in Copy Resources */,
 				CD57779D211CE91F001B371E /* video-with-audio-and-web-audio.html in Copy Resources */,
@@ -2199,6 +2203,8 @@
 		3128A81223763F0B00D90D40 /* link-with-image.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "link-with-image.html"; sourceTree = "<group>"; };
 		3128A814237640FD00D90D40 /* image.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = image.html; sourceTree = "<group>"; };
 		313C3A0121E5677A00DBA86E /* SystemPreviewBlobNaming.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = SystemPreviewBlobNaming.html; sourceTree = "<group>"; };
+		31727A4A29F7338C00A7FB0F /* system-preview.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "system-preview.html"; sourceTree = "<group>"; };
+		31727A5229F733D300A7FB0F /* UnitBox.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = UnitBox.usdz; sourceTree = "<group>"; };
 		31903C902764FE1400363472 /* color-scheme.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "color-scheme.html"; sourceTree = "<group>"; };
 		31B76E4223298E2B007FED2C /* SystemPreview.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemPreview.mm; sourceTree = "<group>"; };
 		31B76E4423299BA3007FED2C /* system-preview-trigger.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "system-preview-trigger.html"; sourceTree = "<group>"; };
@@ -4804,6 +4810,7 @@
 				9BD6D39E1F7B201E00BD4962 /* sunset-in-cupertino-600px.jpg */,
 				1CC4C74B28890C5400A3B23D /* SVGFont.html */,
 				31B76E4423299BA3007FED2C /* system-preview-trigger.html */,
+				31727A4A29F7338C00A7FB0F /* system-preview.html */,
 				313C3A0121E5677A00DBA86E /* SystemPreviewBlobNaming.html */,
 				F46D43AA26D7090300969E5E /* test.jpg */,
 				49C64FD628349C19005BF0C2 /* test.pages */,
@@ -4815,6 +4822,7 @@
 				C22FA32C228F877A009D7988 /* TextWidth.html */,
 				4952BE5C2578113900B0AEF1 /* try-text-select-with-disabled-text-interaction.html */,
 				F4451C751EB8FD7C0020C5DA /* two-paragraph-contenteditable.html */,
+				31727A5229F733D300A7FB0F /* UnitBox.usdz */,
 				CD57779B211CE6CE001B371E /* video-with-audio-and-web-audio.html */,
 				CD577798211CDE8F001B371E /* web-audio-only.html */,
 				57663DF22357E45D00E85E09 /* web-authentication-get-assertion-hid-cancel.html */,

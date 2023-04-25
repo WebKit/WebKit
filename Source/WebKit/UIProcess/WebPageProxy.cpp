@@ -12570,6 +12570,20 @@ FloatSize WebPageProxy::viewportSizeForCSSViewportUnits() const
     return valueOrDefault(internals().viewportSizeForCSSViewportUnits);
 }
 
+#if USE(SYSTEM_PREVIEW)
+void WebPageProxy::handleSystemPreview(const URL& url, const SystemPreviewInfo& systemPreviewInfo)
+{
+    if (m_systemPreviewController)
+        m_systemPreviewController->begin(url, systemPreviewInfo);
+}
+
+void WebPageProxy::setSystemPreviewCompletionHandlerForLoadTesting(CompletionHandler<void(bool)>&& handler)
+{
+    if (m_systemPreviewController)
+        m_systemPreviewController->setCompletionHandlerForLoadTesting(WTFMove(handler));
+}
+#endif
+
 } // namespace WebKit
 
 #undef WEBPAGEPROXY_RELEASE_LOG
