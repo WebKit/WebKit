@@ -282,9 +282,12 @@ public:
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> sourceApplicationAuditData() const;
     void destroyRenderingResources();
-    void releaseSystemMallocMemory();
     void getProcessDisplayName(CompletionHandler<void(String&&)>&&);
     std::optional<audit_token_t> auditTokenForSelf();
+#endif
+
+#if PLATFORM(COCOA) || PLATFORM(WPE) || PLATFORM(GTK)
+    void releaseSystemMallocMemory();
 #endif
 
     const String& uiProcessBundleIdentifier() const { return m_uiProcessBundleIdentifier; }

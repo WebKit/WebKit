@@ -27,6 +27,7 @@
 #include "config.h"
 #include "WebProcess.h"
 
+#include "Logging.h"
 #include "WebKitWebProcessExtensionPrivate.h"
 #include "WebPage.h"
 #include "WebProcessCreationParameters.h"
@@ -65,6 +66,10 @@
 #include "UserMediaCaptureManager.h"
 #endif
 
+#if HAVE(MALLOC_TRIM)
+#include <malloc.h>
+#endif
+
 #if OS(LINUX)
 #include <wtf/linux/RealTimeThreads.h>
 #endif
@@ -79,6 +84,10 @@
 #endif
 
 #include <WebCore/CairoUtilities.h>
+
+#define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
+#define WEBPROCESS_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
+#define WEBPROCESS_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
 
 namespace WebKit {
 
@@ -220,4 +229,24 @@ void WebProcess::switchFromStaticFontRegistryToUserFontRegistry(Vector<WebKit::S
 {
 }
 
+void WebProcess::releaseSystemMallocMemory()
+{
+#if HAVE(MALLOC_TRIM)
+#if !RELEASE_LOG_DISABLED
+    const auto startTime = MonotonicTime::now();
+#endif
+
+    malloc_trim(0);
+
+#if !RELEASE_LOG_DISABLED
+    const auto endTime = MonotonicTime::now();
+    WEBPROCESS_RELEASE_LOG(ProcessSuspension, "releaseSystemMallocMemory: took %.2fms", (endTime - startTime).milliseconds());
+#endif
+#endif
+}
+
 } // namespace WebKit
+
+#undef RELEASE_LOG_SESSION_ID
+#undef WEBPROCESS_RELEASE_LOG
+#undef WEBPROCESS_RELEASE_LOG_ERROR

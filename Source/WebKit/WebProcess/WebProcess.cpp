@@ -1703,8 +1703,10 @@ void WebProcess::nonVisibleProcessEarlyMemoryCleanupTimerFired()
 
     destroyDecodedDataForAllImages();
 
+#if PLATFORM(COCOA) || PLATFORM(WPE) || PLATFORM(GTK)
 #if PLATFORM(COCOA)
     destroyRenderingResources();
+#endif
     releaseSystemMallocMemory();
 #endif
 }
