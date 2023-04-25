@@ -55,6 +55,18 @@ void HTMLImageLoader::dispatchLoadEvent()
         return;
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+    // iOS loads PDF inside <object> elements as images since we don't support loading them
+    // as plugins (see logic in WebFrameLoaderClient::objectContentType()). However, WebKit
+    // doesn't normally fire load/error events when loading <object> as plugins. Therefore,
+    // firing such events for PDF loads on iOS can cause confusion on some sites.
+    // See rdar://107795151.
+    if (auto* objectElement = dynamicDowncast<HTMLObjectElement>(element())) {
+        if (MIMETypeRegistry::isPDFOrPostScriptMIMEType(objectElement->serviceType()))
+            return;
+    }
+#endif
+
     bool errorOccurred = image()->errorOccurred();
     if (!errorOccurred && image()->response().httpStatusCode() >= 400)
         errorOccurred = is<HTMLObjectElement>(element()); // An <object> considers a 404 to be an error and should fire onerror.
