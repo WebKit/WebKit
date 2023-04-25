@@ -1609,6 +1609,10 @@ public:
     bool shouldSkipDecidePolicyForResponse(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&) const;
     void setSkipDecidePolicyForResponseIfPossible(bool value) { m_skipDecidePolicyForResponseIfPossible = value; }
 
+#if PLATFORM(IOS_FAMILY)
+    bool isInStableState() const { return m_isInStableState; }
+#endif
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
