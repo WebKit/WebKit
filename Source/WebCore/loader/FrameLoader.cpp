@@ -352,7 +352,8 @@ FrameLoader::~FrameLoader()
 void FrameLoader::detachFromAllOpenedFrames()
 {
     for (auto& frame : m_openedFrames)
-        frame.loader().m_opener = nullptr;
+        if (auto* localFrame = dynamicDowncast<LocalFrame>(frame))
+            localFrame->loader().m_opener = nullptr;
     m_openedFrames.clear();
 }
 
@@ -407,12 +408,12 @@ FrameIdentifier FrameLoader::frameID() const
     return m_frame.frameID();
 }
 
-LocalFrame* FrameLoader::opener()
+Frame* FrameLoader::opener()
 {
     return m_opener.get();
 }
 
-const LocalFrame* FrameLoader::opener() const
+const Frame* FrameLoader::opener() const
 {
     return m_opener.get();
 }
@@ -1086,18 +1087,20 @@ bool FrameLoader::checkIfFormActionAllowedByCSP(const URL& url, bool didReceiveR
     return m_frame.document()->contentSecurityPolicy()->allowFormAction(url, redirectResponseReceived, preRedirectURL);
 }
 
-void FrameLoader::setOpener(LocalFrame* opener)
+void FrameLoader::setOpener(Frame* opener)
 {
     if (m_opener && !opener)
         m_client->didDisownOpener();
 
     if (m_opener) {
         // When setOpener is called in ~FrameLoader, opener's m_frameLoader is already cleared.
-        auto& openerFrameLoader = m_opener == &m_frame ? *this : m_opener->loader();
-        openerFrameLoader.m_openedFrames.remove(m_frame);
+        if (auto* localOpener = dynamicDowncast<LocalFrame>(m_opener.get())) {
+            auto& openerFrameLoader = m_opener == &m_frame ? *this : localOpener->loader();
+            openerFrameLoader.m_openedFrames.remove(m_frame);
+        }
     }
-    if (opener) {
-        opener->loader().m_openedFrames.add(m_frame);
+    if (auto* localOpener = dynamicDowncast<LocalFrame>(opener)) {
+        localOpener->loader().m_openedFrames.add(m_frame);
         if (auto* page = m_frame.page())
             page->setOpenedByDOMWithOpener(true);
     }
@@ -2769,9 +2772,11 @@ void FrameLoader::setOriginalURLForDownloadRequest(ResourceRequest& request)
         originalURL = initiator->firstPartyForCookies();
         // If there is no main document URL, it means that this document is newly opened and just for download purpose.
         // In this case, we need to set the originalURL to this document's opener's main document URL.
-        if (originalURL.isEmpty() && opener() && opener()->document()) {
-            originalURL = opener()->document()->firstPartyForCookies();
-            initiator = opener()->document();
+        if (originalURL.isEmpty()) {
+            if (auto* localOpener = dynamicDowncast<LocalFrame>(opener()); localOpener && localOpener->document()) {
+                originalURL = localOpener->document()->firstPartyForCookies();
+                initiator = localOpener->document();
+            }
         }
     }
     // If the originalURL is the same as the requested URL, we are processing a download
@@ -3068,8 +3073,10 @@ void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMai
             initiator = m_frame.document();
             if (isMainResource) {
                 auto* ownerFrame = dynamicDowncast<LocalFrame>(m_frame.tree().parent());
-                if (!ownerFrame && m_stateMachine.isDisplayingInitialEmptyDocument())
-                    ownerFrame = m_opener.get();
+                if (!ownerFrame && m_stateMachine.isDisplayingInitialEmptyDocument()) {
+                    if (auto* localOpener = dynamicDowncast<LocalFrame>(m_opener.get()))
+                        ownerFrame = localOpener;
+                }
                 if (ownerFrame)
                     initiator = ownerFrame->document();
                 ASSERT(ownerFrame || m_frame.isMainFrame());
@@ -4177,8 +4184,8 @@ ReferrerPolicy FrameLoader::effectiveReferrerPolicy() const
 {
     if (auto* parentFrame = dynamicDowncast<LocalFrame>(m_frame.tree().parent()))
         return parentFrame->document()->referrerPolicy();
-    if (m_opener)
-        return m_opener->document()->referrerPolicy();
+    if (auto* opener = dynamicDowncast<LocalFrame>(m_opener.get()))
+        return opener->document()->referrerPolicy();
     return ReferrerPolicy::Default;
 }
 

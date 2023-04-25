@@ -85,6 +85,7 @@
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/HitTestResult.h>
+#import <WebCore/JSLocalDOMWindow.h>
 #import <WebCore/JSNode.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/LocalFrame.h>
@@ -2056,7 +2057,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
         return @"";
 
     // Get the frame frome the global object we've settled on.
-    auto* frame = anyWorldGlobalObject->wrapped().frame();
+    auto* frame = JSC::jsCast<WebCore::JSLocalDOMWindow*>(anyWorldGlobalObject)->wrapped().frame();
     ASSERT(frame->document());
     RetainPtr<WebFrame> webFrame(kit(frame)); // Running arbitrary JavaScript can destroy the frame.
 

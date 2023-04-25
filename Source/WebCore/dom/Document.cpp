@@ -3637,8 +3637,10 @@ URL Document::fallbackBaseURL() const
 
     if (documentURL.isAboutBlank()) {
         auto* creator = parentDocument();
-        if (!creator && frame() && frame()->loader().opener())
-            creator = frame()->loader().opener()->document();
+        if (!creator && frame()) {
+            if (auto* localOpener = dynamicDowncast<LocalFrame>(frame()->loader().opener()))
+                creator = localOpener->document();
+        }
         if (creator)
             return creator->baseURL();
     }
@@ -3870,8 +3872,10 @@ bool Document::canNavigateInternal(LocalFrame& targetFrame)
         if (&targetFrame == m_frame->loader().opener())
             return true;
 
-        if (canAccessAncestor(securityOrigin(), targetFrame.loader().opener()))
-            return true;
+        if (auto* localOpener = dynamicDowncast<LocalFrame>(targetFrame.loader().opener())) {
+            if (canAccessAncestor(securityOrigin(), localOpener))
+                return true;
+        }
     }
 
     printNavigationErrorMessage(targetFrame, url(), "The frame attempting navigation is neither same-origin with the target, nor is it the target's parent or opener.");
@@ -6568,7 +6572,7 @@ void Document::initSecurityContext()
     // If we do not obtain a meaningful origin from the URL, then we try to
     // find one via the frame hierarchy.
     RefPtr parentFrame = m_frame->tree().parent();
-    RefPtr openerFrame = m_frame->loader().opener();
+    RefPtr openerFrame = dynamicDowncast<LocalFrame>(m_frame->loader().opener());
 
     RefPtr ownerFrame = dynamicDowncast<LocalFrame>(parentFrame.get());
     if (!ownerFrame)
@@ -6625,7 +6629,7 @@ void Document::initContentSecurityPolicy()
     // delivered with a local scheme (e.g. blob, file, data) should inherit a policy.
     if (!isPluginDocument())
         return;
-    RefPtr openerFrame = m_frame->loader().opener();
+    RefPtr openerFrame = dynamicDowncast<LocalFrame>(m_frame->loader().opener());
     bool shouldInhert = parentFrame || (openerFrame && openerFrame->document()->securityOrigin().isSameOriginDomain(securityOrigin()));
     if (!shouldInhert)
         return;
