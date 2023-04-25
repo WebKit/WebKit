@@ -146,7 +146,12 @@ Type* OverloadResolver::materialize(const AbstractType& abstractType) const
             return type;
         },
         [&](TypeVariable variable) -> Type* {
-            return resolve(variable);
+            Type* type = resolve(variable);
+            if (!type)
+                return nullptr;
+            type = satisfyOrPromote(type, variable.constraints, m_types);
+            RELEASE_ASSERT(type);
+            return type;
         },
         [&](const AbstractVector& vector) -> Type* {
             if (auto* element = materialize(vector.element)) {
@@ -395,8 +400,7 @@ bool OverloadResolver::assign(TypeVariable variable, Type* type)
 {
     logLn("assign ", variable, " => ", *type);
     if (variable.constraints) {
-        type = satisfyOrPromote(type, variable.constraints, m_types);
-        if (!type)
+        if (!satisfies(type, variable.constraints))
             return false;
     }
     m_typeSubstitutions[variable.id] = type;

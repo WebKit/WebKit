@@ -1129,28 +1129,24 @@ fn testInsertBits()
     {
         _ = insertBits(0, 0, 0, 0);
         _ = insertBits(0, 0i, 0, 0);
-        // FIXME: fails to resolve overload resolution
-        // let x3 = insertBits(0, 0u, 0, 0);
+        _ = insertBits(0, 0u, 0, 0);
     }
 
     // [T < ConcreteInteger, N].(Vector[T, N], Vector[T, N], U32, U32) => Vector[T, N],
     {
         _ = insertBits(vec2(0), vec2(0), 0, 0);
         _ = insertBits(vec2(0), vec2(0i), 0, 0);
-        // FIXME: fails to resolve overload resolution
-        // let x3 = insertBits(vec2(0), vec2(0u), 0, 0);
+        _ = insertBits(vec2(0), vec2(0u), 0, 0);
     }
     {
         _ = insertBits(vec3(0), vec3(0), 0, 0);
         _ = insertBits(vec3(0), vec3(0i), 0, 0);
-        // FIXME: fails to resolve overload resolution
-        // let x3 = insertBits(vec3(0), vec3(0u), 0, 0);
+        _ = insertBits(vec3(0), vec3(0u), 0, 0);
     }
     {
         _ = insertBits(vec4(0), vec4(0), 0, 0);
         _ = insertBits(vec4(0), vec4(0i), 0, 0);
-        // FIXME: fails to resolve overload resolution
-        // let x3 = insertBits(vec4(0), vec4(0u), 0, 0);
+        _ = insertBits(vec4(0), vec4(0u), 0, 0);
     }
 }
 
