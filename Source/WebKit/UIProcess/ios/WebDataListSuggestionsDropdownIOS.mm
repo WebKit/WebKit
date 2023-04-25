@@ -231,7 +231,9 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
     [_pickerView setDataSource:self];
     [_pickerView setDelegate:self];
     [_pickerView setControl:self];
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [_pickerView setSize:[UIKeyboard defaultSizeForInterfaceOrientation:view.interfaceOrientation]];
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     return self;
 }

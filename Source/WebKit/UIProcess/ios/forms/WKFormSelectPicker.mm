@@ -164,7 +164,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 
     [self setAllowsMultipleSelection:_allowsMultipleSelection];
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [self setSize:[UIKeyboard defaultSizeForInterfaceOrientation:view.interfaceOrientation]];
+ALLOW_DEPRECATED_DECLARATIONS_END
     [self reloadAllComponents];
 
     if (!_allowsMultipleSelection) {
@@ -277,7 +279,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return itemIndex;
 }
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)pickerView:(UIPickerView *)pickerView row:(int)rowIndex column:(int)columnIndex checked:(BOOL)isChecked
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     auto numberOfOptions = static_cast<NSUInteger>([_view focusedSelectElementOptions].size());
     if (numberOfOptions <= static_cast<NSUInteger>(rowIndex))
@@ -320,8 +324,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     // FIXME: handle extendingSelection.
     [self selectRow:rowIndex inComponent:0 animated:NO];
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // Progammatic selection changes don't call the delegate, so do that manually.
     [self pickerView:self row:rowIndex column:0 checked:YES];
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (BOOL)selectFormAccessoryHasCheckedItemAtRow:(long)rowIndex
