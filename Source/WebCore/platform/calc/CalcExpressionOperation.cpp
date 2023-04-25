@@ -117,7 +117,7 @@ float CalcExpressionOperation::evaluate(float maxValue) const
             float value = child->evaluate(maxValue);
             sum += (value * value);
         }
-        return sum;
+        return std::sqrt(sum);
     }
     case CalcOperator::Sin: {
         if (m_children.size() != 1)
