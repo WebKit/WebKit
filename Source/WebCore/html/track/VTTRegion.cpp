@@ -163,7 +163,7 @@ void VTTRegion::setRegionSettings(const String& inputString)
     VTTScanner input(inputString);
 
     while (!input.isAtEnd()) {
-        input.skipWhile<WebVTTParser::isValidSettingDelimiter>();
+        input.skipWhile<isTabOrSpace>();
         if (input.isAtEnd())
             break;
 

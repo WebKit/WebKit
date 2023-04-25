@@ -32,12 +32,6 @@
 
 namespace WebCore {
 
-// LWSP definition in https://www.ietf.org/rfc/rfc0822.txt
-template<typename CharacterType> static bool isSpaceOrTab(CharacterType character)
-{
-    return character == ' ' || character == '\t';
-}
-
 template<typename CharacterType> static bool isNotURLTerminatingChar(CharacterType character)
 {
     return character != '>';
@@ -61,7 +55,7 @@ template<typename CharacterType> static bool isParameterValueEnd(CharacterType c
 
 template<typename CharacterType> static bool isParameterValueChar(CharacterType character)
 {
-    return !isSpaceOrTab(character) && !isParameterValueEnd(character);
+    return !isTabOrSpace(character) && !isParameterValueEnd(character);
 }
 
 // Verify that the parameter is a link-extension which according to spec doesn't have to have a value.
@@ -83,10 +77,10 @@ static bool isExtensionParameter(LinkHeader::LinkParameterName name)
 //          position     end
 template<typename CharacterType> static std::optional<String> findURLBoundaries(StringParsingBuffer<CharacterType>& buffer)
 {
-    skipWhile<isSpaceOrTab>(buffer);
+    skipWhile<isTabOrSpace>(buffer);
     if (!skipExactly(buffer, '<'))
         return std::nullopt;
-    skipWhile<isSpaceOrTab>(buffer);
+    skipWhile<isTabOrSpace>(buffer);
 
     auto urlStart = buffer.position();
     skipWhile<isNotURLTerminatingChar>(buffer);
@@ -122,12 +116,12 @@ template<typename CharacterType> static bool validFieldEnd(StringParsingBuffer<C
 template<typename CharacterType> static bool parseParameterDelimiter(StringParsingBuffer<CharacterType>& buffer, bool& isValid)
 {
     isValid = true;
-    skipWhile<isSpaceOrTab>(buffer);
+    skipWhile<isTabOrSpace>(buffer);
     if (invalidParameterDelimiter(buffer)) {
         isValid = false;
         return false;
     }
-    skipWhile<isSpaceOrTab>(buffer);
+    skipWhile<isTabOrSpace>(buffer);
     if (validFieldEnd(buffer))
         return false;
     return true;
@@ -182,9 +176,9 @@ template<typename CharacterType> static std::optional<LinkHeader::LinkParameterN
     auto nameStart = buffer.position();
     skipWhile<isValidParameterNameChar>(buffer);
     auto nameEnd = buffer.position();
-    skipWhile<isSpaceOrTab>(buffer);
+    skipWhile<isTabOrSpace>(buffer);
     bool hasEqual = skipExactly(buffer, '=');
-    skipWhile<isSpaceOrTab>(buffer);
+    skipWhile<isTabOrSpace>(buffer);
     auto name = parameterNameFromString(StringView { nameStart, static_cast<unsigned>(nameEnd - nameStart) });
     if (hasEqual)
         return name;
@@ -244,7 +238,7 @@ template<typename CharacterType> static bool parseParameterValue(StringParsingBu
     if (!hasQuotes)
         skipWhile<isParameterValueChar>(buffer);
     valueEnd = buffer.position();
-    skipWhile<isSpaceOrTab>(buffer);
+    skipWhile<isTabOrSpace>(buffer);
     if ((!completeQuotes && valueStart == valueEnd) || (!buffer.atEnd() && !isParameterValueEnd(*buffer))) {
         value = emptyString();
         return false;

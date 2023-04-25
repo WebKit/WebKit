@@ -49,6 +49,7 @@ template<typename CharacterType> constexpr bool isASCIIHexDigit(CharacterType);
 template<typename CharacterType> constexpr bool isASCIILower(CharacterType);
 template<typename CharacterType> constexpr bool isASCIIOctalDigit(CharacterType);
 template<typename CharacterType> constexpr bool isASCIIPrintable(CharacterType);
+template<typename CharacterType> constexpr bool isTabOrSpace(CharacterType);
 template<typename CharacterType> constexpr bool isASCIIWhitespace(CharacterType);
 template<typename CharacterType> constexpr bool isUnicodeCompatibleASCIIWhitespace(CharacterType);
 template<typename CharacterType> constexpr bool isASCIIUpper(CharacterType);
@@ -130,6 +131,11 @@ template<typename CharacterType> constexpr bool isASCIIOctalDigit(CharacterType 
 template<typename CharacterType> constexpr bool isASCIIPrintable(CharacterType character)
 {
     return character >= ' ' && character <= '~';
+}
+
+template<typename CharacterType> constexpr bool isTabOrSpace(CharacterType character)
+{
+    return character == ' ' || character == '\t';
 }
 
 // Infra's "ASCII whitespace" <https://infra.spec.whatwg.org/#ascii-whitespace>
@@ -268,6 +274,7 @@ using WTF::isASCIIHexDigit;
 using WTF::isASCIILower;
 using WTF::isASCIIOctalDigit;
 using WTF::isASCIIPrintable;
+using WTF::isTabOrSpace;
 using WTF::isASCIIWhitespace;
 using WTF::isUnicodeCompatibleASCIIWhitespace;
 using WTF::isASCIIUpper;

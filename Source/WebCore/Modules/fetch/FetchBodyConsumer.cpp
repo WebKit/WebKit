@@ -38,7 +38,6 @@
 #include "JSBlob.h"
 #include "JSDOMFormData.h"
 #include "JSDOMPromiseDeferred.h"
-#include "RFC7230.h"
 #include "TextResourceDecoder.h"
 #include <wtf/StringExtras.h>
 #include <wtf/URLParser.h>
@@ -68,7 +67,7 @@ static HashMap<String, String> parseParameters(StringView input, size_t position
 {
     HashMap<String, String> parameters;
     while (position < input.length()) {
-        while (position < input.length() && RFC7230::isWhitespace(input[position]))
+        while (position < input.length() && isTabOrSpace(input[position]))
             position++;
         size_t nameBegin = position;
         while (position < input.length() && input[position] != '=' && input[position] != ';')

@@ -1131,7 +1131,7 @@ void VTTCue::setCueSettings(const String& inputString)
 
         // The WebVTT cue settings part of a WebVTT cue consists of zero or more of the following components, in any order, 
         // separated from each other by one or more U+0020 SPACE characters or U+0009 CHARACTER TABULATION (tab) characters.
-        input.skipWhile<WebVTTParser::isValidSettingDelimiter>();
+        input.skipWhile<isTabOrSpace>();
         if (input.isAtEnd())
             break;
 
@@ -1145,7 +1145,7 @@ void VTTCue::setCueSettings(const String& inputString)
         CueSetting name = settingName(input);
 
         // 3. Let value be the trailing substring of setting starting from the character immediately after the first U+003A COLON character (:) in that string.
-        VTTScanner::Run valueRun = input.collectUntil<WebVTTParser::isValidSettingDelimiter>();
+        VTTScanner::Run valueRun = input.collectUntil<isTabOrSpace>();
 
         // 4. Run the appropriate substeps that apply for the value of name, as follows:
         switch (name) {

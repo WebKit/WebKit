@@ -37,9 +37,4 @@ bool isDelimiter(UChar);
 bool isValidName(StringView);
 bool isValidValue(StringView);
 
-template<typename CharacterType> constexpr bool isWhitespace(CharacterType character)
-{
-    return character == ' ' || character == '\t';
-}
-
 } // namespace RFC7230

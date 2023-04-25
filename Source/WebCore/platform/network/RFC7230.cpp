@@ -69,7 +69,7 @@ static bool isOBSText(UChar c)
 
 static bool isQuotedTextCharacter(UChar c)
 {
-    return isWhitespace(c)
+    return isTabOrSpace(c)
         || c == 0x21
         || isInRange<0x23, 0x5B>(c)
         || isInRange<0x5D, 0x7E>(c)
@@ -78,14 +78,14 @@ static bool isQuotedTextCharacter(UChar c)
 
 bool isQuotedPairSecondOctet(UChar c)
 {
-    return isWhitespace(c)
+    return isTabOrSpace(c)
         || isVisibleCharacter(c)
         || isOBSText(c);
 }
 
 bool isCommentText(UChar c)
 {
-    return isWhitespace(c)
+    return isTabOrSpace(c)
         || isInRange<0x21, 0x27>(c)
         || isInRange<0x2A, 0x5B>(c)
         || isInRange<0x5D, 0x7E>(c)
@@ -119,7 +119,7 @@ bool isValidValue(StringView value)
         UChar c = value[i];
         switch (state) {
         case State::OptionalWhitespace:
-            if (isWhitespace(c))
+            if (isTabOrSpace(c))
                 continue;
             hadNonWhitespace = true;
             if (isTokenCharacter(c)) {
