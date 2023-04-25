@@ -31,6 +31,7 @@
 #include <wtf/Gigacage.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PrintStream.h>
+#include <wtf/RunLoop.h>
 #include <wtf/ThreadGroup.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/WTFConfig.h>
@@ -482,6 +483,9 @@ void initialize()
 #endif
 #if PLATFORM(COCOA)
         initializeLibraryPathDiagnostics();
+#endif
+#if OS(WINDOWS)
+        RunLoop::registerRunLoopMessageWindowClass();
 #endif
     });
 }
