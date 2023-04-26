@@ -572,7 +572,7 @@ void MediaPlayerPrivateAVFoundation::updateStates()
             else if (itemStatus == MediaPlayerAVPlayerItemStatusFailed)
                 newNetworkState = MediaPlayer::NetworkState::DecodeError;
             else if (itemStatus != MediaPlayerAVPlayerItemStatusPlaybackBufferFull && itemStatus >= MediaPlayerAVPlayerItemStatusReadyToPlay)
-                newNetworkState = (maxTimeLoaded() == durationMediaTime()) ? MediaPlayer::NetworkState::Loaded : MediaPlayer::NetworkState::Loading;
+                newNetworkState = (maxTimeLoaded() >= durationMediaTime()) ? MediaPlayer::NetworkState::Loaded : MediaPlayer::NetworkState::Loading;
         }
     }
 
