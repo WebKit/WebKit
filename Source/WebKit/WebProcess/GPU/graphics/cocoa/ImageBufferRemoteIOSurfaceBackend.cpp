@@ -94,10 +94,10 @@ bool ImageBufferRemoteIOSurfaceBackend::hasBackendHandle() const
     return std::holds_alternative<MachSendRight>(m_handle);
 }
 
-GraphicsContext& ImageBufferRemoteIOSurfaceBackend::context()
+std::unique_ptr<GraphicsContext> ImageBufferRemoteIOSurfaceBackend::createContext()
 {
     RELEASE_ASSERT_NOT_REACHED();
-    return *(GraphicsContext*)nullptr;
+    return nullptr;
 }
 
 IntSize ImageBufferRemoteIOSurfaceBackend::backendSize() const

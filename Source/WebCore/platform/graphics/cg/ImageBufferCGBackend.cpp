@@ -64,20 +64,24 @@ unsigned ImageBufferCGBackend::calculateBytesPerRow(const IntSize& backendSize)
 
 std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBufferCGBackend::createFlusher()
 {
-    return makeUnique<ThreadSafeImageBufferFlusherCG>(context().platformContext());
+    if (!m_context)
+        return nullptr;
+    return makeUnique<ThreadSafeImageBufferFlusherCG>(m_context->platformContext());
 }
 
 ImageBufferCGBackend::~ImageBufferCGBackend() = default;
 
-bool ImageBufferCGBackend::originAtBottomLeftCorner() const
+std::unique_ptr<GraphicsContext> ImageBufferCGBackend::createContext()
 {
-    return isOriginAtBottomLeftCorner;
+    auto context = makeUnique<GraphicsContextCG>(ensurePlatformContext());
+    m_context = context.get();
+    return context;
 }
 
-void ImageBufferCGBackend::applyBaseTransform(GraphicsContextCG& context) const
+void ImageBufferCGBackend::contextReleased()
 {
-    context.applyDeviceScaleFactor(m_parameters.resolutionScale);
-    context.setCTM(calculateBaseTransform(m_parameters, originAtBottomLeftCorner()));
+    m_context = nullptr;
+    m_platformContext = nullptr;
 }
 
 } // namespace WebCore

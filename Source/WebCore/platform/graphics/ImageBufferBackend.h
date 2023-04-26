@@ -36,6 +36,7 @@
 #include "PixelBufferFormat.h"
 #include "PlatformLayer.h"
 #include "RenderingMode.h"
+#include <memory>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -106,7 +107,9 @@ public:
     static size_t calculateExternalMemoryCost(const Parameters&) { return 0; }
     WEBCORE_EXPORT static AffineTransform calculateBaseTransform(const Parameters&, bool originAtBottomLeftCorner);
 
-    virtual GraphicsContext& context() = 0;
+    virtual std::unique_ptr<GraphicsContext> createContext() = 0;
+    virtual void contextReleased() { }
+
     virtual void flushContext() { }
 
     virtual IntSize backendSize() const { return { }; }
@@ -130,7 +133,6 @@ public:
 #endif
 
     virtual bool isInUse() const { return false; }
-    virtual void releaseGraphicsContext() { ASSERT_NOT_REACHED(); }
 
     virtual void transferToNewContext(const ImageBufferCreationContext&) { }
 
@@ -143,8 +145,6 @@ public:
     virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() { return nullptr; }
 
     static constexpr bool isOriginAtBottomLeftCorner = false;
-    virtual bool originAtBottomLeftCorner() const { return isOriginAtBottomLeftCorner; }
-
     static constexpr bool canMapBackingStore = true;
     static constexpr RenderingMode renderingMode = RenderingMode::Unaccelerated;
 

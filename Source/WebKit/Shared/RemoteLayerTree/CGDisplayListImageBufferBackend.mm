@@ -122,7 +122,7 @@ CGDisplayListImageBufferBackend::CGDisplayListImageBufferBackend(const Parameter
 
 ImageBufferBackendHandle CGDisplayListImageBufferBackend::createBackendHandle(SharedMemory::Protection) const
 {
-    ASSERT(m_context);
+    ASSERT(m_platformContext);
 
     RetainPtr<NSDictionary> options;
     RetainPtr<NSMutableArray> ports;
@@ -134,7 +134,7 @@ ImageBufferBackendHandle CGDisplayListImageBufferBackend::createBackendHandle(Sh
         };
     }
 
-    auto data = adoptCF(WKCGCommandsContextCopyEncodedDataWithOptions(m_context->platformContext(), bridge_cast(options.get())));
+    auto data = adoptCF(WKCGCommandsContextCopyEncodedDataWithOptions(m_platformContext.get(), bridge_cast(options.get())));
     ASSERT(data);
 
 #if !RELEASE_LOG_DISABLED
@@ -153,11 +153,16 @@ ImageBufferBackendHandle CGDisplayListImageBufferBackend::createBackendHandle(Sh
     return CGDisplayList { WebCore::SharedBuffer::create(data.get()), WTFMove(sendRights) };
 }
 
-WebCore::GraphicsContext& CGDisplayListImageBufferBackend::context()
+WebCore::GraphicsContext* CGDisplayListImageBufferBackend::createContext()
 {
-    if (!m_context)
-        m_context = makeUnique<GraphicsContextCGDisplayList>(m_parameters, m_renderingMode);
-    return *m_context;
+    auto context = makeUnique<GraphicsContextCGDisplayList>(m_parameters, m_renderingMode);
+    m_platformContext = context->platformContext();
+    return context;
+}
+
+void CGDisplayListImageBufferBackend::contextReleased()
+{
+    m_platformContext = nullptr;
 }
 
 WebCore::IntSize CGDisplayListImageBufferBackend::backendSize() const
@@ -168,11 +173,6 @@ WebCore::IntSize CGDisplayListImageBufferBackend::backendSize() const
 unsigned CGDisplayListImageBufferBackend::bytesPerRow() const
 {
     return calculateBytesPerRow(backendSize());
-}
-
-void CGDisplayListImageBufferBackend::releaseGraphicsContext()
-{
-    m_context = nullptr;
 }
 
 RefPtr<WebCore::NativeImage> CGDisplayListImageBufferBackend::copyNativeImage(WebCore::BackingStoreCopy)

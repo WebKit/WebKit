@@ -45,14 +45,18 @@ namespace WebCore {
 ImageBufferCairoSurfaceBackend::ImageBufferCairoSurfaceBackend(const Parameters& parameters, RefPtr<cairo_surface_t>&& surface)
     : ImageBufferCairoBackend(parameters)
     , m_surface(WTFMove(surface))
-    , m_context(m_surface.get())
 {
     ASSERT(cairo_surface_status(m_surface.get()) == CAIRO_STATUS_SUCCESS);
 }
 
-GraphicsContext& ImageBufferCairoSurfaceBackend::context()
+std::unique_ptr<GraphicsContext> ImageBufferCairoSurfaceBackend::createContext()
 {
-    return m_context;
+    return makeUnique<GraphicsContextCairo>(m_surface.get());
+}
+
+void ImageBufferCairoSurfaceBackend::contextReleased()
+{
+    m_context = nullptr;
 }
 
 IntSize ImageBufferCairoSurfaceBackend::backendSize() const

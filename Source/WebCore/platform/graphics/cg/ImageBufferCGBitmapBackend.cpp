@@ -85,32 +85,34 @@ std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(c
     if (!cgContext)
         return nullptr;
 
-    auto context = makeUnique<GraphicsContextCG>(cgContext.get());
-
     auto dataProvider = adoptCF(CGDataProviderCreateWithData(nullptr, data, numBytes, [] (void*, const void* data, size_t) {
         fastFree(const_cast<void*>(data));
     }));
 
-    return std::unique_ptr<ImageBufferCGBitmapBackend>(new ImageBufferCGBitmapBackend(parameters, data, WTFMove(dataProvider), WTFMove(context)));
+    return std::unique_ptr<ImageBufferCGBitmapBackend>(new ImageBufferCGBitmapBackend(parameters, data, WTFMove(dataProvider), WTFMove(cgContext)));
 }
 
-ImageBufferCGBitmapBackend::ImageBufferCGBitmapBackend(const Parameters& parameters, void* data, RetainPtr<CGDataProviderRef>&& dataProvider, std::unique_ptr<GraphicsContextCG>&& context)
+ImageBufferCGBitmapBackend::ImageBufferCGBitmapBackend(const Parameters& parameters, void* data, RetainPtr<CGDataProviderRef>&& dataProvider, RetainPtr<CGContextRef> platformContext)
     : ImageBufferCGBackend(parameters)
     , m_data(data)
     , m_dataProvider(WTFMove(dataProvider))
 {
     ASSERT(m_data);
     ASSERT(m_dataProvider);
-    m_context = WTFMove(context);
-    ASSERT(m_context);
-    applyBaseTransform(*m_context);
+    m_platformContext = WTFMove(platformContext);
 }
 
 ImageBufferCGBitmapBackend::~ImageBufferCGBitmapBackend() = default;
 
-GraphicsContext& ImageBufferCGBitmapBackend::context()
+CGContextRef ImageBufferCGBitmapBackend::ensurePlatformContext()
 {
-    return *m_context;
+    if (!m_platformContext) {
+        auto size = backendSize();
+        unsigned bytesPerRow = 4 * size.width();
+        m_platformContext = adoptCF(CGBitmapContextCreate(m_data, size.width(), size.height(), 8, bytesPerRow, colorSpace().platformColorSpace(), static_cast<uint32_t>(kCGImageAlphaPremultipliedFirst) | static_cast<uint32_t>(kCGBitmapByteOrder32Host)));
+        RELEASE_ASSERT(m_platformContext);
+    }
+    return m_platformContext.get();
 }
 
 IntSize ImageBufferCGBitmapBackend::backendSize() const
@@ -128,7 +130,7 @@ RefPtr<NativeImage> ImageBufferCGBitmapBackend::copyNativeImage(BackingStoreCopy
 {
     switch (copyBehavior) {
     case CopyBackingStore:
-        return NativeImage::create(adoptCF(CGBitmapContextCreateImage(context().platformContext())));
+        return NativeImage::create(adoptCF(CGBitmapContextCreateImage(ensurePlatformContext())));
 
     case DontCopyBackingStore:
         auto backendSize = this->backendSize();

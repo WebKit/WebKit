@@ -28,13 +28,10 @@
 
 #include "ShareableBitmap.h"
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/NullGraphicsContext.h>
 #include <WebCore/PixelBuffer.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
-
-#if PLATFORM(COCOA)
-#include <WebCore/GraphicsContextCG.h>
-#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -78,11 +75,7 @@ std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBac
     if (!bitmap)
         return nullptr;
 
-    auto context = bitmap->createGraphicsContext();
-    if (!context)
-        return nullptr;
-
-    return makeUnique<ImageBufferShareableBitmapBackend>(parameters, bitmap.releaseNonNull(), WTFMove(context));
+    return makeUnique<ImageBufferShareableBitmapBackend>(parameters, bitmap.releaseNonNull());
 }
 
 std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBackend::create(const Parameters& parameters, ImageBufferBackendHandle handle)
@@ -96,23 +89,14 @@ std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBac
     if (!bitmap)
         return nullptr;
 
-    auto context = bitmap->createGraphicsContext();
-    if (!context)
-        return nullptr;
 
-    return makeUnique<ImageBufferShareableBitmapBackend>(parameters, bitmap.releaseNonNull(), WTFMove(context));
+    return makeUnique<ImageBufferShareableBitmapBackend>(parameters, bitmap.releaseNonNull());
 }
 
-ImageBufferShareableBitmapBackend::ImageBufferShareableBitmapBackend(const Parameters& parameters, Ref<ShareableBitmap>&& bitmap, std::unique_ptr<GraphicsContext>&& context)
-    : PlatformImageBufferBackend(parameters)
+ImageBufferShareableBitmapBackend::ImageBufferShareableBitmapBackend(const Parameters& parameters, Ref<ShareableBitmap>&& bitmap)
+    : ImageBufferBackend(parameters)
     , m_bitmap(WTFMove(bitmap))
-    , m_context(WTFMove(context))
 {
-    // ShareableBitmap ensures that the coordinate space in the context that we're adopting
-    // has a top-left origin, so we don't ever need to flip here, so we don't call setupContext().
-    // However, ShareableBitmap does not have a notion of scale, so we must apply the device
-    // scale factor to the context ourselves.
-    m_context->applyDeviceScaleFactor(resolutionScale());
 }
 
 ImageBufferBackendHandle ImageBufferShareableBitmapBackend::createBackendHandle(SharedMemory::Protection protection) const
@@ -120,6 +104,11 @@ ImageBufferBackendHandle ImageBufferShareableBitmapBackend::createBackendHandle(
     if (auto handle = m_bitmap->createHandle(protection))
         return ImageBufferBackendHandle(WTFMove(*handle));
     return { };
+}
+
+std::unique_ptr<GraphicsContext> ImageBufferShareableBitmapBackend::createContext()
+{
+    return m_bitmap->createGraphicsContext();
 }
 
 IntSize ImageBufferShareableBitmapBackend::backendSize() const

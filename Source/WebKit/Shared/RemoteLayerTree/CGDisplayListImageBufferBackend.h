@@ -44,11 +44,12 @@ public:
 
     static std::unique_ptr<CGDisplayListImageBufferBackend> create(const Parameters&, const WebCore::ImageBufferCreationContext&);
 
-    WebCore::GraphicsContext& context() final;
+    std::unique_ptr<WebCore::GraphicsContext> createContext() final;
+    void releaseContext() final;
+
     WebCore::IntSize backendSize() const final;
     ImageBufferBackendHandle createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const final;
 
-    void releaseGraphicsContext() final;
 
     // NOTE: These all ASSERT_NOT_REACHED().
     RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) final;
@@ -63,7 +64,7 @@ protected:
     // ImageBufferBackendSharing
     ImageBufferBackendSharing* toBackendSharing() final { return this; }
 
-    mutable std::unique_ptr<WebCore::GraphicsContext> m_context;
+    RetainPtr<CGContextRef> m_platformContext;
     RetainPtr<id> m_resourceCache;
     WebCore::RenderingMode m_renderingMode;
 };

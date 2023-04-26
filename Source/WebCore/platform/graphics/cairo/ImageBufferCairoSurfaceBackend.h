@@ -33,12 +33,13 @@
 
 #include "GraphicsContextCairo.h"
 #include "ImageBufferCairoBackend.h"
+#include <memory>
 
 namespace WebCore {
 
 class ImageBufferCairoSurfaceBackend : public ImageBufferCairoBackend {
 public:
-    GraphicsContext& context() override;
+    std::unique_ptr<GraphicsContext> createContext() override;
 
     IntSize backendSize() const override;
 
@@ -56,7 +57,6 @@ protected:
     unsigned bytesPerRow() const override;
 
     RefPtr<cairo_surface_t> m_surface;
-    mutable GraphicsContextCairo m_context;
 };
 
 } // namespace WebCore
