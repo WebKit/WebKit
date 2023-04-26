@@ -37,7 +37,7 @@ namespace WebCore {
 
 template<typename CharacterType> static bool isMediaTypeCharacter(CharacterType c)
 {
-    return !isUnicodeCompatibleASCIIWhitespace(c) && c != '/';
+    return !isASCIIWhitespace(c) && c != '/';
 }
 
 ContentSecurityPolicyMediaListDirective::ContentSecurityPolicyMediaListDirective(const ContentSecurityPolicyDirectiveList& directiveList, const String& name, const String& value)
@@ -63,7 +63,7 @@ void ContentSecurityPolicyMediaListDirective::parse(const String& value)
         while (buffer.hasCharactersRemaining()) {
             // _____ OR _____mime1/mime1
             // ^        ^
-            skipWhile<isUnicodeCompatibleASCIIWhitespace>(buffer);
+            skipWhile<isASCIIWhitespace>(buffer);
             if (buffer.atEnd())
                 return;
 
@@ -71,7 +71,7 @@ void ContentSecurityPolicyMediaListDirective::parse(const String& value)
             // ^
             auto begin = buffer.position();
             if (!skipExactly<isMediaTypeCharacter>(buffer)) {
-                skipWhile<isNotASCIISpace>(buffer);
+                skipWhile<isNotASCIIWhitespace>(buffer);
                 directiveList().policy().reportInvalidPluginTypes(String(begin, buffer.position() - begin));
                 continue;
             }
@@ -80,7 +80,7 @@ void ContentSecurityPolicyMediaListDirective::parse(const String& value)
             // mime1/mime1 mime2/mime2
             //      ^
             if (!skipExactly(buffer, '/')) {
-                skipWhile<isNotASCIISpace>(buffer);
+                skipWhile<isNotASCIIWhitespace>(buffer);
                 directiveList().policy().reportInvalidPluginTypes(String(begin, buffer.position() - begin));
                 continue;
             }
@@ -88,7 +88,7 @@ void ContentSecurityPolicyMediaListDirective::parse(const String& value)
             // mime1/mime1 mime2/mime2
             //       ^
             if (!skipExactly<isMediaTypeCharacter>(buffer)) {
-                skipWhile<isNotASCIISpace>(buffer);
+                skipWhile<isNotASCIIWhitespace>(buffer);
                 directiveList().policy().reportInvalidPluginTypes(String(begin, buffer.position() - begin));
                 continue;
             }
@@ -96,14 +96,14 @@ void ContentSecurityPolicyMediaListDirective::parse(const String& value)
 
             // mime1/mime1 mime2/mime2 OR mime1/mime1  OR mime1/mime1/error
             //            ^                          ^               ^
-            if (buffer.hasCharactersRemaining() && isNotASCIISpace(*buffer)) {
-                skipWhile<isNotASCIISpace>(buffer);
+            if (buffer.hasCharactersRemaining() && !isASCIIWhitespace(*buffer)) {
+                skipWhile<isNotASCIIWhitespace>(buffer);
                 directiveList().policy().reportInvalidPluginTypes(String(begin, buffer.position() - begin));
                 continue;
             }
             m_pluginTypes.add(String(begin, buffer.position() - begin));
 
-            ASSERT(buffer.atEnd() || isUnicodeCompatibleASCIIWhitespace(*buffer));
+            ASSERT(buffer.atEnd() || isASCIIWhitespace(*buffer));
         }
     });
 }
