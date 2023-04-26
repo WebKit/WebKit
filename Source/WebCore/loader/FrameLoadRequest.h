@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FrameLoaderTypes.h"
+#include "NetworkConnectionIntegrity.h"
 #include "ReferrerPolicy.h"
 #include "ResourceRequest.h"
 #include "ShouldTreatAsContinuingLoad.h"
@@ -105,6 +106,9 @@ public:
     void setIsRequestFromClientOrUserInput() { m_isRequestFromClientOrUserInput = true; }
     bool isRequestFromClientOrUserInput() const { return m_isRequestFromClientOrUserInput; }
 
+    void setNetworkConnectionIntegrityPolicy(OptionSet<NetworkConnectionIntegrity> policy) { m_networkConnectionIntegrityPolicy = policy; }
+    OptionSet<NetworkConnectionIntegrity> networkConnectionIntegrityPolicy() const { return m_networkConnectionIntegrityPolicy; }
+
 private:
     Ref<Document> m_requester;
     Ref<SecurityOrigin> m_requesterSecurityOrigin;
@@ -126,6 +130,7 @@ private:
     InitiatedByMainFrame m_initiatedByMainFrame { InitiatedByMainFrame::Unknown };
     bool m_isRequestFromClientOrUserInput { false };
     bool m_isInitialFrameSrcLoad { false };
+    OptionSet<NetworkConnectionIntegrity> m_networkConnectionIntegrityPolicy;
 };
 
 } // namespace WebCore

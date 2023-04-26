@@ -1866,6 +1866,7 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     frameLoadRequest.setLockBackForwardList(loadParameters.lockBackForwardList);
     frameLoadRequest.setClientRedirectSourceForHistory(loadParameters.clientRedirectSourceForHistory);
     frameLoadRequest.setIsRequestFromClientOrUserInput();
+    frameLoadRequest.setNetworkConnectionIntegrityPolicy(loadParameters.networkConnectionIntegrityPolicy);
 
     if (loadParameters.effectiveSandboxFlags) {
         if (auto* localMainFrame = dynamicDowncast<LocalFrame>(corePage()->mainFrame()))

@@ -3579,7 +3579,7 @@ const URL& Document::urlForBindings() const
             return false;
 
         auto* topDocumentLoader = topDocument().loader();
-        if (!topDocumentLoader || !topDocumentLoader->networkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::Enabled))
+        if (!topDocumentLoader || !topDocumentLoader->originatorNetworkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::Enabled))
             return false;
 
         auto preNavigationURL = loader()->originalRequest().httpReferrer();
@@ -5581,7 +5581,7 @@ String Document::referrer()
 String Document::referrerForBindings()
 {
     if (auto* loader = topDocument().loader(); loader
-        && loader->networkConnectionIntegrityPolicy().contains(WebCore::NetworkConnectionIntegrity::Enabled)
+        && loader->originatorNetworkConnectionIntegrityPolicy().contains(WebCore::NetworkConnectionIntegrity::Enabled)
         && !RegistrableDomain { URL { frame()->loader().referrer() } }.matches(securityOrigin().data()))
         return String();
     return referrer();

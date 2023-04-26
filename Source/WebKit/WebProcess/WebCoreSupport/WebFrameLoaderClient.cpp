@@ -505,6 +505,7 @@ void WebFrameLoaderClient::didSameDocumentNavigationForFrameViaJSHistoryAPI(Same
         { }, /* clientRedirectSourceForHistory */
         0, /* effectiveSandboxFlags */
         std::nullopt, /* privateClickMeasurement */
+        { }, /* networkConnectionIntegrityPolicy */
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         std::nullopt, /* webHitTestResultData */
 #endif
@@ -985,6 +986,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Navigati
         { }, /* clientRedirectSourceForHistory */
         0, /* effectiveSandboxFlags */
         navigationAction.privateClickMeasurement(),
+        { }, /* networkConnectionIntegrityPolicy */
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         webHitTestResultDataInNavigationActionData(navigationAction, navigationActionData, m_frame->coreFrame()),
 #endif
@@ -1102,6 +1104,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         documentLoader->clientRedirectSourceForHistory(),
         coreFrame->loader().effectiveSandboxFlags(),
         navigationAction.privateClickMeasurement(),
+        requestingFrame ? requestingFrame->networkConnectionIntegrityPolicy() : OptionSet<NetworkConnectionIntegrity> { },
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         webHitTestResultDataInNavigationActionData(navigationAction, navigationActionData, coreFrame.get()),
 #endif

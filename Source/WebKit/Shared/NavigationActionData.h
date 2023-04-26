@@ -30,6 +30,7 @@
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/NetworkConnectionIntegrity.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/SecurityOriginData.h>
 
@@ -68,6 +69,7 @@ struct NavigationActionData {
     WTF::String clientRedirectSourceForHistory;
     WebCore::SandboxFlags effectiveSandboxFlags { 0 };
     std::optional<WebCore::PrivateClickMeasurement> privateClickMeasurement;
+    OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy;
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     std::optional<WebKit::WebHitTestResultData> webHitTestResultData;
 #endif

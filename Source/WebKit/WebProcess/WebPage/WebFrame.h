@@ -41,6 +41,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/HitTestRequest.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
+#include <WebCore/NetworkConnectionIntegrity.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -223,6 +224,7 @@ public:
 
     Markable<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier() { return m_layerHostingContextIdentifier; }
 
+    OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy() const;
 private:
     WebFrame(WebPage&);
 

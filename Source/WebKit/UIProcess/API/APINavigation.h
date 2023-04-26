@@ -33,6 +33,7 @@
 #include "ProcessThrottler.h"
 #include "WebBackForwardListItem.h"
 #include "WebContentMode.h"
+#include <WebCore/NetworkConnectionIntegrity.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ResourceRequest.h>
@@ -166,6 +167,9 @@ public:
     void setWebsitePolicies(RefPtr<API::WebsitePolicies>&& policies) { m_websitePolicies = WTFMove(policies); }
     API::WebsitePolicies* websitePolicies() { return m_websitePolicies.get(); }
 
+    void setOriginatorNetworkConnectionIntegrityPolicy(OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy) { m_originatorNetworkConnectionIntegrityPolicy = networkConnectionIntegrityPolicy; }
+    OptionSet<WebCore::NetworkConnectionIntegrity> originatorNetworkConnectionIntegrityPolicy() const { return m_originatorNetworkConnectionIntegrityPolicy; }
+
 private:
     explicit Navigation(WebKit::WebNavigationState&);
     Navigation(WebKit::WebNavigationState&, WebKit::WebBackForwardListItem*);
@@ -193,6 +197,7 @@ private:
     WebKit::ProcessThrottler::TimedActivity m_clientNavigationActivity;
     bool m_isLoadedWithNavigationShared { false };
     RefPtr<API::WebsitePolicies> m_websitePolicies;
+    OptionSet<WebCore::NetworkConnectionIntegrity> m_originatorNetworkConnectionIntegrityPolicy;
 };
 
 } // namespace API

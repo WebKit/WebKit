@@ -1113,4 +1113,21 @@ uint64_t WebFrame::messageSenderDestinationID() const
     return m_frameID.object().toUInt64();
 }
 
+OptionSet<WebCore::NetworkConnectionIntegrity> WebFrame::networkConnectionIntegrityPolicy() const
+{
+    auto* coreFrame = this->coreFrame();
+    if (!coreFrame)
+        return { };
+
+    auto* document = coreFrame->document();
+    if (!document)
+        return { };
+
+    auto* topDocumentLoader = document->topDocument().loader();
+    if (!topDocumentLoader)
+        return { };
+
+    return topDocumentLoader->networkConnectionIntegrityPolicy();
+}
+
 } // namespace WebKit

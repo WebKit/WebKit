@@ -454,6 +454,9 @@ public:
     void setNetworkConnectionIntegrityPolicy(OptionSet<NetworkConnectionIntegrity> policy) { m_networkConnectionIntegrityPolicy = policy; }
     OptionSet<NetworkConnectionIntegrity> networkConnectionIntegrityPolicy() const { return m_networkConnectionIntegrityPolicy; }
 
+    void setOriginatorNetworkConnectionIntegrityPolicy(OptionSet<NetworkConnectionIntegrity> policy) { m_originatorNetworkConnectionIntegrityPolicy = policy; }
+    OptionSet<NetworkConnectionIntegrity> originatorNetworkConnectionIntegrityPolicy() const { return m_originatorNetworkConnectionIntegrityPolicy; }
+
     void setIdempotentModeAutosizingOnlyHonorsPercentages(bool idempotentModeAutosizingOnlyHonorsPercentages) { m_idempotentModeAutosizingOnlyHonorsPercentages = idempotentModeAutosizingOnlyHonorsPercentages; }
     bool idempotentModeAutosizingOnlyHonorsPercentages() const { return m_idempotentModeAutosizingOnlyHonorsPercentages; }
 
@@ -694,6 +697,7 @@ private:
 #endif
 
     OptionSet<NetworkConnectionIntegrity> m_networkConnectionIntegrityPolicy;
+    OptionSet<NetworkConnectionIntegrity> m_originatorNetworkConnectionIntegrityPolicy;
     AutoplayPolicy m_autoplayPolicy { AutoplayPolicy::Default };
     OptionSet<AutoplayQuirk> m_allowedAutoplayQuirks;
     PopUpPolicy m_popUpPolicy { PopUpPolicy::Default };
