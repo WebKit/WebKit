@@ -2407,15 +2407,145 @@ static bool rendererCanHaveTrimmedMargin(const RenderBox& renderer, std::optiona
     if (!containingBlock || containingBlock->isRenderView())
         return false;
 
-    // containingBlock->isBlockContainer() can return true even if the item is in a RenderFlexibleBox
-    // (e.g. buttons) so we should explicitly check that the item is not a flex item to catch block containers here
-    if (!renderer.isFlexItem() && containingBlock->isBlockContainer())
-        return false;
 
     if (containingBlock->isFlexibleBox() || containingBlock->isRenderGrid()) {
         if (!marginTrimType)
-            return containingBlock->style().marginTrim().containsAny({ MarginTrimType::BlockStart, MarginTrimType::InlineEnd });
+            return !containingBlock->style().marginTrim().isEmpty();
         return containingBlock->style().marginTrim().contains(marginTrimType.value());
+    // Even though margin-trim is not inherited, it is possible for nested block level boxes
+    // to get placed at the block-start of an containing block ancestor which does have margin-trim.
+    // In this case it is not enough to simply check the immediate containing block of the child. It is
+    // also probably too expensive to perform an arbitrary walk up the tree to check for the existence
+    // of an ancestor containing block with the property, so we will just return true and let
+    // the rest of the logic in RenderBox::hasTrimmedMargin to determine if the rare data bit
+    // were set at some point during layout
+    if (containingBlock->isBlockContainer() && containingBlock->isHorizontalWritingMode() && renderer.isBlockLevelBox() && marginTrimType == MarginTrimType::BlockEnd)
+        return true;
+    return false;
+}
+
+using PhysicalDirection = BoxSide;
+using FlowRelativeDirection = LogicalBoxSide;
+
+static const RenderStyle& formattingContextRootStyle(const RenderBox& renderer)
+{
+    if (auto* ancestorToUse = (renderer.isFlexItem() || renderer.isGridItem()) ? renderer.parent() : renderer.containingBlock())
+        return ancestorToUse->style();
+    ASSERT_NOT_REACHED();
+    return renderer.style();
+};
+
+// Mapping is done according to the table in section 6.4 (Abstract-to-Physical Mappings)
+static FlowRelativeDirection physicalToFlowRelativeDirection(const RenderBox& renderer, PhysicalDirection direction)
+{
+    auto& styleToUse = formattingContextRootStyle(renderer);
+    auto isHorizontalWritingMode = styleToUse.isHorizontalWritingMode();
+    auto isLeftToRightDirection = styleToUse.isLeftToRightDirection();
+    // vertical-rl and horizontal-bt writing modes
+    auto isFlippedBlocksWritingMode = styleToUse.isFlippedBlocksWritingMode();
+
+    switch (direction) {
+    case PhysicalDirection::Top:
+        if (isHorizontalWritingMode)
+            return !isFlippedBlocksWritingMode ? FlowRelativeDirection::BlockStart : FlowRelativeDirection::BlockEnd;
+        return isLeftToRightDirection ? FlowRelativeDirection::InlineStart : FlowRelativeDirection::InlineEnd;
+    case PhysicalDirection::Right:
+        if (isHorizontalWritingMode)
+            return isLeftToRightDirection ? FlowRelativeDirection::InlineEnd : FlowRelativeDirection::InlineStart;
+        return !isFlippedBlocksWritingMode ? FlowRelativeDirection::BlockEnd : FlowRelativeDirection::BlockStart;
+    case PhysicalDirection::Bottom:
+        if (isHorizontalWritingMode)
+            return !isFlippedBlocksWritingMode ? FlowRelativeDirection::BlockEnd : FlowRelativeDirection::BlockStart;
+        return isLeftToRightDirection ? FlowRelativeDirection::InlineEnd : FlowRelativeDirection::InlineStart;
+    case PhysicalDirection::Left:
+        if (isHorizontalWritingMode)
+            return isLeftToRightDirection ? FlowRelativeDirection::InlineStart : FlowRelativeDirection::InlineEnd;
+        return !isFlippedBlocksWritingMode ? FlowRelativeDirection::BlockStart : FlowRelativeDirection::BlockEnd;
+    default:
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+}
+
+static PhysicalDirection flowRelativeToPhysicalDirection(const RenderBox& renderer, FlowRelativeDirection direction)
+{
+    auto& styleToUse = formattingContextRootStyle(renderer);
+    auto isHorizontalWritingMode = styleToUse.isHorizontalWritingMode();
+    auto isLeftToRightDirection = styleToUse.isLeftToRightDirection();
+    // vertical-rl and horizontal-bt writing modes
+    auto isFlippedBlocksWritingMode = styleToUse.isFlippedBlocksWritingMode();
+
+    switch (direction) {
+    case FlowRelativeDirection::BlockStart:
+        if (isHorizontalWritingMode)
+            return !isFlippedBlocksWritingMode ? PhysicalDirection::Top : PhysicalDirection::Bottom;
+        return !isFlippedBlocksWritingMode ? PhysicalDirection::Left : PhysicalDirection::Right;
+    case FlowRelativeDirection::BlockEnd:
+        if (isHorizontalWritingMode)
+            return !isFlippedBlocksWritingMode ? PhysicalDirection::Bottom : PhysicalDirection::Top;
+        return !isFlippedBlocksWritingMode ? PhysicalDirection::Right : PhysicalDirection::Left;
+    case FlowRelativeDirection::InlineStart:
+        if (isHorizontalWritingMode)
+            return isLeftToRightDirection ? PhysicalDirection::Left : PhysicalDirection::Right;
+        return isLeftToRightDirection ? PhysicalDirection::Top : PhysicalDirection::Bottom;
+    case FlowRelativeDirection::InlineEnd:
+        if (isHorizontalWritingMode)
+            return isLeftToRightDirection ? PhysicalDirection::Right : PhysicalDirection::Left;
+        return isLeftToRightDirection ? PhysicalDirection::Bottom : PhysicalDirection::Top;
+    default:
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+}
+
+static MarginTrimType toMarginTrimType(const RenderBox& renderer, CSSPropertyID propertyID)
+{
+    auto flowRelativeDirectionToMarginTrimType = [](auto direction) {
+        switch (direction) {
+        case FlowRelativeDirection::BlockStart:
+            return MarginTrimType::BlockStart;
+        case FlowRelativeDirection::BlockEnd:
+            return MarginTrimType::BlockEnd;
+        case FlowRelativeDirection::InlineStart:
+            return MarginTrimType::InlineStart;
+        case FlowRelativeDirection::InlineEnd:
+            return MarginTrimType::InlineEnd;
+        default:
+            ASSERT_NOT_REACHED();
+            return MarginTrimType::BlockStart;
+        }
+    };
+
+    switch (propertyID) {
+    case CSSPropertyMarginTop:
+        return flowRelativeDirectionToMarginTrimType(physicalToFlowRelativeDirection(renderer, PhysicalDirection::Top));
+    case CSSPropertyMarginRight:
+        return flowRelativeDirectionToMarginTrimType(physicalToFlowRelativeDirection(renderer, PhysicalDirection::Right));
+    case CSSPropertyMarginBottom:
+        return flowRelativeDirectionToMarginTrimType(physicalToFlowRelativeDirection(renderer, PhysicalDirection::Bottom));
+    case CSSPropertyMarginLeft:
+        return flowRelativeDirectionToMarginTrimType(physicalToFlowRelativeDirection(renderer, PhysicalDirection::Left));
+    default:
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+}
+
+enum class PropertyType : bool { Padding, Margin };
+static CSSPropertyID toPaddingOrMarginPropertyID(FlowRelativeDirection direction, const RenderBox& renderer, PropertyType type)
+{
+    switch (flowRelativeToPhysicalDirection(renderer, direction)) {
+    case PhysicalDirection::Top:
+        return type == PropertyType::Padding ? CSSPropertyPaddingTop : CSSPropertyMarginTop;
+    case PhysicalDirection::Right:
+        return type == PropertyType::Padding ? CSSPropertyPaddingRight : CSSPropertyMarginRight;
+    case PhysicalDirection::Bottom:
+        return type == PropertyType::Padding ? CSSPropertyPaddingBottom : CSSPropertyMarginBottom;
+    case PhysicalDirection::Left:
+        return type == PropertyType::Padding ? CSSPropertyPaddingLeft : CSSPropertyMarginLeft;
+    default:
+        ASSERT_NOT_REACHED();
+        return { };
     }
     return false;
 }
@@ -2453,7 +2583,7 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style
             || (rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), { }));
     }
     case CSSPropertyMarginTop:
-        return paddingOrMarginIsRendererDependent<&RenderStyle::marginTop>(style, renderer) || (is<RenderBox>(renderer) && (rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), MarginTrimType::BlockStart)));
+        return paddingOrMarginIsRendererDependent<&RenderStyle::marginTop>(style, renderer) || (is<RenderBox>(renderer) && rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), MarginTrimType::BlockStart));
     case CSSPropertyMarginRight:
         return paddingOrMarginIsRendererDependent<&RenderStyle::marginRight>(style, renderer) || ((is<RenderBox>(renderer)) && rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), MarginTrimType::InlineEnd));
     case CSSPropertyMarginBottom:
