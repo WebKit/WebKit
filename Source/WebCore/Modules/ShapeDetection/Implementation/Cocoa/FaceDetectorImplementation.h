@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)
+
 #include "FaceDetectorInterface.h"
 
 namespace WebCore::ShapeDetection {
@@ -50,6 +52,10 @@ private:
     FaceDetectorImpl& operator=(FaceDetectorImpl&&) = delete;
 
     void detect(Ref<ImageBuffer>&&, CompletionHandler<void(Vector<DetectedFace>&&)>&&) final;
+
+    uint16_t m_maxDetectedFaces { std::numeric_limits<uint16_t>::max() };
 };
 
 } // namespace WebCore::ShapeDetection
+
+#endif // HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)

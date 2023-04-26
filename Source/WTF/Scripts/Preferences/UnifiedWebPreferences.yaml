@@ -5668,7 +5668,8 @@ ServiceWorkersUserGestureEnabled:
 
 ShapeDetection:
   type: bool
-  status: unstable
+  category: media
+  status: testable
   humanReadableName: "Shape Detection API"
   humanReadableDescription: "Enable the Shape Detection API"
   defaultValue:

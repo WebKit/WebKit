@@ -23,23 +23,91 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "FaceDetectorImplementation.h"
+#import "config.h"
+#import "FaceDetectorImplementation.h"
 
-#include "DetectedFaceInterface.h"
-#include "LandmarkInterface.h"
+#if HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)
+
+#import "DetectedFaceInterface.h"
+#import "FaceDetectorOptionsInterface.h"
+#import "ImageBuffer.h"
+#import "LandmarkInterface.h"
+#import "NativeImage.h"
+#import "VisionUtilities.h"
+#import <Vision/Vision.h>
 
 namespace WebCore::ShapeDetection {
 
-FaceDetectorImpl::FaceDetectorImpl(const FaceDetectorOptions&)
+FaceDetectorImpl::FaceDetectorImpl(const FaceDetectorOptions& faceDetectorOptions)
+    : m_maxDetectedFaces(faceDetectorOptions.maxDetectedFaces)
 {
 }
 
 FaceDetectorImpl::~FaceDetectorImpl() = default;
 
-void FaceDetectorImpl::detect(Ref<ImageBuffer>&&, CompletionHandler<void(Vector<DetectedFace>&&)>&& completionHandler)
+static Vector<FloatPoint> convertLandmark(VNFaceLandmarkRegion2D *landmark, const FloatSize& imageSize)
 {
-    completionHandler({ });
+    return Vector { [landmark pointsInImageOfSize:imageSize], landmark.pointCount }.map([&imageSize](const CGPoint& point) {
+        return convertPointFromUnnormalizedVisionToWeb(imageSize, point);
+    });
+}
+
+static Vector<Landmark> convertLandmarks(VNFaceLandmarks2D *landmarks, const FloatSize& imageSize)
+{
+    return {
+        {
+            convertLandmark(landmarks.leftEye, imageSize),
+            WebCore::ShapeDetection::LandmarkType::Eye,
+        }, {
+            convertLandmark(landmarks.rightEye, imageSize),
+            WebCore::ShapeDetection::LandmarkType::Eye,
+        }, {
+            convertLandmark(landmarks.nose, imageSize),
+            WebCore::ShapeDetection::LandmarkType::Nose,
+        },
+    };
+}
+
+void FaceDetectorImpl::detect(Ref<ImageBuffer>&& imageBuffer, CompletionHandler<void(Vector<DetectedFace>&&)>&& completionHandler)
+{
+    auto nativeImage = imageBuffer->copyNativeImage();
+    if (!nativeImage) {
+        completionHandler({ });
+        return;
+    }
+
+    auto platformImage = nativeImage->platformImage();
+    if (!platformImage) {
+        completionHandler({ });
+        return;
+    }
+
+    auto request = adoptNS([VNDetectFaceLandmarksRequest new]);
+    configureRequestToUseCPUOrGPU(request.get());
+
+    auto imageRequestHandler = adoptNS([[VNImageRequestHandler alloc] initWithCGImage:platformImage.get() options:@{ }]);
+
+    NSError *error = nil;
+    auto result = [imageRequestHandler performRequests:@[request.get()] error:&error];
+    if (!result || error) {
+        completionHandler({ });
+        return;
+    }
+
+    Vector<DetectedFace> results;
+    results.reserveInitialCapacity(std::min<size_t>(m_maxDetectedFaces, request.get().results.count));
+    for (VNFaceObservation *observation in request.get().results) {
+        results.uncheckedAppend({
+            convertRectFromVisionToWeb(nativeImage->size(), observation.boundingBox),
+            { convertLandmarks(observation.landmarks, nativeImage->size()) },
+        });
+        if (results.size() >= m_maxDetectedFaces)
+            break;
+    }
+
+    completionHandler(WTFMove(results));
 }
 
 } // namespace WebCore::ShapeDetection
+
+#endif // HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)

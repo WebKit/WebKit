@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)
+
 #include "TextDetectorInterface.h"
 
 namespace WebCore::ShapeDetection {
@@ -51,3 +53,5 @@ private:
 };
 
 } // namespace WebCore::ShapeDetection
+
+#endif // HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)
