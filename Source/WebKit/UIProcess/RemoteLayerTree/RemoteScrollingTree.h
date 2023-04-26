@@ -74,6 +74,9 @@ public:
 
     void tryToApplyLayerPositions();
 
+    virtual void beginTransactionOnScrollingThread() { }
+    virtual void commitTransactionOnScrollingThread() { }
+
 protected:
     explicit RemoteScrollingTree(RemoteScrollingCoordinatorProxy&);
 
@@ -100,6 +103,23 @@ public:
     ~RemoteLayerTreeHitTestLocker()
     {
         m_scrollingTree->unlockLayersForHitTesting();
+    }
+
+private:
+    Ref<RemoteScrollingTree> m_scrollingTree;
+};
+
+class RemoteScrollingTreeTransactionHolder {
+public:
+    RemoteScrollingTreeTransactionHolder(RemoteScrollingTree& scrollingTree)
+        : m_scrollingTree(scrollingTree)
+    {
+        m_scrollingTree->beginTransactionOnScrollingThread();
+    }
+
+    ~RemoteScrollingTreeTransactionHolder()
+    {
+        m_scrollingTree->commitTransactionOnScrollingThread();
     }
 
 private:
