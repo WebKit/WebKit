@@ -4528,8 +4528,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     m_useSceneKitForModel = store.getBoolValueForKey(WebPreferencesKey::useSceneKitForModelKey());
 #endif
 
-    if (settings.showMediaStatsContextMenuItemEnabled())
+    if (settings.developerExtrasEnabled()) {
+        settings.setShowMediaStatsContextMenuItemEnabled(true);
         settings.setTrackConfigurationEnabled(true);
+    }
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebPageUpdatePreferencesAdditions.cpp>
