@@ -2295,13 +2295,17 @@ static bool rendererCanHaveTrimmedMargin(const RenderBox& renderer, MarginTrimTy
     if (!containingBlock || containingBlock->isRenderView())
         return false;
 
-    // containingBlock->isBlockContainer() can return true even if the item is in a RenderFlexibleBox
-    // (e.g. buttons) so we should explicitly check that the item is not a flex item to catch block containers here
-    if (!renderer.isFlexItem() && containingBlock->isBlockContainer())
-        return false;
-
     if (containingBlock->isFlexibleBox() || containingBlock->isRenderGrid())
         return containingBlock->style().marginTrim().contains(marginTrimType);
+    // Even though margin-trim is not inherited, it is possible for nested block level boxes
+    // to get placed at the block-start of an containing block ancestor which does have margin-trim.
+    // In this case it is not enough to simply check the immediate containing block of the child. It is
+    // also probably too expensive to perform an arbitrary walk up the tree to check for the existence
+    // of an ancestor containing block with the property, so we will just return true and let
+    // the rest of the logic in RenderBox::hasTrimmedMargin to determine if the rare data bit
+    // were set at some point during layout
+    if (containingBlock->isBlockContainer() && containingBlock->isHorizontalWritingMode() && renderer.isBlockLevelBox() && marginTrimType == MarginTrimType::BlockEnd)
+        return true;
     return false;
 }
 
@@ -2478,7 +2482,7 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style
             return isLayoutDependent(toPaddingOrMarginPropertyID(FlowRelativeDirection::InlineEnd, *renderBox, PropertyType::Margin), style, renderBox);
         return false;
     case CSSPropertyMarginTop:
-        return paddingOrMarginIsRendererDependent<&RenderStyle::marginTop>(style, renderer) || (is<RenderBox>(renderer) && (rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), MarginTrimType::BlockStart)));
+        return paddingOrMarginIsRendererDependent<&RenderStyle::marginTop>(style, renderer) || (is<RenderBox>(renderer) && rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), MarginTrimType::BlockStart));
     case CSSPropertyMarginRight:
         return paddingOrMarginIsRendererDependent<&RenderStyle::marginRight>(style, renderer) || ((is<RenderBox>(renderer)) && rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), MarginTrimType::InlineEnd));
     case CSSPropertyMarginBottom:
