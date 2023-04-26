@@ -26,13 +26,13 @@
 #import "config.h"
 #import "TextDetectorImplementation.h"
 
-#if HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)
+#if HAVE(SHAPE_DETECTION_API_IMPLEMENTATION) && HAVE(VISION)
 
 #import "DetectedTextInterface.h"
 #import "ImageBuffer.h"
 #import "NativeImage.h"
 #import "VisionUtilities.h"
-#import <Vision/Vision.h>
+#import <pal/cocoa/VisionSoftLink.h>
 
 namespace WebCore::ShapeDetection {
 
@@ -54,10 +54,10 @@ void TextDetectorImpl::detect(Ref<ImageBuffer>&& imageBuffer, CompletionHandler<
         return;
     }
 
-    auto request = adoptNS([VNRecognizeTextRequest new]);
+    auto request = adoptNS([PAL::allocVNRecognizeTextRequestInstance() init]);
     configureRequestToUseCPUOrGPU(request.get());
 
-    auto imageRequestHandler = adoptNS([[VNImageRequestHandler alloc] initWithCGImage:platformImage.get() options:@{ }]);
+    auto imageRequestHandler = adoptNS([PAL::allocVNImageRequestHandlerInstance() initWithCGImage:platformImage.get() options:@{ }]);
 
     NSError *error = nil;
     auto result = [imageRequestHandler performRequests:@[request.get()] error:&error];
@@ -81,4 +81,4 @@ void TextDetectorImpl::detect(Ref<ImageBuffer>&& imageBuffer, CompletionHandler<
 
 } // namespace WebCore::ShapeDetection
 
-#endif // HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)
+#endif // HAVE(SHAPE_DETECTION_API_IMPLEMENTATION) && HAVE(VISION)

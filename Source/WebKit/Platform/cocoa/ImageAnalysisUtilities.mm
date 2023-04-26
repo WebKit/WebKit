@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -410,7 +410,7 @@ void requestPayloadForQRCode(CGImageRef image, CompletionHandler<void(NSString *
         }
 
         for (VNBarcodeObservation *result in request.results) {
-            if (![result.symbology isEqualToString:VNBarcodeSymbologyQR])
+            if (![result.symbology isEqualToString:PAL::get_Vision_VNBarcodeSymbologyQR()])
                 continue;
 
             completion(result.payloadStringValue);
@@ -421,7 +421,7 @@ void requestPayloadForQRCode(CGImageRef image, CompletionHandler<void(NSString *
     });
 
     auto request = adoptNS([PAL::allocVNDetectBarcodesRequestInstance() initWithCompletionHandler:completionHandler.get()]);
-    [request setSymbologies:@[ VNBarcodeSymbologyQR ]];
+    [request setSymbologies:@[ PAL::get_Vision_VNBarcodeSymbologyQR() ]];
 
     NSError *error = nil;
     auto handler = adoptNS([PAL::allocVNImageRequestHandlerInstance() initWithCGImage:adjustedImage.get() options:@{ }]);

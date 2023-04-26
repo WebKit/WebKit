@@ -26,13 +26,13 @@
 #import "config.h"
 #import "VisionUtilities.h"
 
-#if HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)
+#if HAVE(SHAPE_DETECTION_API_IMPLEMENTATION) && HAVE(VISION)
 
 #import "FloatPoint.h"
 #import "FloatRect.h"
 #import "FloatSize.h"
 #import <CoreML/CoreML.h>
-#import <Vision/Vision.h>
+#import <pal/cocoa/VisionSoftLink.h>
 
 namespace WebCore::ShapeDetection {
 
@@ -100,4 +100,4 @@ void configureRequestToUseCPUOrGPU(VNRequest *request)
 
 } // namespace WebCore::ShapeDetection
 
-#endif // HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)
+#endif // HAVE(SHAPE_DETECTION_API_IMPLEMENTATION) && HAVE(VISION)

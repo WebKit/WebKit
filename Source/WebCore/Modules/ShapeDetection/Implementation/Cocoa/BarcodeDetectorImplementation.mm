@@ -26,7 +26,7 @@
 #import "config.h"
 #import "BarcodeDetectorImplementation.h"
 
-#if HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)
+#if HAVE(SHAPE_DETECTION_API_IMPLEMENTATION) && HAVE(VISION)
 
 #import "BarcodeDetectorOptionsInterface.h"
 #import "BarcodeFormatInterface.h"
@@ -34,59 +34,59 @@
 #import "ImageBuffer.h"
 #import "NativeImage.h"
 #import "VisionUtilities.h"
-#import <Vision/Vision.h>
 #import <optional>
+#import <pal/cocoa/VisionSoftLink.h>
 #import <wtf/RetainPtr.h>
 
 namespace WebCore::ShapeDetection {
 
 static BarcodeFormat convertSymbology(VNBarcodeSymbology symbology)
 {
-    if ([symbology isEqual:VNBarcodeSymbologyAztec])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyAztec()])
         return BarcodeFormat::Aztec;
-    if ([symbology isEqual:VNBarcodeSymbologyCodabar])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyCodabar()])
         return BarcodeFormat::Codabar;
-    if ([symbology isEqual:VNBarcodeSymbologyCode39])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyCode39()])
         return BarcodeFormat::Code_39;
-    if ([symbology isEqual:VNBarcodeSymbologyCode39Checksum])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyCode39Checksum()])
         return BarcodeFormat::Code_39;
-    if ([symbology isEqual:VNBarcodeSymbologyCode39FullASCII])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyCode39FullASCII()])
         return BarcodeFormat::Code_39;
-    if ([symbology isEqual:VNBarcodeSymbologyCode39FullASCIIChecksum])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyCode39FullASCIIChecksum()])
         return BarcodeFormat::Code_39;
-    if ([symbology isEqual:VNBarcodeSymbologyCode93])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyCode93()])
         return BarcodeFormat::Code_93;
-    if ([symbology isEqual:VNBarcodeSymbologyCode93i])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyCode93i()])
         return BarcodeFormat::Code_93;
-    if ([symbology isEqual:VNBarcodeSymbologyCode128])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyCode128()])
         return BarcodeFormat::Code_128;
-    if ([symbology isEqual:VNBarcodeSymbologyDataMatrix])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyDataMatrix()])
         return BarcodeFormat::Data_matrix;
-    if ([symbology isEqual:VNBarcodeSymbologyEAN8])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyEAN8()])
         return BarcodeFormat::Ean_8;
-    if ([symbology isEqual:VNBarcodeSymbologyEAN13])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyEAN13()])
         return BarcodeFormat::Ean_13;
-    if ([symbology isEqual:VNBarcodeSymbologyGS1DataBar])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyGS1DataBar()])
         return BarcodeFormat::Unknown;
-    if ([symbology isEqual:VNBarcodeSymbologyGS1DataBarExpanded])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyGS1DataBarExpanded()])
         return BarcodeFormat::Unknown;
-    if ([symbology isEqual:VNBarcodeSymbologyGS1DataBarLimited])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyGS1DataBarLimited()])
         return BarcodeFormat::Unknown;
-    if ([symbology isEqual:VNBarcodeSymbologyI2of5])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyI2of5()])
         return BarcodeFormat::Itf;
-    if ([symbology isEqual:VNBarcodeSymbologyI2of5Checksum])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyI2of5Checksum()])
         return BarcodeFormat::Itf;
-    if ([symbology isEqual:VNBarcodeSymbologyITF14])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyITF14()])
         return BarcodeFormat::Itf;
-    if ([symbology isEqual:VNBarcodeSymbologyMicroPDF417])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyMicroPDF417()])
         return BarcodeFormat::Pdf417;
-    if ([symbology isEqual:VNBarcodeSymbologyMicroQR])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyMicroQR()])
         return BarcodeFormat::Qr_code;
-    if ([symbology isEqual:VNBarcodeSymbologyPDF417])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyPDF417()])
         return BarcodeFormat::Pdf417;
-    if ([symbology isEqual:VNBarcodeSymbologyQR])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyQR()])
         return BarcodeFormat::Qr_code;
-    if ([symbology isEqual:VNBarcodeSymbologyUPCE])
+    if ([symbology isEqual:PAL::get_Vision_VNBarcodeSymbologyUPCE()])
         return BarcodeFormat::Upc_e;
     return BarcodeFormat::Unknown;
 }
@@ -95,33 +95,33 @@ static Vector<VNBarcodeSymbology> convertBarcodeFormat(BarcodeFormat barcodeForm
 {
     switch (barcodeFormat) {
     case BarcodeFormat::Aztec:
-        return { VNBarcodeSymbologyAztec };
+        return { PAL::get_Vision_VNBarcodeSymbologyAztec() };
     case BarcodeFormat::Code_128:
-        return { VNBarcodeSymbologyCode128 };
+        return { PAL::get_Vision_VNBarcodeSymbologyCode128() };
     case BarcodeFormat::Code_39:
-        return { VNBarcodeSymbologyCode39, VNBarcodeSymbologyCode39Checksum, VNBarcodeSymbologyCode39FullASCII, VNBarcodeSymbologyCode39FullASCIIChecksum };
+        return { PAL::get_Vision_VNBarcodeSymbologyCode39(), PAL::get_Vision_VNBarcodeSymbologyCode39Checksum(), PAL::get_Vision_VNBarcodeSymbologyCode39FullASCII(), PAL::get_Vision_VNBarcodeSymbologyCode39FullASCIIChecksum() };
     case BarcodeFormat::Code_93:
-        return { VNBarcodeSymbologyCode93, VNBarcodeSymbologyCode93i };
+        return { PAL::get_Vision_VNBarcodeSymbologyCode93(), PAL::get_Vision_VNBarcodeSymbologyCode93i() };
     case BarcodeFormat::Codabar:
-        return { VNBarcodeSymbologyCodabar };
+        return { PAL::get_Vision_VNBarcodeSymbologyCodabar() };
     case BarcodeFormat::Data_matrix:
-        return { VNBarcodeSymbologyDataMatrix };
+        return { PAL::get_Vision_VNBarcodeSymbologyDataMatrix() };
     case BarcodeFormat::Ean_13:
-        return { VNBarcodeSymbologyEAN13 };
+        return { PAL::get_Vision_VNBarcodeSymbologyEAN13() };
     case BarcodeFormat::Ean_8:
-        return { VNBarcodeSymbologyEAN8 };
+        return { PAL::get_Vision_VNBarcodeSymbologyEAN8() };
     case BarcodeFormat::Itf:
-        return { VNBarcodeSymbologyI2of5, VNBarcodeSymbologyI2of5Checksum, VNBarcodeSymbologyITF14 };
+        return { PAL::get_Vision_VNBarcodeSymbologyI2of5(), PAL::get_Vision_VNBarcodeSymbologyI2of5Checksum(), PAL::get_Vision_VNBarcodeSymbologyITF14() };
     case BarcodeFormat::Pdf417:
-        return { VNBarcodeSymbologyMicroPDF417, VNBarcodeSymbologyPDF417 };
+        return { PAL::get_Vision_VNBarcodeSymbologyMicroPDF417(), PAL::get_Vision_VNBarcodeSymbologyPDF417() };
     case BarcodeFormat::Qr_code:
-        return { VNBarcodeSymbologyMicroQR, VNBarcodeSymbologyQR };
+        return { PAL::get_Vision_VNBarcodeSymbologyMicroQR(), PAL::get_Vision_VNBarcodeSymbologyQR() };
     case BarcodeFormat::Unknown:
-        return { VNBarcodeSymbologyGS1DataBar, VNBarcodeSymbologyGS1DataBarExpanded, VNBarcodeSymbologyGS1DataBarLimited };
+        return { PAL::get_Vision_VNBarcodeSymbologyGS1DataBar(), PAL::get_Vision_VNBarcodeSymbologyGS1DataBarExpanded(), PAL::get_Vision_VNBarcodeSymbologyGS1DataBarLimited() };
     case BarcodeFormat::Upc_a:
         return { };
     case BarcodeFormat::Upc_e:
-        return { VNBarcodeSymbologyUPCE };
+        return { PAL::get_Vision_VNBarcodeSymbologyUPCE() };
     }
 }
 
@@ -149,7 +149,7 @@ static RetainPtr<VNDetectBarcodesRequest> request()
     // configured the same way. This function is intended to make sure both VNDetectBarcodesRequests are
     // configured accordingly.
 
-    auto result = adoptNS([VNDetectBarcodesRequest new]);
+    auto result = adoptNS([PAL::allocVNDetectBarcodesRequestInstance() init]);
     configureRequestToUseCPUOrGPU(result.get());
     return result;
 }
@@ -199,7 +199,7 @@ void BarcodeDetectorImpl::detect(Ref<ImageBuffer>&& imageBuffer, CompletionHandl
         request.get().symbologies = requestedSymbologies.allObjects;
     }
 
-    auto imageRequestHandler = adoptNS([[VNImageRequestHandler alloc] initWithCGImage:platformImage.get() options:@{ }]);
+    auto imageRequestHandler = adoptNS([PAL::allocVNImageRequestHandlerInstance() initWithCGImage:platformImage.get() options:@{ }]);
 
     NSError *error = nil;
     auto result = [imageRequestHandler performRequests:@[request.get()] error:&error];
@@ -224,4 +224,4 @@ void BarcodeDetectorImpl::detect(Ref<ImageBuffer>&& imageBuffer, CompletionHandl
 
 } // namespace WebCore::ShapeDetection
 
-#endif // HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)
+#endif // HAVE(SHAPE_DETECTION_API_IMPLEMENTATION) && HAVE(VISION)

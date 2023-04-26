@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)
+#if HAVE(SHAPE_DETECTION_API_IMPLEMENTATION) && HAVE(VISION)
 
 #include "FaceDetectorInterface.h"
 
@@ -58,4 +58,4 @@ private:
 
 } // namespace WebCore::ShapeDetection
 
-#endif // HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)
+#endif // HAVE(SHAPE_DETECTION_API_IMPLEMENTATION) && HAVE(VISION)

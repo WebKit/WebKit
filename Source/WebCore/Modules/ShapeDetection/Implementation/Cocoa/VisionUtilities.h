@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)
+#if HAVE(SHAPE_DETECTION_API_IMPLEMENTATION) && HAVE(VISION)
 
 #import <wtf/Vector.h>
 
@@ -55,4 +55,4 @@ void configureRequestToUseCPUOrGPU(VNRequest *);
 
 } // namespace WebCore::ShapeDetection
 
-#endif // HAVE(SHAPE_DETECTION_API_IMPLEMENTATION)
+#endif // HAVE(SHAPE_DETECTION_API_IMPLEMENTATION) && HAVE(VISION)
