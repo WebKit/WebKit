@@ -40,6 +40,63 @@
 #include "VideoEncoderPrivateGStreamer.h"
 #endif
 
+namespace {
+struct VideoDecodingLimits {
+    unsigned mediaMaxWidth = 0;
+    unsigned mediaMaxHeight = 0;
+    unsigned mediaMaxFrameRate = 0;
+    VideoDecodingLimits(unsigned mediaMaxWidth, unsigned mediaMaxHeight, unsigned mediaMaxFrameRate)
+        : mediaMaxWidth(mediaMaxWidth)
+        , mediaMaxHeight(mediaMaxHeight)
+        , mediaMaxFrameRate(mediaMaxFrameRate)
+    {
+    }
+};
+}
+
+#ifdef VIDEO_DECODING_LIMIT
+static std::optional<VideoDecodingLimits> videoDecoderLimitsDefaults()
+{
+    // VIDEO_DECODING_LIMIT should be in format: WIDTHxHEIGHT@FRAMERATE.
+    String videoDecodingLimit(String::fromUTF8(VIDEO_DECODING_LIMIT));
+
+    if (videoDecodingLimit.isEmpty())
+        return { };
+
+    Vector<String> entries;
+
+    // Extract frame rate part from the VIDEO_DECODING_LIMIT: WIDTHxHEIGHT@FRAMERATE.
+    videoDecodingLimit.split('@', [&entries](StringView item) {
+        entries.append(item.toString());
+    });
+
+    if (entries.size() != 2)
+        return { };
+
+    auto frameRate = parseIntegerAllowingTrailingJunk<unsigned>(entries[1]);
+
+    if (!frameRate.has_value())
+        return { };
+
+    const auto widthAndHeight = entries[0].split('x');
+
+    if (widthAndHeight.size() != 2)
+        return { };
+
+    const auto width = parseIntegerAllowingTrailingJunk<unsigned>(widthAndHeight[0]);
+
+    if (!width.has_value())
+        return { };
+
+    const auto height = parseIntegerAllowingTrailingJunk<unsigned>(widthAndHeight[1]);
+
+    if (!height.has_value())
+        return { };
+
+    return { VideoDecodingLimits(width.value(), height.value(), frameRate.value()) };
+}
+#endif
+
 namespace WebCore {
 
 GST_DEBUG_CATEGORY_STATIC(webkit_media_gst_registry_scanner_debug);
@@ -48,11 +105,6 @@ GST_DEBUG_CATEGORY_STATIC(webkit_media_gst_registry_scanner_debug);
 // We shouldn't accept media that the player can't actually play.
 // AAC supports up to 96 channels.
 #define MEDIA_MAX_AAC_CHANNELS 96
-
-// Assume hardware video decoding acceleration up to 8K@60fps for the generic case. Some embedded platforms might want to tune this.
-#define MEDIA_MAX_WIDTH 7680.0f
-#define MEDIA_MAX_HEIGHT 4320.0f
-#define MEDIA_MAX_FRAMERATE 60.0f
 
 static bool singletonInitialized = false;
 
@@ -651,6 +703,21 @@ bool GStreamerRegistryScanner::supportsFeatures(const String& features) const
 
 MediaPlayerEnums::SupportsType GStreamerRegistryScanner::isContentTypeSupported(Configuration configuration, const ContentType& contentType, const Vector<ContentType>& contentTypesRequiringHardwareSupport) const
 {
+    static std::optional<VideoDecodingLimits> videoDecodingLimits;
+#ifdef VIDEO_DECODING_LIMIT
+    static std::once_flag onceFlag;
+    if (configuration == Configuration::Decoding) {
+        std::call_once(onceFlag, [] {
+            videoDecodingLimits = videoDecoderLimitsDefaults();
+            if (!videoDecodingLimits) {
+                GST_WARNING("Parsing VIDEO_DECODING_LIMIT failed");
+                ASSERT_NOT_REACHED();
+                return;
+            }
+        });
+    }
+#endif
+
     using SupportsType = MediaPlayerEnums::SupportsType;
 
     const auto& containerType = contentType.containerType().convertToASCIILowercase();
@@ -660,10 +727,23 @@ MediaPlayerEnums::SupportsType GStreamerRegistryScanner::isContentTypeSupported(
     int channels = parseInteger<int>(contentType.parameter("channels"_s)).value_or(1);
     String features = contentType.parameter("features"_s);
     if (channels > MEDIA_MAX_AAC_CHANNELS || channels <= 0
-        || !(features.isEmpty() || supportsFeatures(features))
-        || parseInteger<unsigned>(contentType.parameter("width"_s)).value_or(0) > MEDIA_MAX_WIDTH
-        || parseInteger<unsigned>(contentType.parameter("height"_s)).value_or(0) > MEDIA_MAX_HEIGHT
-        || parseInteger<unsigned>(contentType.parameter("framerate"_s)).value_or(0) > MEDIA_MAX_FRAMERATE)
+        || !(features.isEmpty() || supportsFeatures(features)))
+        return SupportsType::IsNotSupported;
+
+    bool ok;
+    float width = contentType.parameter("width"_s).toFloat(&ok);
+    if (!ok)
+        width = 0;
+    float height = contentType.parameter("height"_s).toFloat(&ok);
+    if (!ok)
+        height = 0;
+
+    if (videoDecodingLimits && (width > videoDecodingLimits->mediaMaxWidth || height > videoDecodingLimits->mediaMaxHeight))
+        return SupportsType::IsNotSupported;
+
+    float frameRate = contentType.parameter("framerate"_s).toFloat(&ok);
+    // Limit frameRate only in case of highest supported resolution.
+    if (ok && videoDecodingLimits && width == videoDecodingLimits->mediaMaxWidth && height == videoDecodingLimits->mediaMaxHeight && frameRate > videoDecodingLimits->mediaMaxFrameRate)
         return SupportsType::IsNotSupported;
 
     const auto& codecs = contentType.codecs();
