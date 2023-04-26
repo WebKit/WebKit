@@ -222,10 +222,12 @@ void RemoteScrollingTree::propagateSynchronousScrollingReasons(const HashSet<Scr
 
 void RemoteScrollingTree::tryToApplyLayerPositions()
 {
+    ASSERT(!isMainRunLoop());
     Locker locker { m_treeLock };
     if (m_hasNodesWithSynchronousScrollingReasons)
         return;
 
+    auto transaction = RemoteScrollingTreeTransactionHolder { *this };
     applyLayerPositionsInternal();
 }
 
