@@ -1713,11 +1713,11 @@ void NetworkProcessProxy::createSymLinkForFileUpgrade(const String& indexedDatab
         FileSystem::createSymbolicLink(indexedDatabaseDirectory, oldVersionDirectory);
 }
 
-void NetworkProcessProxy::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, const URL& url, const String& userAgent, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, LastNavigationWasAppInitiated lastNavigationWasAppInitiated)
+void NetworkProcessProxy::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::ResourceRequest&& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
-    if (!url.isValid() || !url.protocolIsInHTTPFamily())
+    if (!request.url().isValid() || !request.url().protocolIsInHTTPFamily())
         return;
-    send(Messages::NetworkProcess::PreconnectTo(sessionID, webPageProxyID, webPageID, url, userAgent, storedCredentialsPolicy, isNavigatingToAppBoundDomain, lastNavigationWasAppInitiated), 0);
+    send(Messages::NetworkProcess::PreconnectTo(sessionID, webPageProxyID, webPageID, WTFMove(request), storedCredentialsPolicy, isNavigatingToAppBoundDomain), 0);
 }
 
 static bool anyProcessPoolHasForegroundWebProcesses()

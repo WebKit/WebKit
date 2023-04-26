@@ -2038,7 +2038,7 @@ public:
 
     WebPopupMenuProxy* activePopupMenu() const { return m_activePopupMenu.get(); }
 
-    void preconnectTo(const URL&, const String& userAgent);
+    void preconnectTo(WebCore::ResourceRequest&&);
 
     bool canUseCredentialStorage() { return m_canUseCredentialStorage; }
     void setCanUseCredentialStorage(bool);

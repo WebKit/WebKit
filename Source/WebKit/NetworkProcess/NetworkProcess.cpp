@@ -1439,8 +1439,11 @@ void NetworkProcess::setBlobRegistryTopOriginPartitioningEnabled(PAL::SessionID 
         session->setBlobRegistryTopOriginPartitioningEnabled(enabled);
 }
 
-void NetworkProcess::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, const URL& url, const String& userAgent, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, LastNavigationWasAppInitiated lastNavigationWasAppInitiated)
+void NetworkProcess::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::ResourceRequest&& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
+    auto url = request.url();
+    auto userAgent = request.httpUserAgent();
+
     LOG(Network, "(NetworkProcess) Preconnecting to URL %s (storedCredentialsPolicy %i)", url.string().utf8().data(), (int)storedCredentialsPolicy);
 
 #if ENABLE(SERVER_PRECONNECT)
@@ -1454,18 +1457,10 @@ void NetworkProcess::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifi
         return;
 
     NetworkLoadParameters parameters;
-    parameters.request = ResourceRequest { url };
-    parameters.request.setIsAppInitiated(lastNavigationWasAppInitiated == LastNavigationWasAppInitiated::Yes);
-    parameters.request.setFirstPartyForCookies(url);
-    parameters.request.setPriority(WebCore::ResourceLoadPriority::VeryHigh);
+    parameters.request = WTFMove(request);
     parameters.webPageProxyID = webPageProxyID;
     parameters.webPageID = webPageID;
     parameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
-    if (!userAgent.isEmpty()) {
-        // FIXME: we add user-agent to the preconnect request because otherwise the preconnect
-        // gets thrown away by CFNetwork when using an HTTPS proxy (<rdar://problem/59434166>).
-        parameters.request.setHTTPUserAgent(userAgent);
-    }
     parameters.storedCredentialsPolicy = storedCredentialsPolicy;
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
 

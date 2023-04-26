@@ -1613,7 +1613,7 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     prepareToLoadWebPage(process, loadParameters);
 
     if (shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::No)
-        preconnectTo(url, predictedUserAgentForRequest(loadParameters.request));
+        preconnectTo(ResourceRequest { loadParameters.request });
 
     navigation.setIsLoadedWithNavigationShared(true);
 
@@ -5202,14 +5202,23 @@ void WebPageProxy::updateRemoteFrameSize(WebCore::FrameIdentifier frameID, WebCo
     subframePageProxy->send(Messages::WebPage::UpdateFrameSize(frameID, size));
 }
 
-void WebPageProxy::preconnectTo(const URL& url, const String& userAgent)
+void WebPageProxy::preconnectTo(ResourceRequest&& request)
 {
     if (!m_websiteDataStore->configuration().allowsServerPreconnect())
         return;
 
     auto storedCredentialsPolicy = m_canUseCredentialStorage ? WebCore::StoredCredentialsPolicy::Use : WebCore::StoredCredentialsPolicy::DoNotUse;
-
-    websiteDataStore().networkProcess().preconnectTo(sessionID(), identifier(), webPageID(), url, userAgent, storedCredentialsPolicy, isNavigatingToAppBoundDomain(), m_lastNavigationWasAppInitiated ? LastNavigationWasAppInitiated::Yes : LastNavigationWasAppInitiated::No);
+    request.setIsAppInitiated(m_lastNavigationWasAppInitiated);
+    if (request.httpUserAgent().isEmpty()) {
+        if (auto userAgent = predictedUserAgentForRequest(request); !userAgent.isEmpty()) {
+            // FIXME: we add user-agent to the preconnect request because otherwise the preconnect
+            // gets thrown away by CFNetwork when using an HTTPS proxy (<rdar://problem/59434166>).
+            request.setHTTPUserAgent(WTFMove(userAgent));
+        }
+    }
+    request.setFirstPartyForCookies(request.url());
+    request.setPriority(ResourceLoadPriority::VeryHigh);
+    websiteDataStore().networkProcess().preconnectTo(sessionID(), identifier(), webPageID(), WTFMove(request), storedCredentialsPolicy, isNavigatingToAppBoundDomain());
 }
 
 void WebPageProxy::setCanUseCredentialStorage(bool canUseCredentialStorage)
