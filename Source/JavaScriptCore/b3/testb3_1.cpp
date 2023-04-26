@@ -936,6 +936,8 @@ int main(int argc, char** argv)
                 usage();
         } else if (!strcmp(argv[i], "-list"))
             config.mode = TestConfig::Mode::ListTests;
+        else if (!strcmp(argv[i], "-printir"))
+            g_dumpB3AfterGeneration = true;
         else {
             // for backwards compatibility
             config.filter = argv[i];

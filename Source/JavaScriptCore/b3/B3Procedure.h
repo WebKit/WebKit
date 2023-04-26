@@ -281,7 +281,7 @@ public:
     JS_EXPORT_PRIVATE void freeUnneededB3ValuesAfterLowering();
 
     bool shouldDumpIR() const { return m_shouldDumpIR; }
-    void setShouldDumpIR();
+    JS_EXPORT_PRIVATE void setShouldDumpIR();
 
     void setUsessSIMD()
     { 

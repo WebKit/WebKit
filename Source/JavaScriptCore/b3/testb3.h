@@ -192,9 +192,13 @@ extern Lock crashLock;
     }
 
 
+inline bool g_dumpB3AfterGeneration = false;
+
 inline std::unique_ptr<Compilation> compileProc(Procedure& procedure, unsigned optLevel = Options::defaultB3OptLevel())
 {
     procedure.setOptLevel(optLevel);
+    if (g_dumpB3AfterGeneration)
+        procedure.setShouldDumpIR();
     return makeUnique<Compilation>(B3::compile(procedure));
 }
 
