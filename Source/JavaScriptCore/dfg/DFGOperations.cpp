@@ -75,6 +75,7 @@
 #include "ObjectPrototypeInlines.h"
 #include "Operations.h"
 #include "ParseInt.h"
+#include "ReflectObject.h"
 #include "RegExpGlobalDataInlines.h"
 #include "RegExpMatchesArray.h"
 #include "RegExpObjectInlines.h"
@@ -260,7 +261,7 @@ JSC_DEFINE_JIT_OPERATION(operationObjectKeys, JSArray*, (JSGlobalObject* globalO
     JSObject* object = JSValue::decode(encodedObject).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
     scope.release();
-    return ownPropertyKeys(globalObject, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Exclude, CachedPropertyNamesKind::Keys);
+    return ownPropertyKeys(globalObject, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Exclude);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationObjectKeysObject, JSArray*, (JSGlobalObject* globalObject, JSObject* object))
@@ -268,7 +269,7 @@ JSC_DEFINE_JIT_OPERATION(operationObjectKeysObject, JSArray*, (JSGlobalObject* g
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return ownPropertyKeys(globalObject, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Exclude, CachedPropertyNamesKind::Keys);
+    return ownPropertyKeys(globalObject, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Exclude);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationObjectGetOwnPropertyNames, JSArray*, (JSGlobalObject* globalObject, EncodedJSValue encodedObject))
@@ -281,7 +282,7 @@ JSC_DEFINE_JIT_OPERATION(operationObjectGetOwnPropertyNames, JSArray*, (JSGlobal
     JSObject* object = JSValue::decode(encodedObject).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
     scope.release();
-    return ownPropertyKeys(globalObject, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Include, CachedPropertyNamesKind::GetOwnPropertyNames);
+    return ownPropertyKeys(globalObject, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Include);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationObjectGetOwnPropertyNamesObject, JSArray*, (JSGlobalObject* globalObject, JSObject* object))
@@ -289,7 +290,28 @@ JSC_DEFINE_JIT_OPERATION(operationObjectGetOwnPropertyNamesObject, JSArray*, (JS
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return ownPropertyKeys(globalObject, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Include, CachedPropertyNamesKind::GetOwnPropertyNames);
+    return ownPropertyKeys(globalObject, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Include);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationObjectGetOwnPropertySymbols, JSArray*, (JSGlobalObject* globalObject, EncodedJSValue encodedObject))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSObject* object = JSValue::decode(encodedObject).toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    scope.release();
+    return ownPropertyKeys(globalObject, object, PropertyNameMode::Symbols, DontEnumPropertiesMode::Include);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationObjectGetOwnPropertySymbolsObject, JSArray*, (JSGlobalObject* globalObject, JSObject* object))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    return ownPropertyKeys(globalObject, object, PropertyNameMode::Symbols, DontEnumPropertiesMode::Include);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationObjectCreate, JSCell*, (JSGlobalObject* globalObject, EncodedJSValue encodedPrototype))
@@ -429,6 +451,31 @@ JSC_DEFINE_JIT_OPERATION(operationObjectToStringObjectSlow, JSString*, (JSGlobal
 
     JSValue thisValue = JSValue(object).toThis(globalObject, ECMAMode::strict());
     return objectPrototypeToString(globalObject, thisValue);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationReflectOwnKeys, JSArray*, (JSGlobalObject* globalObject, EncodedJSValue encodedObject))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSObject* object = JSValue::decode(encodedObject).getObject();
+    if (UNLIKELY(!object)) {
+        throwTypeError(globalObject, scope, ReflectOwnKeysNonObjectArgumentError);
+        return nullptr;
+    }
+
+    scope.release();
+    return ownPropertyKeys(globalObject, object, PropertyNameMode::StringsAndSymbols, DontEnumPropertiesMode::Include);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationReflectOwnKeysObject, JSArray*, (JSGlobalObject* globalObject, JSObject* object))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    return ownPropertyKeys(globalObject, object, PropertyNameMode::StringsAndSymbols, DontEnumPropertiesMode::Include);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationCreateThis, JSCell*, (JSGlobalObject* globalObject, JSObject* constructor, uint32_t inlineCapacity))

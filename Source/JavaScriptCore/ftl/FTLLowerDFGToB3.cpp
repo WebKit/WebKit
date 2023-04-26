@@ -1149,7 +1149,9 @@ private:
             break;
         case ObjectKeys:
         case ObjectGetOwnPropertyNames:
-            compileObjectKeysOrObjectGetOwnPropertyNames();
+        case ObjectGetOwnPropertySymbols:
+        case ReflectOwnKeys:
+            compileOwnPropertyKeysVariant();
             break;
         case ObjectToString:
             compileObjectToString();
@@ -7673,7 +7675,24 @@ IGNORE_CLANG_WARNINGS_END
         setInt32(m_out.phi(Int32, zeroLengthResult, nonZeroLengthResult));
     }
 
-    void compileObjectKeysOrObjectGetOwnPropertyNames()
+    const AbstractHeap& abstractHeapForOwnPropertyKeysCache(NodeType type)
+    {
+        switch (type) {
+        case ObjectKeys:
+            return m_heaps.StructureRareData_cachedEnumerableStrings;
+        case ObjectGetOwnPropertyNames:
+            return m_heaps.StructureRareData_cachedStrings;
+        case ObjectGetOwnPropertySymbols:
+            return m_heaps.StructureRareData_cachedSymbols;
+        case ReflectOwnKeys:
+            return m_heaps.StructureRareData_cachedStringsAndSymbols;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return m_heaps.root;
+        }
+    }
+
+    void compileOwnPropertyKeysVariant()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         NodeType op = m_node->op();
@@ -7699,7 +7718,7 @@ IGNORE_CLANG_WARNINGS_END
 
                 m_out.appendTo(rareDataCase, useCacheCase);
                 ASSERT(bitwise_cast<uintptr_t>(StructureRareData::cachedPropertyNamesSentinel()) == 1);
-                LValue cached = m_out.loadPtr(previousOrRareData, op == ObjectKeys ? m_heaps.StructureRareData_cachedKeys : m_heaps.StructureRareData_cachedGetOwnPropertyNames);
+                LValue cached = m_out.loadPtr(previousOrRareData, abstractHeapForOwnPropertyKeysCache(op));
                 m_out.branch(m_out.belowOrEqual(cached, m_out.constIntPtr(bitwise_cast<void*>(StructureRareData::cachedPropertyNamesSentinel()))), unsure(slowCase), unsure(useCacheCase));
 
                 m_out.appendTo(useCacheCase, slowButArrayBufferCase);
@@ -7718,7 +7737,7 @@ IGNORE_CLANG_WARNINGS_END
                 LValue slowResultValue = lazySlowPath(
                     [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
                         return createLazyCallGenerator(vm,
-                            op == ObjectKeys ? operationObjectKeysObject : operationObjectGetOwnPropertyNamesObject, locations[0].directGPR(), CCallHelpers::TrustedImmPtr(globalObject), locations[1].directGPR());
+                            operationOwnPropertyKeysVariantObject(op), locations[0].directGPR(), CCallHelpers::TrustedImmPtr(globalObject), locations[1].directGPR());
                     },
                     object);
                 ValueFromBlock slowResult = m_out.anchor(slowResultValue);
@@ -7728,11 +7747,11 @@ IGNORE_CLANG_WARNINGS_END
                 setJSValue(m_out.phi(pointerType(), fastResult, slowButArrayBufferResult, slowResult));
                 break;
             }
-            setJSValue(vmCall(Int64, op == ObjectKeys ? operationObjectKeysObject : operationObjectGetOwnPropertyNamesObject, weakPointer(globalObject), lowObject(m_node->child1())));
+            setJSValue(vmCall(Int64, operationOwnPropertyKeysVariantObject(op), weakPointer(globalObject), lowObject(m_node->child1())));
             break;
         }
         case UntypedUse:
-            setJSValue(vmCall(Int64, op == ObjectKeys ? operationObjectKeys : operationObjectGetOwnPropertyNames, weakPointer(globalObject), lowJSValue(m_node->child1())));
+            setJSValue(vmCall(Int64, operationOwnPropertyKeysVariant(op), weakPointer(globalObject), lowJSValue(m_node->child1())));
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();

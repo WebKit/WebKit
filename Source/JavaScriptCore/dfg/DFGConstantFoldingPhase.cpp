@@ -876,14 +876,16 @@ private:
                 break;
             }
 
+            case ObjectKeys:
             case ObjectGetOwnPropertyNames:
-            case ObjectKeys: {
+            case ObjectGetOwnPropertySymbols:
+            case ReflectOwnKeys: {
                 if (node->child1().useKind() == ObjectUse) {
                     auto& structureSet = m_state.forNode(node->child1()).m_structure;
                     if (structureSet.isFinite() && structureSet.size() == 1) {
                         RegisteredStructure structure = structureSet.onlyStructure();
                         if (auto* rareData = structure->rareDataConcurrently()) {
-                            if (auto* immutableButterfly = rareData->cachedPropertyNamesConcurrently(node->op() == ObjectGetOwnPropertyNames ? CachedPropertyNamesKind::GetOwnPropertyNames : CachedPropertyNamesKind::Keys)) {
+                            if (auto* immutableButterfly = rareData->cachedPropertyNamesConcurrently(node->cachedPropertyNamesKind())) {
                                 if (m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
                                     node->convertToNewArrayBuffer(m_graph.freeze(immutableButterfly));
                                     changed = true;

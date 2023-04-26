@@ -3309,14 +3309,16 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case ObjectKeys:
     case ObjectGetOwnPropertyNames:
-    case ObjectKeys: {
+    case ObjectGetOwnPropertySymbols:
+    case ReflectOwnKeys: {
         if (node->child1().useKind() == ObjectUse) {
             auto& structureSet = forNode(node->child1()).m_structure;
             if (structureSet.isFinite() && structureSet.size() == 1) {
                 RegisteredStructure structure = structureSet.onlyStructure();
                 if (auto* rareData = structure->rareDataConcurrently()) {
-                    if (!!rareData->cachedPropertyNamesConcurrently(node->op() == ObjectGetOwnPropertyNames ? CachedPropertyNamesKind::GetOwnPropertyNames : CachedPropertyNamesKind::Keys)) {
+                    if (!!rareData->cachedPropertyNamesConcurrently(node->cachedPropertyNamesKind())) {
                         if (m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
                             m_state.setShouldTryConstantFolding(true);
                             didFoldClobberWorld();

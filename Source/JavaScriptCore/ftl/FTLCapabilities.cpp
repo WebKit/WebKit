@@ -233,7 +233,9 @@ inline CapabilityLevel canCompile(Node* node)
     case ObjectCreate:
     case ObjectKeys:
     case ObjectGetOwnPropertyNames:
+    case ObjectGetOwnPropertySymbols:
     case ObjectToString:
+    case ReflectOwnKeys:
     case MakeRope:
     case NewArrayWithSize:
     case NewArrayWithSpecies:

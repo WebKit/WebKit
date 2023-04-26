@@ -1201,7 +1201,9 @@ private:
         case CreateRest:
         case NewArrayBuffer:
         case ObjectKeys:
-        case ObjectGetOwnPropertyNames: {
+        case ObjectGetOwnPropertyNames:
+        case ObjectGetOwnPropertySymbols:
+        case ReflectOwnKeys: {
             setPrediction(SpecArray);
             break;
         }

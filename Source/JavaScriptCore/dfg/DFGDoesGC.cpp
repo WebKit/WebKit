@@ -367,7 +367,9 @@ bool doesGC(Graph& graph, Node* node)
     case ObjectCreate:
     case ObjectKeys:
     case ObjectGetOwnPropertyNames:
+    case ObjectGetOwnPropertySymbols:
     case ObjectToString:
+    case ReflectOwnKeys:
     case AllocatePropertyStorage:
     case ReallocatePropertyStorage:
     case Arrayify:

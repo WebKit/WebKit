@@ -514,7 +514,9 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ObjectCreate:
     case ObjectKeys:
     case ObjectGetOwnPropertyNames:
+    case ObjectGetOwnPropertySymbols:
     case ObjectToString:
+    case ReflectOwnKeys:
     case SetLocal:
     case SetCallee:
     case PutStack:

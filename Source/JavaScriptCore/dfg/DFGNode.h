@@ -3413,6 +3413,23 @@ public:
         return OptionSet<JSPropertyNameEnumerator::Flag>::fromRaw(m_opInfo2.as<unsigned>());
     }
 
+    CachedPropertyNamesKind cachedPropertyNamesKind() const
+    {
+        switch (op()) {
+        case ObjectKeys:
+            return CachedPropertyNamesKind::EnumerableStrings;
+        case ObjectGetOwnPropertyNames:
+            return CachedPropertyNamesKind::Strings;
+        case ObjectGetOwnPropertySymbols:
+            return CachedPropertyNamesKind::Symbols;
+        case ReflectOwnKeys:
+            return CachedPropertyNamesKind::StringsAndSymbols;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+
     void resetOpInfo()
     {
         m_opInfo = OpInfoWrapper();

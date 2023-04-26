@@ -28,6 +28,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGArithMode.h"
+#include "DFGNodeType.h"
 #include "IndexingType.h"
 #include "JITOperations.h"
 #include "TypedArrayType.h"
@@ -61,12 +62,16 @@ JSC_DECLARE_JIT_OPERATION(operationObjectKeys, JSArray*, (JSGlobalObject*, Encod
 JSC_DECLARE_JIT_OPERATION(operationObjectKeysObject, JSArray*, (JSGlobalObject*, JSObject*));
 JSC_DECLARE_JIT_OPERATION(operationObjectGetOwnPropertyNames, JSArray*, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationObjectGetOwnPropertyNamesObject, JSArray*, (JSGlobalObject*, JSObject*));
+JSC_DECLARE_JIT_OPERATION(operationObjectGetOwnPropertySymbols, JSArray*, (JSGlobalObject*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationObjectGetOwnPropertySymbolsObject, JSArray*, (JSGlobalObject*, JSObject*));
 JSC_DECLARE_JIT_OPERATION(operationObjectCreate, JSCell*, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationObjectCreateObject, JSCell*, (JSGlobalObject*, JSObject*));
 JSC_DECLARE_JIT_OPERATION(operationObjectAssignObject, void, (JSGlobalObject*, JSObject*, JSObject*));
 JSC_DECLARE_JIT_OPERATION(operationObjectAssignUntyped, void, (JSGlobalObject*, JSObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationObjectToStringUntyped, JSString*, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationObjectToStringObjectSlow, JSString*, (JSGlobalObject*, JSObject*));
+JSC_DECLARE_JIT_OPERATION(operationReflectOwnKeys, JSArray*, (JSGlobalObject*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationReflectOwnKeysObject, JSArray*, (JSGlobalObject*, JSObject*));
 JSC_DECLARE_JIT_OPERATION(operationCreateThis, JSCell*, (JSGlobalObject*, JSObject* constructor, uint32_t inlineCapacity));
 JSC_DECLARE_JIT_OPERATION(operationCreatePromise, JSCell*, (JSGlobalObject*, JSObject* constructor));
 JSC_DECLARE_JIT_OPERATION(operationCreateInternalPromise, JSCell*, (JSGlobalObject*, JSObject* constructor));
@@ -449,6 +454,40 @@ inline auto operationNewTypedArrayWithOneArgumentForType(TypedArrayType type) ->
     }
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;
+}
+
+inline auto operationOwnPropertyKeysVariant(NodeType type) -> decltype(&operationObjectKeys)
+{
+    switch (type) {
+    case ObjectKeys:
+        return operationObjectKeys;
+    case ObjectGetOwnPropertyNames:
+        return operationObjectGetOwnPropertyNames;
+    case ObjectGetOwnPropertySymbols:
+        return operationObjectGetOwnPropertySymbols;
+    case ReflectOwnKeys:
+        return operationReflectOwnKeys;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+}
+
+inline auto operationOwnPropertyKeysVariantObject(NodeType type) -> decltype(&operationObjectKeysObject)
+{
+    switch (type) {
+    case ObjectKeys:
+        return operationObjectKeysObject;
+    case ObjectGetOwnPropertyNames:
+        return operationObjectGetOwnPropertyNamesObject;
+    case ObjectGetOwnPropertySymbols:
+        return operationObjectGetOwnPropertySymbolsObject;
+    case ReflectOwnKeys:
+        return operationReflectOwnKeysObject;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return nullptr;
+    }
 }
 
 } } // namespace JSC::DFG

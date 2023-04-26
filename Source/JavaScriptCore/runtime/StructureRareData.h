@@ -42,10 +42,12 @@ class CachedSpecialPropertyAdaptiveStructureWatchpoint;
 class CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint;
 struct SpecialPropertyCache;
 enum class CachedPropertyNamesKind : uint8_t {
-    Keys = 0,
-    GetOwnPropertyNames,
+    EnumerableStrings = 0,
+    Strings,
+    Symbols,
+    StringsAndSymbols,
 };
-static constexpr unsigned numberOfCachedPropertyNames = 2;
+static constexpr unsigned numberOfCachedPropertyNames = 4;
 
 enum class CachedSpecialPropertyKey : uint8_t {
     ToStringTag = 0,

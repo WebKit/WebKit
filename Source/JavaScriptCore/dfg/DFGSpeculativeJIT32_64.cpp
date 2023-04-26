@@ -3170,8 +3170,10 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case ObjectKeys:
-    case ObjectGetOwnPropertyNames: {
-        compileObjectKeysOrObjectGetOwnPropertyNames(node);
+    case ObjectGetOwnPropertyNames:
+    case ObjectGetOwnPropertySymbols:
+    case ReflectOwnKeys: {
+        compileOwnPropertyKeysVariant(node);
         break;
     }
 

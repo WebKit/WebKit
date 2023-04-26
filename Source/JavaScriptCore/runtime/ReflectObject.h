@@ -29,6 +29,8 @@
 
 namespace JSC {
 
+extern const ASCIILiteral ReflectOwnKeysNonObjectArgumentError;
+
 class ReflectObject final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;

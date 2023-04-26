@@ -47,6 +47,8 @@ static JSC_DECLARE_HOST_FUNCTION(reflectObjectSetPrototypeOf);
 
 namespace JSC {
 
+const ASCIILiteral ReflectOwnKeysNonObjectArgumentError { "Reflect.ownKeys requires the first argument be an object"_s };
+
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ReflectObject);
 
 const ClassInfo ReflectObject::s_info = { "Reflect"_s, &Base::s_info, &reflectObjectTable, nullptr, CREATE_METHOD_TABLE(ReflectObject) };
@@ -62,7 +64,7 @@ const ClassInfo ReflectObject::s_info = { "Reflect"_s, &Base::s_info, &reflectOb
     getPrototypeOf           reflectObjectGetPrototypeOf           DontEnum|Function 1 ReflectGetPrototypeOfIntrinsic
     has                      JSBuiltin                             DontEnum|Function 2
     isExtensible             reflectObjectIsExtensible             DontEnum|Function 1
-    ownKeys                  reflectObjectOwnKeys                  DontEnum|Function 1
+    ownKeys                  reflectObjectOwnKeys                  DontEnum|Function 1 ReflectOwnKeysIntrinsic
     preventExtensions        reflectObjectPreventExtensions        DontEnum|Function 1
     set                      reflectObjectSet                      DontEnum|Function 3
     setPrototypeOf           reflectObjectSetPrototypeOf           DontEnum|Function 2
@@ -199,8 +201,8 @@ JSC_DEFINE_HOST_FUNCTION(reflectObjectOwnKeys, (JSGlobalObject* globalObject, Ca
 
     JSValue target = callFrame->argument(0);
     if (!target.isObject())
-        return JSValue::encode(throwTypeError(globalObject, scope, "Reflect.ownKeys requires the first argument be an object"_s));
-    RELEASE_AND_RETURN(scope, JSValue::encode(ownPropertyKeys(globalObject, jsCast<JSObject*>(target), PropertyNameMode::StringsAndSymbols, DontEnumPropertiesMode::Include, std::nullopt)));
+        return JSValue::encode(throwTypeError(globalObject, scope, ReflectOwnKeysNonObjectArgumentError));
+    RELEASE_AND_RETURN(scope, JSValue::encode(ownPropertyKeys(globalObject, asObject(target), PropertyNameMode::StringsAndSymbols, DontEnumPropertiesMode::Include)));
 }
 
 // https://tc39.github.io/ecma262/#sec-reflect.preventextensions

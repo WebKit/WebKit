@@ -3065,6 +3065,15 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
             return CallOptimizationResult::Inlined;
         }
 
+        case ObjectGetOwnPropertySymbolsIntrinsic: {
+            if (argumentCountIncludingThis < 2)
+                return CallOptimizationResult::DidNothing;
+
+            insertChecks();
+            setResult(addToGraph(ObjectGetOwnPropertySymbols, get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
+            return CallOptimizationResult::Inlined;
+        }
+
         case ObjectToStringIntrinsic: {
             insertChecks();
             setResult(addToGraph(ObjectToString, get(virtualRegisterForArgumentIncludingThis(0, registerOffset))));
@@ -3077,6 +3086,15 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
 
             insertChecks();
             setResult(addToGraph(GetPrototypeOf, OpInfo(0), OpInfo(prediction), Edge(get(virtualRegisterForArgumentIncludingThis(1, registerOffset)), ObjectUse)));
+            return CallOptimizationResult::Inlined;
+        }
+
+        case ReflectOwnKeysIntrinsic: {
+            if (argumentCountIncludingThis < 2)
+                return CallOptimizationResult::DidNothing;
+
+            insertChecks();
+            setResult(addToGraph(ReflectOwnKeys, get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
             return CallOptimizationResult::Inlined;
         }
 

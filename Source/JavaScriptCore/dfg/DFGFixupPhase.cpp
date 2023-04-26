@@ -2080,8 +2080,10 @@ private:
             break;
         }
 
+        case ObjectKeys:
         case ObjectGetOwnPropertyNames:
-        case ObjectKeys: {
+        case ObjectGetOwnPropertySymbols:
+        case ReflectOwnKeys: {
             if (node->child1()->shouldSpeculateObject()) {
                 watchHavingABadTime(node);
                 fixEdge<ObjectUse>(node->child1());

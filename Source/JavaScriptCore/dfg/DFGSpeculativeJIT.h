@@ -1597,7 +1597,7 @@ public:
     void compileNewArrayWithSpecies(Node*);
     void compileNewTypedArray(Node*);
     void compileToThis(Node*);
-    void compileObjectKeysOrObjectGetOwnPropertyNames(Node*);
+    void compileOwnPropertyKeysVariant(Node*);
     void compileObjectAssign(Node*);
     void compileObjectCreate(Node*);
     void compileObjectToString(Node*);
