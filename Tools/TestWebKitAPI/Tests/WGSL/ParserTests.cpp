@@ -81,7 +81,31 @@ inline Expected<WGSL::ShaderModule, WGSL::Error> parse(const String& wgsl)
     return { WTFMove(shaderModule) };
 }
 
-static void testStruct(ASCIILiteral program, const Vector<String>& fieldNames, const Vector<String>& typeNames)
+struct StructAttributeTest {
+    enum Kind {
+        Align,
+        Size,
+    };
+    Kind kind;
+    size_t value;
+};
+
+std::optional<unsigned> extractInteger(WGSL::AST::Expression& expression)
+{
+    switch (expression.kind()) {
+    case WGSL::AST::NodeKind::AbstractIntegerLiteral:
+        return { static_cast<unsigned>(downcast<WGSL::AST::AbstractIntegerLiteral>(expression).value()) };
+    case WGSL::AST::NodeKind::Unsigned32Literal:
+        return { static_cast<unsigned>(downcast<WGSL::AST::Unsigned32Literal>(expression).value()) };
+    case WGSL::AST::NodeKind::Signed32Literal:
+        return { static_cast<unsigned>(downcast<WGSL::AST::Signed32Literal>(expression).value()) };
+    default:
+        return std::nullopt;
+    }
+}
+
+
+static void testStruct(ASCIILiteral program, const Vector<String>& fieldNames, const Vector<String>& typeNames, const Vector<Vector<StructAttributeTest>>& attributeTests = { })
 {
     ASSERT(fieldNames.size() == typeNames.size());
 
@@ -99,7 +123,33 @@ static void testStruct(ASCIILiteral program, const Vector<String>& fieldNames, c
 
     EXPECT_EQ(str.members().size(), fieldNames.size());
     for (unsigned i = 0; i < fieldNames.size(); ++i) {
-        EXPECT_TRUE(str.members()[i].attributes().isEmpty());
+        auto& attributes = str.members()[i].attributes();
+        if (!attributeTests.size())
+            EXPECT_TRUE(attributes.isEmpty());
+        else {
+            const Vector<StructAttributeTest>& tests = attributeTests[i];
+            EXPECT_EQ(tests.size(), attributes.size());
+            for (unsigned j = 0; j < tests.size(); ++j) {
+                auto& test = tests[j];
+                auto& attribute = attributes[j];
+                switch (test.kind) {
+                case StructAttributeTest::Align: {
+                    EXPECT_TRUE(is<WGSL::AST::AlignAttribute>(attribute));
+                    auto alignment = extractInteger(downcast<WGSL::AST::AlignAttribute>(attribute).alignment());
+                    EXPECT_TRUE(alignment.has_value());
+                    EXPECT_EQ(*alignment, test.value);
+                    break;
+                }
+                case StructAttributeTest::Size: {
+                    EXPECT_TRUE(is<WGSL::AST::SizeAttribute>(attribute));
+                    auto size = extractInteger(downcast<WGSL::AST::SizeAttribute>(attribute).size());
+                    EXPECT_TRUE(size.has_value());
+                    EXPECT_EQ(*size, test.value);
+                    break;
+                }
+                }
+            }
+        }
         EXPECT_EQ(str.members()[i].name(), fieldNames[i]);
         EXPECT_TRUE(is<WGSL::AST::NamedTypeName>(str.members()[i].type()));
         auto& memberType = downcast<WGSL::AST::NamedTypeName>(str.members()[i].type());
@@ -168,9 +218,9 @@ TEST(WGSLParserTests, Struct)
     // 2 fields, with trailing comma
     testStruct(
         "struct B {\n"
-        "    a: i32,\n"
-        "    b: f32,\n"
-        "}"_s, { "a"_s, "b"_s }, { "i32"_s, "f32"_s });
+        "    @size(8) a: i32,\n"
+        "    @align(8) b: f32,\n"
+        "}"_s, { "a"_s, "b"_s }, { "i32"_s, "f32"_s }, { { { StructAttributeTest::Size, 8 } }, { { StructAttributeTest::Align, 8 } } });
 }
 
 TEST(WGSLParserTests, GlobalVariable)

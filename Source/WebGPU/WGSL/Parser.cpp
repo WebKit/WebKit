@@ -512,6 +512,20 @@ Result<Ref<AST::Attribute>> Parser<Lexer>::parseAttribute()
         RETURN_NODE_REF(WorkgroupSizeAttribute, WTFMove(x), WTFMove(maybeY), WTFMove(maybeZ));
     }
 
+    if (ident.ident == "align"_s) {
+        CONSUME_TYPE(ParenLeft);
+        PARSE(alignment, Expression);
+        CONSUME_TYPE(ParenRight);
+        RETURN_NODE_REF(AlignAttribute, WTFMove(alignment));
+    }
+
+    if (ident.ident == "size"_s) {
+        CONSUME_TYPE(ParenLeft);
+        PARSE(size, Expression);
+        CONSUME_TYPE(ParenRight);
+        RETURN_NODE_REF(SizeAttribute, WTFMove(size));
+    }
+
     // https://gpuweb.github.io/gpuweb/wgsl/#pipeline-stage-attributes
     if (ident.ident == "vertex"_s)
         RETURN_NODE_REF(StageAttribute, AST::StageAttribute::Stage::Vertex);
