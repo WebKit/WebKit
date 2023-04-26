@@ -170,7 +170,7 @@ void RenderTreeBuilder::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
         // Keep legends out of the flow thread.
         for (auto& box : childrenOfType<RenderBox>(fragmentedFlow)) {
             if (box.isLegend())
-                m_builder.move(fragmentedFlow, flow, box, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
+                m_builder.move(fragmentedFlow, flow, box, &fragmentedFlow, RenderTreeBuilder::NormalizeAfterInsertion::Yes);
         }
     }
 
