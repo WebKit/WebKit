@@ -189,6 +189,8 @@
 #else
 #error "Unsupported pointer width"
 #endif
+#elif PAS_COMPILER(MSVC)
+#define PAS_CPU_ADDRESS64 1
 #else
 #error "Unsupported compiler for libpas"
 #endif
