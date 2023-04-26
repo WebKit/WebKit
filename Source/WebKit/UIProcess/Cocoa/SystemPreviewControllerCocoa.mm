@@ -392,8 +392,8 @@ void SystemPreviewController::loadCompleted(const URL& downloadedFile)
     RELEASE_LOG(SystemPreview, "SystemPreview load has finished on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
 
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    ASSERT(equalIgnoringFragmentIdentifier(m_destinationURL, url));
-    NSURL *nsurl = (NSURL *)url;
+    ASSERT(equalIgnoringFragmentIdentifier(m_destinationURL, downloadedFile));
+    NSURL *nsurl = (NSURL *)downloadedFile;
     if ([getASVLaunchPreviewClass() respondsToSelector:@selector(launchPreviewApplicationWithURLs:completion:)])
         [getASVLaunchPreviewClass() launchPreviewApplicationWithURLs:@[nsurl] completion:^(NSError *error) { }];
 #else
