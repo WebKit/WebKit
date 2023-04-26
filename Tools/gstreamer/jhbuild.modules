@@ -35,7 +35,6 @@
   <repository type="tarball" name="ffmpeg" href="https://ffmpeg.org/releases/"/>
 
   <meson id="orc" mesonargs="-Dgtk_doc=disabled -Dexamples=disabled">
-    <pkg-config>orc-0.4.pc</pkg-config>
     <branch repo="gstreamer"
             module="orc/archive/refs/tags/${version}.tar.gz"
             rename-tarball="orc-${version}.tar.gz"
@@ -62,7 +61,6 @@
   </cmake>
 
   <autotools id="libsrtp">
-    <pkg-config>libsrtp2.pc</pkg-config>
     <branch repo="github-tarball"
             module="cisco/libsrtp/archive/v${version}.tar.gz"
             checkoutdir="libsrtp-${version}"
@@ -85,7 +83,6 @@
   </meson>
 
   <meson id="gst-plugins-base" mesonargs="-Dintrospection=disabled -Dexamples=disabled">
-    <pkg-config>gstreamer-plugins-base-1.0.pc</pkg-config>
     <if condition-set="wpe">
       <autogenargs value="-Dpango=disabled"/>
     </if>
@@ -103,7 +100,6 @@
   </meson>
 
   <meson id="gst-plugins-good" mesonargs="-Dexamples=disabled -Dgtk3=disabled">
-    <pkg-config>gstreamer-plugins-good-1.0.pc</pkg-config>
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
@@ -117,7 +113,6 @@
   </meson>
 
   <meson id="gst-plugins-bad" mesonargs="-Dintrospection=disabled -Dexamples=disabled -Dopenexr=disabled -Dopencv=disabled">
-    <pkg-config>gstreamer-plugins-bad-1.0.pc</pkg-config>
     <dependencies>
       <dep package="graphene"/>
       <dep package="gst-plugins-base"/>
@@ -156,7 +151,6 @@
   </meson>
 
   <meson id="libva" mesonargs="-Denable_va_messaging=false">
-    <pkg-config>libva.pc</pkg-config>
     <branch repo="github-tarball"
             module="intel/libva/archive/${version}.tar.gz"
             checkoutdir="libva-${version}"

@@ -16,7 +16,6 @@
       <dep package="glib-networking"/>
       <dep package="atk"/>
       <dep package="at-spi2-atk"/>
-      <dep package="webkit-gstreamer-testing-dependencies"/>
     </dependencies>
   </metamodule>
 
@@ -31,7 +30,6 @@
       <dep package="glib-networking"/>
       <dep package="atk"/>
       <dep package="at-spi2-atk"/>
-      <dep package="webkit-gstreamer-testing-dependencies"/>
     </dependencies>
   </metamodule>
 
