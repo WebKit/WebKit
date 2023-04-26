@@ -680,6 +680,10 @@ set(bmalloc_INTERFACE_DEPENDENCIES bmalloc_CopyHeaders)
 add_definitions(-D_GNU_SOURCE)
 add_definitions(-DPAS_BMALLOC=1)
 
+if (MSVC)
+    add_compile_options(/wd4206)
+endif ()
+
 set_source_files_properties(
     libpas/src/libpas/pas_bitfit_page_config_kind.c
     libpas/src/libpas/jit_heap.c
