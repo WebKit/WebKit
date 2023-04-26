@@ -50,6 +50,10 @@
 
 #if JSC_OBJC_API_ENABLED
 
+#if __has_feature(objc_arc)
+#error This file cannot be compiled under ARC
+#endif
+
 @implementation JSContext {
     RetainPtr<JSVirtualMachine> m_virtualMachine;
     JSGlobalContextRef m_context;
@@ -64,15 +68,31 @@
 
 - (void)ensureWrapperMap
 {
-    if (!toJS([self JSGlobalContextRef])->wrapperMap()) {
-        // The map will be retained by the GlobalObject in initialization.
-        [[[JSWrapperMap alloc] initWithGlobalContextRef:[self JSGlobalContextRef]] release];
+    if (!toJS(m_context)->wrapperMap()) {
+        JSWrapperMap *map = [[JSWrapperMap alloc] initWithGlobalContextRef:m_context];
+        // Retain the map here.
+        toJSGlobalObject(m_context)->setWrapperMap(map);
+        [map release];
     }
 }
 
 - (instancetype)init
 {
-    return [self initWithVirtualMachine:adoptNS([[JSVirtualMachine alloc] init]).get()];
+    self = [super init];
+    if (!self)
+        return nil;
+
+    m_virtualMachine = [[JSVirtualMachine alloc] init];
+    m_context = JSGlobalContextCreateInGroup(getGroupFromVirtualMachine(m_virtualMachine.get()), 0);
+
+    self.exceptionHandler = ^(JSContext *context, JSValue *exceptionValue) {
+        context.exception = exceptionValue;
+    };
+
+    [self ensureWrapperMap];
+    [m_virtualMachine addContext:self forGlobalContextRef:m_context];
+
+    return self;
 }
 
 - (instancetype)initWithVirtualMachine:(JSVirtualMachine *)virtualMachine

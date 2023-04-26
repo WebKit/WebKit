@@ -34,6 +34,10 @@
 
 #if JSC_OBJC_API_ENABLED
 
+#if __has_feature(objc_arc)
+#error This file cannot be compiled under ARC
+#endif
+
 class JSAPIWrapperObjectHandleOwner final : public JSC::WeakHandleOwner {
 public:
     void finalize(JSC::Handle<JSC::Unknown>, void*) final;
@@ -52,7 +56,7 @@ void JSAPIWrapperObjectHandleOwner::finalize(JSC::Handle<JSC::Unknown> handle, v
     if (!wrapperObject->wrappedObject())
         return;
 
-    JSC::Heap::heap(wrapperObject)->releaseSoon(adoptNS(static_cast<id>(wrapperObject->wrappedObject())));
+    JSC::Heap::heap(wrapperObject)->releaseSoon(adoptNS(wrapperObject->wrappedObject()));
     JSC::WeakSet::deallocate(JSC::WeakImpl::asWeakImpl(handle.slot()));
 }
 
@@ -63,7 +67,7 @@ bool JSAPIWrapperObjectHandleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::
     // the same Objective-C object in multiple global objects keeps all of the global objects alive.
     if (!wrapperObject->wrappedObject())
         return false;
-    return visitor.isMarked(wrapperObject->structure()->globalObject()) && visitor.containsOpaqueRoot(wrapperObject->wrappedObject());
+    return visitor.isMarked(wrapperObject->structure()->globalObject()) && visitor.containsOpaqueRoot((__bridge void *)wrapperObject->wrappedObject());
 }
 
 namespace JSC {
@@ -118,11 +122,11 @@ void JSAPIWrapperObject::finishCreation(VM& vm)
     Base::finishCreation(vm);
     WeakSet::allocate(this, jsAPIWrapperObjectHandleOwner(), 0); // Balanced in JSAPIWrapperObjectHandleOwner::finalize.
 }
-    
-void JSAPIWrapperObject::setWrappedObject(void* wrappedObject)
+
+void JSAPIWrapperObject::setWrappedObject(id wrappedObject)
 {
     ASSERT(!m_wrappedObject);
-    m_wrappedObject = [static_cast<id>(wrappedObject) retain];
+    m_wrappedObject = [wrappedObject retain];
 }
 
 template<typename Visitor>
@@ -131,7 +135,7 @@ void JSAPIWrapperObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     JSAPIWrapperObject* thisObject = JSC::jsCast<JSAPIWrapperObject*>(cell);
     Base::visitChildren(cell, visitor);
 
-    void* wrappedObject = thisObject->wrappedObject();
+    id wrappedObject = thisObject->wrappedObject();
     if (wrappedObject)
         scanExternalObjectGraph(visitor.vm(), visitor, wrappedObject);
 }

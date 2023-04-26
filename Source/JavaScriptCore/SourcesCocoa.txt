@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Apple Inc. All rights reserved.
+// Copyright (C) 2023 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -22,17 +22,14 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 API/JSAPIGlobalObject.mm
-API/JSAPIWrapperObject.mm
 API/JSScript.mm
 API/JSScriptSourceProvider.mm
-API/JSContext.mm
 API/JSManagedValue.mm
 API/JSRemoteInspector.cpp
 API/JSStringRefCF.cpp
 API/JSValue.mm
 API/JSVirtualMachine.mm
 API/JSWrapperMap.mm
-API/ObjCCallbackFunction.mm
 API/PASReportCrashPrivate.cpp
 
 // Use inspector/remote/SourcesCocoa.txt for Remote Inspector files

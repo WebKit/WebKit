@@ -31,7 +31,9 @@
 
 @interface JSWrapperMap : NSObject
 
-- (instancetype)initWithGlobalContextRef:(JSGlobalContextRef)context;
+- (instancetype)init NS_UNAVAILABLE;
+
+- (instancetype)initWithGlobalContextRef:(JSGlobalContextRef)context NS_DESIGNATED_INITIALIZER;
 
 - (JSValue *)jsWrapperForObject:(id)object inContext:(JSContext *)context;
 
