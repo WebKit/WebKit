@@ -42,6 +42,7 @@ RenderLayoutState::RenderLayoutState(RenderElement& renderer, IsPaginated isPagi
 #if ASSERT_ENABLED
     , m_layoutDeltaXSaturated(false)
     , m_layoutDeltaYSaturated(false)
+    , m_blockStartTrimming(Vector<bool>(0))
     , m_renderer(&renderer)
 #endif
 {
@@ -70,6 +71,7 @@ RenderLayoutState::RenderLayoutState(const LocalFrameViewLayoutContext::LayoutSt
     , m_layoutDeltaXSaturated(false)
     , m_layoutDeltaYSaturated(false)
 #endif
+    , m_blockStartTrimming(Vector<bool>(0))
     , m_lineClamp(lineClamp)
     , m_leadingTrim(leadingTrim)
 #if ASSERT_ENABLED

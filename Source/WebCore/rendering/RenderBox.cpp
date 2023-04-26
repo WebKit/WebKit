@@ -1404,13 +1404,6 @@ bool RenderBox::hasTrimmedMargin(std::optional<MarginTrimType> marginTrimType) c
 {
     if (!isInFlow())
         return false;
-#if ASSERT_ENABLED
-    // We should assert here if this function is called with a layout system and
-    // MarginTrimType combination that is not supported yet (i.e. the layout system
-    // does not set the margin trim rare data bit for that margin)
-    if (!isFlexItem() && !isGridItem() && isBlockLevelBox())
-        ASSERT(!marginTrimType || marginTrimType.value() == MarginTrimType::BlockEnd);
-#endif
     if (!hasRareData())
         return false;
     return marginTrimType ? (rareData().trimmedMargins() & static_cast<unsigned>(*marginTrimType)) : rareData().trimmedMargins();

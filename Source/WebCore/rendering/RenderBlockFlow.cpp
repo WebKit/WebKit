@@ -790,13 +790,29 @@ void RenderBlockFlow::layoutBlockChildren(bool relayoutChildren, LayoutUnit& max
     LayoutUnit afterEdge = borderAndPaddingAfter() + scrollbarLogicalHeight();
 
     setLogicalHeight(beforeEdge);
-    
+    auto* layoutState = view().frameView().layoutContext().layoutState(); 
     // Lay out our hypothetical grid line as though it occurs at the top of the block.
-    if (view().frameView().layoutContext().layoutState()->lineGrid() == this)
+    if (layoutState->lineGrid() == this)
         layoutLineGridBox();
 
     // The margin struct caches all our current margin collapsing state.
     MarginInfo marginInfo(*this, beforeEdge, afterEdge);
+
+    auto hasMarginTrimState = false;
+    auto updateMarginTrimStateIfNeeded = [&] {
+        auto containingBlockTrimmingState = layoutState->blockStartTrimming();
+        if (style().marginTrim().contains(MarginTrimType::BlockStart))
+            layoutState->pushBlockStartTrimming(true);
+        else if (!marginInfo.canCollapseMarginBeforeWithChildren() && containingBlockTrimmingState)
+            layoutState->pushBlockStartTrimming(false);
+        else if (marginInfo.canCollapseMarginBeforeWithChildren() && containingBlockTrimmingState)
+            layoutState->pushBlockStartTrimming(containingBlockTrimmingState.value());
+        else
+            return;
+        hasMarginTrimState = true;
+    };
+
+    updateMarginTrimStateIfNeeded();
 
     // Fieldsets need to find their legend and position it inside the border of the object.
     // The legend then gets skipped during normal layout. The same is true for ruby text.
@@ -855,6 +871,8 @@ void RenderBlockFlow::layoutBlockChildren(bool relayoutChildren, LayoutUnit& max
     // Now do the handling of the bottom of the block, adding in our bottom border/padding and
     // determining the correct collapsed bottom margin information.
     handleAfterSideOfBlock(beforeEdge, afterEdge, marginInfo);
+    if (hasMarginTrimState)
+        layoutState->popBlockStartTrimming();
 }
 
 
@@ -1056,9 +1074,14 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
 
     // We are no longer at the top of the block if we encounter a non-empty child.  
     // This has to be done after checking for clear, so that margins can be reset if a clear occurred.
-    if (marginInfo.atBeforeSideOfBlock() && !child.isSelfCollapsingBlock())
+    if (marginInfo.atBeforeSideOfBlock() && !child.isSelfCollapsingBlock()) {
         marginInfo.setAtBeforeSideOfBlock(false);
 
+        if (auto* layoutState = frame().view()->layoutContext().layoutState(); layoutState && layoutState->blockStartTrimming()) {
+            layoutState->popBlockStartTrimming();
+            layoutState->pushBlockStartTrimming(false);
+        }
+    }
     // Now place the child in the correct left position
     determineLogicalLeftPositionForChild(child, ApplyLayoutDelta);
 
@@ -1326,18 +1349,20 @@ LayoutUnit RenderBlockFlow::collapseMarginsWithChildInfo(RenderBox* child, Rende
         auto childBlockFlow = dynamicDowncast<RenderBlockFlow>(child);
         if (childBlockFlow)
             childBlockFlow->setMaxMarginBeforeValues(0_lu, 0_lu);
-        child->setMarginBefore(0_lu, &style());
+        setTrimmedMarginForChild(*child, MarginTrimType::BlockStart);
 
         // The margin after for a self collapsing child should also be trimmed so it does not 
         // influence the margins of the first non collapsing child
         if (childIsSelfCollapsing) {
             if (childBlockFlow)
                 childBlockFlow->setMaxMarginAfterValues(0_lu, 0_lu);
-            child->setMarginAfter(0_lu, &style());
+            setTrimmedMarginForChild(*child, MarginTrimType::BlockEnd);
         }
     };
-    if (marginInfo.atBeforeSideOfBlock() && style().marginTrim().contains(MarginTrimType::BlockStart))
+    if (frame().view()->layoutContext().layoutState()->blockStartTrimming().value_or(false)) {
+        ASSERT(marginInfo.atBeforeSideOfBlock());
         trimChildBlockMargins();
+    }
 
     // Get the four margin values for the child and cache them.
     MarginValues childMargins = child ? marginValuesForChild(*child) : MarginValues(0, 0, 0, 0);

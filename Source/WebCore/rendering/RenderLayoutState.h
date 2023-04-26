@@ -60,6 +60,7 @@ public:
         , m_layoutDeltaXSaturated(false)
         , m_layoutDeltaYSaturated(false)
 #endif
+        , m_blockStartTrimming(Vector<bool>(0))
     {
     }
     RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<LineClamp>, std::optional<LeadingTrim>);
@@ -111,6 +112,13 @@ public:
     void addLeadingTrimEnd(const RenderBlockFlow& targetInlineFormattingContext);
     void resetLeadingTrim() { m_leadingTrim = { }; }
 
+    void pushBlockStartTrimming(bool blockStartTrimming) { m_blockStartTrimming.append(blockStartTrimming); }
+    std::optional<bool> blockStartTrimming() const { return m_blockStartTrimming.isEmpty() ? std::nullopt : std::optional(m_blockStartTrimming.last()); }
+    void popBlockStartTrimming() 
+    {
+        m_blockStartTrimming.removeLast(); 
+    }
+
 private:
     void computeOffsets(const RenderLayoutState& ancestor, RenderBox&, LayoutSize offset);
     void computeClipRect(const RenderLayoutState& ancestor, RenderBox&);
@@ -129,6 +137,8 @@ private:
     bool m_layoutDeltaXSaturated : 1;
     bool m_layoutDeltaYSaturated : 1;
 #endif
+    Vector<bool> m_blockStartTrimming;
+
     // The current line grid that we're snapping to and the offset of the start of the grid.
     WeakPtr<RenderBlockFlow> m_lineGrid;
 
