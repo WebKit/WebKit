@@ -120,6 +120,10 @@ public:
     Element* actionElement() const override;
     Element* mouseButtonListener(MouseButtonListenerResultFilter = ExcludeBodyElement) const;
     Element* anchorElement() const override;
+    AccessibilityObject* internalLinkElement() const;
+    void addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const;
+    void addRadioButtonGroupChildren(AXCoreObject&, AccessibilityChildrenVector&) const;
+    AccessibilityChildrenVector linkedObjects() const override;
     AccessibilityObject* menuForMenuButton() const;
    
     virtual void changeValueByPercent(float percentChange);

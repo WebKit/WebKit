@@ -80,7 +80,6 @@ public:
     AccessibilityObject* parentObject() const override;
     AccessibilityObject* parentObjectIfExists() const override;
     AccessibilityObject* observableObject() const override;
-    AccessibilityChildrenVector linkedObjects() const override;
     AccessibilityObject* titleUIElement() const override;
 
     // Should be called on the root accessibility object to kick off a hit test.
@@ -172,9 +171,6 @@ private:
     Path elementPath() const override;
     
     LayoutRect checkboxOrRadioRect() const;
-    void addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const;
-    void addRadioButtonGroupChildren(AXCoreObject*, AccessibilityChildrenVector&) const;
-    AccessibilityObject* internalLinkElement() const;
     AXCoreObject* accessibilityImageMapHitTest(HTMLAreaElement*, const IntPoint&) const;
     AccessibilityObject* accessibilityParentForImageMap(HTMLMapElement*) const;
     AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const override;

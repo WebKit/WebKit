@@ -1083,6 +1083,77 @@ Element* AccessibilityNodeObject::anchorElement() const
     return nullptr;
 }
 
+AccessibilityObject* AccessibilityNodeObject::internalLinkElement() const
+{
+    // We don't currently support ARIA links as internal link elements, so exit early if anchorElement() is not a native HTMLAnchorElement.
+    WeakPtr anchor = dynamicDowncast<HTMLAnchorElement>(anchorElement());
+    if (!anchor)
+        return nullptr;
+
+    auto linkURL = anchor->href();
+    auto fragmentIdentifier = linkURL.fragmentIdentifier();
+    if (fragmentIdentifier.isEmpty())
+        return nullptr;
+
+    // Check if URL is the same as current URL
+    auto* document = this->document();
+    if (!document || !equalIgnoringFragmentIdentifier(document->url(), linkURL))
+        return nullptr;
+
+    auto linkedNode = document->findAnchor(fragmentIdentifier);
+    if (!linkedNode)
+        return nullptr;
+
+    // The element we find may not be accessible, so find the first accessible object.
+    return firstAccessibleObjectFromNode(linkedNode);
+}
+
+void AccessibilityNodeObject::addRadioButtonGroupChildren(AXCoreObject& parent, AccessibilityChildrenVector& linkedUIElements) const
+{
+    for (const auto& child : parent.children()) {
+        if (child->roleValue() == AccessibilityRole::RadioButton)
+            linkedUIElements.append(child);
+        else
+            addRadioButtonGroupChildren(*child, linkedUIElements);
+    }
+}
+
+void AccessibilityNodeObject::addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const
+{
+    if (roleValue() != AccessibilityRole::RadioButton)
+        return;
+
+    WeakPtr node = this->node();
+    if (auto* input = dynamicDowncast<HTMLInputElement>(node.get())) {
+        for (auto& radioSibling : input->radioButtonGroup()) {
+            if (auto* object = axObjectCache()->getOrCreate(radioSibling.ptr()))
+                linkedUIElements.append(object);
+        }
+    } else {
+        // If we didn't find any radio button siblings with the traditional naming, lets search for a radio group role and find its children.
+        for (auto* parent = parentObject(); parent; parent = parent->parentObject()) {
+            if (parent->roleValue() == AccessibilityRole::RadioGroup)
+                addRadioButtonGroupChildren(*parent, linkedUIElements);
+        }
+    }
+}
+
+AXCoreObject::AccessibilityChildrenVector AccessibilityNodeObject::linkedObjects() const
+{
+    auto linkedObjects = flowToObjects();
+
+    if (isLink()) {
+        if (auto* linkedAXElement = internalLinkElement())
+            linkedObjects.append(linkedAXElement);
+    }
+
+    if (roleValue() == AccessibilityRole::RadioButton)
+        addRadioButtonGroupMembers(linkedObjects);
+
+    linkedObjects.appendVector(controlledObjects());
+    return linkedObjects;
+}
+
 static bool isNodeActionElement(Node* node)
 {
     if (is<HTMLInputElement>(*node)) {

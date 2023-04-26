@@ -59,6 +59,5 @@ accessibility/math-multiscript-attributes.html [ Failure ]
 accessibility/aria-labelledby-on-password-input.html [ Failure ]
 
 accessibility/aria-selected-menu-items.html [ Failure ]
-accessibility/aria-flowto.html [ Failure ]
 accessibility/aria-owns-hierarchy-remap.html [ Failure ]
 accessibility/element-reflection-ariaactivedescendant.html [ Failure ]

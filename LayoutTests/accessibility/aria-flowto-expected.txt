@@ -4,6 +4,8 @@ PASS: item.ariaFlowToElementAtIndex(0).role === 'AXRole: AXButton'
 PASS: item.ariaFlowToElementAtIndex(0).title === 'AXTitle: BUTTON'
 PASS: item.ariaFlowToElementAtIndex(1).role === 'AXRole: AXRadioButton'
 PASS: item.ariaFlowToElementAtIndex(1).title === 'AXTitle: RADIO BUTTON'
+PASS: displayContentsImg.ariaFlowToElementAtIndex(0).role === 'AXRole: AXButton'
+PASS: displayContentsImg.ariaFlowToElementAtIndex(0).title === 'AXTitle: Foo button'
 
 Removing id 'extra' from #item1's aria-flowto.
 PASS: item.ariaFlowToElementAtIndex(0).role === 'AXRole: AXRadioButton'
@@ -15,5 +17,7 @@ TEST COMPLETE
 Item 1
 Item 2
 Item 3
+Foo img
 BUTTON
 RADIO BUTTON
+Foo button
