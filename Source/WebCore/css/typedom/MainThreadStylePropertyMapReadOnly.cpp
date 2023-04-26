@@ -67,7 +67,7 @@ ExceptionOr<RefPtr<CSSStyleValue>> MainThreadStylePropertyMapReadOnly::get(Scrip
         return Exception { TypeError, makeString("Invalid property ", property) };
 
     if (isShorthand(propertyID))
-        return CSSStyleValueFactory::constructStyleValueForShorthandSerialization(shorthandPropertySerialization(propertyID));
+        return CSSStyleValueFactory::constructStyleValueForShorthandSerialization(shorthandPropertySerialization(propertyID), { *document });
 
     return reifyValue(propertyValue(propertyID), propertyID, *document);
 }
@@ -87,7 +87,7 @@ ExceptionOr<Vector<RefPtr<CSSStyleValue>>> MainThreadStylePropertyMapReadOnly::g
         return Exception { TypeError, makeString("Invalid property ", property) };
 
     if (isShorthand(propertyID)) {
-        if (RefPtr value = CSSStyleValueFactory::constructStyleValueForShorthandSerialization(shorthandPropertySerialization(propertyID)))
+        if (RefPtr value = CSSStyleValueFactory::constructStyleValueForShorthandSerialization(shorthandPropertySerialization(propertyID), { *document }))
             return Vector<RefPtr<CSSStyleValue>> { WTFMove(value) };
         return Vector<RefPtr<CSSStyleValue>> { };
     }

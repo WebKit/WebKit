@@ -32,6 +32,6 @@
     SkipVTableValidation
 ] interface CSSStyleValue {
     stringifier;
-    [Exposed=Window] static CSSStyleValue parse([AtomString] USVString property, USVString cssText);
-    [Exposed=Window] static sequence<CSSStyleValue> parseAll([AtomString] USVString property, USVString cssText);
+    [Exposed=Window, CallWith=CurrentDocument] static CSSStyleValue parse([AtomString] USVString property, USVString cssText);
+    [Exposed=Window, CallWith=CurrentDocument] static sequence<CSSStyleValue> parseAll([AtomString] USVString property, USVString cssText);
 };
