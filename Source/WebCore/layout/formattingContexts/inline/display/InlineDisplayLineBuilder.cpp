@@ -241,6 +241,10 @@ static float truncateOverflowingDisplayBoxes(const InlineDisplay::Line& displayL
     auto isFirstContentRun = true;
     if (rootStyle.isLeftToRightDirection()) {
         auto visualRightForContentEnd = std::max(0.f, right(displayLine) - ellipsisWidth);
+#if USE_FLOAT_AS_INLINE_LAYOUT_UNIT
+        if (visualRightForContentEnd)
+            visualRightForContentEnd += LayoutUnit::epsilon();
+#endif
         auto truncateRight = std::optional<float> { };
         for (auto& displayBox : boxes) {
             if (displayBox.isInlineBox())
@@ -258,6 +262,10 @@ static float truncateOverflowingDisplayBoxes(const InlineDisplay::Line& displayL
 
     auto truncateLeft = std::optional<float> { };
     auto visualLeftForContentEnd = std::max(0.f, left(displayLine) + ellipsisWidth);
+#if USE_FLOAT_AS_INLINE_LAYOUT_UNIT
+    if (visualLeftForContentEnd)
+        visualLeftForContentEnd -= LayoutUnit::epsilon();
+#endif
     for (auto& displayBox : makeReversedRange(boxes)) {
         if (displayBox.isInlineBox())
             continue;
