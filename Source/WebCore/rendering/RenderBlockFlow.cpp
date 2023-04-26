@@ -878,6 +878,14 @@ void RenderBlockFlow::layoutBlockChildren(bool relayoutChildren, LayoutUnit& max
 
 void RenderBlockFlow::trimBlockEndChildrenMargins()
 {
+    auto trimSelfCollapsingChildDescendants = [&](RenderBox& child) {
+        ASSERT(child.isSelfCollapsingBlock());
+        for (auto itr = RenderIterator<RenderBox>(&child, child.firstChildBox()); itr; itr = itr.traverseNext()) {
+            setTrimmedMarginForChild(*itr, MarginTrimType::BlockStart);
+            setTrimmedMarginForChild(*itr, MarginTrimType::BlockEnd);
+        }
+    };
+
     ASSERT(style().marginTrim().contains(MarginTrimType::BlockEnd));
     // If we are trimming the block end margin, we need to make sure we trim the margin of the children
     // at the end of the block by walking back up the container. Any self collapsing children will also need to
@@ -894,6 +902,12 @@ void RenderBlockFlow::trimBlockEndChildrenMargins()
         if (child->isSelfCollapsingBlock()) {
             setTrimmedMarginForChild(*child, MarginTrimType::BlockStart);
             childContainingBlock->setLogicalTopForChild(*child, childContainingBlock->logicalHeight());
+            
+            // If this self-collapsing child has any other children, which must also be
+            // self-collapsing, we should trim the margins of all its descendants
+            if (child->firstChildBox() && !child->childrenInline())
+                trimSelfCollapsingChildDescendants(*child);
+
             child = child->previousSiblingBox();
         }  else if (auto* nestedBlock = dynamicDowncast<RenderBlockFlow>(child); nestedBlock && nestedBlock->isBlockContainer() && !nestedBlock->childrenInline() && !nestedBlock->style().marginTrim().contains(MarginTrimType::BlockEnd)) {
             MarginInfo nestedBlockMarginInfo(*nestedBlock, nestedBlock->borderAndPaddingBefore(), nestedBlock->borderAndPaddingAfter());
