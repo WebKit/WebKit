@@ -1259,10 +1259,49 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
         return;
     }
 
+    case AccessCase::IndexedMegamorphicLoad: {
+#if USE(JSVALUE64)
+        ASSERT(!accessCase.viaGlobalProxy());
+
+        CCallHelpers::JumpList slowCases;
+
+        auto allocator = makeDefaultScratchAllocator(scratchGPR);
+        GPRReg scratch2GPR = allocator.allocateScratchGPR();
+        GPRReg scratch3GPR = allocator.allocateScratchGPR();
+        GPRReg scratch4GPR = allocator.allocateScratchGPR();
+        GPRReg scratch5GPR = allocator.allocateScratchGPR();
+
+        ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+
+        CCallHelpers::JumpList notString;
+        GPRReg propertyGPR = m_stubInfo->propertyGPR();
+        if (!m_stubInfo->propertyIsString) {
+            slowCases.append(jit.branchIfNotCell(propertyGPR));
+            slowCases.append(jit.branchIfNotString(propertyGPR));
+        }
+
+        jit.loadPtr(CCallHelpers::Address(propertyGPR, JSString::offsetOfValue()), scratch5GPR);
+        slowCases.append(jit.branchIfRopeStringImpl(scratch5GPR));
+        slowCases.append(jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch5GPR, StringImpl::flagsOffset()), CCallHelpers::TrustedImm32(StringImpl::flagIsAtom())));
+
+        slowCases.append(jit.loadMegamorphicProperty(vm, baseGPR, scratch5GPR, nullptr, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR, scratch4GPR));
+
+        allocator.restoreReusedRegistersByPopping(jit, preservedState);
+        succeed();
+
+        if (allocator.didReuseRegisters()) {
+            slowCases.link(&jit);
+            allocator.restoreReusedRegistersByPopping(jit, preservedState);
+            m_failAndRepatch.append(jit.jump());
+        } else
+            m_failAndRepatch.append(slowCases);
+#endif
+        return;
+    }
+
     case AccessCase::LoadMegamorphic: {
 #if USE(JSVALUE64)
         ASSERT(!accessCase.viaGlobalProxy());
-        CCallHelpers::JumpList primaryFail;
         CCallHelpers::JumpList failAndRepatch;
         auto* uid = accessCase.m_identifier.uid();
 
@@ -1273,7 +1312,7 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
 
         ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
-        auto slowCases = jit.loadMegamorphicProperty(vm, baseGPR, uid, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR, scratch4GPR);
+        auto slowCases = jit.loadMegamorphicProperty(vm, baseGPR, InvalidGPRReg, uid, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR, scratch4GPR);
 
         allocator.restoreReusedRegistersByPopping(jit, preservedState);
         succeed();
@@ -2058,6 +2097,7 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
     case AccessCase::ProxyObjectStore:
     case AccessCase::InstanceOfGeneric:
     case AccessCase::LoadMegamorphic:
+    case AccessCase::IndexedMegamorphicLoad:
     case AccessCase::IndexedInt32Load:
     case AccessCase::IndexedDoubleLoad:
     case AccessCase::IndexedContiguousLoad:
@@ -2633,7 +2673,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 
     // If the resulting set of cases is so big that we would stop caching and this is InstanceOf,
     // then we want to generate the generic InstanceOf and then stop.
-    if (cases.size() >= Options::maxAccessVariantListSize()) {
+    if (cases.size() >= Options::maxAccessVariantListSize() || m_stubInfo->canBeMegamorphic) {
         switch (m_stubInfo->accessType) {
         case AccessType::InstanceOf: {
             while (!cases.isEmpty())
@@ -2666,6 +2706,31 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                 while (!cases.isEmpty())
                     poly.m_list.append(cases.takeLast());
                 cases.append(AccessCase::create(vm(), codeBlock, AccessCase::LoadMegamorphic, identifier));
+                generatedMegamorphicCode = true;
+            }
+            break;
+        }
+        case AccessType::GetByVal: {
+            bool allAreSimpleLoadOrMiss = true;
+            for (auto& accessCase : cases) {
+                if (accessCase->type() != AccessCase::Load && accessCase->type() != AccessCase::Miss)
+                    allAreSimpleLoadOrMiss = false;
+                if (accessCase->usesPolyProto())
+                    allAreSimpleLoadOrMiss = false;
+                if (accessCase->viaGlobalProxy())
+                    allAreSimpleLoadOrMiss = false;
+            }
+
+#if USE(JSVALUE32_64)
+            allAreSimpleLoadOrMiss = false;
+#endif
+            if (m_stubInfo->isEnumerator)
+                allAreSimpleLoadOrMiss = false;
+
+            if (allAreSimpleLoadOrMiss) {
+                while (!cases.isEmpty())
+                    poly.m_list.append(cases.takeLast());
+                cases.append(AccessCase::create(vm(), codeBlock, AccessCase::IndexedMegamorphicLoad, nullptr));
                 generatedMegamorphicCode = true;
             }
             break;

@@ -6817,10 +6817,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 addVarArgChild(base);
                 addVarArgChild(property);
                 addVarArgChild(nullptr); // Leave room for property storage.
-                Node* getByVal = addToGraph(Node::VarArg, GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction));
+                Node* getByVal = addToGraph(Node::VarArg, getByStatus.isMegamorphic() ? GetByValMegamorphic : GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction));
                 m_exitOK = false; // GetByVal must be treated as if it clobbers exit state, since FixupPhase may make it generic.
                 set(bytecode.m_dst, getByVal);
-                if (getByStatus.observedStructureStubInfoSlowPath() || bytecode.metadata(codeBlock).m_seenIdentifiers.count() > Options::getByValICMaxNumberOfIdentifiers())
+                if (!getByStatus.isMegamorphic() && getByStatus.observedStructureStubInfoSlowPath())
                     m_graph.m_slowGetByVal.add(getByVal);
             }
 
@@ -8993,6 +8993,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 NEXT_OPCODE(op_enumerator_get_by_val);
             }
 
+            GetByStatus getByStatus = GetByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin());
+
             // FIXME: Checking for a BadConstantValue causes us to always use the Generic variant if we switched from IndexedMode -> IndexedMode + OwnStructureMode even though that might be fine.
             if (!seenModes.containsAny({ JSPropertyNameEnumerator::GenericMode, JSPropertyNameEnumerator::HasSeenOwnStructureModeStructureMismatch })
                 && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
@@ -9005,7 +9007,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 addVarArgChild(index);
                 addVarArgChild(mode);
                 addVarArgChild(enumerator);
-                set(bytecode.m_dst, addToGraph(Node::VarArg, EnumeratorGetByVal, OpInfo(arrayMode.asWord()), OpInfo(speculation)));
+                Node* getByVal = addToGraph(Node::VarArg, EnumeratorGetByVal, OpInfo(arrayMode.asWord()), OpInfo(speculation));
+                set(bytecode.m_dst, getByVal);
+                if (getByStatus.observedStructureStubInfoSlowPath())
+                    m_graph.m_slowGetByVal.add(getByVal);
 
                 addToGraph(Phantom, propertyName);
                 NEXT_OPCODE(op_enumerator_get_by_val);
@@ -9017,7 +9022,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
             addVarArgChild(index);
             addVarArgChild(mode);
             addVarArgChild(enumerator);
-            set(bytecode.m_dst, addToGraph(Node::VarArg, EnumeratorGetByVal, OpInfo(arrayMode.asWord()), OpInfo(speculation)));
+            Node* getByVal = addToGraph(Node::VarArg, EnumeratorGetByVal, OpInfo(arrayMode.asWord()), OpInfo(speculation));
+            set(bytecode.m_dst, getByVal);
+            if (getByStatus.observedStructureStubInfoSlowPath())
+                m_graph.m_slowGetByVal.add(getByVal);
 
             NEXT_OPCODE(op_enumerator_get_by_val);
         }

@@ -87,6 +87,9 @@ GetByStatus GetByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeInde
     case op_get_by_val:
         return GetByStatus(NoInformation, false);
 
+    case op_enumerator_get_by_val:
+        return GetByStatus(NoInformation, false);
+
     case op_iterator_open: {
         ASSERT(bytecodeIndex.checkpoint() == OpIteratorOpen::getNext);
         auto& metadata = instruction->as<OpIteratorOpen>().metadata(profiledBlock);
@@ -277,7 +280,8 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurr
                 status.appendVariant(GetByVariant(accessCase.identifier(), { }, invalidOffset, { }, WTFMove(callLinkStatus)));
                 return status;
             }
-            case AccessCase::LoadMegamorphic: {
+            case AccessCase::LoadMegamorphic:
+            case AccessCase::IndexedMegamorphicLoad: {
                 // Emitting LoadMegamorphic means that we give up polymorphic IC optimization. So this needs very careful handling.
                 // It is possible that one function can be inlined from the other function, and then it gets limited # of structures.
                 // In this case, continue using IC is better than falling back to megamorphic case. But if the function gets compiled before,

@@ -469,6 +469,8 @@ public:
     bool propertyIsString : 1 { false };
     bool propertyIsInt32 : 1 { false };
     bool propertyIsSymbol : 1 { false };
+    bool canBeMegamorphic : 1 { false };
+    bool isEnumerator : 1 { false };
     bool useDataIC : 1 { false };
 };
 
@@ -522,7 +524,8 @@ struct UnlinkedStructureStubInfo {
     bool propertyIsString : 1 { false };
     bool propertyIsSymbol : 1 { false };
     bool prototypeIsKnownObject : 1 { false };
-    bool tookSlowPath : 1 { false };
+    bool canBeMegamorphic : 1 { false };
+    bool isEnumerator : 1 { false };
     CodeLocationLabel<JSInternalPtrTag> doneLocation;
     CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation;
 };

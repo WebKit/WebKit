@@ -123,6 +123,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(InstanceOfGeneric) \
     macro(CheckPrivateBrand) \
     macro(SetPrivateBrand) \
+    macro(IndexedMegamorphicLoad) \
     macro(IndexedInt32Load) \
     macro(IndexedDoubleLoad) \
     macro(IndexedContiguousLoad) \

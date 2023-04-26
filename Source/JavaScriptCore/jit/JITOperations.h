@@ -274,6 +274,7 @@ JSC_DECLARE_JIT_OPERATION(operationPutGetterSetter, void, (JSGlobalObject*, JSCe
 
 JSC_DECLARE_JIT_OPERATION(operationGetByValOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript));
 JSC_DECLARE_JIT_OPERATION(operationGetByValGeneric, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript));
+JSC_DECLARE_JIT_OPERATION(operationGetByValMegamorphic, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript));
 JSC_DECLARE_JIT_OPERATION(operationGetByVal, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty));
 JSC_DECLARE_JIT_OPERATION(operationGetByValWithThisOptimize, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, EncodedJSValue encodedThis));
 JSC_DECLARE_JIT_OPERATION(operationGetByValWithThisGeneric, EncodedJSValue, (JSGlobalObject*, StructureStubInfo*, ArrayProfile*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, EncodedJSValue encodedThis));

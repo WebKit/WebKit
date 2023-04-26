@@ -915,6 +915,7 @@ private:
 
         case NewArrayWithSpecies:
         case EnumeratorGetByVal:
+        case GetByValMegamorphic:
         case ArrayPop:
         case ArrayPush:
         case RegExpExec:

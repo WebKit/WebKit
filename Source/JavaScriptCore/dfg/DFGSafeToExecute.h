@@ -376,6 +376,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
 
     case EnumeratorGetByVal:
     case GetByVal:
+    case GetByValMegamorphic:
     case GetIndexedPropertyStorage:
     case GetArrayLength:
     case GetTypedArrayLengthAsInt52:

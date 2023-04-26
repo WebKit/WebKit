@@ -408,6 +408,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetTypedArrayLengthAsInt52:
     case GetVectorLength:
     case GetByVal:
+    case GetByValMegamorphic:
     case GetByValWithThis:
     case PutByVal:
     case PutByValAlias:

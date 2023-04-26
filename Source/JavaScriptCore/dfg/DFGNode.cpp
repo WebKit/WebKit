@@ -353,16 +353,17 @@ void Node::convertToRegExpTestInline(FrozenValue* globalObject, FrozenValue* reg
     m_opInfo2 = regExp;
 }
 
-void Node::convertToGetById(Graph& graph, CacheableIdentifier identifier)
+void Node::convertToGetByIdMaybeMegamorphic(Graph& graph, CacheableIdentifier identifier)
 {
-    ASSERT(op() == GetByVal);
+    ASSERT(op() == GetByVal || op() == GetByValMegamorphic);
+    bool isMegamorphic = op() == GetByValMegamorphic;
     Edge base = graph.varArgChild(this, 0);
     ASSERT(base.useKind() == ObjectUse);
     for (unsigned i = 0; i < numChildren(); ++i) {
         Edge& edge = graph.varArgChild(this, i);
         edge = Edge();
     }
-    setOpAndDefaultFlags(GetById);
+    setOpAndDefaultFlags(isMegamorphic ? GetByIdMegamorphic : GetById);
     children.child1() = Edge(base.node(), CellUse);
     children.child2() = Edge();
     children.child3() = Edge();

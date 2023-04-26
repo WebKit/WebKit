@@ -88,6 +88,7 @@ Ref<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, Cache
     case ProxyObjectStore:
     case Replace:
     case InstanceOfGeneric:
+    case IndexedMegamorphicLoad:
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
@@ -349,6 +350,7 @@ bool AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck() const
     case InstanceOfHit:
     case InstanceOfMiss:
     case InstanceOfGeneric:
+    case IndexedMegamorphicLoad:
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
@@ -458,6 +460,7 @@ bool AccessCase::requiresIdentifierNameMatch() const
     case InstanceOfHit:
     case InstanceOfMiss:
     case InstanceOfGeneric:
+    case IndexedMegamorphicLoad:
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
@@ -545,6 +548,7 @@ bool AccessCase::requiresInt32PropertyCheck() const
     case InstanceOfGeneric:
     case CheckPrivateBrand:
     case SetPrivateBrand:
+    case IndexedMegamorphicLoad:
         return false;
     case IndexedInt32Load:
     case IndexedDoubleLoad:
@@ -632,6 +636,7 @@ bool AccessCase::needsScratchFPR() const
     case InstanceOfHit:
     case InstanceOfMiss:
     case InstanceOfGeneric:
+    case IndexedMegamorphicLoad:
     case IndexedInt32Load:
     case IndexedContiguousLoad:
     case IndexedArrayStorageLoad:
@@ -761,6 +766,7 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
     case DirectArgumentsLength:
     case ScopedArgumentsLength:
     case InstanceOfGeneric:
+    case IndexedMegamorphicLoad:
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
@@ -854,6 +860,7 @@ bool AccessCase::doesCalls(VM& vm, Vector<JSCell*>* cellsToMarkIfDoesCalls) cons
     case InstanceOfHit:
     case InstanceOfMiss:
     case InstanceOfGeneric:
+    case IndexedMegamorphicLoad:
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
@@ -964,6 +971,7 @@ bool AccessCase::canReplace(const AccessCase& other) const
     
     switch (type()) {
     case LoadMegamorphic:
+    case IndexedMegamorphicLoad:
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
@@ -1185,6 +1193,7 @@ inline void AccessCase::runWithDowncast(const Func& func)
     case ScopedArgumentsLength:
     case CheckPrivateBrand:
     case SetPrivateBrand:
+    case IndexedMegamorphicLoad:
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
@@ -1325,6 +1334,7 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
     case ScopedArgumentsLength:
     case CheckPrivateBrand:
     case SetPrivateBrand:
+    case IndexedMegamorphicLoad:
     case IndexedInt32Load:
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:

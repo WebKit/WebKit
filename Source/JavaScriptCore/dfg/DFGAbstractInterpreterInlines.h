@@ -2238,6 +2238,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
 
     case GetByVal:
+    case GetByValMegamorphic:
     case AtomicsAdd:
     case AtomicsAnd:
     case AtomicsCompareExchange:
@@ -2247,7 +2248,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case AtomicsStore:
     case AtomicsSub:
     case AtomicsXor: {
-        if (node->op() == GetByVal) {
+        if (node->op() == GetByVal || node->op() == GetByValMegamorphic) {
             auto foldGetByValOnConstantProperty = [&] (Edge& arrayEdge, Edge& indexEdge) {
                 // FIXME: We can expand this for non x86 environments.
                 // https://bugs.webkit.org/show_bug.cgi?id=134641
@@ -2412,9 +2413,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     }
                 }
             }
-        }
-
-        if (node->op() != GetByVal) {
+        } else {
             unsigned numExtraArgs = numExtraAtomicsArgs(node->op());
             Edge storageEdge = m_graph.child(node, 2 + numExtraArgs);
             if (!storageEdge)

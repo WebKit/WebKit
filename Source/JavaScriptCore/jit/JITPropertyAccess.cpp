@@ -70,22 +70,13 @@ void JIT::emit_op_get_by_val(const JSInstruction* currentInstruction)
         stubInfo->propertyIsInt32 = true;
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 
-    if (bytecode.metadata(m_profiledCodeBlock).m_seenIdentifiers.count() > Options::getByValICMaxNumberOfIdentifiers()) {
-        stubInfo->tookSlowPath = true;
+    if (bytecode.metadata(m_profiledCodeBlock).m_seenIdentifiers.count() > Options::getByValICMaxNumberOfIdentifiers())
+        stubInfo->canBeMegamorphic = true;
 
-        auto notCell = branchIfNotCell(baseJSR);
-        emitArrayProfilingSiteWithCell(bytecode, baseJSR.payloadGPR(), scratchGPR);
-        notCell.link(this);
-        loadGlobalObject(scratchGPR);
-        callOperationWithResult(operationGetByVal, resultJSR, scratchGPR, baseJSR, propertyJSR);
+    emitJumpSlowCaseIfNotJSCell(baseJSR, base);
+    emitArrayProfilingSiteWithCell(bytecode, baseJSR.payloadGPR(), scratchGPR);
 
-        gen.generateEmptyPath(*this);
-    } else {
-        emitJumpSlowCaseIfNotJSCell(baseJSR, base);
-        emitArrayProfilingSiteWithCell(bytecode, baseJSR.payloadGPR(), scratchGPR);
-
-        gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
-    }
+    gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
 
     addSlowCase();
     m_getByVals.append(gen);
@@ -112,13 +103,11 @@ void JIT::generateGetByValSlowCase(const OpcodeType& bytecode, Vector<SlowCaseEn
     Label coldPathBegin = label();
     linkAllSlowCases(iter);
 
-    if (!gen.m_unlinkedStubInfo->tookSlowPath) {
-        move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
-        loadConstant(gen.m_unlinkedStubInfoConstantIndex, stubInfoGPR);
-        materializePointerIntoMetadata(bytecode, OpcodeType::Metadata::offsetOfArrayProfile(), profileGPR);
+    move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
+    loadConstant(gen.m_unlinkedStubInfoConstantIndex, stubInfoGPR);
+    materializePointerIntoMetadata(bytecode, OpcodeType::Metadata::offsetOfArrayProfile(), profileGPR);
 
-        emitNakedNearCall(vm().getCTIStub(slow_op_get_by_val_callSlowOperationThenCheckExceptionGenerator).retaggedCode<NoPtrTag>());
-    }
+    emitNakedNearCall(vm().getCTIStub(slow_op_get_by_val_callSlowOperationThenCheckExceptionGenerator).retaggedCode<NoPtrTag>());
 
     gen.reportSlowPathCall(coldPathBegin, Call());
 }
@@ -2224,13 +2213,11 @@ void JIT::emitSlow_op_get_by_val_with_this(const JSInstruction* currentInstructi
     Label coldPathBegin = label();
     linkAllSlowCases(iter);
 
-    if (!gen.m_unlinkedStubInfo->tookSlowPath) {
-        move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
-        loadConstant(gen.m_unlinkedStubInfoConstantIndex, stubInfoGPR);
-        materializePointerIntoMetadata(bytecode, OpGetByValWithThis::Metadata::offsetOfArrayProfile(), profileGPR);
+    move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
+    loadConstant(gen.m_unlinkedStubInfoConstantIndex, stubInfoGPR);
+    materializePointerIntoMetadata(bytecode, OpGetByValWithThis::Metadata::offsetOfArrayProfile(), profileGPR);
 
-        emitNakedNearCall(vm().getCTIStub(slow_op_get_by_val_with_this_callSlowOperationThenCheckExceptionGenerator).retaggedCode<NoPtrTag>());
-    }
+    emitNakedNearCall(vm().getCTIStub(slow_op_get_by_val_with_this_callSlowOperationThenCheckExceptionGenerator).retaggedCode<NoPtrTag>());
 
     gen.reportSlowPathCall(coldPathBegin, Call());
 }
@@ -2441,6 +2428,7 @@ void JIT::emit_op_enumerator_get_by_val(const JSInstruction* currentInstruction)
         nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetByVal, RegisterSetBuilder::stubUnavailableRegisters(),
         JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(resultGPR), stubInfoGPR);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
+    stubInfo->isEnumerator = true;
 
     gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
     resetSP(); // We might OSR exit here, so we need to conservatively reset SP
@@ -2586,6 +2574,7 @@ void JIT::emit_op_enumerator_put_by_val(const JSInstruction* currentInstruction)
         nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::PutByVal, RegisterSetBuilder::stubUnavailableRegisters(),
         JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), profileGPR, stubInfoGPR, PutKind::NotDirect, ecmaMode, PrivateFieldPutKind::none());
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
+    stubInfo->isEnumerator = true;
 
     gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
     resetSP(); // We might OSR exit here, so we need to conservatively reset SP

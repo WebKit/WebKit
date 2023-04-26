@@ -387,8 +387,10 @@ StubInfoSummary StructureStubInfo::summary(VM& vm) const
                 break;
             }
         }
-        if (list->size() == 1 && list->at(0).type() == AccessCase::LoadMegamorphic)
-            return StubInfoSummary::Megamorphic;
+        if (list->size() == 1) {
+            if (list->at(0).type() == AccessCase::LoadMegamorphic || list->at(0).type() == AccessCase::IndexedMegamorphicLoad)
+                return StubInfoSummary::Megamorphic;
+        }
     }
     
     if (tookSlowPath || sawNonCell)
@@ -506,8 +508,12 @@ void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(const BaselineUn
     codeOrigin = CodeOrigin(unlinkedStubInfo.bytecodeIndex);
     m_codePtr = slowPathStartLocation;
     propertyIsInt32 = unlinkedStubInfo.propertyIsInt32;
-    tookSlowPath = unlinkedStubInfo.tookSlowPath;
+    canBeMegamorphic = unlinkedStubInfo.canBeMegamorphic;
+    isEnumerator = unlinkedStubInfo.isEnumerator;
     useDataIC = true;
+
+    if (unlinkedStubInfo.canBeMegamorphic)
+        bufferingCountdown = 1;
 
     auto usedJSRs = RegisterSetBuilder::stubUnavailableRegisters();
     if (accessType == AccessType::GetById && unlinkedStubInfo.bytecodeIndex.checkpoint()) {
@@ -693,8 +699,12 @@ void StructureStubInfo::initializeFromDFGUnlinkedStructureStubInfo(const DFG::Un
     propertyIsString = unlinkedStubInfo.propertyIsString;
     prototypeIsKnownObject = unlinkedStubInfo.prototypeIsKnownObject;
     hasConstantIdentifier = unlinkedStubInfo.hasConstantIdentifier;
-    tookSlowPath = unlinkedStubInfo.tookSlowPath;
+    canBeMegamorphic = unlinkedStubInfo.canBeMegamorphic;
+    isEnumerator = unlinkedStubInfo.isEnumerator;
     useDataIC = true;
+
+    if (unlinkedStubInfo.canBeMegamorphic)
+        bufferingCountdown = 1;
 
     usedRegisters = unlinkedStubInfo.usedRegisters;
 

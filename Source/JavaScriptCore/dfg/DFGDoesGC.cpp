@@ -512,6 +512,7 @@ bool doesGC(Graph& graph, Node* node)
         return false;
 
     case GetByVal:
+    case GetByValMegamorphic:
     case EnumeratorGetByVal:
         if (node->arrayMode().type() == Array::String)
             return true;

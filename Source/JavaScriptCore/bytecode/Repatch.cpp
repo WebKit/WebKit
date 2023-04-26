@@ -605,12 +605,22 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
 void repatchGetBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue baseValue, CacheableIdentifier propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo, GetByKind kind)
 {
     SuperSamplerScope superSamplerScope(false);
-    
-    auto result = tryCacheGetBy(globalObject, codeBlock, baseValue, propertyName, slot, stubInfo, kind);
-    if (result == PromoteToMegamorphic)
-        repatchSlowPathCall(codeBlock, stubInfo, operationGetByIdMegamorphic);
-    else if (result == GiveUpOnCache)
+
+    switch (tryCacheGetBy(globalObject, codeBlock, baseValue, propertyName, slot, stubInfo, kind)) {
+    case PromoteToMegamorphic: {
+        if (kind == GetByKind::ById)
+            repatchSlowPathCall(codeBlock, stubInfo, operationGetByIdMegamorphic);
+        else
+            repatchSlowPathCall(codeBlock, stubInfo, operationGetByValMegamorphic);
+        break;
+    }
+    case GiveUpOnCache:
         repatchSlowPathCall(codeBlock, stubInfo, appropriateGetByFunction(kind));
+        break;
+    case RetryCacheLater:
+    case AttemptToCache:
+        break;
+    }
 }
 
 // Mainly used to transition from megamorphic case to generic case.

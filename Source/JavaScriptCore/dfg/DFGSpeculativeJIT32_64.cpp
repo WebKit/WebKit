@@ -4268,6 +4268,7 @@ void SpeculativeJIT::compile(Node* node)
     case NewBoundFunction:
     case EnumeratorPutByVal:
     case GetByIdMegamorphic:
+    case GetByValMegamorphic:
         DFG_CRASH(m_graph, node, "unexpected node in DFG backend");
         break;
     }

@@ -696,7 +696,8 @@ private:
                 break;
             }
 
-            case GetByVal: {
+            case GetByVal:
+            case GetByValMegamorphic: {
                 if (m_graph.child(node, 0).useKind() == ObjectUse && node->arrayMode().type() == Array::Generic) {
                     AbstractValue& property = m_state.forNode(m_graph.child(node, 1));
                     if (JSValue constant = property.value()) {
@@ -708,7 +709,7 @@ private:
                                 m_graph.freezeStrong(string);
                                 m_graph.identifiers().ensure(const_cast<UniquedStringImpl*>(static_cast<const UniquedStringImpl*>(impl)));
                                 m_insertionSet.insertCheck(indexInBlock, node->origin, m_graph.child(node, 0));
-                                node->convertToGetById(m_graph, CacheableIdentifier::createFromCell(string));
+                                node->convertToGetByIdMaybeMegamorphic(m_graph, CacheableIdentifier::createFromCell(string));
                                 changed = true;
                                 break;
                             }

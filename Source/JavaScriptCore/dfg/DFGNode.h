@@ -517,7 +517,7 @@ public:
     void convertToIdentity();
     void convertToIdentityOn(Node*);
 
-    void convertToGetById(Graph&, CacheableIdentifier);
+    void convertToGetByIdMaybeMegamorphic(Graph&, CacheableIdentifier);
 
     bool mustGenerate() const
     {
@@ -1856,6 +1856,7 @@ public:
         case TryGetById:
         case EnumeratorGetByVal:
         case GetByVal:
+        case GetByValMegamorphic:
         case GetByValWithThis:
         case GetPrivateName:
         case GetPrivateNameById:
@@ -2054,6 +2055,7 @@ public:
         case EnumeratorGetByVal:
         case EnumeratorPutByVal:
         case GetByVal:
+        case GetByValMegamorphic:
         case PutByValDirect:
         case PutByVal:
         case PutByValAlias:
@@ -2086,6 +2088,7 @@ public:
         switch (op()) {
         case EnumeratorGetByVal:
         case GetByVal:
+        case GetByValMegamorphic:
             return 2;
         case EnumeratorPutByVal:
         case PutByValDirect:
@@ -2391,6 +2394,7 @@ public:
         case PutByValAlias:
         case EnumeratorPutByVal:
         case GetByVal:
+        case GetByValMegamorphic:
         case EnumeratorNextUpdateIndexAndMode:
         case EnumeratorGetByVal:
         case EnumeratorInByVal:
