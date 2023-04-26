@@ -58,6 +58,7 @@ else:
 
 if sys.version_info >= (3, 6):
     AutoInstall.register(Package('importlib_metadata', Version(4, 8, 1)))
+    AutoInstall.register(Package('typing_extensions', Version(3, 10, 0)))
 else:
     AutoInstall.register(Package('importlib_metadata', Version(1, 7, 0)))
 
