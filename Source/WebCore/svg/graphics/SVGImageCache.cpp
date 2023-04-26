@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Research In Motion Limited. All rights reserved.
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -53,6 +53,10 @@ void SVGImageCache::setContainerContextForClient(const CachedImageClient& client
 {
     ASSERT(!containerSize.isEmpty());
     ASSERT(containerZoom);
+
+    // SVG container has width or height less than 1 pixel.
+    if (flooredIntSize(containerSize).isEmpty())
+        return;
 
     FloatSize containerSizeWithoutZoom(containerSize);
     containerSizeWithoutZoom.scale(1 / containerZoom);
