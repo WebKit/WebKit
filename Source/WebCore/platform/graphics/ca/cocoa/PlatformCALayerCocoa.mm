@@ -787,15 +787,10 @@ void PlatformCALayerCocoa::setContents(CFTypeRef value)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void PlatformCALayerCocoa::setDelegatedContentsFinishedEvent(const PlatformCALayerInProcessDelegatedContentsFinishedEvent&)
-{
-    // FIXME: To be implemented.
-}
-
 void PlatformCALayerCocoa::setDelegatedContents(const PlatformCALayerInProcessDelegatedContents& contents)
 {
-    setContents(contents.surface.asLayerContents());
-    // FIXME: m_delegatedContentsFinishedIdentifier = contents.finishedIdentifier;
+    if (contents.finishedFence->waitFor(delegatedContentsFinishedTimeout))
+        setContents(contents.surface.asLayerContents());
 }
 
 void PlatformCALayerCocoa::setContentsRect(const FloatRect& value)

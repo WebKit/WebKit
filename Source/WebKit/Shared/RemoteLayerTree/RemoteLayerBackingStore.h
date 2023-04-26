@@ -113,7 +113,6 @@ public:
     void setNeedsDisplay(const WebCore::IntRect);
     void setNeedsDisplay();
 
-    void setDelegatedContentsFinishedEvent(const WebCore::PlatformCALayerDelegatedContentsFinishedEvent&);
     void setDelegatedContents(const WebCore::PlatformCALayerDelegatedContents&);
 
     // Returns true if we need to encode the buffer.

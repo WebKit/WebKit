@@ -27,35 +27,30 @@
 
 #include <variant>
 #include <wtf/MachSendRight.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/ObjectIdentifier.h>
-
-OBJC_PROTOCOL(MTLSharedEvent);
 
 namespace WebCore {
 class IOSurface;
 
-namespace Detail {
-enum PlatformCALayerDelegatedContentsIdentifier { };
-}
+constexpr inline Seconds delegatedContentsFinishedTimeout = 5_s;
 
-struct PlatformCALayerDelegatedContentsFinishedEvent {
-    MachSendRight sharedEvent;
-};
-
-struct PlatformCALayerInProcessDelegatedContentsFinishedEvent {
-    id<MTLSharedEvent> sharedEvent;
+class WEBCORE_EXPORT PlatformCALayerDelegatedContentsFence : public ThreadSafeRefCounted<PlatformCALayerDelegatedContentsFence> {
+    WTF_MAKE_NONCOPYABLE(PlatformCALayerDelegatedContentsFence);
+public:
+    PlatformCALayerDelegatedContentsFence();
+    virtual ~PlatformCALayerDelegatedContentsFence();
+    virtual bool waitFor(Seconds) = 0;
 };
 
 struct PlatformCALayerDelegatedContents {
-    using FinishedIdentifier = ObjectIdentifier<Detail::PlatformCALayerDelegatedContentsIdentifier>;
     MachSendRight surface;
-    FinishedIdentifier finishedIdentifier;
+    RefPtr<PlatformCALayerDelegatedContentsFence> finishedFence;
 };
 
 struct PlatformCALayerInProcessDelegatedContents {
-    using FinishedIdentifier = PlatformCALayerDelegatedContents::FinishedIdentifier;
     const WebCore::IOSurface& surface; 
-    FinishedIdentifier finishedIdentifier;
+    RefPtr<PlatformCALayerDelegatedContentsFence> finishedFence;
 };
 
 }

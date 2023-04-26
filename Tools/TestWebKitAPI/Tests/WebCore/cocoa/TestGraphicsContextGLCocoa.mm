@@ -32,6 +32,7 @@
 #import <WebCore/Color.h>
 #import <WebCore/GraphicsContextGLCocoa.h>
 #import <WebCore/ProcessIdentity.h>
+#import <atomic>
 #import <optional>
 #import <wtf/HashSet.h>
 #import <wtf/MemoryFootprint.h>
@@ -432,6 +433,31 @@ TEST_P(AnyContextAttributeTest, PrepareFailureWorks)
     EXPECT_EQ(1, client.contextLostCalls());
 }
 
+// Tests that prepareForDisplayWithFinishedSignal submits the underlying fence.
+// E.g. no other work will be done to context after prepare, but the finished signal will
+// eventually come.
+TEST_P(AnyContextAttributeTest, FinishIsSignaled)
+{
+    auto context = createTestContext({ 2048, 2048 });
+    ASSERT_NE(context, nullptr);
+    context->markContextChanged();
+    context->clearColor(0.f, 1.f, 0.f, 1.f);
+    context->clear(WebCore::GraphicsContextGL::COLOR_BUFFER_BIT);
+    std::atomic<bool> signalled = false;
+    std::atomic<uint32_t> signalThreadUID = 0;
+    context->prepareForDisplayWithFinishedSignal([&signalled, &signalThreadUID] {
+        signalled = true;
+        signalThreadUID = Thread::current().uid();
+    });
+    while (!signalled)
+        sleep(.1_s);
+    EXPECT_TRUE(signalled);
+    if (context->contextAttributes().useMetal)
+        EXPECT_NE(Thread::current().uid(), signalThreadUID);
+    else
+        EXPECT_EQ(Thread::current().uid(), signalThreadUID);    
+}
+
 #if PLATFORM(IOS_FAMILY) || PLATFORM(IOS_FAMILY_SIMULATOR)
 #define USE_METAL_TESTING_VALUES testing::Values(true)
 #else
@@ -447,6 +473,7 @@ INSTANTIATE_TEST_SUITE_P(GraphicsContextGLCocoaTest,
     TestParametersToStringFormatter());
 
 #undef USE_METAL_TESTING_VALUES
+
 }
 
 #endif

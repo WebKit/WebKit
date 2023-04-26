@@ -1631,7 +1631,7 @@ public:
     WEBCORE_EXPORT static void paintToCanvas(const GraphicsContextGLAttributes&, Ref<PixelBuffer>&&, const IntSize& canvasSize, GraphicsContext&);
 
 protected:
-    WEBCORE_EXPORT void forceContextLost();
+    WEBCORE_EXPORT virtual void forceContextLost();
     WEBCORE_EXPORT void dispatchContextChangedNotification();
 
     int m_currentWidth { 0 };

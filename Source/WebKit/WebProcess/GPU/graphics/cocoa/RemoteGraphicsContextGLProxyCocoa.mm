@@ -43,6 +43,42 @@ namespace WebKit {
 
 namespace {
 
+class DisplayBufferFence final : public WebCore::PlatformCALayerDelegatedContentsFence {
+public:
+    static Ref<DisplayBufferFence> create(IPC::Semaphore&& finishedFenceSemaphore)
+    {
+        return adoptRef(*new DisplayBufferFence(WTFMove(finishedFenceSemaphore)));
+    }
+
+    bool waitFor(Seconds timeout) final
+    {
+        Locker locker { m_lock };
+        if (m_signaled)
+            return true;
+        m_signaled = m_semaphore.waitFor(timeout);
+        return m_signaled;
+    }
+
+    void forceSignal()
+    {
+        Locker locker { m_lock };
+        if (m_signaled)
+            return;
+        m_signaled = true;
+        m_semaphore.signal();
+    }
+
+private:
+    DisplayBufferFence(IPC::Semaphore&& finishedFenceSemaphore)
+        : m_semaphore(WTFMove(finishedFenceSemaphore))
+    {
+    }
+
+    Lock m_lock;
+    bool m_signaled WTF_GUARDED_BY_LOCK(m_lock) { false };
+    IPC::Semaphore m_semaphore;
+};
+
 class DisplayBufferDisplayDelegate final : public WebCore::GraphicsLayerContentsDisplayDelegate {
 public:
     static Ref<DisplayBufferDisplayDelegate> create(bool isOpaque, float contentsScale)
@@ -60,7 +96,7 @@ public:
     void display(WebCore::PlatformCALayer& layer) final
     {
         if (m_displayBuffer)
-            layer.setDelegatedContents({ m_displayBuffer, { } });
+            layer.setDelegatedContents({ m_displayBuffer, m_finishedFence });
         else
             layer.clearContents();
     }
@@ -70,14 +106,16 @@ public:
         return WebCore::GraphicsLayer::CompositingCoordinatesOrientation::BottomUp;
     }
 
-    void setDisplayBuffer(const MachSendRight& displayBuffer)
+    void setDisplayBuffer(const MachSendRight& displayBuffer, RefPtr<DisplayBufferFence> finishedFence)
     {
         if (!displayBuffer) {
+            m_finishedFence = nullptr;
             m_displayBuffer = { };
             return;
         }
         if (m_displayBuffer && displayBuffer.sendRight() == m_displayBuffer.sendRight())
             return;
+        m_finishedFence = WTFMove(finishedFence);
         m_displayBuffer = displayBuffer.copySendRight();
     }
 
@@ -89,6 +127,7 @@ private:
     }
 
     MachSendRight m_displayBuffer;
+    RefPtr<DisplayBufferFence> m_finishedFence;
     const float m_contentsScale;
     const bool m_isOpaque;
 };
@@ -98,6 +137,7 @@ public:
     // RemoteGraphicsContextGLProxy overrides.
     RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return m_layerContentsDisplayDelegate.ptr(); }
     void prepareForDisplay() final;
+    void forceContextLost() final;
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     WebCore::GraphicsContextGLCV* asCV() final { return nullptr; }
 #endif
@@ -107,8 +147,11 @@ private:
         , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create(!attributes.alpha, attributes.devicePixelRatio))
     {
     }
+    void addNewFence(Ref<DisplayBufferFence> newFence);
+    static constexpr size_t maxPendingFences = 3;
+    size_t m_oldestFenceIndex { 0 };
+    RefPtr<DisplayBufferFence> m_frameCompletionFences[maxPendingFences];
 
-    MachSendRight m_displayBuffer;
     Ref<DisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
     friend class RemoteGraphicsContextGLProxy;
 };
@@ -117,7 +160,8 @@ void RemoteGraphicsContextGLProxyCocoa::prepareForDisplay()
 {
     if (isContextLost())
         return;
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PrepareForDisplay());
+    IPC::Semaphore finishedSignaller;
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PrepareForDisplay(finishedSignaller));
     if (!sendResult) {
         markContextLost();
         return;
@@ -125,9 +169,28 @@ void RemoteGraphicsContextGLProxyCocoa::prepareForDisplay()
     auto [displayBufferSendRight] = sendResult.takeReply();
     if (!displayBufferSendRight)
         return;
-    m_displayBuffer = WTFMove(displayBufferSendRight);
     markLayerComposited();
-    m_layerContentsDisplayDelegate->setDisplayBuffer(m_displayBuffer.copySendRight());
+    auto finishedFence = DisplayBufferFence::create(WTFMove(finishedSignaller));
+    addNewFence(finishedFence);
+    m_layerContentsDisplayDelegate->setDisplayBuffer(WTFMove(displayBufferSendRight), WTFMove(finishedFence));
+}
+
+void RemoteGraphicsContextGLProxyCocoa::forceContextLost()
+{
+    for (auto fence : m_frameCompletionFences) {
+        if (fence)
+            fence->forceSignal();
+    }
+    RemoteGraphicsContextGLProxy::forceContextLost();
+}
+
+void RemoteGraphicsContextGLProxyCocoa::addNewFence(Ref<DisplayBufferFence> newFence)
+{
+    // Record the pending fences so that they can be force signaled when context is lost.
+    size_t oldestFenceIndex = m_oldestFenceIndex++ % maxPendingFences;
+    std::exchange(m_frameCompletionFences[oldestFenceIndex], WTFMove(newFence));
+    // Due to the fence being IPC::Semaphore, we do not have very good way of waiting the fence in two places, compositor and here.
+    // Thus we just record maxPendingFences and trust that compositor does not advance too far with multiple frames.
 }
 
 }

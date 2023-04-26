@@ -28,7 +28,6 @@
 #include "PlatformCALayer.h"
 
 OBJC_CLASS NSObject;
-OBJC_PROTOCOL(MTLSharedEvent);
 
 namespace WebCore {
 
@@ -119,7 +118,6 @@ public:
     CFTypeRef contents() const override;
     void setContents(CFTypeRef) override;
     void clearContents() override;
-    void setDelegatedContentsFinishedEvent(const PlatformCALayerInProcessDelegatedContentsFinishedEvent&) override;
     void setDelegatedContents(const PlatformCALayerInProcessDelegatedContents&) override;
 
     void setContentsRect(const FloatRect&) override;

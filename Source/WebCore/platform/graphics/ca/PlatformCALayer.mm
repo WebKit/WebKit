@@ -185,11 +185,6 @@ void PlatformCALayer::clearContents()
     setContents(nullptr);
 }
 
-void PlatformCALayer::setDelegatedContentsFinishedEvent(const PlatformCALayerDelegatedContentsFinishedEvent&)
-{
-    // FIXME: To be implemented.
-}
-
 void PlatformCALayer::setDelegatedContents(const PlatformCALayerDelegatedContents& contents)
 {
     auto surface = WebCore::IOSurface::createFromSendRight(contents.surface.copySendRight());
@@ -197,17 +192,12 @@ void PlatformCALayer::setDelegatedContents(const PlatformCALayerDelegatedContent
         clearContents();
         return;
     }
-    setDelegatedContents({ *surface, contents.finishedIdentifier });
-}
-
-void PlatformCALayer::setDelegatedContentsFinishedEvent(const PlatformCALayerInProcessDelegatedContentsFinishedEvent&)
-{
-    // FIXME: To be implemented.
+    setDelegatedContents({ *surface, contents.finishedFence });
 }
 
 void PlatformCALayer::setDelegatedContents(const PlatformCALayerInProcessDelegatedContents& contents)
 {
-    setDelegatedContents({ contents.surface.createSendRight(), contents.finishedIdentifier });
+    setDelegatedContents({ contents.surface.createSendRight(), contents.finishedFence });
 }
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
@@ -295,6 +285,10 @@ TextStream& operator<<(TextStream& ts, PlatformCALayer::FilterType filterType)
     }
     return ts;
 }
+
+PlatformCALayerDelegatedContentsFence::PlatformCALayerDelegatedContentsFence() = default;
+
+PlatformCALayerDelegatedContentsFence::~PlatformCALayerDelegatedContentsFence() = default;
 
 }
 

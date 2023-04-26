@@ -29,6 +29,7 @@
 
 #include "GraphicsContextGLANGLE.h"
 #include "IOSurface.h"
+#include <wtf/BlockPtr.h>
 
 #if PLATFORM(MAC)
 #include "ScopedHighPerformanceGPURequest.h"
@@ -37,6 +38,8 @@
 #if ENABLE(MEDIA_STREAM)
 #include <memory>
 #endif
+
+OBJC_CLASS MTLSharedEventListener;
 
 namespace WebCore {
 
@@ -55,6 +58,7 @@ class WEBCORE_EXPORT GraphicsContextGLCocoa : public GraphicsContextGLANGLE {
 public:
     static RefPtr<GraphicsContextGLCocoa> create(WebCore::GraphicsContextGLAttributes&&, ProcessIdentity&& resourceOwner);
     ~GraphicsContextGLCocoa();
+
     IOSurface* displayBuffer();
     void markDisplayBufferInUse();
 
@@ -68,12 +72,11 @@ public:
     IOSurfaceTextureAttachment attachIOSurfaceToSharedTexture(GCGLenum target, IOSurface*);
     void detachIOSurfaceFromSharedTexture(void* handle);
 #endif
-#if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
+
     RetainPtr<id> newSharedEventWithMachPort(mach_port_t);
-    void* createSyncWithSharedEvent(const RetainPtr<id>& sharedEvent, uint64_t signalValue);
+    void* createSyncWithSharedEvent(id sharedEvent, uint64_t signalValue);
     bool destroySync(void* sync);
     void clientWaitSyncWithFlush(void* sync, uint64_t timeout);
-#endif
 
     void waitUntilWorkScheduled();
 
@@ -98,6 +101,10 @@ public:
 #if PLATFORM(MAC)
     void updateContextOnDisplayReconfiguration();
 #endif
+
+    // Prepares current frame for display. The `finishedSignal` will be invoked once the frame has finished rendering.
+    void prepareForDisplayWithFinishedSignal(Function<void()> finishedSignal);
+
 protected:
     GraphicsContextGLCocoa(WebCore::GraphicsContextGLAttributes&&, ProcessIdentity&& resourceOwner);
 
@@ -108,6 +115,10 @@ protected:
     bool reshapeDisplayBufferBacking() final;
     bool allocateAndBindDisplayBufferBacking();
     bool bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer);
+
+    // Inserts new fence that will invoke `signal` from a background thread when completed.
+    // If not possible, calls the `signal`.
+    void insertFinishedSignalOrInvoke(Function<void()> signal);
 
     ProcessIdentity m_resourceOwner;
     DestinationColorSpace m_drawingBufferColorSpace;
@@ -122,6 +133,8 @@ protected:
     std::unique_ptr<ImageRotationSessionVT> m_mediaSampleRotationSession;
     IntSize m_mediaSampleRotationSessionSize;
 #endif
+    RetainPtr<MTLSharedEventListener> m_finishedMetalSharedEventListener;
+    RetainPtr<id> m_finishedMetalSharedEvent; // FIXME: Remove all C++ includees and use id<MTLSharedEvent>.
 
     friend class GraphicsContextGLCVCocoa;
 };

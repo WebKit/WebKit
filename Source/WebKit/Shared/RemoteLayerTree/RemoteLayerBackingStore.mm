@@ -49,6 +49,8 @@
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <WebCore/WebLayer.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/FastMalloc.h>
+#import <wtf/Noncopyable.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/TextStream.h>
 
@@ -59,6 +61,32 @@
 namespace WebKit {
 
 using namespace WebCore;
+
+namespace {
+
+class DelegatedContentsFenceFlusher final : public ThreadSafeImageBufferFlusher {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(DelegatedContentsFenceFlusher);
+public:
+    static std::unique_ptr<DelegatedContentsFenceFlusher> create(Ref<PlatformCALayerDelegatedContentsFence> fence)
+    {
+        return std::unique_ptr<DelegatedContentsFenceFlusher> { new DelegatedContentsFenceFlusher(WTFMove(fence)) };
+    }
+
+    void flush() final
+    {
+        m_fence->waitFor(delegatedContentsFinishedTimeout);
+    }
+
+private:
+    DelegatedContentsFenceFlusher(Ref<PlatformCALayerDelegatedContentsFence> fence)
+        : m_fence(WTFMove(fence))
+    {
+    }
+    Ref<PlatformCALayerDelegatedContentsFence> m_fence;
+};
+
+}
 
 RemoteLayerBackingStore::RemoteLayerBackingStore(PlatformCALayerRemote* layer)
     : m_layer(layer)
@@ -329,15 +357,11 @@ bool RemoteLayerBackingStore::supportsPartialRepaint() const
 #endif
 }
 
-void RemoteLayerBackingStore::setDelegatedContentsFinishedEvent(const WebCore::PlatformCALayerDelegatedContentsFinishedEvent&)
-{
-    // FIXME: To be implemented.
-}
-
 void RemoteLayerBackingStore::setDelegatedContents(const WebCore::PlatformCALayerDelegatedContents& contents)
 {
     m_contentsBufferHandle = contents.surface.copySendRight();
-    // FIXME: m_contentsBufferFinishedIdentifier = contents.finishedIdentifier;
+    if (contents.finishedFence)
+        m_frontBufferFlushers.append(DelegatedContentsFenceFlusher::create(Ref { *contents.finishedFence }));
     m_dirtyRegion = { };
     m_paintingRects.clear();
 }

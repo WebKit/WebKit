@@ -359,6 +359,18 @@ bool GraphicsContextGLCocoa::platformInitializeContext()
         LOG(WebGL, "EGLContext Initialization failed.");
         return false;
     }
+    if (attributes.useMetal) {
+        m_finishedMetalSharedEventListener = adoptNS([[MTLSharedEventListener alloc] init]);
+        if (!m_finishedMetalSharedEventListener) {
+            ASSERT_NOT_REACHED();
+            return false;
+        }
+        m_finishedMetalSharedEvent = newSharedEvent(m_displayObj);
+        if (!m_finishedMetalSharedEvent) {
+            ASSERT_NOT_REACHED();
+            return false;
+        }
+    }
     return true;
 }
 
@@ -400,10 +412,8 @@ bool GraphicsContextGLCocoa::platformInitialize()
         // OpenGL sync objects are not signaling upon completion on Catalina-era drivers, so
         // OpenGL cannot use this method of throttling. OpenGL drivers typically implement
         // some sort of internal throttling.
-        if (supportsExtension("GL_ARB_sync"_s)) {
-            m_useFenceSyncForDisplayRateLimit = true;
+        if (supportsExtension("GL_ARB_sync"_s))
             ensureExtensionEnabled("GL_ARB_sync"_s);
-        }
     }
     validateAttributes();
     attributes = contextAttributes(); // They may have changed during validation.
@@ -476,12 +486,6 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
             GL_DeleteTextures(1, &m_preserveDrawingBufferTexture);
         if (m_preserveDrawingBufferFBO)
             GL_DeleteFramebuffers(1, &m_preserveDrawingBufferFBO);
-        // If fences are not enabled, this loop will not execute.
-        for (auto& fence : m_frameCompletionFences)
-            fence.reset();
-    } else {
-        for (auto& fence : m_frameCompletionFences)
-            fence.abandon();
     }
     if (m_displayBufferPbuffer)
         EGL_DestroySurface(m_displayObj, m_displayBufferPbuffer);
@@ -704,13 +708,12 @@ void GraphicsContextGLCocoa::detachIOSurfaceFromSharedTexture(void* handle)
 }
 #endif
 
-#if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
 RetainPtr<id> GraphicsContextGLCocoa::newSharedEventWithMachPort(mach_port_t sharedEventSendRight)
 {
     return WebCore::newSharedEventWithMachPort(m_displayObj, sharedEventSendRight);
 }
 
-void* GraphicsContextGLCocoa::createSyncWithSharedEvent(const RetainPtr<id>& sharedEvent, uint64_t signalValue)
+void* GraphicsContextGLCocoa::createSyncWithSharedEvent(id sharedEvent, uint64_t signalValue)
 {
     COMPILE_ASSERT(sizeof(EGLAttrib) == sizeof(void*), "EGLAttrib not pointer-sized!");
     auto signalValueLo = static_cast<EGLAttrib>(signalValue);
@@ -719,7 +722,7 @@ void* GraphicsContextGLCocoa::createSyncWithSharedEvent(const RetainPtr<id>& sha
     // FIXME: How do we check for available extensions?
     auto display = platformDisplay();
     const EGLAttrib syncAttributes[] = {
-        EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE, reinterpret_cast<EGLAttrib>(sharedEvent.get()),
+        EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE, reinterpret_cast<EGLAttrib>(sharedEvent),
         EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_LO_ANGLE, signalValueLo,
         EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_HI_ANGLE, signalValueHi,
         EGL_NONE
@@ -739,7 +742,6 @@ void GraphicsContextGLCocoa::clientWaitSyncWithFlush(void* sync, uint64_t timeou
     auto ret = EGL_ClientWaitSync(display, sync, EGL_SYNC_FLUSH_COMMANDS_BIT, timeout);
     ASSERT_UNUSED(ret, ret == EGL_CONDITION_SATISFIED);
 }
-#endif
 
 void GraphicsContextGLCocoa::waitUntilWorkScheduled()
 {
@@ -751,17 +753,26 @@ void GraphicsContextGLCocoa::waitUntilWorkScheduled()
 
 void GraphicsContextGLCocoa::prepareForDisplay()
 {
-    if (m_layerComposited)
+    prepareForDisplayWithFinishedSignal([] { });
+}
+
+void GraphicsContextGLCocoa::prepareForDisplayWithFinishedSignal(Function<void()> finishedSignal)
+{
+    if (!makeContextCurrent()) {
+        finishedSignal();
         return;
-    if (!makeContextCurrent())
+    }
+    if (m_layerComposited) {
+        // FIXME: It makes no sense that this happens. Tracking this state should be moved to caller, WebGLRendenderingContextBase.
+        // https://bugs.webkit.org/show_bug.cgi?id=219342
+        insertFinishedSignalOrInvoke(WTFMove(finishedSignal));
+        waitUntilWorkScheduled();
         return;
+    }
     prepareTexture();
-
-    // The IOSurface will be used from other graphics subsystem, so flush GL commands.
-    GL_Flush();
-
+    // The fence inserted by this will be scheduled because next BindTexImage will wait until scheduled.
+    insertFinishedSignalOrInvoke(WTFMove(finishedSignal));
     auto recycledBuffer = m_swapChain.recycleBuffer();
-
     EGL_ReleaseTexImage(m_displayObj, m_displayBufferPbuffer, EGL_BACK_BUFFER);
     m_swapChain.present({ WTFMove(m_displayBufferBacking), m_displayBufferPbuffer });
     m_displayBufferPbuffer = EGL_NO_SURFACE;
@@ -777,17 +788,14 @@ void GraphicsContextGLCocoa::prepareForDisplay()
 
     if (!hasNewBacking) {
         if (!allocateAndBindDisplayBufferBacking()) {
+            // If the allocation failed, BindTexImage did not run. The fence must be scheduled.
+            waitUntilWorkScheduled();
             forceContextLost();
             return;
         }
     }
 
     markLayerComposited();
-
-    if (m_useFenceSyncForDisplayRateLimit) {
-        bool success = waitAndUpdateOldestFrame();
-        UNUSED_VARIABLE(success); // FIXME: implement context lost.
-    }
 }
 
 
@@ -966,6 +974,29 @@ void GraphicsContextGLCocoa::withDisplayBufferAsNativeImage(Function<void(Native
 
     CGImageSetCachingFlags(displayImage->platformImage().get(), kCGImageCachingTransient);
     func(*displayImage);
+}
+
+void GraphicsContextGLCocoa::insertFinishedSignalOrInvoke(Function<void()> signal)
+{
+    if (!contextAttributes().useMetal) {
+        signal();
+        return;
+    }
+    static std::atomic<uint64_t> nextSignalValue;
+    uint64_t signalValue = ++nextSignalValue;
+    id<MTLSharedEvent> event = m_finishedMetalSharedEvent.get();
+    // The block below has to be a real compiler generated block instead of BlockPtr due to a Metal bug. rdar://108035473
+    __block Function<void()> blockSignal = WTFMove(signal);
+    [event notifyListener:m_finishedMetalSharedEventListener.get() atValue:signalValue block:^(id<MTLSharedEvent>, uint64_t) {
+        blockSignal();
+    }];
+    auto* sync = createSyncWithSharedEvent(event, signalValue);
+    if (UNLIKELY(!sync)) {
+        event.signaledValue = signalValue;
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    destroySync(sync);
 }
 
 }

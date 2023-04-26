@@ -54,8 +54,6 @@
 
 namespace WebCore {
 
-static Seconds maxFrameDuration = 5_s;
-
 // List of displays ever instantiated from EGL. When terminating all EGL resources, we need to
 // terminate all displays. However, we cannot ask EGL all the displays it has created.
 // We must know all the displays via this set.
@@ -3138,27 +3136,6 @@ void GraphicsContextGLANGLE::polygonOffsetClampEXT(GCGLfloat factor, GCGLfloat u
         return;
 
     GL_PolygonOffsetClampEXT(factor, units, clamp);
-}
-
-bool GraphicsContextGLANGLE::waitAndUpdateOldestFrame()
-{
-    size_t oldestFrameCompletionFence = m_oldestFrameCompletionFence++ % maxPendingFrames;
-    bool success = true;
-    if (ScopedGLFence fence = WTFMove(m_frameCompletionFences[oldestFrameCompletionFence])) {
-        // Wait so that rendering doeØs not get more than maxPendingFrames frames ahead.
-        GLbitfield flags = GL_SYNC_FLUSH_COMMANDS_BIT;
-#if PLATFORM(COCOA)
-        // Avoid using the GL_SYNC_FLUSH_COMMANDS_BIT because each each frame is ended with a flush
-        // due to external IOSurface access. This particular fence is maxPendingFrames behind.
-        // This means the creation of this fence has already been flushed.
-        flags = 0;
-#endif
-        GLenum result = GL_ClientWaitSync(static_cast<GLsync>(fence.get()), flags, maxFrameDuration.nanosecondsAs<GLuint64>());
-        ASSERT(result != GL_WAIT_FAILED);
-        success = result != GL_WAIT_FAILED && result != GL_TIMEOUT_EXPIRED;
-    }
-    m_frameCompletionFences[oldestFrameCompletionFence].fenceSync();
-    return success;
 }
 
 void GraphicsContextGLANGLE::simulateEventForTesting(SimulatedEventForTesting event)

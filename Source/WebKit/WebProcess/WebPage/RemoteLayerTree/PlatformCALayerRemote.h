@@ -137,7 +137,6 @@ public:
     bool hasContents() const override;
     CFTypeRef contents() const override;
     void setContents(CFTypeRef) override;
-    void setDelegatedContentsFinishedEvent(const WebCore::PlatformCALayerDelegatedContentsFinishedEvent&) override;
     void setDelegatedContents(const WebCore::PlatformCALayerDelegatedContents&) override;
     void setContentsRect(const WebCore::FloatRect&) override;
 

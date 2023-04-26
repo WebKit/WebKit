@@ -396,9 +396,6 @@ protected:
 #endif
     virtual bool reshapeDisplayBufferBacking() = 0;
 
-    // Returns false if context should be lost due to timeout.
-    bool waitAndUpdateOldestFrame() WARN_UNUSED_RETURN;
-
     static void platformReleaseThreadResources();
 
     virtual void invalidateKnownTextureContent(GCGLuint);
@@ -428,10 +425,6 @@ protected:
     GCGLErrorCodeSet m_errors;
     bool m_isForWebGL2 { false };
     bool m_failNextStatusCheck { false };
-    bool m_useFenceSyncForDisplayRateLimit = false;
-    static constexpr size_t maxPendingFrames = 3;
-    size_t m_oldestFrameCompletionFence { 0 };
-    ScopedGLFence m_frameCompletionFences[maxPendingFrames];
     GraphicsContextGLState m_state;
 
     GCGLDisplay m_displayObj { nullptr };
@@ -459,6 +452,7 @@ inline GCGLConfig GraphicsContextGLANGLE::platformConfig() const
 {
     return m_configObj;
 }
+
 }
 
 #endif

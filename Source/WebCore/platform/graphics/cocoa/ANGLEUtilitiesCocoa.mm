@@ -85,13 +85,26 @@ RetainPtr<MTLSharedEvent> newSharedEventWithMachPort(EGLDisplay display, mach_po
     // FIXME: Check for invalid mach_port_t
     EGLDeviceEXT device = EGL_NO_DEVICE_EXT;
     if (!EGL_QueryDisplayAttribEXT(display, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&device)))
-        return RetainPtr<MTLSharedEvent>();
+        return nullptr;
 
     id<MTLDevice> mtlDevice = nil;
     if (!EGL_QueryDeviceAttribEXT(device, EGL_METAL_DEVICE_ANGLE, reinterpret_cast<EGLAttrib*>(&mtlDevice)))
-        return RetainPtr<MTLSharedEvent>();
+        return nullptr;
 
     return adoptNS([(id<MTLDeviceSPI>)mtlDevice newSharedEventWithMachPort:machPort]);
+}
+
+RetainPtr<MTLSharedEvent> newSharedEvent(EGLDisplay display)
+{
+    EGLDeviceEXT device = EGL_NO_DEVICE_EXT;
+    if (!EGL_QueryDisplayAttribEXT(display, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&device)))
+        return nullptr;
+
+    id<MTLDevice> mtlDevice = nil;
+    if (!EGL_QueryDeviceAttribEXT(device, EGL_METAL_DEVICE_ANGLE, reinterpret_cast<EGLAttrib*>(&mtlDevice)))
+        return nullptr;
+
+    return adoptNS([mtlDevice newSharedEvent]);
 }
 
 }
