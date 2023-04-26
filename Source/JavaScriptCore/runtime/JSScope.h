@@ -94,7 +94,7 @@ private:
 
 inline JSScope::JSScope(VM& vm, Structure* structure, JSScope* next)
     : Base(vm, structure)
-    , m_next(vm, this, next, WriteBarrier<JSScope>::MayBeNull)
+    , m_next(next, WriteBarrierEarlyInit)
 {
 }
 

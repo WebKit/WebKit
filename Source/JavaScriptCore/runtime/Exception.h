@@ -69,8 +69,8 @@ public:
     ~Exception();
 
 private:
-    Exception(VM&);
-    void finishCreation(VM&, JSValue thrownValue, StackCaptureAction);
+    Exception(VM&, JSValue thrownValue);
+    void finishCreation(VM&, StackCaptureAction);
     static void destroy(JSCell*);
 
     WriteBarrier<Unknown> m_value;

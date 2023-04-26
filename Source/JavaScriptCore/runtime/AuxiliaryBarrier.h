@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "WriteBarrier.h"
+
 namespace JSC {
 
 class JSCell;
@@ -36,12 +38,18 @@ class VM;
 template<typename T>
 class AuxiliaryBarrier {
 public:
-    typedef T Type;
+    using Type = T;
     
-    AuxiliaryBarrier(): m_value() { }
+    AuxiliaryBarrier() = default;
     
     template<typename U>
     AuxiliaryBarrier(VM&, JSCell*, U&&);
+
+    template<typename U>
+    AuxiliaryBarrier(U&& value, WriteBarrierEarlyInitTag)
+    {
+        setWithoutBarrier(std::forward<U>(value));
+    }
     
     void clear() { m_value = T(); }
     
@@ -60,7 +68,7 @@ public:
     T operator->() const { return get(); }
     
 private:
-    T m_value;
+    T m_value { };
 };
 
 } // namespace JSC

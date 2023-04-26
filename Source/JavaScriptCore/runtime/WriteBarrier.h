@@ -74,6 +74,8 @@ template<class T> inline void validateCell(T)
 }
 #endif
 
+enum WriteBarrierEarlyInitTag { WriteBarrierEarlyInit };
+
 // We have a separate base class with no constructors for use in Unions.
 template <typename T, typename Traits> class WriteBarrierBase {
     using StorageType = typename Traits::StorageType;
@@ -217,6 +219,11 @@ public:
     {
         this->setMayBeNull(vm, owner, value);
     }
+
+    WriteBarrier(T* value, WriteBarrierEarlyInitTag)
+    {
+        this->setWithoutWriteBarrier(value);
+    }
 };
 
 enum UndefinedWriteBarrierTagType { UndefinedWriteBarrierTag };
@@ -248,6 +255,11 @@ public:
         ASSERT(isCompilationThread());
         this->setWithoutWriteBarrier(value);
     }
+
+    WriteBarrier(JSValue value, WriteBarrierEarlyInitTag)
+    {
+        this->setWithoutWriteBarrier(value);
+    }
 };
 
 template <typename U, typename V, typename TraitsU, typename TraitsV>
@@ -275,6 +287,11 @@ public:
     WriteBarrierStructureID(VM& vm, const JSCell* owner, Structure* value, MayBeNullTag)
     {
         setMayBeNull(vm, owner, value);
+    }
+
+    WriteBarrierStructureID(Structure* value, WriteBarrierEarlyInitTag)
+    {
+        setWithoutWriteBarrier(value);
     }
 
     void set(VM&, const JSCell* owner, Structure* value);

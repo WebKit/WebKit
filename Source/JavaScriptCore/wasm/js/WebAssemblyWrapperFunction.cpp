@@ -39,8 +39,9 @@ const ClassInfo WebAssemblyWrapperFunction::s_info = { "WebAssemblyWrapperFuncti
 static JSC_DECLARE_HOST_FUNCTION(callWebAssemblyWrapperFunction);
 static JSC_DECLARE_HOST_FUNCTION(callWebAssemblyWrapperFunctionIncludingV128);
 
-WebAssemblyWrapperFunction::WebAssemblyWrapperFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, Wasm::WasmToWasmImportableFunction importableFunction, RefPtr<const Wasm::RTT> rtt)
-    : Base(vm, executable, globalObject, structure, importableFunction, rtt)
+WebAssemblyWrapperFunction::WebAssemblyWrapperFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, JSWebAssemblyInstance* instance, JSObject* function, Wasm::WasmToWasmImportableFunction importableFunction, RefPtr<const Wasm::RTT> rtt)
+    : Base(vm, executable, globalObject, structure, instance, importableFunction, rtt)
+    , m_function(function, WriteBarrierEarlyInit)
 { }
 
 WebAssemblyWrapperFunction* WebAssemblyWrapperFunction::create(VM& vm, JSGlobalObject* globalObject, Structure* structure, JSObject* function, unsigned importIndex, JSWebAssemblyInstance* instance, Wasm::TypeIndex typeIndex, RefPtr<const Wasm::RTT> rtt)
@@ -55,16 +56,10 @@ WebAssemblyWrapperFunction* WebAssemblyWrapperFunction::create(VM& vm, JSGlobalO
     else
         executable = vm.getHostFunction(callWebAssemblyWrapperFunction, ImplementationVisibility::Public, NoIntrinsic, callHostFunctionAsConstructor, nullptr, name);
 
-    WebAssemblyWrapperFunction* result = new (NotNull, allocateCell<WebAssemblyWrapperFunction>(vm)) WebAssemblyWrapperFunction(vm, executable, globalObject, structure, Wasm::WasmToWasmImportableFunction { typeIndex, &instance->instance().importFunctionInfo(importIndex)->importFunctionStub }, rtt);
-    result->finishCreation(vm, executable, signature.argumentCount(), name, function, instance);
-    return result;
-}
-
-void WebAssemblyWrapperFunction::finishCreation(VM& vm, NativeExecutable* executable, unsigned length, const String& name, JSObject* function, JSWebAssemblyInstance* instance)
-{
-    Base::finishCreation(vm, executable, length, name, instance);
     RELEASE_ASSERT(JSValue(function).isCallable());
-    m_function.set(vm, this, function);
+    WebAssemblyWrapperFunction* result = new (NotNull, allocateCell<WebAssemblyWrapperFunction>(vm)) WebAssemblyWrapperFunction(vm, executable, globalObject, structure, instance, function, Wasm::WasmToWasmImportableFunction { typeIndex, &instance->instance().importFunctionInfo(importIndex)->importFunctionStub }, rtt);
+    result->finishCreation(vm, executable, signature.argumentCount(), name);
+    return result;
 }
 
 Structure* WebAssemblyWrapperFunction::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

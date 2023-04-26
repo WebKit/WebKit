@@ -52,23 +52,20 @@ public:
 
     static JSAPIValueWrapper* create(VM& vm, JSValue value)
     {
-        JSAPIValueWrapper* wrapper = new (NotNull, allocateCell<JSAPIValueWrapper>(vm)) JSAPIValueWrapper(vm);
-        wrapper->finishCreation(vm, value);
+        JSAPIValueWrapper* wrapper = new (NotNull, allocateCell<JSAPIValueWrapper>(vm)) JSAPIValueWrapper(vm, value);
+        wrapper->finishCreation(vm);
+        ASSERT(!value.isCell());
         return wrapper;
     }
 
 private:
-    void finishCreation(VM& vm, JSValue value)
+    JSAPIValueWrapper(VM& vm, JSValue value)
+        : JSCell(vm, vm.apiWrapperStructure.get())
+        , m_value(value, WriteBarrierEarlyInit)
     {
-        Base::finishCreation(vm);
-        m_value.set(vm, this, value);
-        ASSERT(!value.isCell());
     }
 
-    JSAPIValueWrapper(VM& vm)
-        : JSCell(vm, vm.apiWrapperStructure.get())
-    {
-    }
+    DECLARE_DEFAULT_FINISH_CREATION;
 
     WriteBarrier<Unknown> m_value;
 };

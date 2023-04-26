@@ -43,15 +43,15 @@ public:
 
     static JSGlobalProxy* create(VM& vm, Structure* structure)
     {
-        JSGlobalProxy* proxy = new (NotNull, allocateCell<JSGlobalProxy>(vm)) JSGlobalProxy(vm, structure);
+        JSGlobalProxy* proxy = new (NotNull, allocateCell<JSGlobalProxy>(vm)) JSGlobalProxy(vm, structure, nullptr);
         proxy->finishCreation(vm);
         return proxy;
     }
 
     static JSGlobalProxy* create(VM& vm, Structure* structure, JSGlobalObject* globalObject)
     {
-        JSGlobalProxy* proxy = new (NotNull, allocateCell<JSGlobalProxy>(vm)) JSGlobalProxy(vm, structure);
-        proxy->finishCreation(vm, globalObject);
+        JSGlobalProxy* proxy = new (NotNull, allocateCell<JSGlobalProxy>(vm)) JSGlobalProxy(vm, structure, globalObject);
+        proxy->finishCreation(vm);
         return proxy;
     }
 
@@ -68,18 +68,13 @@ public:
     JS_EXPORT_PRIVATE void setTarget(VM&, JSGlobalObject*);
 
 protected:
-    JSGlobalProxy(VM& vm, Structure* structure)
+    JSGlobalProxy(VM& vm, Structure* structure, JSGlobalObject* target)
         : Base(vm, structure)
+        , m_target(target, WriteBarrierEarlyInit)
     {
     }
 
     DECLARE_DEFAULT_FINISH_CREATION;
-
-    void finishCreation(VM& vm, JSGlobalObject* target)
-    {
-        Base::finishCreation(vm);
-        m_target.set(vm, this, target);
-    }
 
     DECLARE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE);
 

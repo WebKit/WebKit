@@ -106,8 +106,8 @@ public:
     static ptrdiff_t offsetOfModuleRecord() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_moduleRecord); }
 
 private:
-    JSWebAssemblyInstance(VM&, Structure*, Ref<Wasm::Instance>&&);
-    void finishCreation(VM&, JSWebAssemblyModule*, WebAssemblyModuleRecord*);
+    JSWebAssemblyInstance(VM&, Structure*, Ref<Wasm::Instance>&&, JSWebAssemblyModule*, WebAssemblyModuleRecord*);
+    void finishCreation(VM&);
     DECLARE_VISIT_CHILDREN;
 
     Ref<Wasm::Instance> m_instance;

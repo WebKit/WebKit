@@ -37,7 +37,7 @@ InternalFunction::InternalFunction(VM& vm, Structure* structure, NativeFunction 
     : Base(vm, structure)
     , m_functionForCall(toTagged(functionForCall))
     , m_functionForConstruct(functionForConstruct ? toTagged(functionForConstruct) : callHostFunctionAsConstructor)
-    , m_globalObject(vm, this, structure->globalObject())
+    , m_globalObject(structure->globalObject(), WriteBarrierEarlyInit)
 {
     ASSERT_WITH_MESSAGE(m_functionForCall, "[[Call]] must be implemented");
     ASSERT(m_functionForConstruct);

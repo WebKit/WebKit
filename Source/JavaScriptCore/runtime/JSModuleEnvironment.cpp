@@ -54,15 +54,9 @@ JSModuleEnvironment* JSModuleEnvironment::create(
         new (
             NotNull,
             allocateCell<JSModuleEnvironment>(vm, JSModuleEnvironment::allocationSize(symbolTable)))
-        JSModuleEnvironment(vm, structure, currentScope, symbolTable);
-    result->finishCreation(vm, initialValue, moduleRecord);
+        JSModuleEnvironment(vm, structure, currentScope, symbolTable, initialValue, moduleRecord);
+    result->finishCreation(vm);
     return result;
-}
-
-void JSModuleEnvironment::finishCreation(VM& vm, JSValue initialValue, AbstractModuleRecord* moduleRecord)
-{
-    Base::finishCreation(vm, initialValue);
-    this->moduleRecordSlot().set(vm, this, moduleRecord);
 }
 
 template<typename Visitor>

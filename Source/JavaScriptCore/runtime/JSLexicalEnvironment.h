@@ -90,12 +90,12 @@ public:
     static JSLexicalEnvironment* create(
         VM& vm, Structure* structure, JSScope* currentScope, SymbolTable* symbolTable, JSValue initialValue)
     {
-        JSLexicalEnvironment* result = 
+        JSLexicalEnvironment* result =
             new (
                 NotNull,
                 allocateCell<JSLexicalEnvironment>(vm, allocationSize(symbolTable)))
-            JSLexicalEnvironment(vm, structure, currentScope, symbolTable);
-        result->finishCreation(vm, initialValue);
+            JSLexicalEnvironment(vm, structure, currentScope, symbolTable, initialValue);
+        result->finishCreation(vm);
         return result;
     }
 
@@ -117,30 +117,22 @@ public:
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject) { return Structure::create(vm, globalObject, jsNull(), TypeInfo(LexicalEnvironmentType, StructureFlags), info()); }
 
 protected:
-    JSLexicalEnvironment(VM&, Structure*, JSScope*, SymbolTable*);
+    JSLexicalEnvironment(VM&, Structure*, JSScope*, SymbolTable*, JSValue initialValue);
 
-    void finishCreationUninitialized(VM& vm)
-    {
-        Base::finishCreation(vm);
-    }
-
-    void finishCreation(VM& vm, JSValue value)
-    {
-        finishCreationUninitialized(vm);
-        ASSERT(value == jsUndefined() || value == jsTDZValue());
-        for (unsigned i = symbolTable()->scopeSize(); i--;) {
-            // Filling this with undefined/TDZEmptyValue is useful because that's what variables start out as.
-            variableAt(ScopeOffset(i)).setStartingValue(value);
-        }
-    }
+    DECLARE_DEFAULT_FINISH_CREATION;
 
     DECLARE_VISIT_CHILDREN;
     static void analyzeHeap(JSCell*, HeapAnalyzer&);
 };
 
-inline JSLexicalEnvironment::JSLexicalEnvironment(VM& vm, Structure* structure, JSScope* currentScope, SymbolTable* symbolTable)
+inline JSLexicalEnvironment::JSLexicalEnvironment(VM& vm, Structure* structure, JSScope* currentScope, SymbolTable* symbolTable, JSValue initialValue)
     : Base(vm, structure, currentScope, symbolTable)
 {
+    ASSERT(initialValue == jsUndefined() || initialValue == jsTDZValue());
+    for (unsigned i = this->symbolTable()->scopeSize(); i--;) {
+        // Filling this with undefined/TDZEmptyValue is useful because that's what variables start out as.
+        variableAt(ScopeOffset(i)).setStartingValue(initialValue);
+    }
 }
 
 } // namespace JSC

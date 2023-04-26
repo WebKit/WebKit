@@ -45,9 +45,9 @@ DebuggerScope* DebuggerScope::create(VM& vm, JSScope* scope)
 
 DebuggerScope::DebuggerScope(VM& vm, Structure* structure, JSScope* scope)
     : JSNonFinalObject(vm, structure)
+    , m_scope(scope, WriteBarrierEarlyInit)
 {
     ASSERT(scope);
-    m_scope.set(vm, this, scope);
 }
 
 template<typename Visitor>

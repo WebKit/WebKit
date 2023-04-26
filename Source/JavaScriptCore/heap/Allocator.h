@@ -46,7 +46,7 @@ public:
     {
     }
     
-    void* allocate(Heap&, GCDeferralContext*, AllocationFailureMode) const;
+    void* allocate(Heap&, size_t cellSize, GCDeferralContext*, AllocationFailureMode) const;
     
     unsigned cellSize() const;
     

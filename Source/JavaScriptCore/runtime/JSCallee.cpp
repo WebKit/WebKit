@@ -34,7 +34,7 @@ const ClassInfo JSCallee::s_info = { "Callee"_s, &Base::s_info, nullptr, nullptr
 
 JSCallee::JSCallee(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     : Base(vm, structure)
-    , m_scope(vm, this, globalObject)
+    , m_scope(globalObject, WriteBarrierEarlyInit)
 {
 }
 

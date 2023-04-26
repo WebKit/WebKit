@@ -345,6 +345,7 @@ public:
     TypeInfo typeInfo() const { return m_blob.typeInfo(m_outOfLineTypeFlags); }
     bool isObject() const { return typeInfo().isObject(); }
     const ClassInfo* classInfoForCells() const { return m_classInfo.get(); }
+    CellState typeInfoDefaultCellState() const { return m_blob.defaultCellState(); }
 protected:
     // You probably want typeInfo().type()
     JSType type() { return JSCell::type(); }

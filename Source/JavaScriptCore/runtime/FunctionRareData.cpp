@@ -73,7 +73,7 @@ FunctionRareData::FunctionRareData(VM& vm, ExecutableBase* executable)
     // the first allocation don't disable optimizations. This isn't super important, since the
     // function is unlikely to allocate a rare data until the first allocation anyway.
     , m_allocationProfileWatchpointSet(ClearWatchpoint)
-    , m_executable(vm, this, executable)
+    , m_executable(executable, WriteBarrierEarlyInit)
     , m_hasReifiedLength(false)
     , m_hasReifiedName(false)
     , m_hasModifiedLengthForBoundOrNonHostFunction(false)

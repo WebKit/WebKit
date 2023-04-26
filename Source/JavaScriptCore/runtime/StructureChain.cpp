@@ -34,7 +34,7 @@ const ClassInfo StructureChain::s_info = { "StructureChain"_s, nullptr, nullptr,
 
 StructureChain::StructureChain(VM& vm, Structure* structure, StructureID* vector)
     : Base(vm, structure)
-    , m_vector(vm, this, vector)
+    , m_vector(vector, WriteBarrierEarlyInit)
 {
 }
 

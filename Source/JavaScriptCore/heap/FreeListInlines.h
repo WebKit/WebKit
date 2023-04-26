@@ -31,9 +31,8 @@
 namespace JSC {
 
 template<typename Func>
-ALWAYS_INLINE HeapCell* FreeList::allocate(const Func& slowPath)
+ALWAYS_INLINE HeapCell* FreeList::allocateWithCellSize(const Func& slowPath, size_t cellSize)
 {
-    unsigned cellSize = m_cellSize;
     if (LIKELY(m_intervalStart < m_intervalEnd)) {
         char* result = m_intervalStart;
         m_intervalStart += cellSize;

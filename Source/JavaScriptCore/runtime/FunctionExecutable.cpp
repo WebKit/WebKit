@@ -37,18 +37,13 @@ namespace JSC {
 
 const ClassInfo FunctionExecutable::s_info = { "FunctionExecutable"_s, &ScriptExecutable::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(FunctionExecutable) };
 
-FunctionExecutable::FunctionExecutable(VM& vm, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, Intrinsic intrinsic, bool isInsideOrdinaryFunction)
+FunctionExecutable::FunctionExecutable(VM& vm, ScriptExecutable* topLevelExecutable, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, Intrinsic intrinsic, bool isInsideOrdinaryFunction)
     : ScriptExecutable(vm.functionExecutableStructure.get(), vm, source, unlinkedExecutable->lexicalScopeFeatures(), unlinkedExecutable->derivedContextType(), false, isInsideOrdinaryFunction || !unlinkedExecutable->isArrowFunction(), EvalContextType::None, intrinsic)
-    , m_unlinkedExecutable(vm, this, unlinkedExecutable)
+    , m_topLevelExecutable(topLevelExecutable ? topLevelExecutable : this, WriteBarrierEarlyInit)
+    , m_unlinkedExecutable(unlinkedExecutable, WriteBarrierEarlyInit)
 {
     RELEASE_ASSERT(!source.isNull());
     ASSERT(source.length());
-}
-
-void FunctionExecutable::finishCreation(VM& vm, ScriptExecutable* topLevelExecutable)
-{
-    Base::finishCreation(vm);
-    m_topLevelExecutable.set(vm, this, topLevelExecutable ? topLevelExecutable : this);
 }
 
 void FunctionExecutable::destroy(JSCell* cell)

@@ -89,7 +89,7 @@ public:
     bool allocationWillSucceed() const { return !allocationWillFail(); }
     
     template<typename Func>
-    HeapCell* allocate(const Func& slowPath);
+    HeapCell* allocateWithCellSize(const Func& slowPath, size_t cellSize);
     
     bool contains(HeapCell*) const;
     

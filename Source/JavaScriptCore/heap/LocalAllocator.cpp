@@ -109,7 +109,7 @@ void LocalAllocator::stopAllocatingForGood()
     reset();
 }
 
-void* LocalAllocator::allocateSlowCase(Heap& heap, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
+void* LocalAllocator::allocateSlowCase(Heap& heap, size_t cellSize, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
     SuperSamplerScope superSamplerScope(false);
     ASSERT(heap.vm().currentThreadIsHoldingAPILock());
@@ -127,9 +127,9 @@ void* LocalAllocator::allocateSlowCase(Heap& heap, GCDeferralContext* deferralCo
     // Goofy corner case: the GC called a callback and now this directory has a currentBlock. This only
     // happens when running WebKit tests, which inject a callback into the GC's finalization.
     if (UNLIKELY(m_currentBlock))
-        return allocate(heap, deferralContext, failureMode);
+        return allocate(heap, cellSize, deferralContext, failureMode);
     
-    void* result = tryAllocateWithoutCollecting();
+    void* result = tryAllocateWithoutCollecting(cellSize);
     
     if (LIKELY(result != nullptr))
         return result;
@@ -150,7 +150,7 @@ void* LocalAllocator::allocateSlowCase(Heap& heap, GCDeferralContext* deferralCo
             return nullptr;
     }
     m_directory->addBlock(block);
-    result = allocateIn(block);
+    result = allocateIn(block, cellSize);
     ASSERT(result);
     return result;
 }
@@ -164,7 +164,7 @@ void LocalAllocator::didConsumeFreeList()
     m_currentBlock = nullptr;
 }
 
-void* LocalAllocator::tryAllocateWithoutCollecting()
+void* LocalAllocator::tryAllocateWithoutCollecting(size_t cellSize)
 {
     // FIXME: GlobalGC
     // FIXME: If we wanted this to be used for real multi-threaded allocations then we would have to
@@ -191,7 +191,7 @@ void* LocalAllocator::tryAllocateWithoutCollecting()
         if (!block)
             break;
 
-        if (void* result = tryAllocateIn(block))
+        if (void* result = tryAllocateIn(block, cellSize))
             return result;
     }
     
@@ -206,21 +206,21 @@ void* LocalAllocator::tryAllocateWithoutCollecting()
             // and empty set at the same time.
             block->removeFromDirectory();
             m_directory->addBlock(block);
-            return allocateIn(block);
+            return allocateIn(block, cellSize);
         }
     }
     
     return nullptr;
 }
 
-void* LocalAllocator::allocateIn(MarkedBlock::Handle* block)
+void* LocalAllocator::allocateIn(MarkedBlock::Handle* block, size_t cellSize)
 {
-    void* result = tryAllocateIn(block);
+    void* result = tryAllocateIn(block, cellSize);
     RELEASE_ASSERT(result);
     return result;
 }
 
-void* LocalAllocator::tryAllocateIn(MarkedBlock::Handle* block)
+void* LocalAllocator::tryAllocateIn(MarkedBlock::Handle* block, size_t cellSize)
 {
     ASSERT(block);
     ASSERT(!block->isFreeListed());
@@ -240,11 +240,11 @@ void* LocalAllocator::tryAllocateIn(MarkedBlock::Handle* block)
     
     m_currentBlock = block;
     
-    void* result = m_freeList.allocate(
-        [] () -> HeapCell* {
+    void* result = m_freeList.allocateWithCellSize(
+        []() -> HeapCell* {
             RELEASE_ASSERT_NOT_REACHED();
             return nullptr;
-        });
+        }, cellSize);
     m_directory->setIsEden(NoLockingNecessary, m_currentBlock, true);
     m_directory->markedSpace().didAllocateInBlock(m_currentBlock);
     return result;

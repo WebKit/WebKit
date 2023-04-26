@@ -59,7 +59,7 @@ Structure* JSWithScope::createStructure(VM& vm, JSGlobalObject* globalObject, JS
 
 JSWithScope::JSWithScope(VM& vm, Structure* structure, JSObject* object, JSScope* next)
     : Base(vm, structure, next)
-    , m_object(vm, this, object)
+    , m_object(object, WriteBarrierEarlyInit)
 {
 }
 

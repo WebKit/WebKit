@@ -57,11 +57,21 @@ inline JSCell::JSCell(CreatingEarlyCellTag)
 
 inline JSCell::JSCell(VM&, Structure* structure)
     : m_structureID(structure->id())
-    , m_indexingTypeAndMisc(structure->indexingModeIncludingHistory())
-    , m_type(structure->typeInfo().type())
-    , m_flags(structure->typeInfo().inlineTypeFlags())
-    , m_cellState(CellState::DefinitelyWhite)
 {
+#if CPU(ARM64) || CPU(X86_64)
+    uint32_t blob = structure->typeInfoBlob();
+    m_indexingTypeAndMisc = bitwise_cast<IndexingType>(static_cast<uint8_t>(blob));
+    m_type = bitwise_cast<JSType>(static_cast<uint8_t>(blob >> 8));
+    m_flags = bitwise_cast<TypeInfo::InlineTypeFlags>(static_cast<uint8_t>(blob >> 16));
+    m_cellState = bitwise_cast<CellState>(static_cast<uint8_t>(blob >> 24));
+    ASSERT(m_cellState == CellState::DefinitelyWhite);
+#else
+    m_indexingTypeAndMisc = structure->indexingModeIncludingHistory();
+    m_type = structure->typeInfo().type();
+    m_flags = structure->typeInfo().inlineTypeFlags();
+    m_cellState = CellState::DefinitelyWhite;
+#endif
+
     ASSERT(!isCompilationThread());
 
     // Note that in the constructor initializer list above, we are only using values
@@ -172,7 +182,7 @@ ALWAYS_INLINE void* tryAllocateCellHelper(VM& vm, size_t size, GCDeferralContext
 {
     ASSERT(deferralContext || vm.heap.isDeferred() || !DisallowGC::isInEffectOnCurrentThread());
     ASSERT(size >= sizeof(T));
-    JSCell* result = static_cast<JSCell*>(subspaceFor<T>(vm)->allocate(vm, size, deferralContext, failureMode));
+    JSCell* result = static_cast<JSCell*>(subspaceFor<T>(vm)->allocate(vm, WTF::roundUpToMultipleOf<T::atomSize>(size), deferralContext, failureMode));
     if constexpr (failureMode == AllocationFailureMode::ReturnNull) {
         if (!result)
             return nullptr;

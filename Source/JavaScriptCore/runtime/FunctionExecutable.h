@@ -50,8 +50,8 @@ public:
 
     static FunctionExecutable* create(VM& vm, ScriptExecutable* topLevelExecutable, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, Intrinsic intrinsic, bool isInsideOrdinaryFunction)
     {
-        FunctionExecutable* executable = new (NotNull, allocateCell<FunctionExecutable>(vm)) FunctionExecutable(vm, source, unlinkedExecutable, intrinsic, isInsideOrdinaryFunction);
-        executable->finishCreation(vm, topLevelExecutable);
+        FunctionExecutable* executable = new (NotNull, allocateCell<FunctionExecutable>(vm)) FunctionExecutable(vm, topLevelExecutable, source, unlinkedExecutable, intrinsic, isInsideOrdinaryFunction);
+        executable->finishCreation(vm);
         return executable;
     }
     static FunctionExecutable* fromGlobalCode(
@@ -323,9 +323,9 @@ public:
 
 private:
     friend class ExecutableBase;
-    FunctionExecutable(VM&, const SourceCode&, UnlinkedFunctionExecutable*, Intrinsic, bool isInsideOrdinaryFunction);
-    
-    void finishCreation(VM&, ScriptExecutable* topLevelExecutable);
+    FunctionExecutable(VM&, ScriptExecutable* topLevelExecutable, const SourceCode&, UnlinkedFunctionExecutable*, Intrinsic, bool isInsideOrdinaryFunction);
+
+    DECLARE_DEFAULT_FINISH_CREATION;
 
     friend class ScriptExecutable;
 

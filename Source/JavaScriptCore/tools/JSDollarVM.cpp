@@ -2012,7 +2012,7 @@ public:
 
     WasmStreamingCompiler(VM& vm, Structure* structure, Wasm::CompilerMode compilerMode, JSGlobalObject* globalObject, JSPromise* promise, JSObject* importObject)
         : Base(vm, structure)
-        , m_promise(vm, this, promise)
+        , m_promise(promise, WriteBarrierEarlyInit)
         , m_streamingCompiler(Wasm::StreamingCompiler::create(vm, compilerMode, globalObject, promise, importObject))
     {
         DollarVMAssertScope assertScope;

@@ -30,10 +30,5 @@
 
 namespace JSC {
 
-unsigned Allocator::cellSize() const
-{
-    return m_localAllocator->cellSize();
-}
-
 } // namespace JSC
 

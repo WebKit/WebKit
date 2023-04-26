@@ -120,7 +120,7 @@ void* CompleteSubspace::tryAllocateSlow(VM& vm, size_t size, GCDeferralContext* 
     sanitizeStackForVM(vm);
 
     if (Allocator allocator = allocatorForNonInline(size, AllocatorForMode::EnsureAllocator))
-        return allocator.allocate(vm.heap, deferralContext, AllocationFailureMode::ReturnNull);
+        return allocator.allocate(vm.heap, allocator.cellSize(), deferralContext, AllocationFailureMode::ReturnNull);
     
     if (size <= Options::preciseAllocationCutoff()
         && size <= MarkedSpace::largeCutoff) {

@@ -1378,7 +1378,7 @@ inline JSObject* asObject(JSValue value)
 
 inline JSObject::JSObject(VM& vm, Structure* structure, Butterfly* butterfly)
     : JSCell(vm, structure)
-    , m_butterfly(vm, this, butterfly)
+    , m_butterfly(butterfly, WriteBarrierEarlyInit)
 {
 }
 

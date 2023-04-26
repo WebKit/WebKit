@@ -57,6 +57,7 @@ public:
     TypeInfo::InlineTypeFlags inlineTypeFlags() const { return u.fields.inlineTypeFlags; }
     
     TypeInfo typeInfo(TypeInfo::OutOfLineTypeFlags outOfLineTypeFlags) const { return TypeInfo(type(), inlineTypeFlags(), outOfLineTypeFlags); }
+    CellState defaultCellState() const { return u.fields.defaultCellState; }
 
     int32_t blob() const { return u.word; }
 

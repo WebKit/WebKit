@@ -48,24 +48,22 @@ Structure* JSWebAssemblyInstance::createStructure(VM& vm, JSGlobalObject* global
     return Structure::create(vm, globalObject, prototype, TypeInfo(WebAssemblyInstanceType, StructureFlags), info());
 }
 
-JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, Ref<Wasm::Instance>&& instance)
+JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, Ref<Wasm::Instance>&& instance, JSWebAssemblyModule* module, WebAssemblyModuleRecord* moduleRecord)
     : Base(vm, structure)
     , m_instance(WTFMove(instance))
     , m_vm(&vm)
-    , m_globalObject(vm, this, structure->globalObject())
+    , m_globalObject(structure->globalObject(), WriteBarrierEarlyInit)
+    , m_module(module, WriteBarrierEarlyInit)
+    , m_moduleRecord(moduleRecord, WriteBarrierEarlyInit)
     , m_tables(m_instance->module().moduleInformation().tableCount())
 {
     m_instance->setOwner(this);
 }
 
-void JSWebAssemblyInstance::finishCreation(VM& vm, JSWebAssemblyModule* module, WebAssemblyModuleRecord* moduleRecord)
+void JSWebAssemblyInstance::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-
-    m_module.set(vm, this, module);
-    m_moduleRecord.set(vm, this, moduleRecord);
-
     vm.heap.reportExtraMemoryAllocated(m_instance->extraMemoryAllocated());
 }
 
@@ -179,8 +177,8 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, JSGlobalObject* 
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 
     // FIXME: These objects could be pretty big we should try to throw OOM here.
-    auto* jsInstance = new (NotNull, allocateCell<JSWebAssemblyInstance>(vm)) JSWebAssemblyInstance(vm, instanceStructure, Wasm::Instance::create(vm, globalObject, WTFMove(module)));
-    jsInstance->finishCreation(vm, jsModule, moduleRecord);
+    auto* jsInstance = new (NotNull, allocateCell<JSWebAssemblyInstance>(vm)) JSWebAssemblyInstance(vm, instanceStructure, Wasm::Instance::create(vm, globalObject, WTFMove(module)), jsModule, moduleRecord);
+    jsInstance->finishCreation(vm);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
     globalObject->use();
 
