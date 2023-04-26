@@ -221,6 +221,7 @@ if (ENABLE_XSLT)
     find_package(LibXslt 1.1.32 REQUIRED)
 endif ()
 
+set(bmalloc_LIBRARY_TYPE OBJECT)
 set(WTF_LIBRARY_TYPE SHARED)
 set(JavaScriptCore_LIBRARY_TYPE SHARED)
 set(PAL_LIBRARY_TYPE OBJECT)

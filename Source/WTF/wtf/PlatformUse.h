@@ -126,10 +126,6 @@
 #define USE_ACCELERATE 1
 #endif
 
-#if OS(WINDOWS)
-#define USE_SYSTEM_MALLOC 1
-#endif
-
 #if CPU(REGISTER64)
 #define USE_JSVALUE64 1
 #else

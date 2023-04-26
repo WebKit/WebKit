@@ -678,6 +678,7 @@ set(bmalloc_INTERFACE_INCLUDE_DIRECTORIES ${bmalloc_FRAMEWORK_HEADERS_DIR})
 set(bmalloc_INTERFACE_DEPENDENCIES bmalloc_CopyHeaders)
 
 add_definitions(-D_GNU_SOURCE)
+add_definitions(-DPAS_BMALLOC=1)
 
 set_source_files_properties(
     libpas/src/libpas/pas_bitfit_page_config_kind.c
