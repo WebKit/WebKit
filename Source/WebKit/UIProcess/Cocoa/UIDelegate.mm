@@ -172,6 +172,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewActionsForElementDefaultActions = [delegate respondsToSelector:@selector(_webView:actionsForElement:defaultActions:)];
     m_delegateMethods.webViewDidNotHandleTapAsClickAtPoint = [delegate respondsToSelector:@selector(_webView:didNotHandleTapAsClickAtPoint:)];
     m_delegateMethods.webViewStatusBarWasTapped = [delegate respondsToSelector:@selector(_webViewStatusBarWasTapped:)];
+    m_delegateMethods.webViewSetShouldKeepScreenAwake = [delegate respondsToSelector:@selector(_webView:setShouldKeepScreenAwake:)];
 #endif
 #if PLATFORM(IOS)
     m_delegateMethods.webViewLockScreenOrientation = [delegate respondsToSelector:@selector(_webViewLockScreenOrientation:lockType:)];
@@ -1594,6 +1595,22 @@ void UIDelegate::UIClient::statusBarWasTapped()
         return;
 
     [static_cast<id <WKUIDelegatePrivate>>(delegate) _webViewStatusBarWasTapped:m_uiDelegate->m_webView.get().get()];
+}
+
+bool UIDelegate::UIClient::setShouldKeepScreenAwake(bool shouldKeepScreenAwake)
+{
+    if (!m_uiDelegate)
+        return false;
+
+    if (!m_uiDelegate->m_delegateMethods.webViewSetShouldKeepScreenAwake)
+        return false;
+
+    auto delegate = m_uiDelegate->m_delegate.get();
+    if (!delegate)
+        return false;
+
+    [static_cast<id <WKUIDelegatePrivate>>(delegate) _webView:m_uiDelegate->m_webView.get().get() setShouldKeepScreenAwake:shouldKeepScreenAwake];
+    return true;
 }
 #endif // PLATFORM(IOS_FAMILY)
 

@@ -1320,6 +1320,7 @@ void WebPageProxy::close()
     WEBPAGEPROXY_RELEASE_LOG(Loading, "close:");
 
     m_isClosed = true;
+    m_process->willRemoveWebPage(*this);
 
     reportPageLoadResult(ResourceError { ResourceError::Type::Cancellation });
 

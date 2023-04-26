@@ -185,6 +185,7 @@ public:
     virtual RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) { return defaultActions; }
     virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) { }
     virtual void statusBarWasTapped() { }
+    virtual bool setShouldKeepScreenAwake(bool) { return false; }
 #endif
 #if PLATFORM(COCOA)
     virtual PlatformViewController *presentingViewController() { return nullptr; }

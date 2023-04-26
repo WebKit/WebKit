@@ -43,6 +43,10 @@ public:
     explicit SleepDisablerCocoa(const String&, Type);
     virtual ~SleepDisablerCocoa();
 
+#if PLATFORM(IOS_FAMILY)
+    PAL_EXPORT static void setScreenWakeLockHandler(Function<bool(bool shouldKeepScreenAwake)>&&);
+#endif
+
 private:
     void takeScreenSleepDisablingAssertion(const String& reason);
     void takeSystemSleepDisablingAssertion(const String& reason);

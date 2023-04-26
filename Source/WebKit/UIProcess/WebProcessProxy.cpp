@@ -173,14 +173,14 @@ RefPtr<WebProcessProxy> WebProcessProxy::processForIdentifier(ProcessIdentifier 
     return allProcessMap().get(identifier).get();
 }
 
-static WebProcessProxy::WebPageProxyMap& globalPageMap()
+auto WebProcessProxy::globalPageMap() -> WebPageProxyMap&
 {
     ASSERT(isMainThreadOrCheckDisabled());
-    static NeverDestroyed<WebProcessProxy::WebPageProxyMap> pageMap;
+    static NeverDestroyed<WebPageProxyMap> pageMap;
     return pageMap;
 }
 
-static inline Vector<RefPtr<WebPageProxy>> globalPages()
+Vector<RefPtr<WebPageProxy>> WebProcessProxy::globalPages()
 {
     return WTF::map(globalPageMap(), [] (auto& keyValue) -> RefPtr<WebPageProxy> {
         return keyValue.value.get();
@@ -758,6 +758,17 @@ void WebProcessProxy::markIsNoLongerInPrewarmedPool()
     m_processPool.setIsWeak(IsWeak::No);
 
     send(Messages::WebProcess::MarkIsNoLongerPrewarmed(), 0);
+}
+
+void WebProcessProxy::willRemoveWebPage(WebPageProxy& page)
+{
+    // Make sure this process doesn't hold any sleep disablers since it no longer has any pages.
+    // We don't do this in removeWebPage() because the WebPageProxy needs to still have its
+    // UIClient to ask to client to stop preventing sleep.
+    if (m_pageMap.size() == 1) {
+        ASSERT_UNUSED(page, m_pageMap.contains(page.identifier()));
+        m_sleepDisablers.clear();
+    }
 }
 
 void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore endsUsingDataStore)

@@ -204,6 +204,7 @@ public:
 
     enum class EndsUsingDataStore : bool { No, Yes };
     void removeWebPage(WebPageProxy&, EndsUsingDataStore);
+    void willRemoveWebPage(WebPageProxy&);
 
     void addProvisionalPageProxy(ProvisionalPageProxy&);
     void removeProvisionalPageProxy(ProvisionalPageProxy&);
@@ -524,6 +525,8 @@ private:
     using WebProcessProxyMap = HashMap<WebCore::ProcessIdentifier, WeakPtr<WebProcessProxy>>;
     static WebProcessProxyMap& allProcessMap();
     static Vector<RefPtr<WebProcessProxy>> allProcesses();
+    static WebPageProxyMap& globalPageMap();
+    static Vector<RefPtr<WebPageProxy>> globalPages();
 
     void platformInitialize();
     void platformDestroy();
@@ -731,6 +734,7 @@ private:
     std::optional<RemoteWorkerInformation> m_sharedWorkerInformation;
     bool m_hasServiceWorkerBackgroundProcessing { false };
 
+    // FIXME: We should probably move this to WebPageProxy.
     HashMap<WebCore::SleepDisablerIdentifier, std::unique_ptr<WebCore::SleepDisabler>> m_sleepDisablers;
 
     struct AudibleMediaActivity {
