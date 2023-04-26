@@ -97,4 +97,11 @@ void ViewBackend::dispatchInputTouchEvent(struct wpe_input_touch_event* event)
     wpe_view_backend_dispatch_touch_event(backend(), event);
 }
 
+void ViewBackend::dispatchInputPointerLockEvent(struct wpe_input_pointer_lock_event* event)
+{
+    if (m_inputClient && m_inputClient->dispatchPointerLockEvent(event))
+        return;
+    wpe_view_backend_dispatch_pointer_lock_event(backend(), event);
+}
+
 } // namespace WPEToolingBackends

@@ -4,12 +4,16 @@ find_package(WaylandProtocols 1.15 REQUIRED)
 find_package(WPEBackend_fdo 1.3.0 REQUIRED)
 
 list(APPEND WPEToolingBackends_PUBLIC_HEADERS
+    ${WPEToolingBackends_DERIVED_SOURCES_DIR}/pointer-constraints-unstable-v1-client-protocol.h
+    ${WPEToolingBackends_DERIVED_SOURCES_DIR}/relative-pointer-unstable-v1-client-protocol.h
     ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-client-protocol.h
     ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-unstable-v6-client-protocol.h
     fdo/WindowViewBackend.h
 )
 
 list(APPEND WPEToolingBackends_SOURCES
+    ${WPEToolingBackends_DERIVED_SOURCES_DIR}/pointer-constraints-unstable-v1-protocol.c
+    ${WPEToolingBackends_DERIVED_SOURCES_DIR}/relative-pointer-unstable-v1-protocol.c
     ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-protocol.c
     ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-unstable-v6-protocol.c
 
@@ -69,6 +73,32 @@ add_custom_command(
     OUTPUT ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-unstable-v6-client-protocol.h
     MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/unstable/xdg-shell/xdg-shell-unstable-v6.xml
     COMMAND ${WAYLAND_SCANNER} client-header ${WAYLAND_PROTOCOLS_DATADIR}/unstable/xdg-shell/xdg-shell-unstable-v6.xml ${WPEToolingBackends_DERIVED_SOURCES_DIR}/xdg-shell-unstable-v6-client-protocol.h
+    VERBATIM)
+
+add_custom_command(
+    OUTPUT ${WPEToolingBackends_DERIVED_SOURCES_DIR}/pointer-constraints-unstable-v1-protocol.c
+    MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml
+    DEPENDS ${WPEToolingBackends_DERIVED_SOURCES_DIR}/pointer-constraints-unstable-v1-client-protocol.h
+    COMMAND ${WAYLAND_SCANNER} private-code ${WAYLAND_PROTOCOLS_DATADIR}/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml ${WPEToolingBackends_DERIVED_SOURCES_DIR}/pointer-constraints-unstable-v1-protocol.c
+    VERBATIM)
+
+add_custom_command(
+    OUTPUT ${WPEToolingBackends_DERIVED_SOURCES_DIR}/pointer-constraints-unstable-v1-client-protocol.h
+    MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml
+    COMMAND ${WAYLAND_SCANNER} client-header ${WAYLAND_PROTOCOLS_DATADIR}/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml ${WPEToolingBackends_DERIVED_SOURCES_DIR}/pointer-constraints-unstable-v1-client-protocol.h
+    VERBATIM)
+
+add_custom_command(
+    OUTPUT ${WPEToolingBackends_DERIVED_SOURCES_DIR}/relative-pointer-unstable-v1-protocol.c
+    MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/unstable/relative-pointer/relative-pointer-unstable-v1.xml
+    DEPENDS ${WPEToolingBackends_DERIVED_SOURCES_DIR}/relative-pointer-unstable-v1-client-protocol.h
+    COMMAND ${WAYLAND_SCANNER} private-code ${WAYLAND_PROTOCOLS_DATADIR}/unstable/relative-pointer/relative-pointer-unstable-v1.xml ${WPEToolingBackends_DERIVED_SOURCES_DIR}/relative-pointer-unstable-v1-protocol.c
+    VERBATIM)
+
+add_custom_command(
+    OUTPUT ${WPEToolingBackends_DERIVED_SOURCES_DIR}/relative-pointer-unstable-v1-client-protocol.h
+    MAIN_DEPENDENCY ${WAYLAND_PROTOCOLS_DATADIR}/unstable/relative-pointer/relative-pointer-unstable-v1.xml
+    COMMAND ${WAYLAND_SCANNER} client-header ${WAYLAND_PROTOCOLS_DATADIR}/unstable/relative-pointer/relative-pointer-unstable-v1.xml ${WPEToolingBackends_DERIVED_SOURCES_DIR}/relative-pointer-unstable-v1-client-protocol.h
     VERBATIM)
 
 list(APPEND WPEToolingBackends_DEFINITIONS WPE_BACKEND_FDO)

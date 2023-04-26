@@ -104,6 +104,10 @@ HeadlessViewBackend::HeadlessViewBackend(uint32_t width, uint32_t height)
     wpe_view_backend_set_fullscreen_handler(backend(), onDOMFullScreenRequest, this);
 #endif
 
+    wpe_view_backend_set_pointer_lock_handler(backend(), [](void*, bool) -> bool {
+        return true;
+    }, this);
+
     m_update.source = g_timeout_source_new(G_USEC_PER_SEC / 60000);
     g_source_set_callback(m_update.source, [](gpointer data) -> gboolean {
         static_cast<HeadlessViewBackend*>(data)->vsync();

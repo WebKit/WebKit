@@ -23,7 +23,7 @@
 #define WebKitPointerLockPermissionRequest_h
 
 #include <glib-object.h>
-#include <webkit/WebKitDefines.h>
+#include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
 
 G_BEGIN_DECLS
 

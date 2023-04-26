@@ -51,6 +51,7 @@
 #include "WebKitNavigationClient.h"
 #include "WebKitNotificationPrivate.h"
 #include "WebKitPermissionStateQueryPrivate.h"
+#include "WebKitPointerLockPermissionRequest.h"
 #include "WebKitPrivate.h"
 #include "WebKitResponsePolicyDecision.h"
 #include "WebKitScriptDialogPrivate.h"
@@ -91,7 +92,6 @@
 #if PLATFORM(GTK)
 #include "WebKitFaviconDatabasePrivate.h"
 #include "WebKitInputMethodContextImplGtk.h"
-#include "WebKitPointerLockPermissionRequest.h"
 #include "WebKitPrintOperationPrivate.h"
 #include "WebKitWebInspectorPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
@@ -2918,6 +2918,8 @@ void webkitWebViewRequestPointerLock(WebKitWebView* webView)
 {
 #if PLATFORM(GTK)
     webkitWebViewBaseRequestPointerLock(WEBKIT_WEB_VIEW_BASE(webView));
+#elif PLATFORM(WPE)
+    webView->priv->view->requestPointerLock();
 #endif
 }
 
@@ -2930,6 +2932,8 @@ void webkitWebViewDidLosePointerLock(WebKitWebView* webView)
 {
 #if PLATFORM(GTK)
     webkitWebViewBaseDidLosePointerLock(WEBKIT_WEB_VIEW_BASE(webView));
+#elif PLATFORM(WPE)
+    webView->priv->view->didLosePointerLock();
 #endif
 }
 #endif

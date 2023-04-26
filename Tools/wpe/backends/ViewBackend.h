@@ -48,6 +48,7 @@ public:
         virtual bool dispatchAxisEvent(struct wpe_input_axis_event*) { return false; }
         virtual bool dispatchKeyboardEvent(struct wpe_input_keyboard_event*) { return false; }
         virtual bool dispatchTouchEvent(struct wpe_input_touch_event*) { return false; }
+        virtual bool dispatchPointerLockEvent(struct wpe_input_pointer_lock_event*) { return false; }
     };
     void setInputClient(std::unique_ptr<InputClient>&&);
 #if defined(ENABLE_ACCESSIBILITY) && ENABLE_ACCESSIBILITY
@@ -70,6 +71,7 @@ protected:
     void dispatchInputAxisEvent(struct wpe_input_axis_event*);
     void dispatchInputKeyboardEvent(struct wpe_input_keyboard_event*);
     void dispatchInputTouchEvent(struct wpe_input_touch_event*);
+    void dispatchInputPointerLockEvent(struct wpe_input_pointer_lock_event*);
 
     uint32_t m_width { 0 };
     uint32_t m_height { 0 };
