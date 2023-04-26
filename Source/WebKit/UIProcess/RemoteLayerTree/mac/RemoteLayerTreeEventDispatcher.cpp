@@ -117,6 +117,11 @@ void RemoteLayerTreeEventDispatcher::invalidate()
 
     stopDisplayLinkObserver();
 
+    {
+        Locker locker { m_scrollingTreeLock };
+        m_scrollingTree = nullptr;
+    }
+
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     m_momentumEventDispatcher = nullptr;
 #endif
@@ -189,9 +194,9 @@ void RemoteLayerTreeEventDispatcher::scrollingThreadHandleWheelEvent(const WebWh
 {
     ASSERT(ScrollingThread::isCurrentThread());
     
-    auto continueEventHandlingOnMainThread = [strongThis = Ref { *this }](WheelEventHandlingResult handlingResult) {
-        RunLoop::main().dispatch([strongThis, handlingResult] {
-            strongThis->continueWheelEventHandling(handlingResult);
+    auto continueEventHandlingOnMainThread = [protectedThis = Ref { *this }](WheelEventHandlingResult handlingResult) {
+        RunLoop::main().dispatch([protectedThis, handlingResult] {
+            protectedThis->continueWheelEventHandling(handlingResult);
         });
     };
 
@@ -275,9 +280,8 @@ void RemoteLayerTreeEventDispatcher::wheelEventHandlingCompleted(const PlatformW
 
     LOG_WITH_STREAM(Scrolling, stream << "RemoteLayerTreeEventDispatcher::wheelEventHandlingCompleted " << wheelEvent << " - sending event to scrolling thread, node " << 0 << " gestureState " << gestureState);
 
-    ScrollingThread::dispatch([strongThis = Ref { *this }, wheelEvent, scrollingNodeID, gestureState] {
-
-        auto scrollingTree = strongThis->scrollingTree();
+    ScrollingThread::dispatch([protectedThis = Ref { *this }, wheelEvent, scrollingNodeID, gestureState] {
+        auto scrollingTree = protectedThis->scrollingTree();
         if (!scrollingTree)
             return;
 
@@ -319,8 +323,8 @@ void RemoteLayerTreeEventDispatcher::startOrStopDisplayLink()
         return;
     }
 
-    RunLoop::main().dispatch([strongThis = Ref { *this }] {
-        strongThis->startOrStopDisplayLinkOnMainThread();
+    RunLoop::main().dispatch([protectedThis = Ref { *this }] {
+        protectedThis->startOrStopDisplayLinkOnMainThread();
     });
 }
 
@@ -459,7 +463,8 @@ void RemoteLayerTreeEventDispatcher::waitForRenderingUpdateCompletionOrTimeout()
         // so we give up trying to sync with the main thread and update layers here on the scrolling thread.
         // Dispatch to allow for the scrolling thread to handle any outstanding wheel events before we commit layers.
         ScrollingThread::dispatch([protectedThis = Ref { *this }]() {
-            protectedThis->scrollingTree()->tryToApplyLayerPositions();
+            if (auto scrollingTree = protectedThis->scrollingTree())
+                scrollingTree->tryToApplyLayerPositions();
         });
         tracePoint(ScrollingThreadRenderUpdateSyncEnd, 1);
     } else
@@ -538,8 +543,8 @@ void RemoteLayerTreeEventDispatcher::stopDisplayDidRefreshCallbacks(PlatformDisp
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
 void RemoteLayerTreeEventDispatcher::flushMomentumEventLoggingSoon()
 {
-    RunLoop::current().dispatchAfter(1_s, [strongThis = Ref { *this }] {
-        strongThis->m_momentumEventDispatcher->flushLog();
+    RunLoop::current().dispatchAfter(1_s, [protectedThis = Ref { *this }] {
+        protectedThis->m_momentumEventDispatcher->flushLog();
     });
 }
 #endif // ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
