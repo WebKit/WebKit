@@ -3305,7 +3305,6 @@ imported/w3c/web-platform-tests/css/css-display/run-in/run-in-text-between-004.x
 imported/w3c/web-platform-tests/css/css-display/run-in/run-in-text-between-005.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-027.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-028.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/text-overflow-029.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/mediaqueries/viewport-script-dynamic.html [ ImageOnlyFailure ]
 

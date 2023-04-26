@@ -153,11 +153,80 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
     };
 }
 
+static float truncateTextContentWithMismatchingDirection(InlineDisplay::Box& displayBox, float contentWidth, float availableWidthForContent, bool canFullyTruncate)
+{
+    // While truncation normally starts at the end of the content and progress backwards, with mismatching direction
+    // we take a different approach and truncate content the other way around (i.e. ellipsis follows inline direction truncating the beginning of the content).
+    // <div dir=rtl>some long content</div>
+    // [...ng content]
+    auto& inlineTextBox = downcast<InlineTextBox>(displayBox.layoutBox());
+    auto& textContent = displayBox.text();
+
+    auto availableWidthForTruncatedContent = contentWidth - availableWidthForContent;
+    auto truncatedSide = TextUtil::breakWord(inlineTextBox, textContent.start(), textContent.length(), contentWidth, availableWidthForTruncatedContent, { }, displayBox.style().fontCascade());
+
+    ASSERT(truncatedSide.length < textContent.length());
+    auto visibleLength = textContent.length() - truncatedSide.length;
+    auto visibleWidth = contentWidth - truncatedSide.logicalWidth;
+    // TextUtil::breakWord never returns overflowing content (left side) which means the right side is normally wider (by one character) than what we need.
+    auto visibleContentOverflows = truncatedSide.logicalWidth < availableWidthForTruncatedContent;
+    if (!visibleContentOverflows) {
+        textContent.setPartiallyVisibleContentLength(visibleLength);
+        return visibleWidth;
+    }
+
+    auto wouldFullyTruncate = visibleLength <= 1;
+    if (wouldFullyTruncate && canFullyTruncate) {
+        displayBox.setIsFullyTruncated();
+        return { };
+    }
+
+    visibleLength = !wouldFullyTruncate ? visibleLength - 1 : 1;
+    textContent.setPartiallyVisibleContentLength(visibleLength);
+    auto visibleStartPosition = textContent.end() - visibleLength;
+    return TextUtil::width(inlineTextBox, displayBox.style().fontCascade(), visibleStartPosition, textContent.end(), { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No);
+}
+
+static float truncate(InlineDisplay::Box& displayBox, float contentWidth, float availableWidthForContent, bool canFullyTruncate)
+{
+    if (displayBox.isText()) {
+        if (!availableWidthForContent && canFullyTruncate) {
+            displayBox.setIsFullyTruncated();
+            return { };
+        }
+        auto contentDirection = displayBox.bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR;
+        if (displayBox.layoutBox().parent().style().direction() != contentDirection)
+            return truncateTextContentWithMismatchingDirection(displayBox, contentWidth, availableWidthForContent, canFullyTruncate);
+
+        auto& inlineTextBox = downcast<InlineTextBox>(displayBox.layoutBox());
+        auto& textContent = displayBox.text();
+        auto visibleSide = TextUtil::breakWord(inlineTextBox, textContent.start(), textContent.length(), contentWidth, availableWidthForContent, { }, displayBox.style().fontCascade());
+        if (visibleSide.length) {
+            textContent.setPartiallyVisibleContentLength(visibleSide.length);
+            return visibleSide.logicalWidth;
+        }
+        if (canFullyTruncate) {
+            displayBox.setIsFullyTruncated();
+            return { };
+        }
+        auto firstCharacterLength = TextUtil::firstUserPerceivedCharacterLength(inlineTextBox, textContent.start(), textContent.length());
+        auto firstCharacterWidth = TextUtil::width(inlineTextBox, displayBox.style().fontCascade(), textContent.start(), textContent.start() + firstCharacterLength, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No);
+        textContent.setPartiallyVisibleContentLength(firstCharacterLength);
+        return firstCharacterWidth;
+    }
+
+    if (canFullyTruncate) {
+        // Atomic inline level boxes are never partially truncated.
+        displayBox.setIsFullyTruncated();
+        return { };
+    }
+    return contentWidth;
+}
+
 static float truncateOverflowingDisplayBoxes(const InlineDisplay::Line& displayLine, InlineDisplay::Boxes& boxes, float ellipsisWidth, const RenderStyle& rootStyle)
 {
     // We gotta truncate some runs.
     ASSERT(displayLine.lineBoxLogicalRect().x() + displayLine.contentLogicalLeft() + displayLine.contentLogicalWidth() + ellipsisWidth > displayLine.lineBoxLogicalRect().maxX());
-    auto isLeftToRightDirection = rootStyle.isLeftToRightDirection();
     auto isHorizontal = rootStyle.isHorizontalWritingMode();
     auto left = [&] (auto& displayBox) {
         return isHorizontal ? displayBox.left() : displayBox.top();
@@ -168,47 +237,17 @@ static float truncateOverflowingDisplayBoxes(const InlineDisplay::Line& displayL
     auto width = [&] (auto& displayBox) {
         return isHorizontal ? displayBox.width() : displayBox.height();
     };
-    auto truncate = [&] (auto& displayBox, auto visibleWidth, auto canFullyTruncate) {
-        if (displayBox.isText()) {
-            if (!visibleWidth && canFullyTruncate) {
-                displayBox.setIsFullyTruncated();
-                return isLeftToRightDirection ? left(displayBox) : right(displayBox);
-            }
-
-            auto& inlineTextBox = downcast<InlineTextBox>(displayBox.layoutBox());
-            auto& textContent = displayBox.text();
-            auto leftSide = TextUtil::breakWord(inlineTextBox, textContent.start(), textContent.length(), width(displayBox), visibleWidth, { }, displayBox.style().fontCascade());
-            if (leftSide.length) {
-                textContent.setPartiallyVisibleContentLength(leftSide.length);
-                return isLeftToRightDirection ? left(displayBox) + leftSide.logicalWidth : right(displayBox) - leftSide.logicalWidth;
-            }
-            if (canFullyTruncate) {
-                displayBox.setIsFullyTruncated();
-                return isLeftToRightDirection ? left(displayBox) : right(displayBox);
-            }
-            auto firstCharacterLength = TextUtil::firstUserPerceivedCharacterLength(inlineTextBox, textContent.start(), textContent.length());
-            auto firstCharacterWidth = TextUtil::width(inlineTextBox, displayBox.style().fontCascade(), textContent.start(), textContent.start() + firstCharacterLength, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No);
-            textContent.setPartiallyVisibleContentLength(firstCharacterLength);
-            return isLeftToRightDirection ? left(displayBox) + firstCharacterWidth : right(displayBox) - firstCharacterWidth;
-        }
-        if (canFullyTruncate) {
-            // Atomic inline level boxes are never partially truncated.
-            displayBox.setIsFullyTruncated();
-            return isLeftToRightDirection ? left(displayBox) : right(displayBox);
-        }
-        return isLeftToRightDirection ? right(displayBox) : left(displayBox);
-    };
-
     // The logically first character or atomic inline-level element on a line must be clipped rather than ellipsed.
     auto isFirstContentRun = true;
-    if (isLeftToRightDirection) {
+    if (rootStyle.isLeftToRightDirection()) {
         auto visualRightForContentEnd = std::max(0.f, right(displayLine) - ellipsisWidth);
         auto truncateRight = std::optional<float> { };
         for (auto& displayBox : boxes) {
             if (displayBox.isInlineBox())
                 continue;
             if (right(displayBox) > visualRightForContentEnd) {
-                auto truncatePosition = truncate(displayBox, std::max(0.f, visualRightForContentEnd - left(displayBox)), !isFirstContentRun);
+                auto visibleWidth = truncate(displayBox, width(displayBox), std::max(0.f, visualRightForContentEnd - left(displayBox)), !isFirstContentRun);
+                auto truncatePosition = left(displayBox) + visibleWidth;
                 truncateRight = truncateRight.value_or(truncatePosition);
             }
             isFirstContentRun = false;
@@ -223,7 +262,8 @@ static float truncateOverflowingDisplayBoxes(const InlineDisplay::Line& displayL
         if (displayBox.isInlineBox())
             continue;
         if (left(displayBox) < visualLeftForContentEnd) {
-            auto truncatePosition = truncate(displayBox, std::max(0.f, right(displayBox) - visualLeftForContentEnd), !isFirstContentRun);
+            auto visibleWidth = truncate(displayBox, width(displayBox), std::max(0.f, right(displayBox) - visualLeftForContentEnd), !isFirstContentRun);
+            auto truncatePosition = right(displayBox) - visibleWidth;
             truncateLeft = truncateLeft.value_or(truncatePosition);
         }
         isFirstContentRun = false;
