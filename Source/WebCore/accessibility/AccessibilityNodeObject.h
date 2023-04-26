@@ -225,4 +225,6 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityNodeObject, isAccessibilityNodeObject())
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AccessibilityNodeObject) \
+    static bool isType(const WebCore::AccessibilityObject& object) { return object.isAccessibilityNodeObject(); } \
+SPECIALIZE_TYPE_TRAITS_END()

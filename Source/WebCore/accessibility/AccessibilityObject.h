@@ -102,7 +102,7 @@ public:
 
     bool isDetached() const override;
 
-    bool isAccessibilityNodeObject() const override { return false; }
+    virtual bool isAccessibilityNodeObject() const { return false; }
     bool isAccessibilityRenderObject() const override { return false; }
     virtual bool isAccessibilityScrollbar() const { return false; }
     virtual bool isAccessibilityScrollViewInstance() const { return false; }
@@ -112,7 +112,7 @@ public:
     bool isAccessibilityARIAGridInstance() const override { return false; }
     bool isAccessibilityARIAGridRowInstance() const override { return false; }
     bool isAccessibilityARIAGridCellInstance() const override { return false; }
-    bool isAccessibilityListBoxInstance() const override { return false; }
+    virtual bool isAccessibilityListBoxInstance() const { return false; }
     bool isAXIsolatedObjectInstance() const override { return false; }
 
     virtual bool isAttachmentElement() const { return false; }
@@ -285,7 +285,7 @@ public:
     bool pressedIsPresent() const override;
     bool ariaIsMultiline() const override;
     String invalidStatus() const override;
-    bool supportsPressed() const override;
+    bool supportsPressed() const;
     bool supportsExpanded() const override;
     bool supportsChecked() const override;
     bool supportsRowCountChange() const;
@@ -483,7 +483,6 @@ public:
 
     void makeRangeVisible(const PlainTextRange&) override { }
     bool press() override;
-    bool performDefaultAction() override { return press(); }
 
     AccessibilityOrientation orientation() const override;
     void increment() override { }
@@ -552,7 +551,7 @@ public:
 
     static String stringForVisiblePositionRange(const VisiblePositionRange&);
     String stringForRange(const SimpleRange&) const override;
-    IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const override { return IntRect(); }
+    virtual IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const { return IntRect(); }
     IntRect boundsForRange(const SimpleRange&) const final;
     void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override { }
 

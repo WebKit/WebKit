@@ -847,13 +847,11 @@ public:
     typedef Vector<RefPtr<AXCoreObject>> AccessibilityChildrenVector;
 
     virtual bool isAccessibilityObject() const = 0;
-    virtual bool isAccessibilityNodeObject() const = 0;
     virtual bool isAccessibilityRenderObject() const = 0;
     virtual bool isAccessibilityTableInstance() const = 0;
     virtual bool isAccessibilityARIAGridInstance() const = 0;
     virtual bool isAccessibilityARIAGridRowInstance() const = 0;
     virtual bool isAccessibilityARIAGridCellInstance() const = 0;
-    virtual bool isAccessibilityListBoxInstance() const = 0;
     virtual bool isAXIsolatedObjectInstance() const = 0;
 
     bool isHeading() const { return roleValue() == AccessibilityRole::Heading; }
@@ -1066,7 +1064,6 @@ public:
     virtual bool pressedIsPresent() const = 0;
     virtual bool ariaIsMultiline() const = 0;
     virtual String invalidStatus() const = 0;
-    virtual bool supportsPressed() const = 0;
     virtual bool supportsExpanded() const = 0;
     virtual bool supportsChecked() const = 0;
     virtual AccessibilitySortDirection sortDirection() const = 0;
@@ -1236,7 +1233,7 @@ public:
 
     virtual void makeRangeVisible(const PlainTextRange&) = 0;
     virtual bool press() = 0;
-    virtual bool performDefaultAction() = 0;
+    bool performDefaultAction() { return press(); }
     virtual bool performDismissAction() { return false; }
     
     virtual AccessibilityOrientation orientation() const = 0;
@@ -1285,7 +1282,6 @@ public:
 #endif
 
     virtual String stringForRange(const SimpleRange&) const = 0;
-    virtual IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const = 0;
     virtual IntRect boundsForRange(const SimpleRange&) const = 0;
     virtual void setSelectedVisiblePositionRange(const VisiblePositionRange&) const = 0;
 

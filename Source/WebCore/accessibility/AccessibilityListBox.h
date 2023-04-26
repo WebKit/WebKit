@@ -56,4 +56,6 @@ private:
     
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityListBox, isAccessibilityListBoxInstance())
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AccessibilityListBox) \
+    static bool isType(const WebCore::AccessibilityObject& object) { return object.isAccessibilityListBoxInstance(); } \
+SPECIALIZE_TYPE_TRAITS_END()
