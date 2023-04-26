@@ -35,6 +35,8 @@ list(APPEND WebKit_SOURCES
     GPUProcess/playstation/GPUProcessMainPlayStation.cpp
     GPUProcess/playstation/GPUProcessPlayStation.cpp
 
+    NetworkProcess/NetworkDataTaskDataURL.cpp
+
     NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
 
     NetworkProcess/Cookies/curl/WebCookieManagerCurl.cpp

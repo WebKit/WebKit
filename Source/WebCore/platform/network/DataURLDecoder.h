@@ -51,7 +51,7 @@ struct ScheduleContext {
 #endif
 };
 
-void decode(const URL&, const ScheduleContext&, DecodeCompletionHandler&&);
+WEBCORE_EXPORT void decode(const URL&, const ScheduleContext&, DecodeCompletionHandler&&);
 WEBCORE_EXPORT std::optional<Result> decode(const URL&);
 
 }

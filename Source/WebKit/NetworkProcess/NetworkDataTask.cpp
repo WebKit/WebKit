@@ -56,14 +56,15 @@ Ref<NetworkDataTask> NetworkDataTask::create(NetworkSession& session, NetworkDat
     ASSERT(!parameters.request.url().protocolIsBlob());
 #if PLATFORM(COCOA)
     return NetworkDataTaskCocoa::create(session, client, parameters);
-#endif
-#if USE(SOUP)
+#else
     if (parameters.request.url().protocolIsData())
         return NetworkDataTaskDataURL::create(session, client, parameters);
+#if USE(SOUP)
     return NetworkDataTaskSoup::create(session, client, parameters);
 #endif
 #if USE(CURL)
     return NetworkDataTaskCurl::create(session, client, parameters);
+#endif
 #endif
 }
 

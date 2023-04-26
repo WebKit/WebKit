@@ -936,7 +936,6 @@ http/tests/security/XFrameOptions/x-frame-options-deny.html [ Skip ] # Failure
 http/tests/security/XFrameOptions/x-frame-options-multiple-headers-conflict.html [ Skip ] # Failure
 http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-deny.html [ Skip ] # Failure
 http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html [ Skip ] # Failure
-http/tests/security/anchor-download-allow-data.html [ Skip ] # Crash
 http/tests/security/bypassing-cors-checks-for-extension-urls.html [ Skip ] # Failure
 http/tests/security/canvas-remote-read-remote-video-allowed-anonymous.html [ Skip ] # Failure
 http/tests/security/canvas-remote-read-remote-video-allowed-redirect.html [ Skip ] # Crash
