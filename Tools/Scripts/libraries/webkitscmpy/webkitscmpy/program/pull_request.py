@@ -30,7 +30,7 @@ from .install_hooks import InstallHooks
 from .squash import Squash
 
 from webkitbugspy import Tracker, radar
-from webkitcorepy import arguments, run, Terminal
+from webkitcorepy import arguments, run, Terminal, OutputCapture
 from webkitscmpy import local, log, remote
 
 
@@ -557,16 +557,18 @@ class PullRequest(Command):
         if target.endswith('fork') and repository.config().get('webkitscmpy.update-fork', 'false') == 'true':
             # If our remote is a GitHub repository, we can use the API and save ourselves a push
             fork_remote = repository.remote(name=target)
+            did_update_branch = False
             if isinstance(fork_remote, remote.GitHub):
                 log.info("Updating '{}' on '{}'".format(branch_point.branch, fork_remote.url))
-                fork_remote.request(
-                    method='POST', path='merge-upstream',
-                    json=dict(branch=branch_point.branch),
-                    authenticated=True,
-                )
-                if run([repository.executable(), 'fetch', target, branch_point.branch], cwd=repository.root_path, capture_output=True).returncode:
+                with OutputCapture():
+                    did_update_branch = fork_remote.request(
+                        method='POST', path='merge-upstream',
+                        json=dict(branch=branch_point.branch),
+                        authenticated=True,
+                    ) is not None
+                if did_update_branch and run([repository.executable(), 'fetch', target, branch_point.branch], cwd=repository.root_path, capture_output=True).returncode:
                     sys.stderr.write("Failed to fetch '{}' for '{}.' Error is non fatal, continuing...\n".format(target, branch_point.branch))
-            elif rebasing:
+            if not did_update_branch and rebasing:
                 log.info("Syncing '{}' to remote '{}'".format(branch_point.branch, target))
                 if run([repository.executable(), 'push', target, '{branch}:{branch}'.format(branch=branch_point.branch)], cwd=repository.root_path, env=push_env).returncode:
                     sys.stderr.write("Failed to sync '{}' to '{}.' Error is non fatal, continuing...\n".format(branch_point.branch, target))
