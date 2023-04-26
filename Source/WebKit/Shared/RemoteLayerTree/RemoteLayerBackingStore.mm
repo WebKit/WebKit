@@ -464,11 +464,10 @@ void RemoteLayerBackingStore::ensureFrontBuffer()
     if (!m_displayListBuffer && m_parameters.includeDisplayList == IncludeDisplayList::Yes) {
         ImageBufferCreationContext creationContext;
         creationContext.useCGDisplayListImageCache = m_parameters.useCGDisplayListImageCache;
-        // FIXME: This should use colorSpace(), not hardcode sRGB.
         if (type() == RemoteLayerBackingStore::Type::IOSurface)
-            m_displayListBuffer = ImageBuffer::create<CGDisplayListAcceleratedImageBufferBackend>(m_parameters.size, m_parameters.scale, DestinationColorSpace::SRGB(), pixelFormat(), RenderingPurpose::DOM, WTFMove(creationContext));
+            m_displayListBuffer = ImageBuffer::create<CGDisplayListAcceleratedImageBufferBackend>(m_parameters.size, m_parameters.scale, colorSpace(), pixelFormat(), RenderingPurpose::DOM, WTFMove(creationContext));
         else
-            m_displayListBuffer = ImageBuffer::create<CGDisplayListImageBufferBackend>(m_parameters.size, m_parameters.scale, DestinationColorSpace::SRGB(), pixelFormat(), RenderingPurpose::DOM, WTFMove(creationContext));
+            m_displayListBuffer = ImageBuffer::create<CGDisplayListImageBufferBackend>(m_parameters.size, m_parameters.scale, colorSpace(), pixelFormat(), RenderingPurpose::DOM, WTFMove(creationContext));
     }
 #endif
 }
