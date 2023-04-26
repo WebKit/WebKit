@@ -96,6 +96,7 @@ inline void usage()
 
 using namespace JSC;
 using namespace JSC::B3;
+namespace CCallDetail = JSC::B3::Air::CCallDetail;
 
 inline bool shouldBeVerbose(Procedure& procedure)
 {
@@ -443,6 +444,96 @@ inline float modelLoad<float, float>(float value) { return value; }
 
 template<>
 inline double modelLoad<double, double>(double value) { return value; }
+
+template<unsigned size> inline const Type b3IntegerType;
+template<> inline const Type b3IntegerType<4> = Int32;
+template<> inline const Type b3IntegerType<8> = Int64;
+
+template<typename T> inline const Type b3Type;
+template<> inline const Type b3Type<int> = b3IntegerType<sizeof(int)>;
+template<> inline const Type b3Type<long> = b3IntegerType<sizeof(long)>;
+template<> inline const Type b3Type<long long> = b3IntegerType<sizeof(long long)>;
+template<> inline const Type b3Type<unsigned> = b3IntegerType<sizeof(unsigned)>;
+template<> inline const Type b3Type<unsigned long> = b3IntegerType<sizeof(unsigned long)>;
+template<> inline const Type b3Type<unsigned long long> = b3IntegerType<sizeof(unsigned long long)>;
+template<> inline const Type b3Type<float> = Float;
+template<> inline const Type b3Type<double> = Double;
+template<typename T> inline const Type b3Type<T*> = pointerType();
+
+inline Value* makeCCallValue(Procedure& procedure, BasicBlock* block, CCallDetail::RegisterArgument arg)
+{
+    Value* val = block->appendNew<ArgumentRegValue>(procedure, Origin(), arg.reg);
+    if constexpr (!is32Bit()) {
+        if (arg.type == Int32)
+            val = block->appendNew<Value>(procedure, Trunc, Origin(), val);
+    }
+
+    if (arg.type == Float)
+        val = block->appendNew<Value>(procedure, Trunc, Origin(), val);
+
+    return val;
+}
+
+#if USE(JSVALUE32_64)
+inline Value* makeCCallValue(Procedure& procedure, BasicBlock* block, CCallDetail::RegisterPairArgument arg)
+{
+    return block->appendNew<ArgumentRegValue>(procedure, Origin(), arg.hi, arg.lo);
+}
+#endif // USE(JSVALUE32_64)
+
+inline Value* makeCCallValue(Procedure& procedure, BasicBlock* block, CCallDetail::StackArgument arg)
+{
+    // we really shouldn't be using this except on arm32, so, assert just in
+    // case, since the details are likely wrong for other architectures, and
+    // it's not expected to end up here on 64-bit
+    RELEASE_ASSERT(isARM_THUMB2());
+
+    return block->appendNew<MemoryValue>(procedure,
+        Load,
+        arg.type,
+        Origin(),
+        block->appendNew<Value>(procedure, FramePointer, Origin()),
+        arg.offset + 2 * sizeof(void*)
+    );
+}
+
+inline Value* makeCCallValue(Procedure& procedure, BasicBlock* block, JSC::B3::Air::CCallDetail::Argument arg)
+{
+    return std::visit(
+        [&](auto&& arg) { return makeCCallValue(procedure, block, arg); },
+        arg
+    );
+}
+
+struct ArgumentValueList {
+    Value* operator[](size_t idx) const
+    {
+        return makeCCallValue(procedure, block, inner[idx]);
+    }
+
+    Value* withBlock(BasicBlock *bb, size_t idx) const
+    {
+        return makeCCallValue(procedure, bb, inner[idx]);
+    }
+
+    Vector<Value*> eager() const
+    {
+        Vector<Value*> result;
+        for (auto arg : inner)
+            result.append(makeCCallValue(procedure, block, arg));
+        return result;
+    }
+
+    Procedure& procedure;
+    BasicBlock* block;
+    Vector<JSC::B3::Air::CCallDetail::Argument> inner;
+};
+
+template<typename ... T>
+ArgumentValueList cCallArgumentValues(Procedure& procedure, BasicBlock* block)
+{
+    return ArgumentValueList { procedure, block, JSC::B3::Air::computeCCallArguments({ b3Type<T> ... }) };
+}
 
 struct TestConfig {
     enum class Mode {
