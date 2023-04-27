@@ -700,7 +700,9 @@
     (iokit-user-client-class "IOAudioControlUserClient")
     (iokit-user-client-class "IOAudioEngineUserClient")
     ;; Following is needed due to <rdar://problem/10427451> && <rdar://problem/10808817>
-    (iokit-user-client-class "AudioAUUC"))
+    (iokit-user-client-class "AudioAUUC")
+    ;; Following is needed due to <rdar://problem/108282689>
+    (iokit-user-client-class "H11ANEInDirectPathClient"))
 
 (deny IOKIT_OPEN_USER_CLIENT
     (iokit-user-client-class "AppleMultitouchDeviceUserClient")
@@ -966,6 +968,12 @@
         (require-all
             (extension "com.apple.webkit.extension.mach")
             (global-name "com.apple.appleh13camerad")
+        )
+#endif
+#if HAVE(APPLE_CAMERA_USER_CLIENT)
+        (require-all
+            (extension "com.apple.webkit.extension.mach")
+            (global-name "com.apple.aneuserd")
         )
 #endif
         )

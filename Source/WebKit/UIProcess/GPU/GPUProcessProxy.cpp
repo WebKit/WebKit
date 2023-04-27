@@ -223,6 +223,10 @@ void GPUProcessProxy::setOrientationForMediaCapture(WebCore::IntDegrees orientat
     send(Messages::GPUProcess::SetOrientationForMediaCapture { orientation }, 0);
 }
 
+#if HAVE(APPLE_CAMERA_USER_CLIENT)
+static const ASCIILiteral appleCameraUserClientPath { "com.apple.aneuserd"_s };
+#endif
+
 static inline bool addCameraSandboxExtensions(Vector<SandboxExtension::Handle>& extensions)
 {
     auto sandboxExtensionHandle = SandboxExtension::createHandleForGenericExtension("com.apple.webkit.camera"_s);
@@ -237,6 +241,7 @@ static inline bool addCameraSandboxExtensions(Vector<SandboxExtension::Handle>& 
                 RELEASE_LOG_ERROR(WebRTC, "Unable to create com.apple.applecamerad sandbox extension");
                 return false;
             }
+            extensions.append(WTFMove(*appleCameraServicePathSandboxExtensionHandle));
 #if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
             auto additionalAppleCameraServicePathSandboxExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.appleh13camerad"_s, std::nullopt);
             if (!additionalAppleCameraServicePathSandboxExtensionHandle) {
@@ -245,7 +250,15 @@ static inline bool addCameraSandboxExtensions(Vector<SandboxExtension::Handle>& 
             }
             extensions.append(WTFMove(*additionalAppleCameraServicePathSandboxExtensionHandle));
 #endif
-            extensions.append(WTFMove(*appleCameraServicePathSandboxExtensionHandle));
+#if HAVE(APPLE_CAMERA_USER_CLIENT)
+            // Needed for rdar://108282689:
+            auto appleCameraUserClientExtensionHandle = SandboxExtension::createHandleForMachLookup(appleCameraUserClientPath, std::nullopt);
+            if (!appleCameraUserClientExtensionHandle) {
+                RELEASE_LOG_ERROR(WebRTC, "Unable to create %s sandbox extension", appleCameraUserClientPath.characters8());
+                return false;
+            }
+            extensions.append(WTFMove(*appleCameraUserClientExtensionHandle));
+#endif
         }
 #endif // HAVE(AUDIT_TOKEN)
 

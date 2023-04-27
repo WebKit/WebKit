@@ -39,6 +39,7 @@ static const ASCIILiteral audioExtensionPath { "com.apple.webkit.microphone"_s }
 static const ASCIILiteral videoExtensionPath { "com.apple.webkit.camera"_s };
 static const ASCIILiteral appleCameraServicePath { "com.apple.applecamerad"_s };
 static const ASCIILiteral additionalAppleCameraServicePath { "com.apple.appleh13camerad"_s };
+static const ASCIILiteral appleCameraUserClientPath { "com.apple.aneuserd"_s };
 #endif
 
 UserMediaProcessManager& UserMediaProcessManager::singleton()
@@ -94,6 +95,9 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
 #if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
         extensionCount++;
 #endif
+#if HAVE(APPLE_CAMERA_USER_CLIENT)
+        extensionCount++;
+#endif
     }
 
     if (extensionCount) {
@@ -130,6 +134,12 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
                 if (auto handle = SandboxExtension::createHandleForMachLookup(additionalAppleCameraServicePath, auditToken)) {
                     handles[--extensionCount] = WTFMove(*handle);
                     ids.uncheckedAppend(additionalAppleCameraServicePath);
+                }
+#endif
+#if HAVE(APPLE_CAMERA_USER_CLIENT)
+                if (auto handle = SandboxExtension::createHandleForMachLookup(appleCameraUserClientPath, auditToken)) {
+                    handles[--extensionCount] = WTFMove(*handle);
+                    ids.uncheckedAppend(appleCameraUserClientPath);
                 }
 #endif
             }
@@ -193,6 +203,9 @@ void UserMediaProcessManager::revokeSandboxExtensionsIfNeeded(WebProcessProxy& p
             params.append(appleCameraServicePath);
 #if USE(APPLE_INTERNAL_SDK) && HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
             params.append(additionalAppleCameraServicePath);
+#endif
+#if USE(APPLE_INTERNAL_SDK) && HAVE(APPLE_CAMERA_USER_CLIENT)
+            params.append(appleCameraUserClientPath);
 #endif
         }
         process.revokeVideoCaptureExtension();
