@@ -141,7 +141,9 @@ RefPtr<cairo_surface_t> ImageBufferShareableBitmapBackend::createCairoSurface()
 
 RefPtr<NativeImage> ImageBufferShareableBitmapBackend::copyNativeImage(BackingStoreCopy copyBehavior)
 {
-    return NativeImage::create(m_bitmap->createPlatformImage(copyBehavior));
+    auto image = m_bitmap->createPlatformImage(copyBehavior);
+    CGImageSetCachingFlags(image.get(), kCGImageCachingTransient);
+    return NativeImage::create(WTFMove(image));
 }
 
 RefPtr<PixelBuffer> ImageBufferShareableBitmapBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator)
