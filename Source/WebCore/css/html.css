@@ -289,6 +289,10 @@ td, th {
     vertical-align: inherit;
 }
 
+td:not(table td), th:not(table th) {
+    padding: 1px;
+}
+
 th {
     font-weight: bold;
     text-align: -internal-th-center;
