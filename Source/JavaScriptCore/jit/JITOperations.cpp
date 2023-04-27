@@ -2427,8 +2427,10 @@ JSC_DEFINE_JIT_OPERATION(operationGetByValMegamorphic, EncodedJSValue, (JSGlobal
         if (UNLIKELY(TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags()) && object->type() != ArrayType && object->type() != JSFunctionType && object != globalObject->arrayPrototype())) {
             if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm))
                 repatchGetBySlowPathCall(callFrame->codeBlock(), *stubInfo, GetByKind::ByVal);
-            if (object->getNonIndexPropertySlot(globalObject, uid, slot))
-                return JSValue::encode(slot.getValue(globalObject, uid));
+            bool result = object->getNonIndexPropertySlot(globalObject, uid, slot);
+            RETURN_IF_EXCEPTION(scope, { });
+            if (result)
+                RELEASE_AND_RETURN(scope, JSValue::encode(slot.getValue(globalObject, uid)));
             return JSValue::encode(jsUndefined());
         }
 
@@ -2450,7 +2452,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetByValMegamorphic, EncodedJSValue, (JSGlobal
                 if (stubInfo && stubInfo->considerRepatchingCacheMegamorphic(vm))
                     repatchGetBySlowPathCall(callFrame->codeBlock(), *stubInfo, GetByKind::ByVal);
             }
-            return JSValue::encode(slot.getValue(globalObject, uid));
+            RELEASE_AND_RETURN(scope, JSValue::encode(slot.getValue(globalObject, uid)));
         }
 
         cacheable &= structure->propertyAccessesAreCacheableForAbsence();
