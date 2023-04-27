@@ -1662,26 +1662,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->clientBadgeEnabled();
 }
 
-- (void)setInactiveSchedulingPolicy:(WKInactiveSchedulingPolicy)policy
-{
-    switch (policy) {
-    case WKInactiveSchedulingPolicySuspend:
-        _preferences->setShouldTakeSuspendedAssertions(false);
-        _preferences->setBackgroundWebContentRunningBoardThrottlingEnabled(true);
-        break;
-    case WKInactiveSchedulingPolicyThrottle:
-        _preferences->setShouldTakeSuspendedAssertions(true);
-        _preferences->setBackgroundWebContentRunningBoardThrottlingEnabled(true);
-        break;
-    case WKInactiveSchedulingPolicyNone:
-        _preferences->setShouldTakeSuspendedAssertions(true);
-        _preferences->setBackgroundWebContentRunningBoardThrottlingEnabled(false);
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-}
-
 - (WKInactiveSchedulingPolicy)inactiveSchedulingPolicy
 {
     return _preferences->backgroundWebContentRunningBoardThrottlingEnabled() ? (_preferences->shouldTakeSuspendedAssertions() ? WKInactiveSchedulingPolicyThrottle : WKInactiveSchedulingPolicySuspend) : WKInactiveSchedulingPolicyNone;
