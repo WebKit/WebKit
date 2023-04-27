@@ -254,7 +254,12 @@ TEST(FullscreenVideoTextRecognition, TogglePlaybackInElementFullscreen)
     [webView waitForImageAnalysisToEnd];
 }
 
+// FIXME: re-enable for iOS when rdar://107476837 is resolved
+#if PLATFORM(IOS)
+TEST(FullscreenVideoTextRecognition, DISABLED_AddVideoAfterEnteringFullscreen)
+#else
 TEST(FullscreenVideoTextRecognition, AddVideoAfterEnteringFullscreen)
+#endif
 {
     auto webView = [FullscreenVideoTextRecognitionWebView create];
     [webView loadVideoSource:@"test.mp4"];
