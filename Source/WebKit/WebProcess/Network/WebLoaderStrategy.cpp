@@ -327,7 +327,11 @@ static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadPara
     if (!mainFrameDocumentLoader || !isMainFrameNavigation)
         mainFrameDocumentLoader = mainFrame.loader().documentLoader();
 
-    parameters.allowPrivacyProxy = mainFrameDocumentLoader ? mainFrameDocumentLoader->allowPrivacyProxy() : true;
+    auto* policySourceDocumentLoader = mainFrameDocumentLoader;
+    if (policySourceDocumentLoader && !policySourceDocumentLoader->request().url().hasSpecialScheme() && frame->document()->url().protocolIsInHTTPFamily())
+        policySourceDocumentLoader = frame->loader().documentLoader();
+
+    parameters.allowPrivacyProxy = policySourceDocumentLoader ? policySourceDocumentLoader->allowPrivacyProxy() : true;
 
     if (auto* document = frame->document()) {
         parameters.crossOriginEmbedderPolicy = document->crossOriginEmbedderPolicy();
@@ -348,7 +352,7 @@ static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadPara
         }
     }
 
-    auto networkConnectionIntegrityPolicy = mainFrameDocumentLoader ? mainFrameDocumentLoader->networkConnectionIntegrityPolicy() : OptionSet<NetworkConnectionIntegrity> { };
+    auto networkConnectionIntegrityPolicy = policySourceDocumentLoader ? policySourceDocumentLoader->networkConnectionIntegrityPolicy() : OptionSet<NetworkConnectionIntegrity> { };
     parameters.networkConnectionIntegrityPolicy = networkConnectionIntegrityPolicy;
 
     if (isMainFrameNavigation)

@@ -1127,7 +1127,11 @@ OptionSet<WebCore::NetworkConnectionIntegrity> WebFrame::networkConnectionIntegr
     if (!topDocumentLoader)
         return { };
 
-    return topDocumentLoader->networkConnectionIntegrityPolicy();
+    auto* policySourceDocumentLoader = topDocumentLoader;
+    if (!policySourceDocumentLoader->request().url().hasSpecialScheme() && document->url().protocolIsInHTTPFamily())
+        policySourceDocumentLoader = document->loader();
+
+    return policySourceDocumentLoader->networkConnectionIntegrityPolicy();
 }
 
 } // namespace WebKit
