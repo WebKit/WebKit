@@ -1,0 +1,148 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+source "$(which env_parallel.bash)"
+
+thisdir="$(realpath "$(dirname "$0")")"
+
+run_slow_tests=0;
+use_canonicalizer=1;
+
+function usage() {
+    echo "usage: dump-testb3-ir [flags] <path to testb3> <output directory>";
+    echo "flags: "
+    echo "  --slow: include slow tests"
+    echo "  --no-canonicalize: don't run canonicalizer"
+    exit 1;
+}
+
+while true; do
+    case "$1" in
+        --slow)
+            run_slow_tests=1;
+            shift 1;
+            ;;
+        --no-canonicalize)
+            use_canonicalizer=0;
+            shift 1;
+            ;;
+        --*)
+            echo "unrecognized flag: $1";
+            usage;
+            exit 1;
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+testb3="$(realpath "$1")"
+out="$(realpath "$2")"
+
+if [ -z "${testb3}" ] || [ -z "${out}" ];
+then
+    usage
+fi;
+
+mkdir -p "${out}"
+
+function drop_ignored_tests() {
+    # we ignore some tests:
+    grep -Ev '(testTwoBitwiseCastOnInt32|testInt32BArgToFloatBitwiseCast|testBitXorArgs(32)?)\(' | \
+        if [ "$run_slow_tests" -eq 0 ]; then
+            grep -Ev 'testSpill(FP|GP)';
+            # these tests take ages to canonicalize--don't run them unless we have to
+        else
+            cat
+        fi
+    # - testTwoBitwiseCastOnInt32
+    #   we change this one because otherwise it's identical to
+    #   testTwoBitwiseCastOnInt64 which seems unintentional
+    #
+    # - testInt32BArgToFloatBitwiseCast
+    #   this is also changed to match the name, otherwise it's very similar to
+    #   TestInt64BArgToDoubleBitwiseCast
+    #
+    # - testBitXorArgs
+    # - testBitXorArgs32
+    #   these upstream tests have indeterminate order of argument values
+}
+
+function winnow_test_list() {
+    # The sed program here does a few things:
+    sed '/^O2:/!d;s/^O2: //;s/^(//;s/\[.*\] *([^)]*) *{ *\([^;]*\); *}/\1/;s/(.*$/(/'
+    #     ^-[0]   ^-[1]     ^-[2]  ^-[3]                                   ^-[4]
+    #
+    # 0. Exclude everything but O2--some tests don't generate code at lower
+    #    optimization levels
+    #
+    # 1. Strip the O2 marker off the front--makes things nicer to read
+    #
+    # 2. If there's a leading paren on the test name, the whole test expression was parenthesized
+    #    in the source code, which will make things annoying for us in step 4, just remove it right away
+    #
+    # 3. If the name is a C++ lambda, carefully tear out the body expression
+    #
+    # 4. Strip everything after the first parenthesis remaining after the above steps.
+    #
+    # Yes, unfortunately, this is all necessary since there are some truly oddball test names
+    # as a result of using preprocessor stringifying to get them from the source code
+    #
+    # We leave the opening paren on the test group name so that e.g. for `testCompare(...)` we don't
+    # inadvertently end up catching `testCompareOneFloatToDouble(...)` along with it
+
+}
+
+function forget_addresses() {
+    # We need to yank out addresses that end up in the output
+    sed 's/generator = 0x[0-9a-f]*,/generator = <redacted>,/g' | \
+        sed 's/[0-9]\{9,14\}[0-9]*/<bigimm>/g' | \
+        sed 's/DataSection at 0x[0-9a-f]*/DataSection at <redacted>/'
+
+    # FIXME(jgriego) this doesn't include immediates that happen to be stack
+    # addresses--there's several of these.
+    #
+    # FIXME(jgriego) we also need to deal with some trivial reorderings
+    # (ArgumentRegValues always end up first after our changes)--Not really sure
+    # how to cope with this, we probably need to write a sort of sophisticated
+    # semantic diff--i don't think it's ideal to handle in this script
+}
+
+function keep_initial_b3() {
+    sed -n '/Initial B3:/,/B3 after/p;/B3 after/d;/Opt Level/d;/^b3/!p'
+}
+
+function remove_misc_noise() {
+    # some tests have additional output that will break the comparison
+    sed '/That took [0-9.]* ms./d'
+}
+
+function prepare_for_summary() {
+    if [ "$use_canonicalizer" -eq 1 ]; then
+        "${thisdir}/canonicalize-testb3-ir.py"
+    else
+        cat
+    fi
+}
+
+function dump_one() {
+    # This gets invoked for every test group after our winnowing
+    case="$1";
+    filename="$(sed 'y/<>(), /______/;s/__*/_/g;s/_$//' <<<"${case}")"
+    "${testb3}" -filter "O2: ${case}" -printir 2>&1 | \
+        grep -v '^Air' | \
+        keep_initial_b3 | \
+        remove_misc_noise | \
+        forget_addresses | \
+        prepare_for_summary \
+            >"${out}/${filename}"
+}
+
+"${testb3}" -list 2>&1 \
+    | winnow_test_list \
+    | drop_ignored_tests \
+    | uniq \
+    | env_parallel --bar dump_one '{}'
+
+
