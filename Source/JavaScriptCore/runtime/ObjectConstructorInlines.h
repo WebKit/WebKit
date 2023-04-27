@@ -63,7 +63,9 @@ ALWAYS_INLINE bool objectAssignFast(VM& vm, JSObject* target, JSObject* source, 
     if (!canUseFastPath)
         return false;
 
-    target->putOwnDataPropertyBatching(vm, properties.data(), values.data(), properties.size());
+    // Actually, assigning with empty object (option for example) is common. (`Object.assign(defaultOptions, passedOptions)` where `passedOptions` is empty object.)
+    if (properties.size())
+        target->putOwnDataPropertyBatching(vm, properties.data(), values.data(), properties.size());
     return true;
 }
 

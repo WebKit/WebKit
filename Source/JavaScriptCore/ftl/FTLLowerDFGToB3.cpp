@@ -7821,9 +7821,32 @@ IGNORE_CLANG_WARNINGS_END
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         switch (m_node->child2().useKind()) {
-        case ObjectUse:
-            vmCall(Void, operationObjectAssignObject, weakPointer(globalObject), lowCell(m_node->child1()), lowObject(m_node->child2()));
+        case ObjectUse: {
+            LBasicBlock checkStructure1 = m_out.newBlock();
+            LBasicBlock checkStructure2 = m_out.newBlock();
+            LBasicBlock genericCase = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            LValue target = lowCell(m_node->child1());
+            LValue source = lowObject(m_node->child2());
+
+            m_out.branch(m_out.equal(m_out.load8ZeroExt32(source, m_heaps.JSCell_typeInfoType), m_out.constInt32(FinalObjectType)), unsure(checkStructure1), unsure(genericCase));
+
+            LBasicBlock lastNext = m_out.appendTo(checkStructure1, checkStructure2);
+            LValue indexingMode = m_out.load8ZeroExt32(source, m_heaps.JSCell_indexingTypeAndMisc);
+            m_out.branch(m_out.testIsZero32(indexingMode, m_out.constInt32(IndexingShapeMask)), unsure(checkStructure2), unsure(genericCase));
+
+            m_out.appendTo(checkStructure2, genericCase);
+            LValue structure = loadStructure(source);
+            m_out.branch(m_out.isZero32(m_out.load32(structure, m_heaps.Structure_propertyHash)), unsure(continuation), unsure(genericCase));
+
+            m_out.appendTo(genericCase, continuation);
+            vmCall(Void, operationObjectAssignObject, weakPointer(globalObject), target, source);
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
             return;
+        }
         case UntypedUse:
             vmCall(Void, operationObjectAssignUntyped, weakPointer(globalObject), lowCell(m_node->child1()), lowJSValue(m_node->child2()));
             return;

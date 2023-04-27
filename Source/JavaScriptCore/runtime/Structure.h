@@ -714,6 +714,11 @@ public:
         return OBJECT_OFFSETOF(Structure, m_bitField);
     }
 
+    static ptrdiff_t propertyHashOffset()
+    {
+        return OBJECT_OFFSETOF(Structure, m_propertyHash);
+    }
+
     static Structure* createStructure(VM&);
         
     bool transitionWatchpointSetHasBeenInvalidated() const

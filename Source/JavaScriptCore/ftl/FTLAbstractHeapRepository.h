@@ -158,6 +158,7 @@ namespace JSC { namespace FTL {
     macro(Structure_inlineCapacity, Structure::inlineCapacityOffset()) \
     macro(Structure_outOfLineTypeFlags, Structure::outOfLineTypeFlagsOffset()) \
     macro(Structure_previousOrRareData, Structure::previousOrRareDataOffset()) \
+    macro(Structure_propertyHash, Structure::propertyHashOffset()) \
     macro(Structure_prototype, Structure::prototypeOffset()) \
     macro(StructureRareData_cachedEnumerableStrings, StructureRareData::offsetOfCachedPropertyNames(CachedPropertyNamesKind::EnumerableStrings)) \
     macro(StructureRareData_cachedStrings, StructureRareData::offsetOfCachedPropertyNames(CachedPropertyNamesKind::Strings)) \

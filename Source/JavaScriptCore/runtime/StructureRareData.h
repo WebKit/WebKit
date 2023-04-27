@@ -123,6 +123,11 @@ public:
         return OBJECT_OFFSETOF(StructureRareData, m_specialPropertyCache);
     }
 
+    static ptrdiff_t offsetOfPrevious()
+    {
+        return OBJECT_OFFSETOF(StructureRareData, m_previous);
+    }
+
     DECLARE_EXPORT_INFO;
 
     void finalizeUnconditionally(VM&, CollectionScope);

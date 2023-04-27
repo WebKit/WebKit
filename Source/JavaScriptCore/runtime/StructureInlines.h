@@ -784,6 +784,7 @@ ALWAYS_INLINE bool Structure::canPerformFastPropertyEnumeration() const
         return false;
     // FIXME: Indexed properties can be handled.
     // https://bugs.webkit.org/show_bug.cgi?id=185358
+
     if (hasIndexedProperties(indexingType()))
         return false;
     if (hasAnyKindOfGetterSetterProperties())

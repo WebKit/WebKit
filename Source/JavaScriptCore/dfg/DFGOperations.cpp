@@ -367,35 +367,9 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignObject, void, (JSGlobalObject* glo
         // that ends up transitioning the structure underneath us.
         // https://bugs.webkit.org/show_bug.cgi?id=187837
 
-        // FIXME: This fast path is very similar to ObjectConstructor' one. But extracting it to a function caused performance
-        // regression in object-assign-replace. Since the code is small and fast path, we keep both.
-
         // Do not clear since Vector::clear shrinks the backing store.
-        properties.resize(0);
-        values.clear();
-        bool canUseFastPath = source->fastForEachPropertyWithSideEffectFreeFunctor(vm, [&](const PropertyTableEntry& entry) -> bool {
-            if (entry.attributes() & PropertyAttribute::DontEnum)
-                return true;
-
-            PropertyName propertyName(entry.key());
-            if (propertyName.isPrivateName())
-                return true;
-
-            properties.append(entry.key());
-            values.appendWithCrashOnOverflow(source->getDirect(entry.offset()));
-
-            return true;
-        });
-
-        if (canUseFastPath) {
-            for (size_t i = 0; i < properties.size(); ++i) {
-                // FIXME: We could put properties in a batching manner to accelerate Object.assign more.
-                // https://bugs.webkit.org/show_bug.cgi?id=185358
-                PutPropertySlot putPropertySlot(target, true);
-                target->putOwnDataProperty(vm, properties[i].get(), values.at(i), putPropertySlot);
-            }
+        if (objectAssignFast(vm, target, source, properties, values))
             return;
-        }
     }
 
     scope.release();

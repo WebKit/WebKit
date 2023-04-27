@@ -4095,7 +4095,7 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, const RefPtr<UniquedStringImpl
 {
     unsigned i = 0;
     Structure* structure = this->structure();
-    if (!(structure->isDictionary() || (structure->transitionCountEstimate() + size) > Structure::s_maxTransitionLength || !structure->canPerformFastPropertyEnumeration() || (structure->transitionWatchpointSet().isBeingWatched() && structure->transitionWatchpointSet().isStillValid()))) {
+    if (!(structure->isDictionary() || (structure->transitionCountEstimate() + size) > Structure::s_maxTransitionLength || !structure->canPerformFastPropertyEnumeration())) {
         Vector<PropertyOffset, 16> offsets;
         offsets.reserveInitialCapacity(size);
 
@@ -4106,10 +4106,6 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, const RefPtr<UniquedStringImpl
             if (Structure* newStructure = Structure::addPropertyTransitionToExistingStructure(structure, propertyName, 0, offset)) {
                 structure = newStructure;
                 offsets.uncheckedAppend(offset);
-                // If we detect that this structure requires transition watchpoint firing, then we need to stop this batching and rest of the values
-                // should be put via generic way.
-                if (UNLIKELY(structure->transitionWatchpointSet().isBeingWatched() && structure->transitionWatchpointSet().isStillValid()))
-                    break;
                 continue;
             }
 
@@ -4118,10 +4114,13 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, const RefPtr<UniquedStringImpl
             if (offset != invalidOffset) {
                 structure->didReplaceProperty(offset);
                 offsets.uncheckedAppend(offset);
-                if (UNLIKELY(structure->transitionWatchpointSet().isBeingWatched() && structure->transitionWatchpointSet().isStillValid()))
-                    break;
                 continue;
             }
+
+            // If we detect that this structure requires transition watchpoint firing, then we need to stop this batching and rest of the values
+            // should be put via generic way.
+            if (UNLIKELY(structure->transitionWatchpointSet().isBeingWatched() && structure->transitionWatchpointSet().isStillValid()))
+                break;
 
             // It will go to the cacheable dictionary case. We stop the batching here and fall though to the generic case.
             // We break here before adding offset to offsets since this property itself should be put via generic path.
