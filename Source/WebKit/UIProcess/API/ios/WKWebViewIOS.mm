@@ -3125,7 +3125,11 @@ static bool isLockdownModeWarningNeeded()
     if (!lockdownModeWarningNeeded)
         return;
 
+#if PLATFORM(MACCATALYST)
+    auto message = WEB_UI_NSSTRING(@"Certain experiences and features may not function as expected. You can manage Lockdown Mode in Settings.", "Lockdown Mode alert message");
+#else
     auto message = WEB_UI_NSSTRING(@"Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings.", "Lockdown Mode alert message");
+#endif
 
     auto decisionHandler = makeBlockPtr([message, protectedSelf = retainPtr(self)](WKDialogResult result) mutable {
         if (result == WKDialogResultAskAgain) {
