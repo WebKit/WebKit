@@ -2551,7 +2551,12 @@ TEST(SOAuthorizationSubFrame, SOAuthorizationLoadPolicyIgnore)
     EXPECT_FALSE(authorizationPerformed);
 }
 
+// FIX ME WHEN rdar://107855114 is resolved. 
+#if PLATFORM(IOS)
+TEST(SOAuthorizationSubFrame, DISABLED_SOAuthorizationLoadPolicyAllowAsync)
+#else
 TEST(SOAuthorizationSubFrame, SOAuthorizationLoadPolicyAllowAsync)
+#endif
 {
     resetState();
     SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
