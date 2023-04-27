@@ -189,7 +189,7 @@ struct _WebKitVideoEncoderPrivate {
 
 #define webkit_video_encoder_parent_class parent_class
 WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitVideoEncoder, webkit_video_encoder, GST_TYPE_BIN,
-    GST_DEBUG_CATEGORY_INIT(video_encoder_debug, "webkitvideoencoder", 0, "WebKit Video encoder"))
+    GST_DEBUG_CATEGORY_INIT(video_encoder_debug, "webkitvideoencoderprivate", 0, "WebKit Video Encoder Private"))
 
 enum {
     PROP_FORMAT = 1,
