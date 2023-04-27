@@ -15680,7 +15680,6 @@
 			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "WebKit" */;
 			buildPhases = (
 				DDE992F2278D05FA00F60D26 /* Product Dependencies */,
-				1ADAE12F1919A90C00F48E21 /* Update Info.plist with version information */,
 				1A07D2F51919AA8A00ECDA16 /* Make Frameworks Symbolic Link */,
 				8DC2EF500486A6940098B216 /* Headers */,
 				DDC907B5298B2DE800ECA4D6 /* Migrate WebCore and WebKitLegacy Headers */,
@@ -15977,22 +15976,6 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "if [[ ${WK_PLATFORM_NAME} != \"iphoneos\" && ${WK_PLATFORM_NAME} != \"maccatalyst\" ]]; then\n    exit 0;\nfi\n\nif [[ ! -d \"${INSTALL_ROOT}/${WK_ALTERNATE_FRAMEWORKS_DIR}${SYSTEM_LIBRARY_DIR}/PrivateFrameworks\" ]]; then\n    mkdir -p \"${INSTALL_ROOT}/${WK_ALTERNATE_FRAMEWORKS_DIR}${SYSTEM_LIBRARY_DIR}/PrivateFrameworks\"\nfi\n\nln -s -h -f ../Frameworks/WebKit.framework \"${INSTALL_ROOT}/${WK_ALTERNATE_FRAMEWORKS_DIR}${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebKit.framework\"\n";
-		};
-		1ADAE12F1919A90C00F48E21 /* Update Info.plist with version information */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/../../Configurations/Version.xcconfig",
-			);
-			name = "Update Info.plist with version information";
-			outputPaths = (
-				"$(SRCROOT)/Info.plist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\nif [[ \"${CONFIGURATION}\" != \"Production\" ]]; then\ntouch \"${SRCROOT}/Info.plist\";\nfi;\n";
 		};
 		2D7DEBDF21269C9F00B9F73C /* Generate Unified Sources */ = {
 			isa = PBXShellScriptBuildPhase;

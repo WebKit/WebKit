@@ -11568,7 +11568,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 149C275D08902AFE008A9EFC /* Build configuration list for PBXNativeTarget "JavaScriptCore" */;
 			buildPhases = (
-				5D2F7CF90C6875BB00B5B72B /* Update Info.plist with version information */,
 				A53F1ABF18C90F8B0072EB6D /* Resources */,
 				F4CDF3C927E9147500191928 /* Copy Profiling Data */,
 				932F5B3F0822A1C700736975 /* Headers */,
@@ -11855,22 +11854,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nif [ -f ../../Tools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../../Tools/Scripts/check-for-weak-vtables-and-externals\nfi\n";
-		};
-		5D2F7CF90C6875BB00B5B72B /* Update Info.plist with version information */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/../../Configurations/Version.xcconfig",
-			);
-			name = "Update Info.plist with version information";
-			outputPaths = (
-				"$(SRCROOT)/Info.plist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\nif [[ \"${CONFIGURATION}\" != \"Production\" ]]; then\n    touch \"${SRCROOT}/Info.plist\";\nfi;\n";
 		};
 		5D5D8ABF0E0D0B0300F9C692 /* Create /usr/local/bin/jsc symlink */ = {
 			isa = PBXShellScriptBuildPhase;
