@@ -48,6 +48,10 @@
 #include <shlwapi.h>
 #endif
 
+#if !defined(ENABLE_CURL_HTTP3)
+#define ENABLE_CURL_HTTP3 0
+#endif
+
 namespace WebCore {
 
 class EnvironmentVariableReader {
@@ -121,6 +125,13 @@ CurlContext::CurlContext()
 
     m_scheduler = makeUnique<CurlRequestScheduler>(maxConnects, maxTotalConnections, maxHostConnections);
 
+    auto info = curl_version_info(CURLVERSION_NOW);
+    m_isAltSvcEnabled = info->features & CURL_VERSION_ALTSVC;
+    m_isHttp2Enabled = info->features & CURL_VERSION_HTTP2;
+#if ENABLE_CURL_HTTP3
+    m_isHttp3Enabled = (info->features & CURL_VERSION_HTTP3) && m_isAltSvcEnabled;
+#endif
+
 #ifndef NDEBUG
     m_verbose = envVar.defined("DEBUG_CURL");
 
@@ -160,18 +171,6 @@ void CurlContext::clearAlternativeServicesStorageFile()
 {
     if (!m_alternativeServicesStorageFile.isEmpty())
         FileSystem::deleteFile(m_alternativeServicesStorageFile);
-}
-
-bool CurlContext::isAltSvcEnabled() const
-{
-    auto info = curl_version_info(CURLVERSION_NOW);
-    return info->features & CURL_VERSION_ALTSVC;
-}
-
-bool CurlContext::isHttp2Enabled() const
-{
-    auto info = curl_version_info(CURLVERSION_NOW);
-    return info->features & CURL_VERSION_HTTP2;
 }
 
 // CurlShareHandle --------------------------------------------
@@ -478,8 +477,11 @@ void CurlHandle::enableRequestHeaders()
 
 void CurlHandle::enableHttp()
 {
-    if (m_url.protocolIs("https"_s) && CurlContext::singleton().isHttp2Enabled()) {
-        curl_easy_setopt(m_handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2TLS);
+    auto isHttp2Enabled = CurlContext::singleton().isHttp2Enabled();
+    auto isHttp3Enabled = CurlContext::singleton().isHttp3Enabled();
+
+    if (m_url.protocolIs("https"_s) && (isHttp2Enabled || isHttp3Enabled)) {
+        curl_easy_setopt(m_handle, CURLOPT_HTTP_VERSION, isHttp3Enabled ? CURL_HTTP_VERSION_3 : CURL_HTTP_VERSION_2TLS);
         curl_easy_setopt(m_handle, CURLOPT_PIPEWAIT, 1L);
         curl_easy_setopt(m_handle, CURLOPT_SSL_ENABLE_ALPN, 1L);
         curl_easy_setopt(m_handle, CURLOPT_SSL_ENABLE_NPN, 0L);
@@ -568,6 +570,7 @@ void CurlHandle::enableAltSvc()
 
     long altSvcCtrl = CURLALTSVC_H1;
     altSvcCtrl |= CurlContext::singleton().isHttp2Enabled() ? CURLALTSVC_H2 : 0;
+    altSvcCtrl |= CurlContext::singleton().isHttp3Enabled() ? CURLALTSVC_H3 : 0;
 
     curl_easy_setopt(m_handle, CURLOPT_ALTSVC, CurlContext::singleton().alternativeServicesStorageFile().utf8().data());
     curl_easy_setopt(m_handle, CURLOPT_ALTSVC_CTRL, altSvcCtrl);

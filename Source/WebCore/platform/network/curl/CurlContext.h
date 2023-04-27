@@ -122,8 +122,9 @@ public:
     CurlSSLHandle& sslHandle() { return m_sslHandle; }
 
     // Supported features
-    bool isAltSvcEnabled() const;
-    bool isHttp2Enabled() const;
+    bool isAltSvcEnabled() const { return m_isAltSvcEnabled; }
+    bool isHttp2Enabled() const { return m_isHttp2Enabled; }
+    bool isHttp3Enabled() const { return m_isHttp3Enabled; }
 
     // Timeout
     Seconds dnsCacheTimeout() const { return m_dnsCacheTimeout; }
@@ -143,6 +144,10 @@ private:
     CurlShareHandle m_shareHandle;
     CurlSSLHandle m_sslHandle;
     std::unique_ptr<CurlRequestScheduler> m_scheduler;
+
+    bool m_isAltSvcEnabled { false };
+    bool m_isHttp2Enabled { false };
+    bool m_isHttp3Enabled { false };
 
     Seconds m_dnsCacheTimeout { Seconds::fromMinutes(5) };
     Seconds m_connectTimeout { 30.0 };
