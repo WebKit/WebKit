@@ -27,6 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import os
 import shlex
 
@@ -38,6 +39,7 @@ from webkitpy.port.headlessdriver import HeadlessDriver
 
 from webkitcorepy import decorators
 
+_log = logging.getLogger(__name__)
 
 class WPEPort(GLibPort):
     port_name = "wpe"
@@ -117,7 +119,7 @@ class WPEPort(GLibPort):
             return browser
 
         if browser:
-            print("Unknown browser {}. Defaulting to Cog and MiniBrowser selection".format(browser))
+            _log.warning("Unknown browser {}. Defaulting to Cog and MiniBrowser selection".format(browser))
 
         if self._filesystem.isfile(self.cog_path_to('launcher', 'cog')):
             return "cog"
@@ -138,11 +140,11 @@ class WPEPort(GLibPort):
         if self.browser_name() == "cog":
             miniBrowser = self.cog_path_to('launcher', 'cog')
             if not self._filesystem.isfile(miniBrowser):
-                print("Cog not found 😢. If you wish to enable it, rebuild with `-DENABLE_COG=ON`. Falling back to good old MiniBrowser")
+                _log.warning("Cog not found 😢. If you wish to enable it, rebuild with `-DENABLE_COG=ON`. Falling back to good old MiniBrowser")
                 miniBrowser = None
             else:
                 print("Using Cog as MiniBrowser")
-                has_platform_arg = any((a == "-P" or a.startswith("--platform=") for a in args))
+                has_platform_arg = any((a == "-P" or a.startswith("--platform=") for a in args)) or "COG_PLATFORM_NAME" in os.environ
                 if not has_platform_arg:
                     args.insert(0, "--platform=gtk4")
 
@@ -150,7 +152,7 @@ class WPEPort(GLibPort):
             print("Using default MiniBrowser")
             miniBrowser = self._build_path('bin', 'MiniBrowser')
             if not self._filesystem.isfile(miniBrowser):
-                print("%s not found... Did you run build-webkit?" % miniBrowser)
+                _log.warning("%s not found... Did you run build-webkit?" % miniBrowser)
                 return 1
         command = [miniBrowser]
         if os.environ.get("WEBKIT_MINI_BROWSER_PREFIX"):
