@@ -161,14 +161,15 @@ void ensureGigacage()
 
             // FIXME: Randomize where this goes.
             // https://bugs.webkit.org/show_bug.cgi?id=175245
-            void* base = tryVMAllocate(maxAlignment, totalSize, VMTag::JSGigacage);
-            if (!base) {
+            auto result = tryVMAllocateAligned(maxAlignment, totalSize, VMTag::JSGigacage);
+            if (!result) {
                 if (GIGACAGE_ALLOCATION_CAN_FAIL)
                     return;
                 fprintf(stderr, "FATAL: Could not allocate gigacage memory with maxAlignment = %lu, totalSize = %lu.\n", maxAlignment, totalSize);
                 fprintf(stderr, "(Make sure you have not set a virtual memory limit.)\n");
                 BCRASH();
             }
+            void* base = result->aligned;
 
             size_t nextCage = 0;
             for (Kind kind : shuffledKinds) {

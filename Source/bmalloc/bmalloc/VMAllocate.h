@@ -32,8 +32,14 @@
 #include "Range.h"
 #include "Sizes.h"
 #include <algorithm>
+#include <optional>
+
+#if BPLATFORM(WIN)
+#include <windows.h>
+#else
 #include <sys/mman.h>
 #include <unistd.h>
+#endif
 
 #if BOS(DARWIN)
 #include <mach/vm_page_size.h>
@@ -51,11 +57,45 @@ namespace bmalloc {
 #define BMALLOC_NORESERVE 0
 #endif
 
+struct VMAllocation {
+    void* address;
+    size_t size;
+};
+
+struct VMAlignedAllocation {
+    void* aligned;
+    VMAllocation allocation;
+};
+
+#if BPLATFORM(WIN)
+
+inline size_t vmGranularity()
+{
+    static size_t cached;
+    if (!cached) {
+        SYSTEM_INFO info;
+        GetSystemInfo(&info);
+        long granularity = info.dwAllocationGranularity;
+        if (granularity < 0)
+            BCRASH();
+        cached = granularity;
+    }
+    return cached;
+}
+
+#endif
+
 inline size_t vmPageSize()
 {
     static size_t cached;
     if (!cached) {
+#if BPLATFORM(WIN)
+        SYSTEM_INFO info;
+        GetSystemInfo(&info);
+        long pageSize = info.dwPageSize;
+#else
         long pageSize = sysconf(_SC_PAGESIZE);
+#endif
         if (pageSize < 0)
             BCRASH();
         cached = pageSize;
@@ -97,10 +137,7 @@ inline size_t vmPageSizePhysical()
 #if BOS(DARWIN) && (BCPU(ARM64) || BCPU(ARM))
     return vm_kernel_page_size;
 #else
-    static size_t cached;
-    if (!cached)
-        cached = sysconf(_SC_PAGESIZE);
-    return cached;
+    return vmPageSize();
 #endif
 }
 
@@ -123,9 +160,13 @@ inline void vmValidatePhysical(void* p, size_t vmSize)
 inline void* tryVMAllocate(size_t vmSize, VMTag usage = VMTag::Malloc)
 {
     vmValidate(vmSize);
+#if BPLATFORM(WIN)
+    void* result = VirtualAlloc(nullptr, vmSize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+#else
     void* result = mmap(0, vmSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON | BMALLOC_NORESERVE, static_cast<int>(usage), 0);
     if (result == MAP_FAILED)
         return nullptr;
+#endif
     return result;
 }
 
@@ -139,60 +180,39 @@ inline void* vmAllocate(size_t vmSize, VMTag usage = VMTag::Malloc)
 inline void vmDeallocate(void* p, size_t vmSize)
 {
     vmValidate(p, vmSize);
+#if BPLATFORM(WIN)
+    auto success = VirtualFree(p, vmSize, MEM_DECOMMIT);
+    RELEASE_BASSERT(success);
+#else
     munmap(p, vmSize);
+#endif
 }
 
 inline void vmRevokePermissions(void* p, size_t vmSize)
 {
     vmValidate(p, vmSize);
+#if BPLATFORM(WIN)
+    auto success = VirtualProtect(p, vmSize, PAGE_NOACCESS, nullptr);
+    RELEASE_BASSERT(success);
+#else
     mprotect(p, vmSize, PROT_NONE);
+#endif
 }
 
 inline void vmZeroAndPurge(void* p, size_t vmSize, VMTag usage = VMTag::Malloc)
 {
     vmValidate(p, vmSize);
+#if BPLATFORM(WIN)
+    auto success = VirtualFree(p, vmSize, MEM_DECOMMIT);
+    RELEASE_BASSERT(success);
+    void* result = VirtualAlloc(p, vmSize, MEM_COMMIT, PAGE_READWRITE);
+    RELEASE_BASSERT(result);
+#else
     // MAP_ANON guarantees the memory is zeroed. This will also cause
     // page faults on accesses to this range following this call.
     void* result = mmap(p, vmSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON | MAP_FIXED | BMALLOC_NORESERVE, static_cast<int>(usage), 0);
     RELEASE_BASSERT(result == p);
-}
-
-// Allocates vmSize bytes at a specified power-of-two alignment.
-// Use this function to create maskable memory regions.
-
-inline void* tryVMAllocate(size_t vmAlignment, size_t vmSize, VMTag usage = VMTag::Malloc)
-{
-    vmValidate(vmSize);
-    vmValidate(vmAlignment);
-
-    size_t mappedSize = vmAlignment + vmSize;
-    if (mappedSize < vmAlignment || mappedSize < vmSize) // Check for overflow
-        return nullptr;
-
-    char* mapped = static_cast<char*>(tryVMAllocate(mappedSize, usage));
-    if (!mapped)
-        return nullptr;
-    char* mappedEnd = mapped + mappedSize;
-
-    char* aligned = roundUpToMultipleOf(vmAlignment, mapped);
-    char* alignedEnd = aligned + vmSize;
-    
-    RELEASE_BASSERT(alignedEnd <= mappedEnd);
-    
-    if (size_t leftExtra = aligned - mapped)
-        vmDeallocate(mapped, leftExtra);
-    
-    if (size_t rightExtra = mappedEnd - alignedEnd)
-        vmDeallocate(alignedEnd, rightExtra);
-
-    return aligned;
-}
-
-inline void* vmAllocate(size_t vmAlignment, size_t vmSize, VMTag usage = VMTag::Malloc)
-{
-    void* result = tryVMAllocate(vmAlignment, vmSize, usage);
-    RELEASE_BASSERT(result);
-    return result;
+#endif
 }
 
 inline void vmDeallocatePhysicalPages(void* p, size_t vmSize)
@@ -202,6 +222,9 @@ inline void vmDeallocatePhysicalPages(void* p, size_t vmSize)
     SYSCALL(madvise(p, vmSize, MADV_FREE_REUSABLE));
 #elif BOS(FREEBSD)
     SYSCALL(madvise(p, vmSize, MADV_FREE));
+#elif BPLATFORM(WIN)
+    void* result = VirtualAlloc(p, vmSize, MEM_RESET, PAGE_NOACCESS);
+    RELEASE_BASSERT(result);
 #else
     SYSCALL(madvise(p, vmSize, MADV_DONTNEED));
 #if BOS(LINUX)
@@ -219,6 +242,9 @@ inline void vmAllocatePhysicalPages(void* p, size_t vmSize)
     // For the Darwin platform, we don't need to call madvise(..., MADV_FREE_REUSE)
     // to commit physical memory to back a range of allocated virtual memory.
     // Instead the kernel will commit pages as they are touched.
+#elif BPLATFORM(WIN)
+    void* result = VirtualAlloc(p, vmSize, MEM_COMMIT, PAGE_READWRITE);
+    RELEASE_BASSERT(result);
 #else
     SYSCALL(madvise(p, vmSize, MADV_NORMAL));
 #if BOS(LINUX)
@@ -261,6 +287,48 @@ inline void vmAllocatePhysicalPagesSloppy(void* p, size_t size)
         return;
 
     vmAllocatePhysicalPages(begin, end - begin);
+}
+
+// Allocates vmSize bytes at a specified power-of-two alignment.
+// Use this function to create maskable memory regions.
+
+inline std::optional<VMAlignedAllocation> tryVMAllocateAligned(size_t vmAlignment, size_t vmSize, VMTag usage = VMTag::Malloc)
+{
+    vmValidate(vmSize);
+    vmValidate(vmAlignment);
+
+    size_t mappedSize = vmAlignment + vmSize;
+    if (mappedSize < vmAlignment || mappedSize < vmSize) // Check for overflow
+        return std::nullopt;
+
+    char* mapped = static_cast<char*>(tryVMAllocate(mappedSize, usage));
+    if (!mapped)
+        return std::nullopt;
+    char* mappedEnd = mapped + mappedSize;
+
+    char* aligned = roundUpToMultipleOf(vmAlignment, mapped);
+    char* alignedEnd = aligned + vmSize;
+
+    RELEASE_BASSERT(alignedEnd <= mappedEnd);
+
+    size_t leftExtra = aligned - mapped;
+    size_t rightExtra = mappedEnd - alignedEnd;
+
+#if BPLATFORM(WIN)
+    if (leftExtra)
+        vmDeallocatePhysicalPagesSloppy(mapped, leftExtra);
+    if (rightExtra)
+        vmDeallocatePhysicalPagesSloppy(alignedEnd, rightExtra);
+
+    return VMAlignedAllocation { aligned, VMAllocation { mapped, mappedSize } };
+#else
+    if (leftExtra)
+        vmDeallocate(mapped, leftExtra);
+    if (rightExtra)
+        vmDeallocate(alignedEnd, rightExtra);
+
+    return VMAlignedAllocation { aligned, VMAllocation { aligned, vmSize } };
+#endif
 }
 
 } // namespace bmalloc

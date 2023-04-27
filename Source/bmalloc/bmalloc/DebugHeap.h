@@ -29,6 +29,7 @@
 #include "FailureAction.h"
 #include "Mutex.h"
 #include "StaticPerProcess.h"
+#include "VMAllocate.h"
 #include <mutex>
 #include <unordered_map>
 
@@ -73,7 +74,7 @@ private:
     
     // This is the debug heap. We can use whatever data structures we like. It doesn't matter.
     size_t m_pageSize { 0 };
-    std::unordered_map<void*, size_t> m_sizeMap;
+    std::unordered_map<void*, VMAllocation> m_largeAlignedMap;
 };
 DECLARE_STATIC_PER_PROCESS_STORAGE(DebugHeap);
 

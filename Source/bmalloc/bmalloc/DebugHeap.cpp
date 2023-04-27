@@ -28,7 +28,6 @@
 #include "Algorithm.h"
 #include "BAssert.h"
 #include "BPlatform.h"
-#include "VMAllocate.h"
 #include <cstdlib>
 #include <thread>
 
@@ -157,14 +156,14 @@ void* DebugHeap::memalignLarge(size_t alignment, size_t size)
 {
     alignment = roundUpToMultipleOf(m_pageSize, alignment);
     size = roundUpToMultipleOf(m_pageSize, size);
-    void* result = tryVMAllocate(alignment, size);
+    auto result = tryVMAllocateAligned(alignment, size);
     if (!result)
         return nullptr;
     {
         LockHolder locker(mutex());
-        m_sizeMap[result] = size;
+        m_largeAlignedMap[result->aligned] = result->allocation;
     }
-    return result;
+    return result->aligned;
 }
 
 void DebugHeap::freeLarge(void* base)
@@ -172,15 +171,15 @@ void DebugHeap::freeLarge(void* base)
     if (!base)
         return;
     
-    size_t size;
+    VMAllocation allocation;
     {
         LockHolder locker(mutex());
-        size = m_sizeMap[base];
-        size_t numErased = m_sizeMap.erase(base);
+        allocation = m_largeAlignedMap[base];
+        size_t numErased = m_largeAlignedMap.erase(base);
         RELEASE_BASSERT(numErased == 1);
     }
     
-    vmDeallocate(base, size);
+    vmDeallocate(allocation.address, allocation.size);
 }
 
 DebugHeap* DebugHeap::tryGetSlow()
