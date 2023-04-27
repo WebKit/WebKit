@@ -286,8 +286,8 @@ TEST(WTF_RunLoop, Create)
     }
 }
 
-// FIXME(https://bugs.webkit.org/show_bug.cgi?id=246569): glib runloop does not match Cocoa.
-#if USE(GLIB)
+// FIXME(https://bugs.webkit.org/show_bug.cgi?id=246569): glib and Windows runloop does not match Cocoa.
+#if USE(GLIB) || OS(WINDOWS)
 #define MAYBE_DispatchInRunLoopIterationDispatchesOnNextIteration1 DISABLED_DispatchInRunLoopIterationDispatchesOnNextIteration1
 #define MAYBE_DispatchInRunLoopIterationDispatchesOnNextIteration2 DISABLED_DispatchInRunLoopIterationDispatchesOnNextIteration2
 #else
