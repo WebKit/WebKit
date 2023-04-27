@@ -1,6 +1,6 @@
 webkit.org/b/245686 [ Ventura+ ] fast/text/system-font-fallback.html [ ImageOnlyFailure ]
 
-webkit.org/b/251099 [ Debug ] fast/images/avif-image-document.html [ Pass Crash]
+webkit.org/b/251099 [ Debug ] fast/images/avif-image-document.html [ Pass Crash ]
 
 #rdar://108624999 ([ EWS arm64 ] 3x imported/w3c/web-platform-tests/css/css-color/parsing/color* (layout-tests) are constant failures)
 imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-color-mix-function.html [ Pass Failure ]
