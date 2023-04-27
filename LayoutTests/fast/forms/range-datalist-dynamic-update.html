@@ -1,0 +1,25 @@
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function load()
+{
+    setTimeout(() => {
+        range.setAttribute("list", "markers");
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}
+
+</script>
+<body onload="load()">
+<input type="range" id="range">
+<datalist id="markers">
+    <option value="0"></option>
+    <option value="25"></option>
+    <option value="50"></option>
+    <option value="75"></option>
+    <option value="100"></option>
+</datalist>

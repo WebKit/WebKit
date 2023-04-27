@@ -37,12 +37,20 @@ public:
         EvenLessGood
     };
 
+    static Ref<MeterPart> create();
     WEBCORE_EXPORT static Ref<MeterPart> create(GaugeRegion, double value, double minimum, double maximum);
 
     GaugeRegion gaugeRegion() const { return m_gaugeRegion; }
+    void setGaugeRegion(GaugeRegion gaugeRegion) { m_gaugeRegion = gaugeRegion; }
+
     double value() const { return m_value; }
+    void setValue(double value) { m_value = value; }
+
     double minimum() const { return m_minimum; }
+    void setMinimum(double minimum) { m_minimum = minimum; }
+
     double maximum() const { return m_maximum; }
+    void setMaximum(double maximum) { m_maximum = maximum; }
 
 private:
     MeterPart(GaugeRegion, double value, double minimum, double maximum);

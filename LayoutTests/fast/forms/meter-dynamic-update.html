@@ -1,0 +1,22 @@
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function load()
+{
+    setTimeout(() => {
+        meter.max = 100;
+        meter.low = 20;
+        meter.high = 80;
+        meter.optimum = 90;
+        meter.value = 18;
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}
+
+</script>
+<body onload="load()">
+<meter id="meter"></meter>

@@ -31,6 +31,11 @@
 
 namespace WebCore {
 
+Ref<SliderTrackPart> SliderTrackPart::create(StyleAppearance type)
+{
+    return adoptRef(*new SliderTrackPart(type, { }, { }, { }));
+}
+
 Ref<SliderTrackPart> SliderTrackPart::create(StyleAppearance type, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios)
 {
     return adoptRef(*new SliderTrackPart(type, thumbSize, trackBounds, WTFMove(tickRatios)));

@@ -493,7 +493,7 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
 }
 
 #if ENABLE(APPLE_PAY)
-static RefPtr<ControlPart> createApplePayButtonPartForRenderer(const RenderObject& renderer)
+static void updateApplePayButtonPartForRenderer(ApplePayButtonPart& applePayButtonPart, const RenderObject& renderer)
 {
     auto& style = renderer.style();
 
@@ -501,15 +501,14 @@ static RefPtr<ControlPart> createApplePayButtonPartForRenderer(const RenderObjec
     if (locale.isEmpty())
         locale = defaultLanguage(ShouldMinimizeLanguages::No);
 
-    return ApplePayButtonPart::create(style.applePayButtonType(), style.applePayButtonStyle(), locale);
+    applePayButtonPart.setButtonType(style.applePayButtonType());
+    applePayButtonPart.setButtonStyle(style.applePayButtonStyle());
+    applePayButtonPart.setLocale(locale);
 }
 #endif
 
-static RefPtr<ControlPart> createMeterPartForRenderer(const RenderObject& renderer)
+static void updateMeterPartForRenderer(MeterPart& meterPart, const RenderMeter& renderMeter)
 {
-    ASSERT(is<RenderMeter>(renderer));
-    const auto& renderMeter = downcast<RenderMeter>(renderer);
-
     auto element = renderMeter.meterElement();
     MeterPart::GaugeRegion gaugeRegion;
 
@@ -525,21 +524,20 @@ static RefPtr<ControlPart> createMeterPartForRenderer(const RenderObject& render
         break;
     }
 
-    return MeterPart::create(gaugeRegion, element->value(), element->min(), element->max());
+    meterPart.setGaugeRegion(gaugeRegion);
+    meterPart.setValue(element->value());
+    meterPart.setMinimum(element->min());
+    meterPart.setMaximum(element->max());
 }
 
-static RefPtr<ControlPart> createProgressBarPartForRenderer(const RenderObject& renderer)
+static void updateProgressBarPartForRenderer(ProgressBarPart& progressBarPart, const RenderProgress& renderProgress)
 {
-    ASSERT(is<RenderProgress>(renderer));
-    const auto& renderProgress = downcast<RenderProgress>(renderer);
-    return ProgressBarPart::create(renderProgress.position(), renderProgress.animationStartTime().secondsSinceEpoch());
+    progressBarPart.setPosition(renderProgress.position());
+    progressBarPart.setAnimationStartTime(renderProgress.animationStartTime().secondsSinceEpoch());
 }
 
-static RefPtr<ControlPart> createSliderTrackPartForRenderer(const RenderObject& renderer)
+static void updateSliderTrackPartForRenderer(SliderTrackPart& sliderTrackPart, const RenderObject& renderer)
 {
-    auto type = renderer.style().effectiveAppearance();
-    ASSERT(type == StyleAppearance::SliderHorizontal || type == StyleAppearance::SliderVertical);
-
     ASSERT(is<HTMLInputElement>(renderer.node()));
     auto& input = downcast<HTMLInputElement>(*renderer.node());
     ASSERT(input.isRangeControl());
@@ -576,7 +574,10 @@ static RefPtr<ControlPart> createSliderTrackPartForRenderer(const RenderObject& 
         }
     }
 #endif
-    return SliderTrackPart::create(type, thumbSize, trackBounds, WTFMove(tickRatios));
+
+    sliderTrackPart.setThumbSize(thumbSize);
+    sliderTrackPart.setTrackBounds(trackBounds);
+    sliderTrackPart.setTickRatios(WTFMove(tickRatios));
 }
 
 RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer) const
@@ -605,21 +606,21 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
         return MenuListButtonPart::create();
 
     case StyleAppearance::Meter:
-        return createMeterPartForRenderer(renderer);
+        return MeterPart::create();
 
     case StyleAppearance::ProgressBar:
-        return createProgressBarPartForRenderer(renderer);
+        return ProgressBarPart::create();
 
     case StyleAppearance::SliderHorizontal:
     case StyleAppearance::SliderVertical:
-        return createSliderTrackPartForRenderer(renderer);
+        return SliderTrackPart::create(appearance);
 
     case StyleAppearance::SearchField:
         return SearchFieldPart::create();
 
 #if ENABLE(APPLE_PAY)
     case StyleAppearance::ApplePayButton:
-        return createApplePayButtonPartForRenderer(renderer);
+        return ApplePayButtonPart::create();
 #endif
 #if ENABLE(ATTACHMENT_ELEMENT)
     case StyleAppearance::Attachment:
@@ -671,6 +672,33 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
 
     ASSERT_NOT_REACHED();
     return nullptr;
+}
+
+void RenderTheme::updateControlPartForRenderer(ControlPart& part, const RenderObject& renderer) const
+{
+    if (auto* meterPart = dynamicDowncast<MeterPart>(part)) {
+        ASSERT(is<RenderMeter>(renderer));
+        updateMeterPartForRenderer(*meterPart, downcast<RenderMeter>(renderer));
+        return;
+    }
+
+    if (auto* progressBarPart = dynamicDowncast<ProgressBarPart>(part)) {
+        ASSERT(is<RenderProgress>(renderer));
+        updateProgressBarPartForRenderer(*progressBarPart, downcast<RenderProgress>(renderer));
+        return;
+    }
+
+    if (auto* sliderTrackPart = dynamicDowncast<SliderTrackPart>(part)) {
+        updateSliderTrackPartForRenderer(*sliderTrackPart, renderer);
+        return;
+    }
+
+#if ENABLE(APPLE_PAY)
+    if (auto* applePayButtonPart = dynamicDowncast<ApplePayButtonPart>(part)) {
+        updateApplePayButtonPartForRenderer(*applePayButtonPart, renderer);
+        return;
+    }
+#endif
 }
 
 OptionSet<ControlStyle::State> RenderTheme::extractControlStyleStatesForRenderer(const RenderObject& renderer) const
@@ -761,6 +789,8 @@ bool RenderTheme::paint(const RenderBox& box, ControlPart& part, const PaintInfo
 
     if (paintInfo.context().paintingDisabled())
         return false;
+
+    updateControlPartForRenderer(part, box);
 
     float deviceScaleFactor = box.document().deviceScaleFactor();
     auto zoomedRect = snapRectToDevicePixels(rect, deviceScaleFactor);

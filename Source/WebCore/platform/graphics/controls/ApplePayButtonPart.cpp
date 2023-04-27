@@ -32,6 +32,11 @@
 
 namespace WebCore {
 
+Ref<ApplePayButtonPart> ApplePayButtonPart::create()
+{
+    return adoptRef(*new ApplePayButtonPart(ApplePayButtonType::Plain, ApplePayButtonStyle::White, { }));
+}
+
 Ref<ApplePayButtonPart> ApplePayButtonPart::create(ApplePayButtonType buttonType, ApplePayButtonStyle buttonStyle, const String& locale)
 {
     return adoptRef(*new ApplePayButtonPart(buttonType, buttonStyle, locale));
