@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,7 +74,7 @@ public:
     FloatSize videoDimensions() const override { return m_videoDimensions; }
     bool hasVideo() const override { return m_hasVideo; }
 
-    WEBCORE_EXPORT void setVideoInlineSizeFenced(const FloatSize&, const WTF::MachSendRight&);
+    WEBCORE_EXPORT void setVideoSizeFenced(const FloatSize&, const WTF::MachSendRight&);
 
     WEBCORE_EXPORT void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&&) override;
 
