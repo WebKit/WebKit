@@ -76,7 +76,6 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_in_by_id);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_in_by_val);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_has_private_name);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_has_private_brand);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_has_structure_with_flags);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_del_by_id);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_by_val);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_private_name);

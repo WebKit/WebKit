@@ -1121,35 +1121,6 @@ private:
 
                 break;
             }
-
-            case HasStructureWithFlags: {
-                const AbstractValue& child = m_state.forNode(node->child1());
-                unsigned flags = node->structureFlags();
-                ASSERT(flags);
-
-                if (Structure::bitFieldFlagsCantBeChangedWithoutTransition(flags) && child.m_type && !(child.m_type & ~SpecCell) && child.m_structure.isFinite()) {
-                    bool canFoldToTrue = true;
-                    bool canFoldToFalse = true;
-
-                    child.m_structure.forEach([&] (RegisteredStructure structure) {
-                        bool notDictionary = !structure->isDictionary();
-                        bool hasAnyOfBitFieldFlags = structure->hasAnyOfBitFieldFlags(flags);
-
-                        canFoldToTrue &= notDictionary && hasAnyOfBitFieldFlags;
-                        canFoldToFalse &= notDictionary && !hasAnyOfBitFieldFlags;
-                    });
-
-                    if (canFoldToTrue) {
-                        m_graph.convertToConstant(node, jsBoolean(true));
-                        changed = true;
-                    } else if (canFoldToFalse) {
-                        m_graph.convertToConstant(node, jsBoolean(false));
-                        changed = true;
-                    }
-                }
-
-                break;
-            }
                 
             case PhantomNewObject:
             case PhantomNewFunction:

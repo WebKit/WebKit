@@ -3311,5 +3311,3 @@ slowPathOp(enumerator_in_by_val)
 slowPathOp(enumerator_put_by_val)
 slowPathOp(enumerator_has_own_property)
 slowPathOp(mod)
-
-llintSlowPathOp(has_structure_with_flags)

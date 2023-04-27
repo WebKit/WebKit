@@ -109,8 +109,9 @@ class JSGlobalObject;
     v(stringSplitFast, nullptr) \
     v(stringSubstring, nullptr) \
     v(handleNegativeProxyHasTrapResult, nullptr) \
-    v(handlePositiveProxySetTrapResult, nullptr) \
     v(handleProxyGetTrapResult, nullptr) \
+    v(handleProxySetTrapResultSloppy, nullptr) \
+    v(handleProxySetTrapResultStrict, nullptr) \
     v(dateTimeFormat, nullptr) \
     v(webAssemblyCompileStreamingInternal, nullptr) \
     v(webAssemblyInstantiateStreamingInternal, nullptr) \

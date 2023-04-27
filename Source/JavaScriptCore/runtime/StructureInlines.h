@@ -488,11 +488,6 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
     checkConsistency();
     if (attributes & PropertyAttribute::DontEnum || propertyName.isSymbol())
         setIsQuickPropertyAccessAllowedForEnumeration(false);
-    if (attributes & PropertyAttribute::DontDelete) {
-        setHasNonConfigurableProperties(true);
-        if (attributes & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessorOrValue)
-            setHasNonConfigurableReadOnlyOrGetterSetterProperties(true);
-    }
     if (propertyName == vm.propertyNames->underscoreProto)
         setHasUnderscoreProtoPropertyExcludingOriginalProto(true);
 
@@ -583,11 +578,6 @@ inline PropertyOffset Structure::attributeChange(VM& vm, PropertyName propertyNa
 
     if (attributes & PropertyAttribute::DontEnum)
         setIsQuickPropertyAccessAllowedForEnumeration(false);
-    if (attributes & PropertyAttribute::DontDelete) {
-        setHasNonConfigurableProperties(true);
-        if (attributes & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessorOrValue)
-            setHasNonConfigurableReadOnlyOrGetterSetterProperties(true);
-    }
     if (attributes & PropertyAttribute::ReadOnly)
         setContainsReadOnlyProperties();
 

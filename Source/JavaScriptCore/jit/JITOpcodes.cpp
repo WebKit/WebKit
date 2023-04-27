@@ -374,21 +374,6 @@ void JIT::emit_op_is_object(const JSInstruction* currentInstruction)
     emitPutVirtualRegister(dst, jsRegT10);
 }
 
-void JIT::emit_op_has_structure_with_flags(const JSInstruction* currentInstruction)
-{
-    auto bytecode = currentInstruction->as<OpHasStructureWithFlags>();
-    VirtualRegister dst = bytecode.m_dst;
-    VirtualRegister object = bytecode.m_operand;
-    unsigned flags = bytecode.m_flags;
-
-    emitGetVirtualRegister(object, jsRegT10);
-    emitLoadStructure(vm(), jsRegT10.payloadGPR(), regT2);
-
-    test32(NonZero, Address(regT2, Structure::bitFieldOffset()), TrustedImm32(flags), regT0);
-    boxBoolean(regT0, jsRegT10);
-    emitPutVirtualRegister(dst, jsRegT10);
-}
-
 void JIT::emit_op_to_primitive(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpToPrimitive>();

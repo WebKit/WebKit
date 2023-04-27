@@ -1487,17 +1487,6 @@ public:
     {
         return speculationFromJSType(queriedType());
     }
-
-    bool hasStructureFlags()
-    {
-        return op() == HasStructureWithFlags;
-    }
-
-    uint32_t structureFlags()
-    {
-        ASSERT(hasStructureFlags());
-        return m_opInfo.as<uint32_t>();
-    }
     
     bool hasResult()
     {

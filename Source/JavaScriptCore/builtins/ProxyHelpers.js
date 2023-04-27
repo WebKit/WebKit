@@ -44,9 +44,7 @@ function performProxyObjectHas(propertyName)
     if (trap.@call(handler, target, propertyName))
         return true;
 
-    if (@mustValidateResultOfProxyTrapsExceptGetAndSet(target))
-        @handleNegativeProxyHasTrapResult(target, propertyName);
-
+    @handleNegativeProxyHasTrapResult(target, propertyName);
     return false;
 }
 
@@ -70,8 +68,9 @@ function performProxyObjectGet(propertyName, receiver)
 
     var trapResult = trap.@call(handler, target, propertyName, receiver);
 
-    if (@mustValidateResultOfProxyGetAndSetTraps(target))
-        @handleProxyGetTrapResult(trapResult, target, propertyName);
+    // FIXME: Add op_get_own_property bytecode and IC, which returns two values, value and attributes.
+    // Then we can implement it fully in JS.
+    @handleProxyGetTrapResult(trapResult, target, propertyName);
 
     return trapResult;
 }
@@ -96,11 +95,9 @@ function performProxyObjectSetSloppy(propertyName, receiver, value)
     if (!@isCallable(trap))
         @throwTypeError("'set' property of a Proxy's handler should be callable");
 
-    if (!trap.@call(handler, target, propertyName, value, receiver))
-        return;
+    var trapResult = trap.@call(handler, target, propertyName, value, receiver);
 
-    if (@mustValidateResultOfProxyGetAndSetTraps(target))
-        @handlePositiveProxySetTrapResult(target, propertyName, value);
+    @handleProxySetTrapResultSloppy(trapResult, target, propertyName, value);
 }
 
 @linkTimeConstant
@@ -123,9 +120,7 @@ function performProxyObjectSetStrict(propertyName, receiver, value)
     if (!@isCallable(trap))
         @throwTypeError("'set' property of a Proxy's handler should be callable");
 
-    if (!trap.@call(handler, target, propertyName, value, receiver))
-        @throwTypeError("Proxy object's 'set' trap returned falsy value for property '" + @String(propertyName) + "'");
+    var trapResult = trap.@call(handler, target, propertyName, value, receiver);
 
-    if (@mustValidateResultOfProxyGetAndSetTraps(target))
-        @handlePositiveProxySetTrapResult(target, propertyName, value);
+    @handleProxySetTrapResultStrict(trapResult, target, propertyName, value);
 }

@@ -1505,18 +1505,6 @@ LLINT_SLOW_PATH_DECL(slow_path_has_private_brand)
     LLINT_RETURN(jsBoolean(asObject(baseValue)->hasPrivateBrand(globalObject, getOperand(callFrame, bytecode.m_brand))));
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_has_structure_with_flags)
-{
-    LLINT_BEGIN();
-
-    auto bytecode = pc->as<OpHasStructureWithFlags>();
-    ASSERT(getOperand(callFrame, bytecode.m_operand).isObject());
-    JSObject* object = asObject(getOperand(callFrame, bytecode.m_operand));
-    unsigned flags = bytecode.m_flags;
-
-    LLINT_RETURN(jsBoolean(object->structure()->hasAnyOfBitFieldFlags(flags)));
-}
-
 LLINT_SLOW_PATH_DECL(slow_path_put_getter_by_id)
 {
     LLINT_BEGIN();

@@ -2384,11 +2384,6 @@ private:
             break;
         }
 
-        case HasStructureWithFlags: {
-            fixEdge<KnownCellUse>(node->child1());
-            break;
-        }
-
         case HasIndexedProperty: {
             node->setArrayMode(
                 node->arrayMode().refine(

@@ -5969,20 +5969,6 @@ void SpeculativeJIT::compileIsTypedArrayView(Node* node)
     blessedBooleanResult(resultGPR, node);
 }
 
-void SpeculativeJIT::compileHasStructureWithFlags(Node* node)
-{
-    SpeculateCellOperand object(this, node->child1());
-    GPRTemporary result(this, Reuse, object);
-
-    GPRReg objectGPR = object.gpr();
-    GPRReg resultGPR = result.gpr();
-
-    emitLoadStructure(vm(), objectGPR, resultGPR);
-    test32(NonZero, Address(resultGPR, Structure::bitFieldOffset()), TrustedImm32(node->structureFlags()), resultGPR);
-
-    unblessedBooleanResult(resultGPR, node);
-}
-
 void SpeculativeJIT::compileToObjectOrCallObjectConstructor(Node* node)
 {
     RELEASE_ASSERT(node->child1().useKind() == UntypedUse);

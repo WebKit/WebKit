@@ -1383,13 +1383,6 @@ op :is_cell_with_type,
         type: JSType,
     }
 
-op :has_structure_with_flags,
-    args: {
-        dst: VirtualRegister,
-        operand: VirtualRegister,
-        flags: unsigned,
-    }
-
 end_section :Bytecode
 
 begin_section :CLoopHelpers,
