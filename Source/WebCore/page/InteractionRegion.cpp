@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementInlines.h"
+#include "ElementRuleCollector.h"
 #include "FrameSnapshotting.h"
 #include "GeometryUtilities.h"
 #include "HTMLAnchorElement.h"
@@ -43,11 +44,13 @@
 #include "Page.h"
 #include "PathUtilities.h"
 #include "PlatformMouseEvent.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "RenderBox.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "SimpleRange.h"
 #include "SliderThumbElement.h"
+#include "StyleResolver.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -105,6 +108,35 @@ static bool shouldAllowAccessibilityRoleAsPointerCursorReplacement(const Element
     default:
         return false;
     }
+}
+
+static bool elementMatchesHoverRules(Element& element)
+{
+    bool foundHoverRules = false;
+    bool initialValue = element.document().userActionElements().isHovered(element);
+
+    for (auto key : Style::makePseudoClassInvalidationKeys(CSSSelector::PseudoClassHover, element)) {
+        auto& ruleSets = element.styleResolver().ruleSets();
+        auto* invalidationRuleSets = ruleSets.pseudoClassInvalidationRuleSets(key);
+        if (!invalidationRuleSets)
+            continue;
+
+        for (auto& invalidationRuleSet : *invalidationRuleSets) {
+            element.document().userActionElements().setHovered(element, invalidationRuleSet.isNegation == Style::IsNegation::No);
+            Style::ElementRuleCollector ruleCollector(element, *invalidationRuleSet.ruleSet, nullptr);
+            ruleCollector.setMode(SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements);
+            if (ruleCollector.matchesAnyAuthorRules()) {
+                foundHoverRules = true;
+                break;
+            }
+        }
+
+        if (foundHoverRules)
+            break;
+    }
+
+    element.document().userActionElements().setHovered(element, initialValue);
+    return foundHoverRules;
 }
 
 static bool shouldAllowNonPointerCursorForElement(const Element& element)
@@ -181,7 +213,17 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     bool hasListener = renderer.style().eventListenerRegionTypes().contains(EventListenerRegionType::MouseClick);
     bool hasPointer = cursorTypeForElement(*matchedElement) == CursorType::Pointer || shouldAllowNonPointerCursorForElement(*matchedElement);
     bool isTooBigForInteraction = checkedRegionArea.value() > frameViewArea / 2;
-    if (!hasListener || !hasPointer || isTooBigForInteraction) {
+
+    bool detectedHoverRules = false;
+    if (!hasPointer) {
+        // The hover check can be expensive (it may end up doing selector matching), so we only run it on some elements.
+        bool hasVisualEdges = !renderer.style().borderAndBackgroundEqual(RenderStyle::defaultStyle());
+        bool nonScrollable = !renderer.hasPotentiallyScrollableOverflow();
+        if (hasVisualEdges && nonScrollable)
+            detectedHoverRules = elementMatchesHoverRules(*matchedElement);
+    }
+
+    if (!hasListener || !(hasPointer || detectedHoverRules) || isTooBigForInteraction) {
         bool isOverlay = renderer.style().specifiedZIndex() > 0 || renderer.isFixedPositioned();
         if (isOverlay && isOriginalMatch) {
             return { {
