@@ -4,3 +4,15 @@
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Platform-specific directories. Skipped globally, then re-enabled here.
 #//////////////////////////////////////////////////////////////////////////////////////////
+
+#rdar://107906590 (Mass Expectations for failing tests on branch)
+fast/forms/input-button-sizes.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-conditional/js/001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-backgrounds/border-bottom-right-radius-004.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-backgrounds/border-top-right-radius-004.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-nesting/cssom.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-nesting/invalid-inner-rules.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-nesting/parsing.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-nesting/serialize-group-rules-with-decls.tentative.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-transforms/transform-3d-rotateY-stair-below-001.xht [ ImageOnlyFailure ]
+svg/clip-path/clip-opacity-translate.svg [ ImageOnlyFailure ]
