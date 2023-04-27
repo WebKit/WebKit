@@ -71,6 +71,7 @@ DEFAULT_BRANCH = 'main'
 DEFAULT_REMOTE = 'origin'
 LAYOUT_TESTS_URL = '{}{}/blob/{}/LayoutTests/'.format(GITHUB_URL, GITHUB_PROJECTS[0], DEFAULT_BRANCH)
 MAX_COMMITS_IN_PR_SERIES = 50
+QUEUES_WITH_PUSH_ACCESS = ('commit-queue', 'merge-queue', 'unsafe-merge-queue')
 
 
 class BufferLogHeaderObserver(logobserver.BufferLogObserver):
@@ -95,7 +96,7 @@ class GitHub(object):
 
     @classmethod
     def user_for_queue(cls, queue):
-        if queue.lower() in ['commit-queue', 'merge-queue', 'unsafe-merge-queue']:
+        if queue.lower() in QUEUES_WITH_PUSH_ACCESS:
             return 'merge-queue'
         return None
 
@@ -719,6 +720,7 @@ class CheckOutSource(git.Git):
             self.repourl = self.default_repourl
         defer.returnValue(rc)
 
+    @defer.inlineCallbacks
     def run(self):
         self.branch = self.getProperty('github.base.ref') or self.branch
 
@@ -728,7 +730,10 @@ class CheckOutSource(git.Git):
             GIT_PASSWORD=access_token,
         )
 
-        return super().run()
+        rc = yield super().run()
+        if rc == SUCCESS and self.getProperty('buildername', '').lower() not in QUEUES_WITH_PUSH_ACCESS:
+            yield self._dovccmd(['remote', 'set-url', '--push', 'origin', 'PUSH_DISABLED_BY_ADMIN'])
+        defer.returnValue(rc)
 
 
 class CleanUpGitIndexLock(shell.ShellCommand):

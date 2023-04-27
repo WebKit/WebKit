@@ -6224,6 +6224,63 @@ class TestCheckOutSource(BuildStepMixinAdditions, unittest.TestCase):
                 env=self.ENV,
                 command=['git', 'rev-parse', 'HEAD'],
             ) + ExpectShell.log('stdio', stdout='3b84731a5f6a0a38b6f48a16ab927e5dbcb5c770\n') + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'remote', 'set-url', '--push', 'origin', 'PUSH_DISABLED_BY_ADMIN'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Cleaned and updated working directory')
+        return self.runStep()
+
+    def test_success_merge_queue(self):
+        self.setupStep(CheckOutSource())
+        self.setProperty('project', 'WebKit/WebKit')
+        self.setProperty('buildername', 'Merge-Queue')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', '--version'],
+            ) + ExpectShell.log('stdio', stdout='git version 2.32.3 (Apple Git-135)\n') + 0,
+            Expect(
+                'stat', dict(
+                    file='wkdir/.buildbot-patched',
+                    logEnviron=False,
+                ),
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'clean', '-f', '-f', '-d', '-x'],
+            ) + 0,
+            Expect(
+                'listdir', dict(
+                    dir='wkdir',
+                    timeout=7200,
+                    logEnviron=False,
+                ),
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'clone', 'https://github.com/WebKit/WebKit.git', '.', '--progress'],
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'rev-parse', 'HEAD'],
+            ) + ExpectShell.log('stdio', stdout='3b84731a5f6a0a38b6f48a16ab927e5dbcb5c770\n') + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Cleaned and updated working directory')
         return self.runStep()
@@ -6273,6 +6330,13 @@ class TestCheckOutSource(BuildStepMixinAdditions, unittest.TestCase):
                 env=self.ENV,
                 command=['git', 'rev-parse', 'HEAD'],
             ) + ExpectShell.log('stdio', stdout='3b84731a5f6a0a38b6f48a16ab927e5dbcb5c770\n') + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                env=self.ENV,
+                command=['git', 'remote', 'set-url', '--push', 'origin', 'PUSH_DISABLED_BY_ADMIN'],
+            ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Cleaned and updated working directory')
         return self.runStep()
