@@ -400,6 +400,7 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
     RELEASE_ASSERT(viewSize.width);
     RELEASE_ASSERT(viewSize.height);
 
+    // FIXME: Do we still require this workaround?
     UIView *selectionView = [platformView().contentView valueForKeyPath:@"interactionAssistant.selectionView"];
     UIView *startGrabberView = [selectionView valueForKeyPath:@"rangeView.startGrabber"];
     UIView *endGrabberView = [selectionView valueForKeyPath:@"rangeView.endGrabber"];

@@ -31,6 +31,7 @@
 #import <wtf/BlockPtr.h>
 
 typedef struct CGRect CGRect;
+OBJC_CLASS UITextSelectionDisplayInteraction;
 
 namespace WebCore {
 class FloatPoint;
@@ -111,8 +112,6 @@ private:
     std::optional<bool> stableStateOverride() const override;
     void setStableStateOverride(std::optional<bool> overrideValue) override;
     JSObjectRef contentVisibleRect() const override;
-    JSObjectRef textSelectionRangeRects() const override;
-    JSObjectRef textSelectionCaretRect() const override;
     JSObjectRef selectionStartGrabberViewRect() const override;
     JSObjectRef selectionEndGrabberViewRect() const override;
     JSObjectRef selectionCaretViewRect() const override;
@@ -184,6 +183,10 @@ private:
     void resignFirstResponder() override;
 
     void simulateRotation(DeviceOrientation, JSValueRef callback);
+
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+    UITextSelectionDisplayInteraction *textSelectionDisplayInteraction() const;
+#endif
 };
 
 }

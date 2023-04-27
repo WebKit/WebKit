@@ -2824,18 +2824,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 #endif
 
-- (NSArray<NSValue *> *)_uiTextSelectionRects
-{
-    NSMutableArray *textSelectionRects = [NSMutableArray array];
-
-    if (_textInteractionAssistant) {
-        for (WKTextSelectionRect *selectionRect in [_textInteractionAssistant valueForKeyPath:@"selectionView.selection.selectionRects"])
-            [textSelectionRects addObject:[NSValue valueWithCGRect:selectionRect.rect]];
-    }
-
-    return textSelectionRects;
-}
-
 - (BOOL)_pointIsInsideSelectionRect:(CGPoint)point outBoundingRect:(WebCore::FloatRect *)outBoundingRect
 {
     BOOL pointIsInSelectionRect = NO;

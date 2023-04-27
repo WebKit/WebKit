@@ -23,7 +23,7 @@ function computeCaretRectForElement(element)
 {
     return new Promise((resolved) => {
         async function handleFocus() {
-            let caretRect = await UIHelper.getUICaretRect();
+            let caretRect = await UIHelper.getUICaretViewRect();
             await UIHelper.deactivateFormControl(element);
             resolved(caretRect);
         }

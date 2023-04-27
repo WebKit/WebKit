@@ -746,32 +746,32 @@ static UICalloutBar *suppressUICalloutBar()
     }
 }
 
-- (RetainPtr<NSArray>)selectionRectsAfterPresentationUpdate
-{
-    RetainPtr<TestWKWebView> retainedSelf = self;
-
-    __block bool isDone = false;
-    __block RetainPtr<NSArray> selectionRects;
-    [self _doAfterNextPresentationUpdate:^() {
-        selectionRects = [retainedSelf _uiTextSelectionRects];
-        isDone = true;
-    }];
-
-    TestWebKitAPI::Util::run(&isDone);
-    return selectionRects;
-}
-
 - (CGRect)caretViewRectInContentCoordinates
 {
-    UIView *selectionView = [self.textInputContentView valueForKeyPath:@"interactionAssistant.selectionView"];
-    CGRect caretFrame = [[selectionView valueForKeyPath:@"caretView.frame"] CGRectValue];
-    return [selectionView convertRect:caretFrame toView:self.textInputContentView];
+    UIView *caretView = [self.textInputContentView valueForKeyPath:@"interactionAssistant.selectionView.caretView"];
+
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+    if (!caretView) {
+        if (auto view = self.textSelectionDisplayInteraction.cursorView; !view.hidden)
+            caretView = view;
+    }
+#endif
+
+    return [caretView convertRect:caretView.bounds toView:self.textInputContentView];
 }
 
 - (NSArray<NSValue *> *)selectionViewRectsInContentCoordinates
 {
     NSMutableArray *selectionRects = [NSMutableArray array];
     NSArray<UITextSelectionRect *> *rects = [self.textInputContentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView.rects"];
+
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+    if (!rects) {
+        if (auto view = self.textSelectionDisplayInteraction.highlightView; !view.hidden)
+            rects = view.selectionRects;
+    }
+#endif
+
     for (UITextSelectionRect *rect in rects)
         [selectionRects addObject:[NSValue valueWithCGRect:rect.rect]];
     return selectionRects;
@@ -789,6 +789,15 @@ static UICalloutBar *suppressUICalloutBar()
     TestWebKitAPI::Util::run(&finished);
     return info.autorelease();
 }
+
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+
+- (UITextSelectionDisplayInteraction *)textSelectionDisplayInteraction
+{
+    return dynamic_objc_cast<UITextSelectionDisplayInteraction>([self.textInputContentView valueForKeyPath:@"interactionAssistant._selectionViewManager"]);
+}
+
+#endif
 
 static WKContentView *recursiveFindWKContentView(UIView *view)
 {
@@ -811,7 +820,7 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
 
 @end
 
-#endif
+#endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(MAC)
 

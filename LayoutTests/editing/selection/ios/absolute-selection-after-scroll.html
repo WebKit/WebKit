@@ -46,7 +46,7 @@
         }
 
         selectTextAt(50, 50)
-        .then(() => UIHelper.getUISelectionRects())
+        .then(() => UIHelper.getUISelectionViewRects())
         .then((rects) => {
             initialSelectionRects = rects;
             shouldBe("initialSelectionRects.length", "1");
@@ -55,7 +55,7 @@
             shouldBe("initialSelectionRects[0].width", "309");
             shouldBe("initialSelectionRects[0].height", "112");
             document.scrollingElement.scrollTop += 5000;
-            return UIHelper.getUISelectionRects();
+            return UIHelper.getUISelectionViewRects();
         })
         .then((rects) => {
             finalSelectionRects = rects;

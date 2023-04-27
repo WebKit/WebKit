@@ -32,7 +32,7 @@
         function pressArrow() {
             uiController.typeCharacterUsingHardwareKeyboard("leftArrow", function() {
                 uiController.doAfterNextStablePresentationUpdate(function() {
-                    var selectionRectLeft = uiController.textSelectionCaretRect.left;
+                    var selectionRectLeft = uiController.selectionCaretViewRect.left;
                     var caretPositionsLength = caretPositions.length;
                     if (caretPositionsLength == 0 || caretPositions[caretPositionsLength - 1] != selectionRectLeft) {
                         caretPositions.push(selectionRectLeft);

@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "CocoaColorSerialization.h"
 #import "HIDEventGenerator.h"
 #import "PlatformViewHelpers.h"
 #import "PlatformWebView.h"
@@ -822,21 +823,6 @@ JSObjectRef UIScriptControllerIOS::contentVisibleRect() const
     return m_context->objectFromRect(rect);
 }
 
-JSObjectRef UIScriptControllerIOS::textSelectionRangeRects() const
-{
-    auto selectionRects = adoptNS([[NSMutableArray alloc] init]);
-    NSArray *rects = webView()._uiTextSelectionRects;
-    for (NSValue *rect in rects)
-        [selectionRects addObject:toNSDictionary(rect.CGRectValue)];
-
-    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:selectionRects.get() inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
-}
-
-JSObjectRef UIScriptControllerIOS::textSelectionCaretRect() const
-{
-    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(webView()._uiTextCaretRect) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
-}
-
 static void clipSelectionViewRectToContentView(CGRect& rect, UIView *contentView)
 {
     rect = CGRectIntersection(contentView.bounds, rect);
@@ -850,8 +836,19 @@ static void clipSelectionViewRectToContentView(CGRect& rect, UIView *contentView
 JSObjectRef UIScriptControllerIOS::selectionStartGrabberViewRect() const
 {
     UIView *contentView = platformContentView();
-    UIView *selectionRangeView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView"];
-    auto frameInContentViewCoordinates = [selectionRangeView convertRect:[[selectionRangeView valueForKeyPath:@"startGrabber"] frame] toView:contentView];
+    UIView *handleView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView.startGrabber"];
+
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+    if (!handleView) {
+        // FIXME: We should be able to use -handleViews here, but this seems returns an empty array,
+        // even when selection handles are present. Use -handleViews once rdar://108607881 is fixed.
+        auto view = findAllViewsInHierarchyOfType(contentView, NSClassFromString(@"_UITextSelectionLollipopView")).firstObject;
+        if (!view.hidden)
+            handleView = view;
+    }
+#endif
+
+    auto frameInContentViewCoordinates = [handleView convertRect:handleView.bounds toView:contentView];
     clipSelectionViewRectToContentView(frameInContentViewCoordinates, contentView);
     auto jsContext = m_context->jsContext();
     return JSValueToObject(jsContext, [JSValue valueWithObject:toNSDictionary(frameInContentViewCoordinates) inContext:[JSContext contextWithJSGlobalContextRef:jsContext]].JSValueRef, nullptr);
@@ -860,8 +857,19 @@ JSObjectRef UIScriptControllerIOS::selectionStartGrabberViewRect() const
 JSObjectRef UIScriptControllerIOS::selectionEndGrabberViewRect() const
 {
     UIView *contentView = platformContentView();
-    UIView *selectionRangeView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView"];
-    auto frameInContentViewCoordinates = [selectionRangeView convertRect:[[selectionRangeView valueForKeyPath:@"endGrabber"] frame] toView:contentView];
+    UIView *handleView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView.endGrabber"];
+
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+    if (!handleView) {
+        // FIXME: We should be able to use -handleViews here, but this seems returns an empty array,
+        // even when selection handles are present. Use -handleViews once rdar://108607881 is fixed.
+        auto view = findAllViewsInHierarchyOfType(contentView, NSClassFromString(@"_UITextSelectionLollipopView")).lastObject;
+        if (!view.hidden)
+            handleView = view;
+    }
+#endif
+
+    auto frameInContentViewCoordinates = [handleView convertRect:handleView.bounds toView:contentView];
     clipSelectionViewRectToContentView(frameInContentViewCoordinates, contentView);
     auto jsContext = m_context->jsContext();
     return JSValueToObject(jsContext, [JSValue valueWithObject:toNSDictionary(frameInContentViewCoordinates) inContext:[JSContext contextWithJSGlobalContextRef:jsContext]].JSValueRef, nullptr);
@@ -871,6 +879,14 @@ JSObjectRef UIScriptControllerIOS::selectionCaretViewRect() const
 {
     UIView *contentView = platformContentView();
     UIView *caretView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.caretView"];
+
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+    if (!caretView) {
+        if (auto view = textSelectionDisplayInteraction().cursorView; !view.hidden)
+            caretView = view;
+    }
+#endif
+
     auto rectInContentViewCoordinates = CGRectIntersection([caretView convertRect:caretView.bounds toView:contentView], contentView.bounds);
     clipSelectionViewRectToContentView(rectInContentViewCoordinates, contentView);
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(rectInContentViewCoordinates) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
@@ -881,10 +897,19 @@ JSObjectRef UIScriptControllerIOS::selectionRangeViewRects() const
     UIView *contentView = platformContentView();
     UIView *rangeView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView"];
     auto rectsAsDictionaries = adoptNS([[NSMutableArray alloc] init]);
-    NSArray *textRectInfoArray = [rangeView valueForKeyPath:@"rects"];
-    for (id textRectInfo in textRectInfoArray) {
-        NSValue *rectValue = [textRectInfo valueForKeyPath:@"rect"];
-        auto rangeRectInContentViewCoordinates = [rangeView convertRect:rectValue.CGRectValue toView:contentView];
+    NSArray<UITextSelectionRect *> *textRectInfoArray = [rangeView valueForKeyPath:@"rects"];
+
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+    if (!textRectInfoArray) {
+        if (auto view = textSelectionDisplayInteraction().highlightView; !view.hidden) {
+            textRectInfoArray = view.selectionRects;
+            rangeView = view;
+        }
+    }
+#endif
+
+    for (UITextSelectionRect *textRectInfo in textRectInfoArray) {
+        auto rangeRectInContentViewCoordinates = [rangeView convertRect:textRectInfo.rect toView:contentView];
         clipSelectionViewRectToContentView(rangeRectInContentViewCoordinates, contentView);
         [rectsAsDictionaries addObject:toNSDictionary(CGRectIntersection(rangeRectInContentViewCoordinates, contentView.bounds))];
     }
@@ -1295,11 +1320,20 @@ bool UIScriptControllerIOS::isAnimatingDragCancel() const
 
 JSRetainPtr<JSStringRef> UIScriptControllerIOS::selectionCaretBackgroundColor() const
 {
-    NSString *serializedColor = webView()._serializedSelectionCaretBackgroundColorForTesting;
-    if (!serializedColor)
-        return { };
+    auto contentView = platformContentView();
+    UIColor *backgroundColor = [contentView valueForKeyPath:@"textInteractionAssistant.selectionView.caretView.backgroundColor"];
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+    if (!backgroundColor) {
+        if (auto view = textSelectionDisplayInteraction().cursorView; !view.hidden)
+            backgroundColor = view.tintColor;
+    }
+#endif
 
-    return adopt(JSStringCreateWithCFString((__bridge CFStringRef)serializedColor));
+    if (!backgroundColor)
+        return nil;
+
+    auto serialization = WebCoreTestSupport::serializationForCSS(backgroundColor).createCFString();
+    return adopt(JSStringCreateWithCFString(serialization.get()));
 }
 
 JSObjectRef UIScriptControllerIOS::tapHighlightViewRect() const
@@ -1435,6 +1469,15 @@ void UIScriptControllerIOS::resignFirstResponder()
 {
     [webView() resignFirstResponder];
 }
+
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+
+UITextSelectionDisplayInteraction *UIScriptControllerIOS::textSelectionDisplayInteraction() const
+{
+    return dynamic_objc_cast<UITextSelectionDisplayInteraction>([platformContentView() valueForKeyPath:@"interactionAssistant._selectionViewManager"]);
+}
+
+#endif
 
 }
 

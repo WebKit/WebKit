@@ -837,38 +837,6 @@ window.UIHelper = class UIHelper {
         });
     }
 
-    static getUICaretRect()
-    {
-        if (!this.isWebKit2() || !this.isIOSFamily())
-            return Promise.resolve();
-
-        return new Promise(resolve => {
-            testRunner.runUIScript(`(function() {
-                uiController.doAfterNextStablePresentationUpdate(function() {
-                    uiController.uiScriptComplete(JSON.stringify(uiController.textSelectionCaretRect));
-                });
-            })()`, jsonString => {
-                resolve(JSON.parse(jsonString));
-            });
-        });
-    }
-
-    static getUISelectionRects()
-    {
-        if (!this.isWebKit2() || !this.isIOSFamily())
-            return Promise.resolve();
-
-        return new Promise(resolve => {
-            testRunner.runUIScript(`(function() {
-                uiController.doAfterNextStablePresentationUpdate(function() {
-                    uiController.uiScriptComplete(JSON.stringify(uiController.textSelectionRangeRects));
-                });
-            })()`, jsonString => {
-                resolve(JSON.parse(jsonString));
-            });
-        });
-    }
-
     static scrollbarState(scroller, isVertical)
     {
         var internalFunctions = scroller ? scroller.ownerDocument.defaultView.internals : internals;

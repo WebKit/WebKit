@@ -473,7 +473,7 @@ TEST(iOSMouseSupport, ShowingContextMenuSelectsEditableText)
 
     TestWebKitAPI::Util::run(&done);
     EXPECT_WK_STREQ("Hello", [webView stringByEvaluatingJavaScript:@"getSelection().toString()"]);
-    EXPECT_FALSE(CGRectIsEmpty([webView _uiTextSelectionRects].firstObject.CGRectValue));
+    EXPECT_FALSE(CGRectIsEmpty([webView selectionViewRectsInContentCoordinates].firstObject.CGRectValue));
 }
 
 TEST(iOSMouseSupport, ShowingContextMenuSelectsNonEditableText)
@@ -488,7 +488,7 @@ TEST(iOSMouseSupport, ShowingContextMenuSelectsNonEditableText)
 
     TestWebKitAPI::Util::run(&done);
     EXPECT_WK_STREQ("Hello", [webView stringByEvaluatingJavaScript:@"getSelection().toString()"]);
-    EXPECT_FALSE(CGRectIsEmpty([webView _uiTextSelectionRects].firstObject.CGRectValue));
+    EXPECT_FALSE(CGRectIsEmpty([webView selectionViewRectsInContentCoordinates].firstObject.CGRectValue));
 }
 
 #if ENABLE(IOS_TOUCH_EVENTS)

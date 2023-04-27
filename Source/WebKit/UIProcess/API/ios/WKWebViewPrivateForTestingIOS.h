@@ -41,7 +41,6 @@
 @property (nonatomic, readonly) NSString *textContentTypeForTesting;
 @property (nonatomic, readonly) NSString *selectFormPopoverTitle;
 @property (nonatomic, readonly) NSString *formInputLabel;
-@property (nonatomic, readonly) NSArray<NSValue *> *_uiTextSelectionRects;
 @property (nonatomic, readonly) CGRect _inputViewBoundsInWindow;
 @property (nonatomic, readonly) NSString *_uiViewTreeAsText;
 @property (nonatomic, readonly) NSNumber *_stableStateOverride;
@@ -86,8 +85,6 @@
 - (void)_setDeviceOrientationUserPermissionHandlerForTesting:(BOOL (^)(void))handler;
 
 - (void)_setDeviceHasAGXCompilerServiceForTesting;
-
-- (NSString *)_serializedSelectionCaretBackgroundColorForTesting;
 
 - (BOOL)_hasResizeAssertion;
 - (void)_simulateSelectionStart;

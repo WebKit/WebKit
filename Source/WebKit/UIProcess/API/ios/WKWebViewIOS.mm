@@ -3475,10 +3475,8 @@ static bool isLockdownModeWarningNeeded()
 
 - (CGRect)_uiTextCaretRect
 {
-    // Force the selection view to update if needed.
-    [_contentView _updateChangedSelection];
-
-    return [[_contentView valueForKeyPath:@"interactionAssistant.selectionView.selection.caretRect"] CGRectValue];
+    // Only here to maintain binary compatibility.
+    return CGRectZero;
 }
 
 - (UIView *)_safeBrowsingWarning

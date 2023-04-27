@@ -135,6 +135,7 @@ static void handleMenuDidHideNotification(CFNotificationCenterRef, void*, CFStri
 void TestController::notifyDone()
 {
     UIView *contentView = mainWebView()->platformView().contentView;
+    // FIXME: Do we still require this workaround?
     UIView *selectionView = [contentView valueForKeyPath:@"interactionAssistant.selectionView"];
     [selectionView _removeAllAnimations:YES];
 }

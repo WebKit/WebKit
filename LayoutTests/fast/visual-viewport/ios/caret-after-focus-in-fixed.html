@@ -44,7 +44,7 @@
         {
             return `(function() {
                 uiController.doAfterNextStablePresentationUpdate(function() {
-                    uiController.uiScriptComplete(JSON.stringify(uiController.textSelectionCaretRect));
+                    uiController.uiScriptComplete(JSON.stringify(uiController.selectionCaretViewRect));
                 });
                 uiController.keyboardAccessoryBarNext();
             })();`;
@@ -53,7 +53,7 @@
         function getCaretRectScript()
         {
             return `(function() {
-                return JSON.stringify(uiController.textSelectionCaretRect);
+                return JSON.stringify(uiController.selectionCaretViewRect);
             })();`;
         }
 
