@@ -389,6 +389,9 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _dragInteractionPolicy = _WKDragInteractionPolicyDefault;
 
     _contentView = adoptNS([[WKContentView alloc] initWithFrame:self.bounds processPool:processPool configuration:pageConfiguration.copyRef() webView:self]);
+#if PLATFORM(IOS_FAMILY)
+    [[_contentView layer] setAllowsGroupBlending:NO];
+#endif
     _page = [_contentView page];
     [[_configuration _contentProviderRegistry] addPage:*_page];
 
