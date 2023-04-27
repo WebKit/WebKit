@@ -1,0 +1,9 @@
+Test repaint rects when the drop-shadow filter property changes on a box with positioned children
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL layerTreeAsText.indexOf('(rect 200 200 100 100)') > -1 should be true. Was false.
+PASS successfullyParsed is true
+
+TEST COMPLETE

@@ -214,6 +214,8 @@ public:
 
     ListStyleType listStyleType;
 
+    IntOutsets accumulatedFilterOutsets;
+
 private:
     StyleRareInheritedData();
     StyleRareInheritedData(const StyleRareInheritedData&);

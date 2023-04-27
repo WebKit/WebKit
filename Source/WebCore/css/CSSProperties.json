@@ -7236,6 +7236,7 @@
                 "aliases": [
                     "-webkit-filter"
                 ],
+                "custom": "Value",
                 "conditional-converter": "FilterOperations",
                 "parser-function": "consumeFilter",
                 "parser-function-requires-context": true,

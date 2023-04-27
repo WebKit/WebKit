@@ -264,6 +264,7 @@ public:
     LayoutBoxExtent maskBoxImageOutsets() const { return imageOutsets(maskBoxImage()); }
 
     IntOutsets filterOutsets() const { return hasFilter() ? filter().outsets() : IntOutsets(); }
+    IntOutsets accumulatedFilterOutsets() const { return m_rareInheritedData->accumulatedFilterOutsets; }
 
     Order rtlOrdering() const { return static_cast<Order>(m_inheritedFlags.rtlOrdering); }
     void setRTLOrdering(Order ordering) { m_inheritedFlags.rtlOrdering = static_cast<unsigned>(ordering); }
@@ -918,6 +919,7 @@ public:
     const FilterOperations& filter() const { return m_nonInheritedData->miscData->filter->operations; }
     bool hasFilter() const { return !m_nonInheritedData->miscData->filter->operations.operations().isEmpty(); }
     bool hasReferenceFilterOnly() const;
+    bool hasAccumulatedFilterOutsets() const { return !accumulatedFilterOutsets().isZero(); }
 
     FilterOperations& mutableAppleColorFilter() { return m_rareInheritedData.access().appleColorFilter.access().operations; }
     const FilterOperations& appleColorFilter() const { return m_rareInheritedData->appleColorFilter->operations; }
@@ -1390,6 +1392,7 @@ public:
 
     void setFilter(const FilterOperations& ops) { SET_DOUBLY_NESTED_VAR(m_nonInheritedData, miscData, filter, operations, ops); }
     void setAppleColorFilter(const FilterOperations& ops) { SET_NESTED_VAR(m_rareInheritedData, appleColorFilter, operations, ops); }
+    void setAccumulatedFilterOutsets(IntOutsets outsets) { SET_VAR(m_rareInheritedData, accumulatedFilterOutsets, outsets); }
 
 #if ENABLE(FILTERS_LEVEL_2)
     void setBackdropFilter(const FilterOperations& ops) { SET_DOUBLY_NESTED_VAR(m_nonInheritedData, rareData, backdropFilter, operations, ops); }

@@ -57,6 +57,7 @@ public:
 
     bool hasOutsets() const { return !outsets().isZero(); }
     IntOutsets outsets() const;
+    IntOutsets accumulatedFilterOutsets(IntOutsets parentOutsets) const;
 
     bool hasFilterThatAffectsOpacity() const;
     bool hasFilterThatMovesPixels() const;
