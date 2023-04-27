@@ -43,6 +43,15 @@ SubframePageProxy::SubframePageProxy(WebPageProxy& page, WebProcessProxy& proces
 {
     if (!m_isInSameProcessAsMainFrame)
         m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
+
+    auto* drawingArea = page.drawingArea();
+    auto parameters = page.creationParameters(m_process, *drawingArea);
+    parameters.subframeProcessFrameTreeCreationParameters = page.frameTreeCreationParameters();
+    parameters.isProcessSwap = true; // FIXME: This should be a parameter to creationParameters rather than doctoring up the parameters afterwards.
+    parameters.topContentInset = 0;
+    m_process->send(Messages::WebProcess::CreateWebPage(m_webPageID, parameters), 0);
+    m_process->addVisitedLinkStoreUser(page.visitedLinkStore(), page.identifier());
+    drawingArea->attachToProvisionalFrameProcess(m_process);
 }
 
 SubframePageProxy::~SubframePageProxy()

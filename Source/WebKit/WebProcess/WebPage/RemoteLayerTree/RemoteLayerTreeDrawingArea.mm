@@ -62,9 +62,8 @@ using namespace WebCore;
 
 static WeakPtr<WebFrame> initialRootFrame(WebPage& page, const WebPageCreationParameters& parameters)
 {
-    if (parameters.subframeProcessFrameTreeInitializationParameters) {
-        // attachToInitialRootFrame will be called once the frame exists.
-        ASSERT(!WebProcess::singleton().webFrame(parameters.subframeProcessFrameTreeInitializationParameters->localFrameIdentifier));
+    if (parameters.subframeProcessFrameTreeCreationParameters) {
+        // attachToInitialRootFrame will be called once the frame transitions to local.
         return nullptr;
     }
     return page.mainWebFrame();

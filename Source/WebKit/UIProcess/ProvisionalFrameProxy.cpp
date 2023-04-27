@@ -49,7 +49,7 @@
 
 namespace WebKit {
 
-ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProcessProxy>&& process, const WebCore::ResourceRequest& request, bool didCreateNewProcess)
+ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProcessProxy>&& process, const WebCore::ResourceRequest& request)
     : m_frame(frame)
     , m_process(WTFMove(process))
     , m_visitedLinkStore(frame.page()->visitedLinkStore())
@@ -62,44 +62,24 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProces
     m_process->addMessageReceiver(Messages::WebFrameProxy::messageReceiverName(), frame.frameID().object(), *this);
 
     ASSERT(frame.page());
-    auto& page = *frame.page();
-    auto* drawingArea = page.drawingArea();
-    ASSERT(drawingArea);
-
-    if (didCreateNewProcess) {
-        auto parameters = page.creationParameters(m_process, *drawingArea);
-        parameters.subframeProcessFrameTreeInitializationParameters = { {
-            frame.frameID(),
-            *page.frameTreeCreationParameters(),
-            m_layerHostingContextIdentifier
-        } };
-        parameters.isProcessSwap = true; // FIXME: This should be a parameter to creationParameters rather than doctoring up the parameters afterwards.
-        parameters.topContentInset = 0;
-        m_process->send(Messages::WebProcess::CreateWebPage(m_pageID, parameters), 0);
-        m_process->addVisitedLinkStoreUser(page.visitedLinkStore(), page.identifier());
-        drawingArea->attachToProvisionalFrameProcess(m_process);
-    }
 
     LoadParameters loadParameters;
     loadParameters.request = request;
     loadParameters.shouldTreatAsContinuingLoad = WebCore::ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision;
     loadParameters.frameIdentifier = frame.frameID();
     // FIXME: Add more parameters as appropriate.
+
+    LocalFrameCreationParameters localFrameCreationParameters {
+        frame.frameID(),
+        frame.parentFrame()->frameID(),
+        m_layerHostingContextIdentifier
+    };
+
     // FIXME: This gives too much cookie access. This should be removed after putting the entire frame tree in all web processes.
     auto giveAllCookieAccess = LoadedWebArchive::Yes;
-    if (didCreateNewProcess) {
-        page.websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(m_process->coreProcessIdentifier(), WebCore::RegistrableDomain(request.url()), giveAllCookieAccess), [process = m_process, loadParameters = WTFMove(loadParameters), pageID = m_pageID] () mutable {
-            // FIXME: Do we need a LoadRequestWaitingForProcessLaunch version?
-            process->send(Messages::WebPage::LoadRequest(loadParameters), pageID);
-        });
-    } else {
-        LocalFrameCreationParameters localFrameCreationParameters {
-            frame.frameID(),
-            frame.parentFrame()->frameID(),
-            m_layerHostingContextIdentifier
-        };
-        m_process->send(Messages::WebPage::LoadRequestByCreatingNewLocalFrameOrConvertingRemoteFrame(localFrameCreationParameters, loadParameters), m_pageID);
-    }
+    frame.page()->websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(m_process->coreProcessIdentifier(), WebCore::RegistrableDomain(request.url()), giveAllCookieAccess), [process = m_process, loadParameters = WTFMove(loadParameters), localFrameCreationParameters = WTFMove(localFrameCreationParameters), pageID = m_pageID] () mutable {
+        process->send(Messages::WebPage::LoadRequestByCreatingNewLocalFrameOrConvertingRemoteFrame(localFrameCreationParameters, loadParameters), pageID);
+    });
 }
 
 ProvisionalFrameProxy::~ProvisionalFrameProxy()

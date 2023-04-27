@@ -468,6 +468,7 @@ private:
     bool m_inStopAllLoaders;
     bool m_inClearProvisionalLoadForPolicyCheck { false };
     bool m_shouldReportResourceTimingToParentFrame { true };
+    bool m_provisionalLoadHappeningInAnotherProcess { false };
 
     String m_outgoingReferrer;
 

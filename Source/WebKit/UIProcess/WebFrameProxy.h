@@ -151,7 +151,7 @@ public:
     void disconnect();
     void didCreateSubframe(WebCore::FrameIdentifier);
     ProcessID processIdentifier() const;
-    void swapToProcess(Ref<WebProcessProxy>&&, const WebCore::ResourceRequest&, bool didCreateNewProcess);
+    void swapToProcess(Ref<WebProcessProxy>&&, const WebCore::ResourceRequest&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 

@@ -2480,13 +2480,18 @@ bool FrameLoader::subframeIsLoading() const
     // It's most likely that the last added frame is the last to load so we walk backwards.
     for (auto* child = m_frame.tree().lastChild(); child; child = child->tree().previousSibling()) {
         auto* localChild = dynamicDowncast<LocalFrame>(child);
-        if (!localChild)
+        if (!localChild) {
+            if (child->preventsParentFromBeingComplete())
+                return true;
             continue;
+        }
         FrameLoader& childLoader = localChild->loader();
         DocumentLoader* documentLoader = childLoader.documentLoader();
         if (documentLoader && documentLoader->isLoadingInAPISense())
             return true;
         documentLoader = childLoader.provisionalDocumentLoader();
+        if (childLoader.m_provisionalLoadHappeningInAnotherProcess)
+            return true;
         if (documentLoader && documentLoader->isLoadingInAPISense())
             return true;
         documentLoader = childLoader.policyDocumentLoader();
@@ -3682,6 +3687,9 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
             // Don't call checkCompleted until RemoteFrame::didFinishLoadInAnotherProcess,
             // to prevent onload from happening until iframes finish loading in other processes.
             ASSERT(m_frame.settings().siteIsolationEnabled());
+            // FIXME: This needs to be set back to false if the provisional load in another process fails before it it committed.
+            // When the load is committed, this FrameLoader and its LocalFrame are replaced by a RemoteFrame.
+            m_provisionalLoadHappeningInAnotherProcess = true;
         }
 
         if (navigationPolicyDecision != NavigationPolicyDecision::StopAllLoads)

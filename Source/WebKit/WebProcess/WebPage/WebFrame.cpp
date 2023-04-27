@@ -28,6 +28,7 @@
 
 #include "APIArray.h"
 #include "DownloadManager.h"
+#include "DrawingArea.h"
 #include "FrameInfoData.h"
 #include "InjectedBundleCSSStyleDeclarationHandle.h"
 #include "InjectedBundleHitTestResult.h"
@@ -134,7 +135,7 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const At
 {
     auto frame = create(page);
     ASSERT(page.corePage());
-    auto coreFrame = LocalFrame::createSubframe(*page.corePage(), makeUniqueRef<WebFrameLoaderClient>(frame.get()), WebCore::FrameIdentifier::generate(), ownerElement);
+    auto coreFrame = LocalFrame::createSubframe(*page.corePage(), makeUniqueRef<WebFrameLoaderClient>(frame.get(), frame->makeInvalidator()), WebCore::FrameIdentifier::generate(), ownerElement);
     frame->m_coreFrame = coreFrame.get();
 
     ASSERT(!frame->m_frameID);
@@ -150,17 +151,13 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const At
     return frame;
 }
 
-Ref<WebFrame> WebFrame::createLocalSubframeHostedInAnotherProcess(WebPage& page, WebFrame& parent, WebCore::FrameIdentifier frameID, WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier, std::optional<ScopeExit<Function<void()>>>&& invalidator)
+Ref<WebFrame> WebFrame::createLocalSubframeHostedInAnotherProcess(WebPage& page, WebFrame& parent, WebCore::FrameIdentifier frameID, WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier)
 {
     auto frame = create(page);
     RELEASE_ASSERT(page.corePage());
     RELEASE_ASSERT(parent.coreAbstractFrame());
 
-    // FIXME: we should always have an invalidator, and we should unconditionally handle message receiver
-    // addition in the constructor and removal in the destructor.
-    if (invalidator)
-        WebProcess::singleton().removeMessageReceiver(Messages::WebFrame::messageReceiverName(), frameID.object());
-    auto coreFrame = LocalFrame::createSubframeHostedInAnotherProcess(*page.corePage(), makeUniqueRef<WebFrameLoaderClient>(frame.get(), WTFMove(invalidator)), frameID, *parent.coreAbstractFrame());
+    auto coreFrame = LocalFrame::createSubframeHostedInAnotherProcess(*page.corePage(), makeUniqueRef<WebFrameLoaderClient>(frame.get(), frame->makeInvalidator()), frameID, *parent.coreAbstractFrame());
     frame->m_coreFrame = coreFrame.get();
     frame->setLayerHostingContextIdentifier(layerHostingContextIdentifier);
 
@@ -177,14 +174,13 @@ Ref<WebFrame> WebFrame::createLocalSubframeHostedInAnotherProcess(WebPage& page,
 Ref<WebFrame> WebFrame::createRemoteSubframe(WebPage& page, WebFrame& parent, WebCore::FrameIdentifier frameID, WebCore::ProcessIdentifier remoteProcessIdentifier)
 {
     auto frame = create(page);
-    auto invalidator = makeScopeExit<Function<void()>>([frame] {
-        frame->invalidate(); // FIXME: This is duplicate code with WebFrameLoaderClient ctor.
-    });
-    auto client = makeUniqueRef<WebRemoteFrameClient>(frame.copyRef(), WTFMove(invalidator));
+    auto client = makeUniqueRef<WebRemoteFrameClient>(frame.copyRef(), frame->makeInvalidator());
     RELEASE_ASSERT(page.corePage());
     RELEASE_ASSERT(parent.coreAbstractFrame());
     auto coreFrame = RemoteFrame::createSubframe(*page.corePage(), WTFMove(client), frameID, *parent.coreAbstractFrame(), remoteProcessIdentifier);
     frame->m_coreFrame = coreFrame.get();
+    ASSERT(!frame->m_frameID);
+    frame->m_frameID = coreFrame->frameID();
     WebProcess::singleton().addWebFrame(frameID, frame.ptr());
     WebProcess::singleton().addMessageReceiver(Messages::WebFrame::messageReceiverName(), frameID.object(), frame.get());
     // FIXME: Pass in a name and call FrameTree::setName here.
@@ -294,6 +290,13 @@ void WebFrame::invalidate()
     m_coreFrame = 0;
 }
 
+ScopeExit<Function<void()>> WebFrame::makeInvalidator()
+{
+    return makeScopeExit<Function<void()>>([protectedThis = Ref { *this }] {
+        protectedThis->invalidate();
+    });
+}
+
 uint64_t WebFrame::setUpPolicyListener(WebCore::PolicyCheckIdentifier identifier, WebCore::FramePolicyFunction&& policyFunction, ForNavigationAction forNavigationAction)
 {
     auto policyListenerID = generateListenerID();
@@ -384,6 +387,43 @@ void WebFrame::didCommitLoadInAnotherProcess(WebCore::LayerHostingContextIdentif
     ownerElement->setContentFrame(*m_coreFrame);
 
     ownerElement->scheduleInvalidateStyleAndLayerComposition();
+}
+
+void WebFrame::transitionToLocal(WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier)
+{
+    RefPtr remoteFrame = coreRemoteFrame();
+    if (!remoteFrame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto* corePage = remoteFrame->page();
+    if (!corePage) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto* parent = remoteFrame->tree().parent();
+    if (!parent) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    parent->tree().removeChild(*remoteFrame);
+    remoteFrame->disconnectOwnerElement();
+    auto invalidator = static_cast<WebRemoteFrameClient&>(remoteFrame->client()).takeFrameInvalidator();
+
+    auto localFrame = LocalFrame::createSubframeHostedInAnotherProcess(*corePage, makeUniqueRef<WebFrameLoaderClient>(*this, WTFMove(invalidator)), m_frameID, *parent);
+    m_coreFrame = localFrame.ptr();
+    localFrame->init();
+
+    setLayerHostingContextIdentifier(layerHostingContextIdentifier);
+    corePage->addRootFrame(localFrame.get());
+
+    if (auto* webPage = page(); webPage && m_coreFrame->isRootFrame()) {
+        if (auto* drawingArea = webPage->drawingArea())
+            drawingArea->attachToInitialRootFrame(m_coreFrame->frameID());
+    }
 }
 
 void WebFrame::didFinishLoadInAnotherProcess()

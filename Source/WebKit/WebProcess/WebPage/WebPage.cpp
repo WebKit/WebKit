@@ -500,13 +500,10 @@ static Vector<UserContentURLPattern> parseAndAllowAccessToCORSDisablingPatterns(
 
 static std::variant<UniqueRef<FrameLoaderClient>, PageConfiguration::RemoteMainFrameCreationParameters> clientForMainFrame(Ref<WebFrame>&& mainFrame, std::optional<WebCore::ProcessIdentifier> remoteProcessIdentifier)
 {
+    auto invalidator = mainFrame->makeInvalidator();
     if (!remoteProcessIdentifier)
-        return UniqueRef<WebCore::FrameLoaderClient>(makeUniqueRef<WebFrameLoaderClient>(WTFMove(mainFrame)));
+        return UniqueRef<WebCore::FrameLoaderClient>(makeUniqueRef<WebFrameLoaderClient>(WTFMove(mainFrame), WTFMove(invalidator)));
 
-    // FIXME: This is duplicate code with WebFrameLoaderClient ctor.
-    auto invalidator = makeScopeExit<Function<void()>>([frame = mainFrame.copyRef()] {
-        frame->invalidate();
-    });
     return PageConfiguration::RemoteMainFrameCreationParameters { UniqueRef<RemoteFrameClient>(makeUniqueRef<WebRemoteFrameClient>(WTFMove(mainFrame), WTFMove(invalidator))), remoteProcessIdentifier.value() };
 }
 
@@ -631,8 +628,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     m_pageGroup = WebProcess::singleton().webPageGroup(parameters.pageGroupData);
 
     std::optional<ProcessIdentifier> remoteProcessIdentifier;
-    if (parameters.subframeProcessFrameTreeInitializationParameters)
-        remoteProcessIdentifier = parameters.subframeProcessFrameTreeInitializationParameters->treeCreationParameters.remoteProcessIdentifier;
+    if (parameters.subframeProcessFrameTreeCreationParameters)
+        remoteProcessIdentifier = parameters.subframeProcessFrameTreeCreationParameters->remoteProcessIdentifier;
 
     PageConfiguration pageConfiguration(
         WebProcess::singleton().sessionID(),
@@ -645,7 +642,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebProcess::singleton().cookieJar(),
         makeUniqueRef<WebProgressTrackerClient>(*this),
         clientForMainFrame(m_mainFrame.copyRef(), remoteProcessIdentifier),
-        parameters.subframeProcessFrameTreeInitializationParameters ? parameters.subframeProcessFrameTreeInitializationParameters->treeCreationParameters.frameID : WebCore::FrameIdentifier::generate(),
+        parameters.subframeProcessFrameTreeCreationParameters ? parameters.subframeProcessFrameTreeCreationParameters->frameID : WebCore::FrameIdentifier::generate(),
         makeUniqueRef<WebSpeechRecognitionProvider>(m_identifier),
         makeUniqueRef<MediaRecorderProvider>(*this),
         WebProcess::singleton().broadcastChannelRegistry(),
@@ -745,7 +742,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebProcess::singleton().switchFromStaticFontRegistryToUserFontRegistry(WTFMove(parameters.fontMachExtensionHandles));
 #endif
 
-    bool receivedMainFrameIdentifierFromUIProcess = !!parameters.subframeProcessFrameTreeInitializationParameters;
+    bool receivedMainFrameIdentifierFromUIProcess = !!parameters.subframeProcessFrameTreeCreationParameters;
     
     m_page = makeUnique<Page>(WTFMove(pageConfiguration));
 
@@ -781,10 +778,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     m_page->settings().setBackForwardCacheExpirationInterval(Seconds::infinity());
 
     m_mainFrame->initWithCoreMainFrame(*this, m_page->mainFrame(), receivedMainFrameIdentifierFromUIProcess);
-    if (auto& subframeProcessFrameTreeInitializationParameters = parameters.subframeProcessFrameTreeInitializationParameters) {
-        for (auto& childParameters : subframeProcessFrameTreeInitializationParameters->treeCreationParameters.children)
-            constructFrameTree(m_mainFrame.get(), subframeProcessFrameTreeInitializationParameters->localFrameIdentifier, subframeProcessFrameTreeInitializationParameters->layerHostingContextIdentifier, childParameters);
-        m_drawingArea->attachToInitialRootFrame(subframeProcessFrameTreeInitializationParameters->localFrameIdentifier);
+    if (auto& subframeProcessFrameTreeCreationParameters = parameters.subframeProcessFrameTreeCreationParameters) {
+        for (auto& childParameters : subframeProcessFrameTreeCreationParameters->children)
+            constructFrameTree(m_mainFrame.get(), childParameters);
     }
 
     m_drawingArea->updatePreferences(parameters.store);
@@ -1015,18 +1011,11 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 }
 
-void WebPage::constructFrameTree(WebFrame& parent, WebCore::FrameIdentifier localFrameIdentifier, WebCore::LayerHostingContextIdentifier localFrameHostLayerIdentifier, const FrameTreeCreationParameters& treeCreationParameters)
+void WebPage::constructFrameTree(WebFrame& parent, const FrameTreeCreationParameters& treeCreationParameters)
 {
-    bool shouldCreateLocalFrame = treeCreationParameters.frameID == localFrameIdentifier;
-    auto frame = shouldCreateLocalFrame
-        ? WebFrame::createLocalSubframeHostedInAnotherProcess(*this, parent, treeCreationParameters.frameID, localFrameHostLayerIdentifier, std::nullopt)
-        : WebFrame::createRemoteSubframe(*this, parent, treeCreationParameters.frameID, treeCreationParameters.remoteProcessIdentifier);
-    if (shouldCreateLocalFrame) {
-        ASSERT(frame->coreFrame());
-        m_page->addRootFrame(*frame->coreFrame());
-    }
+    auto frame = WebFrame::createRemoteSubframe(*this, parent, treeCreationParameters.frameID, treeCreationParameters.remoteProcessIdentifier);
     for (auto& parameters : treeCreationParameters.children)
-        constructFrameTree(frame, localFrameIdentifier, localFrameHostLayerIdentifier, parameters);
+        constructFrameTree(frame, parameters);
 }
 
 #if ENABLE(GPU_PROCESS)
@@ -1782,43 +1771,23 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& loadParamet
 
 void WebPage::loadRequestByCreatingNewLocalFrameOrConvertingRemoteFrame(LocalFrameCreationParameters&& localFrameCreationParameters, LoadParameters&& loadParameters)
 {
+    // FIXME: This is duplicate information.
+    ASSERT(loadParameters.frameIdentifier == localFrameCreationParameters.frameIdentifier);
+
     RefPtr frame = WebProcess::singleton().webFrame(localFrameCreationParameters.frameIdentifier);
-    if (frame && frame->coreFrame()) {
-        loadRequest(WTFMove(loadParameters));
-        return;
-    }
-
-    // If there is an existing RemoteFrame, let's remove it and later convert it to a LocalFrame.
-    RefPtr<WebFrame> parentWebFrame;
-    RefPtr<WebCore::RemoteFrame> coreRemoteFrame;
-    std::optional<ScopeExit<Function<void()>>> invalidator;
-    if (frame) {
-        coreRemoteFrame = frame->coreRemoteFrame();
-        auto* parent = coreRemoteFrame->tree().parent();
-        if (!parent) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
-
-        parentWebFrame = WebProcess::singleton().webFrame(parent->frameID());
+    if (!frame) {
+        RefPtr parentWebFrame = WebProcess::singleton().webFrame(localFrameCreationParameters.parentFrameIdentifier);
         if (!parentWebFrame) {
             ASSERT_NOT_REACHED();
             return;
         }
-
-        parent->tree().removeChild(*coreRemoteFrame);
-        coreRemoteFrame->disconnectOwnerElement();
-        if (auto* remoteFrameClient = static_cast<WebRemoteFrameClient*>(&coreRemoteFrame->client()))
-            invalidator.emplace(remoteFrameClient->takeFrameInvalidator());
-    } else
-        parentWebFrame = WebProcess::singleton().webFrame(localFrameCreationParameters.parentFrameIdentifier);
-
-    if (!parentWebFrame) {
-        ASSERT_NOT_REACHED();
+        WebFrame::createLocalSubframeHostedInAnotherProcess(*this, *parentWebFrame, localFrameCreationParameters.frameIdentifier, localFrameCreationParameters.layerHostingContextIdentifier);
+        loadRequest(WTFMove(loadParameters));
         return;
     }
 
-    WebFrame::createLocalSubframeHostedInAnotherProcess(*this, *parentWebFrame, localFrameCreationParameters.frameIdentifier, localFrameCreationParameters.layerHostingContextIdentifier, WTFMove(invalidator));
+    if (!is<LocalFrame>(frame->coreAbstractFrame()))
+        frame->transitionToLocal(localFrameCreationParameters.layerHostingContextIdentifier);
 
     loadRequest(WTFMove(loadParameters));
 }
@@ -1858,7 +1827,9 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     platformDidReceiveLoadParameters(loadParameters);
 
     // Initate the load in WebCore.
+    ASSERT(frame);
     ASSERT(frame->coreFrame());
+    ASSERT(frame->coreFrame()->document());
     FrameLoadRequest frameLoadRequest { *frame->coreFrame(), loadParameters.request };
     frameLoadRequest.setShouldOpenExternalURLsPolicy(loadParameters.shouldOpenExternalURLsPolicy);
     frameLoadRequest.setShouldTreatAsContinuingLoad(loadParameters.shouldTreatAsContinuingLoad);

@@ -1824,11 +1824,12 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
 
     auto [process, suspendedPage, reason] = processForNavigationInternal(page, navigation, sourceProcess.copyRef(), sourceURL, processSwapRequestedByClient, lockdownMode, frameInfo, dataStore.copyRef());
 
-    if (page.preferences().siteIsolationEnabled()) {
-        auto registrableDomain = RegistrableDomain(navigation.currentRequest().url());
-        if (!registrableDomain.isEmpty()) {
+    if (!frame.isMainFrame() && page.preferences().siteIsolationEnabled()) {
+        RegistrableDomain navigationDomain(navigation.currentRequest().url());
+        RegistrableDomain mainFrameDomain(URL(page.pageLoadState().activeURL()));
+        if (!navigationDomain.isEmpty() && navigationDomain != mainFrameDomain) {
             auto subFramePageProxy = makeUniqueRef<SubframePageProxy>(page, process, frame.isMainFrame());
-            page.addSubframePageProxyForFrameID(frame.frameID(), registrableDomain, WTFMove(subFramePageProxy));
+            page.addSubframePageProxyForFrameID(frame.frameID(), navigationDomain, WTFMove(subFramePageProxy));
         }
     }
 

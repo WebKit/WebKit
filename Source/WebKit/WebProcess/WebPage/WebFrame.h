@@ -80,7 +80,7 @@ class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame>, public 
 public:
     static Ref<WebFrame> create(WebPage& page) { return adoptRef(*new WebFrame(page)); }
     static Ref<WebFrame> createSubframe(WebPage&, WebFrame& parent, const AtomString& frameName, WebCore::HTMLFrameOwnerElement&);
-    static Ref<WebFrame> createLocalSubframeHostedInAnotherProcess(WebPage&, WebFrame& parent, WebCore::FrameIdentifier, WebCore::LayerHostingContextIdentifier, std::optional<ScopeExit<Function<void()>>>&&);
+    static Ref<WebFrame> createLocalSubframeHostedInAnotherProcess(WebPage&, WebFrame& parent, WebCore::FrameIdentifier, WebCore::LayerHostingContextIdentifier);
     static Ref<WebFrame> createRemoteSubframe(WebPage&, WebFrame& parent, WebCore::FrameIdentifier, WebCore::ProcessIdentifier);
     ~WebFrame();
 
@@ -88,6 +88,7 @@ public:
 
     // Called when the FrameLoaderClient (and therefore the WebCore::Frame) is being torn down.
     void invalidate();
+    ScopeExit<Function<void()>> makeInvalidator();
 
     WebPage* page() const;
 
@@ -95,6 +96,8 @@ public:
     WebCore::LocalFrame* coreFrame() const;
     WebCore::RemoteFrame* coreRemoteFrame() const;
     WebCore::Frame* coreAbstractFrame() const;
+
+    void transitionToLocal(WebCore::LayerHostingContextIdentifier);
 
     FrameInfoData info() const;
     void getFrameInfo(CompletionHandler<void(FrameInfoData&&)>&&);

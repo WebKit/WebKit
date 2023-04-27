@@ -122,11 +122,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebFrameLoaderClient::WebFrameLoaderClient(Ref<WebFrame>&& frame, std::optional<ScopeExit<Function<void()>>>&& invalidator)
+WebFrameLoaderClient::WebFrameLoaderClient(Ref<WebFrame>&& frame, ScopeExit<Function<void()>>&& invalidator)
     : m_frame(WTFMove(frame))
-    , m_frameInvalidator(invalidator ? WTFMove(*invalidator) : makeScopeExit<Function<void()>>([frame = m_frame] {
-        frame->invalidate();
-    }))
+    , m_frameInvalidator(WTFMove(invalidator))
 {
 }
 

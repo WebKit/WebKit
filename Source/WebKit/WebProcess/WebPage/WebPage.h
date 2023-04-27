@@ -1630,7 +1630,7 @@ public:
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
-    void constructFrameTree(WebFrame& parent, WebCore::FrameIdentifier localFrameIdentifier, WebCore::LayerHostingContextIdentifier localFrameHostLayerIdentifier, const FrameTreeCreationParameters&);
+    void constructFrameTree(WebFrame& parent, const FrameTreeCreationParameters&);
 
     void updateThrottleState();
 
