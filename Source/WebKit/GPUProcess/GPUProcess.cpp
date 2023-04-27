@@ -225,8 +225,9 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
     WebCore::initializeCommonAtomStrings();
 
     auto& memoryPressureHandler = MemoryPressureHandler::singleton();
-    memoryPressureHandler.setLowMemoryHandler([this] (Critical critical, Synchronous synchronous) {
-        lowMemoryHandler(critical, synchronous);
+    memoryPressureHandler.setLowMemoryHandler([weakThis = WeakPtr { *this }] (Critical critical, Synchronous synchronous) {
+        if (RefPtr process = weakThis.get())
+            process->lowMemoryHandler(critical, synchronous);
     });
     memoryPressureHandler.install();
 

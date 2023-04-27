@@ -322,8 +322,9 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     m_suppressMemoryPressureHandler = parameters.shouldSuppressMemoryPressureHandler;
     if (!m_suppressMemoryPressureHandler) {
         auto& memoryPressureHandler = MemoryPressureHandler::singleton();
-        memoryPressureHandler.setLowMemoryHandler([this] (Critical critical, Synchronous) {
-            lowMemoryHandler(critical);
+        memoryPressureHandler.setLowMemoryHandler([weakThis = WeakPtr { *this }] (Critical critical, Synchronous) {
+            if (RefPtr process = weakThis.get())
+                process->lowMemoryHandler(critical);
         });
         memoryPressureHandler.install();
     }
