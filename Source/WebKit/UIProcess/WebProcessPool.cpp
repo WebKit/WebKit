@@ -375,6 +375,11 @@ void WebProcessPool::setOverrideLanguages(Vector<String>&& languages)
 
     LOG_WITH_STREAM(Language, stream << "WebProcessPool is setting OverrideLanguages: " << languages);
     sendToAllProcesses(Messages::WebProcess::UserPreferredLanguagesChanged(overrideLanguages()));
+
+#if ENABLE(GPU_PROCESS)
+    if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
+        gpuProcess->send(Messages::GPUProcess::UserPreferredLanguagesChanged(overrideLanguages()), 0);
+#endif
 #if USE(SOUP)
     for (auto networkProcess : NetworkProcessProxy::allNetworkProcesses())
         networkProcess->send(Messages::NetworkProcess::UserPreferredLanguagesChanged(overrideLanguages()), 0);

@@ -71,6 +71,8 @@ void GPUProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if USE(GBM)
     encoder << renderDeviceFile;
 #endif
+
+    encoder << overrideLanguages;
 }
 
 bool GPUProcessCreationParameters::decode(IPC::Decoder& decoder, GPUProcessCreationParameters& result)
@@ -141,6 +143,12 @@ bool GPUProcessCreationParameters::decode(IPC::Decoder& decoder, GPUProcessCreat
         return false;
     result.renderDeviceFile = WTFMove(*renderDeviceFile);
 #endif
+
+    std::optional<Vector<String>> overrideLanguages;
+    decoder >> overrideLanguages;
+    if (!overrideLanguages)
+        return false;
+    result.overrideLanguages = WTFMove(*overrideLanguages);
 
     return true;
 }

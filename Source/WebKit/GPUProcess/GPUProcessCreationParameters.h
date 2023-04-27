@@ -71,6 +71,7 @@ struct GPUProcessCreationParameters {
 #if USE(GBM)
     String renderDeviceFile;
 #endif
+    Vector<String> overrideLanguages;
 
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, GPUProcessCreationParameters&);

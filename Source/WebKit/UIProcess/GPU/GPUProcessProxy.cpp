@@ -36,6 +36,7 @@
 #include "GPUProcessProxyMessages.h"
 #include "GPUProcessSessionParameters.h"
 #include "Logging.h"
+#include "OverrideLanguages.h"
 #include "ProvisionalPageProxy.h"
 #include "WebPageGroup.h"
 #include "WebPageMessages.h"
@@ -136,6 +137,7 @@ GPUProcessProxy::GPUProcessProxy()
 
     GPUProcessCreationParameters parameters;
     parameters.auxiliaryProcessParameters = auxiliaryProcessParameters();
+    parameters.overrideLanguages = overrideLanguages();
 
 #if ENABLE(MEDIA_STREAM)
     parameters.useMockCaptureDevices = m_useMockCaptureDevices;

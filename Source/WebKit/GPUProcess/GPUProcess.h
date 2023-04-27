@@ -153,6 +153,7 @@ private:
     void removeSession(PAL::SessionID);
     
     bool updatePreference(std::optional<bool>& oldPreference, std::optional<bool>& newPreference);
+    void userPreferredLanguagesChanged(Vector<String>&&);
 
 #if ENABLE(MEDIA_STREAM)
     void setMockCaptureDevicesEnabled(bool);

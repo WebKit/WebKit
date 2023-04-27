@@ -280,7 +280,6 @@ private:
     void createRemoteCommandListener(RemoteRemoteCommandListenerIdentifier);
     void releaseRemoteCommandListener(RemoteRemoteCommandListenerIdentifier);
     void setMediaOverridesForTesting(MediaOverridesForTesting);
-    void setUserPreferredLanguages(const Vector<String>&);
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
 
 #if USE(GRAPHICS_LAYER_WC)

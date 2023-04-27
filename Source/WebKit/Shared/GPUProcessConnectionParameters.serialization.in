@@ -24,7 +24,6 @@
 
 struct WebKit::GPUProcessConnectionParameters {
     WebCore::ProcessIdentity webProcessIdentity;
-    Vector<String> overrideLanguages;
     bool isLockdownModeEnabled;
 #if ENABLE(IPC_TESTING_API)
     bool ignoreInvalidMessageForTesting;

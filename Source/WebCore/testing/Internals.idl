@@ -521,6 +521,11 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined advanceToNextMisspelling();
 
     sequence<DOMString> userPreferredLanguages();
+
+    // This only overrides the languages inside the WebProcess, not the GPUProcess.
+    // To override the language more globally, please add something like this to
+    // your test instead:
+    // <!-- webkit-test-runner [ language=jp,fr ] -->
     undefined setUserPreferredLanguages(sequence<DOMString> languages);
 
     sequence<DOMString> userPreferredAudioCharacteristics();

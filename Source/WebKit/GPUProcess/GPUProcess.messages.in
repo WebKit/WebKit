@@ -83,6 +83,8 @@ messages -> GPUProcess LegacyReceiver {
     EnablePowerLogging(WebKit::SandboxExtension::Handle handle)
 #endif
 
+    UserPreferredLanguagesChanged(Vector<String> languages)
+
     WebProcessConnectionCountForTesting() -> (uint64_t count)
 }
 

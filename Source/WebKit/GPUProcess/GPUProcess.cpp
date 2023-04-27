@@ -51,6 +51,7 @@
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <wtf/Algorithms.h>
 #include <wtf/CallbackAggregator.h>
+#include <wtf/Language.h>
 #include <wtf/LogInitialization.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/OptionSet.h>
@@ -278,6 +279,7 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
     WTF::Thread::setCurrentThreadIsUserInteractive(0);
 
     WebCore::setPresentingApplicationPID(parameters.parentPID);
+    overrideUserPreferredLanguages(parameters.overrideLanguages);
 
 #if USE(OS_STATE)
     registerWithStateDumper("GPUProcess state"_s);
@@ -340,6 +342,11 @@ bool GPUProcess::updatePreference(std::optional<bool>& oldPreference, std::optio
     }
     
     return false;
+}
+
+void GPUProcess::userPreferredLanguagesChanged(Vector<String>&& languages)
+{
+    overrideUserPreferredLanguages(languages);
 }
 
 void GPUProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime, CompletionHandler<void()>&& completionHandler)
