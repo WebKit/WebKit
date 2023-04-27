@@ -1402,6 +1402,7 @@ public:
 
     void compileCheckTypeInfoFlags(Node*);
     void compileCheckIdent(Node*);
+    void compileHasStructureWithFlags(Node*);
 
     void compileParseInt(Node*);
     

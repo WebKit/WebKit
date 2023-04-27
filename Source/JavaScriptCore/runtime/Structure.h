@@ -341,6 +341,16 @@ public:
         return typeInfo().hasStaticPropertyTable() && !staticPropertiesReified();
     }
 
+    bool isNonExtensibleOrHasNonConfigurableProperties() const
+    {
+        return didPreventExtensions() || hasNonConfigurableProperties();
+    }
+
+    bool hasAnyOfBitFieldFlags(unsigned flags) const
+    {
+        return m_bitField & flags;
+    }
+
     // Type accessors.
     TypeInfo typeInfo() const { return m_blob.typeInfo(m_outOfLineTypeFlags); }
     bool isObject() const { return typeInfo().isObject(); }
@@ -835,15 +845,30 @@ public:
     DEFINE_BITFIELD(bool, didTransition, DidTransition, 1, 21);
     DEFINE_BITFIELD(bool, staticPropertiesReified, StaticPropertiesReified, 1, 22);
     DEFINE_BITFIELD(bool, hasBeenFlattenedBefore, HasBeenFlattenedBefore, 1, 23);
+    DEFINE_BITFIELD(bool, isBrandedStructure, IsBrandedStructure, 1, 24);
     DEFINE_BITFIELD(bool, didWatchInternalProperties, DidWatchInternalProperties, 1, 25);
     DEFINE_BITFIELD(bool, transitionWatchpointIsLikelyToBeFired, TransitionWatchpointIsLikelyToBeFired, 1, 26);
     DEFINE_BITFIELD(bool, hasBeenDictionary, HasBeenDictionary, 1, 27);
     DEFINE_BITFIELD(bool, protectPropertyTableWhileTransitioning, ProtectPropertyTableWhileTransitioning, 1, 28);
     DEFINE_BITFIELD(bool, hasUnderscoreProtoPropertyExcludingOriginalProto, HasUnderscoreProtoPropertyExcludingOriginalProto, 1, 29);
-    DEFINE_BITFIELD(bool, isBrandedStructure, IsBrandedStructure, 1, 30);
+    DEFINE_BITFIELD(bool, hasNonConfigurableProperties, HasNonConfigurableProperties, 1, 30);
+    DEFINE_BITFIELD(bool, hasNonConfigurableReadOnlyOrGetterSetterProperties, HasNonConfigurableReadOnlyOrGetterSetterProperties, 1, 31);
 
     static_assert(s_bitWidthOfTransitionPropertyAttributes <= sizeof(TransitionPropertyAttributes) * 8);
     static_assert(s_bitWidthOfTransitionKind <= sizeof(TransitionKind) * 8);
+
+    static bool bitFieldFlagsCantBeChangedWithoutTransition(unsigned flags)
+    {
+        return flags == (flags & (
+            s_didPreventExtensionsBits
+            | s_isQuickPropertyAccessAllowedForEnumerationBits
+            | s_hasAnyKindOfGetterSetterPropertiesBits
+            | s_hasReadOnlyOrGetterSetterPropertiesExcludingProtoBits
+            | s_hasUnderscoreProtoPropertyExcludingOriginalProtoBits
+            | s_hasNonConfigurablePropertiesBits
+            | s_hasNonConfigurableReadOnlyOrGetterSetterPropertiesBits
+        ));
+    }
 
     int transitionCountEstimate() const
     {

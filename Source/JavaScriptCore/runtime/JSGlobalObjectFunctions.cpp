@@ -1035,33 +1035,22 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncHandleProxyGetTrapResult, (JSGlobalObject* gl
     return JSValue::encode(jsUndefined());
 }
 
-static ALWAYS_INLINE EncodedJSValue globalFuncHandleProxySetTrapResult(JSGlobalObject* globalObject, CallFrame* callFrame, ECMAMode ecmaMode)
+JSC_DEFINE_HOST_FUNCTION(globalFuncHandlePositiveProxySetTrapResult, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue trapResult = callFrame->uncheckedArgument(0);
-    JSObject* target = asObject(callFrame->uncheckedArgument(1));
+    JSObject* target = asObject(callFrame->uncheckedArgument(0));
 
-    Identifier propertyName = callFrame->uncheckedArgument(2).toPropertyKey(globalObject);
+    Identifier propertyName = callFrame->uncheckedArgument(1).toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    JSValue putValue = callFrame->uncheckedArgument(3);
+    JSValue putValue = callFrame->uncheckedArgument(2);
 
     scope.release();
-    ProxyObject::validateSetTrapResult(globalObject, trapResult, target, propertyName, putValue, ecmaMode.isStrict());
+    ProxyObject::validatePositiveSetTrapResult(globalObject, target, propertyName, putValue);
 
     return JSValue::encode(jsUndefined());
-}
-
-JSC_DEFINE_HOST_FUNCTION(globalFuncHandleProxySetTrapResultSloppy, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    return globalFuncHandleProxySetTrapResult(globalObject, callFrame, ECMAMode::sloppy());
-}
-
-JSC_DEFINE_HOST_FUNCTION(globalFuncHandleProxySetTrapResultStrict, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    return globalFuncHandleProxySetTrapResult(globalObject, callFrame, ECMAMode::strict());
 }
 
 } // namespace JSC

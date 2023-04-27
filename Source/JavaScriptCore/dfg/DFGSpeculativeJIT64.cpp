@@ -4756,6 +4756,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case HasStructureWithFlags: {
+        compileHasStructureWithFlags(node);
+        break;
+    }
+
     case ParseInt: {
         compileParseInt(node);
         break;

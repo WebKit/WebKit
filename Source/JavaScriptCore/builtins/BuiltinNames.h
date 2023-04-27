@@ -182,9 +182,8 @@ namespace JSC {
     macro(stringSplitFast) \
     macro(stringSubstring) \
     macro(handleNegativeProxyHasTrapResult) \
+    macro(handlePositiveProxySetTrapResult) \
     macro(handleProxyGetTrapResult) \
-    macro(handleProxySetTrapResultSloppy) \
-    macro(handleProxySetTrapResultStrict) \
     macro(importModule) \
     macro(copyDataProperties) \
     macro(meta) \

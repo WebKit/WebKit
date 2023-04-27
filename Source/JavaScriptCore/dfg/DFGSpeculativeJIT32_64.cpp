@@ -3565,6 +3565,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case HasStructureWithFlags: {
+        compileHasStructureWithFlags(node);
+        break;
+    }
+
     case OverridesHasInstance: {
         compileOverridesHasInstance(node);
         break;

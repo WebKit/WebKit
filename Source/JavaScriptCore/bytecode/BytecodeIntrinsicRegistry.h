@@ -98,6 +98,8 @@ enum class LinkTimeConstant : int32_t;
     macro(toString) \
     macro(toPropertyKey) \
     macro(toObject) \
+    macro(mustValidateResultOfProxyGetAndSetTraps) \
+    macro(mustValidateResultOfProxyTrapsExceptGetAndSet) \
     macro(newArrayWithSize) \
     macro(newArrayWithSpecies) \
     macro(newPromise) \
