@@ -106,14 +106,20 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
     adjustInlineFormattingStateWithNewInlineItems();
 
 #if ASSERT_ENABLED
-    // Check if we've got matching inline box start/end pairs.
+    // Check if we've got matching inline box start/end pairs and unique inline level items (non-text, non-inline box items).
     size_t inlineBoxStart = 0;
     size_t inlineBoxEnd = 0;
+    auto inlineLevelItems = HashSet<const Box*> { };
     for (auto& inlineItem : m_formattingState.inlineItems()) {
         if (inlineItem.isInlineBoxStart())
             ++inlineBoxStart;
         else if (inlineItem.isInlineBoxEnd())
             ++inlineBoxEnd;
+        else {
+            auto hasToBeUniqueLayoutBox = inlineItem.isBox() || inlineItem.isFloat() || inlineItem.isHardLineBreak();
+            if (hasToBeUniqueLayoutBox)
+                ASSERT(inlineLevelItems.add(&inlineItem.layoutBox()).isNewEntry);
+        }
     }
     ASSERT(inlineBoxStart == inlineBoxEnd);
 #endif

@@ -101,7 +101,7 @@ static std::optional<size_t> damagedLineIndex(std::optional<DamagedContent> dama
             ASSERT(displayBoxes[damagedDisplayBoxIndex - 1].lineIndex() == damagedDisplayBox.lineIndex());
             return { damagedDisplayBox.lineIndex() };
         }
-        auto damagedContentIsFirstContentOnLine = !damagedDisplayBox.isText() || (damagedContent->offset && damagedDisplayBox.text().start() == *damagedContent->offset);
+        auto damagedContentIsFirstContentOnLine = !damagedDisplayBox.isText() || (damagedContent->offset && (!*damagedContent->offset || damagedDisplayBox.text().start() == *damagedContent->offset));
         return { damagedContentIsFirstContentOnLine ? damagedDisplayBox.lineIndex() - 1 : damagedDisplayBox.lineIndex() };
     };
 
