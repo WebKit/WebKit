@@ -1237,13 +1237,16 @@ ExceptionOr<Ref<ElementInternals>> HTMLElement::attachInternals()
     return ElementInternals::create(*this);
 }
 
-static ExceptionOr<void> checkPopoverValidity(HTMLElement& element, PopoverVisibilityState expectedState)
+static ExceptionOr<void> checkPopoverValidity(HTMLElement& element, PopoverVisibilityState expectedState, Document* expectedDocument = nullptr)
 {
     if (element.popoverState() == PopoverState::None)
         return Exception { NotSupportedError, "Element does not have the popover attribute"_s };
 
     if (!element.isConnected())
         return Exception { InvalidStateError, "Element is not connected"_s };
+
+    if (expectedDocument && element.document() != *expectedDocument)
+        return Exception { InvalidStateError, "Invalid when the document changes while showing or hiding a popover element"_s };
 
     if (element.popoverData()->visibilityState() != expectedState)
         return Exception { InvalidStateError, "Element has unexpected visibility state"_s };
@@ -1370,12 +1373,13 @@ ExceptionOr<void> HTMLElement::showPopover()
 
     ASSERT(!isInTopLayer());
 
+    Ref document = this->document();
     auto event = ToggleEvent::create(eventNames().beforetoggleEvent, { EventInit { }, "closed"_s, "open"_s }, Event::IsCancelable::Yes);
     dispatchEvent(event);
     if (event->defaultPrevented() || event->defaultHandled())
         return { };
 
-    if (auto check = checkPopoverValidity(*this, PopoverVisibilityState::Hidden); check.hasException())
+    if (auto check = checkPopoverValidity(*this, PopoverVisibilityState::Hidden, document.ptr()); check.hasException())
         return check.releaseException();
 
     ASSERT(popoverData());
@@ -1383,17 +1387,17 @@ ExceptionOr<void> HTMLElement::showPopover()
     if (popoverState() == PopoverState::Auto) {
         auto originalState = popoverState();
         RefPtr ancestor = topmostPopoverAncestor(*this);
-        document().hideAllPopoversUntil(ancestor.get(), FocusPreviousElement::No, FireEvents::Yes);
+        document->hideAllPopoversUntil(ancestor.get(), FocusPreviousElement::No, FireEvents::Yes);
 
         if (popoverState() != originalState)
             return Exception { InvalidStateError, "The value of the popover attribute was changed while hiding the popover."_s };
 
-        if (auto check = checkPopoverValidity(*this, PopoverVisibilityState::Hidden); check.hasException())
+        if (auto check = checkPopoverValidity(*this, PopoverVisibilityState::Hidden, document.ptr()); check.hasException())
             return check.releaseException();
     }
 
-    bool shouldRestoreFocus = !document().topmostAutoPopover();
-    RefPtr previouslyFocusedElement = document().focusedElement();
+    bool shouldRestoreFocus = !document->topmostAutoPopover();
+    RefPtr previouslyFocusedElement = document->focusedElement();
 
     addToTopLayer();
 
