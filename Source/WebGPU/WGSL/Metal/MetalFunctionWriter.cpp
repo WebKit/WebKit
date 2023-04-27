@@ -168,7 +168,7 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
     m_stringBuilder.append(m_indent, "struct ", structDecl.name(), " {\n");
     {
         IndentationScope scope(m_indent);
-        for (auto& member : structDecl.members()) {
+        for (AST::StructureMember& member : structDecl.members()) {
             m_stringBuilder.append(m_indent);
             visit(member.type());
             m_stringBuilder.append(" ", member.name());

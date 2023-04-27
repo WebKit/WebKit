@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ASTAttribute.h"
+#include "ASTBuilder.h"
 #include "ASTExpression.h"
 #include "ASTForward.h"
 #include "ASTStatement.h"
@@ -34,6 +35,7 @@
 #include "ASTVariable.h"
 #include "CompilationMessage.h"
 #include "Lexer.h"
+#include "WGSLShaderModule.h"
 #include <wtf/Ref.h>
 
 namespace WGSL {
@@ -45,6 +47,7 @@ class Parser {
 public:
     Parser(ShaderModule& shaderModule, Lexer& lexer)
         : m_shaderModule(shaderModule)
+        , m_builder(shaderModule.astBuilder())
         , m_lexer(lexer)
         , m_current(lexer.lex())
     {
@@ -58,7 +61,7 @@ public:
     Result<AST::Attribute::List> parseAttributes();
     Result<AST::Attribute::Ref> parseAttribute();
     Result<AST::Structure::Ref> parseStructure(AST::Attribute::List&&);
-    Result<AST::StructureMember> parseStructureMember();
+    Result<std::reference_wrapper<AST::StructureMember>> parseStructureMember();
     Result<AST::TypeName::Ref> parseTypeName();
     Result<AST::TypeName::Ref> parseTypeNameAfterIdentifier(AST::Identifier&&, SourcePosition start);
     Result<AST::TypeName::Ref> parseArrayType();
@@ -101,6 +104,7 @@ private:
     Token& current() { return m_current; }
 
     ShaderModule& m_shaderModule;
+    AST::Builder& m_builder;
     Lexer& m_lexer;
     Token m_current;
 };

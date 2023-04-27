@@ -123,6 +123,8 @@
 		9776BE732992A236002D6D93 /* Overload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9776BE712992A236002D6D93 /* Overload.cpp */; };
 		9776BE742992A236002D6D93 /* Overload.h in Headers */ = {isa = PBXBuildFile; fileRef = 9776BE722992A236002D6D93 /* Overload.h */; };
 		9776BE7629957E12002D6D93 /* WGSLShaderModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 9776BE7529957E12002D6D93 /* WGSLShaderModule.h */; };
+		97835C9329F7C9C600939EBA /* ASTBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 97835C9229F7C9C600939EBA /* ASTBuilder.h */; };
+		97835C9529F7D85A00939EBA /* ASTBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97835C9429F7D85A00939EBA /* ASTBuilder.cpp */; };
 		9789C31A297EA105009E9006 /* CallGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9789C318297EA105009E9006 /* CallGraph.cpp */; };
 		978A9125298A4E8400B37E5E /* MangleNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978A9123298A4E8400B37E5E /* MangleNames.cpp */; };
 		978A9126298A4E8400B37E5E /* MangleNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 978A9124298A4E8400B37E5E /* MangleNames.h */; };
@@ -363,6 +365,8 @@
 		9776BE712992A236002D6D93 /* Overload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Overload.cpp; sourceTree = "<group>"; };
 		9776BE722992A236002D6D93 /* Overload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Overload.h; sourceTree = "<group>"; };
 		9776BE7529957E12002D6D93 /* WGSLShaderModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WGSLShaderModule.h; sourceTree = "<group>"; };
+		97835C9229F7C9C600939EBA /* ASTBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTBuilder.h; sourceTree = "<group>"; };
+		97835C9429F7D85A00939EBA /* ASTBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ASTBuilder.cpp; sourceTree = "<group>"; };
 		9789C318297EA105009E9006 /* CallGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallGraph.cpp; sourceTree = "<group>"; };
 		9789C319297EA105009E9006 /* CallGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallGraph.h; sourceTree = "<group>"; };
 		978A9123298A4E8400B37E5E /* MangleNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MangleNames.cpp; sourceTree = "<group>"; };
@@ -602,6 +606,8 @@
 				3A12AECB28FCFA9800C1B975 /* ASTBitcastExpression.h */,
 				3A12AED028FCFC5500C1B975 /* ASTBoolLiteral.h */,
 				3A12AE9F28FCE94B00C1B975 /* ASTBreakStatement.h */,
+				97835C9429F7D85A00939EBA /* ASTBuilder.cpp */,
+				97835C9229F7C9C600939EBA /* ASTBuilder.h */,
 				3A12AE9028FCE94A00C1B975 /* ASTBuiltinAttribute.h */,
 				33EA188527BC26DF00A1DD52 /* ASTCallExpression.h */,
 				3A12AEA328FCE94C00C1B975 /* ASTCompoundAssignmentStatement.h */,
@@ -707,6 +713,7 @@
 				3A12AECD28FCFA9800C1B975 /* ASTBitcastExpression.h in Headers */,
 				3A12AED628FCFC5600C1B975 /* ASTBoolLiteral.h in Headers */,
 				3A12AEB928FCE94C00C1B975 /* ASTBreakStatement.h in Headers */,
+				97835C9329F7C9C600939EBA /* ASTBuilder.h in Headers */,
 				3A12AEAA28FCE94C00C1B975 /* ASTBuiltinAttribute.h in Headers */,
 				33EA188627BC26DF00A1DD52 /* ASTCallExpression.h in Headers */,
 				3A12AEBD28FCE94C00C1B975 /* ASTCompoundAssignmentStatement.h in Headers */,
@@ -951,6 +958,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3AD0D23E2988F3AB0080D728 /* ASTBinaryExpression.cpp in Sources */,
+				97835C9529F7D85A00939EBA /* ASTBuilder.cpp in Sources */,
 				3A9D02A4298390CF00888A75 /* ASTStringDumper.cpp in Sources */,
 				3AD0D23B2988ED8F0080D728 /* ASTUnaryExpression.cpp in Sources */,
 				3A1337E728FBD56400F29B73 /* ASTVisitor.cpp in Sources */,

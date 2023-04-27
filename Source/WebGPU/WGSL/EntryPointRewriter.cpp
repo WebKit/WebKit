@@ -159,7 +159,7 @@ void EntryPointRewriter::constructInputStruct()
     // insert `var ${parameter.name()} = ${structName}.${parameter.name()}`
     AST::StructureMember::List structMembers;
     for (auto& parameter : m_parameters) {
-        structMembers.append(makeUniqueRef<AST::StructureMember>(
+        structMembers.append(m_shaderModule.astBuilder().construct<AST::StructureMember>(
             SourceSpan::empty(),
             WTFMove(parameter.name),
             WTFMove(parameter.type),
@@ -253,7 +253,7 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
             )
         ));
         path.append(data.name);
-        for (auto& member : structType->structure.members())
+        for (AST::StructureMember& member : structType->structure.members())
             visit(path, MemberOrParameter { member.name(), member.type(), member.attributes() });
         path.removeLast();
         return;

@@ -148,7 +148,7 @@ void NameManglerVisitor::visit(AST::Structure& structure)
     introduceVariable(structure.name(), MangledName::Type);
 
     NameMap fieldMap;
-    for (auto& member : structure.members()) {
+    for (AST::StructureMember& member : structure.members()) {
         AST::Visitor::visit(member.type());
         auto mangledName = makeMangledName(member.name(), MangledName::Field);
         fieldMap.add(member.name(), mangledName);

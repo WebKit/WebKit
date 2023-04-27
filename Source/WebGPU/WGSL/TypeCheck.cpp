@@ -178,7 +178,7 @@ void TypeChecker::visitStructMembers(AST::Structure& structure)
     ASSERT(std::holds_alternative<Types::Struct>(**type));
 
     auto& structType = std::get<Types::Struct>(**type);
-    for (auto& member : structure.members()) {
+    for (AST::StructureMember& member : structure.members()) {
         auto* memberType = resolve(member.type());
         auto result = structType.fields.add(member.name().id(), memberType);
         ASSERT_UNUSED(result, result.isNewEntry);

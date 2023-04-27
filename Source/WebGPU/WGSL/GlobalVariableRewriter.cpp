@@ -312,7 +312,7 @@ void RewriteGlobalVariables::insertStructs(const UsedGlobals& usedGlobals)
             AST::TypeName::Ref memberType = *global->declaration->maybeTypeName();
             if (shouldBeReference)
                 memberType = adoptRef(*new AST::ReferenceTypeName(span, WTFMove(memberType)));
-            structMembers.append(makeUniqueRef<AST::StructureMember>(
+            structMembers.append(m_callGraph.ast().astBuilder().construct<AST::StructureMember>(
                 span,
                 AST::Identifier::make(global->declaration->name()),
                 WTFMove(memberType),

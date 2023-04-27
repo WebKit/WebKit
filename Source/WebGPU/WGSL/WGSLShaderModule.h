@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ASTBuilder.h"
 #include "ASTDirective.h"
 #include "ASTFunction.h"
 #include "ASTStructure.h"
@@ -56,6 +57,7 @@ public:
     AST::Structure::List& structures() { return m_structures; }
     AST::Variable::List& variables() { return m_variables; }
     TypeStore& types() { return m_types; }
+    AST::Builder& astBuilder() { return m_astBuilder; }
 
     template<typename T>
     std::enable_if_t<std::is_base_of_v<AST::Node, T>, void> replace(T* current, T&& replacement)
@@ -136,6 +138,7 @@ private:
     AST::Structure::List m_structures;
     AST::Variable::List m_variables;
     TypeStore m_types;
+    AST::Builder m_astBuilder;
     Vector<std::function<void()>> m_replacements;
 };
 

@@ -26,22 +26,17 @@
 #pragma once
 
 #include "ASTAttribute.h"
+#include "ASTBuilder.h"
 #include "ASTIdentifier.h"
 #include "ASTTypeName.h"
 
 namespace WGSL::AST {
 
 class StructureMember final : public Node {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    using List = UniqueRefVector<StructureMember>;
+    WGSL_AST_BUILDER_NODE(StructureMember);
 
-    StructureMember(SourceSpan span, Identifier&& name, TypeName::Ref&& type, Attribute::List&& attributes)
-        : Node(span)
-        , m_name(WTFMove(name))
-        , m_attributes(WTFMove(attributes))
-        , m_type(WTFMove(type))
-    { }
+public:
+    using List = Vector<std::reference_wrapper<StructureMember>>;
 
     NodeKind kind() const final;
     Identifier& name() { return m_name; }
@@ -49,6 +44,13 @@ public:
     Attribute::List& attributes() { return m_attributes; }
 
 private:
+    StructureMember(SourceSpan span, Identifier&& name, TypeName::Ref&& type, Attribute::List&& attributes)
+        : Node(span)
+        , m_name(WTFMove(name))
+        , m_attributes(WTFMove(attributes))
+        , m_type(WTFMove(type))
+    { }
+
     Identifier m_name;
     Attribute::List m_attributes;
     TypeName::Ref m_type;

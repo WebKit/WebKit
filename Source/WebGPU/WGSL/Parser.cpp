@@ -77,6 +77,12 @@ struct TemplateTypes<TT> {
         return { WTFMove(astNodeResult) }; \
     } while (false)
 
+#define RETURN_ARENA_NODE(type, ...) \
+    do { \
+        AST::type& astNodeResult = m_builder.construct<AST::type>(CURRENT_SOURCE_SPAN() __VA_OPT__(,) __VA_ARGS__); /* NOLINT */ \
+        return { astNodeResult }; \
+    } while (false)
+
 #define RETURN_NODE_REF(type, ...) \
     return { adoptRef(*new AST::type(CURRENT_SOURCE_SPAN(), __VA_ARGS__)) };
 
@@ -549,7 +555,7 @@ Result<AST::Structure::Ref> Parser<Lexer>::parseStructure(AST::Attribute::List&&
     AST::StructureMember::List members;
     while (current().type != TokenType::BraceRight) {
         PARSE(member, StructureMember);
-        members.append(makeUniqueRef<AST::StructureMember>(WTFMove(member)));
+        members.append(member);
         if (current().type == TokenType::Comma)
             consume();
         else
@@ -562,7 +568,7 @@ Result<AST::Structure::Ref> Parser<Lexer>::parseStructure(AST::Attribute::List&&
 }
 
 template<typename Lexer>
-Result<AST::StructureMember> Parser<Lexer>::parseStructureMember()
+Result<std::reference_wrapper<AST::StructureMember>> Parser<Lexer>::parseStructureMember()
 {
     START_PARSE();
 
@@ -571,7 +577,7 @@ Result<AST::StructureMember> Parser<Lexer>::parseStructureMember()
     CONSUME_TYPE(Colon);
     PARSE(type, TypeName);
 
-    RETURN_NODE(StructureMember, WTFMove(name), WTFMove(type), WTFMove(attributes));
+    RETURN_ARENA_NODE(StructureMember, WTFMove(name), WTFMove(type), WTFMove(attributes));
 }
 
 template<typename Lexer>
