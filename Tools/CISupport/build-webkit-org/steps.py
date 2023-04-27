@@ -152,6 +152,13 @@ class CheckOutSource(git.Git):
         else:
             return {'step': 'Cleaned and updated working directory'}
 
+    @defer.inlineCallbacks
+    def run(self):
+        rc = yield super().run()
+        if rc == SUCCESS:
+            yield self._dovccmd(['remote', 'set-url', '--push', 'origin', 'PUSH_DISABLED_BY_ADMIN'])
+        defer.returnValue(rc)
+
 
 class CleanUpGitIndexLock(shell.ShellCommand):
     name = 'clean-git-index-lock'
