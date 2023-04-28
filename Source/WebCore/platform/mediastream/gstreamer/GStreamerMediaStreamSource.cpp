@@ -579,21 +579,22 @@ static void webkitMediaStreamSrcUriHandlerInit(gpointer gIface, gpointer)
 #define webkit_media_stream_src_parent_class parent_class
 WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitMediaStreamSrc, webkit_media_stream_src, GST_TYPE_BIN, doInit)
 
-static void webkitMediaStreamSrcSetProperty(GObject* object, guint propertyId, const GValue*, GParamSpec* pspec)
-{
-    switch (propertyId) {
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
-        break;
-    }
-}
-
 static void webkitMediaStreamSrcGetProperty(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
     switch (propertyId) {
-    case PROP_IS_LIVE:
-        g_value_set_boolean(value, TRUE);
+    case PROP_IS_LIVE: {
+        bool hasCaptureTrack = false;
+        auto* self = WEBKIT_MEDIA_STREAM_SRC_CAST(object);
+        for (auto& track : self->priv->tracks) {
+            if (track->isCaptureTrack()) {
+                hasCaptureTrack = true;
+                break;
+            }
+        }
+
+        g_value_set_boolean(value, hasCaptureTrack);
         break;
+    }
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;
@@ -710,7 +711,6 @@ static void webkit_media_stream_src_class_init(WebKitMediaStreamSrcClass* klass)
     gobjectClass->constructed = webkitMediaStreamSrcConstructed;
     gobjectClass->dispose = webkitMediaStreamSrcDispose;
     gobjectClass->get_property = webkitMediaStreamSrcGetProperty;
-    gobjectClass->set_property = webkitMediaStreamSrcSetProperty;
 
     g_object_class_install_property(gobjectClass, PROP_IS_LIVE, g_param_spec_boolean("is-live", nullptr, nullptr,
         TRUE, static_cast<GParamFlags>(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
