@@ -2767,11 +2767,12 @@ webkit.org/b/255184 [ Ventura ] transforms/3d/hit-testing/overlapping-layers-hit
 [ Ventura ] svg/W3C-SVG-1.1/metadata-example-01-b.svg [ Pass Failure ]
 [ Ventura ] svg/custom/use-on-symbol-inside-pattern.svg [ Pass Failure ]
 [ Ventura ] webaudio/ScriptProcessor/scriptprocessor-offlineaudiocontext.html [ Pass Failure ]
-[ Ventura ] webaudio/audiocontext-large-samplerate.html [ Pass Failure ]
 [ Ventura ] fast/shrink-wrap/rect-shrink-wrap.html [ Pass ImageOnlyFailure ]
 [ Ventura ] imported/mozilla/svg/smil/style/anim-css-fontsize-1-from-by-pct-pct.svg [ Pass ImageOnlyFailure ]
 [ Ventura ] imported/mozilla/svg/smil/style/anim-css-fontsize-1-from-to-pct-pct.svg [ Pass ImageOnlyFailure ]
 [ Ventura ] imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-009.html [ Pass ImageOnlyFailure ]
 [ Ventura ] imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-010.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/256091 [ Ventura+ ] webaudio/audiocontext-large-samplerate.html [ Pass Failure ]
 
 webkit.org/b/255788 [ Ventura+ Debug ] tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-async-overflow.html [ Skip ]
