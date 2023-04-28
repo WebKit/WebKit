@@ -29,6 +29,12 @@ AcceleratedCompositedAnimationsEnabled:
     WebCore:
       default: true
 
+AllowAnimationControlsOverride:
+  type: bool
+  defaultValue:
+    WebCore:
+      default: false
+
 AnimatedImageDebugCanvasDrawingEnabled:
   type: bool
   defaultValue:

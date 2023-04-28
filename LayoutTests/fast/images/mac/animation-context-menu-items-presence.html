@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<style>
+#gif {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+</style>
+</head>
+<body>
+
+<img id="gif" src="../resources/animation.gif" />
+
+<script>
+description("This test ensures that the 'Play Animation', 'Pause Animation', 'Play All Animations', and 'Pause All Animations' context menu items do not appear by default.");
+
+window.addEventListener("load", () => {
+  window.jsTestIsAsync = true;
+  if (!window.internals)
+    return;
+  internals.settings.setImageAnimationControlEnabled(true);
+
+  eventSender.mouseMoveTo(1, 1);
+  eventSender.contextClick().filter(item => item.title).forEach((item) => {
+    debug(item.title);
+    if (item.title.toLowerCase().includes("animation"))
+      debug(`FAIL: Unexpected context menu item ${item.title}.`);
+  });
+
+  internals.settings.setImageAnimationControlEnabled(false);
+  internals.clearMemoryCache();
+  finishJSTest();
+});
+</script>
+</body>
+</html>

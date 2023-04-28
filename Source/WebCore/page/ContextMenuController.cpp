@@ -94,6 +94,12 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+#include <wtf/SoftLinking.h>
+SOFT_LINK_LIBRARY_OPTIONAL(libAccessibility)
+SOFT_LINK_OPTIONAL(libAccessibility, _AXSReduceMotionAutoplayAnimatedImagesEnabled, Boolean, (), ());
+#endif
+
 namespace WebCore {
 
 using namespace WTF::Unicode;
@@ -1032,6 +1038,18 @@ void ContextMenuController::populate()
 #endif
     };
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    auto canAddAnimationControls = [&] () -> bool {
+        if (!frame->page() || !frame->page()->settings().imageAnimationControlEnabled())
+            return false;
+
+        auto* autoplayAnimatedImagesFunction = _AXSReduceMotionAutoplayAnimatedImagesEnabledPtr();
+        // Only show these controls if autoplay of animated images has been disabled.
+        bool systemAllowsAnimationControls = autoplayAnimatedImagesFunction && !autoplayAnimatedImagesFunction();
+        return systemAllowsAnimationControls || frame->page()->settings().allowAnimationControlsOverride();
+    };
+#endif
+
     auto selectedText = m_context.hitTestResult().selectedText();
     m_context.setSelectedText(selectedText);
 
@@ -1071,7 +1089,7 @@ void ContextMenuController::populate()
                 }
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-                if (image && image->isAnimated() && frame->page() && frame->page()->settings().imageAnimationControlEnabled()) {
+                if (image && image->isAnimated() && canAddAnimationControls()) {
                     appendItem(*separatorItem(), m_contextMenu.get());
                     if (m_context.hitTestResult().isAnimating())
                         appendItem(PauseAnimation, m_contextMenu.get());
@@ -1086,7 +1104,7 @@ void ContextMenuController::populate()
         }
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-        if (frame->page() && frame->page()->settings().imageAnimationControlEnabled()) {
+        if (canAddAnimationControls()) {
             if (frame->page()->imageAnimationEnabled())
                 appendItem(PauseAllAnimations, m_contextMenu.get());
             else

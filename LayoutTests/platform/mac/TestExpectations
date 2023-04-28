@@ -111,6 +111,9 @@ fast/images/mac/play-all-pause-all-animations-context-menu-items.html [ Skip ]
 # Enabled in rdar://104134092
 fast/images/mac/play-pause-individual-animation-context-menu-items.html [ Skip ]
 
+# Enabled in rdar://108629675
+fast/images/mac/animation-context-menu-items-presence.html [ Skip ]
+
 # <rdar://problem/5647952> fast/events/mouseout-on-window.html needs mac DRT to issue mouse out events
 fast/events/mouseout-on-window.html [ Failure ]
 
