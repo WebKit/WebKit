@@ -6,6 +6,7 @@ include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
 include(platform/Soup.cmake)
 include(platform/TextureMapper.cmake)
+include(platform/Whisper.cmake)
 
 list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
     "SourcesGTK.txt"
