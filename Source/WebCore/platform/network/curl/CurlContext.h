@@ -178,7 +178,6 @@ public:
     CURLMcode addHandle(CURL*);
     CURLMcode removeHandle(CURL*);
 
-    CURLMcode getFdSet(fd_set&, fd_set&, fd_set&, int&);
     CURLMcode poll(const Vector<curl_waitfd>&, int);
     CURLMcode wakeUp();
     CURLMcode perform(int&);
@@ -261,7 +260,6 @@ public:
     void enableHttpGetRequest();
     void enableHttpHeadRequest();
     void enableHttpPostRequest();
-    void setPostFields(const uint8_t*, long);
     void setPostFieldLarge(curl_off_t);
     void enableHttpPutRequest();
     void setInFileSizeLarge(curl_off_t);
@@ -312,8 +310,6 @@ public:
     void addExtraNetworkLoadMetrics(NetworkLoadMetrics&);
 
     std::optional<CertificateInfo> certificateInfo() const;
-
-    static long long maxCurlOffT();
 
     // socket
     Expected<curl_socket_t, CURLcode> getActiveSocket();

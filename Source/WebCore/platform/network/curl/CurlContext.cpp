@@ -266,16 +266,6 @@ CURLMcode CurlMultiHandle::removeHandle(CURL* handle)
     return curl_multi_remove_handle(m_multiHandle, handle);
 }
 
-CURLMcode CurlMultiHandle::getFdSet(fd_set& readFdSet, fd_set& writeFdSet, fd_set& excFdSet, int& maxFd)
-{
-    FD_ZERO(&readFdSet);
-    FD_ZERO(&writeFdSet);
-    FD_ZERO(&excFdSet);
-    maxFd = 0;
-
-    return curl_multi_fdset(m_multiHandle, &readFdSet, &writeFdSet, &excFdSet, &maxFd);
-}
-
 CURLMcode CurlMultiHandle::poll(const Vector<curl_waitfd>& extraFds, int timeoutMS)
 {
     int numFds = 0;
@@ -506,12 +496,6 @@ void CurlHandle::enableHttpPostRequest()
     enableHttp();
     curl_easy_setopt(m_handle, CURLOPT_POST, 1L);
     curl_easy_setopt(m_handle, CURLOPT_POSTFIELDSIZE, 0L);
-}
-
-void CurlHandle::setPostFields(const uint8_t* data, long size)
-{
-    curl_easy_setopt(m_handle, CURLOPT_POSTFIELDS, data);
-    curl_easy_setopt(m_handle, CURLOPT_POSTFIELDSIZE, size);
 }
 
 void CurlHandle::setPostFieldLarge(curl_off_t size)
@@ -981,13 +965,6 @@ std::optional<CertificateInfo> CurlHandle::certificateInfo() const
     }
 
     return std::nullopt;
-}
-
-long long CurlHandle::maxCurlOffT()
-{
-    static const long long maxCurlOffT = (1LL << (expectedSizeOfCurlOffT() * 8 - 1)) - 1;
-
-    return maxCurlOffT;
 }
 
 int CurlHandle::expectedSizeOfCurlOffT()
