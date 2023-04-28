@@ -102,11 +102,9 @@ void AccessibilityARIAGrid::addChildren()
     }
     
     m_childrenInitialized = true;
-    if (!m_renderer)
-        return;
-    
-    AXObjectCache* axCache = m_renderer->document().axObjectCache();
-    
+    auto* document = this->document();
+    auto* axCache = document ? document->axObjectCache() : nullptr;
+
     // Add the children rows but be mindful in case there are footer sections in this table.
     HashSet<AccessibilityObject*> appendedRows;
     unsigned columnCount = 0;

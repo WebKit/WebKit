@@ -35,6 +35,7 @@
 #include "ElementIterator.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "MathMLElement.h"
 #include "RenderObject.h"
 #include "RenderTableCell.h"
 
@@ -77,9 +78,6 @@ bool AccessibilityTableCell::computeAccessibilityIsIgnored() const
 
 AccessibilityTable* AccessibilityTableCell::parentTable() const
 {
-    if (!is<RenderTableCell>(renderer()))
-        return nullptr;
-
     // If the document no longer exists, we might not have an axObjectCache.
     if (!axObjectCache())
         return nullptr;
@@ -89,28 +87,35 @@ AccessibilityTable* AccessibilityTableCell::parentTable() const
     // By using only get() implies that the AXTable must be created before AXTableCells. This should
     // always be the case when AT clients access a table.
     // https://bugs.webkit.org/show_bug.cgi?id=42652
-    AccessibilityObject* parentTable = axObjectCache()->get(downcast<RenderTableCell>(*m_renderer).table());
-    if (!is<AccessibilityTable>(parentTable))
+    AccessibilityObject* tableFromRenderTree = nullptr;
+    if (auto* renderTableCell = dynamicDowncast<RenderTableCell>(renderer()))
+        tableFromRenderTree = axObjectCache()->get(renderTableCell->table());
+    else if (node()) {
+        return downcast<AccessibilityTable>(Accessibility::findAncestor<AccessibilityObject>(*this, false, [] (const auto& ancestor) {
+            return is<AccessibilityTable>(ancestor);
+        }));
+    }
+
+    if (!tableFromRenderTree)
         return nullptr;
     
     // The RenderTableCell's table() object might be anonymous sometimes. We should handle it gracefully
     // by finding the right table.
-    if (!parentTable->node()) {
-        for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) {
+    if (!tableFromRenderTree->node()) {
+        for (auto* ancestor = parentObject(); ancestor; ancestor = ancestor->parentObject()) {
             // If this is a non-anonymous table object, but not an accessibility table, we should stop because
             // we don't want to choose another ancestor table as this cell's table.
-            if (is<AccessibilityTable>(*parent)) {
-                auto& parentTable = downcast<AccessibilityTable>(*parent);
-                if (parentTable.isExposable())
-                    return &parentTable;
-                if (parentTable.node())
+            if (auto* ancestorTable = dynamicDowncast<AccessibilityTable>(ancestor)) {
+                if (ancestorTable->isExposable())
+                    return ancestorTable;
+                if (ancestorTable->node())
                     break;
             }
         }
         return nullptr;
     }
     
-    return downcast<AccessibilityTable>(parentTable);
+    return dynamicDowncast<AccessibilityTable>(tableFromRenderTree);
 }
     
 bool AccessibilityTableCell::isTableCell() const
@@ -118,8 +123,8 @@ bool AccessibilityTableCell::isTableCell() const
     // If the parent table is an accessibility table, then we are a table cell.
     // This used to check if the unignoredParent was a row, but that exploded performance if
     // this was in nested tables. This check should be just as good.
-    AccessibilityObject* parentTable = this->parentTable();
-    return is<AccessibilityTable>(parentTable) && downcast<AccessibilityTable>(*parentTable).isExposable();
+    auto* parentTable = this->parentTable();
+    return parentTable && parentTable->isExposable();
 }
     
 AccessibilityRole AccessibilityTableCell::determineAccessibilityRole()
@@ -321,22 +326,29 @@ AccessibilityTableRow* AccessibilityTableCell::parentRow() const
 
 std::pair<unsigned, unsigned> AccessibilityTableCell::rowIndexRange() const
 {
-    std::pair<unsigned, unsigned> rowRange { 0, 1 };
-    if (!is<RenderTableCell>(renderer()))
-        return rowRange;
-
-    RenderTableCell& renderCell = downcast<RenderTableCell>(*m_renderer);
+    auto* parentRow = this->parentRow();
+    std::pair<unsigned, unsigned> rowRange { parentRow ? parentRow->rowIndex() : 0, 1 };
 
     // ARIA 1.1's aria-rowspan attribute is intended for cells and gridcells which are not contained
     // in a native table. But if we have a valid author-provided value and do not have an explicit
     // native host language value for the rowspan, expose the ARIA value.
     rowRange.second = axRowSpan();
-    if (static_cast<int>(rowRange.second) == -1)
-        rowRange.second = renderCell.rowSpan();
-    
-    if (AccessibilityTableRow* parentRow = this->parentRow())
-        rowRange.first = parentRow->rowIndex();
-
+    if (static_cast<int>(rowRange.second) == -1) {
+        // It's faster to get rowspan from RenderTableCell because it has built in caches to avoid
+        // reading from the DOM, so try that first.
+        if (auto* renderTableCell = dynamicDowncast<RenderTableCell>(renderer()))
+            rowRange.second = renderTableCell->rowSpan();
+        else if (auto* tableCellElement = dynamicDowncast<HTMLTableCellElement>(node()))
+            rowRange.second = std::min<unsigned>(tableCellElement->rowSpan(), maxRowIndex);
+#if ENABLE(MATHML)
+        else if (auto* mathMLElement = dynamicDowncast<MathMLElement>(node()); mathMLElement && mathMLElement->hasTagName(MathMLNames::mtdTag))
+            rowRange.second = std::min<unsigned>(mathMLElement->rowSpan(), maxRowIndex);
+#endif
+        else {
+            // Default back to 1.
+            rowRange.second = 1;
+        }
+    }
     return rowRange;
 }
     

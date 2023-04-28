@@ -87,23 +87,26 @@ bool AccessibilityTable::hasNonTableARIARole() const
 
 bool AccessibilityTable::isExposable() const
 {
-    return m_renderer && m_isExposable;
+    return m_isExposable && (m_renderer || is<HTMLTableElement>(node()));
 }
 
 HTMLTableElement* AccessibilityTable::tableElement() const
 {
-    if (!is<RenderTable>(*m_renderer))
+    if (auto* tableElement = dynamicDowncast<HTMLTableElement>(node()))
+        return tableElement;
+
+    auto* renderTable = dynamicDowncast<RenderTable>(renderer());
+    if (!renderTable)
         return nullptr;
-    
-    RenderTable& table = downcast<RenderTable>(*m_renderer);
-    if (is<HTMLTableElement>(table.element()))
-        return downcast<HTMLTableElement>(table.element());
+
+    if (auto* tableElement = dynamicDowncast<HTMLTableElement>(renderTable->element()))
+        return tableElement;
     // Try to find the table element, when the AccessibilityTable is mapped to an anonymous table renderer.
-    auto* firstChild = table.firstChild();
+    auto* firstChild = renderTable->firstChild();
     if (!firstChild || !firstChild->node())
         return nullptr;
-    if (is<HTMLTableElement>(*firstChild->node()))
-        return downcast<HTMLTableElement>(firstChild->node());
+    if (auto* childTable = dynamicDowncast<HTMLTableElement>(firstChild->node()))
+        return childTable;
     // FIXME: This might find an unrelated parent table element.
     return ancestorsOfType<HTMLTableElement>(*(firstChild->node())).first();
 }
@@ -364,7 +367,7 @@ bool AccessibilityTable::computeIsTableExposableThroughAccessibility() const
     // <table> should be exposed as an AXTable. The goal
     // is to only show "data" tables.
 
-    if (!m_renderer)
+    if (!m_renderer && !is<HTMLTableElement>(node()))
         return false;
 
     // If it has a non-table ARIA role, it shouldn't be exposed as a table.
@@ -449,7 +452,7 @@ void AccessibilityTable::addChildren()
     if (footer)
         addChildrenFromSection(footer, maxColumnCount);
     
-    AXObjectCache* axCache = m_renderer->document().axObjectCache();
+    auto* axCache = document()->axObjectCache();
     // make the columns based on the number of columns in the first body
     unsigned length = maxColumnCount;
     for (unsigned i = 0; i < length; ++i) {
@@ -496,7 +499,7 @@ void AccessibilityTable::addChildrenFromSection(RenderTableSection* tableSection
     if (!tableSection)
         return;
     
-    AXObjectCache* axCache = m_renderer->document().axObjectCache();
+    auto* axCache = document()->axObjectCache();
     HashSet<AccessibilityObject*> appendedRows;
     unsigned numRows = tableSection->numRows();
     for (unsigned rowIndex = 0; rowIndex < numRows; ++rowIndex) {
@@ -556,15 +559,11 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTable::rows()
 
 AXCoreObject::AccessibilityChildrenVector AccessibilityTable::columnHeaders()
 {
-    AccessibilityChildrenVector headers;
-    if (!m_renderer)
-        return headers;
-
     updateChildrenIfNecessary();
 
+    AccessibilityChildrenVector headers;
     // Sometimes m_columns can be reset during the iteration, we cache it here to be safe.
     AccessibilityChildrenVector columnsCopy = m_columns;
-
     for (const auto& column : columnsCopy) {
         if (auto* header = column->columnHeader())
             headers.append(header);
@@ -575,17 +574,13 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTable::columnHeaders()
 
 AXCoreObject::AccessibilityChildrenVector AccessibilityTable::rowHeaders()
 {
-    AccessibilityChildrenVector headers;
-    if (!m_renderer)
-        return headers;
-
     updateChildrenIfNecessary();
 
+    AccessibilityChildrenVector headers;
     // Sometimes m_rows can be reset during the iteration, we cache it here to be safe.
     AccessibilityChildrenVector rowsCopy = m_rows;
-
     for (const auto& row : rowsCopy) {
-        if (AXCoreObject* header = downcast<AccessibilityTableRow>(*row).headerObject())
+        if (auto* header = downcast<AccessibilityTableRow>(*row).headerObject())
             headers.append(header);
     }
 
@@ -594,12 +589,9 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTable::rowHeaders()
 
 AXCoreObject::AccessibilityChildrenVector AccessibilityTable::visibleRows()
 {
-    AccessibilityChildrenVector rows;
-    if (!m_renderer)
-        return rows;
-
     updateChildrenIfNecessary();
 
+    AccessibilityChildrenVector rows;
     for (const auto& row : m_rows) {
         if (row && !row->isOffScreen())
             rows.append(row);
@@ -610,15 +602,11 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTable::visibleRows()
 
 AXCoreObject::AccessibilityChildrenVector AccessibilityTable::cells()
 {
-    AccessibilityChildrenVector cells;
-    if (!m_renderer)
-        return cells;
-
     updateChildrenIfNecessary();
 
+    AccessibilityChildrenVector cells;
     for (const auto& row : m_rows)
         cells.appendVector(row->children());
-
     return cells;
 }
     
@@ -716,20 +704,15 @@ String AccessibilityTable::title() const
         return AccessibilityRenderObject::title();
     
     String title;
-    if (!m_renderer)
-        return title;
-    
-    // see if there is a caption
-    Node* tableElement = m_renderer->node();
-    if (is<HTMLTableElement>(tableElement)) {
-        if (auto caption = downcast<HTMLTableElement>(*tableElement).caption())
+    // Prefer the table caption if present.
+    if (auto* tableElement = dynamicDowncast<HTMLTableElement>(node())) {
+        if (RefPtr caption = tableElement->caption())
             title = caption->innerText();
     }
     
-    // try the standard 
+    // Fall back to standard title computation.
     if (title.isEmpty())
         title = AccessibilityRenderObject::title();
-    
     return title;
 }
 
