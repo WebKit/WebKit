@@ -457,7 +457,8 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
         cache->childrenChanged(&parent, newChild);
 
     if (parent.hasOutlineAutoAncestor() || parent.outlineStyleForRepaint().outlineStyleIsAuto() == OutlineIsAuto::On)
-        newChild->setHasOutlineAutoAncestor();
+        if (!is<RenderMultiColumnSet>(newChild->previousSibling())) 
+            newChild->setHasOutlineAutoAncestor();
 }
 
 void RenderTreeBuilder::move(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject& child, RenderObject* beforeChild, NormalizeAfterInsertion normalizeAfterInsertion)

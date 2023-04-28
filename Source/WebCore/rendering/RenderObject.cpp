@@ -926,9 +926,9 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
             renderer = renderMultiColumnPlaceholder;
         }
 
-        bool rendererHasOutlineAutoAncestor = renderer->hasOutlineAutoAncestor();
+        bool rendererHasOutlineAutoAncestor = renderer->hasOutlineAutoAncestor() || originalRenderer->hasOutlineAutoAncestor();
         ASSERT(rendererHasOutlineAutoAncestor
-            || renderer->outlineStyleForRepaint().outlineStyleIsAuto() == OutlineIsAuto::On
+            || originalRenderer->outlineStyleForRepaint().outlineStyleIsAuto() == OutlineIsAuto::On
             || (is<RenderBoxModelObject>(*renderer) && downcast<RenderBoxModelObject>(*renderer).isContinuation()));
         if (originalRenderer == &repaintContainer && rendererHasOutlineAutoAncestor)
             repaintRectNeedsConverting = true;
@@ -936,11 +936,11 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
             continue;
         // Issue repaint on the correct repaint container.
         LayoutRect adjustedRepaintRect = repaintRect;
-        adjustedRepaintRect.inflate(renderer->outlineStyleForRepaint().outlineSize());
+        adjustedRepaintRect.inflate(originalRenderer->outlineStyleForRepaint().outlineSize());
         if (!repaintRectNeedsConverting)
             repaintContainer.repaintRectangle(adjustedRepaintRect);
-        else if (is<RenderLayerModelObject>(renderer)) {
-            const auto& rendererWithOutline = downcast<RenderLayerModelObject>(*renderer);
+        else if (is<RenderLayerModelObject>(originalRenderer)) {
+            const auto& rendererWithOutline = downcast<RenderLayerModelObject>(*originalRenderer);
             adjustedRepaintRect = LayoutRect(repaintContainer.localToContainerQuad(FloatRect(adjustedRepaintRect), &rendererWithOutline).boundingBox());
             rendererWithOutline.repaintRectangle(adjustedRepaintRect);
         }
