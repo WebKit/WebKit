@@ -184,12 +184,6 @@ UniqueRef<Layout::Box> BoxTree::createLayoutBox(RenderObject& renderer)
     if (is<RenderText>(renderer)) {
         auto& textRenderer = downcast<RenderText>(renderer);
 
-        if (is<RenderCounter>(textRenderer) && textRenderer.preferredLogicalWidthsDirty()) {
-            // This ensures that InlineTextBox always has up-to-date counter text.
-            // Counter content is updated through preferred width computation.
-            downcast<RenderCounter>(textRenderer).updateCounter();
-        }
-
         auto style = RenderStyle::createAnonymousStyleWithDisplay(textRenderer.style(), DisplayType::Inline);
         auto isCombinedText = is<RenderCombineText>(textRenderer) && downcast<RenderCombineText>(textRenderer).isCombined();
         auto text = style.textSecurity() == TextSecurity::None

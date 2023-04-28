@@ -178,17 +178,12 @@ void CounterNode::resetRenderers()
 {
     if (!m_rootRenderer)
         return;
-    bool skipLayoutAndPerfWidthsRecalc = m_rootRenderer->renderTreeBeingDestroyed();
     auto* current = m_rootRenderer;
     while (current) {
-        if (!skipLayoutAndPerfWidthsRecalc) {
-            current->setNeedsLayoutAndPrefWidthsRecalc();
-            if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*current))
-                lineLayout->flow().invalidateLineLayoutPath();
-        }
         auto* next = current->m_nextForSameCounter;
         current->m_nextForSameCounter = nullptr;
         current->m_counterNode = nullptr;
+        current->view().addCounterNeedingUpdate(*current);
         current = next;
     }
     m_rootRenderer = nullptr;

@@ -37,8 +37,6 @@ public:
 
     static void destroyCounterNodes(RenderElement&);
     static void destroyCounterNode(RenderElement&, const AtomString& identifier);
-    static void rendererSubtreeAttached(RenderElement&);
-    static void rendererRemovedFromTree(RenderElement&);
     static void rendererStyleChanged(RenderElement&, const RenderStyle* oldStyle, const RenderStyle& newStyle);
 
     void updateCounter();
@@ -51,8 +49,6 @@ private:
     ASCIILiteral renderName() const override;
     bool isCounter() const override;
     String originalText() const override;
-    
-    void computePreferredLogicalWidths(float leadWidth) override;
 
     CounterContent m_counter;
     CounterNode* m_counterNode { nullptr };

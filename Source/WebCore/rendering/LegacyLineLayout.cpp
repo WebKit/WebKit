@@ -191,7 +191,6 @@ static inline void dirtyLineBoxesForRenderer(RenderObject& renderer, bool fullLa
 {
     if (is<RenderText>(renderer)) {
         RenderText& renderText = downcast<RenderText>(renderer);
-        updateCounterIfNeeded(renderText);
         renderText.dirtyLineBoxes(fullLayout);
     } else if (is<RenderLineBreak>(renderer))
         downcast<RenderLineBreak>(renderer).dirtyLineBoxes(fullLayout);

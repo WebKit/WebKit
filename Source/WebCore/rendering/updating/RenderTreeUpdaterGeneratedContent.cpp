@@ -29,6 +29,7 @@
 #include "ContentData.h"
 #include "InspectorInstrumentation.h"
 #include "PseudoElement.h"
+#include "RenderCounter.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElement.h"
 #include "RenderImage.h"
@@ -67,6 +68,18 @@ void RenderTreeUpdater::GeneratedContent::updateQuotesUpTo(RenderQuote* lastQuot
             return;
     }
     ASSERT(!lastQuote || m_updater.m_builder.hasBrokenContinuation());
+}
+
+void RenderTreeUpdater::GeneratedContent::updateCounters()
+{
+    auto update = [&] {
+        auto counters = m_updater.renderView().takeCountersNeedingUpdate();
+        for (auto& counter : counters)
+            counter.updateCounter();
+    };
+    // Update twice and hope it stabilizes.
+    update();
+    update();
 }
 
 static bool elementIsTargetedByKeyframeEffectRequiringPseudoElement(const Element* element, PseudoId pseudoId)
