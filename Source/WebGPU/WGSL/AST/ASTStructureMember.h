@@ -29,6 +29,7 @@
 #include "ASTBuilder.h"
 #include "ASTIdentifier.h"
 #include "ASTTypeName.h"
+#include <wtf/ReferenceWrapperVector.h>
 
 namespace WGSL::AST {
 
@@ -36,7 +37,7 @@ class StructureMember final : public Node {
     WGSL_AST_BUILDER_NODE(StructureMember);
 
 public:
-    using List = Vector<std::reference_wrapper<StructureMember>>;
+    using List = ReferenceWrapperVector<StructureMember>;
 
     NodeKind kind() const final;
     Identifier& name() { return m_name; }

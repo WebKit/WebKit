@@ -253,7 +253,7 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
             )
         ));
         path.append(data.name);
-        for (AST::StructureMember& member : structType->structure.members())
+        for (auto& member : structType->structure.members())
             visit(path, MemberOrParameter { member.name(), member.type(), member.attributes() });
         path.removeLast();
         return;

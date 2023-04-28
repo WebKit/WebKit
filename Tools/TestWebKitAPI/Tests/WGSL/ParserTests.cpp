@@ -123,7 +123,7 @@ static void testStruct(ASCIILiteral program, const Vector<String>& fieldNames, c
 
     EXPECT_EQ(str.members().size(), fieldNames.size());
     for (unsigned i = 0; i < fieldNames.size(); ++i) {
-        auto& attributes = str.members()[i].get().attributes();
+        auto& attributes = str.members()[i].attributes();
         if (!attributeTests.size())
             EXPECT_TRUE(attributes.isEmpty());
         else {
@@ -150,9 +150,9 @@ static void testStruct(ASCIILiteral program, const Vector<String>& fieldNames, c
                 }
             }
         }
-        EXPECT_EQ(str.members()[i].get().name(), fieldNames[i]);
-        EXPECT_TRUE(is<WGSL::AST::NamedTypeName>(str.members()[i].get().type()));
-        auto& memberType = downcast<WGSL::AST::NamedTypeName>(str.members()[i].get().type());
+        EXPECT_EQ(str.members()[i].name(), fieldNames[i]);
+        EXPECT_TRUE(is<WGSL::AST::NamedTypeName>(str.members()[i].type()));
+        auto& memberType = downcast<WGSL::AST::NamedTypeName>(str.members()[i].type());
         EXPECT_EQ(memberType.name(), typeNames[i]);
     }
 }
