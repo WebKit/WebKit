@@ -439,7 +439,13 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
 
 - (NSRect)dropdownRectForElementRect:(const WebCore::IntRect&)rect
 {
-    NSRect windowRect = [[_presentingView window] convertRectToScreen:[_presentingView convertRect:rect toView:nil]];
+    NSWindow *presentingWindow = [_presentingView window];
+    NSRect screenRect = presentingWindow.screen.visibleFrame;
+    NSRect windowRect = [presentingWindow convertRectToScreen:[_presentingView convertRect:rect toView:nil]];
+
+    windowRect = CGRectIntersection(windowRect, screenRect);
+    if (CGRectIsNull(windowRect))
+        return NSZeroRect;
 
     CGFloat totalCellHeight = 0;
     for (auto& suggestion : _suggestions)
@@ -449,11 +455,11 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
     if (_suggestions.size() > 1)
         totalIntercellSpacingAndPadding += (_suggestions.size() - 1) * [_table intercellSpacing].height;
 
-    CGSize mainScreenFrameSize = NSScreen.mainScreen.frame.size;
-    CGFloat width = std::min<CGFloat>(rect.width(), mainScreenFrameSize.width);
-    CGFloat height = std::min<CGFloat>(totalIntercellSpacingAndPadding + std::min(totalCellHeight, maximumTotalHeightForDropdownCells), mainScreenFrameSize.height);
-    CGFloat originX = std::max<CGFloat>(NSMinX(windowRect), std::numeric_limits<int>::min());
-    CGFloat originY = std::max<CGFloat>(NSMinY(windowRect) - height - dropdownTopMargin, std::numeric_limits<int>::min());
+    CGFloat width = std::min<CGFloat>(rect.width(), screenRect.size.width);
+    CGFloat height = std::min<CGFloat>(totalIntercellSpacingAndPadding + std::min(totalCellHeight, maximumTotalHeightForDropdownCells), screenRect.size.height);
+    CGFloat originX = std::max<CGFloat>(NSMinX(windowRect), 0);
+    CGFloat originY = std::max<CGFloat>(NSMinY(windowRect) - height - dropdownTopMargin, 0);
+
     return NSMakeRect(originX, originY, width, height);
 }
 
