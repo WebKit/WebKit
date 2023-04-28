@@ -56,7 +56,8 @@ public:
 
     void begin(const URL&, const WebCore::SystemPreviewInfo&);
     void updateProgress(float);
-    void loadCompleted(const URL& downloadedFile);
+    void loadStarted(const URL& localFileURL);
+    void loadCompleted(const URL& localFileURL);
     void loadFailed();
     void end();
 
@@ -75,8 +76,9 @@ private:
 
     WebPageProxy& m_webPageProxy;
     WebCore::SystemPreviewInfo m_systemPreviewInfo;
-    URL m_destinationURL;
-    URL m_originatingPageURL;
+    URL m_downloadURL;
+    URL m_localFileURL;
+    String m_fragmentIdentifier;
 #if USE(QUICK_LOOK)
     RetainPtr<QLPreviewController> m_qlPreviewController;
     RetainPtr<_WKPreviewControllerDelegate> m_qlPreviewControllerDelegate;

@@ -54,9 +54,9 @@ SOFT_LINK_CLASS(AssetViewer, ARQuickLookWebKitItem);
 SOFT_LINK_CLASS(AssetViewer, ASVLaunchPreview);
 
 @interface ASVLaunchPreview (Staging_101981518)
-+ (void)beginPreviewApplicationWithURLs:(NSArray *)urls is3DContent:(BOOL)is3DContent completion:(void (^)(NSError *))handler;
 + (void)beginPreviewApplicationWithURLs:(NSArray *)urls is3DContent:(BOOL)is3DContent websiteURL:(NSURL *)websiteURL completion:(void (^)(NSError *))handler;
 + (void)launchPreviewApplicationWithURLs:(NSArray *)urls completion:(void (^)(NSError *))handler;
++ (void)cancelPreviewApplicationWithURLs:(NSArray<NSURL *> *)urls error:(NSError *)error completion:(void (^)(NSError *))handler;
 @end
 #endif
 
@@ -260,7 +260,8 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
     WebKit::SystemPreviewController* _previewController;
     long long _expectedContentLength;
     RetainPtr<NSMutableData> _data;
-    RetainPtr<NSString> _suggestedFilename;
+    FileSystem::PlatformFileHandle _fileHandle;
+    String _filePath;
 };
 @end
 
@@ -304,7 +305,18 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
         _expectedContentLength = 0;
 
     _data = adoptNS([[NSMutableData alloc] initWithCapacity:_expectedContentLength]);
-    _suggestedFilename = adoptNS([response.suggestedFilename copy]);
+
+    auto fileExtension = [response] {
+        // Without this file extension for reality files, ARQL fails to open them.
+        if ([response.MIMEType isEqualToString:@"model/vnd.reality"])
+            return ".reality"_s;
+        return ".usdz"_s;
+    }();
+
+    _filePath = FileSystem::openTemporaryFile("SystemPreview"_s, _fileHandle, fileExtension);
+    ASSERT(FileSystem::isHandleValid(_fileHandle));
+
+    _previewController->loadStarted(URL::fileURLWithFileSystemPath(_filePath));
     decisionHandler(_WKDataTaskResponsePolicyAllow);
 }
 
@@ -319,6 +331,7 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
 - (void)dataTask:(_WKDataTask *)dataTask didCompleteWithError:(NSError *)error
 {
     if (error) {
+        FileSystem::closeFile(_fileHandle);
         _previewController->loadFailed();
         return;
     }
@@ -328,19 +341,15 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
 
 - (void)completeLoad
 {
-    FileSystem::PlatformFileHandle fileHandle;
-    auto filePath = FileSystem::openTemporaryFile("SystemPreview"_s, fileHandle, ".usdz"_s);
-    ASSERT(FileSystem::isHandleValid(fileHandle));
-
-    size_t byteCount = FileSystem::writeToFile(fileHandle, [_data bytes], [_data length]);
-    FileSystem::closeFile(fileHandle);
+    size_t byteCount = FileSystem::writeToFile(_fileHandle, [_data bytes], [_data length]);
+    FileSystem::closeFile(_fileHandle);
 
     if (byteCount != _data.get().length) {
         _previewController->loadFailed();
         return;
     }
 
-    _previewController->loadCompleted(URL::fileURLWithFileSystemPath(filePath));
+    _previewController->loadCompleted(URL::fileURLWithFileSystemPath(_filePath));
 }
 
 @end
@@ -376,6 +385,10 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SystemPreview
         strongThis->takeActivityToken();
     });
 
+    m_downloadURL = url;
+    m_fragmentIdentifier = url.fragmentIdentifier().toString();
+
+#if !HAVE(UIKIT_WEBKIT_INTERNALS)
     m_qlPreviewController = adoptNS([PAL::allocQLPreviewControllerInstance() init]);
 
     m_qlPreviewControllerDelegate = adoptNS([[_WKPreviewControllerDelegate alloc] initWithSystemPreviewController:this]);
@@ -385,20 +398,38 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SystemPreview
     [m_qlPreviewController setDataSource:m_qlPreviewControllerDataSource.get()];
 
     [presentingViewController presentViewController:m_qlPreviewController.get() animated:YES completion:nullptr];
+#endif
 }
 
-void SystemPreviewController::loadCompleted(const URL& downloadedFile)
+void SystemPreviewController::loadStarted(const URL& localFileURL)
+{
+    RELEASE_LOG(SystemPreview, "SystemPreview load has started on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
+    m_localFileURL = localFileURL;
+
+    // Take the local URL, but add on the fragment from the original request URL.
+    if (!m_fragmentIdentifier.isEmpty())
+        m_localFileURL.setFragmentIdentifier(m_fragmentIdentifier);
+
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+    NSURL *nsurl = (NSURL *)m_localFileURL;
+    if ([getASVLaunchPreviewClass() respondsToSelector:@selector(beginPreviewApplicationWithURLs:is3DContent:websiteURL:completion:)])
+        [getASVLaunchPreviewClass() beginPreviewApplicationWithURLs:@[nsurl] is3DContent:YES websiteURL:m_downloadURL completion:^(NSError *error) { }];
+#endif
+}
+
+void SystemPreviewController::loadCompleted(const URL& localFileURL)
 {
     RELEASE_LOG(SystemPreview, "SystemPreview load has finished on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
 
+    ASSERT(equalIgnoringFragmentIdentifier(m_localFileURL, localFileURL));
+
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    ASSERT(equalIgnoringFragmentIdentifier(m_destinationURL, downloadedFile));
-    NSURL *nsurl = (NSURL *)downloadedFile;
+    NSURL *nsurl = (NSURL *)m_localFileURL;
     if ([getASVLaunchPreviewClass() respondsToSelector:@selector(launchPreviewApplicationWithURLs:completion:)])
         [getASVLaunchPreviewClass() launchPreviewApplicationWithURLs:@[nsurl] completion:^(NSError *error) { }];
 #else
     if (m_qlPreviewControllerDataSource)
-        [m_qlPreviewControllerDataSource finish:downloadedFile];
+        [m_qlPreviewControllerDataSource finish:m_localFileURL];
 #endif
     releaseActivityTokenIfNecessary();
 
@@ -408,9 +439,13 @@ void SystemPreviewController::loadCompleted(const URL& downloadedFile)
 
 void SystemPreviewController::loadFailed()
 {
-    RELEASE_LOG(SystemPreview, "SystemPreview failed on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
+    RELEASE_LOG(SystemPreview, "SystemPreview load has failed on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
 
-#if !HAVE(UIKIT_WEBKIT_INTERNALS)
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+    NSURL *nsurl = (NSURL *)m_localFileURL;
+    if ([getASVLaunchPreviewClass() respondsToSelector:@selector(cancelPreviewApplicationWithURLs:error:completion:)])
+        [getASVLaunchPreviewClass() cancelPreviewApplicationWithURLs:@[nsurl] error:nil completion:^(NSError *error) { }];
+#else
     if (m_qlPreviewControllerDataSource)
         [m_qlPreviewControllerDataSource.get() failWithError:nil];
 
