@@ -260,6 +260,9 @@ void AudioDestinationGStreamer::stopRendering(CompletionHandler<void(bool)>&& co
 
 void AudioDestinationGStreamer::notifyStartupResult(bool success)
 {
+    if (success)
+        notifyIsPlaying(true);
+
     callOnMainThreadAndWait([this, completionHandler = WTFMove(m_startupCompletionHandler), success]() mutable {
         GST_DEBUG_OBJECT(m_pipeline.get(), "Has start completion handler: %s", boolForPrinting(!!completionHandler));
         if (completionHandler)
