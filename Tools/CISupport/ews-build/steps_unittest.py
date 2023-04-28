@@ -44,7 +44,7 @@ import send_email
 
 from layout_test_failures import LayoutTestFailures
 from steps import (AddReviewerToCommitMessage, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults,
-                   AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
+                   AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, AnalyzeTest262TestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
                    Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckStatusOnEWSQueues, CheckStyle,
                    CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CommitPatch, CompileJSCWithoutChange,
                    CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors,
@@ -1817,6 +1817,112 @@ class TestAnalyzeJSCTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('jsc_flaky_and_passed', {'test2': {'P': 7, 'T': 10}})
         self.setProperty('jsc_clean_tree_stress_test_failures', ['test1'])
         self.expectOutcome(result=SUCCESS, state_string='Passed JSC tests')
+        return self.runStep()
+
+    def test_unexpected_infra_issue(self):
+        self.configureStep()
+        self.setProperty('jsc_stress_test_failures', [])
+        self.setProperty('jsc_clean_tree_stress_test_failures', [])
+        self.setProperty('clean_tree_run_status', FAILURE)
+        self.expectOutcome(result=RETRY, state_string='Unexpected infrastructure issue, retrying build (retry)')
+        return self.runStep()
+
+    def test_change_breaking_jsc_test_suite(self):
+        self.configureStep()
+        self.setProperty('jsc_stress_test_failures', [])
+        self.setProperty('jsc_flaky_and_passed', {})
+        self.setProperty('jsc_clean_tree_stress_test_failures', [])
+        self.setProperty('jsc_clean_tree_flaky_and_passed', {})
+        self.setProperty('clean_tree_run_status', SUCCESS)
+        self.expectOutcome(result=FAILURE, state_string='Found unexpected failure with change (failure)')
+        return self.runStep()
+
+
+class TestAnalyzeTest262TestsResults(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(AnalyzeTest262TestsResults())
+        self.setProperty('jsc_stress_test_failures', [])
+        self.setProperty('jsc_binary_failures', [])
+        self.setProperty('jsc_flaky_and_passed', {})
+        self.setProperty('jsc_clean_tree_stress_test_failures', [])
+        self.setProperty('jsc_clean_tree_binary_failures', [])
+        self.setProperty('jsc_clean_tree_flaky_and_passed', {})
+
+    def test_single_new_stress_failure(self):
+        self.configureStep()
+        self.setProperty('jsc_stress_test_failures', ['stress/force-error.js.bytecode-cache'])
+        self.expectOutcome(result=FAILURE, state_string='Found 1 new test262 stress test failure: stress/force-error.js.bytecode-cache (failure)')
+        return self.runStep()
+
+    def test_single_new_binary_failure(self):
+        self.configureStep()
+        self.setProperty('jsc_binary_failures', ['testmasm'])
+        self.expectOutcome(result=FAILURE, state_string='Found 1 new test262 binary failure: testmasm (failure)')
+        return self.runStep()
+
+    def test_multiple_new_stress_failure(self):
+        self.configureStep()
+        self.setProperty('jsc_stress_test_failures', [f'test{i}' for i in range(0, 30)])
+        self.expectOutcome(result=FAILURE, state_string='Found 30 new test262 stress test failures: test0, test1, test10, test11, test12, test13, test14, test15, test16, test17 ... (failure)')
+        return self.runStep()
+
+    def test_multiple_new_binary_failure(self):
+        self.configureStep()
+        self.setProperty('jsc_binary_failures', ['testmasm', 'testair', 'testb3', 'testdfg', 'testapi'])
+        self.expectOutcome(result=FAILURE, state_string='Found 5 new test262 binary failures: testair, testapi, testb3, testdfg, testmasm (failure)')
+        return self.runStep()
+
+    def test_new_stress_and_binary_failure(self):
+        self.configureStep()
+        self.setProperty('jsc_stress_test_failures', ['es6.yaml/es6/Set_iterator_closing.js.default'])
+        self.setProperty('jsc_binary_failures', ['testmasm'])
+        self.expectOutcome(result=FAILURE, state_string='Found 1 new test262 binary failure: testmasm, Found 1 new JSC stress test failure: es6.yaml/es6/Set_iterator_closing.js.default (failure)')
+        return self.runStep()
+
+    def test_stress_failure_on_clean_tree(self):
+        self.configureStep()
+        self.setProperty('jsc_stress_test_failures', ['stress/force-error.js.default'])
+        self.setProperty('jsc_clean_tree_stress_test_failures', ['stress/force-error.js.default'])
+        self.expectOutcome(result=SUCCESS, state_string='Passed test262 tests')
+        return self.runStep()
+
+    def test_binary_failure_on_clean_tree(self):
+        self.configureStep()
+        self.setProperty('jsc_binary_failures', ['testdfg'])
+        self.setProperty('jsc_rerun_binary_failures', ['testdfg'])
+        self.setProperty('jsc_clean_tree_binary_failures', ['testdfg'])
+        self.expectOutcome(result=SUCCESS, state_string='Passed test262 tests')
+        return self.runStep()
+
+    def test_stress_and_binary_failure_on_clean_tree(self):
+        self.configureStep()
+        self.setProperty('jsc_stress_test_failures', ['es6.yaml/es6/Set_iterator_closing.js.default'])
+        self.setProperty('jsc_binary_failures', ['testair'])
+        self.setProperty('jsc_clean_tree_stress_test_failures', ['es6.yaml/es6/Set_iterator_closing.js.default'])
+        self.setProperty('jsc_clean_tree_binary_failures', ['testair'])
+        self.expectOutcome(result=SUCCESS, state_string='Passed test262 tests')
+        return self.runStep()
+
+    def test_flaky_and_consistent_stress_failures(self):
+        self.configureStep()
+        self.setProperty('jsc_stress_test_failures', ['test1'])
+        self.setProperty('jsc_flaky_and_passed', {'test2': {'P': '7', 'T': '10'}})
+        self.expectOutcome(result=FAILURE, state_string='Found 1 new test262 stress test failure: test1 (failure)')
+        return self.runStep()
+
+    def test_flaky_and_consistent_failures_with_clean_tree_failures(self):
+        self.configureStep()
+        self.setProperty('jsc_stress_test_failures', ['test1'])
+        self.setProperty('jsc_flaky_and_passed', {'test2': {'P': 7, 'T': 10}})
+        self.setProperty('jsc_clean_tree_stress_test_failures', ['test1'])
+        self.expectOutcome(result=SUCCESS, state_string='Passed test262 tests')
         return self.runStep()
 
     def test_unexpected_infra_issue(self):
