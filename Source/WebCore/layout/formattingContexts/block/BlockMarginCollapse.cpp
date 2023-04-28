@@ -409,24 +409,8 @@ bool BlockMarginCollapse::marginsCollapseThrough(const ElementBox& layoutBox) co
                 return false;
 
             auto isConsideredEmpty = [&] {
-                auto& inlineFormattingState = layoutState.formattingStateForInlineFormattingContext(layoutBox);
-                if (!inlineFormattingState.lines().isEmpty())
-                    return false;
-                // Any float box in this formatting context prevents collapsing through.
-                auto parentBlockFormattingState = [&] () -> BlockFormattingState& {
-                    if (layoutBox.establishesBlockFormattingContext())
-                        return layoutState.formattingStateForBlockFormattingContext(layoutBox);
-                    for (auto& containingBlock : containingBlockChain(layoutBox)) {
-                        if (containingBlock.establishesBlockFormattingContext())
-                            return layoutState.formattingStateForBlockFormattingContext(containingBlock);
-                    }
-                    ASSERT_NOT_REACHED();
-                    return layoutState.formattingStateForBlockFormattingContext(FormattingContext::initialContainingBlock(layoutBox));
-                };
-                for (auto& floatItem : parentBlockFormattingState().floatingState().floats()) {
-                    if (floatItem.isInFormattingContextOf(layoutBox))
-                        return false;
-                }
+                // FIXME: Check for non-empty inline formatting context if applicable.
+                // FIXME: Any float box in this formatting context prevents collapsing through.
                 return true;
             };
             return isConsideredEmpty();

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DisplayBoxFactory.h"
+#include "InlineDisplayContent.h"
 #include <wtf/IsoMalloc.h>
 
 #if ENABLE(TREE_DEBUGGING)
@@ -80,6 +81,9 @@ private:
 
     void didAppendNonContainerStackingItem(StackingItem&);
 
+    const InlineDisplay::Lines& lines(const Layout::ElementBox&) const { return m_displayLines; }
+    const InlineDisplay::Boxes& boxes(const Layout::ElementBox&) const { return m_displayBoxes; }
+
     Tree& tree() const { return *m_tree; }
 
     BuildingState& currentState();
@@ -90,6 +94,9 @@ private:
 
     std::unique_ptr<Tree> m_tree;
     std::unique_ptr<Vector<BuildingState>> m_stateStack;
+
+    InlineDisplay::Lines m_displayLines;
+    InlineDisplay::Boxes m_displayBoxes;
 };
 
 #if ENABLE(TREE_DEBUGGING)

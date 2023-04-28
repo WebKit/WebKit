@@ -60,17 +60,8 @@ public:
     LayoutUnit nestedListMarkerOffset(const ElementBox& listMarkerBox) const { return m_nestedListMarkerOffset.get(&listMarkerBox); }
     void resetNestedListMarkerOffsets() { return m_nestedListMarkerOffset.clear(); }
 
-    // FIXME: Only used by the full LFC codepath.
-    const InlineDisplay::Lines& lines() const { return m_displayLines; }
-    InlineDisplay::Lines& lines() { return m_displayLines; }
-    const InlineDisplay::Boxes& boxes() const { return m_displayBoxes; }
-    InlineDisplay::Boxes& boxes() { return m_displayBoxes; }
-
 private:
-    // Cacheable input to line layout.
     InlineItems m_inlineItems;
-    InlineDisplay::Lines m_displayLines;
-    InlineDisplay::Boxes m_displayBoxes;
     // FIXME: This should be part of a non-persistent formatting state.
     HashMap<const ElementBox*, LayoutUnit> m_nestedListMarkerOffset;
     InlineLayoutUnit m_clearGapBeforeFirstLine { 0 };
@@ -86,8 +77,6 @@ inline void InlineFormattingState::setClearGapAfterLastLine(InlineLayoutUnit ver
 inline void InlineFormattingState::shrinkToFit()
 {
     m_inlineItems.shrinkToFit();
-    m_displayLines.shrinkToFit();
-    m_displayBoxes.shrinkToFit();
 }
 
 }

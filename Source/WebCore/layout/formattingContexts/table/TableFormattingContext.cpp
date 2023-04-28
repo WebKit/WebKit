@@ -159,11 +159,8 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
                         formattingState.boxGeometry(*child).moveVertically(intrinsicPaddingTop);
                     }
                     if (cellBox.establishesInlineFormattingContext()) {
-                        auto& inlineFormattingStatee = layoutState().formattingStateForInlineFormattingContext(cellBox);
-                        for (auto& box : inlineFormattingStatee.boxes())
-                            box.moveVertically(intrinsicPaddingTop);
-                        for (auto& line : inlineFormattingStatee.lines())
-                            line.moveVertically(intrinsicPaddingTop);
+                        // FIXME: Adjust inline display content when applicable.
+                        ASSERT_NOT_IMPLEMENTED_YET();
                     }
                 };
                 adjustCellContentWithInstrinsicPaddingBefore();

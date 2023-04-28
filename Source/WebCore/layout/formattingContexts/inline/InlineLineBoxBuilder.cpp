@@ -294,10 +294,8 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
                 if (synthesizeBaseline)
                     return marginBoxHeight;
 
-                auto& formattingState = layoutState().formattingStateForInlineFormattingContext(downcast<ElementBox>(layoutBox));
-                auto& lastLine = formattingState.lines().last();
-                auto inlineBlockBaseline = lastLine.top() + lastLine.baseline();
-                return inlineLevelBoxGeometry.marginBefore() + inlineLevelBoxGeometry.borderBefore() + inlineLevelBoxGeometry.paddingBefore().value_or(0) + inlineBlockBaseline;
+                // FIXME: Grab the first/last baseline off of the inline formatting context (display content).
+                ASSERT_NOT_IMPLEMENTED_YET();
             }
             return marginBoxHeight;
         }();

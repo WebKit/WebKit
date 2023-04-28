@@ -116,8 +116,10 @@ static void collectInlineBoxes(const RenderBlockFlow& root, Vector<WebCore::Lega
 
 static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, const LayoutState& layoutState, const RenderBlockFlow& blockFlow, const ElementBox& inlineFormattingRoot)
 {
-    auto& inlineFormattingState = layoutState.formattingStateForFormattingContext(inlineFormattingRoot);
-    auto& boxes = downcast<InlineFormattingState>(inlineFormattingState).boxes();
+    UNUSED_PARAM(layoutState);
+    UNUSED_PARAM(inlineFormattingRoot);
+    // FIXME: Populate display boxes.
+    auto boxes = InlineDisplay::Boxes { };
     // Collect inlineboxes.
     Vector<WebCore::LegacyInlineBox*> inlineBoxes;
     collectInlineBoxes(blockFlow, inlineBoxes);

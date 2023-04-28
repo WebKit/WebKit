@@ -4838,31 +4838,9 @@ webkit.org/b/31278 [ Debug ] fast/multicol/spanner-get-re-added-on-move-crash.ht
 
 webkit.org/b/225247 [ Debug ] fast/multicol/span/float-becomes-spanner-crash.html [ Skip ]
 
-webkit.org/b/226002 fast/layoutformattingcontext/table-simple-row-height.html [ Skip ]
-webkit.org/b/226364 fast/layoutformattingcontext/table-with-percent-columns-and-spacing.html [ Skip ]
-fast/layoutformattingcontext/absolute-positioned-box-with-inline-sibling.html [ Skip ]
-[ Debug ] fast/layoutformattingcontext/table-fixed-width-with-max-distribution.html [ Skip ]
-[ Debug ] fast/layoutformattingcontext/table-space-distribution-simple-mismatching.html [ Skip ]
-[ Debug ] fast/layoutformattingcontext/block-only/float-avoider-multiple-roots.html [ Skip ]
-[ Debug ] fast/layoutformattingcontext/block-only/float-avoider-simple-right.html [ Skip ]
-[ Debug ] fast/layoutformattingcontext/block-only/float-avoider-with-margins.html [ Skip ]
-[ Debug ] fast/layoutformattingcontext/block-only/float-avoider-simple-left.html [ Skip ]
-[ Debug ] fast/layoutformattingcontext/block-only/floating-with-new-block-formatting-context.html [ Skip ]
-fast/layoutformattingcontext/block-only/floats-and-block-formatting-roots.html [ Skip ]
-fast/layoutformattingcontext/float-avoider-available-horizontal-space2.html [ Skip ]
-fast/layoutformattingcontext/float-avoider-with-inline-content.html [ Skip ]
-# needs BlockLayoutState support
-fast/layoutformattingcontext/float-avoiding-br-last-line.html [ Skip ]
-fast/layoutformattingcontext/float-avoiding-br-simple.html [ Skip ]
-fast/layoutformattingcontext/intrusive-floats-and-stretchy-lines-simple.html [ Skip ]
-fast/layoutformattingcontext/intrusive-floats-takes-entire-horizontal-space.html [ Skip ]
-
 # Needs display box support.
-fast/layoutformattingcontext/flex-box-simple.html [ Skip ]
-
-# Missing painting support for in-flow positioning
-fast/layoutformattingcontext/replaced-box-with-margin-on-baseline.html [ ImageOnlyFailure ]
-fast/layoutformattingcontext/table-cell-vertical-alignment-simple.html [ ImageOnlyFailure ]
+[ Debug ] fast/layoutformattingcontext/ [ Skip ]
+[ Release ] fast/layoutformattingcontext/ [ ImageOnlyFailure Pass ]
 
 # This webstorage test has crashed since it was imported.
 imported/w3c/web-platform-tests/webstorage/storage_session_setitem_quotaexceedederr.window.html [ Skip ]

@@ -137,10 +137,9 @@ void InlineFormattingContext::layoutInFlowContent(const ConstraintsForInFlowCont
         layoutBox = nextInlineLevelBoxToLayout(*layoutBox, root());
     }
 
+    // FIXME: Transition to non-formatting state based inline content.
     auto& inlineFormattingState = formattingState();
     inlineFormattingState.clearInlineItems();
-    inlineFormattingState.boxes().clear();
-    inlineFormattingState.lines().clear();
     auto needsLayoutStartPosition = !m_lineDamage || !m_lineDamage->start() ? InlineItemPosition() : m_lineDamage->start()->inlineItemPosition;
     auto needsInlineItemsUpdate = inlineFormattingState.inlineItems().isEmpty() || m_lineDamage;
     if (needsInlineItemsUpdate)
@@ -152,8 +151,9 @@ void InlineFormattingContext::layoutInFlowContent(const ConstraintsForInFlowCont
     auto needsLayoutRange = InlineItemRange { needsLayoutStartPosition, { inlineItems.size(), 0 } };
 
     auto previousLine = [&]() -> std::optional<PreviousLine> {
-        auto& displayLines = inlineFormattingState.lines();
-        auto& displayBoxes = inlineFormattingState.boxes();
+        // FIXME: Populate inline display content.
+        auto displayLines = InlineDisplay::Lines { };
+        auto displayBoxes = InlineDisplay::Boxes { };
         if (displayLines.isEmpty() || displayBoxes.isEmpty())
             return { };
         auto& lastDisplayBox = displayBoxes.last();
@@ -162,10 +162,6 @@ void InlineFormattingContext::layoutInFlowContent(const ConstraintsForInFlowCont
     };
     auto displayContent = lineLayout(inlineItems, needsLayoutRange, previousLine(), { constraints, { } }, blockLayoutState).displayContent;
     computeStaticPositionForOutOfFlowContent(inlineFormattingState.outOfFlowBoxes(), constraints, displayContent, blockLayoutState.floatingState());
-    // FIXME: Transition to non-formatting state based inline content.
-    inlineFormattingState.lines() = WTFMove(displayContent.lines);
-    inlineFormattingState.boxes() = WTFMove(displayContent.boxes);
-
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root() << ")");
 }
 
@@ -228,12 +224,8 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstra
 
 LayoutUnit InlineFormattingContext::usedContentHeight() const
 {
-    auto& lines = formattingState().lines();
-    // Even empty content generates a line.
-    ASSERT(!lines.isEmpty());
-    auto top = LayoutUnit { lines.first().top() };
-    auto bottom = LayoutUnit { lines.last().bottom() + formattingState().clearGapAfterLastLine() };
-    return bottom - top;
+    // FIXME: Populate and use inline display content.
+    return { };
 }
 
 static InlineItemPosition leadingInlineItemPositionForNextLine(InlineItemPosition lineContentEnd, std::optional<InlineItemPosition> previousLineTrailingInlineItemPosition, InlineItemPosition layoutRangeEnd)
