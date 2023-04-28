@@ -124,11 +124,8 @@ void RemoteGraphicsContextGLCocoa::prepareForDisplay(IPC::Semaphore&& finishedSe
         finishedSemaphore.signal();
     });
     MachSendRight sendRight;
-    auto displayBuffer = m_context->displayBuffer();
-    if (displayBuffer) {
-        m_context->markDisplayBufferInUse();
-        sendRight = displayBuffer->createSendRight();
-    }
+    if (WebCore::IOSurface* surface = m_context->displayBufferSurface())
+        sendRight = surface->createSendRight();
     completionHandler(WTFMove(sendRight));
 }
 

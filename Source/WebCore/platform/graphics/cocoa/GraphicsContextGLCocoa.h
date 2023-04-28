@@ -29,7 +29,8 @@
 
 #include "GraphicsContextGLANGLE.h"
 #include "IOSurface.h"
-#include <wtf/BlockPtr.h>
+#include "ProcessIdentity.h"
+#include <array>
 
 #if PLATFORM(MAC)
 #include "ScopedHighPerformanceGPURequest.h"
@@ -44,7 +45,6 @@ OBJC_CLASS MTLSharedEventListener;
 namespace WebCore {
 
 class GraphicsLayerContentsDisplayDelegate;
-class ProcessIdentity;
 
 #if ENABLE(VIDEO)
 class GraphicsContextGLCVCocoa;
@@ -58,9 +58,7 @@ class WEBCORE_EXPORT GraphicsContextGLCocoa : public GraphicsContextGLANGLE {
 public:
     static RefPtr<GraphicsContextGLCocoa> create(WebCore::GraphicsContextGLAttributes&&, ProcessIdentity&& resourceOwner);
     ~GraphicsContextGLCocoa();
-
-    IOSurface* displayBuffer();
-    void markDisplayBufferInUse();
+    IOSurface* displayBufferSurface();
 
     enum class PbufferAttachmentUsage { Read, Write, ReadWrite };
     // Returns a handle which, if non-null, must be released via the
@@ -91,6 +89,7 @@ public:
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> paintCompositedResultsToVideoFrame() final;
 #endif
+    RefPtr<PixelBuffer> readCompositedResults() final;
     void setContextVisibility(bool) final;
     void setDrawingBufferColorSpace(const DestinationColorSpace&) final;
     void prepareForDisplay() override;
@@ -112,9 +111,20 @@ protected:
     bool platformInitializeContext() final;
     bool platformInitialize() final;
     void invalidateKnownTextureContent(GCGLuint) final;
-    bool reshapeDisplayBufferBacking() final;
-    bool allocateAndBindDisplayBufferBacking();
-    bool bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer);
+    bool reshapeDrawingBuffer() final;
+
+    // IOSurface backing store for an image of a texture.
+    // When preserveDrawingBuffer == false, this is the drawing buffer backing store.
+    // When preserveDrawingBuffer == true, this is blitted to during display prepare.
+    struct IOSurfacePbuffer {
+        std::unique_ptr<IOSurface> surface;
+        void* pbuffer { nullptr };
+        operator bool() const { return !!surface; }
+    };
+    IOSurfacePbuffer& drawingBuffer();
+    IOSurfacePbuffer& displayBuffer();
+    bool bindNextDrawingBuffer();
+    void freeDrawingBuffers();
 
     // Inserts new fence that will invoke `signal` from a background thread when completed.
     // If not possible, calls the `signal`.
@@ -136,6 +146,9 @@ protected:
     RetainPtr<MTLSharedEventListener> m_finishedMetalSharedEventListener;
     RetainPtr<id> m_finishedMetalSharedEvent; // FIXME: Remove all C++ includees and use id<MTLSharedEvent>.
 
+    static constexpr size_t maxReusedDrawingBuffers { 3 };
+    size_t m_currentDrawingBufferIndex { 0 };
+    std::array<IOSurfacePbuffer, maxReusedDrawingBuffers> m_drawingBuffers;
     friend class GraphicsContextGLCVCocoa;
 };
 

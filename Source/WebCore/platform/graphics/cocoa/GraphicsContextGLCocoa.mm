@@ -32,7 +32,6 @@
 #import "ANGLEUtilities.h"
 #import "ANGLEUtilitiesCocoa.h"
 #import "CVUtilities.h"
-#import "GraphicsContextGLIOSurfaceSwapChain.h"
 #import "GraphicsLayerContentsDisplayDelegate.h"
 #import "IOSurfacePool.h"
 #import "Logging.h"
@@ -238,16 +237,14 @@ GraphicsContextGLCocoa::GraphicsContextGLCocoa(GraphicsContextGLAttributes&& cre
 {
 }
 
-GraphicsContextGLCocoa::~GraphicsContextGLCocoa() = default;
-
-IOSurface* GraphicsContextGLCocoa::displayBuffer()
+GraphicsContextGLCocoa::~GraphicsContextGLCocoa()
 {
-    return m_swapChain.displayBuffer().surface.get();
+    freeDrawingBuffers();
 }
 
-void GraphicsContextGLCocoa::markDisplayBufferInUse()
+IOSurface* GraphicsContextGLCocoa::displayBufferSurface()
 {
-    return m_swapChain.markDisplayBufferInUse();
+    return displayBuffer().surface.get();
 }
 
 bool GraphicsContextGLCocoa::platformInitializeContext()
@@ -487,14 +484,6 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
         if (m_preserveDrawingBufferFBO)
             GL_DeleteFramebuffers(1, &m_preserveDrawingBufferFBO);
     }
-    if (m_displayBufferPbuffer)
-        EGL_DestroySurface(m_displayObj, m_displayBufferPbuffer);
-    auto recycledBuffer = m_swapChain.recycleBuffer();
-    if (recycledBuffer.handle)
-        EGL_DestroySurface(m_displayObj, recycledBuffer.handle);
-    auto contentsHandle = m_swapChain.detachClient();
-    if (contentsHandle)
-        EGL_DestroySurface(m_displayObj, contentsHandle);
     if (m_contextObj) {
         makeCurrent(m_displayObj, EGL_NO_CONTEXT);
         EGL_DestroyContext(m_displayObj, m_contextObj);
@@ -551,81 +540,99 @@ void GraphicsContextGLCocoa::updateContextOnDisplayReconfiguration()
 }
 #endif
 
-bool GraphicsContextGLCocoa::reshapeDisplayBufferBacking()
+bool GraphicsContextGLCocoa::reshapeDrawingBuffer()
 {
     ASSERT(!getInternalFramebufferSize().isEmpty());
-    // Reset the current backbuffer now before allocating a new one in order to slightly reduce memory pressure.
-    if (m_displayBufferBacking) {
-        m_displayBufferBacking.reset();
-        EGL_ReleaseTexImage(m_displayObj, m_displayBufferPbuffer, EGL_BACK_BUFFER);
-        EGL_DestroySurface(m_displayObj, m_displayBufferPbuffer);
-        m_displayBufferPbuffer = EGL_NO_SURFACE;
-    }
-    // Reset the future recycled buffer now, because it most likely will not be reusable at the time it will be reused.
-    auto recycledBuffer = m_swapChain.recycleBuffer();
-    if (recycledBuffer.handle)
-        EGL_DestroySurface(m_displayObj, recycledBuffer.handle);
-    recycledBuffer.surface.reset();
-    return allocateAndBindDisplayBufferBacking();
+    freeDrawingBuffers();
+    return bindNextDrawingBuffer();
 }
 
 void GraphicsContextGLCocoa::setDrawingBufferColorSpace(const DestinationColorSpace& colorSpace)
 {
-    if (m_drawingBufferColorSpace != colorSpace) {
-        m_drawingBufferColorSpace = colorSpace;
-
-        if (!getInternalFramebufferSize().isEmpty() && !reshapeDisplayBufferBacking()) {
-            RELEASE_LOG(WebGL, "Fatal: Unable to allocate backing store of size %d x %d", getInternalFramebufferSize().width(), getInternalFramebufferSize().height());
-            forceContextLost();
-        }
-    }
+    if (m_drawingBufferColorSpace == colorSpace)
+        return;
+    m_drawingBufferColorSpace = colorSpace;
+    if (getInternalFramebufferSize().isEmpty())
+        return;
+    if (!reshapeDrawingBuffer())
+        forceContextLost();
 }
 
-bool GraphicsContextGLCocoa::allocateAndBindDisplayBufferBacking()
+GraphicsContextGLCocoa::IOSurfacePbuffer& GraphicsContextGLCocoa::displayBuffer()
+{
+    return m_drawingBuffers[(m_currentDrawingBufferIndex + maxReusedDrawingBuffers - 1u) % maxReusedDrawingBuffers];
+}
+
+GraphicsContextGLCocoa::IOSurfacePbuffer& GraphicsContextGLCocoa::drawingBuffer()
+{
+    return m_drawingBuffers[m_currentDrawingBufferIndex % maxReusedDrawingBuffers];
+}
+
+bool GraphicsContextGLCocoa::bindNextDrawingBuffer()
 {
     ASSERT(!getInternalFramebufferSize().isEmpty());
+    if (drawingBuffer())
+        EGL_ReleaseTexImage(m_displayObj, drawingBuffer().pbuffer, EGL_BACK_BUFFER);
+
+    m_currentDrawingBufferIndex++;
+    auto& buffer = drawingBuffer();
+
+    if (buffer && (buffer.surface->isInUse() || m_failNextStatusCheck)) {
+        EGL_DestroySurface(m_displayObj, buffer.pbuffer);
+        buffer = { };
+    }
     if (m_failNextStatusCheck) {
         m_failNextStatusCheck = false;
         return false;
     }
-    auto backing = IOSurface::create(nullptr, getInternalFramebufferSize(), m_drawingBufferColorSpace, IOSurface::Name::GraphicsContextGL);
-    if (!backing)
-        return false;
-    if (m_resourceOwner)
-        backing->setOwnershipIdentity(m_resourceOwner);
+    if (!buffer) {
+        auto surface = IOSurface::create(nullptr, getInternalFramebufferSize(), m_drawingBufferColorSpace, IOSurface::Name::GraphicsContextGL);
+        if (!surface)
+            return false;
+        if (m_resourceOwner)
+            surface->setOwnershipIdentity(m_resourceOwner);
 
-    const bool usingAlpha = contextAttributes().alpha;
-    const auto size = getInternalFramebufferSize();
-    const EGLint surfaceAttributes[] = {
-        EGL_WIDTH, size.width(),
-        EGL_HEIGHT, size.height(),
-        EGL_IOSURFACE_PLANE_ANGLE, 0,
-        EGL_TEXTURE_TARGET, EGLDrawingBufferTextureTargetForDrawingTarget(drawingBufferTextureTarget()),
-        EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, usingAlpha ? GL_BGRA_EXT : GL_RGB,
-        EGL_TEXTURE_FORMAT, EGL_TEXTURE_RGBA,
-        EGL_TEXTURE_TYPE_ANGLE, GL_UNSIGNED_BYTE,
-        // Only has an effect on the iOS Simulator.
-        EGL_IOSURFACE_USAGE_HINT_ANGLE, EGL_IOSURFACE_WRITE_HINT_ANGLE,
-        EGL_NONE, EGL_NONE
-    };
-    EGLSurface pbuffer = EGL_CreatePbufferFromClientBuffer(m_displayObj, EGL_IOSURFACE_ANGLE, backing->surface(), m_configObj, surfaceAttributes);
-    if (!pbuffer)
-        return false;
-    return bindDisplayBufferBacking(WTFMove(backing), pbuffer);
-}
+        const bool usingAlpha = contextAttributes().alpha;
+        const auto size = getInternalFramebufferSize();
+        const EGLint surfaceAttributes[] = {
+            EGL_WIDTH, size.width(),
+            EGL_HEIGHT, size.height(),
+            EGL_IOSURFACE_PLANE_ANGLE, 0,
+            EGL_TEXTURE_TARGET, EGLDrawingBufferTextureTargetForDrawingTarget(drawingBufferTextureTarget()),
+            EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, usingAlpha ? GL_BGRA_EXT : GL_RGB,
+            EGL_TEXTURE_FORMAT, EGL_TEXTURE_RGBA,
+            EGL_TEXTURE_TYPE_ANGLE, GL_UNSIGNED_BYTE,
+            // Only has an effect on the iOS Simulator.
+            EGL_IOSURFACE_USAGE_HINT_ANGLE, EGL_IOSURFACE_WRITE_HINT_ANGLE,
+            EGL_NONE, EGL_NONE
+        };
+        EGLSurface pbuffer = EGL_CreatePbufferFromClientBuffer(m_displayObj, EGL_IOSURFACE_ANGLE, surface->surface(), m_configObj, surfaceAttributes);
+        if (!pbuffer)
+            return false;
+        buffer = { WTFMove(surface), pbuffer };
+    }
 
-bool GraphicsContextGLCocoa::bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer)
-{
     GCGLenum textureTarget = drawingBufferTextureTarget();
     ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(textureTarget), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
     GL_BindTexture(textureTarget, m_texture);
-    if (!EGL_BindTexImage(m_displayObj, pbuffer, EGL_BACK_BUFFER)) {
-        EGL_DestroySurface(m_displayObj, pbuffer);
+    if (!EGL_BindTexImage(m_displayObj, buffer.pbuffer, EGL_BACK_BUFFER)) {
+        EGL_DestroySurface(m_displayObj, buffer.pbuffer);
+        buffer = { };
         return false;
     }
-    m_displayBufferPbuffer = pbuffer;
-    m_displayBufferBacking = WTFMove(backing);
     return true;
+}
+
+void GraphicsContextGLCocoa::freeDrawingBuffers()
+{
+    if (drawingBuffer())
+        EGL_ReleaseTexImage(m_displayObj, drawingBuffer().pbuffer, EGL_BACK_BUFFER);
+    for (auto& buffer : m_drawingBuffers) {
+        if (buffer) {
+            EGL_DestroySurface(m_displayObj, buffer.pbuffer);
+            buffer = { };
+        }
+    }
 }
 
 bool GraphicsContextGLANGLE::makeCurrent(GCGLDisplay display, GCGLContext context)
@@ -769,32 +776,17 @@ void GraphicsContextGLCocoa::prepareForDisplayWithFinishedSignal(Function<void()
         waitUntilWorkScheduled();
         return;
     }
+    if (!drawingBuffer())
+        return;
     prepareTexture();
     // The fence inserted by this will be scheduled because next BindTexImage will wait until scheduled.
     insertFinishedSignalOrInvoke(WTFMove(finishedSignal));
-    auto recycledBuffer = m_swapChain.recycleBuffer();
-    EGL_ReleaseTexImage(m_displayObj, m_displayBufferPbuffer, EGL_BACK_BUFFER);
-    m_swapChain.present({ WTFMove(m_displayBufferBacking), m_displayBufferPbuffer });
-    m_displayBufferPbuffer = EGL_NO_SURFACE;
-
-    bool hasNewBacking = false;
-    if (recycledBuffer.surface && recycledBuffer.surface->size() == getInternalFramebufferSize() && recycledBuffer.surface->colorSpace() == m_drawingBufferColorSpace) {
-        hasNewBacking = bindDisplayBufferBacking(WTFMove(recycledBuffer.surface), recycledBuffer.handle);
-        recycledBuffer.handle = nullptr;
+    if (!bindNextDrawingBuffer()) {
+        // If the allocation failed, BindTexImage did not run. The fence must be scheduled.
+        waitUntilWorkScheduled();
+        forceContextLost();
+        return;
     }
-    recycledBuffer.surface.reset();
-    if (recycledBuffer.handle)
-        EGL_DestroySurface(m_displayObj, recycledBuffer.handle);
-
-    if (!hasNewBacking) {
-        if (!allocateAndBindDisplayBufferBacking()) {
-            // If the allocation failed, BindTexImage did not run. The fence must be scheduled.
-            waitUntilWorkScheduled();
-            forceContextLost();
-            return;
-        }
-    }
-
     markLayerComposited();
 }
 
@@ -808,12 +800,10 @@ GraphicsContextGLCV* GraphicsContextGLCocoa::asCV()
 }
 #endif
 
-RefPtr<PixelBuffer> GraphicsContextGLANGLE::readCompositedResults()
+RefPtr<PixelBuffer> GraphicsContextGLCocoa::readCompositedResults()
 {
-    auto& displayBuffer = m_swapChain.displayBuffer();
-    if (!displayBuffer.surface || !displayBuffer.handle)
-        return nullptr;
-    if (displayBuffer.surface->size() != getInternalFramebufferSize())
+    auto& buffer = displayBuffer();
+    if (!buffer || buffer.surface->size() != getInternalFramebufferSize())
         return nullptr;
     // Note: We are using GL to read the IOSurface. At the time of writing, there are no convinient
     // functions to convert the IOSurface pixel data to ImageData. The image data ends up being
@@ -824,7 +814,7 @@ RefPtr<PixelBuffer> GraphicsContextGLANGLE::readCompositedResults()
     GCGLenum textureTarget = drawingBufferTextureTarget();
     ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(drawingBufferTextureTarget()), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
     GL_BindTexture(textureTarget, texture);
-    if (!EGL_BindTexImage(m_displayObj, displayBuffer.handle, EGL_BACK_BUFFER))
+    if (!EGL_BindTexImage(m_displayObj, buffer.pbuffer, EGL_BACK_BUFFER))
         return nullptr;
     GL_TexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     ScopedFramebuffer fbo;
@@ -834,7 +824,7 @@ RefPtr<PixelBuffer> GraphicsContextGLANGLE::readCompositedResults()
 
     auto result = readPixelsForPaintResults();
 
-    EGLBoolean releaseOk = EGL_ReleaseTexImage(m_displayObj, displayBuffer.handle, EGL_BACK_BUFFER);
+    EGLBoolean releaseOk = EGL_ReleaseTexImage(m_displayObj, buffer.pbuffer, EGL_BACK_BUFFER);
     ASSERT_UNUSED(releaseOk, releaseOk);
     return result;
 }
@@ -842,13 +832,11 @@ RefPtr<PixelBuffer> GraphicsContextGLANGLE::readCompositedResults()
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
 RefPtr<VideoFrame> GraphicsContextGLCocoa::paintCompositedResultsToVideoFrame()
 {
-    auto &displayBuffer = m_swapChain.displayBuffer();
-    if (!displayBuffer.surface || !displayBuffer.handle)
-        return nullptr;
-    if (displayBuffer.surface->size() != getInternalFramebufferSize())
+    auto& buffer = displayBuffer();
+    if (!buffer || buffer.surface->size() != getInternalFramebufferSize())
         return nullptr;
     // Display surface is not marked in use since we will mirror and rotate it explicitly.
-    auto pixelBuffer = createCVPixelBuffer(displayBuffer.surface->surface());
+    auto pixelBuffer = createCVPixelBuffer(buffer.surface->surface());
     if (!pixelBuffer)
         return nullptr;
     // Mirror and rotate the pixel buffer explicitly, as WebRTC encoders cannot mirror.
@@ -904,8 +892,8 @@ void GraphicsContextGLCocoa::withDrawingBufferAsNativeImage(Function<void(Native
     if (!makeContextCurrent())
         return;
 
-    if (!m_displayBufferBacking
-        || m_displayBufferBacking->size() != getInternalFramebufferSize())
+    auto& buffer = drawingBuffer();
+    if (!buffer || buffer.surface->size() != getInternalFramebufferSize())
         return;
 
     prepareTexture();
@@ -917,9 +905,9 @@ void GraphicsContextGLCocoa::withDrawingBufferAsNativeImage(Function<void(Native
         // Use the IOSurface backed image directly
         waitUntilWorkScheduled();
 
-        cgContext = m_displayBufferBacking->createPlatformContext();
+        cgContext = buffer.surface->createPlatformContext();
         if (cgContext)
-            drawingImage = NativeImage::create(m_displayBufferBacking->createImage(cgContext.get()));
+            drawingImage = NativeImage::create(buffer.surface->createImage(cgContext.get()));
     } else {
         // Since IOSurface-backed images only support premultiplied alpha, read
         // the image into a PixelBuffer which can be used to create a CGImage
@@ -942,10 +930,10 @@ void GraphicsContextGLCocoa::withDrawingBufferAsNativeImage(Function<void(Native
 
 void GraphicsContextGLCocoa::withDisplayBufferAsNativeImage(Function<void(NativeImage&)> func)
 {
-    auto& displayBuffer = m_swapChain.displayBuffer();
-    if (!displayBuffer.surface || !displayBuffer.handle)
+    auto& buffer = displayBuffer();
+    if (!buffer)
         return;
-    if (displayBuffer.surface->size() != getInternalFramebufferSize())
+    if (buffer.surface->size() != getInternalFramebufferSize())
         return;
 
     RetainPtr<CGContextRef> cgContext;
@@ -953,9 +941,9 @@ void GraphicsContextGLCocoa::withDisplayBufferAsNativeImage(Function<void(Native
 
     if (contextAttributes().premultipliedAlpha) {
         // Use the IOSurface backed image directly
-        cgContext = displayBuffer.surface->createPlatformContext();
+        cgContext = buffer.surface->createPlatformContext();
         if (cgContext)
-            displayImage = NativeImage::create(displayBuffer.surface->createImage(cgContext.get()));
+            displayImage = NativeImage::create(buffer.surface->createImage(cgContext.get()));
     } else {
         // Since IOSurface-backed images only support premultiplied alpha, read
         // the image into a PixelBuffer which can be used to create a CGImage

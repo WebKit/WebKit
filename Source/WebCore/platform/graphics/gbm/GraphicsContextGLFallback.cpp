@@ -83,6 +83,11 @@ RefPtr<VideoFrame> GraphicsContextGLFallback::paintCompositedResultsToVideoFrame
 }
 #endif
 
+RefPtr<PixelBuffer> GraphicsContextGLFallback::readCompositedResults()
+{
+    return readRenderingResults();
+}
+
 bool GraphicsContextGLFallback::platformInitializeContext()
 {
     m_isForWebGL2 = contextAttributes().webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
@@ -246,7 +251,7 @@ void GraphicsContextGLFallback::setContextVisibility(bool)
 {
 }
 
-bool GraphicsContextGLFallback::reshapeDisplayBufferBacking()
+bool GraphicsContextGLFallback::reshapeDrawingBuffer()
 {
     auto attrs = contextAttributes();
     const auto size = getInternalFramebufferSize();

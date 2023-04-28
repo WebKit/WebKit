@@ -34,12 +34,6 @@
 #include <memory>
 #include <wtf/Function.h>
 
-#if PLATFORM(COCOA)
-#include "GraphicsContextGLIOSurfaceSwapChain.h"
-#include "IOSurface.h"
-#include "ProcessIdentity.h"
-#endif
-
 namespace WebCore {
 
 // Base class for GraphicsContextGL contexts that use ANGLE.
@@ -384,7 +378,7 @@ protected:
     void checkGPUStatus();
 
     RefPtr<PixelBuffer> readRenderingResults();
-    RefPtr<PixelBuffer> readCompositedResults();
+    virtual RefPtr<PixelBuffer> readCompositedResults() = 0;
     RefPtr<PixelBuffer> readPixelsForPaintResults();
 
     bool reshapeFBOs(const IntSize&);
@@ -394,7 +388,7 @@ protected:
 #if PLATFORM(COCOA)
     static bool makeCurrent(GCGLDisplay, GCGLContext);
 #endif
-    virtual bool reshapeDisplayBufferBacking() = 0;
+    virtual bool reshapeDrawingBuffer() = 0;
 
     static void platformReleaseThreadResources();
 
@@ -430,16 +424,6 @@ protected:
     GCGLDisplay m_displayObj { nullptr };
     GCGLContext m_contextObj { nullptr };
     GCGLConfig m_configObj { nullptr };
-
-#if PLATFORM(COCOA)
-    // FIXME: Move these to GraphicsContextGLCocoa.
-    GraphicsContextGLIOSurfaceSwapChain m_swapChain;
-    // Backing store for the the buffer which is eventually used for display.
-    // When preserveDrawingBuffer == false, this is the drawing buffer backing store.
-    // When preserveDrawingBuffer == true, this is blitted to during display prepare.
-    std::unique_ptr<IOSurface> m_displayBufferBacking;
-    void* m_displayBufferPbuffer { nullptr };
-#endif
 };
 
 

@@ -187,7 +187,7 @@ void WebProcessGraphicsContextGLCocoa::prepareForDisplay()
     // Currently there's no mechanism to detect if scheduled commands were lost, so we
     // assume that scheduled fence will always be signalled. 
     // Here we trust that compositor does not advance too far with multiple frames.
-    m_layerContentsDisplayDelegate->setDisplayBuffer(displayBuffer(), WTFMove(finishedFence));
+    m_layerContentsDisplayDelegate->setDisplayBuffer(displayBufferSurface(), WTFMove(finishedFence));
 }
 
 #if PLATFORM(MAC)

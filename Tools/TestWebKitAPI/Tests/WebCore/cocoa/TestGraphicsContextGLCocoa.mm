@@ -309,7 +309,7 @@ TEST_P(AnyContextAttributeTest, DisplayBuffersAreRecycled)
     for (int i = 0; i < 50; ++i) {
         EXPECT_TRUE(changeContextContents(*context, i));
         context->prepareForDisplay();
-        auto* surface = context->displayBuffer();
+        auto* surface = context->displayBufferSurface();
         ASSERT_NE(surface, nullptr);
         int slot = i % expectedDisplayBufferPoolSize;
         if (!expectedDisplayBuffers[slot])
@@ -320,28 +320,6 @@ TEST_P(AnyContextAttributeTest, DisplayBuffersAreRecycled)
         for (int j = i + 1; j < expectedDisplayBufferPoolSize; ++j)
             EXPECT_NE(expectedDisplayBuffers[i].get(), expectedDisplayBuffers[j].get()) << "for i: " << i << " j:" << j;
     }
-}
-
-// Test that drawing buffers are not recycled if `GraphicsContextGLOpenGL::markDisplayBufferInUse()`
-// is called.
-TEST_P(AnyContextAttributeTest, DisplayBuffersAreNotRecycledWhenMarkedInUse)
-{
-    auto context = createTestContext({ 20, 20 });
-    ASSERT_NE(context, nullptr);
-    HashSet<RetainPtr<IOSurfaceRef>> seenSurfaceRefs;
-    for (int i = 0; i < 50; ++i) {
-        EXPECT_TRUE(changeContextContents(*context, i));
-        context->prepareForDisplay();
-        WebCore::IOSurface* surface = context->displayBuffer();
-        ASSERT_NE(surface, nullptr);
-        IOSurfaceRef surfaceRef = surface->surface();
-        EXPECT_NE(surfaceRef, nullptr);
-        EXPECT_FALSE(seenSurfaceRefs.contains(surfaceRef));
-        seenSurfaceRefs.add(surfaceRef);
-
-        context->markDisplayBufferInUse();
-    }
-    ASSERT_EQ(seenSurfaceRefs.size(), 50u);
 }
 
 // Test that drawing buffers are not recycled if the use count of the underlying IOSurface
@@ -355,7 +333,7 @@ TEST_P(AnyContextAttributeTest, DisplayBuffersAreNotRecycledWhedInUse)
     for (int i = 0; i < 50; ++i) {
         EXPECT_TRUE(changeContextContents(*context, i));
         context->prepareForDisplay();
-        WebCore::IOSurface* surface = context->displayBuffer();
+        WebCore::IOSurface* surface = context->displayBufferSurface();
         ASSERT_NE(surface, nullptr);
         IOSurfaceRef surfaceRef = surface->surface();
         EXPECT_NE(surfaceRef, nullptr);
@@ -386,8 +364,9 @@ TEST_P(AnyContextAttributeTest, UnrecycledDisplayBuffersNoLeaks)
     for (int i = 0; i < 50; ++i) {
         EXPECT_TRUE(changeContextContents(*context, i));
         context->prepareForDisplay();
-        EXPECT_NE(context->displayBuffer(), nullptr);
-        context->markDisplayBufferInUse();
+        auto* surface = context->displayBufferSurface();
+        EXPECT_NE(surface, nullptr);
+        IOSurfaceIncrementUseCount(surface->surface());
     }
 
     EXPECT_TRUE(memoryFootprintChangedBy(lastFootprint, footprintChange, footprintError));
@@ -407,7 +386,7 @@ TEST_P(AnyContextAttributeTest, PrepareFailureWorks)
     EXPECT_TRUE(context->getErrors().isEmpty());
     context->simulateEventForTesting(WebCore::GraphicsContextGLSimulatedEventForTesting::DisplayBufferAllocationFailure);
     context->prepareForDisplay();
-    EXPECT_NE(context->displayBuffer(), nullptr);
+    EXPECT_NE(context->displayBufferSurface(), nullptr);
     EXPECT_EQ(1, client.contextLostCalls());
     // For documentation purposes how the context behaves afterwards.
     // For WebGL this is not relevant, as the context is marked as lost, and each new WebGL call will

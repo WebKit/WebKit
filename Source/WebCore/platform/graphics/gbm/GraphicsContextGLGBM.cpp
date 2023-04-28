@@ -80,6 +80,11 @@ bool GraphicsContextGLGBM::copyTextureFromMedia(MediaPlayer&, PlatformGLObject, 
 }
 #endif
 
+RefPtr<PixelBuffer> GraphicsContextGLGBM::readCompositedResults()
+{
+    return readRenderingResults();
+}
+
 void GraphicsContextGLGBM::setContextVisibility(bool)
 {
 }
@@ -276,7 +281,7 @@ void GraphicsContextGLGBM::prepareTexture()
     GL_Flush();
 }
 
-bool GraphicsContextGLGBM::reshapeDisplayBufferBacking()
+bool GraphicsContextGLGBM::reshapeDrawingBuffer()
 {
     m_swapchain = Swapchain(platformDisplay());
     allocateDrawBufferObject();

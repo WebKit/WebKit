@@ -267,7 +267,7 @@ bool GraphicsContextGLANGLE::reshapeFBOs(const IntSize& size)
     // resize regular FBO
     GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
-    if (!reshapeDisplayBufferBacking()) {
+    if (!reshapeDrawingBuffer()) {
         RELEASE_LOG(WebGL, "Fatal: Unable to allocate backing store of size %d x %d", width, height);
         forceContextLost();
         return true;

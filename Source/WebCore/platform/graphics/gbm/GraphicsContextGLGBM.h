@@ -56,6 +56,8 @@ public:
 #if ENABLE(VIDEO)
     bool copyTextureFromMedia(MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) override;
 #endif
+    RefPtr<PixelBuffer> readCompositedResults() final;
+
 
     void setContextVisibility(bool) override;
     void prepareForDisplay() override;
@@ -65,7 +67,7 @@ public:
     bool platformInitialize() override;
 
     void prepareTexture() override;
-    bool reshapeDisplayBufferBacking() override;
+    bool reshapeDrawingBuffer() override;
 
     struct Swapchain {
         Swapchain() = default;

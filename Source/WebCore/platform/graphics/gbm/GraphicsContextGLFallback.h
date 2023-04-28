@@ -52,9 +52,10 @@ public:
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> paintCompositedResultsToVideoFrame() final;
 #endif
+    RefPtr<PixelBuffer> readCompositedResults() final;
 
     void setContextVisibility(bool) final;
-    bool reshapeDisplayBufferBacking() final;
+    bool reshapeDrawingBuffer() final;
     void prepareForDisplay() final;
 
     GCGLuint getInternalColorFormat() const { return m_internalColorFormat; }
