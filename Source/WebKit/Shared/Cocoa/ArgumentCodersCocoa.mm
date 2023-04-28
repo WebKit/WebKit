@@ -543,7 +543,9 @@ static void encodeSecureCodingInternal(Encoder& encoder, id <NSObject, NSSecureC
 
     auto delegate = adoptNS([[WKSecureCodingArchivingDelegate alloc] init]);
 
-    if ([object isKindOfClass:NSURLCredential.class])
+    // FIXME: These can be removed on operating systems that have rdar://107730786.
+    if ([object isKindOfClass:NSURLCredential.class]
+        || [object isKindOfClass:NSURLProtectionSpace.class])
         [delegate setRewriteMutableDictionary:YES];
 
     if ([object isKindOfClass:NSTextAttachment.class]) {
@@ -567,6 +569,7 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
     static bool supportsDataDetectors = false;
     static bool supportsVisionKitCore = false;
     static bool supportsRevealCore = false;
+
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
 #if ENABLE(APPLE_PAY)
@@ -600,64 +603,91 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
 #endif
     });
 
-    if (([allowedClasses containsObject:NSURLProtectionSpace.class]
-            && (
-                decoder.messageName() == IPC::MessageName::DownloadProxy_DidReceiveAuthenticationChallenge // NP -> UIP
-                || decoder.messageName() == IPC::MessageName::NetworkProcessProxy_DidReceiveAuthenticationChallenge // NP -> UIP
-                || decoder.messageName() == IPC::MessageName::NetworkProcessProxy_ResourceLoadDidReceiveChallenge // NP -> UIP
-                || decoder.messageName() == IPC::MessageName::NetworkProcessProxy_DataTaskReceivedChallenge // NP -> UIP
-                || decoder.messageName() == IPC::MessageName::AuthenticationManager_CompleteAuthenticationChallenge // UIP -> NP
-            )
-        )
 #if ENABLE(IMAGE_ANALYSIS) && HAVE(VK_IMAGE_ANALYSIS)
-        || (
-            (supportsVisionKitCore && [allowedClasses containsObject:PAL::getVKCImageAnalysisClass()])
-            && (
-                decoder.messageName() == IPC::MessageName::WebPage_UpdateWithTextRecognitionResult // UIP -> WCP
-                || decoder.messageName() == IPC::MessageName::WebPageProxy_RequestTextRecognitionReply // UIP -> WCP
-            ) && isInWebProcess()
-        )
+    auto isDecodingKnownVKCImageAnalysisMessageFromUIProcess = [] (auto& decoder) {
+        auto messageName = decoder.messageName();
+        return messageName == IPC::MessageName::WebPage_UpdateWithTextRecognitionResult // UIP -> WCP
+            || messageName == IPC::MessageName::WebPageProxy_RequestTextRecognitionReply; // UIP -> WCP
+    };
 #endif
+
+    auto isDecodingKnownProtectionSpaceMessage = [] (auto& decoder) {
+        auto messageName = decoder.messageName();
+        return messageName == IPC::MessageName::DownloadProxy_DidReceiveAuthenticationChallenge // NP -> UIP
+            || messageName == IPC::MessageName::NetworkProcessProxy_DidReceiveAuthenticationChallenge // NP -> UIP
+            || messageName == IPC::MessageName::NetworkProcessProxy_ResourceLoadDidReceiveChallenge // NP -> UIP
+            || messageName == IPC::MessageName::NetworkProcessProxy_DataTaskReceivedChallenge // NP -> UIP
+            || messageName == IPC::MessageName::AuthenticationManager_CompleteAuthenticationChallenge; // UIP -> NP
+    };
+
+    auto isDecodingKnownNSURLCredentialMessage = [] (auto& decoder) {
+        auto messageName = decoder.messageName();
+        return messageName == IPC::MessageName::DownloadProxy_DidReceiveAuthenticationChallenge // NP -> UIP
+            || messageName == IPC::MessageName::NetworkProcessProxy_DidReceiveAuthenticationChallenge // NP -> UIP
+            || messageName == IPC::MessageName::NetworkProcessProxy_ResourceLoadDidReceiveChallenge // NP -> UIP
+            || messageName == IPC::MessageName::NetworkProcessProxy_DataTaskReceivedChallenge // NP -> UIP
+            || messageName == IPC::MessageName::NetworkProcessProxy_DataTaskReceivedChallengeReply // UIP -> NP
+            || messageName == IPC::MessageName::AuthenticationManager_CompleteAuthenticationChallenge; // UIP -> NP
+    };
+
+#if ENABLE(IMAGE_ANALYSIS) && HAVE(VK_IMAGE_ANALYSIS)
+    // blocked by rdar://108673895
+    if (supportsVisionKitCore
+        && [allowedClasses containsObject:PAL::getVKCImageAnalysisClass()]
+        && isDecodingKnownVKCImageAnalysisMessageFromUIProcess(decoder)
+        && isInWebProcess())
+        return false;
+#endif
+
 #if ENABLE(DATA_DETECTION)
-        || (supportsDataDetectorsCore && [allowedClasses containsObject:PAL::getDDScannerResultClass()]) // rdar://107553330 - relying on NSMutableArray re-write, don't re-introduce rdar://107676726
+    // rdar://107553330 - don't re-introduce rdar://107676726
+    // was blocked by rdar://106937270
+    if (supportsDataDetectorsCore && [allowedClasses containsObject:PAL::getDDScannerResultClass()])
+        return false;
 #if PLATFORM(MAC)
-        || (supportsDataDetectors && [allowedClasses containsObject:PAL::getDDActionContextClass()]) // rdar://107553348 - relying on NSMutableArray re-write, don't re-introduce rdar://107676726
+    // rdar://107553348 - don't re-introduce rdar://107676726
+    // was blocked by rdar://106937270
+    if (supportsDataDetectors && [allowedClasses containsObject:PAL::getDDActionContextClass()])
+        return false;
 #endif // PLATFORM(MAC)
 #endif // ENABLE(DATA_DETECTION)
-#if ENABLE(REVEAL)
-        || (supportsRevealCore && [allowedClasses containsObject:PAL::getRVItemClass()]) // rdar://107553310 - relying on NSMutableArray re-write, don't re-introduce rdar://107673064
-#endif // ENABLE(REVEAL)
-#if ENABLE(APPLE_PAY)
-        || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentMethodClass()]) // rdar://107553480 Don't reintroduce rdar://108235706
-        || (!strictSecureDecodingForAllObjCEnabled() && [allowedClasses containsObject:NSMutableURLRequest.class]) // rdar://107553194 Don't reintroduce rdar://108339450
-#endif
-        || [allowedClasses containsObject:NSParagraphStyle.class] // rdar://107553230 don't reintroduce rdar://108038436
-    ) {
-        return false;
-    }
 
-    if ((strictSecureDecodingForAllObjCEnabled() && [allowedClasses containsObject:NSMutableURLRequest.class]) // rdar://107553194 Don't reintroduce rdar://108339450
-        || [allowedClasses containsObject:NSShadow.class] // rdar://107553244
+#if ENABLE(REVEAL)
+    // rdar://107553310 - don't re-introduce rdar://107673064
+    // was blocked by rdar://106937270
+    if (supportsRevealCore && [allowedClasses containsObject:PAL::getRVItemClass()])
+        return false;
+#endif // ENABLE(REVEAL)
+
+#if ENABLE(APPLE_PAY)
+    // rdar://107553480 Don't reintroduce rdar://108235706
+    // blocked by rdar://108370686
+    if (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentMethodClass()])
+        return false;
+#endif
+
+    // rdar://107553230 don't reintroduce rdar://108038436
+    // blocked by rdar://108533718
+    if ([allowedClasses containsObject:NSParagraphStyle.class])
+        return false;
+
+    // rdar://107553194, Don't reintroduce rdar://108339450
+    if ([allowedClasses containsObject:NSMutableURLRequest.class])
+        return strictSecureDecodingForAllObjCEnabled();
+
+    // rdar://108674269
+    if ([allowedClasses containsObject:NSURLProtectionSpace.class] && isDecodingKnownProtectionSpaceMessage(decoder))
+        return strictSecureDecodingForAllObjCEnabled();
+
+    if ([allowedClasses containsObject:NSShadow.class] // rdar://107553244
         || [allowedClasses containsObject:NSTextAttachment.class] // rdar://107553273
 #if ENABLE(APPLE_PAY)
         || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentSetupFeatureClass()]) // rdar://107553409
         || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentMerchantSessionClass()]) // rdar://107553452
         || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentClass()] && isInWebProcess())
 #endif // ENABLE(APPLE_PAY)
-        || (
-            [allowedClasses containsObject:NSURLCredential.class] // rdar://107553367 relying on NSMutableDictionary re-write
-            && (
-                decoder.messageName() == IPC::MessageName::DownloadProxy_DidReceiveAuthenticationChallenge // NP -> UIP
-                || decoder.messageName() == IPC::MessageName::NetworkProcessProxy_DidReceiveAuthenticationChallenge // NP -> UIP
-                || decoder.messageName() == IPC::MessageName::NetworkProcessProxy_ResourceLoadDidReceiveChallenge // NP -> UIP
-                || decoder.messageName() == IPC::MessageName::NetworkProcessProxy_DataTaskReceivedChallenge // NP -> UIP
-                || decoder.messageName() == IPC::MessageName::NetworkProcessProxy_DataTaskReceivedChallengeReply // UIP -> NP
-                || decoder.messageName() == IPC::MessageName::AuthenticationManager_CompleteAuthenticationChallenge // UIP -> NP
-            )
-        )
-    ) {
+        || ([allowedClasses containsObject:NSURLCredential.class] && isDecodingKnownNSURLCredentialMessage(decoder))) // rdar://107553367
         return true;
-    }
 
     RELEASE_LOG_FAULT(SecureCoding, "Strict mode check found unknown classes %@", allowedClasses);
     ASSERT_NOT_REACHED();
