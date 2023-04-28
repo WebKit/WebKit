@@ -36,6 +36,7 @@ list(APPEND WTF_SOURCES
     linux/RealTimeThreads.cpp
 
     posix/CPUTimePOSIX.cpp
+    posix/FileSystemPOSIX.cpp
     posix/OSAllocatorPOSIX.cpp
     posix/ThreadingPOSIX.cpp
 
