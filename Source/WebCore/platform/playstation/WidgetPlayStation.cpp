@@ -44,7 +44,7 @@ void Widget::setFrameRect(const IntRect& rect)
     notImplemented();
 }
 
-void Widget::paint(GraphicsContext&, const IntRect&, SecurityOriginPaintPolicy, EventRegionContext*)
+void Widget::paint(GraphicsContext&, const IntRect&, SecurityOriginPaintPolicy, RegionContext*)
 {
     notImplemented();
 }
