@@ -5245,20 +5245,6 @@ ResizeObserverEnabled:
     WebCore:
       default: true
 
-ResolutionMediaFeatureEnabled:
-  type: bool
-  status: stable
-  category: media
-  humanReadableName: "Resolution media feature"
-  humanReadableDescription: "Enable resolution media feature support"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 ResourceLoadSchedulingEnabled:
   type: bool
   status: internal
