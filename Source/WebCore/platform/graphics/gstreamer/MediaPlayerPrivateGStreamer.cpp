@@ -2208,7 +2208,7 @@ void MediaPlayerPrivateGStreamer::configureElementPlatformQuirks(GstElement* ele
     if (g_str_has_prefix(GST_ELEMENT_NAME(element), "brcmaudiosink"))
         g_object_set(G_OBJECT(element), "async", TRUE, nullptr);
 #if ENABLE(MEDIA_STREAM)
-    if (!m_streamPrivate && !g_strcmp0(G_OBJECT_TYPE_NAME(G_OBJECT(element)), "GstBrcmPCMSink") && gstObjectHasProperty(element, "low_latency")) {
+    if (m_streamPrivate && !g_strcmp0(G_OBJECT_TYPE_NAME(G_OBJECT(element)), "GstBrcmPCMSink") && gstObjectHasProperty(element, "low_latency")) {
         GST_DEBUG_OBJECT(pipeline(), "Set 'low_latency' in brcmpcmsink");
         g_object_set(element, "low_latency", TRUE, "low_latency_max_queued_ms", 60, nullptr);
     }
@@ -2224,7 +2224,7 @@ void MediaPlayerPrivateGStreamer::configureElementPlatformQuirks(GstElement* ele
         if (westerosfactory) {
             gst_object_unref(gst_plugin_feature_load(GST_PLUGIN_FEATURE(westerosfactory.get())));
             westerosSinkType = gst_element_factory_get_element_type(westerosfactory.get());
-            for (auto* t = gst_element_factory_get_static_pad_templates(westerosfactory.get()); !t; t = g_list_next(t)) {
+            for (auto* t = gst_element_factory_get_static_pad_templates(westerosfactory.get()); t; t = g_list_next(t)) {
                 GstStaticPadTemplate* padtemplate = static_cast<GstStaticPadTemplate*>(t->data);
                 if (padtemplate->direction != GST_PAD_SINK)
                     continue;
@@ -2237,7 +2237,7 @@ void MediaPlayerPrivateGStreamer::configureElementPlatformQuirks(GstElement* ele
     });
 #if ENABLE(MEDIA_STREAM)
     if (G_TYPE_CHECK_INSTANCE_TYPE(G_OBJECT(element), westerosSinkType)) {
-        if (!m_streamPrivate && gstObjectHasProperty(element, "immediate-output")) {
+        if (m_streamPrivate && gstObjectHasProperty(element, "immediate-output")) {
             GST_DEBUG_OBJECT(pipeline(), "Enable 'immediate-output' in WesterosSink");
             g_object_set(G_OBJECT(element), "immediate-output", TRUE, nullptr);
         }
@@ -2254,7 +2254,7 @@ void MediaPlayerPrivateGStreamer::configureElementPlatformQuirks(GstElement* ele
 #endif
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(REALTEK)
-    if (!m_streamPrivate && g_object_class_find_property(G_OBJECT_GET_CLASS(element), "media-tunnel")) {
+    if (m_streamPrivate && g_object_class_find_property(G_OBJECT_GET_CLASS(element), "media-tunnel")) {
         GST_INFO_OBJECT(pipeline(), "Enable 'immediate-output' in rtkaudiosink");
         g_object_set(element, "media-tunnel", FALSE, "audio-service", TRUE, "lowdelay-sync-mode", TRUE, nullptr);
     }
