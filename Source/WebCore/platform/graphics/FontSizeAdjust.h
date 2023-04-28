@@ -62,8 +62,8 @@ struct FontSizeAdjust {
         IcWidth,
         IcHeight
     } metric;
-    Markable<float, FloatMarkableTraits> value;
     bool isFromFont { false };
+    Markable<float, FloatMarkableTraits> value { };
 };
 
 inline void add(Hasher& hasher, const FontSizeAdjust& fontSizeAdjust)
