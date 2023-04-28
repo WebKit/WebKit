@@ -36,9 +36,9 @@ bool isInsideFlatpak()
     return returnValue;
 }
 
-bool isInsideDocker()
+bool isInsideContainer()
 {
-    static bool returnValue = g_file_test("/.dockerenv", G_FILE_TEST_EXISTS);
+    static bool returnValue = g_file_test("/run/.containerenv", G_FILE_TEST_EXISTS);
     return returnValue;
 }
 
