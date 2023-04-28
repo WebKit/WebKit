@@ -54,19 +54,11 @@ public:
 
     bool canPreview(const String& mimeType) const;
 
-    // New methods that use WKDataTask.
     void begin(const URL&, const WebCore::SystemPreviewInfo&);
+    void updateProgress(float);
     void loadCompleted(const URL& downloadedFile);
     void loadFailed();
     void end();
-
-    // Old methods that use LegacyDownloadClient.
-    void start(URL originatingPageURL, const String& mimeType, const WebCore::SystemPreviewInfo&);
-    void setDestinationURL(URL);
-    void updateProgress(float);
-    void finish(URL);
-    void cancel();
-    void fail(const WebCore::ResourceError&);
 
     WebPageProxy& page() { return m_webPageProxy; }
     const WebCore::SystemPreviewInfo& previewInfo() const { return m_systemPreviewInfo; }

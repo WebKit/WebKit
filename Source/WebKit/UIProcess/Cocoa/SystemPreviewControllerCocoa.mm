@@ -206,7 +206,7 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
 - (void)previewControllerDidDismiss:(QLPreviewController *)controller
 {
     if (_previewController)
-        _previewController->cancel();
+        _previewController->end();
 }
 
 - (UIViewController *)presentingViewController
@@ -428,6 +428,28 @@ void SystemPreviewController::loadFailed()
         m_testingCallback(false);
 }
 
+void SystemPreviewController::end()
+{
+    RELEASE_LOG(SystemPreview, "SystemPreview ended on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
+
+#if !HAVE(UIKIT_WEBKIT_INTERNALS)
+    m_qlPreviewControllerDelegate = nullptr;
+    m_qlPreviewControllerDataSource = nullptr;
+    m_qlPreviewController = nullptr;
+    m_wkSystemPreviewDataTaskDelegate = nullptr;
+#endif
+}
+
+void SystemPreviewController::updateProgress(float progress)
+{
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+    UNUSED_PARAM(progress);
+#else
+    if (m_qlPreviewControllerDataSource)
+        [m_qlPreviewControllerDataSource setProgress:progress];
+#endif
+}
+
 void SystemPreviewController::takeActivityToken()
 {
 #if USE(RUNNINGBOARD)
@@ -450,100 +472,6 @@ void SystemPreviewController::releaseActivityTokenIfNecessary()
 void SystemPreviewController::setCompletionHandlerForLoadTesting(CompletionHandler<void(bool)>&& handler)
 {
     m_testingCallback = WTFMove(handler);
-}
-
-void SystemPreviewController::start(URL originatingPageURL, const String& mimeType, const WebCore::SystemPreviewInfo& systemPreviewInfo)
-{
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
-    UNUSED_PARAM(mimeType);
-    UNUSED_PARAM(systemPreviewInfo);
-#else
-    ASSERT(!m_qlPreviewController);
-    if (m_qlPreviewController)
-        return;
-
-    UIViewController *presentingViewController = m_webPageProxy.uiClient().presentingViewController();
-
-    if (!presentingViewController)
-        return;
-
-    m_systemPreviewInfo = systemPreviewInfo;
-
-    m_qlPreviewController = adoptNS([PAL::allocQLPreviewControllerInstance() init]);
-
-    m_qlPreviewControllerDelegate = adoptNS([[_WKPreviewControllerDelegate alloc] initWithSystemPreviewController:this]);
-    [m_qlPreviewController setDelegate:m_qlPreviewControllerDelegate.get()];
-
-    m_qlPreviewControllerDataSource = adoptNS([[_WKPreviewControllerDataSource alloc] initWithSystemPreviewController:this MIMEType:mimeType originatingPageURL:originatingPageURL]);
-    [m_qlPreviewController setDataSource:m_qlPreviewControllerDataSource.get()];
-
-    [presentingViewController presentViewController:m_qlPreviewController.get() animated:YES completion:nullptr];
-#endif
-
-    m_originatingPageURL = originatingPageURL;
-
-    RELEASE_LOG(SystemPreview, "SystemPreview started on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
-}
-
-void SystemPreviewController::setDestinationURL(URL url)
-{
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
-    NSURL *nsurl = (NSURL *)url;
-    NSURL *originatingPageURL = (NSURL *)m_originatingPageURL;
-    if ([getASVLaunchPreviewClass() respondsToSelector:@selector(beginPreviewApplicationWithURLs:is3DContent:websiteURL:completion:)])
-        [getASVLaunchPreviewClass() beginPreviewApplicationWithURLs:@[nsurl] is3DContent:YES websiteURL:originatingPageURL completion:^(NSError *error) { }];
-    else if ([getASVLaunchPreviewClass() respondsToSelector:@selector(beginPreviewApplicationWithURLs:is3DContent:completion:)])
-        [getASVLaunchPreviewClass() beginPreviewApplicationWithURLs:@[nsurl] is3DContent:YES completion:^(NSError *error) { }];
-
-#endif
-    m_destinationURL = WTFMove(url);
-}
-
-void SystemPreviewController::updateProgress(float progress)
-{
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
-    UNUSED_PARAM(progress);
-#else
-    if (m_qlPreviewControllerDataSource)
-        [m_qlPreviewControllerDataSource setProgress:progress];
-#endif
-}
-
-void SystemPreviewController::finish(URL url)
-{
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
-    ASSERT(equalIgnoringFragmentIdentifier(m_destinationURL, url));
-    NSURL *nsurl = (NSURL *)url;
-    if ([getASVLaunchPreviewClass() respondsToSelector:@selector(launchPreviewApplicationWithURLs:completion:)])
-        [getASVLaunchPreviewClass() launchPreviewApplicationWithURLs:@[nsurl] completion:^(NSError *error) { }];
-#else
-    if (m_qlPreviewControllerDataSource)
-        [m_qlPreviewControllerDataSource finish:url];
-
-    RELEASE_LOG(SystemPreview, "SystemPreview load has finished on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
-#endif
-}
-
-void SystemPreviewController::cancel()
-{
-#if !HAVE(UIKIT_WEBKIT_INTERNALS)
-    if (m_qlPreviewController)
-        [m_qlPreviewController.get() dismissViewControllerAnimated:YES completion:nullptr];
-
-    m_qlPreviewControllerDelegate = nullptr;
-    m_qlPreviewControllerDataSource = nullptr;
-    m_qlPreviewController = nullptr;
-
-    RELEASE_LOG(SystemPreview, "SystemPreview ended/cancelled on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
-#endif
-}
-
-void SystemPreviewController::fail(const WebCore::ResourceError& error)
-{
-#if !HAVE(UIKIT_WEBKIT_INTERNALS)
-    if (m_qlPreviewControllerDataSource)
-        [m_qlPreviewControllerDataSource failWithError:error.nsError()];
-#endif
 }
 
 void SystemPreviewController::triggerSystemPreviewAction()
