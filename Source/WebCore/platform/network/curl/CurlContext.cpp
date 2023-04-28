@@ -535,13 +535,13 @@ void CurlHandle::enableAcceptEncoding()
 
 void CurlHandle::enableAllowedProtocols()
 {
-    static const long allowedProtocols = CURLPROTO_FILE |
 #if ENABLE(FTPDIR)
-        CURLPROTO_FTP | CURLPROTO_FTPS |
+    auto allowedProtocols = "file,ftp,ftps,http,https";
+#else
+    auto allowedProtocols = "file,http,https";
 #endif
-        CURLPROTO_HTTP | CURLPROTO_HTTPS;
 
-    curl_easy_setopt(m_handle, CURLOPT_PROTOCOLS, allowedProtocols);
+    curl_easy_setopt(m_handle, CURLOPT_PROTOCOLS_STR, allowedProtocols);
 }
 
 void CurlHandle::enableAltSvc()
