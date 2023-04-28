@@ -74,17 +74,13 @@ public:
     LiteralParserToken() = default;
 
     TokenType type;
+    unsigned stringIs8Bit : 1; // Only used for TokString.
+    unsigned stringOrIdentifierLength : 31;
     union {
         double numberToken; // Only used for TokNumber.
-        struct {
-            union {
-                const CharType* identifierStart;
-                const LChar* stringStart8;
-                const UChar* stringStart16;
-            };
-            unsigned stringIs8Bit : 1; // Only used for TokString.
-            unsigned stringOrIdentifierLength : 31;
-        };
+        const CharType* identifierStart;
+        const LChar* stringStart8;
+        const UChar* stringStart16;
     };
 };
 
