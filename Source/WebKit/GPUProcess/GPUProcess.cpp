@@ -280,7 +280,9 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
     WTF::Thread::setCurrentThreadIsUserInteractive(0);
 
     WebCore::setPresentingApplicationPID(parameters.parentPID);
-    overrideUserPreferredLanguages(parameters.overrideLanguages);
+
+    if (!parameters.overrideLanguages.isEmpty())
+        overrideUserPreferredLanguages(parameters.overrideLanguages);
 
 #if USE(OS_STATE)
     registerWithStateDumper("GPUProcess state"_s);
