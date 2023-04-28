@@ -1,0 +1,17 @@
+<script>
+  onload = async () => {
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    internals.withUserGesture(() => {});
+    let video0 = document.createElement('video');
+    video0.src = 'data:video/mp4;';
+    document.body.append(video0);
+    $vm.print(await video0.requestFullscreen());
+    navigator.mediaSession.callActionHandler({action: 'play'});
+    let div0 = document.createElement('div');
+    video0.append(div0);
+    $vm.print(await div0.requestFullscreen());
+    video0.webkitSetPresentationMode('inline');
+    document.body.innerHTML = 'PASS if no crash';
+  };
+</script>

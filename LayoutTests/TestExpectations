@@ -6245,3 +6245,5 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/js
 webkit.org/b/252183 imported/w3c/web-platform-tests/css/css-box/margin-trim/block-container-overflowing-float-margins-tirmmed-at-final-position-block-layout.html [ ImageOnlyFailure ]
 webkit.org/b/253055 imported/w3c/web-platform-tests/css/css-box/margin-trim/block-container-floats-adjacent-to-containing-block-should-be-trimmed-only.html [ ImageOnlyFailure ]
 
+webkit.org/b/255970 [ Debug ] fullscreen/exit-full-screen-video-crash.html [ Crash ]
+
