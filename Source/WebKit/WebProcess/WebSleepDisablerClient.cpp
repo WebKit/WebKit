@@ -32,15 +32,15 @@
 
 namespace WebKit {
 
-void WebSleepDisablerClient::didCreateSleepDisabler(WebCore::SleepDisablerIdentifier identifier, const String& reason, bool display, WebCore::PageIdentifier pageID)
+void WebSleepDisablerClient::didCreateSleepDisabler(WebCore::SleepDisablerIdentifier identifier, const String& reason, bool display, std::optional<WebCore::PageIdentifier> pageID)
 {
-    if (auto* webPage = WebProcess::singleton().webPage(pageID))
+    if (auto* webPage = pageID ? WebProcess::singleton().webPage(*pageID) : nullptr)
         webPage->send(Messages::WebPageProxy::DidCreateSleepDisabler(identifier, reason, display));
 }
 
-void WebSleepDisablerClient::didDestroySleepDisabler(WebCore::SleepDisablerIdentifier identifier, WebCore::PageIdentifier pageID)
+void WebSleepDisablerClient::didDestroySleepDisabler(WebCore::SleepDisablerIdentifier identifier, std::optional<WebCore::PageIdentifier> pageID)
 {
-    if (auto* webPage = WebProcess::singleton().webPage(pageID))
+    if (auto* webPage = pageID ? WebProcess::singleton().webPage(*pageID) : nullptr)
         webPage->send(Messages::WebPageProxy::DidDestroySleepDisabler(identifier));
 }
 

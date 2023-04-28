@@ -44,7 +44,7 @@ WakeLockManager::~WakeLockManager()
     m_document.unregisterForVisibilityStateChangedCallbacks(*this);
 }
 
-void WakeLockManager::addWakeLock(Ref<WakeLockSentinel>&& lock, PageIdentifier pageID)
+void WakeLockManager::addWakeLock(Ref<WakeLockSentinel>&& lock, std::optional<PageIdentifier> pageID)
 {
     auto type = lock->type();
     auto& locks = m_wakeLocks.ensure(type, [] { return Vector<RefPtr<WakeLockSentinel>>(); }).iterator->value;

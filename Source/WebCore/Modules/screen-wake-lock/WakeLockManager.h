@@ -44,7 +44,7 @@ public:
     explicit WakeLockManager(Document&);
     ~WakeLockManager();
 
-    void addWakeLock(Ref<WakeLockSentinel>&&, PageIdentifier);
+    void addWakeLock(Ref<WakeLockSentinel>&&, std::optional<PageIdentifier>);
     void removeWakeLock(WakeLockSentinel&);
 
     void releaseAllLocks(WakeLockType);

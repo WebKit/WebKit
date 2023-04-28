@@ -34,7 +34,7 @@ namespace WebCore {
 class SleepDisabler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT SleepDisabler(const String&, PAL::SleepDisabler::Type, PageIdentifier);
+    WEBCORE_EXPORT SleepDisabler(const String&, PAL::SleepDisabler::Type, std::optional<PageIdentifier>);
     WEBCORE_EXPORT ~SleepDisabler();
 
     PAL::SleepDisabler::Type type() const { return m_type; }
@@ -43,7 +43,7 @@ private:
     std::unique_ptr<PAL::SleepDisabler> m_platformSleepDisabler;
     SleepDisablerIdentifier m_identifier;
     PAL::SleepDisabler::Type m_type;
-    PageIdentifier m_pageID;
+    std::optional<PageIdentifier> m_pageID;
 };
 
 } // namespace WebCore

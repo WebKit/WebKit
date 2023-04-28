@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-SleepDisabler::SleepDisabler(const String& reason, PAL::SleepDisabler::Type type, PageIdentifier pageID)
+SleepDisabler::SleepDisabler(const String& reason, PAL::SleepDisabler::Type type, std::optional<PageIdentifier> pageID)
     : m_type(type)
     , m_pageID(pageID)
 {
