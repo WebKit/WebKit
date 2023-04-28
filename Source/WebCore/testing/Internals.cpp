@@ -6767,10 +6767,14 @@ String Internals::focusRingColor()
     return serializationForCSS(RenderTheme::singleton().focusRingColor({ }));
 }
 
-unsigned Internals::createSleepDisabler(const String& reason, bool display)
+ExceptionOr<unsigned> Internals::createSleepDisabler(const String& reason, bool display)
 {
+    auto* document = contextDocument();
+    if (!document || !document->pageID())
+        return Exception { InvalidAccessError };
+
     static unsigned lastUsedIdentifier = 0;
-    auto sleepDisabler = makeUnique<WebCore::SleepDisabler>(reason, display ? PAL::SleepDisabler::Type::Display : PAL::SleepDisabler::Type::System);
+    auto sleepDisabler = makeUnique<WebCore::SleepDisabler>(reason, display ? PAL::SleepDisabler::Type::Display : PAL::SleepDisabler::Type::System, *document->pageID());
     m_sleepDisablers.add(++lastUsedIdentifier, WTFMove(sleepDisabler));
     return lastUsedIdentifier;
 }

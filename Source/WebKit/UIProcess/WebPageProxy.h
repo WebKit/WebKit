@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include <WebCore/SleepDisablerIdentifier.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/ProcessID.h>
 #include <wtf/UniqueRef.h>
@@ -119,6 +120,7 @@ class SecurityOriginData;
 class SelectionData;
 class SelectionGeometry;
 class SharedBuffer;
+class SleepDisabler;
 class SpeechRecognitionRequest;
 class SubstituteData;
 class TextCheckingRequestData;
@@ -591,6 +593,8 @@ public:
     void loadServiceWorker(const URL&, bool usingModules, CompletionHandler<void(bool success)>&&);
 
     WebUserContentControllerProxy& userContentController() { return m_userContentController.get(); }
+
+    bool hasSleepDisabler() const;
 
 #if ENABLE(FULLSCREEN_API)
     WebFullScreenManagerProxy* fullScreenManager();
@@ -2205,6 +2209,9 @@ public:
 
     void didCommitLoadForFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool wasPrivateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
 
+    void didCreateSleepDisabler(WebCore::SleepDisablerIdentifier, const String& reason, bool display);
+    void didDestroySleepDisabler(WebCore::SleepDisablerIdentifier);
+
 #if PLATFORM(MAC)
     void setCaretDecorationVisibility(bool);
 #endif
@@ -3278,6 +3285,7 @@ private:
 #endif
 
     RefPtr<WebPageProxy> m_pageToCloneSessionStorageFrom;
+    HashMap<WebCore::SleepDisablerIdentifier, std::unique_ptr<WebCore::SleepDisabler>> m_sleepDisablers;
 };
 
 } // namespace WebKit

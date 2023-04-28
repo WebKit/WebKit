@@ -26,19 +26,22 @@
 #include "config.h"
 #include "WebSleepDisablerClient.h"
 
-#include "WebProcess.h"
-#include "WebProcessProxyMessages.h"
+#include "MessageSenderInlines.h"
+#include "WebPage.h"
+#include "WebPageProxyMessages.h"
 
 namespace WebKit {
 
-void WebSleepDisablerClient::didCreateSleepDisabler(WebCore::SleepDisablerIdentifier identifier, const String& reason, bool display)
+void WebSleepDisablerClient::didCreateSleepDisabler(WebCore::SleepDisablerIdentifier identifier, const String& reason, bool display, WebCore::PageIdentifier pageID)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::DidCreateSleepDisabler(identifier, reason, display), 0);
+    if (auto* webPage = WebProcess::singleton().webPage(pageID))
+        webPage->send(Messages::WebPageProxy::DidCreateSleepDisabler(identifier, reason, display));
 }
 
-void WebSleepDisablerClient::didDestroySleepDisabler(WebCore::SleepDisablerIdentifier identifier)
+void WebSleepDisablerClient::didDestroySleepDisabler(WebCore::SleepDisablerIdentifier identifier, WebCore::PageIdentifier pageID)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::DidDestroySleepDisabler(identifier), 0);
+    if (auto* webPage = WebProcess::singleton().webPage(pageID))
+        webPage->send(Messages::WebPageProxy::DidDestroySleepDisabler(identifier));
 }
 
 } // namespace WebKit

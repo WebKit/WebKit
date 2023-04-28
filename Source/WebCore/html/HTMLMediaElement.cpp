@@ -7498,8 +7498,10 @@ void HTMLMediaElement::updateSleepDisabling()
         m_sleepDisabler = nullptr;
     else if (shouldDisableSleep != SleepType::None) {
         auto type = shouldDisableSleep == SleepType::Display ? PAL::SleepDisabler::Type::Display : PAL::SleepDisabler::Type::System;
-        if (!m_sleepDisabler || m_sleepDisabler->type() != type)
-            m_sleepDisabler = makeUnique<SleepDisabler>("com.apple.WebCore: HTMLMediaElement playback"_s, type);
+        if (!m_sleepDisabler || m_sleepDisabler->type() != type) {
+            if (auto pageID = document().pageID())
+                m_sleepDisabler = makeUnique<SleepDisabler>("com.apple.WebCore: HTMLMediaElement playback"_s, type, *pageID);
+        }
     }
 
     if (m_player)

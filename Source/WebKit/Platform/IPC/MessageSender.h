@@ -43,10 +43,10 @@ class MessageSender {
 public:
     virtual ~MessageSender();
 
-    template<typename T> inline bool send(T&& message);
-    template<typename T> inline bool send(T&& message, OptionSet<SendOption>);
-    template<typename T> inline bool send(T&& message, uint64_t destinationID);
-    template<typename T> inline bool send(T&& message, uint64_t destinationID, OptionSet<SendOption>);
+    template<typename T> inline bool send(T&& message); // Defined in MessageSenderInlines.h.
+    template<typename T> inline bool send(T&& message, OptionSet<SendOption>); // Defined in MessageSenderInlines.h.
+    template<typename T> inline bool send(T&& message, uint64_t destinationID); // Defined in MessageSenderInlines.h.
+    template<typename T> inline bool send(T&& message, uint64_t destinationID, OptionSet<SendOption>); // Defined in MessageSenderInlines.h.
     template<typename T, typename U, typename V> inline bool send(T&& message, ObjectIdentifierGeneric<U, V> destinationID);
     template<typename T, typename U, typename V> inline bool send(T&& message, ObjectIdentifierGeneric<U, V> destinationID, OptionSet<SendOption>);
 

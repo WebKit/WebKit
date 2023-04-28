@@ -89,9 +89,14 @@ void WakeLock::request(WakeLockType lockType, Ref<DeferredPromise>&& promise)
                 promise->reject(Exception { NotAllowedError, "Document is hidden"_s });
                 return;
             }
+            auto pageID = document->pageID();
+            if (!pageID) {
+                promise->reject(Exception { NotAllowedError, "Document is detached"_s });
+                return;
+            }
             auto lock = WakeLockSentinel::create(document, lockType);
             promise->resolve<IDLInterface<WakeLockSentinel>>(lock.get());
-            document->wakeLockManager().addWakeLock(WTFMove(lock));
+            document->wakeLockManager().addWakeLock(WTFMove(lock), *pageID);
         });
     });
 }

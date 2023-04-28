@@ -397,7 +397,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (BOOL)_hasSleepDisabler
 {
-    return _page && _page->process().hasSleepDisabler();
+    return _page && _page->hasSleepDisabler();
 }
 
 - (NSString*)_scrollbarStateForScrollingNodeID:(uint64_t)scrollingNodeID isVertical:(bool)isVertical

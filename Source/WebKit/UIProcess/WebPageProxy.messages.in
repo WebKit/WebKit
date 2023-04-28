@@ -627,6 +627,9 @@ messages -> WebPageProxy {
     HandleSystemPreview(URL url, struct WebCore::SystemPreviewInfo systemPreviewInfo)
 #endif
 
+    DidCreateSleepDisabler(WebCore::SleepDisablerIdentifier identifier, String reason, bool display)
+    DidDestroySleepDisabler(WebCore::SleepDisablerIdentifier identifier)
+
     RequestCookieConsent() -> (enum:uint8_t WebCore::CookieConsentDecisionResult result)
     ClassifyModalContainerControls(Vector<String> texts) -> (Vector<WebCore::ModalContainerControlType> types)
     DecidePolicyForModalContainer(OptionSet<WebCore::ModalContainerControlType> types) -> (enum:uint8_t WebCore::ModalContainerDecision decision)

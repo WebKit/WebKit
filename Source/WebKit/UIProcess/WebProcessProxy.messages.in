@@ -70,9 +70,6 @@ messages -> WebProcessProxy LegacyReceiver {
     SendMessageToWebContextWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage)
 #endif
 
-    DidCreateSleepDisabler(WebCore::SleepDisablerIdentifier identifier, String reason, bool display)
-    DidDestroySleepDisabler(WebCore::SleepDisablerIdentifier identifier)
-
     CreateSpeechRecognitionServer(WebCore::PageIdentifier identifier)
     DestroySpeechRecognitionServer(WebCore::PageIdentifier identifier)
 
