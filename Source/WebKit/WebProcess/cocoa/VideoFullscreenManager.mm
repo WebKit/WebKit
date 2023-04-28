@@ -409,10 +409,17 @@ void VideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElemen
 void VideoFullscreenManager::exitVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, CompletionHandler<void(bool)>&& completionHandler)
 {
     INFO_LOG(LOGIDENTIFIER);
+    LOG(Fullscreen, "VideoFullscreenManager::exitVideoFullscreenForVideoElement(%p)", this);
+
     ASSERT(m_page);
     ASSERT(m_videoElements.contains(videoElement));
 
-    auto contextId = m_videoElements.get(videoElement);
+    if (!m_videoElements.contains(&videoElement)) {
+        completionHandler(false);
+        return;
+    }
+
+    auto contextId = m_videoElements.get(&videoElement);
     auto& interface = ensureInterface(contextId);
     if (interface.animationState() != VideoFullscreenInterfaceContext::AnimationType::None) {
         completionHandler(false);
@@ -441,6 +448,9 @@ void VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(HTMLVideo
 
     ASSERT(m_page);
     ASSERT(m_videoElements.contains(videoElement));
+
+    if (!m_videoElements.contains(&videoElement))
+        return;
 
     if (m_videoElementInPictureInPicture == &videoElement)
         m_videoElementInPictureInPicture = nullptr;
