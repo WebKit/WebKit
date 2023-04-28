@@ -1235,6 +1235,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'download-built-product',
             'extract-built-product',
+            'wincairo-requirements',
             'jscore-test'
         ],
         'WinCairo-64-bit-Debug-Build': [
@@ -1309,6 +1310,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'download-built-product',
             'extract-built-product',
+            'wincairo-requirements',
             'jscore-test'
         ],
         'PlayStation-Debug-Build': [
