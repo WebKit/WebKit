@@ -1441,7 +1441,7 @@ static Vector<String> authoredGridTrackSizes(Node* node, GridTrackSizingDirectio
         }
     }
 
-    auto* cssValueList = dynamicDowncast<CSSValueList>(*cssValue);
+    auto* cssValueList = dynamicDowncast<CSSValueList>(cssValue.get());
     if (!cssValueList)
         return { };
     
