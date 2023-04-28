@@ -620,6 +620,13 @@ public:
         rareData.m_privateNames.add(key, value);
     }
 
+    bool hasPrivateName(const RefPtr<UniquedStringImpl>& key) const
+    {
+        if (auto* rareData = m_rareData.get())
+            return rareData->m_privateNames.contains(key);
+        return false;
+    }
+
     template<typename Entry>
     void set(const ConcurrentJSLocker&, UniquedStringImpl* key, Entry&& entry)
     {
