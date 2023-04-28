@@ -485,7 +485,6 @@ private:
     void configureDownloadBuffer(GstElement*);
     static void downloadBufferFileCreatedCallback(MediaPlayerPrivateGStreamer*);
 
-    void configureDepayloader(GstElement*);
     void configureVideoDecoder(GstElement*);
     void configureElement(GstElement*);
 #if PLATFORM(BROADCOM) || USE(WESTEROS_SINK) || PLATFORM(AMLOGIC) || PLATFORM(REALTEK)

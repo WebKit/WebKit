@@ -2169,11 +2169,6 @@ void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
         return;
     }
 
-    if (classifiers.contains("Depayloader"_s)) {
-        configureDepayloader(element);
-        return;
-    }
-
     if (isMediaStreamPlayer())
         return;
 
@@ -2930,17 +2925,6 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     if (m_videoSink)
         configureElementPlatformQuirks(m_videoSink.get());
 #endif
-}
-
-void MediaPlayerPrivateGStreamer::configureDepayloader(GstElement* depayloader)
-{
-    if (!isMediaStreamPlayer())
-        return;
-
-    if (gstObjectHasProperty(depayloader, "request-keyframe"))
-        g_object_set(depayloader, "request-keyframe", TRUE, nullptr);
-    if (gstObjectHasProperty(depayloader, "wait-for-keyframe"))
-        g_object_set(depayloader, "wait-for-keyframe", TRUE, nullptr);
 }
 
 void MediaPlayerPrivateGStreamer::configureVideoDecoder(GstElement* decoder)
