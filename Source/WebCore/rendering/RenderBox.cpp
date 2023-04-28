@@ -806,17 +806,21 @@ LayoutRect RenderBox::outlineBoundsForRepaint(const RenderLayerModelObject* repa
 
     if (repaintContainer != this) {
         FloatQuad containerRelativeQuad;
-        if (geometryMap)
+        if (geometryMap) {
+#if ASSERT_ENABLED
+            // The geometryMap path does not take layoutDelta into account,
+            // assert that there's no layoutDelta on the layout state stack.
+            auto& layoutContext = view().frameView().layoutContext();
+            ASSERT(layoutContext.layoutDelta() == LayoutSize());
+            for (const RenderElement* renderer = this; renderer && renderer != repaintContainer; renderer = renderer->parent())
+                ASSERT(layoutContext.layoutDeltaOfRenderer(renderer) == LayoutSize());
+#endif
             containerRelativeQuad = geometryMap->mapToContainer(box, repaintContainer);
-        else
+        } else
             containerRelativeQuad = localToContainerQuad(FloatRect(box), repaintContainer);
 
         box = LayoutRect(containerRelativeQuad.boundingBox());
     }
-    
-    // FIXME: layoutDelta needs to be applied in parts before/after transforms and
-    // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
-    box.move(view().frameView().layoutContext().layoutDelta());
 
     return LayoutRect(snapRectToDevicePixels(box, document().deviceScaleFactor()));
 }
@@ -2302,11 +2306,18 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* ancestorContai
     if (ancestorContainer == this)
         return;
 
-    if (!ancestorContainer && view().frameView().layoutContext().isPaintOffsetCacheEnabled()) {
-        auto* layoutState = view().frameView().layoutContext().layoutState();
+    const LocalFrameViewLayoutContext& layoutContext = view().frameView().layoutContext();
+    if (!ancestorContainer && layoutContext.isPaintOffsetCacheEnabled()) {
+        auto* layoutState = layoutContext.layoutState();
+
         LayoutSize offset = layoutState->paintOffset() + locationOffset();
         if (style().hasInFlowPosition() && layer())
             offset += layer()->offsetForInFlowPosition();
+
+        // If layoutState is enabled, it means we have no transforms etc.
+        // on the stack, and we can just add the total delta.
+        offset += layoutState->layoutDelta();
+
         transformState.move(offset);
         return;
     }
@@ -2333,6 +2344,9 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* ancestorContai
     // order to avoid piping this flag down the method chain.
     if (mode.contains(IgnoreStickyOffsets) && isStickilyPositioned())
         containerOffset -= stickyPositionOffset();
+
+    LayoutSize layoutDelta = layoutContext.layoutDeltaOfRenderer(this);
+    containerOffset += layoutDelta;
 
     pushOntoTransformState(transformState, mode, ancestorContainer, container, containerOffset, containerSkipped);
     if (containerSkipped)
@@ -2461,9 +2475,6 @@ LayoutRect RenderBox::clippedOverflowRect(const RenderLayerModelObject* repaintC
         return { };
 
     LayoutRect r = visualOverflowRect();
-    // FIXME: layoutDelta needs to be applied in parts before/after transforms and
-    // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
-    r.move(view().frameView().layoutContext().layoutDelta());
     return computeRect(r, repaintContainer, context);
 }
 
@@ -2483,6 +2494,11 @@ LayoutRect RenderBox::computeVisibleRectUsingPaintOffset(const LayoutRect& rect)
     adjustedRect.move(layoutState->paintOffset());
     if (layoutState->isClipped())
         adjustedRect.intersect(layoutState->clipRect());
+
+    // If layoutState is enabled, it means we have no transforms etc.
+    // on the stack, and we can just add the total delta.
+    adjustedRect.move(layoutState->layoutDelta());
+
     return adjustedRect;
 }
 
@@ -2497,8 +2513,11 @@ std::optional<LayoutRect> RenderBox::computeVisibleRectInContainer(const LayoutR
     // physical when we hit a repaint container boundary. Therefore the final rect returned is always in the
     // physical coordinate space of the container.
     const RenderStyle& styleToUse = style();
+
+    const LocalFrameViewLayoutContext& layoutContext = view().frameView().layoutContext();
+
     // Paint offset cache is only valid for root-relative, non-fixed position repainting
-    if (view().frameView().layoutContext().isPaintOffsetCacheEnabled() && !container && styleToUse.position() != PositionType::Fixed && !context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
+    if (layoutContext.isPaintOffsetCacheEnabled() && !container && styleToUse.position() != PositionType::Fixed && !context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
         return computeVisibleRectUsingPaintOffset(rect);
 
     LayoutRect adjustedRect = rect;
@@ -2571,6 +2590,8 @@ std::optional<LayoutRect> RenderBox::computeVisibleRectInContainer(const LayoutR
         // flag on the RenderObject has been cleared, so use the one on the style().
         topLeft += layer()->offsetForInFlowPosition();
     }
+
+    topLeft.move(layoutContext.layoutDeltaOfRenderer(this));
 
     // FIXME: We ignore the lightweight clipping rect that controls use, since if |o| is in mid-layout,
     // its controlClipRect will be wrong. For overflow clip we use the values cached by the layer.

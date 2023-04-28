@@ -562,6 +562,23 @@ LayoutSize LocalFrameViewLayoutContext::layoutDelta() const
         return layoutState->layoutDelta();
     return { };
 }
+
+LayoutSize LocalFrameViewLayoutContext::layoutDeltaOfRenderer(const RenderObject* renderObject) const
+{
+    if (!m_LayoutStateIndexMap.contains(renderObject))
+        return { };
+
+    auto layoutStateIndex = m_LayoutStateIndexMap.get(renderObject);
+    if (layoutStateIndex >= m_layoutStateStack.size()) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    auto layoutDelta = m_layoutStateStack[layoutStateIndex]->layoutDelta();
+    if (layoutStateIndex > 0)
+        layoutDelta -= m_layoutStateStack[layoutStateIndex - 1]->layoutDelta();
+    return layoutDelta;
+}
     
 void LocalFrameViewLayoutContext::addLayoutDelta(const LayoutSize& delta)
 {
@@ -591,6 +608,7 @@ void LocalFrameViewLayoutContext::pushLayoutState(RenderElement& root)
     ASSERT(!layoutState());
 
     m_layoutStateStack.append(makeUnique<RenderLayoutState>(root));
+    m_LayoutStateIndexMap.add(&root, m_layoutStateStack.size() - 1);
 }
 
 bool LocalFrameViewLayoutContext::pushLayoutStateForPaginationIfNeeded(RenderBlockFlow& layoutRoot)
@@ -598,6 +616,7 @@ bool LocalFrameViewLayoutContext::pushLayoutStateForPaginationIfNeeded(RenderBlo
     if (layoutState())
         return false;
     m_layoutStateStack.append(makeUnique<RenderLayoutState>(layoutRoot, RenderLayoutState::IsPaginated::Yes));
+    m_LayoutStateIndexMap.add(&layoutRoot, m_layoutStateStack.size() - 1);
     return true;
 }
     
@@ -614,6 +633,7 @@ bool LocalFrameViewLayoutContext::pushLayoutState(RenderBox& renderer, const Lay
             , pageHeightChanged
             , layoutState ? layoutState->lineClamp() : std::nullopt
             , layoutState ? layoutState->textBoxTrim() : RenderLayoutState::TextBoxTrim()));
+        m_LayoutStateIndexMap.add(&renderer, m_layoutStateStack.size() - 1);
         return true;
     }
     return false;
@@ -626,6 +646,7 @@ void LocalFrameViewLayoutContext::popLayoutState()
 
     auto currentLineClamp = layoutState()->lineClamp();
 
+    m_LayoutStateIndexMap.remove(m_layoutStateStack.last()->renderer());
     m_layoutStateStack.removeLast();
 
     if (currentLineClamp) {

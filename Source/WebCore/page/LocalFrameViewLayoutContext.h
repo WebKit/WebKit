@@ -108,11 +108,13 @@ public:
     // last layout location, in order to repaint correctly.
     // If we're doing a full repaint m_layoutState will be 0, but in that case layoutDelta doesn't matter.
     LayoutSize layoutDelta() const;
+    LayoutSize layoutDeltaOfRenderer(const RenderObject*) const;
     void addLayoutDelta(const LayoutSize& delta);
 #if ASSERT_ENABLED
     bool layoutDeltaMatches(const LayoutSize& delta);
 #endif
     using LayoutStateStack = Vector<std::unique_ptr<RenderLayoutState>>;
+    using LayoutStateMap = HashMap<const RenderObject*, size_t>;
 
     const Layout::LayoutState* layoutFormattingState() const { return m_layoutState.get(); }
 
@@ -179,6 +181,7 @@ private:
     int m_layoutDisallowedCount { 0 };
     unsigned m_paintOffsetCacheDisableCount { 0 };
     LayoutStateStack m_layoutStateStack;
+    LayoutStateMap m_LayoutStateIndexMap;
     std::unique_ptr<Layout::LayoutTree> m_layoutTree;
     std::unique_ptr<Layout::LayoutState> m_layoutState;
 };

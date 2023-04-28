@@ -1035,10 +1035,7 @@ void RenderObject::repaintRectangle(const LayoutRect& repaintRect, ClipRepaintTo
     // Don't repaint if we're unrooted (note that view() still returns the view when unrooted)
     if (!isRooted() || view().printing())
         return;
-    // FIXME: layoutDelta needs to be applied in parts before/after transforms and
-    // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
     auto dirtyRect = repaintRect;
-    dirtyRect.move(view().frameView().layoutContext().layoutDelta());
     issueRepaint(dirtyRect, shouldClipToLayer, forceRepaint, shouldClipToContainer);
 }
 

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WebKit test case for bug 23308</title>
+<style>
+  body {
+    margin: 0;
+    font: 20px/1 Ahem;
+  }
+  .flex {
+    display: flex;
+  }
+  .composited {
+    transform: translateZ(0);
+  }
+</style>
+</head>
+<body>
+<!-- You should see text 'TEST CASE' -->
+<div id="upper" style="background: yellow"></div>
+<div class="composited flex">
+  <div id="lower" style="background: red;">TEST</div>
+</div>
+<script>
+  if (window.testRunner) {
+    testRunner.dumpAsText(false);
+    testRunner.waitUntilDone();
+  }
+  function doTest() {
+    if (window.internals) {
+      internals.startTrackingRepaints();
+    }
+    document.getElementById("upper").style.height = "1em";
+    document.getElementById("lower").innerHTML = "TEST CASE";
+    if (window.internals) {
+      var layerTreeText = internals.layerTreeAsText(
+        document,
+        internals.LAYER_TREE_INCLUDES_REPAINT_RECTS
+      );
+      internals.stopTrackingRepaints();
+      var resultElement = document.createElement('pre');
+      resultElement.appendChild(document.createTextNode(layerTreeText));
+      document.body.appendChild(resultElement);
+    }
+    if (window.testRunner) {
+      testRunner.notifyDone();
+    }
+  }
+  (function () {
+    setTimeout(function () {
+      doTest();
+    }, 100);
+  })();
+</script>
+</body>
+</html>

@@ -816,9 +816,6 @@ LayoutRect RenderReplaced::clippedOverflowRect(const RenderLayerModelObject* rep
     // The selectionRect can project outside of the overflowRect, so take their union
     // for repainting to avoid selection painting glitches.
     LayoutRect r = unionRect(localSelectionRect(false), visualOverflowRect());
-    // FIXME: layoutDelta needs to be applied in parts before/after transforms and
-    // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
-    r.move(view().frameView().layoutContext().layoutDelta());
     return computeRect(r, repaintContainer, context);
 }
 

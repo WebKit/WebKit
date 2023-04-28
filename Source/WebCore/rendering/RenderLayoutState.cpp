@@ -43,8 +43,8 @@ RenderLayoutState::RenderLayoutState(RenderElement& renderer, IsPaginated isPagi
     , m_layoutDeltaXSaturated(false)
     , m_layoutDeltaYSaturated(false)
     , m_blockStartTrimming(Vector<bool>(0))
-    , m_renderer(&renderer)
 #endif
+    , m_renderer(&renderer)
 {
     if (RenderElement* container = renderer.container()) {
         FloatPoint absContentPoint = container->localToAbsolute(FloatPoint(), UseTransforms);
@@ -74,9 +74,7 @@ RenderLayoutState::RenderLayoutState(const LocalFrameViewLayoutContext::LayoutSt
     , m_blockStartTrimming(Vector<bool>(0))
     , m_lineClamp(lineClamp)
     , m_textBoxTrim(textBoxTrim)
-#if ASSERT_ENABLED
     , m_renderer(&renderer)
-#endif
 {
     if (!layoutStateStack.isEmpty()) {
         auto& ancestor = *layoutStateStack.last().get();

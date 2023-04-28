@@ -401,9 +401,6 @@ LayoutRect RenderTableCell::clippedOverflowRect(const RenderLayerModelObject* re
     LayoutPoint location(std::max<LayoutUnit>(left, -visualOverflowRect().x()), std::max<LayoutUnit>(top, -visualOverflowRect().y()));
     LayoutRect r(-location.x(), -location.y(), location.x() + std::max(width() + right, visualOverflowRect().maxX()), location.y() + std::max(height() + bottom, visualOverflowRect().maxY()));
 
-    // FIXME: layoutDelta needs to be applied in parts before/after transforms and
-    // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
-    r.move(view().frameView().layoutContext().layoutDelta());
     return computeRect(r, repaintContainer, context);
 }
 

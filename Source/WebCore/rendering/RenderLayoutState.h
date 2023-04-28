@@ -87,9 +87,7 @@ public:
 
     bool needsBlockDirectionLocationSetBeforeLayout() const { return m_lineGrid || (m_isPaginated && m_pageLogicalHeight); }
 
-#if ASSERT_ENABLED
     RenderElement* renderer() const { return m_renderer; }
-#endif
     LayoutRect clipRect() const { return m_clipRect; }
     bool isClipped() const { return m_clipped; }
 
@@ -163,9 +161,7 @@ private:
     LayoutSize m_lineGridPaginationOrigin;
     std::optional<LineClamp> m_lineClamp;
     std::optional<TextBoxTrim> m_textBoxTrim;
-#if ASSERT_ENABLED
     RenderElement* m_renderer { nullptr };
-#endif
 };
 
 // Stack-based class to assist with LayoutState push/pop
