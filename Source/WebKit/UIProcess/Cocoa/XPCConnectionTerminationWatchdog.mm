@@ -26,11 +26,8 @@
 #import "config.h"
 #import "XPCConnectionTerminationWatchdog.h"
 
-#import "XPCUtilities.h"
-
-#if PLATFORM(IOS_FAMILY)
 #import "ProcessAssertion.h"
-#endif
+#import "XPCUtilities.h"
 
 namespace WebKit {
 
@@ -42,9 +39,7 @@ void XPCConnectionTerminationWatchdog::startConnectionTerminationWatchdog(OSObje
 XPCConnectionTerminationWatchdog::XPCConnectionTerminationWatchdog(OSObjectPtr<xpc_connection_t>&& xpcConnection, Seconds interval)
     : m_xpcConnection(WTFMove(xpcConnection))
     , m_watchdogTimer(RunLoop::main(), this, &XPCConnectionTerminationWatchdog::watchdogTimerFired)
-#if PLATFORM(IOS_FAMILY)
     , m_assertion(ProcessAndUIAssertion::create(xpc_connection_get_pid(m_xpcConnection.get()), "XPCConnectionTerminationWatchdog"_s, ProcessAssertionType::Background))
-#endif
 {
     m_watchdogTimer.startOneShot(interval);
 }
