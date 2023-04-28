@@ -2,36 +2,18 @@
 <html>
 <head>
 <meta name="fuzzy" content="maxDifference=115;totalPixels=28000-29000" />
-    <style>
-        video {
-            position: absolute;
-            left: 10px;
-            top: 50px;
-        }
-        
-        .masker {
-            position: absolute;
-            left: 10px;
-            top: 50px;
-            height: 360px;
-            width: 680px;
-            border-top: 50px solid white;
-            border-right: 100px solid white;
-            border-bottom: 250px solid white;
-            border-left: 100px solid white;
-            box-sizing: border-box;
-        }
-    </style>
+<script src="../../webrtc/routines.js"></script>
 </head>
 
 <body>
 <p>Tests that the video frames of an HTMLVideoElement are black if no video MediaStreamTrack is enabled.</p>
-<video controls width="680" height="360"></video>
-<div class="masker"></div>
+<video/>
+<canvas id="canvas"></div>
 
 <script>
     let mediaStream;
     let video;
+    let canvas;
 
     function debug(msg)
     {
@@ -41,9 +23,15 @@
     }
 
     function canplaythrough()
-    {    
+    {
         mediaStream.getVideoTracks()[0].enabled = false;
-        setTimeout(() => { window.testRunner.notifyDone(); }, 200);
+        setTimeout(() => {
+            waitForVideoSize(video, 320, 240).then(() => {
+                checkVideoIsEntirelyBlack(canvas, video).then(() => {
+                    window.testRunner.notifyDone();
+                });
+            });
+        }, 2000);
     }
 
     function canplay()
@@ -64,10 +52,12 @@
 
     function start()
     {
+        canvas = document.getElementById("canvas");
+
         video = document.querySelector('video');
         video.addEventListener('canplay', canplay, false);
         video.addEventListener('canplaythrough', canplaythrough, false);
-        navigator.mediaDevices.getUserMedia({video:true})
+        navigator.mediaDevices.getUserMedia({video: {width: 320, height: 240}})
             .then(setupStream)
             .catch(failedToSetupStream);
     }
