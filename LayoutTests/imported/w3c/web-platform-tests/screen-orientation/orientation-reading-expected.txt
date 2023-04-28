@@ -1,10 +1,8 @@
 
-Harness Error (FAIL), message = Test named 'Test the orientations and associated angles when the natural orientation is 'portrait'' specified 1 'cleanup' function, and 1 failed.
-
 PASS screen.orientation attributes are present
 PASS Test the orientations and associated angles when the natural orientation is 'portrait'
-NOTRUN Test the orientations and associated angles when the natural orientation is 'landscape'
+PASS Test the orientations and associated angles when the natural orientation is 'landscape'
 PASS Test that ScreenOrientation properties are not writable
 PASS Test that ScreenOrientation is always the same object
-NOTRUN Test that ScreenOrientation's attribute values change after 'change' event fires
+FAIL Test that ScreenOrientation's attribute values change after 'change' event fires promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
 

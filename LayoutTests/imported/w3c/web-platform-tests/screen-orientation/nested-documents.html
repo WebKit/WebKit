@@ -37,7 +37,7 @@
 
     promise_test(async (t) => {
       t.add_cleanup(makeCleanup());
-      // Create 3 nested iframes
+      // Create 2 nested iframes
       const src = "/screen-orientation/resources/empty.html";
       const outerIframe = await attachIframe({ src: `${src}#1` });
       const innerIframe = await attachIframe({
@@ -49,11 +49,9 @@
 
       // Go full screen
       await test_driver.bless(
-        "request full screen",
-        null,
-        innerIframe.contentWindow
+        "request full screen"
       );
-      await innerIframe.contentDocument.documentElement.requestFullscreen();
+      await document.documentElement.requestFullscreen();
       const opposite = getOppositeOrientation();
 
       // Each iframe tries to lock the orientation
@@ -68,20 +66,16 @@
       const topPromise = window.screen.orientation.lock(opposite);
 
       // Check that all promises are rejected with AbortError
-      const abortedPromises = [];
       for (let i = 0; i < requestToLock.length; i++) {
         const { promise, context } = requestToLock[i];
-        const p = promise_rejects_dom(
+        await promise_rejects_dom(
           t,
           "AbortError",
           context.DOMException,
           promise,
           `Expected request to lock orientation from iframe ${i} to abort`
         );
-        abortedPromises.push(p);
       }
-      await Promise.all(abortedPromises);
-
       // Finally, top-level promise resolves
       await topPromise;
     }, "The orientation lock from one document affects lock requests from other documents");

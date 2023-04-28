@@ -31,7 +31,7 @@
       <p id="#fragment"></p>
       <a href="#fragment">fragment</a>
     `;
-    await test_driver.bless("request full screen");
+    await test_driver.bless("request full screen", null, iframe.contentWindow);
     await document.documentElement.requestFullscreen();
     const orientation = getOppositeOrientation();
     const p = iframe.contentWindow.screen.orientation.lock(orientation);
@@ -43,7 +43,7 @@
   promise_test(async (t) => {
     t.add_cleanup(makeCleanup());
     const iframe = await attachIframe();
-    await test_driver.bless("request full screen");
+    await test_driver.bless("request full screen", null, iframe.contentWindow);
     await document.documentElement.requestFullscreen();
     const orientation = getOppositeOrientation();
     const p = iframe.contentWindow.screen.orientation.lock(orientation);

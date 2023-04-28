@@ -1,7 +1,10 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: Screen orientation locking is not supported
+CONSOLE MESSAGE: Unhandled Promise Rejection: SecurityError: Locking the screen orientation is only allowed when in fullscreen
+CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: Screen orientation locking is not supported
 
 
-Harness Error (FAIL), message = Test named 'Requesting orientation lock from one document cancels the lock request from another document' specified 1 'cleanup' function, and 1 failed.
+Harness Error (FAIL), message = Unhandled rejection: Screen orientation locking is not supported
 
 FAIL Requesting orientation lock from one document cancels the lock request from another document promise_rejects_dom: function "function () { throw e }" threw object "SecurityError: Locking the screen orientation is only allowed when in fullscreen" that is not a DOMException AbortError: property "code" is equal to 18, expected 20
-NOTRUN The orientation lock from one document affects lock requests from other documents
+FAIL The orientation lock from one document affects lock requests from other documents promise_rejects_dom: Expected request to lock orientation from iframe 0 to abort function "function () { throw e }" threw object "SecurityError: Locking the screen orientation is only allowed when in fullscreen" that is not a DOMException AbortError: property "code" is equal to 18, expected 20
 

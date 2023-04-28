@@ -467,7 +467,7 @@ window.test_driver_internal.minimize_window = async function (context=null)
  */
 window.test_driver_internal.set_window_rect = async function (rect, context=null)
 {
-    if (typeof rect !== "object" || typeof rect.width !== "number" || typeof rect.height !== "number")
+    if (!rect || typeof rect !== "object" || typeof rect.width !== "number" || typeof rect.height !== "number")
         throw new Error("Invalid rect");
 
     context = context ?? window;

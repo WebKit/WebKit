@@ -35,11 +35,9 @@ export function getOppositeOrientation() {
 
 export function makeCleanup() {
   return async () => {
-    document.screen.orientation.unlock();
+    screen.orientation.unlock();
     if (document.fullscreenElement) {
-      try {
-        await document.exitFullscreen();
-      } catch {}
+      await document.fullscreenElement.ownerDocument.exitFullscreen();
     }
   };
 }

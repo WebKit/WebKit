@@ -19,7 +19,7 @@
     await minimize();
 
     assert_equals(document.visibilityState, "hidden", "Document must be hidden");
-    await promise_rejects_dom(t, "SecurityError", screen.orientation.lock("landscape") );
+    await promise_rejects_dom(t, "SecurityError", screen.orientation.lock(getOppositeOrientation()));
   }, "hidden documents must reject went trying to call lock or unlock");
 
   promise_test(async (t) => {
@@ -34,8 +34,10 @@
 
   promise_test(async (t) => {
     const { minimize, restore } = window_state_context(t);
-    t.add_cleanup(restore);
     t.add_cleanup(makeCleanup());
+
+    await test_driver.bless("request full screen");
+    await document.documentElement.requestFullscreen();
     await screen.orientation.lock(getOppositeOrientation());
 
     await minimize();
@@ -46,8 +48,9 @@
 
   promise_test(async (t) => {
     const { minimize, restore } = window_state_context(t);
-    t.add_cleanup(restore);
     t.add_cleanup(makeCleanup());
+    await test_driver.bless("request full screen");
+    await document.documentElement.requestFullscreen();
     await screen.orientation.lock(getOppositeOrientation());
 
     await minimize();
@@ -59,6 +62,9 @@
     await restore();
 
     assert_equals(document.visibilityState, "visible");
+
+    await test_driver.bless("request full screen");
+    await document.documentElement.requestFullscreen();
     await screen.orientation.lock(getOppositeOrientation());
     screen.orientation.unlock();
   }, "Once maximized, a minimized window can lock or unlock the screen orientation again");
