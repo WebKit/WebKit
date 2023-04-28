@@ -2661,7 +2661,7 @@ void Heap::reportExtraMemoryVisited(size_t size)
         CheckedSize checkedNewSize = oldSize;
         checkedNewSize += size;
         size_t newSize = UNLIKELY(checkedNewSize.hasOverflowed()) ? std::numeric_limits<size_t>::max() : checkedNewSize.value();
-        if (__sync_bool_compare_and_swap(counter, oldSize, newSize))
+        if (WTF::atomicCompareExchangeWeakRelaxed(counter, oldSize, newSize))
             return;
     }
 }
@@ -2673,7 +2673,7 @@ void Heap::reportExternalMemoryVisited(size_t size)
 
     for (;;) {
         size_t oldSize = *counter;
-        if (__sync_bool_compare_and_swap(counter, oldSize, oldSize + size))
+        if (WTF::atomicCompareExchangeWeakRelaxed(counter, oldSize, oldSize + size))
             return;
     }
 }
