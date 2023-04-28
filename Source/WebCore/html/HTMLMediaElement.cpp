@@ -5715,8 +5715,14 @@ void HTMLMediaElement::mediaPlayerCharacteristicChanged()
 
     beginProcessingMediaPlayerCallback();
 
-    if (captionDisplayMode() == CaptionUserPreferences::Automatic && m_subtitleTrackLanguage != m_player->languageOfPrimaryAudioTrack())
-        markCaptionAndSubtitleTracksAsUnconfigured(AfterDelay);
+    if (captionDisplayMode() == CaptionUserPreferences::Automatic) {
+        auto languageOfPrimaryAudioTrack = m_player->languageOfPrimaryAudioTrack();
+        auto audioLanguageChanged = !m_languageOfPrimaryAudioTrack || *m_languageOfPrimaryAudioTrack != languageOfPrimaryAudioTrack;
+        if (audioLanguageChanged && m_subtitleTrackLanguage != languageOfPrimaryAudioTrack) {
+            m_languageOfPrimaryAudioTrack = languageOfPrimaryAudioTrack;
+            markCaptionAndSubtitleTracksAsUnconfigured(AfterDelay);
+        }
+    }
 
     if (potentiallyPlaying())
         mediaPlayerRenderingModeChanged();

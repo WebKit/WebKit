@@ -1211,6 +1211,7 @@ private:
     AutoplayEventPlaybackState m_autoplayEventPlaybackState { AutoplayEventPlaybackState::None };
 
     String m_subtitleTrackLanguage;
+    std::optional<String> m_languageOfPrimaryAudioTrack;
     MediaTime m_lastTextTrackUpdateTime { -1, 1 };
 
     std::optional<CaptionUserPreferences::CaptionDisplayMode> m_captionDisplayMode;
