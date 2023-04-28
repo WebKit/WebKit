@@ -27,6 +27,7 @@
 
 #if LIBPAS_ENABLED
 
+#include <unistd.h>
 #include "pas_ptr_hash_set.h"
 #include "pas_ptr_hash_map.h"
 #include "pas_root.h"
@@ -98,7 +99,7 @@ kern_return_t pas_report_crash_extract_pgm_failure(vm_address_t fault_address, m
         addr64_t key = (addr64_t) hash_map_entry->key;
 
         // Lower PGM Bounds Checking
-        addr64_t bottom = (addr64_t) (key - pgm_metadata->mem_to_waste - pgm_metadata->page_size);
+        addr64_t bottom = (addr64_t) (key - pgm_metadata->mem_to_waste - (addr64_t) getpagesize());
         addr64_t top = (addr64_t) (key - pgm_metadata->mem_to_waste);
 
         if ((fault_address >= bottom)
@@ -107,12 +108,14 @@ kern_return_t pas_report_crash_extract_pgm_failure(vm_address_t fault_address, m
             report->confidence = "high";
             report->fault_address = fault_address;
             report->allocation_size = pgm_metadata->allocation_size_requested;
+            report->nearest_allocation = key;
+            report->allocation_state = pgm_metadata->freed ? "freed" : "allocated";
             return KERN_SUCCESS;
         }
 
         // Upper PGM Bounds Checking
         bottom = (addr64_t) (key - pgm_metadata->mem_to_waste + pgm_metadata->size_of_data_pages);
-        top = (addr64_t) (key - pgm_metadata->mem_to_waste + pgm_metadata->size_of_data_pages + pgm_metadata->page_size);
+        top = (addr64_t) (key - pgm_metadata->mem_to_waste + pgm_metadata->size_of_data_pages + (addr64_t) getpagesize());
 
         if ((fault_address >= bottom)
             && (fault_address < top)) {
@@ -120,6 +123,8 @@ kern_return_t pas_report_crash_extract_pgm_failure(vm_address_t fault_address, m
             report->confidence = "high";
             report->fault_address = fault_address;
             report->allocation_size = pgm_metadata->allocation_size_requested;
+            report->nearest_allocation = key;
+            report->allocation_state = pgm_metadata->freed ? "freed" : "allocated";
             return KERN_SUCCESS;
         }
 
@@ -133,11 +138,13 @@ kern_return_t pas_report_crash_extract_pgm_failure(vm_address_t fault_address, m
             report->confidence = "high";
             report->fault_address = fault_address;
             report->allocation_size = pgm_metadata->allocation_size_requested;
+            report->nearest_allocation = key;
+            report->allocation_state = pgm_metadata->freed ? "freed" : "allocated";
             return KERN_SUCCESS;
         }
 
         // UAF + OOB Check
-        bottom = (addr64_t) (key - pgm_metadata->mem_to_waste - pgm_metadata->page_size);
+        bottom = (addr64_t) (key - pgm_metadata->mem_to_waste - (addr64_t) getpagesize());
         top = (addr64_t) key;
 
         if ((fault_address >= bottom)
@@ -146,6 +153,8 @@ kern_return_t pas_report_crash_extract_pgm_failure(vm_address_t fault_address, m
             report->confidence = "low";
             report->fault_address = fault_address;
             report->allocation_size = pgm_metadata->allocation_size_requested;
+            report->nearest_allocation = key;
+            report->allocation_state = pgm_metadata->freed ? "freed" : "allocated";
             return KERN_SUCCESS;
         }
     }

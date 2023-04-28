@@ -42,11 +42,11 @@ struct pas_pgm_storage {
     uintptr_t start_of_data_pages;
 
     /*
-     * These parameter below rely on page sizes being less than 65536.
+     * This parameter relies on page sizes being less than 65536.
      * I am not aware of any platforms using more than this at the moment.
      */
     uint16_t mem_to_waste;
-    uint16_t page_size;
+    bool freed;
 
     pas_large_heap* large_heap;
 };

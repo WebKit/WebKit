@@ -135,8 +135,8 @@ pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* la
     value->size_of_data_pages        = size + mem_to_waste;
     value->start_of_data_pages       = result.begin + page_size;
     value->allocation_size_requested = size;
-    value->page_size                 = page_size;
     value->large_heap                = large_heap;
+    value->freed                     = false;
 
     pas_ptr_hash_map_add_result add_result = pas_ptr_hash_map_add(&pas_pgm_hash_map, key, NULL, &pas_large_utility_free_heap_allocation_config);
     PAS_ASSERT(add_result.is_new_entry);
@@ -184,18 +184,15 @@ void pas_probabilistic_guard_malloc_deallocate(void* mem)
     int madvise_res = madvise((void *) value->start_of_data_pages, value->size_of_data_pages, MADV_FREE);
     PAS_ASSERT(!madvise_res);
 
-    bool removed = pas_ptr_hash_map_remove(&pas_pgm_hash_map, key, NULL, &pas_large_utility_free_heap_allocation_config);
-    PAS_ASSERT(removed);
-
     free_wasted_mem  += value->mem_to_waste;
-    free_virtual_mem += (2 * value->page_size) + value->allocation_size_requested + value->mem_to_waste;
+    free_virtual_mem += (2 * (size_t) getpagesize()) + value->allocation_size_requested + value->mem_to_waste;
+
+    value->freed = true;
 
     if (verbose)
         pas_probabilistic_guard_malloc_debug_info(key, value, "Deallocating Memory");
 
     pas_probabilistic_guard_malloc_can_use = true;
-
-    pas_utility_heap_deallocate(value);
 }
 
 bool pas_probabilistic_guard_malloc_check_exists(uintptr_t mem)
@@ -279,7 +276,7 @@ void pas_probabilistic_guard_malloc_debug_info(const void* key, const pas_pgm_st
         "\n"
         " Allocation\n"
         " Allocation Size Requested : %zu \n"
-        " Page Size                 : %hu \n"
+        " Page Size                 : %d \n"
         " Memory Wasted             : %hu \n"
         " Size of Data Pages        : %zu \n"
         " Start of Data Pages       : %p  \n"
@@ -291,11 +288,11 @@ void pas_probabilistic_guard_malloc_debug_info(const void* key, const pas_pgm_st
         free_wasted_mem,
         free_virtual_mem,
         value->allocation_size_requested,
-        value->page_size,
+        getpagesize(),
         value->mem_to_waste,
         value->size_of_data_pages,
         (uintptr_t*) value->start_of_data_pages,
-        (uintptr_t*) value->start_of_data_pages - value->page_size,
+        (uintptr_t*) value->start_of_data_pages - getpagesize(),
         (uintptr_t*) value->start_of_data_pages + value->size_of_data_pages,
         key);
 }
