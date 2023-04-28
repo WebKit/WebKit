@@ -220,9 +220,9 @@ void ProcessLauncher::launchProcess()
     if (sandboxEnabled && isFlatpakSpawnUsable())
         process = flatpakSpawn(launcher.get(), m_launchOptions, argv, socketPair.client, &error.outPtr());
 #if ENABLE(BUBBLEWRAP_SANDBOX)
-    // You cannot use bubblewrap within Flatpak or Docker so lets ensure it never happens.
+    // You cannot use bubblewrap within Flatpak or Docker/podman so lets ensure it never happens.
     // Snap can allow it but has its own limitations that require workarounds.
-    else if (sandboxEnabled && !isInsideFlatpak() && !isInsideSnap() && !isInsideDocker())
+    else if (sandboxEnabled && !isInsideFlatpak() && !isInsideSnap() && !isInsideContainer())
         process = bubblewrapSpawn(launcher.get(), m_launchOptions, argv, &error.outPtr());
 #endif // ENABLE(BUBBLEWRAP_SANDBOX)
     else
