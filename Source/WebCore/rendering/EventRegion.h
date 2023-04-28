@@ -30,6 +30,7 @@
 #include "InteractionRegion.h"
 #include "Node.h"
 #include "Region.h"
+#include "RegionContext.h"
 #include "RenderStyleConstants.h"
 #include "TouchAction.h"
 #include <wtf/ArgumentCoder.h>
@@ -44,18 +45,12 @@ class Path;
 class RenderObject;
 class RenderStyle;
 
-enum class WindRule : bool;
-
-class EventRegionContext {
+class EventRegionContext : public RegionContext {
 public:
     explicit EventRegionContext(EventRegion&);
+    virtual ~EventRegionContext();
 
-    void pushTransform(const AffineTransform&);
-    void popTransform();
-
-    void pushClip(const IntRect&);
-    void pushClip(const Path&, WindRule);
-    void popClip();
+    bool isEventRegionContext() const final { return true; }
 
     void unite(const Region&, RenderObject&, const RenderStyle&, bool overrideUserModifyIsEditable = false);
     bool contains(const IntRect&) const;
@@ -69,8 +64,6 @@ public:
 
 private:
     EventRegion& m_eventRegion;
-    Vector<AffineTransform> m_transformStack;
-    Vector<IntRect> m_clipStack;
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     Vector<InteractionRegion> m_interactionRegions;
@@ -78,45 +71,6 @@ private:
     HashSet<IntRect> m_occlusionRects;
     HashMap<ElementIdentifier, Region> m_discoveredRegionsByElement;
 #endif
-};
-
-class EventRegionContextStateSaver {
-public:
-    EventRegionContextStateSaver(EventRegionContext* context)
-        : m_context(context)
-    {
-    }
-    
-    ~EventRegionContextStateSaver()
-    {
-        if (!m_context)
-            return;
-
-        if (m_pushedClip)
-            m_context->popClip();
-    }
-    
-    void pushClip(const IntRect& clipRect)
-    {
-        ASSERT(!m_pushedClip);
-        if (m_context)
-            m_context->pushClip(clipRect);
-        m_pushedClip = true;
-    }
-
-    void pushClip(const Path& path, WindRule windRule)
-    {
-        ASSERT(!m_pushedClip);
-        if (m_context)
-            m_context->pushClip(path, windRule);
-        m_pushedClip = true;
-    }
-
-    EventRegionContext* context() const { return m_context; }
-
-private:
-    EventRegionContext* m_context;
-    bool m_pushedClip { false };
 };
 
 class EventRegion {
@@ -214,3 +168,7 @@ inline void EventRegion::ensureEditableRegion()
 #endif
 
 }
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::EventRegionContext)
+    static bool isType(const WebCore::RegionContext& regionContext) { return regionContext.isEventRegionContext(); }
+SPECIALIZE_TYPE_TRAITS_END()

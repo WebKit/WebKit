@@ -43,48 +43,7 @@ EventRegionContext::EventRegionContext(EventRegion& eventRegion)
 {
 }
 
-void EventRegionContext::pushTransform(const AffineTransform& transform)
-{
-    if (m_transformStack.isEmpty())
-        m_transformStack.append(transform);
-    else
-        m_transformStack.append(m_transformStack.last() * transform);
-}
-
-void EventRegionContext::popTransform()
-{
-    if (m_transformStack.isEmpty()) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    m_transformStack.removeLast();
-}
-
-void EventRegionContext::pushClip(const IntRect& clipRect)
-{
-    auto transformedClip = m_transformStack.isEmpty() ? clipRect : m_transformStack.last().mapRect(clipRect);
-
-    if (m_clipStack.isEmpty())
-        m_clipStack.append(transformedClip);
-    else
-        m_clipStack.append(intersection(m_clipStack.last(), transformedClip));
-}
-
-void EventRegionContext::pushClip(const Path& path, WindRule)
-{
-    // FIXME: Approximate paths better.
-    auto pathBounds = enclosingIntRect(path.boundingRect());
-    pushClip(pathBounds);
-}
-
-void EventRegionContext::popClip()
-{
-    if (m_clipStack.isEmpty()) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    m_clipStack.removeLast();
-}
+EventRegionContext::~EventRegionContext() = default;
 
 void EventRegionContext::unite(const Region& region, RenderObject& renderer, const RenderStyle& style, bool overrideUserModifyIsEditable)
 {

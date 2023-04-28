@@ -4676,6 +4676,18 @@ void LocalFrameView::invalidateImagesWithAsyncDecodes()
     traverseForPaintInvalidation(NullGraphicsContext::PaintInvalidationReasons::InvalidatingImagesWithAsyncDecodes);
 }
 
+void LocalFrameView::updateAccessibilityObjectRegions()
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (!AXObjectCache::accessibilityEnabled() || !AXObjectCache::isIsolatedTreeEnabled())
+        return;
+
+    NullGraphicsContext graphicsContext;
+    AccessibilityRegionContext accessibilityRegionContext;
+    paint(graphicsContext, frameRect(), SecurityOriginPaintPolicy::AnyOrigin, &accessibilityRegionContext);
+#endif
+}
+
 void LocalFrameView::traverseForPaintInvalidation(NullGraphicsContext::PaintInvalidationReasons paintInvalidationReasons)
 {
     if (needsLayout())
@@ -4708,7 +4720,7 @@ void LocalFrameView::setWasScrolledByUser(bool wasScrolledByUser)
     adjustTiledBackingCoverage();
 }
 
-void LocalFrameView::willPaintContents(GraphicsContext& context, const IntRect&, PaintingState& paintingState)
+void LocalFrameView::willPaintContents(GraphicsContext& context, const IntRect&, PaintingState& paintingState, RegionContext* regionContext)
 {
     Document* document = m_frame->document();
 
@@ -4738,6 +4750,9 @@ void LocalFrameView::willPaintContents(GraphicsContext& context, const IntRect&,
         m_paintBehavior.add(PaintBehavior::Snapshotting);
     }
 
+    if (is<AccessibilityRegionContext>(regionContext))
+        m_paintBehavior.add(PaintBehavior::FlattenCompositingLayers);
+
     paintingState.isFlatteningPaintOfRootFrame = (m_paintBehavior & PaintBehavior::FlattenCompositingLayers) && !m_frame->ownerElement() && !context.detectingContentfulPaint();
     if (paintingState.isFlatteningPaintOfRootFrame)
         notifyWidgetsInAllFrames(WillPaintFlattened);
@@ -4766,7 +4781,7 @@ void LocalFrameView::didPaintContents(GraphicsContext& context, const IntRect& d
     }
 }
 
-void LocalFrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect, SecurityOriginPaintPolicy securityOriginPaintPolicy, EventRegionContext* eventRegionContext)
+void LocalFrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect, SecurityOriginPaintPolicy securityOriginPaintPolicy, RegionContext* regionContext)
 {
 #ifndef NDEBUG
     bool fillWithWarningColor;
@@ -4806,7 +4821,7 @@ void LocalFrameView::paintContents(GraphicsContext& context, const IntRect& dirt
     }
 
     PaintingState paintingState;
-    willPaintContents(context, dirtyRect, paintingState);
+    willPaintContents(context, dirtyRect, paintingState, regionContext);
 
     // m_nodeToDraw is used to draw only one element (and its descendants)
     RenderObject* renderer = m_nodeToDraw ? m_nodeToDraw->renderer() : nullptr;
@@ -4814,9 +4829,9 @@ void LocalFrameView::paintContents(GraphicsContext& context, const IntRect& dirt
 
     RenderObject::SetLayoutNeededForbiddenScope forbidSetNeedsLayout(rootLayer->renderer());
 
-    rootLayer->paint(context, dirtyRect, LayoutSize(), m_paintBehavior, renderer, { }, securityOriginPaintPolicy == SecurityOriginPaintPolicy::AnyOrigin ? RenderLayer::SecurityOriginPaintPolicy::AnyOrigin : RenderLayer::SecurityOriginPaintPolicy::AccessibleOriginOnly, eventRegionContext);
+    rootLayer->paint(context, dirtyRect, LayoutSize(), m_paintBehavior, renderer, { }, securityOriginPaintPolicy == SecurityOriginPaintPolicy::AnyOrigin ? RenderLayer::SecurityOriginPaintPolicy::AnyOrigin : RenderLayer::SecurityOriginPaintPolicy::AccessibleOriginOnly, regionContext);
     if (auto* scrollableRootLayer = rootLayer->scrollableArea()) {
-        if (scrollableRootLayer->containsDirtyOverlayScrollbars() && !eventRegionContext)
+        if (scrollableRootLayer->containsDirtyOverlayScrollbars() && !regionContext)
             scrollableRootLayer->paintOverlayScrollbars(context, dirtyRect, m_paintBehavior, renderer);
     }
 

@@ -2437,6 +2437,7 @@ plugins/DOMPlugin.cpp
 plugins/DOMPluginArray.cpp
 plugins/PluginData.cpp
 plugins/PluginInfoProvider.cpp
+rendering/AccessibilityRegionContext.cpp
 rendering/AutoTableLayout.cpp
 rendering/BackgroundPainter.cpp
 rendering/BidiRun.cpp
@@ -2482,6 +2483,7 @@ rendering/OrderIterator.cpp
 rendering/PathOperation.cpp
 rendering/PointerEventsHitRules.cpp
 rendering/ReferencedSVGResources.cpp
+rendering/RegionContext.cpp
 rendering/RenderAttachment.cpp
 rendering/RenderBlock.cpp
 rendering/RenderBlockFlow.cpp

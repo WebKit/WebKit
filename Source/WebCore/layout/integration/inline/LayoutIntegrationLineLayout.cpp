@@ -1098,6 +1098,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, con
 
     auto shouldPaintForPhase = [&] {
         switch (paintInfo.phase) {
+        case PaintPhase::Accessibility:
         case PaintPhase::Foreground:
         case PaintPhase::EventRegion:
         case PaintPhase::TextClip:

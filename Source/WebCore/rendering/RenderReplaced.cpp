@@ -217,8 +217,13 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         if (visibleToHitTesting()) {
             auto borderRect = LayoutRect(adjustedPaintOffset, size());
             auto borderRegion = approximateAsRegion(style().getRoundedBorderFor(borderRect));
-            paintInfo.eventRegionContext->unite(borderRegion, *this, style());
+            paintInfo.eventRegionContext()->unite(borderRegion, *this, style());
         }
+        return;
+    }
+
+    if (paintInfo.phase == PaintPhase::Accessibility) {
+        paintInfo.accessibilityRegionContext()->takeBounds(*this, FloatRect(adjustedPaintOffset, size()));
         return;
     }
 
@@ -311,7 +316,8 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
         && paintInfo.phase != PaintPhase::SelfOutline
         && paintInfo.phase != PaintPhase::Selection
         && paintInfo.phase != PaintPhase::Mask
-        && paintInfo.phase != PaintPhase::EventRegion)
+        && paintInfo.phase != PaintPhase::EventRegion
+        && paintInfo.phase != PaintPhase::Accessibility)
         return false;
 
     if (!paintInfo.shouldPaintWithinRoot(*this))

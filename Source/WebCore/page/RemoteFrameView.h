@@ -52,7 +52,7 @@ private:
     void invalidateScrollbarRect(Scrollbar&, const IntRect&) final;
     HostWindow* hostWindow() const final;
     IntRect windowClipRect() const final;
-    void paintContents(GraphicsContext&, const IntRect& damageRect, SecurityOriginPaintPolicy, EventRegionContext*) final;
+    void paintContents(GraphicsContext&, const IntRect& damageRect, SecurityOriginPaintPolicy, RegionContext*) final;
     void addedOrRemovedScrollbar() final;
     void delegatedScrollingModeDidChange() final;
     void updateScrollCorner() final;

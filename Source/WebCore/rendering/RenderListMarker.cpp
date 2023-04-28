@@ -1584,7 +1584,7 @@ auto RenderListMarker::textRun() const -> TextRunWithUnderlyingString
 
 void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (paintInfo.phase != PaintPhase::Foreground)
+    if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Accessibility)
         return;
     
     if (style().visibility() != Visibility::Visible)
@@ -1600,6 +1600,12 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     
     auto markerRect = relativeMarkerRect();
     markerRect.moveBy(boxOrigin);
+
+    if (paintInfo.phase == PaintPhase::Accessibility) {
+        paintInfo.accessibilityRegionContext()->takeBounds(*this, markerRect);
+        return;
+    }
+
     if (markerRect.isEmpty())
         return;
 

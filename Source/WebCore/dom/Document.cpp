@@ -4771,6 +4771,14 @@ void Document::updateEventRegions()
     }
 }
 
+void Document::updateAccessibilityObjectRegions()
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (auto* view = renderView())
+        view->frameView().updateAccessibilityObjectRegions();
+#endif
+}
+
 void Document::invalidateEventRegionsForFrame(HTMLFrameOwnerElement& element)
 {
     auto* renderer = element.renderer();

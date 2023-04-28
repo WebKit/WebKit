@@ -81,7 +81,7 @@ TextBoxPainter<TextBoxPath>::TextBoxPainter(TextBoxPath&& textBox, PaintInfo& pa
     , m_useCustomUnderlines(m_containsComposition && m_renderer.frame().editor().compositionUsesCustomUnderlines())
     , m_emphasisMarkExistsAndIsAbove(RenderText::emphasisMarkExistsAndIsAbove(m_renderer, m_style))
 {
-    ASSERT(paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::Selection || paintInfo.phase == PaintPhase::TextClip || paintInfo.phase == PaintPhase::EventRegion);
+    ASSERT(paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::Selection || paintInfo.phase == PaintPhase::TextClip || paintInfo.phase == PaintPhase::EventRegion || paintInfo.phase == PaintPhase::Accessibility);
 }
 
 template<typename TextBoxPath>
@@ -105,7 +105,7 @@ void TextBoxPainter<TextBoxPath>::paint()
     if (m_paintInfo.phase == PaintPhase::EventRegion) {
         constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::IgnoreCSSPointerEventsProperty };
         if (m_renderer.parent()->visibleToHitTesting(hitType))
-            m_paintInfo.eventRegionContext->unite(enclosingIntRect(m_paintRect), const_cast<RenderText&>(m_renderer), m_style);
+            m_paintInfo.eventRegionContext()->unite(enclosingIntRect(m_paintRect), const_cast<RenderText&>(m_renderer), m_style);
         return;
     }
 

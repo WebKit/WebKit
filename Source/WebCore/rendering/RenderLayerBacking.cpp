@@ -3392,7 +3392,7 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const LayoutRect& r, Graph
 
 void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, GraphicsContext& context,
     const IntRect& paintDirtyRect, // In the coords of rootLayer.
-    OptionSet<PaintBehavior> paintBehavior, EventRegionContext* eventRegionContext)
+    OptionSet<PaintBehavior> paintBehavior, RegionContext* regionContext)
 {
 #if USE(OWNING_LAYER_BEAR_TRAP)
     RELEASE_ASSERT_WITH_MESSAGE(m_owningLayerBearTrap == BEAR_TRAP_VALUE, "RenderLayerBacking::paintIntoLayer(): m_owningLayerBearTrap caught the bear (55699292)");
@@ -3411,33 +3411,33 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
 
     auto paintFlags = paintFlagsForLayer(*graphicsLayer);
 
-    if (eventRegionContext)
+    if (is<EventRegionContext>(regionContext))
         paintFlags.add(RenderLayer::PaintLayerFlag::CollectingEventRegion);
 
     RenderObject::SetLayoutNeededForbiddenScope forbidSetNeedsLayout(renderer());
 
     auto paintOneLayer = [&](RenderLayer& layer, OptionSet<RenderLayer::PaintLayerFlag> paintFlags) {
         LocalFrameView::PaintingState paintingState;
-        if (!eventRegionContext) {
+        if (!regionContext) {
             InspectorInstrumentation::willPaint(layer.renderer());
 
             if (layer.isRenderViewLayer())
-                renderer().view().frameView().willPaintContents(context, paintDirtyRect, paintingState);
+                renderer().view().frameView().willPaintContents(context, paintDirtyRect, paintingState, regionContext);
         }
 
         RenderLayer::LayerPaintingInfo paintingInfo(&m_owningLayer, paintDirtyRect, paintBehavior, -m_subpixelOffsetFromRenderer);
-        paintingInfo.eventRegionContext = eventRegionContext;
+        paintingInfo.regionContext = regionContext;
 
         if (&layer == &m_owningLayer) {
             layer.paintLayerContents(context, paintingInfo, paintFlags);
 
             auto* scrollableArea = layer.scrollableArea();
-            if (scrollableArea && scrollableArea->containsDirtyOverlayScrollbars() && !eventRegionContext)
+            if (scrollableArea && scrollableArea->containsDirtyOverlayScrollbars() && !regionContext)
                 layer.paintLayerContents(context, paintingInfo, paintFlags | RenderLayer::PaintLayerFlag::PaintingOverlayScrollbars);
         } else
             layer.paintLayerWithEffects(context, paintingInfo, paintFlags);
 
-        if (!eventRegionContext) {
+        if (!regionContext) {
             if (layer.isRenderViewLayer())
                 renderer().view().frameView().didPaintContents(context, paintDirtyRect, paintingState);
 
@@ -3459,14 +3459,14 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
 
         if (graphicsLayer->paintingPhase().contains(GraphicsLayerPaintingPhase::OverflowContents))
             sharingLayerPaintFlags.add(RenderLayer::PaintLayerFlag::PaintingOverflowContents);
-        if (eventRegionContext)
+        if (is<EventRegionContext>(regionContext))
             sharingLayerPaintFlags.add(RenderLayer::PaintLayerFlag::CollectingEventRegion);
 
         for (auto& layerWeakPtr : m_backingSharingLayers)
             paintOneLayer(*layerWeakPtr, sharingLayerPaintFlags);
     }
 
-    if (!eventRegionContext)
+    if (!regionContext)
         compositor().didPaintBacking(this);
 
 #if USE(OWNING_LAYER_BEAR_TRAP)

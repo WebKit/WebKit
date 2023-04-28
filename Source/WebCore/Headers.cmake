@@ -2070,6 +2070,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     plugins/PluginInfoProvider.h
     plugins/PluginViewBase.h
 
+    rendering/AccessibilityRegionContext.h
     rendering/BreakLines.h
     rendering/CaretRectComputation.h
     rendering/CSSFilter.h
@@ -2099,6 +2100,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/PaintInfo.h
     rendering/PaintPhase.h
     rendering/PathOperation.h
+    rendering/RegionContext.h
     rendering/RenderAttachment.h
     rendering/RenderBlock.h
     rendering/RenderBlockFlow.h

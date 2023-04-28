@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+class RegionContext;
+
 Widget::~Widget()
 {
     ASSERT(!parent());
@@ -60,7 +62,7 @@ void Widget::hide()
     setSelfVisible(false);
 }
 
-void Widget::paint(GraphicsContext&, const IntRect&, SecurityOriginPaintPolicy, EventRegionContext*)
+void Widget::paint(GraphicsContext&, const IntRect&, SecurityOriginPaintPolicy, RegionContext*)
 {
 }
 

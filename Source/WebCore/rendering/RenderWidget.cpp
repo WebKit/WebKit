@@ -263,17 +263,17 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
         paintRect.move(-widgetPaintOffset);
     }
 
-    if (paintInfo.eventRegionContext) {
+    if (paintInfo.regionContext) {
         AffineTransform transform;
         transform.translate(contentPaintOffset);
-        paintInfo.eventRegionContext->pushTransform(transform);
+        paintInfo.regionContext->pushTransform(transform);
     }
 
     // FIXME: Remove repaintrect enclosing/integral snapping when RenderWidget becomes device pixel snapped.
-    m_widget->paint(paintInfo.context(), snappedIntRect(paintRect), paintInfo.requireSecurityOriginAccessForWidgets ? Widget::SecurityOriginPaintPolicy::AccessibleOriginOnly : Widget::SecurityOriginPaintPolicy::AnyOrigin, paintInfo.eventRegionContext);
+    m_widget->paint(paintInfo.context(), snappedIntRect(paintRect), paintInfo.requireSecurityOriginAccessForWidgets ? Widget::SecurityOriginPaintPolicy::AccessibleOriginOnly : Widget::SecurityOriginPaintPolicy::AnyOrigin, paintInfo.regionContext);
 
-    if (paintInfo.eventRegionContext)
-        paintInfo.eventRegionContext->popTransform();
+    if (paintInfo.regionContext)
+        paintInfo.regionContext->popTransform();
 
     if (!widgetPaintOffset.isZero())
         paintInfo.context().translate(-widgetPaintOffset);
@@ -337,7 +337,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (style().hasBorderRadius())
         paintInfo.context().restore();
 
-    if (paintInfo.phase == PaintPhase::EventRegion)
+    if (paintInfo.phase == PaintPhase::EventRegion || paintInfo.phase == PaintPhase::Accessibility)
         return;
 
     // Paint a partially transparent wash over selected widgets.

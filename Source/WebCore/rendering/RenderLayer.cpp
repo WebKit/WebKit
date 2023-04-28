@@ -47,6 +47,7 @@
 #include "config.h"
 #include "RenderLayer.h"
 
+#include "AccessibilityRegionContext.h"
 #include "BitmapImage.h"
 #include "BoxShape.h"
 #include "CSSFilter.h"
@@ -2779,14 +2780,15 @@ bool RenderLayer::isPointInResizeControl(IntPoint localPoint) const
     return overflowControlsRects().resizer.contains(localPoint);
 }
 
-void RenderLayer::paint(GraphicsContext& context, const LayoutRect& damageRect, const LayoutSize& subpixelOffset, OptionSet<PaintBehavior> paintBehavior, RenderObject* subtreePaintRoot, OptionSet<PaintLayerFlag> paintFlags, SecurityOriginPaintPolicy paintPolicy, EventRegionContext* eventRegionContext)
+void RenderLayer::paint(GraphicsContext& context, const LayoutRect& damageRect, const LayoutSize& subpixelOffset, OptionSet<PaintBehavior> paintBehavior, RenderObject* subtreePaintRoot, OptionSet<PaintLayerFlag> paintFlags, SecurityOriginPaintPolicy paintPolicy, RegionContext* regionContext)
 {
     OverlapTestRequestMap overlapTestRequests;
 
     LayerPaintingInfo paintingInfo(this, enclosingIntRect(damageRect), paintBehavior, subpixelOffset, subtreePaintRoot, &overlapTestRequests, paintPolicy == SecurityOriginPaintPolicy::AccessibleOriginOnly);
-    if (eventRegionContext) {
-        paintingInfo.eventRegionContext = eventRegionContext;
-        paintFlags.add(RenderLayer::PaintLayerFlag::CollectingEventRegion);
+    if (regionContext) {
+        paintingInfo.regionContext = regionContext;
+        if (is<EventRegionContext>(regionContext))
+            paintFlags.add(RenderLayer::PaintLayerFlag::CollectingEventRegion);
     }
     paintLayer(context, paintingInfo, paintFlags);
 
@@ -2794,7 +2796,7 @@ void RenderLayer::paint(GraphicsContext& context, const LayoutRect& damageRect, 
         widget->setOverlapTestResult(false);
 }
 
-void RenderLayer::clipToRect(GraphicsContext& context, GraphicsContextStateSaver& stateSaver, EventRegionContextStateSaver& eventRegionStateSaver, const LayerPaintingInfo& paintingInfo, OptionSet<PaintBehavior> paintBehavior, const ClipRect& clipRect, BorderRadiusClippingRule rule)
+void RenderLayer::clipToRect(GraphicsContext& context, GraphicsContextStateSaver& stateSaver, RegionContextStateSaver& regionContextStateSaver, const LayerPaintingInfo& paintingInfo, OptionSet<PaintBehavior> paintBehavior, const ClipRect& clipRect, BorderRadiusClippingRule rule)
 {
     float deviceScaleFactor = renderer().document().deviceScaleFactor();
     bool needsClipping = !clipRect.isInfinite() && clipRect.rect() != paintingInfo.paintDirtyRect;
@@ -2806,7 +2808,7 @@ void RenderLayer::clipToRect(GraphicsContext& context, GraphicsContextStateSaver
         adjustedClipRect.move(paintingInfo.subpixelOffset);
         auto snappedClipRect = snapRectToDevicePixelsIfNeeded(adjustedClipRect, renderer());
         context.clip(snappedClipRect);
-        eventRegionStateSaver.pushClip(enclosingIntRect(snappedClipRect));
+        regionContextStateSaver.pushClip(enclosingIntRect(snappedClipRect));
     }
 
     if (clipRect.affectedByRadius()) {
@@ -2947,7 +2949,7 @@ void RenderLayer::paintLayerWithEffects(GraphicsContext& context, const LayerPai
         // Make sure the parent's clip rects have been calculated.
         ClipRect clipRect = paintingInfo.paintDirtyRect;
         GraphicsContextStateSaver stateSaver(context, false);
-        EventRegionContextStateSaver eventRegionStateSaver(paintingInfo.eventRegionContext);
+        RegionContextStateSaver regionContextStateSaver(paintingInfo.regionContext);
         if (parent()) {
             auto options = paintFlags.contains(PaintLayerFlag::PaintingOverflowContents) ? clipRectOptionsForPaintingOverflowControls : clipRectDefaultOptions;
             auto clipRectsContext = ClipRectsContext(paintingInfo.rootLayer, (paintFlags & PaintLayerFlag::TemporaryClipRects) ? TemporaryClipRects : PaintingClipRects, options);
@@ -2976,7 +2978,7 @@ void RenderLayer::paintLayerWithEffects(GraphicsContext& context, const LayerPai
 #endif
 
             // Push the parent coordinate space's clip.
-            parent()->clipToRect(context, stateSaver, eventRegionStateSaver, paintingInfo, paintBehavior, clipRect);
+            parent()->clipToRect(context, stateSaver, regionContextStateSaver, paintingInfo, paintBehavior, clipRect);
         }
 
         paintLayerByApplyingTransform(context, paintingInfo, paintFlags);
@@ -3050,10 +3052,10 @@ std::pair<Path, WindRule> RenderLayer::computeClipPath(const LayoutSize& offsetF
     return { Path(), WindRule::NonZero };
 }
 
-void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSaver& stateSaver, EventRegionContextStateSaver& eventRegionStateSaver, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags, const LayoutSize& offsetFromRoot)
+void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSaver& stateSaver, RegionContextStateSaver& regionContextStateSaver, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags, const LayoutSize& offsetFromRoot)
 {
-    bool isCollectingEventRegion = paintFlags.contains(PaintLayerFlag::CollectingEventRegion);
-    if (!renderer().hasClipPath() || (context.paintingDisabled() && !isCollectingEventRegion) || paintingInfo.paintDirtyRect.isEmpty())
+    bool isCollectingRegions = paintFlags.contains(PaintLayerFlag::CollectingEventRegion) || is<AccessibilityRegionContext>(paintingInfo.regionContext);
+    if (!renderer().hasClipPath() || (context.paintingDisabled() && !isCollectingRegions) || paintingInfo.paintDirtyRect.isEmpty())
         return;
 
     // SVG elements get clipped in SVG code.
@@ -3069,8 +3071,8 @@ void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSa
         // clippedContentBounds is used as the reference box for inlines, which is also poorly specified: https://github.com/w3c/csswg-drafts/issues/6383.
         auto [path, windRule] = computeClipPath(paintingOffsetFromRoot, clippedContentBounds);
 
-        if (isCollectingEventRegion) {
-            eventRegionStateSaver.pushClip(path, windRule);
+        if (isCollectingRegions) {
+            regionContextStateSaver.pushClip(path);
             return;
         }
 
@@ -3153,9 +3155,9 @@ void RenderLayer::applyFilters(GraphicsContext& originalContext, const LayerPain
     ClipRect backgroundRect = layerFragments.isEmpty() ? ClipRect() : layerFragments[0].backgroundRect;
 
     GraphicsContextStateSaver stateSaver(originalContext, false);
-    EventRegionContextStateSaver eventRegionStateSaver(paintingInfo.eventRegionContext);
+    RegionContextStateSaver regionContextStateSaver(paintingInfo.regionContext);
 
-    clipToRect(originalContext, stateSaver, eventRegionStateSaver, paintingInfo, behavior, backgroundRect);
+    clipToRect(originalContext, stateSaver, regionContextStateSaver, paintingInfo, behavior, backgroundRect);
     m_filters->applyFilterEffect(originalContext);
 }
 
@@ -3175,6 +3177,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     bool isPaintingCompositedBackground = localPaintFlags.contains(PaintLayerFlag::PaintingCompositingBackgroundPhase);
     bool isPaintingOverflowContents = localPaintFlags.contains(PaintLayerFlag::PaintingOverflowContents);
     bool isCollectingEventRegion = localPaintFlags.contains(PaintLayerFlag::CollectingEventRegion);
+    bool isCollectingAccessibilityRegion = is<AccessibilityRegionContext>(paintingInfo.regionContext);
 
     bool isSelfPaintingLayer = this->isSelfPaintingLayer();
 
@@ -3184,11 +3187,11 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     // content. When not composited scrolling, the outline is painted in the
     // foreground phase. Since scrolled contents are moved by repainting in this
     // case, the outline won't get 'dragged along'.
-    bool shouldPaintOutline = isSelfPaintingLayer && !isPaintingOverlayScrollbars && !isCollectingEventRegion
+    bool shouldPaintOutline = isSelfPaintingLayer && !isPaintingOverlayScrollbars && !isCollectingEventRegion && !isCollectingAccessibilityRegion
         && (renderer().view().printing() || renderer().view().hasRenderersWithOutline())
         && ((isPaintingScrollingContent && isPaintingCompositedBackground)
         || (!isPaintingScrollingContent && isPaintingCompositedForeground));
-    bool shouldPaintContent = m_hasVisibleContent && isSelfPaintingLayer && !isPaintingOverlayScrollbars && !isCollectingEventRegion;
+    bool shouldPaintContent = m_hasVisibleContent && isSelfPaintingLayer && !isPaintingOverlayScrollbars && !isCollectingEventRegion && !isCollectingAccessibilityRegion;
 
     if (localPaintFlags.contains(PaintLayerFlag::PaintingRootBackgroundOnly) && !renderer().isRenderView() && !renderer().isDocumentElementRenderer()) {
         // If beginTransparencyLayers was called prior to this, ensure the transparency state is cleaned up before returning.
@@ -3221,10 +3224,10 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         columnAwareOffsetFromRoot = toLayoutSize(convertToLayerCoords(paintingInfo.rootLayer, LayoutPoint(), AdjustForColumns));
 
     GraphicsContextStateSaver stateSaver(context, false);
-    EventRegionContextStateSaver eventRegionStateSaver(paintingInfo.eventRegionContext);
+    RegionContextStateSaver regionContextStateSaver(paintingInfo.regionContext);
 
     if (shouldApplyClipPath(paintingInfo.paintBehavior, localPaintFlags))
-        setupClipPath(context, stateSaver, eventRegionStateSaver, paintingInfo, localPaintFlags, columnAwareOffsetFromRoot);
+        setupClipPath(context, stateSaver, regionContextStateSaver, paintingInfo, localPaintFlags, columnAwareOffsetFromRoot);
 
     bool selectionAndBackgroundsOnly = paintingInfo.paintBehavior.contains(PaintBehavior::SelectionAndBackgroundsOnly);
     bool selectionOnly = paintingInfo.paintBehavior.contains(PaintBehavior::SelectionOnly);
@@ -3281,7 +3284,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
             performOverlapTests(*localPaintingInfo.overlapTestRequests, localPaintingInfo.rootLayer, this);
 
         LayoutRect paintDirtyRect = localPaintingInfo.paintDirtyRect;
-        if (shouldPaintContent || shouldPaintOutline || isPaintingOverlayScrollbars || isCollectingEventRegion) {
+        if (shouldPaintContent || shouldPaintOutline || isPaintingOverlayScrollbars || isCollectingEventRegion || isCollectingAccessibilityRegion) {
             // Collect the fragments. This will compute the clip rectangles and paint offsets for each layer fragment, as well as whether or not the content of each
             // fragment should paint. If the parent's filter dictates full repaint to ensure proper filter effect,
             // use the overflow clip as dirty rect, instead of no clipping. It maintains proper clipping for overflow::scroll.
@@ -3318,6 +3321,9 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
         if (isCollectingEventRegion)
             collectEventRegionForFragments(layerFragments, currentContext, localPaintingInfo, paintBehavior);
+
+        if (isCollectingAccessibilityRegion)
+            collectAccessibilityRegionsForFragments(layerFragments, currentContext, localPaintingInfo, paintBehavior);
 
         if (shouldPaintOutline)
             paintOutlineForFragments(layerFragments, currentContext, localPaintingInfo, paintBehavior, subtreePaintRootForRenderer);
@@ -3404,8 +3410,8 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext& context, const 
     auto affineTransform = transform.toAffineTransform();
     context.concatCTM(affineTransform);
 
-    if (paintingInfo.eventRegionContext)
-        paintingInfo.eventRegionContext->pushTransform(affineTransform);
+    if (paintingInfo.regionContext)
+        paintingInfo.regionContext->pushTransform(affineTransform);
 
     // Only propagate the subpixel offsets to the descendant layers, if we're not the root
     // of a SVG subtree, where no pixel snapping is applied -- only the outermost <svg> layer
@@ -3421,8 +3427,8 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext& context, const 
     transformedPaintingInfo.subpixelOffset = adjustedSubpixelOffset;
     paintLayerContentsAndReflection(context, transformedPaintingInfo, paintFlags);
 
-    if (paintingInfo.eventRegionContext)
-        paintingInfo.eventRegionContext->popTransform();
+    if (paintingInfo.regionContext)
+        paintingInfo.regionContext->popTransform();
 
     context.setCTM(oldTransform);
 }
@@ -3639,9 +3645,9 @@ void RenderLayer::paintTransformedLayerIntoFragments(GraphicsContext& context, c
             paintBehavior.add(PaintBehavior::CompositedOverflowScrollContent);
 
         GraphicsContextStateSaver stateSaver(context, false);
-        EventRegionContextStateSaver eventRegionStateSaver(paintingInfo.eventRegionContext);
+        RegionContextStateSaver regionContextStateSaver(paintingInfo.regionContext);
 
-        parent()->clipToRect(context, stateSaver, eventRegionStateSaver, paintingInfo, paintBehavior, clipRect);
+        parent()->clipToRect(context, stateSaver, regionContextStateSaver, paintingInfo, paintBehavior, clipRect);
         paintLayerByApplyingTransform(context, paintingInfo, paintFlags, fragment.paginationOffset);
     }
 }
@@ -3659,12 +3665,12 @@ void RenderLayer::paintBackgroundForFragments(const LayerFragments& layerFragmen
             beginTransparencyLayers(contextForTransparencyLayer, localPaintingInfo, transparencyPaintDirtyRect);
     
         GraphicsContextStateSaver stateSaver(context, false);
-        EventRegionContextStateSaver eventRegionStateSaver(localPaintingInfo.eventRegionContext);
+        RegionContextStateSaver regionContextStateSaver(localPaintingInfo.regionContext);
 
         if (localPaintingInfo.clipToDirtyRect) {
             // Paint our background first, before painting any child layers.
             // Establish the clip used to paint our background.
-            clipToRect(context, stateSaver, eventRegionStateSaver, localPaintingInfo, paintBehavior, fragment.backgroundRect, DoNotIncludeSelfForBorderRadius); // Background painting will handle clipping to self.
+            clipToRect(context, stateSaver, regionContextStateSaver, localPaintingInfo, paintBehavior, fragment.backgroundRect, DoNotIncludeSelfForBorderRadius); // Background painting will handle clipping to self.
         }
         
         // Paint the background.
@@ -3710,13 +3716,13 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
         localPaintBehavior.add(PaintBehavior::CompositedOverflowScrollContent);
 
     GraphicsContextStateSaver stateSaver(context, false);
-    EventRegionContextStateSaver eventRegionStateSaver(localPaintingInfo.eventRegionContext);
+    RegionContextStateSaver regionContextStateSaver(localPaintingInfo.regionContext);
 
     // Optimize clipping for the single fragment case.
     bool shouldClip = localPaintingInfo.clipToDirtyRect && layerFragments.size() == 1 && layerFragments[0].shouldPaintContent && !layerFragments[0].foregroundRect.isEmpty();
     if (shouldClip)
-        clipToRect(context, stateSaver, eventRegionStateSaver, localPaintingInfo, localPaintBehavior, layerFragments[0].foregroundRect);
-    
+        clipToRect(context, stateSaver, regionContextStateSaver, localPaintingInfo, localPaintBehavior, layerFragments[0].foregroundRect);
+
     // We have to loop through every fragment multiple times, since we have to repaint in each specific phase in order for
     // interleaving of the fragments to work properly.
     bool selectionOnly = localPaintingInfo.paintBehavior.contains(PaintBehavior::SelectionOnly);
@@ -3757,11 +3763,11 @@ void RenderLayer::paintForegroundForFragmentsWithPhase(PaintPhase phase, const L
             continue;
 
         GraphicsContextStateSaver stateSaver(context, false);
-        EventRegionContextStateSaver eventRegionStateSaver(localPaintingInfo.eventRegionContext);
+        RegionContextStateSaver regionContextStateSaver(localPaintingInfo.regionContext);
 
         if (shouldClip)
-            clipToRect(context, stateSaver, eventRegionStateSaver, localPaintingInfo, paintBehavior, fragment.foregroundRect);
-    
+            clipToRect(context, stateSaver, regionContextStateSaver, localPaintingInfo, paintBehavior, fragment.foregroundRect);
+
         PaintInfo paintInfo(context, fragment.foregroundRect.rect(), phase, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer(), this, localPaintingInfo.requireSecurityOriginAccessForWidgets);
         if (phase == PaintPhase::Foreground)
             paintInfo.overlapTestRequests = localPaintingInfo.overlapTestRequests;
@@ -3780,9 +3786,9 @@ void RenderLayer::paintOutlineForFragments(const LayerFragments& layerFragments,
         PaintInfo paintInfo(context, fragment.backgroundRect.rect(), PaintPhase::SelfOutline, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer(), this);
 
         GraphicsContextStateSaver stateSaver(context, false);
-        EventRegionContextStateSaver eventRegionStateSaver(localPaintingInfo.eventRegionContext);
+        RegionContextStateSaver regionContextStateSaver(localPaintingInfo.regionContext);
 
-        clipToRect(context, stateSaver, eventRegionStateSaver, localPaintingInfo, paintBehavior, fragment.backgroundRect, DoNotIncludeSelfForBorderRadius);
+        clipToRect(context, stateSaver, regionContextStateSaver, localPaintingInfo, paintBehavior, fragment.backgroundRect, DoNotIncludeSelfForBorderRadius);
         renderer().paint(paintInfo, paintOffsetForRenderer(fragment, localPaintingInfo));
     }
 }
@@ -3795,11 +3801,11 @@ void RenderLayer::paintMaskForFragments(const LayerFragments& layerFragments, Gr
             continue;
 
         GraphicsContextStateSaver stateSaver(context, false);
-        EventRegionContextStateSaver eventRegionStateSaver(localPaintingInfo.eventRegionContext);
+        RegionContextStateSaver regionContextStateSaver(localPaintingInfo.regionContext);
 
         if (localPaintingInfo.clipToDirtyRect)
-            clipToRect(context, stateSaver, eventRegionStateSaver, localPaintingInfo, paintBehavior, fragment.backgroundRect, DoNotIncludeSelfForBorderRadius); // Mask painting will handle clipping to self.
-        
+            clipToRect(context, stateSaver, regionContextStateSaver, localPaintingInfo, paintBehavior, fragment.backgroundRect, DoNotIncludeSelfForBorderRadius); // Mask painting will handle clipping to self.
+
         // Paint the mask.
         // FIXME: Eventually we will collect the region from the fragment itself instead of just from the paint info.
         PaintInfo paintInfo(context, fragment.backgroundRect.rect(), PaintPhase::Mask, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer(), this);
@@ -3814,10 +3820,10 @@ void RenderLayer::paintChildClippingMaskForFragments(const LayerFragments& layer
             continue;
 
         GraphicsContextStateSaver stateSaver(context, false);
-        EventRegionContextStateSaver eventRegionStateSaver(localPaintingInfo.eventRegionContext);
+        RegionContextStateSaver regionContextStateSaver(localPaintingInfo.regionContext);
 
         if (localPaintingInfo.clipToDirtyRect)
-            clipToRect(context, stateSaver, eventRegionStateSaver, localPaintingInfo, paintBehavior, fragment.foregroundRect, IncludeSelfForBorderRadius); // Child clipping mask painting will handle clipping to self.
+            clipToRect(context, stateSaver, regionContextStateSaver, localPaintingInfo, paintBehavior, fragment.foregroundRect, IncludeSelfForBorderRadius); // Child clipping mask painting will handle clipping to self.
 
         // Paint the clipped mask.
         PaintInfo paintInfo(context, fragment.backgroundRect.rect(), PaintPhase::ClippingMask, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer(), this);
@@ -3834,25 +3840,35 @@ void RenderLayer::paintOverflowControlsForFragments(const LayerFragments& layerF
             continue;
 
         GraphicsContextStateSaver stateSaver(context, false);
-        EventRegionContextStateSaver eventRegionStateSaver(localPaintingInfo.eventRegionContext);
+        RegionContextStateSaver regionContextStateSaver(localPaintingInfo.regionContext);
 
-        clipToRect(context, stateSaver, eventRegionStateSaver, localPaintingInfo, { }, fragment.backgroundRect);
+        clipToRect(context, stateSaver, regionContextStateSaver, localPaintingInfo, { }, fragment.backgroundRect);
         m_scrollableArea->paintOverflowControls(context, roundedIntPoint(paintOffsetForRenderer(fragment, localPaintingInfo)), snappedIntRect(fragment.backgroundRect.rect()), true);
     }
 }
 
 void RenderLayer::collectEventRegionForFragments(const LayerFragments& layerFragments, GraphicsContext& context, const LayerPaintingInfo& localPaintingInfo, OptionSet<PaintBehavior> paintBehavior)
 {
-    ASSERT(localPaintingInfo.eventRegionContext);
+    ASSERT(is<EventRegionContext>(localPaintingInfo.regionContext));
     for (const auto& fragment : layerFragments) {
         PaintInfo paintInfo(context, fragment.foregroundRect.rect(), PaintPhase::EventRegion, paintBehavior);
-        paintInfo.eventRegionContext = localPaintingInfo.eventRegionContext;
+        paintInfo.regionContext = localPaintingInfo.regionContext;
         if (localPaintingInfo.clipToDirtyRect) // clip-path?
-            paintInfo.eventRegionContext->pushClip(enclosingIntRect(fragment.backgroundRect.rect()));
+            paintInfo.regionContext->pushClip(enclosingIntRect(fragment.backgroundRect.rect()));
 
         renderer().paint(paintInfo, paintOffsetForRenderer(fragment, localPaintingInfo));
         if (localPaintingInfo.clipToDirtyRect)
-            paintInfo.eventRegionContext->popClip();
+            paintInfo.regionContext->popClip();
+    }
+}
+
+void RenderLayer::collectAccessibilityRegionsForFragments(const LayerFragments& layerFragments, GraphicsContext& context, const LayerPaintingInfo& localPaintingInfo, OptionSet<PaintBehavior> paintBehavior)
+{
+    ASSERT(is<AccessibilityRegionContext>(localPaintingInfo.regionContext));
+    for (const auto& fragment : layerFragments) {
+        PaintInfo paintInfo(context, fragment.foregroundRect.rect(), PaintPhase::Accessibility, paintBehavior);
+        paintInfo.regionContext = localPaintingInfo.regionContext;
+        renderer().paint(paintInfo, paintOffsetForRenderer(fragment, localPaintingInfo));
     }
 }
 

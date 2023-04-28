@@ -131,7 +131,7 @@ private:
 
     // WebCore::Widget
     void setFrameRect(const WebCore::IntRect&) final;
-    void paint(WebCore::GraphicsContext&, const WebCore::IntRect&, WebCore::Widget::SecurityOriginPaintPolicy, WebCore::EventRegionContext*) final;
+    void paint(WebCore::GraphicsContext&, const WebCore::IntRect&, WebCore::Widget::SecurityOriginPaintPolicy, WebCore::RegionContext*) final;
     void invalidateRect(const WebCore::IntRect&) final;
     void frameRectsChanged() final;
     void setParent(WebCore::ScrollView*) final;

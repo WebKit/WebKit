@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include "AccessibilityRegionContext.h"
 #include "AffineTransform.h"
+#include "EventRegion.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "LayoutRect.h"
@@ -37,7 +39,6 @@
 
 namespace WebCore {
 
-class EventRegionContext;
 class OverlapTestRequestClient;
 class RenderInline;
 class RenderLayer;
@@ -121,6 +122,9 @@ struct PaintInfo {
         rect.setSize(LayoutSize(tranformedRect.size()));
     }
 
+    EventRegionContext* eventRegionContext() { return dynamicDowncast<EventRegionContext>(regionContext); }
+    AccessibilityRegionContext* accessibilityRegionContext() { return dynamicDowncast<AccessibilityRegionContext>(regionContext); }
+
     LayoutRect rect;
     PaintPhase phase;
     OptionSet<PaintBehavior> paintBehavior;
@@ -130,7 +134,7 @@ struct PaintInfo {
     const RenderLayerModelObject* paintContainer; // the layer object that originates the current painting
     bool requireSecurityOriginAccessForWidgets { false };
     const RenderLayer* m_enclosingSelfPaintingLayer { nullptr };
-    EventRegionContext* eventRegionContext { nullptr }; // For PaintPhase::EventRegion.
+    RegionContext* regionContext { nullptr }; // For PaintPhase::EventRegion and PaintPhase::Accessibility.
 
 private:
     GraphicsContext* m_context;

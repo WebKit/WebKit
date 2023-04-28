@@ -1224,6 +1224,7 @@ public:
 
     WEBCORE_EXPORT String displayStringModifiedByEncoding(const String&) const;
 
+    void updateAccessibilityObjectRegions();
     void updateEventRegions();
 
     void invalidateRenderingDependentRegions();

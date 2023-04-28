@@ -1276,14 +1276,14 @@ void ScrollView::paintPanScrollIcon(GraphicsContext& context)
     context.drawImage(panScrollIcon, iconGCPoint);
 }
 
-void ScrollView::paint(GraphicsContext& context, const IntRect& rect, SecurityOriginPaintPolicy securityOriginPaintPolicy, EventRegionContext* eventRegionContext)
+void ScrollView::paint(GraphicsContext& context, const IntRect& rect, SecurityOriginPaintPolicy securityOriginPaintPolicy, RegionContext* regionContext)
 {
     if (platformWidget()) {
         Widget::paint(context, rect);
         return;
     }
 
-    if (context.paintingDisabled() && !context.performingPaintInvalidation() && !eventRegionContext)
+    if (context.paintingDisabled() && !context.performingPaintInvalidation() && !regionContext)
         return;
 
     IntRect documentDirtyRect = rect;
@@ -1306,7 +1306,7 @@ void ScrollView::paint(GraphicsContext& context, const IntRect& rect, SecurityOr
             context.clip(visibleContentRect(LegacyIOSDocumentVisibleRect));
         }
 
-        paintContents(context, documentDirtyRect, securityOriginPaintPolicy, eventRegionContext);
+        paintContents(context, documentDirtyRect, securityOriginPaintPolicy, regionContext);
     }
 
 #if HAVE(RUBBER_BANDING)

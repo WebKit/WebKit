@@ -51,6 +51,7 @@ enum class PaintPhase : uint16_t {
     Mask                     = 1 << 10,
     ClippingMask             = 1 << 11,
     EventRegion              = 1 << 12,
+    Accessibility            = 1 << 13,
 };
 
 enum class PaintBehavior : uint16_t {

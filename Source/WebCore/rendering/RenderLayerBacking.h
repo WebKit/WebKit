@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
-class EventRegionContext;
 class KeyframeList;
 class PaintedContentsInfo;
+class RegionContext;
 class RenderLayerCompositor;
 class TiledBacking;
 class TransformationMatrix;
@@ -396,7 +396,7 @@ private:
     bool hasTiledBackingFlatteningLayer() const { return (m_childContainmentLayer && m_isFrameLayerWithTiledBacking); }
     GraphicsLayer* tileCacheFlatteningLayer() const { return m_isFrameLayerWithTiledBacking ? m_childContainmentLayer.get() : nullptr; }
 
-    void paintIntoLayer(const GraphicsLayer*, GraphicsContext&, const IntRect& paintDirtyRect, OptionSet<PaintBehavior>, EventRegionContext* = nullptr);
+    void paintIntoLayer(const GraphicsLayer*, GraphicsContext&, const IntRect& paintDirtyRect, OptionSet<PaintBehavior>, RegionContext* = nullptr);
     OptionSet<RenderLayer::PaintLayerFlag> paintFlagsForLayer(const GraphicsLayer&) const;
     
     void paintDebugOverlays(const GraphicsLayer*, GraphicsContext&);

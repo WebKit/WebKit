@@ -71,7 +71,7 @@ void LegacyInlineElementBox::paint(PaintInfo& paintInfo, const LayoutPoint& pain
     if (!paintInfo.shouldPaintWithinRoot(renderer()))
         return;
 
-    if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Selection && paintInfo.phase != PaintPhase::EventRegion)
+    if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Selection && paintInfo.phase != PaintPhase::EventRegion && paintInfo.phase != PaintPhase::Accessibility)
         return;
 
     LayoutPoint childPoint = paintOffset;
