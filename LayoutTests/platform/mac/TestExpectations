@@ -1201,8 +1201,6 @@ webkit.org/b/169838 [ Release ] fast/workers/worker-close-more.html [ Pass Timeo
 
 webkit.org/b/158420 http/tests/navigation/redirect-to-fragment2.html [ Failure ]
 
-webkit.org/b/170177 fast/images/reset-image-animation.html [ Pass Failure ]
-
 webkit.org/b/168390 fast/images/slower-animation-than-decoding-image.html [ Pass Failure ]
 
 
