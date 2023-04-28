@@ -3295,6 +3295,12 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
 {
     Ref protectedFrame(m_frame);
 
+#if ENABLE(POINTER_LOCK)
+    // Context menus should not be handled while pointer is locked.
+    if (auto* page = m_frame.page(); !page || page->pointerLockController().isLocked())
+        return false;
+#endif
+
     RefPtr doc = m_frame.document();
     RefPtr view = m_frame.view();
     if (!view)

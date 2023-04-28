@@ -93,6 +93,15 @@
             doNextStepWithUserGesture();
         },
         function () {
+            debug("     With a lock in place send a right click.")
+            targetdiv1.oncontextmenu = eventNotExpected;
+            targetdiv2.oncontextmenu = eventExpected;
+            document.body.oncontextmenu = eventNotExpected;
+            if (window.eventSender)
+                window.eventSender.contextClick();
+            doNextStepWithUserGesture();
+        },
+        function () {
             targetdiv2.requestPointerLock();
             expectedTargetToBeLockedString = "targetdiv2";
             // doNextStep() called by onpointerlockchange handler.
