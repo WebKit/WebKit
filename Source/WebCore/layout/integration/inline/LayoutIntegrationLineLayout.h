@@ -149,7 +149,7 @@ private:
 
     void prepareLayoutState();
     void prepareFloatingState();
-    FloatRect constructContent(Layout::InlineLayoutResult&&);
+    FloatRect constructContent(const Layout::InlineLayoutState&, Layout::InlineLayoutResult&&);
     Vector<LineAdjustment> adjustContent();
     void updateRenderTreePositions(const Vector<LineAdjustment>&);
 
@@ -175,6 +175,7 @@ private:
     // FIXME: This should be part of LayoutState.
     std::unique_ptr<Layout::InlineDamage> m_lineDamage;
     std::unique_ptr<InlineContent> m_inlineContent;
+    HashMap<const Layout::ElementBox*, LayoutUnit> m_nestedListMarkerOffsets;
 };
 
 }

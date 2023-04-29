@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "BlockLayoutState.h"
 #include "FloatingContext.h"
 #include "FormattingConstraints.h"
 #include "InlineContentBreaker.h"
 #include "InlineFormattingState.h"
+#include "InlineLayoutState.h"
 #include "InlineLine.h"
 #include "InlineLineTypes.h"
 
@@ -41,7 +41,7 @@ struct LineCandidate;
 
 class LineBuilder {
 public:
-    LineBuilder(InlineFormattingContext&, BlockLayoutState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, std::optional<IntrinsicWidthMode> = std::nullopt);
+    LineBuilder(InlineFormattingContext&, InlineLayoutState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, std::optional<IntrinsicWidthMode> = std::nullopt);
     LineBuilder(const InlineFormattingContext&, const InlineItems&, std::optional<IntrinsicWidthMode>);
 
     struct LineInput {
@@ -139,8 +139,9 @@ private:
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     InlineFormattingState* formattingState() { return m_inlineFormattingState; }
-    const BlockLayoutState* blockLayoutState() const { return m_blockLayoutState; }
-    FloatingState* floatingState() { return m_blockLayoutState ? &m_blockLayoutState->floatingState() : nullptr; }
+    InlineLayoutState* inlineLayoutState() const { return m_inlineLayoutState; }
+    BlockLayoutState* blockLayoutState() const { return inlineLayoutState() ? &m_inlineLayoutState->parentBlockLayoutState() : nullptr; }
+    FloatingState* floatingState() { return blockLayoutState() ? &blockLayoutState()->floatingState() : nullptr; }
     const FloatingState* floatingState() const { return const_cast<LineBuilder&>(*this).floatingState(); }
     const ElementBox& root() const;
     const LayoutState& layoutState() const;
@@ -151,7 +152,7 @@ private:
     std::optional<IntrinsicWidthMode> m_intrinsicWidthMode;
     const InlineFormattingContext& m_inlineFormattingContext;
     InlineFormattingState* m_inlineFormattingState { nullptr };
-    BlockLayoutState* m_blockLayoutState { nullptr };
+    InlineLayoutState* m_inlineLayoutState { nullptr };
     std::optional<HorizontalConstraints> m_rootHorizontalConstraints;
 
     Line m_line;

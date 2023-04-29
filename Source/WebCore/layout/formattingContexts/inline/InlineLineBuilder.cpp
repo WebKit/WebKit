@@ -333,11 +333,11 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
     return boxGeometry.marginBoxWidth();
 }
 
-LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, BlockLayoutState& blockLayoutState, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems, std::optional<IntrinsicWidthMode> intrinsicWidthMode)
+LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, InlineLayoutState& inlineLayoutState, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems, std::optional<IntrinsicWidthMode> intrinsicWidthMode)
     : m_intrinsicWidthMode(intrinsicWidthMode)
     , m_inlineFormattingContext(inlineFormattingContext)
     , m_inlineFormattingState(&inlineFormattingContext.formattingState())
-    , m_blockLayoutState(&blockLayoutState)
+    , m_inlineLayoutState(&inlineLayoutState)
     , m_rootHorizontalConstraints(rootHorizontalConstraints)
     , m_line(inlineFormattingContext)
     , m_inlineItems(inlineItems)
@@ -1008,7 +1008,7 @@ LayoutUnit LineBuilder::adjustGeometryForInitialLetterIfNeeded(const Box& floatB
     auto drop = floatBox.style().initialLetterDrop();
     auto isInitialLetter = floatBox.isFloatingPositioned() && floatBox.style().styleType() == PseudoId::FirstLetter && drop;
     if (!isInitialLetter) {
-        formattingState()->setClearGapBeforeFirstLine({ });
+        inlineLayoutState()->setClearGapBeforeFirstLine({ });
         return { };
     }
     // Here we try to set the vertical start position for the float in flush with the adjoining text content's cap height.
@@ -1017,7 +1017,7 @@ LayoutUnit LineBuilder::adjustGeometryForInitialLetterIfNeeded(const Box& floatB
     // While initial-letter based floats do not set their clear property, intrusive floats from sibling IFCs are supposed to be cleared.
     auto intrusiveBottom = blockLayoutState()->intrusiveInitialLetterLogicalBottom();
     if (!initialLetterCapHeightOffset && !intrusiveBottom) {
-        formattingState()->setClearGapBeforeFirstLine({ });
+        inlineLayoutState()->setClearGapBeforeFirstLine({ });
         return { };
     }
 
@@ -1049,7 +1049,7 @@ LayoutUnit LineBuilder::adjustGeometryForInitialLetterIfNeeded(const Box& floatB
     }
 
     m_lineLogicalRect.moveVertically(clearGapBeforeFirstLine);
-    formattingState()->setClearGapBeforeFirstLine(clearGapBeforeFirstLine);
+    inlineLayoutState()->setClearGapBeforeFirstLine(clearGapBeforeFirstLine);
     return initialLetterCapHeightOffset.value_or(0_lu);
 }
 

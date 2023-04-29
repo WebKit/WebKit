@@ -26,7 +26,6 @@
 #include "config.h"
 #include "InlineLineBoxBuilder.h"
 
-#include "BlockLayoutState.h"
 #include "InlineLineBoxVerticalAligner.h"
 #include "InlineLineBuilder.h"
 #include "LayoutBoxGeometry.h"
@@ -34,10 +33,10 @@
 namespace WebCore {
 namespace Layout {
 
-LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingContext, const LineBuilder::LineContent& lineContent, const BlockLayoutState& blockLayoutState)
+LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingContext, const InlineLayoutState& inlineLayoutState, const LineBuilder::LineContent& lineContent)
     : m_inlineFormattingContext(inlineFormattingContext)
+    , m_inlineLayoutState(inlineLayoutState)
     , m_lineContent(lineContent)
-    , m_blockLayoutState(blockLayoutState)
 {
 }
 
@@ -681,11 +680,8 @@ void LineBoxBuilder::computeLineBoxGeometry(LineBox& lineBox) const
 
 void LineBoxBuilder::adjustOutsideListMarkersPosition(LineBox& lineBox)
 {
-    auto& formattingContext = this->formattingContext();
-    auto& formattingState = formattingContext.formattingState();
-    auto& formattingGeometry = formattingContext.formattingGeometry();
-
-    auto floatingContext = FloatingContext { formattingContext, blockLayoutState().floatingState() };
+    auto& formattingGeometry = formattingContext().formattingGeometry();
+    auto floatingContext = FloatingContext { formattingContext(), blockLayoutState().floatingState() };
     auto lineBoxRect = lineBox.logicalRect();
     auto floatConstraints = floatingContext.constraints(LayoutUnit { lineBoxRect.top() }, LayoutUnit { lineBoxRect.bottom() }, FloatingContext::MayBeAboveLastFloat::No);
 
@@ -702,7 +698,7 @@ void LineBoxBuilder::adjustOutsideListMarkersPosition(LineBox& lineBox)
         auto listMarkerInitialOffsetFromRootInlineBox = listMarkerInlineLevelBox.logicalLeft() - rootInlineBoxOffsetFromContentBoxOrIntrusiveFloat;
         auto logicalLeft = listMarkerInitialOffsetFromRootInlineBox;
         auto nestedListMarkerMarginStart = [&] {
-            auto nestedOffset = formattingState.nestedListMarkerOffset(listMarkerBox);
+            auto nestedOffset = inlineLayoutState().nestedListMarkerOffset(listMarkerBox);
             if (nestedOffset == LayoutUnit::min())
                 return 0_lu;
             // Nested list markers (in standards mode) share the same line and have offsets as if they had dedicated lines.

@@ -37,7 +37,7 @@
 namespace WebCore {
 namespace Layout {
 
-class BlockLayoutState;
+class InlineLayoutState;
 class InlineDamage;
 class InlineFormattingState;
 class LineBox;
@@ -68,13 +68,13 @@ public:
     const InlineFormattingGeometry& formattingGeometry() const final { return m_inlineFormattingGeometry; }
     const InlineFormattingQuirks& formattingQuirks() const final { return m_inlineFormattingQuirks; }
 
-    InlineLayoutResult layoutInFlowAndFloatContentForIntegration(const ConstraintsForInlineContent&, BlockLayoutState&);
-    void layoutOutOfFlowContentForIntegration(const ConstraintsForInlineContent&, BlockLayoutState&, const InlineDisplay::Content&);
+    InlineLayoutResult layoutInFlowAndFloatContentForIntegration(const ConstraintsForInlineContent&, InlineLayoutState&);
+    void layoutOutOfFlowContentForIntegration(const ConstraintsForInlineContent&, InlineLayoutState&, const InlineDisplay::Content&);
     IntrinsicWidthConstraints computedIntrinsicWidthConstraintsForIntegration();
 
 private:
-    InlineLayoutResult lineLayout(const InlineItems&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, BlockLayoutState&);
-    void layoutFloatContentOnly(const ConstraintsForInlineContent&, BlockLayoutState&);
+    InlineLayoutResult lineLayout(const InlineItems&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, InlineLayoutState&);
+    void layoutFloatContentOnly(const ConstraintsForInlineContent&, FloatingState&);
     void computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList&, const ConstraintsForInFlowContent&, const InlineDisplay::Content&, const FloatingState&);
 
     void computeIntrinsicWidthForFormattingRoot(const Box&);
@@ -85,7 +85,7 @@ private:
     void computeWidthAndMargin(const Box&, const HorizontalConstraints&);
 
     void collectContentIfNeeded();
-    InlineRect createDisplayContentForLine(size_t lineIndex, const LineBuilder::LineContent&, const ConstraintsForInlineContent&, const BlockLayoutState&, InlineDisplay::Content&);
+    InlineRect createDisplayContentForLine(size_t lineIndex, const LineBuilder::LineContent&, const ConstraintsForInlineContent&, const InlineLayoutState&, InlineDisplay::Content&);
     void resetGeometryForClampedContent(const InlineItemRange& needsDisplayContentRange, const LineBuilder::FloatList& suspendedFloats, LayoutPoint topleft);
 
     const InlineDamage* m_lineDamage { nullptr };

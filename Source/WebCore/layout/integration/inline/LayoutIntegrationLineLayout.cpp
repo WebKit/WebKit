@@ -263,7 +263,7 @@ void LineLayout::updateListMarkerDimensions(const RenderListMarker& listMarker)
             // the large negative margin (i.e. this ensures that logical left of the list content stays at the line start)
             listMarkerGeometry.setHorizontalMargin({ listMarkerGeometry.marginStart() + offsetFromParentListItem, listMarkerGeometry.marginEnd() - offsetFromParentListItem });
             if (auto nestedOffset = offsetFromAssociatedListItem - offsetFromParentListItem)
-                m_inlineFormattingState.addNestedListMarkerOffset(layoutBox, nestedOffset);
+                m_nestedListMarkerOffsets.set(&layoutBox, nestedOffset);
         }
     }
 }
@@ -573,12 +573,13 @@ std::optional<LayoutRect> LineLayout::layout()
         auto constraintsForInFlowContent = Layout::ConstraintsForInFlowContent { m_inlineContentConstraints->horizontal(), partialContentTop };
         return { constraintsForInFlowContent, m_inlineContentConstraints->visualLeft() };
     }();
-    auto blockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState(), lineClamp(flow()), leadingTrim(flow()), intrusiveInitialLetterBottom() };
+    auto parentBlockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState(), lineClamp(flow()), leadingTrim(flow()), intrusiveInitialLetterBottom() };
+    auto inlineLayoutState = Layout::InlineLayoutState { parentBlockLayoutState, WTFMove(m_nestedListMarkerOffsets) };
     auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState, m_lineDamage.get() };
-    auto layoutResult = inlineFormattingContext.layoutInFlowAndFloatContentForIntegration(inlineContentConstraints, blockLayoutState);
-    inlineFormattingContext.layoutOutOfFlowContentForIntegration(inlineContentConstraints, blockLayoutState, layoutResult.displayContent);
+    auto layoutResult = inlineFormattingContext.layoutInFlowAndFloatContentForIntegration(inlineContentConstraints, inlineLayoutState);
+    inlineFormattingContext.layoutOutOfFlowContentForIntegration(inlineContentConstraints, inlineLayoutState, layoutResult.displayContent);
 
-    auto repaintRect = LayoutRect { constructContent(WTFMove(layoutResult)) };
+    auto repaintRect = LayoutRect { constructContent(inlineLayoutState, WTFMove(layoutResult)) };
 
     auto adjustments = adjustContent();
 
@@ -589,15 +590,14 @@ std::optional<LayoutRect> LineLayout::layout()
     return isPartialLayout ? std::make_optional(repaintRect) : std::nullopt;
 }
 
-FloatRect LineLayout::constructContent(Layout::InlineLayoutResult&& layoutResult)
+FloatRect LineLayout::constructContent(const Layout::InlineLayoutState& inlineLayoutState, Layout::InlineLayoutResult&& layoutResult)
 {
     auto damagedRect = InlineContentBuilder { flow(), m_boxTree }.build(WTFMove(layoutResult), ensureInlineContent(), m_lineDamage.get());
 
-    m_inlineContent->clearGapBeforeFirstLine = m_inlineFormattingState.clearGapBeforeFirstLine();
-    m_inlineContent->clearGapAfterLastLine = m_inlineFormattingState.clearGapAfterLastLine();
+    m_inlineContent->clearGapBeforeFirstLine = inlineLayoutState.clearGapBeforeFirstLine();
+    m_inlineContent->clearGapAfterLastLine = inlineLayoutState.clearGapAfterLastLine();
     m_inlineContent->shrinkToFit();
 
-    m_inlineFormattingState.resetNestedListMarkerOffsets();
     m_inlineFormattingState.shrinkToFit();
     m_blockFormattingState.shrinkToFit();
 

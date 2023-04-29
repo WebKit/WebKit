@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "BlockLayoutState.h"
 #include "InlineFormattingContext.h"
+#include "InlineLayoutState.h"
 #include "InlineLineBuilder.h"
 #include "TextUtil.h"
 
@@ -39,7 +39,7 @@ class LayoutState;
 
 class LineBoxBuilder {
 public:
-    LineBoxBuilder(const InlineFormattingContext&, const LineBuilder::LineContent&, const BlockLayoutState&);
+    LineBoxBuilder(const InlineFormattingContext&, const InlineLayoutState&, const LineBuilder::LineContent&);
 
     LineBox build(size_t lineIndex);
 
@@ -62,13 +62,14 @@ private:
     const Box& rootBox() const { return formattingContext().root(); }
     const RenderStyle& rootStyle() const { return isFirstLine() ? rootBox().firstLineStyle() : rootBox().style(); }
 
-    const BlockLayoutState& blockLayoutState() const { return m_blockLayoutState; }
+    const InlineLayoutState& inlineLayoutState() const { return m_inlineLayoutState; }
+    const BlockLayoutState& blockLayoutState() const { return inlineLayoutState().parentBlockLayoutState(); }
     LayoutState& layoutState() const { return formattingContext().layoutState(); }
 
 private:
     const InlineFormattingContext& m_inlineFormattingContext;
+    const InlineLayoutState& m_inlineLayoutState;
     const LineBuilder::LineContent& m_lineContent;
-    const BlockLayoutState& m_blockLayoutState;
     bool m_fallbackFontRequiresIdeographicBaseline { false };
     HashMap<const InlineLevelBox*, TextUtil::FallbackFontList> m_fallbackFontsForInlineBoxes;
     Vector<size_t> m_outsideListMarkers;
