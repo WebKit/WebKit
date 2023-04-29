@@ -1,26 +1,26 @@
 
 PASS Popover focus test: default behavior - popover is not focused
-FAIL Popover button click focus test: default behavior - popover is not focused assert_equals: focus should move to the button when clicked, and should stay there when the popover closes expected Element node <button popovertarget="popover-id">Click me</button> but got Element node <button id="priorFocus"></button>
+FAIL Popover button click focus test: default behavior - popover is not focused assert_equals: focus should move to the button when clicked, and should stay there when the popover closes expected Element node <button tabindex="0" popovertarget="popover-id">Click me<... but got Element node <button tabindex="0" id="priorFocus"></button>
 PASS Popover corner cases test: default behavior - popover is not focused
 PASS Popover focus test: autofocus popover
-FAIL Popover button click focus test: autofocus popover assert_equals: focus should move to the button when clicked, and should stay there when the popover closes expected Element node <button popovertarget="popover-id">Click me</button> but got Element node <button id="priorFocus"></button>
+FAIL Popover button click focus test: autofocus popover assert_equals: focus should move to the button when clicked, and should stay there when the popover closes expected Element node <button tabindex="0" popovertarget="popover-id">Click me<... but got Element node <button tabindex="0" id="priorFocus"></button>
 PASS Popover corner cases test: autofocus popover
 PASS Popover focus test: autofocus empty popover
-FAIL Popover button click focus test: autofocus empty popover assert_false: expected false got true
-FAIL Popover corner cases test: autofocus empty popover assert_false: popover should start out hidden expected false got true
+FAIL Popover button click focus test: autofocus empty popover assert_equals: focus should move to the button when clicked, and should stay there when the popover closes expected Element node <button tabindex="0" popovertarget="popover-id">Click me<... but got Element node <button tabindex="0" id="priorFocus"></button>
+PASS Popover corner cases test: autofocus empty popover
 PASS Popover focus test: autofocus popover with button
-FAIL Popover button click focus test: autofocus popover with button assert_equals: focus should move to the button when clicked, and should stay there when the popover closes expected Element node <button popovertarget="popover-id">Click me</button> but got Element node <button id="priorFocus"></button>
+FAIL Popover button click focus test: autofocus popover with button assert_equals: focus should move to the button when clicked, and should stay there when the popover closes expected Element node <button tabindex="0" popovertarget="popover-id">Click me<... but got Element node <button tabindex="0" id="priorFocus"></button>
 PASS Popover corner cases test: autofocus popover with button
 PASS Popover focus test: autofocus child
-FAIL Popover button click focus test: autofocus child assert_false: expected false got true
-FAIL Popover corner cases test: autofocus child assert_false: popover should start out hidden expected false got true
+FAIL Popover button click focus test: autofocus child assert_equals: focus should move to the button when clicked, and should stay there when the popover closes expected Element node <button tabindex="0" popovertarget="popover-id">Click me<... but got Element node <button tabindex="0" id="priorFocus"></button>
+PASS Popover corner cases test: autofocus child
 PASS Popover focus test: autofocus on tabindex=0 element
-FAIL Popover button click focus test: autofocus on tabindex=0 element assert_equals: focus should move to the button when clicked, and should stay there when the popover closes expected Element node <button popovertarget="popover-id">Click me</button> but got Element node <button id="priorFocus"></button>
+FAIL Popover button click focus test: autofocus on tabindex=0 element assert_equals: focus should move to the button when clicked, and should stay there when the popover closes expected Element node <button tabindex="0" popovertarget="popover-id">Click me<... but got Element node <button tabindex="0" id="priorFocus"></button>
 PASS Popover corner cases test: autofocus on tabindex=0 element
 PASS Popover focus test: autofocus multiple children
-FAIL Popover button click focus test: autofocus multiple children assert_false: expected false got true
-FAIL Popover corner cases test: autofocus multiple children assert_false: popover should start out hidden expected false got true
+FAIL Popover button click focus test: autofocus multiple children assert_equals: focus should move to the button when clicked, and should stay there when the popover closes expected Element node <button tabindex="0" popovertarget="popover-id">Click me<... but got Element node <button tabindex="0" id="priorFocus"></button>
+PASS Popover corner cases test: autofocus multiple children
 PASS Popover focus test: autofocus popover and multiple autofocus children
-FAIL Popover button click focus test: autofocus popover and multiple autofocus children assert_equals: focus should move to the button when clicked, and should stay there when the popover closes expected Element node <button popovertarget="popover-id">Click me</button> but got Element node <button id="priorFocus"></button>
+FAIL Popover button click focus test: autofocus popover and multiple autofocus children assert_equals: focus should move to the button when clicked, and should stay there when the popover closes expected Element node <button tabindex="0" popovertarget="popover-id">Click me<... but got Element node <button tabindex="0" id="priorFocus"></button>
 PASS Popover corner cases test: autofocus popover and multiple autofocus children
 

@@ -5,7 +5,7 @@ PASS Canceling pointer events should not keep clicks from light dismissing popov
 PASS Clicking inside a popover does not close that popover
 PASS Popovers close on pointerup, not pointerdown
 PASS Synthetic events can't close popovers
-FAIL Moving focus outside the popover should not dismiss the popover assert_equals: Focus should move to a button outside the popover expected Element node <button id="after_p1">Next control after popover1</button> but got Element node <body><button id="b1t" popovertarget="p1">Popover 1</butt...
+PASS Moving focus outside the popover should not dismiss the popover
 PASS Clicking inside a child popover shouldn't close either popover
 PASS Clicking inside a parent popover should close child popover
 PASS Clicking on invoking element, after using it for activation, shouldn't close its popover
@@ -20,7 +20,7 @@ PASS An invoking element that was not used to invoke the popover can still be pa
 FAIL Scrolling within a popover should not close the popover promise_test: Unhandled rejection with value: object "Error: Unknown source type "wheel"."
 PASS Clicking inside a shadow DOM popover does not close that popover
 PASS Clicking outside a shadow DOM popover should close that popover
-FAIL Moving focus back to the anchor element should not dismiss the popover assert_equals: Focus should move to the anchor element expected Element node <button id="p8anchor">Popover8 anchor (no action)</button> but got Element node <body><button id="b1t" popovertarget="p1">Popover 1</butt...
+PASS Moving focus back to the anchor element should not dismiss the popover
 PASS Ensure circular/convoluted ancestral relationships are functional
 PASS Ensure circular/convoluted ancestral relationships are functional, with a direct showPopover()
 PASS Hide the target popover during "hide all popovers until"

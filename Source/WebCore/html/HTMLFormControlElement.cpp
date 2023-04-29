@@ -242,6 +242,8 @@ void HTMLFormControlElement::didRecalcStyle(Style::Change)
 
 bool HTMLFormControlElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
+    if (!!tabIndexSetExplicitly())
+        return Element::isKeyboardFocusable(event);
     return isFocusable()
         && document().frame()
         && document().frame()->eventHandler().tabsToAllFormControls(event);
@@ -252,7 +254,7 @@ bool HTMLFormControlElement::isMouseFocusable() const
 #if (PLATFORM(GTK) || PLATFORM(WPE))
     return HTMLElement::isMouseFocusable();
 #else
-    if (needsMouseFocusableQuirk())
+    if (!!tabIndexSetExplicitly() || needsMouseFocusableQuirk())
         return HTMLElement::isMouseFocusable();
     return false;
 #endif

@@ -1,8 +1,10 @@
 Button1  Button2  Invoker1  Button3  Button4
 Invoker  after
-Show popover Hide popover
+Show popover
+Toggle popover Other focusable element
 
-FAIL Popover focus navigation assert_equals: Focus should move from invoker into the open popover expected Element node <button id="inside_popover1">Inside1</button> but got Element node <button id="button3">Button3</button>
+FAIL Popover focus navigation assert_equals: Focus should move from invoker into the open popover expected Element node <button id="inside_popover1" tabindex="0">Inside1</button> but got Element node <button id="button3" tabindex="0">Button3</button>
 PASS Circular reference tab navigation
-FAIL Popover focus returns when popover is hidden by invoker assert_equals: Hide button should be focused due to autofocus attribute expected Element node <button popovertarget="deleted1" popovertargetaction="hid... but got Element node <button popovertarget="deleted1" popovertargetaction="sho...
+PASS Popover focus returns when popover is hidden by invoker
+FAIL Popover focus only returns to invoker when focus is within the popover assert_equals: focus does not move because it was not inside the popover expected Element node <span tabindex="0">Other focusable element</span> but got Element node <button popovertarget="focus-return2-p">Toggle popover</b...
 
