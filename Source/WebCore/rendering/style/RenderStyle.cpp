@@ -1254,17 +1254,19 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<Styl
         return true;
 
 
-    if (m_nonInheritedData.ptr() != other.m_nonInheritedData.ptr()) {
-        if (m_nonInheritedData->backgroundData.ptr() != other.m_nonInheritedData->backgroundData.ptr()) {
+    if (currentColorDiffers || m_nonInheritedData.ptr() != other.m_nonInheritedData.ptr()) {
+        if (currentColorDiffers || m_nonInheritedData->backgroundData.ptr() != other.m_nonInheritedData->backgroundData.ptr()) {
             if (!m_nonInheritedData->backgroundData->isEquivalentForPainting(*other.m_nonInheritedData->backgroundData, currentColorDiffers))
                 return true;
         }
 
-        if (m_nonInheritedData->surroundData.ptr() != other.m_nonInheritedData->surroundData.ptr()) {
+        if (currentColorDiffers || m_nonInheritedData->surroundData.ptr() != other.m_nonInheritedData->surroundData.ptr()) {
             if (!m_nonInheritedData->surroundData->border.isEquivalentForPainting(other.m_nonInheritedData->surroundData->border, currentColorDiffers))
                 return true;
         }
+    }
 
+    if (m_nonInheritedData.ptr() != other.m_nonInheritedData.ptr()) {
         if (m_nonInheritedData->miscData.ptr() != other.m_nonInheritedData->miscData.ptr()
             && miscDataChangeRequiresRepaint(*m_nonInheritedData->miscData, *other.m_nonInheritedData->miscData, changedContextSensitiveProperties))
             return true;
@@ -2329,7 +2331,7 @@ Color RenderStyle::colorResolvingCurrentColor(CSSPropertyID colorProperty, bool 
 {
     auto result = unresolvedColorForProperty(colorProperty, visitedLink);
 
-    if (isCurrentColor(result)) {
+    if (result.isCurrentColor()) {
         if (colorProperty == CSSPropertyTextDecorationColor) {
             if (hasPositiveStrokeWidth()) {
                 // Prefer stroke color if possible but not if it's fully transparent.
