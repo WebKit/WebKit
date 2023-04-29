@@ -113,7 +113,7 @@ static bool shouldAllowAccessibilityRoleAsPointerCursorReplacement(const Element
 static bool elementMatchesHoverRules(Element& element)
 {
     bool foundHoverRules = false;
-    bool initialValue = element.document().userActionElements().isHovered(element);
+    bool initialValue = element.isUserActionElement() && element.document().userActionElements().isHovered(element);
 
     for (auto key : Style::makePseudoClassInvalidationKeys(CSSSelector::PseudoClassHover, element)) {
         auto& ruleSets = element.styleResolver().ruleSets();
