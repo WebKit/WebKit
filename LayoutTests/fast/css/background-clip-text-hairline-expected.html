@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        .container {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+        }
+
+        .text-gradient {
+            width: 500px;
+            line-height: 2em;
+            font-size: 4em;
+            box-sizing: border-box;
+            background: linear-gradient(to bottom right, blue, blue 100%);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .obscurer {
+            position: absolute;
+            left: 20px;
+            top: 30px;
+            width: 500px;
+            height: 100px;
+            background-color: gray;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="text-gradient">background-clip</div>
+    </div>
+    <div class="obscurer"></div>
+</body>
+</html>

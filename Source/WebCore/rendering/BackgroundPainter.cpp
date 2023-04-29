@@ -318,6 +318,8 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
         maskRect = snapRectToDevicePixels(rect, deviceScaleFactor);
         maskRect.intersect(snapRectToDevicePixels(m_paintInfo.rect, deviceScaleFactor));
 
+        maskRect.inflate(1);
+
         // Now create the mask.
         maskImage = context.createAlignedImageBuffer(maskRect.size());
         if (!maskImage)
