@@ -46,6 +46,8 @@ public:
 
     ~CSSUnresolvedColor();
 
+    bool containsCurrentColor() const;
+
     void serializationForCSS(StringBuilder&) const;
     String serializationForCSS() const;
 

@@ -25,12 +25,22 @@
 
 #include "config.h"
 #include "CSSUnresolvedColor.h"
+#include "StyleColor.h"
 
 #include "StyleBuilderState.h"
 
 namespace WebCore {
 
 CSSUnresolvedColor::~CSSUnresolvedColor() = default;
+
+bool CSSUnresolvedColor::containsCurrentColor() const
+{
+    return WTF::switchOn(m_value,
+        [&] (const CSSUnresolvedColorMix& unresolved) {
+            return StyleColor::containsCurrentColor(unresolved.mixComponents1.color) || StyleColor::containsCurrentColor(unresolved.mixComponents2.color);
+        }
+    );
+}
 
 void CSSUnresolvedColor::serializationForCSS(StringBuilder& builder) const
 {

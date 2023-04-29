@@ -95,6 +95,7 @@ public:
     static Color colorFromKeyword(CSSValueID, OptionSet<StyleColorOptions>);
     static Color colorFromAbsoluteKeyword(CSSValueID);
 
+    static bool containsCurrentColor(const CSSPrimitiveValue&);
     static bool isAbsoluteColorKeyword(CSSValueID);
     static bool isCurrentColorKeyword(CSSValueID id) { return id == CSSValueCurrentcolor; }
     static bool isCurrentColor(const CSSPrimitiveValue& value) { return isCurrentColorKeyword(value.valueID()); }
@@ -111,6 +112,7 @@ public:
     // https://drafts.csswg.org/css-color-4/#typedef-color
     static bool isColorKeyword(CSSValueID, OptionSet<CSSColorType> = { CSSColorType::Absolute, CSSColorType::Current, CSSColorType::System });
 
+    bool containsCurrentColor() const;
     bool isCurrentColor() const;
     bool isColorMix() const;
     bool isAbsoluteColor() const;
