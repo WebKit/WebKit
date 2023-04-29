@@ -206,7 +206,6 @@ public:
     MediaPlayer::VideoGravity videoFullscreenGravity() const { return m_videoFullscreenGravity; }
 #endif
 
-    void scheduleCheckPlaybackTargetCompatability();
     void checkPlaybackTargetCompatibility();
     void scheduleResolvePendingPlayPromises();
     void scheduleRejectPendingPlayPromises(Ref<DOMException>&&);
@@ -1038,9 +1037,9 @@ private:
     Timer m_scanTimer;
     Timer m_playbackControlsManagerBehaviorRestrictionsTimer;
     Timer m_seekToPlaybackPositionEndedTimer;
+    Timer m_checkPlaybackTargetCompatibilityTimer;
     TaskCancellationGroup m_configureTextTracksTaskCancellationGroup;
     TaskCancellationGroup m_updateTextTracksTaskCancellationGroup;
-    TaskCancellationGroup m_checkPlaybackTargetCompatibilityTaskCancellationGroup;
     TaskCancellationGroup m_updateMediaStateTaskCancellationGroup;
     TaskCancellationGroup m_mediaEngineUpdatedTaskCancellationGroup;
     TaskCancellationGroup m_updatePlayStateTaskCancellationGroup;
@@ -1278,7 +1277,6 @@ private:
     MediaProducerMediaStateFlags m_mediaState;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    MonotonicTime m_currentPlaybackTargetIsWirelessEventFiredTime;
     bool m_hasPlaybackTargetAvailabilityListeners { false };
     bool m_failedToPlayToWirelessTarget { false };
     bool m_lastTargetAvailabilityEventState { false };
