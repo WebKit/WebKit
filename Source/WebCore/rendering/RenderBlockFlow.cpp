@@ -4060,13 +4060,17 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
 
     for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
         auto& renderer = *walker.current();
-        if (relayoutChildren || (is<RenderBox>(renderer) && downcast<RenderBox>(renderer).hasRelativeDimensions()))
+        auto childNeedsLayout = relayoutChildren || (is<RenderBox>(renderer) && downcast<RenderBox>(renderer).hasRelativeDimensions());
+        auto childNeedsPreferredWidthComputation = relayoutChildren && is<RenderBox>(renderer) && downcast<RenderBox>(renderer).needsPreferredWidthsRecalculation();
+        if (childNeedsLayout)
             renderer.setNeedsLayout(MarkOnlyThis);
+        if (childNeedsPreferredWidthComputation)
+            renderer.setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
 
         if (renderer.isOutOfFlowPositioned())
             renderer.containingBlock()->insertPositionedObject(downcast<RenderBox>(renderer));
 
-        if (!renderer.needsLayout() && !needsUpdateReplacedDimensions)
+        if (!renderer.needsLayout() && !renderer.preferredLogicalWidthsDirty() && !needsUpdateReplacedDimensions)
             continue;
 
         auto shouldRunInFlowLayout = renderer.isInFlow() && is<RenderElement>(renderer) && !is<RenderLineBreak>(renderer) && !is<RenderInline>(renderer) && !is<RenderCounter>(renderer);
