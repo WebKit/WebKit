@@ -66,6 +66,7 @@
 #include "ValueProfile.h"
 #include "VirtualRegister.h"
 #include "Watchpoint.h"
+#include <wtf/ApproximateTime.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/FixedVector.h>
 #include <wtf/HashSet.h>
@@ -908,7 +909,7 @@ private:
 
     Seconds timeSinceCreation()
     {
-        return MonotonicTime::now() - m_creationTime;
+        return ApproximateTime::now() - m_creationTime;
     }
 
     void createRareDataIfNecessary()
@@ -985,7 +986,7 @@ private:
 
     RefPtr<MetadataTable> m_metadata;
 
-    MonotonicTime m_creationTime;
+    ApproximateTime m_creationTime;
     double m_previousCounter { 0 };
 
     std::unique_ptr<RareData> m_rareData;

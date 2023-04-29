@@ -297,7 +297,7 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     , m_functionDecls(other.m_functionDecls)
     , m_functionExprs(other.m_functionExprs)
     , m_metadata(other.m_metadata)
-    , m_creationTime(MonotonicTime::now())
+    , m_creationTime(ApproximateTime::now())
 {
     ASSERT(heap()->isDeferred());
     ASSERT(m_scopeRegister.isLocal());
@@ -343,7 +343,7 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, ScriptExecutable* ownerExecut
     , m_vm(&vm)
     , m_instructionsRawPointer(unlinkedCodeBlock->instructions().rawPointer())
     , m_metadata(unlinkedCodeBlock->metadata().link())
-    , m_creationTime(MonotonicTime::now())
+    , m_creationTime(ApproximateTime::now())
 {
     ASSERT(heap()->isDeferred());
     ASSERT(m_scopeRegister.isLocal());
