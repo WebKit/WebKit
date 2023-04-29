@@ -1868,6 +1868,9 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     if (gestureRecognizer != _mouseGestureRecognizer && [_mouseGestureRecognizer mouseTouch] == touch && touch._isPointerTouch)
         return NO;
 
+    if (gestureRecognizer == _mouseGestureRecognizer && !touch._isPointerTouch)
+        return NO;
+
     if (gestureRecognizer == _doubleTapGestureRecognizer || gestureRecognizer == _nonBlockingDoubleTapGestureRecognizer)
         return touch.type != UITouchTypeIndirectPointer;
 #endif
@@ -10298,7 +10301,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
     [_mouseGestureRecognizer setEnabled:[self shouldUseMouseGestureRecognizer]];
 #if ENABLE(PENCIL_HOVER)
     [_pencilHoverGestureRecognizer setAllowedTouchTypes:@[ @(UITouchTypePencil)] ];
-    [_mouseGestureRecognizer setAllowedTouchTypes:@[ @(UITouchTypeIndirectPointer)] ];
+    [_mouseGestureRecognizer setAllowedTouchTypes:@[@(UITouchTypeDirect), @(UITouchTypeIndirectPointer)] ];
     [_pencilHoverGestureRecognizer setEnabled:[self shouldUseMouseGestureRecognizer]];
 #endif
 }
