@@ -249,7 +249,6 @@ private:
     RefPtr<RTCDtlsTransport> getOrCreateDtlsTransport(std::unique_ptr<RTCDtlsTransportBackend>&&);
     void updateTransceiverTransports();
 
-    friend class GStreamerMediaEndpoint;
     void setSignalingState(RTCSignalingState);
 
     bool m_isStopped { false };

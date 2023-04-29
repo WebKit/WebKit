@@ -127,7 +127,6 @@ private:
     void setDescription(const RTCSessionDescription*, DescriptionType, Function<void(const GstSDPMessage&)>&& preProcessCallback, Function<void(const GstSDPMessage&)>&& successCallback, Function<void(const GError*)>&& failureCallback);
     void initiate(bool isInitiator, GstStructure*);
 
-    void onSignalingStateChange();
     void onNegotiationNeeded();
     void onIceConnectionChange();
     void onIceGatheringChange();
