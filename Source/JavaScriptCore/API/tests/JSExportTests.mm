@@ -195,7 +195,7 @@ static void wrapperForNSObjectisObject()
 {
     @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
-        context[@"Object"] = [[NSNull alloc] init];
+        context[@"Object"] = [NSNull null];
         context.exception = nil;
 
         context[@"A"] = NSObject.class;
