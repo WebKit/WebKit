@@ -89,6 +89,13 @@ bool SettingsBase::platformDefaultMediaSourceEnabled()
 {
     return true;
 }
+
+uint64_t SettingsBase::defaultMaximumSourceBufferSize()
+{
+    // Allow SourceBuffers to store up to 304MB each, enough for approximately five minutes
+    // of 1080p video and stereo audio.
+    return 318767104;
+}
 #endif
 
 #endif

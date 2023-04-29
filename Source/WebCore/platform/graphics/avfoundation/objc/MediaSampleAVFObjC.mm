@@ -135,7 +135,14 @@ MediaTime MediaSampleAVFObjC::duration() const
 
 size_t MediaSampleAVFObjC::sizeInBytes() const
 {
-    return PAL::CMSampleBufferGetTotalSampleSize(m_sample.get());
+    // Per sample overhead was calculated with `leaks` on a process
+    // with MallocStackLogging enabled. This value should be occasionally
+    // re-validated and updated when OS changes occurr.
+    constexpr size_t EstimatedCMSampleBufferOverhead = 1234;
+
+    return PAL::CMSampleBufferGetTotalSampleSize(m_sample.get())
+        + sizeof(MediaSampleAVFObjC)
+        + EstimatedCMSampleBufferOverhead;
 }
 
 PlatformSample MediaSampleAVFObjC::platformSample() const
