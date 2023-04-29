@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -3465,80 +3465,6 @@ public:
     {
         return 4;
     }
-    
-    static void replaceWithLoad(void* where)
-    {
-        Datasize sf;
-        AddOp op;
-        SetFlags S;
-        int shift;
-        int imm12;
-        RegisterID rn;
-        RegisterID rd;
-        if (disassembleAddSubtractImmediate(where, sf, op, S, shift, imm12, rn, rd)) {
-            ASSERT(sf == Datasize_64);
-            ASSERT(op == AddOp_ADD);
-            ASSERT(!S);
-            ASSERT(!shift);
-            ASSERT(!(imm12 & ~0xff8));
-            int insn = loadStoreRegisterUnsignedImmediate(MemOpSize_64, false, MemOp_LOAD, encodePositiveImmediate<64>(imm12), rn, rd);
-            RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(where) == where);
-            performJITMemcpy(where, &insn, sizeof(int));
-            cacheFlush(where, sizeof(int));
-        }
-#if ASSERT_ENABLED
-        else {
-            MemOpSize size;
-            bool V;
-            MemOp opc;
-            int imm12;
-            RegisterID rn;
-            RegisterID rt;
-            ASSERT(disassembleLoadStoreRegisterUnsignedImmediate(where, size, V, opc, imm12, rn, rt));
-            ASSERT(size == MemOpSize_64);
-            ASSERT(!V);
-            ASSERT(opc == MemOp_LOAD);
-            ASSERT(!(imm12 & ~0x1ff));
-        }
-#endif // ASSERT_ENABLED
-    }
-
-    static void replaceWithAddressComputation(void* where)
-    {
-        MemOpSize size;
-        bool V;
-        MemOp opc;
-        int imm12;
-        RegisterID rn;
-        RegisterID rt;
-        if (disassembleLoadStoreRegisterUnsignedImmediate(where, size, V, opc, imm12, rn, rt)) {
-            ASSERT(size == MemOpSize_64);
-            ASSERT(!V);
-            ASSERT(opc == MemOp_LOAD);
-            ASSERT(!(imm12 & ~0x1ff));
-            int insn = addSubtractImmediate(Datasize_64, AddOp_ADD, DontSetFlags, 0, imm12 * sizeof(void*), rn, rt);
-            RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(where) == where);
-            performJITMemcpy(where, &insn, sizeof(int));
-            cacheFlush(where, sizeof(int));
-        }
-#if ASSERT_ENABLED
-        else {
-            Datasize sf;
-            AddOp op;
-            SetFlags S;
-            int shift;
-            int imm12;
-            RegisterID rn;
-            RegisterID rd;
-            ASSERT(disassembleAddSubtractImmediate(where, sf, op, S, shift, imm12, rn, rd));
-            ASSERT(sf == Datasize_64);
-            ASSERT(op == AddOp_ADD);
-            ASSERT(!S);
-            ASSERT(!shift);
-            ASSERT(!(imm12 & ~0xff8));
-        }
-#endif // ASSERT_ENABLED
-    }
 
     static void repatchPointer(void* where, void* valuePtr)
     {
@@ -3557,33 +3483,6 @@ public:
 
         if (flush)
             cacheFlush(address, sizeof(int) * 3);
-    }
-
-    static void repatchInt32(void* where, int32_t value)
-    {
-        int* address = static_cast<int*>(where);
-
-        Datasize sf;
-        MoveWideOp opc;
-        int hw;
-        uint16_t imm16;
-        RegisterID rd;
-        bool expected = disassembleMoveWideImediate(address, sf, opc, hw, imm16, rd);
-        ASSERT_UNUSED(expected, expected && !sf && (opc == MoveWideOp_Z || opc == MoveWideOp_N) && !hw);
-        ASSERT(checkMovk<Datasize_32>(address[1], 1, rd));
-
-        int buffer[2];
-        if (value >= 0) {
-            buffer[0] = moveWideImediate(Datasize_32, MoveWideOp_Z, 0, getHalfword(value, 0), rd);
-            buffer[1] = moveWideImediate(Datasize_32, MoveWideOp_K, 1, getHalfword(value, 1), rd);
-        } else {
-            buffer[0] = moveWideImediate(Datasize_32, MoveWideOp_N, 0, ~getHalfword(value, 0), rd);
-            buffer[1] = moveWideImediate(Datasize_32, MoveWideOp_K, 1, getHalfword(value, 1), rd);
-        }
-        RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(where) == where);
-        performJITMemcpy(where, &buffer, sizeof(int) * 2);
-
-        cacheFlush(where, sizeof(int) * 2);
     }
 
     static void* readPointer(void* where)

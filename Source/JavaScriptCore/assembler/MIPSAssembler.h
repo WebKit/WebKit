@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2009 University of Szeged
  * All rights reserved.
  * Copyright (C) 2010 MIPS Technologies, Inc. All rights reserved.
@@ -850,8 +850,9 @@ public:
         relinkJump(from, to);
     }
 
-    static void repatchInt32(void* from, int32_t to)
+    static void repatchPointer(void* from, void* toPtr)
     {
+        int32_t to = reinterpret_cast<int32_t>(toPtr);
         MIPSWord* insn = reinterpret_cast<MIPSWord*>(from);
         ASSERT((*insn & 0xffe00000) == 0x3c000000); // lui
         *insn = (*insn & 0xffff0000) | ((to >> 16) & 0xffff);
@@ -870,11 +871,6 @@ public:
         ASSERT((*insn & 0xfc000000) == 0x34000000); // ori
         result |= *insn & 0x0000ffff;
         return result;
-    }
-    
-    static void repatchPointer(void* from, void* to)
-    {
-        repatchInt32(from, reinterpret_cast<int32_t>(to));
     }
 
     static void* readPointer(void* from)
@@ -935,28 +931,6 @@ public:
         ASSERT(!(bitwise_cast<uintptr_t>(to) & 3));
         size_t ops = linkDirectJump(instructionStart, to);
         cacheFlush(instructionStart, ops);
-    }
-
-    static void replaceWithLoad(void* instructionStart)
-    {
-        MIPSWord* insn = reinterpret_cast<MIPSWord*>(instructionStart);
-        ASSERT((*insn & 0xffe00000) == 0x3c000000); // lui
-        insn++;
-        ASSERT((*insn & 0xfc0007ff) == 0x00000021); // addu
-        insn++;
-        *insn = 0x8c000000 | ((*insn) & 0x3ffffff); // lw
-        cacheFlush(insn, 4);
-    }
-
-    static void replaceWithAddressComputation(void* instructionStart)
-    {
-        MIPSWord* insn = reinterpret_cast<MIPSWord*>(instructionStart);
-        ASSERT((*insn & 0xffe00000) == 0x3c000000); // lui
-        insn++;
-        ASSERT((*insn & 0xfc0007ff) == 0x00000021); // addu
-        insn++;
-        *insn = 0x24000000 | ((*insn) & 0x3ffffff); // addiu
-        cacheFlush(insn, 4);
     }
 
     /* Update each jump in the buffer of newBase.  */

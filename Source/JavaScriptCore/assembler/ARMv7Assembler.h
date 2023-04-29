@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2010 University of Szeged
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2720,13 +2720,6 @@ public:
         return readPointer(reinterpret_cast<uint16_t*>(from) - 1);
     }
 
-    static void repatchInt32(void* where, int32_t value)
-    {
-        ASSERT(!(reinterpret_cast<intptr_t>(where) & 1));
-        
-        setInt32(where, value, true);
-    }
-    
     static void repatchPointer(void* where, void* value)
     {
         ASSERT(!(reinterpret_cast<intptr_t>(where) & 1));
@@ -2773,52 +2766,6 @@ public:
     static constexpr ptrdiff_t patchableJumpSize()
     {
         return 10;
-    }
-    
-    static void replaceWithLoad(void* instructionStart)
-    {
-        ASSERT(!(bitwise_cast<uintptr_t>(instructionStart) & 1));
-        uint16_t* ptr = reinterpret_cast<uint16_t*>(instructionStart);
-        switch (ptr[0] & 0xFFF0) {
-        case OP_LDR_imm_T3:
-            break;
-        case OP_ADD_imm_T3: {
-            ASSERT(!(ptr[1] & 0xF000));
-            uint16_t instructions[2];
-            instructions[0] = ptr[0] & 0x000F;
-            instructions[0] |= OP_LDR_imm_T3;
-            instructions[1] = ptr[1] | (ptr[1] & 0x0F00) << 4;
-            instructions[1] &= 0xF0FF;
-            performJITMemcpy(ptr, instructions, sizeof(uint16_t) * 2);
-            cacheFlush(ptr, sizeof(uint16_t) * 2);
-            break;
-        }
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-    }
-
-    static void replaceWithAddressComputation(void* instructionStart)
-    {
-        ASSERT(!(bitwise_cast<uintptr_t>(instructionStart) & 1));
-        uint16_t* ptr = reinterpret_cast<uint16_t*>(instructionStart);
-        switch (ptr[0] & 0xFFF0) {
-        case OP_LDR_imm_T3: {
-            ASSERT(!(ptr[1] & 0x0F00));
-            uint16_t instructions[2];
-            instructions[0] = ptr[0] & 0x000F;
-            instructions[0] |= OP_ADD_imm_T3;
-            instructions[1] = ptr[1] | (ptr[1] & 0xF000) >> 4;
-            instructions[1] &= 0x0FFF;
-            performJITMemcpy(ptr, instructions, sizeof(uint16_t) * 2);
-            cacheFlush(ptr, sizeof(uint16_t) * 2);
-            break;
-        }
-        case OP_ADD_imm_T3:
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
     }
 
     unsigned debugOffset() { return m_formatter.debugOffset(); }
