@@ -698,7 +698,6 @@ public:
 
     bool isGridItem() const { return parent() && parent()->isRenderGrid() && !isExcludedFromNormalLayout(); }
     bool isFlexItem() const { return parent() && parent()->isFlexibleBox() && !isExcludedFromNormalLayout(); }
-    bool isBlockLevelBox() const { return style().isDisplayBlockLevel(); }
 
     virtual void adjustBorderBoxRectForPainting(LayoutRect&) { };
 

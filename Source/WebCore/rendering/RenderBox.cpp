@@ -1469,8 +1469,14 @@ bool RenderBox::hasTrimmedMargin(std::optional<MarginTrimType> marginTrimType) c
     // We should assert here if this function is called with a layout system and
     // MarginTrimType combination that is not supported yet (i.e. the layout system
     // does not set the margin trim rare data bit for that margin)
-    if (!isFlexItem() && !isGridItem() && isBlockLevelBox())
-        ASSERT(!marginTrimType || marginTrimType.value() == MarginTrimType::BlockEnd);
+
+    // containingBlock->isBlockContainer() can return true even if the item is in a RenderFlexibleBox
+    // (e.g. buttons) so we should explicitly check that the item is not a flex item to catch block containers here
+    auto* containingBlock = this->containingBlock(); 
+    if (containingBlock && !containingBlock->isFlexibleBox() && containingBlock->isBlockContainer()) {
+        ASSERT_NOT_IMPLEMENTED_YET();
+        return false;
+    }
 #endif
     if (!hasRareData())
         return false;
