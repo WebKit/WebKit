@@ -206,10 +206,6 @@ bool isCounterStyleUnsupportedByUserAgent(CSSValueID valueID)
     case CSSValueTradChineseInformal:
     case CSSValueTradChineseFormal:
     case CSSValueEthiopicNumeric:
-    // FIXME: Enable Korean styles (rdar://106193134).
-    case CSSValueKoreanHangulFormal:
-    case CSSValueKoreanHanjaFormal:
-    case CSSValueKoreanHanjaInformal:
     case CSSValueNone:
         return true;
     default:
