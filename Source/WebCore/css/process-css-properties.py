@@ -6105,7 +6105,7 @@ def main():
     parser.add_argument('--check-unused-grammars-values', action='store_true')
     args = parser.parse_args()
 
-    with open(args.properties, "r") as properties_file:
+    with open(args.properties, "r", encoding="utf-8") as properties_file:
         properties_json = json.load(properties_file)
 
     parsing_context = ParsingContext(properties_json, defines_string=args.defines, parsing_for_codegen=True, check_unused_grammars_values=args.check_unused_grammars_values, verbose=args.verbose)
