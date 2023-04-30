@@ -491,6 +491,62 @@ TEST(iOSMouseSupport, ShowingContextMenuSelectsNonEditableText)
     EXPECT_FALSE(CGRectIsEmpty([webView selectionViewRectsInContentCoordinates].firstObject.CGRectValue));
 }
 
+static void simulateEditContextMenuAppearance(TestWKWebView *webView, CGPoint location)
+{
+    __block bool done = false;
+    [webView.textInputContentView prepareSelectionForContextMenuWithLocationInView:location completionHandler:^(BOOL, RVItem *) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+TEST(iOSMouseSupport, ContextClickAtEndOfSelection)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1000, 400)]);
+    [webView synchronouslyLoadTestPageNamed:@"try-text-select-with-disabled-text-interaction"];
+
+    __auto_type setupSelection = ^(TestWKWebView* webView) {
+        // Creates a selection of the characters "Hell"
+        NSString *modifySelectionJavascript = @""
+        "(() => {"
+        "  const node = document.getElementById('editable').firstChild;"
+        "  const range = document.createRange();"
+        "  range.setStart(node, 0);"
+        "  range.setEnd(node, 4);"
+        "  "
+        "  var selection = window.getSelection();"
+        "  selection.removeAllRanges();"
+        "  selection.addRange(range);"
+        "})();";
+
+        __block bool done = false;
+        [webView evaluateJavaScript:modifySelectionJavascript completionHandler:^(id, NSError *error) {
+            EXPECT_NULL(error);
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+
+        [webView stringByEvaluatingJavaScript:modifySelectionJavascript];
+        [webView waitForNextPresentationUpdate];
+
+        EXPECT_WK_STREQ("Hell", [webView selectedText]);
+    };
+
+    const CGFloat centerOfLetterO = 795;
+
+    setupSelection(webView.get());
+
+    // Right click a bit to the left of the center of the "o". This should not change the selection.
+    simulateEditContextMenuAppearance(webView.get(), NSMakePoint(centerOfLetterO - 5, 200));
+    EXPECT_WK_STREQ("Hell", [webView selectedText]);
+
+    setupSelection(webView.get());
+
+    // Right click a bit to the right of the center of the "o". This should change the selection.
+    simulateEditContextMenuAppearance(webView.get(), NSMakePoint(centerOfLetterO + 5, 200));
+    EXPECT_WK_STREQ("Hello", [webView selectedText]);
+}
+
 #if ENABLE(IOS_TOUCH_EVENTS)
 
 TEST(iOSMouseSupport, WebsiteMouseEventPolicies)
