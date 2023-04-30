@@ -22,9 +22,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
- /* https://www.w3.org/TR/css-counter-styles-3/#predefined-counters */
-
 /* Once a style is added here, make sure it is not listed at isCounterStyleUnsupportedByUserAgent() */
+
+/*** Built-in the spec: https://www.w3.org/TR/css-counter-styles-3/#predefined-counters ***/
 
 @counter-style decimal {
     system: numeric;
@@ -354,4 +354,86 @@
     suffix: ', ';
     negative: "\B9C8\C774\B108\C2A4  ";
     /* 마이너스 (followed by a space) */
+}
+
+
+/*** Subset of Ready-made Counter Styles: https://www.w3.org/TR/predefined-counter-styles/ ***/
+
+@counter-style binary {
+    system: numeric;
+    symbols: '\30' '\31';
+    /* symbols: '0' '1' */
+}
+
+@counter-style lower-hexadecimal {
+    system: numeric;
+    symbols: '\30' '\31' '\32' '\33' '\34' '\35' '\36' '\37' '\38' '\39' '\61' '\62' '\63' '\64' '\65' '\66';
+    /* '0' '1' '2' '3' '4' '5' '6' '7' '8' '9' 'a' 'b' 'c' 'd' 'e' 'f' */
+}
+
+@counter-style upper-hexadecimal {
+    system: numeric;
+    symbols: '\30' '\31' '\32' '\33' '\34' '\35' '\36' '\37' '\38' '\39' '\41' '\42' '\43' '\44' '\45' '\46';
+    /* '0' '1' '2' '3' '4' '5' '6' '7' '8' '9' 'A' 'B' 'C' 'D' 'E' 'F' */
+}
+
+@counter-style octal {
+    system: numeric;
+    symbols: '\30' '\31' '\32' '\33' '\34' '\35' '\36' '\37';
+    /* '0' '1' '2' '3' '4' '5' '6' '7' */
+}
+
+@counter-style hangul {
+    system: alphabetic;
+    symbols: '\AC00' '\B098' '\B2E4' '\B77C' '\B9C8' '\BC14' '\C0AC' '\C544' '\C790' '\CC28' '\CE74' '\D0C0' '\D30C' '\D558';
+    /* '가' '나' '다' '라' '마' '바' '사' '아' '자' '차' '카' '타' '파' '하' */
+}
+
+@counter-style hangul-consonant {
+    system: alphabetic;
+    symbols: '\3131' '\3134' '\3137' '\3139' '\3141' '\3142' '\3145' '\3147' '\3148' '\314A' '\314B' '\314C' '\314D' '\314E';
+    /* 'ㄱ' 'ㄴ' 'ㄷ' 'ㄹ' 'ㅁ' 'ㅂ' 'ㅅ' 'ㅇ' 'ㅈ' 'ㅊ' 'ㅋ' 'ㅌ' 'ㅍ' 'ㅎ' */
+}
+
+/*** WebKit specific ***/
+
+@counter-style asterisks {
+    system: symbolic;
+    symbols: '\2A';
+    /* '*' */
+    suffix: ' ';
+}
+
+@counter-style footnotes {
+    system: symbolic;
+    symbols: '\2A' '\2051' '\2020' '\2021';
+    /* '*' '⁑' '†' '‡' */
+    suffix: ' ';
+}
+
+@counter-style lower-norwegian {
+    system: alphabetic;
+    symbols: '\61' '\62' '\63' '\64' '\65' '\66' '\67' '\68' '\69' '\6A' '\6B' '\6C' '\6D' '\6E' '\6F' '\70' '\71' '\72' '\73' '\74' '\75' '\76' '\77' '\78' '\79' '\7A' '\E6' '\F8' '\E5';
+    /* 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 'k' 'l' 'm' 'n' 'o' 'p' 'q' 'r' 's' 't' 'u' 'v' 'w' 'x' 'y' 'z' 'æ' 'ø' 'å' */
+    suffix: ' ';
+}
+
+@counter-style upper-greek {
+    system: alphabetic;
+    symbols: '\0391' '\0392' '\0393' '\0394' '\0395' '\0396' '\0397' '\0398' '\0399' '\039A' '\039B' '\039C' '\039D' '\039E' '\039F' '\03A0' '\03A1' '\03A3' '\03A4' '\03A5' '\03A6' '\03A7' '\03A8' '\03A9';
+    /* 'Α' 'Β' 'Γ' 'Δ' 'Ε' 'Ζ' 'Η' 'Θ' 'Ι' 'Κ' 'Λ' 'Μ' 'Ν' 'Ξ' 'Ο' 'Π' 'Ρ' 'Σ' 'Τ' 'Υ' 'Φ' 'Χ' 'Ψ' 'Ω' */
+}
+
+@counter-style upper-norwegian {
+    system: alphabetic;
+    symbols: '\41' '\42' '\43' '\44' '\45' '\46' '\47' '\48' '\49' '\4A' '\4B' '\4C' '\4D' '\4E' '\4F' '\50' '\51' '\52' '\53' '\54' '\55' '\56' '\57' '\58' '\59' '\5A' '\C6' '\D8' '\C5';
+    /* 'A' 'B' 'C' 'D' 'E' 'F' 'G' 'H' 'I' 'J' 'K' 'L' 'M' 'N' 'O' 'P' 'Q' 'R' 'S' 'T' 'U' 'V' 'W' 'X' 'Y' 'Z' 'Æ' 'Ø' 'Å' */
+    suffix: ' ';
+}
+
+/* identical to persian in the spec */
+@counter-style urdu {
+    system: numeric;
+    symbols: '\6F0' '\6F1' '\6F2' '\6F3' '\6F4' '\6F5' '\6F6' '\6F7' '\6F8' '\6F9';
+    /* '۰' '۱' '۲' '۳' '۴' '۵' '۶' '۷' '۸' '۹' */
 }

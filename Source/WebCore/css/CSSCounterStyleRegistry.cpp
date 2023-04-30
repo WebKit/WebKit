@@ -171,54 +171,42 @@ bool isCounterStyleUnsupportedByUserAgent(CSSValueID valueID)
 {
     // This list has to be in sync with styles defined in counterStyles.css, once a style is added there, remove it from here.
     switch (valueID) {
-    // FIXME: transform hard-coded styles into @counter-styles when possible (rdar://106708729).
-    case CSSValueBinary:
-    case CSSValueLowerHexadecimal:
-    case CSSValueOctal:
-    case CSSValueOriya:
-    case CSSValueUrdu:
-    case CSSValueUpperHexadecimal:
-    case CSSValueAfar:
-    case CSSValueEthiopicHalehameAaEt:
-    case CSSValueEthiopicHalehameAaEr:
+    // FIXME: Review correctness of Ethiopian counter styles (rdar://108704382).
     case CSSValueAmharic:
-    case CSSValueEthiopicHalehameAmEt:
     case CSSValueAmharicAbegede:
-    case CSSValueEthiopicAbegedeAmEt:
+    case CSSValueAfar:
     case CSSValueEthiopic:
-    case CSSValueEthiopicHalehameGez:
     case CSSValueEthiopicAbegede:
+    case CSSValueEthiopicAbegedeAmEt:
     case CSSValueEthiopicAbegedeGez:
-    case CSSValueHangulConsonant:
-    case CSSValueHangul:
-    case CSSValueLowerNorwegian:
-    case CSSValueOromo:
-    case CSSValueEthiopicHalehameOmEt:
-    case CSSValueSidama:
-    case CSSValueEthiopicHalehameSidEt:
-    case CSSValueSomali:
-    case CSSValueEthiopicHalehameSoEt:
-    case CSSValueTigre:
-    case CSSValueEthiopicHalehameTig:
-    case CSSValueTigrinyaEr:
-    case CSSValueEthiopicHalehameTiEr:
-    case CSSValueTigrinyaErAbegede:
     case CSSValueEthiopicAbegedeTiEr:
-    case CSSValueTigrinyaEt:
-    case CSSValueEthiopicHalehameTiEt:
-    case CSSValueTigrinyaEtAbegede:
     case CSSValueEthiopicAbegedeTiEt:
-    case CSSValueUpperGreek:
-    case CSSValueUpperNorwegian:
-    case CSSValueAsterisks:
-    case CSSValueFootnotes:
+    case CSSValueEthiopicHalehameAaEr:
+    case CSSValueEthiopicHalehameAaEt:
+    case CSSValueEthiopicHalehameAmEt:
+    case CSSValueEthiopicHalehameGez:
+    case CSSValueEthiopicHalehameOmEt:
+    case CSSValueEthiopicHalehameSidEt:
+    case CSSValueEthiopicHalehameSoEt:
+    case CSSValueEthiopicHalehameTiEr:
+    case CSSValueEthiopicHalehameTiEt:
+    case CSSValueEthiopicHalehameTig:
+    case CSSValueOromo:
+    case CSSValueSidama:
+    case CSSValueSomali:
+    case CSSValueTigre:
+    case CSSValueTigrinyaEr:
+    case CSSValueTigrinyaErAbegede:
+    case CSSValueTigrinyaEt:
+    case CSSValueTigrinyaEtAbegede:
+    // Complex styles that use custom algorithms (rdar://103021467).
     case CSSValueCjkIdeographic:
     case CSSValueSimpChineseInformal:
     case CSSValueSimpChineseFormal:
     case CSSValueTradChineseInformal:
     case CSSValueTradChineseFormal:
     case CSSValueEthiopicNumeric:
-    // FIXME: enable korean styles rdar://106193134.
+    // FIXME: Enable Korean styles (rdar://106193134).
     case CSSValueKoreanHangulFormal:
     case CSSValueKoreanHanjaFormal:
     case CSSValueKoreanHanjaInformal:
