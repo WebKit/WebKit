@@ -55,6 +55,11 @@ struct CSSCounterStyleDescriptors {
         Symbolic,
         Additive,
         Fixed,
+        SimplifiedChineseInformal,
+        SimplifiedChineseFormal,
+        TraditionalChineseInformal,
+        TraditionalChineseFormal,
+        EthiopicNumeric,
         Extends
     };
     enum class SpeakAs : uint8_t {

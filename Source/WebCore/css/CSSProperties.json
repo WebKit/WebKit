@@ -9617,6 +9617,7 @@
                 "codegen-properties": {
                     "settings-flag": "cssCounterStyleAtRulesEnabled",
                     "parser-function": "consumeCounterStyleSystem",
+                    "parser-function-requires-context": true,
                     "parser-grammar-unused": "cyclic | numeric | alphabetic | symbolic | additive | [ fixed <integer>? ] | [ extends <counter-style-name> ]",
                     "parser-grammar-unused-reason": "Needs support for ordered groups, optionals and applying restrictions to <custom-ident>."
                 },

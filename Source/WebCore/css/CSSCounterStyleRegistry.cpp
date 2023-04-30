@@ -199,13 +199,6 @@ bool isCounterStyleUnsupportedByUserAgent(CSSValueID valueID)
     case CSSValueTigrinyaErAbegede:
     case CSSValueTigrinyaEt:
     case CSSValueTigrinyaEtAbegede:
-    // Complex styles that use custom algorithms (rdar://103021467).
-    case CSSValueCjkIdeographic:
-    case CSSValueSimpChineseInformal:
-    case CSSValueSimpChineseFormal:
-    case CSSValueTradChineseInformal:
-    case CSSValueTradChineseFormal:
-    case CSSValueEthiopicNumeric:
     case CSSValueNone:
         return true;
     default:

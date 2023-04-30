@@ -78,6 +78,12 @@ public:
     bool isExtendsSystem() const { return system() == CSSCounterStyleDescriptors::System::Extends; }
     void extendAndResolve(const CSSCounterStyle&);
 
+    static String counterForSystemSimplifiedChineseInformal(int);
+    static String counterForSystemSimplifiedChineseFormal(int);
+    static String counterForSystemTraditionalChineseInformal(int);
+    static String counterForSystemTraditionalChineseFormal(int);
+    static String counterForSystemEthiopicNumeric(unsigned);
+
 private:
     CSSCounterStyle(const CSSCounterStyleDescriptors&, bool isPredefinedCounterStyle);
 

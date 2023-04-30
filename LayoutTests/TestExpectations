@@ -6158,11 +6158,9 @@ http/wpt/loading/early-hints [ Skip ]
 
 # Most ports don't have a HEIC decoder.
 http/tests/misc/heic-accept-header.html [ Pass Failure ]
-# Missing complex predefined counter-style at-rule rdar://103021467
-imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/dependent-builtin.html [ ImageOnlyFailure ]
 
-# Missing counter-style integration with counter() rdar://106084053
-imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/disclosure-styles.html [ ImageOnlyFailure ]
+# Needs proper bidi algorithm.
+webkit.org/b/256153 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/disclosure-styles.html [ ImageOnlyFailure ]
 
 # WPT seems to be wrong regarding prefix/suffix fallback (https://github.com/web-platform-tests/wpt/issues/38772)
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-additive.html [ ImageOnlyFailure ]

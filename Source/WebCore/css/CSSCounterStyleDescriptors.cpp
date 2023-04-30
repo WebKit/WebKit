@@ -293,6 +293,11 @@ bool CSSCounterStyleDescriptors::areSymbolsValidForSystem(CSSCounterStyleDescrip
         return symbols.size() >= 2u;
     case System::Additive:
         return additiveSymbols.size();
+    case System::SimplifiedChineseInformal:
+    case System::SimplifiedChineseFormal:
+    case System::TraditionalChineseInformal:
+    case System::TraditionalChineseFormal:
+    case System::EthiopicNumeric:
     case System::Extends:
         return !symbols.size() && !additiveSymbols.size();
     default:
@@ -404,36 +409,33 @@ String CSSCounterStyleDescriptors::systemCSSText() const
 {
     if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::System))
         return emptyString();
-    StringBuilder builder;
-    if (m_isExtendedResolved) {
-        builder.append(makeString("extends ", m_extendsName));
-        return builder.toString();
-    }
+    if (m_isExtendedResolved)
+        return makeString("extends ", m_extendsName);
 
     switch (m_system) {
     case System::Cyclic:
-        builder.append("cyclic");
-        break;
+        return "cyclic"_s;
     case System::Numeric:
-        builder.append("numeric");
-        break;
+        return "numeric"_s;
     case System::Alphabetic:
-        builder.append("alphabetic");
-        break;
+        return "alphabetic"_s;
     case System::Symbolic:
-        builder.append("symbolic");
-        break;
+        return "symbolic"_s;
     case System::Additive:
-        builder.append("additive");
-        break;
+        return "additive"_s;
     case System::Fixed:
-        builder.append(makeString("fixed ", m_fixedSystemFirstSymbolValue));
-        break;
+        return makeString("fixed ", m_fixedSystemFirstSymbolValue);
     case System::Extends:
-        builder.append(makeString("extends ", m_extendsName));
-        break;
+        return makeString("extends ", m_extendsName);
+    // Internal values should not be exposed.
+    case System::SimplifiedChineseInformal:
+    case System::SimplifiedChineseFormal:
+    case System::TraditionalChineseInformal:
+    case System::TraditionalChineseFormal:
+    case System::EthiopicNumeric:
+        return emptyString();
     }
-    return builder.toString();
+    return emptyString();
 }
 
 String CSSCounterStyleDescriptors::negativeCSSText() const

@@ -356,6 +356,54 @@
     /* 마이너스 (followed by a space) */
 }
 
+/*** Complex counter style systems ***/
+
+@counter-style simp-chinese-informal {
+    system: -internal-simplified-chinese-informal;
+    range: -9999 9999;
+    suffix: '\3001'; /* '、' */
+    negative: '\8D1F'; /* '负' */
+    fallback: cjk-decimal;
+}
+
+@counter-style simp-chinese-formal {
+    system: -internal-simplified-chinese-formal;
+    range: -9999 9999;
+    suffix: '\3001'; /* '、' */
+    negative: '\8D1F'; /* '负' */
+    fallback: cjk-decimal;
+}
+
+@counter-style trad-chinese-informal {
+    system: -internal-traditional-chinese-informal;
+    range: -9999 9999;
+    suffix: '\3001'; /* '、' */
+    negative: '\8CA0'; /* '負' */
+    fallback: cjk-decimal;
+}
+
+@counter-style trad-chinese-formal {
+    system: -internal-traditional-chinese-formal;
+    range: -9999 9999;
+    suffix: '\3001'; /* '、' */
+    negative: '\8CA0'; /* '負' */
+    fallback: cjk-decimal;
+}
+
+/* identical to trad-chinese-informal */
+@counter-style cjk-ideographic {
+    system: -internal-traditional-chinese-informal;
+    range: -9999 9999;
+    suffix: '\3001'; /* '、' */
+    negative: '\8CA0'; /* '負' */
+    fallback: cjk-decimal;
+}
+
+@counter-style ethiopic-numeric {
+    system: -internal-ethiopic-numeric;
+    range: 1 infinite;
+    suffix: '\002F\20'; /* '/ ' (followed by space) */
+}
 
 /*** Subset of Ready-made Counter Styles: https://www.w3.org/TR/predefined-counter-styles/ ***/
 

@@ -8234,12 +8234,24 @@ RefPtr<CSSValue> consumeFontPaletteValuesOverrideColors(CSSParserTokenRange& ran
 // MARK: @counter-style
 
 // https://www.w3.org/TR/css-counter-styles-3/#counter-style-system
-RefPtr<CSSValue> consumeCounterStyleSystem(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeCounterStyleSystem(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // cyclic | numeric | alphabetic | symbolic | additive | [fixed <integer>?] | [ extends <counter-style-name> ]
 
     if (auto ident = consumeIdent<CSSValueCyclic, CSSValueNumeric, CSSValueAlphabetic, CSSValueSymbolic, CSSValueAdditive>(range))
         return ident;
+
+    if (isUASheetBehavior(context.mode)) {
+        auto internalKeyword = consumeIdent<
+            CSSValueInternalSimplifiedChineseInformal,
+            CSSValueInternalSimplifiedChineseFormal,
+            CSSValueInternalTraditionalChineseInformal,
+            CSSValueInternalTraditionalChineseFormal,
+            CSSValueInternalEthiopicNumeric
+        >(range);
+        if (internalKeyword)
+            return internalKeyword;
+    }
 
     if (auto ident = consumeIdent<CSSValueFixed>(range)) {
         if (range.atEnd())
@@ -8253,8 +8265,6 @@ RefPtr<CSSValue> consumeCounterStyleSystem(CSSParserTokenRange& range)
     }
 
     if (auto ident = consumeIdent<CSSValueExtends>(range)) {
-        // FIXME: (rdar://103020193) "If a @counter-style uses the extends system, it must not contain a symbols or additive-symbols descriptor, or else the @counter-style rule is invalid." (https://www.w3.org/TR/css-counter-styles-3/#extends-system)
-
         // There must be a `<counter-style-name>` following the `extends` keyword. If there isn't, this value is invalid.
         auto parsedCounterStyleName = consumeCounterStyleName(range);
         if (!parsedCounterStyleName)

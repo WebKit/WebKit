@@ -327,7 +327,7 @@ RefPtr<CSSValue> consumeFontPaletteValuesOverrideColors(CSSParserTokenRange&, co
 
 // @counter-style descriptor consumers:
 
-RefPtr<CSSValue> consumeCounterStyleSystem(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeCounterStyleSystem(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeCounterStyleSymbol(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeCounterStyleNegative(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeCounterStyleRange(CSSParserTokenRange&);

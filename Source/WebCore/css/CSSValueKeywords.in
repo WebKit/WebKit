@@ -1613,6 +1613,11 @@ numeric
 symbolic
 additive
 // fixed
+-internal-simplified-chinese-informal
+-internal-simplified-chinese-formal
+-internal-traditional-chinese-informal
+-internal-traditional-chinese-formal
+-internal-ethiopic-numeric
 extends
 
 // @counter-style `speak-as` descriptor values
