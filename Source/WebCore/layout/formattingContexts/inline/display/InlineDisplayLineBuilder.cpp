@@ -256,8 +256,8 @@ static float truncateOverflowingDisplayBoxes(const InlineDisplay::Line& displayL
             }
             isFirstContentRun = false;
         }
-        ASSERT(truncateRight.has_value());
-        return truncateRight.value_or(0.f);
+        ASSERT(truncateRight.has_value() || right(boxes.last()) == visualRightForContentEnd);
+        return truncateRight.value_or(right(boxes.last()));
     }
 
     auto truncateLeft = std::optional<float> { };
@@ -276,8 +276,8 @@ static float truncateOverflowingDisplayBoxes(const InlineDisplay::Line& displayL
         }
         isFirstContentRun = false;
     }
-    ASSERT(truncateLeft.has_value());
-    return truncateLeft.value_or(ellipsisWidth) - ellipsisWidth;
+    ASSERT(truncateLeft.has_value() || left(boxes.first()) == visualLeftForContentEnd);
+    return truncateLeft.value_or(left(boxes.first())) - ellipsisWidth;
 }
 
 std::optional<FloatRect> InlineDisplayLineBuilder::trailingEllipsisVisualRectAfterTruncation(LineEndingEllipsisPolicy lineEndingEllipsisPolicy, const InlineDisplay::Line& displayLine, InlineDisplay::Boxes& displayBoxes, bool isLastLineWithInlineContent)
