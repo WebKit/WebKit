@@ -457,6 +457,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
     }();
     auto oldContentLogicalWidth = contentLogicalWidth();
     auto runHasHangablePunctuationStart = isFirstFormattedLine() && TextUtil::hasHangablePunctuationStart(inlineTextItem, style) && !lineHasVisuallyNonEmptyContent();
+    auto contentLogicalRight = InlineLayoutUnit { };
     if (needsNewRun) {
         // Note, negative word spacing may cause glyph overlap.
         auto runLogicalLeft = [&] {
@@ -466,31 +467,32 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
         }();
         m_runs.append({ inlineTextItem, style, runLogicalLeft, logicalWidth });
         // Note that the _content_ logical right may be larger than the _run_ logical right.
-        auto contentLogicalRight = runLogicalLeft + logicalWidth + m_clonedEndDecorationWidthForInlineBoxRuns;
-        m_contentLogicalWidth = std::max(oldContentLogicalWidth, contentLogicalRight);
-    } else if (style.letterSpacing() >= 0) {
-        auto& lastRun = m_runs.last();
-        lastRun.expand(inlineTextItem, logicalWidth);
-        // Ensure that property values that act like negative margin are not making the line wider.
-        m_contentLogicalWidth = std::max(oldContentLogicalWidth, lastRun.logicalRight() + m_clonedEndDecorationWidthForInlineBoxRuns);
+        contentLogicalRight = runLogicalLeft + logicalWidth;
     } else {
         auto& lastRun = m_runs.last();
         ASSERT(lastRun.isText());
-        // Negative letter spacing should only shorten the content to the boundary of the previous run.
-        // FIXME: We may need to traverse all the way to the previous non-text run (or even across inline boxes).
-        auto contentWidthWithoutLastTextRun = [&] {
-            if (style.fontCascade().wordSpacing() >= 0)
-                return m_contentLogicalWidth - std::max(0.f, lastRun.logicalWidth());
-            // FIXME: Let's see if we need to optimize for this is the rare case of both letter and word spacing being negative.
-            auto rightMostPosition = InlineLayoutUnit { };
-            for (auto& run : makeReversedRange(m_runs))
-                rightMostPosition = std::max(rightMostPosition, run.logicalRight());
-            return std::max(0.f, rightMostPosition);
-        }();
-        auto lastRunLogicalRight = lastRun.logicalRight();
-        lastRun.expand(inlineTextItem, logicalWidth);
-        m_contentLogicalWidth = std::max(contentWidthWithoutLastTextRun, lastRunLogicalRight + logicalWidth);
+        if (style.letterSpacing() >= 0) {
+            lastRun.expand(inlineTextItem, logicalWidth);
+            contentLogicalRight = lastRun.logicalRight();
+        } else {
+            auto contentWidthWithoutLastTextRun = [&] {
+                // FIXME: We may need to traverse all the way to the previous non-text run (or even across inline boxes).
+                if (style.fontCascade().wordSpacing() >= 0)
+                    return m_contentLogicalWidth - std::max(0.f, lastRun.logicalWidth());
+                // FIXME: Let's see if we need to optimize for this is the rare case of both letter and word spacing being negative.
+                auto rightMostPosition = InlineLayoutUnit { };
+                for (auto& run : makeReversedRange(m_runs))
+                    rightMostPosition = std::max(rightMostPosition, run.logicalRight());
+                return std::max(0.f, rightMostPosition);
+            }();
+            auto lastRunLogicalRight = lastRun.logicalRight();
+            lastRun.expand(inlineTextItem, logicalWidth);
+            // Negative letter spacing should only shorten the content to the boundary of the previous run.
+            contentLogicalRight = std::max(contentWidthWithoutLastTextRun, lastRunLogicalRight + logicalWidth);
+        }
     }
+    // Ensure that property values that act like negative margin are not making the line wider.
+    m_contentLogicalWidth = std::max(oldContentLogicalWidth, contentLogicalRight + m_clonedEndDecorationWidthForInlineBoxRuns);
 
     auto lastRunIndex = m_runs.size() - 1;
     m_trailingSoftHyphenWidth = { };
