@@ -1808,6 +1808,21 @@ ReplacementFragment* ReplaceSelectionCommand::ensureReplacementFragment()
     return m_replacementFragment.get();
 }
 
+static bool fullySelectsEnclosingLink(const VisibleSelection& selection)
+{
+    auto start = selection.start();
+    auto end = selection.end();
+    RefPtr ancestor = commonInclusiveAncestor(start, end);
+    if (!ancestor)
+        return false;
+
+    RefPtr link = ancestor->enclosingLinkEventParentOrSelf();
+    if (!link)
+        return false;
+
+    return positionBeforeNode(link.get()).downstream().equals(start) && positionAfterNode(link.get()).upstream().equals(end);
+}
+
 // During simple pastes, where we're just pasting a text node into a run of text, we insert the text node
 // directly into the text node that holds the selection.  This is much faster than the generalized code in
 // ReplaceSelectionCommand, and works around <https://bugs.webkit.org/show_bug.cgi?id=6148> since we don't 
@@ -1824,6 +1839,9 @@ bool ReplaceSelectionCommand::performTrivialReplace(const ReplacementFragment& f
 
     // e.g. when "bar" is inserted after "foo" in <div><u>foo</u></div>, "bar" should not be underlined.
     if (nodeToSplitToAvoidPastingIntoInlineNodesWithStyle(endingSelection().start()))
+        return false;
+
+    if (fullySelectsEnclosingLink(endingSelection()))
         return false;
 
     RefPtr<Node> nodeAfterInsertionPos = endingSelection().end().downstream().anchorNode();
