@@ -119,6 +119,13 @@ public:
         return *static_cast<const DerivedTime*>(this);
     }
 
+    static constexpr DerivedTime timePointFromNow(Seconds relativeTimeFromNow)
+    {
+        if (std::isinf(relativeTimeFromNow))
+            return DerivedTime::fromRawSeconds(relativeTimeFromNow.value());
+        return DerivedTime::now() + relativeTimeFromNow;
+    }
+
 protected:
     // This is the epoch. So, x.secondsSinceEpoch() should be the same as x - DerivedTime().
     constexpr GenericTimeMixin() = default;

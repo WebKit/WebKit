@@ -351,6 +351,12 @@ void Mutex::unlock()
 // Returns an interval in milliseconds suitable for passing to one of the Win32 wait functions (e.g., ::WaitForSingleObject).
 static DWORD absoluteTimeToWaitTimeoutInterval(WallTime absoluteTime)
 {
+    if (std::isinf(absoluteTime)) {
+        if (absoluteTime == -WallTime::infinity())
+            return 0;
+        return INFINITE;
+    }
+
     WallTime currentTime = WallTime::now();
 
     // Time is in the past - return immediately.

@@ -141,7 +141,7 @@ namespace WTF {
         Locker lock { m_lock };
         bool timedOut = false;
 
-        MonotonicTime absoluteTimeout = MonotonicTime::now() + relativeTimeout;
+        MonotonicTime absoluteTimeout = MonotonicTime::timePointFromNow(relativeTimeout);
         auto found = m_queue.end();
         while (!m_killed && !timedOut) {
             found = m_queue.findIf([&predicate](const std::unique_ptr<DataType>& ptr) -> bool {

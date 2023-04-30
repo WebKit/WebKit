@@ -59,7 +59,7 @@ public:
     bool waitFor(Seconds timeout) final
     {
         Locker locker { m_lock };
-        auto absoluteTime = MonotonicTime::now() + timeout;
+        auto absoluteTime = MonotonicTime::timePointFromNow(timeout);
         return m_condition.waitUntil(m_lock, absoluteTime, [&] {
             assertIsHeld(m_lock);
             return m_isSet;

@@ -147,7 +147,7 @@ void RunLoop::TimerBase::timerFired()
             m_isActive = false;
             ::KillTimer(m_runLoop->m_runLoopMessageWindow, bitwise_cast<uintptr_t>(this));
         } else
-            m_nextFireDate = MonotonicTime::now() + m_interval;
+            m_nextFireDate = MonotonicTime::timePointFromNow(m_interval);
     }
 
     fired();
@@ -169,7 +169,7 @@ void RunLoop::TimerBase::start(Seconds interval, bool repeat)
     m_isRepeating = repeat;
     m_isActive = true;
     m_interval = interval;
-    m_nextFireDate = MonotonicTime::now() + m_interval;
+    m_nextFireDate = MonotonicTime::timePointFromNow(m_interval);
     ::SetTimer(m_runLoop->m_runLoopMessageWindow, bitwise_cast<uintptr_t>(this), interval.millisecondsAs<UINT>(), nullptr);
 }
 
