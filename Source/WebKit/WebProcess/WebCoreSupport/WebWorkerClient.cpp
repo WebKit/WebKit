@@ -26,12 +26,14 @@
 #include "config.h"
 #include "WebWorkerClient.h"
 
+#include "EventDispatcher.h"
 #include "ImageBufferShareableBitmapBackend.h"
 #include "RemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/Page.h>
+#include <WebCore/WorkerAnimationController.h>
 
 #if ENABLE(WEBGL) && ENABLE(GPU_PROCESS)
 #include "RemoteGraphicsContextGLProxy.h"
@@ -105,6 +107,11 @@ std::unique_ptr<WorkerClient> WebWorkerClient::clone(SerialFunctionDispatcher& d
 #else
     return makeUnique<WebWorkerClient>(dispatcher, m_displayID);
 #endif
+}
+
+RefPtr<WorkerAnimationController> WebWorkerClient::createAnimationController(WorkerGlobalScope& workerGlobalScope)
+{
+    return nullptr;
 }
 
 PlatformDisplayID WebWorkerClient::displayID() const
