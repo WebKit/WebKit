@@ -2298,12 +2298,14 @@ bool AccessibilityObject::isModalDescendant(Node* modalNode) const
     if (!modalNode || !node)
         return false;
     
-    if (node == modalNode)
-        return true;
-    
     // ARIA 1.1 aria-modal, indicates whether an element is modal when displayed.
     // For the decendants of the modal object, they should also be considered as aria-modal=true.
-    return node->isDescendantOrShadowDescendantOf(*modalNode);
+    // Determine descendancy by iterating the composed tree which inherently accounts for shadow roots and slots.
+    for (auto* ancestor = this->node(); ancestor; ancestor = ancestor->parentInComposedTree()) {
+        if (ancestor == modalNode)
+            return true;
+    }
+    return false;
 }
 
 bool AccessibilityObject::isModalNode() const
@@ -3054,6 +3056,22 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::selectedCells()
     }
 
     return selectedCells;
+}
+
+void AccessibilityObject::setSelectedRows(AccessibilityChildrenVector& selectedRows)
+{
+    // Setting selected only makes sense in trees and tables (and tree-tables).
+    AccessibilityRole role = roleValue();
+    if (role != AccessibilityRole::Tree && role != AccessibilityRole::TreeGrid && role != AccessibilityRole::Table && role != AccessibilityRole::Grid)
+        return;
+
+    bool isMulti = isMultiSelectable();
+    for (const auto& selectedRow : selectedRows) {
+        // FIXME: At the time of writing, setSelected is only implemented for AccessibilityListBoxOption and AccessibilityMenuListOption which are unlikely to be "rows", so this function probably isn't doing anything useful.
+        selectedRow->setSelected(true);
+        if (isMulti)
+            break;
+    }
 }
 
 void AccessibilityObject::setFocused(bool focus)

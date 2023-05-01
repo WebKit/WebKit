@@ -479,7 +479,7 @@ public:
 
     bool setValue(float) override { return false; }
     void setSelected(bool) override { }
-    void setSelectedRows(AccessibilityChildrenVector&) override { }
+    void setSelectedRows(AccessibilityChildrenVector&) final;
 
     void makeRangeVisible(const PlainTextRange&) override { }
     bool press() override;

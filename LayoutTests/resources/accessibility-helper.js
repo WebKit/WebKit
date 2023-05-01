@@ -24,7 +24,7 @@ function dumpAccessibilityTree(accessibilityObject, stopElement, indent, allAttr
     str += accessibilityObject.role;
     if (includeSubrole === true && accessibilityObject.subrole)
         str += " " + accessibilityObject.subrole;
-    str += " " + (getValueFromTitle === true ? accessibilityObject.title : accessibilityObject.stringValue);
+    str += " " + (getValueFromTitle === true ? accessibilityObject.title : accessibilityController.platformName === "ios" ? accessibilityObject.description : accessibilityObject.stringValue);
     str += allAttributesIfNeeded && accessibilityObject.role == '' ? accessibilityObject.allAttributes() : '';
     str += "\n";
 

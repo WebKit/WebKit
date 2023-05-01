@@ -1,0 +1,19 @@
+This test ensures that slotted content inside dialogs is accessible.
+
+AXRole: AXWebArea
+    AXRole: AXDialog
+        AXRole: AXHeading AXValue: Hello world
+        AXRole: AXSection AXValue:
+            AXRole: AXButton
+        AXRole: AXParagraph AXValue: Slotted paragraph text.
+        AXRole: AXSection AXValue:
+            AXRole: AXLink AXValue: Slotted link
+            AXRole: AXTextField AXValue:
+            AXRole: AXButton
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Slotted paragraph text.
+
+Slotted link    Slotted Button

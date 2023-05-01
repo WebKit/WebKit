@@ -1481,30 +1481,14 @@ URL AccessibilityRenderObject::url() const
     return AccessibilityNodeObject::url();
 }
 
-void AccessibilityRenderObject::setSelectedRows(AccessibilityChildrenVector& selectedRows)
-{
-    // Setting selected only makes sense in trees and tables (and tree-tables).
-    AccessibilityRole role = roleValue();
-    if (role != AccessibilityRole::Tree && role != AccessibilityRole::TreeGrid && role != AccessibilityRole::Table && role != AccessibilityRole::Grid)
-        return;
-    
-    bool isMulti = isMultiSelectable();
-    unsigned count = selectedRows.size();
-    if (count > 1 && !isMulti)
-        count = 1;
-    
-    for (const auto& selectedRow : selectedRows)
-        selectedRow->setSelected(true);
-}
-    
 bool AccessibilityRenderObject::setValue(const String& string)
 {
     if (!m_renderer || !is<Element>(m_renderer->node()))
         return false;
-    
+
     Element& element = downcast<Element>(*m_renderer->node());
     RenderObject& renderer = *m_renderer;
-    
+
     // We should use the editor's insertText to mimic typing into the field.
     // Also only do this when the field is in editing mode.
     if (auto* frame = renderer.document().frame()) {
@@ -1524,7 +1508,7 @@ bool AccessibilityRenderObject::setValue(const String& string)
         downcast<HTMLTextAreaElement>(element).setValue(string);
         return true;
     }
-    
+
     return false;
 }
 
