@@ -59,6 +59,7 @@ public:
 #endif
 
     std::unique_ptr<WorkerClient> clone(SerialFunctionDispatcher&) final;
+    RefPtr<WebCore::WorkerAnimationController> createAnimationController(WebCore::WorkerGlobalScope&) final;
 
     WebCore::PlatformDisplayID displayID() const final;
 

@@ -31,11 +31,16 @@
 
 namespace WebCore {
 
+class WorkerAnimationController;
+class WorkerGlobalScope;
+
 class WorkerClient : public GraphicsClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
 
     virtual std::unique_ptr<WorkerClient> clone(SerialFunctionDispatcher&) = 0;
+
+    virtual RefPtr<WorkerAnimationController> createAnimationController(WorkerGlobalScope&) = 0;
 
     virtual ~WorkerClient() = default;
 };
