@@ -30,7 +30,7 @@ messages -> EventDispatcher NotRefCounted {
     GestureEvent(WebCore::PageIdentifier pageID, WebKit::WebGestureEvent event)
 #endif
 #if HAVE(CVDISPLAYLINK)
-    DisplayDidRefresh(uint32_t displayID, struct WebCore::DisplayUpdate update, bool sendToMainThread)
+    DisplayDidRefresh(uint32_t displayID, struct WebCore::DisplayUpdate update, bool wantsFullSpeedUpdates, bool anyObserverWantsCallback)
 #endif
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)

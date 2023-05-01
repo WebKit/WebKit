@@ -60,8 +60,8 @@ messages -> WebProcessProxy LegacyReceiver {
 #endif
 
 #if HAVE(CVDISPLAYLINK)
-    StartDisplayLink(WebKit::DisplayLinkObserverID observerID, uint32_t displayID, unsigned preferredFramesPerSecond)
-    StopDisplayLink(WebKit::DisplayLinkObserverID observerID, uint32_t displayID)
+    StartDisplayLink(WebKit::DisplayLinkObserverID observerID, uint32_t displayID, unsigned preferredFramesPerSecond, bool sendToEventDispatcher)
+    StopDisplayLink(WebKit::DisplayLinkObserverID observerID, uint32_t displayID, bool sendToEventDispatcher)
     SetDisplayLinkPreferredFramesPerSecond(WebKit::DisplayLinkObserverID observerID, uint32_t displayID, unsigned preferredFramesPerSecond);
 #endif
 
