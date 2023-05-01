@@ -140,8 +140,8 @@ static bool colorChangeRequiresRepaint(const StyleColor& a, const StyleColor& b,
     if (a != b)
         return true;
 
-    if (a.containsCurrentColor()) {
-        ASSERT(b.containsCurrentColor());
+    if (a.isCurrentColor()) {
+        ASSERT(b.isCurrentColor());
         return currentColorDiffers;
     }
 
