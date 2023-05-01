@@ -2414,7 +2414,7 @@ static bool rendererCanHaveTrimmedMargin(const RenderBox& renderer, std::optiona
 
     if (containingBlock->isFlexibleBox() || containingBlock->isRenderGrid()) {
         if (!marginTrimType)
-            return containingBlock->style().marginTrim().containsAny({ MarginTrimType::BlockStart, MarginTrimType::InlineEnd });
+            return !containingBlock->style().marginTrim().isEmpty();
         return containingBlock->style().marginTrim().contains(marginTrimType.value());
     }
     return false;
