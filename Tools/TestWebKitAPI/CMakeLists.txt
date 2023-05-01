@@ -125,6 +125,8 @@ set(TestWTF_SOURCES
     Tests/WTF/WeakPtr.cpp
     Tests/WTF/WorkQueue.cpp
     Tests/WTF/WorkerPool.cpp
+
+    Tests/WTF/bmalloc/PerThread.cpp
 )
 
 set(TestWTF_PRIVATE_INCLUDE_DIRECTORIES

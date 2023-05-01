@@ -42,6 +42,10 @@
 #if defined(BUILDING_WITH_CMAKE)
 
 // CMake path
+#if defined(BUILDING_TestWTF)
+#include <bmalloc/BExport.h>
+#endif
+
 #if defined(BUILDING_TestJSC) || defined(BUILDING_TestJavaScriptCore)
 #include <JavaScriptCore/JSExportMacros.h>
 #endif

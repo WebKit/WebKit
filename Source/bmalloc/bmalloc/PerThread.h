@@ -30,7 +30,12 @@
 #include "PerHeapKind.h"
 #include "VMAllocate.h"
 #include <mutex>
+
+#if BPLATFORM(WIN)
+#include <windows.h>
+#else
 #include <pthread.h>
+#endif
 
 #if defined(__has_include)
 #if __has_include(<System/pthread_machdep.h>)
@@ -91,6 +96,33 @@ template<> struct PerThreadStorage<PerHeapKind<Cache>> {
     }
 #pragma clang diagnostic pop
 };
+
+#elif BPLATFORM(WIN)
+
+template<typename T> class PerThreadStorage {
+public:
+    ~PerThreadStorage()
+    {
+        if (m_destructor && m_object)
+            m_destructor(m_object);
+    }
+
+    static void* get() { return s_storage.m_object; }
+
+    static void init(void* object, void (*destructor)(void*))
+    {
+        s_storage.m_object = object;
+        s_storage.m_destructor = destructor;
+    }
+
+private:
+    static thread_local PerThreadStorage<T> s_storage;
+
+    void* m_object;
+    void (*m_destructor)(void*);
+};
+
+template<typename T> thread_local PerThreadStorage<T> PerThreadStorage<T>::s_storage;
 
 #else
 

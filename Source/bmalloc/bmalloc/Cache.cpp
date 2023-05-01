@@ -53,6 +53,14 @@ Cache::Cache(HeapKind heapKind)
     BASSERT(!Environment::get()->isDebugHeapEnabled());
 }
 
+BNO_INLINE void* Cache::getSignatureForTesting()
+{
+    PerHeapKind<Cache>* caches = PerThread<PerHeapKind<Cache>>::getFastCase();
+    if (!caches)
+        caches = PerThread<PerHeapKind<Cache>>::getSlowCase();
+    return reinterpret_cast<void*>(&caches->at(mapToActiveHeapKindAfterEnsuringGigacage(HeapKind::Primary)));
+}
+
 BNO_INLINE void* Cache::tryAllocateSlowCaseNullCache(HeapKind heapKind, size_t size)
 {
     if (auto* debugHeap = DebugHeap::tryGet())

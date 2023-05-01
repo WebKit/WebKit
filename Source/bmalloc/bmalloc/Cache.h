@@ -54,6 +54,9 @@ public:
     Allocator& allocator() { return m_allocator; }
     Deallocator& deallocator() { return m_deallocator; }
 
+    // For testing only
+    BEXPORT static void* getSignatureForTesting();
+
 private:
     BEXPORT static void* tryAllocateSlowCaseNullCache(HeapKind, size_t);
     BEXPORT static void* allocateSlowCaseNullCache(HeapKind, size_t);

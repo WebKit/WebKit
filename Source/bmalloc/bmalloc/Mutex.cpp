@@ -30,6 +30,8 @@
 #if BOS(DARWIN)
 #include <mach/mach_traps.h>
 #include <mach/thread_switch.h>
+#elif BPLATFORM(WIN)
+#include <windows.h>
 #endif
 #include <thread>
 
@@ -40,6 +42,8 @@ static inline void yield()
 #if BOS(DARWIN)
     constexpr mach_msg_timeout_t timeoutInMS = 1;
     thread_switch(MACH_PORT_NULL, SWITCH_OPTION_DEPRESS, timeoutInMS);
+#elif BPLATFORM(WIN)
+    SwitchToThread();
 #else
     sched_yield();
 #endif
