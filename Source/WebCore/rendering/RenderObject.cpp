@@ -2418,6 +2418,18 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
         }
     }
 
+    auto numberOfGeometries = geometries.size();
+
+    // If we have no geometries, do not even bother doing any more work.
+    if (!numberOfGeometries)
+        return { };
+
+    // Only set the line break bit if the end of the range actually
+    // extends all the way to include the <br>. VisiblePosition helps to
+    // figure this out.
+    if (is<HTMLBRElement>(VisiblePosition(makeContainerOffsetPosition(range.end)).deepEquivalent().firstNode()))
+        geometries.last().setIsLineBreak(true);
+    
     // The range could span nodes with different writing modes.
     // If this is the case, we use the writing mode of the common ancestor.
     if (containsDifferentWritingModes) {
@@ -2427,30 +2439,19 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
         }
     }
 
-    auto numberOfGeometries = geometries.size();
-
-    // If the selection ends in a BR, then add the line break bit to the last rect we have.
-    // This will cause its selection rect to extend to the end of the line.
-    if (numberOfGeometries) {
-        // Only set the line break bit if the end of the range actually
-        // extends all the way to include the <br>. VisiblePosition helps to
-        // figure this out.
-        if (is<HTMLBRElement>(VisiblePosition(makeContainerOffsetPosition(range.end)).deepEquivalent().firstNode()))
-            geometries.last().setIsLineBreak(true);
-    }
-
-    int lineTop = std::numeric_limits<int>::max();
-    int lineBottom = std::numeric_limits<int>::min();
+    // Do line 0 first, and then check the boundaries of each line after.
+    int lineTop = geometries[0].logicalTop();
+    int lineBottom = lineTop + geometries[0].logicalHeight();
     int lastLineTop = lineTop;
     int lastLineBottom = lineBottom;
-    int lineNumber = 0;
+    int lineNumber = 1;
 
-    for (size_t i = 0; i < numberOfGeometries; ++i) {
+    for (size_t i = 1; i < numberOfGeometries; ++i) {
         int currentRectTop = geometries[i].logicalTop();
         int currentRectBottom = currentRectTop + geometries[i].logicalHeight();
 
         // We don't want to count the ruby text as a separate line.
-        if (intervalsSufficientlyOverlap(currentRectTop, currentRectBottom, lineTop, lineBottom) || (i && geometries[i].isRubyText())) {
+        if (intervalsSufficientlyOverlap(currentRectTop, currentRectBottom, lineTop, lineBottom) || geometries[i].isRubyText()) {
             // Grow the current line bounds.
             lineTop = std::min(lineTop, currentRectTop);
             lineBottom = std::max(lineBottom, currentRectBottom);
@@ -2464,8 +2465,8 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
             if (!hasFlippedWritingMode) {
                 lastLineTop = lineTop;
                 if (currentRectBottom >= lastLineTop) {
-                    lastLineBottom = lineBottom;
                     lineTop = lastLineBottom;
+                    lastLineBottom = lineBottom;
                 } else {
                     lineTop = currentRectTop;
                     lastLineBottom = std::numeric_limits<int>::min();
@@ -2473,7 +2474,7 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
                 lineBottom = currentRectBottom;
             } else {
                 lastLineBottom = lineBottom;
-                if (currentRectTop <= lastLineBottom && i && geometries[i].pageNumber() == geometries[i - 1].pageNumber()) {
+                if (currentRectTop <= lastLineBottom && geometries[i].pageNumber() == geometries[i - 1].pageNumber()) {
                     lastLineTop = lineTop;
                     lineBottom = lastLineTop;
                 } else {
