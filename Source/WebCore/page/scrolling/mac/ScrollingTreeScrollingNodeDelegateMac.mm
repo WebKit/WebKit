@@ -48,7 +48,6 @@ ScrollingTreeScrollingNodeDelegateMac::ScrollingTreeScrollingNodeDelegateMac(Scr
 
 ScrollingTreeScrollingNodeDelegateMac::~ScrollingTreeScrollingNodeDelegateMac()
 {
-    m_scrollerPair->releaseReferencesToScrollerImpsOnTheMainThread();
 }
 
 void ScrollingTreeScrollingNodeDelegateMac::nodeWillBeDestroyed()

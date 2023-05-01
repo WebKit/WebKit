@@ -70,6 +70,7 @@ public:
     void setLastKnownMousePositionInScrollbar(IntPoint position) { m_lastKnownMousePositionInScrollbar = position; }
     IntPoint lastKnownMousePositionInScrollbar() const;
     void visibilityChanged(bool);
+    void detach();
 private:
     bool m_isVisible { false };
     ScrollerPairMac& m_pair;

@@ -325,8 +325,6 @@ ScrollerMac::ScrollerMac(ScrollerPairMac& pair, ScrollbarOrientation orientation
 
 ScrollerMac::~ScrollerMac()
 {
-    [m_scrollerImpDelegate invalidate];
-    [m_scrollerImp setDelegate:nil];
 }
 
 void ScrollerMac::attach()
@@ -334,6 +332,12 @@ void ScrollerMac::attach()
     m_scrollerImpDelegate = adoptNS([[WebScrollerImpDelegateMac alloc] initWithScroller:this]);
     m_scrollerImp = [NSScrollerImp scrollerImpWithStyle:nsScrollerStyle(m_pair.scrollbarStyle()) controlSize:NSControlSizeRegular horizontal:m_orientation == ScrollbarOrientation::Horizontal replacingScrollerImp:nil];
     [m_scrollerImp setDelegate:m_scrollerImpDelegate.get()];
+}
+
+void ScrollerMac::detach()
+{
+    [m_scrollerImpDelegate invalidate];
+    [m_scrollerImp setDelegate:nil];
 }
 
 void ScrollerMac::setHostLayer(CALayer *layer)
