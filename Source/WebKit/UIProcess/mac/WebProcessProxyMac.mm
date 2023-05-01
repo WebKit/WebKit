@@ -64,15 +64,21 @@ std::optional<unsigned> WebProcessProxy::nominalFramesPerSecondForDisplay(WebCor
     return processPool().displayLinks().nominalFramesPerSecondForDisplay(displayID);
 }
 
-void WebProcessProxy::startDisplayLink(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
+void WebProcessProxy::startDisplayLink(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond, bool sendToEventDispatcher)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     processPool().displayLinks().startDisplayLink(m_displayLinkClient, observerID, displayID, preferredFramesPerSecond);
+    if (sendToEventDispatcher)
+        m_observersWantingSendToEventDispatcher++;
+    m_displayLinkClient.setSendToEventDispatcher(m_observersWantingSendToEventDispatcher > 0);
 }
 
-void WebProcessProxy::stopDisplayLink(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID)
+void WebProcessProxy::stopDisplayLink(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID, bool sendToEventDispatcher)
 {
     processPool().displayLinks().stopDisplayLink(m_displayLinkClient, observerID, displayID);
+    if (sendToEventDispatcher)
+        m_observersWantingSendToEventDispatcher--;
+    m_displayLinkClient.setSendToEventDispatcher(m_observersWantingSendToEventDispatcher > 0);
 }
 
 void WebProcessProxy::setDisplayLinkPreferredFramesPerSecond(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)

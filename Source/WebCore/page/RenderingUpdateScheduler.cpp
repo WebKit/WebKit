@@ -53,11 +53,15 @@ bool RenderingUpdateScheduler::scheduleAnimation()
 void RenderingUpdateScheduler::adjustRenderingUpdateFrequency()
 {
     auto renderingUpdateFramesPerSecond = m_page.preferredRenderingUpdateFramesPerSecond();
-    if (renderingUpdateFramesPerSecond) {
-        setPreferredFramesPerSecond(renderingUpdateFramesPerSecond.value());
-        m_useTimer = false;
-    } else
-        m_useTimer = true;
+    std::optional<FramesPerSecond> previousRenderingUpdateFramesPerSecond = m_useTimer ? std::nullopt : std::optional<FramesPerSecond>(preferredFramesPerSecond());
+    if (renderingUpdateFramesPerSecond != previousRenderingUpdateFramesPerSecond) {
+        if (renderingUpdateFramesPerSecond) {
+            setPreferredFramesPerSecond(renderingUpdateFramesPerSecond.value());
+            m_useTimer = false;
+        } else
+            m_useTimer = true;
+        m_page.chrome().client().renderingUpdateFrequencyChanged();
+    }
 
     if (isScheduled()) {
         clearScheduled();

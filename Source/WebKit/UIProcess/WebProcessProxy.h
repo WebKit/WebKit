@@ -343,8 +343,8 @@ public:
     DisplayLink::Client& displayLinkClient() { return m_displayLinkClient; }
     std::optional<unsigned> nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID);
 
-    void startDisplayLink(DisplayLinkObserverID, WebCore::PlatformDisplayID, WebCore::FramesPerSecond);
-    void stopDisplayLink(DisplayLinkObserverID, WebCore::PlatformDisplayID);
+    void startDisplayLink(DisplayLinkObserverID, WebCore::PlatformDisplayID, WebCore::FramesPerSecond, bool sendToEventDispatcher);
+    void stopDisplayLink(DisplayLinkObserverID, WebCore::PlatformDisplayID, bool sendToEventDispatcher);
     void setDisplayLinkPreferredFramesPerSecond(DisplayLinkObserverID, WebCore::PlatformDisplayID, WebCore::FramesPerSecond);
     void setDisplayLinkForDisplayWantsFullSpeedUpdates(WebCore::PlatformDisplayID, bool wantsFullSpeedUpdates);
 #endif
@@ -669,6 +669,7 @@ private:
 
 #if HAVE(CVDISPLAYLINK)
     DisplayLinkProcessProxyClient m_displayLinkClient;
+    uint32_t m_observersWantingSendToEventDispatcher { 0 };
 #endif
 
 #if ENABLE(ROUTING_ARBITRATION)
