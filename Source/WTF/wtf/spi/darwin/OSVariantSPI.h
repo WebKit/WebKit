@@ -33,6 +33,7 @@
 
 WTF_EXTERN_C_BEGIN
 bool os_variant_allows_internal_security_policies(const char *);
+bool os_variant_is_basesystem(const char *);
 WTF_EXTERN_C_END
 
 #endif

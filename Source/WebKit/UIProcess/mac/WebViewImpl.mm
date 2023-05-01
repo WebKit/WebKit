@@ -142,6 +142,7 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/spi/darwin/OSVariantSPI.h>
 #import <wtf/text/StringConcatenate.h>
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
@@ -1135,7 +1136,7 @@ static RetainPtr<NSObject> subscribeToTextInputNotifications(WebViewImpl*);
 
 static bool isInRecoveryOS()
 {
-    return !getuid();
+    return os_variant_is_basesystem("WebKit");
 }
 
 WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWebView, WebProcessPool& processPool, Ref<API::PageConfiguration>&& configuration)
