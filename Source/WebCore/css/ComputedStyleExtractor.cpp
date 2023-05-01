@@ -2420,7 +2420,7 @@ static bool rendererCanHaveTrimmedMargin(const RenderBox& renderer, std::optiona
     // of an ancestor containing block with the property, so we will just return true and let
     // the rest of the logic in RenderBox::hasTrimmedMargin to determine if the rare data bit
     // were set at some point during layout
-    if (containingBlock->isBlockContainer() && containingBlock->isHorizontalWritingMode() && renderer.isBlockLevelBox())
+    if (containingBlock->isBlockContainer() && containingBlock->isHorizontalWritingMode() && renderer.isBlockLevelBox() && marginTrimType == MarginTrimType::BlockEnd)
         return true;
     return false;
 }
