@@ -1833,6 +1833,13 @@
    },
    {
       "emails" : [
+         "dtr_bugzilla@apple.com"
+      ],
+      "github" : "drobson1005",
+      "name" : "Dan Robson"
+   },
+   {
+      "emails" : [
          "danw@gnome.org"
       ],
       "name" : "Dan Winship",
