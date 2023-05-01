@@ -468,6 +468,13 @@ template<> struct ArgumentCoder<WebCore::CDMInstanceSession::Message> {
 };
 #endif
 
+#if HAVE(PASSKIT_INSTALLMENTS)
+template<> struct ArgumentCoder<WebCore::PaymentInstallmentConfiguration> {
+    static void encode(Encoder&, const WebCore::PaymentInstallmentConfiguration&);
+    static std::optional<WebCore::PaymentInstallmentConfiguration> decode(Decoder&);
+};
+#endif
+
 #if ENABLE(IMAGE_ANALYSIS) && ENABLE(DATA_DETECTION)
 
 template<> struct ArgumentCoder<WebCore::TextRecognitionDataDetector> {

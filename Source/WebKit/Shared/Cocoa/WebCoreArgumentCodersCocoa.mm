@@ -80,6 +80,24 @@ namespace IPC {
 
 #if ENABLE(APPLE_PAY)
 
+#if HAVE(PASSKIT_INSTALLMENTS)
+
+void ArgumentCoder<WebCore::PaymentInstallmentConfiguration>::encode(Encoder& encoder, const WebCore::PaymentInstallmentConfiguration& configuration)
+{
+    encoder << configuration.platformConfiguration();
+}
+
+std::optional<WebCore::PaymentInstallmentConfiguration> ArgumentCoder<WebCore::PaymentInstallmentConfiguration>::decode(Decoder& decoder)
+{
+    auto configuration = IPC::decode<PKPaymentInstallmentConfiguration>(decoder, PAL::getPKPaymentInstallmentConfigurationClass());
+    if (!configuration)
+        return std::nullopt;
+
+    return { WTFMove(*configuration) };
+}
+
+#endif // HAVE(PASSKIT_INSTALLMENTS)
+
 void ArgumentCoder<WebCore::Payment>::encode(Encoder& encoder, const WebCore::Payment& payment)
 {
     encoder << payment.pkPayment();

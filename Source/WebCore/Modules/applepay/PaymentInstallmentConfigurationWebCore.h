@@ -27,7 +27,6 @@
 
 #if HAVE(PASSKIT_INSTALLMENTS)
 
-#include "ApplePayInstallmentConfigurationWebCore.h"
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSDictionary;
@@ -36,6 +35,7 @@ OBJC_CLASS PKPaymentInstallmentConfiguration;
 namespace WebCore {
 
 class Document;
+struct ApplePayInstallmentConfiguration;
 template<typename> class ExceptionOr;
 
 class WEBCORE_EXPORT PaymentInstallmentConfiguration {
@@ -44,16 +44,14 @@ public:
 
     PaymentInstallmentConfiguration() = default;
     PaymentInstallmentConfiguration(RetainPtr<PKPaymentInstallmentConfiguration>&&);
-    PaymentInstallmentConfiguration(ApplePayInstallmentConfiguration&&);
-    PaymentInstallmentConfiguration(const ApplePayInstallmentConfiguration&, RetainPtr<NSDictionary>&&);
 
-    RetainPtr<PKPaymentInstallmentConfiguration> platformConfiguration() const;
-    const ApplePayInstallmentConfiguration& applePayInstallmentConfiguration() const;
+    PKPaymentInstallmentConfiguration *platformConfiguration() const;
+    ApplePayInstallmentConfiguration applePayInstallmentConfiguration() const;
 
 private:
-    static ApplePayInstallmentConfiguration applePayInstallmentConfiguration(PKPaymentInstallmentConfiguration *);
+    PaymentInstallmentConfiguration(const ApplePayInstallmentConfiguration&, NSDictionary *applicationMetadata);
 
-    ApplePayInstallmentConfiguration m_configuration;
+    RetainPtr<PKPaymentInstallmentConfiguration> m_configuration;
 };
 
 } // namespace WebCore

@@ -771,49 +771,6 @@ enum class WebCore::ApplePayErrorCode : uint8_t {
 };
 #endif // ENABLE(APPLE_PAY)
 
-#if ENABLE(APPLE_PAY_INSTALLMENTS)
-header: <WebCore/ApplePayInstallmentConfigurationWebCore.h>
-[CustomHeader] struct WebCore::ApplePayInstallmentConfiguration {
-    WebCore::ApplePaySetupFeatureType featureType;
-    String merchandisingImageData;
-    String openToBuyThresholdAmount;
-    String bindingTotalAmount;
-    String currencyCode;
-    bool isInStorePurchase;
-    String merchantIdentifier;
-    String referrerIdentifier;
-    Vector<WebCore::ApplePayInstallmentItem> items;
-    String applicationMetadata;
-    WebCore::ApplePayInstallmentRetailChannel retailChannel;
-};
-header: <WebCore/PaymentInstallmentConfigurationWebCore.h>
-[CustomHeader] class WebCore::PaymentInstallmentConfiguration {
-    WebCore::ApplePayInstallmentConfiguration applePayInstallmentConfiguration()
-}
-struct WebCore::ApplePayInstallmentItem {
-    WebCore::ApplePayInstallmentItemType type;
-    String amount;
-    String currencyCode;
-    String programIdentifier;
-    String apr;
-    String programTerms;
-};
-enum class WebCore::ApplePaySetupFeatureType : bool
-enum class WebCore::ApplePayInstallmentItemType : uint8_t {
-    Generic,
-    Phone,
-    Pad,
-    Watch,
-    Mac,
-};
-enum class WebCore::ApplePayInstallmentRetailChannel : uint8_t {
-    Unknown,
-    App,
-    Web,
-    InStore,
-};
-#endif // ENABLE(APPLE_PAY_INSTALLMENTS)
-
 #if ENABLE(APPLE_PAY_COUPON_CODE)
 struct WebCore::ApplePayCouponCodeUpdate : WebCore::ApplePayDetailsUpdateBase {
     Vector<RefPtr<WebCore::ApplePayError>> errors;
