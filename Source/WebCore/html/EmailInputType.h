@@ -54,6 +54,7 @@ private:
     String typeMismatchText() const final;
     bool supportsSelectionAPI() const final;
     String sanitizeValue(const String&) const final;
+    void attributeChanged(const QualifiedName&) final;
 };
 
 } // namespace WebCore

@@ -7,4 +7,5 @@ PASS When the multiple attribute is removed, the user agent must run the value s
 PASS multiple_email has the multiple attribute
 PASS run the value sanitization algorithm after setting a new value
 PASS valid value is a set of valid email addresses separated by a single ','
+PASS When the multiple attribute is set, the user agent must run the value sanitization algorithm
 
