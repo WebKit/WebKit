@@ -63,7 +63,7 @@ shouldThrow(function () {
         value: 42,
     }), true);
     receiver.cocoa = 'NG';
-}, `TypeError: Attempting to change value of a readonly property.`);
+}, `TypeError: Attempted to assign to readonly property.`);
 
 // 9.1.9.1 4-d-ii
 shouldThrow(function () {
@@ -85,7 +85,7 @@ shouldThrow(function () {
         value: 42,
     }), true);
     receiver.cocoa = 'NG';
-}, `TypeError: Attempting to change value of a readonly property.`);
+}, `TypeError: Attempted to assign to readonly property.`);
 
 // 9.1.9.1 7
 shouldThrow(function () {
