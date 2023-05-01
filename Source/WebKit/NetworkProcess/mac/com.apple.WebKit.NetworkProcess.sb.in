@@ -726,11 +726,10 @@
 (when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-kernel-endpoint))
     (allow mach-kernel-endpoint
         (apply-message-filter
-            (deny mach-message-send (with telemetry))
+            (allow mach-message-send (with report) (with telemetry))
             (allow mach-message-send (kernel-mig-routine
                 _mach_make_memory_entry
                 host_get_io_master
-                host_get_special_port
                 host_info
                 host_request_notification
                 io_connect_method
@@ -740,33 +739,23 @@
                 io_registry_entry_create_iterator
                 io_registry_entry_from_path
                 io_registry_entry_get_parent_iterator
-                io_registry_entry_get_properties_bin_buf
                 io_registry_entry_get_property_bin_buf
                 io_server_version
                 io_service_add_interest_notification_64
                 io_service_get_matching_service_bin
                 io_service_open_extended
                 mach_exception_raise
-                mach_memory_entry_ownership
-                mach_port_extract_right
-                mach_port_get_context_from_user
                 mach_port_get_refs
-                mach_port_is_connection_for_service
                 mach_port_request_notification
                 mach_port_set_attributes
                 mach_vm_copy
                 mach_vm_map_external
                 mach_vm_remap_external
                 semaphore_create
-                semaphore_destroy
                 task_get_special_port_from_user
                 task_info_from_user
                 task_policy_set
                 task_restartable_ranges_synchronize
-                task_set_exc_guard_behavior
-                task_set_special_port
-                task_threads_from_user
-                thread_info
                 thread_resume
                 thread_suspend)))))
 
