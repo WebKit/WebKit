@@ -840,9 +840,9 @@ void RenderBlockFlow::trimBlockEndChildrenMargins()
         }
 
         auto* childContainingBlock = child->containingBlock();
-        setTrimmedMarginForChild(*child, MarginTrimType::BlockEnd);
+        childContainingBlock->setMarginAfterForChild(*child, 0_lu);
         if (child->isSelfCollapsingBlock()) {
-            setTrimmedMarginForChild(*child, MarginTrimType::BlockStart);
+            childContainingBlock->setMarginBeforeForChild(*child, 0_lu);
             childContainingBlock->setLogicalTopForChild(*child, childContainingBlock->logicalHeight());
             child = child->previousSiblingBox();
         }  else if (auto* nestedBlock = dynamicDowncast<RenderBlockFlow>(child); nestedBlock && nestedBlock->isBlockContainer() && !nestedBlock->childrenInline() && !nestedBlock->style().marginTrim().contains(MarginTrimType::BlockEnd)) {
