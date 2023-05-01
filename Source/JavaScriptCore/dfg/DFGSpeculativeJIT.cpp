@@ -9723,36 +9723,6 @@ void SpeculativeJIT::compileCreateScopedArguments(Node* node)
     cellResult(resultGPR, node);
 }
 
-void SpeculativeJIT::compileCreateClonedArguments(Node* node)
-{
-    GPRFlushedCallResult result(this);
-    GPRReg resultGPR = result.gpr();
-    flushRegisters();
-
-    JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
-    
-    // We set up the arguments ourselves, because we have the whole register file and we can
-    // set them up directly into the argument registers.
-    
-    // Arguments: 0:JSGlobalObject*, 1:structure, 2:start, 3:length, 4:callee
-    setupArgument(4, [&] (GPRReg destGPR) { emitGetCallee(node->origin.semantic, destGPR); });
-    setupArgument(3, [&] (GPRReg destGPR) { emitGetLength(node->origin.semantic, destGPR); });
-    setupArgument(2, [&] (GPRReg destGPR) { emitGetArgumentStart(node->origin.semantic, destGPR); });
-    setupArgument(
-        1, [&] (GPRReg destGPR) {
-            loadLinkableConstant(LinkableConstant(*this, globalObject->clonedArgumentsStructure()), destGPR);
-        });
-    setupArgument(
-        0, [&] (GPRReg destGPR) {
-            loadLinkableConstant(LinkableConstant::globalObject(*this, node), destGPR);
-        });
-    
-    appendCallSetResult(operationCreateClonedArguments, resultGPR);
-    exceptionCheck();
-    
-    cellResult(resultGPR, node);
-}
-
 void SpeculativeJIT::compileCreateRest(Node* node)
 {
     ASSERT(node->op() == CreateRest);
@@ -9864,13 +9834,12 @@ void SpeculativeJIT::compileSpread(Node* node)
         load32(Address(lengthGPR, Butterfly::offsetOfPublicLength()), lengthGPR);
         slowPath.append(branch32(Above, lengthGPR, TrustedImm32(MAX_STORAGE_VECTOR_LENGTH)));
         static_assert(sizeof(JSValue) == 8 && 1 << 3 == 8, "This is strongly assumed in the code below.");
-        move(lengthGPR, scratch1GPR);
-        lshift32(TrustedImm32(3), scratch1GPR);
+        lshift32(lengthGPR, TrustedImm32(3), scratch1GPR);
         add32(TrustedImm32(JSImmutableButterfly::offsetOfData()), scratch1GPR);
 
         emitAllocateVariableSizedCell<JSImmutableButterfly>(vm(), resultGPR, TrustedImmPtr(m_graph.registerStructure(vm().immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get())), scratch1GPR, scratch1GPR, scratch2GPR, slowPath);
-        store32(lengthGPR, Address(resultGPR, JSImmutableButterfly::offsetOfPublicLength()));
-        store32(lengthGPR, Address(resultGPR, JSImmutableButterfly::offsetOfVectorLength()));
+        ASSERT(JSImmutableButterfly::offsetOfPublicLength() + static_cast<ptrdiff_t>(sizeof(uint32_t)) == JSImmutableButterfly::offsetOfVectorLength());
+        storePair32(lengthGPR, lengthGPR, resultGPR, TrustedImm32(JSImmutableButterfly::offsetOfPublicLength()));
 
         loadPtr(Address(argument, JSObject::butterflyOffset()), scratch1GPR);
 
@@ -11965,8 +11934,7 @@ void SpeculativeJIT::emitNewTypedArrayWithSizeInRegister(Node* node, TypedArrayT
         Above, sizeGPR, TrustedImm32(JSArrayBufferView::fastSizeLimit)));
 #endif
     
-    move(sizeGPR, scratchGPR);
-    lshift32(TrustedImm32(logElementSize(typedArrayType)), scratchGPR);
+    lshift32(sizeGPR, TrustedImm32(logElementSize(typedArrayType)), scratchGPR);
     if (elementSize(typedArrayType) < 8) {
         add32(TrustedImm32(7), scratchGPR);
         and32(TrustedImm32(~7), scratchGPR);
@@ -14244,8 +14212,7 @@ void SpeculativeJIT::emitAllocateButterfly(GPRReg storageResultGPR, GPRReg sizeG
 {
     RELEASE_ASSERT(RegisterSetBuilder(storageResultGPR, sizeGPR, scratch1, scratch2, scratch3).numberOfSetGPRs() == 5);
     ASSERT((1 << 3) == sizeof(JSValue));
-    zeroExtend32ToWord(sizeGPR, scratch1);
-    lshift32(TrustedImm32(3), scratch1);
+    lshift32(sizeGPR, TrustedImm32(3), scratch1);
     add32(TrustedImm32(sizeof(IndexingHeader)), scratch1, scratch2);
 #if ASSERT_ENABLED
     Jump didNotOverflow = branch32(AboveOrEqual, scratch2, sizeGPR);
@@ -14255,9 +14222,8 @@ void SpeculativeJIT::emitAllocateButterfly(GPRReg storageResultGPR, GPRReg sizeG
     emitAllocateVariableSized(
         storageResultGPR, vm().jsValueGigacageAuxiliarySpace(), scratch2, scratch1, scratch3, slowCases);
     addPtr(TrustedImm32(sizeof(IndexingHeader)), storageResultGPR);
-
-    store32(sizeGPR, Address(storageResultGPR, Butterfly::offsetOfPublicLength()));
-    store32(sizeGPR, Address(storageResultGPR, Butterfly::offsetOfVectorLength()));
+    ASSERT(Butterfly::offsetOfPublicLength() + static_cast<ptrdiff_t>(sizeof(uint32_t)) == Butterfly::offsetOfVectorLength());
+    storePair32(sizeGPR, sizeGPR, storageResultGPR, TrustedImm32(Butterfly::offsetOfPublicLength()));
 }
 
 void SpeculativeJIT::compileNormalizeMapKey(Node* node)

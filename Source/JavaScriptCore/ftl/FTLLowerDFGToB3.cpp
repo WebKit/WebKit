@@ -39,6 +39,7 @@
 #include "B3ValueInlines.h"
 #include "ButterflyInlines.h"
 #include "CallFrameShuffler.h"
+#include "ClonedArguments.h"
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGCapabilities.h"
 #include "DFGClobberize.h"
@@ -7607,13 +7608,72 @@ IGNORE_CLANG_WARNINGS_END
     
     void compileCreateClonedArguments()
     {
+        if (m_graph.isWatchingHavingABadTimeWatchpoint(m_node)) {
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+
+            LBasicBlock slowCase = m_out.newBlock();
+            LBasicBlock allocateButterfly = m_out.newBlock();
+            LBasicBlock loopStart = m_out.newBlock();
+            LBasicBlock finish = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            ValueFromBlock nullButterfly = m_out.anchor(m_out.intPtrZero);
+            size_t outOfLineCapacity = globalObject->clonedArgumentsStructure()->outOfLineCapacity();
+            LValue length = getArgumentsLength().value;
+            LValue argumentRegion = getArgumentsStart();
+            LValue callee = getCurrentCallee();
+            m_out.branch(m_out.aboveOrEqual(length, m_out.constInt32(MAX_STORAGE_VECTOR_LENGTH)), unsure(slowCase), unsure(allocateButterfly));
+
+            LBasicBlock lastNext = m_out.appendTo(allocateButterfly, loopStart);
+            LValue byteSize = m_out.add(m_out.constIntPtr(sizeof(IndexingHeader) + outOfLineCapacity * sizeof(JSValue)), m_out.shl(m_out.zeroExtPtr(length), m_out.constInt32(3)));
+            LValue allocator = allocatorForSize(vm().jsValueGigacageAuxiliarySpace(), byteSize, slowCase);
+            LValue storage = allocateHeapCell(allocator, slowCase);
+            for (unsigned i = 0; i < outOfLineCapacity; ++i)
+                m_out.store64(m_out.int64Zero, m_out.address(m_heaps.properties.atAnyNumber(), storage, i * sizeof(JSValue)));
+            LValue butterfly = m_out.add(m_out.constIntPtr(sizeof(IndexingHeader) + outOfLineCapacity * sizeof(JSValue)), storage);
+            m_out.store32(length, butterfly, m_heaps.Butterfly_publicLength);
+            m_out.store32(length, butterfly, m_heaps.Butterfly_vectorLength);
+            m_out.store64(boxInt32(length), m_out.address(m_heaps.properties.atAnyNumber(), butterfly, offsetRelativeToBase(clonedArgumentsLengthPropertyOffset)));
+            ValueFromBlock fastButterfly = m_out.anchor(butterfly);
+            LValue arguments = allocateObject<ClonedArguments>(m_graph.registerStructure(globalObject->clonedArgumentsStructure()), butterfly, slowCase);
+            m_out.store64(callee, arguments, m_heaps.ClonedArguments_callee);
+            ValueFromBlock startLength = m_out.anchor(m_out.zeroExtPtr(length));
+            m_out.branch(m_out.isZero32(length), unsure(finish), unsure(loopStart));
+
+            m_out.appendTo(loopStart, finish);
+            LValue phiOffset = m_out.phi(pointerType(), startLength);
+            LValue currentOffset = m_out.sub(phiOffset, m_out.intPtrOne);
+            m_out.addIncomingToPhi(phiOffset, m_out.anchor(currentOffset));
+            LValue loadedValue = m_out.load64(m_out.baseIndex(m_heaps.variables, argumentRegion, currentOffset));
+            IndexedAbstractHeap& heap = m_heaps.indexedContiguousProperties;
+            m_out.store64(loadedValue, m_out.baseIndex(heap, butterfly, currentOffset));
+            m_out.branch(m_out.isZero64(currentOffset), unsure(finish), unsure(loopStart));
+
+            m_out.appendTo(finish, slowCase);
+            ValueFromBlock fastResult = m_out.anchor(arguments);
+            mutatorFence();
+            m_out.jump(continuation);
+
+            m_out.appendTo(slowCase, continuation);
+            LValue slowResultValue = vmCall(
+                Int64, operationCreateClonedArguments, weakPointer(globalObject),
+                weakPointer(m_graph.globalObjectFor(m_origin.semantic)->clonedArgumentsStructure()),
+                argumentRegion, length, callee, m_out.phi(pointerType(), nullButterfly, fastButterfly));
+            ValueFromBlock slowResult = m_out.anchor(slowResultValue);
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            setJSValue(m_out.phi(pointerType(), fastResult, slowResult));
+            return;
+        }
+
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         LValue result = vmCall(
             Int64, operationCreateClonedArguments, weakPointer(globalObject),
             weakPointer(
                 m_graph.globalObjectFor(m_origin.semantic)->clonedArgumentsStructure()),
-            getArgumentsStart(), getArgumentsLength().value, getCurrentCallee());
-        
+            getArgumentsStart(), getArgumentsLength().value, getCurrentCallee(), m_out.intPtrZero);
+
         setJSValue(result);
     }
 

@@ -40,24 +40,26 @@ ClonedArguments::ClonedArguments(VM& vm, Structure* structure, Butterfly* butter
 {
 }
 
-ClonedArguments* ClonedArguments::createEmpty(
-    VM& vm, Structure* structure, JSFunction* callee, unsigned length)
+ClonedArguments* ClonedArguments::createEmpty(VM& vm, Structure* structure, JSFunction* callee, unsigned length, Butterfly* butterfly)
 {
     unsigned vectorLength = length;
     if (vectorLength > MAX_STORAGE_VECTOR_LENGTH)
         return nullptr;
 
-    Butterfly* butterfly;
     if (UNLIKELY(structure->mayInterceptIndexedAccesses() || structure->storedPrototypeObject()->needsSlowPutIndexing())) {
-        butterfly = createArrayStorageButterfly(vm, nullptr, structure, length, vectorLength);
-        butterfly->arrayStorage()->m_numValuesInVector = vectorLength;
+        if (!butterfly) {
+            butterfly = createArrayStorageButterfly(vm, nullptr, structure, length, vectorLength);
+            butterfly->arrayStorage()->m_numValuesInVector = vectorLength;
+        }
     } else {
-        IndexingHeader indexingHeader;
-        indexingHeader.setVectorLength(vectorLength);
-        indexingHeader.setPublicLength(length);
-        butterfly = Butterfly::tryCreate(vm, nullptr, 0, structure->outOfLineCapacity(), true, indexingHeader, vectorLength * sizeof(EncodedJSValue));
-        if (!butterfly)
-            return nullptr;
+        if (!butterfly) {
+            IndexingHeader indexingHeader;
+            indexingHeader.setVectorLength(vectorLength);
+            indexingHeader.setPublicLength(length);
+            butterfly = Butterfly::tryCreate(vm, nullptr, 0, structure->outOfLineCapacity(), true, indexingHeader, vectorLength * sizeof(EncodedJSValue));
+            if (!butterfly)
+                return nullptr;
+        }
 
         for (unsigned i = length; i < vectorLength; ++i)
             butterfly->contiguous().atUnsafe(i).clear();
@@ -73,16 +75,6 @@ ClonedArguments* ClonedArguments::createEmpty(
     return result;
 }
 
-ClonedArguments* ClonedArguments::createEmpty(JSGlobalObject* globalObject, JSFunction* callee, unsigned length)
-{
-    VM& vm = globalObject->vm();
-    // NB. Some clients might expect that the global object of of this object is the global object
-    // of the callee. We don't do this for now, but maybe we should.
-    ClonedArguments* result = createEmpty(vm, globalObject->clonedArgumentsStructure(), callee, length);
-    ASSERT(!result->needsSlowPutIndexing() || shouldUseSlowPut(result->structure()->indexingType()));
-    return result;
-}
-
 ClonedArguments* ClonedArguments::createWithInlineFrame(JSGlobalObject* globalObject, CallFrame* targetFrame, InlineCallFrame* inlineCallFrame, ArgumentsMode mode)
 {
     JSFunction* callee;
@@ -93,6 +85,15 @@ ClonedArguments* ClonedArguments::createWithInlineFrame(JSGlobalObject* globalOb
         callee = jsCast<JSFunction*>(targetFrame->jsCallee());
 
     ClonedArguments* result = nullptr;
+
+    auto createEmptyWithAssert = [&](JSGlobalObject* globalObject, JSFunction* callee, unsigned length) {
+        VM& vm = globalObject->vm();
+        // NB. Some clients might expect that the global object of of this object is the global object
+        // of the callee. We don't do this for now, but maybe we should.
+        ClonedArguments* result = ClonedArguments::createEmpty(vm, globalObject->clonedArgumentsStructure(), callee, length, nullptr);
+        ASSERT(!result->needsSlowPutIndexing() || shouldUseSlowPut(result->structure()->indexingType()));
+        return result;
+    };
     
     unsigned length = 0; // Initialize because VC needs it.
     switch (mode) {
@@ -103,13 +104,13 @@ ClonedArguments* ClonedArguments::createWithInlineFrame(JSGlobalObject* globalOb
             else
                 length = inlineCallFrame->argumentCountIncludingThis;
             length--;
-            result = createEmpty(globalObject, callee, length);
+            result = createEmptyWithAssert(globalObject, callee, length);
 
             for (unsigned i = length; i--;)
                 result->putDirectIndex(globalObject, i, inlineCallFrame->m_argumentsWithFixup[i + 1].recover(targetFrame));
         } else {
             length = targetFrame->argumentCount();
-            result = createEmpty(globalObject, callee, length);
+            result = createEmptyWithAssert(globalObject, callee, length);
 
             for (unsigned i = length; i--;)
                 result->putDirectIndex(globalObject, i, targetFrame->uncheckedArgument(i));
@@ -118,7 +119,7 @@ ClonedArguments* ClonedArguments::createWithInlineFrame(JSGlobalObject* globalOb
     }
         
     case ArgumentsMode::FakeValues: {
-        result = createEmpty(globalObject, callee, 0);
+        result = createEmptyWithAssert(globalObject, callee, 0);
         break;
     } }
 
@@ -134,12 +135,10 @@ ClonedArguments* ClonedArguments::createWithMachineFrame(JSGlobalObject* globalO
     return result;
 }
 
-ClonedArguments* ClonedArguments::createByCopyingFrom(
-    JSGlobalObject* globalObject, Structure* structure, Register* argumentStart, unsigned length,
-    JSFunction* callee)
+ClonedArguments* ClonedArguments::createByCopyingFrom(JSGlobalObject* globalObject, Structure* structure, Register* argumentStart, unsigned length, JSFunction* callee, Butterfly* butterfly)
 {
     VM& vm = globalObject->vm();
-    ClonedArguments* result = createEmpty(vm, structure, callee, length);
+    ClonedArguments* result = createEmpty(vm, structure, callee, length, butterfly);
     
     for (unsigned i = length; i--;)
         result->putDirectIndex(globalObject, i, argumentStart[i].jsValue());
@@ -184,6 +183,7 @@ bool ClonedArguments::getOwnPropertySlot(JSObject* object, JSGlobalObject* globa
                 slot.setGetterSlot(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::Accessor, thisObject->globalObject()->throwTypeErrorArgumentsCalleeGetterSetter());
                 return true;
             }
+            // This happens when ClonedArguments is created for non strict functions via `func.arguments` access.
             slot.setValue(thisObject, 0, thisObject->m_callee.get());
             return true;
         }

@@ -52,6 +52,7 @@ namespace JSC { namespace FTL {
     macro(Butterfly_vectorLength, Butterfly::offsetOfVectorLength()) \
     macro(CallFrame_callerFrame, CallFrame::callerFrameOffset()) \
     macro(ClassInfo_parentClass, ClassInfo::offsetOfParentClass()) \
+    macro(ClonedArguments_callee, ClonedArguments::offsetOfCallee()) \
     macro(DateInstance_internalNumber, DateInstance::offsetOfInternalNumber()) \
     macro(DateInstance_data, DateInstance::offsetOfData()) \
     macro(DateInstanceData_gregorianDateTimeCachedForMS, DateInstanceData::offsetOfGregorianDateTimeCachedForMS()) \

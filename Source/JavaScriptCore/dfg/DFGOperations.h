@@ -230,7 +230,7 @@ JSC_DECLARE_JIT_OPERATION(operationCreateDirectArguments, JSCell*, (VM*, Structu
 JSC_DECLARE_JIT_OPERATION(operationCreateDirectArgumentsDuringExit, JSCell*, (VM*, InlineCallFrame*, JSFunction*, uint32_t argumentCount));
 JSC_DECLARE_JIT_OPERATION(operationCreateScopedArguments, JSCell*, (JSGlobalObject*, Structure*, Register* argumentStart, uint32_t length, JSFunction* callee, JSLexicalEnvironment*));
 JSC_DECLARE_JIT_OPERATION(operationCreateClonedArgumentsDuringExit, JSCell*, (VM*, InlineCallFrame*, JSFunction*, uint32_t argumentCount));
-JSC_DECLARE_JIT_OPERATION(operationCreateClonedArguments, JSCell*, (JSGlobalObject*, Structure*, Register* argumentStart, uint32_t length, JSFunction* callee));
+JSC_DECLARE_JIT_OPERATION(operationCreateClonedArguments, JSCell*, (JSGlobalObject*, Structure*, Register* argumentStart, uint32_t length, JSFunction* callee, Butterfly*));
 JSC_DECLARE_JIT_OPERATION(operationCreateRest, JSCell*, (JSGlobalObject*, Register* argumentStart, unsigned numberOfArgumentsToSkip, unsigned arraySize));
 JSC_DECLARE_JIT_OPERATION(operationNewArrayBuffer, JSCell*, (VM*, Structure*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationSetAdd, JSCell*, (JSGlobalObject*, JSCell*, EncodedJSValue, int32_t));

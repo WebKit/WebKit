@@ -2079,17 +2079,15 @@ JSC_DEFINE_JIT_OPERATION(operationCreateScopedArguments, JSCell*, (JSGlobalObjec
     // didn't feel like changing the max number of arguments for a slow path call from 6 to 7.
     ScopedArgumentsTable* table = scope->symbolTable()->arguments();
     
-    return ScopedArguments::createByCopyingFrom(
-        vm, structure, argumentStart, length, callee, table, scope);
+    return ScopedArguments::createByCopyingFrom(vm, structure, argumentStart, length, callee, table, scope);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationCreateClonedArguments, JSCell*, (JSGlobalObject* globalObject, Structure* structure, Register* argumentStart, uint32_t length, JSFunction* callee))
+JSC_DEFINE_JIT_OPERATION(operationCreateClonedArguments, JSCell*, (JSGlobalObject* globalObject, Structure* structure, Register* argumentStart, uint32_t length, JSFunction* callee, Butterfly* butterfly))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return ClonedArguments::createByCopyingFrom(
-        globalObject, structure, argumentStart, length, callee);
+    return ClonedArguments::createByCopyingFrom(globalObject, structure, argumentStart, length, callee, butterfly);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationCreateDirectArgumentsDuringExit, JSCell*, (VM* vmPointer, InlineCallFrame* inlineCallFrame, JSFunction* callee, uint32_t argumentCount))
@@ -2138,8 +2136,7 @@ JSC_DEFINE_JIT_OPERATION(operationCreateClonedArgumentsDuringExit, JSCell*, (VM*
     
     unsigned length = argumentCount - 1;
     JSGlobalObject* globalObject = codeBlock->globalObject();
-    ClonedArguments* result = ClonedArguments::createEmpty(
-        vm, globalObject->clonedArgumentsStructure(), callee, length);
+    ClonedArguments* result = ClonedArguments::createEmpty(vm, globalObject->clonedArgumentsStructure(), callee, length, nullptr);
     
     Register* arguments =
         callFrame->registers() + (inlineCallFrame ? inlineCallFrame->stackOffset : 0) +

@@ -1995,6 +1995,8 @@ public:
 
     void emitFillStorageWithJSEmpty(GPRReg baseGPR, ptrdiff_t initialOffset, unsigned count, GPRReg scratchGPR)
     {
+        if (!count)
+            return;
 #if USE(JSVALUE64)
         unsigned pairCount = count >> 1;
         unsigned pairIndex = 0;
