@@ -27,7 +27,6 @@
 #include "CSSCounterStyleDescriptors.h"
 
 #include "CSSCounterStyleRule.h"
-#include "CSSMarkup.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
@@ -410,7 +409,7 @@ String CSSCounterStyleDescriptors::systemCSSText() const
     if (!m_explicitlySetDescriptors.contains(ExplicitlySetDescriptors::System))
         return emptyString();
     if (m_isExtendedResolved)
-        return makeString("extends ", m_extendsName);
+        return makeString("extends "_s, m_extendsName);
 
     switch (m_system) {
     case System::Cyclic:
@@ -424,9 +423,9 @@ String CSSCounterStyleDescriptors::systemCSSText() const
     case System::Additive:
         return "additive"_s;
     case System::Fixed:
-        return makeString("fixed ", m_fixedSystemFirstSymbolValue);
+        return makeString("fixed "_s, m_fixedSystemFirstSymbolValue);
     case System::Extends:
-        return makeString("extends ", m_extendsName);
+        return makeString("extends "_s, m_extendsName);
     // Internal values should not be exposed.
     case System::SimplifiedChineseInformal:
     case System::SimplifiedChineseFormal:

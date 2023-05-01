@@ -28,9 +28,6 @@
 
 #include "CSSCounterStyleDescriptors.h"
 #include "CSSCounterStyleRegistry.h"
-#include "CSSCounterStyleRule.h"
-#include "CSSPrimitiveValue.h"
-#include "CSSValuePair.h"
 #include <cmath>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextBreakIterator.h>
@@ -146,7 +143,7 @@ String CSSCounterStyle::counterForSystemAdditive(unsigned value) const
     }
 
     StringBuilder result;
-    auto appendToResult = [&](String symbol, unsigned frequency) {
+    auto appendToResult = [&](const String& symbol, unsigned frequency) {
         for (unsigned i = 0; i < frequency; ++i)
             result.append(symbol);
     };
@@ -252,7 +249,7 @@ static String counterForSystemCJK(int number, const std::array<UChar, 17>& table
 
 String CSSCounterStyle::counterForSystemSimplifiedChineseInformal(int value)
 {
-    static constexpr std::array<UChar, 17> simplifiedChineseInformalTable = {
+    static constexpr std::array<UChar, 17> simplifiedChineseInformalTable {
         0x842C, 0x5104, 0x5146, // These three group markers are probably wrong; OK because we don't use this on big enough numbers.
         0x5341, 0x767E, 0x5343,
         0x96F6, 0x4E00, 0x4E8C, 0x4E09, 0x56DB,
@@ -264,7 +261,7 @@ String CSSCounterStyle::counterForSystemSimplifiedChineseInformal(int value)
 
 String CSSCounterStyle::counterForSystemSimplifiedChineseFormal(int value)
 {
-    static constexpr std::array<UChar, 17> simplifiedChineseFormalTable = {
+    static constexpr std::array<UChar, 17> simplifiedChineseFormalTable {
         0x842C, 0x5104, 0x5146, // These three group markers are probably wrong; OK because we don't use this on big enough numbers.
         0x62FE, 0x4F70, 0x4EDF,
         0x96F6, 0x58F9, 0x8D30, 0x53C1, 0x8086,
@@ -276,7 +273,7 @@ String CSSCounterStyle::counterForSystemSimplifiedChineseFormal(int value)
 
 String CSSCounterStyle::counterForSystemTraditionalChineseInformal(int value)
 {
-    static constexpr std::array<UChar, 17> traditionalChineseInformalTable = {
+    static constexpr std::array<UChar, 17> traditionalChineseInformalTable {
         0x842C, 0x5104, 0x5146,
         0x5341, 0x767E, 0x5343,
         0x96F6, 0x4E00, 0x4E8C, 0x4E09, 0x56DB,
@@ -288,7 +285,7 @@ String CSSCounterStyle::counterForSystemTraditionalChineseInformal(int value)
 
 String CSSCounterStyle::counterForSystemTraditionalChineseFormal(int value)
 {
-    static constexpr std::array<UChar, 17> traditionalChineseFormalTable = {
+    static constexpr std::array<UChar, 17> traditionalChineseFormalTable {
         0x842C, 0x5104, 0x5146, // These three group markers are probably wrong; OK because we don't use this on big enough numbers.
         0x62FE, 0x4F70, 0x4EDF,
         0x96F6, 0x58F9, 0x8CB3, 0x53C3, 0x8086,

@@ -136,7 +136,6 @@ const TestFeatures& TestOptions::defaults()
             { "AttachmentWideLayoutEnabled", false },
             { "CSSContainmentEnabled", false },
             { "CSSCounterStyleAtRuleImageSymbolsEnabled", false },
-            { "CSSCounterStyleAtRulesEnabled", false },
             { "CSSGradientInterpolationColorSpacesEnabled", true },
             { "CSSGradientPremultipliedAlphaInterpolationEnabled", true },
             { "CSSInputSecurityEnabled", true },
