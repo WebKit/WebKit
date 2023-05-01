@@ -6960,7 +6960,7 @@ RefPtr<CSSValue> consumeListStyleType(CSSParserTokenRange& range, const CSSParse
     if (auto predefinedValues = consumeIdentRange(range, CSSValueDisc, CSSValueEthiopicNumeric))
         return predefinedValues;
 
-    if (context.counterStyleAtRuleEnabled)
+    if (context.propertySettings.cssCounterStyleAtRulesEnabled)
         return consumeCustomIdent(range);
 
     return nullptr;
