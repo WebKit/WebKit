@@ -123,7 +123,7 @@ private:
     static void sendDidReceiveEvent(WebCore::PageIdentifier, WebEventType, bool didHandleEvent);
 
 #if PLATFORM(MAC)
-    void displayDidRefresh(WebCore::PlatformDisplayID, const WebCore::DisplayUpdate&, bool sendToMainThread);
+    void displayDidRefresh(WebCore::PlatformDisplayID, const WebCore::DisplayUpdate&, bool wantsFullSpeedUpdates, bool anyObserverWantsCallback);
 #endif
 
 #if ENABLE(SCROLLING_THREAD)

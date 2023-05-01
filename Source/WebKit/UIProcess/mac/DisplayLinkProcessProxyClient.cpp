@@ -53,10 +53,7 @@ void DisplayLinkProcessProxyClient::displayLinkFired(WebCore::PlatformDisplayID 
     if (!connection)
         return;
 
-    if (wantsFullSpeedUpdates)
-        connection->send(Messages::EventDispatcher::DisplayDidRefresh(displayID, displayUpdate, anyObserverWantsCallback), 0, { }, Thread::QOS::UserInteractive);
-    else if (anyObserverWantsCallback)
-        connection->send(Messages::WebProcess::DisplayDidRefresh(displayID, displayUpdate), 0, { }, Thread::QOS::UserInteractive);
+    connection->send(Messages::EventDispatcher::DisplayDidRefresh(displayID, displayUpdate, wantsFullSpeedUpdates, anyObserverWantsCallback), 0, { }, Thread::QOS::UserInteractive);
 }
 
 }

@@ -2115,15 +2115,6 @@ void WebProcess::setClientBadge(WebPageProxyIdentifier pageIdentifier, const Web
     parentProcessConnection()->send(Messages::WebProcessProxy::SetClientBadge(pageIdentifier, origin, badge), 0);
 }
 
-#if HAVE(CVDISPLAYLINK)
-void WebProcess::displayDidRefresh(uint32_t displayID, const DisplayUpdate& displayUpdate)
-{
-    ASSERT(RunLoop::isMain());
-    m_eventDispatcher.notifyScrollingTreesDisplayDidRefresh(displayID);
-    DisplayRefreshMonitorManager::sharedManager().displayDidRefresh(displayID, displayUpdate);
-}
-#endif
-
 #if ENABLE(TRACKING_PREVENTION)
 void WebProcess::setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode, CompletionHandler<void()>&& completionHandler)
 {

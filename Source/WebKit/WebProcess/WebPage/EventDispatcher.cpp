@@ -306,20 +306,21 @@ void EventDispatcher::notifyScrollingTreesDisplayDidRefresh(PlatformDisplayID di
 }
 
 #if HAVE(CVDISPLAYLINK)
-void EventDispatcher::displayDidRefresh(PlatformDisplayID displayID, const DisplayUpdate& displayUpdate, bool sendToMainThread)
+void EventDispatcher::displayDidRefresh(PlatformDisplayID displayID, const DisplayUpdate& displayUpdate, bool wantsFullSpeedUpdates, bool anyObserverWantsCallback)
 {
-    tracePoint(DisplayRefreshDispatchingToMainThread, displayID, sendToMainThread);
+    assertIsCurrent(m_queue.get());
+    tracePoint(DisplayRefreshDispatchingToMainThread, displayID, anyObserverWantsCallback);
 
-    ASSERT(!RunLoop::isMain());
-
+    if (wantsFullSpeedUpdates) {
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
-    m_momentumEventDispatcher->displayDidRefresh(displayID);
+        m_momentumEventDispatcher->displayDidRefresh(displayID);
 #endif
+    }
+
+    if (!anyObserverWantsCallback)
+        return;
 
     notifyScrollingTreesDisplayDidRefresh(displayID);
-
-    if (!sendToMainThread)
-        return;
 
     RunLoop::main().dispatch([displayID, displayUpdate]() {
         DisplayRefreshMonitorManager::sharedManager().displayDidRefresh(displayID, displayUpdate);
@@ -329,6 +330,7 @@ void EventDispatcher::displayDidRefresh(PlatformDisplayID displayID, const Displ
 
 void EventDispatcher::pageScreenDidChange(PageIdentifier pageID, PlatformDisplayID displayID, std::optional<unsigned> nominalFramesPerSecond)
 {
+    assertIsCurrent(m_queue.get());
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     m_momentumEventDispatcher->pageScreenDidChange(pageID, displayID, nominalFramesPerSecond);
 #else

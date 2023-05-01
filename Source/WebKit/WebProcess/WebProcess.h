@@ -541,10 +541,6 @@ private:
     void sendResourceLoadStatisticsDataImmediately(CompletionHandler<void()>&&);
 #endif
 
-#if HAVE(CVDISPLAYLINK)
-    void displayDidRefresh(uint32_t displayID, const WebCore::DisplayUpdate&);
-#endif
-
 #if PLATFORM(MAC)
     void systemWillPowerOn();
     void systemWillSleep();

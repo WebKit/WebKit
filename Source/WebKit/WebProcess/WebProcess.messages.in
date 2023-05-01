@@ -188,10 +188,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     DidWriteToPasteboardAsynchronously(String pasteboardName);
 #endif
 
-#if HAVE(CVDISPLAYLINK)
-    DisplayDidRefresh(uint32_t displayID, struct WebCore::DisplayUpdate update)
-#endif
-
 #if PLATFORM(MAC)
     SystemWillPowerOn()
     SystemWillSleep()
