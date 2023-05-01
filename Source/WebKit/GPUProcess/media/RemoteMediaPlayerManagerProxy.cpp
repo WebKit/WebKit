@@ -56,6 +56,11 @@ RemoteMediaPlayerManagerProxy::RemoteMediaPlayerManagerProxy(GPUConnectionToWebP
 
 RemoteMediaPlayerManagerProxy::~RemoteMediaPlayerManagerProxy()
 {
+    clear();
+}
+
+void RemoteMediaPlayerManagerProxy::clear()
+{
     auto proxies = std::exchange(m_proxies, { });
 
     for (auto& proxy : proxies.values())
