@@ -1757,6 +1757,8 @@
 		A5E391FD2183C1F800C8FB31 /* InspectorTargetProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A5E391FC2183C1E900C8FB31 /* InspectorTargetProxy.h */; };
 		A5EC6AD42151BD7B00677D17 /* WebPageDebuggable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EC6AD32151BD6900677D17 /* WebPageDebuggable.h */; };
 		A5EFD38C16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A70FBDCA29F22928007615D7 /* WebWorkerAnimationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A70FBDC829F22928007615D7 /* WebWorkerAnimationController.cpp */; };
+		A70FBDCB29F22928007615D7 /* WebWorkerAnimationController.h in Headers */ = {isa = PBXBuildFile; fileRef = A70FBDC929F22928007615D7 /* WebWorkerAnimationController.h */; };
 		A7A3D555289395E2008D683D /* WebWorkerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A3D553289395E2008D683D /* WebWorkerClient.h */; };
 		A7D792D81767CCA300881CBE /* ActivityAssertion.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D792D41767CB0900881CBE /* ActivityAssertion.h */; };
 		AAB145E6223F931200E489D8 /* PrefetchCache.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB145E4223F931200E489D8 /* PrefetchCache.h */; };
@@ -6310,6 +6312,8 @@
 		A5EC6AD22151BD6900677D17 /* WebPageDebuggable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageDebuggable.cpp; sourceTree = "<group>"; };
 		A5EC6AD32151BD6900677D17 /* WebPageDebuggable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPageDebuggable.h; sourceTree = "<group>"; };
 		A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageVisibilityTypes.h; sourceTree = "<group>"; };
+		A70FBDC829F22928007615D7 /* WebWorkerAnimationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebWorkerAnimationController.cpp; sourceTree = "<group>"; };
+		A70FBDC929F22928007615D7 /* WebWorkerAnimationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebWorkerAnimationController.h; sourceTree = "<group>"; };
 		A72D5D7F1236CBA800A88B15 /* APISerializedScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APISerializedScriptValue.h; sourceTree = "<group>"; };
 		A78CCDD8193AC9E3005ECC25 /* com.apple.WebKit.Networking.sb.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.Networking.sb.in; sourceTree = "<group>"; };
 		A7A3D552289395E2008D683D /* WebWorkerClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebWorkerClient.cpp; sourceTree = "<group>"; };
@@ -12621,6 +12625,8 @@
 				BCC43AC6127B99DE00317F16 /* WebPopupMenuMac.mm */,
 				C11A9ED021403B4000CFB20A /* WebSwitchingGPUClient.cpp */,
 				C11A9ECB214035F800CFB20A /* WebSwitchingGPUClient.h */,
+				A70FBDC829F22928007615D7 /* WebWorkerAnimationController.cpp */,
+				A70FBDC929F22928007615D7 /* WebWorkerAnimationController.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -15045,6 +15051,7 @@
 				83EE575C1DB7D61100C74C50 /* WebValidationMessageClient.h in Headers */,
 				572FD44322265CE200A1ECC3 /* WebViewDidMoveToWindowObserver.h in Headers */,
 				0FD07E5028A3414700B38C81 /* WebViewImpl.h in Headers */,
+				A70FBDCB29F22928007615D7 /* WebWorkerAnimationController.h in Headers */,
 				A7A3D555289395E2008D683D /* WebWorkerClient.h in Headers */,
 				29CD55AA128E294F00133C85 /* WKAccessibilityWebPageObjectBase.h in Headers */,
 				29232DF418B29D6800D0596F /* WKAccessibilityWebPageObjectMac.h in Headers */,
@@ -17371,6 +17378,7 @@
 				515262BD1FB951610070E579 /* WebSWServerToContextConnectionMessageReceiver.cpp in Sources */,
 				1AAF08B719269E6D00B6390C /* WebUserContentControllerMessageReceiver.cpp in Sources */,
 				7C361D78192803BD0036A59D /* WebUserContentControllerProxyMessageReceiver.cpp in Sources */,
+				A70FBDCA29F22928007615D7 /* WebWorkerAnimationController.cpp in Sources */,
 				C6A4CA0C2252899800169289 /* WKBundlePageMac.mm in Sources */,
 				2D931169212F61B200044BFE /* WKContentView.mm in Sources */,
 				2D93116A212F61B500044BFE /* WKContentViewInteraction.mm in Sources */,

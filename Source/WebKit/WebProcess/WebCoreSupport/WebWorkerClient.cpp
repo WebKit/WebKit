@@ -32,6 +32,9 @@
 #include "RemoteRenderingBackendProxy.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#if HAVE(CVDISPLAYLINK)
+#include "WebWorkerAnimationController.h"
+#endif
 #include <WebCore/Page.h>
 #include <WebCore/WorkerAnimationController.h>
 
@@ -111,7 +114,11 @@ std::unique_ptr<WorkerClient> WebWorkerClient::clone(SerialFunctionDispatcher& d
 
 RefPtr<WorkerAnimationController> WebWorkerClient::createAnimationController(WorkerGlobalScope& workerGlobalScope)
 {
+#if HAVE(CVDISPLAYLINK)
+    return WebWorkerAnimationController::create(workerGlobalScope, m_creationParameters.pageID, m_dispatcher);
+#else
     return nullptr;
+#endif
 }
 
 PlatformDisplayID WebWorkerClient::displayID() const
