@@ -93,6 +93,8 @@ webkit.org/b/231635 [ Release ] editing/selection/ios/scroll-to-reveal-selection
 media/picture-in-picture [ Pass ]
 media/remove-video-element-in-pip-from-document.html [ Pass ]
 
+http/tests/media/media-source/mediasource-rvfc.html [ Pass ]
+
 webkit.org/b/228622 [ Debug ] accessibility/ios-simulator/scroll-in-overflow-div.html [ Crash ]
 
 webkit.org/b/228663 fast/canvas/canvas-color-space-display-p3.html [ ImageOnlyFailure ]
@@ -122,4 +124,3 @@ webkit.org/b/244674 [ Release ] imported/w3c/web-platform-tests/IndexedDB/idbfac
 
 media/mediacapabilities/mediacapabilities-allowed-codecs.html [ Pass ]
 media/mediacapabilities/mediacapabilities-allowed-containers.html [ Pass ]
-

@@ -3713,7 +3713,7 @@ webkit.org/b/242270 fast/encoding/char-after-fast-path-ascii-decoding.html [ Pas
 webkit.org/b/242273 fast/events/ios/dragstart-on-image-by-long-pressing.html [ Pass Failure ]
 
 # Requires platform support (see rdar://94324932).
-http/tests/media/media-source/mediasource-rvfc.html [ Pass Failure ]
+http/tests/media/media-source/mediasource-rvfc.html [ Skip ]
 
 # Crashing in a system framework rdar://102159271
 fast/forms/ios/file-upload-panel-capture.html [ Skip ]
