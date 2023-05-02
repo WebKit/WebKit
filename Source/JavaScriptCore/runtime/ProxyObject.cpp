@@ -452,13 +452,6 @@ bool ProxyObject::performPut(JSGlobalObject* globalObject, JSValue putValue, JSV
     ASSERT(!arguments.hasOverflowed());
     JSValue trapResult = call(globalObject, setMethod, callData, handler, arguments);
     RETURN_IF_EXCEPTION(scope, false);
-    RELEASE_AND_RETURN(scope, validateSetTrapResult(globalObject, trapResult, target, propertyName, putValue, shouldThrow));
-}
-
-bool ProxyObject::validateSetTrapResult(JSGlobalObject* globalObject, JSValue trapResult, JSObject* target, PropertyName propertyName, JSValue putValue, bool shouldThrow)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
 
     bool trapResultAsBool = trapResult.toBoolean(globalObject);
     RETURN_IF_EXCEPTION(scope, false);
@@ -468,24 +461,32 @@ bool ProxyObject::validateSetTrapResult(JSGlobalObject* globalObject, JSValue tr
         return false;
     }
 
+    validatePositiveSetTrapResult(globalObject, target, propertyName, putValue);
+    RETURN_IF_EXCEPTION(scope, false);
+    return true;
+}
+
+void ProxyObject::validatePositiveSetTrapResult(JSGlobalObject* globalObject, JSObject* target, PropertyName propertyName, JSValue putValue)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     PropertyDescriptor descriptor;
     bool hasProperty = target->getOwnPropertyDescriptor(globalObject, propertyName, descriptor);
     EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
     if (hasProperty && !descriptor.configurable()) {
         if (descriptor.isDataDescriptor() && !descriptor.writable()) {
             bool isSame = sameValue(globalObject, descriptor.value(), putValue);
-            RETURN_IF_EXCEPTION(scope, false);
+            RETURN_IF_EXCEPTION(scope, void());
             if (!isSame) {
                 throwTypeError(globalObject, scope, "Proxy handler's 'set' on a non-configurable and non-writable property on 'target' should either return false or be the same value already on the 'target'"_s);
-                return false;
+                return;
             }
         } else if (descriptor.isAccessorDescriptor() && descriptor.setter().isUndefined()) {
             throwTypeError(globalObject, scope, "Proxy handler's 'set' method on a non-configurable accessor property without a setter should return false"_s);
-            return false;
+            return;
         }
     }
-
-    return true;
 }
 
 bool ProxyObject::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)

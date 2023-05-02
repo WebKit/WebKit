@@ -4845,6 +4845,18 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case HasStructureWithFlags: {
+        const AbstractValue& child = forNode(node->child1());
+        unsigned flags = node->structureFlags();
+        ASSERT(flags);
+
+        if (Structure::bitFieldFlagsCantBeChangedWithoutTransition(flags) && child.m_type && !(child.m_type & ~SpecCell) && child.m_structure.isFinite())
+            m_state.setShouldTryConstantFolding(true);
+
+        setNonCellTypeForNode(node, SpecBoolean);
+        break;
+    }
+
     case ParseInt: {
         AbstractValue value = forNode(node->child1());
         if (value.m_type && !(value.m_type & ~SpecInt32Only)) {

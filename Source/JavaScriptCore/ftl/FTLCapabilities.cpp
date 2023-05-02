@@ -289,6 +289,7 @@ inline CapabilityLevel canCompile(Node* node)
     case IsConstructor:
     case IsTypedArrayView:
     case CheckTypeInfoFlags:
+    case HasStructureWithFlags:
     case OverridesHasInstance:
     case InstanceOf:
     case InstanceOfCustom:

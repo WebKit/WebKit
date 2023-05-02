@@ -440,6 +440,7 @@ namespace JSC {
 #endif
         void emit_op_is_object(const JSInstruction*);
         void emit_op_is_cell_with_type(const JSInstruction*);
+        void emit_op_has_structure_with_flags(const JSInstruction*);
         void emit_op_jeq_null(const JSInstruction*);
         void emit_op_jfalse(const JSInstruction*);
         void emit_op_jmp(const JSInstruction*);

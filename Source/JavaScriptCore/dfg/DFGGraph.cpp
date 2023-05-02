@@ -289,6 +289,8 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
     }
     if (node->hasQueriedType())
         out.print(comma, node->queriedType());
+    if (node->hasStructureFlags())
+        out.print(comma, node->structureFlags());
     if (node->hasStorageAccessData()) {
         StorageAccessData& storageAccessData = node->storageAccessData();
         out.print(comma, "id", storageAccessData.identifierNumber, "{", identifiers()[storageAccessData.identifierNumber], "}");

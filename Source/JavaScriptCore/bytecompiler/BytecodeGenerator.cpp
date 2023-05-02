@@ -2835,6 +2835,12 @@ RegisterID* BytecodeGenerator::emitHasPrivateName(RegisterID* dst, RegisterID* b
     return dst;
 }
 
+RegisterID* BytecodeGenerator::emitHasStructureWithFlags(RegisterID* dst, RegisterID* src, unsigned flags)
+{
+    OpHasStructureWithFlags::emit(this, dst, src, flags);
+    return dst;
+}
+
 RegisterID* BytecodeGenerator::emitDirectPutByVal(RegisterID* base, RegisterID* property, RegisterID* value)
 {
     OpPutByValDirect::emit(this, base, property, value, ecmaMode());

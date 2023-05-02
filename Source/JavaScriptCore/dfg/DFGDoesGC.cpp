@@ -187,6 +187,7 @@ bool doesGC(Graph& graph, Node* node)
     case Check:
     case CheckVarargs:
     case CheckTypeInfoFlags:
+    case HasStructureWithFlags:
     case MultiGetByOffset:
     case MultiDeleteByOffset:
     case ValueRep:

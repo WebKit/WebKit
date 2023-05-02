@@ -6624,6 +6624,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_is_cell_with_type);
         }
 
+        case op_has_structure_with_flags: {
+            auto bytecode = currentInstruction->as<OpHasStructureWithFlags>();
+            Node* object = get(bytecode.m_operand);
+            set(bytecode.m_dst, addToGraph(HasStructureWithFlags, OpInfo(bytecode.m_flags), object));
+            NEXT_OPCODE(op_has_structure_with_flags);
+        }
+
         case op_is_object: {
             auto bytecode = currentInstruction->as<OpIsObject>();
             Node* value = get(bytecode.m_operand);

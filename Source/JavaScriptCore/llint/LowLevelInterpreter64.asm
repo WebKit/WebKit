@@ -1611,6 +1611,17 @@ llintOpWithReturn(op_is_cell_with_type, OpIsCellWithType, macro (size, get, disp
 end)
 
 
+llintOpWithReturn(op_has_structure_with_flags, OpHasStructureWithFlags, macro (size, get, dispatch, return)
+    getu(size, OpHasStructureWithFlags, m_flags, t0)
+    get(m_operand, t1)
+    loadConstantOrVariable(size, t1, t2)
+    loadStructureWithScratch(t2, t3, t1)
+    tinz Structure::m_bitField[t3], t0, t1
+    orq ValueFalse, t1
+    return(t1)
+end)
+
+
 llintOpWithReturn(op_is_object, OpIsObject, macro (size, get, dispatch, return)
     get(m_operand, t1)
     loadConstantOrVariable(size, t1, t0)

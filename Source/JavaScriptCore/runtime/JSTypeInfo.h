@@ -60,6 +60,7 @@ static constexpr unsigned StructureIsImmortal = 1 << 17;
 static constexpr unsigned OverridesPut = 1 << 18;
 static constexpr unsigned OverridesGetPrototype = 1 << 19;
 static constexpr unsigned GetOwnPropertySlotMayBeWrongAboutDontEnum = 1 << 20;
+static constexpr unsigned OverridesIsExtensible = 1 << 21;
 
 static constexpr unsigned numberOfInlineBits = 8;
 static constexpr unsigned OverridesGetPrototypeOutOfLine = OverridesGetPrototype >> numberOfInlineBits;
@@ -105,6 +106,7 @@ public:
     bool overridesAnyFormOfGetOwnPropertyNames() const { return overridesGetOwnPropertyNames() || overridesGetOwnSpecialPropertyNames(); }
     bool overridesPut() const { return isSetOnFlags2<OverridesPut>(); }
     bool overridesGetPrototype() const { return isSetOnFlags2<OverridesGetPrototype>(); }
+    bool overridesIsExtensible() const { return isSetOnFlags2<OverridesIsExtensible>(); }
     bool prohibitsPropertyCaching() const { return isSetOnFlags2<ProhibitsPropertyCaching>(); }
     bool getOwnPropertySlotIsImpure() const { return isSetOnFlags2<GetOwnPropertySlotIsImpure>(); }
     bool getOwnPropertySlotIsImpureForPropertyAbsence() const { return isSetOnFlags2<GetOwnPropertySlotIsImpureForPropertyAbsence>(); }

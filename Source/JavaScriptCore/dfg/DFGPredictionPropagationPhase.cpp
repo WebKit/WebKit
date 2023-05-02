@@ -1132,6 +1132,7 @@ private:
         case IsConstructor:
         case IsCellWithType:
         case IsTypedArrayView:
+        case HasStructureWithFlags:
         case MatchStructure: {
             setPrediction(SpecBoolean);
             break;

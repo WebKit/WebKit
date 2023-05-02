@@ -33,7 +33,7 @@ class ProxyObject final : public JSInternalFieldObjectImpl<2> {
 public:
     using Base = JSInternalFieldObjectImpl<2>;
 
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnPropertyNames | OverridesGetPrototype | OverridesGetCallData | OverridesPut | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | ProhibitsPropertyCaching;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnPropertyNames | OverridesGetPrototype | OverridesGetCallData | OverridesPut | OverridesIsExtensible | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | ProhibitsPropertyCaching;
 
     enum class Field : uint32_t {
         Target = 0,
@@ -80,8 +80,8 @@ public:
     JSValue handler() const { return internalField(Field::Handler).get(); }
 
     static void validateNegativeHasTrapResult(JSGlobalObject*, JSObject*, PropertyName);
+    static void validatePositiveSetTrapResult(JSGlobalObject*, JSObject*, PropertyName, JSValue putValue);
     static void validateGetTrapResult(JSGlobalObject*, JSValue trapResult, JSObject*, PropertyName);
-    static bool validateSetTrapResult(JSGlobalObject*, JSValue trapResult, JSObject*, PropertyName, JSValue putValue, bool shouldThrow);
 
     static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     static bool putByIndex(JSCell*, JSGlobalObject*, unsigned propertyName, JSValue, bool shouldThrow);
