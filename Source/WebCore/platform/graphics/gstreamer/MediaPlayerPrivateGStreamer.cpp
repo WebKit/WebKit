@@ -80,6 +80,7 @@
 #include <gst/audio/streamvolume.h>
 #include <gst/gst.h>
 #include <gst/pbutils/missing-plugins.h>
+#include <gst/pbutils/pbutils.h>
 #include <gst/video/gstvideometa.h>
 #include <limits>
 #include <wtf/FileSystem.h>
@@ -2164,8 +2165,15 @@ void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
     if ((classifiers.contains("Converter"_s) || classifiers.contains("Decoder"_s)) && classifiers.contains("Video"_s) && !classifiers.contains("Parser"_s))
         webkitGstTraceProcessingTimeForElement(element);
 
-    if (classifiers.contains("Decoder"_s) && classifiers.contains("Video"_s)) {
-        configureVideoDecoder(element);
+    // This will set the multiqueue size to the default value.
+    if (g_str_has_prefix(elementName.get(), "uridecodebin"))
+        g_object_set(element, "buffer-size", 2 * MB, nullptr);
+
+    if (classifiers.contains("Decoder"_s)) {
+        if (classifiers.contains("Video"_s))
+            configureVideoDecoder(element);
+        else if (classifiers.contains("Audio"_s))
+            configureAudioDecoder(element);
         return;
     }
 
@@ -2176,10 +2184,6 @@ void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
         configureDownloadBuffer(element);
         return;
     }
-
-    // This will set the multiqueue size to the default value.
-    if (g_str_has_prefix(elementName.get(), "uridecodebin"))
-        g_object_set(element, "buffer-size", 2 * MB, nullptr);
 
     if (!g_strcmp0(G_OBJECT_TYPE_NAME(G_OBJECT(element)), "GstQueue2"))
         g_object_set(G_OBJECT(element), "high-watermark", 0.10, nullptr);
@@ -2927,6 +2931,36 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
 #endif
 }
 
+void MediaPlayerPrivateGStreamer::setupCodecProbe(GstElement* element)
+{
+#if GST_CHECK_VERSION(1, 20, 0)
+    auto sinkPad = adoptGRef(gst_element_get_static_pad(element, "sink"));
+    gst_pad_add_probe(sinkPad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, reinterpret_cast<GstPadProbeCallback>(+[](GstPad* pad, GstPadProbeInfo* info, MediaPlayerPrivateGStreamer* player) -> GstPadProbeReturn {
+        auto* event = gst_pad_probe_info_get_event(info);
+        if (GST_EVENT_TYPE(event) != GST_EVENT_CAPS)
+            return GST_PAD_PROBE_OK;
+
+        GstCaps* caps;
+        gst_event_parse_caps(event, &caps);
+        GUniquePtr<char> codec(gst_codec_utils_caps_get_mime_codec(caps));
+        if (!codec)
+            return GST_PAD_PROBE_REMOVE;
+
+        GUniquePtr<char> streamId(gst_pad_get_stream_id(pad));
+        GST_DEBUG_OBJECT(player->pipeline(), "Setting codec for stream %s to %s", streamId.get(), codec.get());
+        player->m_codecs.add(String::fromLatin1(streamId.get()), String::fromLatin1(codec.get()));
+        return GST_PAD_PROBE_REMOVE;
+    }), this, nullptr);
+#else
+    UNUSED_PARAM(element);
+#endif
+}
+
+void MediaPlayerPrivateGStreamer::configureAudioDecoder(GstElement* decoder)
+{
+    setupCodecProbe(decoder);
+}
+
 void MediaPlayerPrivateGStreamer::configureVideoDecoder(GstElement* decoder)
 {
     GUniquePtr<char> name(gst_element_get_name(decoder));
@@ -2946,6 +2980,8 @@ void MediaPlayerPrivateGStreamer::configureVideoDecoder(GstElement* decoder)
 #if USE(TEXTURE_MAPPER_GL)
     updateTextureMapperFlags();
 #endif
+
+    setupCodecProbe(decoder);
 
     if (!isMediaStreamPlayer())
         return;
@@ -4312,6 +4348,11 @@ void MediaPlayerPrivateGStreamer::checkPlayingConsistency()
         } else
             m_didTryToRecoverPlayingState = false;
     }
+}
+
+String MediaPlayerPrivateGStreamer::codecForStreamId(const String& streamId)
+{
+    return m_codecs.get(streamId);
 }
 
 }

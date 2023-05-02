@@ -31,70 +31,91 @@
 
 #include "GStreamerCommon.h"
 #include "MediaPlayerPrivateGStreamer.h"
-#include <gst/pbutils/pbutils.h>
 #include <wtf/Scope.h>
 
 namespace WebCore {
+
+GST_DEBUG_CATEGORY(webkit_audio_track_debug);
+#define GST_CAT_DEFAULT webkit_audio_track_debug
+
+static void ensureDebugCategoryInitialized()
+{
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_audio_track_debug, "webkitaudiotrack", 0, "WebKit Audio Track");
+    });
+}
 
 AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer> player, unsigned index, GRefPtr<GstPad>&& pad, bool shouldHandleStreamStartEvent)
     : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Audio, this, index, WTFMove(pad), shouldHandleStreamStartEvent)
     , m_player(player)
 {
+    ensureDebugCategoryInitialized();
 }
 
 AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer> player, unsigned index, GstStream* stream)
     : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Audio, this, index, stream)
     , m_player(player)
 {
-    int kind;
-    auto tags = adoptGRef(gst_stream_get_tags(m_stream.get()));
-
-    if (tags && gst_tag_list_get_int(tags.get(), "webkit-media-stream-kind", &kind) && kind == static_cast<int>(AudioTrackPrivate::Kind::Main)) {
-        auto streamFlags = gst_stream_get_stream_flags(m_stream.get());
-        gst_stream_set_stream_flags(m_stream.get(), static_cast<GstStreamFlags>(streamFlags | GST_STREAM_FLAG_SELECT));
-    }
-
+    ensureDebugCategoryInitialized();
     g_signal_connect_swapped(m_stream.get(), "notify::caps", G_CALLBACK(+[](AudioTrackPrivateGStreamer* track) {
         track->m_taskQueue.enqueueTask([track]() {
-            track->updateConfigurationFromCaps();
+            auto caps = adoptGRef(gst_stream_get_caps(track->m_stream.get()));
+            track->capsChanged(String::fromLatin1(gst_stream_get_stream_id(track->m_stream.get())), caps);
         });
     }), this);
     g_signal_connect_swapped(m_stream.get(), "notify::tags", G_CALLBACK(+[](AudioTrackPrivateGStreamer* track) {
         track->m_taskQueue.enqueueTask([track]() {
-            track->updateConfigurationFromTags();
+            auto tags = adoptGRef(gst_stream_get_tags(track->m_stream.get()));
+            track->updateConfigurationFromTags(tags);
         });
     }), this);
 
-    updateConfigurationFromCaps();
-    updateConfigurationFromTags();
-}
-
-void AudioTrackPrivateGStreamer::updateConfigurationFromTags()
-{
-    ASSERT(isMainThread());
-    if (!m_stream)
-        return;
+    auto caps = adoptGRef(gst_stream_get_caps(m_stream.get()));
+    updateConfigurationFromCaps(caps);
 
     auto tags = adoptGRef(gst_stream_get_tags(m_stream.get()));
-    unsigned bitrate;
-    if (!tags || !gst_tag_list_get_uint(tags.get(), GST_TAG_BITRATE, &bitrate))
+    updateConfigurationFromTags(tags);
+}
+
+void AudioTrackPrivateGStreamer::capsChanged(const String& streamId, const GRefPtr<GstCaps>& caps)
+{
+    ASSERT(isMainThread());
+    updateConfigurationFromCaps(caps);
+
+    auto codec = m_player->codecForStreamId(streamId);
+    if (codec.isEmpty())
+        return;
+    GST_DEBUG_OBJECT(objectForLogging(), "Setting codec to %s", codec.ascii().data());
+    auto configuration = this->configuration();
+    configuration.codec = WTFMove(codec);
+    setConfiguration(WTFMove(configuration));
+}
+
+void AudioTrackPrivateGStreamer::updateConfigurationFromTags(const GRefPtr<GstTagList>& tags)
+{
+    ASSERT(isMainThread());
+    GST_DEBUG_OBJECT(objectForLogging(), "Updating audio configuration from %" GST_PTR_FORMAT, tags.get());
+    if (!tags)
         return;
 
+    unsigned bitrate;
+    if (!gst_tag_list_get_uint(tags.get(), GST_TAG_BITRATE, &bitrate))
+        return;
+
+    GST_DEBUG_OBJECT(objectForLogging(), "Setting bitrate to %u", bitrate);
     auto configuration = this->configuration();
     configuration.bitrate = bitrate;
     setConfiguration(WTFMove(configuration));
 }
 
-void AudioTrackPrivateGStreamer::updateConfigurationFromCaps()
+void AudioTrackPrivateGStreamer::updateConfigurationFromCaps(const GRefPtr<GstCaps>& caps)
 {
     ASSERT(isMainThread());
-    if (!m_stream)
-        return;
-
-    auto caps = adoptGRef(gst_stream_get_caps(m_stream.get()));
     if (!caps || !gst_caps_is_fixed(caps.get()))
         return;
 
+    GST_DEBUG_OBJECT(objectForLogging(), "Updating audio configuration from %" GST_PTR_FORMAT, caps.get());
     auto configuration = this->configuration();
     auto scopeExit = makeScopeExit([&] {
         setConfiguration(WTFMove(configuration));
@@ -115,11 +136,6 @@ void AudioTrackPrivateGStreamer::updateConfigurationFromCaps()
         configuration.sampleRate = GST_AUDIO_INFO_RATE(&info);
         configuration.numberOfChannels = GST_AUDIO_INFO_CHANNELS(&info);
     }
-
-#if GST_CHECK_VERSION(1, 20, 0)
-    GUniquePtr<char> codec(gst_codec_utils_caps_get_mime_codec(caps.get()));
-    configuration.codec = String::fromLatin1(codec.get());
-#endif
 }
 
 AudioTrackPrivate::Kind AudioTrackPrivateGStreamer::kind() const

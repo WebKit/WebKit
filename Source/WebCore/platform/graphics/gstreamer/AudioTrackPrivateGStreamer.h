@@ -27,7 +27,6 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
-#include "AbortableTaskQueue.h"
 #include "AudioTrackPrivate.h"
 #include "TrackPrivateBaseGStreamer.h"
 
@@ -60,11 +59,13 @@ public:
     AtomString id() const final { return m_id; }
     AtomString label() const final { return m_label; }
     AtomString language() const final { return m_language; }
-    AbortableTaskQueue m_taskQueue;
 
 protected:
-    void updateConfigurationFromCaps();
-    void updateConfigurationFromTags();
+    void updateConfigurationFromCaps(const GRefPtr<GstCaps>&);
+    void updateConfigurationFromTags(const GRefPtr<GstTagList>&);
+
+    void tagsChanged(const GRefPtr<GstTagList>& tags) final { updateConfigurationFromTags(tags); }
+    void capsChanged(const String& streamId, const GRefPtr<GstCaps>&) final;
 
 private:
     AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, unsigned index, GRefPtr<GstPad>&&, bool shouldHandleStreamStartEvent);

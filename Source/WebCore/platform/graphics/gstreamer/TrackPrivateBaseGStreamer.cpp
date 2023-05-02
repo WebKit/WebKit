@@ -112,9 +112,9 @@ void TrackPrivateBaseGStreamer::setPad(GRefPtr<GstPad>&& pad)
     m_bestUpstreamPad = findBestUpstreamPad(m_pad);
     m_id = generateUniquePlaybin2StreamID(m_type, m_index);
 
-    m_eventProbe = gst_pad_add_probe(m_bestUpstreamPad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, [] (GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
-        auto* track = static_cast<TrackPrivateBaseGStreamer*>(userData);
-        switch (GST_EVENT_TYPE(gst_pad_probe_info_get_event(info))) {
+    m_eventProbe = gst_pad_add_probe(m_bestUpstreamPad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, reinterpret_cast<GstPadProbeCallback>(+[](GstPad* pad, GstPadProbeInfo* info, TrackPrivateBaseGStreamer* track) -> GstPadProbeReturn {
+        auto* event = gst_pad_probe_info_get_event(info);
+        switch (GST_EVENT_TYPE(event)) {
         case GST_EVENT_TAG:
             track->tagsChanged();
             break;
@@ -122,17 +122,41 @@ void TrackPrivateBaseGStreamer::setPad(GRefPtr<GstPad>&& pad)
             if (track->m_shouldHandleStreamStartEvent)
                 track->streamChanged();
             break;
+        case GST_EVENT_CAPS: {
+            GUniquePtr<char> streamId(gst_pad_get_stream_id(pad));
+            if (!streamId)
+                break;
+
+            auto streamIdString = String::fromLatin1(streamId.get());
+            track->m_taskQueue.enqueueTask([track, streamId = WTFMove(streamIdString), event = GRefPtr<GstEvent>(event)]() {
+                GstCaps* caps;
+                gst_event_parse_caps(event.get(), &caps);
+                if (!caps)
+                    return;
+                track->capsChanged(streamId, GRefPtr<GstCaps>(caps));
+            });
+            break;
+        }
         default:
             break;
         }
         return GST_PAD_PROBE_OK;
-    }, this, nullptr);
+    }), this, nullptr);
 }
 
 TrackPrivateBaseGStreamer::~TrackPrivateBaseGStreamer()
 {
     disconnect();
     m_notifier->invalidate();
+}
+
+GstObject* TrackPrivateBaseGStreamer::objectForLogging() const
+{
+    if (m_stream)
+        return GST_OBJECT_CAST(m_stream.get());
+
+    ASSERT(m_pad);
+    return GST_OBJECT_CAST(m_pad.get());
 }
 
 void TrackPrivateBaseGStreamer::disconnect()
@@ -228,6 +252,8 @@ void TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged()
 
     if (!tags)
         return;
+
+    tagsChanged(tags);
 
     if (getTag(tags.get(), GST_TAG_TITLE, m_label) && client)
         client->labelChanged(m_label);

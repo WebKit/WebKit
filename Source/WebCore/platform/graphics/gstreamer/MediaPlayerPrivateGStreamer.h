@@ -248,6 +248,8 @@ public:
     // to avoid deadlocks from threads in the playback pipeline waiting for the main thread.
     AbortableTaskQueue& sinkTaskQueue() { return m_sinkTaskQueue; }
 
+    String codecForStreamId(const String& streamId);
+
 protected:
     enum MainThreadNotification {
         VideoChanged = 1 << 0,
@@ -485,6 +487,7 @@ private:
     void configureDownloadBuffer(GstElement*);
     static void downloadBufferFileCreatedCallback(MediaPlayerPrivateGStreamer*);
 
+    void configureAudioDecoder(GstElement*);
     void configureVideoDecoder(GstElement*);
     void configureElement(GstElement*);
 #if PLATFORM(BROADCOM) || USE(WESTEROS_SINK) || PLATFORM(AMLOGIC) || PLATFORM(REALTEK)
@@ -614,6 +617,9 @@ private:
     // Specific to MediaStream playback.
     MediaTime m_startTime;
     MediaTime m_pausedTime;
+
+    void setupCodecProbe(GstElement*);
+    HashMap<String, String> m_codecs;
 };
 
 }

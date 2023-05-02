@@ -1098,9 +1098,6 @@ imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-webrtc.h
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-before-xr-session.https.html [ Skip ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-during-xr-session.https.html [ Skip ]
 
-# Expected to pass when we enable playbin3 by default and update the SDK to GStreamer 1.20.
-webkit.org/b/234084 media/track/audio-track-configuration.html [ Failure ]
-
 # Expected to pass when we enable playbin3 by default.
 webkit.org/b/131546 media/track/track-in-band-cues-added-once.html [ Timeout Crash ]
 webkit.org/b/131546 webkit.org/b/198830 media/track/track-in-band-legacy-api.html [ Failure Crash ]
