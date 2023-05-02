@@ -76,6 +76,13 @@
 #include <gst/webrtc/webrtc-enumtypes.h>
 #endif
 
+#if USE(GSTREAMER_FULL) && GST_CHECK_VERSION(1, 18, 0) && !GST_CHECK_VERSION(1, 20, 0)
+#define IS_GST_FULL_1_18 1
+#include <gst/gstinitstaticplugins.h>
+#else
+#define IS_GST_FULL_1_18 0
+#endif
+
 GST_DEBUG_CATEGORY(webkit_gst_common_debug);
 #define GST_CAT_DEFAULT webkit_gst_common_debug
 
@@ -315,6 +322,10 @@ void registerWebKitGStreamerElements()
     static std::once_flag onceFlag;
     bool registryWasUpdated = false;
     std::call_once(onceFlag, [&registryWasUpdated] {
+
+#if IS_GST_FULL_1_18
+        gst_init_static_plugins();
+#endif
 
         // Rank guidelines are as following:
         // - Use GST_RANK_PRIMARY for elements meant to be auto-plugged and for which we know
@@ -1010,5 +1021,7 @@ bool gstObjectHasProperty(GstPad* pad, const char* name)
 }
 
 } // namespace WebCore
+
+#undef IS_GST_FULL_1_18
 
 #endif // USE(GSTREAMER)
