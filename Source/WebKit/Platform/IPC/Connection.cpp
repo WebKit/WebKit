@@ -55,8 +55,11 @@ namespace IPC {
 
 #if PLATFORM(COCOA)
 // The IPC connection gets killed if the incoming message queue reaches 50000 messages before the main thread has a chance to dispatch them.
-const size_t maxPendingIncomingMessagesKillingThreshold { 50000 };
+constexpr size_t maxPendingIncomingMessagesKillingThreshold { 50000 };
 #endif
+
+constexpr size_t largeOutgoingMessageQueueCountThreshold { 1024 };
+constexpr Seconds largeOutgoingMessageQueueTimeThreshold { 30_s };
 
 std::atomic<unsigned> UnboundedSynchronousIPCScope::unboundedSynchronousIPCCount = 0;
 
@@ -443,6 +446,11 @@ void Connection::setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWo
     m_didCloseOnConnectionWorkQueueCallback = callback;
 }
 
+void Connection::setOutgoingMessageQueueIsGrowingLargeCallback(OutgoingMessageQueueIsGrowingLargeCallback&& callback)
+{
+    m_outgoingMessageQueueIsGrowingLargeCallback = WTFMove(callback);
+}
+
 bool Connection::open(Client& client, SerialFunctionDispatcher& dispatcher)
 {
     ASSERT(!m_client);
@@ -469,6 +477,7 @@ void Connection::invalidate()
         return;
     assertIsCurrent(dispatcher());
     m_client = nullptr;
+    m_outgoingMessageQueueIsGrowingLargeCallback = nullptr;
     [this] {
         Locker locker { m_incomingMessagesLock };
         return WTFMove(m_syncState);
@@ -547,9 +556,26 @@ bool Connection::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption>
     else if (sendOptions.contains(SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply))
         encoder->setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC);
 
+    size_t outgoingMessagesCount;
+    bool shouldNotifyOfQueueGrowingLarge;
     {
         Locker locker { m_outgoingMessagesLock };
         m_outgoingMessages.append(WTFMove(encoder));
+        outgoingMessagesCount = m_outgoingMessages.size();
+        shouldNotifyOfQueueGrowingLarge = m_outgoingMessageQueueIsGrowingLargeCallback && outgoingMessagesCount > largeOutgoingMessageQueueCountThreshold && (MonotonicTime::now() - m_lastOutgoingMessageQueueIsGrowingLargeCallbackCallTime) >= largeOutgoingMessageQueueTimeThreshold;
+        if (shouldNotifyOfQueueGrowingLarge)
+            m_lastOutgoingMessageQueueIsGrowingLargeCallbackCallTime = MonotonicTime::now();
+    }
+
+    if (shouldNotifyOfQueueGrowingLarge) {
+        RELEASE_LOG_ERROR(IPC, "Connection::sendMessage(): Too many messages (%zu) in the queue to remote PID: %d, notifying client", outgoingMessagesCount
+#if OS(DARWIN)
+            , remoteProcessID()
+#else
+            , 0
+#endif
+            );
+        m_outgoingMessageQueueIsGrowingLargeCallback();
     }
 
     // FIXME: We should add a boolean flag so we don't call this when work has already been scheduled.

@@ -200,6 +200,7 @@ protected:
 private:
     virtual void connectionWillOpen(IPC::Connection&);
     virtual void processWillShutDown(IPC::Connection&) = 0;
+    void outgoingMessageQueueIsGrowingLarge();
 
     void populateOverrideLanguagesLaunchOptions(ProcessLauncher::LaunchOptions&) const;
     Vector<String> platformOverrideLanguages() const;
@@ -215,9 +216,12 @@ private:
     WebCore::ProcessIdentifier m_processIdentifier { WebCore::ProcessIdentifier::generate() };
     std::optional<UseLazyStop> m_delayedResponsivenessCheck;
     MonotonicTime m_processStart;
-#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+#if USE(RUNNINGBOARD)
+    ProcessThrottler::TimedActivity m_timedActivityForIPC;
+#if PLATFORM(MAC)
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_lifetimeActivity;
     RefPtr<ProcessAssertion> m_boostedJetsamAssertion;
+#endif
 #endif
 };
 

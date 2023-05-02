@@ -49,6 +49,9 @@ namespace WebKit {
 AuxiliaryProcessProxy::AuxiliaryProcessProxy(bool alwaysRunsAtBackgroundPriority, Seconds responsivenessTimeout)
     : m_responsivenessTimer(*this, responsivenessTimeout)
     , m_alwaysRunsAtBackgroundPriority(alwaysRunsAtBackgroundPriority)
+#if USE(RUNNINGBOARD)
+    , m_timedActivityForIPC(3_s)
+#endif
 {
 }
 
@@ -300,6 +303,12 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection
 
     connectionWillOpen(*m_connection);
     m_connection->open(*this);
+    m_connection->setOutgoingMessageQueueIsGrowingLargeCallback([weakThis = WeakPtr { *this }] {
+        ensureOnMainRunLoop([weakThis] {
+            if (weakThis)
+                weakThis->outgoingMessageQueueIsGrowingLarge();
+        });
+    });
 
     for (auto&& pendingMessage : std::exchange(m_pendingMessages, { })) {
         if (!shouldSendPendingMessage(pendingMessage))
@@ -309,6 +318,15 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection
         else
             m_connection->sendMessage(WTFMove(pendingMessage.encoder), pendingMessage.sendOptions);
     }
+}
+
+void AuxiliaryProcessProxy::outgoingMessageQueueIsGrowingLarge()
+{
+#if USE(RUNNINGBOARD)
+    // If we keep trying to send IPC to a suspended process, the outgoing message queue may grow large and result
+    // in increased memory usage. To avoid this, we wake up the process for a bit so we can drain the messages.
+    m_timedActivityForIPC = throttler().backgroundActivity("IPC sending due to large outgoing queue"_s);
+#endif
 }
 
 void AuxiliaryProcessProxy::replyToPendingMessages()

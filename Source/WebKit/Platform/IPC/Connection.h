@@ -265,6 +265,9 @@ public:
     typedef void (*DidCloseOnConnectionWorkQueueCallback)(Connection*);
     void setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback);
 
+    using OutgoingMessageQueueIsGrowingLargeCallback = Function<void()>;
+    void setOutgoingMessageQueueIsGrowingLargeCallback(OutgoingMessageQueueIsGrowingLargeCallback&&);
+
     // Adds a message receive queue. The client should make sure the instance is removed before it goes
     // out of scope.
     // std::nullopt ReceiverMatchSpec matches all receivers.
@@ -465,6 +468,8 @@ private:
     bool m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage { false };
     bool m_shouldExitOnSyncMessageSendFailure { false };
     DidCloseOnConnectionWorkQueueCallback m_didCloseOnConnectionWorkQueueCallback { nullptr };
+    OutgoingMessageQueueIsGrowingLargeCallback m_outgoingMessageQueueIsGrowingLargeCallback;
+    MonotonicTime m_lastOutgoingMessageQueueIsGrowingLargeCallbackCallTime WTF_GUARDED_BY_LOCK(m_outgoingMessagesLock);
 
     Ref<WorkQueue> m_connectionQueue;
     bool m_isConnected { false };
