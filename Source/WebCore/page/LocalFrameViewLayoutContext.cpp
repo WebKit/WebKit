@@ -78,7 +78,7 @@ void LocalFrameViewLayoutContext::layoutUsingFormattingContext()
             descendant.clearNeedsLayout();
         renderView.clearNeedsLayout();
     }
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree(*m_layoutState, renderView);
 #endif
 }

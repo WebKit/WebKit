@@ -666,7 +666,7 @@ public:
         iterator(const FlattenedConstraint* constraint, size_t index)
             : m_constraint(constraint)
             , m_index(index)
-#ifndef NDEBUG
+#if ASSERT_ENABLED
             , m_generation(constraint->m_generation)
 #endif
         {
@@ -679,7 +679,7 @@ public:
 
         iterator& operator++()
         {
-#ifndef NDEBUG
+#if ASSERT_ENABLED
             ASSERT(m_generation == m_constraint->m_generation);
 #endif
             m_index++;
@@ -692,7 +692,7 @@ public:
     private:
         const FlattenedConstraint* m_constraint { nullptr };
         size_t m_index { 0 };
-#ifndef NDEBUG
+#if ASSERT_ENABLED
         int m_generation { 0 };
 #endif
     };

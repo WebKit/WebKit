@@ -2701,7 +2701,7 @@ KeyframeEffect::CanBeAcceleratedMutationScope::~CanBeAcceleratedMutationScope()
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 static bool acceleratedPropertyDidChange(AnimatableProperty property, const RenderStyle& previousStyle, const RenderStyle& currentStyle, const Settings& settings)
 {
-#if !defined(NDEBUG)
+#if ASSERT_ENABLED
     ASSERT(CSSPropertyAnimation::animationOfPropertyIsAccelerated(property, settings));
 #else
     UNUSED_PARAM(settings);
