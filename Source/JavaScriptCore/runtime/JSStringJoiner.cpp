@@ -44,6 +44,54 @@ static inline void appendStringToData(CharacterType*& data, StringView string)
 }
 
 template<typename CharacterType>
+static inline void appendStringToDataWithOneCharacterSeparatorRepeatedly(CharacterType*& data, UChar separatorCharacter, StringView string, unsigned count)
+{
+#if OS(DARWIN)
+    if constexpr (std::is_same_v<CharacterType, LChar>) {
+        ASSERT(string.is8Bit());
+        if (count > 4) {
+            switch (string.length() + 1) {
+            case 16: {
+                alignas(16) LChar pattern[16];
+                pattern[0] = separatorCharacter;
+                string.getCharacters8(pattern + 1);
+                size_t fillLength = count * 16;
+                memset_pattern16(data, pattern, fillLength);
+                data += fillLength;
+                return;
+            }
+            case 8: {
+                alignas(8) LChar pattern[8];
+                pattern[0] = separatorCharacter;
+                string.getCharacters8(pattern + 1);
+                size_t fillLength = count * 8;
+                memset_pattern8(data, pattern, fillLength);
+                data += fillLength;
+                return;
+            }
+            case 4: {
+                alignas(4) LChar pattern[4];
+                pattern[0] = separatorCharacter;
+                string.getCharacters8(pattern + 1);
+                size_t fillLength = count * 4;
+                memset_pattern4(data, pattern, fillLength);
+                data += fillLength;
+                return;
+            }
+            default:
+                break;
+            }
+        }
+    }
+#endif
+
+    while (count--) {
+        *data++ = separatorCharacter;
+        appendStringToData(data, string);
+    }
+}
+
+template<typename CharacterType>
 static inline String joinStrings(const JSStringJoiner::Entries& strings, StringView separator, unsigned joinedLength)
 {
     ASSERT(joinedLength);
@@ -72,18 +120,12 @@ static inline String joinStrings(const JSStringJoiner::Entries& strings, StringV
             const auto& entry = strings[0];
             unsigned count = entry.m_additional;
             appendStringToData(data, entry.m_view.view);
-            while (count--) {
-                *data++ = separatorCharacter;
-                appendStringToData(data, entry.m_view.view);
-            }
+            appendStringToDataWithOneCharacterSeparatorRepeatedly(data, separatorCharacter, entry.m_view.view, count);
         }
         for (unsigned i = 1; i < size; ++i) {
             const auto& entry = strings[i];
             unsigned count = entry.m_additional;
-            do {
-                *data++ = separatorCharacter;
-                appendStringToData(data, entry.m_view.view);
-            } while (count--);
+            appendStringToDataWithOneCharacterSeparatorRepeatedly(data, separatorCharacter, entry.m_view.view, count + 1);
         }
         break;
     }
