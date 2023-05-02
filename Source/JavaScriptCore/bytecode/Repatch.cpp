@@ -399,11 +399,24 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                 newCase = ModuleNamespaceAccessCase::create(vm, codeBlock, propertyName, jsCast<JSModuleNamespaceObject*>(baseCell), moduleNamespaceSlot->environment, ScopeOffset(moduleNamespaceSlot->scopeOffset));
         }
 
-        if ((kind == GetByKind::ById || kind == GetByKind::ByVal || kind == GetByKind::ByIdWithThis || kind == GetByKind::ByValWithThis) && !propertyName.isPrivateName() && baseCell->inherits<ProxyObject>()) {
-            propertyName.ensureIsCell(vm);
-            newCase = ProxyObjectAccessCase::create(vm, codeBlock, AccessCase::ProxyObjectLoad, propertyName);
+        if (!propertyName.isPrivateName() && baseCell->inherits<ProxyObject>()) {
+            switch (kind) {
+            case GetByKind::ById:
+            case GetByKind::ByIdWithThis: {
+                propertyName.ensureIsCell(vm);
+                newCase = ProxyObjectAccessCase::create(vm, codeBlock, AccessCase::ProxyObjectLoad, propertyName);
+                break;
+            }
+            case GetByKind::ByVal:
+            case GetByKind::ByValWithThis: {
+                newCase = ProxyObjectAccessCase::create(vm, codeBlock, AccessCase::IndexedProxyObjectLoad, nullptr);
+                break;
+            }
+            default:
+                break;
+            }
         }
-        
+
         if (!newCase) {
             if (!slot.isCacheable() && !slot.isUnset())
                 return GiveUpOnCache;
