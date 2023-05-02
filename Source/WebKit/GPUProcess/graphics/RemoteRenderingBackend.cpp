@@ -179,11 +179,6 @@ void RemoteRenderingBackend::didCreateImageBufferBackend(ImageBufferBackendHandl
     send(Messages::RemoteRenderingBackendProxy::DidCreateImageBufferBackend(WTFMove(handle), renderingResourceIdentifier.object()), m_renderingBackendIdentifier);
 }
 
-void RemoteRenderingBackend::didFlush(DisplayListRecorderFlushIdentifier flushIdentifier)
-{
-    send(Messages::RemoteRenderingBackendProxy::DidFlush(flushIdentifier));
-}
-
 void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingResourceIdentifier imageBufferResourceIdentifier)
 {
     // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
