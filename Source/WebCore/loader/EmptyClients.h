@@ -226,6 +226,6 @@ class EmptyChromeClient : public ChromeClient {
 };
 
 DiagnosticLoggingClient& emptyDiagnosticLoggingClient();
-WEBCORE_EXPORT PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID);
+WEBCORE_EXPORT PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier>, PAL::SessionID);
 
 }

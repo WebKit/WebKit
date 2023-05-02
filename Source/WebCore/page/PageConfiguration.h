@@ -27,6 +27,7 @@
 
 #include "ContentSecurityPolicy.h"
 #include "FrameIdentifier.h"
+#include "PageIdentifier.h"
 #include "ShouldRelaxThirdPartyCookieBlocking.h"
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
@@ -94,6 +95,7 @@ public:
     };
 
     WEBCORE_EXPORT PageConfiguration(
+        std::optional<PageIdentifier>,
         PAL::SessionID,
         UniqueRef<EditorClient>&&,
         Ref<SocketProvider>&&,
@@ -122,6 +124,7 @@ public:
     WEBCORE_EXPORT ~PageConfiguration();
     PageConfiguration(PageConfiguration&&);
 
+    std::optional<PageIdentifier> identifier;
     PAL::SessionID sessionID;
     std::unique_ptr<AlternativeTextClient> alternativeTextClient;
     UniqueRef<ChromeClient> chromeClient;

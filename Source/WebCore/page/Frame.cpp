@@ -54,6 +54,13 @@ Frame::~Frame()
     m_windowProxy->detachFromFrame();
 }
 
+std::optional<PageIdentifier> Frame::pageID() const
+{
+    if (auto* page = this->page())
+        return page->identifier();
+    return std::nullopt;
+}
+
 bool Frame::isRootFrame() const
 {
     // A root frame is a local frame with a remote frame parent or no parent.

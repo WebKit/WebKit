@@ -98,8 +98,7 @@ void WebSharedWorkerContextManagerConnection::updatePreferencesStore(const WebPr
 void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::ClientOrigin&& origin, WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, WebCore::WorkerOptions&& workerOptions, WebCore::WorkerFetchResult&& workerFetchResult, WebCore::WorkerInitializationData&& initializationData)
 {
     RELEASE_LOG(SharedWorker, "WebSharedWorkerContextManagerConnection::launchSharedWorker: sharedWorkerIdentifier=%" PRIu64, sharedWorkerIdentifier.toUInt64());
-    auto pageConfiguration = WebCore::pageConfigurationWithEmptyClients(WebProcess::singleton().sessionID());
-
+    auto pageConfiguration = WebCore::pageConfigurationWithEmptyClients(m_pageID, WebProcess::singleton().sessionID());
     pageConfiguration.badgeClient = WebBadgeClient::create();
     pageConfiguration.databaseProvider = WebDatabaseProvider::getOrCreate(m_pageGroupID);
     pageConfiguration.socketProvider = WebSocketProvider::create(m_webPageProxyID);

@@ -278,7 +278,8 @@ static Ref<Frame> createMainFrame(Page& page, std::variant<UniqueRef<FrameLoader
 }
 
 Page::Page(PageConfiguration&& pageConfiguration)
-    : m_chrome(makeUniqueRef<Chrome>(*this, WTFMove(pageConfiguration.chromeClient)))
+    : m_identifier(pageConfiguration.identifier)
+    , m_chrome(makeUniqueRef<Chrome>(*this, WTFMove(pageConfiguration.chromeClient)))
     , m_dragCaretController(makeUniqueRef<DragCaretController>())
 #if ENABLE(DRAG_SUPPORT)
     , m_dragController(makeUniqueRef<DragController>(*this, WTFMove(pageConfiguration.dragClient)))
@@ -2554,10 +2555,8 @@ void Page::suspendAllMediaPlayback()
 MediaSessionGroupIdentifier Page::mediaSessionGroupIdentifier() const
 {
     if (!m_mediaSessionGroupIdentifier) {
-        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get())) {
-            if (auto identifier = localMainFrame->loader().pageID())
-                m_mediaSessionGroupIdentifier = ObjectIdentifier<MediaSessionGroupIdentifierType>(identifier->toUInt64());
-        }
+        if (auto identifier = this->identifier())
+            m_mediaSessionGroupIdentifier = ObjectIdentifier<MediaSessionGroupIdentifierType>(identifier->toUInt64());
     }
     return m_mediaSessionGroupIdentifier;
 }

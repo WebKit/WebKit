@@ -718,11 +718,6 @@ void LocalFrame::injectUserScriptsAwaitingNotification()
         injectUserScriptImmediately(world, script.get());
 }
 
-std::optional<PageIdentifier> LocalFrame::pageID() const
-{
-    return loader().pageID();
-}
-
 RenderView* LocalFrame::contentRenderer() const
 {
     return document() ? document()->renderView() : nullptr;

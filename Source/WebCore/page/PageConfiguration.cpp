@@ -72,6 +72,7 @@
 namespace WebCore {
 
 PageConfiguration::PageConfiguration(
+    std::optional<PageIdentifier> identifier,
     PAL::SessionID sessionID,
     UniqueRef<EditorClient>&& editorClient,
     Ref<SocketProvider>&& socketProvider,
@@ -96,7 +97,8 @@ PageConfiguration::PageConfiguration(
     UniqueRef<PaymentCoordinatorClient>&& paymentCoordinatorClient,
 #endif
     UniqueRef<ChromeClient>&& chromeClient)
-    : sessionID(sessionID)
+    : identifier(identifier)
+    , sessionID(sessionID)
     , chromeClient(WTFMove(chromeClient))
 #if ENABLE(CONTEXT_MENUS)
     , contextMenuClient(WTFMove(contextMenuClient))

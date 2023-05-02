@@ -641,11 +641,6 @@ RefPtr<Widget> EmptyFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInEl
     return nullptr;
 }
 
-std::optional<PageIdentifier> EmptyFrameLoaderClient::pageID() const
-{
-    return std::nullopt;
-}
-
 bool EmptyFrameLoaderClient::hasWebView() const
 {
     return true; // mainly for assertions
@@ -1189,9 +1184,10 @@ public:
     RefPtr<ThreadableWebSocketChannel> createWebSocketChannel(Document&, WebSocketChannelClient&) final { return nullptr; }
 };
 
-PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
+PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier> identifier, PAL::SessionID sessionID)
 {
     PageConfiguration pageConfiguration {
+        identifier,
         sessionID,
         makeUniqueRef<EmptyEditorClient>(),
         adoptRef(*new EmptySocketProvider),

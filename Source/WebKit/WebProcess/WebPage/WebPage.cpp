@@ -632,6 +632,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         remoteProcessIdentifier = parameters.subframeProcessFrameTreeCreationParameters->remoteProcessIdentifier;
 
     PageConfiguration pageConfiguration(
+        pageID,
         WebProcess::singleton().sessionID(),
         makeUniqueRef<WebEditorClient>(this),
         WebSocketProvider::create(parameters.webPageProxyIdentifier),
@@ -643,7 +644,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         makeUniqueRef<WebProgressTrackerClient>(*this),
         clientForMainFrame(m_mainFrame.copyRef(), remoteProcessIdentifier),
         parameters.subframeProcessFrameTreeCreationParameters ? parameters.subframeProcessFrameTreeCreationParameters->frameID : WebCore::FrameIdentifier::generate(),
-        makeUniqueRef<WebSpeechRecognitionProvider>(m_identifier),
+        makeUniqueRef<WebSpeechRecognitionProvider>(pageID),
         makeUniqueRef<MediaRecorderProvider>(*this),
         WebProcess::singleton().broadcastChannelRegistry(),
         makeUniqueRef<WebStorageProvider>(),

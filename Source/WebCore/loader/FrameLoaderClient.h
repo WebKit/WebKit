@@ -32,7 +32,6 @@
 #include "FrameLoaderTypes.h"
 #include "LayoutMilestone.h"
 #include "LinkIcon.h"
-#include "PageIdentifier.h"
 #include "RegistrableDomain.h"
 #include "ResourceLoaderIdentifier.h"
 #include <wtf/Expected.h>
@@ -123,8 +122,6 @@ public:
     virtual bool hasWebView() const = 0; // mainly for assertions
 
     virtual void makeRepresentation(DocumentLoader*) = 0;
-
-    virtual std::optional<PageIdentifier> pageID() const = 0;
 
 #if PLATFORM(IOS_FAMILY)
     // Returns true if the client forced the layout.

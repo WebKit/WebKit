@@ -30,7 +30,6 @@
 #include "AdjustViewSizeOrNot.h"
 #include "Document.h"
 #include "Frame.h"
-#include "PageIdentifier.h"
 #include "ScrollTypes.h"
 #include "UserScriptTypes.h"
 #include <wtf/HashSet.h>
@@ -154,8 +153,6 @@ public:
     ScriptController& script() { return m_script; }
     const ScriptController& script() const { return m_script; }
     void resetScript();
-
-    WEBCORE_EXPORT std::optional<PageIdentifier> pageID() const;
 
     WEBCORE_EXPORT RenderView* contentRenderer() const; // Root of the render tree for the document contained in this frame.
     WEBCORE_EXPORT RenderWidget* ownerRenderer() const; // Renderer for the element that contains this frame.

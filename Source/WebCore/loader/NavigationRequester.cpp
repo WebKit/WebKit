@@ -40,7 +40,7 @@ static std::optional<GlobalFrameIdentifier> createGlobalFrameIdentifier(const Do
     if (!frame)
         return std::nullopt;
 
-    auto pageID = frame->loader().pageID();
+    auto pageID = document.pageID();
     if (!pageID)
         return std::nullopt;
 

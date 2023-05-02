@@ -198,11 +198,6 @@ WebFrameLoaderClient::WebFrameLoaderClient(WebFrame *webFrame)
 {
 }
 
-std::optional<WebCore::PageIdentifier> WebFrameLoaderClient::pageID() const
-{
-    return std::nullopt;
-}
-
 WebFrameLoaderClient::~WebFrameLoaderClient()
 {
     [m_webFrame.get() _clearCoreFrame];

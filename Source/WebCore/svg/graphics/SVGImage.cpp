@@ -462,7 +462,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
         return EncodedDataStatus::Complete;
 
     if (allDataReceived) {
-        auto pageConfiguration = pageConfigurationWithEmptyClients(PAL::SessionID::defaultSessionID());
+        auto pageConfiguration = pageConfigurationWithEmptyClients(std::nullopt, PAL::SessionID::defaultSessionID());
         pageConfiguration.chromeClient = makeUniqueRef<SVGImageChromeClient>(this);
 
         // FIXME: If this SVG ends up loading itself, we might leak the world.

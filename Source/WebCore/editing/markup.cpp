@@ -183,7 +183,7 @@ void removeSubresourceURLAttributes(Ref<DocumentFragment>&& fragment, Function<b
 
 std::unique_ptr<Page> createPageForSanitizingWebContent()
 {
-    auto pageConfiguration = pageConfigurationWithEmptyClients(PAL::SessionID::defaultSessionID());
+    auto pageConfiguration = pageConfigurationWithEmptyClients(std::nullopt, PAL::SessionID::defaultSessionID());
     
     auto page = makeUnique<Page>(WTFMove(pageConfiguration));
 #if ENABLE(VIDEO)

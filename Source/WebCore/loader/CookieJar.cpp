@@ -79,12 +79,10 @@ String CookieJar::cookies(Document& document, const URL& url) const
 
     auto includeSecureCookies = shouldIncludeSecureCookies(document, url);
 
+    auto pageID = document.pageID();
     std::optional<FrameIdentifier> frameID;
-    std::optional<PageIdentifier> pageID;
-    if (auto* frame = document.frame()) {
+    if (auto* frame = document.frame())
         frameID = frame->loader().frameID();
-        pageID = frame->loader().pageID();
-    }
 
     std::pair<String, bool> result;
     if (auto* session = m_storageSessionProvider->storageSession())
@@ -102,24 +100,20 @@ CookieRequestHeaderFieldProxy CookieJar::cookieRequestHeaderFieldProxy(const Doc
 {
     TraceScope scope(FetchCookiesStart, FetchCookiesEnd);
 
+    auto pageID = document.pageID();
     std::optional<FrameIdentifier> frameID;
-    std::optional<PageIdentifier> pageID;
-    if (auto* frame = document.frame()) {
+    if (auto* frame = document.frame())
         frameID = frame->loader().frameID();
-        pageID = frame->loader().pageID();
-    }
 
     return { document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldIncludeSecureCookies(document, url) };
 }
 
 void CookieJar::setCookies(Document& document, const URL& url, const String& cookieString)
 {
+    auto pageID = document.pageID();
     std::optional<FrameIdentifier> frameID;
-    std::optional<PageIdentifier> pageID;
-    if (auto* frame = document.frame()) {
+    if (auto* frame = document.frame())
         frameID = frame->loader().frameID();
-        pageID = frame->loader().pageID();
-    }
 
     if (auto* session = m_storageSessionProvider->storageSession())
         session->setCookiesFromDOM(document.firstPartyForCookies(), sameSiteInfo(document, IsForDOMCookieAccess::Yes), url, frameID, pageID, ApplyTrackingPrevention::Yes, cookieString, shouldRelaxThirdPartyCookieBlocking(document));
@@ -149,12 +143,10 @@ std::pair<String, SecureCookiesAccessed> CookieJar::cookieRequestHeaderFieldValu
 
 String CookieJar::cookieRequestHeaderFieldValue(Document& document, const URL& url) const
 {
+    auto pageID = document.pageID();
     std::optional<FrameIdentifier> frameID;
-    std::optional<PageIdentifier> pageID;
-    if (auto* frame = document.frame()) {
+    if (auto* frame = document.frame())
         frameID = frame->loader().frameID();
-        pageID = frame->loader().pageID();
-    }
 
     auto result = cookieRequestHeaderFieldValue(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldIncludeSecureCookies(document, url));
     if (result.second == SecureCookiesAccessed::Yes)
@@ -164,12 +156,10 @@ String CookieJar::cookieRequestHeaderFieldValue(Document& document, const URL& u
 
 bool CookieJar::getRawCookies(const Document& document, const URL& url, Vector<Cookie>& cookies) const
 {
+    auto pageID = document.pageID();
     std::optional<FrameIdentifier> frameID;
-    std::optional<PageIdentifier> pageID;
-    if (auto* frame = document.frame()) {
+    if (auto* frame = document.frame())
         frameID = frame->loader().frameID();
-        pageID = frame->loader().pageID();
-    }
 
     if (auto* session = m_storageSessionProvider->storageSession())
         return session->getRawCookies(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, ApplyTrackingPrevention::Yes, shouldRelaxThirdPartyCookieBlocking(document), cookies);

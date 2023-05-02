@@ -218,7 +218,6 @@ public:
     const FrameLoaderClient& client() const { return m_client.get(); }
     FrameLoaderClient& client() { return m_client.get(); }
 
-    WEBCORE_EXPORT std::optional<PageIdentifier> pageID() const;
     WEBCORE_EXPORT FrameIdentifier frameID() const;
 
     void setDefersLoading(bool);
@@ -340,6 +339,7 @@ private:
         MayNotAttemptCacheOnlyLoadForFormSubmissionItem
     };
 
+    std::optional<PageIdentifier> pageID() const;
     void executeJavaScriptURL(const URL&, const NavigationAction&);
 
     bool allChildrenAreComplete() const; // immediate children, not all descendants

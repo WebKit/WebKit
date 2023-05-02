@@ -188,7 +188,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
         trackingParameters.webPageProxyID = valueOrDefault(webFrameLoaderClient->webPageProxyID());
     else if (is<RemoteWorkerFrameLoaderClient>(frameLoaderClient))
         trackingParameters.webPageProxyID = downcast<RemoteWorkerFrameLoaderClient>(frameLoaderClient).webPageProxyID();
-    trackingParameters.pageID = valueOrDefault(frameLoaderClient.pageID());
+    trackingParameters.pageID = valueOrDefault(frameLoader->frame().pageID());
     trackingParameters.frameID = frameLoader->frameID();
     trackingParameters.resourceID = identifier;
 

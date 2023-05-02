@@ -199,6 +199,7 @@
 #import <WebCore/NotificationController.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageConfiguration.h>
+#import <WebCore/PageIdentifier.h>
 #import <WebCore/PathUtilities.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/PlatformScreen.h>
@@ -1499,6 +1500,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
     auto storageProvider = PageStorageSessionProvider::create();
     WebCore::PageConfiguration pageConfiguration(
+        WebCore::PageIdentifier::generate(),
         [[self preferences] privateBrowsingEnabled] ? PAL::SessionID::legacyPrivateSessionID() : PAL::SessionID::defaultSessionID(),
         makeUniqueRef<WebEditorClient>(self),
         LegacySocketProvider::create(),
@@ -1762,6 +1764,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
     auto storageProvider = PageStorageSessionProvider::create();
     WebCore::PageConfiguration pageConfiguration(
+        WebCore::PageIdentifier::generate(),
         [[self preferences] privateBrowsingEnabled] ? PAL::SessionID::legacyPrivateSessionID() : PAL::SessionID::defaultSessionID(),
         makeUniqueRef<WebEditorClient>(self),
         LegacySocketProvider::create(),

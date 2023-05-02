@@ -33,7 +33,6 @@ namespace WebKit {
 
 RemoteWorkerFrameLoaderClient::RemoteWorkerFrameLoaderClient(WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, const String& userAgent)
     : m_webPageProxyID(webPageProxyID)
-    , m_pageID(pageID)
     , m_userAgent(userAgent)
 {
     RELEASE_LOG(Worker, "RemoteWorkerFrameLoaderClient::RemoteWorkerFrameLoaderClient webPageProxyID %" PRIu64 ", pageID %" PRIu64, webPageProxyID.toUInt64(), pageID.toUInt64());

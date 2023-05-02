@@ -288,6 +288,9 @@ public:
     WEBCORE_EXPORT explicit Page(PageConfiguration&&);
     WEBCORE_EXPORT ~Page();
 
+    // Utility pages (e.g. SVG image pages) don't have an identifier currently.
+    std::optional<PageIdentifier> identifier() const { return m_identifier; }
+
     WEBCORE_EXPORT uint64_t renderTreeSize() const;
 
     WEBCORE_EXPORT void setNeedsRecalcStyleInAllFrames();
@@ -1091,6 +1094,7 @@ private:
     void updateElementsWithTextRecognitionResults();
 #endif
 
+    std::optional<PageIdentifier> m_identifier;
     UniqueRef<Chrome> m_chrome;
     UniqueRef<DragCaretController> m_dragCaretController;
 

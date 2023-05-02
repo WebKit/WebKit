@@ -400,7 +400,7 @@ void FrameLoader::initForSynthesizedDocument(const URL&)
 
 std::optional<PageIdentifier> FrameLoader::pageID() const
 {
-    return client().pageID();
+    return m_frame.page() ? m_frame.page()->identifier() : std::nullopt;
 }
 
 FrameIdentifier FrameLoader::frameID() const

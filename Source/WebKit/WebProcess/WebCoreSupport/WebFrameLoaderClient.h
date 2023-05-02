@@ -52,7 +52,6 @@ public:
     void applyToDocumentLoader(WebsitePoliciesData&&);
 
     std::optional<WebPageProxyIdentifier> webPageProxyID() const;
-    std::optional<WebCore::PageIdentifier> pageID() const final;
 
 #if ENABLE(TRACKING_PREVENTION)
     bool hasFrameSpecificStorageAccess() final { return !!m_frameSpecificStorageAccessIdentifier; }
