@@ -14,7 +14,7 @@ html, body {
 
 #scroller {
     width: 100%;
-    height: 75%;
+    height: 400px;
     overflow: scroll;
     border: 4px solid black;
     box-sizing: border-box;
@@ -28,7 +28,7 @@ html, body {
     background: linear-gradient(to bottom, red 0%, green 50%, blue 100%);
 }
 </style>
-<body onload="runTest()">
+<body>
     <div id="scroller">
         <div id="content"></div>
     </div>
@@ -38,40 +38,27 @@ html, body {
 <script>
 jsTestIsAsync = true;
 
-let reachedMinimumScrollPosition = false;
-const minimumExpectedScrollTop = 500;
+const minimumExpectedScrollTop = 600;
 const scroller = document.getElementById("scroller");
 
-scroller.addEventListener("scroll", observeScrollEvent);
 scroller.addEventListener("click", () => testFailed("Observed unexpected click event."), { once: true });
 
-function noteTestProgress() {
-    if (!window.progress)
-        progress = 0;
-    if (++progress == 2)
-        finishJSTest();
-}
-
-async function observeScrollEvent() {
-    if (!window.testRunner || scroller.scrollTop < minimumExpectedScrollTop || reachedMinimumScrollPosition)
-        return;
-
-    reachedMinimumScrollPosition = true;
-    testPassed(`scroller.scrollTop passed ${minimumExpectedScrollTop}`);
-    removeEventListener("scroll", observeScrollEvent);
-    await UIHelper.activateAt(160, 250);
-    noteTestProgress();
-}
-
-async function runTest()
-{
+addEventListener("load", async () => {
     description("Verifies that tapping a subscrollable region during momentum scrolling does not dispatch click events. To run the test manually, swipe up on the black box to scroll it; while scrolling, tap the scrollable area to interrupt scrolling. The scrollable area should not observe any click events.");
 
     if (!window.testRunner)
         return;
 
-    await UIHelper.dragFromPointToPoint(160, 250, 160, 50, 0.1);
-    noteTestProgress();
-}
+    await UIHelper.dragFromPointToPoint(160, 350, 160, 0, 0.1);
+    await shouldBecomeEqual("scroller.scrollTop > minimumExpectedScrollTop", "true");
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(160, 350)
+        .wait(0.1)
+        .end()
+        .takeResult());
+
+    await UIHelper.ensureStablePresentationUpdate();
+    finishJSTest();
+});
 </script>
 </html>

@@ -3,7 +3,7 @@ Verifies that tapping a subscrollable region during momentum scrolling does not 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS scroller.scrollTop passed 500
+PASS scroller.scrollTop > minimumExpectedScrollTop became true
 PASS successfullyParsed is true
 
 TEST COMPLETE
