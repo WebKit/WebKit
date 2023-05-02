@@ -2092,11 +2092,13 @@ bool RenderLayerBacking::updateAncestorClipping(bool needsAncestorClip, const Re
             layersChanged = true;
         }
     } else if (m_ancestorClippingStack) {
-        removeClippingStackLayers(*m_ancestorClippingStack);
+        auto* scrollingCoordinator = m_owningLayer.page().scrollingCoordinator();
+
+        m_ancestorClippingStack->clear(scrollingCoordinator);
         m_ancestorClippingStack = nullptr;
         
         if (m_overflowControlsHostLayerAncestorClippingStack) {
-            removeClippingStackLayers(*m_overflowControlsHostLayerAncestorClippingStack);
+            m_overflowControlsHostLayerAncestorClippingStack->clear(scrollingCoordinator);
             m_overflowControlsHostLayerAncestorClippingStack = nullptr;
         }
         
