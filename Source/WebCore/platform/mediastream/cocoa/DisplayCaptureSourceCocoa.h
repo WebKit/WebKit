@@ -88,7 +88,7 @@ public:
         const void* logIdentifier() const final { return m_logIdentifier; }
         WTFLogChannel& logChannel() const final;
 
-        void setObserver(CapturerObserver*);
+        void setObserver(CapturerObserver&);
 
     protected:
         Capturer() = default;

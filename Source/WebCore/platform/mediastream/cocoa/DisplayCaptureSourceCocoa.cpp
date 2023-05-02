@@ -113,7 +113,7 @@ DisplayCaptureSourceCocoa::DisplayCaptureSourceCocoa(UniqueRef<Capturer>&& captu
     , m_timer(RunLoop::current(), this, &DisplayCaptureSourceCocoa::emitFrame)
     , m_userActivity("App nap disabled for screen capture"_s)
 {
-    m_capturer->setObserver(this);
+    m_capturer->setObserver(*this);
 }
 
 DisplayCaptureSourceCocoa::~DisplayCaptureSourceCocoa()
@@ -334,7 +334,7 @@ WTFLogChannel& DisplayCaptureSourceCocoa::Capturer::logChannel() const
     return LogWebRTC;
 }
 
-void DisplayCaptureSourceCocoa::Capturer::setObserver(CapturerObserver* observer)
+void DisplayCaptureSourceCocoa::Capturer::setObserver(CapturerObserver& observer)
 {
     m_observer = WeakPtr { observer };
 }
