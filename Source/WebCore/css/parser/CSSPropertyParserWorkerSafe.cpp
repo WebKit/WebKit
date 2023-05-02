@@ -207,6 +207,21 @@ RefPtr<CSSPrimitiveValue> CSSPropertyParserWorkerSafe::parseFontFaceDisplay(cons
     return parsedValue;
 }
 
+RefPtr<CSSValue> CSSPropertyParserWorkerSafe::parseFontFaceSizeAdjust(const String& string, ScriptExecutionContext& context)
+{
+    CSSParserContext parserContext(parserMode(context));
+    CSSParserImpl parser(parserContext, string);
+    CSSParserTokenRange range = parser.tokenizer()->tokenRange();
+    range.consumeWhitespace();
+    if (range.atEnd())
+        return nullptr;
+    auto parsedValue = CSSPropertyParserHelpers::consumePercent(range, ValueRange::NonNegative);
+    if (!parsedValue || !range.atEnd())
+        return nullptr;
+
+    return parsedValue;
+}
+
 namespace CSSPropertyParserHelpersWorkerSafe {
 
 static RefPtr<CSSFontFaceSrcResourceValue> consumeFontFaceSrcURI(CSSParserTokenRange& range, const CSSParserContext& context)

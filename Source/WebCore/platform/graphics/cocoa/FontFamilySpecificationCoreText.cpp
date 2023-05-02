@@ -61,7 +61,7 @@ FontRanges FontFamilySpecificationCoreText::fontRanges(const FontDescription& fo
         return makeUnique<FontPlatformData>(font.get(), size, false, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
     });
 
-    originalPlatformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust());
+    originalPlatformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.computedSize());
     return FontRanges(FontCache::forCurrentThread().fontForPlatformData(originalPlatformData));
 }
 

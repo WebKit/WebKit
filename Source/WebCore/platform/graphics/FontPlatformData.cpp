@@ -87,13 +87,13 @@ void FontPlatformData::updateSize(float size)
 }
 #endif
 
-void FontPlatformData::updateSizeWithFontSizeAdjust(const FontSizeAdjust& fontSizeAdjust)
+void FontPlatformData::updateSizeWithFontSizeAdjust(const FontSizeAdjust& fontSizeAdjust, float computedSize)
 {
     if (!fontSizeAdjust.value)
         return;
 
     auto tmpFont = FontCache::forCurrentThread().fontForPlatformData(*this);
-    auto adjustedFontSize = Style::adjustedFontSize(size(), fontSizeAdjust, tmpFont->fontMetrics());
+    auto adjustedFontSize = Style::adjustedFontSize(computedSize, fontSizeAdjust, tmpFont->fontMetrics());
 
     if (adjustedFontSize == size())
         return;

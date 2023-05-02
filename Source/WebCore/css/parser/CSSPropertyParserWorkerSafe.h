@@ -52,6 +52,7 @@ public:
     static RefPtr<CSSValueList> parseFontFaceUnicodeRange(const String&, ScriptExecutionContext&);
     static RefPtr<CSSValue> parseFontFaceFeatureSettings(const String&, ScriptExecutionContext&);
     static RefPtr<CSSPrimitiveValue> parseFontFaceDisplay(const String&, ScriptExecutionContext&);
+    static RefPtr<CSSValue> parseFontFaceSizeAdjust(const String&, ScriptExecutionContext&);
 };
 
 namespace CSSPropertyParserHelpersWorkerSafe {

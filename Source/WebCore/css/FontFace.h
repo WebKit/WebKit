@@ -52,6 +52,7 @@ public:
         String unicodeRange;
         String featureSettings;
         String display;
+        String sizeAdjust;
     };
     
     using Source = std::variant<String, RefPtr<JSC::ArrayBuffer>, RefPtr<JSC::ArrayBufferView>>;
@@ -66,6 +67,7 @@ public:
     ExceptionOr<void> setUnicodeRange(ScriptExecutionContext&, const String&);
     ExceptionOr<void> setFeatureSettings(ScriptExecutionContext&, const String&);
     ExceptionOr<void> setDisplay(ScriptExecutionContext&, const String&);
+    ExceptionOr<void> setSizeAdjust(ScriptExecutionContext&, const String&);
 
     String family() const;
     String style() const;
@@ -74,6 +76,7 @@ public:
     String unicodeRange() const;
     String featureSettings() const;
     String display() const;
+    String sizeAdjust() const;
 
     enum class LoadStatus { Unloaded, Loading, Loaded, Error };
     LoadStatus status() const;

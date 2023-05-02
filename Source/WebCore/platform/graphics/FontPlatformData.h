@@ -165,7 +165,7 @@ public:
     static FontPlatformData cloneWithSyntheticOblique(const FontPlatformData&, bool);
 
     static FontPlatformData cloneWithSize(const FontPlatformData&, float);
-    void updateSizeWithFontSizeAdjust(const FontSizeAdjust&);
+    void updateSizeWithFontSizeAdjust(const FontSizeAdjust&, float);
 
 #if PLATFORM(WIN)
     HFONT hfont() const { return m_font ? m_font->get() : 0; }

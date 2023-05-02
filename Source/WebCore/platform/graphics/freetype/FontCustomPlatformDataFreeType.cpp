@@ -94,10 +94,10 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     }
 #endif
 
-    auto size = description.computedPixelSize();
+    auto size = description.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
     FontPlatformData platformData(m_fontFace.get(), WTFMove(pattern), size, freeTypeFace->face_flags & FT_FACE_FLAG_FIXED_WIDTH, bold, italic, description.orientation());
 
-    platformData.updateSizeWithFontSizeAdjust(description.fontSizeAdjust());
+    platformData.updateSizeWithFontSizeAdjust(description.fontSizeAdjust(), description.computedPixelSize());
     return platformData;
 }
 

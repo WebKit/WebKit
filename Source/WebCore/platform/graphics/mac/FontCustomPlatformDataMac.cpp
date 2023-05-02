@@ -47,7 +47,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
         addAttributesForWebFonts(attributes, fontDescription.shouldAllowUserInstalledFonts());
     });
 
-    int size = fontDescription.computedPixelSize();
+    auto size = fontDescription.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
     FontOrientation orientation = fontDescription.orientation();
     FontWidthVariant widthVariant = fontDescription.widthVariant();
 
@@ -55,7 +55,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     ASSERT(font);
     FontPlatformData platformData(font.get(), size, bold, italic, orientation, widthVariant, fontDescription.textRenderingMode(), this);
 
-    platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust());
+    platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.computedPixelSize());
     return platformData;
 }
 

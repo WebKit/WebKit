@@ -673,7 +673,7 @@ static void autoActivateFont(const String& name, CGFloat size)
 
 std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext& fontCreationContext)
 {
-    float size = fontDescription.computedPixelSize();
+    auto size = fontDescription.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
     auto& fontDatabase = database(fontDescription.shouldAllowUserInstalledFonts());
     auto font = fontWithFamily(fontDatabase, family, fontDescription, fontCreationContext, size);
 
@@ -700,7 +700,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 
     FontPlatformData platformData(font.get(), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
 
-    platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust());
+    platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.computedPixelSize());
     return makeUnique<FontPlatformData>(platformData);
 }
 

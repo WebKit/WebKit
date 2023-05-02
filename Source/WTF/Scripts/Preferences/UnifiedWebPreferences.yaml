@@ -1027,17 +1027,17 @@ CSSCustomPropertiesAndValuesEnabled:
 
 CSSFontFaceSizeAdjustEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS @font-face size-adjust"
   humanReadableDescription: "Enable size-adjust descriptor in @font-face"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSGradientInterpolationColorSpacesEnabled:
   type: bool
