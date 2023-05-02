@@ -702,7 +702,7 @@ void TextBoxTrimmer::setTextBoxTrimForSubtree(const RenderBlockFlow* inlineForma
     if (textBoxTrim == TextBoxTrim::Normal) {
         if (m_flow.borderAndPaddingStart()) {
             // For block containers: trim the block-start side of the first formatted line to the corresponding
-            // text-edge metric of its root inline box. If there is no such line, or if there is intervening non-zero padding or borders,
+            // text-box-edge metric of its root inline box. If there is no such line, or if there is intervening non-zero padding or borders,
             // there is no effect.
             layoutState->resetTextBoxTrim();
         }

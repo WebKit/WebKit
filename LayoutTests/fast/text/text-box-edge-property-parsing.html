@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Test parsing of the CSS text-box-edge property.');
+
+function test(declaration) {
+    var div = document.createElement("div");
+    div.setAttribute("style", declaration);
+    return div.style.textBoxEdge;
+}
+
+shouldBeEqualToString('test("text-box-edge: leading")', "leading");
+
+shouldBeEqualToString('test("text-box-edge: text")', "text");
+shouldBeEqualToString('test("text-box-edge: cap")', "cap");
+shouldBeEqualToString('test("text-box-edge: ex")', "ex");
+shouldBeEqualToString('test("text-box-edge: ideographic")', "ideographic");
+shouldBeEqualToString('test("text-box-edge: ideographic-ink")', "ideographic-ink");
+shouldBeEqualToString('test("text-box-edge: alphabetic")', "");
+
+shouldBeEqualToString('test("text-box-edge: text text")', "text text");
+shouldBeEqualToString('test("text-box-edge: text alphabetic")', "text alphabetic");
+shouldBeEqualToString('test("text-box-edge: text ideographic")', "text ideographic");
+shouldBeEqualToString('test("text-box-edge: text ideographic-ink")', "text ideographic-ink");
+
+shouldBeEqualToString('test("text-box-edge: cap text")', "cap text");
+shouldBeEqualToString('test("text-box-edge: cap alphabetic")', "cap alphabetic");
+shouldBeEqualToString('test("text-box-edge: cap ideographic")', "cap ideographic");
+shouldBeEqualToString('test("text-box-edge: cap ideographic-ink")', "cap ideographic-ink");
+
+shouldBeEqualToString('test("text-box-edge: ex text")', "ex text");
+shouldBeEqualToString('test("text-box-edge: ex alphabetic")', "ex alphabetic");
+shouldBeEqualToString('test("text-box-edge: ex ideographic")', "ex ideographic");
+shouldBeEqualToString('test("text-box-edge: ex ideographic-ink")', "ex ideographic-ink");
+
+shouldBeEqualToString('test("text-box-edge: ideographic text")', "ideographic text");
+shouldBeEqualToString('test("text-box-edge: ideographic alphabetic")', "ideographic alphabetic");
+shouldBeEqualToString('test("text-box-edge: ideographic ideographic")', "ideographic ideographic");
+shouldBeEqualToString('test("text-box-edge: ideographic ideographic-ink")', "ideographic ideographic-ink");
+
+shouldBeEqualToString('test("text-box-edge: ideographic-ink text")', "ideographic-ink text");
+shouldBeEqualToString('test("text-box-edge: ideographic-ink alphabetic")', "ideographic-ink alphabetic");
+shouldBeEqualToString('test("text-box-edge: ideographic-ink ideographic")', "ideographic-ink ideographic");
+shouldBeEqualToString('test("text-box-edge: ideographic-ink ideographic-ink")', "ideographic-ink ideographic-ink");
+
+shouldBeEqualToString('test("text-box-edge: leading leading")', "");
+shouldBeEqualToString('test("text-box-edge: leading text")', "");
+shouldBeEqualToString('test("text-box-edge: leading cap")', "");
+shouldBeEqualToString('test("text-box-edge: leading ex")', "");
+shouldBeEqualToString('test("text-box-edge: leading ideographic")', "");
+shouldBeEqualToString('test("text-box-edge: leading ideographic-ink")', "");
+
+shouldBeEqualToString('test("text-box-edge: text leading")', "");
+shouldBeEqualToString('test("text-box-edge: cap leading")', "");
+shouldBeEqualToString('test("text-box-edge: ex leading")', "");
+shouldBeEqualToString('test("text-box-edge: ideographic leading")', "");
+shouldBeEqualToString('test("text-box-edge: ideographic-ink leading")', "");
+
+shouldBeEqualToString('test("text-box-edge: text cap")', "");
+shouldBeEqualToString('test("text-box-edge: text ex")', "");
+shouldBeEqualToString('test("text-box-edge: alphabetic")', "");
+shouldBeEqualToString('test("text-box-edge: alphabetic text")', "");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

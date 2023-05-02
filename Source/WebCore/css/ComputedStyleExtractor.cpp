@@ -1212,10 +1212,10 @@ static Ref<CSSValueList> valueForScrollSnapAlignment(const ScrollSnapAlign& alig
         createConvertingToCSSValueID(alignment.inlineAlign));
 }
 
-static Ref<CSSValueList> valueForTextEdge(const TextEdge& textEdge)
+static Ref<CSSValueList> valueForTextBoxEdge(const TextBoxEdge& textBoxEdge)
 {
-    return CSSValueList::createSpaceSeparated(createConvertingToCSSValueID(textEdge.over),
-        createConvertingToCSSValueID(textEdge.under));
+    return CSSValueList::createSpaceSeparated(createConvertingToCSSValueID(textBoxEdge.over),
+        createConvertingToCSSValueID(textBoxEdge.under));
 }
 
 static Ref<CSSValue> willChangePropertyValue(const WillChangeData* willChangeData)
@@ -4183,8 +4183,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return valueForScrollSnapType(style.scrollSnapType());
     case CSSPropertyOverflowAnchor:
         return createConvertingToCSSValueID(style.overflowAnchor());
-    case CSSPropertyTextEdge:
-        return valueForTextEdge(style.textEdge());
+    case CSSPropertyTextBoxEdge:
+        return valueForTextBoxEdge(style.textBoxEdge());
 
 #if ENABLE(APPLE_PAY)
     case CSSPropertyApplePayButtonStyle:

@@ -142,7 +142,7 @@ class TransformationMatrix;
 struct ScrollSnapAlign;
 struct ScrollSnapType;
 
-struct TextEdge;
+struct TextBoxEdge;
 
 namespace Style {
 class CustomPropertyRegistry;
@@ -429,7 +429,7 @@ public:
     TextJustify textJustify() const { return static_cast<TextJustify>(m_rareInheritedData->textJustify); }
 
     TextBoxTrim textBoxTrim() const { return static_cast<TextBoxTrim>(m_nonInheritedData->rareData->textBoxTrim); }
-    TextEdge textEdge() const;
+    TextBoxEdge textBoxEdge() const;
 
     OptionSet<MarginTrimType> marginTrim() const { return m_nonInheritedData->rareData->marginTrim; }
 
@@ -1116,7 +1116,7 @@ public:
     void setTextJustify(TextJustify v) { SET_VAR(m_rareInheritedData, textJustify, static_cast<unsigned>(v)); }
 
     void setTextBoxTrim(TextBoxTrim value) { SET_NESTED_VAR(m_nonInheritedData, rareData, textBoxTrim, static_cast<unsigned>(value)); }
-    void setTextEdge(TextEdge);
+    void setTextBoxEdge(TextBoxEdge);
 
     void setMarginTrim(OptionSet<MarginTrimType> value) { SET_NESTED_VAR(m_nonInheritedData, rareData, marginTrim, value); }
 
@@ -1740,7 +1740,7 @@ public:
     static Length initialPadding() { return Length(LengthType::Fixed); }
     static Length initialTextIndent() { return Length(LengthType::Fixed); }
     static TextBoxTrim initialTextBoxTrim() { return TextBoxTrim::Normal; }
-    static TextEdge initialTextEdge();
+    static TextBoxEdge initialTextBoxEdge();
     static Length initialZeroLength() { return Length(LengthType::Fixed); }
     static Length initialOneLength() { return Length(1, LengthType::Fixed); }
     static unsigned short initialWidows() { return 2; }

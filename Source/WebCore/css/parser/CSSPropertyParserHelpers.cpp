@@ -6668,7 +6668,7 @@ RefPtr<CSSValue> consumeScrollSnapType(CSSParserTokenRange& range)
     return CSSValueList::createSpaceSeparated(firstValue.releaseNonNull());
 }
 
-RefPtr<CSSValue> consumeTextEdge(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeTextBoxEdge(CSSParserTokenRange& range)
 {
     if (range.peek().id() == CSSValueLeading)
         return CSSValueList::createSpaceSeparated(consumeIdent(range).releaseNonNull());

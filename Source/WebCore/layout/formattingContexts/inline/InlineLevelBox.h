@@ -81,7 +81,7 @@ public:
     InlineLayoutUnit fontSize() const { return m_style.primaryFontSize; }
 
     // FIXME: Maybe it's time to subclass inline box types.
-    TextEdge textEdge() const { return m_style.textEdge; }
+    TextBoxEdge textBoxEdge() const { return m_style.textBoxEdge; }
     TextBoxTrim textBoxTrim() const { return m_style.textBoxTrim; }
     InlineLayoutUnit inlineBoxContentOffsetForTextBoxTrim() const { return m_inlineBoxContentOffsetForTextBoxTrim; }
 
@@ -161,7 +161,7 @@ private:
     struct Style {
         const FontMetrics& primaryFontMetrics;
         const Length& lineHeight;
-        TextEdge textEdge;
+        TextBoxEdge textBoxEdge;
         TextBoxTrim textBoxTrim;
         WTF::OptionSet<LineBoxContain> lineBoxContain;
         InlineLayoutUnit primaryFontSize { 0 };
@@ -182,7 +182,7 @@ inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& s
     , m_isFirstWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::First))
     , m_isLastWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::Last))
     , m_type(type)
-    , m_style({ style.fontCascade().metricsOfPrimaryFont(), style.lineHeight(), style.textEdge(), style.textBoxTrim(), style.lineBoxContain(), InlineLayoutUnit(style.fontCascade().fontDescription().computedPixelSize()), { } })
+    , m_style({ style.fontCascade().metricsOfPrimaryFont(), style.lineHeight(), style.textBoxEdge(), style.textBoxTrim(), style.lineBoxContain(), InlineLayoutUnit(style.fontCascade().fontDescription().computedPixelSize()), { } })
 {
     m_style.verticalAlignment.type = style.verticalAlign();
     if (m_style.verticalAlignment.type == VerticalAlign::Length)

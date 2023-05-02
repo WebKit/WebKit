@@ -2242,50 +2242,50 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
-constexpr CSSValueID toCSSValueID(TextEdgeType textEdgeType)
+constexpr CSSValueID toCSSValueID(TextBoxEdgeType textBoxEdgeType)
 {
-    switch (textEdgeType) {
-    case TextEdgeType::Leading:
+    switch (textBoxEdgeType) {
+    case TextBoxEdgeType::Leading:
         return CSSValueLeading;
-    case TextEdgeType::Text:
+    case TextBoxEdgeType::Text:
         return CSSValueText;
-    case TextEdgeType::CapHeight:
+    case TextBoxEdgeType::CapHeight:
         return CSSValueCap;
-    case TextEdgeType::ExHeight:
+    case TextBoxEdgeType::ExHeight:
         return CSSValueEx;
-    case TextEdgeType::Alphabetic:
+    case TextBoxEdgeType::Alphabetic:
         return CSSValueAlphabetic;
-    case TextEdgeType::CJKIdeographic:
+    case TextBoxEdgeType::CJKIdeographic:
         return CSSValueIdeographic;
-    case TextEdgeType::CJKIdeographicInk:
+    case TextBoxEdgeType::CJKIdeographicInk:
         return CSSValueIdeographicInk;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
     return CSSValueInvalid;
 }
 
-template<> constexpr TextEdgeType fromCSSValueID(CSSValueID valueID)
+template<> constexpr TextBoxEdgeType fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
     case CSSValueLeading:
-        return TextEdgeType::Leading;
+        return TextBoxEdgeType::Leading;
     case CSSValueText:
-        return TextEdgeType::Text;
+        return TextBoxEdgeType::Text;
     case CSSValueCap:
-        return TextEdgeType::CapHeight;
+        return TextBoxEdgeType::CapHeight;
     case CSSValueEx:
-        return TextEdgeType::ExHeight;
+        return TextBoxEdgeType::ExHeight;
     case CSSValueAlphabetic:
-        return TextEdgeType::Alphabetic;
+        return TextBoxEdgeType::Alphabetic;
     case CSSValueIdeographic:
-        return TextEdgeType::CJKIdeographic;
+        return TextBoxEdgeType::CJKIdeographic;
     case CSSValueIdeographicInk:
-        return TextEdgeType::CJKIdeographicInk;
+        return TextBoxEdgeType::CJKIdeographicInk;
     default:
         break;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return TextEdgeType::Leading;
+    return TextBoxEdgeType::Leading;
 }
 
 #if ENABLE(APPLE_PAY)

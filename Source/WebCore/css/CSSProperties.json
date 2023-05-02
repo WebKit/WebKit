@@ -678,7 +678,7 @@
                 "url": "https://www.w3.org/TR/css-fonts-4/#font-stretch-prop"
             }
         },
-        "text-edge": {
+        "text-box-edge": {
             "values": [
                 "leading",
                 "text",
@@ -689,9 +689,9 @@
                 "cap"
             ],
             "codegen-properties": {
-                "converter": "TextEdge",
+                "converter": "TextBoxEdge",
                 "settings-flag": "cssTextBoxTrimEnabled",
-                "parser-function": "consumeTextEdge",
+                "parser-function": "consumeTextBoxEdge",
                 "parser-grammar-unused": "leading | [ [ text | cap | ex | ideographic | ideographic-ink ] [ text | alphabetic | ideographic | ideographic-ink ]? ]",
                 "parser-grammar-unused-reason": "Needs support for 'groups' and 'optional'."
             },

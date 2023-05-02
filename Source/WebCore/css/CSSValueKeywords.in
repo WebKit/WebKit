@@ -1073,7 +1073,7 @@ no-punctuation
 antialiased
 subpixel-antialiased
 
-// text-edge
+// text-box-edge
 leading
 // text
 cap

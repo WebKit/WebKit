@@ -29,7 +29,7 @@
 #include "RenderStyleConstants.h"
 #include "StyleColor.h"
 #include "StyleCustomPropertyData.h"
-#include "StyleTextEdge.h"
+#include "StyleTextBoxEdge.h"
 #include "TabSize.h"
 #include "TextSpacing.h"
 #include "TextUnderlineOffset.h"
@@ -99,7 +99,7 @@ public:
 
     TextUnderlineOffset textUnderlineOffset;
 
-    TextEdge textEdge;
+    TextBoxEdge textBoxEdge;
     
     Length wordSpacing;
     float miterLimit;

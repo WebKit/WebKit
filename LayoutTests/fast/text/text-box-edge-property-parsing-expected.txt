@@ -1,0 +1,51 @@
+Test parsing of the CSS text-box-edge property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS test("text-box-edge: leading") is "leading"
+PASS test("text-box-edge: text") is "text"
+PASS test("text-box-edge: cap") is "cap"
+PASS test("text-box-edge: ex") is "ex"
+PASS test("text-box-edge: ideographic") is "ideographic"
+PASS test("text-box-edge: ideographic-ink") is "ideographic-ink"
+PASS test("text-box-edge: alphabetic") is ""
+PASS test("text-box-edge: text text") is "text text"
+PASS test("text-box-edge: text alphabetic") is "text alphabetic"
+PASS test("text-box-edge: text ideographic") is "text ideographic"
+PASS test("text-box-edge: text ideographic-ink") is "text ideographic-ink"
+PASS test("text-box-edge: cap text") is "cap text"
+PASS test("text-box-edge: cap alphabetic") is "cap alphabetic"
+PASS test("text-box-edge: cap ideographic") is "cap ideographic"
+PASS test("text-box-edge: cap ideographic-ink") is "cap ideographic-ink"
+PASS test("text-box-edge: ex text") is "ex text"
+PASS test("text-box-edge: ex alphabetic") is "ex alphabetic"
+PASS test("text-box-edge: ex ideographic") is "ex ideographic"
+PASS test("text-box-edge: ex ideographic-ink") is "ex ideographic-ink"
+PASS test("text-box-edge: ideographic text") is "ideographic text"
+PASS test("text-box-edge: ideographic alphabetic") is "ideographic alphabetic"
+PASS test("text-box-edge: ideographic ideographic") is "ideographic ideographic"
+PASS test("text-box-edge: ideographic ideographic-ink") is "ideographic ideographic-ink"
+PASS test("text-box-edge: ideographic-ink text") is "ideographic-ink text"
+PASS test("text-box-edge: ideographic-ink alphabetic") is "ideographic-ink alphabetic"
+PASS test("text-box-edge: ideographic-ink ideographic") is "ideographic-ink ideographic"
+PASS test("text-box-edge: ideographic-ink ideographic-ink") is "ideographic-ink ideographic-ink"
+PASS test("text-box-edge: leading leading") is ""
+PASS test("text-box-edge: leading text") is ""
+PASS test("text-box-edge: leading cap") is ""
+PASS test("text-box-edge: leading ex") is ""
+PASS test("text-box-edge: leading ideographic") is ""
+PASS test("text-box-edge: leading ideographic-ink") is ""
+PASS test("text-box-edge: text leading") is ""
+PASS test("text-box-edge: cap leading") is ""
+PASS test("text-box-edge: ex leading") is ""
+PASS test("text-box-edge: ideographic leading") is ""
+PASS test("text-box-edge: ideographic-ink leading") is ""
+PASS test("text-box-edge: text cap") is ""
+PASS test("text-box-edge: text ex") is ""
+PASS test("text-box-edge: alphabetic") is ""
+PASS test("text-box-edge: alphabetic text") is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

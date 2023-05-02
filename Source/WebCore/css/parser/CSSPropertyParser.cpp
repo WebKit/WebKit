@@ -1208,7 +1208,7 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
         return CSSValueStart;
     case CSSPropertyTextDecorationStyle:
         return CSSValueSolid;
-    case CSSPropertyTextEdge:
+    case CSSPropertyTextBoxEdge:
         return CSSValueLeading;
     case CSSPropertyTextOrientation:
         return CSSValueMixed;

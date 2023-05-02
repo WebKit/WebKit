@@ -50,7 +50,7 @@
 #include "StyleResolver.h"
 #include "StyleScrollSnapPoints.h"
 #include "StyleSelfAlignmentData.h"
-#include "StyleTextEdge.h"
+#include "StyleTextBoxEdge.h"
 #include "StyleTreeResolver.h"
 #include "WillChangeData.h"
 #include <wtf/MathExtras.h>
@@ -2881,19 +2881,19 @@ bool RenderStyle::hasSnapPosition() const
     return alignment.blockAlign != ScrollSnapAxisAlignType::None || alignment.inlineAlign != ScrollSnapAxisAlignType::None;
 }
 
-TextEdge RenderStyle::textEdge() const
+TextBoxEdge RenderStyle::textBoxEdge() const
 {
-    return m_rareInheritedData->textEdge;
+    return m_rareInheritedData->textBoxEdge;
 }
 
-void RenderStyle::setTextEdge(TextEdge textEdgeValue)
+void RenderStyle::setTextBoxEdge(TextBoxEdge textBoxEdgeValue)
 {
-    SET_VAR(m_rareInheritedData, textEdge, textEdgeValue);
+    SET_VAR(m_rareInheritedData, textBoxEdge, textBoxEdgeValue);
 }
 
-TextEdge RenderStyle::initialTextEdge()
+TextBoxEdge RenderStyle::initialTextBoxEdge()
 {
-    return { TextEdgeType::Leading, TextEdgeType::Leading };
+    return { TextBoxEdgeType::Leading, TextBoxEdgeType::Leading };
 }
 
 bool RenderStyle::hasReferenceFilterOnly() const
