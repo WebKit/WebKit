@@ -14,9 +14,4 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/badging/META.yml
-/LayoutTests/imported/w3c/web-platform-tests/badging/badge-error.https.html
-/LayoutTests/imported/w3c/web-platform-tests/badging/badge-success.https.html
-/LayoutTests/imported/w3c/web-platform-tests/badging/idlharness.https.any.js
-/LayoutTests/imported/w3c/web-platform-tests/badging/non-fully-active.https.html
-/LayoutTests/imported/w3c/web-platform-tests/badging/setAppBadge_cross_origin.sub.https.html
+/LayoutTests/imported/w3c/web-platform-tests/badging/resources/setAppBadge_iframe.html
