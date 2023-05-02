@@ -306,8 +306,8 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     NSNotificationCenter *defaultNotificationCenter = [NSNotificationCenter defaultCenter];
 
     // An NSView derived object such as WKView cannot observe these notifications, because NSView itself observes them.
-    [defaultNotificationCenter addObserver:self selector:@selector(_windowDidOrderOffScreen:) name:@"NSWindowDidOrderOffScreenNotification" object:window];
-    [defaultNotificationCenter addObserver:self selector:@selector(_windowDidOrderOnScreen:) name:@"_NSWindowDidBecomeVisible" object:window];
+    [defaultNotificationCenter addObserver:self selector:@selector(_windowDidOrderOffScreen:) name:NSWindowDidOrderOffScreenNotification object:window];
+    [defaultNotificationCenter addObserver:self selector:@selector(_windowDidOrderOnScreen:) name:NSWindowDidOrderOnScreenNotification object:window];
 
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:nil];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidResignKey:) name:NSWindowDidResignKeyNotification object:nil];
@@ -317,7 +317,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidResize:) name:NSWindowDidResizeNotification object:window];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeBackingProperties:) name:NSWindowDidChangeBackingPropertiesNotification object:window];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeScreen:) name:NSWindowDidChangeScreenNotification object:window];
-    [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeLayerHosting:) name:@"_NSWindowDidChangeContentsHostedInLayerSurfaceNotification" object:window];
+    [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeLayerHosting:) name:_NSWindowDidChangeContentsHostedInLayerSurfaceNotification object:window];
     [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeOcclusionState:) name:NSWindowDidChangeOcclusionStateNotification object:window];
 
     [defaultNotificationCenter addObserver:self selector:@selector(_screenDidChangeColorSpace:) name:NSScreenColorSpaceDidChangeNotification object:nil];
@@ -340,8 +340,8 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
     NSNotificationCenter *defaultNotificationCenter = [NSNotificationCenter defaultCenter];
 
-    [defaultNotificationCenter removeObserver:self name:@"NSWindowDidOrderOffScreenNotification" object:window];
-    [defaultNotificationCenter removeObserver:self name:@"_NSWindowDidBecomeVisible" object:window];
+    [defaultNotificationCenter removeObserver:self name:NSWindowDidOrderOffScreenNotification object:window];
+    [defaultNotificationCenter removeObserver:self name:NSWindowDidOrderOnScreenNotification object:window];
 
     [defaultNotificationCenter removeObserver:self name:NSWindowDidBecomeKeyNotification object:nil];
     [defaultNotificationCenter removeObserver:self name:NSWindowDidResignKeyNotification object:nil];
@@ -351,7 +351,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [defaultNotificationCenter removeObserver:self name:NSWindowDidResizeNotification object:window];
     [defaultNotificationCenter removeObserver:self name:NSWindowDidChangeBackingPropertiesNotification object:window];
     [defaultNotificationCenter removeObserver:self name:NSWindowDidChangeScreenNotification object:window];
-    [defaultNotificationCenter removeObserver:self name:@"_NSWindowDidChangeContentsHostedInLayerSurfaceNotification" object:window];
+    [defaultNotificationCenter removeObserver:self name:_NSWindowDidChangeContentsHostedInLayerSurfaceNotification object:window];
     [defaultNotificationCenter removeObserver:self name:NSWindowDidChangeOcclusionStateNotification object:window];
 
     [defaultNotificationCenter removeObserver:self name:NSScreenColorSpaceDidChangeNotification object:nil];

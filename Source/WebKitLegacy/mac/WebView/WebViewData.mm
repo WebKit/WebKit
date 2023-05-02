@@ -42,6 +42,7 @@
 #import <WebCore/TextIndicatorWindow.h>
 #import <WebCore/ValidationBubble.h>
 #import <WebCore/WebCoreJITOperations.h>
+#import <pal/spi/mac/NSWindowSPI.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
 #import <wtf/SetForScope.h>
@@ -79,16 +80,14 @@ int pluginDatabaseClientCount = 0;
 - (void)startObserving:(NSWindow *)window
 {
     // An NSView derived object such as WebView cannot observe these notifications, because NSView itself observes them.
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowVisibilityChanged:)
-                                                 name:@"NSWindowDidOrderOffScreenNotification" object:window];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowVisibilityChanged:)
-                                                 name:@"_NSWindowDidBecomeVisible" object:window];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowVisibilityChanged:) name:NSWindowDidOrderOffScreenNotification object:window];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowVisibilityChanged:) name:NSWindowDidOrderOnScreenNotification object:window];
 }
 
 - (void)stopObserving:(NSWindow *)window
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NSWindowDidOrderOffScreenNotification" object:window];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"_NSWindowDidBecomeVisible" object:window];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidOrderOffScreenNotification object:window];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidOrderOnScreenNotification object:window];
 }
 
 - (void)_windowVisibilityChanged:(NSNotification *)notification
