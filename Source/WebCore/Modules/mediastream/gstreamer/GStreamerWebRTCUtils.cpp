@@ -557,7 +557,7 @@ GRefPtr<GstCaps> capsFromSDPMedia(const GstSDPMedia* media)
         auto rtpMap = StringView::fromLatin1(rtpMapValue);
         auto components = rtpMap.split(' ');
         auto payloadType = parseInteger<int>(*components.begin());
-        if (!payloadType || !*payloadType) {
+        if (!payloadType) {
             GST_WARNING("Invalid payload type in rtpmap %s", rtpMap.utf8().data());
             continue;
         }
