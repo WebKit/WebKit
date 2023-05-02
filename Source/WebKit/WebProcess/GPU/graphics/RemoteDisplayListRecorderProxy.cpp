@@ -75,16 +75,6 @@ ALWAYS_INLINE void RemoteDisplayListRecorderProxy::send(T&& message)
     m_renderingBackend->streamConnection().send(WTFMove(message), m_destinationBufferIdentifier, defaultSendTimeout);
 }
 
-template<typename T>
-ALWAYS_INLINE void RemoteDisplayListRecorderProxy::sendSync(T&& message)
-{
-    if (UNLIKELY(!(m_renderingBackend && m_imageBuffer)))
-        return;
-
-    m_imageBuffer->backingStoreWillChange();
-    m_renderingBackend->streamConnection().sendSync(WTFMove(message), m_destinationBufferIdentifier, defaultSendTimeout);
-}
-
 RenderingMode RemoteDisplayListRecorderProxy::renderingMode() const
 {
     return m_imageBuffer ? m_imageBuffer->renderingMode() : RenderingMode::Unaccelerated;
@@ -515,14 +505,9 @@ bool RemoteDisplayListRecorderProxy::recordResourceUse(Gradient& gradient)
     return true;
 }
 
-void RemoteDisplayListRecorderProxy::flushContext(const IPC::Semaphore& semaphore)
+void RemoteDisplayListRecorderProxy::flushContext(DisplayListRecorderFlushIdentifier identifier)
 {
-    send(Messages::RemoteDisplayListRecorder::FlushContext(semaphore));
-}
-
-void RemoteDisplayListRecorderProxy::flushContextSync()
-{
-    sendSync(Messages::RemoteDisplayListRecorder::FlushContextSync());
+    send(Messages::RemoteDisplayListRecorder::FlushContext(identifier));
 }
 
 RefPtr<ImageBuffer> RemoteDisplayListRecorderProxy::createImageBuffer(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, std::optional<RenderingMode> renderingMode, std::optional<RenderingMethod> renderingMethod) const

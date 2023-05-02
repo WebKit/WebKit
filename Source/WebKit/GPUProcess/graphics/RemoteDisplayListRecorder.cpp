@@ -603,16 +603,10 @@ void RemoteDisplayListRecorder::applyDeviceScaleFactor(float scaleFactor)
     handleItem(DisplayList::ApplyDeviceScaleFactor(scaleFactor));
 }
 
-void RemoteDisplayListRecorder::flushContext(IPC::Semaphore&& semaphore)
+void RemoteDisplayListRecorder::flushContext(DisplayListRecorderFlushIdentifier identifier)
 {
     m_imageBuffer->flushDrawingContext();
-    semaphore.signal();
-}
-
-void RemoteDisplayListRecorder::flushContextSync(CompletionHandler<void()>&& completionHandler)
-{
-    m_imageBuffer->flushDrawingContext();
-    completionHandler();
+    m_renderingBackend->didFlush(identifier);
 }
 
 } // namespace WebKit

@@ -76,6 +76,8 @@ private:
 
     bool hasPendingFlush() const;
 
+    void waitForDidFlushWithTimeout();
+
     RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const final;
     RefPtr<WebCore::NativeImage> copyNativeImageForDrawing(WebCore::GraphicsContext&) const final;
     RefPtr<WebCore::NativeImage> sinkIntoNativeImage() final;
@@ -117,7 +119,7 @@ class RemoteImageBufferProxyFlushState : public ThreadSafeRefCounted<RemoteImage
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteImageBufferProxyFlushState() = default;
-    void waitForDidFlush(DisplayListRecorderFlushIdentifier, Seconds timeout);
+    void waitForDidFlushOnSecondaryThread(DisplayListRecorderFlushIdentifier);
     void markCompletedFlush(DisplayListRecorderFlushIdentifier);
     void cancel();
     DisplayListRecorderFlushIdentifier identifierForCompletedFlush() const;

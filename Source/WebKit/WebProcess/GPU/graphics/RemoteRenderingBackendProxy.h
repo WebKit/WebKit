@@ -27,7 +27,6 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "DisplayListRecorderFlushIdentifier.h"
 #include "GPUProcessConnection.h"
 #include "IPCSemaphore.h"
 #include "ImageBufferBackendHandle.h"
@@ -49,7 +48,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/Span.h>
 #include <wtf/WeakPtr.h>
-#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 
@@ -139,6 +137,7 @@ public:
         TimeoutOrIPCFailure
     };
     DidReceiveBackendCreationResult waitForDidCreateImageBufferBackend();
+    bool waitForDidFlush();
 
     RenderingBackendIdentifier renderingBackendIdentifier() const;
 
@@ -159,7 +158,7 @@ public:
 
     SerialFunctionDispatcher& dispatcher() { return m_dispatcher; }
 
-    void addPendingFlush(RemoteImageBufferProxyFlushState&, IPC::Semaphore&&, DisplayListRecorderFlushIdentifier);
+    void addPendingFlush(RemoteImageBufferProxyFlushState&, DisplayListRecorderFlushIdentifier);
 
 private:
     explicit RemoteRenderingBackendProxy(const RemoteRenderingBackendCreationParameters&, SerialFunctionDispatcher&);
@@ -190,6 +189,7 @@ private:
 
     // Messages to be received.
     void didCreateImageBufferBackend(ImageBufferBackendHandle&&, WebCore::RenderingResourceIdentifier);
+    void didFlush(DisplayListRecorderFlushIdentifier);
     void didFinalizeRenderingUpdate(RenderingUpdateID didRenderingUpdateID);
     void didMarkLayersAsVolatile(MarkSurfacesAsVolatileRequestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>& markedVolatileBufferIdentifiers, bool didMarkAllLayerAsVolatile);
 
@@ -204,7 +204,7 @@ private:
 
     RenderingUpdateID m_renderingUpdateID;
     RenderingUpdateID m_didRenderingUpdateID;
-    Ref<WorkQueue> m_flushWorkQueue;
+    HashMap<DisplayListRecorderFlushIdentifier, Ref<RemoteImageBufferProxyFlushState>> m_pendingFlushes;
 };
 
 } // namespace WebKit

@@ -54,7 +54,7 @@ public:
 
     void flush() final
     {
-        m_flushState->waitForDidFlush(m_targetFlushIdentifier, Seconds::infinity());
+        m_flushState->waitForDidFlushOnSecondaryThread(m_targetFlushIdentifier);
     }
 
 private:
@@ -128,6 +128,29 @@ void RemoteImageBufferProxy::didCreateImageBufferBackend(ImageBufferBackendHandl
         m_backend = AcceleratedImageBufferShareableMappedBackend::create(parameters(), WTFMove(handle));
     else
         m_backend = AcceleratedImageBufferRemoteBackend::create(parameters(), WTFMove(handle));
+}
+
+void RemoteImageBufferProxy::waitForDidFlushWithTimeout()
+{
+    if (!m_remoteRenderingBackendProxy)
+        return;
+
+    // Wait for our DisplayList to be flushed but do not hang.
+    static constexpr unsigned maximumNumberOfTimeouts = 3;
+    unsigned numberOfTimeouts = 0;
+#if !LOG_DISABLED
+    auto startTime = MonotonicTime::now();
+#endif
+    LOG_WITH_STREAM(SharedDisplayLists, stream << "RemoteImageBufferProxy " << m_renderingResourceIdentifier << " waitForDidFlushWithTimeout: waiting for flush {" << m_sentFlushIdentifier);
+    while (numberOfTimeouts < maximumNumberOfTimeouts && hasPendingFlush()) {
+        if (!m_remoteRenderingBackendProxy->waitForDidFlush())
+            ++numberOfTimeouts;
+    }
+
+    LOG_WITH_STREAM(SharedDisplayLists, stream << "RemoteImageBufferProxy " << m_renderingResourceIdentifier << " waitForDidFlushWithTimeout: done waiting " << (MonotonicTime::now() - startTime).milliseconds() << "ms; " << numberOfTimeouts << " timeout(s)");
+
+    if (UNLIKELY(numberOfTimeouts >= maximumNumberOfTimeouts))
+        RELEASE_LOG_FAULT(SharedDisplayLists, "Exceeded timeout while waiting for flush in remote rendering backend: %" PRIu64 ".", m_remoteRenderingBackendProxy->renderingBackendIdentifier().toUInt64());
 }
 
 ImageBufferBackend* RemoteImageBufferProxy::ensureBackendCreated() const
@@ -277,14 +300,10 @@ void RemoteImageBufferProxy::flushDrawingContext()
 
     TraceScope tracingScope(FlushRemoteImageBufferStart, FlushRemoteImageBufferEnd);
 
-    if (!m_needsFlush) {
-        if (hasPendingFlush())
-            m_flushState->waitForDidFlush(m_sentFlushIdentifier, RemoteDisplayListRecorderProxy::defaultSendTimeout);
-        return;
-    }
-
-    m_remoteDisplayList.flushContextSync();
-    m_needsFlush = false;
+    bool shouldWait = flushDrawingContextAsync();
+    LOG_WITH_STREAM(SharedDisplayLists, stream << "RemoteImageBufferProxy " << m_renderingResourceIdentifier << " flushDrawingContext: shouldWait " << shouldWait);
+    if (shouldWait)
+        waitForDidFlushWithTimeout();
 }
 
 bool RemoteImageBufferProxy::flushDrawingContextAsync()
@@ -297,9 +316,8 @@ bool RemoteImageBufferProxy::flushDrawingContextAsync()
 
     m_sentFlushIdentifier = DisplayListRecorderFlushIdentifier::generate();
     LOG_WITH_STREAM(SharedDisplayLists, stream << "RemoteImageBufferProxy " << m_renderingResourceIdentifier << " flushDrawingContextAsync - flush " << m_sentFlushIdentifier);
-    IPC::Semaphore flushSemaphore;
-    m_remoteDisplayList.flushContext(flushSemaphore);
-    m_remoteRenderingBackendProxy->addPendingFlush(m_flushState, WTFMove(flushSemaphore), m_sentFlushIdentifier);
+    m_remoteDisplayList.flushContext(m_sentFlushIdentifier);
+    m_remoteRenderingBackendProxy->addPendingFlush(m_flushState, m_sentFlushIdentifier);
     m_needsFlush = false;
     return true;
 }
@@ -322,12 +340,12 @@ void RemoteImageBufferProxy::prepareForBackingStoreChange()
         backend->ensureNativeImagesHaveCopiedBackingStore();
 }
 
-void RemoteImageBufferProxyFlushState::waitForDidFlush(DisplayListRecorderFlushIdentifier targetFlushIdentifier, Seconds timeout)
+void RemoteImageBufferProxyFlushState::waitForDidFlushOnSecondaryThread(DisplayListRecorderFlushIdentifier targetFlushIdentifier)
 {
     Locker locker { m_lock };
     if (m_identifier >= targetFlushIdentifier)
         return;
-    m_condition.waitFor(m_lock, timeout, [&] {
+    m_condition.wait(m_lock, [&] {
         assertIsHeld(m_lock);
         return m_identifier >= targetFlushIdentifier;
     });
