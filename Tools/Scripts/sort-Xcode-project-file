@@ -139,6 +139,9 @@ for my $projectFile (@ARGV) {
             if ($lastTwo[0] =~ m#^\s+\Q$mainGroup\E = \{$#) {
                 # Don't sort mainGroup
                 print $OUT @children;
+            } elsif ($lastTwo[0] =~ m#\Q/* Products */\E = \{$#) {
+                # Don't sort Products
+                print $OUT @children;
             } else {
                 print $OUT sort sortChildrenByFileName @children;
             }
