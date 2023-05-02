@@ -76,6 +76,16 @@ ALWAYS_INLINE void RemoteDisplayListRecorderProxy::send(T&& message)
     m_renderingBackend->streamConnection().send(WTFMove(message), m_destinationBufferIdentifier, defaultSendTimeout);
 }
 
+template<typename T>
+ALWAYS_INLINE void RemoteDisplayListRecorderProxy::sendSync(T&& message)
+{
+    if (UNLIKELY(!(m_renderingBackend && m_imageBuffer)))
+        return;
+
+    m_imageBuffer->backingStoreWillChange();
+    m_renderingBackend->streamConnection().sendSync(WTFMove(message), m_destinationBufferIdentifier, defaultSendTimeout);
+}
+
 RenderingMode RemoteDisplayListRecorderProxy::renderingMode() const
 {
     return m_imageBuffer ? m_imageBuffer->renderingMode() : RenderingMode::Unaccelerated;
@@ -524,7 +534,7 @@ bool RemoteDisplayListRecorderProxy::recordResourceUse(Filter& filter)
 
 void RemoteDisplayListRecorderProxy::flushContext(const IPC::Semaphore& semaphore)
 {
-    send(Messages::RemoteDisplayListRecorder::FlushContext(semaphore));
+   send(Messages::RemoteDisplayListRecorder::FlushContext(semaphore));
 }
 
 void RemoteDisplayListRecorderProxy::flushContextSync()

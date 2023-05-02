@@ -97,7 +97,6 @@ public:
 
     // Messages to be sent.
     void didCreateImageBufferBackend(ImageBufferBackendHandle, QualifiedRenderingResourceIdentifier, RemoteDisplayListRecorder&);
-    void didFlush(DisplayListRecorderFlushIdentifier);
 
     // Runs Function in RemoteRenderingBackend task queue.
     void dispatch(Function<void()>&&);
