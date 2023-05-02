@@ -113,6 +113,8 @@ std::optional<PermissionName> Permissions::toPermissionName(const String& name)
         return PermissionName::Microphone;
     if (name == "notifications"_s)
         return PermissionName::Notifications;
+    if (name == "push"_s)
+        return PermissionName::Push;
     return std::nullopt;
 }
 

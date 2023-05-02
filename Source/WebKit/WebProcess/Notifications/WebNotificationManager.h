@@ -67,7 +67,7 @@ public:
     void didUpdateNotificationDecision(const String& originString, bool allowed);
 
     // Looks in local cache for permission. If not found, returns DefaultDenied.
-    WebCore::NotificationClient::Permission policyForOrigin(const String& originString) const;
+    WebCore::NotificationClient::Permission policyForOrigin(const String& originString, WebPage* = nullptr) const;
 
     void removeAllPermissionsForTesting();
 
@@ -83,9 +83,6 @@ private:
     void didClickNotification(const UUID& notificationID);
     void didCloseNotifications(const Vector<UUID>& notificationIDs);
     void didRemoveNotificationDecisions(const Vector<String>& originStrings);
-
-    template<typename U> bool sendNotificationMessage(U&& message, WebPage*);
-    template<typename U> bool sendNotificationMessageWithAsyncReply(U&& message, WebPage*, CompletionHandler<void()>&&);
 
     WebProcess& m_process;
 

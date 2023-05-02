@@ -485,11 +485,33 @@ void WebPageProxy::ProcessActivityState::takeCapturingActivity()
     m_isCapturingActivity = m_page.process().throttler().foregroundActivity("View is capturing media"_s).moveToUniquePtr();
 }
 
+#if PLATFORM(MAC)
+// On macOS, we opt pages out of process suspension if they used the Notification API to avoid breaking
+// some use cases.
+// In particular, we opt out if either:
+// - The page showed a notification
+// - The page called navigator.permissions.query({ name: "notifications" }) and it returned true.
+// - The page accessed Notification.permission and it returned "granted".
+// - The page requested permission via Notification.requestPermission() and it was granted.
+// This gets reset whenever a new main frame load commits inside the page.
+void WebPageProxy::ProcessActivityState::takeLikelyToUseNotificationsActivity()
+{
+    if (!m_likelyToUseNotificationsActivity)
+        m_likelyToUseNotificationsActivity = m_page.process().throttler().backgroundActivity("View is likely to use notifications"_s).moveToUniquePtr();
+}
+
+void WebPageProxy::ProcessActivityState::dropLikelyToUseNotificationsActivity()
+{
+    m_likelyToUseNotificationsActivity = nullptr;
+}
+#endif
+
 void WebPageProxy::ProcessActivityState::reset()
 {
     m_isVisibleActivity = nullptr;
 #if PLATFORM(MAC)
     *m_wasRecentlyVisibleActivity = nullptr;
+    m_likelyToUseNotificationsActivity = nullptr;
 #endif
     m_isAudibleActivity = nullptr;
     m_isCapturingActivity = nullptr;
@@ -5559,6 +5581,9 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
         if (is<RemoteLayerTreeDrawingAreaProxy>(*m_drawingArea))
             internals().firstLayerTreeTransactionIdAfterDidCommitLoad = downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea()).nextLayerTreeTransactionID();
 #endif
+#if PLATFORM(MAC)
+        m_processActivityState.dropLikelyToUseNotificationsActivity();
+#endif
     }
 
     auto transaction = internals().pageLoadState.transaction();
@@ -9494,7 +9519,7 @@ void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const Permi
         // FIXME: We should set shouldChangeDeniedToPrompt after the first
         // permission request like we do for notifications.
 #endif
-    } else if (descriptor.name == PermissionName::Notifications) {
+    } else if (descriptor.name == PermissionName::Notifications || descriptor.name == PermissionName::Push) {
 #if ENABLE(NOTIFICATIONS)
         name = "notifications"_s;
 
@@ -9523,7 +9548,8 @@ void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const Permi
         return;
     }
 
-    CompletionHandler<void(std::optional<WebCore::PermissionState>)> callback = [clientOrigin, shouldChangeDeniedToPrompt, shouldChangePromptToGrant, completionHandler = WTFMove(completionHandler)](auto result) mutable {
+    bool isNotificationPermission = descriptor.name == PermissionName::Notifications;
+    CompletionHandler<void(std::optional<WebCore::PermissionState>)> callback = [clientOrigin, shouldChangeDeniedToPrompt, shouldChangePromptToGrant, isNotificationPermission, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](auto result) mutable {
         if (!result) {
             completionHandler({ });
             return;
@@ -9532,6 +9558,8 @@ void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const Permi
             result = PermissionState::Prompt;
         else if (*result == PermissionState::Prompt && shouldChangePromptToGrant)
             result = PermissionState::Granted;
+        if (result == PermissionState::Granted && isNotificationPermission && weakThis)
+            weakThis->pageWillLikelyUseNotifications();
         completionHandler(*result);
     };
 
@@ -9743,13 +9771,26 @@ void WebPageProxy::requestNotificationPermission(const String& originString, Com
     internals().notificationPermissionRequesters.add(origin->securityOrigin());
 #endif
 
-    m_uiClient->decidePolicyForNotificationPermissionRequest(*this, origin.get(), WTFMove(completionHandler));
+    m_uiClient->decidePolicyForNotificationPermissionRequest(*this, origin.get(), [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](bool allowed) mutable {
+        if (allowed && weakThis)
+            weakThis->pageWillLikelyUseNotifications();
+        completionHandler(allowed);
+    });
+}
+
+void WebPageProxy::pageWillLikelyUseNotifications()
+{
+#if PLATFORM(MAC)
+    m_processActivityState.takeLikelyToUseNotificationsActivity();
+#endif
 }
 
 void WebPageProxy::showNotification(IPC::Connection& connection, const WebCore::NotificationData& notificationData, RefPtr<WebCore::NotificationResources>&& notificationResources)
 {
     m_process->processPool().supplement<WebNotificationManagerProxy>()->show(this, connection, notificationData, WTFMove(notificationResources));
-    m_process->throttler().delaySuspension();
+#if PLATFORM(MAC)
+    m_processActivityState.takeLikelyToUseNotificationsActivity();
+#endif
 }
 
 void WebPageProxy::cancelNotification(const UUID& notificationID)

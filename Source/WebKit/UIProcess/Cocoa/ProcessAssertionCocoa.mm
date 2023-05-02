@@ -321,7 +321,12 @@ static NSString *runningBoardNameForAssertionType(ProcessAssertionType assertion
     case ProcessAssertionType::Suspended:
         return @"Suspended";
     case ProcessAssertionType::Background:
+#if PLATFORM(MAC)
+        // The background assertions time out after 30 seconds on iOS but not macOS.
+        return @"IndefiniteBackground";
+#else
         return @"Background";
+#endif
     case ProcessAssertionType::UnboundedNetworking:
         return @"UnboundedNetworking";
     case ProcessAssertionType::Foreground:

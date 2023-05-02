@@ -117,9 +117,14 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
         return hasRequestedPermission ? NotificationClient::Permission::Denied : NotificationClient::Permission::Default;
 
     NotificationClient::Permission resultPermission;
-    callOnMainRunLoopAndWait([&resultPermission, origin = origin->data().toString().isolatedCopy()] {
-        resultPermission = WebProcess::singleton().supplement<WebNotificationManager>()->policyForOrigin(origin);
-    });
+    if (auto* document = dynamicDowncast<Document>(*context)) {
+        ASSERT(isMainRunLoop());
+        resultPermission = WebProcess::singleton().supplement<WebNotificationManager>()->policyForOrigin(origin->data().toString(), document->page() ? WebPage::fromCorePage(*document->page()) : nullptr);
+    } else {
+        callOnMainRunLoopAndWait([&resultPermission, origin = origin->data().toString().isolatedCopy()] {
+            resultPermission = WebProcess::singleton().supplement<WebNotificationManager>()->policyForOrigin(origin);
+        });
+    }
 
     // To reduce fingerprinting, if the origin has not requested permission to use the
     // Notifications API, and the permission state is "denied", return "default" instead.

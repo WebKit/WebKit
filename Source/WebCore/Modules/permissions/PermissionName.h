@@ -42,6 +42,7 @@ enum class PermissionName : uint8_t {
     Midi,
     Nfc,
     Notifications,
+    Push,
     ScreenWakeLock,
     SpeakerSelection
 };
@@ -65,6 +66,7 @@ template<> struct EnumTraits<WebCore::PermissionName> {
         WebCore::PermissionName::Midi,
         WebCore::PermissionName::Nfc,
         WebCore::PermissionName::Notifications,
+        WebCore::PermissionName::Push,
         WebCore::PermissionName::ScreenWakeLock,
         WebCore::PermissionName::SpeakerSelection
     >;

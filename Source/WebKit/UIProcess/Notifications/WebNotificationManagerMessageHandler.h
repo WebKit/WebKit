@@ -41,6 +41,7 @@ private:
     void cancelNotification(const UUID& notificationID) final;
     void clearNotifications(const Vector<UUID>& notificationIDs) final;
     void didDestroyNotification(const UUID& notificationID) final;
+    void pageWasNotifiedOfNotificationPermission() final;
 
     WebPageProxy& m_webPageProxy;
 };

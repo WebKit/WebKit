@@ -96,4 +96,9 @@ void WebNotificationManagerMessageHandler::didDestroyNotification(const UUID& no
     m_webPageProxy.didDestroyNotification(notificationID);
 }
 
+void WebNotificationManagerMessageHandler::pageWasNotifiedOfNotificationPermission()
+{
+    m_webPageProxy.pageWillLikelyUseNotifications();
+}
+
 } // namespace WebKit
