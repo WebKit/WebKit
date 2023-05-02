@@ -30,8 +30,14 @@
 namespace WGSL::AST {
 
 class WorkgroupSizeAttribute final : public Attribute {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(WorkgroupSizeAttribute);
 public:
+    NodeKind kind() const override;
+    Expression& x() { return m_x.get(); }
+    Expression* maybeY() { return m_y.get(); }
+    Expression* maybeZ() { return m_z.get(); }
+
+private:
     WorkgroupSizeAttribute(SourceSpan span, Expression::Ref&& x, Expression::Ptr&& maybeY, Expression::Ptr&& maybeZ)
         : Attribute(span)
         , m_x(WTFMove(x))
@@ -39,12 +45,6 @@ public:
         , m_z(WTFMove(maybeZ))
     { }
 
-    NodeKind kind() const override;
-    Expression& x() { return m_x.get(); }
-    Expression* maybeY() { return m_y.get(); }
-    Expression* maybeZ() { return m_z.get(); }
-
-private:
     Expression::Ref m_x;
     Expression::Ptr m_y;
     Expression::Ptr m_z;

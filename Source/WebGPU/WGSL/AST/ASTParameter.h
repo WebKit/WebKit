@@ -29,6 +29,7 @@
 #include "ASTIdentifier.h"
 #include "ASTTypeName.h"
 #include <wtf/RefCounted.h>
+#include <wtf/RefVector.h>
 
 namespace WGSL::AST {
 

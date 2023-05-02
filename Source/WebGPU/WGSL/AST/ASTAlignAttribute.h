@@ -26,22 +26,23 @@
 #pragma once
 
 #include "ASTAttribute.h"
+#include "ASTBuilder.h"
 #include "ASTExpression.h"
 
 namespace WGSL::AST {
 
 class AlignAttribute final : public Attribute {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(AlignAttribute);
 public:
+    NodeKind kind() const override;
+    Expression& alignment() { return m_alignment.get(); }
+
+private:
     AlignAttribute(SourceSpan span, Expression::Ref&& alignment)
         : Attribute(span)
         , m_alignment(WTFMove(alignment))
     { }
 
-    NodeKind kind() const override;
-    Expression& alignment() { return m_alignment.get(); }
-
-private:
     Expression::Ref m_alignment;
 };
 

@@ -26,22 +26,24 @@
 #pragma once
 
 #include "ASTAttribute.h"
+#include "ASTBuilder.h"
 #include "ASTExpression.h"
 
 namespace WGSL::AST {
 
 class IdAttribute final : public Attribute {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(IdAttribute);
+
 public:
+    NodeKind kind() const override;
+    Expression& value() { return m_value; }
+
+private:
     IdAttribute(SourceSpan span, Expression::Ref&& value)
         : Attribute(span)
         , m_value(WTFMove(value))
     { }
 
-    NodeKind kind() const override;
-    Expression& value() { return m_value; }
-
-private:
     Expression::Ref m_value;
 };
 

@@ -452,7 +452,7 @@ Result<AST::Attribute::List> Parser<Lexer>::parseAttributes()
 }
 
 template<typename Lexer>
-Result<Ref<AST::Attribute>> Parser<Lexer>::parseAttribute()
+Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
 {
     START_PARSE();
 
@@ -464,7 +464,7 @@ Result<Ref<AST::Attribute>> Parser<Lexer>::parseAttribute()
         // FIXME: should more kinds of literals be accepted here?
         CONSUME_TYPE_NAMED(id, IntegerLiteral);
         CONSUME_TYPE(ParenRight);
-        RETURN_NODE_REF(GroupAttribute, id.literalValue);
+        RETURN_ARENA_NODE(GroupAttribute, id.literalValue);
     }
 
     if (ident.ident == "binding"_s) {
@@ -472,7 +472,7 @@ Result<Ref<AST::Attribute>> Parser<Lexer>::parseAttribute()
         // FIXME: should more kinds of literals be accepted here?
         CONSUME_TYPE_NAMED(id, IntegerLiteral);
         CONSUME_TYPE(ParenRight);
-        RETURN_NODE_REF(BindingAttribute, id.literalValue);
+        RETURN_ARENA_NODE(BindingAttribute, id.literalValue);
     }
 
     if (ident.ident == "location"_s) {
@@ -480,14 +480,14 @@ Result<Ref<AST::Attribute>> Parser<Lexer>::parseAttribute()
         // FIXME: should more kinds of literals be accepted here?
         CONSUME_TYPE_NAMED(id, IntegerLiteral);
         CONSUME_TYPE(ParenRight);
-        RETURN_NODE_REF(LocationAttribute, id.literalValue);
+        RETURN_ARENA_NODE(LocationAttribute, id.literalValue);
     }
 
     if (ident.ident == "builtin"_s) {
         CONSUME_TYPE(ParenLeft);
         PARSE(name, Identifier);
         CONSUME_TYPE(ParenRight);
-        RETURN_NODE_REF(BuiltinAttribute, WTFMove(name));
+        RETURN_ARENA_NODE(BuiltinAttribute, WTFMove(name));
     }
 
     if (ident.ident == "workgroup_size"_s) {
@@ -515,30 +515,30 @@ Result<Ref<AST::Attribute>> Parser<Lexer>::parseAttribute()
             }
         }
         CONSUME_TYPE(ParenRight);
-        RETURN_NODE_REF(WorkgroupSizeAttribute, WTFMove(x), WTFMove(maybeY), WTFMove(maybeZ));
+        RETURN_ARENA_NODE(WorkgroupSizeAttribute, WTFMove(x), WTFMove(maybeY), WTFMove(maybeZ));
     }
 
     if (ident.ident == "align"_s) {
         CONSUME_TYPE(ParenLeft);
         PARSE(alignment, Expression);
         CONSUME_TYPE(ParenRight);
-        RETURN_NODE_REF(AlignAttribute, WTFMove(alignment));
+        RETURN_ARENA_NODE(AlignAttribute, WTFMove(alignment));
     }
 
     if (ident.ident == "size"_s) {
         CONSUME_TYPE(ParenLeft);
         PARSE(size, Expression);
         CONSUME_TYPE(ParenRight);
-        RETURN_NODE_REF(SizeAttribute, WTFMove(size));
+        RETURN_ARENA_NODE(SizeAttribute, WTFMove(size));
     }
 
     // https://gpuweb.github.io/gpuweb/wgsl/#pipeline-stage-attributes
     if (ident.ident == "vertex"_s)
-        RETURN_NODE_REF(StageAttribute, AST::StageAttribute::Stage::Vertex);
+        RETURN_ARENA_NODE(StageAttribute, AST::StageAttribute::Stage::Vertex);
     if (ident.ident == "compute"_s)
-        RETURN_NODE_REF(StageAttribute, AST::StageAttribute::Stage::Compute);
+        RETURN_ARENA_NODE(StageAttribute, AST::StageAttribute::Stage::Compute);
     if (ident.ident == "fragment"_s)
-        RETURN_NODE_REF(StageAttribute, AST::StageAttribute::Stage::Fragment);
+        RETURN_ARENA_NODE(StageAttribute, AST::StageAttribute::Stage::Fragment);
 
     FAIL("Unknown attribute. Supported attributes are 'group', 'binding', 'location', 'builtin', 'vertex', 'compute', 'fragment'."_s);
 }

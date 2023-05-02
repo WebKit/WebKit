@@ -317,7 +317,7 @@ void RewriteGlobalVariables::insertStructs(const UsedGlobals& usedGlobals)
                 AST::Identifier::make(global->declaration->name()),
                 WTFMove(memberType),
                 AST::Attribute::List {
-                    adoptRef(*new AST::BindingAttribute(span, binding))
+                    m_callGraph.ast().astBuilder().construct<AST::BindingAttribute>(span, binding)
                 }
             ));
         }
@@ -345,7 +345,7 @@ void RewriteGlobalVariables::insertParameters(AST::Function& function, const Use
             argumentBufferParameterName(group),
             WTFMove(type),
             AST::Attribute::List {
-                adoptRef(*new AST::GroupAttribute(span, group))
+                m_callGraph.ast().astBuilder().construct<AST::GroupAttribute>(span, group)
             },
             AST::ParameterRole::BindGroup
         )));
