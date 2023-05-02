@@ -7619,13 +7619,18 @@ IGNORE_CLANG_WARNINGS_END
 
             ValueFromBlock nullButterfly = m_out.anchor(m_out.intPtrZero);
             size_t outOfLineCapacity = globalObject->clonedArgumentsStructure()->outOfLineCapacity();
-            LValue length = getArgumentsLength().value;
+            ArgumentsLength argumentsLength = getArgumentsLength();
+            LValue length = argumentsLength.value;
             LValue argumentRegion = getArgumentsStart();
             LValue callee = getCurrentCallee();
             m_out.branch(m_out.aboveOrEqual(length, m_out.constInt32(MAX_STORAGE_VECTOR_LENGTH)), unsure(slowCase), unsure(allocateButterfly));
 
             LBasicBlock lastNext = m_out.appendTo(allocateButterfly, loopStart);
-            LValue byteSize = m_out.add(m_out.constIntPtr(sizeof(IndexingHeader) + outOfLineCapacity * sizeof(JSValue)), m_out.shl(m_out.zeroExtPtr(length), m_out.constInt32(3)));
+            LValue byteSize = nullptr;
+            if (argumentsLength.isKnown)
+                byteSize = m_out.constIntPtr(sizeof(IndexingHeader) + outOfLineCapacity * sizeof(JSValue) + argumentsLength.known * sizeof(JSValue));
+            else
+                byteSize = m_out.add(m_out.constIntPtr(sizeof(IndexingHeader) + outOfLineCapacity * sizeof(JSValue)), m_out.shl(m_out.zeroExtPtr(length), m_out.constInt32(3)));
             LValue allocator = allocatorForSize(vm().jsValueGigacageAuxiliarySpace(), byteSize, slowCase);
             LValue storage = allocateHeapCell(allocator, slowCase);
             for (unsigned i = 0; i < outOfLineCapacity; ++i)
