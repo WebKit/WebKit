@@ -296,7 +296,9 @@ inline ListStyleType BuilderConverter::convertListStyleType(const BuilderState& 
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.isValueID()) {
-        if (builderState.document().settings().cssCounterStyleAtRulesEnabled() && !isCounterStyleUnsupportedByUserAgent(primitiveValue.valueID()))
+        if (primitiveValue.valueID() == CSSValueNone)
+            return { ListStyleType::Type::None, nullAtom() };
+        if (builderState.document().settings().cssCounterStyleAtRulesEnabled())
             return { ListStyleType::Type::CounterStyle, makeAtomString(primitiveValue.stringValue()) };
         return { fromCSSValue<ListStyleType::Type>(primitiveValue), nullAtom() };
     }
