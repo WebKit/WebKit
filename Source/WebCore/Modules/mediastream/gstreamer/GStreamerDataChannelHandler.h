@@ -66,7 +66,7 @@ private:
 
     void readyStateChanged();
     void bufferedAmountChanged();
-    void checkState();
+    bool checkState();
     void postTask(Function<void()>&&);
 
     struct StateChange {

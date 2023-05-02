@@ -161,9 +161,10 @@ void GStreamerDataChannelHandler::setClient(RTCDataChannelHandlerClient& client,
     m_client = client;
     m_contextIdentifier = contextIdentifier;
 
-    checkState();
+    auto readyStateDispatched = checkState();
 
-    for (auto& message : m_pendingMessages) {
+    auto messages = WTFMove(m_pendingMessages);
+    for (auto& message : messages) {
         switchOn(message, [&](Ref<FragmentedSharedBuffer>& data) {
             DC_DEBUG("Notifying queued raw data (size: %zu)", data->size());
             const auto* rawData = data->makeContiguous()->data();
@@ -177,12 +178,14 @@ void GStreamerDataChannelHandler::setClient(RTCDataChannelHandlerClient& client,
             if (stateChange.error) {
                 if (auto rtcError = toRTCError(*stateChange.error))
                     client.didDetectError(rtcError.releaseNonNull());
+                return;
             }
-            DC_DEBUG("Dispatching state change to %d on channel %p", static_cast<int>(stateChange.state), m_channel.get());
-            client.didChangeReadyState(stateChange.state);
+            if (!readyStateDispatched) {
+                DC_DEBUG("Dispatching state change to %d on channel %p", static_cast<int>(stateChange.state), m_channel.get());
+                client.didChangeReadyState(stateChange.state);
+            }
         });
     }
-    m_pendingMessages.clear();
 }
 
 bool GStreamerDataChannelHandler::sendStringData(const CString& text)
@@ -221,14 +224,14 @@ std::optional<unsigned short> GStreamerDataChannelHandler::id() const
     return id != -1 ? std::make_optional(id) : std::nullopt;
 }
 
-void GStreamerDataChannelHandler::checkState()
+bool GStreamerDataChannelHandler::checkState()
 {
     ASSERT(m_clientLock.isHeld());
 
     DC_DEBUG("Checking state.");
     if (!m_channel) {
         DC_DEBUG("No channel.");
-        return;
+        return false;
     }
 
     GstWebRTCDataChannelState channelState;
@@ -257,17 +260,17 @@ void GStreamerDataChannelHandler::checkState()
     if (!m_client) {
         DC_DEBUG("No client yet on channel %p, queueing state", m_channel.get());
         m_pendingMessages.append(StateChange { state, { } });
-        return;
+        return false;
     }
 
     if (channelState == GST_WEBRTC_DATA_CHANNEL_STATE_OPEN && m_closing) {
         DC_DEBUG("Ignoring open state notification on channel %p because it was pending to be closed", m_channel.get());
-        return;
+        return false;
     }
 
     if (!*m_client) {
         DC_DEBUG("Client is empty.");
-        return;
+        return false;
     }
 
 #ifndef GST_DISABLE_GST_DEBUG
@@ -281,6 +284,7 @@ void GStreamerDataChannelHandler::checkState()
         }
         client.value()->didChangeReadyState(state);
     });
+    return true;
 }
 
 void GStreamerDataChannelHandler::readyStateChanged()
