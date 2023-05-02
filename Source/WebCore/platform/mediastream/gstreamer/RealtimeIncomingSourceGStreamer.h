@@ -46,7 +46,6 @@ private:
     const RealtimeMediaSourceCapabilities& capabilities() final;
 
     virtual void dispatchSample(GRefPtr<GstSample>&&) { }
-    void handleDownstreamEvent(GRefPtr<GstEvent>&&);
 
     GRefPtr<GstElement> m_bin;
     GRefPtr<GstElement> m_valve;

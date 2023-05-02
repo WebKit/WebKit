@@ -54,8 +54,6 @@
 #if USE(GSTREAMER)
 #include "GUniquePtrGStreamer.h"
 #include <wtf/glib/GRefPtr.h>
-
-typedef struct _GstEvent GstEvent;
 #endif
 
 namespace WTF {
@@ -99,10 +97,6 @@ public:
         virtual bool preventSourceFromStopping() { return false; }
 
         virtual void hasStartedProducingData() { }
-
-#if USE(GSTREAMER)
-        virtual void handleDownstreamEvent(GRefPtr<GstEvent>&&) { }
-#endif
     };
     class AudioSampleObserver {
     public:

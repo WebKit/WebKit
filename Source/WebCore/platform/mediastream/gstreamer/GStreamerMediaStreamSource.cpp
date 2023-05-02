@@ -168,6 +168,18 @@ public:
                 auto& trackSource = internalSource->m_track.source();
                 ASSERT(internalSource->m_webrtcSourceClientId.has_value());
                 auto clientId = internalSource->m_webrtcSourceClientId.value();
+
+                if (GST_IS_QUERY(info->data)) {
+                    switch (GST_QUERY_TYPE(GST_PAD_PROBE_INFO_QUERY(info))) {
+                    case GST_QUERY_CAPS:
+                        return GST_PAD_PROBE_OK;
+                    default:
+                        break;
+                    }
+                    GST_DEBUG_OBJECT(internalSource->m_src.get(), "Proxying query %" GST_PTR_FORMAT " to appsink peer", GST_PAD_PROBE_INFO_QUERY(info));
+                } else
+                    GST_DEBUG_OBJECT(internalSource->m_src.get(), "Proxying event %" GST_PTR_FORMAT " to appsink peer", GST_PAD_PROBE_INFO_EVENT(info));
+
                 if (trackSource.isIncomingAudioSource()) {
                     auto& source = static_cast<RealtimeIncomingAudioSourceGStreamer&>(trackSource);
                     if (GST_IS_EVENT(info->data))
@@ -342,12 +354,6 @@ public:
             else
                 flush();
         }
-    }
-
-    void handleDownstreamEvent(GRefPtr<GstEvent>&& event) final
-    {
-        auto pad = adoptGRef(gst_element_get_static_pad(m_src.get(), "src"));
-        gst_pad_push_event(pad.get(), event.leakRef());
     }
 
     void videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata) final

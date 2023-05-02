@@ -55,9 +55,7 @@ RealtimeIncomingSourceGStreamer::RealtimeIncomingSourceGStreamer(const CaptureDe
             g_object_set(element, "request-keyframe", TRUE, nullptr);
         if (gstObjectHasProperty(element, "wait-for-keyframe"))
             g_object_set(element, "wait-for-keyframe", TRUE, nullptr);
-        g_object_set(element, "auto-header-extension", FALSE, nullptr);
-    }),
-        nullptr);
+    }), nullptr);
 
     g_signal_connect_swapped(parsebin, "pad-added", G_CALLBACK(+[](RealtimeIncomingSourceGStreamer* source, GstPad* pad) {
         auto sinkPad = adoptGRef(gst_element_get_static_pad(source->m_tee.get(), "sink"));
@@ -129,6 +127,7 @@ int RealtimeIncomingSourceGStreamer::registerClient(GRefPtr<GstElement>&& appsrc
             case GST_EVENT_STREAM_START:
             case GST_EVENT_CAPS:
             case GST_EVENT_SEGMENT:
+            case GST_EVENT_STREAM_COLLECTION:
                 return false;
             case GST_EVENT_LATENCY: {
                 GstClockTime minLatency, maxLatency;
@@ -144,7 +143,14 @@ int RealtimeIncomingSourceGStreamer::registerClient(GRefPtr<GstElement>&& appsrc
             default:
                 break;
             }
-            self->handleDownstreamEvent(WTFMove(event));
+
+            if (int clientId = GPOINTER_TO_INT(g_object_get_qdata(G_OBJECT(sink), self->m_clientQuark))) {
+                GST_DEBUG_OBJECT(sink, "Forwarding event %" GST_PTR_FORMAT " to client", event.get());
+                auto appsrc = self->m_clients.get(clientId);
+                auto pad = adoptGRef(gst_element_get_static_pad(appsrc, "src"));
+                gst_pad_push_event(pad.get(), event.leakRef());
+            }
+
             return false;
         },
 #if GST_CHECK_VERSION(1, 23, 0)
@@ -210,14 +216,6 @@ bool RealtimeIncomingSourceGStreamer::handleUpstreamQuery(GstQuery* query, int c
     auto sink = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_bin.get()), makeString("sink-", clientId).ascii().data()));
     auto pad = adoptGRef(gst_element_get_static_pad(sink.get(), "sink"));
     return gst_pad_peer_query(pad.get(), query);
-}
-
-void RealtimeIncomingSourceGStreamer::handleDownstreamEvent(GRefPtr<GstEvent>&& event)
-{
-    GST_DEBUG_OBJECT(bin(), "Handling %" GST_PTR_FORMAT, event.get());
-    forEachObserver([event = WTFMove(event)](Observer& observer) {
-        observer.handleDownstreamEvent(GRefPtr<GstEvent>(event.get()));
-    });
 }
 
 } // namespace WebCore
