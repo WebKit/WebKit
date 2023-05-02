@@ -904,25 +904,25 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
 
     case CSSUnitType::CSS_CQW: {
         if (auto* containerRenderer = selectContainerRenderer(CQ::Axis::Width))
-            return containerRenderer->width() * value / 100;
+            return containerRenderer->contentWidth() * value / 100;
         return value * conversionData.smallViewportFactor().width();
     }
 
     case CSSUnitType::CSS_CQH: {
         if (auto* containerRenderer = selectContainerRenderer(CQ::Axis::Height))
-            return containerRenderer->height() * value / 100;
+            return containerRenderer->contentHeight() * value / 100;
         return value * conversionData.smallViewportFactor().height();
     }
 
     case CSSUnitType::CSS_CQI: {
         if (auto* containerRenderer = selectContainerRenderer(CQ::Axis::Inline))
-            return containerRenderer->logicalWidth() * value / 100;
+            return containerRenderer->contentLogicalWidth() * value / 100;
         return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Inline, conversionData.smallViewportFactor(), conversionData.rootStyle());
     }
 
     case CSSUnitType::CSS_CQB: {
         if (auto* containerRenderer = selectContainerRenderer(CQ::Axis::Block))
-            return containerRenderer->logicalHeight() * value / 100;
+            return containerRenderer->contentLogicalHeight() * value / 100;
         return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Block, conversionData.smallViewportFactor(), conversionData.rootStyle());
     }
 
