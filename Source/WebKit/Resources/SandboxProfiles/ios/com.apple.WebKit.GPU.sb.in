@@ -920,9 +920,10 @@
 (when (defined? 'MSC_mach_msg2_trap)
     (allow syscall-mach (machtrap-number MSC_mach_msg2_trap)))
 
-(allow syscall-mig (with report)(with telemetry))
+(deny syscall-mig (with telemetry))
 (allow syscall-mig (kernel-mig-routine
     _mach_make_memory_entry
+    clock_get_time
     host_get_clock_service
     host_get_io_master
     host_get_special_port
@@ -933,11 +934,15 @@
     io_iterator_next
     io_registry_entry_from_path
     io_registry_entry_get_property_bin_buf
+    io_registry_entry_get_property_bytes
     io_registry_entry_get_registry_entry_id
     io_server_version
+    io_service_close
     io_service_get_matching_service_bin
     io_service_get_matching_services_bin
     io_service_open_extended
+    mach_eventlink_associate
+    mach_exception_raise
     mach_memory_entry_ownership
     mach_port_extract_right
     mach_port_get_context_from_user
@@ -947,6 +952,8 @@
     mach_port_set_attributes
     mach_vm_copy
     mach_vm_map_external
+    mach_vm_region
+    mach_vm_remap_external
     semaphore_create
     semaphore_destroy
     task_get_special_port_from_user
@@ -954,6 +961,7 @@
     task_restartable_ranges_register
     task_restartable_ranges_synchronize
     task_set_special_port
+    thread_policy
     thread_policy_set
     thread_resume
     thread_suspend))
