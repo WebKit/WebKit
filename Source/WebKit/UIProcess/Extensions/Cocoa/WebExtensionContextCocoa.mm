@@ -49,6 +49,7 @@
 #import "_WKWebExtensionTab.h"
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/UserScript.h>
+#import <pal/spi/cocoa/NSKeyedUnarchiverSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
 #import <wtf/URLParser.h>
@@ -1357,7 +1358,7 @@ void WebExtensionContext::queueStartupAndInstallEventsForExtensionIfNecessary()
 void WebExtensionContext::loadBackgroundPageListenersFromStorage()
 {
     NSData *listenersData = [m_state objectForKey:backgroundContentEventListenersKey];
-    NSCountedSet *savedListeners = [NSKeyedUnarchiver unarchivedObjectOfClasses:[NSSet setWithArray:@[ NSCountedSet.class, NSNumber.class ]] fromData:listenersData error:nil];
+    NSCountedSet *savedListeners = [NSKeyedUnarchiver _strictlyUnarchivedObjectOfClasses:[NSSet setWithObjects:NSCountedSet.class, NSNumber.class, nil] fromData:listenersData error:nil];
 
     m_backgroundContentEventListeners.clear();
     for (NSNumber *entry in savedListeners)
