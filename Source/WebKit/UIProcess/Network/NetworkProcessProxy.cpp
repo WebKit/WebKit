@@ -2002,6 +2002,16 @@ void NetworkProcessProxy::reloadExecutionContextsForOrigin(const WebCore::Client
     }
 }
 
+#if USE(RUNNINGBOARD)
+void NetworkProcessProxy::wakeUpWebProcessForIPC(WebCore::ProcessIdentifier processIdentifier)
+{
+    auto webProcess = WebProcessProxy::processForIdentifier(processIdentifier);
+    RELEASE_LOG(Process, "%p - NetworkProcessProxy::wakeUpWebProcessForIPC processIdentifier=%" PRIu64 ", webProcess=%p", this, processIdentifier.toUInt64(), webProcess.get());
+    if (webProcess)
+        webProcess->wakeUpTemporarilyForIPC();
+}
+#endif
+
 #if ENABLE(NETWORK_ISSUE_REPORTING)
 
 void NetworkProcessProxy::reportNetworkIssue(WebPageProxyIdentifier pageIdentifier, const URL& requestURL)

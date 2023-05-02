@@ -104,6 +104,10 @@ messages -> NetworkProcessProxy LegacyReceiver {
     DeleteWebsiteDataInWebProcessesForOrigin(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, struct WebCore::ClientOrigin origin, PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier webPageProxyID) -> ()
     ReloadExecutionContextsForOrigin(struct WebCore::ClientOrigin origin, PAL::SessionID sessionID, std::optional<WebCore::FrameIdentifier> triggeringFrame) -> ()
 
+#if USE(RUNNINGBOARD)
+    WakeUpWebProcessForIPC(WebCore::ProcessIdentifier processIdentifier)
+#endif
+
 #if ENABLE(NETWORK_ISSUE_REPORTING)
     ReportNetworkIssue(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, URL requestURL)
 #endif

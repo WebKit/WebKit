@@ -375,6 +375,10 @@ private:
     void contentExtensionRules(UserContentControllerIdentifier);
 #endif
 
+#if USE(RUNNINGBOARD)
+    void wakeUpWebProcessForIPC(WebCore::ProcessIdentifier);
+#endif
+
 #if ENABLE(SERVICE_WORKER)
     void startServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier);
     void endServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier);

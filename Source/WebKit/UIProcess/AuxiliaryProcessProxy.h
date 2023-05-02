@@ -163,6 +163,10 @@ public:
 
     std::optional<SandboxExtension::Handle> createMobileGestaltSandboxExtensionIfNeeded() const;
 
+#if USE(RUNNINGBOARD)
+    void wakeUpTemporarilyForIPC();
+#endif
+
 protected:
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;

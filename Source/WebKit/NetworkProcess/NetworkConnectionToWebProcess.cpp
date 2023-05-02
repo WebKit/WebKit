@@ -142,6 +142,12 @@ NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(NetworkProcess& net
     // reply from the Network process, which would be unsafe.
     m_connection->setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(true);
     m_connection->open(*this);
+#if USE(RUNNINGBOARD)
+    m_connection->setOutgoingMessageQueueIsGrowingLargeCallback([weakThis = WeakPtr { *this }] {
+        if (weakThis)
+            weakThis->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::WakeUpWebProcessForIPC(weakThis->m_webProcessIdentifier), 0);
+    });
+#endif
 
 #if ENABLE(SERVICE_WORKER)
     establishSWServerConnection();

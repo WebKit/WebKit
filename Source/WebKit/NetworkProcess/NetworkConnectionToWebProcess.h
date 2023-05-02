@@ -110,7 +110,7 @@ class NetworkConnectionToWebProcess
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
     , public WebCore::CookieChangeObserver
 #endif
-    , IPC::Connection::Client {
+    , public IPC::Connection::Client {
 public:
     using RegistrableDomain = WebCore::RegistrableDomain;
 
