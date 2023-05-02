@@ -458,6 +458,34 @@ private:
                 "\n");
         }
 
+        // We might encounter a crash in operationStrCat3(2) due to LICM might hoist StrCat node but
+        // not hoist its prerequisite Check nodes. For example,
+        //
+        // DFG before LICM:
+        //    ...
+        //    Block 3: D@4: Check(Check:NotSymbol:D@2)
+        //    Block 3: D@5: StrCat(KnownPrimitive:D@1, KnownPrimitive:D@2, KnownPrimitive:D@3)
+        //    ...
+        // 
+        // DFG after LICM: (This is bad!)
+        //    ...
+        //    Block 0: D@5: StrCat(KnownPrimitive:D@1, KnownPrimitive:D@2, KnownPrimitive:D@3)
+        //    ...
+        //    Block 3: D@5: StrCat(KnownPrimitive:D@1, KnownPrimitive:D@2, KnownPrimitive:D@3)
+        //    ...
+        //
+        // A simple fix is just add new Check nodes and hoist them. This wouldn't harm the performance
+        // since redundant Check nodes would be eliminated in the clean up phase. However, maybe we
+        // need to propose a mechanism to associate nodes which have prerequisite relations in process.
+        if (node->op() == StrCat) {
+            m_graph.doToChildren(
+                node,
+                [&] (Edge& edge) {
+                    Node* checkNotEmpty = m_graph.addNode(Check, originalOrigin, Edge(edge.node(), NotSymbolUse));
+                    insertHoistedNode(checkNotEmpty);
+                });
+        }
+
         insertHoistedNode(node);
         updateAbstractState();
 
