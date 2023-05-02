@@ -31,6 +31,16 @@
 #include "MarkedBlock.h"
 #include "VM.h"
 
+#if !USE(SYSTEM_MALLOC)
+#include <bmalloc/BPlatform.h>
+#if BUSE(LIBPAS)
+#include <bmalloc/pas_debug_spectrum.h>
+#include <bmalloc/pas_fd_stream.h>
+#include <bmalloc/pas_heap_lock.h>
+#include <bmalloc/pas_thread_local_cache.h>
+#endif
+#endif
+
 namespace JSC {
 
 static constexpr Seconds sweepTimeSlice = 10_ms;
@@ -64,6 +74,11 @@ void IncrementalSweeper::doSweep(VM& vm, MonotonicTime sweepBeginTime)
         return;
     }
 
+#if !USE(SYSTEM_MALLOC)
+#if BUSE(LIBPAS)
+    pas_thread_local_cache_flush_deallocation_log(pas_thread_local_cache_try_get(), pas_lock_is_not_held);
+#endif
+#endif
     if (m_shouldFreeFastMallocMemoryAfterSweeping) {
         WTF::releaseFastMallocFreeMemory();
         m_shouldFreeFastMallocMemoryAfterSweeping = false;
