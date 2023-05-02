@@ -2471,7 +2471,6 @@ imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/b
 [ Ventura+ ] http/tests/inspector/network/resource-timing.html [ Failure ]
 [ Monterey+ ] http/tests/inspector/network/resource-security-certificate.html [ Pass Failure ]
 [ Ventura+ ] http/tests/inspector/network/getSerializedCertificate.html [ Failure ]
-[ Ventura+ ] fast/shrink-wrap/rect-shrink-wrap.html [ ImageOnlyFailure ]
 [ Ventura+ arm64 ] fast/writing-mode/english-bt-text-with-spelling-marker.html [ ImageOnlyFailure ]
 [ Monterey+ ] css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
 [ Ventura+ ] compositing/fixed-with-main-thread-scrolling.html [ ImageOnlyFailure ]
