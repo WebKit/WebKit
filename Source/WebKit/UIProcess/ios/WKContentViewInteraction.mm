@@ -2860,20 +2860,44 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return pointIsInSelectionRect;
 }
 
-- (BOOL)_isInterruptingDecelerationForScrollViewOrAncestor:(UIScrollView *)scrollView
+- (BOOL)_hasEnclosingScrollView:(UIScrollView *)firstView matchingCriteria:(Function<BOOL(UIScrollView *)>&&)matchFunction
 {
-    UIScrollView *mainScroller = self.webView.scrollView;
-    UIView *view = scrollView ?: mainScroller;
-    while (view) {
-        if (dynamic_objc_cast<UIScrollView>(view)._isInterruptingDeceleration)
+    UIView *view = firstView ?: self.webView.scrollView;
+    for (; view; view = view.superview) {
+        if (auto scrollView = dynamic_objc_cast<UIScrollView>(view); scrollView && matchFunction(scrollView))
             return YES;
-
-        if (mainScroller == view)
-            break;
-
-        view = view.superview;
     }
     return NO;
+}
+
+- (BOOL)_isPanningScrollViewOrAncestor:(UIScrollView *)scrollView
+{
+    return [self _hasEnclosingScrollView:scrollView matchingCriteria:[](UIScrollView *scrollView) {
+        if (scrollView.dragging || scrollView.decelerating)
+            return YES;
+
+        if (UIPanGestureRecognizer *panGesture = scrollView.panGestureRecognizer) {
+            switch (panGesture.state) {
+            case UIGestureRecognizerStateBegan:
+            case UIGestureRecognizerStateChanged:
+            case UIGestureRecognizerStateEnded:
+                return YES;
+            case UIGestureRecognizerStatePossible:
+            case UIGestureRecognizerStateCancelled:
+            case UIGestureRecognizerStateFailed:
+                return NO;
+            }
+        }
+        ASSERT_NOT_REACHED();
+        return NO;
+    }];
+}
+
+- (BOOL)_isInterruptingDecelerationForScrollViewOrAncestor:(UIScrollView *)scrollView
+{
+    return [self _hasEnclosingScrollView:scrollView matchingCriteria:[](UIScrollView *scrollView) {
+        return scrollView._isInterruptingDeceleration;
+    }];
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
@@ -2883,7 +2907,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (gestureRecognizer == _singleTapGestureRecognizer) {
         if ([self _shouldToggleSelectionCommandsAfterTapAt:point])
             return NO;
-        return ![self _isInterruptingDecelerationForScrollViewOrAncestor:[_singleTapGestureRecognizer lastTouchedScrollView]];
+        auto scrollView = [_singleTapGestureRecognizer lastTouchedScrollView];
+        return ![self _isPanningScrollViewOrAncestor:scrollView] && ![self _isInterruptingDecelerationForScrollViewOrAncestor:scrollView];
     }
 
     if (gestureRecognizer == _doubleTapGestureRecognizerForDoubleClick) {
