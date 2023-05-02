@@ -40,8 +40,6 @@ class RealtimeVideoSource final
 public:
     static Ref<RealtimeVideoSource> create(Ref<RealtimeVideoCaptureSource>&& source, bool shouldUseIOSurface = true) { return adoptRef(*new RealtimeVideoSource(WTFMove(source), shouldUseIOSurface)); }
 
-    Vector<VideoPresetData> presetsData() { return m_source->presetsData(); }
-
 private:
     WEBCORE_EXPORT RealtimeVideoSource(Ref<RealtimeVideoCaptureSource>&&, bool shouldUseIOSurface);
     ~RealtimeVideoSource();

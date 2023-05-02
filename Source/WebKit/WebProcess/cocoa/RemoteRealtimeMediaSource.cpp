@@ -52,8 +52,8 @@ RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RemoteRealtimeMediaSourcePr
 
 void RemoteRealtimeMediaSource::createRemoteMediaSource()
 {
-    m_proxy.createRemoteMediaSource(deviceIDHashSalts(), pageIdentifier(), [this, protectedThis = Ref { *this }](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities, auto&&, auto, auto) {
-        if (!succeeded) {
+    m_proxy.createRemoteMediaSource(deviceIDHashSalts(), pageIdentifier(), [this, protectedThis = Ref { *this }](auto&& errorMessage, auto&& settings, auto&& capabilities) {
+        if (!errorMessage.isNull()) {
             m_proxy.didFail(WTFMove(errorMessage));
             return;
         }

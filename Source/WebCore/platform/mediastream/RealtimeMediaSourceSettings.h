@@ -79,7 +79,7 @@ public:
 
     WEBCORE_EXPORT OptionSet<RealtimeMediaSourceSettings::Flag> difference(const RealtimeMediaSourceSettings&) const;
 
-    explicit RealtimeMediaSourceSettings() = default;
+    RealtimeMediaSourceSettings() = default;
     RealtimeMediaSourceSettings(uint32_t width, uint32_t height, float aspectRatio, float frameRate, VideoFacingMode facingMode, double volume, uint32_t sampleRate, uint32_t sampleSize, bool echoCancellation, AtomString&& deviceId, AtomString&& groupId, AtomString&& label, DisplaySurfaceType displaySurface, bool logicalSurface, double zoom, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
         : m_width(width)
         , m_height(height)

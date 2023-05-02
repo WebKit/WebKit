@@ -50,7 +50,6 @@ public:
     virtual VideoFrameRotation videoFrameRotation() const;
 
     double observedFrameRate() const { return m_observedFrameRate; }
-    Vector<VideoPresetData> presetsData();
 
     void ensureIntrinsicSizeMaintainsAspectRatio();
 

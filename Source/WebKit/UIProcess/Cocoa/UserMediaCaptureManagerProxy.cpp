@@ -322,8 +322,10 @@ CaptureSourceOrError UserMediaCaptureManagerProxy::createCameraSource(const Capt
 
 void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(RealtimeMediaSourceIdentifier id, const CaptureDevice& device, WebCore::MediaDeviceHashSalts&& hashSalts, const MediaConstraints& mediaConstraints, bool shouldUseGPUProcessRemoteFrames, PageIdentifier pageIdentifier, CreateSourceCallback&& completionHandler)
 {
-    if (!m_connectionProxy->willStartCapture(device.type()))
-        return completionHandler(false, "Request is not allowed"_s, RealtimeMediaSourceSettings { }, { }, { }, { }, 0);
+    if (!m_connectionProxy->willStartCapture(device.type())) {
+        completionHandler("Request is not allowed"_s, { }, { });
+        return;
+    }
 
     auto* constraints = mediaConstraints.isValid ? &mediaConstraints : nullptr;
 
@@ -346,35 +348,24 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
         break;
     }
 
-    bool succeeded = !!sourceOrError;
-    String invalidConstraints;
-    RealtimeMediaSourceSettings settings;
-    RealtimeMediaSourceCapabilities capabilities;
-    Vector<VideoPresetData> presets;
-    IntSize size;
-    double frameRate = 0;
+    if (!sourceOrError) {
+        completionHandler(WTFMove(sourceOrError.errorMessage), { }, { });
+        return;
+    }
 
-    if (sourceOrError) {
-        auto source = sourceOrError.source();
+    auto source = sourceOrError.source();
 #if !RELEASE_LOG_DISABLED
-        source->setLogger(m_connectionProxy->logger(), LoggerHelper::uniqueLogIdentifier());
+    source->setLogger(m_connectionProxy->logger(), LoggerHelper::uniqueLogIdentifier());
 #endif
-        settings = source->settings();
-        capabilities = source->capabilities();
-        if (source->isVideoSource()) {
-            auto& videoSource = static_cast<RealtimeVideoSource&>(source.get());
-            presets = videoSource.presetsData();
-            size = videoSource.size();
-            frameRate = videoSource.frameRate();
-        }
 
-        ASSERT(!m_proxies.contains(id));
-        auto proxy = makeUnique<SourceProxy>(id, m_connectionProxy->connection(), ProcessIdentity { m_connectionProxy->resourceOwner() }, WTFMove(source), shouldUseGPUProcessRemoteFrames ? m_connectionProxy->remoteVideoFrameObjectHeap() : nullptr);
-        m_proxies.add(id, WTFMove(proxy));
-    } else
-        invalidConstraints = WTFMove(sourceOrError.errorMessage);
+    auto settings = source->settings();
+    auto capabilities = source->capabilities();
 
-    completionHandler(succeeded, invalidConstraints, WTFMove(settings), WTFMove(capabilities), WTFMove(presets), size, frameRate);
+    ASSERT(!m_proxies.contains(id));
+    auto proxy = makeUnique<SourceProxy>(id, m_connectionProxy->connection(), ProcessIdentity { m_connectionProxy->resourceOwner() }, WTFMove(source), shouldUseGPUProcessRemoteFrames ? m_connectionProxy->remoteVideoFrameObjectHeap() : nullptr);
+    m_proxies.add(id, WTFMove(proxy));
+
+    completionHandler({ }, WTFMove(settings), WTFMove(capabilities));
 }
 
 void UserMediaCaptureManagerProxy::startProducingData(RealtimeMediaSourceIdentifier id)

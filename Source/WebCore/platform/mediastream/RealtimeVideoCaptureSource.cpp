@@ -60,13 +60,6 @@ const Vector<VideoPreset>& RealtimeVideoCaptureSource::presets()
     return m_presets;
 }
 
-Vector<VideoPresetData> RealtimeVideoCaptureSource::presetsData()
-{
-    return WTF::map(presets(), [](auto& preset) -> VideoPresetData {
-        return { preset.size(), preset.frameRateRanges() };
-    });
-}
-
 void RealtimeVideoCaptureSource::setSupportedPresets(Vector<VideoPresetData>&& presetData)
 {
     auto presets = WTF::map(WTFMove(presetData), [](auto&& data) {
