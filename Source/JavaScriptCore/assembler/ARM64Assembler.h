@@ -3474,15 +3474,18 @@ public:
     static void setPointer(int* address, void* valuePtr, RegisterID rd, bool flush)
     {
         uintptr_t value = reinterpret_cast<uintptr_t>(valuePtr);
-        int buffer[3];
+        int buffer[NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS];
         buffer[0] = moveWideImediate(Datasize_64, MoveWideOp_Z, 0, getHalfword(value, 0), rd);
         buffer[1] = moveWideImediate(Datasize_64, MoveWideOp_K, 1, getHalfword(value, 1), rd);
-        buffer[2] = moveWideImediate(Datasize_64, MoveWideOp_K, 2, getHalfword(value, 2), rd);
+        if constexpr (NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS > 2)
+            buffer[2] = moveWideImediate(Datasize_64, MoveWideOp_K, 2, getHalfword(value, 2), rd);
+        if constexpr (NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS > 3)
+            buffer[3] = moveWideImediate(Datasize_64, MoveWideOp_K, 3, getHalfword(value, 3), rd);
         RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(address) == address);
-        performJITMemcpy(address, buffer, sizeof(int) * 3);
+        performJITMemcpy(address, buffer, sizeof(int) * NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS);
 
         if (flush)
-            cacheFlush(address, sizeof(int) * 3);
+            cacheFlush(address, sizeof(int) * NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS);
     }
 
     static void* readPointer(void* where)
@@ -3503,18 +3506,25 @@ public:
         ASSERT_UNUSED(expected, expected && sf && opc == MoveWideOp_K && hw == 1 && rd == rdFirst);
         result |= static_cast<uintptr_t>(imm16) << 16;
 
-#if CPU(ADDRESS64)
-        expected = disassembleMoveWideImediate(address + 2, sf, opc, hw, imm16, rd);
-        ASSERT_UNUSED(expected, expected && sf && opc == MoveWideOp_K && hw == 2 && rd == rdFirst);
-        result |= static_cast<uintptr_t>(imm16) << 32;
-#endif
+        if constexpr (NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS > 2) {
+            expected = disassembleMoveWideImediate(address + 2, sf, opc, hw, imm16, rd);
+            ASSERT_UNUSED(expected, expected && sf && opc == MoveWideOp_K && hw == 2 && rd == rdFirst);
+            result |= static_cast<uintptr_t>(imm16) << 32;
+        }
+
+        if constexpr (NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS > 3) {
+            expected = disassembleMoveWideImediate(address + 3, sf, opc, hw, imm16, rd);
+            ASSERT_UNUSED(expected, expected && sf && opc == MoveWideOp_K && hw == 3 && rd == rdFirst);
+            result |= static_cast<uintptr_t>(imm16) << 48;
+        }
 
         return reinterpret_cast<void*>(result);
     }
 
     static void* readCallTarget(void* from)
     {
-        return readPointer(reinterpret_cast<int*>(from) - (isAddress64Bit() ? 4 : 3));
+        constexpr ptrdiff_t callInstruction = 1;
+        return readPointer(reinterpret_cast<int*>(from) - callInstruction - NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS);
     }
 
     // The static relink, repatch, and replace methods can use can
@@ -3741,7 +3751,10 @@ protected:
         bool expected = disassembleMoveWideImediate(address, sf, opc, hw, imm16, rd);
         ASSERT_UNUSED(expected, expected && sf && opc == MoveWideOp_Z && !hw);
         ASSERT(checkMovk<Datasize_64>(address[1], 1, rd));
-        ASSERT(checkMovk<Datasize_64>(address[2], 2, rd));
+        if constexpr (NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS > 2)
+            ASSERT(checkMovk<Datasize_64>(address[2], 2, rd));
+        if constexpr (NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS > 3)
+            ASSERT(checkMovk<Datasize_64>(address[3], 3, rd));
 
         setPointer(address, valuePtr, rd, flush);
     }
@@ -4489,7 +4502,15 @@ protected:
     AssemblerBuffer m_buffer;
 
 public:
+#if CPU(ARM64E)
+    static constexpr ptrdiff_t MAX_POINTER_BITS = 64;
+#elif CPU(ADDRESS64)
     static constexpr ptrdiff_t MAX_POINTER_BITS = 48;
+#else
+    static constexpr ptrdiff_t MAX_POINTER_BITS = 32;
+#endif
+    // Each movz/k instruction can only encode 16 bits.
+    static constexpr ptrdiff_t NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS = MAX_POINTER_BITS / 16;
 };
 
 } // namespace JSC

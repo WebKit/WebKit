@@ -66,7 +66,7 @@ protected:
     static constexpr size_t INSTRUCTION_SIZE = 4;
 
     // N instructions to load the pointer + 1 call instruction.
-    static constexpr ptrdiff_t REPATCH_OFFSET_CALL_TO_POINTER = -((Assembler::MAX_POINTER_BITS / 16 + 1) * INSTRUCTION_SIZE);
+    static constexpr ptrdiff_t REPATCH_OFFSET_CALL_TO_POINTER = -((Assembler::NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS + 1) * INSTRUCTION_SIZE);
 
 public:
     MacroAssemblerARM64()
@@ -5908,8 +5908,9 @@ protected:
         intptr_t value = reinterpret_cast<intptr_t>(imm.m_value);
         m_assembler.movz<64>(dest, getHalfword(value, 0));
         m_assembler.movk<64>(dest, getHalfword(value, 1), 16);
-        m_assembler.movk<64>(dest, getHalfword(value, 2), 32);
-        if constexpr (Assembler::MAX_POINTER_BITS > 48)
+        if constexpr (Assembler::NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS > 2)
+            m_assembler.movk<64>(dest, getHalfword(value, 2), 32);
+        if constexpr (Assembler::NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS > 3)
             m_assembler.movk<64>(dest, getHalfword(value, 3), 48);
     }
 
