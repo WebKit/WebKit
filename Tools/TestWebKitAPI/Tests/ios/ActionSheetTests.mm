@@ -66,11 +66,11 @@
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 @interface TestWKWebViewForAnimationControls : TestWKWebView
-- (BOOL)_allowAnimationControlsForTesting;
+- (BOOL)_allowAnimationControls;
 @end
 
 @implementation TestWKWebViewForAnimationControls
-- (BOOL)_allowAnimationControlsForTesting
+- (BOOL)_allowAnimationControls
 {
     return YES;
 }
@@ -407,14 +407,16 @@ static bool performLongPressAction(WKWebView *webView, ActionSheetObserver *obse
     return true;
 }
 
-TEST(ActionSheetTests, PlayPauseAnimationInsideLink)
+static void playPauseAnimationTest(NSString *testFilename)
 {
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     auto webView = adoptNS([[TestWKWebViewForAnimationControls alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration addToWindow:YES]);
     auto observer = adoptNS([[ActionSheetObserver alloc] init]);
     [webView setUIDelegate:observer.get()];
-    [webView synchronouslyLoadTestPageNamed:@"img-animation-in-anchor"];
+    [webView synchronouslyLoadTestPageNamed:testFilename];
     [webView stringByEvaluatingJavaScript:@"window.internals.settings.setImageAnimationControlEnabled(true)"];
+    // Pause animations globally to establish a known state.
+    [webView stringByEvaluatingJavaScript:@"window.internals.setImageAnimationEnabled(false)"];
 
     // Start the animation.
     while (!performLongPressAction(webView.get(), observer.get(), CGPointMake(100, 100), _WKElementActionPlayAnimation))
@@ -427,6 +429,16 @@ TEST(ActionSheetTests, PlayPauseAnimationInsideLink)
     // Wait until we have "Play Animation" again (indicating the animation was successfully paused).
     while (!performLongPressAction(webView.get(), observer.get(), CGPointMake(100, 100), _WKElementActionPlayAnimation))
         TestWebKitAPI::Util::runFor(0.1_s);
+}
+
+TEST(ActionSheetTests, PlayPauseAnimationInsideLink)
+{
+    playPauseAnimationTest(@"img-animation-in-anchor");
+}
+
+TEST(ActionSheetTests, PlayPauseAnimationCoveredByLink)
+{
+    playPauseAnimationTest(@"img-animation-covered-by-link");
 }
 
 TEST(ActionSheetTests, PlayPauseAnimationSheetActionsNotPresentByDefault)

@@ -847,7 +847,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_simulateSelectionStart;
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-- (BOOL)_allowAnimationControlsForTesting;
+- (BOOL)_allowAnimationControls;
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)

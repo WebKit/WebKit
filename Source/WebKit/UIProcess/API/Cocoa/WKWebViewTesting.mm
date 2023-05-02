@@ -482,12 +482,6 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     });
 }
 
-- (BOOL)_allowAnimationControlsForTesting
-{
-    // For subclasses to override.
-    return NO;
-}
-
 - (BOOL)_shouldBypassGeolocationPromptForTesting
 {
     // For subclasses to override.

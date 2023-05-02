@@ -84,7 +84,6 @@ struct WKAppPrivacyReportTestingData {
 - (void)_didShowContextMenu;
 - (void)_didDismissContextMenu;
 
-- (BOOL)_allowAnimationControlsForTesting;
 - (BOOL)_shouldBypassGeolocationPromptForTesting;
 
 - (void)_didPresentContactPicker;

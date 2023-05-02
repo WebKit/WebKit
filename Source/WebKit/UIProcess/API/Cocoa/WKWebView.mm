@@ -205,6 +205,12 @@ static const BOOL defaultAllowsViewportShrinkToFit = NO;
 static const BOOL defaultFastClickingEnabled = NO;
 #endif
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+#import <wtf/SoftLinking.h>
+SOFT_LINK_LIBRARY_OPTIONAL(libAccessibility)
+SOFT_LINK_OPTIONAL(libAccessibility, _AXSReduceMotionAutoplayAnimatedImagesEnabled, Boolean, (), ());
+#endif
+
 #define THROW_IF_SUSPENDED if (UNLIKELY(_page && _page->isSuspended())) \
     [NSException raise:NSInternalInconsistencyException format:@"The WKWebView is suspended"]
 
@@ -2556,6 +2562,15 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
     THROW_IF_SUSPENDED;
     return _page->allowsAnyAnimationToPlay();
 }
+
+- (BOOL)_allowAnimationControls
+{
+    THROW_IF_SUSPENDED;
+
+    // Only show animation controls if autoplay of animated images has been disabled.
+    auto* autoplayAnimatedImagesFunction = _AXSReduceMotionAutoplayAnimatedImagesEnabledPtr();
+    return autoplayAnimatedImagesFunction && !autoplayAnimatedImagesFunction();
+}
 #else // !ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 - (void)_pauseAllAnimationsWithCompletionHandler:(void(^)(void))completionHandler
 {
@@ -2572,6 +2587,11 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 - (BOOL)_allowsAnyAnimationToPlay
 {
     return YES;
+}
+
+- (BOOL)_allowAnimationControls
+{
+    return NO;
 }
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 

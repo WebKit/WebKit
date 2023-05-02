@@ -63,11 +63,6 @@ SOFT_LINK_FRAMEWORK(SafariServices)
 SOFT_LINK_CLASS(SafariServices, SSReadingList)
 #endif
 
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-SOFT_LINK_LIBRARY_OPTIONAL(libAccessibility)
-SOFT_LINK_OPTIONAL(libAccessibility, _AXSReduceMotionAutoplayAnimatedImagesEnabled, Boolean, (), ());
-#endif
-
 #import "TCCSoftLink.h"
 
 OBJC_CLASS DDAction;
@@ -533,17 +528,25 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_appendAnimationAction:(NSMutableArray *)actions elementInfo:(_WKActivatedElementInfo *)elementInfo
 {
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-    if (elementInfo.isAnimatedImage) {
-        // Only show these controls if autoplay of animated images has been disabled.
-        auto* autoplayAnimatedImagesFunction = _AXSReduceMotionAutoplayAnimatedImagesEnabledPtr();
-        BOOL systemAllowsControls = autoplayAnimatedImagesFunction && !autoplayAnimatedImagesFunction();
-        if (!systemAllowsControls && [_delegate respondsToSelector:@selector(_allowAnimationControlsForTesting)])
-            systemAllowsControls = [_delegate _allowAnimationControlsForTesting];
+    BOOL hasAnimation = elementInfo.isAnimatedImage || !elementInfo._animationsUnderElement.isEmpty();
+    if (!hasAnimation || !elementInfo.canShowAnimationControls)
+        return;
 
-        if (systemAllowsControls && elementInfo.canShowAnimationControls)
-            [actions addObject:[_WKElementAction _elementActionWithType:elementInfo.isAnimating ? _WKElementActionPauseAnimation : _WKElementActionPlayAnimation info:elementInfo assistant:self]];
+    if (![_delegate respondsToSelector:@selector(_allowAnimationControls)] || ![_delegate _allowAnimationControls])
+        return;
+
+    BOOL isAnimating = elementInfo.isAnimating;
+    if (!elementInfo.isAnimatedImage) {
+        // If the activated element is not an animated image, but it has animations underneath it, take the "is animating" state from these animations.
+        for (const auto& elementAnimationContext : elementInfo._animationsUnderElement) {
+            if (elementAnimationContext.isAnimating) {
+                isAnimating = YES;
+                break;
+            }
+        }
     }
-#endif
+    [actions addObject:[_WKElementAction _elementActionWithType:isAnimating ? _WKElementActionPauseAnimation : _WKElementActionPlayAnimation info:elementInfo assistant:self]];
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 }
 
 - (RetainPtr<NSArray<_WKElementAction *>>)defaultActionsForLinkSheet:(_WKActivatedElementInfo *)elementInfo
@@ -1079,14 +1082,22 @@ static NSMutableArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr
         [delegate actionSheetAssistant:self copySubject:element.image sourceMIMEType:element.imageMIMEType];
 #endif
         break;
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-    case _WKElementActionPlayAnimation:
-        [delegate actionSheetAssistant:self performAction:WebKit::SheetAction::PlayAnimation];
-        break;
     case _WKElementActionPauseAnimation:
-        [delegate actionSheetAssistant:self performAction:WebKit::SheetAction::PauseAnimation];
-        break;
+    case _WKElementActionPlayAnimation: {
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+        auto sheetAction = type == _WKElementActionPauseAnimation ? WebKit::SheetAction::PauseAnimation : WebKit::SheetAction::PlayAnimation;
+        [delegate actionSheetAssistant:self performAction:sheetAction];
+
+        if (!element._animationsUnderElement.isEmpty() && [delegate respondsToSelector:@selector(_actionSheetAssistant:performAction:onElements:)]) {
+            auto elementContexts = element._animationsUnderElement.map([] (const auto& elementAnimationContext) {
+                return elementAnimationContext.element;
+            });
+
+            [delegate _actionSheetAssistant:self performAction:sheetAction onElements:WTFMove(elementContexts)];
+        }
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+        break;
+    }
     default:
         ASSERT_NOT_REACHED();
         break;

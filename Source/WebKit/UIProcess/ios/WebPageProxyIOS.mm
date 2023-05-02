@@ -583,6 +583,11 @@ void WebPageProxy::performActionOnElement(uint32_t action)
     });
 }
 
+void WebPageProxy::performActionOnElements(uint32_t action, Vector<WebCore::ElementContext>&& elements)
+{
+    m_process->send(Messages::WebPage::PerformActionOnElements(action, elements), webPageID());
+}
+
 void WebPageProxy::saveImageToLibrary(const SharedMemory::Handle& imageHandle, const String& authorizationToken)
 {
     MESSAGE_CHECK(!imageHandle.isNull());

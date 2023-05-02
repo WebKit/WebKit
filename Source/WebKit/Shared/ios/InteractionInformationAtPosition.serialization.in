@@ -92,6 +92,10 @@ struct WebKit::InteractionInformationAtPosition {
 
     std::optional<WebCore::ElementContext> elementContext;
     std::optional<WebCore::ElementContext> hostImageOrVideoElementContext;
+
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    Vector<WebCore::ElementAnimationContext> animationsAtPoint;
+#endif
 };
 
 #endif

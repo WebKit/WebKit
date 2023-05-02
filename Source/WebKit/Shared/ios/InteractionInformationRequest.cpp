@@ -41,6 +41,7 @@ void InteractionInformationRequest::encode(IPC::Encoder& encoder) const
     encoder << includeCaretContext;
     encoder << includeHasDoubleClickHandler;
     encoder << includeImageData;
+    encoder << gatherAnimations;
     encoder << linkIndicatorShouldHaveLegacyMargins;
     encoder << disallowUserAgentShadowContent;
 }
@@ -63,6 +64,9 @@ bool InteractionInformationRequest::decode(IPC::Decoder& decoder, InteractionInf
         return false;
 
     if (!decoder.decode(result.includeImageData))
+        return false;
+
+    if (!decoder.decode(result.gatherAnimations))
         return false;
 
     if (!decoder.decode(result.linkIndicatorShouldHaveLegacyMargins))
@@ -89,6 +93,9 @@ bool InteractionInformationRequest::isValidForRequest(const InteractionInformati
         return false;
 
     if (other.includeImageData && !includeImageData)
+        return false;
+
+    if (other.gatherAnimations && !gatherAnimations)
         return false;
 
     if (other.linkIndicatorShouldHaveLegacyMargins != linkIndicatorShouldHaveLegacyMargins)

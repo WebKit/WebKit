@@ -1325,6 +1325,11 @@ struct WebCore::ElementContext {
     WebCore::ElementIdentifier elementIdentifier;
 };
 
+struct WebCore::ElementAnimationContext {
+    WebCore::ElementContext element;
+    bool isAnimating;
+};
+
 header: <WebCore/FrameLoaderTypes.h>
 [CustomHeader] struct WebCore::SystemPreviewInfo {
     WebCore::ElementContext element;

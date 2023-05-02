@@ -26,9 +26,9 @@
 #if PLATFORM(IOS_FAMILY)
 #import "InteractionInformationAtPosition.h"
 #endif
-#import <WebKit/_WKActivatedElementInfo.h>
-
+#import <WebCore/ElementAnimationContext.h>
 #import <WebCore/IntPoint.h>
+#import <WebKit/_WKActivatedElementInfo.h>
 
 namespace WebKit {
     class ShareableBitmap;
@@ -44,12 +44,13 @@ namespace WebKit {
 - (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL information:(const WebKit::InteractionInformationAtPosition&)information;
 - (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url image:(WebKit::ShareableBitmap*)image information:(const WebKit::InteractionInformationAtPosition&)information;
 - (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL userInfo:(NSDictionary *)userInfo information:(const WebKit::InteractionInformationAtPosition&)information;
-- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL location:(const WebCore::IntPoint&)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image imageMIMEType:(NSString *)imageMIMEType isAnimatedImage:(BOOL)isAnimatedImage isAnimating:(BOOL)isAnimating canShowAnimationControls:(BOOL)canShowAnimationControls userInfo:(NSDictionary *)userInfo;
+- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL location:(const WebCore::IntPoint&)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image imageMIMEType:(NSString *)imageMIMEType isAnimatedImage:(BOOL)isAnimatedImage isAnimating:(BOOL)isAnimating canShowAnimationControls:(BOOL)canShowAnimationControls animationsUnderElement:(Vector<WebCore::ElementAnimationContext>)animationsUnderElement userInfo:(NSDictionary *)userInfo;
 #endif // PLATFORM(IOS_FAMILY)
 
 @property (nonatomic, readonly) NSString *imageMIMEType;
 @property (nonatomic, readonly) WebCore::IntPoint _interactionLocation;
 @property (nonatomic, readonly) BOOL _isImage;
 @property (nonatomic, readonly) BOOL _isUsingAlternateURLForImage;
+@property (nonatomic, readonly) const Vector<WebCore::ElementAnimationContext>& _animationsUnderElement;
 
 @end

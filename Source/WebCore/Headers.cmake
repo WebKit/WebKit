@@ -758,6 +758,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/Element.h
     dom/ElementAncestorIterator.h
     dom/ElementAncestorIteratorInlines.h
+    dom/ElementAnimationContext.h
     dom/ElementChildIterator.h
     dom/ElementChildIteratorInlines.h
     dom/ElementContext.h

@@ -85,6 +85,7 @@
 #import <WebCore/EditorClient.h>
 #import <WebCore/Element.h>
 #import <WebCore/ElementAncestorIteratorInlines.h>
+#import <WebCore/ElementAnimationContext.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/File.h>
 #import <WebCore/FloatQuad.h>
@@ -112,6 +113,7 @@
 #import <WebCore/HTMLVideoElement.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/HitTestResult.h>
+#import <WebCore/Image.h>
 #import <WebCore/ImageOverlay.h>
 #import <WebCore/InputMode.h>
 #import <WebCore/KeyboardEvent.h>
@@ -3017,9 +3019,6 @@ static void imagePositionInformation(WebPage& page, Element& element, const Inte
     info.imageMIMEType = image.mimeType();
     info.isAnimatedImage = image.isAnimated();
     info.isAnimating = image.isAnimating();
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-    info.canShowAnimationControls = page.corePage() && page.corePage()->settings().imageAnimationControlEnabled();
-#endif
     info.elementContainsImageOverlay = is<HTMLElement>(element) && ImageOverlay::hasOverlay(downcast<HTMLElement>(element));
 
     if (request.includeSnapshot || request.includeImageData)
@@ -3291,6 +3290,32 @@ static void populateCaretContext(const HitTestResult& hitTestResult, const Inter
     info.shouldNotUseIBeamInEditableContent = nodeShouldNotUseIBeam(node) || nodeShouldNotUseIBeam(deepPosition.computeNodeBeforePosition()) || nodeShouldNotUseIBeam(deepPosition.computeNodeAfterPosition());
 }
 
+static void animationPositionInformation(WebPage& page, const InteractionInformationRequest& request, const HitTestResult& hitTestResult, InteractionInformationAtPosition& info)
+{
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    info.canShowAnimationControls = page.corePage() && page.corePage()->settings().imageAnimationControlEnabled();
+    if (!request.gatherAnimations)
+        return;
+
+    for (const auto& node : hitTestResult.listBasedTestResult()) {
+        auto* element = dynamicDowncast<Element>(node.ptr());
+        if (!element)
+            continue;
+
+        auto rendererAndImage = imageRendererAndImage(*element);
+        if (!rendererAndImage || !rendererAndImage->second.isAnimated())
+            continue;
+
+        if (auto elementContext = page.contextForElement(*element))
+            info.animationsAtPoint.append({ WTFMove(*elementContext), rendererAndImage->second.isAnimating() });
+    }
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(request);
+    UNUSED_PARAM(info);
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+}
+
 InteractionInformationAtPosition WebPage::positionInformation(const InteractionInformationRequest& request)
 {
     InteractionInformationAtPosition info;
@@ -3318,6 +3343,12 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
     if (request.disallowUserAgentShadowContent)
         hitTestRequestTypes.add(HitTestRequest::Type::DisallowUserAgentShadowContent);
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    if (request.gatherAnimations) {
+        hitTestRequestTypes.add(HitTestRequest::Type::IncludeAllElementsUnderPoint);
+        hitTestRequestTypes.add(HitTestRequest::Type::CollectMultipleElements);
+    }
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
     auto& eventHandler = localMainFrame->eventHandler();
     auto hitTestResult = eventHandler.hitTestResultAtPoint(request.point, hitTestRequestTypes);
@@ -3366,6 +3397,7 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
             imagePositionInformation(*this, downcast<HTMLImageElement>(*hitTestNode), request, info);
     }
 
+    animationPositionInformation(*this, request, hitTestResult, info);
     selectionPositionInformation(*this, request, info);
 
     // Prevent the callout bar from showing when tapping on the datalist button.
@@ -3399,6 +3431,19 @@ void WebPage::startInteractionWithElementContextOrPosition(std::optional<WebCore
 void WebPage::stopInteraction()
 {
     m_interactionNode = nullptr;
+}
+
+static void handleAnimationActions(Element& element, uint32_t action)
+{
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    if (static_cast<SheetAction>(action) == SheetAction::PlayAnimation) {
+        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element))
+            imageElement->setAllowsAnimation(true);
+    } else if (static_cast<SheetAction>(action) == SheetAction::PauseAnimation) {
+        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element))
+            imageElement->setAllowsAnimation(false);
+    }
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 }
 
 void WebPage::performActionOnElement(uint32_t action, const String& authorizationToken, CompletionHandler<void()>&& completionHandler)
@@ -3452,15 +3497,15 @@ void WebPage::performActionOnElement(uint32_t action, const String& authorizatio
         send(Messages::WebPageProxy::SaveImageToLibrary(WTFMove(handle), authorizationToken));
     }
 
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-    if (static_cast<SheetAction>(action) == SheetAction::PlayAnimation) {
-        if (auto* imageElement = dynamicDowncast<HTMLImageElement>(element))
-            imageElement->setAllowsAnimation(true);
-    } else if (static_cast<SheetAction>(action) == SheetAction::PauseAnimation) {
-        if (auto* imageElement = dynamicDowncast<HTMLImageElement>(element))
-            imageElement->setAllowsAnimation(false);
+    handleAnimationActions(element, action);
+}
+
+void WebPage::performActionOnElements(uint32_t action, const Vector<WebCore::ElementContext>& elements)
+{
+    for (const auto& elementContext : elements) {
+        if (RefPtr element = elementForContext(elementContext))
+            handleAnimationActions(*element, action);
     }
-#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 }
 
 static inline RefPtr<Element> nextAssistableElement(Node* startNode, Page& page, bool isForward)

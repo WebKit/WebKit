@@ -104,6 +104,7 @@ messages -> WebPage LegacyReceiver {
     StartInteractionWithElementContextOrPosition(std::optional<WebCore::ElementContext> elementContext, WebCore::IntPoint point)
     StopInteraction()
     PerformActionOnElement(uint32_t action, String authenticationToken) -> ()
+    PerformActionOnElements(uint32_t action, Vector<WebCore::ElementContext> elements)
     FocusNextFocusedElement(bool isForward) -> ()
     AutofillLoginCredentials(String username, String password)
     SetFocusedElementValue(struct WebCore::ElementContext context, String value)

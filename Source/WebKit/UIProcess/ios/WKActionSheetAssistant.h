@@ -90,7 +90,8 @@ typedef NS_ENUM(NSInteger, _WKElementActionType);
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant copySubject:(UIImage *)image sourceMIMEType:(NSString *)sourceMIMEType;
 #endif
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-- (BOOL)_allowAnimationControlsForTesting;
+- (BOOL)_allowAnimationControls;
+- (void)_actionSheetAssistant:(WKActionSheetAssistant *)assistant performAction:(WebKit::SheetAction)action onElements:(Vector<WebCore::ElementContext>&&)elements;
 #endif
 @end
 

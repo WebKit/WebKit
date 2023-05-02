@@ -2935,6 +2935,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             request.includeSnapshot = true;
             request.includeLinkIndicator = true;
             request.linkIndicatorShouldHaveLegacyMargins = !self._shouldUseContextMenus;
+            request.gatherAnimations = [self.webView _allowAnimationControls];
         }
 
         [self requestAsynchronousPositionInformationUpdate:request];
@@ -8250,6 +8251,8 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     request.includeSnapshot = true;
     request.includeLinkIndicator = assistant.needsLinkIndicator;
     request.linkIndicatorShouldHaveLegacyMargins = !self._shouldUseContextMenus;
+    request.gatherAnimations = [self.webView _allowAnimationControls];
+
     if (![self ensurePositionInformationIsUpToDate:request])
         return std::nullopt;
 
@@ -8263,6 +8266,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     request.includeSnapshot = true;
     request.includeLinkIndicator = assistant.needsLinkIndicator;
     request.linkIndicatorShouldHaveLegacyMargins = !self._shouldUseContextMenus;
+    request.gatherAnimations = [self.webView _allowAnimationControls];
 
     [self requestAsynchronousPositionInformationUpdate:request];
 }
@@ -8270,6 +8274,11 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant performAction:(WebKit::SheetAction)action
 {
     _page->performActionOnElement((uint32_t)action);
+}
+
+- (void)_actionSheetAssistant:(WKActionSheetAssistant *)assistant performAction:(WebKit::SheetAction)action onElements:(Vector<WebCore::ElementContext>&&)elements
+{
+    _page->performActionOnElements((uint32_t)action, WTFMove(elements));
 }
 
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant openElementAtLocation:(CGPoint)location
@@ -11817,9 +11826,9 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 }
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-- (BOOL)_allowAnimationControlsForTesting
+- (BOOL)_allowAnimationControls
 {
-    return self.webView._allowAnimationControlsForTesting;
+    return self.webView._allowAnimationControls;
 }
 #endif
 
@@ -12159,6 +12168,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         request.includeLinkIndicator = true;
         request.disallowUserAgentShadowContent = triggeredByImageAnalysisTimeout;
         request.linkIndicatorShouldHaveLegacyMargins = ![strongSelf _shouldUseContextMenus];
+        request.gatherAnimations = [strongSelf->_webView _allowAnimationControls];
 
         [strongSelf doAfterPositionInformationUpdate:[weakSelf = WeakObjCPtr<WKContentView>(strongSelf.get()), completion] (WebKit::InteractionInformationAtPosition) {
             if (auto strongSelf = weakSelf.get())
@@ -12631,6 +12641,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     request.includeSnapshot = true;
     request.includeLinkIndicator = true;
     request.linkIndicatorShouldHaveLegacyMargins = !self._shouldUseContextMenus;
+    request.gatherAnimations = [self.webView _allowAnimationControls];
     if (![self ensurePositionInformationIsUpToDate:request])
         return NO;
     if (!_positionInformation.isLink && !_positionInformation.isImage && !_positionInformation.isAttachment)
