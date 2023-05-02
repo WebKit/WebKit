@@ -390,7 +390,7 @@ ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> CSSFontFaceSet::matchin
         AtomString familyAtom;
         WTF::switchOn(familyRaw, [&] (CSSValueID familyKeyword) {
             if (familyKeyword != CSSValueWebkitBody)
-                familyAtom = familyNamesData->at(CSSPropertyParserHelpers::genericFontFamilyIndex(familyKeyword));
+                familyAtom = familyNames->at(CSSPropertyParserHelpers::genericFontFamilyIndex(familyKeyword));
             else {
                 ASSERT(m_owningFontSelector && m_owningFontSelector->scriptExecutionContext());
                 familyAtom = AtomString { m_owningFontSelector->scriptExecutionContext()->settingsValues().fontGenericFamilies.standardFontFamily() };

@@ -406,6 +406,7 @@ TEST(WTF_RefPtr, ReturnValue)
 }
 
 struct ConstRefCounted : RefCounted<ConstRefCounted> {
+    using CompactPtrTypeTraits = WTF::BigHeapTypeTraits<ConstRefCounted>;
     static Ref<ConstRefCounted> create() { return adoptRef(*new ConstRefCounted); }
 };
 

@@ -32,6 +32,8 @@
 #include "Weak.h"
 #include "WeakHandleOwner.h"
 
+#include <wtf/text/StringImpl.h>
+
 namespace JSC {
 
 class UnlinkedFunctionExecutable;

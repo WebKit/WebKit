@@ -194,23 +194,6 @@ inline RegisteredSymbolImpl* SymbolImpl::asRegisteredSymbolImpl()
     return static_cast<RegisteredSymbolImpl*>(this);
 }
 
-#if ASSERT_ENABLED
-// SymbolImpls created from StaticStringImpl will ASSERT
-// in the generic ValueCheck<T>::checkConsistency
-// as they are not allocated by fastMalloc.
-// We don't currently have any way to detect that case
-// so we ignore the consistency check for all SymbolImpls*.
-template<> struct
-ValueCheck<SymbolImpl*> {
-    static void checkConsistency(const SymbolImpl*) { }
-};
-
-template<> struct
-ValueCheck<const SymbolImpl*> {
-    static void checkConsistency(const SymbolImpl*) { }
-};
-#endif // ASSERT_ENABLED
-
 } // namespace WTF
 
 using WTF::SymbolImpl;

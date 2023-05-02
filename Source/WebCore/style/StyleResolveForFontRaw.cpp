@@ -75,7 +75,7 @@ std::optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascade
         switchOn(item, [&] (CSSValueID ident) {
             isGenericFamily = ident != CSSValueWebkitBody;
             if (isGenericFamily)
-                family = familyNamesData->at(CSSPropertyParserHelpers::genericFontFamilyIndex(ident));
+                family = familyNames->at(CSSPropertyParserHelpers::genericFontFamilyIndex(ident));
             else
                 family = AtomString(context.settingsValues().fontGenericFamilies.standardFontFamily());
         }, [&] (const AtomString& familyString) {

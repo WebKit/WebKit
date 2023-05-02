@@ -92,6 +92,12 @@ void initialize()
         }
         Options::finalize();
 
+        StringImpl::initialize_empty();
+        FOREACH_STATIC_STRING_IMPL(INITIALIZE_STATIC_STRING_IMPL)
+
+        AtomString::initializeStrings();
+        String::initializeStrings();
+
 #if !USE(SYSTEM_MALLOC)
 #if BUSE(LIBPAS)
         if (Options::libpasScavengeContinuously())

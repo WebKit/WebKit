@@ -39,6 +39,8 @@
 
 namespace WTF {
 
+static_assert(MACH_VM_MAX_ADDRESS_RAW);
+
 #if CPU(ADDRESS64) && CPU(ARM64) && OS(DARWIN) && (MACH_VM_MAX_ADDRESS_RAW < (1ULL << 36))
 #define HAVE_36BIT_ADDRESS 1
 #else

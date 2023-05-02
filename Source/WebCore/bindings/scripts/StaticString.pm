@@ -43,7 +43,7 @@ END
 
     for my $name (sort keys %strings) {
         my $value = $strings{$name};
-        push(@result, "static constexpr StringImpl::StaticStringImpl ${name}Data(\"${value}\");\n");
+        push(@result, "DECLARE_STATIC_STRING_IMPL(${name}Data, \"${value}\")\n");
     }
 
     push(@result, <<END);
@@ -64,13 +64,12 @@ sub GenerateStringAsserts($)
 
     my @result = ();
 
-    push(@result, "#ifndef NDEBUG\n");
-
     for my $name (sort keys %strings) {
-        push(@result, "    reinterpret_cast<const StringImpl*>(&${name}Data)->assertHashIsCorrect();\n");
+        push(@result, "    initialize_${name}Data();\n");
+        push(@result, "#ifndef NDEBUG\n");
+        push(@result, "    ${name}Data()->assertHashIsCorrect();\n");
+        push(@result, "#endif // NDEBUG\n");
     }
-
-    push(@result, "#endif // NDEBUG\n");
 
     push(@result, "\n");
 

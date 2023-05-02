@@ -615,11 +615,11 @@ TEST(WTF, StringImplNullSymbolToAtomString)
     ASSERT_TRUE(result2);
 }
 
-static StringImpl::StaticStringImpl staticString {"Cocoa"};
+static StringImpl* staticString = MAKE_STATIC_STRING_IMPL("Cocoa");
 
 TEST(WTF, StringImplStaticToAtomString)
 {
-    StringImpl& original = staticString;
+    StringImpl& original = *staticString;
     ASSERT_FALSE(original.isSymbol());
     ASSERT_FALSE(original.isAtom());
     ASSERT_TRUE(original.isStatic());

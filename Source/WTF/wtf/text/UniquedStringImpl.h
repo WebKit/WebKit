@@ -42,23 +42,6 @@ public:
     using CompactPtrTypeTraits = WTF::BigHeapTypeTraits<UniquedStringImpl>;
 };
 
-#if ASSERT_ENABLED
-// UniquedStringImpls created from StaticStringImpl will ASSERT
-// in the generic ValueCheck<T>::checkConsistency
-// as they are not allocated by fastMalloc.
-// We don't currently have any way to detect that case
-// so we ignore the consistency check for all UniquedStringImpls*.
-template<> struct
-ValueCheck<UniquedStringImpl*> {
-    static void checkConsistency(const UniquedStringImpl*) { }
-};
-
-template<> struct
-ValueCheck<const UniquedStringImpl*> {
-    static void checkConsistency(const UniquedStringImpl*) { }
-};
-#endif // ASSERT_ENABLED
-
 } // namespace WTF
 
 using WTF::UniquedStringImpl;

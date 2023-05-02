@@ -267,14 +267,19 @@ Ref<StringImpl> StringImpl::create(const LChar* characters, unsigned length)
     return createInternal(characters, length);
 }
 
+Ref<StringImpl> StringImpl::createStaticStringImplInternal(const LChar* characters, unsigned length)
+{
+    Ref<StringImpl> result = adoptRef(*new StringImpl(characters, length, ConstructWithoutCopying));
+    result->hash();
+    result->m_refCount |= s_refCountFlagIsStaticString;
+    return result;
+}
+
 Ref<StringImpl> StringImpl::createStaticStringImpl(const LChar* characters, unsigned length)
 {
     if (!length)
         return *empty();
-    Ref<StringImpl> result = createInternal(characters, length);
-    result->hash();
-    result->m_refCount |= s_refCountFlagIsStaticString;
-    return result;
+    return createStaticStringImplInternal(characters, length);
 }
 
 Ref<StringImpl> StringImpl::createStaticStringImpl(const UChar* characters, unsigned length)

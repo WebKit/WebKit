@@ -189,11 +189,20 @@ void ensureGigacage()
                 uint64_t random[2];
                 cryptoRandom(reinterpret_cast<unsigned char*>(random), sizeof(random));
                 size_t gigacageSize = maxSize(kind);
-                size_t size = roundDownToMultipleOf(vmPageSize(), gigacageSize - (random[0] % maximumCageSizeReductionForSlide));
+                size_t size = gigacageSize;
+                if (kind != SmallHeap)
+                    size = roundDownToMultipleOf(vmPageSize(), gigacageSize - (random[0] % maximumCageSizeReductionForSlide));
                 g_gigacageConfig.setAllocSize(kind, size);
-                ptrdiff_t offset = roundDownToMultipleOf(vmPageSize(), random[1] % (gigacageSize - size));
+                ptrdiff_t offset = 0;
+                if (kind != SmallHeap)
+                    offset = roundDownToMultipleOf(vmPageSize(), random[1] % (gigacageSize - size));
                 void* thisBase = reinterpret_cast<unsigned char*>(gigacageBasePtr) + offset;
                 g_gigacageConfig.setAllocBasePtr(kind, thisBase);
+
+                if (kind == SmallHeap && (reinterpret_cast<uint64_t>(thisBase) & ~smallHeapGigacageMask) != reinterpret_cast<uint64_t>(thisBase)) {
+                    fprintf(stderr, "Small heap did not get allocated correctly: %p", thisBase);
+                    RELEASE_BASSERT(false);
+                }
 
 #if BUSE(LIBPAS)
                 bmalloc_force_auxiliary_heap_into_reserved_memory(

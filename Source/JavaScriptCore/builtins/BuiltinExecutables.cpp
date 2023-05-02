@@ -47,11 +47,11 @@ SourceCode BuiltinExecutables::defaultConstructorSourceCode(ConstructorKind cons
     case ConstructorKind::Naked:
         break;
     case ConstructorKind::Base: {
-        static NeverDestroyed<const String> baseConstructorCode(MAKE_STATIC_STRING_IMPL("(function () { })"));
+        static NeverDestroyed<const String> baseConstructorCode(StringImpl::baseConstructorString());
         return makeSource(baseConstructorCode, { });
     }
     case ConstructorKind::Extends: {
-        static NeverDestroyed<const String> derivedConstructorCode(MAKE_STATIC_STRING_IMPL("(function (...args) { super(...args); })"));
+        static NeverDestroyed<const String> derivedConstructorCode(StringImpl::derivedConstructorString());
         return makeSource(derivedConstructorCode, { });
     }
     }

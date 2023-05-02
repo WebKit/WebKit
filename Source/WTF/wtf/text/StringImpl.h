@@ -32,6 +32,7 @@
 #include <wtf/Gigacage.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Packed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -142,6 +143,32 @@ struct StringStats {
 #define STRING_STATS_DEREF_STRING(string) ((void)0)
 
 #endif
+
+// TODO move to separate file.
+#define FOREACH_STATIC_STRING_IMPL(macro) \
+    macro(aboutBlankString, "about:blank") \
+    macro(aboutSrcDocString, "about:srcdoc") \
+    macro(baseConstructorString, "(function () { })") \
+    macro(derivedConstructorString, "(function (...args) { super(...args); })") \
+    macro(terminationErrorString, "JavaScript execution terminated.") \
+    macro(maskedURLStringForBindings, "webkit-masked-url://hidden/")
+
+#define DECLARE_STATIC_STRING_IMPL(name, characters) \
+    WTF_EXPORT_PRIVATE static LazyNeverDestroyed<StringImpl*> s_##name; \
+    ALWAYS_INLINE static StringImpl* name() \
+    { \
+        return s_##name.get(); \
+    } \
+    ALWAYS_INLINE static void initialize_##name() \
+    { \
+        s_##name.construct(&StringImpl::createStaticStringImpl(characters, sizeof(characters) / sizeof(characters[0])).leakRef()); \
+    }
+
+#define DEFINE_STATIC_STRING_IMPL(name, _) \
+    LazyNeverDestroyed<StringImpl*> StringImpl::s_##name;
+
+#define INITIALIZE_STATIC_STRING_IMPL(name, _) \
+    StringImpl::initialize_##name();
 
 class STRING_IMPL_ALIGNMENT StringImplShape {
     WTF_MAKE_NONCOPYABLE(StringImplShape);
@@ -327,7 +354,7 @@ public:
     bool isSymbol() const { return m_hashAndFlags & s_hashFlagStringKindIsSymbol; }
     bool isAtom() const { return m_hashAndFlags & s_hashFlagStringKindIsAtom; }
     void setIsAtom(bool);
-    
+
     bool isExternal() const { return bufferOwnership() == BufferExternal; }
 
     bool isSubString() const { return bufferOwnership() == BufferSubstring; }
@@ -374,43 +401,18 @@ public:
     void ref();
     void deref();
 
-    class StaticStringImpl : private StringImplShape {
-        WTF_MAKE_NONCOPYABLE(StaticStringImpl);
-    public:
-        // Used to construct static strings, which have an special refCount that can never hit zero.
-        // This means that the static string will never be destroyed, which is important because
-        // static strings will be shared across threads & ref-counted in a non-threadsafe manner.
-        //
-        // In order to make StaticStringImpl thread safe, we also need to ensure that the rest of
-        // the fields are never mutated by threads. We have this guarantee because:
-        //
-        // 1. m_length is only set on construction and never mutated thereafter.
-        //
-        // 2. m_data8 and m_data16 are only set on construction and never mutated thereafter.
-        //    We also know that a StringImpl never changes from 8 bit to 16 bit because there
-        //    is no way to set/clear the s_hashFlag8BitBuffer flag other than at construction.
-        //
-        // 3. m_hashAndFlags will not be mutated by different threads because:
-        //
-        //    a. StaticStringImpl's constructor sets the s_hashFlagDidReportCost flag to ensure
-        //       that StringImpl::cost() returns early.
-        //       This means StaticStringImpl costs are not counted. But since there should only
-        //       be a finite set of StaticStringImpls, their cost can be aggregated into a single
-        //       system cost if needed.
-        //    b. setIsAtom() is never called on a StaticStringImpl.
-        //       setIsAtom() asserts !isStatic().
-        //    c. setHash() is never called on a StaticStringImpl.
-        //       StaticStringImpl's constructor sets the hash on construction.
-        //       StringImpl::hash() only sets a new hash iff !hasHash().
-        //       Additionally, StringImpl::setHash() asserts hasHash() and !isStatic().
+    FOREACH_STATIC_STRING_IMPL(DECLARE_STATIC_STRING_IMPL)
 
-        template<unsigned characterCount> explicit constexpr StaticStringImpl(const char (&characters)[characterCount], StringKind = StringNormal);
-        template<unsigned characterCount> explicit constexpr StaticStringImpl(const char16_t (&characters)[characterCount], StringKind = StringNormal);
-        operator StringImpl&();
-    };
+    WTF_EXPORT_PRIVATE static LazyNeverDestroyed<StringImpl*> s_empty;
+    ALWAYS_INLINE static StringImpl* empty()
+    {
+        return s_empty.get();
+    }
 
-    WTF_EXPORT_PRIVATE static StaticStringImpl s_emptyAtomString;
-    ALWAYS_INLINE static StringImpl* empty() { return reinterpret_cast<StringImpl*>(&s_emptyAtomString); }
+    ALWAYS_INLINE static void initialize_empty()
+    {
+        s_empty.construct(&StringImpl::createStaticStringImplInternal(bitwise_cast<const LChar*>(""), 0).leakRef());
+    }
 
     // FIXME: Do these functions really belong in StringImpl?
     template<typename CharacterType> static void copyCharacters(CharacterType* destination, const CharacterType* source, unsigned length);
@@ -507,7 +509,7 @@ public:
     BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags & s_hashMaskBufferOwnership); }
 
     template<typename T> static size_t headerSize() { return tailOffset<T>(); }
-    
+
 protected:
     ~StringImpl();
 
@@ -561,10 +563,6 @@ public:
     void assertHashIsCorrect() const;
 };
 
-using StaticStringImpl = StringImpl::StaticStringImpl;
-
-static_assert(sizeof(StringImpl) == sizeof(StaticStringImpl));
-
 template<typename CharacterType>
 struct HashTranslatorCharBuffer {
     const CharacterType* characters;
@@ -585,17 +583,6 @@ struct HashTranslatorCharBuffer {
     {
     }
 };
-
-#if ASSERT_ENABLED
-
-// StringImpls created from StaticStringImpl will ASSERT in the generic ValueCheck<T>::checkConsistency
-// as they are not allocated by fastMalloc. We don't currently have any way to detect that case
-// so we ignore the consistency check for all StringImpl*.
-template<> struct ValueCheck<StringImpl*> {
-    static void checkConsistency(const StringImpl*) { }
-};
-
-#endif // ASSERT_ENABLED
 
 WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const StringImpl*);
 WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const LChar*);
@@ -649,8 +636,7 @@ template<> struct DefaultHash<PackedPtr<StringImpl>>;
 template<> struct DefaultHash<CompactPtr<StringImpl>>;
 
 #define MAKE_STATIC_STRING_IMPL(characters) ([] { \
-        static StaticStringImpl impl(characters); \
-        return &impl; \
+        return &StringImpl::createStaticStringImpl(characters, sizeof(characters) / sizeof(characters[0])).get(); \
     }())
 
 template<> ALWAYS_INLINE Ref<StringImpl> StringImpl::constructInternal<LChar>(StringImpl& string, unsigned length)
@@ -1357,23 +1343,6 @@ inline void StringImpl::assertHashIsCorrect() const
     ASSERT(existingHash() == StringHasher::computeHashAndMaskTop8Bits(characters8(), length()));
 }
 
-template<unsigned characterCount> constexpr StringImpl::StaticStringImpl::StaticStringImpl(const char (&characters)[characterCount], StringKind stringKind)
-    : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
-        s_hashFlag8BitBuffer | s_hashFlagDidReportCost | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
-{
-}
-
-template<unsigned characterCount> constexpr StringImpl::StaticStringImpl::StaticStringImpl(const char16_t (&characters)[characterCount], StringKind stringKind)
-    : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
-        s_hashFlagDidReportCost | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
-{
-}
-
-inline StringImpl::StaticStringImpl::operator StringImpl&()
-{
-    return *reinterpret_cast<StringImpl*>(this);
-}
-
 inline bool equalIgnoringASCIICase(const StringImpl& a, const StringImpl& b)
 {
     return equalIgnoringASCIICaseCommon(a, b);
@@ -1560,7 +1529,6 @@ inline Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionErro
 
 } // namespace WTF
 
-using WTF::StaticStringImpl;
 using WTF::StringImpl;
 using WTF::equal;
 using WTF::isNotSpaceOrNewline;
