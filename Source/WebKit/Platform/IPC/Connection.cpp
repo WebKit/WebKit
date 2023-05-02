@@ -568,13 +568,11 @@ bool Connection::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption>
     }
 
     if (shouldNotifyOfQueueGrowingLarge) {
-        RELEASE_LOG_ERROR(IPC, "Connection::sendMessage(): Too many messages (%zu) in the queue to remote PID: %d, notifying client", outgoingMessagesCount
 #if OS(DARWIN)
-            , remoteProcessID()
+        RELEASE_LOG_ERROR(IPC, "Connection::sendMessage(): Too many messages (%zu) in the queue to remote PID: %d, notifying client", outgoingMessagesCount, remoteProcessID());
 #else
-            , 0
+        RELEASE_LOG_ERROR(IPC, "Connection::sendMessage(): Too many messages (%zu) in the queue, notifying client", outgoingMessagesCount);
 #endif
-            );
         m_outgoingMessageQueueIsGrowingLargeCallback();
     }
 
