@@ -71,6 +71,7 @@ void LayerAncestorClippingStack::clear(ScrollingCoordinator* scrollingCoordinato
         }
 
         GraphicsLayer::unparentAndClear(entry.clippingLayer);
+        GraphicsLayer::unparentAndClear(entry.scrollingLayer);
     }
 }
 
