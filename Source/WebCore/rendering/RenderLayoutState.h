@@ -43,7 +43,7 @@ class RenderLayoutState {
     WTF_MAKE_NONCOPYABLE(RenderLayoutState); WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    struct LeadingTrim {
+    struct TextBoxTrim {
         bool trimFirstFormattedLine { false };
         WeakPtr<const RenderBlockFlow> trimLastFormattedLineOnTarget;
     };
@@ -63,7 +63,7 @@ public:
         , m_blockStartTrimming(Vector<bool>(0))
     {
     }
-    RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<LineClamp>, std::optional<LeadingTrim>);
+    RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<LineClamp>, std::optional<TextBoxTrim>);
     enum class IsPaginated : bool { No, Yes };
     explicit RenderLayoutState(RenderElement&, IsPaginated = IsPaginated::No);
 
@@ -102,15 +102,15 @@ public:
     void setLineClamp(std::optional<LineClamp> lineClamp) { m_lineClamp = lineClamp; }
     std::optional<LineClamp> lineClamp() const { return m_lineClamp; }
 
-    std::optional<LeadingTrim> leadingTrim() { return m_leadingTrim; }
-    bool hasLeadingTrimStart() const { return m_leadingTrim && m_leadingTrim->trimFirstFormattedLine; }
-    bool hasLeadingTrimEnd(const RenderBlockFlow& candidate) const { return m_leadingTrim && m_leadingTrim->trimLastFormattedLineOnTarget.get() == &candidate; }
+    std::optional<TextBoxTrim> textBoxTrim() { return m_textBoxTrim; }
+    bool hasTextBoxTrimStart() const { return m_textBoxTrim && m_textBoxTrim->trimFirstFormattedLine; }
+    bool hasTextBoxTrimEnd(const RenderBlockFlow& candidate) const { return m_textBoxTrim && m_textBoxTrim->trimLastFormattedLineOnTarget.get() == &candidate; }
 
-    void addLeadingTrimStart();
-    void removeLeadingTrimStart();
+    void addTextBoxTrimStart();
+    void removeTextBoxTrimStart();
 
-    void addLeadingTrimEnd(const RenderBlockFlow& targetInlineFormattingContext);
-    void resetLeadingTrim() { m_leadingTrim = { }; }
+    void addTextBoxTrimEnd(const RenderBlockFlow& targetInlineFormattingContext);
+    void resetTextBoxTrim() { m_textBoxTrim = { }; }
 
     void pushBlockStartTrimming(bool blockStartTrimming) { m_blockStartTrimming.append(blockStartTrimming); }
     std::optional<bool> blockStartTrimming() const { return m_blockStartTrimming.isEmpty() ? std::nullopt : std::optional(m_blockStartTrimming.last()); }
@@ -162,7 +162,7 @@ private:
     LayoutSize m_lineGridOffset;
     LayoutSize m_lineGridPaginationOrigin;
     std::optional<LineClamp> m_lineClamp;
-    std::optional<LeadingTrim> m_leadingTrim;
+    std::optional<TextBoxTrim> m_textBoxTrim;
 #if ASSERT_ENABLED
     RenderElement* m_renderer { nullptr };
 #endif
@@ -211,28 +211,28 @@ private:
     bool m_pushed { false };
 };
 
-inline void RenderLayoutState::addLeadingTrimStart()
+inline void RenderLayoutState::addTextBoxTrimStart()
 {
-    if (m_leadingTrim) {
-        m_leadingTrim->trimFirstFormattedLine = true;
+    if (m_textBoxTrim) {
+        m_textBoxTrim->trimFirstFormattedLine = true;
         return;
     }
-    m_leadingTrim = { true, { } };
+    m_textBoxTrim = { true, { } };
 }
 
-inline void RenderLayoutState::removeLeadingTrimStart()
+inline void RenderLayoutState::removeTextBoxTrimStart()
 {
-    ASSERT(m_leadingTrim && m_leadingTrim->trimFirstFormattedLine);
-    m_leadingTrim->trimFirstFormattedLine = false;
+    ASSERT(m_textBoxTrim && m_textBoxTrim->trimFirstFormattedLine);
+    m_textBoxTrim->trimFirstFormattedLine = false;
 }
 
-inline void RenderLayoutState::addLeadingTrimEnd(const RenderBlockFlow& targetInlineFormattingContext)
+inline void RenderLayoutState::addTextBoxTrimEnd(const RenderBlockFlow& targetInlineFormattingContext)
 {
-    if (m_leadingTrim) {
-        m_leadingTrim->trimLastFormattedLineOnTarget = &targetInlineFormattingContext;
+    if (m_textBoxTrim) {
+        m_textBoxTrim->trimLastFormattedLineOnTarget = &targetInlineFormattingContext;
         return;
     }
-    m_leadingTrim = { false, &targetInlineFormattingContext };
+    m_textBoxTrim = { false, &targetInlineFormattingContext };
 }
 
 } // namespace WebCore

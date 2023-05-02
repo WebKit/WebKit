@@ -527,17 +527,17 @@ static inline std::optional<Layout::BlockLayoutState::LineClamp> lineClamp(const
     return { };
 }
 
-static inline Layout::BlockLayoutState::LeadingTrim leadingTrim(const RenderBlockFlow& rootRenderer)
+static inline Layout::BlockLayoutState::TextBoxTrim textBoxTrim(const RenderBlockFlow& rootRenderer)
 {
     auto* layoutState = rootRenderer.view().frameView().layoutContext().layoutState();
     if (!layoutState)
         return { };
-    auto leadingTrimForIFC = Layout::BlockLayoutState::LeadingTrim { };
-    if (layoutState->hasLeadingTrimStart())
-        leadingTrimForIFC.add(Layout::BlockLayoutState::LeadingTrimSide::Start);
-    if (layoutState->hasLeadingTrimEnd(rootRenderer))
-        leadingTrimForIFC.add(Layout::BlockLayoutState::LeadingTrimSide::End);
-    return leadingTrimForIFC;
+    auto textBoxTrimForIFC = Layout::BlockLayoutState::TextBoxTrim { };
+    if (layoutState->hasTextBoxTrimStart())
+        textBoxTrimForIFC.add(Layout::BlockLayoutState::TextBoxTrimSide::Start);
+    if (layoutState->hasTextBoxTrimEnd(rootRenderer))
+        textBoxTrimForIFC.add(Layout::BlockLayoutState::TextBoxTrimSide::End);
+    return textBoxTrimForIFC;
 }
 
 std::optional<LayoutRect> LineLayout::layout()
@@ -573,7 +573,7 @@ std::optional<LayoutRect> LineLayout::layout()
         auto constraintsForInFlowContent = Layout::ConstraintsForInFlowContent { m_inlineContentConstraints->horizontal(), partialContentTop };
         return { constraintsForInFlowContent, m_inlineContentConstraints->visualLeft() };
     }();
-    auto parentBlockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState(), lineClamp(flow()), leadingTrim(flow()), intrusiveInitialLetterBottom() };
+    auto parentBlockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState(), lineClamp(flow()), textBoxTrim(flow()), intrusiveInitialLetterBottom() };
     auto inlineLayoutState = Layout::InlineLayoutState { parentBlockLayoutState, WTFMove(m_nestedListMarkerOffsets) };
     auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState, m_lineDamage.get() };
     auto layoutResult = inlineFormattingContext.layoutInFlowAndFloatContentForIntegration(inlineContentConstraints, inlineLayoutState);

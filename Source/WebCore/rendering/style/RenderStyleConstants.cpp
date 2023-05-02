@@ -1183,13 +1183,13 @@ TextStream& operator<<(TextStream& ts, TextWrap wrap)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, LeadingTrim leadingTrim)
+TextStream& operator<<(TextStream& ts, TextBoxTrim textBoxTrim)
 {
-    switch (leadingTrim) {
-    case LeadingTrim::Normal: ts << "Normal"; break;
-    case LeadingTrim::Start: ts << "Start"; break;
-    case LeadingTrim::End: ts << "End"; break;
-    case LeadingTrim::Both: ts << "Both"; break;
+    switch (textBoxTrim) {
+    case TextBoxTrim::Normal: ts << "Normal"; break;
+    case TextBoxTrim::Start: ts << "Start"; break;
+    case TextBoxTrim::End: ts << "End"; break;
+    case TextBoxTrim::Both: ts << "Both"; break;
     }
     return ts;
 }

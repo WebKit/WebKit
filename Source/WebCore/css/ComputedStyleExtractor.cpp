@@ -3130,8 +3130,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyCaretColor)) : currentColorOrValidColor(style, style.caretColor());
     case CSSPropertyClear:
         return createConvertingToCSSValueID(style.clear());
-    case CSSPropertyLeadingTrim:
-        return createConvertingToCSSValueID(style.leadingTrim());
+    case CSSPropertyTextBoxTrim:
+        return createConvertingToCSSValueID(style.textBoxTrim());
     case CSSPropertyColor:
         return cssValuePool.createColorValue(m_allowVisitedStyle ? style.visitedDependentColor(CSSPropertyColor) : style.color());
     case CSSPropertyPrintColorAdjust:

@@ -82,8 +82,8 @@ public:
 
     // FIXME: Maybe it's time to subclass inline box types.
     TextEdge textEdge() const { return m_style.textEdge; }
-    LeadingTrim leadingTrim() const { return m_style.leadingTrim; }
-    InlineLayoutUnit inlineBoxContentOffsetForLeadingTrim() const { return m_inlineBoxContentOffsetForLeadingTrim; }
+    TextBoxTrim textBoxTrim() const { return m_style.textBoxTrim; }
+    InlineLayoutUnit inlineBoxContentOffsetForTextBoxTrim() const { return m_inlineBoxContentOffsetForTextBoxTrim; }
 
     bool hasAnnotation() const { return (hasContent() || isAtomicInlineLevelBox()) && m_annotation.has_value(); };
     std::optional<InlineLayoutUnit> annotationAbove() const { return hasAnnotation() ? std::optional { m_annotation->above } : std::nullopt; }
@@ -139,7 +139,7 @@ private:
     void setLogicalLeft(InlineLayoutUnit logicalLeft) { m_logicalRect.setLeft(logicalLeft); }
     void setAscentAndDescent(AscentAndDescent ascentAndDescent) { m_ascentAndDescent = { InlineLayoutUnit(roundToInt(ascentAndDescent.ascent)), InlineLayoutUnit(roundToInt(ascentAndDescent.descent)) }; }
     void setLayoutBounds(const AscentAndDescent& layoutBounds) { m_layoutBounds = { InlineLayoutUnit(roundToInt(layoutBounds.ascent)), InlineLayoutUnit(roundToInt(layoutBounds.descent)) }; }
-    void setInlineBoxContentOffsetForLeadingTrim(InlineLayoutUnit offset) { m_inlineBoxContentOffsetForLeadingTrim = offset; }
+    void setInlineBoxContentOffsetForTextBoxTrim(InlineLayoutUnit offset) { m_inlineBoxContentOffsetForTextBoxTrim = offset; }
 
     void setIsFirstBox() { m_isFirstWithinLayoutBox = true; }
     void setIsLastBox() { m_isLastWithinLayoutBox = true; }
@@ -150,7 +150,7 @@ private:
     InlineRect m_logicalRect;
     AscentAndDescent m_layoutBounds;
     AscentAndDescent m_ascentAndDescent;
-    InlineLayoutUnit m_inlineBoxContentOffsetForLeadingTrim { 0.f };
+    InlineLayoutUnit m_inlineBoxContentOffsetForTextBoxTrim { 0.f };
     bool m_hasContent { false };
     // These bits are about whether this inline level box is the first/last generated box of the associated Layout::Box
     // (e.g. always true for atomic inline level boxes, but inline boxes spanning over multiple lines can produce separate first/last boxes).
@@ -162,7 +162,7 @@ private:
         const FontMetrics& primaryFontMetrics;
         const Length& lineHeight;
         TextEdge textEdge;
-        LeadingTrim leadingTrim;
+        TextBoxTrim textBoxTrim;
         WTF::OptionSet<LineBoxContain> lineBoxContain;
         InlineLayoutUnit primaryFontSize { 0 };
         VerticalAlignment verticalAlignment { };
@@ -182,7 +182,7 @@ inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& s
     , m_isFirstWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::First))
     , m_isLastWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::Last))
     , m_type(type)
-    , m_style({ style.fontCascade().metricsOfPrimaryFont(), style.lineHeight(), style.textEdge(), style.leadingTrim(), style.lineBoxContain(), InlineLayoutUnit(style.fontCascade().fontDescription().computedPixelSize()), { } })
+    , m_style({ style.fontCascade().metricsOfPrimaryFont(), style.lineHeight(), style.textEdge(), style.textBoxTrim(), style.lineBoxContain(), InlineLayoutUnit(style.fontCascade().fontDescription().computedPixelSize()), { } })
 {
     m_style.verticalAlignment.type = style.verticalAlign();
     if (m_style.verticalAlignment.type == VerticalAlign::Length)

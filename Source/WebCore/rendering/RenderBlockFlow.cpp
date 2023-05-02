@@ -673,68 +673,68 @@ static RenderBlockFlow* lastInlineFormattingContextRoot(const RenderBlockFlow& e
     return nullptr;
 }
 
-class LeadingTrimmer {
+class TextBoxTrimmer {
 public:
-    LeadingTrimmer(const RenderBlockFlow& flow, const RenderBlockFlow* inlineFormattingContextRootForLeadingTrimEnd = nullptr)
+    TextBoxTrimmer(const RenderBlockFlow& flow, const RenderBlockFlow* inlineFormattingContextRootForTextBoxTrimEnd = nullptr)
         : m_flow(flow)
     {
-        setLeadingTrimForSubtree(inlineFormattingContextRootForLeadingTrimEnd);
+        setTextBoxTrimForSubtree(inlineFormattingContextRootForTextBoxTrimEnd);
     }
 
-    ~LeadingTrimmer()
+    ~TextBoxTrimmer()
     {
-        adjustLeadingTrimAfterLayout();
+        adjustTextBoxTrimAfterLayout();
     }
 
 private:
-    void setLeadingTrimForSubtree(const RenderBlockFlow* inlineFormattingContextRootForLeadingTrimEnd);
-    void adjustLeadingTrimAfterLayout();
+    void setTextBoxTrimForSubtree(const RenderBlockFlow* inlineFormattingContextRootForTextBoxTrimEnd);
+    void adjustTextBoxTrimAfterLayout();
 
     const RenderBlockFlow& m_flow;
 };
 
-void LeadingTrimmer::setLeadingTrimForSubtree(const RenderBlockFlow* inlineFormattingContextRootForLeadingTrimEnd)
+void TextBoxTrimmer::setTextBoxTrimForSubtree(const RenderBlockFlow* inlineFormattingContextRootForTextBoxTrimEnd)
 {
     auto* layoutState = m_flow.view().frameView().layoutContext().layoutState();
     if (!layoutState)
         return;
-    auto leadingTrim = m_flow.style().leadingTrim();
-    if (leadingTrim == LeadingTrim::Normal) {
+    auto textBoxTrim = m_flow.style().textBoxTrim();
+    if (textBoxTrim == TextBoxTrim::Normal) {
         if (m_flow.borderAndPaddingStart()) {
             // For block containers: trim the block-start side of the first formatted line to the corresponding
             // text-edge metric of its root inline box. If there is no such line, or if there is intervening non-zero padding or borders,
             // there is no effect.
-            layoutState->resetLeadingTrim();
+            layoutState->resetTextBoxTrim();
         }
         return;
     }
     // FIXME: Add support for nested leading trims if applicable.
-    layoutState->resetLeadingTrim();
-    auto applyLeadingTrimStart = leadingTrim == LeadingTrim::Start || leadingTrim == LeadingTrim::Both;
-    auto applyLeadingTrimEnd = (leadingTrim == LeadingTrim::End || leadingTrim == LeadingTrim::Both) && inlineFormattingContextRootForLeadingTrimEnd;
-    if (applyLeadingTrimEnd) {
-        layoutState->addLeadingTrimEnd(*inlineFormattingContextRootForLeadingTrimEnd);
+    layoutState->resetTextBoxTrim();
+    auto applyTextBoxTrimStart = textBoxTrim == TextBoxTrim::Start || textBoxTrim == TextBoxTrim::Both;
+    auto applyTextBoxTrimEnd = (textBoxTrim == TextBoxTrim::End || textBoxTrim == TextBoxTrim::Both) && inlineFormattingContextRootForTextBoxTrimEnd;
+    if (applyTextBoxTrimEnd) {
+        layoutState->addTextBoxTrimEnd(*inlineFormattingContextRootForTextBoxTrimEnd);
         // FIXME: Instead we should just damage the last line.
-        if (auto* firstFormattedLineRoot = firstInlineFormattingContextRoot(m_flow); firstFormattedLineRoot && firstFormattedLineRoot != inlineFormattingContextRootForLeadingTrimEnd) {
+        if (auto* firstFormattedLineRoot = firstInlineFormattingContextRoot(m_flow); firstFormattedLineRoot && firstFormattedLineRoot != inlineFormattingContextRootForTextBoxTrimEnd) {
             // When we run a "last line" layout on the last formatting context, we should not trim the first line ever (see FIXME).
-            applyLeadingTrimStart = false;
+            applyTextBoxTrimStart = false;
         }
     }
-    if (applyLeadingTrimStart)
-        layoutState->addLeadingTrimStart();
+    if (applyTextBoxTrimStart)
+        layoutState->addTextBoxTrimStart();
 }
 
-void LeadingTrimmer::adjustLeadingTrimAfterLayout()
+void TextBoxTrimmer::adjustTextBoxTrimAfterLayout()
 {
     auto* layoutState = m_flow.view().frameView().layoutContext().layoutState();
     if (!layoutState)
         return;
-    if (m_flow.style().leadingTrim() != LeadingTrim::Normal)
-        return layoutState->resetLeadingTrim();
-    // This is propagated leading-trim.
-    if (layoutState->hasLeadingTrimStart() && m_flow.hasLines()) {
+    if (m_flow.style().textBoxTrim() != TextBoxTrim::Normal)
+        return layoutState->resetTextBoxTrim();
+    // This is propagated text-box-trim.
+    if (layoutState->hasTextBoxTrimStart() && m_flow.hasLines()) {
         // Only the first formatted line is trimmed.
-        layoutState->removeLeadingTrimStart();
+        layoutState->removeTextBoxTrimStart();
     }
 }
 
@@ -753,20 +753,20 @@ void RenderBlockFlow::layoutInFlowChildren(bool relayoutChildren, LayoutUnit& re
     }
 
     if (childrenInline()) {
-        auto leadingTrimmer = LeadingTrimmer { *this, this };
+        auto textBoxTrimmer = TextBoxTrimmer { *this, this };
         layoutInlineChildren(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
         return;
     }
 
     {
         // With block children, there's no way to tell what the last formatted line is until after we finished laying out the subtree.
-        auto leadingTrimmer = LeadingTrimmer { *this };
+        auto textBoxTrimmer = TextBoxTrimmer { *this };
         layoutBlockChildren(relayoutChildren, maxFloatLogicalBottom);
     }
 
-    auto handleLeadingTrimEnd = [&] {
-        auto hasLeadingTrimEnd = style().leadingTrim() == LeadingTrim::End || style().leadingTrim() == LeadingTrim::Both;
-        if (!hasLeadingTrimEnd)
+    auto handleTextBoxTrimEnd = [&] {
+        auto hasTextBoxTrimEnd = style().textBoxTrim() == TextBoxTrim::End || style().textBoxTrim() == TextBoxTrim::Both;
+        if (!hasTextBoxTrimEnd)
             return;
         // Dirty the last formatted line (in the last IFC) and issue relayout with forcing trimming the last line.
         if (auto* rootForLastFormattedLine = lastInlineFormattingContextRoot(*this)) {
@@ -775,11 +775,11 @@ void RenderBlockFlow::layoutInFlowChildren(bool relayoutChildren, LayoutUnit& re
                 ancestor->setNeedsLayout(MarkOnlyThis);
             }
 
-            auto leadingTrimmer = LeadingTrimmer { *this, rootForLastFormattedLine };
+            auto textBoxTrimmer = TextBoxTrimmer { *this, rootForLastFormattedLine };
             layoutBlockChildren(relayoutChildren, maxFloatLogicalBottom);
         }
     };
-    handleLeadingTrimEnd();
+    handleTextBoxTrimEnd();
 }
 
 void RenderBlockFlow::layoutBlockChildren(bool relayoutChildren, LayoutUnit& maxFloatLogicalBottom)

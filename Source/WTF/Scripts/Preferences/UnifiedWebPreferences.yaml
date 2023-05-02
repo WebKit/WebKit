@@ -1094,20 +1094,6 @@ CSSInputSecurityEnabled:
     WebCore:
       default: false
 
-CSSLeadingTrimEnabled:
-  type: bool
-  status: preview
-  category: css
-  humanReadableName: "CSS leading-trim property"
-  humanReadableDescription: "Enable leading-trim"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 CSSMarginTrimEnabled:
   type: bool
   status: stable
@@ -1250,6 +1236,20 @@ CSSTextAlignLastEnabled:
       default: true
     WebCore:
       default: true
+
+CSSTextBoxTrimEnabled:
+  type: bool
+  status: preview
+  category: css
+  humanReadableName: "CSS text-box-trim property"
+  humanReadableDescription: "Enable text-box-trim"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 CSSTextGroupAlignEnabled:
   type: bool

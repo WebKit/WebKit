@@ -690,7 +690,7 @@
             ],
             "codegen-properties": {
                 "converter": "TextEdge",
-                "settings-flag": "cssLeadingTrimEnabled",
+                "settings-flag": "cssTextBoxTrimEnabled",
                 "parser-function": "consumeTextEdge",
                 "parser-grammar-unused": "leading | [ [ text | cap | ex | ideographic | ideographic-ink ] [ text | alphabetic | ideographic | ideographic-ink ]? ]",
                 "parser-grammar-unused-reason": "Needs support for 'groups' and 'optional'."
@@ -3788,7 +3788,7 @@
                 "url": "https://www.w3.org/TR/SVG11/text.html#KerningProperty"
             }
         },
-        "leading-trim": {
+        "text-box-trim": {
             "values": [
                 "normal",
                 "start",
@@ -3796,7 +3796,7 @@
                 "both"
             ],
             "codegen-properties": {
-                "settings-flag": "cssLeadingTrimEnabled",
+                "settings-flag": "cssTextBoxTrimEnabled",
                 "parser-grammar": "<<values>>"
             },
             "specification": {

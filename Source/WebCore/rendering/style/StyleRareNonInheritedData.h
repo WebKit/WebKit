@@ -213,7 +213,7 @@ public:
 
     unsigned containerType : 2; // ContainerType
 
-    unsigned leadingTrim : 2; // LeadingTrim
+    unsigned textBoxTrim : 2; // TextBoxTrim
 
     unsigned overflowAnchor : 1; // Scroll Anchoring- OverflowAnchor
 

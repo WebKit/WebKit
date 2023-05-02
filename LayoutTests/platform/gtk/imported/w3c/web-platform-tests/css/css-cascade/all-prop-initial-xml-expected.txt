@@ -176,7 +176,7 @@ PASS justify-items
 PASS justify-self
 PASS justify-tracks
 PASS kerning
-PASS leading-trim
+PASS text-box-trim
 PASS left
 PASS letter-spacing
 PASS lighting-color

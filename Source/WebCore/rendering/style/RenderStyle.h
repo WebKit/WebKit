@@ -428,7 +428,7 @@ public:
     TextIndentType textIndentType() const { return static_cast<TextIndentType>(m_rareInheritedData->textIndentType); }
     TextJustify textJustify() const { return static_cast<TextJustify>(m_rareInheritedData->textJustify); }
 
-    LeadingTrim leadingTrim() const { return static_cast<LeadingTrim>(m_nonInheritedData->rareData->leadingTrim); }
+    TextBoxTrim textBoxTrim() const { return static_cast<TextBoxTrim>(m_nonInheritedData->rareData->textBoxTrim); }
     TextEdge textEdge() const;
 
     OptionSet<MarginTrimType> marginTrim() const { return m_nonInheritedData->rareData->marginTrim; }
@@ -1115,7 +1115,7 @@ public:
     void setTextIndentType(TextIndentType v) { SET_VAR(m_rareInheritedData, textIndentType, static_cast<unsigned>(v)); }
     void setTextJustify(TextJustify v) { SET_VAR(m_rareInheritedData, textJustify, static_cast<unsigned>(v)); }
 
-    void setLeadingTrim(LeadingTrim value) { SET_NESTED_VAR(m_nonInheritedData, rareData, leadingTrim, static_cast<unsigned>(value)); }
+    void setTextBoxTrim(TextBoxTrim value) { SET_NESTED_VAR(m_nonInheritedData, rareData, textBoxTrim, static_cast<unsigned>(value)); }
     void setTextEdge(TextEdge);
 
     void setMarginTrim(OptionSet<MarginTrimType> value) { SET_NESTED_VAR(m_nonInheritedData, rareData, marginTrim, value); }
@@ -1739,7 +1739,7 @@ public:
     static OptionSet<MarginTrimType> initialMarginTrim() { return { }; }
     static Length initialPadding() { return Length(LengthType::Fixed); }
     static Length initialTextIndent() { return Length(LengthType::Fixed); }
-    static LeadingTrim initialLeadingTrim() { return LeadingTrim::Normal; }
+    static TextBoxTrim initialTextBoxTrim() { return TextBoxTrim::Normal; }
     static TextEdge initialTextEdge();
     static Length initialZeroLength() { return Length(LengthType::Fixed); }
     static Length initialOneLength() { return Length(1, LengthType::Fixed); }

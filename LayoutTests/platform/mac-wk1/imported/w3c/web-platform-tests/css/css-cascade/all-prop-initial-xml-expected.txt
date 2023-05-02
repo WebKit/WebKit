@@ -176,7 +176,6 @@ PASS justify-items
 PASS justify-self
 PASS justify-tracks
 PASS kerning
-PASS leading-trim
 PASS left
 PASS letter-spacing
 PASS lighting-color
@@ -302,6 +301,7 @@ PASS text-align
 PASS text-align-last
 PASS text-anchor
 PASS text-autospace
+PASS text-box-trim
 PASS text-combine-upright
 PASS text-decoration-color
 PASS text-decoration-line

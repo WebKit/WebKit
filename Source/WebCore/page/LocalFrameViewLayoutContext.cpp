@@ -613,7 +613,7 @@ bool LocalFrameViewLayoutContext::pushLayoutState(RenderBox& renderer, const Lay
             , pageHeight
             , pageHeightChanged
             , layoutState ? layoutState->lineClamp() : std::nullopt
-            , layoutState ? layoutState->leadingTrim() : RenderLayoutState::LeadingTrim()));
+            , layoutState ? layoutState->textBoxTrim() : RenderLayoutState::TextBoxTrim()));
         return true;
     }
     return false;
