@@ -139,10 +139,10 @@
     { "name": "ews196", "platform": "ios-simulator-16" },
     { "name": "ews197", "platform": "ios-simulator-16" },
     { "name": "ews198", "platform": "ios-simulator-16" },
-    { "name": "ews200", "platform": "ios-simulator-16" },
-    { "name": "ews201", "platform": "ios-simulator-16" },
-    { "name": "ews202", "platform": "ios-simulator-16" },
-    { "name": "ews203", "platform": "ios-simulator-16" },
+    { "name": "ews200", "platform": "*" },
+    { "name": "ews201", "platform": "*" },
+    { "name": "ews202", "platform": "*" },
+    { "name": "ews203", "platform": "*" },
     { "name": "webkit-cq-01", "platform": "mac-monterey" },
     { "name": "webkit-cq-02", "platform": "mac-monterey" },
     { "name": "webkit-cq-03", "platform": "mac-monterey" },
@@ -302,6 +302,12 @@
       "workernames": ["ews136", "ews137"]
     },
     {
+      "name": "Test262-arm64-EWS", "shortname": "test262-arm64", "icon": "buildAndTest",
+      "factory": "Test262BuildAndTestsFactory", "platform": "mac-ventura",
+      "configuration": "release", "runTests": "true",
+      "workernames": ["ews200", "ews201"]
+    },
+    {
       "name": "JSC-MIPSEL-32bits-Build-EWS", "shortname": "jsc-mips", "icon": "buildOnly",
       "factory": "JSCBuildFactory", "platform": "jsc-only",
       "configuration": "release", "architectures": ["mipsel"],
@@ -399,7 +405,7 @@
       "type": "Try_Userpass", "name": "try", "port": 5555,
       "builderNames": [
             "Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-16-Build-EWS", "iOS-16-Simulator-Build-EWS",
-            "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
+            "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS", "Test262-arm64-EWS",
             "macOS-AppleSilicon-Ventura-Debug-Build-EWS", "macOS-Monterey-Release-Build-EWS",
             "Services-EWS", "Style-EWS", "tvOS-16-Build-EWS", "tvOS-16-Simulator-Build-EWS", "watchOS-9-Build-EWS",
             "watchOS-9-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS"
@@ -413,7 +419,7 @@
       "type": "AnyBranchScheduler", "name": "pull_request",
       "builderNames": [
             "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-16-Build-EWS", "iOS-16-Simulator-Build-EWS",
-            "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
+            "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS", "Test262-arm64-EWS",
             "macOS-AppleSilicon-Ventura-Debug-Build-EWS", "macOS-Monterey-Release-Build-EWS",
             "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-16-Build-EWS", "tvOS-16-Simulator-Build-EWS", "watchOS-9-Build-EWS",
             "watchOS-9-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS"

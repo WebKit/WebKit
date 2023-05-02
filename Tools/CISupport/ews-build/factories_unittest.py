@@ -407,6 +407,23 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'compile-jsc',
             'jscore-test'
         ],
+        'Test262-arm64-EWS': [
+            'configure-build',
+            'check-change-relevance',
+            'validate-change',
+            'configuration',
+            'clean-up-git-repo',
+            'checkout-source',
+            'fetch-branch-references',
+            'checkout-specific-revision',
+            'show-identifier',
+            'apply-patch',
+            'checkout-pull-request',
+            'kill-old-processes',
+            'validate-change',
+            'compile-jsc',
+            'test262-test'
+        ],
         'JSC-Tests-EWS': [
             'configure-build',
             'check-change-relevance',

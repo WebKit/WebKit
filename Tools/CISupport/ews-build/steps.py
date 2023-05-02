@@ -3113,7 +3113,6 @@ class RunJSCTestsWithoutChange(RunJavaScriptCoreTests):
         self.setProperty('clean_tree_run_status', rc)
         return rc
 
-
 class AnalyzeJSCTestsResults(buildstep.BuildStep, AddToLogMixin):
     name = 'analyze-jsc-tests-results'
     description = ['analyze-jsc-test-results']
@@ -3228,6 +3227,157 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep, AddToLogMixin):
         except Exception as e:
             print('Error in sending email for pre-existing failure: {}'.format(e))
 
+
+class RunTest262Tests(TestWithFailureCount):
+    name = "test262-test"
+    description = ["test262-tests running"]
+    descriptionDone = ["test262-tests"]
+    failedTestsFormatString = "%d Test262 test%s failed"
+    command = ["perl", "Tools/Scripts/test262-runner", "--verbose", WithProperties("--%(configuration)s")]
+    test_summary_re = re.compile(r'^\! NEW FAIL')
+
+    def evaluateCommand(self, cmd):
+        rc = super().evaluateCommand(cmd)
+        if rc == SUCCESS or rc == WARNINGS:
+            message = 'Passed test262 tests'
+            self.descriptionDone = message
+            self.build.results = SUCCESS
+            self.build.buildFinished([message], SUCCESS)
+        else:
+            self.build.addStepsAfterCurrentStep([UnApplyPatch(),
+                                                RevertPullRequestChanges(),
+                                                ValidateChange(verifyBugClosed=False, addURLs=False),
+                                                CompileJSCWithoutChange(),
+                                                ValidateChange(verifyBugClosed=False, addURLs=False),
+                                                KillOldProcesses(),
+                                                RunTest262TestsWithoutChange(),
+                                                AnalyzeTest262TestsResults()])
+        return rc
+
+
+class RunTest262TestsWithoutChange(RunTest262Tests):
+    name = 'test262-test-without-change'
+    prefix = 'test262_clean_tree_'
+
+    def evaluateCommand(self, cmd):
+        rc = shell.Test.evaluateCommand(self, cmd)
+        self.setProperty('clean_tree_run_status', rc)
+        return rc
+
+
+class AnalyzeTest262TestsResults(buildstep.BuildStep, AddToLogMixin):
+    name = 'analyze-test262-tests-results'
+    description = ['analyze-test262-test-results']
+    descriptionDone = ['analyze-test262-tests-results']
+    NUM_FAILURES_TO_DISPLAY = 10
+
+    def start(self):
+        stress_failures_with_change = set(self.getProperty('jsc_stress_test_failures', []))
+        binary_failures_with_change = set(self.getProperty('jsc_binary_failures', []))
+        clean_tree_stress_failures = set(self.getProperty('jsc_clean_tree_stress_test_failures', []))
+        clean_tree_binary_failures = set(self.getProperty('jsc_clean_tree_binary_failures', []))
+        clean_tree_failures = list(clean_tree_binary_failures) + list(clean_tree_stress_failures)
+        clean_tree_failures_string = ', '.join(clean_tree_failures[:self.NUM_FAILURES_TO_DISPLAY])
+
+        flaky_stress_failures_with_change = set(self.getProperty('jsc_flaky_and_passed', {}).keys())
+        clean_tree_flaky_stress_failures = set(self.getProperty('jsc_clean_tree_flaky_and_passed', {}).keys())
+        flaky_stress_failures = sorted(list(flaky_stress_failures_with_change) + list(clean_tree_flaky_stress_failures))[:self.NUM_FAILURES_TO_DISPLAY]
+        flaky_failures_string = ', '.join(flaky_stress_failures)
+
+        new_stress_failures = stress_failures_with_change - clean_tree_stress_failures
+        new_binary_failures = binary_failures_with_change - clean_tree_binary_failures
+        self.new_stress_failures_to_display = ', '.join(sorted(list(new_stress_failures))[:self.NUM_FAILURES_TO_DISPLAY])
+        self.new_binary_failures_to_display = ', '.join(sorted(list(new_binary_failures))[:self.NUM_FAILURES_TO_DISPLAY])
+
+        self._addToLog('stderr', '\nFailures with change: {}'.format(list(binary_failures_with_change) + list(stress_failures_with_change))[:self.NUM_FAILURES_TO_DISPLAY])
+        self._addToLog('stderr', '\nFlaky Tests with change: {}'.format(', '.join(flaky_stress_failures_with_change)))
+        self._addToLog('stderr', '\nFailures on clean tree: {}'.format(clean_tree_failures_string))
+        self._addToLog('stderr', '\nFlaky Tests on clean tree: {}'.format(', '.join(clean_tree_flaky_stress_failures)))
+
+        if (not stress_failures_with_change) and (not binary_failures_with_change):
+            # If we've made it here, then jsc-tests and re-run-jsc-tests failed, which means
+            # there should have been some test failures. Otherwise there is some unexpected issue.
+            clean_tree_run_status = self.getProperty('clean_tree_run_status', FAILURE)
+            if clean_tree_run_status == SUCCESS:
+                return self.report_failure(set(), set())
+            # TODO: email EWS admins
+            return self.retry_build('Unexpected infrastructure issue, retrying build')
+
+        if new_stress_failures or new_binary_failures:
+            self._addToLog('stderr', '\nNew binary failures: {}.\nNew stress test failures: {}\n'.format(self.new_binary_failures_to_display, self.new_stress_failures_to_display))
+            return self.report_failure(new_binary_failures, new_stress_failures)
+        else:
+            self._addToLog('stderr', '\nNo new failures\n')
+            self.finished(SUCCESS)
+            self.build.results = SUCCESS
+            self.descriptionDone = 'Passed test262 tests'
+            pluralSuffix = 's' if len(clean_tree_failures) > 1 else ''
+            message = ''
+            if clean_tree_failures:
+                message = 'Found {} pre-existing JSC test failure{}: {}'.format(len(clean_tree_failures), pluralSuffix, clean_tree_failures_string)
+                for clean_tree_failure in clean_tree_failures[:self.NUM_FAILURES_TO_DISPLAY]:
+                    self.send_email_for_pre_existing_failure(clean_tree_failure)
+            if len(clean_tree_failures) > self.NUM_FAILURES_TO_DISPLAY:
+                message += ' ...'
+            if flaky_stress_failures:
+                message += ' Found flaky tests: {}'.format(flaky_failures_string)
+                for flaky_failure in flaky_stress_failures:
+                    self.send_email_for_flaky_failure(flaky_failure)
+            self.build.buildFinished([message], SUCCESS)
+        return defer.succeed(None)
+
+    def retry_build(self, message):
+        self.descriptionDone = message
+        self.finished(RETRY)
+        self.build.buildFinished([message], RETRY)
+        return defer.succeed(None)
+
+    def report_failure(self, new_binary_failures, new_stress_failures):
+        message = ''
+        if (not new_binary_failures) and (not new_stress_failures):
+            message = 'Found unexpected failure with change'
+        if new_binary_failures:
+            pluralSuffix = 's' if len(new_binary_failures) > 1 else ''
+            message = 'Found {} new test262 binary failure{}: {}'.format(len(new_binary_failures), pluralSuffix, self.new_binary_failures_to_display)
+        if new_stress_failures:
+            if message:
+                message += ', '
+            pluralSuffix = 's' if len(new_stress_failures) > 1 else ''
+            message += 'Found {} new test262 stress test failure{}: {}'.format(len(new_stress_failures), pluralSuffix, self.new_stress_failures_to_display)
+            if len(new_stress_failures) > self.NUM_FAILURES_TO_DISPLAY:
+                message += ' ...'
+
+        self.finished(FAILURE)
+        self.build.results = FAILURE
+        self.descriptionDone = message
+        self.build.buildFinished([message], FAILURE)
+        return defer.succeed(None)
+
+    def send_email_for_flaky_failure(self, test_name):
+        try:
+            builder_name = self.getProperty('buildername', '')
+            worker_name = self.getProperty('workername', '')
+            build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
+            history_url = '{}?suite=test262-tests&test={}'.format(RESULTS_DB_URL, test_name)
+
+            email_subject = 'Flaky test: {}'.format(test_name)
+            email_text = 'Flaky test: {}\n\nBuild: {}\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_name, build_url, builder_name, worker_name, history_url)
+            send_email_to_bot_watchers(email_subject, email_text, builder_name, 'flaky-{}'.format(test_name))
+        except Exception as e:
+            print('Error in sending email for flaky failure: {}'.format(e))
+
+    def send_email_for_pre_existing_failure(self, test_name):
+        try:
+            builder_name = self.getProperty('buildername', '')
+            worker_name = self.getProperty('workername', '')
+            build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
+            history_url = '{}?suite=test262-tests&test={}'.format(RESULTS_DB_URL, test_name)
+
+            email_subject = 'Pre-existing test failure: {}'.format(test_name)
+            email_text = 'Test {} failed on clean tree run in {}.\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_name, build_url, builder_name, worker_name, history_url)
+            send_email_to_bot_watchers(email_subject, email_text, builder_name, 'preexisting-{}'.format(test_name))
+        except Exception as e:
+            print('Error in sending email for pre-existing failure: {}'.format(e))
 
 class InstallBuiltProduct(shell.ShellCommand):
     name = 'install-built-product'
