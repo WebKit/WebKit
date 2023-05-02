@@ -472,6 +472,8 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
         return true;
     if (lineLayout.hasOutOfFlowContent())
         return true;
+    if (rootBlockContainer.containsFloats())
+        return true;
     if (lineLayout.contentNeedsVisualReordering() || (is<RenderText>(renderer) && Layout::TextUtil::containsStrongDirectionalityText(downcast<RenderText>(renderer).text()))) {
         // FIXME: InlineItemsBuilder needs some work to support paragraph level bidi handling.
         return true;
