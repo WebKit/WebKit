@@ -37,7 +37,7 @@ SkewTransformOperation::SkewTransformOperation(double angleX, double angleY, Tra
     , m_angleX(angleX)
     , m_angleY(angleY)
 {
-    ASSERT(isSkewTransformOperationType());
+    RELEASE_ASSERT(isSkewTransformOperationType(type));
 }
 
 bool SkewTransformOperation::operator==(const TransformOperation& other) const

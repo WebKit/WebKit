@@ -107,24 +107,38 @@ public:
     
     virtual bool isRepresentableIn2D() const { return true; }
 
-    bool isRotateTransformOperationType() const
+    static bool isRotateTransformOperationType(Type type)
     {
-        return type() == Type::RotateX || type() == Type::RotateY || type() == Type::RotateZ || type() == Type::Rotate || type() == Type::Rotate3D;
+        return type == Type::RotateX
+            || type == Type::RotateY
+            || type == Type::RotateZ
+            || type == Type::Rotate
+            || type == Type::Rotate3D;
     }
 
-    bool isScaleTransformOperationType() const
+    static bool isScaleTransformOperationType(Type type)
     {
-        return type() == Type::ScaleX || type() == Type::ScaleY || type() == Type::ScaleZ || type() == Type::Scale || type() == Type::Scale3D;
+        return type == Type::ScaleX
+            || type == Type::ScaleY
+            || type == Type::ScaleZ
+            || type == Type::Scale
+            || type == Type::Scale3D;
     }
 
-    bool isSkewTransformOperationType() const
+    static bool isSkewTransformOperationType(Type type)
     {
-        return type() == Type::SkewX || type() == Type::SkewY || type() == Type::Skew;
+        return type == Type::SkewX
+            || type == Type::SkewY
+            || type == Type::Skew;
     }
 
-    bool isTranslateTransformOperationType() const
+    static bool isTranslateTransformOperationType(Type type)
     {
-        return type() == Type::TranslateX || type() == Type::TranslateY || type() == Type::TranslateZ || type() == Type::Translate || type() == Type::Translate3D;
+        return type == Type::TranslateX
+            || type == Type::TranslateY
+            || type == Type::TranslateZ
+            || type == Type::Translate
+            || type == Type::Translate3D;
     }
     
     virtual void dump(WTF::TextStream&) const = 0;
@@ -173,5 +187,5 @@ template<> struct EnumTraits<WebCore::TransformOperation::Type> {
 
 #define SPECIALIZE_TYPE_TRAITS_TRANSFORMOPERATION(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
-    static bool isType(const WebCore::TransformOperation& operation) { return operation.predicate; } \
+    static bool isType(const WebCore::TransformOperation& operation) { return predicate(operation.type()); } \
 SPECIALIZE_TYPE_TRAITS_END()

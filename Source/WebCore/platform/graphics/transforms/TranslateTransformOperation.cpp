@@ -39,7 +39,7 @@ TranslateTransformOperation::TranslateTransformOperation(const Length& tx, const
     , m_y(ty)
     , m_z(tz)
 {
-    ASSERT(isTranslateTransformOperationType());
+    RELEASE_ASSERT(isTranslateTransformOperationType(type));
 }
 
 bool TranslateTransformOperation::operator==(const TransformOperation& other) const
