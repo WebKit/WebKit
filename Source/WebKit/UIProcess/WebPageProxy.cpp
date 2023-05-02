@@ -217,6 +217,7 @@
 #include <wtf/CallbackAggregator.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/NumberOfCores.h>
 #include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/URL.h>
@@ -523,7 +524,10 @@ void WebPageProxy::ProcessActivityState::reset()
 void WebPageProxy::ProcessActivityState::dropVisibleActivity()
 {
 #if PLATFORM(MAC)
-    *m_wasRecentlyVisibleActivity = m_page.process().throttler().foregroundActivity("View was recently visible"_s);
+    if (WTF::numberOfProcessorCores() > 4)
+        *m_wasRecentlyVisibleActivity = m_page.process().throttler().backgroundActivity("View was recently visible"_s);
+    else
+        *m_wasRecentlyVisibleActivity = m_page.process().throttler().foregroundActivity("View was recently visible"_s);
 #endif
     m_isVisibleActivity = nullptr;
 }
