@@ -5949,14 +5949,14 @@ void WebPageProxy::didReceiveTitleForFrame(FrameIdentifier frameID, const String
 
     auto transaction = internals().pageLoadState.transaction();
 
-    if (frame->isMainFrame())
+    if (frame->isMainFrame()) {
         internals().pageLoadState.setTitle(transaction, title);
+        process().throttler().delaySuspension();
+    }
 
     frame->didChangeTitle(title);
     
     internals().pageLoadState.commitChanges();
-
-    process().throttler().delaySuspension();
 
 #if ENABLE(REMOTE_INSPECTOR)
     if (frame->isMainFrame())
