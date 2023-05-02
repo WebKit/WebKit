@@ -579,7 +579,7 @@ void NetworkProcess::setSession(PAL::SessionID sessionID, std::unique_ptr<Networ
     m_networkSessions.set(sessionID, WTFMove(session));
 }
 
-void NetworkProcess::destroySession(PAL::SessionID sessionID)
+void NetworkProcess::destroySession(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 #if !USE(SOUP) && !USE(CURL)
@@ -592,13 +592,16 @@ void NetworkProcess::destroySession(PAL::SessionID sessionID)
         session->invalidateAndCancel();
         auto& storageManager = session->storageManager();
         m_closingStorageManagers.add(&storageManager);
-        storageManager.close([this, protectedThis = Ref { *this }, storageManager = &storageManager]() {
+        storageManager.close([this, protectedThis = Ref { *this }, storageManager = &storageManager, completionHandler = std::exchange(completionHandler, { })]() mutable {
             m_closingStorageManagers.remove(storageManager);
+            completionHandler();
             stopRunLoopIfNecessary();
         });
     }
     m_networkStorageSessions.remove(sessionID);
     m_sessionsControlledByAutomation.remove(sessionID);
+    if (completionHandler)
+        completionHandler();
 }
 
 void NetworkProcess::registrableDomainsWithLastAccessedTime(PAL::SessionID sessionID, CompletionHandler<void(std::optional<HashMap<RegistrableDomain, WallTime>>)>&& completionHandler)

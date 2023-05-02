@@ -452,6 +452,7 @@ public:
     void clearProxyConfigData();
     void setProxyConfigData(const API::Data&, uuid_t proxyIdentifier);
 #endif
+    void setCompletionHandlerForRemovalFromNetworkProcess(CompletionHandler<void(String&&)>&&);
     
 private:
     enum class ForceReinitialization : bool { No, Yes };
@@ -576,6 +577,7 @@ private:
     Ref<WebCore::LocalWebLockRegistry> m_webLockRegistry;
 
     RefPtr<WebPreferences> m_serviceWorkerOverridePreferences;
+    CompletionHandler<void(String&&)> m_completionHandlerForRemovalFromNetworkProcess;
 };
 
 }

@@ -941,4 +941,56 @@ TEST(WKWebsiteDataStoreConfiguration, QuotaRatioDefaultValue)
     EXPECT_EQ([[websiteDataStoreConfiguration.get() totalQuotaRatio] doubleValue], 0.8);
 }
 
+TEST(WKWebsiteDataStorePrivate, CompletionHandlerForRemovalFromNetworkProcess)
+{
+    __block bool done = false;
+    __block unsigned completionHandlerNumber = 0;
+
+    // Create a web view that keeps default network process running.
+    auto defaultConfiguration = adoptNS([WKWebViewConfiguration new]);
+    auto defaultNavigationDelegate = adoptNS([[NavigationTestDelegate alloc] init]);
+    auto defaultWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:defaultConfiguration.get()]);
+    [defaultWebView setNavigationDelegate:defaultNavigationDelegate.get()];
+    [defaultWebView loadHTMLString:@"" baseURL:[NSURL URLWithString:@"http://apple.com"]];
+    [defaultNavigationDelegate waitForDidFinishNavigation];
+
+    @autoreleasepool {
+        // Create a new data store to be removed from network process.
+        auto websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+        auto configuration = adoptNS([WKWebViewConfiguration new]);
+        [configuration setWebsiteDataStore:websiteDataStore];
+        auto handler = adoptNS([[WKWebsiteDataStoreMessageHandler alloc] init]);
+        [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+        auto navigationDelegate = adoptNS([[NavigationTestDelegate alloc] init]);
+        [webView setNavigationDelegate:navigationDelegate.get()];
+        [webView loadHTMLString:@"" baseURL:[NSURL URLWithString:@"http://webkit.org/"]];
+        [navigationDelegate waitForDidFinishNavigation];
+        EXPECT_EQ(defaultConfiguration.get().websiteDataStore._networkProcessIdentifier, configuration.get().websiteDataStore._networkProcessIdentifier);
+
+        done = false;
+        [websiteDataStore _setCompletionHandlerForRemovalFromNetworkProcess:^(NSError *error) {
+            EXPECT_NOT_NULL(error);
+            EXPECT_TRUE([[error description] containsString:@"New completion handler is set"]);
+            completionHandlerNumber = 1;
+            done = true;
+        }];
+
+        [websiteDataStore _setCompletionHandlerForRemovalFromNetworkProcess:^(NSError *error) {
+            EXPECT_NULL(error);
+            completionHandlerNumber = 2;
+            done = true;
+        }];
+        Util::run(&done);
+        EXPECT_EQ(completionHandlerNumber, 1u);
+        
+        // Wait for WebsiteDataStore to be destroyed and removed from network process.
+        done = false;
+    }
+
+    Util::run(&done);
+    EXPECT_EQ(completionHandlerNumber, 2u);
+}
+
+
 } // namespace TestWebKitAPI

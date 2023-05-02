@@ -167,7 +167,7 @@ public:
 
     void setSession(PAL::SessionID, std::unique_ptr<NetworkSession>&&);
     NetworkSession* networkSession(PAL::SessionID) const final;
-    void destroySession(PAL::SessionID);
+    void destroySession(PAL::SessionID, CompletionHandler<void()>&& = [] { });
 
     void forEachNetworkSession(const Function<void(NetworkSession&)>&);
 
