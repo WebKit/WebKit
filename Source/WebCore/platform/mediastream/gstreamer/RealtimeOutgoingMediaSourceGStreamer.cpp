@@ -68,6 +68,8 @@ RealtimeOutgoingMediaSourceGStreamer::~RealtimeOutgoingMediaSourceGStreamer()
     if (m_transceiver)
         g_signal_handlers_disconnect_by_data(m_transceiver.get(), this);
 
+    stopOutgoingSource();
+
     if (GST_IS_PAD(m_webrtcSinkPad.get())) {
         auto srcPad = adoptGRef(gst_element_get_static_pad(m_bin.get(), "src"));
         if (gst_pad_unlink(srcPad.get(), m_webrtcSinkPad.get())) {
