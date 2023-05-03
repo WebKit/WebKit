@@ -131,8 +131,10 @@ static JSValue performProxyGet(JSGlobalObject* globalObject, ProxyObject* proxyO
     JSValue trapResult = call(globalObject, getHandler, callData, handler, arguments);
     RETURN_IF_EXCEPTION(scope, { });
 
-    ProxyObject::validateGetTrapResult(globalObject, trapResult, target, propertyName);
-    RETURN_IF_EXCEPTION(scope, { });
+    if (target->structure()->hasNonConfigurableReadOnlyOrGetterSetterProperties()) {
+        ProxyObject::validateGetTrapResult(globalObject, trapResult, target, propertyName);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
 
     return trapResult;
 }
@@ -233,6 +235,9 @@ bool ProxyObject::performInternalMethodGetOwnProperty(JSGlobalObject* globalObje
     ASSERT(!arguments.hasOverflowed());
     JSValue trapResult = call(globalObject, getOwnPropertyDescriptorMethod, callData, handler, arguments);
     RETURN_IF_EXCEPTION(scope, false);
+
+    if (trapResult.isUndefined() && !target->structure()->isNonExtensibleOrHasNonConfigurableProperties())
+        return false;
 
     if (!trapResult.isUndefined() && !trapResult.isObject()) {
         throwTypeError(globalObject, scope, "result of 'getOwnPropertyDescriptor' call should either be an Object or undefined"_s);
@@ -343,8 +348,11 @@ bool ProxyObject::performHasProperty(JSGlobalObject* globalObject, PropertyName 
     if (trapResultAsBool)
         return true;
 
-    scope.release();
-    validateNegativeHasTrapResult(globalObject, target, propertyName);
+    if (target->structure()->isNonExtensibleOrHasNonConfigurableProperties()) {
+        validateNegativeHasTrapResult(globalObject, target, propertyName);
+        RETURN_IF_EXCEPTION(scope, false);
+    }
+
     return false;
 }
 
@@ -461,8 +469,11 @@ bool ProxyObject::performPut(JSGlobalObject* globalObject, JSValue putValue, JSV
         return false;
     }
 
-    validatePositiveSetTrapResult(globalObject, target, propertyName, putValue);
-    RETURN_IF_EXCEPTION(scope, false);
+    if (target->structure()->hasNonConfigurableReadOnlyOrGetterSetterProperties()) {
+        validatePositiveSetTrapResult(globalObject, target, propertyName, putValue);
+        RETURN_IF_EXCEPTION(scope, false);
+    }
+
     return true;
 }
 
@@ -664,6 +675,9 @@ bool ProxyObject::performDelete(JSGlobalObject* globalObject, PropertyName prope
 
     if (!trapResultAsBool)
         return false;
+
+    if (!target->structure()->isNonExtensibleOrHasNonConfigurableProperties())
+        return true;
 
     PropertyDescriptor descriptor;
     bool result = target->getOwnPropertyDescriptor(globalObject, propertyName, descriptor);
@@ -870,13 +884,16 @@ bool ProxyObject::performDefineOwnProperty(JSGlobalObject* globalObject, Propert
         return false;
     }
 
+    bool settingConfigurableToFalse = descriptor.configurablePresent() && !descriptor.configurable();
+    if (!settingConfigurableToFalse && !target->structure()->isNonExtensibleOrHasNonConfigurableProperties())
+        return true;
+
     PropertyDescriptor targetDescriptor;
     bool isTargetDescriptorDefined = target->getOwnPropertyDescriptor(globalObject, propertyName, targetDescriptor);
     RETURN_IF_EXCEPTION(scope, false);
 
     bool targetIsExtensible = target->isExtensible(globalObject);
     RETURN_IF_EXCEPTION(scope, false);
-    bool settingConfigurableToFalse = descriptor.configurablePresent() && !descriptor.configurable();
 
     if (!isTargetDescriptorDefined) {
         if (!targetIsExtensible) {
