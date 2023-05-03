@@ -1449,7 +1449,7 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
         queuePopoverToggleEventTask(PopoverVisibilityState::Showing, PopoverVisibilityState::Hidden);
 
     if (RefPtr element = popoverData()->previouslyFocusedElement()) {
-        if (focusPreviousElement == FocusPreviousElement::Yes) {
+        if (focusPreviousElement == FocusPreviousElement::Yes && containsIncludingShadowDOM(document().focusedElement())) {
             FocusOptions options;
             options.preventScroll = true;
             element->focus(options);

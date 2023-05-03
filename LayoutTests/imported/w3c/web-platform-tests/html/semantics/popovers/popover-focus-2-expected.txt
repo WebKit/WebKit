@@ -6,5 +6,5 @@ Toggle popover Other focusable element
 PASS Popover focus navigation
 PASS Circular reference tab navigation
 PASS Popover focus returns when popover is hidden by invoker
-FAIL Popover focus only returns to invoker when focus is within the popover assert_equals: focus does not move because it was not inside the popover expected Element node <span tabindex="0">Other focusable element</span> but got Element node <button popovertarget="focus-return2-p" tabindex="0">Togg...
+PASS Popover focus only returns to invoker when focus is within the popover
 
