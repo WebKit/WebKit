@@ -88,21 +88,23 @@ using ValueOrException = Expected<JSC::JSValue, ExceptionDetails>;
 #if ENABLE(CONTEXT_MENUS)
 class FrontendMenuProvider : public ContextMenuProvider {
 public:
-    static Ref<FrontendMenuProvider> create(InspectorFrontendHost* frontendHost, Deprecated::ScriptObject frontendApiObject, const Vector<ContextMenuItem>& items)
+    static Ref<FrontendMenuProvider> create(InspectorFrontendHost* frontendHost, JSC::JSGlobalObject* globalObject, JSC::JSObject* frontendApiObject, const Vector<ContextMenuItem>& items)
     {
-        return adoptRef(*new FrontendMenuProvider(frontendHost, frontendApiObject, items));
+        return adoptRef(*new FrontendMenuProvider(frontendHost, globalObject, frontendApiObject, items));
     }
     
     void disconnect()
     {
         m_frontendApiObject = { };
+        m_globalObject = nullptr;
         m_frontendHost = nullptr;
     }
     
 private:
-    FrontendMenuProvider(InspectorFrontendHost* frontendHost, Deprecated::ScriptObject frontendApiObject, const Vector<ContextMenuItem>& items)
+    FrontendMenuProvider(InspectorFrontendHost* frontendHost, JSC::JSGlobalObject* globalObject, JSC::JSObject* frontendApiObject, const Vector<ContextMenuItem>& items)
         : m_frontendHost(frontendHost)
-        , m_frontendApiObject(frontendApiObject)
+        , m_globalObject(globalObject)
+        , m_frontendApiObject(globalObject->vm(), frontendApiObject)
         , m_items(items)
     {
     }
@@ -121,10 +123,10 @@ private:
     void contextMenuItemSelected(ContextMenuAction action, const String&) override
     {
         if (m_frontendHost) {
-            UserGestureIndicator gestureIndicator(ProcessingUserGesture, dynamicDowncast<Document>(executionContext(m_frontendApiObject.globalObject())));
+            UserGestureIndicator gestureIndicator(ProcessingUserGesture, dynamicDowncast<Document>(executionContext(m_globalObject)));
             int itemNumber = action - ContextMenuItemBaseCustomTag;
 
-            Deprecated::ScriptFunctionCall function(m_frontendApiObject, "contextMenuItemSelected"_s, WebCore::functionCallHandlerFromAnyThread);
+            ScriptFunctionCall function(m_globalObject, m_frontendApiObject.get(), "contextMenuItemSelected"_s, WebCore::functionCallHandlerFromAnyThread);
             function.appendArgument(itemNumber);
             function.call();
         }
@@ -133,7 +135,7 @@ private:
     void contextMenuCleared() override
     {
         if (m_frontendHost) {
-            Deprecated::ScriptFunctionCall function(m_frontendApiObject, "contextMenuCleared"_s, WebCore::functionCallHandlerFromAnyThread);
+            ScriptFunctionCall function(m_globalObject, m_frontendApiObject.get(), "contextMenuCleared"_s, WebCore::functionCallHandlerFromAnyThread);
             function.call();
 
             m_frontendHost->m_menuProvider = nullptr;
@@ -142,7 +144,8 @@ private:
     }
 
     InspectorFrontendHost* m_frontendHost;
-    Deprecated::ScriptObject m_frontendApiObject;
+    JSC::JSGlobalObject* m_globalObject;
+    JSC::Strong<JSObject> m_frontendApiObject;
     Vector<ContextMenuItem> m_items;
 };
 #endif
@@ -586,7 +589,7 @@ void InspectorFrontendHost::showContextMenu(Event& event, Vector<ContextMenuItem
     ContextMenu menu;
     populateContextMenu(WTFMove(items), menu);
 
-    auto menuProvider = FrontendMenuProvider::create(this, { &globalObject, frontendAPIObject }, menu.items());
+    auto menuProvider = FrontendMenuProvider::create(this, &globalObject, frontendAPIObject, menu.items());
     m_menuProvider = menuProvider.ptr();
     m_frontendPage->contextMenuController().showContextMenu(event, menuProvider);
 #else

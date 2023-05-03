@@ -33,6 +33,7 @@
 #include "InjectedScriptBase.h"
 
 #include "DebuggerEvalEnabler.h"
+#include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "JSNativeStdFunction.h"
@@ -41,14 +42,77 @@
 
 namespace Inspector {
 
+static RefPtr<JSON::Value> jsToInspectorValue(JSC::JSGlobalObject* globalObject, JSC::JSValue value, int maxDepth)
+{
+    if (!value) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    if (!maxDepth)
+        return nullptr;
+
+    maxDepth--;
+
+    if (value.isUndefinedOrNull())
+        return JSON::Value::null();
+    if (value.isBoolean())
+        return JSON::Value::create(value.asBoolean());
+    if (value.isDouble())
+        return JSON::Value::create(value.asDouble());
+    if (value.isInt32())
+        return JSON::Value::create(value.asInt32());
+    if (value.isString())
+        return JSON::Value::create(asString(value)->value(globalObject));
+
+    if (value.isObject()) {
+        if (isJSArray(value)) {
+            auto inspectorArray = JSON::Array::create();
+            auto& array = *asArray(value);
+            unsigned length = array.length();
+            for (unsigned i = 0; i < length; i++) {
+                auto elementValue = jsToInspectorValue(globalObject, array.getIndex(globalObject, i), maxDepth);
+                if (!elementValue)
+                    return nullptr;
+                inspectorArray->pushValue(elementValue.releaseNonNull());
+            }
+            return inspectorArray;
+        }
+        JSC::VM& vm = globalObject->vm();
+        auto inspectorObject = JSON::Object::create();
+        auto& object = *value.getObject();
+        JSC::PropertyNameArray propertyNames(vm, JSC::PropertyNameMode::Strings, JSC::PrivateSymbolMode::Exclude);
+        object.methodTable()->getOwnPropertyNames(&object, globalObject, propertyNames, JSC::DontEnumPropertiesMode::Exclude);
+        for (auto& name : propertyNames) {
+            auto inspectorValue = jsToInspectorValue(globalObject, object.get(globalObject, name), maxDepth);
+            if (!inspectorValue)
+                return nullptr;
+            inspectorObject->setValue(name.string(), inspectorValue.releaseNonNull());
+        }
+        return inspectorObject;
+    }
+
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+RefPtr<JSON::Value> toInspectorValue(JSC::JSGlobalObject* globalObject, JSC::JSValue value)
+{
+    // FIXME: Maybe we should move the JSLockHolder stuff to the callers since this function takes a JSValue directly.
+    // Doing the locking here made sense when we were trying to abstract the difference between multiple JavaScript engines.
+    JSC::JSLockHolder holder(globalObject);
+    return jsToInspectorValue(globalObject, value, JSON::Value::maxDepth);
+}
+
 InjectedScriptBase::InjectedScriptBase(const String& name)
     : m_name(name)
 {
 }
 
-InjectedScriptBase::InjectedScriptBase(const String& name, Deprecated::ScriptObject injectedScriptObject, InspectorEnvironment* environment)
+InjectedScriptBase::InjectedScriptBase(const String& name, JSC::JSGlobalObject* globalObject, JSC::JSObject* injectedScriptObject, InspectorEnvironment* environment)
     : m_name(name)
-    , m_injectedScriptObject(injectedScriptObject)
+    , m_globalObject(globalObject)
+    , m_injectedScriptObject(globalObject->vm(), injectedScriptObject)
     , m_environment(environment)
 {
 }
@@ -59,27 +123,26 @@ InjectedScriptBase::~InjectedScriptBase()
 
 bool InjectedScriptBase::hasAccessToInspectedScriptState() const
 {
-    return m_environment && m_environment->canAccessInspectedScriptState(m_injectedScriptObject.globalObject());
+    return m_environment && m_environment->canAccessInspectedScriptState(m_globalObject);
 }
 
-const Deprecated::ScriptObject& InjectedScriptBase::injectedScriptObject() const
+JSC::JSObject* InjectedScriptBase::injectedScriptObject() const
 {
-    return m_injectedScriptObject;
+    return m_injectedScriptObject.get();
 }
 
-Expected<JSC::JSValue, NakedPtr<JSC::Exception>> InjectedScriptBase::callFunctionWithEvalEnabled(Deprecated::ScriptFunctionCall& function) const
+Expected<JSC::JSValue, NakedPtr<JSC::Exception>> InjectedScriptBase::callFunctionWithEvalEnabled(ScriptFunctionCall& function) const
 {
-    JSC::JSGlobalObject* globalObject = m_injectedScriptObject.globalObject();
-    JSC::DebuggerEvalEnabler evalEnabler(globalObject);
+    JSC::DebuggerEvalEnabler evalEnabler(m_globalObject);
     return function.call();
 }
 
-Ref<JSON::Value> InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& function)
+Ref<JSON::Value> InjectedScriptBase::makeCall(ScriptFunctionCall& function)
 {
     if (hasNoValue() || !hasAccessToInspectedScriptState())
         return JSON::Value::null();
 
-    auto globalObject = m_injectedScriptObject.globalObject();
+    auto globalObject = m_globalObject;
 
     auto result = callFunctionWithEvalEnabled(function);
     if (!result) {
@@ -100,19 +163,19 @@ Ref<JSON::Value> InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& fu
     return resultJSONValue.releaseNonNull();
 }
 
-void InjectedScriptBase::makeEvalCall(Protocol::ErrorString& errorString, Deprecated::ScriptFunctionCall& function, RefPtr<Protocol::Runtime::RemoteObject>& resultObject, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex)
+void InjectedScriptBase::makeEvalCall(Protocol::ErrorString& errorString, ScriptFunctionCall& function, RefPtr<Protocol::Runtime::RemoteObject>& resultObject, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex)
 {
     checkCallResult(errorString, makeCall(function), resultObject, wasThrown, savedResultIndex);
 }
 
-void InjectedScriptBase::makeAsyncCall(Deprecated::ScriptFunctionCall& function, AsyncCallCallback&& callback)
+void InjectedScriptBase::makeAsyncCall(ScriptFunctionCall& function, AsyncCallCallback&& callback)
 {
     if (hasNoValue() || !hasAccessToInspectedScriptState()) {
         checkAsyncCallResult(JSON::Value::null(), callback);
         return;
     }
 
-    auto* globalObject = m_injectedScriptObject.globalObject();
+    auto* globalObject = m_globalObject;
     JSC::VM& vm = globalObject->vm();
 
     JSC::JSNativeStdFunction* jsFunction = nullptr;

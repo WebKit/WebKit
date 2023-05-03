@@ -36,7 +36,7 @@
 #include "JSLock.h"
 #include <wtf/text/WTFString.h>
 
-namespace Deprecated {
+namespace Inspector {
 
 using namespace JSC;
 
@@ -94,17 +94,17 @@ void ScriptCallArgumentHandler::appendArgument(bool argument)
     m_arguments.append(jsBoolean(argument));
 }
 
-ScriptFunctionCall::ScriptFunctionCall(const Deprecated::ScriptObject& thisObject, const String& name, ScriptFunctionCallHandler callHandler)
-    : ScriptCallArgumentHandler(thisObject.globalObject())
+ScriptFunctionCall::ScriptFunctionCall(JSC::JSGlobalObject* globalObject, JSC::JSObject* thisObject, const String& name, ScriptFunctionCallHandler callHandler)
+    : ScriptCallArgumentHandler(globalObject)
     , m_callHandler(callHandler)
-    , m_thisObject(thisObject)
+    , m_thisObject(globalObject->vm(), thisObject)
     , m_name(name)
 {
 }
 
 Expected<JSValue, NakedPtr<Exception>> ScriptFunctionCall::call()
 {
-    JSObject* thisObject = m_thisObject.jsObject();
+    JSObject* thisObject = m_thisObject.get();
 
     VM& vm = m_globalObject->vm();
     JSLockHolder lock(vm);
@@ -141,4 +141,4 @@ Expected<JSValue, NakedPtr<Exception>> ScriptFunctionCall::call()
     return result;
 }
 
-} // namespace Deprecated
+} // namespace Inspector

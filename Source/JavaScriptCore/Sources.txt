@@ -189,10 +189,6 @@ b3/B3WasmAddressValue.cpp
 b3/B3WasmBoundsCheckValue.cpp
 b3/B3Width.cpp
 
-bindings/ScriptFunctionCall.cpp
-bindings/ScriptObject.cpp
-bindings/ScriptValue.cpp
-
 builtins/BuiltinExecutables.cpp
 builtins/BuiltinExecutableCreator.cpp
 builtins/BuiltinNames.cpp
@@ -615,6 +611,7 @@ inspector/ScriptArguments.cpp
 inspector/ScriptCallFrame.cpp
 inspector/ScriptCallStack.cpp
 inspector/ScriptCallStackFactory.cpp
+inspector/ScriptFunctionCall.cpp
 
 // Derived Sources
 inspector/InspectorBackendDispatchers.cpp

@@ -48,7 +48,7 @@ class InspectorEnvironment;
 class JS_EXPORT_PRIVATE InjectedScript final : public InjectedScriptBase {
 public:
     InjectedScript();
-    InjectedScript(Deprecated::ScriptObject, InspectorEnvironment*);
+    InjectedScript(JSC::JSGlobalObject*, JSC::JSObject*, InspectorEnvironment*);
     ~InjectedScript() final;
 
     struct ExecuteOptions {

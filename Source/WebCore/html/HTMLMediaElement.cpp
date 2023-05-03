@@ -126,7 +126,6 @@
 #include "VideoTrackList.h"
 #include "VideoTrackPrivate.h"
 #include "WebCoreJSClientData.h"
-#include <JavaScriptCore/ScriptObject.h>
 #include <JavaScriptCore/Uint8Array.h>
 #include <limits>
 #include <pal/SessionID.h>

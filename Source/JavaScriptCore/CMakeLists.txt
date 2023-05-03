@@ -626,10 +626,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     b3/B3Type.h
     b3/B3ValueRep.h
 
-    bindings/ScriptFunctionCall.h
-    bindings/ScriptObject.h
-    bindings/ScriptValue.h
-
     builtins/BuiltinNames.h
     builtins/BuiltinUtils.h
 
@@ -838,6 +834,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     inspector/ScriptCallFrame.h
     inspector/ScriptCallStack.h
     inspector/ScriptCallStackFactory.h
+    inspector/ScriptFunctionCall.h
 
     inspector/agents/InspectorAgent.h
     inspector/agents/InspectorAuditAgent.h

@@ -43,10 +43,10 @@
 #include "Pasteboard.h"
 #include "Storage.h"
 #include "WebConsoleAgent.h"
+#include <JavaScriptCore/InjectedScriptBase.h>
 #include <JavaScriptCore/InspectorAgent.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
-#include <JavaScriptCore/ScriptValue.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>

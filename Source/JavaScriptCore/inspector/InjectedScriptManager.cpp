@@ -197,7 +197,7 @@ InjectedScript InjectedScriptManager::injectedScriptFor(JSGlobalObject* globalOb
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    InjectedScript result({ globalObject, createResult.value() }, &m_environment);
+    InjectedScript result(globalObject, createResult.value(), &m_environment);
     m_idToInjectedScript.set(id, result);
     didCreateInjectedScript(result);
     return result;

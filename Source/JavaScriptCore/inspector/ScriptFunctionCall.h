@@ -33,15 +33,20 @@
 
 #include "ArgList.h"
 #include "Exception.h"
-#include "ScriptObject.h"
+#include "JSCJSValue.h"
+#include "JSCJSValueInlines.h"
+#include "JSObject.h"
+#include "Strong.h"
+#include "StrongInlines.h"
 #include <wtf/Expected.h>
+#include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
 class JSValue;
 }
 
-namespace Deprecated {
+namespace Inspector {
 
 class JS_EXPORT_PRIVATE ScriptCallArgumentHandler {
 public:
@@ -70,14 +75,14 @@ private:
 
 class JS_EXPORT_PRIVATE ScriptFunctionCall : public ScriptCallArgumentHandler {
 public:
-    typedef JSC::JSValue (*ScriptFunctionCallHandler)(JSC::JSGlobalObject* globalObject, JSC::JSValue functionObject, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>&);
-    ScriptFunctionCall(const ScriptObject& thisObject, const String& name, ScriptFunctionCallHandler handler = nullptr);
+    typedef JSC::JSValue (*ScriptFunctionCallHandler)(JSC::JSGlobalObject*, JSC::JSValue functionObject, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>&);
+    ScriptFunctionCall(JSC::JSGlobalObject*, JSC::JSObject* thisObject, const String& name, ScriptFunctionCallHandler = nullptr);
     Expected<JSC::JSValue, NakedPtr<JSC::Exception>> call();
 
 protected:
     ScriptFunctionCallHandler m_callHandler;
-    ScriptObject m_thisObject;
+    JSC::Strong<JSC::JSObject> m_thisObject;
     String m_name;
 };
 
-} // namespace Deprecated
+} // namespace Inspector
