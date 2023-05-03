@@ -281,6 +281,11 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
     return WebCore::MIMETypeRegistry::isUSDMIMEType(MIMEType);
 }
 
+- (BOOL)isValidFileExtension:(NSString *)extension
+{
+    return WebCore::MIMETypeRegistry::isUSDMIMEType(WebCore::MIMETypeRegistry::mimeTypeForExtension(String(extension)));
+}
+
 - (void)dataTask:(_WKDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response decisionHandler:(void (^)(_WKDataTaskResponsePolicy))decisionHandler
 {
     if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
@@ -293,8 +298,8 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
         }
     }
 
-    if (![self isValidMIMEType:response.MIMEType]) {
-        RELEASE_LOG(SystemPreview, "cancelling subresource load due to unhandled MIME type: \"%@\"", response.MIMEType);
+    if (![self isValidMIMEType:response.MIMEType] && ![self isValidFileExtension:response.URL.pathExtension]) {
+        RELEASE_LOG(SystemPreview, "cancelling subresource load due to unhandled MIME type: \"%@\" extension: \"%@\"", response.MIMEType, response.URL.pathExtension);
         decisionHandler(_WKDataTaskResponsePolicyCancel);
         _previewController->loadFailed();
         return;
@@ -399,6 +404,8 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SystemPreview
 
     [presentingViewController presentViewController:m_qlPreviewController.get() animated:YES completion:nullptr];
 #endif
+
+    m_state = State::Began;
 }
 
 void SystemPreviewController::loadStarted(const URL& localFileURL)
@@ -411,10 +418,11 @@ void SystemPreviewController::loadStarted(const URL& localFileURL)
         m_localFileURL.setFragmentIdentifier(m_fragmentIdentifier);
 
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    NSURL *nsurl = (NSURL *)m_localFileURL;
     if ([getASVLaunchPreviewClass() respondsToSelector:@selector(beginPreviewApplicationWithURLs:is3DContent:websiteURL:completion:)])
-        [getASVLaunchPreviewClass() beginPreviewApplicationWithURLs:@[nsurl] is3DContent:YES websiteURL:m_downloadURL completion:^(NSError *error) { }];
+        [getASVLaunchPreviewClass() beginPreviewApplicationWithURLs:localFileURLs() is3DContent:YES websiteURL:m_downloadURL completion:^(NSError *error) { }];
 #endif
+
+    m_state = State::Loading;
 }
 
 void SystemPreviewController::loadCompleted(const URL& localFileURL)
@@ -424,9 +432,8 @@ void SystemPreviewController::loadCompleted(const URL& localFileURL)
     ASSERT(equalIgnoringFragmentIdentifier(m_localFileURL, localFileURL));
 
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    NSURL *nsurl = (NSURL *)m_localFileURL;
     if ([getASVLaunchPreviewClass() respondsToSelector:@selector(launchPreviewApplicationWithURLs:completion:)])
-        [getASVLaunchPreviewClass() launchPreviewApplicationWithURLs:@[nsurl] completion:^(NSError *error) { }];
+        [getASVLaunchPreviewClass() launchPreviewApplicationWithURLs:localFileURLs() completion:^(NSError *error) { }];
 #else
     if (m_qlPreviewControllerDataSource)
         [m_qlPreviewControllerDataSource finish:m_localFileURL];
@@ -435,6 +442,8 @@ void SystemPreviewController::loadCompleted(const URL& localFileURL)
 
     if (m_testingCallback)
         m_testingCallback(true);
+
+    m_state = State::Succeeded;
 }
 
 void SystemPreviewController::loadFailed()
@@ -442,9 +451,8 @@ void SystemPreviewController::loadFailed()
     RELEASE_LOG(SystemPreview, "SystemPreview load has failed on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
 
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    NSURL *nsurl = (NSURL *)m_localFileURL;
-    if ([getASVLaunchPreviewClass() respondsToSelector:@selector(cancelPreviewApplicationWithURLs:error:completion:)])
-        [getASVLaunchPreviewClass() cancelPreviewApplicationWithURLs:@[nsurl] error:nil completion:^(NSError *error) { }];
+    if (m_state == State::Loading && [getASVLaunchPreviewClass() respondsToSelector:@selector(cancelPreviewApplicationWithURLs:error:completion:)])
+        [getASVLaunchPreviewClass() cancelPreviewApplicationWithURLs:localFileURLs() error:nil completion:^(NSError *error) { }];
 #else
     if (m_qlPreviewControllerDataSource)
         [m_qlPreviewControllerDataSource.get() failWithError:nil];
@@ -461,6 +469,8 @@ void SystemPreviewController::loadFailed()
 
     if (m_testingCallback)
         m_testingCallback(false);
+
+    m_state = State::Failed;
 }
 
 void SystemPreviewController::end()
@@ -473,6 +483,8 @@ void SystemPreviewController::end()
     m_qlPreviewController = nullptr;
     m_wkSystemPreviewDataTaskDelegate = nullptr;
 #endif
+
+    m_state = State::Ended;
 }
 
 void SystemPreviewController::updateProgress(float progress)
@@ -528,6 +540,12 @@ void SystemPreviewController::triggerSystemPreviewActionWithTargetForTesting(uin
     m_systemPreviewInfo.element.documentIdentifier = { *uuid, m_webPageProxy.process().coreProcessIdentifier() };
     m_systemPreviewInfo.element.webPageIdentifier = ObjectIdentifier<WebCore::PageIdentifierType>(pageID);
     triggerSystemPreviewAction();
+}
+
+NSArray *SystemPreviewController::localFileURLs() const
+{
+    NSURL *nsurl = (NSURL *)m_localFileURL;
+    return nsurl ? @[ nsurl ] : @[];
 }
 
 }

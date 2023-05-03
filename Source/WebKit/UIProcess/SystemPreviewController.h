@@ -35,6 +35,7 @@
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
+OBJC_CLASS NSArray;
 OBJC_CLASS NSString;
 #if USE(QUICK_LOOK)
 OBJC_CLASS QLPreviewController;
@@ -70,9 +71,21 @@ public:
     void setCompletionHandlerForLoadTesting(CompletionHandler<void(bool)>&&);
 
 private:
-
     void takeActivityToken();
     void releaseActivityTokenIfNecessary();
+
+    NSArray *localFileURLs() const;
+
+    enum class State : uint8_t {
+        Initial,
+        Began,
+        Loading,
+        Failed,
+        Succeeded,
+        Ended
+    };
+
+    State m_state { State::Initial };
 
     WebPageProxy& m_webPageProxy;
     WebCore::SystemPreviewInfo m_systemPreviewInfo;
