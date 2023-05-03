@@ -669,6 +669,10 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
     // blocked by rdar://108370686
     if (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentMethodClass()])
         return false;
+
+    // Don't reintroduce rdar://108660074
+    if (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKContactClass()])
+        return false;
 #endif
 
     // rdar://107553230 don't reintroduce rdar://108038436
