@@ -1424,6 +1424,13 @@ void HTMLTreeBuilder::processStartTag(AtomHTMLToken&& token)
                 processFakeEndTag(TagName::optgroup);
             m_tree.insertHTMLElement(WTFMove(token));
             return;
+        case TagName::hr:
+            if (m_tree.currentStackItem().elementName() == HTML::option)
+                processFakeEndTag(TagName::option);
+            if (m_tree.currentStackItem().elementName() == HTML::optgroup)
+                processFakeEndTag(TagName::optgroup);
+            m_tree.insertSelfClosingHTMLElement(WTFMove(token));
+            return;
         case TagName::select: {
             parseError(token);
             AtomHTMLToken endSelect(HTMLToken::Type::EndTag, TagName::select);
