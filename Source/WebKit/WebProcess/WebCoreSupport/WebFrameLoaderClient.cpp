@@ -1897,7 +1897,16 @@ RemoteAXObjectRef WebFrameLoaderClient::accessibilityRemoteObject()
     
     return webPage->accessibilityRemoteObject();
 }
-    
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+void WebFrameLoaderClient::setAXIsolatedTreeRoot(WebCore::AXCoreObject* axObject)
+{
+    ASSERT(isMainRunLoop());
+    if (auto* webPage = m_frame->page())
+        webPage->setAXIsolatedTreeRoot(axObject);
+}
+#endif
+
 void WebFrameLoaderClient::willCacheResponse(DocumentLoader*, ResourceLoaderIdentifier identifier, NSCachedURLResponse* response, CompletionHandler<void(NSCachedURLResponse *)>&& completionHandler) const
 {
     WebPage* webPage = m_frame->page();

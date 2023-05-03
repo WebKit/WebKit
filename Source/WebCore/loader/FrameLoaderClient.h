@@ -65,6 +65,7 @@ OBJC_CLASS NSView;
 
 namespace WebCore {
 
+class AXCoreObject;
 class AuthenticationChallenge;
 class CachedFrame;
 class CachedResourceRequest;
@@ -294,6 +295,9 @@ public:
 #if PLATFORM(COCOA)
     // Allow an accessibility object to retrieve a Frame parent if there's no PlatformWidget.
     virtual RemoteAXObjectRef accessibilityRemoteObject() = 0;
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    virtual void setAXIsolatedTreeRoot(AXCoreObject*) = 0;
+#endif
     virtual void willCacheResponse(DocumentLoader*, ResourceLoaderIdentifier, NSCachedURLResponse*, CompletionHandler<void(NSCachedURLResponse *)>&&) const = 0;
     virtual std::optional<double> dataDetectionReferenceDate() { return std::nullopt; }
 #endif

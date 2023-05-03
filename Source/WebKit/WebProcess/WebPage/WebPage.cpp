@@ -2064,6 +2064,10 @@ void WebPage::setSize(const WebCore::IntSize& viewSize)
     if (view->useFixedLayout())
         sendViewportAttributesChanged(m_page->viewportArguments());
 #endif
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    cacheAXSize(m_viewSize);
+#endif
 }
 
 #if USE(COORDINATED_GRAPHICS)
@@ -5599,7 +5603,12 @@ void WebPage::windowAndViewFramesChanged(const FloatRect& windowFrameInScreenCoo
     m_windowFrameInScreenCoordinates = windowFrameInScreenCoordinates;
     m_windowFrameInUnflippedScreenCoordinates = windowFrameInUnflippedScreenCoordinates;
     m_viewFrameInWindowCoordinates = viewFrameInWindowCoordinates;
+
     m_accessibilityPosition = accessibilityViewCoordinates;
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    cacheAXPosition(m_accessibilityPosition);
+#endif
+
     m_hasCachedWindowFrame = !m_windowFrameInUnflippedScreenCoordinates.isEmpty();
 }
 

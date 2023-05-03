@@ -516,6 +516,23 @@ WKAccessibilityWebPageObject* WebPage::accessibilityRemoteObject()
     return m_mockAccessibilityElement.get();
 }
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+void WebPage::cacheAXPosition(const WebCore::FloatPoint& point)
+{
+    [m_mockAccessibilityElement setPosition:point];
+}
+
+void WebPage::cacheAXSize(const WebCore::IntSize& size)
+{
+    [m_mockAccessibilityElement setSize:size];
+}
+
+void WebPage::setAXIsolatedTreeRoot(WebCore::AXCoreObject* root)
+{
+    [m_mockAccessibilityElement setIsolatedTreeRoot:root];
+}
+#endif
+
 bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)
 {
     if ([NSURLConnection canHandleRequest:request.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody)])

@@ -147,10 +147,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (NSArray *)accessibilityChildren
 {
     id wrapper = [self accessibilityRootObjectWrapper];
-    if (!wrapper)
-        return @[];
-    
-    return @[wrapper];
+    return wrapper ? @[wrapper] : @[];
 }
 
 - (NSArray *)accessibilityChildrenInNavigationOrder
@@ -207,20 +204,34 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSValue *)accessibilityAttributeSizeValue
 {
-    return ax::retrieveValueFromMainThread<RetainPtr<id>>([PROTECTED_SELF] () -> RetainPtr<id> {
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (!isMainRunLoop()) {
+        Locker lock { m_cacheLock };
+        return [NSValue valueWithSize:(NSSize)m_size];
+    }
+#endif
+
+    return ax::retrieveAutoreleasedValueFromMainThread<id>([PROTECTED_SELF] () -> RetainPtr<id> {
         if (!protectedSelf->m_page)
             return nil;
         return [NSValue valueWithSize:(NSSize)protectedSelf->m_page->size()];
-    }).autorelease();
+    });
 }
 
 - (NSValue *)accessibilityAttributePositionValue
 {
-    return ax::retrieveValueFromMainThread<RetainPtr<id>>([PROTECTED_SELF] () -> RetainPtr<id> {
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (!isMainRunLoop()) {
+        Locker lock { m_cacheLock };
+        return [NSValue valueWithPoint:(NSPoint)m_position];
+    }
+#endif
+
+    return ax::retrieveAutoreleasedValueFromMainThread<id>([PROTECTED_SELF] () -> RetainPtr<id> {
         if (!protectedSelf->m_page)
             return nil;
         return [NSValue valueWithPoint:(NSPoint)protectedSelf->m_page->accessibilityPosition()];
-    }).autorelease();
+    });
 }
 
 - (id)accessibilityDataDetectorValue:(NSString *)attribute point:(WebCore::FloatPoint&)point

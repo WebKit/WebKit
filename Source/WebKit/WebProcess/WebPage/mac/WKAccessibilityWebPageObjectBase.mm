@@ -81,6 +81,14 @@ namespace ax = WebCore::Accessibility;
 
 - (id)accessibilityRootObjectWrapper
 {
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (!isMainRunLoop()) {
+        Locker lock { m_cacheLock };
+        if (m_isolatedTreeRoot)
+            return m_isolatedTreeRoot->wrapper();
+    }
+#endif
+
     return ax::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
         if (!WebCore::AXObjectCache::accessibilityEnabled())
             WebCore::AXObjectCache::enableAccessibility();
@@ -105,7 +113,10 @@ namespace ax = WebCore::Accessibility;
 
     if (page) {
         m_pageID = page->identifier();
-
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+        [self setPosition:page->accessibilityPosition()];
+        [self setSize:page->size()];
+#endif
         auto* frame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
         m_hasMainFramePlugin = frame && frame->document() ? frame->document()->isPluginDocument() : false;
     } else {
@@ -113,6 +124,29 @@ namespace ax = WebCore::Accessibility;
         m_hasMainFramePlugin = false;
     }
 }
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+- (void)setPosition:(const WebCore::FloatPoint&)point
+{
+    ASSERT(isMainRunLoop());
+    Locker locker { m_cacheLock };
+    m_position = point;
+}
+
+- (void)setSize:(const WebCore::IntSize&)size
+{
+    ASSERT(isMainRunLoop());
+    Locker locker { m_cacheLock };
+    m_size = size;
+}
+
+- (void)setIsolatedTreeRoot:(NakedPtr<WebCore::AXCoreObject>)root
+{
+    ASSERT(isMainRunLoop());
+    Locker locker { m_cacheLock };
+    m_isolatedTreeRoot = root;
+}
+#endif
 
 - (void)setHasMainFramePlugin:(bool)hasPlugin
 {

@@ -191,6 +191,7 @@ class SharedBufferReference;
 
 namespace WebCore {
 
+class AXCoreObject;
 class AbstractFrame;
 class CachedPage;
 class CaptureDevice;
@@ -1000,6 +1001,11 @@ public:
     void platformInitializeAccessibility();
     void registerUIProcessAccessibilityTokens(const IPC::DataReference& elemenToken, const IPC::DataReference& windowToken);
     WKAccessibilityWebPageObject* accessibilityRemoteObject();
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    void cacheAXPosition(const WebCore::FloatPoint&);
+    void cacheAXSize(const WebCore::IntSize&);
+    void setAXIsolatedTreeRoot(WebCore::AXCoreObject*);
+#endif
     NSObject *accessibilityObjectForMainFramePlugin();
     const WebCore::FloatPoint& accessibilityPosition() const { return m_accessibilityPosition; }
 
