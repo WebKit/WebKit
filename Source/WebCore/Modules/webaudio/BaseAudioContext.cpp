@@ -67,6 +67,7 @@
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "NetworkingContext.h"
+#include "OriginAccessPatterns.h"
 #include "OscillatorNode.h"
 #include "Page.h"
 #include "PannerNode.h"
@@ -272,7 +273,7 @@ bool BaseAudioContext::wouldTaintOrigin(const URL& url) const
         return false;
 
     if (auto* document = this->document())
-        return !document->securityOrigin().canRequest(url);
+        return !document->securityOrigin().canRequest(url, OriginAccessPatternsForWebProcess::singleton());
 
     return false;
 }

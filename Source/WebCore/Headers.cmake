@@ -1314,6 +1314,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/MemoryRelease.h
     page/ModalContainerTypes.h
     page/NavigatorIsLoggedIn.h
+    page/OriginAccessPatterns.h
     page/Page.h
     page/PageColorSampler.h
     page/PageConfiguration.h

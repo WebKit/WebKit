@@ -34,6 +34,7 @@
 #include "HistoryItem.h"
 #include "LocalFrame.h"
 #include "MouseEvent.h"
+#include "OriginAccessPatterns.h"
 
 namespace WebCore {
 
@@ -67,7 +68,7 @@ NavigationAction& NavigationAction::operator=(NavigationAction&&) = default;
 
 static bool shouldTreatAsSameOriginNavigation(const Document& document, const URL& url)
 {
-    return url.protocolIsAbout() || url.protocolIsData() || (url.protocolIsBlob() && document.securityOrigin().canRequest(url));
+    return url.protocolIsAbout() || url.protocolIsData() || (url.protocolIsBlob() && document.securityOrigin().canRequest(url, OriginAccessPatternsForWebProcess::singleton()));
 }
 
 static std::optional<NavigationAction::UIEventWithKeyStateData> keyStateDataForFirstEventWithKeyState(Event* event)

@@ -32,6 +32,7 @@
 #include "LocalFrame.h"
 #include "MediaList.h"
 #include "Node.h"
+#include "OriginAccessPatterns.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include "ResourceLoadInfo.h"
@@ -369,7 +370,7 @@ const AtomString& StyleSheetContents::namespaceURIFromPrefix(const AtomString& p
 
 bool StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cachedStyleSheet, const SecurityOrigin* securityOrigin)
 {
-    bool isSameOriginRequest = securityOrigin && securityOrigin->canRequest(baseURL());
+    bool isSameOriginRequest = securityOrigin && securityOrigin->canRequest(baseURL(), OriginAccessPatternsForWebProcess::singleton());
     CachedCSSStyleSheet::MIMETypeCheckHint mimeTypeCheckHint = isStrictParserMode(m_parserContext.mode) || !isSameOriginRequest ? CachedCSSStyleSheet::MIMETypeCheckHint::Strict : CachedCSSStyleSheet::MIMETypeCheckHint::Lax;
     bool hasValidMIMEType = true;
     String sheetText = cachedStyleSheet->sheetText(mimeTypeCheckHint, &hasValidMIMEType);

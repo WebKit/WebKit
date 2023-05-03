@@ -32,6 +32,7 @@
 #include "AbstractWorker.h"
 
 #include "ContentSecurityPolicy.h"
+#include "OriginAccessPatterns.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "WorkerOptions.h"
@@ -64,7 +65,7 @@ ExceptionOr<URL> AbstractWorker::resolveURL(const String& url)
     if (!scriptURL.isValid())
         return Exception { SyntaxError };
 
-    if (!context.securityOrigin()->canRequest(scriptURL) && !scriptURL.protocolIsData())
+    if (!context.securityOrigin()->canRequest(scriptURL, OriginAccessPatternsForWebProcess::singleton()) && !scriptURL.protocolIsData())
         return Exception { SecurityError };
 
     ASSERT(context.contentSecurityPolicy());

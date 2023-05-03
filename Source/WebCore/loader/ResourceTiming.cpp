@@ -29,6 +29,7 @@
 #include "CachedResource.h"
 #include "DeprecatedGlobalSettings.h"
 #include "DocumentLoadTiming.h"
+#include "OriginAccessPatterns.h"
 #include "PerformanceServerTiming.h"
 #include "SecurityOrigin.h"
 #include "ServerTimingParser.h"
@@ -67,7 +68,7 @@ ResourceTiming::ResourceTiming(const URL& url, const String& initiatorType, cons
 
 void ResourceTiming::updateExposure(const SecurityOrigin& origin)
 {
-    m_isSameOriginRequest = m_isSameOriginRequest && origin.canRequest(m_url);
+    m_isSameOriginRequest = m_isSameOriginRequest && origin.canRequest(m_url, OriginAccessPatternsForWebProcess::singleton());
 }
 
 Vector<Ref<PerformanceServerTiming>> ResourceTiming::populateServerTiming() const

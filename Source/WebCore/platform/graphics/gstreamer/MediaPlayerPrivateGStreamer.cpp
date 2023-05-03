@@ -41,6 +41,7 @@
 #include "MediaPlayer.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
+#include "OriginAccessPatterns.h"
 #include "SecurityOrigin.h"
 #include "TimeRanges.h"
 #include "VideoSinkGStreamer.h"
@@ -2606,7 +2607,7 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
 
         changePipelineState(GST_STATE_READY);
         auto securityOrigin = SecurityOrigin::create(m_url);
-        if (securityOrigin->canRequest(newUrl)) {
+        if (securityOrigin->canRequest(newUrl, EmptyOriginAccessPatterns::singleton())) {
             GST_INFO_OBJECT(pipeline(), "New media url: %s", newUrl.string().utf8().data());
 
             // Reset player states.

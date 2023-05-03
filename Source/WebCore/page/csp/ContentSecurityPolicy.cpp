@@ -47,6 +47,7 @@
 #include "JSWindowProxy.h"
 #include "LegacySchemeRegistry.h"
 #include "LocalFrame.h"
+#include "OriginAccessPatterns.h"
 #include "ParsingUtilities.h"
 #include "PingLoader.h"
 #include "Report.h"
@@ -775,7 +776,7 @@ String ContentSecurityPolicy::createURLForReporting(const URL& url, const String
     // WPT indicates that modern Reporting API expects explicit port in reported URLs
     //     content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html
     //     content-security-policy/reporting-api/reporting-api-sends-reports-on-violation.https.sub.html
-    if (securityOrigin->canRequest(url) || directiveIsSafe)
+    if (securityOrigin->canRequest(url, originAccessPatternsForWebProcessOrEmpty()) || directiveIsSafe)
         return usesReportingAPI ? url.strippedForUseAsReferrerWithExplicitPort() : url.strippedForUseAsReferrer();
 
     return SecurityOrigin::create(url)->toString();

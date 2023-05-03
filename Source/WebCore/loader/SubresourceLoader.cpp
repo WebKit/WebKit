@@ -43,6 +43,7 @@
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "MemoryCache.h"
+#include "OriginAccessPatterns.h"
 #include "Page.h"
 #include "ResourceLoadObserver.h"
 #include "ResourceTiming.h"
@@ -649,7 +650,7 @@ Expected<void, String> SubresourceLoader::checkResponseCrossOriginAccessControl(
 Expected<void, String> SubresourceLoader::checkRedirectionCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse& redirectResponse, ResourceRequest& newRequest)
 {
     bool crossOriginFlag = m_resource->isCrossOrigin();
-    bool isNextRequestCrossOrigin = m_origin && !m_origin->canRequest(newRequest.url());
+    bool isNextRequestCrossOrigin = m_origin && !m_origin->canRequest(newRequest.url(), OriginAccessPatternsForWebProcess::singleton());
 
     if (isNextRequestCrossOrigin)
         m_resource->setCrossOrigin();
@@ -695,7 +696,7 @@ Expected<void, String> SubresourceLoader::checkRedirectionCrossOriginAccessContr
         updateRequestForAccessControl(newRequest, *m_origin, options().storedCredentialsPolicy);
     }
 
-    updateRequestReferrer(newRequest, referrerPolicy(), previousRequest.httpReferrer());
+    updateRequestReferrer(newRequest, referrerPolicy(), previousRequest.httpReferrer(), OriginAccessPatternsForWebProcess::singleton());
 
     FrameLoader::addHTTPOriginIfNeeded(newRequest, m_origin ? m_origin->toString() : String());
 

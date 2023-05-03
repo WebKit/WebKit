@@ -30,6 +30,7 @@
 #include "SecurityPolicy.h"
 
 #include "OriginAccessEntry.h"
+#include "OriginAccessPatterns.h"
 #include "SecurityOrigin.h"
 #include "UserContentURLPattern.h"
 #include <memory>
@@ -53,14 +54,6 @@ static OriginAccessMap& originAccessMap() WTF_REQUIRES_LOCK(originAccessMapLock)
     ASSERT(originAccessMapLock.isHeld());
     static NeverDestroyed<OriginAccessMap> originAccessMap;
     return originAccessMap;
-}
-
-static Lock originAccessPatternLock;
-static Vector<UserContentURLPattern>& originAccessPatterns() WTF_REQUIRES_LOCK(originAccessPatternLock)
-{
-    ASSERT(originAccessPatternLock.isHeld());
-    static NeverDestroyed<Vector<UserContentURLPattern>> originAccessPatterns;
-    return originAccessPatterns;
 }
 
 bool SecurityPolicy::shouldHideReferrer(const URL& url, const String& referrer)
@@ -89,7 +82,7 @@ String SecurityPolicy::referrerToOriginString(const String& referrer)
     return originString + "/";
 }
 
-String SecurityPolicy::generateReferrerHeader(ReferrerPolicy referrerPolicy, const URL& url, const String& referrer)
+String SecurityPolicy::generateReferrerHeader(ReferrerPolicy referrerPolicy, const URL& url, const String& referrer, const OriginAccessPatterns& patterns)
 {
     ASSERT(referrer == URL { referrer }.strippedForUseAsReferrer()
         || referrer == SecurityOrigin::create(URL { referrer })->toString());
@@ -110,7 +103,7 @@ String SecurityPolicy::generateReferrerHeader(ReferrerPolicy referrerPolicy, con
         break;
     case ReferrerPolicy::SameOrigin: {
         auto origin = SecurityOrigin::createFromString(referrer);
-        if (!origin->canRequest(url))
+        if (!origin->canRequest(url, patterns))
             return String();
         break;
     }
@@ -122,13 +115,13 @@ String SecurityPolicy::generateReferrerHeader(ReferrerPolicy referrerPolicy, con
         return referrerToOriginString(referrer);
     case ReferrerPolicy::OriginWhenCrossOrigin: {
         auto origin = SecurityOrigin::createFromString(referrer);
-        if (!origin->canRequest(url))
+        if (!origin->canRequest(url, patterns))
             return referrerToOriginString(referrer);
         break;
     }
     case ReferrerPolicy::StrictOriginWhenCrossOrigin: {
         auto origin = SecurityOrigin::createFromString(referrer);
-        if (!origin->canRequest(url)) {
+        if (!origin->canRequest(url, patterns)) {
             if (shouldHideReferrer(url, referrer))
                 return String();
             return referrerToOriginString(referrer);
@@ -142,7 +135,7 @@ String SecurityPolicy::generateReferrerHeader(ReferrerPolicy referrerPolicy, con
     return shouldHideReferrer(url, referrer) ? String() : referrer;
 }
 
-String SecurityPolicy::generateOriginHeader(ReferrerPolicy referrerPolicy, const URL& url, const SecurityOrigin& securityOrigin)
+String SecurityPolicy::generateOriginHeader(ReferrerPolicy referrerPolicy, const URL& url, const SecurityOrigin& securityOrigin, const OriginAccessPatterns& patterns)
 {
     switch (referrerPolicy) {
     case ReferrerPolicy::NoReferrer:
@@ -154,7 +147,7 @@ String SecurityPolicy::generateOriginHeader(ReferrerPolicy referrerPolicy, const
             return "null"_s;
         break;
     case ReferrerPolicy::SameOrigin:
-        if (!securityOrigin.canRequest(url))
+        if (!securityOrigin.canRequest(url, patterns))
             return "null"_s;
         break;
     case ReferrerPolicy::EmptyString:
@@ -202,7 +195,7 @@ bool SecurityPolicy::allowSubstituteDataAccessToLocal()
     return localLoadPolicy != SecurityPolicy::AllowLocalLoadsForLocalOnly;
 }
 
-bool SecurityPolicy::isAccessAllowed(const SecurityOrigin& activeOrigin, const SecurityOrigin& targetOrigin, const URL& targetURL)
+bool SecurityPolicy::isAccessAllowed(const SecurityOrigin& activeOrigin, const SecurityOrigin& targetOrigin, const URL& targetURL, const OriginAccessPatterns& patterns)
 {
     ASSERT(targetOrigin.equal(SecurityOrigin::create(targetURL).ptr()));
     {
@@ -214,17 +207,13 @@ bool SecurityPolicy::isAccessAllowed(const SecurityOrigin& activeOrigin, const S
             }
         }
     }
-    Locker locker { originAccessPatternLock };
-    for (const auto& pattern : originAccessPatterns()) {
-        if (pattern.matches(targetURL))
-            return true;
-    }
-    return false;
+
+    return patterns.anyPatternMatches(targetURL);
 }
 
-bool SecurityPolicy::isAccessAllowed(const SecurityOrigin& activeOrigin, const URL& url)
+bool SecurityPolicy::isAccessAllowed(const SecurityOrigin& activeOrigin, const URL& url, const OriginAccessPatterns& patterns)
 {
-    return isAccessAllowed(activeOrigin, SecurityOrigin::create(url).get(), url);
+    return isAccessAllowed(activeOrigin, SecurityOrigin::create(url).get(), url, patterns);
 }
 
 void SecurityPolicy::addOriginAccessAllowlistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains)
@@ -263,12 +252,6 @@ void SecurityPolicy::resetOriginAccessAllowlists()
 {
     Locker locker { originAccessMapLock };
     originAccessMap().clear();
-}
-
-void SecurityPolicy::allowAccessTo(const UserContentURLPattern& pattern)
-{
-    Locker locker { originAccessPatternLock };
-    originAccessPatterns().append(pattern);
 }
 
 } // namespace WebCore

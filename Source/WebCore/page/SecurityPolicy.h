@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class OriginAccessPatterns;
 class SecurityOrigin;
 class UserContentURLPattern;
 
@@ -49,9 +50,9 @@ public:
     // Returns the referrer modified according to the referrer policy for a
     // navigation to a given URL. If the referrer returned is empty, the
     // referrer header should be omitted.
-    WEBCORE_EXPORT static String generateReferrerHeader(ReferrerPolicy, const URL&, const String& referrer);
+    WEBCORE_EXPORT static String generateReferrerHeader(ReferrerPolicy, const URL&, const String& referrer, const OriginAccessPatterns&);
 
-    static String generateOriginHeader(ReferrerPolicy, const URL&, const SecurityOrigin&);
+    static String generateOriginHeader(ReferrerPolicy, const URL&, const SecurityOrigin&, const OriginAccessPatterns&);
 
     static bool shouldInheritSecurityOriginFromOwner(const URL&);
 
@@ -67,13 +68,12 @@ public:
     static bool restrictAccessToLocal();
     static bool allowSubstituteDataAccessToLocal();
 
-    WEBCORE_EXPORT static void allowAccessTo(const UserContentURLPattern&);
     WEBCORE_EXPORT static void addOriginAccessAllowlistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains);
     WEBCORE_EXPORT static void removeOriginAccessAllowlistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains);
     WEBCORE_EXPORT static void resetOriginAccessAllowlists();
 
-    static bool isAccessAllowed(const SecurityOrigin& activeOrigin, const SecurityOrigin& targetOrigin, const URL& targetURL);
-    static bool isAccessAllowed(const SecurityOrigin& activeOrigin, const URL& targetURL);
+    static bool isAccessAllowed(const SecurityOrigin& activeOrigin, const SecurityOrigin& targetOrigin, const URL& targetURL, const OriginAccessPatterns&);
+    static bool isAccessAllowed(const SecurityOrigin& activeOrigin, const URL& targetURL, const OriginAccessPatterns&);
 };
 
 } // namespace WebCore

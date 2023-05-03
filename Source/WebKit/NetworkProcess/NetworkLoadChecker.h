@@ -41,6 +41,7 @@
 
 namespace WebCore {
 class ContentSecurityPolicy;
+class OriginAccessPatterns;
 struct ContentRuleListResults;
 struct ContentSecurityPolicyClient;
 enum class NetworkConnectionIntegrity : uint16_t;
@@ -111,6 +112,8 @@ public:
 
 private:
     WebCore::ContentSecurityPolicy* contentSecurityPolicy();
+    const WebCore::OriginAccessPatterns& originAccessPatterns() const;
+    bool isSameOrigin(const URL&, const WebCore::SecurityOrigin*) const;
     bool isChecking() const { return !!m_corsPreflightChecker; }
     bool isRedirected() const { return m_redirectCount; }
 
