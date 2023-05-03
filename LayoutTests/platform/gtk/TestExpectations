@@ -1006,7 +1006,6 @@ webkit.org/b/232386 fast/text/line-breaks-after-white-space.html [ Failure ]
 
 webkit.org/b/236298 fast/forms/basic-textareas-quirks-simple-lines.html [ ImageOnlyFailure ]
 webkit.org/b/236298 fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
-webkit.org/b/236298 fast/text/simple-lines-text-transform.html [ ImageOnlyFailure ]
 webkit.org/b/236298 fast/text/simple-line-wordspacing.html [ ImageOnlyFailure ]
 webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-fonts/first-available-font-003.html [ ImageOnlyFailure ]
 
