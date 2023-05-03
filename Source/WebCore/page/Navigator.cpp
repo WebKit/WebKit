@@ -403,10 +403,16 @@ void Navigator::setAppBadge(std::optional<unsigned long long> badge, Ref<Deferre
         return;
     }
 
-    auto* document = frame->document();
-    if (document && !document->isFullyActive()) {
-        promise->reject(InvalidStateError);
-        return;
+    if (auto* document = frame->document()) {
+        if (!document->isFullyActive()) {
+            promise->reject(InvalidStateError);
+            return;
+        }
+
+        if (!frame->isMainFrame() && !document->topOrigin().isSameOriginDomain(document->securityOrigin())) {
+            promise->reject(SecurityError);
+            return;
+        }
     }
 
     page->badgeClient().setAppBadge(page, SecurityOriginData::fromFrame(frame), badge);
