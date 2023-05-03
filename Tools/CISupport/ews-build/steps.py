@@ -28,7 +28,6 @@ from buildbot.steps import master, shell, transfer, trigger
 from buildbot.steps.source import git
 from buildbot.steps.worker import CompositeStepMixin
 from datetime import date
-from requests.auth import HTTPBasicAuth
 
 from twisted.internet import defer, reactor, task
 
@@ -42,7 +41,6 @@ import json
 import mock
 import os
 import re
-import requests
 import socket
 import sys
 import time
@@ -1371,72 +1369,65 @@ class BugzillaMixin(AddToLogMixin):
     bug_closed_statuses = ['RESOLVED', 'VERIFIED', 'CLOSED']
     fast_cq_preambles = ('revert of ', 'fast-cq', '[fast-cq]')
 
+    @defer.inlineCallbacks
     def fetch_data_from_url_with_authentication_bugzilla(self, url):
         response = None
         try:
-            response = requests.get(url, timeout=60, params={'Bugzilla_api_key': self.get_bugzilla_api_key()})
+            response = yield TwistedAdditions.request(
+                url, type=b'GET', timeout=60,
+                params={'Bugzilla_api_key': self.get_bugzilla_api_key()},
+                logger=lambda content: self._addToLog('stdio', content),
+            )
             if response.status_code != 200:
-                self._addToLog('stdio', 'Accessed {url} with unexpected status code {status_code}.\n'.format(url=url, status_code=response.status_code))
-                return None
+                yield self._addToLog('stdio', 'Accessed {url} with unexpected status code {status_code}.\n'.format(url=url, status_code=response.status_code))
+                return defer.returnValue(None)
         except Exception as e:
             # Catching all exceptions here to safeguard api key.
-            self._addToLog('stdio', 'Failed to access {url}.\n'.format(url=url))
-            return None
-        return response
+            yield self._addToLog('stdio', 'Failed to access {url}.\n'.format(url=url))
+            return defer.returnValue(None)
+        return defer.returnValue(response)
 
-    def fetch_data_from_url(self, url):
-        response = None
-        try:
-            response = requests.get(url, timeout=60)
-        except Exception as e:
-            if response:
-                self._addToLog('stdio', 'Failed to access {url} with status code {status_code}.\n'.format(url=url, status_code=response.status_code))
-            else:
-                self._addToLog('stdio', 'Failed to access {url} with exception: {exception}\n'.format(url=url, exception=e))
-            return None
-        if response.status_code != 200:
-            self._addToLog('stdio', 'Accessed {url} with unexpected status code {status_code}.\n'.format(url=url, status_code=response.status_code))
-            return None
-        return response
-
+    @defer.inlineCallbacks
     def get_patch_json(self, patch_id):
         patch_url = '{}rest/bug/attachment/{}'.format(BUG_SERVER_URL, patch_id)
-        patch = self.fetch_data_from_url_with_authentication_bugzilla(patch_url)
+        patch = yield self.fetch_data_from_url_with_authentication_bugzilla(patch_url)
         if not patch:
-            return None
+            return defer.returnValue(None)
         try:
             patch_json = patch.json().get('attachments')
         except Exception as e:
-            print('Failed to fetch patch json from {}, error: {}'.format(patch_url, e))
-            return None
+            yield self._addToLog('Failed to fetch patch json from {}, error: {}'.format(patch_url, e))
+            return defer.returnValue(None)
         if not patch_json or len(patch_json) == 0:
-            return None
-        return patch_json.get(str(patch_id))
+            return defer.returnValue(None)
+        return defer.returnValue(patch_json.get(str(patch_id)))
 
+    @defer.inlineCallbacks
     def get_bug_json(self, bug_id):
         bug_url = '{}rest/bug/{}'.format(BUG_SERVER_URL, bug_id)
-        bug = self.fetch_data_from_url_with_authentication_bugzilla(bug_url)
+        bug = yield self.fetch_data_from_url_with_authentication_bugzilla(bug_url)
         if not bug:
-            return None
+            return defer.returnValue(None)
         try:
             bugs_json = bug.json().get('bugs')
         except Exception as e:
-            print('Failed to fetch bug json from {}, error: {}'.format(bug_url, e))
-            return None
+            yield self._addToLog('Failed to fetch bug json from {}, error: {}'.format(bug_url, e))
+            return defer.returnValue(None)
         if not bugs_json or len(bugs_json) == 0:
-            return None
-        return bugs_json[0]
+            return defer.returnValue(None)
+        return defer.returnValue(bugs_json[0])
 
+    @defer.inlineCallbacks
     def get_bug_id_from_patch(self, patch_id):
-        patch_json = self.get_patch_json(patch_id)
+        patch_json = yield self.get_patch_json(patch_id)
         if not patch_json:
-            self._addToLog('stdio', 'Unable to fetch patch {}.\n'.format(patch_id))
-            return -1
-        return patch_json.get('bug_id')
+            yield self._addToLog('stdio', 'Unable to fetch patch {}.\n'.format(patch_id))
+            return defer.returnValue(-1)
+        return defer.returnValue(patch_json.get('bug_id'))
 
     @defer.inlineCallbacks
     def _is_patch_obsolete(self, patch_id):
-        patch_json = self.get_patch_json(patch_id)
+        patch_json = yield self.get_patch_json(patch_id)
         if not patch_json:
             yield self._addToLog('stdio', 'Unable to fetch patch {}.\n'.format(patch_id))
             return defer.returnValue(-1)
@@ -1456,7 +1447,7 @@ class BugzillaMixin(AddToLogMixin):
 
     @defer.inlineCallbacks
     def _is_patch_review_denied(self, patch_id):
-        patch_json = self.get_patch_json(patch_id)
+        patch_json = yield self.get_patch_json(patch_id)
         if not patch_json:
             yield self._addToLog('stdio', 'Unable to fetch patch {}.\n'.format(patch_id))
             return defer.returnValue(-1)
@@ -1468,7 +1459,7 @@ class BugzillaMixin(AddToLogMixin):
 
     @defer.inlineCallbacks
     def _is_patch_cq_plus(self, patch_id):
-        patch_json = self.get_patch_json(patch_id)
+        patch_json = yield self.get_patch_json(patch_id)
         if not patch_json:
             yield self._addToLog('stdio', 'Unable to fetch patch {}.\n'.format(patch_id))
             return defer.returnValue(-1)
@@ -1481,7 +1472,7 @@ class BugzillaMixin(AddToLogMixin):
 
     @defer.inlineCallbacks
     def _does_patch_have_acceptable_review_flag(self, patch_id):
-        patch_json = self.get_patch_json(patch_id)
+        patch_json = yield self.get_patch_json(patch_id)
         if not patch_json:
             yield self._addToLog('stdio', 'Unable to fetch patch {}.\n'.format(patch_id))
             return defer.returnValue(-1)
@@ -1506,7 +1497,7 @@ class BugzillaMixin(AddToLogMixin):
             yield self._addToLog('stdio', 'Skipping bug status validation since bug id is None.\n')
             return defer.returnValue(-1)
 
-        bug_json = self.get_bug_json(bug_id)
+        bug_json = yield self.get_bug_json(bug_id)
         if not bug_json or not bug_json.get('status'):
             yield self._addToLog('stdio', 'Unable to fetch bug {}.\n'.format(bug_id))
             return defer.returnValue(-1)
@@ -1525,7 +1516,7 @@ class BugzillaMixin(AddToLogMixin):
 
     @defer.inlineCallbacks
     def should_send_email_for_patch(self, patch_id):
-        patch_json = self.get_patch_json(patch_id)
+        patch_json = yield self.get_patch_json(patch_id)
         if not patch_json:
             yield self._addToLog('stdio', 'Unable to fetch patch {}'.format(patch_id))
             return defer.returnValue(True)
@@ -1748,7 +1739,9 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             self.build.addStepsAfterCurrentStep([LeaveComment(), SetCommitQueueMinusFlagOnPatch()])
             return defer.returnValue(FAILURE)
 
-        bug_id = self.getProperty('bug_id', '') or self.get_bug_id_from_patch(patch_id)
+        bug_id = self.getProperty('bug_id', '')
+        if not bug_id:
+            bug_id = yield self.get_bug_id_from_patch(patch_id)
 
         bug_closed = yield self._is_bug_closed(bug_id) if self.verifyBugClosed else 0
         if bug_closed == 1:
