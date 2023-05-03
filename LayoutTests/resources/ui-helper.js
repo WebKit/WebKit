@@ -842,7 +842,8 @@ window.UIHelper = class UIHelper {
         var internalFunctions = scroller ? scroller.ownerDocument.defaultView.internals : internals;
         if (!this.isWebKit2() || this.isIOSFamily())
             return Promise.resolve();
-        if (internals.isUsingUISideCompositing()) {
+
+        if (internals.isUsingUISideCompositing() && scroller.nodeName != "SELECT") {
             return new Promise(resolve => {
                 testRunner.runUIScript(`(function() {
                     uiController.doAfterNextStablePresentationUpdate(function() {
