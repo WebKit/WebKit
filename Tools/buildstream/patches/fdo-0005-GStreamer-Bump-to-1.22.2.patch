@@ -1,7 +1,7 @@
-From 4301f0cfbb7701752d73cb8eeaf1fefe1395197a Mon Sep 17 00:00:00 2001
+From d22c9daefbd330d00af0359004b16073ac0eab37 Mon Sep 17 00:00:00 2001
 From: Philippe Normand <philn@igalia.com>
-Date: Wed, 25 Jan 2023 12:28:10 +0000
-Subject: [PATCH 5/5] GStreamer: Bump to 1.22.0
+Date: Fri, 28 Apr 2023 13:18:24 +0100
+Subject: [PATCH] GStreamer: Bump to 1.22.2
 
 ---
  elements/components/gstreamer-plugins-good.bst       |  2 ++
@@ -37,7 +37,7 @@ index f5664d7db..b5144c26e 100644
      -Dpackage-origin="freedesktop-sdk"
      -Dx264=enabled
 diff --git a/elements/include/gstreamer-source.yml b/elements/include/gstreamer-source.yml
-index 122976d85..63ef2b87d 100644
+index e73a056ab..ee16131c9 100644
 --- a/elements/include/gstreamer-source.yml
 +++ b/elements/include/gstreamer-source.yml
 @@ -3,9 +3,9 @@ sources:
@@ -48,8 +48,8 @@ index 122976d85..63ef2b87d 100644
 +  - '1.22'
    match:
    - 1.*[02468].*
--  ref: 1.20.5-0-gf7806a854aad960eae3288db4a67a574f92428fe
-+  ref: 1.22.0-0-gf13c65d977b740b5955343d320dcf2061bbdf62d
+-  ref: 1.20.6-0-gb7d3037cca2fe72c5b7daab5e0617e61ae013dcc
++  ref: 1.22.2-0-ga8f569e801491204bcd7f1d050bd40a794507a68
  - kind: patch_queue
    path: patches/gstreamer
 diff --git a/patches/gstreamer/gst-libav-no-cache-generator.patch b/patches/gstreamer/gst-libav-no-cache-generator.patch
@@ -71,5 +71,5 @@ index 7e4381830..000000000
 -     disable_incremental_build: true,
 - )]
 -- 
-2.39.1
+2.40.1
 
