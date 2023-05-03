@@ -6160,14 +6160,9 @@ http/tests/misc/heic-accept-header.html [ Pass Failure ]
 # Needs proper bidi algorithm.
 webkit.org/b/256153 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/disclosure-styles.html [ ImageOnlyFailure ]
 
-# WPT seems to be wrong regarding prefix/suffix fallback (https://github.com/web-platform-tests/wpt/issues/38772)
-imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-additive.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-alphabetic.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-extends.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-symbolic.html [ ImageOnlyFailure ]
+# WPT seems to be wrong regarding prefix/suffix fallback (https://github.com/web-platform-tests/wpt/issues/38772). We need to fix the remaining tests on WPT:
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/suffix-fallback.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/fallback-cycle.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/descriptor-prefix.html [ ImageOnlyFailure ]
 
 # Missing support to counter-style at-rule in shadow scope rdar://103873418
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/override-in-shadow-dom.html [ ImageOnlyFailure ]
