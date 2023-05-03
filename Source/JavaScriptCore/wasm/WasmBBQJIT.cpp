@@ -7049,18 +7049,41 @@ public:
         }
     }
 
-    void saveValuesAcrossCall(const CallInformation& callInfo)
+    template<size_t N>
+    void saveValuesAcrossCallAndPassArguments(const Vector<Value, N>& arguments, const CallInformation& callInfo)
     {
-        // Flush any values in caller-saved registers.
+        // First, we resolve all the locations of the passed arguments, before any spillage occurs. For constants,
+        // we store their normal values; for all other values, we store pinned values with their current location.
+        // We'll directly use these when passing parameters, since no other instructions we emit here should
+        // overwrite registers currently occupied by values.
+
+        Vector<Value, N> resolvedArguments;
+        resolvedArguments.reserveInitialCapacity(arguments.size());
+        for (unsigned i = 0; i < arguments.size(); i ++) {
+            if (arguments[i].isConst())
+                resolvedArguments.uncheckedAppend(arguments[i]);
+            else
+                resolvedArguments.uncheckedAppend(Value::pinned(arguments[i].type(), locationOf(arguments[i])));
+
+            // Like other value uses, we count this as a use here, and end the lifetimes of any temps we passed.
+            // This saves us the work of having to spill them to their canonical slots.
+            consume(arguments[i]);
+        }
+
+        // At this point in the program, argumentLocations doesn't represent the state of the register allocator.
+        // We need to be careful not to allocate any new registers before passing them to the function, since that
+        // could clobber the registers we assume still contain the argument values!
+
+        // Next, for all values currently still occupying a caller-saved register, we flush them to their canonical slot.
         for (Reg reg : m_callerSaves) {
             RegisterBinding binding = reg.isGPR() ? m_gprBindings[reg.gpr()] : m_fprBindings[reg.fpr()];
             if (!binding.toValue().isNone())
                 flushValue(binding.toValue());
         }
 
-        // Flush any values that overlap with parameter locations.
-        // FIXME: This is kind of a quick and dirty approach to what really should be a parallel move
-        // from argument to parameter locations, we may be able to avoid some stores.
+        // Additionally, we flush anything currently bound to a register we're going to use for parameter passing. I
+        // think these will be handled by the caller-save logic without additional effort, but it doesn't hurt to be
+        // careful.
         for (size_t i = 0; i < callInfo.params.size(); ++i) {
             Location paramLocation = Location::fromArgumentLocation(callInfo.params[i]);
             if (paramLocation.isRegister()) {
@@ -7069,6 +7092,13 @@ public:
                     flushValue(binding.toValue());
             }
         }
+
+        // Finally, we parallel-move arguments to the parameter locations.
+        Vector<Location, N> parameterLocations;
+        parameterLocations.reserveInitialCapacity(callInfo.params.size());
+        for (const auto& param : callInfo.params)
+            parameterLocations.uncheckedAppend(Location::fromArgumentLocation(param));
+        emitShuffle(resolvedArguments, parameterLocations, Location::fromGPR(wasmScratchGPR), Location::fromFPR(wasmScratchFPR));
     }
 
     void restoreValuesAfterCall(const CallInformation& callInfo)
@@ -7076,18 +7106,6 @@ public:
         UNUSED_PARAM(callInfo);
         // Caller-saved values shouldn't actually need to be restored here, the register allocator will restore them lazily
         // whenever they are next used.
-    }
-
-    template<size_t N>
-    void passParametersToCall(const Vector<Value, N>& arguments, const CallInformation& callInfo)
-    {
-        // Move arguments to parameter locations.
-        for (size_t i = 0; i < callInfo.params.size(); i ++) {
-            Location paramLocation = Location::fromArgumentLocation(callInfo.params[i]);
-            Value argument = arguments[i];
-            emitMove(argument, paramLocation);
-            consume(argument);
-        }
     }
 
     template<size_t N>
@@ -7135,10 +7153,7 @@ public:
 
         // Preserve caller-saved registers and other info
         prepareForExceptions();
-        saveValuesAcrossCall(callInfo);
-
-        // Move argument values to parameter locations
-        passParametersToCall(arguments, callInfo);
+        saveValuesAcrossCallAndPassArguments(arguments, callInfo);
 
         // Materialize address of native function and call register
         void* taggedFunctionPtr = tagCFunctionPtr<void*, OperationPtrTag>(function);
@@ -7164,10 +7179,7 @@ public:
 
         // Preserve caller-saved registers and other info
         prepareForExceptions();
-        saveValuesAcrossCall(callInfo);
-
-        // Move argument values to parameter locations
-        passParametersToCall(arguments, callInfo);
+        saveValuesAcrossCallAndPassArguments(arguments, callInfo);
 
         // Materialize address of native function and call register
         void* taggedFunctionPtr = tagCFunctionPtr<void*, OperationPtrTag>(function);
@@ -7231,10 +7243,7 @@ public:
 
         // Preserve caller-saved registers and other info
         prepareForExceptions();
-        saveValuesAcrossCall(callInfo);
-
-        // Move argument values to parameter locations
-        passParametersToCall(arguments, callInfo);
+        saveValuesAcrossCallAndPassArguments(arguments, callInfo);
 
         if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex)) {
             m_jit.move(TrustedImmPtr(Instance::offsetOfImportFunctionStub(functionIndex)), wasmScratchGPR);
@@ -7286,8 +7295,7 @@ public:
         // Safe to use across saveValues/passParameters since neither clobber the scratch GPR.
         m_jit.loadPtr(Address(calleeCode), wasmScratchGPR);
         prepareForExceptions();
-        saveValuesAcrossCall(wasmCalleeInfo);
-        passParametersToCall(arguments, wasmCalleeInfo);
+        saveValuesAcrossCallAndPassArguments(arguments, wasmCalleeInfo);
         m_jit.call(wasmScratchGPR, WasmEntryPtrTag);
         returnValuesFromCall(results, *signature.as<FunctionSignature>(), wasmCalleeInfo);
 
@@ -8865,7 +8873,7 @@ private:
     }
 
     template<size_t N, typename OverflowHandler>
-    void emitShuffle(Vector<Value, N, OverflowHandler>& srcVector, Vector<Location, N, OverflowHandler>& dstVector)
+    void emitShuffle(Vector<Value, N, OverflowHandler>& srcVector, Vector<Location, N, OverflowHandler>& dstVector, Location gpTemp, Location fpTemp)
     {
         ASSERT(srcVector.size() == dstVector.size());
 
@@ -8876,15 +8884,21 @@ private:
 
         // For multi-value return, a parallel move might be necessary. This is comparatively complex
         // and slow, so we limit it to this slow path.
-        ScratchScope<1, 1> scratches(*this);
-        Location gpTemp = Location::fromGPR(scratches.gpr(0));
-        Location fpTemp = Location::fromFPR(scratches.fpr(0));
         Vector<ShuffleStatus, N, OverflowHandler> statusVector(srcVector.size(), ShuffleStatus::ToMove);
-
         for (unsigned i = 0; i < srcVector.size(); i ++) {
             if (statusVector[i] == ShuffleStatus::ToMove)
                 emitShuffleMove(srcVector, dstVector, statusVector, i, gpTemp, fpTemp);
         }
+    }
+
+    template<size_t N, typename OverflowHandler>
+    void emitShuffle(Vector<Value, N, OverflowHandler>& srcVector, Vector<Location, N, OverflowHandler>& dstVector)
+    {
+        ScratchScope<1, 1> scratches(*this);
+        Location gpTemp = Location::fromGPR(scratches.gpr(0));
+        Location fpTemp = Location::fromFPR(scratches.fpr(0));
+
+        emitShuffle(srcVector, dstVector, gpTemp, fpTemp);
     }
 
     ControlData& currentControlData()
