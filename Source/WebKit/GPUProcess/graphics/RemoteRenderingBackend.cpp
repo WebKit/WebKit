@@ -612,8 +612,11 @@ void RemoteRenderingBackend::releaseRemoteGPU(WebGPUIdentifier identifier)
 {
     bool result = m_remoteGPUMap.remove(identifier);
     ASSERT_UNUSED(result, result);
-    if (m_remoteGPUMap.isEmpty())
-        gpuConnectionToWebProcess().gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
+    if (m_remoteGPUMap.isEmpty()) {
+        ensureOnMainRunLoop([connectionToWebProcess = m_gpuConnectionToWebProcess] {
+            connectionToWebProcess->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
+        });
+    }
 }
 
 void RemoteRenderingBackend::createRemoteBarcodeDetector(ShapeDetectionIdentifier identifier, const WebCore::ShapeDetection::BarcodeDetectorOptions& barcodeDetectorOptions)
