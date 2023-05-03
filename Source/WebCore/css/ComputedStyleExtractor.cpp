@@ -2291,12 +2291,9 @@ static bool rendererCanHaveTrimmedMargin(const RenderBox& renderer, MarginTrimTy
     // specific margin) implemented
     // 2.) The block container/flexbox/grid has this margin specified in its margin-trim style
     // If marginTrimType is empty we will check if any of the supported margins are in the style
-    auto* containingBlock = renderer.containingBlock();
-    if (!containingBlock || containingBlock->isRenderView())
-        return false;
+    if (renderer.isFlexItem() || renderer.isGridItem())
+        return renderer.parent()->style().marginTrim().contains(marginTrimType);
 
-    if (containingBlock->isFlexibleBox() || containingBlock->isRenderGrid())
-        return containingBlock->style().marginTrim().contains(marginTrimType);
     // Even though margin-trim is not inherited, it is possible for nested block level boxes
     // to get placed at the block-start of an containing block ancestor which does have margin-trim.
     // In this case it is not enough to simply check the immediate containing block of the child. It is
@@ -2304,8 +2301,10 @@ static bool rendererCanHaveTrimmedMargin(const RenderBox& renderer, MarginTrimTy
     // of an ancestor containing block with the property, so we will just return true and let
     // the rest of the logic in RenderBox::hasTrimmedMargin to determine if the rare data bit
     // were set at some point during layout
-    if (containingBlock->isBlockContainer() && containingBlock->isHorizontalWritingMode() && renderer.isBlockLevelBox())
-        return true;
+    if (renderer.isBlockLevelBox()) {
+        auto containingBlock = renderer.containingBlock();
+        return containingBlock && containingBlock->isHorizontalWritingMode();
+    }
     return false;
 }
 
