@@ -6957,7 +6957,7 @@ RefPtr<CSSValue> consumeListStyleType(CSSParserTokenRange& range, const CSSParse
     if (range.peek().type() == StringToken)
         return consumeString(range);
 
-    if (auto predefinedValues = consumeIdentRange(range, CSSValueDisc, CSSValueEthiopicNumeric))
+    if (auto predefinedValues = consumeIdent(range, isPredefinedCounterStyle))
         return predefinedValues;
 
     if (context.propertySettings.cssCounterStyleAtRulesEnabled)

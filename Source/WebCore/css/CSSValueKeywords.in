@@ -400,6 +400,7 @@ inside
 //
 // CSS_PROP_LIST_STYLE_TYPE:
 // The order here must match the order of the ListStyleType enum in RenderStyleConstants.h.
+// If the first or last counter style change, please make sure to update `isPredefinedCounterStyle()`.
 //
 disc
 circle

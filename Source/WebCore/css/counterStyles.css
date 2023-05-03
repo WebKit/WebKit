@@ -22,6 +22,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*** NOTE: New counter styles should also be added in CSSValueKeywords.in, and isPredefinedCounterStyle() should also be updated if needed. ***/
 /*** Built-in the spec: https://www.w3.org/TR/css-counter-styles-3/#predefined-counters ***/
 
 @counter-style decimal {
