@@ -530,6 +530,9 @@ private:
 
     void detachScrollCoordinatedLayer(RenderLayer&, OptionSet<ScrollCoordinationRole>);
     void detachScrollCoordinatedLayerWithRole(RenderLayer&, ScrollingCoordinator&, ScrollCoordinationRole);
+    
+    void resolveScrollingTreeRelationships();
+    bool setupScrollProxyRelatedOverflowScrollingNode(ScrollingCoordinator&, ScrollingNodeID, RenderLayer&);
 
     void updateSynchronousScrollingNodes();
 
@@ -635,6 +638,7 @@ private:
     Color m_rootExtendedBackgroundColor;
 
     HashMap<ScrollingNodeID, WeakPtr<RenderLayer>> m_scrollingNodeToLayerMap;
+    WeakHashSet<RenderLayer> m_layersWithUnresolvedRelations;
 #if PLATFORM(IOS_FAMILY)
     std::unique_ptr<LegacyWebKitScrollingLayerCoordinator> m_legacyScrollingLayerCoordinator;
 #endif

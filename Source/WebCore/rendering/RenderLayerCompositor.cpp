@@ -915,7 +915,9 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 #endif
 
     if (updateRoot->hasDescendantNeedingUpdateBackingOrHierarchyTraversal() || updateRoot->needsUpdateBackingOrHierarchyTraversal()) {
+        ASSERT(m_layersWithUnresolvedRelations.isEmptyIgnoringNullReferences());
         ScrollingTreeState scrollingTreeState = { 0, 0 };
+
         if (!m_renderView.frame().isMainFrame())
             scrollingTreeState.parentNodeID = frameHostingNodeForFrame(m_renderView.frame());
 
@@ -940,6 +942,8 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
         if (scrollingCoordinator && scrollingCoordinator->hasSubscrollers() != hadSubscrollers)
             invalidateEventRegionForAllFrames();
+
+        resolveScrollingTreeRelationships();
     }
 
 #if !LOG_DISABLED
@@ -4962,6 +4966,20 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingRole(Rende
     return newNodeID;
 }
 
+bool RenderLayerCompositor::setupScrollProxyRelatedOverflowScrollingNode(ScrollingCoordinator& scrollingCoordinator, ScrollingNodeID scrollingProxyNodeID, RenderLayer& overflowScrollingLayer)
+{
+    auto* backing = overflowScrollingLayer.backing();
+    if (!backing)
+        return false;
+
+    auto overflowScrollNodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling);
+    if (!overflowScrollNodeID)
+        return false;
+
+    scrollingCoordinator.setRelatedOverflowScrollingNodes(scrollingProxyNodeID, { overflowScrollNodeID });
+    return true;
+}
+
 ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingProxyRole(RenderLayer& layer, ScrollingTreeState& treeState, OptionSet<ScrollingNodeChangeFlags> changes)
 {
     auto* scrollingCoordinator = this->scrollingCoordinator();
@@ -4992,14 +5010,8 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingProxyRole(
             ASSERT(entry.clipData.clippingLayer);
             ASSERT(entry.clipData.clippingLayer->isComposited());
 
-            ScrollingNodeID overflowScrollNodeID = 0;
-            if (auto* backing = entry.clipData.clippingLayer->backing())
-                overflowScrollNodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling);
-
-            Vector<ScrollingNodeID> scrollingNodeIDs;
-            if (overflowScrollNodeID)
-                scrollingNodeIDs.append(overflowScrollNodeID);
-            scrollingCoordinator->setRelatedOverflowScrollingNodes(entry.overflowScrollProxyNodeID, WTFMove(scrollingNodeIDs));
+            if (!setupScrollProxyRelatedOverflowScrollingNode(*scrollingCoordinator, entry.overflowScrollProxyNodeID, *entry.clipData.clippingLayer))
+                m_layersWithUnresolvedRelations.add(layer);
         }
     }
     
@@ -5056,6 +5068,33 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForPositioningRole(Ren
     }
 
     return newNodeID;
+}
+
+void RenderLayerCompositor::resolveScrollingTreeRelationships()
+{
+    if (m_layersWithUnresolvedRelations.isEmptyIgnoringNullReferences())
+        return;
+
+    auto* scrollingCoordinator = this->scrollingCoordinator();
+
+    for (auto& layer : m_layersWithUnresolvedRelations) {
+        LOG_WITH_STREAM(ScrollingTree, stream << "RenderLayerCompositor::resolveScrollingTreeRelationships - resolving relationship for layer " << &layer);
+
+        if (!layer.isComposited())
+            continue;
+
+        if (auto* clippingStack = layer.backing()->ancestorClippingStack()) {
+            for (auto& entry : clippingStack->stack()) {
+                if (!entry.clipData.isOverflowScroll)
+                    continue;
+
+                bool succeeded = setupScrollProxyRelatedOverflowScrollingNode(*scrollingCoordinator, entry.overflowScrollProxyNodeID, *entry.clipData.clippingLayer);
+                ASSERT_UNUSED(succeeded, succeeded);
+            }
+        }
+    }
+
+    m_layersWithUnresolvedRelations.clear();
 }
 
 void RenderLayerCompositor::updateSynchronousScrollingNodes()

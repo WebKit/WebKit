@@ -283,9 +283,11 @@ void ScrollingStateTree::clear()
 
 std::unique_ptr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentation::Type preferredLayerRepresentation)
 {
+    ASSERT(isValid());
+
     if (!m_unparentedNodes.isEmpty()) {
         // We expect temporarily to have unparented nodes when committing when connecting across iframe boundaries, but unparented nodes should not stick around for a long time.
-        LOG(Scrolling, "Committing with %u unparented nodes", m_unparentedNodes.size());
+        LOG(ScrollingTree, "Committing with %u unparented nodes", m_unparentedNodes.size());
     }
 
     // This function clones and resets the current state tree, but leaves the tree structure intact.
@@ -300,6 +302,62 @@ std::unique_ptr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentati
     treeStateClone->m_hasNewRootStateNode = std::exchange(m_hasNewRootStateNode, false);
 
     return treeStateClone;
+}
+
+void ScrollingStateTree::traverse(const ScrollingStateNode& node, const Function<void(const ScrollingStateNode&)>& traversalFunc) const
+{
+    traversalFunc(node);
+
+    if (auto* children = node.children()) {
+        for (auto childNode : *children) {
+            ASSERT(childNode);
+            traverse(*childNode, traversalFunc);
+        }
+    }
+}
+
+bool ScrollingStateTree::isValid() const
+{
+    if (!m_rootStateNode)
+        return true;
+
+    bool isValid = true;
+    traverse(*m_rootStateNode, [&](const ScrollingStateNode& node) {
+        switch (node.nodeType()) {
+        case ScrollingNodeType::MainFrame:
+            break;
+        case ScrollingNodeType::Subframe:
+            break;
+        case ScrollingNodeType::FrameHosting:
+            break;
+        case ScrollingNodeType::Overflow:
+            break;
+        case ScrollingNodeType::OverflowProxy: {
+            auto& proxyNode = downcast<ScrollingStateOverflowScrollProxyNode>(node);
+            if (!proxyNode.overflowScrollingNode() || !nodeMap().contains(proxyNode.overflowScrollingNode())) {
+                ALWAYS_LOG_WITH_STREAM(stream << "ScrollingStateOverflowScrollProxyNode " << node.scrollingNodeID() << " refers to non-existant overflow node " << proxyNode.overflowScrollingNode());
+                isValid = false;
+            }
+            break;
+        }
+        case ScrollingNodeType::Fixed:
+            break;
+        case ScrollingNodeType::Sticky:
+            break;
+        case ScrollingNodeType::Positioned: {
+            auto& positionedNode = downcast<ScrollingStatePositionedNode>(node);
+            for (auto relatedNodeID : positionedNode.relatedOverflowScrollingNodes()) {
+                if (!relatedNodeID || !nodeMap().contains(relatedNodeID)) {
+                    ALWAYS_LOG_WITH_STREAM(stream << "ScrollingStatePositionedNode " << node.scrollingNodeID() << " refers to non-existant overflow node " << relatedNodeID);
+                    isValid = false;
+                }
+            }
+            break;
+        }
+        }
+    });
+    
+    return isValid;
 }
 
 void ScrollingStateTree::setRootStateNode(Ref<ScrollingStateFrameScrollingNode>&& rootStateNode)
