@@ -4416,3 +4416,5 @@ transforms/3d/hit-testing/overlapping-layers-hit-test.html [ Failure ]
 webaudio/ScriptProcessor/scriptprocessor-offlineaudiocontext.html [ Failure ]
 
 webkit.org/b/256189 [ Debug ] ipc/wait-for-video-output-will-change.html [ Crash ]
+
+webkit.org/256217 [ Debug ] imported/w3c/web-platform-tests/background-fetch/port-blocking.https.window.html [ Pass Crash ]
