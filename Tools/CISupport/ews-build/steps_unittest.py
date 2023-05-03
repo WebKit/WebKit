@@ -7471,7 +7471,7 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
                 command=[
                     'git', 'filter-branch', '-f',
                     '--env-filter', "GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}';GIT_COMMITTER_NAME='WebKit Committer';GIT_COMMITTER_EMAIL='committer@webkit.org'".format(date=date),
-                    'HEAD...HEAD~1',
+                    'HEAD...HEAD~4',
                 ],
             ) + 0,
         )
