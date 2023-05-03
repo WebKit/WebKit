@@ -1287,16 +1287,21 @@ void NetworkStorageManager::setItem(IPC::Connection& connection, StorageAreaIden
     writeOriginToFileIfNecessary(storageArea->origin(), storageArea);
 }
 
-void NetworkStorageManager::removeItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& urlString, CompletionHandler<void()>&& completionHandler)
+void NetworkStorageManager::removeItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& urlString, CompletionHandler<void(bool, HashMap<String, String>&&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
+    bool hasError = false;
+    HashMap<String, String> allItems;
     auto storageArea = m_storageAreaRegistry->getStorageArea(identifier);
     if (!storageArea)
-        return completionHandler();
+        return completionHandler(hasError, WTFMove(allItems));
     
-    storageArea->removeItem(connection.uniqueID(), implIdentifier, WTFMove(key), WTFMove(urlString));
-    completionHandler();
+    auto result = storageArea->removeItem(connection.uniqueID(), implIdentifier, WTFMove(key), WTFMove(urlString));
+    hasError = !result;
+    if (hasError)
+        allItems = storageArea->allItems();
+    completionHandler(hasError, WTFMove(allItems));
 
     writeOriginToFileIfNecessary(storageArea->origin(), storageArea);
 }

@@ -102,7 +102,7 @@ void StorageAreaMap::setItem(LocalFrame& sourceFrame, StorageAreaImpl* sourceAre
         return;
     }
 
-    auto callback = [weakThis = WeakPtr { *this }, seed = m_currentSeed, key](bool hasError, auto allItems) mutable {
+    auto callback = [weakThis = WeakPtr { *this }, seed = m_currentSeed, key](bool hasError, auto&& allItems) mutable {
         if (weakThis)
             weakThis->didSetItem(seed, key, hasError, WTFMove(allItems));
     };
@@ -128,9 +128,9 @@ void StorageAreaMap::removeItem(WebCore::LocalFrame& sourceFrame, StorageAreaImp
         return;
     }
 
-    auto callback = [weakThis = WeakPtr { *this }, seed = m_currentSeed, key]() mutable {
+    auto callback = [weakThis = WeakPtr { *this }, seed = m_currentSeed, key](bool hasError, auto&& allItems) mutable {
         if (weakThis)
-            weakThis->didRemoveItem(seed, key);
+            weakThis->didRemoveItem(seed, key, hasError, WTFMove(allItems));
     };
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkStorageManager::RemoveItem(*m_remoteAreaIdentifier, sourceArea->identifier(), key, sourceFrame.document()->url().string()), WTFMove(callback));
 }
@@ -180,13 +180,16 @@ void StorageAreaMap::didSetItem(uint64_t mapSeed, const String& key, bool hasErr
         syncItems(WTFMove(remoteItems));
 }
 
-void StorageAreaMap::didRemoveItem(uint64_t mapSeed, const String& key)
+void StorageAreaMap::didRemoveItem(uint64_t mapSeed, const String& key, bool hasError, HashMap<String, String>&& remoteItems)
 {
     if (m_currentSeed != mapSeed)
         return;
 
     ASSERT(m_pendingValueChanges.contains(key));
     m_pendingValueChanges.remove(key);
+
+    if (hasError)
+        syncItems(WTFMove(remoteItems));
 }
 
 void StorageAreaMap::didClear(uint64_t mapSeed)

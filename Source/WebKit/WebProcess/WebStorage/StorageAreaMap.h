@@ -77,7 +77,7 @@ public:
 
 private:
     void didSetItem(uint64_t mapSeed, const String& key, bool hasError, HashMap<String, String>&&);
-    void didRemoveItem(uint64_t mapSeed, const String& key);
+    void didRemoveItem(uint64_t mapSeed, const String& key, bool hasError, HashMap<String, String>&&);
     void didClear(uint64_t mapSeed);
 
     // Message handlers.
