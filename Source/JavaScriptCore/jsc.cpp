@@ -1436,7 +1436,10 @@ JSC_DEFINE_HOST_FUNCTION(functionBtoa, (JSGlobalObject* globalObject, CallFrame*
     if (!stringToEncode.isAllLatin1())
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Invalid character in argument for btoa."_s)));
 
-    String encodedString = base64EncodeToString(stringToEncode.latin1());
+    String encodedString = base64EncodeToStringReturnNullIfOverflow(stringToEncode.latin1());
+    if (!encodedString)
+        return JSValue::encode(throwException(globalObject, scope, createOutOfMemoryError(globalObject)));
+
     return JSValue::encode(jsString(vm, encodedString));
 }
 

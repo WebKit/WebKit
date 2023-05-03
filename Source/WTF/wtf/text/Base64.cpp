@@ -168,6 +168,11 @@ String base64EncodeToString(Span<const std::byte> input, Base64EncodeMode mode)
     return makeString(base64Encoded(input, mode));
 }
 
+String base64EncodeToStringReturnNullIfOverflow(Span<const std::byte> input, Base64EncodeMode mode)
+{
+    return tryMakeString(base64Encoded(input, mode));
+}
+
 template<typename T> static std::optional<Vector<uint8_t>> base64DecodeInternal(Span<const T> inputDataBuffer, Base64DecodeMode mode)
 {
     if (!inputDataBuffer.size())

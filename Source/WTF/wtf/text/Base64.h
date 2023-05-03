@@ -72,6 +72,9 @@ String base64EncodeToString(Span<const char>, Base64EncodeMode = Base64EncodeMod
 String base64EncodeToString(const CString&, Base64EncodeMode = Base64EncodeMode::Default);
 String base64EncodeToString(const void*, unsigned, Base64EncodeMode = Base64EncodeMode::Default);
 
+WTF_EXPORT_PRIVATE String base64EncodeToStringReturnNullIfOverflow(Span<const std::byte>, Base64EncodeMode = Base64EncodeMode::Default);
+String base64EncodeToStringReturnNullIfOverflow(const CString&, Base64EncodeMode = Base64EncodeMode::Default);
+
 WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64Decode(Span<const std::byte>, Base64DecodeMode = Base64DecodeMode::DefaultIgnorePadding);
 WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64Decode(StringView, Base64DecodeMode = Base64DecodeMode::DefaultIgnorePadding);
 std::optional<Vector<uint8_t>> base64Decode(Span<const uint8_t>, Base64DecodeMode = Base64DecodeMode::DefaultIgnorePadding);
@@ -138,6 +141,11 @@ inline String base64EncodeToString(Span<const uint8_t> input, Base64EncodeMode m
     return base64EncodeToString(asBytes(input), mode);
 }
 
+inline String base64EncodeToStringReturnNullIfOverflow(Span<const uint8_t> input, Base64EncodeMode mode)
+{
+    return base64EncodeToStringReturnNullIfOverflow(asBytes(input), mode);
+}
+
 inline String base64EncodeToString(Span<const char> input, Base64EncodeMode mode)
 {
     return base64EncodeToString(asBytes(input), mode);
@@ -146,6 +154,11 @@ inline String base64EncodeToString(Span<const char> input, Base64EncodeMode mode
 inline String base64EncodeToString(const CString& input, Base64EncodeMode mode)
 {
     return base64EncodeToString(input.bytes(), mode);
+}
+
+inline String base64EncodeToStringReturnNullIfOverflow(const CString& input, Base64EncodeMode mode)
+{
+    return base64EncodeToStringReturnNullIfOverflow(input.bytes(), mode);
 }
 
 inline String base64EncodeToString(const void* input, unsigned length, Base64EncodeMode mode)
