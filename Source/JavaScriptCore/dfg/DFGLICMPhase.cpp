@@ -219,7 +219,7 @@ public:
                 for (unsigned stackIndex = loopStack.size(); stackIndex--;) {
                     if (UNLIKELY(Options::useLICMFuzzing())) {
                         bool shouldAttemptHoist = random.returnTrueWithProbability(Options::allowHoistingLICMProbability());
-                        if (!shouldAttemptHoist)
+                        if (!shouldAttemptHoist && !nodeRef->isCheckNode())
                             continue;
                     }
 

@@ -561,6 +561,37 @@ public:
         }
     }
 
+    bool isCheckNode()
+    {
+        switch (op()) {
+        case Check:
+        case CheckVarargs:
+        case CheckTierUpInLoop:
+        case CheckTierUpAndOSREnter:
+        case CheckTierUpAtReturn:
+        case CheckPrivateBrand:
+        case CheckStructure:
+        case CheckStructureOrEmpty:
+        case CheckArray:
+        case CheckArrayOrEmpty:
+        case CheckDetached:
+        case CheckIsConstant:
+        case CheckNotEmpty:
+        case CheckBadValue:
+        case CheckInBounds:
+        case CheckInBoundsInt52:
+        case CheckIdent:
+        case CheckTypeInfoFlags:
+        case CheckJSCast:
+        case CheckNotJSCast:
+        case CheckStructureImmediate:
+        case CheckTraps:
+            return true;
+        default:
+            return false;
+        }
+    }
+
     FrozenValue* constant()
     {
         ASSERT(hasConstant());
