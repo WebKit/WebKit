@@ -113,8 +113,8 @@ AcceleratedDrawingEnabled:
   type: bool
   status: internal
   defaultsOverridable: true
-  humanReadableName: "GraphicsLayerCA accelerated drawing"
-  humanReadableDescription: "Enable GraphicsLayerCA accelerated drawing"
+  humanReadableName: "GraphicsLayer accelerated drawing"
+  humanReadableDescription: "Enable GraphicsLayer accelerated drawing"
   defaultValue:
     WebKitLegacy:
       "PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)": true
@@ -782,6 +782,7 @@ BlockIOKitInWebContentSandbox:
   humanReadableName: "IOKit blocking in the WebContent sandbox"
   humanReadableDescription: "Block IOKit access in the WebContent sandbox"
   webcoreBinding: none
+  condition: HAVE(SANDBOX_STATE_FLAGS)
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
@@ -2312,6 +2313,7 @@ ExperimentalSandboxEnabled:
   category: security
   humanReadableName: "Enable experimental sandbox features"
   humanReadableDescription: "Enable experimental sandbox features"
+  condition: HAVE(MACH_BOOTSTRAP_EXTENSION) || HAVE(SANDBOX_STATE_FLAGS)
   webcoreBinding: none
   exposed: [ WebKit ]
   defaultValue:
@@ -2894,6 +2896,7 @@ ImageAnalysisDuringFindInPageEnabled:
   status: unstable
   humanReadableName: "Image Analysis for Find-in-Page"
   humanReadableDescription: "Trigger image analysis when performing Find-in-Page"
+  condition: ENABLE(IMAGE_ANALYSIS)
   defaultValue:
     WebKitLegacy:
       default: false
@@ -4476,6 +4479,7 @@ NeedsInAppBrowserPrivacyQuirks:
   humanReadableDescription: "Enable quirks needed to support In-App Browser privacy"
   webcoreBinding: none
   exposed: [ WebKit ]
+  condition: ENABLE(APP_BOUND_DOMAINS)
   defaultValue:
     WebKit:
       default: false
@@ -5602,6 +5606,7 @@ ServiceWorkerEntitlementDisabledForTesting:
   status: embedder
   webcoreBinding: none
   exposed: [ WebKit ]
+  condition: ENABLE(SERVICE_WORKER)
   defaultValue:
     WebKit:
       default: false
