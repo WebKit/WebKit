@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 20px; }
+    label {
+        padding: 10px;
+    }
+    .container {
+        display: block;
+        width: 240px;
+        margin: 10px;
+
+        text-align: center;
+        background: blue;
+        border-radius: 16px;
+    }
+</style>
+<body>
+<label>Inactive label</label>
+<label for="coffee">Do you like coffee?</label>
+<input type="checkbox" name="coffee" id="coffee">
+<label class="container">
+    And checkboxes? <input type="checkbox">
+</label>
+
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+};
+</script>
+</body>
+</html>

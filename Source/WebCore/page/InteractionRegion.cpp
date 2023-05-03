@@ -38,6 +38,7 @@
 #include "HTMLFieldSetElement.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLInputElement.h"
+#include "HTMLLabelElement.h"
 #include "HitTestResult.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
@@ -197,6 +198,11 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     if (auto* buttonElement = ancestorsOfType<HTMLButtonElement>(*matchedElement).first())
         matchedElement = buttonElement;
 
+    if (is<HTMLElement>(originalElement) && downcast<HTMLElement>(originalElement)->isLabelable()) {
+        if (auto* labelElement = ancestorsOfType<HTMLLabelElement>(*originalElement).first())
+            matchedElement = labelElement;
+    }
+
     if (!shouldAllowElement(*matchedElement))
         return std::nullopt;
 
@@ -214,6 +220,18 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     bool hasPointer = cursorTypeForElement(*matchedElement) == CursorType::Pointer || shouldAllowNonPointerCursorForElement(*matchedElement);
     bool isTooBigForInteraction = checkedRegionArea.value() > frameViewArea / 2;
 
+    auto elementIdentifier = matchedElement->identifier();
+
+    if (!hasPointer && is<HTMLLabelElement>(matchedElement)) {
+        // Could be a `<label for="...">` or a label with a descendant.
+        // In cases where both elements get a region we want to group them by the same `elementIdentifier`.
+        auto associatedElement = downcast<HTMLLabelElement>(matchedElement)->control();
+        if (associatedElement) {
+            hasPointer = true;
+            elementIdentifier = associatedElement->identifier();
+        }
+    }
+
     bool detectedHoverRules = false;
     if (!hasPointer) {
         // The hover check can be expensive (it may end up doing selector matching), so we only run it on some elements.
@@ -228,7 +246,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
         if (isOverlay && isOriginalMatch) {
             return { {
                 InteractionRegion::Type::Occlusion,
-                matchedElement->identifier(),
+                elementIdentifier,
                 bounds
             } };
         }
@@ -284,7 +302,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
 
     return { {
         InteractionRegion::Type::Interaction,
-        matchedElement->identifier(),
+        elementIdentifier,
         bounds,
         borderRadius,
         maskedCorners
