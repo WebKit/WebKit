@@ -5888,20 +5888,17 @@ bool Document::shouldMaskURLForBindingsInternal(const URL& urlToMask) const
     return maskedURLSchemes.contains<StringViewHashTranslator>(urlToMask.protocol());
 }
 
-StringImpl& Document::maskedURLStringForBindings()
-{
-    return *StringImpl::maskedURLStringForBindings();
-}
-
 const URL& Document::maskedURLForBindings()
 {
     // This function can be called from GC heap thread, thus we need to use StaticStringImpl as a source of URL.
     // StaticStringImpl is never converted to AtomString, and it is safe to be used in any thread.
+    static LazyNeverDestroyed<StringImpl*> maskedURLStringForBindings;
     static LazyNeverDestroyed<URL> url;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&] {
-        url.construct(maskedURLStringForBindings());
-        ASSERT(url->string().impl() == &static_cast<StringImpl&>(maskedURLStringForBindings()));
+        maskedURLStringForBindings.construct(&StringImpl::createStaticStringImplWithoutCopying("webkit-masked-url://hidden/", sizeof("webkit-masked-url://hidden/") / sizeof(char) - 1).leakRef());
+        url.construct(maskedURLStringForBindings.get());
+        ASSERT(url->string().impl() == static_cast<StringImpl*>(maskedURLStringForBindings.get()));
     });
     return url;
 }

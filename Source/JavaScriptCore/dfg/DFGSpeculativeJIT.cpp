@@ -2143,7 +2143,7 @@ void SpeculativeJIT::compileStringSlice(Node* node)
     slowCases.append(branch32(NotEqual, tempGPR, TrustedImm32(1)));
 
     // Refill StringImpl* here.
-    loadJSStringImpl(fiberTempGPR, fiberTempGPR, tempGPR);
+    loadJSStringImpl(fiberTempGPR, fiberTempGPR);
     loadPtr(Address(fiberTempGPR, StringImpl::dataOffset()), tempGPR);
 
     // Load the character into scratchReg
@@ -2238,7 +2238,7 @@ void SpeculativeJIT::compileToLowerCase(Node* node)
     loadPtr(Address(stringGPR, JSString::offsetOfFiberAndLengthAndFlag()), tempGPR);
     expandJSStringLength(tempGPR, lengthGPR);
     slowPath.append(branchIfRopeStringImpl(tempGPR));
-    loadJSStringImpl(tempGPR, tempGPR, charGPR);
+    loadJSStringImpl(tempGPR, tempGPR);
     slowPath.append(branchTest32(
         Zero, Address(tempGPR, StringImpl::flagsOffset()),
         TrustedImm32(StringImpl::flagIs8Bit())));
@@ -3164,7 +3164,7 @@ void SpeculativeJIT::compileGetCharCodeAt(Node* node)
     
     // unsigned comparison so we can filter out negative indices and indices that are too large
     speculationCheck(Uncountable, JSValueRegs(), nullptr, branch32(AboveOrEqual, indexReg, scratch2Reg));
-    loadJSStringImpl(scratchReg, scratchReg, scratch2Reg);
+    loadJSStringImpl(scratchReg, scratchReg);
 
     // Load the character into scratchReg
     Jump is16Bit = branchTest32(Zero, Address(scratchReg, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit()));
@@ -3208,7 +3208,7 @@ void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std:
     if (node->arrayMode().isInBounds())
         speculationCheck(OutOfBounds, JSValueRegs(), nullptr, outOfBounds);
     
-    loadJSStringImpl(scratchReg, scratchReg, scratch2Reg);
+    loadJSStringImpl(scratchReg, scratchReg);
 
     // Load the character into scratchReg
     Jump is16Bit = branchTest32(Zero, Address(scratchReg, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit()));
@@ -8389,9 +8389,8 @@ void SpeculativeJIT::compileStringEquality(
     
     trueCase.append(branchTest32(Zero, lengthGPR));
 
-    ASSERT(noOverlap(leftGPR, leftTempGPR, rightTempGPR, lengthGPR, leftTemp2GPR));
-    loadJSStringImpl(leftTempGPR, leftTempGPR, leftTemp2GPR);
-    loadJSStringImpl(rightTempGPR, rightTempGPR, leftTemp2GPR);
+    loadJSStringImpl(leftTempGPR, leftTempGPR);
+    loadJSStringImpl(rightTempGPR, rightTempGPR);
     
     slowCase.append(branchTest32(
         Zero,
@@ -12431,14 +12430,14 @@ void SpeculativeJIT::speculateStringIdentAndLoadStorage(Edge edge, GPRReg string
     loadPtr(Address(string, JSString::offsetOfFiberAndLengthAndFlag()), tempGPR);
     
     if (!needsTypeCheck(edge, SpecStringIdent | ~SpecString)) {
-        loadJSStringImpl(tempGPR, storage, tempGPR);
+        loadJSStringImpl(tempGPR, storage);
         return;
     }
 
     speculationCheck(
         BadType, JSValueSource::unboxedCell(string), edge,
         branchIfRopeStringImpl(tempGPR));
-    loadJSStringImpl(tempGPR, storage, tempGPR);
+    loadJSStringImpl(tempGPR, storage);
     speculationCheck(
         BadType, JSValueSource::unboxedCell(string), edge, branchTest32(
             Zero,
@@ -12997,7 +12996,7 @@ void SpeculativeJIT::emitSwitchCharStringJump(Node* node, SwitchData* data, GPRR
             value,
             TrustedImm32(1)),
         data->fallThrough.block);
-    loadJSStringImpl(scratch, scratch, value);
+    loadJSStringImpl(scratch, scratch);
     
     loadPtr(Address(scratch, StringImpl::dataOffset()), value);
     
@@ -13240,17 +13239,15 @@ void SpeculativeJIT::emitSwitchStringOnString(Node* node, SwitchData* data, GPRR
     
     GPRTemporary length(this);
     GPRTemporary temp(this);
-    GPRTemporary temp2(this);
     
     GPRReg lengthGPR = length.gpr();
     GPRReg tempGPR = temp.gpr();
-    GPRReg temp2GPR = temp2.gpr();
     
     JumpList slowCases;
     loadPtr(Address(string, JSString::offsetOfFiberAndLengthAndFlag()), tempGPR);
     slowCases.append(branchIfRopeStringImpl(tempGPR));
     expandJSStringLength(tempGPR, lengthGPR);
-    loadJSStringImpl(tempGPR, tempGPR, temp2GPR);
+    loadJSStringImpl(tempGPR, tempGPR);
     
     slowCases.append(branchTest32(
         Zero,
@@ -16764,7 +16761,7 @@ void SpeculativeJIT::compileMakeRope(Node* node)
             if (needsRopeCase)
                 isRope = branchIfRopeStringImpl(scratch2GPR);
 
-            loadJSStringImpl(scratch2GPR, scratch2GPR, scratch3GPR);
+            loadJSStringImpl(scratch2GPR, scratch2GPR);
             load32(Address(scratch2GPR, StringImpl::flagsOffset()), flagsGPR);
 
             if (ASSERT_ENABLED) {
@@ -16819,7 +16816,7 @@ void SpeculativeJIT::compileMakeRope(Node* node)
             if (needsRopeCase)
                 isRope = branchIfRopeStringImpl(scratch2GPR);
             
-            loadJSStringImpl(scratch2GPR, scratch2GPR, scratch3GPR);
+            loadJSStringImpl(scratch2GPR, scratch2GPR);
 
             if (ASSERT_ENABLED) {
                 // Make sure that StringImpl* length matches the JSString length.

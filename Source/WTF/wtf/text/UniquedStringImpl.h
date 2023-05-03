@@ -39,7 +39,12 @@ protected:
     UniquedStringImpl(CreateSymbolTag, const UChar* characters, unsigned length) : StringImpl(CreateSymbol, characters, length) { }
     UniquedStringImpl(CreateSymbolTag) : StringImpl(CreateSymbol) { }
 public:
+#if HAVE(36BIT_ADDRESS) or !USE(JSVALUE64) or !GIGACAGE_ENABLED
     using CompactPtrTypeTraits = WTF::BigHeapTypeTraits<UniquedStringImpl>;
+#else
+    using AllocatorInfo = Gigacage::SmallHeapAllocatorInfo;
+    using CompactPtrTypeTraits = WTF::SmallHeapTypeTraits<UniquedStringImpl, AllocatorInfo>;
+#endif
 };
 
 } // namespace WTF

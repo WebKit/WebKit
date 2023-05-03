@@ -151,12 +151,12 @@ END
 
     print F "    familyNamesData.construct();\n";
     for my $name (sort keys %parameters) {
-        print F "    familyNamesData->uncheckedAppend(${name}Data());\n";
+        print F "    familyNamesData->uncheckedAppend(s_${name}Data.get());\n";
     }
 
     print F "\n";
     for my $name (sort keys %parameters) {
-        print F "    ${name}.construct(${name}Data());\n";
+        print F "    ${name}.construct(s_${name}Data.get());\n";
     }
 
     print F "\n";
@@ -1005,7 +1005,7 @@ sub printTagNameCppFile
     print F "static constexpr int unadjustedTagNamesLengths[] = {\n";
     for my $elementKey (sort byElementNameOrder keys %allElements) {
         next if $allElements{$elementKey}{unadjustedTagEnumValue} eq "";
-        print F "    sizeof(\"$allElements{$elementKey}{parsedTagName}\") / sizeof(char),\n";
+        print F "    sizeof(\"$allElements{$elementKey}{parsedTagName}\") / sizeof(char) - 1,\n";
     }
     print F "};\n";
     print F "\n";
@@ -1641,7 +1641,7 @@ sub printDefinitions
         my $identifier = $namesRef->{$key}{identifier};
         my $nodeNameEnumValue = $namesRef->{$key}{nodeNameEnumValue} || "Unknown";
         # Attribute names never correspond to a recognized NodeName.
-        print F "        { $cast&$identifier$shortCamelType, ${identifier}Data(), NodeName::$nodeNameEnumValue },\n";
+        print F "        { $cast&$identifier$shortCamelType, s_${identifier}Data.get(), NodeName::$nodeNameEnumValue },\n";
     }
 
     print F "    };\n";

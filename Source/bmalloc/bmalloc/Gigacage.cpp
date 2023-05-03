@@ -118,8 +118,7 @@ void ensureGigacage()
             RELEASE_BASSERT(!g_gigacageConfig.ensureGigacageHasBeenCalled);
             g_gigacageConfig.ensureGigacageHasBeenCalled = true;
 
-            if (!shouldBeEnabled())
-                return;
+            RELEASE_BASSERT(shouldBeEnabled());
 
 #if BENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
             // We might only get page size alignment, but that's also the minimum
@@ -190,7 +189,9 @@ void ensureGigacage()
                 cryptoRandom(reinterpret_cast<unsigned char*>(random), sizeof(random));
                 size_t gigacageSize = maxSize(kind);
                 size_t size = gigacageSize;
-                if (kind != SmallHeap)
+                if (kind == SmallHeap)
+                    size = roundDownToMultipleOf(vmPageSize(), gigacageSize);
+                else
                     size = roundDownToMultipleOf(vmPageSize(), gigacageSize - (random[0] % maximumCageSizeReductionForSlide));
                 g_gigacageConfig.setAllocSize(kind, size);
                 ptrdiff_t offset = 0;
@@ -198,11 +199,6 @@ void ensureGigacage()
                     offset = roundDownToMultipleOf(vmPageSize(), random[1] % (gigacageSize - size));
                 void* thisBase = reinterpret_cast<unsigned char*>(gigacageBasePtr) + offset;
                 g_gigacageConfig.setAllocBasePtr(kind, thisBase);
-
-                if (kind == SmallHeap && (reinterpret_cast<uint64_t>(thisBase) & ~smallHeapGigacageMask) != reinterpret_cast<uint64_t>(thisBase)) {
-                    fprintf(stderr, "Small heap did not get allocated correctly: %p", thisBase);
-                    RELEASE_BASSERT(false);
-                }
 
 #if BUSE(LIBPAS)
                 bmalloc_force_auxiliary_heap_into_reserved_memory(
@@ -224,6 +220,9 @@ void ensureGigacage()
             vmDeallocatePhysicalPages(base, totalSize);
             g_gigacageConfig.isEnabled = true;
         });
+    auto* thiz = bmalloc::api::tryMalloc(32, bmalloc::HeapKind::SmallHeapGigacage);
+    RELEASE_BASSERT(bitwise_cast<uint64_t>(thiz) > bitwise_cast<uint64_t>(allocBase(Kind::SmallHeap)));
+    RELEASE_BASSERT(bitwise_cast<uint64_t>(thiz) < bitwise_cast<uint64_t>(allocBase(Kind::SmallHeap)) + maxSize(Kind::SmallHeap));
 }
 
 void disablePrimitiveGigacage()

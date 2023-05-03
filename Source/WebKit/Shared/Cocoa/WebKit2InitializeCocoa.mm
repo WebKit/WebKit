@@ -50,13 +50,12 @@ static void runInitializationCode(void* = nullptr)
 {
     RELEASE_ASSERT_WITH_MESSAGE([NSThread isMainThread], "InitializeWebKit2 should be called on the main thread");
 
+    WTF::initializeMainThread();
+    JSC::initialize();
     WebCore::initializeCommonAtomStrings();
 #if PLATFORM(IOS_FAMILY)
     InitWebCoreThreadSystemInterface();
 #endif
-
-    JSC::initialize();
-    WTF::initializeMainThread();
 
     WTF::RefCountedBase::enableThreadingChecksGlobally();
 

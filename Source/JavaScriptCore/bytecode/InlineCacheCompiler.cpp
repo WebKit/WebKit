@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "InlineCacheCompiler.h"
-#include "JavaScriptCore/ProbeContext.h"
 
 #if ENABLE(JIT)
 
@@ -375,6 +374,7 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
 
     JSGlobalObject* globalObject = m_globalObject;
     CCallHelpers& jit = *m_jit;
+    JIT_COMMENT(jit, "Begin generateWithGuard");
     StructureStubInfo& stubInfo = *m_stubInfo;
     VM& vm = m_vm;
     JSValueRegs valueRegs = stubInfo.valueRegs();
@@ -389,10 +389,8 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
         if (accessCase.uid()->isSymbol())
             jit.loadPtr(MacroAssembler::Address(propertyGPR, Symbol::offsetOfSymbolImpl()), scratchGPR);
         else {
-            auto allocator = makeDefaultScratchAllocator(scratchGPR);
-            GPRReg scratch2GPR = allocator.allocateScratchGPR();
             jit.loadPtr(MacroAssembler::Address(propertyGPR, JSString::offsetOfFiberAndLengthAndFlag()), scratchGPR);
-            jit.loadJSStringImpl(scratchGPR, scratchGPR, scratch2GPR);
+            jit.loadJSStringImpl(scratchGPR, scratchGPR);
         }
         fallThrough.append(jit.branchPtr(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImmPtr(accessCase.uid())));
     }
@@ -763,7 +761,7 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
         jit.expandJSStringLength(scratch2GPR, scratchGPR);
 
         failAndIgnore.append(jit.branch32(CCallHelpers::AboveOrEqual, propertyGPR, scratchGPR));
-        jit.loadJSStringImpl(scratch2GPR, scratch2GPR, scratchGPR);
+        jit.loadJSStringImpl(scratch2GPR, scratch2GPR);
 
         jit.load32(CCallHelpers::Address(scratch2GPR, StringImpl::flagsOffset()), scratchGPR);
         jit.loadPtr(CCallHelpers::Address(scratch2GPR, StringImpl::dataOffset()), scratch2GPR);
@@ -1289,7 +1287,7 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
 
         jit.loadPtr(CCallHelpers::Address(propertyGPR, JSString::offsetOfFiberAndLengthAndFlag()), scratch5GPR);
         slowCases.append(jit.branchIfRopeStringImpl(scratch5GPR));
-        jit.loadJSStringImpl(scratch5GPR, scratch5GPR, scratchGPR);
+        jit.loadJSStringImpl(scratch5GPR, scratch5GPR);
         slowCases.append(jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch5GPR, StringImpl::flagsOffset()), CCallHelpers::TrustedImm32(StringImpl::flagIsAtom())));
 
         slowCases.append(jit.loadMegamorphicProperty(vm, baseGPR, scratch5GPR, nullptr, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR, scratch4GPR));
@@ -3103,7 +3101,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> code = FINALIZE_CODE_FOR(
         codeBlock, linkBuffer, JITStubRoutinePtrTag,
-        "%s", toCString("Access stub for ", *codeBlock, " ", m_stubInfo->codeOrigin, " with return point ", successLabel, ": ", listDump(cases)).data());
+        "%s", toCString("Access stub for ", *codeBlock, " ", m_stubInfo->codeOrigin, "with start: ", m_stubInfo->startLocation, " with return point ", successLabel, ": ", listDump(cases)).data());
 
     stub = createICJITStubRoutine(code, WTFMove(keys), WTFMove(weakStructures), vm(), codeBlock, doesCalls, cellsToMark, WTFMove(m_callLinkInfos), codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
 

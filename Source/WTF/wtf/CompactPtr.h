@@ -39,8 +39,6 @@
 
 namespace WTF {
 
-static_assert(MACH_VM_MAX_ADDRESS_RAW);
-
 #if CPU(ADDRESS64) && CPU(ARM64) && OS(DARWIN) && (MACH_VM_MAX_ADDRESS_RAW < (1ULL << 36))
 #define HAVE_36BIT_ADDRESS 1
 #else
@@ -62,27 +60,31 @@ struct SmallHeapTypeTraits {
     static constexpr uintptr_t alignmentMask = (1ull << bitsShift) - 1;
 #endif
 
-    static ALWAYS_INLINE StorageType encode(const T* ptr)
+    static ALWAYS_INLINE StorageType encode(const T* ptr) { return encode(bitwise_cast<const void*>(ptr)); }
+
+    static ALWAYS_INLINE StorageType encode(const void* ptr)
     {
         uintptr_t intPtr = bitwise_cast<uintptr_t>(ptr);
         static_assert(alignof(T) >= (1ULL << bitsShift));
-        RELEASE_ASSERT(!(intPtr & alignmentMask));
+        ASSERT(!(intPtr & alignmentMask));
         StorageType encoded = static_cast<StorageType>((intPtr >> bitsShift) & additionalMask);
-        RELEASE_ASSERT(!ptr || decode(encoded) == ptr);
+        ASSERT(!ptr || decode(encoded) == ptr);
         return encoded;
     }
 
-    static ALWAYS_INLINE T* decode(StorageType ptr)
+    static ALWAYS_INLINE T* decode(StorageType ptr) { return bitwise_cast<T*>(decodeRaw(ptr)); }
+
+    static ALWAYS_INLINE void* decodeRaw(StorageType ptr)
     {
         static_assert(alignof(T) >= (1ULL << bitsShift));
 #if HAVE(36BIT_ADDRESS)
-        return bitwise_cast<T*>(static_cast<uintptr_t>(ptr) << bitsShift);
+        return bitwise_cast<void*>(static_cast<uintptr_t>(ptr) << bitsShift);
 #else
         uintptr_t intPtr = static_cast<uintptr_t>(ptr);
         if (!intPtr)
             return nullptr;
         intPtr = (intPtr << bitsShift) | AllocatorInfo::baseAddress();
-        return bitwise_cast<T*>(intPtr);
+        return bitwise_cast<void*>(intPtr);
 #endif
     }
 };
@@ -275,7 +277,8 @@ public:
         return a.m_ptr != b.m_ptr;
     }
 
-    StorageType& storage() const { return m_ptr; }
+    const StorageType& storage() const { return m_ptr; }
+    StorageType& storage() { return m_ptr; }
 
 private:
     template <typename X>

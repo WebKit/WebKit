@@ -78,7 +78,7 @@ ALWAYS_INLINE void JIT::emitLoadCharacterString(RegisterID src, RegisterID dst, 
     expandJSStringLength(dst, regT1);
     failures.append(branch32(NotEqual, regT1, TrustedImm32(1)));
     failures.append(branchIfRopeStringImpl(dst));
-    loadJSStringImpl(dst, dst, regT1);
+    loadJSStringImpl(dst, dst);
     loadPtr(MacroAssembler::Address(dst, StringImpl::dataOffset()), regT1);
 
     auto is16Bit = branchTest32(Zero, Address(dst, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit()));

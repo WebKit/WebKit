@@ -30,6 +30,7 @@
 #include "BuiltinNames.h"
 #include "JSCJSValueInlines.h"
 #include "Parser.h"
+#include "SmallStrings.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace JSC {
@@ -47,12 +48,10 @@ SourceCode BuiltinExecutables::defaultConstructorSourceCode(ConstructorKind cons
     case ConstructorKind::Naked:
         break;
     case ConstructorKind::Base: {
-        static NeverDestroyed<const String> baseConstructorCode(StringImpl::baseConstructorString());
-        return makeSource(baseConstructorCode, { });
+        return makeSource({ baseConstructorString() }, { });
     }
     case ConstructorKind::Extends: {
-        static NeverDestroyed<const String> derivedConstructorCode(StringImpl::derivedConstructorString());
-        return makeSource(derivedConstructorCode, { });
+        return makeSource({ derivedConstructorString() }, { });
     }
     }
     RELEASE_ASSERT_NOT_REACHED();

@@ -2831,8 +2831,8 @@ void SpeculativeJIT::compileRegExpTestInline(Node* node)
         loadPtr(Address(argumentGPR, JSString::offsetOfFiberAndLengthAndFlag()), stringImplGPR);
         // If the string is a rope or 16 bit, we call the operation.
         slowCases.append(branchIfRopeStringImpl(stringImplGPR));
-        loadJSStringImpl(stringImplGPR, stringImplGPR, strLengthGPR);
         expandJSStringLength(stringImplGPR, strLengthGPR);
+        loadJSStringImpl(stringImplGPR, stringImplGPR);
         slowCases.append(branchTest32(
             Zero,
             Address(stringImplGPR, StringImpl::flagsOffset()),
@@ -5024,7 +5024,7 @@ void SpeculativeJIT::compile(Node* node)
 
             loadPtr(Address(inputGPR, JSString::offsetOfFiberAndLengthAndFlag()), resultGPR);
             slowPath.append(branchIfRopeStringImpl(resultGPR));
-            loadJSStringImpl(resultGPR, resultGPR, tempGPR);
+            loadJSStringImpl(resultGPR, resultGPR);
             load32(Address(resultGPR, StringImpl::flagsOffset()), resultGPR);
             urshift32(TrustedImm32(StringImpl::s_flagCount), resultGPR);
             slowPath.append(branchTest32(Zero, resultGPR));
@@ -5064,7 +5064,7 @@ void SpeculativeJIT::compile(Node* node)
         straightHash.append(branchIfNotString(inputGPR));
         loadPtr(Address(inputGPR, JSString::offsetOfFiberAndLengthAndFlag()), resultGPR);
         slowPath.append(branchIfRopeStringImpl(resultGPR));
-        loadJSStringImpl(resultGPR, resultGPR, tempGPR);
+        loadJSStringImpl(resultGPR, resultGPR);
         load32(Address(resultGPR, StringImpl::flagsOffset()), resultGPR);
         urshift32(TrustedImm32(StringImpl::s_flagCount), resultGPR);
         slowPath.append(branchTest32(Zero, resultGPR));
@@ -5501,7 +5501,7 @@ void SpeculativeJIT::compile(Node* node)
             speculateString(node->child2(), keyGPR);
             loadPtr(Address(keyGPR, JSString::offsetOfFiberAndLengthAndFlag()), implGPR);
             slowPath.append(branchIfRopeStringImpl(implGPR));
-            loadJSStringImpl(implGPR, implGPR, tempGPR);
+            loadJSStringImpl(implGPR, implGPR);
             slowPath.append(branchTest32(
                 Zero, Address(implGPR, StringImpl::flagsOffset()),
                 TrustedImm32(StringImpl::flagIsAtom())));
@@ -5512,7 +5512,7 @@ void SpeculativeJIT::compile(Node* node)
             auto isNotString = branchIfNotString(keyGPR);
             loadPtr(Address(keyGPR, JSString::offsetOfFiberAndLengthAndFlag()), implGPR);
             slowPath.append(branchIfRopeStringImpl(implGPR));
-            loadJSStringImpl(implGPR, implGPR, tempGPR);
+            loadJSStringImpl(implGPR, implGPR);
             slowPath.append(branchTest32(
                 Zero, Address(implGPR, StringImpl::flagsOffset()),
                 TrustedImm32(StringImpl::flagIsAtom())));
@@ -6360,7 +6360,7 @@ void SpeculativeJIT::compileStringCodePointAt(Node* node)
     speculationCheck(Uncountable, JSValueRegs(), nullptr, branch32(AboveOrEqual, indexGPR, scratch2GPR));
 
     // Load the character into scratch1GPR
-    loadJSStringImpl(scratch1GPR, scratch1GPR, scratch3GPR);
+    loadJSStringImpl(scratch1GPR, scratch1GPR);
     loadPtr(Address(scratch1GPR, StringImpl::dataOffset()), scratch4GPR);
     auto is16Bit = branchTest32(Zero, Address(scratch1GPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit()));
 
@@ -6661,7 +6661,7 @@ void SpeculativeJIT::compileGetByValMegamorphic(Node* node)
 
     loadPtr(Address(subscriptGPR, JSString::offsetOfFiberAndLengthAndFlag()), scratch5GPR);
     slowCases.append(branchIfRopeStringImpl(scratch5GPR));
-    loadJSStringImpl(scratch5GPR, scratch5GPR, scratch1GPR);
+    loadJSStringImpl(scratch5GPR, scratch5GPR);
     slowCases.append(branchTest32(Zero, Address(scratch5GPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIsAtom())));
 
     slowCases.append(loadMegamorphicProperty(vm(), baseGPR, scratch5GPR, nullptr, scratch3GPR, scratch1GPR, scratch2GPR, scratch3GPR, scratch4GPR));

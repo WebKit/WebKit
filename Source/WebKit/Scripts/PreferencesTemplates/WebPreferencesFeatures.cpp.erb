@@ -37,6 +37,7 @@ namespace WebKit {
 
 const Vector<RefPtr<API::Object>>& WebPreferences::features()
 {
+    WTF::initialize(); // We use WTF strings
     static NeverDestroyed<Vector<RefPtr<API::Object>>> features(std::initializer_list<RefPtr<API::Object>> {
 <% for @pref in @exposedFeatures do -%>
 <%- if @pref.condition -%>

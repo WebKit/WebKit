@@ -945,20 +945,24 @@ bool protocolIsInHTTPFamily(StringView url)
 
 const URL& aboutBlankURL()
 {
+    static LazyNeverDestroyed<StringImpl*> aboutBlankString;
     static LazyNeverDestroyed<URL> staticBlankURL;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&] {
-        staticBlankURL.construct(StringImpl::aboutBlankString());
+        aboutBlankString.construct(&StringImpl::createStaticStringImplWithoutCopying("about:blank", sizeof("about:blank") / sizeof(char) - 1).leakRef());
+        staticBlankURL.construct(aboutBlankString.get());
     });
     return staticBlankURL;
 }
 
 const URL& aboutSrcDocURL()
 {
+    static LazyNeverDestroyed<StringImpl*> aboutSrcDocString;
     static LazyNeverDestroyed<URL> staticSrcDocURL;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&] {
-        staticSrcDocURL.construct(StringImpl::aboutSrcDocString());
+        aboutSrcDocString.construct(&StringImpl::createStaticStringImplWithoutCopying("about:srcdoc", sizeof("about:srcdoc") / sizeof(char) - 1).leakRef());
+        staticSrcDocURL.construct(aboutSrcDocString.get());
     });
     return staticSrcDocURL;
 }

@@ -89,6 +89,8 @@ JSString* asString(JSValue);
 //                                            x:(is8Bit),y:(isSubstring),z:(isRope) bit flags
 
 class alignas(16) JSString : public JSCell {
+    WTF_MAKE_NONCOPYABLE(JSString);
+    WTF_MAKE_NONMOVABLE(JSString);
 public:
     friend class JIT;
     friend class VM;
@@ -107,7 +109,7 @@ public:
 
     static constexpr uint8_t numberOfLowerTierCells = 0;
 
-#if HAVE(36BIT_ADDRESS) or !USE(JSVALUE64)
+#if HAVE(36BIT_ADDRESS) or !USE(JSVALUE64) or !GIGACAGE_ENABLED
     using CompactPtrTypeTraits = WTF::BigHeapTypeTraits<JSString>;
 #else
     // If you change this, change loadCompactPtrJSString() in LLInt.
@@ -135,7 +137,7 @@ public:
     static constexpr unsigned MaxLength = std::numeric_limits<int32_t>::max();
     static_assert(MaxLength == String::MaxLength);
 
-#if USE(JSVALUE64)
+#if CPU(ADDRESS64)
     static constexpr uintptr_t isRopeInPointer = (1ul << 31);
     static_assert(isRopeInPointer > MaxLength);
 #else
@@ -233,7 +235,7 @@ public:
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-#if USE(JSVALUE64)
+#if CPU(ADDRESS64)
     static ptrdiff_t offsetOfFiberAndLengthAndFlag() { return OBJECT_OFFSETOF(JSString, m_fiberAndLength); }
     static constexpr uint64_t fiberAndLengthAndFlagLengthMask = (~isRopeInPointer) & ((1ul << 32) - 1);
 #else
@@ -261,7 +263,7 @@ protected:
     JS_EXPORT_PRIVATE bool equalSlowCase(JSGlobalObject*, JSString* other) const;
     bool isSubstring() const;
 
-#if USE(JSVALUE64)
+#if CPU(ADDRESS64)
     // Note: note atomic on 32-bit.
     struct AtomicFiberData {
         uint32_t lengthAndFlag = 0;
@@ -376,6 +378,8 @@ private:
 // from JSStringSubspace::
 class JSRopeString final : public JSString {
     friend class JSString;
+    WTF_MAKE_NONCOPYABLE(JSRopeString);
+    WTF_MAKE_NONMOVABLE(JSRopeString);
 public:
     template<typename, SubspaceAccess>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
@@ -383,7 +387,7 @@ public:
         return &vm.ropeStringSpace();
     }
 
-#if HAVE(36BIT_ADDRESS) or !USE(JSVALUE64)
+#if HAVE(36BIT_ADDRESS) or !USE(JSVALUE64) or !GIGACAGE_ENABLED
     using CompactPtrTypeTraits = WTF::BigHeapTypeTraits<JSRopeString>;
 #else
     using CompactPtrTypeTraits = WTF::SmallHeapTypeTraits<JSRopeString, Gigacage::SmallHeapAllocatorInfo>;

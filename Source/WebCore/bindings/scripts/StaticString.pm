@@ -42,11 +42,12 @@ sub GenerateStrings($)
 END
 
     for my $name (sort keys %strings) {
-        my $value = $strings{$name};
-        push(@result, "DECLARE_STATIC_STRING_IMPL(${name}Data, \"${value}\")\n");
+        push(@result, "static LazyNeverDestroyed<StringImpl*> s_${name}Data;\n");
     }
 
     push(@result, <<END);
+
+#undef DECLARE_STATIC_STRING_IMPL
 
 #if COMPILER(MSVC)
 #pragma warning(pop)
@@ -65,9 +66,10 @@ sub GenerateStringAsserts($)
     my @result = ();
 
     for my $name (sort keys %strings) {
-        push(@result, "    initialize_${name}Data();\n");
+        my $value = $strings{$name};
+        push(@result, "    s_${name}Data.construct(&StringImpl::createStaticStringImplWithoutCopying(\"${value}\", sizeof(\"${value}\") / sizeof(char) - 1 /* skip null byte */).leakRef());\n");
         push(@result, "#ifndef NDEBUG\n");
-        push(@result, "    ${name}Data()->assertHashIsCorrect();\n");
+        push(@result, "    s_${name}Data.get()->assertHashIsCorrect();\n");
         push(@result, "#endif // NDEBUG\n");
     }
 

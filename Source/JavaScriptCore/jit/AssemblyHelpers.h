@@ -1194,11 +1194,11 @@ public:
         and64(TrustedImm32(JSString::fiberAndLengthAndFlagLengthMask), dest);
     }
 
-    void loadJSStringImpl(GPRReg fiberAndLengthAndFlag, GPRReg dest, GPRReg scratch)
+    void loadJSStringImpl(GPRReg fiberAndLengthAndFlag, GPRReg dest)
     {
         move(fiberAndLengthAndFlag, dest);
         rshift64(MacroAssembler::TrustedImm32(32), dest);
-        expandCompactPtr<StringImpl>(dest, scratch);
+        expandCompactPtr<StringImpl>(dest);
     }
 #endif
 
@@ -1978,19 +1978,16 @@ public:
     }
 
     template<typename T>
-    void loadCompactPtr(Address address, GPRReg dest, GPRReg scratch = InvalidGPRReg)
+    void loadCompactPtr(Address address, GPRReg dest)
     {
 #if HAVE(36BIT_ADDRESS)
-        UNUSED_PARAM(scratch);
         load32(address, dest);
         lshift64(TrustedImm32(4), dest);
 #else 
 #if USE(JSVALUE64)
     if constexpr (sizeof(typename T::CompactPtrTypeTraits::StorageType) <= 4) {
-        ASSERT(scratch);
-        ASSERT(scratch != dest);
         load32(address, dest);
-        expandCompactPtr<T>(dest, scratch);
+        expandCompactPtr<T>(dest);
     } else
 #endif // USE(JSVALUE64)
         loadPtr(address, dest);
@@ -1998,21 +1995,17 @@ public:
     }
 
     template<typename T>
-    void expandCompactPtr(GPRReg srcDst, GPRReg scratch)
+    void expandCompactPtr(GPRReg srcDst)
     {
 #if HAVE(36BIT_ADDRESS)
-        UNUSED_PARAM(scratch);
         lshift64(TrustedImm32(4), srcDst);
 #else
 #if USE(JSVALUE64)
         if constexpr (sizeof(typename T::CompactPtrTypeTraits::StorageType) <= 4) {
-            ASSERT(srcDst != scratch);
-            move(TrustedImmPtr(T::AllocatorInfo::baseAddress()), scratch);
             lshift64(TrustedImm32(4), srcDst);
-            addPtr(scratch, srcDst);
+            orPtr(TrustedImmPtr(T::AllocatorInfo::baseAddress()), srcDst);
         } else
 #endif // USE(JSVALUE64)
-        UNUSED_PARAM(scratch);
         UNUSED_PARAM(srcDst);
 #endif
     }
@@ -2044,6 +2037,8 @@ public:
             else
                 and32(TrustedImm32(0xFFFFFFFF), scratch);
             move(scratch, dest);
+            if (scratch != dest)
+                move(TrustedImm32(0xBEEF), scratch);
         } else
 #endif // USE(JSVALUE64)
             move(src, dest);
@@ -2056,6 +2051,7 @@ public:
         if constexpr (sizeof(typename T::CompactPtrTypeTraits::StorageType) <= 4) {
             compressCompactPtr<T>(src, scratch, scratch);
             store32(scratch, address);
+            move(TrustedImm32(0xBEEF), scratch);
         } else
             storePtr(src, address);
     }

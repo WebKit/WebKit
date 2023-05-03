@@ -741,7 +741,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> stringGetByValGenerator(VM& vm)
     // Do an unsigned compare to simultaneously filter negative indices as well as indices that are too large
     failures.append(jit.branch32(JSInterfaceJIT::AboveOrEqual, indexGPR, scratchGPR));
     failures.append(jit.branchIfRopeStringImpl(stringGPR));
-    jit.loadJSStringImpl(stringGPR, stringGPR, scratchGPR);
+    jit.loadJSStringImpl(stringGPR, stringGPR);
 
     // Load the character
     JSInterfaceJIT::JumpList cont8Bit;
@@ -785,7 +785,7 @@ static void stringCharLoad(SpecializedThunkJIT& jit)
     jit.appendFailure(jit.branch32(MacroAssembler::AboveOrEqual, SpecializedThunkJIT::regT1, SpecializedThunkJIT::regT2));
 
     // Expand the StringImpl*
-    jit.loadJSStringImpl(SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT2);
+    jit.loadJSStringImpl(SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT0);
 
     // Load the character
     SpecializedThunkJIT::JumpList is16Bit;
@@ -853,7 +853,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> stringPrototypeCodePointAtThunkGenerator(V
     // Do an unsigned compare to simultaneously filter negative indices as well as indices that are too large
     jit.appendFailure(jit.branch32(CCallHelpers::AboveOrEqual, GPRInfo::regT1, GPRInfo::regT3));
     jit.appendFailure(jit.branchIfRopeStringImpl(GPRInfo::regT0));
-    jit.loadJSStringImpl(GPRInfo::regT0, GPRInfo::regT0, GPRInfo::regT2);
+    jit.loadJSStringImpl(GPRInfo::regT0, GPRInfo::regT0);
 
     // Load the character
     CCallHelpers::JumpList done;

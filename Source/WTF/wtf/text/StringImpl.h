@@ -33,6 +33,7 @@
 #include <wtf/IsoMalloc.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Nonmovable.h>
 #include <wtf/Packed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -144,44 +145,15 @@ struct StringStats {
 
 #endif
 
-// TODO move to separate file.
-#define FOREACH_STATIC_STRING_IMPL(macro) \
-    macro(aboutBlankString, "about:blank") \
-    macro(aboutSrcDocString, "about:srcdoc") \
-    macro(baseConstructorString, "(function () { })") \
-    macro(derivedConstructorString, "(function (...args) { super(...args); })") \
-    macro(terminationErrorString, "JavaScript execution terminated.") \
-    macro(maskedURLStringForBindings, "webkit-masked-url://hidden/")
-
-#define DECLARE_STATIC_STRING_IMPL(name, characters) \
-    WTF_EXPORT_PRIVATE static LazyNeverDestroyed<StringImpl*> s_##name; \
-    ALWAYS_INLINE static StringImpl* name() \
-    { \
-        return s_##name.get(); \
-    } \
-    ALWAYS_INLINE static void initialize_##name() \
-    { \
-        s_##name.construct(&StringImpl::createStaticStringImpl(characters, sizeof(characters) / sizeof(characters[0])).leakRef()); \
-    }
-
-#define DEFINE_STATIC_STRING_IMPL(name, _) \
-    LazyNeverDestroyed<StringImpl*> StringImpl::s_##name;
-
-#define INITIALIZE_STATIC_STRING_IMPL(name, _) \
-    StringImpl::initialize_##name();
-
 class STRING_IMPL_ALIGNMENT StringImplShape {
     WTF_MAKE_NONCOPYABLE(StringImplShape);
+    WTF_MAKE_NONMOVABLE(StringImplShape);
 public:
     static constexpr unsigned MaxLength = std::numeric_limits<int32_t>::max();
 
 protected:
     StringImplShape(unsigned refCount, unsigned length, const LChar*, unsigned hashAndFlags);
     StringImplShape(unsigned refCount, unsigned length, const UChar*, unsigned hashAndFlags);
-
-    enum ConstructWithConstExprTag { ConstructWithConstExpr };
-    template<unsigned characterCount> constexpr StringImplShape(unsigned refCount, unsigned length, const char (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag);
-    template<unsigned characterCount> constexpr StringImplShape(unsigned refCount, unsigned length, const char16_t (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag);
 
     unsigned m_refCount;
     unsigned m_length;
@@ -205,6 +177,7 @@ protected:
 DECLARE_SMALLHEAP_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringImpl);
 class StringImpl : private StringImplShape {
     WTF_MAKE_NONCOPYABLE(StringImpl);
+    WTF_MAKE_NONMOVABLE(StringImpl);
     WTF_MAKE_STRUCT_SMALLHEAP_ALLOCATED_WITH_HEAP_IDENTIFIER(StringImpl);
 
     friend class AtomStringImpl;
@@ -228,7 +201,7 @@ class StringImpl : private StringImplShape {
 
 public:
     static constexpr uint8_t numberOfLowerTierCells = 0;
-#if HAVE(36BIT_ADDRESS) or !USE(JSVALUE64)
+#if HAVE(36BIT_ADDRESS) or !USE(JSVALUE64) or !GIGACAGE_ENABLED
     using CompactPtrTypeTraits = WTF::BigHeapTypeTraits<StringImpl>;
 #else
     using AllocatorInfo = Gigacage::SmallHeapAllocatorInfo;
@@ -275,6 +248,9 @@ private:
     StringImpl(const UChar*, unsigned length, ConstructWithoutCopyingTag);
     StringImpl(const LChar*, unsigned length, ConstructWithoutCopyingTag);
 
+    enum ConstructEmptyTag { ConstructEmpty };
+    StringImpl(ConstructEmptyTag);
+
     // Used to create new strings that are a substring of an existing StringImpl (BufferSubstring).
     StringImpl(const LChar*, unsigned length, Ref<StringImpl>&&);
     StringImpl(const UChar*, unsigned length, Ref<StringImpl>&&);
@@ -311,7 +287,12 @@ public:
         ASSERT(charactersAreAllASCII(bitwise_cast<const LChar*>(characters), length));
         return createStaticStringImpl(bitwise_cast<const LChar*>(characters), length);
     }
-    WTF_EXPORT_PRIVATE static Ref<StringImpl> createStaticStringImplInternal(const LChar*, unsigned length);
+    static Ref<StringImpl> createStaticStringImplWithoutCopying(const char* characters, unsigned length)
+    {
+        ASSERT(charactersAreAllASCII(bitwise_cast<const LChar*>(characters), length));
+        return createStaticStringImplWithoutCopying(bitwise_cast<const LChar*>(characters), length);
+    }
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> createStaticStringImplWithoutCopying(const LChar*, unsigned length);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createStaticStringImpl(const LChar*, unsigned length);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createStaticStringImpl(const UChar*, unsigned length);
 
@@ -401,17 +382,15 @@ public:
     void ref();
     void deref();
 
-    FOREACH_STATIC_STRING_IMPL(DECLARE_STATIC_STRING_IMPL)
-
-    WTF_EXPORT_PRIVATE static LazyNeverDestroyed<StringImpl*> s_empty;
+    WTF_EXPORT_PRIVATE static LazyNeverDestroyed<Ref<StringImpl>> s_empty;
     ALWAYS_INLINE static StringImpl* empty()
     {
-        return s_empty.get();
+        return &s_empty.get().get();
     }
 
-    ALWAYS_INLINE static void initialize_empty()
+    ALWAYS_INLINE static void initializeEmptyString()
     {
-        s_empty.construct(&StringImpl::createStaticStringImplInternal(bitwise_cast<const LChar*>(""), 0).leakRef());
+        s_empty.construct(adoptRef(*new StringImpl(ConstructEmpty)));
     }
 
     // FIXME: Do these functions really belong in StringImpl?
@@ -636,7 +615,7 @@ template<> struct DefaultHash<PackedPtr<StringImpl>>;
 template<> struct DefaultHash<CompactPtr<StringImpl>>;
 
 #define MAKE_STATIC_STRING_IMPL(characters) ([] { \
-        return &StringImpl::createStaticStringImpl(characters, sizeof(characters) / sizeof(characters[0])).get(); \
+        return &StringImpl::createStaticStringImplWithoutCopying(characters, sizeof(characters) / sizeof(char) - 1).get(); \
     }())
 
 template<> ALWAYS_INLINE Ref<StringImpl> StringImpl::constructInternal<LChar>(StringImpl& string, unsigned length)
@@ -814,22 +793,6 @@ inline StringImplShape::StringImplShape(unsigned refCount, unsigned length, cons
 {
 }
 
-template<unsigned characterCount> constexpr StringImplShape::StringImplShape(unsigned refCount, unsigned length, const char (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag)
-    : m_refCount(refCount)
-    , m_length(length)
-    , m_data8Char(characters)
-    , m_hashAndFlags(hashAndFlags)
-{
-}
-
-template<unsigned characterCount> constexpr StringImplShape::StringImplShape(unsigned refCount, unsigned length, const char16_t (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag)
-    : m_refCount(refCount)
-    , m_length(length)
-    , m_data16Char(characters)
-    , m_hashAndFlags(hashAndFlags)
-{
-}
-
 inline Ref<StringImpl> StringImpl::isolatedCopy() const
 {
     if (!requiresCopy()) {
@@ -929,6 +892,14 @@ inline StringImpl::StringImpl(const LChar* characters, unsigned length, Construc
     ASSERT(m_length);
 
     STRING_STATS_ADD_8BIT_STRING(m_length);
+}
+
+inline StringImpl::StringImpl(ConstructEmptyTag)
+    : StringImplShape(s_refCountFlagIsStaticString, 0, bitwise_cast<const LChar*>(""), s_hashFlag8BitBuffer | StringAtom | s_hashFlagDidReportCost | (StringHasher::computeLiteralHashAndMaskTop8Bits("") << s_flagCount))
+{
+    ASSERT(m_data8);
+    ASSERT(!s_empty.isConstructed());
+    assertHashIsCorrect();
 }
 
 template<typename Malloc>

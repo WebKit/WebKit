@@ -267,8 +267,11 @@ Ref<StringImpl> StringImpl::create(const LChar* characters, unsigned length)
     return createInternal(characters, length);
 }
 
-Ref<StringImpl> StringImpl::createStaticStringImplInternal(const LChar* characters, unsigned length)
+Ref<StringImpl> StringImpl::createStaticStringImplWithoutCopying(const LChar* characters, unsigned length)
 {
+    ASSERT(length);
+    if (!length)
+        return *empty();
     Ref<StringImpl> result = adoptRef(*new StringImpl(characters, length, ConstructWithoutCopying));
     result->hash();
     result->m_refCount |= s_refCountFlagIsStaticString;
@@ -279,7 +282,10 @@ Ref<StringImpl> StringImpl::createStaticStringImpl(const LChar* characters, unsi
 {
     if (!length)
         return *empty();
-    return createStaticStringImplInternal(characters, length);
+    Ref<StringImpl> result = createInternal(characters, length);
+    result->hash();
+    result->m_refCount |= s_refCountFlagIsStaticString;
+    return result;
 }
 
 Ref<StringImpl> StringImpl::createStaticStringImpl(const UChar* characters, unsigned length)
@@ -1661,7 +1667,6 @@ bool equalIgnoringNullity(const UChar* a, size_t aLength, StringImpl* b)
     return equal(a, b->characters16(), b->length());
 }
 
-FOREACH_STATIC_STRING_IMPL(DEFINE_STATIC_STRING_IMPL)
-DEFINE_STATIC_STRING_IMPL(empty, "")
+LazyNeverDestroyed<Ref<StringImpl>> StringImpl::s_empty;
 
 } // namespace WTF

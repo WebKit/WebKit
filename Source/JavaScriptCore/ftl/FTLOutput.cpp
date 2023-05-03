@@ -38,6 +38,7 @@
 #include "B3StackmapGenerationParams.h"
 #include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
+#include "ProbeContext.h"
 #include "SuperSampler.h"
 
 namespace JSC { namespace FTL {
@@ -84,6 +85,20 @@ LBasicBlock Output::appendTo(LBasicBlock block, LBasicBlock nextBlock)
 void Output::appendTo(LBasicBlock block)
 {
     m_block = block;
+}
+
+void Output::probeDebugPrint(const String& str, LValue value)
+{
+    PatchpointValue* result = patchpoint(Void);
+    result->append(value, ValueRep::SomeRegister);
+    result->setGenerator(
+        [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            auto reg = params.at(0).gpr();
+            jit.probeDebug([=](Probe::Context& ctx) {
+                dataLogLn(str, " value: ", ctx.gpr<uint64_t>(reg));
+            });
+        });
+    result->effects = Effects::forCall();
 }
 
 LValue Output::framePointer()

@@ -47,6 +47,7 @@ const String& emptyString() { return s_emptyString.get(); }
 
 void String::initializeStrings()
 {
+    StringImpl::initializeEmptyString();
     s_emptyString.construct(StringImpl::empty());
     s_nullString.construct(static_cast<StringImpl*>(nullptr));
 }

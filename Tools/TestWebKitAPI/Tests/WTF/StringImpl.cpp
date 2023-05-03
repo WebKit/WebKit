@@ -734,23 +734,6 @@ TEST(WTF, DynamicStaticStringImpl)
     doStaticStringImplTests(StaticStringImplTestSet::DynamicallyAllocatedImpl, hello, world, longer, hello2);
 }
 
-static SymbolImpl::StaticSymbolImpl staticSymbol {"Cocoa"};
-static SymbolImpl::StaticSymbolImpl staticPrivateSymbol {"Cocoa", SymbolImpl::s_flagIsPrivate };
-
-TEST(WTF, StaticSymbolImpl)
-{
-    auto& symbol = static_cast<SymbolImpl&>(staticSymbol);
-    ASSERT_TRUE(symbol.isSymbol());
-    ASSERT_FALSE(symbol.isPrivate());
-}
-
-TEST(WTF, StaticPrivateSymbolImpl)
-{
-    auto& symbol = static_cast<SymbolImpl&>(staticPrivateSymbol);
-    ASSERT_TRUE(symbol.isSymbol());
-    ASSERT_TRUE(symbol.isPrivate());
-}
-
 TEST(WTF, ExternalStringImplCreate8bit)
 {
     constexpr LChar buffer[] = "hello";

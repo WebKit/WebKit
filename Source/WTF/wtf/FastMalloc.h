@@ -373,35 +373,46 @@ using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 
 #define WTF_MAKE_SMALLHEAP_ALLOCATED_IMPL \
-    void* operator new(size_t, void* p) { return p; } \
-    void* operator new[](size_t, void* p) { return p; } \
+    ALWAYS_INLINE void* operator new(size_t, void* p) { ASSERT(CompactPtrTypeTraits::decodeRaw(CompactPtrTypeTraits::encode(p)) == p); return p; } \
+    ALWAYS_INLINE void* operator new[](size_t, void* p) { ASSERT(CompactPtrTypeTraits::decodeRaw(CompactPtrTypeTraits::encode(p)) == p); return p; } \
     \
-    void* operator new(size_t size) \
+    ALWAYS_INLINE void* operator new(size_t size) \
     { \
-        return ::Gigacage::tryMalloc(::Gigacage::SmallHeap, size); \
+        ASSERT(AllocatorInfo::baseAddress()); \
+        auto* thiz = ::Gigacage::tryMalloc(::Gigacage::SmallHeap, size); \
+        ASSERT(CompactPtrTypeTraits::decodeRaw(CompactPtrTypeTraits::encode(thiz)) == thiz); \
+        return thiz; \
     } \
     \
-    void operator delete(void* p) \
+    ALWAYS_INLINE void operator delete(void* p) \
     { \
+        ASSERT(CompactPtrTypeTraits::decodeRaw(CompactPtrTypeTraits::encode(p)) == p); \
         ::Gigacage::free(::Gigacage::SmallHeap, p); \
     } \
     \
-    void* operator new[](size_t size) \
+    ALWAYS_INLINE void* operator new[](size_t size) \
     { \
-        return ::Gigacage::tryMalloc(::Gigacage::SmallHeap, size); \
+        ASSERT(AllocatorInfo::baseAddress()); \
+        auto* thiz = ::Gigacage::tryMalloc(::Gigacage::SmallHeap, size); \
+        ASSERT(CompactPtrTypeTraits::decodeRaw(CompactPtrTypeTraits::encode(thiz)) == thiz); \
+        return thiz; \
     } \
     \
-    void operator delete[](void* p) \
+    ALWAYS_INLINE void operator delete[](void* p) \
     { \
+        ASSERT(CompactPtrTypeTraits::decodeRaw(CompactPtrTypeTraits::encode(p)) == p); \
         ::Gigacage::free(::Gigacage::SmallHeap, p); \
     } \
-    void* operator new(size_t, NotNullTag, void* location) \
+    ALWAYS_INLINE void* operator new(size_t, NotNullTag, void* location) \
     { \
         ASSERT(location); \
+        ASSERT(AllocatorInfo::baseAddress()); \
+        ASSERT(CompactPtrTypeTraits::decodeRaw(CompactPtrTypeTraits::encode(location)) == location); \
         return location; \
     } \
-    static void freeAfterDestruction(void* p) \
+    ALWAYS_INLINE static void freeAfterDestruction(void* p) \
     { \
+        ASSERT(CompactPtrTypeTraits::decodeRaw(CompactPtrTypeTraits::encode(p)) == p); \
         ::Gigacage::free(::Gigacage::SmallHeap, p); \
     } \
     using webkitFastMalloced = int; \
