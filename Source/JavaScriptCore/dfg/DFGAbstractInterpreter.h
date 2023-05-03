@@ -124,6 +124,11 @@ public:
         makeHeapTopForNode(edge.node());
     }
     
+    bool hasClearedAbstractState(NodeFlowProjection node)
+    {
+        return m_state.hasClearedAbstractState(node);
+    }
+
     bool needsTypeCheck(Node* node, SpeculatedType typesPassedThrough)
     {
         return !forNode(node).isType(typesPassedThrough);

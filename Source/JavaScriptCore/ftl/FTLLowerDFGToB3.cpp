@@ -615,6 +615,10 @@ private:
                 continue;
             if (node->op() == CheckInBoundsInt52)
                 continue;
+            if (node->op() == EnumeratorNextUpdateIndexAndMode) {
+                ASSERT(m_interpreter.hasClearedAbstractState(node));
+                continue;
+            }
 
             AbstractValue value = m_interpreter.forNode(node);
             {
