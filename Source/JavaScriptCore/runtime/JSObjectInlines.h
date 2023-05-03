@@ -222,7 +222,7 @@ inline bool JSObject::noSideEffectMayHaveNonIndexProperty(VM& vm, PropertyName p
         unsigned attributes;
         if (UNLIKELY(isValidOffset(structure.get(vm, propertyName, attributes))))
             return true;
-        if (TypeInfo::hasStaticPropertyTable(inlineTypeFlags) && !structure.staticPropertiesReified()) {
+        if (hasNonReifiedStaticProperties()) {
             for (auto* ancestorClass = object->classInfo(); ancestorClass; ancestorClass = ancestorClass->parentClass) {
                 if (auto* table = ancestorClass->staticPropHashTable; UNLIKELY(table && table->entry(propertyName)))
                     return true;
@@ -827,7 +827,7 @@ inline void JSObject::setPrivateBrand(JSGlobalObject* globalObject, JSValue bran
 template<typename Functor>
 bool JSObject::fastForEachPropertyWithSideEffectFreeFunctor(VM& vm, const Functor& functor)
 {
-    if (!staticPropertiesReified())
+    if (hasNonReifiedStaticProperties())
         return false;
 
     Structure* structure = this->structure();

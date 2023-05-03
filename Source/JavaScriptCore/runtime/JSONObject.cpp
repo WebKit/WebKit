@@ -30,6 +30,7 @@
 #include "ArrayConstructor.h"
 #include "BigIntObject.h"
 #include "BooleanObject.h"
+#include "GetterSetter.h"
 #include "JSArrayInlines.h"
 #include "JSCInlines.h"
 #include "LiteralParser.h"
@@ -520,7 +521,8 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
             if (stringifier.m_usingArrayReplacer) {
                 m_propertyNames = stringifier.m_arrayReplacerPropertyNames.data();
                 m_size = m_propertyNames->propertyNameVector().size();
-            } else if (m_structure && m_object->structureID() == m_structure->id() && m_structure->canPerformFastPropertyEnumeration()) {
+            } else if (m_object->structure() == m_structure && canPerformFastPropertyNameEnumerationForJSONStringifyWithSideEffect(m_structure)) {
+                m_hasFastObjectProperties = m_structure->canPerformFastPropertyEnumeration();
                 m_structure->forEachProperty(vm, [&](const PropertyTableEntry& entry) -> bool {
                     if (entry.attributes() & PropertyAttribute::DontEnum)
                         return true;
@@ -531,7 +533,6 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
                     m_propertiesAndOffsets.constructAndAppend(propertyName, entry.offset());
                     return true;
                 });
-                m_hasFastObjectProperties = true;
                 m_size = m_propertiesAndOffsets.size();
             } else {
                 PropertyNameArray objectPropertyNames(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
@@ -540,6 +541,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
                 m_propertyNames = objectPropertyNames.releaseData();
                 m_size = m_propertyNames->propertyNameVector().size();
             }
+
             builder.append('{');
         }
         stringifier.indent();
@@ -591,9 +593,27 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
                 RETURN_IF_EXCEPTION(scope, false);
             }
         } else {
-            propertyName = m_propertyNames->propertyNameVector()[index];
-            value = m_object->get(globalObject, propertyName);
-            RETURN_IF_EXCEPTION(scope, false);
+            if (m_propertyNames) {
+                propertyName = m_propertyNames->propertyNameVector()[index];
+                value = m_object->get(globalObject, propertyName);
+                RETURN_IF_EXCEPTION(scope, false);
+            } else {
+                propertyName = std::get<0>(m_propertiesAndOffsets[index]);
+                if (m_object->structureID() == m_structure->id()) {
+                    unsigned offset = std::get<1>(m_propertiesAndOffsets[index]);
+                    value = m_object->getDirect(offset);
+                    if (value.isGetterSetter()) {
+                        value = jsCast<GetterSetter*>(value)->callGetter(globalObject, m_object);
+                        RETURN_IF_EXCEPTION(scope, false);
+                    } else if (value.isCustomGetterSetter()) {
+                        value = m_object->get(globalObject, propertyName);
+                        RETURN_IF_EXCEPTION(scope, false);
+                    }
+                } else {
+                    value = m_object->get(globalObject, propertyName);
+                    RETURN_IF_EXCEPTION(scope, false);
+                }
+            }
         }
 
         rollBackPoint = builder.length();

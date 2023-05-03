@@ -2204,7 +2204,7 @@ bool JSObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Proper
 
     unsigned attributes;
 
-    if (!thisObject->staticPropertiesReified()) {
+    if (thisObject->hasNonReifiedStaticProperties()) {
         if (auto entry = thisObject->findPropertyHashEntry(propertyName)) {
             // If the static table contains a non-configurable (DontDelete) property then we can return early;
             // if there is a property in the storage array it too must be non-configurable (the language does

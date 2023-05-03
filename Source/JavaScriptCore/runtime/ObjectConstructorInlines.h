@@ -29,6 +29,22 @@
 
 namespace JSC {
 
+ALWAYS_INLINE bool canPerformFastPropertyNameEnumerationForJSONStringifyWithSideEffect(Structure* structure)
+{
+    // We do not check GetterSetter, CustomGetterSetter. GetterSetter and CustomGetterSetter will be invoked, and we fall back to the a bit more generic mode when we detect structure transition.
+    if (structure->typeInfo().overridesGetOwnPropertySlot())
+        return false;
+    if (structure->typeInfo().overridesAnyFormOfGetOwnPropertyNames())
+        return false;
+    if (hasIndexedProperties(structure->indexingType()))
+        return false;
+    if (structure->isUncacheableDictionary())
+        return false;
+    if (structure->hasNonReifiedStaticProperties())
+        return false;
+    return true;
+}
+
 ALWAYS_INLINE bool objectAssignFast(VM& vm, JSObject* target, JSObject* source, Vector<RefPtr<UniquedStringImpl>, 8>& properties, MarkedArgumentBuffer& values)
 {
     // |source| Structure does not have any getters. And target can perform fast put.
