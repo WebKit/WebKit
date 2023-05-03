@@ -38,42 +38,62 @@ function checkGreenPixel(value, cptr)
         return value == 255;
 }
 
-promise_test((test) => {
+promise_test(async test => {
     var stream = canvas1.captureStream();
     video1.srcObject = stream;
 
-    if (!window.internals)
-        var promise = Promise.resolve();
-    else {
-        internals.observeMediaStreamTrack(stream.getVideoTracks()[0]);
-        var promise = internals.grabNextMediaStreamTrackFrame().then((data) => {
-            data.data.forEach((value, cptr) => {
-                assert_true(checkGreenPixel(value, cptr), "expecting value " + cptr + " to be part of a green pixel");
-            });
-        })
-    }
+    const promise = new Promise((resolve, reject) => {
+        const identifier = video1.requestVideoFrameCallback((now, metadata) => {
+            resolve(new VideoFrame(video1));
+        });
+        setTimeout(() => {
+            reject("no rvfc for " + identifier);
+            video1.cancelVideoFrameCallback(identifier);
+        }, 5000);
+
+    });
 
     modifyCanvas(gl1, true);
-    return promise;
+
+    const frame = await promise;
+    test.add_cleanup(() => { frame.close(); });
+
+    const data = new Uint8Array(frame.allocationSize());
+    const layout = await frame.copyTo(data);
+
+    assert_equals(frame.format, "BGRA");
+    data.forEach((value, cptr) => {
+        assert_true(checkGreenPixel(value, cptr), "expecting value " + cptr + " to be part of a green pixel");
+    });
 }, "captureStream with 3d context drawing - not buffered initially");
 
-promise_test((test) => {
+promise_test(async test => {
     var stream = canvas2.captureStream();
     video2.srcObject = stream;
 
-    if (!window.internals)
-        var promise = Promise.resolve();
-    else {
-        internals.observeMediaStreamTrack(stream.getVideoTracks()[0]);
-        var promise = internals.grabNextMediaStreamTrackFrame().then((data) => {
-            data.data.forEach((value, cptr) => {
-                assert_true(checkGreenPixel(value, cptr), "expecting value " + cptr + " to be part of a green pixel");
-            });
-        })
-    }
+    const promise = new Promise((resolve, reject) => {
+        const identifier = video2.requestVideoFrameCallback((now, metadata) => {
+            resolve(new VideoFrame(video2));
+        });
+        setTimeout(() => {
+            reject("no rvfc for " + identifier);
+            video2.cancelVideoFrameCallback(identifier);
+        }, 5000);
+
+    });
 
     modifyCanvas(gl2, true);
-    return promise;
+
+    const frame = await promise;
+    test.add_cleanup(() => { frame.close(); });
+
+    const data = new Uint8Array(frame.allocationSize());
+    const layout = await frame.copyTo(data);
+
+    assert_equals(frame.format, "BGRA");
+    data.forEach((value, cptr) => {
+        assert_true(checkGreenPixel(value, cptr), "expecting value " + cptr + " to be part of a green pixel");
+    });
 }, "captureStream with 3d context drawing - buffered initially");
 
         </script>

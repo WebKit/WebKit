@@ -92,17 +92,6 @@ void VideoFrame::paintInContext(GraphicsContext&, const FloatRect&, const ImageO
 }
 #endif // !PLATFORM(COCOA)
 
-#if !PLATFORM(COCOA)
-RefPtr<JSC::Uint8ClampedArray> VideoFrame::getRGBAImageData() const
-{
-#if USE(GSTREAMER)
-    if (isGStreamer())
-        return static_cast<const VideoFrameGStreamer*>(this)->computeRGBAImageData();
-#endif
-    // FIXME: Add support.
-    return nullptr;
-}
-#endif
 }
 
 #endif // ENABLE(VIDEO)

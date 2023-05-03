@@ -5819,11 +5819,6 @@ void Internals::observeMediaStreamTrack(MediaStreamTrack& track)
     }
 }
 
-void Internals::grabNextMediaStreamTrackFrame(TrackFramePromise&& promise)
-{
-    m_nextTrackFramePromise = makeUnique<TrackFramePromise>(WTFMove(promise));
-}
-
 void Internals::mediaStreamTrackVideoFrameRotation(DOMPromiseDeferred<IDLShort>&& promise)
 {
     promise.resolve(m_trackVideoRotation);
@@ -5836,23 +5831,6 @@ void Internals::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetada
             return;
         m_trackVideoSampleCount++;
         m_trackVideoRotation = static_cast<int>(videoFrame->rotation());
-        if (!m_nextTrackFramePromise)
-            return;
-
-        auto& videoSettings = m_trackSource->settings();
-        if (!videoSettings.width() || !videoSettings.height())
-            return;
-
-        auto rgba = videoFrame->getRGBAImageData();
-        if (!rgba)
-            return;
-
-        auto imageData = ImageData::create(rgba.releaseNonNull(), videoSettings.width(), videoSettings.height(), { { PredefinedColorSpace::SRGB } });
-        if (!imageData.hasException())
-            m_nextTrackFramePromise->resolve(imageData.releaseReturnValue());
-        else
-            m_nextTrackFramePromise->reject(imageData.exception().code());
-        m_nextTrackFramePromise = nullptr;
     });
 }
 

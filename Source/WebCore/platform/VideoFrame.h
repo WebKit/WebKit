@@ -85,7 +85,6 @@ public:
 #if PLATFORM(COCOA) && USE(AVFOUNDATION)
     WEBCORE_EXPORT RefPtr<VideoFrameCV> asVideoFrameCV();
 #endif
-    WEBCORE_EXPORT RefPtr<JSC::Uint8ClampedArray> getRGBAImageData() const;
 
     using CopyCallback = CompletionHandler<void(std::optional<Vector<PlaneLayout>>&&)>;
     void copyTo(Span<uint8_t>, VideoPixelFormat, Vector<ComputedPlaneLayout>&&, CopyCallback&&);
