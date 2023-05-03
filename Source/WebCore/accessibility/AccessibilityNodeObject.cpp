@@ -59,6 +59,7 @@
 #include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSelectElement.h"
+#include "HTMLSlotElement.h"
 #include "HTMLSummaryElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
@@ -2381,21 +2382,19 @@ SRGBA<uint8_t> AccessibilityNodeObject::colorValue() const
 static String accessibleNameForNode(Node* node, Node* labelledbyNode)
 {
     ASSERT(node);
-    if (!is<Element>(node))
-        return String();
-    
-    Element& element = downcast<Element>(*node);
-    const AtomString& ariaLabel = element.attributeWithoutSynchronization(aria_labelAttr);
+
+    auto* element = dynamicDowncast<Element>(node);
+    const AtomString& ariaLabel = element ? element->attributeWithoutSynchronization(aria_labelAttr) : nullAtom();
     if (!ariaLabel.isEmpty())
         return ariaLabel;
     
-    const AtomString& alt = element.attributeWithoutSynchronization(altAttr);
+    const AtomString& alt = element ? element->attributeWithoutSynchronization(altAttr) : nullAtom();
     if (!alt.isEmpty())
         return alt;
 
     // If the node can be turned into an AX object, we can use standard name computation rules.
     // If however, the node cannot (because there's no renderer e.g.) fallback to using the basic text underneath.
-    auto axObject = element.document().axObjectCache()->getOrCreate(&element);
+    auto* axObject = node->document().axObjectCache()->getOrCreate(node);
     if (axObject) {
         String valueDescription = axObject->valueDescription();
         if (!valueDescription.isEmpty())
@@ -2444,14 +2443,26 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
         if (axObject->accessibleNameDerivesFromContent())
             text = axObject->textUnderElement(AccessibilityTextUnderElementMode(AccessibilityTextUnderElementMode::TextUnderElementModeIncludeNameFromContentsChildren, true, labelledbyNode));
     } else
-        text = element.innerText().simplifyWhiteSpace();
+        text = (element ? element->innerText() : node->textContent()).simplifyWhiteSpace();
 
     if (!text.isEmpty())
         return text;
     
-    const AtomString& title = element.attributeWithoutSynchronization(titleAttr);
+    const AtomString& title = element ? element->attributeWithoutSynchronization(titleAttr) : nullAtom();
     if (!title.isEmpty())
         return title;
+
+    auto* slotElement = dynamicDowncast<HTMLSlotElement>(node);
+    // Compute the accessible name for a slot's contents only if it's being used to label another node.
+    if (auto* assignedNodes = (slotElement && labelledbyNode) ? slotElement->assignedNodes() : nullptr) {
+        StringBuilder builder;
+        for (const auto& assignedNode : *assignedNodes)
+            appendNameToStringBuilder(builder, accessibleNameForNode(assignedNode.get()));
+
+        auto assignedNodesText = builder.toString();
+        if (!assignedNodesText.isEmpty())
+            return assignedNodesText;
+    }
     
     return String();
 }
