@@ -36,6 +36,7 @@ div#attachment-container {
     height: 80px;
     background-color: -apple-system-tertiary-fill;
 #endif
+    margin: 1px;
     border-radius: 8px;
     font: caption;
     pointer-events: none;
