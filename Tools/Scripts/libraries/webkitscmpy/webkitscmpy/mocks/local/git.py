@@ -505,6 +505,16 @@ nothing to commit, working tree clean
                         stdout='\n'.join(['{}={}'.format(key, value) for key, value in Git.config().items()])
                     ),
             ), mocks.Subprocess.Route(
+                self.executable, 'config', '--add', re.compile(r'.+'), re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs:
+                    self.edit_config(args[3], args[4]),
+            ), mocks.Subprocess.Route(
+                self.executable, 'config', '--unset', re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs:
+                    self.edit_config(args[3], value=None),
+            ), mocks.Subprocess.Route(
                 self.executable, 'config', re.compile(r'.+'), re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs:
@@ -971,10 +981,11 @@ nothing to commit, working tree clean
                 match = self.RE_MULTI_TOP.match(line)
                 if not match or '{}.{}'.format(match.group('keya'), match.group('keyb')) != key_a:
                     continue
-                configfile.write('\t{}={}\n'.format(key_b, value))
+                if value is not None:
+                    configfile.write('\t{}={}\n'.format(key_b, value))
                 did_print = True
 
-            if not did_print:
+            if not did_print and value is not None:
                 configfile.write('[{}]\n'.format(key_a))
                 configfile.write('\t{}={}\n'.format(key_b, value))
 
@@ -1080,7 +1091,7 @@ nothing to commit, working tree clean
             branch_point=self.head.branch_point or self.head.identifier,
             message='Cherry-pick {}. {}\n    {}\n'.format(
                 env.get('GIT_WEBKIT_CHERRY_PICKED', '') or commit.hash,
-                env.get('GIT_WEBKIT_BUG', '') or '<bug>',
+                env.get('COMMIT_MESSAGE_BUG', '') or '<bug>',
                 '\n    '.join(commit.message.splitlines()),
             ),
         )
