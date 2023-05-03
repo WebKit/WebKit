@@ -204,6 +204,10 @@ private:
     NSInteger m_lastCandidateRequestSequenceNumber;
 #endif
 
+#if ENABLE(TEXT_CARET)
+    bool m_lastSelectionWasPainted { false };
+#endif
+
     enum class EditorStateIsContentEditable { No, Yes, Unset };
     EditorStateIsContentEditable m_lastEditorStateWasContentEditable { EditorStateIsContentEditable::Unset };
 };

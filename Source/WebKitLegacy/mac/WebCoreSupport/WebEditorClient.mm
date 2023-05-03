@@ -368,6 +368,20 @@ void WebEditorClient::respondToChangedSelection(LocalFrame* frame)
     if (frame->editor().canEdit())
         requestCandidatesForSelection(frame->selection().selection());
 #endif
+
+#if ENABLE(TEXT_CARET)
+    if (!frame->editor().ignoreSelectionChanges()) {
+        auto& selection = frame->selection().selection();
+        bool selectionIsPainted = selection.isRange() || (selection.isCaret() && selection.hasEditableStyle());
+
+        if (m_lastSelectionWasPainted || selectionIsPainted) {
+            if (auto* page = frame->page())
+                page->scheduleRenderingUpdate({ RenderingUpdateStep::LayerFlush });
+        }
+
+        m_lastSelectionWasPainted = selectionIsPainted;
+    }
+#endif // ENABLE(TEXT_CARET)
 }
 
 void WebEditorClient::discardedComposition(LocalFrame*)
