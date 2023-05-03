@@ -651,11 +651,6 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
         return false;
 #endif // PLATFORM(MAC)
 #endif // ENABLE(DATA_DETECTION)
-#if ENABLE(APPLE_PAY)
-    // Don't reintroduce rdar://108281584
-    if (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentInstallmentConfigurationClass()]) 
-        return false;
-#endif
 
 #if ENABLE(REVEAL)
     // rdar://107553310 - don't re-introduce rdar://107673064

@@ -42,6 +42,7 @@
 #include "MockPaymentMethod.h"
 #include "Page.h"
 #include "PaymentCoordinator.h"
+#include "PaymentInstallmentConfigurationWebCore.h"
 #include "PaymentSessionError.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/RunLoop.h>
@@ -115,7 +116,8 @@ bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const
     m_requiredBillingContactFields = request.requiredBillingContactFields();
     m_requiredShippingContactFields = request.requiredShippingContactFields();
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
-    m_installmentConfiguration = request.installmentConfiguration().applePayInstallmentConfiguration();
+    if (auto& configuration = request.installmentConfiguration().applePayInstallmentConfiguration())
+        m_installmentConfiguration = *configuration;
 #endif
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     m_supportsCouponCode = request.supportsCouponCode();
@@ -349,6 +351,15 @@ void MockPaymentCoordinator::beginApplePaySetup(const ApplePaySetupConfiguration
 {
     m_setupConfiguration = configuration;
     completionHandler(true);
+}
+
+bool MockPaymentCoordinator::installmentConfigurationReturnsNil() const
+{
+#if HAVE(PASSKIT_INSTALLMENTS)
+    return !PaymentInstallmentConfiguration(nullptr).platformConfiguration();
+#else
+    return true;
+#endif
 }
 
 } // namespace WebCore

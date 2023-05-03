@@ -35,7 +35,7 @@ OBJC_CLASS PKPaymentSetupFeature;
 namespace WebCore {
 
 enum class ApplePaySetupFeatureState : uint8_t;
-enum class ApplePaySetupFeatureType : uint8_t;
+enum class ApplePaySetupFeatureType : bool;
 
 class ApplePaySetupFeature : public RefCounted<ApplePaySetupFeature> {
 public:

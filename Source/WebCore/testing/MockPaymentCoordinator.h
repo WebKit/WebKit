@@ -107,6 +107,8 @@ public:
     const std::optional<ApplePayLaterAvailability> applePayLaterAvailability() const { return m_applePayLaterAvailability; }
 #endif
 
+    bool installmentConfigurationReturnsNil() const;
+
     void ref() const { }
     void deref() const { }
 
