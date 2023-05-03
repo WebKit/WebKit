@@ -33,7 +33,6 @@
 
 #include "JSDOMWrapper.h"
 #include "ScriptWrappable.h"
-#include <JavaScriptCore/WeakInlines.h>
 
 namespace WebCore {
 

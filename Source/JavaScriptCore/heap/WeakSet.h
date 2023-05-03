@@ -115,9 +115,9 @@ inline bool WeakSet::isTriviallyDestructible() const
     return true;
 }
 
-inline void WeakSet::deallocate(WeakImpl* weakImpl)
+ALWAYS_INLINE void WeakSet::deallocate(WeakImpl* weakImpl)
 {
-    weakImpl->setState(WeakImpl::Deallocated);
+    weakImpl->clear();
 }
 
 inline void WeakSet::lastChanceToFinalize()

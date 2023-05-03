@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include <JavaScriptCore/Weak.h>
+#include <JavaScriptCore/WeakInlines.h>
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {

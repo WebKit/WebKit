@@ -584,7 +584,6 @@ heap/SynchronousStopTheWorldMutatorScheduler.cpp
 heap/Synchronousness.cpp
 heap/VerifierSlotVisitor.cpp
 heap/VisitRaceKey.cpp
-heap/Weak.cpp
 heap/WeakBlock.cpp
 heap/WeakHandleOwner.cpp
 heap/WeakSet.cpp
