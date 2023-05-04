@@ -7050,7 +7050,7 @@ public:
     }
 
     template<size_t N>
-    void saveValuesAcrossCallAndPassArguments(const Vector<Value, N>& arguments, const CallInformation& callInfo)
+    void saveValuesAcrossCallAndPassArguments(const Vector<Value, N>& arguments, const CallInformation& callInfo, GPRReg gpScratch, FPRReg fpScratch)
     {
         // First, we resolve all the locations of the passed arguments, before any spillage occurs. For constants,
         // we store their normal values; for all other values, we store pinned values with their current location.
@@ -7098,7 +7098,7 @@ public:
         parameterLocations.reserveInitialCapacity(callInfo.params.size());
         for (const auto& param : callInfo.params)
             parameterLocations.uncheckedAppend(Location::fromArgumentLocation(param));
-        emitShuffle(resolvedArguments, parameterLocations, Location::fromGPR(wasmScratchGPR), Location::fromFPR(wasmScratchFPR));
+        emitShuffle(resolvedArguments, parameterLocations, Location::fromGPR(gpScratch), Location::fromFPR(fpScratch));
     }
 
     void restoreValuesAfterCall(const CallInformation& callInfo)
@@ -7153,7 +7153,7 @@ public:
 
         // Preserve caller-saved registers and other info
         prepareForExceptions();
-        saveValuesAcrossCallAndPassArguments(arguments, callInfo);
+        saveValuesAcrossCallAndPassArguments(arguments, callInfo, wasmScratchGPR, wasmScratchFPR);
 
         // Materialize address of native function and call register
         void* taggedFunctionPtr = tagCFunctionPtr<void*, OperationPtrTag>(function);
@@ -7179,7 +7179,7 @@ public:
 
         // Preserve caller-saved registers and other info
         prepareForExceptions();
-        saveValuesAcrossCallAndPassArguments(arguments, callInfo);
+        saveValuesAcrossCallAndPassArguments(arguments, callInfo, wasmScratchGPR, wasmScratchFPR);
 
         // Materialize address of native function and call register
         void* taggedFunctionPtr = tagCFunctionPtr<void*, OperationPtrTag>(function);
@@ -7243,7 +7243,7 @@ public:
 
         // Preserve caller-saved registers and other info
         prepareForExceptions();
-        saveValuesAcrossCallAndPassArguments(arguments, callInfo);
+        saveValuesAcrossCallAndPassArguments(arguments, callInfo, wasmScratchGPR, wasmScratchFPR);
 
         if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex)) {
             m_jit.move(TrustedImmPtr(Instance::offsetOfImportFunctionStub(functionIndex)), wasmScratchGPR);
@@ -7292,10 +7292,14 @@ public:
         // Since this can switch instance, we need to keep JSWebAssemblyInstance anchored in the stack.
         m_jit.storePtr(jsCalleeAnchor, Location::fromArgumentLocation(wasmCalleeInfo.thisArgument).asAddress());
 
-        // Safe to use across saveValues/passParameters since neither clobber the scratch GPR.
         m_jit.loadPtr(Address(calleeCode), wasmScratchGPR);
         prepareForExceptions();
-        saveValuesAcrossCallAndPassArguments(arguments, wasmCalleeInfo);
+
+        // This is kind of weird! We can't use wasmScratchGPR here, since it stores the address of callee. But we know
+        // that the calleeCode GPR will never be used after this point, and that it can't be bound to any of our
+        // arguments. So we use it as the scratch GPR for passing the arguments instead.
+        saveValuesAcrossCallAndPassArguments(arguments, wasmCalleeInfo, calleeCode, wasmScratchFPR);
+
         m_jit.call(wasmScratchGPR, WasmEntryPtrTag);
         returnValuesFromCall(results, *signature.as<FunctionSignature>(), wasmCalleeInfo);
 
