@@ -3777,31 +3777,11 @@ void LocalFrameView::flushAnyPendingPostLayoutTasks()
         updateEmbeddedObjectsTimerFired();
 }
 
-void LocalFrameView::queuePostLayoutCallback(Function<void()>&& callback)
-{
-    m_postLayoutCallbackQueue.append(WTFMove(callback));
-}
-
-void LocalFrameView::flushPostLayoutTasksQueue()
-{
-    if (layoutContext().isLayoutNested())
-        return;
-
-    if (!m_postLayoutCallbackQueue.size())
-        return;
-
-    Vector<Function<void()>> queue = WTFMove(m_postLayoutCallbackQueue);
-    for (auto& task : queue)
-        task();
-}
-
 void LocalFrameView::performPostLayoutTasks()
 {
     // FIXME: We should not run any JavaScript code in this function.
     LOG(Layout, "LocalFrameView %p performPostLayoutTasks", this);
     updateHasReachedSignificantRenderedTextThreshold();
-
-    flushPostLayoutTasksQueue();
 
     if (!layoutContext().isLayoutNested() && m_frame->document()->documentElement())
         fireLayoutRelatedMilestonesIfNeeded();
