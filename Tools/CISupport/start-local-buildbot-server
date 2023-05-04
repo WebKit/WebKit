@@ -128,20 +128,34 @@ class BuildbotTestRunner(object):
         self._server_http_port, self._server_pb_port = self._get_config_tcp_ports()
 
     def _get_config_tcp_ports(self):
-        pb_port = 17000
-        http_port = 8010
-        try:
-            with open(os.path.join(self._configdir, self._server_config_file_name)) as f:
-                for line in f:
-                    if '=' in line:
-                        if 'protocols' in line and 'pb' in line and 'port' in line:
-                            pb = eval(line.split('=', 1)[1])
-                            pb_port = int((pb['pb']['port']))
-                        if 'www' in line and 'port' in line:
-                            http = eval(line.split('=', 1)[1])
-                            http_port = int((http['port']))
-        except:
-            print("Unable to detect http and pb ports from config. Using defaults")
+
+        def get_numeric_from_port_line(line):
+            port_string = str(line)
+            if 'tcp:' in port_string:
+                port_string = port_string.split('tcp:', 1)[1]
+                if ':' in port_string:
+                    port_string = port_string.split(':', 1)[0]
+            if port_string.isnumeric():
+                return int((port_string))
+            return None
+
+        pb_port = None
+        http_port = None
+        with open(os.path.join(self._configdir, self._server_config_file_name)) as f:
+            for line in f:
+                if '=' in line:
+                    if 'protocols' in line and 'pb' in line and 'port' in line:
+                        pb = eval(line.split('=', 1)[1])
+                        pb_port = get_numeric_from_port_line(pb['pb']['port'])
+                    if 'www' in line and 'port' in line:
+                        http = eval(line.split('=', 1)[1])
+                        http_port = get_numeric_from_port_line(http['port'])
+        if pb_port is None:
+            print("Unable to detect pb port from config. Using default")
+            pb_port = 17000
+        if http_port is None:
+            print("Unable to detect http port from config. Using default")
+            http_port = 8010
         return http_port, pb_port
 
     def start(self, basetempdir=None, no_clean=False, number_workers=1, use_system_version=False):
@@ -263,9 +277,11 @@ class BuildbotTestRunner(object):
                        'buildbot-waterfall-view=={}'.format(buildbot_version),
                        'buildbot-worker=={}'.format(buildbot_version),
                        'buildbot-www=={}'.format(buildbot_version),
-                       'twisted==21.2.0',
+                       'lz4==1.1.0',
+                       'mock==4',
+                       'rapidfuzz==2.11.1',
                        'requests==2.21.0',
-                       'lz4==1.1.0']
+                       'twisted==21.2.0']
             pip_process = subprocess.Popen(pip_cmd, cwd=self._base_workdir_temp,
                                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             stdout, stderr = pip_process.communicate()
