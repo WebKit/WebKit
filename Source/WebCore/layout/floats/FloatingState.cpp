@@ -37,19 +37,28 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FloatingState);
 
-FloatingState::FloatItem::FloatItem(const Box& layoutBox, Position position, BoxGeometry absoluteBoxGeometry)
+FloatingState::FloatItem::FloatItem(const Box& layoutBox, Position position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft)
     : m_layoutBox(layoutBox)
     , m_position(position)
     , m_absoluteBoxGeometry(absoluteBoxGeometry)
+    , m_localTopLeft(localTopLeft)
     , m_shape(layoutBox.shape())
 {
 }
 
-FloatingState::FloatItem::FloatItem(Position position, BoxGeometry absoluteBoxGeometry, const Shape* shape)
+FloatingState::FloatItem::FloatItem(Position position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft, const Shape* shape)
     : m_position(position)
     , m_absoluteBoxGeometry(absoluteBoxGeometry)
+    , m_localTopLeft(localTopLeft)
     , m_shape(shape)
 {
+}
+
+BoxGeometry FloatingState::FloatItem::boxGeometry() const
+{
+    auto boxGeometry = BoxGeometry { m_absoluteBoxGeometry };
+    boxGeometry.setLogicalTopLeft(m_localTopLeft);
+    return boxGeometry;
 }
 
 FloatingState::FloatItem::~FloatItem() = default;
@@ -89,12 +98,12 @@ void FloatingState::append(FloatItem newFloatItem)
             continue;
 
         auto isHorizontallyOrdered = [&] {
-            if (newFloatItem.rectWithMargin().top() > floatItem.rectWithMargin().top()) {
+            if (newFloatItem.absoluteRectWithMargin().top() > floatItem.absoluteRectWithMargin().top()) {
                 // There's no more floats on this vertical position.
                 return true;
             }
-            return (isLeftPositioned && newFloatItem.rectWithMargin().right() >= floatItem.rectWithMargin().right())
-                || (!isLeftPositioned && newFloatItem.rectWithMargin().left() <= floatItem.rectWithMargin().left());
+            return (isLeftPositioned && newFloatItem.absoluteRectWithMargin().right() >= floatItem.absoluteRectWithMargin().right())
+                || (!isLeftPositioned && newFloatItem.absoluteRectWithMargin().left() <= floatItem.absoluteRectWithMargin().left());
         };
         if (isHorizontallyOrdered())
             return m_floats.insert(i + 1, newFloatItem);

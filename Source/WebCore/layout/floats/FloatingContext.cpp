@@ -132,20 +132,20 @@ static bool areFloatsHorizontallySorted(const FloatingState& floatingState)
 
     for (auto& floatItem : floats) {
         if (floatItem.isLeftPositioned()) {
-            auto rightEdge = floatItem.rectWithMargin().right();
+            auto rightEdge = floatItem.absoluteRectWithMargin().right();
             if (rightEdge < rightEdgeOfLeftFloats) {
-                if (leftBottom && floatItem.rectWithMargin().top() < *leftBottom)
+                if (leftBottom && floatItem.absoluteRectWithMargin().top() < *leftBottom)
                     return false;
             }
-            leftBottom = floatItem.rectWithMargin().bottom();
+            leftBottom = floatItem.absoluteRectWithMargin().bottom();
             rightEdgeOfLeftFloats = rightEdge;
         } else {
-            auto leftEdge = floatItem.rectWithMargin().left();
+            auto leftEdge = floatItem.absoluteRectWithMargin().left();
             if (leftEdge > leftEdgeOfRightFloats) {
-                if (rightBottom && floatItem.rectWithMargin().top() < *rightBottom)
+                if (rightBottom && floatItem.absoluteRectWithMargin().top() < *rightBottom)
                     return false;
             }
-            rightBottom = floatItem.rectWithMargin().bottom();
+            rightBottom = floatItem.absoluteRectWithMargin().bottom();
             leftEdgeOfRightFloats = leftEdge;
         }
     }
@@ -250,7 +250,7 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const BoxGeo
     } else {
         // Incoming float cannot be placed higher than existing floats (margin box of the last float).
         // Take the static position (where the box would go if it wasn't floating) and adjust it with the last float.
-        auto previousFloatAbsoluteTop = floatingState().floats().last().rectWithMargin().top();
+        auto previousFloatAbsoluteTop = floatingState().floats().last().absoluteRectWithMargin().top();
         if (verticalPositionCandidate - boxGeometry.marginBefore() < previousFloatAbsoluteTop)
             verticalPositionCandidate = previousFloatAbsoluteTop + boxGeometry.marginBefore();
     }
@@ -360,7 +360,7 @@ std::optional<LayoutUnit> FloatingContext::bottom(Clear type) const
         if ((type == Clear::Left && !floatItem.isLeftPositioned())
             || (type == Clear::Right && floatItem.isLeftPositioned()))
             continue;
-        bottom = !bottom ? floatItem.rectWithMargin().bottom() : std::max(*bottom, floatItem.rectWithMargin().bottom());
+        bottom = !bottom ? floatItem.absoluteRectWithMargin().bottom() : std::max(*bottom, floatItem.absoluteRectWithMargin().bottom());
     }
     return bottom;
 }
@@ -369,7 +369,7 @@ std::optional<LayoutUnit> FloatingContext::top() const
 {
     auto top = std::optional<LayoutUnit> { };
     for (auto& floatItem : floatingState().floats())
-        top = !top ? floatItem.rectWithMargin().top() : std::min(*top, floatItem.rectWithMargin().top());
+        top = !top ? floatItem.absoluteRectWithMargin().top() : std::min(*top, floatItem.absoluteRectWithMargin().top());
     return top;
 }
 
@@ -401,13 +401,13 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
     };
 
     auto computeFloatEdgeAndBottom = [&](auto& floatItem) -> std::optional<std::pair<LayoutUnit, LayoutUnit>> {
-        auto marginRect = floatItem.rectWithMargin();
+        auto marginRect = floatItem.absoluteRectWithMargin();
         if (!contains(marginRect))
             return { };
 
         if (auto* shape = floatItem.shape()) {
             // Shapes are relative to the border box.
-            auto borderRect = floatItem.borderBoxRect();
+            auto borderRect = floatItem.absoluteBorderBoxRect();
             auto positionInShape = adjustedCandidateTop - borderRect.top();
 
             if (!shape->lineOverlapsShapeMarginBounds(positionInShape, candidateHeight))
@@ -501,9 +501,10 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
 
 FloatingState::FloatItem FloatingContext::toFloatItem(const Box& floatBox, const BoxGeometry& boxGeometry) const
 {
+    auto borderBoxTopLeft = BoxGeometry::borderBoxTopLeft(boxGeometry);
     auto absoluteBoxGeometry = BoxGeometry { boxGeometry };
-    absoluteBoxGeometry.setLogicalTopLeft(mapTopLeftToFloatingStateRoot(floatBox, BoxGeometry::borderBoxTopLeft(boxGeometry)));
-    return { floatBox, isFloatingCandidateLeftPositionedInFloatingState(floatBox) ? FloatingState::FloatItem::Position::Left : FloatingState::FloatItem::Position::Right, absoluteBoxGeometry };
+    absoluteBoxGeometry.setLogicalTopLeft(mapTopLeftToFloatingStateRoot(floatBox, borderBoxTopLeft));
+    return { floatBox, isFloatingCandidateLeftPositionedInFloatingState(floatBox) ? FloatingState::FloatItem::Position::Left : FloatingState::FloatItem::Position::Right, absoluteBoxGeometry, borderBoxTopLeft };
 }
 
 void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAvoider) const
@@ -533,7 +534,7 @@ void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAv
                 auto& floatBox = floats[i];
 
                 auto intersects = [&] {
-                    auto floatingRect = floatBox.rectWithMargin();
+                    auto floatingRect = floatBox.absoluteRectWithMargin();
                     if (floatAvoider.left() >= floatingRect.right() || floatAvoider.right() <= floatingRect.left())
                         return false;
                     return floatAvoider.top() >= floatingRect.top() && floatAvoider.top() < floatingRect.bottom();
@@ -548,7 +549,7 @@ void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAv
         auto* intersectedFloatBox = overlappingFloatBox(startIndex, floatAvoider);
         if (!intersectedFloatBox)
             return;
-        floatAvoider.setVerticalPosition({ intersectedFloatBox->rectWithMargin().top() });
+        floatAvoider.setVerticalPosition({ intersectedFloatBox->absoluteRectWithMargin().top() });
     }
 }
 
@@ -667,7 +668,7 @@ bool FloatPair::intersects(const FloatAvoider& floatAvoider) const
     auto intersects = [&](auto* floating) {
         if (!floating)
             return false;
-        auto floatingRect = floating->rectWithMargin();
+        auto floatingRect = floating->absoluteRectWithMargin();
         if (floatAvoider.left() >= floatingRect.right() || floatAvoider.right() <= floatingRect.left())
             return false;
         return floatAvoider.top() >= floatingRect.top() && floatAvoider.top() < floatingRect.bottom();
@@ -688,10 +689,10 @@ FloatPair::HorizontalConstraints FloatPair::horizontalConstraints() const
     std::optional<PositionInContextRoot> rightEdge;
 
     if (left())
-        leftEdge = PositionInContextRoot { left()->rectWithMargin().right() };
+        leftEdge = PositionInContextRoot { left()->absoluteRectWithMargin().right() };
 
     if (right())
-        rightEdge = PositionInContextRoot { right()->rectWithMargin().left() };
+        rightEdge = PositionInContextRoot { right()->absoluteRectWithMargin().left() };
 
     return { leftEdge, rightEdge };
 }
@@ -702,8 +703,8 @@ PositionInContextRoot FloatPair::bottom() const
     auto* right = this->right();
     ASSERT(left || right);
 
-    auto leftBottom = left ? std::optional<PositionInContextRoot>(PositionInContextRoot { left->rectWithMargin().bottom() }) : std::nullopt;
-    auto rightBottom = right ? std::optional<PositionInContextRoot>(PositionInContextRoot { right->rectWithMargin().bottom() }) : std::nullopt;
+    auto leftBottom = left ? std::optional<PositionInContextRoot>(PositionInContextRoot { left->absoluteRectWithMargin().bottom() }) : std::nullopt;
+    auto rightBottom = right ? std::optional<PositionInContextRoot>(PositionInContextRoot { right->absoluteRectWithMargin().bottom() }) : std::nullopt;
 
     if (leftBottom && rightBottom)
         return std::max(*leftBottom, *rightBottom);
@@ -750,7 +751,7 @@ Iterator& Iterator::operator++()
         if (!currentIndex)
             return { };
 
-        auto currentBottom = m_floats[currentIndex].rectWithMargin().bottom();
+        auto currentBottom = m_floats[currentIndex].absoluteRectWithMargin().bottom();
 
         std::optional<unsigned> index = currentIndex;
         while (true) {
@@ -758,7 +759,7 @@ Iterator& Iterator::operator++()
             if (!index)
                 return { };
 
-            if (m_floats[*index].rectWithMargin().bottom() > currentBottom)
+            if (m_floats[*index].absoluteRectWithMargin().bottom() > currentBottom)
                 return index;
         }
 
@@ -772,8 +773,8 @@ Iterator& Iterator::operator++()
     // Ensure that the new floating's bottom edge is positioned lower than the current one -which essentially means skipping in-between floats that are positioned higher).
     // 3. Reset the vertical position and align it with the new left-right pair. These floats are now the inner-most boxes for the current vertical position.
     // As the result we have more horizontal space on the current vertical position.
-    auto leftBottom = m_current.left() ? std::optional<PositionInContextRoot>(m_current.left()->bottom()) : std::nullopt;
-    auto rightBottom = m_current.right() ? std::optional<PositionInContextRoot>(m_current.right()->bottom()) : std::nullopt;
+    auto leftBottom = m_current.left() ? std::optional<PositionInContextRoot>(m_current.left()->absoluteBottom()) : std::nullopt;
+    auto rightBottom = m_current.right() ? std::optional<PositionInContextRoot>(m_current.right()->absoluteBottom()) : std::nullopt;
 
     auto updateLeft = (leftBottom == rightBottom) || (!rightBottom || (leftBottom && *leftBottom < *rightBottom));
     auto updateRight = (leftBottom == rightBottom) || (!leftBottom || (rightBottom && *leftBottom > *rightBottom));
@@ -819,7 +820,7 @@ void Iterator::set(PositionInContextRoot verticalPosition)
                 return { };
 
             // Is this floating intrusive on this position?
-            auto rect = m_floats[*index].rectWithMargin();
+            auto rect = m_floats[*index].absoluteRectWithMargin();
             if (rect.top() <= verticalPosition && rect.bottom() > verticalPosition)
                 return index;
         }

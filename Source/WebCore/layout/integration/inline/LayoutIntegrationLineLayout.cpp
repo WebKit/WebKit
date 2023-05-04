@@ -787,7 +787,7 @@ void LineLayout::prepareFloatingState()
         auto shapeOutsideInfo = floatingObject->renderer().shapeOutsideInfo();
         auto* shape = shapeOutsideInfo ? &shapeOutsideInfo->computedShape() : nullptr;
 
-        floatingState.append({ logicalPosition(), boxGeometry, shape });
+        floatingState.append({ logicalPosition(), boxGeometry, logicalRect.location(), shape });
     }
 }
 
