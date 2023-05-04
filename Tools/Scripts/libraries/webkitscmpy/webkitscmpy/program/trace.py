@@ -28,7 +28,7 @@ from webkitscmpy import Commit, local, log, remote
 from webkitbugspy import Tracker
 
 
-COMMIT_REF_BASE = r'r?R?[a-f0-9A-F]+.?\d*@?[0-9a-zA-z\-\/\.]*'
+COMMIT_REF_BASE = r'r?R?[a-f0-9A-F]+(\.\d+)?@?([0-9a-zA-z\-\/\.]+[0-9a-zA-z\-\/])?'
 COMPOUND_COMMIT_REF = r'(?P<primary>{})(?P<secondary> \({}\))?'.format(COMMIT_REF_BASE, COMMIT_REF_BASE)
 CHERRY_PICK_RE = [
     re.compile(r'\S* ?[Cc]herry[- ][Pp]ick of:? {}'.format(COMPOUND_COMMIT_REF)),
@@ -119,7 +119,7 @@ class Relationship(object):
                 secondary = match.group('secondary')
                 if secondary:
                     secondary = UNPACK_SECONDARY_RE.match(secondary).groups()[0]
-                return type, [ref.rstrip('.').rstrip() for ref in [primary, secondary] if ref]
+                return type, [ref.rstrip() for ref in [primary, secondary] if ref]
         return None, []
 
     def __init__(self, commit, type=None):
