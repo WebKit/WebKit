@@ -117,7 +117,7 @@ struct WebPageCreationParameters;
 struct WebPreferencesStore;
 struct WebsiteData;
 
-enum class RemoteWorkerType : bool;
+enum class RemoteWorkerType : uint8_t;
 enum class WebsiteDataType : uint32_t;
 
 #if ENABLE(MEDIA_STREAM)
@@ -180,7 +180,7 @@ public:
     bool isInProcessCache() const { return m_isInProcessCache; }
 
     void enableRemoteWorkers(RemoteWorkerType, const UserContentControllerIdentifier&);
-    void disableRemoteWorkers(RemoteWorkerType);
+    void disableRemoteWorkers(OptionSet<RemoteWorkerType>);
 
     WebsiteDataStore* websiteDataStore() const { ASSERT(m_websiteDataStore); return m_websiteDataStore.get(); }
     void setWebsiteDataStore(WebsiteDataStore&);

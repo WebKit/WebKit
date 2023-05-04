@@ -1141,8 +1141,7 @@ void WebProcessProxy::didBecomeUnresponsive()
     // If the web process becomes unresponsive and only runs service/shared workers, kill it ourselves since there are no native clients to do it.
     if (isRunningWorkers() && m_pageMap.isEmpty()) {
         WEBPROCESSPROXY_RELEASE_LOG_ERROR(PerformanceLogging, "didBecomeUnresponsive: Terminating worker-only web process because it is unresponsive");
-        disableRemoteWorkers(RemoteWorkerType::ServiceWorker);
-        disableRemoteWorkers(RemoteWorkerType::SharedWorker);
+        disableRemoteWorkers({ RemoteWorkerType::ServiceWorker, RemoteWorkerType::SharedWorker });
         terminate();
     }
 }
@@ -2219,35 +2218,40 @@ void WebProcessProxy::endServiceWorkerBackgroundProcessing()
 }
 #endif // ENABLE(SERVICE_WORKER)
 
-void WebProcessProxy::disableRemoteWorkers(RemoteWorkerType workerType)
+void WebProcessProxy::disableRemoteWorkers(OptionSet<RemoteWorkerType> workerTypes)
 {
-    auto& remoteWorkerInformation = workerType == RemoteWorkerType::ServiceWorker ? m_serviceWorkerInformation : m_sharedWorkerInformation;
-    if (!remoteWorkerInformation)
-        return;
+    bool didDisableWorkers = false;
+
+    if (workerTypes.contains(RemoteWorkerType::SharedWorker) && m_sharedWorkerInformation) {
+        WEBPROCESSPROXY_RELEASE_LOG(Process, "disableWorkers: Disabling shared workers");
+        m_sharedWorkerInformation = { };
+        didDisableWorkers = true;
+    }
 
 #if ENABLE(SERVICE_WORKER)
-    if (workerType == RemoteWorkerType::ServiceWorker)
+    if (workerTypes.contains(RemoteWorkerType::ServiceWorker) && m_serviceWorkerInformation) {
+        WEBPROCESSPROXY_RELEASE_LOG(Process, "disableWorkers: Disabling service workers");
         removeMessageReceiver(Messages::NotificationManagerMessageHandler::messageReceiverName(), m_serviceWorkerInformation->remoteWorkerPageID);
+        m_serviceWorkerInformation = { };
+        didDisableWorkers = true;
+    }
 #endif
-    remoteWorkerInformation = { };
 
-    WEBPROCESSPROXY_RELEASE_LOG(Process, "disableWorkers: Disabling workers (workerType=%" PUBLIC_LOG_STRING ")", workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared");
+    if (!didDisableWorkers)
+        return;
 
     updateBackgroundResponsivenessTimer();
 
     if (!isRunningWorkers())
-        processPool().removeFromRemoteWorkerProcesses(*this);
+        processPool().removeRemoteWorkerProcess(*this);
 
-    switch (workerType) {
-    case RemoteWorkerType::ServiceWorker:
+    if (workerTypes.contains(RemoteWorkerType::SharedWorker))
+        send(Messages::WebSharedWorkerContextManagerConnection::Close { }, 0);
+
 #if ENABLE(SERVICE_WORKER)
+    if (workerTypes.contains(RemoteWorkerType::ServiceWorker))
         send(Messages::WebSWContextManagerConnection::Close { }, 0);
 #endif
-        break;
-    case RemoteWorkerType::SharedWorker:
-        send(Messages::WebSharedWorkerContextManagerConnection::Close { }, 0);
-        break;
-    }
 
     maybeShutDown();
 }
@@ -2286,6 +2290,8 @@ void WebProcessProxy::enableRemoteWorkers(RemoteWorkerType workerType, const Use
         nullptr,
         { }
     };
+
+    processPool().addRemoteWorkerProcess(*this);
 
 #if ENABLE(SERVICE_WORKER)
     if (workerType == RemoteWorkerType::ServiceWorker)

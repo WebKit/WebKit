@@ -573,8 +573,6 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
         processPool->m_processes.append(WTFMove(newProcessProxy));
     }
 
-    remoteWorkerProcesses().add(*remoteWorkerProcessProxy);
-
     const WebPreferencesStore* preferencesStore = nullptr;
     if (workerType == RemoteWorkerType::ServiceWorker) {
         if (auto* preferences = websiteDataStore->serviceWorkerOverridePreferences())
@@ -597,8 +595,17 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
         remoteWorkerProcessProxy->setRemoteWorkerUserAgent(processPool->m_remoteWorkerUserAgent);
 }
 
-void WebProcessPool::removeFromRemoteWorkerProcesses(WebProcessProxy& process)
+void WebProcessPool::addRemoteWorkerProcess(WebProcessProxy& process)
 {
+    ASSERT(&process.processPool() == this);
+    ASSERT(process.isRunningWorkers());
+    remoteWorkerProcesses().add(process);
+}
+
+void WebProcessPool::removeRemoteWorkerProcess(WebProcessProxy& process)
+{
+    ASSERT(!process.isRunningWorkers());
+    ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == &process; }));
     ASSERT(remoteWorkerProcesses().contains(process));
     remoteWorkerProcesses().remove(process);
 }
@@ -1006,12 +1013,13 @@ void WebProcessPool::disconnectProcess(WebProcessProxy& process)
 
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> Some of the invalidation calls of the other supplements are still necessary in multi-process mode, but they should only affect data structures pertaining to the process being disconnected.
     // Clearing everything causes assertion failures, so it's less trouble to skip that for now.
-    Ref<WebProcessProxy> protectedProcess(process);
+    Ref protectedProcess { process };
 
     m_backForwardCache->removeEntriesForProcess(process);
 
     if (process.isRunningWorkers())
-        removeFromRemoteWorkerProcesses(process);
+        process.disableRemoteWorkers({ RemoteWorkerType::ServiceWorker, RemoteWorkerType::SharedWorker });
+    ASSERT(!remoteWorkerProcesses().contains(process));
 
     supplement<WebGeolocationManagerProxy>()->webProcessIsGoingAway(process);
 

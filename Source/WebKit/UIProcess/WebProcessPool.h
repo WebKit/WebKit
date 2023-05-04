@@ -365,7 +365,6 @@ public:
     void networkProcessDidTerminate(NetworkProcessProxy&, ProcessTerminationReason);
 
     bool isServiceWorkerPageID(WebPageProxyIdentifier) const;
-    void removeFromRemoteWorkerProcesses(WebProcessProxy&);
 
 #if ENABLE(SERVICE_WORKER)
     size_t serviceWorkerProxiesCount() const;
@@ -497,6 +496,9 @@ public:
     
     static void setUseSeparateServiceWorkerProcess(bool);
     static bool useSeparateServiceWorkerProcess() { return s_useSeparateServiceWorkerProcess; }
+
+    void addRemoteWorkerProcess(WebProcessProxy&);
+    void removeRemoteWorkerProcess(WebProcessProxy&);
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
     void notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue);

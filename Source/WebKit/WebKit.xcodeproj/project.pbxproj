@@ -4747,6 +4747,7 @@
 		46EE3E8A2763FD2A0060C70F /* WebSharedWorkerServerConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebSharedWorkerServerConnection.messages.in; sourceTree = "<group>"; };
 		46F38E8B2416E66D0059375A /* RunningBoardServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunningBoardServicesSPI.h; sourceTree = "<group>"; };
 		46F9B26223526ED0006FE5FA /* WebBackForwardCacheEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardCacheEntry.h; sourceTree = "<group>"; };
+		46FA2E752A04240300912BFE /* RemoteWorkerType.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteWorkerType.serialization.in; sourceTree = "<group>"; };
 		493102BC2683F3A5002BB885 /* AppPrivacyReport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppPrivacyReport.h; sourceTree = "<group>"; };
 		4955A6E528076D4C00BB91C4 /* ArrayReferenceTuple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayReferenceTuple.h; sourceTree = "<group>"; };
 		4973DF472422941F00E4C26A /* NavigatingToAppBoundDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigatingToAppBoundDomain.h; sourceTree = "<group>"; };
@@ -8012,6 +8013,7 @@
 				5C80B3DD23690F100086E6DE /* RemoteWorkerInitializationData.cpp */,
 				5C80B3DB23690D8D0086E6DE /* RemoteWorkerInitializationData.h */,
 				4691CB9A27B2DD1800B29AAF /* RemoteWorkerType.h */,
+				46FA2E752A04240300912BFE /* RemoteWorkerType.serialization.in */,
 				7203449B26A6C476000A5F54 /* RenderingUpdateID.h */,
 				5CB7AFE623C681B000E49CF3 /* ResourceLoadInfo.h */,
 				5C00993B2417FB7E00D53C25 /* ResourceLoadStatisticsParameters.h */,

@@ -113,7 +113,7 @@ class ProcessAssertion;
 class WebPageNetworkParameters;
 enum class CallDownloadDidStart : bool;
 enum class LoadedWebArchive : bool;
-enum class RemoteWorkerType : bool;
+enum class RemoteWorkerType : uint8_t;
 enum class ShouldGrandfatherStatistics : bool;
 enum class StorageAccessStatus : uint8_t;
 enum class WebsiteDataFetchOption : uint8_t;

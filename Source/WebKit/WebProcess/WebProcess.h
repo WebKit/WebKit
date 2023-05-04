@@ -155,7 +155,7 @@ struct WebPreferencesStore;
 struct WebsiteData;
 struct WebsiteDataStoreParameters;
 
-enum class RemoteWorkerType : bool;
+enum class RemoteWorkerType : uint8_t;
 enum class WebsiteDataType : uint32_t;
 
 #if PLATFORM(IOS_FAMILY)
