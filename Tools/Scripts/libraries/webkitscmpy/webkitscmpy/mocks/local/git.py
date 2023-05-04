@@ -254,9 +254,9 @@ nothing to commit, working tree clean
                     returncode=0,
                 ),
             ), mocks.Subprocess.Route(
-                self.executable, 'branch', '-a', '--merged', '--format=.+', '.+',
+                self.executable, 'branch', '-a', '--format', '.+', '--merged', '.+',
                 cwd=self.path,
-                generator=lambda *args, **kwargs: self.branch_merged_to(args[5]),
+                generator=lambda *args, **kwargs: self.branch_merged_to(args[6]),
             ), mocks.Subprocess.Route(
                 self.executable, 'branch', '-a',
                 cwd=self.path,
