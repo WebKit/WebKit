@@ -27,14 +27,29 @@ import subprocess
 import sys
 import time
 
-from webkitcorepy import Terminal
-from webkitscmpy.commit import Commit
+from webkitcorepy import Terminal, run
+from webkitscmpy import local, Commit
 
 
 class Command(object):
     name = None
     aliases = []
     help = None
+
+    @classmethod
+    def write_branch_variables(cls, repository, branch, **variables):
+        if not isinstance(repository, local.Git):
+            return False
+        result = True
+        for key, value in variables.items():
+            if not value:
+                continue
+            for v in value if isinstance(value, (list, tuple)) else [value]:
+                result &= run(
+                    [repository.executable(), 'config', '--add', 'branch.{}.{}'.format(branch, key), str(v)],
+                    cwd=repository.root_path, capture_output=True,
+                ).returncode == 0
+        return result
 
     @classmethod
     def parser(cls, parser, loggers=None):

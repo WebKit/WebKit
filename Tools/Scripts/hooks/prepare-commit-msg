@@ -25,20 +25,39 @@ from webkitpy.common.checkout.diff_parser import DiffParser
 from webkitbugspy import radar
 
 
+BRANCH = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], **ENCODING_KWARGS).strip()
+for name, variable in dict(
+    title='COMMIT_MESSAGE_TITLE',
+    bug='COMMIT_MESSAGE_BUG',
+    cherry_picked='GIT_WEBKIT_CHERRY_PICKED',
+).items():
+    if variable in os.environ:
+        continue
+    try:
+        value = subprocess.check_output(
+            ['git', 'config', '--get-all', 'branch.{}.{}'.format(BRANCH, name)],
+            **ENCODING_KWARGS
+        ).strip()
+        if not value:
+            continue
+        os.environ[variable] = value
+    except subprocess.CalledProcessError:
+        continue
+
+
 def get_bugs_string():
     """Determines what bug URLs to fill or suggest in a WebKit commit message."""
-    env = os.environ
     need_the_bug_url = 'Need the bug URL (OOPS!).'
     need_the_radar = 'Include a Radar link (OOPS!).'
     has_radar = any([bool(regex.match(line))
-                     for line in env.get('COMMIT_MESSAGE_BUG', '').splitlines()
+                     for line in os.environ.get('COMMIT_MESSAGE_BUG', '').splitlines()
                      for regex in radar.Tracker.RES])
 
-    if env.get('COMMIT_MESSAGE_BUG'):
+    if os.environ.get('COMMIT_MESSAGE_BUG'):
         if has_radar or not bool(radar.Tracker.radarclient()):
-            return env['COMMIT_MESSAGE_BUG']
+            return os.environ['COMMIT_MESSAGE_BUG']
         else:
-            return env['COMMIT_MESSAGE_BUG'] + '\n' + need_the_radar
+            return os.environ['COMMIT_MESSAGE_BUG'] + '\n' + need_the_radar
 
     bugs_string = need_the_bug_url
     if bool(radar.Tracker.radarclient()):
@@ -133,7 +152,7 @@ def source_branches():
 
 def cherry_pick(content):
     cherry_picked = os.environ.get('GIT_WEBKIT_CHERRY_PICKED')
-    bug = os.environ.get('GIT_WEBKIT_BUG')
+    bug = os.environ.get('COMMIT_MESSAGE_BUG', '').splitlines()[0]
 
     if PREFER_RADAR and not bug:
         RADAR_RES = [

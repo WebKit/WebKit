@@ -89,7 +89,14 @@ class CherryPick(Command):
 
         env = os.environ.copy()
         env['GIT_WEBKIT_CHERRY_PICKED'] = cherry_pick_string
-        env['GIT_WEBKIT_BUG'] = issue.link if issue else ''
+        env['COMMIT_MESSAGE_BUG'] = issue.link if issue else ''
+
+        cls.write_branch_variables(
+            repository, repository.branch,
+            cherry_pick=cherry_pick_string,
+            bug=[issue.link] if issue else [],
+        )
+
         return run(
             [repository.executable(), 'cherry-pick', '-e', commit.hash],
             cwd=repository.root_path,
