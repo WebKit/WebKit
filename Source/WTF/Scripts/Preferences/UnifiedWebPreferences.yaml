@@ -5657,6 +5657,8 @@ ServiceWorkersUserGestureEnabled:
     WebCore:
       default: true
 
+# When enabling this, don't enable on watchOS or the macOS base system (which don't have Vision.framework).
+# You can detect these by running isVisionFrameworkAvailable().
 ShapeDetection:
   type: bool
   category: media

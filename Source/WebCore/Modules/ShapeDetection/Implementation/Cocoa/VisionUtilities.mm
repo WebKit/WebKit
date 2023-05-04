@@ -32,6 +32,7 @@
 #import "FloatRect.h"
 #import "FloatSize.h"
 #import <CoreML/CoreML.h>
+#import <pal/cocoa/CoreMLSoftLink.h>
 #import <pal/cocoa/VisionSoftLink.h>
 
 namespace WebCore::ShapeDetection {
@@ -79,7 +80,7 @@ void configureRequestToUseCPUOrGPU(VNRequest *request)
     for (VNComputeStage computeStage in supportedComputeStageDevices) {
         bool set = false;
         for (id<MLComputeDeviceProtocol> device in supportedComputeStageDevices[computeStage]) {
-            if ([device isKindOfClass:MLGPUComputeDevice.class]) {
+            if ([device isKindOfClass:PAL::getMLGPUComputeDeviceClass()]) {
                 [request setComputeDevice:device forComputeStage:computeStage];
                 set = true;
                 break;
@@ -87,7 +88,7 @@ void configureRequestToUseCPUOrGPU(VNRequest *request)
         }
         if (!set) {
             for (id<MLComputeDeviceProtocol> device in supportedComputeStageDevices[computeStage]) {
-                if ([device isKindOfClass:MLCPUComputeDevice.class]) {
+                if ([device isKindOfClass:PAL::getMLGPUComputeDeviceClass()]) {
                     [request setComputeDevice:device forComputeStage:computeStage];
                     set = true;
                     break;

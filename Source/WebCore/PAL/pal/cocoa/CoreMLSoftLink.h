@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,8 @@
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, CoreML)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, MLCPUComputeDevice)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, MLFeatureValue)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, MLGPUComputeDevice)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, MLModel)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, MLModelConfiguration)
