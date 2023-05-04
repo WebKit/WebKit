@@ -486,11 +486,33 @@ void WebPageProxy::ProcessActivityState::takeCapturingActivity()
     m_isCapturingActivity = m_page.process().throttler().foregroundActivity("View is capturing media"_s).moveToUniquePtr();
 }
 
+#if PLATFORM(MAC)
+// On macOS, we opt pages out of process suspension if they used the Notification API to avoid breaking
+// some use cases.
+// In particular, we opt out if either:
+// - The page showed a notification
+// - The page called navigator.permissions.query({ name: "notifications" }) and it returned true.
+// - The page accessed Notification.permission and it returned "granted".
+// - The page requested permission via Notification.requestPermission() and it was granted.
+// This gets reset whenever a new main frame load commits inside the page.
+void WebPageProxy::ProcessActivityState::takeLikelyToUseNotificationsActivity()
+{
+    if (!m_likelyToUseNotificationsActivity)
+        m_likelyToUseNotificationsActivity = m_page.process().throttler().backgroundActivity("View is likely to use notifications"_s).moveToUniquePtr();
+}
+
+void WebPageProxy::ProcessActivityState::dropLikelyToUseNotificationsActivity()
+{
+    m_likelyToUseNotificationsActivity = nullptr;
+}
+#endif
+
 void WebPageProxy::ProcessActivityState::reset()
 {
     m_isVisibleActivity = nullptr;
 #if PLATFORM(MAC)
     *m_wasRecentlyVisibleActivity = nullptr;
+    m_likelyToUseNotificationsActivity = nullptr;
 #endif
     m_isAudibleActivity = nullptr;
     m_isCapturingActivity = nullptr;
@@ -5563,7 +5585,9 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
         if (is<RemoteLayerTreeDrawingAreaProxy>(*m_drawingArea))
             internals().firstLayerTreeTransactionIdAfterDidCommitLoad = downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea()).nextLayerTreeTransactionID();
 #endif
-        internals().pageAllowedToRunInTheBackgroundToken = nullptr;
+#if PLATFORM(MAC)
+        m_processActivityState.dropLikelyToUseNotificationsActivity();
+#endif
     }
 
     auto transaction = internals().pageLoadState.transaction();
@@ -5777,10 +5801,8 @@ void WebPageProxy::didFailLoadForFrame(FrameIdentifier frameID, FrameInfoData&& 
 
     bool isMainFrame = frame->isMainFrame();
 
-    if (isMainFrame) {
+    if (isMainFrame)
         internals().pageLoadState.didFailLoad(transaction);
-        internals().pageAllowedToRunInTheBackgroundToken = nullptr;
-    }
 
     if (m_controlledByAutomation) {
         if (auto* automationSession = process().processPool().automationSession())
@@ -5933,13 +5955,7 @@ void WebPageProxy::didReceiveTitleForFrame(FrameIdentifier frameID, const String
 
     if (frame->isMainFrame()) {
         internals().pageLoadState.setTitle(transaction, title);
-        if (!isViewVisible() && !frame->title().isNull() && frame->title() != title) {
-            WEBPAGEPROXY_RELEASE_LOG(ViewState, "didReceiveTitleForFrame: This page changes its title in the background and is allowed to run in the background");
-            // This page updates its title in the background and is thus able to communicate with
-            // the user while in the background. Allow it to run in the background.
-            if (!internals().pageAllowedToRunInTheBackgroundToken)
-                internals().pageAllowedToRunInTheBackgroundToken = process().throttler().pageAllowedToRunInTheBackgroundToken();
-        }
+        process().throttler().delaySuspension();
     }
 
     frame->didChangeTitle(title);
@@ -8927,9 +8943,10 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement = false;
 #endif
 
+    m_processActivityState.reset();
+
     internals().pageIsUserObservableCount = nullptr;
     internals().visiblePageToken = nullptr;
-    internals().pageAllowedToRunInTheBackgroundToken = nullptr;
 
     m_hasRunningProcess = false;
     m_areActiveDOMObjectsAndAnimationsSuspended = false;
@@ -9767,17 +9784,17 @@ void WebPageProxy::requestNotificationPermission(const String& originString, Com
 
 void WebPageProxy::pageWillLikelyUseNotifications()
 {
-    WEBPAGEPROXY_RELEASE_LOG(ViewState, "pageWillLikelyUseNotifications: This page is likely to use notifications and is allowed to run in the background");
-    if (!internals().pageAllowedToRunInTheBackgroundToken)
-        internals().pageAllowedToRunInTheBackgroundToken = process().throttler().pageAllowedToRunInTheBackgroundToken();
+#if PLATFORM(MAC)
+    m_processActivityState.takeLikelyToUseNotificationsActivity();
+#endif
 }
 
 void WebPageProxy::showNotification(IPC::Connection& connection, const WebCore::NotificationData& notificationData, RefPtr<WebCore::NotificationResources>&& notificationResources)
 {
     m_process->processPool().supplement<WebNotificationManagerProxy>()->show(this, connection, notificationData, WTFMove(notificationResources));
-    WEBPAGEPROXY_RELEASE_LOG(ViewState, "showNotification: This page shows notifications and is allowed to run in the background");
-    if (!internals().pageAllowedToRunInTheBackgroundToken)
-        internals().pageAllowedToRunInTheBackgroundToken = process().throttler().pageAllowedToRunInTheBackgroundToken();
+#if PLATFORM(MAC)
+    m_processActivityState.takeLikelyToUseNotificationsActivity();
+#endif
 }
 
 void WebPageProxy::cancelNotification(const UUID& notificationID)

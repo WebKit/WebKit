@@ -54,7 +54,6 @@ ProcessThrottler::ProcessThrottler(ProcessThrottlerClient& process, bool shouldT
     : m_process(process)
     , m_prepareToSuspendTimeoutTimer(RunLoop::main(), this, &ProcessThrottler::prepareToSuspendTimeoutTimerFired)
     , m_dropSuspendedAssertionTimer(RunLoop::main(), this, &ProcessThrottler::dropSuspendedAssertionTimerFired)
-    , m_pageAllowedToRunInTheBackgroundCounter([this](RefCounterEvent) { numberOfPagesAllowedToRunInTheBackgroundChanged(); })
     , m_shouldTakeUIBackgroundAssertion(shouldTakeUIBackgroundAssertion)
 {
 }
@@ -251,10 +250,7 @@ void ProcessThrottler::dropSuspendedAssertionTimerFired()
 {
     PROCESSTHROTTLER_RELEASE_LOG("dropSuspendedAssertionTimerFired: Removing suspended process assertion");
     RELEASE_ASSERT(m_assertion && m_assertion->type() == ProcessAssertionType::Suspended);
-    if (m_pageAllowedToRunInTheBackgroundCounter.value())
-        PROCESSTHROTTLER_RELEASE_LOG("dropSuspendedAssertionTimerFired: Not releasing suspended assertion because a page is allowed to run in the background");
-    else
-        m_assertion = nullptr;
+    m_assertion = nullptr;
 }
 
 void ProcessThrottler::processReadyToSuspend()
@@ -340,23 +336,11 @@ void ProcessThrottler::setShouldTakeSuspendedAssertion(bool shouldTakeSuspendedA
     m_shouldTakeSuspendedAssertion = shouldTakeSuspendedAssertion;
 }
 
-PageAllowedToRunInTheBackgroundCounter::Token ProcessThrottler::pageAllowedToRunInTheBackgroundToken()
+void ProcessThrottler::delaySuspension()
 {
-    return m_pageAllowedToRunInTheBackgroundCounter.count();
-}
-
-void ProcessThrottler::numberOfPagesAllowedToRunInTheBackgroundChanged()
-{
-    if (m_pageAllowedToRunInTheBackgroundCounter.value())
-        return;
-
+    PROCESSTHROTTLER_RELEASE_LOG("delaySuspension");
     if (m_dropSuspendedAssertionTimer.isActive())
-        return;
-
-    if (m_assertion && m_assertion->isValid() && m_assertion->type() == ProcessAssertionType::Suspended) {
-        PROCESSTHROTTLER_RELEASE_LOG("numberOfPagesAllowedToRunInTheBackgroundChanged: Releasing suspended assertion");
-        m_assertion = nullptr;
-    }
+        m_dropSuspendedAssertionTimer.startOneShot(removeAllAssertionsTimeout);
 }
 
 ProcessThrottlerTimedActivity::ProcessThrottlerTimedActivity(Seconds timeout, ProcessThrottler::ActivityVariant&& activity)
