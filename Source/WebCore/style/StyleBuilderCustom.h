@@ -1474,6 +1474,12 @@ inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValu
                 break;
             }
         }
+    };
+    if (is<CSSValueList>(value)) {
+        for (auto& item : downcast<CSSValueList>(value))
+            processSingleValue(item);
+    } else {
+        processSingleValue(value);
     }
     if (!didSet)
         builderState.style().clearContent();
