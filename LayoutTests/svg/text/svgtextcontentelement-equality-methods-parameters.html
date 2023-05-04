@@ -17,21 +17,7 @@
   
     var emptySvgText = document.createElementNS(svgNS, "text");
     svgRoot.appendChild(emptySvgText);
-  
-    function assert_equals_to_SVGPoint(actualPoint, expectedPoint)
-    {
-      assert_equals(actualPoint.x, expectedPoint.x);
-      assert_equals(actualPoint.y, expectedPoint.y);
-    }
-  
-    function assert_equals_to_SVGRect(actualRect, expectedRect)
-    {
-      assert_equals(actualRect.x, expectedRect.x);
-      assert_equals(actualRect.y, expectedRect.y);
-      assert_equals(actualRect.width, expectedRect.width);
-      assert_equals(actualRect.height, expectedRect.height);
-    }
-  
+
     // Test the equality part of the restriction.
     assert_throws_dom("IndexSizeError", function() { svgText.getSubStringLength(7, 2); });
     assert_throws_dom("IndexSizeError", function() { svgText.getStartPositionOfChar(7); });
