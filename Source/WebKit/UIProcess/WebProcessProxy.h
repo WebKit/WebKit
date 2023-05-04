@@ -683,6 +683,9 @@ private:
 
     VisibleWebPageCounter m_visiblePageCounter;
     RefPtr<WebsiteDataStore> m_websiteDataStore;
+#if PLATFORM(COCOA)
+    RefPtr<NetworkProcessProxy> m_networkProcessToKeepAliveUntilDataStoreIsCreated;
+#endif
 
     bool m_isUnderMemoryPressure { false };
 

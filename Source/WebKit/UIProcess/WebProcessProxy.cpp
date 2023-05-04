@@ -407,6 +407,13 @@ void WebProcessProxy::setWebsiteDataStore(WebsiteDataStore& dataStore)
     ASSERT(!m_websiteDataStore);
     WEBPROCESSPROXY_RELEASE_LOG(Process, "setWebsiteDataStore() dataStore=%p, sessionID=%" PRIu64, &dataStore, dataStore.sessionID().toUInt64());
     m_websiteDataStore = &dataStore;
+#if PLATFORM(COCOA)
+    if (m_networkProcessToKeepAliveUntilDataStoreIsCreated) {
+        auto& networkProcess = m_websiteDataStore->networkProcess(); // Transfer ownership of the NetworkProcessProxy to the WebsiteDataStore.
+        ASSERT_UNUSED(networkProcess, m_networkProcessToKeepAliveUntilDataStoreIsCreated == &networkProcess);
+        m_networkProcessToKeepAliveUntilDataStoreIsCreated = nullptr;
+    }
+#endif
     updateRegistrationWithDataStore();
     send(Messages::WebProcess::SetWebsiteDataStoreParameters(processPool().webProcessDataStoreParameters(*this, dataStore)), 0);
 
@@ -1197,14 +1204,15 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     }
 
 #if PLATFORM(COCOA)
-    if (auto networkProcess = NetworkProcessProxy::defaultNetworkProcess())
-        networkProcess->sendXPCEndpointToProcess(*this);
+    if (m_websiteDataStore)
+        m_websiteDataStore->networkProcess().sendXPCEndpointToProcess(*this);
     else {
-        RunLoop::main().dispatch([weakThis = WeakPtr { *this }] {
-            if (!weakThis)
-                return;
-            NetworkProcessProxy::ensureDefaultNetworkProcess()->sendXPCEndpointToProcess(*weakThis);
-        });
+        // Prewarmed web processes don't have a data store but still need a network process to launch properly
+        // because the network process needs to send it the launch services database. Since the data store
+        // normally keeps the network process alive, we stash it in m_networkProcessToKeepAliveUntilDataStoreIsCreated
+        // until the prewarmed web process gets assigned a data store.
+        m_networkProcessToKeepAliveUntilDataStoreIsCreated = NetworkProcessProxy::ensureDefaultNetworkProcess();
+        m_networkProcessToKeepAliveUntilDataStoreIsCreated->sendXPCEndpointToProcess(*this);
     }
 #endif
 
