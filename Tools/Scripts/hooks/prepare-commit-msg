@@ -152,7 +152,8 @@ def source_branches():
 
 def cherry_pick(content):
     cherry_picked = os.environ.get('GIT_WEBKIT_CHERRY_PICKED')
-    bug = os.environ.get('COMMIT_MESSAGE_BUG', '').splitlines()[0]
+    bugs = os.environ.get('COMMIT_MESSAGE_BUG', '').splitlines()
+    bug = bugs[0] if bugs else None
 
     if PREFER_RADAR and not bug:
         RADAR_RES = [
