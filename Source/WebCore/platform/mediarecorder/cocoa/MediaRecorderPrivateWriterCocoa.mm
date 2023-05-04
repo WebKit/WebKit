@@ -40,8 +40,8 @@
 #include "WebAudioBufferList.h"
 #include <AVFoundation/AVAssetWriter.h>
 #include <AVFoundation/AVAssetWriterInput.h>
+#include <UniformTypeIdentifiers/UTCoreTypes.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
-#include <pal/spi/cocoa/AVAssetWriterSPI.h>
 #include <wtf/BlockPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/FileSystem.h>
@@ -72,17 +72,11 @@
     return self;
 }
 
-- (void)assetWriter:(AVAssetWriter *)assetWriter didProduceFragmentedHeaderData:(NSData *)fragmentedHeaderData
+- (void)assetWriter:(AVAssetWriter *)writer didOutputSegmentData:(NSData *)segmentData segmentType:(AVAssetSegmentType)segmentType
 {
-    UNUSED_PARAM(assetWriter);
-    m_writer->appendData(static_cast<const uint8_t*>([fragmentedHeaderData bytes]), [fragmentedHeaderData length]);
-}
-
-- (void)assetWriter:(AVAssetWriter *)assetWriter didProduceFragmentedMediaData:(NSData *)fragmentedMediaData fragmentedMediaDataReport:(AVFragmentedMediaDataReport *)fragmentedMediaDataReport
-{
-    UNUSED_PARAM(assetWriter);
-    UNUSED_PARAM(fragmentedMediaDataReport);
-    m_writer->appendData(static_cast<const uint8_t*>([fragmentedMediaData bytes]), [fragmentedMediaData length]);
+    UNUSED_PARAM(writer);
+    UNUSED_PARAM(segmentType);
+    m_writer->appendData(static_cast<const uint8_t*>([segmentData bytes]), [segmentData length]);
 }
 
 - (void)close
@@ -147,15 +141,10 @@ MediaRecorderPrivateWriter::~MediaRecorderPrivateWriter()
 
 bool MediaRecorderPrivateWriter::initialize(const MediaRecorderPrivateOptions& options)
 {
-    NSError *error = nil;
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    m_writer = adoptNS([PAL::allocAVAssetWriterInstance() initWithFileType:AVFileTypeMPEG4 error:&error]);
-ALLOW_DEPRECATED_DECLARATIONS_END
-    if (error) {
-        RELEASE_LOG_ERROR(MediaStream, "create AVAssetWriter instance failed with error code %ld", (long)error.code);
-        return false;
-    }
-
+    auto type = [UTType typeWithIdentifier:AVFileTypeMPEG4];
+    m_writer = adoptNS([PAL::allocAVAssetWriterInstance() initWithContentType:type]);
+    m_writer.get().outputFileTypeProfile = @"MPEG4AppleHLS";
+    m_writer.get().preferredOutputSegmentInterval = PAL::get_CoreMedia_kCMTimeIndefinite();
     m_writerDelegate = adoptNS([[WebAVAssetWriterDelegate alloc] initWithWriter: *this]);
     [m_writer setDelegate:m_writerDelegate.get()];
 
@@ -301,6 +290,19 @@ bool MediaRecorderPrivateWriter::appendCompressedVideoSampleBufferIfPossible()
 
 void MediaRecorderPrivateWriter::appendCompressedVideoSampleBuffer(CMSampleBufferRef buffer)
 {
+    if (m_shouldWaitForKeyFrameAfterFlush) {
+        bool isKeyFrame = false;
+        auto attachments = PAL::CMSampleBufferGetSampleAttachmentsArray(buffer, 0);
+        if (attachments != nullptr && CFArrayGetCount(attachments)) {
+            auto attachment = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(attachments, 0));
+            isKeyFrame = !CFDictionaryContainsKey(attachment, PAL::kCMSampleAttachmentKey_NotSync);
+        }
+        if (!isKeyFrame)
+            return;
+
+        m_shouldWaitForKeyFrameAfterFlush = false;
+    }
+
     ASSERT([m_videoAssetWriterInput isReadyForMoreMediaData]);
     m_lastVideoPresentationTime = PAL::CMSampleBufferGetPresentationTimeStamp(buffer);
     m_lastVideoDecodingTime = PAL::CMSampleBufferGetDecodeTimeStamp(buffer);
@@ -343,13 +345,19 @@ void MediaRecorderPrivateWriter::flushCompressedSampleBuffers(Function<void()>&&
     }
 
     if (!hasPendingAudioSamples && !hasPendingVideoSamples) {
+        m_shouldWaitForKeyFrameAfterFlush = true;
+        if (m_videoCompressor)
+            m_videoCompressor->forceKeyFrame();
         callback();
         return;
     }
 
     ASSERT(!m_isFlushingSamples);
     m_isFlushingSamples = true;
-    auto block = makeBlockPtr([this, weakThis = ThreadSafeWeakPtr { *this }, hasPendingAudioSamples, hasPendingVideoSamples, audioSampleQueue = WTFMove(m_pendingAudioSampleQueue), videoSampleQueue = WTFMove(m_pendingVideoFrameQueue), callback = WTFMove(callback)]() mutable {
+    if (m_videoCompressor)
+        m_videoCompressor->forceKeyFrame();
+
+    auto block = makeBlockPtr([this, weakThis = ThreadSafeWeakPtr { *this }, hasPendingVideoSamples, audioSampleQueue = WTFMove(m_pendingAudioSampleQueue), videoSampleQueue = WTFMove(m_pendingVideoFrameQueue), callback = WTFMove(callback)]() mutable {
         auto strongThis = weakThis.get();
         if (!strongThis) {
             callback();
@@ -365,13 +373,8 @@ void MediaRecorderPrivateWriter::flushCompressedSampleBuffers(Function<void()>&&
         if (!audioSampleQueue.isEmpty() || !videoSampleQueue.isEmpty() || (hasPendingVideoSamples && ![m_videoAssetWriterInput isReadyForMoreMediaData]))
             return;
 
-        if (hasPendingAudioSamples)
-            [m_audioAssetWriterInput markAsFinished];
-        if (hasPendingVideoSamples) {
-            appendEndsPreviousSampleDurationMarker(m_videoAssetWriterInput.get(), m_lastVideoPresentationTime, m_lastVideoDecodingTime);
-            [m_videoAssetWriterInput markAsFinished];
-        }
         m_isFlushingSamples = false;
+        m_shouldWaitForKeyFrameAfterFlush = true;
         callback();
         finishedFlushingSamples();
     });
@@ -466,9 +469,7 @@ void MediaRecorderPrivateWriter::stopRecording()
             if (!strongThis)
                 return;
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            [m_writer flush];
-ALLOW_DEPRECATED_DECLARATIONS_END
+            [m_writer flushSegment];
 
             [m_writer finishWritingWithCompletionHandler:[whenFinished = WTFMove(whenFinished)]() mutable {
                 callOnMainThread(WTFMove(whenFinished));
@@ -501,9 +502,7 @@ void MediaRecorderPrivateWriter::fetchData(CompletionHandler<void(RefPtr<Fragmen
             if (!strongThis)
                 return;
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            [strongThis->m_writer flush];
-ALLOW_DEPRECATED_DECLARATIONS_END
+            [strongThis->m_writer flushSegment];
 
             callOnMainThread([weakThis = WTFMove(weakThis)] {
                 if (auto strongThis = weakThis.get())

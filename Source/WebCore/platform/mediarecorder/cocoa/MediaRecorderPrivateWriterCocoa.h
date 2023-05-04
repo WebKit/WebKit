@@ -135,6 +135,7 @@ private:
     Deque<RetainPtr<CMSampleBufferRef>> m_pendingAudioSampleQueue;
 
     bool m_isFlushingSamples { false };
+    bool m_shouldWaitForKeyFrameAfterFlush { false };
     bool m_shouldStopAfterFlushingSamples { false };
     bool m_firstVideoFrame { false };
     std::optional<CGAffineTransform> m_videoTransform;

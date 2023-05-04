@@ -50,6 +50,8 @@ public:
 
     unsigned bitRate() const;
 
+    void forceKeyFrame() { m_shouldForceKeyFrame = true; }
+
 private:
     enum class Profile { Baseline, Main, High };
     VideoSampleBufferCompressor(CMVideoCodecType, Profile);
@@ -70,6 +72,7 @@ private:
     RetainPtr<VTCompressionSessionRef> m_vtSession;
 
     bool m_isEncoding { false };
+    bool m_shouldForceKeyFrame { false };
     float m_maxKeyFrameIntervalDuration { 2.0 };
     unsigned m_expectedFrameRate { 30 };
     std::optional<unsigned> m_outputBitRate;

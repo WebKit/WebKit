@@ -319,7 +319,6 @@
 		DD20DDD727BC90D70093D175 /* AppSSOSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 576CA9D522B854AB0030143C /* AppSSOSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DDD827BC90D70093D175 /* AudioToolboxSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D02E93B2056FAA700A13797 /* AudioToolboxSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DDD927BC90D70093D175 /* AuthKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 572A107722B456F500F410C8 /* AuthKitSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD20DDDA27BC90D70093D175 /* AVAssetWriterSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 411A9AC02525D4CA00807D7E /* AVAssetWriterSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DDDB27BC90D70093D175 /* AVFoundationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C7785701F45130F00F4EBB6 /* AVFoundationSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DDDC27BC90D70093D175 /* AVKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA1221F3BEB4900DBC317 /* AVKitSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DDDD27BC90D70093D175 /* AVStreamDataParserSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B99E4525DD70150007829A /* AVStreamDataParserSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -911,7 +910,6 @@
 		31647FAE251759DB0010F8FB /* OpenGLSoftLinkCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenGLSoftLinkCocoa.mm; sourceTree = "<group>"; };
 		31647FAF251759DC0010F8FB /* OpenGLSoftLinkCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenGLSoftLinkCocoa.h; sourceTree = "<group>"; };
 		3C963637289DC1C600570DD6 /* BarcodeSupportSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BarcodeSupportSPI.h; sourceTree = "<group>"; };
-		411A9AC02525D4CA00807D7E /* AVAssetWriterSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVAssetWriterSPI.h; sourceTree = "<group>"; };
 		416E995123DAE6BD00E871CB /* AudioToolboxSoftLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioToolboxSoftLink.cpp; sourceTree = "<group>"; };
 		416E995223DAE6BE00E871CB /* AudioToolboxSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioToolboxSoftLink.h; sourceTree = "<group>"; };
 		416E995523DAEFF700E871CB /* VideoToolboxSoftLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoToolboxSoftLink.cpp; sourceTree = "<group>"; };
@@ -1118,7 +1116,6 @@
 				576CA9D522B854AB0030143C /* AppSSOSPI.h */,
 				2D02E93B2056FAA700A13797 /* AudioToolboxSPI.h */,
 				572A107722B456F500F410C8 /* AuthKitSPI.h */,
-				411A9AC02525D4CA00807D7E /* AVAssetWriterSPI.h */,
 				0C7785701F45130F00F4EBB6 /* AVFoundationSPI.h */,
 				0C2DA1221F3BEB4900DBC317 /* AVKitSPI.h */,
 				41B99E4525DD70150007829A /* AVStreamDataParserSPI.h */,
@@ -1794,7 +1791,6 @@
 				DD20DD1527BC90D60093D175 /* AudioToolboxSoftLink.h in Headers */,
 				DD20DDD827BC90D70093D175 /* AudioToolboxSPI.h in Headers */,
 				DD20DDD927BC90D70093D175 /* AuthKitSPI.h in Headers */,
-				DD20DDDA27BC90D70093D175 /* AVAssetWriterSPI.h in Headers */,
 				DD20DD1B27BC90D60093D175 /* AVFoundationSoftLink.h in Headers */,
 				DD20DDDB27BC90D70093D175 /* AVFoundationSPI.h in Headers */,
 				DD20DDDC27BC90D70093D175 /* AVKitSPI.h in Headers */,

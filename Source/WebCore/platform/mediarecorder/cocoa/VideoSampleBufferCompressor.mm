@@ -193,10 +193,16 @@ void VideoSampleBufferCompressor::processSampleBuffer(CMSampleBufferRef buffer)
             return;
     }
 
+    NSDictionary *frameProperties = nullptr;
+    if (m_shouldForceKeyFrame) {
+        m_shouldForceKeyFrame = false;
+        frameProperties = @{(__bridge NSString*)kVTEncodeFrameOptionKey_ForceKeyFrame:@YES};
+    }
+
     auto imageBuffer = PAL::CMSampleBufferGetImageBuffer(buffer);
     auto presentationTimeStamp = PAL::CMSampleBufferGetPresentationTimeStamp(buffer);
     auto duration = PAL::CMSampleBufferGetDuration(buffer);
-    auto error = PAL::VTCompressionSessionEncodeFrame(m_vtSession.get(), imageBuffer, presentationTimeStamp, duration, NULL, this, NULL);
+    auto error = PAL::VTCompressionSessionEncodeFrame(m_vtSession.get(), imageBuffer, presentationTimeStamp, duration, (__bridge CFDictionaryRef)frameProperties, this, NULL);
     RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTCompressionSessionEncodeFrame failed with %d", error);
 }
 
