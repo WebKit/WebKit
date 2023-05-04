@@ -477,7 +477,7 @@ private:
 #endif
 
 #if ENABLE(GAMEPAD)
-    unsigned m_gamepadEventListenerCount { 0 };
+    uint64_t m_gamepadEventListenerCount { 0 };
 #endif
 
     mutable RefPtr<Storage> m_sessionStorage;
