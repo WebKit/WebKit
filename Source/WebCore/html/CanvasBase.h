@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FloatRect.h"
 #include "IntSize.h"
 #include "PixelBuffer.h"
 #include "TaskSource.h"
@@ -45,10 +46,12 @@ class GraphicsContext;
 class GraphicsContextStateSaver;
 class Image;
 class ImageBuffer;
-class FloatRect;
+class IntRect;
 class ScriptExecutionContext;
 class SecurityOrigin;
 class WebCoreOpaqueRoot;
+
+enum class ShouldApplyPostProcessingToDirtyRect : bool { No, Yes };
 
 class CanvasDisplayBufferObserver : public CanMakeWeakPtr<CanvasDisplayBufferObserver> {
 public:
@@ -109,7 +112,8 @@ public:
 
     GraphicsClient* graphicsClient() const;
 
-    virtual void didDraw(const std::optional<FloatRect>&) = 0;
+    void didDraw(const std::optional<FloatRect>& rect) { return didDraw(rect, ShouldApplyPostProcessingToDirtyRect::Yes); }
+    virtual void didDraw(const std::optional<FloatRect>&, ShouldApplyPostProcessingToDirtyRect);
 
     virtual Image* copiedImage() const = 0;
     virtual void clearCopiedImage() const = 0;
@@ -126,8 +130,7 @@ public:
     virtual void queueTaskKeepingObjectAlive(TaskSource, Function<void()>&&) = 0;
     virtual void dispatchEvent(Event&) = 0;
 
-    bool shouldInjectNoiseBeforeReadback() const;
-    bool postProcessPixelBuffer(Ref<PixelBuffer>&&, bool, const HashSet<uint32_t>&) const;
+    bool postProcessPixelBufferResults(Ref<PixelBuffer>&&, const HashSet<uint32_t>&) const;
 
 protected:
     explicit CanvasBase(IntSize);
@@ -145,9 +148,12 @@ protected:
     RefPtr<ImageBuffer> allocateImageBuffer(bool usesDisplayListDrawing, bool avoidBackendSizeCheckForTesting) const;
 
 private:
+    bool shouldInjectNoiseBeforeReadback() const;
+    void postProcessDirtyCanvasBuffer() const;
     virtual void createImageBuffer() const { }
 
     mutable IntSize m_size;
+    mutable FloatRect m_postProcessDirtyRect;
     mutable Lock m_imageBufferAssignmentLock;
     mutable RefPtr<ImageBuffer> m_imageBuffer;
     mutable size_t m_imageBufferCost { 0 };

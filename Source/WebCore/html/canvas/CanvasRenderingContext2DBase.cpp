@@ -1040,7 +1040,7 @@ void CanvasRenderingContext2DBase::clip(Path2D& path, CanvasFillRule windingRule
     clipInternal(path.path(), windingRule);
 }
 
-static inline IntRect computeImageDataRect(ImageBuffer& buffer, int width, int height, IntRect& destRect, IntSize destOffset)
+static inline IntRect computeImageDataRect(const ImageBuffer& buffer, int width, int height, IntRect destRect, const IntSize& destOffset)
 {
     destRect.intersect(IntRect { 0, 0, width, height });
     destRect.move(destOffset);
@@ -1051,28 +1051,6 @@ static inline IntRect computeImageDataRect(ImageBuffer& buffer, int width, int h
     sourceRect.move(-destOffset);
     sourceRect.intersect(IntRect { 0, 0, width, height });
     return sourceRect;
-}
-
-void CanvasRenderingContext2DBase::postProcessPixelBuffer() const
-{
-    if (!canvasBase().shouldInjectNoiseBeforeReadback() || m_wasLastDrawPutImageData)
-        return;
-
-    ImageBuffer* buffer = canvasBase().buffer();
-    if (!buffer)
-        return;
-
-    IntRect dirtyRect { static_cast<int>(m_dirtyRect.x()), static_cast<int>(m_dirtyRect.y()), static_cast<int>(m_dirtyRect.width()) + 1, static_cast<int>(m_dirtyRect.height()) + 1 };
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toDestinationColorSpace(m_settings.colorSpace) };
-    auto pixelBuffer = buffer->getPixelBuffer(format, dirtyRect);
-    if (!is<ByteArrayPixelBuffer>(pixelBuffer))
-        return;
-
-    if (canvasBase().postProcessPixelBuffer(*pixelBuffer, false, suppliedColors())) {
-        IntSize destOffset { 0, 0 };
-        IntRect sourceRect = computeImageDataRect(*buffer, dirtyRect.width(), dirtyRect.height(), dirtyRect, destOffset);
-        buffer->putPixelBuffer(*pixelBuffer, sourceRect, IntPoint { destOffset });
-    }
 }
 
 void CanvasRenderingContext2DBase::fillInternal(const Path& path, CanvasFillRule windingRule)
@@ -2185,7 +2163,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(C
 
 void CanvasRenderingContext2DBase::didDrawEntireCanvas()
 {
-    didDraw(backingStoreBounds(), DidDrawOption::ApplyClip);
+    didDraw(backingStoreBounds(), { DidDrawOption::ApplyClip, DidDrawOption::ApplyPostProcessing });
 }
 
 void CanvasRenderingContext2DBase::didDraw(std::optional<FloatRect> rect, OptionSet<DidDrawOption> options)
@@ -2205,7 +2183,6 @@ void CanvasRenderingContext2DBase::didDraw(std::optional<FloatRect> rect, Option
     if (!state().hasInvertibleTransform)
         return;
 
-    m_wasLastDrawPutImageData = false;
     if (options.contains(DidDrawOption::ApplyTransform))
         dirtyRect = state().transform.mapRect(dirtyRect);
 
@@ -2223,7 +2200,7 @@ void CanvasRenderingContext2DBase::didDraw(std::optional<FloatRect> rect, Option
         canvasBase().didDraw(std::nullopt);
     else {
         m_dirtyRect.unite(dirtyRect);
-        canvasBase().didDraw(m_dirtyRect);
+        canvasBase().didDraw(m_dirtyRect, options.contains(DidDrawOption::ApplyPostProcessing) ? ShouldApplyPostProcessingToDirtyRect::Yes : ShouldApplyPostProcessingToDirtyRect::No);
     }
 }
 
@@ -2348,6 +2325,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
 
     IntRect imageDataRect { sx, sy, sw, sh };
 
+    canvasBase().makeRenderingResultsAvailable();
     ImageBuffer* buffer = canvasBase().buffer();
     if (!buffer) {
         auto imageData = ImageData::createUninitialized(imageDataRect.width(), imageDataRect.height(), m_settings.colorSpace, settings);
@@ -2367,12 +2345,6 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
     }
 
     ASSERT(pixelBuffer->format().colorSpace == toDestinationColorSpace(computedColorSpace));
-
-    if (canvasBase().postProcessPixelBuffer(*pixelBuffer, m_wasLastDrawPutImageData, suppliedColors())) {
-        IntSize destOffset { 0, 0 };
-        IntRect sourceRect = computeImageDataRect(*buffer, imageDataRect.width(), imageDataRect.height(), imageDataRect, destOffset);
-        buffer->putPixelBuffer(*pixelBuffer, sourceRect, IntPoint { destOffset });
-    }
 
     return { { ImageData::create(static_reference_cast<ByteArrayPixelBuffer>(pixelBuffer.releaseNonNull())) } };
 }
@@ -2408,8 +2380,7 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy,
     if (!sourceRect.isEmpty())
         buffer->putPixelBuffer(data.pixelBuffer(), sourceRect, IntPoint { destOffset });
 
-    didDraw(FloatRect { destRect }, { }); // ignore transform, shadow and clip
-    m_wasLastDrawPutImageData = true;
+    didDraw(FloatRect { destRect }, { }); // ignore transform, shadow, clip, and post-processing
 }
 
 void CanvasRenderingContext2DBase::inflateStrokeRect(FloatRect& rect) const

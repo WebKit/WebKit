@@ -420,8 +420,9 @@ void OffscreenCanvas::convertToBlob(ImageEncodeOptions&& options, Ref<DeferredPr
     promise->resolveWithNewlyCreated<IDLInterface<Blob>>(WTFMove(blob));
 }
 
-void OffscreenCanvas::didDraw(const std::optional<FloatRect>& rect)
+void OffscreenCanvas::didDraw(const std::optional<FloatRect>& rect, ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
 {
+    CanvasBase::didDraw(rect, shouldApplyPostProcessingToDirtyRect);
     clearCopiedImage();
     scheduleCommitToPlaceholderCanvas();
     notifyObserversCanvasChanged(rect);
@@ -543,7 +544,7 @@ void OffscreenCanvas::setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&& buffer)
     m_hasCreatedImageBuffer = true;
     setImageBuffer(WTFMove(buffer));
 
-    didDraw(FloatRect(FloatPoint(), size()));
+    CanvasBase::didDraw(FloatRect(FloatPoint(), size()));
 }
 
 std::unique_ptr<SerializedImageBuffer> OffscreenCanvas::takeImageBuffer() const

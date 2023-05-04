@@ -26,17 +26,18 @@
 #include "config.h"
 #include "CanvasBase.h"
 
+#include "ByteArrayPixelBuffer.h"
 #include "CanvasRenderingContext.h"
 #include "Chrome.h"
 #include "Document.h"
 #include "Element.h"
-#include "FloatRect.h"
 #include "GraphicsClient.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "HostWindow.h"
 #include "ImageBuffer.h"
 #include "InspectorInstrumentation.h"
+#include "IntRect.h"
 #include "StyleCanvasImage.h"
 #include "RenderElement.h"
 #include "WebCoreOpaqueRoot.h"
@@ -108,7 +109,7 @@ void CanvasBase::makeRenderingResultsAvailable()
 {
     if (auto* context = renderingContext()) {
         context->paintRenderingResultsToCanvas();
-        context->postProcessPixelBuffer();
+        postProcessDirtyCanvasBuffer();
     }
 }
 
@@ -197,6 +198,13 @@ void CanvasBase::notifyObserversCanvasChanged(const std::optional<FloatRect>& re
 {
     for (auto& observer : m_observers)
         observer.canvasChanged(*this, rect);
+}
+
+void CanvasBase::didDraw(const std::optional<FloatRect>& rect, ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
+{
+    // FIXME: We should exclude rects with ShouldApplyPostProcessingToDirtyRect::No
+    if (shouldInjectNoiseBeforeReadback() && shouldApplyPostProcessingToDirtyRect == ShouldApplyPostProcessingToDirtyRect::Yes && rect)
+        m_postProcessDirtyRect.unite(*rect);
 }
 
 void CanvasBase::notifyObserversCanvasResized()
@@ -361,12 +369,37 @@ RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer(bool usesDisplayListDrawing,
 
 bool CanvasBase::shouldInjectNoiseBeforeReadback() const
 {
+    // Note, every early-return resulting from this check potentially leaks this state. This is a risk that we're accepting right now.
     return scriptExecutionContext() && scriptExecutionContext()->noiseInjectionHashSalt();
 }
 
-bool CanvasBase::postProcessPixelBuffer(Ref<PixelBuffer>&& pixelBuffer, bool wasLastDrawByBitMap, const HashSet<uint32_t>& suppliedColors) const
+void CanvasBase::postProcessDirtyCanvasBuffer() const
 {
-    if (!shouldInjectNoiseBeforeReadback() || wasLastDrawByBitMap)
+    if (!shouldInjectNoiseBeforeReadback())
+        return;
+
+    if (m_postProcessDirtyRect.isEmpty())
+        return;
+
+    ImageBuffer* imageBuffer = buffer();
+    if (!imageBuffer)
+        return;
+
+    auto imageRect = enclosingIntRect(m_postProcessDirtyRect);
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, imageBuffer->colorSpace() };
+    auto pixelBuffer = imageBuffer->getPixelBuffer(format, imageRect);
+    if (!is<ByteArrayPixelBuffer>(pixelBuffer))
+        return;
+
+    if (postProcessPixelBufferResults(*pixelBuffer, { })) {
+        imageBuffer->putPixelBuffer(*pixelBuffer, imageRect, { 0, 0 });
+        m_postProcessDirtyRect = { };
+    }
+}
+
+bool CanvasBase::postProcessPixelBufferResults(Ref<PixelBuffer>&& pixelBuffer, const HashSet<uint32_t>& suppliedColors) const
+{
+    if (!shouldInjectNoiseBeforeReadback())
         return false;
 
     ASSERT(pixelBuffer->format().pixelFormat == PixelFormat::RGBA8);
