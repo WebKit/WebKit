@@ -54,6 +54,10 @@
 #import <AVKit/AVPictureInPictureController.h>
 #endif
 
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#import <WebKitAdditions/VideoFullscreenInterfaceAVKitAdditions.h>
+#endif
+
 using namespace WebCore;
 
 #import <pal/cf/CoreMediaSoftLink.h>
@@ -396,6 +400,10 @@ NS_ASSUME_NONNULL_END
     _avPlayerViewController.get().modalPresentationStyle = UIModalPresentationOverFullScreen;
 #if PLATFORM(WATCHOS)
     _avPlayerViewController.get().delegate = self;
+#endif
+
+#if ENABLE(FULLSCREEN_WINDOW_EFFECTS)
+    setupAVPlayerViewControllerForFullscreenWindowEffects(_avPlayerViewController.get());
 #endif
 
 #if HAVE(PIP_CONTROLLER)
