@@ -56,7 +56,7 @@ class Publish(Command):
     @classmethod
     def branches_on(cls, repository, ref):
         output = run(
-            [repository.executable(), 'branch', '-a', '--merged', '--format="%(refname)"', ref],
+            [repository.executable(), 'branch', '-a', '--format', '%(refname)', '--merged', ref],
             cwd=repository.root_path,
             capture_output=True,
             encoding='utf-8',
