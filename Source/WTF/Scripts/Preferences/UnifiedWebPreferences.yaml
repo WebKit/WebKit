@@ -7122,8 +7122,10 @@ WebCodecsAV1Enabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "USE(GSTREAMER)": true
       default: false
     WebCore:
+      "USE(GSTREAMER)": true
       default: false
 
 WebCodecsEnabled:
@@ -7296,8 +7298,10 @@ WebRTCAV1CodecEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "USE(GSTREAMER)": true
       default: false
     WebCore:
+      "USE(GSTREAMER)": true
       default: false
 
 WebRTCAudioLatencyAdaptationEnabled:

@@ -42,7 +42,7 @@ GST_DEBUG_CATEGORY(video_encoder_debug);
 #define NUMBER_OF_THREADS 4
 
 static GstStaticPadTemplate sinkTemplate = GST_STATIC_PAD_TEMPLATE("sink", GST_PAD_SINK, GST_PAD_ALWAYS, GST_STATIC_CAPS("video/x-raw(ANY)"));
-static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src", GST_PAD_SRC, GST_PAD_ALWAYS, GST_STATIC_CAPS("video/x-h264;video/x-vp8;video/x-vp9;video/x-h265"));
+static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src", GST_PAD_SRC, GST_PAD_ALWAYS, GST_STATIC_CAPS("video/x-h264;video/x-vp8;video/x-vp9;video/x-h265;video/x-av1"));
 
 // https://www.w3.org/TR/mediastream-recording/#bitratemode
 typedef enum {
@@ -113,7 +113,8 @@ enum EncoderId {
     VaapiH264,
     VaapiH265,
     Vp8,
-    Vp9
+    Vp9,
+    Av1
 };
 
 class Encoders {
@@ -706,6 +707,35 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
                 break;
             };
         });
+
+    if (webkitGstCheckVersion(1, 22, 0)) {
+        Encoders::registerEncoder(Av1, "av1enc", "av1parse", "video/x-av1", nullptr,
+            [](WebKitVideoEncoder* self) {
+                g_object_set(self->priv->encoder.get(), "threads", NUMBER_OF_THREADS, nullptr);
+                gst_util_set_object_arg(G_OBJECT(self->priv->encoder.get()), "keyframe-mode", "disabled");
+            }, "target-bitrate", setBitrateKbitPerSec, "keyframe-max-dist", [](GstElement* encoder, BitrateMode mode) {
+                switch (mode) {
+                case CONSTANT_BITRATE_MODE:
+                    gst_util_set_object_arg(G_OBJECT(encoder), "end-usage", "cbr");
+                    break;
+                case VARIABLE_BITRATE_MODE:
+                    gst_util_set_object_arg(G_OBJECT(encoder), "end-usage", "vbr");
+                    break;
+                }
+            }, [](GstElement* encoder, LatencyMode mode) {
+                if (!gstObjectHasProperty(encoder, "usage-profile"))
+                    return;
+                switch (mode) {
+                case REALTIME_LATENCY_MODE:
+                    gst_util_set_object_arg(G_OBJECT(encoder), "usage-profile", "realtime");
+                    break;
+                case QUALITY_LATENCY_MODE:
+                    gst_util_set_object_arg(G_OBJECT(encoder), "usage-profile", "good-quality");
+                    gst_util_set_object_arg(G_OBJECT(encoder), "end-usage", "q");
+                    break;
+                }
+            });
+    }
 
     auto srcPadTemplateCaps = createSrcPadTemplateCaps();
     gst_element_class_add_pad_template(elementClass, gst_pad_template_new("src", GST_PAD_SRC, GST_PAD_ALWAYS, srcPadTemplateCaps.get()));
