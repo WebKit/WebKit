@@ -99,6 +99,8 @@ class Relationship(object):
 
     @classmethod
     def parse(cls, commit):
+        if not commit.message:
+            return None, []
         lines = commit.message.splitlines()
         lines_to_check = commit.trailers + [lines[0]]
 
@@ -131,24 +133,6 @@ class Relationship(object):
 
 
 class CommitsStory(object):
-    @classmethod
-    def issues_for(cls, commit):
-        filter = set()
-        result = []
-        line_count = 0
-        for line in commit.message.splitlines():
-            if not line and line_count >= 2:
-                break
-            if not line:
-                continue
-            line_count += 1
-            for word in line.split(' '):
-                bug = Tracker.from_string(word)
-                if bug and bug.link not in filter:
-                    filter.add(bug.link)
-                    result.append(bug)
-        return result
-
     def __init__(self, commits=None):
         self.commits = []
         self.by_ref = {}
@@ -176,7 +160,7 @@ class CommitsStory(object):
         if commit.revision:
             self.by_ref['r{}'.format(commit.revision)] = commit
 
-        for issue in self.issues_for(commit):
+        for issue in commit.issues:
             if issue.link not in self.by_issue:
                 self.by_issue[issue.link] = []
             self.by_issue[issue.link].append(commit)
@@ -256,7 +240,7 @@ class Trace(Command):
                 result.append(candidate)
 
         type = Relationship.REFERENCES
-        for issue in CommitsStory.issues_for(commit):
+        for issue in commit.issues:
             for candidate in commits_story.by_issue.get(issue.link, []):
                 if str(candidate) in tracked:
                     continue
