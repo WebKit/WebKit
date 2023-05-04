@@ -1158,7 +1158,6 @@
 		F456AB1C213EDBA300CB2CEF /* FontManagerTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F456AB1B213EDBA300CB2CEF /* FontManagerTests.mm */; };
 		F457275E25578D06007ACA34 /* DisplayListTestsCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F457275D25578D06007ACA34 /* DisplayListTestsCG.cpp */; };
 		F457A9D6202D68AF00F7E9D5 /* DataTransfer.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F457A9B3202D535300F7E9D5 /* DataTransfer.html */; };
-		F458286027750525003ECCF3 /* modal-container-custom.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F458285F2775051B003ECCF3 /* modal-container-custom.html */; };
 		F45B63FB1F197F4A009D38B9 /* image-map.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F45B63FA1F197F33009D38B9 /* image-map.html */; };
 		F45B63FE1F19D410009D38B9 /* ActionSheetTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F45B63FC1F19D410009D38B9 /* ActionSheetTests.mm */; };
 		F45C640028178AD30090DFAB /* green-400x400.webp in Copy Resources */ = {isa = PBXBuildFile; fileRef = F45C63FF28178AC40090DFAB /* green-400x400.webp */; };
@@ -1190,7 +1189,6 @@
 		F472E00327D966F200F3A172 /* TextAlternatives.mm in Sources */ = {isa = PBXBuildFile; fileRef = F472E00227D966F200F3A172 /* TextAlternatives.mm */; };
 		F47728991E4AE3C1007ABF6A /* full-page-contenteditable.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F47728981E4AE3AD007ABF6A /* full-page-contenteditable.html */; };
 		F47DFB2621A878DF00021FB6 /* data-detectors.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F47DFB2421A8704A00021FB6 /* data-detectors.html */; };
-		F481C028277945B800E470CF /* modal-container-with-overlay.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F481C0272779459700E470CF /* modal-container-with-overlay.html */; };
 		F4856CA31E649EA8009D7EE7 /* attachment-element.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4856CA21E6498A8009D7EE7 /* attachment-element.html */; };
 		F486B1D01F67952300F34BDD /* DataTransfer-setDragImage.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F486B1CF1F6794FF00F34BDD /* DataTransfer-setDragImage.html */; };
 		F48D6C10224B377000E3E2FB /* PreferredContentMode.mm in Sources */ = {isa = PBXBuildFile; fileRef = F48D6C0F224B377000E3E2FB /* PreferredContentMode.mm */; };
@@ -1238,7 +1236,6 @@
 		F4E0A2B82122847400AF7C7F /* TestFilePromiseReceiver.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4E0A2B72122847400AF7C7F /* TestFilePromiseReceiver.mm */; };
 		F4E3D80820F70BB9007B58C5 /* significant-text-milestone-article.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4E3D80720F708E4007B58C5 /* significant-text-milestone-article.html */; };
 		F4E7A66327222CA900E74D36 /* canvas-image-data.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4E7A66227222BB100E74D36 /* canvas-image-data.html */; };
-		F4E86F8A2773DC1B003859A6 /* modal-container.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4E86F892773DC06003859A6 /* modal-container.html */; };
 		F4EC8094260D30540010311D /* simple-image-overlay.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4EC8093260D2E620010311D /* simple-image-overlay.html */; };
 		F4F137921D9B683E002BEC57 /* large-video-test-now-playing.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4F137911D9B6832002BEC57 /* large-video-test-now-playing.html */; };
 		F4F405BC1D4C0D1C007A9707 /* full-size-autoplaying-video-with-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4F405BA1D4C0CF8007A9707 /* full-size-autoplaying-video-with-audio.html */; };
@@ -1749,9 +1746,6 @@
 				517E7E04151119C100D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html in Copy Resources */,
 				4971B1202453A88C0096994D /* missingTopFrameUniqueRedirectSameSiteStrictTableSchema.db in Copy Resources */,
 				51CD1C721B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html in Copy Resources */,
-				F458286027750525003ECCF3 /* modal-container-custom.html in Copy Resources */,
-				F481C028277945B800E470CF /* modal-container-with-overlay.html in Copy Resources */,
-				F4E86F8A2773DC1B003859A6 /* modal-container.html in Copy Resources */,
 				7A1458FC1AD5C07000E06772 /* mouse-button-listener.html in Copy Resources */,
 				33E79E06137B5FD900E32D99 /* mouse-move-listener.html in Copy Resources */,
 				9B59F12A2034086F009E63D5 /* mso-list-compat-mode.html in Copy Resources */,
@@ -3446,7 +3440,6 @@
 		F457275D25578D06007ACA34 /* DisplayListTestsCG.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DisplayListTestsCG.cpp; path = cg/DisplayListTestsCG.cpp; sourceTree = "<group>"; };
 		F457A9B3202D535300F7E9D5 /* DataTransfer.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DataTransfer.html; sourceTree = "<group>"; };
 		F457A9B6202D5CDC00F7E9D5 /* PasteMixedContent.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteMixedContent.mm; sourceTree = "<group>"; };
-		F458285F2775051B003ECCF3 /* modal-container-custom.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "modal-container-custom.html"; sourceTree = "<group>"; };
 		F45B63FA1F197F33009D38B9 /* image-map.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "image-map.html"; sourceTree = "<group>"; };
 		F45B63FC1F19D410009D38B9 /* ActionSheetTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ActionSheetTests.mm; sourceTree = "<group>"; };
 		F45C63FE28178A530090DFAB /* webp-image.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "webp-image.html"; sourceTree = "<group>"; };
@@ -3457,7 +3450,6 @@
 		F45E15742112CE6200307E82 /* TestInputDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestInputDelegate.h; sourceTree = "<group>"; };
 		F45E15752112CE6200307E82 /* TestInputDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestInputDelegate.mm; sourceTree = "<group>"; };
 		F45EB60327739F2B003571AE /* TestModalContainerControls.mlmodelc */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = TestModalContainerControls.mlmodelc; sourceTree = "<group>"; };
-		F45EB6062773C371003571AE /* ModalContainerObservation.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ModalContainerObservation.mm; sourceTree = "<group>"; };
 		F460BEE727A1F2D6007B87D9 /* offscreen-image.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "offscreen-image.html"; sourceTree = "<group>"; };
 		F460F656261116EA0064F2B6 /* InjectedBundleHitTest.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = InjectedBundleHitTest.mm; sourceTree = "<group>"; };
 		F460F659261117E70064F2B6 /* InjectedBundleHitTestPlugIn.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = InjectedBundleHitTestPlugIn.mm; sourceTree = "<group>"; };
@@ -3487,7 +3479,6 @@
 		F47DFB2421A8704A00021FB6 /* data-detectors.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "data-detectors.html"; sourceTree = "<group>"; };
 		F47DFB2721A885E700021FB6 /* DataDetectorsCoreSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataDetectorsCoreSPI.h; sourceTree = "<group>"; };
 		F4811E5821940B4400A5E0FD /* WKWebViewEditActions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewEditActions.mm; sourceTree = "<group>"; };
-		F481C0272779459700E470CF /* modal-container-with-overlay.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "modal-container-with-overlay.html"; sourceTree = "<group>"; };
 		F4856CA21E6498A8009D7EE7 /* attachment-element.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "attachment-element.html"; sourceTree = "<group>"; };
 		F486B1CF1F6794FF00F34BDD /* DataTransfer-setDragImage.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "DataTransfer-setDragImage.html"; sourceTree = "<group>"; };
 		F48D6C0F224B377000E3E2FB /* PreferredContentMode.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferredContentMode.mm; sourceTree = "<group>"; };
@@ -3549,7 +3540,6 @@
 		F4E0A2B72122847400AF7C7F /* TestFilePromiseReceiver.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestFilePromiseReceiver.mm; sourceTree = "<group>"; };
 		F4E3D80720F708E4007B58C5 /* significant-text-milestone-article.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "significant-text-milestone-article.html"; sourceTree = "<group>"; };
 		F4E7A66227222BB100E74D36 /* canvas-image-data.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "canvas-image-data.html"; sourceTree = "<group>"; };
-		F4E86F892773DC06003859A6 /* modal-container.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "modal-container.html"; sourceTree = "<group>"; };
 		F4EB4E8F2328AC3000574DAB /* NSItemProviderAdditions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NSItemProviderAdditions.h; path = cocoa/NSItemProviderAdditions.h; sourceTree = SOURCE_ROOT; };
 		F4EB4E902328AC3000574DAB /* NSItemProviderAdditions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = NSItemProviderAdditions.mm; path = cocoa/NSItemProviderAdditions.mm; sourceTree = SOURCE_ROOT; };
 		F4EC8093260D2E620010311D /* simple-image-overlay.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "simple-image-overlay.html"; sourceTree = "<group>"; };
@@ -4016,7 +4006,6 @@
 				51BE9E652376089500B4E117 /* MediaType.mm */,
 				5165FE03201EE617009F7EC3 /* MessagePortProviders.mm */,
 				51CD1C6A1B38CE3600142CA5 /* ModalAlerts.mm */,
-				F45EB6062773C371003571AE /* ModalContainerObservation.mm */,
 				1ABC3DED1899BE6D004F0626 /* Navigation.mm */,
 				6351992722275C6A00890AD3 /* NavigationAction.mm */,
 				5C8BC798218CF3E900813886 /* NetworkProcess.mm */,
@@ -5323,9 +5312,6 @@
 				CDC9442B1EF1FBD20059C3C4 /* mediastreamtrack-detached.html */,
 				4971B11F2453A87F0096994D /* missingTopFrameUniqueRedirectSameSiteStrictTableSchema.db */,
 				51CD1C711B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html */,
-				F458285F2775051B003ECCF3 /* modal-container-custom.html */,
-				F481C0272779459700E470CF /* modal-container-with-overlay.html */,
-				F4E86F892773DC06003859A6 /* modal-container.html */,
 				7A1458FB1AD5C03500E06772 /* mouse-button-listener.html */,
 				33E79E05137B5FCE00E32D99 /* mouse-move-listener.html */,
 				5797FE321EB15A8900B2F4A0 /* navigation-client-default-crypto.html */,
@@ -5684,13 +5670,13 @@
 		DDF3A82A28930475005920CF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DDF3A83D28930475005920CF /* gtest_unittest */,
-				DDF3A83B28930475005920CF /* gtest_unittest-framework */,
-				DDF3A83F28930475005920CF /* sample1_unittest-framework */,
-				DDF3A84128930475005920CF /* sample1_unittest-static */,
 				DDF3A83528930475005920CF /* gtest.framework */,
 				DDF3A83728930475005920CF /* libgtest.a */,
 				DDF3A83928930475005920CF /* libgtest_main.a */,
+				DDF3A83B28930475005920CF /* gtest_unittest-framework */,
+				DDF3A83D28930475005920CF /* gtest_unittest */,
+				DDF3A83F28930475005920CF /* sample1_unittest-framework */,
+				DDF3A84128930475005920CF /* sample1_unittest-static */,
 			);
 			name = Products;
 			sourceTree = "<group>";

@@ -3,7 +3,7 @@
  *                     1999 Lars Knoll <knoll@kde.org>
  *                     1999 Antti Koivisto <koivisto@kde.org>
  *                     2000 Dirk Mueller <mueller@kde.org>
- * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2009 Google Inc. All rights reserved.
@@ -72,7 +72,6 @@
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "MemoryCache.h"
-#include "ModalContainerObserver.h"
 #include "NullGraphicsContext.h"
 #include "OverflowEvent.h"
 #include "Page.h"
@@ -3848,9 +3847,6 @@ void LocalFrameView::performPostLayoutTasks()
 
     if (AXObjectCache* cache = m_frame->document()->existingAXObjectCache())
         cache->performDeferredCacheUpdate();
-
-    if (auto* observer = m_frame->document()->modalContainerObserver())
-        observer->updateModalContainerIfNeeded(*this);
 }
 
 IntSize LocalFrameView::sizeForResizeEvent() const

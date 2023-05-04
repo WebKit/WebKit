@@ -161,7 +161,6 @@
 #include "MediaQueryMatcher.h"
 #include "MediaStream.h"
 #include "MessageEvent.h"
-#include "ModalContainerObserver.h"
 #include "MouseEventWithHitTestResults.h"
 #include "MutationEvent.h"
 #include "NameNodeList.h"
@@ -9519,18 +9518,6 @@ String Document::debugDescription() const
 
     builder.append(' ', documentURI());
     return builder.toString();
-}
-
-ModalContainerObserver* Document::modalContainerObserver()
-{
-    if (!m_modalContainerObserver && ModalContainerObserver::isNeededFor(*this))
-        m_modalContainerObserver = makeUnique<ModalContainerObserver>();
-    return m_modalContainerObserver.get();
-}
-
-ModalContainerObserver* Document::modalContainerObserverIfExists() const
-{
-    return m_modalContainerObserver.get();
 }
 
 TextStream& operator<<(TextStream& ts, const Document& document)

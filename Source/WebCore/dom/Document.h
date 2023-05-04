@@ -174,7 +174,6 @@ class MediaProducer;
 class MediaQueryList;
 class MediaQueryMatcher;
 class MessagePortChannelProvider;
-class ModalContainerObserver;
 class MouseEventWithHitTestResults;
 class NodeFilter;
 class NodeIterator;
@@ -1749,9 +1748,6 @@ public:
 
     URL fallbackBaseURL() const;
 
-    WEBCORE_EXPORT ModalContainerObserver* modalContainerObserver();
-    ModalContainerObserver* modalContainerObserverIfExists() const;
-
     void createNewIdentifier();
 
     WEBCORE_EXPORT bool hasElementWithPendingUserAgentShadowTreeUpdate(Element&) const;
@@ -2226,7 +2222,6 @@ private:
 
     Ref<ReportingScope> m_reportingScope;
 
-    std::unique_ptr<ModalContainerObserver> m_modalContainerObserver;
     std::unique_ptr<WakeLockManager> m_wakeLockManager;
     std::unique_ptr<SleepDisabler> m_sleepDisabler;
 

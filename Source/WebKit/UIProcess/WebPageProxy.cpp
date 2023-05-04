@@ -12287,11 +12287,6 @@ Vector<SandboxExtension::Handle> WebPageProxy::createNetworkExtensionsSandboxExt
 {
     return { };
 }
-
-void WebPageProxy::classifyModalContainerControls(Vector<String>&&, CompletionHandler<void(Vector<ModalContainerControlType>&&)>&& completion)
-{
-    completion({ });
-}
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
@@ -12340,11 +12335,6 @@ void WebPageProxy::clearAppPrivacyReportTestingData(CompletionHandler<void()>&& 
 void WebPageProxy::requestCookieConsent(CompletionHandler<void(CookieConsentDecisionResult)>&& completion)
 {
     m_uiClient->requestCookieConsent(WTFMove(completion));
-}
-
-void WebPageProxy::decidePolicyForModalContainer(OptionSet<ModalContainerControlType> types, CompletionHandler<void(ModalContainerDecision)>&& completion)
-{
-    m_uiClient->decidePolicyForModalContainer(types, WTFMove(completion));
 }
 
 #if ENABLE(VIDEO)

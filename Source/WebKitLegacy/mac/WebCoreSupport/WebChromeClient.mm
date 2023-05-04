@@ -1211,13 +1211,3 @@ void WebChromeClient::requestCookieConsent(CompletionHandler<void(CookieConsentD
 {
     completion(CookieConsentDecisionResult::NotSupported);
 }
-
-void WebChromeClient::classifyModalContainerControls(Vector<String>&&, CompletionHandler<void(Vector<ModalContainerControlType>&&)>&& completion)
-{
-    completion({ });
-}
-
-void WebChromeClient::decidePolicyForModalContainer(OptionSet<ModalContainerControlType>, CompletionHandler<void(ModalContainerDecision)>&& completion)
-{
-    completion(ModalContainerDecision::Show);
-}

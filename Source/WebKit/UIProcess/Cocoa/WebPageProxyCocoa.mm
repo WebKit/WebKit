@@ -36,7 +36,6 @@
 #import "InsertTextOptions.h"
 #import "LoadParameters.h"
 #import "MessageSenderInlines.h"
-#import "ModalContainerControlClassifier.h"
 #import "NetworkConnectionIntegrityHelpers.h"
 #import "PageClient.h"
 #import "PlaybackSessionManagerProxy.h"
@@ -942,11 +941,6 @@ bool WebPageProxy::isQuarantinedAndNotUserApproved(const String& fileURLString)
     return true;
 }
 #endif
-
-void WebPageProxy::classifyModalContainerControls(Vector<String>&& texts, CompletionHandler<void(Vector<ModalContainerControlType>&&)>&& completion)
-{
-    ModalContainerControlClassifier::sharedClassifier().classify(WTFMove(texts), WTFMove(completion));
-}
 
 void WebPageProxy::replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference& data)
 {

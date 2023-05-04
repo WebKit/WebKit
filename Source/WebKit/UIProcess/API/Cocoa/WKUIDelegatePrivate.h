@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -113,13 +113,6 @@ typedef NS_OPTIONS(NSUInteger, _WKXRSessionFeatureFlags) {
     _WKXRSessionFeatureFlagsHandTracking = 1 << 5,
 } WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
-typedef NS_ENUM(NSInteger, _WKModalContainerDecision) {
-    _WKModalContainerDecisionShow,
-    _WKModalContainerDecisionHideAndIgnore,
-    _WKModalContainerDecisionHideAndAllow,
-    _WKModalContainerDecisionHideAndDisallow,
-} WK_API_AVAILABLE(macos(13.0), ios(16.0));
-
 typedef NS_ENUM(NSInteger, WKDisplayCapturePermissionDecision) {
     WKDisplayCapturePermissionDecisionDeny,
     WKDisplayCapturePermissionDecisionScreenPrompt,
@@ -205,8 +198,6 @@ struct UIEdgeInsets;
 - (void)_webViewEndXRSession:(WKWebView *)webView WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 - (void)_webView:(WKWebView *)webView requestCookieConsentWithMoreInfoHandler:(void (^)(void))moreInfoHandler decisionHandler:(void (^)(BOOL))decisionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));
-
-- (void)_webView:(WKWebView *)webView decidePolicyForModalContainer:(_WKModalContainerInfo *)containerInfo decisionHandler:(void (^)(_WKModalContainerDecision))decisionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 - (void)_webView:(WKWebView *)webView updatedAppBadge:(NSNumber *)badge fromSecurityOrigin:(WKSecurityOrigin *)origin WK_API_AVAILABLE(macos(13.3), ios(16.4));
 - (void)_webView:(WKWebView *)webView updatedClientBadge:(NSNumber *)badge fromSecurityOrigin:(WKSecurityOrigin *)origin WK_API_AVAILABLE(macos(13.3), ios(16.4));

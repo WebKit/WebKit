@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -47,7 +47,6 @@
 #include "LocalDOMWindow.h"
 #include "LocalFrameView.h"
 #include "MathMLElement.h"
-#include "ModalContainerObserver.h"
 #include "NodeName.h"
 #include "Page.h"
 #include "Quirks.h"
@@ -593,13 +592,6 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         if (m_document.settings().textAutosizingUsesIdempotentMode())
             adjustForTextAutosizing(style, *m_element);
 #endif
-
-        if (auto observer = m_element->document().modalContainerObserverIfExists()) {
-            if (observer->shouldHide(*m_element))
-                style.setDisplay(DisplayType::None);
-            if (observer->shouldMakeVerticallyScrollable(*m_element))
-                style.setOverflowY(Overflow::Auto);
-        }
     }
 
     if (style.contentVisibility() == ContentVisibility::Hidden)

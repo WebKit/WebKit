@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -156,7 +156,6 @@
 #include "MockLibWebRTCPeerConnection.h"
 #include "MockPageOverlay.h"
 #include "MockPageOverlayClient.h"
-#include "ModalContainerObserver.h"
 #include "NavigatorBeacon.h"
 #include "NavigatorMediaDevices.h"
 #include "NetworkLoadInformation.h"
@@ -7064,12 +7063,6 @@ RefPtr<PushSubscription> Internals::createPushSubscription(const String& endpoin
     return PushSubscription::create(PushSubscriptionData { { }, WTFMove(myEndpoint), expirationTime, WTFMove(myServerVAPIDPublicKey), WTFMove(myClientECDHPublicKey), WTFMove(myAuth) });
 }
 #endif
-
-void Internals::overrideModalContainerSearchTermForTesting(AtomString&& term)
-{
-    if (auto observer = contextDocument()->modalContainerObserver())
-        observer->overrideSearchTermForTesting(WTFMove(term));
-}
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 
