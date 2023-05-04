@@ -267,6 +267,7 @@
 #include "TypedElementDescendantIteratorInlines.h"
 #include "UndoManager.h"
 #include "UserGestureIndicator.h"
+#include "ValidationMessage.h"
 #include "ValidationMessageClient.h"
 #include "ViolationReportType.h"
 #include "VisibilityChangeClient.h"
@@ -4587,6 +4588,18 @@ void Document::invalidateScrollbars()
 {
     if (RefPtr frameView = view())
         frameView->invalidateScrollbarsForAllScrollableAreas();
+}
+
+void Document::scheduleToAdjustValidationMessagePosition(ValidationMessage& validationMessage)
+{
+    m_validationMessagesToPosition.add(validationMessage);
+    scheduleRenderingUpdate(RenderingUpdateStep::UpdateValidationMessagePositions);
+}
+
+void Document::adjustValidationMessagePositions()
+{
+    for (auto& message : std::exchange(m_validationMessagesToPosition, { }))
+        message.adjustBubblePosition();
 }
 
 void Document::addAudioProducer(MediaProducer& audioProducer)

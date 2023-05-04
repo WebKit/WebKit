@@ -56,12 +56,12 @@ public:
     void requestToHideMessage();
     bool isVisible() const;
     bool shadowTreeContains(const Node&) const;
+    void adjustBubblePosition();
 
 private:
     ValidationMessageClient* validationMessageClient() const;
     void setMessage(const String&);
     void setMessageDOMAndStartTimer();
-    void adjustBubblePosition();
     void buildBubbleTree();
     void deleteBubbleTree();
 

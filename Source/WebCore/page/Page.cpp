@@ -1810,6 +1810,10 @@ void Page::updateRendering()
         }
     });
 
+    runProcessingStep(RenderingUpdateStep::UpdateValidationMessagePositions, [] (Document& document) {
+        document.adjustValidationMessagePositions();
+    });
+
     for (auto& document : initialDocuments) {
         if (document && document->domWindow())
             document->domWindow()->unfreezeNowTimestamp();
@@ -4119,6 +4123,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
     case RenderingUpdateStep::PrepareCanvasesForDisplay: ts << "PrepareCanvasesForDisplay"; break;
     case RenderingUpdateStep::CaretAnimation: ts << "CaretAnimation"; break;
     case RenderingUpdateStep::FocusFixup: ts << "FocusFixup"; break;
+    case RenderingUpdateStep::UpdateValidationMessagePositions: ts << "UpdateValidationMessagePositions"; break;
     }
     return ts;
 }

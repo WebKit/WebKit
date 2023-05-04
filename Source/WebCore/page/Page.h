@@ -237,6 +237,7 @@ enum class RenderingUpdateStep : uint32_t {
     PrepareCanvasesForDisplay       = 1 << 16,
     CaretAnimation                  = 1 << 17,
     FocusFixup                      = 1 << 18,
+    UpdateValidationMessagePositions= 1 << 19,
 };
 
 enum class LookalikeCharacterSanitizationTrigger : uint8_t {

@@ -223,6 +223,7 @@ class TextResourceDecoder;
 class TransformSource;
 class TreeWalker;
 class UndoManager;
+class ValidationMessage;
 class VisibilityChangeClient;
 class VisitedLinkState;
 class WakeLockManager;
@@ -1489,6 +1490,9 @@ public:
 
     void invalidateScrollbars();
 
+    void scheduleToAdjustValidationMessagePosition(ValidationMessage&);
+    void adjustValidationMessagePositions();
+
     WEBCORE_EXPORT void addAudioProducer(MediaProducer&);
     WEBCORE_EXPORT void removeAudioProducer(MediaProducer&);
     void setActiveSpeechRecognition(SpeechRecognition*);
@@ -2233,6 +2237,8 @@ private:
 
     struct PendingScrollEventTargetList;
     std::unique_ptr<PendingScrollEventTargetList> m_pendingScrollEventTargetList;
+
+    WeakHashSet<ValidationMessage> m_validationMessagesToPosition;
 
     MediaProducerMediaStateFlags m_mediaState;
 
