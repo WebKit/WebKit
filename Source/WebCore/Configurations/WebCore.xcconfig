@@ -1,4 +1,4 @@
-// Copyright (C) 2009-2022 Apple Inc. All rights reserved.
+// Copyright (C) 2009-2023 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -75,6 +75,25 @@ WK_ANGLE_LDFLAGS = -weak-lANGLE-shared;
 
 WK_WEBGPU_LDFLAGS = -weak_framework WebGPU;
 
+// Vision.framework is not present in the watchOS SDK.
+// It's present in the macOS SDK, but isn't present in the macOS base system at runtime.
+// So we have to weak-link it on macOS.
+// And we have to weak-link it everywhere else, because Vision depends on UIKit, which depends on WebCore.
+WK_VISION_LDFLAGS = $(WK_VISION_LDFLAGS_$(WK_PLATFORM_NAME))
+WK_VISION_LDFLAGS_iphoneos = $(WK_HAVE_VISION_LDFLAGS);
+WK_VISION_LDFLAGS_iphonesimulator = $(WK_HAVE_VISION_LDFLAGS);
+WK_VISION_LDFLAGS_watchos = ;
+WK_VISION_LDFLAGS_watchsimulator = ;
+WK_VISION_LDFLAGS_appletvos = $(WK_HAVE_VISION_LDFLAGS)
+WK_VISION_LDFLAGS_appletvsimulator = $(WK_HAVE_VISION_LDFLAGS);
+WK_VISION_LDFLAGS_maccatalyst = $(WK_HAVE_VISION_LDFLAGS);
+WK_VISION_LDFLAGS_macosx = $(WK_HAVE_VISION_LDFLAGS);
+WK_HAVE_VISION_LDFLAGS = -weak_framework Vision;
+
+// CoreML is present in all the SDKs, but it isn't present in the macOS base system at runtime.
+// So we have to weak-link it.
+WK_COREML_LDFLAGS = -weak_framework CoreML;
+
 WK_APPKIT_LDFLAGS = $(WK_APPKIT_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_APPKIT_LDFLAGS_macosx = -framework AppKit;
 WK_APPKIT_LDFLAGS_maccatalyst = -framework AppKit;
@@ -145,7 +164,7 @@ WK_DEBUG_LDFLAGS =
 WK_DEBUG_LDFLAGS[config=Debug] = -Wl,-debug_variant
 
 // FIXME: Reduce the number of allowable_clients <rdar://problem/31823969>
-OTHER_LDFLAGS = $(inherited) $(WK_RELOCATABLE_FRAMEWORK_LDFLAGS) -weak-lxslt -lsqlite3 -lobjc -allowable_client WebCoreTestSupport -allowable_client WebKitLegacy -allowable_client TestIPC -force_load $(BUILT_PRODUCTS_DIR)/libPAL.a -framework CFNetwork -framework CoreAudio -framework CoreGraphics -framework CoreText -framework Foundation -framework IOSurface -framework ImageIO -framework Metal $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH)) $(OTHER_LDFLAGS_PLATFORM_$(WK_PLATFORM_NAME)) $(WK_ANGLE_LDFLAGS) $(WK_WEBGPU_LDFLAGS) $(WK_APPKIT_LDFLAGS) $(WK_APPSUPPORT_LDFLAGS) $(WK_AUDIO_UNIT_LDFLAGS) $(WK_CARBON_LDFLAGS) $(WK_CORE_UI_LDFLAGS) $(WK_DATA_DETECTORS_CORE_LDFLAGS) $(WK_GRAPHICS_SERVICES_LDFLAGS) $(WK_IOSURFACE_ACCELERATOR_LDFLAGS) $(WK_LIBWEBRTC_LDFLAGS) $(WK_MOBILE_CORE_SERVICES_LDFLAGS) $(WK_MOBILE_GESTALT_LDFLAGS) $(WK_NETWORK_EXTENSION_LDFLAGS) $(WK_SYSTEM_CONFIGURATION_LDFLAGS) $(WK_CORE_IMAGE_LDFLAGS) $(WK_URL_FORMATTING_LDFLAGS) $(WK_UNIFORM_TYPE_IDENTIFIERS_LDFLAGS) $(WK_SCENEKIT_LDFLAGS) $(SOURCE_VERSION_LDFLAGS) $(PROFILE_GENERATE_OR_USE_LDFLAGS) $(WK_NO_STATIC_INITIALIZERS) $(WK_DEBUG_LDFLAGS);
+OTHER_LDFLAGS = $(inherited) $(WK_RELOCATABLE_FRAMEWORK_LDFLAGS) -weak-lxslt -lsqlite3 -lobjc -allowable_client WebCoreTestSupport -allowable_client WebKitLegacy -allowable_client TestIPC -force_load $(BUILT_PRODUCTS_DIR)/libPAL.a -framework CFNetwork -framework CoreAudio -framework CoreGraphics -framework CoreText -framework Foundation -framework IOSurface -framework ImageIO -framework Metal $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH)) $(OTHER_LDFLAGS_PLATFORM_$(WK_PLATFORM_NAME)) $(WK_ANGLE_LDFLAGS) $(WK_WEBGPU_LDFLAGS) $(WK_APPKIT_LDFLAGS) $(WK_APPSUPPORT_LDFLAGS) $(WK_AUDIO_UNIT_LDFLAGS) $(WK_CARBON_LDFLAGS) $(WK_CORE_UI_LDFLAGS) $(WK_DATA_DETECTORS_CORE_LDFLAGS) $(WK_GRAPHICS_SERVICES_LDFLAGS) $(WK_IOSURFACE_ACCELERATOR_LDFLAGS) $(WK_LIBWEBRTC_LDFLAGS) $(WK_MOBILE_CORE_SERVICES_LDFLAGS) $(WK_MOBILE_GESTALT_LDFLAGS) $(WK_NETWORK_EXTENSION_LDFLAGS) $(WK_SYSTEM_CONFIGURATION_LDFLAGS) $(WK_CORE_IMAGE_LDFLAGS) $(WK_URL_FORMATTING_LDFLAGS) $(WK_UNIFORM_TYPE_IDENTIFIERS_LDFLAGS) $(WK_SCENEKIT_LDFLAGS) $(SOURCE_VERSION_LDFLAGS) $(PROFILE_GENERATE_OR_USE_LDFLAGS) $(WK_VISION_LDFLAGS) $(WK_COREML_LDFLAGS) $(WK_NO_STATIC_INITIALIZERS) $(WK_DEBUG_LDFLAGS);
 
 OTHER_LDFLAGS_PLATFORM_cocoatouch = -allowable_client WebKit -allowable_client iTunesU -allowable_client Casablanca -allowable_client Remote -allowable_client TVBooks -allowable_client DumpRenderTree -allowable_client WebKitTestRunner -allowable_client TestWebKitAPI;
 OTHER_LDFLAGS_PLATFORM_macosx = -sub_library libobjc -umbrella WebKit $(PROFILE_GENERATE_OR_USE_LDFLAGS);

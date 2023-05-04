@@ -34,7 +34,7 @@
 #import "LandmarkInterface.h"
 #import "NativeImage.h"
 #import "VisionUtilities.h"
-#import <pal/cocoa/VisionSoftLink.h>
+#import <Vision/Vision.h>
 
 namespace WebCore::ShapeDetection {
 
@@ -82,10 +82,10 @@ void FaceDetectorImpl::detect(Ref<ImageBuffer>&& imageBuffer, CompletionHandler<
         return;
     }
 
-    auto request = adoptNS([PAL::allocVNDetectFaceLandmarksRequestInstance() init]);
+    auto request = adoptNS([VNDetectFaceLandmarksRequest new]);
     configureRequestToUseCPUOrGPU(request.get());
 
-    auto imageRequestHandler = adoptNS([PAL::allocVNImageRequestHandlerInstance() initWithCGImage:platformImage.get() options:@{ }]);
+    auto imageRequestHandler = adoptNS([[VNImageRequestHandler alloc] initWithCGImage:platformImage.get() options:@{ }]);
 
     NSError *error = nil;
     auto result = [imageRequestHandler performRequests:@[request.get()] error:&error];

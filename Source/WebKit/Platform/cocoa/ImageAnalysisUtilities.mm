@@ -31,6 +31,7 @@
 #import "CocoaImage.h"
 #import "Logging.h"
 #import "TransactionID.h"
+#import <Vision/Vision.h>
 #import <WebCore/TextRecognitionResult.h>
 #import <pal/spi/cocoa/FeatureFlagsSPI.h>
 #import <wtf/RobinHoodHashSet.h>
@@ -41,7 +42,6 @@
 #endif
 
 #import <pal/cocoa/VisionKitCoreSoftLink.h>
-#import <pal/cocoa/VisionSoftLink.h>
 
 #define CRLayoutDirectionTopToBottom 3
 
@@ -398,7 +398,7 @@ static RetainPtr<CGImageRef> imageFilledWithWhiteBackground(CGImageRef image)
 
 void requestPayloadForQRCode(CGImageRef image, CompletionHandler<void(NSString *)>&& completion)
 {
-    if (!image || !PAL::isVisionFrameworkAvailable())
+    if (!image || ![VNRequest class])
         return completion(nil);
 
     auto adjustedImage = imageFilledWithWhiteBackground(image);
@@ -410,7 +410,7 @@ void requestPayloadForQRCode(CGImageRef image, CompletionHandler<void(NSString *
         }
 
         for (VNBarcodeObservation *result in request.results) {
-            if (![result.symbology isEqualToString:PAL::get_Vision_VNBarcodeSymbologyQR()])
+            if (![result.symbology isEqualToString:VNBarcodeSymbologyQR])
                 continue;
 
             completion(result.payloadStringValue);
@@ -420,11 +420,11 @@ void requestPayloadForQRCode(CGImageRef image, CompletionHandler<void(NSString *
         completion(nil);
     });
 
-    auto request = adoptNS([PAL::allocVNDetectBarcodesRequestInstance() initWithCompletionHandler:completionHandler.get()]);
-    [request setSymbologies:@[ PAL::get_Vision_VNBarcodeSymbologyQR() ]];
+    auto request = adoptNS([[VNDetectBarcodesRequest alloc] initWithCompletionHandler:completionHandler.get()]);
+    [request setSymbologies:@[ VNBarcodeSymbologyQR ]];
 
     NSError *error = nil;
-    auto handler = adoptNS([PAL::allocVNImageRequestHandlerInstance() initWithCGImage:adjustedImage.get() options:@{ }]);
+    auto handler = adoptNS([[VNImageRequestHandler alloc] initWithCGImage:adjustedImage.get() options:@{ }]);
     [handler performRequests:@[ request.get() ] error:&error];
 
     if (error)

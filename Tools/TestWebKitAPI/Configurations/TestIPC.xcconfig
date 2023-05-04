@@ -1,4 +1,4 @@
-// Copyright (C) 2022 Apple Inc. All rights reserved.
+// Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -32,7 +32,22 @@ GCC_PREPROCESSOR_DEFINITIONS = $(inherited) BUILDING_TEST_IPC GTEST_API_=
 WK_UIKITMACHELPER_LDFLAGS = $(WK_UIKITMACHELPER_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_UIKITMACHELPER_LDFLAGS_maccatalyst = -framework UIKitMacHelper;
 
-OTHER_LDFLAGS = $(inherited) $(WK_UIKITMACHELPER_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH)) -framework UniformTypeIdentifiers;
+// Vision.framework is not present in the watchOS SDK.
+// It's present in the macOS SDK, but isn't present in the macOS base system at runtime.
+// So we have to weak-link it on macOS.
+// We can link it normally everywhere else, because UIKit does not depend on WebKit (but does depend on WebCore).
+WK_VISION_LDFLAGS = $(WK_VISION_LDFLAGS_$(WK_PLATFORM_NAME))
+WK_VISION_LDFLAGS_iphoneos = $(WK_HAVE_VISION_LDFLAGS);
+WK_VISION_LDFLAGS_iphonesimulator = $(WK_HAVE_VISION_LDFLAGS);
+WK_VISION_LDFLAGS_watchos = ;
+WK_VISION_LDFLAGS_watchsimulator = ;
+WK_VISION_LDFLAGS_appletvos = $(WK_HAVE_VISION_LDFLAGS)
+WK_VISION_LDFLAGS_appletvsimulator = $(WK_HAVE_VISION_LDFLAGS);
+WK_VISION_LDFLAGS_maccatalyst = $(WK_HAVE_VISION_LDFLAGS);
+WK_VISION_LDFLAGS_macosx = $(WK_HAVE_VISION_LDFLAGS);
+WK_HAVE_VISION_LDFLAGS = -framework Vision;
+
+OTHER_LDFLAGS = $(inherited) $(WK_UIKITMACHELPER_LDFLAGS) $(WK_VISION_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH)) -framework UniformTypeIdentifiers;
 OTHER_LDFLAGS_PLATFORM_ = -framework Cocoa -framework Carbon -framework CoreServices;
 OTHER_LDFLAGS_PLATFORM_cocoatouch = -framework CoreGraphics -framework MobileCoreServices -framework UIKit;
 
