@@ -115,10 +115,22 @@ static const AtomString& attachmentPreviewIdentifier()
     return identifier;
 }
 
+static const AtomString& attachmentPlaceholderIdentifier()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-placeholder"_s);
+    return identifier;
+}
+
 static const AtomString& attachmentProgressIdentifier()
 {
     static MainThreadNeverDestroyed<const AtomString> identifier("attachment-progress"_s);
     return identifier;
+}
+
+static const AtomString& attachmentProgressCSSProperty()
+{
+    static MainThreadNeverDestroyed<const AtomString> property("--progress"_s);
+    return property;
 }
 
 static const AtomString& attachmentProgressCircleIdentifier()
@@ -229,6 +241,8 @@ void HTMLAttachmentElement::ensureModernShadowTree(ShadowRoot& root)
     m_innerLegacyAttachment->setIdAttribute(attachmentPreviewIdentifier());
     previewArea->appendChild(*m_innerLegacyAttachment);
 
+    m_placeholderElement = createContainedElement<HTMLDivElement>(previewArea, attachmentPlaceholderIdentifier());
+
     m_progressElement = createContainedElement<HTMLDivElement>(previewArea, attachmentProgressIdentifier());
     updateProgress(attributeWithoutSynchronization(progressAttr));
 
@@ -291,11 +305,21 @@ void HTMLAttachmentElement::updateProgress(const AtomString& progress)
     bool validProgress = false;
     float value = progress.toFloat(&validProgress);
     if (validProgress && std::isfinite(value)) {
-        m_progressElement->setAttributeWithoutSynchronization(styleAttr, makeAtomString("--progress: ", (value < 0.0) ? "0"_s : (value > 1.0) ? "1"_s : progress));
+        if (!value) {
+            m_placeholderElement->removeInlineStyleProperty(CSSPropertyDisplay);
+            m_progressElement->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
+            m_progressElement->removeInlineStyleCustomProperty(attachmentProgressCSSProperty());
+            return;
+        }
+        m_placeholderElement->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
+        m_progressElement->removeInlineStyleProperty(CSSPropertyDisplay);
+        m_progressElement->setInlineStyleCustomProperty(attachmentProgressCSSProperty(), (value < 0.0) ? "0"_s : (value > 1.0) ? "1"_s : progress);
         return;
     }
 
-    m_progressElement->setAttributeWithoutSynchronization(styleAttr, "display: none;"_s);
+    m_placeholderElement->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
+    m_progressElement->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
+    m_progressElement->removeInlineStyleCustomProperty(attachmentProgressCSSProperty());
 }
 
 void HTMLAttachmentElement::updateSaveButton(bool show)

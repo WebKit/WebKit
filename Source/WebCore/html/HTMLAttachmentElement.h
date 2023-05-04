@@ -127,6 +127,7 @@ private:
 
     RefPtr<HTMLAttachmentElement> m_innerLegacyAttachment;
     RefPtr<HTMLElement> m_containerElement;
+    RefPtr<HTMLElement> m_placeholderElement;
     RefPtr<HTMLElement> m_progressElement;
     RefPtr<HTMLElement> m_informationBlock;
     RefPtr<HTMLElement> m_actionTextElement;
