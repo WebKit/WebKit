@@ -53,7 +53,7 @@ static WARN_UNUSED_RETURN bool decodeImage(Decoder& decoder, RefPtr<Image>& imag
     if (!handle || !*handle)
         return false;
 
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(**handle);
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(WTFMove(**handle));
     if (!bitmap)
         return false;
     image = bitmap->createImage();

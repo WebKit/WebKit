@@ -134,10 +134,10 @@ public:
     static RefPtr<ShareableBitmap> createFromImageDraw(WebCore::NativeImage&);
 
     // Create a shareable bitmap from a handle.
-    static RefPtr<ShareableBitmap> create(const Handle&, SharedMemory::Protection = SharedMemory::Protection::ReadWrite);
+    static RefPtr<ShareableBitmap> create(Handle&&, SharedMemory::Protection = SharedMemory::Protection::ReadWrite);
     
     // Create a shareable bitmap from a ReadOnly handle.
-    static std::optional<Ref<ShareableBitmap>> createReadOnly(const std::optional<Handle>&);
+    static std::optional<Ref<ShareableBitmap>> createReadOnly(std::optional<Handle>&&);
 
     std::optional<Handle> createHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const;
     
