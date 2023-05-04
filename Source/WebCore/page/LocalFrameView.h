@@ -867,6 +867,8 @@ private:
     void updateWidgetPositionsTimerFired();
 
     bool scrollToFragmentInternal(StringView);
+    void scheduleScrollToAnchorAndTextFragment();
+    void scrollToAnchorAndTextFragmentNowIfNeeded();
     void scrollToAnchor();
     void scrollToTextFragmentRange();
     void scrollPositionChanged(const ScrollPosition& oldPosition, const ScrollPosition& newPosition);
@@ -1054,6 +1056,7 @@ private:
     // True if autosize has been run since m_shouldAutoSize was set.
     bool m_didRunAutosize { false };
     bool m_inUpdateEmbeddedObjects { false };
+    bool m_scheduledToScrollToAnchor { false };
 };
 
 inline void LocalFrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& size)

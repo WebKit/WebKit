@@ -2409,7 +2409,9 @@ void LocalFrameView::maintainScrollPositionAtAnchor(ContainerNode* anchorNode)
     if (renderView && renderView->needsLayout())
         layoutContext().layout();
     else
-        scrollToAnchor();
+        scheduleScrollToAnchorAndTextFragment();
+
+    scrollToAnchorAndTextFragmentNowIfNeeded();
 }
 
 void LocalFrameView::maintainScrollPositionAtScrollToTextFragmentRange(SimpleRange& range)
@@ -3646,6 +3648,33 @@ bool LocalFrameView::safeToPropagateScrollToParent() const
         return false;
 
     return document->securityOrigin().isSameOriginDomain(parentDocument->securityOrigin());
+}
+
+void LocalFrameView::scheduleScrollToAnchorAndTextFragment()
+{
+    if (m_scheduledToScrollToAnchor)
+        return;
+
+    RefPtr document = m_frame->document();
+    ASSERT(document);
+
+    m_scheduledToScrollToAnchor = true;
+    document->eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        protectedThis->scrollToAnchorAndTextFragmentNowIfNeeded();
+    });
+}
+
+void LocalFrameView::scrollToAnchorAndTextFragmentNowIfNeeded()
+{
+    if (!m_scheduledToScrollToAnchor)
+        return;
+
+    m_scheduledToScrollToAnchor = false;
+    scrollToAnchor();
+    scrollToTextFragmentRange();
 }
 
 void LocalFrameView::scrollToAnchor()
