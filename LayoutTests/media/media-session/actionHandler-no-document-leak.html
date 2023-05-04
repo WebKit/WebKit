@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<iframe id="iframe"></iframe>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that page installed actionHandlers do not leak documents.");
+
+jsTestIsAsync = true;
+frameDocumentID = 0;
+checkCount = 0;
+
+function iframeLoaded(frameDocument) {
+    if (!window.internals) {
+        testFailed("Test requires internals.");
+        return;
+    }
+
+    frameDocumentID = internals.documentIdentifier(frameDocument);
+    shouldBeTrue("internals.isDocumentAlive(frameDocumentID)");
+
+    iframe.addEventListener("load", () => {
+        handle = setInterval(() => {
+            gc();
+            if (!internals.isDocumentAlive(frameDocumentID)) {
+                clearInterval(handle);
+                testPassed("The iframe document didn't leak.");
+                finishJSTest();
+            }
+            checkCount++;
+            if (checkCount > 500) {
+                clearInterval(handle);
+                testFailed("The iframe document leaked.");
+                finishJSTest();
+            }
+        }, 10);
+    });
+
+    iframe.src = "about:blank";
+}
+
+onload = () => {
+    iframe.src = "resources/media-session-action-handler-document-leak-frame.html";
+    document.body.appendChild(iframe);
+};
+
+onmessage = (message) => {
+    if (message.data === "frameLoaded")
+        iframeLoaded(iframe.contentWindow.document);
+};
+
+</script>
+</body>
+</html>
