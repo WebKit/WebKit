@@ -421,7 +421,6 @@ webkit.org/b/245840 webgl/max-active-contexts-webglcontextlost-prevent-default.h
 webkit.org/b/245840 webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure ]
 webkit.org/b/245840 webgl/webgl2-primitive-restart.html [ ImageOnlyFailure ]
 webkit.org/b/245840 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Failure ]
-webkit.org/b/245840 fast/canvas/webgl/copy-tex-image-and-sub-image-2d-bad-input.html [ Failure ]
 webkit.org/b/245840 fast/canvas/webgl/drawElements-empty-vertex-data.html [ Failure ]
 webkit.org/b/245840 fast/canvas/webgl/drawingbuffer-test.html [ Failure ]
 webkit.org/b/245840 fast/canvas/webgl/largeBuffer.html [ Failure ]
@@ -434,8 +433,6 @@ webkit.org/b/245840 fast/canvas/webgl/tex-image-with-greyscale-image.html [ Fail
 webkit.org/b/245840 fast/canvas/webgl/tex-sub-image-2d.html [ Failure ]
 webkit.org/b/245840 fast/canvas/webgl/tex-sub-image-cube-maps.html [ Failure ]
 webkit.org/b/245840 fast/canvas/webgl/vertexAttribPointer-with-bad-offset.html [ Failure ]
-webkit.org/b/245840 fast/canvas/webgl/webgl-drawarrays-crash-2.html [ Failure ]
-webkit.org/b/245840 fast/canvas/webgl/webgl-drawarrays-crash.html [ Failure ]
 
 # WebGL ANGLE backed flaky tests
 webkit.org/b/245840 webgl/1.0.3/conformance/textures/copy-tex-image-2d-formats.html [ Failure Pass ]
