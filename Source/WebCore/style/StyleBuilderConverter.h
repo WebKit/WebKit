@@ -990,13 +990,19 @@ inline RefPtr<ShapeValue> BuilderConverter::convertShapeValue(BuilderState& buil
 
     RefPtr<BasicShape> shape;
     CSSBoxType referenceBox = CSSBoxType::BoxMissing;
-    for (auto& currentValue : downcast<CSSValueList>(value)) {
+    auto processSingleValue = [&](const CSSValue& currentValue) {
         if (!currentValue.isValueID())
             shape = basicShapeForValue(builderState.cssToLengthConversionData(), currentValue);
         else
             referenceBox = fromCSSValue<CSSBoxType>(currentValue);
+    };
+    if (is<CSSValueList>(value)) {
+        for (auto& currentValue : downcast<CSSValueList>(value))
+            processSingleValue(currentValue);
+    } else {
+        processSingleValue(value);
     }
-
+    
     if (shape)
         return ShapeValue::create(shape.releaseNonNull(), referenceBox);
 
