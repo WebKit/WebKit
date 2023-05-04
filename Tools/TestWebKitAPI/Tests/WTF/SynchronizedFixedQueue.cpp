@@ -85,12 +85,7 @@ public:
             while (m_lowerQueue->dequeue(lower)) {
                 m_upperQueue->enqueue(toUpper(lower));
                 EXPECT_TRUE(lower == textItem(m_produceCount++));
-#if PLATFORM(WIN)
-                auto sleepAmount = std::chrono::milliseconds(20);
-#else
-                auto sleepAmount = std::chrono::milliseconds(10);
-#endif
-                std::this_thread::sleep_for(sleepAmount);
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
             m_produceCloseSemaphore.signal();
         });
@@ -151,8 +146,8 @@ public:
     bool isProducing() { return m_produceQueue; }
     bool isConsuming() { return m_consumeQueue; }
 
-    size_t produceCount() const { return m_produceCount; }
-    size_t consumeCount() const { return m_consumeCount; }
+    const std::atomic<size_t>& produceCount() const { return m_produceCount; }
+    const std::atomic<size_t>& consumeCount() const { return m_consumeCount; }
 
 private:
     Ref<SynchronizedFixedQueue<CString, BufferSize>> m_lowerQueue;
@@ -161,8 +156,8 @@ private:
     RefPtr<WorkQueue> m_consumeQueue;
     BinarySemaphore m_produceCloseSemaphore;
     BinarySemaphore m_consumeCloseSemaphore;
-    size_t m_produceCount { 0 };
-    size_t m_consumeCount { 0 };
+    std::atomic<size_t> m_produceCount { 0 };
+    std::atomic<size_t> m_consumeCount { 0 };
 };
 
 TEST(WTF_SynchronizedFixedQueue, Basic)
@@ -181,7 +176,7 @@ TEST(WTF_SynchronizedFixedQueue, Basic)
 
 TEST(WTF_SynchronizedFixedQueue, ProduceOnly)
 {
-    ToUpperConverter<4U> converter;
+    ToUpperConverter<8U> converter;
     
     converter.startProducing();
     EXPECT_TRUE(converter.isProducing() && !converter.isConsuming());
@@ -193,9 +188,14 @@ TEST(WTF_SynchronizedFixedQueue, ProduceOnly)
         
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
+    while (converter.produceCount() < count)
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
     converter.stop();
     EXPECT_FALSE(converter.isProducing() || converter.isConsuming());
+
+    EXPECT_EQ(converter.produceCount(), count);
+    EXPECT_EQ(converter.consumeCount(), 0U);
 }
 
 TEST(WTF_SynchronizedFixedQueue, ConsumeOnly)
@@ -223,8 +223,8 @@ TEST(WTF_SynchronizedFixedQueue, Limits)
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(400));
+    while (converter.consumeCount() < count)
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
     converter.stop();
     EXPECT_FALSE(converter.isProducing() || converter.isConsuming());
