@@ -57,6 +57,8 @@
 
 #if USE(GBM)
 #include "AcceleratedBackingStoreDMABuf.h"
+#include <WebCore/PlatformDisplayGBM.h>
+#include <WebCore/PlatformDisplaySurfaceless.h>
 #endif
 #endif
 
@@ -135,6 +137,19 @@ static bool webGLEnabled(WebKitURISchemeRequest* request)
 }
 #endif
 
+static bool uiProcessContextIsEGL()
+{
+#if USE(EGL)
+#if PLATFORM(GTK)
+    return !!PlatformDisplay::sharedDisplay().gtkEGLDisplay();
+#else
+    return true;
+#endif
+#else
+    return false;
+#endif
+}
+
 static const char* openGLAPI()
 {
     if (epoxy_is_desktop_gl())
@@ -175,6 +190,34 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
         tablesBuilder.append("</table>"_s);
     };
 
+#if USE(EGL)
+    auto addEGLInfo = [&](auto& jsonObject) {
+        addTableRow(jsonObject, "GL_RENDERER"_s, String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_RENDERER))));
+        addTableRow(jsonObject, "GL_VENDOR"_s, String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_VENDOR))));
+        addTableRow(jsonObject, "GL_VERSION"_s, String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
+        addTableRow(jsonObject, "GL_SHADING_LANGUAGE_VERSION"_s, String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
+
+#if USE(OPENGL_ES)
+        addTableRow(jsonObject, "GL_EXTENSIONS"_s, String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS))));
+#else
+        StringBuilder extensionsBuilder;
+        GLint numExtensions = 0;
+        glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+        for (GLint i = 0; i < numExtensions; ++i) {
+            if (i)
+                extensionsBuilder.append(' ');
+            extensionsBuilder.append(reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i)));
+        }
+        addTableRow(jsonObject, "GL_EXTENSIONS"_s, extensionsBuilder.toString());
+#endif
+
+        auto eglDisplay = eglGetCurrentDisplay();
+        addTableRow(jsonObject, "EGL_VERSION"_s, String::fromUTF8(eglQueryString(eglDisplay, EGL_VERSION)));
+        addTableRow(jsonObject, "EGL_VENDOR"_s, String::fromUTF8(eglQueryString(eglDisplay, EGL_VENDOR)));
+        addTableRow(jsonObject, "EGL_EXTENSIONS"_s, makeString(eglQueryString(nullptr, EGL_EXTENSIONS), ' ', eglQueryString(eglDisplay, EGL_EXTENSIONS)));
+    };
+#endif
+
     auto jsonObject = JSON::Object::create();
 
     startTable("Version Information"_s);
@@ -188,7 +231,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 #endif
 
     const char* desktopName = g_getenv("XDG_CURRENT_DESKTOP");
-    addTableRow(versionObject, "Desktop"_s, (desktopName && *desktopName) ? makeString(desktopName) : "Unknown"_s);
+    addTableRow(versionObject, "Desktop"_s, (desktopName && *desktopName) ? String::fromUTF8(desktopName) : "Unknown"_s);
 
 #if USE(CAIRO)
     addTableRow(versionObject, "Cairo version"_s, makeString(CAIRO_VERSION_STRING, " (build) "_s, cairo_version_string(), " (runtime)"_s));
@@ -221,7 +264,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 
 #if PLATFORM(WPE)
     addTableRow(versionObject, "WPE version"_s, makeString(WPE_MAJOR_VERSION, '.', WPE_MINOR_VERSION, '.', WPE_MICRO_VERSION, " (build) "_s, wpe_get_major_version(), '.', wpe_get_minor_version(), '.', wpe_get_micro_version(), " (runtime)"_s));
-    addTableRow(versionObject, "WPE backend"_s, makeString(wpe_loader_get_loaded_implementation_library_name()));
+    addTableRow(versionObject, "WPE backend"_s, String::fromUTF8(wpe_loader_get_loaded_implementation_library_name()));
 #endif
 
     stopTable();
@@ -233,82 +276,107 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 #if PLATFORM(GTK)
     StringBuilder typeStringBuilder;
 #if PLATFORM(WAYLAND)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland) {
+    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
         typeStringBuilder.append("Wayland"_s);
-        typeStringBuilder.append(usingDMABufRenderer ? " (DMABuf renderer)"_s : " (WPE renderer)"_s);
-    }
 #endif
 #if PLATFORM(X11)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11) {
+    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)
         typeStringBuilder.append("X11"_s);
-        typeStringBuilder.append(usingDMABufRenderer ? " (DMABuf renderer)"_s : " (XWindow renderer)"_s);
-    }
 #endif
     addTableRow(displayObject, "Type"_s, !typeStringBuilder.isEmpty() ? typeStringBuilder.toString() : "Unknown"_s);
 #endif // PLATFORM(GTK)
+
+    const char* policy = hardwareAccelerationPolicy(request);
 
     auto rect = IntRect(screenRect(nullptr));
     addTableRow(displayObject, "Screen geometry"_s, makeString(rect.x(), ',', rect.y(), ' ', rect.width(), 'x', rect.height()));
 
     rect = IntRect(screenAvailableRect(nullptr));
     addTableRow(displayObject, "Screen work area"_s, makeString(rect.x(), ',', rect.y(), ' ', rect.width(), 'x', rect.height()));
-    addTableRow(displayObject, "Depth"_s, makeString(screenDepth(nullptr)));
-    addTableRow(displayObject, "Bits per color component"_s, makeString(screenDepthPerComponent(nullptr)));
-    addTableRow(displayObject, "DPI"_s, makeString(screenDPI()));
+    addTableRow(displayObject, "Depth"_s, String::number(screenDepth(nullptr)));
+    addTableRow(displayObject, "Bits per color component"_s, String::number(screenDepthPerComponent(nullptr)));
+    addTableRow(displayObject, "DPI"_s, String::number(screenDPI()));
+#if USE(GBM)
+    if (strcmp(policy, "never")) {
+        auto deviceFile = PlatformDisplay::sharedDisplay().drmDeviceFile();
+        if (!deviceFile.isEmpty())
+            addTableRow(displayObject, "DRM Device"_s, deviceFile);
+        auto renderNode = PlatformDisplay::sharedDisplay().drmRenderNodeFile();
+        if (!renderNode.isEmpty())
+            addTableRow(displayObject, "DRM Render Node"_s, renderNode);
+    }
+#endif
 
     stopTable();
     jsonObject->setObject("Display Information"_s, WTFMove(displayObject));
 
     auto hardwareAccelerationObject = JSON::Object::create();
     startTable("Hardware Acceleration Information"_s);
-    addTableRow(hardwareAccelerationObject, "Policy"_s, makeString(hardwareAccelerationPolicy(request)));
+    addTableRow(hardwareAccelerationObject, "Policy"_s, String::fromUTF8(policy));
 
 #if ENABLE(WEBGL)
     addTableRow(hardwareAccelerationObject, "WebGL enabled"_s, webGLEnabled(request) ? "Yes"_s : "No"_s);
 #endif
 
+    std::unique_ptr<PlatformDisplay> renderDisplay;
+    if (strcmp(policy, "never")) {
+        addTableRow(jsonObject, "API"_s, String::fromUTF8(openGLAPI()));
+#if PLATFORM(WAYLAND)
+        if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
+            addTableRow(hardwareAccelerationObject, "Renderer"_s, usingDMABufRenderer ? "DMABuf"_s : "WPE"_s);
+#endif
+#if PLATFORM(X11)
+        if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)
+            addTableRow(hardwareAccelerationObject, "Renderer"_s, usingDMABufRenderer ? "DMABuf"_s : "XWindow"_s);
+#endif
+        addTableRow(hardwareAccelerationObject, "Native interface"_s, uiProcessContextIsEGL() ? "EGL"_s : "None"_s);
+
 #if USE(EGL)
-    auto glContext = GLContext::createOffscreen(PlatformDisplay::sharedDisplay());
-    glContext->makeContextCurrent();
-
-    addTableRow(hardwareAccelerationObject, "API"_s, makeString(openGLAPI()));
-    addTableRow(hardwareAccelerationObject, "Native interface"_s, "EGL"_s);
-    addTableRow(hardwareAccelerationObject, "GL_RENDERER"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_RENDERER))));
-    addTableRow(hardwareAccelerationObject, "GL_VENDOR"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_VENDOR))));
-    addTableRow(hardwareAccelerationObject, "GL_VERSION"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
-    addTableRow(hardwareAccelerationObject, "GL_SHADING_LANGUAGE_VERSION"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
-
-#if USE(GBM)
-    auto deviceFile = PlatformDisplay::sharedDisplay().drmDeviceFile();
-    if (!deviceFile.isEmpty())
-        addTableRow(hardwareAccelerationObject, "DRM Device"_s, deviceFile);
-    auto renderNode = PlatformDisplay::sharedDisplay().drmRenderNodeFile();
-    if (!renderNode.isEmpty())
-        addTableRow(hardwareAccelerationObject, "DRM Render Node"_s, renderNode);
-#endif
-
-#if USE(OPENGL_ES)
-    addTableRow(hardwareAccelerationObject, "GL_EXTENSIONS"_s, makeString(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS))));
-#else
-    StringBuilder extensionsBuilder;
-    GLint numExtensions = 0;
-    glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
-    for (GLint i = 0; i < numExtensions; ++i) {
-        if (i)
-            extensionsBuilder.append(' ');
-        extensionsBuilder.append(reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i)));
-    }
-    addTableRow(hardwareAccelerationObject, "GL_EXTENSIONS"_s, extensionsBuilder.toString());
-#endif
-
-    auto eglDisplay = PlatformDisplay::sharedDisplay().eglDisplay();
-    addTableRow(hardwareAccelerationObject, "EGL_VERSION"_s, makeString(eglQueryString(eglDisplay, EGL_VERSION)));
-    addTableRow(hardwareAccelerationObject, "EGL_VENDOR"_s, makeString(eglQueryString(eglDisplay, EGL_VENDOR)));
-    addTableRow(hardwareAccelerationObject, "EGL_EXTENSIONS"_s, makeString(eglQueryString(nullptr, EGL_EXTENSIONS), ' ', eglQueryString(eglDisplay, EGL_EXTENSIONS)));
+        if (uiProcessContextIsEGL()) {
+            auto glContext = GLContext::createOffscreen(PlatformDisplay::sharedDisplay());
+            glContext->makeContextCurrent();
+            addEGLInfo(hardwareAccelerationObject);
+        }
 #endif // USE(EGL)
+    }
 
     stopTable();
     jsonObject->setObject("Hardware Acceleration Information"_s, WTFMove(hardwareAccelerationObject));
+
+#if USE(EGL) && PLATFORM(GTK)
+    if (strcmp(policy, "never")) {
+        std::unique_ptr<PlatformDisplay> platformDisplay;
+#if USE(GBM)
+        if (usingDMABufRenderer) {
+            if (auto* device = PlatformDisplay::sharedDisplay().gbmDevice())
+                platformDisplay = PlatformDisplayGBM::create(device);
+            else
+                platformDisplay = PlatformDisplaySurfaceless::create();
+        }
+#endif
+
+        if (platformDisplay || !uiProcessContextIsEGL()) {
+            auto hardwareAccelerationObject = JSON::Object::create();
+            startTable("Hardware Acceleration Information (Render Process)"_s);
+
+            if (platformDisplay)
+                addTableRow(hardwareAccelerationObject, "Platform"_s, String::fromUTF8(platformDisplay->type() == PlatformDisplay::Type::GBM ? "GBM"_s : "Surfaceless"_s));
+
+            auto glContext = GLContext::createOffscreen(platformDisplay ? *platformDisplay : PlatformDisplay::sharedDisplay());
+            glContext->makeContextCurrent();
+            addEGLInfo(hardwareAccelerationObject);
+
+            stopTable();
+            jsonObject->setObject("Hardware Acceleration Information (Render process)"_s, WTFMove(hardwareAccelerationObject));
+
+            if (platformDisplay) {
+                // Clear the contexts used by the display before it's destroyed.
+                glContext = nullptr;
+                platformDisplay->clearSharingGLContext();
+            }
+        }
+    }
+#endif
 
     auto infoAsString = jsonObject->toJSONString();
     g_string_append_printf(html, "<script>function copyAsJSON() { "

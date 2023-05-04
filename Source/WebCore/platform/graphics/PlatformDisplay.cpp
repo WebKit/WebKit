@@ -221,11 +221,21 @@ void PlatformDisplay::sharedDisplayDidClose()
 }
 #endif
 
+#if USE(EGL)
+static HashSet<PlatformDisplay*>& eglDisplays()
+{
+    static NeverDestroyed<HashSet<PlatformDisplay*>> displays;
+    return displays;
+}
+#endif
+
 PlatformDisplay::~PlatformDisplay()
 {
-#if USE(EGL) && !PLATFORM(WIN)
-    ASSERT(!m_eglDisplayOwned || m_eglDisplay == EGL_NO_DISPLAY);
+#if USE(EGL)
+    if (m_eglDisplay != EGL_NO_DISPLAY && eglDisplays().remove(this))
+        terminateEGLDisplay();
 #endif
+
 #if PLATFORM(GTK)
     if (m_sharedDisplay)
         g_signal_handlers_disconnect_by_data(m_sharedDisplay.get(), this);
@@ -249,12 +259,6 @@ void PlatformDisplay::clearSharingGLContext()
 #endif
 
 #if USE(EGL)
-static HashSet<PlatformDisplay*>& eglDisplays()
-{
-    static NeverDestroyed<HashSet<PlatformDisplay*>> displays;
-    return displays;
-}
-
 EGLDisplay PlatformDisplay::eglDisplay() const
 {
     if (!m_eglDisplayInitialized)
