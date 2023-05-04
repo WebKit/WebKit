@@ -63,16 +63,16 @@ private:
 #endif
 
     // IPC message handlers
-    void update(uint64_t backingStoreStateID, const UpdateInfo&) override;
+    void update(uint64_t backingStoreStateID, UpdateInfo&&) override;
     void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
-    void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&) override;
+    void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, UpdateInfo&&) override;
     void updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
     void targetRefreshRateDidChange(unsigned) override;
 
     bool shouldSendWheelEventsToEventDispatcher() const override { return true; }
 
 #if !PLATFORM(WPE)
-    void incorporateUpdate(const UpdateInfo&);
+    void incorporateUpdate(UpdateInfo&&);
 #endif
 
     bool alwaysUseCompositing() const;

@@ -54,10 +54,10 @@ public:
 #endif
 
     void paint(PlatformGraphicsContext, const WebCore::IntRect&);
-    void incorporateUpdate(const UpdateInfo&);
+    void incorporateUpdate(UpdateInfo&&);
 
 private:
-    void incorporateUpdate(ShareableBitmap*, const UpdateInfo&);
+    void incorporateUpdate(ShareableBitmap*, UpdateInfo&&);
     void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
 
 #if USE(CAIRO)

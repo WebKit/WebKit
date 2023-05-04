@@ -132,7 +132,7 @@ void DrawingAreaProxyCoordinatedGraphics::commitTransientZoom(double scale, Floa
 }
 #endif
 
-void DrawingAreaProxyCoordinatedGraphics::update(uint64_t, const UpdateInfo& updateInfo)
+void DrawingAreaProxyCoordinatedGraphics::update(uint64_t, UpdateInfo&& updateInfo)
 {
     if (m_isWaitingForDidUpdateGeometry && updateInfo.viewSize != m_lastSentSize) {
         m_webPageProxy.send(Messages::DrawingArea::DisplayDidRefresh(), m_identifier);
@@ -142,7 +142,7 @@ void DrawingAreaProxyCoordinatedGraphics::update(uint64_t, const UpdateInfo& upd
     // FIXME: Handle the case where the view is hidden.
 
 #if !PLATFORM(WPE)
-    incorporateUpdate(updateInfo);
+    incorporateUpdate(WTFMove(updateInfo));
 #endif
 
     if (!m_isWaitingForDidUpdateGeometry)
@@ -154,11 +154,11 @@ void DrawingAreaProxyCoordinatedGraphics::enterAcceleratedCompositingMode(uint64
     enterAcceleratedCompositingMode(layerTreeContext);
 }
 
-void DrawingAreaProxyCoordinatedGraphics::exitAcceleratedCompositingMode(uint64_t, const UpdateInfo& updateInfo)
+void DrawingAreaProxyCoordinatedGraphics::exitAcceleratedCompositingMode(uint64_t, UpdateInfo&& updateInfo)
 {
     exitAcceleratedCompositingMode();
 #if !PLATFORM(WPE)
-    incorporateUpdate(updateInfo);
+    incorporateUpdate(WTFMove(updateInfo));
 #endif
 }
 
@@ -173,7 +173,7 @@ void DrawingAreaProxyCoordinatedGraphics::targetRefreshRateDidChange(unsigned ra
 }
 
 #if !PLATFORM(WPE)
-void DrawingAreaProxyCoordinatedGraphics::incorporateUpdate(const UpdateInfo& updateInfo)
+void DrawingAreaProxyCoordinatedGraphics::incorporateUpdate(UpdateInfo&& updateInfo)
 {
     ASSERT(!isInAcceleratedCompositingMode());
 
@@ -183,14 +183,15 @@ void DrawingAreaProxyCoordinatedGraphics::incorporateUpdate(const UpdateInfo& up
     if (!m_backingStore || m_backingStore->size() != updateInfo.viewSize)
         m_backingStore = makeUnique<BackingStore>(updateInfo.viewSize, updateInfo.deviceScaleFactor, m_webPageProxy);
 
-    m_backingStore->incorporateUpdate(updateInfo);
-
     Region damageRegion;
     if (updateInfo.scrollRect.isEmpty()) {
         for (const auto& rect : updateInfo.updateRects)
             damageRegion.unite(rect);
     } else
         damageRegion = IntRect(IntPoint(), m_webPageProxy.viewSize());
+
+    m_backingStore->incorporateUpdate(WTFMove(updateInfo));
+
     m_webPageProxy.setViewNeedsDisplay(damageRegion);
 }
 #endif

@@ -44,7 +44,7 @@ BackingStore::~BackingStore()
 {
 }
 
-void BackingStore::incorporateUpdate(const UpdateInfo& updateInfo)
+void BackingStore::incorporateUpdate(UpdateInfo&& updateInfo)
 {
     ASSERT(m_size == updateInfo.viewSize);
     
@@ -58,7 +58,7 @@ void BackingStore::incorporateUpdate(const UpdateInfo& updateInfo)
     ASSERT(bitmap->size() == updateSize);
 #endif
     
-    incorporateUpdate(bitmap.get(), updateInfo);
+    incorporateUpdate(bitmap.get(), WTFMove(updateInfo));
 }
 
 } // namespace WebKit
