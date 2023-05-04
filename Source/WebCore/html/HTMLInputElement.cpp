@@ -908,7 +908,10 @@ void HTMLInputElement::didAttachRenderers()
     m_inputType->attach();
 
     if (document().focusedElement() == this) {
-        document().view()->queuePostLayoutCallback([protectedThis = Ref { *this }] {
+        document().eventLoop().queueTask(TaskSource::UserInteraction, [weakThis = WeakPtr { *this }]() {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis || protectedThis->document().focusedElement() != protectedThis)
+                return;
             protectedThis->updateFocusAppearance(SelectionRestorationMode::RestoreOrSelectAll, SelectionRevealMode::Reveal);
         });
     }
