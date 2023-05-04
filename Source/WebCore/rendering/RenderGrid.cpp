@@ -468,7 +468,7 @@ void RenderGrid::layoutMasonry(bool relayoutChildren)
             trackBasedLogicalHeight += size.value();
         else {
             if (areMasonryRows())
-                trackBasedLogicalHeight += m_masonryLayout.gridContentSize() + m_masonryLayout.gridGap();
+                trackBasedLogicalHeight += m_masonryLayout.gridContentSize();
             else
                 trackBasedLogicalHeight += m_trackSizingAlgorithm.computeTrackBasedSize();
         }
