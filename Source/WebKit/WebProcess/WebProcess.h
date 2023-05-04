@@ -115,6 +115,10 @@ struct ServiceWorkerContextData;
 #endif
 }
 
+namespace WTF {
+enum class Critical : bool;
+}
+
 namespace WebKit {
 
 class AudioMediaStreamTrackRendererInternalUnitManager;
@@ -300,6 +304,7 @@ public:
 
     void prepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime, CompletionHandler<void()>&&);
     void processDidResume();
+    void handleMemoryPressureWarning(WTF::Critical, CompletionHandler<void()>&&);
 
     void sendPrewarmInformation(const URL&);
 

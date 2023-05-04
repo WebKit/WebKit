@@ -1245,7 +1245,7 @@ WebProcessPool::Statistics& WebProcessPool::statistics()
     return statistics;
 }
 
-void WebProcessPool::handleMemoryPressureWarning(Critical)
+void WebProcessPool::handleMemoryPressureWarning(Critical isCritical)
 {
     WEBPROCESSPOOL_RELEASE_LOG(PerformanceLogging, "handleMemoryPressureWarning:");
 
@@ -1257,6 +1257,16 @@ void WebProcessPool::handleMemoryPressureWarning(Critical)
     if (m_prewarmedProcess)
         m_prewarmedProcess->shutDown();
     ASSERT(!m_prewarmedProcess);
+
+#if PLATFORM(MAC)
+    // On macOS, processes do not attempt to free up memory before suspending for performance
+    // reasons. If the UIProcess gets a memory pressure warning, we need to make sure we wake
+    // up those suspended processes so they can handle the memory pressure warning.
+    for (auto& process : processes()) {
+        if (process->throttler().isSuspended())
+            process->sendWithAsyncReply(Messages::WebProcess::HandleMemoryPressureWarning(isCritical), [] { });
+    }
+#endif
 }
 
 ProcessID WebProcessPool::prewarmedProcessIdentifier()

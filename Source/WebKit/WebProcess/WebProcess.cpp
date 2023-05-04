@@ -1547,6 +1547,17 @@ void WebProcess::pageActivityStateDidChange(PageIdentifier, OptionSet<WebCore::A
     }
 }
 
+void WebProcess::handleMemoryPressureWarning(Critical isCritical, CompletionHandler<void()>&& completionHandler)
+{
+    WEBPROCESS_RELEASE_LOG(ProcessSuspension, "handleMemoryPressureWarning:");
+    if (!m_suppressMemoryPressureHandler) {
+        MemoryPressureHandler::singleton().releaseMemory(isCritical, Synchronous::Yes);
+        for (auto& page : m_pageMap.values())
+            page->releaseMemory(isCritical);
+    }
+    completionHandler();
+}
+
 void WebProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime, CompletionHandler<void()>&& completionHandler)
 {
 #if !RELEASE_LOG_DISABLED
