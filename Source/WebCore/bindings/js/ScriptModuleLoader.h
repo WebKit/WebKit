@@ -54,12 +54,12 @@ class ScriptModuleLoader final : private ModuleScriptLoaderClient {
 public:
     enum class OwnerType : uint8_t { Document, WorkerOrWorklet };
     enum class ModuleType : uint8_t { Invalid, JavaScript, WebAssembly, JSON };
-    explicit ScriptModuleLoader(ScriptExecutionContext&, OwnerType);
+    explicit ScriptModuleLoader(ScriptExecutionContext*, OwnerType);
     ~ScriptModuleLoader();
 
     UniqueRef<ScriptModuleLoader> shadowRealmLoader(JSC::JSGlobalObject* realmGlobal) const;
 
-    ScriptExecutionContext& context() { return m_context.get(); }
+    ScriptExecutionContext* context() { return m_context.get(); }
 
     JSC::Identifier resolve(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue moduleName, JSC::JSValue importerModuleKey, JSC::JSValue scriptFetcher);
     JSC::JSInternalPromise* fetch(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue moduleKey, JSC::JSValue parameters, JSC::JSValue scriptFetcher);
@@ -73,7 +73,7 @@ private:
     URL moduleURL(JSC::JSGlobalObject&, JSC::JSValue);
     URL responseURLFromRequestURL(JSC::JSGlobalObject&, JSC::JSValue);
 
-    CheckedRef<ScriptExecutionContext> m_context;
+    WeakPtr<ScriptExecutionContext> m_context;
     MemoryCompactRobinHoodHashMap<String, URL> m_requestURLToResponseURLMap;
     HashSet<Ref<ModuleScriptLoader>> m_loaders;
     OwnerType m_ownerType;
