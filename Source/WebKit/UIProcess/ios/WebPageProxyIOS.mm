@@ -1244,7 +1244,7 @@ void WebPageProxy::didStartLoadForQuickLookDocumentInMainFrame(const String& fil
 
 void WebPageProxy::didFinishLoadForQuickLookDocumentInMainFrame(ShareableResource::Handle&& handle)
 {
-    auto buffer = handle.tryWrapInSharedBuffer();
+    auto buffer = WTFMove(handle).tryWrapInSharedBuffer();
     if (!buffer)
         return;
 

@@ -70,9 +70,9 @@ RefPtr<SharedBuffer> ShareableResource::wrapInSharedBuffer()
     });
 }
 
-RefPtr<SharedBuffer> ShareableResourceHandle::tryWrapInSharedBuffer() const
+RefPtr<SharedBuffer> ShareableResourceHandle::tryWrapInSharedBuffer() &&
 {
-    RefPtr<ShareableResource> resource = ShareableResource::map(*this);
+    RefPtr<ShareableResource> resource = ShareableResource::map(WTFMove(*this));
     if (!resource) {
         LOG_ERROR("Failed to recreate ShareableResource from handle.");
         return nullptr;
@@ -95,7 +95,7 @@ RefPtr<ShareableResource> ShareableResource::create(Ref<SharedMemory>&& sharedMe
     return adoptRef(*new ShareableResource(WTFMove(sharedMemory), offset, size));
 }
 
-RefPtr<ShareableResource> ShareableResource::map(const Handle& handle)
+RefPtr<ShareableResource> ShareableResource::map(Handle&& handle)
 {
     auto sharedMemory = SharedMemory::map(handle.m_handle, SharedMemory::Protection::ReadOnly);
     if (!sharedMemory)

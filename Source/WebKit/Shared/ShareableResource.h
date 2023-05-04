@@ -50,7 +50,7 @@ public:
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, ShareableResourceHandle&);
 
-    RefPtr<WebCore::SharedBuffer> tryWrapInSharedBuffer() const;
+    RefPtr<WebCore::SharedBuffer> tryWrapInSharedBuffer() &&;
 
 private:
     friend class ShareableResource;
@@ -68,7 +68,7 @@ public:
     static RefPtr<ShareableResource> create(Ref<SharedMemory>&&, unsigned offset, unsigned size);
 
     // Create a shareable resource from a handle.
-    static RefPtr<ShareableResource> map(const Handle&);
+    static RefPtr<ShareableResource> map(Handle&&);
 
     std::optional<Handle> createHandle();
 

@@ -1425,7 +1425,7 @@ static std::optional<WebCore::ScriptBuffer> decodeScriptBufferAsShareableResourc
     ShareableResource::Handle handle;
     if (!decoder.decode(handle) || handle.isNull())
         return std::nullopt;
-    auto buffer = handle.tryWrapInSharedBuffer();
+    auto buffer = WTFMove(handle).tryWrapInSharedBuffer();
     if (!buffer)
         return std::nullopt;
     return WebCore::ScriptBuffer { WTFMove(buffer) };

@@ -331,7 +331,7 @@ void WebResourceLoader::didReceiveResource(ShareableResource::Handle&& handle)
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveResource for '%s'", m_coreLoader->url().string().latin1().data());
     WEBRESOURCELOADER_RELEASE_LOG("didReceiveResource:");
 
-    RefPtr<SharedBuffer> buffer = handle.tryWrapInSharedBuffer();
+    RefPtr<SharedBuffer> buffer = WTFMove(handle).tryWrapInSharedBuffer();
 
     if (!buffer) {
         LOG_ERROR("Unable to create buffer from ShareableResource sent from the network process.");
