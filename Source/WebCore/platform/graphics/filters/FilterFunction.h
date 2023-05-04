@@ -33,6 +33,7 @@
 #include "FloatRect.h"
 #include "LengthBox.h"
 #include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/AtomString.h>
 
 namespace WTF {
@@ -49,7 +50,7 @@ enum class FilterRepresentation : uint8_t {
     Debugging
 };
 
-class FilterFunction : public RefCounted<FilterFunction> {
+class FilterFunction : public ThreadSafeRefCounted<FilterFunction> {
 public:
     enum class Type : uint8_t {
         CSSFilter,

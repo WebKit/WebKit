@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,18 +25,17 @@
 
 #pragma once
 
-#include "FilterEffectGeometry.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-struct SVGFilterExpressionNode {
+class FilterEffect;
+
+struct SVGFilterTransactionItem {
     unsigned index;
-    std::optional<FilterEffectGeometry> geometry;
-    unsigned level;
+    Ref<FilterEffect> effect;
 };
 
-using SVGFilterExpressionReference = Vector<SVGFilterExpressionNode>;
-
+using SVGFilterTransaction = Vector<SVGFilterTransactionItem>;
 
 } // namespace WebCore

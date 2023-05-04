@@ -27,6 +27,7 @@
 
 #include "PixelBufferFormat.h"
 #include "RenderingMode.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

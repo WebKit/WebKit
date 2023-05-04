@@ -34,6 +34,7 @@
 #include "GraphicsTypes.h"
 #include "RenderingResource.h"
 #include <variant>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
 #if USE(CG)
@@ -58,7 +59,7 @@ class AffineTransform;
 class FloatRect;
 class GraphicsContext;
 
-class Gradient : public RenderingResource {
+class Gradient : public ThreadSafeRefCounted<Gradient>, public RenderingResource {
 public:
     struct LinearData {
         FloatPoint point0;

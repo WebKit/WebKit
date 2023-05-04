@@ -448,7 +448,10 @@ template<> struct ArgumentCoder<WebCore::SVGFilter> {
 
 template<> struct ArgumentCoder<WebCore::Filter> {
     template<typename Encoder>
+    static void encodeFilterProperties(Encoder&, const WebCore::Filter&);
+    template<typename Encoder>
     static void encode(Encoder&, const WebCore::Filter&);
+    static WARN_UNUSED_RETURN bool decodeFilterProperties(Decoder&, WebCore::Filter&);
     static std::optional<Ref<WebCore::Filter>> decode(Decoder&);
 };
 

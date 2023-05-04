@@ -350,6 +350,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::PolicyCheckIdentifier',
         'WebCore::RenderingMode',
         'WebCore::RenderingPurpose',
+        'WebCore::SVGFilterTransaction',
         'WebCore::ScriptExecutionContextIdentifier',
         'WebCore::ServiceWorkerOrClientData',
         'WebCore::ServiceWorkerOrClientIdentifier',

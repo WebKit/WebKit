@@ -163,12 +163,7 @@ void Recorder::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect
         }
     }
 
-    if (!sourceImage) {
-        recordDrawFilteredImageBuffer(nullptr, sourceImageRect, filter);
-        return;
-    }
-
-    if (!recordResourceUse(*sourceImage)) {
+    if (sourceImage && !recordResourceUse(*sourceImage)) {
         GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter, results);
         return;
     }

@@ -120,6 +120,11 @@ private:
         m_resourceHeap.add(gradient.renderingResourceIdentifier(), Ref { gradient });
     }
 
+    void cacheSVGFilter(SVGFilter& svgFilter)
+    {
+        m_resourceHeap.add(svgFilter.renderingResourceIdentifier(), Ref { svgFilter });
+    }
+
     static bool shouldDumpForFlags(OptionSet<AsTextFlag>, ItemHandle);
 
     LocalResourceHeap m_resourceHeap;

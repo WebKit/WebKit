@@ -44,19 +44,17 @@ RemoteResourceCacheProxy::RemoteResourceCacheProxy(RemoteRenderingBackendProxy& 
 
 RemoteResourceCacheProxy::~RemoteResourceCacheProxy()
 {
-    clearNativeImageMap();
-    clearImageBufferBackends();
-    clearDecomposedGlyphsMap();
-    clearGradientMap();
+    clear();
 }
 
 void RemoteResourceCacheProxy::clear()
 {
     clearNativeImageMap();
     clearImageBufferBackends();
-    m_imageBuffers.clear();
     clearDecomposedGlyphsMap();
     clearGradientMap();
+    clearSVGFilterMap();
+    m_imageBuffers.clear();
 }
 
 void RemoteResourceCacheProxy::cacheImageBuffer(RemoteImageBufferProxy& imageBuffer)
@@ -207,11 +205,20 @@ void RemoteResourceCacheProxy::recordGradientUse(Gradient& gradient)
     }
 }
 
+void RemoteResourceCacheProxy::recordSVGFilterUse(SVGFilter& svgFilter)
+{
+    if (m_svgFilters.add(svgFilter.renderingResourceIdentifier(), svgFilter).isNewEntry) {
+        svgFilter.addObserver(*this);
+        m_remoteRenderingBackendProxy.cacheSVGFilter(svgFilter);
+    }
+}
+
 void RemoteResourceCacheProxy::releaseRenderingResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
     bool removed = m_nativeImages.remove(renderingResourceIdentifier)
         || m_decomposedGlyphs.remove(renderingResourceIdentifier)
-        || m_gradients.remove(renderingResourceIdentifier);
+        || m_gradients.remove(renderingResourceIdentifier)
+        || m_svgFilters.remove(renderingResourceIdentifier);
     RELEASE_ASSERT(removed);
     m_remoteRenderingBackendProxy.releaseRenderingResource(renderingResourceIdentifier);
 }
@@ -261,9 +268,16 @@ void RemoteResourceCacheProxy::clearDecomposedGlyphsMap()
 
 void RemoteResourceCacheProxy::clearGradientMap()
 {
-    for (auto& gradients : m_gradients.values())
-        gradients.get()->removeObserver(*this);
+    for (auto& gradient : m_gradients.values())
+        gradient.get()->removeObserver(*this);
     m_gradients.clear();
+}
+
+void RemoteResourceCacheProxy::clearSVGFilterMap()
+{
+    for (auto& svgFilter : m_svgFilters.values())
+        svgFilter.get()->removeObserver(*this);
+    m_svgFilters.clear();
 }
 
 void RemoteResourceCacheProxy::finalizeRenderingUpdateForFonts()
@@ -320,6 +334,7 @@ void RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed()
     clearImageBufferBackends();
     clearDecomposedGlyphsMap();
     clearGradientMap();
+    clearSVGFilterMap();
 
     for (auto& imageBuffer : m_imageBuffers.values()) {
         if (!imageBuffer)
@@ -335,6 +350,7 @@ void RemoteResourceCacheProxy::releaseMemory()
     clearFontCustomPlatformDataMap();
     clearDecomposedGlyphsMap();
     clearGradientMap();
+    clearSVGFilterMap();
     m_remoteRenderingBackendProxy.releaseAllRemoteResources();
 }
 

@@ -28,6 +28,7 @@
 #include "FilterEffect.h"
 #include "FilterImageVector.h"
 #include "ImageBufferAllocator.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 
@@ -37,6 +38,7 @@ class FilterEffect;
 class FilterImage;
 
 class FilterResults {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT FilterResults(std::unique_ptr<ImageBufferAllocator>&& = nullptr);
 

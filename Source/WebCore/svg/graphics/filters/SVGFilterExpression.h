@@ -30,10 +30,8 @@
 
 namespace WebCore {
 
-class FilterEffect;
-
 struct SVGFilterExpressionTerm {
-    Ref<FilterEffect> effect;
+    unsigned index;
     std::optional<FilterEffectGeometry> geometry;
     unsigned level;
 };

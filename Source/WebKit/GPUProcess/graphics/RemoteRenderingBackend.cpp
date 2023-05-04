@@ -425,6 +425,17 @@ void RemoteRenderingBackend::cacheGradientWithQualifiedIdentifier(Ref<Gradient>&
     m_remoteResourceCache.cacheGradient(WTFMove(gradient), gradientResourceIdentifier);
 }
 
+void RemoteRenderingBackend::cacheSVGFilter(Ref<SVGFilter>&& svgFilter, RenderingResourceIdentifier renderingResourceIdentifier)
+{
+    cacheSVGFilterWithQualifiedIdentifier(WTFMove(svgFilter), { renderingResourceIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
+}
+
+void RemoteRenderingBackend::cacheSVGFilterWithQualifiedIdentifier(Ref<SVGFilter>&& svgFilter, QualifiedRenderingResourceIdentifier svgFilterResourceIdentifier)
+{
+    ASSERT(!RunLoop::isMain());
+    m_remoteResourceCache.cacheSVGFilter(WTFMove(svgFilter), svgFilterResourceIdentifier);
+}
+
 void RemoteRenderingBackend::releaseAllResources()
 {
     ASSERT(!RunLoop::isMain());

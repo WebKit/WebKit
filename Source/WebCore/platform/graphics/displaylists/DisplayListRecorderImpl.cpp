@@ -444,5 +444,11 @@ bool RecorderImpl::recordResourceUse(Gradient& gradient)
     return true;
 }
 
+bool RecorderImpl::recordResourceUse(SVGFilter& svgFilter)
+{
+    m_displayList.cacheSVGFilter(svgFilter);
+    return true;
+}
+
 } // namespace DisplayList
 } // namespace WebCore

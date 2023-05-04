@@ -45,7 +45,6 @@ public:
     FilterData() = default;
 
     RefPtr<SVGFilter> filter;
-    FilterResults results;
 
     std::unique_ptr<FilterTargetSwitcher> targetSwitcher;
     FloatRect sourceImageRect;

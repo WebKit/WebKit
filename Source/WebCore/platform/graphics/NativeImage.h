@@ -32,6 +32,7 @@
 #include "IntSize.h"
 #include "PlatformImage.h"
 #include "RenderingResource.h"
+#include <wtf/ThreadSafeRefCounted.h>
 
 #if USE(CAIRO)
 #include "PixelBuffer.h"
@@ -41,7 +42,7 @@ namespace WebCore {
 
 class GraphicsContext;
 
-class NativeImage final : public RenderingResource {
+class NativeImage final : public ThreadSafeRefCounted<NativeImage>, public RenderingResource {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static WEBCORE_EXPORT RefPtr<NativeImage> create(PlatformImagePtr&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());

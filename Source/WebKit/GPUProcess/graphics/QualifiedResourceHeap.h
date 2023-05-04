@@ -35,6 +35,7 @@
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/SVGFilter.h>
 #include <WebCore/SourceImage.h>
 #include <wtf/HashMap.h>
 
@@ -70,6 +71,11 @@ public:
     void add(QualifiedRenderingResourceIdentifier renderingResourceIdentifier, Ref<WebCore::Gradient>&& gradient)
     {
         add(renderingResourceIdentifier, WTFMove(gradient), m_gradientCount);
+    }
+
+    void add(QualifiedRenderingResourceIdentifier renderingResourceIdentifier, Ref<WebCore::SVGFilter>&& svgFilter)
+    {
+        add(renderingResourceIdentifier, WTFMove(svgFilter), m_svgFilterCount);
     }
 
     void add(QualifiedRenderingResourceIdentifier renderingResourceIdentifier, Ref<WebCore::FontCustomPlatformData>&& customPlatformData)
@@ -116,6 +122,11 @@ public:
         return get<WebCore::Gradient>(renderingResourceIdentifier);
     }
 
+    WebCore::SVGFilter* getSVGFilter(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
+    {
+        return get<WebCore::SVGFilter>(renderingResourceIdentifier);
+    }
+
     WebCore::FontCustomPlatformData* getFontCustomPlatformData(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
     {
         return get<WebCore::FontCustomPlatformData>(renderingResourceIdentifier);
@@ -146,6 +157,11 @@ public:
         return remove<WebCore::Gradient>(renderingResourceIdentifier, m_gradientCount);
     }
 
+    bool removeSVGFilter(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+    {
+        return remove<WebCore::SVGFilter>(renderingResourceIdentifier, m_svgFilterCount);
+    }
+
     bool removeFontCustomPlatformData(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
     {
         return remove<WebCore::FontCustomPlatformData>(renderingResourceIdentifier, m_customPlatformDataCount);
@@ -155,7 +171,7 @@ public:
     {
         checkInvariants();
 
-        if (!m_nativeImageCount && !m_fontCount && !m_decomposedGlyphsCount && !m_gradientCount)
+        if (!m_nativeImageCount && !m_fontCount && !m_decomposedGlyphsCount && !m_gradientCount && !m_svgFilterCount)
             return;
 
         m_resources.removeIf([] (const auto& resource) {
@@ -163,6 +179,7 @@ public:
                 || std::holds_alternative<Ref<WebCore::Font>>(resource.value)
                 || std::holds_alternative<Ref<WebCore::DecomposedGlyphs>>(resource.value)
                 || std::holds_alternative<Ref<WebCore::Gradient>>(resource.value)
+                || std::holds_alternative<Ref<WebCore::SVGFilter>>(resource.value)
                 || std::holds_alternative<Ref<WebCore::FontCustomPlatformData>>(resource.value);
         });
 
@@ -170,6 +187,7 @@ public:
         m_fontCount = 0;
         m_decomposedGlyphsCount = 0;
         m_gradientCount = 0;
+        m_svgFilterCount = 0;
         m_customPlatformDataCount = 0;
 
         checkInvariants();
@@ -248,6 +266,7 @@ private:
         unsigned customPlatformDataCount = 0;
         unsigned decomposedGlyphsCount = 0;
         unsigned gradientCount = 0;
+        unsigned svgFilterCount = 0;
         for (const auto& pair : m_resources) {
             WTF::switchOn(pair.value, [&] (std::monostate) {
                 ASSERT_NOT_REACHED();
@@ -263,6 +282,8 @@ private:
                 ++decomposedGlyphsCount;
             }, [&] (const Ref<WebCore::Gradient>&) {
                 ++gradientCount;
+            }, [&] (const Ref<WebCore::SVGFilter>&) {
+                ++svgFilterCount;
             });
         }
         ASSERT(imageBufferCount == m_imageBufferCount);
@@ -271,7 +292,8 @@ private:
         ASSERT(customPlatformDataCount == m_customPlatformDataCount);
         ASSERT(decomposedGlyphsCount == m_decomposedGlyphsCount);
         ASSERT(gradientCount == m_gradientCount);
-        ASSERT(m_resources.size() == m_imageBufferCount + m_nativeImageCount + m_fontCount + m_decomposedGlyphsCount + m_customPlatformDataCount + m_gradientCount);
+        ASSERT(svgFilterCount == m_svgFilterCount);
+        ASSERT(m_resources.size() == m_imageBufferCount + m_nativeImageCount + m_fontCount + m_decomposedGlyphsCount + m_customPlatformDataCount + m_gradientCount + m_svgFilterCount);
 #endif
     }
 
@@ -282,6 +304,7 @@ private:
         Ref<WebCore::Font>,
         Ref<WebCore::DecomposedGlyphs>,
         Ref<WebCore::Gradient>,
+        Ref<WebCore::SVGFilter>,
         Ref<WebCore::FontCustomPlatformData>
     >;
     HashMap<QualifiedRenderingResourceIdentifier, Resource> m_resources;
@@ -291,6 +314,7 @@ private:
     unsigned m_fontCount { 0 };
     unsigned m_decomposedGlyphsCount { 0 };
     unsigned m_gradientCount { 0 };
+    unsigned m_svgFilterCount { 0 };
     unsigned m_customPlatformDataCount { 0 };
 };
 

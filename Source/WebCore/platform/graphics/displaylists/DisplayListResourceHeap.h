@@ -31,6 +31,7 @@
 #include "ImageBuffer.h"
 #include "NativeImage.h"
 #include "RenderingResourceIdentifier.h"
+#include "SVGFilter.h"
 #include "SourceImage.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -48,6 +49,7 @@ public:
     virtual Font* getFont(RenderingResourceIdentifier) const = 0;
     virtual DecomposedGlyphs* getDecomposedGlyphs(RenderingResourceIdentifier) const = 0;
     virtual Gradient* getGradient(RenderingResourceIdentifier) const = 0;
+    virtual SVGFilter* getSVGFilter(RenderingResourceIdentifier) const = 0;
 };
 
 class LocalResourceHeap : public ResourceHeap {
@@ -75,6 +77,11 @@ public:
     void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<Gradient>&& gradient)
     {
         m_resources.add(renderingResourceIdentifier, WTFMove(gradient));
+    }
+
+    void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<SVGFilter>&& svgFilter)
+    {
+        m_resources.add(renderingResourceIdentifier, WTFMove(svgFilter));
     }
 
     ImageBuffer* getImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier) const final
@@ -116,6 +123,11 @@ public:
         return get<Gradient>(renderingResourceIdentifier);
     }
 
+    SVGFilter* getSVGFilter(RenderingResourceIdentifier renderingResourceIdentifier) const final
+    {
+        return get<SVGFilter>(renderingResourceIdentifier);
+    }
+
     void clear()
     {
         m_resources.clear();
@@ -138,7 +150,8 @@ private:
         Ref<NativeImage>,
         Ref<Font>,
         Ref<DecomposedGlyphs>,
-        Ref<Gradient>
+        Ref<Gradient>,
+        Ref<SVGFilter>
     >;
 
     HashMap<RenderingResourceIdentifier, Resource> m_resources;

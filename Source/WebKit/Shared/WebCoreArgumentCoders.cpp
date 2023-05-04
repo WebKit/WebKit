@@ -122,7 +122,6 @@
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/RotateTransformOperation.h>
 #include <WebCore/SVGFilter.h>
-#include <WebCore/SVGFilterExpressionReference.h>
 #include <WebCore/ScaleTransformOperation.h>
 #include <WebCore/ScriptBuffer.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
@@ -2101,6 +2100,8 @@ void ArgumentCoder<CSSFilter>::encode(Encoder& encoder, const CSSFilter& filter)
     encoder << filter.functions().size();
     for (auto& function : filter.functions())
         encoder << function;
+    
+    ArgumentCoder<Filter>::encodeFilterProperties(encoder, filter);
 }
 
 template
@@ -2132,38 +2133,22 @@ std::optional<Ref<CSSFilter>> ArgumentCoder<CSSFilter>::decode(Decoder& decoder)
     if (!filter)
         return std::nullopt;
 
+    if (!ArgumentCoder<Filter>::decodeFilterProperties(decoder, *filter))
+        return std::nullopt;
+
     return filter.releaseNonNull();
 }
 
 template<typename Encoder>
 void ArgumentCoder<SVGFilter>::encode(Encoder& encoder, const SVGFilter& filter)
 {
-    HashMap<Ref<FilterEffect>, unsigned> indicies;
-    Vector<Ref<FilterEffect>> effects;
-
-    // Get the individual FilterEffects in filter.expression().
-    for (auto& term : filter.expression()) {
-        if (indicies.contains(term.effect))
-            continue;
-        indicies.add(term.effect, effects.size());
-        effects.append(term.effect);
-    }
-
-    // Replace the Ref<FilterEffect> in SVGExpressionTerm with its index in indicies.
-    auto expressionReference = WTF::map(filter.expression(), [&indicies] (auto&& term) -> SVGFilterExpressionNode {
-        ASSERT(indicies.contains(term.effect));
-        unsigned index = indicies.get(term.effect);
-        return { index, term.geometry, term.level };
-    });
-
     encoder << filter.targetBoundingBox();
     encoder << filter.primitiveUnits();
-    
-    encoder << effects.size();
-    for (auto& effect : effects)
-        encoder << effect;
+    encoder << filter.expression();
+    encoder << filter.effects();
 
-    encoder << expressionReference;
+    encoder << filter.renderingResourceIdentifierIfExists();
+    ArgumentCoder<Filter>::encodeFilterProperties(encoder, filter);
 }
 
 template
@@ -2183,42 +2168,60 @@ std::optional<Ref<SVGFilter>> ArgumentCoder<SVGFilter>::decode(Decoder& decoder)
     if (!primitiveUnits)
         return std::nullopt;
 
-    std::optional<size_t> effectsSize;
-    decoder >> effectsSize;
-    if (!effectsSize || !*effectsSize)
+    std::optional<SVGFilterExpression> expression;
+    decoder >> expression;
+    if (!expression || expression->isEmpty())
         return std::nullopt;
 
-    Vector<Ref<FilterEffect>> effects;
-    effects.reserveInitialCapacity(*effectsSize);
-
-    for (size_t i = 0; i < *effectsSize; ++i) {
-        std::optional<Ref<FilterEffect>> effect;
-        decoder >> effect;
-        if (!effect)
-            return std::nullopt;
-        effects.uncheckedAppend(WTFMove(*effect));
-    }
-
-    std::optional<SVGFilterExpressionReference> expressionReference;
-    decoder >> expressionReference;
-    if (!expressionReference || expressionReference->isEmpty())
+    std::optional<FilterEffectVector> effects;
+    decoder >> effects;
+    if (!effects || effects->isEmpty())
         return std::nullopt;
 
-    SVGFilterExpression expression;
-    expression.reserveInitialCapacity(expressionReference->size());
+    std::optional<std::optional<RenderingResourceIdentifier>> renderingResourceIdentifier;
+    decoder >> renderingResourceIdentifier;
+    if (!renderingResourceIdentifier)
+        return std::nullopt;
 
-    // Replace the index in ExpressionReferenceTerm with its Ref<FilterEffect> in effects.
-    for (auto& term : *expressionReference) {
-        if (term.index >= effects.size())
-            return std::nullopt;
-        expression.uncheckedAppend({ effects[term.index], term.geometry, term.level });
-    }
-
-    auto filter = WebCore::SVGFilter::create(*targetBoundingBox, *primitiveUnits, WTFMove(expression));
+    auto filter = WebCore::SVGFilter::create(*targetBoundingBox, *primitiveUnits, WTFMove(*expression), WTFMove(*effects), *renderingResourceIdentifier);
     if (!filter)
         return std::nullopt;
 
+    if (!ArgumentCoder<Filter>::decodeFilterProperties(decoder, *filter))
+        return std::nullopt;
+
     return filter.releaseNonNull();
+}
+
+template<typename Encoder>
+void ArgumentCoder<Filter>::encodeFilterProperties(Encoder& encoder, const Filter& filter)
+{
+    encoder << filter.filterRenderingModes();
+    encoder << filter.filterScale();
+    encoder << filter.filterRegion();
+}
+
+bool ArgumentCoder<Filter>::decodeFilterProperties(Decoder& decoder, Filter& filter)
+{
+    std::optional<OptionSet<FilterRenderingMode>> filterRenderingModes;
+    decoder >> filterRenderingModes;
+    if (!filterRenderingModes)
+        return false;
+
+    std::optional<FloatSize> filterScale;
+    decoder >> filterScale;
+    if (!filterScale)
+        return false;
+
+    std::optional<FloatRect> filterRegion;
+    decoder >> filterRegion;
+    if (!filterRegion)
+        return false;
+
+    filter.setFilterRenderingModes(*filterRenderingModes);
+    filter.setFilterScale(*filterScale);
+    filter.setFilterRegion(*filterRegion);
+    return true;
 }
 
 template<typename Encoder>
@@ -2230,10 +2233,6 @@ void ArgumentCoder<Filter>::encode(Encoder& encoder, const Filter& filter)
         encoder << downcast<CSSFilter>(filter);
     else
         encoder << downcast<SVGFilter>(filter);
-
-    encoder << filter.filterRenderingModes();
-    encoder << filter.filterScale();
-    encoder << filter.filterRegion();
 }
 
 template
@@ -2265,25 +2264,6 @@ std::optional<Ref<Filter>> ArgumentCoder<Filter>::decode(Decoder& decoder)
         
         filter = WTFMove(*svgFilter);
     }
-
-    std::optional<OptionSet<FilterRenderingMode>> filterRenderingModes;
-    decoder >> filterRenderingModes;
-    if (!filterRenderingModes)
-        return std::nullopt;
-
-    std::optional<FloatSize> filterScale;
-    decoder >> filterScale;
-    if (!filterScale)
-        return std::nullopt;
-
-    std::optional<FloatRect> filterRegion;
-    decoder >> filterRegion;
-    if (!filterRegion)
-        return std::nullopt;
-
-    (*filter)->setFilterRenderingModes(*filterRenderingModes);
-    (*filter)->setFilterScale(*filterScale);
-    (*filter)->setFilterRegion(*filterRegion);
 
     return filter;
 }

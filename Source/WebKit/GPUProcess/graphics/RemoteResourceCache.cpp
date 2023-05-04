@@ -75,6 +75,11 @@ void RemoteResourceCache::cacheGradient(Ref<Gradient>&& gradient, QualifiedRende
     m_resourceHeap.add(renderingResourceIdentifier, WTFMove(gradient));
 }
 
+void RemoteResourceCache::cacheSVGFilter(Ref<SVGFilter>&& svgFilter, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+{
+    m_resourceHeap.add(renderingResourceIdentifier, WTFMove(svgFilter));
+}
+
 NativeImage* RemoteResourceCache::cachedNativeImage(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_resourceHeap.getNativeImage(renderingResourceIdentifier);
@@ -117,6 +122,11 @@ Gradient* RemoteResourceCache::cachedGradient(QualifiedRenderingResourceIdentifi
     return m_resourceHeap.getGradient(renderingResourceIdentifier);
 }
 
+SVGFilter* RemoteResourceCache::cachedSVGFilter(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
+{
+    return m_resourceHeap.getSVGFilter(renderingResourceIdentifier);
+}
+
 void RemoteResourceCache::releaseAllResources()
 {
     m_resourceHeap.releaseAllResources();
@@ -134,6 +144,7 @@ bool RemoteResourceCache::releaseRenderingResource(QualifiedRenderingResourceIde
         || m_resourceHeap.removeFont(renderingResourceIdentifier)
         || m_resourceHeap.removeDecomposedGlyphs(renderingResourceIdentifier)
         || m_resourceHeap.removeGradient(renderingResourceIdentifier)
+        || m_resourceHeap.removeSVGFilter(renderingResourceIdentifier)
         || m_resourceHeap.removeFontCustomPlatformData(renderingResourceIdentifier))
         return true;
 

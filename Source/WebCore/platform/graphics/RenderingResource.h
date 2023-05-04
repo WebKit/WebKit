@@ -27,12 +27,11 @@
 
 #include "RenderingResourceIdentifier.h"
 #include <wtf/HashSet.h>
-#include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class RenderingResource
-    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RenderingResource> {
+class RenderingResource : public CanMakeWeakPtr<RenderingResource> {
 public:
     class Observer {
     public:
@@ -59,6 +58,11 @@ public:
     {
         ASSERT(m_renderingResourceIdentifier);
         return *m_renderingResourceIdentifier;
+    }
+
+    std::optional<RenderingResourceIdentifier> renderingResourceIdentifierIfExists() const
+    {
+        return m_renderingResourceIdentifier;
     }
 
     void addObserver(Observer& observer)

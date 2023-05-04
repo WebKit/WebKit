@@ -31,7 +31,7 @@
 #include <WebCore/DecomposedGlyphs.h>
 #include <WebCore/Gradient.h>
 #include <WebCore/NativeImage.h>
-#include <WebCore/RenderingResource.h>
+#include <WebCore/SVGFilter.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -61,6 +61,7 @@ public:
     void recordImageBufferUse(WebCore::ImageBuffer&);
     void recordDecomposedGlyphsUse(WebCore::DecomposedGlyphs&);
     void recordGradientUse(WebCore::Gradient&);
+    void recordSVGFilterUse(WebCore::SVGFilter&);
     void recordFontCustomPlatformDataUse(const WebCore::FontCustomPlatformData&);
 
     void didPaintLayers();
@@ -75,15 +76,17 @@ public:
 
 private:
     using ImageBufferHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<RemoteImageBufferProxy>>;
-    using NativeImageHashMap = HashMap<WebCore::RenderingResourceIdentifier, ThreadSafeWeakPtr<WebCore::NativeImage>>;
+    using NativeImageHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::NativeImage>>;
     using FontHashMap = HashMap<WebCore::RenderingResourceIdentifier, uint64_t>;
-    using DecomposedGlyphsHashMap = HashMap<WebCore::RenderingResourceIdentifier, ThreadSafeWeakPtr<WebCore::DecomposedGlyphs>>;
-    using GradientHashMap = HashMap<WebCore::RenderingResourceIdentifier, ThreadSafeWeakPtr<WebCore::Gradient>>;
+    using DecomposedGlyphsHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::DecomposedGlyphs>>;
+    using GradientHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::Gradient>>;
+    using SVGFilterHashMap = HashMap<WebCore::RenderingResourceIdentifier, WeakPtr<WebCore::SVGFilter>>;
 
     void releaseRenderingResource(WebCore::RenderingResourceIdentifier) override;
     void clearNativeImageMap();
     void clearDecomposedGlyphsMap();
     void clearGradientMap();
+    void clearSVGFilterMap();
 
     void finalizeRenderingUpdateForFonts();
     void prepareForNextRenderingUpdate();
@@ -96,6 +99,7 @@ private:
     FontHashMap m_fonts;
     DecomposedGlyphsHashMap m_decomposedGlyphs;
     GradientHashMap m_gradients;
+    SVGFilterHashMap m_svgFilters;
     FontHashMap m_fontCustomPlatformDatas;
 
     unsigned m_numberOfFontsUsedInCurrentRenderingUpdate { 0 };

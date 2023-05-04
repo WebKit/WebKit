@@ -27,10 +27,11 @@
 
 #include "PositionedGlyphs.h"
 #include "RenderingResource.h"
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
-class DecomposedGlyphs final : public RenderingResource {
+class DecomposedGlyphs final : public ThreadSafeRefCounted<DecomposedGlyphs>, public RenderingResource {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static WEBCORE_EXPORT Ref<DecomposedGlyphs> create(const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());

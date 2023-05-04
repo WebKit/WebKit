@@ -192,10 +192,23 @@ void RemoteDisplayListRecorderProxy::recordResetClip()
 
 void RemoteDisplayListRecorderProxy::recordDrawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter)
 {
-    std::optional<RenderingResourceIdentifier> identifier;
+    std::optional<RenderingResourceIdentifier> sourceImageIdentifier;
     if (sourceImage)
-        identifier = sourceImage->renderingResourceIdentifier();
-    send(Messages::RemoteDisplayListRecorder::DrawFilteredImageBuffer(WTFMove(identifier), sourceImageRect, filter));
+        sourceImageIdentifier = sourceImage->renderingResourceIdentifier();
+
+    if (!is<SVGFilter>(filter)) {
+        send(Messages::RemoteDisplayListRecorder::DrawFilteredImageBuffer(WTFMove(sourceImageIdentifier), sourceImageRect, filter));
+        return;
+    }
+
+    auto& svgFilter = downcast<SVGFilter>(filter);
+    if (!svgFilter.hasValidRenderingResourceIdentifier()) {
+        send(Messages::RemoteDisplayListRecorder::DrawFilteredImageBuffer(WTFMove(sourceImageIdentifier), sourceImageRect, filter));
+        return;
+    }
+
+    recordResourceUse(svgFilter);
+    send(Messages::RemoteDisplayListRecorder::DrawSVGFilteredImageBuffer(WTFMove(sourceImageIdentifier), sourceImageRect, svgFilter.renderingResourceIdentifier(), svgFilter.buildTransaction()));
 }
 
 void RemoteDisplayListRecorderProxy::recordDrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode mode)
@@ -502,6 +515,17 @@ bool RemoteDisplayListRecorderProxy::recordResourceUse(Gradient& gradient)
     }
 
     m_renderingBackend->remoteResourceCacheProxy().recordGradientUse(gradient);
+    return true;
+}
+
+bool RemoteDisplayListRecorderProxy::recordResourceUse(SVGFilter& svgFilter)
+{
+    if (UNLIKELY(!m_renderingBackend)) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    m_renderingBackend->remoteResourceCacheProxy().recordSVGFilterUse(svgFilter);
     return true;
 }
 
