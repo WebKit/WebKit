@@ -55,7 +55,7 @@ InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineBuild
         auto& lastRunLayoutBox = lineContent.runs.last().layoutBox();
         if (!lastRunLayoutBox.hasFloatClear())
             return lineLogicalRect.bottom();
-        auto positionWithClearance = floatingContext.verticalPositionWithClearance(lastRunLayoutBox);
+        auto positionWithClearance = floatingContext.verticalPositionWithClearance(lastRunLayoutBox, formattingContext().geometryForBox(lastRunLayoutBox));
         if (!positionWithClearance)
             return lineLogicalRect.bottom();
         return std::max(lineLogicalRect.bottom(), InlineLayoutUnit(positionWithClearance->position));

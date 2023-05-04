@@ -322,8 +322,9 @@ void InlineFormattingContext::layoutFloatContentOnly(const ConstraintsForInlineC
         staticPosition.move(floatBoxGeometry.marginStart(), floatBoxGeometry.marginBefore());
         floatBoxGeometry.setLogicalTopLeft(staticPosition);
 
-        floatBoxGeometry.setLogicalTopLeft(floatingContext.positionForFloat(floatBox, constraints.horizontal()));
-        floatingState.append(floatingContext.toFloatItem(floatBox));
+        auto floatBoxTopLeft = floatingContext.positionForFloat(floatBox, floatBoxGeometry, constraints.horizontal());
+        floatBoxGeometry.setLogicalTopLeft(floatBoxTopLeft);
+        floatingState.append(floatingContext.toFloatItem(floatBox, floatBoxGeometry));
     }
 }
 

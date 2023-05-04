@@ -139,7 +139,7 @@ void BlockFormattingContext::layoutInFlowContent(const ConstraintsForInFlowConte
             // All inflow descendants (if there are any) are laid out by now. Let's compute the box's height and vertical margin.
             computeHeightAndMargin(layoutBox, containingBlockConstraints);
             if (layoutBox.isFloatingPositioned())
-                floatingState.append(floatingContext.toFloatItem(layoutBox));
+                floatingState.append(floatingContext.toFloatItem(layoutBox, geometryForBox(layoutBox)));
             else {
                 // Adjust the vertical position now that we've got final margin values for non-float avoider boxes.
                 // Float avoiders have pre-computed vertical positions when floats are present.
@@ -312,9 +312,11 @@ void BlockFormattingContext::computePositionToAvoidFloats(const FloatingContext&
     // because all the already-placed floats (floats that we are trying to avoid here) in this BFC might belong
     // to a different set of containing blocks (but they all descendants of the BFC root).
     // However according to the BFC rules, at this point of the layout flow we don't yet have computed vertical positions for the ancestors.
+    auto& boxGeometry = formattingState().boxGeometry(layoutBox);
     if (layoutBox.isFloatingPositioned()) {
         precomputeVerticalPositionForBoxAndAncestors(layoutBox, constraintsPair);
-        formattingState().boxGeometry(layoutBox).setLogicalTopLeft(floatingContext.positionForFloat(layoutBox, constraintsPair.containingBlock.horizontal()));
+        auto borderBoxTopLeft = floatingContext.positionForFloat(layoutBox, boxGeometry, constraintsPair.containingBlock.horizontal());
+        boxGeometry.setLogicalTopLeft(borderBoxTopLeft);
         return;
     }
     // Non-float positioned float avoiders (formatting context roots and clear boxes) should be fine unless there are floats in this context.
@@ -325,7 +327,8 @@ void BlockFormattingContext::computePositionToAvoidFloats(const FloatingContext&
         return computeVerticalPositionForFloatClear(floatingContext, layoutBox);
 
     ASSERT(layoutBox.establishesFormattingContext());
-    formattingState().boxGeometry(layoutBox).setLogicalTopLeft(floatingContext.positionForNonFloatingFloatAvoider(layoutBox));
+    auto borderBoxTopLeft = floatingContext.positionForNonFloatingFloatAvoider(layoutBox, boxGeometry);
+    boxGeometry.setLogicalTopLeft(borderBoxTopLeft);
 }
 
 void BlockFormattingContext::computeVerticalPositionForFloatClear(const FloatingContext& floatingContext, const ElementBox& layoutBox)
@@ -333,11 +336,11 @@ void BlockFormattingContext::computeVerticalPositionForFloatClear(const Floating
     ASSERT(layoutBox.hasFloatClear());
     if (floatingContext.isEmpty())
         return;
-    auto verticalPositionAndClearance = floatingContext.verticalPositionWithClearance(layoutBox);
+    auto& boxGeometry = formattingState().boxGeometry(layoutBox);
+    auto verticalPositionAndClearance = floatingContext.verticalPositionWithClearance(layoutBox, boxGeometry);
     if (!verticalPositionAndClearance)
         return;
 
-    auto& boxGeometry = formattingState().boxGeometry(layoutBox);
     ASSERT(verticalPositionAndClearance->position >= BoxGeometry::borderBoxTop(boxGeometry));
     boxGeometry.setLogicalTop(verticalPositionAndClearance->position);
     if (verticalPositionAndClearance->clearance)
