@@ -1577,14 +1577,14 @@ inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValu
     }
 
     bool didSet = false;
-    for (auto& item : downcast<CSSValueList>(value)) {
-        if (item->isImage()) {
-            builderState.style().setContent(builderState.createStyleImage(item.get()), didSet);
+    auto processSingleValue = [&] (const CSSValue& item) {
+        if (item.isImage()) {
+            builderState.style().setContent(builderState.createStyleImage(item), didSet);
             didSet = true;
-            continue;
+            return;
         }
 
-        auto* primitive = dynamicDowncast<CSSPrimitiveValue>(item.get());
+        auto* primitive = dynamicDowncast<CSSPrimitiveValue>(item);
         if (primitive && primitive->isString()) {
             builderState.style().setContent(primitive->stringValue().impl(), didSet);
             didSet = true;
@@ -1600,14 +1600,14 @@ inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValu
             didSet = true;
             // Register the fact that the attribute value affects the style.
             builderState.registerContentAttribute(attr.localName());
-        } else if (item->isCounter()) {
+        } else if (item.isCounter()) {
             // FIXME: counter-style: we probably want to review this for custom counter-style.
-            auto& counter = downcast<CSSCounterValue>(item.get());
+            auto& counter = downcast<CSSCounterValue>(item);
             auto listStyle = fromCSSValueID<ListStyleType>(counter.listStyle());
             builderState.style().setContent(makeUnique<CounterContent>(counter.identifier(), listStyle, counter.separator()), didSet);
             didSet = true;
         } else {
-            switch (item->valueID()) {
+            switch (item.valueID()) {
             case CSSValueOpenQuote:
                 builderState.style().setContent(QuoteType::OpenQuote, didSet);
                 didSet = true;
@@ -1629,6 +1629,12 @@ inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValu
                 break;
             }
         }
+    };
+    if (is<CSSValueList>(value)) {
+        for (auto& item : downcast<CSSValueList>(value))
+            processSingleValue(item);
+    } else {
+        processSingleValue(value);
     }
     if (!didSet)
         builderState.style().clearContent();
