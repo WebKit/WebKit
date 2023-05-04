@@ -1,5 +1,5 @@
 #!/usr/bin/env {{ python }}
-VERSION = '1.5'
+VERSION = '2.0'
 
 import io
 import os
@@ -24,7 +24,7 @@ CLASS_1 = 1  # Commit exists on another remote
 CLASS_2 = 2  # Commit is a cherry-pick of one that exists on another remote
 CLASS_3 = 3  # Commit references a bug which requires redaction
 
-COMMIT_REF_BASE = r'r?R?[a-f0-9A-F]+.?\d*@?[0-9a-zA-z\-\/\.]*'
+COMMIT_REF_BASE = r'r?R?[a-f0-9A-F]+(\.\d+)?@?([0-9a-zA-z\-\/\.]+[0-9a-zA-z\-\/])?'
 COMPOUND_COMMIT_REF = r'(?P<primary>{})(?P<secondary> \({}\))?'.format(COMMIT_REF_BASE, COMMIT_REF_BASE)
 CHERRY_PICK_RE = [
     re.compile(r'\S* ?[Cc]herry[- ][Pp]ick of {}'.format(COMPOUND_COMMIT_REF)),
@@ -204,30 +204,26 @@ def message_for(commit):
     )
 
 
-def security_level_for_commit(commit, remotes, name_to_remote=None):
+def security_level_for_commit(commit, remotes, name_to_remote=None, allow_class_1=False):
     if not name_to_remote:
         _, name_to_remote = remote_name_mappings()
 
     # Class 1: the commit we're pushing exists on a remote already
+    class_1_level = None
     if remotes:
-        return security_level_for_remotes(remotes, name_to_remote), CLASS_1
+        class_1_level = security_level_for_remotes(remotes, name_to_remote)
+    # The commit is public already, we should preform no further checks
+    if class_1_level == 0:
+        return class_1_level, CLASS_1
+    # The commit exists on another remote, and we are not allowing class 1 violations
+    if not allow_class_1 and remotes:
+        return class_1_level, CLASS_1
 
     message = message_for(commit)
     title = message.splitlines()[0]
 
-    # Compute class 3 before class 2, because a class 3 violation is more interesting than a class 2
-    # if both indicate a commit is potentially sensative
-    did_redact = False
-    if REPOSITORY:
-        obj = Commit(hash=commit, message=message)
-        for issue in obj.issues:
-            redaction = issue.redacted
-            if redaction:
-                did_redact = True
-            if getattr(redaction, 'exemption', False):
-                return 0, CLASS_3
-
     # Class 2: The commit we're pushing is a cherry-pick of something that exists on a remote already
+    class_2_level = None
     for r in CHERRY_PICK_RE:
         match = r.match(title)
         if not match:
@@ -236,23 +232,36 @@ def security_level_for_commit(commit, remotes, name_to_remote=None):
         secondary = match.group('secondary')
         if secondary:
             secondary = UNPACK_SECONDARY_RE.match(secondary).groups()[0]
-        for candidate in [primary, secondary]:
+        for candidate in filter(bool, (primary, secondary)):
             original_remotes = remotes_for(candidate)
             if not original_remotes:
                 continue
-            level = security_level_for_remotes(original_remotes, name_to_remote)
+            class_2_level = security_level_for_remotes(original_remotes, name_to_remote)
 
             # If the commit is a cherry-pick of something already public, the state of the bug it's referencing doesn't matter 
-            if did_redact and level != 0:
-                return 1, CLASS_3
-            return level, CLASS_2
+            if class_2_level == 0:
+                return class_2_level, CLASS_3
+            # Check for a class 3 violation before returning our class 2 violation
+            break
         break
 
     # Class 3: We must inspect the commit for bug references
     if REPOSITORY:
+        did_redact = False
+        obj = Commit(hash=commit, message=message)
+        for issue in obj.issues:
+            redaction = issue.redacted
+            if redaction:
+                did_redact = True
+            if getattr(redaction, 'exemption', False):
+                return 0, CLASS_3
         if did_redact:
             return 1, CLASS_3
-        return 0, CLASS_3
+
+    if class_1_level is not None:
+        return class_1_level, CLASS_1
+    if class_2_level is not None:
+        return class_2_level, CLASS_2
 
     return None, None
 
@@ -298,8 +307,17 @@ def main(name, remote):
         for commit in commits_in(from_ref, to_ref):
             if commit not in remotes_with:
                 remotes_with[commit] = remotes_for(commit) or []
-            if remotes_with.get(commit):
-                # Any future commits (being ancestors of this one) will nessesarily be on the same remote this commit is
+
+            # Any future commits (being ancestors of this one) will nessesarily be on the same remote this commit is
+            rs = remotes_with.get(commit, [])
+            if not rs:
+                continue
+            if name in rs or MODE != PUBLISH_MODE and rs:
+                break
+            commit_level = security_level_for_remotes(rs, name_to_remote)
+            if commit_level == 0:
+                break
+            if (commit_level or MAX_LEVEL) <= (target_security_level or 0):
                 break
     remotes_with = dict(filter(lambda pair: name not in pair[1], remotes_with.items()))
 
@@ -309,7 +327,7 @@ def main(name, remote):
 
     prompt_for = []
     for commit, remotes in remotes_with.items():
-        security_level, categorization_class = security_level_for_commit(commit, remotes, name_to_remote=name_to_remote)
+        security_level, categorization_class = security_level_for_commit(commit, remotes, name_to_remote=name_to_remote, allow_class_1=MODE == PUBLISH_MODE)
 
         # Unkown security level of source
         if categorization_class == 1 and security_level is None and not target_security_level:
@@ -330,7 +348,7 @@ def main(name, remote):
         # Security level of original of a cherry-pick exceeds security level of target
         if categorization_class == 2 and (MAX_LEVEL if security_level is None else security_level) > (target_security_level or 0):
             print_error("'{}' cherry-picks a change from a more secure remote than '{}'".format(commit, name))
-            if MODE == DEFAULT_MODE:
+            if MODE in (DEFAULT_MODE, PUBLISH_MODE):
                 prompt_for.append(commit)
             else:
                 return 1
