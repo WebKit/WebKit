@@ -1396,7 +1396,7 @@ class BugzillaMixin(AddToLogMixin):
         try:
             patch_json = patch.json().get('attachments')
         except Exception as e:
-            yield self._addToLog('Failed to fetch patch json from {}, error: {}'.format(patch_url, e))
+            yield self._addToLog('stdio', f'Failed to fetch patch json from {patch_url}, error: {e}')
             return defer.returnValue(None)
         if not patch_json or len(patch_json) == 0:
             return defer.returnValue(None)
@@ -1411,7 +1411,7 @@ class BugzillaMixin(AddToLogMixin):
         try:
             bugs_json = bug.json().get('bugs')
         except Exception as e:
-            yield self._addToLog('Failed to fetch bug json from {}, error: {}'.format(bug_url, e))
+            yield self._addToLog('stdio', f'Failed to fetch bug json from {bug_url}, error: {e}')
             return defer.returnValue(None)
         if not bugs_json or len(bugs_json) == 0:
             return defer.returnValue(None)
