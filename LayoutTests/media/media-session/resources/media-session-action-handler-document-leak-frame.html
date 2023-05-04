@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+onload = () => {
+    let actions = ["play", "pause", "seekbackward", "seekforward", "previoustrack", "nexttrack", "skipad", "stop", "seekto"];
+    for (action of actions) {
+        navigator.mediaSession.setActionHandler(action, actionDetails => {
+            window.actionDetails = actionDetails;
+        });
+    }
+
+    for (mediaAction of actions) {
+        internals.sendMediaSessionAction(navigator.mediaSession, {action: mediaAction});
+    }
+
+    parent.postMessage("frameLoaded");
+};
+</script>
+</body>
+</html>
