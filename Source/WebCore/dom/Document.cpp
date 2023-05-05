@@ -2256,19 +2256,20 @@ bool Document::needsStyleRecalc() const
     return false;
 }
 
-static bool isSafeToUpdateStyleOrLayout()
+static bool isSafeToUpdateLayout()
 {
     return ScriptDisallowedScope::InMainThread::isScriptAllowed() || !isInWebProcess();
 }
 
 bool Document::updateStyleIfNeeded()
 {
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
     if (isResolvingContainerQueriesForSelfOrAncestor())
         return false;
 
     RefPtr frameView = view();
     {
-        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         ASSERT(isMainThread());
         ASSERT(!frameView || !frameView->isPainting());
 
@@ -2284,8 +2285,6 @@ bool Document::updateStyleIfNeeded()
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
     ContentChangeObserver::StyleRecalcScope observingScope(*this);
 #endif
-    // The early exit above for !needsStyleRecalc() is needed when updateWidgetPositions() is called in runOrScheduleAsynchronousTasks().
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isSafeToUpdateStyleOrLayout());
     resolveStyle();
     return true;
 }
@@ -2300,7 +2299,7 @@ void Document::updateLayout()
         ASSERT_NOT_REACHED();
         return;
     }
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isSafeToUpdateStyleOrLayout());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isSafeToUpdateLayout());
 
     RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
 
