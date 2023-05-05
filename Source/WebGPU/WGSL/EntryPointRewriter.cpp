@@ -46,7 +46,7 @@ public:
 private:
     struct MemberOrParameter {
         AST::Identifier name;
-        AST::TypeName::Ref type;
+        AST::TypeName& type;
         AST::Attribute::List attributes;
     };
 
@@ -111,8 +111,8 @@ void EntryPointRewriter::rewrite()
     appendBuiltins();
 
     // add parameter to builtins: ${structName} : ${structType}
-    auto type = adoptRef(*new AST::NamedTypeName(SourceSpan::empty(), AST::Identifier::make(m_structTypeName)));
-    type->m_resolvedType = m_structType;
+    auto& type = m_shaderModule.astBuilder().construct<AST::NamedTypeName>(SourceSpan::empty(), AST::Identifier::make(m_structTypeName));
+    type.m_resolvedType = m_structType;
     auto parameter = adoptRef(*new AST::Parameter(
         SourceSpan::empty(),
         AST::Identifier::make(m_structParameterName),
@@ -162,7 +162,7 @@ void EntryPointRewriter::constructInputStruct()
         structMembers.append(m_shaderModule.astBuilder().construct<AST::StructureMember>(
             SourceSpan::empty(),
             WTFMove(parameter.name),
-            WTFMove(parameter.type),
+            parameter.type,
             WTFMove(parameter.attributes)
         ));
     }
@@ -211,7 +211,7 @@ void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& da
                 AST::VariableFlavor::Var,
                 AST::Identifier::make(data.name),
                 nullptr, // TODO: do we need a VariableQualifier?
-                data.type.copyRef(),
+                &data.type,
                 WTFMove(rhs),
                 AST::Attribute::List { }
             )
@@ -239,7 +239,7 @@ void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& da
 
 void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
 {
-    if (auto* structType = std::get_if<Types::Struct>(data.type->resolvedType())) {
+    if (auto* structType = std::get_if<Types::Struct>(data.type.resolvedType())) {
         m_materializations.append(makeUniqueRef<AST::VariableStatement>(
             SourceSpan::empty(),
             makeUniqueRef<AST::Variable>(
@@ -247,7 +247,7 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
                 AST::VariableFlavor::Var,
                 AST::Identifier::make(data.name),
                 nullptr,
-                data.type.copyRef(),
+                &data.type,
                 nullptr,
                 AST::Attribute::List { }
             )
@@ -290,7 +290,7 @@ void EntryPointRewriter::appendBuiltins()
         m_shaderModule.append(m_function.parameters(), adoptRef(*new AST::Parameter(
             SourceSpan::empty(),
             AST::Identifier::make(data.name),
-            WTFMove(data.type),
+            data.type,
             WTFMove(data.attributes),
             AST::ParameterRole::UserDefined
         )));

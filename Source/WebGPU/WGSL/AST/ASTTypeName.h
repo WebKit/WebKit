@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ASTBuilder.h"
 #include "ASTExpression.h"
 #include "ASTIdentifier.h"
 
@@ -37,63 +38,65 @@ struct Type;
 namespace AST {
 class Structure;
 
-class TypeName : public Node, public RefCounted<TypeName> {
-    WTF_MAKE_FAST_ALLOCATED;
+class TypeName : public Node {
     friend TypeChecker;
     friend EntryPointRewriter;
     friend RewriteGlobalVariables;
 
 public:
-    using Ref = WTF::Ref<TypeName>;
-    using Ptr = RefPtr<TypeName>;
+    using Ref = std::reference_wrapper<TypeName>;
+    using Ptr = TypeName*;
 
+    const Type* resolvedType() const { return m_resolvedType; }
+
+protected:
     TypeName(SourceSpan span)
         : Node(span)
     { }
-
-    const Type* resolvedType() const { return m_resolvedType; }
 
 private:
     const Type* m_resolvedType;
 };
 
 class ArrayTypeName : public TypeName {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    ArrayTypeName(SourceSpan span, TypeName::Ptr&& elementType, Expression::Ptr&& elementCount)
-        : TypeName(span)
-        , m_elementType(WTFMove(elementType))
-        , m_elementCount(WTFMove(elementCount))
-    { }
+    WGSL_AST_BUILDER_NODE(ArrayTypeName);
 
+public:
     NodeKind kind() const override;
 
-    TypeName* maybeElementType() const { return m_elementType.get(); }
+    TypeName* maybeElementType() const { return m_elementType; }
     Expression* maybeElementCount() const { return m_elementCount.get(); }
 
 private:
+    ArrayTypeName(SourceSpan span, TypeName::Ptr elementType, Expression::Ptr&& elementCount)
+        : TypeName(span)
+        , m_elementType(elementType)
+        , m_elementCount(WTFMove(elementCount))
+    { }
+
     TypeName::Ptr m_elementType;
     Expression::Ptr m_elementCount;
 };
 
 class NamedTypeName : public TypeName {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(NamedTypeName);
 
 public:
+    NodeKind kind() const override;
+    Identifier& name() { return m_name; }
+
+private:
     NamedTypeName(SourceSpan span, Identifier&& name)
         : TypeName(span)
         , m_name(WTFMove(name))
     { }
 
-    NodeKind kind() const override;
-    Identifier& name() { return m_name; }
-
-private:
     Identifier m_name;
 };
 
 class ParameterizedTypeName : public TypeName {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(ParameterizedTypeName);
+
 public:
     enum class Base {
         Vec2,
@@ -123,12 +126,6 @@ public:
         LastEntry = TextureStorage3d,
     };
     static constexpr unsigned NumberOfBaseTypes = static_cast<unsigned>(Base::LastEntry) + 1;
-
-    ParameterizedTypeName(SourceSpan span, Base base, TypeName::Ref&& elementType)
-        : TypeName(span)
-        , m_base(base)
-        , m_elementType(WTFMove(elementType))
-    { }
 
     static std::optional<Base> stringViewToKind(const StringView& view)
     {
@@ -238,22 +235,29 @@ public:
     TypeName& elementType() { return m_elementType; }
 
 private:
+    ParameterizedTypeName(SourceSpan span, Base base, TypeName::Ref&& elementType)
+        : TypeName(span)
+        , m_base(base)
+        , m_elementType(WTFMove(elementType))
+    { }
+
     Base m_base;
     TypeName::Ref m_elementType;
 };
 
 class ReferenceTypeName final : public TypeName {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(ReferenceTypeName);
+
 public:
+    NodeKind kind() const override;
+    TypeName& type() const { return m_type.get(); }
+
+private:
     ReferenceTypeName(SourceSpan span, TypeName::Ref&& type)
         : TypeName(span)
         , m_type(WTFMove(type))
     { }
 
-    NodeKind kind() const override;
-    TypeName& type() const { return m_type.get(); }
-
-private:
     TypeName::Ref m_type;
 };
 

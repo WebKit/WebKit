@@ -311,7 +311,7 @@ void RewriteGlobalVariables::insertStructs(const UsedGlobals& usedGlobals)
 
             AST::TypeName::Ref memberType = *global->declaration->maybeTypeName();
             if (shouldBeReference)
-                memberType = adoptRef(*new AST::ReferenceTypeName(span, WTFMove(memberType)));
+                memberType = m_callGraph.ast().astBuilder().construct<AST::ReferenceTypeName>(span, WTFMove(memberType));
             structMembers.append(m_callGraph.ast().astBuilder().construct<AST::StructureMember>(
                 span,
                 AST::Identifier::make(global->declaration->name()),
@@ -338,12 +338,12 @@ void RewriteGlobalVariables::insertParameters(AST::Function& function, const Use
     auto span = function.span();
     for (auto& it : usedGlobals) {
         unsigned group = it.key;
-        auto type = adoptRef(*new AST::NamedTypeName(span, argumentBufferStructName(group)));
-        type->m_resolvedType = m_structTypes.get(group);
+        auto& type = m_callGraph.ast().astBuilder().construct<AST::NamedTypeName>(span, argumentBufferStructName(group));
+        type.m_resolvedType = m_structTypes.get(group);
         m_callGraph.ast().append(function.parameters(), adoptRef(*new AST::Parameter(
             span,
             argumentBufferParameterName(group),
-            WTFMove(type),
+            type,
             AST::Attribute::List {
                 m_callGraph.ast().astBuilder().construct<AST::GroupAttribute>(span, group)
             },

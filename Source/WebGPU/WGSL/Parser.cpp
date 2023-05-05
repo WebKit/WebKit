@@ -589,19 +589,19 @@ Result<AST::TypeName::Ref> Parser<Lexer>::parseTypeName()
         return parseArrayType();
     if (current().type == TokenType::KeywordI32) {
         consume();
-        RETURN_NODE_REF(NamedTypeName, AST::Identifier::makeWithSpan(CURRENT_SOURCE_SPAN(), StringView { "i32"_s }));
+        RETURN_ARENA_NODE(NamedTypeName, AST::Identifier::makeWithSpan(CURRENT_SOURCE_SPAN(), StringView { "i32"_s }));
     }
     if (current().type == TokenType::KeywordF32) {
         consume();
-        RETURN_NODE_REF(NamedTypeName, AST::Identifier::makeWithSpan(CURRENT_SOURCE_SPAN(), StringView { "f32"_s }));
+        RETURN_ARENA_NODE(NamedTypeName, AST::Identifier::makeWithSpan(CURRENT_SOURCE_SPAN(), StringView { "f32"_s }));
     }
     if (current().type == TokenType::KeywordU32) {
         consume();
-        RETURN_NODE_REF(NamedTypeName, AST::Identifier::makeWithSpan(CURRENT_SOURCE_SPAN(), StringView { "u32"_s }));
+        RETURN_ARENA_NODE(NamedTypeName, AST::Identifier::makeWithSpan(CURRENT_SOURCE_SPAN(), StringView { "u32"_s }));
     }
     if (current().type == TokenType::KeywordBool) {
         consume();
-        RETURN_NODE_REF(NamedTypeName, AST::Identifier::makeWithSpan(CURRENT_SOURCE_SPAN(), StringView { "bool"_s }));
+        RETURN_ARENA_NODE(NamedTypeName, AST::Identifier::makeWithSpan(CURRENT_SOURCE_SPAN(), StringView { "bool"_s }));
     }
     if (current().type == TokenType::Identifier) {
         PARSE(name, Identifier);
@@ -619,9 +619,9 @@ Result<AST::TypeName::Ref> Parser<Lexer>::parseTypeNameAfterIdentifier(AST::Iden
         CONSUME_TYPE(Lt);
         PARSE(elementType, TypeName);
         CONSUME_TYPE(Gt);
-        RETURN_NODE_REF(ParameterizedTypeName, *kind, WTFMove(elementType));
+        RETURN_ARENA_NODE(ParameterizedTypeName, *kind, WTFMove(elementType));
     }
-    RETURN_NODE_REF(NamedTypeName, WTFMove(name));
+    RETURN_ARENA_NODE(NamedTypeName, WTFMove(name));
 }
 
 template<typename Lexer>
@@ -640,7 +640,7 @@ Result<AST::TypeName::Ref> Parser<Lexer>::parseArrayType()
         consume();
 
         PARSE(elementType, TypeName);
-        maybeElementType = WTFMove(elementType);
+        maybeElementType = &elementType.get();
 
         if (current().type == TokenType::Comma) {
             consume();
@@ -656,7 +656,7 @@ Result<AST::TypeName::Ref> Parser<Lexer>::parseArrayType()
         CONSUME_TYPE(Gt);
     }
 
-    RETURN_NODE_REF(ArrayTypeName, WTFMove(maybeElementType), WTFMove(maybeElementCount));
+    RETURN_ARENA_NODE(ArrayTypeName, maybeElementType, WTFMove(maybeElementCount));
 }
 
 template<typename Lexer>
@@ -703,8 +703,8 @@ Result<AST::Variable::Ref> Parser<Lexer>::parseVariableWithAttributes(AST::Attri
     AST::TypeName::Ptr maybeType = nullptr;
     if (current().type == TokenType::Colon) {
         consume();
-        PARSE(TypeName, TypeName);
-        maybeType = WTFMove(TypeName);
+        PARSE(typeName, TypeName);
+        maybeType = &typeName.get();
     }
 
     std::unique_ptr<AST::Expression> maybeInitializer = nullptr;
@@ -815,7 +815,7 @@ Result<AST::Function> Parser<Lexer>::parseFunction(AST::Attribute::List&& attrib
         PARSE(parsedReturnAttributes, Attributes);
         returnAttributes = WTFMove(parsedReturnAttributes);
         PARSE(type, TypeName);
-        maybeReturnType = WTFMove(type);
+        maybeReturnType = &type.get();
     }
 
     PARSE(body, CompoundStatement);
