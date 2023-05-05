@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-void GridMasonryLayout::performMasonryPlacement(unsigned gridAxisTracks, GridTrackSizingDirection masonryAxisDirection)
+void GridMasonryLayout::initializeMasonry(unsigned gridAxisTracks, GridTrackSizingDirection masonryAxisDirection)
 {
-    // Reset the global variables as they may contain state from previous runs of Masonry.
+    // Reset global variables as they may contain state from previous runs of Masonry.
     m_masonryAxisDirection = masonryAxisDirection;
     m_masonryAxisGridGap = m_renderGrid.gridGap(m_masonryAxisDirection);
     m_gridAxisTracksCount = gridAxisTracks;
@@ -47,6 +47,11 @@ void GridMasonryLayout::performMasonryPlacement(unsigned gridAxisTracks, GridTra
     m_renderGrid.populateExplicitGridAndOrderIterator();
 
     resizeAndResetRunningPositions();
+}
+
+void GridMasonryLayout::performMasonryPlacement(unsigned gridAxisTracks, GridTrackSizingDirection masonryAxisDirection)
+{
+    initializeMasonry(gridAxisTracks, masonryAxisDirection);
 
     m_renderGrid.populateGridPositionsForDirection(ForColumns);
     m_renderGrid.populateGridPositionsForDirection(ForRows);

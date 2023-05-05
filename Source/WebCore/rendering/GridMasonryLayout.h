@@ -40,6 +40,7 @@ public:
     {
     }
 
+    void initializeMasonry(unsigned gridAxisTracks, GridTrackSizingDirection masonryAxisDirection);
     void performMasonryPlacement(unsigned gridAxisTracks, GridTrackSizingDirection masonryAxisDirection);
     LayoutUnit offsetForChild(const RenderBox&) const;
     LayoutUnit gridContentSize() const { return m_gridContentSize; };
