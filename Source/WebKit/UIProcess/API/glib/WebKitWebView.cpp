@@ -3830,7 +3830,7 @@ gdouble webkit_web_view_get_zoom_level(WebKitWebView* webView)
  * @command: the command to check
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
- * @user_data: (closure): the data to pass to callback function
+ * @user_data: the data to pass to callback function
  *
  * Asynchronously check if it is possible to execute the given editing command.
  *
@@ -4035,7 +4035,7 @@ static void webkitWebViewEvaluateJavascriptInternal(WebKitWebView* webView, cons
  * @source_uri: (nullable): the source URI
  * @cancellable: (nullable): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the script finished
- * @user_data: (closure): the data to pass to callback function
+ * @user_data: the data to pass to callback function
  *
  * Asynchronously evaluate @script in the script world with name @world_name of the main frame current context in @web_view.
  * If @world_name is %NULL, the default world is used. Any value that is not %NULL is a distinct world.
@@ -4172,7 +4172,7 @@ static void webkitWebViewCallAsyncJavascriptFunctionInternal(WebKitWebView* webV
  * @source_uri: (nullable): the source URI
  * @cancellable: (nullable): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the script finished
- * @user_data: (closure): the data to pass to callback function
+ * @user_data: the data to pass to callback function
  *
  * Asynchronously call @body with @arguments in the script world with name @world_name of the main frame current context in @web_view.
  * The @arguments values must be one of the following types, or contain only the following GVariant types: number, string and dictionary.
@@ -4268,7 +4268,7 @@ JSCValue* webkit_web_view_call_async_javascript_function_finish(WebKitWebView* w
  * @script: the script to run
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the script finished
- * @user_data: (closure): the data to pass to callback function
+ * @user_data: the data to pass to callback function
  *
  * Asynchronously run @script in the context of the current page in @web_view.
  *
@@ -4357,7 +4357,7 @@ WebKitJavascriptResult* webkit_web_view_run_javascript_finish(WebKitWebView* web
  * @world_name: the name of a #WebKitScriptWorld
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the script finished
- * @user_data: (closure): the data to pass to callback function
+ * @user_data: the data to pass to callback function
  *
  * Asynchronously run @script in the script world.
  *
@@ -4386,7 +4386,7 @@ void webkit_web_view_run_javascript_in_world(WebKitWebView* webView, const gchar
  * @world_name (nullable): the name of a #WebKitScriptWorld, if no name (i.e. %NULL) is provided, the default world is used. Any value that is not %NULL is a distinct world.
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the script finished
- * @user_data: (closure): the data to pass to callback function
+ * @user_data: the data to pass to callback function
  *
  * Asynchronously run @body in the script world with name @world_name of the current page context in
  * @web_view. If WebKitSettings:enable-javascript is FALSE, this method will do nothing. This API
@@ -4498,7 +4498,7 @@ static void resourcesStreamReadCallback(GObject* object, GAsyncResult* result, g
  * @resource: the location of the resource to load
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the script finished
- * @user_data: (closure): the data to pass to callback function
+ * @user_data: the data to pass to callback function
  *
  * Asynchronously run the script from @resource.
  *
@@ -4655,7 +4655,7 @@ static void getContentsAsMHTMLDataCallback(API::Data* wkData, GTask* taskPtr)
  * @save_mode: the #WebKitSaveMode specifying how the web page should be saved.
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
- * @user_data: (closure): the data to pass to callback function
+ * @user_data: the data to pass to callback function
  *
  * Asynchronously save the current web page.
  *
@@ -4718,7 +4718,7 @@ GInputStream* webkit_web_view_save_finish(WebKitWebView* webView, GAsyncResult* 
  * @save_mode: the #WebKitSaveMode specifying how the web page should be saved.
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
- * @user_data: (closure): the data to pass to callback function
+ * @user_data: the data to pass to callback function
  *
  * Asynchronously save the current web page.
  *
@@ -4855,7 +4855,7 @@ gboolean webkit_web_view_get_tls_info(WebKitWebView* webView, GTlsCertificate** 
  * @options: #WebKitSnapshotOptions for the snapshot
  * @cancellable: (allow-none): a #GCancellable
  * @callback: (scope async): a #GAsyncReadyCallback
- * @user_data: (closure): user data
+ * @user_data: user data
  *
  * Asynchronously retrieves a snapshot of @web_view for @region.
  *
@@ -5050,8 +5050,8 @@ void webkit_web_view_restore_session_state(WebKitWebView* webView, WebKitWebView
 /**
  * webkit_web_view_add_frame_displayed_callback:
  * @web_view: a #WebKitWebView
- * @callback: a #WebKitFrameDisplayedCallback
- * @user_data: (closure): user data to pass to @callback
+ * @callback: (scope notified): a #WebKitFrameDisplayedCallback
+ * @user_data: user data to pass to @callback
  * @destroy_notify: (nullable): destroy notifier for @user_data
  *
  * Add a callback to be called when the backend notifies that a frame has been displayed in @web_view.
@@ -5104,7 +5104,7 @@ void webkit_web_view_remove_frame_displayed_callback(WebKitWebView* webView, uns
  * @message: a #WebKitUserMessage
  * @cancellable: (nullable): a #GCancellable or %NULL to ignore
  * @callback: (scope async): (nullable): A #GAsyncReadyCallback to call when the request is satisfied or %NULL
- * @user_data: (closure): the data to pass to callback function
+ * @user_data: the data to pass to callback function
  *
  * Send @message to the #WebKitWebPage corresponding to @web_view.
  *

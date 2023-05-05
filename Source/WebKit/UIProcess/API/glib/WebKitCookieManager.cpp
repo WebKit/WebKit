@@ -225,7 +225,7 @@ void webkit_cookie_manager_set_accept_policy(WebKitCookieManager* manager, WebKi
  * @cookie_manager: a #WebKitCookieManager
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
- * @user_data: (closure): the data to pass to callback function
+ * @user_data: the data to pass to callback function
  *
  * Asynchronously get the cookie acceptance policy of @cookie_manager.
  *
@@ -272,7 +272,7 @@ WebKitCookieAcceptPolicy webkit_cookie_manager_get_accept_policy_finish(WebKitCo
  * @cookie: the #SoupCookie to be added
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
- * @user_data: (closure): the data to pass to callback function
+ * @user_data: the data to pass to callback function
  *
  * Asynchronously add a #SoupCookie to the underlying storage.
  *
@@ -318,7 +318,7 @@ gboolean webkit_cookie_manager_add_cookie_finish(WebKitCookieManager* manager, G
  * @uri: the URI associated to the cookies to be retrieved
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
- * @user_data: (closure): the data to pass to callback function
+ * @user_data: the data to pass to callback function
  *
  * Asynchronously get a list of #SoupCookie from @cookie_manager.
  *
@@ -376,7 +376,7 @@ GList* webkit_cookie_manager_get_cookies_finish(WebKitCookieManager* manager, GA
  * @cookie: the #SoupCookie to be deleted
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
- * @user_data: (closure): the data to pass to callback function
+ * @user_data: the data to pass to callback function
  *
  * Asynchronously delete a #SoupCookie from the current session.
  *
@@ -422,7 +422,7 @@ gboolean webkit_cookie_manager_delete_cookie_finish(WebKitCookieManager* manager
  * @cookie_manager: a #WebKitCookieManager
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
- * @user_data: (closure): the data to pass to callback function
+ * @user_data: the data to pass to callback function
  *
  * Asynchronously get the list of domains for which @cookie_manager contains cookies.
  *

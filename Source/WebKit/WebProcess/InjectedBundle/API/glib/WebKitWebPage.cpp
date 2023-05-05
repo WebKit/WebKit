@@ -905,8 +905,8 @@ WebKitWebEditor* webkit_web_page_get_editor(WebKitWebPage* webPage)
  * @web_page: a #WebKitWebPage
  * @message: a #WebKitUserMessage
  * @cancellable: (nullable): a #GCancellable or %NULL to ignore
- * @callback: (scope async): (nullable): A #GAsyncReadyCallback to call when the request is satisfied or %NULL
- * @user_data: (closure): the data to pass to callback function
+ * @callback: (scope async) (nullable): A #GAsyncReadyCallback to call when the request is satisfied or %NULL
+ * @user_data: the data to pass to callback function
  *
  * Send @message to the #WebKitWebView corresponding to @web_page. If @message is floating, it's consumed.
  *

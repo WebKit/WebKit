@@ -1154,7 +1154,7 @@ static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes type
  * @types: #WebKitWebsiteDataTypes
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
- * @user_data: (closure): the data to pass to callback function
+ * @user_data: the data to pass to callback function
  *
  * Asynchronously get the list of #WebKitWebsiteData for the given @types.
  *
@@ -1209,7 +1209,7 @@ GList* webkit_website_data_manager_fetch_finish(WebKitWebsiteDataManager* manage
  * @website_data: (element-type WebKitWebsiteData): a #GList of #WebKitWebsiteData
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
- * @user_data: (closure): the data to pass to callback function
+ * @user_data: the data to pass to callback function
  *
  * Asynchronously removes the website data in the given @website_data list.
  *
@@ -1276,7 +1276,7 @@ gboolean webkit_website_data_manager_remove_finish(WebKitWebsiteDataManager* man
  * @timespan: a #GTimeSpan
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
- * @user_data: (closure): the data to pass to callback function
+ * @user_data: the data to pass to callback function
  *
  * Asynchronously clear the website data of the given @types modified in the past @timespan.
  *
@@ -1596,7 +1596,7 @@ GList* webkit_itp_third_party_get_first_parties(WebKitITPThirdParty* thirdParty)
  * @manager: a #WebKitWebsiteDataManager
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
- * @user_data: (closure): the data to pass to callback function
+ * @user_data: the data to pass to callback function
  *
  * Asynchronously get the list of #WebKitITPThirdParty seen for @manager.
  *
