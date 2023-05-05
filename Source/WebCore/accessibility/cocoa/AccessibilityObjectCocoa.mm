@@ -331,12 +331,13 @@ void attributedStringSetFont(NSMutableAttributedString *attributedString, CTFont
 static void attributedStringAppendWrapper(NSMutableAttributedString *attrString, WebAccessibilityObjectWrapper *wrapper)
 {
     const auto attachmentCharacter = static_cast<UniChar>(NSAttachmentCharacter);
-    [attrString appendAttributedString:[[NSMutableAttributedString alloc] initWithString:[NSString stringWithCharacters:&attachmentCharacter length:1]
+    [attrString appendAttributedString:adoptNS([[NSMutableAttributedString alloc] initWithString:[NSString stringWithCharacters:&attachmentCharacter length:1]
 #if PLATFORM(MAC)
-        attributes:@{ NSAccessibilityAttachmentTextAttribute : (__bridge id)adoptCF(NSAccessibilityCreateAXUIElementRef(wrapper)).get() }]];
+        attributes:@{ NSAccessibilityAttachmentTextAttribute : (__bridge id)adoptCF(NSAccessibilityCreateAXUIElementRef(wrapper)).get() }
 #else
-        attributes:@{ UIAccessibilityTokenAttachment : wrapper }]];
+        attributes:@{ UIAccessibilityTokenAttachment : wrapper }
 #endif
+    ]).get()];
 }
 
 RetainPtr<NSArray> AccessibilityObject::contentForRange(const SimpleRange& range, SpellCheck spellCheck) const
