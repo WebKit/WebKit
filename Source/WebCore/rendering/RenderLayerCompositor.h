@@ -198,8 +198,6 @@ public:
     // Update event regions, which only needs to happen once per rendering update.
     void updateEventRegions();
 
-    enum class LayoutUpToDate : bool { No, Yes };
-
     struct RequiresCompositingData {
         LayoutUpToDate layoutUpToDate { LayoutUpToDate::Yes };
         RenderLayer::ViewportConstrainedNotCompositedReason nonCompositedForPositionReason { RenderLayer::NoNotCompositedReason };

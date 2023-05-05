@@ -1085,7 +1085,7 @@ void RenderLayerScrollableArea::computeScrollDimensions()
     m_scrollHeight = roundToInt(overflowBottom() - overflowTop());
 
     computeScrollOrigin();
-    computeHasCompositedScrollableOverflow();
+    computeHasCompositedScrollableOverflow(LayoutUpToDate::Yes);
 }
 
 void RenderLayerScrollableArea::computeScrollOrigin()
@@ -1105,9 +1105,21 @@ void RenderLayerScrollableArea::computeScrollOrigin()
         m_hBar->offsetDidChange();
 }
 
-void RenderLayerScrollableArea::computeHasCompositedScrollableOverflow()
+void RenderLayerScrollableArea::computeHasCompositedScrollableOverflow(LayoutUpToDate layoutUpToDate)
 {
-    bool hasCompositedScrollableOverflow = canUseCompositedScrolling() && (hasScrollableHorizontalOverflow() || hasScrollableVerticalOverflow());
+    bool hasCompositedScrollableOverflow = m_hasCompositedScrollableOverflow;
+
+    switch (layoutUpToDate) {
+    case LayoutUpToDate::No:
+        // If layout is not up to date, the only thing we can reliably know is that style prevents overflow scrolling.
+        if (!canUseCompositedScrolling())
+            hasCompositedScrollableOverflow = false;
+        break;
+    case LayoutUpToDate::Yes:
+        hasCompositedScrollableOverflow = canUseCompositedScrolling() && (hasScrollableHorizontalOverflow() || hasScrollableVerticalOverflow());
+        break;
+    }
+
     if (hasCompositedScrollableOverflow == m_hasCompositedScrollableOverflow)
         return;
 
@@ -1286,7 +1298,6 @@ void RenderLayerScrollableArea::updateScrollbarSteps()
         m_vBar->setSteps(Scrollbar::pixelsPerLineStep(height), Scrollbar::pageStep(height));
     }
 }
-
 
 // This is called from layout code (before updateLayerPositions).
 void RenderLayerScrollableArea::updateScrollInfoAfterLayout()

@@ -236,7 +236,7 @@ public:
 
     bool scrollingMayRevealBackground() const;
 
-    void computeHasCompositedScrollableOverflow();
+    void computeHasCompositedScrollableOverflow(LayoutUpToDate);
 
     // NOTE: This should only be called by the overridden setScrollOffset from ScrollableArea.
     void scrollTo(const ScrollPosition&);

@@ -89,6 +89,7 @@ class TransformationMatrix;
 enum BorderRadiusClippingRule { IncludeSelfForBorderRadius, DoNotIncludeSelfForBorderRadius };
 enum IncludeSelfOrNot { IncludeSelf, ExcludeSelf };
 enum CrossFrameBoundaries : bool { No, Yes };
+enum class LayoutUpToDate : bool { No, Yes };
 
 enum RepaintStatus {
     NeedsNormalRepaint,
@@ -465,6 +466,7 @@ public:
     bool canUseCompositedScrolling() const;
     // Returns true when there is actually scrollable overflow (requires layout to be up-to-date).
     bool hasCompositedScrollableOverflow() const;
+    void computeHasCompositedScrollableOverflow(LayoutUpToDate);
 
     bool hasOverlayScrollbars() const;
 

@@ -2766,6 +2766,12 @@ bool RenderLayer::hasCompositedScrollableOverflow() const
     return false;
 }
 
+void RenderLayer::computeHasCompositedScrollableOverflow(LayoutUpToDate layoutUpToDate)
+{
+    if (m_scrollableArea)
+        m_scrollableArea->computeHasCompositedScrollableOverflow(layoutUpToDate);
+}
+
 bool RenderLayer::hasOverlayScrollbars() const
 {
     if (m_scrollableArea)
@@ -5408,7 +5414,7 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
         // Visibility and scrollability are input to canUseCompositedScrolling().
         if (m_scrollableArea) {
             if (visibilityChanged || oldStyle->isOverflowVisible() != renderer().style().isOverflowVisible())
-                m_scrollableArea->computeHasCompositedScrollableOverflow();
+                m_scrollableArea->computeHasCompositedScrollableOverflow(LayoutUpToDate::No);
         }
     }
 

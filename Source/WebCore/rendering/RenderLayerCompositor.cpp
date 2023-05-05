@@ -3446,6 +3446,7 @@ bool RenderLayerCompositor::requiresCompositingForOverflowScrolling(const Render
         return layer.isComposited();
     }
 
+    const_cast<RenderLayer&>(layer).computeHasCompositedScrollableOverflow(LayoutUpToDate::Yes);
     return layer.hasCompositedScrollableOverflow();
 }
 

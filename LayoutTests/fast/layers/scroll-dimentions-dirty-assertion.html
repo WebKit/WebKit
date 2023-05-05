@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		span {
+			display: inline-block;
+			width: 28px;
+			height: 40px;
+			margin: 0;
+			word-break: break-all;
+			font-size: 32px;
+		}
+		a {
+			display: block;
+			width: 100px;
+			height: 100px;
+			overflow: hidden;
+		}
+	</style>
+	<script>
+		if (window.testRunner)
+			testRunner.dumpAsText();
+
+		window.addEventListener('load', () => {
+			document.body.offsetWidth;
+			const target = document.getElementById('target');
+			target.textContent = "This test should not assert";
+			target.style.overflowX = 'hidden';
+		}, false);
+	</script>
+</head>
+<body>
+	<a><span id="target">A</span> Hello world</a>
+</body>
+</html>
