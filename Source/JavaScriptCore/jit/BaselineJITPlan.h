@@ -44,7 +44,8 @@ public:
     CompilationResult finalize() override;
 
 private:
-    JIT m_jit;
+    BytecodeIndex m_loopOSREntryBytecodeIndex;
+    std::optional<JIT> m_jit;
 };
 
 } // namespace JSC

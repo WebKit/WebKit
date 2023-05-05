@@ -169,7 +169,7 @@ namespace JSC {
         CompilationResult finalizeOnMainThread(CodeBlock*);
         size_t codeSize() const;
 
-        void doMainThreadPreparationBeforeCompile();
+        static void doMainThreadPreparationBeforeCompile(VM&);
         
         static CompilationResult compile(VM& vm, CodeBlock* codeBlock, JITCompilationEffort effort)
         {

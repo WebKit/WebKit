@@ -1055,16 +1055,16 @@ size_t JIT::codeSize() const
 
 CompilationResult JIT::privateCompile(CodeBlock* codeBlock, JITCompilationEffort effort)
 {
-    doMainThreadPreparationBeforeCompile();
+    doMainThreadPreparationBeforeCompile(vm());
     compileAndLinkWithoutFinalizing(effort);
     return finalizeOnMainThread(codeBlock);
 }
 
-void JIT::doMainThreadPreparationBeforeCompile()
+void JIT::doMainThreadPreparationBeforeCompile(VM& vm)
 {
     // This ensures that we have the most up to date type information when performing typecheck optimizations for op_profile_type.
-    if (m_vm->typeProfiler())
-        m_vm->typeProfilerLog()->processLogEntries(*m_vm, "Preparing for JIT compilation."_s);
+    if (vm.typeProfiler())
+        vm.typeProfilerLog()->processLogEntries(vm, "Preparing for JIT compilation."_s);
 }
 
 unsigned JIT::frameRegisterCountFor(UnlinkedCodeBlock* codeBlock)

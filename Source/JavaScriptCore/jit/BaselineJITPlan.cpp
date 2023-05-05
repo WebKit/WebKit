@@ -32,31 +32,28 @@ namespace JSC {
 
 BaselineJITPlan::BaselineJITPlan(CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex)
     : JITPlan(JITCompilationMode::Baseline, codeBlock)
-    , m_jit(codeBlock->vm(), codeBlock, loopOSREntryBytecodeIndex)
+    , m_loopOSREntryBytecodeIndex(loopOSREntryBytecodeIndex)
 {
-#if CPU(ARM64E)
-    m_jit.m_assembler.buffer().arm64eHash().deallocatePinForCurrentThread();
-#endif
-    m_jit.doMainThreadPreparationBeforeCompile();
+    JIT::doMainThreadPreparationBeforeCompile(codeBlock->vm());
 }
 
 auto BaselineJITPlan::compileInThreadImpl() -> CompilationPath
 {
-#if CPU(ARM64E)
-    m_jit.m_assembler.buffer().arm64eHash().allocatePinForCurrentThreadAndInitializeHash();
-#endif
-    m_jit.compileAndLinkWithoutFinalizing(JITCompilationCanFail);
+    m_jit.emplace(*m_vm, m_codeBlock, m_loopOSREntryBytecodeIndex);
+    m_jit->compileAndLinkWithoutFinalizing(JITCompilationCanFail);
     return BaselinePath;
 }
 
 size_t BaselineJITPlan::codeSize() const
 {
-    return m_jit.codeSize();
+    if (m_jit)
+        return m_jit->codeSize();
+    return 0;
 }
 
 CompilationResult BaselineJITPlan::finalize()
 {
-    CompilationResult result = m_jit.finalizeOnMainThread(m_codeBlock);
+    CompilationResult result = m_jit->finalizeOnMainThread(m_codeBlock);
     switch (result) {
     case CompilationFailed:
         CODEBLOCK_LOG_EVENT(m_codeBlock, "delayJITCompile", ("compilation failed"));
