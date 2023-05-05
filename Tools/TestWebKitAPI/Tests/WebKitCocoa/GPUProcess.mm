@@ -78,7 +78,7 @@ TEST(GPUProcess, RelaunchOnCrash)
 
     // evaluateJavaScript gives us the user gesture we need to reliably start audio playback on all platforms.
     __block bool done = false;
-    [webView evaluateJavaScript:@"startPlaying()" completionHandler:^(id result, NSError *error) {
+    [webView callAsyncJavaScript:@"return startPlaying()" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
         EXPECT_TRUE(!error);
         done = true;
     }];
@@ -129,7 +129,7 @@ TEST(GPUProcess, WebProcessTerminationAfterTooManyGPUProcessCrashes)
 
     // evaluateJavaScript gives us the user gesture we need to reliably start audio playback on all platforms.
     __block bool done = false;
-    [webView evaluateJavaScript:@"startPlaying()" completionHandler:^(id result, NSError *error) {
+    [webView callAsyncJavaScript:@"return startPlaying()" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
         EXPECT_TRUE(!error);
         done = true;
     }];
@@ -200,7 +200,7 @@ TEST(GPUProcess, WebProcessTerminationAfterTooManyGPUProcessCrashes)
     // Manually start audio playback again.
     // evaluateJavaScript gives us the user gesture we need to reliably start audio playback on all platforms.
     done = false;
-    [webView evaluateJavaScript:@"startPlaying()" completionHandler:^(id result, NSError *error) {
+    [webView callAsyncJavaScript:@"return startPlaying()" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
         EXPECT_TRUE(!error);
         done = true;
     }];
@@ -799,7 +799,7 @@ TEST(GPUProcess, ExitsUnderMemoryPressureWebAudioCase)
 
         // evaluateJavaScript gives us the user gesture we need to reliably start audio playback on all platforms.
         __block bool done = false;
-        [webView evaluateJavaScript:@"startPlaying()" completionHandler:^(id result, NSError *error) {
+        [webView callAsyncJavaScript:@"return startPlaying()" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
             EXPECT_TRUE(!error);
             done = true;
         }];
@@ -823,7 +823,7 @@ TEST(GPUProcess, ExitsUnderMemoryPressureWebAudioNonRenderingAudioContext)
 
     // evaluateJavaScript gives us the user gesture we need to reliably start audio playback on all platforms.
     __block bool done = false;
-    [webView evaluateJavaScript:@"startPlaying()" completionHandler:^(id result, NSError *error) {
+    [webView callAsyncJavaScript:@"return startPlaying()" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
         EXPECT_TRUE(!error);
         done = true;
     }];
