@@ -22,6 +22,7 @@
 #include "config.h"
 #include "FontCustomPlatformData.h"
 
+#include "CSSFontFaceSrcValue.h"
 #include "CairoUtilities.h"
 #include "Font.h"
 #include "FontCacheFreeType.h"
@@ -161,6 +162,12 @@ bool FontCustomPlatformData::supportsFormat(const String& format)
         || equalLettersIgnoringASCIICase(format, "opentype-variations"_s)
 #endif
         || equalLettersIgnoringASCIICase(format, "woff"_s);
+}
+
+bool FontCustomPlatformData::supportsTechnology(const FontTechnology&)
+{
+    // FIXME: define supported technologies for this platform (webkit.org/b/256310).
+    return true;
 }
 
 }

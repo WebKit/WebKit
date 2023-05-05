@@ -233,6 +233,7 @@ static RefPtr<CSSFontFaceSrcResourceValue> consumeFontFaceSrcURI(CSSParserTokenR
         return nullptr;
 
     String format;
+    Vector<FontTechnology> supportedTechnologies;
     if (range.peek().functionId() == CSSValueFormat) {
         // https://drafts.csswg.org/css-fonts/#descdef-font-face-src
         // FIXME: We allow any identifier here and convert to strings; specification calls for certain keywords and legacy compatibility strings.
@@ -247,10 +248,15 @@ static RefPtr<CSSFontFaceSrcResourceValue> consumeFontFaceSrcURI(CSSParserTokenR
             return nullptr;
         format = arg.value().toString();
     }
+    if (range.peek().functionId() == CSSValueTech) {
+        supportedTechnologies = CSSPropertyParserHelpers::consumeFontTech(range);
+        if (supportedTechnologies.isEmpty())
+            return nullptr;
+    }
     if (!range.atEnd())
         return nullptr;
 
-    return CSSFontFaceSrcResourceValue::create(WTFMove(location), WTFMove(format), context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
+    return CSSFontFaceSrcResourceValue::create(WTFMove(location), WTFMove(format), WTFMove(supportedTechnologies), context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
 }
 
 static RefPtr<CSSValue> consumeFontFaceSrcLocal(CSSParserTokenRange& range)

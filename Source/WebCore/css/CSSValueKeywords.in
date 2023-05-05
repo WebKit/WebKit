@@ -1316,6 +1316,19 @@ svg
 truetype
 woff
 woff2
+// @font-face src tech()
+tech
+color-cbdt
+color-colrv0
+color-colrv1
+color-sbix
+color-svg
+features-aat
+features-graphite
+features-opentype
+incremental
+palettes
+variations
 
 // (-webkit-)filter
 // invert
@@ -1632,8 +1645,10 @@ words
 // @supports
 // https://drafts.csswg.org/css-conditional-4/#typedef-supports-selector-fn
 // https://drafts.csswg.org/css-conditional-5/#typedef-supports-font-format-fn
+// https://drafts.csswg.org/css-conditional-5/#typedef-supports-font-tech-fn
 selector
 font-format
+font-tech
 
 // math-style
 // normal

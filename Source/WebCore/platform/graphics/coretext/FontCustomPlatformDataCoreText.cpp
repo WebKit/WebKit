@@ -21,6 +21,7 @@
 #include "config.h"
 #include "FontCustomPlatformData.h"
 
+#include "CSSFontFaceSrcValue.h"
 #include "Font.h"
 #include "FontCache.h"
 #include "FontCacheCoreText.h"
@@ -99,6 +100,22 @@ bool FontCustomPlatformData::supportsFormat(const String& format)
         || equalLettersIgnoringASCIICase(format, "truetype-variations"_s)
         || equalLettersIgnoringASCIICase(format, "opentype-variations"_s)
         || equalLettersIgnoringASCIICase(format, "woff"_s);
+}
+
+bool FontCustomPlatformData::supportsTechnology(const FontTechnology& tech)
+{
+    switch (tech) {
+    case FontTechnology::ColorColrv0:
+    case FontTechnology::ColorSbix:
+    case FontTechnology::ColorSvg:
+    case FontTechnology::FeaturesAat:
+    case FontTechnology::FeaturesOpentype:
+    case FontTechnology::Palettes:
+    case FontTechnology::Variations:
+        return true;
+    default:
+        return false;
+    }
 }
 
 }

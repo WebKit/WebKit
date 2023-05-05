@@ -46,6 +46,7 @@
 #include "CSSCursorImageValue.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSFilterImageValue.h"
+#include "CSSFontFaceSrcValue.h"
 #include "CSSFontPaletteValuesOverrideColorsValue.h"
 #include "CSSFontVariantAlternatesValue.h"
 #include "CSSFontVariantLigaturesParser.h"
@@ -84,6 +85,7 @@
 #include "ColorInterpolation.h"
 #include "ColorLuminance.h"
 #include "ColorNormalization.h"
+#include "FontCustomPlatformData.h"
 #include "FontFace.h"
 #include "Logging.h"
 #include "RenderStyleConstants.h"
@@ -8211,6 +8213,24 @@ bool identMatchesSupportedFontFormat(CSSValueID id)
         CSSValueWoff,
         CSSValueWoff2
     >(id);
+}
+
+
+Vector<FontTechnology> consumeFontTech(CSSParserTokenRange& range, bool singleValue)
+{
+    Vector<FontTechnology> technologies;
+    auto args = consumeFunction(range);
+    do {
+        auto& arg = args.consumeIncludingWhitespace();
+        if (arg.type() != IdentToken)
+            return { };
+        auto technology = fromCSSValueID<FontTechnology>(arg.id());
+        if (technology != FontTechnology::Invalid && FontCustomPlatformData::supportsTechnology(technology))
+            technologies.append(technology);
+    } while (consumeCommaIncludingWhitespace(args) && !singleValue);
+    if (!args.atEnd())
+        return { };
+    return technologies;
 }
 
 // MARK: @font-palette-values

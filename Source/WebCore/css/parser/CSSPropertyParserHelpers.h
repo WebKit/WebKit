@@ -52,6 +52,7 @@ enum class FamilyNamesIndex;
 }
 
 enum class BoxOrient : bool;
+enum class FontTechnology : uint8_t;
 
 // When these functions are successful, they will consume all the relevant
 // tokens from the range and also consume any whitespace which follows. When
@@ -319,6 +320,7 @@ RefPtr<CSSValue> consumeDeclarationValue(CSSParserTokenRange&, const CSSParserCo
 // @font-face descriptor consumers:
 
 RefPtr<CSSValue> consumeFontFaceFontFamily(CSSParserTokenRange&);
+Vector<FontTechnology> consumeFontTech(CSSParserTokenRange&, bool singleValue = false);
 bool identMatchesSupportedFontFormat(CSSValueID);
 
 // @font-palette-values descriptor consumers:

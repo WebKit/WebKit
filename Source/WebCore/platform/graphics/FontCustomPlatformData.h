@@ -49,6 +49,7 @@ namespace WebCore {
 class SharedBuffer;
 class FontDescription;
 class FontCreationContext;
+enum class FontTechnology : uint8_t;
 
 template <typename T> class FontTaggedSettings;
 typedef FontTaggedSettings<int> FontFeatureSettings;
@@ -74,6 +75,7 @@ public:
     FontPlatformData fontPlatformData(const FontDescription&, bool bold, bool italic, const FontCreationContext&);
 
     static bool supportsFormat(const String&);
+    static bool supportsTechnology(const FontTechnology&);
 
 #if PLATFORM(WIN)
     String name;

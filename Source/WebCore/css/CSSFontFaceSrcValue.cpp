@@ -72,17 +72,18 @@ bool CSSFontFaceSrcLocalValue::equals(const CSSFontFaceSrcLocalValue& other) con
     return m_fontFaceName == other.m_fontFaceName;
 }
 
-CSSFontFaceSrcResourceValue::CSSFontFaceSrcResourceValue(ResolvedURL&& location, String&& format, LoadedFromOpaqueSource source)
+CSSFontFaceSrcResourceValue::CSSFontFaceSrcResourceValue(ResolvedURL&& location, String&& format, Vector<FontTechnology>&& technologies, LoadedFromOpaqueSource source)
     : CSSValue(FontFaceSrcResourceClass)
     , m_location(WTFMove(location))
     , m_format(WTFMove(format))
+    , m_technologies(WTFMove(technologies))
     , m_loadedFromOpaqueSource(source)
 {
 }
 
-Ref<CSSFontFaceSrcResourceValue> CSSFontFaceSrcResourceValue::create(ResolvedURL location, String format, LoadedFromOpaqueSource source)
+Ref<CSSFontFaceSrcResourceValue> CSSFontFaceSrcResourceValue::create(ResolvedURL location, String format, Vector<FontTechnology>&& technologies, LoadedFromOpaqueSource source)
 {
-    return adoptRef(*new CSSFontFaceSrcResourceValue { WTFMove(location), WTFMove(format), source });
+    return adoptRef(*new CSSFontFaceSrcResourceValue { WTFMove(location), WTFMove(format), WTFMove(technologies), source });
 }
 
 std::unique_ptr<FontLoadRequest> CSSFontFaceSrcResourceValue::fontLoadRequest(ScriptExecutionContext& context, bool isInitiatingElementInUserAgentShadowTree)
@@ -117,14 +118,25 @@ bool CSSFontFaceSrcResourceValue::customTraverseSubresources(const Function<bool
 
 String CSSFontFaceSrcResourceValue::customCSSText() const
 {
-    if (m_format.isEmpty())
-        return serializeURL(m_location.specifiedURLString);
-    return makeString(serializeURL(m_location.specifiedURLString), " format(", serializeString(m_format), ')');
+    StringBuilder builder;
+    builder.append(serializeURL(m_location.specifiedURLString));
+    if (!m_format.isEmpty())
+        builder.append(" format(", serializeString(m_format), ')');
+    if (!m_technologies.isEmpty()) {
+        builder.append(" tech(");
+        for (size_t i = 0; i < m_technologies.size(); ++i) {
+            if (i)
+                builder.append(", ");
+            builder.append(cssTextFromFontTech(m_technologies[i]));
+        }
+        builder.append(')');
+    }
+    return builder.toString();
 }
 
 bool CSSFontFaceSrcResourceValue::equals(const CSSFontFaceSrcResourceValue& other) const
 {
-    return m_location.specifiedURLString == m_location.specifiedURLString && m_format == other.m_format;
+    return m_location.specifiedURLString == m_location.specifiedURLString && m_format == other.m_format && m_technologies == other.m_technologies;
 }
 
 }

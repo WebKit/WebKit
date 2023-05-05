@@ -30,6 +30,7 @@
 #pragma once
 
 #include "CSSCalcValue.h"
+#include "CSSFontFaceSrcValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSValueKeywords.h"
@@ -2408,6 +2409,37 @@ template<> constexpr FontOpticalSizing fromCSSValueID(CSSValueID valueID)
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
     return FontOpticalSizing::Enabled;
+}
+
+template<> constexpr FontTechnology fromCSSValueID(CSSValueID valueID)
+{
+    switch (valueID) {
+    case CSSValueColorColrv0:
+        return FontTechnology::ColorColrv0;
+    case CSSValueColorColrv1:
+        return FontTechnology::ColorColrv1;
+    case CSSValueColorCbdt:
+        return FontTechnology::ColorCbdt;
+    case CSSValueColorSbix:
+        return FontTechnology::ColorSbix;
+    case CSSValueColorSvg:
+        return FontTechnology::ColorSvg;
+    case CSSValueFeaturesAat:
+        return FontTechnology::FeaturesAat;
+    case CSSValueFeaturesGraphite:
+        return FontTechnology::FeaturesGraphite;
+    case CSSValueFeaturesOpentype:
+        return FontTechnology::FeaturesOpentype;
+    case CSSValueIncremental:
+        return FontTechnology::Incremental;
+    case CSSValuePalettes:
+        return FontTechnology::Palettes;
+    case CSSValueVariations:
+        return FontTechnology::Variations;
+    default:
+        break;
+    }
+    return FontTechnology::Invalid;
 }
 
 #define TYPE FontSynthesisLonghandValue
