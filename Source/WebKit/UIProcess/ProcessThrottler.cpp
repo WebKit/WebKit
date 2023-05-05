@@ -53,7 +53,7 @@ static uint64_t generatePrepareToSuspendRequestID()
 ProcessThrottler::ProcessThrottler(ProcessThrottlerClient& process, bool shouldTakeUIBackgroundAssertion)
     : m_process(process)
     , m_prepareToSuspendTimeoutTimer(RunLoop::main(), this, &ProcessThrottler::prepareToSuspendTimeoutTimerFired)
-    , m_dropSuspendedAssertionTimer(RunLoop::main(), this, &ProcessThrottler::dropSuspendedAssertionTimerFired)
+    , m_dropNearSuspendedAssertionTimer(RunLoop::main(), this, &ProcessThrottler::dropNearSuspendedAssertionTimerFired)
     , m_shouldTakeUIBackgroundAssertion(shouldTakeUIBackgroundAssertion)
 {
 }
@@ -123,8 +123,8 @@ String ProcessThrottler::assertionName(ProcessAssertionType type) const
             return "Foreground"_s;
         case ProcessAssertionType::Background:
             return "Background"_s;
-        case ProcessAssertionType::Suspended:
-            return "Suspended"_s;
+        case ProcessAssertionType::NearSuspended:
+            return "NearSuspended"_s;
         case ProcessAssertionType::UnboundedNetworking:
         case ProcessAssertionType::MediaPlayback:
         case ProcessAssertionType::FinishTaskInterruptable:
@@ -146,7 +146,7 @@ ProcessAssertionType ProcessThrottler::assertionTypeForState(ProcessThrottleStat
     case ProcessThrottleState::Background:
         return ProcessAssertionType::Background;
     case ProcessThrottleState::Suspended:
-        return ProcessAssertionType::Suspended;
+        return ProcessAssertionType::NearSuspended;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -180,13 +180,13 @@ void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
             weakThis->assertionWasInvalidated();
     });
 
-    if (m_assertion->type() == ProcessAssertionType::Suspended) {
-        if (!m_shouldTakeSuspendedAssertion)
+    if (m_assertion->type() == ProcessAssertionType::NearSuspended) {
+        if (!m_shouldTakeNearSuspendedAssertion)
             m_assertion = nullptr;
         else
-            m_dropSuspendedAssertionTimer.startOneShot(removeAllAssertionsTimeout);
+            m_dropNearSuspendedAssertionTimer.startOneShot(removeAllAssertionsTimeout);
     } else
-        m_dropSuspendedAssertionTimer.stop();
+        m_dropNearSuspendedAssertionTimer.stop();
 
     m_process.didChangeThrottleState(newState);
 }
@@ -226,14 +226,14 @@ void ProcessThrottler::didConnectToProcess(ProcessID pid)
 
     m_processIdentifier = pid;
     updateThrottleStateNow();
-    RELEASE_ASSERT(m_assertion || (m_state == ProcessThrottleState::Suspended && !m_shouldTakeSuspendedAssertion));
+    RELEASE_ASSERT(m_assertion || (m_state == ProcessThrottleState::Suspended && !m_shouldTakeNearSuspendedAssertion));
 }
 
 void ProcessThrottler::didDisconnectFromProcess()
 {
     PROCESSTHROTTLER_RELEASE_LOG_WITH_PID("didDisconnectFromProcess:", m_processIdentifier);
 
-    m_dropSuspendedAssertionTimer.stop();
+    m_dropNearSuspendedAssertionTimer.stop();
     clearPendingRequestToSuspend();
     m_processIdentifier = 0;
     m_assertion = nullptr;
@@ -246,10 +246,10 @@ void ProcessThrottler::prepareToSuspendTimeoutTimerFired()
     updateThrottleStateNow();
 }
 
-void ProcessThrottler::dropSuspendedAssertionTimerFired()
+void ProcessThrottler::dropNearSuspendedAssertionTimerFired()
 {
-    PROCESSTHROTTLER_RELEASE_LOG("dropSuspendedAssertionTimerFired: Removing suspended process assertion");
-    RELEASE_ASSERT(m_assertion && m_assertion->type() == ProcessAssertionType::Suspended);
+    PROCESSTHROTTLER_RELEASE_LOG("dropNearSuspendedAssertionTimerFired: Removing near-suspended process assertion");
+    RELEASE_ASSERT(m_assertion && m_assertion->type() == ProcessAssertionType::NearSuspended);
     m_assertion = nullptr;
 }
 
@@ -331,16 +331,16 @@ void ProcessThrottler::setAllowsActivities(bool allow)
         invalidateAllActivities();
 }
 
-void ProcessThrottler::setShouldTakeSuspendedAssertion(bool shouldTakeSuspendedAssertion)
+void ProcessThrottler::setShouldTakeNearSuspendedAssertion(bool shouldTakeNearSuspendedAssertion)
 {
-    m_shouldTakeSuspendedAssertion = shouldTakeSuspendedAssertion;
+    m_shouldTakeNearSuspendedAssertion = shouldTakeNearSuspendedAssertion;
 }
 
 void ProcessThrottler::delaySuspension()
 {
     PROCESSTHROTTLER_RELEASE_LOG("delaySuspension");
-    if (m_dropSuspendedAssertionTimer.isActive())
-        m_dropSuspendedAssertionTimer.startOneShot(removeAllAssertionsTimeout);
+    if (m_dropNearSuspendedAssertionTimer.isActive())
+        m_dropNearSuspendedAssertionTimer.startOneShot(removeAllAssertionsTimeout);
 }
 
 ProcessThrottlerTimedActivity::ProcessThrottlerTimedActivity(Seconds timeout, ProcessThrottler::ActivityVariant&& activity)

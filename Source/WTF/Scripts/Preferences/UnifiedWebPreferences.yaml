@@ -5782,16 +5782,16 @@ ShouldDisplayTextDescriptions:
     WebCore:
       default: false
 
-ShouldDropSuspendedAssertionAfterDelay:
+ShouldDropNearSuspendedAssertionAfterDelay:
   type: bool
   status: internal
-  humanReadableName: "Drop Suspended Assertion After Delay"
+  humanReadableName: "Drop Near-Suspended Assertion After Delay"
   humanReadableDescription: "Causes processes to fully suspend after a delay"
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
-      default: WebKit::defaultShouldDropSuspendedAssertionAfterDelay()
+      default: WebKit::defaultShouldDropNearSuspendedAssertionAfterDelay()
     WebCore:
       default: false
 
@@ -5870,12 +5870,12 @@ ShouldSuppressTextInputFromEditingDuringProvisionalNavigation:
     WebCore:
       default: false
 
-ShouldTakeSuspendedAssertions:
+ShouldTakeNearSuspendedAssertions:
   type: bool
   status: internal
   category: dom
-  humanReadableName: "Take WebKit:Suspended assertions on background web content processes"
-  humanReadableDescription: "Take WebKit:Suspended assertions on background web content processes"
+  humanReadableName: "Take WebKit:NearSuspended assertions on background web content processes"
+  humanReadableDescription: "Take WebKit:NearSuspended assertions on background web content processes"
   exposed: [ WebKit ]
   defaultValue:
     WebKitLegacy:

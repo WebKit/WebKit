@@ -600,8 +600,8 @@ private:
     bool messageSourceIsValidWebContentProcess();
 #endif
 
-    bool shouldTakeSuspendedAssertion() const;
-    bool shouldDropSuspendedAssertionAfterDelay() const;
+    bool shouldTakeNearSuspendedAssertion() const;
+    bool shouldDropNearSuspendedAssertionAfterDelay() const;
 
     enum class IsWeak : bool { No, Yes };
     template<typename T> class WeakOrStrongPtr {

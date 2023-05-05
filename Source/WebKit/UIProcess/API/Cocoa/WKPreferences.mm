@@ -1666,15 +1666,15 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 {
     switch (policy) {
     case WKInactiveSchedulingPolicySuspend:
-        _preferences->setShouldTakeSuspendedAssertions(false);
+        _preferences->setShouldTakeNearSuspendedAssertions(false);
         _preferences->setBackgroundWebContentRunningBoardThrottlingEnabled(true);
         break;
     case WKInactiveSchedulingPolicyThrottle:
-        _preferences->setShouldTakeSuspendedAssertions(true);
+        _preferences->setShouldTakeNearSuspendedAssertions(true);
         _preferences->setBackgroundWebContentRunningBoardThrottlingEnabled(true);
         break;
     case WKInactiveSchedulingPolicyNone:
-        _preferences->setShouldTakeSuspendedAssertions(true);
+        _preferences->setShouldTakeNearSuspendedAssertions(true);
         _preferences->setBackgroundWebContentRunningBoardThrottlingEnabled(false);
         break;
     default:
@@ -1684,7 +1684,7 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 
 - (WKInactiveSchedulingPolicy)inactiveSchedulingPolicy
 {
-    return _preferences->backgroundWebContentRunningBoardThrottlingEnabled() ? (_preferences->shouldTakeSuspendedAssertions() ? WKInactiveSchedulingPolicyThrottle : WKInactiveSchedulingPolicySuspend) : WKInactiveSchedulingPolicyNone;
+    return _preferences->backgroundWebContentRunningBoardThrottlingEnabled() ? (_preferences->shouldTakeNearSuspendedAssertions() ? WKInactiveSchedulingPolicyThrottle : WKInactiveSchedulingPolicySuspend) : WKInactiveSchedulingPolicyNone;
 }
 
 - (void)_setVerifyWindowOpenUserGestureFromUIProcess:(BOOL)enabled
