@@ -538,6 +538,7 @@ void LocalFrameViewLayoutContext::applyTextSizingIfNeeded(RenderElement& layoutR
 
 void LocalFrameViewLayoutContext::updateStyleForLayout()
 {
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     Document& document = *frame().document();
 
     // FIXME: This shouldn't be necessary, but see rdar://problem/36670246.
