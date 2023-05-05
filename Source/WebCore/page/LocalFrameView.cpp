@@ -1827,16 +1827,20 @@ void LocalFrameView::updateLayoutViewport()
             LayoutPoint newOrigin = computeLayoutViewportOrigin(visualViewportRect(), minStableLayoutViewportOrigin(), maxStableLayoutViewportOrigin(), layoutViewport, StickToDocumentBounds);
             setLayoutViewportOverrideRect(LayoutRect(newOrigin, m_layoutViewportOverrideRect.value().size()));
         }
-        layoutOrVisualViewportChanged();
-        return;
+    } else {
+        LayoutPoint newLayoutViewportOrigin = computeLayoutViewportOrigin(visualViewportRect(), minStableLayoutViewportOrigin(), maxStableLayoutViewportOrigin(), layoutViewport, scrollBehaviorForFixedElements());
+        if (newLayoutViewportOrigin != m_layoutViewportOrigin) {
+            setBaseLayoutViewportOrigin(newLayoutViewportOrigin);
+            LOG_WITH_STREAM(Scrolling, stream << "layoutViewport changed to " << layoutViewportRect());
+        }
     }
+    if (m_frame->settings().visualViewportAPIEnabled()) {
+        if (auto* window = m_frame->window())
+            window->visualViewport().update();
 
-    LayoutPoint newLayoutViewportOrigin = computeLayoutViewportOrigin(visualViewportRect(), minStableLayoutViewportOrigin(), maxStableLayoutViewportOrigin(), layoutViewport, scrollBehaviorForFixedElements());
-    if (newLayoutViewportOrigin != m_layoutViewportOrigin) {
-        setBaseLayoutViewportOrigin(newLayoutViewportOrigin);
-        LOG_WITH_STREAM(Scrolling, stream << "layoutViewport changed to " << layoutViewportRect());
+        if (auto scrollingCoordinator = this->scrollingCoordinator())
+            scrollingCoordinator->frameViewVisualViewportChanged(*this);
     }
-    layoutOrVisualViewportChanged();
 }
 
 LayoutPoint LocalFrameView::minStableLayoutViewportOrigin() const
@@ -3282,18 +3286,6 @@ void LocalFrameView::updateTiledBackingAdaptiveSizing()
         return;
 
     tiledBacking->setScrollability(computeScrollability());
-}
-
-// FIXME: This shouldn't be called from outside; LocalFrameView should call it when the relevant viewports change.
-void LocalFrameView::layoutOrVisualViewportChanged()
-{
-    if (m_frame->settings().visualViewportAPIEnabled()) {
-        if (auto* window = m_frame->window())
-            window->visualViewport().update();
-
-        if (auto scrollingCoordinator = this->scrollingCoordinator())
-            scrollingCoordinator->frameViewVisualViewportChanged(*this);
-    }
 }
 
 void LocalFrameView::unobscuredContentSizeChanged()

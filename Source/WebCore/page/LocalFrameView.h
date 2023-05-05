@@ -328,8 +328,6 @@ public:
     // offsets from rubber-banding, and it takes zooming into account. 
     LayoutRect viewportConstrainedVisibleContentRect() const;
 
-    WEBCORE_EXPORT void layoutOrVisualViewportChanged();
-
     LayoutRect rectForFixedPositionLayout() const;
 
     void viewportContentsChanged();
