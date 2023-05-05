@@ -26,6 +26,8 @@
 #ifndef PAS_SEGREGATED_PAGE_H
 #define PAS_SEGREGATED_PAGE_H
 
+PAS_IGNORE_WARNINGS_BEGIN("cast-align")
+
 #include "pas_allocator_index.h"
 #include "pas_bitvector.h"
 #include "pas_config.h"
@@ -473,6 +475,8 @@ pas_segregated_page_for_address_and_heap_config(uintptr_t begin, const pas_heap_
 }
 
 PAS_END_EXTERN_C;
+
+PAS_IGNORE_WARNINGS_END
 
 #endif /* PAS_SEGREGATED_PAGE_H */
 
