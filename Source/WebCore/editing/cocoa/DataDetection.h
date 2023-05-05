@@ -33,7 +33,13 @@
 #import <wtf/OptionSet.h>
 #import <wtf/RetainPtr.h>
 
+#if HAVE(SECURE_ACTION_CONTEXT)
+OBJC_CLASS DDSecureActionContext;
+using WKDDActionContext = DDSecureActionContext;
+#else
 OBJC_CLASS DDActionContext;
+using WKDDActionContext = DDActionContext;
+#endif
 OBJC_CLASS NSArray;
 OBJC_CLASS NSDictionary;
 
@@ -47,7 +53,7 @@ class QualifiedName;
 struct TextRecognitionDataDetector;
 
 struct DetectedItem {
-    RetainPtr<DDActionContext> actionContext;
+    RetainPtr<WKDDActionContext> actionContext;
     FloatRect boundingBox;
     SimpleRange range;
 };

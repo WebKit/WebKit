@@ -31,7 +31,13 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
+#if HAVE(SECURE_ACTION_CONTEXT)
+OBJC_CLASS DDSecureActionContext;
+using WKDDActionContext = DDSecureActionContext;
+#else
 OBJC_CLASS DDActionContext;
+using WKDDActionContext = DDActionContext;
+#endif
 
 namespace IPC {
 class Decoder;
@@ -46,7 +52,7 @@ namespace WebKit {
 
 #if PLATFORM(MAC)
 struct WebHitTestResultPlatformData {
-    RetainPtr<DDActionContext> detectedDataActionContext;
+    RetainPtr<WKDDActionContext> detectedDataActionContext;
     WebCore::FloatRect detectedDataBoundingBox;
     RefPtr<WebCore::TextIndicator> detectedDataTextIndicator;
     WebCore::PageOverlay::PageOverlayID detectedDataOriginatingPageOverlay;

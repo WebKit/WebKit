@@ -31,7 +31,13 @@
 #include <WebCore/SimpleRange.h>
 #include <wtf/RetainPtr.h>
 
+#if HAVE(SECURE_ACTION_CONTEXT)
+OBJC_CLASS DDSecureActionContext;
+using WKDDActionContext = DDSecureActionContext;
+#else
 OBJC_CLASS DDActionContext;
+using WKDDActionContext = DDActionContext;
+#endif
 
 namespace WebCore {
 class IntRect;
@@ -82,7 +88,7 @@ public:
 
 #if PLATFORM(MAC)
     struct ActionContext {
-        RetainPtr<DDActionContext> context;
+        RetainPtr<WKDDActionContext> context;
         WebCore::SimpleRange range;
     };
     std::optional<ActionContext> actionContextForResultAtPoint(WebCore::FloatPoint);

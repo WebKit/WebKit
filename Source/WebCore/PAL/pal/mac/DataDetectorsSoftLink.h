@@ -31,7 +31,12 @@
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, DataDetectors)
 
+#if HAVE(SECURE_ACTION_CONTEXT)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, DDSecureActionContext)
+#else
 SOFT_LINK_CLASS_FOR_HEADER(PAL, DDActionContext)
+#endif
+
 SOFT_LINK_CLASS_FOR_HEADER(PAL, DDActionsManager)
 
 #if HAVE(DATA_DETECTORS_MAC_ACTION)
@@ -48,5 +53,29 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectors, DDHighlightCreateWithRectsInVi
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectors, DDHighlightGetLayerWithContext, CGLayerRef, (DDHighlightRef highlight, CGContextRef context), (highlight, context))
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectors, DDHighlightGetBoundingRect, CGRect, (DDHighlightRef highlight), (highlight))
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectors, DDHighlightPointIsOnHighlight, Boolean, (DDHighlightRef highlight, CGPoint point, Boolean* onButton), (highlight, point, onButton))
+
+namespace PAL {
+
+inline WKDDActionContext *allocWKDDActionContextInstance()
+{
+#if HAVE(SECURE_ACTION_CONTEXT)
+    return allocDDSecureActionContextInstance();
+#else
+    return allocDDActionContextInstance();
+#endif
+}
+
+#ifdef __OBJC__
+inline Class getWKDDActionContextClass()
+{
+#if HAVE(SECURE_ACTION_CONTEXT)
+    return getDDSecureActionContextClass();
+#else
+    return getDDActionContextClass();
+#endif
+}
+#endif
+
+}
 
 #endif // PLATFORM(MAC) && ENABLE(DATA_DETECTION)

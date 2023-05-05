@@ -113,7 +113,8 @@ static std::optional<DetectedItem> detectItem(const VisiblePosition& position, c
     if (!view)
         return { };
 
-    auto actionContext = adoptNS([PAL::allocDDActionContextInstance() init]);
+    auto actionContext = adoptNS([PAL::allocWKDDActionContextInstance() init]);
+
     [actionContext setAllResults:@[ (__bridge id)mainResult ]];
     [actionContext setMainResult:mainResult];
 

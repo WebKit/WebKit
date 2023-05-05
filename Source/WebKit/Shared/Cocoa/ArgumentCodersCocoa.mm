@@ -562,6 +562,17 @@ static void encodeSecureCodingInternal(Encoder& encoder, id <NSObject, NSSecureC
     encoder << (__bridge CFDataRef)[archiver encodedData];
 }
 
+#if ENABLE(DATA_DETECTION) || ENABLE(REVEAL)
+static bool haveSecureActionContext()
+{
+#if HAVE(SECURE_ACTION_CONTEXT)
+    return true;
+#else
+    return false;
+#endif // HAVE(SECURE_ACTION_CONTEXT)
+}
+#endif // ENABLE(DATA_DETECTION) || ENABLE(REVEAL)
+
 static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClasses)
 {
     static bool supportsPassKitCore = false;
@@ -641,22 +652,18 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
 
 #if ENABLE(DATA_DETECTION)
     // rdar://107553330 - don't re-introduce rdar://107676726
-    // was blocked by rdar://106937270
     if (supportsDataDetectorsCore && [allowedClasses containsObject:PAL::getDDScannerResultClass()])
-        return false;
+        return haveSecureActionContext() && strictSecureDecodingForAllObjCEnabled();
 #if PLATFORM(MAC)
     // rdar://107553348 - don't re-introduce rdar://107676726
-    // was blocked by rdar://106937270
-    if (supportsDataDetectors && [allowedClasses containsObject:PAL::getDDActionContextClass()])
-        return false;
+    if (supportsDataDetectors && [allowedClasses containsObject:PAL::getWKDDActionContextClass()])
+        return haveSecureActionContext() && strictSecureDecodingForAllObjCEnabled();
 #endif // PLATFORM(MAC)
 #endif // ENABLE(DATA_DETECTION)
-
 #if ENABLE(REVEAL)
     // rdar://107553310 - don't re-introduce rdar://107673064
-    // was blocked by rdar://106937270
     if (supportsRevealCore && [allowedClasses containsObject:PAL::getRVItemClass()])
-        return false;
+        return haveSecureActionContext() && strictSecureDecodingForAllObjCEnabled();
 #endif // ENABLE(REVEAL)
 
 #if ENABLE(APPLE_PAY)
@@ -666,6 +673,7 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
         return false;
 
     // Don't reintroduce rdar://108660074
+    // Blocked by rdar://108864885
     if (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKContactClass()])
         return false;
 #endif

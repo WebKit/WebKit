@@ -67,6 +67,11 @@
 
 @end
 
+#if HAVE(SECURE_ACTION_CONTEXT)
+@interface DDSecureActionContext : DDActionContext
+@end
+#endif
+
 @interface DDActionsManager : NSObject
 
 + (DDActionsManager *)sharedManager;
@@ -113,6 +118,12 @@ typedef NSUInteger DDHighlightStyle;
 @end
 
 #endif // !HAVE(DATA_DETECTORS_MAC_ACTION)
+
+#if HAVE(SECURE_ACTION_CONTEXT)
+using WKDDActionContext = DDSecureActionContext;
+#else
+using WKDDActionContext = DDActionContext;
+#endif
 
 #endif // PLATFORM(MAC)
 
