@@ -118,11 +118,6 @@ static uint64_t generateListenerID()
 // FIXME: Remove receivedMainFrameIdentifierFromUIProcess in favor of a more correct way of sending frame tree deltas to each process.
 void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame, bool receivedMainFrameIdentifierFromUIProcess)
 {
-    ASSERT(!m_frameID);
-    m_frameID = coreFrame.frameID();
-    WebProcess::singleton().addMessageReceiver(Messages::WebFrame::messageReceiverName(), m_frameID.object(), *this);
-    WebProcess::singleton().addWebFrame(frameID(), this);
-
     if (!receivedMainFrameIdentifierFromUIProcess)
         page.send(Messages::WebPageProxy::DidCreateMainFrame(frameID()));
 
@@ -134,15 +129,12 @@ void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame, bool recei
 
 Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const AtomString& frameName, HTMLFrameOwnerElement& ownerElement)
 {
-    auto frame = create(page);
+    auto frameID = WebCore::FrameIdentifier::generate();
+    auto frame = create(page, frameID);
     ASSERT(page.corePage());
-    auto coreFrame = LocalFrame::createSubframe(*page.corePage(), makeUniqueRef<WebFrameLoaderClient>(frame.get(), frame->makeInvalidator()), WebCore::FrameIdentifier::generate(), ownerElement);
+    auto coreFrame = LocalFrame::createSubframe(*page.corePage(), makeUniqueRef<WebFrameLoaderClient>(frame.get(), frame->makeInvalidator()), frameID, ownerElement);
     frame->m_coreFrame = coreFrame.get();
 
-    ASSERT(!frame->m_frameID);
-    frame->m_frameID = coreFrame->frameID();
-    WebProcess::singleton().addMessageReceiver(Messages::WebFrame::messageReceiverName(), frame->m_frameID.object(), frame.get());
-    WebProcess::singleton().addWebFrame(coreFrame->frameID(), frame.ptr());
     parent.send(Messages::WebFrameProxy::DidCreateSubframe(coreFrame->frameID()));
 
     coreFrame->tree().setName(frameName);
@@ -154,18 +146,13 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const At
 
 Ref<WebFrame> WebFrame::createLocalSubframeHostedInAnotherProcess(WebPage& page, WebFrame& parent, WebCore::FrameIdentifier frameID, WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier)
 {
-    auto frame = create(page);
+    auto frame = create(page, frameID);
     RELEASE_ASSERT(page.corePage());
     RELEASE_ASSERT(parent.coreAbstractFrame());
 
     auto coreFrame = LocalFrame::createSubframeHostedInAnotherProcess(*page.corePage(), makeUniqueRef<WebFrameLoaderClient>(frame.get(), frame->makeInvalidator()), frameID, *parent.coreAbstractFrame());
     frame->m_coreFrame = coreFrame.get();
     frame->setLayerHostingContextIdentifier(layerHostingContextIdentifier);
-
-    ASSERT(!frame->m_frameID);
-    frame->m_frameID = coreFrame->frameID();
-    WebProcess::singleton().addWebFrame(frameID, frame.ptr());
-    WebProcess::singleton().addMessageReceiver(Messages::WebFrame::messageReceiverName(), frameID.object(), frame.get());
 
     // FIXME: Pass in a name and call FrameTree::setName here.
     coreFrame->init();
@@ -174,26 +161,26 @@ Ref<WebFrame> WebFrame::createLocalSubframeHostedInAnotherProcess(WebPage& page,
 
 Ref<WebFrame> WebFrame::createRemoteSubframe(WebPage& page, WebFrame& parent, WebCore::FrameIdentifier frameID, WebCore::ProcessIdentifier remoteProcessIdentifier)
 {
-    auto frame = create(page);
+    auto frame = create(page, frameID);
     auto client = makeUniqueRef<WebRemoteFrameClient>(frame.copyRef(), frame->makeInvalidator());
     RELEASE_ASSERT(page.corePage());
     RELEASE_ASSERT(parent.coreAbstractFrame());
     auto coreFrame = RemoteFrame::createSubframe(*page.corePage(), WTFMove(client), frameID, *parent.coreAbstractFrame(), remoteProcessIdentifier);
     frame->m_coreFrame = coreFrame.get();
-    ASSERT(!frame->m_frameID);
-    frame->m_frameID = coreFrame->frameID();
-    WebProcess::singleton().addWebFrame(frameID, frame.ptr());
-    WebProcess::singleton().addMessageReceiver(Messages::WebFrame::messageReceiverName(), frameID.object(), frame.get());
+
     // FIXME: Pass in a name and call FrameTree::setName here.
     return frame;
 }
 
-WebFrame::WebFrame(WebPage& page)
+WebFrame::WebFrame(WebPage& page, WebCore::FrameIdentifier frameID)
     : m_page(page)
+    , m_frameID(frameID)
 {
 #ifndef NDEBUG
     webFrameCounter.increment();
 #endif
+    WebProcess::singleton().addMessageReceiver(Messages::WebFrame::messageReceiverName(), m_frameID.object(), *this);
+    WebProcess::singleton().addWebFrame(m_frameID, this);
 }
 
 WebFrameLoaderClient* WebFrame::frameLoaderClient() const
@@ -211,6 +198,7 @@ WebFrame::~WebFrame()
         completionHandler();
 
     WebProcess::singleton().removeMessageReceiver(Messages::WebFrame::messageReceiverName(), m_frameID.object());
+    ASSERT_WITH_MESSAGE(!WebProcess::singleton().webFrame(m_frameID), "invalidate should have removed this WebFrame before destruction");
 
 #ifndef NDEBUG
     webFrameCounter.decrement();

@@ -510,7 +510,7 @@ static std::variant<UniqueRef<FrameLoaderClient>, PageConfiguration::RemoteMainF
 
 WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     : m_identifier(pageID)
-    , m_mainFrame(WebFrame::create(*this))
+    , m_mainFrame(WebFrame::create(*this, parameters.subframeProcessFrameTreeCreationParameters ? parameters.subframeProcessFrameTreeCreationParameters->frameID : WebCore::FrameIdentifier::generate()))
     , m_viewSize(parameters.viewSize)
     , m_drawingAreaType(parameters.drawingAreaType)
     , m_alwaysShowsHorizontalScroller { parameters.alwaysShowsHorizontalScroller }
@@ -644,7 +644,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebProcess::singleton().cookieJar(),
         makeUniqueRef<WebProgressTrackerClient>(*this),
         clientForMainFrame(m_mainFrame.copyRef(), remoteProcessIdentifier),
-        parameters.subframeProcessFrameTreeCreationParameters ? parameters.subframeProcessFrameTreeCreationParameters->frameID : WebCore::FrameIdentifier::generate(),
+        m_mainFrame->frameID(),
         makeUniqueRef<WebSpeechRecognitionProvider>(pageID),
         makeUniqueRef<MediaRecorderProvider>(*this),
         WebProcess::singleton().broadcastChannelRegistry(),
