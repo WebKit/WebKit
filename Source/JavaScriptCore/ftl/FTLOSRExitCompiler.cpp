@@ -148,6 +148,15 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
 
     CCallHelpers jit(codeBlock);
 
+    if (UNLIKELY(Options::printEachOSRExit())) {
+        SpeculationFailureDebugInfo* debugInfo = new SpeculationFailureDebugInfo;
+        debugInfo->codeBlock = jit.codeBlock();
+        debugInfo->kind = exit.m_kind;
+        debugInfo->bytecodeIndex = exit.m_codeOrigin.bytecodeIndex();
+
+        jit.debugCall(vm, operationDebugPrintSpeculationFailure, debugInfo);
+    }
+
     // The first thing we need to do is restablish our frame in the case of an exception.
     if (exit.isGenericUnwindHandler()) {
         RELEASE_ASSERT(vm.callFrameForCatch); // The first time we hit this exit, like at all other times, this field should be non-null.
