@@ -1,9 +1,9 @@
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 768.00 2021.00)
+  (bounds 810.00 2021.00)
   (children 1
     (GraphicsLayer
-      (bounds 768.00 2021.00)
+      (bounds 810.00 2021.00)
       (contentsOpaque 1)
       (children 1
         (GraphicsLayer
@@ -31,8 +31,13 @@
                               (children 1
                                 (GraphicsLayer
                                   (position 8.00 10.00)
-                                  (bounds 200.00 140.00)
-                                  (contentsOpaque 1)
+                                  (preserves3D 1)
+                                  (children 1
+                                    (GraphicsLayer
+                                      (bounds 200.00 140.00)
+                                      (contentsOpaque 1)
+                                    )
+                                  )
                                 )
                               )
                             )
