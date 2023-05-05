@@ -59,6 +59,10 @@
 #include "IPCTester.h"
 #endif
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#include "LogData.h"
+#endif
+
 namespace PAL {
 class SessionID;
 }
@@ -205,7 +209,7 @@ public:
     void installMockContentFilter(WebCore::MockContentFilterSettings&&);
 #endif
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-    void logOnBehalfOfWebContent(IPC::DataReference&& logChannel, IPC::DataReference&& logCategory, IPC::DataReference&& logString, uint8_t logType, int32_t pid);
+    void logOnBehalfOfWebContent(Vector<LogData>&&, WTF::ProcessID);
 #endif
 private:
     NetworkConnectionToWebProcess(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters, IPC::Connection::Identifier);

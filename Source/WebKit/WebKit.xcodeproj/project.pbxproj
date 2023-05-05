@@ -7062,6 +7062,7 @@
 		E350A7C52934F1C100A06C29 /* common.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = common.sb; sourceTree = "<group>"; };
 		E350A7C82934F75F00A06C29 /* common.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = common.sb; sourceTree = "<group>"; };
 		E350A7DF29364D3800A06C29 /* util.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = util.sb; sourceTree = "<group>"; };
+		E353A0EF29F33E6600B9E716 /* LogData.serialization.in */ = {isa = PBXFileReference; explicitFileType = text; path = LogData.serialization.in; sourceTree = "<group>"; };
 		E36A00E129CF4EBA00AC4E8A /* TextTrackRepresentationCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextTrackRepresentationCocoa.h; sourceTree = "<group>"; };
 		E36A00E229CF7AC000AC4E8A /* TextTrackRepresentationCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextTrackRepresentationCocoa.mm; sourceTree = "<group>"; };
 		E36D701A27B709ED006531B7 /* WebAttachmentElementClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAttachmentElementClient.h; sourceTree = "<group>"; };
@@ -7088,6 +7089,7 @@
 		E3BCE878267252120011D8DB /* AccessibilityPreferences.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilityPreferences.h; sourceTree = "<group>"; };
 		E3C2BC93289CF8FB00ACC3E9 /* common.sb */ = {isa = PBXFileReference; lastKnownFileType = text; path = common.sb; sourceTree = "<group>"; };
 		E3CAAA432413278A00CED2E2 /* AccessibilitySupportSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilitySupportSPI.h; sourceTree = "<group>"; };
+		E3DB635829F1D6E20026AB30 /* LogData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LogData.h; sourceTree = "<group>"; };
 		E3EFB02C2550617C003C2F96 /* WebSystemSoundDelegate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSystemSoundDelegate.cpp; sourceTree = "<group>"; };
 		E3EFB02D2550617C003C2F96 /* WebSystemSoundDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSystemSoundDelegate.h; sourceTree = "<group>"; };
 		E404907121DE65F70037F0DB /* ScrollingTreeFrameScrollingNodeRemoteMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeFrameScrollingNodeRemoteMac.cpp; sourceTree = "<group>"; };
@@ -10213,6 +10215,8 @@
 				CE550E12228373C800D28791 /* InsertTextOptions.h */,
 				C1663E5A24AEA74200C6A3B2 /* LaunchServicesDatabaseXPCConstants.h */,
 				2D1087621D2C641B00B85F82 /* LoadParametersCocoa.mm */,
+				E3DB635829F1D6E20026AB30 /* LogData.h */,
+				E353A0EF29F33E6600B9E716 /* LogData.serialization.in */,
 				2D440B8325EF235E00A98D87 /* PDFKitSoftLink.h */,
 				2D440B8225EF235E00A98D87 /* PDFKitSoftLink.mm */,
 				442E7BEA27B4581300C69AC1 /* RevealItem.h */,

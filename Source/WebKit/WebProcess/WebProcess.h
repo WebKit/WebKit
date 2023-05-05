@@ -82,6 +82,10 @@
 #include <WebCore/CaptionUserPreferences.h>
 #endif
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#include "LogData.h"
+#endif
+
 namespace API {
 class Object;
 }
@@ -616,6 +620,11 @@ private:
 
     void setNetworkProcessConnectionID(IPC::Connection::UniqueID);
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    void registerLogHook();
+    void logFlushTimerFired();
+#endif
+
     RefPtr<WebConnectionToUIProcess> m_webConnection;
 
     HashMap<WebCore::PageIdentifier, RefPtr<WebPage>> m_pageMap;
@@ -774,6 +783,12 @@ private:
 #endif
     bool m_hadMainFrameMainResourcePrivateRelayed { false };
     bool m_imageAnimationEnabled { true };
+    
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    Lock m_logDataLock;
+    Vector<LogData> m_logs WTF_GUARDED_BY_LOCK(m_logDataLock);
+    RunLoop::Timer m_logFlushTimer;
+#endif
 };
 
 } // namespace WebKit

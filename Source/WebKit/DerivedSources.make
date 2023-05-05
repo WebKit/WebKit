@@ -483,6 +483,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/AlternativeTextClient.serialization.in \
 	Shared/Cocoa/CacheStoragePolicy.serialization.in \
 	Shared/Cocoa/DataDetectionResult.serialization.in \
+	Shared/Cocoa/LogData.serialization.in \
 	Shared/Cocoa/RevealItem.serialization.in \
 	Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in \
 	Shared/CallbackID.serialization.in \

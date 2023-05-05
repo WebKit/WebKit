@@ -88,6 +88,7 @@
 
 #if PLATFORM(COCOA)
 #include <wtf/OSObjectPtr.h>
+#include <wtf/spi/cocoa/OSLogSPI.h>
 #endif
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
@@ -1423,17 +1424,19 @@ void NetworkConnectionToWebProcess::installMockContentFilter(WebCore::MockConten
 #endif
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-void NetworkConnectionToWebProcess::logOnBehalfOfWebContent(IPC::DataReference&& logChannel, IPC::DataReference&& logCategory, IPC::DataReference&& logString, uint8_t logType, int32_t pid)
+void NetworkConnectionToWebProcess::logOnBehalfOfWebContent(Vector<LogData>&& logs, WTF::ProcessID pid)
 {
-    OSObjectPtr<os_log_t> osLogChannel;
-    if (logChannel.data() && logCategory.data()) {
-        auto channel = reinterpret_cast<const char*>(logChannel.data());
-        auto category = reinterpret_cast<const char*>(logCategory.data());
-        osLogChannel = adoptOSObject(os_log_create(channel, category));
-    }
-    RELEASE_ASSERT(logType == OS_LOG_TYPE_DEFAULT || logType == OS_LOG_TYPE_INFO || logType == OS_LOG_TYPE_DEBUG || logType == OS_LOG_TYPE_ERROR || logType == OS_LOG_TYPE_FAULT);
+    for (auto& log : logs) {
+        OSObjectPtr<os_log_t> osLogChannel;
+        if (log.channel.data() && log.category.data())
+            osLogChannel = adoptOSObject(os_log_create(log.channel.data(), log.category.data()));
+        RELEASE_ASSERT(log.type == OS_LOG_TYPE_DEFAULT || log.type == OS_LOG_TYPE_INFO || log.type == OS_LOG_TYPE_DEBUG || log.type == OS_LOG_TYPE_ERROR || log.type == OS_LOG_TYPE_FAULT);
 
-    os_log_with_type(osLogChannel.get() ? osLogChannel.get() : OS_LOG_DEFAULT, static_cast<os_log_type_t>(logType), "WebContent[pid=%d, identifier=%llu]: %s", pid, m_webProcessIdentifier.toUInt64(), logString.data());
+        if (!log.logString.data())
+            continue;
+
+        os_log_with_type(osLogChannel.get() ? osLogChannel.get() : OS_LOG_DEFAULT, static_cast<os_log_type_t>(log.type), "WebContent[pid=%d, identifier=%llu]: %s", pid, m_webProcessIdentifier.toUInt64(), log.logString.data());
+    }
 }
 #endif
 
