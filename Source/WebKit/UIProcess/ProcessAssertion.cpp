@@ -34,8 +34,8 @@ namespace WebKit {
 ASCIILiteral processAssertionTypeDescription(ProcessAssertionType type)
 {
     switch (type) {
-    case ProcessAssertionType::Suspended:
-        return "suspended"_s;
+    case ProcessAssertionType::NearSuspended:
+        return "near-suspended"_s;
     case ProcessAssertionType::Background:
         return "background"_s;
     case ProcessAssertionType::UnboundedNetworking:

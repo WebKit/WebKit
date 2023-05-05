@@ -123,8 +123,8 @@ public:
     void didDisconnectFromProcess();
     bool shouldBeRunnable() const { return m_foregroundActivities.size() || m_backgroundActivities.size(); }
     void setAllowsActivities(bool);
-    void setShouldDropSuspendedAssertionAfterDelay(bool shouldDropAfterDelay) { m_shouldDropSuspendedAssertionAfterDelay = shouldDropAfterDelay; }
-    void setShouldTakeSuspendedAssertion(bool);
+    void setShouldDropNearSuspendedAssertionAfterDelay(bool shouldDropAfterDelay) { m_shouldDropNearSuspendedAssertionAfterDelay = shouldDropAfterDelay; }
+    void setShouldTakeNearSuspendedAssertion(bool);
     void delaySuspension();
     bool isSuspended() const { return m_processIdentifier && !m_assertion; }
     ProcessThrottleState currentState() const { return m_state; }
@@ -139,7 +139,7 @@ private:
     void setAssertionType(ProcessAssertionType);
     void setThrottleState(ProcessThrottleState);
     void prepareToSuspendTimeoutTimerFired();
-    void dropSuspendedAssertionTimerFired();
+    void dropNearSuspendedAssertionTimerFired();
     void sendPrepareToSuspendIPC(IsSuspensionImminent);
     void processReadyToSuspend();
 
@@ -158,14 +158,14 @@ private:
     ProcessID m_processIdentifier { 0 };
     RefPtr<ProcessAssertion> m_assertion;
     RunLoop::Timer m_prepareToSuspendTimeoutTimer;
-    RunLoop::Timer m_dropSuspendedAssertionTimer;
+    RunLoop::Timer m_dropNearSuspendedAssertionTimer;
     HashSet<Activity*> m_foregroundActivities;
     HashSet<Activity*> m_backgroundActivities;
     std::optional<uint64_t> m_pendingRequestToSuspendID;
     ProcessThrottleState m_state { ProcessThrottleState::Suspended };
-    bool m_shouldDropSuspendedAssertionAfterDelay { false };
+    bool m_shouldDropNearSuspendedAssertionAfterDelay { false };
     bool m_shouldTakeUIBackgroundAssertion { false };
-    bool m_shouldTakeSuspendedAssertion { true };
+    bool m_shouldTakeNearSuspendedAssertion { true };
     bool m_allowsActivities { true };
 };
 
