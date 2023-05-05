@@ -384,7 +384,7 @@ static gboolean addSettingsGroupToContext(GOptionContext *context, WebKitSetting
             .arg_data = parseFeaturesOptionCallback,
             .arg_description = "FEATURE-LIST",
         },
-        G_OPTION_ENTRY_NULL
+        { NULL }
     };
     g_option_group_add_entries(webSettingsGroup, featureEntries);
 
