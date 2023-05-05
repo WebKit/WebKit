@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include <unicode/utypes.h>
 #include <wtf/DataRef.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 

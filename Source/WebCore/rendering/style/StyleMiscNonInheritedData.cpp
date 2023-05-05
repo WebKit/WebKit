@@ -29,7 +29,7 @@
 #include "AnimationList.h"
 #include "ContentData.h"
 #include "FillLayer.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "ShadowData.h"
 #include "StyleDeprecatedFlexibleBoxData.h"
 #include "StyleFilterData.h"

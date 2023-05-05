@@ -24,6 +24,7 @@
 
 #include "PathTraversalState.h"
 #include "RenderSVGTextPath.h"
+#include "RenderStyleInlines.h"
 #include "SVGElement.h"
 #include "SVGGeometryElement.h"
 #include "SVGInlineTextBoxInlines.h"
