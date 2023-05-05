@@ -257,8 +257,8 @@ WebKitWebPage* webkit_web_process_extension_get_page(WebKitWebProcessExtension* 
  * @extension: a #WebKitWebProcessExtension
  * @message: a #WebKitUserMessage
  * @cancellable: (nullable): a #GCancellable or %NULL to ignore
- * @callback: (scope async): (nullable): A #GAsyncReadyCallback to call when the request is satisfied or %NULL
- * @user_data: (closure): the data to pass to callback function
+ * @callback: (scope async) (nullable): A #GAsyncReadyCallback to call when the request is satisfied or %NULL
+ * @user_data: the data to pass to callback function
  *
  * Send @message to the #WebKitWebContext corresponding to @extension. If @message is floating, it's consumed.
  *

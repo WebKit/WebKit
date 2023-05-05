@@ -759,7 +759,7 @@ void jsc_context_clear_exception(JSCContext* context)
  * JSCExceptionHandler:
  * @context: a #JSCContext
  * @exception: a #JSCException
- * @user_data: user data
+ * @user_data: (closure): user data
  *
  * Function used to handle JavaScript exceptions in a #JSCContext.
  */
@@ -767,8 +767,8 @@ void jsc_context_clear_exception(JSCContext* context)
 /**
  * jsc_context_push_exception_handler:
  * @context: a #JSCContext
- * @handler: a #JSCExceptionHandler
- * @user_data: (closure): user data to pass to @handler
+ * @handler: (closure user_data): a #JSCExceptionHandler
+ * @user_data: user data to pass to @handler
  * @destroy_notify: (nullable): destroy notifier for @user_data
  *
  * Push an exception handler in @context. Whenever a JavaScript exception happens in
