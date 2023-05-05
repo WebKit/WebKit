@@ -1343,6 +1343,8 @@ void LocalFrameView::willDoLayout(WeakPtr<RenderElement> layoutRoot)
 
 void LocalFrameView::didLayout(WeakPtr<RenderElement> layoutRoot)
 {
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
     auto* layoutRootEnclosingLayer = layoutRoot->enclosingLayer();
     layoutRootEnclosingLayer->updateLayerPositionsAfterLayout(!is<RenderView>(*layoutRoot), layoutContext().needsFullRepaint());
 
