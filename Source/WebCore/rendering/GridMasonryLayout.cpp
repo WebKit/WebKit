@@ -226,7 +226,8 @@ void GridMasonryLayout::updateRunningPositions(const RenderBox& child, const Gri
 
 void GridMasonryLayout::updateItemOffset(const RenderBox& child, LayoutUnit offset)
 {
-    m_itemOffsets.add(&child, offset);
+    // We set() and not add() to update the value if the child is already inserted
+    m_itemOffsets.set(&child, offset);
 }
 
 GridSpan GridMasonryLayout::gridAxisPositionUsingPackAutoFlow(const RenderBox& item) const
