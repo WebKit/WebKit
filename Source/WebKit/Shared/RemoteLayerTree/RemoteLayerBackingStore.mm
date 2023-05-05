@@ -362,6 +362,7 @@ void RemoteLayerBackingStore::setDelegatedContents(const WebCore::PlatformCALaye
     m_contentsBufferHandle = contents.surface.copySendRight();
     if (contents.finishedFence)
         m_frontBufferFlushers.append(DelegatedContentsFenceFlusher::create(Ref { *contents.finishedFence }));
+    m_contentsRenderingResourceIdentifier = contents.surfaceIdentifier;
     m_dirtyRegion = { };
     m_paintingRects.clear();
 }
@@ -675,8 +676,11 @@ RetainPtr<id> RemoteLayerBackingStoreProperties::layerContentsBufferFromBackendH
     return contents;
 }
 
-void RemoteLayerBackingStoreProperties::applyBackingStoreToLayer(CALayer *layer, LayerContentsType contentsType, bool replayCGDisplayListsIntoBackingStore)
+void RemoteLayerBackingStoreProperties::applyBackingStoreToLayer(CALayer *layer, LayerContentsType contentsType, std::optional<WebCore::RenderingResourceIdentifier> asyncContentsIdentifier, bool replayCGDisplayListsIntoBackingStore)
 {
+    if (asyncContentsIdentifier && m_frontBufferIdentifier && *asyncContentsIdentifier >= *m_frontBufferIdentifier)
+        return;
+
     layer.contentsOpaque = m_isOpaque;
 
     RetainPtr<id> contents;

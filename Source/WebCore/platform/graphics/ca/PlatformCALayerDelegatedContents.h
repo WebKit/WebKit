@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "RenderingResourceIdentifier.h"
 #include <variant>
 #include <wtf/MachSendRight.h>
 #include <wtf/Noncopyable.h>
@@ -46,6 +47,7 @@ public:
 struct PlatformCALayerDelegatedContents {
     MachSendRight surface;
     RefPtr<PlatformCALayerDelegatedContentsFence> finishedFence;
+    std::optional<RenderingResourceIdentifier> surfaceIdentifier;
 };
 
 struct PlatformCALayerInProcessDelegatedContents {

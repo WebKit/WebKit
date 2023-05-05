@@ -1343,6 +1343,12 @@ void GraphicsLayerCA::setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDis
     noteLayerPropertyChanged(ContentsPlatformLayerChanged);
 }
 
+PlatformLayerIdentifier GraphicsLayerCA::setContentsToAsyncDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate> delegate, ContentsLayerPurpose purpose)
+{
+    setContentsDisplayDelegate(WTFMove(delegate), purpose);
+    return m_contentsLayer->layerID();
+}
+
 #if PLATFORM(IOS_FAMILY)
 PlatformLayer* GraphicsLayerCA::contentsLayerForMedia() const
 {

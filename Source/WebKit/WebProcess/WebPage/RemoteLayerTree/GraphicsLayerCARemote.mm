@@ -36,6 +36,7 @@
 #include <WebCore/GraphicsLayerContentsDisplayDelegate.h>
 #include <WebCore/HTMLVideoElement.h>
 #include <WebCore/Model.h>
+#include <WebCore/PlatformCALayerDelegatedContents.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/RemoteFrame.h>
 
@@ -116,10 +117,9 @@ Color GraphicsLayerCARemote::pageTiledBackingBorderColor() const
 
 class GraphicsLayerCARemoteAsyncContentsDisplayDelegate : public GraphicsLayerAsyncContentsDisplayDelegate {
 public:
-    GraphicsLayerCARemoteAsyncContentsDisplayDelegate(IPC::Connection& connection, DrawingAreaIdentifier identifier, WebCore::PlatformLayerIdentifier layerID)
+    GraphicsLayerCARemoteAsyncContentsDisplayDelegate(IPC::Connection& connection, DrawingAreaIdentifier identifier)
         : m_connection(connection)
         , m_drawingArea(identifier)
-        , m_layerID(layerID)
     { }
 
     bool tryCopyToLayer(ImageBuffer& buffer) final
@@ -138,14 +138,35 @@ public:
             return false;
 
         auto backendHandle = sharing->createBackendHandle(SharedMemory::Protection::ReadOnly);
-        m_connection->send(Messages::RemoteLayerTreeDrawingAreaProxy::AsyncSetLayerContents(m_layerID, backendHandle), m_drawingArea.toUInt64());
+        m_connection->send(Messages::RemoteLayerTreeDrawingAreaProxy::AsyncSetLayerContents(m_layerID, backendHandle, clone->renderingResourceIdentifier()), m_drawingArea.toUInt64());
+        ASSERT(std::holds_alternative<MachSendRight>(backendHandle));
+
+        Locker locker { m_surfaceLock };
+        m_surfaceSendRight = std::get<MachSendRight>(backendHandle);
+        m_surfaceIdentifier = clone->renderingResourceIdentifier();
+
         return true;
+    }
+
+    void display(PlatformCALayer& layer) final
+    {
+        Locker locker { m_surfaceLock };
+        if (m_surfaceSendRight)
+            layer.setDelegatedContents({ *m_surfaceSendRight, { }, std::optional<RenderingResourceIdentifier>(m_surfaceIdentifier) });
+    }
+
+    void setDestinationLayerID(WebCore::PlatformLayerIdentifier layerID)
+    {
+        m_layerID = layerID;
     }
 
 private:
     Ref<IPC::Connection> m_connection;
     DrawingAreaIdentifier m_drawingArea;
     WebCore::PlatformLayerIdentifier m_layerID;
+    Lock m_surfaceLock;
+    std::optional<MachSendRight> m_surfaceSendRight WTF_GUARDED_BY_LOCK(m_surfaceLock);
+    WebCore::RenderingResourceIdentifier m_surfaceIdentifier WTF_GUARDED_BY_LOCK(m_surfaceLock);
 };
 
 RefPtr<WebCore::GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCARemote::createAsyncContentsDisplayDelegate()
@@ -153,7 +174,12 @@ RefPtr<WebCore::GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCARemote
     if (!m_context || !m_context->drawingAreaIdentifier() || !WebProcess::singleton().parentProcessConnection())
         return nullptr;
 
-    return adoptRef(new GraphicsLayerCARemoteAsyncContentsDisplayDelegate(*WebProcess::singleton().parentProcessConnection(), m_context->drawingAreaIdentifier(), primaryLayerID()));
+    auto delegate = adoptRef(new GraphicsLayerCARemoteAsyncContentsDisplayDelegate(*WebProcess::singleton().parentProcessConnection(), m_context->drawingAreaIdentifier()));
+
+    auto layerID = setContentsToAsyncDisplayDelegate(delegate, ContentsLayerPurpose::Canvas);
+
+    delegate->setDestinationLayerID(layerID);
+    return delegate;
 }
 
 GraphicsLayer::LayerMode GraphicsLayerCARemote::layerMode() const

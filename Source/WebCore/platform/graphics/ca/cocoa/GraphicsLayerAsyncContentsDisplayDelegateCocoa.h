@@ -35,6 +35,7 @@ class GraphicsLayerAsyncContentsDisplayDelegateCocoa : public GraphicsLayerAsync
 public:
     GraphicsLayerAsyncContentsDisplayDelegateCocoa(GraphicsLayerCA&);
     bool tryCopyToLayer(ImageBuffer&) final;
+    void display(PlatformCALayer&) final { }
 
 private:
     RetainPtr<CALayer> m_layer;

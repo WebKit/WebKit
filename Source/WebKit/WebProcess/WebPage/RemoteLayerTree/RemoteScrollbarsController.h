@@ -48,7 +48,7 @@ public:
     void mouseExitedScrollbar(WebCore::Scrollbar*) const final;
     bool shouldScrollbarParticipateInHitTesting(WebCore::Scrollbar*) final;
     
-    void setScrollbarVisibilityState(ScrollbarOrientation, bool) final;
+    void setScrollbarVisibilityState(WebCore::ScrollbarOrientation, bool) final;
 
 private:
     bool m_horizontalOverlayScrollbarIsVisible { false };
