@@ -311,7 +311,10 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
 
 TextStream& operator<<(TextStream& ts, const InteractionRegion& interactionRegion)
 {
-    ts.dumpProperty(interactionRegion.type == InteractionRegion::Type::Occlusion ? "occlusion" : "interaction", interactionRegion.rectInLayerCoordinates);
+    auto regionName = interactionRegion.type == InteractionRegion::Type::Interaction
+        ? "interaction"
+        : (interactionRegion.type == InteractionRegion::Type::Occlusion ? "occlusion" : "guard");
+    ts.dumpProperty(regionName, interactionRegion.rectInLayerCoordinates);
     auto radius = interactionRegion.borderRadius;
     if (interactionRegion.maskedCorners.isEmpty())
         ts.dumpProperty("borderRadius", radius);

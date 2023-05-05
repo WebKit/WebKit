@@ -13,7 +13,7 @@ And checkboxes?
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (occlusion (272,13) width=37 height=36)
+        (guard (272,13) width=37 height=36)
         (borderRadius 0.00),
         (interaction (282,23) width=17 height=16)
         (borderRadius 5.00),

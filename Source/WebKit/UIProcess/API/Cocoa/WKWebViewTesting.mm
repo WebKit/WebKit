@@ -94,11 +94,9 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     };
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    if ([layer valueForKey:@"WKInteractionRegionGroupName"]) {
-        ts.dumpProperty("type", "interaction");
-        traverse = false;
-    } else if ([layer valueForKey:@"WKInteractionRegionType"]) {
-        ts.dumpProperty("type", "occlusion");
+    NSNumber *interactionRegionLayerType = [layer valueForKey:@"WKInteractionRegionType"];
+    if (interactionRegionLayerType) {
+        ts.dumpProperty("type", interactionRegionLayerType);
         traverse = false;
     }
 #endif

@@ -66,12 +66,12 @@
                                   (layer anchorPoint [x: 0 y: 0])
                                   (sublayers
                                     (
-                                      (type interaction)
+                                      (type 0)
                                       (layer bounds [x: 0 y: 0 width: 59 height: 20])
                                       (layer position [x: 29.5 y: 29.5])
                                       (layer cornerRadius 9))
                                     (
-                                      (type interaction)
+                                      (type 0)
                                       (layer bounds [x: 0 y: 0 width: 284 height: 192])
                                       (layer position [x: 152 y: 152])
                                       (layer cornerRadius 8))
@@ -91,7 +91,7 @@
                                           (layer opacity 0)
                                           (sublayers
                                             (
-                                              (type interaction)
+                                              (type 0)
                                               (layer bounds [x: 0 y: 0 width: 76 height: 27])
                                               (layer position [x: 34 y: 34])
                                               (layer cornerRadius 8))))
@@ -101,11 +101,11 @@
                                           (layer opacity 0.8)
                                           (sublayers
                                             (
-                                              (type occlusion)
+                                              (type 1)
                                               (layer bounds [x: 0 y: 0 width: 800 height: 600])
                                               (layer position [x: 400 y: 400]))
                                             (
-                                              (type interaction)
+                                              (type 0)
                                               (layer bounds [x: 0 y: 0 width: 33 height: 27])
                                               (layer position [x: 12.5 y: 12.5])
                                               (layer cornerRadius 8))

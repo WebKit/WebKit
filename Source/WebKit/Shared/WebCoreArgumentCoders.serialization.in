@@ -4812,7 +4812,11 @@ struct WebCore::GlobalWindowIdentifier {
     WebCore::WindowIdentifier windowIdentifier;
 };
 
-[Nested] enum class WebCore::InteractionRegion::Type : bool;
+[Nested] enum class WebCore::InteractionRegion::Type : uint8_t {
+    Interaction,
+    Occlusion,
+    Guard
+};
 [Nested, OptionSet] enum class WebCore::InteractionRegion::CornerMask : uint8_t {
     MinXMinYCorner
     MaxXMinYCorner

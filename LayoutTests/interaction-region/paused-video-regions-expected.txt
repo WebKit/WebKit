@@ -26,28 +26,26 @@
               (children 1
                 (GraphicsLayer
                   (position 176.00 144.00)
-                  (bounds 70.00 70.00)
-                  (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [-35.00 -35.00 0.00 1.00])
+                  (bounds 51.00 51.00)
+                  (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [-25.50 -25.50 0.00 1.00])
                   (event region
-                    (rect (18,0) width=34 height=5)
-                    (rect (5,5) width=60 height=13)
-                    (rect (0,18) width=70 height=34)
-                    (rect (5,52) width=60 height=13)
-                    (rect (18,65) width=34 height=5)
+                    (rect (8,0) width=35 height=8)
+                    (rect (0,8) width=51 height=35)
+                    (rect (8,43) width=35 height=8)
 
                   (interaction regions [
-                    (interaction (0,0) width=70 height=70)
-                    (borderRadius 35.00)])
+                    (interaction (0,0) width=51 height=51)
+                    (borderRadius 25.50)])
                   )
                   (children 1
                     (GraphicsLayer
-                      (position 3.00 0.00)
-                      (bounds 70.00 70.00)
+                      (position 10.00 10.00)
+                      (bounds 31.00 31.00)
                       (contentsOpaque 1)
-                      (transform [0.90 0.00 0.00 0.00] [0.00 0.90 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+                      (transform [0.90 0.00 0.00 0.00] [0.00 0.90 0.00 0.00] [0.00 0.00 1.00 0.00] [2.48 0.00 0.00 1.00])
                       (mask layer)
                         (GraphicsLayer
-                          (bounds 70.00 70.00)
+                          (bounds 31.00 31.00)
                           (drawsContent 1)
                         )
                     )
