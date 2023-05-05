@@ -3790,7 +3790,7 @@
         },
         "text-box-trim": {
             "values": [
-                "normal",
+                "none",
                 "start",
                 "end",
                 "both"

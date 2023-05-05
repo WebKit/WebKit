@@ -1739,7 +1739,7 @@ public:
     static OptionSet<MarginTrimType> initialMarginTrim() { return { }; }
     static Length initialPadding() { return Length(LengthType::Fixed); }
     static Length initialTextIndent() { return Length(LengthType::Fixed); }
-    static TextBoxTrim initialTextBoxTrim() { return TextBoxTrim::Normal; }
+    static TextBoxTrim initialTextBoxTrim() { return TextBoxTrim::None; }
     static TextBoxEdge initialTextBoxEdge();
     static Length initialZeroLength() { return Length(LengthType::Fixed); }
     static Length initialOneLength() { return Length(1, LengthType::Fixed); }

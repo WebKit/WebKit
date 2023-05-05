@@ -1186,7 +1186,7 @@ TextStream& operator<<(TextStream& ts, TextWrap wrap)
 TextStream& operator<<(TextStream& ts, TextBoxTrim textBoxTrim)
 {
     switch (textBoxTrim) {
-    case TextBoxTrim::Normal: ts << "Normal"; break;
+    case TextBoxTrim::None: ts << "None"; break;
     case TextBoxTrim::Start: ts << "Start"; break;
     case TextBoxTrim::End: ts << "End"; break;
     case TextBoxTrim::Both: ts << "Both"; break;

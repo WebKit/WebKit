@@ -237,7 +237,7 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
         auto ascentAndDescent = [&]() -> InlineLevelBox::AscentAndDescent {
             auto textBoxTrim = inlineLevelBox.textBoxTrim();
             auto fontBaseline = lineBox.baselineType();
-            if (inlineLevelBox.isRootInlineBox() || textBoxTrim == TextBoxTrim::Normal)
+            if (inlineLevelBox.isRootInlineBox() || textBoxTrim == TextBoxTrim::None)
                 return primaryFontMetricsForInlineBox(inlineLevelBox, fontBaseline);
 
             auto& fontMetrics = inlineLevelBox.primarymetricsOfPrimaryFont();

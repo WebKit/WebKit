@@ -687,7 +687,7 @@ enum class TextUnderlinePosition : uint8_t {
 };
 
 enum class TextBoxTrim : uint8_t {
-    Normal,
+    None,
     Start,
     End,
     Both

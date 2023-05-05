@@ -699,7 +699,7 @@ void TextBoxTrimmer::setTextBoxTrimForSubtree(const RenderBlockFlow* inlineForma
     if (!layoutState)
         return;
     auto textBoxTrim = m_flow.style().textBoxTrim();
-    if (textBoxTrim == TextBoxTrim::Normal) {
+    if (textBoxTrim == TextBoxTrim::None) {
         if (m_flow.borderAndPaddingStart()) {
             // For block containers: trim the block-start side of the first formatted line to the corresponding
             // text-box-edge metric of its root inline box. If there is no such line, or if there is intervening non-zero padding or borders,
@@ -729,7 +729,7 @@ void TextBoxTrimmer::adjustTextBoxTrimAfterLayout()
     auto* layoutState = m_flow.view().frameView().layoutContext().layoutState();
     if (!layoutState)
         return;
-    if (m_flow.style().textBoxTrim() != TextBoxTrim::Normal)
+    if (m_flow.style().textBoxTrim() != TextBoxTrim::None)
         return layoutState->resetTextBoxTrim();
     // This is propagated text-box-trim.
     if (layoutState->hasTextBoxTrimStart() && m_flow.hasLines()) {
