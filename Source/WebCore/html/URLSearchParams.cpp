@@ -68,10 +68,10 @@ String URLSearchParams::get(const String& name) const
     return String();
 }
 
-bool URLSearchParams::has(const String& name) const
+bool URLSearchParams::has(const String& name, const String& value) const
 {
     for (const auto& pair : m_pairs) {
-        if (pair.key == name)
+        if (pair.key == name && (value.isNull() || pair.value == value))
             return true;
     }
     return false;
@@ -126,10 +126,10 @@ Vector<String> URLSearchParams::getAll(const String& name) const
     return values;
 }
 
-void URLSearchParams::remove(const String& name)
+void URLSearchParams::remove(const String& name, const String& value)
 {
     m_pairs.removeAllMatching([&] (const auto& pair) {
-        return pair.key == name;
+        return pair.key == name && (value.isNull() || pair.value == value);
     });
     updateURL();
 }

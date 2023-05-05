@@ -281,6 +281,7 @@ PASS Parsing: <http://foo:💩@example.com/bar> against <http://other.com/>
 PASS Parsing: <#> against <test:test>
 FAIL Parsing: <#x> against <data:,> assert_equals: href expected "data:,#x" but got "test:test#x"
 PASS Parsing: <#x> against <about:blank>
+PASS Parsing: <#x:y> against <about:blank>
 PASS Parsing: <#> against <test:test?test>
 PASS Parsing: <https://@test@test@example:800/> against <http://doesnotmatter/>
 PASS Parsing: <https://@@@example> against <http://doesnotmatter/>

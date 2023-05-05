@@ -280,6 +280,7 @@ PASS Parsing: <http://foo:💩@example.com/bar> against <http://other.com/>
 PASS Parsing: <#> against <test:test>
 PASS Parsing: <#x> against <data:,>
 PASS Parsing: <#x> against <about:blank>
+PASS Parsing: <#x:y> against <about:blank>
 PASS Parsing: <#> against <test:test?test>
 PASS Parsing: <https://@test@test@example:800/> against <http://doesnotmatter/>
 PASS Parsing: <https://@@@example> against <http://doesnotmatter/>

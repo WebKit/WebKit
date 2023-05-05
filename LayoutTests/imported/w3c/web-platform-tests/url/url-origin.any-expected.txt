@@ -226,6 +226,7 @@ PASS Origin parsing: <#> against <test:test>
 PASS Origin parsing: <#x> against <mailto:x@x.com>
 PASS Origin parsing: <#x> against <data:,>
 PASS Origin parsing: <#x> against <about:blank>
+PASS Origin parsing: <#x:y> against <about:blank>
 PASS Origin parsing: <#> against <test:test?test>
 PASS Origin parsing: <https://@test@test@example:800/> against <http://doesnotmatter/>
 PASS Origin parsing: <https://@@@example> against <http://doesnotmatter/>
