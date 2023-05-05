@@ -82,7 +82,7 @@ void CcidService::restartDiscoveryInternal()
 
 void CcidService::platformStartDiscovery()
 {
-    [[TKSmartCardSlotManager defaultManager] addObserver:[[_WKSmartCardSlotObserver alloc] initWithService:this] forKeyPath:@"slotNames" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:nil];
+    [[TKSmartCardSlotManager defaultManager] addObserver:adoptNS([[_WKSmartCardSlotObserver alloc] initWithService:this]).get() forKeyPath:@"slotNames" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:nil];
 }
 
 void CcidService::onValidCard(RetainPtr<TKSmartCard>&& smartCard)
@@ -100,7 +100,7 @@ void CcidService::updateSlots(NSArray *slots)
         if (it == m_slotNames.end()) {
             m_slotNames.add(name);
             [[TKSmartCardSlotManager defaultManager] getSlotWithName:nsName reply:makeBlockPtr([this](TKSmartCardSlot * _Nullable slot) mutable {
-                [slot addObserver:[[_WKSmartCardSlotStateObserver alloc] initWithService:this slot:WTFMove(slot)] forKeyPath:@"state" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:nil];
+                [slot addObserver:adoptNS([[_WKSmartCardSlotStateObserver alloc] initWithService:this slot:WTFMove(slot)]).get() forKeyPath:@"state" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:nil];
             }).get()];
         }
     }
