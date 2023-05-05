@@ -3609,11 +3609,6 @@ public:
 
     static int jumpSizeDelta(JumpType jumpType, JumpLinkType jumpLinkType) { return JUMP_ENUM_SIZE(jumpType) - JUMP_ENUM_SIZE(jumpLinkType); }
 
-    static ALWAYS_INLINE bool linkRecordSourceComparator(const LinkRecord& a, const LinkRecord& b)
-    {
-        return a.from() < b.from();
-    }
-
     static bool canCompact(JumpType jumpType)
     {
         // Fixed jumps cannot be compacted
@@ -3681,7 +3676,9 @@ public:
 
     Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink()
     {
-        std::sort(m_jumpsToLink.begin(), m_jumpsToLink.end(), linkRecordSourceComparator);
+        std::sort(m_jumpsToLink.begin(), m_jumpsToLink.end(), [](auto& a, auto& b) {
+            return a.from() < b.from();
+        });
         return m_jumpsToLink;
     }
 

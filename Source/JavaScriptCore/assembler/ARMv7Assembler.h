@@ -2500,11 +2500,6 @@ public:
     
     // Assembler admin methods:
 
-    static ALWAYS_INLINE bool linkRecordSourceComparator(const LinkRecord& a, const LinkRecord& b)
-    {
-        return a.from() < b.from();
-    }
-
     static bool canCompact(JumpType jumpType)
     {
         // The following cannot be compacted:
@@ -2567,7 +2562,9 @@ public:
     
     Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink()
     {
-        std::sort(m_jumpsToLink.begin(), m_jumpsToLink.end(), linkRecordSourceComparator);
+        std::sort(m_jumpsToLink.begin(), m_jumpsToLink.end(), [](auto& a, auto& b) {
+            return a.from() < b.from();
+        });
         return m_jumpsToLink;
     }
 
