@@ -27,6 +27,7 @@
 #define WKBundlePageOverlay_h
 
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 #include <WebKit/WKEvent.h>
 #include <WebKit/WKGeometry.h>
 
@@ -104,13 +105,13 @@ typedef struct WKBundlePageOverlayAccessibilityClientV0 {
     WKAccessibilityAttributeNamesCallback                               copyAccessibilityAttributeNames;
 } WKBundlePageOverlayAccessibilityClientV0;
 
-WK_EXPORT WKTypeID WKBundlePageOverlayGetTypeID();
+WK_EXPORT WKTypeID WKBundlePageOverlayGetTypeID() WK_C_API_DEPRECATED;
 
-WK_EXPORT WKBundlePageOverlayRef WKBundlePageOverlayCreate(WKBundlePageOverlayClientBase* client);
-WK_EXPORT void WKBundlePageOverlaySetNeedsDisplay(WKBundlePageOverlayRef bundlePageOverlay, WKRect rect);
-WK_EXPORT float WKBundlePageOverlayFractionFadedIn(WKBundlePageOverlayRef bundlePageOverlay);
-WK_EXPORT void WKBundlePageOverlaySetAccessibilityClient(WKBundlePageOverlayRef bundlePageOverlay, WKBundlePageOverlayAccessibilityClientBase* client);
-WK_EXPORT void WKBundlePageOverlayClear(WKBundlePageOverlayRef bundlePageOverlay);
+WK_EXPORT WKBundlePageOverlayRef WKBundlePageOverlayCreate(WKBundlePageOverlayClientBase* client) WK_C_API_DEPRECATED;
+WK_EXPORT void WKBundlePageOverlaySetNeedsDisplay(WKBundlePageOverlayRef bundlePageOverlay, WKRect rect) WK_C_API_DEPRECATED;
+WK_EXPORT float WKBundlePageOverlayFractionFadedIn(WKBundlePageOverlayRef bundlePageOverlay) WK_C_API_DEPRECATED;
+WK_EXPORT void WKBundlePageOverlaySetAccessibilityClient(WKBundlePageOverlayRef bundlePageOverlay, WKBundlePageOverlayAccessibilityClientBase* client) WK_C_API_DEPRECATED;
+WK_EXPORT void WKBundlePageOverlayClear(WKBundlePageOverlayRef bundlePageOverlay) WK_C_API_DEPRECATED;
 
 #ifdef __cplusplus
 }

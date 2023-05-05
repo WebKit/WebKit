@@ -690,7 +690,6 @@
 		2D54C319212F3B330049C174 /* UnifiedSource62-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D54C305212F3B330049C174 /* UnifiedSource62-mm.mm */; };
 		2D54C31A212F3B330049C174 /* UnifiedSource61-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D54C306212F3B330049C174 /* UnifiedSource61-mm.mm */; };
 		2D54C31B212F4DA60049C174 /* ProcessLauncher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE117F511DBB30900981615 /* ProcessLauncher.cpp */; };
-		2D5C9D0619C81D8F00B3C5C1 /* WebPageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5C9D0419C81D8F00B3C5C1 /* WebPageOverlay.h */; };
 		2D64824B2644B1AB00030335 /* RemoteLayerTreeLayers.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6482492644B1AB00030335 /* RemoteLayerTreeLayers.h */; };
 		2D6B371B18A967AD0042AE80 /* _WKThumbnailView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6B371918A967AD0042AE80 /* _WKThumbnailView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D6CD119189058A500E5A4A0 /* ViewSnapshotStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6CD117189058A500E5A4A0 /* ViewSnapshotStore.h */; };
@@ -3962,8 +3961,6 @@
 		2D54C304212F3B330049C174 /* UnifiedSource71-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource71-mm.mm"; sourceTree = "<group>"; };
 		2D54C305212F3B330049C174 /* UnifiedSource62-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource62-mm.mm"; sourceTree = "<group>"; };
 		2D54C306212F3B330049C174 /* UnifiedSource61-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource61-mm.mm"; sourceTree = "<group>"; };
-		2D5C9D0319C81D8F00B3C5C1 /* WebPageOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageOverlay.cpp; sourceTree = "<group>"; };
-		2D5C9D0419C81D8F00B3C5C1 /* WebPageOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageOverlay.h; sourceTree = "<group>"; };
 		2D6482492644B1AB00030335 /* RemoteLayerTreeLayers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeLayers.h; sourceTree = "<group>"; };
 		2D64824A2644B1AB00030335 /* RemoteLayerTreeLayers.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeLayers.mm; sourceTree = "<group>"; };
 		2D65D194274B8E73009C4101 /* ScrollingAccelerationCurveMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingAccelerationCurveMac.mm; sourceTree = "<group>"; };
@@ -12102,8 +12099,6 @@
 				BC7B621412A4219A00D174A4 /* WebPageGroupProxy.cpp */,
 				BC7B621312A4219A00D174A4 /* WebPageGroupProxy.h */,
 				7A10937629BF8B71006BDB7B /* WebPageInlines.h */,
-				2D5C9D0319C81D8F00B3C5C1 /* WebPageOverlay.cpp */,
-				2D5C9D0419C81D8F00B3C5C1 /* WebPageOverlay.h */,
 				BCA0EF7E12331E78007D3CFB /* WebUndoStep.cpp */,
 				BCA0EF7D12331E78007D3CFB /* WebUndoStep.h */,
 				F4B378D021DDBBAB0095A378 /* WebUndoStepID.h */,
@@ -14938,7 +14933,6 @@
 				A543E30D215C8A9000279CD9 /* WebPageInspectorTargetController.h in Headers */,
 				A543E307215AD13700279CD9 /* WebPageInspectorTargetFrontendChannel.h in Headers */,
 				C0CE72A11247E71D00BC0EC4 /* WebPageMessages.h in Headers */,
-				2D5C9D0619C81D8F00B3C5C1 /* WebPageOverlay.h in Headers */,
 				939EF86F29D0C17300F23AEE /* WebPageProxy.h in Headers */,
 				46C392292316EC4D008EED9B /* WebPageProxyIdentifier.h in Headers */,
 				939EF86E29D0C16400F23AEE /* WebPageProxyInternals.h in Headers */,

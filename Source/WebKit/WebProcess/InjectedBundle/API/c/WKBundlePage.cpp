@@ -55,7 +55,6 @@
 #include "WebInspector.h"
 #include "WebPage.h"
 #include "WebPageGroupProxy.h"
-#include "WebPageOverlay.h"
 #include "WebProcess.h"
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/AccessibilityObjectInterface.h>
@@ -424,24 +423,20 @@ WKBundleBackForwardListRef WKBundlePageGetBackForwardList(WKBundlePageRef pageRe
     return nullptr;
 }
 
-void WKBundlePageInstallPageOverlay(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
+void WKBundlePageInstallPageOverlay(WKBundlePageRef, WKBundlePageOverlayRef)
 {
-    WebKit::toImpl(pageRef)->corePage()->pageOverlayController().installPageOverlay(*WebKit::toImpl(pageOverlayRef)->coreOverlay(), WebCore::PageOverlay::FadeMode::DoNotFade);
 }
 
-void WKBundlePageUninstallPageOverlay(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
+void WKBundlePageUninstallPageOverlay(WKBundlePageRef, WKBundlePageOverlayRef)
 {
-    WebKit::toImpl(pageRef)->corePage()->pageOverlayController().uninstallPageOverlay(*WebKit::toImpl(pageOverlayRef)->coreOverlay(), WebCore::PageOverlay::FadeMode::DoNotFade);
 }
 
-void WKBundlePageInstallPageOverlayWithAnimation(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
+void WKBundlePageInstallPageOverlayWithAnimation(WKBundlePageRef, WKBundlePageOverlayRef)
 {
-    WebKit::toImpl(pageRef)->corePage()->pageOverlayController().installPageOverlay(*WebKit::toImpl(pageOverlayRef)->coreOverlay(), WebCore::PageOverlay::FadeMode::Fade);
 }
 
-void WKBundlePageUninstallPageOverlayWithAnimation(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
+void WKBundlePageUninstallPageOverlayWithAnimation(WKBundlePageRef, WKBundlePageOverlayRef)
 {
-    WebKit::toImpl(pageRef)->corePage()->pageOverlayController().uninstallPageOverlay(*WebKit::toImpl(pageOverlayRef)->coreOverlay(), WebCore::PageOverlay::FadeMode::Fade);
 }
 
 void WKBundlePageSetTopOverhangImage(WKBundlePageRef pageRef, WKImageRef imageRef)

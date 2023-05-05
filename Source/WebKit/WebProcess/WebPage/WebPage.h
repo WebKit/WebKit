@@ -336,7 +336,6 @@ class WebNotificationClient;
 class WebOpenPanelResultListener;
 class WebPageGroupProxy;
 class WebPageInspectorTargetController;
-class WebPageOverlay;
 class WebPaymentCoordinator;
 class WebPopupMenu;
 class WebRemoteObjectRegistry;

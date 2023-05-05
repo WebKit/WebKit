@@ -49,7 +49,6 @@
 #import "WebInspector.h"
 #import "WebKeyboardEvent.h"
 #import "WebMouseEvent.h"
-#import "WebPageOverlay.h"
 #import "WebPageProxyMessages.h"
 #import "WebPasteboardOverrides.h"
 #import "WebPreferencesStore.h"
@@ -885,30 +884,8 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
         }
     }
 
-    bool pageOverlayDidOverrideDataDetectors = false;
-    for (auto& overlay : corePage()->pageOverlayController().pageOverlays()) {
-        auto webOverlay = WebPageOverlay::fromCoreOverlay(*overlay);
-        if (!webOverlay)
-            continue;
-
-        auto actionContext = webOverlay->actionContextForResultAtPoint(locationInContentCoordinates);
-        if (!actionContext)
-            continue;
-
-        auto view = actionContext->range.start.document().view();
-        if (!view)
-            continue;
-
-        pageOverlayDidOverrideDataDetectors = true;
-        immediateActionResult.platformData.detectedDataActionContext = actionContext->context.get();
-        immediateActionResult.platformData.detectedDataBoundingBox = view->contentsToWindow(enclosingIntRect(unitedBoundingBoxes(RenderObject::absoluteTextQuads(actionContext->range))));
-        immediateActionResult.platformData.detectedDataTextIndicator = TextIndicator::createWithRange(actionContext->range, indicatorOptions(actionContext->range), TextIndicatorPresentationTransition::FadeIn);
-        immediateActionResult.platformData.detectedDataOriginatingPageOverlay = overlay->pageOverlayID();
-        break;
-    }
-
     // FIXME: Avoid scanning if we will just throw away the result (e.g. we're over a link).
-    if (!pageOverlayDidOverrideDataDetectors && hitTestResult.innerNode() && (hitTestResult.innerNode()->isTextNode() || hitTestResult.isOverTextInsideFormControlElement())) {
+    if (hitTestResult.innerNode() && (hitTestResult.innerNode()->isTextNode() || hitTestResult.isOverTextInsideFormControlElement())) {
         if (auto result = DataDetection::detectItemAroundHitTestResult(hitTestResult)) {
             immediateActionResult.platformData.detectedDataActionContext = WTFMove(result->actionContext);
             immediateActionResult.platformData.detectedDataBoundingBox = result->boundingBox;
@@ -983,26 +960,14 @@ void WebPage::immediateActionDidComplete()
         localMainFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCompleted);
 }
 
-void WebPage::dataDetectorsDidPresentUI(PageOverlay::PageOverlayID overlayID)
+void WebPage::dataDetectorsDidPresentUI(PageOverlay::PageOverlayID)
 {
-    for (const auto& overlay : corePage()->pageOverlayController().pageOverlays()) {
-        if (overlay->pageOverlayID() == overlayID) {
-            if (WebPageOverlay* webOverlay = WebPageOverlay::fromCoreOverlay(*overlay))
-                webOverlay->dataDetectorsDidPresentUI();
-            return;
-        }
-    }
+    // FIXME: Remove.
 }
 
-void WebPage::dataDetectorsDidChangeUI(PageOverlay::PageOverlayID overlayID)
+void WebPage::dataDetectorsDidChangeUI(PageOverlay::PageOverlayID)
 {
-    for (const auto& overlay : corePage()->pageOverlayController().pageOverlays()) {
-        if (overlay->pageOverlayID() == overlayID) {
-            if (WebPageOverlay* webOverlay = WebPageOverlay::fromCoreOverlay(*overlay))
-                webOverlay->dataDetectorsDidChangeUI();
-            return;
-        }
-    }
+    // FIXME: Remove.
 }
 
 void WebPage::dataDetectorsDidHideUI(PageOverlay::PageOverlayID overlayID)
@@ -1012,14 +977,6 @@ void WebPage::dataDetectorsDidHideUI(PageOverlay::PageOverlayID overlayID)
         return;
     // Dispatching a fake mouse event will allow clients to display any UI that is normally displayed on hover.
     localMainFrame->eventHandler().dispatchFakeMouseMoveEventSoon();
-
-    for (const auto& overlay : corePage()->pageOverlayController().pageOverlays()) {
-        if (overlay->pageOverlayID() == overlayID) {
-            if (WebPageOverlay* webOverlay = WebPageOverlay::fromCoreOverlay(*overlay))
-                webOverlay->dataDetectorsDidHideUI();
-            return;
-        }
-    }
 }
 
 void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo&, MonotonicTime)

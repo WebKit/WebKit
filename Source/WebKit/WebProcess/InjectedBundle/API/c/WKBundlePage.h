@@ -73,11 +73,11 @@ WK_EXPORT WKBundleBackForwardListRef WKBundlePageGetBackForwardList(WKBundlePage
 WK_EXPORT WKStringRef WKBundlePageDumpHistoryForTesting(WKBundlePageRef page, WKStringRef directory);
 WK_EXPORT void WKBundleClearHistoryForTesting(WKBundlePageRef page);
 
-WK_EXPORT void WKBundlePageInstallPageOverlay(WKBundlePageRef page, WKBundlePageOverlayRef pageOverlay);
-WK_EXPORT void WKBundlePageUninstallPageOverlay(WKBundlePageRef page, WKBundlePageOverlayRef pageOverlay);
+WK_EXPORT void WKBundlePageInstallPageOverlay(WKBundlePageRef page, WKBundlePageOverlayRef pageOverlay) WK_C_API_DEPRECATED;
+WK_EXPORT void WKBundlePageUninstallPageOverlay(WKBundlePageRef page, WKBundlePageOverlayRef pageOverlay) WK_C_API_DEPRECATED;
 
-WK_EXPORT void WKBundlePageInstallPageOverlayWithAnimation(WKBundlePageRef page, WKBundlePageOverlayRef pageOverlay);
-WK_EXPORT void WKBundlePageUninstallPageOverlayWithAnimation(WKBundlePageRef page, WKBundlePageOverlayRef pageOverlay);
+WK_EXPORT void WKBundlePageInstallPageOverlayWithAnimation(WKBundlePageRef page, WKBundlePageOverlayRef pageOverlay) WK_C_API_DEPRECATED;
+WK_EXPORT void WKBundlePageUninstallPageOverlayWithAnimation(WKBundlePageRef page, WKBundlePageOverlayRef pageOverlay) WK_C_API_DEPRECATED;
 
 WK_EXPORT void WKBundlePageSetTopOverhangImage(WKBundlePageRef page, WKImageRef image);
 WK_EXPORT void WKBundlePageSetBottomOverhangImage(WKBundlePageRef page, WKImageRef image);

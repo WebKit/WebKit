@@ -852,7 +852,6 @@ WebProcess/WebPage/WebFrame.cpp
 WebProcess/WebPage/WebOpenPanelResultListener.cpp
 WebProcess/WebPage/WebPage.cpp @no-unify
 WebProcess/WebPage/WebPageGroupProxy.cpp
-WebProcess/WebPage/WebPageOverlay.cpp
 WebProcess/WebPage/WebURLSchemeHandlerProxy.cpp
 WebProcess/WebPage/WebURLSchemeTaskProxy.cpp
 WebProcess/WebPage/WebUndoStep.cpp

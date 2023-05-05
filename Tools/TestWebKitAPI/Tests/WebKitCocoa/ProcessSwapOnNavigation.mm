@@ -6888,62 +6888,6 @@ static bool hasOverlay(CALayer *layer)
 }
 #endif
 
-// FIXME when rdar://106098852 is resolved
-#if PLATFORM(MAC) && (__MAC_OS_X_VERSION_MIN_REQUIRED > 130000) || PLATFORM(IOS)
-TEST(ProcessSwap, DISABLED_PageOverlayLayerPersistence)
-#else
-TEST(ProcessSwap, PageOverlayLayerPersistence)
-#endif
-{
-    auto processPoolConfiguration = psonProcessPoolConfiguration();
-    [processPoolConfiguration setInjectedBundleURL:[[NSBundle mainBundle] URLForResource:@"TestWebKitAPI" withExtension:@"wkbundle"]];
-    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
-    [processPool _setObject:@"PageOverlayPlugIn" forBundleParameter:TestWebKitAPI::Util::TestPlugInClassNameParameter];
-
-    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [webViewConfiguration setProcessPool:processPool.get()];
-
-    auto handler = adoptNS([[PSONScheme alloc] init]);
-    [handler addMappingFromURLString:@"pson://www.webkit.org/page-overlay" toData:""];
-    [handler addMappingFromURLString:@"pson://www.apple.com/page-overlay" toData:""];
-    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
-
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
-
-    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
-    [webView setNavigationDelegate:navigationDelegate.get()];
-
-    auto request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/page-overlay"]];
-    [webView loadRequest:request];
-
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    [webView waitForNextPresentationUpdate];
-
-    // We can only look for the overlay layer in the UI-side layer tree on platforms
-    // that use UI-side compositing.
-#if !PLATFORM(MAC)
-    EXPECT_TRUE(hasOverlay([webView layer]));
-#endif
-
-    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/page-overlay"]];
-    [webView loadRequest:request];
-
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    [webView waitForNextPresentationUpdate];
-
-    [webView goBack]; // Back to webkit.org.
-
-    [webView waitForNextPresentationUpdate];
-
-#if !PLATFORM(MAC)
-    EXPECT_TRUE(hasOverlay([webView layer]));
-#endif
-}
-
 #if PLATFORM(IOS)
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED > 130400

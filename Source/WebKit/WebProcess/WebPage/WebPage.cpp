@@ -125,7 +125,6 @@
 #include "WebPageInlines.h"
 #include "WebPageInspectorTargetController.h"
 #include "WebPageMessages.h"
-#include "WebPageOverlay.h"
 #include "WebPageProxyMessages.h"
 #include "WebPaymentCoordinator.h"
 #include "WebPerformanceLoggingClient.h"
