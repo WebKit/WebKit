@@ -16,6 +16,14 @@
 <p><img src="resources/largeblank.png"></p>
 <p><img src="resources/largeblank.png"></p>
 <script type="text/javascript">
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    window.addEventListener('scroll', () => {
+        testRunner.notifyDone();
+    });
+}
+
 document.write(location.href="#anchor1");
 </script>
 </body>

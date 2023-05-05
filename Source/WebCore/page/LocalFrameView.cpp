@@ -3845,12 +3845,10 @@ void LocalFrameView::performPostLayoutTasks()
             renderView->compositor().frameViewDidLayout();
     }
 
-    scrollToAnchor();
-    
-    scrollToTextFragmentRange();
+    scheduleScrollToAnchorAndTextFragment();
 
     scheduleResizeEventIfNeeded();
-    
+
     updateLayoutViewport();
     viewportContentsChanged();
 
