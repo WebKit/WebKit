@@ -331,6 +331,7 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/coretext/FontCascadeCoreText.cpp
     platform/graphics/coretext/FontCoreText.cpp
+    platform/graphics/coretext/FontCustomPlatformDataCoreText.cpp
     platform/graphics/coretext/FontPlatformDataCoreText.cpp
     platform/graphics/coretext/GlyphPageCoreText.cpp
 
@@ -344,7 +345,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/mac/DisplayConfigurationMonitor.cpp
     platform/graphics/mac/FloatPointMac.mm
     platform/graphics/mac/FloatSizeMac.mm
-    platform/graphics/mac/FontCustomPlatformDataMac.cpp
     platform/graphics/mac/GraphicsChecksMac.cpp
     platform/graphics/mac/IconMac.mm
     platform/graphics/mac/ImageMac.mm
