@@ -3584,29 +3584,35 @@ const URL& Document::urlForBindings() const
         if (!policySourceLoader || !policySourceLoader->originatorNetworkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::Enabled))
             return false;
 
-        auto preNavigationURL = loader()->originalRequest().httpReferrer();
-        if (preNavigationURL.isEmpty() || RegistrableDomain { URL { preNavigationURL } }.matches(securityOrigin().data()))
+        auto preNavigationURL = URL { loader()->originalRequest().httpReferrer() };
+        if (preNavigationURL.isEmpty() || RegistrableDomain { preNavigationURL }.matches(securityOrigin().data()))
+            return false;
+
+        auto areSameSiteIgnoringPublicSuffix = [](StringView domain, StringView otherDomain) {
+            auto domainString = topPrivatelyControlledDomain(domain.toStringWithoutCopying());
+            auto otherDomainString = topPrivatelyControlledDomain(otherDomain.toStringWithoutCopying());
+            auto substringToSeparator = [](const String& string) -> String {
+                auto indexOfFirstSeparator = string.find('.');
+                if (indexOfFirstSeparator == notFound)
+                    return { };
+                return string.left(indexOfFirstSeparator);
+            };
+            auto firstSubstring = substringToSeparator(domainString);
+            return !firstSubstring.isEmpty() && firstSubstring == substringToSeparator(otherDomainString);
+        };
+
+        auto currentHost = securityOrigin().data().host();
+        if (areSameSiteIgnoringPublicSuffix(preNavigationURL.host(), currentHost))
             return false;
 
         if (!m_hasLoadedThirdPartyScript)
             return false;
 
         if (auto sourceURL = currentSourceURL(); !sourceURL.isEmpty()) {
-            RegistrableDomain sourceURLDomain { sourceURL };
-            if (sourceURLDomain.matches(securityOrigin().data()))
+            if (RegistrableDomain { sourceURL }.matches(securityOrigin().data()))
                 return false;
 
-            auto domainString = topPrivatelyControlledDomain(securityOrigin().data().host());
-            auto sourceURLDomainString = topPrivatelyControlledDomain(sourceURLDomain.string());
-            auto substringToSeparator = [&](const String& domain) -> StringView {
-                auto indexOfFirstSeparator = domain.find('.');
-                if (indexOfFirstSeparator == notFound)
-                    return { };
-                return domain.left(indexOfFirstSeparator);
-            };
-
-            auto firstSubstring = substringToSeparator(domainString);
-            if (!firstSubstring.isEmpty() && firstSubstring == substringToSeparator(sourceURLDomainString))
+            if (areSameSiteIgnoringPublicSuffix(sourceURL.host(), currentHost))
                 return false;
         }
 
