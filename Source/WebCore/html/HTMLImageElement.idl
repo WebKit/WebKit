@@ -42,7 +42,7 @@
     readonly attribute USVString currentSrc;
     [CEReactions=NotNeeded, EnabledBySetting=ReferrerPolicyAttributeEnabled, ImplementedAs=referrerPolicyForBindings] attribute [AtomString] DOMString referrerPolicy;
     [CEReactions=NotNeeded] attribute [AtomString] DOMString decoding;
-    [CEReactions, DisabledByQuirk=shouldDisableLazyImageLoading, EnabledBySetting=LazyImageLoadingEnabled, ImplementedAs=loadingForBindings] attribute [AtomString] DOMString loading;
+    [CEReactions=NotNeeded, DisabledByQuirk=shouldDisableLazyImageLoading, EnabledBySetting=LazyImageLoadingEnabled, ImplementedAs=loadingForBindings] attribute [AtomString] DOMString loading;
 
     Promise<undefined> decode();
 
@@ -56,7 +56,7 @@
 
     [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString border;
 
-    [CEReactions, EnabledBySetting=FetchPriorityEnabled, ImplementedAs=fetchPriorityForBindings] attribute [AtomString] DOMString fetchPriority;
+    [CEReactions=NotNeeded, EnabledBySetting=FetchPriorityEnabled, ImplementedAs=fetchPriorityForBindings] attribute [AtomString] DOMString fetchPriority;
 
     // Non-standard
     [Conditional=ATTACHMENT_ELEMENT, EnabledByDeprecatedGlobalSetting=AttachmentElementEnabled] readonly attribute DOMString attachmentIdentifier;

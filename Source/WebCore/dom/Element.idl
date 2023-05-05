@@ -31,10 +31,10 @@
     readonly attribute DOMString localName;
     readonly attribute DOMString tagName;
 
-    [CEReactions, Reflect] attribute DOMString id;
-    [CEReactions, Reflect=class] attribute DOMString className;
+    [CEReactions=Needed, Reflect] attribute DOMString id;
+    [CEReactions=Needed, Reflect=class] attribute DOMString className;
     [SameObject, PutForwards=value] readonly attribute DOMTokenList classList;
-    [CEReactions, Reflect, Unscopable] attribute DOMString slot;
+    [CEReactions=Needed, Reflect, Unscopable] attribute DOMString slot;
     [SameObject, PutForwards=value] readonly attribute DOMTokenList part;
 
     [DOMJIT=ReadDOM] boolean hasAttributes();
@@ -42,19 +42,19 @@
     sequence<DOMString> getAttributeNames();
     [DOMJIT=ReadDOM, ImplementedAs=getAttributeForBindings] DOMString? getAttribute([AtomString] DOMString qualifiedName);
     [ImplementedAs=getAttributeNSForBindings] DOMString? getAttributeNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
-    [CEReactions] undefined setAttribute([AtomString] DOMString qualifiedName, [AtomString] DOMString value);
-    [CEReactions] undefined setAttributeNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString qualifiedName, [AtomString] DOMString value);
-    [CEReactions, ImplementedAs=removeAttributeForBindings] undefined removeAttribute([AtomString] DOMString qualifiedName);
-    [CEReactions, ImplementedAs=removeAttributeNSForBindings] undefined removeAttributeNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
-    [CEReactions] boolean toggleAttribute([AtomString] DOMString qualifiedName, optional boolean force);
+    [CEReactions=Needed] undefined setAttribute([AtomString] DOMString qualifiedName, [AtomString] DOMString value);
+    [CEReactions=Needed] undefined setAttributeNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString qualifiedName, [AtomString] DOMString value);
+    [CEReactions=Needed, ImplementedAs=removeAttributeForBindings] undefined removeAttribute([AtomString] DOMString qualifiedName);
+    [CEReactions=Needed, ImplementedAs=removeAttributeNSForBindings] undefined removeAttributeNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
+    [CEReactions=Needed] boolean toggleAttribute([AtomString] DOMString qualifiedName, optional boolean force);
     boolean hasAttribute([AtomString] DOMString qualifiedName);
     boolean hasAttributeNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
 
     [DOMJIT=ReadDOM] Attr? getAttributeNode([AtomString] DOMString qualifiedName);
     Attr? getAttributeNodeNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
-    [CEReactions] Attr? setAttributeNode(Attr attr);
-    [CEReactions] Attr? setAttributeNodeNS(Attr attr);
-    [CEReactions] Attr removeAttributeNode(Attr attr);
+    [CEReactions=Needed] Attr? setAttributeNode(Attr attr);
+    [CEReactions=Needed] Attr? setAttributeNodeNS(Attr attr);
+    [CEReactions=Needed] Attr removeAttributeNode(Attr attr);
 
     ShadowRoot attachShadow(ShadowRootInit init);
     [ImplementedAs=shadowRootForBindings, CallWith=CurrentGlobalObject] readonly attribute ShadowRoot? shadowRoot;
@@ -67,7 +67,7 @@
     HTMLCollection getElementsByTagNameNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
     HTMLCollection getElementsByClassName([AtomString] DOMString name);
 
-    [CEReactions] Element? insertAdjacentElement(DOMString where, Element element); // Historical.
+    [CEReactions=Needed] Element? insertAdjacentElement(DOMString where, Element element); // Historical.
     undefined insertAdjacentText(DOMString where, DOMString data); // Historical.
 
     

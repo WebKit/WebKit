@@ -29,9 +29,9 @@
 [
     Exposed=TestGlobalObject
 ] interface TestCEReactions {
-    [CEReactions] undefined methodWithCEReactions();
-    [CEReactions] attribute DOMString attributeWithCEReactions;
-    [CEReactions, Reflect] attribute DOMString reflectAttributeWithCEReactions;
+    [CEReactions=Needed] undefined methodWithCEReactions();
+    [CEReactions=Needed] attribute DOMString attributeWithCEReactions;
+    [CEReactions=Needed, Reflect] attribute DOMString reflectAttributeWithCEReactions;
 
     [PutForwards=value] attribute TestCEReactionsStringifier stringifierAttribute;
 

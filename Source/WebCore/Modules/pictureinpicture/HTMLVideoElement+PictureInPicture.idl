@@ -34,6 +34,6 @@
     attribute EventHandler onenterpictureinpicture;
     attribute EventHandler onleavepictureinpicture;
 
-    [CEReactions, Reflect] attribute boolean autoPictureInPicture;
-    [CEReactions, Reflect] attribute boolean disablePictureInPicture;
+    [CEReactions=NotNeeded, Reflect] attribute boolean autoPictureInPicture;
+    [CEReactions=NotNeeded, Reflect] attribute boolean disablePictureInPicture;
 };

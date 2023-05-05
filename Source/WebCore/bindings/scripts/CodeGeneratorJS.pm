@@ -8269,6 +8269,8 @@ sub GenerateCustomElementReactionsStackIfNeeded
 
     AddToImplIncludes("CustomElementReactionQueue.h");
 
+    assert("CEReactions should have a value of Needed or NotNeeded but found '$CEReactions'. Most CEReactions are not needed because WebKit does not support customized builtins.") unless $CEReactions eq "NotNeeded" || $CEReactions eq "Needed";
+
     if ($CEReactions eq "NotNeeded") {
         push(@$outputArray, "    CustomElementReactionDisallowedScope customElementReactionDisallowedScope;\n");
     } else {

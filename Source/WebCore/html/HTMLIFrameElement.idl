@@ -47,5 +47,5 @@
 
     [EnabledBySetting=ReferrerPolicyAttributeEnabled, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute [AtomString] DOMString referrerPolicy;
 
-    [CEReactions, EnabledBySetting=LazyIframeLoadingEnabled, ImplementedAs=loadingForBindings] attribute [AtomString] DOMString loading;
+    [CEReactions=NotNeeded, EnabledBySetting=LazyIframeLoadingEnabled, ImplementedAs=loadingForBindings] attribute [AtomString] DOMString loading;
 };

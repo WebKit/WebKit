@@ -28,9 +28,9 @@ typedef USVString CSSOMString;
 [
     Exposed=TestGlobalObject
 ] interface TestDelegateToSharedSyntheticAttribute {
-    [CEReactions, DelegateToSharedSyntheticAttribute=sharedAttribute1, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString property1;
-    [CEReactions, DelegateToSharedSyntheticAttribute=sharedAttribute1, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString property2;
-    [CEReactions, DelegateToSharedSyntheticAttribute=sharedAttribute1, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString property3;
-    [CEReactions, DelegateToSharedSyntheticAttribute=sharedAttribute2, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString property4;
-    [CEReactions, DelegateToSharedSyntheticAttribute=sharedAttribute2, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString property5;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=sharedAttribute1, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString property1;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=sharedAttribute1, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString property2;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=sharedAttribute1, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString property3;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=sharedAttribute2, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString property4;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=sharedAttribute2, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString property5;
 };

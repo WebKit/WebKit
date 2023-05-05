@@ -35,6 +35,7 @@
         },
         "CEReactions": {
             "contextsAllowed": ["attribute", "operation"],
+            "values": ["Needed", "NotNeeded"],
             "standard": {
                 "url": "https://html.spec.whatwg.org/multipage/custom-elements.html#cereactions"
             }

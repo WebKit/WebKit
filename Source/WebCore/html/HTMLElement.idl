@@ -29,41 +29,41 @@
     [Custom] constructor();
 
     // metadata attributes
-    [CEReactions, Reflect] attribute DOMString title;
-    [CEReactions, Reflect] attribute DOMString lang;
-    [CEReactions] attribute boolean translate;
-    [CEReactions] attribute [AtomString] DOMString dir;
+    [CEReactions=Needed, Reflect] attribute DOMString title;
+    [CEReactions=Needed, Reflect] attribute DOMString lang;
+    [CEReactions=Needed] attribute boolean translate;
+    [CEReactions=Needed] attribute [AtomString] DOMString dir;
 
     // user interaction
-    [CEReactions, Reflect] attribute boolean hidden;
+    [CEReactions=Needed, Reflect] attribute boolean hidden;
     undefined click();
-    [CEReactions, Reflect] attribute DOMString accessKey;
+    [CEReactions=Needed, Reflect] attribute DOMString accessKey;
     readonly attribute DOMString accessKeyLabel;
-    [CEReactions] attribute boolean draggable;
-    [CEReactions] attribute boolean spellcheck;
+    [CEReactions=Needed] attribute boolean draggable;
+    [CEReactions=Needed] attribute boolean spellcheck;
     // FIXME: 'autocapitalize' should not be [LegacyNullToEmptyString].
-    [Conditional=AUTOCAPITALIZE, CEReactions] attribute [LegacyNullToEmptyString, AtomString] DOMString autocapitalize;
+    [Conditional=AUTOCAPITALIZE, CEReactions=Needed] attribute [LegacyNullToEmptyString, AtomString] DOMString autocapitalize;
 
-    [CEReactions] attribute [LegacyNullToEmptyString] DOMString innerText;
+    [CEReactions=Needed] attribute [LegacyNullToEmptyString] DOMString innerText;
 
     [EnabledBySetting=FormAssociatedCustomElementsEnabled] ElementInternals attachInternals();
 
-    [CEReactions, Reflect, EnabledBySetting=InertAttributeEnabled] attribute boolean inert;
+    [CEReactions=Needed, Reflect, EnabledBySetting=InertAttributeEnabled] attribute boolean inert;
 
     // The popover API
     [EnabledBySetting=PopoverAttributeEnabled, DisabledByQuirk=shouldDisablePopoverAttribute] undefined showPopover();
     [EnabledBySetting=PopoverAttributeEnabled, DisabledByQuirk=shouldDisablePopoverAttribute] undefined hidePopover();
     [EnabledBySetting=PopoverAttributeEnabled, DisabledByQuirk=shouldDisablePopoverAttribute] undefined togglePopover(optional boolean force);
-    [CEReactions, EnabledBySetting=PopoverAttributeEnabled, DisabledByQuirk=shouldDisablePopoverAttribute] attribute [AtomString] DOMString? popover;
+    [CEReactions=Needed, EnabledBySetting=PopoverAttributeEnabled, DisabledByQuirk=shouldDisablePopoverAttribute] attribute [AtomString] DOMString? popover;
 
     // Non-standard: IE extension. May get added to the specification (https://github.com/whatwg/html/issues/668).
-    [CEReactions] attribute [LegacyNullToEmptyString] DOMString outerText;
+    [CEReactions=Needed] attribute [LegacyNullToEmptyString] DOMString outerText;
 
     // Non-standard: iOS extension.
-    [Conditional=AUTOCORRECT, CEReactions] attribute boolean autocorrect;
+    [Conditional=AUTOCORRECT, CEReactions=Needed] attribute boolean autocorrect;
 
     // Non-standard: We are the only browser to support this now that Blink dropped it (http://crbug.com/688943).
-    [CEReactions, Reflect] attribute DOMString webkitdropzone;
+    [CEReactions=Needed, Reflect] attribute DOMString webkitdropzone;
 };
 
 HTMLElement includes GlobalEventHandlers;

@@ -28,7 +28,7 @@
     readonly attribute DOMString? prefix;
     readonly attribute DOMString localName;
     readonly attribute DOMString name;
-    [CEReactions] attribute [AtomString] DOMString value;
+    [CEReactions=Needed] attribute [AtomString] DOMString value;
 
     readonly attribute Element? ownerElement;
 

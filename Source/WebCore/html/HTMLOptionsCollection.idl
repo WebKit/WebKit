@@ -24,10 +24,10 @@
     JSGenerateToNativeObject,
     Exposed=Window
 ] interface HTMLOptionsCollection : HTMLCollection {
-    [CEReactions] attribute unsigned long length;
-    [CEReactions] setter undefined (unsigned long index, HTMLOptionElement? option);
-    [CEReactions] undefined add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
-    [CEReactions] undefined remove(long index);
+    [CEReactions=Needed] attribute unsigned long length;
+    [CEReactions=Needed] setter undefined (unsigned long index, HTMLOptionElement? option);
+    [CEReactions=Needed] undefined add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
+    [CEReactions=Needed] undefined remove(long index);
 
     attribute long selectedIndex;
 

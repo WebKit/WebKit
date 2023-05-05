@@ -64,7 +64,7 @@
     undefined setBaseAndExtent(Node? baseNode, unsigned long baseOffset, Node? extentNode, unsigned long extentOffset);
     undefined selectAllChildren(Node node);
 
-    [CEReactions] undefined deleteFromDocument();
+    [CEReactions=Needed] undefined deleteFromDocument();
     boolean containsNode(Node node, optional boolean allowPartialContainment = false);
 
     [NotEnumerable] DOMString toString();

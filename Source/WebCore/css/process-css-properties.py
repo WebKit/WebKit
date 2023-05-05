@@ -3174,7 +3174,7 @@ class GenerateCSSStyleDeclarationPropertyNames:
             if property.codegen_properties.settings_flag:
                 extended_attributes_values += [f"EnabledBySetting={property.codegen_properties.settings_flag}"]
 
-            to.write(f"[CEReactions, {', '.join(extended_attributes_values)}] attribute [LegacyNullToEmptyString] CSSOMString {idl_attribute_name};")
+            to.write(f"[CEReactions=Needed, {', '.join(extended_attributes_values)}] attribute [LegacyNullToEmptyString] CSSOMString {idl_attribute_name};")
 
     def generate_css_style_declaration_property_names_idl(self):
         with open('CSSStyleDeclaration+PropertyNames.idl', 'w') as output_file:

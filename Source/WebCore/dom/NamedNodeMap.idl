@@ -28,8 +28,8 @@
     getter Attr? item(unsigned long index);
     getter Attr? getNamedItem([AtomString] DOMString qualifiedName);
     Attr? getNamedItemNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
-    [CEReactions] Attr? setNamedItem(Attr attr);
-    [CEReactions, ImplementedAs=setNamedItem] Attr? setNamedItemNS(Attr attr);
-    [CEReactions] Attr removeNamedItem([AtomString] DOMString qualifiedName);
-    [CEReactions] Attr removeNamedItemNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
+    [CEReactions=Needed] Attr? setNamedItem(Attr attr);
+    [CEReactions=Needed, ImplementedAs=setNamedItem] Attr? setNamedItemNS(Attr attr);
+    [CEReactions=Needed] Attr removeNamedItem([AtomString] DOMString qualifiedName);
+    [CEReactions=Needed] Attr removeNamedItemNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
 };

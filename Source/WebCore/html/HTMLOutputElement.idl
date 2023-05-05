@@ -33,8 +33,8 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
 
     readonly attribute DOMString type;
-    [CEReactions] attribute DOMString defaultValue;
-    [CEReactions] attribute DOMString value;
+    [CEReactions=Needed] attribute DOMString defaultValue;
+    [CEReactions=Needed] attribute DOMString value;
 
     readonly attribute boolean willValidate;
     readonly attribute ValidityState validity;

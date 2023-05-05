@@ -25,8 +25,8 @@
 
 // https://html.spec.whatwg.org/#elementcontenteditable
 interface mixin ElementContentEditable {
-    [CEReactions] attribute DOMString contentEditable;
-    [CEReactions, EnabledBySetting=EnterKeyHintEnabled] attribute [AtomString] DOMString enterKeyHint;
+    [CEReactions=Needed] attribute DOMString contentEditable;
+    [CEReactions=Needed, EnabledBySetting=EnterKeyHintEnabled] attribute [AtomString] DOMString enterKeyHint;
     readonly attribute boolean isContentEditable;
-    [CEReactions] attribute [AtomString] DOMString inputMode;
+    [CEReactions=Needed] attribute [AtomString] DOMString inputMode;
 };

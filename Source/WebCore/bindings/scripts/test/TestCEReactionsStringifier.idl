@@ -29,6 +29,6 @@
 [
     Exposed=TestGlobalObject
 ] interface TestCEReactionsStringifier {
-    [CEReactions] stringifier attribute DOMString value;
+    [CEReactions=Needed] stringifier attribute DOMString value;
     [CEReactions=NotNeeded] stringifier attribute DOMString valueWithoutReactions;
 };

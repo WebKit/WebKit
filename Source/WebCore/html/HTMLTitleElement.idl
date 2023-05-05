@@ -20,6 +20,6 @@
 [
     Exposed=Window
 ] interface HTMLTitleElement : HTMLElement {
-    [CEReactions] attribute DOMString text;
+    [CEReactions=Needed] attribute DOMString text;
 };
 
