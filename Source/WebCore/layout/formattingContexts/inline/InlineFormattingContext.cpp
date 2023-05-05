@@ -430,8 +430,8 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(In
         previousLine = PreviousLine { lineIndex++, intrinsicContent.trailingOverflowingContentWidth, { }, { }, { } };
 
         // FIXME: Add support for clear.
-        for (auto* inlineFloatItem : intrinsicContent.placedFloats)
-            maximumFloatWidth += geometryForBox(inlineFloatItem->layoutBox()).marginBoxWidth();
+        for (auto floatItem : intrinsicContent.placedFloats)
+            maximumFloatWidth += geometryForBox(*floatItem.layoutBox()).marginBoxWidth();
     }
     return maximumLineWidth + maximumFloatWidth;
 }
@@ -555,11 +555,23 @@ InlineRect InlineFormattingContext::createDisplayContentForLine(size_t lineIndex
 
     displayContent.boxes.appendVector(WTFMove(boxes));
     displayContent.lines.append(displayLine);
+    auto updateBoxGeometryForPlacedFloats = [&] {
+        for (auto& floatItem : lineContent.placedFloats) {
+            if (!floatItem.layoutBox()) {
+                ASSERT_NOT_REACHED();
+                // We should not be placing intrusive floats coming from parent BFC.
+                continue;
+            }
+            auto& boxGeometry = formattingState().boxGeometry(*floatItem.layoutBox());
+            boxGeometry.setLogicalTopLeft(BoxGeometry::borderBoxTopLeft(floatItem.boxGeometry()));
+        }
+    };
+    updateBoxGeometryForPlacedFloats();
 
     return InlineFormattingGeometry::flipVisualRectToLogicalForWritingMode(displayContent.lines.last().lineBoxRect(), root().style().writingMode());
 }
 
-void InlineFormattingContext::resetGeometryForClampedContent(const InlineItemRange& needsDisplayContentRange, const LineBuilder::FloatList& suspendedFloats, LayoutPoint topleft)
+void InlineFormattingContext::resetGeometryForClampedContent(const InlineItemRange& needsDisplayContentRange, const LineBuilder::SuspendedFloatList& suspendedFloats, LayoutPoint topleft)
 {
     if (needsDisplayContentRange.isEmpty() && suspendedFloats.isEmpty())
         return;

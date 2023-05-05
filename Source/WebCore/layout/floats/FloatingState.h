@@ -27,6 +27,7 @@
 
 #include "LayoutBoxGeometry.h"
 #include "LayoutElementBox.h"
+#include "Shape.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/OptionSet.h>
 
@@ -72,9 +73,8 @@ public:
 
         const Shape* shape() const { return m_shape.get(); }
 
-#if ASSERT_ENABLED
-        const Box* floatBox() const { return m_layoutBox.get(); }
-#endif
+        const Box* layoutBox() const { return m_layoutBox.get(); }
+
     private:
         CheckedPtr<const Box> m_layoutBox;
         Position m_position;

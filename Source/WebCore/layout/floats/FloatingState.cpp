@@ -80,8 +80,8 @@ void FloatingState::append(FloatItem newFloatItem)
         return m_floats.append(newFloatItem);
 
     // The integration codepath does not construct a layout box for the float item.
-    ASSERT_IMPLIES(newFloatItem.floatBox(), m_floats.findIf([&] (auto& entry) {
-        return entry.floatBox() == newFloatItem.floatBox();
+    ASSERT_IMPLIES(newFloatItem.layoutBox(), m_floats.findIf([&] (auto& entry) {
+        return entry.layoutBox() == newFloatItem.layoutBox();
     }) == notFound);
 
     // When adding a new float item to the list, we have to ensure that it is definitely the left(right)-most item.

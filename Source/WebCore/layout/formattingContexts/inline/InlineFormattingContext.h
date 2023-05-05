@@ -86,7 +86,7 @@ private:
 
     void collectContentIfNeeded();
     InlineRect createDisplayContentForLine(size_t lineIndex, const LineBuilder::LineContent&, const ConstraintsForInlineContent&, const InlineLayoutState&, InlineDisplay::Content&);
-    void resetGeometryForClampedContent(const InlineItemRange& needsDisplayContentRange, const LineBuilder::FloatList& suspendedFloats, LayoutPoint topleft);
+    void resetGeometryForClampedContent(const InlineItemRange& needsDisplayContentRange, const LineBuilder::SuspendedFloatList& suspendedFloats, LayoutPoint topleft);
 
     const InlineDamage* m_lineDamage { nullptr };
     const InlineFormattingGeometry m_inlineFormattingGeometry;

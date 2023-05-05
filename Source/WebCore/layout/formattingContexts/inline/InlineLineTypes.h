@@ -66,7 +66,7 @@ struct PreviousLine {
     std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
     bool endsWithLineBreak { false };
     TextDirection inlineBaseDirection { TextDirection::LTR };
-    Vector<const InlineItem*> suspendedFloats;
+    Vector<const Box*> suspendedFloats;
 };
 
 inline InlineItemRange::InlineItemRange(InlineItemPosition start, InlineItemPosition end)

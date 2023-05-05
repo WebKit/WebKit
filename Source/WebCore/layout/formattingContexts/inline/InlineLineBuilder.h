@@ -48,11 +48,13 @@ public:
         InlineItemRange needsLayoutRange;
         InlineRect initialLogicalRect;
     };
-    using FloatList = Vector<const InlineItem*>;
+    using PlacedFloatList = FloatingState::FloatList;
+    using SuspendedFloatList = Vector<const Box*>;
     struct LineContent {
         InlineItemRange committedRange;
         std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
-        FloatList suspendedFloats;
+        PlacedFloatList placedFloats;
+        SuspendedFloatList suspendedFloats;
         bool hasIntrusiveFloat { false };
         InlineLayoutUnit lineInitialLogicalLeftIncludingIntrusiveFloats { 0.f };
         InlineLayoutPoint lineLogicalTopLeft;
@@ -83,7 +85,7 @@ public:
         InlineItemRange committedRange;
         std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
         InlineLayoutUnit contentLogicalWidth { 0 };
-        FloatList placedFloats;
+        PlacedFloatList placedFloats;
     };
     IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, const std::optional<PreviousLine>&);
 
@@ -111,9 +113,9 @@ private:
         size_t partialTrailingContentLength { 0 };
         std::optional<InlineLayoutUnit> overflowLogicalWidth { };
     };
-    LayoutUnit adjustGeometryForInitialLetterIfNeeded(const Box& floatBox);
+    LayoutUnit adjustGeometryForInitialLetterIfNeeded(const Box& floatBox, BoxGeometry&);
     enum MayOverConstrainLine : bool { No, Yes };
-    bool tryPlacingFloatBox(const InlineItem&, MayOverConstrainLine);
+    bool tryPlacingFloatBox(const Box&, MayOverConstrainLine);
     Result handleInlineContent(InlineContentBreaker&, const InlineItemRange& needsLayoutRange, const LineCandidate&);
     std::tuple<InlineRect, bool> lineBoxForCandidateInlineContent(const LineCandidate&) const;
     size_t rebuildLineWithInlineContent(const InlineItemRange& needsLayoutRange, const InlineItem& lastInlineItemToAdd);
@@ -161,8 +163,8 @@ private:
     InlineLayoutUnit m_lineMarginStart { 0.f };
     InlineLayoutUnit m_initialIntrusiveFloatsWidth { 0.f };
     const InlineItems& m_inlineItems;
-    FloatList m_placedFloats;
-    FloatList m_suspendedFloats;
+    PlacedFloatList m_placedFloats;
+    SuspendedFloatList m_suspendedFloats;
     std::optional<InlineTextItem> m_partialLeadingTextItem;
     std::optional<InlineLayoutUnit> m_overflowingLogicalWidth;
     Vector<const InlineItem*> m_wrapOpportunityList;

@@ -305,7 +305,7 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
         return { };
 
     auto& layoutBox = inlineItem.layoutBox();
-    auto& boxGeometry = m_inlineFormattingContext.geometryForBox(layoutBox);
+    auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
 
     if (layoutBox.isReplacedBox())
         return boxGeometry.marginBoxWidth();
@@ -366,6 +366,7 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const LineInput& lineI
 
     return { committedRange
         , committedContent.overflowLogicalWidth
+        , WTFMove(m_placedFloats)
         , WTFMove(m_suspendedFloats)
         , m_lineIsConstrainedByFloat
         , m_lineInitialLogicalRect.left() + m_initialIntrusiveFloatsWidth
@@ -508,11 +509,11 @@ CommittedContent LineBuilder::placeInlineContent(const InlineItemRange& needsLay
         // Now check if we can put this content on the current line.
         if (auto* floatItem = lineCandidate.floatItem) {
             ASSERT(lineCandidate.inlineContent.isEmpty());
-            if (!tryPlacingFloatBox(*floatItem, m_line.runs().isEmpty() ? MayOverConstrainLine::Yes : MayOverConstrainLine::No)) {
+            if (!tryPlacingFloatBox(floatItem->layoutBox(), m_line.runs().isEmpty() ? MayOverConstrainLine::Yes : MayOverConstrainLine::No)) {
                 // This float overconstrains the line (it simply means shrinking the line box by the float would cause inline content overflow.)
                 // At this point we suspend float layout but continue with inline layout.
                 // Such suspended float will be placed at the next available vertical positon when this line "closes".
-                m_suspendedFloats.append(floatItem);
+                m_suspendedFloats.append(&floatItem->layoutBox());
             }
             ++committedItemCount;
         } else {
@@ -576,7 +577,7 @@ InlineItemRange LineBuilder::close(const InlineItemRange& needsLayoutRange, cons
     auto& rootStyle = this->rootStyle();
 
     auto handleTrailingContent = [&] {
-        auto& quirks = m_inlineFormattingContext.formattingQuirks();
+        auto& quirks = formattingContext().formattingQuirks();
         auto lineHasOverflow = [&] {
             return horizontalAvailableSpace < m_line.contentLogicalWidth();
         };
@@ -1003,7 +1004,7 @@ std::tuple<InlineRect, bool> LineBuilder::lineBoxForCandidateInlineContent(const
     return { adjustedLineRect, lineConstraints.left || lineConstraints.right };
 }
 
-LayoutUnit LineBuilder::adjustGeometryForInitialLetterIfNeeded(const Box& floatBox)
+LayoutUnit LineBuilder::adjustGeometryForInitialLetterIfNeeded(const Box& floatBox, BoxGeometry& boxGeometry)
 {
     auto drop = floatBox.style().initialLetterDrop();
     auto isInitialLetter = floatBox.isFloatingPositioned() && floatBox.style().styleType() == PseudoId::FirstLetter && drop;
@@ -1043,9 +1044,8 @@ LayoutUnit LineBuilder::adjustGeometryForInitialLetterIfNeeded(const Box& floatB
     } else if (drop > letterHeight) {
         // Initial letter is sunken below the first line.
         auto numberOfLinesAboveInitialLetter = drop - letterHeight;
-        auto additialMarginBefore = numberOfLinesAboveInitialLetter * rootStyle().computedLineHeight();
-        auto& floatBoxGeometry = formattingState()->boxGeometry(floatBox);
-        floatBoxGeometry.setVerticalMargin({ floatBoxGeometry.marginBefore() + additialMarginBefore, floatBoxGeometry.marginAfter() });
+        auto additionallMarginBefore = numberOfLinesAboveInitialLetter * rootStyle().computedLineHeight();
+        boxGeometry.setVerticalMargin({ boxGeometry.marginBefore() + additionallMarginBefore, boxGeometry.marginAfter() });
     }
 
     m_lineLogicalRect.moveVertically(clearGapBeforeFirstLine);
@@ -1083,20 +1083,17 @@ static bool haveEnoughSpaceForFloatWithClear(const LayoutRect& floatBoxMarginBox
     return contentLogicalWidth <= availableSpaceForContentWithPlacedFloat;
 }
 
-bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, MayOverConstrainLine mayOverConstrainLine)
+bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine mayOverConstrainLine)
 {
     if (isInIntrinsicWidthMode()) {
-        ASSERT_NOT_REACHED();
+        ASSERT_NOT_IMPLEMENTED_YET();
         // Floats are not supposed to be added to FloatingState in intrinsic mode.
-        m_placedFloats.append(&floatItem);
         return true;
     }
-    ASSERT(formattingState());
     if (isFloatLayoutSuspended())
         return false;
 
-    auto& floatBox = floatItem.layoutBox();
-    auto& boxGeometry = formattingState()->boxGeometry(floatBox);
+    auto boxGeometry = BoxGeometry { formattingContext().geometryForBox(floatBox) };
     if (!shouldTryToPlaceFloatBox(floatBox, boxGeometry.marginBoxWidth(), mayOverConstrainLine))
         return false;
 
@@ -1104,7 +1101,7 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, MayOverConstra
     auto floatingContext = FloatingContext { formattingContext(), *floatingState() };
     auto computeFloatBoxPosition = [&] {
         // Set static position first.
-        auto additionalOffset = adjustGeometryForInitialLetterIfNeeded(floatBox);
+        auto additionalOffset = adjustGeometryForInitialLetterIfNeeded(floatBox, boxGeometry);
         auto staticPosition = LayoutPoint { lineMarginBoxLeft, m_lineLogicalRect.top() + additionalOffset };
         staticPosition.move(boxGeometry.marginStart(), boxGeometry.marginBefore());
         boxGeometry.setLogicalTopLeft(staticPosition);
@@ -1141,10 +1138,10 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, MayOverConstra
     if (floatBox.hasFloatClear() && !willFloatBoxWithClearFit())
         return false;
 
-    auto floatBoxItem = floatingContext.toFloatItem(floatBox, boxGeometry);
     auto placeFloatBox = [&] {
-        floatingState()->append(floatBoxItem);
-        m_placedFloats.append(&floatItem);
+        auto floatItem = floatingContext.toFloatItem(floatBox, boxGeometry);
+        floatingState()->append(floatItem);
+        m_placedFloats.append(floatItem);
     };
     placeFloatBox();
 
