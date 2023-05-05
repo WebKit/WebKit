@@ -60,18 +60,18 @@ class StyleFilterData;
 class StyleFlexibleBoxData;
 class StyleGridData;
 class StyleGridItemData;
-class StyleMarqueeData;
 class StyleMultiColData;
 class StyleReflection;
 class StyleResolver;
 class StyleTransformData;
 
 struct LengthSize;
+struct StyleMarqueeData;
 
 // Page size type.
 // StyleRareNonInheritedData::pageSize is meaningful only when
 // StyleRareNonInheritedData::pageSizeType is PAGE_SIZE_RESOLVED.
-enum PageSizeType {
+enum PageSizeType : uint8_t {
     PAGE_SIZE_AUTO, // size: auto
     PAGE_SIZE_AUTO_LANDSCAPE, // size: landscape
     PAGE_SIZE_AUTO_PORTRAIT, // size: portrait
@@ -123,7 +123,7 @@ public:
     LengthBox scrollMargin { 0, 0, 0, 0 };
     LengthBox scrollPadding { Length(LengthType::Auto), Length(LengthType::Auto), Length(LengthType::Auto), Length(LengthType::Auto) };
 
-    std::unique_ptr<CounterDirectiveMap> counterDirectives;
+    CounterDirectiveMap counterDirectives;
 
     RefPtr<WillChangeData> willChange; // Null indicates 'auto'.
     

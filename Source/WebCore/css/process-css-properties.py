@@ -3288,10 +3288,14 @@ class GenerateStyleBuilderGenerated:
     # Color property setters.
 
     def _generate_color_property_initial_value_setter(self, to, property):
+        if property.codegen_properties.initial == "currentColor":
+            initial_function = "StyleColor::currentColor"
+        else:
+            initial_function = "RenderStyle::" + property.codegen_properties.initial
         to.write(f"if (builderState.applyPropertyToRegularStyle())")
-        to.write(f"    builderState.style().{property.codegen_properties.setter}(RenderStyle::{property.codegen_properties.initial}());")
+        to.write(f"    builderState.style().{property.codegen_properties.setter}({initial_function}());")
         to.write(f"if (builderState.applyPropertyToVisitedLinkStyle())")
-        to.write(f"    builderState.style().setVisitedLink{property.name_for_methods}(RenderStyle::{property.codegen_properties.initial}());")
+        to.write(f"    builderState.style().setVisitedLink{property.name_for_methods}({initial_function}());")
 
     def _generate_color_property_inherit_value_setter(self, to, property):
         to.write(f"if (builderState.applyPropertyToRegularStyle())")
@@ -3672,7 +3676,7 @@ class GenerateStyleBuilderGenerated:
                 headers=[
                     "CSSPrimitiveValueMappings.h",
                     "CSSProperty.h",
-                    "RenderStyle.h",
+                    "RenderStyleSetters.h",
                     "StyleBuilderConverter.h",
                     "StyleBuilderCustom.h",
                     "StyleBuilderState.h",

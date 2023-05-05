@@ -28,6 +28,7 @@
 
 #include "InlineFormattingContext.h"
 #include "LayoutBoxGeometry.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 namespace Layout {

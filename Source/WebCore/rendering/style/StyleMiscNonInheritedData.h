@@ -91,7 +91,7 @@ public:
     LengthPoint objectPosition;
     int order;
 
-    unsigned hasAttrContent : 1;
+    unsigned hasAttrContent : 1 { false };
     unsigned aspectRatioType : 2; // AspectRatioType
     unsigned appearance : appearanceBitWidth; // EAppearance
     unsigned effectiveAppearance : appearanceBitWidth; // EAppearance

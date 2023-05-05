@@ -63,15 +63,18 @@
 #include "PerspectiveTransformOperation.h"
 #include "QuotesData.h"
 #include "RenderBlock.h"
-#include "RenderBox.h"
+#include "RenderBoxInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderGrid.h"
 #include "RenderInline.h"
 #include "RotateTransformOperation.h"
 #include "SVGElement.h"
+#include "SVGRenderStyle.h"
 #include "ScaleTransformOperation.h"
 #include "SkewTransformOperation.h"
 #include "StylePropertyShorthand.h"
 #include "StylePropertyShorthandFunctions.h"
+#include "StyleReflection.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "Styleable.h"
@@ -95,10 +98,10 @@ public:
     }
     virtual ~OrderedNamedLinesCollector() = default;
 
-    bool isEmpty() const { return m_orderedNamedGridLines.isEmpty() && m_orderedNamedAutoRepeatGridLines.isEmpty(); }
+    bool isEmpty() const { return m_orderedNamedGridLines.map.isEmpty() && m_orderedNamedAutoRepeatGridLines.map.isEmpty(); }
     virtual void collectLineNamesForIndex(Vector<String>&, unsigned index) const = 0;
 
-    virtual int namedGridLineCount() const { return m_orderedNamedGridLines.size(); }
+    virtual int namedGridLineCount() const { return m_orderedNamedGridLines.map.size(); }
 
 protected:
 
@@ -132,14 +135,14 @@ public:
     OrderedNamedLinesCollectorInSubgridLayout(const RenderStyle& style, bool isRowAxis, unsigned totalTracksCount)
         : OrderedNamedLinesCollector(style, isRowAxis)
         , m_insertionPoint(isRowAxis ? style.gridAutoRepeatColumnsInsertionPoint() : style.gridAutoRepeatRowsInsertionPoint())
-        , m_autoRepeatLineSetListLength((isRowAxis ? style.autoRepeatOrderedNamedGridColumnLines() : style.autoRepeatOrderedNamedGridRowLines()).size())
+        , m_autoRepeatLineSetListLength((isRowAxis ? style.autoRepeatOrderedNamedGridColumnLines() : style.autoRepeatOrderedNamedGridRowLines()).map.size())
         , m_totalLines(totalTracksCount + 1)
     {
         if (!m_autoRepeatLineSetListLength) {
             m_autoRepeatTotalLineSets = 0;
             return;
         }
-        unsigned named = (isRowAxis ? style.orderedNamedGridColumnLines() : style.orderedNamedGridRowLines()).size();
+        unsigned named = (isRowAxis ? style.orderedNamedGridColumnLines() : style.orderedNamedGridRowLines()).map.size();
         if (named >= m_totalLines) {
             m_autoRepeatTotalLineSets = 0;
             return;
@@ -158,15 +161,14 @@ private:
     unsigned m_totalLines;
 };
 
-void OrderedNamedLinesCollector::appendLines(Vector<String>& lineNamesValue, unsigned index, NamedLinesType type) const
+void OrderedNamedLinesCollector::appendLines(Vector<String>& lineNames, unsigned index, NamedLinesType type) const
 {
-    auto iter = type == NamedLines ? m_orderedNamedGridLines.find(index) : m_orderedNamedAutoRepeatGridLines.find(index);
-    auto endIter = type == NamedLines ? m_orderedNamedGridLines.end() : m_orderedNamedAutoRepeatGridLines.end();
-    if (iter == endIter)
+    auto& map = (type == NamedLines ? m_orderedNamedGridLines : m_orderedNamedAutoRepeatGridLines).map;
+    auto it = map.find(index);
+    if (it == map.end())
         return;
-
-    for (const auto& lineName : iter->value)
-        lineNamesValue.append(lineName);
+    for (auto& name : it->value)
+        lineNames.append(name);
 }
 
 void OrderedNamedLinesCollectorInGridLayout::collectLineNamesForIndex(Vector<String>& lineNamesValue, unsigned i) const
@@ -1113,7 +1115,7 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
     }
 
     // Otherwise, the resolved value is the computed value, preserving repeat().
-    auto& computedTracks = isRowAxis ? style.gridColumnList() : style.gridRowList();
+    auto& computedTracks = (isRowAxis ? style.gridColumnList() : style.gridRowList()).list;
 
     auto repeatVisitor = [&](CSSValueListBuilder& list, const RepeatEntry& entry) {
         if (std::holds_alternative<Vector<String>>(entry)) {
@@ -2062,12 +2064,12 @@ static Ref<CSSValueList> contentToCSSValue(const RenderStyle& style)
 
 static Ref<CSSValue> counterToCSSValue(const RenderStyle& style, CSSPropertyID propertyID)
 {
-    auto* map = style.counterDirectives();
-    if (!map)
+    auto& map = style.counterDirectives().map;
+    if (map.isEmpty())
         return CSSPrimitiveValue::create(CSSValueNone);
 
     CSSValueListBuilder list;
-    for (auto& keyValue : *map) {
+    for (auto& keyValue : map) {
         if (auto number = (propertyID == CSSPropertyCounterIncrement ? keyValue.value.incrementValue : keyValue.value.resetValue)) {
             list.append(CSSPrimitiveValue::createCustomIdent(keyValue.key));
             list.append(CSSPrimitiveValue::createInteger(*number));

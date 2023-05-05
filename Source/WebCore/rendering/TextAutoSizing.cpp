@@ -39,6 +39,7 @@
 #include "RenderTreeBuilder.h"
 #include "Settings.h"
 #include "StyleResolver.h"
+#include "TextSizeAdjustment.h"
 
 namespace WebCore {
 

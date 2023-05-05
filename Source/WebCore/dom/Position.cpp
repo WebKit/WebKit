@@ -45,6 +45,7 @@
 #include "PositionIterator.h"
 #include "RenderBlock.h"
 #include "RenderBlockFlow.h"
+#include "RenderBoxInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderGrid.h"
 #include "RenderInline.h"

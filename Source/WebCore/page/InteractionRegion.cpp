@@ -46,7 +46,7 @@
 #include "PathUtilities.h"
 #include "PlatformMouseEvent.h"
 #include "PseudoClassChangeInvalidation.h"
-#include "RenderBox.h"
+#include "RenderBoxInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "SimpleRange.h"

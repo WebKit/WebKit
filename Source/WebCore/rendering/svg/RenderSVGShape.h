@@ -27,6 +27,7 @@
 #pragma once
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
+
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "RenderSVGModelObject.h"
@@ -83,7 +84,7 @@ public:
 
     bool needsHasSVGTransformFlags() const final;
 
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const final;
+    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const final;
 
 protected:
     void element() const = delete;
@@ -95,7 +96,7 @@ protected:
     float strokeWidth() const;
     bool hasSmoothStroke() const;
 
-    bool hasNonScalingStroke() const { return style().svgStyle().vectorEffect() == VectorEffect::NonScalingStroke; }
+    inline bool hasNonScalingStroke() const;
     AffineTransform nonScalingStrokeTransform() const;
     Path* nonScalingStrokePath(const Path*, const AffineTransform&) const;
 

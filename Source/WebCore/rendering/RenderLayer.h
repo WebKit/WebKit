@@ -437,7 +437,7 @@ public:
 
     bool cannotBlitToWindow() const;
 
-    bool isTransparent() const { return renderer().isTransparent() || renderer().hasMask(); }
+    inline bool isTransparent() const; // FIXME: This function is incorrectly named. It's isNotOpaque, sometimes called hasOpacity, not isEntirelyTransparent.
 
     bool hasReflection() const { return renderer().hasReflection(); }
     bool isReflection() const { return renderer().isReplica(); }
@@ -598,12 +598,7 @@ public:
     void setFilterBackendNeedsRepaintingInRect(const LayoutRect&);
     bool hasAncestorWithFilterOutsets() const;
 
-    bool canUseOffsetFromAncestor() const
-    {
-        // FIXME: This really needs to know if there are transforms on this layer and any of the layers
-        // between it and the ancestor in question.
-        return !renderer().isTransformed() && !renderer().isSVGRootOrLegacySVGRoot();
-    }
+    inline bool canUseOffsetFromAncestor() const;
 
     // FIXME: adjustForColumns allows us to position compositing layers in columns correctly, but eventually they need to be split across columns too.
     enum ColumnOffsetAdjustment { DontAdjustForColumns, AdjustForColumns };
@@ -611,7 +606,7 @@ public:
     LayoutPoint convertToLayerCoords(const RenderLayer* ancestorLayer, const LayoutPoint&, ColumnOffsetAdjustment adjustForColumns = DontAdjustForColumns) const;
     LayoutSize offsetFromAncestor(const RenderLayer*, ColumnOffsetAdjustment = DontAdjustForColumns) const;
 
-    int zIndex() const { return renderer().style().usedZIndex(); }
+    inline int zIndex() const;
 
     enum class PaintLayerFlag : uint16_t {
         HaveTransparency                      = 1 << 0,
@@ -718,7 +713,7 @@ public:
 
     // If true, this layer's children are included in its bounds for overlap testing.
     // We can't rely on the children's positions if this layer has a filter that could have moved the children's pixels around.
-    bool overlapBoundsIncludeChildren() const { return hasFilter() && renderer().style().filter().hasFilterThatMovesPixels(); }
+    inline bool overlapBoundsIncludeChildren() const;
 
     // Can pass offsetFromRoot if known.
     LayoutRect calculateLayerBounds(const RenderLayer* ancestorLayer, const LayoutSize& offsetFromRoot, OptionSet<CalculateLayerBoundsFlag> = defaultCalculateLayerBoundsFlags()) const;
@@ -735,7 +730,7 @@ public:
     void setStaticInlinePosition(LayoutUnit position) { m_offsetForPosition.setWidth(position); }
     void setStaticBlockPosition(LayoutUnit position) { m_offsetForPosition.setHeight(position); }
 
-    bool isTransformed() const { return renderer().isTransformed(); }
+    inline bool isTransformed() const;
     // Note that this transform has the transform-origin baked in.
     TransformationMatrix* transform() const { return m_transform.get(); }
     // updateTransformFromStyle computes a transform according to the passed options (e.g. transform-origin baked in or excluded) and the given style.
@@ -743,7 +738,8 @@ public:
     // currentTransform computes a transform which takes accelerated animations into account. The
     // resulting transform has transform-origin baked in, unless non-default options are given. If
     // the layer does not have a transform, the identity matrix is returned.
-    TransformationMatrix currentTransform(OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const;
+    TransformationMatrix currentTransform(OptionSet<RenderStyle::TransformOperationOption>) const;
+    TransformationMatrix currentTransform() const;
     TransformationMatrix renderableTransform(OptionSet<PaintBehavior>) const;
     
     // Get the children transform (to apply a perspective on children), which is applied to transformed sublayers, but not this layer.
@@ -752,28 +748,21 @@ public:
     TransformationMatrix perspectiveTransform() const;
     FloatPoint perspectiveOrigin() const;
     FloatPoint3D transformOriginPixelSnappedIfNeeded() const;
-    bool preserves3D() const { return renderer().style().preserves3D(); }
-    bool hasPerspective() const { return renderer().style().hasPerspective(); }
+    inline bool preserves3D() const;
+    inline bool hasPerspective() const;
     bool has3DTransform() const { return m_transform && !m_transform->isAffine(); }
     bool hasTransformedAncestor() const { return m_hasTransformedAncestor; }
     bool participatesInPreserve3D() const;
 
     bool hasFixedContainingBlockAncestor() const { return m_hasFixedContainingBlockAncestor; }
 
-    bool hasFilter() const { return renderer().hasFilter(); }
+    inline bool hasFilter() const;
     bool hasFilterOutsets() const { return !filterOutsets().isZero(); }
     IntOutsets filterOutsets() const;
-    bool hasBackdropFilter() const
-    {
-#if ENABLE(FILTERS_LEVEL_2)
-        return renderer().hasBackdropFilter();
-#else
-        return false;
-#endif
-    }
+    inline bool hasBackdropFilter() const;
 
+    inline bool hasBlendMode() const;
 #if ENABLE(CSS_COMPOSITING)
-    bool hasBlendMode() const { return renderer().hasBlendMode(); }
     BlendMode blendMode() const { return static_cast<BlendMode>(m_blendMode); }
 
     bool isolatesCompositedBlending() const { return m_hasNotIsolatedCompositedBlendingDescendants && isCSSStackingContext(); }
@@ -822,21 +811,13 @@ public:
     std::optional<ScrollingScope> boxScrollingScope() const { return m_boxScrollingScope; }
     std::optional<ScrollingScope> contentsScrollingScope() const { return m_contentsScrollingScope; }
 
-    bool paintsWithTransparency(OptionSet<PaintBehavior> paintBehavior) const
-    {
-        if (!renderer().isTransparent() && !hasNonOpacityTransparency())
-            return false;
-        return (paintBehavior & PaintBehavior::FlattenCompositingLayers) || !isComposited();
-    }
+    inline bool paintsWithTransparency(OptionSet<PaintBehavior>) const;
 
     // If we will only draw a single item, then we can just apply
     // opacity to the drawing context rather than pushing a transparency
     // layer. This currently only detects a single bitmap image, but could
     // be extended to handle other cases.
-    bool canPaintTransparencyWithSetOpacity() const
-    {
-        return isBitmapOnly() && !hasNonOpacityTransparency();
-    }
+    inline bool canPaintTransparencyWithSetOpacity() const;
 
     bool paintsWithTransform(OptionSet<PaintBehavior>) const;
     bool shouldPaintMask(OptionSet<PaintBehavior>, OptionSet<PaintLayerFlag>) const;
@@ -1194,10 +1175,7 @@ private:
     // Convert a point in absolute coords into layer coords, taking transforms into account
     LayoutPoint absoluteToContents(const LayoutPoint&) const;
 
-    bool hasNonOpacityTransparency() const
-    {
-        return renderer().hasMask() || hasBlendMode() || (isolatesBlending() && !renderer().isDocumentElementRenderer());
-    }
+    inline bool hasNonOpacityTransparency() const;
 
     void updatePagination();
 

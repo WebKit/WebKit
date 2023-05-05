@@ -30,6 +30,8 @@
 #include "FontCascade.h"
 #include "GraphicsContext.h"
 #include "LegacyInlineElementBox.h"
+#include "ListStyleType.h"
+#include "RenderBoxInlines.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderMultiColumnFlow.h"
@@ -407,9 +409,9 @@ static StringView listMarkerSuffix(ListStyleType::Type type)
     return ". "_s;
 }
 
-String listMarkerText(ListStyleType::Type type, int value, CSSCounterStyle* counterStyle)
+String listMarkerText(const ListStyleType& type, int value, CSSCounterStyle* counterStyle)
 {
-    switch (effectiveListMarkerType(type, value)) {
+    switch (effectiveListMarkerType(type.type, value)) {
     case ListStyleType::Type::None:
         return emptyString();
 
@@ -1698,7 +1700,7 @@ void RenderListMarker::updateContent()
         break;
     }
     default:
-        auto text = listMarkerText(styleType.type, m_listItem->value());
+        auto text = listMarkerText(styleType, m_listItem->value());
         m_textWithSuffix = makeString(text, listMarkerSuffix(styleType.type));
         m_textWithoutSuffixLength = text.length();
         m_textIsLeftToRightDirection = u_charDirection(text[0]) != U_RIGHT_TO_LEFT;

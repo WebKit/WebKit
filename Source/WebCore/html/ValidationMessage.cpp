@@ -41,7 +41,7 @@
 #include "HTMLNames.h"
 #include "Page.h"
 #include "RenderBlock.h"
-#include "RenderObject.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "ShadowPseudoIds.h"

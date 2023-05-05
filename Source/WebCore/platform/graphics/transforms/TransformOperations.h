@@ -19,7 +19,6 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- *
  */
 
 #pragma once
@@ -36,7 +35,7 @@ struct BlendingContext;
 class TransformOperations {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT explicit TransformOperations(bool makeIdentity = false);
+    TransformOperations() = default;
     WEBCORE_EXPORT explicit TransformOperations(Vector<RefPtr<TransformOperation>>&&);
     
     bool operator==(const TransformOperations& o) const;

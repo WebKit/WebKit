@@ -76,7 +76,7 @@
 #import "RenderObject.h"
 #import "RenderProgress.h"
 #import "RenderSlider.h"
-#import "RenderStyle.h"
+#import "RenderStyleSetters.h"
 #import "RenderView.h"
 #import "Settings.h"
 #import "Theme.h"
@@ -572,7 +572,7 @@ void RenderThemeIOS::adjustTextFieldStyle(RenderStyle& style, const Element* ele
 
     auto adjustBackgroundColor = [&] {
         auto styleColorOptions = element->document().styleColorOptions(&style);
-        if (!style.backgroundColorEqualsToColorIgnoringVisited(systemColor(CSSValueAppleSystemOpaqueTertiaryFill, styleColorOptions)))
+        if (style.backgroundColor() != systemColor(CSSValueAppleSystemOpaqueTertiaryFill, styleColorOptions))
             return;
 
         style.setBackgroundColor(systemColor(CSSValueWebkitControlBackground, styleColorOptions));

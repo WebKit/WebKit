@@ -32,6 +32,7 @@
 #include "DisplayStyle.h"
 #include "DisplayTree.h"
 #include "LayoutBoxGeometry.h"
+#include "LayoutBoxInlines.h"
 #include "LayoutChildIterator.h"
 #include "LayoutElementBox.h"
 #include "LayoutInitialContainingBlock.h"

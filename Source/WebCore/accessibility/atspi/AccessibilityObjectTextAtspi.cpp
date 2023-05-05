@@ -21,6 +21,7 @@
 #include "AccessibilityObjectAtspi.h"
 
 #if USE(ATSPI)
+
 #include "AXObjectCache.h"
 #include "AccessibilityAtspi.h"
 #include "AccessibilityAtspiEnums.h"
@@ -31,6 +32,7 @@
 #include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
+#include "RenderStyleInlines.h"
 #include "SurrogatePairAwareTextIterator.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"

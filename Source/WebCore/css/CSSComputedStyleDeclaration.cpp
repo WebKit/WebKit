@@ -35,7 +35,7 @@
 #include "DeprecatedCSSOMValue.h"
 #include "RenderBox.h"
 #include "RenderBoxModelObject.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "StylePropertiesInlines.h"
 #include "StylePropertyShorthand.h"
 #include "StyleScope.h"

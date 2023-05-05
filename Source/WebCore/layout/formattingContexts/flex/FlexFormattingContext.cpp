@@ -33,6 +33,7 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
 #include "LayoutContext.h"
+#include "LengthFunctions.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

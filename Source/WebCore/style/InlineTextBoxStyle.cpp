@@ -29,10 +29,11 @@
 #include "FontCascade.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLNames.h"
+#include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorInlineBox.h"
 #include "InlineIteratorTextBox.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderInline.h"
-#include "TextUnderlineOffset.h"
 
 namespace WebCore {
 

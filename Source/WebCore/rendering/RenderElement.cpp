@@ -66,12 +66,9 @@
 #include "RenderLayerCompositor.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
-#if ASSERT_ENABLED
-#include "RenderListMarker.h"
-#endif
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderSVGViewportContainer.h"
-#include "RenderStyle.h"
+#include "RenderStyleSetters.h"
 #include "RenderTableCaption.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
@@ -80,6 +77,7 @@
 #include "RenderTheme.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
+#include "ResolvedStyle.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
 #include "SVGLengthContext.h"
@@ -892,6 +890,14 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
 
     if (isDocumentElementRenderer() || isBody())
         view().frameView().updateExtendBackgroundIfNecessary();
+}
+
+inline void RenderCounter::rendererStyleChanged(RenderElement& renderer, const RenderStyle* oldStyle, const RenderStyle& newStyle)
+{
+    if ((!oldStyle || oldStyle->counterDirectives().map.isEmpty()) && newStyle.counterDirectives().map.isEmpty())
+        return;
+
+    rendererStyleChangedSlowCase(renderer, oldStyle, newStyle);
 }
 
 #if !PLATFORM(IOS_FAMILY)

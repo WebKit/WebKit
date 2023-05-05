@@ -30,6 +30,7 @@
 #include "LocalFrameView.h"
 #include "RenderScrollbarPart.h"
 #include "RenderScrollbarTheme.h"
+#include "RenderStyleSetters.h"
 #include "RenderWidget.h"
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"

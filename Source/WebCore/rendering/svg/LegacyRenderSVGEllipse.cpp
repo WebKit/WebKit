@@ -31,6 +31,7 @@
 #include "SVGCircleElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGEllipseElement.h"
+#include "SVGRenderStyle.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

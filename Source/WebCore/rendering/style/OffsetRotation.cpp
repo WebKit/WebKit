@@ -31,12 +31,6 @@
 
 namespace WebCore {
 
-OffsetRotation::OffsetRotation(bool hasAuto, float angle)
-    : m_angle(angle)
-    , m_hasAuto(hasAuto)
-{
-}
-
 bool OffsetRotation::operator==(const OffsetRotation& o) const
 {
     return m_hasAuto == o.m_hasAuto && m_angle == o.m_angle;

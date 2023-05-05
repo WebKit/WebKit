@@ -56,12 +56,12 @@ enum class FontSmoothingMode : uint8_t {
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, FontSmoothingMode);
 
-enum class FontOrientation : uint8_t {
+enum class FontOrientation : bool {
     Horizontal,
     Vertical
 };
 
-enum class NonCJKGlyphOrientation : uint8_t {
+enum class NonCJKGlyphOrientation : bool {
     Mixed,
     Upright
 };

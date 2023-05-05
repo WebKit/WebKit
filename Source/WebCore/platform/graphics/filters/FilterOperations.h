@@ -26,7 +26,6 @@
 #pragma once
 
 #include "FilterOperation.h"
-#include "LengthBox.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -37,7 +36,7 @@ struct BlendingContext;
 class FilterOperations {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit FilterOperations() { };
+    FilterOperations() = default;
     explicit FilterOperations(Vector<RefPtr<FilterOperation>>&&);
 
     WEBCORE_EXPORT bool operator==(const FilterOperations&) const;

@@ -57,7 +57,7 @@
 #include "ProgressBarPart.h"
 #include "RenderMeter.h"
 #include "RenderProgress.h"
-#include "RenderStyle.h"
+#include "RenderStyleSetters.h"
 #include "RenderView.h"
 #include "SearchFieldCancelButtonPart.h"
 #include "SearchFieldPart.h"
@@ -77,10 +77,6 @@
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringConcatenateNumbers.h>
-
-#if ENABLE(APPLE_PAY)
-#include "ApplePayButtonPart.h"
-#endif
 
 #if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsMac.h"

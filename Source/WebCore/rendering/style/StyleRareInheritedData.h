@@ -120,7 +120,7 @@ public:
     unsigned lineBreak : 3; // LineBreak
     unsigned userSelect : 2; // UserSelect
     unsigned colorSpace : 1; // ColorSpace
-    unsigned speakAs : 4; // ESpeakAs
+    unsigned speakAs : 4 { 0 }; // OptionSet<SpeakAs>
     unsigned hyphens : 2; // Hyphens
     unsigned textCombine : 1; // text-combine-upright
     unsigned textEmphasisFill : 1; // TextEmphasisFill

@@ -22,9 +22,10 @@
 #include "config.h"
 #include "FixedTableLayout.h"
 
-#include "RenderTable.h"
-#include "RenderTableCell.h"
+#include "RenderBoxInlines.h"
+#include "RenderTableCellInlines.h"
 #include "RenderTableCol.h"
+#include "RenderTableInlines.h"
 #include "RenderTableSection.h"
 
 /*

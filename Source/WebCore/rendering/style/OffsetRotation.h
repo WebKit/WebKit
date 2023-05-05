@@ -33,7 +33,7 @@ struct BlendingContext;
 
 class OffsetRotation {
 public:
-    WEBCORE_EXPORT OffsetRotation(bool hasAuto = false, float angle = 0);
+    constexpr OffsetRotation(bool hasAuto = false, float angle = 0) : m_angle(angle), m_hasAuto(hasAuto) { }
 
     bool hasAuto() const { return m_hasAuto; }
     float angle() const { return m_angle; }

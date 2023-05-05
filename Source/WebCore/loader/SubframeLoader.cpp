@@ -50,6 +50,7 @@
 #include "Page.h"
 #include "PluginData.h"
 #include "PluginDocument.h"
+#include "RenderBoxInlines.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderView.h"
 #include "ScriptController.h"

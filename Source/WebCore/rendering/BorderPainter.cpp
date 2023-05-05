@@ -26,6 +26,7 @@
 #include "config.h"
 #include "BorderPainter.h"
 
+#include "BorderData.h"
 #include "BorderEdge.h"
 #include "CachedImage.h"
 #include "FloatRoundedRect.h"
@@ -38,6 +39,20 @@
 #include "RenderTheme.h"
 
 namespace WebCore {
+
+struct BorderPainter::Sides {
+    RoundedRect outerBorder;
+    RoundedRect innerBorder;
+    RoundedRect unadjustedInnerBorder;
+    std::optional<BorderData::Radii> radii { };
+    const BorderEdges& edges;
+    bool haveAllSolidEdges { true };
+    BackgroundBleedAvoidance bleedAvoidance { BackgroundBleedNone };
+    bool includeLogicalLeftEdge { true };
+    bool includeLogicalRightEdge { true };
+    bool appliedClipAlready { false };
+    bool isHorizontal { true };
+};
 
 BorderPainter::BorderPainter(const RenderElement& renderer, const PaintInfo& paintInfo)
     : m_renderer(renderer)

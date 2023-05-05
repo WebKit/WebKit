@@ -25,6 +25,7 @@
 #include "HTMLMetaElement.h"
 
 #include "Attribute.h"
+#include "CSSParser.h"
 #include "Color.h"
 #include "Document.h"
 #include "ElementInlines.h"

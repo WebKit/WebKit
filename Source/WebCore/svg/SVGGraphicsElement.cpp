@@ -24,6 +24,7 @@
 
 #include "LegacyRenderSVGPath.h"
 #include "RenderAncestorIterator.h"
+#include "RenderElementInlines.h"
 #include "RenderLayer.h"
 #include "RenderSVGHiddenContainer.h"
 #include "RenderSVGPath.h"

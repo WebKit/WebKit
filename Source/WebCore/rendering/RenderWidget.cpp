@@ -32,6 +32,7 @@
 #include "LocalFrame.h"
 #include "RemoteFrame.h"
 #include "RemoteFrameView.h"
+#include "RenderBoxInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerScrollableArea.h"

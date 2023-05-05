@@ -38,7 +38,7 @@
 #include "HTTPParsers.h"
 #include "MathMLMathElement.h"
 #include "MathMLNames.h"
-#include "RenderMathMLBlock.h"
+#include "RenderMathMLBlockInlines.h"
 #include "RenderTableCell.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"

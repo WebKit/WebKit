@@ -48,6 +48,7 @@
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HitTestResult.h"
+#include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLineBox.h"
 #include "InlineRunAndOffset.h"
@@ -56,8 +57,9 @@
 #include "LocalFrameView.h"
 #include "Page.h"
 #include "PaintInfo.h"
-#include "PathOperation.h"
+#include "RenderBlockInlines.h"
 #include "RenderBoxFragmentInfo.h"
+#include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
@@ -66,11 +68,12 @@
 #include "RenderGrid.h"
 #include "RenderInline.h"
 #include "RenderIterator.h"
-#include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
+#include "RenderLayerInlines.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderLayoutState.h"
 #include "RenderMultiColumnFlow.h"
+#include "RenderObjectInlines.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderTableCell.h"
 #include "RenderTheme.h"
@@ -82,8 +85,8 @@
 #include "ScrollAnimator.h"
 #include "ScrollbarTheme.h"
 #include "Settings.h"
+#include "StyleReflection.h"
 #include "StyleScrollSnapPoints.h"
-#include "TextDirection.h"
 #include "TransformState.h"
 #include <algorithm>
 #include <math.h>
@@ -5697,6 +5700,15 @@ const RenderBlockFlow* RenderBox::blockFormattingContextRoot() const
     while (blockContainer && !blockContainer->establishesBlockFormattingContext())
         blockContainer = blockContainer->containingBlock();
     return dynamicDowncast<RenderBlockFlow>(blockContainer);
+}
+
+// hasAutoZIndex only returns true if the element is positioned or a flex-item since
+// position:static elements that are not flex-items get their z-index coerced to auto.
+bool RenderBox::requiresLayer() const
+{
+    return isDocumentElementRenderer() || isPositioned() || createsGroup() || hasNonVisibleOverflow()
+        || hasTransformRelatedProperty() || hasHiddenBackface() || hasReflection() || style().specifiesColumns()
+        || style().containsLayout() || !style().hasAutoUsedZIndex() || hasRunningAcceleratedAnimations();
 }
 
 } // namespace WebCore

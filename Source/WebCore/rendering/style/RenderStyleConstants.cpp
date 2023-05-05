@@ -1154,7 +1154,6 @@ TextStream& operator<<(TextStream& ts, TextTransform textTransform)
     case TextTransform::Lowercase: ts << "lowercase"; break;
     case TextTransform::FullSizeKana: ts << "full-size-kana"; break;
     case TextTransform::FullWidth: ts << "full-width"; break;
-    case TextTransform::None: ts << "none"; break;
     }
     return ts;
 }
@@ -1371,7 +1370,5 @@ CSSBoxType transformBoxToCSSBoxType(TransformBox transformBox)
         return CSSBoxType::BorderBox;
     }
 }
-
-const float defaultMiterLimit = 4;
 
 } // namespace WebCore

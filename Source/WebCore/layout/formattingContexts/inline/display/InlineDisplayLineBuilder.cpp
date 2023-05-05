@@ -148,7 +148,7 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
         , contentVisualOffsetInInlineDirection
         , rootInlineBox.logicalWidth()
         , isLeftToRightDirection
-        , lineBox.isHorizontal()
+        , rootInlineBox.layoutBox().style().isHorizontalWritingMode()
         , lineIsFullyTruncatedInBlockDirection
     };
 }

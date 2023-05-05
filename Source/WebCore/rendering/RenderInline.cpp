@@ -29,10 +29,12 @@
 #include "FrameSelection.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
+#include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLineBox.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LegacyInlineElementBox.h"
+#include "LegacyInlineFlowBoxInlines.h"
 #include "LegacyInlineTextBox.h"
 #include "RenderBlock.h"
 #include "RenderChildIterator.h"
@@ -51,6 +53,7 @@
 #include "StyleInheritedData.h"
 #include "TransformState.h"
 #include "VisiblePosition.h"
+#include "WillChangeData.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
 
@@ -988,6 +991,16 @@ bool isEmptyInline(const RenderInline& renderer)
             return false;
     }
     return true;
+}
+
+inline bool RenderInline::willChangeCreatesStackingContext() const
+{
+    return style().willChange() && style().willChange()->canCreateStackingContext();
+}
+
+bool RenderInline::requiresLayer() const
+{
+    return isInFlowPositioned() || createsGroup() || hasClipPath() || shouldApplyPaintContainment() || willChangeCreatesStackingContext() || hasRunningAcceleratedAnimations();
 }
 
 } // namespace WebCore

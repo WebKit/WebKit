@@ -34,6 +34,8 @@
 #include "GridArea.h"
 #include "RenderBox.h"
 #include "RenderGrid.h"
+#include "RenderStyleInlines.h"
+#include "StyleGridData.h"
 #include <cstdlib>
 
 namespace WebCore {
@@ -75,7 +77,7 @@ static inline GridPositionSide transposedSide(GridPositionSide side)
 
 static std::optional<int> clampedImplicitLineForArea(const RenderStyle& style, const String& name, int min, int max, bool isRowAxis, bool isStartSide)
 {
-    const NamedGridAreaMap& areas = style.namedGridArea();
+    auto& areas = style.namedGridArea().map;
     auto gridAreaIt = areas.find(name);
     if (gridAreaIt != areas.end()) {
         const GridArea& gridArea = gridAreaIt->value;
@@ -96,9 +98,9 @@ NamedLineCollectionBase::NamedLineCollectionBase(const RenderGrid& initialGrid, 
 
     m_lastLine = explicitGridSizeForSide(*grid, side);
 
-    const auto& gridLineNames = isRowAxis ? gridContainerStyle->namedGridColumnLines() : gridContainerStyle->namedGridRowLines();
-    const auto& autoRepeatGridLineNames = isRowAxis ? gridContainerStyle->autoRepeatNamedGridColumnLines() : gridContainerStyle->autoRepeatNamedGridRowLines();
-    const auto& implicitGridLineNames = isRowAxis ? gridContainerStyle->implicitNamedGridColumnLines() : gridContainerStyle->implicitNamedGridRowLines();
+    auto& gridLineNames = (isRowAxis ? gridContainerStyle->namedGridColumnLines() : gridContainerStyle->namedGridRowLines()).map;
+    auto& autoRepeatGridLineNames = (isRowAxis ? gridContainerStyle->autoRepeatNamedGridColumnLines() : gridContainerStyle->autoRepeatNamedGridRowLines()).map;
+    auto& implicitGridLineNames = (isRowAxis ? gridContainerStyle->implicitNamedGridColumnLines() : gridContainerStyle->implicitNamedGridRowLines()).map;
 
     auto linesIterator = gridLineNames.find(lineName);
     m_namedLinesIndices = linesIterator == gridLineNames.end() ? nullptr : &linesIterator->value;
@@ -155,9 +157,9 @@ NamedLineCollectionBase::NamedLineCollectionBase(const RenderGrid& initialGrid, 
     }
 
     ASSERT(!m_autoRepeatTotalTracks);
-    m_autoRepeatTrackListLength = (isRowAxis ? gridContainerStyle->autoRepeatOrderedNamedGridColumnLines() : gridContainerStyle->autoRepeatOrderedNamedGridRowLines()).size();
+    m_autoRepeatTrackListLength = (isRowAxis ? gridContainerStyle->autoRepeatOrderedNamedGridColumnLines() : gridContainerStyle->autoRepeatOrderedNamedGridRowLines()).map.size();
     if (m_autoRepeatTrackListLength) {
-        unsigned namedLines = (isRowAxis ? gridContainerStyle->orderedNamedGridColumnLines() : gridContainerStyle->orderedNamedGridRowLines()).size();
+        unsigned namedLines = (isRowAxis ? gridContainerStyle->orderedNamedGridColumnLines() : gridContainerStyle->orderedNamedGridRowLines()).map.size();
         unsigned totalLines = m_lastLine + 1;
         if (namedLines < totalLines) {
             // auto repeat in a subgrid specifies the line names that should be repeated, not
@@ -385,7 +387,7 @@ static void adjustGridPositionsFromStyle(const RenderBox& gridItem, GridTrackSiz
 
     if (isIndefiniteSpan(initialPosition, finalPosition) && is<RenderGrid>(gridItem) && downcast<RenderGrid>(gridItem).isSubgrid(direction)) {
         // Indefinite span for an item that is subgridded in this axis.
-        int lineCount = (isForColumns ? gridItem.style().orderedNamedGridColumnLines() : gridItem.style().orderedNamedGridRowLines()).size();
+        int lineCount = (isForColumns ? gridItem.style().orderedNamedGridColumnLines() : gridItem.style().orderedNamedGridRowLines()).map.size();
 
         if (initialPosition.isAuto()) {
             // Set initial position to span <line names - 1>

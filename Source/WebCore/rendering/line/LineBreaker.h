@@ -26,7 +26,6 @@
 
 #include "LegacyInlineIterator.h"
 #include "LineInfo.h"
-#include "LineInlineHeaders.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {

@@ -31,6 +31,7 @@
 #include "MediaQueryParserContext.h"
 #include "NodeRenderStyle.h"
 #include "RenderElement.h"
+#include "ResolvedStyle.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include <wtf/text/TextStream.h>

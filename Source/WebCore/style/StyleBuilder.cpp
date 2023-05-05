@@ -30,6 +30,7 @@
 #include "config.h"
 #include "StyleBuilder.h"
 
+#include "CSSCustomPropertyValue.h"
 #include "CSSFontSelector.h"
 #include "CSSPaintImageValue.h"
 #include "CSSPendingSubstitutionValue.h"

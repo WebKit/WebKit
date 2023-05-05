@@ -27,6 +27,7 @@
 #include "Image.h"
 #include "IntRect.h"
 #include "RenderSVGResourceMaskerInlines.h"
+#include "SVGRenderStyle.h"
 #include "SVGRenderingContext.h"
 #include <wtf/IsoMallocInlines.h>
 

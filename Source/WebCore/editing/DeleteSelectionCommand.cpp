@@ -42,6 +42,7 @@
 #include "LocalFrame.h"
 #include "NodeTraversal.h"
 #include "Range.h"
+#include "RenderBoxInlines.h"
 #include "RenderTableCell.h"
 #include "RenderText.h"
 #include "RenderedDocumentMarker.h"

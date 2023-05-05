@@ -56,6 +56,7 @@
 #include "RenderScrollbar.h"
 #include "RenderStyleConstants.h"
 #include "RenderView.h"
+#include "ResolvedStyle.h"
 #include "RuleSet.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElement.h"

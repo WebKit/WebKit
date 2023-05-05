@@ -113,7 +113,7 @@ struct Box {
 
     UBiDiLevel bidiLevel() const { return m_bidiLevel; }
 
-    bool isHorizontal() const { return style().isHorizontalWritingMode(); }
+    inline bool isHorizontal() const;
 
     bool hasContent() const { return m_hasContent; }
     bool isVisible() const { return !isFullyTruncated() && style().visibility() == Visibility::Visible; }

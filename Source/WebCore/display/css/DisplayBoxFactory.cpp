@@ -42,6 +42,7 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutElementBox.h"
 #include "LayoutInitialContainingBlock.h"
+#include "LengthFunctions.h"
 #include "Logging.h"
 #include "TransformationMatrix.h"
 

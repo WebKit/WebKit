@@ -31,9 +31,8 @@
 #include "config.h"
 #include "GridBaselineAlignment.h"
 
-#include "RenderBox.h"
-#include "RenderStyle.h"
-#include "rendering/style/RenderStyleConstants.h"
+#include "RenderBoxInlines.h"
+#include "RenderStyleConstants.h"
 
 namespace WebCore {
 

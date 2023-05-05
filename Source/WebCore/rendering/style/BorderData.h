@@ -32,15 +32,17 @@ namespace WebCore {
 
 class OutlineValue;
 
+struct BorderDataRadii {
+    LengthSize topLeft { LengthType::Fixed, LengthType::Fixed };
+    LengthSize topRight { LengthType::Fixed, LengthType::Fixed };
+    LengthSize bottomLeft { LengthType::Fixed, LengthType::Fixed };
+    LengthSize bottomRight { LengthType::Fixed, LengthType::Fixed };
+};
+
 class BorderData {
 friend class RenderStyle;
 public:
-    struct Radii {
-        LengthSize topLeft { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };
-        LengthSize topRight { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };
-        LengthSize bottomLeft { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };
-        LengthSize bottomRight { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };
-    };
+    using Radii = BorderDataRadii;
 
     bool hasBorder() const
     {

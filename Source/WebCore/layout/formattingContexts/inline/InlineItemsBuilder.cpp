@@ -30,6 +30,7 @@
 #include "InlineSoftLineBreakItem.h"
 #include "StyleResolver.h"
 #include "TextUtil.h"
+#include "UnicodeBidi.h"
 #include <wtf/Scope.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>

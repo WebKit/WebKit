@@ -33,6 +33,7 @@
 #include "GraphicsContext.h"
 #include "MathMLFractionElement.h"
 #include "PaintInfo.h"
+#include "RenderMathMLBlockInlines.h"
 #include <cmath>
 #include <wtf/IsoMallocInlines.h>
 

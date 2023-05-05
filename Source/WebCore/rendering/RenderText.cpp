@@ -34,7 +34,8 @@
 #include "DocumentMarkerController.h"
 #include "FloatQuad.h"
 #include "Hyphenation.h"
-#include "InlineIteratorLineBox.h"
+#include "InlineIteratorBoxInlines.h"
+#include "InlineIteratorLineBoxInlines.h"
 #include "InlineIteratorLogicalOrderTraversal.h"
 #include "InlineIteratorTextBox.h"
 #include "InlineRunAndOffset.h"
@@ -1429,7 +1430,7 @@ void RenderText::setRenderedText(const String& newText)
         m_text = makeStringByReplacingAll(m_text, '\\', yenSign);
     
     const auto& style = this->style();
-    if (style.textTransform() != TextTransform::None)
+    if (!style.textTransform().isEmpty())
         m_text = applyTextTransform(style, m_text, previousCharacter());
 
     // At rendering time, if certain fonts are used, these characters get swapped out with higher-quality PUA characters.
@@ -1569,7 +1570,7 @@ String RenderText::textWithoutConvertingBackslashToYenSymbol() const
     if (!m_useBackslashAsYenSymbol || style().textSecurity() != TextSecurity::None)
         return text();
 
-    if (style().textTransform() == TextTransform::None)
+    if (style().textTransform().isEmpty())
         return originalText();
 
     return applyTextTransform(style(), originalText(), previousCharacter());

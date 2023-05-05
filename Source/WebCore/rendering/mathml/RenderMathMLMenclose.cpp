@@ -32,6 +32,7 @@
 #include "GraphicsContext.h"
 #include "MathMLNames.h"
 #include "PaintInfo.h"
+#include "RoundedRect.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 

@@ -47,6 +47,8 @@
 #include "ImageOverlayController.h"
 #include "MediaControlsHost.h"
 #include "Page.h"
+#include "RenderBoxInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderImage.h"
 #include "RenderText.h"
 #include "ShadowRoot.h"

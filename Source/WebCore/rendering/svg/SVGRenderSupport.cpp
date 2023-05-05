@@ -47,6 +47,7 @@
 #include "RenderSVGText.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGGeometryElement.h"
+#include "SVGRenderStyle.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "TransformState.h"

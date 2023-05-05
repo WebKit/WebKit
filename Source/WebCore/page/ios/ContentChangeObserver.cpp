@@ -26,6 +26,8 @@
 #include "ContentChangeObserver.h"
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
+
+#include "Animation.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMTimer.h"

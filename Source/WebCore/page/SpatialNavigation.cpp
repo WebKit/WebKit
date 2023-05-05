@@ -42,6 +42,7 @@
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
+#include "RenderStyleInlines.h"
 #include "Settings.h"
 
 namespace WebCore {

@@ -30,7 +30,6 @@
 #include "SVGRenderTreeAsText.h"
 
 #include "ColorSerialization.h"
-#include "GraphicsTypes.h"
 #include "LegacyRenderSVGImage.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShapeInlines.h"
@@ -52,6 +51,7 @@
 #include "RenderSVGRoot.h"
 #include "RenderSVGShapeInlines.h"
 #include "RenderSVGText.h"
+#include "RenderStyleInlines.h"
 #include "SVGCircleElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGEllipseElement.h"
@@ -61,10 +61,10 @@
 #include "SVGPathUtilities.h"
 #include "SVGPolyElement.h"
 #include "SVGRectElement.h"
+#include "SVGRenderStyle.h"
 #include "SVGRootInlineBox.h"
 #include "SVGStopElement.h"
 #include "StyleCachedImage.h"
-
 #include <math.h>
 
 namespace WebCore {

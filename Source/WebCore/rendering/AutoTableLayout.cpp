@@ -22,12 +22,13 @@
 #include "config.h"
 #include "AutoTableLayout.h"
 
+#include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"
 #include "RenderFlexibleBox.h"
 #include "RenderGrid.h"
-#include "RenderTable.h"
-#include "RenderTableCell.h"
+#include "RenderTableCellInlines.h"
 #include "RenderTableCol.h"
+#include "RenderTableInlines.h"
 #include "RenderTableSection.h"
 #include "RenderView.h"
 

@@ -42,7 +42,7 @@
 #include "PlatformStrategies.h"
 #include "Quirks.h"
 #include "RenderElement.h"
-#include "RenderStyle.h"
+#include "RenderStyleSetters.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StyleAdjuster.h"

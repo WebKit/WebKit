@@ -26,7 +26,7 @@
 #include "FontMetrics.h"
 #include "HTMLElement.h"
 #include "HTMLWBRElement.h"
-#include "InlineIteratorBox.h"
+#include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorLineBox.h"
 #include "InlineRunAndOffset.h"
 #include "LineSelection.h"

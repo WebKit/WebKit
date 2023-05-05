@@ -21,7 +21,9 @@
 #include "SVGBoundingBoxComputation.h"
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
+
 #include "RenderChildIterator.h"
+#include "RenderObjectInlines.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGForeignObject.h"
 #include "RenderSVGHiddenContainer.h"

@@ -37,6 +37,7 @@ class LegacyInlineElementBox;
 class RenderBlockFlow;
 class RenderBoxFragmentInfo;
 class RenderFragmentContainer;
+class RoundedRectRadii;
 struct PaintInfo;
 
 enum SizeType { MainOrPreferredSize, MinSize, MaxSize };
@@ -52,18 +53,11 @@ class RenderBox : public RenderBoxModelObject {
 public:
     virtual ~RenderBox();
 
-    // hasAutoZIndex only returns true if the element is positioned or a flex-item since
-    // position:static elements that are not flex-items get their z-index coerced to auto.
-    bool requiresLayer() const override
-    {
-        return isDocumentElementRenderer() || isPositioned() || createsGroup() || hasNonVisibleOverflow()
-            || hasTransformRelatedProperty() || hasHiddenBackface() || hasReflection() || style().specifiesColumns()
-            || style().containsLayout() || !style().hasAutoUsedZIndex() || hasRunningAcceleratedAnimations();
-    }
+    bool requiresLayer() const override;
 
     bool requiresLayerWithScrollableArea() const;
     bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) const final;
-    
+
     LayoutUnit x() const { return m_frameRect.x(); }
     LayoutUnit y() const { return m_frameRect.y(); }
     LayoutUnit width() const { return m_frameRect.width(); }
@@ -79,65 +73,29 @@ public:
     template<typename T> void setWidth(T width) { m_frameRect.setWidth(width); }
     template<typename T> void setHeight(T height) { m_frameRect.setHeight(height); }
 
-    LayoutUnit logicalLeft() const { return style().isHorizontalWritingMode() ? x() : y(); }
-    LayoutUnit logicalRight() const { return logicalLeft() + logicalWidth(); }
-    LayoutUnit logicalTop() const { return style().isHorizontalWritingMode() ? y() : x(); }
-    LayoutUnit logicalBottom() const { return logicalTop() + logicalHeight(); }
-    LayoutUnit logicalWidth() const { return style().isHorizontalWritingMode() ? width() : height(); }
-    LayoutUnit logicalHeight() const { return style().isHorizontalWritingMode() ? height() : width(); }
+    inline LayoutUnit logicalLeft() const;
+    inline LayoutUnit logicalRight() const;
+    inline LayoutUnit logicalTop() const;
+    inline LayoutUnit logicalBottom() const;
+    inline LayoutUnit logicalWidth() const;
+    inline LayoutUnit logicalHeight() const;
 
     enum class AllowIntrinsic : bool { No, Yes };
     LayoutUnit constrainLogicalWidthInFragmentByMinMax(LayoutUnit, LayoutUnit, RenderBlock&, RenderFragmentContainer*, AllowIntrinsic = AllowIntrinsic::Yes) const;
     LayoutUnit constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const;
     LayoutUnit constrainContentBoxLogicalHeightByMinMax(LayoutUnit logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const;
 
-    void setLogicalLeft(LayoutUnit left)
-    {
-        if (style().isHorizontalWritingMode())
-            setX(left);
-        else
-            setY(left);
-    }
-    void setLogicalTop(LayoutUnit top)
-    {
-        if (style().isHorizontalWritingMode())
-            setY(top);
-        else
-            setX(top);
-    }
-    void setLogicalLocation(const LayoutPoint& location)
-    {
-        if (style().isHorizontalWritingMode())
-            setLocation(location);
-        else
-            setLocation(location.transposedPoint());
-    }
-    void setLogicalWidth(LayoutUnit size)
-    {
-        if (style().isHorizontalWritingMode())
-            setWidth(size);
-        else
-            setHeight(size);
-    }
-    void setLogicalHeight(LayoutUnit size)
-    {
-        if (style().isHorizontalWritingMode())
-            setHeight(size);
-        else
-            setWidth(size);
-    }
-    void setLogicalSize(const LayoutSize& size)
-    {
-        if (style().isHorizontalWritingMode())
-            setSize(size);
-        else
-            setSize(size.transposedSize());
-    }
+    inline void setLogicalLeft(LayoutUnit);
+    inline void setLogicalTop(LayoutUnit);
+    inline void setLogicalLocation(LayoutPoint);
+    inline void setLogicalWidth(LayoutUnit);
+    inline void setLogicalHeight(LayoutUnit);
+    inline void setLogicalSize(LayoutSize);
 
     LayoutPoint location() const { return m_frameRect.location(); }
     LayoutSize locationOffset() const { return LayoutSize(x(), y()); }
     LayoutSize size() const { return m_frameRect.size(); }
-    LayoutSize logicalSize() const { return style().isHorizontalWritingMode() ? m_frameRect.size() : m_frameRect.size().transposedSize(); }
+    inline LayoutSize logicalSize() const;
 
     void setLocation(const LayoutPoint& location) { m_frameRect.setLocation(location); }
     
@@ -147,23 +105,16 @@ public:
     LayoutRect frameRect() const { return m_frameRect; }
     void setFrameRect(const LayoutRect& rect) { m_frameRect = rect; }
 
-    LayoutRect marginBoxRect() const
-    {
-        auto marginLeft = computedCSSPadding(style().marginLeft());
-        auto marginRight = computedCSSPadding(style().marginRight());
-        auto marginTop = computedCSSPadding(style().marginTop());
-        auto marginBottom = computedCSSPadding(style().marginBottom());
-        return LayoutRect(-marginLeft, -marginTop, size().width() + marginLeft + marginRight, size().height() + marginTop + marginBottom);
-    }
+    inline LayoutRect marginBoxRect() const;
     LayoutRect borderBoxRect() const { return LayoutRect(LayoutPoint(), size()); }
     LayoutRect borderBoundingBox() const final { return borderBoxRect(); }
-    LayoutSize borderBoxLogicalSize() const { return logicalSize(); }
+    inline LayoutSize borderBoxLogicalSize() const;
 
-    WEBCORE_EXPORT RoundedRect::Radii borderRadii() const;
+    WEBCORE_EXPORT RoundedRectRadii borderRadii() const;
     RoundedRect roundedBorderBoxRect() const;
 
     // The content area of the box (excludes padding - and intrinsic padding for table cells, etc... - and border).
-    LayoutRect contentBoxRect() const;
+    inline LayoutRect contentBoxRect() const;
     LayoutPoint contentBoxLocation() const;
 
     // https://www.w3.org/TR/css-transforms-1/#reference-box
@@ -176,7 +127,7 @@ public:
 
     // This returns the content area of the box (excluding padding and border). The only difference with contentBoxRect is that computedCSSContentBoxRect
     // does include the intrinsic padding in the content box as this is what some callers expect (like getComputedStyle).
-    LayoutRect computedCSSContentBoxRect() const { return LayoutRect(borderLeft() + computedCSSPaddingLeft(), borderTop() + computedCSSPaddingTop(), paddingBoxWidth() - computedCSSPaddingLeft() - computedCSSPaddingRight(), paddingBoxHeight() - computedCSSPaddingTop() - computedCSSPaddingBottom()); }
+    inline LayoutRect computedCSSContentBoxRect() const;
 
     // Bounds of the outline box in absolute coords. Respects transforms
     LayoutRect outlineBoundsForRepaint(const RenderLayerModelObject* /*repaintContainer*/, const RenderGeometryMap*) const final;
@@ -203,38 +154,38 @@ public:
     // but it is on the right in vertical-rl.
     WEBCORE_EXPORT LayoutRect flippedClientBoxRect() const;
     LayoutRect layoutOverflowRect() const { return m_overflow ? m_overflow->layoutOverflowRect() : flippedClientBoxRect(); }
-    LayoutUnit logicalLeftLayoutOverflow() const { return style().isHorizontalWritingMode() ? layoutOverflowRect().x() : layoutOverflowRect().y(); }
-    LayoutUnit logicalRightLayoutOverflow() const { return style().isHorizontalWritingMode() ? layoutOverflowRect().maxX() : layoutOverflowRect().maxY(); }
+    inline LayoutUnit logicalLeftLayoutOverflow() const;
+    inline LayoutUnit logicalRightLayoutOverflow() const;
     
     LayoutRect visualOverflowRect() const { return m_overflow ? m_overflow->visualOverflowRect() : borderBoxRect(); }
-    LayoutUnit logicalLeftVisualOverflow() const { return style().isHorizontalWritingMode() ? visualOverflowRect().x() : visualOverflowRect().y(); }
-    LayoutUnit logicalRightVisualOverflow() const { return style().isHorizontalWritingMode() ? visualOverflowRect().maxX() : visualOverflowRect().maxY(); }
+    inline LayoutUnit logicalLeftVisualOverflow() const;
+    inline LayoutUnit logicalRightVisualOverflow() const;
 
     void addLayoutOverflow(const LayoutRect&);
     void addVisualOverflow(const LayoutRect&);
     void clearOverflow();
     
-    virtual bool isTopLayoutOverflowAllowed() const { return !style().isLeftToRightDirection() && !isHorizontalWritingMode(); }
-    virtual bool isLeftLayoutOverflowAllowed() const { return !style().isLeftToRightDirection() && isHorizontalWritingMode(); }
+    virtual inline bool isTopLayoutOverflowAllowed() const;
+    virtual inline bool isLeftLayoutOverflowAllowed() const;
     
     void addVisualEffectOverflow();
     LayoutRect applyVisualEffectOverflow(const LayoutRect&) const;
     void addOverflowFromChild(const RenderBox* child) { addOverflowFromChild(child, child->locationOffset()); }
     void addOverflowFromChild(const RenderBox* child, const LayoutSize& delta);
 
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const override;
+    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const override;
 
-    LayoutSize contentSize() const { return { contentWidth(), contentHeight() }; }
-    LayoutUnit contentWidth() const { return std::max(0_lu, paddingBoxWidth() - paddingLeft() - paddingRight()); }
-    LayoutUnit contentHeight() const { return std::max(0_lu, paddingBoxHeight() - paddingTop() - paddingBottom()); }
-    LayoutSize contentLogicalSize() const { return style().isHorizontalWritingMode() ? contentSize() : contentSize().transposedSize(); }
-    LayoutUnit contentLogicalWidth() const { return style().isHorizontalWritingMode() ? contentWidth() : contentHeight(); }
-    LayoutUnit contentLogicalHeight() const { return style().isHorizontalWritingMode() ? contentHeight() : contentWidth(); }
+    inline LayoutSize contentSize() const;
+    inline LayoutUnit contentWidth() const;
+    inline LayoutUnit contentHeight() const;
+    inline LayoutSize contentLogicalSize() const;
+    inline LayoutUnit contentLogicalWidth() const;
+    inline LayoutUnit contentLogicalHeight() const;
 
-    LayoutUnit paddingBoxWidth() const { return std::max(0_lu, width() - borderLeft() - borderRight() - verticalScrollbarWidth()); }
-    LayoutUnit paddingBoxHeight() const { return std::max(0_lu, height() - borderTop() - borderBottom() - horizontalScrollbarHeight()); }
+    inline LayoutUnit paddingBoxWidth() const;
+    inline LayoutUnit paddingBoxHeight() const;
     LayoutRect paddingBoxRect() const;
-    LayoutRect paddingBoxRectIncludingScrollbar() const { return LayoutRect(borderLeft(), borderTop(), width() - borderLeft() - borderRight(), height() - borderTop() - borderBottom()); }
+    inline LayoutRect paddingBoxRectIncludingScrollbar() const;
 
     // IE extensions. Used to calculate offsetWidth/Height.  Overridden by inlines (RenderFlow)
     // to return the remaining width on a given line (and the height of a single line).
@@ -243,14 +194,14 @@ public:
 
     // More IE extensions.  clientWidth and clientHeight represent the interior of an object
     // excluding border and scrollbar.  clientLeft/Top are just the borderLeftWidth and borderTopWidth.
-    LayoutUnit clientLeft() const { return borderLeft(); }
-    LayoutUnit clientTop() const { return borderTop(); }
+    inline LayoutUnit clientLeft() const;
+    inline LayoutUnit clientTop() const;
     WEBCORE_EXPORT LayoutUnit clientWidth() const;
     WEBCORE_EXPORT LayoutUnit clientHeight() const;
-    LayoutUnit clientLogicalWidth() const { return style().isHorizontalWritingMode() ? clientWidth() : clientHeight(); }
-    LayoutUnit clientLogicalHeight() const { return style().isHorizontalWritingMode() ? clientHeight() : clientWidth(); }
-    LayoutUnit clientLogicalBottom() const { return borderBefore() + clientLogicalHeight(); }
-    LayoutRect clientBoxRect() const { return LayoutRect(clientLeft(), clientTop(), clientWidth(), clientHeight()); }
+    inline LayoutUnit clientLogicalWidth() const;
+    inline LayoutUnit clientLogicalHeight() const;
+    inline LayoutUnit clientLogicalBottom() const;
+    inline LayoutRect clientBoxRect() const;
 
     // scrollWidth/scrollHeight will be the same as clientWidth/clientHeight unless the
     // object has overflow:hidden/scroll/auto specified and also has overflow.
@@ -335,8 +286,8 @@ public:
     void clearOverridingLogicalHeight();
     void clearOverridingLogicalWidth();
 
-    LayoutUnit overridingContentLogicalWidth() const { return std::max(LayoutUnit(), overridingLogicalWidth() - borderAndPaddingLogicalWidth() - scrollbarLogicalWidth()); }
-    LayoutUnit overridingContentLogicalHeight() const { return std::max(LayoutUnit(), overridingLogicalHeight() - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight()); }
+    inline LayoutUnit overridingContentLogicalWidth() const;
+    inline LayoutUnit overridingContentLogicalHeight() const;
 
     std::optional<LayoutUnit> overridingContainingBlockContentWidth() const override;
     std::optional<LayoutUnit> overridingContainingBlockContentHeight() const override;
@@ -453,14 +404,11 @@ public:
     RenderBoxFragmentInfo* renderBoxFragmentInfo(RenderFragmentContainer*, RenderBoxFragmentInfoFlags = CacheRenderBoxFragmentInfo) const;
     void computeLogicalWidthInFragment(LogicalExtentComputedValues&, RenderFragmentContainer* = nullptr) const;
 
-    bool stretchesToViewport() const
-    {
-        return document().inQuirksMode() && style().logicalHeight().isAuto() && !isFloatingOrOutOfFlowPositioned() && (isDocumentElementRenderer() || isBody()) && !shouldComputeLogicalHeightFromAspectRatio() && !isInline();
-    }
+    inline bool stretchesToViewport() const;
 
     virtual LayoutSize intrinsicSize() const { return LayoutSize(); }
     LayoutUnit intrinsicLogicalWidth() const;
-    LayoutUnit intrinsicLogicalHeight() const { return style().isHorizontalWritingMode() ? intrinsicSize().height() : intrinsicSize().width(); }
+    inline LayoutUnit intrinsicLogicalHeight() const;
 
     // Whether or not the element shrinks to its intrinsic width (rather than filling the width
     // of a containing block).  HTML4 buttons, <select>s, <input>s, legends, and floating/compact elements do this.
@@ -491,20 +439,20 @@ public:
     enum class UpdatePercentageHeightDescendants : bool { No, Yes };
     std::optional<LayoutUnit> computePercentageLogicalHeight(const Length& height, UpdatePercentageHeightDescendants = UpdatePercentageHeightDescendants::Yes) const;
 
-    LayoutUnit availableLogicalWidth() const { return contentLogicalWidth(); }
+    inline LayoutUnit availableLogicalWidth() const;
     virtual LayoutUnit availableLogicalHeight(AvailableLogicalHeightType) const;
     LayoutUnit availableLogicalHeightUsing(const Length&, AvailableLogicalHeightType) const;
-    
+
     // There are a few cases where we need to refer specifically to the available physical width and available physical height.
     // Relative positioning is one of those cases, since left/top offsets are physical.
-    LayoutUnit availableWidth() const { return style().isHorizontalWritingMode() ? availableLogicalWidth() : availableLogicalHeight(IncludeMarginBorderPadding); }
-    LayoutUnit availableHeight() const { return style().isHorizontalWritingMode() ? availableLogicalHeight(IncludeMarginBorderPadding) : availableLogicalWidth(); }
+    inline LayoutUnit availableWidth() const;
+    inline LayoutUnit availableHeight() const;
 
     WEBCORE_EXPORT virtual int verticalScrollbarWidth() const;
     WEBCORE_EXPORT int horizontalScrollbarHeight() const;
     int intrinsicScrollbarLogicalWidth() const;
-    int scrollbarLogicalWidth() const { return style().isHorizontalWritingMode() ? verticalScrollbarWidth() : horizontalScrollbarHeight(); }
-    int scrollbarLogicalHeight() const { return style().isHorizontalWritingMode() ? horizontalScrollbarHeight() : verticalScrollbarWidth(); }
+    inline int scrollbarLogicalWidth() const;
+    inline int scrollbarLogicalHeight() const;
     virtual bool scroll(ScrollDirection, ScrollGranularity, unsigned stepCount = 1, Element** stopElement = nullptr, RenderBox* startBox = nullptr, const IntPoint& wheelEventAbsolutePoint = IntPoint());
     virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, unsigned stepCount = 1, Element** stopElement = nullptr);
     WEBCORE_EXPORT bool canBeScrolledAndHasScrollableArea() const;
@@ -524,11 +472,10 @@ public:
     bool scrollsOverflowX() const { return hasNonVisibleOverflow() && (style().overflowX() == Overflow::Scroll || style().overflowX() == Overflow::Auto); }
     bool scrollsOverflowY() const { return hasNonVisibleOverflow() && (style().overflowY() == Overflow::Scroll || style().overflowY() == Overflow::Auto); }
 
-    bool hasHorizontalOverflow() const { return scrollWidth() != roundToInt(paddingBoxWidth()); }
-    bool hasVerticalOverflow() const { return scrollHeight() != roundToInt(paddingBoxHeight()); }
-
-    bool hasScrollableOverflowX() const { return scrollsOverflowX() && hasHorizontalOverflow(); }
-    bool hasScrollableOverflowY() const { return scrollsOverflowY() && hasVerticalOverflow(); }
+    inline bool hasHorizontalOverflow() const;
+    inline bool hasVerticalOverflow() const;
+    inline bool hasScrollableOverflowX() const;
+    inline bool hasScrollableOverflowY() const;
 
     LayoutBoxExtent scrollPaddingForViewportRect(const LayoutRect& viewportRect);
 
@@ -686,7 +633,7 @@ public:
 
     bool isGridItem() const { return parent() && parent()->isRenderGrid() && !isExcludedFromNormalLayout(); }
     bool isFlexItem() const { return parent() && parent()->isFlexibleBox() && !isExcludedFromNormalLayout(); }
-    bool isBlockLevelBox() const { return style().isDisplayBlockLevel(); }
+    inline bool isBlockLevelBox() const;
 
     virtual void adjustBorderBoxRectForPainting(LayoutRect&) { };
 
@@ -697,16 +644,8 @@ public:
     // The explicit intrinsic inner size of contain-intrinsic-size
     std::optional<LayoutUnit> explicitIntrinsicInnerWidth() const;
     std::optional<LayoutUnit> explicitIntrinsicInnerHeight() const;
-
-    std::optional<LayoutUnit> explicitIntrinsicInnerLogicalWidth() const
-    {
-        return style().isHorizontalWritingMode() ? explicitIntrinsicInnerWidth() : explicitIntrinsicInnerHeight();
-    }
-
-    std::optional<LayoutUnit> explicitIntrinsicInnerLogicalHeight() const
-    {
-        return style().isHorizontalWritingMode() ? explicitIntrinsicInnerHeight() : explicitIntrinsicInnerWidth();
-    }
+    inline std::optional<LayoutUnit> explicitIntrinsicInnerLogicalWidth() const;
+    inline std::optional<LayoutUnit> explicitIntrinsicInnerLogicalHeight() const;
 
     bool establishesIndependentFormattingContext() const override;
     bool establishesBlockFormattingContext() const;
@@ -721,7 +660,7 @@ protected:
 
     void willBeDestroyed() override;
 
-    bool shouldTrimChildMargin(MarginTrimType, const RenderBox&) const;
+    inline bool shouldTrimChildMargin(MarginTrimType, const RenderBox&) const;
     virtual bool isChildEligibleForMarginTrim(MarginTrimType, const RenderBox&) const { return false; }
 
     virtual bool shouldResetLogicalHeightBeforeLayout() const { return false; }
@@ -943,18 +882,6 @@ inline void RenderBox::setInlineBoxWrapper(LegacyInlineElementBox* boxWrapper)
     }
 
     m_inlineBoxWrapper = boxWrapper;
-}
-
-inline LayoutRect RenderBox::contentBoxRect() const
-{
-    return { contentBoxLocation(), contentSize() };
-}
-
-inline bool RenderBox::shouldTrimChildMargin(MarginTrimType marginTrimType, const RenderBox& child) const
-{
-    if (!style().marginTrim().contains(marginTrimType))
-        return false;
-    return isChildEligibleForMarginTrim(marginTrimType, child);
 }
 
 LayoutUnit synthesizedBaseline(const RenderBox&, const RenderStyle& parentStyle, LineDirectionMode, BaselineSynthesisEdge);

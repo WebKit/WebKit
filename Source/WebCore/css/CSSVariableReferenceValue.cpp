@@ -30,7 +30,7 @@
 #include "config.h"
 #include "CSSVariableReferenceValue.h"
 
-#include "CSSParserToken.h"
+#include "CSSCustomPropertyValue.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParser.h"
 #include "CSSRegisteredCustomProperty.h"

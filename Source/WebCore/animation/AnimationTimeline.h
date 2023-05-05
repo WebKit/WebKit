@@ -26,15 +26,14 @@
 
 #pragma once
 
-#include "RenderStyle.h"
-#include "WebAnimation.h"
 #include <wtf/Forward.h>
 #include <wtf/Markable.h>
-#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Seconds.h>
 
 namespace WebCore {
+
+class WebAnimation;
 
 class AnimationTimeline : public RefCounted<AnimationTimeline>, public CanMakeWeakPtr<AnimationTimeline> {
 public:

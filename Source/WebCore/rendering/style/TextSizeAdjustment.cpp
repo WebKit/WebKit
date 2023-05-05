@@ -32,16 +32,6 @@
 
 namespace WebCore {
 
-AutosizeStatus::AutosizeStatus(OptionSet<Fields> fields)
-    : m_fields(fields)
-{
-}
-
-bool AutosizeStatus::contains(Fields fields) const
-{
-    return m_fields.contains(fields);
-}
-
 bool AutosizeStatus::probablyContainsASmallFixedNumberOfLines(const RenderStyle& style)
 {
     auto& lineHeightAsLength = style.specifiedLineHeight();

@@ -51,4 +51,11 @@ RenderTable* RenderTableCaption::table() const
     return downcast<RenderTable>(parent());
 }
 
+LayoutUnit RenderTableCaption::containingBlockLogicalWidthForContent() const
+{
+    if (auto* containingBlock = this->containingBlock())
+        return containingBlock->logicalWidth();
+    return { };
+}
+
 }

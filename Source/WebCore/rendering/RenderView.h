@@ -65,7 +65,7 @@ public:
     // The same as the FrameView's layoutHeight/layoutWidth but with null check guards.
     int viewHeight() const;
     int viewWidth() const;
-    int viewLogicalWidth() const { return style().isHorizontalWritingMode() ? viewWidth() : viewHeight(); }
+    inline int viewLogicalWidth() const;
     int viewLogicalHeight() const;
 
     LayoutUnit clientLogicalWidthForFixedPosition() const;

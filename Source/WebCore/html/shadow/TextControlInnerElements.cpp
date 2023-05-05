@@ -39,6 +39,7 @@
 #include "MouseEvent.h"
 #include "PlatformMouseEvent.h"
 #include "RenderSearchField.h"
+#include "RenderStyleSetters.h"
 #include "RenderTextControl.h"
 #include "RenderView.h"
 #include "ScriptController.h"

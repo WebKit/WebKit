@@ -28,6 +28,7 @@
 
 #include "BlockFormattingQuirks.h"
 #include "BlockFormattingState.h"
+#include "BorderValue.h"
 #include "FloatingState.h"
 #include "InlineFormattingState.h"
 #include "LayoutBox.h"
@@ -35,7 +36,7 @@
 #include "LayoutElementBox.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutUnit.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 namespace Layout {
@@ -499,9 +500,9 @@ UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::positiv
 
     UsedVerticalMargin::PositiveAndNegativePair::Values nonCollapsedBefore;
     if (nonCollapsedValues.before > 0)
-        nonCollapsedBefore = { nonCollapsedValues.before, { }, layoutBox.style().hasMarginBeforeQuirk() };
+        nonCollapsedBefore = { nonCollapsedValues.before, { }, layoutBox.style().marginBefore().hasQuirk() };
     else if (nonCollapsedValues.before < 0)
-        nonCollapsedBefore = { { }, nonCollapsedValues.before, layoutBox.style().hasMarginBeforeQuirk() };
+        nonCollapsedBefore = { { }, nonCollapsedValues.before, layoutBox.style().marginBefore().hasQuirk() };
 
     return computedPositiveAndNegativeMargin(collapsedMarginBefore, nonCollapsedBefore);
 }
@@ -518,9 +519,9 @@ UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::positiv
     // update it later when we compute the next sibling's margin before. See updateMarginAfterForPreviousSibling.
     UsedVerticalMargin::PositiveAndNegativePair::Values nonCollapsedAfter;
     if (nonCollapsedValues.after > 0)
-        nonCollapsedAfter = { nonCollapsedValues.after, { }, layoutBox.style().hasMarginAfterQuirk() };
+        nonCollapsedAfter = { nonCollapsedValues.after, { }, layoutBox.style().marginAfter().hasQuirk() };
     else if (nonCollapsedValues.after < 0)
-        nonCollapsedAfter = { { }, nonCollapsedValues.after, layoutBox.style().hasMarginAfterQuirk() };
+        nonCollapsedAfter = { { }, nonCollapsedValues.after, layoutBox.style().marginAfter().hasQuirk() };
 
     return computedPositiveAndNegativeMargin(lastChildCollapsedMarginAfter(), nonCollapsedAfter);
 }

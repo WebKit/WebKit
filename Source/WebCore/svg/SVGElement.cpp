@@ -41,6 +41,7 @@
 #include "RenderAncestorIterator.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMasker.h"
+#include "ResolvedStyle.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementRareData.h"
 #include "SVGElementTypeHelpers.h"
@@ -57,6 +58,7 @@
 #include "SVGUseElement.h"
 #include "ShadowRoot.h"
 #include "StyleAdjuster.h"
+#include "StyleResolver.h"
 #include "XMLNames.h"
 #include <wtf/HashMap.h>
 #include <wtf/IsoMallocInlines.h>
@@ -730,6 +732,19 @@ void SVGElement::setUseOverrideComputedStyle(bool value)
 {
     if (m_svgRareData)
         m_svgRareData->setUseOverrideComputedStyle(value);
+}
+
+inline const RenderStyle* SVGElementRareData::overrideComputedStyle(Element& element, const RenderStyle* parentStyle)
+{
+    if (!m_useOverrideComputedStyle)
+        return nullptr;
+    if (!m_overrideComputedStyle || m_needsOverrideComputedStyleUpdate) {
+        // The style computed here contains no CSS Animations/Transitions or SMIL induced rules - this is needed to compute the "base value" for the SMIL animation sandwhich model.
+        m_overrideComputedStyle = element.styleResolver().styleForElement(element, { parentStyle }, RuleMatchingBehavior::MatchAllRulesExcludingSMIL).style;
+        m_needsOverrideComputedStyleUpdate = false;
+    }
+    ASSERT(m_overrideComputedStyle);
+    return m_overrideComputedStyle.get();
 }
 
 const RenderStyle* SVGElement::computedStyle(PseudoId pseudoElementSpecifier)

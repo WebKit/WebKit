@@ -59,15 +59,6 @@ private:
     friend class CounterNode;
 };
 
-
-inline void RenderCounter::rendererStyleChanged(RenderElement& renderer, const RenderStyle* oldStyle, const RenderStyle& newStyle)
-{
-    if ((!oldStyle || !oldStyle->counterDirectives()) && !newStyle.counterDirectives())
-        return;
-
-    rendererStyleChangedSlowCase(renderer, oldStyle, newStyle);
-}
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderCounter, isCounter())

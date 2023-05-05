@@ -38,6 +38,7 @@
 #include "GradientImage.h"
 #include "NodeRenderStyle.h"
 #include "RenderElement.h"
+#include "RenderStyleInlines.h"
 #include "StyleBuilderState.h"
 
 namespace WebCore {

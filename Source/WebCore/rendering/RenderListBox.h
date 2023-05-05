@@ -72,9 +72,9 @@ public:
     bool scrolledToLeft() const final;
     bool scrolledToRight() const final;
     
-    bool isVisibleToHitTesting() const final { return visibleToHitTesting(); };
-
 private:
+    bool isVisibleToHitTesting() const final;
+
     void willBeDestroyed() override;
 
     void element() const = delete;

@@ -33,6 +33,7 @@
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderMarquee.h"
+#include "RenderStyleInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

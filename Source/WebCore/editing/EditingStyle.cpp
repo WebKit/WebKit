@@ -41,6 +41,7 @@
 #include "Editing.h"
 #include "Editor.h"
 #include "ElementInlines.h"
+#include "FilterOperations.h"
 #include "FontCache.h"
 #include "FontCascade.h"
 #include "HTMLFontElement.h"

@@ -38,6 +38,8 @@
 #include "MediaPlayerEnums.h"
 #include "Page.h"
 #include "PaintInfo.h"
+#include "RenderBoxInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderView.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>

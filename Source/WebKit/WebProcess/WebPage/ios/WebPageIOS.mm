@@ -137,6 +137,7 @@
 #import <WebCore/Quirks.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderBlock.h>
+#import <WebCore/RenderBoxInlines.h>
 #import <WebCore/RenderImage.h>
 #import <WebCore/RenderLayer.h>
 #import <WebCore/RenderThemeIOS.h>

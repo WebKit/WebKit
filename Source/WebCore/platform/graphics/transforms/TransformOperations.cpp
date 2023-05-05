@@ -23,18 +23,11 @@
 #include "TransformOperations.h"
 
 #include "AnimationUtilities.h"
-#include "IdentityTransformOperation.h"
 #include "Matrix3DTransformOperation.h"
 #include <algorithm>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
-
-TransformOperations::TransformOperations(bool makeIdentity)
-{
-    if (makeIdentity)
-        m_operations.append(IdentityTransformOperation::create());
-}
 
 TransformOperations::TransformOperations(Vector<RefPtr<TransformOperation>>&& operations)
     : m_operations(WTFMove(operations))

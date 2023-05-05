@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "RenderStyle.h"
+#include "SVGRenderStyle.h"
 #include <wtf/URL.h>
 
 namespace WebCore {

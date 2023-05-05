@@ -29,7 +29,8 @@
 #include "ElementInlines.h"
 #include "HTMLFrameOwnerElement.h"
 #include "Logging.h"
-#include "RenderBox.h"
+#include "RenderBoxInlines.h"
+#include "RenderElementInlines.h"
 #include "SVGElement.h"
 
 namespace WebCore {

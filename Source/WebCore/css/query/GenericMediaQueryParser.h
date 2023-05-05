@@ -25,7 +25,6 @@
 #pragma once
 
 #include "CSSParserContext.h"
-#include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
 #include "GenericMediaQueryTypes.h"
 #include <wtf/RobinHoodHashMap.h>

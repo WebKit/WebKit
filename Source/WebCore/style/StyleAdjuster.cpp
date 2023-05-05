@@ -51,7 +51,7 @@
 #include "Page.h"
 #include "Quirks.h"
 #include "RenderBox.h"
-#include "RenderStyle.h"
+#include "RenderStyleSetters.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "SVGElement.h"
@@ -61,8 +61,10 @@
 #include "SVGURIReference.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "StyleSelfAlignmentData.h"
 #include "StyleUpdate.h"
 #include "Text.h"
+#include "TouchAction.h"
 #include "WebAnimationTypes.h"
 #include <wtf/RobinHoodHashSet.h>
 
@@ -407,9 +409,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             || style.clipPath()
             || style.boxReflect()
             || style.hasFilter()
-#if ENABLE(FILTERS_LEVEL_2)
             || style.hasBackdropFilter()
-#endif
             || style.hasBlendMode()
             || style.hasIsolation()
             || style.position() == PositionType::Sticky
@@ -535,9 +535,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             || style.hasFilter()
             || style.hasIsolation()
             || style.hasMask()
-#if ENABLE(FILTERS_LEVEL_2)
             || style.hasBackdropFilter()
-#endif
             || style.hasBlendMode();
         style.setTransformStyleForcedToFlat(forceToFlat);
     }

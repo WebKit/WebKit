@@ -29,13 +29,12 @@
 #include "ElementInlines.h"
 #include "FloatingObjects.h"
 #include "FrameSelection.h"
-#include "HTMLElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HitTestLocation.h"
-#include "InlineIteratorBox.h"
+#include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorInlineBox.h"
-#include "InlineIteratorLineBox.h"
+#include "InlineIteratorLineBoxInlines.h"
 #include "InlineIteratorLogicalOrderTraversal.h"
 #include "InlineIteratorTextBox.h"
 #include "InlineWalker.h"
@@ -43,12 +42,16 @@
 #include "LayoutRepainter.h"
 #include "LegacyInlineTextBox.h"
 #include "LegacyLineLayout.h"
+#include "LegacyRootInlineBox.h"
 #include "LineSelection.h"
 #include "LocalFrame.h"
 #include "Logging.h"
+#include "RenderBlockFlowInlines.h"
+#include "RenderBlockInlines.h"
 #include "RenderCombineText.h"
 #include "RenderCounter.h"
 #include "RenderDeprecatedFlexibleBox.h"
+#include "RenderElementInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderInline.h"
 #include "RenderIterator.h"
@@ -60,7 +63,7 @@
 #include "RenderMarquee.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
-#include "RenderTableCell.h"
+#include "RenderTableCellInlines.h"
 #include "RenderText.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
@@ -68,7 +71,6 @@
 #include "TextAutoSizing.h"
 #include "VerticalPositionCache.h"
 #include "VisiblePosition.h"
-#include "rendering/LegacyRootInlineBox.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -526,8 +528,8 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
         if (!isCell) {
             initMaxMarginValues();
 
-            setHasMarginBeforeQuirk(styleToUse.hasMarginBeforeQuirk());
-            setHasMarginAfterQuirk(styleToUse.hasMarginAfterQuirk());
+            setHasMarginBeforeQuirk(styleToUse.marginBefore().hasQuirk());
+            setHasMarginAfterQuirk(styleToUse.marginAfter().hasQuirk());
             setPaginationStrut(0);
         }
         if (!firstChild() && !isAnonymousBlock())
@@ -1646,8 +1648,8 @@ void RenderBlockFlow::marginBeforeEstimateForChild(RenderBox& child, LayoutUnit&
         grandchildBox->computeAndSetBlockDirectionMargins(*this);
         if (is<RenderBlock>(*grandchildBox)) {
             RenderBlock& grandchildBlock = downcast<RenderBlock>(*grandchildBox);
-            grandchildBlock.setHasMarginBeforeQuirk(grandchildBox->style().hasMarginBeforeQuirk());
-            grandchildBlock.setHasMarginAfterQuirk(grandchildBox->style().hasMarginAfterQuirk());
+            grandchildBlock.setHasMarginBeforeQuirk(grandchildBox->style().marginBefore().hasQuirk());
+            grandchildBlock.setHasMarginAfterQuirk(grandchildBox->style().marginAfter().hasQuirk());
         }
     }
 

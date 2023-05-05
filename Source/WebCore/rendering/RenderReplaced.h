@@ -38,15 +38,7 @@ public:
 
     bool setNeedsLayoutIfNeededAfterIntrinsicSizeChange();
 
-    LayoutSize intrinsicSize() const final
-    {
-        LayoutSize size = m_intrinsicSize;
-        if (isHorizontalWritingMode() ? shouldApplySizeOrInlineSizeContainment() : shouldApplySizeContainment())
-            size.setWidth(explicitIntrinsicInnerWidth().value_or(0));
-        if (isHorizontalWritingMode() ? shouldApplySizeContainment() : shouldApplySizeOrInlineSizeContainment())
-            size.setHeight(explicitIntrinsicInnerHeight().value_or(0));
-        return size;
-    }
+    LayoutSize intrinsicSize() const final;
     
     RoundedRect roundedContentBoxRect() const;
     
@@ -63,7 +55,6 @@ protected:
     RenderReplaced(Document&, RenderStyle&&, const LayoutSize& intrinsicSize);
 
     void layout() override;
-
 
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const final;
 

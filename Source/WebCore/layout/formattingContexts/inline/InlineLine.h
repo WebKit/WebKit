@@ -123,7 +123,7 @@ public:
         bool shouldTrailingWhitespaceHang() const;
         TextDirection inlineDirection() const;
         InlineLayoutUnit letterSpacing() const;
-        bool hasTextCombine() const;
+        inline bool hasTextCombine() const;
 
         UBiDiLevel bidiLevel() const { return m_bidiLevel; }
 
@@ -339,11 +339,6 @@ inline TextDirection Line::Run::inlineDirection() const
 inline InlineLayoutUnit Line::Run::letterSpacing() const
 {
     return m_style.letterSpacing();
-}
-
-inline bool Line::Run::hasTextCombine() const
-{
-    return m_style.hasTextCombine();
 }
 
 }

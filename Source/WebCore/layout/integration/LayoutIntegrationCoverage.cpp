@@ -27,9 +27,11 @@
 #include "LayoutIntegrationCoverage.h"
 
 #include "DeprecatedGlobalSettings.h"
+#include "GapLength.h"
 #include "HTMLTextFormControlElement.h"
 #include "InlineWalker.h"
 #include "LayoutIntegrationLineLayout.h"
+#include "LineClampValue.h"
 #include "Logging.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
@@ -48,6 +50,8 @@
 #include "RenderVTTCue.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "StyleContentAlignmentData.h"
+#include "StyleSelfAlignmentData.h"
 #include "TextUtil.h"
 #include <pal/Logging.h>
 #include <wtf/OptionSet.h>

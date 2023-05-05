@@ -56,6 +56,7 @@
 #include "FrameSelection.h"
 #include "HitTestResult.h"
 #include "InspectorInstrumentation.h"
+#include "LineClampValue.h"
 #include "Logging.h"
 #include "RenderFlexibleBox.h"
 #include "RenderGeometryMap.h"

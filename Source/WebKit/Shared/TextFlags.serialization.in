@@ -120,16 +120,8 @@ enum class WebCore::FontSmoothingMode : uint8_t {
     SubpixelAntialiased
 };
 
-enum class WebCore::FontOrientation : uint8_t {
-    Horizontal,
-    Vertical
-};
-
-enum class WebCore::NonCJKGlyphOrientation : uint8_t {
-    Mixed,
-    Upright
-};
-
+enum class WebCore::FontOrientation : bool
+enum class WebCore::NonCJKGlyphOrientation : bool
 enum class FontVariantNumericOrdinal : bool
 enum class FontVariantNumericSlashedZero : bool
 enum class WebCore::FontSynthesisLonghandValue : bool

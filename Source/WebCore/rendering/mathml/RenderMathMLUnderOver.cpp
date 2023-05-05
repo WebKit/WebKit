@@ -33,6 +33,7 @@
 #include "MathMLOperatorDictionary.h"
 #include "MathMLUnderOverElement.h"
 #include "RenderIterator.h"
+#include "RenderMathMLBlockInlines.h"
 #include "RenderMathMLOperator.h"
 #include <wtf/IsoMallocInlines.h>
 

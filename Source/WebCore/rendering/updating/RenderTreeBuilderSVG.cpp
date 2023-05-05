@@ -32,6 +32,7 @@
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
 #include "RenderSVGViewportContainer.h"
+#include "RenderStyleSetters.h"
 #include "RenderTreeBuilderBlock.h"
 #include "RenderTreeBuilderBlockFlow.h"
 #include "RenderTreeBuilderInline.h"

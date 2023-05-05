@@ -42,6 +42,7 @@
 #include "Page.h"
 #include "PopupMenu.h"
 #include "RenderScrollbar.h"
+#include "RenderStyleSetters.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderTreeBuilder.h"

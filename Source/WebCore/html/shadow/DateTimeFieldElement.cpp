@@ -38,6 +38,7 @@
 #include "PlatformLocale.h"
 #include "RenderStyle.h"
 #include "RenderTheme.h"
+#include "ResolvedStyle.h"
 #include "StyleResolver.h"
 #include "Text.h"
 #include <wtf/IsoMallocInlines.h>

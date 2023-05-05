@@ -45,6 +45,7 @@
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "ProcessingInstruction.h"
+#include "RenderBoxInlines.h"
 #include "RenderView.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGStyleElement.h"

@@ -52,6 +52,7 @@
 #include "ReferencedSVGResources.h"
 #include "RenderChildIterator.h"
 #include "RenderCounter.h"
+#include "RenderElementInlines.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderGeometryMap.h"
 #include "RenderInline.h"

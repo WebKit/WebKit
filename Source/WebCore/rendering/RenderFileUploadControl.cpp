@@ -31,6 +31,7 @@
 #include "LocalizedStrings.h"
 #include "PaintInfo.h"
 #include "RenderButton.h"
+#include "RenderElementInlines.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "ShadowRoot.h"

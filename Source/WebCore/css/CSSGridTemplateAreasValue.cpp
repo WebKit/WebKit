@@ -34,6 +34,7 @@
 
 #include "GridArea.h"
 #include <wtf/FixedVector.h>
+#include <wtf/HashSet.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
@@ -56,13 +57,13 @@ Ref<CSSGridTemplateAreasValue> CSSGridTemplateAreasValue::create(NamedGridAreaMa
 
 static String stringForPosition(const NamedGridAreaMap& gridAreaMap, size_t row, size_t column)
 {
-    Vector<String> candidates;
-    for (auto& it : gridAreaMap) {
+    HashSet<String> candidates;
+    for (auto& it : gridAreaMap.map) {
         auto& area = it.value;
         if (row >= area.rows.startLine() && row < area.rows.endLine())
-            candidates.append(it.key);
+            candidates.add(it.key);
     }
-    for (auto& it : gridAreaMap) {
+    for (auto& it : gridAreaMap.map) {
         auto& area = it.value;
         if (column >= area.columns.startLine() && column < area.columns.endLine() && candidates.contains(it.key))
             return it.key;
@@ -73,7 +74,7 @@ static String stringForPosition(const NamedGridAreaMap& gridAreaMap, size_t row,
 String CSSGridTemplateAreasValue::stringForRow(size_t row) const
 {
     FixedVector<String> columns(m_columnCount);
-    for (auto& it : m_map) {
+    for (auto& it : m_map.map) {
         auto& area = it.value;
         if (row >= area.rows.startLine() && row < area.rows.endLine()) {
             for (unsigned i = area.columns.startLine(); i < area.columns.endLine(); i++)
@@ -113,7 +114,7 @@ String CSSGridTemplateAreasValue::customCSSText() const
 
 bool CSSGridTemplateAreasValue::equals(const CSSGridTemplateAreasValue& other) const
 {
-    return m_map == other.m_map && m_rowCount == other.m_rowCount && m_columnCount == other.m_columnCount;
+    return m_map.map == other.m_map.map && m_rowCount == other.m_rowCount && m_columnCount == other.m_columnCount;
 }
 
 } // namespace WebCore

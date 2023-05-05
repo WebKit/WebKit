@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #include "HTMLTableElement.h"
 #include "LocalFrame.h"
 #include "RenderElement.h"
+#include "RenderStyleInlines.h"
 #include "RenderText.h"
 #include "Text.h"
 #include "VisibleUnits.h"

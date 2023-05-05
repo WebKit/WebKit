@@ -27,6 +27,7 @@
 #include "InlineIteratorTextBox.h"
 
 #include "InlineIteratorLineBox.h"
+#include "InlineIteratorTextBoxInlines.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LineSelection.h"
 #include "RenderCombineText.h"

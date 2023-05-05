@@ -30,6 +30,7 @@
 #include "config.h"
 #include "DOMSelection.h"
 
+#include "CommonAtomStrings.h"
 #include "Document.h"
 #include "Editing.h"
 #include "FrameSelection.h"

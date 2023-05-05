@@ -51,6 +51,7 @@
 #include "StyleScope.h"
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
+#include "WillChangeData.h"
 
 namespace WebCore {
 

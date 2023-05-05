@@ -52,6 +52,7 @@
 #include "Range.h"
 #include "RenderBlock.h"
 #include "RenderElement.h"
+#include "RenderStyleInlines.h"
 #include "RenderTableCell.h"
 #include "RenderTextControlSingleLine.h"
 #include "ShadowRoot.h"

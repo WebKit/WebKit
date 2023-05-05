@@ -30,7 +30,9 @@
 #include "RenderSVGPath.h"
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
+
 #include "Gradient.h"
+#include "RenderSVGShapeInlines.h"
 #include "SVGPathElement.h"
 #include "SVGSubpathData.h"
 #include <wtf/IsoMallocInlines.h>

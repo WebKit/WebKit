@@ -61,6 +61,7 @@
 #include "Navigator.h"
 #include "OffscreenCanvas.h"
 #include "PlaceholderRenderingContext.h"
+#include "RenderBoxInlines.h"
 #include "RenderElement.h"
 #include "RenderHTMLCanvas.h"
 #include "ResourceLoadObserver.h"

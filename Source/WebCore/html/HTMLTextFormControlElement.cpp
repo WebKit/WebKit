@@ -54,6 +54,7 @@
 #include "Page.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderLineBreak.h"
+#include "RenderStyleSetters.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "ScriptDisallowedScope.h"

@@ -32,7 +32,9 @@
 #include "FloatRoundedRect.h"
 #include "FrameSelection.h"
 #include "HTMLAttachmentElement.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderChildIterator.h"
+#include "RenderStyleSetters.h"
 #include "RenderTheme.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/URL.h>

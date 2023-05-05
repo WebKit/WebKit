@@ -39,6 +39,7 @@
 #include "FontCascade.h"
 #include "Length.h"
 #include "NodeRenderStyle.h"
+#include "RenderBoxInlines.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include <wtf/NeverDestroyed.h>

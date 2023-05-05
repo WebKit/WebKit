@@ -241,6 +241,10 @@ public:
     GridSpan rows;
 };
 
-typedef HashMap<String, GridArea> NamedGridAreaMap;
+struct NamedGridAreaMap {
+    HashMap<String, GridArea> map;
+};
+inline bool operator==(const NamedGridAreaMap& a, const NamedGridAreaMap& b) { return a.map == b.map; }
+inline bool operator!=(const NamedGridAreaMap& a, const NamedGridAreaMap& b) { return a.map != b.map; }
 
 } // namespace WebCore

@@ -918,6 +918,7 @@ inline void Element::disconnectFromResizeObservers()
 }
 
 void invalidateForSiblingCombinators(Element* sibling);
+inline bool isInTopLayerOrBackdrop(const RenderStyle&, const Element*);
 
 } // namespace WebCore
 

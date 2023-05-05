@@ -40,6 +40,8 @@ constexpr bool operator!=(const CounterDirectives& a, const CounterDirectives& b
     return !(a == b);
 }
 
-using CounterDirectiveMap = HashMap<AtomString, CounterDirectives>;
+struct CounterDirectiveMap {
+    HashMap<AtomString, CounterDirectives> map;
+};
 
 } // namespace WebCore

@@ -32,10 +32,12 @@
 #include "InlineDisplayContent.h"
 #include "InlineFormattingContext.h"
 #include "InlineFormattingQuirks.h"
+#include "InlineLevelBoxInlines.h"
 #include "InlineLineBoxVerticalAligner.h"
 #include "LayoutBox.h"
 #include "LayoutElementBox.h"
 #include "LengthFunctions.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 namespace Layout {

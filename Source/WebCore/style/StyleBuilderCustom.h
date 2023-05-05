@@ -45,15 +45,17 @@
 #include "HTMLElement.h"
 #include "LocalFrame.h"
 #include "SVGElement.h"
-#include "SVGRenderStyle.h"
 #include "StyleBuilderConverter.h"
+#include "StyleBuilderStateInlines.h"
 #include "StyleCachedImage.h"
 #include "StyleCursorImage.h"
+#include "StyleCustomPropertyData.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleGeneratedImage.h"
 #include "StyleImageSet.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include "TextSizeAdjustment.h"
 #include "WillChangeData.h"
 
 namespace WebCore {
@@ -1331,8 +1333,8 @@ inline void BuilderCustom::applyValueTextEmphasisStyle(BuilderState& builderStat
 template <BuilderCustom::CounterBehavior counterBehavior>
 inline void BuilderCustom::applyInheritCounter(BuilderState& builderState)
 {
-    auto& map = builderState.style().accessCounterDirectives();
-    for (auto& keyValue : const_cast<RenderStyle&>(builderState.parentStyle()).accessCounterDirectives()) {
+    auto& map = builderState.style().accessCounterDirectives().map;
+    for (auto& keyValue : builderState.parentStyle().counterDirectives().map) {
         auto& directives = map.add(keyValue.key, CounterDirectives { }).iterator->value;
         if (counterBehavior == Reset)
             directives.resetValue = keyValue.value.resetValue;
@@ -1349,7 +1351,7 @@ inline void BuilderCustom::applyValueCounter(BuilderState& builderState, CSSValu
     if (!is<CSSValueList>(value) && !setCounterIncrementToNone)
         return;
 
-    CounterDirectiveMap& map = builderState.style().accessCounterDirectives();
+    auto& map = builderState.style().accessCounterDirectives().map;
     for (auto& keyValue : map) {
         if (counterBehavior == Reset)
             keyValue.value.resetValue = std::nullopt;

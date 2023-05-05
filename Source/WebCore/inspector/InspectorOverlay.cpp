@@ -63,8 +63,9 @@
 #include "OrderIterator.h"
 #include "Page.h"
 #include "PseudoElement.h"
-#include "RenderBox.h"
+#include "RenderBoxInlines.h"
 #include "RenderBoxModelObject.h"
+#include "RenderElementInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderGrid.h"
 #include "RenderInline.h"
@@ -1487,19 +1488,15 @@ static OrderedNamedGridLinesMap gridLineNames(const RenderStyle* renderStyle, Gr
     
     OrderedNamedGridLinesMap combinedGridLineNames;
     auto appendLineNames = [&](unsigned index, const Vector<String>& newNames) {
-        if (combinedGridLineNames.contains(index)) {
-            auto names = combinedGridLineNames.take(index);
-            names.appendVector(newNames);
-            combinedGridLineNames.add(index, names);
-        } else
-            combinedGridLineNames.add(index, newNames);
+        if (auto result = combinedGridLineNames.map.add(index, newNames); !result.isNewEntry)
+            result.iterator->value.appendVector(newNames);
     };
-    
+
     auto orderedGridLineNames = direction == GridTrackSizingDirection::ForColumns ? renderStyle->orderedNamedGridColumnLines() : renderStyle->orderedNamedGridRowLines();
-    for (auto& [i, names] : orderedGridLineNames)
+    for (auto& [i, names] : orderedGridLineNames.map)
         appendLineNames(i, names);
-    
-    auto autoRepeatOrderedGridLineNames = direction == GridTrackSizingDirection::ForColumns ? renderStyle->autoRepeatOrderedNamedGridColumnLines() : renderStyle->autoRepeatOrderedNamedGridRowLines();
+
+    auto& autoRepeatOrderedGridLineNames = (direction == GridTrackSizingDirection::ForColumns ? renderStyle->autoRepeatOrderedNamedGridColumnLines() : renderStyle->autoRepeatOrderedNamedGridRowLines()).map;
     auto autoRepeatInsertionPoint = direction == GridTrackSizingDirection::ForColumns ? renderStyle->gridAutoRepeatColumnsInsertionPoint() : renderStyle->gridAutoRepeatRowsInsertionPoint();
     unsigned autoRepeatIndex = 0;
     while (autoRepeatOrderedGridLineNames.size() && autoRepeatIndex < expectedLineCount - autoRepeatInsertionPoint) {
@@ -1510,7 +1507,7 @@ static OrderedNamedGridLinesMap gridLineNames(const RenderStyle* renderStyle, Gr
     }
 
     auto implicitGridLineNames = direction == GridTrackSizingDirection::ForColumns ? renderStyle->implicitNamedGridColumnLines() : renderStyle->implicitNamedGridRowLines();
-    for (auto& [name, indexes] : implicitGridLineNames) {
+    for (auto& [name, indexes] : implicitGridLineNames.map) {
         for (auto i : indexes)
             appendLineNames(i, {name});
     }
@@ -1712,8 +1709,8 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
             if (i <= authoredTrackColumnSizes.size())
                 lineLabel.append(emSpace, -static_cast<int>(authoredTrackColumnSizes.size() - i + 1));
         }
-        if (gridOverlay.config.showLineNames && columnLineNames.contains(i)) {
-            for (auto lineName : columnLineNames.get(i)) {
+        if (gridOverlay.config.showLineNames) {
+            for (auto lineName : columnLineNames.map.get(i)) {
                 if (!lineLabel.isEmpty())
                     lineLabel.append(thinSpace, bullet, thinSpace);
                 lineLabel.append(lineName);
@@ -1796,8 +1793,8 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
             if (i <= authoredTrackRowSizes.size())
                 lineLabel.append(emSpace, -static_cast<int>(authoredTrackRowSizes.size() - i + 1));
         }
-        if (gridOverlay.config.showLineNames && rowLineNames.contains(i)) {
-            for (auto lineName : rowLineNames.get(i)) {
+        if (gridOverlay.config.showLineNames) {
+            for (auto lineName : rowLineNames.map.get(i)) {
                 if (!lineLabel.isEmpty())
                     lineLabel.append(thinSpace, bullet, thinSpace);
                 lineLabel.append(lineName);
@@ -1823,7 +1820,7 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
     }
 
     if (gridOverlay.config.showAreaNames) {
-        for (auto& gridArea : node->renderStyle()->namedGridArea()) {
+        for (auto& gridArea : node->renderStyle()->namedGridArea().map) {
             auto& name = gridArea.key;
             auto& area = gridArea.value;
 

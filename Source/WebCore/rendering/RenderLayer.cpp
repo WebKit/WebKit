@@ -93,6 +93,8 @@
 #include "PlatformMouseEvent.h"
 #include "ReferencedSVGResources.h"
 #include "RenderAncestorIterator.h"
+#include "RenderBoxInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderFragmentContainer.h"
 #include "RenderFragmentedFlow.h"
@@ -117,6 +119,7 @@
 #include "RenderSVGText.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarPart.h"
+#include "RenderStyleSetters.h"
 #include "RenderTableCell.h"
 #include "RenderTableRow.h"
 #include "RenderText.h"
@@ -1371,7 +1374,7 @@ void RenderLayer::updateTransform()
     if (hasTransform) {
         m_transform->makeIdentity();
         setReferenceBoxForPathOperations();
-        updateTransformFromStyle(*m_transform, renderer().style(), RenderStyle::allTransformOperations);
+        updateTransformFromStyle(*m_transform, renderer().style(), RenderStyle::allTransformOperations());
     }
 
     if (had3DTransform != has3DTransform()) {
@@ -1400,6 +1403,11 @@ TransformationMatrix RenderLayer::currentTransform(OptionSet<RenderStyle::Transf
     }
 
     return *m_transform;
+}
+
+TransformationMatrix RenderLayer::currentTransform() const
+{
+    return currentTransform(RenderStyle::allTransformOperations());
 }
 
 TransformationMatrix RenderLayer::renderableTransform(OptionSet<PaintBehavior> paintBehavior) const

@@ -38,7 +38,7 @@
 #include "RenderBox.h"
 #include "RenderObject.h"
 #include "RenderProgress.h"
-#include "RenderStyle.h"
+#include "RenderStyleSetters.h"
 #include "ThemeAdwaita.h"
 #include "TimeRanges.h"
 #include "UserAgentScripts.h"

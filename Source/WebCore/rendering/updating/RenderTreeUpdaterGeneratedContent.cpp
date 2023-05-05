@@ -34,6 +34,7 @@
 #include "RenderElement.h"
 #include "RenderImage.h"
 #include "RenderQuote.h"
+#include "RenderStyleInlines.h"
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
 #include "StyleTreeResolver.h"

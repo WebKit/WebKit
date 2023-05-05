@@ -40,15 +40,19 @@
 #include "LayoutRepainter.h"
 #include "LocalFrameView.h"
 #include "RenderBlockFlow.h"
+#include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"
 #include "RenderDescendantIterator.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
+#include "RenderObjectInlines.h"
 #include "RenderTableCaption.h"
-#include "RenderTableCell.h"
+#include "RenderTableCellInlines.h"
 #include "RenderTableCol.h"
-#include "RenderTableSection.h"
+#include "RenderTableInlines.h"
+#include "RenderTableRowInlines.h"
+#include "RenderTableSectionInlines.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
@@ -918,7 +922,7 @@ void RenderTable::splitColumn(unsigned position, unsigned firstSpan)
 {
     // We split the column at "position", taking "firstSpan" cells from the span.
     ASSERT(m_columns[position].span > firstSpan);
-    m_columns.insert(position, ColumnStruct(firstSpan));
+    m_columns.insert(position, { firstSpan });
     m_columns[position + 1].span -= firstSpan;
 
     // Propagate the change in our columns representation to the sections that don't need
@@ -936,7 +940,7 @@ void RenderTable::splitColumn(unsigned position, unsigned firstSpan)
 void RenderTable::appendColumn(unsigned span)
 {
     unsigned newColumnIndex = m_columns.size();
-    m_columns.append(ColumnStruct(span));
+    m_columns.append({ span });
 
     // Unless the table has cell(s) with colspan that exceed the number of columns afforded
     // by the other rows in the table we can use the fast path when mapping columns to effective columns.

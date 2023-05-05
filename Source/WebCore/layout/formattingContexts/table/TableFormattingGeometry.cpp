@@ -53,8 +53,8 @@ LayoutUnit TableFormattingGeometry::cellBoxContentHeight(const ElementBox& cellB
         auto& firstInFlowChildGeometry = formattingContext.geometryForBox(firstInFlowChild, FormattingContext::EscapeReason::TableQuirkNeedsGeometryFromEstablishedFormattingContext);
         auto& lastInFlowChildGeometry = formattingContext.geometryForBox(lastInFlowChild, FormattingContext::EscapeReason::TableQuirkNeedsGeometryFromEstablishedFormattingContext);
 
-        auto top = firstInFlowChild.style().hasMarginBeforeQuirk() ? BoxGeometry::borderBoxRect(firstInFlowChildGeometry).top() : BoxGeometry::marginBoxRect(firstInFlowChildGeometry).top();
-        auto bottom = lastInFlowChild.style().hasMarginAfterQuirk() ? BoxGeometry::borderBoxRect(lastInFlowChildGeometry).bottom() : BoxGeometry::marginBoxRect(lastInFlowChildGeometry).bottom();
+        auto top = firstInFlowChild.style().marginBefore().hasQuirk() ? BoxGeometry::borderBoxRect(firstInFlowChildGeometry).top() : BoxGeometry::marginBoxRect(firstInFlowChildGeometry).top();
+        auto bottom = lastInFlowChild.style().marginAfter().hasQuirk() ? BoxGeometry::borderBoxRect(lastInFlowChildGeometry).bottom() : BoxGeometry::marginBoxRect(lastInFlowChildGeometry).bottom();
         return bottom - top;
     }
     return contentHeightForFormattingContextRoot(cellBox);

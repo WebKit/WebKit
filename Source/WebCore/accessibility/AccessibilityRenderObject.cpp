@@ -115,6 +115,10 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/unicode/CharacterNames.h>
 
+#if ENABLE(APPLE_PAY)
+#include "ApplePayButtonPart.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;

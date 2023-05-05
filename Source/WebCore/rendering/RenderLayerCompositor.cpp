@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-
 #include "RenderLayerCompositor.h"
 
 #include "AsyncScrollingCoordinator.h"
+#include "BorderData.h"
 #include "CSSPropertyNames.h"
 #include "CanvasRenderingContext.h"
 #include "Chrome.h"
@@ -61,6 +61,7 @@
 #include "Settings.h"
 #include "TiledBacking.h"
 #include "TransformState.h"
+#include "WillChangeData.h"
 #include <wtf/HexNumber.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/SetForScope.h>

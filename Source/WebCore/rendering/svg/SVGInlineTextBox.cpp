@@ -34,6 +34,7 @@
 #include "RenderSVGResourceSolidColor.h"
 #include "RenderView.h"
 #include "SVGInlineTextBoxInlines.h"
+#include "SVGRenderStyle.h"
 #include "SVGRenderingContext.h"
 #include "SVGResourcesCache.h"
 #include "SVGRootInlineBox.h"
@@ -286,9 +287,8 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         if (decorations & TextDecorationLine::Overline)
             paintDecoration(paintInfo.context(), TextDecorationLine::Overline, fragment);
 
-        auto paintOrder = RenderStyle::paintTypesForPaintOrder(style.paintOrder());
-        for (unsigned i = 0; i < paintOrder.size(); ++i) {
-            switch (paintOrder.at(i)) {
+        for (auto type : RenderStyle::paintTypesForPaintOrder(style.paintOrder())) {
+            switch (type) {
             case PaintType::Fill:
                 if (!hasFill)
                     continue;

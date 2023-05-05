@@ -26,11 +26,13 @@
 #include "RenderSVGRoot.h"
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
+
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
 #include "LocalFrame.h"
 #include "Page.h"
+#include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderInline.h"

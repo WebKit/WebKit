@@ -25,6 +25,7 @@
 #include "config.h"
 #include "CustomPropertyRegistry.h"
 
+#include "CSSCustomPropertyValue.h"
 #include "CSSPropertyParser.h"
 #include "CSSRegisteredCustomProperty.h"
 #include "Document.h"

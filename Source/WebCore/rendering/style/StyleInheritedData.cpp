@@ -22,7 +22,7 @@
 #include "config.h"
 #include "StyleInheritedData.h"
 
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 

@@ -29,6 +29,8 @@
 #include "InlineRect.h"
 #include "LayoutBox.h"
 #include "LayoutUnits.h"
+#include "LengthFunctions.h"
+#include "StyleTextBoxEdge.h"
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -41,11 +43,11 @@ class LineBoxVerticalAligner;
 class InlineLevelBox {
 public:
     enum class LineSpanningInlineBox : bool { No, Yes };
-    static InlineLevelBox createInlineBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, LineSpanningInlineBox = LineSpanningInlineBox::No);
-    static InlineLevelBox createRootInlineBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
-    static InlineLevelBox createAtomicInlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
-    static InlineLevelBox createLineBreakBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft);
-    static InlineLevelBox createGenericInlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft);
+    static inline InlineLevelBox createInlineBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, LineSpanningInlineBox = LineSpanningInlineBox::No);
+    static inline InlineLevelBox createRootInlineBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
+    static inline InlineLevelBox createAtomicInlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
+    static inline InlineLevelBox createLineBreakBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft);
+    static inline InlineLevelBox createGenericInlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft);
 
     struct AscentAndDescent {
         InlineLayoutUnit ascent { 0 };
@@ -75,7 +77,7 @@ public:
     InlineLayoutUnit preferredLineHeight() const;
     bool isPreferredLineHeightFontMetricsBased() const { return m_style.lineHeight.isNegative(); }
 
-    bool mayStretchLineBox() const;
+    inline bool mayStretchLineBox() const;
 
     const FontMetrics& primarymetricsOfPrimaryFont() const { return m_style.primaryFontMetrics; }
     InlineLayoutUnit fontSize() const { return m_style.primaryFontSize; }
@@ -176,49 +178,6 @@ private:
     std::optional<Annotation> m_annotation;
 };
 
-inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize, Type type, OptionSet<PositionWithinLayoutBox> positionWithinLayoutBox)
-    : m_layoutBox(layoutBox)
-    , m_logicalRect({ }, logicalLeft, logicalSize.width(), logicalSize.height())
-    , m_isFirstWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::First))
-    , m_isLastWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::Last))
-    , m_type(type)
-    , m_style({ style.fontCascade().metricsOfPrimaryFont(), style.lineHeight(), style.textBoxEdge(), style.textBoxTrim(), style.lineBoxContain(), InlineLayoutUnit(style.fontCascade().fontDescription().computedPixelSize()), { } })
-{
-    m_style.verticalAlignment.type = style.verticalAlign();
-    if (m_style.verticalAlignment.type == VerticalAlign::Length)
-        m_style.verticalAlignment.baselineOffset = floatValueForLength(style.verticalAlignLength(), preferredLineHeight());
-
-    auto setAnnotationIfApplicable = [&] {
-        if (auto* rubyAdjustments = layoutBox.rubyAdjustments()) {
-            m_annotation = { rubyAdjustments->annotationAbove, rubyAdjustments->annotationBelow };
-            return;
-        }
-        // Generic, non-inline box inline-level content (e.g. replaced elements) can't have text-emphasis annotations.
-        if (!isRootInlineBox() && !isInlineBox())
-            return;
-        auto hasTextEmphasis =  style.textEmphasisMark() != TextEmphasisMark::None;
-        if (!hasTextEmphasis)
-            return;
-        auto emphasisPosition = style.textEmphasisPosition();
-        // Normally we resolve visual -> logical values at pre-layout time, but emphaisis values are not part of the general box geometry.
-        auto hasAboveTextEmphasis = false;
-        auto hasUnderTextEmphasis = false;
-        if (style.isHorizontalWritingMode()) {
-            hasAboveTextEmphasis = emphasisPosition.contains(TextEmphasisPosition::Over);
-            hasUnderTextEmphasis = !hasAboveTextEmphasis && emphasisPosition.contains(TextEmphasisPosition::Under);
-        } else {
-            hasAboveTextEmphasis = emphasisPosition.contains(TextEmphasisPosition::Right) || emphasisPosition == TextEmphasisPosition::Over;  
-            hasUnderTextEmphasis = !hasAboveTextEmphasis && (emphasisPosition.contains(TextEmphasisPosition::Left) || emphasisPosition == TextEmphasisPosition::Under);
-        }
-
-        if (hasAboveTextEmphasis || hasUnderTextEmphasis) {
-            InlineLayoutUnit annotationSize = roundToInt(style.fontCascade().floatEmphasisMarkHeight(style.textEmphasisMarkString()));
-            m_annotation = { hasAboveTextEmphasis ? annotationSize : 0, hasAboveTextEmphasis ? 0 : annotationSize };
-        }
-    };
-    setAnnotationIfApplicable();
-}
-
 inline void InlineLevelBox::setHasContent()
 {
     ASSERT(isInlineBox());
@@ -236,55 +195,10 @@ inline InlineLayoutUnit InlineLevelBox::preferredLineHeight() const
     return floorf(m_style.lineHeight.value());
 }
 
-
 inline bool InlineLevelBox::hasLineBoxRelativeAlignment() const
 {
     auto verticalAlignment = verticalAlign().type;
     return verticalAlignment == VerticalAlign::Top || verticalAlignment == VerticalAlign::Bottom;
-}
-
-inline InlineLevelBox InlineLevelBox::createAtomicInlineLevelBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
-{
-    return InlineLevelBox { layoutBox, style, logicalLeft, { logicalWidth, { } }, Type::AtomicInlineLevelBox };
-}
-
-inline InlineLevelBox InlineLevelBox::createRootInlineBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
-{
-    return InlineLevelBox { layoutBox, style, logicalLeft, { logicalWidth, { } }, Type::RootInlineBox, { } };
-}
-
-inline InlineLevelBox InlineLevelBox::createInlineBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, LineSpanningInlineBox isLineSpanning)
-{
-    return InlineLevelBox { layoutBox, style, logicalLeft, { logicalWidth, { } }, isLineSpanning == LineSpanningInlineBox::Yes ? Type::LineSpanningInlineBox : Type::InlineBox, { } };
-}
-
-inline InlineLevelBox InlineLevelBox::createLineBreakBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft)
-{
-    return InlineLevelBox { layoutBox, style, logicalLeft, { }, Type::LineBreakBox };
-}
-
-inline InlineLevelBox InlineLevelBox::createGenericInlineLevelBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft)
-{
-    return InlineLevelBox { layoutBox, style, logicalLeft, { }, Type::GenericInlineLevelBox };
-}
-
-inline bool InlineLevelBox::mayStretchLineBox() const
-{
-    if (isRootInlineBox())
-        return m_style.lineBoxContain.containsAny({ LineBoxContain::Block, LineBoxContain::Inline }) || (hasContent() && m_style.lineBoxContain.containsAny({ LineBoxContain::InitialLetter, LineBoxContain::Font, LineBoxContain::Glyphs }));
-
-    if (isAtomicInlineLevelBox())
-        return m_style.lineBoxContain.contains(LineBoxContain::Replaced);
-
-    if (isInlineBox()) {
-        // Either the inline box itself is included or its text content thorugh Glyph and Font.
-        return m_style.lineBoxContain.containsAny({ LineBoxContain::Inline, LineBoxContain::InlineBox }) || (hasContent() && m_style.lineBoxContain.containsAny({ LineBoxContain::Font, LineBoxContain::Glyphs }));
-    }
-
-    if (isLineBreakBox())
-        return m_style.lineBoxContain.containsAny({ LineBoxContain::Inline, LineBoxContain::InlineBox }) || (hasContent() && m_style.lineBoxContain.containsAny({ LineBoxContain::Font, LineBoxContain::Glyphs }));
-
-    return true;
 }
 
 inline void InlineLevelBox::AscentAndDescent::round()

@@ -28,6 +28,7 @@
 #include "config.h"
 #include "RoundedRect.h"
 
+#include "FloatQuad.h"
 #include "FloatRoundedRect.h"
 #include "GeometryUtilities.h"
 #include "LayoutRect.h"

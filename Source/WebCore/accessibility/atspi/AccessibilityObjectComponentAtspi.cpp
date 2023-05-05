@@ -21,6 +21,7 @@
 #include "AccessibilityObjectAtspi.h"
 
 #if USE(ATSPI)
+
 #include "AccessibilityAtspi.h"
 #include "AccessibilityAtspiEnums.h"
 #include "AccessibilityObject.h"
@@ -28,6 +29,7 @@
 #include "Document.h"
 #include "LocalFrameView.h"
 #include "RenderLayer.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 

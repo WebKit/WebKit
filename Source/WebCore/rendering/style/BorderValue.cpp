@@ -25,8 +25,6 @@
 #include "config.h"
 #include "BorderValue.h"
 
-#include "RenderStyle.h"
-
 namespace WebCore {
 
 BorderValue::BorderValue()

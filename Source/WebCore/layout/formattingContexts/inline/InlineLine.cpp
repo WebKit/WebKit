@@ -30,12 +30,18 @@
 #include "InlineFormattingContext.h"
 #include "InlineSoftLineBreakItem.h"
 #include "LayoutBoxGeometry.h"
+#include "RenderStyleInlines.h"
 #include "TextFlags.h"
 #include "TextUtil.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
+
+inline bool Line::Run::hasTextCombine() const
+{
+    return m_style.hasTextCombine();
+}
 
 Line::Line(const InlineFormattingContext& inlineFormattingContext)
     : m_inlineFormattingContext(inlineFormattingContext)

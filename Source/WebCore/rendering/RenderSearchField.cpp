@@ -44,6 +44,7 @@
 #include "RenderView.h"
 #include "StyleResolver.h"
 #include "TextControlInnerElements.h"
+#include "UnicodeBidi.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

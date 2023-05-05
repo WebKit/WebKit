@@ -35,9 +35,11 @@ namespace WebCore {
 
 class StyleContentAlignmentData {
 public:
+    constexpr StyleContentAlignmentData() = default;
+
     // Style data for Content-Distribution properties: align-content, justify-content.
     // <content-distribution> || [ <overflow-position>? && <content-position> ]
-    StyleContentAlignmentData(ContentPosition position, ContentDistribution distribution, OverflowAlignment overflow = OverflowAlignment::Default)
+    constexpr StyleContentAlignmentData(ContentPosition position, ContentDistribution distribution, OverflowAlignment overflow = OverflowAlignment::Default)
         : m_position(static_cast<uint16_t>(position))
         , m_distribution(static_cast<uint16_t>(distribution))
         , m_overflow(static_cast<uint16_t>(overflow))
@@ -63,9 +65,9 @@ public:
     }
 
 private:
-    uint16_t m_position : 4; // ContentPosition
-    uint16_t m_distribution : 3; // ContentDistribution
-    uint16_t m_overflow : 2; // OverflowAlignment
+    uint16_t m_position : 4 { 0 }; // ContentPosition
+    uint16_t m_distribution : 3 { 0 }; // ContentDistribution
+    uint16_t m_overflow : 2 { 0 }; // OverflowAlignment
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const StyleContentAlignmentData&);

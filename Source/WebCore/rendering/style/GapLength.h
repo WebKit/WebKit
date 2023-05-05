@@ -38,7 +38,7 @@ class TextStream;
 
 namespace WebCore {
 
-// This class wraps the lenght of a gap used by properties column-gap and row-gap.
+// This class wraps the length of a gap used by properties column-gap and row-gap.
 // The valid values are "normal" or a non-negative <length-percentage>.
 class GapLength {
 public:

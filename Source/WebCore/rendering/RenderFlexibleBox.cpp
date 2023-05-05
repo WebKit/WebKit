@@ -38,23 +38,25 @@
 #include "LayoutIntegrationCoverage.h"
 #include "LayoutIntegrationFlexLayout.h"
 #include "LayoutRepainter.h"
+#include "LayoutUnit.h"
+#include "RenderBlockInlines.h"
 #include "RenderChildIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
 #include "RenderObjectEnums.h"
+#include "RenderObjectInlines.h"
 #include "RenderReplaced.h"
 #include "RenderSVGRoot.h"
 #include "RenderStyleConstants.h"
 #include "RenderTable.h"
 #include "RenderView.h"
 #include "WritingMode.h"
-#include "platform/LayoutUnit.h"
-#include "rendering/RenderBox.h"
 #include <limits>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/SetForScope.h>
 #include <wtf/TypeCasts.h>
+
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFlexibleBox);

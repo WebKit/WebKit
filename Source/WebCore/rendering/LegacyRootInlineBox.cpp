@@ -21,6 +21,7 @@
 #include "LegacyRootInlineBox.h"
 
 #include "BidiResolver.h"
+#include "CSSLineBoxContainValue.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
@@ -31,6 +32,7 @@
 #include "LocalFrame.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "PaintInfo.h"
+#include "RenderBoxInlines.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderInline.h"
 #include "RenderLayoutState.h"

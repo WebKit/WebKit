@@ -29,7 +29,7 @@
 #if ENABLE(VIDEO)
 #include "RenderVTTCue.h"
 
-#include "InlineIteratorBox.h"
+#include "InlineIteratorBoxInlines.h"
 #include "RenderInline.h"
 #include "RenderLayoutState.h"
 #include "RenderView.h"

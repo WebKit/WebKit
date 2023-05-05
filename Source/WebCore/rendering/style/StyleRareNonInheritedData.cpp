@@ -16,18 +16,16 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- *
  */
 
 #include "config.h"
 #include "StyleRareNonInheritedData.h"
 
 #include "RenderCounter.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "ShadowData.h"
-#include "StyleCustomPropertyData.h"
-#include "StyleFilterData.h"
 #include "StyleImage.h"
+#include "StyleReflection.h"
 #include "StyleResolver.h"
 #include <wtf/PointerComparison.h>
 #include <wtf/RefPtr.h>
@@ -135,7 +133,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , clip(o.clip)
     , scrollMargin(o.scrollMargin)
     , scrollPadding(o.scrollPadding)
-    , counterDirectives(o.counterDirectives ? makeUnique<CounterDirectiveMap>(*o.counterDirectives) : nullptr)
+    , counterDirectives(o.counterDirectives)
     , willChange(o.willChange)
     , boxReflect(o.boxReflect)
     , maskBoxImage(o.maskBoxImage)
@@ -224,7 +222,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && clip == o.clip
         && scrollMargin == o.scrollMargin
         && scrollPadding == o.scrollPadding
-        && arePointingToEqualData(counterDirectives, o.counterDirectives)
+        && counterDirectives.map == o.counterDirectives.map
         && arePointingToEqualData(willChange, o.willChange)
         && arePointingToEqualData(boxReflect, o.boxReflect)
         && maskBoxImage == o.maskBoxImage

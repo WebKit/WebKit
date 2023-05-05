@@ -137,18 +137,10 @@ LineBoxIterator lineBoxFor(const LayoutIntegration::InlineContent&, size_t lineI
 
 LeafBoxIterator closestBoxForHorizontalPosition(const LineBox&, float horizontalPosition, bool editableOnly = false);
 
-// -----------------------------------------------
-inline float previousLineBoxContentBottomOrBorderAndPadding(const LineBox& lineBox)
-{
-    return lineBox.isFirst() ? lineBox.formattingContextRoot().borderAndPaddingBefore().toFloat() : lineBox.contentLogicalTopAdjustedForPrecedingLineBox(); 
-}
+inline float previousLineBoxContentBottomOrBorderAndPadding(const LineBox&);
+inline float contentStartInBlockDirection(const LineBox&);
 
-inline float contentStartInBlockDirection(const LineBox& lineBox)
-{
-    if (!lineBox.formattingContextRoot().style().isFlippedBlocksWritingMode())
-        return std::max(lineBox.contentLogicalTop(), previousLineBoxContentBottomOrBorderAndPadding(lineBox));
-    return std::min(lineBox.contentLogicalBottom(), lineBox.contentLogicalBottomAdjustedForFollowingLineBox());
-}
+// -----------------------------------------------
 
 inline LineBox::LineBox(PathVariant&& path)
     : m_pathVariant(WTFMove(path))

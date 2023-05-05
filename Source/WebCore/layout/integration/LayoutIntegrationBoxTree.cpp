@@ -40,6 +40,7 @@
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
+#include "RenderStyleSetters.h"
 #include "RenderTable.h"
 #include "RenderView.h"
 #include "TextUtil.h"

@@ -3353,7 +3353,7 @@
         },
         "cx": {
             "codegen-properties": {
-                "initial": "initialZeroLength",
+                "initial": "zeroLength",
                 "converter": "Length",
                 "parser-grammar": "<length-percentage>"
             },
@@ -3364,7 +3364,7 @@
         },
         "cy": {
             "codegen-properties": {
-                "initial": "initialZeroLength",
+                "initial": "zeroLength",
                 "converter": "Length",
                 "parser-grammar": "<length-percentage>"
             },
@@ -5356,7 +5356,7 @@
         },
         "r": {
             "codegen-properties": {
-                "initial": "initialZeroLength",
+                "initial": "zeroLength",
                 "converter": "Length",
                 "parser-grammar": "<length-percentage [0,inf]>"
             },
@@ -5533,7 +5533,7 @@
         "stroke-dashoffset": {
             "inherited": true,
             "codegen-properties": {
-                "initial": "initialZeroLength",
+                "initial": "zeroLength",
                 "name-for-methods": "StrokeDashOffset",
                 "converter": "LengthAllowingNumber",
                 "parser-grammar": "<length-percentage> | <number>"
@@ -5627,7 +5627,7 @@
             "inherited": true,
             "codegen-properties": {
                 "custom": "Value",
-                "initial": "initialOneLength",
+                "initial": "oneLength",
                 "converter": "LengthAllowingNumber",
                 "parser-grammar": "<length-percentage [0,inf]> | <number [0,inf]>"
             },
@@ -6377,7 +6377,7 @@
         },
         "x": {
             "codegen-properties": {
-                "initial": "initialZeroLength",
+                "initial": "zeroLength",
                 "converter": "Length",
                 "parser-grammar": "<length-percentage>"
             },
@@ -6388,7 +6388,7 @@
         },
         "y": {
             "codegen-properties": {
-                "initial": "initialZeroLength",
+                "initial": "zeroLength",
                 "converter": "Length",
                 "parser-grammar": "<length-percentage>"
             },

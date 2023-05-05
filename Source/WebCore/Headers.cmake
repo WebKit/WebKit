@@ -2107,8 +2107,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderBlock.h
     rendering/RenderBlockFlow.h
     rendering/RenderBox.h
+    rendering/RenderBoxInlines.h
     rendering/RenderBoxModelObject.h
+    rendering/RenderBoxModelObjectInlines.h
     rendering/RenderElement.h
+    rendering/RenderElementInlines.h
     rendering/RenderEmbeddedObject.h
     rendering/RenderFlexibleBox.h
     rendering/RenderFrame.h
@@ -2126,6 +2129,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderModel.h
     rendering/RenderObject.h
     rendering/RenderObjectEnums.h
+    rendering/RenderObjectInlines.h
     rendering/RenderOverflow.h
     rendering/RenderPtr.h
     rendering/RenderReplaced.h
@@ -2167,6 +2171,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/style/OutlineValue.h
     rendering/style/RenderStyle.h
     rendering/style/RenderStyleConstants.h
+    rendering/style/RenderStyleInlines.h
+    rendering/style/RenderStyleSetters.h
     rendering/style/SVGRenderStyle.h
     rendering/style/SVGRenderStyleDefs.h
     rendering/style/ShadowData.h

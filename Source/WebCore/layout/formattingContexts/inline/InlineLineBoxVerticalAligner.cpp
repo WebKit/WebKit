@@ -27,6 +27,7 @@
 #include "InlineLineBoxVerticalAligner.h"
 
 #include "InlineFormattingContext.h"
+#include "InlineLevelBoxInlines.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
 

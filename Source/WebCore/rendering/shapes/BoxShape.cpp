@@ -30,7 +30,7 @@
 #include "config.h"
 #include "BoxShape.h"
 
-#include "RenderBox.h"
+#include "RenderBoxInlines.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {

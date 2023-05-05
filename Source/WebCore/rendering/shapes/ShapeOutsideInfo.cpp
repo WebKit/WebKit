@@ -28,14 +28,14 @@
  */
 
 #include "config.h"
-
 #include "ShapeOutsideInfo.h"
 
 #include "BoxShape.h"
 #include "FloatingObjects.h"
 #include "LengthFunctions.h"
 #include "RenderBlockFlow.h"
-#include "RenderBox.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderFragmentContainer.h"
 #include "RenderImage.h"
 #include "RenderView.h"

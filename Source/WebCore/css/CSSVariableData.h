@@ -29,13 +29,10 @@
 
 #pragma once
 
-#include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-class CSSParserTokenRange;
 
 class CSSVariableData : public RefCounted<CSSVariableData> {
     WTF_MAKE_NONCOPYABLE(CSSVariableData);

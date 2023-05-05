@@ -31,7 +31,6 @@
 #include "CSSUnparsedValue.h"
 
 #include "CSSOMVariableReferenceValue.h"
-#include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
 #include "CSSTokenizer.h"
 #include "CSSVariableReferenceValue.h"

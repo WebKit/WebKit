@@ -44,6 +44,7 @@
 #include "LocalFrameView.h"
 #include "Path.h"
 #include "RenderBlock.h"
+#include "RenderElementInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderFragmentContainer.h"
 #include "RenderInline.h"
@@ -935,6 +936,11 @@ void RenderBoxModelObject::applyTransform(TransformationMatrix&, const RenderSty
     // applyTransform() is only used through RenderLayer*, which only invokes this for RenderBox derived renderers, thus not for
     // RenderInline/RenderLineBreak - the other two renderers that inherit from RenderBoxModelObject.
     ASSERT_NOT_REACHED();
+}
+
+bool RenderBoxModelObject::requiresLayer() const
+{
+    return isDocumentElementRenderer() || isPositioned() || createsGroup() || hasTransformRelatedProperty() || hasHiddenBackface() || hasReflection();
 }
 
 } // namespace WebCore

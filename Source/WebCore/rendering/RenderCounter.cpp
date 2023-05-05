@@ -23,9 +23,9 @@
 #include "RenderCounter.h"
 
 #include "CSSCounterStyleRegistry.h"
+#include "CounterDirectives.h"
 #include "CounterNode.h"
 #include "Document.h"
-#include "Element.h"
 #include "ElementInlines.h"
 #include "ElementTraversal.h"
 #include "HTMLNames.h"
@@ -208,10 +208,7 @@ static std::optional<CounterPlan> planCounter(RenderElement& renderer, const Ato
         return std::nullopt; // Counters are forbidden from all other pseudo elements.
     }
 
-    CounterDirectives directives;
-
-    if (auto map = style.counterDirectives())
-        directives = map->get(identifier);
+    auto directives = style.counterDirectives().map.get(identifier);
 
     if (identifier == "list-item"_s) {
         auto itemDirectives = listItemCounterDirectives(renderer);
@@ -266,7 +263,7 @@ static CounterInsertionPoint findPlaceForCounter(RenderElement& counterOwner, co
         Vector<RenderElement*> previousRenderers;
         RenderElement* current = currentRenderer;
         while (current && !current->hasCounterNodeMap()) {
-            if (current->style().counterDirectives())
+            if (!current->style().counterDirectives().map.isEmpty())
                 previousRenderers.append(current);
             current = previousInPreOrderRespectingContainment(*current);
         }
@@ -451,13 +448,13 @@ String RenderCounter::originalText() const
     int value = child->actsAsReset() ? child->value() : child->countInParent();
 
     auto counterStyle = this->counterStyle();
-    String text = listMarkerText(m_counter.listStyleType().type, value, counterStyle.get());
+    String text = listMarkerText(m_counter.listStyleType(), value, counterStyle.get());
 
     if (!m_counter.separator().isNull()) {
         if (!child->actsAsReset())
             child = child->parent();
         while (CounterNode* parent = child->parent()) {
-            text = listMarkerText(m_counter.listStyleType().type, child->countInParent(), counterStyle.get())
+            text = listMarkerText(m_counter.listStyleType(), child->countInParent(), counterStyle.get())
                 + m_counter.separator() + text;
             child = parent;
         }
@@ -533,11 +530,11 @@ void RenderCounter::rendererStyleChangedSlowCase(RenderElement& renderer, const 
         return; // cannot have generated content or if it can have, it will be handled during attaching
 
     const CounterDirectiveMap* oldCounterDirectives;
-    if (oldStyle && (oldCounterDirectives = oldStyle->counterDirectives())) {
-        if (auto* newCounterDirectives = newStyle.counterDirectives()) {
-            for (auto& keyValue : *newCounterDirectives) {
-                auto existingEntry = oldCounterDirectives->find(keyValue.key);
-                if (existingEntry != oldCounterDirectives->end()) {
+    if (oldStyle && !(oldCounterDirectives = &oldStyle->counterDirectives())->map.isEmpty()) {
+        if (auto& newCounterDirectives = newStyle.counterDirectives().map; !newCounterDirectives.isEmpty()) {
+            for (auto& keyValue : newCounterDirectives) {
+                auto existingEntry = oldCounterDirectives->map.find(keyValue.key);
+                if (existingEntry != oldCounterDirectives->map.end()) {
                     if (existingEntry->value == keyValue.value)
                         continue;
                     RenderCounter::destroyCounterNode(renderer, keyValue.key);
@@ -548,8 +545,8 @@ void RenderCounter::rendererStyleChangedSlowCase(RenderElement& renderer, const 
                 makeCounterNode(renderer, keyValue.key, false);
             }
             // Destroying old counters that do not exist in the new counterDirective map.
-            for (auto& key : oldCounterDirectives->keys()) {
-                if (!newCounterDirectives->contains(key))
+            for (auto& key : oldCounterDirectives->map.keys()) {
+                if (!newCounterDirectives.contains(key))
                     RenderCounter::destroyCounterNode(renderer, key);
             }
         } else {
@@ -557,13 +554,11 @@ void RenderCounter::rendererStyleChangedSlowCase(RenderElement& renderer, const 
                 RenderCounter::destroyCounterNodes(renderer);
         }
     } else {
-        if (auto* newCounterDirectives = newStyle.counterDirectives()) {
-            for (auto& key : newCounterDirectives->keys()) {
-                // We must create this node here, because the added node may be a node with no display such as
-                // as those created by the increment or reset directives and the re-layout that will happen will
-                // not catch the change if the node had no children.
-                makeCounterNode(renderer, key, false);
-            }
+        for (auto& key : newStyle.counterDirectives().map.keys()) {
+            // We must create this node here, because the added node may be a node with no display such as
+            // as those created by the increment or reset directives and the re-layout that will happen will
+            // not catch the change if the node had no children.
+            makeCounterNode(renderer, key, false);
         }
     }
 }

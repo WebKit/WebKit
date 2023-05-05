@@ -66,6 +66,7 @@
 #include "RenderIFrame.h"
 #include "RenderImage.h"
 #include "RenderLayerCompositor.h"
+#include "RenderLayerInlines.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderMedia.h"
 #include "RenderModel.h"
@@ -674,7 +675,7 @@ void RenderLayerBacking::updateTransform(const RenderStyle& style)
 {
     TransformationMatrix t;
     if (m_owningLayer.isTransformed())
-        m_owningLayer.updateTransformFromStyle(t, style, RenderStyle::individualTransformOperations);
+        m_owningLayer.updateTransformFromStyle(t, style, RenderStyle::individualTransformOperations());
     
     if (m_contentsContainmentLayer) {
         m_contentsContainmentLayer->setTransform(t);
@@ -3803,7 +3804,7 @@ bool RenderLayerBacking::getCurrentTransform(const GraphicsLayer* graphicsLayer,
         return false;
 
     if (m_owningLayer.isTransformed()) {
-        transform = m_owningLayer.currentTransform(RenderStyle::individualTransformOperations);
+        transform = m_owningLayer.currentTransform(RenderStyle::individualTransformOperations());
         return true;
     }
     return false;

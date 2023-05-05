@@ -32,9 +32,10 @@
 #include "AXObjectCache.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "ListStyleType.h"
 #include "PseudoElement.h"
 #include "RenderListItem.h"
-#include "RenderObject.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
     

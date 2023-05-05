@@ -27,6 +27,7 @@
 
 #include "LayoutUnits.h"
 #include "RenderStyle.h"
+#include "RenderStyleConstants.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/IsoMalloc.h>
 
@@ -110,8 +111,8 @@ public:
     bool isFloatingOrOutOfFlowPositioned() const { return isFloatingPositioned() || isOutOfFlowPositioned(); }
 
     bool isContainingBlockForInFlow() const;
-    bool isContainingBlockForFixedPosition() const;
-    bool isContainingBlockForOutOfFlowPosition() const;
+    inline bool isContainingBlockForFixedPosition() const;
+    inline bool isContainingBlockForOutOfFlowPosition() const;
 
     bool isAnonymous() const { return m_isAnonymous; }
 
@@ -262,21 +263,11 @@ inline bool Box::isContainingBlockForInFlow() const
     return isBlockContainer() || establishesFormattingContext();
 }
 
-inline bool Box::isContainingBlockForFixedPosition() const
-{
-    return isInitialContainingBlock() || isLayoutContainmentBox() || style().hasTransform();
 }
 
-inline bool Box::isContainingBlockForOutOfFlowPosition() const
-{
-    return isInitialContainingBlock() || isPositioned() || isLayoutContainmentBox() || style().hasTransform();
-}
-
-}
 }
 
 #define SPECIALIZE_TYPE_TRAITS_LAYOUT_BOX(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Layout::ToValueTypeName) \
     static bool isType(const WebCore::Layout::Box& box) { return box.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
-

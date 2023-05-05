@@ -56,6 +56,7 @@
 #import "RenderMeter.h"
 #import "RenderProgress.h"
 #import "RenderSlider.h"
+#import "RenderStyleSetters.h"
 #import "RenderView.h"
 #import "SliderThumbElement.h"
 #import "StringTruncator.h"

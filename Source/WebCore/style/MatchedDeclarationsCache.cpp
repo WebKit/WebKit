@@ -33,6 +33,7 @@
 #include "CSSFontSelector.h"
 #include "Document.h"
 #include "FontCascade.h"
+#include "RenderStyleInlines.h"
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {

@@ -88,7 +88,6 @@ class Attr;
 class CanvasBase;
 class CDATASection;
 class CSSCounterStyleRegistry;
-class CSSCustomPropertyValue;
 class CSSFontSelector;
 class CSSStyleDeclaration;
 class CSSStyleSheet;

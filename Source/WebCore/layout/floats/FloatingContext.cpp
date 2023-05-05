@@ -32,6 +32,7 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutElementBox.h"
+#include "RenderStyleInlines.h"
 #include "Shape.h"
 #include <wtf/IsoMallocInlines.h>
 

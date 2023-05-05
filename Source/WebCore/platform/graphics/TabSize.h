@@ -37,7 +37,7 @@ enum TabSizeValueType {
 };
 
 struct TabSize {
-    TabSize(float numOrLength, TabSizeValueType isSpaces = SpaceValueType)
+    constexpr TabSize(float numOrLength, TabSizeValueType isSpaces = SpaceValueType)
         : m_value(numOrLength)
         , m_isSpaces(isSpaces)
     {

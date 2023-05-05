@@ -56,17 +56,17 @@
 #include "FontSizeAdjust.h"
 #include "FrameDestructionObserverInlines.h"
 #include "GridPositionsResolver.h"
-#include "Length.h"
-#include "ListStyleType.h"
 #include "LocalFrame.h"
 #include "QuotesData.h"
+#include "RenderStyleInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGPathElement.h"
+#include "SVGRenderStyle.h"
 #include "SVGURIReference.h"
 #include "Settings.h"
 #include "StyleBuilderState.h"
 #include "StyleFontSizeFunctions.h"
-#include "StyleGridData.h"
+#include "StyleReflection.h"
 #include "StyleScrollSnapPoints.h"
 #include "StyleTextBoxEdge.h"
 #include "TabSize.h"
@@ -1085,14 +1085,14 @@ inline bool BuilderConverter::createGridTrackList(const CSSValue& value, GridTra
     bool isSubgrid = is<CSSSubgridValue>(value);
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         if (primitiveValue->valueID() == CSSValueMasonry) {
-            trackList.append(GridTrackEntryMasonry());
+            trackList.list.append(GridTrackEntryMasonry());
             return true;
         }
         if (primitiveValue->valueID() == CSSValueNone)
             return true;
     } else if (isSubgrid) {
         valueList = &downcast<CSSSubgridValue>(value);
-        trackList.append(GridTrackEntrySubgrid());
+        trackList.list.append(GridTrackEntrySubgrid());
     } else if (is<CSSValueList>(value))
         valueList = &downcast<CSSValueList>(value);
     else
@@ -1130,11 +1130,11 @@ inline bool BuilderConverter::createGridTrackList(const CSSValue& value, GridTra
             Vector<String> names;
             for (auto& namedGridLineValue : downcast<CSSGridLineNamesValue>(currentValue).names())
                 names.append(namedGridLineValue);
-            trackList.append(WTFMove(names));
+            trackList.list.append(WTFMove(names));
             return;
         }
 
-        ensureLineNames(trackList);
+        ensureLineNames(trackList.list);
 
         if (is<CSSGridAutoRepeatValue>(currentValue)) {
             CSSValueID autoRepeatID = downcast<CSSGridAutoRepeatValue>(currentValue).autoRepeatID();
@@ -1144,15 +1144,15 @@ inline bool BuilderConverter::createGridTrackList(const CSSValue& value, GridTra
             repeat.type = autoRepeatID == CSSValueAutoFill ? AutoRepeatType::Fill : AutoRepeatType::Fit;
 
             buildRepeatList(currentValue, repeat.list);
-            trackList.append(WTFMove(repeat));
+            trackList.list.append(WTFMove(repeat));
         } else if (is<CSSGridIntegerRepeatValue>(currentValue)) {
             GridTrackEntryRepeat repeat;
             repeat.repeats = downcast<CSSGridIntegerRepeatValue>(currentValue).repetitions();
 
             buildRepeatList(currentValue, repeat.list);
-            trackList.append(WTFMove(repeat));
+            trackList.list.append(WTFMove(repeat));
         } else {
-            trackList.append(createGridTrackSize(currentValue, builderState));
+            trackList.list.append(createGridTrackSize(currentValue, builderState));
         }
     };
 
@@ -1163,8 +1163,8 @@ inline bool BuilderConverter::createGridTrackList(const CSSValue& value, GridTra
             addOne(value);
     }
 
-    if (!trackList.isEmpty())
-        ensureLineNames(trackList);
+    if (!trackList.list.isEmpty())
+        ensureLineNames(trackList.list);
 
     return true;
 }
@@ -1220,19 +1220,20 @@ inline bool BuilderConverter::createGridPosition(const CSSValue& value, GridPosi
 
 inline void BuilderConverter::createImplicitNamedGridLinesFromGridArea(const NamedGridAreaMap& namedGridAreas, NamedGridLinesMap& namedGridLines, GridTrackSizingDirection direction)
 {
-    for (auto& area : namedGridAreas) {
+    for (auto& area : namedGridAreas.map) {
         GridSpan areaSpan = direction == ForRows ? area.value.rows : area.value.columns;
         {
-            auto& startVector = namedGridLines.add(area.key + "-start", Vector<unsigned>()).iterator->value;
+            auto& startVector = namedGridLines.map.add(area.key + "-start"_s, Vector<unsigned>()).iterator->value;
             startVector.append(areaSpan.startLine());
             std::sort(startVector.begin(), startVector.end());
         }
         {
-            auto& endVector = namedGridLines.add(area.key + "-end", Vector<unsigned>()).iterator->value;
+            auto& endVector = namedGridLines.map.add(area.key + "-end"_s, Vector<unsigned>()).iterator->value;
             endVector.append(areaSpan.endLine());
             std::sort(endVector.begin(), endVector.end());
         }
     }
+    // FIXME: For acceptable performance, should sort once at the end, not as we add each item, or at least insert in sorted order instead of using std::sort each time.
 }
 
 inline Vector<GridTrackSize> BuilderConverter::convertGridTrackSizeList(BuilderState& builderState, const CSSValue& value)

@@ -42,6 +42,7 @@
 #include "LocalizedStrings.h"
 #include "NodeName.h"
 #include "PlatformLocale.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderTextControl.h"
 #include "StepRange.h"
 #include <limits>

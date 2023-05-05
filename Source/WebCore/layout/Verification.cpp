@@ -27,6 +27,7 @@
 #include "LayoutState.h"
 
 #if ASSERT_ENABLED
+
 #include "BlockFormattingState.h"
 #include "InlineFormattingState.h"
 #include "LayoutBox.h"
@@ -36,7 +37,7 @@
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutTreeBuilder.h"
 #include "LegacyInlineTextBox.h"
-#include "RenderBox.h"
+#include "RenderBoxInlines.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
 #include "RenderTableCell.h"
@@ -352,4 +353,3 @@ void LayoutContext::verifyAndOutputMismatchingLayoutTree(const LayoutState& layo
 }
 
 #endif // ASSERT_ENABLED
-

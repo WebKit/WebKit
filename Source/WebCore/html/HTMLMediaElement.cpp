@@ -102,6 +102,7 @@
 #include "PseudoClassChangeInvalidation.h"
 #include "Quirks.h"
 #include "RegistrableDomain.h"
+#include "RenderBoxInlines.h"
 #include "RenderLayerCompositor.h"
 #include "RenderTheme.h"
 #include "RenderVideo.h"

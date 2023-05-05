@@ -26,9 +26,7 @@
 #include "config.h"
 #include "DisplayStyle.h"
 
-#include "BorderData.h"
-#include "FillLayer.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "ShadowData.h"
 #include <wtf/IsoMallocInlines.h>
 

@@ -41,40 +41,33 @@
 #include "ColorBlending.h"
 #include "ComputedStyleExtractor.h"
 #include "ContentData.h"
-#include "CounterDirectives.h"
 #include "CustomPropertyRegistry.h"
 #include "Document.h"
 #include "FloatConversion.h"
 #include "FontCascade.h"
 #include "FontSelectionAlgorithm.h"
 #include "FontTaggedSettings.h"
-#include "GapLength.h"
 #include "GridPositionsResolver.h"
 #include "IdentityTransformOperation.h"
 #include "LengthPoint.h"
 #include "Logging.h"
 #include "Matrix3DTransformOperation.h"
 #include "MatrixTransformOperation.h"
-#include "OffsetRotation.h"
-#include "PathOperation.h"
 #include "QuotesData.h"
 #include "RenderBox.h"
-#include "RenderStyle.h"
+#include "RenderStyleSetters.h"
+#include "SVGRenderStyle.h"
 #include "Settings.h"
 #include "StyleCachedImage.h"
 #include "StyleCrossfadeImage.h"
 #include "StyleFilterImage.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
-#include "TabSize.h"
-#include "TextSpacing.h"
 #include <algorithm>
 #include <memory>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/PointerComparison.h>
-#include <wtf/RefCounted.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -543,29 +536,29 @@ static inline std::optional<FontSelectionValue> blendFunc(std::optional<FontSele
 
 static inline bool canInterpolate(const GridTrackList& from, const GridTrackList& to)
 {
-    if (from.size() != to.size())
+    if (from.list.size() != to.list.size())
         return false;
 
     size_t i = 0;
     auto visitor = WTF::makeVisitor([&](const GridTrackSize&) {
-        return std::holds_alternative<GridTrackSize>(to[i]);
+        return std::holds_alternative<GridTrackSize>(to.list[i]);
     }, [&](const Vector<String>&) {
-        return std::holds_alternative<Vector<String>>(to[i]);
+        return std::holds_alternative<Vector<String>>(to.list[i]);
     }, [&](const GridTrackEntryRepeat& repeat) {
-        if (!std::holds_alternative<GridTrackEntryRepeat>(to[i]))
+        if (!std::holds_alternative<GridTrackEntryRepeat>(to.list[i]))
             return false;
-        const auto& toEntry = std::get<GridTrackEntryRepeat>(to[i]);
+        const auto& toEntry = std::get<GridTrackEntryRepeat>(to.list[i]);
         return repeat.repeats == toEntry.repeats && repeat.list.size() == toEntry.list.size();
-    }, [&](const GridTrackEntryAutoRepeat&) {
+    }, [](const GridTrackEntryAutoRepeat&) {
         return false;
-    }, [&](const GridTrackEntrySubgrid&) {
+    }, [](const GridTrackEntrySubgrid&) {
         return false;
-    }, [&](const GridTrackEntryMasonry&) {
+    }, [](const GridTrackEntryMasonry&) {
         return false;
     });
 
-    for (i = 0; i < from.size(); i++) {
-        if (!std::visit(visitor, from[i]))
+    for (i = 0; i < from.list.size(); i++) {
+        if (!std::visit(visitor, from.list[i]))
             return false;
     }
 
@@ -633,33 +626,33 @@ static inline GridTrackList blendFunc(const GridTrackList& from, const GridTrack
     size_t i = 0;
 
     auto visitor = WTF::makeVisitor([&](const GridTrackSize& size) {
-        result.append(blendFunc(size, std::get<GridTrackSize>(to[i]), context));
+        result.list.append(blendFunc(size, std::get<GridTrackSize>(to.list[i]), context));
     }, [&](const Vector<String>& names) {
         if (context.progress < 0.5)
-            result.append(names);
+            result.list.append(names);
         else {
-            const Vector<String>& toNames = std::get<Vector<String>>(to[i]);
-            result.append(toNames);
+            const Vector<String>& toNames = std::get<Vector<String>>(to.list[i]);
+            result.list.append(toNames);
         }
     }, [&](const GridTrackEntryRepeat& repeatFrom) {
-        const auto& repeatTo = std::get<GridTrackEntryRepeat>(to[i]);
+        auto& repeatTo = std::get<GridTrackEntryRepeat>(to.list[i]);
         GridTrackEntryRepeat repeatResult;
         repeatResult.repeats = repeatFrom.repeats;
         repeatResult.list = blendFunc(repeatFrom.list, repeatTo.list, context);
-        result.append(WTFMove(repeatResult));
+        result.list.append(WTFMove(repeatResult));
     }, [&](const GridTrackEntryAutoRepeat& repeatFrom) {
-        const auto& repeatTo = std::get<GridTrackEntryAutoRepeat>(to[i]);
+        auto& repeatTo = std::get<GridTrackEntryAutoRepeat>(to.list[i]);
         GridTrackEntryAutoRepeat repeatResult;
         repeatResult.type = repeatFrom.type;
         repeatResult.list = blendFunc(repeatFrom.list, repeatTo.list, context);
-        result.append(WTFMove(repeatResult));
-    }, [&](const GridTrackEntrySubgrid&) {
-    }, [&](const GridTrackEntryMasonry&) {
+        result.list.append(WTFMove(repeatResult));
+    }, [](const GridTrackEntrySubgrid&) {
+    }, [](const GridTrackEntryMasonry&) {
     });
 
 
-    for (i = 0; i < from.size(); i++)
-        std::visit(visitor, from[i]);
+    for (i = 0; i < from.list.size(); i++)
+        std::visit(visitor, from.list[i]);
 
     return result;
 }
@@ -969,10 +962,10 @@ static bool canInterpolateLengthVariants(const GapLength& from, const GapLength&
     return canInterpolateLengths(from.length(), to.length(), isLengthPercentage);
 }
 
-class LengthPointPropertyWrapper : public PropertyWrapperGetter<LengthPoint> {
+class LengthPointPropertyWrapper : public PropertyWrapperGetter<const LengthPoint&> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    LengthPointPropertyWrapper(CSSPropertyID property, LengthPoint (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthPoint&&))
+    LengthPointPropertyWrapper(CSSPropertyID property, const LengthPoint& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthPoint))
         : PropertyWrapperGetter(property, getter)
         , m_setter(setter)
     {
@@ -992,7 +985,7 @@ private:
         (destination.*m_setter)(blendFunc(value(from), value(to), context));
     }
 
-    void (RenderStyle::*m_setter)(LengthPoint&&);
+    void (RenderStyle::*m_setter)(LengthPoint);
 };
 
 // This class extends LengthPointPropertyWrapper to accommodate `auto` value expressed as
@@ -1000,7 +993,7 @@ private:
 // offset-anchor and offset-position, which allows `auto`, and is expressed like so.
 class LengthPointOrAutoPropertyWrapper : public LengthPointPropertyWrapper {
 public:
-    LengthPointOrAutoPropertyWrapper(CSSPropertyID property, LengthPoint (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthPoint&&))
+    LengthPointOrAutoPropertyWrapper(CSSPropertyID property, const LengthPoint& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthPoint))
         : LengthPointPropertyWrapper(property, getter, setter)
     {
     }
@@ -1019,7 +1012,7 @@ private:
 
 class OffsetLengthPointWrapper final : public LengthPointOrAutoPropertyWrapper {
 public:
-    OffsetLengthPointWrapper(CSSPropertyID property, LengthPoint (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthPoint&&))
+    OffsetLengthPointWrapper(CSSPropertyID property, const LengthPoint& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthPoint))
         : LengthPointOrAutoPropertyWrapper(property, getter, setter)
     {
     }
@@ -3069,26 +3062,20 @@ public:
 
     bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
-        auto* aCounterDirectives = a.counterDirectives();
-        auto* bCounterDirectives = b.counterDirectives();
-
-        if (!aCounterDirectives && !bCounterDirectives)
-            return true;
-        if (aCounterDirectives && bCounterDirectives) {
-            if (aCounterDirectives->size() != bCounterDirectives->size())
+        auto& mapA = a.counterDirectives().map;
+        auto& mapB = b.counterDirectives().map;
+        if (mapA.size() != mapB.size())
+            return false;
+        for (auto& [key, aDirective] : mapA) {
+            auto it = mapB.find(key);
+            if (it == mapB.end())
                 return false;
-            for (auto& [key, aDirective] : *aCounterDirectives) {
-                auto it = bCounterDirectives->find(key);
-                if (it == bCounterDirectives->end())
-                    return false;
-                auto& bDirective = it->value;
-                if ((property() == CSSPropertyCounterIncrement && aDirective.incrementValue != bDirective.incrementValue)
-                    || (property() == CSSPropertyCounterReset && aDirective.resetValue != bDirective.resetValue))
-                    return false;
-            }
-            return true;
+            auto& bDirective = it->value;
+            if ((property() == CSSPropertyCounterIncrement && aDirective.incrementValue != bDirective.incrementValue)
+                || (property() == CSSPropertyCounterReset && aDirective.resetValue != bDirective.resetValue))
+                return false;
         }
-        return false;
+        return true;
     }
 
 #if !LOG_DISABLED
@@ -3104,21 +3091,16 @@ public:
         ASSERT(!context.progress || context.progress == 1);
 
         // Clear all existing values in the existing set of directives.
-        if (destination.counterDirectives()) {
-            for (auto& [key, directive] : destination.accessCounterDirectives()) {
-                if (property() == CSSPropertyCounterIncrement)
-                    directive.incrementValue = std::nullopt;
-                else
-                    directive.resetValue = std::nullopt;
-            }
+        for (auto& [key, directive] : destination.accessCounterDirectives().map) {
+            if (property() == CSSPropertyCounterIncrement)
+                directive.incrementValue = std::nullopt;
+            else
+                directive.resetValue = std::nullopt;
         }
 
         auto& style = context.progress ? to : from;
-        if (!style.counterDirectives())
-            return;
-
-        auto& targetDirectives = destination.accessCounterDirectives();
-        for (auto& [key, directive] : *style.counterDirectives()) {
+        auto& targetDirectives = destination.accessCounterDirectives().map;
+        for (auto& [key, directive] : style.counterDirectives().map) {
             auto updateDirective = [&](CounterDirectives& target, const CounterDirectives& source) {
                 if (property() == CSSPropertyCounterIncrement)
                     target.incrementValue = source.incrementValue;
@@ -3216,9 +3198,9 @@ public:
 
     bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
-        return a.implicitNamedGridColumnLines() == b.implicitNamedGridColumnLines()
-            && a.implicitNamedGridRowLines() == b.implicitNamedGridRowLines()
-            && a.namedGridArea() == b.namedGridArea()
+        return a.implicitNamedGridColumnLines().map == b.implicitNamedGridColumnLines().map
+            && a.implicitNamedGridRowLines().map == b.implicitNamedGridRowLines().map
+            && a.namedGridArea().map == b.namedGridArea().map
             && a.namedGridAreaRowCount() == b.namedGridAreaRowCount()
             && a.namedGridAreaColumnCount() == b.namedGridAreaColumnCount();
     }

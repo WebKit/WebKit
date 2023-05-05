@@ -7589,11 +7589,11 @@ bool parseGridTemplateAreasRow(StringView gridRowNames, NamedGridAreaMap& gridAr
         while (lookAheadColumn < columnCount && columnNames[lookAheadColumn] == gridAreaName)
             lookAheadColumn++;
 
-        auto gridAreaIt = gridAreaMap.find(gridAreaName);
-        if (gridAreaIt == gridAreaMap.end())
-            gridAreaMap.add(gridAreaName, GridArea(GridSpan::translatedDefiniteGridSpan(rowCount, rowCount + 1), GridSpan::translatedDefiniteGridSpan(currentColumn, lookAheadColumn)));
-        else {
-            auto& gridArea = gridAreaIt->value;
+        auto result = gridAreaMap.map.ensure(gridAreaName, [&] {
+            return GridArea(GridSpan::translatedDefiniteGridSpan(rowCount, rowCount + 1), GridSpan::translatedDefiniteGridSpan(currentColumn, lookAheadColumn));
+        });
+        if (!result.isNewEntry) {
+            auto& gridArea = result.iterator->value;
 
             // The following checks test that the grid area is a single filled-in rectangle.
             // 1. The new row is adjacent to the previously parsed row.

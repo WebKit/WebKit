@@ -27,6 +27,7 @@
 #include "HitTestResult.h"
 #include "InlineBoxPainter.h"
 #include "LegacyEllipsisBox.h"
+#include "LegacyInlineFlowBoxInlines.h"
 #include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
 #include "RenderBlock.h"
@@ -43,6 +44,8 @@
 #include "Settings.h"
 #include "Text.h"
 #include "TextBoxPainter.h"
+#include "TextDecorationThickness.h"
+#include "TextUnderlineOffset.h"
 #include <math.h>
 #include <wtf/IsoMallocInlines.h>
 

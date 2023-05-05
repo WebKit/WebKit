@@ -33,6 +33,7 @@
 #include "GridPositionsResolver.h"
 #include "GridTrackSizingAlgorithm.h"
 #include "LayoutRepainter.h"
+#include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
@@ -130,14 +131,14 @@ bool RenderGrid::explicitGridDidResize(const RenderStyle& oldStyle) const
 
 bool RenderGrid::namedGridLinesDefinitionDidChange(const RenderStyle& oldStyle) const
 {
-    return oldStyle.namedGridRowLines() != style().namedGridRowLines()
-        || oldStyle.namedGridColumnLines() != style().namedGridColumnLines();
+    return oldStyle.namedGridRowLines().map != style().namedGridRowLines().map
+        || oldStyle.namedGridColumnLines().map != style().namedGridColumnLines().map;
 }
 
 bool RenderGrid::implicitGridLinesDefinitionDidChange(const RenderStyle& oldStyle) const
 {
-    return oldStyle.implicitNamedGridRowLines() != style().implicitNamedGridRowLines()
-        || oldStyle.implicitNamedGridColumnLines() != style().implicitNamedGridColumnLines();
+    return oldStyle.implicitNamedGridRowLines().map != style().implicitNamedGridRowLines().map
+        || oldStyle.implicitNamedGridColumnLines().map != style().implicitNamedGridColumnLines().map;
 }
 
 // This method optimizes the gutters computation by skiping the available size
@@ -1561,6 +1562,16 @@ bool RenderGrid::aspectRatioPrefersInline(const RenderBox& child, bool blockFlow
     if (!blockFlowIsColumnAxis)
         std::swap(hasExplicitInlineStretch, hasExplicitBlockStretch);
     return !hasExplicitBlockStretch;
+}
+
+inline bool RenderGrid::allowedToStretchChildAlongColumnAxis(const RenderBox& child) const
+{
+    return alignSelfForChild(child).position() == ItemPosition::Stretch && hasAutoSizeInColumnAxis(child) && !hasAutoMarginsInColumnAxis(child);
+}
+
+inline bool RenderGrid::allowedToStretchChildAlongRowAxis(const RenderBox& child) const
+{
+    return justifySelfForChild(child).position() == ItemPosition::Stretch && hasAutoSizeInRowAxis(child) && !hasAutoMarginsInRowAxis(child);
 }
 
 // FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.

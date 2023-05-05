@@ -28,6 +28,7 @@
 
 #include "FlexFormattingContext.h"
 #include "LayoutContext.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 namespace Layout {

@@ -128,8 +128,8 @@ public:
 
     LayoutRect collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<FloatQuad>&);
 
-    LayoutUnit marginLeft() const { return minimumValueForLength(style().marginLeft(), 0); }
-    LayoutUnit marginRight() const { return minimumValueForLength(style().marginRight(), 0); }
+    inline LayoutUnit marginLeft() const;
+    inline LayoutUnit marginRight() const;
 
     LegacyInlineTextBox* firstTextBox() const { return m_lineBoxes.first(); }
     LegacyInlineTextBox* lastTextBox() const { return m_lineBoxes.last(); }
