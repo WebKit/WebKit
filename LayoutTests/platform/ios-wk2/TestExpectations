@@ -2341,8 +2341,6 @@ webkit.org/b/245595 imported/blink/svg/canvas/canvas-draw-pattern-size.html [ Im
 
 webkit.org/b/245600 fast/attachment/attachment-wrapping-action.html [ ImageOnlyFailure ]
 
-webkit.org/b/245613 scrollingcoordinator/ios/fixed-in-frame-layer-reconcile-layer-position.html [ Pass Failure ]
-
 webkit.org/b/245686 fast/text/system-font-fallback.html [ ImageOnlyFailure ]
 
 webkit.org/b/245710 media/video-played-reset.html [ Pass Failure ]
