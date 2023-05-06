@@ -698,22 +698,22 @@ Ref<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, Ref<API
     return webPage;
 }
 
-bool WebProcessProxy::shouldTakeSuspendedAssertion() const
+bool WebProcessProxy::shouldTakeNearSuspendedAssertion() const
 {
 #if USE(RUNNINGBOARD)
     for (auto& page : m_pageMap.values()) {
         bool processSuppressionEnabled = page->preferences().pageVisibilityBasedProcessSuppressionEnabled();
-        bool suspendedAssertionsEnabled = page->preferences().shouldTakeSuspendedAssertions();
-        if (suspendedAssertionsEnabled || !processSuppressionEnabled)
+        bool nearSuspendedAssertionsEnabled = page->preferences().shouldTakeNearSuspendedAssertions();
+        if (nearSuspendedAssertionsEnabled || !processSuppressionEnabled)
             return true;
     }
 #endif
     return false;
 }
 
-bool WebProcessProxy::shouldDropSuspendedAssertionAfterDelay() const
+bool WebProcessProxy::shouldDropNearSuspendedAssertionAfterDelay() const
 {
-    return WTF::anyOf(m_pageMap.values(), [](auto& page) { return page->preferences().shouldDropSuspendedAssertionAfterDelay(); });
+    return WTF::anyOf(m_pageMap.values(), [](auto& page) { return page->preferences().shouldDropNearSuspendedAssertionAfterDelay(); });
 }
 
 void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataStore beginsUsingDataStore)
@@ -740,8 +740,8 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
     m_pageMap.set(webPage.identifier(), WeakPtr { webPage });
     globalPageMap().set(webPage.identifier(), WeakPtr { webPage });
 
-    m_throttler.setShouldTakeSuspendedAssertion(shouldTakeSuspendedAssertion());
-    m_throttler.setShouldDropSuspendedAssertionAfterDelay(shouldDropSuspendedAssertionAfterDelay());
+    m_throttler.setShouldTakeNearSuspendedAssertion(shouldTakeNearSuspendedAssertion());
+    m_throttler.setShouldDropNearSuspendedAssertionAfterDelay(shouldDropNearSuspendedAssertionAfterDelay());
 
     updateRegistrationWithDataStore();
     updateBackgroundResponsivenessTimer();
@@ -1241,8 +1241,8 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 #endif // PLATFORM(MAC)
 #endif // USE(RUNNINGBOARD)
 
-    m_throttler.setShouldTakeSuspendedAssertion(shouldTakeSuspendedAssertion());
-    m_throttler.setShouldDropSuspendedAssertionAfterDelay(shouldDropSuspendedAssertionAfterDelay());
+    m_throttler.setShouldTakeNearSuspendedAssertion(shouldTakeNearSuspendedAssertion());
+    m_throttler.setShouldDropNearSuspendedAssertionAfterDelay(shouldDropNearSuspendedAssertionAfterDelay());
 
 #if PLATFORM(COCOA)
     unblockAccessibilityServerIfNeeded();
