@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -224,9 +224,9 @@ static UIBezierPath *pathWithRoundedRectInFrame(CGRect rect, CGFloat borderRadiu
     CGRect viewBounds = self.bounds;
     [_dimmingView setFrame:UIRectInsetEdges(viewBounds, UIRectEdgeAll, -digitalCrownMaximumScrollDistance)];
     [_dismissButton sizeToFit];
-    [_dismissButton setFrame:CGRect { CGPointMake(0, 0), [_dismissButton size] }];
+    [_dismissButton setFrame:CGRect { CGPointMake(0, 0), [_dismissButton bounds].size }];
     [_submitButton sizeToFit];
-    [_submitButton setFrame:CGRect { CGPointMake(CGRectGetWidth(viewBounds) - CGRectGetWidth([_submitButton bounds]), 0), [_submitButton size] }];
+    [_submitButton setFrame:CGRect { CGPointMake(CGRectGetWidth(viewBounds) - CGRectGetWidth([_submitButton bounds]), 0), [_submitButton bounds].size }];
     [_submitButtonBackgroundView setFrame:CGRectMake(0, 0, CGRectGetWidth(viewBounds), submitButtonHeight)];
 }
 
