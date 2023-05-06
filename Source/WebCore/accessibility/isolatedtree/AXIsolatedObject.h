@@ -107,11 +107,18 @@ private:
     void fillChildrenVectorForProperty(AXPropertyName, AccessibilityChildrenVector&) const;
     void setMathscripts(AXPropertyName, AXCoreObject&);
     void insertMathPairs(Vector<std::pair<AXID, AXID>>&, AccessibilityMathMultiscriptPairs&);
+    template<typename U> void performFunctionOnMainThreadAndWait(U&& lambda) const
+    {
+        Accessibility::performFunctionOnMainThreadAndWait([&lambda, this] {
+            if (RefPtr object = associatedAXObject())
+                lambda(object.get());
+        });
+    }
     template<typename U> void performFunctionOnMainThread(U&& lambda) const
     {
-        Accessibility::performFunctionOnMainThread([&lambda, this]() {
-            if (auto* object = associatedAXObject())
-                lambda(object);
+        Accessibility::performFunctionOnMainThread([lambda = WTFMove(lambda), protectedThis = Ref { *this }] () mutable {
+            if (RefPtr object = protectedThis->associatedAXObject())
+                lambda(object.get());
         });
     }
 
@@ -385,12 +392,14 @@ private:
     void setARIAGrabbed(bool) override;
     void setIsExpanded(bool) override;
     bool setValue(float) override;
+    void setValueIgnoringResult(float) final;
     void setSelected(bool) override;
-    void setSelectedRows(AccessibilityChildrenVector&) override;
+    void setSelectedRows(AccessibilityChildrenVector&&) override;
     void setFocused(bool) override;
     void setSelectedText(const String&) override;
-    void setSelectedTextRange(const PlainTextRange&) override;
+    void setSelectedTextRange(PlainTextRange&&) override;
     bool setValue(const String&) override;
+    void setValueIgnoringResult(const String&) final;
 #if PLATFORM(MAC)
     void setCaretBrowsingEnabled(bool) override;
 #endif
@@ -404,12 +413,12 @@ private:
     void increment() override;
     void decrement() override;
     bool performDismissAction() override;
+    void performDismissActionIgnoringResult() final;
     void scrollToMakeVisible() const override;
-    void scrollToMakeVisibleWithSubFocus(const IntRect&) const override;
-    void scrollToGlobalPoint(const IntPoint&) const override;
+    void scrollToMakeVisibleWithSubFocus(IntRect&&) const override;
+    void scrollToGlobalPoint(IntPoint&&) const final;
     bool replaceTextInRange(const String&, const PlainTextRange&) override;
     bool insertText(const String&) override;
-    void makeRangeVisible(const PlainTextRange&) override;
     bool press() override;
 
     bool isAccessibilityObject() const override { return false; }

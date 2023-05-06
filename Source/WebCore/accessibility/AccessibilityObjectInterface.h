@@ -1222,20 +1222,22 @@ public:
     
     virtual void setFocused(bool) = 0;
     virtual void setSelectedText(const String&) = 0;
-    virtual void setSelectedTextRange(const PlainTextRange&) = 0;
+    virtual void setSelectedTextRange(PlainTextRange&&) = 0;
     virtual bool setValue(const String&) = 0;
+    virtual void setValueIgnoringResult(const String&) = 0;
     virtual bool replaceTextInRange(const String&, const PlainTextRange&) = 0;
     virtual bool insertText(const String&) = 0;
 
     virtual bool setValue(float) = 0;
+    virtual void setValueIgnoringResult(float) = 0;
     virtual void setSelected(bool) = 0;
-    virtual void setSelectedRows(AccessibilityChildrenVector&) = 0;
+    virtual void setSelectedRows(AccessibilityChildrenVector&&) = 0;
 
-    virtual void makeRangeVisible(const PlainTextRange&) = 0;
     virtual bool press() = 0;
     bool performDefaultAction() { return press(); }
     virtual bool performDismissAction() { return false; }
-    
+    virtual void performDismissActionIgnoringResult() = 0;
+
     virtual AccessibilityOrientation orientation() const = 0;
     virtual void increment() = 0;
     virtual void decrement() = 0;
@@ -1335,9 +1337,9 @@ public:
     // Make this object visible by scrolling as many nested scrollable views as needed.
     virtual void scrollToMakeVisible() const = 0;
     // Same, but if the whole object can't be made visible, try for this subrect, in local coordinates.
-    virtual void scrollToMakeVisibleWithSubFocus(const IntRect&) const = 0;
+    virtual void scrollToMakeVisibleWithSubFocus(IntRect&&) const = 0;
     // Scroll this object to a given point in global coordinates of the top-level window.
-    virtual void scrollToGlobalPoint(const IntPoint&) const = 0;
+    virtual void scrollToGlobalPoint(IntPoint&&) const = 0;
 
     AccessibilityChildrenVector contents();
 
@@ -1935,9 +1937,16 @@ void enumerateDescendants(T& object, bool includeSelf, const F& lambda)
         enumerateDescendants(*child, true, lambda);
 }
 
-template<typename U> inline void performFunctionOnMainThread(U&& lambda)
+template<typename U> inline void performFunctionOnMainThreadAndWait(U&& lambda)
 {
     callOnMainThreadAndWait([lambda = WTFMove(lambda)] () {
+        lambda();
+    });
+}
+
+template<typename U> inline void performFunctionOnMainThread(U&& lambda)
+{
+    ensureOnMainThread([lambda = WTFMove(lambda)] () mutable {
         lambda();
     });
 }

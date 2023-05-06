@@ -1643,7 +1643,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if ([attributeName isEqualToString:NSAccessibilityNumberOfCharactersAttribute])
             return @(backingObject->textLength());
 
-        if ([attributeName isEqualToString: NSAccessibilitySelectedTextAttribute]) {
+        if ([attributeName isEqualToString:NSAccessibilitySelectedTextAttribute]) {
             String selectedText = backingObject->selectedText();
             if (selectedText.isNull())
                 return nil;
@@ -2355,9 +2355,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute])
         return YES;
 
-    if ([attributeName isEqualToString: NSAccessibilitySelectedTextAttribute]
-        || [attributeName isEqualToString: NSAccessibilitySelectedTextRangeAttribute]
-        || [attributeName isEqualToString: NSAccessibilityVisibleCharacterRangeAttribute])
+    if ([attributeName isEqualToString:NSAccessibilitySelectedTextAttribute]
+        || [attributeName isEqualToString:NSAccessibilitySelectedTextRangeAttribute])
         return backingObject->canSetTextRangeAttributes();
 
     if ([attributeName isEqualToString:NSAccessibilityGrabbedAttribute])
@@ -2500,6 +2499,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 - (void)_accessibilityPerformPressAction
 {
+    ASSERT(isMainThread());
     auto* backingObject = self.updateObjectBackingStore;
     if (!backingObject)
         return;
@@ -2650,7 +2650,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     else if ([action isEqualToString:NSAccessibilityScrollToVisibleAction])
         [self accessibilityScrollToVisible];
     else if ([action isEqualToString:@"AXDismissAction"])
-        backingObject->performDismissAction();
+        backingObject->performDismissActionIgnoringResult();
 }
 
 - (BOOL)accessibilityReplaceRange:(NSRange)range withText:(NSString *)string
@@ -2720,9 +2720,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         backingObject->setFocused([number boolValue]);
     } else if ([attributeName isEqualToString: NSAccessibilityValueAttribute]) {
         if (number && backingObject->canSetNumericValue())
-            backingObject->setValue([number floatValue]);
+            backingObject->setValueIgnoringResult([number floatValue]);
         else if (string)
-            backingObject->setValue(string);
+            backingObject->setValueIgnoringResult(string);
     } else if ([attributeName isEqualToString: NSAccessibilitySelectedAttribute]) {
         if (!number)
             return;
@@ -2735,20 +2735,17 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         convertToVector(array, selectedChildren);
         backingObject->setSelectedChildren(selectedChildren);
     } else if (backingObject->isTextControl()) {
-        if ([attributeName isEqualToString: NSAccessibilitySelectedTextAttribute]) {
+        if ([attributeName isEqualToString:NSAccessibilitySelectedTextAttribute])
             backingObject->setSelectedText(string);
-        } else if ([attributeName isEqualToString: NSAccessibilitySelectedTextRangeAttribute]) {
+        else if ([attributeName isEqualToString:NSAccessibilitySelectedTextRangeAttribute])
             backingObject->setSelectedTextRange(PlainTextRange(range.location, range.length));
-        } else if ([attributeName isEqualToString: NSAccessibilityVisibleCharacterRangeAttribute]) {
-            backingObject->makeRangeVisible(PlainTextRange(range.location, range.length));
-        }
     } else if ([attributeName isEqualToString:NSAccessibilityDisclosingAttribute] || [attributeName isEqualToString:NSAccessibilityExpandedAttribute])
         backingObject->setIsExpanded([number boolValue]);
     else if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute]) {
         AccessibilityObject::AccessibilityChildrenVector selectedRows;
         convertToVector(array, selectedRows);
         if (backingObject->isTree() || (backingObject->isTable() && backingObject->isExposable()))
-            backingObject->setSelectedRows(selectedRows);
+            backingObject->setSelectedRows(WTFMove(selectedRows));
     } else if ([attributeName isEqualToString:NSAccessibilityGrabbedAttribute])
         backingObject->setARIAGrabbed([number boolValue]);
     else if (backingObject->isWebArea() && [attributeName isEqualToString:NSAccessibilityPreventKeyboardDOMEventDispatchAttribute])

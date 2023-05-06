@@ -208,7 +208,7 @@ RetainPtr<NSAttributedString> AXIsolatedObject::attributedStringForTextMarkerRan
         [result removeAttribute:NSAccessibilityMisspelledTextAttribute range:resultRange];
         [result removeAttribute:NSAccessibilityMarkedMisspelledTextAttribute range:resultRange];
         // FIXME: pull attributedStringSetSpelling off the main thread.
-        performFunctionOnMainThread([result = retainPtr(result), &resultRange] (AccessibilityObject* axObject) {
+        performFunctionOnMainThreadAndWait([result = retainPtr(result), &resultRange] (AccessibilityObject* axObject) {
             attributedStringSetSpelling(result.get(), axObject->node(), String { [result string] }, resultRange);
         });
     }
@@ -221,9 +221,9 @@ void AXIsolatedObject::setPreventKeyboardDOMEventDispatch(bool value)
     ASSERT(!isMainThread());
     ASSERT(isWebArea());
 
-    performFunctionOnMainThread([&value, this](AXCoreObject* object) {
+    setProperty(AXPropertyName::PreventKeyboardDOMEventDispatch, value);
+    performFunctionOnMainThread([value] (auto* object) {
         object->setPreventKeyboardDOMEventDispatch(value);
-        setProperty(AXPropertyName::PreventKeyboardDOMEventDispatch, value);
     });
 }
 
@@ -232,9 +232,9 @@ void AXIsolatedObject::setCaretBrowsingEnabled(bool value)
     ASSERT(!isMainThread());
     ASSERT(isWebArea());
 
-    performFunctionOnMainThread([&value, this](AXCoreObject* object) {
+    setProperty(AXPropertyName::CaretBrowsingEnabled, value);
+    performFunctionOnMainThread([value] (auto* object) {
         object->setCaretBrowsingEnabled(value);
-        setProperty(AXPropertyName::CaretBrowsingEnabled, value);
     });
 }
 

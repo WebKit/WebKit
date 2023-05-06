@@ -472,16 +472,18 @@ public:
     void setFocused(bool) override;
 
     void setSelectedText(const String&) override { }
-    void setSelectedTextRange(const PlainTextRange&) override { }
+    void setSelectedTextRange(PlainTextRange&&) override { }
     bool setValue(const String&) override { return false; }
+    void setValueIgnoringResult(const String& value) final { setValue(value); }
     bool replaceTextInRange(const String&, const PlainTextRange&) override;
     bool insertText(const String&) override;
 
     bool setValue(float) override { return false; }
+    void setValueIgnoringResult(float value) final { setValue(value); }
     void setSelected(bool) override { }
-    void setSelectedRows(AccessibilityChildrenVector&) final;
+    void setSelectedRows(AccessibilityChildrenVector&&) final;
 
-    void makeRangeVisible(const PlainTextRange&) override { }
+    void performDismissActionIgnoringResult() final { performDismissAction(); }
     bool press() override;
 
     AccessibilityOrientation orientation() const override;
@@ -619,9 +621,9 @@ public:
     // Make this object visible by scrolling as many nested scrollable views as needed.
     void scrollToMakeVisible() const override;
     // Same, but if the whole object can't be made visible, try for this subrect, in local coordinates.
-    void scrollToMakeVisibleWithSubFocus(const IntRect&) const override;
+    void scrollToMakeVisibleWithSubFocus(IntRect&&) const override;
     // Scroll this object to a given point in global coordinates of the top-level window.
-    void scrollToGlobalPoint(const IntPoint&) const override;
+    void scrollToGlobalPoint(IntPoint&&) const final;
 
     enum class ScrollByPageDirection { Up, Down, Left, Right };
     bool scrollByPage(ScrollByPageDirection) const;

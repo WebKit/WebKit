@@ -3058,7 +3058,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::selectedCells()
     return selectedCells;
 }
 
-void AccessibilityObject::setSelectedRows(AccessibilityChildrenVector& selectedRows)
+void AccessibilityObject::setSelectedRows(AccessibilityChildrenVector&& selectedRows)
 {
     // Setting selected only makes sense in trees and tables (and tree-tables).
     AccessibilityRole role = roleValue();
@@ -3530,7 +3530,7 @@ void AccessibilityObject::scrollToMakeVisible(const ScrollRectToVisibleOptions& 
         LocalFrameView::scrollRectToVisible(boundingBoxRect(), *renderer, false, options);
 }
 
-void AccessibilityObject::scrollToMakeVisibleWithSubFocus(const IntRect& subfocus) const
+void AccessibilityObject::scrollToMakeVisibleWithSubFocus(IntRect&& subfocus) const
 {
     // Search up the parent chain until we find the first one that's scrollable.
     AccessibilityObject* scrollParent = parentObject();
@@ -3565,15 +3565,14 @@ void AccessibilityObject::scrollToMakeVisibleWithSubFocus(const IntRect& subfocu
     scrollParent->scrollTo(IntPoint(desiredX, desiredY));
 
     // Convert the subfocus into the coordinates of the scroll parent.
-    IntRect newSubfocus = subfocus;
     IntRect newElementRect = snappedIntRect(elementRect());
     IntRect scrollParentRect = snappedIntRect(scrollParent->elementRect());
-    newSubfocus.move(newElementRect.x(), newElementRect.y());
-    newSubfocus.move(-scrollParentRect.x(), -scrollParentRect.y());
-    
+    subfocus.move(newElementRect.x(), newElementRect.y());
+    subfocus.move(-scrollParentRect.x(), -scrollParentRect.y());
+
     // Recursively make sure the scroll parent itself is visible.
     if (scrollParent->parentObject())
-        scrollParent->scrollToMakeVisibleWithSubFocus(newSubfocus);
+        scrollParent->scrollToMakeVisibleWithSubFocus(WTFMove(subfocus));
 }
 
 FloatRect AccessibilityObject::unobscuredContentRect() const
@@ -3584,7 +3583,7 @@ FloatRect AccessibilityObject::unobscuredContentRect() const
     return FloatRect(snappedIntRect(document->view()->unobscuredContentRect()));
 }
 
-void AccessibilityObject::scrollToGlobalPoint(const IntPoint& globalPoint) const
+void AccessibilityObject::scrollToGlobalPoint(IntPoint&& point) const
 {
     // Search up the parent chain and create a vector of all scrollable parent objects
     // and ending with this object itself.
@@ -3601,7 +3600,6 @@ void AccessibilityObject::scrollToGlobalPoint(const IntPoint& globalPoint) const
     // Start with the outermost scrollable (the main window) and try to scroll the
     // next innermost object to the given point.
     int offsetX = 0, offsetY = 0;
-    IntPoint point = globalPoint;
     size_t levels = objects.size() - 1;
     for (size_t i = 0; i < levels; i++) {
         const AccessibilityObject* outer = objects[i];
