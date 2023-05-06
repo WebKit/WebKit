@@ -263,8 +263,7 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
         return;
     }
     if (inlineLevelBox.isListMarker()) {
-        // Special list marker handling. Text driven list markers behave as text when it comes to layout bounds.
-        auto& layoutBox = inlineLevelBox.layoutBox();
+        auto& layoutBox = downcast<ElementBox>(inlineLevelBox.layoutBox());
         auto& listMarkerBoxGeometry = formattingContext().geometryForBox(layoutBox);
         auto marginBoxHeight = listMarkerBoxGeometry.marginBoxHeight();
 
@@ -274,8 +273,22 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
             inlineLevelBox.setLogicalHeight(marginBoxHeight);
             return;
         }
-        if (auto ascent = downcast<ElementBox>(layoutBox).baselineForIntegration())
-            return setVerticalProperties({ *ascent, marginBoxHeight - *ascent });
+        if (auto ascent = layoutBox.baselineForIntegration()) {
+            if (layoutBox.isListMarkerImage())
+                return setVerticalProperties({ *ascent, marginBoxHeight - *ascent });
+            // Special list marker handling. Text driven list markers behave as text when it comes to layout bounds/ascent descent.
+            // This needs to consult the list marker's style (and not the root) because we don't follow the DOM insertion point in case like this:
+            // <li><div>content</div></li>
+            // where the list marker ends up inside the <div> and the <div>'s style != <li>'s style.
+            inlineLevelBox.setLayoutBounds({ *ascent, layoutBox.style().computedLineHeight() - *ascent });
+
+            auto& fontMetrics = inlineLevelBox.primarymetricsOfPrimaryFont();
+            auto fontBaseline = lineBox.baselineType();
+            inlineLevelBox.setAscentAndDescent({ InlineLayoutUnit(fontMetrics.ascent(fontBaseline)), InlineLayoutUnit(fontMetrics.descent(fontBaseline)) });
+
+            inlineLevelBox.setLogicalHeight(marginBoxHeight);
+            return;
+        }
         setVerticalProperties({ marginBoxHeight, { } });
         return;
     }

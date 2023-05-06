@@ -129,7 +129,7 @@ bool InlineFormattingGeometry::inlineLevelBoxAffectsLineBox(const InlineLevelBox
     if (inlineLevelBox.isLineBreakBox())
         return false;
     if (inlineLevelBox.isListMarker())
-        return downcast<ElementBox>(inlineLevelBox.layoutBox()).isListMarkerImage();
+        return true;
     if (inlineLevelBox.isInlineBox())
         return layoutState().inStandardsMode() ? true : formattingContext().formattingQuirks().inlineBoxAffectsLineBox(inlineLevelBox);
     if (inlineLevelBox.isAtomicInlineLevelBox())
