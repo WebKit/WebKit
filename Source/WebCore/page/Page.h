@@ -568,6 +568,7 @@ public:
     WEBCORE_EXPORT void setPagination(const Pagination&);
 
     WEBCORE_EXPORT unsigned pageCount() const;
+    WEBCORE_EXPORT unsigned pageCountAssumingLayoutIsUpToDate() const;
 
     WEBCORE_EXPORT DiagnosticLoggingClient& diagnosticLoggingClient() const;
 

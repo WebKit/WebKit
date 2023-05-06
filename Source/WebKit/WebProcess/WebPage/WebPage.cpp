@@ -261,6 +261,7 @@
 #include <WebCore/RunJavaScriptParameters.h>
 #include <WebCore/SWClientConnection.h>
 #include <WebCore/ScriptController.h>
+#include <WebCore/ScriptDisallowedScope.h>
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/SelectionRestorationMode.h>
 #include <WebCore/SerializedScriptValue.h>
@@ -4661,6 +4662,11 @@ void WebPage::layoutIfNeeded()
 void WebPage::updateRendering()
 {
     m_page->updateRendering();
+
+#if PLATFORM(IOS_FAMILY)
+    findController().redraw();
+    foundTextRangeController().redraw();
+#endif
 }
 
 void WebPage::didUpdateRendering()
@@ -5559,7 +5565,9 @@ void WebPage::updateMainFrameScrollOffsetPinning()
 
 void WebPage::mainFrameDidLayout()
 {
-    unsigned pageCount = m_page->pageCount();
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
+    unsigned pageCount = m_page->pageCountAssumingLayoutIsUpToDate();
     if (pageCount != m_cachedPageCount) {
         send(Messages::WebPageProxy::DidChangePageCount(pageCount));
         m_cachedPageCount = pageCount;
@@ -5576,8 +5584,6 @@ void WebPage::mainFrameDidLayout()
         if (m_viewportConfiguration.setContentsSize(newContentSize))
             viewportConfigurationChanged();
     }
-    findController().redraw();
-    foundTextRangeController().redraw();
 #endif
 }
 

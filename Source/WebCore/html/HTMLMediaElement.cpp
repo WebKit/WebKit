@@ -8103,8 +8103,11 @@ void HTMLMediaElement::updateMediaControlsAfterPresentationModeChange()
 
 void HTMLMediaElement::pageScaleFactorChanged()
 {
-    if (m_mediaControlsDependOnPageScaleFactor)
-        updatePageScaleFactorJSProperty();
+    if (m_mediaControlsDependOnPageScaleFactor) {
+        queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this] {
+            updatePageScaleFactorJSProperty();
+        });
+    }
 }
 
 void HTMLMediaElement::userInterfaceLayoutDirectionChanged()

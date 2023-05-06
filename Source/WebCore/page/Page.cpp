@@ -1616,6 +1616,16 @@ unsigned Page::pageCount() const
     if (Document* document = localMainFrame ? localMainFrame->document() : nullptr)
         document->updateLayoutIgnorePendingStylesheets();
 
+    return pageCountAssumingLayoutIsUpToDate();
+}
+
+unsigned Page::pageCountAssumingLayoutIsUpToDate() const
+{
+    if (m_pagination.mode == Unpaginated)
+        return 0;
+
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
+    ASSERT(!localMainFrame || !localMainFrame->view() || !localMainFrame->view()->needsLayout());
     RenderView* contentRenderer = localMainFrame ? localMainFrame->contentRenderer() : nullptr;
     return contentRenderer ? contentRenderer->pageCount() : 0;
 }
