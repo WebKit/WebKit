@@ -40,7 +40,6 @@
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
-#include <WebCore/RealtimeVideoSource.h>
 #include <wtf/Assertions.h>
 
 namespace WebKit {

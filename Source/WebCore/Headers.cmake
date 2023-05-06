@@ -1974,7 +1974,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mediastream/RealtimeMediaSourceSettings.h
     platform/mediastream/RealtimeMediaSourceSupportedConstraints.h
     platform/mediastream/RealtimeVideoCaptureSource.h
-    platform/mediastream/RealtimeVideoSource.h
     platform/mediastream/VideoPreset.h
     platform/mediastream/WebAudioSourceProvider.h
     platform/mediastream/WebRTCProvider.h

@@ -42,7 +42,6 @@
 #include "NotImplemented.h"
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceSettings.h"
-#include "RealtimeVideoSource.h"
 #include "VideoFrame.h"
 #include <math.h>
 #include <wtf/UUID.h>

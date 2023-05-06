@@ -36,7 +36,6 @@
 #import "PlatformLayer.h"
 #import "RealtimeMediaSourceCenter.h"
 #import "RealtimeMediaSourceSettings.h"
-#import "RealtimeVideoSource.h"
 #import "RealtimeVideoUtilities.h"
 #import "VideoFrameCV.h"
 #import <AVFoundation/AVCaptureDevice.h>
@@ -121,14 +120,14 @@ CaptureSourceOrError AVVideoCaptureSource::create(const CaptureDevice& device, M
     if (!avDevice)
         return { "No AVVideoCaptureSource device"_s };
 
-    auto source = adoptRef(*new AVVideoCaptureSource(avDevice, device, WTFMove(hashSalts), pageIdentifier));
+    Ref<RealtimeMediaSource> source = adoptRef(*new AVVideoCaptureSource(avDevice, device, WTFMove(hashSalts), pageIdentifier));
     if (constraints) {
         auto result = source->applyConstraints(*constraints);
         if (result)
             return WTFMove(result.value().badConstraint);
     }
 
-    return CaptureSourceOrError(RealtimeVideoSource::create(WTFMove(source)));
+    return source;
 }
 
 static double cameraZoomScaleFactor(AVCaptureDeviceType deviceType)

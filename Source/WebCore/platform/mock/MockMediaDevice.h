@@ -31,7 +31,7 @@
 
 #include "CaptureDevice.h"
 #include "RealtimeMediaSource.h"
-#include "RealtimeVideoSource.h"
+#include "VideoPreset.h"
 
 namespace WebCore {
 

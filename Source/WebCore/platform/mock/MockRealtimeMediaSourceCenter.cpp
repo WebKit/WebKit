@@ -115,7 +115,7 @@ private:
     CaptureDeviceManager& videoCaptureDeviceManager() final { return MockRealtimeMediaSourceCenter::singleton().videoCaptureDeviceManager(); }
 };
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 class MockDisplayCapturer final : public DisplayCaptureSourceCocoa::Capturer {
 public:
     MockDisplayCapturer(const CaptureDevice&, PageIdentifier);
@@ -174,7 +174,7 @@ IntSize MockDisplayCapturer::intrinsicSize() const
     auto& properties = std::get<MockDisplayProperties>(device->properties);
     return properties.defaultSize;
 }
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(COCOA)
 
 class MockRealtimeDisplaySourceFactory : public DisplayCaptureFactory {
 public:
@@ -186,7 +186,7 @@ public:
         switch (device.type()) {
         case CaptureDevice::DeviceType::Screen:
         case CaptureDevice::DeviceType::Window:
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
             return DisplayCaptureSourceCocoa::create(UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<MockDisplayCapturer>(device, pageIdentifier)), device, WTFMove(hashSalts), constraints, pageIdentifier);
 #elif USE(GSTREAMER)
             return MockDisplayCaptureSourceGStreamer::create(device, WTFMove(hashSalts), constraints, pageIdentifier);

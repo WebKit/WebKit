@@ -71,7 +71,10 @@ class PlatformAudioData;
 class RealtimeMediaSourceSettings;
 class VideoFrame;
 
+enum class VideoFrameRotation : uint16_t;
+
 struct CaptureSourceOrError;
+struct VideoFrameAdaptor;
 
 class WEBCORE_EXPORT RealtimeMediaSource
     : public ThreadSafeRefCounted<RealtimeMediaSource, WTF::DestructionThread::MainRunLoop>
@@ -117,7 +120,7 @@ public:
 #endif
     };
 
-    virtual ~RealtimeMediaSource() = default;
+    virtual ~RealtimeMediaSource();
 
     virtual Ref<RealtimeMediaSource> clone() { return *this; }
 
@@ -158,6 +161,7 @@ public:
     WEBCORE_EXPORT void removeAudioSampleObserver(AudioSampleObserver&);
 
     WEBCORE_EXPORT void addVideoFrameObserver(VideoFrameObserver&);
+    WEBCORE_EXPORT void addVideoFrameObserver(VideoFrameObserver&, IntSize, double);
     WEBCORE_EXPORT void removeVideoFrameObserver(VideoFrameObserver&);
 
     virtual const IntSize size() const;
@@ -203,6 +207,13 @@ public:
     virtual void applyConstraints(const MediaConstraints&, ApplyConstraintsHandler&&);
     std::optional<ApplyConstraintsError> applyConstraints(const MediaConstraints&);
 
+    struct VideoFrameSizeConstraints {
+        std::optional<int> width;
+        std::optional<int> height;
+        std::optional<double> frameRate;
+    };
+    WEBCORE_EXPORT VideoFrameSizeConstraints extractVideoFrameSizeConstraints(const MediaConstraints&);
+
     bool supportsConstraints(const MediaConstraints&, String&);
     bool supportsConstraint(const MediaConstraint&);
 
@@ -210,6 +221,8 @@ public:
     virtual bool isCaptureSource() const { return false; }
     virtual CaptureDevice::DeviceType deviceType() const { return CaptureDevice::DeviceType::Unknown; }
     virtual bool isVideoSource() const;
+    WEBCORE_EXPORT virtual VideoFrameRotation videoFrameRotation() const;
+    WEBCORE_EXPORT virtual IntSize computeResizedVideoFrameSize(IntSize desiredSize, IntSize actualSize);
 
     virtual void monitorOrientation(OrientationNotifier&) { }
 
@@ -254,6 +267,7 @@ protected:
     double fitnessDistance(const MediaConstraint&);
     void applyConstraint(const MediaConstraint&);
     void applyConstraints(const FlattenedConstraint&);
+    VideoFrameSizeConstraints extractVideoFrameSizeConstraints(const FlattenedConstraint&);
     bool supportsSizeFrameRateAndZoom(std::optional<IntConstraint> width, std::optional<IntConstraint> height, std::optional<DoubleConstraint>, std::optional<DoubleConstraint>, String&, double& fitnessDistance);
 
     virtual bool supportsSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>);
@@ -280,6 +294,8 @@ protected:
     void setName(const AtomString&);
     void setPersistentId(const String&);
 
+    bool hasSeveralVideoFrameObserversWithAdaptors() const { return m_videoFrameObserversWithAdaptors > 1; }
+
 private:
     virtual void startProducingData() { }
     virtual void stopProducingData() { }
@@ -289,6 +305,7 @@ private:
     virtual void stopBeingObserved() { stop(); }
 
     virtual void didEnd() { }
+    virtual double observedFrameRate() const { return 0.0; }
 
     void updateHasStartedProducingData();
     void initializePersistentId();
@@ -312,7 +329,7 @@ private:
     HashSet<AudioSampleObserver*> m_audioSampleObservers WTF_GUARDED_BY_LOCK(m_audioSampleObserversLock);
 
     mutable Lock m_videoFrameObserversLock;
-    HashSet<VideoFrameObserver*> m_videoFrameObservers WTF_GUARDED_BY_LOCK(m_videoFrameObserversLock);
+    HashMap<VideoFrameObserver*, std::unique_ptr<VideoFrameAdaptor>> m_videoFrameObservers WTF_GUARDED_BY_LOCK(m_videoFrameObserversLock);
 
     CaptureDevice m_device;
 
@@ -336,6 +353,8 @@ private:
     bool m_captureDidFailed { false };
     bool m_isEnded { false };
     bool m_hasStartedProducingData { false };
+
+    unsigned m_videoFrameObserversWithAdaptors { 0 };
 };
 
 struct CaptureSourceOrError {

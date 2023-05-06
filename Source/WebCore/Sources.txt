@@ -2357,7 +2357,6 @@ platform/mediastream/RealtimeMediaSourceSupportedConstraints.cpp
 platform/mediastream/RealtimeOutgoingAudioSource.cpp
 platform/mediastream/RealtimeOutgoingVideoSource.cpp
 platform/mediastream/RealtimeVideoCaptureSource.cpp
-platform/mediastream/RealtimeVideoSource.cpp
 platform/mediastream/WebRTCProvider.cpp
 platform/mock/DeviceOrientationClientMock.cpp
 platform/mock/GeolocationClientMock.cpp

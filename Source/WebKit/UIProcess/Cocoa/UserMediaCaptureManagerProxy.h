@@ -97,7 +97,7 @@ private:
     void setIsInBackground(WebCore::RealtimeMediaSourceIdentifier, bool);
 
     WebCore::CaptureSourceOrError createMicrophoneSource(const WebCore::CaptureDevice&, WebCore::MediaDeviceHashSalts&&, const WebCore::MediaConstraints*, WebCore::PageIdentifier);
-    WebCore::CaptureSourceOrError createCameraSource(const WebCore::CaptureDevice&, WebCore::MediaDeviceHashSalts&&, const WebCore::MediaConstraints*, WebCore::PageIdentifier);
+    WebCore::CaptureSourceOrError createCameraSource(const WebCore::CaptureDevice&, WebCore::MediaDeviceHashSalts&&, WebCore::PageIdentifier);
 
     class SourceProxy;
     friend class SourceProxy;

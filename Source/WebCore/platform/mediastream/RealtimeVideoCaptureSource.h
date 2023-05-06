@@ -47,9 +47,9 @@ public:
 
     bool supportsSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>) override;
     virtual void generatePresets() = 0;
-    virtual VideoFrameRotation videoFrameRotation() const;
 
-    double observedFrameRate() const { return m_observedFrameRate; }
+    double observedFrameRate() const final { return m_observedFrameRate; }
+    Vector<VideoPresetData> presetsData();
 
     void ensureIntrinsicSizeMaintainsAspectRatio();
 
@@ -85,7 +85,10 @@ private:
         double requestedZoom { 0 };
     };
     bool supportsCaptureSize(std::optional<int>, std::optional<int>, const Function<bool(const IntSize&)>&&);
-    std::optional<CaptureSizeFrameRateAndZoom> bestSupportedSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>);
+
+    enum class TryPreservingSize { No, Yes };
+    std::optional<CaptureSizeFrameRateAndZoom> bestSupportedSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double>, std::optional<double>, TryPreservingSize = TryPreservingSize::Yes);
+
     bool presetSupportsFrameRate(const VideoPreset&, double);
     bool presetSupportsZoom(const VideoPreset&, double);
 

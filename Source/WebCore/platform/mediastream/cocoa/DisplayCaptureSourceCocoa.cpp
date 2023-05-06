@@ -202,31 +202,38 @@ Seconds DisplayCaptureSourceCocoa::elapsedTime()
     return m_elapsedTime + (MonotonicTime::now() - m_startTime);
 }
 
-// We keep the aspect ratio of the intrinsic size for the frame size as getDisplayMedia allows max constraints only.
-void DisplayCaptureSourceCocoa::updateFrameSize()
+IntSize DisplayCaptureSourceCocoa::computeResizedVideoFrameSize(IntSize desiredSize, IntSize intrinsicSize)
 {
-    auto intrinsicSize = this->intrinsicSize();
-    auto frameSize = size();
-    if (!frameSize.height())
-        frameSize.setHeight(intrinsicSize.height());
-    if (!frameSize.width())
-        frameSize.setWidth(intrinsicSize.width());
+    // We keep the aspect ratio of the intrinsic size for the frame size as getDisplayMedia allows max constraints only.
+    if (!intrinsicSize.width() || !intrinsicSize.height())
+        return desiredSize;
 
-    auto maxHeight = std::min(frameSize.height(), intrinsicSize.height());
-    auto maxWidth = std::min(frameSize.width(), intrinsicSize.width());
+    if (!desiredSize.height())
+        desiredSize.setHeight(intrinsicSize.height());
+    if (!desiredSize.width())
+        desiredSize.setWidth(intrinsicSize.width());
+
+    auto maxHeight = std::min(desiredSize.height(), intrinsicSize.height());
+    auto maxWidth = std::min(desiredSize.width(), intrinsicSize.width());
 
     auto heightForMaxWidth = maxWidth * intrinsicSize.height() / intrinsicSize.width();
     auto widthForMaxHeight = maxHeight * intrinsicSize.width() / intrinsicSize.height();
 
-    if (heightForMaxWidth <= maxHeight) {
-        setSize({ maxWidth, heightForMaxWidth });
-        return;
-    }
-    if (widthForMaxHeight <= maxWidth) {
-        setSize({ widthForMaxHeight, maxHeight });
-        return;
-    }
-    setSize(intrinsicSize);
+    if (heightForMaxWidth <= maxHeight)
+        return { maxWidth, heightForMaxWidth };
+
+    if (widthForMaxHeight <= maxWidth)
+        return { widthForMaxHeight, maxHeight };
+
+    return intrinsicSize;
+}
+
+void DisplayCaptureSourceCocoa::setSizeFrameRateAndZoom(std::optional<int>, std::optional<int>, std::optional<double> frameRate, std::optional<double>)
+{
+    // We do not need to handle width, height or zoom here since we capture at full size and let each video frame observer resize as needed.
+    // FIXME: We should set frameRate according all video frame observers.
+    if (frameRate && *frameRate > this->frameRate())
+        setFrameRate(*frameRate);
 }
 
 void DisplayCaptureSourceCocoa::emitFrame()
@@ -271,7 +278,7 @@ void DisplayCaptureSourceCocoa::emitFrame()
 
     if (intrinsicSize() != imageSize) {
         setIntrinsicSize(imageSize);
-        updateFrameSize();
+        setSize(imageSize);
     }
 
     auto videoFrame = WTF::switchOn(frame,

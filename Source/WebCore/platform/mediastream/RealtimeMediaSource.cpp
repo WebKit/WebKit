@@ -47,7 +47,35 @@
 #include <wtf/UUID.h>
 #include <wtf/text/StringHash.h>
 
+#if PLATFORM(COCOA)
+#include "ImageTransferSessionVT.h"
+#include "VideoFrameCV.h"
+#endif
+
+#if USE(GSTREAMER)
+#include "VideoFrameGStreamer.h"
+#endif
+
 namespace WebCore {
+
+struct VideoFrameAdaptor {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+    VideoFrameAdaptor(IntSize size, double frameRate)
+        : size(size)
+        , frameRate(frameRate)
+    {
+    }
+
+    IntSize size;
+    double frameRate;
+
+    size_t frameDecimation { 1 };
+    size_t frameDecimationCounter { 0 };
+#if PLATFORM(COCOA)
+    std::unique_ptr<ImageTransferSessionVT> imageTransferSession;
+#endif
+};
 
 static RealtimeMediaSource::Type toSourceType(CaptureDevice::DeviceType type)
 {
@@ -76,6 +104,10 @@ RealtimeMediaSource::RealtimeMediaSource(const CaptureDevice& device, MediaDevic
     , m_device(device)
 {
     initializePersistentId();
+}
+
+RealtimeMediaSource::~RealtimeMediaSource()
+{
 }
 
 void RealtimeMediaSource::setPersistentId(const String& persistentID)
@@ -112,14 +144,26 @@ void RealtimeMediaSource::addVideoFrameObserver(VideoFrameObserver& observer)
 {
     ASSERT(isMainThread());
     Locker locker { m_videoFrameObserversLock };
-    m_videoFrameObservers.add(&observer);
+    m_videoFrameObservers.add(&observer, nullptr);
+}
+
+void RealtimeMediaSource::addVideoFrameObserver(VideoFrameObserver& observer, IntSize size, double frameRate)
+{
+    ASSERT(isMainThread());
+    Locker locker { m_videoFrameObserversLock };
+    ASSERT(!m_videoFrameObservers.contains(&observer));
+    m_videoFrameObservers.add(&observer, makeUnique<VideoFrameAdaptor>(size, frameRate));
+    ++m_videoFrameObserversWithAdaptors;
 }
 
 void RealtimeMediaSource::removeVideoFrameObserver(VideoFrameObserver& observer)
 {
     ASSERT(isMainThread());
     Locker locker { m_videoFrameObserversLock };
-    m_videoFrameObservers.remove(&observer);
+    if (auto result = m_videoFrameObservers.take(&observer)) {
+        ASSERT(m_videoFrameObserversWithAdaptors);
+        --m_videoFrameObserversWithAdaptors;
+    }
 }
 
 void RealtimeMediaSource::addObserver(Observer& observer)
@@ -183,7 +227,7 @@ void RealtimeMediaSource::forEachObserver(const Function<void(Observer&)>& apply
 void RealtimeMediaSource::forEachVideoFrameObserver(const Function<void(VideoFrameObserver&)>& apply)
 {
     Locker locker { m_videoFrameObserversLock };
-    for (auto* observer : m_videoFrameObservers)
+    for (auto* observer : m_videoFrameObservers.keys())
         apply(*observer);
 }
 
@@ -232,6 +276,43 @@ void RealtimeMediaSource::updateHasStartedProducingData()
     });
 }
 
+VideoFrameRotation RealtimeMediaSource::videoFrameRotation() const
+{
+    return VideoFrameRotation::None;
+}
+
+static RefPtr<VideoFrame> adaptVideoFrame(VideoFrameAdaptor& adaptor, VideoFrame& videoFrame, IntSize desiredSize)
+{
+#if PLATFORM(COCOA)
+    if (!adaptor.imageTransferSession || adaptor.imageTransferSession->pixelFormat() != videoFrame.pixelFormat())
+        adaptor.imageTransferSession = ImageTransferSessionVT::create(videoFrame.pixelFormat(), true);
+
+    ASSERT(adaptor.imageTransferSession);
+    if (!adaptor.imageTransferSession)
+        return nullptr;
+
+    return adaptor.imageTransferSession->convertVideoFrame(videoFrame, desiredSize);
+#elif USE(GSTREAMER)
+    UNUSED_PARAM(adaptor);
+    return reinterpret_cast<VideoFrameGStreamer&>(videoFrame).resizeTo(desiredSize);
+#else
+    UNUSED_PARAM(adaptor);
+    UNUSED_PARAM(videoFrame);
+    UNUSED_PARAM(desiredSize);
+    notImplemented();
+    return nullptr;
+#endif
+}
+
+IntSize RealtimeMediaSource::computeResizedVideoFrameSize(IntSize desiredSize, IntSize actualSize)
+{
+    if (desiredSize.width() && !desiredSize.height())
+        return { desiredSize.width(), desiredSize.width() * actualSize.height() / actualSize.width() };
+    if (desiredSize.height() && !desiredSize.width())
+        return { desiredSize.height() * actualSize.width() / actualSize.height(), desiredSize.height() };
+    return desiredSize;
+}
+
 void RealtimeMediaSource::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata metadata)
 {
 #if !RELEASE_LOG_DISABLED
@@ -251,8 +332,29 @@ void RealtimeMediaSource::videoFrameAvailable(VideoFrame& videoFrame, VideoFrame
     updateHasStartedProducingData();
 
     Locker locker { m_videoFrameObserversLock };
-    for (auto* observer : m_videoFrameObservers)
-        observer->videoFrameAvailable(videoFrame, metadata);
+    for (auto& [key, value] : m_videoFrameObservers) {
+        if (auto* adaptor = value.get()) {
+            if (adaptor->frameDecimation > 1 && ++adaptor->frameDecimationCounter % adaptor->frameDecimation)
+                continue;
+
+            adaptor->frameDecimation = adaptor->frameRate ? static_cast<size_t>(observedFrameRate() / adaptor->frameRate) : 1;
+            if (!adaptor->frameDecimation)
+                adaptor->frameDecimation = 1;
+
+            if (!adaptor->size.isZero()) {
+                auto actualSize = expandedIntSize(videoFrame.presentationSize());
+                auto desiredSize = computeResizedVideoFrameSize(adaptor->size, actualSize);
+
+                if (desiredSize != actualSize) {
+                    if (auto newVideoFrame = adaptVideoFrame(*adaptor, videoFrame, desiredSize)) {
+                        key->videoFrameAvailable(*newVideoFrame, metadata);
+                        continue;
+                    }
+                }
+            }
+        }
+        key->videoFrameAvailable(videoFrame, metadata);
+    }
 }
 
 void RealtimeMediaSource::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t numberOfFrames)
@@ -971,6 +1073,60 @@ bool RealtimeMediaSource::supportsConstraints(const MediaConstraints& constraint
     return true;
 }
 
+RealtimeMediaSource::VideoFrameSizeConstraints RealtimeMediaSource::extractVideoFrameSizeConstraints(const MediaConstraints& constraints)
+{
+    FlattenedConstraint candidates;
+    String invalidConstraint;
+    if (!selectSettings(constraints, candidates, invalidConstraint))
+        return { };
+    return extractVideoFrameSizeConstraints(candidates);
+}
+
+RealtimeMediaSource::VideoFrameSizeConstraints RealtimeMediaSource::extractVideoFrameSizeConstraints(const FlattenedConstraint& constraints)
+{
+    VideoFrameSizeConstraints result;
+    auto& capabilities = this->capabilities();
+
+    if (auto* constraint = constraints.find(MediaConstraintType::Width)) {
+        ASSERT(constraint->isInt());
+        if (capabilities.supportsWidth()) {
+            auto range = capabilities.width();
+            result.width = downcast<IntConstraint>(*constraint).valueForCapabilityRange(size().width(), range.rangeMin().asInt, range.rangeMax().asInt);
+        }
+    }
+
+    if (auto* constraint = constraints.find(MediaConstraintType::Height)) {
+        ASSERT(constraint->isInt());
+        if (capabilities.supportsHeight()) {
+            auto range = capabilities.height();
+            result.height = downcast<IntConstraint>(*constraint).valueForCapabilityRange(size().height(), range.rangeMin().asInt, range.rangeMax().asInt);
+        }
+    }
+
+    if (auto* constraint = constraints.find(MediaConstraintType::AspectRatio)) {
+        ASSERT(constraint->isDouble());
+        if (capabilities.supportsAspectRatio()) {
+            auto range = capabilities.aspectRatio();
+            if (auto aspectRatio = downcast<DoubleConstraint>(*constraint).valueForCapabilityRange(this->aspectRatio(), range.rangeMin().asDouble, range.rangeMax().asDouble)) {
+                if (!result.width && result.height)
+                    result.width = *result.height * aspectRatio;
+                if (result.width && !result.height)
+                    result.height = *result.width / aspectRatio;
+            }
+        }
+    }
+
+    if (auto* constraint = constraints.find(MediaConstraintType::FrameRate)) {
+        ASSERT(constraint->isDouble());
+        if (capabilities.supportsFrameRate()) {
+            auto range = capabilities.frameRate();
+            result.frameRate = downcast<DoubleConstraint>(*constraint).valueForCapabilityRange(this->frameRate(), range.rangeMin().asDouble, range.rangeMax().asDouble);
+        }
+    }
+
+    return result;
+}
+
 void RealtimeMediaSource::applyConstraints(const FlattenedConstraint& constraints)
 {
     if (constraints.isEmpty())
@@ -978,46 +1134,20 @@ void RealtimeMediaSource::applyConstraints(const FlattenedConstraint& constraint
 
     beginConfiguration();
 
-    auto& capabilities = this->capabilities();
-
-    std::optional<int> width;
-    if (const MediaConstraint* constraint = constraints.find(MediaConstraintType::Width)) {
-        ASSERT(constraint->isInt());
-        if (capabilities.supportsWidth()) {
-            auto range = capabilities.width();
-            width = downcast<IntConstraint>(*constraint).valueForCapabilityRange(size().width(), range.rangeMin().asInt, range.rangeMax().asInt);
-        }
-    }
-
-    std::optional<int> height;
-    if (const MediaConstraint* constraint = constraints.find(MediaConstraintType::Height)) {
-        ASSERT(constraint->isInt());
-        if (capabilities.supportsHeight()) {
-            auto range = capabilities.height();
-            height = downcast<IntConstraint>(*constraint).valueForCapabilityRange(size().height(), range.rangeMin().asInt, range.rangeMax().asInt);
-        }
-    }
-
-    std::optional<double> frameRate;
-    if (const MediaConstraint* constraint = constraints.find(MediaConstraintType::FrameRate)) {
-        ASSERT(constraint->isDouble());
-        if (capabilities.supportsFrameRate()) {
-            auto range = capabilities.frameRate();
-            frameRate = downcast<DoubleConstraint>(*constraint).valueForCapabilityRange(this->frameRate(), range.rangeMin().asDouble, range.rangeMax().asDouble);
-        }
-    }
+    auto videoFrameSizeConstraints = extractVideoFrameSizeConstraints(constraints);
 
     std::optional<double> zoom;
     if (const MediaConstraint* constraint = constraints.find(MediaConstraintType::Zoom)) {
         ASSERT(constraint->isDouble());
+        auto& capabilities = this->capabilities();
         if (capabilities.supportsZoom()) {
             auto range = capabilities.zoom();
             zoom = downcast<DoubleConstraint>(*constraint).valueForCapabilityRange(this->zoom(), range.rangeMin().asDouble, range.rangeMax().asDouble);
         }
     }
 
-    if (width || height || frameRate || zoom)
-        setSizeFrameRateAndZoom(WTFMove(width), WTFMove(height), WTFMove(frameRate), WTFMove(zoom));
+    if (videoFrameSizeConstraints.width || videoFrameSizeConstraints.height || videoFrameSizeConstraints.frameRate || zoom)
+        setSizeFrameRateAndZoom(videoFrameSizeConstraints.width, videoFrameSizeConstraints.height, videoFrameSizeConstraints.frameRate, WTFMove(zoom));
 
     for (auto& variant : constraints) {
         if (variant.constraintType() == MediaConstraintType::Width || variant.constraintType() == MediaConstraintType::Height || variant.constraintType() == MediaConstraintType::FrameRate || variant.constraintType() == MediaConstraintType::Zoom)
