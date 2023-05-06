@@ -69,7 +69,7 @@ enum class RunAsAsyncFunction : bool;
 struct ExceptionDetails;
 struct RunJavaScriptParameters;
 
-enum ReasonForCallingCanExecuteScripts {
+enum class ReasonForCallingCanExecuteScripts : uint8_t {
     AboutToCreateEventListener,
     AboutToExecuteScript,
     NotAboutToExecuteScript

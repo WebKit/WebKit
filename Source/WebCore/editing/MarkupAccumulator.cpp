@@ -366,7 +366,7 @@ void MarkupAccumulator::appendNamespace(StringBuilder& result, const AtomString&
 static inline bool isScriptEnabled(Node& node)
 {
     RefPtr frame = node.document().frame();
-    return frame && frame->script().canExecuteScripts(NotAboutToExecuteScript);
+    return frame && frame->script().canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript);
 }
 
 EntityMask MarkupAccumulator::entityMaskForText(const Text& text) const

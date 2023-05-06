@@ -996,7 +996,7 @@ bool HTMLImageElement::isDeferred() const
 
 bool HTMLImageElement::isLazyLoadable() const
 {
-    if (!document().frame() || !document().frame()->script().canExecuteScripts(NotAboutToExecuteScript))
+    if (!document().frame() || !document().frame()->script().canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
         return false;
     return hasLazyLoadableAttributeValue(attributeWithoutSynchronization(HTMLNames::loadingAttr));
 }

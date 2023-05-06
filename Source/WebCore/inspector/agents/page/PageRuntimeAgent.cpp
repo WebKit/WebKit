@@ -139,7 +139,7 @@ void PageRuntimeAgent::reportExecutionContextCreation()
         return;
 
     m_inspectedPage.forEachFrame([&](LocalFrame& frame) {
-        if (!frame.script().canExecuteScripts(NotAboutToExecuteScript))
+        if (!frame.script().canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
             return;
 
         auto frameId = pageAgent->frameId(&frame);

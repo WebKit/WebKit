@@ -195,7 +195,7 @@ static bool isFrameLazyLoadable(const Document& document, const URL& url, const 
     if (!url.isValid() || url.isAboutBlank())
         return false;
 
-    if (!document.frame() || !document.frame()->script().canExecuteScripts(NotAboutToExecuteScript))
+    if (!document.frame() || !document.frame()->script().canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
         return false;
 
     return equalLettersIgnoringASCIICase(loadingAttributeValue, "lazy"_s);

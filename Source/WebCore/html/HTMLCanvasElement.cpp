@@ -178,7 +178,7 @@ void HTMLCanvasElement::attributeChanged(const QualifiedName& name, const AtomSt
 RenderPtr<RenderElement> HTMLCanvasElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
 {
     RefPtr frame { document().frame() };
-    if (frame && frame->script().canExecuteScripts(NotAboutToExecuteScript))
+    if (frame && frame->script().canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
         return createRenderer<RenderHTMLCanvas>(*this, WTFMove(style));
     return HTMLElement::createElementRenderer(WTFMove(style), insertionPosition);
 }

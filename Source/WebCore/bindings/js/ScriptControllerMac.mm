@@ -75,7 +75,7 @@ RefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(
 
 WebScriptObject *ScriptController::windowScriptObject()
 {
-    if (!canExecuteScripts(NotAboutToExecuteScript))
+    if (!canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
         return nil;
 
     if (!m_windowScriptObject) {
@@ -90,7 +90,7 @@ WebScriptObject *ScriptController::windowScriptObject()
 JSContext *ScriptController::javaScriptContext()
 {
 #if JSC_OBJC_API_ENABLED
-    if (!canExecuteScripts(NotAboutToExecuteScript))
+    if (!canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
         return 0;
     JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(bindingRootObject()->globalObject())];
     return context;

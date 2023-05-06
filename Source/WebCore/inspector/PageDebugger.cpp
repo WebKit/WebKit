@@ -166,7 +166,7 @@ void PageDebugger::setJavaScriptPaused(const PageGroup& pageGroup, bool paused)
 
 void PageDebugger::setJavaScriptPaused(LocalFrame& frame, bool paused)
 {
-    if (!frame.script().canExecuteScripts(NotAboutToExecuteScript))
+    if (!frame.script().canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
         return;
 
     frame.script().setPaused(paused);
