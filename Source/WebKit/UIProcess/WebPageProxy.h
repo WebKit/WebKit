@@ -2816,18 +2816,12 @@ private:
         bool hasValidOpeningAppLinkActivity() const;
 #endif
 
-#if PLATFORM(MAC)
-        void takeLikelyToUseNotificationsActivity();
-        void dropLikelyToUseNotificationsActivity();
-#endif
-
     private:
         WebPageProxy& m_page;
 
         std::unique_ptr<ProcessThrottlerActivity> m_isVisibleActivity;
 #if PLATFORM(MAC)
         UniqueRef<ProcessThrottlerTimedActivity> m_wasRecentlyVisibleActivity;
-        std::unique_ptr<ProcessThrottlerActivity> m_likelyToUseNotificationsActivity;
 #endif
         std::unique_ptr<ProcessThrottlerActivity> m_isAudibleActivity;
         std::unique_ptr<ProcessThrottlerActivity> m_isCapturingActivity;

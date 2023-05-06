@@ -54,6 +54,7 @@ ProcessThrottler::ProcessThrottler(ProcessThrottlerClient& process, bool shouldT
     : m_process(process)
     , m_prepareToSuspendTimeoutTimer(RunLoop::main(), this, &ProcessThrottler::prepareToSuspendTimeoutTimerFired)
     , m_dropNearSuspendedAssertionTimer(RunLoop::main(), this, &ProcessThrottler::dropNearSuspendedAssertionTimerFired)
+    , m_pageAllowedToRunInTheBackgroundCounter([this](RefCounterEvent) { numberOfPagesAllowedToRunInTheBackgroundChanged(); })
     , m_shouldTakeUIBackgroundAssertion(shouldTakeUIBackgroundAssertion)
 {
 }
@@ -250,7 +251,10 @@ void ProcessThrottler::dropNearSuspendedAssertionTimerFired()
 {
     PROCESSTHROTTLER_RELEASE_LOG("dropNearSuspendedAssertionTimerFired: Removing near-suspended process assertion");
     RELEASE_ASSERT(m_assertion && m_assertion->type() == ProcessAssertionType::NearSuspended);
-    m_assertion = nullptr;
+    if (m_pageAllowedToRunInTheBackgroundCounter.value())
+        PROCESSTHROTTLER_RELEASE_LOG("dropNearSuspendedAssertionTimerFired: Not releasing near-suspended assertion because a page is allowed to run in the background");
+    else
+        m_assertion = nullptr;
 }
 
 void ProcessThrottler::processReadyToSuspend()
@@ -336,11 +340,23 @@ void ProcessThrottler::setShouldTakeNearSuspendedAssertion(bool shouldTakeNearSu
     m_shouldTakeNearSuspendedAssertion = shouldTakeNearSuspendedAssertion;
 }
 
-void ProcessThrottler::delaySuspension()
+PageAllowedToRunInTheBackgroundCounter::Token ProcessThrottler::pageAllowedToRunInTheBackgroundToken()
 {
-    PROCESSTHROTTLER_RELEASE_LOG("delaySuspension");
+    return m_pageAllowedToRunInTheBackgroundCounter.count();
+}
+
+void ProcessThrottler::numberOfPagesAllowedToRunInTheBackgroundChanged()
+{
+    if (m_pageAllowedToRunInTheBackgroundCounter.value())
+        return;
+
     if (m_dropNearSuspendedAssertionTimer.isActive())
-        m_dropNearSuspendedAssertionTimer.startOneShot(removeAllAssertionsTimeout);
+        return;
+
+    if (m_assertion && m_assertion->isValid() && m_assertion->type() == ProcessAssertionType::NearSuspended) {
+        PROCESSTHROTTLER_RELEASE_LOG("numberOfPagesAllowedToRunInTheBackgroundChanged: Releasing near-suspended assertion");
+        m_assertion = nullptr;
+    }
 }
 
 ProcessThrottlerTimedActivity::ProcessThrottlerTimedActivity(Seconds timeout, ProcessThrottler::ActivityVariant&& activity)
