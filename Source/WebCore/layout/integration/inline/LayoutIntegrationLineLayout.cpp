@@ -665,12 +665,11 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             ASSERT(renderer.layer());
             auto& layer = *renderer.layer();
             auto logicalBorderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(logicalGeometry) };
+            auto previousStaticPosition = LayoutPoint { layer.staticInlinePosition(), layer.staticBlockPosition() };
+            auto delta = logicalBorderBoxRect.location() - previousStaticPosition;
 
             if (layoutBox.style().isOriginalDisplayInlineType()) {
-                auto previousStaticPosition = LayoutPoint { layer.staticInlinePosition(), layer.staticBlockPosition() };
                 blockFlow.setStaticInlinePositionForChild(renderer, logicalBorderBoxRect.y(), logicalBorderBoxRect.x());
-
-                auto delta = logicalBorderBoxRect.location() - previousStaticPosition;
                 // A non-statically positioned out-of-flow box's layout will override the top/left values we are setting here.
                 renderer.move(delta.width(), delta.height());
             }
@@ -678,8 +677,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             layer.setStaticBlockPosition(logicalBorderBoxRect.y());
             layer.setStaticInlinePosition(logicalBorderBoxRect.x());
 
-            // FIXME: Figure out if this is really needed (see webkit.org/b/254666).
-            if (layoutBox.style().hasStaticInlinePosition(renderer.isHorizontalWritingMode()))
+            if (!delta.isZero() && layoutBox.style().hasStaticInlinePosition(renderer.isHorizontalWritingMode()))
                 renderer.setChildNeedsLayout(MarkOnlyThis);
             continue;
         }
