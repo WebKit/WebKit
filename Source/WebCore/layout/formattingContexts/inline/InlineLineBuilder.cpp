@@ -388,7 +388,7 @@ LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineIt
     auto committedContent = placeInlineContent(needsLayoutRange);
     auto committedRange = close(needsLayoutRange, committedContent);
     auto contentWidth = lineConstraints.logicalRect.left() + lineConstraints.marginStart + m_line.contentLogicalWidth();
-    return { committedRange, committedContent.overflowLogicalWidth, contentWidth, WTFMove(m_placedFloats) };
+    return { committedRange, committedContent.overflowLogicalWidth, contentWidth, WTFMove(m_placedFloats), WTFMove(m_suspendedFloats) };
 }
 
 void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const UsedConstraints& lineConstraints, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>& previousLine)
@@ -1077,11 +1077,6 @@ static bool haveEnoughSpaceForFloatWithClear(const LayoutRect& floatBoxMarginBox
 
 bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine mayOverConstrainLine)
 {
-    if (isInIntrinsicWidthMode()) {
-        ASSERT_NOT_IMPLEMENTED_YET();
-        // Floats are not supposed to be added to FloatingState in intrinsic mode.
-        return true;
-    }
     if (isFloatLayoutSuspended())
         return false;
 

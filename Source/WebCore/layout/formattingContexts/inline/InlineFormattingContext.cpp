@@ -422,25 +422,32 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(In
     auto& inlineItems = formattingState().inlineItems();
     auto lineBuilder = LineBuilder { *this, inlineLayoutState, horizontalConstraints, inlineItems, intrinsicWidthMode };
     auto layoutRange = InlineItemRange { 0 , inlineItems.size() };
-    auto maximumLineWidth = InlineLayoutUnit { };
-    auto maximumFloatWidth = LayoutUnit { };
+    auto maximumContentWidth = InlineLayoutUnit { };
     auto previousLineEnd = std::optional<InlineItemPosition> { };
     auto previousLine = std::optional<PreviousLine> { };
     auto lineIndex = 0lu;
 
     while (!layoutRange.isEmpty()) {
         auto intrinsicContent = lineBuilder.computedIntrinsicWidth(layoutRange, previousLine);
-        maximumLineWidth = std::max(maximumLineWidth, intrinsicContent.contentLogicalWidth);
+        auto floatContentWidth = [&] {
+            auto leftWidth = LayoutUnit { };
+            auto rightWidth = LayoutUnit { };
+            for (auto& floatItem : intrinsicContent.placedFloats) {
+                auto marginBoxRect = BoxGeometry::marginBoxRect(floatItem.boxGeometry());
+                if (floatItem.isLeftPositioned())
+                    leftWidth = std::max(leftWidth, marginBoxRect.right());
+                else
+                    rightWidth = std::max(rightWidth, horizontalConstraints.logicalWidth - marginBoxRect.left());
+            }
+            return InlineLayoutUnit { leftWidth + rightWidth };
+        };
+        maximumContentWidth = std::max(maximumContentWidth, intrinsicContent.contentLogicalWidth + floatContentWidth());
 
         layoutRange.start = leadingInlineItemPositionForNextLine(intrinsicContent.committedRange.end, previousLineEnd, layoutRange.end);
         previousLineEnd = layoutRange.start;
-        previousLine = PreviousLine { lineIndex++, intrinsicContent.trailingOverflowingContentWidth, { }, { }, { } };
-
-        // FIXME: Add support for clear.
-        for (auto floatItem : intrinsicContent.placedFloats)
-            maximumFloatWidth += geometryForBox(*floatItem.layoutBox()).marginBoxWidth();
+        previousLine = PreviousLine { lineIndex++, intrinsicContent.trailingOverflowingContentWidth, { }, { }, WTFMove(intrinsicContent.suspendedFloats) };
     }
-    return maximumLineWidth + maximumFloatWidth;
+    return maximumContentWidth;
 }
 
 void InlineFormattingContext::computeIntrinsicWidthForFormattingRoot(const Box& formattingRoot)

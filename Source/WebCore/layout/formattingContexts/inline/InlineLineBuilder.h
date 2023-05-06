@@ -85,6 +85,7 @@ public:
         std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
         InlineLayoutUnit contentLogicalWidth { 0 };
         PlacedFloatList placedFloats;
+        SuspendedFloatList suspendedFloats;
     };
     IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, const std::optional<PreviousLine>&);
 
