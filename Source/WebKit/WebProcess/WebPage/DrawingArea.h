@@ -96,7 +96,7 @@ public:
     virtual bool layerTreeStateIsFrozen() const { return false; }
 
     virtual void updatePreferences(const WebPreferencesStore&) { }
-    virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) { }
+    virtual void mainFrameContentSizeChanged(WebCore::FrameIdentifier, const WebCore::IntSize&) { }
 
 #if PLATFORM(COCOA)
     virtual void setViewExposedRect(std::optional<WebCore::FloatRect>) = 0;
@@ -123,7 +123,8 @@ public:
 
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return nullptr; }
     virtual void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) = 0;
-    virtual void attachToInitialRootFrame(WebCore::FrameIdentifier) { }
+    virtual void addRootFrame(WebCore::FrameIdentifier) { }
+    // FIXME: Add a corresponding removeRootFrame.
     virtual void triggerRenderingUpdate() = 0;
 
     virtual void willStartRenderingUpdateDisplay();
@@ -138,7 +139,7 @@ public:
 
     virtual void tryMarkLayersVolatile(CompletionHandler<void(bool)>&&);
 
-    virtual void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) { }
+    virtual void attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, WebCore::GraphicsLayer*) { }
 
     virtual std::optional<WebCore::DestinationColorSpace> displayColorSpace() const { return { }; }
 

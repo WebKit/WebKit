@@ -763,6 +763,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     m_page->setDeviceScaleFactor(parameters.deviceScaleFactor);
 
     m_drawingArea = DrawingArea::create(*this, parameters);
+    // FIXME: Rename coreAbstractFrame to coreFrame and coreFrame to coreLocalFrame.
+    // FIXME: Refactor frame construction and remove receivedMainFrameIdentifierFromUIProcess.
+    if (!receivedMainFrameIdentifierFromUIProcess)
+        m_drawingArea->addRootFrame(m_mainFrame->frameID());
     m_drawingArea->setShouldScaleViewToFitDocument(parameters.shouldScaleViewToFitDocument);
 
     if (parameters.isProcessSwap)
@@ -1084,6 +1088,9 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
         oldDrawingArea->removeMessageReceiverIfNeeded();
 
         m_drawingArea = DrawingArea::create(*this, parameters);
+        // FIXME: Rename coreAbstractFrame to coreFrame and coreFrame to coreLocalFrame.
+        if (is<WebCore::LocalFrame>(m_mainFrame->coreAbstractFrame()))
+            m_drawingArea->addRootFrame(m_mainFrame->frameID());
         m_drawingArea->setShouldScaleViewToFitDocument(parameters.shouldScaleViewToFitDocument);
         m_drawingArea->updatePreferences(parameters.store);
 
@@ -4568,16 +4575,17 @@ void WebPage::detectDataInAllFrames(OptionSet<WebCore::DataDetectorType> dataDet
 #endif // ENABLE(DATA_DETECTION)
 
 #if PLATFORM(COCOA)
-void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction, WebFrame* rootFrame)
+void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction, WebCore::FrameIdentifier rootFrameID)
 {
+    auto* rootFrame = WebProcess::singleton().webFrame(rootFrameID);
     if (!rootFrame)
         return;
 
-    auto* localMainFrame = rootFrame->coreFrame();
-    if (!localMainFrame)
+    auto* localRootFrame = rootFrame->coreFrame();
+    if (!localRootFrame)
         return;
 
-    auto* frameView = localMainFrame->view();
+    auto* frameView = localRootFrame->view();
     if (!frameView)
         return;
 

@@ -711,7 +711,7 @@ void WebChromeClient::contentsSizeChanged(LocalFrame& frame, const IntSize& size
 
     m_page.send(Messages::WebPageProxy::DidChangeContentSize(size));
 
-    m_page.drawingArea()->mainFrameContentSizeChanged(size);
+    m_page.drawingArea()->mainFrameContentSizeChanged(frame.frameID(), size);
 
     if (frameView && !frameView->delegatesScrollingToNativeView())  {
         bool hasHorizontalScrollbar = frameView->horizontalScrollbar();
@@ -1056,8 +1056,12 @@ void WebChromeClient::attachRootGraphicsLayer(LocalFrame& frame, GraphicsLayer* 
 
 void WebChromeClient::attachViewOverlayGraphicsLayer(GraphicsLayer* graphicsLayer)
 {
-    if (auto drawingArea = m_page.drawingArea())
-        drawingArea->attachViewOverlayGraphicsLayer(graphicsLayer);
+    auto* drawingArea = m_page.drawingArea();
+    if (!drawingArea)
+        return;
+
+    // FIXME: Support view overlays in iframe processes if needed.
+    drawingArea->attachViewOverlayGraphicsLayer(m_page.mainWebFrame().frameID(), graphicsLayer);
 }
 
 void WebChromeClient::setNeedsOneShotDrawingSynchronization()

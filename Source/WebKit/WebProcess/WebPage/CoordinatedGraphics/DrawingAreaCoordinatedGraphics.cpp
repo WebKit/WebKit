@@ -261,7 +261,7 @@ void DrawingAreaCoordinatedGraphics::updatePreferences(const WebPreferencesStore
     }
 }
 
-void DrawingAreaCoordinatedGraphics::mainFrameContentSizeChanged(const IntSize& size)
+void DrawingAreaCoordinatedGraphics::mainFrameContentSizeChanged(WebCore::FrameIdentifier, const IntSize& size)
 {
     if (m_layerTreeHost)
         m_layerTreeHost->contentsSizeChanged(size);
@@ -392,7 +392,7 @@ void DrawingAreaCoordinatedGraphics::activityStateDidChange(OptionSet<ActivitySt
     completionHandler();
 }
 
-void DrawingAreaCoordinatedGraphics::attachViewOverlayGraphicsLayer(GraphicsLayer* viewOverlayRootLayer)
+void DrawingAreaCoordinatedGraphics::attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, GraphicsLayer* viewOverlayRootLayer)
 {
     if (m_layerTreeHost)
         m_layerTreeHost->setViewOverlayRootLayer(viewOverlayRootLayer);

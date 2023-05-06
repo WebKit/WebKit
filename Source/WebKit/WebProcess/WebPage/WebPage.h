@@ -444,7 +444,7 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    void willCommitLayerTree(RemoteLayerTreeTransaction&, WebFrame*);
+    void willCommitLayerTree(RemoteLayerTreeTransaction&, WebCore::FrameIdentifier);
     void didFlushLayerTreeAtTime(MonotonicTime);
 #endif
 

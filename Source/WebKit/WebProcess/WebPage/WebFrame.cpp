@@ -411,7 +411,7 @@ void WebFrame::transitionToLocal(WebCore::LayerHostingContextIdentifier layerHos
 
     if (auto* webPage = page(); webPage && m_coreFrame->isRootFrame()) {
         if (auto* drawingArea = webPage->drawingArea())
-            drawingArea->attachToInitialRootFrame(m_coreFrame->frameID());
+            drawingArea->addRootFrame(m_coreFrame->frameID());
     }
 }
 

@@ -57,7 +57,7 @@ private:
     bool layerTreeStateIsFrozen() const override { return m_layerTreeStateIsFrozen; }
 
     void updatePreferences(const WebPreferencesStore&) override;
-    void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
+    void mainFrameContentSizeChanged(WebCore::FrameIdentifier, const WebCore::IntSize&) override;
     void sendEnterAcceleratedCompositingModeIfNeeded() override;
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
@@ -80,7 +80,7 @@ private:
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) override;
 
     void activityStateDidChange(OptionSet<WebCore::ActivityState>, ActivityStateChangeID, CompletionHandler<void()>&&) override;
-    void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) override;
+    void attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, WebCore::GraphicsLayer*) override;
 
     // IPC message handlers.
     void updateGeometry(const WebCore::IntSize&, CompletionHandler<void()>&&) override;

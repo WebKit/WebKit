@@ -68,7 +68,7 @@ private:
     void triggerRenderingUpdate() override;
 
     void updatePreferences(const WebPreferencesStore&) override;
-    void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
+    void mainFrameContentSizeChanged(WebCore::FrameIdentifier, const WebCore::IntSize&) override;
 
     void setViewExposedRect(std::optional<WebCore::FloatRect>) override;
     std::optional<WebCore::FloatRect> viewExposedRect() const override { return m_viewExposedRect; }
@@ -87,7 +87,7 @@ private:
 
     void activityStateDidChange(OptionSet<WebCore::ActivityState> changed, ActivityStateChangeID, CompletionHandler<void()>&&) override;
 
-    void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) override;
+    void attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, WebCore::GraphicsLayer*) override;
 
     bool addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone> paintMilestones) override;
 

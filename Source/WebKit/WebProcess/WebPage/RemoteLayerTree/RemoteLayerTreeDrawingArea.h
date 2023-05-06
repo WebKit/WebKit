@@ -71,9 +71,9 @@ private:
 
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) override;
-    void attachToInitialRootFrame(WebCore::FrameIdentifier) final;
+    void addRootFrame(WebCore::FrameIdentifier) final;
     void triggerRenderingUpdate() override;
-    void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) override;
+    void attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, WebCore::GraphicsLayer*) override;
 
     void dispatchAfterEnsuringDrawing(IPC::AsyncReplyID) final;
     virtual void willCommitLayerTree(RemoteLayerTreeTransaction&) { };
@@ -109,7 +109,7 @@ private:
 
     void setDeviceScaleFactor(float) override;
 
-    void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
+    void mainFrameContentSizeChanged(WebCore::FrameIdentifier, const WebCore::IntSize&) override;
 
     void activityStateDidChange(OptionSet<WebCore::ActivityState> changed, ActivityStateChangeID, CompletionHandler<void()>&&) override;
 
@@ -152,10 +152,11 @@ private:
         Ref<WebCore::GraphicsLayer> layer;
         RefPtr<WebCore::GraphicsLayer> contentLayer;
         RefPtr<WebCore::GraphicsLayer> viewOverlayRootLayer;
-        WeakPtr<WebFrame> frame;
+        WebCore::FrameIdentifier frameID;
     };
+    RootLayerInfo* rootLayerInfoWithFrameIdentifier(WebCore::FrameIdentifier);
 
-    Vector<RootLayerInfo> m_rootLayers;
+    Vector<RootLayerInfo, 1> m_rootLayers;
 
     std::optional<WebCore::FloatRect> m_viewExposedRect;
 
