@@ -1005,7 +1005,7 @@ std::tuple<InlineRect, bool> LineBuilder::lineBoxForCandidateInlineContent(const
     return { adjustedLineRect, lineConstraints.left || lineConstraints.right };
 }
 
-LayoutUnit LineBuilder::adjustGeometryForInitialLetterIfNeeded(const Box& floatBox, BoxGeometry& boxGeometry)
+std::optional<LineBuilder::InitialLetterOffsets> LineBuilder::adjustLineRectForInitialLetterIfApplicable(const Box& floatBox)
 {
     auto drop = floatBox.style().initialLetterDrop();
     auto isInitialLetter = floatBox.isFloatingPositioned() && floatBox.style().styleType() == PseudoId::FirstLetter && drop;
@@ -1034,6 +1034,7 @@ LayoutUnit LineBuilder::adjustGeometryForInitialLetterIfNeeded(const Box& floatB
         clearGapBeforeFirstLine = *intrusiveBottom;
     }
 
+    auto sunkenBelowFirstLineOffset = LayoutUnit { };
     auto letterHeight = floatBox.style().initialLetterHeight();
     if (drop < letterHeight) {
         // Sunken/raised initial letter pushes contents of the first line down.
@@ -1045,13 +1046,12 @@ LayoutUnit LineBuilder::adjustGeometryForInitialLetterIfNeeded(const Box& floatB
     } else if (drop > letterHeight) {
         // Initial letter is sunken below the first line.
         auto numberOfLinesAboveInitialLetter = drop - letterHeight;
-        auto additionallMarginBefore = numberOfLinesAboveInitialLetter * rootStyle().computedLineHeight();
-        boxGeometry.setVerticalMargin({ boxGeometry.marginBefore() + additionallMarginBefore, boxGeometry.marginAfter() });
+        sunkenBelowFirstLineOffset = numberOfLinesAboveInitialLetter * rootStyle().computedLineHeight();
     }
 
     m_lineLogicalRect.moveVertically(clearGapBeforeFirstLine);
     inlineLayoutState()->setClearGapBeforeFirstLine(clearGapBeforeFirstLine);
-    return initialLetterCapHeightOffset.value_or(0_lu);
+    return InitialLetterOffsets { initialLetterCapHeightOffset.value_or(0_lu), sunkenBelowFirstLineOffset };
 }
 
 bool LineBuilder::shouldTryToPlaceFloatBox(const Box& floatBox, LayoutUnit floatBoxMarginBoxWidth, MayOverConstrainLine mayOverConstrainLine) const
@@ -1102,8 +1102,11 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
     auto floatingContext = FloatingContext { formattingContext(), *floatingState() };
     auto computeFloatBoxPosition = [&] {
         // Set static position first.
-        auto additionalOffset = adjustGeometryForInitialLetterIfNeeded(floatBox, boxGeometry);
-        auto staticPosition = LayoutPoint { lineMarginBoxLeft, m_lineLogicalRect.top() + additionalOffset };
+        auto staticPosition = LayoutPoint { lineMarginBoxLeft, m_lineLogicalRect.top() };
+        if (auto additionalOffsets = adjustLineRectForInitialLetterIfApplicable(floatBox)) {
+            staticPosition.setY(m_lineLogicalRect.top() + additionalOffsets->capHeightOffset);
+            boxGeometry.setVerticalMargin({ boxGeometry.marginBefore() + additionalOffsets->sunkenBelowFirstLineOffset, boxGeometry.marginAfter() });
+        }
         staticPosition.move(boxGeometry.marginStart(), boxGeometry.marginBefore());
         boxGeometry.setLogicalTopLeft(staticPosition);
         // Compute float position by running float layout.
