@@ -1921,7 +1921,7 @@ const AtomString& Element::getAttributeNS(const AtomString& namespaceURI, const 
 ExceptionOr<bool> Element::toggleAttribute(const AtomString& qualifiedName, std::optional<bool> force)
 {
     if (!Document::isValidName(qualifiedName))
-        return Exception { InvalidCharacterError };
+        return Exception { InvalidCharacterError, makeString("Invalid qualified name: '", qualifiedName, "'") };
 
     synchronizeAttribute(qualifiedName);
 
@@ -1945,7 +1945,7 @@ ExceptionOr<bool> Element::toggleAttribute(const AtomString& qualifiedName, std:
 ExceptionOr<void> Element::setAttribute(const AtomString& qualifiedName, const AtomString& value)
 {
     if (!Document::isValidName(qualifiedName))
-        return Exception { InvalidCharacterError };
+        return Exception { InvalidCharacterError, makeString("Invalid qualified name: '", qualifiedName, "'") };
 
     synchronizeAttribute(qualifiedName);
     auto caseAdjustedQualifiedName = shouldIgnoreAttributeCase(*this) ? qualifiedName.convertToASCIILowercase() : qualifiedName;
