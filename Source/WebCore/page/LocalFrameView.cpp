@@ -3805,7 +3805,7 @@ void LocalFrameView::updateEmbeddedObjectsTimerFired()
 
 void LocalFrameView::flushAnyPendingPostLayoutTasks()
 {
-    layoutContext().flushAsynchronousTasks();
+    layoutContext().flushPostLayoutTasks();
     if (m_updateEmbeddedObjectsTimer.isActive())
         updateEmbeddedObjectsTimerFired();
 }

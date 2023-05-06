@@ -96,7 +96,7 @@ public:
     void setNeedsFullRepaint() { m_needsFullRepaint = true; }
     bool needsFullRepaint() const { return m_needsFullRepaint; }
 
-    void flushAsynchronousTasks();
+    void flushPostLayoutTasks();
 
     RenderLayoutState* layoutState() const PURE_FUNCTION;
     // Returns true if layoutState should be used for its cached offset and clip.
@@ -129,7 +129,7 @@ private:
     bool isLayoutSchedulingEnabled() const { return m_layoutSchedulingIsEnabled; }
 
     void layoutTimerFired();
-    void runAsynchronousTasks();
+    void runPostLayoutTasks();
     void runOrScheduleAsynchronousTasks();
     bool inAsynchronousTasks() const { return m_inAsynchronousTasks; }
 
@@ -163,7 +163,7 @@ private:
 
     LocalFrameView& m_frameView;
     Timer m_layoutTimer;
-    Timer m_asynchronousTasksTimer;
+    Timer m_postLayoutTaskTimer;
     WeakPtr<RenderElement> m_subtreeLayoutRoot;
 
     bool m_layoutSchedulingIsEnabled { true };

@@ -155,7 +155,7 @@ private:
 LocalFrameViewLayoutContext::LocalFrameViewLayoutContext(LocalFrameView& frameView)
     : m_frameView(frameView)
     , m_layoutTimer(*this, &LocalFrameViewLayoutContext::layoutTimerFired)
-    , m_asynchronousTasksTimer(*this, &LocalFrameViewLayoutContext::runAsynchronousTasks)
+    , m_postLayoutTaskTimer(*this, &LocalFrameViewLayoutContext::runPostLayoutTasks)
 {
 }
 
@@ -223,8 +223,8 @@ void LocalFrameViewLayoutContext::performLayout()
 
         if (!frame().document()->isResolvingContainerQueriesForSelfOrAncestor()) {
             // If this is a new top-level layout and there are any remaining tasks from the previous layout, finish them now.
-            if (!isLayoutNested() && m_asynchronousTasksTimer.isActive())
-                runAsynchronousTasks();
+            if (!isLayoutNested() && m_postLayoutTaskTimer.isActive())
+                runPostLayoutTasks();
 
             updateStyleForLayout();
         }
@@ -283,44 +283,44 @@ void LocalFrameViewLayoutContext::performLayout()
 
 void LocalFrameViewLayoutContext::runOrScheduleAsynchronousTasks()
 {
-    if (m_asynchronousTasksTimer.isActive())
+    if (m_postLayoutTaskTimer.isActive())
         return;
 
     if (frame().document()->isResolvingContainerQueries()) {
         // We are doing layout from style resolution to resolve container queries.
-        m_asynchronousTasksTimer.startOneShot(0_s);
+        m_postLayoutTaskTimer.startOneShot(0_s);
         return;
     }
 
     // If we are already in performPostLayoutTasks(), defer post layout tasks until after we return
     // to avoid re-entrancy.
     if (m_inAsynchronousTasks) {
-        m_asynchronousTasksTimer.startOneShot(0_s);
+        m_postLayoutTaskTimer.startOneShot(0_s);
         return;
     }
 
-    runAsynchronousTasks();
+    runPostLayoutTasks();
     if (needsLayout()) {
-        // If runAsynchronousTasks() made us layout again, let's defer the tasks until after we return.
-        m_asynchronousTasksTimer.startOneShot(0_s);
+        // If runPostLayoutTasks() made us layout again, let's defer the tasks until after we return.
+        m_postLayoutTaskTimer.startOneShot(0_s);
         layout();
     }
 }
 
-void LocalFrameViewLayoutContext::runAsynchronousTasks()
+void LocalFrameViewLayoutContext::runPostLayoutTasks()
 {
-    m_asynchronousTasksTimer.stop();
+    m_postLayoutTaskTimer.stop();
     if (m_inAsynchronousTasks)
         return;
     SetForScope inAsynchronousTasks(m_inAsynchronousTasks, true);
     view().performPostLayoutTasks();
 }
 
-void LocalFrameViewLayoutContext::flushAsynchronousTasks()
+void LocalFrameViewLayoutContext::flushPostLayoutTasks()
 {
-    if (!m_asynchronousTasksTimer.isActive())
+    if (!m_postLayoutTaskTimer.isActive())
         return;
-    runAsynchronousTasks();
+    runPostLayoutTasks();
 }
 
 void LocalFrameViewLayoutContext::reset()
@@ -331,7 +331,7 @@ void LocalFrameViewLayoutContext::reset()
     m_layoutSchedulingIsEnabled = true;
     m_layoutTimer.stop();
     m_firstLayout = true;
-    m_asynchronousTasksTimer.stop();
+    m_postLayoutTaskTimer.stop();
     m_needsFullRepaint = true;
 }
 
@@ -402,8 +402,8 @@ void LocalFrameViewLayoutContext::scheduleLayout()
 
 void LocalFrameViewLayoutContext::unscheduleLayout()
 {
-    if (m_asynchronousTasksTimer.isActive())
-        m_asynchronousTasksTimer.stop();
+    if (m_postLayoutTaskTimer.isActive())
+        m_postLayoutTaskTimer.stop();
 
     if (!m_layoutTimer.isActive())
         return;
