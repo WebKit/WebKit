@@ -1389,8 +1389,8 @@ PlainTextRange AccessibilityRenderObject::selectedTextRange() const
 {
     ASSERT(isTextControl());
 
-    if (isSecureField())
-        return PlainTextRange();
+    if (shouldReturnEmptySelectedText())
+        return { };
 
     // Use the text control native range if it's a native object.
     if (isNativeTextControl()) {

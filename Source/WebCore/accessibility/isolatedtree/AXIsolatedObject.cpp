@@ -1168,6 +1168,9 @@ bool AXIsolatedObject::isNativeTextControl() const
 
 PlainTextRange AXIsolatedObject::selectedTextRange() const
 {
+    if (shouldReturnEmptySelectedText())
+        return { };
+
     return Accessibility::retrieveValueFromMainThread<PlainTextRange>([this] () -> PlainTextRange {
         if (auto* object = associatedAXObject())
             return object->selectedTextRange();
