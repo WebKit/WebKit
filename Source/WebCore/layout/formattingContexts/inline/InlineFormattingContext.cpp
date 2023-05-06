@@ -413,8 +413,14 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstra
 
 InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(IntrinsicWidthMode intrinsicWidthMode) const
 {
+    auto floatingState = FloatingState { layoutState(), root() };
+    auto parentBlockLayoutState = BlockLayoutState { floatingState, { } };
+    auto inlineLayoutState = InlineLayoutState { parentBlockLayoutState, { } };
+    auto horizontalConstraints = HorizontalConstraints { };
+    if (intrinsicWidthMode == IntrinsicWidthMode::Maximum)
+        horizontalConstraints.logicalWidth = maxInlineLayoutUnit();
     auto& inlineItems = formattingState().inlineItems();
-    auto lineBuilder = LineBuilder { *this, inlineItems, intrinsicWidthMode };
+    auto lineBuilder = LineBuilder { *this, inlineLayoutState, horizontalConstraints, inlineItems, intrinsicWidthMode };
     auto layoutRange = InlineItemRange { 0 , inlineItems.size() };
     auto maximumLineWidth = InlineLayoutUnit { };
     auto maximumFloatWidth = LayoutUnit { };

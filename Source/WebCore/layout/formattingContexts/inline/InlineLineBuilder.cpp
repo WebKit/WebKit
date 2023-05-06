@@ -337,16 +337,8 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
 LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, InlineLayoutState& inlineLayoutState, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems, std::optional<IntrinsicWidthMode> intrinsicWidthMode)
     : m_intrinsicWidthMode(intrinsicWidthMode)
     , m_inlineFormattingContext(inlineFormattingContext)
-    , m_inlineLayoutState(&inlineLayoutState)
+    , m_inlineLayoutState(inlineLayoutState)
     , m_rootHorizontalConstraints(rootHorizontalConstraints)
-    , m_line(inlineFormattingContext)
-    , m_inlineItems(inlineItems)
-{
-}
-
-LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, const InlineItems& inlineItems, std::optional<IntrinsicWidthMode> intrinsicWidthMode)
-    : m_intrinsicWidthMode(intrinsicWidthMode)
-    , m_inlineFormattingContext(inlineFormattingContext)
     , m_line(inlineFormattingContext)
     , m_inlineItems(inlineItems)
 {
@@ -610,10 +602,10 @@ InlineItemRange LineBuilder::close(const InlineItemRange& needsLayoutRange, cons
 
 FloatingContext::Constraints LineBuilder::floatConstraints(const InlineRect& lineMarginBoxRect) const
 {
-    if (isInIntrinsicWidthMode() || floatingState()->isEmpty())
+    if (isInIntrinsicWidthMode() || floatingState().isEmpty())
         return { };
 
-    return formattingContext().formattingGeometry().floatConstraintsForLine(lineMarginBoxRect.top(), lineMarginBoxRect.height(), FloatingContext { formattingContext(), *floatingState() });
+    return formattingContext().formattingGeometry().floatConstraintsForLine(lineMarginBoxRect.top(), lineMarginBoxRect.height(), FloatingContext { formattingContext(), floatingState() });
 }
 
 LineBuilder::UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& initialLineLogicalRect, std::optional<bool> previousLineEndsWithLineBreak) const
@@ -1009,16 +1001,16 @@ std::optional<LineBuilder::InitialLetterOffsets> LineBuilder::adjustLineRectForI
     auto drop = floatBox.style().initialLetterDrop();
     auto isInitialLetter = floatBox.isFloatingPositioned() && floatBox.style().styleType() == PseudoId::FirstLetter && drop;
     if (!isInitialLetter) {
-        inlineLayoutState()->setClearGapBeforeFirstLine({ });
+        inlineLayoutState().setClearGapBeforeFirstLine({ });
         return { };
     }
     // Here we try to set the vertical start position for the float in flush with the adjoining text content's cap height.
     // It's a super premature as at this point we don't normally deal with vertical geometry -other than the incoming vertical constraint.
     auto initialLetterCapHeightOffset = formattingContext().formattingQuirks().initialLetterAlignmentOffset(floatBox, rootStyle());
     // While initial-letter based floats do not set their clear property, intrusive floats from sibling IFCs are supposed to be cleared.
-    auto intrusiveBottom = blockLayoutState()->intrusiveInitialLetterLogicalBottom();
+    auto intrusiveBottom = blockLayoutState().intrusiveInitialLetterLogicalBottom();
     if (!initialLetterCapHeightOffset && !intrusiveBottom) {
-        inlineLayoutState()->setClearGapBeforeFirstLine({ });
+        inlineLayoutState().setClearGapBeforeFirstLine({ });
         return { };
     }
 
@@ -1049,7 +1041,7 @@ std::optional<LineBuilder::InitialLetterOffsets> LineBuilder::adjustLineRectForI
     }
 
     m_lineLogicalRect.moveVertically(clearGapBeforeFirstLine);
-    inlineLayoutState()->setClearGapBeforeFirstLine(clearGapBeforeFirstLine);
+    inlineLayoutState().setClearGapBeforeFirstLine(clearGapBeforeFirstLine);
     return InitialLetterOffsets { initialLetterCapHeightOffset.value_or(0_lu), sunkenBelowFirstLineOffset };
 }
 
@@ -1098,7 +1090,7 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
         return false;
 
     auto lineMarginBoxLeft = std::max(0.f, m_lineLogicalRect.left() - m_lineMarginStart);
-    auto floatingContext = FloatingContext { formattingContext(), *floatingState() };
+    auto floatingContext = FloatingContext { formattingContext(), floatingState() };
     auto computeFloatBoxPosition = [&] {
         // Set static position first.
         auto staticPosition = LayoutPoint { lineMarginBoxLeft, m_lineLogicalRect.top() };
@@ -1143,7 +1135,7 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
 
     auto placeFloatBox = [&] {
         auto floatItem = floatingContext.toFloatItem(floatBox, boxGeometry);
-        floatingState()->append(floatItem);
+        floatingState().append(floatItem);
         m_placedFloats.append(floatItem);
     };
     placeFloatBox();

@@ -42,7 +42,6 @@ struct LineCandidate;
 class LineBuilder {
 public:
     LineBuilder(const InlineFormattingContext&, InlineLayoutState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, std::optional<IntrinsicWidthMode> = std::nullopt);
-    LineBuilder(const InlineFormattingContext&, const InlineItems&, std::optional<IntrinsicWidthMode>);
 
     struct LineInput {
         InlineItemRange needsLayoutRange;
@@ -144,10 +143,10 @@ private:
     bool isFirstFormattedLine() const { return !m_previousLine.has_value(); }
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
-    InlineLayoutState* inlineLayoutState() const { return m_inlineLayoutState; }
-    BlockLayoutState* blockLayoutState() const { return inlineLayoutState() ? &m_inlineLayoutState->parentBlockLayoutState() : nullptr; }
-    FloatingState* floatingState() { return blockLayoutState() ? &blockLayoutState()->floatingState() : nullptr; }
-    const FloatingState* floatingState() const { return const_cast<LineBuilder&>(*this).floatingState(); }
+    InlineLayoutState& inlineLayoutState() const { return m_inlineLayoutState; }
+    BlockLayoutState& blockLayoutState() const { return inlineLayoutState().parentBlockLayoutState(); }
+    FloatingState& floatingState() { return blockLayoutState().floatingState(); }
+    const FloatingState& floatingState() const { return const_cast<LineBuilder&>(*this).floatingState(); }
     const ElementBox& root() const;
     const LayoutState& layoutState() const;
     const RenderStyle& rootStyle() const;
@@ -156,7 +155,7 @@ private:
     std::optional<PreviousLine> m_previousLine { };
     std::optional<IntrinsicWidthMode> m_intrinsicWidthMode;
     const InlineFormattingContext& m_inlineFormattingContext;
-    InlineLayoutState* m_inlineLayoutState { nullptr };
+    InlineLayoutState& m_inlineLayoutState;
     std::optional<HorizontalConstraints> m_rootHorizontalConstraints;
 
     Line m_line;
