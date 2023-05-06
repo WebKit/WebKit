@@ -162,6 +162,7 @@ public:
 
     WebFrameProxy* parentFrame() { return m_parentFrame.get(); }
     WebProcessProxy& process() { return m_process.get(); }
+    ProvisionalFrameProxy* provisionalFrame() { return m_provisionalFrame.get(); }
 
 private:
     WebFrameProxy(WebPageProxy&, WebProcessProxy&, WebCore::FrameIdentifier);

@@ -4362,6 +4362,12 @@ void Page::didFinishScrolling()
 #endif
 }
 
+void Page::addRootFrame(LocalFrame& frame)
+{
+    ASSERT(frame.isRootFrame());
+    m_rootFrames.add(frame);
+}
+
 void Page::reloadExecutionContextsForOrigin(const ClientOrigin& origin, std::optional<FrameIdentifier> triggeringFrame) const
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());

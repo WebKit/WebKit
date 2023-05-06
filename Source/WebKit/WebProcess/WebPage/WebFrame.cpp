@@ -407,7 +407,8 @@ void WebFrame::transitionToLocal(WebCore::LayerHostingContextIdentifier layerHos
     localFrame->init();
 
     setLayerHostingContextIdentifier(layerHostingContextIdentifier);
-    corePage->addRootFrame(localFrame.get());
+    if (localFrame->isRootFrame())
+        corePage->addRootFrame(localFrame.get());
 
     if (auto* webPage = page(); webPage && m_coreFrame->isRootFrame()) {
         if (auto* drawingArea = webPage->drawingArea())

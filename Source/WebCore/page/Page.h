@@ -1041,7 +1041,7 @@ public:
     void didFinishScrolling();
 
     const WeakHashSet<LocalFrame>& rootFrames() const { return m_rootFrames; }
-    void addRootFrame(LocalFrame& frame) { m_rootFrames.add(frame); }
+    WEBCORE_EXPORT void addRootFrame(LocalFrame&);
 
 private:
     struct Navigation {

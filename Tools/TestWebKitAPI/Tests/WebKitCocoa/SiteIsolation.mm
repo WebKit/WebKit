@@ -411,7 +411,7 @@ TEST(SiteIsolation, NavigatingCrossOriginIframeToSameOrigin)
         pid_t childFramePid = childFrame._processIdentifier;
         EXPECT_NE(mainFramePid, 0);
         EXPECT_NE(childFramePid, 0);
-        EXPECT_NE(mainFramePid, childFramePid); // FIXME: These should be equal.
+        EXPECT_EQ(mainFramePid, childFramePid);
         EXPECT_WK_STREQ(mainFrame.securityOrigin.host, "example.com");
         EXPECT_WK_STREQ(childFrame.securityOrigin.host, "example.com");
         done = true;
@@ -612,7 +612,7 @@ TEST(SiteIsolation, ChildNavigatingToMainFrameDomain)
     [navigationDelegate allowAnyTLSCertificate];
 
     auto configuration = server.httpsProxyConfiguration();
-    // FIXME: Enable site isolation once the new frame can be loaded in the same process as mainFrame
+    enableSiteIsolation(configuration);
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
     webView.get().navigationDelegate = navigationDelegate.get();

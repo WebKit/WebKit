@@ -1825,9 +1825,14 @@ void WebProcessPool::removeProcessFromOriginCacheSet(WebProcessProxy& process)
 
 void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& frame, const API::Navigation& navigation, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient processSwapRequestedByClient, WebProcessProxy::LockdownMode lockdownMode, const FrameInfoData& frameInfo, Ref<WebsiteDataStore>&& dataStore, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral, DidCreateNewProcess)>&& completionHandler)
 {
+    auto registrableDomain = RegistrableDomain { navigation.currentRequest().url() };
+    RegistrableDomain mainFrameDomain(URL(page.pageLoadState().activeURL()));
     if (!frame.isMainFrame() && page.preferences().siteIsolationEnabled()) {
-        auto registrableDomain = RegistrableDomain { navigation.currentRequest().url() };
         if (!registrableDomain.isEmpty()) {
+            if (registrableDomain == mainFrameDomain) {
+                completionHandler(Ref { page.mainFrame()->process() }, nullptr, "Found process for the same registration domain as mainFrame domain"_s, DidCreateNewProcess::No);
+                return;
+            }
             if (auto* subframePageProxy = page.subpageFrameProxyForRegistrableDomain(registrableDomain)) {
                 completionHandler(Ref { subframePageProxy->process() }, nullptr, "Found process for the same registration domain"_s, DidCreateNewProcess::No);
                 return;
@@ -1839,7 +1844,6 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
 
     if (!frame.isMainFrame() && page.preferences().siteIsolationEnabled()) {
         RegistrableDomain navigationDomain(navigation.currentRequest().url());
-        RegistrableDomain mainFrameDomain(URL(page.pageLoadState().activeURL()));
         if (!navigationDomain.isEmpty() && navigationDomain != mainFrameDomain) {
             auto subFramePageProxy = makeUniqueRef<SubframePageProxy>(page, process, frame.isMainFrame());
             page.addSubframePageProxyForFrameID(frame.frameID(), navigationDomain, WTFMove(subFramePageProxy));
