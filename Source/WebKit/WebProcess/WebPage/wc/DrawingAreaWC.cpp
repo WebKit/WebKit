@@ -91,7 +91,7 @@ void DrawingAreaWC::setRootCompositingLayer(WebCore::Frame&, GraphicsLayer* root
     updateRootLayers();
 }
 
-void DrawingAreaWC::attachViewOverlayGraphicsLayer(GraphicsLayer* layer)
+void DrawingAreaWC::attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, GraphicsLayer* layer)
 {
     m_viewOverlayRootLayer = layer;
     updateRootLayers();
