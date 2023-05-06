@@ -2090,7 +2090,7 @@ void Document::updateRenderTree(std::unique_ptr<const Style::Update> styleUpdate
 
 void Document::resolveStyle(ResolveStyleType type)
 {
-    ScriptDisallowedScope::InMainThreadOfWebProcess scriptDisallowedScope;
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
     ASSERT(!view() || !view()->isPainting());
 
@@ -2100,11 +2100,9 @@ void Document::resolveStyle(ResolveStyleType type)
 
     auto& frameView = m_renderView->frameView();
     Ref protectedFrameView { frameView };
-    if (frameView.isPainting())
-        return;
 
-    if (m_inStyleRecalc)
-        return; // Guard against re-entrancy. -dwh
+    RELEASE_ASSERT(!frameView.isPainting());
+    RELEASE_ASSERT(!m_inStyleRecalc);
 
     TraceScope tracingScope(StyleRecalcStart, StyleRecalcEnd);
 
@@ -2113,24 +2111,19 @@ void Document::resolveStyle(ResolveStyleType type)
     // FIXME: We should update style on our ancestor chain before proceeding, however doing so at
     // the time this comment was originally written caused several tests to crash.
 
-    {
-        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+    // FIXME: Do this user agent shadow tree update per tree scope.
+    for (auto& element : copyToVectorOf<Ref<Element>>(m_elementsWithPendingUserAgentShadowTreeUpdates))
+        element->updateUserAgentShadowTree();
 
-        // FIXME: Do this user agent shadow tree update per tree scope.
-        for (auto& element : copyToVectorOf<Ref<Element>>(m_elementsWithPendingUserAgentShadowTreeUpdates))
-            element->updateUserAgentShadowTree();
+    styleScope().flushPendingUpdate();
+    frameView.willRecalcStyle();
 
-        styleScope().flushPendingUpdate();
-        frameView.willRecalcStyle();
-
-        InspectorInstrumentation::willRecalculateStyle(*this);
-    }
+    InspectorInstrumentation::willRecalculateStyle(*this);
 
     bool updatedCompositingLayers = false;
     {
         Style::PostResolutionCallbackDisabler disabler(*this);
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
-        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
         m_inStyleRecalc = true;
 
@@ -2198,7 +2191,7 @@ void Document::resolveStyle(ResolveStyleType type)
                 localMainFrame->eventHandler().dispatchFakeMouseMoveEventSoon();
 
         ++m_styleRecalcCount;
-        // FIXME: Assert ASSERT(!needsStyleRecalc()) here. Do we still have some cases where it's not true?
+        // FIXME: Assert ASSERT(!needsStyleRecalc()) here. fast/events/media-element-focus-tab.html hits this assertion.
     }
 
     InspectorInstrumentation::didRecalculateStyle(*this);
