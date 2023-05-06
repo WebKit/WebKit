@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "ArgList.h"
+#include "GetVM.h"
 #include "Identifier.h"
 #include "JSCJSValue.h"
 #include <array>
@@ -110,9 +112,15 @@ public:
     JSValue tryLiteralParse()
     {
         m_lexer.next();
-        JSValue result = parse(m_mode == StrictJSON ? StartParseExpression : StartParseStatement);
-        if (m_lexer.currentToken()->type == TokSemi)
-            m_lexer.next();
+        JSValue result;
+        VM& vm = getVM(m_globalObject);
+        if (m_mode == StrictJSON)
+            result = parseRecursivelyEntry(vm);
+        else {
+            result = parse(vm, StartParseStatement);
+            if (m_lexer.currentToken()->type == TokSemi)
+                m_lexer.next();
+        }
         if (m_lexer.currentToken()->type != TokEnd)
             return JSValue();
         return result;
@@ -188,7 +196,9 @@ private:
     };
     
     class StackGuard;
-    JSValue parse(ParserState);
+    JSValue parseRecursivelyEntry(VM&);
+    JSValue parseRecursively(VM&, uint8_t* stackLimit);
+    JSValue parse(VM&, ParserState);
 
     JSValue parsePrimitiveValue(VM&);
 
@@ -202,6 +212,10 @@ private:
     typename LiteralParser<CharType>::Lexer m_lexer;
     const ParserMode m_mode;
     String m_parseErrorMessage;
+    HashSet<JSObject*> m_visitedUnderscoreProto;
+    MarkedArgumentBuffer m_objectStack;
+    Vector<ParserState, 16, UnsafeVectorOverflow> m_stateStack;
+    Vector<Identifier, 16, UnsafeVectorOverflow> m_identifierStack;
 };
 
 } // namespace JSC

@@ -553,6 +553,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, dumpWasmOpcodeStatistics, false, Normal, nullptr) \
     v(Bool, dumpCompilerConstructionSite, false, Normal, nullptr) \
     v(Bool, dumpWasmWarnings, false, Normal, nullptr) \
+    v(Bool, useRecursiveJSONParse, true, Normal, nullptr) \
     \
     /* Feature Flags */\
     \

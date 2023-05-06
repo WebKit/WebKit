@@ -125,7 +125,7 @@ bool LiteralParser<CharType>::tryJSONPParse(Vector<JSONPData>& results, bool nee
     startJSON:
         m_lexer.next();
         results.append(JSONPData());
-        JSValue startParseExpressionValue = parse(StartParseExpression);
+        JSValue startParseExpressionValue = parse(vm, StartParseExpression);
         RETURN_IF_EXCEPTION(scope, false);
         results.last().m_value.set(vm, startParseExpressionValue);
         if (!results.last().m_value)
@@ -810,7 +810,7 @@ ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lexIdentifier(LiteralPar
 }
 
 template <typename CharType>
-TokenType LiteralParser<CharType>::Lexer::next()
+ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::next()
 {
     TokenType result = lex(m_currentToken);
     ASSERT(m_currentToken.type == result);
@@ -1187,23 +1187,133 @@ ALWAYS_INLINE JSValue LiteralParser<CharType>::parsePrimitiveValue(VM& vm)
 }
 
 template <typename CharType>
-JSValue LiteralParser<CharType>::parse(ParserState initialState)
+JSValue LiteralParser<CharType>::parseRecursivelyEntry(VM& vm)
 {
-    VM& vm = m_globalObject->vm();
+    ASSERT(m_mode == StrictJSON);
+    if (UNLIKELY(!Options::useRecursiveJSONParse()))
+        return parse(vm, StartParseExpression);
+    TokenType type = m_lexer.currentToken()->type;
+    if (type == TokLBrace || type == TokLBracket)
+        return parseRecursively(vm, bitwise_cast<uint8_t*>(vm.softStackLimit()));
+    return parsePrimitiveValue(vm);
+}
+
+template <typename CharType>
+JSValue LiteralParser<CharType>::parseRecursively(VM& vm, uint8_t* stackLimit)
+{
+    if (UNLIKELY(bitwise_cast<uint8_t*>(currentStackPointer()) < stackLimit))
+        return parse(vm, StartParseExpression);
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    TokenType type = m_lexer.currentToken()->type;
+    if (type == TokLBracket) {
+        JSArray* array = constructEmptyArray(m_globalObject, nullptr);
+        TokenType type = m_lexer.next();
+        if (type == TokRBracket) {
+            m_lexer.next();
+            return array;
+        }
+        unsigned index = 0;
+        while (true) {
+            JSValue value;
+            if (type == TokLBrace || type == TokLBracket)
+                value = parseRecursively(vm, stackLimit);
+            else
+                value = parsePrimitiveValue(vm);
+            if (UNLIKELY(!value))
+                return { };
+
+            array->putDirectIndex(m_globalObject, index++, value);
+            RETURN_IF_EXCEPTION(scope, { });
+
+            type = m_lexer.currentToken()->type;
+            if (type == TokComma) {
+                type = m_lexer.next();
+                if (UNLIKELY(type == TokRBracket)) {
+                    m_parseErrorMessage = "Unexpected comma at the end of array expression"_s;
+                    return { };
+                }
+                continue;
+            }
+
+            if (UNLIKELY(type != TokRBracket)) {
+                setErrorMessageForToken(TokRBracket);
+                return { };
+            }
+
+            m_lexer.next();
+            return array;
+        }
+    }
+
+    ASSERT(type == TokLBrace);
+    JSObject* object = constructEmptyObject(m_globalObject);
+    type = m_lexer.next();
+    if (type == TokString) {
+        while (true) {
+            Identifier ident = makeIdentifier(vm, m_lexer.currentToken());
+
+            if (UNLIKELY(m_lexer.next() != TokColon)) {
+                setErrorMessageForToken(TokColon);
+                return { };
+            }
+
+            type = m_lexer.next();
+            JSValue value;
+            if (type == TokLBrace || type == TokLBracket)
+                value = parseRecursively(vm, stackLimit);
+            else
+                value = parsePrimitiveValue(vm);
+            if (UNLIKELY(!value))
+                return { };
+
+            if (std::optional<uint32_t> index = parseIndex(ident)) {
+                object->putDirectIndex(m_globalObject, index.value(), value);
+                RETURN_IF_EXCEPTION(scope, { });
+            } else
+                object->putDirect(vm, ident, value);
+
+            type = m_lexer.currentToken()->type;
+            if (type == TokComma) {
+                if (UNLIKELY(m_lexer.next() != TokString)) {
+                    m_parseErrorMessage = "Property name must be a string literal"_s;
+                    return { };
+                }
+                continue;
+            }
+
+            if (UNLIKELY(type != TokRBrace)) {
+                setErrorMessageForToken(TokRBrace);
+                return { };
+            }
+
+            m_lexer.next();
+            return object;
+        }
+    }
+
+    if (UNLIKELY(type != TokRBrace)) {
+        setErrorMessageForToken(TokRBrace);
+        return { };
+    }
+
+    m_lexer.next();
+    return object;
+}
+
+template <typename CharType>
+JSValue LiteralParser<CharType>::parse(VM& vm, ParserState initialState)
+{
     auto scope = DECLARE_THROW_SCOPE(vm);
     ParserState state = initialState;
-    MarkedArgumentBuffer objectStack;
     JSValue lastValue;
-    Vector<ParserState, 16, UnsafeVectorOverflow> stateStack;
-    Vector<Identifier, 16, UnsafeVectorOverflow> identifierStack;
-    HashSet<JSObject*> visitedUnderscoreProto;
     while (1) {
         switch(state) {
         startParseArray:
         case StartParseArray: {
             JSArray* array = constructEmptyArray(m_globalObject, nullptr);
             RETURN_IF_EXCEPTION(scope, { });
-            objectStack.appendWithCrashOnOverflow(array);
+            m_objectStack.appendWithCrashOnOverflow(array);
         }
         doParseArrayStartExpression:
         FALLTHROUGH;
@@ -1215,15 +1325,15 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                     return { };
                 }
                 m_lexer.next();
-                lastValue = objectStack.takeLast();
+                lastValue = m_objectStack.takeLast();
                 break;
             }
 
-            stateStack.append(DoParseArrayEndExpression);
+            m_stateStack.append(DoParseArrayEndExpression);
             goto startParseExpression;
         }
         case DoParseArrayEndExpression: {
-            JSArray* array = asArray(objectStack.last());
+            JSArray* array = asArray(m_objectStack.last());
             array->putDirectIndex(m_globalObject, array->length(), lastValue);
             RETURN_IF_EXCEPTION(scope, { });
 
@@ -1236,7 +1346,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
             }
             
             m_lexer.next();
-            lastValue = objectStack.takeLast();
+            lastValue = m_objectStack.takeLast();
             break;
         }
         startParseObject:
@@ -1255,9 +1365,9 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
 
                     TokenType nextType = m_lexer.next();
                     if (nextType == TokLBrace || nextType == TokLBracket) {
-                        objectStack.appendWithCrashOnOverflow(object);
-                        identifierStack.append(WTFMove(ident));
-                        stateStack.append(DoParseObjectEndExpression);
+                        m_objectStack.appendWithCrashOnOverflow(object);
+                        m_identifierStack.append(WTFMove(ident));
+                        m_stateStack.append(DoParseObjectEndExpression);
                         if (nextType == TokLBrace)
                             goto startParseObject;
                         ASSERT(nextType == TokLBracket);
@@ -1270,7 +1380,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                         return { };
 
                     if (m_mode != StrictJSON && ident == vm.propertyNames->underscoreProto) {
-                        if (UNLIKELY(!visitedUnderscoreProto.add(object).isNewEntry)) {
+                        if (UNLIKELY(!m_visitedUnderscoreProto.add(object).isNewEntry)) {
                             m_parseErrorMessage = "Attempted to redefine __proto__ property"_s;
                             return { };
                         }
@@ -1320,7 +1430,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                 m_parseErrorMessage = "Property name must be a string literal"_s;
                 return { };
             }
-            identifierStack.append(makeIdentifier(vm, m_lexer.currentToken()));
+            m_identifierStack.append(makeIdentifier(vm, m_lexer.currentToken()));
 
             // Check for colon
             if (UNLIKELY(m_lexer.next() != TokColon)) {
@@ -1329,15 +1439,15 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
             }
 
             m_lexer.next();
-            stateStack.append(DoParseObjectEndExpression);
+            m_stateStack.append(DoParseObjectEndExpression);
             goto startParseExpression;
         }
         case DoParseObjectEndExpression:
         {
-            JSObject* object = asObject(objectStack.last());
-            Identifier ident = identifierStack.takeLast();
+            JSObject* object = asObject(m_objectStack.last());
+            Identifier ident = m_identifierStack.takeLast();
             if (m_mode != StrictJSON && ident == vm.propertyNames->underscoreProto) {
-                if (UNLIKELY(!visitedUnderscoreProto.add(object).isNewEntry)) {
+                if (UNLIKELY(!m_visitedUnderscoreProto.add(object).isNewEntry)) {
                     m_parseErrorMessage = "Attempted to redefine __proto__ property"_s;
                     return { };
                 }
@@ -1358,7 +1468,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                 return { };
             }
             m_lexer.next();
-            lastValue = objectStack.takeLast();
+            lastValue = m_objectStack.takeLast();
             break;
         }
         startParseExpression:
@@ -1386,7 +1496,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
 
             case TokLParen: {
                 m_lexer.next();
-                stateStack.append(StartParseStatementEndStatement);
+                m_stateStack.append(StartParseStatementEndStatement);
                 goto startParseExpression;
             }
             case TokRBracket:
@@ -1439,7 +1549,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
             break;
         }
         case StartParseStatementEndStatement: {
-            ASSERT(stateStack.isEmpty());
+            ASSERT(m_stateStack.isEmpty());
             if (m_lexer.currentToken()->type != TokRParen)
                 return { };
             if (m_lexer.next() == TokEnd)
@@ -1450,9 +1560,9 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
-        if (stateStack.isEmpty())
+        if (m_stateStack.isEmpty())
             return lastValue;
-        state = stateStack.takeLast();
+        state = m_stateStack.takeLast();
         continue;
     }
 }
