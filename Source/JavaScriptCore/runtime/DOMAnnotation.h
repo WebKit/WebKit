@@ -47,9 +47,4 @@ inline bool operator==(const DOMAttributeAnnotation& left, const DOMAttributeAnn
     return left.classInfo == right.classInfo && left.domJIT == right.domJIT;
 }
 
-inline bool operator!=(const DOMAttributeAnnotation& left, const DOMAttributeAnnotation& right)
-{
-    return !(left == right);
-}
-
 } // namespace JSC

@@ -249,11 +249,6 @@ public:
             && m_offset == other.m_offset;
     }
     
-    bool operator!=(const Relationship& other) const
-    {
-        return !(*this == other);
-    }
-    
     bool operator<(const Relationship& other) const
     {
         if (m_left != other.m_left)

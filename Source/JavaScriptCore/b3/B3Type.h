@@ -77,8 +77,6 @@ public:
 
     bool operator==(const TypeKind& otherKind) const { return kind() == otherKind; }
     bool operator==(const Type& type) const { return m_kind == type.m_kind; }
-    bool operator!=(const TypeKind& otherKind) const { return !(*this == otherKind); }
-    bool operator!=(const Type& type) const { return !(*this == type); }
 
 private:
     TypeKind m_kind { Void };

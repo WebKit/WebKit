@@ -69,9 +69,4 @@ inline bool operator==(const TabSize& a, const TabSize& b)
     return (a.m_value == b.m_value) && (a.m_isSpaces == b.m_isSpaces);
 }
 
-inline bool operator!=(const TabSize& a, const TabSize& b)
-{
-    return !(a == b);
-}
-
 } // namespace WebCore

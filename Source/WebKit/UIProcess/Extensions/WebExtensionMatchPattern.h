@@ -81,7 +81,6 @@ public:
     static void registerCustomURLScheme(String);
 
     bool operator==(const WebExtensionMatchPattern&) const;
-    bool operator!=(const WebExtensionMatchPattern& other) const { return !(this == &other); }
 
     bool isValid() const { return m_valid; }
     bool isSupported() const;

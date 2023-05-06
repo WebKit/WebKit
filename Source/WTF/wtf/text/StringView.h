@@ -258,10 +258,6 @@ inline bool operator==(StringView a, StringView b) { return equal(a, b); }
 inline bool operator==(StringView a, ASCIILiteral b) { return equal(a, b); }
 inline bool operator==(ASCIILiteral a, StringView b) { return equal(b, a); }
 
-inline bool operator!=(StringView a, StringView b) { return !equal(a, b); }
-inline bool operator!=(StringView a, ASCIILiteral b) { return !equal(a, b); }
-inline bool operator!=(ASCIILiteral a, StringView b) { return !equal(b, a); }
-
 struct StringViewWithUnderlyingString;
 
 // This returns a StringView of the normalized result, and a String that is either
@@ -838,7 +834,6 @@ public:
     WTF_EXPORT_PRIVATE Iterator& operator++();
 
     bool operator==(const Iterator&) const;
-    bool operator!=(const Iterator&) const;
 
 private:
     enum PositionTag { AtEnd };
@@ -871,7 +866,6 @@ public:
     WTF_EXPORT_PRIVATE Iterator& operator++();
 
     WTF_EXPORT_PRIVATE bool operator==(const Iterator&) const;
-    WTF_EXPORT_PRIVATE bool operator!=(const Iterator&) const;
 
 private:
     class Impl;
@@ -888,7 +882,6 @@ public:
     Iterator& operator++();
 
     bool operator==(const Iterator&) const;
-    bool operator!=(const Iterator&) const;
 
 private:
     const void* m_current;
@@ -908,7 +901,6 @@ public:
     Iterator& operator++();
 
     bool operator==(const Iterator&) const;
-    bool operator!=(const Iterator&) const;
 
 private:
     StringView m_stringView;
@@ -1008,11 +1000,6 @@ inline bool StringView::CodePoints::Iterator::operator==(const Iterator& other) 
     return m_current == other.m_current;
 }
 
-inline bool StringView::CodePoints::Iterator::operator!=(const Iterator& other) const
-{
-    return !(*this == other);
-}
-
 inline auto StringView::CodePoints::begin() const -> Iterator
 {
     return Iterator(m_stringView, 0);
@@ -1050,11 +1037,6 @@ inline bool StringView::CodeUnits::Iterator::operator==(const Iterator& other) c
     ASSERT(m_stringView.m_characters == other.m_stringView.m_characters);
     ASSERT(m_stringView.m_length == other.m_stringView.m_length);
     return m_index == other.m_index;
-}
-
-inline bool StringView::CodeUnits::Iterator::operator!=(const Iterator& other) const
-{
-    return !(*this == other);
 }
 
 inline auto StringView::CodeUnits::begin() const -> Iterator
@@ -1119,11 +1101,6 @@ inline bool StringView::SplitResult::Iterator::operator==(const Iterator& other)
 {
     ASSERT(&m_result == &other.m_result);
     return m_position == other.m_position && m_isDone == other.m_isDone;
-}
-
-inline bool StringView::SplitResult::Iterator::operator!=(const Iterator& other) const
-{
-    return !(*this == other);
 }
 
 template<typename CharacterType, typename MatchedCharacterPredicate>

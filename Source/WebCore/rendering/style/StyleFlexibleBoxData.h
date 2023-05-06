@@ -39,10 +39,6 @@ public:
     Ref<StyleFlexibleBoxData> copy() const;
 
     bool operator==(const StyleFlexibleBoxData&) const;
-    bool operator!=(const StyleFlexibleBoxData& o) const
-    {
-        return !(*this == o);
-    }
 
     float flexGrow;
     float flexShrink;

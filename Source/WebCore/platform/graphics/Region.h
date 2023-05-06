@@ -153,7 +153,6 @@ private:
     friend bool operator==(const Region&, const Region&);
     friend bool operator==(const Shape&, const Shape&);
     friend bool operator==(const Span&, const Span&);
-    friend bool operator!=(const Span&, const Span&);
 };
 
 static inline Region intersect(const Region& a, const Region& b)
@@ -184,10 +183,6 @@ inline bool operator==(const Region& a, const Region& b)
 {
     return a.m_bounds == b.m_bounds && arePointingToEqualData(a.m_shape, b.m_shape);
 }
-inline bool operator!=(const Region& a, const Region& b)
-{
-    return !(a == b);
-}
 
 inline bool operator==(const Region::Shape& a, const Region::Shape& b)
 {
@@ -197,11 +192,6 @@ inline bool operator==(const Region::Shape& a, const Region::Shape& b)
 inline bool operator==(const Region::Span& a, const Region::Span& b)
 {
     return a.y == b.y && a.segmentIndex == b.segmentIndex;
-}
-
-inline bool operator!=(const Region::Span& a, const Region::Span& b)
-{
-    return !(a == b);
 }
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Region&);

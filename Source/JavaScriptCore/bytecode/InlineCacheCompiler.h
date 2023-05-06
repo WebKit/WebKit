@@ -87,11 +87,6 @@ public:
         return m_kind == other.m_kind && m_code == other.m_code;
     }
 
-    bool operator!=(const AccessGenerationResult& other) const
-    {
-        return !(*this == other);
-    }
-
     explicit operator bool() const
     {
         return *this != AccessGenerationResult();

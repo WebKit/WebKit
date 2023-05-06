@@ -243,11 +243,6 @@ bool StringView::GraphemeClusters::Iterator::operator==(const Iterator& other) c
     return *m_impl == *(other.m_impl);
 }
 
-bool StringView::GraphemeClusters::Iterator::operator!=(const Iterator& other) const
-{
-    return !(*this == other);
-}
-
 enum class ASCIICase { Lower, Upper };
 
 template<ASCIICase type, typename CharacterType>

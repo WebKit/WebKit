@@ -59,11 +59,6 @@ public:
         return m_position == o.m_position && m_positionType == o.m_positionType && m_overflow == o.m_overflow;
     }
 
-    bool operator!=(const StyleSelfAlignmentData& o) const
-    {
-        return !(*this == o);
-    }
-
 private:
     uint8_t m_position : 4 { 0 }; // ItemPosition
     uint8_t m_positionType: 1 { 0 }; // ItemPositionType: Whether or not alignment uses the 'legacy' keyword.

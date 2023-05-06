@@ -151,7 +151,6 @@ struct TrackInfo : public ThreadSafeRefCounted<TrackInfo> {
             return false;
         return equalTo(other);
     }
-    bool operator!=(const TrackInfo& other) const { return !(*this == other); }
 
     FourCC codecName;
     uint64_t trackID { 0 };

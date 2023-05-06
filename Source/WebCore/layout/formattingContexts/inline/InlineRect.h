@@ -100,6 +100,11 @@ private:
     InlineLayoutRect m_rect;
 };
 
+inline bool operator==(const InlineRect& a, const InlineRect& b)
+{
+    return static_cast<InlineLayoutRect>(a) == static_cast<InlineLayoutRect>(b);
+}
+
 inline InlineRect::InlineRect(InlineLayoutUnit top, InlineLayoutUnit left, InlineLayoutUnit width, InlineLayoutUnit height)
     : m_rect(left, top, width, height)
 {

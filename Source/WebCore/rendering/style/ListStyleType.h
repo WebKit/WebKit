@@ -141,7 +141,6 @@ struct ListStyleType {
     bool isDisclosureClosed() const;
 
     bool operator==(const ListStyleType& other) const { return type == other.type && identifier == other.identifier; }
-    bool operator!=(const ListStyleType& other) const { return !(*this == other); }
 
     Type type { Type::None };
     // The identifier is the string when the type is String and is the @counter-style name when the type is CounterStyle.

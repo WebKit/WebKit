@@ -46,13 +46,11 @@ public:
         CSSUnitType unitType;
 
         bool operator==(const NumericSyntaxValue& other) const { return value == other.value && unitType == other.unitType; }
-        bool operator!=(const NumericSyntaxValue& other) const { return !(this == &other); }
     };
 
     struct TransformSyntaxValue {
         RefPtr<TransformOperation> transform;
         bool operator==(const TransformSyntaxValue& other) const { return arePointingToEqualData(transform, other.transform); }
-        bool operator!=(const TransformSyntaxValue& other) const { return !(this == &other); }
     };
 
     using SyntaxValue = std::variant<Length, NumericSyntaxValue, StyleColor, RefPtr<StyleImage>, URL, String, TransformSyntaxValue>;
@@ -62,7 +60,6 @@ public:
         ValueSeparator separator;
 
         bool operator==(const SyntaxValueList& other) const { return values == other.values && separator == other.separator; }
-        bool operator!=(const SyntaxValueList& other) const { return !(this == &other); }
     };
 
     using VariantValue = std::variant<std::monostate, Ref<CSSVariableReferenceValue>, CSSValueID, Ref<CSSVariableData>, SyntaxValue, SyntaxValueList>;

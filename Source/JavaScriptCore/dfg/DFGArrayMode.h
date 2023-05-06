@@ -547,10 +547,6 @@ public:
             && mayBeResizableOrGrowableSharedTypedArray() == other.mayBeResizableOrGrowableSharedTypedArray();
     }
     
-    bool operator!=(const ArrayMode& other) const
-    {
-        return !(*this == other);
-    }
 private:
     explicit ArrayMode(unsigned word)
     {

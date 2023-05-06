@@ -37,10 +37,6 @@ public:
     Ref<StyleDeprecatedFlexibleBoxData> copy() const;
 
     bool operator==(const StyleDeprecatedFlexibleBoxData&) const;
-    bool operator!=(const StyleDeprecatedFlexibleBoxData& other) const
-    {
-        return !(*this == other);
-    }
 
     float flex;
     unsigned flexGroup;

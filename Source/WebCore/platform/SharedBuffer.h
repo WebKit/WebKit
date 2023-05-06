@@ -208,7 +208,6 @@ public:
     void hintMemoryNotNeededSoon() const;
 
     WEBCORE_EXPORT bool operator==(const FragmentedSharedBuffer&) const;
-    bool operator!=(const FragmentedSharedBuffer& other) const { return !operator==(other); }
 
     WEBCORE_EXPORT Ref<SharedBuffer> makeContiguous() const;
 

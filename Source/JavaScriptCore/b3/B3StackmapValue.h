@@ -273,11 +273,6 @@ public:
                 return m_index == other.m_index;
             }
 
-            bool operator!=(const iterator& other) const
-            {
-                return !(*this == other);
-            }
-            
         private:
             const ConstrainedValueCollection* m_collection;
             unsigned m_index;

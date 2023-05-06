@@ -128,7 +128,6 @@ struct Action {
         : m_data(WTFMove(data)) { }
 
     bool operator==(const Action& other) const { return m_data == other.m_data; }
-    bool operator!=(const Action& other) const { return !(*this == other); }
 
     const ActionData& data() const { return m_data; }
 

@@ -105,7 +105,6 @@ public:
         using Base = WeakListHashSetIteratorBase<WeakListHashSet, typename WeakPtrImplSet::iterator>;
 
         bool operator==(const WeakListHashSetIterator& other) const { return Base::m_position == other.Base::m_position; }
-        bool operator!=(const WeakListHashSetIterator& other) const { return Base::m_position != other.Base::m_position; }
 
         T* get() { return Base::makePeek(); }
         T& operator*() { return *Base::makePeek(); }
@@ -136,7 +135,6 @@ public:
         using Base = WeakListHashSetIteratorBase<WeakListHashSet, typename WeakPtrImplSet::const_iterator>;
 
         bool operator==(const WeakListHashSetConstIterator& other) const { return Base::m_position == other.Base::m_position; }
-        bool operator!=(const WeakListHashSetConstIterator& other) const { return Base::m_position != other.Base::m_position; }
 
         const T* get() const { return Base::makePeek(); }
         const T& operator*() const { return *Base::makePeek(); }

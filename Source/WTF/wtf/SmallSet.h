@@ -108,7 +108,6 @@ public:
         T& operator*() { ASSERT(m_index < m_capacity); return static_cast<T&>(m_buffer[m_index]); }
         T operator*() const { ASSERT(m_index < m_capacity); return static_cast<T>(m_buffer[m_index]); }
         bool operator==(const iterator& other) const { ASSERT(m_buffer == other.m_buffer); return m_index == other.m_index; }
-        bool operator!=(const iterator& other) const { ASSERT(m_buffer == other.m_buffer); return !(*this == other); }
 
     private:
         template<typename U, typename H, unsigned S> friend class WTF::SmallSet;

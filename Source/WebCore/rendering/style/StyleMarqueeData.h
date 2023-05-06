@@ -34,7 +34,6 @@ struct StyleMarqueeData : RefCounted<StyleMarqueeData> {
     Ref<StyleMarqueeData> copy() const;
 
     bool operator==(const StyleMarqueeData&) const;
-    bool operator!=(const StyleMarqueeData& o) const { return !(*this == o); }
 
     Length increment;
     int speed;

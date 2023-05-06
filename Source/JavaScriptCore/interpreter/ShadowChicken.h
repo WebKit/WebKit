@@ -162,11 +162,6 @@ public:
                 && isTailDeleted == other.isTailDeleted;
         }
         
-        bool operator!=(const Frame& other) const
-        {
-            return !(*this == other);
-        }
-        
         void dump(PrintStream&) const;
         
         // FIXME: This should be able to hold the moral equivalent of StackVisitor::Frame, so that

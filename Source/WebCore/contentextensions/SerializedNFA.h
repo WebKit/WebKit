@@ -90,7 +90,6 @@ public:
             ASSERT(&serializedNFA == &other.serializedNFA);
             return position == other.position;
         }
-        bool operator!=(const ConstTargetIterator& other) const { return !(*this == other); }
 
         ConstTargetIterator& operator++()
         {
@@ -117,7 +116,6 @@ public:
             ASSERT(&serializedNFA == &other.serializedNFA);
             return position == other.position;
         }
-        bool operator!=(const ConstRangeIterator& other) const { return !(*this == other); }
 
         ConstRangeIterator& operator++()
         {

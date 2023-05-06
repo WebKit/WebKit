@@ -43,7 +43,6 @@ public:
     constexpr bool isPercentage() const { return m_value >= 0; }
 
     constexpr bool operator==(const TextSizeAdjustment& anAdjustment) const { return m_value == anAdjustment.m_value; }
-    constexpr bool operator!=(const TextSizeAdjustment& anAdjustment) const { return m_value != anAdjustment.m_value; }
 
 private:
     float m_value;
@@ -66,7 +65,6 @@ public:
     constexpr bool contains(Fields) const;
 
     constexpr bool operator==(const AutosizeStatus& other) const { return fields() == other.fields(); }
-    constexpr bool operator!=(const AutosizeStatus& other) const { return !(*this == other); }
 
     static float idempotentTextSize(float specifiedSize, float pageScale);
     static AutosizeStatus computeStatus(const RenderStyle&);

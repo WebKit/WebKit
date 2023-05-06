@@ -71,11 +71,6 @@ bool PipelineLayout::operator==(const PipelineLayout& other) const
     return false;
 }
 
-bool PipelineLayout::operator!=(const PipelineLayout& other) const
-{
-    return !(*this == other);
-}
-
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs

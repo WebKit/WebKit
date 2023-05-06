@@ -101,7 +101,6 @@ struct GridTrackList {
     Vector<GridTrackEntry> list;
 };
 inline bool operator==(const GridTrackList& a, const GridTrackList& b) { return a.list == b.list; }
-inline bool operator!=(const GridTrackList& a, const GridTrackList& b) { return a.list != b.list; }
 inline WTF::TextStream& operator<<(WTF::TextStream& stream, const GridTrackList& list) { return stream << list.list; }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const RepeatEntry&);
@@ -117,11 +116,6 @@ public:
     bool operator==(const StyleGridData& o) const
     {
         return m_columns.list == o.m_columns.list && m_rows.list == o.m_rows.list && implicitNamedGridColumnLines.map == o.implicitNamedGridColumnLines.map && implicitNamedGridRowLines.map == o.implicitNamedGridRowLines.map && gridAutoFlow == o.gridAutoFlow && gridAutoRows == o.gridAutoRows && gridAutoColumns == o.gridAutoColumns && namedGridArea.map == o.namedGridArea.map && namedGridAreaRowCount == o.namedGridAreaRowCount && namedGridAreaColumnCount == o.namedGridAreaColumnCount && m_masonryRows == o.m_masonryRows && m_masonryColumns == o.m_masonryColumns && masonryAutoFlow == o.masonryAutoFlow && alignTracks == o.alignTracks && justifyTracks == o.justifyTracks;
-    }
-
-    bool operator!=(const StyleGridData& o) const
-    {
-        return !(*this == o);
     }
 
     void setRows(const GridTrackList&);

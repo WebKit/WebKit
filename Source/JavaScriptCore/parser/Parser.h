@@ -967,11 +967,6 @@ struct ScopeRef {
         return m_index == other.m_index;
     }
 
-    bool operator!=(const ScopeRef& other) const
-    {
-        return !(*this == other);
-    }
-
 private:
     ScopeStack* m_scopeStack;
     unsigned m_index;

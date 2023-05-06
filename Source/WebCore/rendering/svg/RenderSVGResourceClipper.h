@@ -35,7 +35,6 @@ struct ClipperData {
 
     struct Inputs {
         bool operator==(const Inputs& other) const = default;
-        bool operator!=(const Inputs& other) const { return !(*this == other); }
 
         FloatRect objectBoundingBox;
         FloatRect clippedContentBounds;

@@ -74,11 +74,6 @@ public:
         return m_length == other.m_length;
     }
 
-    constexpr bool operator!=(const TextUnderlineOffset& other) const
-    {
-        return !(*this == other);
-    }
-
 private:
     constexpr TextUnderlineOffset(std::optional<float> length)
         : m_length(length)

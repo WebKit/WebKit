@@ -269,10 +269,10 @@ public:
             return *this;
         }
 
-        bool operator!=(const iterator& other) const
+        bool operator==(const iterator& other) const
         {
             ASSERT(m_bank == other.m_bank);
-            return m_index != other.m_index;
+            return m_index == other.m_index;
         }
 
         unsigned index() const

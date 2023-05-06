@@ -96,7 +96,6 @@ public:
     bool operator<(const IPAddress& other) const { return compare(other) == ComparisonResult::Less; }
     bool operator>(const IPAddress& other) const { return compare(other) == ComparisonResult::Greater; }
     bool operator==(const IPAddress& other) const { return compare(other) == ComparisonResult::Equal; }
-    bool operator!=(const IPAddress& other) const { return !(*this == other); }
 
 private:
     std::variant<WTF::HashTableEmptyValueType, struct in_addr, struct in6_addr> m_address;

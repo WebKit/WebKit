@@ -49,11 +49,6 @@ struct SourceSite {
         return registrableDomain == other.registrableDomain;
     }
 
-    bool operator!=(const SourceSite& other) const
-    {
-        return registrableDomain != other.registrableDomain;
-    }
-
     bool matches(const URL& url) const
     {
         return registrableDomain.matches(url);
@@ -94,11 +89,6 @@ struct AttributionDestinationSite {
     bool operator==(const AttributionDestinationSite& other) const
     {
         return registrableDomain == other.registrableDomain;
-    }
-
-    bool operator!=(const AttributionDestinationSite& other) const
-    {
-        return registrableDomain != other.registrableDomain;
     }
 
     bool matches(const URL& url) const

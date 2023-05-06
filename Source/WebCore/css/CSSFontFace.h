@@ -139,7 +139,6 @@ public:
         UChar32 from;
         UChar32 to;
         bool operator==(const UnicodeRange& other) const { return from == other.from && to == other.to; }
-        bool operator!=(const UnicodeRange& other) const { return !(*this == other); }
     };
 
     bool rangesMatchCodePoint(UChar32) const;

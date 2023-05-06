@@ -53,11 +53,6 @@ public:
         return value() == o.value() && isPercentage() == o.isPercentage();
     }
     
-    constexpr bool operator!=(const LineClampValue& o) const
-    {
-        return !(*this == o);
-    }
-    
 private:
     LineClamp m_type;
     int m_value;

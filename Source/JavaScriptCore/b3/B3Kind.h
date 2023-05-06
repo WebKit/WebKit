@@ -192,11 +192,6 @@ public:
             && m_isSensitiveToNaN == other.m_isSensitiveToNaN;
     }
     
-    bool operator!=(const Kind& other) const
-    {
-        return !(*this == other);
-    }
-    
     void dump(PrintStream&) const;
     
     unsigned hash() const

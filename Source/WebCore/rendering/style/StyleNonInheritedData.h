@@ -45,7 +45,6 @@ public:
     Ref<StyleNonInheritedData> copy() const;
 
     bool operator==(const StyleNonInheritedData&) const;
-    bool operator!=(const StyleNonInheritedData& other) const { return !(*this == other); }
 
     DataRef<StyleBoxData> boxData;
     DataRef<StyleBackgroundData> backgroundData;

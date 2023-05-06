@@ -122,10 +122,10 @@ template<typename ElementType> auto DoubleElementDescendantIterator<ElementType>
     return { *m_pair.first, *m_pair.second };
 }
 
-template<typename ElementType> constexpr bool DoubleElementDescendantIterator<ElementType>::operator!=(std::nullptr_t) const
+template<typename ElementType> constexpr bool DoubleElementDescendantIterator<ElementType>::operator==(std::nullptr_t) const
 {
     ASSERT(!m_pair.first == !m_pair.second);
-    return m_pair.first;
+    return !m_pair.first;
 }
 
 template<typename ElementType> DoubleElementDescendantIterator<ElementType>& DoubleElementDescendantIterator<ElementType>::operator++()

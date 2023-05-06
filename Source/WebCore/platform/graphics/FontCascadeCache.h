@@ -138,11 +138,6 @@ struct FontDescriptionKey {
             && arePointingToEqualData(m_rareData, other.m_rareData);
     }
 
-    bool operator!=(const FontDescriptionKey& other) const
-    {
-        return !(*this == other);
-    }
-
     bool isHashTableDeletedValue() const { return m_isDeletedValue; }
 
     friend void add(Hasher&, const FontDescriptionKey&);
@@ -226,7 +221,6 @@ private:
 };
 
 bool operator==(const FontFamilyName&, const FontFamilyName&);
-bool operator!=(const FontFamilyName&, const FontFamilyName&);
 
 struct FontCascadeCacheKey {
     FontDescriptionKey fontDescriptionKey; // Shared with the lower level FontCache (caching Font objects)

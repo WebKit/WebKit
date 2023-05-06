@@ -86,7 +86,6 @@ public:
         PropertyReference operator*() const { return properties.propertyAt(index); }
         Iterator& operator++() { ++index; return *this; }
         bool operator==(std::nullptr_t) const { return index >= properties.propertyCount(); }
-        bool operator!=(std::nullptr_t) const { return index < properties.propertyCount(); }
 
     private:
         const T& properties;

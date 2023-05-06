@@ -95,7 +95,6 @@ public:
                 }
 
                 bool operator==(const iterator& other) const { return m_sparceSetIterator == other.m_sparceSetIterator; }
-                bool operator!=(const iterator& other) const { return m_sparceSetIterator != other.m_sparceSetIterator; }
 
             private:
                 Adapter& m_adapter;
@@ -197,11 +196,6 @@ public:
             {
                 ASSERT(m_liveness == other.m_liveness);
                 return m_iter == other.m_iter;
-            }
-
-            bool operator!=(const iterator& other) const
-            {
-                return !(*this == other);
             }
 
         private:

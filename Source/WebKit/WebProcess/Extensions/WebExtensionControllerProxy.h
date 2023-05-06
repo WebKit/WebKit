@@ -58,7 +58,6 @@ public:
     WebExtensionControllerIdentifier identifier() { return m_identifier; }
 
     bool operator==(const WebExtensionControllerProxy& other) const { return (this == &other); }
-    bool operator!=(const WebExtensionControllerProxy& other) const { return !(this == &other); }
 
 #if PLATFORM(COCOA)
     void globalObjectIsAvailableForFrame(WebPage&, WebFrame&, WebCore::DOMWrapperWorld&);

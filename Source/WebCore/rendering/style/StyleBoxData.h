@@ -38,11 +38,7 @@ public:
     static Ref<StyleBoxData> create() { return adoptRef(*new StyleBoxData); }
     Ref<StyleBoxData> copy() const;
 
-    bool operator==(const StyleBoxData& o) const;
-    bool operator!=(const StyleBoxData& o) const
-    {
-        return !(*this == o);
-    }
+    bool operator==(const StyleBoxData&) const;
 
     const Length& width() const { return m_width; }
     const Length& height() const { return m_height; }

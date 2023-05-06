@@ -118,11 +118,6 @@ public:
             && u == other.u;
     }
 
-    bool operator!=(const ValueKey& other) const
-    {
-        return !(*this == other);
-    }
-
     unsigned hash() const
     {
         return m_kind.hash() + m_type.hash() + WTF::IntHash<int32_t>::hash(u.indices[0]) + u.indices[1] + u.indices[2] + u.indices[3];

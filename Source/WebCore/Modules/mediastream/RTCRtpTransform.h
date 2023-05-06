@@ -66,10 +66,6 @@ private:
 };
 
 bool operator==(const RTCRtpTransform&, const RTCRtpTransform&);
-inline bool operator!=(const RTCRtpTransform& a, const RTCRtpTransform& b)
-{
-    return !(a == b);
-}
 
 } // namespace WebCore
 

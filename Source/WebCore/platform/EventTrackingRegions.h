@@ -84,6 +84,5 @@ struct EventTrackingRegions {
 };
 
 bool operator==(const EventTrackingRegions&, const EventTrackingRegions&);
-inline bool operator!=(const EventTrackingRegions& a, const EventTrackingRegions& b) { return !(a == b); }
 
 } // namespace WebCore

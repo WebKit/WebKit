@@ -61,11 +61,6 @@ public:
         return m_isNormal == other.m_isNormal && m_length == other.m_length;
     }
 
-    bool operator!=(const GapLength& other) const
-    {
-        return !(*this == other);
-    }
-
 private:
     bool m_isNormal;
     Length m_length;

@@ -358,7 +358,6 @@ public:
         // Other checks probably aren't necessary but it's good to be paranoid.
         return m_payload == other.m_payload && m_argCount == other.m_argCount && m_retCount == other.m_retCount;
     }
-    bool operator!=(const FunctionSignature& other) const { return !(*this == other); }
 
     WTF::String toString() const;
     void dump(WTF::PrintStream& out) const;
@@ -441,7 +440,6 @@ public:
             return false;
         return(as<Type>() == rhs.as<Type>());
     }
-    bool operator!=(const StorageType& rhs) const { return !(*this == rhs); };
 
     int8_t typeCode() const
     {
@@ -490,7 +488,6 @@ public:
     Mutability mutability;
 
     bool operator==(const FieldType& rhs) const { return type == rhs.type && mutability == rhs.mutability; }
-    bool operator!=(const FieldType& rhs) const { return !(*this == rhs); }
 };
 
 class StructType {

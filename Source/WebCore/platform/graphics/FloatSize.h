@@ -230,11 +230,6 @@ inline bool areEssentiallyEqual(const FloatSize& a, const FloatSize& b)
     return WTF::areEssentiallyEqual(a.width(), b.width()) && WTF::areEssentiallyEqual(a.height(), b.height());
 }
 
-constexpr bool operator!=(const FloatSize& a, const FloatSize& b)
-{
-    return a.width() != b.width() || a.height() != b.height();
-}
-
 inline IntSize roundedIntSize(const FloatSize& p)
 {
     return IntSize(clampToInteger(roundf(p.width())), clampToInteger(roundf(p.height())));

@@ -64,7 +64,6 @@ public:
             && m_classInfo == other.m_classInfo;
     }
     
-    bool operator!=(const PrototypeKey& other) const { return !(*this == other); }
     explicit operator bool() const { return *this != PrototypeKey(); }
     bool isHashTableDeletedValue() const { return *this == PrototypeKey(WTF::HashTableDeletedValue); }
     

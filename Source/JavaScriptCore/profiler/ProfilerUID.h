@@ -61,11 +61,6 @@ public:
         return m_uid == other.m_uid;
     }
     
-    bool operator!=(const UID& other) const
-    {
-        return !(*this == other);
-    }
-    
     explicit operator bool() const
     {
         return *this != UID();

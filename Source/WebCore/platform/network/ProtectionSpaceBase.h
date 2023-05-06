@@ -99,7 +99,6 @@ private:
 };
 
 inline bool operator==(const ProtectionSpace& a, const ProtectionSpace& b) { return ProtectionSpaceBase::compare(a, b); }
-inline bool operator!=(const ProtectionSpace& a, const ProtectionSpace& b) { return !(a == b); }
     
 } // namespace WebCore
 

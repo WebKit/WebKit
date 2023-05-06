@@ -38,9 +38,4 @@ inline bool operator==(const ScreenDataOverrides& a, const ScreenDataOverrides& 
     return a.width == b.width && a.height == b.height && a.scale == b.scale;
 }
 
-inline bool operator!=(const ScreenDataOverrides& a, const ScreenDataOverrides& b)
-{
-    return !(a == b);
-}
-
 }

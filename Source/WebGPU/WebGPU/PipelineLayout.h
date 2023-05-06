@@ -59,7 +59,6 @@ public:
     bool isValid() const { return !m_bindGroupLayouts.isEmpty(); }
 
     bool operator==(const PipelineLayout&) const;
-    bool operator!=(const PipelineLayout&) const;
 
     size_t numberOfBindGroupLayouts() const { return m_bindGroupLayouts.size(); }
     const BindGroupLayout& bindGroupLayout(size_t i) const { return m_bindGroupLayouts[i]; }

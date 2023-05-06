@@ -68,11 +68,6 @@ template<typename T> bool operator==(const BoxPtr<T>& lhs, const BoxPtr<T>& rhs)
     return *lhs == *rhs;
 }
 
-template<typename T> bool operator!=(const BoxPtr<T>& lhs, const BoxPtr<T>& rhs)
-{
-    return !(lhs == rhs);
-}
-
 } // namespace WTF
 
 using WTF::adoptInBoxPtr;

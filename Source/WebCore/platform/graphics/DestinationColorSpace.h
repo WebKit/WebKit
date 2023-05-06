@@ -52,7 +52,6 @@ private:
 };
 
 WEBCORE_EXPORT bool operator==(const DestinationColorSpace&, const DestinationColorSpace&);
-WEBCORE_EXPORT bool operator!=(const DestinationColorSpace&, const DestinationColorSpace&);
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DestinationColorSpace&);
 }

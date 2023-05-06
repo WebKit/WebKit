@@ -65,11 +65,6 @@ public:
             && m_uid == other.m_uid;
     }
 
-    bool operator!=(const PropertyTypeKey& other) const
-    {
-        return !(*this == other);
-    }
-
     unsigned hash() const
     {
         return WTF::PtrHash<Structure*>::hash(m_structure) + WTF::PtrHash<UniquedStringImpl*>::hash(m_uid);

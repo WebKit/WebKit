@@ -44,7 +44,6 @@ public:
     // Since (1) we do not copy Wasm::Tag and (2) we always allocate Wasm::Tag from heap, we can use
     // pointer comparison for identity check.
     bool operator==(const Tag& other) const { return this == &other; }
-    bool operator!=(const Tag& other) const { return this != &other; }
 
     const FunctionSignature& type() const { return *m_type->as<FunctionSignature>(); }
 

@@ -57,7 +57,6 @@ public:
     String storageDirectory() const { return m_storageDirectory; }
 
     bool operator==(const WebExtensionControllerConfiguration&) const;
-    bool operator!=(const WebExtensionControllerConfiguration& other) const { return !(this == &other); }
 
 #ifdef __OBJC__
     _WKWebExtensionControllerConfiguration *wrapper() const { return (_WKWebExtensionControllerConfiguration *)API::ObjectImpl<API::Object::Type::WebExtensionControllerConfiguration>::wrapper(); }

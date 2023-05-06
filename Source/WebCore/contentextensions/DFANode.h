@@ -57,7 +57,6 @@ public:
             ASSERT(&dfa  == &other.dfa);
             return position == other.position;
         }
-        bool operator!=(const ConstRangeIterator& other) const { return !(*this == other); }
 
         ConstRangeIterator& operator++()
         {
@@ -98,7 +97,6 @@ public:
             ASSERT(&dfa  == &other.dfa);
             return position == other.position;
         }
-        bool operator!=(const RangeIterator& other) const { return !(*this == other); }
 
         RangeIterator& operator++()
         {

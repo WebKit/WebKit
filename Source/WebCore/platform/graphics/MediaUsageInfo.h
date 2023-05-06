@@ -106,11 +106,6 @@ struct MediaUsageInfo {
             ;
     }
 
-    bool operator!=(const MediaUsageInfo other) const
-    {
-        return !(*this == other);
-    }
-
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<MediaUsageInfo> decode(Decoder&);
 };

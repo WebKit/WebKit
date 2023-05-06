@@ -77,11 +77,6 @@ public:
         return m_begin == other.m_begin && m_end == other.m_end;
     }
 
-    constexpr bool operator!=(const HeapRange& other) const
-    {
-        return !operator==(other);
-    }
-
     template<uint16_t begin, uint16_t end>
     static constexpr HeapRange fromConstant()
     {

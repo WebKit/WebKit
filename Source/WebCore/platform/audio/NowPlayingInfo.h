@@ -43,11 +43,6 @@ struct NowPlayingInfoArtwork {
         return src == other.src && mimeType == other.mimeType;
     }
 
-    bool operator!=(const NowPlayingInfoArtwork& other) const
-    {
-        return !(*this == other);
-    }
-
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<NowPlayingInfoArtwork> decode(Decoder&);
 };
@@ -98,11 +93,6 @@ struct NowPlayingInfo {
             && isPlaying == other.isPlaying
             && allowsNowPlayingControlsVisibility == other.allowsNowPlayingControlsVisibility
             && artwork == other.artwork;
-    }
-
-    bool operator!=(const NowPlayingInfo& other) const
-    {
-        return !(*this == other);
     }
 
     template<class Encoder> void encode(Encoder&) const;

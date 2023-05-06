@@ -99,11 +99,6 @@ public:
         }
     }
 
-    constexpr bool operator!=(const TextDecorationThickness& other) const
-    {
-        return !(*this == other);
-    }
-
 private:
     enum class Type : uint8_t {
         Auto,

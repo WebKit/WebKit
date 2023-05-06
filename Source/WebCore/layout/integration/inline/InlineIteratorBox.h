@@ -120,10 +120,7 @@ public:
     explicit operator bool() const { return !atEnd(); }
 
     bool operator==(const BoxIterator&) const;
-    bool operator!=(const BoxIterator& other) const { return !(*this == other); }
-
     bool operator==(EndIterator) const { return atEnd(); }
-    bool operator!=(EndIterator) const { return !atEnd(); }
 
     const Box& operator*() const { return m_box; }
     const Box* operator->() const { return &m_box; }

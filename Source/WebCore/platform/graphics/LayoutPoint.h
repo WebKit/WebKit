@@ -153,11 +153,6 @@ inline bool operator==(const LayoutPoint& a, const LayoutPoint& b)
     return a.x() == b.x() && a.y() == b.y();
 }
 
-inline bool operator!=(const LayoutPoint& a, const LayoutPoint& b)
-{
-    return a.x() != b.x() || a.y() != b.y();
-}
-
 inline LayoutPoint toLayoutPoint(const LayoutSize& size)
 {
     return LayoutPoint(size.width(), size.height());

@@ -232,11 +232,6 @@ inline bool operator==(const IntRect& a, const IntRect& b)
     return a.location() == b.location() && a.size() == b.size();
 }
 
-inline bool operator!=(const IntRect& a, const IntRect& b)
-{
-    return a.location() != b.location() || a.size() != b.size();
-}
-
 inline IntRect& operator-=(IntRect& r, const IntPoint& offset)
 {
     r.move(-offset.x(), -offset.y());

@@ -50,7 +50,6 @@ public:
 
     static std::optional<CSSNumericType> create(CSSUnitType, int exponent = 1);
     bool operator==(const CSSNumericType& other) const;
-    bool operator!=(const CSSNumericType& other) const { return !(*this == other); }
     static std::optional<CSSNumericType> addTypes(const Vector<Ref<CSSNumericValue>>&);
     static std::optional<CSSNumericType> addTypes(CSSNumericType, CSSNumericType);
     static std::optional<CSSNumericType> multiplyTypes(const Vector<Ref<CSSNumericValue>>&);

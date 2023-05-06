@@ -155,29 +155,4 @@ template <typename T, typename U> inline bool operator==(T* a, const Handle<U>& 
     return a == b.get(); 
 }
 
-template <typename T, typename U> inline bool operator!=(const Handle<T>& a, const Handle<U>& b)
-{ 
-    return a.get() != b.get(); 
-}
-
-template <typename T, typename U> inline bool operator!=(const Handle<T>& a, U* b)
-{
-    return a.get() != b; 
-}
-
-template <typename T, typename U> inline bool operator!=(T* a, const Handle<U>& b)
-{ 
-    return a != b.get(); 
-}
-
-template <typename T, typename U> inline bool operator!=(const Handle<T>& a, JSValue b)
-{
-    return a.get() != b; 
-}
-
-template <typename T, typename U> inline bool operator!=(JSValue a, const Handle<U>& b)
-{ 
-    return a != b.get(); 
-}
-
 } // namespace JSC

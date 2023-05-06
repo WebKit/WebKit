@@ -68,11 +68,6 @@ public:
             && m_sizeAdjust == other.m_sizeAdjust;
     }
 
-    bool operator!=(const FontCreationContextRareData& other) const
-    {
-        return !(*this == other);
-    }
-
 private:
     FontCreationContextRareData(const FontFeatureSettings& fontFaceFeatures, const FontPaletteValues& fontPaletteValues, RefPtr<FontFeatureValues> fontFeatureValues, float sizeAdjust)
         : m_fontFaceFeatures(fontFaceFeatures)
@@ -128,11 +123,6 @@ public:
     {
         return m_fontFaceCapabilities == other.m_fontFaceCapabilities
             && arePointingToEqualData(m_rareData, other.m_rareData);
-    }
-
-    bool operator!=(const FontCreationContext& other) const
-    {
-        return !(*this == other);
     }
 
 private:

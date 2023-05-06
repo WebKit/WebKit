@@ -722,11 +722,6 @@ public:
                 return m_index == other.m_index;
             }
             
-            bool operator!=(const iterator& other) const
-            {
-                return !(*this == other);
-            }
-            
         private:
             BlockIndex findNext(BlockIndex index)
             {

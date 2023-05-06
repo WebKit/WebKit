@@ -525,7 +525,6 @@ public:
 #endif
 
     bool operator==(const WebProcessPool& other) const { return (this == &other); }
-    bool operator!=(const WebProcessPool& other) const { return !(this == &other); }
 
 private:
     void platformInitialize();

@@ -687,7 +687,6 @@ public:
         }
 
         bool operator==(const iterator& other) const { return m_index == other.m_index; }
-        bool operator!=(const iterator& other) const { return !(*this == other); }
 
     private:
         const FlattenedConstraint* m_constraint { nullptr };

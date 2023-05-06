@@ -54,11 +54,6 @@ struct ResourceCryptographicDigest {
     {
         return algorithm == other.algorithm && value == other.value;
     }
-
-    bool operator!=(const ResourceCryptographicDigest& other) const
-    {
-        return !(*this == other);
-    }
 };
 
 inline void add(Hasher& hasher, const ResourceCryptographicDigest& digest)

@@ -87,7 +87,6 @@ public:
     bool isHashTableDeletedValue() const { return m_impl.isHashTableDeletedValue(); }
 
     bool operator==(const QualifiedName& other) const { return m_impl == other.m_impl; }
-    bool operator!=(const QualifiedName& other) const { return !(*this == other); }
 
     bool matches(const QualifiedName& other) const { return m_impl == other.m_impl || (localName() == other.localName() && namespaceURI() == other.namespaceURI()); }
 
@@ -136,9 +135,7 @@ inline const QualifiedName& anyQName() { return anyName; }
 const QualifiedName& nullQName();
 
 inline bool operator==(const AtomString& a, const QualifiedName& q) { return a == q.localName(); }
-inline bool operator!=(const AtomString& a, const QualifiedName& q) { return a != q.localName(); }
 inline bool operator==(const QualifiedName& q, const AtomString& a) { return a == q.localName(); }
-inline bool operator!=(const QualifiedName& q, const AtomString& a) { return a != q.localName(); }
 
 struct QualifiedNameHash {
     static unsigned hash(const QualifiedName& name) { return hash(name.impl()); }

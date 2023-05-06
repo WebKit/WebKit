@@ -1087,8 +1087,7 @@ struct OptionReader {
     public:
         void dump(StringBuilder&) const;
 
-        bool operator==(const Option& other) const;
-        bool operator!=(const Option& other) const { return !(*this == other); }
+        bool operator==(const Option&) const;
 
         const char* name() const { return Options::s_constMetaData[m_id].name; }
         const char* description() const { return Options::s_constMetaData[m_id].description; }

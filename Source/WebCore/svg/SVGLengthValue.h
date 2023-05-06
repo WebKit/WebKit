@@ -106,11 +106,6 @@ inline bool operator==(const SVGLengthValue& a, const SVGLengthValue& b)
     return a.valueInSpecifiedUnits() == b.valueInSpecifiedUnits() && a.lengthType() == b.lengthType() && a.lengthMode() == b.lengthMode();
 }
 
-inline bool operator!=(const SVGLengthValue& a, const SVGLengthValue& b)
-{
-    return a.valueInSpecifiedUnits() != b.valueInSpecifiedUnits() || a.lengthType() != b.lengthType() || a.lengthMode() != b.lengthMode();
-}
-
 WTF::TextStream& operator<<(WTF::TextStream&, const SVGLengthValue&);
 
 } // namespace WebCore

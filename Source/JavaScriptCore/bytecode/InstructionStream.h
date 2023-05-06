@@ -72,9 +72,9 @@ private:
         inline const InstructionType* operator->() const { return unwrap(); }
         inline const InstructionType* ptr() const { return unwrap(); }
 
-        bool operator!=(const BaseRef<InstructionBuffer>& other) const
+        bool operator==(const BaseRef<InstructionBuffer>& other) const
         {
-            return &m_instructions != &other.m_instructions || m_index != other.m_index;
+            return &m_instructions == &other.m_instructions && m_index == other.m_index;
         }
 
         BaseRef next() const

@@ -55,7 +55,6 @@ public:
     const OptionalStringVector& cookedStrings() const { return m_cookedStrings; }
 
     bool operator==(const TemplateObjectDescriptor& other) const { return m_hash == other.m_hash && m_rawStrings == other.m_rawStrings; }
-    bool operator!=(const TemplateObjectDescriptor& other) const { return m_hash != other.m_hash || m_rawStrings != other.m_rawStrings; }
 
     struct Hasher {
         static unsigned hash(const TemplateObjectDescriptor& key) { return key.hash(); }

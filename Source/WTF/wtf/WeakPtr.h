@@ -365,21 +365,6 @@ template<typename T, typename U, typename WeakPtrImpl> inline bool operator==(T*
     return a == b.get();
 }
 
-template<typename T, typename U, typename WeakPtrImpl> inline bool operator!=(const WeakPtr<T, WeakPtrImpl>& a, const WeakPtr<U, WeakPtrImpl>& b)
-{
-    return a.get() != b.get();
-}
-
-template<typename T, typename U, typename WeakPtrImpl> inline bool operator!=(const WeakPtr<T, WeakPtrImpl>& a, U* b)
-{
-    return a.get() != b;
-}
-
-template<typename T, typename U, typename WeakPtrImpl> inline bool operator!=(T* a, const WeakPtr<U, WeakPtrImpl>& b)
-{
-    return a != b.get();
-}
-
 template<class T, typename = std::enable_if_t<!IsSmartPtr<T>::value>>
 WeakPtr(const T* value, EnableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes) -> WeakPtr<T, typename T::WeakPtrImplType>;
 

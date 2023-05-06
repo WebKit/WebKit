@@ -42,11 +42,6 @@ inline bool operator==(const ImageWithScale& a, const ImageWithScale& b)
     return a.image == b.image && a.scaleFactor == b.scaleFactor;
 }
 
-inline bool operator!=(const ImageWithScale& a, const ImageWithScale& b)
-{
-    return !(a == b);
-}
-
 class StyleMultiImage : public StyleImage {
     WTF_MAKE_FAST_ALLOCATED;
 public:

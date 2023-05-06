@@ -65,11 +65,6 @@ struct FontPaletteIndex {
         return true;
     }
 
-    bool operator!=(const FontPaletteIndex& other) const
-    {
-        return !(*this == other);
-    }
-
     enum class Type : uint8_t {
         Light,
         Dark,
@@ -117,11 +112,6 @@ public:
     bool operator==(const FontPaletteValues& other) const
     {
         return m_basePalette == other.m_basePalette && m_overrideColors == other.m_overrideColors;
-    }
-
-    bool operator!=(const FontPaletteValues& other) const
-    {
-        return !(*this == other);
     }
 
 private:

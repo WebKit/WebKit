@@ -66,12 +66,6 @@ constexpr bool operator==(const ColorMatrix<ColumnCount, RowCount>& a, const Col
     return true;
 }
 
-template<size_t ColumnCount, size_t RowCount>
-constexpr bool operator!=(const ColorMatrix<ColumnCount, RowCount>& a, const ColorMatrix<ColumnCount, RowCount>& b)
-{
-    return !(a == b);
-}
-
 constexpr ColorMatrix<3, 3> brightnessColorMatrix(float amount)
 {
     // Brightness is specified as a compontent transfer function: https://www.w3.org/TR/filter-effects-1/#brightnessEquivalent

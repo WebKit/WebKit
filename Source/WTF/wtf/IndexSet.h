@@ -120,11 +120,6 @@ public:
                 return m_iter == other.m_iter;
             }
 
-            bool operator!=(const iterator& other) const
-            {
-                return !(*this == other);
-            }
-
         private:
             const CollectionType* m_collection;
             BitVector::iterator m_iter;

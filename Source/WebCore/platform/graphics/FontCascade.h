@@ -115,7 +115,6 @@ public:
     WEBCORE_EXPORT FontCascade& operator=(const FontCascade&);
 
     WEBCORE_EXPORT bool operator==(const FontCascade& other) const;
-    bool operator!=(const FontCascade& other) const { return !(*this == other); }
 
     const FontCascadeDescription& fontDescription() const { return m_fontDescription; }
 

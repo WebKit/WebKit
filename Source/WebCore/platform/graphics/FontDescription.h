@@ -42,7 +42,6 @@ public:
     WEBCORE_EXPORT FontDescription();
 
     bool operator==(const FontDescription&) const;
-    bool operator!=(const FontDescription& other) const { return !(*this == other); }
 
     float computedSize() const { return m_computedSize; }
     unsigned computedPixelSize() const { return unsigned(m_computedSize + 0.5f); }

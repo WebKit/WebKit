@@ -156,11 +156,6 @@ public:
         return m_callee == other.m_callee;
     }
     
-    bool operator!=(const CallVariant& other) const
-    {
-        return !(*this == other);
-    }
-    
     bool operator<(const CallVariant& other) const
     {
         return m_callee < other.m_callee;

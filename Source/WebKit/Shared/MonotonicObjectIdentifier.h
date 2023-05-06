@@ -85,11 +85,6 @@ public:
         return m_identifier <= other.m_identifier;
     }
 
-    bool operator!=(const MonotonicObjectIdentifier& other) const
-    {
-        return m_identifier != other.m_identifier;
-    }
-
     MonotonicObjectIdentifier& increment()
     {
         ++m_identifier;

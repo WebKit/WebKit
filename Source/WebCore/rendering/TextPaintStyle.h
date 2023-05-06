@@ -43,7 +43,6 @@ struct TextPaintStyle {
     TextPaintStyle(const Color&);
 
     bool operator==(const TextPaintStyle&) const;
-    bool operator!=(const TextPaintStyle& other) const { return !(*this == other); }
 
     Color fillColor;
     Color strokeColor;

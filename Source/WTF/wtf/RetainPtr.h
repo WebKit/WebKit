@@ -312,21 +312,6 @@ template<typename T, typename U> constexpr bool operator==(T* a, const RetainPtr
     return a == b.get(); 
 }
 
-template<typename T, typename U> constexpr bool operator!=(const RetainPtr<T>& a, const RetainPtr<U>& b)
-{ 
-    return a.get() != b.get(); 
-}
-
-template<typename T, typename U> constexpr bool operator!=(const RetainPtr<T>& a, U* b)
-{
-    return a.get() != b; 
-}
-
-template<typename T, typename U> constexpr bool operator!=(T* a, const RetainPtr<U>& b)
-{ 
-    return a != b.get(); 
-}
-
 template<typename T> constexpr RetainPtr<T> adoptCF(T CF_RELEASES_ARGUMENT ptr)
 {
 #ifdef __OBJC__

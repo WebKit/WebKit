@@ -277,11 +277,6 @@ public:
             && m_structuresForMaterialization == other.m_structuresForMaterialization;
     }
 
-    bool operator!=(const Allocation& other) const
-    {
-        return !(*this == other);
-    }
-
     void dump(PrintStream& out) const
     {
         dumpInContext(out, nullptr);
@@ -641,11 +636,6 @@ public:
         other.assertIsValid();
         return m_allocations == other.m_allocations
             && m_pointers == other.m_pointers;
-    }
-
-    bool operator!=(const LocalHeap& other) const
-    {
-        return !(*this == other);
     }
 
     const HashMap<Node*, Allocation>& allocations() const

@@ -87,7 +87,6 @@ public:
     }
 
     bool operator==(const SVGPathByteStream& other) const { return m_data == other.m_data; }
-    bool operator!=(const SVGPathByteStream& other) const { return !(*this == other); }
 
     std::unique_ptr<SVGPathByteStream> copy() const
     {

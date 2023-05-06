@@ -118,7 +118,6 @@ public:
         Iterator& operator++(int) = delete;
 
         bool operator==(const Iterator& other) const { return m_value == other.m_value; }
-        bool operator!=(const Iterator& other) const { return m_value != other.m_value; }
 
     private:
         Iterator(StorageType value) : m_value(value) { }
@@ -209,11 +208,6 @@ public:
     constexpr friend bool operator==(OptionSet lhs, OptionSet rhs)
     {
         return lhs.m_storage == rhs.m_storage;
-    }
-
-    constexpr friend bool operator!=(OptionSet lhs, OptionSet rhs)
-    {
-        return lhs.m_storage != rhs.m_storage;
     }
 
     constexpr friend OptionSet operator|(OptionSet lhs, OptionSet rhs)

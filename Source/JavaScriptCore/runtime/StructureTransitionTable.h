@@ -195,11 +195,6 @@ class StructureTransitionTable {
                 return a.m_encodedData == b.m_encodedData;
             }
 
-            friend bool operator!=(const Key& a, const Key& b)
-            {
-                return a.m_encodedData != b.m_encodedData;
-            }
-
         private:
             uintptr_t m_encodedData { 0 };
         };

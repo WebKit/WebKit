@@ -62,11 +62,6 @@ inline bool operator==(const FillSize& a, const FillSize& b)
     return a.type == b.type && a.size == b.size;
 }
 
-inline bool operator!=(const FillSize& a, const FillSize& b)
-{
-    return !(a == b);
-}
-
 class FillLayer : public RefCounted<FillLayer> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -156,7 +151,6 @@ public:
     FillLayer& operator=(const FillLayer&);
 
     bool operator==(const FillLayer&) const;
-    bool operator!=(const FillLayer& other) const { return !(*this == other); }
 
     bool containsImage(StyleImage&) const;
     bool imagesAreLoaded() const;

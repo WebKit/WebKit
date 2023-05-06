@@ -75,11 +75,6 @@ public:
                 && m_stackmapRole == other.m_stackmapRole;
         }
 
-        bool operator!=(const Key& other) const
-        {
-            return !(*this == other);
-        }
-
         explicit operator bool() const { return *this != Key(); }
 
         Air::Kind kind() const { return m_kind; }

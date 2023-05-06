@@ -43,7 +43,6 @@ public:
         const CSSValue& operator*() const { return vector[index]; }
         iterator& operator++() { ++index; return *this; }
         constexpr bool operator==(const iterator& other) const { return index == other.index; }
-        constexpr bool operator!=(const iterator& other) const { return index != other.index; }
 
         const CSSValueContainingVector& vector;
         unsigned index { 0 };

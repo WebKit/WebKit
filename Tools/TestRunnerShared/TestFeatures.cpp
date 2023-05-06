@@ -73,11 +73,6 @@ bool operator==(const TestFeatures& a, const TestFeatures& b)
     return true;
 }
 
-bool operator!=(const TestFeatures& a, const TestFeatures& b)
-{
-    return !(a == b);
-}
-
 static bool pathContains(const std::string& pathOrURL, const char* substring)
 {
     return pathOrURL.find(substring) != std::string::npos;

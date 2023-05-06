@@ -339,10 +339,6 @@ public:
             return m_index == other.m_index;
         }
         
-        bool operator!=(const iterator& other) const
-        {
-            return !(*this == other);
-        }
     private:
         const BitVector* m_bitVector;
         size_t m_index;

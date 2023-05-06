@@ -273,10 +273,6 @@ struct AbstractValue {
             && m_structure == other.m_structure
             && m_value == other.m_value;
     }
-    bool operator!=(const AbstractValue& other) const
-    {
-        return !(*this == other);
-    }
     
     ALWAYS_INLINE bool merge(const AbstractValue& other)
     {

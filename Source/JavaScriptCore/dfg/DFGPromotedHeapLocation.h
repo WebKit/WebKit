@@ -105,11 +105,6 @@ public:
             && m_info == other.m_info;
     }
     
-    bool operator!=(const PromotedLocationDescriptor& other) const
-    {
-        return !(*this == other);
-    }
-
     bool isHashTableDeletedValue() const
     {
         return m_kind == InvalidPromotedLocationKind && m_info;

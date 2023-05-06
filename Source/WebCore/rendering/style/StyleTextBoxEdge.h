@@ -39,6 +39,4 @@ inline bool operator==(const TextBoxEdge& a, const TextBoxEdge& b)
     return a.over == b.over && a.under == b.under;
 }
 
-inline bool operator!=(const TextBoxEdge& a, const TextBoxEdge& b) { return !(a == b); }
-
 } // namespace WebCore

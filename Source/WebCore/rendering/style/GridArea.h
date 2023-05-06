@@ -232,11 +232,6 @@ public:
         return columns == o.columns && rows == o.rows;
     }
 
-    bool operator!=(const GridArea& o) const
-    {
-        return !(*this == o);
-    }
-
     GridSpan columns;
     GridSpan rows;
 };
@@ -245,6 +240,5 @@ struct NamedGridAreaMap {
     HashMap<String, GridArea> map;
 };
 inline bool operator==(const NamedGridAreaMap& a, const NamedGridAreaMap& b) { return a.map == b.map; }
-inline bool operator!=(const NamedGridAreaMap& a, const NamedGridAreaMap& b) { return a.map != b.map; }
 
 } // namespace WebCore

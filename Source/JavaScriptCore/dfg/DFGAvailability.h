@@ -124,11 +124,6 @@ public:
             && m_flushedAt == other.m_flushedAt;
     }
     
-    bool operator!=(const Availability& other) const
-    {
-        return !(*this == other);
-    }
-    
     Availability merge(const Availability& other) const
     {
         return Availability(

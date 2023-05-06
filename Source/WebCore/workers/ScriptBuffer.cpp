@@ -85,9 +85,4 @@ bool operator==(const ScriptBuffer& a, const ScriptBuffer& b)
     return *a.buffer() == *b.buffer();
 }
 
-bool operator!=(const ScriptBuffer& a, const ScriptBuffer& b)
-{
-    return !(a == b);
-}
-
 } // namespace WebCore

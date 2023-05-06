@@ -150,10 +150,6 @@ public:
     Ref<StyleFillData> copy() const;
 
     bool operator==(const StyleFillData&) const;
-    bool operator!=(const StyleFillData& other) const
-    {
-        return !(*this == other);
-    }
 
     float opacity;
     StyleColor paintColor;
@@ -176,10 +172,6 @@ public:
     Ref<StyleStrokeData> copy() const;
 
     bool operator==(const StyleStrokeData&) const;
-    bool operator!=(const StyleStrokeData& other) const
-    {
-        return !(*this == other);
-    }
 
     float opacity;
 
@@ -208,10 +200,6 @@ public:
     Ref<StyleStopData> copy() const;
 
     bool operator==(const StyleStopData&) const;
-    bool operator!=(const StyleStopData& other) const
-    {
-        return !(*this == other);
-    }
 
     float opacity;
     StyleColor color;
@@ -229,10 +217,6 @@ public:
     Ref<StyleTextData> copy() const;
     
     bool operator==(const StyleTextData& other) const;
-    bool operator!=(const StyleTextData& other) const
-    {
-        return !(*this == other);
-    }
 
     SVGLengthValue kerning;
 
@@ -250,10 +234,6 @@ public:
     Ref<StyleMiscData> copy() const;
 
     bool operator==(const StyleMiscData&) const;
-    bool operator!=(const StyleMiscData& other) const
-    {
-        return !(*this == other);
-    }
 
     float floodOpacity;
     StyleColor floodColor;
@@ -275,10 +255,6 @@ public:
     Ref<StyleShadowSVGData> copy() const;
 
     bool operator==(const StyleShadowSVGData&) const;
-    bool operator!=(const StyleShadowSVGData& other) const
-    {
-        return !(*this == other);
-    }
 
     std::unique_ptr<ShadowData> shadow;
 
@@ -296,10 +272,6 @@ public:
     Ref<StyleInheritedResourceData> copy() const;
 
     bool operator==(const StyleInheritedResourceData&) const;
-    bool operator!=(const StyleInheritedResourceData& other) const
-    {
-        return !(*this == other);
-    }
 
     String markerStart;
     String markerMid;
@@ -319,10 +291,6 @@ public:
     Ref<StyleLayoutData> copy() const;
 
     bool operator==(const StyleLayoutData&) const;
-    bool operator!=(const StyleLayoutData& other) const
-    {
-        return !(*this == other);
-    }
 
     Length cx;
     Length cy;

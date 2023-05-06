@@ -46,8 +46,6 @@ public:
         return m_colorScheme == other.m_colorScheme && m_allowsTransformations == other.m_allowsTransformations;
     }
 
-    constexpr bool operator!=(const StyleColorScheme& other) const { return !(*this == other); }
-
     constexpr bool isNormal() const { return m_colorScheme.isEmpty() && m_allowsTransformations; }
     constexpr bool isOnly() const { return m_colorScheme.isEmpty() && !m_allowsTransformations; }
 

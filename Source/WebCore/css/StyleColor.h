@@ -159,11 +159,6 @@ inline bool operator==(const StyleColorMix::Component& a, const StyleColorMix::C
         && a.percentage == b.percentage;
 }
 
-inline bool operator!=(const StyleColorMix::Component& a, const StyleColorMix::Component& b)
-{
-    return !(a == b);
-}
-
 inline bool operator==(const StyleColorMix& a, const StyleColorMix& b)
 {
     return a.colorInterpolationMethod == b.colorInterpolationMethod
@@ -171,19 +166,9 @@ inline bool operator==(const StyleColorMix& a, const StyleColorMix& b)
         && a.mixComponents2 == b.mixComponents2;
 }
 
-inline bool operator!=(const StyleColorMix& a, const StyleColorMix& b)
-{
-    return !(a == b);
-}
-
 inline bool operator==(const UniqueRef<StyleColorMix>& a, const UniqueRef<StyleColorMix>& b)
 {
     return a.get() == b.get();
-}
-
-inline bool operator!=(const UniqueRef<StyleColorMix>& a, const UniqueRef<StyleColorMix>& b)
-{
-    return !(a == b);
 }
 
 constexpr bool operator==(const StyleCurrentColor&, const StyleCurrentColor&)
@@ -191,19 +176,9 @@ constexpr bool operator==(const StyleCurrentColor&, const StyleCurrentColor&)
     return true;
 }
 
-constexpr bool operator!=(const StyleCurrentColor&, const StyleCurrentColor&)
-{
-    return false;
-}
-
 inline bool operator==(const StyleColor& a, const StyleColor& b)
 {
     return a.m_color == b.m_color;
-}
-
-inline bool operator!=(const StyleColor& a, const StyleColor& b)
-{
-    return !(a == b);
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const StyleColorMix&);

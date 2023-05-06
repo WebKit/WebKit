@@ -95,7 +95,6 @@ public:
         {
             return this->isEnd == other.isEnd;
         }
-        bool operator!=(const FakeRangeIterator& other) const { return !(*this == other); }
         FakeRangeIterator operator++()
         {
             isEnd = true;

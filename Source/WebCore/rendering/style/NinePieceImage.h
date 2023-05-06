@@ -115,7 +115,6 @@ public:
     NinePieceImage(RefPtr<StyleImage>&&, LengthBox imageSlices, bool fill, LengthBox borderSlices, bool overridesBorderWidths, LengthBox outset, NinePieceImageRule horizontalRule, NinePieceImageRule verticalRule);
 
     bool operator==(const NinePieceImage& other) const { return m_data == other.m_data; }
-    bool operator!=(const NinePieceImage& other) const { return m_data != other.m_data; }
 
     bool hasImage() const { return m_data->image; }
     StyleImage* image() const { return m_data->image.get(); }
@@ -196,7 +195,6 @@ private:
         Ref<Data> copy() const;
 
         bool operator==(const Data&) const;
-        bool operator!=(const Data& other) const { return !(*this == other); }
 
         bool fill { false };
         bool overridesBorderWidths { false };

@@ -304,7 +304,6 @@ public:
 #endif
 
     bool operator==(const RenderStyle&) const;
-    bool operator!=(const RenderStyle& other) const { return !(*this == other); }
 
     void inheritFrom(const RenderStyle&);
     void inheritIgnoringCustomPropertiesFrom(const RenderStyle&);
@@ -2103,7 +2102,6 @@ public:
 private:
     struct NonInheritedFlags {
         bool operator==(const NonInheritedFlags&) const;
-        bool operator!=(const NonInheritedFlags& other) const { return !(*this == other); }
 
         inline void copyNonInheritedFrom(const NonInheritedFlags&);
 
@@ -2147,7 +2145,6 @@ private:
 
     struct InheritedFlags {
         bool operator==(const InheritedFlags&) const;
-        bool operator!=(const InheritedFlags& other) const { return !(*this == other); }
 
         unsigned emptyCells : 1; // EmptyCell
         unsigned captionSide : 2; // CaptionSide

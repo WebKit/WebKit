@@ -179,11 +179,6 @@ struct FontVariantAlternatesValues {
             && historicalForms == other.historicalForms;
     }
 
-    bool operator!=(const FontVariantAlternatesValues& other) const
-    {
-        return !(*this == other);
-    }
-
     String stylistic;
     Vector<String> styleset;
     Vector<String> characterVariant;
@@ -372,8 +367,6 @@ struct FontVariantSettings {
             && eastAsianWidth == other.eastAsianWidth
             && eastAsianRuby == other.eastAsianRuby;
     }
-
-    bool operator!=(const FontVariantSettings& other) const { return !(*this == other); }
 
     FontVariantLigatures commonLigatures;
     FontVariantLigatures discretionaryLigatures;

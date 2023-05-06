@@ -41,7 +41,6 @@ public:
     Ref<StyleBackgroundData> copy() const;
 
     bool operator==(const StyleBackgroundData&) const;
-    bool operator!=(const StyleBackgroundData& other) const { return !(*this == other); }
 
     bool isEquivalentForPainting(const StyleBackgroundData&, bool currentColorDiffers) const;
 

@@ -59,11 +59,6 @@ public:
         return m_position == o.m_position && m_distribution == o.m_distribution && m_overflow == o.m_overflow;
     }
 
-    bool operator!=(const StyleContentAlignmentData& o) const
-    {
-        return !(*this == o);
-    }
-
 private:
     uint16_t m_position : 4 { 0 }; // ContentPosition
     uint16_t m_distribution : 3 { 0 }; // ContentDistribution

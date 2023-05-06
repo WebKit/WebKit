@@ -48,7 +48,6 @@ public:
     bool changeRequiresLayout(const SVGRenderStyle& other) const;
 
     bool operator==(const SVGRenderStyle&) const;
-    bool operator!=(const SVGRenderStyle& other) const { return !(*this == other); }
 
     // Initial values for all the properties
     static AlignmentBaseline initialAlignmentBaseline() { return AlignmentBaseline::Auto; }
@@ -194,7 +193,6 @@ private:
 
     struct InheritedFlags {
         bool operator==(const InheritedFlags&) const;
-        bool operator!=(const InheritedFlags& other) const { return !(*this == other); }
 
         unsigned shapeRendering : 2; // ShapeRendering
         unsigned clipRule : 1; // WindRule
@@ -209,7 +207,6 @@ private:
     struct NonInheritedFlags {
         // 32 bit non-inherited, don't add to the struct, or the operator will break.
         bool operator==(const NonInheritedFlags& other) const { return flags == other.flags; }
-        bool operator!=(const NonInheritedFlags& other) const { return flags != other.flags; }
 
         union {
             struct {

@@ -42,7 +42,6 @@ public:
     {
         return m_direction == o.m_direction && m_offset == o.m_offset && m_mask == o.m_mask;
     }
-    bool operator!=(const StyleReflection& o) const { return !(*this == o); }
 
     ReflectionDirection direction() const { return m_direction; }
     const Length& offset() const { return m_offset; }

@@ -55,11 +55,6 @@ inline bool operator==(const StringWithDirection& a, const StringWithDirection& 
     return a.string == b.string && a.direction == b.direction;
 }
 
-inline bool operator!=(const StringWithDirection& a, const StringWithDirection& b)
-{
-    return !(a == b);
-}
-
 inline StringWithDirection truncateFromEnd(const StringWithDirection& string, unsigned maxLength)
 {
     return { string.string.left(maxLength), string.direction };

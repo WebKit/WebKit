@@ -135,7 +135,6 @@ public:
     static const PermissionsSet& supportedPermissions();
 
     bool operator==(const WebExtension& other) const { return (this == &other); }
-    bool operator!=(const WebExtension& other) const { return !(this == &other); }
 
     bool manifestParsedSuccessfully();
     NSDictionary *manifest();

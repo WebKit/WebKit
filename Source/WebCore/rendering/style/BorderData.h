@@ -116,11 +116,6 @@ public:
             && m_radii.topLeft == o.m_radii.topLeft && m_radii.topRight == o.m_radii.topRight && m_radii.bottomLeft == o.m_radii.bottomLeft && m_radii.bottomRight == o.m_radii.bottomRight;
     }
 
-    bool operator!=(const BorderData& o) const
-    {
-        return !(*this == o);
-    }
-
     const BorderValue& left() const { return m_left; }
     const BorderValue& right() const { return m_right; }
     const BorderValue& top() const { return m_top; }

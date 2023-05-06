@@ -124,11 +124,6 @@ public:
         return result;
     }
     
-    bool operator!=(const CagedPtr& other) const
-    {
-        return !(*this == other);
-    }
-    
     explicit operator bool() const
     {
         return getUnsafe() != nullptr;

@@ -99,11 +99,6 @@ bool Effects::operator==(const Effects& other) const
         && fence == other.fence;
 }
 
-bool Effects::operator!=(const Effects& other) const
-{
-    return !(*this == other);
-}
-
 void Effects::dump(PrintStream& out) const
 {
     CommaPrinter comma("|");

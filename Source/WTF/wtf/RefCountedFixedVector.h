@@ -70,11 +70,6 @@ public:
         return create(Base::begin(), Base::end());
     }
 
-    bool operator!=(const RefCountedFixedVectorBase& other) const
-    {
-        return !(*this == other);
-    }
-
     bool operator==(const RefCountedFixedVectorBase& other) const
     {
         if (Base::size() != other.size())

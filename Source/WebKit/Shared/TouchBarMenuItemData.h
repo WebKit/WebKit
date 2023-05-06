@@ -86,11 +86,6 @@ inline bool operator==(const TouchBarMenuItemData& lhs, const TouchBarMenuItemDa
         && lhs.priority == rhs.priority;
 }
 
-inline bool operator!=(const TouchBarMenuItemData& lhs, const TouchBarMenuItemData& rhs)
-{
-    return !(lhs == rhs);
-}
-
 } // namespace WebKit
 
 #endif // HAVE(TOUCH_BAR)

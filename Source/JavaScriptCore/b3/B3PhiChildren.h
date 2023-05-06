@@ -85,11 +85,6 @@ public:
                 return m_index == other.m_index;
             }
 
-            bool operator!=(const iterator& other) const
-            {
-                return !(*this == other);
-            }
-
         private:
             Vector<UpsilonValue*>* m_values;
             unsigned m_index;

@@ -102,7 +102,6 @@ public:
     const FloatPair& operator*() const { return m_current; }
     Iterator& operator++();
     bool operator==(const Iterator&) const;
-    bool operator!=(const Iterator&) const;
 
 private:
     void set(PositionInContextRoot verticalPosition);
@@ -839,11 +838,6 @@ void Iterator::set(PositionInContextRoot verticalPosition)
 bool Iterator::operator==(const Iterator& other) const
 {
     return m_current == other.m_current;
-}
-
-bool Iterator::operator!=(const Iterator& other) const
-{
-    return !(*this == other);
 }
 
 }

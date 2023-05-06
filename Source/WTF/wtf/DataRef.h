@@ -88,11 +88,6 @@ public:
         return m_data.ptr() == other.m_data.ptr() || m_data.get() == other.m_data.get();
     }
 
-    bool operator!=(const DataRef& other) const
-    {
-        return !(*this == other);
-    }
-
 private:
     Ref<T> m_data;
 };

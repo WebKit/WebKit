@@ -781,11 +781,6 @@ public:
             && m_scale == other.m_scale;
     }
 
-    bool operator!=(const Arg& other) const
-    {
-        return !(*this == other);
-    }
-
     explicit operator bool() const { return *this != Arg(); }
 
     Kind kind() const

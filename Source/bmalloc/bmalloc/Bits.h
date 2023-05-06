@@ -251,12 +251,6 @@ public:
         return true;
     }
     
-    template<typename Other>
-    bool operator!=(const Other& other) const
-    {
-        return !(*this == other);
-    }
-    
     bool at(size_t index) const
     {
         return atImpl(index);

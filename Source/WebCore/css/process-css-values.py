@@ -349,7 +349,6 @@ class GenerationContext:
                     constexpr CSSValueID operator*() const { return static_cast<CSSValueID>(index); }
                     constexpr Iterator& operator++() { ++index; return *this; }
                     constexpr bool operator==(std::nullptr_t) const { return index >= numCSSValueKeywords; }
-                    constexpr bool operator!=(std::nullptr_t) const { return index < numCSSValueKeywords; }
                 };
                 static constexpr Iterator begin() { return { }; }
                 static constexpr std::nullptr_t end() { return nullptr; }

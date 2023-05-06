@@ -87,8 +87,7 @@ public:
     ~KeyframeList();
 
     KeyframeList& operator=(KeyframeList&&) = default;
-    bool operator==(const KeyframeList& o) const;
-    bool operator!=(const KeyframeList& o) const { return !(*this == o); }
+    bool operator==(const KeyframeList&) const;
 
     const AtomString& animationName() const { return m_animationName; }
     

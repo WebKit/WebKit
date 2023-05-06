@@ -201,7 +201,6 @@ public:
     T* operator->() const { return Base::after(); }
 
     bool operator==(const Iterator& other) const { return Base::isEqual(other); }
-    bool operator!=(const Iterator& other) const { return !Base::isEqual(other); }
 
     Iterator& operator++() { Base::increment(); return *this; }
     // postfix ++ intentionally omitted
@@ -240,7 +239,6 @@ public:
     const T* operator->() const { return Base::after(); }
 
     bool operator==(const Iterator& other) const { return Base::isEqual(other); }
-    bool operator!=(const Iterator& other) const { return !Base::isEqual(other); }
 
     Iterator& operator++() { Base::increment(); return *this; }
     // postfix ++ intentionally omitted

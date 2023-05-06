@@ -338,11 +338,6 @@ private:
             return a.m_structure == b.m_structure && a.m_byValId == b.m_byValId;
         }
 
-        friend bool operator!=(const BufferedStructure& a, const BufferedStructure& b)
-        {
-            return !(a == b);
-        }
-
         struct Hash {
             static unsigned hash(const BufferedStructure& key)
             {

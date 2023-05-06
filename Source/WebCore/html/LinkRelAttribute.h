@@ -75,9 +75,4 @@ inline bool operator==(const LinkRelAttribute& left, const LinkRelAttribute& rig
         ;
 }
 
-inline bool operator!=(const LinkRelAttribute& left, const LinkRelAttribute& right)
-{
-    return !(left == right);
-}
-
 }

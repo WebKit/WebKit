@@ -190,11 +190,6 @@ public:
         return m_value == other.m_value;
     }
 
-    bool operator!=(const Tmp& other) const
-    {
-        return !(*this == other);
-    }
-
     void dump(PrintStream& out) const;
 
     Tmp(WTF::HashTableDeletedValueType)

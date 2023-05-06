@@ -117,10 +117,7 @@ public:
     WEBCORE_EXPORT explicit operator bool() const;
 
     bool operator==(const LineBoxIterator&) const;
-    bool operator!=(const LineBoxIterator& other) const { return !(*this == other); }
-
     bool operator==(EndLineBoxIterator) const { return atEnd(); }
-    bool operator!=(EndLineBoxIterator) const { return !atEnd(); }
 
     const LineBox& operator*() const { return m_lineBox; }
     const LineBox* operator->() const { return &m_lineBox; }

@@ -76,11 +76,6 @@ public:
             return m_index == other.m_index;
         }
 
-        bool operator!=(const iterator& other) const
-        {
-            return !(*this == other);
-        }
-
     private:
         SuccessorCollection* m_collection;
         size_t m_index;
@@ -118,11 +113,6 @@ public:
         {
             ASSERT(m_collection == other.m_collection);
             return m_index == other.m_index;
-        }
-
-        bool operator!=(const const_iterator& other) const
-        {
-            return !(*this == other);
         }
 
     private:

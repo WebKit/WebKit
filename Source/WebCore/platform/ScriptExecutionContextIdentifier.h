@@ -61,7 +61,6 @@ public:
     bool isHashTableDeletedValue() const { return m_processIdentifier.isHashTableDeletedValue(); }
 
     bool operator==(const ProcessQualified& other) const { return m_object == other.m_object && m_processIdentifier == other.m_processIdentifier; }
-    bool operator!=(const ProcessQualified& other) const { return !(*this == other); }
 
     String toString() const { return m_object.toString(); }
 

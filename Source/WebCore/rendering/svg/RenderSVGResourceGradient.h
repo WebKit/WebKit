@@ -40,8 +40,6 @@ struct GradientData {
             return std::tie(objectBoundingBox, textPaintingScale) == std::tie(other.objectBoundingBox, other.textPaintingScale);
         }
 
-        bool operator!=(const Inputs& other) const { return !(*this == other); }
-
         std::optional<FloatRect> objectBoundingBox;
         float textPaintingScale = 1;
     };

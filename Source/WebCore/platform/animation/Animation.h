@@ -183,7 +183,6 @@ public:
 
     // return true every Animation in the chain (defined by m_next) match 
     bool operator==(const Animation& o) const { return animationsMatch(o); }
-    bool operator!=(const Animation& o) const { return !(*this == o); }
 
     bool fillsBackwards() const { return m_fillModeSet && (fillMode() == AnimationFillMode::Backwards || fillMode() == AnimationFillMode::Both); }
     bool fillsForwards() const { return m_fillModeSet && (fillMode() == AnimationFillMode::Forwards || fillMode() == AnimationFillMode::Both); }

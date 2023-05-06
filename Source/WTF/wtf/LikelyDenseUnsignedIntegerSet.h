@@ -214,10 +214,6 @@ public:
         {
             return m_underlying == other.m_underlying && m_shift == other.m_shift;
         }
-        bool operator!=(const iterator& other) const
-        {
-            return m_underlying != other.m_underlying || m_shift != other.m_shift;
-        }
 
     private:
         std::variant<BitVector::iterator, typename Set::iterator> m_underlying;

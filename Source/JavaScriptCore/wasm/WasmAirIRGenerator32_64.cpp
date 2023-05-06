@@ -86,11 +86,6 @@ struct TypedTmp {
             && m_type == other.m_type;
     }
 
-    bool operator!=(const TypedTmp& other) const
-    {
-        return !(*this == other);
-    }
-
     Type type() const { return m_type; }
 
     bool isGPPair() const

@@ -207,9 +207,6 @@ struct adjusted_mantissa {
   bool operator==(const adjusted_mantissa &o) const {
     return mantissa == o.mantissa && power2 == o.power2;
   }
-  bool operator!=(const adjusted_mantissa &o) const {
-    return mantissa != o.mantissa || power2 != o.power2;
-  }
 };
 
 // Bias so we can get the real exponent with an invalid adjusted_mantissa.

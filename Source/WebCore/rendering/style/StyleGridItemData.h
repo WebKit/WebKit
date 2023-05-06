@@ -49,11 +49,6 @@ public:
             && gridRowStart == o.gridRowStart && gridRowEnd == o.gridRowEnd;
     }
 
-    bool operator!=(const StyleGridItemData& o) const
-    {
-        return !(*this == o);
-    }
-
     GridPosition gridColumnStart;
     GridPosition gridColumnEnd;
     GridPosition gridRowStart;

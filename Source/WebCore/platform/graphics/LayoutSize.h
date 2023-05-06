@@ -183,11 +183,6 @@ inline bool operator==(const LayoutSize& a, const LayoutSize& b)
     return a.width() == b.width() && a.height() == b.height();
 }
 
-inline bool operator!=(const LayoutSize& a, const LayoutSize& b)
-{
-    return a.width() != b.width() || a.height() != b.height();
-}
-
 inline IntSize flooredIntSize(const LayoutSize& s)
 {
     return IntSize(s.width().floor(), s.height().floor());

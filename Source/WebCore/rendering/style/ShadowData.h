@@ -59,10 +59,6 @@ public:
     ShadowData& operator=(ShadowData&&) = default;
 
     bool operator==(const ShadowData& o) const;
-    bool operator!=(const ShadowData& o) const
-    {
-        return !(*this == o);
-    }
     
     const Length& x() const { return m_location.x(); }
     const Length& y() const { return m_location.y(); }

@@ -50,7 +50,6 @@ public:
     }
 
     bool operator==(const Iterator& other) const { return &m_displayList == &other.m_displayList && m_cursor == other.m_cursor; }
-    bool operator!=(const Iterator& other) const { return !(*this == other); }
     void operator++() { advance(); }
 
     struct Value {

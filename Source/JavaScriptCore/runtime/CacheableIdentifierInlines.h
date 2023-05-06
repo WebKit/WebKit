@@ -152,11 +152,6 @@ inline bool CacheableIdentifier::operator==(const CacheableIdentifier& other) co
     return uid() == other.uid();
 }
 
-inline bool CacheableIdentifier::operator!=(const CacheableIdentifier& other) const
-{
-    return uid() != other.uid();
-}
-
 inline bool CacheableIdentifier::operator==(const Identifier& other) const
 {
     return uid() == other.impl();

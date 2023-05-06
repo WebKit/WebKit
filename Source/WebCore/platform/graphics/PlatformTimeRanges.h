@@ -111,11 +111,9 @@ public:
         }
 
         inline bool operator==(const Range& other) const { return start == other.start && end == other.end; }
-        inline bool operator!=(const Range& other) const { return !operator==(other); }
     };
 
     bool operator==(const PlatformTimeRanges& other) const;
-    bool operator!=(const PlatformTimeRanges& other) const;
 
 private:
     friend struct IPC::ArgumentCoder<PlatformTimeRanges, void>;

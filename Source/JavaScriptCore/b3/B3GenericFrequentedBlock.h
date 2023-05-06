@@ -51,11 +51,6 @@ public:
             && m_frequency == other.m_frequency;
     }
 
-    bool operator!=(const GenericFrequentedBlock& other) const
-    {
-        return !(*this == other);
-    }
-
     explicit operator bool() const
     {
         return *this != GenericFrequentedBlock();

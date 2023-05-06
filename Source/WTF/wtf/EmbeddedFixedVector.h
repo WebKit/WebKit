@@ -80,11 +80,6 @@ public:
         return create(Base::begin(), Base::end());
     }
 
-    bool operator!=(const EmbeddedFixedVector& other) const
-    {
-        return !(*this == other);
-    }
-
     bool operator==(const EmbeddedFixedVector& other) const
     {
         if (Base::size() != other.size())

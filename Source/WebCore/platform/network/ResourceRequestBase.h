@@ -313,7 +313,6 @@ private:
 bool equalIgnoringHeaderFields(const ResourceRequestBase&, const ResourceRequestBase&);
 
 inline bool operator==(const ResourceRequest& a, const ResourceRequest& b) { return ResourceRequestBase::equal(a, b); }
-inline bool operator!=(ResourceRequest& a, const ResourceRequest& b) { return !(a == b); }
 
 WEBCORE_EXPORT unsigned initializeMaximumHTTPConnectionCountPerHost();
 #if PLATFORM(IOS_FAMILY)

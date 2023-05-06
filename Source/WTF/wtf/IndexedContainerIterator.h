@@ -62,11 +62,6 @@ public:
         return m_index == other.m_index;
     }
 
-    bool operator!=(const IndexedContainerIterator& other) const
-    {
-        return !(*this == other);
-    }
-
 private:
     unsigned findNext(unsigned index)
     {

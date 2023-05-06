@@ -76,9 +76,7 @@ struct ImageOrientation {
 
     constexpr operator int() const { return static_cast<int>(m_orientation); }
     friend constexpr bool operator==(const ImageOrientation& lhs, const ImageOrientation& rhs) { return lhs.m_orientation == rhs.m_orientation; }
-    friend constexpr bool operator!=(const ImageOrientation& lhs, const ImageOrientation& rhs) { return lhs.m_orientation != rhs.m_orientation; }
     friend constexpr bool operator==(const ImageOrientation& lhs, const Orientation& rhs) { return lhs.m_orientation == rhs; }
-    friend constexpr bool operator!=(const ImageOrientation& lhs, const Orientation& rhs) { return lhs.m_orientation != rhs; }
 
     constexpr Orientation orientation() const { return m_orientation; }
     

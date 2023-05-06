@@ -144,12 +144,8 @@ public:
     bool isPrivateName() const { return isSymbol() && static_cast<const SymbolImpl*>(impl())->isPrivate(); }
 
     friend bool operator==(const Identifier&, const Identifier&);
-    friend bool operator!=(const Identifier&, const Identifier&);
-
     friend bool operator==(const Identifier&, const LChar*);
     friend bool operator==(const Identifier&, const char*);
-    friend bool operator!=(const Identifier&, const LChar*);
-    friend bool operator!=(const Identifier&, const char*);
 
     static bool equal(const StringImpl*, const LChar*);
     static inline bool equal(const StringImpl*a, const char*b) { return Identifier::equal(a, reinterpret_cast<const LChar*>(b)); };
@@ -235,11 +231,6 @@ inline bool operator==(const Identifier& a, const Identifier& b)
     return Identifier::equal(a, b);
 }
 
-inline bool operator!=(const Identifier& a, const Identifier& b)
-{
-    return !Identifier::equal(a, b);
-}
-
 inline bool operator==(const Identifier& a, const LChar* b)
 {
     return Identifier::equal(a, b);
@@ -248,16 +239,6 @@ inline bool operator==(const Identifier& a, const LChar* b)
 inline bool operator==(const Identifier& a, const char* b)
 {
     return Identifier::equal(a, reinterpret_cast<const LChar*>(b));
-}
-
-inline bool operator!=(const Identifier& a, const LChar* b)
-{
-    return !Identifier::equal(a, b);
-}
-
-inline bool operator!=(const Identifier& a, const char* b)
-{
-    return !Identifier::equal(a, reinterpret_cast<const LChar*>(b));
 }
 
 inline bool Identifier::equal(const StringImpl* r, const LChar* s)

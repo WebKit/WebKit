@@ -39,10 +39,6 @@ public:
     WEBCORE_EXPORT explicit TransformOperations(Vector<RefPtr<TransformOperation>>&&);
     
     bool operator==(const TransformOperations& o) const;
-    bool operator!=(const TransformOperations& o) const
-    {
-        return !(*this == o);
-    }
     
     void apply(const FloatSize& size, TransformationMatrix& matrix) const { apply(0, size, matrix); }
     void apply(unsigned start, const FloatSize& size, TransformationMatrix& matrix) const

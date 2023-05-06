@@ -67,10 +67,6 @@ public:
     ~StyleRareInheritedData();
 
     bool operator==(const StyleRareInheritedData& o) const;
-    bool operator!=(const StyleRareInheritedData& o) const
-    {
-        return !(*this == o);
-    }
 
     bool hasColorFilters() const;
 

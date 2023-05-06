@@ -46,7 +46,6 @@ public:
     bool operator!() const { return m_index.get() == invalidIndex(); }
     
     bool operator==(const MinifiedID& other) const { return m_index.get() == other.m_index.get(); }
-    bool operator!=(const MinifiedID& other) const { return m_index.get() != other.m_index.get(); }
     bool operator<(const MinifiedID& other) const { return m_index.get() < other.m_index.get(); }
     bool operator>(const MinifiedID& other) const { return m_index.get() > other.m_index.get(); }
     bool operator<=(const MinifiedID& other) const { return m_index.get() <= other.m_index.get(); }

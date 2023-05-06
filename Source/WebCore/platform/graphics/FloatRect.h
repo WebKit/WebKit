@@ -285,11 +285,6 @@ inline bool operator==(const FloatRect& a, const FloatRect& b)
     return a.location() == b.location() && a.size() == b.size();
 }
 
-inline bool operator!=(const FloatRect& a, const FloatRect& b)
-{
-    return a.location() != b.location() || a.size() != b.size();
-}
-
 inline bool areEssentiallyEqual(const FloatRect& a, const FloatRect& b)
 {
     return areEssentiallyEqual(a.location(), b.location()) && areEssentiallyEqual(a.size(), b.size());

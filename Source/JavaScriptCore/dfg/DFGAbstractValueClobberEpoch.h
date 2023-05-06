@@ -69,11 +69,6 @@ public:
         return m_value == other.m_value;
     }
     
-    bool operator!=(const AbstractValueClobberEpoch& other) const
-    {
-        return !(*this == other);
-    }
-    
     StructureClobberState structureClobberState() const
     {
         return m_value & watchedFlag ? StructuresAreWatched : StructuresAreClobbered;

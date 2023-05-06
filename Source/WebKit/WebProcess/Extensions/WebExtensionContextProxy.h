@@ -58,7 +58,6 @@ public:
     WebExtensionContextIdentifier identifier() { return m_identifier; }
 
     bool operator==(const WebExtensionContextProxy& other) const { return (this == &other); }
-    bool operator!=(const WebExtensionContextProxy& other) const { return !(this == &other); }
 
     const URL& baseURL() { return m_baseURL; }
     const String& uniqueIdentifier() const { return m_uniqueIdentifier; }

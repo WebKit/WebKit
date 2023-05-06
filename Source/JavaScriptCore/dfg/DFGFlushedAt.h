@@ -64,8 +64,6 @@ public:
             && m_virtualRegister == other.m_virtualRegister;
     }
     
-    bool operator!=(const FlushedAt& other) const { return !(*this == other); }
-    
     FlushedAt merge(const FlushedAt& other) const
     {
         if (!*this)

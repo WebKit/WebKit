@@ -76,7 +76,6 @@ public:
     WebExtensionControllerParameters parameters() const;
 
     bool operator==(const WebExtensionController& other) const { return (this == &other); }
-    bool operator!=(const WebExtensionController& other) const { return !(this == &other); }
 
     bool storageIsPersistent() const { return m_configuration->storageIsPersistent(); }
     String storageDirectory(WebExtensionContext&) const;

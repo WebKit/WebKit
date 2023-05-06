@@ -61,11 +61,6 @@ public:
         return m_globalObject == other.m_globalObject && m_identifierNumber == other.m_identifierNumber;
     }
 
-    bool operator!=(const DesiredGlobalProperty& other) const
-    {
-        return !(*this == other);
-    }
-
     bool isHashTableDeletedValue() const
     {
         return !m_globalObject && m_identifierNumber == UINT_MAX;

@@ -44,7 +44,6 @@ public:
 
     struct Styles {
         bool operator==(const Styles&) const;
-        bool operator!=(const Styles& other) const { return !(*this == other); }
 
         struct DecorationStyleAndColor {
             Color color;

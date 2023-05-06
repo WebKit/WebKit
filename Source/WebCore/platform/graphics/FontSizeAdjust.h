@@ -50,11 +50,6 @@ struct FontSizeAdjust {
             && isFromFont == other.isFromFont;
     }
 
-    bool operator!=(const FontSizeAdjust& other) const
-    {
-        return !(*this == other);
-    }
-
     enum class Metric : uint8_t {
         ExHeight,
         CapHeight,

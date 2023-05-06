@@ -324,11 +324,6 @@ inline bool operator==(const WKSelectionDrawingInfo& a, const WKSelectionDrawing
     return true;
 }
 
-inline bool operator!=(const WKSelectionDrawingInfo& a, const WKSelectionDrawingInfo& b)
-{
-    return !(a == b);
-}
-
 static TextStream& operator<<(TextStream& stream, WKSelectionDrawingInfo::SelectionType type)
 {
     switch (type) {

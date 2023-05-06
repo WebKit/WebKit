@@ -90,7 +90,6 @@ public:
     ~StyleRareNonInheritedData();
     
     bool operator==(const StyleRareNonInheritedData&) const;
-    bool operator!=(const StyleRareNonInheritedData& other) const { return !(*this == other); }
 
     LengthPoint perspectiveOrigin() const { return { perspectiveOriginX, perspectiveOriginY }; }
 

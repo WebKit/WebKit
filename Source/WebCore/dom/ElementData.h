@@ -50,7 +50,6 @@ public:
     AttributeConstIterator& operator++() { ++m_offset; return *this; }
 
     bool operator==(const AttributeConstIterator& other) const { return m_offset == other.m_offset; }
-    bool operator!=(const AttributeConstIterator& other) const { return !(*this == other); }
 
 private:
     const Attribute* m_array;

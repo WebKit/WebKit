@@ -72,11 +72,6 @@ public:
         return m_barrier.get() == other.m_barrier.get();
     }
     
-    bool operator!=(const CagedBarrierPtr& other) const
-    {
-        return !(*this == other);
-    }
-    
     explicit operator bool() const
     {
         return !!m_barrier.get();

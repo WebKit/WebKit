@@ -73,10 +73,6 @@ public:
     Ref<ShapeValue> blend(const ShapeValue&, const BlendingContext&) const;
 
     bool operator==(const ShapeValue&) const;
-    bool operator!=(const ShapeValue& other) const
-    {
-        return !(*this == other);
-    }
 
 private:
     ShapeValue(Ref<BasicShape>&& shape, CSSBoxType cssBox)

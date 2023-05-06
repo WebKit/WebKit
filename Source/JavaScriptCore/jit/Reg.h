@@ -142,11 +142,6 @@ public:
         return m_index == other.m_index;
     }
 
-    constexpr bool operator!=(const Reg& other) const
-    {
-        return m_index != other.m_index;
-    }
-
     constexpr bool operator<(const Reg& other) const
     {
         return m_index < other.m_index;
@@ -199,11 +194,6 @@ public:
             bool operator==(const iterator& other) const
             {
                 return m_regIndex == other.m_regIndex;
-            }
-
-            bool operator!=(const iterator& other) const
-            {
-                return !(*this == other);
             }
 
         private:

@@ -58,7 +58,6 @@ public:
     ~StyleMiscNonInheritedData();
 
     bool operator==(const StyleMiscNonInheritedData&) const;
-    bool operator!=(const StyleMiscNonInheritedData& other) const { return !(*this == other); }
 
     bool hasOpacity() const { return opacity < 1; }
     bool hasFilters() const;

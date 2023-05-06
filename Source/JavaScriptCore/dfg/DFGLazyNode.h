@@ -122,11 +122,6 @@ public:
         return m_node == other.m_node;
     }
 
-    bool operator!=(const LazyNode& other) const
-    {
-        return !(*this == other);
-    }
-
     Node* ensureIsNode(InsertionSet& insertionSet, BasicBlock* block, unsigned nodeIndex)
     {
         if (!m_node)

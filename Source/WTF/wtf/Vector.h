@@ -1739,12 +1739,6 @@ bool operator==(const Vector<T, inlineCapacityA, OverflowHandlerA, minCapacityA,
     return VectorTypeOperations<T>::compare(a.data(), b.data(), a.size());
 }
 
-template<typename T, size_t inlineCapacityA, typename OverflowHandlerA, size_t minCapacityA, typename MallocA, size_t inlineCapacityB, typename OverflowHandlerB, size_t minCapacityB, typename MallocB>
-inline bool operator!=(const Vector<T, inlineCapacityA, OverflowHandlerA, minCapacityA, MallocA>& a, const Vector<T, inlineCapacityB, OverflowHandlerB, minCapacityB, MallocB>& b)
-{
-    return !(a == b);
-}
-
 #if ASSERT_ENABLED
 template<typename T> struct ValueCheck<Vector<T>> {
     typedef Vector<T> TraitType;

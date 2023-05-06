@@ -174,11 +174,6 @@ inline bool operator==(const FloatQuad& a, const FloatQuad& b)
     return a.p1() == b.p1() && a.p2() == b.p2() && a.p3() == b.p3() && a.p4() == b.p4();
 }
 
-inline bool operator!=(const FloatQuad& a, const FloatQuad& b)
-{
-    return !(a == b);
-}
-
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatQuad&);
 
 Vector<FloatRect> boundingBoxes(const Vector<FloatQuad>&);

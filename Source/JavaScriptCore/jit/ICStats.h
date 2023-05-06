@@ -130,11 +130,6 @@ public:
             && m_propertyName == other.m_propertyName;
     }
     
-    bool operator!=(const ICEvent& other) const
-    {
-        return !(*this == other);
-    }
-    
     bool operator<(const ICEvent& other) const;
     bool operator>(const ICEvent& other) const { return other < *this; }
     bool operator<=(const ICEvent& other) const { return !(*this > other); }

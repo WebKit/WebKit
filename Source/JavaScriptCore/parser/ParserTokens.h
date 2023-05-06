@@ -225,10 +225,6 @@ struct JSTextPosition {
             && offset == other.offset
             && lineStartOffset == other.lineStartOffset;
     }
-    bool operator!=(const JSTextPosition& other) const
-    {
-        return !(*this == other);
-    }
 
     int column() const { return offset - lineStartOffset; }
     void checkConsistency()

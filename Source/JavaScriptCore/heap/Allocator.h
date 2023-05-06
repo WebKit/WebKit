@@ -53,7 +53,6 @@ public:
     LocalAllocator* localAllocator() const { return m_localAllocator; }
     
     bool operator==(const Allocator& other) const { return m_localAllocator == other.localAllocator(); }
-    bool operator!=(const Allocator& other) const { return !(*this == other); }
     explicit operator bool() const { return *this != Allocator(); }
     
 private:

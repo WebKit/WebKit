@@ -43,7 +43,6 @@ public:
     CursorData& at(size_t i) { return m_vector.at(i); }
 
     bool operator==(const CursorList& o) const { return m_vector == o.m_vector; }
-    bool operator!=(const CursorList& o) const { return m_vector != o.m_vector; }
 
     size_t size() const { return m_vector.size(); }
     void append(const CursorData& cursorData) { m_vector.append(cursorData); }

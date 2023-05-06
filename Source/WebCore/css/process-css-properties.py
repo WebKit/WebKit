@@ -3003,7 +3003,6 @@ class GenerateCSSPropertyNames:
         to.newline()
 
         to.write(f"bool operator==(const CSSPropertySettings&, const CSSPropertySettings&);")
-        to.write(f"inline bool operator!=(const CSSPropertySettings& a, const CSSPropertySettings& b) {{ return !(a == b); }}")
         to.write(f"void add(Hasher&, const CSSPropertySettings&);")
         to.newline()
 
@@ -3029,7 +3028,6 @@ class GenerateCSSPropertyNames:
                     constexpr CSSPropertyID operator*() const { return static_cast<CSSPropertyID>(index); }
                     constexpr Iterator& operator++() { ++index; return *this; }
                     constexpr bool operator==(std::nullptr_t) const { return index > static_cast<uint16_t>(last); }
-                    constexpr bool operator!=(std::nullptr_t) const { return index <= static_cast<uint16_t>(last); }
                 };
                 static constexpr Iterator begin() { return { }; }
                 static constexpr std::nullptr_t end() { return nullptr; }

@@ -40,10 +40,6 @@ public:
     }
     
     bool operator==(const WillChangeData&) const;
-    bool operator!=(const WillChangeData& o) const
-    {
-        return !(*this == o);
-    }
 
     bool isAuto() const { return m_animatableFeatures.isEmpty(); }
     size_t numFeatures() const { return m_animatableFeatures.size(); }

@@ -190,7 +190,6 @@ public:
     explicit operator bool() const { return !(!*this); }
     
     bool operator==(const CodePtr& other) const { return m_value == other.m_value; }
-    bool operator!=(const CodePtr& other) const { return m_value != other.m_value; }
 
     // Disallow any casting operations (except for booleans). Instead, the client
     // should be asking taggedPtr() explicitly.

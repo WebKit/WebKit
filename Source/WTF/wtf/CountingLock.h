@@ -116,7 +116,6 @@ public:
         explicit operator bool() const { return !!m_value; }
         
         bool operator==(const Count& other) const { return m_value == other.m_value; }
-        bool operator!=(const Count& other) const { return m_value != other.m_value; }
         
     private:
         friend class CountingLock;

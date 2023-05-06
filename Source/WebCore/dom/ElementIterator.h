@@ -50,8 +50,8 @@ public:
 
     constexpr operator bool() const { return m_current; }
     constexpr bool operator!() const { return !m_current; }
-    constexpr bool operator!=(std::nullptr_t) const { return m_current; }
-    inline constexpr bool operator!=(const ElementIterator&) const;
+    constexpr bool operator==(std::nullptr_t) const { return !m_current; }
+    constexpr bool operator==(const ElementIterator&) const;
 
     inline ElementIterator& traverseNext();
     inline ElementIterator& traversePrevious();
@@ -89,10 +89,10 @@ inline ElementIterator<ElementType>::ElementIterator(const ContainerNode* root, 
 {
 }
 
-template<typename ElementType> constexpr bool ElementIterator<ElementType>::operator!=(const ElementIterator& other) const
+template<typename ElementType> constexpr bool ElementIterator<ElementType>::operator==(const ElementIterator& other) const
 {
     ASSERT(m_root == other.m_root || !m_current || !other.m_current);
-    return m_current != other.m_current;
+    return m_current == other.m_current;
 }
 
 template <typename ElementType>

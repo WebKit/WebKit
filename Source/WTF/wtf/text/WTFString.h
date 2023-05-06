@@ -329,12 +329,6 @@ inline bool operator==(ASCIILiteral a, const String& b) { return equal(b.impl(),
 template<size_t inlineCapacity> inline bool operator==(const Vector<char, inlineCapacity>& a, const String& b) { return equal(b.impl(), a.data(), a.size()); }
 template<size_t inlineCapacity> inline bool operator==(const String& a, const Vector<char, inlineCapacity>& b) { return b == a; }
 
-inline bool operator!=(const String& a, const String& b) { return !equal(a.impl(), b.impl()); }
-inline bool operator!=(const String& a, ASCIILiteral b) { return !equal(a.impl(), b); }
-inline bool operator!=(ASCIILiteral a, const String& b) { return !equal(b.impl(), a); }
-template<size_t inlineCapacity> inline bool operator!=(const Vector<char, inlineCapacity>& a, const String& b) { return !(a == b); }
-template<size_t inlineCapacity> inline bool operator!=(const String& a, const Vector<char, inlineCapacity>& b) { return b != a; }
-
 bool equalIgnoringASCIICase(const String&, const String&);
 bool equalIgnoringASCIICase(const String&, ASCIILiteral);
 

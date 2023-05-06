@@ -114,11 +114,9 @@ private:
     RefPtr<CStringBuffer> m_buffer;
 };
 
-WTF_EXPORT_PRIVATE bool operator==(const CString& a, const CString& b);
-inline bool operator!=(const CString& a, const CString& b) { return !(a == b); }
-WTF_EXPORT_PRIVATE bool operator==(const CString& a, const char* b);
-inline bool operator!=(const CString& a, const char* b) { return !(a == b); }
-WTF_EXPORT_PRIVATE bool operator<(const CString& a, const CString& b);
+WTF_EXPORT_PRIVATE bool operator==(const CString&, const CString&);
+WTF_EXPORT_PRIVATE bool operator==(const CString&, const char*);
+WTF_EXPORT_PRIVATE bool operator<(const CString&, const CString&);
 
 struct CStringHash {
     static unsigned hash(const CString& string) { return string.hash(); }

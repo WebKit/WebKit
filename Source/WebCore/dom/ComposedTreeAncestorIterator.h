@@ -43,7 +43,6 @@ public:
     Element* operator->() { return &get(); }
 
     bool operator==(const ComposedTreeAncestorIterator& other) const { return m_current == other.m_current; }
-    bool operator!=(const ComposedTreeAncestorIterator& other) const { return m_current != other.m_current; }
 
     ComposedTreeAncestorIterator& operator++() { return traverseParent(); }
 

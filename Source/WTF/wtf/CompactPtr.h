@@ -207,12 +207,6 @@ public:
         return a.m_ptr == b.m_ptr;
     }
 
-    template<typename U>
-    friend bool operator!=(const CompactPtr& a, const CompactPtr<U>& b)
-    {
-        return a.m_ptr != b.m_ptr;
-    }
-
     StorageType storage() const { return m_ptr; }
 
 private:
@@ -236,18 +230,6 @@ template<typename T, typename U>
 inline bool operator==(T* a, const CompactPtr<U>& b)
 {
     return a == b.get();
-}
-
-template<typename T, typename U>
-inline bool operator!=(const CompactPtr<T>& a, U* b)
-{
-    return !(a == b);
-}
-
-template<typename T, typename U>
-inline bool operator!=(T* a, const CompactPtr<U>& b)
-{
-    return !(a == b);
 }
 
 template <typename T>

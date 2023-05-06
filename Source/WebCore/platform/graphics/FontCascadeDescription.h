@@ -50,7 +50,6 @@ public:
     WEBCORE_EXPORT FontCascadeDescription();
 
     bool operator==(const FontCascadeDescription&) const;
-    bool operator!=(const FontCascadeDescription& other) const { return !(*this == other); }
 
     unsigned familyCount() const { return m_families->size(); }
     const AtomString& firstFamily() const { return familyAt(0); }

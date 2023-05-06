@@ -58,11 +58,6 @@ struct HashableActionList {
         return state == other.state && actions == other.actions;
     }
 
-    bool operator!=(const HashableActionList& other) const
-    {
-        return !(*this == other);
-    }
-
     Vector<uint64_t> actions;
     unsigned hash;
     enum {

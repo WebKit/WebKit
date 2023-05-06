@@ -125,7 +125,7 @@ public:
 
     operator bool() const { return m_node; }
     bool operator!() const { return !m_node; }
-    bool operator!=(const std::nullptr_t) const { return m_node; }
+    bool operator==(const std::nullptr_t) const { return !m_node; }
 
     IntersectingNodeIterator& operator++() { advance(); return *this; }
     void advance();

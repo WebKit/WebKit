@@ -63,6 +63,5 @@ private:
 };
 
 bool operator==(const ScriptBuffer&, const ScriptBuffer&);
-bool operator!=(const ScriptBuffer&, const ScriptBuffer&);
 
 } // namespace WebCore

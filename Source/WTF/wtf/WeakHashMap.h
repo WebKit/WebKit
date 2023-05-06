@@ -131,7 +131,6 @@ public:
         using Base = WeakHashMapIteratorBase<WeakHashMap, typename WeakHashImplMap::iterator, PeekPtrType, PeekType>;
 
         bool operator==(const WeakHashMapIterator& other) const { return Base::m_position == other.Base::m_position; }
-        bool operator!=(const WeakHashMapIterator& other) const { return Base::m_position != other.Base::m_position; }
 
         PeekPtrType get() { return Base::makePeek(); }
         PeekType operator*() { return Base::makePeek(); }
@@ -156,7 +155,6 @@ public:
         using Base = WeakHashMapIteratorBase<const WeakHashMap, typename WeakHashImplMap::const_iterator, const PeekPtrType, const PeekType>;
 
         bool operator==(const WeakHashMapConstIterator& other) const { return Base::m_position == other.Base::m_position; }
-        bool operator!=(const WeakHashMapConstIterator& other) const { return Base::m_position != other.Base::m_position; }
 
         const PeekPtrType get() const { return Base::makePeek(); }
         const PeekType operator*() const { return Base::makePeek(); }

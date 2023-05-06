@@ -129,11 +129,6 @@ inline bool operator==(const LegacyInlineIterator& it1, const LegacyInlineIterat
     return it1.offset() == it2.offset() && it1.renderer() == it2.renderer();
 }
 
-inline bool operator!=(const LegacyInlineIterator& it1, const LegacyInlineIterator& it2)
-{
-    return it1.offset() != it2.offset() || it1.renderer() != it2.renderer();
-}
-
 static inline UCharDirection embedCharFromDirection(TextDirection direction, UnicodeBidi unicodeBidi)
 {
     if (unicodeBidi == UnicodeBidi::Embed)

@@ -329,11 +329,6 @@ inline bool JSValue::operator==(const JSValue& other) const
     return u.asInt64 == other.u.asInt64;
 }
 
-inline bool JSValue::operator!=(const JSValue& other) const
-{
-    return u.asInt64 != other.u.asInt64;
-}
-
 inline bool JSValue::isEmpty() const
 {
     return tag() == EmptyValueTag;
@@ -479,11 +474,6 @@ inline JSValue::operator bool() const
 inline bool JSValue::operator==(const JSValue& other) const
 {
     return u.asInt64 == other.u.asInt64;
-}
-
-inline bool JSValue::operator!=(const JSValue& other) const
-{
-    return u.asInt64 != other.u.asInt64;
 }
 
 inline bool JSValue::isEmpty() const

@@ -43,8 +43,6 @@ inline bool operator==(const ScrollSnapType& a, const ScrollSnapType& b)
     return a.axis == b.axis && a.strictness == b.strictness;
 }
 
-inline bool operator!=(const ScrollSnapType& a, const ScrollSnapType& b) { return !(a == b); }
-
 struct ScrollSnapAlign {
     ScrollSnapAxisAlignType blockAlign { ScrollSnapAxisAlignType::None };
     ScrollSnapAxisAlignType inlineAlign { ScrollSnapAxisAlignType::None };
@@ -54,7 +52,5 @@ inline bool operator==(const ScrollSnapAlign& a, const ScrollSnapAlign& b)
 {
     return a.blockAlign == b.blockAlign && a.inlineAlign == b.inlineAlign;
 }
-
-inline bool operator!=(const ScrollSnapAlign& a, const ScrollSnapAlign& b) { return !(a == b); }
 
 } // namespace WebCore

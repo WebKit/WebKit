@@ -247,11 +247,6 @@ inline bool operator==(const FloatPoint& a, const FloatPoint& b)
     return a.x() == b.x() && a.y() == b.y();
 }
 
-inline bool operator!=(const FloatPoint& a, const FloatPoint& b)
-{
-    return a.x() != b.x() || a.y() != b.y();
-}
-
 inline float operator*(const FloatPoint& a, const FloatPoint& b)
 {
     // dot product

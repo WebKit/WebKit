@@ -40,11 +40,6 @@ struct FontPalette {
         return type == other.type;
     }
 
-    bool operator!=(const FontPalette& other) const
-    {
-        return !(*this == other);
-    }
-
     enum class Type : uint8_t {
         Normal,
         Light,

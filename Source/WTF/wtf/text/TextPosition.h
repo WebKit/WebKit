@@ -41,7 +41,6 @@ public:
 
     TextPosition() { }
     bool operator==(const TextPosition& other) const { return m_line == other.m_line && m_column == other.m_column; }
-    bool operator!=(const TextPosition& other) const { return !(*this == other); }
 
     // A value with line value less than a minimum; used as an impossible position.
     static TextPosition belowRangePosition() { return TextPosition(OrdinalNumber::beforeFirst(), OrdinalNumber::beforeFirst()); }

@@ -215,11 +215,6 @@ public:
         }
     }
 
-    bool operator!=(const ValueRep& other) const
-    {
-        return !(*this == other);
-    }
-
     explicit operator bool() const { return kind() != WarmAny; }
 
     bool isAny() const { return kind() == WarmAny || kind() == ColdAny || kind() == LateColdAny; }
