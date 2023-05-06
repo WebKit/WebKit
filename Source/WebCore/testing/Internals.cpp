@@ -6926,13 +6926,13 @@ ExceptionOr<void> Internals::setMockMediaSessionCoordinatorCommandsShouldFail(bo
 }
 #endif // ENABLE(MEDIA_SESSION)
 
-constexpr ASCIILiteral string(PartialOrdering ordering)
+constexpr ASCIILiteral string(std::partial_ordering ordering)
 {
     if (is_lt(ordering))
         return "less"_s;
     if (is_gt(ordering))
         return "greater"_s;
-    if (is_eq(ordering))
+    if (WebCore::is_eq(ordering))
         return "equivalent"_s;
     return "unordered"_s;
 }

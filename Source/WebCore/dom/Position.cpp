@@ -1616,22 +1616,22 @@ std::optional<BoundaryPoint> makeBoundaryPoint(const Position& position)
     return BoundaryPoint { container.releaseNonNull(), static_cast<unsigned>(position.computeOffsetInContainerNode()) };
 }
 
-template<TreeType treeType> PartialOrdering treeOrder(const Position& a, const Position& b)
+template<TreeType treeType> std::partial_ordering treeOrder(const Position& a, const Position& b)
 {
     if (a.isNull() || b.isNull())
-        return a.isNull() && b.isNull() ? PartialOrdering::equivalent : PartialOrdering::unordered;
+        return a.isNull() && b.isNull() ? std::partial_ordering::equivalent : std::partial_ordering::unordered;
 
     auto aContainer = a.containerNode();
     auto bContainer = b.containerNode();
 
     if (!aContainer || !bContainer) {
         if (!commonInclusiveAncestor<treeType>(*a.anchorNode(), *b.anchorNode()))
-            return PartialOrdering::unordered;
+            return std::partial_ordering::unordered;
         if (!aContainer && !bContainer && a.anchorType() == b.anchorType())
-            return PartialOrdering::equivalent;
+            return std::partial_ordering::equivalent;
         if (bContainer)
-            return a.anchorType() == Position::PositionIsBeforeAnchor ? PartialOrdering::less : PartialOrdering::greater;
-        return b.anchorType() == Position::PositionIsBeforeAnchor ? PartialOrdering::greater : PartialOrdering::less;
+            return a.anchorType() == Position::PositionIsBeforeAnchor ? std::partial_ordering::less : std::partial_ordering::greater;
+        return b.anchorType() == Position::PositionIsBeforeAnchor ? std::partial_ordering::greater : std::partial_ordering::less;
     }
 
     // FIXME: Avoid computing node offset for cases where we don't need to.
@@ -1639,13 +1639,13 @@ template<TreeType treeType> PartialOrdering treeOrder(const Position& a, const P
     return treeOrder<treeType>(*makeBoundaryPoint(a), *makeBoundaryPoint(b));
 }
 
-PartialOrdering documentOrder(const Position& a, const Position& b)
+std::partial_ordering documentOrder(const Position& a, const Position& b)
 {
     return treeOrder<ComposedTree>(a, b);
 }
 
-template PartialOrdering treeOrder<ComposedTree>(const Position&, const Position&);
-template PartialOrdering treeOrder<ShadowIncludingTree>(const Position&, const Position&);
+template std::partial_ordering treeOrder<ComposedTree>(const Position&, const Position&);
+template std::partial_ordering treeOrder<ShadowIncludingTree>(const Position&, const Position&);
 
 } // namespace WebCore
 

@@ -107,7 +107,7 @@ private:
 
 bool operator==(const VisiblePosition&, const VisiblePosition&);
 
-WEBCORE_EXPORT PartialOrdering documentOrder(const VisiblePosition&, const VisiblePosition&);
+WEBCORE_EXPORT std::partial_ordering documentOrder(const VisiblePosition&, const VisiblePosition&);
 bool operator<(const VisiblePosition&, const VisiblePosition&);
 bool operator>(const VisiblePosition&, const VisiblePosition&);
 bool operator<=(const VisiblePosition&, const VisiblePosition&);

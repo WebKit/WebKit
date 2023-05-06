@@ -31,6 +31,7 @@
 #include "StyleValidity.h"
 #include "TaskSource.h"
 #include "TreeScope.h"
+#include <compare>
 #include <wtf/CompactPointerTuple.h>
 #include <wtf/CompactUniquePtrTuple.h>
 #include <wtf/FixedVector.h>
@@ -745,38 +746,17 @@ private:
 
 bool connectedInSameTreeScope(const Node*, const Node*);
 
-// Designed to be used the same way as C++20 std::partial_ordering class.
-// FIXME: Consider putting this in a separate header.
-// FIXME: Once we can require C++20, replace with std::partial_ordering.
-class PartialOrdering {
-public:
-    static const PartialOrdering less;
-    static const PartialOrdering equivalent;
-    static const PartialOrdering greater;
-    static const PartialOrdering unordered;
-
-    friend constexpr bool is_eq(PartialOrdering);
-    friend constexpr bool is_lt(PartialOrdering);
-    friend constexpr bool is_gt(PartialOrdering);
-
-private:
-    enum class Type : uint8_t { Less, Equivalent, Greater, Unordered };
-    constexpr PartialOrdering(Type type) : m_type { type } { }
-    Type m_type;
-};
-constexpr bool is_eq(PartialOrdering);
-constexpr bool is_lt(PartialOrdering);
-constexpr bool is_gt(PartialOrdering);
-constexpr bool is_neq(PartialOrdering);
-constexpr bool is_lteq(PartialOrdering);
-constexpr bool is_gteq(PartialOrdering);
+// FIXME: We should remove these but std::is_eq() / std::is_neq() are not available in
+// some of our SDKs yet (rdar://87314077).
+constexpr bool is_eq(std::partial_ordering cmp) { return cmp == 0; }
+constexpr bool is_neq(std::partial_ordering cmp) { return cmp != 0; }
 
 enum TreeType { Tree, ShadowIncludingTree, ComposedTree };
 template<TreeType = Tree> ContainerNode* parent(const Node&);
 template<TreeType = Tree> Node* commonInclusiveAncestor(const Node&, const Node&);
-template<TreeType = Tree> PartialOrdering treeOrder(const Node&, const Node&);
+template<TreeType = Tree> std::partial_ordering treeOrder(const Node&, const Node&);
 
-WEBCORE_EXPORT PartialOrdering treeOrderForTesting(TreeType, const Node&, const Node&);
+WEBCORE_EXPORT std::partial_ordering treeOrderForTesting(TreeType, const Node&, const Node&);
 
 #if ASSERT_ENABLED
 
@@ -894,41 +874,6 @@ inline void Node::setTreeScopeRecursively(TreeScope& newTreeScope)
     ASSERT(!m_deletionHasBegun);
     if (m_treeScope != &newTreeScope)
         moveTreeToNewScope(*this, *m_treeScope, newTreeScope);
-}
-
-inline constexpr PartialOrdering PartialOrdering::less(Type::Less);
-inline constexpr PartialOrdering PartialOrdering::equivalent(Type::Equivalent);
-inline constexpr PartialOrdering PartialOrdering::greater(Type::Greater);
-inline constexpr PartialOrdering PartialOrdering::unordered(Type::Unordered);
-
-constexpr bool is_eq(PartialOrdering ordering)
-{
-    return ordering.m_type == PartialOrdering::Type::Equivalent;
-}
-
-constexpr bool is_lt(PartialOrdering ordering)
-{
-    return ordering.m_type == PartialOrdering::Type::Less;
-}
-
-constexpr bool is_gt(PartialOrdering ordering)
-{
-    return ordering.m_type == PartialOrdering::Type::Greater;
-}
-
-constexpr bool is_neq(PartialOrdering ordering)
-{
-    return is_lt(ordering) || is_gt(ordering);
-}
-
-constexpr bool is_lteq(PartialOrdering ordering)
-{
-    return is_lt(ordering) || is_eq(ordering);
-}
-
-constexpr bool is_gteq(PartialOrdering ordering)
-{
-    return is_gt(ordering) || is_eq(ordering);
 }
 
 inline void EventTarget::ref()

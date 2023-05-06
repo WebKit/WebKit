@@ -2785,35 +2785,35 @@ static bool isSiblingSubsequent(const Node& siblingA, const Node& siblingB)
     return false;
 }
 
-template<TreeType treeType> PartialOrdering treeOrder(const Node& a, const Node& b)
+template<TreeType treeType> std::partial_ordering treeOrder(const Node& a, const Node& b)
 {
     if (&a == &b)
-        return PartialOrdering::equivalent;
+        return std::partial_ordering::equivalent;
     auto result = commonInclusiveAncestorAndChildren<treeType>(a, b);
     if (!result.commonAncestor)
-        return PartialOrdering::unordered;
+        return std::partial_ordering::unordered;
     if (!result.distinctAncestorA)
-        return PartialOrdering::less;
+        return std::partial_ordering::less;
     if (!result.distinctAncestorB)
-        return PartialOrdering::greater;
+        return std::partial_ordering::greater;
     bool isShadowRootA = result.distinctAncestorA->isShadowRoot();
     bool isShadowRootB = result.distinctAncestorB->isShadowRoot();
     if (isShadowRootA || isShadowRootB) {
         if (!isShadowRootB)
-            return PartialOrdering::less;
+            return std::partial_ordering::less;
         if (!isShadowRootA)
-            return PartialOrdering::greater;
+            return std::partial_ordering::greater;
         ASSERT_NOT_REACHED();
-        return PartialOrdering::unordered;
+        return std::partial_ordering::unordered;
     }
-    return isSiblingSubsequent(*result.distinctAncestorA, *result.distinctAncestorB) ? PartialOrdering::less : PartialOrdering::greater;
+    return isSiblingSubsequent(*result.distinctAncestorA, *result.distinctAncestorB) ? std::partial_ordering::less : std::partial_ordering::greater;
 }
 
-template PartialOrdering treeOrder<Tree>(const Node&, const Node&);
-template PartialOrdering treeOrder<ShadowIncludingTree>(const Node&, const Node&);
-template PartialOrdering treeOrder<ComposedTree>(const Node&, const Node&);
+template std::partial_ordering treeOrder<Tree>(const Node&, const Node&);
+template std::partial_ordering treeOrder<ShadowIncludingTree>(const Node&, const Node&);
+template std::partial_ordering treeOrder<ComposedTree>(const Node&, const Node&);
 
-PartialOrdering treeOrderForTesting(TreeType type, const Node& a, const Node& b)
+std::partial_ordering treeOrderForTesting(TreeType type, const Node& a, const Node& b)
 {
     switch (type) {
     case Tree:
@@ -2824,7 +2824,7 @@ PartialOrdering treeOrderForTesting(TreeType type, const Node& a, const Node& b)
         return treeOrder<ComposedTree>(a, b);
     }
     ASSERT_NOT_REACHED();
-    return PartialOrdering::unordered;
+    return std::partial_ordering::unordered;
 }
 
 TextStream& operator<<(TextStream& ts, const Node& node)
