@@ -41,7 +41,7 @@ struct LineCandidate;
 
 class LineBuilder {
 public:
-    LineBuilder(InlineFormattingContext&, InlineLayoutState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, std::optional<IntrinsicWidthMode> = std::nullopt);
+    LineBuilder(const InlineFormattingContext&, InlineLayoutState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, std::optional<IntrinsicWidthMode> = std::nullopt);
     LineBuilder(const InlineFormattingContext&, const InlineItems&, std::optional<IntrinsicWidthMode>);
 
     struct LineInput {
@@ -144,7 +144,6 @@ private:
     bool isFirstFormattedLine() const { return !m_previousLine.has_value(); }
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
-    InlineFormattingState* formattingState() { return m_inlineFormattingState; }
     InlineLayoutState* inlineLayoutState() const { return m_inlineLayoutState; }
     BlockLayoutState* blockLayoutState() const { return inlineLayoutState() ? &m_inlineLayoutState->parentBlockLayoutState() : nullptr; }
     FloatingState* floatingState() { return blockLayoutState() ? &blockLayoutState()->floatingState() : nullptr; }
@@ -157,7 +156,6 @@ private:
     std::optional<PreviousLine> m_previousLine { };
     std::optional<IntrinsicWidthMode> m_intrinsicWidthMode;
     const InlineFormattingContext& m_inlineFormattingContext;
-    InlineFormattingState* m_inlineFormattingState { nullptr };
     InlineLayoutState* m_inlineLayoutState { nullptr };
     std::optional<HorizontalConstraints> m_rootHorizontalConstraints;
 

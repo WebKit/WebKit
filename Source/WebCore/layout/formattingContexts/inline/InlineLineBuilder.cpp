@@ -334,10 +334,9 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
     return boxGeometry.marginBoxWidth();
 }
 
-LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, InlineLayoutState& inlineLayoutState, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems, std::optional<IntrinsicWidthMode> intrinsicWidthMode)
+LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, InlineLayoutState& inlineLayoutState, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems, std::optional<IntrinsicWidthMode> intrinsicWidthMode)
     : m_intrinsicWidthMode(intrinsicWidthMode)
     , m_inlineFormattingContext(inlineFormattingContext)
-    , m_inlineFormattingState(&inlineFormattingContext.formattingState())
     , m_inlineLayoutState(&inlineLayoutState)
     , m_rootHorizontalConstraints(rootHorizontalConstraints)
     , m_line(inlineFormattingContext)
