@@ -403,7 +403,7 @@ public:
     AXComputedObjectAttributeCache* computedObjectAttributeCache() { return m_computedObjectAttributeCache.get(); }
 
     Document& document() const { return m_document; }
-    std::optional<PageIdentifier> pageID() const { return m_pageID; }
+    constexpr const std::optional<PageIdentifier>& pageID() const { return m_pageID; }
 
 #if PLATFORM(MAC)
     static void setShouldRepostNotificationsForTests(bool value);
@@ -431,9 +431,13 @@ public:
     WEBCORE_EXPORT static bool usedOnAXThread();
 private:
     static bool clientSupportsIsolatedTree();
+    static bool isTestClient();
     AXCoreObject* isolatedTreeRootObject();
+    // Propagates the root of the isolated tree back into the Core and WebKit.
+    void setIsolatedTreeRoot(AXCoreObject*);
     void setIsolatedTreeFocusedObject(Node*);
-    RefPtr<AXIsolatedTree> getOrCreateIsolatedTree() const;
+    RefPtr<AXIsolatedTree> getOrCreateIsolatedTree();
+    void buildIsolatedTree();
     void updateIsolatedTree(AccessibilityObject&, AXNotification);
     void updateIsolatedTree(AccessibilityObject*, AXNotification);
     void updateIsolatedTree(const Vector<std::pair<RefPtr<AccessibilityObject>, AXNotification>>&);
@@ -610,6 +614,7 @@ private:
     std::optional<std::pair<WeakPtr<Node, WeakPtrImplWithEventTargetData>, WeakPtr<Node, WeakPtrImplWithEventTargetData>>> m_deferredFocusedNodeChange;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    Timer m_buildIsolatedTreeTimer;
     bool m_deferredRegenerateIsolatedTree { false };
 #endif
     bool m_isSynchronizingSelection { false };

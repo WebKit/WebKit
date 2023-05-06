@@ -664,6 +664,12 @@ bool AXObjectCache::clientSupportsIsolatedTree()
         || client == kAXClientTypeXCTest);
 }
 
+bool AXObjectCache::isTestClient()
+{
+    auto client = _AXGetClientForCurrentRequestUntrusted();
+    return UNLIKELY(client == kAXClientTypeWebKitTesting || client == kAXClientTypeXCTest);
+}
+
 bool AXObjectCache::isIsolatedTreeEnabled()
 {
     static std::atomic<bool> enabled { false };

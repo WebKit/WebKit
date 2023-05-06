@@ -229,6 +229,9 @@ AXObjectCache::AXObjectCache(Document& document)
     , m_liveRegionChangedPostTimer(*this, &AXObjectCache::liveRegionChangedNotificationPostTimerFired)
     , m_currentModalElement(nullptr)
     , m_performCacheUpdateTimer(*this, &AXObjectCache::performCacheUpdateTimerFired)
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    , m_buildIsolatedTreeTimer(*this, &AXObjectCache::buildIsolatedTree)
+#endif
 {
     AXTRACE(makeString("AXObjectCache::AXObjectCache 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
 #ifndef NDEBUG
@@ -824,21 +827,45 @@ AXCoreObject* AXObjectCache::rootObject()
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree() const
+RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree()
 {
     AXTRACE(makeString("AXObjectCache::getOrCreateIsolatedTree 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
+    ASSERT(isMainThread());
+
     if (!m_pageID)
         return nullptr;
 
     RefPtr tree = AXIsolatedTree::treeForPageID(m_pageID);
-    if (!tree) {
-        tree = Accessibility::retrieveValueFromMainThread<RefPtr<AXIsolatedTree>>([this] () -> RefPtr<AXIsolatedTree> {
-            return AXIsolatedTree::create(const_cast<AXObjectCache*>(this));
-        });
-        AXObjectCache::initializeSecondaryAXThread();
-    }
+    if (tree)
+        return tree;
+
+    // A new isolated tree needs to be created. This method can be called as the result of a client request. Since creating the isolated tree can take long,
+    // especially for large documents, for real clients we build a temporary "empty" isolated tree consisting only of the ScrollView and the WebArea objects.
+    // Then we schedule building the entire isolated tree on a Timer.
+    // For test clients, LayoutTests or XCTests, build the whole isolated tree.
+    if (!isTestClient()) {
+        tree = AXIsolatedTree::createEmpty(this);
+        if (!m_buildIsolatedTreeTimer.isActive())
+            m_buildIsolatedTreeTimer.startOneShot(0_s);
+    } else
+        tree = AXIsolatedTree::create(this);
+    setIsolatedTreeRoot(tree->rootNode().get());
+    AXObjectCache::initializeSecondaryAXThread();
 
     return tree;
+}
+
+void AXObjectCache::buildIsolatedTree()
+{
+    m_buildIsolatedTreeTimer.stop();
+
+    if (!m_pageID)
+        return;
+
+    auto tree = AXIsolatedTree::create(this);
+    setIsolatedTreeRoot(tree->rootNode().get());
+
+    postPlatformNotification(tree->rootNode().get(), AXNotification::AXLoadComplete);
 }
 
 AXCoreObject* AXObjectCache::isolatedTreeRootObject()
@@ -849,6 +876,13 @@ AXCoreObject* AXObjectCache::isolatedTreeRootObject()
     // Should not get here, couldn't create the IsolatedTree.
     ASSERT_NOT_REACHED();
     return nullptr;
+}
+
+void AXObjectCache::setIsolatedTreeRoot(AXCoreObject* root)
+{
+    ASSERT(isMainThread());
+    if (auto* frame = m_document.frame())
+        frame->loader().client().setAXIsolatedTreeRoot(root);
 }
 #endif
 

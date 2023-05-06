@@ -66,6 +66,31 @@ void AXIsolatedTree::queueForDestruction()
     m_queuedForDestruction = true;
 }
 
+Ref<AXIsolatedTree> AXIsolatedTree::createEmpty(AXObjectCache* axObjectCache)
+{
+    AXTRACE("AXIsolatedTree::createEmpty"_s);
+    ASSERT(isMainThread());
+    ASSERT(axObjectCache && axObjectCache->pageID());
+
+    auto tree = adoptRef(*new AXIsolatedTree(axObjectCache));
+
+    auto* axRoot = axObjectCache->getOrCreate(axObjectCache->document().view());
+    if (axRoot) {
+        tree->m_unresolvedPendingAppends.set(axRoot->objectID(), AttachWrapper::OnMainThread);
+        tree->collectNodeChangesForChildrenMatching(*axRoot, [] (const auto& object) {
+            return object.roleValue() == AccessibilityRole::WebArea;
+        });
+        tree->queueRemovalsAndUnresolvedChanges({ });
+    }
+
+    tree->updateLoadingProgress(axObjectCache->loadingProgress());
+
+    // Now that the tree is ready to take client requests, add it to the tree maps so that it can be found.
+    storeTree(axObjectCache, tree);
+
+    return tree;
+}
+
 Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache* axObjectCache)
 {
     AXTRACE("AXIsolatedTree::create"_s);
@@ -83,23 +108,26 @@ Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache* axObjectCache)
 
     // Generate the nodes of the tree and set its root and focused objects.
     // For this, we need the root and focused objects of the AXObject tree.
-    auto* axRoot = axObjectCache->getOrCreate(axObjectCache->document().view());
+    auto* axRoot = axObjectCache->getOrCreate(document.view());
     if (axRoot)
         tree->generateSubtree(*axRoot);
-    auto* axFocus = axObjectCache->focusedObjectForPage(axObjectCache->document().page());
+    auto* axFocus = axObjectCache->focusedObjectForPage(document.page());
     if (axFocus)
         tree->setFocusedNodeID(axFocus->objectID());
 
-    // Now that the tree is ready to take client requests, add it to the tree
-    // maps so that it can be found.
-    AXTreeStore::add(tree->treeID(), tree.ptr());
-    auto pageID = axObjectCache->pageID();
-    Locker locker { s_storeLock };
-    ASSERT(!treePageCache().contains(*pageID));
-    treePageCache().set(*pageID, tree.copyRef());
     tree->updateLoadingProgress(axObjectCache->loadingProgress());
 
+    // Now that the tree is ready to take client requests, add it to the tree maps so that it can be found.
+    storeTree(axObjectCache, tree);
+
     return tree;
+}
+
+void AXIsolatedTree::storeTree(AXObjectCache* axObjectCache, const Ref<AXIsolatedTree>& tree)
+{
+    AXTreeStore::set(tree->treeID(), tree.ptr());
+    Locker locker { s_storeLock };
+    treePageCache().set(*axObjectCache->pageID(), tree.copyRef());
 }
 
 void AXIsolatedTree::removeTreeForPageID(PageIdentifier pageID)
@@ -301,6 +329,28 @@ void AXIsolatedTree::queueRemovalsAndUnresolvedChanges(Vector<AXID>&& subtreeRem
     for (const auto& resolvedAppend : resolvedAppends)
         queueChange(resolvedAppend);
     queueRemovalsLocked(WTFMove(subtreeRemovals));
+}
+
+template <typename F>
+void AXIsolatedTree::collectNodeChangesForChildrenMatching(AccessibilityObject& axObject, F&& matches)
+{
+    ASSERT(isMainThread());
+
+    auto axChildrenCopy = axObject.children();
+    Vector<AXID> axChildrenIDs;
+    axChildrenIDs.reserveInitialCapacity(axChildrenCopy.size());
+    for (const auto& axChild : axChildrenCopy) {
+        if (!matches(*axChild))
+            continue;
+
+        axChildrenIDs.uncheckedAppend(axChild->objectID());
+        m_unresolvedPendingAppends.set(axChild->objectID(), AttachWrapper::OnMainThread);
+    }
+    axChildrenIDs.shrinkToFit();
+
+    // Update the m_nodeMap.
+    auto* axParent = axObject.parentObjectUnignored();
+    m_nodeMap.set(axObject.objectID(), ParentChildrenIDs { axParent ? axParent->objectID() : AXID(), WTFMove(axChildrenIDs) });
 }
 
 void AXIsolatedTree::collectNodeChangesForSubtree(AXCoreObject& axObject)

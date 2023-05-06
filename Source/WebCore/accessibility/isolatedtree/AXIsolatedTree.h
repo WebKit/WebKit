@@ -253,6 +253,8 @@ class AXIsolatedTree : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AX
     friend void streamIsolatedSubtreeOnMainThread(TextStream&, const AXIsolatedTree&, AXID, const OptionSet<AXStreamOptions>&);
 public:
     static Ref<AXIsolatedTree> create(AXObjectCache*);
+    // Creates a tree consisting of only the Scrollview and the WebArea objects. This tree is used as a temporary placeholder while the whole tree is being built.
+    static Ref<AXIsolatedTree> createEmpty(AXObjectCache*);
     virtual ~AXIsolatedTree();
 
     static void removeTreeForPageID(PageIdentifier);
@@ -312,6 +314,7 @@ public:
 
 private:
     AXIsolatedTree(AXObjectCache*);
+    static void storeTree(AXObjectCache*, const Ref<AXIsolatedTree>&);
 
     // Queue this isolated tree up to destroy itself on the secondary thread.
     // We can't destroy the tree on the main-thread (by removing all `Ref`s to it)
@@ -324,6 +327,8 @@ private:
     std::optional<NodeChange> nodeChangeForObject(Ref<AccessibilityObject>, AttachWrapper = AttachWrapper::OnMainThread);
     void collectNodeChangesForSubtree(AXCoreObject&);
     bool isCollectingNodeChanges() const { return m_collectingNodeChangesAtTreeLevel > 0; }
+    template <typename F>
+    void collectNodeChangesForChildrenMatching(AccessibilityObject&, F&&);
     void queueChange(const NodeChange&) WTF_REQUIRES_LOCK(m_changeLogLock);
     void queueRemovals(Vector<AXID>&&);
     void queueRemovalsLocked(Vector<AXID>&&) WTF_REQUIRES_LOCK(m_changeLogLock);
