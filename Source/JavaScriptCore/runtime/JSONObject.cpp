@@ -38,6 +38,7 @@
 #include "ObjectConstructorInlines.h"
 #include "PropertyNameArray.h"
 #include "VMInlines.h"
+#include <charconv>
 #include <wtf/text/EscapedFormsForJSON.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -523,7 +524,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
                 m_size = m_propertyNames->propertyNameVector().size();
             } else if (m_object->structure() == m_structure && canPerformFastPropertyNameEnumerationForJSONStringifyWithSideEffect(m_structure)) {
                 m_hasFastObjectProperties = m_structure->canPerformFastPropertyEnumeration();
-                m_structure->forEachProperty(vm, [&](const PropertyTableEntry& entry) -> bool {
+                m_structure->forEachProperty(vm, [&](const auto& entry) -> bool {
                     if (entry.attributes() & PropertyAttribute::DontEnum)
                         return true;
 
@@ -973,13 +974,13 @@ void FastStringifier::append(JSValue value)
 
     if (value.isInt32()) {
         auto number = value.asInt32();
-        auto length = lengthOfIntegerAsString(number);
-        if (UNLIKELY(!hasRemainingCapacity(length))) {
+        char* cursor = reinterpret_cast<char*>(m_buffer) + m_length;
+        auto result = std::to_chars(cursor, reinterpret_cast<char*>(m_buffer + sizeof(m_buffer)), number);
+        if (UNLIKELY(result.ec == std::errc::value_too_large)) {
             recordBufferFull();
             return;
         }
-        writeIntegerToBuffer(number, &m_buffer[m_length]);
-        m_length += length;
+        m_length += result.ptr - cursor;
         return;
     }
 
@@ -1021,7 +1022,8 @@ void FastStringifier::append(JSValue value)
             recordBufferFull();
             return;
         }
-        m_buffer[m_length] = '"';
+        auto* cursor = m_buffer + m_length;
+        *cursor++ = '"';
         auto* characters = string.characters8();
         for (unsigned i = 0; i < stringLength; ++i) {
             auto character = characters[i];
@@ -1029,9 +1031,9 @@ void FastStringifier::append(JSValue value)
                 recordFailure("string character needs escaping"_s);
                 return;
             }
-            m_buffer[m_length + 1 + i] = character;
+            *cursor++ = character;
         }
-        m_buffer[m_length + 1 + stringLength] = '"';
+        *cursor = '"';
         m_length += 1 + stringLength + 1;
         return;
     }
@@ -1068,7 +1070,7 @@ void FastStringifier::append(JSValue value)
             recordFastPropertyEnumerationFailure(object);
             return;
         }
-        structure.forEachProperty(m_vm, [&](const PropertyTableEntry& entry) -> bool {
+        structure.forEachProperty(m_vm, [&](const auto& entry) -> bool {
             if (entry.attributes() & PropertyAttribute::DontEnum)
                 return true;
             auto& name = *entry.key();
