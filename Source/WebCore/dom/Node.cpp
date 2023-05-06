@@ -765,12 +765,12 @@ const AtomString& Node::namespaceURI() const
 
 bool Node::isContentEditable() const
 {
-    return computeEditability(UserSelectAllDoesNotAffectEditability, ShouldUpdateStyle::Update) != Editability::ReadOnly;
+    return computeEditability(UserSelectAllTreatment::Editable, ShouldUpdateStyle::Update) != Editability::ReadOnly;
 }
 
 bool Node::isContentRichlyEditable() const
 {
-    return computeEditability(UserSelectAllIsAlwaysNonEditable, ShouldUpdateStyle::Update) == Editability::CanEditRichly;
+    return computeEditability(UserSelectAllTreatment::NotEditable, ShouldUpdateStyle::Update) == Editability::CanEditRichly;
 }
 
 void Node::inspect()
@@ -787,7 +787,7 @@ static Node::Editability computeEditabilityFromComputedStyle(const RenderStyle& 
 
     // Elements with user-select: all style are considered atomic
     // therefore non editable.
-    if (treatment == Node::UserSelectAllIsAlwaysNonEditable && style.effectiveUserSelect() == UserSelect::All)
+    if (treatment == Node::UserSelectAllTreatment::NotEditable && style.effectiveUserSelect() == UserSelect::All)
         return Node::Editability::ReadOnly;
 
     if (pageIsEditable == PageIsEditable::Yes)
@@ -2561,9 +2561,9 @@ Node::Editability Node::computeEditabilityForMouseClickEvents(const RenderStyle*
 {
     // FIXME: Why is the iOS code path different from the non-iOS code path?
 #if PLATFORM(IOS_FAMILY)    
-    auto userSelectAllTreatment = UserSelectAllDoesNotAffectEditability;
+    auto userSelectAllTreatment = UserSelectAllTreatment::Editable;
 #else
-    auto userSelectAllTreatment = UserSelectAllIsAlwaysNonEditable;
+    auto userSelectAllTreatment = UserSelectAllTreatment::NotEditable;
 #endif
 
     return computeEditabilityWithStyle(style, userSelectAllTreatment, style ? ShouldUpdateStyle::DoNotUpdate : ShouldUpdateStyle::Update);

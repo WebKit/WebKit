@@ -124,7 +124,7 @@ static bool isEditableToAccessibility(const Node& node)
 
 static bool computeEditability(const Node& node, EditableType editableType, Node::ShouldUpdateStyle shouldUpdateStyle)
 {
-    if (node.computeEditability(Node::UserSelectAllIsAlwaysNonEditable, shouldUpdateStyle) != Node::Editability::ReadOnly)
+    if (node.computeEditability(Node::UserSelectAllTreatment::NotEditable, shouldUpdateStyle) != Node::Editability::ReadOnly)
         return true;
 
     switch (editableType) {

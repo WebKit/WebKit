@@ -349,11 +349,8 @@ public:
 
     WEBCORE_EXPORT void inspect();
 
-    enum UserSelectAllTreatment {
-        UserSelectAllDoesNotAffectEditability,
-        UserSelectAllIsAlwaysNonEditable
-    };
-    bool hasEditableStyle(UserSelectAllTreatment treatment = UserSelectAllIsAlwaysNonEditable) const
+    enum class UserSelectAllTreatment : bool { NotEditable, Editable };
+    bool hasEditableStyle(UserSelectAllTreatment treatment = UserSelectAllTreatment::NotEditable) const
     {
         return computeEditability(treatment, ShouldUpdateStyle::DoNotUpdate) != Editability::ReadOnly;
     }
@@ -361,7 +358,7 @@ public:
     // FIXME: Replace every use of this function by helpers in Editing.h
     bool hasRichlyEditableStyle() const
     {
-        return computeEditability(UserSelectAllIsAlwaysNonEditable, ShouldUpdateStyle::DoNotUpdate) == Editability::CanEditRichly;
+        return computeEditability(UserSelectAllTreatment::NotEditable, ShouldUpdateStyle::DoNotUpdate) == Editability::CanEditRichly;
     }
 
     enum class Editability { ReadOnly, CanEditPlainText, CanEditRichly };
