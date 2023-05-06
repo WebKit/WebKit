@@ -1333,6 +1333,11 @@ void HTMLElement::checkAndPossiblyClosePopoverStackInternal()
 // https://html.spec.whatwg.org/#popover-focusing-steps
 static void runPopoverFocusingSteps(HTMLElement& popover)
 {
+    if (auto* dialog = dynamicDowncast<HTMLDialogElement>(popover)) {
+        dialog->runFocusingSteps();
+        return;
+    }
+
     RefPtr control = popover.hasAttribute(autofocusAttr) ? &popover : popover.findAutofocusDelegate();
 
     if (!control)

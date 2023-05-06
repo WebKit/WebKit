@@ -63,6 +63,8 @@ ExceptionOr<void> HTMLDialogElement::show()
 
     m_previouslyFocusedElement = document().focusedElement();
 
+    document().hideAllPopoversUntil(nullptr, FocusPreviousElement::No, FireEvents::No);
+
     runFocusingSteps();
     return { };
 }
@@ -91,6 +93,8 @@ ExceptionOr<void> HTMLDialogElement::showModal()
         addToTopLayer();
 
     m_previouslyFocusedElement = document().focusedElement();
+
+    document().hideAllPopoversUntil(nullptr, FocusPreviousElement::No, FireEvents::No);
 
     runFocusingSteps();
 
@@ -134,9 +138,11 @@ void HTMLDialogElement::queueCancelTask()
 // https://html.spec.whatwg.org/multipage/interactive-elements.html#dialog-focusing-steps
 void HTMLDialogElement::runFocusingSteps()
 {
-    document().hideAllPopoversUntil(nullptr, FocusPreviousElement::No, FireEvents::No);
-
-    RefPtr control = findFocusDelegate();
+    RefPtr<Element> control;
+    if (m_isModal && hasAttributeWithoutSynchronization(HTMLNames::autofocusAttr))
+        control = this;
+    if (!control)
+        control = findFocusDelegate();
 
     if (!control)
         control = this;
