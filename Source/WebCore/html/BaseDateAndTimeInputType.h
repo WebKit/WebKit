@@ -52,6 +52,7 @@ public:
     bool typeMismatchFor(const String&) const final;
     bool valueMissing(const String&) const final;
     bool typeMismatch() const final;
+    bool hasBadInput() const final;
 
 protected:
     enum class DateTimeFormatValidationResults : uint8_t {

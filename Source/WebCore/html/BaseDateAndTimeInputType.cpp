@@ -168,6 +168,12 @@ bool BaseDateAndTimeInputType::typeMismatch() const
     return typeMismatchFor(element()->value());
 }
 
+bool BaseDateAndTimeInputType::hasBadInput() const
+{
+    ASSERT(element());
+    return element()->value().isEmpty() && m_dateTimeEditElement && m_dateTimeEditElement->editableFieldsHaveValues();
+}
+
 Decimal BaseDateAndTimeInputType::defaultValueForStepUp() const
 {
     double ms = WallTime::now().secondsSinceEpoch().milliseconds();
