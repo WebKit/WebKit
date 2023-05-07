@@ -53,7 +53,7 @@ class RTCPeerConnectionHandler;
 class RTCDataChannel final : public RefCounted<RTCDataChannel>, public ActiveDOMObject, public RTCDataChannelHandlerClient, public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(RTCDataChannel);
 public:
-    static Ref<RTCDataChannel> create(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&);
+    static Ref<RTCDataChannel> create(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&, RTCDataChannelState);
     static Ref<RTCDataChannel> create(ScriptExecutionContext&, RTCDataChannelIdentifier, String&&, RTCDataChannelInit&&, RTCDataChannelState);
 
     bool ordered() const { return *m_options.ordered; }
@@ -89,9 +89,10 @@ public:
     using RefCounted<RTCDataChannel>::deref;
 
     WEBCORE_EXPORT static std::unique_ptr<RTCDataChannelHandler> handlerFromIdentifier(RTCDataChannelLocalIdentifier);
+    void fireOpenEventIfNeeded();
 
 private:
-    RTCDataChannel(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&);
+    RTCDataChannel(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&, RTCDataChannelState);
 
     static NetworkSendQueue createMessageQueue(ScriptExecutionContext&, RTCDataChannel&);
 

@@ -73,8 +73,10 @@ RTCDataChannelInit LibWebRTCDataChannelHandler::dataChannelInit() const
 
     RTCDataChannelInit init;
     init.ordered = m_channel->ordered();
-    init.maxPacketLifeTime = m_channel->maxRetransmitTime();
-    init.maxRetransmits = m_channel->maxRetransmits();
+    if (auto maxPacketLifeTime = m_channel->maxPacketLifeTime())
+        init.maxPacketLifeTime = *maxPacketLifeTime;
+    if (auto maxRetransmitsOpt = m_channel->maxRetransmitsOpt())
+        init.maxRetransmits = *maxRetransmitsOpt;
     init.protocol = fromStdString(protocol);
     init.negotiated = m_channel->negotiated();
     init.id = m_channel->id();
