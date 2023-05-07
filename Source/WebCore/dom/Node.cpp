@@ -853,7 +853,7 @@ RenderBoxModelObject* Node::renderBoxModelObject() const
 }
     
 LayoutRect Node::renderRect(bool* isReplaced)
-{    
+{
     RenderObject* hitRenderer = this->renderer();
     if (!hitRenderer && is<HTMLAreaElement>(*this)) {
         auto& area = downcast<HTMLAreaElement>(*this);
@@ -869,6 +869,7 @@ LayoutRect Node::renderRect(bool* isReplaced)
         }
         renderer = renderer->parent();
     }
+    *isReplaced = false;
     return LayoutRect();    
 }
 
