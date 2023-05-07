@@ -249,8 +249,8 @@ public:
     void onPaint(const RenderObject&, IntRect&&) const;
     void onPaint(const Widget&, IntRect&&) const;
 #else
-    void onPaint(const RenderObject&, IntRect&&) const { ASSERT_NOT_REACHED(); }
-    void onPaint(const Widget&, IntRect&&) const { ASSERT_NOT_REACHED(); }
+    NO_RETURN_DUE_TO_ASSERT void onPaint(const RenderObject&, IntRect&&) const { ASSERT_NOT_REACHED(); }
+    NO_RETURN_DUE_TO_ASSERT void onPaint(const Widget&, IntRect&&) const { ASSERT_NOT_REACHED(); }
 #endif
 
     // Text marker utilities.
