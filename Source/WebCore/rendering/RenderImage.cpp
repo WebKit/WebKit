@@ -63,6 +63,7 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
 #include "Settings.h"
+#include "TextPainter.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
 
@@ -543,29 +544,51 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
             }
 
             if (!m_altText.isEmpty()) {
-                auto& font = style().fontCascade();
-                auto& fontMetrics = font.metricsOfPrimaryFont();
+                auto& style = this->style();
+                auto& fontCascade = style.fontCascade();
+                auto& fontMetrics = fontCascade.metricsOfPrimaryFont();
+                auto isHorizontal = style.isHorizontalWritingMode();
                 auto encodedDisplayString = document().displayStringModifiedByEncoding(m_altText);
-                auto textRun = RenderBlock::constructTextRun(encodedDisplayString, style(), ExpansionBehavior::defaultBehavior(), RespectDirection | RespectDirectionOverride);
-                auto textWidth = LayoutUnit { font.width(textRun) };
+                auto textRun = RenderBlock::constructTextRun(encodedDisplayString, style, ExpansionBehavior::defaultBehavior(), RespectDirection | RespectDirectionOverride);
+                auto textWidth = LayoutUnit { fontCascade.width(textRun) };
 
                 auto hasRoomForAltText = [&] {
-                    // Only draw the alt text if it'll fit within the content box,
-                    // and only if it fits above the error image.
-                    if (usableSize.width() < textWidth)
+                    // Only draw the alt text if it fits within the content box (content width) and above the error image (content height).
+                    // Error picture is always visually below the text regardless of writing direction.
+                    auto availableLogicalWidth = isHorizontal ? usableSize.width() : (errorPictureDrawn ? imageOffset.height() : usableSize.height());
+                    if (availableLogicalWidth < textWidth)
                         return false;
-                    return errorPictureDrawn ? fontMetrics.height() <= imageOffset.height() : usableSize.height() >= fontMetrics.height();
+                    auto availableLogicalHeight = isHorizontal ? (errorPictureDrawn ? imageOffset.height() : usableSize.height()) : usableSize.width();
+                    return availableLogicalHeight >= fontMetrics.height();
                 };
                 if (hasRoomForAltText()) {
-                    auto altTextLocation = [&]() -> LayoutPoint {
-                        auto contentHorizontalOffset = LayoutUnit { leftBorder + leftPadding + (paddingWidth / 2) - missingImageBorderWidth };
-                        auto contentVerticalOffset = LayoutUnit { topBorder + topPadding + fontMetrics.ascent() + (paddingHeight / 2) - missingImageBorderWidth };
-                        if (!style().isLeftToRightDirection())
-                            contentHorizontalOffset += contentSize.width() - textWidth;
-                        return paintOffset + LayoutPoint { contentHorizontalOffset, contentVerticalOffset };
-                    };
-                    context.setFillColor(style().visitedDependentColorWithColorFilter(CSSPropertyColor));
-                    context.drawBidiText(font, textRun, altTextLocation());
+                    context.setFillColor(style.visitedDependentColorWithColorFilter(CSSPropertyColor));
+                    if (isHorizontal) {
+                        auto altTextLocation = [&]() -> LayoutPoint {
+                            auto contentHorizontalOffset = LayoutUnit { leftBorder + leftPadding + (paddingWidth / 2) - missingImageBorderWidth };
+                            auto contentVerticalOffset = LayoutUnit { topBorder + topPadding + fontMetrics.ascent() + (paddingHeight / 2) - missingImageBorderWidth };
+                            if (!style.isLeftToRightDirection())
+                                contentHorizontalOffset += contentSize.width() - textWidth;
+                            return paintOffset + LayoutPoint { contentHorizontalOffset, contentVerticalOffset };
+                        };
+                        context.drawBidiText(fontCascade, textRun, altTextLocation());
+                    } else {
+                        // FIXME: TextBoxPainter has this logic already, maybe we should transition to some painter class.
+                        auto contentLogicalHeight = fontMetrics.height();
+                        auto adjustedPaintOffset = LayoutPoint { paintOffset.x(), paintOffset.y() - contentLogicalHeight };
+
+                        auto visualLeft = size().width() / 2 - contentLogicalHeight / 2;
+                        auto visualRight = visualLeft + contentLogicalHeight;
+                        if (style.isFlippedBlocksWritingMode())
+                            visualLeft = size().width() - visualRight;
+                        visualLeft += adjustedPaintOffset.x();
+
+                        auto rotationRect = LayoutRect { visualLeft, adjustedPaintOffset.y(), textWidth, contentLogicalHeight };
+                        context.concatCTM(rotation(rotationRect, Clockwise));
+                        auto textOrigin = LayoutPoint { visualLeft, adjustedPaintOffset.y() + fontCascade.metricsOfPrimaryFont().ascent() };
+                        context.drawBidiText(fontCascade, textRun, textOrigin);
+                        context.concatCTM(rotation(rotationRect, Counterclockwise));
+                    }
                 }
             }
         }
