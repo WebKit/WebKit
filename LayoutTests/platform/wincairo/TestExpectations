@@ -437,7 +437,12 @@ webgl/tex-2d-video-no-change-wrap.html [ Skip ]
 fast/harness/platform-layer-tree-as-text.html [ Skip ]
 
 # OffscreenCanvas isn't supported yet
-fast/canvas/offscreen-giant-transfer-to-imagebitmap.html [ Failure ]
+fast/canvas/offscreen-backing-store-attached.html [ Skip ]
+fast/canvas/offscreen-border.html [ Skip ]
+fast/canvas/offscreen-clipped.html [ Skip ]
+fast/canvas/offscreen-enabled.html [ Skip ]
+fast/canvas/offscreen-giant-transfer-to-imagebitmap.html [ Skip ]
+fast/canvas/offscreen-scaling.html [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # These areas are not implemented well on WinCairo
@@ -2072,7 +2077,6 @@ fast/events/domactivate-sets-underlying-click-event-as-handled.html [ Skip ] # F
 fast/events/dropzone-004.html [ Failure ]
 fast/events/dropzone-005.html [ Failure ]
 fast/events/fire-mousedown-while-pressing-mouse-button.html [ Failure ]
-fast/events/focus-label-legend-elements-with-tab.html [ Failure ]
 fast/events/frame-tab-focus.html [ Failure ]
 fast/events/ime-composition-events-001.html [ Failure ]
 fast/events/ime-compositionend-on-selection-change.html [ Failure ]
@@ -2661,7 +2665,6 @@ transforms/3d/point-mapping/3d-point-mapping-2.html [ Failure ]
 fast/css/focus-ring-continuations.html [ Failure ]
 
 editing/selection/shift-click-live-range.html [ Failure ]
-fast/canvas/offscreen-enabled.html [ Failure ]
 
 animations/no-style-recalc-during-accelerated-animation.html [ Failure ]
 editing/deleting/delete-ligature-003.html [ Failure ]
@@ -2804,5 +2807,3 @@ fast/css/scrollbar-dynamic-style-change.html [ ImageOnlyFailure ]
 fast/dynamic/out-of-flow-counter-do-not-update.html [ ImageOnlyFailure ]
 
 webkit.org/b/253868 js/ShadowRealm-iframe-detach.html [ Timeout Pass ]
-
-fast/canvas/offscreen-scaling.html [ ImageOnlyFailure ]
