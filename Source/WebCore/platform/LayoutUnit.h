@@ -79,10 +79,6 @@ public:
     {
         m_value = clampTo<int>(value * kFixedPointDenominator);
     }
-    explicit LayoutUnit(float value)
-    {
-        m_value = clampToInteger(value * kFixedPointDenominator);
-    }
     explicit LayoutUnit(double value)
     {
         m_value = clampToInteger(value * kFixedPointDenominator);
