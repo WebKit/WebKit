@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<body>
+<script src='../../resources/js-test.js'></script>
+<script>
+description("Test a gradient stored on the state stack does not get garbage collected. Test passes if it does not crash.");
+jsTestIsAsync = true;
+window.onload = function() {
+    let context = document.getElementById('c').getContext('2d');
+    if (true) {
+        let gradient = context.createLinearGradient(0, 0, 75, 75);
+        gradient.addColorStop(0, 'red');
+        gradient.addColorStop(0.33, 'white');
+        gradient.addColorStop(0.67, 'white');
+        gradient.addColorStop(1, 'blue');
+        context.scale(2,2);
+        context.beginPath();
+        context.rect(0,0,75,75);
+        context.clip();
+        context.fillStyle = gradient;
+        context.fillRect(0,0,30,30);
+        context.fillRect(50,50,30,30);
+        context.save();
+    }
+    context.fillStyle = 'green';
+    context.scale(0.5,0.5);
+    context.beginPath();
+    context.rect(0,0,5,5);
+    context.clip();
+    requestAnimationFrame(() => forceGC(context));
+};
+
+function forceGC(ctx) {
+  count = 0;
+  handle = setInterval(() => {
+      gc();
+      count++;
+      if (count > 500) {
+        clearInterval(handle);
+        drawSecondFrame(ctx);
+      }
+  }, 10);
+}
+
+function drawSecondFrame(ctx) {
+    ctx.restore();
+    let gradient = ctx.fillStyle;
+    // colors are type string, gradients and patterns are objects
+    if (typeof gradient !== typeof {})
+        testFailed("Should have restored a gradient from the state stack.");
+
+    ctx.fillRect(0,0,30,30);
+    ctx.fillRect(75,75,30,30);
+    if (window.testRunner) {
+        finishJSTest("PASS");
+    }
+}
+</script>
+<canvas id="c" width="300" height="300"></canvas>
+</body>
