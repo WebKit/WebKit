@@ -27,45 +27,16 @@
 #include "config.h"
 #include "SharedMemory.h"
 
-#include "ArgumentCoders.h"
 #include <wtf/RefPtr.h>
 
 namespace WebKit {
 
-bool SharedMemory::Handle::isNull() const
+bool SharedMemoryHandle::isNull() const
 {
     return !m_handle;
 }
 
-void SharedMemory::Handle::encode(IPC::Encoder& encoder) const
-{
-    encoder << static_cast<uint64_t>(m_size);
-    // Hand off ownership of our HANDLE to the receiving process. It will close it for us.
-    // FIXME: If the receiving process crashes before it receives the memory, the memory will be
-    // leaked. See <http://webkit.org/b/47502>.
-    encoder << WTFMove(m_handle);
-}
-
-bool SharedMemory::Handle::decode(IPC::Decoder& decoder, SharedMemory::Handle& handle)
-{
-    ASSERT_ARG(handle, !handle.m_handle);
-    ASSERT_ARG(handle, !handle.m_size);
-
-    uint64_t dataLength;
-    if (!decoder.decode(dataLength))
-        return false;
-    
-    auto processSpecificHandle = decoder.decode<Win32Handle>();
-    if (!processSpecificHandle)
-        return false;
-
-    handle.m_handle = WTFMove(*processSpecificHandle);
-    handle.m_size = dataLength;
-    return true;
-}
-
-
-void SharedMemory::Handle::clear()
+void SharedMemoryHandle::clear()
 {
     m_handle = { };
 }

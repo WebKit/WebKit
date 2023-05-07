@@ -64,64 +64,41 @@ static int toVMMemoryLedger(MemoryLedger memoryLedger)
 }
 #endif
 
-void SharedMemory::Handle::takeOwnershipOfMemory(MemoryLedger memoryLedger) const
+void SharedMemoryHandle::takeOwnershipOfMemory(MemoryLedger memoryLedger) const
 {
 #if HAVE(MACH_MEMORY_ENTRY)
     if (!m_handle)
         return;
 
     kern_return_t kr = mach_memory_entry_ownership(m_handle.sendRight(), mach_task_self(), toVMMemoryLedger(memoryLedger), 0);
-    RELEASE_LOG_ERROR_IF(kr != KERN_SUCCESS, VirtualMemory, "SharedMemory::Handle::takeOwnershipOfMemory: Failed ownership of shared memory. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
+    RELEASE_LOG_ERROR_IF(kr != KERN_SUCCESS, VirtualMemory, "SharedMemoryHandle::takeOwnershipOfMemory: Failed ownership of shared memory. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
 #else
     UNUSED_PARAM(memoryLedger);
 #endif
 }
 
-void SharedMemory::Handle::setOwnershipOfMemory(const WebCore::ProcessIdentity& processIdentity, MemoryLedger memoryLedger) const
+void SharedMemoryHandle::setOwnershipOfMemory(const WebCore::ProcessIdentity& processIdentity, MemoryLedger memoryLedger) const
 {
 #if HAVE(TASK_IDENTITY_TOKEN) && HAVE(MACH_MEMORY_ENTRY_OWNERSHIP_IDENTITY_TOKEN_SUPPORT)
     if (!m_handle)
         return;
 
     kern_return_t kr = mach_memory_entry_ownership(m_handle.sendRight(), processIdentity.taskIdToken(), toVMMemoryLedger(memoryLedger), 0);
-    RELEASE_LOG_ERROR_IF(kr != KERN_SUCCESS, VirtualMemory, "SharedMemory::Handle::setOwnershipOfMemory: Failed ownership of shared memory. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
+    RELEASE_LOG_ERROR_IF(kr != KERN_SUCCESS, VirtualMemory, "SharedMemoryHandle::setOwnershipOfMemory: Failed ownership of shared memory. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
 #else
     UNUSED_PARAM(memoryLedger);
     UNUSED_PARAM(processIdentity);
 #endif
 }
 
-bool SharedMemory::Handle::isNull() const
+bool SharedMemoryHandle::isNull() const
 {
     return !m_handle;
 }
 
-void SharedMemory::Handle::clear()
+void SharedMemoryHandle::clear()
 {
     *this = { };
-}
-
-void SharedMemory::Handle::encode(IPC::Encoder& encoder) const
-{
-    encoder << static_cast<uint64_t>(m_size);
-    encoder << WTFMove(m_handle); // FIXME: add rvalue encode.
-}
-
-bool SharedMemory::Handle::decode(IPC::Decoder& decoder, SharedMemoryHandle& handle)
-{
-    ASSERT(!handle.m_handle);
-    ASSERT(!handle.m_size);
-    uint64_t bufferSize;
-    if (!decoder.decode(bufferSize))
-        return false;
-
-    auto sendRight = decoder.decode<MachSendRight>();
-    if (UNLIKELY(!decoder.isValid()))
-        return false;
-    
-    handle.m_size = bufferSize;
-    handle.m_handle = WTFMove(*sendRight);
-    return true;
 }
 
 static inline void* toPointer(mach_vm_address_t address)

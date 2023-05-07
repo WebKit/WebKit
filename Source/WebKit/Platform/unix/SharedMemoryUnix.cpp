@@ -26,10 +26,10 @@
  */
 
 #include "config.h"
-#if USE(UNIX_DOMAIN_SOCKETS)
 #include "SharedMemory.h"
 
-#include "WebCoreArgumentCoders.h"
+#if USE(UNIX_DOMAIN_SOCKETS)
+
 #include <errno.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -52,38 +52,17 @@
 
 namespace WebKit {
 
-void SharedMemory::Handle::clear()
+void SharedMemoryHandle::clear()
 {
     *this = { };
 }
 
-bool SharedMemory::Handle::isNull() const
+bool SharedMemoryHandle::isNull() const
 {
     return !m_handle;
 }
 
-void SharedMemory::Handle::encode(IPC::Encoder& encoder) const
-{
-    encoder << m_size << WTFMove(m_handle);
-}
-
-bool SharedMemory::Handle::decode(IPC::Decoder& decoder, SharedMemory::Handle& handle)
-{
-    ASSERT_ARG(handle, handle.isNull());
-    size_t size;
-    if (!decoder.decode(size))
-        return false;
-
-    auto fd = decoder.decode<UnixFileDescriptor>();
-    if (UNLIKELY(!decoder.isValid()))
-        return false;
-
-    handle.m_size = size;
-    handle.m_handle = WTFMove(*fd);
-    return true;
-}
-
-UnixFileDescriptor SharedMemory::Handle::releaseHandle()
+UnixFileDescriptor SharedMemoryHandle::releaseHandle()
 {
     return WTFMove(m_handle);
 }
