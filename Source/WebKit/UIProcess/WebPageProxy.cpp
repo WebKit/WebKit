@@ -11857,6 +11857,11 @@ Logger& WebPageProxy::logger()
     return *m_logger;
 }
 
+const void* WebPageProxy::logIdentifier() const
+{
+    return reinterpret_cast<const void*>(intHash(identifier().toUInt64()));
+}
+
 void WebPageProxy::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
 {
 #if !RELEASE_LOG_DISABLED

@@ -599,6 +599,23 @@ bool VideoFullscreenInterfaceMac::isPlayingVideoInEnhancedFullscreen() const
     return hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) && [m_webVideoFullscreenInterfaceObjC isPlaying];
 }
 
+#if !RELEASE_LOG_DISABLED
+const void* VideoFullscreenInterfaceMac::logIdentifier() const
+{
+    return m_playbackSessionInterface->logIdentifier();
+}
+
+const Logger* VideoFullscreenInterfaceMac::loggerPtr() const
+{
+    return m_playbackSessionInterface->loggerPtr();
+}
+
+WTFLogChannel& VideoFullscreenInterfaceMac::logChannel() const
+{
+    return LogFullscreen;
+}
+#endif
+
 bool supportsPictureInPicture()
 {
     return PIPLibrary() && getPIPViewControllerClass();

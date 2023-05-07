@@ -29,8 +29,10 @@
 #if HAVE(AVKIT)
 
 #import "GeometryUtilities.h"
+#import "Logging.h"
 #import "VideoFullscreenChangeObserver.h"
 #import "WebAVPlayerController.h"
+#import <wtf/LoggerHelper.h>
 #import <wtf/RunLoop.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -49,6 +51,14 @@ using namespace WebCore;
 
 SOFTLINK_AVKIT_FRAMEWORK()
 SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
+
+#if !RELEASE_LOG_DISABLED
+@interface WebAVPlayerLayer (Logging)
+@property (readonly, nonatomic) const void* logIdentifier;
+@property (readonly, nonatomic) const Logger* loggerPtr;
+@property (readonly, nonatomic) WTFLogChannel* logChannel;
+@end
+#endif
 
 @implementation WebAVPlayerLayer {
     RefPtr<PlatformVideoFullscreenInterface> _fullscreenInterface;
@@ -129,11 +139,15 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
 
 - (void)layoutSublayers
 {
-    if ([_videoSublayer superlayer] != self)
+    if ([_videoSublayer superlayer] != self) {
+        OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, "videoSublayer is has another superlayer, bailing");
         return;
+    }
 
-    if (self.videoDimensions.height <= 0 || self.videoDimensions.width <= 0)
+    if (self.videoDimensions.height <= 0 || self.videoDimensions.width <= 0) {
+        OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, "videoDimensions are empty, bailing");
         return;
+    }
 
     FloatRect sourceVideoFrame = self.videoSublayer.bounds;
     FloatRect targetVideoFrame = [self calculateTargetVideoFrame];
@@ -152,12 +166,15 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
         // the subsequent calculations incorrect. When this happens, just do
         // the synchronous resize step instead.
         _targetVideoFrame = targetVideoFrame;
+        OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, "sourceVideoFrame is empty; calling -resolveBounds");
         [self resolveBounds];
         return;
     }
 
-    if (sourceVideoFrame == targetVideoFrame && CGAffineTransformIsIdentity(self.affineTransform))
+    if (sourceVideoFrame == targetVideoFrame && CGAffineTransformIsIdentity(self.affineTransform)) {
+        OBJC_DEBUG_LOG(OBJC_LOGIDENTIFIER, "targetVideoFrame (", _targetVideoFrame.size(), ") is equal to sourceVideoFrame, and affineTransform is identity, bailing");
         return;
+    }
 
     CGAffineTransform transform = CGAffineTransformMakeScale(targetVideoFrame.width() / sourceVideoFrame.width(), targetVideoFrame.height() / sourceVideoFrame.height());
 
@@ -169,6 +186,7 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
     [CATransaction commit];
 
     _targetVideoFrame = targetVideoFrame;
+    OBJC_DEBUG_LOG(OBJC_LOGIDENTIFIER, "targetVideoFrame: ", targetVideoFrame.size(), ", transform: [", transform.a, ", ", transform.d, "]");
 
     NSTimeInterval animationDuration = [CATransaction animationDuration];
     RunLoop::main().dispatch([self, strongSelf = retainPtr(self), animationDuration] {
@@ -181,15 +199,21 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
 
-    if ([_videoSublayer superlayer] != self)
+    if ([_videoSublayer superlayer] != self) {
+        OBJC_ERROR_LOG(OBJC_LOGIDENTIFIER, "videoSublayer is has another superlayer, bailing");
         return;
+    }
 
-    if (CGRectEqualToRect(self.videoSublayer.bounds, _targetVideoFrame) && CGAffineTransformIsIdentity([_videoSublayer affineTransform]))
+    if (CGRectEqualToRect(self.videoSublayer.bounds, _targetVideoFrame) && CGAffineTransformIsIdentity([_videoSublayer affineTransform])) {
+        OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, "targetVideoFrame (", _targetVideoFrame.size(), ") is equal to videoSublayer.bounds, and affineTransform is identity, bailing");
         return;
+    }
 
     [CATransaction begin];
     [CATransaction setAnimationDuration:0];
     [CATransaction setDisableActions:YES];
+
+    OBJC_DEBUG_LOG(OBJC_LOGIDENTIFIER, _targetVideoFrame.size());
 
     if (auto* model = _fullscreenInterface ? _fullscreenInterface->videoFullscreenModel() : nullptr) {
         FloatRect targetVideoBounds { { }, _targetVideoFrame.size() };
@@ -261,5 +285,28 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
 }
 
 @end
+
+#if !RELEASE_LOG_DISABLED
+@implementation WebAVPlayerLayer (Logging)
+- (const void*)logIdentifier
+{
+    if (auto fullscreenInterface = _fullscreenInterface.get())
+        return fullscreenInterface->logIdentifier();
+    return nullptr;
+}
+
+- (const Logger*)loggerPtr
+{
+    if (auto fullscreenInterface = _fullscreenInterface.get())
+        return fullscreenInterface->loggerPtr();
+    return nullptr;
+}
+
+- (WTFLogChannel*)logChannel
+{
+    return &LogFullscreen;
+}
+@end
+#endif
 
 #endif // HAVE(AVKIT)

@@ -33,11 +33,18 @@
 #import "PlaybackSessionManagerProxyMessages.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import <wtf/LoggerHelper.h>
 
 namespace WebKit {
 using namespace WebCore;
 
 #pragma mark - PlaybackSessionModelContext
+
+PlaybackSessionModelContext::PlaybackSessionModelContext(PlaybackSessionManagerProxy& manager, PlaybackSessionContextIdentifier contextId)
+    : m_manager(&manager)
+    , m_contextId(contextId)
+{
+}
 
 void PlaybackSessionModelContext::addClient(PlaybackSessionModelClient& client)
 {
@@ -59,24 +66,28 @@ void PlaybackSessionModelContext::sendRemoteCommand(WebCore::PlatformMediaSessio
 
 void PlaybackSessionModelContext::play()
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (m_manager)
         m_manager->play(m_contextId);
 }
 
 void PlaybackSessionModelContext::pause()
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (m_manager)
         m_manager->pause(m_contextId);
 }
 
 void PlaybackSessionModelContext::togglePlayState()
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (m_manager)
         m_manager->togglePlayState(m_contextId);
 }
 
 void PlaybackSessionModelContext::beginScrubbing()
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (m_manager)
         m_manager->beginScrubbing(m_contextId);
 
@@ -85,6 +96,7 @@ void PlaybackSessionModelContext::beginScrubbing()
 
 void PlaybackSessionModelContext::endScrubbing()
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (m_manager)
         m_manager->endScrubbing(m_contextId);
 
@@ -94,42 +106,49 @@ void PlaybackSessionModelContext::endScrubbing()
 
 void PlaybackSessionModelContext::seekToTime(double time, double toleranceBefore, double toleranceAfter)
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, time, ", toleranceBefore: ", toleranceBefore, ", toleranceAfter: ", toleranceAfter);
     if (m_manager)
         m_manager->seekToTime(m_contextId, time, toleranceBefore, toleranceAfter);
 }
 
 void PlaybackSessionModelContext::fastSeek(double time)
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, time);
     if (m_manager)
         m_manager->fastSeek(m_contextId, time);
 }
 
 void PlaybackSessionModelContext::beginScanningForward()
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (m_manager)
         m_manager->beginScanningForward(m_contextId);
 }
 
 void PlaybackSessionModelContext::beginScanningBackward()
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (m_manager)
         m_manager->beginScanningBackward(m_contextId);
 }
 
 void PlaybackSessionModelContext::endScanning()
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (m_manager)
         m_manager->endScanning(m_contextId);
 }
 
 void PlaybackSessionModelContext::setDefaultPlaybackRate(double defaultPlaybackRate)
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, defaultPlaybackRate);
     if (m_manager)
         m_manager->setDefaultPlaybackRate(m_contextId, defaultPlaybackRate);
 }
 
 void PlaybackSessionModelContext::setPlaybackRate(double playbackRate)
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, playbackRate);
     if (m_manager)
         m_manager->setPlaybackRate(m_contextId, playbackRate);
 }
@@ -139,6 +158,7 @@ void PlaybackSessionModelContext::selectAudioMediaOption(uint64_t index)
     if (m_audioMediaSelectedIndex == index)
         return;
 
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, index);
     if (m_manager)
         m_manager->selectAudioMediaOption(m_contextId, index);
 }
@@ -148,18 +168,21 @@ void PlaybackSessionModelContext::selectLegibleMediaOption(uint64_t index)
     if (m_legibleMediaSelectedIndex == index)
         return;
 
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, index);
     if (m_manager)
         m_manager->selectLegibleMediaOption(m_contextId, index);
 }
 
 void PlaybackSessionModelContext::togglePictureInPicture()
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (m_manager)
         m_manager->togglePictureInPicture(m_contextId);
 }
 
 void PlaybackSessionModelContext::toggleMuted()
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (m_manager)
         m_manager->toggleMuted(m_contextId);
 }
@@ -169,6 +192,7 @@ void PlaybackSessionModelContext::setMuted(bool muted)
     if (muted == m_muted)
         return;
 
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, muted);
     if (m_manager)
         m_manager->setMuted(m_contextId, muted);
 }
@@ -178,24 +202,28 @@ void PlaybackSessionModelContext::setVolume(double volume)
     if (volume == m_volume)
         return;
 
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, volume);
     if (m_manager)
         m_manager->setVolume(m_contextId, volume);
 }
 
 void PlaybackSessionModelContext::setPlayingOnSecondScreen(bool value)
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, value);
     if (m_manager)
         m_manager->setPlayingOnSecondScreen(m_contextId, value);
 }
 
 void PlaybackSessionModelContext::playbackStartedTimeChanged(double playbackStartedTime)
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, playbackStartedTime);
     m_playbackStartedTime = playbackStartedTime;
     m_playbackStartedTimeNeedsUpdate = false;
 }
 
 void PlaybackSessionModelContext::durationChanged(double duration)
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, duration);
     m_duration = duration;
     for (auto* client : m_clients)
         client->durationChanged(duration);
@@ -203,6 +231,7 @@ void PlaybackSessionModelContext::durationChanged(double duration)
 
 void PlaybackSessionModelContext::currentTimeChanged(double currentTime)
 {
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, currentTime);
     m_currentTime = currentTime;
     auto anchorTime = [[NSProcessInfo processInfo] systemUptime];
     if (m_playbackStartedTimeNeedsUpdate)
@@ -214,6 +243,7 @@ void PlaybackSessionModelContext::currentTimeChanged(double currentTime)
 
 void PlaybackSessionModelContext::bufferedTimeChanged(double bufferedTime)
 {
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, bufferedTime);
     m_bufferedTime = bufferedTime;
     for (auto* client : m_clients)
         client->bufferedTimeChanged(bufferedTime);
@@ -221,6 +251,7 @@ void PlaybackSessionModelContext::bufferedTimeChanged(double bufferedTime)
 
 void PlaybackSessionModelContext::rateChanged(OptionSet<WebCore::PlaybackSessionModel::PlaybackState> playbackState, double playbackRate, double defaultPlaybackRate)
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, playbackRate, ", defaultPlaybackRate", defaultPlaybackRate);
     m_playbackState = playbackState;
     m_playbackRate = playbackRate;
     m_defaultPlaybackRate = defaultPlaybackRate;
@@ -230,6 +261,7 @@ void PlaybackSessionModelContext::rateChanged(OptionSet<WebCore::PlaybackSession
 
 void PlaybackSessionModelContext::seekableRangesChanged(WebCore::TimeRanges& seekableRanges, double lastModifiedTime, double liveUpdateInterval)
 {
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, seekableRanges.ranges());
     m_seekableRanges = seekableRanges;
     m_seekableTimeRangesLastModifiedTime = lastModifiedTime;
     m_liveUpdateInterval = liveUpdateInterval;
@@ -322,6 +354,18 @@ void PlaybackSessionModelContext::pictureInPictureActiveChanged(bool active)
         client->pictureInPictureActiveChanged(active);
 }
 
+#if !RELEASE_LOG_DISABLED
+const Logger* PlaybackSessionModelContext::loggerPtr() const
+{
+    return m_manager ? &m_manager->logger() : nullptr;
+}
+
+WTFLogChannel& PlaybackSessionModelContext::logChannel() const
+{
+    return WebKit2LogMedia;
+}
+#endif
+
 #pragma mark - PlaybackSessionManagerProxy
 
 Ref<PlaybackSessionManagerProxy> PlaybackSessionManagerProxy::create(WebPageProxy& page)
@@ -331,12 +375,18 @@ Ref<PlaybackSessionManagerProxy> PlaybackSessionManagerProxy::create(WebPageProx
 
 PlaybackSessionManagerProxy::PlaybackSessionManagerProxy(WebPageProxy& page)
     : m_page(&page)
+#if !RELEASE_LOG_DISABLED
+    , m_logger(page.logger())
+    , m_logIdentifier(page.logIdentifier())
+#endif
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     m_page->process().addMessageReceiver(Messages::PlaybackSessionManagerProxy::messageReceiverName(), m_page->webPageID(), *this);
 }
 
 PlaybackSessionManagerProxy::~PlaybackSessionManagerProxy()
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     if (!m_page)
         return;
     invalidate();
@@ -344,6 +394,7 @@ PlaybackSessionManagerProxy::~PlaybackSessionManagerProxy()
 
 void PlaybackSessionManagerProxy::invalidate()
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     m_page->process().removeMessageReceiver(Messages::PlaybackSessionManagerProxy::messageReceiverName(), m_page->webPageID());
     m_page = nullptr;
 
@@ -667,6 +718,19 @@ bool PlaybackSessionManagerProxy::isPaused(PlaybackSessionContextIdentifier iden
     auto& model = *std::get<0>(iterator->value);
     return !model.isPlaying() && !model.isStalled();
 }
+
+#if !RELEASE_LOG_DISABLED
+void PlaybackSessionManagerProxy::setLogIdentifier(PlaybackSessionContextIdentifier identifier, uint64_t logIdentifier)
+{
+    auto& model = ensureModel(identifier);
+    model.setLogIdentifier(reinterpret_cast<const void*>(logIdentifier));
+}
+
+WTFLogChannel& PlaybackSessionManagerProxy::logChannel() const
+{
+    return WebKit2LogMedia;
+}
+#endif
 
 } // namespace WebKit
 

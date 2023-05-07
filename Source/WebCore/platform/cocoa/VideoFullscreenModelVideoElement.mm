@@ -43,6 +43,7 @@
 #import "TextTrackList.h"
 #import "TimeRanges.h"
 #import <QuartzCore/CoreAnimation.h>
+#import <wtf/LoggerHelper.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/SoftLinking.h>
 
@@ -51,20 +52,16 @@ namespace WebCore {
 VideoFullscreenModelVideoElement::VideoFullscreenModelVideoElement()
     : EventListener(EventListener::CPPEventListenerType)
 {
-    LOG(Fullscreen, "VideoFullscreenModelVideoElement %p ctor", this);
 }
 
 VideoFullscreenModelVideoElement::~VideoFullscreenModelVideoElement()
 {
-    LOG(Fullscreen, "VideoFullscreenModelVideoElement %p dtor", this);
 }
 
 void VideoFullscreenModelVideoElement::setVideoElement(HTMLVideoElement* videoElement)
 {
     if (m_videoElement == videoElement)
         return;
-
-    LOG(Fullscreen, "VideoFullscreenModelVideoElement %p setVideoElement(%p)", this, videoElement);
 
     if (m_videoElement && m_videoElement->videoFullscreenLayer())
         m_videoElement->setVideoFullscreenLayer(nullptr);
@@ -75,7 +72,11 @@ void VideoFullscreenModelVideoElement::setVideoElement(HTMLVideoElement* videoEl
     }
     m_isListening = false;
 
+    if (m_videoElement && !videoElement)
+        ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "-> null");
+
     m_videoElement = videoElement;
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
     if (m_videoElement) {
         for (auto& eventName : observedEventNames())
@@ -95,7 +96,7 @@ void VideoFullscreenModelVideoElement::updateForEventName(const WTF::AtomString&
 {
     if (m_clients.isEmpty())
         return;
-    
+
     bool all = eventName == eventNameAll();
 
     if (all
@@ -127,12 +128,14 @@ void VideoFullscreenModelVideoElement::updateForEventName(const WTF::AtomString&
 
 void VideoFullscreenModelVideoElement::willExitFullscreen()
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (m_videoElement)
         m_videoElement->willExitFullscreen();
 }
 
 RetainPtr<PlatformLayer> VideoFullscreenModelVideoElement::createVideoFullscreenLayer()
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (m_videoElement)
         return m_videoElement->createVideoFullscreenLayer();
     return nullptr;
@@ -144,7 +147,9 @@ void VideoFullscreenModelVideoElement::setVideoFullscreenLayer(PlatformLayer* vi
         completionHandler();
         return;
     }
-    
+
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+
     m_videoFullscreenLayer = videoLayer;
 #if PLATFORM(MAC)
     [m_videoFullscreenLayer setAnchorPoint:CGPointMake(0, 0)];
@@ -163,6 +168,7 @@ void VideoFullscreenModelVideoElement::setVideoFullscreenLayer(PlatformLayer* vi
 
 void VideoFullscreenModelVideoElement::waitForPreparedForInlineThen(WTF::Function<void()>&& completionHandler)
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (!m_videoElement) {
         completionHandler();
         return;
@@ -173,6 +179,7 @@ void VideoFullscreenModelVideoElement::waitForPreparedForInlineThen(WTF::Functio
 
 void VideoFullscreenModelVideoElement::requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia)
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, mode, ", finishedWithMedia: ", finishedWithMedia);
     if (m_videoElement)
         m_videoElement->setPresentationMode(HTMLVideoElement::toPresentationMode(mode));
 
@@ -186,6 +193,7 @@ void VideoFullscreenModelVideoElement::requestFullscreenMode(HTMLMediaElementEnu
 
 void VideoFullscreenModelVideoElement::setVideoLayerFrame(FloatRect rect)
 {
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, rect.size());
     m_videoFrame = rect;
     [m_videoFullscreenLayer setFrame:CGRect(rect)];
     if (m_videoElement)
@@ -197,6 +205,7 @@ void VideoFullscreenModelVideoElement::setVideoSizeFenced(const FloatSize& size,
     if (!m_videoElement)
         return;
 
+    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, size);
     m_videoElement->setVideoInlineSizeFenced(size, fence);
     m_videoElement->setVideoFullscreenFrame({ { }, size });
 
@@ -204,6 +213,7 @@ void VideoFullscreenModelVideoElement::setVideoSizeFenced(const FloatSize& size,
 
 void VideoFullscreenModelVideoElement::setVideoLayerGravity(MediaPlayer::VideoGravity gravity)
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, gravity);
     if (m_videoElement)
         m_videoElement->setVideoFullscreenGravity(gravity);
 }
@@ -222,6 +232,7 @@ const AtomString& VideoFullscreenModelVideoElement::eventNameAll()
 
 void VideoFullscreenModelVideoElement::fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode)
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, videoFullscreenMode);
     if (m_videoElement) {
         UserGestureIndicator gestureIndicator(ProcessingUserGesture, &m_videoElement->document());
         m_videoElement->setPresentationMode(HTMLVideoElement::toPresentationMode(videoFullscreenMode));
@@ -251,6 +262,7 @@ void VideoFullscreenModelVideoElement::setHasVideo(bool hasVideo)
     if (hasVideo == m_hasVideo)
         return;
 
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, hasVideo);
     m_hasVideo = hasVideo;
 
     for (auto& client : copyToVector(m_clients))
@@ -262,6 +274,7 @@ void VideoFullscreenModelVideoElement::setVideoDimensions(const FloatSize& video
     if (m_videoDimensions == videoDimensions)
         return;
 
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, videoDimensions);
     m_videoDimensions = videoDimensions;
 
     for (auto& client : copyToVector(m_clients))
@@ -281,33 +294,55 @@ void VideoFullscreenModelVideoElement::setPlayerIdentifier(std::optional<MediaPl
 
 void VideoFullscreenModelVideoElement::willEnterPictureInPicture()
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     for (auto& client : copyToVector(m_clients))
         client->willEnterPictureInPicture();
 }
 
 void VideoFullscreenModelVideoElement::didEnterPictureInPicture()
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     for (auto& client : copyToVector(m_clients))
         client->didEnterPictureInPicture();
 }
 
 void VideoFullscreenModelVideoElement::failedToEnterPictureInPicture()
 {
+    ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     for (auto& client : copyToVector(m_clients))
         client->failedToEnterPictureInPicture();
 }
 
 void VideoFullscreenModelVideoElement::willExitPictureInPicture()
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     for (auto& client : copyToVector(m_clients))
         client->willExitPictureInPicture();
 }
 
 void VideoFullscreenModelVideoElement::didExitPictureInPicture()
 {
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     for (auto& client : copyToVector(m_clients))
         client->didExitPictureInPicture();
 }
+
+#if !RELEASE_LOG_DISABLED
+const Logger* VideoFullscreenModelVideoElement::loggerPtr() const
+{
+    return m_videoElement ? &m_videoElement->logger() : nullptr;
+}
+
+const void* VideoFullscreenModelVideoElement::logIdentifier()
+{
+    return m_videoElement ? m_videoElement->logIdentifier() : nullptr;
+}
+
+WTFLogChannel& VideoFullscreenModelVideoElement::logChannel() const
+{
+    return LogFullscreen;
+}
+#endif
 
 } // namespace WebCore
 

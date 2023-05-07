@@ -8811,6 +8811,21 @@ bool WebPage::shouldSkipDecidePolicyForResponse(const WebCore::ResourceResponse&
     return true;
 }
 
+const Logger& WebPage::logger() const
+{
+    if (!m_logger) {
+        m_logger = Logger::create(this);
+        m_logger->setEnabled(this, !sessionID().isEphemeral());
+    }
+
+    return *m_logger;
+}
+
+const void* WebPage::logIdentifier() const
+{
+    return reinterpret_cast<const void*>(intHash(m_identifier.toUInt64()));
+}
+
 } // namespace WebKit
 
 #undef WEBPAGE_RELEASE_LOG

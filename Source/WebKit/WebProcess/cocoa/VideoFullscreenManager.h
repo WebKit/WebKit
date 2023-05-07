@@ -186,6 +186,13 @@ protected:
 
     void setCurrentlyInFullscreen(VideoFullscreenInterfaceContext&, bool);
 
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const;
+    const void* logIdentifier() const;
+    const char* logClassName() const;
+    WTFLogChannel& logChannel() const;
+#endif
+
     WebPage* m_page;
     Ref<PlaybackSessionManager> m_playbackSessionManager;
     HashMap<WebCore::HTMLVideoElement*, PlaybackSessionContextIdentifier> m_videoElements;

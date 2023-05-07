@@ -74,6 +74,13 @@ public:
 
     void invalidate();
 
+#if !RELEASE_LOG_DISABLED
+    const void* logIdentifier() const;
+    const Logger* loggerPtr() const;
+    const char* logClassName() const { return "PlaybackSessionInterfaceMac"; };
+    WTFLogChannel& logChannel() const;
+#endif
+
 private:
     PlaybackSessionInterfaceMac(PlaybackSessionModel&);
     WeakPtr<PlaybackSessionModel> m_playbackSessionModel;

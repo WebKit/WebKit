@@ -78,6 +78,13 @@ public:
 
     WEBCORE_EXPORT void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&&) override;
 
+#if !RELEASE_LOG_DISABLED
+    const Logger* loggerPtr() const;
+    WEBCORE_EXPORT const void* logIdentifier();
+    const char* logClassName() const { return "VideoFullscreenModelVideoElement"; }
+    WTFLogChannel& logChannel() const;
+#endif
+
 protected:
     WEBCORE_EXPORT VideoFullscreenModelVideoElement();
 

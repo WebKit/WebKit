@@ -1936,6 +1936,7 @@ public:
 #endif
 
     Logger& logger();
+    const void* logIdentifier() const;
 
     // IPC::MessageReceiver
     // Implemented in generated WebPageProxyMessageReceiver.cpp
