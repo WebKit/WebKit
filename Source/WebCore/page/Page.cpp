@@ -1928,6 +1928,16 @@ auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
         document.updateEventRegions();
     });
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::AccessibilityRegionUpdate);
+    if (shouldUpdateAccessibilityRegions()) {
+        m_lastAccessibilityObjectRegionsUpdate = m_lastRenderingUpdateTimestamp;
+        forEachDocument([] (Document& document) {
+            document.updateAccessibilityObjectRegions();
+        });
+    }
+#endif
+
     DebugPageOverlays::doAfterUpdateRendering(*this);
 
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::PrepareCanvasesForDisplay);
@@ -2094,6 +2104,28 @@ void Page::setLoadSchedulingMode(LoadSchedulingMode mode)
 
     platformStrategies()->loaderStrategy()->setResourceLoadSchedulingMode(*this, m_loadSchedulingMode);
 }
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+bool Page::shouldUpdateAccessibilityRegions() const
+{
+    static constexpr Seconds updateInterval { 750_ms };
+    if (!AXObjectCache::accessibilityEnabled() || !AXObjectCache::isIsolatedTreeEnabled())
+        return false;
+
+    ASSERT(m_lastRenderingUpdateTimestamp >= m_lastAccessibilityObjectRegionsUpdate);
+    if ((m_lastRenderingUpdateTimestamp - m_lastAccessibilityObjectRegionsUpdate) < updateInterval) {
+        // We've already updated accessibility object rects recently, so skip this update and schedule another for later.
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
+        auto* mainDocument = localMainFrame ? localMainFrame->document() : nullptr;
+        // If accessibility is enabled and we have a main document, that document should have an AX object cache.
+        ASSERT(!mainDocument || mainDocument->existingAXObjectCache());
+        if (auto* topAxObjectCache = mainDocument ? mainDocument->existingAXObjectCache() : nullptr)
+            topAxObjectCache->scheduleObjectRegionsUpdate();
+        return false;
+    }
+    return true;
+}
+#endif
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void Page::setImageAnimationEnabled(bool enabled)
@@ -4134,6 +4166,9 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
     case RenderingUpdateStep::CaretAnimation: ts << "CaretAnimation"; break;
     case RenderingUpdateStep::FocusFixup: ts << "FocusFixup"; break;
     case RenderingUpdateStep::UpdateValidationMessagePositions: ts << "UpdateValidationMessagePositions"; break;
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    case RenderingUpdateStep::AccessibilityRegionUpdate: ts << "AccessibilityRegionUpdate"; break;
+#endif
     }
     return ts;
 }

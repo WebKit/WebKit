@@ -725,6 +725,16 @@ void AXIsolatedTree::updateLoadingProgress(double newProgressValue)
     m_loadingProgress = newProgressValue;
 }
 
+void AXIsolatedTree::updateFrame(AXID axID, IntRect&& newFrame)
+{
+    ASSERT(isMainThread());
+
+    AXPropertyMap propertyMap;
+    propertyMap.set(AXPropertyName::RelativeFrame, WTFMove(newFrame));
+    Locker locker { m_changeLogLock };
+    m_pendingPropertyChanges.append({ axID, WTFMove(propertyMap) });
+}
+
 void AXIsolatedTree::removeNode(const AccessibilityObject& axObject)
 {
     AXTRACE("AXIsolatedTree::removeNode"_s);

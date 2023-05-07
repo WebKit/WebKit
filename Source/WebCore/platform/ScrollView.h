@@ -176,6 +176,7 @@ public:
     // will be returned instead of the value set on Page.
     enum class TopContentInsetType { WebCoreContentInset, WebCoreOrPlatformContentInset };
     virtual float topContentInset(TopContentInsetType = TopContentInsetType::WebCoreContentInset) const { return 0; }
+    IntRect frameRectShrunkByInset() const;
 
     // The visible content rect has a location that is the scrolled offset of the document. The width and height are the unobscured viewport
     // width and height. By default the scrollbars themselves are excluded from this rectangle, but an optional boolean argument allows them

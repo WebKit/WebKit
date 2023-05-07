@@ -25,12 +25,16 @@
 
 #pragma once
 
-#include "FloatRect.h"
+#include "InlineIteratorTextBox.h"
+#include "LayoutRect.h"
 #include "RegionContext.h"
 
 namespace WebCore {
 
 class RenderBox;
+class RenderBoxModelObject;
+class RenderText;
+class RenderView;
 
 class AccessibilityRegionContext : public RegionContext {
 public:
@@ -39,10 +43,28 @@ public:
 
     bool isAccessibilityRegionContext() const final { return true; }
 
+    // This group of methods takes paint-time geometry and uses it directly.
+    void takeBounds(const RenderBox&, LayoutPoint /* paintOffset */);
     void takeBounds(const RenderBox&, FloatRect /* paintRect */);
+    void takeBounds(const RenderInline* renderInline, LayoutRect&& paintRect)
+    {
+        if (renderInline)
+            takeBounds(*renderInline, WTFMove(paintRect));
+    };
+    void takeBounds(const RenderInline&, LayoutRect&& /* paintRect */);
+    void takeBounds(const RenderText&, FloatRect /* paintRect */);
+    void takeBounds(const RenderView&, LayoutPoint&& /* paintOffset */);
+
+    // This group of methods serves only as a notification that the given object is
+    // being painted. From there, we construct the geometry we need ourselves
+    // (cheaply, i.e. by combining already-computed geometry how we need it).
+    void onPaint(const ScrollView&);
 
 private:
+    void takeBoundsInternal(const RenderBoxModelObject&, IntRect&& /* paintRect */);
+
     // Maps the given rect using the current transform and clip stack.
+    // Assumes `rect` is in page-absolute coordinate space (because the clips being applied are).
     template<typename RectT>
     FloatRect mapRect(RectT&& rect)
     {
@@ -60,6 +82,7 @@ private:
         return mappedRect;
     }
 
+    WeakHashMap<RenderText, FloatRect> m_accumulatedRenderTextRects;
 }; // class AccessibilityRegionContext
 
 } // namespace WebCore

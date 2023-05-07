@@ -1,0 +1,114 @@
+This test ensures we compute the relative frame of display:contents elements correctly.
+
+
+{ AXRole: AXToolbar #toolbar1 } has AXRelativeFrame: NSRect: {{2208, 3000}, {64, 72}}
+
+{ AXRole: AXList #ol-one } has AXRelativeFrame: NSRect: {{2208, 3000}, {64, 72}}
+
+{ AXRole: AXGroup } has AXRelativeFrame: NSRect: {{2248, 3000}, {23, 36}}
+
+{ AXRole: AXListMarker } has AXRelativeFrame: NSRect: {{2228, 3000}, {16, 18}}
+
+{ AXRole: AXStaticText AXValue: LI one } has AXRelativeFrame: NSRect: {{2248, 3000}, {24, 36}}
+
+{ AXRole: AXGroup } has AXRelativeFrame: NSRect: {{2248, 3036}, {24, 36}}
+
+{ AXRole: AXListMarker } has AXRelativeFrame: NSRect: {{2228, 3036}, {16, 18}}
+
+{ AXRole: AXStaticText AXValue: LI two } has AXRelativeFrame: NSRect: {{2248, 3036}, {24, 36}}
+
+{ AXRole: AXToolbar #toolbar2 } has AXRelativeFrame: NSRect: {{2208, 3088}, {72, 72}}
+
+{ AXRole: AXGroup } has AXRelativeFrame: NSRect: {{2208, 3088}, {72, 72}}
+
+{ AXRole: AXList #ol-two } has AXRelativeFrame: NSRect: {{2208, 3088}, {72, 72}}
+
+{ AXRole: AXGroup } has AXRelativeFrame: NSRect: {{2248, 3088}, {32, 36}}
+
+{ AXRole: AXListMarker } has AXRelativeFrame: NSRect: {{2228, 3088}, {16, 18}}
+
+{ AXRole: AXStaticText AXValue: LI three } has AXRelativeFrame: NSRect: {{2248, 3088}, {32, 36}}
+
+{ AXRole: AXGroup } has AXRelativeFrame: NSRect: {{2248, 3124}, {27, 36}}
+
+{ AXRole: AXListMarker } has AXRelativeFrame: NSRect: {{2228, 3124}, {16, 18}}
+
+{ AXRole: AXStaticText AXValue: LI four } has AXRelativeFrame: NSRect: {{2248, 3124}, {27, 36}}
+
+{ AXRole: AXToolbar #toolbar3 } has AXRelativeFrame: NSRect: {{2208, 3176}, {24, 72}}
+
+{ AXRole: AXList #ol-three } has AXRelativeFrame: NSRect: {{2208, 3176}, {24, 72}}
+
+{ AXRole: AXGroup } has AXRelativeFrame: NSRect: {{2208, 3176}, {24, 36}}
+
+{ AXRole: AXListMarker } has AXRelativeFrame: NSRect: {{2188, 3176}, {16, 18}}
+
+{ AXRole: AXStaticText AXValue: LI five } has AXRelativeFrame: NSRect: {{2208, 3176}, {24, 36}}
+
+{ AXRole: AXGroup } has AXRelativeFrame: NSRect: {{2208, 3212}, {19, 36}}
+
+{ AXRole: AXListMarker } has AXRelativeFrame: NSRect: {{2188, 3212}, {16, 18}}
+
+{ AXRole: AXStaticText AXValue: LI six } has AXRelativeFrame: NSRect: {{2208, 3212}, {19, 36}}
+
+Removing #wrapper margins.
+
+{ AXRole: AXToolbar #toolbar1 } has AXRelativeFrame: NSRect: {{8, 8}, {784, 36}}
+
+{ AXRole: AXList #ol-one } has AXRelativeFrame: NSRect: {{8, 8}, {784, 36}}
+
+{ AXRole: AXGroup } has AXRelativeFrame: NSRect: {{48, 8}, {744, 18}}
+
+{ AXRole: AXListMarker } has AXRelativeFrame: NSRect: {{28, 8}, {16, 18}}
+
+{ AXRole: AXStaticText AXValue: LI one } has AXRelativeFrame: NSRect: {{48, 8}, {43, 18}}
+
+{ AXRole: AXGroup } has AXRelativeFrame: NSRect: {{48, 26}, {744, 18}}
+
+{ AXRole: AXListMarker } has AXRelativeFrame: NSRect: {{28, 26}, {16, 18}}
+
+{ AXRole: AXStaticText AXValue: LI two } has AXRelativeFrame: NSRect: {{48, 26}, {44, 18}}
+
+{ AXRole: AXToolbar #toolbar2 } has AXRelativeFrame: NSRect: {{8, 60}, {784, 36}}
+
+{ AXRole: AXGroup } has AXRelativeFrame: NSRect: {{8, 60}, {784, 36}}
+
+{ AXRole: AXList #ol-two } has AXRelativeFrame: NSRect: {{8, 60}, {784, 36}}
+
+{ AXRole: AXGroup } has AXRelativeFrame: NSRect: {{48, 60}, {744, 18}}
+
+{ AXRole: AXListMarker } has AXRelativeFrame: NSRect: {{28, 60}, {16, 18}}
+
+{ AXRole: AXStaticText AXValue: LI three } has AXRelativeFrame: NSRect: {{48, 60}, {52, 18}}
+
+{ AXRole: AXGroup } has AXRelativeFrame: NSRect: {{48, 78}, {744, 18}}
+
+{ AXRole: AXListMarker } has AXRelativeFrame: NSRect: {{28, 78}, {16, 18}}
+
+{ AXRole: AXStaticText AXValue: LI four } has AXRelativeFrame: NSRect: {{48, 78}, {46, 18}}
+
+{ AXRole: AXToolbar #toolbar3 } has AXRelativeFrame: NSRect: {{8, 112}, {784, 36}}
+
+{ AXRole: AXList #ol-three } has AXRelativeFrame: NSRect: {{8, 112}, {784, 36}}
+
+{ AXRole: AXGroup } has AXRelativeFrame: NSRect: {{8, 112}, {784, 18}}
+
+{ AXRole: AXListMarker } has AXRelativeFrame: NSRect: {{-12, 112}, {16, 18}}
+
+{ AXRole: AXStaticText AXValue: LI five } has AXRelativeFrame: NSRect: {{8, 112}, {44, 18}}
+
+{ AXRole: AXGroup } has AXRelativeFrame: NSRect: {{8, 130}, {784, 18}}
+
+{ AXRole: AXListMarker } has AXRelativeFrame: NSRect: {{-12, 130}, {16, 18}}
+
+{ AXRole: AXStaticText AXValue: LI six } has AXRelativeFrame: NSRect: {{8, 130}, {38, 18}}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+LI one
+LI two
+LI three
+LI four
+LI five
+LI six

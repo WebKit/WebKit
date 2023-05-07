@@ -249,6 +249,10 @@ AXObjectCache::AXObjectCache(Document& document)
         loadingProgress = 1;
     m_loadingProgress = loadingProgress;
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    m_geometryManager = AXGeometryManager::create(*this);
+#endif
+
     AXTreeStore::add(m_id, WeakPtr { this });
 }
 
@@ -850,6 +854,9 @@ RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree()
     } else
         tree = AXIsolatedTree::create(this);
     setIsolatedTreeRoot(tree->rootNode().get());
+    // Schedule a paint to cache the rects for the objects in this new isolated tree.
+    scheduleObjectRegionsUpdate(true /* scheduleImmediately */);
+
     AXObjectCache::initializeSecondaryAXThread();
 
     return tree;
@@ -954,6 +961,9 @@ void AXObjectCache::remove(AXID axID)
     object->detach(AccessibilityDetachmentType::ElementDestroyed);
 
     m_idsInUse.remove(axID);
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    m_geometryManager->remove(axID);
+#endif
     ASSERT(m_objects.size() >= m_idsInUse.size());
 }
     
@@ -3856,7 +3866,21 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         }
     }
 }
-#endif
+
+void AXObjectCache::onPaint(const RenderObject& renderer, IntRect&& paintRect) const
+{
+    if (!m_pageID)
+        return;
+    m_geometryManager->onPaint(m_renderObjectMapping.get(const_cast<RenderObject*>(&renderer)), WTFMove(paintRect));
+}
+
+void AXObjectCache::onPaint(const Widget& widget, IntRect&& paintRect) const
+{
+    if (!m_pageID)
+        return;
+    m_geometryManager->onPaint(m_widgetObjectMapping.get(const_cast<Widget*>(&widget)), WTFMove(paintRect));
+}
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 void AXObjectCache::deferRecomputeIsIgnoredIfNeeded(Element* element)
 {

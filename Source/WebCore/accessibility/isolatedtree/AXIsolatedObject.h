@@ -53,6 +53,8 @@ public:
 
     void attachPlatformWrapper(AccessibilityObjectWrapper*);
     bool isDetached() const override;
+    bool isTable() const final { return boolAttributeValue(AXPropertyName::IsTable); }
+    bool isExposable() const final { return boolAttributeValue(AXPropertyName::IsExposable); }
 
     AXIsolatedObject* parentObject() const override { return parentObjectUnignored(); }
     AXIsolatedObject* editableAncestor() override { return Accessibility::editableAncestor(*this); };
@@ -97,6 +99,7 @@ private:
     template<typename T> Vector<T> vectorAttributeValue(AXPropertyName) const;
     template<typename T> OptionSet<T> optionSetAttributeValue(AXPropertyName) const;
     template<typename T> std::pair<T, T> pairAttributeValue(AXPropertyName) const;
+    template<typename T> std::optional<T> optionalAttributeValue(AXPropertyName) const;
     template<typename T> T propertyValue(AXPropertyName) const;
 
     // The following method performs a lazy caching of the given property.
@@ -133,8 +136,7 @@ private:
     bool isKeyboardFocusable() const override { return boolAttributeValue(AXPropertyName::IsKeyboardFocusable); }
     
     // Table support.
-    bool isTable() const override { return boolAttributeValue(AXPropertyName::IsTable); }
-    bool isExposable() const override { return boolAttributeValue(AXPropertyName::IsExposable); }
+    AXIsolatedObject* exposedTableAncestor(bool includeSelf = false) const final { return Accessibility::exposedTableAncestor(*this, includeSelf); }
     int tableLevel() const override { return intAttributeValue(AXPropertyName::TableLevel); }
     bool supportsSelectedRows() const override { return boolAttributeValue(AXPropertyName::SupportsSelectedRows); }
     AccessibilityChildrenVector columns() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Columns)); }
@@ -186,6 +188,7 @@ private:
     FloatPoint screenRelativePosition() const final;
     FloatRect relativeFrame() const override;
     IntSize size() const final { return snappedIntRect(LayoutRect(relativeFrame())).size(); }
+    FloatRect relativeFrameFromChildren() const;
     bool supportsDatetimeAttribute() const override { return boolAttributeValue(AXPropertyName::SupportsDatetimeAttribute); }
     String datetimeAttributeValue() const override { return stringAttributeValue(AXPropertyName::DatetimeAttributeValue); }
     bool canSetValueAttribute() const override { return boolAttributeValue(AXPropertyName::CanSetValueAttribute); }
@@ -528,6 +531,8 @@ private:
     Vector<AXID> m_childrenIDs;
     Vector<RefPtr<AXCoreObject>> m_children;
     AXPropertyMap m_propertyMap;
+    // Some objects (e.g. display:contents) form their geometry through their children.
+    bool m_getsGeometryFromChildren { false };
 
 #if PLATFORM(COCOA)
     RetainPtr<NSView> m_platformWidget;

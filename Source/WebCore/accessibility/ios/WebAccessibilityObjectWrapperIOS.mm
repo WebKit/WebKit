@@ -1295,10 +1295,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 - (AccessibilityTable*)tableParent
 {
     // Find the parent table for the table cell.
-    if (AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, true, [] (const AXCoreObject& object) {
-        return is<AccessibilityTable>(object) && downcast<AccessibilityTable>(object).isExposable();
-    }))
-        return static_cast<AccessibilityTable*>(parent);
+    if (auto* ancestor = self.axBackingObject->exposedTableAncestor(true))
+        return dynamicDowncast<AccessibilityTable>(ancestor);
     return nil;
 }
 

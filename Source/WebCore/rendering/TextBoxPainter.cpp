@@ -113,6 +113,11 @@ void TextBoxPainter<TextBoxPath>::paint()
         return;
     }
 
+    if (m_paintInfo.phase == PaintPhase::Accessibility) {
+        m_paintInfo.accessibilityRegionContext()->takeBounds(m_renderer, m_paintRect);
+        return;
+    }
+
     bool shouldRotate = !textBox().isHorizontal() && !m_isCombinedText;
     if (shouldRotate)
         m_paintInfo.context().concatCTM(rotation(m_paintRect, Clockwise));

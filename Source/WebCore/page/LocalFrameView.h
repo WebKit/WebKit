@@ -712,6 +712,7 @@ public:
     WEBCORE_EXPORT void invalidateControlTints();
     void invalidateImagesWithAsyncDecodes();
     void updateAccessibilityObjectRegions();
+    AXObjectCache* axObjectCache() const;
 
     void invalidateScrollbarsForAllScrollableAreas();
 
@@ -891,7 +892,6 @@ private:
 
     bool isViewForDocumentInFrame() const;
 
-    AXObjectCache* axObjectCache() const;
     void notifyWidgetsInAllFrames(WidgetNotification);
     void removeFromAXObjectCache();
     void notifyWidgets(WidgetNotification);

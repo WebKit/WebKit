@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script>
+window.jsTestIsAsync = true;
+var output = "This test ensures we compute the relative frame of display:contents elements correctly.\n\n";
+
+function relativeFrameContains(id, expectedFrame) {
+    return accessibilityController
+        .accessibleElementById(id)
+        .stringDescriptionOfAttributeValue("AXRelativeFrame")
+        .includes(expectedFrame);
+}
+
+function relativeFrame(id) {
+    return accessibilityController
+        .accessibleElementById(id)
+        .stringDescriptionOfAttributeValue("AXRelativeFrame");
+}
+
+function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    // Traverse initial page state.
+    traverseWrapperContent();
+
+    setTimeout(async () => {
+        output += "\nRemoving #wrapper margins.\n";
+        document.getElementById("wrapper").style.marginTop = "0";
+        document.getElementById("wrapper").style.marginLeft = "0";
+
+        await waitFor(() => {
+            return relativeFrameContains("ol-one", "{8, 8}, {784, 36}") &&
+                relativeFrameContains("ol-two", "{8, 60}, {784, 36}") &&
+                relativeFrameContains("ol-three", "{8, 112}, {784, 36}");
+        });
+
+        traverseWrapperContent();
+
+        debug(output);
+        finishJSTest();
+    });
+}
+
+function traverseWrapperContent() {
+    const body = accessibilityController.accessibleElementById("wrapper");
+
+    let searchResult = null;
+    while (true) {
+        searchResult = body.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+        if (!searchResult)
+            break;
+
+        const role = searchResult.role;
+        let id = searchResult.domIdentifier;
+        id = id ? `#${id}` : '';
+        if (role.includes("StaticText"))
+            id = searchResult.stringValue;
+        output += `\n{ ${role}${id ? ` ${id}` : ''} } has AXRelativeFrame: ${searchResult.stringDescriptionOfAttributeValue("AXRelativeFrame")}\n`;
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+
+<div id="wrapper" role="group" style="margin-top: 3000px; margin-left: 2200px;">
+    <div id="toolbar1" role="toolbar" style="display: contents;">
+        <div>
+            <ol id="ol-one">
+                <li>LI one</li>
+                <li>LI two</li>
+            </ol>
+        </div>
+    </div>
+
+    <div id="toolbar2" role="toolbar">
+        <div role="group" style="display: contents;">
+            <ol id="ol-two">
+                <li>LI three</li>
+                <li>LI four</li>
+            </ol>
+        </div>
+    </div>
+
+    <div id="toolbar3" role="toolbar">
+        <div>
+            <ol id="ol-three" style="display:contents">
+                <li>LI five</li>
+                <li>LI six</li>
+            </ol>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+

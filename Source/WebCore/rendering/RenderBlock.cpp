@@ -1267,7 +1267,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         return;
 
     if (paintPhase == PaintPhase::Accessibility)
-        paintInfo.accessibilityRegionContext()->takeBounds(*this, FloatRect(paintOffset, size()));
+        paintInfo.accessibilityRegionContext()->takeBounds(*this, paintOffset);
 
     if (paintPhase == PaintPhase::EventRegion) {
         auto borderRect = LayoutRect(paintOffset, size());

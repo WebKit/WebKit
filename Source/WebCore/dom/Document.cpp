@@ -4786,6 +4786,9 @@ void Document::updateEventRegions()
 void Document::updateAccessibilityObjectRegions()
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (auto* cache = existingAXObjectCache())
+        cache->willUpdateObjectRegions();
+
     if (auto* view = renderView())
         view->frameView().updateAccessibilityObjectRegions();
 #endif

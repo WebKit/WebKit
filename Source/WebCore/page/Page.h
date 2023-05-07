@@ -238,6 +238,9 @@ enum class RenderingUpdateStep : uint32_t {
     CaretAnimation                  = 1 << 17,
     FocusFixup                      = 1 << 18,
     UpdateValidationMessagePositions= 1 << 19,
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    AccessibilityRegionUpdate       = 1 << 20,
+#endif
 };
 
 enum class LookalikeCharacterSanitizationTrigger : uint8_t {
@@ -261,6 +264,9 @@ constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
     RenderingUpdateStep::WheelEventMonitorCallbacks,
     RenderingUpdateStep::CursorUpdate,
     RenderingUpdateStep::EventRegionUpdate,
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    RenderingUpdateStep::AccessibilityRegionUpdate,
+#endif
     RenderingUpdateStep::PrepareCanvasesForDisplay,
     RenderingUpdateStep::CaretAnimation,
 };
@@ -1015,6 +1021,9 @@ public:
     AttachmentElementClient* attachmentElementClient() { return m_attachmentElementClient.get(); }
 #endif
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    bool shouldUpdateAccessibilityRegions() const;
+#endif
     WEBCORE_EXPORT std::optional<AXTreeData> accessibilityTreeData() const;
 #if USE(ATSPI)
     AccessibilityRootAtspi* accessibilityRootObject() const { return m_accessibilityRootObject; }
@@ -1383,6 +1392,9 @@ private:
     bool m_isServiceWorkerPage { false };
 
     MonotonicTime m_lastRenderingUpdateTimestamp;
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    MonotonicTime m_lastAccessibilityObjectRegionsUpdate;
+#endif
 
     Color m_underPageBackgroundColorOverride;
     std::optional<Color> m_sampledPageTopColor;

@@ -1472,7 +1472,10 @@ accessibility/node-only-inert-object.html [ Failure ]
 
 # AccessibilityUIElement::stringDescriptionOfAttributeValue is not implemented.
 accessibility/mac/aria-owned-object-relative-frame.html [ Skip ]
+accessibility/mac/display-contents-relative-frame.html [ Skip ]
+accessibility/mac/dynamic-transform-relative-frame.html [ Skip ]
 accessibility/mac/iframe-relative-frame.html [ Skip ]
+accessibility/mac/position-fixed-top-bottom-properties-relative-frame.html [ Skip ]
 accessibility/mac/shadow-dom-relative-frame.html [ Skip ]
 accessibility/mac/svg-relative-frame.html [ Skip ]
 accessibility/mac/table-relative-frame.html [ Skip ]

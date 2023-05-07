@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ScrollView.h"
 
+#include "AccessibilityRegionContext.h"
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
@@ -338,6 +339,15 @@ IntRect ScrollView::visibleContentRectInternal(VisibleContentRectIncludesScrollb
 #endif
 
     return unobscuredContentRect(scrollbarInclusion);
+}
+
+IntRect ScrollView::frameRectShrunkByInset() const
+{
+    auto rect = frameRect();
+    float inset = topContentInset();
+    rect.move(0, inset);
+    rect.contract(0, inset);
+    return rect;
 }
 
 IntSize ScrollView::layoutSize() const
@@ -1332,6 +1342,9 @@ void ScrollView::paint(GraphicsContext& context, const IntRect& rect, SecurityOr
     // Paint the panScroll Icon
     if (m_drawPanScrollIcon)
         paintPanScrollIcon(context);
+
+    if (auto* axRegionContext = dynamicDowncast<AccessibilityRegionContext>(regionContext))
+        axRegionContext->onPaint(*this);
 }
 
 void ScrollView::calculateOverhangAreasForPainting(IntRect& horizontalOverhangRect, IntRect& verticalOverhangRect)

@@ -1430,6 +1430,7 @@ public:
     virtual AXCoreObject* focusableAncestor() = 0;
     virtual AXCoreObject* editableAncestor() = 0;
     virtual AXCoreObject* highestEditableAncestor() = 0;
+    virtual AXCoreObject* exposedTableAncestor(bool includeSelf = false) const = 0;
 
     virtual PAL::SessionID sessionID() const = 0;
     virtual String documentURI() const = 0;
@@ -1913,6 +1914,14 @@ T* liveRegionAncestor(const T& object, bool excludeIfOff)
 {
     return findAncestor<T>(object, true, [excludeIfOff] (const T& object) {
         return object.supportsLiveRegion(excludeIfOff);
+    });
+}
+
+template<typename T>
+T* exposedTableAncestor(const T& object, bool includeSelf = false)
+{
+    return findAncestor<T>(object, includeSelf, [] (const T& object) {
+        return object.isTable() && object.isExposable();
     });
 }
 

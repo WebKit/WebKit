@@ -733,6 +733,7 @@ public:
     AccessibilityObject* focusableAncestor() override { return Accessibility::focusableAncestor(*this); }
     AccessibilityObject* editableAncestor() override { return Accessibility::editableAncestor(*this); };
     AccessibilityObject* highestEditableAncestor() override { return Accessibility::highestEditableAncestor(*this); }
+    AccessibilityObject* exposedTableAncestor(bool includeSelf = false) const final { return Accessibility::exposedTableAncestor(*this, includeSelf); }
 
     const AccessibilityScrollView* ancestorAccessibilityScrollView(bool includeSelf) const;
     virtual AccessibilityObject* webAreaObject() const { return nullptr; }

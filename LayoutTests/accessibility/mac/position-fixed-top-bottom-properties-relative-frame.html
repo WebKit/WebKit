@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+#dialog-container {
+    bottom: auto;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    right: 0;
+    top: 100px;
+}
+#dialog {
+    margin: 0 auto;
+    box-shadow: 0 2px 7px rgba(5,27,44,.06),0 2px 32px rgba(5,27,44,.16);
+    color: #050b2c;
+    padding: 1.25em;
+    border-bottom-left-radius: .6em;
+    border-bottom-right-radius: .6em;
+    width: 550px;
+}
+</style>
+<script>
+window.jsTestIsAsync = true;
+var output = "This test ensures we compute the relative frame of position:fixed elements correctly when they have specified `top` and `bottom` CSS properties.\n\n";
+
+function currentRelativeFrame() {
+    if (!window.accessibilityController)
+        return "";
+
+    return accessibilityController
+        .accessibleElementById("end-of-page-container")
+        .stringDescriptionOfAttributeValue("AXRelativeFrame");
+}
+
+var lastRelativeFrame;
+async function scrollAndTraverse(yPixels) {
+    output += `\nSetting scroll to ${yPixels}px\n`;
+    window.scroll(0, yPixels);
+    let newRelativeFrame;
+    await waitFor(() => {
+        newRelativeFrame = currentRelativeFrame();
+        return lastRelativeFrame !== newRelativeFrame;
+    });
+    lastRelativeFrame = newRelativeFrame;
+    traverseBodyContent();
+}
+
+function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    // Traverse initial page state.
+    traverseBodyContent();
+    lastRelativeFrame = currentRelativeFrame();
+
+    setTimeout(async () => {
+        await scrollAndTraverse(1000);
+        await scrollAndTraverse(2000);
+        await scrollAndTraverse(3000);
+
+        debug(output);
+        finishJSTest();
+    });
+}
+
+function traverseBodyContent() {
+    const body = accessibilityController.accessibleElementById("body");
+
+    let searchResult = null;
+    while (true) {
+        searchResult = body.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+        if (!searchResult)
+            break;
+
+        const role = searchResult.role;
+        let id = searchResult.domIdentifier;
+        id = id ? `#${id}` : '';
+        if (role && role.includes("StaticText"))
+            id = searchResult.stringValue;
+        output += `\n{ ${role}${id ? ` ${id}` : ''} } has AXRelativeFrame: ${searchResult.stringDescriptionOfAttributeValue("AXRelativeFrame")}\n`;
+    }
+}
+</script>
+</head>
+<body id="body" role="group" onload="runTest()" style="height: 4000px">
+
+<div id="dialog-container">
+    <div id="dialog">
+        <div style="margin-top: 10px; margin-bottom: 50px">This is some filler text. You can read it, but it's not overly important. Have a great day!</div>
+        <progress id="progress" max="100" value="70">70%</progress>
+        <br/><br/>
+    </div>
+</div>
+
+<div id="end-of-page-container" role="group" style="margin-top: 3000px">
+    End of page
+</div>
+</body>
+</html>
+

@@ -227,7 +227,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     }
 
     if (paintInfo.phase == PaintPhase::Accessibility) {
-        paintInfo.accessibilityRegionContext()->takeBounds(*this, FloatRect(adjustedPaintOffset, size()));
+        paintInfo.accessibilityRegionContext()->takeBounds(*this, adjustedPaintOffset);
         return;
     }
 

@@ -32,6 +32,10 @@
 #include "AXLogger.h"
 #include <pal/SessionID.h>
 
+#if PLATFORM(MAC)
+#import <pal/spi/mac/HIServicesSPI.h>
+#endif
+
 #if PLATFORM(COCOA)
 #include <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
 #endif
@@ -164,6 +168,16 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::IsKeyboardFocusable, object.isKeyboardFocusable());
     setProperty(AXPropertyName::BrailleRoleDescription, object.brailleRoleDescription().isolatedCopy());
     setProperty(AXPropertyName::BrailleLabel, object.brailleLabel().isolatedCopy());
+
+    if (std::optional frame = axObjectCache()->paintRectForID(object.objectID()))
+        setProperty(AXPropertyName::RelativeFrame, WTFMove(*frame));
+    else if (!object.renderer() && object.node() && is<AccessibilityNodeObject>(object)) {
+        // The frame of node-only AX objects is made up of their children.
+        m_getsGeometryFromChildren = true;
+    } else if (object.isMenuListPopup()) {
+        // AccessibilityMenuListPopup's elementRect is hardcoded to return an empty rect, so preserve that behavior.
+        setProperty(AXPropertyName::RelativeFrame, IntRect());
+    }
 
     if (object.supportsCheckedState()) {
         setProperty(AXPropertyName::SupportsCheckedState, true);
@@ -773,6 +787,22 @@ std::pair<T, T> AXIsolatedObject::pairAttributeValue(AXPropertyName propertyName
     );
 }
 
+template<typename T>
+std::optional<T> AXIsolatedObject::optionalAttributeValue(AXPropertyName propertyName) const
+{
+    auto it = m_propertyMap.find(propertyName);
+    if (it == m_propertyMap.end())
+        return std::nullopt;
+
+    return WTF::switchOn(it->value,
+        [] (const T& typedValue) -> std::optional<T> { return typedValue; },
+        [] (const auto&) -> std::optional<T> {
+            ASSERT_NOT_REACHED();
+            return std::nullopt;
+        }
+    );
+}
+
 uint64_t AXIsolatedObject::uint64AttributeValue(AXPropertyName propertyName) const
 {
     auto value = m_propertyMap.get(propertyName);
@@ -1064,7 +1094,14 @@ std::optional<SimpleRange> AXIsolatedObject::misspellingRange(const SimpleRange&
 
 LayoutRect AXIsolatedObject::elementRect() const
 {
-    return Accessibility::retrieveValueFromMainThread<LayoutRect>([this] () -> LayoutRect {
+#if PLATFORM(MAC)
+    // It is not expected for elementRect to be called directly or indirectly when serving a request for VoiceOver.
+    // If this does happen, we should either see if AXIsolatedObject::relativeFrame can be used instead, or do the
+    // work to cache the correct elementRect value.
+    ASSERT(_AXGetClientForCurrentRequestUntrusted() != kAXClientTypeVoiceOver);
+#endif
+
+    return Accessibility::retrieveValueFromMainThread<LayoutRect>([&, this] () -> LayoutRect {
         if (auto* axObject = associatedAXObject())
             return axObject->elementRect();
         return { };
@@ -1082,12 +1119,36 @@ FloatPoint AXIsolatedObject::screenRelativePosition() const
 
 FloatRect AXIsolatedObject::relativeFrame() const
 {
-    // Retrieve this on the main thread because we require the scroll ancestor to convert to the right scroll offset.
+    if (auto cachedRelativeFrame = optionalAttributeValue<IntRect>(AXPropertyName::RelativeFrame)) {
+        // We should not have cached a relative frame for elements that get their geometry from their children.
+        ASSERT(!m_getsGeometryFromChildren);
+        return *cachedRelativeFrame;
+    }
+
+    if (m_getsGeometryFromChildren) {
+        auto frame = enclosingIntRect(relativeFrameFromChildren());
+        if (!frame.isEmpty())
+            return frame;
+        // Either we had no children, or our children had empty frames. The right thing to do would be to return
+        // a rect at the position of the nearest render tree ancestor with some made-up size (AccessibilityNodeObject::boundingBoxRect does this).
+        // However, we don't have access to the render tree in this context (only the AX isolated tree, which is too sparse for this purpose), so
+        // until we cache the necessary information let's go to the main-thread.
+    } else if (roleValue() == AccessibilityRole::Column || roleValue() == AccessibilityRole::TableHeaderContainer)
+        return exposedTableAncestor() ? relativeFrameFromChildren() : FloatRect();
+
     return Accessibility::retrieveValueFromMainThread<FloatRect>([this] () -> FloatRect {
         if (auto* axObject = associatedAXObject())
             return axObject->relativeFrame();
         return { };
     });
+}
+
+FloatRect AXIsolatedObject::relativeFrameFromChildren() const
+{
+    FloatRect rect;
+    for (const auto& child : const_cast<AXIsolatedObject*>(this)->children())
+        rect.unite(child->relativeFrame());
+    return rect;
 }
 
 FloatRect AXIsolatedObject::convertFrameToSpace(const FloatRect& rect, AccessibilityConversionSpace space) const

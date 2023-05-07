@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AXGeometryManager.h"
 #include "AXIsolatedTree.h"
 #include "AXTextMarker.h"
 #include "AXTextStateChangeIntent.h"
@@ -34,6 +35,7 @@
 #include "Timer.h"
 #include "VisibleUnits.h"
 #include <limits.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
@@ -132,7 +134,7 @@ enum AXTextChange { AXTextInserted, AXTextDeleted, AXTextAttributesChanged };
 
 enum class PostTarget { Element, ObservableParent };
 
-class AXObjectCache : public CanMakeWeakPtr<AXObjectCache>
+class AXObjectCache : public CanMakeWeakPtr<AXObjectCache>, public CanMakeCheckedPtr
     , public AXTreeStore<AXObjectCache> {
     WTF_MAKE_NONCOPYABLE(AXObjectCache);
     WTF_MAKE_FAST_ALLOCATED;
@@ -241,6 +243,15 @@ public:
 
     AccessibilityObject* objectForID(const AXID id) const { return m_objects.get(id); }
     Vector<RefPtr<AXCoreObject>> objectsForIDs(const Vector<AXID>&) const;
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    std::optional<IntRect> paintRectForID(AXID axID) { return m_geometryManager->paintRectForID(axID); }
+    void onPaint(const RenderObject&, IntRect&&) const;
+    void onPaint(const Widget&, IntRect&&) const;
+#else
+    void onPaint(const RenderObject&, IntRect&&) const { ASSERT_NOT_REACHED(); }
+    void onPaint(const Widget&, IntRect&&) const { ASSERT_NOT_REACHED(); }
+#endif
 
     // Text marker utilities.
     std::optional<TextMarkerData> textMarkerDataForVisiblePosition(const VisiblePosition&);
@@ -427,6 +438,8 @@ public:
     void updateRelations(Element&, const QualifiedName&);
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    void scheduleObjectRegionsUpdate(bool scheduleImmediately = false) { m_geometryManager->scheduleObjectRegionsUpdate(scheduleImmediately); }
+    void willUpdateObjectRegions() { m_geometryManager->willUpdateObjectRegions(); }
     WEBCORE_EXPORT static bool isIsolatedTreeEnabled();
     WEBCORE_EXPORT static bool usedOnAXThread();
 private:
@@ -503,7 +516,7 @@ private:
     void notificationPostTimerFired();
 
     void liveRegionChangedNotificationPostTimerFired();
-    
+
     void focusCurrentModal();
     
     void performCacheUpdateTimerFired();
@@ -616,6 +629,7 @@ private:
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     Timer m_buildIsolatedTreeTimer;
     bool m_deferredRegenerateIsolatedTree { false };
+    std::unique_ptr<AXGeometryManager> m_geometryManager;
 #endif
     bool m_isSynchronizingSelection { false };
     bool m_performingDeferredCacheUpdate { false };
@@ -679,6 +693,8 @@ inline void AXObjectCache::autofillTypeChanged(Node*) { }
 inline void AXObjectCache::childrenChanged(Node*, Node*) { }
 inline void AXObjectCache::childrenChanged(RenderObject*, RenderObject*) { }
 inline void AXObjectCache::childrenChanged(AccessibilityObject*) { }
+inline void AXObjectCache::onPaint(const RenderObject&, IntRect&&) { }
+inline void AXObjectCache::onPaint(const Widget&, IntRect&&) { }
 inline void AXObjectCache::onSelectedChanged(Node*) { }
 inline void AXObjectCache::onTextSecurityChanged(HTMLInputElement&) { }
 inline void AXObjectCache::onTitleChange(Document&) { }
