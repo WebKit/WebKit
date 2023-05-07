@@ -115,7 +115,6 @@ public:
         std::optional<int> sampleSize;
         std::optional<bool> echoCancellation;
         String displaySurface;
-        std::optional<bool> logicalSurface;
         String deviceId;
         String groupId;
         std::optional<double> zoom;

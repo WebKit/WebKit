@@ -728,12 +728,7 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
         break;
 
     case MediaConstraintType::AspectRatio: {
-        ASSERT(constraint.isDouble());
-        if (!capabilities.supportsAspectRatio())
-            return;
-
-        auto range = capabilities.aspectRatio();
-        applyNumericConstraint(downcast<DoubleConstraint>(constraint), aspectRatio(), { }, range.rangeMin().asDouble, range.rangeMax().asDouble, *this, &RealtimeMediaSource::setAspectRatio);
+        ASSERT_NOT_REACHED();
         break;
     }
 
@@ -1106,8 +1101,10 @@ RealtimeMediaSource::VideoFrameSizeConstraints RealtimeMediaSource::extractVideo
     if (auto* constraint = constraints.find(MediaConstraintType::AspectRatio)) {
         ASSERT(constraint->isDouble());
         if (capabilities.supportsAspectRatio()) {
+            auto size = this->size();
             auto range = capabilities.aspectRatio();
-            if (auto aspectRatio = downcast<DoubleConstraint>(*constraint).valueForCapabilityRange(this->aspectRatio(), range.rangeMin().asDouble, range.rangeMax().asDouble)) {
+            auto currentAspectRatio = size.width() ? size.width() / static_cast<double>(size.height()) : 0;
+            if (auto aspectRatio = downcast<DoubleConstraint>(*constraint).valueForCapabilityRange(currentAspectRatio, range.rangeMin().asDouble, range.rangeMax().asDouble)) {
                 if (!result.width && result.height)
                     result.width = *result.height * aspectRatio;
                 if (result.width && !result.height)
@@ -1150,7 +1147,7 @@ void RealtimeMediaSource::applyConstraints(const FlattenedConstraint& constraint
         setSizeFrameRateAndZoom(videoFrameSizeConstraints.width, videoFrameSizeConstraints.height, videoFrameSizeConstraints.frameRate, WTFMove(zoom));
 
     for (auto& variant : constraints) {
-        if (variant.constraintType() == MediaConstraintType::Width || variant.constraintType() == MediaConstraintType::Height || variant.constraintType() == MediaConstraintType::FrameRate || variant.constraintType() == MediaConstraintType::Zoom)
+        if (variant.constraintType() == MediaConstraintType::Width || variant.constraintType() == MediaConstraintType::Height || variant.constraintType() == MediaConstraintType::AspectRatio || variant.constraintType() == MediaConstraintType::FrameRate || variant.constraintType() == MediaConstraintType::Zoom)
             continue;
 
         applyConstraint(variant);
@@ -1201,9 +1198,6 @@ const IntSize RealtimeMediaSource::size() const
             size.setHeight(size.width() * (m_intrinsicSize.height() / static_cast<double>(m_intrinsicSize.width())));
         else if (size.height())
             size.setWidth(size.height() * (m_intrinsicSize.width() / static_cast<double>(m_intrinsicSize.height())));
-
-        if (m_aspectRatio)
-            size.setHeight(static_cast<int>(static_cast<float>(size.width()) / m_aspectRatio));
     }
 
     return size;
@@ -1238,24 +1232,6 @@ void RealtimeMediaSource::setFrameRate(double rate)
     
     m_frameRate = rate;
     notifySettingsDidChangeObservers(RealtimeMediaSourceSettings::Flag::FrameRate);
-}
-
-void RealtimeMediaSource::setAspectRatio(double ratio)
-{
-    if (m_aspectRatio == ratio)
-        return;
-
-    ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER, ratio);
-    
-    m_aspectRatio = ratio;
-
-    auto size = m_size;
-    if (!size.isEmpty()) {
-        size.setHeight(static_cast<int>(static_cast<float>(size.width()) / ratio));
-        setSize(size);
-    }
-
-    notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::AspectRatio });
 }
 
 void RealtimeMediaSource::setZoom(double zoom)

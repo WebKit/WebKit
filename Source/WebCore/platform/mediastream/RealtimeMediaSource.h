@@ -173,9 +173,6 @@ public:
     double frameRate() const { return m_frameRate; }
     void setFrameRate(double);
 
-    double aspectRatio() const { return m_aspectRatio; }
-    void setAspectRatio(double);
-
     double zoom() const { return m_zoom; }
     void setZoom(double);
 
@@ -338,7 +335,6 @@ private:
     // Set on sample generation thread.
     IntSize m_intrinsicSize;
     double m_frameRate { 30 };
-    double m_aspectRatio { 0 };
     double m_zoom { 1 };
     double m_volume { 1 };
     double m_sampleRate { 0 };

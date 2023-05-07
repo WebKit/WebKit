@@ -4265,7 +4265,6 @@ enum class WebCore::DisplaySurfaceType : uint8_t {
 class WebCore::RealtimeMediaSourceSettings {
     uint32_t width();
     uint32_t height();
-    float aspectRatio();
     float frameRate();
     WebCore::VideoFacingMode facingMode();
     double volume();

@@ -258,8 +258,8 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
         result.width = settings.width();
     if (settings.supportsHeight())
         result.height = settings.height();
-    if (settings.supportsAspectRatio() && settings.aspectRatio()) // FIXME: Why the check for zero here?
-        result.aspectRatio = settings.aspectRatio();
+    if (settings.supportsAspectRatio() && result.height && result.width)
+        result.aspectRatio = *result.width / static_cast<double>(*result.height);
     if (settings.supportsFrameRate())
         result.frameRate = settings.frameRate();
     if (settings.supportsFacingMode())
@@ -280,8 +280,6 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
         result.displaySurface = RealtimeMediaSourceSettings::displaySurface(settings.displaySurface());
     if (settings.supportsZoom())
         result.zoom = settings.zoom();
-
-    // FIXME: shouldn't this include logicalSurface?
 
     return result;
 }
