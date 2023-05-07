@@ -12,6 +12,7 @@ PASS document.createAttributeNS('ns', 'f@ast') threw exception InvalidCharacterE
 PASS document.body.setAttribute('@foo', 'test') threw exception InvalidCharacterError: Invalid qualified name: '@foo'.
 PASS document.body.setAttributeNS('ns', '@foo', 'test') threw exception InvalidCharacterError: Invalid qualified name start in '@foo'.
 PASS document.body.setAttributeNS('ns', 'f@st', 'test') threw exception InvalidCharacterError: Invalid qualified name part in 'f@st'.
+PASS document.createProcessingInstruction('@foo', 'test') threw exception InvalidCharacterError: Invalid qualified name: '@foo'.
 PASS successfullyParsed is true
 
 TEST COMPLETE

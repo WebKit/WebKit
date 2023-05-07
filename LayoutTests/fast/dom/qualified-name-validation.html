@@ -14,6 +14,7 @@ shouldThrowErrorName("document.createAttributeNS('ns', 'f@ast')", "InvalidCharac
 shouldThrowErrorName("document.body.setAttribute('@foo', 'test')", "InvalidCharacterError");
 shouldThrowErrorName("document.body.setAttributeNS('ns', '@foo', 'test')", "InvalidCharacterError");
 shouldThrowErrorName("document.body.setAttributeNS('ns', 'f@st', 'test')", "InvalidCharacterError");
+shouldThrowErrorName("document.createProcessingInstruction('@foo', 'test')", "InvalidCharacterError");
 </script>
 </body>
 </html>

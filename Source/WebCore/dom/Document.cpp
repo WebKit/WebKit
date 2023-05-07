@@ -1131,7 +1131,7 @@ ExceptionOr<Ref<CDATASection>> Document::createCDATASection(String&& data)
 ExceptionOr<Ref<ProcessingInstruction>> Document::createProcessingInstruction(String&& target, String&& data)
 {
     if (!isValidName(target))
-        return Exception { InvalidCharacterError, makeString("Invalid qualified name: ", target, "'") };
+        return Exception { InvalidCharacterError, makeString("Invalid qualified name: '", target, "'") };
 
     if (data.contains("?>"_s))
         return Exception { InvalidCharacterError };
