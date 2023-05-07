@@ -37,6 +37,8 @@ class Path;
 
 class ThemeAdwaita : public Theme {
 public:
+    ThemeAdwaita();
+
     enum class PaintRounded : bool { No, Yes };
 
     static void paintFocus(GraphicsContext&, const FloatRect&, int offset, const Color&, PaintRounded = PaintRounded::No);
@@ -46,6 +48,8 @@ public:
     static void paintArrow(GraphicsContext&, const FloatRect&, ArrowDirection, bool);
 
     virtual void platformColorsDidChange() { };
+
+    bool userPrefersReducedMotion() const final;
 
     void setAccentColor(const Color&);
     Color accentColor();
@@ -62,7 +66,13 @@ private:
 
     static Color focusColor(const Color&);
 
+#if PLATFORM(GTK)
+    void refreshGtkSettings();
+#endif
+
     Color m_accentColor { SRGBA<uint8_t> { 52, 132, 228 } };
+
+    bool m_prefersReducedMotion { false };
 };
 
 } // namespace WebCore

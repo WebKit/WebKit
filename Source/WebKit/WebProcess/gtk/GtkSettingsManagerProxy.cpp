@@ -107,6 +107,9 @@ void GtkSettingsManagerProxy::applySettings(GtkSettingsState&& state)
 
     if (state.overlayScrolling)
         g_object_set(m_settings, "gtk-overlay-scrolling", *state.overlayScrolling, nullptr);
+
+    if (state.enableAnimations)
+        g_object_set(m_settings, "gtk-enable-animations", *state.enableAnimations, nullptr);
 }
 
 void GtkSettingsManagerProxy::applyHintingSettings()
