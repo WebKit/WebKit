@@ -372,6 +372,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)playerViewControllerShouldHandleDoneButtonTap:(AVPlayerViewController *)playerViewController;
 - (void)setWebKitOverrideRouteSharingPolicy:(NSUInteger)routeSharingPolicy routingContextUID:(NSString *)routingContextUID;
+#if !RELEASE_LOG_DISABLED
+@property (readonly, nonatomic) const void* logIdentifier;
+@property (readonly, nonatomic) const Logger* loggerPtr;
+@property (readonly, nonatomic) WTFLogChannel* logChannel;
+#endif
 @end
 NS_ASSUME_NONNULL_END
 
@@ -396,6 +401,9 @@ NS_ASSUME_NONNULL_END
         return nil;
 
     _fullscreenInterface = ThreadSafeWeakPtr { *interface };
+
+    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
+
     _avPlayerViewController = adoptNS([allocAVPlayerViewControllerInstance() initWithPlayerLayerView:interface->playerLayerView()]);
     _avPlayerViewController.get().modalPresentationStyle = UIModalPresentationOverFullScreen;
 #if PLATFORM(WATCHOS)
@@ -420,6 +428,8 @@ NS_ASSUME_NONNULL_END
 
 - (void)dealloc
 {
+    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
+
     if (_startPictureInPictureTimer) {
         [self removeObserver];
         [_startPictureInPictureTimer invalidate];
@@ -451,6 +461,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (void)enterFullScreenAnimated:(BOOL)animated completionHandler:(void (^)(BOOL success, NSError * __nullable error))completionHandler
 {
+    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, animated);
 #if PLATFORM(WATCHOS)
     auto fullscreenInterface = _fullscreenInterface.get();
     if (!fullscreenInterface) {
@@ -473,6 +484,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (void)exitFullScreenAnimated:(BOOL)animated completionHandler:(void (^)(BOOL success, NSError * __nullable error))completionHandler
 {
+    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, animated);
 #if PLATFORM(WATCHOS)
     if (!_presentingViewController)
         return;
@@ -534,6 +546,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 
 - (void)tryToStartPictureInPicture MY_NO_RETURN
 {
+    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
 #if PLATFORM(WATCHOS)
     UNUSED_VARIABLE(startPictureInPictureTimeInterval);
     ASSERT_NOT_REACHED();
@@ -561,6 +574,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 
 - (void)startPictureInPicture MY_NO_RETURN
 {
+    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
 #if PLATFORM(WATCHOS)
     ASSERT_NOT_REACHED();
 #elif HAVE(PIP_CONTROLLER)
@@ -572,6 +586,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 
 - (void)stopPictureInPicture MY_NO_RETURN
 {
+    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
 #if PLATFORM(WATCHOS)
     ASSERT_NOT_REACHED();
 #elif HAVE(PIP_CONTROLLER)
@@ -633,6 +648,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 #if !PLATFORM(WATCHOS)
 - (void)flashPlaybackControlsWithDuration:(NSTimeInterval)duration
 {
+    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
     if ([_avPlayerViewController respondsToSelector:@selector(flashPlaybackControlsWithDuration:)])
         [_avPlayerViewController flashPlaybackControlsWithDuration:duration];
 }
@@ -649,6 +665,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 
 - (void)setShowsPlaybackControls:(BOOL)showsPlaybackControls
 {
+    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, showsPlaybackControls);
 #if PLATFORM(WATCHOS)
     UNUSED_PARAM(showsPlaybackControls);
 #else
@@ -658,6 +675,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 
 - (void)setAllowsPictureInPicturePlayback:(BOOL)allowsPictureInPicturePlayback
 {
+    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, allowsPictureInPicturePlayback);
 #if PLATFORM(WATCHOS)
     UNUSED_PARAM(allowsPictureInPicturePlayback);
 #else
@@ -694,6 +712,26 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
     [_avPlayerViewController removeFromParentViewController];
 }
 
+#if !RELEASE_LOG_DISABLED
+- (const void*)logIdentifier
+{
+    if (auto fullscreenInterface = _fullscreenInterface.get())
+        return fullscreenInterface->logIdentifier();
+    return nullptr;
+}
+
+- (const Logger*)loggerPtr
+{
+    if (auto fullscreenInterface = _fullscreenInterface.get())
+        return fullscreenInterface->loggerPtr();
+    return nullptr;
+}
+
+- (WTFLogChannel*)logChannel
+{
+    return &LogFullscreen;
+}
+#endif
 @end
 
 Ref<VideoFullscreenInterfaceAVKit> VideoFullscreenInterfaceAVKit::create(PlaybackSessionInterfaceAVKit& playbackSessionInterface)
@@ -1235,12 +1273,14 @@ void VideoFullscreenInterfaceAVKit::setInlineRect(const FloatRect& inlineRect, b
 void VideoFullscreenInterfaceAVKit::doSetup()
 {
     if (m_currentMode.hasVideo() && m_targetMode.hasVideo()) {
+        ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "both targetMode and currentMode haveVideo, bailing");
         m_standby = m_targetStandby;
         finalizeSetup();
         return;
     }
 
     if (!m_hasUpdatedInlineRect && m_fullscreenChangeObserver) {
+        ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "!hasUpdatedInlineRect, bailing");
         m_setupNeedsInlineRect = true;
         m_fullscreenChangeObserver->requestUpdateInlineRect();
         return;
@@ -1274,6 +1314,7 @@ void VideoFullscreenInterfaceAVKit::doSetup()
     [m_playerLayerView setBackgroundColor:clearUIColor()];
 
     if (!m_currentMode.hasPictureInPicture() && !m_changingStandbyOnly) {
+        ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Moving videoView to fullscreen WebAVPlayerLayerView");
         [m_playerLayerView setVideoView:m_videoView.get()];
         [m_playerLayerView addSubview:m_videoView.get()];
     }
@@ -1540,6 +1581,23 @@ bool VideoFullscreenInterfaceAVKit::isPlayingVideoInEnhancedFullscreen() const
 {
     return hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) && [playerController() isPlaying];
 }
+
+#if !RELEASE_LOG_DISABLED
+const void* VideoFullscreenInterfaceAVKit::logIdentifier() const
+{
+    return m_playbackSessionInterface->logIdentifier();
+}
+
+const Logger* VideoFullscreenInterfaceAVKit::loggerPtr() const
+{
+    return m_playbackSessionInterface->loggerPtr();
+}
+
+WTFLogChannel& VideoFullscreenInterfaceAVKit::logChannel() const
+{
+    return LogFullscreen;
+}
+#endif
 
 static std::optional<bool> isPictureInPictureSupported;
 

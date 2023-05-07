@@ -79,6 +79,13 @@ public:
 
     WebAVPlayerController *playerController() const { return m_playerController.get(); }
 
+#if !RELEASE_LOG_DISABLED
+    const void* logIdentifier() const;
+    const Logger* loggerPtr() const;
+    const char* logClassName() const { return "PlaybackSessionInterfaceAVKit"; };
+    WTFLogChannel& logChannel() const;
+#endif
+
 private:
     PlaybackSessionInterfaceAVKit(PlaybackSessionModel&);
     RetainPtr<WebAVPlayerController> m_playerController;

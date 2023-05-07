@@ -93,11 +93,7 @@ private:
     friend class PlaybackSessionManagerProxy;
     friend class VideoFullscreenModelContext;
 
-    PlaybackSessionModelContext(PlaybackSessionManagerProxy& manager, PlaybackSessionContextIdentifier contextId)
-        : m_manager(&manager)
-        , m_contextId(contextId)
-    {
-    }
+    PlaybackSessionModelContext(PlaybackSessionManagerProxy&, PlaybackSessionContextIdentifier);
 
     // PlaybackSessionModel
     void play() final;
@@ -146,6 +142,15 @@ private:
     bool isPictureInPictureSupported() const final { return m_pictureInPictureSupported; }
     bool isPictureInPictureActive() const final { return m_pictureInPictureActive; }
 
+#if !RELEASE_LOG_DISABLED
+    void setLogIdentifier(const void* identifier) { m_logIdentifier = identifier; }
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    const Logger* loggerPtr() const;
+
+    const char* logClassName() const { return "PlaybackSessionModelContext"; };
+    WTFLogChannel& logChannel() const;
+#endif
+
     PlaybackSessionManagerProxy* m_manager;
     PlaybackSessionContextIdentifier m_contextId;
     HashSet<WebCore::PlaybackSessionModelClient*> m_clients;
@@ -174,6 +179,10 @@ private:
     double m_volume { 0 };
     bool m_pictureInPictureSupported { false };
     bool m_pictureInPictureActive { false };
+
+#if !RELEASE_LOG_DISABLED
+    const void* m_logIdentifier { nullptr };
+#endif
 };
 
 class PlaybackSessionManagerProxy : public RefCounted<PlaybackSessionManagerProxy>, private IPC::MessageReceiver {
@@ -251,10 +260,24 @@ private:
     void setPlayingOnSecondScreen(PlaybackSessionContextIdentifier, bool);
     void sendRemoteCommand(PlaybackSessionContextIdentifier, WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&);
 
+#if !RELEASE_LOG_DISABLED
+    void setLogIdentifier(PlaybackSessionContextIdentifier, uint64_t);
+
+    const Logger& logger() const { return m_logger; }
+    const void* logIdentifier() const { return m_logIdentifier; }
+    const char* logClassName() const { return "VideoFullscreenManagerProxy"; }
+    WTFLogChannel& logChannel() const;
+#endif
+
     WebPageProxy* m_page;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     PlaybackSessionContextIdentifier m_controlsManagerContextId;
     HashCountedSet<PlaybackSessionContextIdentifier> m_clientCounts;
+
+#if !RELEASE_LOG_DISABLED
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
 };
 
 } // namespace WebKit
