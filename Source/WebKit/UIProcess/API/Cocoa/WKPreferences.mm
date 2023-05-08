@@ -180,6 +180,31 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _preferences->setFullScreenEnabled(elementFullscreenEnabled);
 }
 
+- (void)setInactiveSchedulingPolicy:(WKInactiveSchedulingPolicy)policy
+{
+    switch (policy) {
+    case WKInactiveSchedulingPolicySuspend:
+        _preferences->setShouldTakeNearSuspendedAssertions(false);
+        _preferences->setBackgroundWebContentRunningBoardThrottlingEnabled(true);
+        break;
+    case WKInactiveSchedulingPolicyThrottle:
+        _preferences->setShouldTakeNearSuspendedAssertions(true);
+        _preferences->setBackgroundWebContentRunningBoardThrottlingEnabled(true);
+        break;
+    case WKInactiveSchedulingPolicyNone:
+        _preferences->setShouldTakeNearSuspendedAssertions(true);
+        _preferences->setBackgroundWebContentRunningBoardThrottlingEnabled(false);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
+- (WKInactiveSchedulingPolicy)inactiveSchedulingPolicy
+{
+    return _preferences->backgroundWebContentRunningBoardThrottlingEnabled() ? (_preferences->shouldTakeNearSuspendedAssertions() ? WKInactiveSchedulingPolicyThrottle : WKInactiveSchedulingPolicySuspend) : WKInactiveSchedulingPolicyNone;
+}
+
 #pragma mark OS X-specific methods
 
 #if PLATFORM(MAC)
@@ -1660,31 +1685,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 - (BOOL)_clientBadgeEnabled
 {
     return _preferences->clientBadgeEnabled();
-}
-
-- (void)setInactiveSchedulingPolicy:(WKInactiveSchedulingPolicy)policy
-{
-    switch (policy) {
-    case WKInactiveSchedulingPolicySuspend:
-        _preferences->setShouldTakeNearSuspendedAssertions(false);
-        _preferences->setBackgroundWebContentRunningBoardThrottlingEnabled(true);
-        break;
-    case WKInactiveSchedulingPolicyThrottle:
-        _preferences->setShouldTakeNearSuspendedAssertions(true);
-        _preferences->setBackgroundWebContentRunningBoardThrottlingEnabled(true);
-        break;
-    case WKInactiveSchedulingPolicyNone:
-        _preferences->setShouldTakeNearSuspendedAssertions(true);
-        _preferences->setBackgroundWebContentRunningBoardThrottlingEnabled(false);
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-}
-
-- (WKInactiveSchedulingPolicy)inactiveSchedulingPolicy
-{
-    return _preferences->backgroundWebContentRunningBoardThrottlingEnabled() ? (_preferences->shouldTakeNearSuspendedAssertions() ? WKInactiveSchedulingPolicyThrottle : WKInactiveSchedulingPolicySuspend) : WKInactiveSchedulingPolicyNone;
 }
 
 - (void)_setVerifyWindowOpenUserGestureFromUIProcess:(BOOL)enabled
