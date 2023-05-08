@@ -42,13 +42,13 @@ FontCustomPlatformData::~FontCustomPlatformData() = default;
 
 FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& fontDescription, bool bold, bool italic, const FontCreationContext& fontCreationContext)
 {
+    auto size = fontDescription.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
     UnrealizedCoreTextFont unrealizedFont = { RetainPtr { fontDescriptor } };
-    unrealizedFont.setSize(fontDescription.computedPixelSize());
+    unrealizedFont.setSize(size);
     unrealizedFont.modify([&](CFMutableDictionaryRef attributes) {
         addAttributesForWebFonts(attributes, fontDescription.shouldAllowUserInstalledFonts());
     });
 
-    auto size = fontDescription.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
     FontOrientation orientation = fontDescription.orientation();
     FontWidthVariant widthVariant = fontDescription.widthVariant();
 

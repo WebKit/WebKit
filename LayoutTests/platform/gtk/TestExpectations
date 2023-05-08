@@ -812,6 +812,9 @@ webkit.org/b/161962 fast/forms/implicit-submission.html [ Failure ]
 
 webkit.org/b/169531 fast/text/font-selection-font-face-parse.html [ Skip ]
 
+# @font-face: missing integration between size-adjust and optical-size
+ webkit.org/b/256457 imported/w3c/web-platform-tests/css/css-fonts/variations/variable-opsz-size-adjust.html [ ImageOnlyFailure ]
+
 # CSS image-orientation is not yet enabled.
 webkit.org/b/89052 fast/css/image-orientation [ Skip ]
 
