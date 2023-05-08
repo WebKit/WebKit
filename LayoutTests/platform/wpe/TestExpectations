@@ -771,6 +771,9 @@ webkit.org/b/217370 fast/events/setDragImage-element-non-nullable.html [ Failure
 
 webkit.org/b/256310 imported/w3c/web-platform-tests/css/css-fonts/parsing/font-face-src-tech.html [ Skip ]
 
+# @font-face: missing integration between size-adjust and optical-size
+ webkit.org/b/256457 imported/w3c/web-platform-tests/css/css-fonts/variations/variable-opsz-size-adjust.html [ ImageOnlyFailure ]
+
 # WebXR
 webkit.org/b/225483 [ Release ] imported/w3c/web-platform-tests/webxr/events_input_source_recreation.https.html [ Pass ]
 webkit.org/b/225483 [ Release ] imported/w3c/web-platform-tests/webxr/events_input_sources_change.https.html [ Pass ]

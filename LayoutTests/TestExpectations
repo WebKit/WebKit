@@ -3711,8 +3711,6 @@ webkit.org/b/219735 imported/w3c/web-platform-tests/css/css-font-loading/fontfac
 
 # @font-face: size-adjust and text-decoration
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/size-adjust-text-decoration.tentative.html [ ImageOnlyFailure ]
-# @font-face: size-adjust and optical-size
-webkit.org/b/255862 imported/w3c/web-platform-tests/css/css-fonts/variations/variable-opsz-size-adjust.html [ ImageOnlyFailure ]
 
 # We intentionally do not want to allow disabling required ligatures, so we don't honor this optional test.
 imported/w3c/web-platform-tests/css/css-fonts/font-variant-ligatures-11.optional.html [ ImageOnlyFailure ]
