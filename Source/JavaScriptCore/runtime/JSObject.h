@@ -1250,6 +1250,8 @@ public:
         return Structure::create(vm, globalObject, prototype, typeInfo(), info(), defaultIndexingType, inlineCapacity);
     }
 
+    static JSFinalObject* createDefaultEmptyObject(JSGlobalObject*);
+
     DECLARE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE);
 
     DECLARE_EXPORT_INFO;
@@ -1257,10 +1259,11 @@ public:
 private:
     friend class LLIntOffsetsExtractor;
 
-    explicit JSFinalObject(VM& vm, Structure* structure, Butterfly* butterfly)
+    explicit JSFinalObject(VM& vm, Structure* structure, Butterfly* butterfly, size_t inlineCapacity)
         : JSObject(vm, structure, butterfly)
     {
-        gcSafeZeroMemory(inlineStorageUnsafe(), structure->inlineCapacity() * sizeof(EncodedJSValue));
+        // We do not need to use gcSafeMemcpy since this object is not exposed yet.
+        memset(inlineStorageUnsafe(), 0, inlineCapacity * sizeof(EncodedJSValue));
     }
 
 #if ASSERT_ENABLED
@@ -1277,10 +1280,11 @@ JS_EXPORT_PRIVATE JSC_DECLARE_HOST_FUNCTION(objectPrivateFuncInstanceOf);
 
 inline JSFinalObject* JSFinalObject::createWithButterfly(VM& vm, Structure* structure, Butterfly* butterfly)
 {
+    size_t inlineCapacity = structure->inlineCapacity();
     JSFinalObject* finalObject = new (
         NotNull,
-        allocateCell<JSFinalObject>(vm, allocationSize(structure->inlineCapacity()))
-    ) JSFinalObject(vm, structure, butterfly);
+        allocateCell<JSFinalObject>(vm, allocationSize(inlineCapacity))
+    ) JSFinalObject(vm, structure, butterfly, inlineCapacity);
     finalObject->finishCreation(vm);
     return finalObject;
 }

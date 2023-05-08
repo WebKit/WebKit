@@ -78,7 +78,7 @@ inline JSFinalObject* constructEmptyObject(JSGlobalObject* globalObject, JSObjec
 
 inline JSFinalObject* constructEmptyObject(JSGlobalObject* globalObject)
 {
-    return constructEmptyObject(getVM(globalObject), globalObject->objectStructureForObjectConstructor());
+    return JSFinalObject::createDefaultEmptyObject(globalObject);
 }
 
 inline JSObject* constructObject(JSGlobalObject* globalObject, JSValue arg)
