@@ -580,18 +580,20 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, WTF::Funct
         context.fillRect(layerBounds, SRGBA<uint8_t> { 255, 47, 146 });
 #endif
 
-    // FIXME: Clarify that GraphicsLayerPaintSnapshotting is just about image decoding.
-    auto flags = m_layer->context() && m_layer->context()->nextRenderingUpdateRequiresSynchronousImageDecoding() ? GraphicsLayerPaintSnapshotting : GraphicsLayerPaintNormal;
+    // FIXME: Clarify that GraphicsLayerPaintBehavior::Snapshotting is just about image decoding.
+    OptionSet<GraphicsLayerPaintBehavior> paintBehavior;
+    if (m_layer->context() && m_layer->context()->nextRenderingUpdateRequiresSynchronousImageDecoding())
+        paintBehavior.add(WebCore::GraphicsLayerPaintBehavior::Snapshotting);
     
     // FIXME: This should be moved to PlatformCALayerRemote for better layering.
     switch (m_layer->layerType()) {
     case PlatformCALayer::LayerTypeSimpleLayer:
     case PlatformCALayer::LayerTypeTiledBackingTileLayer:
-        m_layer->owner()->platformCALayerPaintContents(m_layer, context, dirtyBounds, flags);
+        m_layer->owner()->platformCALayerPaintContents(m_layer, context, dirtyBounds, paintBehavior);
         break;
     case PlatformCALayer::LayerTypeWebLayer:
     case PlatformCALayer::LayerTypeBackdropLayer:
-        PlatformCALayer::drawLayerContents(context, m_layer, m_paintingRects, flags);
+        PlatformCALayer::drawLayerContents(context, m_layer, m_paintingRects, paintBehavior);
         break;
     case PlatformCALayer::LayerTypeLayer:
     case PlatformCALayer::LayerTypeTransformLayer:

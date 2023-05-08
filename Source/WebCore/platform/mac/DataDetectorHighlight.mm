@@ -112,7 +112,7 @@ void DataDetectorHighlight::notifyFlushRequired(const GraphicsLayer*)
     m_page->scheduleRenderingUpdate(RenderingUpdateStep::LayerFlush);
 }
 
-void DataDetectorHighlight::paintContents(const GraphicsLayer*, GraphicsContext& graphicsContext, const FloatRect&, GraphicsLayerPaintBehavior)
+void DataDetectorHighlight::paintContents(const GraphicsLayer*, GraphicsContext& graphicsContext, const FloatRect&, OptionSet<GraphicsLayerPaintBehavior>)
 {
     if (!PAL::isDataDetectorsFrameworkAvailable())
         return;

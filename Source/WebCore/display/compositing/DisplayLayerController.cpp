@@ -55,7 +55,7 @@ void LayerController::RootLayerClient::notifyFlushRequired(const GraphicsLayer*)
     m_layerController.scheduleRenderingUpdate();
 }
 
-void LayerController::RootLayerClient::paintContents(const GraphicsLayer* layer, GraphicsContext& context, const FloatRect& dirtyRect, GraphicsLayerPaintBehavior)
+void LayerController::RootLayerClient::paintContents(const GraphicsLayer* layer, GraphicsContext& context, const FloatRect& dirtyRect, OptionSet<GraphicsLayerPaintBehavior>)
 {
     ASSERT_UNUSED(layer, layer == m_layerController.contentLayer());
 

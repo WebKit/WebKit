@@ -70,12 +70,10 @@ enum class PlatformLayerTreeAsTextFlags : uint8_t {
     IncludeModels = 1 << 2,
 };
 
-enum GraphicsLayerPaintFlags {
-    GraphicsLayerPaintNormal                    = 0,
-    GraphicsLayerPaintSnapshotting              = 1 << 0,
-    GraphicsLayerPaintFirstTilePaint            = 1 << 1,
+enum class GraphicsLayerPaintBehavior : uint8_t {
+    Snapshotting              = 1 << 0,
+    FirstTilePaint            = 1 << 1,
 };
-typedef unsigned GraphicsLayerPaintBehavior;
     
 class GraphicsLayerClient {
 public:
@@ -94,7 +92,7 @@ public:
     // Notification that this layer requires a flush before the next display refresh.
     virtual void notifyFlushBeforeDisplayRefresh(const GraphicsLayer*) { }
 
-    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, const FloatRect& /* inClip */, GraphicsLayerPaintBehavior) { }
+    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, const FloatRect& /* inClip */, OptionSet<GraphicsLayerPaintBehavior>) { }
     virtual void didChangePlatformLayerForLayer(const GraphicsLayer*) { }
 
     // Provides current transform (taking transform-origin and animations into account). Input matrix has been

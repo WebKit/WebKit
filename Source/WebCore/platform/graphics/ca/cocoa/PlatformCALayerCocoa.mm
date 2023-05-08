@@ -1187,14 +1187,14 @@ PlatformCALayer::RepaintRectList PlatformCALayer::collectRectsToPaint(GraphicsCo
     return dirtyRects;
 }
 
-void PlatformCALayer::drawLayerContents(GraphicsContext& graphicsContext, WebCore::PlatformCALayer* platformCALayer, RepaintRectList& dirtyRects, GraphicsLayerPaintBehavior layerPaintBehavior)
+void PlatformCALayer::drawLayerContents(GraphicsContext& graphicsContext, WebCore::PlatformCALayer* platformCALayer, RepaintRectList& dirtyRects, OptionSet<GraphicsLayerPaintBehavior> layerPaintBehavior)
 {
     WebCore::PlatformCALayerClient* layerContents = platformCALayer->owner();
     if (!layerContents)
         return;
 
     if (!layerContents->platformCALayerRepaintCount(platformCALayer))
-        layerPaintBehavior |= GraphicsLayerPaintFirstTilePaint;
+        layerPaintBehavior.add(GraphicsLayerPaintBehavior::FirstTilePaint);
 
     {
         GraphicsContextStateSaver saver(graphicsContext);

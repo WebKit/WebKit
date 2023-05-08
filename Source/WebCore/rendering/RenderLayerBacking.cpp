@@ -3695,7 +3695,7 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
 }
 
 // Up-call from compositing layer drawing callback.
-void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, const FloatRect& clip, GraphicsLayerPaintBehavior layerPaintBehavior)
+void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, const FloatRect& clip, OptionSet<GraphicsLayerPaintBehavior> layerPaintBehavior)
 {
 #ifndef NDEBUG
     renderer().page().setIsPainting(true);
@@ -3711,7 +3711,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
     IntRect dirtyRect = enclosingIntRect(adjustedClipRect);
 
     if (!graphicsLayer->repaintCount())
-        layerPaintBehavior |= GraphicsLayerPaintFirstTilePaint;
+        layerPaintBehavior.add(GraphicsLayerPaintBehavior::FirstTilePaint);
 
     if (graphicsLayer == m_graphicsLayer.get()
         || graphicsLayer == m_foregroundLayer.get()
@@ -3724,10 +3724,10 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
 
         // We have to use the same root as for hit testing, because both methods can compute and cache clipRects.
         OptionSet<PaintBehavior> behavior = PaintBehavior::Normal;
-        if (layerPaintBehavior == GraphicsLayerPaintSnapshotting)
+        if (layerPaintBehavior.contains(GraphicsLayerPaintBehavior::Snapshotting))
             behavior.add(PaintBehavior::Snapshotting);
         
-        if (layerPaintBehavior == GraphicsLayerPaintFirstTilePaint)
+        if (layerPaintBehavior.contains(GraphicsLayerPaintBehavior::FirstTilePaint))
             behavior.add(PaintBehavior::TileFirstPaint);
 
         paintIntoLayer(graphicsLayer, context, dirtyRect, behavior);
