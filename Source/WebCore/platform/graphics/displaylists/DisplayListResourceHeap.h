@@ -45,36 +45,36 @@ public:
     virtual ImageBuffer* getImageBuffer(RenderingResourceIdentifier) const = 0;
     virtual NativeImage* getNativeImage(RenderingResourceIdentifier) const = 0;
     virtual std::optional<SourceImage> getSourceImage(RenderingResourceIdentifier) const = 0;
-    virtual Font* getFont(RenderingResourceIdentifier) const = 0;
     virtual DecomposedGlyphs* getDecomposedGlyphs(RenderingResourceIdentifier) const = 0;
     virtual Gradient* getGradient(RenderingResourceIdentifier) const = 0;
+    virtual Font* getFont(RenderingResourceIdentifier) const = 0;
 };
 
 class LocalResourceHeap : public ResourceHeap {
 public:
     void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<ImageBuffer>&& imageBuffer)
     {
-        m_resources.add(renderingResourceIdentifier, WTFMove(imageBuffer));
+        add<ImageBuffer>(renderingResourceIdentifier, WTFMove(imageBuffer));
     }
 
     void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<NativeImage>&& image)
     {
-        m_resources.add(renderingResourceIdentifier, WTFMove(image));
-    }
-
-    void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<Font>&& font)
-    {
-        m_resources.add(renderingResourceIdentifier, WTFMove(font));
+        add<RenderingResource>(renderingResourceIdentifier, WTFMove(image));
     }
 
     void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<DecomposedGlyphs>&& decomposedGlyphs)
     {
-        m_resources.add(renderingResourceIdentifier, WTFMove(decomposedGlyphs));
+        add<RenderingResource>(renderingResourceIdentifier, WTFMove(decomposedGlyphs));
     }
 
     void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<Gradient>&& gradient)
     {
-        m_resources.add(renderingResourceIdentifier, WTFMove(gradient));
+        add<RenderingResource>(renderingResourceIdentifier, WTFMove(gradient));
+    }
+
+    void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<Font>&& font)
+    {
+        add<Font>(renderingResourceIdentifier, WTFMove(font));
     }
 
     ImageBuffer* getImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier) const final
@@ -84,7 +84,8 @@ public:
 
     NativeImage* getNativeImage(RenderingResourceIdentifier renderingResourceIdentifier) const final
     {
-        return get<NativeImage>(renderingResourceIdentifier);
+        auto* renderingResource = get<RenderingResource>(renderingResourceIdentifier);
+        return dynamicDowncast<NativeImage>(renderingResource);
     }
 
     std::optional<SourceImage> getSourceImage(RenderingResourceIdentifier renderingResourceIdentifier) const final
@@ -101,19 +102,21 @@ public:
         return std::nullopt;
     }
 
-    Font* getFont(RenderingResourceIdentifier renderingResourceIdentifier) const final
-    {
-        return get<Font>(renderingResourceIdentifier);
-    }
-
     DecomposedGlyphs* getDecomposedGlyphs(RenderingResourceIdentifier renderingResourceIdentifier) const final
     {
-        return get<DecomposedGlyphs>(renderingResourceIdentifier);
+        auto* renderingResource = get<RenderingResource>(renderingResourceIdentifier);
+        return dynamicDowncast<DecomposedGlyphs>(renderingResource);
     }
 
     Gradient* getGradient(RenderingResourceIdentifier renderingResourceIdentifier) const final
     {
-        return get<Gradient>(renderingResourceIdentifier);
+        auto* renderingResource = get<RenderingResource>(renderingResourceIdentifier);
+        return dynamicDowncast<Gradient>(renderingResource);
+    }
+
+    Font* getFont(RenderingResourceIdentifier renderingResourceIdentifier) const final
+    {
+        return get<Font>(renderingResourceIdentifier);
     }
 
     void clear()
@@ -122,6 +125,12 @@ public:
     }
 
 private:
+    template <typename T>
+    void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<T>&& object)
+    {
+        m_resources.add(renderingResourceIdentifier, WTFMove(object));
+    }
+
     template <typename T>
     T* get(RenderingResourceIdentifier renderingResourceIdentifier) const
     {
@@ -135,10 +144,8 @@ private:
     using Resource = std::variant<
         std::monostate,
         Ref<ImageBuffer>,
-        Ref<NativeImage>,
-        Ref<Font>,
-        Ref<DecomposedGlyphs>,
-        Ref<Gradient>
+        Ref<RenderingResource>,
+        Ref<Font>
     >;
 
     HashMap<RenderingResourceIdentifier, Resource> m_resources;

@@ -50,6 +50,10 @@ public:
             observer->releaseRenderingResource(renderingResourceIdentifier());
     }
 
+    virtual bool isNativeImage() const { return false; }
+    virtual bool isGradient() const { return false; }
+    virtual bool isDecomposedGlyphs() const { return false; }
+
     bool hasValidRenderingResourceIdentifier() const
     {
         return m_renderingResourceIdentifier.has_value();
