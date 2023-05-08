@@ -45,7 +45,11 @@ if (!window.accessibilityController)
     debug('This test requires accessibilityController');
 else {
     shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").role', 'AXRole: AXCheckBox');
-    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").helpText', 'AXHelp: some description other description');
+    if (accessibilityController.platformName == "mac")
+        shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").customContent', 'description: some description other description');
+    else
+        shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").helpText', 'AXHelp: some description other description');
+
     shouldBe('accessibilityController.accessibleElementById("custom-1").detailsElements().length', '2');
     shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").detailsElements()[0].domIdentifier', 'details1');
     shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").detailsElements()[1].domIdentifier', 'details2');

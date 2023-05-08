@@ -57,27 +57,49 @@ if (window.accessibilityController) {
     target1.ariaDescribedByElements = [desc1];
     setTimeout(async function() {
         axTarget1 = accessibilityController.accessibleElementById("target1");
-        output += await expectAsync("axTarget1.helpText", "'AXHelp: First description'");
+        if (accessibilityController.platformName == "mac")
+            output += await expectAsync("axTarget1.customContent", "'description: First description'");
+        else
+            output += await expectAsync("axTarget1.helpText", "'AXHelp: First description'");
 
         target2.ariaDescribedByElements = [document.getElementsByClassName("desc")[0]];
         axTarget2 = accessibilityController.accessibleElementById("target2");
-        output += await expectAsync("axTarget2.helpText", "'AXHelp: Second description'");
+        if (accessibilityController.platformName == "mac")
+            output += await expectAsync("axTarget2.customContent", "'description: Second description'");
+        else
+            output += await expectAsync("axTarget2.helpText", "'AXHelp: Second description'");
+
         target2.setAttribute("aria-describedby", "desc1");
-        output += await expectAsync("axTarget2.helpText", "'AXHelp: First description'");
+        if (accessibilityController.platformName == "mac")
+            output += await expectAsync("axTarget2.customContent", "'description: First description'");
+        else
+            output += await expectAsync("axTarget2.helpText", "'AXHelp: First description'");
 
         axInnerTarget = accessibilityController.accessibleElementById("innertarget");
-        output += expect("axInnerTarget.helpText", "'AXHelp: Third description'");
+        if (accessibilityController.platformName == "mac")
+            output += expect("axInnerTarget.customContent", "'description: Third description'");
+        else
+            output += expect("axInnerTarget.helpText", "'AXHelp: Third description'");
 
         target2.ariaDescribedByElements = [desc1, document.getElementsByClassName("desc")[0], desc3];
-        output += await expectAsync("axTarget2.helpText", "'AXHelp: First description Second description Third description'");
+        if (accessibilityController.platformName == "mac")
+            output += await expectAsync("axTarget2.customContent", "'description: First description Second description Third description'");
+        else
+            output += await expectAsync("axTarget2.helpText", "'AXHelp: First description Second description Third description'");
 
         target4.ariaDescribedByElements = [desc4];
         desc4.id = "desc4-new";
         axTarget4 = accessibilityController.accessibleElementById("target4");
-        output += await expectAsync("axTarget4.helpText", "'AXHelp: Fourth description'");
+        if (accessibilityController.platformName == "mac")
+            output += await expectAsync("axTarget4.customContent", "'description: Fourth description'");
+        else
+            output += await expectAsync("axTarget4.helpText", "'AXHelp: Fourth description'");
 
         axTarget5 = accessibilityController.accessibleElementById("target5");
-        output += expect("axTarget5.helpText", "'AXHelp: Fifth description'");
+        if (accessibilityController.platformName == "mac")
+            output += expect("axTarget5.customContent", "'description: Fifth description'");
+        else
+            output += expect("axTarget5.helpText", "'AXHelp: Fifth description'");
 
         debug(output);
         finishJSTest();

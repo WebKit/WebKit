@@ -38,6 +38,10 @@
 #import <wtf/Vector.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+#if HAVE(ACCESSIBILITY_FRAMEWORK)
+#import <Accessibility/Accessibility.h>
+#endif
+
 #ifndef NSAccessibilityDOMIdentifierAttribute
 #define NSAccessibilityDOMIdentifierAttribute @"AXDOMIdentifier"
 #endif
@@ -741,6 +745,18 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::helpText() const
     END_AX_OBJC_EXCEPTIONS
     
     return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::customContent() const
+{
+#if HAVE(ACCESSIBILITY_FRAMEWORK)
+    auto customContent = adoptNS([[NSMutableArray alloc] init]);
+    for (AXCustomContent *content in [m_element accessibilityCustomContent])
+        [customContent addObject:[NSString stringWithFormat:@"%@: %@", content.label, content.value]];
+    return [[customContent.get() componentsJoinedByString:@"\n"] createJSStringRef];
+#else
+    return nullptr;
+#endif
 }
 
 double AccessibilityUIElement::x()

@@ -414,7 +414,10 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
     auto extendedDescription = backingObject->extendedDescription();
     if (extendedDescription.length()) {
         accessibilityCustomContent = adoptNS([[NSMutableArray alloc] init]);
-        [accessibilityCustomContent addObject:[PAL::getAXCustomContentClass() customContentWithLabel:WEB_UI_STRING("description", "description detail") value:extendedDescription]];
+        AXCustomContent *contentItem = [PAL::getAXCustomContentClass() customContentWithLabel:WEB_UI_STRING("description", "description detail") value:extendedDescription];
+        // Set this to high, so that it's always spoken.
+        [contentItem setImportance:AXCustomContentImportanceHigh];
+        [accessibilityCustomContent addObject:contentItem];
     }
     
     return accessibilityCustomContent.autorelease();

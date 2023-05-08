@@ -1862,11 +1862,14 @@ void AccessibilityNodeObject::helpText(Vector<AccessibilityText>& textOrder) con
     const AtomString& ariaHelp = getAttribute(aria_helpAttr);
     if (!ariaHelp.isEmpty())
         textOrder.append(AccessibilityText(ariaHelp, AccessibilityTextSource::Help));
-    
+
+#if !PLATFORM(COCOA)
     String describedBy = ariaDescribedByAttribute();
     if (!describedBy.isEmpty())
         textOrder.append(AccessibilityText(describedBy, AccessibilityTextSource::Summary));
-    else if (isControl()) {
+#endif
+
+    if (isControl()) {
         // For controls, use their fieldset parent's described-by text if available.
         auto matchFunc = [] (const AccessibilityObject& object) {
             return object.isFieldset() && !object.ariaDescribedByAttribute().isEmpty();

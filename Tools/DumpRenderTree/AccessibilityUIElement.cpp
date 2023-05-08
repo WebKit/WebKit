@@ -1244,6 +1244,12 @@ static JSValueRef getHelpTextCallback(JSContextRef context, JSObjectRef thisObje
     return JSValueMakeString(context, language.get());
 }
 
+static JSValueRef getCustomContentCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    auto customContent = toAXElement(thisObject)->customContent();
+    return JSValueMakeString(context, customContent.get());
+}
+
 static JSValueRef getLiveRegionRelevantCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     auto liveRegionRelevant = toAXElement(thisObject)->liveRegionRelevant();
@@ -1960,6 +1966,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "description", getDescriptionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "language", getLanguageCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "helpText", getHelpTextCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "customContent", getCustomContentCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "stringValue", getStringValueCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "x", getXCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "y", getYCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

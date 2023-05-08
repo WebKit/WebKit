@@ -1,0 +1,21 @@
+Checks that element reflection is exposed to the a11y tree for 'ariaDescribedByElements'
+
+PASS: axTarget1.customContent === 'description: First description'
+PASS: axTarget2.customContent === 'description: Second description'
+PASS: axTarget2.customContent === 'description: First description'
+PASS: axInnerTarget.customContent === 'description: Third description'
+PASS: axTarget2.customContent === 'description: First description Second description Third description'
+PASS: axTarget4.customContent === 'description: Fourth description'
+PASS: axTarget5.customContent === 'description: Fifth description'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+First description
+Target 1
+Second description
+Target 2
+Third description
+Fourth description
+Target 4
+Fifth description

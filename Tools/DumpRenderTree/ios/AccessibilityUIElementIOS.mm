@@ -38,6 +38,10 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
+#if HAVE(ACCESSIBILITY_FRAMEWORK)
+#import <Accessibility/Accessibility.h>
+#endif
+
 #import <UIKit/UIKit.h>
 
 typedef void (*AXPostedNotificationCallback)(id element, NSString* notification, void* context);
@@ -838,6 +842,18 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringValue()
 JSRetainPtr<JSStringRef> AccessibilityUIElement::language()
 {
     return WTR::createJSString();
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::customContent() const
+{
+#if HAVE(ACCESSIBILITY_FRAMEWORK)
+    auto customContent = adoptNS([[NSMutableArray alloc] init]);
+    for (AXCustomContent *content in [m_element accessibilityCustomContent])
+        [customContent addObject:[NSString stringWithFormat:@"%@: %@", content.label, content.value]];
+    return [[customContent.get() componentsJoinedByString:@"\n"] createJSStringRef];
+#else
+    return nullptr;
+#endif
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::helpText() const

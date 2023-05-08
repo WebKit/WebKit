@@ -1,8 +1,8 @@
 This test ensures that aria-description maps to appropriate attributes and works with aria-describedby correctly.
 
-Help text:
-Help text: AXHelp: text
-Help text: AXHelp: text
+Custom content: description: Longer description
+Custom content: description: text
+Custom content: description: text
 
 PASS successfullyParsed is true
 

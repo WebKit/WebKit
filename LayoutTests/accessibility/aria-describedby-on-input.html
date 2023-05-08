@@ -22,13 +22,22 @@
         window.jsTestIsAsync = true;
 
         var timeInput = accessibilityController.accessibleElementById("time");
-        testOutput += `The accessibility description of #time is \"${timeInput.helpText}\"\n`;
+        let isCocoa = accessibilityController.platformName == "mac" || accessibilityController.platformName == "ios";
+        if (isCocoa)
+            testOutput += `The accessibility description of #time is \"${timeInput.customContent}\"\n`;
+        else
+            testOutput += `The accessibility description of #time is \"${timeInput.helpText}\"\n`;
 
         testOutput += `\nUpdating aria-describedby of #time to #description3.\n`;
         document.getElementById("time").setAttribute("aria-describedby", "description3");
         setTimeout(async function() {
-            await waitFor(() => timeInput.helpText.includes("Foobar") );
-            testOutput += `The accessibility description of #time is \"${timeInput.helpText}\"\n`;
+            if (isCocoa) {
+                await waitFor(() => timeInput.customContent.includes("Foobar") );
+                testOutput += `The accessibility description of #time is \"${timeInput.customContent}\"\n`;
+            } else {
+                await waitFor(() => timeInput.helpText.includes("Foobar") );
+                testOutput += `The accessibility description of #time is \"${timeInput.helpText}\"\n`;
+            }
 
             document.getElementById("content").style.visibility = "hidden";
             debug(testOutput);

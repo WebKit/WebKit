@@ -216,6 +216,10 @@ public:
     AccessibilityUIElement ariaFlowToElementAtIndex(unsigned);
     AccessibilityUIElement ariaControlsElementAtIndex(unsigned);
 
+#if PLATFORM(COCOA)
+    JSRetainPtr<JSStringRef> customContent() const;
+#endif
+
     // ARIA Drag and Drop
     bool ariaIsGrabbed() const;
     // A space concatentated string of all the drop effects.

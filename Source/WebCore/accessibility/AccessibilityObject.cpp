@@ -3250,6 +3250,15 @@ Vector<String> AccessibilityObject::classList() const
     return classList;
 }
 
+String AccessibilityObject::extendedDescription() const
+{
+    auto describedBy = ariaDescribedByAttribute();
+    if (!describedBy.isEmpty())
+        return describedBy;
+
+    return getAttribute(HTMLNames::aria_descriptionAttr);
+}
+
 bool AccessibilityObject::supportsPressed() const
 {
     const AtomString& expanded = getAttribute(aria_pressedAttr);

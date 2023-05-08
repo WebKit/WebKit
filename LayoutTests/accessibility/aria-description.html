@@ -7,12 +7,39 @@
 
 <div id="button" role="button" aria-description="Longer description">button</div>
 
+<div id="button1" role="button" aria-describedby="label1">button</div>
+<div id="label1">text</div>
+
+<div id="button2" role="button" aria-describedby="label2" aria-description="Longer description ignored">button</div>
+<div id="label2">text</div>
+
 <script>
-    var testOutput = "This test ensures that aria-description maps to appropriate attributes.\n\n";
+    var testOutput = "This test ensures that aria-description maps to appropriate attributes and works with aria-describedby correctly.\n\n";
 
     if (window.accessibilityController) {
+        let isCocoa = accessibilityController.platformName == "mac" || accessibilityController.platformName == "ios";
+
+        // aria-description case.
         const button = accessibilityController.accessibleElementById("button");
-        testOutput += `Custom content: ${button.customContent}\n`;
+        if (isCocoa)
+            testOutput += `Custom content: ${button.customContent}\n`;
+        else
+            testOutput += `Help text: ${button.helpText}\n`;
+
+        // aria-describedby case.
+        const button1 = accessibilityController.accessibleElementById("button1");
+        if (isCocoa)
+            testOutput += `Custom content: ${button1.customContent}\n`;
+        else
+            testOutput += `Help text: ${button1.helpText}\n`;
+
+        // aria-describedby and aria-description case.
+        const button2 = accessibilityController.accessibleElementById("button2");
+        if (isCocoa)
+            testOutput += `Custom content: ${button2.customContent}\n`;
+        else
+            testOutput += `Help text: ${button2.helpText}\n`;
+
         debug(testOutput);
     }
 </script>

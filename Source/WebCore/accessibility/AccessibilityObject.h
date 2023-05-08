@@ -398,7 +398,7 @@ public:
     String brailleRoleDescription() const override { return getAttribute(HTMLNames::aria_brailleroledescriptionAttr); }
     String embeddedImageDescription() const override;
     std::optional<AccessibilityChildrenVector> imageOverlayElements() override { return std::nullopt; }
-    String extendedDescription() const override { return getAttribute(HTMLNames::aria_descriptionAttr); }
+    String extendedDescription() const override;
 
     // Abbreviations
     String expandedTextValue() const override { return String(); }
