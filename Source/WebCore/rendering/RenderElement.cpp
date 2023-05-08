@@ -3,8 +3,8 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
  *           (C) 2005, 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
- * Copyright (C) 2010-2014 Google Inc. All rights reserved.
+ * Copyright (C) 2005-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2012 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -1291,11 +1291,10 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
         LayoutUnit boxWidth = is<RenderBox>(*this) ? downcast<RenderBox>(*this).width() : 0_lu;
         LayoutUnit minInsetRightShadowExtent = std::min<LayoutUnit>(-insetShadowExtent.right(), std::min(newBounds.width(), oldBounds.width()));
         LayoutUnit borderWidth = std::max(borderRight, std::max(valueForLength(style().borderTopRightRadius().width, boxWidth), valueForLength(style().borderBottomRightRadius().width, boxWidth)));
-        LayoutUnit decorationsLeftWidth = std::max(LayoutUnit(-outlineStyle.outlineOffset()), borderWidth + minInsetRightShadowExtent) + std::max(outlineWidth, -shadowLeft);
-        LayoutUnit decorationsRightWidth = std::max(LayoutUnit(-outlineStyle.outlineOffset()), borderWidth + minInsetRightShadowExtent) + std::max(outlineWidth, shadowRight);
-        LayoutRect rightRect(newOutlineBox.x() + std::min(newOutlineBox.width(), oldOutlineBox.width()) - decorationsLeftWidth,
+        LayoutUnit decorationsWidth = std::max(LayoutUnit(-outlineStyle.outlineOffset()), borderWidth + minInsetRightShadowExtent) + std::max(outlineWidth, shadowRight);
+        LayoutRect rightRect(newOutlineBox.x() + std::min(newOutlineBox.width(), oldOutlineBox.width()) - decorationsWidth,
             newOutlineBox.y(),
-            width + decorationsLeftWidth + decorationsRightWidth,
+            width + decorationsWidth,
             std::max(newOutlineBox.height(), oldOutlineBox.height()));
         LayoutUnit right = std::min(newBounds.maxX(), oldBounds.maxX());
         if (rightRect.x() < right) {
@@ -1313,12 +1312,11 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
         LayoutUnit minInsetBottomShadowExtent = std::min<LayoutUnit>(-insetShadowExtent.bottom(), std::min(newBounds.height(), oldBounds.height()));
         LayoutUnit borderHeight = std::max(borderBottom, std::max(valueForLength(style().borderBottomLeftRadius().height, boxHeight),
             valueForLength(style().borderBottomRightRadius().height, boxHeight)));
-        LayoutUnit decorationsTopHeight = std::max(LayoutUnit(-outlineStyle.outlineOffset()), borderHeight + minInsetBottomShadowExtent) + std::max(outlineWidth, -shadowTop);
-        LayoutUnit decorationsBottomHeight = std::max(LayoutUnit(-outlineStyle.outlineOffset()), borderHeight + minInsetBottomShadowExtent) + std::max(outlineWidth, shadowBottom);
+        LayoutUnit decorationsHeight = std::max(LayoutUnit(-outlineStyle.outlineOffset()), borderHeight + minInsetBottomShadowExtent) + std::max(outlineWidth, shadowBottom);
         LayoutRect bottomRect(newOutlineBox.x(),
-            std::min(newOutlineBox.maxY(), oldOutlineBox.maxY()) - decorationsTopHeight,
+            std::min(newOutlineBox.maxY(), oldOutlineBox.maxY()) - decorationsHeight,
             std::max(newOutlineBox.width(), oldOutlineBox.width()),
-            height + decorationsTopHeight + decorationsBottomHeight);
+            height + decorationsHeight);
         LayoutUnit bottom = std::min(newBounds.maxY(), oldBounds.maxY());
         if (bottomRect.y() < bottom) {
             bottomRect.setHeight(std::min(bottomRect.height(), bottom - bottomRect.y()));
