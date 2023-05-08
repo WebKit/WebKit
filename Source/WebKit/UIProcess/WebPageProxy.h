@@ -2150,6 +2150,7 @@ public:
 
     SubframePageProxy* subpageFrameProxyForRegistrableDomain(WebCore::RegistrableDomain) const;
     SubframePageProxy* subframePageProxyForFrameID(WebCore::FrameIdentifier) const;
+    void createRemoteSubframesInOtherProcesses(WebFrameProxy&);
 
     void requestImageBitmap(const WebCore::ElementContext&, CompletionHandler<void(ShareableBitmapHandle&&, const String& sourceMIMEType)>&&);
 

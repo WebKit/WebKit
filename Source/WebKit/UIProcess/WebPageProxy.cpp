@@ -4075,13 +4075,12 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
             loadParameters.request = navigation.currentRequest();
             loadParameters.shouldTreatAsContinuingLoad = WebCore::ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision;
             loadParameters.frameIdentifier = frame.frameID();
-            
+
+            // FIXME: This layer hosting context identifier isn't hooked up right.
             LocalFrameCreationParameters localFrameCreationParameters {
-                frame.frameID(),
-                frame.parentFrame()->frameID(),
                 WebCore::LayerHostingContextIdentifier::generate()
             };
-            newProcess->send(Messages::WebPage::LoadRequestByCreatingNewLocalFrameOrConvertingRemoteFrame(localFrameCreationParameters, loadParameters), frame.page()->webPageID());
+            newProcess->send(Messages::WebPage::TransitionFrameToLocalAndLoadRequest(localFrameCreationParameters, loadParameters), frame.page()->webPageID());
         }
         return;
     }
@@ -5700,6 +5699,31 @@ SubframePageProxy* WebPageProxy::subframePageProxyForFrameID(WebCore::FrameIdent
     if (domainIterator == internals.frameIdentifierToDomainMap.end())
         return nullptr;
     return internals.domainToSubframePageProxyMap.get(domainIterator->value);
+}
+
+void WebPageProxy::createRemoteSubframesInOtherProcesses(WebFrameProxy& newFrame)
+{
+    if (!m_preferences->siteIsolationEnabled())
+        return;
+
+    auto* parent = newFrame.parentFrame();
+    if (!parent) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto& mainFrameProcess = process();
+    auto& newFrameProcess = newFrame.process();
+    auto& internals = this->internals();
+
+    // FIXME: We'll also have to use this pattern to update remoteProcessIdentifier so that postMessage continues to work after an iframe changes processes.
+    for (auto& subframePageProxy : internals.domainToSubframePageProxyMap.values()) {
+        if (&subframePageProxy->process() == &newFrameProcess)
+            continue;
+        subframePageProxy->send(Messages::WebPage::CreateRemoteSubframe(parent->frameID(), newFrame.frameID(), newFrameProcess.coreProcessIdentifier()));
+    }
+    if (&newFrameProcess != &mainFrameProcess)
+        send(Messages::WebPage::CreateRemoteSubframe(parent->frameID(), newFrame.frameID(), newFrameProcess.coreProcessIdentifier()));
 }
 
 void WebPageProxy::didFinishLoadForFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, uint64_t navigationID, const UserData& userData)

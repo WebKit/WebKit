@@ -192,7 +192,6 @@ class SharedBufferReference;
 namespace WebCore {
 
 class AXCoreObject;
-class AbstractFrame;
 class CachedPage;
 class CaptureDevice;
 class DocumentLoader;
@@ -598,6 +597,8 @@ public:
 
     WebCore::Frame* mainFrame() const; // May return nullptr.
     WebCore::LocalFrameView* mainFrameView() const; // May return nullptr.
+
+    void createRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID, WebCore::ProcessIdentifier remoteProcessIdentifier);
 
     std::optional<WebCore::SimpleRange> currentSelectionAsRange();
 
@@ -1754,7 +1755,7 @@ private:
     // Actions
     void tryClose(CompletionHandler<void(bool)>&&);
     void platformDidReceiveLoadParameters(const LoadParameters&);
-    void loadRequestByCreatingNewLocalFrameOrConvertingRemoteFrame(LocalFrameCreationParameters&&, LoadParameters&&);
+    void transitionFrameToLocalAndLoadRequest(LocalFrameCreationParameters&&, LoadParameters&&);
     void loadRequest(LoadParameters&&);
     [[noreturn]] void loadRequestWaitingForProcessLaunch(LoadParameters&&, URL&&, WebPageProxyIdentifier, bool);
     void loadData(LoadParameters&&);

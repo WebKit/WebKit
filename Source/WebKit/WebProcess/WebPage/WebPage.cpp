@@ -1025,6 +1025,16 @@ void WebPage::constructFrameTree(WebFrame& parent, const FrameTreeCreationParame
         constructFrameTree(frame, parameters);
 }
 
+void WebPage::createRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID, WebCore::ProcessIdentifier remoteProcessIdentifier)
+{
+    auto* parentFrame = WebProcess::singleton().webFrame(parentID);
+    if (!parentFrame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    WebFrame::createRemoteSubframe(*this, *parentFrame, newChildID, remoteProcessIdentifier);
+}
+
 #if ENABLE(GPU_PROCESS)
 void WebPage::gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection& gpuProcessConnection)
 {
@@ -1779,25 +1789,20 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& loadParamet
 }
 #endif
 
-void WebPage::loadRequestByCreatingNewLocalFrameOrConvertingRemoteFrame(LocalFrameCreationParameters&& localFrameCreationParameters, LoadParameters&& loadParameters)
+void WebPage::transitionFrameToLocalAndLoadRequest(LocalFrameCreationParameters&& creationParameters, LoadParameters&& loadParameters)
 {
-    // FIXME: This is duplicate information.
-    ASSERT(loadParameters.frameIdentifier == localFrameCreationParameters.frameIdentifier);
-
-    RefPtr frame = WebProcess::singleton().webFrame(localFrameCreationParameters.frameIdentifier);
-    if (!frame) {
-        RefPtr parentWebFrame = WebProcess::singleton().webFrame(localFrameCreationParameters.parentFrameIdentifier);
-        if (!parentWebFrame) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
-        WebFrame::createLocalSubframeHostedInAnotherProcess(*this, *parentWebFrame, localFrameCreationParameters.frameIdentifier, localFrameCreationParameters.layerHostingContextIdentifier);
-        loadRequest(WTFMove(loadParameters));
+    if (!loadParameters.frameIdentifier) {
+        ASSERT_NOT_REACHED();
         return;
     }
 
-    if (!is<LocalFrame>(frame->coreAbstractFrame()))
-        frame->transitionToLocal(localFrameCreationParameters.layerHostingContextIdentifier);
+    RefPtr frame = WebProcess::singleton().webFrame(*loadParameters.frameIdentifier);
+    if (!frame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    frame->transitionToLocal(creationParameters.layerHostingContextIdentifier);
 
     loadRequest(WTFMove(loadParameters));
 }

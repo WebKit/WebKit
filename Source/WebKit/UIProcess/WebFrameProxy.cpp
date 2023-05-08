@@ -379,6 +379,8 @@ void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID)
 
     auto child = WebFrameProxy::create(*m_page, m_process, frameID);
     child->m_parentFrame = *this;
+    if (m_page)
+        m_page->createRemoteSubframesInOtherProcesses(child);
     m_childFrames.add(WTFMove(child));
 }
 

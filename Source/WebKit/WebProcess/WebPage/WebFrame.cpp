@@ -144,21 +144,6 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const At
     return frame;
 }
 
-Ref<WebFrame> WebFrame::createLocalSubframeHostedInAnotherProcess(WebPage& page, WebFrame& parent, WebCore::FrameIdentifier frameID, WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier)
-{
-    auto frame = create(page, frameID);
-    RELEASE_ASSERT(page.corePage());
-    RELEASE_ASSERT(parent.coreAbstractFrame());
-
-    auto coreFrame = LocalFrame::createSubframeHostedInAnotherProcess(*page.corePage(), makeUniqueRef<WebFrameLoaderClient>(frame.get(), frame->makeInvalidator()), frameID, *parent.coreAbstractFrame());
-    frame->m_coreFrame = coreFrame.get();
-    frame->setLayerHostingContextIdentifier(layerHostingContextIdentifier);
-
-    // FIXME: Pass in a name and call FrameTree::setName here.
-    coreFrame->init();
-    return frame;
-}
-
 Ref<WebFrame> WebFrame::createRemoteSubframe(WebPage& page, WebFrame& parent, WebCore::FrameIdentifier frameID, WebCore::ProcessIdentifier remoteProcessIdentifier)
 {
     auto frame = create(page, frameID);

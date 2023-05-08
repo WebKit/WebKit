@@ -31,8 +31,6 @@
 namespace WebKit {
 
 struct LocalFrameCreationParameters {
-    WebCore::FrameIdentifier frameIdentifier;
-    WebCore::FrameIdentifier parentFrameIdentifier;
     WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier;
 };
 

@@ -70,15 +70,13 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProces
     // FIXME: Add more parameters as appropriate.
 
     LocalFrameCreationParameters localFrameCreationParameters {
-        frame.frameID(),
-        frame.parentFrame()->frameID(),
         m_layerHostingContextIdentifier
     };
 
     // FIXME: This gives too much cookie access. This should be removed after putting the entire frame tree in all web processes.
     auto giveAllCookieAccess = LoadedWebArchive::Yes;
     frame.page()->websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(m_process->coreProcessIdentifier(), WebCore::RegistrableDomain(request.url()), giveAllCookieAccess), [process = m_process, loadParameters = WTFMove(loadParameters), localFrameCreationParameters = WTFMove(localFrameCreationParameters), pageID = m_pageID] () mutable {
-        process->send(Messages::WebPage::LoadRequestByCreatingNewLocalFrameOrConvertingRemoteFrame(localFrameCreationParameters, loadParameters), pageID);
+        process->send(Messages::WebPage::TransitionFrameToLocalAndLoadRequest(localFrameCreationParameters, loadParameters), pageID);
     });
 }
 
