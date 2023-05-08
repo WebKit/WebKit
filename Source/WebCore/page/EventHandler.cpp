@@ -398,6 +398,7 @@ void EventHandler::clear()
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
     m_touches.clear();
+    m_touchLastGlobalPositionAndDeltaMap.clear();
     m_firstTouchID = InvalidTouchIdentifier;
     m_touchEventTargetSubframe = nullptr;
 #endif
@@ -4731,7 +4732,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
     Ref protectedFrame(m_frame);
 
     // First build up the lists to use for the 'touches', 'targetTouches' and 'changedTouches' attributes
-    // in the JS event. See http://www.sitepen.com/blog/2008/07/10/touching-and-gesturing-on-the-iphone/
+    // in the JS event. See https://www.sitepen.com/blog/touching-and-gesturing-on-the-iphone/
     // for an overview of how these lists fit together.
 
     // Holds the complete set of touches on the screen and will be used as the 'touches' list in the JS event.

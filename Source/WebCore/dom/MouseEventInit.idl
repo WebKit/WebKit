@@ -30,8 +30,8 @@ dictionary MouseEventInit : EventModifierInit {
     long clientX = 0;
     long clientY = 0;
 
-    [Conditional=POINTER_LOCK] double movementX = 0;
-    [Conditional=POINTER_LOCK] double movementY = 0;
+    double movementX = 0;
+    double movementY = 0;
 
     short button = 0;
     unsigned short buttons = 0;

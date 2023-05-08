@@ -82,8 +82,8 @@ public:
     static Ref<PointerEvent> create(const AtomString& type, PointerID, const String& pointerType, IsPrimary = IsPrimary::No);
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
-    static Ref<PointerEvent> create(const PlatformTouchEvent&, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
-    static Ref<PointerEvent> create(const AtomString& type, const PlatformTouchEvent&, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
+    static Ref<PointerEvent> create(const PlatformTouchEvent&, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const IntPoint& touchDelta = { });
+    static Ref<PointerEvent> create(const AtomString& type, const PlatformTouchEvent&, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const IntPoint& touchDelta = { });
 #endif
 
     virtual ~PointerEvent();
@@ -122,7 +122,7 @@ private:
     PointerEvent(const AtomString& type, short button, const MouseEvent&, PointerID, const String& pointerType);
     PointerEvent(const AtomString& type, PointerID, const String& pointerType, IsPrimary);
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
-    PointerEvent(const AtomString& type, const PlatformTouchEvent&, IsCancelable isCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
+    PointerEvent(const AtomString& type, const PlatformTouchEvent&, IsCancelable isCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&, const IntPoint& touchDelta = { });
 #endif
 
     PointerID m_pointerId { mousePointerID };

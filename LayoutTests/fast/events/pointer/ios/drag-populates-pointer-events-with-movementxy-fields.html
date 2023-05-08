@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../../resources/js-test.js"></script>
+    <script src="../../../../resources/testharness.js"></script>
+    <script src="../../../../resources/testharnessreport.js"></script>
+    <script src="../../../../resources/basic-gestures.js"></script>
+    <style>
+        body {
+            margin: none;
+            touch-action: none;
+        }
+    </style>
+    <meta name="viewport" content="initial-scale=1">
+</head>
+<body>
+    <p id="description"></p>
+    <div id="console">
+    </div>
+    <script>
+        description("Test that the movementX/Y fields of the pointer events fired from a touch drag are correct.");
+        window.jsTestIsAsync = true;
+
+        function assertEquals(fieldName, actual, expected)
+        {
+            if (actual == expected)
+                debug('PASS: ' + fieldName + ' is correct.');
+            else
+                debug('FAIL: ' + fieldName + ' should be ' + expected + ', was ' + actual);
+        }
+
+        function runTest()
+        {
+            window.addEventListener("pointerdown", event => {
+                debug("pointerdown fired.");
+                assertEquals("movementX", event.movementX, 0);
+                assertEquals("movementY", event.movementY, 0);
+            });
+
+            window.addEventListener("pointermove", event => {
+                debug("pointermove fired.");
+                assertEquals("movementX", event.movementX, -2);
+                assertEquals("movementY", event.movementY, -2);
+            });
+
+            window.addEventListener("pointerup", event => {
+                debug("pointerup fired.");
+                assertEquals("movementX", event.movementX, 0);
+                assertEquals("movementY", event.movementY, 0);
+                finishJSTest();
+            });
+
+            if (window.testRunner)
+                touchAndDragFromPointToPoint(50, 50, 40, 40).then(() => liftUpAtPoint(40, 40));
+        }
+
+        window.addEventListener("load", runTest, false);
+    </script>
+</body>
+</html>

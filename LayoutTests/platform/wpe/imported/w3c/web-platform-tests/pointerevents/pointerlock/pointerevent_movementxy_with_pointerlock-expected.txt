@@ -12,5 +12,5 @@ Click left button again to end the test.
 Test passes if the proper behavior of the events is observed.
 
 
-FAIL mouse pointerevent movementX/Y with pointerlock test assert_equals: expected (undefined) undefined but got (number) 10
+FAIL mouse pointerevent movementX/Y with pointerlock test assert_equals: expected 0 but got 10
 

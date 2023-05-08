@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-using PointerID = int32_t;
+using PointerID = uint32_t;
 
 static constexpr PointerID mousePointerID = 1;
 

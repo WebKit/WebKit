@@ -58,7 +58,7 @@ public:
     RefPtr<PointerEvent> pointerEventForMouseEvent(const MouseEvent&, PointerID, const String& pointerType);
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
-    void dispatchEventForTouchAtIndex(EventTarget&, const PlatformTouchEvent&, unsigned, bool isPrimary, WindowProxy&);
+    void dispatchEventForTouchAtIndex(EventTarget&, const PlatformTouchEvent&, unsigned, bool isPrimary, WindowProxy&, const IntPoint&);
 #endif
 
     WEBCORE_EXPORT void touchWithIdentifierWasRemoved(PointerID);
