@@ -709,7 +709,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             // https://www.w3.org/TR/css-text-3/#white-space-processing
             // "Control characters (Unicode category Cc)—other than tabs (U+0009), line feeds (U+000A), carriage returns (U+000D) and sequences that form a segment break—must be rendered as a visible glyph"
             // Also, we're omitting Null (U+0000) from this set because Chrome and Firefox do so and it's needed for compat. See https://github.com/w3c/csswg-drafts/pull/6983.
-            if (ch != newlineCharacter && ch != carriageReturn && ch != noBreakSpace && ch != tabCharacter && ch != nullCharacter && isControlCharacter(ch)) {
+            if (isControlCharacter(ch) && ch != newlineCharacter && ch != carriageReturn && ch != noBreakSpace && ch != tabCharacter && ch != nullCharacter) {
                 // Let's assume that .notdef is visible.
                 glyph = 0;
                 advance.setWidth(font.widthForGlyph(glyph));

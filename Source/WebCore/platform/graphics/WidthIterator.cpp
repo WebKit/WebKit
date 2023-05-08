@@ -559,39 +559,16 @@ void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned g
         glyphBuffer.deleteGlyphWithoutAffectingSize(index);
     };
 
-    auto makeGlyphInvisible = [&](auto index) {
-        glyphBuffer.makeGlyphInvisible(index);
-    };
-
     for (unsigned i = glyphBufferStartIndex; i < glyphBuffer.size(); yPosition += height(glyphBuffer.advanceAt(i)), ++i) {
         auto stringOffset = glyphBuffer.checkedStringOffsetAt(i, m_run.length());
         if (!stringOffset)
             continue;
-        auto characterResponsibleForThisGlyph = m_run[stringOffset.value()];
-
-        switch (characterResponsibleForThisGlyph) {
-        case newlineCharacter:
-        case carriageReturn:
-            ASSERT(glyphBuffer.fonts(i)[0]);
-            // FIXME: It isn't quite right to use the space glyph here, because the space character may be supposed to render with a totally unrelated font (because of fallback).
-            // Instead, we should probably somehow have the caller pass in a Font/glyph pair to use in this situation.
-            if (auto spaceGlyph = glyphBuffer.fontAt(i).spaceGlyph())
-                clobberGlyph(i, spaceGlyph);
-            adjustForSyntheticBold(i);
-            continue;
-        case noBreakSpace:
-            adjustForSyntheticBold(i);
-            continue;
-        case tabCharacter:
-            makeGlyphInvisible(i);
-            adjustForSyntheticBold(i);
-            continue;
-        }
+        auto ch = m_run[stringOffset.value()];
 
         // https://www.w3.org/TR/css-text-3/#white-space-processing
         // "Control characters (Unicode category Cc)—other than tabs (U+0009), line feeds (U+000A), carriage returns (U+000D) and sequences that form a segment break—must be rendered as a visible glyph"
         // Also, we're omitting Null (U+0000) from this set because Chrome and Firefox do so and it's needed for compat. See https://github.com/w3c/csswg-drafts/pull/6983.
-        if (characterResponsibleForThisGlyph != nullCharacter && isControlCharacter(characterResponsibleForThisGlyph)) {
+        if (isControlCharacter(ch) && ch != newlineCharacter && ch != carriageReturn && ch != noBreakSpace && ch != tabCharacter && ch != nullCharacter) {
             // Let's assume that .notdef is visible.
             GlyphBufferGlyph visibleGlyph = 0;
             clobberGlyph(i, visibleGlyph);
@@ -603,7 +580,7 @@ void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned g
 
         // https://drafts.csswg.org/css-text-3/#white-space-processing
         // "Unsupported Default_ignorable characters must be ignored for text rendering."
-        if (FontCascade::isCharacterWhoseGlyphsShouldBeDeletedForTextRendering(characterResponsibleForThisGlyph)) {
+        if (FontCascade::isCharacterWhoseGlyphsShouldBeDeletedForTextRendering(ch)) {
             deleteGlyph(i);
             continue;
         }
