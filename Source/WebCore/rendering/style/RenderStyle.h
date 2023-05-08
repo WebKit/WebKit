@@ -1015,8 +1015,8 @@ public:
 #if ENABLE(FILTERS_LEVEL_2)
     inline FilterOperations& mutableBackdropFilter();
     inline const FilterOperations& backdropFilter() const;
-#endif
     inline bool hasBackdropFilter() const;
+#endif
 
 #if ENABLE(CSS_COMPOSITING)
     inline void setBlendMode(BlendMode);
