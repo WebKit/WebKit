@@ -279,17 +279,22 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 #if HAVE(VIDEO_RESTRICTED_DECODING)
 #if PLATFORM(MAC)
+    OSObjectPtr<dispatch_semaphore_t> codeCheckSemaphore;
     if (SandboxExtension::consumePermanently(parameters.trustdExtensionHandle)) {
         // Open up a Mach connection to trustd by doing a code check validation on the main bundle.
         // This is required since launchd will be blocked after process launch, which prevents new Mach connections to be created.
         // FIXME: remove this once <rdar://90127163> is fixed.
-        auto bundleURL = adoptCF(CFBundleCopyBundleURL(CFBundleGetMainBundle()));
-        SecStaticCodeRef code = nullptr;
-        SecStaticCodeCreateWithPath(bundleURL.get(), kSecCSDefaultFlags, &code);
-        if (code) {
-            SecStaticCodeCheckValidity(code, kSecCSDoNotValidateResources, nullptr);
-            CFRelease(code);
-        }
+        codeCheckSemaphore = adoptOSObject(dispatch_semaphore_create(0));
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [codeCheckSemaphore = codeCheckSemaphore] {
+            auto bundleURL = adoptCF(CFBundleCopyExecutableURL(CFBundleGetMainBundle()));
+            SecStaticCodeRef code = nullptr;
+            SecStaticCodeCreateWithPath(bundleURL.get(), kSecCSDefaultFlags, &code);
+            if (code) {
+                SecStaticCodeCheckValidity(code, kSecCSDoNotValidateResources | kSecCSDoNotValidateExecutable, nullptr);
+                CFRelease(code);
+            }
+            dispatch_semaphore_signal(codeCheckSemaphore.get());
+        });
     }
 #endif // PLATFORM(MAC)
 #if USE(APPLE_INTERNAL_SDK)
@@ -477,6 +482,11 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     // Soft link frameworks related to Data Detection before we disconnect from launchd because these frameworks connect to
     // launchd temporarily at link time to register XPC services. See rdar://93598951 (my feature request to stop doing that)
     softlinkDataDetectorsFrameworks();
+
+#if HAVE(VIDEO_RESTRICTED_DECODING) && PLATFORM(MAC)
+    if (codeCheckSemaphore)
+        dispatch_semaphore_wait(codeCheckSemaphore.get(), DISPATCH_TIME_FOREVER);
+#endif
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&& parameters)
