@@ -77,11 +77,9 @@ public:
     virtual bool isOffscreen2d() const { return false; }
     virtual bool isPaint() const { return false; }
 
-    virtual void clearAccumulatedDirtyRect() { }
-
     // Called before paintRenderingResultsToCanvas if paintRenderingResultsToCanvas is
     // used for compositing purposes.
-    virtual void prepareForDisplayWithPaint() { }
+    virtual void prepareForDisplayWithPaint();
     virtual void paintRenderingResultsToCanvas() { }
     virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate();
     virtual void setContentsToLayer(GraphicsLayer&);

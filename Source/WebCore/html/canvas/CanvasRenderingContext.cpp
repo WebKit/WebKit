@@ -36,6 +36,7 @@
 #include "HTMLVideoElement.h"
 #include "Image.h"
 #include "ImageBitmap.h"
+#include "InspectorInstrumentation.h"
 #include "OriginAccessPatterns.h"
 #include "PixelFormat.h"
 #include "SVGImageElement.h"
@@ -85,6 +86,12 @@ void CanvasRenderingContext::ref()
 void CanvasRenderingContext::deref()
 {
     m_canvas.derefCanvasBase();
+}
+
+void CanvasRenderingContext::prepareForDisplayWithPaint()
+{
+    if (UNLIKELY(hasActiveInspectorCanvasCallTracer()))
+        InspectorInstrumentation::didFinishRecordingCanvasFrame(*this);
 }
 
 RefPtr<GraphicsLayerContentsDisplayDelegate> CanvasRenderingContext::layerContentsDisplayDelegate()

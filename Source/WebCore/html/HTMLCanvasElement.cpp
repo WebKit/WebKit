@@ -52,7 +52,6 @@
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "InMemoryDisplayList.h"
-#include "InspectorInstrumentation.h"
 #include "JSDOMConvertDictionary.h"
 #include "JSNodeCustomInlines.h"
 #include "LocalFrame.h"
@@ -647,9 +646,6 @@ bool HTMLCanvasElement::paintsIntoCanvasBuffer() const
 
 void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r, CompositeOperator op)
 {
-    if (m_context)
-        m_context->clearAccumulatedDirtyRect();
-
     if (!context.paintingDisabled()) {
         bool shouldPaint = true;
 
@@ -668,9 +664,6 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r, Com
             }
         }
     }
-
-    if (UNLIKELY(m_context && m_context->hasActiveInspectorCanvasCallTracer()))
-        InspectorInstrumentation::didFinishRecordingCanvasFrame(*m_context);
 }
 
 bool HTMLCanvasElement::isGPUBased() const

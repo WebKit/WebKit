@@ -1072,6 +1072,7 @@ void WebGLRenderingContextBase::restoreStateAfterClear()
 
 void WebGLRenderingContextBase::prepareForDisplayWithPaint()
 {
+    CanvasRenderingContext::prepareForDisplayWithPaint();
     m_isDisplayingWithPaint = true;
 }
 
