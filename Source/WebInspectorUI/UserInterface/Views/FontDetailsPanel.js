@@ -303,7 +303,7 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
 
     _formatSimpleFeatureValues(property, features, noMatchesResult)
     {
-        let valueParts = property.value.match(WI.Font.SettingPattern);
+        let valueParts = property.value.match(WI.FontStyles.SettingPattern);
         let results = [];
         // Only one result should be pushed per group.
         let resultGroups = new Set;
@@ -322,7 +322,7 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
 
     _formatLigatureValue(property)
     {
-        let valueParts = property.value.match(WI.Font.SettingPattern);
+        let valueParts = property.value.match(WI.FontStyles.SettingPattern);
 
         let results = [];
 
