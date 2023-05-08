@@ -461,7 +461,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (void)enterFullScreenAnimated:(BOOL)animated completionHandler:(void (^)(BOOL success, NSError * __nullable error))completionHandler
 {
-    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, animated);
+    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, !!animated);
 #if PLATFORM(WATCHOS)
     auto fullscreenInterface = _fullscreenInterface.get();
     if (!fullscreenInterface) {
@@ -484,7 +484,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (void)exitFullScreenAnimated:(BOOL)animated completionHandler:(void (^)(BOOL success, NSError * __nullable error))completionHandler
 {
-    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, animated);
+    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, !!animated);
 #if PLATFORM(WATCHOS)
     if (!_presentingViewController)
         return;
@@ -665,7 +665,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 
 - (void)setShowsPlaybackControls:(BOOL)showsPlaybackControls
 {
-    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, showsPlaybackControls);
+    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, !!showsPlaybackControls);
 #if PLATFORM(WATCHOS)
     UNUSED_PARAM(showsPlaybackControls);
 #else
@@ -675,7 +675,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 
 - (void)setAllowsPictureInPicturePlayback:(BOOL)allowsPictureInPicturePlayback
 {
-    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, allowsPictureInPicturePlayback);
+    OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER, !!allowsPictureInPicturePlayback);
 #if PLATFORM(WATCHOS)
     UNUSED_PARAM(allowsPictureInPicturePlayback);
 #else
