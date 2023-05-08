@@ -1,0 +1,51 @@
+From e9473a25601ee72eaaf7af51a1ae2711583b4c94 Mon Sep 17 00:00:00 2001
+From: David Kilzer <ddkilzer@apple.com>
+Date: Sun, 7 May 2023 12:17:17 -0700
+Subject: [PATCH] Fix false-positive bad release after calling
+ H264BufferToCMSampleBuffer/H265BufferToCMSampleBuffer
+ https://bugs.webkit.org/show_bug.cgi?id=256432 <rdar://109014853>
+
+Reviewed by NOBODY (OOPS!).
+
+Add CF_RETURNS_RETAINED to both methods to fix the false
+positive bad releases.  This lets the clang static analyzer
+reason properly about the return value of these functions.
+
+* Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.mm:
+(H264BufferToCMSampleBuffer):
+* Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH265.mm:
+(H265BufferToCMSampleBuffer):
+---
+ .../sdk/objc/components/video_codec/RTCVideoDecoderH264.mm      | 2 +-
+ .../sdk/objc/components/video_codec/RTCVideoDecoderH265.mm      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.mm
+index 30ce6837e504..86f58cb5a70c 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.mm
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.mm
+@@ -109,7 +109,7 @@ - (NSInteger)startDecodeWithNumberOfCores:(int)numberOfCores {
+   return WEBRTC_VIDEO_CODEC_OK;
+ }
+ 
+-CMSampleBufferRef H264BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffer_size, CMVideoFormatDescriptionRef video_format) {
++CMSampleBufferRef H264BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffer_size, CMVideoFormatDescriptionRef video_format) CF_RETURNS_RETAINED {
+   CMBlockBufferRef new_block_buffer;
+   if (auto error = CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, NULL, buffer_size, kCFAllocatorDefault, NULL, 0, buffer_size, kCMBlockBufferAssureMemoryNowFlag, &new_block_buffer)) {
+     RTC_LOG(LS_ERROR) << "H264BufferToCMSampleBuffer CMBlockBufferCreateWithMemoryBlock failed with: " << error;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH265.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH265.mm
+index beecdd85b968..2df8fbf4e5c3 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH265.mm
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH265.mm
+@@ -103,7 +103,7 @@ - (NSInteger)startDecodeWithNumberOfCores:(int)numberOfCores {
+   return WEBRTC_VIDEO_CODEC_OK;
+ }
+ 
+-CMSampleBufferRef H265BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffer_size, CMVideoFormatDescriptionRef video_format) {
++CMSampleBufferRef H265BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffer_size, CMVideoFormatDescriptionRef video_format) CF_RETURNS_RETAINED {
+   CMBlockBufferRef new_block_buffer;
+   if (auto error = CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, NULL, buffer_size, kCFAllocatorDefault, NULL, 0, buffer_size, kCMBlockBufferAssureMemoryNowFlag, &new_block_buffer)) {
+     RTC_LOG(LS_ERROR) << "H265BufferToCMSampleBuffer CMBlockBufferCreateWithMemoryBlock failed with: " << error;
+-- 
+2.39.2 (Apple Git-143)
+

@@ -103,7 +103,7 @@ void h265DecompressionOutputCallback(void* decoderRef,
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
-CMSampleBufferRef H265BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffer_size, CMVideoFormatDescriptionRef video_format) {
+CMSampleBufferRef H265BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffer_size, CMVideoFormatDescriptionRef video_format) CF_RETURNS_RETAINED {
   CMBlockBufferRef new_block_buffer;
   if (auto error = CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, NULL, buffer_size, kCFAllocatorDefault, NULL, 0, buffer_size, kCMBlockBufferAssureMemoryNowFlag, &new_block_buffer)) {
     RTC_LOG(LS_ERROR) << "H265BufferToCMSampleBuffer CMBlockBufferCreateWithMemoryBlock failed with: " << error;
