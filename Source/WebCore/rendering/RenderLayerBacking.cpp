@@ -3710,8 +3710,10 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
     adjustedClipRect.move(m_subpixelOffsetFromRenderer);
     IntRect dirtyRect = enclosingIntRect(adjustedClipRect);
 
-    if (!graphicsLayer->repaintCount())
-        layerPaintBehavior.add(GraphicsLayerPaintBehavior::FirstTilePaint);
+    if (!layerPaintBehavior.contains(GraphicsLayerPaintBehavior::ForceSynchronousImageDecoding)) {
+        if (!graphicsLayer->repaintCount())
+            layerPaintBehavior.add(GraphicsLayerPaintBehavior::DefaultAsynchronousImageDecoding);
+    }
 
     if (graphicsLayer == m_graphicsLayer.get()
         || graphicsLayer == m_foregroundLayer.get()
@@ -3724,11 +3726,11 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
 
         // We have to use the same root as for hit testing, because both methods can compute and cache clipRects.
         OptionSet<PaintBehavior> behavior = PaintBehavior::Normal;
-        if (layerPaintBehavior.contains(GraphicsLayerPaintBehavior::Snapshotting))
-            behavior.add(PaintBehavior::Snapshotting);
-        
-        if (layerPaintBehavior.contains(GraphicsLayerPaintBehavior::FirstTilePaint))
-            behavior.add(PaintBehavior::TileFirstPaint);
+        if (layerPaintBehavior.contains(GraphicsLayerPaintBehavior::ForceSynchronousImageDecoding)) {
+            behavior.add(PaintBehavior::ForceSynchronousImageDecoding);
+            behavior.add(PaintBehavior::Snapshotting); // FIXME: This is a bug: https://bugs.webkit.org/show_bug.cgi?id=256039.
+        } else if (layerPaintBehavior.contains(GraphicsLayerPaintBehavior::DefaultAsynchronousImageDecoding))
+            behavior.add(PaintBehavior::DefaultAsynchronousImageDecoding);
 
         paintIntoLayer(graphicsLayer, context, dirtyRect, behavior);
 

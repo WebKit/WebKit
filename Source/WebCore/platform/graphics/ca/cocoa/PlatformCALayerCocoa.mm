@@ -1193,8 +1193,10 @@ void PlatformCALayer::drawLayerContents(GraphicsContext& graphicsContext, WebCor
     if (!layerContents)
         return;
 
-    if (!layerContents->platformCALayerRepaintCount(platformCALayer))
-        layerPaintBehavior.add(GraphicsLayerPaintBehavior::FirstTilePaint);
+    if (!layerPaintBehavior.contains(GraphicsLayerPaintBehavior::ForceSynchronousImageDecoding)) {
+        if (!layerContents->platformCALayerRepaintCount(platformCALayer))
+            layerPaintBehavior.add(GraphicsLayerPaintBehavior::DefaultAsynchronousImageDecoding);
+    }
 
     {
         GraphicsContextStateSaver saver(graphicsContext);

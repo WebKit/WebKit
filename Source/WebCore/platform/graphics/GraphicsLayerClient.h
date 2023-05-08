@@ -71,8 +71,8 @@ enum class PlatformLayerTreeAsTextFlags : uint8_t {
 };
 
 enum class GraphicsLayerPaintBehavior : uint8_t {
-    Snapshotting              = 1 << 0,
-    FirstTilePaint            = 1 << 1,
+    ForceSynchronousImageDecoding = 1 << 0,
+    DefaultAsynchronousImageDecoding = 1 << 1,
 };
     
 class GraphicsLayerClient {

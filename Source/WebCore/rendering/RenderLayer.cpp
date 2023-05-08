@@ -3252,7 +3252,12 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     RenderObject* subtreePaintRootForRenderer = nullptr;
 
     auto paintBehavior = [&]() {
-        constexpr OptionSet<PaintBehavior> flagsToCopy = { PaintBehavior::FlattenCompositingLayers, PaintBehavior::Snapshotting, PaintBehavior::ExcludeSelection };
+        constexpr OptionSet<PaintBehavior> flagsToCopy {
+            PaintBehavior::FlattenCompositingLayers,
+            PaintBehavior::Snapshotting,
+            PaintBehavior::ForceSynchronousImageDecoding,
+            PaintBehavior::ExcludeSelection
+        };
         OptionSet<PaintBehavior> paintBehavior = paintingInfo.paintBehavior & flagsToCopy;
 
         if (localPaintFlags.contains(PaintLayerFlag::PaintingSkipRootBackground))
@@ -3260,9 +3265,9 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         else if (localPaintFlags.contains(PaintLayerFlag::PaintingRootBackgroundOnly))
             paintBehavior.add(PaintBehavior::RootBackgroundOnly);
 
-        // FIXME: This seems wrong. We should retain the TileFirstPaint flag for all RenderLayers painted into the root tile cache.
-        if ((paintingInfo.paintBehavior & PaintBehavior::TileFirstPaint) && isRenderViewLayer())
-            paintBehavior.add(PaintBehavior::TileFirstPaint);
+        // FIXME: This seems wrong. We should retain the DefaultAsynchronousImageDecoding flag for all RenderLayers painted into the root tile cache.
+        if ((paintingInfo.paintBehavior & PaintBehavior::DefaultAsynchronousImageDecoding) && isRenderViewLayer())
+            paintBehavior.add(PaintBehavior::DefaultAsynchronousImageDecoding);
 
         if (isPaintingOverflowContents)
             paintBehavior.add(PaintBehavior::CompositedOverflowScrollContent);
@@ -3717,17 +3722,14 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
         localPaintBehavior = paintBehavior;
 
     // FIXME: It's unclear if this flag copying is necessary.
-    if (localPaintingInfo.paintBehavior & PaintBehavior::ExcludeSelection)
-        localPaintBehavior.add(PaintBehavior::ExcludeSelection);
-    
-    if (localPaintingInfo.paintBehavior & PaintBehavior::Snapshotting)
-        localPaintBehavior.add(PaintBehavior::Snapshotting);
-    
-    if (localPaintingInfo.paintBehavior & PaintBehavior::TileFirstPaint)
-        localPaintBehavior.add(PaintBehavior::TileFirstPaint);
-
-    if (localPaintingInfo.paintBehavior & PaintBehavior::CompositedOverflowScrollContent)
-        localPaintBehavior.add(PaintBehavior::CompositedOverflowScrollContent);
+    constexpr OptionSet<PaintBehavior> flagsToCopy {
+        PaintBehavior::ExcludeSelection,
+        PaintBehavior::Snapshotting,
+        PaintBehavior::ForceSynchronousImageDecoding,
+        PaintBehavior::DefaultAsynchronousImageDecoding,
+        PaintBehavior::CompositedOverflowScrollContent
+    };
+    localPaintBehavior.add(localPaintingInfo.paintBehavior & flagsToCopy);
 
     GraphicsContextStateSaver stateSaver(context, false);
     RegionContextStateSaver regionContextStateSaver(localPaintingInfo.regionContext);
@@ -5799,12 +5801,13 @@ TextStream& operator<<(TextStream& ts, PaintBehavior behavior)
     case PaintBehavior::SelectionAndBackgroundsOnly: ts << "SelectionAndBackgroundsOnly"; break;
     case PaintBehavior::ExcludeSelection: ts << "ExcludeSelection"; break;
     case PaintBehavior::FlattenCompositingLayers: ts << "FlattenCompositingLayers"; break;
-    case PaintBehavior::Snapshotting: ts << "Snapshotting"; break;
-    case PaintBehavior::TileFirstPaint: ts << "TileFirstPaint"; break;
+    case PaintBehavior::ForceSynchronousImageDecoding: ts << "ForceSynchronousImageDecoding"; break;
+    case PaintBehavior::DefaultAsynchronousImageDecoding: ts << "DefaultAsynchronousImageDecoding"; break;
     case PaintBehavior::CompositedOverflowScrollContent: ts << "CompositedOverflowScrollContent"; break;
     case PaintBehavior::AnnotateLinks: ts << "AnnotateLinks"; break;
     case PaintBehavior::EventRegionIncludeForeground: ts << "EventRegionIncludeForeground"; break;
     case PaintBehavior::EventRegionIncludeBackground: ts << "EventRegionIncludeBackground"; break;
+    case PaintBehavior::Snapshotting: ts << "Snapshotting"; break;
     }
 
     return ts;
