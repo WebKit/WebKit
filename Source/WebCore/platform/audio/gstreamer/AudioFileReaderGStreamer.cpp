@@ -330,6 +330,10 @@ void AudioFileReader::handleNewDeinterleavePad(GstPad* pad)
         // new_event
         nullptr,
 #endif
+#if GST_CHECK_VERSION(1, 23, 0)
+        // propose_allocation
+        nullptr,
+#endif
         { nullptr }
     };
     gst_app_sink_set_callbacks(GST_APP_SINK(sink), &callbacks, this, nullptr);
