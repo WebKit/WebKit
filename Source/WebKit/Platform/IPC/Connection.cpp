@@ -467,7 +467,6 @@ void Connection::invalidate()
     m_isValid = false;
     if (!m_client)
         return;
-    assertIsCurrent(dispatcher());
     m_client = nullptr;
     [this] {
         Locker locker { m_incomingMessagesLock };

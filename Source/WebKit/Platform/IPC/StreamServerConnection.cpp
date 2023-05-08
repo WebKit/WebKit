@@ -78,7 +78,7 @@ void StreamServerConnection::open()
     });
     // FIXME(http://webkit.org/b/238986): Workaround for not being able to deliver messages from the dedicated connection to the work queue the client uses.
     m_connection->addMessageReceiveQueue(*this, { });
-    m_connection->open(s_dedicatedConnectionClient.get());
+    m_connection->open(s_dedicatedConnectionClient.get(), RunLoop::main());
     m_isOpen = true;
 }
 
