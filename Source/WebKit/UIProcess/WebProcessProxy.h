@@ -362,6 +362,7 @@ public:
     void sendPrepareToSuspend(IsSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&&) final;
     void sendProcessDidResume(ResumeReason) final;
     void didChangeThrottleState(ProcessThrottleState) final;
+    void prepareToDropLastAssertion(CompletionHandler<void()>&&) final;
     ASCIILiteral clientName() const final { return "WebProcess"_s; }
     String environmentIdentifier() const final;
 

@@ -1700,6 +1700,23 @@ void WebProcessProxy::didChangeThrottleState(ProcessThrottleState type)
     ASSERT(!m_backgroundToken || !m_foregroundToken);
 }
 
+void WebProcessProxy::prepareToDropLastAssertion(CompletionHandler<void()>&& completionHandler)
+{
+#if PLATFORM(MAC)
+    if (isInProcessCache()) {
+        // We don't free caches in cached WebProcesses on macOS for performance reasons.
+        // Cached WebProcess will anyway shutdown on memory pressure.
+        return completionHandler();
+    }
+    // On macOS, we don't slim down the process in the PrepareToSuspend IPC, we delay clearing the
+    // caches until we release the suspended assertion.
+    sendWithAsyncReply(Messages::WebProcess::ReleaseMemory(), WTFMove(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
+#else
+    // On iOS, we already slim down the process via the PrepareToSuspend IPC.
+    completionHandler();
+#endif
+}
+
 String WebProcessProxy::environmentIdentifier() const
 {
     if (m_environmentIdentifier.isEmpty()) {

@@ -214,5 +214,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     OpenDirectoryCacheInvalidated(WebKit::SandboxExtension::Handle handle, WebKit::SandboxExtension::Handle machBootstrapHandle)
 #endif
 
+    ReleaseMemory() -> ()
+
     RemotePostMessage(struct WebCore::FrameIdentifier frameIdentifier, std::optional<WebCore::SecurityOriginData> target, struct WebCore::MessageWithMessagePorts message)
 }
