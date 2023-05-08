@@ -974,12 +974,14 @@ void FastStringifier::append(JSValue value)
 
     if (value.isInt32()) {
         auto number = value.asInt32();
-        char* cursor = reinterpret_cast<char*>(m_buffer) + m_length;
-        auto result = std::to_chars(cursor, reinterpret_cast<char*>(m_buffer + sizeof(m_buffer)), number);
-        if (UNLIKELY(result.ec == std::errc::value_too_large)) {
+        constexpr unsigned maxInt32StringLength = 11; // -INT32_MIN, "-2147483648".
+        if (UNLIKELY(!hasRemainingCapacity(maxInt32StringLength))) {
             recordBufferFull();
             return;
         }
+        char* cursor = reinterpret_cast<char*>(m_buffer) + m_length;
+        auto result = std::to_chars(cursor, cursor + maxInt32StringLength, number);
+        ASSERT(result.ec != std::errc::value_too_large);
         m_length += result.ptr - cursor;
         return;
     }
