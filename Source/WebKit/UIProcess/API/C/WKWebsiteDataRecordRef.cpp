@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WKWebsiteDataRecordRef.h"
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(UI_SIDE_COMPOSITING)
+#include "APIWebsiteDataRecord.h"
+#include "WKAPICast.h"
 
-#include "RemoteScrollingTree.h"
+WKTypeID WKWebsiteDataRecordGetTypeID()
+{
+    return WebKit::toAPI(API::WebsiteDataRecord::APIType);
+}
 
-namespace WebKit {
+WKStringRef WKWebsiteDataRecordGetDisplayName(WKWebsiteDataRecordRef dataRecordRef)
+{
+    return WebKit::toCopiedAPI(WebKit::toImpl(dataRecordRef)->websiteDataRecord().displayName);
+}
 
-class RemoteScrollingCoordinatorProxy;
-
-class RemoteScrollingTreeIOS final : public RemoteScrollingTree {
-public:
-    explicit RemoteScrollingTreeIOS(RemoteScrollingCoordinatorProxy&);
-    virtual ~RemoteScrollingTreeIOS();
-
-private:
-    Ref<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) final;
-
-    void scrollingTreeNodeWillStartPanGesture(WebCore::ScrollingNodeID) final;
-};
-
-} // namespace WebKit
-
-#endif // PLATFORM(IOS_FAMILY) && ENABLE(UI_SIDE_COMPOSITING)
+WKWebsiteDataTypes WKWebsiteDataRecordGetDataTypes(WKWebsiteDataRecordRef dataRecordRef)
+{
+    return WebKit::toAPI(WebKit::toImpl(dataRecordRef)->websiteDataRecord().types);
+}

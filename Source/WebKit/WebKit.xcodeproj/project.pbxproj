@@ -163,6 +163,7 @@
 		0FFED98E23A3200A00EEF459 /* WKWebViewIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFED98C23A3200400EEF459 /* WKWebViewIOS.h */; };
 		0FFED99323A3203D00EEF459 /* WKWebViewMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFED99023A3203800EEF459 /* WKWebViewMac.h */; };
 		15739BBD1B42042D00D258C1 /* WebUserMediaClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A410F4919AF7B80002EBAB5 /* WebUserMediaClient.h */; };
+		16B4A5922A2084A300948C0C /* WKWebsiteDataRecordRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 16B4A5912A2084A300948C0C /* WKWebsiteDataRecordRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A002D43196B337000B9AD44 /* _WKSessionStateInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A002D42196B337000B9AD44 /* _WKSessionStateInternal.h */; };
 		1A002D44196B338900B9AD44 /* _WKSessionState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A002D3F196B329400B9AD44 /* _WKSessionState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A002D49196B345D00B9AD44 /* SessionStateCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A002D47196B345D00B9AD44 /* SessionStateCoding.h */; };
@@ -3020,6 +3021,9 @@
 		118502632673B0DA00A6425E /* XRDeviceIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XRDeviceIdentifier.h; sourceTree = "<group>"; };
 		118502642673B0DA00A6425E /* XRDeviceInfo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XRDeviceInfo.cpp; sourceTree = "<group>"; };
 		118502652673B0DA00A6425E /* XRDeviceInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XRDeviceInfo.h; sourceTree = "<group>"; };
+		16B4A58F2A2083A300948C0C /* WKAPICast.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKAPICast.cpp; sourceTree = "<group>"; };
+		16B4A5902A20845600948C0C /* WKWebsiteDataRecordRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKWebsiteDataRecordRef.cpp; sourceTree = "<group>"; };
+		16B4A5912A2084A300948C0C /* WKWebsiteDataRecordRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebsiteDataRecordRef.h; sourceTree = "<group>"; };
 		1A002D3E196B329400B9AD44 /* _WKSessionState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKSessionState.mm; sourceTree = "<group>"; };
 		1A002D3F196B329400B9AD44 /* _WKSessionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKSessionState.h; sourceTree = "<group>"; };
 		1A002D42196B337000B9AD44 /* _WKSessionStateInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKSessionStateInternal.h; sourceTree = "<group>"; };
@@ -12491,6 +12495,7 @@
 				5123CF18133D25E60056F800 /* cg */,
 				6EE849C41368D9040038D481 /* mac */,
 				BCB63477116BF10600603215 /* WebKit2_C.h */,
+				16B4A58F2A2083A300948C0C /* WKAPICast.cpp */,
 				BCDDB32C124EC2E10048D13C /* WKAPICast.h */,
 				517A33B3130B308C00F80CB5 /* WKApplicationCacheManager.cpp */,
 				517A33B4130B308C00F80CB5 /* WKApplicationCacheManager.h */,
@@ -12628,6 +12633,8 @@
 				4A410F3619AF7AC3002EBAB5 /* WKUserMediaPermissionRequest.h */,
 				7C89D2A11A678875003A5FDE /* WKUserScriptRef.cpp */,
 				7C89D2A21A678875003A5FDE /* WKUserScriptRef.h */,
+				16B4A5902A20845600948C0C /* WKWebsiteDataRecordRef.cpp */,
+				16B4A5912A2084A300948C0C /* WKWebsiteDataRecordRef.h */,
 				5C6E7D87232361E700C2159D /* WKWebsiteDataStoreConfigurationRef.cpp */,
 				5C6E7D86232361E700C2159D /* WKWebsiteDataStoreConfigurationRef.h */,
 				1A57109C1ABA0027002FABBE /* WKWebsiteDataStoreRef.cpp */,
@@ -15511,6 +15518,7 @@
 				1A4832CC1A9BC465008B4DFE /* WKWebsiteDataRecord.h in Headers */,
 				1A4832CE1A9BC484008B4DFE /* WKWebsiteDataRecordInternal.h in Headers */,
 				1AA654D11B14F71400BF1D3E /* WKWebsiteDataRecordPrivate.h in Headers */,
+				16B4A5922A2084A300948C0C /* WKWebsiteDataRecordRef.h in Headers */,
 				75A8D2C8187CCFAB00C39C9E /* WKWebsiteDataStore.h in Headers */,
 				5C6E7D882323620500C2159D /* WKWebsiteDataStoreConfigurationRef.h in Headers */,
 				75A8D2D6187D1C0E00C39C9E /* WKWebsiteDataStoreInternal.h in Headers */,

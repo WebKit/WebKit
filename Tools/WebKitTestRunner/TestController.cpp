@@ -73,6 +73,7 @@
 #include <WebKit/WKUserContentControllerRef.h>
 #include <WebKit/WKUserContentExtensionStoreRef.h>
 #include <WebKit/WKUserMediaPermissionCheck.h>
+#include <WebKit/WKWebsiteDataRecordRef.h>
 #include <WebKit/WKWebsiteDataStoreConfigurationRef.h>
 #include <WebKit/WKWebsiteDataStoreRef.h>
 #include <WebKit/WKWebsitePolicies.h>
@@ -3287,7 +3288,7 @@ void TestController::clearServiceWorkerRegistrations()
 {
     GenericVoidContext context(*this);
 
-    WKWebsiteDataStoreRemoveAllServiceWorkerRegistrations(websiteDataStore(), &context, genericVoidCallback);
+    WKWebsiteDataStoreRemoveDataOfTypes(websiteDataStore(), kWKWebsiteDataTypesServiceWorkerRegistrations, 0, &context, genericVoidCallback);
     runUntil(context.done, noTimeout);
 }
 
@@ -3313,7 +3314,11 @@ void TestController::clearDOMCache(WKStringRef origin)
     ClearDOMCacheCallbackContext context(*this);
 
     auto cacheOrigin = adoptWK(WKSecurityOriginCreateFromString(origin));
-    WKWebsiteDataStoreRemoveFetchCacheForOrigin(websiteDataStore(), cacheOrigin.get(), &context, clearDOMCacheCallback);
+
+    auto typeRef = static_cast<WKTypeRef>(cacheOrigin.get());
+    auto arrayRef = adoptWK(WKArrayCreate(&typeRef, 1));
+
+    WKWebsiteDataStoreRemoveDataOfTypesWithValues(websiteDataStore(), kWKWebsiteDataTypesDOMCache, arrayRef.get(), &context, clearDOMCacheCallback);
     runUntil(context.done, noTimeout);
 }
 
@@ -3321,7 +3326,7 @@ void TestController::clearDOMCaches()
 {
     ClearDOMCacheCallbackContext context(*this);
 
-    WKWebsiteDataStoreRemoveAllFetchCaches(websiteDataStore(), &context, clearDOMCacheCallback);
+    WKWebsiteDataStoreRemoveDataOfTypes(websiteDataStore(), kWKWebsiteDataTypesDOMCache, 0, &context, clearDOMCacheCallback);
     runUntil(context.done, noTimeout);
 }
 
@@ -3329,7 +3334,7 @@ void TestController::clearMemoryCache()
 {
     ClearDOMCacheCallbackContext context(*this);
 
-    WKWebsiteDataStoreRemoveMemoryCaches(websiteDataStore(), &context, clearDOMCacheCallback);
+    WKWebsiteDataStoreRemoveDataOfTypes(websiteDataStore(), kWKWebsiteDataTypesMemoryCache, 0, &context, clearDOMCacheCallback);
     runUntil(context.done, noTimeout);
 }
 
@@ -3353,14 +3358,14 @@ static void StorageVoidCallback(void* userData)
 void TestController::clearIndexedDatabases()
 {
     StorageVoidCallbackContext context(*this);
-    WKWebsiteDataStoreRemoveAllIndexedDatabases(websiteDataStore(), &context, StorageVoidCallback);
+    WKWebsiteDataStoreRemoveDataOfTypes(websiteDataStore(), kWKWebsiteDataTypesIndexedDBDatabases, 0, &context, StorageVoidCallback);
     runUntil(context.done, noTimeout);
 }
 
 void TestController::clearLocalStorage()
 {
     StorageVoidCallbackContext context(*this);
-    WKWebsiteDataStoreRemoveLocalStorage(websiteDataStore(), &context, StorageVoidCallback);
+    WKWebsiteDataStoreRemoveDataOfTypes(websiteDataStore(), kWKWebsiteDataTypesLocalStorage, 0, &context, StorageVoidCallback);
     runUntil(context.done, noTimeout);
 }
 
@@ -3387,8 +3392,15 @@ void TestController::resetStoragePersistedState()
 
 void TestController::clearStorage()
 {
+    static const WKWebsiteDataTypes storageDataTypes = kWKWebsiteDataTypesLocalStorage
+        | kWKWebsiteDataTypesIndexedDBDatabases
+        | kWKWebsiteDataTypesCredentials
+        | kWKWebsiteDataTypesServiceWorkerRegistrations
+        | kWKWebsiteDataTypesDOMCache
+        | kWKWebsiteDataTypesFileSystem;
+
     StorageVoidCallbackContext context(*this);
-    WKWebsiteDataStoreClearStorage(TestController::websiteDataStore(), &context, StorageVoidCallback);
+    WKWebsiteDataStoreRemoveDataOfTypes(websiteDataStore(), storageDataTypes, 0, &context, StorageVoidCallback);
     runUntil(context.done, noTimeout);
 }
 
@@ -3513,7 +3525,10 @@ void TestController::clearStatisticsDataForDomain(WKStringRef domain)
 {
     ResourceStatisticsCallbackContext context(*this);
 
-    WKWebsiteDataStoreRemoveITPDataForDomain(websiteDataStore(), domain, &context, resourceStatisticsVoidResultCallback);
+    auto typeRef = static_cast<WKTypeRef>(domain);
+    auto arrayRef = adoptWK(WKArrayCreate(&typeRef, 1));
+
+    WKWebsiteDataStoreRemoveDataOfTypesWithValues(websiteDataStore(), kWKWebsiteDataTypesResourceLoadStatistics, arrayRef.get(), &context, resourceStatisticsVoidResultCallback);
     runUntil(context.done, noTimeout);
 }
 
@@ -3794,7 +3809,7 @@ void TestController::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours
 void TestController::statisticsClearThroughWebsiteDataRemoval()
 {
     ResourceStatisticsCallbackContext context(*this);
-    WKWebsiteDataStoreStatisticsClearThroughWebsiteDataRemoval(websiteDataStore(), &context, resourceStatisticsVoidResultCallback);
+    WKWebsiteDataStoreRemoveDataOfTypes(websiteDataStore(), kWKWebsiteDataTypesResourceLoadStatistics, 0, &context, resourceStatisticsVoidResultCallback);
     runUntil(context.done, noTimeout);
     m_currentInvocation->didClearStatisticsThroughWebsiteDataRemoval();
 }
@@ -4145,7 +4160,7 @@ void TestController::clearPrivateClickMeasurement()
 void TestController::clearPrivateClickMeasurementsThroughWebsiteDataRemoval()
 {
     PrivateClickMeasurementVoidCallbackContext callbackContext(*this);
-    WKWebsiteDataStoreClearPrivateClickMeasurementsThroughWebsiteDataRemoval(websiteDataStore(), &callbackContext, privateClickMeasurementVoidCallback);
+    WKWebsiteDataStoreRemoveDataOfTypes(websiteDataStore(), kWKWebsiteDataTypesPrivateClickMeasurements, 0, &callbackContext, privateClickMeasurementVoidCallback);
     runUntil(callbackContext.done, noTimeout);
 }
 

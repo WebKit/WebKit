@@ -483,9 +483,11 @@ UIProcess/API/APIUserScript.cpp
 UIProcess/API/APIUserStyleSheet.cpp
 UIProcess/API/APIWebAuthenticationAssertionResponse.cpp
 UIProcess/API/APIWebAuthenticationPanel.cpp
+UIProcess/API/APIWebsiteDataRecord.cpp
 UIProcess/API/APIWebsitePolicies.cpp
 UIProcess/API/APIWindowFeatures.cpp
 
+UIProcess/API/C/WKAPICast.cpp
 UIProcess/API/C/WKApplicationCacheManager.cpp
 UIProcess/API/C/WKAuthenticationChallenge.cpp
 UIProcess/API/C/WKAuthenticationDecisionListener.cpp
@@ -537,6 +539,7 @@ UIProcess/API/C/WKUserContentControllerRef.cpp
 UIProcess/API/C/WKUserContentExtensionStoreRef.cpp
 UIProcess/API/C/WKUserMediaPermissionCheck.cpp
 UIProcess/API/C/WKUserMediaPermissionRequest.cpp
+UIProcess/API/C/WKWebsiteDataRecordRef.cpp
 UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.cpp
 UIProcess/API/C/WKWebsiteDataStoreRef.cpp
 UIProcess/API/C/WKWebsitePolicies.cpp
