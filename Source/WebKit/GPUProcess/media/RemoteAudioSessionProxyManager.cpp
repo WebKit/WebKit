@@ -213,6 +213,24 @@ void RemoteAudioSessionProxyManager::updatePresentingProcesses()
     AudioSession::sharedSession().setPresentingProcesses(WTFMove(presentingProcesses));
 }
 
+void RemoteAudioSessionProxyManager::beginInterruptionRemote()
+{
+    auto& session = this->session();
+    // Temporarily remove as an observer to avoid a spurious IPC back to the web process.
+    session.removeInterruptionObserver(*this);
+    session.beginInterruption();
+    session.addInterruptionObserver(*this);
+}
+
+void RemoteAudioSessionProxyManager::endInterruptionRemote(AudioSession::MayResume mayResume)
+{
+    auto& session = this->session();
+    // Temporarily remove as an observer to avoid a spurious IPC back to the web process.
+    session.removeInterruptionObserver(*this);
+    session.endInterruption(mayResume);
+    session.addInterruptionObserver(*this);
+}
+
 void RemoteAudioSessionProxyManager::beginAudioSessionInterruption()
 {
     m_proxies.forEach([](auto& proxy) {

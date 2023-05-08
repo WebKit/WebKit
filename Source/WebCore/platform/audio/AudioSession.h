@@ -133,7 +133,7 @@ public:
 
         virtual void beginAudioSessionInterruption() = 0;
         virtual void endAudioSessionInterruption(MayResume) = 0;
-        virtual void activeStateChanged() { }
+        virtual void audioSessionActiveStateChanged() { }
     };
     virtual void addInterruptionObserver(InterruptionObserver&);
     virtual void removeInterruptionObserver(InterruptionObserver&);

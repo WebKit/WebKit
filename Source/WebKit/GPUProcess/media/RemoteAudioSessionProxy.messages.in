@@ -33,6 +33,9 @@ messages -> RemoteAudioSessionProxy NotRefCounted {
 
     TriggerBeginInterruptionForTesting()
     TriggerEndInterruptionForTesting()
+
+    BeginInterruptionRemote()
+    EndInterruptionRemote(WebCore::AudioSession::MayResume flags)
 }
 
 #endif

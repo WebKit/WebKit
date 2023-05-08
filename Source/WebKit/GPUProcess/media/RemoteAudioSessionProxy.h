@@ -81,6 +81,9 @@ private:
     void triggerBeginInterruptionForTesting();
     void triggerEndInterruptionForTesting();
 
+    void beginInterruptionRemote();
+    void endInterruptionRemote(WebCore::AudioSession::MayResume);
+
     RemoteAudioSessionProxyManager& audioSessionManager();
     IPC::Connection& connection();
 

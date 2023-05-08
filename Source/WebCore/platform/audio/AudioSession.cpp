@@ -153,7 +153,7 @@ void AudioSession::endInterruption(MayResume mayResume)
 void AudioSession::activeStateChanged()
 {
     for (auto& observer : m_interruptionObservers)
-        observer.activeStateChanged();
+        observer.audioSessionActiveStateChanged();
 }
 
 void AudioSession::setCategory(CategoryType, Mode, RouteSharingPolicy)

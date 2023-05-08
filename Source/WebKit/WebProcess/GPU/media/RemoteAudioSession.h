@@ -43,6 +43,7 @@ class WebProcess;
 
 class RemoteAudioSession final
     : public WebCore::AudioSession
+    , public WebCore::AudioSession::InterruptionObserver
     , public GPUProcessConnection::Client
     , IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
@@ -98,6 +99,12 @@ private:
     RemoteAudioSessionConfiguration& configuration();
     void initializeConfigurationIfNecessary();
 
+    void beginInterruptionRemote();
+    void endInterruptionRemote(MayResume);
+
+    // InterruptionObserver
+    void beginAudioSessionInterruption() final;
+    void endAudioSessionInterruption(WebCore::AudioSession::MayResume) final;
 
     WebProcess& m_process;
 

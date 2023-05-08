@@ -153,7 +153,7 @@ void DOMAudioSession::endAudioSessionInterruption(AudioSession::MayResume)
     scheduleStateChangeEvent();
 }
 
-void DOMAudioSession::activeStateChanged()
+void DOMAudioSession::audioSessionActiveStateChanged()
 {
     scheduleStateChangeEvent();
 }

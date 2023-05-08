@@ -47,12 +47,15 @@ UniqueRef<RemoteAudioSession> RemoteAudioSession::create(WebProcess& process)
 RemoteAudioSession::RemoteAudioSession(WebProcess& process)
     : m_process(process)
 {
+    addInterruptionObserver(*this);
 }
 
 RemoteAudioSession::~RemoteAudioSession()
 {
     if (m_gpuProcessConnection)
         m_gpuProcessConnection->messageReceiverMap().removeMessageReceiver(Messages::RemoteAudioSession::messageReceiverName());
+
+    removeInterruptionObserver(*this);
 }
 
 void RemoteAudioSession::gpuProcessConnectionDidClose(GPUProcessConnection& connection)
@@ -170,6 +173,30 @@ void RemoteAudioSession::configurationChanged(RemoteAudioSessionConfiguration&& 
     });
     if (isActiveChanged)
         activeStateChanged();
+}
+
+void RemoteAudioSession::beginInterruptionRemote()
+{
+    removeInterruptionObserver(*this);
+    beginInterruption();
+    addInterruptionObserver(*this);
+}
+
+void RemoteAudioSession::endInterruptionRemote(MayResume mayResume)
+{
+    removeInterruptionObserver(*this);
+    endInterruption(mayResume);
+    addInterruptionObserver(*this);
+}
+
+void RemoteAudioSession::beginAudioSessionInterruption()
+{
+    ensureConnection().send(Messages::RemoteAudioSessionProxy::BeginInterruptionRemote(), { });
+}
+
+void RemoteAudioSession::endAudioSessionInterruption(MayResume mayResume)
+{
+    ensureConnection().send(Messages::RemoteAudioSessionProxy::EndInterruptionRemote(mayResume), { });
 }
 
 void RemoteAudioSession::beginInterruptionForTesting()
