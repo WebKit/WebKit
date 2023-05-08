@@ -777,14 +777,12 @@ static void restoreFromSessionStateTest(IsAppInitiated isAppInitiated)
     TestWebKitAPI::Util::run(&isDone);
 }
 
-// FIXME: Re-enable this test once webkit.org/b/254289 has been resolved.
-TEST(AppPrivacyReport, DISABLED_RestoreFromSessionStateIsAppInitiated)
+TEST(AppPrivacyReport, RestoreFromSessionStateIsAppInitiated)
 {
     restoreFromSessionStateTest(IsAppInitiated::Yes);
 }
 
-// FIXME: Re-enable this test once webkit.org/b/254289 has been resolved.
-TEST(AppPrivacyReport, DISABLED_RestoreFromSessionStateIsNonAppInitiated)
+TEST(AppPrivacyReport, RestoreFromSessionStateIsNonAppInitiated)
 {
     restoreFromSessionStateTest(IsAppInitiated::No);
 }
@@ -824,14 +822,12 @@ static void restoreFromInteractionStateTest(IsAppInitiated isAppInitiated)
     TestWebKitAPI::Util::run(&isDone);
 }
 
-// FIXME: Re-enable this test once webkit.org/b/254289 has been resolved.
-TEST(AppPrivacyReport, DISABLED_RestoreFromInteractionStateIsAppInitiated)
+TEST(AppPrivacyReport, RestoreFromInteractionStateIsAppInitiated)
 {
     restoreFromInteractionStateTest(IsAppInitiated::Yes);
 }
 
-// FIXME: Re-enable this test once webkit.org/b/254289 has been resolved.
-TEST(AppPrivacyReport, DISABLED_RestoreFromInteractionStateIsNonAppInitiated)
+TEST(AppPrivacyReport, RestoreFromInteractionStateIsNonAppInitiated)
 {
     restoreFromInteractionStateTest(IsAppInitiated::No);
 }
