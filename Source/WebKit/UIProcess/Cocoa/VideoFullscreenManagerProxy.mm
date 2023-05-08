@@ -187,6 +187,17 @@ void VideoFullscreenModelContext::removeClient(VideoFullscreenModelClient& clien
     m_clients.remove(&client);
 }
 
+void VideoFullscreenModelContext::setVideoDimensions(const WebCore::FloatSize& videoDimensions)
+{
+    if (m_videoDimensions == videoDimensions)
+        return;
+
+    m_videoDimensions = videoDimensions;
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, videoDimensions);
+    for (auto& client : copyToVector(m_clients))
+        client->videoDimensionsChanged(videoDimensions);
+}
+
 void VideoFullscreenModelContext::requestCloseAllMediaPresentations(bool finishedWithMedia, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_manager) {
@@ -609,15 +620,16 @@ PlatformLayerContainer VideoFullscreenManagerProxy::createLayerWithID(PlaybackSe
     auto& [model, interface] = ensureModelAndInterface(contextId);
     addClientForContext(contextId);
 
+    if (model->videoDimensions().isEmpty() && !nativeSize.isEmpty())
+        model->setVideoDimensions(nativeSize);
+
     RetainPtr<WKLayerHostView> view = createLayerHostViewWithID(contextId, videoLayerID, initialSize, hostingDeviceScaleFactor);
 
     if (!model->playerLayer()) {
-        ALWAYS_LOG(LOGIDENTIFIER, model->logIdentifier(), ", Creating AVPlayerLayer");
+        ALWAYS_LOG(LOGIDENTIFIER, model->logIdentifier(), ", Creating AVPlayerLayer, initialSize: ", initialSize, ", nativeSize: ", nativeSize);
         auto playerLayer = adoptNS([[WebAVPlayerLayer alloc] init]);
 
-        [playerLayer setVideoDimensions:nativeSize];
-        [playerLayer setFullscreenInterface:interface.get()];
-        
+        [playerLayer setFullscreenModel:model.get()];
         [playerLayer setVideoSublayer:[view layer]];
 
         // The videoView may already be reparented in fullscreen, so only parent the view
@@ -672,7 +684,7 @@ RetainPtr<WebAVPlayerLayerView> VideoFullscreenManagerProxy::createViewWithID(Pl
         auto *playerLayer = (WebAVPlayerLayer *)[playerView layer];
 
         [playerLayer setVideoDimensions:nativeSize];
-        [playerLayer setFullscreenInterface:interface.get()];
+        [playerLayer setFullscreenModel:model.get()];
 
         [playerLayer setVideoSublayer:[view layer]];
 
@@ -752,6 +764,7 @@ void VideoFullscreenManagerProxy::setHasVideo(PlaybackSessionContextIdentifier c
 void VideoFullscreenManagerProxy::setVideoDimensions(PlaybackSessionContextIdentifier contextId, const FloatSize& videoDimensions)
 {
     auto& [model, interface] = ensureModelAndInterface(contextId);
+    model->setVideoDimensions(videoDimensions);
 
     if (m_mockVideoPresentationModeEnabled) {
         if (videoDimensions.isEmpty())
@@ -760,11 +773,6 @@ void VideoFullscreenManagerProxy::setVideoDimensions(PlaybackSessionContextIdent
         m_mockPictureInPictureWindowSize.setHeight(DefaultMockPictureInPictureWindowWidth / videoDimensions.aspectRatio());
         return;
     }
-
-    if (auto* layer = model->playerLayer())
-        [layer setVideoDimensions:videoDimensions];
-
-    interface->videoDimensionsChanged(videoDimensions);
 }
 
 void VideoFullscreenManagerProxy::enterFullscreen(PlaybackSessionContextIdentifier contextId)

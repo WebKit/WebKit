@@ -333,7 +333,7 @@ const Logger* VideoFullscreenModelVideoElement::loggerPtr() const
     return m_videoElement ? &m_videoElement->logger() : nullptr;
 }
 
-const void* VideoFullscreenModelVideoElement::logIdentifier()
+const void* VideoFullscreenModelVideoElement::logIdentifier() const
 {
     return m_videoElement ? m_videoElement->logIdentifier() : nullptr;
 }

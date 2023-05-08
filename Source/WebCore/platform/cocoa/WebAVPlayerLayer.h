@@ -37,20 +37,12 @@ OBJC_CLASS NSString;
 
 namespace WebCore {
 class VideoFullscreenModel;
-class VideoFullscreenInterfaceAVKit;
-class VideoFullscreenInterfaceMac;
 }
-
-#if PLATFORM(IOS_FAMILY)
-typedef WebCore::VideoFullscreenInterfaceAVKit PlatformVideoFullscreenInterface;
-#else
-typedef WebCore::VideoFullscreenInterfaceMac PlatformVideoFullscreenInterface;
-#endif
 
 WEBCORE_EXPORT @interface WebAVPlayerLayer : CALayer
 @property (nonatomic, retain, nullable) NSString *videoGravity;
 @property (nonatomic, getter=isReadyForDisplay) BOOL readyForDisplay;
-@property (nonatomic, assign, nullable) PlatformVideoFullscreenInterface* fullscreenInterface;
+@property (nonatomic, assign, nullable) WebCore::VideoFullscreenModel* fullscreenModel;
 @property (nonatomic, retain, nonnull) AVPlayerController *playerController;
 @property (nonatomic, retain, nonnull) CALayer *videoSublayer;
 @property (nonatomic, copy, nullable) NSDictionary *pixelBufferAttributes;
