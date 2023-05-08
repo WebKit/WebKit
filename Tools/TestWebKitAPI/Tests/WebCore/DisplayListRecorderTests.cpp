@@ -32,8 +32,8 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/InMemoryDisplayList.h>
+#include <numbers>
 #include <wtf/StdLibExtras.h>
-
 #if PLATFORM(COCOA)
 #include <WebCore/GraphicsContextCG.h>
 #endif
@@ -369,10 +369,81 @@ struct ChangeAntialiasBeforeClipToImageBuffer {
     }
 };
 
+struct TrivialTranslate {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.translate(1, 0);
+        c.translate(0, 0);
+        c.translate(0, 2);
+        c.drawRect({ 0, 0, 1, 1 });
+    }
+
+    static String description()
+    {
+        return R"DL(
+(translate
+  (x 1.00)
+  (y 0.00))
+(translate
+  (x 0.00)
+  (y 2.00))
+(draw-rect
+  (rect at (0,0) size 1x1)
+  (border-thickness 1.00)))DL"_s;
+    }
+};
+struct TrivialScale {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.scale({ 1.1f, 1.2f });
+        c.scale({ 1.f, 1.f });
+        c.scale({ .1f, .7f });
+        c.drawRect({ 0, 0, 1, 1 });
+    }
+
+    static String description()
+    {
+        return R"DL(
+(scale
+  (size width=1.10 height=1.20))
+(scale
+  (size width=0.10 height=0.70))
+(draw-rect
+  (rect at (0,0) size 1x1)
+  (border-thickness 1.00)))DL"_s;
+    }
+};
+struct TrivialRotate {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.rotate(1.f);
+        c.rotate(0.f);
+        c.rotate(2.f);
+        c.rotate(std::numbers::pi_v<float> * 2.f);
+        c.rotate(7.f * std::numbers::pi_v<float> * 2.f);
+        c.rotate(-2.f * std::numbers::pi_v<float> * 2.f);
+        c.drawRect({ 0, 0, 1, 1 });
+    }
+
+    static String description()
+    {
+        return R"DL(
+(rotate
+  (angle 1.00))
+(rotate
+  (angle 2.00))
+(rotate
+  (angle 43.98))
+(draw-rect
+  (rect at (0,0) size 1x1)
+  (border-thickness 1.00)))DL"_s;
+    }
+};
+
 using AllOperations = testing::Types<NoCommands, ChangeAntialias, ChangeAntialiasBeforeSave,
     ChangeAntialiasBeforeAndAfterSave, ChangeAntialiasInEmptySaveRestore, DrawSystemImage, ChangeAntialiasBeforeClipRect,
     ChangeAntialiasBeforeClipOutRect, ChangeAntialiasBeforeClipOutPath, ChangeAntialiasBeforeClipPath,
-    ChangeAntialiasBeforeClipToImageBuffer>;
+    ChangeAntialiasBeforeClipToImageBuffer, TrivialTranslate, TrivialScale, TrivialRotate>;
 
 }
 
