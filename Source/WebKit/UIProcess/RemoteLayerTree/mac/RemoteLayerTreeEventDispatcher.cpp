@@ -450,6 +450,14 @@ void RemoteLayerTreeEventDispatcher::waitForRenderingUpdateCompletionOrTimeout()
     auto estimatedNextDisplayRefreshTime = std::max(m_lastDisplayDidRefreshTime + m_scrollingTree->frameDuration(), currentTime);
     auto timeoutTime = std::min(currentTime + m_scrollingTree->maxAllowableRenderingUpdateDurationForSynchronization(), estimatedNextDisplayRefreshTime);
 
+    constexpr auto maximumTimeoutDelay = 32_ms;
+    auto maximumTimeoutTime = currentTime + maximumTimeoutDelay;
+    if (timeoutTime > maximumTimeoutTime) {
+        RELEASE_LOG_ERROR(DisplayLink, "%p - [webPageID=%" PRIu64 "] RemoteLayerTreeEventDispatcher::waitForRenderingUpdateCompletionOrTimeout - bad timeout %.2fms into the future (frame duration %.2fms)", this, m_pageIdentifier.toUInt64(),
+            (timeoutTime - currentTime).milliseconds(), m_scrollingTree->frameDuration().milliseconds());
+        timeoutTime = maximumTimeoutTime;
+    }
+
     bool becameIdle = m_stateCondition.waitUntil(m_scrollingTreeLock, timeoutTime, [&] {
         assertIsHeld(m_scrollingTreeLock);
         return m_state == SynchronizationState::Idle;
