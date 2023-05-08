@@ -239,22 +239,15 @@ void MediaSession::setActionHandler(MediaSessionAction action, RefPtr<MediaSessi
 {
     if (handler) {
         ALWAYS_LOG(LOGIDENTIFIER, "adding ", action);
-        {
-            Locker lock { m_actionHandlersLock };
-            m_actionHandlers.set(action, handler);
-        }
+        m_actionHandlers.set(action, handler);
         auto platformCommand = platformCommandForMediaSessionAction(action);
         if (platformCommand != PlatformMediaSession::NoCommand)
             PlatformMediaSessionManager::sharedManager().addSupportedCommand(platformCommand);
     } else {
-        bool containedAction;
-        {
-            Locker lock { m_actionHandlersLock };
-            containedAction = m_actionHandlers.remove(action);
-        }
-
-        if (containedAction)
+        if (m_actionHandlers.contains(action)) {
             ALWAYS_LOG(LOGIDENTIFIER, "removing ", action);
+            m_actionHandlers.remove(action);
+        }
         PlatformMediaSessionManager::sharedManager().removeSupportedCommand(platformCommandForMediaSessionAction(action));
     }
 
@@ -275,12 +268,7 @@ void MediaSession::callActionHandler(const MediaSessionActionDetails& actionDeta
 
 bool MediaSession::callActionHandler(const MediaSessionActionDetails& actionDetails, TriggerGestureIndicator triggerGestureIndicator)
 {
-    RefPtr<MediaSessionActionHandler> handler;
-    {
-        Locker lock { m_actionHandlersLock };
-        handler = m_actionHandlers.get(actionDetails.action);
-    }
-    if (handler) {
+    if (auto handler = m_actionHandlers.get(actionDetails.action)) {
         std::optional<UserGestureIndicator> maybeGestureIndicator;
         if (triggerGestureIndicator == TriggerGestureIndicator::Yes)
             maybeGestureIndicator.emplace(ProcessingUserGesture, document());
