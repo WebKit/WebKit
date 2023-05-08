@@ -2496,7 +2496,7 @@ void Element::parserSetAttributes(Span<const Attribute> attributes)
 
     // Use attributes instead of m_elementData because attributeChanged might modify m_elementData.
     for (const auto& attribute : attributes)
-        notifyAttributeChanged(attribute.name(), nullAtom(), attribute.value(), ModifiedDirectly);
+        notifyAttributeChanged(attribute.name(), nullAtom(), attribute.value(), AttributeModificationReason::Directly);
 }
 
 void Element::parserDidSetAttributes()
@@ -5013,7 +5013,7 @@ void Element::cloneAttributesFromElement(const Element& other)
         m_elementData = other.m_elementData->makeUniqueCopy();
 
     for (const Attribute& attribute : attributesIterator())
-        notifyAttributeChanged(attribute.name(), nullAtom(), attribute.value(), ModifiedByCloning);
+        notifyAttributeChanged(attribute.name(), nullAtom(), attribute.value(), AttributeModificationReason::ByCloning);
 
     setNonce(other.nonce());
 }

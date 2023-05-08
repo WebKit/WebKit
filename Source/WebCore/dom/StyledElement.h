@@ -75,7 +75,7 @@ protected:
     {
     }
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = ModifiedDirectly) override;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = AttributeModificationReason::Directly) override;
 
     virtual bool hasPresentationalHintsForAttribute(const QualifiedName&) const { return false; }
 
