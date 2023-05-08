@@ -6130,7 +6130,7 @@ static Editor::Command command(Document* document, const String& commandName, bo
         return Editor::Command();
 
     return frame->editor().command(commandName,
-        userInterface ? CommandFromDOMWithUserInterface : CommandFromDOM);
+        userInterface ? EditorCommandSource::DOMWithUserInterface : EditorCommandSource::DOM);
 }
 
 ExceptionOr<bool> Document::execCommand(const String& commandName, bool userInterface, const String& value)

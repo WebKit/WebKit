@@ -34,7 +34,7 @@ namespace WebCore {
 
     class DocumentFragment;
 
-    enum class MailBlockquoteHandling;
+    enum class MailBlockquoteHandling : bool;
 
     class TextEvent final : public UIEvent {
         WTF_MAKE_ISO_ALLOCATED(TextEvent);

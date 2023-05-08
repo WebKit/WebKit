@@ -1315,7 +1315,7 @@ void Editor::clear()
     m_customCompositionUnderlines.clear();
     m_customCompositionHighlights.clear();
     m_shouldStyleWithCSS = false;
-    m_defaultParagraphSeparator = EditorParagraphSeparatorIsDiv;
+    m_defaultParagraphSeparator = EditorParagraphSeparator::div;
     m_mark = { };
     m_oldSelectionForEditorUIUpdate = { };
     m_editorUIUpdateTimer.stop();
