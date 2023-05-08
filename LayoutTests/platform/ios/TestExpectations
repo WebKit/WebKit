@@ -16,7 +16,6 @@ editing/selection/ios [ Pass ]
 http/tests/quicklook [ Pass ]
 media/ios [ Pass ]
 media/audioSession/ios [ Pass ]
-model-element [ Pass ]
 quicklook [ Pass ]
 system-preview [ Pass ]
 remote-layer-tree [ Pass ]
@@ -2208,7 +2207,6 @@ accessibility/visible-character-range-basic.html [ Pass ]
 accessibility/visible-character-range-height-changes.html [ Pass ]
 accessibility/visible-character-range-width-changes.html [ Pass ]
 accessibility/ancestor-computation.html [ Pass ]
-accessibility/model-element-attributes.html [ Pass ]
 
 # Enable "aria-current" tests for iOS.
 webkit.org/b/149297 accessibility/aria-current.html [ Pass ]
@@ -3502,11 +3500,6 @@ webkit.org/b/229832 [ Release ] imported/w3c/web-platform-tests/beacon/beacon-re
 # rdar://83207621 ([ BigSur wk2 Release ] 2 fast/canvas/ tests are flaky failing (230366))
 [ Release ] fast/canvas/canvas-composite-text-alpha.html [ Pass Timeout Failure ]
 fast/canvas/canvas-blending-text.html [ Pass Failure ]
-
-# This test requires ARQL SPIs not yet available to OpenSource builds.
-model-element/model-element-camera.html [ Skip ]
-model-element/model-element-interactive-dragging.html [ Skip ]
-model-element/model-element-inline-preview-deletion-upon-source-change.html [ Skip ]
 
 # webkit.org/b/201982 These are flaky failures on iOS
 fast/images/exif-orientation-svg-feimage.html [ Pass Failure ]

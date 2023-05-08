@@ -513,7 +513,6 @@ fast/url/user-visible [ Skip ]
 
 # platformLayerTreeAsText is only implemented for Cocoa ports.
 fast/harness/platform-layer-tree-as-text.html [ Skip ]
-model-element/model-element-graphics-layers-opacity.html [ Skip ]
 
 # ENABLE_DRAG_SUPPORT is OFF in WPE.
 fast/events/5056619.html [ Skip ]

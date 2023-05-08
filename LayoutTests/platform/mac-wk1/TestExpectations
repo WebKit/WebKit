@@ -56,8 +56,6 @@ imported/w3c/web-platform-tests/css/css-properties-values-api/ [ Skip ]
 css-custom-properties-api [ Skip ]
 css-typedom [ Skip ]
 css-dark-mode [ Skip ]
-model-element [ Skip ]
-http/tests/model [ Skip ]
 
 media/audioSession [ Skip ]
 
@@ -1485,7 +1483,6 @@ accessibility/visible-character-range-basic.html [ Skip ]
 accessibility/visible-character-range-height-changes.html [ Skip ]
 accessibility/visible-character-range-scrolling.html [ Skip ]
 accessibility/visible-character-range-width-changes.html [ Skip ]
-accessibility/model-element-attributes.html [ Skip ]
 accessibility/aria-description.html [ Skip ]
 
 # Missing AccessibilityUIElement::focusableAncestor implementation.

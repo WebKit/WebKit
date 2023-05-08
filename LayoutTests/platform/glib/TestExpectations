@@ -514,9 +514,6 @@ accessibility/visible-character-range-height-changes.html [ Skip ]
 accessibility/visible-character-range-scrolling.html [ Skip ]
 accessibility/visible-character-range-width-changes.html [ Skip ]
 
-# Missing support of HTML Model element (ENABLE MODEL).
-accessibility/model-element-attributes.html [ Skip ]
-
 # Started failing after it was rewritten in https://bugs.webkit.org/show_bug.cgi?id=251175.
 # Test may need to be altered to accommodate glib-specific behavior?
 accessibility/element-reflection-ariadescribedby.html [ Timeout ]

@@ -1469,7 +1469,6 @@ webkit.org/b/229166 webrtc/utf8-sdp.html [ Pass Failure ]
 [ Monterey+ ] webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Pass Failure ]
 
 # webkit.org/b/228200 Setting multiple test expectations for Monetery on OpenSource:
-[ Monterey ] model-element/model-element-source.html [ Pass Crash ]
 [ Monterey Release ] platform/mac-wk2/plugins/asychronous-deadlock-with-timer-and-evaluate.html [ Pass Crash ]
 [ Monterey Release ] media/media-fragments/TC0004.html [ Pass Timeout ]
 
@@ -1719,8 +1718,6 @@ webkit.org/b/255407 [ Monterey x86_64 ] imported/w3c/web-platform-tests/html/sem
 [ Monterey+ x86_64 ] css3/blending/background-blend-mode-body-image.html [ ImageOnlyFailure ]
 [ BigSur Monterey ] fast/images/animated-heics-draw.html [ Skip ]
 [ Ventura+ ] fast/images/animated-heics-draw.html [ Pass Timeout ]
-[ Ventura+ ] model-element/model-element-ready.html [ Pass Failure ]
-[ Monterey+ ] model-element/model-element-graphics-layers-opacity.html [ Failure ]
 [ Ventura+ ] http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html [ Failure ]
 [ Ventura+ ] http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html [ Failure ]
 [ Ventura+ ]  http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js.html [ Failure ]

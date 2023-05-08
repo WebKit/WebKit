@@ -51,9 +51,6 @@ fast/repaint/placeholder-after-caps-lock-hidden.html [ Pass ]
 fast/visual-viewport/rubberbanding-viewport-rects.html [ Pass ]
 fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Pass ]
 
-model-element/model-element-contents-layer-updates-with-clipping.html [ Pass ]
-model-element/model-element-contents-layer-updates.html [ Pass ]
-
 # Pending SDK changes, re-skip these tests that are un-skipped above.
 fast/viewport/ios/viewport-fit-contain.html [ Skip ]
 fast/viewport/ios/viewport-fit-cover.html [ Skip ]

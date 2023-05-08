@@ -279,7 +279,6 @@ fast/images/object-image.html [ WontFix Pass ]
 
 # platformLayerTreeAsText is only implemented for Cocoa ports.
 fast/harness/platform-layer-tree-as-text.html [ Skip ]
-model-element/model-element-graphics-layers-opacity.html [ Skip ]
 
 # This test requires Mac ObjC bindings, although it currently passes
 Bug(GTK) http/tests/security/dataTransfer-set-data-file-url.html [ WontFix Pass ]

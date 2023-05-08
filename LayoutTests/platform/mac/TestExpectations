@@ -129,15 +129,6 @@ webkit.org/b/21916 tables/mozilla_expected_failures/bugs/bug178855.xml [ Pass Im
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 
-# This test only works with UI-side compositing
-model-element/model-element-contents-layer-updates-with-clipping.html [ Skip ]
-model-element/model-element-contents-layer-updates.html [ Skip ]
-
-# This test requires ARQL SPIs not yet available to OpenSource builds.
-model-element/model-element-camera.html [ Skip ]
-model-element/model-element-interactive-dragging.html [ Skip ]
-model-element/model-element-inline-preview-deletion-upon-source-change.html [ Skip ]
-
 # Accessibility tests for notifications that don't exist or aren't needed on Mac OS X.
 accessibility/aria-checkbox-sends-notification.html
 accessibility/aria-switch-sends-notification.html
@@ -2102,7 +2093,6 @@ webkit.org/b/227998 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/228311 imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-dynamic-remove-style-detached.html [ Pass Failure Timeout ]
 
 # webkit.org/b/228200 Setting multiple test expectations for Monterey on OpenSource:
-[ Monterey ] model-element/model-element-graphics-layers-opacity.html [ Pass Failure ]
 [ Monterey Debug arm64 ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-restartIce.https.html [ Pass Failure Crash ]
 
 webkit.org/b/255235 [ Monterey Debug ] imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override.html [ Failure ]
@@ -2241,9 +2231,6 @@ platform/mac/plugins/convert-point.html [ Skip ]
 webkit.org/b/226826 [ Monterey ] http/tests/ssl/applepay/ApplePayButton.html [ Failure ]
 
 webkit.org/b/235660 [ Debug ] fast/replaced/encrypted-pdf-as-object-and-embed.html [ Skip ]
-
-# <model> tests involving the ready promise can only work on Monterey and up
-[ BigSur ] model-element/model-element-ready.html [ Skip ]
 
 # This test is specific to Core Text.
 fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
