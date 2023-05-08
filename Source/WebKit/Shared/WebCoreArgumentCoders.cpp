@@ -2158,12 +2158,11 @@ void ArgumentCoder<SVGFilter>::encode(Encoder& encoder, const SVGFilter& filter)
 
     encoder << filter.targetBoundingBox();
     encoder << filter.primitiveUnits();
-    
-    encoder << effects.size();
-    for (auto& effect : effects)
-        encoder << effect;
 
+    encoder << effects;
     encoder << expressionReference;
+
+    encoder << filter.renderingResourceIdentifierIfExists();
 }
 
 template
@@ -2183,21 +2182,10 @@ std::optional<Ref<SVGFilter>> ArgumentCoder<SVGFilter>::decode(Decoder& decoder)
     if (!primitiveUnits)
         return std::nullopt;
 
-    std::optional<size_t> effectsSize;
-    decoder >> effectsSize;
-    if (!effectsSize || !*effectsSize)
+    std::optional<Vector<Ref<FilterEffect>>> effects;
+    decoder >> effects;
+    if (!effects || effects->isEmpty())
         return std::nullopt;
-
-    Vector<Ref<FilterEffect>> effects;
-    effects.reserveInitialCapacity(*effectsSize);
-
-    for (size_t i = 0; i < *effectsSize; ++i) {
-        std::optional<Ref<FilterEffect>> effect;
-        decoder >> effect;
-        if (!effect)
-            return std::nullopt;
-        effects.uncheckedAppend(WTFMove(*effect));
-    }
 
     std::optional<SVGFilterExpressionReference> expressionReference;
     decoder >> expressionReference;
@@ -2209,12 +2197,17 @@ std::optional<Ref<SVGFilter>> ArgumentCoder<SVGFilter>::decode(Decoder& decoder)
 
     // Replace the index in ExpressionReferenceTerm with its Ref<FilterEffect> in effects.
     for (auto& term : *expressionReference) {
-        if (term.index >= effects.size())
+        if (term.index >= effects->size())
             return std::nullopt;
-        expression.uncheckedAppend({ effects[term.index], term.geometry, term.level });
+        expression.uncheckedAppend({ (*effects)[term.index], term.geometry, term.level });
     }
 
-    auto filter = WebCore::SVGFilter::create(*targetBoundingBox, *primitiveUnits, WTFMove(expression));
+    std::optional<std::optional<RenderingResourceIdentifier>> renderingResourceIdentifier;
+    decoder >> renderingResourceIdentifier;
+    if (!renderingResourceIdentifier)
+        return std::nullopt;
+
+    auto filter = WebCore::SVGFilter::create(*targetBoundingBox, *primitiveUnits, WTFMove(expression), *renderingResourceIdentifier);
     if (!filter)
         return std::nullopt;
 

@@ -32,7 +32,7 @@
 #include "FilterStyle.h"
 #include "FloatRect.h"
 #include "LengthBox.h"
-#include <wtf/RefCounted.h>
+#include "RenderingResource.h"
 #include <wtf/text/AtomString.h>
 
 namespace WTF {
@@ -49,7 +49,7 @@ enum class FilterRepresentation : uint8_t {
     Debugging
 };
 
-class FilterFunction : public RefCounted<FilterFunction> {
+class FilterFunction : public RenderingResource {
 public:
     enum class Type : uint8_t {
         CSSFilter,
@@ -80,7 +80,7 @@ public:
         FELast = SourceGraphic
     };
 
-    FilterFunction(Type);
+    FilterFunction(Type, std::optional<RenderingResourceIdentifier> = std::nullopt);
     virtual ~FilterFunction() = default;
 
     Type filterType() const { return m_filterType; }
