@@ -25,7 +25,6 @@ namespace WebCore {
 
 inline bool RenderLayer::canPaintTransparencyWithSetOpacity() const { return isBitmapOnly() && !hasNonOpacityTransparency(); }
 inline bool RenderLayer::hasBackdropFilter() const { return renderer().hasBackdropFilter(); }
-inline bool RenderLayer::hasBlendMode() const { return renderer().hasBlendMode(); } // FIXME: Why ask the renderer this given we have m_blendMode?
 inline bool RenderLayer::hasFilter() const { return renderer().hasFilter(); }
 inline bool RenderLayer::hasNonOpacityTransparency() const { return renderer().hasMask() || hasBlendMode() || (isolatesBlending() && !renderer().isDocumentElementRenderer()); }
 inline bool RenderLayer::hasPerspective() const { return renderer().style().hasPerspective(); }
@@ -34,6 +33,10 @@ inline bool RenderLayer::isTransparent() const { return renderer().isTransparent
 inline bool RenderLayer::overlapBoundsIncludeChildren() const { return hasFilter() && renderer().style().filter().hasFilterThatMovesPixels(); }
 inline bool RenderLayer::preserves3D() const { return renderer().style().preserves3D(); }
 inline int RenderLayer::zIndex() const { return renderer().style().usedZIndex(); }
+
+#if ENABLE(CSS_COMPOSITING)
+inline bool RenderLayer::hasBlendMode() const { return renderer().hasBlendMode(); } // FIXME: Why ask the renderer this given we have m_blendMode?
+#endif
 
 inline bool RenderLayer::canUseOffsetFromAncestor() const
 {

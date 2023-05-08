@@ -763,8 +763,8 @@ public:
     IntOutsets filterOutsets() const;
     inline bool hasBackdropFilter() const;
 
-    inline bool hasBlendMode() const;
 #if ENABLE(CSS_COMPOSITING)
+    inline bool hasBlendMode() const;
     BlendMode blendMode() const { return static_cast<BlendMode>(m_blendMode); }
 
     bool isolatesCompositedBlending() const { return m_hasNotIsolatedCompositedBlendingDescendants && isCSSStackingContext(); }

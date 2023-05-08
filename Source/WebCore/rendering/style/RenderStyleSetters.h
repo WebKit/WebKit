@@ -199,7 +199,6 @@ inline void RenderStyle::setImplicitNamedGridColumnLines(const NamedGridLinesMap
 inline void RenderStyle::setImplicitNamedGridRowLines(const NamedGridLinesMap& namedGridRowLines) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, implicitNamedGridRowLines, namedGridRowLines); }
 inline void RenderStyle::setInitialLetter(const IntSize& size) { SET_NESTED(m_nonInheritedData, rareData, initialLetter, size); }
 inline void RenderStyle::setInputSecurity(InputSecurity security) { SET_NESTED(m_nonInheritedData, rareData, inputSecurity, static_cast<unsigned>(security)); }
-inline void RenderStyle::setIsolation(Isolation isolation) { SET_NESTED(m_nonInheritedData, rareData, isolation, static_cast<unsigned>(isolation)); }
 inline void RenderStyle::setJoinStyle(LineJoin style) { SET(m_rareInheritedData, joinStyle, static_cast<unsigned>(style)); }
 inline void RenderStyle::setJustifyContent(const StyleContentAlignmentData& data) { SET_NESTED(m_nonInheritedData, miscData, justifyContent, data); }
 inline void RenderStyle::setJustifyContentPosition(ContentPosition position) { m_nonInheritedData.access().miscData.access().justifyContent.setPosition(position); }
@@ -567,6 +566,8 @@ inline void RenderStyle::setBlendMode(BlendMode mode)
     SET_NESTED(m_nonInheritedData, rareData, effectiveBlendMode, static_cast<unsigned>(mode));
     SET(m_rareInheritedData, isInSubtreeWithBlendMode, mode != BlendMode::Normal);
 }
+
+inline void RenderStyle::setIsolation(Isolation isolation) { SET_NESTED(m_nonInheritedData, rareData, isolation, static_cast<unsigned>(isolation)); }
 
 #endif
 
