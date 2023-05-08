@@ -512,7 +512,7 @@ std::optional<WebCore::FontPlatformData> ArgumentCoder<WebCore::Font>::decodePla
         if (!handle)
             return std::nullopt;
 
-        auto sharedMemoryBuffer = WebKit::SharedMemory::map(*handle, WebKit::SharedMemory::Protection::ReadOnly);
+        auto sharedMemoryBuffer = WebKit::SharedMemory::map(WTFMove(*handle), WebKit::SharedMemory::Protection::ReadOnly);
         if (!sharedMemoryBuffer)
             return std::nullopt;
 

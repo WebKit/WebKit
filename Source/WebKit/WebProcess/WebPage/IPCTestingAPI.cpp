@@ -2971,10 +2971,10 @@ template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* glob
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
 
     auto protection = Protection::ReadWrite;
-    auto sharedMemory = SharedMemory::map(value, protection);
+    auto sharedMemory = SharedMemory::map(WTFMove(value), protection);
     if (!sharedMemory) {
         protection = Protection::ReadOnly;
-        sharedMemory = SharedMemory::map(value, protection);
+        sharedMemory = SharedMemory::map(WTFMove(value), protection);
         if (!sharedMemory)
             return JSC::JSValue();
     }

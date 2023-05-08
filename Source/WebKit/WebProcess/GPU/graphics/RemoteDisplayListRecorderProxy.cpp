@@ -353,8 +353,8 @@ void RemoteDisplayListRecorderProxy::recordPaintVideoFrame(VideoFrame& frame, co
 #if PLATFORM(COCOA)
     auto sharedVideoFrame = m_sharedVideoFrameWriter.write(frame, [&](auto& semaphore) {
         send(Messages::RemoteDisplayListRecorder::SetSharedVideoFrameSemaphore { semaphore });
-    }, [&](auto& handle) {
-        send(Messages::RemoteDisplayListRecorder::SetSharedVideoFrameMemory { handle });
+    }, [&](auto&& handle) {
+        send(Messages::RemoteDisplayListRecorder::SetSharedVideoFrameMemory { WTFMove(handle) });
     });
     if (!sharedVideoFrame)
         return;

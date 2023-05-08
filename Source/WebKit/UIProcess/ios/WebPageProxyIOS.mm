@@ -588,12 +588,12 @@ void WebPageProxy::performActionOnElements(uint32_t action, Vector<WebCore::Elem
     m_process->send(Messages::WebPage::PerformActionOnElements(action, elements), webPageID());
 }
 
-void WebPageProxy::saveImageToLibrary(const SharedMemory::Handle& imageHandle, const String& authorizationToken)
+void WebPageProxy::saveImageToLibrary(SharedMemory::Handle&& imageHandle, const String& authorizationToken)
 {
     MESSAGE_CHECK(!imageHandle.isNull());
     MESSAGE_CHECK(isValidPerformActionOnElementAuthorizationToken(authorizationToken));
 
-    auto sharedMemoryBuffer = SharedMemory::map(imageHandle, SharedMemory::Protection::ReadOnly);
+    auto sharedMemoryBuffer = SharedMemory::map(WTFMove(imageHandle), SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryBuffer)
         return;
 
@@ -1679,7 +1679,7 @@ FloatSize WebPageProxy::viewLayoutSize() const
 
 #if ENABLE(DRAG_SUPPORT)
 
-void WebPageProxy::setPromisedDataForImage(const String&, const SharedMemory::Handle&, const String&, const String&, const String&, const String&, const String&, const SharedMemory::Handle&, const String&)
+void WebPageProxy::setPromisedDataForImage(const String&, SharedMemory::Handle&&, const String&, const String&, const String&, const String&, const String&, SharedMemory::Handle&&, const String&)
 {
     notImplemented();
 }

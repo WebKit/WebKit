@@ -78,9 +78,9 @@ void RemoteGraphicsContextGL::setSharedVideoFrameSemaphore(IPC::Semaphore&& sema
     m_sharedVideoFrameReader.setSemaphore(WTFMove(semaphore));
 }
 
-void RemoteGraphicsContextGL::setSharedVideoFrameMemory(const SharedMemory::Handle& handle)
+void RemoteGraphicsContextGL::setSharedVideoFrameMemory(SharedMemory::Handle&& handle)
 {
-    m_sharedVideoFrameReader.setSharedMemory(handle);
+    m_sharedVideoFrameReader.setSharedMemory(WTFMove(handle));
 }
 #endif
 

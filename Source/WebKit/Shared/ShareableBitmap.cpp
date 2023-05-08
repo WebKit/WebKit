@@ -118,7 +118,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::createFromImageDraw(NativeImage& image)
 
 RefPtr<ShareableBitmap> ShareableBitmap::create(Handle&& handle, SharedMemory::Protection protection)
 {
-    auto sharedMemory = SharedMemory::map(handle.m_handle, protection);
+    auto sharedMemory = SharedMemory::map(WTFMove(handle.m_handle), protection);
     if (!sharedMemory)
         return nullptr;
 
@@ -130,7 +130,7 @@ std::optional<Ref<ShareableBitmap>> ShareableBitmap::createReadOnly(std::optiona
     if (!handle)
         return std::nullopt;
 
-    auto sharedMemory = SharedMemory::map(handle->m_handle, SharedMemory::Protection::ReadOnly);
+    auto sharedMemory = SharedMemory::map(WTFMove(handle->m_handle), SharedMemory::Protection::ReadOnly);
     if (!sharedMemory)
         return std::nullopt;
     

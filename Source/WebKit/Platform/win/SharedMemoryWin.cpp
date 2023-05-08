@@ -72,7 +72,7 @@ static DWORD accessRights(SharedMemory::Protection protection)
     return 0;
 }
 
-RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protection)
+RefPtr<SharedMemory> SharedMemory::map(Handle&& handle, Protection protection)
 {
     RefPtr<SharedMemory> memory = adopt(handle.m_handle.get(), handle.m_size, protection);
     if (!memory)

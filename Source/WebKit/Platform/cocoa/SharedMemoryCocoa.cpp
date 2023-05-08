@@ -189,7 +189,7 @@ RefPtr<SharedMemory> SharedMemory::wrapMap(void* data, size_t size, Protection p
     return WTFMove(sharedMemory);
 }
 
-RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protection)
+RefPtr<SharedMemory> SharedMemory::map(Handle&& handle, Protection protection)
 {
     if (handle.isNull())
         return nullptr;

@@ -71,12 +71,12 @@ class SharedVideoFrameWriter {
 public:
     SharedVideoFrameWriter();
 
-    std::optional<SharedVideoFrame> write(const WebCore::VideoFrame&, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::Handle&)>&);
-    std::optional<SharedVideoFrame::Buffer> writeBuffer(CVPixelBufferRef, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::Handle&)>&, bool canSendIOSurface = true);
+    std::optional<SharedVideoFrame> write(const WebCore::VideoFrame&, const Function<void(IPC::Semaphore&)>&, const Function<void(SharedMemory::Handle&&)>&);
+    std::optional<SharedVideoFrame::Buffer> writeBuffer(CVPixelBufferRef, const Function<void(IPC::Semaphore&)>&, const Function<void(SharedMemory::Handle&&)>&, bool canSendIOSurface = true);
 #if USE(LIBWEBRTC)
-    std::optional<SharedVideoFrame::Buffer> writeBuffer(const webrtc::VideoFrame&, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::Handle&)>&);
+    std::optional<SharedVideoFrame::Buffer> writeBuffer(const webrtc::VideoFrame&, const Function<void(IPC::Semaphore&)>&, const Function<void(SharedMemory::Handle&&)>&);
 #endif
-    std::optional<SharedVideoFrame::Buffer> writeBuffer(const WebCore::VideoFrame&, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::Handle&)>&);
+    std::optional<SharedVideoFrame::Buffer> writeBuffer(const WebCore::VideoFrame&, const Function<void(IPC::Semaphore&)>&, const Function<void(SharedMemory::Handle&&)>&);
 
     void disable();
     bool isDisabled() const { return m_isDisabled; }
@@ -85,11 +85,11 @@ private:
     static constexpr Seconds defaultTimeout = 3_s;
 
     bool wait(const Function<void(IPC::Semaphore&)>&);
-    bool allocateStorage(size_t, const Function<void(const SharedMemory::Handle&)>&);
-    bool prepareWriting(const WebCore::SharedVideoFrameInfo&, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::Handle&)>&);
+    bool allocateStorage(size_t, const Function<void(SharedMemory::Handle&&)>&);
+    bool prepareWriting(const WebCore::SharedVideoFrameInfo&, const Function<void(IPC::Semaphore&)>&, const Function<void(SharedMemory::Handle&&)>&);
 
 #if USE(LIBWEBRTC)
-    std::optional<SharedVideoFrame::Buffer> writeBuffer(webrtc::VideoFrameBuffer&, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::Handle&)>&);
+    std::optional<SharedVideoFrame::Buffer> writeBuffer(webrtc::VideoFrameBuffer&, const Function<void(IPC::Semaphore&)>&, const Function<void(SharedMemory::Handle&&)>&);
 #endif
     void signalInCaseOfError();
 
@@ -110,7 +110,7 @@ public:
     SharedVideoFrameReader();
 
     void setSemaphore(IPC::Semaphore&& semaphore) { m_semaphore = WTFMove(semaphore); }
-    bool setSharedMemory(const SharedMemory::Handle&);
+    bool setSharedMemory(SharedMemory::Handle&&);
 
     RefPtr<WebCore::VideoFrame> read(SharedVideoFrame&&);
     RetainPtr<CVPixelBufferRef> readBuffer(SharedVideoFrame::Buffer&&);

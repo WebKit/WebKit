@@ -87,7 +87,7 @@ std::optional<SharedBufferReference> SharedBufferReference::decode(Decoder& deco
     if (!decoder.decode(handle))
         return std::nullopt;
 
-    auto sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
+    auto sharedMemoryBuffer = SharedMemory::map(WTFMove(handle), SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryBuffer)
         return std::nullopt;
 

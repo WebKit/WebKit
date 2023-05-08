@@ -104,7 +104,7 @@ public:
     // FIXME: Change these factory functions to return Ref<SharedMemory> and crash on failure.
     static RefPtr<SharedMemory> allocate(size_t);
     static RefPtr<SharedMemory> copyBuffer(const WebCore::FragmentedSharedBuffer&);
-    static RefPtr<SharedMemory> map(const Handle&, Protection);
+    static RefPtr<SharedMemory> map(Handle&&, Protection);
 #if USE(UNIX_DOMAIN_SOCKETS)
     static RefPtr<SharedMemory> wrapMap(void*, size_t, int fileDescriptor);
 #elif OS(DARWIN)

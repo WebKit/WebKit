@@ -565,7 +565,7 @@ std::optional<Ref<FontCustomPlatformData>> ArgumentCoder<FontCustomPlatformData>
     if (!handle)
         return std::nullopt;
 
-    auto sharedMemoryBuffer = WebKit::SharedMemory::map(*handle, WebKit::SharedMemory::Protection::ReadOnly);
+    auto sharedMemoryBuffer = WebKit::SharedMemory::map(WTFMove(*handle), WebKit::SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryBuffer)
         return std::nullopt;
 
@@ -1377,7 +1377,7 @@ std::optional<Ref<WebCore::FragmentedSharedBuffer>> ArgumentCoder<WebCore::Fragm
     if (!decoder.decode(handle))
         return std::nullopt;
 
-    auto sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
+    auto sharedMemoryBuffer = SharedMemory::map(WTFMove(handle), SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryBuffer)
         return std::nullopt;
 

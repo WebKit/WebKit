@@ -929,7 +929,7 @@ public:
     void stopInteraction();
     void performActionOnElement(uint32_t action);
     void performActionOnElements(uint32_t action, Vector<WebCore::ElementContext>&&);
-    void saveImageToLibrary(const SharedMemoryHandle& imageHandle, const String& authorizationToken);
+    void saveImageToLibrary(SharedMemoryHandle&& imageHandle, const String& authorizationToken);
     void focusNextFocusedElement(bool isForward, CompletionHandler<void()>&&);
     void setFocusedElementValue(const WebCore::ElementContext&, const String&);
     void setFocusedElementSelectedIndex(const WebCore::ElementContext&, uint32_t index, bool allowMultipleSelection = false);
@@ -1370,8 +1370,8 @@ public:
     void setDragCaretRect(const WebCore::IntRect&);
 #if PLATFORM(COCOA)
     void startDrag(const WebCore::DragItem&, ShareableBitmapHandle&& dragImageHandle);
-    void setPromisedDataForImage(const String& pasteboardName, const SharedMemoryHandle& imageHandle, const String& filename, const String& extension,
-        const String& title, const String& url, const String& visibleURL, const SharedMemoryHandle& archiveHandle, const String& originIdentifier);
+    void setPromisedDataForImage(const String& pasteboardName, SharedMemoryHandle&& imageHandle, const String& filename, const String& extension,
+        const String& title, const String& url, const String& visibleURL, SharedMemoryHandle&& archiveHandle, const String& originIdentifier);
 #endif
 #if PLATFORM(GTK)
     void startDrag(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, ShareableBitmapHandle&& dragImage, WebCore::IntPoint&& dragImageHotspot);

@@ -96,7 +96,7 @@ private:
     void flushEncoder(VideoEncoderIdentifier);
     void setEncodeRates(VideoEncoderIdentifier, uint32_t bitRate, uint32_t frameRate);
     void setSharedVideoFrameSemaphore(VideoEncoderIdentifier, IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(VideoEncoderIdentifier, const SharedMemory::Handle&);
+    void setSharedVideoFrameMemory(VideoEncoderIdentifier, SharedMemory::Handle&&);
     void setRTCLoggingLevel(WTFLogLevel);
 
     struct Decoder {

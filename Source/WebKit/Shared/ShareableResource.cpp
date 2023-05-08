@@ -97,7 +97,7 @@ RefPtr<ShareableResource> ShareableResource::create(Ref<SharedMemory>&& sharedMe
 
 RefPtr<ShareableResource> ShareableResource::map(Handle&& handle)
 {
-    auto sharedMemory = SharedMemory::map(handle.m_handle, SharedMemory::Protection::ReadOnly);
+    auto sharedMemory = SharedMemory::map(WTFMove(handle.m_handle), SharedMemory::Protection::ReadOnly);
     if (!sharedMemory)
         return nullptr;
 

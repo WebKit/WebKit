@@ -694,7 +694,7 @@ void WebPasteboardProxy::testIPCSharedMemory(IPC::Connection& connection, const 
     MESSAGE_CHECK_COMPLETION(!pasteboardName.isEmpty(), completionHandler(-1, makeString("error")));
     MESSAGE_CHECK_COMPLETION(!pasteboardType.isEmpty(), completionHandler(-1, makeString("error")));
 
-    auto sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
+    auto sharedMemoryBuffer = SharedMemory::map(WTFMove(handle), SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryBuffer) {
         completionHandler(-1, makeString("error EOM"));
         return;

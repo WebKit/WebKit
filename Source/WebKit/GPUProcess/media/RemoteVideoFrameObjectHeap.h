@@ -69,7 +69,7 @@ private:
     void pixelBuffer(RemoteVideoFrameReadReference&&, CompletionHandler<void(RetainPtr<CVPixelBufferRef>)>&&);
     void convertFrameBuffer(SharedVideoFrame&&, CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(const SharedMemory::Handle&);
+    void setSharedVideoFrameMemory(SharedMemory::Handle&&);
 #endif
 
     void createPixelConformerIfNeeded();

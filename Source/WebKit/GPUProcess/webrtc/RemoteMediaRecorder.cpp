@@ -125,9 +125,9 @@ void RemoteMediaRecorder::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphor
     m_sharedVideoFrameReader.setSemaphore(WTFMove(semaphore));
 }
 
-void RemoteMediaRecorder::setSharedVideoFrameMemory(const SharedMemory::Handle& handle)
+void RemoteMediaRecorder::setSharedVideoFrameMemory(SharedMemory::Handle&& handle)
 {
-    m_sharedVideoFrameReader.setSharedMemory(handle);
+    m_sharedVideoFrameReader.setSharedMemory(WTFMove(handle));
 }
 
 }

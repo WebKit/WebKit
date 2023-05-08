@@ -519,9 +519,9 @@ void RemoteDisplayListRecorder::setSharedVideoFrameSemaphore(IPC::Semaphore&& se
     m_sharedVideoFrameReader.setSemaphore(WTFMove(semaphore));
 }
 
-void RemoteDisplayListRecorder::setSharedVideoFrameMemory(const SharedMemory::Handle& handle)
+void RemoteDisplayListRecorder::setSharedVideoFrameMemory(SharedMemory::Handle&& handle)
 {
-    m_sharedVideoFrameReader.setSharedMemory(handle);
+    m_sharedVideoFrameReader.setSharedMemory(WTFMove(handle));
 }
 #endif // PLATFORM(COCOA) && ENABLE(VIDEO)
 

@@ -147,16 +147,17 @@ RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
     return instance;
 }
 
-RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protection)
+RefPtr<SharedMemory> SharedMemory::map(Handle&& handle, Protection protection)
 {
     ASSERT(!handle.isNull());
     void* data = mmap(0, handle.size(), accessModeMMap(protection), MAP_SHARED, handle.m_handle.value(), 0);
-    handle.m_handle = { };
     if (data == MAP_FAILED)
         return nullptr;
 
-    RefPtr<SharedMemory> instance = wrapMap(data, handle.size(), -1);
-    instance->m_isWrappingMap = false;
+    RefPtr<SharedMemory> instance = adoptRef(new SharedMemory());
+    instance->m_data = data;
+    instance->m_size = handle.size();
+    instance->m_fileDescriptor = handle.releaseHandle();
     return instance;
 }
 
@@ -203,4 +204,3 @@ auto SharedMemory::createHandle(Protection) -> std::optional<Handle>
 } // namespace WebKit
 
 #endif
-

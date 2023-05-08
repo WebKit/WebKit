@@ -261,8 +261,8 @@ bool RemoteGraphicsContextGLProxy::copyTextureFromVideoFrame(WebCore::VideoFrame
         auto sendResult = send(Messages::RemoteGraphicsContextGL::SetSharedVideoFrameSemaphore { semaphore });
         if (!sendResult)
             markContextLost();
-    }, [this](auto& handle) {
-        auto sendResult = send(Messages::RemoteGraphicsContextGL::SetSharedVideoFrameMemory { handle });
+    }, [this](auto&& handle) {
+        auto sendResult = send(Messages::RemoteGraphicsContextGL::SetSharedVideoFrameMemory { WTFMove(handle) });
         if (!sendResult)
             markContextLost();
     });

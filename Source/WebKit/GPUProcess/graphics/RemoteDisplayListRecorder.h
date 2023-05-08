@@ -163,7 +163,7 @@ private:
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     void paintVideoFrame(SharedVideoFrame&&, const WebCore::FloatRect&, bool shouldDiscardAlpha);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(const SharedMemory::Handle&);
+    void setSharedVideoFrameMemory(SharedMemory::Handle&&);
 #endif
 
     WeakPtr<WebCore::ImageBuffer> m_imageBuffer;

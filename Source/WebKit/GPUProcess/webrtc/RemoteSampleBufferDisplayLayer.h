@@ -80,7 +80,7 @@ private:
     void enqueueVideoFrame(SharedVideoFrame&&);
     void clearVideoFrames();
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(const SharedMemory::Handle&);
+    void setSharedVideoFrameMemory(SharedMemory::Handle&&);
 
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const final;
