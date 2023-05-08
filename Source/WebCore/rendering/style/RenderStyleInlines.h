@@ -391,7 +391,7 @@ constexpr LineClampValue RenderStyle::initialLineClamp() { return { }; }
 inline const AtomString& RenderStyle::initialLineGrid() { return nullAtom(); }
 constexpr LineSnap RenderStyle::initialLineSnap() { return LineSnap::None; }
 constexpr ListStylePosition RenderStyle::initialListStylePosition() { return ListStylePosition::Outside; }
-inline ListStyleType RenderStyle::initialListStyleType() { return { ListStyleType::Type::Disc, nullAtom() }; }
+inline ListStyleType RenderStyle::initialListStyleType() { return { ListStyleType::Type::CounterStyle, nameString(CSSValueDisc) }; }
 inline Length RenderStyle::initialMargin() { return zeroLength(); }
 constexpr OptionSet<MarginTrimType> RenderStyle::initialMarginTrim() { return { }; }
 constexpr MarqueeBehavior RenderStyle::initialMarqueeBehavior() { return MarqueeBehavior::Scroll; }

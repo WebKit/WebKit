@@ -32,7 +32,6 @@
 #include "HTMLOListElement.h"
 #include "PseudoElement.h"
 #include "RenderListItem.h"
-#include "RenderListMarker.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include <wtf/IsoMallocInlines.h>
@@ -447,14 +446,26 @@ String RenderCounter::originalText() const
     CheckedPtr child = m_counterNode;
     int value = child->actsAsReset() ? child->value() : child->countInParent();
 
+    auto counterText = [](const ListStyleType& styleType, int value, CSSCounterStyle* counterStyle) {
+        if (styleType.type == ListStyleType::Type::None)
+            return emptyString();
+
+        if (styleType.type == ListStyleType::Type::CounterStyle) {
+            ASSERT(counterStyle);
+            return counterStyle->text(value);
+        }
+
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    };
     auto counterStyle = this->counterStyle();
-    String text = listMarkerText(m_counter.listStyleType(), value, counterStyle.get());
+    String text = counterText(m_counter.listStyleType(), value, counterStyle.get());
 
     if (!m_counter.separator().isNull()) {
         if (!child->actsAsReset())
             child = child->parent();
         while (CounterNode* parent = child->parent()) {
-            text = listMarkerText(m_counter.listStyleType(), child->countInParent(), counterStyle.get())
+            text = counterText(m_counter.listStyleType(), child->countInParent(), counterStyle.get())
                 + m_counter.separator() + text;
             child = parent;
         }

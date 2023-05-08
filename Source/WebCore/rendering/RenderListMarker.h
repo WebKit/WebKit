@@ -30,8 +30,6 @@ class CSSCounterStyle;
 class RenderListItem;
 class StyleRuleCounterStyle;
 
-String listMarkerText(const ListStyleType&, int value, CSSCounterStyle* = nullptr);
-
 // Used to render the list item's marker.
 // The RenderListMarker always has to be a child of a RenderListItem.
 class RenderListMarker final : public RenderBox {

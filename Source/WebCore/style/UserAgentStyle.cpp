@@ -253,7 +253,7 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
         addToDefaultStyle(*popoverStyleSheet);
     }
 
-    if (!counterStylesStyleSheet && element.document().settings().cssCounterStyleAtRulesEnabled()) {
+    if (!counterStylesStyleSheet) {
         counterStylesStyleSheet = parseUASheet(StringImpl::createWithoutCopying(counterStylesUserAgentStyleSheet, sizeof(counterStylesUserAgentStyleSheet)));
         addToCounterStyleRegistry(*counterStylesStyleSheet);
     }

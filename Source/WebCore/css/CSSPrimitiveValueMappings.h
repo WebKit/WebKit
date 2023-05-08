@@ -822,11 +822,9 @@ constexpr CSSValueID toCSSValueID(ListStyleType::Type style)
     switch (style) {
     case ListStyleType::Type::None:
         return CSSValueNone;
-    case ListStyleType::Type::String:
+    default:
         ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
         return CSSValueInvalid;
-    default:
-        return static_cast<CSSValueID>(static_cast<int>(CSSValueDisc) + static_cast<uint8_t>(style));
     }
 }
 
@@ -836,7 +834,8 @@ template<> constexpr ListStyleType::Type fromCSSValueID(CSSValueID valueID)
     case CSSValueNone:
         return ListStyleType::Type::None;
     default:
-        return static_cast<ListStyleType::Type>(valueID - CSSValueDisc);
+        ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
+        return ListStyleType::Type::None;
     }
 }
 

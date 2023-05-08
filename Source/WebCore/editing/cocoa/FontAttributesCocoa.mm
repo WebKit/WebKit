@@ -40,31 +40,31 @@ namespace WebCore {
 
 static NSString *cocoaTextListMarkerName(ListStyleType styleType, bool ordered)
 {
-    if (styleType.type == ListStyleType::Type::Disc || (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueDisc)))
+    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueDisc))
         return NSTextListMarkerDisc;
-    if (styleType.type == ListStyleType::Type::Circle || (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueCircle)))
+    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueCircle))
         return NSTextListMarkerCircle;
-    if (styleType.type == ListStyleType::Type::Square || (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueSquare)))
+    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueSquare))
         return NSTextListMarkerSquare;
-    if (styleType.type == ListStyleType::Type::Decimal || (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueDecimal)))
+    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueDecimal))
         return NSTextListMarkerDecimal;
-    if (styleType.type == ListStyleType::Type::Octal || (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueOctal)))
+    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueOctal))
         return NSTextListMarkerOctal;
-    if (styleType.type == ListStyleType::Type::LowerRoman || (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueLowerRoman)))
+    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueLowerRoman))
         return NSTextListMarkerLowercaseRoman;
-    if (styleType.type == ListStyleType::Type::UpperRoman || (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueUpperRoman)))
+    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueUpperRoman))
         return NSTextListMarkerUppercaseRoman;
-    if (styleType.type == ListStyleType::Type::LowerAlpha || (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueLowerAlpha)))
+    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueLowerAlpha))
         return NSTextListMarkerLowercaseAlpha;
-    if (styleType.type == ListStyleType::Type::UpperAlpha || (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueUpperAlpha)))
+    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueUpperAlpha))
         return NSTextListMarkerUppercaseAlpha;
-    if (styleType.type == ListStyleType::Type::LowerLatin || (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueLowerLatin)))
+    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueLowerLatin))
         return NSTextListMarkerLowercaseLatin;
-    if (styleType.type == ListStyleType::Type::UpperLatin || (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueUpperLatin)))
+    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueUpperLatin))
         return NSTextListMarkerUppercaseLatin;
-    if (styleType.type == ListStyleType::Type::LowerHexadecimal || (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueLowerHexadecimal)))
+    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueLowerHexadecimal))
         return NSTextListMarkerLowercaseHexadecimal;
-    if (styleType.type == ListStyleType::Type::UpperHexadecimal || (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueUpperHexadecimal)))
+    if (styleType.type == ListStyleType::Type::CounterStyle && styleType.identifier == nameLiteral(CSSValueUpperHexadecimal))
         return NSTextListMarkerUppercaseHexadecimal;
     // The remaining web-exposed list style types have no Cocoa equivalents.
     // Fall back to default styles for ordered and unordered lists.

@@ -298,14 +298,15 @@ inline ListStyleType BuilderConverter::convertListStyleType(const BuilderState& 
     if (primitiveValue.isValueID()) {
         if (primitiveValue.valueID() == CSSValueNone)
             return { ListStyleType::Type::None, nullAtom() };
-        if (builderState.document().settings().cssCounterStyleAtRulesEnabled())
-            return { ListStyleType::Type::CounterStyle, makeAtomString(primitiveValue.stringValue()) };
-        return { fromCSSValue<ListStyleType::Type>(primitiveValue), nullAtom() };
+        return { ListStyleType::Type::CounterStyle, makeAtomString(primitiveValue.stringValue()) };
     }
     if (primitiveValue.isCustomIdent()) {
         ASSERT(builderState.document().settings().cssCounterStyleAtRulesEnabled());
         return { ListStyleType::Type::CounterStyle, makeAtomString(primitiveValue.stringValue()) };
     }
+#if !ASSERT_ENABLED
+    UNUSED_PARAM(builderState);
+#endif
     return { ListStyleType::Type::String, makeAtomString(primitiveValue.stringValue()) };
 }
 
