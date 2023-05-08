@@ -385,9 +385,20 @@ void GStreamerElementHarness::flush()
 {
     GST_DEBUG_OBJECT(element(), "Flushing");
 
+    if (!flushBuffers())
+        return;
+
+    m_inputCaps.clear();
+    m_stickyEventsSent.store(false);
+    GST_DEBUG_OBJECT(element(), "Flushing done, input caps and sticky events cleared");
+}
+
+bool GStreamerElementHarness::flushBuffers()
+{
+    GST_DEBUG_OBJECT(element(), "Flushing buffers");
     if (element()->current_state <= GST_STATE_PAUSED) {
         GST_DEBUG_OBJECT(element(), "No need to flush in paused state");
-        return;
+        return false;
     }
 
     processOutputBuffers();
@@ -403,9 +414,8 @@ void GStreamerElementHarness::flush()
         }
     }
 
-    m_inputCaps.clear();
-    m_stickyEventsSent.store(false);
-    GST_DEBUG_OBJECT(element(), "Flushing done");
+    GST_DEBUG_OBJECT(element(), "Buffers flushed");
+    return true;
 }
 
 #ifndef GST_DISABLE_GST_DEBUG

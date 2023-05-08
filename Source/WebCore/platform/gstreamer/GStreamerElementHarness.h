@@ -100,6 +100,7 @@ public:
 
     void processOutputBuffers();
     void flush();
+    bool flushBuffers();
 
     void dumpGraph(const char* filenamePrefix);
 

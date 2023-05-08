@@ -1131,17 +1131,9 @@ media/media-hevc-video-as-img.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.worker.html [ Pass ]
 
-# Expected to pass when updating to GStreamer 1.22, but still failing. Investigation pending.
+# Likely bugs related with dav1ddec.
 imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?av1 [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?h264_annexb [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?h264_avc [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?vp8 [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?vp9 [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?av1 [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?h264_annexb [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?h264_avc [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?vp8 [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?vp9 [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
