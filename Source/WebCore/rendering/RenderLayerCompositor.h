@@ -570,6 +570,8 @@ private:
 
     void updateCompositingForLayerTreeAsTextDump();
 
+    bool isHiddenSubframe(RenderLayerModelObject&) const;
+
     RenderView& m_renderView;
     Timer m_updateCompositingLayersTimer;
 

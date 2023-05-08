@@ -2647,6 +2647,9 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer& layer, R
         return false;
     }
 
+    if (isHiddenSubframe(renderer))
+        return false;
+
     // The root layer always has a compositing layer, but it may not have backing.
     return requiresCompositingForTransform(renderer)
         || requiresCompositingForAnimation(renderer)
@@ -3333,16 +3336,22 @@ bool RenderLayerCompositor::requiresCompositingForPlugin(RenderLayerModelObject&
     IntRect contentBox = snappedIntRect(pluginRenderer.contentBoxRect());
     return (contentBox.height() * contentBox.width() > 1);
 }
-    
+
+bool RenderLayerCompositor::isHiddenSubframe(RenderLayerModelObject& renderer) const
+{
+    if (!is<RenderWidget>(renderer))
+        return false;
+
+    auto& frameRenderer = downcast<RenderWidget>(renderer);
+    return frameRenderer.style().visibility() != Visibility::Visible;
+}
+
 bool RenderLayerCompositor::requiresCompositingForFrame(RenderLayerModelObject& renderer, RequiresCompositingData& queryData) const
 {
     if (!is<RenderWidget>(renderer))
         return false;
 
     auto& frameRenderer = downcast<RenderWidget>(renderer);
-    if (frameRenderer.style().visibility() != Visibility::Visible)
-        return false;
-
     if (!frameRenderer.requiresAcceleratedCompositing())
         return false;
 
