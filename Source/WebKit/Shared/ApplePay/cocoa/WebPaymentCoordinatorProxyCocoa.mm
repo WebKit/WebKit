@@ -222,7 +222,7 @@ PKShippingMethods *toPKShippingMethods(const Vector<WebCore::ApplePayShippingMet
             defaultMethod = pkShippingMethod;
         return pkShippingMethod;
     });
-    return [PAL::allocPKShippingMethodsInstance() initWithMethods:methods.get() defaultMethod:defaultMethod.get()];
+    return adoptNS([PAL::allocPKShippingMethodsInstance() initWithMethods:methods.get() defaultMethod:defaultMethod.get()]).autorelease();
 }
 
 #endif // HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
