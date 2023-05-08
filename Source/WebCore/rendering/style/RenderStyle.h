@@ -1016,6 +1016,8 @@ public:
     inline FilterOperations& mutableBackdropFilter();
     inline const FilterOperations& backdropFilter() const;
     inline bool hasBackdropFilter() const;
+#else
+    bool hasBackdropFilter() const { return false; };
 #endif
 
 #if ENABLE(CSS_COMPOSITING)
