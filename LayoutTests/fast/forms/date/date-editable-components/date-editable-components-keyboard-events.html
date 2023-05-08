@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test.js"></script>
 <script src="../../../../resources/ui-helper.js"></script>
 </head>
 <body>
@@ -221,11 +221,16 @@ addEventListener("load", async () => {
     shouldBe("changeEventsFired", "2");
     shouldBe("inputEventsFired", "2");
 
+    input.setAttribute('value', '2012-02-01');
+    beginTest("EmptyString Test", "2012-02-01");
+    UIHelper.keyDown("\t"); // -> 02/[01]/2012
+    UIHelper.keyDown("downArrow"); // -> 02/[31]/2012
+    shouldBeEqualToString('input.value', ''); // 2012-02-31 is not a valid date.
+    input.removeAttribute('value');
+
     finishJSTest();
 });
 
 </script>
-
-<script src="../../../../resources/js-test-post.js"></script>
 </body>
 </html>

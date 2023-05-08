@@ -79,6 +79,9 @@ PASS input.value is "2020-01-01"
 PASS input.value is "2020-01-02"
 PASS changeEventsFired is 2
 PASS inputEventsFired is 2
+
+EmptyString Test
+PASS input.value is ""
 PASS successfullyParsed is true
 
 TEST COMPLETE
