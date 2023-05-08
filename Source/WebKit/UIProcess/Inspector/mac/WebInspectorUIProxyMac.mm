@@ -239,7 +239,7 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
 
     _savePanel = savePanel;
 
-    self.view = [[NSView alloc] init];
+    self.view = adoptNS([[NSView alloc] init]).get();
 
     NSTextField *label = [NSTextField labelWithString:WEB_UI_STRING("Format:", "Label for the save data format selector when saving data in Web Inspector")];
     label.textColor = NSColor.secondaryLabelColor;
