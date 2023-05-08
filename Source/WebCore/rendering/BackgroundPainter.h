@@ -27,6 +27,9 @@
 
 namespace WebCore {
 
+class GraphicsContext;
+class FloatRoundedRect;
+
 enum class ShadowStyle : uint8_t;
 
 struct BackgroundImageGeometry {

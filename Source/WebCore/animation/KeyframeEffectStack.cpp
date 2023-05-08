@@ -32,6 +32,11 @@
 #include "CSSTransition.h"
 #include "Document.h"
 #include "KeyframeEffect.h"
+#include "RenderStyle.h"
+#include "RotateTransformOperation.h"
+#include "ScaleTransformOperation.h"
+#include "TransformOperations.h"
+#include "TranslateTransformOperation.h"
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
 #include <wtf/PointerComparison.h>

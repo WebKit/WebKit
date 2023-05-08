@@ -38,6 +38,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HTMLTemplateElement.h"
+#include "NodeName.h"
 #include "ProcessingInstruction.h"
 #include "ScriptController.h"
 #include "TemplateContentDocumentFragment.h"

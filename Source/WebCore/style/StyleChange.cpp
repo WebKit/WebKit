@@ -27,6 +27,8 @@
 #include "StyleChange.h"
 
 #include "RenderStyle.h"
+#include "RenderStyleConstants.h"
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 namespace Style {

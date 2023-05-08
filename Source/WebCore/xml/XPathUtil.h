@@ -27,6 +27,7 @@
 
 #pragma once
 
+#include <unicode/utypes.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

@@ -53,6 +53,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLImageLoader.h"
 #include "HTMLOptionElement.h"
+#include "HTMLParserIdioms.h"
 #include "IdTargetObserver.h"
 #include "KeyboardEvent.h"
 #include "LocalDOMWindow.h"

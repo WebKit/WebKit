@@ -75,6 +75,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
+#include "HTMLParserIdioms.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPHeaderValues.h"
 #include "HTTPParsers.h"

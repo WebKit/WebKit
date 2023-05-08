@@ -42,6 +42,7 @@
 #include "RenderStyleSetters.h"
 #include "RenderTextControl.h"
 #include "RenderView.h"
+#include "ResolvedStyle.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowPseudoIds.h"

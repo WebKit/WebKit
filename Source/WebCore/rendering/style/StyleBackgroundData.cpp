@@ -23,8 +23,8 @@
 #include "StyleBackgroundData.h"
 
 #include "BorderData.h"
-#include "RenderStyle.h"
 #include "RenderStyleConstants.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 

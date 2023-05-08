@@ -30,6 +30,7 @@
 
 #include "Gradient.h"
 #include "SVGPathElement.h"
+#include "SVGRenderStyle.h"
 #include "SVGSubpathData.h"
 #include <wtf/IsoMallocInlines.h>
 

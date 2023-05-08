@@ -29,6 +29,7 @@
 #include "JSDOMBinding.h"
 #include "JSKeyframeEffect.h"
 #include "KeyframeEffect.h"
+#include "RenderStyle.h"
 
 using namespace JSC;
 

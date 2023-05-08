@@ -28,7 +28,7 @@
 
 #if ENABLE(MATHML)
 
-#include "RenderBoxInlines.h"
+#include "RenderMathMLBlockInlines.h"
 #include <cmath>
 #include <wtf/IsoMallocInlines.h>
 

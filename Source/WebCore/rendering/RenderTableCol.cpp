@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderTableCol.h"
 
+#include "BorderData.h"
 #include "HTMLNames.h"
 #include "HTMLTableColElement.h"
 #include "RenderChildIterator.h"

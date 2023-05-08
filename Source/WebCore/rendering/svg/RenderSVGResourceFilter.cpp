@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "RenderSVGResourceFilterInlines.h"
 #include "SVGElementTypeHelpers.h"
+#include "SVGRenderStyle.h"
 #include "SVGRenderingContext.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>

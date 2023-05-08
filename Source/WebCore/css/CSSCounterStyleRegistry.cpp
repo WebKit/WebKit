@@ -30,6 +30,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSValuePair.h"
 #include "ListStyleType.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

@@ -30,6 +30,7 @@
 #include "SVGRenderStyleDefs.h"
 
 #include "RenderStyleInlines.h"
+#include "SVGRenderStyle.h"
 #include <wtf/PointerComparison.h>
 #include <wtf/text/TextStream.h>
 

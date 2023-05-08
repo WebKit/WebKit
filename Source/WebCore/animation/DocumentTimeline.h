@@ -28,6 +28,7 @@
 #include "AnimationFrameRate.h"
 #include "AnimationTimeline.h"
 #include "DocumentTimelineOptions.h"
+#include "ExceptionOr.h"
 #include "Timer.h"
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
@@ -36,9 +37,13 @@ namespace WebCore {
 
 class AnimationEventBase;
 class CustomEffectCallback;
+class Document;
 class DocumentTimelinesController;
+class Element;
 class RenderBoxModelObject;
 class RenderElement;
+class WeakPtrImplWithEventTargetData;
+class WebAnimation;
 
 struct CustomAnimationOptions;
 

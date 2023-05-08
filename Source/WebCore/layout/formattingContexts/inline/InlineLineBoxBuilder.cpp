@@ -27,6 +27,7 @@
 #include "InlineLineBoxBuilder.h"
 
 #include "CSSLineBoxContainValue.h"
+#include "InlineLevelBoxInlines.h"
 #include "InlineLineBoxVerticalAligner.h"
 #include "InlineLineBuilder.h"
 #include "LayoutBoxGeometry.h"

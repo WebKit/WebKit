@@ -30,6 +30,7 @@
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderMultiColumnFlow.h"
+#include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include <wtf/WeakPtr.h>
 

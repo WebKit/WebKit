@@ -30,6 +30,7 @@
 #include "CSSImageValue.h"
 #include "CSSNamedImageValue.h"
 #include "CSSPaintImageValue.h"
+#include "CSSVariableData.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "RenderElement.h"

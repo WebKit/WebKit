@@ -26,6 +26,8 @@
 #include "config.h"
 #include "RegionContext.h"
 
+#include "Path.h"
+
 namespace WebCore {
 
 void RegionContext::pushTransform(const AffineTransform& transform)

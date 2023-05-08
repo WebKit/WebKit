@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InlineLineBuilder.h"
 
+#include "CSSLineBoxContainValue.h"
 #include "InlineFormattingContext.h"
 #include "InlineFormattingGeometry.h"
 #include "InlineFormattingQuirks.h"

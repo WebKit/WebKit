@@ -36,6 +36,7 @@
 #include "HTMLMetaElement.h"
 #include "HTMLNames.h"
 #include "HTMLParamElement.h"
+#include "HTMLParserIdioms.h"
 #include "LocalFrame.h"
 #include "MIMETypeRegistry.h"
 #include "NodeList.h"

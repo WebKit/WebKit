@@ -41,6 +41,7 @@
 #include "Document.h"
 #include "HTMLElement.h"
 #include "PaintWorkletGlobalScope.h"
+#include "RenderStyle.h"
 #include "Settings.h"
 #include "StyleBuilderGenerated.h"
 #include "StyleFontSizeFunctions.h"

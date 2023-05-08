@@ -36,6 +36,7 @@
 #include "MathMLRootElement.h"
 #include "PaintInfo.h"
 #include "RenderIterator.h"
+#include "RenderMathMLBlockInlines.h"
 #include "RenderMathMLMenclose.h"
 #include "RenderMathMLOperator.h"
 #include <wtf/IsoMallocInlines.h>

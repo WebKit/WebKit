@@ -26,6 +26,7 @@
 
 #include "GraphicsContext.h"
 #include "ImageQualityController.h"
+#include "LayoutRect.h"
 #include "LengthFunctions.h"
 #include "RenderStyle.h"
 #include <wtf/NeverDestroyed.h>

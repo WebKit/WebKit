@@ -32,6 +32,7 @@
 #include "MathMLNames.h"
 #include "MathMLRowElement.h"
 #include "RenderIterator.h"
+#include "RenderMathMLBlockInlines.h"
 #include "RenderMathMLOperator.h"
 #include "RenderMathMLRoot.h"
 #include <wtf/IsoMallocInlines.h>

@@ -35,6 +35,7 @@
 #include "ElementIterator.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "HTMLTableCellElement.h"
 #include "MathMLElement.h"
 #include "RenderObject.h"
 #include "RenderTableCell.h"

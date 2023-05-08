@@ -34,6 +34,7 @@
 #include "ColorSerialization.h"
 #include "ComputedStyleExtractor.h"
 #include "RenderStyle.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

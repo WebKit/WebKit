@@ -69,6 +69,7 @@
 #include "UserGestureIndicator.h"
 #include "WebCorePersistentCoders.h"
 #include <JavaScriptCore/ScriptFunctionCall.h>
+#include <JavaScriptCore/Strong.h>
 #include <pal/system/Sound.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/JSONValues.h>
@@ -145,7 +146,7 @@ private:
 
     InspectorFrontendHost* m_frontendHost;
     JSC::JSGlobalObject* m_globalObject;
-    JSC::Strong<JSObject> m_frontendApiObject;
+    JSC::Strong<JSC::JSObject> m_frontendApiObject;
     Vector<ContextMenuItem> m_items;
 };
 #endif

@@ -35,6 +35,7 @@
 #include "RenderStyle.h"
 #include "Shape.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 namespace Layout {

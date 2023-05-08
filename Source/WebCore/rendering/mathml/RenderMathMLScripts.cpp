@@ -32,6 +32,7 @@
 
 #include "MathMLElement.h"
 #include "MathMLScriptsElement.h"
+#include "RenderMathMLBlockInlines.h"
 #include "RenderMathMLOperator.h"
 #include <wtf/IsoMallocInlines.h>
 

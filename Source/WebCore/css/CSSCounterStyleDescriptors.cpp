@@ -27,6 +27,7 @@
 #include "CSSCounterStyleDescriptors.h"
 
 #include "CSSCounterStyleRule.h"
+#include "CSSMarkup.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePair.h"

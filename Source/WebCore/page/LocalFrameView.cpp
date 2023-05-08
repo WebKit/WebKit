@@ -43,6 +43,7 @@
 #include "DocumentSVG.h"
 #include "Editor.h"
 #include "EventHandler.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "FocusController.h"

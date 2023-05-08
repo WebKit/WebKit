@@ -27,6 +27,7 @@
 #include "GradientAttributes.h"
 #include "GraphicsContext.h"
 #include "RenderSVGText.h"
+#include "SVGRenderStyle.h"
 #include "SVGRenderingContext.h"
 #include <wtf/IsoMallocInlines.h>
 

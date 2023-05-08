@@ -34,6 +34,7 @@
 #include "HTMLDataListElement.h"
 #include "HTMLNames.h"
 #include "HTMLOptGroupElement.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLSelectElement.h"
 #include "NodeName.h"
 #include "NodeRenderStyle.h"
