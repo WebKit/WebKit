@@ -130,10 +130,8 @@ void RemoteResourceCache::releaseAllImageResources()
 bool RemoteResourceCache::releaseRenderingResource(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
 {
     if (m_resourceHeap.removeImageBuffer(renderingResourceIdentifier)
-        || m_resourceHeap.removeNativeImage(renderingResourceIdentifier)
+        || m_resourceHeap.removeRenderingResource(renderingResourceIdentifier)
         || m_resourceHeap.removeFont(renderingResourceIdentifier)
-        || m_resourceHeap.removeDecomposedGlyphs(renderingResourceIdentifier)
-        || m_resourceHeap.removeGradient(renderingResourceIdentifier)
         || m_resourceHeap.removeFontCustomPlatformData(renderingResourceIdentifier))
         return true;
 

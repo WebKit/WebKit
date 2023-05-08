@@ -41,7 +41,13 @@ public:
 private:
     DecomposedGlyphs(PositionedGlyphs&&, RenderingResourceIdentifier);
 
+    bool isDecomposedGlyphs() const final { return true; }
+
     PositionedGlyphs m_positionedGlyphs;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::DecomposedGlyphs)
+    static bool isType(const WebCore::RenderingResource& renderingResource) { return renderingResource.isDecomposedGlyphs(); }
+SPECIALIZE_TYPE_TRAITS_END()

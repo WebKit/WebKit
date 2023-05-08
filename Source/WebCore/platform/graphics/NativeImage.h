@@ -66,6 +66,8 @@ private:
     NativeImage(PlatformImagePtr&&, RenderingResourceIdentifier, Ref<PixelBuffer>&&);
 #endif
 
+    bool isNativeImage() const final { return true; }
+
     PlatformImagePtr m_platformImage;
 #if USE(CAIRO)
     RefPtr<PixelBuffer> m_pixelBuffer;
@@ -73,3 +75,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::NativeImage)
+    static bool isType(const WebCore::RenderingResource& renderingResource) { return renderingResource.isNativeImage(); }
+SPECIALIZE_TYPE_TRAITS_END()
