@@ -34,8 +34,13 @@
 
 namespace WebCore {
 
-Filter::Filter(Filter::Type filterType, const FloatSize& filterScale, const FloatRect& filterRegion)
-    : FilterFunction(filterType)
+Filter::Filter(Filter::Type filterType, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
+    : FilterFunction(filterType, renderingResourceIdentifier)
+{
+}
+
+Filter::Filter(Filter::Type filterType, const FloatSize& filterScale, const FloatRect& filterRegion, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
+    : FilterFunction(filterType, renderingResourceIdentifier)
     , m_filterScale(filterScale)
     , m_filterRegion(filterRegion)
 {

@@ -61,6 +61,11 @@ public:
         return *m_renderingResourceIdentifier;
     }
 
+    std::optional<RenderingResourceIdentifier> renderingResourceIdentifierIfExists() const
+    {
+        return m_renderingResourceIdentifier;
+    }
+
     void addObserver(Observer& observer)
     {
         ASSERT(hasValidRenderingResourceIdentifier());
