@@ -120,10 +120,11 @@ class InternalSource final : public MediaStreamTrackPrivate::Observer,
     public RealtimeMediaSource::VideoFrameObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InternalSource(GstElement* parent, MediaStreamTrackPrivate& track, const String& padName)
+    InternalSource(GstElement* parent, MediaStreamTrackPrivate& track, const String& padName, bool consumerIsVideoPlayer)
         : m_parent(parent)
         , m_track(track)
         , m_padName(padName)
+        , m_consumerIsVideoPlayer(consumerIsVideoPlayer)
     {
         static uint64_t audioCounter = 0;
         static uint64_t videoCounter = 0;
@@ -365,6 +366,18 @@ public:
         auto videoFrameSize = videoFrame.presentationSize();
         IntSize captureSize(videoFrameSize.width(), videoFrameSize.height());
 
+        auto gstVideoFrame = static_cast<VideoFrameGStreamer*>(&videoFrame);
+        GRefPtr<GstSample> sample = gstVideoFrame->sample();
+
+#if USE(GSTREAMER_WEBRTC)
+        // Video encoders require a multiple of two frame size. At least x264enc does anyway.
+        if (!m_consumerIsVideoPlayer && !m_track.source().isIncomingVideoSource() && (captureSize.width() % 2 || captureSize.height() % 2)) {
+            captureSize.setWidth(roundUpToMultipleOf(2, captureSize.width()));
+            captureSize.setHeight(roundUpToMultipleOf(2, captureSize.height()));
+            sample = gstVideoFrame->resizedSample(captureSize);
+        }
+#endif
+
         auto settings = m_track.settings();
         m_configuredSize.setWidth(settings.width());
         m_configuredSize.setHeight(settings.height());
@@ -392,7 +405,6 @@ public:
         }
 
         if (m_track.enabled()) {
-            GRefPtr<GstSample> sample = static_cast<VideoFrameGStreamer*>(&videoFrame)->sample();
             pushSample(WTFMove(sample), "Pushing video frame from enabled track");
             return;
         }
@@ -524,6 +536,7 @@ private:
     Lock m_eosLock;
     bool m_eosPending WTF_GUARDED_BY_LOCK(m_eosLock) { false };
     std::optional<int> m_webrtcSourceClientId;
+    bool m_consumerIsVideoPlayer { false };
 };
 
 struct _WebKitMediaStreamSrcPrivate {
@@ -925,7 +938,7 @@ static GstPadProbeReturn webkitMediaStreamSrcPadProbeCb(GstPad* pad, GstPadProbe
     return GST_PAD_PROBE_OK;
 }
 
-void webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc* self, MediaStreamTrackPrivate* track, bool onlyTrack)
+void webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc* self, MediaStreamTrackPrivate* track, bool onlyTrack, bool consumerIsVideoPlayer)
 {
     const char* sourceType;
     unsigned counter;
@@ -945,7 +958,7 @@ void webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc* self, MediaStreamTrackPr
     GST_DEBUG_OBJECT(self, "Setup %s source for track %s, only track: %s", sourceType, track->id().utf8().data(), boolForPrinting(onlyTrack));
 
     auto padName = makeString(sourceType, "_src", counter);
-    auto source = makeUnique<InternalSource>(GST_ELEMENT_CAST(self), *track, padName);
+    auto source = makeUnique<InternalSource>(GST_ELEMENT_CAST(self), *track, padName, consumerIsVideoPlayer);
     auto* element = source->get();
     gst_bin_add(GST_BIN_CAST(self), element);
 
@@ -988,7 +1001,7 @@ void webkitMediaStreamSrcSetStream(WebKitMediaStreamSrc* self, MediaStreamPrivat
     for (auto& track : tracks) {
         if (!isVideoPlayer && track->isVideo())
             continue;
-        webkitMediaStreamSrcAddTrack(self, track.ptr(), onlyTrack);
+        webkitMediaStreamSrcAddTrack(self, track.ptr(), onlyTrack, isVideoPlayer);
     }
 }
 
