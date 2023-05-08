@@ -10,8 +10,12 @@ endif ()
 # Define minimum supported Windows version
 # https://msdn.microsoft.com/en-us/library/6sehtctf.aspx
 #
-# Currently set to Windows 7
-add_definitions(-D_WINDOWS -DWINVER=0x601 -D_WIN32_WINNT=0x601)
+# Windows 10 1809 "Redstone 5" NTDDI_WIN10_RS5 (0x0A000006)
+# https://learn.microsoft.com/en-us/windows/win32/winprog/using-the-windows-headers?redirectedfrom=MSDN#macros-for-conditional-declarations
+#
+# Supported versions of Windows client
+# https://learn.microsoft.com/en-us/windows/release-health/supported-versions-windows-client
+add_definitions(-D_WINDOWS -DNTDDI_VERSION=0x0A000006 -D_WIN32_WINNT=0x0A00)
 
 add_definitions(-DNOMINMAX)
 add_definitions(-DUNICODE -D_UNICODE)
