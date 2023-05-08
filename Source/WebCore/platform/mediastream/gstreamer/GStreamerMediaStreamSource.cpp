@@ -172,6 +172,7 @@ public:
                 if (GST_IS_QUERY(info->data)) {
                     switch (GST_QUERY_TYPE(GST_PAD_PROBE_INFO_QUERY(info))) {
                     case GST_QUERY_CAPS:
+                    case GST_QUERY_LATENCY:
                         return GST_PAD_PROBE_OK;
                     default:
                         break;
