@@ -33,7 +33,6 @@
 #include "StyleColor.h"
 
 #include "CSSResolvedColorMix.h"
-#include "CSSUnresolvedColor.h"
 #include "ColorNormalization.h"
 #include "ColorSerialization.h"
 #include "HashTools.h"
@@ -120,17 +119,6 @@ bool StyleColor::isColorKeyword(CSSValueID id, OptionSet<CSSColorType> allowedCo
         || (allowedColorTypes.contains(CSSColorType::System) && isSystemColorKeyword(id));
 }
 
-bool StyleColor::containsCurrentColor(const CSSPrimitiveValue& value)
-{
-    if (StyleColor::isCurrentColor(value))
-        return true;
-
-    if (value.isUnresolvedColor())
-        return value.unresolvedColor().containsCurrentColor();
-
-    return false;
-}
-
 String StyleColor::debugDescription() const
 {
     TextStream ts;
@@ -149,21 +137,6 @@ Color StyleColor::resolveColor(const Color& currentColor) const
         },
         [&] (const UniqueRef<StyleColorMix>& colorMix) -> Color {
             return WebCore::resolveColor(colorMix, currentColor);
-        }
-    );
-}
-
-bool StyleColor::containsCurrentColor() const
-{
-    return WTF::switchOn(m_color,
-        [&] (const Color&) -> bool {
-            return false;
-        },
-        [&] (const StyleCurrentColor&) -> bool {
-            return true;
-        },
-        [&] (const UniqueRef<StyleColorMix>& colorMix) -> bool {
-            return colorMix->mixComponents1.color.containsCurrentColor() || colorMix->mixComponents2.color.containsCurrentColor();
         }
     );
 }

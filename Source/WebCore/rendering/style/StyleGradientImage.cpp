@@ -92,10 +92,9 @@ static inline bool operator==(const StyleGradientImage::ConicData& a, const Styl
 static bool stopsAreCacheable(const Vector<StyleGradientImage::Stop>& stops)
 {
     for (auto& stop : stops) {
-        // FIXME: Do we need handle calc() here?
         if (stop.position && stop.position->isFontRelativeLength())
             return false;
-        if (stop.color && stop.color->containsCurrentColor())
+        if (stop.color && stop.color->isCurrentColor())
             return false;
     }
     return true;

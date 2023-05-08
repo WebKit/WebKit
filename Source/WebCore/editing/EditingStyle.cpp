@@ -565,9 +565,9 @@ void EditingStyle::init(Node* node, PropertiesToInclude propertiesToInclude)
 
 void EditingStyle::removeTextFillAndStrokeColorsIfNeeded(const RenderStyle* renderStyle)
 {
-    if (renderStyle->textFillColor().isCurrentColor())
+    if (RenderStyle::isCurrentColor(renderStyle->textFillColor()))
         m_mutableStyle->removeProperty(CSSPropertyWebkitTextFillColor);
-    if (renderStyle->textStrokeColor().isCurrentColor())
+    if (RenderStyle::isCurrentColor(renderStyle->textStrokeColor()))
         m_mutableStyle->removeProperty(CSSPropertyWebkitTextStrokeColor);
 }
 

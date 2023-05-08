@@ -48,8 +48,6 @@ public:
     CSSUnresolvedColor& operator=(CSSUnresolvedColor&&) = default;
     ~CSSUnresolvedColor();
 
-    bool containsCurrentColor() const;
-
     void serializationForCSS(StringBuilder&) const;
     String serializationForCSS() const;
 

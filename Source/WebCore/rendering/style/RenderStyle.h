@@ -2032,6 +2032,10 @@ public:
     inline const StyleColor& borderTopColor() const;
     inline const StyleColor& borderBottomColor() const;
     inline const StyleColor& backgroundColor() const;
+
+    static StyleColor currentColor() { return StyleColor::currentColor(); }
+    static bool isCurrentColor(const StyleColor& color) { return color.isCurrentColor(); }
+
     WEBCORE_EXPORT const Color& color() const;
     inline const StyleColor& columnRuleColor() const;
     inline const StyleColor& outlineColor() const;

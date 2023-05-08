@@ -2485,7 +2485,7 @@ private:
         auto toStyleColor = (to.*m_getter)();
 
         // We don't animate when both are currentcolor
-        if (fromStyleColor.isCurrentColor() && toStyleColor.isCurrentColor())
+        if (RenderStyle::isCurrentColor(fromStyleColor) && RenderStyle::isCurrentColor(toStyleColor))
             return;
 
         auto fromColor = from.colorResolvingCurrentColor(fromStyleColor);
@@ -4033,7 +4033,7 @@ static std::optional<CSSCustomPropertyValue::SyntaxValue> blendSyntaxValues(cons
     if (std::holds_alternative<StyleColor>(from) && std::holds_alternative<StyleColor>(to)) {
         auto& fromStyleColor = std::get<StyleColor>(from);
         auto& toStyleColor = std::get<StyleColor>(to);
-        if (!fromStyleColor.isCurrentColor() || !toStyleColor.isCurrentColor())
+        if (!RenderStyle::isCurrentColor(fromStyleColor) || !RenderStyle::isCurrentColor(toStyleColor))
             return blendFunc(fromStyle.colorResolvingCurrentColor(fromStyleColor), toStyle.colorResolvingCurrentColor(toStyleColor), blendingContext);
     }
 
