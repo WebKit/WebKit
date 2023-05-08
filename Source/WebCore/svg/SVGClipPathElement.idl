@@ -24,8 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// https://drafts.fxtf.org/css-masking/#InterfaceSVGClipPathElement
+
 [
     Exposed=Window
-] interface SVGClipPathElement : SVGGraphicsElement {
+] interface SVGClipPathElement : SVGElement {
     readonly attribute SVGAnimatedEnumeration clipPathUnits;
+    readonly attribute SVGAnimatedTransformList transform;
 };
