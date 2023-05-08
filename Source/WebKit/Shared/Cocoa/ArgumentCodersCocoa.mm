@@ -573,6 +573,34 @@ static bool haveSecureActionContext()
 }
 #endif // ENABLE(DATA_DETECTION) || ENABLE(REVEAL)
 
+#if ENABLE(APPLE_PAY)
+static bool haveStrictDecodableCNContact()
+{
+#if HAVE(STRICT_DECODABLE_CNCONTACT)
+    return true;
+#else
+    return false;
+#endif
+}
+static bool haveStrictDecodablePKContact()
+{
+#if HAVE(STRICT_DECODABLE_PKCONTACT)
+    return true;
+#else
+    return false;
+#endif
+}
+#endif // ENABLE(APPLE_PAY)
+
+static bool haveStrictDecodableNSTextTable()
+{
+#if HAVE(STRICT_DECODABLE_NSTEXTTABLE)
+    return true;
+#else
+    return false;
+#endif
+}
+
 static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClasses)
 {
     static bool supportsPassKitCore = false;
@@ -668,20 +696,17 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
 
 #if ENABLE(APPLE_PAY)
     // rdar://107553480 Don't reintroduce rdar://108235706
-    // blocked by rdar://108370686
     if (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentMethodClass()])
-        return false;
+        return haveStrictDecodableCNContact() && strictSecureDecodingForAllObjCEnabled();
 
     // Don't reintroduce rdar://108660074
-    // Blocked by rdar://108864885
     if (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKContactClass()])
-        return false;
+        return haveStrictDecodablePKContact() && strictSecureDecodingForAllObjCEnabled();
 #endif
 
     // rdar://107553230 don't reintroduce rdar://108038436
-    // blocked by rdar://108533718
     if ([allowedClasses containsObject:NSParagraphStyle.class])
-        return false;
+        return haveStrictDecodableNSTextTable() && strictSecureDecodingForAllObjCEnabled();
 
     // rdar://107553194, Don't reintroduce rdar://108339450
     if ([allowedClasses containsObject:NSMutableURLRequest.class])
