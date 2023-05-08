@@ -2035,9 +2035,9 @@ inline void BuilderCustom::applyValueWillChange(BuilderState& builderState, CSSV
     }
 
     auto willChange = WillChangeData::create();
-    for (auto& item : downcast<CSSValueList>(value)) {
+    auto processSingleValue = [&](const CSSValue& item) {
         if (!is<CSSPrimitiveValue>(item))
-            continue;
+            return;
         auto& primitiveValue = downcast<CSSPrimitiveValue>(item);
         switch (primitiveValue.valueID()) {
         case CSSValueScrollPosition:
@@ -2054,7 +2054,13 @@ inline void BuilderCustom::applyValueWillChange(BuilderState& builderState, CSSV
             }
             break;
         }
-    }
+    };
+    if (is<CSSValueList>(value)) {
+        for (auto& item : downcast<CSSValueList>(value))
+            processSingleValue(item);
+    } else
+        processSingleValue(value);
+
     builderState.style().setWillChange(WTFMove(willChange));
 }
 
