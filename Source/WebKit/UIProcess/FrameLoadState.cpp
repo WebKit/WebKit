@@ -46,8 +46,6 @@ void FrameLoadState::removeObserver(Observer& observer)
 
 void FrameLoadState::didStartProvisionalLoad(const URL& url)
 {
-    ASSERT(m_provisionalURL.isEmpty());
-
     m_state = State::Provisional;
     m_provisionalURL = url;
 }

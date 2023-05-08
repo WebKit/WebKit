@@ -515,6 +515,7 @@ public:
     PAL::SessionID sessionID() const;
 
     WebFrameProxy* mainFrame() const { return m_mainFrame.get(); }
+    WebFrameProxy* openerFrame() const { return m_openerFrame.get(); }
     WebFrameProxy* focusedFrame() const { return m_focusedFrame.get(); }
 
     DrawingAreaProxy* drawingArea() const { return m_drawingArea.get(); }
@@ -2399,6 +2400,8 @@ private:
     void didFinishLoadForResource(WebCore::ResourceLoaderIdentifier, WebCore::FrameIdentifier, WebCore::ResourceError&&);
 #endif
 
+    bool shouldClosePreviousPage(bool didSuspendPreviousPage);
+
 #if ENABLE(MEDIA_STREAM)
     UserMediaPermissionRequestManagerProxy& userMediaPermissionRequestManager();
 #endif
@@ -2740,6 +2743,8 @@ private:
 
     void didAttachToRunningProcess();
 
+    bool shouldClosePreviousPage();
+
 #if ENABLE(TRACKING_PREVENTION)
     void logFrameNavigation(const WebFrameProxy&, const URL& pageURL, const WebCore::ResourceRequest&, const URL& redirectURL, bool wasPotentiallyInitiatedByUser);
 #endif
@@ -2886,6 +2891,8 @@ private:
     Ref<WebsiteDataStore> m_websiteDataStore;
 
     RefPtr<WebFrameProxy> m_mainFrame;
+
+    RefPtr<WebFrameProxy> m_openerFrame;
 
     RefPtr<WebFrameProxy> m_focusedFrame;
 

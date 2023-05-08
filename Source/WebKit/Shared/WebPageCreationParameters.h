@@ -291,6 +291,7 @@ struct WebPageCreationParameters {
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
 
     std::optional<FrameTreeCreationParameters> subframeProcessFrameTreeCreationParameters;
+    std::optional<WebCore::FrameIdentifier> openerFrameIdentifier;
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     Vector<WebCore::LookalikeCharactersSanitizationData> lookalikeCharacterStrings;

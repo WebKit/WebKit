@@ -38,7 +38,7 @@
 
 namespace WebKit {
 
-SubframePageProxy::SubframePageProxy(WebPageProxy& page, WebProcessProxy& process, bool isInSameProcessAsMainFrame)
+SubframePageProxy::SubframePageProxy(WebPageProxy& page, WebProcessProxy& process, bool isInSameProcessAsMainFrame, bool isOpener)
     : m_webPageID(page.webPageID())
     , m_process(process)
     , m_page(page)
@@ -53,8 +53,10 @@ SubframePageProxy::SubframePageProxy(WebPageProxy& page, WebProcessProxy& proces
     parameters.isProcessSwap = true; // FIXME: This should be a parameter to creationParameters rather than doctoring up the parameters afterwards.
     parameters.topContentInset = 0;
     m_process->send(Messages::WebProcess::CreateWebPage(m_webPageID, parameters), 0);
-    m_process->addVisitedLinkStoreUser(page.visitedLinkStore(), page.identifier());
-    drawingArea->attachToProvisionalFrameProcess(m_process);
+    if (!isOpener) {
+        m_process->addVisitedLinkStoreUser(page.visitedLinkStore(), page.identifier());
+        drawingArea->attachToProvisionalFrameProcess(m_process);
+    }
 }
 
 SubframePageProxy::~SubframePageProxy()

@@ -171,6 +171,19 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
 
     auto parameters = m_page->creationParameters(m_process, *m_drawingArea, WTFMove(websitePolicies));
     parameters.isProcessSwap = true;
+    auto* openerFrame = m_page->openerFrame();
+    if (m_process->processPool().configuration().processSwapsOnWindowOpenWithOpener() && openerFrame && !m_request.url().isLocalFile()) {
+        parameters.subframeProcessFrameTreeCreationParameters = m_page->frameTreeCreationParameters();
+        if (auto* openerPage = openerFrame->page()) {
+            parameters.openerFrameIdentifier = openerFrame->frameID();
+
+            RegistrableDomain navigationDomain(m_request.url());
+            // We should probably rename SubframePageProxy to something like RemotePageProxy
+            auto subFramePageProxy = makeUniqueRef<SubframePageProxy>(*openerPage, m_process, openerFrame->isMainFrame(), true /* isOpener */);
+            openerPage->addSubframePageProxyForFrameID(openerFrame->frameID(), navigationDomain, WTFMove(subFramePageProxy));
+        }
+    }
+
     m_process->send(Messages::WebProcess::CreateWebPage(m_webPageID, parameters), 0);
     m_process->addVisitedLinkStoreUser(m_page->visitedLinkStore(), m_page->identifier());
 
@@ -240,15 +253,22 @@ void ProvisionalPageProxy::didCreateMainFrame(FrameIdentifier frameID)
     PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "didCreateMainFrame: frameID=%" PRIu64, frameID.object().toUInt64());
     ASSERT(!m_mainFrame);
 
-    m_mainFrame = WebFrameProxy::create(m_page, m_process, frameID);
+    RefPtr<WebFrameProxy> previousMainFrame;
+    if (m_process->processPool().configuration().processSwapsOnWindowOpenWithOpener() && !m_request.url().isLocalFile()) {
+        ASSERT(!m_page->openerFrame() || m_page->mainFrame()->frameID() == frameID);
+        previousMainFrame = m_page->mainFrame();
+        m_mainFrame = m_page->mainFrame();
+    } else {
+        previousMainFrame = m_page->mainFrame();
+        m_mainFrame = WebFrameProxy::create(m_page, m_process, frameID);
+    }
 
     // This navigation was destroyed so no need to notify of redirect.
     if (!m_page->navigationState().hasNavigation(m_navigationID))
         return;
 
     // Restore the main frame's committed URL as some clients may rely on it until the next load is committed.
-    RefPtr previousMainFrame = m_page->mainFrame();
-    if (previousMainFrame) {
+    if (previousMainFrame && previousMainFrame != m_mainFrame) {
         m_mainFrame->frameLoadState().setURL(previousMainFrame->url());
         previousMainFrame->transferNavigationCallbackToFrame(*m_mainFrame);
     }
@@ -318,6 +338,9 @@ void ProvisionalPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameI
         return;
 
     PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "didCommitLoadForFrame: frameID=%" PRIu64, frameID.object().toUInt64());
+    if (m_process->processPool().configuration().processSwapsOnWindowOpenWithOpener() && !m_provisionalLoadURL.isLocalFile())
+        m_page->send(Messages::WebPage::DidCommitLoadInAnotherProcess(frameID, std::nullopt, process().coreProcessIdentifier()));
+
     m_provisionalLoadURL = { };
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
 
