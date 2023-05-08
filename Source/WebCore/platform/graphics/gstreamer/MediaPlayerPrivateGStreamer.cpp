@@ -2948,7 +2948,13 @@ void MediaPlayerPrivateGStreamer::setupCodecProbe(GstElement* element)
             return GST_PAD_PROBE_REMOVE;
 
         GUniquePtr<char> streamId(gst_pad_get_stream_id(pad));
-        GST_DEBUG_OBJECT(player->pipeline(), "Setting codec for stream %s to %s", streamId.get(), codec.get());
+        if (UNLIKELY(!streamId)) {
+            // FIXME: This is a workaround for https://bugs.webkit.org/show_bug.cgi?id=256428.
+            GST_WARNING_OBJECT(player->pipeline(), "Caps event received before stream-start. This shouldn't happen!");
+            return GST_PAD_PROBE_REMOVE;
+        }
+
+        GST_INFO_OBJECT(player->pipeline(), "Setting codec for stream %s to %s", streamId.get(), codec.get());
         player->m_codecs.add(String::fromLatin1(streamId.get()), String::fromLatin1(codec.get()));
         return GST_PAD_PROBE_REMOVE;
     }), this, nullptr);
