@@ -40,9 +40,6 @@ public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
     virtual CallbackResult<void> handleEvent(const MediaSessionActionDetails&) = 0;
-
-protected:
-    virtual bool hasCallback() const = 0;
 };
 
 } // namespace WebCore
