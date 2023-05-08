@@ -3260,9 +3260,9 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         else if (localPaintFlags.contains(PaintLayerFlag::PaintingRootBackgroundOnly))
             paintBehavior.add(PaintBehavior::RootBackgroundOnly);
 
-        // FIXME: This seems wrong. We should retain the TileFirstPaint flag for all RenderLayers painted into the root tile cache.
-        if ((paintingInfo.paintBehavior & PaintBehavior::TileFirstPaint) && isRenderViewLayer())
-            paintBehavior.add(PaintBehavior::TileFirstPaint);
+        // FIXME: This seems wrong. We should retain the DefaultAsynchronousImageDecode flag for all RenderLayers painted into the root tile cache.
+        if ((paintingInfo.paintBehavior & PaintBehavior::DefaultAsynchronousImageDecode) && isRenderViewLayer())
+            paintBehavior.add(PaintBehavior::DefaultAsynchronousImageDecode);
 
         if (isPaintingOverflowContents)
             paintBehavior.add(PaintBehavior::CompositedOverflowScrollContent);
@@ -3717,17 +3717,8 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
         localPaintBehavior = paintBehavior;
 
     // FIXME: It's unclear if this flag copying is necessary.
-    if (localPaintingInfo.paintBehavior & PaintBehavior::ExcludeSelection)
-        localPaintBehavior.add(PaintBehavior::ExcludeSelection);
-    
-    if (localPaintingInfo.paintBehavior & PaintBehavior::Snapshotting)
-        localPaintBehavior.add(PaintBehavior::Snapshotting);
-    
-    if (localPaintingInfo.paintBehavior & PaintBehavior::TileFirstPaint)
-        localPaintBehavior.add(PaintBehavior::TileFirstPaint);
-
-    if (localPaintingInfo.paintBehavior & PaintBehavior::CompositedOverflowScrollContent)
-        localPaintBehavior.add(PaintBehavior::CompositedOverflowScrollContent);
+    constexpr OptionSet<PaintBehavior> flagsToCopy { PaintBehavior::ExcludeSelection, PaintBehavior::Snapshotting, PaintBehavior::DefaultAsynchronousImageDecode, PaintBehavior::CompositedOverflowScrollContent, PaintBehavior::ForceSynchronousImageDecode };
+    localPaintBehavior.add(localPaintingInfo.paintBehavior & flagsToCopy);
 
     GraphicsContextStateSaver stateSaver(context, false);
     RegionContextStateSaver regionContextStateSaver(localPaintingInfo.regionContext);
@@ -5799,12 +5790,13 @@ TextStream& operator<<(TextStream& ts, PaintBehavior behavior)
     case PaintBehavior::SelectionAndBackgroundsOnly: ts << "SelectionAndBackgroundsOnly"; break;
     case PaintBehavior::ExcludeSelection: ts << "ExcludeSelection"; break;
     case PaintBehavior::FlattenCompositingLayers: ts << "FlattenCompositingLayers"; break;
-    case PaintBehavior::Snapshotting: ts << "Snapshotting"; break;
-    case PaintBehavior::TileFirstPaint: ts << "TileFirstPaint"; break;
+    case PaintBehavior::ForceSynchronousImageDecode: ts << "ForceSynchronousImageDecode"; break;
+    case PaintBehavior::DefaultAsynchronousImageDecode: ts << "DefaultAsynchronousImageDecode"; break;
     case PaintBehavior::CompositedOverflowScrollContent: ts << "CompositedOverflowScrollContent"; break;
     case PaintBehavior::AnnotateLinks: ts << "AnnotateLinks"; break;
     case PaintBehavior::EventRegionIncludeForeground: ts << "EventRegionIncludeForeground"; break;
     case PaintBehavior::EventRegionIncludeBackground: ts << "EventRegionIncludeBackground"; break;
+    case PaintBehavior::Snapshotting: ts << "Snapshotting"; break;
     }
 
     return ts;

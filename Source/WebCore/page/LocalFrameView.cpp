@@ -4742,14 +4742,8 @@ void LocalFrameView::willPaintContents(GraphicsContext& context, const IntRect&,
     paintingState.paintBehavior = m_paintBehavior;
     
     if (auto* parentView = parentFrameView()) {
-        if (parentView->paintBehavior() & PaintBehavior::FlattenCompositingLayers)
-            m_paintBehavior.add(PaintBehavior::FlattenCompositingLayers);
-        
-        if (parentView->paintBehavior() & PaintBehavior::Snapshotting)
-            m_paintBehavior.add(PaintBehavior::Snapshotting);
-        
-        if (parentView->paintBehavior() & PaintBehavior::TileFirstPaint)
-            m_paintBehavior.add(PaintBehavior::TileFirstPaint);
+        constexpr OptionSet<PaintBehavior> flagsToCopy { PaintBehavior::FlattenCompositingLayers, PaintBehavior::Snapshotting, PaintBehavior::DefaultAsynchronousImageDecode, PaintBehavior::ForceSynchronousImageDecode };
+        m_paintBehavior.add(parentView->paintBehavior() & flagsToCopy);
     }
 
     if (document->printing()) {

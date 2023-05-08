@@ -697,8 +697,10 @@ void TileGrid::platformCALayerPaintContents(PlatformCALayer* platformCALayer, Gr
         WebThreadLock();
 #endif
 
-    if (!platformCALayerRepaintCount(platformCALayer))
-        layerPaintBehavior.add(GraphicsLayerPaintBehavior::FirstTilePaint);
+    if (!layerPaintBehavior.contains(GraphicsLayerPaintBehavior::ForceSynchronousImageDecode)) {
+        if (!platformCALayerRepaintCount(platformCALayer))
+            layerPaintBehavior.add(GraphicsLayerPaintBehavior::DefaultAsynchronousImageDecode);
+    }
 
     {
         GraphicsContextStateSaver stateSaver(context);

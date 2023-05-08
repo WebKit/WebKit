@@ -580,10 +580,9 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, WTF::Funct
         context.fillRect(layerBounds, SRGBA<uint8_t> { 255, 47, 146 });
 #endif
 
-    // FIXME: Clarify that GraphicsLayerPaintBehavior::Snapshotting is just about image decoding.
-    OptionSet<GraphicsLayerPaintBehavior> paintBehavior;
+    OptionSet<WebCore::GraphicsLayerPaintBehavior> paintBehavior;
     if (m_layer->context() && m_layer->context()->nextRenderingUpdateRequiresSynchronousImageDecoding())
-        paintBehavior.add(WebCore::GraphicsLayerPaintBehavior::Snapshotting);
+        paintBehavior.add(GraphicsLayerPaintBehavior::ForceSynchronousImageDecode);
     
     // FIXME: This should be moved to PlatformCALayerRemote for better layering.
     switch (m_layer->layerType()) {

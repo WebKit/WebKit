@@ -3710,8 +3710,10 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
     adjustedClipRect.move(m_subpixelOffsetFromRenderer);
     IntRect dirtyRect = enclosingIntRect(adjustedClipRect);
 
-    if (!graphicsLayer->repaintCount())
-        layerPaintBehavior.add(GraphicsLayerPaintBehavior::FirstTilePaint);
+    if (!layerPaintBehavior.contains(GraphicsLayerPaintBehavior::ForceSynchronousImageDecode)) {
+        if (!graphicsLayer->repaintCount())
+            layerPaintBehavior.add(GraphicsLayerPaintBehavior::DefaultAsynchronousImageDecode);
+    }
 
     if (graphicsLayer == m_graphicsLayer.get()
         || graphicsLayer == m_foregroundLayer.get()
@@ -3724,11 +3726,10 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
 
         // We have to use the same root as for hit testing, because both methods can compute and cache clipRects.
         OptionSet<PaintBehavior> behavior = PaintBehavior::Normal;
-        if (layerPaintBehavior.contains(GraphicsLayerPaintBehavior::Snapshotting))
-            behavior.add(PaintBehavior::Snapshotting);
-        
-        if (layerPaintBehavior.contains(GraphicsLayerPaintBehavior::FirstTilePaint))
-            behavior.add(PaintBehavior::TileFirstPaint);
+        if (layerPaintBehavior.contains(GraphicsLayerPaintBehavior::ForceSynchronousImageDecode))
+            behavior.add(PaintBehavior::ForceSynchronousImageDecode);
+        else if (layerPaintBehavior.contains(GraphicsLayerPaintBehavior::DefaultAsynchronousImageDecode))
+            behavior.add(PaintBehavior::DefaultAsynchronousImageDecode);
 
         paintIntoLayer(graphicsLayer, context, dirtyRect, behavior);
 

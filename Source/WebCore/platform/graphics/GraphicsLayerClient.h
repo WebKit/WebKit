@@ -70,9 +70,10 @@ enum class PlatformLayerTreeAsTextFlags : uint8_t {
     IncludeModels = 1 << 2,
 };
 
+// See WebCore::PaintBehavior.
 enum class GraphicsLayerPaintBehavior : uint8_t {
-    Snapshotting              = 1 << 0,
-    FirstTilePaint            = 1 << 1,
+    DefaultAsynchronousImageDecode = 1 << 0,
+    ForceSynchronousImageDecode = 1 << 1,
 };
     
 class GraphicsLayerClient {
