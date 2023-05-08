@@ -97,6 +97,8 @@ private:
     friend class VideoFullscreenManagerProxy;
     VideoFullscreenModelContext(VideoFullscreenManagerProxy&, PlaybackSessionModelContext&, PlaybackSessionContextIdentifier);
 
+    void setVideoDimensions(const WebCore::FloatSize&);
+
     // VideoFullscreenModel
     void addClient(WebCore::VideoFullscreenModelClient&) override;
     void removeClient(WebCore::VideoFullscreenModelClient&) override;
@@ -131,8 +133,8 @@ private:
     void fullscreenMayReturnToInline() final;
 
 #if !RELEASE_LOG_DISABLED
-    const void* logIdentifier() const;
-    const Logger* loggerPtr() const;
+    const void* logIdentifier() const override;
+    const Logger* loggerPtr() const override;
 
     const char* logClassName() const { return "VideoFullscreenModelContext"; };
     WTFLogChannel& logChannel() const;

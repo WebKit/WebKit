@@ -201,8 +201,9 @@ enum class PIPState {
     [_pipViewController setUserCanResize:YES];
     [_pipViewController setPlaying:_playing];
     [self setVideoDimensions:NSEqualSizes(_videoDimensions, NSZeroSize) ? frame.size : _videoDimensions];
-    if (_videoFullscreenInterfaceMac && _videoFullscreenInterfaceMac->videoFullscreenModel())
-        _videoFullscreenInterfaceMac->videoFullscreenModel()->setVideoLayerGravity(MediaPlayerEnums::VideoGravity::ResizeAspectFill);
+    auto* model = _videoFullscreenInterfaceMac ? _videoFullscreenInterfaceMac->videoFullscreenModel() : nullptr;
+    if (model)
+        model->setVideoLayerGravity(MediaPlayerEnums::VideoGravity::ResizeAspectFill);
 
     _videoViewContainer = adoptNS([[WebVideoViewContainer alloc] initWithFrame:frame]);
     [_videoViewContainer setVideoViewContainerDelegate:self];
@@ -213,7 +214,7 @@ enum class PIPState {
     _playerLayer = adoptNS([[WebAVPlayerLayer alloc] init]);
     [[_videoViewContainer layer] addSublayer:_playerLayer.get()];
     [_playerLayer setFrame:[_videoViewContainer layer].bounds];
-    [_playerLayer setFullscreenInterface:_videoFullscreenInterfaceMac];
+    [_playerLayer setFullscreenModel:model];
     [_playerLayer setVideoSublayer:videoView.layer];
     [_playerLayer setVideoDimensions:_videoDimensions];
     [_playerLayer setAutoresizingMask:(kCALayerWidthSizable | kCALayerHeightSizable)];
