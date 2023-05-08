@@ -176,6 +176,7 @@ RefPtr<StyleRuleWithNesting> CSSStyleSheet::prepareChildStyleRuleForNesting(Styl
         if (rules[i] == &styleRule) {
             auto styleRuleWithNesting = StyleRuleWithNesting::create(WTFMove(styleRule));
             rules[i] = styleRuleWithNesting.ptr();
+            m_contents->setHasNestingRules();
             return styleRuleWithNesting;
         }        
     }
