@@ -175,6 +175,8 @@ unsigned ImageInputType::height() const
     ASSERT(element());
     Ref<HTMLInputElement> element(*this->element());
 
+    ContentVisibilityForceLayoutScope scope(element.get());
+
     element->document().updateLayout();
 
     if (auto* renderer = element->renderer())
@@ -196,6 +198,8 @@ unsigned ImageInputType::width() const
 {
     ASSERT(element());
     Ref<HTMLInputElement> element(*this->element());
+
+    ContentVisibilityForceLayoutScope scope(element.get());
 
     element->document().updateLayout();
 

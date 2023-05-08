@@ -362,6 +362,15 @@ private:
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 
+class ContentVisibilityForceLayoutScope {
+public:
+    ContentVisibilityForceLayoutScope(Element&);
+    ~ContentVisibilityForceLayoutScope();
+
+private:
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
+};
+
 class Document
     : public ContainerNode
     , public TreeScope
@@ -1772,6 +1781,9 @@ public:
     DOMAudioSessionType audioSessionType() const { return m_audioSessionType; }
 #endif
 
+    void ignoreSkippedContent(bool ignore) { m_ignoreSkippedContent = ignore; }
+    bool isSkippedContentIgnored() const { return m_ignoreSkippedContent; }
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     WEBCORE_EXPORT Document(LocalFrame*, const Settings&, const URL&, DocumentClasses = { }, unsigned constructionFlags = 0, ScriptExecutionContextIdentifier = { });
@@ -2397,6 +2409,7 @@ private:
     bool m_didDispatchViewportPropertiesChanged { false };
 #endif
     bool m_isDirAttributeDirty { false };
+    bool m_ignoreSkippedContent { false };
 
     static bool hasEverCreatedAnAXObjectCache;
 

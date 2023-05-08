@@ -2700,7 +2700,7 @@ bool RenderObject::isSkippedContent() const
 
 bool RenderObject::shouldSkipContent() const
 {
-    return style().contentVisibility() == ContentVisibility::Hidden;
+    return shouldApplySizeOrStyleContainment(style().contentVisibility() == ContentVisibility::Hidden);
 }
 
 TextStream& operator<<(TextStream& ts, const RenderObject& renderer)

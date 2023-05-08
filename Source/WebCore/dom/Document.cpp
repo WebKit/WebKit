@@ -2284,6 +2284,28 @@ bool Document::updateStyleIfNeeded()
     return true;
 }
 
+ContentVisibilityForceLayoutScope::ContentVisibilityForceLayoutScope(Element& context)
+{
+    ASSERT(!context.document().isSkippedContentIgnored());
+    context.document().updateStyleIfNeeded();
+    if (context.isSkippedContent()) {
+        m_document = context.document();
+        m_document->ignoreSkippedContent(true);
+        for (auto target = &context; target; target = target->parentElementInComposedTree()) {
+            if (target->renderer() && target->renderer()->style().contentVisibility() != ContentVisibility::Visible) {
+                target->invalidateStyleForSubtree();
+                return;
+            }
+        }
+    }
+}
+
+ContentVisibilityForceLayoutScope::~ContentVisibilityForceLayoutScope()
+{
+    if (m_document)
+        m_document->ignoreSkippedContent(false);
+}
+
 void Document::updateLayout()
 {
     ASSERT(isMainThread());

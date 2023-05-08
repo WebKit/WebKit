@@ -35,6 +35,8 @@ Change determineChange(const RenderStyle& s1, const RenderStyle& s2)
 {
     if (s1.display() != s2.display())
         return Change::Renderer;
+    if (s1.contentVisibility() != s2.contentVisibility())
+        return Change::Renderer;
     if (s1.hasPseudoStyle(PseudoId::FirstLetter) != s2.hasPseudoStyle(PseudoId::FirstLetter))
         return Change::Renderer;
     // We just detach if a renderer acquires or loses a column-span, since spanning elements

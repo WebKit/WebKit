@@ -768,9 +768,6 @@ Vector<String> Element::getAttributeNames() const
 
 bool Element::hasFocusableStyle() const
 {
-    if (renderer() && renderer()->isSkippedContent())
-        return false;
-
     auto isFocusableStyle = [](const RenderStyle* style) {
         return style && style->display() != DisplayType::None && style->display() != DisplayType::Contents
             && style->visibility() == Visibility::Visible && !style->effectiveInert();
@@ -787,6 +784,9 @@ bool Element::hasFocusableStyle() const
 bool Element::isFocusable() const
 {
     if (!isConnected() || !supportsFocus())
+        return false;
+
+    if (isSkippedContent())
         return false;
 
     if (!renderer()) {
@@ -1312,6 +1312,8 @@ static HashSet<TreeScope*> collectAncestorTreeScopeAsHashSet(Node& node)
 
 int Element::offsetLeftForBindings()
 {
+    ContentVisibilityForceLayoutScope scope(*this);
+
     auto offset = offsetLeft();
 
     RefPtr parent = offsetParent();
@@ -1341,6 +1343,8 @@ int Element::offsetLeft()
 
 int Element::offsetTopForBindings()
 {
+    ContentVisibilityForceLayoutScope scope(*this);
+
     auto offset = offsetTop();
 
     RefPtr parent = offsetParent();
@@ -1522,6 +1526,8 @@ int Element::scrollLeft()
 
 int Element::scrollTop()
 {
+    ContentVisibilityForceLayoutScope scope(*this);
+
     document().updateLayoutIgnorePendingStylesheets();
 
     if (document().scrollingElement() == this) {
@@ -1817,6 +1823,8 @@ static std::optional<std::pair<RenderObject*, LayoutRect>> listBoxElementBoundin
 
 Ref<DOMRectList> Element::getClientRects()
 {
+    ContentVisibilityForceLayoutScope scope(*this);
+
     document().updateLayoutIgnorePendingStylesheets();
 
     RenderObject* renderer = this->renderer();
@@ -1861,6 +1869,8 @@ std::optional<std::pair<RenderObject*, FloatRect>> Element::boundingAbsoluteRect
 
 FloatRect Element::boundingClientRect()
 {
+    ContentVisibilityForceLayoutScope scope(*this);
+
     document().updateLayoutIgnorePendingStylesheets();
     auto pair = boundingAbsoluteRectWithoutLayout();
     if (!pair)
@@ -2452,6 +2462,28 @@ void Element::clearDisplayContentsStyle()
     if (!hasRareData())
         return;
     elementRareData()->setDisplayContentsStyle(nullptr);
+}
+
+bool Element::isSkippedContent() const
+{
+    if (!hasRareData()) {
+        if (auto* renderer = this->renderer())
+            return renderer->isSkippedContent();
+        return false;
+    }
+
+    RenderStyle* style = elementRareData()->computedStyle();
+    if (!style)
+        style = elementRareData()->displayContentsStyle();
+    return style && style->effectiveSkipsContent();
+}
+
+void Element::storeSkippedContentStyle(std::unique_ptr<RenderStyle> style)
+{
+    ASSERT(style && style->effectiveSkipsContent());
+    ASSERT(!renderer() || isPseudoElement());
+    ensureElementRareData().setComputedStyle(WTFMove(style));
+    clearNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
 }
 
 // Returns true is the given attribute is an event handler.
@@ -3782,11 +3814,11 @@ String Element::innerText()
     // We need to update layout, since plainText uses line boxes in the render tree.
     document().updateLayoutIgnorePendingStylesheets();
 
+    if (isSkippedContent())
+        return String();
+
     if (!renderer())
         return textContent(true);
-
-    if (renderer()->isSkippedContent())
-        return String();
 
     return plainText(makeRangeSelectingNodeContents(*this));
 }

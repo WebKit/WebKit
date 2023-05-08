@@ -834,6 +834,8 @@ protected:
 
     void issueRepaint(std::optional<LayoutRect> partialRepaintRect = std::nullopt, ClipRepaintToLayer = ClipRepaintToLayer::No, ForceRepaint = ForceRepaint::No, ClipRepaintToContainer = ClipRepaintToContainer::Yes) const;
 
+    bool shouldApplySizeOrStyleContainment(bool) const;
+
 private:
     void addAbsoluteRectForLayer(LayoutRect& result);
     void setLayerNeedsFullRepaint();

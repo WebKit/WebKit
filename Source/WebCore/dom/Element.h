@@ -693,6 +693,9 @@ public:
     void storeDisplayContentsStyle(std::unique_ptr<RenderStyle>);
     void clearDisplayContentsStyle();
 
+    bool isSkippedContent() const;
+    void storeSkippedContentStyle(std::unique_ptr<RenderStyle>);
+
     using ContainerNode::setAttributeEventListener;
     void setAttributeEventListener(const AtomString& eventType, const QualifiedName& attributeName, const AtomString& value);
 

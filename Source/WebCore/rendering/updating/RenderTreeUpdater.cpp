@@ -195,7 +195,7 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
         auto mayHaveRenderedDescendants = [&]() {
             if (element.renderer())
                 return !(element.isInTopLayer() && element.renderer()->style().effectiveSkipsContent());
-            return element.hasDisplayContents() && shouldCreateRenderer(element, renderTreePosition().parent());
+            return (element.hasDisplayContents() || element.isSkippedContent()) && shouldCreateRenderer(element, renderTreePosition().parent());
         }();
 
         if (!mayHaveRenderedDescendants) {
@@ -347,14 +347,18 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     else
         element.clearDisplayContentsStyle();
 
-    if (!hasDisplayContents) {
+    bool isSkippedContent = (element.isInTopLayer() || !m_document.isSkippedContentIgnored()) && renderTreePosition().parent().shouldSkipContent();
+    if (isSkippedContent && !hasDisplayContents)
+        element.storeSkippedContentStyle(makeUnique<RenderStyle>(WTFMove(elementUpdateStyle)));
+
+    if (!hasDisplayContents && !isSkippedContent) {
         if (elementUpdateStyle.containIntrinsicLogicalWidthType() != ContainIntrinsicSizeType::AutoAndLength)
             element.clearLastRememberedLogicalWidth();
         if (elementUpdateStyle.containIntrinsicLogicalHeightType() != ContainIntrinsicSizeType::AutoAndLength)
             element.clearLastRememberedLogicalHeight();
     }
     auto scopeExit = makeScopeExit([&] {
-        if (!hasDisplayContents) {
+        if (!hasDisplayContents && !isSkippedContent) {
             auto* box = element.renderBox();
             if (box && box->style().hasAutoLengthContainIntrinsicSize() && !box->shouldSkipContent())
                 m_document.observeForContainIntrinsicSize(element);
@@ -363,7 +367,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         }
     });
 
-    bool shouldCreateNewRenderer = !element.renderer() && !hasDisplayContents && !(element.isInTopLayer() && renderTreePosition().parent().style().effectiveSkipsContent());
+    bool shouldCreateNewRenderer = !element.renderer() && !hasDisplayContents && !isSkippedContent;
     if (shouldCreateNewRenderer) {
         if (element.hasCustomStyleResolveCallbacks())
             element.willAttachRenderers();
@@ -511,7 +515,7 @@ void RenderTreeUpdater::createTextRenderer(Text& textNode, const Style::TextUpda
 void RenderTreeUpdater::updateTextRenderer(Text& text, const Style::TextUpdate* textUpdate)
 {
     auto* existingRenderer = text.renderer();
-    bool needsRenderer = textRendererIsNeeded(text);
+    bool needsRenderer = textRendererIsNeeded(text) && (m_document.isSkippedContentIgnored() || !renderTreePosition().parent().shouldSkipContent());
 
     if (existingRenderer && textUpdate && textUpdate->inheritedDisplayContentsStyle) {
         if (existingRenderer->inlineWrapperForDisplayContents() || *textUpdate->inheritedDisplayContentsStyle) {

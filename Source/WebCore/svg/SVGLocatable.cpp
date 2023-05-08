@@ -67,8 +67,11 @@ SVGElement* SVGLocatable::farthestViewportElement(const SVGElement* element)
 FloatRect SVGLocatable::getBBox(SVGElement* element, StyleUpdateStrategy styleUpdateStrategy)
 {
     ASSERT(element);
-    if (styleUpdateStrategy == AllowStyleUpdate)
+    if (styleUpdateStrategy == AllowStyleUpdate) {
+        ContentVisibilityForceLayoutScope scope(*element);
+
         element->document().updateLayoutIgnorePendingStylesheets();
+    }
 
     // FIXME: Eventually we should support getBBox for detached elements.
     if (!element->renderer())
