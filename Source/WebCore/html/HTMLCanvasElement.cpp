@@ -643,18 +643,7 @@ bool HTMLCanvasElement::paintsIntoCanvasBuffer() const
     return true;
 }
 
-#if PLATFORM(COCOA)
-static bool imageDrawingRequiresGuardAgainstUseByPendingLayerTransaction(GraphicsContext& context, const ImageBuffer& imageBuffer)
-{
-    if (context.renderingMode() != RenderingMode::Accelerated || !context.hasPlatformContext())
-        return false;
 
-    if (imageBuffer.renderingMode() != RenderingMode::Accelerated || imageBuffer.context().hasPlatformContext())
-        return false;
-
-    return true;
-}
-#endif
 
 void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r, CompositeOperator op)
 {
@@ -674,12 +663,8 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r, Com
 
         if (shouldPaint) {
             if (hasCreatedImageBuffer()) {
-                if (ImageBuffer* imageBuffer = buffer()) {
+                if (ImageBuffer* imageBuffer = buffer())
                     context.drawImageBuffer(*imageBuffer, snappedIntRect(r), op);
-#if PLATFORM(COCOA)
-                    m_mustGuardAgainstUseByPendingLayerTransaction |= imageDrawingRequiresGuardAgainstUseByPendingLayerTransaction(context, *imageBuffer);
-#endif
-                }
             }
         }
     }
@@ -1082,26 +1067,5 @@ WebCoreOpaqueRoot root(HTMLCanvasElement* canvas)
 {
     return root(static_cast<Node*>(canvas));
 }
-
-#if PLATFORM(COCOA)
-GraphicsContext* HTMLCanvasElement::drawingContext() const
-{
-    auto context = CanvasBase::drawingContext();
-    if (!context)
-        return nullptr;
-
-    if (m_mustGuardAgainstUseByPendingLayerTransaction) {
-        if (auto page = document().page()) {
-            if (page->isAwaitingLayerTreeTransactionFlush()) {
-                if (auto backend = buffer()->backend())
-                    backend->ensureNativeImagesHaveCopiedBackingStore();
-            }
-        }
-        m_mustGuardAgainstUseByPendingLayerTransaction = false;
-    }
-
-    return context;
-}
-#endif
 
 }
