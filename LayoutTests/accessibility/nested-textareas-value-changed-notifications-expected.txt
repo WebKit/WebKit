@@ -8,12 +8,12 @@ AXValue:
 AXValue: aabc
 xyz
 def
-3 AXValueChanged for element outer_editable with AXRole: AXTextArea
+3 AXValueChanged for element  with AXRole: AXWebArea
+AXValue:
+4 AXValueChanged for element outer_editable with AXRole: AXTextArea
 AXValue: aabc
 xyz
 def
-4 AXValueChanged for element  with AXRole: AXWebArea
-AXValue:
 5 AXValueChanged for element  with AXRole: AXWebArea
 AXValue:
 6 AXValueChanged for element outer_editable with AXRole: AXTextArea

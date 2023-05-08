@@ -34,16 +34,26 @@ if (window.testRunner && window.accessibilityController) {
             return;
         count++;
         if (count == 3) {
+          document.getElementById("content").remove();
           finishJSTest();
         }
     });
 
     // Tab 3 times we should be able to get same count of notificaitons
     shouldBeTrue("count == 0");
-    for (var i = 1; i <= 3; i++) 
-        eventSender.keyDown("\t");
 
-    document.getElementById("content").style.visibility = "hidden";
+    async function waitForRAF()
+    {
+        return new Promise(resolve => { requestAnimationFrame(() => setTimeout(resolve, 0)); });
+    }
+
+    (async function () {
+        await waitForRAF();
+        for (var i = 1; i <= 3; i++) {
+            eventSender.keyDown("\t");
+            await waitForRAF();
+        }
+    })();
 }
 </script>
 <script src="../../resources/js-test-post.js"></script>

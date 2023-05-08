@@ -3977,6 +3977,8 @@ ExceptionOr<void> Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayou
         return Exception { TypeError };
 
     document->updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks::Synchronously);
+    document->flushDeferredAXObjectCacheUpdate();
+
     return { };
 }
 

@@ -3857,8 +3857,7 @@ void LocalFrameView::performPostLayoutTasks()
 
     resnapAfterLayout();
 
-    if (AXObjectCache* cache = m_frame->document()->existingAXObjectCache())
-        cache->performDeferredCacheUpdate();
+    m_frame->document()->scheduleDeferredAXObjectCacheUpdate();
 }
 
 IntSize LocalFrameView::sizeForResizeEvent() const

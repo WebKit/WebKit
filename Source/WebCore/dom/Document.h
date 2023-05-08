@@ -1223,6 +1223,9 @@ public:
 
     WEBCORE_EXPORT String displayStringModifiedByEncoding(const String&) const;
 
+    void scheduleDeferredAXObjectCacheUpdate();
+    WEBCORE_EXPORT void flushDeferredAXObjectCacheUpdate();
+
     void updateAccessibilityObjectRegions();
     void updateEventRegions();
 
@@ -2397,6 +2400,8 @@ private:
     bool m_didDispatchViewportPropertiesChanged { false };
 #endif
     bool m_isDirAttributeDirty { false };
+
+    bool m_scheduledDeferredAXObjectCacheUpdate { false };
 
     static bool hasEverCreatedAnAXObjectCache;
 

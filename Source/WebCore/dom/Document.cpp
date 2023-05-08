@@ -4783,6 +4783,31 @@ void Document::updateEventRegions()
     }
 }
 
+void Document::scheduleDeferredAXObjectCacheUpdate()
+{
+    if (m_scheduledDeferredAXObjectCacheUpdate)
+        return;
+
+    m_scheduledDeferredAXObjectCacheUpdate = true;
+    eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakThis = WeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        protectedThis->flushDeferredAXObjectCacheUpdate();
+    });
+}
+
+void Document::flushDeferredAXObjectCacheUpdate()
+{
+    if (!m_scheduledDeferredAXObjectCacheUpdate)
+        return;
+
+    m_scheduledDeferredAXObjectCacheUpdate = false;
+
+    if (AXObjectCache* cache = existingAXObjectCache())
+        cache->performDeferredCacheUpdate();
+}
+
 void Document::updateAccessibilityObjectRegions()
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
