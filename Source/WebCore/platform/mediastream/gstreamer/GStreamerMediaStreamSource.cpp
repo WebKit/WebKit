@@ -124,8 +124,13 @@ public:
         : m_parent(parent)
         , m_track(track)
         , m_padName(padName)
+#if USE(GSTREAMER_WEBRTC)
         , m_consumerIsVideoPlayer(consumerIsVideoPlayer)
+#endif
     {
+#if !USE(GSTREAMER_WEBRTC)
+        UNUSED_PARAM(consumerIsVideoPlayer);
+#endif
         static uint64_t audioCounter = 0;
         static uint64_t videoCounter = 0;
         String elementName;
@@ -536,7 +541,9 @@ private:
     Lock m_eosLock;
     bool m_eosPending WTF_GUARDED_BY_LOCK(m_eosLock) { false };
     std::optional<int> m_webrtcSourceClientId;
+#if USE(GSTREAMER_WEBRTC)
     bool m_consumerIsVideoPlayer { false };
+#endif
 };
 
 struct _WebKitMediaStreamSrcPrivate {

@@ -190,9 +190,9 @@ TEST(FloatSize, TransposedSize)
 
 TEST(FloatSize, Casting)
 {
+#if USE(CG)
     WebCore::FloatSize test(1024.0f, 768.0f);
 
-#if USE(CG)
     CGSize cgSize = test;
 
     EXPECT_FLOAT_EQ(1024.0f, cgSize.width);
