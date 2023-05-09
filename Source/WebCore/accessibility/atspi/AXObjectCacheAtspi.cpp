@@ -130,7 +130,7 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
         wrapper->stateChanged("pressed", coreObject->isPressed());
         break;
     case AXReadOnlyStatusChanged:
-        wrapper->stateChanged("read-only", coreObject->canSetValueAttribute());
+        wrapper->stateChanged("read-only", !coreObject->canSetValueAttribute());
         break;
     case AXRequiredStatusChanged:
         wrapper->stateChanged("required", coreObject->isRequired());

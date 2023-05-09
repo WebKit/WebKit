@@ -1111,8 +1111,6 @@ webkit.org/b/170337 fast/repaint/obscured-background-no-repaint.html [ Failure ]
 
 webkit.org/b/172283 inspector/worker/debugger-multiple-targets-pause.html [ Timeout Pass Failure ]
 
-webkit.org/b/182761 accessibility/gtk/aria-busy-changed-notification.html [ Pass Failure ]
-
 webkit.org/b/186136 compositing/animation/layer-for-filling-animation.html [ Failure ]
 
 webkit.org/b/186667 compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html [ Failure Pass ]

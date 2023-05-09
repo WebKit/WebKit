@@ -3,8 +3,14 @@ This tests that changing the aria-readonly value results in a state-changed noti
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS textbox1.isAttributeSettable('AXValue') is true
+PASS textbox2.isAttributeSettable('AXValue') is false
 Setting aria-readonly to true on textbox1.
 Setting aria-readonly to false on textbox2.
+AXReadOnlyStatusChanged true on textbox1
+AXReadOnlyStatusChanged false on textbox2
+PASS textbox1.isAttributeSettable('AXValue') is false
+PASS textbox2.isAttributeSettable('AXValue') is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
