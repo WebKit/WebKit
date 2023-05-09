@@ -824,7 +824,7 @@ Result<AST::Function> Parser<Lexer>::parseFunction(AST::Attribute::List&& attrib
 }
 
 template<typename Lexer>
-Result<Ref<AST::Parameter>> Parser<Lexer>::parseParameter()
+Result<std::reference_wrapper<AST::Parameter>> Parser<Lexer>::parseParameter()
 {
     START_PARSE();
 
@@ -833,7 +833,7 @@ Result<Ref<AST::Parameter>> Parser<Lexer>::parseParameter()
     CONSUME_TYPE(Colon);
     PARSE(type, TypeName);
 
-    RETURN_NODE_REF(Parameter, WTFMove(name), WTFMove(type), WTFMove(attributes), AST::ParameterRole::UserDefined);
+    RETURN_ARENA_NODE(Parameter, WTFMove(name), WTFMove(type), WTFMove(attributes), AST::ParameterRole::UserDefined);
 }
 
 template<typename Lexer>

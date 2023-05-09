@@ -340,7 +340,7 @@ void RewriteGlobalVariables::insertParameters(AST::Function& function, const Use
         unsigned group = it.key;
         auto& type = m_callGraph.ast().astBuilder().construct<AST::NamedTypeName>(span, argumentBufferStructName(group));
         type.m_resolvedType = m_structTypes.get(group);
-        m_callGraph.ast().append(function.parameters(), adoptRef(*new AST::Parameter(
+        m_callGraph.ast().append(function.parameters(), m_callGraph.ast().astBuilder().construct<AST::Parameter>(
             span,
             argumentBufferParameterName(group),
             type,
@@ -348,7 +348,7 @@ void RewriteGlobalVariables::insertParameters(AST::Function& function, const Use
                 m_callGraph.ast().astBuilder().construct<AST::GroupAttribute>(span, group)
             },
             AST::ParameterRole::BindGroup
-        )));
+        ));
     }
 }
 

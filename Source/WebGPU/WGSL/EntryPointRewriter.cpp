@@ -113,14 +113,14 @@ void EntryPointRewriter::rewrite()
     // add parameter to builtins: ${structName} : ${structType}
     auto& type = m_shaderModule.astBuilder().construct<AST::NamedTypeName>(SourceSpan::empty(), AST::Identifier::make(m_structTypeName));
     type.m_resolvedType = m_structType;
-    auto parameter = adoptRef(*new AST::Parameter(
+    auto& parameter = m_shaderModule.astBuilder().construct<AST::Parameter>(
         SourceSpan::empty(),
         AST::Identifier::make(m_structParameterName),
         type,
         AST::Attribute::List { },
         AST::ParameterRole::StageIn
-    ));
-    m_shaderModule.append(m_function.parameters(), WTFMove(parameter));
+    );
+    m_shaderModule.append(m_function.parameters(), parameter);
 
     while (m_materializations.size())
         m_shaderModule.insert(m_function.body().statements(), 0, m_materializations.takeLast());
@@ -134,9 +134,9 @@ Reflection::EntryPointInformation EntryPointRewriter::takeEntryPointInformation(
 void EntryPointRewriter::collectParameters()
 {
     while (m_function.parameters().size()) {
-        auto parameter = m_shaderModule.takeLast(m_function.parameters());
+        AST::Parameter& parameter = m_shaderModule.takeLast(m_function.parameters());
         Vector<String> path;
-        visit(path, MemberOrParameter { parameter->name(), parameter->typeName(), parameter->attributes() });
+        visit(path, MemberOrParameter { parameter.name(), parameter.typeName(), parameter.attributes() });
     }
 }
 
@@ -287,13 +287,13 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
 void EntryPointRewriter::appendBuiltins()
 {
     for (auto& data : m_builtins) {
-        m_shaderModule.append(m_function.parameters(), adoptRef(*new AST::Parameter(
+        m_shaderModule.append(m_function.parameters(), m_shaderModule.astBuilder().construct<AST::Parameter>(
             SourceSpan::empty(),
             AST::Identifier::make(data.name),
             data.type,
             WTFMove(data.attributes),
             AST::ParameterRole::UserDefined
-        )));
+        ));
     }
 }
 

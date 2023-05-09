@@ -26,10 +26,11 @@
 #pragma once
 
 #include "ASTAttribute.h"
+#include "ASTBuilder.h"
 #include "ASTIdentifier.h"
 #include "ASTTypeName.h"
 #include <wtf/RefCounted.h>
-#include <wtf/RefVector.h>
+#include <wtf/ReferenceWrapperVector.h>
 
 namespace WGSL::AST {
 
@@ -39,18 +40,10 @@ enum class ParameterRole : uint8_t {
     BindGroup,
 };
 
-class Parameter final : public Node, public RefCounted<Parameter> {
-    WTF_MAKE_FAST_ALLOCATED;
+class Parameter final : public Node {
+    WGSL_AST_BUILDER_NODE(Parameter);
 public:
-    using List = RefVector<Parameter>;
-
-    Parameter(SourceSpan span, Identifier&& name, TypeName::Ref&& typeName, Attribute::List&& attributes, ParameterRole role)
-        : Node(span)
-        , m_role(role)
-        , m_name(WTFMove(name))
-        , m_typeName(WTFMove(typeName))
-        , m_attributes(WTFMove(attributes))
-    { }
+    using List = ReferenceWrapperVector<Parameter>;
 
     NodeKind kind() const override;
     Identifier& name() { return m_name; }
@@ -59,6 +52,14 @@ public:
     ParameterRole role() { return m_role; }
 
 private:
+    Parameter(SourceSpan span, Identifier&& name, TypeName::Ref&& typeName, Attribute::List&& attributes, ParameterRole role)
+        : Node(span)
+        , m_role(role)
+        , m_name(WTFMove(name))
+        , m_typeName(WTFMove(typeName))
+        , m_attributes(WTFMove(attributes))
+    { }
+
     ParameterRole m_role;
     Identifier m_name;
     TypeName::Ref m_typeName;

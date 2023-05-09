@@ -103,10 +103,10 @@ public:
         return last;
     }
 
-    template<typename T, size_t size>
-    void append(const Vector<T, size>& constVector, T&& value)
+    template<typename T, typename U, size_t size>
+    void append(const Vector<U, size>& constVector, T&& value)
     {
-        auto& vector = const_cast<Vector<T, size>&>(constVector);
+        auto& vector = const_cast<Vector<U, size>&>(constVector);
         vector.append(std::forward<T>(value));
         m_replacements.append([&vector]() {
             vector.takeLast();
