@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,7 +26,6 @@
 #include "CachedHTMLCollectionInlines.h"
 #include "FormListedElement.h"
 #include "HTMLFormElement.h"
-#include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "ScriptDisallowedScope.h"
 #include <wtf/IsoMallocInlines.h>
@@ -137,18 +136,6 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
                 foundInputElements.add(name);
             }
         }
-    }
-
-    for (auto& elementPtr : ownerNode().imageElements()) {
-        if (!elementPtr)
-            continue;
-        HTMLImageElement& element = *elementPtr;
-        const AtomString& id = element.getIdAttribute();
-        if (!id.isEmpty() && !foundInputElements.contains(id))
-            cache->appendToIdCache(id, element);
-        const AtomString& name = element.getNameAttribute();
-        if (!name.isEmpty() && id != name && !foundInputElements.contains(name))
-            cache->appendToNameCache(name, element);
     }
 
     setNamedItemCache(WTFMove(cache));

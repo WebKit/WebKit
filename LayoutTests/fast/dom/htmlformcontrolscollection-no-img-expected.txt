@@ -1,0 +1,4 @@
+
+
+PASS HTMLFormControlsCollection should not handle IMG elements.
+
