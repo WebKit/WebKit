@@ -1,5 +1,5 @@
-Anchor Tests
-----------------------
+This test produces a snapshot of various anchor element attributes.
+
 AXHasDocumentRoleAncestor: 0
 AXHasWebApplicationAncestor: 0
 AXRole: AXHeading
@@ -33,8 +33,39 @@ AXHighestEditableAncestor: (null)
 AXElementBusy: 0
 
 ------------
+AXHasDocumentRoleAncestor: 0
+AXHasWebApplicationAncestor: 0
+AXRole: AXGroup
+AXSubrole: (null)
+AXRoleDescription: group
+AXChildren: <array of size 1>
+AXChildrenInNavigationOrder: <array of size 1>
+AXHelp:
+AXParent: <AXGroup>
+AXSize: NSSize: {769, 19}
+AXTitle:
+AXDescription:
+AXValue:
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXGroup>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
+AXVisited: 0
+AXLinkedUIElements: <array of size 0>
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXGroup>
+AXLanguage:
+AXDOMIdentifier: bottom2
+AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXGroup>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
+AXElementBusy: 0
 
-
+------------
 AXHasDocumentRoleAncestor: 0
 AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
@@ -69,42 +100,9 @@ AXElementBusy: 0
 
 ------------
 
+PASS successfullyParsed is true
 
-AXHasDocumentRoleAncestor: 0
-AXHasWebApplicationAncestor: 0
-AXRole: AXGroup
-AXSubrole: (null)
-AXRoleDescription: group
-AXChildren: <array of size 1>
-AXChildrenInNavigationOrder: <array of size 1>
-AXHelp:
-AXParent: <AXGroup>
-AXSize: NSSize: {769, 19}
-AXTitle:
-AXDescription:
-AXValue:
-AXFocused: 0
-AXEnabled: 1
-AXWindow: <AXGroup>
-AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
-AXVisited: 0
-AXLinkedUIElements: <array of size 0>
-AXSelected: 0
-AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
-AXLanguage:
-AXDOMIdentifier: bottom2
-AXDOMClassList: <array of size 0>
-AXFocusableAncestor: <AXGroup>
-AXEditableAncestor: (null)
-AXHighestEditableAncestor: (null)
-AXElementBusy: 0
-
-------------
-
-
+TEST COMPLETE
 2.2 Tourette syndrome
 [edit] Tourette syndrome
 

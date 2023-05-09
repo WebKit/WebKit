@@ -513,9 +513,13 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
 
     if (!m_renderer)
         return nullptr;
-    
+
+    WeakPtr cache = axObjectCache();
+    if (!cache)
+        return nullptr;
+
     if (ariaRoleAttribute() == AccessibilityRole::MenuBar)
-        return axObjectCache()->getOrCreate(m_renderer->parent());
+        return cache->getOrCreate(m_renderer->parent());
 
     // menuButton and its corresponding menu are DOM siblings, but Accessibility needs them to be parent/child
     if (ariaRoleAttribute() == AccessibilityRole::Menu) {
@@ -534,10 +538,6 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
         }
     }
 #endif
-
-    AXObjectCache* cache = axObjectCache();
-    if (!cache)
-        return nullptr;
 
     if (auto* parentObject = renderParentObject())
         return cache->getOrCreate(parentObject);
@@ -2523,7 +2523,10 @@ void AccessibilityRenderObject::addNodeOnlyChildren()
     
     if (!hasNodeOnlyChildren)
         return;
-    
+
+    WeakPtr cache = axObjectCache();
+    if (!cache)
+        return;
     // Iterate through all of the children, including those that may have already been added, and
     // try to insert the nodes in the correct place in the DOM order.
     unsigned insertionIndex = 0;
@@ -2546,12 +2549,12 @@ void AccessibilityRenderObject::addNodeOnlyChildren()
 
         if (!nodeHasDisplayContents(*child) && !isNodeAriaVisible(child))
             continue;
-        
+
         unsigned previousSize = m_children.size();
         if (insertionIndex > previousSize)
             insertionIndex = previousSize;
-        
-        insertChild(axObjectCache()->getOrCreate(child), insertionIndex);
+
+        insertChild(cache->getOrCreate(child), insertionIndex);
         insertionIndex += (m_children.size() - previousSize);
     }
 }

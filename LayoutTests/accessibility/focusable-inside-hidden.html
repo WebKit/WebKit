@@ -1,11 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
-
-<body id="body">
+<body>
 
 <div id="otherbutton" tabindex="0">a</div>
 
@@ -16,44 +15,45 @@
 </div>
 
 <script>
-    description("This tests that a focusable object inside an aria-hidden is in the hieararchy only after it gains focus.");
+var output = "This tests that a focusable object inside an aria-hidden is in the hieararchy only after it gains focus.\n\n";
 
-    if (window.accessibilityController) {
-       jsTestIsAsync = true;
+if (window.accessibilityController) {
+   jsTestIsAsync = true;
 
-       // By default, if it doesn't have focus it should be hidden because its inside aria-hidden.
-       var button = accessibilityController.accessibleElementById("button");
-       shouldBeTrue("!button || !button.isValid");
+   // By default, if it doesn't have focus it should be hidden because it's inside aria-hidden.
+   var button = accessibilityController.accessibleElementById("button");
+   output += expect("!button || !button.isValid", "true");
 
-       // Gain focus and this element should be visible to AX.
-       document.getElementById("button").focus();
+   // Gain focus and this element should be visible to AX.
+   document.getElementById("button").focus();
 
-       setTimeout(function() {
+   setTimeout(async function() {
+       await waitFor(() => {
            button = accessibilityController.focusedElement;
-           if (accessibilityController.platformName == "atspi") {
-               shouldBe("button.title", "'AXTitle: BUTTON'");
-           } else {
-               shouldBe("button.description", "'AXDescription: BUTTON'");
-           }
+           return button && button.role.toLowerCase().includes("button");
+       });
+       if (accessibilityController.platformName == "atspi")
+           output += expect("button.title", "'AXTitle: BUTTON'");
+       else
+           output += expect("button.description", "'AXDescription: BUTTON'");
 
+       button = accessibilityController.accessibleElementById("button");
+       if (accessibilityController.platformName == "atspi")
+           output += expect("button.title", "'AXTitle: BUTTON'");
+       else
+           output += expect("button.description", "'AXDescription: BUTTON'");
+
+       // Lose focus and this element should be hidden again.
+       document.getElementById("otherbutton").focus();
+       setTimeout(async function() {
            button = accessibilityController.accessibleElementById("button");
-
-           if (accessibilityController.platformName == "atspi") {
-               shouldBe("button.title", "'AXTitle: BUTTON'");
-           } else {
-               shouldBe("button.description", "'AXDescription: BUTTON'");
-           }
-
-           // Lose focus and this element should be hidden again.
-           document.getElementById("otherbutton").focus();
-           setTimeout(function() {
-               button = accessibilityController.accessibleElementById("button");
-               shouldBeTrue("!button || !button.isValid");
-               finishJSTest();
-           }, 1);
-        }, 1);   
-    }
+           output += await expectAsync("!button || !button.isValid", "true");
+           debug(output);
+           finishJSTest();
+       }, 1);
+    }, 1);
+}
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
+

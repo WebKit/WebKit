@@ -1,30 +1,29 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html id="html" aria-label="Test Webpage">
 <head>
-<script src="../../resources/js-test.js"></script>
 <script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 
 Nothing to see.
 
 <script>
-    if (window.accessibilityController) {
-        window.jsTestIsAsync = true;
-        let output = "This tests that aria-label will become the accessible name of the AXWebArea when used on the HTML tag.\n\n";
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    let output = "This tests that aria-label will become the accessible name of the AXWebArea when used on the HTML tag.\n\n";
 
-        var root = accessibilityController.rootElement.childAtIndex(0);
-        output += expect("root.role", "'AXRole: AXWebArea'");
-        output += expect("root.description", "'AXDescription: Test Webpage'");
+    var root = accessibilityController.rootElement.childAtIndex(0);
+    output += expect("root.role", "'AXRole: AXWebArea'");
+    output += expect("root.description", "'AXDescription: Test Webpage'");
 
-        document.getElementById("html").setAttribute("aria-label", "New Title");
-        setTimeout(async () => {
-            output += expect("root.description", "'AXDescription: New Title'");
-
-            debug(output);
-            finishJSTest();
-        }, 0);
-    }
+    document.getElementById("html").setAttribute("aria-label", "New Title");
+    setTimeout(async () => {
+        output += await expectAsync("root.description", "'AXDescription: New Title'");
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
 </body>
 </html>

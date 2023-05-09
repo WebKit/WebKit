@@ -1,10 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
-<body id="body">
-
+<body>
 
 <div tabindex="0" id="textbox1" contenteditable="true" role="textbox">Single line test</div>
 
@@ -14,60 +14,56 @@ Line<br>
 Textbox
 </div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+var output = "This tests that contenteditable nodes return the correct information for range and selection based attributes.\n\n";
 
-    description("This tests that contenteditable nodes return the correct information for range and selection based attributes.");
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-    if (window.accessibilityController) {
+    var axElement;
+    var matchedText = "e\nText";
+    setTimeout(async function() {
         // Test the single line textbox.
         var textElement = document.getElementById("textbox1");
-        textElement.focus();
-        var axElement = accessibilityController.focusedElement;
+        axElement = await waitForFocus("textbox1");
 
-        var s = window.getSelection();
-        s.setPosition(textElement, 0);
-        for (var k = 0; k < 3; k++) {
-            s.modify("move", "forward", "character");
-        }
-        shouldBe("axElement.selectedTextRange", "'{3, 0}'");
+        let selection = window.getSelection();
+        selection.setPosition(textElement, 0);
+        for (var k = 0; k < 3; k++)
+            selection.modify("move", "forward", "character");
+        output += await expectAsync("axElement.selectedTextRange", "'{3, 0}'");
 
-        for (var k = 0; k < 3; k++) {
-            s.modify("extend", "forward", "character");
-        }
-        shouldBe("axElement.selectedTextRange", "'{3, 3}'");
-        shouldBe("axElement.stringAttributeValue('AXSelectedText')", "'gle'");
+        for (var k = 0; k < 3; k++)
+            selection.modify("extend", "forward", "character");
+        output += await expectAsync("axElement.selectedTextRange", "'{3, 3}'");
+        output += await expectAsync("axElement.stringAttributeValue('AXSelectedText')", "'gle'");
 
-        s.modify("extend", "forward", "character");
-        shouldBe("axElement.selectedTextRange", "'{3, 4}'");
+        selection.modify("extend", "forward", "character");
+        output += await expectAsync("axElement.selectedTextRange", "'{3, 4}'");
 
         // Test the multi-line textbox.
         textElement = document.getElementById("textbox2");
-        textElement.focus();
-        axElement = accessibilityController.focusedElement;
+        axElement = await waitForFocus("textbox2");
 
-        s = window.getSelection();
-        s.setPosition(textElement, 0);
-        for (var k = 0; k < 12; k++) {
-            s.modify("move", "forward", "character");
-        }
-        shouldBe("axElement.selectedTextRange", "'{12, 0}'");
+        selection = window.getSelection();
+        selection.setPosition(textElement, 0);
+        for (var k = 0; k < 12; k++)
+            selection.modify("move", "forward", "character");
+        output += await expectAsync("axElement.selectedTextRange", "'{12, 0}'");
 
-        for (var k = 0; k < 6; k++) {
-            s.modify("extend", "forward", "character");
-        }
-        shouldBe("axElement.selectedTextRange", "'{12, 6}'");
-        var matchedText = "e\nText";
-        shouldBe("axElement.stringAttributeValue('AXSelectedText')", "matchedText");
+        for (var k = 0; k < 6; k++)
+            selection.modify("extend", "forward", "character");
+        output += await expectAsync("axElement.selectedTextRange", "'{12, 6}'");
+        output += await expectAsync("axElement.stringAttributeValue('AXSelectedText')", "matchedText");
 
-        s.modify("extend", "forward", "character");
-        shouldBe("axElement.selectedTextRange", "'{12, 7}'");
-    }
+        selection.modify("extend", "forward", "character");
+        output += await expectAsync("axElement.selectedTextRange", "'{12, 7}'");
 
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
+

@@ -2770,7 +2770,11 @@ bool AccessibilityObject::supportsPressAction() const
     if (nodeHasPresentationRole(actionElement.get()))
         return false;
 
-    auto* axObject = actionElement != element() ? axObjectCache()->getOrCreate(actionElement.get()) : nullptr;
+    auto* cache = axObjectCache();
+    if (!cache)
+        return true;
+
+    auto* axObject = actionElement != element() ? cache->getOrCreate(actionElement.get()) : nullptr;
     if (!axObject)
         return true;
 

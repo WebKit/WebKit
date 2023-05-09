@@ -208,10 +208,12 @@ async function expectAsyncExpression(expression, expectedValue) {
 
 async function waitForFocus(id) {
     document.getElementById(id).focus();
+    let focusedElement;
     await waitFor(() => {
-        const focusedElement = accessibilityController.focusedElement;
+        focusedElement = accessibilityController.focusedElement;
         return focusedElement && focusedElement.domIdentifier === id;
     });
+    return focusedElement;
 }
 
 function evalAndReturn(expression) {

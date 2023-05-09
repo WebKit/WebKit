@@ -535,11 +535,15 @@ AXCoreObject* AccessibilityTable::headerContainer()
 {
     if (m_headerContainer)
         return m_headerContainer.get();
-    
-    auto& tableHeader = downcast<AccessibilityMockObject>(*axObjectCache()->create(AccessibilityRole::TableHeaderContainer));
-    tableHeader.setParent(this);
 
-    m_headerContainer = &tableHeader;
+    auto* cache = axObjectCache();
+    if (!cache)
+        return nullptr;
+
+    auto* tableHeader = downcast<AccessibilityMockObject>(cache->create(AccessibilityRole::TableHeaderContainer));
+    tableHeader->setParent(this);
+
+    m_headerContainer = tableHeader;
     return m_headerContainer.get();
 }
 
