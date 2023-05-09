@@ -22,7 +22,6 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 PRODUCT_NAME = MiniBrowser
-CODE_SIGN_ENTITLEMENTS = MiniBrowser.entitlements;
 PRODUCT_BUNDLE_IDENTIFIER = org.webkit.$(PRODUCT_NAME:rfc1034identifier)
 GCC_PREFIX_HEADER = mac/MiniBrowser_Prefix.pch
 INFOPLIST_FILE = mac/Info.plist
@@ -31,3 +30,9 @@ EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_PLAT
 EXCLUDED_SOURCE_FILE_NAMES_maccatalyst = *
 OTHER_LDFLAGS[sdk=macosx*] = $(inherited) -framework Cocoa -framework UniformTypeIdentifiers -framework WebKit
 STRIP_STYLE = debugging;
+
+WK_PROCESSED_XCENT_FILE = $(TEMP_FILE_DIR)/$(FULL_PRODUCT_NAME).entitlements;
+
+// The use of CODE_SIGN_ENTITLEMENTS leads to a circular build dependency.
+CODE_SIGN_INJECT_BASE_ENTITLEMENTS[sdk=macosx*] = NO;
+OTHER_CODE_SIGN_FLAGS[sdk=macosx*] = --entitlements $(WK_PROCESSED_XCENT_FILE);

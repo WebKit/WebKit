@@ -62,6 +62,7 @@
 		2DC37341198B62D300EC33E9 /* SettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SettingsController.h; path = mac/SettingsController.h; sourceTree = "<group>"; };
 		2DC37342198B62D300EC33E9 /* SettingsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SettingsController.m; path = mac/SettingsController.m; sourceTree = "<group>"; };
 		37BAF90620218053000EA879 /* MiniBrowser.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MiniBrowser.entitlements; sourceTree = "<group>"; };
+		3A4EE1382A09DAD800D16301 /* process-minibrowser-entitlements.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "process-minibrowser-entitlements.sh"; sourceTree = "<group>"; };
 		51E244F811EFCE07008228D1 /* MBToolbarItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBToolbarItem.h; sourceTree = "<group>"; };
 		51E244F911EFCE07008228D1 /* MBToolbarItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBToolbarItem.m; sourceTree = "<group>"; };
 		5C9332AE24C1349C0036DECE /* SecurityInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SecurityInterface.framework; path = System/Library/Frameworks/SecurityInterface.framework; sourceTree = SDKROOT; };
@@ -142,6 +143,7 @@
 				256AC3F00F4B6AF500CF3369 /* MiniBrowser_Prefix.pch */,
 				080E96DDFE201D6D7F000001 /* MiniBrowser */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
+				3A4EE1362A09DAD800D16301 /* Scripts */,
 				BCA8CBDA11E5787800812FB7 /* Configurations */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
@@ -171,6 +173,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		3A4EE1362A09DAD800D16301 /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				3A4EE1382A09DAD800D16301 /* process-minibrowser-entitlements.sh */,
+			);
+			path = Scripts;
+			sourceTree = "<group>";
+		};
 		BCA8CBDA11E5787800812FB7 /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
@@ -189,6 +199,7 @@
 			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "MiniBrowser" */;
 			buildPhases = (
 				8D1107290486CEB800E47090 /* Resources */,
+				3A4EE1342A09DA5F00D16301 /* Process MiniBrowser entitlements */,
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
 			);
@@ -249,6 +260,29 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		3A4EE1342A09DA5F00D16301 /* Process MiniBrowser entitlements */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/MiniBrowser.entitlements",
+			);
+			name = "Process MiniBrowser entitlements";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(WK_PROCESSED_XCENT_FILE)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/process-minibrowser-entitlements.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8D11072C0486CEB800E47090 /* Sources */ = {
