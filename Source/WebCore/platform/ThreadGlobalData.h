@@ -128,13 +128,34 @@ private:
 
     bool m_isInRemoveAllEventListeners { false };
 
-    WEBCORE_EXPORT friend ThreadGlobalData& threadGlobalData();
+    friend ThreadGlobalData& threadGlobalData();
 };
 
+
 #if USE(WEB_THREAD)
-WEBCORE_EXPORT ThreadGlobalData& threadGlobalData();
+WEBCORE_EXPORT ThreadGlobalData& threadGlobalDataSlow();
 #else
-WEBCORE_EXPORT ThreadGlobalData& threadGlobalData() PURE_FUNCTION;
+WEBCORE_EXPORT ThreadGlobalData& threadGlobalDataSlow() PURE_FUNCTION;
 #endif
+
+#if USE(WEB_THREAD)
+inline ThreadGlobalData& threadGlobalData()
+#else
+inline PURE_FUNCTION ThreadGlobalData& threadGlobalData()
+#endif
+{
+#if HAVE(FAST_TLS)
+    if (auto* thread = Thread::currentMayBeNull(); LIKELY(thread)) {
+        if (auto* clientData = thread->m_clientData.get(); LIKELY(clientData))
+            return *static_cast<ThreadGlobalData*>(clientData);
+    }
+#else
+    auto& thread = Thread::current();
+    auto* clientData = thread.m_clientData.get();
+    if (LIKELY(clientData))
+        return *static_cast<ThreadGlobalData*>(clientData);
+#endif
+    return threadGlobalDataSlow();
+}
 
 } // namespace WebCore

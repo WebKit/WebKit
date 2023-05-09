@@ -279,6 +279,14 @@ public:
     struct NewThreadContext;
     static void entryPoint(NewThreadContext*);
     ThreadLikeAssertion threadLikeAssertion() const { return createThreadLikeAssertion(m_uid); }
+
+    // Returns nullptr if thread-specific storage was not initialized.
+#if OS(WINDOWS)
+    WTF_EXPORT_PRIVATE static Thread* currentMayBeNull();
+#else
+    static Thread* currentMayBeNull();
+#endif
+
 protected:
     Thread() = default;
 
@@ -345,13 +353,6 @@ protected:
     // Creates and puts an instance of Thread into thread-specific storage.
     static Thread& initializeTLS(Ref<Thread>&&);
     WTF_EXPORT_PRIVATE static Thread& initializeCurrentTLS();
-
-    // Returns nullptr if thread-specific storage was not initialized.
-#if OS(WINDOWS)
-    WTF_EXPORT_PRIVATE static Thread* currentMayBeNull();
-#else
-    static Thread* currentMayBeNull();
-#endif
 
     static Lock s_allThreadsLock;
 
@@ -424,7 +425,7 @@ inline Thread& Thread::current()
     if (UNLIKELY(Thread::s_key == InvalidThreadSpecificKey))
         WTF::initialize();
 #endif
-    if (auto* thread = currentMayBeNull())
+    if (auto* thread = currentMayBeNull(); LIKELY(thread))
         return *thread;
     return initializeCurrentTLS();
 }

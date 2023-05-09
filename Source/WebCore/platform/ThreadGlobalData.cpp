@@ -71,11 +71,11 @@ void ThreadGlobalData::setWebCoreThreadData()
     ASSERT(&threadGlobalData() == sharedMainThreadStaticData);
 }
 
-ThreadGlobalData& threadGlobalData()
+ThreadGlobalData& threadGlobalDataSlow()
 {
     auto& thread = Thread::current();
     auto* clientData = thread.m_clientData.get();
-    if (LIKELY(clientData))
+    if (UNLIKELY(clientData))
         return *static_cast<ThreadGlobalData*>(clientData);
 
     auto data = adoptRef(*new ThreadGlobalData);
@@ -91,11 +91,11 @@ ThreadGlobalData& threadGlobalData()
 
 #else
 
-ThreadGlobalData& threadGlobalData()
+ThreadGlobalData& threadGlobalDataSlow()
 {
     auto& thread = Thread::current();
     auto* clientData = thread.m_clientData.get();
-    if (LIKELY(clientData))
+    if (UNLIKELY(clientData))
         return *static_cast<ThreadGlobalData*>(clientData);
 
     auto data = adoptRef(*new ThreadGlobalData);
