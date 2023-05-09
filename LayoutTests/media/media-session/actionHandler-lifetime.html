@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests media session action handlers are not prematurely garbage collected. Test passes if it doesn't crash.");
+jsTestIsAsync = true;
+
+function runTest() {
+    internals.sendMediaSessionAction(navigator.mediaSession, {action: "play"});
+    shouldBeTrue(() => areObjectsEqual(window.actionDetails, {action: "play"}));
+
+    internals.sendMediaSessionAction(navigator.mediaSession, {action: "pause"});
+    shouldBeTrue(() => areObjectsEqual(window.actionDetails, {action: "pause"}));
+}
+
+function forceGCAndRunTest() {
+    gc();
+    requestAnimationFrame(() => {
+        runTest();
+        finishJSTest();
+    });
+}
+
+onload = () => {
+    if (!window.internals) {
+        testFailed("Test requires internals.");
+        finishJSTest();
+        return;
+    }
+
+    function callback(actionDetails) {
+        window.actionDetails = actionDetails;
+    };
+
+    let actions = ["play", "pause"];
+    for (action of actions)
+        navigator.mediaSession.setActionHandler(action, callback);
+
+    runTest();
+    requestAnimationFrame(() => forceGCAndRunTest());
+
+};
+</script>
+</body>
