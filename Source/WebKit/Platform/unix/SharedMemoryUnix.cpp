@@ -52,11 +52,6 @@
 
 namespace WebKit {
 
-void SharedMemoryHandle::clear()
-{
-    *this = { };
-}
-
 bool SharedMemoryHandle::isNull() const
 {
     return !m_handle;

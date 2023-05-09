@@ -96,11 +96,6 @@ bool SharedMemoryHandle::isNull() const
     return !m_handle;
 }
 
-void SharedMemoryHandle::clear()
-{
-    *this = { };
-}
-
 static inline void* toPointer(mach_vm_address_t address)
 {
     return reinterpret_cast<void*>(static_cast<uintptr_t>(address));

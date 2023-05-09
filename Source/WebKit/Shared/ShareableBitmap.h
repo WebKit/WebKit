@@ -108,7 +108,6 @@ public:
     // Take ownership of the memory for process memory accounting purposes.
     void takeOwnershipOfMemory(MemoryLedger) const;
 
-    void clear();
 private:
     friend struct IPC::ArgumentCoder<ShareableBitmapHandle, void>;
     friend class ShareableBitmap;

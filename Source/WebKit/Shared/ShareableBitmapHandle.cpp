@@ -49,10 +49,4 @@ void ShareableBitmapHandle::takeOwnershipOfMemory(MemoryLedger ledger) const
     m_handle.takeOwnershipOfMemory(ledger);
 }
 
-void ShareableBitmapHandle::clear()
-{
-    m_handle.clear();
-    m_configuration = { };
-}
-
 } // namespace WebKit

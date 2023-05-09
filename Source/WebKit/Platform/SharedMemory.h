@@ -78,8 +78,6 @@ public:
     void takeOwnershipOfMemory(MemoryLedger) const;
     void setOwnershipOfMemory(const WebCore::ProcessIdentity&, MemoryLedger) const;
 
-    void clear();
-
 #if USE(UNIX_DOMAIN_SOCKETS)
     UnixFileDescriptor releaseHandle();
 #endif
