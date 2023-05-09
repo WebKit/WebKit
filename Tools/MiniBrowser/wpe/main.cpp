@@ -156,13 +156,15 @@ static void filterSavedCallback(WebKitUserContentFilterStore *store, GAsyncResul
     g_main_loop_quit(data->mainLoop);
 }
 
-static void webViewClose(WebKitWebView* webView, gpointer)
+static void webViewClose(WebKitWebView* webView, gpointer user_data)
 {
     // Hash table key delete func takes care of unref'ing the view
     g_hash_table_remove(openViews, webView);
+    if (!g_hash_table_size(openViews))
+        g_application_quit(G_APPLICATION(user_data));
 }
 
-static WebKitWebView* createWebView(WebKitWebView* webView, WebKitNavigationAction*, gpointer)
+static WebKitWebView* createWebView(WebKitWebView* webView, WebKitNavigationAction*, gpointer user_data)
 {
     auto backend = createViewBackend(1280, 720);
     struct wpe_view_backend* wpeBackend = backend->backend();
@@ -181,8 +183,8 @@ static WebKitWebView* createWebView(WebKitWebView* webView, WebKitNavigationActi
         "user-content-manager", webkit_web_view_get_user_content_manager(webView),
         nullptr));
 
-    g_signal_connect(newWebView, "create", G_CALLBACK(createWebView), nullptr);
-    g_signal_connect(newWebView, "close", G_CALLBACK(webViewClose), nullptr);
+    g_signal_connect(newWebView, "create", G_CALLBACK(createWebView), user_data);
+    g_signal_connect(newWebView, "close", G_CALLBACK(webViewClose), user_data);
 
     g_hash_table_add(openViews, newWebView);
 
@@ -357,8 +359,8 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
     webkit_web_context_set_automation_allowed(webContext, automationMode);
     g_signal_connect(webContext, "automation-started", G_CALLBACK(automationStartedCallback), webView);
     g_signal_connect(webView, "permission-request", G_CALLBACK(decidePermissionRequest), nullptr);
-    g_signal_connect(webView, "create", G_CALLBACK(createWebView), nullptr);
-    g_signal_connect(webView, "close", G_CALLBACK(webViewClose), nullptr);
+    g_signal_connect(webView, "create", G_CALLBACK(createWebView), application);
+    g_signal_connect(webView, "close", G_CALLBACK(webViewClose), application);
     g_hash_table_add(openViews, webView);
 
     WebKitColor color;
