@@ -755,6 +755,9 @@ private:
     std::unique_ptr<WebLockRegistryProxy> m_webLockRegistry;
     std::unique_ptr<WebPermissionControllerProxy> m_webPermissionController;
     bool m_isConnectedToHardwareConsole { true };
+#if PLATFORM(MAC)
+    bool m_platformSuspendDidReleaseNearSuspendedAssertion { false };
+#endif
     mutable String m_environmentIdentifier;
 };
 

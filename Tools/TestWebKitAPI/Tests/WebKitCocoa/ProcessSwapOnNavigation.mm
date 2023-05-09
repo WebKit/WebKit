@@ -8736,7 +8736,54 @@ TEST(WebProcessCache, ReusedCrashedCachedWebProcess)
 
     EXPECT_EQ(crashCount, 1u);
 }
-#endif
+
+#if USE(RUNNINGBOARD)
+TEST(WebProcessCache, CachedProcessSuspension)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    processPoolConfiguration.get().pageCacheEnabled = NO;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 800) configuration:webViewConfiguration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    done = false;
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto webkitPID = [webView _webProcessIdentifier];
+
+    // Ask the process cache to send processes after 1 second instead of 30.
+    [WKWebsiteDataStore _setCachedProcessSuspensionDelayForTesting:1];
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
+    done = false;
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    // There should now be a process for webkit.org in the process cache.
+    while ([processPool _processCacheSize] != 1)
+        TestWebKitAPI::Util::runFor(0.1_s);
+
+    // The webkit.org process should suspend promptly.
+    unsigned timeout = 0;
+    while (![processPool _isWebProcessSuspended:webkitPID] && timeout++ < 30)
+        TestWebKitAPI::Util::runFor(0.1_s);
+
+    EXPECT_TRUE([processPool _isWebProcessSuspended:webkitPID]);
+}
+#endif // USE(RUNNINGBOARD)
+#endif // !PLATFORM(IOS_FAMILY)
 
 TEST(WebProcessCache, ReusedCrashedBackForwardSuspendedWebProcess)
 {
