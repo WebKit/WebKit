@@ -1,4 +1,4 @@
-var testCount = 17;
+var testCount = 19;
 var testDocuments = [];
 var testSheets = [];
 var expectedResults = [];
@@ -110,6 +110,8 @@ function executeTests(createCSSOMObjectBeforeTest)
     mutationTest(14, 'sheet.cssRules[3].appendRule("40% { left: 40px; }")', 'red');
     mutationTest(15, 'sheet.cssRules[3].deleteRule("100%")', 'red');
     mutationTest(16, 'sheet.cssRules[4].style.setProperty("font-family", "Bar", "")', 'red');
+    mutationTest(17, 'sheet.cssRules[5].prefix = "O"', 'red');
+    mutationTest(18, 'sheet.cssRules[6].suffix = "i"', 'red');
 
     setTimeout(finishedTests, 80);
 }
