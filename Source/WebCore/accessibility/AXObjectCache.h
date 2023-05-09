@@ -693,8 +693,6 @@ inline void AXObjectCache::autofillTypeChanged(Node*) { }
 inline void AXObjectCache::childrenChanged(Node*, Node*) { }
 inline void AXObjectCache::childrenChanged(RenderObject*, RenderObject*) { }
 inline void AXObjectCache::childrenChanged(AccessibilityObject*) { }
-inline void AXObjectCache::onPaint(const RenderObject&, IntRect&&) { }
-inline void AXObjectCache::onPaint(const Widget&, IntRect&&) { }
 inline void AXObjectCache::onSelectedChanged(Node*) { }
 inline void AXObjectCache::onTextSecurityChanged(HTMLInputElement&) { }
 inline void AXObjectCache::onTitleChange(Document&) { }
