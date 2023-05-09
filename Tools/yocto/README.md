@@ -153,7 +153,7 @@ user@workstation $ Tools/Scripts/cross-toolchain-helper --cross-target=rpi3-32bi
 
 ```
 user@workstation $ Tools/Scripts/cross-toolchain-helper --cross-target=rpi3-32bits-mesa --build-image
-cross-toolchain-helper INFO: Image already built at: /home/igalia/webkit/WebKitBuild/CrossToolChains/rpi3-32bits-mesa/build/image/core-image-webkit-dev-ci-tools-tests.wic.bz2
+cross-toolchain-helper INFO: Image already built at: /home/igalia/webkit/WebKitBuild/CrossToolChains/rpi3-32bits-mesa/build/image/core-image-webkit-dev-ci-tools-tests.wic.xz
 ```
 
 3. Flash a SDCard with this image
@@ -163,13 +163,19 @@ cross-toolchain-helper INFO: Image already built at: /home/igalia/webkit/WebKitB
 ```
 # deb distro: sudo apt install bmap-tools
 # rpm distro: sudo dnf install bmap-tools
-user@workstation $ bmaptool copy /path/to/core-image-webkit-dev-ci-tools-tests.wic.bz2 /dev/mmcblk0
+user@workstation $ bmaptool copy /path/to/core-image-webkit-dev-ci-tools-tests.wic.xz /dev/mmcblk0
 ```
 
   * 3.2. Or alternatively use dd
 
 ```
-user@workstation $ cat /path/to/core-image-webkit-dev-ci-tools-tests.wic.bz2 | bzip2 -dc | dd of=/dev/mmcblk0 status=progress bs=4k
+user@workstation $ cat /path/to/core-image-webkit-dev-ci-tools-tests.wic.xz | xz -dc | dd of=/dev/mmcblk0 status=progress bs=4k
+```
+
+  * 3.3. Or alternatively use the script for deploying
+
+```
+user@workstation $ DEVICESDCARD=/dev/mmcblk0 Tools/Scripts/cross-toolchain-helper --cross-target=rpi3-32bits-mesa --deploy-image-with-script Tools/yocto/deploy_image_scripts/wic-to-sdcard.sh
 ```
 
 4. Grow the rootfs partition to use all the available space on the SDcard
