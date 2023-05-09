@@ -284,8 +284,9 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         // Open up a Mach connection to trustd by doing a code check validation on the main bundle.
         // This is required since launchd will be blocked after process launch, which prevents new Mach connections to be created.
         // FIXME: remove this once <rdar://90127163> is fixed.
+        // Dispatch this work on a thread to avoid blocking the main thread. We will wait for this to complete at the end of this method.
         codeCheckSemaphore = adoptOSObject(dispatch_semaphore_create(0));
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [codeCheckSemaphore = codeCheckSemaphore] {
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0), [codeCheckSemaphore = codeCheckSemaphore] {
             auto bundleURL = adoptCF(CFBundleCopyExecutableURL(CFBundleGetMainBundle()));
             SecStaticCodeRef code = nullptr;
             SecStaticCodeCreateWithPath(bundleURL.get(), kSecCSDefaultFlags, &code);
