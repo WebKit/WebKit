@@ -2497,12 +2497,28 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     return CGRectNull;
 }
 
+static BOOL isBuiltInScrollViewPanGestureRecognizer(UIGestureRecognizer *recognizer)
+{
+    static Class scrollViewPanGestureClass;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        scrollViewPanGestureClass = NSClassFromString(@"UIScrollViewPanGestureRecognizer");
+    });
+    return [recognizer isKindOfClass:scrollViewPanGestureClass];
+}
+
 static BOOL isBuiltInScrollViewGestureRecognizer(UIGestureRecognizer *recognizer)
 {
-    return ([recognizer isKindOfClass:NSClassFromString(@"UIScrollViewPanGestureRecognizer")]
-        || [recognizer isKindOfClass:NSClassFromString(@"UIScrollViewPinchGestureRecognizer")]
-        || [recognizer isKindOfClass:NSClassFromString(@"UIScrollViewKnobLongPressGestureRecognizer")]
-        );
+    static Class scrollViewPinchGestureClass;
+    static Class scrollViewKnobLongPressGestureRecognizerClass;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        scrollViewPinchGestureClass = NSClassFromString(@"UIScrollViewPinchGestureRecognizer");
+        scrollViewKnobLongPressGestureRecognizerClass = NSClassFromString(@"UIScrollViewKnobLongPressGestureRecognizer");
+    });
+    return isBuiltInScrollViewPanGestureRecognizer(recognizer)
+        || [recognizer isKindOfClass:scrollViewPinchGestureClass]
+        || [recognizer isKindOfClass:scrollViewKnobLongPressGestureRecognizerClass];
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)preventingGestureRecognizer canPreventGestureRecognizer:(UIGestureRecognizer *)preventedGestureRecognizer
@@ -2564,7 +2580,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return ![self shouldDeferGestureDueToImageAnalysis:gestureRecognizer];
 #endif
 
-    if (gestureRecognizer == _singleTapGestureRecognizer && [otherGestureRecognizer isKindOfClass:UIPanGestureRecognizer.class]
+    if (gestureRecognizer == _singleTapGestureRecognizer && isBuiltInScrollViewPanGestureRecognizer(otherGestureRecognizer)
         && ![self _isInterruptingDecelerationForScrollViewOrAncestor:[_singleTapGestureRecognizer lastTouchedScrollView]])
         return YES;
 
