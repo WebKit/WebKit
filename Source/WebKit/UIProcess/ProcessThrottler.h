@@ -131,7 +131,7 @@ public:
     void didDisconnectFromProcess();
     bool shouldBeRunnable() const { return m_foregroundActivities.size() || m_backgroundActivities.size(); }
     void setAllowsActivities(bool);
-    void setShouldDropNearSuspendedAssertionAfterDelay(bool shouldDropAfterDelay) { m_shouldDropNearSuspendedAssertionAfterDelay = shouldDropAfterDelay; }
+    void setShouldDropNearSuspendedAssertionAfterDelay(bool);
     void setShouldTakeNearSuspendedAssertion(bool);
     bool isSuspended() const { return m_processIdentifier && !m_assertion; }
     ProcessThrottleState currentState() const { return m_state; }

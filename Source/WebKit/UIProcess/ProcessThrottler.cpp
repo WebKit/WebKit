@@ -184,7 +184,7 @@ void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
     if (isHoldingNearSuspendedAssertion()) {
         if (!m_shouldTakeNearSuspendedAssertion)
             clearAssertion();
-        else
+        else if (m_shouldDropNearSuspendedAssertionAfterDelay)
             m_dropNearSuspendedAssertionTimer.startOneShot(removeAllAssertionsTimeout);
     } else
         m_dropNearSuspendedAssertionTimer.stop();
@@ -251,6 +251,7 @@ void ProcessThrottler::dropNearSuspendedAssertionTimerFired()
 {
     PROCESSTHROTTLER_RELEASE_LOG("dropNearSuspendedAssertionTimerFired: Removing near-suspended process assertion");
     RELEASE_ASSERT(isHoldingNearSuspendedAssertion());
+    ASSERT(m_shouldDropNearSuspendedAssertionAfterDelay);
     if (m_pageAllowedToRunInTheBackgroundCounter.value())
         PROCESSTHROTTLER_RELEASE_LOG("dropNearSuspendedAssertionTimerFired: Not releasing near-suspended assertion because a page is allowed to run in the background");
     else
@@ -350,6 +351,19 @@ void ProcessThrottler::setShouldTakeNearSuspendedAssertion(bool shouldTakeNearSu
             clearAssertion();
         }
     }
+}
+
+void ProcessThrottler::setShouldDropNearSuspendedAssertionAfterDelay(bool shouldDropAfterDelay)
+{
+    if (m_shouldDropNearSuspendedAssertionAfterDelay == shouldDropAfterDelay)
+        return;
+
+    m_shouldDropNearSuspendedAssertionAfterDelay = shouldDropAfterDelay;
+    if (shouldDropAfterDelay) {
+        if (isHoldingNearSuspendedAssertion())
+            m_dropNearSuspendedAssertionTimer.startOneShot(removeAllAssertionsTimeout);
+    } else
+        m_dropNearSuspendedAssertionTimer.stop();
 }
 
 void ProcessThrottler::clearAssertion()
