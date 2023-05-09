@@ -266,12 +266,12 @@ auto DeclarativeAnimation::shouldFireDOMEvents() const -> ShouldFireEvents
 
     auto& document = m_owningElement->document();
     if (is<CSSAnimation>(*this)) {
-        if (document.hasListenerType(Document::CSS_ANIMATION_LISTENER))
+        if (document.hasListenerType(Document::ListenerType::CSSAnimation))
             return ShouldFireEvents::YesForCSSAnimation;
         return ShouldFireEvents::No;
     }
     ASSERT(is<CSSTransition>(*this));
-    if (document.hasListenerType(Document::CSS_TRANSITION_LISTENER))
+    if (document.hasListenerType(Document::ListenerType::CSSTransition))
         return ShouldFireEvents::YesForCSSTransition;
     return ShouldFireEvents::No;
 }

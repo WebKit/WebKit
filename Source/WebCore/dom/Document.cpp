@@ -5491,13 +5491,13 @@ bool Document::hasListenerTypeForEventType(PlatformEvent::Type eventType) const
 {
     switch (eventType) {
     case PlatformEvent::Type::MouseForceChanged:
-        return m_listenerTypes & Document::FORCECHANGED_LISTENER;
+        return m_listenerTypes.contains(Document::ListenerType::ForceChanged);
     case PlatformEvent::Type::MouseForceDown:
-        return m_listenerTypes & Document::FORCEDOWN_LISTENER;
+        return m_listenerTypes.contains(Document::ListenerType::ForceDown);
     case PlatformEvent::Type::MouseForceUp:
-        return m_listenerTypes & Document::FORCEUP_LISTENER;
+        return m_listenerTypes.contains(Document::ListenerType::ForceUp);
     case PlatformEvent::Type::MouseScroll:
-        return m_listenerTypes & Document::SCROLL_LISTENER;
+        return m_listenerTypes.contains(Document::ListenerType::Scroll);
     default:
         return false;
     }
@@ -5507,37 +5507,37 @@ void Document::addListenerTypeIfNeeded(const AtomString& eventType)
 {
     auto& eventNames = WebCore::eventNames();
     if (eventType == eventNames.DOMSubtreeModifiedEvent)
-        addListenerType(DOMSUBTREEMODIFIED_LISTENER);
+        addListenerType(ListenerType::DOMSubtreeModified);
     else if (eventType == eventNames.DOMNodeInsertedEvent)
-        addListenerType(DOMNODEINSERTED_LISTENER);
+        addListenerType(ListenerType::DOMNodeInserted);
     else if (eventType == eventNames.DOMNodeRemovedEvent)
-        addListenerType(DOMNODEREMOVED_LISTENER);
+        addListenerType(ListenerType::DOMNodeRemoved);
     else if (eventType == eventNames.DOMNodeRemovedFromDocumentEvent)
-        addListenerType(DOMNODEREMOVEDFROMDOCUMENT_LISTENER);
+        addListenerType(ListenerType::DOMNodeRemovedFromDocument);
     else if (eventType == eventNames.DOMNodeInsertedIntoDocumentEvent)
-        addListenerType(DOMNODEINSERTEDINTODOCUMENT_LISTENER);
+        addListenerType(ListenerType::DOMNodeInsertedIntoDocument);
     else if (eventType == eventNames.DOMCharacterDataModifiedEvent)
-        addListenerType(DOMCHARACTERDATAMODIFIED_LISTENER);
+        addListenerType(ListenerType::DOMCharacterDataModified);
     else if (eventType == eventNames.overflowchangedEvent)
-        addListenerType(OVERFLOWCHANGED_LISTENER);
+        addListenerType(ListenerType::OverflowChanged);
     else if (eventType == eventNames.scrollEvent)
-        addListenerType(SCROLL_LISTENER);
+        addListenerType(ListenerType::Scroll);
     else if (eventType == eventNames.webkitmouseforcewillbeginEvent)
-        addListenerType(FORCEWILLBEGIN_LISTENER);
+        addListenerType(ListenerType::ForceWillBegin);
     else if (eventType == eventNames.webkitmouseforcechangedEvent)
-        addListenerType(FORCECHANGED_LISTENER);
+        addListenerType(ListenerType::ForceChanged);
     else if (eventType == eventNames.webkitmouseforcedownEvent)
-        addListenerType(FORCEDOWN_LISTENER);
+        addListenerType(ListenerType::ForceDown);
     else if (eventType == eventNames.webkitmouseforceupEvent)
-        addListenerType(FORCEUP_LISTENER);
+        addListenerType(ListenerType::ForceUp);
     else if (eventType == eventNames.focusinEvent)
-        addListenerType(FOCUSIN_LISTENER);
+        addListenerType(ListenerType::FocusIn);
     else if (eventType == eventNames.focusoutEvent)
-        addListenerType(FOCUSOUT_LISTENER);
+        addListenerType(ListenerType::FocusOut);
     else if (eventNames.isCSSTransitionEventType(eventType))
-        addListenerType(CSS_TRANSITION_LISTENER);
+        addListenerType(ListenerType::CSSTransition);
     else if (eventNames.isCSSAnimationEventType(eventType))
-        addListenerType(CSS_ANIMATION_LISTENER);
+        addListenerType(ListenerType::CSSAnimation);
 }
 
 HTMLFrameOwnerElement* Document::ownerElement() const

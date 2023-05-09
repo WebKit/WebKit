@@ -1370,7 +1370,7 @@ void LocalFrameView::didLayout(WeakPtr<RenderElement> layoutRoot)
     handleDeferredScrollbarsUpdate();
     handleDeferredPositionScrollbarLayers();
 
-    if (document->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
+    if (document->hasListenerType(Document::ListenerType::OverflowChanged))
         updateOverflowStatus(layoutWidth() < contentsWidth(), layoutHeight() < contentsHeight());
 
     document->markers().invalidateRectsForAllMarkers();

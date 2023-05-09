@@ -929,11 +929,11 @@ static void dispatchChildInsertionEvents(Node& child)
     RefPtr<Node> c = &child;
     Ref<Document> document(child.document());
 
-    if (c->parentNode() && document->hasListenerType(Document::DOMNODEINSERTED_LISTENER))
+    if (c->parentNode() && document->hasListenerType(Document::ListenerType::DOMNodeInserted))
         c->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeInsertedEvent, Event::CanBubble::Yes, c->parentNode()));
 
     // dispatch the DOMNodeInsertedIntoDocument event to all descendants
-    if (c->isConnected() && document->hasListenerType(Document::DOMNODEINSERTEDINTODOCUMENT_LISTENER)) {
+    if (c->isConnected() && document->hasListenerType(Document::ListenerType::DOMNodeInsertedIntoDocument)) {
         for (; c; c = NodeTraversal::next(*c, &child))
             c->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeInsertedIntoDocumentEvent, Event::CanBubble::No));
     }
@@ -950,11 +950,11 @@ static void dispatchChildRemovalEvents(Ref<Node>& child)
     Ref<Document> document = child->document();
 
     // dispatch pre-removal mutation events
-    if (child->parentNode() && document->hasListenerType(Document::DOMNODEREMOVED_LISTENER))
+    if (child->parentNode() && document->hasListenerType(Document::ListenerType::DOMNodeRemoved))
         child->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeRemovedEvent, Event::CanBubble::Yes, child->parentNode()));
 
     // dispatch the DOMNodeRemovedFromDocument event to all descendants
-    if (child->isConnected() && document->hasListenerType(Document::DOMNODEREMOVEDFROMDOCUMENT_LISTENER)) {
+    if (child->isConnected() && document->hasListenerType(Document::ListenerType::DOMNodeRemovedFromDocument)) {
         for (RefPtr<Node> currentNode = child.copyRef(); currentNode; currentNode = NodeTraversal::next(*currentNode, child.ptr()))
             currentNode->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeRemovedFromDocumentEvent, Event::CanBubble::No));
     }

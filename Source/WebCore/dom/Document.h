@@ -940,27 +940,27 @@ public:
     // keep track of what types of event listeners are registered, so we don't
     // dispatch events unnecessarily
     // FIXME: Consider using OptionSet.
-    enum ListenerType {
-        DOMSUBTREEMODIFIED_LISTENER          = 1 << 0,
-        DOMNODEINSERTED_LISTENER             = 1 << 1,
-        DOMNODEREMOVED_LISTENER              = 1 << 2,
-        DOMNODEREMOVEDFROMDOCUMENT_LISTENER  = 1 << 3,
-        DOMNODEINSERTEDINTODOCUMENT_LISTENER = 1 << 4,
-        DOMCHARACTERDATAMODIFIED_LISTENER    = 1 << 5,
-        OVERFLOWCHANGED_LISTENER             = 1 << 6,
-        TRANSITIONEND_LISTENER               = 1 << 7,
-        SCROLL_LISTENER                      = 1 << 8,
-        FORCEWILLBEGIN_LISTENER              = 1 << 9,
-        FORCECHANGED_LISTENER                = 1 << 10,
-        FORCEDOWN_LISTENER                   = 1 << 11,
-        FORCEUP_LISTENER                     = 1 << 12,
-        FOCUSIN_LISTENER                     = 1 << 13,
-        FOCUSOUT_LISTENER                    = 1 << 14,
-        CSS_TRANSITION_LISTENER              = 1 << 15,
-        CSS_ANIMATION_LISTENER               = 1 << 16
+    enum class ListenerType : uint16_t {
+        DOMSubtreeModified = 1 << 0,
+        DOMNodeInserted = 1 << 1,
+        DOMNodeRemoved = 1 << 2,
+        DOMNodeRemovedFromDocument = 1 << 3,
+        DOMNodeInsertedIntoDocument = 1 << 4,
+        DOMCharacterDataModified = 1 << 5,
+        OverflowChanged = 1 << 6,
+        Scroll = 1 << 7,
+        ForceWillBegin = 1 << 8,
+        ForceChanged = 1 << 9,
+        ForceDown = 1 << 10,
+        ForceUp = 1 << 11,
+        FocusIn = 1 << 12,
+        FocusOut = 1 << 13,
+        CSSTransition = 1 << 14,
+        CSSAnimation = 1 << 15,
     };
 
-    bool hasListenerType(ListenerType listenerType) const { return (m_listenerTypes & listenerType); }
+    bool hasListenerType(ListenerType listenerType) const { return m_listenerTypes.contains(listenerType); }
+    bool hasAnyListenerOfType(OptionSet<ListenerType> listenerTypes) const { return m_listenerTypes.containsAny(listenerTypes); }
     bool hasListenerTypeForEventType(PlatformEventType) const;
     void addListenerTypeIfNeeded(const AtomString& eventType);
 
@@ -1858,7 +1858,7 @@ private:
     void setVisualUpdatesAllowed(bool);
     void visualUpdatesSuppressionTimerFired();
 
-    void addListenerType(ListenerType listenerType) { m_listenerTypes |= listenerType; }
+    void addListenerType(ListenerType listenerType) { m_listenerTypes.add(listenerType); }
 
     void didAssociateFormControlsTimerFired();
 
@@ -2246,7 +2246,7 @@ private:
     unsigned m_disabledFieldsetElementsCount { 0 };
     unsigned m_dataListElementCount { 0 };
 
-    unsigned m_listenerTypes { 0 };
+    OptionSet<ListenerType> m_listenerTypes;
     unsigned m_referencingNodeCount { 0 };
     int m_loadEventDelayCount { 0 };
     unsigned m_lastStyleUpdateSizeForTesting { 0 };

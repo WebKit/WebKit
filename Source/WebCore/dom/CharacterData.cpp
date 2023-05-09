@@ -49,8 +49,8 @@ CharacterData::~CharacterData()
 static bool canUseSetDataOptimization(const CharacterData& node)
 {
     auto& document = node.document();
-    return !document.hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER) && !document.hasMutationObserversOfType(MutationObserverOptionType::CharacterData)
-        && !document.hasListenerType(Document::DOMSUBTREEMODIFIED_LISTENER);
+    return !document.hasListenerType(Document::ListenerType::DOMCharacterDataModified) && !document.hasMutationObserversOfType(MutationObserverOptionType::CharacterData)
+        && !document.hasListenerType(Document::ListenerType::DOMSubtreeModified);
 }
 
 void CharacterData::setData(const String& data)
@@ -211,7 +211,7 @@ void CharacterData::dispatchModifiedEvent(const String& oldData)
         mutationRecipients->enqueueMutationRecord(MutationRecord::createCharacterData(*this, oldData));
 
     if (!isInShadowTree()) {
-        if (document().hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER))
+        if (document().hasListenerType(Document::ListenerType::DOMCharacterDataModified))
             dispatchScopedEvent(MutationEvent::create(eventNames().DOMCharacterDataModifiedEvent, Event::CanBubble::Yes, nullptr, oldData, m_data));
         dispatchSubtreeModifiedEvent();
     }

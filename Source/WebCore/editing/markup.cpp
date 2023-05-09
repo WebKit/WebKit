@@ -1458,11 +1458,8 @@ static inline bool hasOneTextChild(ContainerNode& node)
 
 static inline bool hasMutationEventListeners(const Document& document)
 {
-    return document.hasListenerType(Document::DOMSUBTREEMODIFIED_LISTENER)
-        || document.hasListenerType(Document::DOMNODEINSERTED_LISTENER)
-        || document.hasListenerType(Document::DOMNODEREMOVED_LISTENER)
-        || document.hasListenerType(Document::DOMNODEREMOVEDFROMDOCUMENT_LISTENER)
-        || document.hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER);
+    return document.hasAnyListenerOfType({ Document::ListenerType::DOMSubtreeModified, Document::ListenerType::DOMNodeInserted,
+        Document::ListenerType::DOMNodeRemoved, Document::ListenerType::DOMNodeRemovedFromDocument, Document::ListenerType::DOMCharacterDataModified });
 }
 
 // We can use setData instead of replacing Text node as long as script can't observe the difference.

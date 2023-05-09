@@ -2433,7 +2433,7 @@ void Node::dispatchSubtreeModifiedEvent()
 
     ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(*this));
 
-    if (!document().hasListenerType(Document::DOMSUBTREEMODIFIED_LISTENER))
+    if (!document().hasListenerType(Document::ListenerType::DOMSubtreeModified))
         return;
     const AtomString& subtreeModifiedEventName = eventNames().DOMSubtreeModifiedEvent;
     if (!parentNode() && !hasEventListeners(subtreeModifiedEventName))

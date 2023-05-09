@@ -290,7 +290,7 @@ public:
         , m_hadHorizontalLayoutOverflow(false)
         , m_hadVerticalLayoutOverflow(false)
     {
-        m_shouldDispatchEvent = !m_block->isAnonymous() && m_block->hasNonVisibleOverflow() && m_block->document().hasListenerType(Document::OVERFLOWCHANGED_LISTENER);
+        m_shouldDispatchEvent = !m_block->isAnonymous() && m_block->hasNonVisibleOverflow() && m_block->document().hasListenerType(Document::ListenerType::OverflowChanged);
         if (m_shouldDispatchEvent) {
             m_hadHorizontalLayoutOverflow = m_block->hasHorizontalLayoutOverflow();
             m_hadVerticalLayoutOverflow = m_block->hasVerticalLayoutOverflow();

@@ -3631,7 +3631,7 @@ void Element::runFocusingStepsForAutofocus()
 
 void Element::dispatchFocusInEventIfNeeded(RefPtr<Element>&& oldFocusedElement)
 {
-    if (!document().hasListenerType(Document::FOCUSIN_LISTENER))
+    if (!document().hasListenerType(Document::ListenerType::FocusIn))
         return;
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed() || !isInWebProcess());
     dispatchScopedEvent(FocusEvent::create(eventNames().focusinEvent, Event::CanBubble::Yes, Event::IsCancelable::No, document().windowProxy(), 0, WTFMove(oldFocusedElement)));
@@ -3639,7 +3639,7 @@ void Element::dispatchFocusInEventIfNeeded(RefPtr<Element>&& oldFocusedElement)
 
 void Element::dispatchFocusOutEventIfNeeded(RefPtr<Element>&& newFocusedElement)
 {
-    if (!document().hasListenerType(Document::FOCUSOUT_LISTENER))
+    if (!document().hasListenerType(Document::ListenerType::FocusOut))
         return;
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed() || !isInWebProcess());
     dispatchScopedEvent(FocusEvent::create(eventNames().focusoutEvent, Event::CanBubble::Yes, Event::IsCancelable::No, document().windowProxy(), 0, WTFMove(newFocusedElement)));
@@ -3668,7 +3668,7 @@ void Element::dispatchWebKitImageReadyEventForTesting()
 bool Element::dispatchMouseForceWillBegin()
 {
 #if ENABLE(MOUSE_FORCE_EVENTS)
-    if (!document().hasListenerType(Document::FORCEWILLBEGIN_LISTENER))
+    if (!document().hasListenerType(Document::ListenerType::ForceWillBegin))
         return false;
 
     auto* frame = document().frame();
