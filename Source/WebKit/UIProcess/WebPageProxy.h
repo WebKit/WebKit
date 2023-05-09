@@ -971,6 +971,9 @@ public:
     void requestDocumentEditingContext(DocumentEditingContextRequest, CompletionHandler<void(DocumentEditingContext)>&&);
     void generateSyntheticEditingCommand(SyntheticEditingCommandType);
     void showDataDetectorsUIForPositionInformation(const InteractionInformationAtPosition&);
+
+    void insertionPointColorDidChange();
+
 #if ENABLE(DRAG_SUPPORT)
     void didHandleDragStartRequest(bool started);
     void didHandleAdditionalDragItemsRequest(bool added);

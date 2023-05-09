@@ -1344,6 +1344,12 @@ static std::optional<Color>& cachedFocusRingColor()
     return color;
 }
 
+static std::optional<Color>& cachedInsertionPointColor()
+{
+    static NeverDestroyed<std::optional<Color>> color;
+    return color;
+}
+
 Color RenderThemeIOS::systemFocusRingColor()
 {
     if (!cachedFocusRingColor().has_value()) {
@@ -1356,6 +1362,36 @@ Color RenderThemeIOS::systemFocusRingColor()
 Color RenderThemeIOS::platformFocusRingColor(OptionSet<StyleColorOptions>) const
 {
     return systemFocusRingColor();
+}
+
+Color RenderThemeIOS::insertionPointColor()
+{
+    if (!cachedInsertionPointColor().has_value())
+        cachedInsertionPointColor() = Color::transparentBlack;
+    return *cachedInsertionPointColor();
+}
+
+Color RenderThemeIOS::autocorrectionReplacementMarkerColor(const RenderText& renderer) const
+{
+    auto caretColor = CaretBase::computeCaretColor(renderer.style(), renderer.textNode());
+    if (!caretColor.isValid())
+        caretColor = insertionPointColor();
+
+    auto hsla = caretColor.toColorTypeLossy<HSLA<float>>().resolved();
+    if (hsla.hue) {
+        hsla.saturation = 100;
+        if (renderer.styleColorOptions().contains(StyleColorOptions::UseDarkAppearance)) {
+            hsla.lightness = 50;
+            hsla.alpha = 0.5f;
+        } else {
+            hsla.lightness = 41;
+            hsla.alpha = 0.3f;
+        }
+
+        return hsla;
+    }
+
+    return caretColor.colorWithAlpha(0.3);
 }
 
 Color RenderThemeIOS::platformAnnotationHighlightColor(OptionSet<StyleColorOptions>) const
@@ -1514,6 +1550,11 @@ void RenderThemeIOS::setCSSValueToSystemColorMap(CSSValueToSystemColorMap&& colo
 void RenderThemeIOS::setFocusRingColor(const Color& color)
 {
     cachedFocusRingColor() = color;
+}
+
+void RenderThemeIOS::setInsertionPointColor(const Color& color)
+{
+    cachedInsertionPointColor() = color;
 }
 
 Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOptions> options) const

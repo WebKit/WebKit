@@ -304,6 +304,8 @@ private:
 #endif
 
     WebCore::Color contentViewBackgroundColor() final;
+    WebCore::Color insertionPointColor() final;
+
     String sceneID() final;
 
     void beginTextRecognitionForFullscreenVideo(ShareableBitmap::Handle&&, AVPlayerViewController *) final;

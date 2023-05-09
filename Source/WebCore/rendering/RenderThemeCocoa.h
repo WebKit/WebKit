@@ -47,7 +47,6 @@ protected:
 
     Color platformSpellingMarkerColor(OptionSet<StyleColorOptions>) const override;
     Color platformDictationAlternativesMarkerColor(OptionSet<StyleColorOptions>) const override;
-    Color platformAutocorrectionReplacementMarkerColor(OptionSet<StyleColorOptions>) const override;
     Color platformGrammarMarkerColor(OptionSet<StyleColorOptions>) const override;
 
 private:

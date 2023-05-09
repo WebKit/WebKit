@@ -186,7 +186,7 @@ public:
 
     Color datePlaceholderTextColor(const Color& textColor, const Color& backgroundColor) const;
 
-    Color documentMarkerLineColor(DocumentMarkerLineStyleMode, OptionSet<StyleColorOptions>) const;
+    Color documentMarkerLineColor(const RenderText&, DocumentMarkerLineStyleMode) const;
 
     WEBCORE_EXPORT Color focusRingColor(OptionSet<StyleColorOptions>) const;
     virtual Color platformFocusRingColor(OptionSet<StyleColorOptions>) const { return Color::black; }
@@ -445,13 +445,14 @@ protected:
 
     virtual ColorCache& colorCache(OptionSet<StyleColorOptions>) const;
 
+    virtual Color autocorrectionReplacementMarkerColor(const RenderText&) const;
+
 private:
     StyleAppearance autoAppearanceForElement(RenderStyle&, const Element*) const;
     StyleAppearance adjustAppearanceForElement(RenderStyle&, const Element*, StyleAppearance) const;
 
     Color spellingMarkerColor(OptionSet<StyleColorOptions>) const;
     Color dictationAlternativesMarkerColor(OptionSet<StyleColorOptions>) const;
-    Color autocorrectionReplacementMarkerColor(OptionSet<StyleColorOptions>) const;
     Color grammarMarkerColor(OptionSet<StyleColorOptions>) const;
 
     mutable HashMap<uint8_t, ColorCache, DefaultHash<uint8_t>, WTF::UnsignedWithZeroKeyHashTraits<uint8_t>> m_colorCacheMap;

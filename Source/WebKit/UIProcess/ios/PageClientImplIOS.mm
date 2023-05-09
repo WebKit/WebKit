@@ -1078,6 +1078,11 @@ WebCore::Color PageClientImpl::contentViewBackgroundColor()
     return color;
 }
 
+Color PageClientImpl::insertionPointColor()
+{
+    return roundAndClampToSRGBALossy([m_webView _insertionPointColor].CGColor);
+}
+
 void PageClientImpl::requestScrollToRect(const FloatRect& targetRect, const FloatPoint& origin)
 {
     [m_contentView _scrollToRect:targetRect withOrigin:origin minimumScrollDistance:0];

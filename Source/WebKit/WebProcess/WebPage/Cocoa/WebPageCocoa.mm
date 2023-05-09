@@ -101,6 +101,9 @@ void WebPage::platformInitialize(const WebPageCreationParameters& parameters)
     if (!WebProcess::singleton().isLockdownModeEnabled())
         CARenderServerGetServerPort(nullptr);
 #endif
+#if PLATFORM(IOS_FAMILY)
+    setInsertionPointColor(parameters.insertionPointColor);
+#endif
 }
 
 void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)

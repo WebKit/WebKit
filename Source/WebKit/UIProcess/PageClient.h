@@ -517,6 +517,8 @@ public:
 #endif
 
     virtual WebCore::Color contentViewBackgroundColor() = 0;
+    virtual WebCore::Color insertionPointColor() = 0;
+
     virtual String sceneID() = 0;
 
     virtual void beginTextRecognitionForFullscreenVideo(ShareableBitmap::Handle&&, AVPlayerViewController *) = 0;
