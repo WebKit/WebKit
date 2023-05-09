@@ -34,7 +34,7 @@ namespace WebKit {
 
 RetainPtr<UIAlertController> createUIAlertController(NSString *title, NSString *message)
 {
-    auto alert = adoptNS([UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert]);
+    auto *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
     [alert _setTitleMaximumLineCount:0]; // No limit, we need to make sure the title doesn't get truncated.
     return alert;
 }
