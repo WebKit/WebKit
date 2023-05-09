@@ -200,7 +200,18 @@ function(GI_DOCGEN namespace toml)
         COMMENT "Generating documentation: ${namespace}"
         WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
         DEPENDS ${docdeps}
+        DEPFILE ${contentdir}.dep
         VERBATIM
+        COMMAND "${GIDocgen_EXE}" gen-deps
+            ${common_flags}
+            --content-dir "${contentdir}"
+            --content-dir "${toml_dir}"
+            --config "${toml_path}"
+            "${gir_path}"
+            "${contentdir}.depfiles"
+        COMMAND "${Python_EXECUTABLE}" -c
+            "import sys; print(sys.argv[1], ':', ' '.join((l[:-1] for l in sys.stdin.readlines())))"
+            "${outdir}/index.html" < "${contentdir}.depfiles" > "${contentdir}.dep"
         COMMAND "${GIDocgen_EXE}" generate
             ${common_flags}
             --no-namespace-dir
