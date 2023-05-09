@@ -103,7 +103,8 @@ private:
 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resolveBounds) object:nil];
     [_pixelBufferAttributes release];
-    [self setFullscreenModel:nil];
+    if (_fullscreenModel)
+        _fullscreenModel->removeClient(*_fullscreenModelClient);
     [super dealloc];
 }
 
