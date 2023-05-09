@@ -269,6 +269,42 @@ CanvasEllipseFill = Utilities.createClass(
     }
 });
 
+CanvasSheetCells = Utilities.createClass(
+    function(stage) {
+        this._start = Stage.randomPosition(stage.size)
+        this._color = Stage.randomColor()
+        this._cell_width = Stage.randomInt(90, 150)
+        this._cell_height = Stage.randomInt(20, 30)
+        this._font = Stage.randomInt(10, 40) + 'px Arial';
+        this._border_style_index = Stage.randomInt(0, 3);
+        this._color = Stage.randomColor();
+    }, {
+
+    draw: function(context) {
+        context.save();
+        rectPath = new Path2D();
+        rectPath.rect(this._start.x, this._start.y, this._cell_width, this._cell_height);
+        context.clip(rectPath);
+        context.beginPath();
+        if (this._border_style_index === 0) {
+            context.setLineDash([5, 5]);
+        } else if (this._border_style_index === 1) {
+            context.globalAlpha = 0.5;
+        } else {
+            context.strokeStyle = "#000000";
+        }
+        context.rect(this._start.x, this._start.y, this._cell_width, this._cell_height);
+        context.stroke();
+        context.globalAlpha = 0.5;
+        context.fillStyle = this._color;
+        context.fillRect(this._start.x, this._start.y, this._cell_width, this._cell_height);
+        context.globalAlpha = 1;
+        context.font = this._font;
+        context.fillText("hello world", this._start.x, this._start.y + this._cell_height);
+        context.restore();
+    }
+});
+
 CanvasStroke = Utilities.createClass(
     function (stage) {
         this._object = new (Stage.randomElementInArray(this.objectTypes))(stage);
@@ -459,6 +495,9 @@ CanvasPathBenchmark = Utilities.createSubclass(Benchmark,
             break;
         case "ellipseFill":
             stage = new SimpleCanvasStage(CanvasEllipseFill);
+            break;
+        case "sheetCells":
+            stage = new SimpleCanvasStage(CanvasSheetCells);
             break;
         case "strokes":
             stage = new SimpleCanvasStage(CanvasStroke);
