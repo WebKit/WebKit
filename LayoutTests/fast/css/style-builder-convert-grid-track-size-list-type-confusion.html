@@ -1,0 +1,9 @@
+<script>
+  onload = () => {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    d.attributeStyleMap.set('grid-auto-columns', 'fit-content(calc(0px + 0cqmin))');
+  };
+</script>
+<div id="d"></div>
+<p>PASS if no crash.</p>
