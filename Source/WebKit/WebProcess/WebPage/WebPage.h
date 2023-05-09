@@ -816,6 +816,8 @@ public:
     bool screenIsBeingCaptured() const { return m_screenIsBeingCaptured; }
     void setScreenIsBeingCaptured(bool);
 
+    void setInsertionPointColor(WebCore::Color);
+
     double minimumPageScaleFactor() const;
     double maximumPageScaleFactor() const;
     double maximumPageScaleFactorIgnoringAlwaysScalable() const;

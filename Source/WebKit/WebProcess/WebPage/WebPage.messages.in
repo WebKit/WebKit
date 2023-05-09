@@ -62,6 +62,8 @@ messages -> WebPage LegacyReceiver {
     
     SetScreenIsBeingCaptured(bool captured)
 
+    SetInsertionPointColor(WebCore::Color color)
+
     AttemptSyntheticClick(WebCore::IntPoint point, OptionSet<WebKit::WebEventModifier> modifiers, WebKit::TransactionID lastLayerTreeTransactionId)
     PotentialTapAtPosition(WebKit::TapIdentifier requestID, WebCore::FloatPoint point, bool shouldRequestMagnificationInformation)
     CommitPotentialTap(OptionSet<WebKit::WebEventModifier> modifiers, WebKit::TransactionID lastLayerTreeTransactionId, WebCore::PointerID pointerId)

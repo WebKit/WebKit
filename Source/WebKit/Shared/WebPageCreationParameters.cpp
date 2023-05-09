@@ -110,6 +110,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << keyboardIsAttached;
     encoder << canShowWhileLocked;
     encoder << isCapturingScreen;
+    encoder << insertionPointColor;
 #endif
 #if PLATFORM(COCOA)
     encoder << smartInsertDeleteEnabled;
@@ -405,6 +406,8 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.canShowWhileLocked))
         return std::nullopt;
     if (!decoder.decode(parameters.isCapturingScreen))
+        return std::nullopt;
+    if (!decoder.decode(parameters.insertionPointColor))
         return std::nullopt;
 #endif
 

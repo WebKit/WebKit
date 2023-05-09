@@ -647,6 +647,11 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
         [_scrollView _setIndicatorStyleInternal:UIScrollViewIndicatorStyleBlack];
 }
 
+- (UIColor *)_insertionPointColor
+{
+    return self._textInputTraits.insertionPointColor ?: UIColor.insertionPointColor;
+}
+
 - (void)_videoControlsManagerDidChange
 {
 #if ENABLE(FULLSCREEN_API)

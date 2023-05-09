@@ -5012,6 +5012,11 @@ void WebPage::setScreenIsBeingCaptured(bool captured)
     m_screenIsBeingCaptured = captured;
 }
 
+void WebPage::setInsertionPointColor(WebCore::Color color)
+{
+    RenderThemeIOS::setInsertionPointColor(color);
+}
+
 void WebPage::textInputContextsInRect(FloatRect searchRect, CompletionHandler<void(const Vector<ElementContext>&)>&& completionHandler)
 {
     auto contexts = m_page->editableElementsInRect(searchRect).map([&] (const auto& element) {

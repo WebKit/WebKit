@@ -9183,6 +9183,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.deviceOrientation = m_deviceOrientation;
     parameters.keyboardIsAttached = isInHardwareKeyboardMode();
     parameters.canShowWhileLocked = m_configuration->canShowWhileLocked();
+    parameters.insertionPointColor = pageClient().insertionPointColor();
 #endif
 
 #if PLATFORM(COCOA)

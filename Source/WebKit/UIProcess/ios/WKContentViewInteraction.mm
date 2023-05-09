@@ -3937,6 +3937,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self _updateInteractionTintColor:_traits.get()];
     if (shouldUpdateTextSelection)
         [_textInteractionAssistant activateSelection];
+
+    _page->insertionPointColorDidChange();
 }
 
 #if ENABLE(APP_HIGHLIGHTS)

@@ -1619,6 +1619,11 @@ void WebPageProxy::showDataDetectorsUIForPositionInformation(const InteractionIn
     pageClient().showDataDetectorsUIForPositionInformation(positionInfo);
 }
 
+void WebPageProxy::insertionPointColorDidChange()
+{
+    send(Messages::WebPage::SetInsertionPointColor(pageClient().insertionPointColor()));
+}
+
 Color WebPageProxy::platformUnderPageBackgroundColor() const
 {
     if (auto contentViewBackgroundColor = pageClient().contentViewBackgroundColor(); contentViewBackgroundColor.isValid())

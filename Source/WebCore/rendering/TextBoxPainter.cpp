@@ -847,7 +847,7 @@ void TextBoxPainter<TextBoxPath>::paintPlatformDocumentMarker(const MarkedText& 
         }
     }();
 
-    auto lineStyleColor = RenderTheme::singleton().documentMarkerLineColor(lineStyleMode, m_renderer.styleColorOptions());
+    auto lineStyleColor = RenderTheme::singleton().documentMarkerLineColor(m_renderer, lineStyleMode);
     if (auto* marker = markedText.marker)
         lineStyleColor = lineStyleColor.colorWithAlphaMultipliedBy(marker->opacity());
 

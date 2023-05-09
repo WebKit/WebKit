@@ -269,12 +269,6 @@ Color RenderThemeCocoa::platformDictationAlternativesMarkerColor(OptionSet<Style
     return useDarkMode ? SRGBA<uint8_t> { 40, 145, 255, 217 } : SRGBA<uint8_t> { 0, 122, 255, 191 };
 }
 
-Color RenderThemeCocoa::platformAutocorrectionReplacementMarkerColor(OptionSet<StyleColorOptions> options) const
-{
-    auto useDarkMode = options.contains(StyleColorOptions::UseDarkAppearance);
-    return useDarkMode ? SRGBA<uint8_t> { 40, 145, 255, 217 } : SRGBA<uint8_t> { 0, 122, 255, 191 };
-}
-
 Color RenderThemeCocoa::platformGrammarMarkerColor(OptionSet<StyleColorOptions> options) const
 {
     auto useDarkMode = options.contains(StyleColorOptions::UseDarkAppearance);

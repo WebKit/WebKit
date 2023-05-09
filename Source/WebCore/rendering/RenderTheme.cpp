@@ -2037,8 +2037,9 @@ Color RenderTheme::platformDictationAlternativesMarkerColor(OptionSet<StyleColor
     return Color::green;
 }
 
-Color RenderTheme::autocorrectionReplacementMarkerColor(OptionSet<StyleColorOptions> options) const
+Color RenderTheme::autocorrectionReplacementMarkerColor(const RenderText& renderer) const
 {
+    auto options = renderer.styleColorOptions();
     auto& cache = colorCache(options);
     if (!cache.autocorrectionReplacementMarkerColor.isValid())
         cache.autocorrectionReplacementMarkerColor = platformAutocorrectionReplacementMarkerColor(options);
@@ -2063,8 +2064,10 @@ Color RenderTheme::platformGrammarMarkerColor(OptionSet<StyleColorOptions>) cons
     return Color::green;
 }
 
-Color RenderTheme::documentMarkerLineColor(DocumentMarkerLineStyleMode mode, OptionSet<StyleColorOptions> options) const
+Color RenderTheme::documentMarkerLineColor(const RenderText& renderer, DocumentMarkerLineStyleMode mode) const
 {
+    auto options = renderer.styleColorOptions();
+
     switch (mode) {
     case DocumentMarkerLineStyleMode::Spelling:
         return spellingMarkerColor(options);
@@ -2072,7 +2075,7 @@ Color RenderTheme::documentMarkerLineColor(DocumentMarkerLineStyleMode mode, Opt
     case DocumentMarkerLineStyleMode::TextCheckingDictationPhraseWithAlternatives:
         return dictationAlternativesMarkerColor(options);
     case DocumentMarkerLineStyleMode::AutocorrectionReplacement:
-        return autocorrectionReplacementMarkerColor(options);
+        return autocorrectionReplacementMarkerColor(renderer);
     case DocumentMarkerLineStyleMode::Grammar:
         return grammarMarkerColor(options);
     }

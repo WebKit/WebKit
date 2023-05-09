@@ -185,6 +185,7 @@ struct WebPageCreationParameters {
     bool keyboardIsAttached { false };
     bool canShowWhileLocked { false };
     bool isCapturingScreen { false };
+    WebCore::Color insertionPointColor;
 #endif
 #if PLATFORM(COCOA)
     bool smartInsertDeleteEnabled;
