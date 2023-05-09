@@ -41,7 +41,7 @@ public:
 
     virtual CallbackResult<void> handleEvent(const MediaSessionActionDetails&) = 0;
 
-protected:
+private:
     virtual bool hasCallback() const = 0;
 };
 
