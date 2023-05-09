@@ -51,12 +51,10 @@ PageClientImpl::PageClientImpl(PlayStationWebView& view)
 std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy&)
 {
 #if USE(GRAPHICS_LAYER_WC)
-    if (m_view.page()->preferences().useGPUProcessForDOMRenderingEnabled()
-        || m_view.page()->preferences().useGPUProcessForCanvasRenderingEnabled()
-        || m_view.page()->preferences().useGPUProcessForWebGLEnabled())
-        return makeUnique<DrawingAreaProxyWC>(*m_view.page());
-#endif
+    return makeUnique<DrawingAreaProxyWC>(*m_view.page());
+#else
     return makeUnique<DrawingAreaProxyCoordinatedGraphics>(*m_view.page());
+#endif
 }
 
 void PageClientImpl::setViewNeedsDisplay(const WebCore::Region& region)
