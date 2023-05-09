@@ -1,13 +1,13 @@
 html5lib Parser Test
 
 
-FAIL html5lib_template.html 010950d55f4eccf16e9c4af1d263bb747294c646 assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <template>\n|       content\n|         \"Hello\"" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <template>\n|       content\n|         \"H\"\n|         \"e\"\n|         \"l\"\n|         \"l\"\n|         \"o\""
-FAIL html5lib_template.html a838bd54410cef059a42eea9606356488e16535b assert_equals: expected "#document\n| <html>\n|   <head>\n|     <template>\n|       content\n|         \"Hello\"\n|   <body>" but got "#document\n| <html>\n|   <head>\n|     <template>\n|       content\n|         \"H\"\n|         \"e\"\n|         \"l\"\n|         \"l\"\n|         \"o\"\n|   <body>"
+PASS html5lib_template.html 010950d55f4eccf16e9c4af1d263bb747294c646
+PASS html5lib_template.html a838bd54410cef059a42eea9606356488e16535b
 PASS html5lib_template.html 27fb9111f6675a7e033b867480c0afddcda161a6
-FAIL html5lib_template.html aee883a65775489399a003b2371d58248a6aff6f assert_equals: expected "#document\n| <html>\n|   <head>\n|     <template>\n|       content\n|         \"Hello\"\n|   <body>" but got "#document\n| <html>\n|   <head>\n|     <template>\n|       content\n|         \"H\"\n|         \"e\"\n|         \"l\"\n|         \"l\"\n|         \"o\"\n|   <body>"
+PASS html5lib_template.html aee883a65775489399a003b2371d58248a6aff6f
 PASS html5lib_template.html 89b17b54ab343191bf74ef5434f4d2cfac40ea97
 PASS html5lib_template.html c4433556c7414cfd71f27b420f1ffc4348774f5e
-FAIL html5lib_template.html 3dcce7d97108b3e9ea7fa96f240ac62bf280e74b assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <div>\n|       <template>\n|         content\n|           \"Hello\"" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <div>\n|       <template>\n|         content\n|           \"H\"\n|           \"e\"\n|           \"l\"\n|           \"l\"\n|           \"o\""
+PASS html5lib_template.html 3dcce7d97108b3e9ea7fa96f240ac62bf280e74b
 PASS html5lib_template.html a1f587f7ea85ccfe294bd45bfb501e850cb979e0
 PASS html5lib_template.html cd26a7832f13bdc135697321ca6c2fecdca6ef5d
 PASS html5lib_template.html e30571d90b0e56864499961eb7be955994cf72e2
@@ -70,7 +70,7 @@ PASS html5lib_template.html 9bd9687a65f258adc24450fc5cbd781fff6c038a
 PASS html5lib_template.html db1baeb846d718c773324746524fbd68f2e9436e
 PASS html5lib_template.html 4b0ce46c611dbcc016db272ef007f302bee0c897
 PASS html5lib_template.html 1a735e1c7f28f8701f3c7fd5e9404b8911916086
-FAIL html5lib_template.html 0686eedec06b2db1dc283fac92c1ef1a33114c71 assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <template>\n|       content\n|         <template>\n|           content\n|             <b>\n|               <template>\n|                 content\n|         \"text\"" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <template>\n|       content\n|         <template>\n|           content\n|             <b>\n|               <template>\n|                 content\n|         \"t\"\n|         \"e\"\n|         \"x\"\n|         \"t\""
+PASS html5lib_template.html 0686eedec06b2db1dc283fac92c1ef1a33114c71
 PASS html5lib_template.html d4dfb87ce626f12923056a6cd77448eaf4660ac2
 PASS html5lib_template.html 1f295920f2937b2c8023b3761c43a0d4d9e5353c
 PASS html5lib_template.html 3b91fa08fad923d387d924cff37fbf6b4c3a5712
@@ -102,220 +102,10 @@ PASS html5lib_template.html b79387a54c3b136db0f28ed96555ff683b3947fe
 PASS html5lib_template.html c477a29a4deb32d072a415fa809a84a4f2beee0c
 PASS html5lib_template.html 26e4480c08e1f5f7b6ac8b8c1832ab0312e3b7c5
 PASS html5lib_template.html 24b3b50fdd0bf8d5cf2ebaa6bf502d7bcfde1da4
-FAIL html5lib_template.html d3704c68528357189eb5826ab66eea071d6137a5 assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <table>\n|       <tbody>\n|         <tr>\n|           <td>\n|             <select>\n|               <template>\n|                 content\n|                   \"Foo\"\n|       <caption>\n|         \"A\"" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <table>\n|       <tbody>\n|         <tr>\n|           <td>\n|             <select>\n|               <template>\n|                 content\n|                   \"F\"\n|                   \"o\"\n|                   \"o\"\n|       <caption>\n|         \"A\""
+PASS html5lib_template.html d3704c68528357189eb5826ab66eea071d6137a5
 PASS html5lib_template.html d958f7d44faf772d1fb60f1a8f186f837ca735d9
 PASS html5lib_template.html 3fc4d97fa68fc2658356bdbd4e051c867de8de53
-FAIL html5lib_template.html 94820107bbf3fab3f82de1f717e8413aead7d3a6 assert_equals: expected "#document\n| <html>\n|   <head>\n|     <template>\n|       content\n|         \"Foo\"\n|   <body>" but got "#document\n| <html>\n|   <head>\n|     <template>\n|       content\n|         \"F\"\n|         \"o\"\n|         \"o\"\n|   <body>"
+PASS html5lib_template.html 94820107bbf3fab3f82de1f717e8413aead7d3a6
 PASS html5lib_template.html 657c00ebdda37ae060cc69633ed98482ccc29e18
 PASS html5lib_template.html 649fc955a4b60ab2a5b881d94c9493eb4a545002
-010950d55f4eccf16e9c4af1d263bb747294c646
-
-Input
-
-<body><template>Hello</template>
-Expected
-
-#document
-| <html>
-|   <head>
-|   <body>
-|     <template>
-|       content
-|         "Hello"
-Actual
-
-#document
-| <html>
-|   <head>
-|   <body>
-|     <template>
-|       content
-|         "H"
-|         "e"
-|         "l"
-|         "l"
-|         "o"
-a838bd54410cef059a42eea9606356488e16535b
-
-Input
-
-<template>Hello</template>
-Expected
-
-#document
-| <html>
-|   <head>
-|     <template>
-|       content
-|         "Hello"
-|   <body>
-Actual
-
-#document
-| <html>
-|   <head>
-|     <template>
-|       content
-|         "H"
-|         "e"
-|         "l"
-|         "l"
-|         "o"
-|   <body>
-aee883a65775489399a003b2371d58248a6aff6f
-
-Input
-
-<html><template>Hello</template>
-Expected
-
-#document
-| <html>
-|   <head>
-|     <template>
-|       content
-|         "Hello"
-|   <body>
-Actual
-
-#document
-| <html>
-|   <head>
-|     <template>
-|       content
-|         "H"
-|         "e"
-|         "l"
-|         "l"
-|         "o"
-|   <body>
-3dcce7d97108b3e9ea7fa96f240ac62bf280e74b
-
-Input
-
-<div><template></div>Hello
-Expected
-
-#document
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       <template>
-|         content
-|           "Hello"
-Actual
-
-#document
-| <html>
-|   <head>
-|   <body>
-|     <div>
-|       <template>
-|         content
-|           "H"
-|           "e"
-|           "l"
-|           "l"
-|           "o"
-0686eedec06b2db1dc283fac92c1ef1a33114c71
-
-Input
-
-<body><template><template><b><template></template></template>text</template>
-Expected
-
-#document
-| <html>
-|   <head>
-|   <body>
-|     <template>
-|       content
-|         <template>
-|           content
-|             <b>
-|               <template>
-|                 content
-|         "text"
-Actual
-
-#document
-| <html>
-|   <head>
-|   <body>
-|     <template>
-|       content
-|         <template>
-|           content
-|             <b>
-|               <template>
-|                 content
-|         "t"
-|         "e"
-|         "x"
-|         "t"
-d3704c68528357189eb5826ab66eea071d6137a5
-
-Input
-
-<body><table><tr><td><select><template>Foo</template><caption>A</table>
-Expected
-
-#document
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <tbody>
-|         <tr>
-|           <td>
-|             <select>
-|               <template>
-|                 content
-|                   "Foo"
-|       <caption>
-|         "A"
-Actual
-
-#document
-| <html>
-|   <head>
-|   <body>
-|     <table>
-|       <tbody>
-|         <tr>
-|           <td>
-|             <select>
-|               <template>
-|                 content
-|                   "F"
-|                   "o"
-|                   "o"
-|       <caption>
-|         "A"
-94820107bbf3fab3f82de1f717e8413aead7d3a6
-
-Input
-
-<head></head><template>Foo</template>
-Expected
-
-#document
-| <html>
-|   <head>
-|     <template>
-|       content
-|         "Foo"
-|   <body>
-Actual
-
-#document
-| <html>
-|   <head>
-|     <template>
-|       content
-|         "F"
-|         "o"
-|         "o"
-|   <body>
 
