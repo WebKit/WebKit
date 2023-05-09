@@ -182,6 +182,9 @@ void OffscreenCanvas::setSize(const IntSize& newSize)
 {
     CanvasBase::setSize(newSize);
     reset();
+
+    if (m_context && m_context->isGPUBased())
+        downcast<GPUBasedCanvasRenderingContext>(*m_context).reshape(width(), height());
 }
 
 #if ENABLE(WEBGL)
