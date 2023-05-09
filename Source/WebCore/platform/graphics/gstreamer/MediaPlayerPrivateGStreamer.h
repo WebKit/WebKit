@@ -191,6 +191,7 @@ public:
     std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
     void acceleratedRenderingStateChanged() final;
     bool performTaskAtMediaTime(Function<void()>&&, const MediaTime&) override;
+    void isLoopingChanged() final;
 
 #if USE(TEXTURE_MAPPER_GL)
     PlatformLayer* platformLayer() const override;
@@ -320,8 +321,9 @@ protected:
     void ensureAudioSourceProvider();
     void checkPlayingConsistency();
 
-    virtual bool doSeek(const MediaTime& position, float rate, GstSeekFlags);
+    virtual bool doSeek(const MediaTime& position, float rate);
     void invalidateCachedPosition() const;
+    void ensureSeekFlags();
 
     static void sourceSetupCallback(MediaPlayerPrivateGStreamer*, GstElement*);
     static void videoChangedCallback(MediaPlayerPrivateGStreamer*);
@@ -399,6 +401,7 @@ protected:
 #endif
 
     std::optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
+    GstSeekFlags m_seekFlags;
 
     String errorMessage() const override { return m_errorMessage; }
 

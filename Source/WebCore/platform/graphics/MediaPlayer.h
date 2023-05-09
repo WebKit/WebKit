@@ -670,6 +670,7 @@ public:
     void mediaEngineUpdated() { client().mediaPlayerEngineUpdated(); }
     void resourceNotSupported() { client().mediaPlayerResourceNotSupported(); }
     bool isLooping() const { return client().mediaPlayerIsLooping(); }
+    void isLoopingChanged();
 
     void remoteEngineFailedToLoad();
     SecurityOriginData documentSecurityOrigin() const;

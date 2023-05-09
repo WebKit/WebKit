@@ -198,6 +198,7 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
 
     ensureGStreamerInitialized();
     m_audioSink = createAudioSink();
+    ensureSeekFlags();
 
 #if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
     auto& sharedDisplay = PlatformDisplay::sharedDisplay();
@@ -402,6 +403,10 @@ void MediaPlayerPrivateGStreamer::play()
         m_preload = MediaPlayer::Preload::Auto;
         updateDownloadBufferingFlag();
         GST_INFO_OBJECT(pipeline(), "Play");
+        if (m_player->isLooping()) {
+            GST_DEBUG_OBJECT(pipeline(), "Scheduling initial SEGMENT seek");
+            doSeek(playbackPosition(), m_playbackRate);
+        }
     } else
         loadingFailed(MediaPlayer::NetworkState::Empty);
 }
@@ -442,7 +447,7 @@ bool MediaPlayerPrivateGStreamer::paused() const
     return paused;
 }
 
-bool MediaPlayerPrivateGStreamer::doSeek(const MediaTime& position, float rate, GstSeekFlags seekFlags)
+bool MediaPlayerPrivateGStreamer::doSeek(const MediaTime& position, float rate)
 {
     // Default values for rate >= 0.
     MediaTime startTime = position, endTime = MediaTime::invalidTime();
@@ -461,9 +466,16 @@ bool MediaPlayerPrivateGStreamer::doSeek(const MediaTime& position, float rate, 
         g_object_set(m_downloadBuffer.get(), "high-percent", 0, nullptr);
     }
 
-    GST_DEBUG_OBJECT(pipeline(), "[Seek] Performing actual seek to %" GST_TIME_FORMAT " (endTime: %" GST_TIME_FORMAT ") at rate %f", GST_TIME_ARGS(toGstClockTime(startTime)), GST_TIME_ARGS(toGstClockTime(endTime)), rate);
-    return gst_element_seek(m_pipeline.get(), rate, GST_FORMAT_TIME, seekFlags,
-        GST_SEEK_TYPE_SET, toGstClockTime(startTime), GST_SEEK_TYPE_SET, toGstClockTime(endTime));
+    auto seekFlags = m_seekFlags;
+    if (paused() && !m_isEndReached && m_player->isLooping()) {
+        GST_WARNING_OBJECT(pipeline(), "Segment non-flushing seek attempt on a paused pipeline, video looping will not work as expected");
+        seekFlags = static_cast<GstSeekFlags>((seekFlags | GST_SEEK_FLAG_FLUSH) & ~GST_SEEK_FLAG_SEGMENT);
+    }
+
+    auto seekStart = toGstClockTime(startTime);
+    auto seekStop = toGstClockTime(endTime);
+    GST_DEBUG_OBJECT(pipeline(), "[Seek] Performing actual seek to %" GST_TIMEP_FORMAT " (endTime: %" GST_TIMEP_FORMAT ") at rate %f", &seekStart, &seekStop, rate);
+    return gst_element_seek(m_pipeline.get(), rate, GST_FORMAT_TIME, seekFlags, GST_SEEK_TYPE_SET, seekStart, GST_SEEK_TYPE_SET, seekStop);
 }
 
 void MediaPlayerPrivateGStreamer::seek(const MediaTime& mediaTime)
@@ -501,9 +513,24 @@ void MediaPlayerPrivateGStreamer::seek(const MediaTime& mediaTime)
         GST_DEBUG_OBJECT(pipeline(), "[Seek] cannot seek, current state change is %s", gst_element_state_change_return_get_name(getStateResult));
         return;
     }
+
+    if (m_player->isLooping() && state > GST_STATE_PAUSED) {
+        // Segment seeking is synchronous, the pipeline state is not changed, no flush is done.
+        m_isSeeking = true;
+        if (!doSeek(time, m_player->rate())) {
+            GST_DEBUG_OBJECT(pipeline(), "[Seek] seeking to %s failed", toString(time).utf8().data());
+            return;
+        }
+        m_isEndReached = false;
+        m_isSeeking = false;
+        m_cachedPosition = MediaTime::zeroTime();
+        timeChanged();
+        return;
+    }
+
     if (getStateResult == GST_STATE_CHANGE_ASYNC || state < GST_STATE_PAUSED || m_isEndReached) {
         m_isSeekPending = true;
-        if (m_isEndReached) {
+        if (m_isEndReached && !m_player->isLooping()) {
             GST_DEBUG_OBJECT(pipeline(), "[Seek] reset pipeline");
             m_shouldResetPipeline = true;
             if (!changePipelineState(GST_STATE_PAUSED))
@@ -511,7 +538,7 @@ void MediaPlayerPrivateGStreamer::seek(const MediaTime& mediaTime)
         }
     } else {
         // We can seek now.
-        if (!doSeek(time, m_player->rate(), static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE))) {
+        if (!doSeek(time, m_player->rate())) {
             GST_DEBUG_OBJECT(pipeline(), "[Seek] seeking to %s failed", toString(time).utf8().data());
             return;
         }
@@ -535,7 +562,7 @@ void MediaPlayerPrivateGStreamer::updatePlaybackRate()
     GST_INFO_OBJECT(pipeline(), mute ? "Need to mute audio" : "Do not need to mute audio");
 
     if (m_lastPlaybackRate != m_playbackRate) {
-        if (doSeek(playbackPosition(), m_playbackRate, static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH))) {
+        if (doSeek(playbackPosition(), m_playbackRate)) {
             g_object_set(m_pipeline.get(), "mute", mute, nullptr);
             m_lastPlaybackRate = m_playbackRate;
         } else {
@@ -1751,7 +1778,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         MediaTime duration = durationMediaTime();
         GstClockTime gstreamerPosition = gstreamerPositionFromSinks();
         bool eosFlagIsSetInSink = false;
-        if (m_videoSink) {
+        if (m_player->isVideoPlayer()) {
             GRefPtr<GstPad> sinkPad = adoptGRef(gst_element_get_static_pad(m_videoSink.get(), "sink"));
             eosFlagIsSetInSink = sinkPad && GST_PAD_IS_EOS(sinkPad.get());
         }
@@ -2472,7 +2499,7 @@ void MediaPlayerPrivateGStreamer::updateStates()
         if (m_isSeekPending) {
             GST_DEBUG_OBJECT(pipeline(), "[Seek] committing pending seek to %s", toString(m_seekTime).utf8().data());
             m_isSeekPending = false;
-            m_isSeeking = doSeek(m_seekTime, m_player->rate(), static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE));
+            m_isSeeking = doSeek(m_seekTime, m_player->rate());
             if (!m_isSeeking) {
                 invalidateCachedPosition();
                 GST_DEBUG_OBJECT(pipeline(), "[Seek] seeking to %s failed", toString(m_seekTime).utf8().data());
@@ -2622,6 +2649,7 @@ void MediaPlayerPrivateGStreamer::didEnd()
         wpe_video_plane_display_dmabuf_source_end_of_stream(m_wpeVideoPlaneDisplayDmaBuf.get());
 #endif
     }
+
     timeChanged();
 }
 
@@ -2811,6 +2839,15 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
         player->handleNeedContextMessage(message);
     }), this);
 
+    g_signal_connect_swapped(bus.get(), "message::segment-done", G_CALLBACK(+[](MediaPlayerPrivateGStreamer* player, GstMessage*) {
+        callOnMainThread([weakThis = WeakPtr { *player }, player] {
+            if (!weakThis || !player->m_player->isLooping())
+                return;
+            GST_DEBUG_OBJECT(player->pipeline(), "Handling segment-done message");
+            player->didEnd();
+        });
+    }), this);
+
     // In the MSE case stream collection messages are emitted from the main thread right before the
     // initilization segment is parsed and "updateend" is fired. We need therefore to handle these
     // synchronously in the same main thread tick to make the tracks information available to JS no
@@ -2998,6 +3035,12 @@ bool MediaPlayerPrivateGStreamer::performTaskAtMediaTime(Function<void()>&& task
         RunLoop::main().dispatch(WTFMove(taskToSchedule.value()));
 
     return true;
+}
+
+void MediaPlayerPrivateGStreamer::isLoopingChanged()
+{
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Looping attribute changed to: %s", boolForPrinting(m_player->isLooping()));
+    ensureSeekFlags();
 }
 
 #if USE(TEXTURE_MAPPER_GL)
@@ -3514,6 +3557,12 @@ void MediaPlayerPrivateGStreamer::invalidateCachedPositionOnNextIteration() cons
             return;
         invalidateCachedPosition();
     });
+}
+
+void MediaPlayerPrivateGStreamer::ensureSeekFlags()
+{
+    auto flag = m_player->isLooping() ? GST_SEEK_FLAG_SEGMENT : GST_SEEK_FLAG_FLUSH;
+    m_seekFlags = static_cast<GstSeekFlags>(flag | GST_SEEK_FLAG_ACCURATE);
 }
 
 void MediaPlayerPrivateGStreamer::triggerRepaint(GRefPtr<GstSample>&& sample)

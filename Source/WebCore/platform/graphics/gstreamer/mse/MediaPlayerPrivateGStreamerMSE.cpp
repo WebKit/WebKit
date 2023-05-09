@@ -227,10 +227,10 @@ MediaTime MediaPlayerPrivateGStreamerMSE::durationMediaTime() const
 void MediaPlayerPrivateGStreamerMSE::seek(const MediaTime& time)
 {
     GST_DEBUG_OBJECT(pipeline(), "Requested seek to %s", time.toString().utf8().data());
-    doSeek(time, m_playbackRate, GST_SEEK_FLAG_FLUSH);
+    doSeek(time, m_playbackRate);
 }
 
-bool MediaPlayerPrivateGStreamerMSE::doSeek(const MediaTime& position, float rate, GstSeekFlags seekFlags)
+bool MediaPlayerPrivateGStreamerMSE::doSeek(const MediaTime& position, float rate)
 {
     // This method should only be called outside of MediaPlayerPrivateGStreamerMSE by MediaPlayerPrivateGStreamer::setRate().
 
@@ -251,7 +251,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const MediaTime& position, float rat
 
     // Important: In order to ensure correct propagation whether pre-roll has happened or not, we send the seek directly
     // to the source element, rather than letting playbin do the routing.
-    gst_element_seek(m_source.get(), rate, GST_FORMAT_TIME, seekFlags,
+    gst_element_seek(m_source.get(), rate, GST_FORMAT_TIME, m_seekFlags,
         GST_SEEK_TYPE_SET, toGstClockTime(m_seekTime), GST_SEEK_TYPE_NONE, 0);
     invalidateCachedPosition();
 

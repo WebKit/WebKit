@@ -802,9 +802,11 @@ void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomStrin
             prepareForLoad();
     } else if (name == controlsAttr)
         configureMediaControls();
-    else if (name == loopAttr)
+    else if (name == loopAttr) {
         updateSleepDisabling();
-    else if (name == preloadAttr) {
+        if (m_player)
+            m_player->isLoopingChanged();
+    } else if (name == preloadAttr) {
         if (equalLettersIgnoringASCIICase(value, "none"_s))
             m_preload = MediaPlayer::Preload::None;
         else if (equalLettersIgnoringASCIICase(value, "metadata"_s))
@@ -4163,6 +4165,8 @@ void HTMLMediaElement::setLoop(bool loop)
 {
     ALWAYS_LOG(LOGIDENTIFIER, loop);
     setBooleanAttribute(loopAttr, loop);
+    if (m_player)
+        m_player->isLoopingChanged();
 }
 
 bool HTMLMediaElement::controls() const

@@ -340,6 +340,8 @@ public:
     virtual String errorMessage() const { return { }; }
 
     virtual void renderVideoWillBeDestroyed() { }
+
+    virtual void isLoopingChanged() { }
 };
 
 }

@@ -1761,6 +1761,11 @@ bool MediaPlayer::shouldIgnoreIntrinsicSize()
     return m_private->shouldIgnoreIntrinsicSize();
 }
 
+void MediaPlayer::isLoopingChanged()
+{
+    m_private->isLoopingChanged();
+}
+
 void MediaPlayer::remoteEngineFailedToLoad()
 {
     client().mediaPlayerEngineFailedToLoad();
