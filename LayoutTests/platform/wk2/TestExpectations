@@ -778,6 +778,7 @@ storage/indexeddb/modern/opendatabase-after-storage-crash.html [ Pass ]
 fast/forms/call-text-did-change-in-text-field-when-typing.html [ Pass ]
 
 http/tests/privateClickMeasurement [ Pass ]
+webkit.org/b/227369 http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html [ Pass Failure ]
 
 # User interaction is a WebKit2 concept.
 inspector/debugger/breakpoint-action-emulateUserGesture-userIsInteracting.html [ Pass ]
