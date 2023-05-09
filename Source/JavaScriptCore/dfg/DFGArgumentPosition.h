@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(DFG_JIT)
+
 #include "DFGDoubleFormatState.h"
 #include "DFGVariableAccessData.h"
 #include "DFGVariableAccessDataDump.h"
@@ -140,3 +142,5 @@ private:
 };
 
 } } // namespace JSC::DFG
+
+#endif // ENABLE(DFG_JIT)

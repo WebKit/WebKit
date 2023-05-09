@@ -1466,6 +1466,7 @@
 		DCEE21FD1CEA7551000C2396 /* BlockObjCExceptions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BlockObjCExceptions.mm; sourceTree = "<group>"; };
 		DCEE22041CEB9869000C2396 /* BackwardsGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackwardsGraph.h; sourceTree = "<group>"; };
 		DD284687292442F30009A61D /* UnifiedWebPreferences.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = UnifiedWebPreferences.yaml; sourceTree = "<group>"; };
+		DD28DF2329D368BD00BBB459 /* generate-tapi-filelist.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "generate-tapi-filelist.py"; sourceTree = "<group>"; };
 		DD3DCA0527A4E176007E5B61 /* generate-unified-source-bundles.rb */ = {isa = PBXFileReference; lastKnownFileType = text.script.ruby; path = "generate-unified-source-bundles.rb"; sourceTree = "<group>"; };
 		DD3DCA0627A4E176007E5B61 /* GeneratePreferences.rb */ = {isa = PBXFileReference; lastKnownFileType = text.script.ruby; path = GeneratePreferences.rb; sourceTree = "<group>"; };
 		DD403D5528EB93BE009B4684 /* libbmalloc.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libbmalloc.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2556,6 +2557,7 @@
 			isa = PBXGroup;
 			children = (
 				DD3DCA0027A4E176007E5B61 /* Preferences */,
+				DD28DF2329D368BD00BBB459 /* generate-tapi-filelist.py */,
 				DD3DCA0527A4E176007E5B61 /* generate-unified-source-bundles.rb */,
 				DD3DCA0627A4E176007E5B61 /* GeneratePreferences.rb */,
 			);
@@ -3584,6 +3586,7 @@
 				DD3DC85D27A4BF87007E5B61 /* Headers */,
 				5D247B5E14689B8600E78B76 /* Sources */,
 				5D247B5F14689B8600E78B76 /* Frameworks */,
+				DDA35E4929CA74D4006C1018 /* Generate TAPI filelist */,
 			);
 			buildRules = (
 				DDF307FB27C08869006A526F /* PBXBuildRule */,
@@ -3648,6 +3651,31 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		DDA35E4929CA74D4006C1018 /* Generate TAPI filelist */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/generate-tapi-filelist.py",
+				"$(TEMP_FILE_DIR)/all-product-headers.yaml",
+			);
+			name = "Generate TAPI filelist";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/WTF.json",
+				"$(DSTROOT)/$(PRIVATE_HEADERS_FOLDER_PATH)/WTF.json",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ ${DEPLOYMENT_LOCATION} != YES ]; then\n    \"${SRCROOT}/Scripts/generate-tapi-filelist.py\" --from=\"${TEMP_FILE_DIR}\"/all-product-headers.yaml --install-dir=\"${BUILT_PRODUCTS_DIR}${WK_LIBRARY_HEADERS_FOLDER_PATH}\" --relative-to=\"${SRCROOT}\" > \"${SCRIPT_OUTPUT_FILE_0}\"\nelse\n    \"${SRCROOT}/Scripts/generate-tapi-filelist.py\" --from=\"${DSTROOT}${PRIVATE_HEADERS_FOLDER_PATH}\" --install-dir=\"<SDKROOT>${PRIVATE_HEADERS_FOLDER_PATH}\" --relative-to=\"${DSTROOT}${PRIVATE_HEADERS_FOLDER_PATH}\" > \"${SCRIPT_OUTPUT_FILE_1}\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5D247B5E14689B8600E78B76 /* Sources */ = {

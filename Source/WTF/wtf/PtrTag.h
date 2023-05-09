@@ -162,10 +162,10 @@ struct PtrTagLookup {
 #if CPU(ARM64E)
 #define ENABLE_PTRTAG_DEBUGGING ASSERT_ENABLED
 
+#if ENABLE(PTRTAG_DEBUGGING)
+
 WTF_EXPORT_PRIVATE void registerPtrTagLookup(PtrTagLookup*);
 WTF_EXPORT_PRIVATE void reportBadTag(const void*, PtrTag expectedTag);
-
-#if ENABLE(PTRTAG_DEBUGGING)
 
 WTF_EXPORT_PRIVATE const char* ptrTagName(PtrTag);
 WTF_EXPORT_PRIVATE const char* tagForPtr(const void*);
@@ -573,7 +573,9 @@ using WTF::PtrTag;
 using WTF::PtrTagCallerType;
 using WTF::PtrTagCalleeType;
 
+#if ENABLE(PTRTAG_DEBUGGING)
 using WTF::reportBadTag;
+#endif
 
 using WTF::untagReturnPC;
 using WTF::tagArrayPtr;

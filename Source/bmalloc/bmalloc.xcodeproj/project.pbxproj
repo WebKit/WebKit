@@ -82,7 +82,7 @@
 		0FD557331F7EDB7B00B1F0A3 /* HeapKind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD557321F7EDB7B00B1F0A3 /* HeapKind.cpp */; };
 		1400274918F89C1300115C97 /* Heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 14DA320C18875B09007269E0 /* Heap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		140FA00319CE429C00FFD3C8 /* BumpRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 140FA00219CE429C00FFD3C8 /* BumpRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		140FA00519CE4B6800FFD3C8 /* LineMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 140FA00419CE4B6800FFD3C8 /* LineMetadata.h */; };
+		140FA00519CE4B6800FFD3C8 /* LineMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 140FA00419CE4B6800FFD3C8 /* LineMetadata.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		141D9B001C8E51C0000ABBA0 /* List.h in Headers */ = {isa = PBXBuildFile; fileRef = 141D9AFF1C8E51C0000ABBA0 /* List.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142B44361E2839E7001DA6E9 /* DebugHeap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142B44341E2839E7001DA6E9 /* DebugHeap.cpp */; };
 		142B44371E2839E7001DA6E9 /* DebugHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = 142B44351E2839E7001DA6E9 /* DebugHeap.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -574,7 +574,7 @@
 		DD4BEDD329CBA49700398E35 /* pas_bitfit_page_config_utils_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F87FFC925AF897C000E1ABF /* pas_bitfit_page_config_utils_inlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD4BEDD429CBA49700398E35 /* pas_lenient_compact_unsigned_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C971D02278E798700C9E129 /* pas_lenient_compact_unsigned_ptr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD4BEDD529CBA49700398E35 /* pas_enumerate_large_heaps.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F87002525AF89C8000E1ABF /* pas_enumerate_large_heaps.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD4BEDD629CBA49700398E35 /* thingy_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8700CA25B0CB02000E1ABF /* thingy_heap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DD4BEDD629CBA49700398E35 /* thingy_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8700CA25B0CB02000E1ABF /* thingy_heap.h */; };
 		DD4BEDD729CBA49700398E35 /* pas_create_basic_heap_page_caches_with_reserved_memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC4096F2451495E00876DA0 /* pas_create_basic_heap_page_caches_with_reserved_memory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD4BEDD829CBA49700398E35 /* pas_segregated_page_config_variant.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5FE7C925B6210B001859FC /* pas_segregated_page_config_variant.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD4BEDD929CBA49700398E35 /* pas_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC40AD32451499100876DA0 /* pas_utils.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -675,7 +675,7 @@
 		E3FBB5A2225EADB000DB6FBD /* IsoSharedHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FBB59F225EADB000DB6FBD /* IsoSharedHeap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3FBB5A4225ECAD200DB6FBD /* IsoSharedHeapInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FBB5A3225ECAD200DB6FBD /* IsoSharedHeapInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EB17D11123BFCD42002093A7 /* HeapConstants.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB17D11023BFC8C4002093A7 /* HeapConstants.cpp */; };
-		EB17D11223BFCD7A002093A7 /* HeapConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = EB17D10E23BE691D002093A7 /* HeapConstants.h */; };
+		EB17D11223BFCD7A002093A7 /* HeapConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = EB17D10E23BE691D002093A7 /* HeapConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE48BD3B2321E8D700F136D0 /* FailureAction.h in Headers */ = {isa = PBXBuildFile; fileRef = FE48BD3A2321E8CC00F136D0 /* FailureAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEC3A39324846A8100395B54 /* GigacageConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC3A39224846A6D00395B54 /* GigacageConfig.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEC3A395248471FE00395B54 /* GigacageKind.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC3A394248471FE00395B54 /* GigacageKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2681,6 +2681,7 @@
 				14F271BA18EA3963008C152F /* Sources */,
 				14F271BB18EA3963008C152F /* Frameworks */,
 				14F271BC18EA3963008C152F /* Headers */,
+				DDA35E4829CA6FEB006C1018 /* Generate TAPI filelist */,
 			);
 			buildRules = (
 			);
@@ -2747,6 +2748,31 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		DDA35E4829CA6FEB006C1018 /* Generate TAPI filelist */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../WTF/Scripts/generate-tapi-filelist.py",
+				"$(TEMP_FILE_DIR)/all-product-headers.yaml",
+			);
+			name = "Generate TAPI filelist";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/bmalloc.json",
+				"$(DSTROOT)/$(PRIVATE_HEADERS_FOLDER_PATH)/bmalloc.json",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ ${DEPLOYMENT_LOCATION} != YES ]; then\n    \"${SCRIPT_INPUT_FILE_0}\" --from=\"${SCRIPT_INPUT_FILE_1}\" --install-dir=\"${BUILT_PRODUCTS_DIR}${PRIVATE_HEADERS_FOLDER_PATH}\" > \"${SCRIPT_OUTPUT_FILE_0}\"\nelse\n    \"${SCRIPT_INPUT_FILE_0}\" --from=\"${DSTROOT}${PRIVATE_HEADERS_FOLDER_PATH}\" --install-dir=\"<SDKROOT>${PRIVATE_HEADERS_FOLDER_PATH}\" > \"${SCRIPT_OUTPUT_FILE_1}\" \nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		14CC394018EA8743004AFE34 /* Sources */ = {

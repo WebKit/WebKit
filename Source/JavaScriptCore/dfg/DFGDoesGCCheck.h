@@ -79,7 +79,9 @@ struct DoesGCCheck {
     unsigned nodeOp() { return (u.other >> nodeOpShift) & nodeOpMask; }
     unsigned nodeIndex() { return u.nodeIndex; }
 
+#if ENABLE(DFG_DOES_GC_VALIDATION)
     JS_EXPORT_PRIVATE void verifyCanGC(VM&);
+#endif
 
 private:
     template<typename T> static uint32_t bits(T value) { return static_cast<uint32_t>(value); }

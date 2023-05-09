@@ -270,8 +270,6 @@
 		0F3B7E2B19A11B8000D9BC56 /* CallVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3B7E2519A11B8000D9BC56 /* CallVariant.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F3C1F1B1B868E7900ABB08B /* DFGClobbersExitState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3C1F191B868E7900ABB08B /* DFGClobbersExitState.h */; };
 		0F40E4A71C497F7400A577FA /* AirOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6183321C45F35C0072450B /* AirOpcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F40E4A81C497F7400A577FA /* AirOpcodeGenerated.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6183341C45F3B60072450B /* AirOpcodeGenerated.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F40E4A91C497F7400A577FA /* AirOpcodeUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6183351C45F3B60072450B /* AirOpcodeUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F41545B1FD20B22001B58F6 /* ConstraintConcurrency.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F41545A1FD20B1F001B58F6 /* ConstraintConcurrency.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F426A481460CBB300131F8F /* ValueRecovery.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F426A451460CBAB00131F8F /* ValueRecovery.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F426A491460CBB700131F8F /* VirtualRegister.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F426A461460CBAB00131F8F /* VirtualRegister.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1164,7 +1162,6 @@
 		70B791991C024A29002481E2 /* GeneratorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B7918A1C024432002481E2 /* GeneratorPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70B7919C1C024A49002481E2 /* JSGeneratorFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B7918D1C024462002481E2 /* JSGeneratorFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70DC3E0A1B2DF2C700054299 /* IteratorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 70DC3E081B2DF2C700054299 /* IteratorPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		70DE9A091BE7D69E005D89D9 /* LLIntAssembly.h in Headers */ = {isa = PBXBuildFile; fileRef = 70DE9A081BE7D670005D89D9 /* LLIntAssembly.h */; };
 		70EC0EC31AA0D7DA00B6AAFA /* JSStringIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 70EC0EBD1AA0D7DA00B6AAFA /* JSStringIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70EC0EC71AA0D7DA00B6AAFA /* StringIteratorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 70EC0EC11AA0D7DA00B6AAFA /* StringIteratorPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70ECA6061AFDBEA200449739 /* JSTemplateObjectDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 70ECA6011AFDBEA200449739 /* JSTemplateObjectDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5172,6 +5169,7 @@
 		DD4BEC0E29CB85AF00398E35 /* B3CanonicalizePrePostIncrements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3CanonicalizePrePostIncrements.cpp; path = b3/B3CanonicalizePrePostIncrements.cpp; sourceTree = "<group>"; };
 		DD4BEC0F29CB85AF00398E35 /* B3CanonicalizePrePostIncrements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3CanonicalizePrePostIncrements.h; path = b3/B3CanonicalizePrePostIncrements.h; sourceTree = "<group>"; };
 		DD5F74F8283EF4380027A8C6 /* copy-profiling-data.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "copy-profiling-data.sh"; sourceTree = "<group>"; };
+		DDA35E4D29CACFDE006C1018 /* ExtraSymbolsForTAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtraSymbolsForTAPI.h; sourceTree = "<group>"; };
 		DDE9930E278D086600F60D26 /* libWebKitAdditions.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWebKitAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE26E9021CB5DD0500D2BE82 /* BuiltinExecutableCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuiltinExecutableCreator.h; sourceTree = "<group>"; };
 		DE26E9061CB5DD9600D2BE82 /* BuiltinExecutableCreator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltinExecutableCreator.cpp; sourceTree = "<group>"; };
@@ -6857,6 +6855,7 @@
 				FEF90A8E28AC187A00C14B84 /* APIIntegrity.cpp */,
 				FEF90A8C28AC135C00C14B84 /* APIIntegrityPrivate.h */,
 				53529A4B1C457B75000B49C6 /* APIUtils.h */,
+				DDA35E4D29CACFDE006C1018 /* ExtraSymbolsForTAPI.h */,
 				1CAA8B4A0D32C39A0041BCFF /* JavaScript.h */,
 				1CAA8B4B0D32C39A0041BCFF /* JavaScriptCore.h */,
 				53C3D5E621ED1C050087FDFC /* JSAPIGlobalObject.cpp */,
@@ -9709,8 +9708,6 @@
 				0F6183311C45BF070072450B /* AirLowerMacros.h in Headers */,
 				0F5CF9841E9D537700C18692 /* AirLowerStackArgs.h in Headers */,
 				0F40E4A71C497F7400A577FA /* AirOpcode.h in Headers */,
-				0F40E4A81C497F7400A577FA /* AirOpcodeGenerated.h in Headers */,
-				0F40E4A91C497F7400A577FA /* AirOpcodeUtils.h in Headers */,
 				0FB387901BFBC44D00E3AB1E /* AirOptimizeBlockOrder.h in Headers */,
 				0F9CABC91DB54A7A0008E83B /* AirPadInterference.h in Headers */,
 				0F2AC56F1E8D7B030001EE3F /* AirPhaseInsertionSet.h in Headers */,
@@ -10808,7 +10805,6 @@
 				86D3B3C310159D7F002865E7 /* LinkBuffer.h in Headers */,
 				E3637EE9236E56B00096BD0A /* LinkTimeConstant.h in Headers */,
 				A7E2EA6B0FB460CF00601F06 /* LiteralParser.h in Headers */,
-				70DE9A091BE7D69E005D89D9 /* LLIntAssembly.h in Headers */,
 				FE20CE9E15F04A9500DF3430 /* LLIntCLoop.h in Headers */,
 				0F4680CA14BBB16C00BFE272 /* LLIntCommon.h in Headers */,
 				0F4680D314BBD16700BFE272 /* LLIntData.h in Headers */,
@@ -11565,6 +11561,7 @@
 				1A02D9A81B34A882000D1522 /* Add Symlink in /System/Library/PrivateFrameworks */,
 				53609F9021DFFA9C008FA60A /* Check .xcfilelists */,
 				6577FFC6276AC8D20011AEC8 /* Create Symlink to Alt Root Path */,
+				DD9C4CC52A05D4FB00D52E2E /* Fix up SDKROOT path in TAPI filelists (install only) */,
 			);
 			buildRules = (
 				DD284676291A27C90009A61D /* PBXBuildRule */,
@@ -11926,6 +11923,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nif [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers ]; then\n    ../../Tools/Scripts/check-for-inappropriate-macros-in-external-headers Headers PrivateHeaders/JSBasePrivate.h\nfi\n";
+		};
+		DD9C4CC52A05D4FB00D52E2E /* Fix up SDKROOT path in TAPI filelists (install only) */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SDKROOT)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_HEADERS_FOLDER_PATH)/bmalloc/bmalloc.json",
+				"$(SDKROOT)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_HEADERS_FOLDER_PATH)/wtf/WTF.json",
+			);
+			name = "Fix up SDKROOT path in TAPI filelists (install only)";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/bmalloc.json",
+				"$(DERIVED_FILE_DIR)/WTF.json",
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "for ((i=0; i<${SCRIPT_INPUT_FILE_COUNT}; i++)); do\n    eval input=\"\\${SCRIPT_INPUT_FILE_$i}\"\n    eval output=\"\\${SCRIPT_OUTPUT_FILE_$i}\"\n    sed -e \"s;<SDKROOT>;${SDKROOT};\" \"${input}\" > \"${output}\"\ndone\n";
 		};
 		E1AC2E2C20F7B95800B0897D /* Unlock Keychain */ = {
 			isa = PBXShellScriptBuildPhase;

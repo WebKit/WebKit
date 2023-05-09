@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(DFG_JIT)
+
 #include "DFGMinifiedID.h"
 
 #include "DFGNode.h"
@@ -39,3 +41,5 @@ inline MinifiedID::MinifiedID(Node* node)
 }
 
 } } // namespace JSC::DFG
+
+#endif // ENABLE(DFG_JIT)

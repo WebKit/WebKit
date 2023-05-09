@@ -59,12 +59,12 @@ public:
         return m_validatedOperationsInverseMap.get(bitwise_cast<void*>(pointer));
     }
 #endif
+
+    JS_EXPORT_PRIVATE static void populatePointersInEmbedder(const JITOperationAnnotation* beginOperations, const JITOperationAnnotation* endOperations);
 #endif // ENABLE(JIT_OPERATION_VALIDATION)
 
     static void populatePointersInJavaScriptCore();
     static void populatePointersInJavaScriptCoreForLLInt();
-
-    JS_EXPORT_PRIVATE static void populatePointersInEmbedder(const JITOperationAnnotation* beginOperations, const JITOperationAnnotation* endOperations);
 
 #if ENABLE(JIT_OPERATION_DISASSEMBLY)
     JS_EXPORT_PRIVATE static void populateDisassemblyLabelsInEmbedder(const JITOperationAnnotation* beginOperations, const JITOperationAnnotation* endOperations);

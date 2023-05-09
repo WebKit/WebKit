@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,37 +20,23 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#if ENABLE(FTL_JIT)
+#include "JSContextRef.h"
+#include <wtf/ExportMacros.h>
 
-#include "CodeBlock.h"
-#include "CodeLocation.h"
-#include "FTLLazySlowPath.h"
-#include "FTLSlowPathCall.h"
-#include "FTLThunks.h"
-#include "GPRInfo.h"
-#include "MacroAssemblerCodeRef.h"
-#include "RegisterSet.h"
+// MARK: JavaScriptCore
 
-namespace JSC { namespace FTL {
+extern "C" JS_EXPORT void JSSynchronousGarbageCollectForDebugging(JSContextRef);
+extern "C" JS_EXPORT void JSSynchronousEdenCollectForDebugging(JSContextRef);
 
-template<typename ResultType, typename... ArgumentTypes>
-Ref<LazySlowPath::Generator> createLazyCallGenerator(
-    VM& vm, CodePtr<CFunctionPtrTag> function, ResultType result, ArgumentTypes... arguments)
-{
-    return LazySlowPath::createGenerator(
-        [=, &vm] (CCallHelpers& jit, LazySlowPath::GenerationParams& params) {
-            callOperation(
-                vm, params.lazySlowPath->usedRegisters(), jit, params.lazySlowPath->callSiteIndex(),
-                params.exceptionJumps, function, result, arguments...);
-            params.doneJumps.append(jit.jump());
-        });
+// MARK: WTF
+
+namespace WTF {
+// Can be removed when https://commits.webkit.org/256555@main is sufficiently
+// old that all supported versions of Safari have the change.
+WTF_EXPORT_PRIVATE unsigned weakRandomUint32();
 }
-
-} } // namespace JSC::FTL
-
-#endif // ENABLE(FTL_JIT)

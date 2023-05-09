@@ -32,12 +32,13 @@
 
 #ifdef __APPLE__
 #include "pas_report_crash_pgm_report.h"
+#include "pas_utils.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-__attribute__((visibility("default"))) kern_return_t pas_report_crash_extract_pgm_failure(vm_address_t fault_address, mach_vm_address_t pas_dead_root, unsigned version, task_t task, pas_report_crash_pgm_report *report, crash_reporter_memory_reader_t crm_reader);
+PAS_API kern_return_t pas_report_crash_extract_pgm_failure(vm_address_t fault_address, mach_vm_address_t pas_dead_root, unsigned version, task_t, pas_report_crash_pgm_report *, crash_reporter_memory_reader_t crm_reader);
 
 #ifdef __cplusplus
 }

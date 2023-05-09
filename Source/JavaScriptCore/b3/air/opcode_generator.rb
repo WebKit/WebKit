@@ -530,6 +530,7 @@ end
 
 writeH("Opcode") {
     | outp |
+    outp.puts "#if ENABLE(B3_JIT)"
     outp.puts "namespace JSC { namespace B3 { namespace Air {"
     outp.puts "enum Opcode : int16_t {"
     $opcodes.keys.each {
@@ -545,6 +546,7 @@ writeH("Opcode") {
     outp.puts "class PrintStream;"
     outp.puts "JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::B3::Air::Opcode);"
     outp.puts "} // namespace WTF"
+    outp.puts "#endif // ENABLE(B3_JIT)"
 }
 
 # From here on, we don't try to emit properly indented code, since we're using a recursive pattern

@@ -147,7 +147,7 @@ _NO_CONFIG_H_PATH_PATTERNS = [
 ]
 
 _EXPORT_MACRO_SPEC = {
-    'BEXPORT': 'Source/bmalloc',
+    'BEXPORT': '(Source/bmalloc|Source/JavaScriptCore/API/ExtraSymbolsForTAPI.h)',
     'JS_EXPORT': 'Source/JavaScriptCore/API',
     'JS_EXPORT_PRIVATE': 'Source/JavaScriptCore',
     'PAL_EXPORT': 'Source/WebCore/PAL',
@@ -155,7 +155,7 @@ _EXPORT_MACRO_SPEC = {
     # Excludes PAL and testing directories
     'WEBCORE_EXPORT': 'Source/WebCore/(?!(PAL|testing))',
     'WK_EXPORT': 'Source/WebKit',
-    'WTF_EXPORT_PRIVATE': 'Source/WTF',
+    'WTF_EXPORT_PRIVATE': '(Source/WTF|Source/JavaScriptCore/API/ExtraSymbolsForTAPI.h)',
 }
 
 _EXPORT_MACROS = sorted(_EXPORT_MACRO_SPEC.keys())

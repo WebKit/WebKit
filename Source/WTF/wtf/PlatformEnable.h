@@ -681,6 +681,12 @@
 
 #endif /* !defined(ENABLE_DFG_JIT) && ENABLE(JIT) */
 
+#if ENABLE(DFG_JIT) && ASSERT_ENABLED
+#define ENABLE_DFG_DOES_GC_VALIDATION 1
+#else
+#define ENABLE_DFG_DOES_GC_VALIDATION 0
+#endif
+
 /* Concurrent JS only works on 64-bit platforms because it requires that
    values get stored to atomically. This is trivially true on 64-bit platforms,
    but not true at all on 32-bit platforms where values are composed of two
