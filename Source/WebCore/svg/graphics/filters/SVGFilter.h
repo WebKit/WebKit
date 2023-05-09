@@ -37,7 +37,7 @@ class SVGFilterElement;
 class SVGFilter final : public Filter {
 public:
     static RefPtr<SVGFilter> create(SVGFilterElement&, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext, std::optional<RenderingResourceIdentifier> = std::nullopt);
-    WEBCORE_EXPORT static RefPtr<SVGFilter> create(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&&, std::optional<RenderingResourceIdentifier>);
+    WEBCORE_EXPORT static RefPtr<SVGFilter> create(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&&, FilterEffectVector&&, std::optional<RenderingResourceIdentifier>);
 
     static bool isIdentity(SVGFilterElement&);
     static IntOutsets calculateOutsets(SVGFilterElement&, const FloatRect& targetBoundingBox);
@@ -46,7 +46,8 @@ public:
     SVGUnitTypes::SVGUnitType primitiveUnits() const { return m_primitiveUnits; }
 
     const SVGFilterExpression& expression() const { return m_expression; }
-    
+    const FilterEffectVector& effects() const { return m_effects; }
+
     FilterEffectVector effectsOfType(FilterFunction::Type) const final;
 
     RefPtr<FilterImage> apply(FilterImage* sourceImage, FilterResults&) final;
@@ -58,10 +59,11 @@ public:
 
 private:
     SVGFilter(const FloatSize& filterScale, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, std::optional<RenderingResourceIdentifier>);
-    SVGFilter(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&&, std::optional<RenderingResourceIdentifier>);
+    SVGFilter(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&&, FilterEffectVector&&, std::optional<RenderingResourceIdentifier>);
 
-    static std::optional<SVGFilterExpression> buildExpression(SVGFilterElement&, const SVGFilter&, const GraphicsContext& destinationContext);
+    static std::optional<std::tuple<SVGFilterExpression, FilterEffectVector>> buildExpression(SVGFilterElement&, const SVGFilter&, const GraphicsContext& destinationContext);
     void setExpression(SVGFilterExpression&& expression) { m_expression = WTFMove(expression); }
+    void setEffects(FilterEffectVector&& effects) { m_effects = WTFMove(effects); }
 
     FloatSize resolvedSize(const FloatSize&) const final;
     FloatPoint3D resolvedPoint3D(const FloatPoint3D&) const final;
@@ -75,6 +77,7 @@ private:
     SVGUnitTypes::SVGUnitType m_primitiveUnits;
 
     SVGFilterExpression m_expression;
+    FilterEffectVector m_effects;
 };
 
 } // namespace WebCore

@@ -4424,11 +4424,11 @@ struct WebCore::RTCDataChannelIdentifier {
 
 #endif // ENABLE(WEB_RTC)
 
-header: <WebCore/SVGFilterExpressionReference.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::SVGFilterExpressionNode {
+header: <WebCore/SVGFilterExpression.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::SVGFilterExpressionTerm {
     unsigned index;
-    std::optional<WebCore::FilterEffectGeometry> geometry;
     unsigned level;
+    std::optional<WebCore::FilterEffectGeometry> geometry;
 };
 
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::SVGPreserveAspectRatioValue {

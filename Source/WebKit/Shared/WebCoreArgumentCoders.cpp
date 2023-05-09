@@ -122,7 +122,6 @@
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/RotateTransformOperation.h>
 #include <WebCore/SVGFilter.h>
-#include <WebCore/SVGFilterExpressionReference.h>
 #include <WebCore/ScaleTransformOperation.h>
 #include <WebCore/ScriptBuffer.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
@@ -2138,29 +2137,11 @@ std::optional<Ref<CSSFilter>> ArgumentCoder<CSSFilter>::decode(Decoder& decoder)
 template<typename Encoder>
 void ArgumentCoder<SVGFilter>::encode(Encoder& encoder, const SVGFilter& filter)
 {
-    HashMap<Ref<FilterEffect>, unsigned> indicies;
-    Vector<Ref<FilterEffect>> effects;
-
-    // Get the individual FilterEffects in filter.expression().
-    for (auto& term : filter.expression()) {
-        if (indicies.contains(term.effect))
-            continue;
-        indicies.add(term.effect, effects.size());
-        effects.append(term.effect);
-    }
-
-    // Replace the Ref<FilterEffect> in SVGExpressionTerm with its index in indicies.
-    auto expressionReference = WTF::map(filter.expression(), [&indicies] (auto&& term) -> SVGFilterExpressionNode {
-        ASSERT(indicies.contains(term.effect));
-        unsigned index = indicies.get(term.effect);
-        return { index, term.geometry, term.level };
-    });
-
     encoder << filter.targetBoundingBox();
     encoder << filter.primitiveUnits();
 
-    encoder << effects;
-    encoder << expressionReference;
+    encoder << filter.expression();
+    encoder << filter.effects();
 
     encoder << filter.renderingResourceIdentifierIfExists();
 }
@@ -2182,32 +2163,22 @@ std::optional<Ref<SVGFilter>> ArgumentCoder<SVGFilter>::decode(Decoder& decoder)
     if (!primitiveUnits)
         return std::nullopt;
 
+    std::optional<SVGFilterExpression> expression;
+    decoder >> expression;
+    if (!expression || expression->isEmpty())
+        return std::nullopt;
+
     std::optional<Vector<Ref<FilterEffect>>> effects;
     decoder >> effects;
     if (!effects || effects->isEmpty())
         return std::nullopt;
-
-    std::optional<SVGFilterExpressionReference> expressionReference;
-    decoder >> expressionReference;
-    if (!expressionReference || expressionReference->isEmpty())
-        return std::nullopt;
-
-    SVGFilterExpression expression;
-    expression.reserveInitialCapacity(expressionReference->size());
-
-    // Replace the index in ExpressionReferenceTerm with its Ref<FilterEffect> in effects.
-    for (auto& term : *expressionReference) {
-        if (term.index >= effects->size())
-            return std::nullopt;
-        expression.uncheckedAppend({ (*effects)[term.index], term.geometry, term.level });
-    }
 
     std::optional<std::optional<RenderingResourceIdentifier>> renderingResourceIdentifier;
     decoder >> renderingResourceIdentifier;
     if (!renderingResourceIdentifier)
         return std::nullopt;
 
-    auto filter = WebCore::SVGFilter::create(*targetBoundingBox, *primitiveUnits, WTFMove(expression), *renderingResourceIdentifier);
+    auto filter = WebCore::SVGFilter::create(*targetBoundingBox, *primitiveUnits, WTFMove(*expression), WTFMove(*effects), *renderingResourceIdentifier);
     if (!filter)
         return std::nullopt;
 
