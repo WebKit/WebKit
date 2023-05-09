@@ -80,6 +80,11 @@ function mac_process_webcontent_captiveportal_entitlements()
 
 function mac_process_gpu_entitlements()
 {
+    if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 130300 ))
+    then
+        plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
+    fi
+
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 101400 ))
@@ -113,7 +118,6 @@ function mac_process_gpu_entitlements()
             plistbuddy Add :com.apple.private.screencapturekit.sharingsession bool YES
             plistbuddy Add :com.apple.private.tcc.allow array
             plistbuddy Add :com.apple.private.tcc.allow:0 string kTCCServiceScreenCapture
-            plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
             plistbuddy Add :com.apple.mediaremote.external-artwork-validation bool YES
         fi
 
@@ -132,6 +136,11 @@ function mac_process_gpu_entitlements()
 
 function mac_process_network_entitlements()
 {
+    if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 130300 ))
+    then
+        plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
+    fi
+
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 101500 ))
@@ -154,7 +163,6 @@ function mac_process_network_entitlements()
 
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 130000 ))
         then
-            plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
             plistbuddy Add :com.apple.private.assets.bypass-asset-types-check bool YES
             plistbuddy Add :com.apple.private.assets.accessible-asset-types array
             plistbuddy Add :com.apple.private.assets.accessible-asset-types:0 string com.apple.MobileAsset.WebContentRestrictions
@@ -195,6 +203,11 @@ function webcontent_sandbox_entitlements()
 
 function mac_process_webcontent_shared_entitlements()
 {
+    if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 130300 ))
+    then
+        plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
+    fi
+
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 101400 ))
@@ -218,7 +231,6 @@ function mac_process_webcontent_shared_entitlements()
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 130000 ))
         then
             webcontent_sandbox_entitlements
-            plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
         fi
 
         if [[ "${WK_WEBCONTENT_SERVICE_NEEDS_XPC_DOMAIN_EXTENSION_ENTITLEMENT}" == YES ]]
