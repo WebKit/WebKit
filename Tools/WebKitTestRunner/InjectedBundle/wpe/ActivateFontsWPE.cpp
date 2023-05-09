@@ -32,50 +32,6 @@
 
 namespace WTR {
 
-CString topLevelPath()
-{
-    if (const char* topLevelDirectory = g_getenv("WEBKIT_TOP_LEVEL"))
-        return topLevelDirectory;
-
-    // If the environment variable wasn't provided then assume we were built into
-    // WebKitBuild/Debug or WebKitBuild/Release. Obviously this will fail if the build
-    // directory is non-standard, but we can't do much more about this.
-    GUniquePtr<char> parentPath(g_path_get_dirname(FileSystem::currentExecutablePath().data()));
-    GUniquePtr<char> layoutTestsPath(g_build_filename(parentPath.get(), "..", "..", "..", nullptr));
-    GUniquePtr<char> absoluteTopLevelPath(realpath(layoutTestsPath.get(), 0));
-    return absoluteTopLevelPath.get();
-}
-
-CString getOutputDir()
-{
-    const char* webkitOutputDir = g_getenv("WEBKIT_OUTPUTDIR");
-    if (webkitOutputDir)
-        return webkitOutputDir;
-
-    GUniquePtr<char> outputDir(g_build_filename(topLevelPath().data(), "WebKitBuild", nullptr));
-    return outputDir.get();
-}
-
-static CString getFontsPath()
-{
-    // Try flatpak sandbox path.
-    GUniquePtr<char>fontsPath(g_build_filename("/usr", "share", "webkitgtk-test-fonts", NULL));
-    if (g_file_test(fontsPath.get(), static_cast<GFileTest>(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)))
-        return fontsPath.get();
-
-    CString webkitOutputDir = getOutputDir();
-    fontsPath.reset(g_build_filename(webkitOutputDir.data(), "DependenciesWPE", "Root", "webkitgtk-test-fonts", nullptr));
-    if (g_file_test(fontsPath.get(), static_cast<GFileTest>(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)))
-        return fontsPath.get();
-
-    // Try alternative fonts path.
-    fontsPath.reset(g_build_filename(webkitOutputDir.data(), "webkitgtk-test-fonts", NULL));
-    if (g_file_test(fontsPath.get(), static_cast<GFileTest>(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)))
-        return fontsPath.get();
-
-    return CString();
-}
-
 void activateFonts()
 {
     if (g_getenv("WEBKIT_SKIP_WEBKITTESTRUNNER_FONTCONFIG_INITIALIZATION"))
@@ -103,15 +59,11 @@ void activateFonts()
     if (!FcConfigParseAndLoad(config, reinterpret_cast<FcChar8*>(fontConfigFilename.get()), true))
         g_error("Couldn't load font configuration file from: %s", fontConfigFilename.get());
 
-    CString fontsPath = getFontsPath();
-    if (fontsPath.isNull())
-        g_error("Could not locate test fonts at %s. Is WEBKIT_TOP_LEVEL set?", fontsPath.data());
-
-    GUniquePtr<GDir> fontsDirectory(g_dir_open(fontsPath.data(), 0, nullptr));
+    GUniquePtr<GDir> fontsDirectory(g_dir_open(webkitFontsConfDir, 0, nullptr));
     while (const char* directoryEntry = g_dir_read_name(fontsDirectory.get())) {
         if (!g_str_has_suffix(directoryEntry, ".ttf") && !g_str_has_suffix(directoryEntry, ".otf"))
             continue;
-        GUniquePtr<gchar> fontPath(g_build_filename(fontsPath.data(), directoryEntry, nullptr));
+        GUniquePtr<gchar> fontPath(g_build_filename(webkitFontsConfDir, directoryEntry, nullptr));
         if (!FcConfigAppFontAddFile(config, reinterpret_cast<const FcChar8*>(fontPath.get())))
             g_error("Could not load font at %s!", fontPath.get());
     }
