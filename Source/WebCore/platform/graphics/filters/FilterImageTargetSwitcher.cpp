@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,16 +27,14 @@
 #include "FilterImageTargetSwitcher.h"
 
 #include "Filter.h"
-#include "FilterResults.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 
 namespace WebCore {
 
-FilterImageTargetSwitcher::FilterImageTargetSwitcher(GraphicsContext& destinationContext, Filter& filter, const FloatRect &sourceImageRect, const DestinationColorSpace& colorSpace, FilterResults* results)
+FilterImageTargetSwitcher::FilterImageTargetSwitcher(GraphicsContext& destinationContext, Filter& filter, const FloatRect &sourceImageRect, const DestinationColorSpace& colorSpace)
     : FilterTargetSwitcher(filter)
     , m_sourceImageRect(sourceImageRect)
-    , m_results(results)
 {
     if (sourceImageRect.isEmpty())
         return;
@@ -65,21 +63,20 @@ void FilterImageTargetSwitcher::beginClipAndDrawSourceImage(GraphicsContext& des
     }
 }
 
-void FilterImageTargetSwitcher::endClipAndDrawSourceImage(GraphicsContext& destinationContext)
+void FilterImageTargetSwitcher::endClipAndDrawSourceImage(GraphicsContext& destinationContext, const FilterResultsEnsurer& ensureFilterResults)
 {
     if (auto* context = drawingContext(destinationContext))
         context->restore();
 
-    endDrawSourceImage(destinationContext);
+    endDrawSourceImage(destinationContext, ensureFilterResults);
 }
 
-void FilterImageTargetSwitcher::endDrawSourceImage(GraphicsContext& destinationContext)
+void FilterImageTargetSwitcher::endDrawSourceImage(GraphicsContext& destinationContext, const FilterResultsEnsurer& ensureFilterResults)
 {
     if (!m_filter)
         return;
 
-    FilterResults results;
-    destinationContext.drawFilteredImageBuffer(m_sourceImage.get(), m_sourceImageRect, *m_filter, m_results ? *m_results : results);
+    destinationContext.drawFilteredImageBuffer(m_sourceImage.get(), m_sourceImageRect, *m_filter, ensureFilterResults);
 }
 
 } // namespace WebCore

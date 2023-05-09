@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ private:
     bool needsRedrawSourceImage() const override { return true; }
 
     void beginDrawSourceImage(GraphicsContext& destinationContext) override;
-    void endDrawSourceImage(GraphicsContext& destinationContext) override;
+    void endDrawSourceImage(GraphicsContext& destinationContext, const FilterResultsEnsurer& = nullptr) override;
 
     FilterStyleVector m_filterStyles;
 };

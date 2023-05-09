@@ -151,25 +151,20 @@ void Recorder::setMiterLimit(float miterLimit)
     recordSetMiterLimit(miterLimit);
 }
 
-void Recorder::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter, FilterResults& results)
+void Recorder::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter, const FilterResultsEnsurer& ensureFilterResults)
 {
     appendStateChangeItemIfNecessary();
 
     for (auto& effect : filter.effectsOfType(FilterEffect::Type::FEImage)) {
         auto& feImage = downcast<FEImage>(effect.get());
         if (!recordResourceUse(feImage.sourceImage())) {
-            GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter, results);
+            GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter, ensureFilterResults);
             return;
         }
     }
 
-    if (!sourceImage) {
-        recordDrawFilteredImageBuffer(nullptr, sourceImageRect, filter);
-        return;
-    }
-
-    if (!recordResourceUse(*sourceImage)) {
-        GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter, results);
+    if (sourceImage && !recordResourceUse(*sourceImage)) {
+        GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter, ensureFilterResults);
         return;
     }
 

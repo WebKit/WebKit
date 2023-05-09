@@ -259,7 +259,9 @@ void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingR
     }
 
     FilterResults results(makeUnique<ImageBufferShareableAllocator>(m_renderingBackend->resourceOwner()));
-    handleItem(DisplayList::DrawFilteredImageBuffer(sourceImageIdentifier, sourceImageRect, WTFMove(filter)), sourceImage.get(), results);
+    handleItem(DisplayList::DrawFilteredImageBuffer(sourceImageIdentifier, sourceImageRect, WTFMove(filter)), sourceImage.get(), [&results]() -> auto& {
+        return results;
+    });
 }
 
 void RemoteDisplayListRecorder::drawGlyphs(DisplayList::DrawGlyphs&& item)

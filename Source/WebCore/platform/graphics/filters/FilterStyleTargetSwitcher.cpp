@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ void FilterStyleTargetSwitcher::beginDrawSourceImage(GraphicsContext& destinatio
     }
 }
 
-void FilterStyleTargetSwitcher::endDrawSourceImage(GraphicsContext& destinationContext)
+void FilterStyleTargetSwitcher::endDrawSourceImage(GraphicsContext& destinationContext, const FilterResultsEnsurer&)
 {
     for ([[maybe_unused]] auto& filterStyle : makeReversedRange(m_filterStyles)) {
         destinationContext.endTransparencyLayer();

@@ -492,7 +492,7 @@ public:
     std::optional<RenderingResourceIdentifier> sourceImageIdentifier() const { return m_sourceImageIdentifier; }
     FloatRect sourceImageRect() const { return m_sourceImageRect; }
 
-    WEBCORE_EXPORT void apply(GraphicsContext&, ImageBuffer* sourceImage, FilterResults&);
+    WEBCORE_EXPORT void apply(GraphicsContext&, ImageBuffer* sourceImage, const FilterResultsEnsurer& = nullptr);
 
 private:
     std::optional<RenderingResourceIdentifier> m_sourceImageIdentifier;

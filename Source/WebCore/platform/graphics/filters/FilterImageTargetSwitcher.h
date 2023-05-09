@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,19 +34,17 @@ class ImageBuffer;
 class FilterImageTargetSwitcher final : public FilterTargetSwitcher {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FilterImageTargetSwitcher(GraphicsContext& destinationContext, Filter&, const FloatRect &sourceImageRect, const DestinationColorSpace&, FilterResults* = nullptr);
+    FilterImageTargetSwitcher(GraphicsContext& destinationContext, Filter&, const FloatRect &sourceImageRect, const DestinationColorSpace&);
 
 private:
     GraphicsContext* drawingContext(GraphicsContext& destinationContext) const override;
 
     void beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect) override;
-    void endClipAndDrawSourceImage(GraphicsContext& destinationContext) override;
-    void endDrawSourceImage(GraphicsContext& destinationContext) override;
+    void endClipAndDrawSourceImage(GraphicsContext& destinationContext, const FilterResultsEnsurer& = nullptr) override;
+    void endDrawSourceImage(GraphicsContext& destinationContext, const FilterResultsEnsurer& = nullptr) override;
 
     RefPtr<ImageBuffer> m_sourceImage;
     FloatRect m_sourceImageRect;
-
-    FilterResults* m_results { nullptr };
 };
 
 } // namespace WebCore

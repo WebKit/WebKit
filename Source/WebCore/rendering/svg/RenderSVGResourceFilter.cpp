@@ -145,7 +145,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     auto colorSpace = DestinationColorSpace::SRGB();
 #endif
 
-    filterData->targetSwitcher = FilterTargetSwitcher::create(*context, *filterData->filter, filterData->sourceImageRect, colorSpace, &filterData->results);
+    filterData->targetSwitcher = FilterTargetSwitcher::create(*context, *filterData->filter, filterData->sourceImageRect, colorSpace);
     if (!filterData->targetSwitcher) {
         m_rendererFilterDataMap.remove(&renderer);
         return false;
@@ -211,7 +211,9 @@ void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, Graphic
 
     if (filterData.targetSwitcher) {
         filterData.state = FilterData::Built;
-        filterData.targetSwitcher->endDrawSourceImage(*context);
+        filterData.targetSwitcher->endDrawSourceImage(*context, [&filter = filterData.filter]() -> auto& {
+            return filter->ensureResults();
+        });
     }
 
     LOG_WITH_STREAM(Filters, stream << "RenderSVGResourceFilter " << this << " postApplyResource done\n");
@@ -234,7 +236,7 @@ void RenderSVGResourceFilter::markFilterForRepaint(FilterEffect& effect)
         // Repaint the image on the screen.
         markClientForInvalidation(*objectFilterDataPair.key, RepaintInvalidation);
 
-        filterData->results.clearEffectResult(effect);
+        filterData->filter->clearEffectResult(effect);
     }
 }
 

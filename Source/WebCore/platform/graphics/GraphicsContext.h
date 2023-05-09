@@ -29,6 +29,7 @@
 #include "ControlPart.h"
 #include "DashArray.h"
 #include "DestinationColorSpace.h"
+#include "FilterResults.h"
 #include "FloatRect.h"
 #include "FontCascade.h"
 #include "GraphicsContextState.h"
@@ -48,7 +49,6 @@ namespace WebCore {
 class AffineTransform;
 class DecomposedGlyphs;
 class Filter;
-class FilterResults;
 class FloatRoundedRect;
 class Gradient;
 class GraphicsContextPlatformPrivate;
@@ -273,7 +273,7 @@ public:
     WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect& destination, const ImagePaintingOptions& = { });
     WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = { });
 
-    WEBCORE_EXPORT virtual void drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter&, FilterResults&);
+    WEBCORE_EXPORT virtual void drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter&, const FilterResultsEnsurer& = nullptr);
 
     virtual void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) = 0;
     WEBCORE_EXPORT virtual void drawPattern(ImageBuffer&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { });

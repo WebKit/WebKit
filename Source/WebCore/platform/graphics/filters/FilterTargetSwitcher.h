@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,19 +26,19 @@
 #pragma once
 
 #include "DestinationColorSpace.h"
+#include "FilterResults.h"
 #include "FloatRect.h"
 
 namespace WebCore {
 
 class Filter;
-class FilterResults;
 class GraphicsContext;
 
 class FilterTargetSwitcher {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    static std::unique_ptr<FilterTargetSwitcher> create(GraphicsContext& destinationContext, Filter&, const FloatRect &sourceImageRect, const DestinationColorSpace&, FilterResults* = nullptr);
+    static std::unique_ptr<FilterTargetSwitcher> create(GraphicsContext& destinationContext, Filter&, const FloatRect &sourceImageRect, const DestinationColorSpace&);
 
     virtual ~FilterTargetSwitcher() = default;
 
@@ -47,10 +47,10 @@ public:
     virtual bool needsRedrawSourceImage() const { return false; }
 
     virtual void beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect&) { beginDrawSourceImage(destinationContext); }
-    virtual void endClipAndDrawSourceImage(GraphicsContext& destinationContext) { endDrawSourceImage(destinationContext); }
+    virtual void endClipAndDrawSourceImage(GraphicsContext& destinationContext, const FilterResultsEnsurer& ensureFilterResults = nullptr) { endDrawSourceImage(destinationContext, ensureFilterResults); }
 
     virtual void beginDrawSourceImage(GraphicsContext&) { }
-    virtual void endDrawSourceImage(GraphicsContext&) { }
+    virtual void endDrawSourceImage(GraphicsContext&, const FilterResultsEnsurer& = nullptr) { }
 
 protected:
     FilterTargetSwitcher(Filter&);

@@ -230,6 +230,19 @@ FilterEffectVector SVGFilter::effectsOfType(FilterFunction::Type filterType) con
     return copyToVector(effects);
 }
 
+FilterResults& SVGFilter::ensureResults(const FilterResultsCreator& createFilterResults)
+{
+    if (!m_results)
+        m_results = createFilterResults();
+    return *m_results;
+}
+
+void SVGFilter::clearEffectResult(FilterEffect& effect)
+{
+    if (m_results)
+        m_results->clearEffectResult(effect);
+}
+
 RefPtr<FilterImage> SVGFilter::apply(const Filter&, FilterImage& sourceImage, FilterResults& results)
 {
     return apply(&sourceImage, results);
