@@ -2001,16 +2001,17 @@ void RTCStatsCollector::ProduceTransportStats_n(
     // exist.
     const auto& certificate_stats_it =
         transport_cert_stats.find(transport_name);
+    std::string local_certificate_id, remote_certificate_id;
     RTC_DCHECK(certificate_stats_it != transport_cert_stats.cend());
-    std::string local_certificate_id;
-    if (certificate_stats_it->second.local) {
-      local_certificate_id = RTCCertificateIDFromFingerprint(
-          certificate_stats_it->second.local->fingerprint);
-    }
-    std::string remote_certificate_id;
-    if (certificate_stats_it->second.remote) {
-      remote_certificate_id = RTCCertificateIDFromFingerprint(
-          certificate_stats_it->second.remote->fingerprint);
+    if (certificate_stats_it != transport_cert_stats.cend()) {
+      if (certificate_stats_it->second.local) {
+        local_certificate_id = RTCCertificateIDFromFingerprint(
+            certificate_stats_it->second.local->fingerprint);
+      }
+      if (certificate_stats_it->second.remote) {
+        remote_certificate_id = RTCCertificateIDFromFingerprint(
+            certificate_stats_it->second.remote->fingerprint);
+      }
     }
 
     // There is one transport stats for each channel.
