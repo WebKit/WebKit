@@ -270,6 +270,8 @@
 		0F3B7E2B19A11B8000D9BC56 /* CallVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3B7E2519A11B8000D9BC56 /* CallVariant.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F3C1F1B1B868E7900ABB08B /* DFGClobbersExitState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3C1F191B868E7900ABB08B /* DFGClobbersExitState.h */; };
 		0F40E4A71C497F7400A577FA /* AirOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6183321C45F35C0072450B /* AirOpcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F40E4A81C497F7400A577FA /* AirOpcodeGenerated.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6183341C45F3B60072450B /* AirOpcodeGenerated.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F40E4A91C497F7400A577FA /* AirOpcodeUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6183351C45F3B60072450B /* AirOpcodeUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F41545B1FD20B22001B58F6 /* ConstraintConcurrency.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F41545A1FD20B1F001B58F6 /* ConstraintConcurrency.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F426A481460CBB300131F8F /* ValueRecovery.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F426A451460CBAB00131F8F /* ValueRecovery.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F426A491460CBB700131F8F /* VirtualRegister.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F426A461460CBAB00131F8F /* VirtualRegister.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9708,6 +9710,8 @@
 				0F6183311C45BF070072450B /* AirLowerMacros.h in Headers */,
 				0F5CF9841E9D537700C18692 /* AirLowerStackArgs.h in Headers */,
 				0F40E4A71C497F7400A577FA /* AirOpcode.h in Headers */,
+				0F40E4A81C497F7400A577FA /* AirOpcodeGenerated.h in Headers */,
+				0F40E4A91C497F7400A577FA /* AirOpcodeUtils.h in Headers */,
 				0FB387901BFBC44D00E3AB1E /* AirOptimizeBlockOrder.h in Headers */,
 				0F9CABC91DB54A7A0008E83B /* AirPadInterference.h in Headers */,
 				0F2AC56F1E8D7B030001EE3F /* AirPhaseInsertionSet.h in Headers */,

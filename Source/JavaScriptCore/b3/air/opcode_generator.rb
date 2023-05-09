@@ -701,6 +701,7 @@ formTableWidth = (maxNumOperands + 1) * maxNumOperands / 2
 
 writeH("OpcodeUtils") {
     | outp |
+    outp.puts "#if ENABLE(B3_JIT)"
     outp.puts "#include \"AirCustom.h\""
     outp.puts "#include \"AirInst.h\""
     outp.puts "#include \"AirFormTable.h\""
@@ -836,10 +837,12 @@ writeH("OpcodeUtils") {
     outp.puts "}"
     
     outp.puts "} } } // namespace JSC::B3::Air"
+    outp.puts "#endif // ENABLE(B3_JIT)"
 }
 
 writeH("OpcodeGenerated") {
     | outp |
+    outp.puts "#if ENABLE(B3_JIT)"
     outp.puts "#include \"AirInstInlines.h\""
     outp.puts "#include \"B3ProcedureInlines.h\""
     outp.puts "#include \"CCallHelpers.h\""
@@ -1299,5 +1302,6 @@ writeH("OpcodeGenerated") {
     outp.puts "}"
 
     outp.puts "} } } // namespace JSC::B3::Air"
+    outp.puts "#endif // ENABLE(B3_JIT)"
 }
 
