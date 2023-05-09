@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Google Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2011 Motorola Mobility. All rights reserved.
  *
@@ -626,7 +627,7 @@ void HTMLElement::applyAlignmentAttributeToStyle(const AtomString& alignment, Mu
     CSSValueID floatValue = CSSValueInvalid;
     CSSValueID verticalAlignValue = CSSValueInvalid;
 
-    if (equalLettersIgnoringASCIICase(alignment, "absmiddle"_s))
+    if (equalLettersIgnoringASCIICase(alignment, "absmiddle"_s) || equalLettersIgnoringASCIICase(alignment, "abscenter"_s))
         verticalAlignValue = CSSValueMiddle;
     else if (equalLettersIgnoringASCIICase(alignment, "absbottom"_s))
         verticalAlignValue = CSSValueBottom;
