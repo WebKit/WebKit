@@ -3342,7 +3342,7 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
                     object.stride[i] = GST_VIDEO_INFO_PLANE_STRIDE(&videoInfo, i);
                 }
                 return WTFMove(object);
-            });
+            }, m_textureMapperFlags);
         return;
     }
 
@@ -3462,7 +3462,7 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
             auto object = swapchainBuffer->createDMABufObject(initialObject.handle);
             object.colorSpace = colorSpaceForColorimetry(&GST_VIDEO_INFO_COLORIMETRY(&videoInfo));
             return object;
-        });
+        }, m_textureMapperFlags);
 }
 #endif // USE(TEXTURE_MAPPER_DMABUF)
 

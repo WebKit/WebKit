@@ -39,6 +39,10 @@
 #include "VideoFrame.h"
 #endif
 
+#if USE(GSTREAMER) && ENABLE(MEDIA_STREAM)
+#include "VideoFrameGStreamer.h"
+#endif
+
 namespace WebCore {
 
 static inline bool isDMABufSupportedByANGLEPlatform(const GraphicsContextGLGBM::EGLExtensions& eglExtensions)
@@ -69,7 +73,11 @@ RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLGBM::layerContents
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
 RefPtr<VideoFrame> GraphicsContextGLGBM::paintCompositedResultsToVideoFrame()
 {
-    return { };
+#if USE(GSTREAMER)
+    if (auto pixelBuffer = readCompositedResults())
+        return VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull(), VideoFrameGStreamer::CanvasContentType::WebGL, VideoFrameGStreamer::Rotation::UpsideDown, MediaTime::invalidTime(), { }, 30, true, { });
+#endif
+    return nullptr;
 }
 #endif
 
