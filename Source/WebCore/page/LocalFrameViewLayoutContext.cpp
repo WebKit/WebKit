@@ -259,6 +259,7 @@ void LocalFrameViewLayoutContext::performLayout()
     }
     {
         SetForScope layoutPhase(m_layoutPhase, LayoutPhase::InViewSizeAdjust);
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         if (is<RenderView>(layoutRoot) && !renderView()->printing()) {
             // This is to protect m_needsFullRepaint's value when layout() is getting re-entered through adjustViewSize().
             SetForScope needsFullRepaint(m_needsFullRepaint);
