@@ -3237,6 +3237,18 @@ int main(int argc, char** argv)
     WTF::disableForwardingVPrintfStdErrToOSLog();
 #endif
 
+#if OS(UNIX)
+    if (getenv("JS_SHELL_WAIT_FOR_SIGUSR2_TO_EXIT")) {
+        initializeSignalHandling();
+        addSignalHandler(Signal::Usr, SignalHandler([&] (Signal, SigInfo&, PlatformRegisters&) {
+            dataLogLn("Signal handler hit, we can exit now.");
+            waitToExit.signal();
+            return SignalAction::Handled;
+        }));
+        activateSignalHandlersFor(Signal::Usr);
+    }
+#endif
+
     // We can't use destructors in the following code because it uses Windows
     // Structured Exception Handling
     int res = EXIT_SUCCESS;
@@ -3965,18 +3977,6 @@ int jscmain(int argc, char** argv)
     // Needed for complex.yaml tests.
     if (char* tz = getenv("TZ"))
         setTimeZoneOverride(StringView::fromLatin1(tz));
-#endif
-
-#if OS(UNIX)
-    if (getenv("JS_SHELL_WAIT_FOR_SIGUSR2_TO_EXIT")) {
-        initializeSignalHandling();
-        addSignalHandler(Signal::Usr, SignalHandler([&] (Signal, SigInfo&, PlatformRegisters&) {
-            dataLogLn("Signal handler hit, we can exit now.");
-            waitToExit.signal();
-            return SignalAction::Handled;
-        }));
-        activateSignalHandlersFor(Signal::Usr);
-    }
 #endif
 
     {
