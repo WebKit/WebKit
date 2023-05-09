@@ -32,8 +32,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/InMemoryDisplayList.h>
-#include <numbers>
-#include <wtf/StdLibExtras.h>
+#include <wtf/MathExtras.h>
 #if PLATFORM(COCOA)
 #include <WebCore/GraphicsContextCG.h>
 #endif
@@ -419,9 +418,9 @@ struct TrivialRotate {
         c.rotate(1.f);
         c.rotate(0.f);
         c.rotate(2.f);
-        c.rotate(std::numbers::pi_v<float> * 2.f);
-        c.rotate(7.f * std::numbers::pi_v<float> * 2.f);
-        c.rotate(-2.f * std::numbers::pi_v<float> * 2.f);
+        c.rotate(piFloat * 2.f);
+        c.rotate(7.f * piFloat * 2.f);
+        c.rotate(-2.f * piFloat * 2.f);
         c.drawRect({ 0, 0, 1, 1 });
     }
 

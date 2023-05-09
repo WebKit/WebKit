@@ -36,7 +36,6 @@
 #include "Logging.h"
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
-#include <numbers>
 #include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
 
@@ -309,7 +308,7 @@ void Recorder::translate(float x, float y)
 
 void Recorder::rotate(float angleInRadians)
 {
-    if (WTF::areEssentiallyEqual(0.f, fmodf(angleInRadians, std::numbers::pi_v<float> * 2.f)))
+    if (WTF::areEssentiallyEqual(0.f, fmodf(angleInRadians, piFloat * 2.f)))
         return;
     currentState().rotate(angleInRadians);
     recordRotate(angleInRadians);
