@@ -346,6 +346,8 @@ public:
 
     virtual void renderVideoWillBeDestroyed() { }
 
+    virtual void isLoopingChanged() { }
+
 protected:
     mutable PlatformTimeRanges m_seekable;
 };

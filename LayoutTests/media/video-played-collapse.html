@@ -71,6 +71,10 @@
             {
                 consoleWrite("<br><b><em>Test looping</em></b>");
 
+                // In GStreamer ports video.loop cannot reliably be set on a paused pipeline.
+                // https://bugs.webkit.org/show_bug.cgi?id=256519
+                runSilently("video.play()");
+
                 // Start playing near the end of the movie so it will loop quickly.
                 run("video.loop = true");
                 var startTime = (video.duration - 0.05).toFixed(2);

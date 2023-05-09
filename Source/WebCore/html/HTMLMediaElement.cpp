@@ -797,6 +797,8 @@ void HTMLMediaElement::attributeChanged(const QualifiedName& name, const AtomStr
         return;
     case AttributeNames::loopAttr:
         updateSleepDisabling();
+        if (m_player)
+            m_player->isLoopingChanged();
         return;
     case AttributeNames::preloadAttr:
         if (equalLettersIgnoringASCIICase(newValue, "none"_s))
@@ -4157,6 +4159,8 @@ void HTMLMediaElement::setLoop(bool loop)
 {
     ALWAYS_LOG(LOGIDENTIFIER, loop);
     setBooleanAttribute(loopAttr, loop);
+    if (m_player)
+        m_player->isLoopingChanged();
 }
 
 bool HTMLMediaElement::controls() const
