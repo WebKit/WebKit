@@ -28,6 +28,7 @@
     Conditional=MEDIA_SESSION,
     Exposed=Window,
     ExportMacro=WEBCORE_EXPORT,
+    JSCustomMarkFunction
 ] interface MediaSession
 {
     attribute MediaMetadata? metadata;
