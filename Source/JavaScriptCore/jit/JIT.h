@@ -165,11 +165,10 @@ namespace JSC {
 
         VM& vm() { return *JSInterfaceJIT::vm(); }
 
-        void compileAndLinkWithoutFinalizing(JITCompilationEffort);
-        CompilationResult finalizeOnMainThread(CodeBlock*);
-        size_t codeSize() const;
+        std::tuple<std::unique_ptr<LinkBuffer>, RefPtr<BaselineJITCode>> compileAndLinkWithoutFinalizing(JITCompilationEffort);
+        static CompilationResult finalizeOnMainThread(CodeBlock*, LinkBuffer&, RefPtr<BaselineJITCode>);
 
-        void doMainThreadPreparationBeforeCompile();
+        static void doMainThreadPreparationBeforeCompile(VM&);
         
         static CompilationResult compile(VM& vm, CodeBlock* codeBlock, JITCompilationEffort effort)
         {
@@ -192,7 +191,7 @@ namespace JSC {
         void privateCompileMainPass();
         void privateCompileLinkPass();
         void privateCompileSlowCases();
-        void link();
+        RefPtr<BaselineJITCode> link(LinkBuffer&);
         CompilationResult privateCompile(CodeBlock*, JITCompilationEffort);
 
         // Add a call out from JIT code, without an exception check.
@@ -955,13 +954,11 @@ namespace JSC {
         unsigned m_bytecodeCountHavingSlowCase { 0 };
         
         Label m_arityCheck;
-        std::unique_ptr<LinkBuffer> m_linkBuffer;
 
         std::unique_ptr<JITDisassembler> m_disassembler;
         RefPtr<Profiler::Compilation> m_compilation;
 
         PCToCodeOriginMapBuilder m_pcToCodeOriginMapBuilder;
-        std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
 
         HashMap<const JSInstruction*, void*> m_instructionToMathIC;
         HashMap<const JSInstruction*, UniqueRef<MathICGenerationState>> m_instructionToMathICGenerationState;
@@ -974,7 +971,6 @@ namespace JSC {
         UnlinkedCodeBlock* const m_unlinkedCodeBlock { nullptr };
 
         MathICHolder m_mathICs;
-        RefPtr<BaselineJITCode> m_jitCode;
 
         Vector<JITConstantPool::Value> m_constantPool;
         SegmentedVector<BaselineUnlinkedCallLinkInfo> m_unlinkedCalls;

@@ -33,6 +33,8 @@
 
 namespace JSC {
 
+class BaselineJITCode;
+
 class BaselineJITPlan final : public JITPlan {
     using Base = JITPlan;
 
@@ -44,7 +46,9 @@ public:
     CompilationResult finalize() override;
 
 private:
-    JIT m_jit;
+    BytecodeIndex m_loopOSREntryBytecodeIndex;
+    std::unique_ptr<LinkBuffer> m_linkBuffer;
+    RefPtr<BaselineJITCode> m_jitCode;
 };
 
 } // namespace JSC

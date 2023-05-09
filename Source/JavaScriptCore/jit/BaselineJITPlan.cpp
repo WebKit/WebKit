@@ -32,31 +32,30 @@ namespace JSC {
 
 BaselineJITPlan::BaselineJITPlan(CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex)
     : JITPlan(JITCompilationMode::Baseline, codeBlock)
-    , m_jit(codeBlock->vm(), codeBlock, loopOSREntryBytecodeIndex)
+    , m_loopOSREntryBytecodeIndex(loopOSREntryBytecodeIndex)
 {
-#if CPU(ARM64E)
-    m_jit.m_assembler.buffer().arm64eHash().deallocatePinForCurrentThread();
-#endif
-    m_jit.doMainThreadPreparationBeforeCompile();
+    JIT::doMainThreadPreparationBeforeCompile(codeBlock->vm());
 }
 
 auto BaselineJITPlan::compileInThreadImpl() -> CompilationPath
 {
-#if CPU(ARM64E)
-    m_jit.m_assembler.buffer().arm64eHash().allocatePinForCurrentThreadAndInitializeHash();
-#endif
-    m_jit.compileAndLinkWithoutFinalizing(JITCompilationCanFail);
+    JIT jit(*m_vm, m_codeBlock, m_loopOSREntryBytecodeIndex);
+    auto [ linkBuffer, jitCode ] = jit.compileAndLinkWithoutFinalizing(JITCompilationCanFail);
+    m_linkBuffer = WTFMove(linkBuffer);
+    m_jitCode = WTFMove(jitCode);
     return BaselinePath;
 }
 
 size_t BaselineJITPlan::codeSize() const
 {
-    return m_jit.codeSize();
+    if (m_linkBuffer)
+        return m_linkBuffer->size();
+    return 0;
 }
 
 CompilationResult BaselineJITPlan::finalize()
 {
-    CompilationResult result = m_jit.finalizeOnMainThread(m_codeBlock);
+    CompilationResult result = JIT::finalizeOnMainThread(m_codeBlock, *m_linkBuffer, m_jitCode);
     switch (result) {
     case CompilationFailed:
         CODEBLOCK_LOG_EVENT(m_codeBlock, "delayJITCompile", ("compilation failed"));
