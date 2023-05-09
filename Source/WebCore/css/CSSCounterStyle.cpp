@@ -38,19 +38,14 @@ namespace WebCore {
 String CSSCounterStyle::counterForSystemCyclic(int value) const
 {
     auto amountOfSymbols = symbols().size();
-    if (amountOfSymbols < 1) {
-        ASSERT_NOT_REACHED();
-        return { };
-    }
+    ASSERT(amountOfSymbols > 0);
 
     // For avoiding subtracting -1 from INT_MAX we will sum-up amountOfSymbols in case the value is not positive.
     // This works because x % y = (x + y) % y
     unsigned symbolIndex = static_cast<unsigned>(value > 0 ? value : value + amountOfSymbols);
     symbolIndex = (symbolIndex - 1) % amountOfSymbols;
-    if (static_cast<unsigned>(symbolIndex) >= amountOfSymbols) {
-        ASSERT_NOT_REACHED();
-        return  { };
-    }
+    ASSERT(static_cast<unsigned>(symbolIndex) < amountOfSymbols);
+
     return symbols().at(static_cast<unsigned>(symbolIndex)).text;
 }
 
@@ -69,10 +64,8 @@ String CSSCounterStyle::counterForSystemFixed(int value) const
 String CSSCounterStyle::counterForSystemSymbolic(unsigned value) const
 {
     auto amountOfSymbols = symbols().size();
-    if (!amountOfSymbols) {
-        ASSERT_NOT_REACHED();
-        return { };
-    }
+    ASSERT(amountOfSymbols > 0);
+
     if (value < 1)
         return { };
 
@@ -89,10 +82,8 @@ String CSSCounterStyle::counterForSystemSymbolic(unsigned value) const
 String CSSCounterStyle::counterForSystemAlphabetic(unsigned value) const
 {
     auto amountOfSymbols = symbols().size();
-    if (amountOfSymbols < 2) {
-        ASSERT_NOT_REACHED();
-        return { };
-    }
+    ASSERT(amountOfSymbols >= 2);
+
     if (value < 1)
         return { };
 
@@ -112,10 +103,8 @@ String CSSCounterStyle::counterForSystemAlphabetic(unsigned value) const
 String CSSCounterStyle::counterForSystemNumeric(unsigned value) const
 {
     auto amountOfSymbols = symbols().size();
-    if (amountOfSymbols < 2) {
-        ASSERT_NOT_REACHED();
-        return { };
-    }
+    ASSERT(amountOfSymbols >= 2);
+
     if (!value)
         return symbols().at(0).text;
 
