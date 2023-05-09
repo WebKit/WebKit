@@ -47,8 +47,7 @@ static void waitUntilBufferingPolicyIsEqualTo(WKWebView* webView, const char* ex
     EXPECT_WK_STREQ(expected, observed);
 }
 
-// FIXME Re-enable when https://bugs.webkit.org/show_bug.cgi?id=253658 is fixed
-TEST(WebKit, DISABLED_MediaBufferingPolicy)
+TEST(WebKit, MediaBufferingPolicy)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
@@ -70,8 +69,8 @@ TEST(WebKit, DISABLED_MediaBufferingPolicy)
     // Suspending the process also forces a memory warning, which should purge whatever possible ASAP.
     [webView _processWillSuspendImminentlyForTesting];
 #if PLATFORM(MAC)
-    // Suspending the page on macOS shouldn't cause resource purging
-    waitUntilBufferingPolicyIsEqualTo(webView.get(), "Default");
+    // On macOS, we don't run the memory pressure logic on suspension.
+    waitUntilBufferingPolicyIsEqualTo(webView.get(), "LimitReadAhead");
 #else
     waitUntilBufferingPolicyIsEqualTo(webView.get(), "PurgeResources");
 #endif
