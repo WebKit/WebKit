@@ -2246,7 +2246,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     svg/graphics/filters/SVGFilter.h
     svg/graphics/filters/SVGFilterExpression.h
-    svg/graphics/filters/SVGFilterExpressionReference.h
 
     svg/properties/SVGList.h
     svg/properties/SVGPrimitiveList.h
