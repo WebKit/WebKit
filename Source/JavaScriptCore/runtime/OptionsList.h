@@ -546,7 +546,7 @@ bool canUseWebAssemblyFastMemory();
     \
     v(Bool, useArrayBufferTransfer, false, Normal, "Expose ArrayBuffer.transfer feature.") \
     v(Bool, useArrayFromAsync, true, Normal, "Expose the Array.fromAsync.") \
-    v(Bool, useArrayGroupMethod, true, Normal, "Expose the group() and groupToMap() methods on Array.") \
+    v(Bool, useArrayGroupMethod, false, Normal, "Expose the group() and groupToMap() methods on Array.") \
     v(Bool, useAtomicsWaitAsync, true, Normal, "Expose the waitAsync() methods on Atomics.") \
     v(Bool, useImportAssertion, false, Normal, "Enable import assertion.") \
     v(Bool, useIntlDurationFormat, true, Normal, "Expose the Intl DurationFormat.") \
