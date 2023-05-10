@@ -200,7 +200,7 @@ class Pickable(Command):
         commits = []
         for reference in args.argument:
             branch_point = None
-            if reference in repository.branches:
+            if reference in repository.branches or reference in repository.tags():
                 branch_point = repository.merge_base(args.into, reference)
                 reference = '{}..{}'.format(branch_point.hash if branch_point else args.into, reference)
 
