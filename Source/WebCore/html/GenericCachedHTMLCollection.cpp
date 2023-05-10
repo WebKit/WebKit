@@ -54,46 +54,46 @@ template <CollectionTraversalType traversalType>
 bool GenericCachedHTMLCollection<traversalType>::elementMatches(Element& element) const
 {
     switch (this->type()) {
-    case NodeChildren:
+    case CollectionType::NodeChildren:
         return true;
-    case DocImages:
+    case CollectionType::DocImages:
         return element.hasTagName(imgTag);
-    case DocScripts:
+    case CollectionType::DocScripts:
         return element.hasTagName(scriptTag);
-    case DocForms:
+    case CollectionType::DocForms:
         return element.hasTagName(formTag);
-    case TableTBodies:
+    case CollectionType::TableTBodies:
         return element.hasTagName(tbodyTag);
-    case TRCells:
+    case CollectionType::TRCells:
         return element.hasTagName(tdTag) || element.hasTagName(thTag);
-    case TSectionRows:
+    case CollectionType::TSectionRows:
         return element.hasTagName(trTag);
-    case SelectedOptions:
+    case CollectionType::SelectedOptions:
         return is<HTMLOptionElement>(element) && downcast<HTMLOptionElement>(element).selected();
-    case DataListOptions:
+    case CollectionType::DataListOptions:
         return is<HTMLOptionElement>(element);
-    case MapAreas:
+    case CollectionType::MapAreas:
         return element.hasTagName(areaTag);
-    case DocEmbeds:
+    case CollectionType::DocEmbeds:
         return element.hasTagName(embedTag);
-    case DocLinks:
+    case CollectionType::DocLinks:
         return (element.hasTagName(aTag) || element.hasTagName(areaTag)) && element.hasAttributeWithoutSynchronization(hrefAttr);
-    case DocAnchors:
+    case CollectionType::DocAnchors:
         return element.hasTagName(aTag) && element.hasAttributeWithoutSynchronization(nameAttr);
-    case FieldSetElements:
+    case CollectionType::FieldSetElements:
         return element.isFormListedElement();
-    case ByClass:
-    case ByTag:
-    case ByHTMLTag:
-    case AllDescendants:
-    case DocAll:
-    case DocEmpty:
-    case DocumentAllNamedItems:
-    case DocumentNamedItems:
-    case FormControls:
-    case SelectOptions:
-    case TableRows:
-    case WindowNamedItems:
+    case CollectionType::ByClass:
+    case CollectionType::ByTag:
+    case CollectionType::ByHTMLTag:
+    case CollectionType::AllDescendants:
+    case CollectionType::DocAll:
+    case CollectionType::DocEmpty:
+    case CollectionType::DocumentAllNamedItems:
+    case CollectionType::DocumentNamedItems:
+    case CollectionType::FormControls:
+    case CollectionType::SelectOptions:
+    case CollectionType::TableRows:
+    case CollectionType::WindowNamedItems:
         break;
     }
     // Remaining collection types have their own CachedHTMLCollection subclasses and are not using GenericCachedHTMLCollection.

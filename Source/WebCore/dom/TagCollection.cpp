@@ -35,7 +35,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(TagCollectionNS);
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLTagCollection);
 
 TagCollectionNS::TagCollectionNS(ContainerNode& rootNode, const AtomString& namespaceURI, const AtomString& localName)
-    : CachedHTMLCollection(rootNode, ByTag)
+    : CachedHTMLCollection(rootNode, CollectionType::ByTag)
     , m_namespaceURI(namespaceURI)
     , m_localName(localName)
 {
@@ -48,7 +48,7 @@ TagCollectionNS::~TagCollectionNS()
 }
 
 TagCollection::TagCollection(ContainerNode& rootNode, const AtomString& qualifiedName)
-    : CachedHTMLCollection(rootNode, ByTag)
+    : CachedHTMLCollection(rootNode, CollectionType::ByTag)
     , m_qualifiedName(qualifiedName)
 {
     ASSERT(qualifiedName != starAtom());
@@ -60,7 +60,7 @@ TagCollection::~TagCollection()
 }
 
 HTMLTagCollection::HTMLTagCollection(ContainerNode& rootNode, const AtomString& qualifiedName)
-    : CachedHTMLCollection(rootNode, ByHTMLTag)
+    : CachedHTMLCollection(rootNode, CollectionType::ByHTMLTag)
     , m_qualifiedName(qualifiedName)
     , m_loweredQualifiedName(qualifiedName.convertToASCIILowercase())
 {

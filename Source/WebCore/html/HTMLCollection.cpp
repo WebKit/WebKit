@@ -37,33 +37,33 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLCollection);
 inline auto HTMLCollection::rootTypeFromCollectionType(CollectionType type) -> RootType
 {
     switch (type) {
-    case DocImages:
-    case DocEmpty:
-    case DocEmbeds:
-    case DocForms:
-    case DocLinks:
-    case DocAnchors:
-    case DocScripts:
-    case DocAll:
-    case WindowNamedItems:
-    case DocumentNamedItems:
-    case DocumentAllNamedItems:
-    case FormControls:
+    case CollectionType::DocImages:
+    case CollectionType::DocEmpty:
+    case CollectionType::DocEmbeds:
+    case CollectionType::DocForms:
+    case CollectionType::DocLinks:
+    case CollectionType::DocAnchors:
+    case CollectionType::DocScripts:
+    case CollectionType::DocAll:
+    case CollectionType::WindowNamedItems:
+    case CollectionType::DocumentNamedItems:
+    case CollectionType::DocumentAllNamedItems:
+    case CollectionType::FormControls:
         return HTMLCollection::IsRootedAtTreeScope;
-    case AllDescendants:
-    case ByClass:
-    case ByTag:
-    case ByHTMLTag:
-    case FieldSetElements:
-    case NodeChildren:
-    case TableTBodies:
-    case TSectionRows:
-    case TableRows:
-    case TRCells:
-    case SelectOptions:
-    case SelectedOptions:
-    case DataListOptions:
-    case MapAreas:
+    case CollectionType::AllDescendants:
+    case CollectionType::ByClass:
+    case CollectionType::ByTag:
+    case CollectionType::ByHTMLTag:
+    case CollectionType::FieldSetElements:
+    case CollectionType::NodeChildren:
+    case CollectionType::TableTBodies:
+    case CollectionType::TSectionRows:
+    case CollectionType::TableRows:
+    case CollectionType::TRCells:
+    case CollectionType::SelectOptions:
+    case CollectionType::SelectedOptions:
+    case CollectionType::DataListOptions:
+    case CollectionType::MapAreas:
         return HTMLCollection::IsRootedAtNode;
     }
     ASSERT_NOT_REACHED();
@@ -73,39 +73,39 @@ inline auto HTMLCollection::rootTypeFromCollectionType(CollectionType type) -> R
 static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(CollectionType type)
 {
     switch (type) {
-    case ByTag:
-    case ByHTMLTag:
-    case AllDescendants:
-    case DocImages:
-    case DocEmbeds:
-    case DocForms:
-    case DocScripts:
-    case DocAll:
-    case NodeChildren:
-    case TableTBodies:
-    case TSectionRows:
-    case TableRows:
-    case TRCells:
-    case SelectOptions:
-    case MapAreas:
-    case DocEmpty:
+    case CollectionType::ByTag:
+    case CollectionType::ByHTMLTag:
+    case CollectionType::AllDescendants:
+    case CollectionType::DocImages:
+    case CollectionType::DocEmbeds:
+    case CollectionType::DocForms:
+    case CollectionType::DocScripts:
+    case CollectionType::DocAll:
+    case CollectionType::NodeChildren:
+    case CollectionType::TableTBodies:
+    case CollectionType::TSectionRows:
+    case CollectionType::TableRows:
+    case CollectionType::TRCells:
+    case CollectionType::SelectOptions:
+    case CollectionType::MapAreas:
+    case CollectionType::DocEmpty:
         return DoNotInvalidateOnAttributeChanges;
-    case SelectedOptions:
-    case DataListOptions:
+    case CollectionType::SelectedOptions:
+    case CollectionType::DataListOptions:
         // FIXME: We can do better some day.
         return InvalidateOnAnyAttrChange;
-    case ByClass:
+    case CollectionType::ByClass:
         return InvalidateOnClassAttrChange;
-    case DocAnchors:
+    case CollectionType::DocAnchors:
         return InvalidateOnNameAttrChange;
-    case DocLinks:
+    case CollectionType::DocLinks:
         return InvalidateOnHRefAttrChange;
-    case WindowNamedItems:
-    case DocumentNamedItems:
-    case DocumentAllNamedItems:
+    case CollectionType::WindowNamedItems:
+    case CollectionType::DocumentNamedItems:
+    case CollectionType::DocumentAllNamedItems:
         return InvalidateOnIdNameAttrChange;
-    case FieldSetElements:
-    case FormControls:
+    case CollectionType::FieldSetElements:
+    case CollectionType::FormControls:
         return InvalidateForFormControls;
     }
     ASSERT_NOT_REACHED();
@@ -113,7 +113,7 @@ static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(Col
 }
 
 HTMLCollection::HTMLCollection(ContainerNode& ownerNode, CollectionType type)
-    : m_collectionType(type)
+    : m_collectionType(static_cast<unsigned>(type))
     , m_invalidationType(invalidationTypeExcludingIdAndNameAttributes(type))
     , m_rootType(rootTypeFromCollectionType(type))
     , m_ownerNode(ownerNode)
@@ -131,12 +131,12 @@ HTMLCollection::~HTMLCollection()
     // HTMLNameCollection & ClassCollection remove cache by themselves.
     // FIXME: We need a cleaner way to handle this.
     switch (type()) {
-    case ByClass:
-    case ByTag:
-    case ByHTMLTag:
-    case WindowNamedItems:
-    case DocumentNamedItems:
-    case DocumentAllNamedItems:
+    case CollectionType::ByClass:
+    case CollectionType::ByTag:
+    case CollectionType::ByHTMLTag:
+    case CollectionType::WindowNamedItems:
+    case CollectionType::DocumentNamedItems:
+    case CollectionType::DocumentAllNamedItems:
         break;
     default:
         ownerNode().nodeLists()->removeCachedCollection(this);
@@ -216,7 +216,7 @@ void HTMLCollection::updateNamedElementCache() const
         if (!is<HTMLElement>(element))
             continue;
         const AtomString& name = element.getNameAttribute();
-        if (!name.isEmpty() && id != name && (type() != DocAll || nameShouldBeVisibleInDocumentAll(downcast<HTMLElement>(element))))
+        if (!name.isEmpty() && id != name && (type() != CollectionType::DocAll || nameShouldBeVisibleInDocumentAll(downcast<HTMLElement>(element))))
             cache->appendToNameCache(name, element);
     }
 

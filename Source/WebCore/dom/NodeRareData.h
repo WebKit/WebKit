@@ -101,7 +101,7 @@ public:
     };
 
     using NodeListCacheMap = HashMap<std::pair<unsigned char, AtomString>, LiveNodeList*, NodeListCacheMapEntryHash>;
-    using CollectionCacheMap = HashMap<std::pair<unsigned char, AtomString>, HTMLCollection*, NodeListCacheMapEntryHash>;
+    using CollectionCacheMap = HashMap<std::pair<std::underlying_type_t<CollectionType>, AtomString>, HTMLCollection*, NodeListCacheMapEntryHash>;
     using TagCollectionNSCache = HashMap<QualifiedName, TagCollectionNS*>;
 
     template<typename T, typename ContainerType>
@@ -188,9 +188,9 @@ public:
     inline void adoptDocument(Document& oldDocument, Document& newDocument);
 
 private:
-    std::pair<unsigned char, AtomString> namedCollectionKey(CollectionType type, const AtomString& name)
+    std::pair<std::underlying_type_t<CollectionType>, AtomString> namedCollectionKey(CollectionType type, const AtomString& name)
     {
-        return std::pair<unsigned char, AtomString>(type, name);
+        return std::pair<std::underlying_type_t<CollectionType>, AtomString>(static_cast<std::underlying_type_t<CollectionType>>(type), name);
     }
 
     template<typename NodeListType>

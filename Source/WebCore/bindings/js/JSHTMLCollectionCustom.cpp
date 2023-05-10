@@ -33,11 +33,11 @@ using namespace JSC;
 JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<HTMLCollection>&& collection)
 {
     switch (collection->type()) {
-    case FormControls:
+    case CollectionType::FormControls:
         return createWrapper<HTMLFormControlsCollection>(globalObject, WTFMove(collection));
-    case SelectOptions:
+    case CollectionType::SelectOptions:
         return createWrapper<HTMLOptionsCollection>(globalObject, WTFMove(collection));
-    case DocAll:
+    case CollectionType::DocAll:
         return createWrapper<HTMLAllCollection>(globalObject, WTFMove(collection));
     default:
         break;

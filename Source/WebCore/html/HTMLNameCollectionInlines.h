@@ -34,7 +34,7 @@ namespace WebCore {
 template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
 HTMLNameCollection<HTMLCollectionClass, traversalType>::~HTMLNameCollection()
 {
-    ASSERT(this->type() == WindowNamedItems || this->type() == DocumentNamedItems);
+    ASSERT(this->type() == CollectionType::WindowNamedItems || this->type() == CollectionType::DocumentNamedItems);
 
     document().nodeLists()->removeCachedCollection(this, m_name);
 }

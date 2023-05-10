@@ -6387,63 +6387,63 @@ Ref<HTMLCollection> Document::ensureCachedCollection()
 
 Ref<HTMLCollection> Document::images()
 {
-    return ensureCachedCollection<DocImages>();
+    return ensureCachedCollection<CollectionType::DocImages>();
 }
 
 Ref<HTMLCollection> Document::applets()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<EmptyHTMLCollection>(*this, DocEmpty);
+    return ensureRareData().ensureNodeLists().addCachedCollection<EmptyHTMLCollection>(*this, CollectionType::DocEmpty);
 }
 
 Ref<HTMLCollection> Document::embeds()
 {
-    return ensureCachedCollection<DocEmbeds>();
+    return ensureCachedCollection<CollectionType::DocEmbeds>();
 }
 
 Ref<HTMLCollection> Document::plugins()
 {
     // This is an alias for embeds() required for the JS DOM bindings.
-    return ensureCachedCollection<DocEmbeds>();
+    return ensureCachedCollection<CollectionType::DocEmbeds>();
 }
 
 Ref<HTMLCollection> Document::scripts()
 {
-    return ensureCachedCollection<DocScripts>();
+    return ensureCachedCollection<CollectionType::DocScripts>();
 }
 
 Ref<HTMLCollection> Document::links()
 {
-    return ensureCachedCollection<DocLinks>();
+    return ensureCachedCollection<CollectionType::DocLinks>();
 }
 
 Ref<HTMLCollection> Document::forms()
 {
-    return ensureCachedCollection<DocForms>();
+    return ensureCachedCollection<CollectionType::DocForms>();
 }
 
 Ref<HTMLCollection> Document::anchors()
 {
-    return ensureCachedCollection<DocAnchors>();
+    return ensureCachedCollection<CollectionType::DocAnchors>();
 }
 
 Ref<HTMLCollection> Document::all()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLAllCollection>(*this, DocAll);
+    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLAllCollection>(*this, CollectionType::DocAll);
 }
 
 Ref<HTMLCollection> Document::allFilteredByName(const AtomString& name)
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLAllNamedSubCollection>(*this, DocumentAllNamedItems, name);
+    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLAllNamedSubCollection>(*this, CollectionType::DocumentAllNamedItems, name);
 }
 
 Ref<HTMLCollection> Document::windowNamedItems(const AtomString& name)
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<WindowNameCollection>(*this, WindowNamedItems, name);
+    return ensureRareData().ensureNodeLists().addCachedCollection<WindowNameCollection>(*this, CollectionType::WindowNamedItems, name);
 }
 
 Ref<HTMLCollection> Document::documentNamedItems(const AtomString& name)
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<DocumentNameCollection>(*this, DocumentNamedItems, name);
+    return ensureRareData().ensureNodeLists().addCachedCollection<DocumentNameCollection>(*this, CollectionType::DocumentNamedItems, name);
 }
 
 void Document::finishedParsing()

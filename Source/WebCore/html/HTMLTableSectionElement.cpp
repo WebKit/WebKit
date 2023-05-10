@@ -100,7 +100,7 @@ int HTMLTableSectionElement::numRows() const
 
 Ref<HTMLCollection> HTMLTableSectionElement::rows()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<TSectionRows>::traversalType>>(*this, TSectionRows);
+    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<CollectionType::TSectionRows>::traversalType>>(*this, CollectionType::TSectionRows);
 }
 
 }

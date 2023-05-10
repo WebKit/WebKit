@@ -154,13 +154,13 @@ HTMLTableRowElement* HTMLTableRowsCollection::lastRow(HTMLTableElement& table)
 }
 
 HTMLTableRowsCollection::HTMLTableRowsCollection(HTMLTableElement& table)
-    : CachedHTMLCollection(table, TableRows)
+    : CachedHTMLCollection(table, CollectionType::TableRows)
 {
 }
 
 Ref<HTMLTableRowsCollection> HTMLTableRowsCollection::create(HTMLTableElement& table, CollectionType type)
 {
-    ASSERT_UNUSED(type, type == TableRows);
+    ASSERT_UNUSED(type, type == CollectionType::TableRows);
     return adoptRef(*new HTMLTableRowsCollection(table));
 }
 

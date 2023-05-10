@@ -262,7 +262,7 @@ struct SystemPreviewInfo;
 
 template<typename> class ExceptionOr;
 
-enum CollectionType;
+enum class CollectionType : uint8_t;
 enum CSSPropertyID : uint16_t;
 
 enum class CompositeOperator : uint8_t;

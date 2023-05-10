@@ -71,7 +71,7 @@ private:
     WindowNameCollection(Document& document, CollectionType type, const AtomString& name)
         : HTMLNameCollection<WindowNameCollection, CollectionTraversalType::Descendants>(document, type, name)
     {
-        ASSERT(type == WindowNamedItems);
+        ASSERT(type == CollectionType::WindowNamedItems);
     }
 };
 
@@ -95,11 +95,11 @@ private:
     DocumentNameCollection(Document& document, CollectionType type, const AtomString& name)
         : HTMLNameCollection<DocumentNameCollection, CollectionTraversalType::Descendants>(document, type, name)
     {
-        ASSERT(type == DocumentNamedItems);
+        ASSERT(type == CollectionType::DocumentNamedItems);
     }
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(WindowNameCollection, WindowNamedItems)
-SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(DocumentNameCollection, DocumentNamedItems)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(WindowNameCollection, CollectionType::WindowNamedItems)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(DocumentNameCollection, CollectionType::DocumentNamedItems)

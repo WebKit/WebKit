@@ -41,7 +41,7 @@ using namespace HTMLNames;
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFormControlsCollection);
 
 HTMLFormControlsCollection::HTMLFormControlsCollection(ContainerNode& ownerNode)
-    : CachedHTMLCollection(ownerNode, FormControls)
+    : CachedHTMLCollection(ownerNode, CollectionType::FormControls)
     , m_cachedElement(nullptr)
     , m_cachedElementOffsetInArray(0)
 {

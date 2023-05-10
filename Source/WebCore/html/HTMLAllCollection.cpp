@@ -76,7 +76,7 @@ HTMLAllNamedSubCollection::HTMLAllNamedSubCollection(Document& document, Collect
     : CachedHTMLCollection(document, type)
     , m_name(name)
 {
-    ASSERT(type == DocumentAllNamedItems);
+    ASSERT(type == CollectionType::DocumentAllNamedItems);
 }
 
 HTMLAllNamedSubCollection::~HTMLAllNamedSubCollection()
