@@ -129,7 +129,6 @@ const MessageDescription messageDescriptions[static_cast<size_t>(MessageName::Co
     { "ProcessOutOfStreamMessage", ReceiverName::IPC, false, false },
     { "SetStreamDestinationID", ReceiverName::IPC, false, false },
     { "SyncMessageReply", ReceiverName::IPC, false, false },
-    { "Terminate", ReceiverName::IPC, false, false },
 #if USE(AVFOUNDATION)
     { "TestWithCVPixelBuffer_ReceiveCVPixelBufferReply", ReceiverName::AsyncReply, false, false },
 #endif
