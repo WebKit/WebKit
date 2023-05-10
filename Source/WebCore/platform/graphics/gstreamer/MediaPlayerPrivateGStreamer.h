@@ -620,6 +620,8 @@ private:
 
     bool m_isVisibleInViewport { true };
     GstState m_invisiblePlayerState { GST_STATE_VOID_PENDING };
+
+    bool isSeamlessSeekingEnabled() const { return m_seekFlags & (1 << GST_SEEK_FLAG_SEGMENT); }
 };
 
 }
