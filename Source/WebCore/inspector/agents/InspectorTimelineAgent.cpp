@@ -201,30 +201,13 @@ void InspectorTimelineAgent::internalStart(std::optional<int>&& maxCallStackDept
     m_frameStartObserver = makeUnique<RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::InspectorFrameBegin), [this]() {
         if (!m_tracking || m_environment.debugger()->isPaused())
             return;
-
-        if (!m_runLoopNestingLevel)
+        if (!m_runLoopNestingLevel) {
             pushCurrentRecord(JSON::Object::create(), TimelineRecordType::RenderingFrame, false, nullptr);
-        m_runLoopNestingLevel++;
-    });
-
-    // FIXME: This won't work correctly with RemoteLayerTreeDrawingArea: webkit.org/b/249796. Detecting FrameEnd needs to be handled at the DrawingArea level.
-    m_frameStopObserver = makeUnique<RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::InspectorFrameEnd), [this]() {
-        if (!m_tracking || m_environment.debugger()->isPaused())
-            return;
-
-        ASSERT(m_runLoopNestingLevel > 0);
-        m_runLoopNestingLevel--;
-        if (m_runLoopNestingLevel)
-            return;
-
-        if (m_startedComposite)
-            didComposite();
-
-        didCompleteCurrentRecord(TimelineRecordType::RenderingFrame);
+            m_runLoopNestingLevel++;
+        }
     });
 
     m_frameStartObserver->schedule(currentRunLoop(), kCFRunLoopEntry | kCFRunLoopAfterWaiting);
-    m_frameStopObserver->schedule(currentRunLoop(), kCFRunLoopExit | kCFRunLoopBeforeWaiting);
 
     // Create a runloop record and increment the runloop nesting level, to capture the current turn of the main runloop
     // (which is the outer runloop if recording started while paused in the debugger).
@@ -265,7 +248,6 @@ void InspectorTimelineAgent::internalStop()
 
 #if PLATFORM(COCOA)
     m_frameStartObserver = nullptr;
-    m_frameStopObserver = nullptr;
     m_runLoopNestingLevel = 0;
 #elif USE(GLIB_EVENT_LOOP)
     m_runLoopObserver = nullptr;
@@ -859,5 +841,24 @@ void InspectorTimelineAgent::pushCurrentRecord(Ref<JSON::Object>&& data, Timelin
 {
     pushCurrentRecord(createRecordEntry(WTFMove(data), type, captureCallStack, frame, startTime));
 }
+
+void InspectorTimelineAgent::didCompleteRenderingFrame()
+{
+#if PLATFORM(COCOA)
+    if (!m_tracking || m_environment.debugger()->isPaused())
+        return;
+
+    ASSERT(m_runLoopNestingLevel > 0);
+    m_runLoopNestingLevel--;
+    if (m_runLoopNestingLevel)
+        return;
+
+    if (m_startedComposite)
+        didComposite();
+
+    didCompleteCurrentRecord(TimelineRecordType::RenderingFrame);
+#endif
+}
+
 
 } // namespace WebCore

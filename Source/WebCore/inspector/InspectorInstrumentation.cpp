@@ -831,6 +831,12 @@ void InspectorInstrumentation::frameStartedLoadingImpl(InstrumentingAgents& inst
         inspectorPageAgent->frameStartedLoading(frame);
 }
 
+void InspectorInstrumentation::didCompleteRenderingFrameImpl(InstrumentingAgents& instrumentingAgents)
+{
+    if (auto* timelineAgent = instrumentingAgents.enabledTimelineAgent())
+        timelineAgent->didCompleteRenderingFrame();
+}
+
 void InspectorInstrumentation::frameStoppedLoadingImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame)
 {
     if (frame.isMainFrame()) {

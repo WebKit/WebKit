@@ -2047,7 +2047,8 @@ void Page::didCompleteRenderingFrame()
 
     // FIXME: This is where we'd call requestPostAnimationFrame callbacks: webkit.org/b/249798.
     // FIXME: Run WindowEventLoop tasks from here: webkit.org/b/249684.
-    // FIXME: Drive InspectorFrameEnd from here; webkit.org/b/249796.
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame()))
+        InspectorInstrumentation::didCompleteRenderingFrame(*localMainFrame);
 }
 
 void Page::prioritizeVisibleResources()

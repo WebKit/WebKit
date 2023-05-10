@@ -233,6 +233,7 @@ public:
     static void loaderDetachedFromFrame(LocalFrame&, DocumentLoader&);
     static void frameStartedLoading(LocalFrame&);
     static void frameStoppedLoading(LocalFrame&);
+    static void didCompleteRenderingFrame(LocalFrame&);
     static void frameScheduledNavigation(LocalFrame&, Seconds delay);
     static void frameClearedScheduledNavigation(LocalFrame&);
     static void accessibilitySettingsDidChange(Page&);
@@ -443,6 +444,7 @@ private:
     static void frameDocumentUpdatedImpl(InstrumentingAgents&, LocalFrame&);
     static void loaderDetachedFromFrameImpl(InstrumentingAgents&, DocumentLoader&);
     static void frameStartedLoadingImpl(InstrumentingAgents&, LocalFrame&);
+    static void didCompleteRenderingFrameImpl(InstrumentingAgents&);
     static void frameStoppedLoadingImpl(InstrumentingAgents&, LocalFrame&);
     static void frameScheduledNavigationImpl(InstrumentingAgents&, LocalFrame&, Seconds delay);
     static void frameClearedScheduledNavigationImpl(InstrumentingAgents&, LocalFrame&);
@@ -1125,7 +1127,7 @@ inline void InspectorInstrumentation::didReceiveThreadableLoaderResponse(Documen
     if (auto* agents = instrumentingAgents(documentThreadableLoader.document()))
         didReceiveThreadableLoaderResponseImpl(*agents, documentThreadableLoader, identifier);
 }
-    
+
 inline void InspectorInstrumentation::didReceiveData(LocalFrame* frame, ResourceLoaderIdentifier identifier, const SharedBuffer* buffer, int encodedDataLength)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
@@ -1265,6 +1267,13 @@ inline void InspectorInstrumentation::frameStartedLoading(LocalFrame& frame)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(frame))
         frameStartedLoadingImpl(*agents, frame);
+}
+
+inline void InspectorInstrumentation::didCompleteRenderingFrame(LocalFrame& frame)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (auto* agents = instrumentingAgents(frame))
+        didCompleteRenderingFrameImpl(*agents);
 }
 
 inline void InspectorInstrumentation::frameStoppedLoading(LocalFrame& frame)
