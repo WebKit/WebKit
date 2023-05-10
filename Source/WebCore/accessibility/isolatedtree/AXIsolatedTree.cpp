@@ -43,10 +43,11 @@ HashMap<PageIdentifier, Ref<AXIsolatedTree>>& AXIsolatedTree::treePageCache()
     return map;
 }
 
-AXIsolatedTree::AXIsolatedTree(AXObjectCache* axObjectCache)
-    : AXTreeStore(axObjectCache->treeID())
-    , m_axObjectCache(axObjectCache)
-    , m_usedOnAXThread(axObjectCache->usedOnAXThread())
+AXIsolatedTree::AXIsolatedTree(AXObjectCache& axObjectCache)
+    : AXTreeStore(axObjectCache.treeID())
+    , m_axObjectCache(&axObjectCache)
+    , m_geometryManager(axObjectCache.m_geometryManager)
+    , m_usedOnAXThread(axObjectCache.usedOnAXThread())
 {
     AXTRACE("AXIsolatedTree::AXIsolatedTree"_s);
     ASSERT(isMainThread());
@@ -66,15 +67,15 @@ void AXIsolatedTree::queueForDestruction()
     m_queuedForDestruction = true;
 }
 
-Ref<AXIsolatedTree> AXIsolatedTree::createEmpty(AXObjectCache* axObjectCache)
+Ref<AXIsolatedTree> AXIsolatedTree::createEmpty(AXObjectCache& axObjectCache)
 {
     AXTRACE("AXIsolatedTree::createEmpty"_s);
     ASSERT(isMainThread());
-    ASSERT(axObjectCache && axObjectCache->pageID());
+    ASSERT(axObjectCache.pageID());
 
     auto tree = adoptRef(*new AXIsolatedTree(axObjectCache));
 
-    auto* axRoot = axObjectCache->getOrCreate(axObjectCache->document().view());
+    auto* axRoot = axObjectCache.getOrCreate(axObjectCache.document().view());
     if (axRoot) {
         tree->m_unresolvedPendingAppends.set(axRoot->objectID(), AttachWrapper::OnMainThread);
         tree->collectNodeChangesForChildrenMatching(*axRoot, [] (const auto& object) {
@@ -83,7 +84,7 @@ Ref<AXIsolatedTree> AXIsolatedTree::createEmpty(AXObjectCache* axObjectCache)
         tree->queueRemovalsAndUnresolvedChanges({ });
     }
 
-    tree->updateLoadingProgress(axObjectCache->loadingProgress());
+    tree->updateLoadingProgress(axObjectCache.loadingProgress());
 
     // Now that the tree is ready to take client requests, add it to the tree maps so that it can be found.
     storeTree(axObjectCache, tree);
@@ -91,15 +92,15 @@ Ref<AXIsolatedTree> AXIsolatedTree::createEmpty(AXObjectCache* axObjectCache)
     return tree;
 }
 
-Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache* axObjectCache)
+Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
 {
     AXTRACE("AXIsolatedTree::create"_s);
     ASSERT(isMainThread());
-    ASSERT(axObjectCache && axObjectCache->pageID());
+    ASSERT(axObjectCache.pageID());
 
     auto tree = adoptRef(*new AXIsolatedTree(axObjectCache));
 
-    auto& document = axObjectCache->document();
+    auto& document = axObjectCache.document();
     if (!document.view()->layoutContext().isInRenderTreeLayout() && !document.inRenderTreeUpdate() && !document.inStyleRecalc())
         document.updateLayoutIgnorePendingStylesheets();
 
@@ -108,14 +109,14 @@ Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache* axObjectCache)
 
     // Generate the nodes of the tree and set its root and focused objects.
     // For this, we need the root and focused objects of the AXObject tree.
-    auto* axRoot = axObjectCache->getOrCreate(document.view());
+    auto* axRoot = axObjectCache.getOrCreate(document.view());
     if (axRoot)
         tree->generateSubtree(*axRoot);
-    auto* axFocus = axObjectCache->focusedObjectForPage(document.page());
+    auto* axFocus = axObjectCache.focusedObjectForPage(document.page());
     if (axFocus)
         tree->setFocusedNodeID(axFocus->objectID());
 
-    tree->updateLoadingProgress(axObjectCache->loadingProgress());
+    tree->updateLoadingProgress(axObjectCache.loadingProgress());
 
     // Now that the tree is ready to take client requests, add it to the tree maps so that it can be found.
     storeTree(axObjectCache, tree);
@@ -123,11 +124,11 @@ Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache* axObjectCache)
     return tree;
 }
 
-void AXIsolatedTree::storeTree(AXObjectCache* axObjectCache, const Ref<AXIsolatedTree>& tree)
+void AXIsolatedTree::storeTree(AXObjectCache& axObjectCache, const Ref<AXIsolatedTree>& tree)
 {
     AXTreeStore::set(tree->treeID(), tree.ptr());
     Locker locker { s_storeLock };
-    treePageCache().set(*axObjectCache->pageID(), tree.copyRef());
+    treePageCache().set(*axObjectCache.pageID(), tree.copyRef());
 }
 
 void AXIsolatedTree::removeTreeForPageID(PageIdentifier pageID)

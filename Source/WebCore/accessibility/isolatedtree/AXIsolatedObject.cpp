@@ -28,6 +28,7 @@
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 #include "AXIsolatedObject.h"
 
+#include "AXGeometryManager.h"
 #include "AXIsolatedTree.h"
 #include "AXLogger.h"
 #include <pal/SessionID.h>
@@ -169,7 +170,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::BrailleRoleDescription, object.brailleRoleDescription().isolatedCopy());
     setProperty(AXPropertyName::BrailleLabel, object.brailleLabel().isolatedCopy());
 
-    if (std::optional frame = axObjectCache()->paintRectForID(object.objectID()))
+    if (std::optional frame = tree()->geometryManager()->paintRectForID(object.objectID()))
         setProperty(AXPropertyName::RelativeFrame, WTFMove(*frame));
     else if (!object.renderer() && object.node() && is<AccessibilityNodeObject>(object)) {
         // The frame of node-only AX objects is made up of their children.
@@ -299,6 +300,12 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
         setObjectProperty(AXPropertyName::MathSuperscriptObject, object.mathSuperscriptObject());
         setMathscripts(AXPropertyName::MathPrescripts, object);
         setMathscripts(AXPropertyName::MathPostscripts, object);
+    }
+
+    if (object.isScrollView() || object.isWebArea()) {
+        // For the ScrollView and WebArea objects, cache the TitleAttributeValue and DescriptionAttributeValue eagerly to avoid hitting the main thread in getOrRetrievePropertyValue during the construction of the isolated tree.
+        setProperty(AXPropertyName::TitleAttributeValue, object.titleAttributeValue().isolatedCopy());
+        setProperty(AXPropertyName::DescriptionAttributeValue, object.descriptionAttributeValue().isolatedCopy());
     }
 
     if (isRoot == IsRoot::Yes) {

@@ -220,6 +220,9 @@ public:
     void setIsExpanded(bool) override { }
     FloatRect unobscuredContentRect() const override;
     FloatRect relativeFrame() const override;
+#if PLATFORM(MAC)
+    FloatRect primaryScreenRect() const override;
+#endif
     FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const override;
     HashMap<String, AXEditingStyleValueVariant> resolvedEditingStyles() const override;
     

@@ -187,6 +187,9 @@ private:
     bool isExpanded() const override { return boolAttributeValue(AXPropertyName::IsExpanded); }
     FloatPoint screenRelativePosition() const final;
     FloatRect relativeFrame() const override;
+#if PLATFORM(MAC)
+    FloatRect primaryScreenRect() const override;
+#endif
     IntSize size() const final { return snappedIntRect(LayoutRect(relativeFrame())).size(); }
     FloatRect relativeFrameFromChildren() const;
     bool supportsDatetimeAttribute() const override { return boolAttributeValue(AXPropertyName::SupportsDatetimeAttribute); }

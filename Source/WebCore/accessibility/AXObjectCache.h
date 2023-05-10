@@ -629,7 +629,7 @@ private:
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     Timer m_buildIsolatedTreeTimer;
     bool m_deferredRegenerateIsolatedTree { false };
-    std::unique_ptr<AXGeometryManager> m_geometryManager;
+    Ref<AXGeometryManager> m_geometryManager;
 #endif
     bool m_isSynchronizingSelection { false };
     bool m_performingDeferredCacheUpdate { false };

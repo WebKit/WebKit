@@ -253,9 +253,9 @@ class AXIsolatedTree : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AX
     friend WTF::TextStream& operator<<(WTF::TextStream&, AXIsolatedTree&);
     friend void streamIsolatedSubtreeOnMainThread(TextStream&, const AXIsolatedTree&, AXID, const OptionSet<AXStreamOptions>&);
 public:
-    static Ref<AXIsolatedTree> create(AXObjectCache*);
+    static Ref<AXIsolatedTree> create(AXObjectCache&);
     // Creates a tree consisting of only the Scrollview and the WebArea objects. This tree is used as a temporary placeholder while the whole tree is being built.
-    static Ref<AXIsolatedTree> createEmpty(AXObjectCache*);
+    static Ref<AXIsolatedTree> createEmpty(AXObjectCache&);
     virtual ~AXIsolatedTree();
 
     static void removeTreeForPageID(PageIdentifier);
@@ -263,6 +263,7 @@ public:
     static RefPtr<AXIsolatedTree> treeForPageID(std::optional<PageIdentifier>);
     static RefPtr<AXIsolatedTree> treeForPageID(PageIdentifier);
     AXObjectCache* axObjectCache() const;
+    const Ref<AXGeometryManager>& geometryManager() const { return m_geometryManager; }
 
     RefPtr<AXIsolatedObject> rootNode();
     RefPtr<AXIsolatedObject> focusedNode();
@@ -315,8 +316,8 @@ public:
     AXID treeID() const { return m_id; }
 
 private:
-    AXIsolatedTree(AXObjectCache*);
-    static void storeTree(AXObjectCache*, const Ref<AXIsolatedTree>&);
+    AXIsolatedTree(AXObjectCache&);
+    static void storeTree(AXObjectCache&, const Ref<AXIsolatedTree>&);
 
     // Queue this isolated tree up to destroy itself on the secondary thread.
     // We can't destroy the tree on the main-thread (by removing all `Ref`s to it)
@@ -338,6 +339,7 @@ private:
 
     unsigned m_maxTreeDepth { 0 };
     WeakPtr<AXObjectCache> m_axObjectCache;
+    Ref<AXGeometryManager> m_geometryManager;
     bool m_usedOnAXThread { true };
 
     // Stores the parent ID and children IDS for a given IsolatedObject.

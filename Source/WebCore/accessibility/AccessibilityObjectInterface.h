@@ -1188,7 +1188,9 @@ public:
 
     // Rect relative to the viewport.
     virtual FloatRect relativeFrame() const = 0;
-
+#if PLATFORM(MAC)
+    virtual FloatRect primaryScreenRect() const = 0;
+#endif
     virtual FloatRect unobscuredContentRect() const = 0;
     virtual IntSize size() const = 0;
     virtual IntPoint clickPoint() = 0;

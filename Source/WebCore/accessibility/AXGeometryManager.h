@@ -28,19 +28,21 @@
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 #include "AccessibilityObjectInterface.h"
 #include "IntRectHash.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class AXObjectCache;
 
-class AXGeometryManager {
+class AXGeometryManager : public ThreadSafeRefCounted<AXGeometryManager> {
     WTF_MAKE_NONCOPYABLE(AXGeometryManager);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit AXGeometryManager(AXObjectCache&);
-    static std::unique_ptr<AXGeometryManager> create(AXObjectCache& cache)
+    AXGeometryManager();
+    static Ref<AXGeometryManager> create(AXObjectCache& cache)
     {
-        return makeUnique<AXGeometryManager>(cache);
+        return adoptRef(*new AXGeometryManager(cache));
     }
 
     void willUpdateObjectRegions();
@@ -52,16 +54,25 @@ public:
 
     void remove(AXID axID) { m_paintRects.remove(axID); }
 
+#if PLATFORM(MAC)
+    FloatRect primaryScreenRect() const;
+#endif
+
 private:
     void updateObjectRegionsTimerFired() { scheduleRenderingUpdate(); }
     void scheduleRenderingUpdate();
 
     // The cache that owns this instance.
-    CheckedRef<AXObjectCache> m_cache;
+    WeakPtr<AXObjectCache> m_cache;
     // Bounds computed by PaintPhase::Accessibility.
     HashMap<AXID, IntRect> m_paintRects;
     Timer m_updateObjectRegionsTimer;
+
+#if PLATFORM(MAC)
+    FloatRect m_primaryScreenRect;
+#endif
 };
 
 } // namespace WebCore
+
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)

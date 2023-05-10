@@ -1361,16 +1361,6 @@ static void WebTransformCGPathToNSBezierPath(void* info, const CGPathElement *el
     return [self bezierPathFromPath:transformedPath];
 }
 
-- (NSNumber *)primaryScreenHeight
-{
-    // The rect for primary screen should not change in normal use. So cache it
-    // here to avoid hitting the main thread repeatedly.
-    static FloatRect screenRect = Accessibility::retrieveValueFromMainThread<FloatRect>([] () -> FloatRect {
-        return screenRectForPrimaryScreen();
-    });
-    return [NSNumber numberWithFloat:screenRect.height()];
-}
-
 - (size_t)childrenVectorSize
 {
     return self.axBackingObject->children().size();
@@ -1759,8 +1749,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return [NSValue valueWithSize:NSMakeSize(size.width(), size.height())];
     }
 
-    if ([attributeName isEqualToString: NSAccessibilityPrimaryScreenHeightAttribute])
-        return [self primaryScreenHeight];
+    if ([attributeName isEqualToString:NSAccessibilityPrimaryScreenHeightAttribute])
+        return @(backingObject->primaryScreenRect().height());
+
     if ([attributeName isEqualToString: NSAccessibilityPositionAttribute])
         return [self position];
     if ([attributeName isEqualToString:NSAccessibilityPathAttribute])

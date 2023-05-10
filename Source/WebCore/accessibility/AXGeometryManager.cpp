@@ -31,11 +31,27 @@
 #include "AXObjectCache.h"
 #include "Page.h"
 
+#if PLATFORM(MAC)
+#include "PlatformScreen.h"
+#endif
+
 namespace WebCore {
 
 AXGeometryManager::AXGeometryManager(AXObjectCache& owningCache)
     : m_cache(owningCache)
     , m_updateObjectRegionsTimer(*this, &AXGeometryManager::updateObjectRegionsTimerFired)
+#if PLATFORM(MAC)
+    , m_primaryScreenRect(screenRectForPrimaryScreen())
+#endif
+{
+}
+
+AXGeometryManager::AXGeometryManager()
+    : m_cache(nullptr)
+    , m_updateObjectRegionsTimer(*this, &AXGeometryManager::updateObjectRegionsTimerFired)
+#if PLATFORM(MAC)
+    , m_primaryScreenRect(screenRectForPrimaryScreen())
+#endif
 {
 }
 
@@ -103,5 +119,13 @@ void AXGeometryManager::scheduleRenderingUpdate()
         page->scheduleRenderingUpdate(RenderingUpdateStep::AccessibilityRegionUpdate);
 }
 
+#if PLATFORM(MAC)
+FloatRect AXGeometryManager::primaryScreenRect() const
+{
+    return m_primaryScreenRect;
+}
+#endif
+
 } // namespace WebCore
+
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)

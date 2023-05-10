@@ -45,6 +45,7 @@
 
 #if ENABLE(ACCESSIBILITY) && PLATFORM(MAC)
 
+#import "PlatformScreen.h"
 #import "WebAccessibilityObjectWrapperMac.h"
 #import "Widget.h"
 
@@ -76,6 +77,11 @@ void AccessibilityObject::overrideAttachmentParent(AXCoreObject* parent)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[wrapper() attachmentView] accessibilitySetOverrideValue:parentWrapper forAttribute:NSAccessibilityParentAttribute];
 ALLOW_DEPRECATED_DECLARATIONS_END
+}
+
+FloatRect AccessibilityObject::primaryScreenRect() const
+{
+    return screenRectForPrimaryScreen();
 }
 
 FloatRect AccessibilityObject::convertRectToPlatformSpace(const FloatRect& rect, AccessibilityConversionSpace space) const

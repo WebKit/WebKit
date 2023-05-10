@@ -231,6 +231,7 @@ AXObjectCache::AXObjectCache(Document& document)
     , m_performCacheUpdateTimer(*this, &AXObjectCache::performCacheUpdateTimerFired)
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     , m_buildIsolatedTreeTimer(*this, &AXObjectCache::buildIsolatedTree)
+    , m_geometryManager(AXGeometryManager::create(*this))
 #endif
 {
     AXTRACE(makeString("AXObjectCache::AXObjectCache 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
@@ -248,10 +249,6 @@ AXObjectCache::AXObjectCache(Document& document)
     if (loadingProgress <= 0)
         loadingProgress = 1;
     m_loadingProgress = loadingProgress;
-
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    m_geometryManager = AXGeometryManager::create(*this);
-#endif
 
     AXTreeStore::add(m_id, WeakPtr { this });
 }
@@ -848,11 +845,11 @@ RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree()
     // Then we schedule building the entire isolated tree on a Timer.
     // For test clients, LayoutTests or XCTests, build the whole isolated tree.
     if (!isTestClient()) {
-        tree = AXIsolatedTree::createEmpty(this);
+        tree = AXIsolatedTree::createEmpty(*this);
         if (!m_buildIsolatedTreeTimer.isActive())
             m_buildIsolatedTreeTimer.startOneShot(0_s);
     } else
-        tree = AXIsolatedTree::create(this);
+        tree = AXIsolatedTree::create(*this);
     setIsolatedTreeRoot(tree->rootNode().get());
     // Schedule a paint to cache the rects for the objects in this new isolated tree.
     scheduleObjectRegionsUpdate(true /* scheduleImmediately */);
@@ -869,7 +866,7 @@ void AXObjectCache::buildIsolatedTree()
     if (!m_pageID)
         return;
 
-    auto tree = AXIsolatedTree::create(this);
+    auto tree = AXIsolatedTree::create(*this);
     setIsolatedTreeRoot(tree->rootNode().get());
 
     postPlatformNotification(tree->rootNode().get(), AXNotification::AXLoadComplete);

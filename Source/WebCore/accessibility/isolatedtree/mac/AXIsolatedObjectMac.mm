@@ -82,6 +82,11 @@ RemoteAXObjectRef AXIsolatedObject::remoteParentObject() const
     return is<AXIsolatedObject>(scrollView) ? downcast<AXIsolatedObject>(scrollView)->m_remoteParent.get() : nil;
 }
 
+FloatRect AXIsolatedObject::primaryScreenRect() const
+{
+    return tree()->geometryManager()->primaryScreenRect();
+}
+
 FloatRect AXIsolatedObject::convertRectToPlatformSpace(const FloatRect& rect, AccessibilityConversionSpace space) const
 {
     return Accessibility::retrieveValueFromMainThread<FloatRect>([&rect, &space, this] () -> FloatRect {
