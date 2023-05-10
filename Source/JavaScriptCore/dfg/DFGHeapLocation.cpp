@@ -134,6 +134,10 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("HasIndexedPorpertyLoc");
         return;
 
+    case EnumeratorNextUpdateIndexAndModeLoc:
+        out.print("EnumeratorNextUpdateIndexAndModeLoc");
+        return;
+
     case IndexedPropertyDoubleLoc:
         out.print("IndexedPropertyDoubleLoc");
         return;
