@@ -300,6 +300,23 @@ public:
         m_assembler.add<64>(dest, src, dataTempRegister);
     }
 
+    void add64(TrustedImm64 imm, RegisterID src, RegisterID dest)
+    {
+        intptr_t immediate = imm.m_value;
+
+        if (isUInt12(immediate)) {
+            m_assembler.add<64>(dest, src, UInt12(static_cast<int32_t>(immediate)));
+            return;
+        }
+        if (isUInt12(-immediate)) {
+            m_assembler.sub<64>(dest, src, UInt12(static_cast<int32_t>(-immediate)));
+            return;
+        }
+
+        move(imm, getCachedDataTempRegisterIDAndInvalidate());
+        m_assembler.add<64>(dest, src, dataTempRegister);
+    }
+
     void add64(TrustedImm32 imm, Address address)
     {
         load64(address, getCachedDataTempRegisterIDAndInvalidate());

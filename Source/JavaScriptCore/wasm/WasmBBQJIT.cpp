@@ -4210,9 +4210,24 @@ public:
                 // Fall through to general case.
             } else if (isPowerOfTwo(divisor)) {
                 if constexpr (IsMod) {
-                    Location originalResult = resultLocation;
-                    if constexpr (isSigned)
-                        resultLocation = Location::fromGPR(wasmScratchGPR);
+                    if constexpr (isSigned) {
+                        // This constructs an extra operand with log2(divisor) bits equal to the sign bit of the dividend. If the dividend
+                        // is positive, this is zero and adding it achieves nothing; but if the dividend is negative, this is equal to the
+                        // divisor minus one, which is the exact amount of bias we need to get the correct result. Computing this for both
+                        // positive and negative dividends lets us elide branching, but more importantly allows us to save a register by
+                        // not needing an extra multiplySub at the end.
+                        if constexpr (is32) {
+                            m_jit.rshift32(lhsLocation.asGPR(), TrustedImm32(31), wasmScratchGPR);
+                            m_jit.urshift32(wasmScratchGPR, TrustedImm32(32 - WTF::fastLog2(static_cast<unsigned>(divisor))), wasmScratchGPR);
+                            m_jit.add32(wasmScratchGPR, lhsLocation.asGPR(), resultLocation.asGPR());
+                        } else {
+                            m_jit.rshift64(lhsLocation.asGPR(), TrustedImm32(63), wasmScratchGPR);
+                            m_jit.urshift64(wasmScratchGPR, TrustedImm32(64 - WTF::fastLog2(static_cast<uint64_t>(divisor))), wasmScratchGPR);
+                            m_jit.add64(wasmScratchGPR, lhsLocation.asGPR(), resultLocation.asGPR());
+                        }
+
+                        lhsLocation = resultLocation;
+                    }
 
                     if constexpr (is32)
                         m_jit.and32(Imm32(static_cast<uint32_t>(divisor) - 1), lhsLocation.asGPR(), resultLocation.asGPR());
@@ -4220,33 +4235,36 @@ public:
                         m_jit.and64(TrustedImm64(static_cast<uint64_t>(divisor) - 1), lhsLocation.asGPR(), resultLocation.asGPR());
 
                     if constexpr (isSigned) {
-                        Jump isNonNegative = is32
-                            ? m_jit.branch32(RelationalCondition::GreaterThanOrEqual, lhsLocation.asGPR(), TrustedImm32(0))
-                            : m_jit.branch64(RelationalCondition::GreaterThanOrEqual, lhsLocation.asGPR(), TrustedImm64(0));
+                        // The extra operand we computed is still in wasmScratchGPR - now we can subtract it from the result to get the
+                        // correct answer.
                         if constexpr (is32)
-                            m_jit.neg32(wasmScratchGPR, wasmScratchGPR);
+                            m_jit.sub32(resultLocation.asGPR(), wasmScratchGPR, resultLocation.asGPR());
                         else
-                            m_jit.neg64(wasmScratchGPR, wasmScratchGPR);
-                        isNonNegative.link(&m_jit);
-                        m_jit.move(wasmScratchGPR, originalResult.asGPR());
+                            m_jit.sub64(resultLocation.asGPR(), wasmScratchGPR, resultLocation.asGPR());
                     }
                     return;
                 }
 
                 if constexpr (isSigned) {
-                    Jump isNonNegative = is32
-                        ? m_jit.branch32(RelationalCondition::GreaterThanOrEqual, lhsLocation.asGPR(), TrustedImm32(0))
-                        : m_jit.branch64(RelationalCondition::GreaterThanOrEqual, lhsLocation.asGPR(), TrustedImm64(0));
+                    // If we are doing signed division, we need to bias the dividend for negative numbers.
                     if constexpr (is32)
-                        m_jit.add32(Imm32(1), lhsLocation.asGPR(), lhsLocation.asGPR());
+                        m_jit.add32(TrustedImm32(static_cast<int32_t>(divisor) - 1), lhsLocation.asGPR(), wasmScratchGPR);
                     else
-                        m_jit.add64(TrustedImm32(1), lhsLocation.asGPR(), lhsLocation.asGPR());
-                    isNonNegative.link(&m_jit);
+                        m_jit.add64(TrustedImm64(divisor - 1), lhsLocation.asGPR(), wasmScratchGPR);
+
+                    // moveConditionally seems to be faster than a branch here, even if it's well predicted.
+                    if (is32)
+                        m_jit.moveConditionally32(RelationalCondition::GreaterThanOrEqual, lhsLocation.asGPR(), TrustedImm32(0), lhsLocation.asGPR(), wasmScratchGPR, wasmScratchGPR);
+                    else
+                        m_jit.moveConditionally64(RelationalCondition::GreaterThanOrEqual, lhsLocation.asGPR(), TrustedImm32(0), lhsLocation.asGPR(), wasmScratchGPR, wasmScratchGPR);
+                    lhsLocation = Location::fromGPR(wasmScratchGPR);
                 }
+
                 if constexpr (is32)
                     m_jit.rshift32(lhsLocation.asGPR(), m_jit.trustedImm32ForShift(Imm32(WTF::fastLog2(static_cast<unsigned>(divisor)))), resultLocation.asGPR());
                 else
-                    m_jit.rshift64(lhsLocation.asGPR(),  TrustedImm32(WTF::fastLog2(static_cast<unsigned>(divisor))), resultLocation.asGPR());
+                    m_jit.rshift64(lhsLocation.asGPR(), TrustedImm32(WTF::fastLog2(static_cast<uint64_t>(divisor))), resultLocation.asGPR());
+
                 return;
             }
             // TODO: try generating integer reciprocal instead.
