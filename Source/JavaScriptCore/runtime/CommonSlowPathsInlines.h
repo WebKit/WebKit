@@ -208,7 +208,7 @@ inline void opEnumeratorPutByVal(JSGlobalObject* globalObject, JSValue baseValue
         return;
     }
     case JSPropertyNameEnumerator::OwnStructureMode: {
-        if (LIKELY(baseValue.isCell()) && baseValue.asCell()->structureID() == enumerator->cachedStructureID() && !baseValue.asCell()->structure()->didWatchReplacement()) {
+        if (LIKELY(baseValue.isCell()) && baseValue.asCell()->structureID() == enumerator->cachedStructureID() && !baseValue.asCell()->structure()->isWatchingReplacement()) {
             // We'll only match the structure ID if the base is an object.
             ASSERT(index < enumerator->endStructurePropertyIndex());
             scope.release();

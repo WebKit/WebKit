@@ -2535,7 +2535,7 @@ void JIT::emit_op_enumerator_put_by_val(const JSInstruction* currentInstruction)
     load32(Address(baseGPR, JSCell::structureIDOffset()), profileGPR);
     structureMismatch.append(branch32(NotEqual, profileGPR, Address(scratch1, JSPropertyNameEnumerator::cachedStructureIDOffset())));
     emitNonNullDecodeZeroExtendedStructureID(profileGPR, profileGPR);
-    structureMismatch.append(branchTest32(NonZero, Address(profileGPR, Structure::bitFieldOffset()), TrustedImm32(Structure::s_didWatchReplacementBits)));
+    structureMismatch.append(branchTest32(NonZero, Address(profileGPR, Structure::bitFieldOffset()), TrustedImm32(Structure::s_isWatchingReplacementBits)));
 
     // Compute the offset.
     emitGetVirtualRegister(index, profileGPR);

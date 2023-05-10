@@ -783,6 +783,8 @@ public:
     }
     void startWatchingPropertyForReplacements(VM&, PropertyName);
     WatchpointSet* propertyReplacementWatchpointSet(PropertyOffset);
+    JS_EXPORT_PRIVATE WatchpointSet* firePropertyReplacementWatchpointSet(VM&, PropertyOffset, const char* reason);
+
     void didReplaceProperty(PropertyOffset);
     void didCachePropertyReplacement(VM&, PropertyOffset);
     
@@ -844,7 +846,7 @@ public:
     DEFINE_BITFIELD(bool, isQuickPropertyAccessAllowedForEnumeration, IsQuickPropertyAccessAllowedForEnumeration, 1, 5);
     DEFINE_BITFIELD(TransitionPropertyAttributes, transitionPropertyAttributes, TransitionPropertyAttributes, 7, 6);
     DEFINE_BITFIELD(TransitionKind, transitionKind, TransitionKind, 5, 13);
-    DEFINE_BITFIELD(bool, didWatchReplacement, DidWatchReplacement, 1, 18);
+    DEFINE_BITFIELD(bool, isWatchingReplacement, IsWatchingReplacement, 1, 18); // This flag can be fliped on the main thread at any timing.
     DEFINE_BITFIELD(bool, mayBePrototype, MayBePrototype, 1, 19);
     DEFINE_BITFIELD(bool, didPreventExtensions, DidPreventExtensions, 1, 20);
     DEFINE_BITFIELD(bool, didTransition, DidTransition, 1, 21);

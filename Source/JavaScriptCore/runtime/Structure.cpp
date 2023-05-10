@@ -1015,12 +1015,29 @@ WatchpointSet* Structure::ensurePropertyReplacementWatchpointSet(VM& vm, Propert
     if (!hasRareData())
         allocateRareData(vm);
     ConcurrentJSLocker locker(m_lock);
-    setDidWatchReplacement(true);
-    StructureRareData* rareData = this->rareData();
+    Structure* structure = this;
+    StructureRareData* rareData = structure->rareData();
     auto result = rareData->m_replacementWatchpointSets.add(offset, nullptr);
-    if (result.isNewEntry)
+    if (result.isNewEntry) {
         result.iterator->value = WatchpointSet::create(IsWatched);
+        rareData->incrementActiveReplacementWatchpointSet();
+        structure->setIsWatchingReplacement(true);
+    }
     return result.iterator->value.get();
+}
+
+WatchpointSet* Structure::firePropertyReplacementWatchpointSet(VM& vm, PropertyOffset offset, const char* reason)
+{
+    ASSERT(!isCompilationThread());
+    auto* structure = this;
+    auto* watchpointSet = structure->ensurePropertyReplacementWatchpointSet(vm, offset);
+    if (watchpointSet && watchpointSet->state() == IsWatched) {
+        StructureRareData* rareData = structure->rareData();
+        watchpointSet->fireAll(vm, reason);
+        if (!rareData->decrementActiveReplacementWatchpointSet())
+            structure->setIsWatchingReplacement(false);
+    }
+    return watchpointSet;
 }
 
 void Structure::startWatchingPropertyForReplacements(VM& vm, PropertyName propertyName)
@@ -1033,7 +1050,7 @@ void Structure::startWatchingPropertyForReplacements(VM& vm, PropertyName proper
 void Structure::didCachePropertyReplacement(VM& vm, PropertyOffset offset)
 {
     RELEASE_ASSERT(isValidOffset(offset));
-    ensurePropertyReplacementWatchpointSet(vm, offset)->fireAll(vm, "Did cache property replacement");
+    firePropertyReplacementWatchpointSet(vm, offset, "Did cache property replacement");
 }
 
 void Structure::startWatchingInternalProperties(VM& vm)

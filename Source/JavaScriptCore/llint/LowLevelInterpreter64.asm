@@ -3488,7 +3488,7 @@ llintOpWithMetadata(op_enumerator_put_by_val, OpEnumeratorPutByVal, macro (size,
     bineq t2, JSCell::m_structureID[t0], .putSlowPath
 
     structureIDToStructureWithScratch(t2, t3)
-    btinz Structure::m_bitField[t2], (constexpr Structure::s_didWatchReplacementBits), .putSlowPath
+    btinz Structure::m_bitField[t2], (constexpr Structure::s_isWatchingReplacementBits), .putSlowPath
 
     get(m_value, t2)
     loadConstantOrVariable(size, t2, t3)

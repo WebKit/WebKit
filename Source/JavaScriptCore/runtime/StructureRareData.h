@@ -135,6 +135,16 @@ public:
     static constexpr uintptr_t cachedPropertyNameEnumeratorIsValidatedViaTraversingFlag = 1;
     static constexpr uintptr_t cachedPropertyNameEnumeratorMask = ~static_cast<uintptr_t>(1);
 
+    unsigned incrementActiveReplacementWatchpointSet()
+    {
+        return ++m_activeReplacementWatchpointSet;
+    }
+
+    unsigned decrementActiveReplacementWatchpointSet()
+    {
+        return --m_activeReplacementWatchpointSet;
+    }
+
 private:
     friend class LLIntOffsetsExtractor;
     friend class Structure;
@@ -171,6 +181,7 @@ private:
     WriteBarrierStructureID m_previous;
     PropertyOffset m_maxOffset;
     PropertyOffset m_transitionOffset;
+    unsigned m_activeReplacementWatchpointSet { 0 };
 };
 
 } // namespace JSC
