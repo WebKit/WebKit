@@ -95,3 +95,12 @@ TARGET_MAC_OS_X_VERSION_MAJOR = $(MACOSX_DEPLOYMENT_TARGET:base:base)0000;
 WK_TARGET_IOS_VERSION_MAJOR = $(IPHONEOS_DEPLOYMENT_TARGET:base); // e.g. iOS 9.3 => 9
 WK_TARGET_TVOS_VERSION_MAJOR = $(TVOS_DEPLOYMENT_TARGET:base);
 WK_TARGET_WATCHOS_VERSION_MAJOR = $(WATCHOS_DEPLOYMENT_TARGET:base);
+
+// Open-source builds only: Select a macOS deployment target based on the
+// *system* macOS version, so that we always produce runnable build artifacts.
+// This supports Xcode distributions which ship for a current OS and include
+// the NMOS SDK.
+//
+// In internal builds, OS and SDK versions must be aligned.
+MACOSX_DEPLOYMENT_TARGET = $(MACOSX_DEPLOYMENT_TARGET_$(USE_INTERNAL_SDK));
+MACOSX_DEPLOYMENT_TARGET_ = $(WK_SYSTEM_MACOS_VERSION_MAJOR).0;
