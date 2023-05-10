@@ -153,6 +153,7 @@ struct TrackInfo : public ThreadSafeRefCounted<TrackInfo> {
     }
 
     FourCC codecName;
+    String codecString;
     uint64_t trackID { 0 };
 
     virtual ~TrackInfo() = default;

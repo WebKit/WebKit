@@ -28,6 +28,8 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "MediaSample.h"
+
 namespace WebCore {
 
 Ref<VideoTrackPrivateWebM> VideoTrackPrivateWebM::create(webm::TrackEntry&& trackEntry)
@@ -41,6 +43,14 @@ VideoTrackPrivateWebM::VideoTrackPrivateWebM(webm::TrackEntry&& trackEntry)
     if (m_track.is_enabled.is_present())
         setSelected(m_track.is_enabled.value());
 
+    updateConfiguration();
+}
+
+void VideoTrackPrivateWebM::setFormatDescription(Ref<VideoInfo>&& formatDescription)
+{
+    if (m_formatDescription && *m_formatDescription == formatDescription)
+        return;
+    m_formatDescription = WTFMove(formatDescription);
     updateConfiguration();
 }
 
@@ -90,12 +100,17 @@ int VideoTrackPrivateWebM::trackIndex() const
 
 String VideoTrackPrivateWebM::codec() const
 {
+    if (m_formatDescription) {
+        if (!m_formatDescription->codecString.isEmpty())
+            return m_formatDescription->codecString;
+        return String::fromLatin1(m_formatDescription->codecName.string().data());
+    }
+
     if (!m_track.codec_id.is_present())
         return emptyString();
 
     StringView codecID { m_track.codec_id.value().data(), (unsigned)m_track.codec_id.value().length() };
 
-    // TODO: Specific codec parameters are parsed out of the sample header; they aren't typically contained in the WebM Track element.
     if (codecID == "V_VP9"_s)
         return "vp09"_s;
 
@@ -107,6 +122,9 @@ String VideoTrackPrivateWebM::codec() const
 
 uint32_t VideoTrackPrivateWebM::width() const
 {
+    if (m_formatDescription)
+        return m_formatDescription->size.width();
+
     if (!m_track.video.is_present())
         return 0;
 
@@ -122,6 +140,9 @@ uint32_t VideoTrackPrivateWebM::width() const
 
 uint32_t VideoTrackPrivateWebM::height() const
 {
+    if (m_formatDescription)
+        return m_formatDescription->size.height();
+
     if (!m_track.video.is_present())
         return 0;
 
@@ -147,6 +168,13 @@ double VideoTrackPrivateWebM::framerate() const
     return 0;
 }
 
+PlatformVideoColorSpace VideoTrackPrivateWebM::colorSpace() const
+{
+    if (m_formatDescription)
+        return m_formatDescription->colorSpace;
+    return { };
+}
+
 void VideoTrackPrivateWebM::updateConfiguration()
 {
     PlatformVideoTrackConfiguration configuration {
@@ -154,6 +182,7 @@ void VideoTrackPrivateWebM::updateConfiguration()
         .width = width(),
         .height = height(),
         .framerate = framerate(),
+        .colorSpace = colorSpace(),
     };
     setConfiguration(WTFMove(configuration));
 }

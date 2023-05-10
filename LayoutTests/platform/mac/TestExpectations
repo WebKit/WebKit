@@ -2763,3 +2763,6 @@ webkit.org/b/256091 [ Ventura+ ] webaudio/audiocontext-large-samplerate.html [ P
 webkit.org/b/255788 [ Ventura+ Debug ] tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-async-overflow.html [ Skip ]
 
 webkit.org/b/256108 media/video-audio-session-mode.html [ Failure ]
+
+# VP9 is not supported on all Intel HW
+[ x86_64 ] media/media-source/media-source-webm-configuration-change.html [ Pass Failure ]

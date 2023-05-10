@@ -51,6 +51,8 @@ class WebmParser;
 
 namespace WebCore {
 
+struct TrackInfo;
+
 class WebMParser
     : private webm::Callback
     , private LoggerHelper {
@@ -63,6 +65,7 @@ public:
         virtual void parsedMediaData(MediaSamplesBlock&&) = 0;
         virtual bool canDecrypt() const { return false; }
         virtual void contentKeyRequestInitializationDataForTrackID(Ref<SharedBuffer>&&, uint64_t) { }
+        virtual void formatDescriptionChangedForTrackID(Ref<TrackInfo>&&, uint64_t) { }
         virtual ~Callback() = default;
     };
 
@@ -159,6 +162,7 @@ public:
         {
             m_completeBlockBuffer = nullptr;
             m_processedMediaSamples = { };
+            m_processedMediaSamples.setInfo(formatDescription());
         }
 
         void reset()
@@ -184,6 +188,7 @@ public:
         MediaSamplesBlock m_processedMediaSamples;
         bool m_useByteRange { false };
         MediaSamplesBlock::MediaSampleDataType m_completeFrameData;
+        RefPtr<TrackInfo> m_trackInfo;
 
     private:
         CodecType m_codec;
@@ -248,6 +253,8 @@ public:
         MediaTime m_remainingTrimDuration;
         MediaTime m_presentationTimeShift;
     };
+
+    void formatDescriptionChangedForTrackData(TrackData&);
 
 private:
     TrackData* trackDataForTrackNumber(uint64_t);
@@ -343,6 +350,7 @@ private:
     bool canDecrypt() const final { return !!m_didProvideContentKeyRequestInitializationDataForTrackIDCallback; }
     void contentKeyRequestInitializationDataForTrackID(Ref<SharedBuffer>&&, uint64_t) final;
     void parsedTrimmingData(uint64_t, const MediaTime&) final;
+    void formatDescriptionChangedForTrackID(Ref<TrackInfo>&&, uint64_t) final;
 
     void returnSamples(MediaSamplesBlock&&, CMFormatDescriptionRef);
         

@@ -1,0 +1,77 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>media-source-webm-fragment</title>
+    <script src="../../media/media-source/media-source-loader.js"></script>
+    <script src="../../media/video-test.js"></script>
+    <script>
+    var loader1;
+    var loader2;
+    var source;
+    var sourceBuffer;
+    var mediaSegmentDuration;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    async function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        waitFor(video, 'error').then(failTest);
+
+        loader1 = new MediaSourceLoader('content/test-vp9-profile0-manifest.json');
+        await loader1.load();
+        await loader1.loadMediaData();
+
+        run('sourceBuffer = source.addSourceBuffer(loader1.type())');
+        run('sourceBuffer.appendBuffer(loader1.initSegment())');
+        await waitFor(sourceBuffer, 'update');
+
+        run('sourceBuffer.appendBuffer(loader1.mediaSegment(0))');
+        await waitFor(sourceBuffer, 'update');
+
+        testExpected('video.videoTracks[0].configuration.codec', 'vp09.00.10.08');
+        testExpected('video.videoTracks[0].configuration.width', '640');
+        testExpected('video.videoTracks[0].configuration.height', '480');
+        testExpected('video.videoTracks[0].configuration.colorSpace.matrix', 'bt709');
+        testExpected('video.videoTracks[0].configuration.colorSpace.primaries', 'bt709');
+        testExpected('video.videoTracks[0].configuration.colorSpace.transfer', 'bt709');
+        loader2 = new MediaSourceLoader('content/test-vp9-profile2-manifest.json');
+
+        await loader2.load();
+        await loader2.loadMediaData();
+
+        run('sourceBuffer.appendBuffer(loader2.initSegment())');
+        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.appendBuffer(loader2.mediaSegment(1))');
+        await waitFor(sourceBuffer, 'update');
+
+        testExpected('video.videoTracks[0].configuration.codec', 'vp09.02.10.10.01.09.16.09.01');
+        testExpected('video.videoTracks[0].configuration.width', '720');
+        testExpected('video.videoTracks[0].configuration.height', '480');
+        testExpected('video.videoTracks[0].configuration.colorSpace.matrix', 'bt2020-ncl');
+        testExpected('video.videoTracks[0].configuration.colorSpace.primaries', 'bt2020');
+        testExpected('video.videoTracks[0].configuration.colorSpace.transfer', 'pq');
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            await runTest();
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

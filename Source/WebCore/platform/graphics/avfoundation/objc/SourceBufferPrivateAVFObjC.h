@@ -76,6 +76,8 @@ class VideoTrackPrivateMediaSourceAVFObjC;
 class WebCoreDecompressionSession;
 class SharedBuffer;
 
+struct TrackInfo;
+
 class SourceBufferPrivateAVFObjCErrorClient {
 public:
     virtual ~SourceBufferPrivateAVFObjCErrorClient() = default;
@@ -157,6 +159,7 @@ private:
     void didEncounterErrorDuringParsing(int32_t);
     void didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&&, uint64_t trackId, const String& mediaType);
     bool isMediaSampleAllowed(const MediaSample&) const final;
+    void didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&&, uint64_t);
 
     // SourceBufferPrivate overrides
     void appendInternal(Ref<SharedBuffer>&&) final;

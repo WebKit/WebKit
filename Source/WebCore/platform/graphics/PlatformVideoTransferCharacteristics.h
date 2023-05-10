@@ -46,7 +46,11 @@ enum class PlatformVideoTransferCharacteristics : uint8_t {
     SmpteSt2084,
     SmpteSt4281,
     AribStdB67Hlg,
-    Unspecified
+    Unspecified,
+
+    // Aliases for WebIDL bindings
+    PQ = SmpteSt2084,
+    HLG = AribStdB67Hlg,
 };
 
 } // namespace WebCore

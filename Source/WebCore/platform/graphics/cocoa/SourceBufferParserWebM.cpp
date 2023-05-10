@@ -762,6 +762,10 @@ Status WebMParser::OnEbml(const ElementMetadata&, const Ebml& ebml)
     // of ensuring that libwebm does something sane with rubbish input.
     m_initializationSegmentProcessed = false;
 
+    // Reset the tracks as new tracks _must_ replace old ones. Otherwise, new samples may refer to old
+    // track information.
+    m_tracks.clear();
+
     return Status(Status::kOkCompleted);
 }
 
@@ -1105,6 +1109,12 @@ webm::Status WebMParser::VideoTrackData::consumeFrameData(webm::Reader& reader, 
 
     processPendingMediaSamples(presentationTime);
 
+    if (formatDescription() && (!m_trackInfo || *formatDescription() != *m_trackInfo)) {
+        m_trackInfo = formatDescription();
+        m_processedMediaSamples.setInfo(formatDescription());
+        parser().formatDescriptionChangedForTrackData(*this);
+    }
+
     m_pendingMediaSamples.append({ presentationTime, presentationTime, MediaTime::indefiniteTime(), MediaTime::zeroTime(), WTFMove(m_completeFrameData), isKey ? MediaSample::SampleFlags::IsSync : MediaSample::SampleFlags::None });
 
     ASSERT(!*bytesRemaining);
@@ -1261,10 +1271,14 @@ webm::Status WebMParser::AudioTrackData::consumeFrameData(webm::Reader& reader, 
         }
     }
 
-    if (!m_processedMediaSamples.info())
+    bool shouldDrain = !!m_processedMediaSamples.info();
+    if (formatDescription() && (!m_trackInfo || *formatDescription() != *m_trackInfo)) {
+        if (shouldDrain)
+            drainPendingSamples();
+        m_trackInfo = formatDescription();
         m_processedMediaSamples.setInfo(formatDescription());
-    else if (formatDescription() && *formatDescription() != *m_processedMediaSamples.info())
-        drainPendingSamples();
+        parser().formatDescriptionChangedForTrackData(*this);
+    }
 
     auto trimDuration = MediaTime::zeroTime();
     MediaTime localPresentationTime = presentationTime;
@@ -1434,6 +1448,12 @@ void WebMParser::provideMediaData(MediaSamplesBlock&& samples)
     m_callback.parsedMediaData(WTFMove(samples));
 }
 
+void WebMParser::formatDescriptionChangedForTrackData(TrackData& trackData)
+{
+    if (auto formatDescription = trackData.formatDescription())
+        m_callback.formatDescriptionChangedForTrackID(*formatDescription, trackData.track().track_uid.value());
+}
+
 void SourceBufferParserWebM::parsedInitializationData(InitializationSegment&& initializationSegment)
 {
     m_callOnClientThreadCallback([this, protectedThis = Ref { *this }, initializationSegment = WTFMove(initializationSegment)]() mutable {
@@ -1518,6 +1538,14 @@ void SourceBufferParserWebM::contentKeyRequestInitializationDataForTrackID(Ref<S
 {
     if (m_didProvideContentKeyRequestInitializationDataForTrackIDCallback)
         m_didProvideContentKeyRequestInitializationDataForTrackIDCallback(WTFMove(keyID), trackID);
+}
+
+void SourceBufferParserWebM::formatDescriptionChangedForTrackID(Ref<TrackInfo>&& formatDescription, uint64_t trackID)
+{
+    m_callOnClientThreadCallback([this, protectedThis = Ref { *this }, formatDescription = WTFMove(formatDescription), trackID]() mutable {
+        if (m_didUpdateFormatDescriptionForTrackIDCallback)
+            m_didUpdateFormatDescriptionForTrackIDCallback(WTFMove(formatDescription), trackID);
+    });
 }
 
 void SourceBufferParserWebM::flushPendingAudioSamples()

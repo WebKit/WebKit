@@ -609,6 +609,7 @@ static Ref<VideoInfo> createVideoInfoFromVPCodecConfigurationRecord(const VPCode
     videoInfo->colorSpace.transfer = convertToPlatformVideoTransferCharacteristics(record.transferCharacteristics);
     videoInfo->colorSpace.matrix = convertToPlatformVideoMatrixCoefficients(record.matrixCoefficients);
     videoInfo->codecName = record.codecName == "vp09"_s ? 'vp09' : 'vp08';
+    videoInfo->codecString = createVPCodecParametersString(record);
     return videoInfo;
 }
 

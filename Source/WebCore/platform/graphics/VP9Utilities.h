@@ -126,6 +126,6 @@ struct VPCodecConfigurationRecord {
 };
 
 WEBCORE_EXPORT std::optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecString);
-
+WEBCORE_EXPORT String createVPCodecParametersString(const VPCodecConfigurationRecord&);
 
 }

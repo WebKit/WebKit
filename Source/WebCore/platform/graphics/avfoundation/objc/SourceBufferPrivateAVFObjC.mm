@@ -485,6 +485,22 @@ bool SourceBufferPrivateAVFObjC::isMediaSampleAllowed(const MediaSample& sample)
     return trackId == m_enabledVideoTrackID || m_audioRenderers.contains(trackId);
 }
 
+void SourceBufferPrivateAVFObjC::didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&& formatDescription, uint64_t trackId)
+{
+    if (is<VideoInfo>(formatDescription)) {
+        auto result = m_videoTracks.find(AtomString::number(trackId));
+        if (result != m_videoTracks.end())
+            result->value->setFormatDescription(downcast<VideoInfo>(formatDescription.get()));
+        return;
+    }
+
+    if (is<AudioInfo>(formatDescription)) {
+        auto result = m_audioTracks.find(AtomString::number(trackId));
+        if (result != m_audioTracks.end())
+            result->value->setFormatDescription(downcast<AudioInfo>(formatDescription.get()));
+    }
+}
+
 void SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataForTrackID(uint64_t trackID)
 {
     if (!m_mediaSource)
@@ -600,6 +616,13 @@ void SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>&& data)
         if (!weakThis)
             return;
         weakThis->didProvideMediaDataForTrackId(WTFMove(sample), trackId, mediaType);
+    });
+
+    m_parser->setDidUpdateFormatDescriptionForTrackIDCallback([weakThis = WeakPtr { *this }, abortCalled = m_abortCalled] (Ref<TrackInfo>&& formatDescription, uint64_t trackId) {
+        ASSERT(isMainThread());
+        if (!weakThis || abortCalled != weakThis->m_abortCalled)
+            return;
+        weakThis->didUpdateFormatDescriptionForTrackId(WTFMove(formatDescription), trackId);
     });
 
     m_abortSemaphore = Box<Semaphore>::create(0);
