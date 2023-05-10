@@ -1208,6 +1208,7 @@ JSValue LiteralParser<CharType>::parseRecursively(VM& vm, uint8_t* stackLimit)
     TokenType type = m_lexer.currentToken()->type;
     if (type == TokLBracket) {
         JSArray* array = constructEmptyArray(m_globalObject, nullptr);
+        RETURN_IF_EXCEPTION(scope, { });
         TokenType type = m_lexer.next();
         if (type == TokRBracket) {
             m_lexer.next();
@@ -1220,6 +1221,7 @@ JSValue LiteralParser<CharType>::parseRecursively(VM& vm, uint8_t* stackLimit)
                 value = parseRecursively(vm, stackLimit);
             else
                 value = parsePrimitiveValue(vm);
+            EXCEPTION_ASSERT(!!scope.exception() == !value);
             if (UNLIKELY(!value))
                 return { };
 
@@ -1264,6 +1266,7 @@ JSValue LiteralParser<CharType>::parseRecursively(VM& vm, uint8_t* stackLimit)
                 value = parseRecursively(vm, stackLimit);
             else
                 value = parsePrimitiveValue(vm);
+            EXCEPTION_ASSERT(!!scope.exception() == !value);
             if (UNLIKELY(!value))
                 return { };
 
