@@ -307,6 +307,12 @@ bool IOSApplication::isFirefox()
     return isFirefox;
 }
 
+bool IOSApplication::isHoYoLAB()
+{
+    static bool isHoYoLAB = applicationBundleIsEqualTo("com.miHoYo.HoYoLAB"_s);
+    return isHoYoLAB;
+}
+
 bool IOSApplication::isAppleApplication()
 {
     static bool isAppleApplication = applicationBundleStartsWith("com.apple."_s);

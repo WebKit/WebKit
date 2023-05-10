@@ -258,7 +258,7 @@ bool defaultShouldEnableScreenOrientationAPI()
 #if PLATFORM(MAC)
     return true;
 #elif PLATFORM(IOS_FAMILY)
-    static bool shouldEnableScreenOrientationAPI = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ScreenOrientationAPIEnabled);
+    static bool shouldEnableScreenOrientationAPI = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ScreenOrientationAPIEnabled) || IOSApplication::isHoYoLAB();
     return shouldEnableScreenOrientationAPI;
 #else
     return false;
