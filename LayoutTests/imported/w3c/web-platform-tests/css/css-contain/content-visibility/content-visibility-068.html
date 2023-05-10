@@ -30,6 +30,7 @@ body, html {
 }
 </style>
 
+<div id=end tabindex=1></div>
 <div class=spacer></div>
 <div id=container>
   <div id=focusable tabindex=0></div>
@@ -47,7 +48,7 @@ async_test((t) => {
     });
 
     focusable.focus();
-    requestAnimationFrame(step2);
+    step_timeout(step2, 0);
   }
   // After focusing the subtree, the container should be somewhere closer than
   // 3000px (scrolled into view) and the height should be 10px, since it no
@@ -79,7 +80,11 @@ async_test((t) => {
       assert_equals(r.y, 3000, "step4 offset");
       assert_equals(r.height, 10, "step4 height");
     });
-    focusable.blur();
+
+    // We don't use `blur()` here because in Gecko this leaves the selection
+    // on _focusable_ which means that its content is still relevant. Focusing
+    // another element will move both focus and selection.
+    end.focus();
     requestAnimationFrame(step5);
   }
   // After blurring the focused element, we should go back to the contained
