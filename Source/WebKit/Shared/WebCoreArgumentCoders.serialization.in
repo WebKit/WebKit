@@ -3672,6 +3672,7 @@ struct WebCore::NavigationRequester {
     Ref<WebCore::SecurityOrigin> securityOrigin;
     Ref<WebCore::SecurityOrigin> topOrigin;
     WebCore::PolicyContainer policyContainer;
+    WebCore::ScriptExecutionContextIdentifier documentIdentifier;
     std::optional<WebCore::GlobalFrameIdentifier> globalFrameIdentifier;
 };
 
