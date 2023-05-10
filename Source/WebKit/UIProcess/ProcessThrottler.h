@@ -137,6 +137,8 @@ public:
     ProcessThrottleState currentState() const { return m_state; }
     bool isHoldingNearSuspendedAssertion() const { return m_assertion && m_assertion->type() == ProcessAssertionType::NearSuspended; }
 
+    void invalidateAllActivitiesAndDropAssertion();
+
 private:
     friend class ProcessThrottlerActivity;
     friend WTF::TextStream& operator<<(WTF::TextStream&, const ProcessThrottler&);
@@ -148,6 +150,7 @@ private:
     void setThrottleState(ProcessThrottleState);
     void prepareToSuspendTimeoutTimerFired();
     void dropNearSuspendedAssertionTimerFired();
+    void prepareToDropLastAssertionTimeoutTimerFired();
     void sendPrepareToSuspendIPC(IsSuspensionImminent);
     void processReadyToSuspend();
 
@@ -167,8 +170,10 @@ private:
     ProcessThrottlerClient& m_process;
     ProcessID m_processIdentifier { 0 };
     RefPtr<ProcessAssertion> m_assertion;
+    RefPtr<ProcessAssertion> m_assertionToClearAfterPrepareToDropLastAssertion;
     RunLoop::Timer m_prepareToSuspendTimeoutTimer;
     RunLoop::Timer m_dropNearSuspendedAssertionTimer;
+    RunLoop::Timer m_prepareToDropLastAssertionTimeoutTimer;
     HashSet<Activity*> m_foregroundActivities;
     HashSet<Activity*> m_backgroundActivities;
     std::optional<uint64_t> m_pendingRequestToSuspendID;

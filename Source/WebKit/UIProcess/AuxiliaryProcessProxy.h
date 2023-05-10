@@ -143,6 +143,7 @@ public:
     bool platformIsBeingDebugged() const;
 
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
+    bool runningBoardThrottlingEnabled();
     void setRunningBoardThrottlingEnabled();
 #endif
 

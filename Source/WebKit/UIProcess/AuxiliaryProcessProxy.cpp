@@ -506,6 +506,11 @@ void AuxiliaryProcessProxy::setRunningBoardThrottlingEnabled()
 {
     m_lifetimeActivity = nullptr;
 }
+
+bool AuxiliaryProcessProxy::runningBoardThrottlingEnabled()
+{
+    return !m_lifetimeActivity;
+}
 #endif
 
 } // namespace WebKit

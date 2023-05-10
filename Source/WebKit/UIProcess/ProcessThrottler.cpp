@@ -54,6 +54,7 @@ ProcessThrottler::ProcessThrottler(ProcessThrottlerClient& process, bool shouldT
     : m_process(process)
     , m_prepareToSuspendTimeoutTimer(RunLoop::main(), this, &ProcessThrottler::prepareToSuspendTimeoutTimerFired)
     , m_dropNearSuspendedAssertionTimer(RunLoop::main(), this, &ProcessThrottler::dropNearSuspendedAssertionTimerFired)
+    , m_prepareToDropLastAssertionTimeoutTimer(RunLoop::main(), this, &ProcessThrottler::prepareToDropLastAssertionTimeoutTimerFired)
     , m_pageAllowedToRunInTheBackgroundCounter([this](RefCounterEvent) { numberOfPagesAllowedToRunInTheBackgroundChanged(); })
     , m_shouldTakeUIBackgroundAssertion(shouldTakeUIBackgroundAssertion)
 {
@@ -100,6 +101,15 @@ void ProcessThrottler::invalidateAllActivities()
     while (!m_backgroundActivities.isEmpty())
         (*m_backgroundActivities.begin())->invalidate();
     PROCESSTHROTTLER_RELEASE_LOG("invalidateAllActivities: END");
+}
+
+void ProcessThrottler::invalidateAllActivitiesAndDropAssertion()
+{
+    PROCESSTHROTTLER_RELEASE_LOG("invalidateAllActivitiesAndDropAssertion:");
+    invalidateAllActivities();
+    clearPendingRequestToSuspend();
+    m_dropNearSuspendedAssertionTimer.stop();
+    clearAssertion();
 }
 
 ProcessThrottleState ProcessThrottler::expectedThrottleState()
@@ -366,9 +376,30 @@ void ProcessThrottler::setShouldDropNearSuspendedAssertionAfterDelay(bool should
         m_dropNearSuspendedAssertionTimer.stop();
 }
 
+void ProcessThrottler::prepareToDropLastAssertionTimeoutTimerFired()
+{
+    PROCESSTHROTTLER_RELEASE_LOG("prepareToDropLastAssertionTimeoutTimerFired:");
+    m_assertionToClearAfterPrepareToDropLastAssertion = nullptr;
+}
+
 void ProcessThrottler::clearAssertion()
 {
-    m_process.prepareToDropLastAssertion([assertion = std::exchange(m_assertion, nullptr)] { });
+    if (!m_assertion)
+        return;
+
+    PROCESSTHROTTLER_RELEASE_LOG("clearAssertion:");
+
+    if (!m_prepareToDropLastAssertionTimeoutTimer.isActive())
+        m_prepareToDropLastAssertionTimeoutTimer.startOneShot(10_s);
+
+    m_assertionToClearAfterPrepareToDropLastAssertion = std::exchange(m_assertion, nullptr);
+    m_process.prepareToDropLastAssertion([this, weakThis = WeakPtr { *this }] {
+        if (!weakThis)
+            return;
+        PROCESSTHROTTLER_RELEASE_LOG("clearAssertion: Releasing near-suspended assertion");
+        m_prepareToDropLastAssertionTimeoutTimer.stop();
+        m_assertionToClearAfterPrepareToDropLastAssertion = nullptr;
+    });
 }
 
 PageAllowedToRunInTheBackgroundCounter::Token ProcessThrottler::pageAllowedToRunInTheBackgroundToken()
