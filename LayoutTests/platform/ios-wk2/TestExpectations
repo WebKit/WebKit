@@ -2399,3 +2399,5 @@ webkit.org/b/253533 imported/w3c/web-platform-tests/xhr/status.h2.window.html [ 
 fast/forms/date/date-validity-badinput.html [ Skip ]
 fast/forms/datetimelocal/datetimelocal-validity-badinput.html [ Skip ]
 fast/forms/time/time-validity-badinput.html [ Skip ]
+
+webkit.org/b/256613 imported/w3c/web-platform-tests/screen-orientation/fullscreen-interactions.html [ Failure ]
