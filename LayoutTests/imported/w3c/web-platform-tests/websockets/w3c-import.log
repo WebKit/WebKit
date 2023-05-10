@@ -24,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Close-3000-verify-code.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Close-4999-reason.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Close-Reason-124Bytes.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Close-delayed.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Close-onlyReason.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Close-readyState-Closed.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Close-readyState-Closing.any.js
@@ -80,5 +81,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/websockets/constructor.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/eventhandlers.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/extended-payload-length.html
+/LayoutTests/imported/w3c/web-platform-tests/websockets/idlharness.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/referrer.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/remove-own-iframe-during-onerror.window.js

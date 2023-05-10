@@ -29,6 +29,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/handshake_protocol_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/handshake_sleep_2_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/invalid_wsh.py
+/LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/msg_channel_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/origin_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/protocol_array_wsh.py
 /LayoutTests/imported/w3c/web-platform-tests/websockets/handlers/protocol_wsh.py

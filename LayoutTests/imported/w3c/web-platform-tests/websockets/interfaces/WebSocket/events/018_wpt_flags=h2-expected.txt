@@ -1,5 +1,0 @@
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT open, message, error and close events Test timed out
-

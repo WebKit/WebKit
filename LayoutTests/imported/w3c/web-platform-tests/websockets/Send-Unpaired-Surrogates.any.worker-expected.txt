@@ -1,5 +1,0 @@
-
-PASS Send unpaired surrogates on a WebSocket - Connection should be opened
-PASS Send unpaired surrogates on a WebSocket - Message should be received
-PASS Send unpaired surrogates on a WebSocket - Connection should be closed
-

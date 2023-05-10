@@ -1,5 +1,0 @@
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT WebSockets: data after closing handshake Test timed out
-

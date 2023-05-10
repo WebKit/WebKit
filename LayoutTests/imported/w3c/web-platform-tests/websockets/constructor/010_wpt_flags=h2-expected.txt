@@ -1,5 +1,0 @@
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT WebSockets: protocol in response but no requested protocol Test timed out
-

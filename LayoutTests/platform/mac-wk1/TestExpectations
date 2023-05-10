@@ -2436,6 +2436,11 @@ http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe.html [ P
 http/tests/security/contentSecurityPolicy/script-src-parsing-implicit-and-explicit-port-number.html [ DumpJSConsoleLogInStdErr ]
 
 # These tests have been flaky on WK1 since their import.
+imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/basic-auth.any.serviceworker.html?wss [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/basic-auth.any.sharedworker.html?wss [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/basic-auth.any.worker.html?wss [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/bufferedAmount-unchanged-by-sync-xhr.any.sharedworker.html?wss [ Pass Failure ]
 imported/w3c/web-platform-tests/websockets/cookies/005.html?wss&wpt_flags=https [ Pass Failure ]
 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-arraybuffer.html?wss [ Pass Failure ]
 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-blob.html?wss [ Pass Failure ]

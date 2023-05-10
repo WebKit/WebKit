@@ -1,5 +1,0 @@
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT WebSockets: close() followed by send() Test timed out
-
