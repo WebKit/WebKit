@@ -40,6 +40,7 @@ struct NavigationRequester {
     Ref<SecurityOrigin> securityOrigin;
     Ref<SecurityOrigin> topOrigin;
     CrossOriginOpenerPolicy crossOriginOpenerPolicy;
+    ScriptExecutionContextIdentifier documentIdentifier;
     std::optional<GlobalFrameIdentifier> globalFrameIdentifier;
 
     template<class Encoder> void encode(Encoder&) const;
@@ -49,7 +50,7 @@ struct NavigationRequester {
 template<class Encoder>
 void NavigationRequester::encode(Encoder& encoder) const
 {
-    encoder << url << securityOrigin.get() << topOrigin.get() << crossOriginOpenerPolicy << globalFrameIdentifier;
+    encoder << url << securityOrigin.get() << topOrigin.get() << crossOriginOpenerPolicy << documentIdentifier << globalFrameIdentifier;
 }
 
 template<class Decoder>
@@ -73,12 +74,17 @@ std::optional<NavigationRequester> NavigationRequester::decode(Decoder& decoder)
     if (!crossOriginOpenerPolicy)
         return std::nullopt;
 
+    std::optional<ScriptExecutionContextIdentifier> documentIdentifier;
+    decoder >> documentIdentifier;
+    if (!documentIdentifier)
+        return std::nullopt;
+
     std::optional<std::optional<GlobalFrameIdentifier>> globalFrameIdentifier;
     decoder >> globalFrameIdentifier;
     if (!globalFrameIdentifier)
         return std::nullopt;
 
-    return NavigationRequester { WTFMove(*url), securityOrigin.releaseNonNull(), topOrigin.releaseNonNull(), WTFMove(*crossOriginOpenerPolicy), *globalFrameIdentifier };
+    return NavigationRequester { WTFMove(*url), securityOrigin.releaseNonNull(), topOrigin.releaseNonNull(), WTFMove(*crossOriginOpenerPolicy), *documentIdentifier, *globalFrameIdentifier };
 }
 
 } // namespace WebCore
