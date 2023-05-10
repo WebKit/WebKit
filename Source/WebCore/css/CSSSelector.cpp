@@ -843,6 +843,19 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
 
     builder.append(separator, rightSide);
 
+    auto separatorTextForNestingRelative = [&] () -> String {
+        switch (cs->relation()) {
+        case CSSSelector::Child:
+            return "> "_s;
+        case CSSSelector::DirectAdjacent:
+            return "+ "_s;
+        case CSSSelector::IndirectAdjacent:
+            return "~ "_s;
+        default:
+            return { };
+        }
+    };
+
     if (auto* previousSelector = cs->tagHistory()) {
         ASCIILiteral separator = ""_s;
         switch (cs->relation()) {
@@ -867,6 +880,9 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             break;
         }
         return previousSelector->selectorText(separator, builder);
+    } else if (auto separatorText = separatorTextForNestingRelative(); !separatorText.isNull()) {
+        // We have a separator but no tag history which can happen with implicit relative nesting selector
+        return separatorText + builder.toString();
     }
 
     return builder.toString();

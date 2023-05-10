@@ -47,7 +47,7 @@ std::optional<CSSSelectorList> parseCSSSelector(CSSParserTokenRange range, const
 {
     CSSSelectorParser parser(context, styleSheet, isNestedContext);
     range.consumeWhitespace();
-    auto consume = [&] () {
+    auto consume = [&] {
         if (isNestedContext == CSSParserEnum::IsNestedContext::Yes)
             return parser.consumeNestedSelectorList(range);
 
@@ -351,11 +351,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeRelativeNestedSelec
         return nullptr;
 
     auto last = selector->leftmostSimpleSelector();
-    auto parentSelector = makeUnique<CSSParserSelector>();
-    parentSelector->setMatch(CSSSelector::Match::PseudoClass);
-    parentSelector->setPseudoClassType(CSSSelector::PseudoClassType::PseudoClassNestingParent);
     last->setRelation(scopeCombinator);
-    last->setTagHistory(WTFMove(parentSelector));
 
     return selector;
 }
@@ -1198,10 +1194,16 @@ CSSSelectorList CSSSelectorParser::resolveNestingParent(const CSSSelectorList& n
         } else {
             auto parserSelector = makeUnique<CSSParserSelector>(*selector);
             if (parentResolvedSelectorList) {
-                // We add the implicit parent selector at the beginning of the selector
+                // We add the implicit parent selector at the beginning of the selector.
                 auto lastSelector = parserSelector->leftmostSimpleSelector()->selector();
                 ASSERT(lastSelector);
                 bool isLastInSelectorList = lastSelector->isLastInSelectorList();
+
+                // Relation is Descendant by default.
+                auto relation = lastSelector->relation();
+                if (relation == CSSSelector::RelationType::Subselector)
+                    relation = CSSSelector::RelationType::DescendantSpace;
+
                 lastSelector->setNotLastInTagHistory();
                 lastSelector->setNotLastInSelectorList();
                 CSSSelector parentIsSelector;
@@ -1215,7 +1217,7 @@ CSSSelectorList CSSSelectorParser::resolveNestingParent(const CSSSelectorList& n
                     parentIsSelector.setNotLastInSelectorList();
 
                 auto uniqueParentIsSelector = makeUnique<CSSParserSelector>(parentIsSelector);
-                parserSelector->appendTagHistory(CSSSelector::RelationType::DescendantSpace, WTFMove(uniqueParentIsSelector));
+                parserSelector->appendTagHistory(relation, WTFMove(uniqueParentIsSelector));
             }
             // Otherwise, no nesting parent selector and top-level, do nothing to this selector
             result.append(WTFMove(parserSelector));
