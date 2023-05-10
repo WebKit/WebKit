@@ -1035,6 +1035,46 @@ void WebPage::createRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::F
     WebFrame::createRemoteSubframe(*this, *parentFrame, newChildID, remoteProcessIdentifier);
 }
 
+void WebPage::getFrameInfo(WebCore::FrameIdentifier frameID, CompletionHandler<void(FrameInfoData&&)>&& completionHandler)
+{
+    auto* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame) {
+        ASSERT_NOT_REACHED();
+        return completionHandler({ });
+    }
+    frame->getFrameInfo(WTFMove(completionHandler));
+}
+
+void WebPage::continueWillSubmitForm(WebCore::FrameIdentifier frameID, WebKit::FormSubmitListenerIdentifier formListenerID)
+{
+    auto* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    frame->continueWillSubmitForm(formListenerID);
+}
+
+void WebPage::didCommitLoadInAnotherProcess(WebCore::FrameIdentifier frameID, WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier, WebCore::ProcessIdentifier remoteProcessIdentifier)
+{
+    auto* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    frame->didCommitLoadInAnotherProcess(layerHostingContextIdentifier, remoteProcessIdentifier);
+}
+
+void WebPage::didFinishLoadInAnotherProcess(WebCore::FrameIdentifier frameID)
+{
+    auto* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    frame->didFinishLoadInAnotherProcess();
+}
+
 #if ENABLE(GPU_PROCESS)
 void WebPage::gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection& gpuProcessConnection)
 {

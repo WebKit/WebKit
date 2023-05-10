@@ -44,8 +44,6 @@
 #include "WebChromeClient.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDocumentLoader.h"
-#include "WebFrameMessages.h"
-#include "WebFrameProxyMessages.h"
 #include "WebImage.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
@@ -135,7 +133,7 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const At
     auto coreFrame = LocalFrame::createSubframe(*page.corePage(), makeUniqueRef<WebFrameLoaderClient>(frame.get(), frame->makeInvalidator()), frameID, ownerElement);
     frame->m_coreFrame = coreFrame.get();
 
-    parent.send(Messages::WebFrameProxy::DidCreateSubframe(coreFrame->frameID()));
+    page.send(Messages::WebPageProxy::DidCreateSubframe(parent.frameID(), coreFrame->frameID()));
 
     coreFrame->tree().setName(frameName);
     ASSERT(ownerElement.document().frame());
@@ -164,7 +162,6 @@ WebFrame::WebFrame(WebPage& page, WebCore::FrameIdentifier frameID)
 #ifndef NDEBUG
     webFrameCounter.increment();
 #endif
-    WebProcess::singleton().addMessageReceiver(Messages::WebFrame::messageReceiverName(), m_frameID.object(), *this);
     WebProcess::singleton().addWebFrame(m_frameID, this);
 }
 
@@ -182,7 +179,6 @@ WebFrame::~WebFrame()
     for (auto& completionHandler : willSubmitFormCompletionHandlers.values())
         completionHandler();
 
-    WebProcess::singleton().removeMessageReceiver(Messages::WebFrame::messageReceiverName(), m_frameID.object());
     ASSERT_WITH_MESSAGE(!WebProcess::singleton().webFrame(m_frameID), "invalidate should have removed this WebFrame before destruction");
 
 #ifndef NDEBUG
@@ -1034,7 +1030,6 @@ String WebFrame::mimeTypeForResourceWithURL(const URL& url) const
 
 void WebFrame::updateRemoteFrameSize(WebCore::IntSize size)
 {
-    // FIXME: This should probably be a WebFrameProxy message, but WebFrameProxy::commitProvisionalFrame currently removes the parent frame's process as a message receiver.
     if (m_page)
         m_page->send(Messages::WebPageProxy::UpdateRemoteFrameSize(m_frameID, size));
 }
@@ -1117,16 +1112,6 @@ std::optional<NavigatingToAppBoundDomain> WebFrame::isTopFrameNavigatingToAppBou
     return fromCoreFrame(*localMainFrame)->isNavigatingToAppBoundDomain();
 }
 #endif
-
-IPC::Connection* WebFrame::messageSenderConnection() const
-{
-    return WebProcess::singleton().parentProcessConnection();
-}
-
-uint64_t WebFrame::messageSenderDestinationID() const
-{
-    return m_frameID.object().toUInt64();
-}
 
 OptionSet<WebCore::NetworkConnectionIntegrity> WebFrame::networkConnectionIntegrityPolicy() const
 {

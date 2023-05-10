@@ -27,8 +27,6 @@
 
 #include "APIObject.h"
 #include "FrameLoadState.h"
-#include "MessageReceiver.h"
-#include "MessageSender.h"
 #include "WebFramePolicyListenerProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Forward.h>
@@ -71,7 +69,7 @@ struct FrameTreeCreationParameters;
 struct FrameTreeNodeData;
 struct WebsitePoliciesData;
 
-class WebFrameProxy : public API::ObjectImpl<API::Object::Type::Frame>, public IPC::MessageReceiver, public IPC::MessageSender, public CanMakeCheckedPtr {
+class WebFrameProxy : public API::ObjectImpl<API::Object::Type::Frame>, public CanMakeWeakPtr<WebFrameProxy>, public CanMakeCheckedPtr {
 public:
     static Ref<WebFrameProxy> create(WebPageProxy& page, WebProcessProxy& process, WebCore::FrameIdentifier frameID)
     {
@@ -153,8 +151,6 @@ public:
     ProcessID processIdentifier() const;
     void swapToProcess(Ref<WebProcessProxy>&&, const WebCore::ResourceRequest&);
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
-
     void commitProvisionalFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
 
     void getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&&);
@@ -168,9 +164,6 @@ private:
     WebFrameProxy(WebPageProxy&, WebProcessProxy&, WebCore::FrameIdentifier);
 
     std::optional<WebCore::PageIdentifier> pageIdentifier() const;
-
-    IPC::Connection* messageSenderConnection() const final;
-    uint64_t messageSenderDestinationID() const final;
 
     WeakPtr<WebPageProxy> m_page;
     Ref<WebProcessProxy> m_process;

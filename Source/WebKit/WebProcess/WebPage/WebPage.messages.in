@@ -195,6 +195,11 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     LoadAlternateHTML(struct WebKit::LoadParameters loadParameters)
     CreateRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID, WebCore::ProcessIdentifier remoteProcessIdentifier)
 
+    GetFrameInfo(WebCore::FrameIdentifier frameID) -> (struct WebKit::FrameInfoData data)
+    ContinueWillSubmitForm(WebCore::FrameIdentifier frameID, WebKit::FormSubmitListenerIdentifier listenerID)
+    DidCommitLoadInAnotherProcess(WebCore::FrameIdentifier frameID, WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier, WebCore::ProcessIdentifier remoteProcessIdentifier)
+    DidFinishLoadInAnotherProcess(WebCore::FrameIdentifier frameID)
+
     NavigateToPDFLinkWithSimulatedClick(String url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint)
     GetPDFFirstPageSize(WebCore::FrameIdentifier frameID) -> (WebCore::FloatSize size)
 

@@ -28,8 +28,6 @@
 #include "APIObject.h"
 #include "DownloadID.h"
 #include "IdentifierTypes.h"
-#include "MessageReceiver.h"
-#include "MessageSender.h"
 #include "PolicyDecision.h"
 #include "ShareableBitmap.h"
 #include "TransactionID.h"
@@ -76,7 +74,7 @@ class WebPage;
 struct FrameInfoData;
 struct WebsitePoliciesData;
 
-class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame>, public IPC::MessageReceiver, public IPC::MessageSender {
+class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame>, public CanMakeWeakPtr<WebFrame> {
 public:
     static Ref<WebFrame> create(WebPage& page, WebCore::FrameIdentifier frameID) { return adoptRef(*new WebFrame(page, frameID)); }
     static Ref<WebFrame> createSubframe(WebPage&, WebFrame& parent, const AtomString& frameName, WebCore::HTMLFrameOwnerElement&);
@@ -222,8 +220,6 @@ public:
     std::optional<NavigatingToAppBoundDomain> isTopFrameNavigatingToAppBoundDomain() const;
 #endif
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
-
     Markable<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier() { return m_layerHostingContextIdentifier; }
 
     OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy() const;
@@ -231,9 +227,6 @@ private:
     WebFrame(WebPage&, WebCore::FrameIdentifier);
 
     void setLayerHostingContextIdentifier(WebCore::LayerHostingContextIdentifier identifier) { m_layerHostingContextIdentifier = identifier; }
-
-    IPC::Connection* messageSenderConnection() const final;
-    uint64_t messageSenderDestinationID() const final;
 
     WeakPtr<WebCore::Frame> m_coreFrame;
     WeakPtr<WebPage> m_page;

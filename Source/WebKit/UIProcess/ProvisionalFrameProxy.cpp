@@ -37,7 +37,6 @@
 #include "NetworkProcessMessages.h"
 #include "SubframePageProxy.h"
 #include "WebFrameProxy.h"
-#include "WebFrameProxyMessages.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
@@ -59,7 +58,6 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProces
 {
     m_process->markProcessAsRecentlyUsed();
     m_process->addProvisionalFrameProxy(*this);
-    m_process->addMessageReceiver(Messages::WebFrameProxy::messageReceiverName(), frame.frameID().object(), *this);
 
     ASSERT(frame.page());
 
@@ -82,7 +80,6 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProces
 
 ProvisionalFrameProxy::~ProvisionalFrameProxy()
 {
-    m_process->removeMessageReceiver(Messages::WebFrameProxy::messageReceiverName(), m_frame->frameID().object());
     m_process->removeVisitedLinkStoreUser(m_visitedLinkStore.get(), m_webPageID);
     m_process->removeProvisionalFrameProxy(*this);
 }

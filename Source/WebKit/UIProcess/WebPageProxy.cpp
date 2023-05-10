@@ -126,7 +126,6 @@
 #include "WebEventConversion.h"
 #include "WebFoundTextRange.h"
 #include "WebFrame.h"
-#include "WebFrameMessages.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFrameProxy.h"
 #include "WebFullScreenManagerProxy.h"
@@ -5132,6 +5131,13 @@ void WebPageProxy::didCreateMainFrame(FrameIdentifier frameID)
 #endif
 }
 
+void WebPageProxy::didCreateSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newFrameID)
+{
+    auto* parent = WebFrameProxy::webFrame(parentID);
+    MESSAGE_CHECK(m_process, parent);
+    parent->didCreateSubframe(newFrameID);
+}
+
 void WebPageProxy::didDestroyFrame(FrameIdentifier frameID)
 {
     // If the page is closed before it has had the chance to send the DidCreateMainFrame message
@@ -5758,7 +5764,7 @@ void WebPageProxy::didFinishLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 
         auto* subframePageProxy = subframePageProxyForFrameID(frameID);
         if (subframePageProxy && frame->parentFrame())
-            frame->parentFrame()->process().send(Messages::WebFrame::DidFinishLoadInAnotherProcess(), frameID.object());
+            frame->parentFrame()->process().send(Messages::WebPage::DidFinishLoadInAnotherProcess(frameID), webPageID());
 
         internals().pageLoadState.commitChanges();
     }
@@ -6529,8 +6535,8 @@ void WebPageProxy::willSubmitForm(FrameIdentifier frameID, FrameIdentifier sourc
     for (auto& pair : textFieldValues)
         MESSAGE_CHECK(m_process, API::Dictionary::MapType::isValidKey(pair.first));
 
-    m_formClient->willSubmitForm(*this, *frame, *sourceFrame, textFieldValues, m_process->transformHandlesToObjects(userData.object()).get(), [protectedThis = Ref { *this }, frame, listenerID]() {
-        frame->send(Messages::WebFrame::ContinueWillSubmitForm(listenerID));
+    m_formClient->willSubmitForm(*this, *frame, *sourceFrame, textFieldValues, m_process->transformHandlesToObjects(userData.object()).get(), [protectedThis = Ref { *this }, frameID = frame->frameID(), listenerID]() {
+        protectedThis->send(Messages::WebPage::ContinueWillSubmitForm(frameID, listenerID));
     });
 }
 

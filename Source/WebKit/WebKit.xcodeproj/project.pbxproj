@@ -1290,8 +1290,6 @@
 		5C20F679276A6DB6006CAC22 /* ArgumentCoders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D610413A7F03A00F95D4E /* ArgumentCoders.cpp */; };
 		5C2397D52949235800BB4E10 /* WebRemoteFrameClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C2397D32949235700BB4E10 /* WebRemoteFrameClient.h */; };
 		5C26958520043212005C439B /* WKOpenPanelParametersPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C26958420042F12005C439B /* WKOpenPanelParametersPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5C291274290A669A00452A3E /* WebFrameProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C291272290A669900452A3E /* WebFrameProxyMessageReceiver.cpp */; };
-		5C291275290A669A00452A3E /* WebFrameMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C291273290A669A00452A3E /* WebFrameMessageReceiver.cpp */; };
 		5C298DA01C3DF02100470AFE /* PendingDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C298D9E1C3DEF2900470AFE /* PendingDownload.h */; };
 		5C2C6FA927C9E5E200CCDA9E /* _WKDataTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C2C6FA427C9529900CCDA9E /* _WKDataTask.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C2C6FAA27C9E5EB00CCDA9E /* _WKDataTaskDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C2C6FA327C9529900CCDA9E /* _WKDataTaskDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5304,10 +5302,6 @@
 		5C2397D32949235700BB4E10 /* WebRemoteFrameClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebRemoteFrameClient.h; sourceTree = "<group>"; };
 		5C2397D42949235700BB4E10 /* WebRemoteFrameClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebRemoteFrameClient.cpp; sourceTree = "<group>"; };
 		5C26958420042F12005C439B /* WKOpenPanelParametersPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKOpenPanelParametersPrivate.h; sourceTree = "<group>"; };
-		5C29126F290A11FF00452A3E /* WebFrameProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebFrameProxy.messages.in; sourceTree = "<group>"; };
-		5C291270290A149300452A3E /* WebFrame.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebFrame.messages.in; sourceTree = "<group>"; };
-		5C291272290A669900452A3E /* WebFrameProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFrameProxyMessageReceiver.cpp; sourceTree = "<group>"; };
-		5C291273290A669A00452A3E /* WebFrameMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFrameMessageReceiver.cpp; sourceTree = "<group>"; };
 		5C298D9E1C3DEF2900470AFE /* PendingDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PendingDownload.h; sourceTree = "<group>"; };
 		5C2B1AF3223AB72800B91CF7 /* DownloadMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DownloadMonitor.cpp; sourceTree = "<group>"; };
 		5C2B1AF4223AB72800B91CF7 /* DownloadMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadMonitor.h; sourceTree = "<group>"; };
@@ -12093,7 +12087,6 @@
 				E55CFD4C279D31C3002F1020 /* WebFoundTextRangeController.h */,
 				BC111ADC112F5B9300337BAB /* WebFrame.cpp */,
 				BC032D8910F437A00058C15A /* WebFrame.h */,
-				5C291270290A149300452A3E /* WebFrame.messages.in */,
 				BC857F8412B82D0B00EDEB2E /* WebOpenPanelResultListener.cpp */,
 				BC857F8312B82D0B00EDEB2E /* WebOpenPanelResultListener.h */,
 				BC963D6A113DD19200574BE2 /* WebPage.cpp */,
@@ -12270,7 +12263,6 @@
 				BCB9F69E1123A84B00A137E0 /* WebFramePolicyListenerProxy.h */,
 				BC111B0A112F5E4F00337BAB /* WebFrameProxy.cpp */,
 				BC9B389F10F538BE00443A15 /* WebFrameProxy.h */,
-				5C29126F290A11FF00452A3E /* WebFrameProxy.messages.in */,
 				CD73BA3E131A2E8A00EEDED2 /* WebFullScreenManagerProxy.cpp */,
 				CD73BA3F131A2E8A00EEDED2 /* WebFullScreenManagerProxy.h */,
 				CD73BA40131A2E8A00EEDED2 /* WebFullScreenManagerProxy.messages.in */,
@@ -13477,8 +13469,6 @@
 				1C3BEB4E2887492700E66E38 /* WebExtensionControllerProxyMessages.h */,
 				93E799822756FA540074008A /* WebFileSystemStorageConnectionMessageReceiver.cpp */,
 				93E799812756FA530074008A /* WebFileSystemStorageConnectionMessages.h */,
-				5C291273290A669A00452A3E /* WebFrameMessageReceiver.cpp */,
-				5C291272290A669900452A3E /* WebFrameProxyMessageReceiver.cpp */,
 				CD73BA48131ACD8E00EEDED2 /* WebFullScreenManagerMessageReceiver.cpp */,
 				CD73BA49131ACD8E00EEDED2 /* WebFullScreenManagerMessages.h */,
 				CD73BA45131ACC8800EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp */,
@@ -17317,8 +17307,6 @@
 				1C1CE96D288DF46D0098D3A1 /* WebExtensionMatchPatternCocoa.mm in Sources */,
 				1CAB9B8628F743DB00E6C77E /* WebExtensionURLSchemeHandlerCocoa.mm in Sources */,
 				93E799852756FA550074008A /* WebFileSystemStorageConnectionMessageReceiver.cpp in Sources */,
-				5C291275290A669A00452A3E /* WebFrameMessageReceiver.cpp in Sources */,
-				5C291274290A669A00452A3E /* WebFrameProxyMessageReceiver.cpp in Sources */,
 				CD73BA4E131ACDB700EEDED2 /* WebFullScreenManagerMessageReceiver.cpp in Sources */,
 				CD73BA47131ACC9A00EEDED2 /* WebFullScreenManagerProxyMessageReceiver.cpp in Sources */,
 				BC0E606112D6BA910012A72A /* WebGeolocationManagerMessageReceiver.cpp in Sources */,

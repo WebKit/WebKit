@@ -600,6 +600,11 @@ public:
 
     void createRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID, WebCore::ProcessIdentifier remoteProcessIdentifier);
 
+    void getFrameInfo(WebCore::FrameIdentifier, CompletionHandler<void(FrameInfoData&&)>&&);
+    void continueWillSubmitForm(WebCore::FrameIdentifier, WebKit::FormSubmitListenerIdentifier);
+    void didCommitLoadInAnotherProcess(WebCore::FrameIdentifier, WebCore::LayerHostingContextIdentifier, WebCore::ProcessIdentifier remoteProcessIdentifier);
+    void didFinishLoadInAnotherProcess(WebCore::FrameIdentifier);
+
     std::optional<WebCore::SimpleRange> currentSelectionAsRange();
 
     enum class ShouldPerformLayout : bool { Default, Yes };
