@@ -44,7 +44,7 @@
 #include "RenderElement.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "StyleCustomPropertyData.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"

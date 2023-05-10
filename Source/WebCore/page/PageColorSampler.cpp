@@ -47,7 +47,7 @@
 #include "RegistrableDomain.h"
 #include "RenderImage.h"
 #include "RenderObject.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "Settings.h"
 #include "Styleable.h"
 #include "WebAnimation.h"

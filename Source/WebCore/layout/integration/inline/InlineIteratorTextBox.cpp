@@ -26,11 +26,13 @@
 #include "config.h"
 #include "InlineIteratorTextBox.h"
 
+#include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBoxInlines.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LineSelection.h"
 #include "RenderCombineText.h"
+#include "RenderStyleInlines.h"
 #include "SVGInlineTextBox.h"
 
 namespace WebCore {

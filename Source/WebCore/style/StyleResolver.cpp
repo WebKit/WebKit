@@ -55,6 +55,8 @@
 #include "PageRuleCollector.h"
 #include "RenderScrollbar.h"
 #include "RenderStyleConstants.h"
+#include "RenderStyleInlines.h"
+#include "RenderStyleSetters.h"
 #include "RenderView.h"
 #include "ResolvedStyle.h"
 #include "RuleSet.h"

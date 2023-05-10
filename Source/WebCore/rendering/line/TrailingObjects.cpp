@@ -26,6 +26,7 @@
 #include "TrailingObjects.h"
 
 #include "LegacyInlineIterator.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 

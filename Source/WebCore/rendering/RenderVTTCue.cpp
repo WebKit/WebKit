@@ -30,6 +30,8 @@
 #include "RenderVTTCue.h"
 
 #include "InlineIteratorBoxInlines.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderInline.h"
 #include "RenderLayoutState.h"
 #include "RenderView.h"

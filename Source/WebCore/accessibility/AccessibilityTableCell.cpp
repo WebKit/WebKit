@@ -33,7 +33,6 @@
 #include "AccessibilityTable.h"
 #include "AccessibilityTableRow.h"
 #include "ElementIterator.h"
-#include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HTMLTableCellElement.h"
 #include "MathMLElement.h"

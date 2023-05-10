@@ -33,6 +33,7 @@
 #include "Document.h"
 #include "MediaList.h"
 #include "NodeRenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include "StyleRule.h"
 #include "StyleScope.h"

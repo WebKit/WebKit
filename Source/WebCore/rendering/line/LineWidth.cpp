@@ -31,7 +31,9 @@
 #include "LineWidth.h"
 
 #include "RenderBlockFlow.h"
+#include "RenderBoxInlines.h"
 #include "RenderRubyRun.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 

@@ -31,6 +31,7 @@
 #include "LineInfo.h"
 
 #include "RenderBlock.h"
+#include "RenderBoxInlines.h"
 
 namespace WebCore {
 

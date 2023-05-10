@@ -35,6 +35,7 @@
 #include "InlineTextBoxStyle.h"
 #include "InlineWalker.h"
 #include "LegacyInlineElementBox.h"
+#include "LegacyInlineFlowBoxInlines.h"
 #include "LegacyInlineIterator.h"
 #include "LegacyInlineTextBox.h"
 #include "LineInlineHeaders.h"

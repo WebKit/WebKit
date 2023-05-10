@@ -33,6 +33,7 @@
 #include "RemoteFrame.h"
 #include "RemoteFrameView.h"
 #include "RenderBoxInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerScrollableArea.h"

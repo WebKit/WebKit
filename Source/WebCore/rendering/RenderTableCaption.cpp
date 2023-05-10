@@ -20,6 +20,8 @@
 #include "config.h"
 #include "RenderTableCaption.h"
 
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderTable.h"
 #include <wtf/IsoMallocInlines.h>
 

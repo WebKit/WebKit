@@ -25,6 +25,8 @@
 #include "HTMLTextAreaElement.h"
 #include "HitTestResult.h"
 #include "LocalFrame.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderStyleSetters.h"
 #include "ShadowRoot.h"
 #include "StyleInheritedData.h"

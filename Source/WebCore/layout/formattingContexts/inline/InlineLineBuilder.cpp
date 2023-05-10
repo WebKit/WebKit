@@ -33,6 +33,7 @@
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutState.h"
+#include "RenderStyleInlines.h"
 #include "Shape.h"
 #include "TextUtil.h"
 #include "UnicodeBidi.h"

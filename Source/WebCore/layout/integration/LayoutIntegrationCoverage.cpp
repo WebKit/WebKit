@@ -45,6 +45,7 @@
 #include "RenderListMarker.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderSVGBlock.h"
+#include "RenderStyleInlines.h"
 #include "RenderTable.h"
 #include "RenderTextControl.h"
 #include "RenderVTTCue.h"

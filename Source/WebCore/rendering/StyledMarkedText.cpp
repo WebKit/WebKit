@@ -28,6 +28,7 @@
 
 #include "ElementRuleCollector.h"
 #include "RenderElement.h"
+#include "RenderStyleInlines.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
 

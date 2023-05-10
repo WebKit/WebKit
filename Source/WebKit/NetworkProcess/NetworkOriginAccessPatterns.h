@@ -34,7 +34,7 @@ namespace WebKit {
 class NetworkOriginAccessPatterns final : public WebCore::OriginAccessPatterns {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    void allowAccessTo(const UserContentURLPattern&);
+    void allowAccessTo(const WebCore::UserContentURLPattern&);
 private:
     bool anyPatternMatches(const URL&) const final;
 

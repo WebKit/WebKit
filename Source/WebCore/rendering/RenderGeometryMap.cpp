@@ -28,6 +28,8 @@
 
 #include "RenderFragmentedFlow.h"
 #include "RenderLayer.h"
+#include "RenderObjectInlines.h"
+#include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include "TransformState.h"
 #include <wtf/SetForScope.h>

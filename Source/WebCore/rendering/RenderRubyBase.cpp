@@ -32,6 +32,7 @@
 
 #include "RenderRubyBase.h"
 
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderChildIterator.h"
 #include "RenderRubyRun.h"
 #include "RenderRubyText.h"

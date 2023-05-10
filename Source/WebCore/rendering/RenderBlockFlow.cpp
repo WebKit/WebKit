@@ -48,6 +48,7 @@
 #include "Logging.h"
 #include "RenderBlockFlowInlines.h"
 #include "RenderBlockInlines.h"
+#include "RenderBoxInlines.h"
 #include "RenderCombineText.h"
 #include "RenderCounter.h"
 #include "RenderDeprecatedFlexibleBox.h"

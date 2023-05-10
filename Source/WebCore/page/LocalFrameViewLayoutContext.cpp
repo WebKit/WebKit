@@ -34,6 +34,7 @@
 #include "Logging.h"
 #include "RenderElement.h"
 #include "RenderLayoutState.h"
+#include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"

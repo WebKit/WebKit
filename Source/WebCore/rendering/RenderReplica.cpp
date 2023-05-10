@@ -29,6 +29,8 @@
 #include "config.h"
 #include "RenderReplica.h"
 
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderLayer.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>

@@ -48,6 +48,7 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
+#include "RenderBlockInlines.h"
 #include "RenderBoxFragmentInfo.h"
 #include "RenderBoxInlines.h"
 #include "RenderButton.h"

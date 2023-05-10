@@ -30,6 +30,7 @@
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutElementBox.h"
 #include "LayoutState.h"
+#include "RenderStyleInlines.h"
 #include "TableFormattingContext.h"
 #include "TableGrid.h"
 

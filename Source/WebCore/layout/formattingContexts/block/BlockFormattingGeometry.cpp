@@ -35,6 +35,7 @@
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"
 #include "Logging.h"
+#include "RenderStyleInlines.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

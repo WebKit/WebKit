@@ -34,6 +34,7 @@
 #include "LayoutChildIterator.h"
 #include "LayoutContext.h"
 #include "LengthFunctions.h"
+#include "RenderStyleInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

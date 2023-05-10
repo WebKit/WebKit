@@ -39,6 +39,7 @@
 #include "PointerEventsHitRules.h"
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceSolidColor.h"
+#include "RenderStyleInlines.h"
 #include "SVGPathData.h"
 #include "SVGRenderStyle.h"
 #include "SVGRenderingContext.h"

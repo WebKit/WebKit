@@ -32,7 +32,7 @@
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutPhase.h"
 #include "LayoutState.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "Shape.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>

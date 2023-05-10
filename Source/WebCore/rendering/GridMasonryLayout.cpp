@@ -27,7 +27,9 @@
 
 #include "GridLayoutFunctions.h"
 #include "GridPositionsResolver.h"
+#include "RenderBoxInlines.h"
 #include "RenderGrid.h"
+#include "RenderStyleInlines.h"
 #include "StyleGridData.h"
 #include "WritingMode.h"
 

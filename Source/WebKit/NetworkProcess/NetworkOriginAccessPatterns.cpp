@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-void NetworkOriginAccessPatterns::allowAccessTo(const UserContentURLPattern& pattern)
+void NetworkOriginAccessPatterns::allowAccessTo(const WebCore::UserContentURLPattern& pattern)
 {
     ASSERT(RunLoop::isMain());
     m_patterns.append(pattern);

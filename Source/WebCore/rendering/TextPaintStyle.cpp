@@ -32,7 +32,7 @@
 #include "LocalFrame.h"
 #include "Page.h"
 #include "PaintInfo.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderView.h"

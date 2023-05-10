@@ -30,6 +30,9 @@
 
 #include "MathMLOperatorDictionary.h"
 #include "MathMLOperatorElement.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
+#include "RenderStyleInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

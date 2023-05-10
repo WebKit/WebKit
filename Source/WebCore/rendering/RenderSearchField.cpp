@@ -38,6 +38,8 @@
 #include "LocalizedStrings.h"
 #include "Page.h"
 #include "PopupMenu.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderLayer.h"
 #include "RenderScrollbar.h"
 #include "RenderTheme.h"

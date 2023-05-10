@@ -45,6 +45,7 @@
 #include "RenderMultiColumnSet.h"
 #include "RenderSVGResource.h"
 #include "RenderStyleConstants.h"
+#include "RenderStyleInlines.h"
 #include "RenderTreeUpdaterGeneratedContent.h"
 #include "RenderView.h"
 #include "SVGElement.h"

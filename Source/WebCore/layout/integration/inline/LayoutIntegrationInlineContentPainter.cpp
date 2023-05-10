@@ -31,6 +31,7 @@
 #include "PaintInfo.h"
 #include "RenderBox.h"
 #include "RenderInline.h"
+#include "RenderStyleInlines.h"
 #include "TextBoxPainter.h"
 
 namespace WebCore {

@@ -33,6 +33,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "RenderSlider.h"
+#include "RenderStyleInlines.h"
 #include "SliderThumbElement.h"
 #include "StyleAppearance.h"
 

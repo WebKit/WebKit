@@ -36,6 +36,7 @@
 #include "PaintInfo.h"
 #include "PathUtilities.h"
 #include "RenderBox.h"
+#include "RenderStyleInlines.h"
 #include "RenderTheme.h"
 
 namespace WebCore {

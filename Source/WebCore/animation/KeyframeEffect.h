@@ -36,6 +36,7 @@
 #include "IterationCompositeOperation.h"
 #include "KeyframeEffectOptions.h"
 #include "KeyframeList.h"
+#include "RenderStyle.h"
 #include "Styleable.h"
 #include "WebAnimationTypes.h"
 #include <wtf/Ref.h>

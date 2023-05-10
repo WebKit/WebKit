@@ -26,11 +26,14 @@
 #include "config.h"
 #include "SubframePageProxy.h"
 
+#include "APIWebsitePolicies.h"
+#include "DrawingAreaProxy.h"
 #include "FrameInfoData.h"
 #include "HandleMessage.h"
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
+#include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
 
 namespace WebKit {

@@ -29,10 +29,12 @@
 #include "Grid.h"
 #include "GridArea.h"
 #include "GridLayoutFunctions.h"
+#include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderGrid.h"
 #include "RenderStyleConstants.h"
+#include "RenderStyleInlines.h"
 #include "StyleSelfAlignmentData.h"
 
 namespace WebCore {

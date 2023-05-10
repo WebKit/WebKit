@@ -33,7 +33,7 @@
 #include "CursorList.h"
 #include "Document.h"
 #include "FillLayer.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "SVGURIReference.h"
 #include "Settings.h"
 #include "ShapeValue.h"

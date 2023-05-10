@@ -34,8 +34,11 @@
 #include "MathMLNames.h"
 #include "MathMLTokenElement.h"
 #include "PaintInfo.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderElement.h"
 #include "RenderIterator.h"
+#include "RenderStyleInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

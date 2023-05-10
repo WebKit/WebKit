@@ -34,6 +34,7 @@
 #include "HTMLNames.h"
 #include "HTMLProgressElement.h"
 #include "RenderProgress.h"
+#include "RenderStyleInlines.h"
 #include "ShadowPseudoIds.h"
 #include <wtf/IsoMallocInlines.h>
 

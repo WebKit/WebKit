@@ -39,6 +39,7 @@
 #include "LineSelection.h"
 #include "PaintInfo.h"
 #include "RenderBlock.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderCombineText.h"
 #include "RenderElementInlines.h"
 #include "RenderText.h"

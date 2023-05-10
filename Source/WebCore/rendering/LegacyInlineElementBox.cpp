@@ -31,6 +31,7 @@
 #include "RenderBlock.h"
 #include "RenderBox.h"
 #include "RenderLineBreak.h"
+#include "RenderStyleInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

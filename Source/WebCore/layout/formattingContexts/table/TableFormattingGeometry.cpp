@@ -31,6 +31,7 @@
 #include "LayoutContext.h"
 #include "LayoutDescendantIterator.h"
 #include "LayoutInitialContainingBlock.h"
+#include "RenderStyleInlines.h"
 #include "TableFormattingContext.h"
 #include "TableFormattingQuirks.h"
 

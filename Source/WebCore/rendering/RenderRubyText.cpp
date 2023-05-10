@@ -30,9 +30,11 @@
  */
 
 #include "config.h"
-
 #include "RenderRubyText.h"
+
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderRubyRun.h"
+#include "RenderStyleInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

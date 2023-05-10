@@ -29,6 +29,7 @@
 #include "InlineLevelBoxInlines.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutElementBox.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 namespace Layout {

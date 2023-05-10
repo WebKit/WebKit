@@ -27,7 +27,10 @@
 #include "GridLayoutFunctions.h"
 
 #include "LengthFunctions.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderGrid.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 

@@ -32,6 +32,8 @@
 #include "LayoutIntegrationLineLayout.h"
 #include "LineSelection.h"
 #include "RenderBlockFlow.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
 #include "RenderSVGInlineText.h"
