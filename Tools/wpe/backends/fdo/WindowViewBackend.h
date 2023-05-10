@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ViewBackend.h"
+#include "relative-pointer-unstable-v1-client-protocol.h"
 #include "xdg-shell-client-protocol.h"
 #include "xdg-shell-unstable-v6-client-protocol.h"
 #include <glib.h>
@@ -43,6 +44,8 @@ typedef struct wl_egl_window *EGLNativeWindowType;
 #define EGL_CAST(type, value) (static_cast<type>(value))
 #endif
 
+struct zwp_locked_pointer_v1;
+struct zwp_pointer_constraints_v1;
 struct wpe_fdo_egl_exported_image;
 
 namespace WPEToolingBackends {
@@ -81,6 +84,9 @@ private:
 
     void handleKeyEvent(uint32_t key, uint32_t state, uint32_t time);
     uint32_t modifiers() const;
+
+    bool requestPointerLock();
+    bool requestPointerUnlock();
 
     struct SeatData {
         struct {
@@ -167,6 +173,16 @@ private:
         struct zxdg_surface_v6* surface { nullptr };
         struct zxdg_toplevel_v6* toplevel { nullptr };
     } m_zxdg;
+
+    struct PointerLock {
+        static const struct zwp_relative_pointer_v1_listener s_relativePointerListener;
+
+        struct zwp_pointer_constraints_v1* pointerConstraints { nullptr };
+        struct zwp_locked_pointer_v1* lockedPointer { nullptr };
+        struct zwp_relative_pointer_manager_v1* relativePointerManager { nullptr };
+        struct zwp_relative_pointer_v1* relativePointer { nullptr };
+        struct wpe_input_pointer_event lastMotionEvent;
+    } m_pointerLock;
 };
 
 } // WPEToolingBackends

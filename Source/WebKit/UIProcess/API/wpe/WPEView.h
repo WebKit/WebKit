@@ -104,6 +104,9 @@ public:
     bool setFullScreen(bool);
 #endif
 
+    void requestPointerLock();
+    void didLosePointerLock();
+
 #if ENABLE(ACCESSIBILITY)
     WebKitWebViewAccessible* accessible() const;
 #endif

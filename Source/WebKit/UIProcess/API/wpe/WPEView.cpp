@@ -267,8 +267,13 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
             page.handleTouchEvent(touchEvent);
 #endif
         },
+        // handle_pointer_lock_event
+        [](void* data, struct wpe_input_pointer_lock_event* event)
+        {
+            auto& page = reinterpret_cast<View*>(data)->page();
+            page.handleMouseEvent(WebKit::NativeWebMouseEvent(&event->base, page.deviceScaleFactor(), WebCore::FloatSize(event->x_delta, event->y_delta)));
+        },
         // padding
-        nullptr,
         nullptr,
         nullptr,
         nullptr
@@ -454,6 +459,19 @@ bool View::setFullScreen(bool fullScreenState)
     return true;
 };
 #endif
+
+void View::requestPointerLock()
+{
+    if (wpe_view_backend_request_pointer_lock(m_backend))
+        page().didAllowPointerLock();
+    else
+        page().didDenyPointerLock();
+}
+
+void View::didLosePointerLock()
+{
+    wpe_view_backend_request_pointer_unlock(m_backend);
+}
 
 #if ENABLE(ACCESSIBILITY)
 WebKitWebViewAccessible* View::accessible() const

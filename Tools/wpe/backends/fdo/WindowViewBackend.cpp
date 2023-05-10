@@ -25,6 +25,7 @@
 
 #include "WindowViewBackend.h"
 
+#include "pointer-constraints-unstable-v1-client-protocol.h"
 #include <cstdio>
 #include <cstring>
 #include <linux/input.h>
@@ -142,15 +143,16 @@ const struct wl_registry_listener WindowViewBackend::s_registryListener = {
 
         if (!std::strcmp(interface, "wl_compositor"))
             window->m_compositor = static_cast<struct wl_compositor*>(wl_registry_bind(registry, name, &wl_compositor_interface, 1));
-
-        if (!std::strcmp(interface, "xdg_wm_base"))
+        else if (!std::strcmp(interface, "xdg_wm_base"))
             window->m_xdg.wm = static_cast<struct xdg_wm_base*>(wl_registry_bind(registry, name, &xdg_wm_base_interface, 1));
-
-        if (!std::strcmp(interface, "zxdg_shell_v6"))
+        else if (!std::strcmp(interface, "zxdg_shell_v6"))
             window->m_zxdg.shell = static_cast<struct zxdg_shell_v6*>(wl_registry_bind(registry, name, &zxdg_shell_v6_interface, 1));
-
-        if (!std::strcmp(interface, "wl_seat"))
+        else if (!std::strcmp(interface, "wl_seat"))
             window->m_seat = static_cast<struct wl_seat*>(wl_registry_bind(registry, name, &wl_seat_interface, 5));
+        else if (!std::strcmp(interface, "zwp_pointer_constraints_v1"))
+            window->m_pointerLock.pointerConstraints = static_cast<struct zwp_pointer_constraints_v1*>(wl_registry_bind(registry, name, &zwp_pointer_constraints_v1_interface, 1));
+        else if (!std::strcmp(interface, "zwp_relative_pointer_manager_v1"))
+            window->m_pointerLock.relativePointerManager = static_cast<struct zwp_relative_pointer_manager_v1*>(wl_registry_bind(registry, name, &zwp_relative_pointer_manager_v1_interface, 1));
     },
     // global_remove
     [](void*, struct wl_registry*, uint32_t) { },
@@ -193,15 +195,19 @@ const struct wl_pointer_listener WindowViewBackend::s_pointerListener = {
     [](void* data, struct wl_pointer*, uint32_t time, wl_fixed_t fixedX, wl_fixed_t fixedY)
     {
         auto& window = *static_cast<WindowViewBackend*>(data);
+        if (window.m_pointerLock.lockedPointer)
+            return;
+
         int x = wl_fixed_to_int(fixedX);
         int y = wl_fixed_to_int(fixedY);
         window.m_seatData.pointer.coords = { x, y };
 
-        if (window.m_seatData.pointer.target) {
-            struct wpe_input_pointer_event event = { wpe_input_pointer_event_type_motion,
-                time, x, y, window.m_seatData.pointer.button, window.m_seatData.pointer.state, window.modifiers() };
-            window.dispatchInputPointerEvent(&event);
-        }
+        // Pointer Lock. 7.1 Attributes: movementX/Y must be updated regardless of pointer lock state.
+        window.m_pointerLock.lastMotionEvent = { wpe_input_pointer_event_type_motion,
+            time, x, y, window.m_seatData.pointer.button, window.m_seatData.pointer.state, window.modifiers() };
+
+        if (window.m_seatData.pointer.target)
+            window.dispatchInputPointerEvent(&window.m_pointerLock.lastMotionEvent);
     },
     // button
     [](void* data, struct wl_pointer*, uint32_t /*serial*/, uint32_t time, uint32_t button, uint32_t state)
@@ -649,6 +655,54 @@ const struct zxdg_toplevel_v6_listener WindowViewBackend::XDGUnstable::s_topleve
     },
 };
 
+const struct zwp_relative_pointer_v1_listener WindowViewBackend::PointerLock::s_relativePointerListener = {
+    // relative_motion
+    [](void* data, struct zwp_relative_pointer_v1*, uint32_t, uint32_t, wl_fixed_t, wl_fixed_t, wl_fixed_t deltaX, wl_fixed_t deltaY) {
+        auto& window = *static_cast<WindowViewBackend*>(data);
+        if (window.m_seatData.pointer.target) {
+            struct wpe_input_pointer_lock_event event;
+            event.base = window.m_pointerLock.lastMotionEvent;
+            event.x_delta = wl_fixed_to_int(deltaX);
+            event.y_delta = wl_fixed_to_int(deltaY);
+            window.dispatchInputPointerLockEvent(&event);
+        }
+    }
+};
+
+bool WindowViewBackend::requestPointerLock()
+{
+    if (!m_seatData.pointer.object || !m_seatData.pointer.target)
+        return false;
+
+    if (!m_pointerLock.pointerConstraints || !m_pointerLock.relativePointerManager)
+        return false;
+
+    m_pointerLock.relativePointer = zwp_relative_pointer_manager_v1_get_relative_pointer(m_pointerLock.relativePointerManager, m_seatData.pointer.object);
+    zwp_relative_pointer_v1_add_listener(m_pointerLock.relativePointer, &PointerLock::s_relativePointerListener, this);
+    m_pointerLock.lockedPointer = zwp_pointer_constraints_v1_lock_pointer(m_pointerLock.pointerConstraints, m_seatData.pointer.target, m_seatData.pointer.object, nullptr, ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_PERSISTENT);
+
+    // FIXME: hide the mouse cursor when we support cursors.
+
+    return true;
+}
+
+bool WindowViewBackend::requestPointerUnlock()
+{
+    // FIXME: restore the mouse cursor when we support cursors.
+
+    if (m_pointerLock.relativePointer) {
+        zwp_relative_pointer_v1_destroy(m_pointerLock.relativePointer);
+        m_pointerLock.relativePointer = nullptr;
+    }
+
+    if (m_pointerLock.lockedPointer) {
+        zwp_locked_pointer_v1_destroy(m_pointerLock.lockedPointer);
+        m_pointerLock.lockedPointer = nullptr;
+    }
+
+    return true;
+}
+
 #if WPE_CHECK_VERSION(1, 11, 1)
 
 bool WindowViewBackend::onDOMFullscreenRequest(void* data, bool fullscreen)
@@ -842,6 +896,8 @@ WindowViewBackend::~WindowViewBackend()
         g_source_unref(m_eventSource);
     }
 
+    requestPointerUnlock();
+
     if (m_xdg.toplevel)
         xdg_toplevel_destroy(m_xdg.toplevel);
     if (m_xdg.surface)
@@ -993,6 +1049,11 @@ bool WindowViewBackend::initialize(EGLDisplay eglDisplay)
 #if WPE_CHECK_VERSION(1, 11, 1)
     wpe_view_backend_set_fullscreen_handler(backend(), onDOMFullscreenRequest, this);
 #endif
+
+    wpe_view_backend_set_pointer_lock_handler(backend(), [](void* data, bool lock) -> bool {
+        auto& window = *static_cast<WindowViewBackend*>(data);
+        return lock ? window.requestPointerLock() : window.requestPointerUnlock();
+    }, this);
 
     initializeAccessibility();
 
