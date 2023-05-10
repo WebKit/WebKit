@@ -31,11 +31,6 @@
 
 namespace WebKit {
 
-bool SharedMemoryHandle::isNull() const
-{
-    return !m_handle;
-}
-
 RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
 {
     Win32Handle handle { ::CreateFileMappingW(INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, size, 0) };

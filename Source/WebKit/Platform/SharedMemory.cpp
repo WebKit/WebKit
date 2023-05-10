@@ -33,6 +33,17 @@ namespace WebKit {
 
 using namespace WebCore;
 
+SharedMemoryHandle::SharedMemoryHandle(SharedMemoryHandle::Type&& handle, size_t size)
+    : m_handle(WTFMove(handle))
+    , m_size(size)
+{
+}
+
+bool SharedMemoryHandle::isNull() const
+{
+    return !m_handle;
+}
+
 RefPtr<SharedMemory> SharedMemory::copyBuffer(const FragmentedSharedBuffer& buffer)
 {
     if (buffer.isEmpty())

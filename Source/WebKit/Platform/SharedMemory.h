@@ -60,6 +60,7 @@ namespace WebKit {
 enum class MemoryLedger { None, Default, Network, Media, Graphics, Neural };
 
 class SharedMemoryHandle {
+    WTF_MAKE_NONCOPYABLE(SharedMemoryHandle);
 public:
     using Type =
 #if USE(UNIX_DOMAIN_SOCKETS)
@@ -69,6 +70,12 @@ public:
 #elif OS(WINDOWS)
         Win32Handle;
 #endif
+
+    SharedMemoryHandle() = default;
+    SharedMemoryHandle(SharedMemoryHandle&&) = default;
+    SharedMemoryHandle(SharedMemoryHandle::Type&&, size_t);
+
+    SharedMemoryHandle& operator=(SharedMemoryHandle&&) = default;
 
     bool isNull() const;
 

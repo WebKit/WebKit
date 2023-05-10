@@ -1342,7 +1342,7 @@ JSValueRef JSIPCSemaphore::waitFor(JSContextRef context, JSObjectRef, JSObjectRe
 SharedMemory::Handle JSSharedMemory::createHandle(SharedMemory::Protection protection)
 {
     if (auto handle = m_sharedMemory->createHandle(protection))
-        return *handle;
+        return WTFMove(*handle);
     return { };
 }
 

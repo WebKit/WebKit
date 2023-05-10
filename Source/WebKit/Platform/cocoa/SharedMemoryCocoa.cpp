@@ -91,11 +91,6 @@ void SharedMemoryHandle::setOwnershipOfMemory(const WebCore::ProcessIdentity& pr
 #endif
 }
 
-bool SharedMemoryHandle::isNull() const
-{
-    return !m_handle;
-}
-
 static inline void* toPointer(mach_vm_address_t address)
 {
     return reinterpret_cast<void*>(static_cast<uintptr_t>(address));

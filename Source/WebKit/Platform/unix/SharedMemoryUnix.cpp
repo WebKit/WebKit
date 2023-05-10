@@ -52,11 +52,6 @@
 
 namespace WebKit {
 
-bool SharedMemoryHandle::isNull() const
-{
-    return !m_handle;
-}
-
 UnixFileDescriptor SharedMemoryHandle::releaseHandle()
 {
     return WTFMove(m_handle);
