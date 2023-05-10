@@ -146,7 +146,6 @@ enum class MessageName : uint16_t {
     ProcessOutOfStreamMessage,
     SetStreamDestinationID,
     SyncMessageReply,
-    Terminate,
 #if USE(AVFOUNDATION)
     TestWithCVPixelBuffer_ReceiveCVPixelBufferReply,
 #endif
