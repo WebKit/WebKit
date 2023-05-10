@@ -623,6 +623,8 @@ private:
 
     void setupCodecProbe(GstElement*);
     HashMap<String, String> m_codecs;
+
+    bool isSeamlessSeekingEnabled() const { return m_seekFlags & (1 << GST_SEEK_FLAG_SEGMENT); }
 };
 
 }
