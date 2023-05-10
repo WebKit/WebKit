@@ -4727,20 +4727,43 @@ void Document::appendAutofocusCandidate(Element& candidate)
     m_autofocusCandidates.append(candidate);
 }
 
+// https://html.spec.whatwg.org/multipage/interaction.html#flush-autofocus-candidates
 void Document::flushAutofocusCandidates()
 {
     ASSERT(isTopDocument());
     if (m_isAutofocusProcessed)
         return;
+
+    if (m_autofocusCandidates.isEmpty())
+        return;
+
+    if (cssTarget()) {
+        m_autofocusCandidates.clear();
+        setAutofocusProcessed();
+        return;
+    }
+
     while (!m_autofocusCandidates.isEmpty()) {
         RefPtr element = m_autofocusCandidates.first().get();
         if (!element || !element->document().isFullyActive() || &element->document().topDocument() != this) {
             m_autofocusCandidates.removeFirst();
             continue;
         }
+
         if (auto* parser = scriptableDocumentParser(); parser && parser->hasScriptsWaitingForStylesheets())
             break;
         m_autofocusCandidates.removeFirst();
+
+        bool hasAncestorWithCSSTarget = [&] {
+            for (auto* document = &element->document(); document && document != this; document = document->parentDocument()) {
+                if (document->cssTarget())
+                    return true;
+            }
+            return false;
+        }();
+        if (hasAncestorWithCSSTarget)
+            continue;
+
         // FIXME: Need to ignore if the inclusive ancestor documents has a target element.
         // FIXME: Use the result of getting the focusable area for element if element is not focusable.
         if (element->isFocusable()) {
