@@ -125,7 +125,7 @@ ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
         }
     }
 
-    disconnectSubframesIfNeeded(*this, DescendantsOnly);
+    disconnectSubframesIfNeeded(*this, SubframeDisconnectPolicy::DescendantsOnly);
 
     ContainerNode::ChildChange childChange { ChildChange::Type::AllChildrenRemoved, nullptr, nullptr, nullptr, source, ContainerNode::ChildChange::AffectsElements::Unknown };
 
@@ -201,10 +201,10 @@ ALWAYS_INLINE bool ContainerNode::removeNodeWithScriptAssertion(Node& childToRem
 
     if (source == ChildChange::Source::Parser) {
         // FIXME: Merge these two code paths. It's a bug in the parser not to update connectedSubframeCount in time.
-        disconnectSubframesIfNeeded(*this, DescendantsOnly);
+        disconnectSubframesIfNeeded(*this, SubframeDisconnectPolicy::DescendantsOnly);
     } else {
         if (auto containerChild = dynamicDowncast<ContainerNode>(childToRemove))
-            disconnectSubframesIfNeeded(*containerChild, RootAndDescendants);
+            disconnectSubframesIfNeeded(*containerChild, SubframeDisconnectPolicy::RootAndDescendants);
     }
 
     if (childToRemove.parentNode() != this)
@@ -655,7 +655,7 @@ ExceptionOr<void> ContainerNode::replaceChild(Node& newChild, Node& oldChild)
 
 void ContainerNode::disconnectDescendantFrames()
 {
-    disconnectSubframesIfNeeded(*this, RootAndDescendants);
+    disconnectSubframesIfNeeded(*this, SubframeDisconnectPolicy::RootAndDescendants);
 }
 
 ExceptionOr<void> ContainerNode::removeChild(Node& oldChild)
