@@ -6,8 +6,8 @@
 <style>
   .test {
     background-color: red;
-    width: 100px;
-    height: 100px;
+    width: 30px;
+    height: 30px;
     display: grid;
   }
 
@@ -47,6 +47,18 @@
     }
   }
 
+  .test {
+    > .foo,.test-6,+ .bar {
+      background-color: green;
+    }
+  }
+
+  .test {
+    > .foo, .bar, + .test-7 {
+      background-color: green;
+    }
+  }
+
   body * + * {
     margin-top: 8px;
   }
@@ -58,4 +70,6 @@
   <div class="test test-3"><div class="test-3-child"></div></div>
   <div class="test test-4"></div>
   <div class="test test-5"></div>
+  <div class="test"><div><div class="test test-6"></div></div></div>
+  <div class="test" style="display:none"></div><div class="test test-7"></div>
 </body>
