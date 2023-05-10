@@ -28,6 +28,7 @@
 #include "CharacterProperties.h"
 #include "FloatSize.h"
 #include "FontCascade.h"
+#include "GlyphBuffer.h"
 #include "RenderBlock.h"
 #include "RenderText.h"
 #include "TextRun.h"
@@ -699,8 +700,12 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             CGGlyph glyph = glyphs[i];
             FloatSize advance = treatAsSpace ? FloatSize(spaceWidth, advances[i].height()) : advances[i];
 
-            if (ch == tabCharacter && m_run.allowTabs())
+            if (ch == tabCharacter && m_run.allowTabs()) {
                 advance.setWidth(m_font.tabWidth(font, m_run.tabSize(), m_run.xPos() + m_totalAdvance.width(), Font::SyntheticBoldInclusion::Exclude));
+                // Like simple text path in WidthIterator::applyCSSVisibilityRules,
+                // make tabCharacter glyph invisible after advancing.
+                glyph = deletedGlyph;
+            }
             else if (FontCascade::treatAsZeroWidthSpace(ch) && !treatAsSpace) {
                 advance.setWidth(0);
                 glyph = font.spaceGlyph();
