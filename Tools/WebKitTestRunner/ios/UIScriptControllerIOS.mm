@@ -63,6 +63,19 @@ SOFT_LINK_CLASS(UIKit, UIPhysicalKeyboardEvent)
 
 namespace WTR {
 
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+
+static bool isHiddenOrHasHiddenAncestor(UIView *view)
+{
+    for (auto currentAncestor = view; currentAncestor; currentAncestor = currentAncestor.superview) {
+        if (currentAncestor.hidden)
+            return true;
+    }
+    return false;
+}
+
+#endif // HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+
 static BOOL returnYes()
 {
     return YES;
@@ -840,10 +853,7 @@ JSObjectRef UIScriptControllerIOS::selectionStartGrabberViewRect() const
 
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     if (!handleView) {
-        // FIXME: We should be able to use -handleViews here, but this seems returns an empty array,
-        // even when selection handles are present. Use -handleViews once rdar://108607881 is fixed.
-        auto view = findAllViewsInHierarchyOfType(contentView, NSClassFromString(@"_UITextSelectionLollipopView")).firstObject;
-        if (!view.hidden)
+        if (auto view = textSelectionDisplayInteraction().handleViews.firstObject; !isHiddenOrHasHiddenAncestor(view))
             handleView = view;
     }
 #endif
@@ -861,10 +871,7 @@ JSObjectRef UIScriptControllerIOS::selectionEndGrabberViewRect() const
 
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     if (!handleView) {
-        // FIXME: We should be able to use -handleViews here, but this seems returns an empty array,
-        // even when selection handles are present. Use -handleViews once rdar://108607881 is fixed.
-        auto view = findAllViewsInHierarchyOfType(contentView, NSClassFromString(@"_UITextSelectionLollipopView")).lastObject;
-        if (!view.hidden)
+        if (auto view = textSelectionDisplayInteraction().handleViews.lastObject; !isHiddenOrHasHiddenAncestor(view))
             handleView = view;
     }
 #endif
@@ -882,7 +889,7 @@ JSObjectRef UIScriptControllerIOS::selectionCaretViewRect() const
 
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     if (!caretView) {
-        if (auto view = textSelectionDisplayInteraction().cursorView; !view.hidden)
+        if (auto view = textSelectionDisplayInteraction().cursorView; !isHiddenOrHasHiddenAncestor(view))
             caretView = view;
     }
 #endif
@@ -901,7 +908,7 @@ JSObjectRef UIScriptControllerIOS::selectionRangeViewRects() const
 
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     if (!textRectInfoArray) {
-        if (auto view = textSelectionDisplayInteraction().highlightView; !view.hidden) {
+        if (auto view = textSelectionDisplayInteraction().highlightView; !isHiddenOrHasHiddenAncestor(view)) {
             textRectInfoArray = view.selectionRects;
             rangeView = view;
         }
@@ -1324,7 +1331,7 @@ JSRetainPtr<JSStringRef> UIScriptControllerIOS::selectionCaretBackgroundColor() 
     UIColor *backgroundColor = [contentView valueForKeyPath:@"textInteractionAssistant.selectionView.caretView.backgroundColor"];
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     if (!backgroundColor) {
-        if (auto view = textSelectionDisplayInteraction().cursorView; !view.hidden)
+        if (auto view = textSelectionDisplayInteraction().cursorView; !isHiddenOrHasHiddenAncestor(view))
             backgroundColor = view.tintColor;
     }
 #endif
