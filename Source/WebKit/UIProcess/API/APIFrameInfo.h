@@ -50,6 +50,7 @@ public:
     virtual ~FrameInfo();
 
     bool isMainFrame() const { return m_data.isMainFrame; }
+    bool isLocalFrame() const { return m_data.frameType == WebKit::FrameType::Local; }
     const WebCore::ResourceRequest& request() const { return m_data.request; }
     WebCore::SecurityOriginData& securityOrigin() { return m_data.securityOrigin; }
     Ref<FrameHandle> handle() const;

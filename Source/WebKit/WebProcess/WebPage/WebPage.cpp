@@ -1045,6 +1045,11 @@ void WebPage::getFrameInfo(WebCore::FrameIdentifier frameID, CompletionHandler<v
     frame->getFrameInfo(WTFMove(completionHandler));
 }
 
+void WebPage::getFrameTree(CompletionHandler<void(FrameTreeNodeData&&)>&& completionHandler)
+{
+    completionHandler(m_mainFrame->frameTreeData());
+}
+
 void WebPage::continueWillSubmitForm(WebCore::FrameIdentifier frameID, WebKit::FormSubmitListenerIdentifier formListenerID)
 {
     auto* frame = WebProcess::singleton().webFrame(frameID);

@@ -44,6 +44,11 @@
     [super dealloc];
 }
 
+- (WKFrameInfo *)info
+{
+    return wrapper(API::FrameInfo::create(WebKit::FrameInfoData(_node->info()), &_node->page()));
+}
+
 - (BOOL)isMainFrame
 {
     return _node->isMainFrame();
@@ -92,6 +97,11 @@
 {
     auto* frame = WebKit::WebFrameProxy::webFrame(_node->handle()->frameID());
     return frame ? frame->processIdentifier() : 0;
+}
+
+- (BOOL)_isLocalFrame
+{
+    return _node->isLocalFrame();
 }
 
 - (API::Object&)_apiObject

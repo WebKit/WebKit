@@ -72,6 +72,7 @@ class InjectedBundleScriptWorld;
 class WebImage;
 class WebPage;
 struct FrameInfoData;
+struct FrameTreeNodeData;
 struct WebsitePoliciesData;
 
 class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame>, public CanMakeWeakPtr<WebFrame> {
@@ -97,6 +98,7 @@ public:
     void transitionToLocal(WebCore::LayerHostingContextIdentifier);
 
     FrameInfoData info() const;
+    FrameTreeNodeData frameTreeData() const;
     void getFrameInfo(CompletionHandler<void(FrameInfoData&&)>&&);
 
     WebCore::FrameIdentifier frameID() const;

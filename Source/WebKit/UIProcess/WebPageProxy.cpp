@@ -4996,6 +4996,38 @@ void WebPageProxy::getAllFrames(CompletionHandler<void(FrameTreeNodeData&&)>&& c
     m_mainFrame->getFrameInfo(WTFMove(completionHandler));
 }
 
+void WebPageProxy::getAllFrameTrees(CompletionHandler<void(Vector<FrameTreeNodeData>&&)>&& completionHandler)
+{
+    class FrameTreeCallbackAggregator : public RefCounted<FrameTreeCallbackAggregator> {
+    public:
+        static Ref<FrameTreeCallbackAggregator> create(CompletionHandler<void(Vector<FrameTreeNodeData>&&)>&& completionHandler) { return adoptRef(*new FrameTreeCallbackAggregator(WTFMove(completionHandler))); }
+        void addFrameTree(FrameTreeNodeData&& data) { m_data.append(WTFMove(data)); }
+        ~FrameTreeCallbackAggregator()
+        {
+            m_completionHandler(WTFMove(m_data));
+        }
+    private:
+        FrameTreeCallbackAggregator(CompletionHandler<void(Vector<FrameTreeNodeData>&&)>&& completionHandler)
+            : m_completionHandler(WTFMove(completionHandler)) { }
+        CompletionHandler<void(Vector<FrameTreeNodeData>&&)> m_completionHandler;
+        Vector<FrameTreeNodeData> m_data;
+    };
+
+    if (!m_mainFrame)
+        return completionHandler({ });
+
+    auto& internals = this->internals();
+    auto aggregator = FrameTreeCallbackAggregator::create(WTFMove(completionHandler));
+    m_mainFrame->process().sendWithAsyncReply(Messages::WebPage::GetFrameTree(), [aggregator] (auto&& data) {
+        aggregator->addFrameTree(WTFMove(data));
+    }, webPageID());
+    for (auto& subframePageProxy : internals.domainToSubframePageProxyMap.values()) {
+        subframePageProxy->process().sendWithAsyncReply(Messages::WebPage::GetFrameTree(), [aggregator] (auto&& data) {
+            aggregator->addFrameTree(WTFMove(data));
+        }, webPageID());
+    }
+}
+
 std::optional<FrameTreeCreationParameters> WebPageProxy::frameTreeCreationParameters() const
 {
     if (!m_mainFrame)

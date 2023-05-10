@@ -155,6 +155,7 @@ void ProvisionalPageProxy::cancel()
     error.setType(WebCore::ResourceError::Type::Cancellation);
     FrameInfoData frameInfo {
         true, // isMainFrame
+        FrameType::Local,
         m_request,
         SecurityOriginData::fromURLWithoutStrictOpaqueness(m_request.url()),
         { },

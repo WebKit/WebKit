@@ -196,6 +196,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     CreateRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID, WebCore::ProcessIdentifier remoteProcessIdentifier)
 
     GetFrameInfo(WebCore::FrameIdentifier frameID) -> (struct WebKit::FrameInfoData data)
+    GetFrameTree() -> (struct WebKit::FrameTreeNodeData data)
     ContinueWillSubmitForm(WebCore::FrameIdentifier frameID, WebKit::FormSubmitListenerIdentifier listenerID)
     DidCommitLoadInAnotherProcess(WebCore::FrameIdentifier frameID, WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier, WebCore::ProcessIdentifier remoteProcessIdentifier)
     DidFinishLoadInAnotherProcess(WebCore::FrameIdentifier frameID)

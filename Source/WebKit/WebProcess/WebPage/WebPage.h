@@ -601,6 +601,7 @@ public:
     void createRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID, WebCore::ProcessIdentifier remoteProcessIdentifier);
 
     void getFrameInfo(WebCore::FrameIdentifier, CompletionHandler<void(FrameInfoData&&)>&&);
+    void getFrameTree(CompletionHandler<void(FrameTreeNodeData&&)>&&);
     void continueWillSubmitForm(WebCore::FrameIdentifier, WebKit::FormSubmitListenerIdentifier);
     void didCommitLoadInAnotherProcess(WebCore::FrameIdentifier, WebCore::LayerHostingContextIdentifier, WebCore::ProcessIdentifier remoteProcessIdentifier);
     void didFinishLoadInAnotherProcess(WebCore::FrameIdentifier);

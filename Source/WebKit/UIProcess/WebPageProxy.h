@@ -579,6 +579,7 @@ public:
     void sendMessageToInspectorFrontend(const String& targetId, const String& message);
 
     void getAllFrames(CompletionHandler<void(FrameTreeNodeData&&)>&&);
+    void getAllFrameTrees(CompletionHandler<void(Vector<FrameTreeNodeData>&&)>&&);
     std::optional<FrameTreeCreationParameters> frameTreeCreationParameters() const;
 
 #if ENABLE(REMOTE_INSPECTOR)

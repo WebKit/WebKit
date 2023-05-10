@@ -42,7 +42,9 @@ public:
     virtual ~FrameTreeNode();
 
     WebKit::WebPageProxy& page() { return m_page.get(); }
+    const WebKit::FrameInfoData& info() const { return m_data.info; }
     bool isMainFrame() const { return m_data.info.isMainFrame; }
+    bool isLocalFrame() const { return m_data.info.frameType == WebKit::FrameType::Local; }
     const WebCore::ResourceRequest& request() const { return m_data.info.request; }
     const WebCore::SecurityOriginData& securityOrigin() const { return m_data.info.securityOrigin; }
     const Vector<WebKit::FrameTreeNodeData>& childFrames() const { return m_data.children; }

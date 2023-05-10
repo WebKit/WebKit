@@ -1043,6 +1043,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
 
     FrameInfoData originatingFrameInfoData {
         navigationAction.initiatedByMainFrame() == InitiatedByMainFrame::Yes,
+        FrameType::Local,
         ResourceRequest { requester.url },
         requester.securityOrigin->data(),
         { },

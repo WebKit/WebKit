@@ -48,6 +48,59 @@ static void enableSiteIsolation(WKWebViewConfiguration *configuration)
     }
 }
 
+enum RemoteFrameTag { RemoteFrame };
+struct ExpectedFrameTree {
+    std::variant<RemoteFrameTag, String> remoteOrOrigin;
+    Vector<ExpectedFrameTree> children { };
+};
+
+static bool frameTreesMatch(_WKFrameTreeNode *actualRoot, const ExpectedFrameTree& expectedRoot)
+{
+    WKFrameInfo *info = actualRoot.info;
+    if (info._isLocalFrame != std::holds_alternative<String>(expectedRoot.remoteOrOrigin))
+        return false;
+
+    if (auto* expectedOrigin = std::get_if<String>(&expectedRoot.remoteOrOrigin)) {
+        WKSecurityOrigin *origin = info.securityOrigin;
+        auto actualOrigin = makeString(String(origin.protocol), "://"_s, String(origin.host), origin.port ? makeString(':', origin.port) : String());
+        if (actualOrigin != *expectedOrigin)
+            return false;
+    }
+
+    if (actualRoot.childFrames.count != expectedRoot.children.size())
+        return false;
+    for (size_t i = 0; i < expectedRoot.children.size(); i++) {
+        if (!frameTreesMatch(actualRoot.childFrames[i], expectedRoot.children[i]))
+            return false;
+    }
+    return true;
+}
+
+static bool frameTreesMatch(NSSet<_WKFrameTreeNode *> *actualFrameTrees, Vector<ExpectedFrameTree>&& expectedFrameTrees)
+{
+    EXPECT_EQ(actualFrameTrees.count, expectedFrameTrees.size());
+
+    for (_WKFrameTreeNode *root in actualFrameTrees) {
+        auto index = expectedFrameTrees.findIf([&] (auto& expectedFrameTree) {
+            return frameTreesMatch(root, expectedFrameTree);
+        });
+        if (index == WTF::notFound)
+            return false;
+        expectedFrameTrees.remove(index);
+    }
+    return expectedFrameTrees.isEmpty();
+}
+
+static void checkFrameTreesInProcesses(WKWebView *webView, Vector<ExpectedFrameTree>&& expectedFrameTrees)
+{
+    bool done { false };
+    [webView _frameTrees:makeBlockPtr([&done, expectedFrameTrees = WTFMove(expectedFrameTrees)] (NSSet<_WKFrameTreeNode *> *actualFrameTrees) mutable {
+        EXPECT_TRUE(frameTreesMatch(actualFrameTrees, WTFMove(expectedFrameTrees)));
+        done = true;
+    }).get()];
+    Util::run(&done);
+}
+
 TEST(SiteIsolation, LoadingCallbacksAndPostMessage)
 {
     auto exampleHTML = "<script>"
@@ -140,16 +193,13 @@ TEST(SiteIsolation, LoadingCallbacksAndPostMessage)
         Util::spinRunLoop();
     EXPECT_WK_STREQ(alert.get(), "parent frame received pingpong");
 
-    __block bool done { false };
-    [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        pid_t mainFramePid = mainFrame._processIdentifier;
-        pid_t childFramePid = mainFrame.childFrames.firstObject._processIdentifier;
-        EXPECT_NE(mainFramePid, 0);
-        EXPECT_NE(childFramePid, 0);
-        EXPECT_NE(mainFramePid, childFramePid);
-        done = true;
-    }];
-    Util::run(&done);
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s,
+            { { RemoteFrame } }
+        }, { RemoteFrame,
+            { { "https://webkit.org"_s } }
+        },
+    });
 }
 
 TEST(SiteIsolation, PostMessageWithMessagePorts)

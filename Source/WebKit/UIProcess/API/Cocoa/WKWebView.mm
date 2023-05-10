@@ -2159,6 +2159,16 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     });
 }
 
+- (void)_frameTrees:(void (^)(NSSet<_WKFrameTreeNode *> *))completionHandler
+{
+    _page->getAllFrameTrees([completionHandler = makeBlockPtr(completionHandler), page = Ref { *_page.get() }] (Vector<WebKit::FrameTreeNodeData>&& vector) {
+        auto set = adoptNS([[NSMutableSet alloc] initWithCapacity:vector.size()]);
+        for (auto& data : vector)
+            [set addObject:wrapper(API::FrameTreeNode::create(WTFMove(data), page.get()))];
+        completionHandler(set.get());
+    });
+}
+
 - (BOOL)_isEditable
 {
     return _page && _page->isEditable();

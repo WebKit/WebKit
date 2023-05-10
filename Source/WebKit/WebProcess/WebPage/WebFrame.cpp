@@ -30,6 +30,7 @@
 #include "DownloadManager.h"
 #include "DrawingArea.h"
 #include "FrameInfoData.h"
+#include "FrameTreeNodeData.h"
 #include "InjectedBundleCSSStyleDeclarationHandle.h"
 #include "InjectedBundleHitTestResult.h"
 #include "InjectedBundleNodeHandle.h"
@@ -232,6 +233,7 @@ FrameInfoData WebFrame::info() const
 
     FrameInfoData info {
         isMainFrame(),
+        is<WebCore::LocalFrame>(coreAbstractFrame()) ? FrameType::Local : FrameType::Remote,
         // FIXME: This should use the full request.
         ResourceRequest(url()),
         SecurityOriginData::fromFrame(dynamicDowncast<LocalFrame>(m_coreFrame.get())),
@@ -241,6 +243,32 @@ FrameInfoData WebFrame::info() const
     };
 
     return info;
+}
+
+FrameTreeNodeData WebFrame::frameTreeData() const
+{
+    FrameTreeNodeData data {
+        info(),
+        { }
+    };
+
+    if (!m_coreFrame) {
+        ASSERT_NOT_REACHED();
+        return data;
+    }
+
+    data.children.reserveInitialCapacity(m_coreFrame->tree().childCount());
+
+    for (auto* child = m_coreFrame->tree().firstChild(); child; child = child->tree().nextSibling()) {
+        auto* childWebFrame = WebFrame::fromCoreFrame(*child);
+        if (!childWebFrame) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+        data.children.uncheckedAppend(childWebFrame->frameTreeData());
+    }
+
+    return data;
 }
 
 void WebFrame::getFrameInfo(CompletionHandler<void(FrameInfoData&&)>&& completionHandler)
