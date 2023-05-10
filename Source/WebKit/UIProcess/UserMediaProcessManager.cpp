@@ -40,6 +40,8 @@ static const ASCIILiteral videoExtensionPath { "com.apple.webkit.camera"_s };
 static const ASCIILiteral appleCameraServicePath { "com.apple.applecamerad"_s };
 static const ASCIILiteral additionalAppleCameraServicePath { "com.apple.appleh13camerad"_s };
 static const ASCIILiteral appleCameraUserClientPath { "com.apple.aneuserd"_s };
+static const ASCIILiteral appleCameraUserClientIOKitClientClass { "H11ANEInDirectPathClient"_s };
+static const ASCIILiteral appleCameraUserClientIOKitServiceClass { "H11ANEIn"_s };
 #endif
 
 UserMediaProcessManager& UserMediaProcessManager::singleton()
@@ -96,7 +98,7 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
         extensionCount++;
 #endif
 #if HAVE(APPLE_CAMERA_USER_CLIENT)
-        extensionCount++;
+        extensionCount += 3;
 #endif
     }
 
@@ -140,6 +142,16 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
                 if (auto handle = SandboxExtension::createHandleForMachLookup(appleCameraUserClientPath, auditToken)) {
                     handles[--extensionCount] = WTFMove(*handle);
                     ids.uncheckedAppend(appleCameraUserClientPath);
+                }
+
+                if (auto handle = SandboxExtension::createHandleForIOKitClassExtension(appleCameraUserClientIOKitClientClass, auditToken)) {
+                    handles[--extensionCount] = WTFMove(*handle);
+                    ids.uncheckedAppend(appleCameraUserClientIOKitClientClass);
+                }
+
+                if (auto handle = SandboxExtension::createHandleForIOKitClassExtension(appleCameraUserClientIOKitServiceClass, auditToken)) {
+                    handles[--extensionCount] = WTFMove(*handle);
+                    ids.uncheckedAppend(appleCameraUserClientIOKitServiceClass);
                 }
 #endif
             }

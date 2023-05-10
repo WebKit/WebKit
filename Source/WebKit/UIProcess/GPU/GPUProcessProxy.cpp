@@ -225,6 +225,8 @@ void GPUProcessProxy::setOrientationForMediaCapture(WebCore::IntDegrees orientat
 
 #if HAVE(APPLE_CAMERA_USER_CLIENT)
 static const ASCIILiteral appleCameraUserClientPath { "com.apple.aneuserd"_s };
+static const ASCIILiteral appleCameraUserClientIOKitClientClass { "H11ANEInDirectPathClient"_s };
+static const ASCIILiteral appleCameraUserClientIOKitServiceClass { "H11ANEIn"_s };
 #endif
 
 static inline bool addCameraSandboxExtensions(Vector<SandboxExtension::Handle>& extensions)
@@ -258,6 +260,21 @@ static inline bool addCameraSandboxExtensions(Vector<SandboxExtension::Handle>& 
                 return false;
             }
             extensions.append(WTFMove(*appleCameraUserClientExtensionHandle));
+
+            auto appleCameraUserClientIOKitClientClassExtensionHandle = SandboxExtension::createHandleForIOKitClassExtension(appleCameraUserClientIOKitClientClass, std::nullopt);
+            if (!appleCameraUserClientIOKitClientClassExtensionHandle) {
+                RELEASE_LOG_ERROR(WebRTC, "Unable to create %s sandbox extension", appleCameraUserClientIOKitClientClass.characters8());
+                return false;
+            }
+            extensions.append(WTFMove(*appleCameraUserClientIOKitClientClassExtensionHandle));
+
+            auto appleCameraUserClientIOKitServiceClassExtensionHandle = SandboxExtension::createHandleForIOKitClassExtension(appleCameraUserClientIOKitServiceClass, std::nullopt);
+            if (!appleCameraUserClientIOKitServiceClassExtensionHandle) {
+                RELEASE_LOG_ERROR(WebRTC, "Unable to create %s sandbox extension", appleCameraUserClientIOKitServiceClass.characters8());
+                return false;
+            }
+            extensions.append(WTFMove(*appleCameraUserClientIOKitServiceClassExtensionHandle));
+
 #endif
         }
 #endif // HAVE(AUDIT_TOKEN)
