@@ -109,6 +109,4 @@ private:
     Token m_current;
 };
 
-Result<AST::Expression::Ref> parseExpression(const String& source);
-
 } // namespace WGSL

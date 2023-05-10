@@ -330,22 +330,6 @@ std::optional<Error> parse(ShaderModule& shaderModule)
 }
 
 template<typename Lexer>
-Result<AST::Expression::Ref> parseExpression(const String& source)
-{
-    ShaderModule shaderModule(source);
-    Lexer lexer(shaderModule.source());
-    Parser parser(shaderModule, lexer);
-    return parser.parseExpression();
-}
-
-Result<AST::Expression::Ref> parseExpression(const String& source)
-{
-    if (source.is8Bit())
-        return parseExpression<Lexer<LChar>>(source);
-    return parseExpression<Lexer<UChar>>(source);
-}
-
-template<typename Lexer>
 Expected<Token, TokenType> Parser<Lexer>::consumeType(TokenType type)
 {
     if (current().type == type) {
