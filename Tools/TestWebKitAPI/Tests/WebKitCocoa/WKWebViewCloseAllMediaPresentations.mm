@@ -127,7 +127,12 @@ TEST(WKWebViewCloseAllMediaPresentationsInternal, PictureInPicture)
 
 #if ENABLE(FULLSCREEN_API)
 
+// FIXME rdar://109155883 is resolved.
+#if PLATFORM(IOS)
+TEST(WKWebViewCloseAllMediaPresentations, DISABLED_VideoFullscreen)
+# else
 TEST(WKWebViewCloseAllMediaPresentations, VideoFullscreen)
+#endif
 {
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [[configuration preferences] _setFullScreenEnabled:YES];
