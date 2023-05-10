@@ -535,7 +535,9 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case GetById:
     case GetByIdMegamorphic:
     case GetByIdWithThis:
+    case GetByIdWithThisMegamorphic:
     case GetByValWithThis:
+    case GetByValWithThisMegamorphic:
     case GetByIdFlush:
     case GetByIdDirect:
     case GetByIdDirectFlush:

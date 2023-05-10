@@ -669,6 +669,8 @@ public:
     JSFunction* performProxyObjectHasFunction() const;
     JSFunction* performProxyObjectGetFunction() const;
     JSFunction* performProxyObjectGetFunctionConcurrently() const;
+    JSFunction* performProxyObjectGetByValFunction() const;
+    JSFunction* performProxyObjectGetByValFunctionConcurrently() const;
     JSFunction* performProxyObjectSetSloppyFunction() const;
     JSFunction* performProxyObjectSetSloppyFunctionConcurrently() const;
     JSFunction* performProxyObjectSetStrictFunction() const;

@@ -705,9 +705,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case GetByIdFlush:
     case GetByIdMegamorphic:
     case GetByIdWithThis:
+    case GetByIdWithThisMegamorphic:
     case GetByIdDirect:
     case GetByIdDirectFlush:
     case GetByValWithThis:
+    case GetByValWithThisMegamorphic:
     case PutById:
     case PutByIdWithThis:
     case PutByValWithThis:

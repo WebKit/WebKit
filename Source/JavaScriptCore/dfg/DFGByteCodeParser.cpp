@@ -6859,7 +6859,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* base = get(bytecode.m_base);
             Node* thisValue = get(bytecode.m_thisValue);
             Node* property = get(bytecode.m_property);
-            Node* getByValWithThis = addToGraph(GetByValWithThis, OpInfo(), OpInfo(prediction), base, thisValue, property);
+
+            GetByStatus getByStatus = GetByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin());
+            Node* getByValWithThis = addToGraph(getByStatus.isMegamorphic() ? GetByValWithThisMegamorphic : GetByValWithThis, OpInfo(), OpInfo(prediction), base, thisValue, property);
             set(bytecode.m_dst, getByValWithThis);
 
             NEXT_OPCODE(op_get_by_val_with_this);
@@ -7093,7 +7095,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_property];
             UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
 
-            set(bytecode.m_dst, addToGraph(GetByIdWithThis, OpInfo(CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid)), OpInfo(prediction), base, thisValue));
+            GetByStatus getByStatus = GetByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin());
+
+            set(bytecode.m_dst, addToGraph(getByStatus.isMegamorphic() ? GetByIdWithThisMegamorphic : GetByIdWithThis, OpInfo(CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid)), OpInfo(prediction), base, thisValue));
 
             NEXT_OPCODE(op_get_by_id_with_this);
         }

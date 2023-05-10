@@ -520,7 +520,8 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
 
     case AccessCase::ProxyObjectHas:
     case AccessCase::ProxyObjectLoad:
-    case AccessCase::ProxyObjectStore: {
+    case AccessCase::ProxyObjectStore:
+    case AccessCase::IndexedProxyObjectLoad: {
         ASSERT(!accessCase.viaGlobalProxy());
         emitProxyObjectAccess(accessCase.as<ProxyObjectAccessCase>(), fallThrough);
         return;
@@ -2097,6 +2098,7 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
     case AccessCase::ProxyObjectStore:
     case AccessCase::InstanceOfGeneric:
     case AccessCase::LoadMegamorphic:
+    case AccessCase::IndexedProxyObjectLoad:
     case AccessCase::IndexedMegamorphicLoad:
     case AccessCase::IndexedInt32Load:
     case AccessCase::IndexedDoubleLoad:
@@ -2333,6 +2335,10 @@ void InlineCacheCompiler::emitProxyObjectAccess(ProxyObjectAccessCase& accessCas
         numberOfParameters = 3;
         proxyInternalMethod = globalObject->performProxyObjectGetFunction();
         break;
+    case AccessCase::IndexedProxyObjectLoad:
+        numberOfParameters = 3;
+        proxyInternalMethod = globalObject->performProxyObjectGetByValFunction();
+        break;
     case AccessCase::ProxyObjectStore:
         numberOfParameters = 4;
         proxyInternalMethod = ecmaMode.isStrict() ? globalObject->performProxyObjectSetStrictFunction() : globalObject->performProxyObjectSetSloppyFunction();
@@ -2358,14 +2364,15 @@ void InlineCacheCompiler::emitProxyObjectAccess(ProxyObjectAccessCase& accessCas
     jit.storeCell(baseGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(0).offset() * sizeof(Register)));
 
     if (!stubInfo.hasConstantIdentifier) {
-        RELEASE_ASSERT(accessCase.identifier());
-        GPRReg propertyGPR = stubInfo.propertyGPR();
-        jit.storeCell(propertyGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
+        if (accessCase.m_type != AccessCase::IndexedProxyObjectLoad)
+            RELEASE_ASSERT(accessCase.identifier());
+        jit.storeValue(stubInfo.propertyRegs(), calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
     } else
         jit.storeTrustedValue(accessCase.identifier().cell(), calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
 
     switch (accessCase.m_type) {
     case AccessCase::ProxyObjectLoad:
+    case AccessCase::IndexedProxyObjectLoad:
         jit.storeCell(thisGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(2).offset() * sizeof(Register)));
         break;
     case AccessCase::ProxyObjectStore:
@@ -2682,7 +2689,8 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             generatedMegamorphicCode = true;
             break;
         }
-        case AccessType::GetById: {
+        case AccessType::GetById:
+        case AccessType::GetByIdWithThis: {
             auto identifier = cases.last()->m_identifier;
             bool allAreSimpleLoadOrMiss = true;
             for (auto& accessCase : cases) {
@@ -2710,7 +2718,8 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             }
             break;
         }
-        case AccessType::GetByVal: {
+        case AccessType::GetByVal:
+        case AccessType::GetByValWithThis: {
             bool allAreSimpleLoadOrMiss = true;
             for (auto& accessCase : cases) {
                 if (accessCase->type() != AccessCase::Load && accessCase->type() != AccessCase::Miss)
@@ -2766,7 +2775,8 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
         case AccessCase::Setter:
         case AccessCase::ProxyObjectLoad:
         case AccessCase::ProxyObjectStore:
-            // Getter / Setter / ProxyObjectLoad / ProxyObjectStore relies on stack-pointer adjustment, which is tied to the linked CodeBlock, which makes this code unshareable.
+        case AccessCase::IndexedProxyObjectLoad:
+            // Getter / Setter / ProxyObjectLoad / ProxyObjectStore / IndexedProxyObjectLoad rely on stack-pointer adjustment, which is tied to the linked CodeBlock, which makes this code unshareable.
             canBeShared = false;
             doesJSCalls = true;
             break;

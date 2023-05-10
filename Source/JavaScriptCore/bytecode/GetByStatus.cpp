@@ -85,6 +85,8 @@ GetByStatus GetByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeInde
         break;
 
     case op_get_by_val:
+    case op_get_by_val_with_this:
+    case op_get_by_id_with_this:
         return GetByStatus(NoInformation, false);
 
     case op_enumerator_get_by_val:
