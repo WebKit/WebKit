@@ -4903,21 +4903,12 @@ RefPtr<CSSValue> consumeFontSizeAdjust(CSSParserTokenRange& range)
     if (range.peek().id() == CSSValueNone || range.peek().id() == CSSValueFromFont)
         return consumeIdent(range);
 
-    if (auto value = consumeNumber(range, ValueRange::NonNegative))
-        return value;
-
     auto metric = consumeIdent<CSSValueExHeight, CSSValueCapHeight, CSSValueChWidth, CSSValueIcWidth, CSSValueIcHeight>(range);
-    if (!metric)
-        return nullptr;
-
     auto value = consumeNumber(range, ValueRange::NonNegative);
-    if (!value) {
+    if (!value)
         value = consumeIdent<CSSValueFromFont>(range);
-        if (!value)
-            return nullptr;
-    }
 
-    if (metric->valueID() == CSSValueExHeight)
+    if (!value || !metric || metric->valueID() == CSSValueExHeight)
         return value;
 
     return CSSValuePair::create(metric.releaseNonNull(), value.releaseNonNull());
