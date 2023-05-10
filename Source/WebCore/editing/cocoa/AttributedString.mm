@@ -77,6 +77,8 @@ static RetainPtr<NSObject> toNSObject(const AttributedString::AttributeValue& va
         return (NSString *)value;
     }, [] (const RetainPtr<NSParagraphStyle>& value) -> RetainPtr<NSObject> {
         return value;
+    }, [] (const RetainPtr<NSPresentationIntent>& value) -> RetainPtr<NSObject> {
+        return value;
     }, [] (const URL& value) -> RetainPtr<NSObject> {
         return (NSURL *)value;
     }, [] (const Vector<String>& value) -> RetainPtr<NSObject> {
@@ -179,6 +181,8 @@ static std::optional<AttributedString::AttributeValue> extractValue(id value)
         return { { { RetainPtr { (NSShadow *)value } } } };
     if ([value isKindOfClass:PlatformNSParagraphStyle])
         return { { { RetainPtr { (NSParagraphStyle *)value } } } };
+    if ([value isKindOfClass:PlatformNSPresentationIntent])
+        return { { { RetainPtr { (NSPresentationIntent *)value } } } };
     if ([value isKindOfClass:PlatformNSTextAttachment])
         return { { { RetainPtr { (NSTextAttachment *)value } } } };
     if ([value isKindOfClass:PlatformFontClass])

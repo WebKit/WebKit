@@ -53,6 +53,27 @@ TEST(NSAttributedStringWebKitAdditions, MultipleParagraphs)
     TestWebKitAPI::Util::run(&done);
 }
 
+TEST(NSAttributedStringWebKitAdditions, BlockQuotes)
+{
+    __block bool done = false;
+    [NSAttributedString loadFromHTMLWithString:@"<p>Hello</p><blockquote>Down<blockquote>under</blockquote></blockquote>" options:@{ } completionHandler:^(NSAttributedString *attributedString, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *attributes, NSError *error) {
+        EXPECT_EQ([[attributedString attribute:NSParagraphStyleAttributeName atIndex:0 effectiveRange:nil] headerLevel], 0);
+        EXPECT_EQ([[attributedString attribute:NSParagraphStyleAttributeName atIndex:6 effectiveRange:nil] headerLevel], 0);
+        NSPresentationIntent* quote1 = [attributedString attribute:NSPresentationIntentAttributeName atIndex:6 effectiveRange:nil];
+        ASSERT_NOT_NULL(quote1);
+        EXPECT_EQ([quote1 indentationLevel], 0);
+        EXPECT_EQ([[attributedString attribute:NSParagraphStyleAttributeName atIndex:11 effectiveRange:nil] headerLevel], 0);
+        NSPresentationIntent* quote2 = [attributedString attribute:NSPresentationIntentAttributeName atIndex:11 effectiveRange:nil];
+        ASSERT_NOT_NULL(quote2);
+        EXPECT_EQ([quote2 indentationLevel], 1);
+        EXPECT_NE([quote1 identity], [quote2 identity]);
+        EXPECT_EQ([quote1 identity], [[quote2 parentIntent] identity]);
+
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
 #if PLATFORM(IOS_FAMILY)
 TEST(NSAttributedStringWebKitAdditions, DirectoriesNotCreated)
 {

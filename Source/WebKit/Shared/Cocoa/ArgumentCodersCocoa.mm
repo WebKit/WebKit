@@ -708,6 +708,10 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
     if ([allowedClasses containsObject:NSParagraphStyle.class])
         return haveStrictDecodableNSTextTable() && strictSecureDecodingForAllObjCEnabled();
 
+    // rdar://109121874 don't reintroduce crash in rdar://105853449 added test
+    if ([allowedClasses containsObject:NSPresentationIntent.class])
+        return haveStrictDecodableNSTextTable() && strictSecureDecodingForAllObjCEnabled();
+
     // rdar://107553194, Don't reintroduce rdar://108339450
     if ([allowedClasses containsObject:NSMutableURLRequest.class])
         return strictSecureDecodingForAllObjCEnabled();
