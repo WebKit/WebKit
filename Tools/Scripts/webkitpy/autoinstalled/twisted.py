@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -24,16 +24,25 @@ import sys
 
 from webkitscmpy import AutoInstall, Package, Version
 
-AutoInstall.install(Package('hyperlink', Version(21, 0, 0), pypi_name='hyperlink'))
 AutoInstall.install(Package('constantly', Version(15, 1, 0), pypi_name='constantly'))
-AutoInstall.install(Package('incremental', Version(21, 3, 0), pypi_name='incremental'))
-AutoInstall.install(Package('twisted', Version(20, 3, 0), pypi_name='Twisted'))
 
-AutoInstall.install(Package('pyOpenSSL', Version(20, 0, 0)))
-AutoInstall.install(Package('bcrypt', Version(4), wheel=True))
-AutoInstall.install(Package('pycparser', Version(2, 21), wheel=True))
+if sys.version_info >= (3, 0):
+    AutoInstall.install(Package('hyperlink', Version(21, 0, 0), pypi_name='hyperlink'))
+    AutoInstall.install(Package('incremental', Version(21, 3, 0), pypi_name='incremental'))
+    AutoInstall.install(Package('twisted', Version(20, 3, 0), pypi_name='Twisted'))
 
-from twisted.protocols.tls import TLSMemoryBIOFactory
-from twisted.python import threadpool
+    AutoInstall.install(Package('pyOpenSSL', Version(20, 0, 0)))
+    AutoInstall.install(Package('bcrypt', Version(4), wheel=True))
+    AutoInstall.install(Package('pycparser', Version(2, 21), wheel=True))
+
+    from twisted.protocols.tls import TLSMemoryBIOFactory
+    from twisted.python import threadpool
+else:
+    AutoInstall.install(Package('hyperlink', Version(17, 3, 0), pypi_name='hyperlink'))
+    AutoInstall.install(Package('incremental', Version(17, 5, 0), pypi_name='incremental'))
+    AutoInstall.install(Package('twisted', Version(17, 5, 0), pypi_name='Twisted'))
+
+    AutoInstall.install(Package('pyOpenSSL', Version(17, 2, 0)))
+    AutoInstall.install(Package('pycparser', Version(2, 18)))
 
 sys.modules[__name__] = __import__('twisted')
