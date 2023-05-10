@@ -26,6 +26,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import re
+
 from webkitcorepy import string_utils
 
 from webkitpy.common.checkout.changelog import ChangeLog
@@ -34,9 +36,13 @@ from webkitpy.tool.steps.abstractstep import AbstractStep
 
 
 class PrepareChangeLogForRevert(AbstractStep):
+    INTEGER_RE = re.compile(r'^\d+$')
+
     @classmethod
     def _message_for_revert(cls, revision_list, reason, description_list, reverted_bug_url_list, revert_bug_url=None):
-        message = "Unreviewed, reverting %s.\n" % string_utils.join(['r' + str(revision) for revision in revision_list])
+        message = "Unreviewed, reverting {}.\n".format(string_utils.join([
+            '{}{}'.format('r' if cls.INTEGER_RE.match(str(revision)) else '', revision) for revision in revision_list
+        ]))
         if revert_bug_url:
             message += "%s\n" % revert_bug_url
         message += "\n"
