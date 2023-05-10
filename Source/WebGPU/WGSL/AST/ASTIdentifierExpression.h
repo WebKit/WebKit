@@ -31,19 +31,19 @@
 namespace WGSL::AST {
 
 class IdentifierExpression final : public Expression {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(IdentifierExpression);
 public:
-    IdentifierExpression(SourceSpan span, Identifier&& identifier)
-        : Expression(span)
-        , m_identifier(WTFMove(identifier))
-    { }
-
     NodeKind kind() const override;
 
     Identifier& identifier() { return m_identifier; }
     const Identifier& identifier() const { return m_identifier; }
 
 private:
+    IdentifierExpression(SourceSpan span, Identifier&& identifier)
+        : Expression(span)
+        , m_identifier(WTFMove(identifier))
+    { }
+
     Identifier m_identifier;
 };
 

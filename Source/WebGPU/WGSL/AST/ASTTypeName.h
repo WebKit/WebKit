@@ -65,13 +65,13 @@ public:
     NodeKind kind() const override;
 
     TypeName* maybeElementType() const { return m_elementType; }
-    Expression* maybeElementCount() const { return m_elementCount.get(); }
+    Expression* maybeElementCount() const { return m_elementCount; }
 
 private:
-    ArrayTypeName(SourceSpan span, TypeName::Ptr elementType, Expression::Ptr&& elementCount)
+    ArrayTypeName(SourceSpan span, TypeName::Ptr elementType, Expression::Ptr elementCount)
         : TypeName(span)
         , m_elementType(elementType)
-        , m_elementCount(WTFMove(elementCount))
+        , m_elementCount(elementCount)
     { }
 
     TypeName::Ptr m_elementType;

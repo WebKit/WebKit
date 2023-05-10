@@ -30,17 +30,17 @@
 namespace WGSL::AST {
 
 class Float32Literal final : public Expression {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(Float32Literal);
 public:
+    NodeKind kind() const final;
+    float value() const { return m_value; }
+
+private:
     Float32Literal(SourceSpan span, float value)
         : Expression(span)
         , m_value(value)
     { }
 
-    NodeKind kind() const final;
-    float value() const { return m_value; }
-
-private:
     float m_value;
 };
 

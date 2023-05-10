@@ -130,9 +130,9 @@ void RewriteGlobalVariables::visit(AST::IdentifierExpression& identifier)
     auto name = identifier.identifier();
     if (Global* global = read(name)) {
         if (auto resource = global->resource) {
-            auto base = makeUniqueRef<AST::IdentifierExpression>(identifier.span(), argumentBufferParameterName(resource->group));
-            auto structureAccess = makeUniqueRef<AST::FieldAccessExpression>(identifier.span(), WTFMove(base), WTFMove(name));
-            m_callGraph.ast().replace(&identifier, AST::IdentityExpression(identifier.span(), WTFMove(structureAccess)));
+            auto& base = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(identifier.span(), argumentBufferParameterName(resource->group));
+            auto& structureAccess = m_callGraph.ast().astBuilder().construct<AST::FieldAccessExpression>(identifier.span(), base, WTFMove(name));
+            m_callGraph.ast().replace(identifier, structureAccess);
         }
     }
 }

@@ -30,17 +30,17 @@
 namespace WGSL::AST {
 
 class Unsigned32Literal final : public Expression {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(Unsigned32Literal);
 public:
+    NodeKind kind() const final;
+    uint32_t value() const { return m_value; }
+
+private:
     Unsigned32Literal(SourceSpan span, uint32_t value)
         : Expression(span)
         , m_value(value)
     { }
 
-    NodeKind kind() const final;
-    uint32_t value() const { return m_value; }
-
-private:
     uint32_t m_value;
 };
 

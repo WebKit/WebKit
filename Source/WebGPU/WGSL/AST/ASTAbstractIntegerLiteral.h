@@ -32,17 +32,17 @@ namespace WGSL::AST {
 // Literal ints without size prefix; these ints are signed 64-bit numbers.
 // https://gpuweb.github.io/gpuweb/wgsl/#abstractint
 class AbstractIntegerLiteral final : public Expression {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(AbstractIntegerLiteral);
 public:
+    NodeKind kind() const final;
+    int64_t value() const { return m_value; }
+
+private:
     AbstractIntegerLiteral(SourceSpan span, int64_t value)
         : Expression(span)
         , m_value(value)
     { }
 
-    NodeKind kind() const final;
-    int64_t value() const { return m_value; }
-
-private:
     int64_t m_value;
 };
 

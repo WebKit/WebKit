@@ -35,19 +35,19 @@ namespace WGSL::AST {
 // but can also be a type, in which the whole call is a type conversion expression. The exact
 // kind of expression can only be resolved during semantic analysis.
 class CallExpression final : public Expression {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(CallExpression);
 public:
+    NodeKind kind() const override;
+    TypeName& target() { return m_target.get(); }
+    Expression::List& arguments() { return m_arguments; }
+
+private:
     CallExpression(SourceSpan span, TypeName::Ref&& target, Expression::List&& arguments)
         : Expression(span)
         , m_target(WTFMove(target))
         , m_arguments(WTFMove(arguments))
     { }
 
-    NodeKind kind() const override;
-    TypeName& target() { return m_target.get(); }
-    Expression::List& arguments() { return m_arguments; }
-
-private:
     // If m_target is a NamedType, it could either be a:
     //   * Type that does not accept parameters (bool, i32, u32, ...)
     //   * Identifier that refers to a type alias.

@@ -192,13 +192,13 @@ void EntryPointRewriter::constructInputStruct()
 
 void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& data, IsBuiltin isBuiltin)
 {
-    std::unique_ptr<AST::Expression> rhs;
+    AST::Expression::Ptr rhs;
     if (isBuiltin == IsBuiltin::Yes)
-        rhs = makeUnique<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(data.name));
+        rhs = &m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(data.name));
     else {
-        rhs = makeUnique<AST::FieldAccessExpression>(
+        rhs = &m_shaderModule.astBuilder().construct<AST::FieldAccessExpression>(
             SourceSpan::empty(),
-            makeUniqueRef<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(m_structParameterName)),
+            m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(m_structParameterName)),
             AST::Identifier::make(data.name)
         );
     }
@@ -212,7 +212,7 @@ void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& da
                 AST::Identifier::make(data.name),
                 nullptr, // TODO: do we need a VariableQualifier?
                 &data.type,
-                WTFMove(rhs),
+                rhs,
                 AST::Attribute::List { }
             )
         ));
@@ -221,9 +221,9 @@ void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& da
 
     path.append(data.name);
     unsigned i = 0;
-    UniqueRef<AST::Expression> lhs = makeUniqueRef<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(path[i++]));
+    AST::Expression::Ref lhs = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(path[i++]));
     while (i < path.size()) {
-        lhs = makeUniqueRef<AST::FieldAccessExpression>(
+        lhs = m_shaderModule.astBuilder().construct<AST::FieldAccessExpression>(
             SourceSpan::empty(),
             WTFMove(lhs),
             AST::Identifier::make(path[i++])
@@ -233,7 +233,7 @@ void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& da
     m_materializations.append(makeUniqueRef<AST::AssignmentStatement>(
         SourceSpan::empty(),
         WTFMove(lhs),
-        makeUniqueRefFromNonNullUniquePtr(WTFMove(rhs))
+        *rhs
     ));
 }
 

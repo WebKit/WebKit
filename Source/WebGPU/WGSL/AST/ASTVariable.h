@@ -47,17 +47,17 @@ public:
     using Ref = UniqueRef<Variable>;
     using List = UniqueRefVector<Variable>;
 
-    Variable(SourceSpan span, VariableFlavor flavor, Identifier&& name, TypeName::Ptr type, Expression::Ptr&& initializer)
-        : Variable(span, flavor, WTFMove(name), { }, type, WTFMove(initializer), { })
+    Variable(SourceSpan span, VariableFlavor flavor, Identifier&& name, TypeName::Ptr type, Expression::Ptr initializer)
+        : Variable(span, flavor, WTFMove(name), { }, type, initializer, { })
     { }
 
-    Variable(SourceSpan span, VariableFlavor flavor, Identifier&& name, VariableQualifier::Ptr&& qualifier, TypeName::Ptr type, Expression::Ptr&& initializer, Attribute::List&& attributes)
+    Variable(SourceSpan span, VariableFlavor flavor, Identifier&& name, VariableQualifier::Ptr&& qualifier, TypeName::Ptr type, Expression::Ptr initializer, Attribute::List&& attributes)
         : Declaration(span)
         , m_name(WTFMove(name))
         , m_attributes(WTFMove(attributes))
         , m_qualifier(WTFMove(qualifier))
         , m_type(type)
-        , m_initializer(WTFMove(initializer))
+        , m_initializer(initializer)
         , m_flavor(flavor)
     {
         ASSERT(m_type || m_initializer);
@@ -69,7 +69,7 @@ public:
     Attribute::List& attributes() { return m_attributes; }
     VariableQualifier* maybeQualifier() { return m_qualifier.get(); }
     TypeName* maybeTypeName() { return m_type; }
-    Expression* maybeInitializer() { return m_initializer.get(); }
+    Expression* maybeInitializer() { return m_initializer; }
 
 private:
     Identifier m_name;

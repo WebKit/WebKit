@@ -362,7 +362,7 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
 
 void TypeChecker::visit(AST::BinaryExpression& binary)
 {
-    chooseOverload("operator", binary.span(), toString(binary.operation()), Vector<AST::Expression*> { &binary.leftExpression(), &binary.rightExpression() }, { });
+    chooseOverload("operator", binary.span(), toString(binary.operation()), ReferenceWrapperVector<AST::Expression, 2> { binary.leftExpression(), binary.rightExpression() }, { });
 }
 
 void TypeChecker::visit(AST::IdentifierExpression& identifier)
@@ -463,7 +463,7 @@ void TypeChecker::visit(AST::CallExpression& call)
 
 void TypeChecker::visit(AST::UnaryExpression& unary)
 {
-    chooseOverload("operator", unary.span(), toString(unary.operation()), Vector<AST::Expression*> { &unary.expression() }, { });
+    chooseOverload("operator", unary.span(), toString(unary.operation()), ReferenceWrapperVector<AST::Expression, 1> { unary.expression() }, { });
 }
 
 // Literal Expressions
@@ -633,7 +633,7 @@ Type* TypeChecker::chooseOverload(const char* kind, const SourceSpan& span, cons
     Vector<Type*> valueArguments;
     valueArguments.reserveInitialCapacity(callArguments.size());
     for (unsigned i = 0; i < callArguments.size(); ++i) {
-        auto* type = infer(*callArguments.Vector::at(i));
+        auto* type = infer(callArguments[i]);
         if (isBottom(type)) {
             inferred(m_types.bottomType());
             return m_types.bottomType();
@@ -645,7 +645,7 @@ Type* TypeChecker::chooseOverload(const char* kind, const SourceSpan& span, cons
     if (overload.has_value()) {
         ASSERT(overload->parameters.size() == callArguments.size());
         for (unsigned i = 0; i < callArguments.size(); ++i)
-            callArguments.Vector::at(i)->m_inferredType = overload->parameters[i];
+            callArguments[i].m_inferredType = overload->parameters[i];
         inferred(overload->result);
         return overload->result;
     }

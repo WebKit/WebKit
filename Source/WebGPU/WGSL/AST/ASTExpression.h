@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include "ASTBuilder.h"
 #include "ASTNode.h"
+#include <wtf/ReferenceWrapperVector.h>
 
 namespace WGSL {
 class TypeChecker;
@@ -34,21 +36,22 @@ struct Type;
 namespace AST {
 
 class Expression : public Node {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(Expression);
     friend TypeChecker;
 
 public:
-    using Ref = UniqueRef<Expression>;
-    using Ptr = std::unique_ptr<Expression>;
-    using List = UniqueRefVector<Expression>;
-
-    Expression(SourceSpan span)
-        : Node(span)
-    { }
+    using Ref = std::reference_wrapper<Expression>;
+    using Ptr = Expression*;
+    using List = ReferenceWrapperVector<Expression>;
 
     virtual ~Expression() { }
 
     const Type* inferredType() const { return m_inferredType; }
+
+protected:
+    Expression(SourceSpan span)
+        : Node(span)
+    { }
 
 private:
     const Type* m_inferredType;

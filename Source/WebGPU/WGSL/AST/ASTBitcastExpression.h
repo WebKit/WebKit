@@ -31,18 +31,18 @@
 namespace WGSL::AST {
 
 class BitcastExpression final : public Expression {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(BitcastExpression);
 public:
+    NodeKind kind() const final;
+    Expression& expression() { return m_expression.get(); }
+
+private:
     BitcastExpression(SourceSpan span, TypeName::Ref&& castToType, Expression::Ref&& expression)
         : Expression(span)
         , m_castToType(WTFMove(castToType))
         , m_expression(WTFMove(expression))
     { }
 
-    NodeKind kind() const final;
-    Expression& expression() { return m_expression.get(); }
-
-private:
     TypeName::Ref m_castToType;
     Expression::Ref m_expression;
 };

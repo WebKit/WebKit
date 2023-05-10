@@ -164,7 +164,7 @@ void NameManglerVisitor::visit(AST::Variable& variable)
     for (auto& attribute : variable.attributes()) {
         if (is<AST::IdAttribute>(attribute)) {
             unsigned value;
-            auto expression = downcast<AST::IdAttribute>(attribute).value();
+            auto& expression = downcast<AST::IdAttribute>(attribute).value();
             if (is<AST::AbstractIntegerLiteral>(expression))
                 value = downcast<AST::AbstractIntegerLiteral>(expression).value();
             else if (is<AST::Signed32Literal>(expression))

@@ -33,17 +33,17 @@ namespace WGSL::AST {
 class ForStatement final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ForStatement(SourceSpan span, Statement::Ptr&& initializer, Expression::Ptr&& test, Statement::Ptr&& update, CompoundStatement&& body)
+    ForStatement(SourceSpan span, Statement::Ptr&& initializer, Expression::Ptr test, Statement::Ptr&& update, CompoundStatement&& body)
         : Statement(span)
         , m_initializer(WTFMove(initializer))
-        , m_test(WTFMove(test))
+        , m_test(test)
         , m_update(WTFMove(update))
         , m_body(WTFMove(body))
     { }
 
     NodeKind kind() const override;
     Statement* maybeInitializer() { return m_initializer.get(); }
-    Expression* maybeTest() { return m_test.get(); }
+    Expression* maybeTest() { return m_test; }
     Statement* maybeUpdate() { return m_update.get(); }
     CompoundStatement& body() { return m_body; }
 

@@ -29,13 +29,16 @@
 #include "ParserPrivate.h"
 #include "WGSLShaderModule.h"
 
-static Expected<UniqueRef<WGSL::AST::Expression>, WGSL::Error> parseLCharPrimaryExpression(const String& input)
+static Expected<std::pair<WGSL::ShaderModule, WGSL::AST::Expression::Ref>, WGSL::Error> parseLCharPrimaryExpression(const String& input)
 {
     WGSL::ShaderModule shaderModule(input, { });
     WGSL::Lexer<LChar> lexer(input);
     WGSL::Parser parser(shaderModule, lexer);
 
-    return parser.parsePrimaryExpression();
+    auto expression = parser.parsePrimaryExpression();
+    if (!expression)
+        return makeUnexpected(expression.error());
+    return { std::make_pair(WTFMove(shaderModule), *expression) };
 }
 
 template<class NumberType>
@@ -59,10 +62,10 @@ TEST(WGSLConstLiteralTests, BoolLiteral)
         auto parseResult = parseLCharPrimaryExpression(testCase.input);
         EXPECT_TRUE(parseResult);
 
-        auto expr = WTFMove(*parseResult);
+        AST::Expression& expr = parseResult->second;
         EXPECT_TRUE(is<AST::BoolLiteral>(expr));
 
-        const auto& intLiteral = downcast<AST::BoolLiteral>(expr.get());
+        const auto& intLiteral = downcast<AST::BoolLiteral>(expr);
         EXPECT_EQ(intLiteral.value(), testCase.expectedValue);
         auto inputLength = testCase.input.length();
         EXPECT_EQ(intLiteral.span(), SourceSpan(1, inputLength, inputLength, 0));
@@ -83,10 +86,10 @@ TEST(WGSLConstLiteralTests, AbstractIntegerLiteralDecimal)
         auto parseResult = parseLCharPrimaryExpression(testCase.input);
         EXPECT_TRUE(parseResult);
 
-        auto expr = WTFMove(*parseResult);
+        AST::Expression& expr = parseResult->second;
         EXPECT_TRUE(is<AST::AbstractIntegerLiteral>(expr));
 
-        const auto& intLiteral = downcast<AST::AbstractIntegerLiteral>(expr.get());
+        const auto& intLiteral = downcast<AST::AbstractIntegerLiteral>(expr);
         EXPECT_EQ(intLiteral.value(), testCase.expectedValue);
         auto inputLength = testCase.input.length();
         EXPECT_EQ(intLiteral.span(), SourceSpan(1, inputLength, inputLength, 0));
@@ -107,10 +110,10 @@ TEST(WGSLConstLiteralTests, AbstractIntegerLiteralHex)
         auto parseResult = parseLCharPrimaryExpression(testCase.input);
         EXPECT_TRUE(parseResult);
 
-        auto expr = WTFMove(*parseResult);
+        AST::Expression& expr = parseResult->second;
         EXPECT_TRUE(is<AST::AbstractIntegerLiteral>(expr));
 
-        const auto& intLiteral = downcast<AST::AbstractIntegerLiteral>(expr.get());
+        const auto& intLiteral = downcast<AST::AbstractIntegerLiteral>(expr);
         EXPECT_EQ(intLiteral.value(), testCase.expectedValue);
         auto inputLength = testCase.input.length();
         EXPECT_EQ(intLiteral.span(), WGSL::SourceSpan(1, inputLength, inputLength, 0));
@@ -136,10 +139,10 @@ TEST(WGSLConstLiteralTests, AbstractFloatLiteralDec)
         auto parseResult = parseLCharPrimaryExpression(testCase.input);
         EXPECT_TRUE(parseResult);
 
-        auto expr = WTFMove(*parseResult);
+        AST::Expression& expr = parseResult->second;
         EXPECT_TRUE(is<AST::AbstractFloatLiteral>(expr));
 
-        const auto& floatLiteral = downcast<AST::AbstractFloatLiteral>(expr.get());
+        const auto& floatLiteral = downcast<AST::AbstractFloatLiteral>(expr);
         EXPECT_EQ(floatLiteral.value(), testCase.expectedValue);
         auto inputLength = testCase.input.length();
         EXPECT_EQ(floatLiteral.span(), SourceSpan(1, inputLength, inputLength, 0));

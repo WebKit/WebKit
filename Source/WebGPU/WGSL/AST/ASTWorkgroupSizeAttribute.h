@@ -34,15 +34,15 @@ class WorkgroupSizeAttribute final : public Attribute {
 public:
     NodeKind kind() const override;
     Expression& x() { return m_x.get(); }
-    Expression* maybeY() { return m_y.get(); }
-    Expression* maybeZ() { return m_z.get(); }
+    Expression* maybeY() { return m_y; }
+    Expression* maybeZ() { return m_z; }
 
 private:
-    WorkgroupSizeAttribute(SourceSpan span, Expression::Ref&& x, Expression::Ptr&& maybeY, Expression::Ptr&& maybeZ)
+    WorkgroupSizeAttribute(SourceSpan span, Expression::Ref&& x, Expression::Ptr maybeY, Expression::Ptr maybeZ)
         : Attribute(span)
         , m_x(WTFMove(x))
-        , m_y(WTFMove(maybeY))
-        , m_z(WTFMove(maybeZ))
+        , m_y(maybeY)
+        , m_z(maybeZ)
     { }
 
     Expression::Ref m_x;

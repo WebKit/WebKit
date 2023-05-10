@@ -35,18 +35,18 @@ namespace WGSL::AST {
 // larger node than the one current in the tree. E.g. replacing an identifier
 // with a structure access.
 class IdentityExpression final : public Expression {
-    WTF_MAKE_FAST_ALLOCATED;
+    friend ShaderModule;
 public:
-    IdentityExpression(SourceSpan span, UniqueRef<Expression>&& expression)
-        : Expression(span)
-        , m_expression(WTFMove(expression))
-    { }
-
     NodeKind kind() const override;
     Expression& expression() { return m_expression.get(); }
 
 private:
-    UniqueRef<Expression> m_expression;
+    IdentityExpression(SourceSpan span, Expression::Ref&& expression)
+        : Expression(span)
+        , m_expression(WTFMove(expression))
+    { }
+
+    Expression::Ref m_expression;
 };
 
 } // namespace WGSL::AST

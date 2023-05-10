@@ -670,9 +670,27 @@ TEST(WGSLParserTests, UnaryExpression)
 
 static void testUnaryExpressionX(ASCIILiteral program, WGSL::AST::UnaryOperation op)
 {
-    EXPECT_EXPRESSION(expression, program);
-    EXPECT_TRUE(is<WGSL::AST::UnaryExpression>(expression.get()));
-    auto& unaryExpression = downcast<WGSL::AST::UnaryExpression>(expression.get());
+    auto source = makeString(
+        "fn f() {\n"_s,
+        "_ = "_s, program, ";"_s,
+        "}\n"_s
+    );
+    auto shader = parse(source);
+
+    EXPECT_SHADER(shader);
+    EXPECT_TRUE(shader.has_value());
+    EXPECT_TRUE(shader->directives().isEmpty());
+    EXPECT_TRUE(shader->structures().isEmpty());
+    EXPECT_TRUE(shader->variables().isEmpty());
+    EXPECT_EQ(shader->functions().size(), 1u);
+    auto& function = shader->functions()[0];
+
+    EXPECT_EQ(function.body().statements().size(), 1u);
+    EXPECT_TRUE(is<WGSL::AST::PhonyAssignmentStatement>(function.body().statements()[0]));
+    auto& statement = downcast<WGSL::AST::PhonyAssignmentStatement>(function.body().statements()[0]);
+
+    EXPECT_TRUE(is<WGSL::AST::UnaryExpression>(statement.rhs()));
+    auto& unaryExpression = downcast<WGSL::AST::UnaryExpression>(statement.rhs());
 
     EXPECT_EQ(unaryExpression.operation(), op);
     EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(unaryExpression.expression()));
@@ -693,9 +711,26 @@ static void testBinaryExpressionXY(ASCIILiteral program, WGSL::AST::BinaryOperat
 {
     EXPECT_EQ(ids.size(), 2u);
 
-    EXPECT_EXPRESSION(expression, program);
-    EXPECT_TRUE(is<WGSL::AST::BinaryExpression>(expression.get()));
-    auto& binaryExpression = downcast<WGSL::AST::BinaryExpression>(expression.get());
+    auto source = makeString(
+        "fn f() {\n"_s,
+        "_ = "_s, program, ";"_s,
+        "}\n"_s
+    );
+    auto shader = parse(source);
+
+    EXPECT_SHADER(shader);
+    EXPECT_TRUE(shader.has_value());
+    EXPECT_TRUE(shader->directives().isEmpty());
+    EXPECT_TRUE(shader->structures().isEmpty());
+    EXPECT_TRUE(shader->variables().isEmpty());
+    EXPECT_EQ(shader->functions().size(), 1u);
+    auto& function = shader->functions()[0];
+
+    EXPECT_EQ(function.body().statements().size(), 1u);
+    EXPECT_TRUE(is<WGSL::AST::PhonyAssignmentStatement>(function.body().statements()[0]));
+    auto& statement = downcast<WGSL::AST::PhonyAssignmentStatement>(function.body().statements()[0]);
+    EXPECT_TRUE(is<WGSL::AST::BinaryExpression>(statement.rhs()));
+    auto& binaryExpression = downcast<WGSL::AST::BinaryExpression>(statement.rhs());
 
     EXPECT_EQ(binaryExpression.operation(), op);
     EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(binaryExpression.leftExpression()));
@@ -711,9 +746,27 @@ static void testBinaryExpressionXYZ(ASCIILiteral program, const Vector<WGSL::AST
     EXPECT_EQ(ops.size(), 2u);
     EXPECT_EQ(ids.size(), 3u);
 
-    EXPECT_EXPRESSION(expression, program);
-    EXPECT_TRUE(is<WGSL::AST::BinaryExpression>(expression.get()));
-    auto& binaryExpression = downcast<WGSL::AST::BinaryExpression>(expression.get());
+    auto source = makeString(
+        "fn f() {\n"_s,
+        "_ = "_s, program, ";"_s,
+        "}\n"_s
+    );
+    auto shader = parse(source);
+
+    EXPECT_SHADER(shader);
+    EXPECT_TRUE(shader.has_value());
+    EXPECT_TRUE(shader->directives().isEmpty());
+    EXPECT_TRUE(shader->structures().isEmpty());
+    EXPECT_TRUE(shader->variables().isEmpty());
+    EXPECT_EQ(shader->functions().size(), 1u);
+    auto& function = shader->functions()[0];
+
+    EXPECT_EQ(function.body().statements().size(), 1u);
+    EXPECT_TRUE(is<WGSL::AST::PhonyAssignmentStatement>(function.body().statements()[0]));
+    auto& statement = downcast<WGSL::AST::PhonyAssignmentStatement>(function.body().statements()[0]);
+
+    EXPECT_TRUE(is<WGSL::AST::BinaryExpression>(statement.rhs()));
+    auto& binaryExpression = downcast<WGSL::AST::BinaryExpression>(statement.rhs());
 
     auto& complex = is<WGSL::AST::BinaryExpression>(binaryExpression.leftExpression()) ?
         binaryExpression.leftExpression() : binaryExpression.rightExpression();
