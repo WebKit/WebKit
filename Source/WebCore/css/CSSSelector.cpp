@@ -978,11 +978,10 @@ CSSSelector::CSSSelector(const CSSSelector& other)
     , m_tagIsForNamespaceRule(other.m_tagIsForNamespaceRule)
     , m_caseInsensitiveAttributeValueMatching(other.m_caseInsensitiveAttributeValueMatching)
 {
-    if (other.m_hasRareData) {
-        auto copied = other.m_data.rareData->deepCopy(); 
-        m_data.rareData = &copied.leakRef();
-        m_data.rareData->ref();
-    } else if (other.m_hasNameWithCase) {
+    // Manually ref count the m_data union because they are stored as raw ptr, not as Ref.
+    if (other.m_hasRareData)
+        m_data.rareData = &other.m_data.rareData->deepCopy().leakRef();
+    else if (other.m_hasNameWithCase) {
         m_data.nameWithCase = other.m_data.nameWithCase;
         m_data.nameWithCase->ref();
     } else if (other.match() == Tag) {
