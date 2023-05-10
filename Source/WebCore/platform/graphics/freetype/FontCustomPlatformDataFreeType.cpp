@@ -161,7 +161,8 @@ bool FontCustomPlatformData::supportsFormat(const String& format)
         || equalLettersIgnoringASCIICase(format, "truetype-variations"_s)
         || equalLettersIgnoringASCIICase(format, "opentype-variations"_s)
 #endif
-        || equalLettersIgnoringASCIICase(format, "woff"_s);
+        || equalLettersIgnoringASCIICase(format, "woff"_s)
+        || equalLettersIgnoringASCIICase(format, "svg"_s);
 }
 
 bool FontCustomPlatformData::supportsTechnology(const FontTechnology&)

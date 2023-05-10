@@ -169,15 +169,8 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsSelectorFunc
 CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFontFormatFunction(CSSParserTokenRange& range)
 {
     ASSERT(range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueFontFormat);
-
-    auto block = range.consumeBlock();
-    block.consumeWhitespace();
-
-    auto isSupported = CSSPropertyParserHelpers::consumeIdent(block, CSSPropertyParserHelpers::identMatchesSupportedFontFormat) ? Supported : Unsupported;
-    if (!block.atEnd())
-        return Unsupported;
-
-    return isSupported;
+    auto format = CSSPropertyParserHelpers::consumeFontFormat(range, true);
+    return format.isNull() ? Unsupported : Supported;
 }
 
 // <supports-font-tech-fn>

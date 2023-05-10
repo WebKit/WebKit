@@ -321,7 +321,7 @@ RefPtr<CSSValue> consumeDeclarationValue(CSSParserTokenRange&, const CSSParserCo
 
 RefPtr<CSSValue> consumeFontFaceFontFamily(CSSParserTokenRange&);
 Vector<FontTechnology> consumeFontTech(CSSParserTokenRange&, bool singleValue = false);
-bool identMatchesSupportedFontFormat(CSSValueID);
+String consumeFontFormat(CSSParserTokenRange&, bool rejectStringValues = false);
 
 // @font-palette-values descriptor consumers:
 

@@ -105,7 +105,8 @@ bool FontCustomPlatformData::supportsFormat(const String& format)
 #if USE(WOFF2)
         || equalLettersIgnoringASCIICase(format, "woff2"_s)
 #endif
-        || equalLettersIgnoringASCIICase(format, "woff"_s);
+        || equalLettersIgnoringASCIICase(format, "woff"_s)
+        || equalLettersIgnoringASCIICase(format, "svg"_s);
 }
 
 bool FontCustomPlatformData::supportsTechnology(const FontTechnology&)

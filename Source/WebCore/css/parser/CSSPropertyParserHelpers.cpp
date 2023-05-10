@@ -8193,19 +8193,6 @@ RefPtr<CSSValue> consumeFontFaceFontFamily(CSSParserTokenRange& range)
     return CSSValueList::createCommaSeparated(name.releaseNonNull());
 }
 
-bool identMatchesSupportedFontFormat(CSSValueID id)
-{
-    return identMatches<
-        CSSValueCollection,
-        CSSValueEmbeddedOpentype,
-        CSSValueOpentype,
-        CSSValueSvg,
-        CSSValueTruetype,
-        CSSValueWoff,
-        CSSValueWoff2
-    >(id);
-}
-
 
 Vector<FontTechnology> consumeFontTech(CSSParserTokenRange& range, bool singleValue)
 {
@@ -8222,6 +8209,22 @@ Vector<FontTechnology> consumeFontTech(CSSParserTokenRange& range, bool singleVa
     if (!args.atEnd())
         return { };
     return technologies;
+}
+
+String consumeFontFormat(CSSParserTokenRange& range, bool rejectStringValues)
+{
+    // https://drafts.csswg.org/css-fonts/#descdef-font-face-src
+    // FIXME: We allow any identifier here and convert to strings; specification calls for certain keywords and legacy compatibility strings.
+    auto args = CSSPropertyParserHelpers::consumeFunction(range);
+    auto& arg = args.consumeIncludingWhitespace();
+    if (!args.atEnd())
+        return nullString();
+    if (arg.type() != IdentToken && (rejectStringValues || arg.type() != StringToken))
+        return nullString();
+    auto format = arg.value().toString();
+    if (arg.type() == IdentToken && !FontCustomPlatformData::supportsFormat(format))
+        return nullString();
+    return format;
 }
 
 // MARK: @font-palette-values
