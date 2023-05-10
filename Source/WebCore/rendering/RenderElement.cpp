@@ -1205,21 +1205,21 @@ static bool mustRepaintBackgroundOrBorder(const RenderElement& renderer)
     return false;
 }
 
-bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* repaintContainer, const LayoutRect& oldBounds, const LayoutRect& oldOutlineBox, const LayoutRect* newBoundsPtr, const LayoutRect* newOutlineBoxRectPtr)
+bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* repaintContainer, const LayoutRect& oldClippedOverflowRect, const LayoutRect& oldOutlineAndBoxShadowBox, const LayoutRect* newClippedOverflowRectPtr, const LayoutRect* newOutlineAndBoxShadowBoxRectPtr)
 {
     if (view().printing())
         return false; // Don't repaint if we're printing.
 
     // This ASSERT fails due to animations. See https://bugs.webkit.org/show_bug.cgi?id=37048
-    // ASSERT(!newBoundsPtr || *newBoundsPtr == clippedOverflowRectForRepaint(repaintContainer));
-    LayoutRect newBounds = newBoundsPtr ? *newBoundsPtr : clippedOverflowRectForRepaint(repaintContainer);
-    LayoutRect newOutlineBox;
+    // ASSERT(!newClippedOverflowRectPtr || *newClippedOverflowRectPtr == clippedOverflowRectForRepaint(repaintContainer));
+    LayoutRect newClippedOverflowRect = newClippedOverflowRectPtr ? *newClippedOverflowRectPtr : clippedOverflowRectForRepaint(repaintContainer);
+    LayoutRect newOutlineAndBoxShadowBox;
 
     bool fullRepaint = selfNeedsLayout();
 
-    if (!fullRepaint && oldBounds != newBounds && style().hasBorderRadius()) {
-        auto oldRadius = style().getRoundedBorderFor(oldBounds).radii();
-        auto newRadius = style().getRoundedBorderFor(newBounds).radii();
+    if (!fullRepaint && oldClippedOverflowRect != newClippedOverflowRect && style().hasBorderRadius()) {
+        auto oldRadius = style().getRoundedBorderFor(oldClippedOverflowRect).radii();
+        auto newRadius = style().getRoundedBorderFor(newClippedOverflowRect).radii();
 
         fullRepaint = oldRadius != newRadius;
     }
@@ -1227,100 +1227,142 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
     if (!fullRepaint) {
         // This ASSERT fails due to animations. See https://bugs.webkit.org/show_bug.cgi?id=37048
         // ASSERT(!newOutlineBoxRectPtr || *newOutlineBoxRectPtr == outlineBoundsForRepaint(repaintContainer));
-        newOutlineBox = newOutlineBoxRectPtr ? *newOutlineBoxRectPtr : outlineBoundsForRepaint(repaintContainer);
-        fullRepaint = (newOutlineBox.location() != oldOutlineBox.location() || (mustRepaintBackgroundOrBorder(*this) && (newBounds != oldBounds || newOutlineBox != oldOutlineBox)));
+        newOutlineAndBoxShadowBox = newOutlineAndBoxShadowBoxRectPtr ? *newOutlineAndBoxShadowBoxRectPtr : outlineBoundsForRepaint(repaintContainer);
+        fullRepaint = (newOutlineAndBoxShadowBox.location() != oldOutlineAndBoxShadowBox.location() || (mustRepaintBackgroundOrBorder(*this) && (newClippedOverflowRect != oldClippedOverflowRect || newOutlineAndBoxShadowBox != oldOutlineAndBoxShadowBox)));
     }
 
     if (!repaintContainer)
         repaintContainer = &view();
 
     if (fullRepaint) {
-        repaintUsingContainer(repaintContainer, oldBounds);
-        if (newBounds != oldBounds)
-            repaintUsingContainer(repaintContainer, newBounds);
+        repaintUsingContainer(repaintContainer, oldClippedOverflowRect);
+        if (newClippedOverflowRect != oldClippedOverflowRect)
+            repaintUsingContainer(repaintContainer, newClippedOverflowRect);
         return true;
     }
 
-    if (newBounds == oldBounds && newOutlineBox == oldOutlineBox)
+    if (newClippedOverflowRect == oldClippedOverflowRect && newOutlineAndBoxShadowBox == oldOutlineAndBoxShadowBox)
         return false;
 
-    if (newBounds.isEmpty() && !oldBounds.isEmpty())
-        repaintUsingContainer(repaintContainer, oldBounds);
-    else if (!newBounds.isEmpty() && oldBounds.isEmpty())
-        repaintUsingContainer(repaintContainer, newBounds);
+    if (newClippedOverflowRect.isEmpty() && !oldClippedOverflowRect.isEmpty())
+        repaintUsingContainer(repaintContainer, oldClippedOverflowRect);
+    else if (!newClippedOverflowRect.isEmpty() && oldClippedOverflowRect.isEmpty())
+        repaintUsingContainer(repaintContainer, newClippedOverflowRect);
     else {
-        LayoutUnit deltaLeft = newBounds.x() - oldBounds.x();
+        LayoutUnit deltaLeft = newClippedOverflowRect.x() - oldClippedOverflowRect.x();
         if (deltaLeft > 0)
-            repaintUsingContainer(repaintContainer, LayoutRect(oldBounds.x(), oldBounds.y(), deltaLeft, oldBounds.height()));
+            repaintUsingContainer(repaintContainer, LayoutRect(oldClippedOverflowRect.x(), oldClippedOverflowRect.y(), deltaLeft, oldClippedOverflowRect.height()));
         else if (deltaLeft < 0)
-            repaintUsingContainer(repaintContainer, LayoutRect(newBounds.x(), newBounds.y(), -deltaLeft, newBounds.height()));
+            repaintUsingContainer(repaintContainer, LayoutRect(newClippedOverflowRect.x(), newClippedOverflowRect.y(), -deltaLeft, newClippedOverflowRect.height()));
 
-        LayoutUnit deltaRight = newBounds.maxX() - oldBounds.maxX();
+        LayoutUnit deltaRight = newClippedOverflowRect.maxX() - oldClippedOverflowRect.maxX();
         if (deltaRight > 0)
-            repaintUsingContainer(repaintContainer, LayoutRect(oldBounds.maxX(), newBounds.y(), deltaRight, newBounds.height()));
+            repaintUsingContainer(repaintContainer, LayoutRect(oldClippedOverflowRect.maxX(), newClippedOverflowRect.y(), deltaRight, newClippedOverflowRect.height()));
         else if (deltaRight < 0)
-            repaintUsingContainer(repaintContainer, LayoutRect(newBounds.maxX(), oldBounds.y(), -deltaRight, oldBounds.height()));
+            repaintUsingContainer(repaintContainer, LayoutRect(newClippedOverflowRect.maxX(), oldClippedOverflowRect.y(), -deltaRight, oldClippedOverflowRect.height()));
 
-        LayoutUnit deltaTop = newBounds.y() - oldBounds.y();
+        LayoutUnit deltaTop = newClippedOverflowRect.y() - oldClippedOverflowRect.y();
         if (deltaTop > 0)
-            repaintUsingContainer(repaintContainer, LayoutRect(oldBounds.x(), oldBounds.y(), oldBounds.width(), deltaTop));
+            repaintUsingContainer(repaintContainer, LayoutRect(oldClippedOverflowRect.x(), oldClippedOverflowRect.y(), oldClippedOverflowRect.width(), deltaTop));
         else if (deltaTop < 0)
-            repaintUsingContainer(repaintContainer, LayoutRect(newBounds.x(), newBounds.y(), newBounds.width(), -deltaTop));
+            repaintUsingContainer(repaintContainer, LayoutRect(newClippedOverflowRect.x(), newClippedOverflowRect.y(), newClippedOverflowRect.width(), -deltaTop));
 
-        LayoutUnit deltaBottom = newBounds.maxY() - oldBounds.maxY();
+        LayoutUnit deltaBottom = newClippedOverflowRect.maxY() - oldClippedOverflowRect.maxY();
         if (deltaBottom > 0)
-            repaintUsingContainer(repaintContainer, LayoutRect(newBounds.x(), oldBounds.maxY(), newBounds.width(), deltaBottom));
+            repaintUsingContainer(repaintContainer, LayoutRect(newClippedOverflowRect.x(), oldClippedOverflowRect.maxY(), newClippedOverflowRect.width(), deltaBottom));
         else if (deltaBottom < 0)
-            repaintUsingContainer(repaintContainer, LayoutRect(oldBounds.x(), newBounds.maxY(), oldBounds.width(), -deltaBottom));
+            repaintUsingContainer(repaintContainer, LayoutRect(oldClippedOverflowRect.x(), newClippedOverflowRect.maxY(), oldClippedOverflowRect.width(), -deltaBottom));
     }
 
-    if (newOutlineBox == oldOutlineBox)
+    if (newOutlineAndBoxShadowBox == oldOutlineAndBoxShadowBox)
         return false;
 
-    // We didn't move, but we did change size. Invalidate the delta, which will consist of possibly
-    // two rectangles (but typically only one).
+    // Let's figure out how much we need to repaint within the new bounds.
+    // e.g. when renderer shrinks vertically it's not sufficient to repaint the "shrunk area" (to clear old content, see above) we need to take care of the area within the new bounds to make sure
+    // decorations like border, outline etc get repainted as well (they are enclosed by old/new bounds).
     const RenderStyle& outlineStyle = outlineStyleForRepaint();
-    LayoutUnit outlineWidth { outlineStyle.outlineSize() };
-    auto insetShadowExtent = style().boxShadowInsetExtent();
-    LayoutUnit width = absoluteValue(newOutlineBox.width() - oldOutlineBox.width());
-    if (width) {
-        LayoutUnit shadowLeft;
-        LayoutUnit shadowRight;
-        style().getBoxShadowHorizontalExtent(shadowLeft, shadowRight);
-        LayoutUnit borderRight = is<RenderBox>(*this) ? downcast<RenderBox>(*this).borderRight() : 0_lu;
-        LayoutUnit boxWidth = is<RenderBox>(*this) ? downcast<RenderBox>(*this).width() : 0_lu;
-        LayoutUnit minInsetRightShadowExtent = std::min<LayoutUnit>(-insetShadowExtent.right(), std::min(newBounds.width(), oldBounds.width()));
-        LayoutUnit borderWidth = std::max(borderRight, std::max(valueForLength(style().borderTopRightRadius().width, boxWidth), valueForLength(style().borderBottomRightRadius().width, boxWidth)));
-        LayoutUnit decorationsWidth = std::max(LayoutUnit(-outlineStyle.outlineOffset()), borderWidth + minInsetRightShadowExtent) + std::max(outlineWidth, shadowRight);
-        LayoutRect rightRect(newOutlineBox.x() + std::min(newOutlineBox.width(), oldOutlineBox.width()) - decorationsWidth,
-            newOutlineBox.y(),
-            width + decorationsWidth,
-            std::max(newOutlineBox.height(), oldOutlineBox.height()));
-        LayoutUnit right = std::min(newBounds.maxX(), oldBounds.maxX());
-        if (rightRect.x() < right) {
-            rightRect.setWidth(std::min(rightRect.width(), right - rightRect.x()));
-            repaintUsingContainer(repaintContainer, rightRect);
+    auto& style = this->style();
+    auto outlineWidth = LayoutUnit { outlineStyle.outlineSize() };
+    auto insetShadowExtent = style.boxShadowInsetExtent();
+    auto sizeDelta = LayoutSize { absoluteValue(newOutlineAndBoxShadowBox.width() - oldOutlineAndBoxShadowBox.width()), absoluteValue(newOutlineAndBoxShadowBox.height() - oldOutlineAndBoxShadowBox.height()) };
+    if (sizeDelta.width()) {
+        auto insetExtent = [&] {
+            // Inset "content" is inside the border box (e.g. border, negative outline and box shadow).
+            auto borderRightExtent = [&]() -> LayoutUnit {
+                if (!is<RenderBox>(*this))
+                    return { };
+                auto& renderBox = downcast<RenderBox>(*this);
+                auto borderBoxWidth = renderBox.width();
+                return std::max(renderBox.borderRight(), std::max(valueForLength(style.borderTopRightRadius().width, borderBoxWidth), valueForLength(style.borderBottomRightRadius().width, borderBoxWidth)));
+            };
+            auto outlineRightInsetExtent = [&]() -> LayoutUnit {
+                auto offset = LayoutUnit { outlineStyle.outlineOffset() };
+                return offset < 0 ? -offset : 0_lu;
+            };
+            auto boxShadowRightInsetExtent = [&] {
+                auto rightInset = insetShadowExtent.right();
+                // Clip inset shadow at the clipped overflow rect. We would never paint outside.
+                return rightInset < 0 ? std::min(-rightInset, std::min(newClippedOverflowRect.width(), oldClippedOverflowRect.width())) : 0_lu;
+            };
+            // Outline starts at the border box while box shadow starts at the padding box.
+            return std::max(outlineRightInsetExtent(), borderRightExtent() + boxShadowRightInsetExtent());
+        };
+        auto outsetExtent = [&] {
+            // Outset "content" is outside of the border box (e.g. regular outline and box shadow).
+            auto shadowLeft = LayoutUnit { };
+            auto shadowRight = LayoutUnit { };
+            style.getBoxShadowHorizontalExtent(shadowLeft, shadowRight);
+            return std::max(outlineWidth, shadowRight);
+        };
+        auto decorationRightExtent = insetExtent() + outsetExtent();
+        // Both inset and outset "decorations" are within the "outline and box shadow" box.
+        auto decorationLeft = newOutlineAndBoxShadowBox.x() + std::min(newOutlineAndBoxShadowBox.width(), oldOutlineAndBoxShadowBox.width()) - decorationRightExtent;
+        auto clippedBoundsRight = std::min(newClippedOverflowRect.maxX(), oldClippedOverflowRect.maxX());
+        auto damageExtentWithinClippedOverflow = clippedBoundsRight - decorationLeft;
+        if (damageExtentWithinClippedOverflow > 0) {
+            damageExtentWithinClippedOverflow = std::min(sizeDelta.width() + decorationRightExtent, damageExtentWithinClippedOverflow);
+            auto damagedRect = LayoutRect { decorationLeft, newOutlineAndBoxShadowBox.y(), damageExtentWithinClippedOverflow, std::max(newOutlineAndBoxShadowBox.height(), oldOutlineAndBoxShadowBox.height()) };
+            repaintUsingContainer(repaintContainer, damagedRect);
         }
     }
-    LayoutUnit height = absoluteValue(newOutlineBox.height() - oldOutlineBox.height());
-    if (height) {
-        LayoutUnit shadowTop;
-        LayoutUnit shadowBottom;
-        style().getBoxShadowVerticalExtent(shadowTop, shadowBottom);
-        LayoutUnit borderBottom = is<RenderBox>(*this) ? downcast<RenderBox>(*this).borderBottom() : 0_lu;
-        LayoutUnit boxHeight = is<RenderBox>(*this) ? downcast<RenderBox>(*this).height() : 0_lu;
-        LayoutUnit minInsetBottomShadowExtent = std::min<LayoutUnit>(-insetShadowExtent.bottom(), std::min(newBounds.height(), oldBounds.height()));
-        LayoutUnit borderHeight = std::max(borderBottom, std::max(valueForLength(style().borderBottomLeftRadius().height, boxHeight),
-            valueForLength(style().borderBottomRightRadius().height, boxHeight)));
-        LayoutUnit decorationsHeight = std::max(LayoutUnit(-outlineStyle.outlineOffset()), borderHeight + minInsetBottomShadowExtent) + std::max(outlineWidth, shadowBottom);
-        LayoutRect bottomRect(newOutlineBox.x(),
-            std::min(newOutlineBox.maxY(), oldOutlineBox.maxY()) - decorationsHeight,
-            std::max(newOutlineBox.width(), oldOutlineBox.width()),
-            height + decorationsHeight);
-        LayoutUnit bottom = std::min(newBounds.maxY(), oldBounds.maxY());
-        if (bottomRect.y() < bottom) {
-            bottomRect.setHeight(std::min(bottomRect.height(), bottom - bottomRect.y()));
-            repaintUsingContainer(repaintContainer, bottomRect);
+    if (sizeDelta.height()) {
+        auto insetExtent = [&] {
+            // Inset "content" is inside the border box (e.g. border, negative outline and box shadow).
+            auto borderBottomExtent = [&]() -> LayoutUnit {
+                if (!is<RenderBox>(*this))
+                    return { };
+                auto& renderBox = downcast<RenderBox>(*this);
+                auto borderBoxHeight = renderBox.height();
+                return std::max(renderBox.borderBottom(), std::max(valueForLength(style.borderBottomLeftRadius().height, borderBoxHeight), valueForLength(style.borderBottomRightRadius().height, borderBoxHeight)));
+            };
+            auto outlineBottomInsetExtent = [&]() -> LayoutUnit {
+                auto offset = LayoutUnit { outlineStyle.outlineOffset() };
+                return offset < 0 ? -offset : 0_lu;
+            };
+            auto boxShadowBottomInsetExtent = [&] {
+                auto bottomInset = insetShadowExtent.bottom();
+                // Clip inset shadow at the clipped overflow rect. We would never paint outside.
+                return bottomInset < 0 ? std::min(-bottomInset, std::min(newClippedOverflowRect.height(), oldClippedOverflowRect.height())) : 0_lu;
+            };
+            // Outline starts at the border box while box shadow starts at the padding box.
+            return std::max(outlineBottomInsetExtent(), borderBottomExtent() + boxShadowBottomInsetExtent());
+        };
+        auto outsetExtent = [&] {
+            // Outset "content" is outside of the border box (e.g. regular outline and box shadow).
+            auto shadowTop = LayoutUnit { };
+            auto shadowBottom = LayoutUnit { };
+            style.getBoxShadowVerticalExtent(shadowTop, shadowBottom);
+            return std::max(outlineWidth, shadowBottom);
+        };
+        auto decorationBottomExtent = insetExtent() + outsetExtent();
+        // Both inset and outset "decorations" are within the "outline and box shadow" box.
+        auto decorationTop = std::min(newOutlineAndBoxShadowBox.maxY(), oldOutlineAndBoxShadowBox.maxY()) - decorationBottomExtent;
+        auto clippedBoundsBottom = std::min(newClippedOverflowRect.maxY(), oldClippedOverflowRect.maxY());
+        auto damageExtentWithinClippedOverflow = clippedBoundsBottom - decorationTop;
+        if (damageExtentWithinClippedOverflow > 0) {
+            damageExtentWithinClippedOverflow = std::min(sizeDelta.height() + decorationBottomExtent, damageExtentWithinClippedOverflow);
+            auto damagedRect = LayoutRect { newOutlineAndBoxShadowBox.x(), decorationTop, std::max(newOutlineAndBoxShadowBox.width(), oldOutlineAndBoxShadowBox.width()), damageExtentWithinClippedOverflow };
+            repaintUsingContainer(repaintContainer, damagedRect);
         }
     }
     return false;
