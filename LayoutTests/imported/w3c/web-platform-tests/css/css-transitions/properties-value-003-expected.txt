@@ -89,10 +89,6 @@ PASS transform transform(rotate) / values
 PASS transform transform(rotate) / events
 PASS transform-origin horizontal(keyword) / values
 FAIL transform-origin horizontal(keyword) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "transform-origin:2s" but got "transform-origin-x:2s"
-PASS zoom number(integer) / values
-FAIL zoom number(integer) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "zoom:2s" but got "font-size:2s zoom:2s"
-PASS zoom number(decimal) / values
-FAIL zoom number(decimal) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "zoom:2s" but got "font-size:2s zoom:2s"
 FAIL display display(static to absolute) / values assert_not_equals: must not be target value after start got disallowed value "block"
 FAIL display display(static to absolute) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "display:2s" but got ""
 FAIL display display(block to inline-block) / values assert_not_equals: must not be target value after start got disallowed value "inline-block"
