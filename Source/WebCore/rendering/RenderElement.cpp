@@ -1286,6 +1286,10 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
     auto insetShadowExtent = style.boxShadowInsetExtent();
     auto sizeDelta = LayoutSize { absoluteValue(newOutlineAndBoxShadowBox.width() - oldOutlineAndBoxShadowBox.width()), absoluteValue(newOutlineAndBoxShadowBox.height() - oldOutlineAndBoxShadowBox.height()) };
     if (sizeDelta.width()) {
+        auto shadowLeft = LayoutUnit { };
+        auto shadowRight = LayoutUnit { };
+        style.getBoxShadowHorizontalExtent(shadowLeft, shadowRight);
+
         auto insetExtent = [&] {
             // Inset "content" is inside the border box (e.g. border, negative outline and box shadow).
             auto borderRightExtent = [&]() -> LayoutUnit {
@@ -1300,18 +1304,16 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
                 return offset < 0 ? -offset : 0_lu;
             };
             auto boxShadowRightInsetExtent = [&] {
-                auto rightInset = insetShadowExtent.right();
+                // Turn negative box shadow offset into inset.
+                auto inset = std::min(insetShadowExtent.right(), shadowLeft);
                 // Clip inset shadow at the clipped overflow rect. We would never paint outside.
-                return rightInset < 0 ? std::min(-rightInset, std::min(newClippedOverflowRect.width(), oldClippedOverflowRect.width())) : 0_lu;
+                return inset < 0 ? std::min(-inset, std::min(newClippedOverflowRect.width(), oldClippedOverflowRect.width())) : 0_lu;
             };
             // Outline starts at the border box while box shadow starts at the padding box.
             return std::max(outlineRightInsetExtent(), borderRightExtent() + boxShadowRightInsetExtent());
         };
         auto outsetExtent = [&] {
             // Outset "content" is outside of the border box (e.g. regular outline and box shadow).
-            auto shadowLeft = LayoutUnit { };
-            auto shadowRight = LayoutUnit { };
-            style.getBoxShadowHorizontalExtent(shadowLeft, shadowRight);
             return std::max(outlineWidth, shadowRight);
         };
         auto decorationRightExtent = insetExtent() + outsetExtent();
@@ -1326,6 +1328,10 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
         }
     }
     if (sizeDelta.height()) {
+        auto shadowTop = LayoutUnit { };
+        auto shadowBottom = LayoutUnit { };
+        style.getBoxShadowVerticalExtent(shadowTop, shadowBottom);
+
         auto insetExtent = [&] {
             // Inset "content" is inside the border box (e.g. border, negative outline and box shadow).
             auto borderBottomExtent = [&]() -> LayoutUnit {
@@ -1339,19 +1345,17 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
                 auto offset = LayoutUnit { outlineStyle.outlineOffset() };
                 return offset < 0 ? -offset : 0_lu;
             };
-            auto boxShadowBottomInsetExtent = [&] {
-                auto bottomInset = insetShadowExtent.bottom();
+            auto boxShadowBottomInsetExtent = [&]() -> LayoutUnit {
+                // Turn negative box shadow offset into inset.
+                auto inset = std::min(insetShadowExtent.bottom(), shadowTop);
                 // Clip inset shadow at the clipped overflow rect. We would never paint outside.
-                return bottomInset < 0 ? std::min(-bottomInset, std::min(newClippedOverflowRect.height(), oldClippedOverflowRect.height())) : 0_lu;
+                return inset < 0 ? std::min(-inset, std::min(newClippedOverflowRect.height(), oldClippedOverflowRect.height())) : 0_lu;
             };
             // Outline starts at the border box while box shadow starts at the padding box.
             return std::max(outlineBottomInsetExtent(), borderBottomExtent() + boxShadowBottomInsetExtent());
         };
         auto outsetExtent = [&] {
             // Outset "content" is outside of the border box (e.g. regular outline and box shadow).
-            auto shadowTop = LayoutUnit { };
-            auto shadowBottom = LayoutUnit { };
-            style.getBoxShadowVerticalExtent(shadowTop, shadowBottom);
             return std::max(outlineWidth, shadowBottom);
         };
         auto decorationBottomExtent = insetExtent() + outsetExtent();
