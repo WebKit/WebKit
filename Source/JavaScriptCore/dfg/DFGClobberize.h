@@ -384,6 +384,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
         read(JSObject_butterfly);
         ArrayMode mode = node->arrayMode();
+        LocationKind locationKind = node->op() == EnumeratorNextUpdateIndexAndMode ? EnumeratorNextUpdateIndexAndModeLoc : HasIndexedPropertyLoc;
         switch (mode.type()) {
         case Array::ForceExit: {
             write(SideState);
@@ -393,7 +394,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             if (mode.isInBounds()) {
                 read(Butterfly_publicLength);
                 read(IndexedInt32Properties);
-                def(HeapLocation(HasIndexedPropertyLoc, IndexedInt32Properties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
+                def(HeapLocation(locationKind, IndexedInt32Properties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
                 return;
             }
             break;
@@ -403,7 +404,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             if (mode.isInBounds()) {
                 read(Butterfly_publicLength);
                 read(IndexedDoubleProperties);
-                def(HeapLocation(HasIndexedPropertyLoc, IndexedDoubleProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
+                def(HeapLocation(locationKind, IndexedDoubleProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
                 return;
             }
             break;
@@ -413,7 +414,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             if (mode.isInBounds()) {
                 read(Butterfly_publicLength);
                 read(IndexedContiguousProperties);
-                def(HeapLocation(HasIndexedPropertyLoc, IndexedContiguousProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
+                def(HeapLocation(locationKind, IndexedContiguousProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
                 return;
             }
             break;

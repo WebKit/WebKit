@@ -46,6 +46,7 @@ enum LocationKind {
     DirectArgumentsLoc,
     GetterLoc,
     GlobalVariableLoc,
+    EnumeratorNextUpdateIndexAndModeLoc,
     HasIndexedPropertyLoc,
     IndexedPropertyDoubleLoc,
     IndexedPropertyDoubleSaneChainLoc,

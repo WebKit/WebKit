@@ -305,8 +305,15 @@ bool InPlaceAbstractState::endBasicBlock()
             block->valuesAtTail[i] = atIndex(i);
         }
 
-        for (NodeAbstractValuePair& valueAtTail : block->ssa->valuesAtTail)
-            valueAtTail.value = forNode(valueAtTail.node);
+        for (NodeAbstractValuePair& valueAtTail : block->ssa->valuesAtTail) {
+            NodeFlowProjection& node = valueAtTail.node;
+            if (node->isTuple()) {
+                ASSERT(hasClearedAbstractState(node));
+                valueAtTail.value = AbstractValue();
+                continue;
+            }
+            valueAtTail.value = forNode(node);
+        }
         break;
     }
 
@@ -370,14 +377,18 @@ bool InPlaceAbstractState::merge(BasicBlock* from, BasicBlock* to)
             unsigned valueCountInFromBlock = 0;
             for (NodeAbstractValuePair& fromBlockValueAtTail : from->ssa->valuesAtTail) {
                 if (fromBlockValueAtTail.node == node) {
-                    ASSERT(fromBlockValueAtTail.value == forNode(node));
+                    if (node->isTuple())
+                        ASSERT(hasClearedAbstractState(node) && !fromBlockValueAtTail.value);
+                    else
+                        ASSERT(fromBlockValueAtTail.value == forNode(node));
                     ++valueCountInFromBlock;
                 }
             }
             ASSERT(valueCountInFromBlock == 1);
 #endif
 
-            changed |= entry.value.merge(forNode(node));
+            if (!node->isTuple())
+                changed |= entry.value.merge(forNode(node));
 
             if (DFGInPlaceAbstractStateInternal::verbose)
                 dataLog("         Result: ", entry.value, "\n");
