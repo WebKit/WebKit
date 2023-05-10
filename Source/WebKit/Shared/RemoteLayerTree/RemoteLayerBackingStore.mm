@@ -51,6 +51,7 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Noncopyable.h>
+#import <wtf/Scope.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/TextStream.h>
 
@@ -459,7 +460,9 @@ void RemoteLayerBackingStore::ensureFrontBuffer()
         return;
     }
 
+    // Assume that newly allocated buffers have already been cleared.
     m_frontBuffer.imageBuffer = collection->allocateBufferForBackingStore(*this);
+    m_frontBuffer.isCleared = true;
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     if (!m_displayListBuffer && m_parameters.includeDisplayList == IncludeDisplayList::Yes) {
@@ -534,6 +537,10 @@ void RemoteLayerBackingStore::paintContents()
 
 void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, WTF::Function<void()>&& additionalContextSetupCallback)
 {
+    auto markFrontBufferNotCleared = makeScopeExit([&]() {
+        m_frontBuffer.isCleared = false;
+    });
+
     GraphicsContextStateSaver stateSaver(context);
 
     if (additionalContextSetupCallback)
@@ -560,8 +567,18 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, WTF::Funct
     }
 
     IntRect layerBounds(IntPoint(), expandedIntSize(m_parameters.size));
-    if (!m_dirtyRegion.contains(layerBounds) && m_backBuffer.imageBuffer)
+    if (!m_dirtyRegion.contains(layerBounds) && m_backBuffer.imageBuffer) {
+        if (m_paintingRects.size() == 1)
+            context.clipOut(m_paintingRects[0]);
+        else {
+            Path clipPath;
+            for (auto rect : m_paintingRects)
+                clipPath.addRect(rect);
+            context.clipOut(clipPath);
+        }
         context.drawImageBuffer(*m_backBuffer.imageBuffer, { 0, 0 }, { CompositeOperator::Copy });
+        context.resetClip();
+    }
 
     if (m_paintingRects.size() == 1)
         context.clip(m_paintingRects[0]);
@@ -572,7 +589,7 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, WTF::Funct
         context.clipPath(clipPath);
     }
 
-    if (!m_parameters.isOpaque && !m_layer->owner()->platformCALayerShouldPaintUsingCompositeCopy())
+    if (!m_parameters.isOpaque && !m_frontBuffer.isCleared && !m_layer->owner()->platformCALayerShouldPaintUsingCompositeCopy())
         context.clearRect(layerBounds);
 
 #ifndef NDEBUG

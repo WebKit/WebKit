@@ -180,6 +180,7 @@ private:
 
     struct Buffer {
         RefPtr<WebCore::ImageBuffer> imageBuffer;
+        bool isCleared { false };
 
         explicit operator bool() const
         {
