@@ -1779,9 +1779,7 @@ public:
 #endif
 
     virtual void didChangeViewSize() { }
-
-    void updateRelevancyOfContentVisibilityElements();
-    void scheduleContentRelevancyUpdate(ContentRelevancyStatus);
+    bool isNavigationBlockedByThirdPartyIFrameRedirectBlocking(Frame& targetFrame, const URL& destinationURL);
 
 protected:
     enum class ConstructionFlag : uint8_t {
@@ -1885,8 +1883,7 @@ private:
     void invalidateDOMCookieCache();
     void didLoadResourceSynchronously(const URL&) final;
 
-    bool canNavigateInternal(LocalFrame& targetFrame);
-    bool isNavigationBlockedByThirdPartyIFrameRedirectBlocking(LocalFrame& targetFrame, const URL& destinationURL);
+    bool canNavigateInternal(Frame& targetFrame);
 
 #if USE(QUICK_LOOK)
     bool shouldEnforceQuickLookSandbox() const;
