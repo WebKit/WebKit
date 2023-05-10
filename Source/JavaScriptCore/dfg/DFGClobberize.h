@@ -1824,6 +1824,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case ObjectUse:
             read(HeapObjectCount);
             write(HeapObjectCount);
+            write(JSCell_structureID); // prototype object can be transitioned.
             return;
         case UntypedUse:
             clobberTop();

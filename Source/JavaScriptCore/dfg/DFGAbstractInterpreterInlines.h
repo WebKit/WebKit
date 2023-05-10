@@ -3297,14 +3297,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
             if (structure) {
                 m_state.setShouldTryConstantFolding(true);
-                if (node->child1().useKind() == UntypedUse)
-                    didFoldClobberWorld();
+                didFoldClobberWorld();
                 setForNode(node, structure);
                 break;
             }
         }
-        if (node->child1().useKind() == UntypedUse)
-            clobberWorld();
+        clobberWorld();
         setTypeForNode(node, SpecFinalObject);
         break;
     }
