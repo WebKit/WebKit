@@ -1747,6 +1747,8 @@ public:
     DOMAudioSessionType audioSessionType() const { return m_audioSessionType; }
 #endif
 
+    bool isNavigationBlockedByThirdPartyIFrameRedirectBlocking(Frame& targetFrame, const URL& destinationURL);
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     WEBCORE_EXPORT Document(Frame*, const Settings&, const URL&, DocumentClasses = { }, unsigned constructionFlags = 0, ScriptExecutionContextIdentifier = { });
@@ -1849,7 +1851,6 @@ private:
     void didLoadResourceSynchronously(const URL&) final;
 
     bool canNavigateInternal(Frame& targetFrame);
-    bool isNavigationBlockedByThirdPartyIFrameRedirectBlocking(Frame& targetFrame, const URL& destinationURL);
 
 #if USE(QUICK_LOOK)
     bool shouldEnforceQuickLookSandbox() const;
