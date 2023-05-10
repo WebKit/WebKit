@@ -1166,6 +1166,13 @@ void VideoFullscreenInterfaceAVKit::didStopPictureInPicture()
 
     if (m_exitFullscreenNeedsExitPictureInPicture)
         doExitFullscreen();
+
+    if (!m_targetMode.hasFullscreen() && !m_currentMode.hasFullscreen() && !m_hasVideoContentLayer) {
+        // We have just exited pip and not entered fullscreen in turn. To avoid getting
+        // stuck holding the video content layer, explicitly return it here:
+        if (m_fullscreenChangeObserver)
+            m_fullscreenChangeObserver->returnVideoView();
+    }
 }
 
 void VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletionHandler(void (^completionHandler)(BOOL restored))
