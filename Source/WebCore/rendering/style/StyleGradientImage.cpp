@@ -189,7 +189,7 @@ RefPtr<Image> StyleGradientImage::image(const RenderElement* renderer, const Flo
 
     bool cacheable = m_knownCacheableBarringFilter && !renderer->style().hasAppleColorFilter();
     if (cacheable) {
-        if (!clients().contains(const_cast<RenderElement*>(renderer)))
+        if (!clients().contains(const_cast<RenderElement&>(*renderer)))
             return nullptr;
         if (auto* result = const_cast<StyleGradientImage&>(*this).cachedImageForSize(size))
             return result;
