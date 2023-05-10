@@ -813,14 +813,6 @@ bool OriginStorageManager::isEmpty()
     return defaultBucket().isEmpty();
 }
 
-void OriginStorageManager::setPersisted(bool value)
-{
-    ASSERT(!RunLoop::isMain());
-
-    m_persisted = value;
-    defaultBucket().setMode(value ? StorageBucketMode::Persistent : StorageBucketMode::BestEffort);
-}
-
 WebCore::StorageEstimate OriginStorageManager::estimate()
 {
     ASSERT(!RunLoop::isMain());

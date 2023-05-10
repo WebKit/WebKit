@@ -138,7 +138,6 @@ private:
     HashSet<WebCore::ClientOrigin> getAllOrigins();
     Vector<WebsiteData::Entry> fetchDataFromDisk(OptionSet<WebsiteDataType>, ShouldComputeSize);
     HashSet<WebCore::ClientOrigin> deleteDataOnDisk(OptionSet<WebsiteDataType>, WallTime, const Function<bool(const WebCore::ClientOrigin&)>&);
-    bool evictDataByTopOrigin(const WebCore::SecurityOriginData&);
 #if PLATFORM(IOS_FAMILY)
     void includeOriginInBackupIfNecessary(OriginStorageManager&);
 #endif
@@ -228,8 +227,11 @@ private:
     WallTime lastModificationTimeForOrigin(const WebCore::ClientOrigin&, OriginStorageManager&) const;
     void updateLastModificationTimeForOrigin(const WebCore::ClientOrigin&);
     void schedulePerformEviction();
+    bool persistedInternal(const WebCore::ClientOrigin&);
+    String persistedFilePath(const WebCore::ClientOrigin&);
     struct AccessRecord {
         bool isActive { false };
+        std::optional<bool> isPersisted;
         uint64_t usage { 0 };
         WallTime lastAccessTime;
         Vector<WebCore::SecurityOriginData> clientOrigins;

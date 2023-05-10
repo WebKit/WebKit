@@ -62,8 +62,6 @@ public:
     ~OriginStorageManager();
 
     void connectionClosed(IPC::Connection::UniqueID);
-    bool persisted() const { return m_persisted; }
-    void setPersisted(bool value);
     WebCore::StorageEstimate estimate();
     const String& path() const { return m_path; }
     OriginQuotaManager& quotaManager();
@@ -115,7 +113,6 @@ private:
     OriginQuotaManager::IncreaseQuotaFunction m_increaseQuotaFunction;
     OriginQuotaManager::NotifySpaceGrantedFunction m_notifySpaceGrantedFunction;
     RefPtr<OriginQuotaManager> m_quotaManager;
-    bool m_persisted { false };
     UnifiedOriginStorageLevel m_level;
     Markable<WallTime> m_originFileCreationTimestamp;
 #if PLATFORM(IOS_FAMILY)

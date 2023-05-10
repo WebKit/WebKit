@@ -71,6 +71,7 @@ static const Seconds defaultBackupExclusionPeriod { 24_h };
 static constexpr double defaultThirdPartyOriginQuotaRatio = 0.1; // third-party_origin_quota / origin_quota
 static constexpr uint64_t defaultStandardReportedQuota = 10 * GB;
 static constexpr uint64_t defaultVolumeCapacityUnit = 1 * GB;
+static constexpr auto persistedFileName = "persisted"_s;
 
 // FIXME: Remove this if rdar://104754030 is fixed.
 static HashMap<String, ThreadSafeWeakPtr<NetworkStorageManager>>& activePaths()
@@ -137,6 +138,15 @@ static void deleteEmptyOriginDirectory(const String& directory)
 
     FileSystem::deleteEmptyDirectory(directory);
     FileSystem::deleteEmptyDirectory(FileSystem::parentPath(directory));
+}
+
+String NetworkStorageManager::persistedFilePath(const WebCore::ClientOrigin& origin)
+{
+    auto directory = originDirectoryPath(m_path, origin, m_salt);
+    if (directory.isEmpty())
+        return emptyString();
+
+    return FileSystem::pathByAppendingComponent(directory, persistedFileName);
 }
 
 Ref<NetworkStorageManager> NetworkStorageManager::create(NetworkProcess& process, PAL::SessionID sessionID, Markable<UUID> identifier, IPC::Connection::UniqueID connection, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel level)
@@ -460,6 +470,8 @@ void NetworkStorageManager::donePrepareForEviction(const std::optional<HashMap<W
         bool removed = removeOriginStorageManagerIfPossible(origin);
         if (!removed)
             record.isActive = true;
+        if (!record.isPersisted && persistedInternal(WebCore::ClientOrigin { origin.topOrigin, origin.topOrigin }))
+            record.isPersisted = true;
     }
 
     m_totalUsage = totalUsage;
@@ -485,12 +497,8 @@ void NetworkStorageManager::performEviction(HashMap<WebCore::SecurityOriginData,
     uint64_t deletedOriginCount = 0;
     while (!sortedOriginRecords.isEmpty() && *m_totalUsage > m_totalQuota) {
         auto [topOrigin, record] = sortedOriginRecords.takeLast();
-        bool canDelete = !record.isActive;
-        if (!canDelete) {
-            UNUSED_PARAM(deletedOriginCount);
-            RELEASE_LOG(Storage, "%p - NetworkStorageManager::performEviction evicts %" PRIu64 " origins before getting an active origin", this, deletedOriginCount);
-            return;
-        }
+        if (record.isActive || valueOrDefault(record.isPersisted))
+            continue;
 
         for (auto& clientOrigin : record.clientOrigins) {
             auto origin = WebCore::ClientOrigin { topOrigin, clientOrigin };
@@ -502,7 +510,7 @@ void NetworkStorageManager::performEviction(HashMap<WebCore::SecurityOriginData,
         ++deletedOriginCount;
     }
 
-    RELEASE_LOG(Storage, "%p - NetworkStorageManager::performEviction evicts %" PRIu64 " origins", this, deletedOriginCount);
+    RELEASE_LOG(Storage, "%p - NetworkStorageManager::performEviction evicts %" PRIu64 " origins, current usage %" PRIu64 ", total quota %" PRIu64, this, deletedOriginCount, valueOrDefault(m_totalUsage), m_totalQuota);
 }
 
 OriginStorageManager& NetworkStorageManager::originStorageManager(const WebCore::ClientOrigin& origin, ShouldWriteOriginFile shouldWriteOriginFile)
@@ -589,19 +597,34 @@ void NetworkStorageManager::updateLastModificationTimeForOrigin(const WebCore::C
         FileSystem::updateFileModificationTime(manager->resolvedPath(WebsiteDataType::IndexedDBDatabases));
 }
 
+bool NetworkStorageManager::persistedInternal(const WebCore::ClientOrigin& origin)
+{
+    auto persistedFile = persistedFilePath(origin);
+    if (persistedFile.isEmpty())
+        return false;
+
+    return FileSystem::fileExists(persistedFile);
+}
+
 void NetworkStorageManager::persisted(const WebCore::ClientOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
 
-    completionHandler(originStorageManager(origin).persisted());
+    completionHandler(persistedInternal(origin));
 }
 
 void NetworkStorageManager::persist(const WebCore::ClientOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
 
-    originStorageManager(origin).setPersisted(true);
-    completionHandler(true);
+    if (origin.topOrigin != origin.clientOrigin)
+        return completionHandler(false);
+
+    if (persistedFilePath(origin).isEmpty())
+        return completionHandler(false);
+
+    // FIXME: add heuristics to decide if origin can be persisted and write persited file if it can.
+    return completionHandler(false);
 }
 
 void NetworkStorageManager::estimate(const WebCore::ClientOrigin& origin, CompletionHandler<void(std::optional<WebCore::StorageEstimate>)>&& completionHandler)
@@ -618,9 +641,11 @@ void NetworkStorageManager::resetStoragePersistedState(CompletionHandler<void()>
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         assertIsCurrent(workQueue());
-        // Reset persisted value.
-        for (auto& manager : m_originStorageManagers.values())
-            manager->setPersisted(false);
+        for (auto& origin : getAllOrigins()) {
+            auto persistedFile = persistedFilePath(origin);
+            if (!persistedFile.isEmpty())
+                FileSystem::deleteFile(persistedFile);
+        }
 
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler();
@@ -915,6 +940,13 @@ HashSet<WebCore::ClientOrigin> NetworkStorageManager::deleteDataOnDisk(OptionSet
             deletedOrigins.add(origin);
             originStorageManager(origin).deleteData(types, modifiedSinceTime);
         }
+
+        if (types.containsAll(allManagedTypes())) {
+            auto persistedFile = persistedFilePath(origin);
+            if (!persistedFile.isEmpty())
+                FileSystem::deleteFile(persistedFile);
+        }
+
         removeOriginStorageManagerIfPossible(origin);
     }
 
@@ -1015,30 +1047,6 @@ void NetworkStorageManager::moveData(OptionSet<WebsiteDataType> types, WebCore::
 
         RunLoop::main().dispatch(WTFMove(completionHandler));
     });
-}
-
-bool NetworkStorageManager::evictDataByTopOrigin(const WebCore::SecurityOriginData& topOrigin)
-{
-    ASSERT(!RunLoop::isMain());
-    assertIsCurrent(workQueue());
-
-    Vector<WebCore::ClientOrigin> originsToEvict;
-    for (auto& origin : getAllOrigins()) {
-        if (origin.topOrigin != topOrigin)
-            continue;
-
-        if (auto* originManager = m_originStorageManagers.get(origin)) {
-            if (originManager->isActive())
-                return false;
-        }
-        originsToEvict.append(origin);
-    }
-
-    for (auto& origin : originsToEvict) {
-        originStorageManager(origin).deleteData(allManagedTypes(), -WallTime::infinity());
-        removeOriginStorageManagerIfPossible(origin);
-    }
-    return true;
 }
 
 void NetworkStorageManager::getOriginDirectory(WebCore::ClientOrigin&& origin, WebsiteDataType type, CompletionHandler<void(const String&)>&& completionHandler)
