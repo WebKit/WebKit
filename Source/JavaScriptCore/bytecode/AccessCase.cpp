@@ -88,6 +88,7 @@ Ref<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, Cache
     case ProxyObjectStore:
     case Replace:
     case InstanceOfGeneric:
+    case IndexedProxyObjectLoad:
     case IndexedMegamorphicLoad:
     case IndexedInt32Load:
     case IndexedDoubleLoad:
@@ -350,6 +351,7 @@ bool AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck() const
     case InstanceOfHit:
     case InstanceOfMiss:
     case InstanceOfGeneric:
+    case IndexedProxyObjectLoad:
     case IndexedMegamorphicLoad:
     case IndexedInt32Load:
     case IndexedDoubleLoad:
@@ -460,6 +462,7 @@ bool AccessCase::requiresIdentifierNameMatch() const
     case InstanceOfHit:
     case InstanceOfMiss:
     case InstanceOfGeneric:
+    case IndexedProxyObjectLoad:
     case IndexedMegamorphicLoad:
     case IndexedInt32Load:
     case IndexedDoubleLoad:
@@ -548,6 +551,7 @@ bool AccessCase::requiresInt32PropertyCheck() const
     case InstanceOfGeneric:
     case CheckPrivateBrand:
     case SetPrivateBrand:
+    case IndexedProxyObjectLoad:
     case IndexedMegamorphicLoad:
         return false;
     case IndexedInt32Load:
@@ -636,6 +640,7 @@ bool AccessCase::needsScratchFPR() const
     case InstanceOfHit:
     case InstanceOfMiss:
     case InstanceOfGeneric:
+    case IndexedProxyObjectLoad:
     case IndexedMegamorphicLoad:
     case IndexedInt32Load:
     case IndexedContiguousLoad:
@@ -735,7 +740,8 @@ void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
     }
     case ProxyObjectHas:
     case ProxyObjectLoad:
-    case ProxyObjectStore: {
+    case ProxyObjectStore:
+    case IndexedProxyObjectLoad: {
         auto& accessor = this->as<ProxyObjectAccessCase>();
         if (accessor.callLinkInfo())
             accessor.callLinkInfo()->forEachDependentCell(functor);
@@ -835,6 +841,7 @@ bool AccessCase::doesCalls(VM& vm, Vector<JSCell*>* cellsToMarkIfDoesCalls) cons
     case ProxyObjectHas:
     case ProxyObjectLoad:
     case ProxyObjectStore:
+    case IndexedProxyObjectLoad:
         doesCalls = true;
         break;
     case IntrinsicGetter: {
@@ -1026,6 +1033,7 @@ bool AccessCase::canReplace(const AccessCase& other) const
     case ProxyObjectHas:
     case ProxyObjectLoad:
     case ProxyObjectStore:
+    case IndexedProxyObjectLoad:
         return other.type() == type();
 
     case ModuleNamespaceLoad: {
@@ -1277,6 +1285,7 @@ inline void AccessCase::runWithDowncast(const Func& func)
     case ProxyObjectHas:
     case ProxyObjectLoad:
     case ProxyObjectStore:
+    case IndexedProxyObjectLoad:
         func(static_cast<ProxyObjectAccessCase*>(this));
         break;
     }
@@ -1390,8 +1399,9 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
     case Setter:
     case ProxyObjectHas:
     case ProxyObjectLoad:
-    case ProxyObjectStore: {
-        // Getter / Setter / ProxyObjectHas / ProxyObjectLoad / ProxyObjectStore relies on CodeBlock, which makes sharing impossible.
+    case ProxyObjectStore:
+    case IndexedProxyObjectLoad: {
+        // Getter / Setter / ProxyObjectHas / ProxyObjectLoad / ProxyObjectStore / IndexedProxyObjectLoad rely on CodeBlock, which makes sharing impossible.
         return false;
     }
 

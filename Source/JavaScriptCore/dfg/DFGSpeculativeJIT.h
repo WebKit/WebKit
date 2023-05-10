@@ -714,6 +714,7 @@ public:
     void compileGetById(Node*, AccessType);
     void compileGetByIdFlush(Node*, AccessType);
     void compileGetByIdMegamorphic(Node*);
+    void compileGetByIdWithThisMegamorphic(Node*);
     void compileInById(Node*);
     void compileInByVal(Node*);
     void compileHasPrivate(Node*, AccessType);
@@ -1475,6 +1476,7 @@ public:
     void compilePutByValForCellWithString(Node*);
     void compilePutByValForCellWithSymbol(Node*);
     void compileGetByValWithThis(Node*);
+    void compileGetByValWithThisMegamorphic(Node*);
     void compilePutPrivateName(Node*);
     void compilePutPrivateNameById(Node*);
     void compileCheckPrivateBrand(Node*);

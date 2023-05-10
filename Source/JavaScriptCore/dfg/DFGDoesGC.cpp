@@ -300,7 +300,9 @@ bool doesGC(Graph& graph, Node* node)
     case GetByIdFlush:
     case GetByIdMegamorphic:
     case GetByIdWithThis:
+    case GetByIdWithThisMegamorphic:
     case GetByValWithThis:
+    case GetByValWithThisMegamorphic:
     case GetDynamicVar:
     case GetMapBucket:
     case HasIndexedProperty:

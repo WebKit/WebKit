@@ -1138,6 +1138,7 @@ public:
         case GetByIdFlush:
         case GetByIdMegamorphic:
         case GetByIdWithThis:
+        case GetByIdWithThisMegamorphic:
         case GetByIdDirect:
         case GetByIdDirectFlush:
         case GetPrivateNameById:
@@ -1888,6 +1889,7 @@ public:
         case GetByIdFlush:
         case GetByIdMegamorphic:
         case GetByIdWithThis:
+        case GetByIdWithThisMegamorphic:
         case GetByIdDirect:
         case GetByIdDirectFlush:
         case GetPrototypeOf:
@@ -1896,6 +1898,7 @@ public:
         case GetByVal:
         case GetByValMegamorphic:
         case GetByValWithThis:
+        case GetByValWithThisMegamorphic:
         case GetPrivateName:
         case GetPrivateNameById:
         case Call:

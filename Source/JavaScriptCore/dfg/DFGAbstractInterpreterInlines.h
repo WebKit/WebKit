@@ -3689,7 +3689,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case GetPrivateName:
     case GetByValWithThis:
+    case GetByValWithThisMegamorphic:
     case GetByIdWithThis:
+    case GetByIdWithThisMegamorphic:
         clobberWorld();
         makeHeapTopForNode(node);
         break;

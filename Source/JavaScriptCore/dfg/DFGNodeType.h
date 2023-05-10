@@ -204,6 +204,7 @@ namespace JSC { namespace DFG {
     macro(GetByVal, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(GetByValMegamorphic, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(GetByValWithThis, NodeResultJS | NodeMustGenerate) \
+    macro(GetByValWithThisMegamorphic, NodeResultJS | NodeMustGenerate) \
     macro(GetMyArgumentByVal, NodeResultJS | NodeMustGenerate) \
     macro(GetMyArgumentByValOutOfBounds, NodeResultJS | NodeMustGenerate) \
     macro(VarargsLength, NodeMustGenerate | NodeResultInt32) \
@@ -220,6 +221,7 @@ namespace JSC { namespace DFG {
     macro(GetById, NodeResultJS | NodeMustGenerate) \
     macro(GetByIdFlush, NodeResultJS | NodeMustGenerate) \
     macro(GetByIdWithThis, NodeResultJS | NodeMustGenerate) \
+    macro(GetByIdWithThisMegamorphic, NodeResultJS | NodeMustGenerate) \
     macro(GetByIdDirect, NodeResultJS | NodeMustGenerate) \
     macro(GetByIdDirectFlush, NodeResultJS | NodeMustGenerate) \
     macro(GetByIdMegamorphic, NodeResultJS | NodeMustGenerate) \

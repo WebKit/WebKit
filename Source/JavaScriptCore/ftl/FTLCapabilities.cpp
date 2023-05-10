@@ -244,6 +244,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetByIdFlush:
     case GetByIdMegamorphic:
     case GetByIdWithThis:
+    case GetByIdWithThisMegamorphic:
     case GetByIdDirect:
     case GetByIdDirectFlush:
     case ToThis:
@@ -413,6 +414,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetByVal:
     case GetByValMegamorphic:
     case GetByValWithThis:
+    case GetByValWithThisMegamorphic:
     case PutByVal:
     case PutByValAlias:
     case PutByValDirect:

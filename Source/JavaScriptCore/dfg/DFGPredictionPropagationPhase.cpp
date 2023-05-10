@@ -931,10 +931,12 @@ private:
         case GetByIdFlush:
         case GetByIdMegamorphic:
         case GetByIdWithThis:
+        case GetByIdWithThisMegamorphic:
         case GetByIdDirect:
         case GetByIdDirectFlush:
         case TryGetById:
         case GetByValWithThis:
+        case GetByValWithThisMegamorphic:
         case GetByOffset:
         case GetPrivateName:
         case GetPrivateNameById:

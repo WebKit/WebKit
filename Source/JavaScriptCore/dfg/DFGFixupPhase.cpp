@@ -1200,9 +1200,12 @@ private:
             break;
         }
 
-        case GetByValWithThis: {
+        case GetByValWithThis:
             break;
-        }
+
+        case GetByValWithThisMegamorphic:
+            fixEdge<CellUse>(node->child1());
+            break;
 
         case EnumeratorPutByVal: {
             fixEdge<CellUse>(m_graph.varArgChild(node, 0));
@@ -1975,6 +1978,10 @@ private:
             }
             break;
         }
+
+        case GetByIdWithThisMegamorphic:
+            fixEdge<CellUse>(node->child1());
+            break;
 
         case PutById:
         case PutByIdFlush:
