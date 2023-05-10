@@ -44,6 +44,7 @@
 #include "CSSTokenizer.h"
 #include "CSSUnicodeRangeValue.h"
 #include "Document.h"
+#include "FontCustomPlatformData.h"
 #include "ParsingUtilities.h"
 #include "ScriptExecutionContext.h"
 #include "StyleSheetContents.h"
@@ -235,18 +236,9 @@ static RefPtr<CSSFontFaceSrcResourceValue> consumeFontFaceSrcURI(CSSParserTokenR
     String format;
     Vector<FontTechnology> supportedTechnologies;
     if (range.peek().functionId() == CSSValueFormat) {
-        // https://drafts.csswg.org/css-fonts/#descdef-font-face-src
-        // FIXME: We allow any identifier here and convert to strings; specification calls for certain keywords and legacy compatibility strings.
-        auto args = CSSPropertyParserHelpers::consumeFunction(range);
-        auto& arg = args.consumeIncludingWhitespace();
-        if (!args.atEnd())
+        format = CSSPropertyParserHelpers::consumeFontFormat(range);
+        if (format.isNull())
             return nullptr;
-        if (arg.type() == IdentToken) {
-            if (!CSSPropertyParserHelpers::identMatchesSupportedFontFormat(arg.id()))
-                return nullptr;
-        } else if (arg.type() != StringToken)
-            return nullptr;
-        format = arg.value().toString();
     }
     if (range.peek().functionId() == CSSValueTech) {
         supportedTechnologies = CSSPropertyParserHelpers::consumeFontTech(range);

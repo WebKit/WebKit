@@ -100,7 +100,7 @@ std::unique_ptr<FontLoadRequest> CSSFontFaceSrcResourceValue::fontLoadRequest(Sc
         isFormatSVG = false;
     } else {
         isFormatSVG = equalLettersIgnoringASCIICase(m_format, "svg"_s);
-        if (!isFormatSVG && !FontCustomPlatformData::supportsFormat(m_format))
+        if (!FontCustomPlatformData::supportsFormat(m_format))
             return nullptr;
     }
 
