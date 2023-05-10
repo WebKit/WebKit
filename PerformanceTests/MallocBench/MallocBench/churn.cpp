@@ -45,9 +45,9 @@ void benchmark_churn(CommandLine& commandLine)
     if (commandLine.isParallel())
         times /= cpuCount();
 
-    auto total = std::unique_ptr<HeapDouble>(new HeapDouble(0.0));
+    auto total = std::make_unique<HeapDouble>(0.0);
     for (size_t i = 0; i < times; ++i) {
-        auto heapDouble = std::unique_ptr<HeapDouble>(new HeapDouble(i));
+        auto heapDouble = std::make_unique<HeapDouble>(i);
         *total += *heapDouble;
     }
 }

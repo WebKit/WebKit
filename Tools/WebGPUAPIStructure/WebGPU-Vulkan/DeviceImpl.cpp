@@ -36,7 +36,7 @@ namespace WebGPU {
     static const vk::Format framebufferColorPixelFormat = vk::Format::eR8G8B8A8Srgb;
 
     std::unique_ptr<Device> Device::create(HINSTANCE hInstance, HWND hWnd) {
-        return std::unique_ptr<Device>(new DeviceImpl(hInstance, hWnd));
+        return std::make_unique<Device>(hInstance, hWnd);
     }
 
     static vk::Format convertPixelFormat(PixelFormat pixelFormat) {
@@ -167,7 +167,7 @@ namespace WebGPU {
             swapchainImageViews.push_back(device->createImageViewUnique(imageViewCreateInfo));
         }
 
-        queue = std::unique_ptr<QueueImpl>(new QueueImpl(*device, *commandPool, swapchainImageViews, *swapchain, surfaceCapabilities.currentExtent, framebufferColorPixelFormat, device->getQueue(queueFamilyIndex, 0)));
+        queue = std::make_unique<QueueImpl>(*device, *commandPool, swapchainImageViews, *swapchain, surfaceCapabilities.currentExtent, framebufferColorPixelFormat, device->getQueue(queueFamilyIndex, 0));
 
         vk::PipelineCacheCreateInfo pipelineCacheCreateInfo;
         pipelineCache = device->createPipelineCacheUnique(pipelineCacheCreateInfo);
