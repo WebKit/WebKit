@@ -65,19 +65,25 @@ function selectionToString() {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
 
+    console.log("1. Waiting for keyboard to appear");
     await UIHelper.activateAndWaitForInputSessionAt(160, 160);
     document.querySelector("#caret-rect").textContent = rectToString(await UIHelper.getUICaretViewRect());
 
+    console.log("2. Selecting all");
     document.execCommand("selectAll");
     document.querySelector("#selection-rects").textContent = (await UIHelper.getUISelectionViewRects()).map(rectToString).join(", ");
     document.querySelector("#start-grabber-rect").textContent = rectToString(await UIHelper.getSelectionStartGrabberViewRect());
     document.querySelector("#end-grabber-rect").textContent = rectToString(await UIHelper.getSelectionEndGrabberViewRect());
 
+    console.log("3. Collapsing selection");
     getSelection().collapseToEnd();
     document.querySelector("#selection-before").textContent = selectionToString();
+
+    console.log("4. Tapping page");
     await UIHelper.tapAt(32, 32);
     document.querySelector("#selection-after").textContent = selectionToString();
 
+    console.log("5. Blurring focused element and waiting for keyboard to dismiss");
     document.activeElement.blur();
     await UIHelper.waitForKeyboardToHide();
 
