@@ -57,6 +57,5 @@ list(APPEND TestRunnerInjectedBundle_INCLUDE_DIRECTORIES
 )
 
 add_definitions(
-    -DFONTS_CONF_DIR="${TOOLS_DIR}/WebKitTestRunner/glib/fonts"
     -DTOP_LEVEL_DIR="${CMAKE_SOURCE_DIR}"
 )
