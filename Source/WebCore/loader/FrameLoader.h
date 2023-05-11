@@ -203,6 +203,8 @@ public:
 
     void didReachLayoutMilestone(OptionSet<LayoutMilestone>);
     void didFirstLayout();
+    void restoreScrollPositionAndViewStateSoon();
+    void restoreScrollPositionAndViewStateNowIfNeeded();
     void didReachVisuallyNonEmptyState();
 
     void loadedResourceFromMemoryCache(CachedResource&, ResourceRequest& newRequest, ResourceError&);
@@ -515,6 +517,7 @@ private:
 
     bool m_inStopForBackForwardCache { false };
     bool m_isHTTPFallbackInProgress { false };
+    bool m_shouldRestoreScrollPositionAndViewState { false };
 };
 
 // This function is called by createWindow() in JSDOMWindowBase.cpp, for example, for

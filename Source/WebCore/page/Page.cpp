@@ -1743,6 +1743,18 @@ void Page::updateRendering()
 
     layoutIfNeeded();
 
+    auto runProcessingStep = [&](RenderingUpdateStep step, const Function<void(Document&)>& perDocumentFunction) {
+        m_renderingUpdateRemainingSteps.last().remove(step);
+        forEachDocument(perDocumentFunction);
+    };
+
+    runProcessingStep(RenderingUpdateStep::RestoreScrollPositionAndViewState, [] (Document& document) {
+        RefPtr frame = document.frame();
+        if (!frame)
+            return;
+        frame->loader().restoreScrollPositionAndViewStateNowIfNeeded();
+    });
+
 #if ENABLE(ASYNC_SCROLLING)
     if (auto* scrollingCoordinator = this->scrollingCoordinator())
         scrollingCoordinator->willStartRenderingUpdate();
@@ -1754,11 +1766,6 @@ void Page::updateRendering()
         document.domWindow()->freezeNowTimestamp();
         initialDocuments.append(document);
     });
-
-    auto runProcessingStep = [&](RenderingUpdateStep step, const Function<void(Document&)>& perDocumentFunction) {
-        m_renderingUpdateRemainingSteps.last().remove(step);
-        forEachDocument(perDocumentFunction);
-    };
 
     runProcessingStep(RenderingUpdateStep::FlushAutofocusCandidates, [] (Document& document) {
         if (document.isTopDocument())
@@ -4170,6 +4177,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     case RenderingUpdateStep::AccessibilityRegionUpdate: ts << "AccessibilityRegionUpdate"; break;
 #endif
+    case RenderingUpdateStep::RestoreScrollPositionAndViewState: ts << "RestoreScrollPositionAndViewState"; break;
     }
     return ts;
 }

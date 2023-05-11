@@ -2805,10 +2805,29 @@ void FrameLoader::didFirstLayout()
         return;
 #endif
     if (m_frame.page() && isBackForwardLoadType(m_loadType))
-        history().restoreScrollPositionAndViewState();
+        restoreScrollPositionAndViewStateSoon();
 
     if (m_stateMachine.committedFirstRealDocumentLoad() && !m_stateMachine.isDisplayingInitialEmptyDocument() && !m_stateMachine.firstLayoutDone())
         m_stateMachine.advanceTo(FrameLoaderStateMachine::FirstLayoutDone);
+}
+
+void FrameLoader::restoreScrollPositionAndViewStateSoon()
+{
+    if (m_shouldRestoreScrollPositionAndViewState)
+        return;
+    m_shouldRestoreScrollPositionAndViewState = true;
+    RefPtr document = m_frame.document();
+    if (!document)
+        return;
+    document->scheduleRenderingUpdate(RenderingUpdateStep::RestoreScrollPositionAndViewState);
+}
+
+void FrameLoader::restoreScrollPositionAndViewStateNowIfNeeded()
+{
+    if (!m_shouldRestoreScrollPositionAndViewState)
+        return;
+    m_shouldRestoreScrollPositionAndViewState = false;
+    history().restoreScrollPositionAndViewState();
 }
 
 void FrameLoader::didReachVisuallyNonEmptyState()

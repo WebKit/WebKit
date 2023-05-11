@@ -241,6 +241,7 @@ enum class RenderingUpdateStep : uint32_t {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     AccessibilityRegionUpdate       = 1 << 20,
 #endif
+    RestoreScrollPositionAndViewState = 1 << 21,
 };
 
 enum class LookalikeCharacterSanitizationTrigger : uint8_t {
