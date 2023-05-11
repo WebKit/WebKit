@@ -165,6 +165,11 @@ double VideoTrackPrivateWebM::framerate() const
     if (video.frame_rate.is_present())
         return video.frame_rate.value();
 
+    if (m_track.default_duration.is_present()) {
+        static constexpr double nanosecondsPerSecond = 1000 * 1000 * 1000;
+        return nanosecondsPerSecond / m_track.default_duration.value();
+    }
+
     return 0;
 }
 

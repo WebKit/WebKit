@@ -1,0 +1,11 @@
+
+TEST("content/test-vp9-23.976fps-manifest.json")
+EXPECTED (video.videoTracks[0].configuration.framerate == '23.976') OK
+TEST("content/test-vp9-24fps-manifest.json")
+EXPECTED (video.videoTracks[0].configuration.framerate == '24') OK
+TEST("content/test-vp9-29.97fps-manifest.json")
+EXPECTED (video.videoTracks[0].configuration.framerate == '29.97') OK
+TEST("content/test-vp9-30fps-manifest.json")
+EXPECTED (video.videoTracks[0].configuration.framerate == '30') OK
+END OF TEST
+
