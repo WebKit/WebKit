@@ -295,6 +295,9 @@ struct VectorTypeOperations
     }
 };
 
+template<typename T>
+constexpr inline bool isValidCapacityForVector(size_t capacity) { return capacity <= std::numeric_limits<unsigned>::max() / sizeof(T); }
+
 template<typename T, typename Malloc>
 class VectorBufferBase {
     WTF_MAKE_NONCOPYABLE(VectorBufferBase);
@@ -304,7 +307,7 @@ public:
     {
         static_assert(action == FailureAction::Crash || action == FailureAction::Report);
         ASSERT(newCapacity);
-        if (newCapacity > std::numeric_limits<unsigned>::max() / sizeof(T)) {
+        if (!isValidCapacityForVector<T>(newCapacity)) {
             if constexpr (action == FailureAction::Crash)
                 CRASH();
             else
