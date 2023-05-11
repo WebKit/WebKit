@@ -260,6 +260,14 @@ GraphicsContext& RemoteImageBufferProxy::context() const
 
 void RemoteImageBufferProxy::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
+    if (canMapBackingStore()) {
+        // Simulate a write so that pending reads migrate the data off of the mapped buffer.
+        context().fillRect({ });
+        const_cast<RemoteImageBufferProxy&>(*this).flushDrawingContext();
+        ImageBuffer::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
+        return;
+    }
+
     if (UNLIKELY(!m_remoteRenderingBackendProxy))
         return;
     // The math inside PixelBuffer::create() doesn't agree with the math inside ImageBufferBackend::putPixelBuffer() about how m_resolutionScale interacts with the data in the ImageBuffer.
