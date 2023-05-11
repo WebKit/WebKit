@@ -31,12 +31,12 @@
 #include "PointerID.h"
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
+#if ENABLE(TOUCH_EVENTS)
+#if PLATFORM(IOS_FAMILY)
 #include "PlatformTouchEventIOS.h"
-#endif
-
-#if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE))
+#elif PLATFORM(WPE)
 #include "PlatformTouchEvent.h"
+#endif
 #endif
 
 namespace WebCore {
