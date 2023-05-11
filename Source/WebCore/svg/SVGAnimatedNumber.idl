@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
- * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// https://svgwg.org/svg2-draft/types.html#InterfaceSVGAnimatedNumber
+
 [
     SkipVTableValidation,
     Exposed=Window
 ] interface SVGAnimatedNumber {
-    attribute unrestricted float baseVal;
-    readonly attribute unrestricted float animVal;
+    attribute float baseVal;
+    readonly attribute float animVal;
 };
 
