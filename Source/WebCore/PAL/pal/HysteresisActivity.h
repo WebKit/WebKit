@@ -40,7 +40,6 @@ public:
     explicit HysteresisActivity(Function<void(HysteresisState)>&& callback = [](HysteresisState) { }, Seconds hysteresisSeconds = defaultHysteresisDuration)
         : m_callback(WTFMove(callback))
         , m_hysteresisSeconds(hysteresisSeconds)
-        , m_active(false)
         , m_timer(RunLoop::main(), this, &HysteresisActivity::hysteresisTimerFired)
     {
     }
@@ -49,6 +48,7 @@ public:
     {
         if (m_active)
             return;
+
         m_active = true;
 
         if (m_timer.isActive())
@@ -61,17 +61,20 @@ public:
     {
         if (!m_active)
             return;
-        m_active = false;
 
+        m_active = false;
         m_timer.startOneShot(m_hysteresisSeconds);
     }
 
     void impulse()
     {
-        if (!m_active) {
-            start();
-            stop();
-        }
+        if (m_active)
+            return;
+
+        if (state() == HysteresisState::Stopped)
+            m_callback(HysteresisState::Started);
+
+        m_timer.startOneShot(m_hysteresisSeconds);
     }
 
     HysteresisState state() const
@@ -88,8 +91,8 @@ private:
 
     Function<void(HysteresisState)> m_callback;
     Seconds m_hysteresisSeconds;
-    bool m_active;
     RunLoop::Timer m_timer;
+    bool m_active { false };
 };
 
 } // namespace PAL
