@@ -35,7 +35,7 @@
 #include "PlatformTouchEventIOS.h"
 #endif
 
-#if ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE))
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(WPE)
 #include "PlatformTouchEvent.h"
 #endif
 
@@ -120,6 +120,7 @@ private:
     static CanBubble typeCanBubble(const AtomString& type) { return typeIsEnterOrLeave(type) ? CanBubble::No : CanBubble::Yes; }
     static IsCancelable typeIsCancelable(const AtomString& type) { return typeIsEnterOrLeave(type) ? IsCancelable::No : IsCancelable::Yes; }
     static IsComposed typeIsComposed(const AtomString& type) { return typeIsEnterOrLeave(type) ? IsComposed::No : IsComposed::Yes; }
+#if PLATFORM(WPE)
     static short buttonForType(const AtomString& type) { return type == eventNames().pointermoveEvent ? -1 : 0; }
     static unsigned short buttonsForType(const AtomString& type)
     {
@@ -127,6 +128,7 @@ private:
         auto& eventNames = WebCore::eventNames();
         return (type == eventNames.pointerupEvent || type == eventNames.pointeroutEvent || type == eventNames.pointerleaveEvent || type == eventNames.pointercancelEvent) ? 0 : 1;
     }
+#endif
 
     PointerEvent();
     PointerEvent(const AtomString&, Init&&);
