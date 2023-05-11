@@ -73,11 +73,11 @@ public:
     Result<AST::Function::Ref> parseFunction(AST::Attribute::List&&);
     Result<std::reference_wrapper<AST::Parameter>> parseParameter();
     Result<AST::Statement::Ref> parseStatement();
-    Result<AST::CompoundStatement> parseCompoundStatement();
-    Result<AST::IfStatement> parseIfStatement();
-    Result<AST::IfStatement> parseIfStatementWithAttributes(AST::Attribute::List&&, SourcePosition _startOfElementPosition);
-    Result<AST::ForStatement> parseForStatement();
-    Result<AST::ReturnStatement> parseReturnStatement();
+    Result<AST::CompoundStatement::Ref> parseCompoundStatement();
+    Result<AST::Statement::Ref> parseIfStatement();
+    Result<AST::Statement::Ref> parseIfStatementWithAttributes(AST::Attribute::List&&, SourcePosition _startOfElementPosition);
+    Result<AST::Statement::Ref> parseForStatement();
+    Result<AST::Statement::Ref> parseReturnStatement();
     Result<AST::Expression::Ref> parseShortCircuitExpression(AST::Expression::Ref&&, TokenType, AST::BinaryOperation);
     Result<AST::Expression::Ref> parseRelationalExpression();
     Result<AST::Expression::Ref> parseRelationalExpressionPostUnary(AST::Expression::Ref&& lhs);

@@ -31,19 +31,19 @@
 namespace WGSL::AST {
 
 class AssignmentStatement final : public Statement {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(AssignmentStatement);
 public:
+    NodeKind kind() const override;
+    Expression& lhs() { return m_lhs.get(); }
+    Expression& rhs() { return m_rhs.get(); }
+
+private:
     AssignmentStatement(SourceSpan span, Expression::Ref&& lhs, Expression::Ref&& rhs)
         : Statement(span)
         , m_lhs(WTFMove(lhs))
         , m_rhs(WTFMove(rhs))
     { }
 
-    NodeKind kind() const override;
-    Expression& lhs() { return m_lhs.get(); }
-    Expression& rhs() { return m_rhs.get(); }
-
-private:
     Expression::Ref m_lhs;
     Expression::Ref m_rhs;
 };

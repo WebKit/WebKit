@@ -25,20 +25,19 @@
 
 #pragma once
 
-#pragma once
-
 #include "ASTStatement.h"
 
 namespace WGSL::AST {
 
 class DiscardStatement final : public Statement {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(DiscardStatement);
 public:
+    NodeKind kind() const override;
+
+private:
     DiscardStatement(SourceSpan span)
         : Statement(span)
     { }
-
-    NodeKind kind() const override;
 };
 
 } // namespace WGSL::AST

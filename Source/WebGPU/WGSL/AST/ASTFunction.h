@@ -47,16 +47,16 @@ public:
     Attribute::List& attributes() { return m_attributes; }
     Attribute::List& returnAttributes() { return m_returnAttributes; }
     TypeName* maybeReturnType() { return m_returnType; }
-    CompoundStatement& body() { return m_body; }
+    CompoundStatement& body() { return m_body.get(); }
     const Identifier& name() const { return m_name; }
     const Parameter::List& parameters() const { return m_parameters; }
     const Attribute::List& attributes() const { return m_attributes; }
     const Attribute::List& returnAttributes() const { return m_returnAttributes; }
     const TypeName* maybeReturnType() const { return m_returnType; }
-    const CompoundStatement& body() const { return m_body; }
+    const CompoundStatement& body() const { return m_body.get(); }
 
 private:
-    Function(SourceSpan span, Identifier&& name, Parameter::List&& parameters, TypeName::Ptr returnType, CompoundStatement&& body, Attribute::List&& attributes, Attribute::List&& returnAttributes)
+    Function(SourceSpan span, Identifier&& name, Parameter::List&& parameters, TypeName::Ptr returnType, CompoundStatement::Ref&& body, Attribute::List&& attributes, Attribute::List&& returnAttributes)
         : Declaration(span)
         , m_name(WTFMove(name))
         , m_parameters(WTFMove(parameters))
@@ -71,7 +71,7 @@ private:
     Attribute::List m_attributes;
     Attribute::List m_returnAttributes;
     TypeName::Ptr m_returnType;
-    CompoundStatement m_body;
+    CompoundStatement::Ref m_body;
 };
 
 } // namespace WGSL::AST

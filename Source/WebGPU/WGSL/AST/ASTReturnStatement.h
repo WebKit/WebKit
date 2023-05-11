@@ -31,17 +31,17 @@
 namespace WGSL::AST {
 
 class ReturnStatement final : public Statement {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(ReturnStatement);
 public:
+    NodeKind kind() const override;
+    Expression* maybeExpression() { return m_expression; }
+
+private:
     ReturnStatement(SourceSpan span, Expression::Ptr expression)
         : Statement(span)
         , m_expression(expression)
     { }
 
-    NodeKind kind() const override;
-    Expression* maybeExpression() { return m_expression; }
-
-private:
     Expression::Ptr m_expression;
 };
 

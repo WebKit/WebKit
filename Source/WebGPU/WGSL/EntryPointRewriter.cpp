@@ -204,7 +204,7 @@ void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& da
     }
 
     if (!path.size()) {
-        m_materializations.append(makeUniqueRef<AST::VariableStatement>(
+        m_materializations.append(m_shaderModule.astBuilder().construct<AST::VariableStatement>(
             SourceSpan::empty(),
             m_shaderModule.astBuilder().construct<AST::Variable>(
                 SourceSpan::empty(),
@@ -230,7 +230,7 @@ void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& da
         );
     }
     path.removeLast();
-    m_materializations.append(makeUniqueRef<AST::AssignmentStatement>(
+    m_materializations.append(m_shaderModule.astBuilder().construct<AST::AssignmentStatement>(
         SourceSpan::empty(),
         WTFMove(lhs),
         *rhs
@@ -240,7 +240,7 @@ void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& da
 void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
 {
     if (auto* structType = std::get_if<Types::Struct>(data.type.resolvedType())) {
-        m_materializations.append(makeUniqueRef<AST::VariableStatement>(
+        m_materializations.append(m_shaderModule.astBuilder().construct<AST::VariableStatement>(
             SourceSpan::empty(),
             m_shaderModule.astBuilder().construct<AST::Variable>(
                 SourceSpan::empty(),

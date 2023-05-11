@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ASTAttribute.h"
+#include "ASTAttribute.h"
 #include "ASTDeclaration.h"
 #include "ASTExpression.h"
 #include "ASTIdentifier.h"

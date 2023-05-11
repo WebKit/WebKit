@@ -827,24 +827,23 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
     switch (current().type) {
     case TokenType::BraceLeft: {
         PARSE(compoundStmt, CompoundStatement);
-        return { makeUniqueRef<AST::CompoundStatement>(WTFMove(compoundStmt)) };
+        return { compoundStmt };
     }
     case TokenType::KeywordIf: {
         // FIXME: Handle attributes attached to statement.
-        PARSE(ifStmt, IfStatement);
-        return { makeUniqueRef<AST::IfStatement>(WTFMove(ifStmt)) };
+        return parseIfStatement();
     }
     case TokenType::KeywordReturn: {
         PARSE(returnStmt, ReturnStatement);
         CONSUME_TYPE(Semicolon);
-        return { makeUniqueRef<AST::ReturnStatement>(WTFMove(returnStmt)) };
+        return { returnStmt };
     }
     case TokenType::KeywordConst:
     case TokenType::KeywordLet:
     case TokenType::KeywordVar: {
         PARSE(variable, Variable);
         CONSUME_TYPE(Semicolon);
-        return { makeUniqueRef<AST::VariableStatement>(CURRENT_SOURCE_SPAN(), WTFMove(variable)) };
+        RETURN_ARENA_NODE(VariableStatement, WTFMove(variable));
     }
     case TokenType::Identifier: {
         // FIXME: there will be other cases here eventually for function calls
@@ -859,21 +858,20 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
         CONSUME_TYPE(Semicolon);
 
         if (maybeOp)
-            RETURN_NODE_UNIQUE_REF(CompoundAssignmentStatement, WTFMove(lhs), WTFMove(rhs), *maybeOp);
+            RETURN_ARENA_NODE(CompoundAssignmentStatement, WTFMove(lhs), WTFMove(rhs), *maybeOp);
 
-        RETURN_NODE_UNIQUE_REF(AssignmentStatement, WTFMove(lhs), WTFMove(rhs));
+        RETURN_ARENA_NODE(AssignmentStatement, WTFMove(lhs), WTFMove(rhs));
     }
     case TokenType::KeywordFor: {
         // FIXME: Handle attributes attached to statement.
-        PARSE(forStmt, ForStatement);
-        return { makeUniqueRef<AST::ForStatement>(WTFMove(forStmt)) };
+        return parseForStatement();
     }
     case TokenType::Underbar : {
         consume();
         CONSUME_TYPE(Equal);
         PARSE(rhs, Expression);
         CONSUME_TYPE(Semicolon);
-        RETURN_NODE_UNIQUE_REF(PhonyAssignmentStatement, WTFMove(rhs));
+        RETURN_ARENA_NODE(PhonyAssignmentStatement, WTFMove(rhs));
     }
     default:
         FAIL("Not a valid statement"_s);
@@ -881,7 +879,7 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
 }
 
 template<typename Lexer>
-Result<AST::CompoundStatement> Parser<Lexer>::parseCompoundStatement()
+Result<AST::CompoundStatement::Ref> Parser<Lexer>::parseCompoundStatement()
 {
     START_PARSE();
 
@@ -895,11 +893,11 @@ Result<AST::CompoundStatement> Parser<Lexer>::parseCompoundStatement()
 
     CONSUME_TYPE(BraceRight);
 
-    RETURN_NODE(CompoundStatement, WTFMove(statements));
+    RETURN_ARENA_NODE(CompoundStatement, WTFMove(statements));
 }
 
 template<typename Lexer>
-Result<AST::IfStatement> Parser<Lexer>::parseIfStatement()
+Result<AST::Statement::Ref> Parser<Lexer>::parseIfStatement()
 {
     START_PARSE();
 
@@ -909,31 +907,31 @@ Result<AST::IfStatement> Parser<Lexer>::parseIfStatement()
 }
 
 template<typename Lexer>
-Result<AST::IfStatement> Parser<Lexer>::parseIfStatementWithAttributes(AST::Attribute::List&& attributes, SourcePosition _startOfElementPosition)
+Result<AST::Statement::Ref> Parser<Lexer>::parseIfStatementWithAttributes(AST::Attribute::List&& attributes, SourcePosition _startOfElementPosition)
 {
     CONSUME_TYPE(KeywordIf);
     PARSE(testExpr, Expression);
     PARSE(thenStmt, CompoundStatement);
 
-    AST::Statement::Ptr maybeElseStmt;
+    AST::Statement::Ptr maybeElseStmt = nullptr;
     if (current().type == TokenType::KeywordElse) {
         consume();
         // The syntax following an 'else' keyword can be either an 'if'
         // statement or a brace-delimited compound statement.
         if (current().type == TokenType::KeywordIf) {
             PARSE(elseStmt, IfStatementWithAttributes, { }, _startOfElementPosition);
-            maybeElseStmt = WTF::makeUnique<AST::IfStatement>(WTFMove(elseStmt));
+            maybeElseStmt = &elseStmt.get();
         } else {
             PARSE(elseStmt, CompoundStatement);
-            maybeElseStmt = WTF::makeUnique<AST::CompoundStatement>(WTFMove(elseStmt));
+            maybeElseStmt = &elseStmt.get();
         }
     }
 
-    RETURN_NODE(IfStatement, WTFMove(testExpr), WTFMove(thenStmt), WTFMove(maybeElseStmt), WTFMove(attributes));
+    RETURN_ARENA_NODE(IfStatement, WTFMove(testExpr), WTFMove(thenStmt), maybeElseStmt, WTFMove(attributes));
 }
 
 template<typename Lexer>
-Result<AST::ForStatement> Parser<Lexer>::parseForStatement()
+Result<AST::Statement::Ref> Parser<Lexer>::parseForStatement()
 {
     START_PARSE();
 
@@ -948,7 +946,7 @@ Result<AST::ForStatement> Parser<Lexer>::parseForStatement()
     if (current().type != TokenType::Semicolon) {
         // FIXME: this should be for_init
         PARSE(variable, Variable);
-        maybeInitializer = makeUnique<AST::VariableStatement>(CURRENT_SOURCE_SPAN(), WTFMove(variable));
+        maybeInitializer = &MAKE_ARENA_NODE(VariableStatement, WTFMove(variable));
     }
     CONSUME_TYPE(Semicolon);
 
@@ -966,22 +964,22 @@ Result<AST::ForStatement> Parser<Lexer>::parseForStatement()
 
     PARSE(body, CompoundStatement);
 
-    RETURN_NODE(ForStatement, WTFMove(maybeInitializer), WTFMove(maybeTest), WTFMove(maybeUpdate), WTFMove(body));
+    RETURN_ARENA_NODE(ForStatement, maybeInitializer, maybeTest, maybeUpdate, WTFMove(body));
 }
 
 template<typename Lexer>
-Result<AST::ReturnStatement> Parser<Lexer>::parseReturnStatement()
+Result<AST::Statement::Ref> Parser<Lexer>::parseReturnStatement()
 {
     START_PARSE();
 
     CONSUME_TYPE(KeywordReturn);
 
     if (current().type == TokenType::Semicolon) {
-        RETURN_NODE(ReturnStatement, { });
+        RETURN_ARENA_NODE(ReturnStatement, nullptr);
     }
 
     PARSE(expr, Expression);
-    RETURN_NODE(ReturnStatement, &expr.get());
+    RETURN_ARENA_NODE(ReturnStatement, &expr.get());
 }
 
 template<typename Lexer>

@@ -31,23 +31,22 @@
 namespace WGSL::AST {
 
 class DecrementIncrementStatement final : public Statement {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(DecrementIncrementStatement);
 public:
-
     enum class Operation : uint8_t {
         Decrement,
         Increment,
     };
 
+    NodeKind kind() const override;
+    Expression& expression() { return m_expression; }
+
+private:
     DecrementIncrementStatement(SourceSpan span, Expression::Ref&& expression)
         : Statement(span)
         , m_expression(WTFMove(expression))
     { }
 
-    NodeKind kind() const override;
-    Expression& expression() { return m_expression; }
-
-private:
     Expression::Ref m_expression;
 };
 
