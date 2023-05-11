@@ -18,13 +18,13 @@ shouldBeEqualToString("ws.binaryType", "arraybuffer");
 ws.binaryType = "blob";
 shouldBeEqualToString("ws.binaryType", "blob");
 
-shouldThrowErrorName("ws.binaryType = 'Blob'", "SyntaxError");
+ws.binaryType = 'Blob';
 shouldBeEqualToString("ws.binaryType", "blob");
 
-shouldThrowErrorName("ws.binaryType = 'ArrayBuffer'", "SyntaxError");
+ws.binaryType = 'ArrayBuffer';
 shouldBeEqualToString("ws.binaryType", "blob");
 
-shouldThrowErrorName("ws.binaryType = ''", "SyntaxError");
+ws.binaryType = '';
 shouldBeEqualToString("ws.binaryType", "blob");
 
 </script>

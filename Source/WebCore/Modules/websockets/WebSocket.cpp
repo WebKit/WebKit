@@ -470,30 +470,10 @@ String WebSocket::extensions() const
     return m_extensions;
 }
 
-String WebSocket::binaryType() const
+ExceptionOr<void> WebSocket::setBinaryType(BinaryType binaryType)
 {
-    switch (m_binaryType) {
-    case BinaryType::Blob:
-        return "blob"_s;
-    case BinaryType::ArrayBuffer:
-        return "arraybuffer"_s;
-    }
-    ASSERT_NOT_REACHED();
-    return String();
-}
-
-ExceptionOr<void> WebSocket::setBinaryType(const String& binaryType)
-{
-    if (binaryType == "blob"_s) {
-        m_binaryType = BinaryType::Blob;
-        return { };
-    }
-    if (binaryType == "arraybuffer"_s) {
-        m_binaryType = BinaryType::ArrayBuffer;
-        return { };
-    }
-    scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "'" + binaryType + "' is not a valid value for binaryType; binaryType remains unchanged.");
-    return Exception { SyntaxError };
+    m_binaryType = binaryType;
+    return { };
 }
 
 EventTargetInterface WebSocket::eventTargetInterface() const
@@ -602,7 +582,7 @@ void WebSocket::didReceiveBinaryData(Vector<uint8_t>&& binaryData)
             // FIXME: We just received the data from NetworkProcess, and are sending it back. This is inefficient.
             dispatchEvent(MessageEvent::create(Blob::create(scriptExecutionContext(), WTFMove(binaryData), emptyString()), SecurityOrigin::create(m_url)->toString()));
             break;
-        case BinaryType::ArrayBuffer:
+        case BinaryType::Arraybuffer:
             dispatchEvent(MessageEvent::create(ArrayBuffer::create(binaryData.data(), binaryData.size()), SecurityOrigin::create(m_url)->toString()));
             break;
         }

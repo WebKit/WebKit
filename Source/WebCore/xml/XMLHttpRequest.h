@@ -77,7 +77,7 @@ public:
     const URL& url() const { return m_url; }
     String statusText() const;
     int status() const;
-    State readyState() const;
+    State readyState() const { return static_cast<State>(m_readyState); }
     bool withCredentials() const { return m_includeCredentials; }
     ExceptionOr<void> setWithCredentials(bool);
     ExceptionOr<void> open(const String& method, const String& url);
@@ -117,7 +117,7 @@ public:
         Text = 5,
     };
     ExceptionOr<void> setResponseType(ResponseType);
-    ResponseType responseType() const;
+    ResponseType responseType() const { return static_cast<ResponseType>(m_responseType); }
 
     String responseURL() const;
 
@@ -256,15 +256,5 @@ private:
     std::atomic<bool> m_hasRelevantEventListener;
     bool m_wasDidSendDataCalledForTotalBytes { false };
 };
-
-inline auto XMLHttpRequest::responseType() const -> ResponseType
-{
-    return static_cast<ResponseType>(m_responseType);
-}
-
-inline auto XMLHttpRequest::readyState() const -> State
-{
-    return static_cast<State>(m_readyState);
-}
 
 } // namespace WebCore
