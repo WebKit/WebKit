@@ -172,7 +172,7 @@ class MediaControls extends LayoutNode
         this.element.classList.add("fade-in");
     }
 
-    isPointInControls(point, includeContainer)
+    isPointInControls(point)
     {
         let ancestor = this.element.parentNode;
         while (ancestor && !(ancestor instanceof ShadowRoot))
@@ -183,9 +183,6 @@ class MediaControls extends LayoutNode
             return false;
 
         const tappedElement = shadowRoot.elementFromPoint(point.x, point.y);
-
-        if (includeContainer && this.element === tappedElement)
-            return true;
 
         return this.children.some(child => child.element.contains(tappedElement));
     }

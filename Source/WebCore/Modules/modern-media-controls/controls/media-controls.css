@@ -126,6 +126,10 @@
     mix-blend-mode: plus-lighter;
 }
 
+.backdrop {
+    pointer-events: none;
+}
+
 .stats-container {
     display: flex;
     justify-content: center;
