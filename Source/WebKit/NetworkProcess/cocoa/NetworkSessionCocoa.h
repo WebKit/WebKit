@@ -148,9 +148,10 @@ public:
     void removeDataTask(DataTaskIdentifier);
 
 #if HAVE(NW_PROXY_CONFIG)
-    nw_proxy_config_t proxyConfig() const { return m_nwProxyConfig.get(); }
+    const Vector<RetainPtr<nw_proxy_config_t>> proxyConfigs() const { return m_nwProxyConfigs; }
+
     void clearProxyConfigData() final;
-    void setProxyConfigData(const IPC::DataReference& proxyConfigData, const IPC::DataReference& proxyIdentifierData) final;
+    void setProxyConfigData(Vector<std::pair<Vector<uint8_t>, UUID>>&&) final;
 #endif
 
 private:
@@ -200,7 +201,7 @@ private:
     String m_sourceApplicationSecondaryIdentifier;
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
 #if HAVE(NW_PROXY_CONFIG)
-    RetainPtr<nw_proxy_config_t> m_nwProxyConfig;
+    Vector<RetainPtr<nw_proxy_config_t>> m_nwProxyConfigs;
 #endif
     RetainPtr<DMFWebsitePolicyMonitor> m_deviceManagementPolicyMonitor;
     bool m_deviceManagementRestrictionsEnabled { false };

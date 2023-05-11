@@ -2427,10 +2427,9 @@ void WebsiteDataStore::clearProxyConfigData()
     networkProcess().send(Messages::NetworkProcess::ClearProxyConfigData(m_sessionID), 0);
 }
 
-void WebsiteDataStore::setProxyConfigData(const API::Data& data, uuid_t proxyIdentifier)
+void WebsiteDataStore::setProxyConfigData(Vector<std::pair<Vector<uint8_t>, UUID>>&& data)
 {
-    auto proxyIdentifierData = IPC::DataReference(reinterpret_cast<uint8_t *>(proxyIdentifier), sizeof(uuid_t));
-    networkProcess().send(Messages::NetworkProcess::SetProxyConfigData(m_sessionID, data.dataReference(), WTFMove(proxyIdentifierData)), 0);
+    networkProcess().send(Messages::NetworkProcess::SetProxyConfigData(m_sessionID, WTFMove(data)), 0);
 }
 #endif // HAVE(NW_PROXY_CONFIG)
 

@@ -235,13 +235,13 @@ void NetworkProcess::clearProxyConfigData(PAL::SessionID sessionID)
     session->clearProxyConfigData();
 }
 
-void NetworkProcess::setProxyConfigData(PAL::SessionID sessionID, const IPC::DataReference& proxyConfigData, const IPC::DataReference& proxyIdentifierData)
+void NetworkProcess::setProxyConfigData(PAL::SessionID sessionID, Vector<std::pair<Vector<uint8_t>, UUID>>&& proxyConfigurations)
 {
     auto* session = networkSession(sessionID);
     if (!session)
         return;
 
-    session->setProxyConfigData(proxyConfigData, proxyIdentifierData);
+    session->setProxyConfigData(WTFMove(proxyConfigurations));
 }
 #endif // HAVE(NW_PROXY_CONFIG)
 

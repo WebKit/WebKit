@@ -1331,13 +1331,18 @@ void SessionWrapper::initialize(NSURLSessionConfiguration *configuration, Networ
     session = [NSURLSession sessionWithConfiguration:configuration delegate:delegate.get() delegateQueue:[NSOperationQueue mainQueue]];
     
 #if HAVE(NW_PROXY_CONFIG)
+    auto* clearProxies = nw_context_clear_proxiesPtr();
+    auto* addProxy = nw_context_add_proxyPtr();
+    if (!clearProxies || !addProxy)
+        return;
+
     if (auto networkContext = session.get()._networkContext) {
-        if (auto proxyConfig = networkSession.proxyConfig()) {
-            if (auto* clearProxies = nw_context_clear_proxiesPtr())
-                clearProxies(networkContext);
-            if (auto* addProxy = nw_context_add_proxyPtr())
-                addProxy(networkContext, proxyConfig);
-        }
+        auto proxyConfigs = networkSession.proxyConfigs();
+        if (!proxyConfigs.isEmpty())
+            clearProxies(networkContext);
+
+        for (auto& proxyConfig : proxyConfigs)
+            addProxy(networkContext, proxyConfig.get());
     }
 #endif
 }
@@ -2093,7 +2098,11 @@ void NetworkSessionCocoa::forEachSessionWrapper(Function<void(SessionWrapper&)>&
 #if HAVE(NW_PROXY_CONFIG)
 void NetworkSessionCocoa::clearProxyConfigData()
 {
-    m_nwProxyConfig = nullptr;
+    auto* clearProxies = nw_context_clear_proxiesPtr();
+    if (!clearProxies)
+        return;
+
+    m_nwProxyConfigs.clear();
 
     RetainPtr<NSMutableSet> contexts = adoptNS([[NSMutableSet alloc] init]);
     forEachSessionWrapper([&contexts] (SessionWrapper& sessionWrapper) {
@@ -2102,39 +2111,41 @@ void NetworkSessionCocoa::clearProxyConfigData()
         [contexts.get() addObject:sessionWrapper.session.get()._networkContext];
     });
 
-    if (auto* clearProxies = nw_context_clear_proxiesPtr()) {
-        for (nw_context_t context in contexts.get())
-            clearProxies(context);
-    }
+    for (nw_context_t context in contexts.get())
+        clearProxies(context);
 }
 
-void NetworkSessionCocoa::setProxyConfigData(const IPC::DataReference& proxyConfigData, const IPC::DataReference& proxyIdentifierData)
+void NetworkSessionCocoa::setProxyConfigData(Vector<std::pair<Vector<uint8_t>, UUID>>&& proxyConfigurations)
 {
-    uuid_t identifier;
-    if (proxyIdentifierData.size_bytes() == sizeof(uuid_t))
-        memcpy(identifier, proxyIdentifierData.data(), proxyIdentifierData.size_bytes());
-    
-#if __has_include(<Network/proxy_config_private.h>)
-    if (auto* createProxyConfig = nw_proxy_config_create_with_agent_dataPtr())
-        m_nwProxyConfig = adoptNS(createProxyConfig(proxyConfigData.data(), proxyConfigData.size_bytes(), identifier));
-#else
-    UNUSED_PARAM(proxyConfigData);
-#endif
-    
+    auto* clearProxies = nw_context_clear_proxiesPtr();
+    auto* addProxy = nw_context_add_proxyPtr();
+    auto* createProxyConfig = nw_proxy_config_create_with_agent_dataPtr();
+    if (!clearProxies || !addProxy || !createProxyConfig)
+        return;
+
     RetainPtr<NSMutableSet> contexts = adoptNS([[NSMutableSet alloc] init]);
     forEachSessionWrapper([&contexts] (SessionWrapper& sessionWrapper) {
         if (!sessionWrapper.session)
             return;
         [contexts.get() addObject:sessionWrapper.session.get()._networkContext];
     });
+
+    for (nw_context_t context in contexts.get())
+        clearProxies(context);
+    m_nwProxyConfigs.clear();
+
+    for (auto& config : proxyConfigurations) {
+        uuid_t identifier;
+        memcpy(identifier, config.second.toSpan().data(), sizeof(uuid_t));
+
+#if __has_include(<Network/proxy_config_private.h>)
+        m_nwProxyConfigs.append(adoptNS(createProxyConfig(config.first.data(), config.first.size(), identifier)));
+#endif
+    }
     
-    if (auto* clearProxies = nw_context_clear_proxiesPtr()) {
-        if (auto* addProxy = nw_context_add_proxyPtr()) {
-            for (nw_context_t context in contexts.get()) {
-                clearProxies(context);
-                addProxy(context, m_nwProxyConfig.get());
-            }
-        }
+    for (nw_context_t context in contexts.get()) {
+        for (auto& proxyConfig : m_nwProxyConfigs)
+            addProxy(context, proxyConfig.get());
     }
 }
 #endif // HAVE(NW_PROXY_CONFIG)

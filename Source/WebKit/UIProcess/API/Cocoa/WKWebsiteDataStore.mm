@@ -239,7 +239,9 @@ private:
     bool m_hasNotifyBackgroundFetchChangeSelector { false };
 };
 
-@implementation WKWebsiteDataStore
+@implementation WKWebsiteDataStore {
+    RetainPtr<NSArray> _proxyConfigurations;
+}
 
 + (WKWebsiteDataStore *)defaultDataStore
 {
@@ -384,20 +386,32 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 }
 
 #if HAVE(NW_PROXY_CONFIG)
-- (void)setProxyConfiguration:(nw_proxy_config_t)proxyConfig
+- (void)setProxyConfigurations:(NSArray<nw_proxy_config_t> *)proxyConfigurations
 {
-    if (!proxyConfig) {
+    _proxyConfigurations = [proxyConfigurations copy];
+    if (!_proxyConfigurations || !_proxyConfigurations.get().count) {
         _websiteDataStore->clearProxyConfigData();
         return;
     }
 
-    uuid_t proxyIdentifier;
-    nw_proxy_config_get_identifier(proxyConfig, proxyIdentifier);
+    Vector<std::pair<Vector<uint8_t>, UUID>> configDataVector;
+    for (nw_proxy_config_t proxyConfig in proxyConfigurations) {
+        RetainPtr<NSData> agentData = adoptNS((NSData *)nw_proxy_config_copy_agent_data(proxyConfig));
 
-    auto proxyConfigData = API::Data::createWithoutCopying((NSData *)nw_proxy_config_copy_agent_data(proxyConfig));
+        uuid_t proxyIdentifier;
+        nw_proxy_config_get_identifier(proxyConfig, proxyIdentifier);
+
+        configDataVector.append({ vectorFromNSData(agentData.get()), UUID(proxyIdentifier) });
+    }
     
-    _websiteDataStore->setProxyConfigData(proxyConfigData.get(), proxyIdentifier);
+    _websiteDataStore->setProxyConfigData(WTFMove(configDataVector));
 }
+
+- (NSArray<nw_proxy_config_t> *)proxyConfigurations
+{
+    return _proxyConfigurations.get();
+}
+
 #endif // HAVE(NW_PROXY_CONFIG)
 
 #pragma mark WKObject protocol implementation

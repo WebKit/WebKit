@@ -2229,6 +2229,7 @@
 			fileType = pattern.proxy;
 			inputFiles = (
 				"$(SRCROOT)/Scripts/postprocess-header-rule",
+				"$(SRCROOT)/mac/replace-webkit-additions-includes.py",
 			);
 			isEditable = 1;
 			outputFiles = (

@@ -486,7 +486,7 @@ private:
 
 #if HAVE(NW_PROXY_CONFIG)
     void clearProxyConfigData(PAL::SessionID);
-    void setProxyConfigData(PAL::SessionID, const IPC::DataReference& proxyConfigData, const IPC::DataReference& proxyIdentifierData);
+    void setProxyConfigData(PAL::SessionID, Vector<std::pair<Vector<uint8_t>, UUID>>&& proxyConfigurations);
 #endif
     
 #if USE(SOUP)

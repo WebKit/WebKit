@@ -450,7 +450,7 @@ public:
 
 #if HAVE(NW_PROXY_CONFIG)
     void clearProxyConfigData();
-    void setProxyConfigData(const API::Data&, uuid_t proxyIdentifier);
+    void setProxyConfigData(Vector<std::pair<Vector<uint8_t>, UUID>>&&);
 #endif
     void setCompletionHandlerForRemovalFromNetworkProcess(CompletionHandler<void(String&&)>&&);
     

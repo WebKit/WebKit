@@ -163,26 +163,65 @@ TEST(WebKit, SOCKS5)
 }
 
 #if HAVE(NW_PROXY_CONFIG) && __has_include(<Network/proxy_config_private.h>)
-// FIXME: Enabling blocked by rdar://106168249
-TEST(WebKit, DISABLED_HTTPSProxyAPI)
+TEST(WebKit, HTTPSProxyAPI)
 {
     auto* createProxyConfig = nw_proxy_config_create_http_connectPtr();
     if (!createProxyConfig)
         return;
-
-    HTTPServer server(HTTPServer::respondWithOK, HTTPServer::Protocol::HttpsProxy);
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]);
     auto delegate = adoptNS([ProxyDelegate new]);
     [webView setNavigationDelegate:delegate.get()];
     [webView setUIDelegate:delegate.get()];
 
-    auto endpoint = adoptNS(nw_endpoint_create_host("127.0.0.1", std::to_string(server.port()).c_str()));
-    auto proxyConfig = adoptNS(createProxyConfig(endpoint.get(), nil));
-    [webView.get().configuration.websiteDataStore setProxyConfiguration:proxyConfig.get()];
+    TestWebKitAPI::HTTPServer nonProxyServer({
+        { "/"_s, { "<script>alert('non proxy success!')</script>"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Https);
+
+    TestWebKitAPI::HTTPServer proxyServer1({
+        { "/"_s, { "<script>alert('proxy success!')</script>"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy);
+
+    TestWebKitAPI::HTTPServer proxyServer2({
+        { "/"_s, { "<script>alert('other proxy success!')</script>"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy);
+
+    // 127.0.0.1:1 will never be reachable and will immediately timeout, causing
+    // us to fallback to 127.0.0.1:<real port>
+    auto endpoint1 = adoptNS(nw_endpoint_create_host("127.0.0.1", "1"));
+    auto proxyConfig1 = adoptNS(createProxyConfig(endpoint1.get(), nil));
+
+    auto endpoint2 = adoptNS(nw_endpoint_create_host("127.0.0.1", std::to_string(proxyServer1.port()).c_str()));
+    auto proxyConfig2 = adoptNS(createProxyConfig(endpoint2.get(), nil));
+
+    auto endpoint3 = adoptNS(nw_endpoint_create_host("127.0.0.1", std::to_string(proxyServer2.port()).c_str()));
+    auto proxyConfig3 = adoptNS(createProxyConfig(endpoint3.get(), nil));
+
+    // Proxy 1 should be ignored as it is unreachable.
+    // Proxy 2 should be used.
+    // Proxy 3 should be ignored, since proxy 2 handled the request
+    webView.get().configuration.websiteDataStore.proxyConfigurations = @[ proxyConfig1.get(), proxyConfig2.get(), proxyConfig3.get() ];
+
+    EXPECT_EQ(webView.get().configuration.websiteDataStore.proxyConfigurations[0], proxyConfig1.get());
+    EXPECT_EQ(webView.get().configuration.websiteDataStore.proxyConfigurations[1], proxyConfig2.get());
+    EXPECT_EQ(webView.get().configuration.websiteDataStore.proxyConfigurations[2], proxyConfig3.get());
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
-    EXPECT_WK_STREQ([delegate waitForAlert], "success!");
+    EXPECT_WK_STREQ([delegate waitForAlert], "proxy success!");
+
+    // Proxy 3 should be used
+    // Proxy 2 should now be ignored, since proxy 3 handled the request
+    webView.get().configuration.websiteDataStore.proxyConfigurations = @[ proxyConfig3.get(), proxyConfig2.get() ];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://yetanotherexample.net/"]]];
+    EXPECT_WK_STREQ([delegate waitForAlert], "other proxy success!");
+
+    // Clear the proxies. The server should be hit directly.
+    webView.get().configuration.websiteDataStore.proxyConfigurations = nil;
+    EXPECT_EQ(webView.get().configuration.websiteDataStore.proxyConfigurations, nil);
+
+    [webView loadRequest:nonProxyServer.request()];
+    EXPECT_WK_STREQ([delegate waitForAlert], "non proxy success!");
 }
 
 TEST(WebKit, SOCKS5API)
@@ -244,7 +283,7 @@ TEST(WebKit, SOCKS5API)
     auto proxyConfig = adoptNS(createProxyConfig(endpoint.get()));
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]);
-    [webView.get().configuration.websiteDataStore setProxyConfiguration:proxyConfig.get()];
+    webView.get().configuration.websiteDataStore.proxyConfigurations = @[ proxyConfig.get() ];
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://example.com/"]]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "success!");
