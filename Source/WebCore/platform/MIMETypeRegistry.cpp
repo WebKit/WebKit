@@ -603,7 +603,7 @@ static inline bool isValidXMLMIMETypeChar(UChar c)
 
 bool MIMETypeRegistry::isXMLMIMEType(const String& mimeType)
 {
-    if (equalLettersIgnoringASCIICase(mimeType, "text/xml"_s) || equalLettersIgnoringASCIICase(mimeType, "application/xml"_s) || equalLettersIgnoringASCIICase(mimeType, "text/xsl"_s))
+    if (equalLettersIgnoringASCIICase(mimeType, "text/xml"_s) || equalLettersIgnoringASCIICase(mimeType, "application/xml"_s))
         return true;
 
     if (!mimeType.endsWithIgnoringASCIICase("+xml"_s))
