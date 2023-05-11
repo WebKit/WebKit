@@ -30,6 +30,7 @@
 
 #include "GPUConnectionToWebProcess.h"
 #include "QualifiedRenderingResourceIdentifier.h"
+#include "RemoteGraphicsContextGLInitializationState.h"
 #include "RemoteGraphicsContextGLMessages.h"
 #include "RemoteGraphicsContextGLProxyMessages.h"
 #include "StreamConnectionWorkQueue.h"
@@ -137,10 +138,12 @@ void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttr
         m_context->setClient(this);
         String extensions = m_context->getString(GraphicsContextGL::EXTENSIONS);
         String requestableExtensions = m_context->getString(GraphicsContextGL::REQUESTABLE_EXTENSIONS_ANGLE);
-        send(Messages::RemoteGraphicsContextGLProxy::WasCreated(true, workQueue().wakeUpSemaphore(), m_streamConnection->clientWaitSemaphore(), extensions, requestableExtensions));
+        auto [externalImageTarget, externalImageBindingQuery] = m_context->externalImageTextureBindingPoint();
+
+        send(Messages::RemoteGraphicsContextGLProxy::WasCreated(true, workQueue().wakeUpSemaphore(), m_streamConnection->clientWaitSemaphore(), { extensions, requestableExtensions, externalImageTarget, externalImageBindingQuery }));
         m_streamConnection->startReceivingMessages(*this, Messages::RemoteGraphicsContextGL::messageReceiverName(), m_graphicsContextGLIdentifier.toUInt64());
     } else
-        send(Messages::RemoteGraphicsContextGLProxy::WasCreated(false, { }, { }, emptyString(), emptyString()));
+        send(Messages::RemoteGraphicsContextGLProxy::WasCreated(false, { }, { }, { }));
 }
 
 void RemoteGraphicsContextGL::workQueueUninitialize()

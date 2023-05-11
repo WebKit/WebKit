@@ -1537,6 +1537,8 @@ public:
     GraphicsContextGLAttributes contextAttributes() const { return m_attrs; }
     void setContextAttributes(const GraphicsContextGLAttributes& attrs) { m_attrs = attrs; }
 
+    virtual std::tuple<GCGLenum, GCGLenum> externalImageTextureBindingPoint();
+
     virtual void reshape(int width, int height) = 0;
 
     virtual void setContextVisibility(bool) = 0;
