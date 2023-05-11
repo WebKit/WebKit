@@ -302,9 +302,9 @@ class Scope;
 class Update;
 }
 
-enum PageshowEventPersistence { PageshowEventNotPersisted, PageshowEventPersisted };
+enum class PageshowEventPersistence : bool { NotPersisted, Persisted };
 
-enum NodeListInvalidationType {
+enum class NodeListInvalidationType : uint8_t {
     DoNotInvalidateOnAttributeChanges,
     InvalidateOnClassAttrChange,
     InvalidateOnIdNameAttrChange,
@@ -314,7 +314,7 @@ enum NodeListInvalidationType {
     InvalidateOnHRefAttrChange,
     InvalidateOnAnyAttrChange,
 };
-const int numNodeListInvalidationTypes = InvalidateOnAnyAttrChange + 1;
+const uint8_t numNodeListInvalidationTypes = static_cast<uint8_t>(NodeListInvalidationType::InvalidateOnAnyAttrChange) + 1;
 
 enum class EventHandlerRemoval { One, All };
 using EventTargetSet = HashCountedSet<Node*>;

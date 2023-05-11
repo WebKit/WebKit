@@ -103,7 +103,7 @@ static void firePageShowEvent(Page& page)
         // This takes care of firing the visibilitychange event and making sure the document is reported as visible.
         document->setVisibilityHiddenDueToDismissal(false);
 
-        document->dispatchPageshowEvent(PageshowEventPersisted);
+        document->dispatchPageshowEvent(PageshowEventPersistence::Persisted);
     }
 }
 

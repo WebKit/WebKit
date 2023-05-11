@@ -3323,7 +3323,7 @@ void Document::implicitClose()
     }
 
     dispatchWindowLoadEvent();
-    dispatchPageshowEvent(PageshowEventNotPersisted);
+    dispatchPageshowEvent(PageshowEventPersistence::NotPersisted);
 
     if (f)
         f->loader().dispatchOnloadEvents();
@@ -5127,7 +5127,7 @@ void Document::setCSSTarget(Element* newTarget)
 
 void Document::registerNodeListForInvalidation(LiveNodeList& list)
 {
-    m_nodeListAndCollectionCounts[list.invalidationType()]++;
+    m_nodeListAndCollectionCounts[static_cast<unsigned>(list.invalidationType())]++;
     if (!list.isRootedAtTreeScope())
         return;
     ASSERT(!list.isRegisteredForInvalidationAtDocument());
@@ -5137,7 +5137,7 @@ void Document::registerNodeListForInvalidation(LiveNodeList& list)
 
 void Document::unregisterNodeListForInvalidation(LiveNodeList& list)
 {
-    m_nodeListAndCollectionCounts[list.invalidationType()]--;
+    m_nodeListAndCollectionCounts[static_cast<unsigned>(list.invalidationType())]--;
     if (!list.isRegisteredForInvalidationAtDocument())
         return;
 
@@ -5148,15 +5148,15 @@ void Document::unregisterNodeListForInvalidation(LiveNodeList& list)
 
 void Document::registerCollection(HTMLCollection& collection)
 {
-    m_nodeListAndCollectionCounts[collection.invalidationType()]++;
+    m_nodeListAndCollectionCounts[static_cast<unsigned>(collection.invalidationType())]++;
     if (collection.isRootedAtTreeScope())
         m_collectionsInvalidatedAtDocument.add(&collection);
 }
 
 void Document::unregisterCollection(HTMLCollection& collection)
 {
-    ASSERT(m_nodeListAndCollectionCounts[collection.invalidationType()]);
-    m_nodeListAndCollectionCounts[collection.invalidationType()]--;
+    ASSERT(m_nodeListAndCollectionCounts[static_cast<unsigned>(collection.invalidationType())]);
+    m_nodeListAndCollectionCounts[static_cast<unsigned>(collection.invalidationType())]--;
     if (!collection.isRootedAtTreeScope())
         return;
 
@@ -5166,14 +5166,14 @@ void Document::unregisterCollection(HTMLCollection& collection)
 void Document::collectionCachedIdNameMap(const HTMLCollection& collection)
 {
     ASSERT_UNUSED(collection, collection.hasNamedElementCache());
-    m_nodeListAndCollectionCounts[InvalidateOnIdNameAttrChange]++;
+    m_nodeListAndCollectionCounts[static_cast<unsigned>(NodeListInvalidationType::InvalidateOnIdNameAttrChange)]++;
 }
 
 void Document::collectionWillClearIdNameMap(const HTMLCollection& collection)
 {
     ASSERT_UNUSED(collection, collection.hasNamedElementCache());
-    ASSERT(m_nodeListAndCollectionCounts[InvalidateOnIdNameAttrChange]);
-    m_nodeListAndCollectionCounts[InvalidateOnIdNameAttrChange]--;
+    ASSERT(m_nodeListAndCollectionCounts[static_cast<unsigned>(NodeListInvalidationType::InvalidateOnIdNameAttrChange)]);
+    m_nodeListAndCollectionCounts[static_cast<unsigned>(NodeListInvalidationType::InvalidateOnIdNameAttrChange)]--;
 }
 
 void Document::attachNodeIterator(NodeIterator& iterator)
@@ -7130,7 +7130,7 @@ void Document::dispatchPageshowEvent(PageshowEventPersistence persisted)
         return;
     m_lastPageStatus = PageStatus::Shown;
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=36334 Pageshow event needs to fire asynchronously.
-    dispatchWindowEvent(PageTransitionEvent::create(eventNames().pageshowEvent, persisted == PageshowEventPersisted), this);
+    dispatchWindowEvent(PageTransitionEvent::create(eventNames().pageshowEvent, persisted == PageshowEventPersistence::Persisted), this);
 }
 
 void Document::dispatchPagehideEvent(PageshowEventPersistence persisted)
@@ -7142,7 +7142,7 @@ void Document::dispatchPagehideEvent(PageshowEventPersistence persisted)
     if (m_lastPageStatus == PageStatus::Hidden)
         return;
     m_lastPageStatus = PageStatus::Hidden;
-    dispatchWindowEvent(PageTransitionEvent::create(eventNames().pagehideEvent, persisted == PageshowEventPersisted), this);
+    dispatchWindowEvent(PageTransitionEvent::create(eventNames().pagehideEvent, persisted == PageshowEventPersistence::Persisted), this);
 }
 
 void Document::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&& eventInit)

@@ -89,32 +89,32 @@ static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(Col
     case CollectionType::SelectOptions:
     case CollectionType::MapAreas:
     case CollectionType::DocEmpty:
-        return DoNotInvalidateOnAttributeChanges;
+        return NodeListInvalidationType::DoNotInvalidateOnAttributeChanges;
     case CollectionType::SelectedOptions:
     case CollectionType::DataListOptions:
         // FIXME: We can do better some day.
-        return InvalidateOnAnyAttrChange;
+        return NodeListInvalidationType::InvalidateOnAnyAttrChange;
     case CollectionType::ByClass:
-        return InvalidateOnClassAttrChange;
+        return NodeListInvalidationType::InvalidateOnClassAttrChange;
     case CollectionType::DocAnchors:
-        return InvalidateOnNameAttrChange;
+        return NodeListInvalidationType::InvalidateOnNameAttrChange;
     case CollectionType::DocLinks:
-        return InvalidateOnHRefAttrChange;
+        return NodeListInvalidationType::InvalidateOnHRefAttrChange;
     case CollectionType::WindowNamedItems:
     case CollectionType::DocumentNamedItems:
     case CollectionType::DocumentAllNamedItems:
-        return InvalidateOnIdNameAttrChange;
+        return NodeListInvalidationType::InvalidateOnIdNameAttrChange;
     case CollectionType::FieldSetElements:
     case CollectionType::FormControls:
-        return InvalidateForFormControls;
+        return NodeListInvalidationType::InvalidateForFormControls;
     }
     ASSERT_NOT_REACHED();
-    return DoNotInvalidateOnAttributeChanges;
+    return NodeListInvalidationType::DoNotInvalidateOnAttributeChanges;
 }
 
 HTMLCollection::HTMLCollection(ContainerNode& ownerNode, CollectionType type)
     : m_collectionType(static_cast<unsigned>(type))
-    , m_invalidationType(invalidationTypeExcludingIdAndNameAttributes(type))
+    , m_invalidationType(static_cast<unsigned>(invalidationTypeExcludingIdAndNameAttributes(type)))
     , m_rootType(rootTypeFromCollectionType(type))
     , m_ownerNode(ownerNode)
 {
