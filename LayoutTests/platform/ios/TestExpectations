@@ -3972,8 +3972,6 @@ imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html 
 
 webkit.org/b/248923 fast/rendering/render-style-null-optgroup-crash.html [ Pass Failure ]
 
-webkit.org/b/249367 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transferrable.w.html [ Pass Failure ]
-
 webkit.org/b/249407 media/audioSession/getUserMedia.html [ Failure ]
 
 # Per-process limit is only for WK2
