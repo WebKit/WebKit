@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "CanvasNoiseInjection.h"
 #include "FloatRect.h"
 #include "IntSize.h"
 #include "PixelBuffer.h"
@@ -131,7 +130,7 @@ public:
     virtual void queueTaskKeepingObjectAlive(TaskSource, Function<void()>&&) = 0;
     virtual void dispatchEvent(Event&) = 0;
 
-    bool postProcessPixelBufferResults(Ref<PixelBuffer>&&) const;
+    bool postProcessPixelBufferResults(Ref<PixelBuffer>&&, const HashSet<uint32_t>&) const;
 
 protected:
     explicit CanvasBase(IntSize);
@@ -150,15 +149,16 @@ protected:
 
 private:
     bool shouldInjectNoiseBeforeReadback() const;
+    void postProcessDirtyCanvasBuffer() const;
     virtual void createImageBuffer() const { }
 
     mutable IntSize m_size;
+    mutable FloatRect m_postProcessDirtyRect;
     mutable Lock m_imageBufferAssignmentLock;
     mutable RefPtr<ImageBuffer> m_imageBuffer;
     mutable size_t m_imageBufferCost { 0 };
     mutable std::unique_ptr<GraphicsContextStateSaver> m_contextStateSaver;
 
-    CanvasNoiseInjection m_canvasNoiseInjection;
     bool m_originClean { true };
 #if ASSERT_ENABLED
     bool m_didNotifyObserversCanvasDestroyed { false };

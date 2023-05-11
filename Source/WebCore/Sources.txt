@@ -1259,7 +1259,6 @@ html/BaseDateAndTimeInputType.cpp
 html/BaseTextInputType.cpp
 html/ButtonInputType.cpp
 html/CanvasBase.cpp
-html/CanvasNoiseInjection.cpp
 html/CheckboxInputType.cpp
 html/ColorInputType.cpp
 html/CustomPaintCanvas.cpp
