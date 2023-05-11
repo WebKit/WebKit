@@ -84,7 +84,8 @@ RemoteAXObjectRef AXIsolatedObject::remoteParentObject() const
 
 FloatRect AXIsolatedObject::primaryScreenRect() const
 {
-    return tree()->geometryManager()->primaryScreenRect();
+    RefPtr geometryManager = tree()->geometryManager();
+    return geometryManager ? geometryManager->primaryScreenRect() : FloatRect();
 }
 
 FloatRect AXIsolatedObject::convertRectToPlatformSpace(const FloatRect& rect, AccessibilityConversionSpace space) const

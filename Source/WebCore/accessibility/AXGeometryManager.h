@@ -28,6 +28,7 @@
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 #include "AccessibilityObjectInterface.h"
 #include "IntRectHash.h"
+#include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -44,6 +45,7 @@ public:
     {
         return adoptRef(*new AXGeometryManager(cache));
     }
+    ~AXGeometryManager();
 
     void willUpdateObjectRegions();
     void scheduleObjectRegionsUpdate(bool /* scheduleImmediately */);
@@ -55,7 +57,8 @@ public:
     void remove(AXID axID) { m_paintRects.remove(axID); }
 
 #if PLATFORM(MAC)
-    FloatRect primaryScreenRect() const;
+    void initializePrimaryScreenRect();
+    FloatRect primaryScreenRect();
 #endif
 
 private:
@@ -69,7 +72,8 @@ private:
     Timer m_updateObjectRegionsTimer;
 
 #if PLATFORM(MAC)
-    FloatRect m_primaryScreenRect;
+    FloatRect m_primaryScreenRect WTF_GUARDED_BY_LOCK(m_lock);
+    Lock m_lock;
 #endif
 };
 

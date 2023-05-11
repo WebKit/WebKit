@@ -40,19 +40,19 @@ namespace WebCore {
 AXGeometryManager::AXGeometryManager(AXObjectCache& owningCache)
     : m_cache(owningCache)
     , m_updateObjectRegionsTimer(*this, &AXGeometryManager::updateObjectRegionsTimerFired)
-#if PLATFORM(MAC)
-    , m_primaryScreenRect(screenRectForPrimaryScreen())
-#endif
 {
 }
 
 AXGeometryManager::AXGeometryManager()
     : m_cache(nullptr)
     , m_updateObjectRegionsTimer(*this, &AXGeometryManager::updateObjectRegionsTimerFired)
-#if PLATFORM(MAC)
-    , m_primaryScreenRect(screenRectForPrimaryScreen())
-#endif
 {
+}
+
+AXGeometryManager::~AXGeometryManager()
+{
+    if (m_updateObjectRegionsTimer.isActive())
+        m_updateObjectRegionsTimer.stop();
 }
 
 std::optional<IntRect> AXGeometryManager::paintRectForID(AXID axID)
@@ -115,13 +115,23 @@ void AXGeometryManager::willUpdateObjectRegions()
 
 void AXGeometryManager::scheduleRenderingUpdate()
 {
+    if (!m_cache)
+        return;
+
     if (auto* page = m_cache->document().page())
         page->scheduleRenderingUpdate(RenderingUpdateStep::AccessibilityRegionUpdate);
 }
 
 #if PLATFORM(MAC)
-FloatRect AXGeometryManager::primaryScreenRect() const
+void AXGeometryManager::initializePrimaryScreenRect()
 {
+    Locker locker { m_lock };
+    m_primaryScreenRect = screenRectForPrimaryScreen();
+}
+
+FloatRect AXGeometryManager::primaryScreenRect()
+{
+    Locker locker { m_lock };
     return m_primaryScreenRect;
 }
 #endif

@@ -263,7 +263,7 @@ public:
     static RefPtr<AXIsolatedTree> treeForPageID(std::optional<PageIdentifier>);
     static RefPtr<AXIsolatedTree> treeForPageID(PageIdentifier);
     AXObjectCache* axObjectCache() const;
-    const Ref<AXGeometryManager>& geometryManager() const { return m_geometryManager; }
+    constexpr AXGeometryManager* geometryManager() const { return m_geometryManager.get(); }
 
     RefPtr<AXIsolatedObject> rootNode();
     RefPtr<AXIsolatedObject> focusedNode();
@@ -339,7 +339,7 @@ private:
 
     unsigned m_maxTreeDepth { 0 };
     WeakPtr<AXObjectCache> m_axObjectCache;
-    Ref<AXGeometryManager> m_geometryManager;
+    RefPtr<AXGeometryManager> m_geometryManager;
     bool m_usedOnAXThread { true };
 
     // Stores the parent ID and children IDS for a given IsolatedObject.

@@ -170,7 +170,9 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::BrailleRoleDescription, object.brailleRoleDescription().isolatedCopy());
     setProperty(AXPropertyName::BrailleLabel, object.brailleLabel().isolatedCopy());
 
-    if (std::optional frame = tree()->geometryManager()->paintRectForID(object.objectID()))
+    RefPtr geometryManager = tree()->geometryManager();
+    std::optional frame = geometryManager ? geometryManager->paintRectForID(object.objectID()) : std::nullopt;
+    if (frame)
         setProperty(AXPropertyName::RelativeFrame, WTFMove(*frame));
     else if (object.isScrollView() || object.isWebArea()) {
         // The GeometryManager does not have a relative frame for the ScrollView or the WebArea yet. We need to get it from the live object so that we don't need to hit the main thread in the case a request comes in while the whole isolated tree is being built.

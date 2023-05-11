@@ -840,7 +840,10 @@ RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree()
     if (tree)
         return tree;
 
-    // A new isolated tree needs to be created. This method can be called as the result of a client request. Since creating the isolated tree can take long,
+    // A new isolated tree needs to be created. Initialize the GeometryManager primary screen rect to be ready when needed.
+    m_geometryManager->initializePrimaryScreenRect();
+
+    // This method can be called as the result of a client request. Since creating the isolated tree can take long,
     // especially for large documents, for real clients we build a temporary "empty" isolated tree consisting only of the ScrollView and the WebArea objects.
     // Then we schedule building the entire isolated tree on a Timer.
     // For test clients, LayoutTests or XCTests, build the whole isolated tree.

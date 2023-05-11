@@ -46,7 +46,7 @@ HashMap<PageIdentifier, Ref<AXIsolatedTree>>& AXIsolatedTree::treePageCache()
 AXIsolatedTree::AXIsolatedTree(AXObjectCache& axObjectCache)
     : AXTreeStore(axObjectCache.treeID())
     , m_axObjectCache(&axObjectCache)
-    , m_geometryManager(axObjectCache.m_geometryManager)
+    , m_geometryManager(axObjectCache.m_geometryManager.ptr())
     , m_usedOnAXThread(axObjectCache.usedOnAXThread())
 {
     AXTRACE("AXIsolatedTree::AXIsolatedTree"_s);
@@ -137,8 +137,10 @@ void AXIsolatedTree::removeTreeForPageID(PageIdentifier pageID)
     ASSERT(isMainThread());
 
     Locker locker { s_storeLock };
-    if (auto tree = treePageCache().take(pageID))
+    if (auto tree = treePageCache().take(pageID)) {
+        tree->m_geometryManager = nullptr;
         tree->queueForDestruction();
+    }
 }
 
 RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(PageIdentifier pageID)
