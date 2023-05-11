@@ -205,6 +205,7 @@ void LocalFrameViewLayoutContext::performLayout()
 
     LayoutScope layoutScope(*this);
     TraceScope tracingScope(LayoutStart, LayoutEnd);
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     InspectorInstrumentation::willLayout(downcast<LocalFrame>(view().frame()));
     WeakPtr<RenderElement> layoutRoot;
     

@@ -2251,11 +2251,6 @@ bool Document::needsStyleRecalc() const
     return false;
 }
 
-static bool isSafeToUpdateLayout()
-{
-    return ScriptDisallowedScope::InMainThread::isScriptAllowed() || !isInWebProcess();
-}
-
 bool Document::updateStyleIfNeeded()
 {
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
@@ -2294,9 +2289,9 @@ void Document::updateLayout()
         ASSERT_NOT_REACHED();
         return;
     }
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isSafeToUpdateLayout());
 
     RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
     if (RefPtr owner = ownerElement())
         owner->document().updateLayout();
