@@ -1082,6 +1082,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         }
 
         WebCore::ResourceResponse resourceResponse(response);
+        if (!resourceResponse.url().hasSpecialScheme())
+            privateRelayed = PrivateRelayed::No;
         // Lazy initialization is not helpful in the WebKit2 case because we always end up initializing
         // all the fields when sending the response to the WebContent process over IPC.
         resourceResponse.disableLazyInitialization();
