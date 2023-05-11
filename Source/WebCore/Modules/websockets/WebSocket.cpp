@@ -176,7 +176,7 @@ ExceptionOr<Ref<WebSocket>> WebSocket::create(ScriptExecutionContext& context, c
     auto socket = adoptRef(*new WebSocket(context));
     socket->suspendIfNeeded();
 
-    auto result = socket->connect(context.completeURL(url).string(), protocols);
+    auto result = socket->connect(context.completeURL(url, ScriptExecutionContext::ForceUTF8::Yes).string(), protocols);
     if (result.hasException())
         return result.releaseException();
 
@@ -235,6 +235,11 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         m_state = CLOSED;
         return Exception { SyntaxError };
     }
+
+    if (m_url.protocolIs("http"_s))
+        m_url.setProtocol("ws"_s);
+    else if (m_url.protocolIs("https"_s))
+        m_url.setProtocol("wss"_s);
 
     if (!m_url.protocolIs("ws"_s) && !m_url.protocolIs("wss"_s)) {
         context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Wrong url scheme for WebSocket " + m_url.stringCenterEllipsizedToLength());

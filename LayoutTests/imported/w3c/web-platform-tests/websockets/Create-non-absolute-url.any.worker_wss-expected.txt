@@ -1,3 +1,0 @@
-
-PASS Create WebSocket - Pass a non absolute URL - SYNTAX_ERR is thrown
-
