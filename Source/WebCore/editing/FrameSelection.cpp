@@ -1759,13 +1759,8 @@ IntRect FrameSelection::absoluteCaretBounds(bool* insideFixed)
 
 static void repaintCaretForLocalRect(Node* node, const LayoutRect& rect, CaretAnimator* caretAnimator)
 {
-    if (auto* caretPainter = rendererForCaretPainting(node)) {
-        LayoutRect adjustedRect = caretAnimator ? caretAnimator->caretRepaintRectForLocalRect(rect) : rect;
-        if (adjustedRect == rect)
-            caretPainter->repaintRectangle(adjustedRect);
-        else
-            caretPainter->repaintRectangle(adjustedRect, RenderObject::ClipRepaintToLayer::No, RenderObject::ForceRepaint::Yes, RenderObject::ClipRepaintToContainer::No);
-    }
+    if (auto* caretPainter = rendererForCaretPainting(node))
+        caretPainter->repaintRectangle(caretAnimator ? caretAnimator->caretRepaintRectForLocalRect(rect) : rect);
 }
 
 bool FrameSelection::recomputeCaretRect()
