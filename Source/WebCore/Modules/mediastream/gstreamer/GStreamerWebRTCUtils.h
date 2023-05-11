@@ -214,9 +214,7 @@ static inline GstWebRTCBundlePolicy bundlePolicyFromConfiguration(const MediaEnd
 {
     switch (configuration.bundlePolicy) {
     case RTCBundlePolicy::Balanced:
-        // Balanced policy support is not yet implemented in webrtcbin, so fallback to max-bundle,
-        // which is what most end-points expect anyway.
-        return GST_WEBRTC_BUNDLE_POLICY_MAX_BUNDLE;
+        return GST_WEBRTC_BUNDLE_POLICY_BALANCED;
     case RTCBundlePolicy::MaxCompat:
         return GST_WEBRTC_BUNDLE_POLICY_MAX_COMPAT;
     case RTCBundlePolicy::MaxBundle:
