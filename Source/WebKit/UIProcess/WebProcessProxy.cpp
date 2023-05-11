@@ -65,6 +65,7 @@
 #include "WebPasteboardProxy.h"
 #include "WebPermissionControllerMessages.h"
 #include "WebPermissionControllerProxy.h"
+#include "WebPreferencesDefaultValues.h"
 #include "WebPreferencesKeys.h"
 #include "WebProcessCache.h"
 #include "WebProcessDataStoreParameters.h"
@@ -701,6 +702,12 @@ Ref<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, Ref<API
 bool WebProcessProxy::shouldTakeNearSuspendedAssertion() const
 {
 #if USE(RUNNINGBOARD)
+    if (m_pageMap.isEmpty()) {
+        // The setting come from pages but this process has no page, we thus use the default
+        // setting value, which is true.
+        return true;
+    }
+
     for (auto& page : m_pageMap.values()) {
         bool processSuppressionEnabled = page->preferences().pageVisibilityBasedProcessSuppressionEnabled();
         bool nearSuspendedAssertionsEnabled = page->preferences().shouldTakeNearSuspendedAssertions();
@@ -713,6 +720,10 @@ bool WebProcessProxy::shouldTakeNearSuspendedAssertion() const
 
 bool WebProcessProxy::shouldDropNearSuspendedAssertionAfterDelay() const
 {
+    if (m_pageMap.isEmpty()) {
+        // The setting come from pages but this process has no page, we thus use the default setting value.
+        return defaultShouldDropNearSuspendedAssertionAfterDelay();
+    }
     return WTF::anyOf(m_pageMap.values(), [](auto& page) { return page->preferences().shouldDropNearSuspendedAssertionAfterDelay(); });
 }
 
