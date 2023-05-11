@@ -1181,9 +1181,21 @@ static void doClipWithAntialias(cairo_t* cr, cairo_antialias_t antialias)
     cairo_set_antialias(cr, savedAntialiasRule);
 }
 
-void clip(GraphicsContextCairo& platformContext, const FloatRect& rect)
+static FloatRect clampClipRect(const FloatRect& rect)
+{
+    // Cairo is internally using 24.8 fixed point numbers.
+    float maxValue = 1 << 22;
+    auto x = std::max(rect.x(), -maxValue / 2);
+    auto y = std::max(rect.y(), -maxValue / 2);
+    auto width = std::min(rect.width(), maxValue);
+    auto height = std::min(rect.height(), maxValue);
+    return { x, y, width, height };
+}
+
+void clip(GraphicsContextCairo& platformContext, const FloatRect& clipRect)
 {
     cairo_t* cr = platformContext.cr();
+    auto rect = clampClipRect(clipRect);
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
     cairo_set_fill_rule(cr, CAIRO_FILL_RULE_WINDING);
