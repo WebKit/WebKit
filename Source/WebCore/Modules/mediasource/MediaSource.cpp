@@ -1046,11 +1046,10 @@ void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
         // on the readyState.
         // https://w3c.github.io/media-source/#htmlmediaelement-extensions-buffered
         updateBufferedIfNeeded(true /* force */);
-        return;
+    } else {
+        ASSERT(isClosed());
+        scheduleEvent(eventNames().sourcecloseEvent);
     }
-
-    ASSERT(isClosed());
-    scheduleEvent(eventNames().sourcecloseEvent);
 
     monitorSourceBuffers();
 }

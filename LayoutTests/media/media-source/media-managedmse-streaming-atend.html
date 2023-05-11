@@ -9,6 +9,7 @@
     var loader;
     var source;
     var sourceBuffer;
+    var ended = false;
 
     function loaderPromise(loader) {
         return new Promise((resolve, reject) => {
@@ -34,31 +35,31 @@
             source = new ManagedMediaSource();
             run('video.src = URL.createObjectURL(source)');
 
-            await waitFor(source, 'sourceopen');
-            testExpected('source.streaming', true);
-            await waitFor(source, 'startstreaming');
+            await Promise.all([ waitFor(source, 'sourceopen'), waitFor(source, 'startstreaming')]);
 
             run('sourceBuffer = source.addSourceBuffer(loader.type())');
 
             run('sourceBuffer.appendBuffer(loader.initSegment())');
             await waitFor(sourceBuffer, 'update');
+            run('source.duration = 0.1');
+            await waitFor(video, 'durationchange');
 
-            var done = false;
-            waitForEventOnceOn(source, 'endstreaming', () => { done = true; });
+            // The endstreaming event shouldn't be fired even if we have appended data past the element's duration
+            // unless the mediasource is ended.
+            waitFor(source, 'endstreaming').then(() => {
+                if (!ended)
+                    failTest();
+                else
+                    endTest();
+            });
 
             do {
                 sourceBuffer.appendBuffer(loader.mediaSegment(0));
                 await once(sourceBuffer, 'update');
                 sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1);
-            } while (!done);
-            testExpected('source.streaming', false);
-
-            waitForEventOnceOn(source, 'startstreaming', () => {
-                testExpected('source.streaming', true);
-                endTest();
-            });
-
-            sourceBuffer.remove(video.currentTime, video.currentTime + 5);
+            } while (source.duration <= 5);
+            run('ended = true');
+            run('source.endOfStream()');
         } catch (e) {
             failTest(`Caught exception: "${e}"`);
         }
