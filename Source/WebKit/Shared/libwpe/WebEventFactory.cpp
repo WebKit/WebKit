@@ -157,7 +157,7 @@ static inline short pressedMouseButtons(uint32_t modifiers)
     return buttons;
 }
 
-WebMouseEvent WebEventFactory::createWebMouseEvent(struct wpe_input_pointer_event* event, float deviceScaleFactor)
+WebMouseEvent WebEventFactory::createWebMouseEvent(struct wpe_input_pointer_event* event, float deviceScaleFactor, WebMouseEventSyntheticClickType syntheticClickType)
 {
     auto type = WebEventType::NoType;
     switch (event->type) {
@@ -192,7 +192,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(struct wpe_input_pointer_even
     WebCore::IntPoint position(event->x, event->y);
     position.scale(1 / deviceScaleFactor);
     return WebMouseEvent({ type, modifiersForEventModifiers(event->modifiers), wallTimeForEventTime(event->time) }, button, pressedMouseButtons(event->modifiers), position, position,
-        0, 0, 0, clickCount);
+        0, 0, 0, clickCount, 0, syntheticClickType);
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* event, float deviceScaleFactor, WebWheelEvent::Phase phase, WebWheelEvent::Phase momentumPhase)

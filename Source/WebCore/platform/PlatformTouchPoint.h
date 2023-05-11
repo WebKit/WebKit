@@ -49,6 +49,18 @@ public:
     {
     }
 
+#if PLATFORM(WPE)
+    // FIXME: since WPE currently does not send touch stationary events, we need to be able to
+    // create a PlatformTouchPoint of type TouchCancelled artificially
+    PlatformTouchPoint(unsigned id, State state, IntPoint screenPos, IntPoint pos)
+        : m_id(id)
+        , m_state(state)
+        , m_screenPos(screenPos)
+        , m_pos(pos)
+    {
+    }
+#endif
+
     unsigned id() const { return m_id; }
     State state() const { return m_state; }
     IntPoint screenPos() const { return m_screenPos; }

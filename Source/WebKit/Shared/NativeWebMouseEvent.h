@@ -74,7 +74,7 @@ public:
     NativeWebMouseEvent(WebEventType, WebMouseEventButton, unsigned short buttons, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<WebEventModifier>, WallTime timestamp, double force, GestureWasCancelled, const String& pointerType);
     NativeWebMouseEvent(const NativeWebMouseEvent&, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ);
 #elif USE(LIBWPE)
-    NativeWebMouseEvent(struct wpe_input_pointer_event*, float deviceScaleFactor);
+    NativeWebMouseEvent(struct wpe_input_pointer_event*, float deviceScaleFactor, WebMouseEventSyntheticClickType = WebMouseEventSyntheticClickType::NoTap);
 #elif PLATFORM(WIN)
     NativeWebMouseEvent(HWND, UINT message, WPARAM, LPARAM, bool);
 #endif

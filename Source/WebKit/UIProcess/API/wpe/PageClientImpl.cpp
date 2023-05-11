@@ -219,7 +219,7 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& touchEvent, b
 
             // Mouse motion towards the point of the click.
             event->type = wpe_input_pointer_event_type_motion;
-            page.handleMouseEvent(NativeWebMouseEvent(event, page.deviceScaleFactor()));
+            page.handleMouseEvent(NativeWebMouseEvent(event, page.deviceScaleFactor(), WebMouseEventSyntheticClickType::OneFingerTap));
 
             event->type = wpe_input_pointer_event_type_button;
             event->button = 1;
@@ -227,12 +227,12 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& touchEvent, b
             // Mouse down on the point of the click.
             event->state = 1;
             event->modifiers |= wpe_input_pointer_modifier_button1;
-            page.handleMouseEvent(NativeWebMouseEvent(event, page.deviceScaleFactor()));
+            page.handleMouseEvent(NativeWebMouseEvent(event, page.deviceScaleFactor(), WebMouseEventSyntheticClickType::OneFingerTap));
 
             // Mouse up on the same location.
             event->state = 0;
             event->modifiers &= ~wpe_input_pointer_modifier_button1;
-            page.handleMouseEvent(NativeWebMouseEvent(event, page.deviceScaleFactor()));
+            page.handleMouseEvent(NativeWebMouseEvent(event, page.deviceScaleFactor(), WebMouseEventSyntheticClickType::OneFingerTap));
         },
         [&](TouchGestureController::ContextMenuEvent&) {
             // FIXME: Generate contextmenuevent without accidentally generating mouseup/mousedown events

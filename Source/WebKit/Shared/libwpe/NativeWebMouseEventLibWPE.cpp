@@ -30,8 +30,8 @@
 
 namespace WebKit {
 
-NativeWebMouseEvent::NativeWebMouseEvent(struct wpe_input_pointer_event* event, float deviceScaleFactor)
-    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, deviceScaleFactor))
+NativeWebMouseEvent::NativeWebMouseEvent(struct wpe_input_pointer_event* event, float deviceScaleFactor, WebMouseEventSyntheticClickType syntheticClickType)
+    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, deviceScaleFactor, syntheticClickType))
 {
 }
 
