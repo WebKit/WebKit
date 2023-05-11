@@ -53,8 +53,11 @@ HTMLDialogElement::HTMLDialogElement(const QualifiedName& tagName, Document& doc
 ExceptionOr<void> HTMLDialogElement::show()
 {
     // If the element already has an open attribute, then return.
-    if (isOpen())
-        return { };
+    if (isOpen()) {
+        if (!isModal())
+            return { };
+        return Exception { InvalidStateError, "Cannot call show() on an open modal dialog."_s };
+    }
 
     if (popoverData() && popoverData()->visibilityState() == PopoverVisibilityState::Showing)
         return Exception { InvalidStateError, "Element is already an open popover."_s };
@@ -72,8 +75,11 @@ ExceptionOr<void> HTMLDialogElement::show()
 ExceptionOr<void> HTMLDialogElement::showModal()
 {
     // If subject already has an open attribute, then throw an "InvalidStateError" DOMException.
-    if (isOpen())
-        return Exception { InvalidStateError, "Element is already open."_s };
+    if (isOpen()) {
+        if (isModal())
+            return { };
+        return Exception { InvalidStateError, "Cannot call showModal() on an open non-modal dialog."_s };
+    }
 
     // If subject is not connected, then throw an "InvalidStateError" DOMException.
     if (!isConnected())

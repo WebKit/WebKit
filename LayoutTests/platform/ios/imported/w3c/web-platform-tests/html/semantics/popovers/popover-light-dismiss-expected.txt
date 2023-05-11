@@ -10,11 +10,11 @@ PASS Clicking inside a child popover shouldn't close either popover
 FAIL Clicking inside a parent popover should close child popover assert_false: expected false got true
 PASS Clicking on invoking element, after using it for activation, shouldn't close its popover
 FAIL Clicking on invoking element, after using it for activation, shouldn't close its popover (nested case) assert_true: button2 should activate popover2 expected true got false
-FAIL Clicking on invoking element, after using it for activation, shouldn't close its popover (nested case, not used for invocation) promise_test: Unhandled rejection with value: object "InvalidStateError: Element has unexpected visibility state"
-FAIL Clicking on invoking element, even if it wasn't used for activation, shouldn't close its popover promise_test: Unhandled rejection with value: object "InvalidStateError: Element has unexpected visibility state"
-FAIL Clicking on popovertarget element, even if it wasn't used for activation, should hide it exactly once promise_test: Unhandled rejection with value: object "InvalidStateError: Element has unexpected visibility state"
-FAIL Clicking on anchor element (that isn't an invoking element) shouldn't prevent its popover from being closed promise_test: Unhandled rejection with value: object "InvalidStateError: Element has unexpected visibility state"
-FAIL Dragging from an open popover outside an open popover should leave the popover open promise_test: Unhandled rejection with value: object "InvalidStateError: Element has unexpected visibility state"
+PASS Clicking on invoking element, after using it for activation, shouldn't close its popover (nested case, not used for invocation)
+PASS Clicking on invoking element, even if it wasn't used for activation, shouldn't close its popover
+FAIL Clicking on popovertarget element, even if it wasn't used for activation, should hide it exactly once assert_false: popover1 should be hidden by popovertarget expected false got true
+FAIL Clicking on anchor element (that isn't an invoking element) shouldn't prevent its popover from being closed assert_false: popover1 should close expected false got true
+PASS Dragging from an open popover outside an open popover should leave the popover open
 FAIL A popover inside an invoking element doesn't participate in that invoker's ancestor chain assert_true: invoking element should open popover expected true got false
 PASS An invoking element that was not used to invoke the popover can still be part of the ancestor chain
 FAIL Scrolling within a popover should not close the popover promise_test: Unhandled rejection with value: object "Error: Unknown source type "wheel"."
