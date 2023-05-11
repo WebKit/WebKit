@@ -48,6 +48,14 @@ public:
         } };
     }
 
+    enum class HandlerTrap : uint8_t {
+        Has = 0,
+        Get,
+        Set,
+    };
+
+    static constexpr unsigned numberOfCachedHandlerTrapsOffsets = 3;
+
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
@@ -93,10 +101,14 @@ public:
     const WriteBarrier<Unknown>& internalField(Field field) const { return Base::internalField(static_cast<uint32_t>(field)); }
     WriteBarrier<Unknown>& internalField(Field field) { return Base::internalField(static_cast<uint32_t>(field)); }
 
+    JSObject* getHandlerTrap(JSGlobalObject*, JSObject*, CallData&, const Identifier&, HandlerTrap);
+
 private:
     JS_EXPORT_PRIVATE ProxyObject(VM&, Structure*);
     JS_EXPORT_PRIVATE void finishCreation(VM&, JSGlobalObject*, JSValue target, JSValue handler);
     JS_EXPORT_PRIVATE static Structure* structureForTarget(JSGlobalObject*, JSValue target);
+
+    void clearHandlerTrapsOffsetsCache();
 
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     static bool getOwnPropertySlotByIndex(JSObject*, JSGlobalObject*, unsigned propertyName, PropertySlot&);
@@ -129,6 +141,9 @@ private:
 
     bool m_isCallable : 1 { false };
     bool m_isConstructible : 1 { false };
+    PropertyOffset m_handlerTrapsOffsetsCache[numberOfCachedHandlerTrapsOffsets];
+    WriteBarrierStructureID m_handlerStructureID;
+    WriteBarrierStructureID m_handlerPrototypeStructureID;
 };
 
 } // namespace JSC
