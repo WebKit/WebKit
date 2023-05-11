@@ -30,26 +30,16 @@
 #include "ASTDeclaration.h"
 #include "ASTParameter.h"
 #include "ASTTypeName.h"
-#include "CompilationMessage.h"
 
 #include <wtf/UniqueRefVector.h>
 
 namespace WGSL::AST {
 
 class Function final : public Declaration {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(Function);
 public:
-    using List = UniqueRefVector<Function>;
-
-    Function(SourceSpan span, Identifier&& name, Parameter::List&& parameters, TypeName::Ptr returnType, CompoundStatement&& body, Attribute::List&& attributes, Attribute::List&& returnAttributes)
-        : Declaration(span)
-        , m_name(WTFMove(name))
-        , m_parameters(WTFMove(parameters))
-        , m_attributes(WTFMove(attributes))
-        , m_returnAttributes(WTFMove(returnAttributes))
-        , m_returnType(returnType)
-        , m_body(WTFMove(body))
-    { }
+    using Ref = std::reference_wrapper<Function>;
+    using List = ReferenceWrapperVector<Function>;
 
     NodeKind kind() const override;
     Identifier& name() { return m_name; }
@@ -66,6 +56,16 @@ public:
     const CompoundStatement& body() const { return m_body; }
 
 private:
+    Function(SourceSpan span, Identifier&& name, Parameter::List&& parameters, TypeName::Ptr returnType, CompoundStatement&& body, Attribute::List&& attributes, Attribute::List&& returnAttributes)
+        : Declaration(span)
+        , m_name(WTFMove(name))
+        , m_parameters(WTFMove(parameters))
+        , m_attributes(WTFMove(attributes))
+        , m_returnAttributes(WTFMove(returnAttributes))
+        , m_returnType(returnType)
+        , m_body(WTFMove(body))
+    { }
+
     Identifier m_name;
     Parameter::List m_parameters;
     Attribute::List m_attributes;

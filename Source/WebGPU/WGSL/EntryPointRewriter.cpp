@@ -180,7 +180,7 @@ void EntryPointRewriter::constructInputStruct()
         break;
     }
 
-    m_shaderModule.append(m_shaderModule.structures(), makeUniqueRef<AST::Structure>(
+    m_shaderModule.append(m_shaderModule.structures(), m_shaderModule.astBuilder().construct<AST::Structure>(
         SourceSpan::empty(),
         AST::Identifier::make(m_structTypeName),
         WTFMove(structMembers),
@@ -206,7 +206,7 @@ void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& da
     if (!path.size()) {
         m_materializations.append(makeUniqueRef<AST::VariableStatement>(
             SourceSpan::empty(),
-            makeUniqueRef<AST::Variable>(
+            m_shaderModule.astBuilder().construct<AST::Variable>(
                 SourceSpan::empty(),
                 AST::VariableFlavor::Var,
                 AST::Identifier::make(data.name),
@@ -242,7 +242,7 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
     if (auto* structType = std::get_if<Types::Struct>(data.type.resolvedType())) {
         m_materializations.append(makeUniqueRef<AST::VariableStatement>(
             SourceSpan::empty(),
-            makeUniqueRef<AST::Variable>(
+            m_shaderModule.astBuilder().construct<AST::Variable>(
                 SourceSpan::empty(),
                 AST::VariableFlavor::Var,
                 AST::Identifier::make(data.name),

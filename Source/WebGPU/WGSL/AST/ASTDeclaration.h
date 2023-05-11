@@ -25,18 +25,19 @@
 
 #pragma once
 
+#include "ASTBuilder.h"
 #include "ASTNode.h"
-
+#include <wtf/ReferenceWrapperVector.h>
 #include <wtf/TypeCasts.h>
-#include <wtf/UniqueRefVector.h>
 
 namespace WGSL::AST {
 
 class Declaration : public Node {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(Declaration);
 public:
-    using List = UniqueRefVector<Declaration>;
+    using List = ReferenceWrapperVector<Declaration>;
 
+protected:
     Declaration(SourceSpan span)
         : Node(span)
     { }

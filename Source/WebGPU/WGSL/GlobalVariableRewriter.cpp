@@ -322,7 +322,7 @@ void RewriteGlobalVariables::insertStructs(const UsedGlobals& usedGlobals)
             ));
         }
 
-        m_callGraph.ast().append(m_callGraph.ast().structures(), makeUniqueRef<AST::Structure>(
+        m_callGraph.ast().append(m_callGraph.ast().structures(), m_callGraph.ast().astBuilder().construct<AST::Structure>(
             SourceSpan::empty(),
             WTFMove(structName),
             WTFMove(structMembers),

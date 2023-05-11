@@ -411,7 +411,7 @@ Result<void> Parser<Lexer>::parseGlobalDecl()
     }
     case TokenType::KeywordFn: {
         PARSE(fn, Function, WTFMove(attributes));
-        m_shaderModule.functions().append(makeUniqueRef<AST::Function>(WTFMove(fn)));
+        m_shaderModule.functions().append(WTFMove(fn));
         return { };
     }
     default:
@@ -545,7 +545,7 @@ Result<AST::Structure::Ref> Parser<Lexer>::parseStructure(AST::Attribute::List&&
 
     CONSUME_TYPE(BraceRight);
 
-    RETURN_NODE_UNIQUE_REF(Structure, WTFMove(name), WTFMove(members), WTFMove(attributes), AST::StructureRole::UserDefined);
+    RETURN_ARENA_NODE(Structure, WTFMove(name), WTFMove(members), WTFMove(attributes), AST::StructureRole::UserDefined);
 }
 
 template<typename Lexer>
@@ -673,10 +673,10 @@ Result<AST::Variable::Ref> Parser<Lexer>::parseVariableWithAttributes(AST::Attri
 
     auto varFlavor = flavor(varKind);
 
-    std::unique_ptr<AST::VariableQualifier> maybeQualifier = nullptr;
+    AST::VariableQualifier::Ptr maybeQualifier = nullptr;
     if (current().type == TokenType::Lt) {
         PARSE(variableQualifier, VariableQualifier);
-        maybeQualifier = WTF::makeUnique<AST::VariableQualifier>(WTFMove(variableQualifier));
+        maybeQualifier = &variableQualifier.get();
     }
 
     PARSE(name, Identifier);
@@ -695,11 +695,11 @@ Result<AST::Variable::Ref> Parser<Lexer>::parseVariableWithAttributes(AST::Attri
         maybeInitializer = &initializerExpr.get();
     }
 
-    RETURN_NODE_UNIQUE_REF(Variable, varFlavor, WTFMove(name), WTFMove(maybeQualifier), WTFMove(maybeType), WTFMove(maybeInitializer), WTFMove(attributes));
+    RETURN_ARENA_NODE(Variable, varFlavor, WTFMove(name), WTFMove(maybeQualifier), WTFMove(maybeType), WTFMove(maybeInitializer), WTFMove(attributes));
 }
 
 template<typename Lexer>
-Result<AST::VariableQualifier> Parser<Lexer>::parseVariableQualifier()
+Result<AST::VariableQualifier::Ref> Parser<Lexer>::parseVariableQualifier()
 {
     START_PARSE();
 
@@ -715,8 +715,7 @@ Result<AST::VariableQualifier> Parser<Lexer>::parseVariableQualifier()
     }
 
     CONSUME_TYPE(Gt);
-
-    RETURN_NODE(VariableQualifier, storageClass, accessMode);
+    RETURN_ARENA_NODE(VariableQualifier, storageClass, accessMode);
 }
 
 template<typename Lexer>
@@ -770,7 +769,7 @@ Result<AST::AccessMode> Parser<Lexer>::parseAccessMode()
 }
 
 template<typename Lexer>
-Result<AST::Function> Parser<Lexer>::parseFunction(AST::Attribute::List&& attributes)
+Result<AST::Function::Ref> Parser<Lexer>::parseFunction(AST::Attribute::List&& attributes)
 {
     START_PARSE();
 
@@ -801,7 +800,7 @@ Result<AST::Function> Parser<Lexer>::parseFunction(AST::Attribute::List&& attrib
 
     PARSE(body, CompoundStatement);
 
-    RETURN_NODE(Function, WTFMove(name), WTFMove(parameters), WTFMove(maybeReturnType), WTFMove(body), WTFMove(attributes), WTFMove(returnAttributes));
+    RETURN_ARENA_NODE(Function, WTFMove(name), WTFMove(parameters), WTFMove(maybeReturnType), WTFMove(body), WTFMove(attributes), WTFMove(returnAttributes));
 }
 
 template<typename Lexer>

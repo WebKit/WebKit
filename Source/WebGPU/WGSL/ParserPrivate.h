@@ -67,10 +67,10 @@ public:
     Result<AST::TypeName::Ref> parseArrayType();
     Result<AST::Variable::Ref> parseVariable();
     Result<AST::Variable::Ref> parseVariableWithAttributes(AST::Attribute::List&&);
-    Result<AST::VariableQualifier> parseVariableQualifier();
+    Result<AST::VariableQualifier::Ref> parseVariableQualifier();
     Result<AST::StorageClass> parseStorageClass();
     Result<AST::AccessMode> parseAccessMode();
-    Result<AST::Function> parseFunction(AST::Attribute::List&&);
+    Result<AST::Function::Ref> parseFunction(AST::Attribute::List&&);
     Result<std::reference_wrapper<AST::Parameter>> parseParameter();
     Result<AST::Statement::Ref> parseStatement();
     Result<AST::CompoundStatement> parseCompoundStatement();
