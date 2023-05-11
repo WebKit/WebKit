@@ -266,11 +266,10 @@ GraphicsContext& RemoteImageBufferProxy::context() const
 void RemoteImageBufferProxy::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
     if (canMapBackingStore()) {
+        // Simulate a write so that pending reads migrate the data off of the mapped buffer.
+        context().fillRect({ });
         const_cast<RemoteImageBufferProxy&>(*this).flushDrawingContext();
         ImageBuffer::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
-        // Simulate a write so that read caches are cleared.
-        // FIXME: This should not be done via the context draw, as that induces a flush.
-        context().fillRect({ });
         return;
     }
 
