@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ASTBuilder.h"
 
+#include "ASTNode.h"
+
 namespace WGSL::AST {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(WGSLAST);

@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "ASTNode.h"
 #include <wtf/MallocPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Nonmovable.h>
@@ -46,6 +45,8 @@ namespace WGSL {
 class ShaderModule;
 
 namespace AST {
+
+class Node;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(WGSLAST);
 

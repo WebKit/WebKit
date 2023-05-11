@@ -68,23 +68,11 @@ struct TemplateTypes<TT> {
 #define CURRENT_SOURCE_SPAN() \
     SourceSpan(_startOfElementPosition, m_lexer.currentPosition())
 
-#define MAKE_NODE_UNIQUE_REF(type, ...) \
-    makeUniqueRef<AST::type>(CURRENT_SOURCE_SPAN() __VA_OPT__(,) __VA_ARGS__) /* NOLINT */
-
 #define MAKE_ARENA_NODE(type, ...) \
     m_builder.construct<AST::type>(CURRENT_SOURCE_SPAN() __VA_OPT__(,) __VA_ARGS__) /* NOLINT */
 
-#define RETURN_NODE(type, ...) \
-    do { \
-        AST::type astNodeResult(CURRENT_SOURCE_SPAN() __VA_OPT__(,) __VA_ARGS__); /* NOLINT */ \
-        return { WTFMove(astNodeResult) }; \
-    } while (false)
-
 #define RETURN_ARENA_NODE(type, ...) \
     return { MAKE_ARENA_NODE(type __VA_OPT__(,) __VA_ARGS__) }; /* NOLINT */
-
-#define RETURN_NODE_UNIQUE_REF(type, ...) \
-    return { MAKE_NODE_UNIQUE_REF(type __VA_OPT__(,) __VA_ARGS__) }; /* NOLINT */
 
 #define FAIL(string) \
     return makeUnexpected(Error(string, CURRENT_SOURCE_SPAN()));
