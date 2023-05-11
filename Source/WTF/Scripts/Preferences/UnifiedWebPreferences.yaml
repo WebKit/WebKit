@@ -6165,7 +6165,7 @@ StrictSecureDecodingForAllObjC:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: false
+      default: true
 
 SubgridEnabled:
   type: bool

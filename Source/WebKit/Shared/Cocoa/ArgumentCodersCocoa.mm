@@ -276,7 +276,7 @@ bool strictSecureDecodingForAllObjCEnabled()
     }
     ASSERT(!strictSecureDecodingForAllObjCEnabledValue());
 
-    static bool cachedValue { WebKit::experimentalFeatureEnabled(WebKit::WebPreferencesKey::strictSecureDecodingForAllObjCKey()) };
+    static bool cachedValue { WebKit::experimentalFeatureEnabled(WebKit::WebPreferencesKey::strictSecureDecodingForAllObjCKey(), true) };
     return cachedValue;
 }
 

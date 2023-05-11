@@ -95,13 +95,13 @@ static std::atomic<bool> hasInitializedManagedDomains = false;
 static std::atomic<bool> managedKeyExists = false;
 #endif
 
-bool experimentalFeatureEnabled(const String& key)
+bool experimentalFeatureEnabled(const String& key, bool defaultValue)
 {
     auto defaultsKey = adoptNS([[NSString alloc] initWithFormat:@"WebKitExperimental%@", static_cast<NSString *>(key)]);
     if ([[NSUserDefaults standardUserDefaults] objectForKey:defaultsKey.get()] != nil)
         return [[NSUserDefaults standardUserDefaults] boolForKey:defaultsKey.get()];
 
-    return false;
+    return defaultValue;
 }
 
 static NSString* applicationOrProcessIdentifier()
