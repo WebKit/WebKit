@@ -4177,10 +4177,6 @@ static void adjustSettingsForLockdownMode(Settings& settings, const WebPreferenc
     settings.setFileReaderAPIEnabled(false);
     settings.setFileSystemAccessEnabled(false);
     settings.setIndexedDBAPIEnabled(false);
-#if ENABLE(SERVICE_WORKER)
-    settings.setServiceWorkersEnabled(false);
-    settings.setServiceWorkerNavigationPreloadEnabled(false);
-#endif
     settings.setWebLocksAPIEnabled(false);
     settings.setCacheAPIEnabled(false);
 
