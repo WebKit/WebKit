@@ -745,7 +745,7 @@ static bool shouldPaintBoundsRect(const IntRect& bounds, const Vector<IntRect, 1
 
 void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
 {
-    ASSERT(!m_isPaintingSuspended);
+    ASSERT(!m_isPaintingSuspended || m_inUpdateGeometry);
     ASSERT(!m_layerTreeHost);
 
     m_webPage.updateRendering();
