@@ -7555,9 +7555,7 @@
 		41433CE71F79B33300387B4D /* lpc_tables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lpc_tables.h; path = fix/source/lpc_tables.h; sourceTree = "<group>"; };
 		41433CE81F79B33300387B4D /* arith_routines_hist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = arith_routines_hist.c; path = fix/source/arith_routines_hist.c; sourceTree = "<group>"; };
 		41433CE91F79B33300387B4D /* isacfix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = isacfix.c; path = fix/source/isacfix.c; sourceTree = "<group>"; };
-		41433D2B1F79B39200387B4D /* libwebrtc.iOS.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = libwebrtc.iOS.exp; sourceTree = "<group>"; };
-		41433D2C1F79B39200387B4D /* libwebrtc.mac.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = libwebrtc.mac.exp; sourceTree = "<group>"; };
-		41433D2D1F79B39200387B4D /* libwebrtc.iOSsim.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = libwebrtc.iOSsim.exp; sourceTree = "<group>"; };
+		41433D2C1F79B39200387B4D /* libwebrtc.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = libwebrtc.exp; sourceTree = "<group>"; };
 		4144B3D021698966004363AC /* RTCNativeMutableI420Buffer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RTCNativeMutableI420Buffer.mm; sourceTree = "<group>"; };
 		4144B3D92169A06F004363AC /* RTCVideoDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCVideoDecoder.h; sourceTree = "<group>"; };
 		4144B3DA2169A06F004363AC /* RTCVideoEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCVideoEncoder.h; sourceTree = "<group>"; };
@@ -9100,6 +9098,7 @@
 		41FE8676215C54AA00B62C07 /* cv-symline.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "cv-symline.c"; sourceTree = "<group>"; };
 		41FE8677215C54AA00B62C07 /* cv-type.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "cv-type.c"; sourceTree = "<group>"; };
 		41FE8678215C54AA00B62C07 /* cv-dbgfmt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "cv-dbgfmt.c"; sourceTree = "<group>"; };
+		44C229C12A0AF4130008308E /* libwebrtc.testing.exp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.exports; path = libwebrtc.testing.exp; sourceTree = "<group>"; };
 		5C0073091E5513E70042215A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		5C00730A1E5513E70042215A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		5C00730B1E5513E70042215A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
@@ -19248,9 +19247,8 @@
 				5C0884891E4A978C00403995 /* libsrtp.xcconfig */,
 				411ED035212E05DE004320BA /* libvpx.xcconfig */,
 				CDEBB11E24C0189600ADBD44 /* libwebm.xcconfig */,
-				41433D2B1F79B39200387B4D /* libwebrtc.iOS.exp */,
-				41433D2D1F79B39200387B4D /* libwebrtc.iOSsim.exp */,
-				41433D2C1F79B39200387B4D /* libwebrtc.mac.exp */,
+				41433D2C1F79B39200387B4D /* libwebrtc.exp */,
+				44C229C12A0AF4130008308E /* libwebrtc.testing.exp */,
 				5D7C59C51208C68B001C873E /* libwebrtc.xcconfig */,
 				5C08848A1E4A978C00403995 /* libyuv.xcconfig */,
 				5C4B4A8F1E42C431002651C8 /* opus.xcconfig */,
@@ -22675,6 +22673,7 @@
 			buildConfigurationList = FB39D0D61200F11E00088E69 /* Build configuration list for PBXNativeTarget "libwebrtc" */;
 			buildPhases = (
 				FB39D77B1201110C00088E69 /* Headers */,
+				44C229C02A0AF12E0008308E /* Generate Export Files */,
 				FB39D0CE1200F0E300088E69 /* Sources */,
 				FB39D0CF1200F0E300088E69 /* Frameworks */,
 				5CD286461E6E154E0094FDC8 /* Check for Weak VTables and Externals */,
@@ -22776,6 +22775,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../../Tools/Scripts/check-for-inappropriate-objc-class-names WK_RTC || exit $?\nfi\n";
+		};
+		44C229C02A0AF12E0008308E /* Generate Export Files */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(PROJECT_DIR)/Configurations/libwebrtc.exp",
+				"$(PROJECT_DIR)/Configurations/libwebrtc.testing.exp",
+			);
+			name = "Generate Export Files";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(EXPORTED_SYMBOLS_FILE)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n\nEXP_GENERATED=\"${SCRIPT_OUTPUT_FILE_0}\"\n\n[[ -z \"${EXP_GENERATED}\" ]] && exit 1\n\ncat \"${SCRIPT_INPUT_FILE_0}\" > \"${EXP_GENERATED}\"\n\nif [[ \"${WK_EXPORT_SYMBOLS_FOR_TESTING}\" == \"YES\" ]]; then\n    cat \"${SCRIPT_INPUT_FILE_1}\" >> \"${EXP_GENERATED}\"\nfi\n";
 		};
 		5CD286461E6E154E0094FDC8 /* Check for Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+// Copyright (C) 2017-2023 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -25,11 +25,7 @@
 
 PRODUCT_NAME = libwebrtc;
 
-EXPORTED_SYMBOLS_FILE[sdk=macosx*] = $(EXPORTED_SYMBOLS_FILE_$(WK_IS_CATALYST))
-EXPORTED_SYMBOLS_FILE_NO = Configurations/libwebrtc.mac.exp;
-EXPORTED_SYMBOLS_FILE_YES = Configurations/libwebrtc.iOS.exp;
-EXPORTED_SYMBOLS_FILE[sdk=iphoneos*] = Configurations/libwebrtc.iOS.exp;
-EXPORTED_SYMBOLS_FILE[sdk=iphonesimulator*] = Configurations/libwebrtc.iOSsim.exp;
+EXPORTED_SYMBOLS_FILE = $(BUILT_PRODUCTS_DIR)/DerivedSources/libwebrtc/libwebrtc.generated.exp;
 
 INSTALL_PATH = $(WEBCORE_LIBRARY_DIR);
 
