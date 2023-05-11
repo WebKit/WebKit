@@ -293,6 +293,7 @@ private:
     float m_initialScale { 1 };
     DestinationColorSpace m_colorSpace;
     const DrawGlyphsMode m_drawGlyphsMode { DrawGlyphsMode::Normal };
+    const FloatRect m_initialClip;
 };
 
 } // namespace DisplayList

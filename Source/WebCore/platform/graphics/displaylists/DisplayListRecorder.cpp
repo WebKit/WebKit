@@ -51,6 +51,7 @@ Recorder::Recorder(const GraphicsContextState& state, const FloatRect& initialCl
     , m_initialScale(initialCTM.xScale())
     , m_colorSpace(colorSpace)
     , m_drawGlyphsMode(drawGlyphsMode)
+    , m_initialClip(initialClip)
 {
     ASSERT(!state.changes());
     m_stateStack.append({ state, initialCTM, initialCTM.mapRect(initialClip) });
@@ -545,6 +546,8 @@ void Recorder::drawControlPart(ControlPart& part, const FloatRoundedRect& border
 
 void Recorder::resetClip()
 {
+    currentState().clipBounds = m_initialClip;
+
     recordResetClip();
 }
 

@@ -277,6 +277,19 @@ struct DrawSystemImage {
     }
 };
 
+struct ResetClipRect {
+    void operator()(WebCore::GraphicsContext& c)
+    {
+        c.resetClip();
+    }
+
+    static String description()
+    {
+        return R"DL(
+(reset-clip))DL"_s;
+    }
+};
+
 struct ChangeAntialiasBeforeClipRect {
     void operator()(WebCore::GraphicsContext& c)
     {
@@ -442,7 +455,7 @@ struct TrivialRotate {
 using AllOperations = testing::Types<NoCommands, ChangeAntialias, ChangeAntialiasBeforeSave,
     ChangeAntialiasBeforeAndAfterSave, ChangeAntialiasInEmptySaveRestore, DrawSystemImage, ChangeAntialiasBeforeClipRect,
     ChangeAntialiasBeforeClipOutRect, ChangeAntialiasBeforeClipOutPath, ChangeAntialiasBeforeClipPath,
-    ChangeAntialiasBeforeClipToImageBuffer, TrivialTranslate, TrivialScale, TrivialRotate>;
+    ChangeAntialiasBeforeClipToImageBuffer, TrivialTranslate, TrivialScale, TrivialRotate, ResetClipRect>;
 
 }
 
