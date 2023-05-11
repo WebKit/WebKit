@@ -1221,7 +1221,7 @@ JSValue LiteralParser<CharType>::parseRecursively(VM& vm, uint8_t* stackLimit)
                 value = parseRecursively(vm, stackLimit);
             else
                 value = parsePrimitiveValue(vm);
-            EXCEPTION_ASSERT(!!scope.exception() == !value);
+            EXCEPTION_ASSERT((!!scope.exception() || !m_parseErrorMessage.isNull()) == !value);
             if (UNLIKELY(!value))
                 return { };
 
@@ -1266,7 +1266,7 @@ JSValue LiteralParser<CharType>::parseRecursively(VM& vm, uint8_t* stackLimit)
                 value = parseRecursively(vm, stackLimit);
             else
                 value = parsePrimitiveValue(vm);
-            EXCEPTION_ASSERT(!!scope.exception() == !value);
+            EXCEPTION_ASSERT((!!scope.exception() || !m_parseErrorMessage.isNull()) == !value);
             if (UNLIKELY(!value))
                 return { };
 
