@@ -83,9 +83,6 @@ struct TemplateTypes<TT> {
 #define RETURN_ARENA_NODE(type, ...) \
     return { MAKE_ARENA_NODE(type __VA_OPT__(,) __VA_ARGS__) }; /* NOLINT */
 
-#define RETURN_NODE_REF(type, ...) \
-    return { adoptRef(*new AST::type(CURRENT_SOURCE_SPAN(), __VA_ARGS__)) };
-
 #define RETURN_NODE_UNIQUE_REF(type, ...) \
     return { MAKE_NODE_UNIQUE_REF(type __VA_OPT__(,) __VA_ARGS__) }; /* NOLINT */
 

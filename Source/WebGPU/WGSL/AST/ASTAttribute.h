@@ -27,7 +27,6 @@
 
 #include "ASTNode.h"
 
-#include <wtf/RefCounted.h>
 #include <wtf/ReferenceWrapperVector.h>
 
 namespace WGSL::AST {
