@@ -1589,7 +1589,12 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& f
     if (!internalFrame)
         return { };
 
+    // FIXME: Add support for srcRect
     context->paintVideoFrame(*internalFrame, dstRect, frame.shoudlDiscardAlpha());
+
+    auto normalizedDstRect = normalizeRect(dstRect);
+    bool repaintEntireCanvas = rectContainsCanvas(normalizedDstRect);
+    didDraw(repaintEntireCanvas, normalizedDstRect);
 
     return { };
 }
