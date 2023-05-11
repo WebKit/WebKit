@@ -1494,10 +1494,13 @@ bool RenderFlexibleBox::updateAutoMarginsInCrossAxis(RenderBox& child, LayoutUni
 LayoutUnit RenderFlexibleBox::marginBoxAscentForChild(const RenderBox& child)
 {
     auto ascent = alignmentForChild(child) == ItemPosition::LastBaseline ? child.lastLineBaseline() : child.firstLineBaseline();
-    auto direction = isHorizontalFlow() ? HorizontalLine : VerticalLine;
-    if (!ascent) 
+    auto isHorizontalFlow = this->isHorizontalFlow();
+    auto direction = isHorizontalFlow ? HorizontalLine : VerticalLine;
+    if (!ascent)
         return synthesizedBaseline(child, style(), direction, BorderBox) + flowAwareMarginBeforeForChild(child);
-    return *ascent + flowAwareMarginBeforeForChild(child);
+    if (isHorizontalFlow ? child.isScrollContainerY() : child.isScrollContainerX())
+        return std::clamp(*ascent, 0_lu, crossAxisExtentForChild(child)) + flowAwareMarginBeforeForChild(child);
+    return *ascent + flowAwareMarginBeforeForChild(child);;
 }
 
 LayoutUnit RenderFlexibleBox::computeChildMarginValue(Length margin)
@@ -2209,10 +2212,8 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vect
             maxDescent = std::max(maxDescent, descent);
             if (alignment == ItemPosition::Baseline) {
                 maxAscent =  std::max(maxAscent, ascent);
-                // FIXME: Take scrollbar into account (https://bugs.webkit.org/show_bug.cgi?id=246229)
                 childCrossAxisMarginBoxExtent = maxAscent + maxDescent;
             } else {
-                // FIXME: Take scrollbar into account (https://bugs.webkit.org/show_bug.cgi?id=246229)
                 lastBaselineMaxAscent = std::max(lastBaselineMaxAscent, ascent);
                 childCrossAxisMarginBoxExtent = lastBaselineMaxAscent + maxDescent;
             }

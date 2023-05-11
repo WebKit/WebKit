@@ -477,6 +477,9 @@ public:
     inline bool hasScrollableOverflowX() const;
     inline bool hasScrollableOverflowY() const;
 
+    bool isScrollContainerX() const { return style().overflowX() == Overflow::Scroll || style().overflowX() == Overflow::Hidden || style().overflowX() == Overflow::Auto;  }
+    bool isScrollContainerY() const { return style().overflowY() == Overflow::Scroll || style().overflowY() == Overflow::Hidden || style().overflowY() == Overflow::Auto; }
+
     LayoutBoxExtent scrollPaddingForViewportRect(const LayoutRect& viewportRect);
 
     bool usesCompositedScrolling() const;
