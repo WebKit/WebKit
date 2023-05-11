@@ -708,9 +708,9 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
     if ([allowedClasses containsObject:NSParagraphStyle.class])
         return haveStrictDecodableNSTextTable() && strictSecureDecodingForAllObjCEnabled();
 
-    // rdar://109121874 don't reintroduce crash in rdar://105853449 added test
+    // rdar://109121874
     if ([allowedClasses containsObject:NSPresentationIntent.class])
-        return haveStrictDecodableNSTextTable() && strictSecureDecodingForAllObjCEnabled();
+        return strictSecureDecodingForAllObjCEnabled();
 
     // rdar://107553194, Don't reintroduce rdar://108339450
     if ([allowedClasses containsObject:NSMutableURLRequest.class])
@@ -730,6 +730,9 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
         || ([allowedClasses containsObject:NSURLCredential.class] && isDecodingKnownNSURLCredentialMessage(decoder))) // rdar://107553367
         return true;
 
+    // Note: Do not add more classes to the list of strict decoded classes.
+    // If you want to serialize something new, extract its contents into a
+    // struct and use a *.serialization.in file to serialize its contents.
     RELEASE_LOG_FAULT(SecureCoding, "Strict mode check found unknown classes %@", allowedClasses);
     ASSERT_NOT_REACHED();
     return true;
