@@ -36,13 +36,15 @@ for name, variable in dict(
     try:
         value = subprocess.check_output(
             ['git', 'config', '--get-all', 'branch.{}.{}'.format(BRANCH, name)],
+            stderr=subprocess.PIPE,
             **ENCODING_KWARGS
         ).strip()
-        if not value:
-            continue
-        os.environ[variable] = value
-    except subprocess.CalledProcessError:
-        continue
+        if value:
+            os.environ[variable] = value
+    except subprocess.CalledProcessError as error:
+        # `1` means that key did not exist, which is valid.
+        if error.returncode != 1:
+            sys.stderr.write(error.stderr)
 
 
 def get_bugs_string():
