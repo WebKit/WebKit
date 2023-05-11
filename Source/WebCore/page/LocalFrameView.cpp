@@ -3813,6 +3813,8 @@ void LocalFrameView::flushAnyPendingPostLayoutTasks()
 
 void LocalFrameView::performPostLayoutTasks()
 {
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
     // FIXME: We should not run any JavaScript code in this function.
     LOG(Layout, "LocalFrameView %p performPostLayoutTasks", this);
     updateHasReachedSignificantRenderedTextThreshold();
