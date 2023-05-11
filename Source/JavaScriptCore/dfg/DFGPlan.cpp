@@ -337,7 +337,7 @@ Plan::CompilationPath Plan::compileInThreadImpl()
                 return FailPath;
             }
         }
-        dumpAndVerifyGraph(dfg, "Graph after optimization:");
+        dumpAndVerifyGraph(dfg, "Graph after optimization:", Options::dumpOptimizedDFGGraph());
         
         {
             CompilerTimingScope timingScope("DFG", "machine code generation");
@@ -440,7 +440,7 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         }
 
         dfg.nextPhase();
-        dumpAndVerifyGraph(dfg, "Graph just before FTL lowering:", shouldDumpDisassembly(m_mode));
+        dumpAndVerifyGraph(dfg, "Graph just before FTL lowering:", shouldDumpDisassembly(m_mode) || Options::dumpOptimizedDFGFTLGraph());
 
         // Flash a safepoint in case the GC wants some action.
         Safepoint::Result safepointResult;

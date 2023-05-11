@@ -152,7 +152,9 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, dumpGraphAfterParsing, false, Normal, nullptr) \
     v(Bool, dumpGraphAtEachPhase, false, Normal, nullptr) \
     v(Bool, dumpDFGGraphAtEachPhase, false, Normal, "dumps the DFG graph at each phase of DFG compilation (note this excludes DFG graphs during FTL compilation)") \
+    v(Bool, dumpOptimizedDFGGraph, false, Normal, "dumps the DFG graph after last phase of DFG compilation (note this excludes DFG graphs during FTL compilation)") \
     v(Bool, dumpDFGFTLGraphAtEachPhase, false, Normal, "dumps the DFG graph at each phase of DFG compilation when compiling FTL code") \
+    v(Bool, dumpOptimizedDFGFTLGraph, false, Normal, "dumps the DFG graph after last phase of DFG compilation when compiling FTL code") \
     v(Bool, dumpB3GraphAtEachPhase, false, Normal, "dumps the B3 graph at each phase of compilation") \
     v(Bool, dumpAirGraphAtEachPhase, false, Normal, "dumps the Air graph at each phase of compilation") \
     v(Bool, verboseDFGBytecodeParsing, false, Normal, nullptr) \
