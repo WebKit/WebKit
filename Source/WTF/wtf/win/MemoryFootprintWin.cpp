@@ -44,8 +44,8 @@ size_t memoryFootprint()
     // > The shared data includes pages that contain all instructions your application executes,
     // > including those in your DLLs and the system DLLs. As the working set size increases,
     // > memory demand increases.
-    Win32Handle process(OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, GetCurrentProcessId()));
-    if (!process.isValid())
+    auto process = Win32Handle::adopt(::OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, GetCurrentProcessId()));
+    if (!process)
         return 0;
 
     auto countSizeOfPrivateWorkingSet = [] (const PSAPI_WORKING_SET_INFORMATION& workingSets) {

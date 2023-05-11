@@ -115,7 +115,7 @@ void ProcessLauncher::launchProcess()
 
     // We've finished launching the process, message back to the run loop.
     RefPtr<ProcessLauncher> protectedThis(this);
-    m_hProcess = processInformation.hProcess;
+    m_hProcess = Win32Handle::adopt(processInformation.hProcess);
     WTF::ProcessID pid = processInformation.dwProcessId;
 
     RunLoop::main().dispatch([protectedThis, pid, serverIdentifier] {
@@ -125,7 +125,7 @@ void ProcessLauncher::launchProcess()
 
 void ProcessLauncher::terminateProcess()
 {
-    if (!m_hProcess.isValid())
+    if (!m_hProcess)
         return;
 
     ::TerminateProcess(m_hProcess.get(), 0);
@@ -133,7 +133,7 @@ void ProcessLauncher::terminateProcess()
 
 void ProcessLauncher::platformInvalidate()
 {
-    m_hProcess.clear();
+    m_hProcess = { };
 }
 
 } // namespace WebKit

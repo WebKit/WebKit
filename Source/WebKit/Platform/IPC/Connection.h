@@ -200,7 +200,7 @@ public:
         int handle { -1 };
 #elif OS(WINDOWS)
         explicit Identifier(Handle&& handle)
-            : Identifier(handle.release())
+            : Identifier(handle.leak())
         {
         }
         explicit Identifier(HANDLE handle)

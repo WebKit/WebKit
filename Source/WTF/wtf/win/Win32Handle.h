@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Patrick Gansterer <paroga@paroga.com>
+ * Copyright (C) 2023 Sony Interactive Entertainment Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,73 +25,34 @@
 
 #pragma once
 
-#include <memory>
 #include <windows.h>
-#include <wtf/Noncopyable.h>
+#include <wtf/FastMalloc.h>
 
 namespace WTF {
 
 class Win32Handle {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
+    WTF_EXPORT_PRIVATE static Win32Handle adopt(HANDLE);
+
     Win32Handle() = default;
-    explicit Win32Handle(HANDLE handle) : m_handle(handle) { }
-    Win32Handle(const Win32Handle& other)
-    {
-        *this = other;
-    }
+    WTF_EXPORT_PRIVATE Win32Handle(const Win32Handle&);
+    WTF_EXPORT_PRIVATE Win32Handle(Win32Handle&&);
+    WTF_EXPORT_PRIVATE ~Win32Handle();
 
-    Win32Handle(Win32Handle&& other)
-    {
-        *this = WTFMove(other);
-    }
+    WTF_EXPORT_PRIVATE Win32Handle& operator=(const Win32Handle&);
+    WTF_EXPORT_PRIVATE Win32Handle& operator=(Win32Handle&&);
 
-    ~Win32Handle() { clear(); }
-
-    Win32Handle& operator=(const Win32Handle& other)
-    {
-        if (this != &other) {
-            clear();
-            if (other.isValid()) {
-                auto processHandle = ::GetCurrentProcess();
-                ::DuplicateHandle(processHandle, other.m_handle, processHandle, &m_handle, 0, FALSE, DUPLICATE_SAME_ACCESS);
-            }
-        }
-        return *this;
-    }
-
-    Win32Handle& operator=(Win32Handle&& other)
-    {
-        if (this != &other) {
-            clear();
-            m_handle = other.release();
-        }
-        return *this;
-    }
-
-    void clear()
-    {
-        if (!isValid())
-            return;
-        CloseHandle(m_handle);
-        m_handle = INVALID_HANDLE_VALUE;
-    }
-
-    bool isValid() const { return m_handle != INVALID_HANDLE_VALUE; }
-    explicit operator bool() const { return isValid(); }
+    explicit operator bool() const { return m_handle != INVALID_HANDLE_VALUE; }
 
     HANDLE get() const { return m_handle; }
-    HANDLE release() { HANDLE ret = m_handle; m_handle = INVALID_HANDLE_VALUE; return ret; }
 
-    Win32Handle& operator=(HANDLE handle)
-    {
-        clear();
-        m_handle = handle;
-        return *this;
-    }
+    WTF_EXPORT_PRIVATE Win32Handle copy() const;
+    WTF_EXPORT_PRIVATE HANDLE leak() WARN_UNUSED_RETURN;
 
 private:
+    explicit Win32Handle(HANDLE);
+
     HANDLE m_handle { INVALID_HANDLE_VALUE };
 };
 

@@ -33,7 +33,7 @@ namespace WTF {
 
 void MemoryPressureHandler::platformInitialize()
 {
-    m_lowMemoryHandle = CreateMemoryResourceNotification(LowMemoryResourceNotification);
+    m_lowMemoryHandle = Win32Handle::adopt(::CreateMemoryResourceNotification(LowMemoryResourceNotification));
 }
 
 void MemoryPressureHandler::windowsMeasurementTimerFired()

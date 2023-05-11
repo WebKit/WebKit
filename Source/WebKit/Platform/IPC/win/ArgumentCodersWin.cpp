@@ -34,12 +34,12 @@ namespace IPC {
 
 void ArgumentCoder<Win32Handle>::encode(Encoder& encoder, const Win32Handle& handle)
 {
-    encoder << Win32Handle { handle };
+    encoder << handle.copy();
 }
 
 void ArgumentCoder<Win32Handle>::encode(Encoder& encoder, Win32Handle&& handle)
 {
-    encoder << reinterpret_cast<uint64_t>(handle.release());
+    encoder << reinterpret_cast<uint64_t>(handle.leak());
     // Send along our PID so that the receiving process can duplicate the HANDLE for its own use.
     encoder << static_cast<uint32_t>(::GetCurrentProcessId());
 }
@@ -52,7 +52,7 @@ std::optional<Win32Handle> ArgumentCoder<Win32Handle>::decode(Decoder& decoder)
         return std::nullopt;
     if (reinterpret_cast<HANDLE>(*sourceHandle) == INVALID_HANDLE_VALUE)
         return Win32Handle { };
-    Win32Handle sourceProcess { ::OpenProcess(PROCESS_DUP_HANDLE, FALSE, *sourcePID) };
+    auto sourceProcess = Win32Handle::adopt(::OpenProcess(PROCESS_DUP_HANDLE, FALSE, *sourcePID));
     if (!sourceProcess)
         return std::nullopt;
     HANDLE duplicatedHandle;
@@ -61,7 +61,7 @@ std::optional<Win32Handle> ArgumentCoder<Win32Handle>::decode(Decoder& decoder)
         ASSERT_WITH_MESSAGE(false, "::DuplicateHandle failed with error %lu", ::GetLastError());
         return std::nullopt;
     }
-    return Win32Handle { duplicatedHandle };
+    return Win32Handle::adopt(duplicatedHandle);
 }
 
 }

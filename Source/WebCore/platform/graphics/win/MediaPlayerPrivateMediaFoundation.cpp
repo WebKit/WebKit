@@ -2244,7 +2244,7 @@ void MediaPlayerPrivateMediaFoundation::VideoScheduler::setFrameRate(const MFRat
 
 HRESULT MediaPlayerPrivateMediaFoundation::VideoScheduler::startScheduler(IMFClock* clock)
 {
-    if (m_schedulerThread.isValid())
+    if (m_schedulerThread)
         return E_UNEXPECTED;
 
     HRESULT hr = S_OK;
@@ -2255,19 +2255,19 @@ HRESULT MediaPlayerPrivateMediaFoundation::VideoScheduler::startScheduler(IMFClo
     timeBeginPeriod(1);
 
     // Create an event to signal that the scheduler thread has started.
-    m_threadReadyEvent = ::CreateEvent(nullptr, FALSE, FALSE, nullptr);
-    if (!m_threadReadyEvent.isValid())
+    m_threadReadyEvent = Win32Handle::adopt(::CreateEvent(nullptr, FALSE, FALSE, nullptr));
+    if (!m_threadReadyEvent)
         return HRESULT_FROM_WIN32(GetLastError());
 
     // Create an event to signal that the flush has completed.
-    m_flushEvent = ::CreateEvent(nullptr, FALSE, FALSE, nullptr);
-    if (!m_flushEvent.isValid())
+    m_flushEvent = Win32Handle::adopt(::CreateEvent(nullptr, FALSE, FALSE, nullptr));
+    if (!m_flushEvent)
         return HRESULT_FROM_WIN32(GetLastError());
 
     // Start scheduler thread.
     DWORD threadID = 0;
-    m_schedulerThread = ::CreateThread(nullptr, 0, schedulerThreadProc, (LPVOID)this, 0, &threadID);
-    if (!m_schedulerThread.isValid())
+    m_schedulerThread = Win32Handle::adopt(::CreateThread(nullptr, 0, schedulerThreadProc, (LPVOID)this, 0, &threadID));
+    if (!m_schedulerThread)
         return HRESULT_FROM_WIN32(GetLastError());
 
     HANDLE hObjects[] = { m_threadReadyEvent.get(), m_schedulerThread.get() };
@@ -2276,7 +2276,7 @@ HRESULT MediaPlayerPrivateMediaFoundation::VideoScheduler::startScheduler(IMFClo
     DWORD result = ::WaitForMultipleObjects(2, hObjects, FALSE, INFINITE);
     if (WAIT_OBJECT_0 != result) {
         // The thread has terminated.
-        m_schedulerThread.clear();
+        m_schedulerThread = { };
         return E_UNEXPECTED;
     }
 
@@ -2287,7 +2287,7 @@ HRESULT MediaPlayerPrivateMediaFoundation::VideoScheduler::startScheduler(IMFClo
 
 HRESULT MediaPlayerPrivateMediaFoundation::VideoScheduler::stopScheduler()
 {
-    if (!m_schedulerThread.isValid())
+    if (!m_schedulerThread)
         return S_OK;
 
     // Terminate the scheduler thread
@@ -2299,9 +2299,9 @@ HRESULT MediaPlayerPrivateMediaFoundation::VideoScheduler::stopScheduler()
 
     Locker locker { m_lock };
 
-    m_scheduledSamples.clear();
-    m_schedulerThread.clear();
-    m_flushEvent.clear();
+    m_scheduledSamples = { };
+    m_schedulerThread = { };
+    m_flushEvent = { };
 
     // Clear previously set timer resolution.
     timeEndPeriod(1);
@@ -2313,7 +2313,7 @@ HRESULT MediaPlayerPrivateMediaFoundation::VideoScheduler::flush()
 {
     // This method will wait for the flush to finish on the worker thread.
 
-    if (m_schedulerThread.isValid()) {
+    if (m_schedulerThread) {
         ::PostThreadMessage(m_threadID, EventFlush, 0, 0);
 
         HANDLE objects[] = { m_flushEvent.get(), m_schedulerThread.get() };
@@ -2335,7 +2335,7 @@ HRESULT MediaPlayerPrivateMediaFoundation::VideoScheduler::scheduleSample(IMFSam
     if (!m_presenter)
         return MF_E_NOT_INITIALIZED;
 
-    if (!m_schedulerThread.isValid())
+    if (!m_schedulerThread)
         return MF_E_NOT_INITIALIZED;
 
     DWORD exitCode = 0;

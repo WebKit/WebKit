@@ -34,7 +34,7 @@ namespace IPC {
 
 Semaphore::Semaphore()
 {
-    m_semaphoreHandle = CreateSemaphoreA(nullptr, 0, 1, nullptr);
+    m_semaphoreHandle = Win32Handle::adopt(::CreateSemaphoreA(nullptr, 0, 1, nullptr));
     RELEASE_ASSERT(m_semaphoreHandle);
 }
 

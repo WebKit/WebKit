@@ -33,7 +33,7 @@ namespace WebKit {
 
 RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
 {
-    Win32Handle handle { ::CreateFileMappingW(INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, size, 0) };
+    auto handle = Win32Handle::adopt(::CreateFileMappingW(INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, size, 0));
     if (!handle)
         return nullptr;
 
@@ -69,7 +69,7 @@ RefPtr<SharedMemory> SharedMemory::map(Handle&& handle, Protection protection)
         return nullptr;
 
     // The SharedMemory object now owns the HANDLE.
-    (void) handle.m_handle.release();
+    (void) handle.m_handle.leak();
 
     return memory;
 }
@@ -89,7 +89,7 @@ RefPtr<SharedMemory> SharedMemory::adopt(HANDLE handle, size_t size, Protection 
     RefPtr<SharedMemory> memory = adoptRef(new SharedMemory);
     memory->m_size = size;
     memory->m_data = baseAddress;
-    memory->m_handle = handle;
+    memory->m_handle = Win32Handle::adopt(handle);
 
     return memory;
 }
@@ -114,7 +114,7 @@ auto SharedMemory::createHandle(Protection protection) -> std::optional<Handle>
     if (!::DuplicateHandle(processHandle, m_handle.get(), processHandle, &duplicatedHandle, accessRights(protection), FALSE, 0))
         return std::nullopt;
 
-    handle.m_handle = Win32Handle { duplicatedHandle };
+    handle.m_handle = Win32Handle::adopt(duplicatedHandle);
     handle.m_size = m_size;
     return WTFMove(handle);
 }

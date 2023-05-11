@@ -37,6 +37,7 @@ list(APPEND WTF_SOURCES
     win/PathWalker.cpp
     win/RunLoopWin.cpp
     win/ThreadingWin.cpp
+    win/Win32Handle.cpp
 )
 
 list(APPEND WTF_LIBRARIES
