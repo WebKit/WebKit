@@ -5,7 +5,8 @@
  * Copyright (C) 2011 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  * Copyright (C) 2012 University of Szeged
  * Copyright (C) 2012 Renata Hodovan <reni@webkit.org>
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -146,23 +147,24 @@ inline Document* SVGUseElement::externalDocument() const
 
 void SVGUseElement::transferSizeAttributesToTargetClone(SVGElement& shadowElement) const
 {
-    // FIXME: The check for valueInSpecifiedUnits being non-zero below is a workaround for the fact
-    // that we currently have no good way to tell whether a particular animatable attribute is a value
-    // indicating it was unspecified, or specified but could not be parsed. Would be nice to fix that some day.
-    if (is<SVGSymbolElement>(shadowElement)) {
-        // Spec (<use> on <symbol>): This generated 'svg' will always have explicit values for attributes width and height.
-        // If attributes width and/or height are provided on the 'use' element, then these attributes
-        // will be transferred to the generated 'svg'. If attributes width and/or height are not specified,
-        // the generated 'svg' element will use values of 100% for these attributes.
-        shadowElement.setAttribute(SVGNames::widthAttr, width().valueInSpecifiedUnits() ? width().valueAsAtomString() : "100%"_s);
-        shadowElement.setAttribute(SVGNames::heightAttr, height().valueInSpecifiedUnits() ? height().valueAsAtomString() : "100%"_s);
-    } else if (is<SVGSVGElement>(shadowElement)) {
-        // Spec (<use> on <svg>): If attributes width and/or height are provided on the 'use' element, then these
-        // values will override the corresponding attributes on the 'svg' in the generated tree.
-        RefPtr correspondingElement = shadowElement.correspondingElement();
-        shadowElement.setAttribute(SVGNames::widthAttr, width().valueInSpecifiedUnits() ? width().valueAsAtomString() : (correspondingElement ? correspondingElement->getAttribute(SVGNames::widthAttr) : nullAtom()));
-        shadowElement.setAttribute(SVGNames::heightAttr, height().valueInSpecifiedUnits() ? height().valueAsAtomString() : (correspondingElement ? correspondingElement->getAttribute(SVGNames::heightAttr) : nullAtom()));
-    }
+    // Use |shadowElement| for checking the element type, because we will
+    // have replaced a <symbol> with an <svg> in the instance tree.
+    if (!is<SVGSymbolElement>(shadowElement) && !is<SVGSVGElement>(shadowElement))
+        return;
+
+    // "The width and height properties on the 'use' element override the values
+    // for the corresponding properties on a referenced 'svg' or 'symbol' element
+    // when determining the used value for that property on the instance root
+    // element. However, if the computed value for the property on the 'use'
+    // element is auto, then the property is computed as normal for the element
+    // instance. ... Because auto is the initial value, if dimensions are not
+    // explicitly set on the 'use' element, the values set on the 'svg' or
+    // 'symbol' will be used as defaults."
+    // https://svgwg.org/svg2-draft/struct.html#UseElement
+
+    RefPtr correspondingElement = shadowElement.correspondingElement();
+    shadowElement.setAttribute(SVGNames::widthAttr, width().valueInSpecifiedUnits() ? width().valueAsAtomString() : (correspondingElement ? correspondingElement->getAttribute(SVGNames::widthAttr) : nullAtom()));
+    shadowElement.setAttribute(SVGNames::heightAttr, height().valueInSpecifiedUnits() ? height().valueAsAtomString() : (correspondingElement ? correspondingElement->getAttribute(SVGNames::heightAttr) : nullAtom()));
 }
 
 void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
