@@ -1,3 +1,4 @@
+//@skip if $memoryLimited
 //@ runDefault
 function shouldThrow(func, errorMessage) {
     var errorThrown = false;
