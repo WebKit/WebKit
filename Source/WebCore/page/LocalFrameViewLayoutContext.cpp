@@ -503,9 +503,6 @@ bool LocalFrameViewLayoutContext::canPerformLayout() const
     if (isInRenderTreeLayout())
         return false;
 
-    if (layoutDisallowed())
-        return false;
-
     if (view().isPainting())
         return false;
 

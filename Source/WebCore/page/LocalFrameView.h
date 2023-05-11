@@ -443,9 +443,6 @@ public:
 
     WEBCORE_EXPORT Color documentBackgroundColor() const;
 
-    void startDisallowingLayout() { layoutContext().startDisallowingLayout(); }
-    void endDisallowingLayout() { layoutContext().endDisallowingLayout(); }
-
     static MonotonicTime currentPaintTimeStamp() { return sCurrentPaintTimeStamp; } // returns 0 if not painting
     
     WEBCORE_EXPORT void updateLayoutAndStyleIfNeededRecursive();
