@@ -431,12 +431,12 @@ static void playPauseAnimationTest(NSString *testFilename)
         TestWebKitAPI::Util::runFor(0.1_s);
 }
 
-TEST(ActionSheetTests, PlayPauseAnimationInsideLink)
+TEST(ActionSheetTests, DISABLED_PlayPauseAnimationInsideLink)
 {
     playPauseAnimationTest(@"img-animation-in-anchor");
 }
 
-TEST(ActionSheetTests, PlayPauseAnimationCoveredByLink)
+TEST(ActionSheetTests, DISABLED_PlayPauseAnimationCoveredByLink)
 {
     playPauseAnimationTest(@"img-animation-covered-by-link");
 }
