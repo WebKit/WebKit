@@ -386,13 +386,14 @@ void CanvasBase::postProcessDirtyCanvasBuffer() const
         return;
 
     auto imageRect = enclosingIntRect(m_postProcessDirtyRect);
+    imageRect.intersect({ { }, size() });
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, imageBuffer->colorSpace() };
     auto pixelBuffer = imageBuffer->getPixelBuffer(format, imageRect);
     if (!is<ByteArrayPixelBuffer>(pixelBuffer))
         return;
 
     if (postProcessPixelBufferResults(*pixelBuffer, { })) {
-        imageBuffer->putPixelBuffer(*pixelBuffer, imageRect, { 0, 0 });
+        imageBuffer->putPixelBuffer(*pixelBuffer, imageRect, imageRect.location());
         m_postProcessDirtyRect = { };
     }
 }
