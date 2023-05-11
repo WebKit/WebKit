@@ -372,6 +372,9 @@ bool WebPageProxy::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEven
     if (!m_process->hasConnection())
         return false;
 
+    if (shouldAvoidSynchronouslyWaitingToPreventDeadlock())
+        return false;
+
     send(Messages::WebPage::RequestAcceptsFirstMouse(eventNumber, event), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
     bool receivedReply = m_process->connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::HandleAcceptsFirstMouse>(webPageID(), 3_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
 
