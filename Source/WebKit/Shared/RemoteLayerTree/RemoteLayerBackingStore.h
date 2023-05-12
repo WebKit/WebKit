@@ -180,6 +180,7 @@ private:
 
     struct Buffer {
         RefPtr<WebCore::ImageBuffer> imageBuffer;
+        bool isCleared { false };
 
         explicit operator bool() const
         {
@@ -206,6 +207,8 @@ private:
     Buffer m_frontBuffer;
     Buffer m_backBuffer;
     Buffer m_secondaryBackBuffer;
+
+    std::optional<WebCore::IntRect> m_previouslyPaintedRect;
 
     // FIXME: This should be removed and m_bufferHandle should be used to ref the buffer once ShareableBitmap::Handle
     // can be encoded multiple times. http://webkit.org/b/234169
