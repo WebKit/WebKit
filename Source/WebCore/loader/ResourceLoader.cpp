@@ -257,7 +257,8 @@ void ResourceLoader::start()
 
     RefPtr<SecurityOrigin> sourceOrigin = is<SubresourceLoader>(*this) ? downcast<SubresourceLoader>(*this).origin() : nullptr;
     if (!sourceOrigin && frameLoader()) {
-        auto* document = frameLoader()->frame().document();
+        auto* localFrame = dynamicDowncast<LocalFrame>(frameLoader()->frame());
+        auto* document = localFrame ? localFrame->document() : nullptr;
         sourceOrigin =  document ? &document->securityOrigin() : nullptr;
     }
 

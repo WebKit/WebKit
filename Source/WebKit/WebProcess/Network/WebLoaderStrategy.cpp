@@ -705,7 +705,8 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, WebC
     trackingParameters.frameID = frameID;
     trackingParameters.resourceID = resourceLoadIdentifier;
 
-    auto* document = frameLoader.frame().document();
+    auto* localFrame = dynamicDowncast<LocalFrame>(frameLoader.frame());
+    auto* document = localFrame ? localFrame->document() : nullptr;
     if (!document) {
         WEBLOADERSTRATEGY_WITH_FRAMELOADER_RELEASE_LOG_ERROR("loadResourceSynchronously: no document");
         error = internalError(request.url());

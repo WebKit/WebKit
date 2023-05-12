@@ -106,7 +106,7 @@ public:
     WEBCORE_EXPORT void init();
     void initForSynthesizedDocument(const URL&);
 
-    LocalFrame& frame() const { return m_frame; }
+    Frame& frame() const { return m_frame; }
 
     class PolicyChecker;
     PolicyChecker& policyChecker() const { return *m_policyChecker; }
@@ -440,7 +440,7 @@ private:
     void clearProvisionalLoadForPolicyCheck();
     bool hasOpenedFrames() const;
 
-    LocalFrame& m_frame;
+    Frame& m_frame;
     UniqueRef<FrameLoaderClient> m_client;
 
     const std::unique_ptr<PolicyChecker> m_policyChecker;

@@ -299,7 +299,8 @@ void CachedResourceRequest::updateReferrerAndOriginHeaders(FrameLoader& frameLoa
     if (!m_resourceRequest.httpOrigin().isEmpty())
         return;
 
-    auto* document = frameLoader.frame().document();
+    auto* localFrame = dynamicDowncast<LocalFrame>(frameLoader.frame());
+    auto* document = localFrame ? localFrame->document() : nullptr;
     auto actualOrigin = (document && m_options.destination == FetchOptionsDestination::EmptyString && m_initiatorType == cachedResourceRequestInitiatorTypes().fetch) ? Ref { document->securityOrigin() } : SecurityOrigin::createFromString(outgoingReferrer);
     String outgoingOrigin;
     if (m_options.mode == FetchOptions::Mode::Cors)

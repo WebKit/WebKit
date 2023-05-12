@@ -882,18 +882,20 @@ void CachedResourceLoader::updateHTTPRequestHeaders(FrameLoader& frameLoader, Ca
     // FIXME: We should reconcile handling of MainResource with other resources.
     if (type != CachedResource::Type::MainResource)
         request.updateReferrerAndOriginHeaders(frameLoader);
+
+    auto* localFrame = dynamicDowncast<LocalFrame>(frameLoader.frame());
 #if ENABLE(PUBLIC_SUFFIX_LIST)
     // FetchMetadata depends on PSL to determine same-site relationships and without this
     // ability it is best to not set any FetchMetadata headers as sites generally expect
     // all of them or none.
-    if (frameLoader.frame().settings().fetchMetadataEnabled() && (!frameLoader.frame().document() || !frameLoader.frame().document()->quirks().shouldDisableFetchMetadata())) {
-        auto site = computeFetchMetadataSite(request.resourceRequest(), type, request.options().mode, frameLoader.frame().document()->securityOrigin());
+    if (localFrame && frameLoader.frame().settings().fetchMetadataEnabled() && (!localFrame->document() || !localFrame->document()->quirks().shouldDisableFetchMetadata())) {
+        auto site = computeFetchMetadataSite(request.resourceRequest(), type, request.options().mode, localFrame->document()->securityOrigin());
         updateRequestFetchMetadataHeaders(request.resourceRequest(), request.options(), site);
     }
 #endif // ENABLE(PUBLIC_SUFFIX_LIST)
     request.updateUserAgentHeader(frameLoader);
 
-    if (frameLoader.frame().loader().loadType() == FrameLoadType::ReloadFromOrigin)
+    if (localFrame && localFrame->loader().loadType() == FrameLoadType::ReloadFromOrigin)
         request.updateCacheModeIfNeeded(cachePolicy(type, request.resourceRequest().url()));
     request.updateAccordingCacheMode();
     request.updateAcceptEncodingHeader();

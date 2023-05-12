@@ -109,7 +109,8 @@ void WebResourceLoadScheduler::loadResource(LocalFrame& frame, CachedResource& r
 
 void WebResourceLoadScheduler::loadResourceSynchronously(FrameLoader& frameLoader, ResourceLoaderIdentifier, const ResourceRequest& request, ClientCredentialPolicy, const FetchOptions& options, const HTTPHeaderMap&, ResourceError& error, ResourceResponse& response, Vector<uint8_t>& data)
 {
-    auto* document = frameLoader.frame().document();
+    auto* localFrame = dynamicDowncast<LocalFrame>(frameLoader.frame());
+    auto* document = localFrame ? localFrame->document() : nullptr;
     auto* sourceOrigin = document ? &document->securityOrigin() : nullptr;
     ResourceHandle::loadResourceSynchronously(frameLoader.networkingContext(), request, options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use, sourceOrigin, error, response, data);
 }
@@ -267,7 +268,8 @@ void WebResourceLoadScheduler::servePendingRequests(HostInformation* host, Resou
             // For named hosts - which are only http(s) hosts - we should always enforce the connection limit.
             // For non-named hosts - everything but http(s) - we should only enforce the limit if the document isn't done parsing 
             // and we don't know all stylesheets yet.
-            Document* document = resourceLoader->frameLoader() ? resourceLoader->frameLoader()->frame().document() : 0;
+            auto* localFrame = resourceLoader->frameLoader() ? dynamicDowncast<LocalFrame>(resourceLoader->frameLoader()->frame()) : nullptr;
+            auto* document = localFrame ? localFrame->document() : nullptr;
             bool shouldLimitRequests = !host->name().isNull() || (document && (document->parsing() || !document->haveStylesheetsLoaded()));
             if (shouldLimitRequests && host->limitRequests(priority))
                 return;
