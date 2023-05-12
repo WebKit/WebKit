@@ -29,6 +29,7 @@
 #include "DocumentInlines.h"
 #include "HTMLFrameOwnerElement.h"
 #include "LocalFrame.h"
+#include "NavigationScheduler.h"
 #include "Page.h"
 #include "RemoteFrame.h"
 #include "WindowProxy.h"
@@ -44,6 +45,7 @@ Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrame
     , m_mainFrame(parent ? page.mainFrame() : *this)
     , m_settings(page.settings())
     , m_frameType(frameType)
+    , m_navigationScheduler(makeUniqueRef<NavigationScheduler>(*this))
 {
     if (parent)
         parent->tree().appendChild(*this);
@@ -52,6 +54,7 @@ Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrame
 Frame::~Frame()
 {
     m_windowProxy->detachFromFrame();
+    m_navigationScheduler->cancel();
 }
 
 std::optional<PageIdentifier> Frame::pageID() const

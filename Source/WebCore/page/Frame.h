@@ -30,6 +30,7 @@
 #include "PageIdentifier.h"
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -37,6 +38,7 @@ namespace WebCore {
 class DOMWindow;
 class FrameView;
 class HTMLFrameOwnerElement;
+class NavigationScheduler;
 class Page;
 class Settings;
 class WeakPtrImplWithEventTargetData;
@@ -64,6 +66,7 @@ public:
     WEBCORE_EXPORT void detachFromPage();
     inline HTMLFrameOwnerElement* ownerElement() const; // Defined in HTMLFrameOwnerElement.h.
     WEBCORE_EXPORT void disconnectOwnerElement();
+    NavigationScheduler& navigationScheduler() const { return m_navigationScheduler.get(); }
 
     virtual void frameDetached() = 0;
     virtual bool preventsParentFromBeingComplete() const = 0;
@@ -84,6 +87,7 @@ private:
     Frame& m_mainFrame;
     const Ref<Settings> m_settings;
     FrameType m_frameType;
+    mutable UniqueRef<NavigationScheduler> m_navigationScheduler;
 };
 
 } // namespace WebCore

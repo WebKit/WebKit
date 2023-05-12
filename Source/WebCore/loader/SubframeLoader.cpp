@@ -241,7 +241,7 @@ LocalFrame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerEl
     URL upgradedRequestURL = requestURL;
     initiatingDocument.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(upgradedRequestURL, ContentSecurityPolicy::InsecureRequestType::Load);
 
-    RefPtr frame = dynamicDowncast<LocalFrame>(ownerElement.contentFrame());
+    RefPtr frame = ownerElement.contentFrame();
     if (frame) {
         CompletionHandler<void()> stopDelayingLoadEvent = [] { };
         if (upgradedRequestURL.protocolIsJavaScript()) {

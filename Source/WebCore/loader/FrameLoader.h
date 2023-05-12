@@ -465,38 +465,38 @@ private:
 
     URL m_provisionalLoadErrorBeingHandledURL;
 
-    bool m_quickRedirectComing;
-    bool m_sentRedirectNotification;
-    bool m_inStopAllLoaders;
+    bool m_quickRedirectComing { false };
+    bool m_sentRedirectNotification { false };
+    bool m_inStopAllLoaders { false };
     bool m_inClearProvisionalLoadForPolicyCheck { false };
     bool m_shouldReportResourceTimingToParentFrame { true };
     bool m_provisionalLoadHappeningInAnotherProcess { false };
 
     String m_outgoingReferrer;
 
-    bool m_isExecutingJavaScriptFormAction;
+    bool m_isExecutingJavaScriptFormAction { false };
 
-    bool m_didCallImplicitClose;
-    bool m_wasUnloadEventEmitted;
+    bool m_didCallImplicitClose { true };
+    bool m_wasUnloadEventEmitted { false };
 
     PageDismissalType m_pageDismissalEventBeingDispatched { PageDismissalType::None };
-    bool m_isComplete;
-    bool m_needsClear;
+    bool m_isComplete { false };
+    bool m_needsClear { false };
 
     URL m_submittedFormURL;
 
     Timer m_checkTimer;
-    bool m_shouldCallCheckCompleted;
-    bool m_shouldCallCheckLoadComplete;
+    bool m_shouldCallCheckCompleted { false };
+    bool m_shouldCallCheckLoadComplete { false };
 
     WeakPtr<Frame> m_opener;
     WeakHashSet<Frame> m_openedFrames;
 
-    bool m_loadingFromCachedPage;
+    bool m_loadingFromCachedPage { false };
 
-    bool m_currentNavigationHasShownBeforeUnloadConfirmPanel;
+    bool m_currentNavigationHasShownBeforeUnloadConfirmPanel { false };
 
-    bool m_loadsSynchronously;
+    bool m_loadsSynchronously { false };
 
     SandboxFlags m_forcedSandboxFlags;
 

@@ -86,7 +86,6 @@ class IntPoint;
 class IntRect;
 class IntSize;
 class LocalFrameView;
-class NavigationScheduler;
 class Node;
 class Page;
 class RenderLayer;
@@ -147,7 +146,6 @@ public:
     const EventHandler& eventHandler() const { return m_eventHandler; }
     const FrameLoader& loader() const { return m_loader.get(); }
     FrameLoader& loader() { return m_loader.get(); }
-    NavigationScheduler& navigationScheduler() const;
     FrameSelection& selection() { return document()->selection(); }
     const FrameSelection& selection() const { return document()->selection(); }
     ScriptController& script() { return m_script; }
@@ -305,7 +303,6 @@ private:
     Vector<std::pair<Ref<DOMWrapperWorld>, UniqueRef<UserScript>>> m_userScriptsAwaitingNotification;
 
     UniqueRef<FrameLoader> m_loader;
-    mutable UniqueRef<NavigationScheduler> m_navigationScheduler;
 
     RefPtr<LocalFrameView> m_view;
     RefPtr<Document> m_doc;
@@ -344,16 +341,6 @@ private:
 
     UniqueRef<EventHandler> m_eventHandler;
 };
-
-using LocalFrame = LocalFrame;
-
-// FIXME: Remove after WebKitAdditions transitions to this change.
-#define WEBCORE_HAS_LOCAL_FRAME 1
-
-inline NavigationScheduler& LocalFrame::navigationScheduler() const
-{
-    return m_navigationScheduler.get();
-}
 
 inline LocalFrameView* LocalFrame::view() const
 {

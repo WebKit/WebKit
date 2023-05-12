@@ -163,6 +163,7 @@ WebFrame::WebFrame(WebPage& page, WebCore::FrameIdentifier frameID)
 #ifndef NDEBUG
     webFrameCounter.increment();
 #endif
+    ASSERT(!WebProcess::singleton().webFrame(m_frameID));
     WebProcess::singleton().addWebFrame(m_frameID, this);
 }
 
@@ -284,6 +285,7 @@ WebCore::FrameIdentifier WebFrame::frameID() const
 
 void WebFrame::invalidate()
 {
+    ASSERT(!WebProcess::singleton().webFrame(m_frameID) || WebProcess::singleton().webFrame(m_frameID) == this);
     WebProcess::singleton().removeWebFrame(frameID(), m_page ? std::optional<WebPageProxyIdentifier>(m_page->webPageProxyIdentifier()) : std::nullopt);
     m_coreFrame = 0;
 }

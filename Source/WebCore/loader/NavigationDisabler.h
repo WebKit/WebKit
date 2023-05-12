@@ -55,7 +55,7 @@ public:
         }
     }
 
-    static bool isNavigationAllowed(LocalFrame& frame)
+    static bool isNavigationAllowed(Frame& frame)
     {
         if (auto* localFrame = dynamicDowncast<LocalFrame>(frame.mainFrame()))
             return !localFrame->m_navigationDisableCount && !s_globalNavigationDisableCount;

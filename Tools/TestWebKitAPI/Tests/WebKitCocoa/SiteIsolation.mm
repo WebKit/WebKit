@@ -473,7 +473,7 @@ TEST(SiteIsolation, ParentNavigatingCrossOriginIframeToSameOrigin)
 {
     HTTPServer server({
         { "/example"_s, { "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe><script>onload = () => { document.getElementById('webkit_frame').src = 'https://example.com/example_subframe' }</script>"_s } },
-        { "/example_subframe"_s, { "<script>alert('done')</script>"_s } },
+        { "/example_subframe"_s, { "<script>onload = ()=>{ alert('done') }</script>"_s } },
         { "/webkit"_s, { "hi"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
