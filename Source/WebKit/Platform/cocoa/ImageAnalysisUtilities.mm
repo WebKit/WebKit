@@ -398,37 +398,48 @@ static RetainPtr<CGImageRef> imageFilledWithWhiteBackground(CGImageRef image)
 
 void requestPayloadForQRCode(CGImageRef image, CompletionHandler<void(NSString *)>&& completion)
 {
+    ASSERT(RunLoop::isMain());
+
     if (!image || !PAL::isVisionFrameworkAvailable())
         return completion(nil);
 
-    auto adjustedImage = imageFilledWithWhiteBackground(image);
+    auto queue = WorkQueue::create("com.apple.WebKit.ImageAnalysisUtilities.QRCodePayloadRequest");
+    queue->dispatch([image = retainPtr(image), completion = WTFMove(completion)]() mutable {
+        auto adjustedImage = imageFilledWithWhiteBackground(image.get());
 
-    auto completionHandler = makeBlockPtr([completion = WTFMove(completion)](VNRequest *request, NSError *error) mutable {
-        if (error) {
-            completion(nil);
-            return;
-        }
+        auto callCompletionOnMainRunLoopWithResult = [completion = WTFMove(completion)](NSString *result) mutable {
+            callOnMainRunLoop([completion = WTFMove(completion), result = retainPtr(result)]() mutable {
+                completion(result.get());
+            });
+        };
 
-        for (VNBarcodeObservation *result in request.results) {
-            if (![result.symbology isEqualToString:PAL::get_Vision_VNBarcodeSymbologyQR()])
-                continue;
+        auto completionHandler = makeBlockPtr([callCompletionOnMainRunLoopWithResult = WTFMove(callCompletionOnMainRunLoopWithResult)](VNRequest *request, NSError *error) mutable {
+            if (error) {
+                callCompletionOnMainRunLoopWithResult(nil);
+                return;
+            }
 
-            completion(result.payloadStringValue);
-            return;
-        }
+            for (VNBarcodeObservation *result in request.results) {
+                if (![result.symbology isEqualToString:PAL::get_Vision_VNBarcodeSymbologyQR()])
+                    continue;
 
-        completion(nil);
+                callCompletionOnMainRunLoopWithResult(result.payloadStringValue);
+                return;
+            }
+
+            callCompletionOnMainRunLoopWithResult(nil);
+        });
+
+        auto request = adoptNS([PAL::allocVNDetectBarcodesRequestInstance() initWithCompletionHandler:completionHandler.get()]);
+        [request setSymbologies:@[ PAL::get_Vision_VNBarcodeSymbologyQR() ]];
+
+        NSError *error = nil;
+        auto handler = adoptNS([PAL::allocVNImageRequestHandlerInstance() initWithCGImage:adjustedImage.get() options:@{ }]);
+        [handler performRequests:@[ request.get() ] error:&error];
+
+        if (error)
+            completionHandler(nil, error);
     });
-
-    auto request = adoptNS([PAL::allocVNDetectBarcodesRequestInstance() initWithCompletionHandler:completionHandler.get()]);
-    [request setSymbologies:@[ PAL::get_Vision_VNBarcodeSymbologyQR() ]];
-
-    NSError *error = nil;
-    auto handler = adoptNS([PAL::allocVNImageRequestHandlerInstance() initWithCGImage:adjustedImage.get() options:@{ }]);
-    [handler performRequests:@[ request.get() ] error:&error];
-
-    if (error)
-        completionHandler(nil, error);
 }
 
 #endif // HAVE(VISION)
