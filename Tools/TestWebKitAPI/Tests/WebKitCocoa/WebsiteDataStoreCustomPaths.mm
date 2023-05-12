@@ -1126,6 +1126,7 @@ TEST(WKWebsiteDataStoreConfiguration, SameCustomPathForDifferentTypes)
     websiteDataStoreConfiguration.get()._webSQLDatabaseDirectory = sharedDirectory;
     websiteDataStoreConfiguration.get()._webStorageDirectory = sharedDirectory;
     websiteDataStoreConfiguration.get()._indexedDBDatabaseDirectory = sharedDirectory;
+    websiteDataStoreConfiguration.get()._serviceWorkerRegistrationDirectory = sharedDirectory;
     websiteDataStoreConfiguration.get()._cookieStorageFile = [sharedDirectory URLByAppendingPathComponent:@"Cookies.binarycookies" isDirectory:NO];
     websiteDataStoreConfiguration.get().generalStorageDirectory = [sharedDirectory URLByAppendingPathComponent:@"Default" isDirectory:YES];
 
