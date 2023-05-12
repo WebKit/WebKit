@@ -1,5 +1,7 @@
 
-PASS .foo { & { color: green; } }
+PASS .foo {
+  & { color: green; }
+}
 PASS .foo { //color: red; color: green; }
 PASS .foo {
   &.bar { color: green; }

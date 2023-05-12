@@ -182,28 +182,13 @@ String CSSStyleRule::cssText() const
     return builder.toString();
 }
 
-// FIXME: share all methods below with CSSGroupingRule.
-
-void CSSStyleRule::cssTextForDeclsAndRules(StringBuilder& decls, StringBuilder& rules) const
+void CSSStyleRule::cssTextForDeclsAndRules(StringBuilder&, StringBuilder& rules) const
 {
-    for (unsigned index = 0 ; index < nestedRules().size() ; index++) {
-        // We put the declarations at the upper level when the rule:
-        // - is a style rule
-        // - has just "&" as selector
-        // - has no child rules
-        auto childRule = nestedRules()[index];
-        if (childRule->isStyleRuleWithNesting()) {
-            auto& nestedStyleRule = downcast<StyleRuleWithNesting>(childRule);
-            if (nestedStyleRule.originalSelectorList().hasOnlyNestingSelector() && nestedStyleRule.nestedRules().isEmpty()) {
-                decls.append(nestedStyleRule.properties().asText());
-                continue;
-            }
-        }
-        // Otherwise we print the child rule
-        auto wrappedRule = item(index);
-        rules.append("\n  ", wrappedRule->cssText());
-    }
+    for (unsigned index = 0 ; index < nestedRules().size() ; index++)
+        rules.append("\n  ", item(index)->cssText());
 }
+
+// FIXME: share all methods below with CSSGroupingRule.
 
 void CSSStyleRule::reattach(StyleRuleBase& rule)
 {
