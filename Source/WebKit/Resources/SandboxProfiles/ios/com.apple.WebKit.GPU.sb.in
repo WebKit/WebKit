@@ -710,8 +710,9 @@
 
 ;; Silence reports about things we do not want access to:
 (deny mach-lookup (with no-report)
-    (global-name "com.apple.fontservicesd")
-)
+    (global-name
+        "com.apple.fontservicesd"
+        "com.apple.coremedia.mediaparserd.utilities"))
 
 (deny file-write-create (vnode-type SYMLINK))
 (deny file-read-xattr file-write-xattr (xattr-prefix "com.apple.security.private."))
