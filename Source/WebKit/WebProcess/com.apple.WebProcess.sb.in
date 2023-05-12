@@ -2385,7 +2385,10 @@
     (deny mach-lookup (with telemetry-backtrace)
         (require-all
             (require-not (extension "com.apple.webkit.extension.mach"))
-            (xpc-service-name "com.apple.MTLCompilerService"))))
+            (xpc-service-name "com.apple.MTLCompilerService")))
+    (deny iokit-open-service (with no-report)
+        (iokit-registry-entry-class
+            "AMDRadeonX6000_AMDNavi14GraphicsAccelerator"))) ;; <rdar://104970117>
 #endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
