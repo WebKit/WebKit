@@ -54,8 +54,8 @@ void ServiceWorkerStorageManager::closeFiles()
 
 void ServiceWorkerStorageManager::clearAllRegistrations()
 {
-    m_database = nullptr;
-    FileSystem::deleteNonEmptyDirectory(m_path);
+    if (auto database = ensureDatabase())
+        database->clearAllRegistrations();
 }
 
 std::optional<Vector<WebCore::ServiceWorkerContextData>> ServiceWorkerStorageManager::importRegistrations()
