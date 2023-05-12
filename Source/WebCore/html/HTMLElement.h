@@ -192,13 +192,6 @@ protected:
     void childrenChanged(const ChildChange&) override;
     void updateEffectiveDirectionalityOfDirAuto();
 
-    void checkAndPossiblyClosePopoverStack()
-    {
-        if (!document().settings().popoverAttributeEnabled() || !document().hasTopLayerElement())
-            return;
-        checkAndPossiblyClosePopoverStackInternal();
-    }
-
     using EventHandlerNameMap = HashMap<AtomStringImpl*, AtomString>;
     static const AtomString& eventNameForEventHandlerAttribute(const QualifiedName& attributeName, const EventHandlerNameMap&);
 
@@ -222,7 +215,6 @@ private:
     enum class UseCSSPXAsUnitType : bool { No, Yes };
     enum class IsMultiLength : bool { No, Yes };
     void addHTMLLengthToStyle(MutableStyleProperties&, CSSPropertyID, StringView value, AllowPercentage, UseCSSPXAsUnitType, IsMultiLength, AllowZeroValue = AllowZeroValue::Yes);
-    void checkAndPossiblyClosePopoverStackInternal();
 };
 
 inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document& document, ConstructionType type = CreateHTMLElement)

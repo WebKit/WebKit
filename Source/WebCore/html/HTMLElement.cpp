@@ -1304,31 +1304,9 @@ static HTMLElement* topmostPopoverAncestor(Element& newPopover)
 
     checkAncestor(newPopover.parentElementInComposedTree());
 
-    // Iterate over all popover invokers in the document.
-    for (auto& invoker : descendantsOfType<HTMLFormControlElement>(newPopover.treeScope().rootNode())) {
-        // popoverTargetElement() already checks if the form control can invoke popovers.
-        if (invoker.popoverTargetElement() == &newPopover)
-            checkAncestor(&invoker);
-    }
+    checkAncestor(newPopover.popoverData()->invoker());
 
     return topmostAncestor.get();
-}
-
-void HTMLElement::checkAndPossiblyClosePopoverStackInternal()
-{
-    Vector<RefPtr<Element>> autoPopoverList;
-    for (auto& element : document().topLayerElements()) {
-        if (!is<HTMLElement>(element) || downcast<HTMLElement>(element.get()).popoverState() != PopoverState::Auto)
-            continue;
-        autoPopoverList.append(element.ptr());
-    }
-
-    for (size_t i = autoPopoverList.size(); i-- > 1;) {
-        if (topmostPopoverAncestor(*autoPopoverList[i]) != autoPopoverList[i - 1]) {
-            document().hideAllPopoversUntil(nullptr, FocusPreviousElement::No, FireEvents::No);
-            return;
-        }
-    }
 }
 
 // https://html.spec.whatwg.org/#popover-focusing-steps

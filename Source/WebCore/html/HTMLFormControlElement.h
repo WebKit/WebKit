@@ -129,8 +129,6 @@ protected:
 
     void handlePopoverTargetAction() const;
 
-    void didChangeForm() override;
-
 private:
     void refFormAssociatedElement() const final { ref(); }
     void derefFormAssociatedElement() const final { deref(); }

@@ -6,17 +6,17 @@ PASS Clicking inside a popover does not close that popover
 PASS Popovers close on pointerup, not pointerdown
 PASS Synthetic events can't close popovers
 PASS Moving focus outside the popover should not dismiss the popover
-PASS Clicking inside a child popover shouldn't close either popover
-PASS Clicking inside a parent popover should close child popover
+FAIL Clicking inside a child popover shouldn't close either popover assert_true: popover1 should be open expected true got false
+FAIL Clicking inside a parent popover should close child popover assert_true: expected true got false
 PASS Clicking on invoking element, after using it for activation, shouldn't close its popover
 PASS Clicking on invoking element, after using it for activation, shouldn't close its popover (nested case)
-PASS Clicking on invoking element, after using it for activation, shouldn't close its popover (nested case, not used for invocation)
+FAIL Clicking on invoking element, after using it for activation, shouldn't close its popover (nested case, not used for invocation) assert_true: expected true got false
 PASS Clicking on invoking element, even if it wasn't used for activation, shouldn't close its popover
 PASS Clicking on popovertarget element, even if it wasn't used for activation, should hide it exactly once
 PASS Clicking on anchor element (that isn't an invoking element) shouldn't prevent its popover from being closed
-PASS Dragging from an open popover outside an open popover should leave the popover open
+FAIL Dragging from an open popover outside an open popover should leave the popover open assert_true: expected true got false
 PASS A popover inside an invoking element doesn't participate in that invoker's ancestor chain
-PASS An invoking element that was not used to invoke the popover can still be part of the ancestor chain
+PASS An invoking element that was not used to invoke the popover is not part of the ancestor chain
 FAIL Scrolling within a popover should not close the popover promise_test: Unhandled rejection with value: object "Error: Unknown source type "wheel"."
 PASS Clicking inside a shadow DOM popover does not close that popover
 PASS Clicking outside a shadow DOM popover should close that popover

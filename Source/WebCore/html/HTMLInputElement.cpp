@@ -590,8 +590,6 @@ void HTMLInputElement::updateType(const AtomString& typeAttributeValue)
     }
 
     updateValidity();
-
-    checkAndPossiblyClosePopoverStack();
 }
 
 inline void HTMLInputElement::runPostTypeUpdateTasks()

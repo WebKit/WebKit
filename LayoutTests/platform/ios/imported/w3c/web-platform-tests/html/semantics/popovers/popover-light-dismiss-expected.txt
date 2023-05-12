@@ -6,17 +6,17 @@ FAIL Clicking inside a popover does not close that popover assert_false: expecte
 FAIL Popovers close on pointerup, not pointerdown assert_false: expected false got true
 FAIL Synthetic events can't close popovers assert_false: expected false got true
 FAIL Moving focus outside the popover should not dismiss the popover assert_equals: Focus should move to a button outside the popover expected Element node <button id="after_p1" tabindex="0">Next control after pop... but got Element node <body><button id="b1t" popovertarget="p1">Popover 1</butt...
-PASS Clicking inside a child popover shouldn't close either popover
-FAIL Clicking inside a parent popover should close child popover assert_false: expected false got true
-PASS Clicking on invoking element, after using it for activation, shouldn't close its popover
+FAIL Clicking inside a child popover shouldn't close either popover assert_true: popover1 should be open expected true got false
+FAIL Clicking inside a parent popover should close child popover assert_true: expected true got false
+FAIL Clicking on invoking element, after using it for activation, shouldn't close its popover assert_true: expected true got false
 FAIL Clicking on invoking element, after using it for activation, shouldn't close its popover (nested case) assert_true: button2 should activate popover2 expected true got false
-PASS Clicking on invoking element, after using it for activation, shouldn't close its popover (nested case, not used for invocation)
+FAIL Clicking on invoking element, after using it for activation, shouldn't close its popover (nested case, not used for invocation) assert_true: expected true got false
 PASS Clicking on invoking element, even if it wasn't used for activation, shouldn't close its popover
 FAIL Clicking on popovertarget element, even if it wasn't used for activation, should hide it exactly once assert_false: popover1 should be hidden by popovertarget expected false got true
 FAIL Clicking on anchor element (that isn't an invoking element) shouldn't prevent its popover from being closed assert_false: popover1 should close expected false got true
-PASS Dragging from an open popover outside an open popover should leave the popover open
+FAIL Dragging from an open popover outside an open popover should leave the popover open assert_true: expected true got false
 FAIL A popover inside an invoking element doesn't participate in that invoker's ancestor chain assert_true: invoking element should open popover expected true got false
-PASS An invoking element that was not used to invoke the popover can still be part of the ancestor chain
+PASS An invoking element that was not used to invoke the popover is not part of the ancestor chain
 FAIL Scrolling within a popover should not close the popover promise_test: Unhandled rejection with value: object "Error: Unknown source type "wheel"."
 PASS Clicking inside a shadow DOM popover does not close that popover
 FAIL Clicking outside a shadow DOM popover should close that popover assert_false: expected false got true
