@@ -158,6 +158,7 @@ public:
     MediaPlayer::NetworkState networkState() const final;
     MediaPlayer::ReadyState readyState() const final;
     void setPageIsVisible(bool visible) final { m_visible = visible; }
+    void setVisibleInViewport(bool isVisible) final;
     void setPresentationSize(const IntSize&) final;
     // Prefer MediaTime based methods over float based.
     float duration() const final { return durationMediaTime().toFloat(); }
@@ -616,6 +617,9 @@ private:
     AbortableTaskQueue m_sinkTaskQueue;
 
     bool m_didTryToRecoverPlayingState { false };
+
+    bool m_isVisibleInViewport { true };
+    GstState m_invisiblePlayerState { GST_STATE_VOID_PENDING };
 
     // Specific to MediaStream playback.
     MediaTime m_startTime;

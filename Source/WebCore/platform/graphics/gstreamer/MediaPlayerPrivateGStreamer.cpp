@@ -331,7 +331,7 @@ void MediaPlayerPrivateGStreamer::load(const String& urlString)
         m_fillTimer.stop();
 
     ASSERT(m_pipeline);
-
+    setVisibleInViewport(m_player->isVisibleInViewport());
     setPlaybinURL(url);
 
     GST_DEBUG_OBJECT(pipeline(), "preload: %s", convertEnumerationToString(m_preload).utf8().data());
@@ -917,15 +917,14 @@ bool MediaPlayerPrivateGStreamer::changePipelineState(GstState newState)
 {
     ASSERT(m_pipeline);
 
-    GstState currentState, pending;
-
-    gst_element_get_state(m_pipeline.get(), &currentState, &pending, 0);
-    if (currentState == newState || pending == newState) {
-        GST_DEBUG_OBJECT(pipeline(), "Rejected state change to %s from %s with %s pending", gst_element_state_get_name(newState),
-            gst_element_state_get_name(currentState), gst_element_state_get_name(pending));
+    if (!m_isVisibleInViewport && newState > GST_STATE_PAUSED) {
+        GST_DEBUG_OBJECT(pipeline(), "Saving state for when player becomes visible: %s", gst_element_state_get_name(newState));
+        m_invisiblePlayerState = newState;
         return true;
     }
 
+    GstState currentState, pending;
+    gst_element_get_state(m_pipeline.get(), &currentState, &pending, 0);
     GST_DEBUG_OBJECT(pipeline(), "Changing state change to %s from %s with %s pending", gst_element_state_get_name(newState),
         gst_element_state_get_name(currentState), gst_element_state_get_name(pending));
 
@@ -3830,6 +3829,35 @@ void MediaPlayerPrivateGStreamer::flushCurrentBuffer()
 }
 #endif
 
+void MediaPlayerPrivateGStreamer::setVisibleInViewport(bool isVisible)
+{
+    if (isMediaStreamPlayer())
+        return;
+
+    // Some layout tests (webgl) expect playback of invisible videos to not be suspended, so allow
+    // this using an environment variable, set from the webkitpy glib port sub-classes.
+    const char* allowPlaybackOfInvisibleVideos = g_getenv("WEBKIT_GST_ALLOW_PLAYBACK_OF_INVISIBLE_VIDEOS");
+    if (!isVisible && allowPlaybackOfInvisibleVideos && !strcmp(allowPlaybackOfInvisibleVideos, "1"))
+        return;
+
+    GST_INFO_OBJECT(m_pipeline.get(), "%s %s player %svisible in viewport", m_isMuted ? "Muted" : "Un-muted", m_player->isVideoPlayer() ? "video" : "audio", isVisible ? "" : "no longer ");
+    if (!m_player->isVideoPlayer() || !m_isMuted)
+        return;
+
+    if (!isVisible) {
+        GstState currentState;
+        gst_element_get_state(m_pipeline.get(), &currentState, nullptr, 0);
+        if (currentState > GST_STATE_NULL)
+            m_invisiblePlayerState = currentState;
+        m_isVisibleInViewport = false;
+        gst_element_set_state(m_pipeline.get(), GST_STATE_PAUSED);
+    } else {
+        m_isVisibleInViewport = true;
+        if (m_invisiblePlayerState != GST_STATE_VOID_PENDING)
+            changePipelineState(m_invisiblePlayerState);
+    }
+}
+
 void MediaPlayerPrivateGStreamer::setPresentationSize(const IntSize& size)
 {
     m_size = size;
@@ -3840,7 +3868,7 @@ void MediaPlayerPrivateGStreamer::paint(GraphicsContext& context, const FloatRec
     if (context.paintingDisabled())
         return;
 
-    if (!m_visible)
+    if (!m_visible || !m_isVisibleInViewport)
         return;
 
     Locker sampleLocker { m_sampleMutex };
