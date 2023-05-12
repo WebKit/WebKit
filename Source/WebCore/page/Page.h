@@ -1130,11 +1130,11 @@ private:
 
     UniqueRef<BackForwardController> m_backForwardController;
     WeakHashSet<LocalFrame> m_rootFrames;
+    UniqueRef<EditorClient> m_editorClient;
     Ref<Frame> m_mainFrame;
 
     RefPtr<PluginData> m_pluginData;
 
-    UniqueRef<EditorClient> m_editorClient;
     std::unique_ptr<ValidationMessageClient> m_validationMessageClient;
     std::unique_ptr<DiagnosticLoggingClient> m_diagnosticLoggingClient;
     std::unique_ptr<PerformanceLoggingClient> m_performanceLoggingClient;

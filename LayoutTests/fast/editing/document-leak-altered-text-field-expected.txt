@@ -1,0 +1,11 @@
+Make sure that the document doesn't leak if it contains a modified text input field.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS w.document.getElementById('textField').value is "test"
+PASS The Document didn't leak
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
