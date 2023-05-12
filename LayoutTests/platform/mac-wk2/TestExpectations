@@ -1461,8 +1461,6 @@ webkit.org/b/229158 [ Monterey+ ] webrtc/video-setDirection.html [ Pass Failure 
 
 webkit.org/b/229163 webrtc/video-addTransceiver.html [ Pass Failure ]
 
-webkit.org/b/229614 [ BigSur ] webrtc/video-mediastreamtrack-stats.html [ Pass Crash Failure ]
-
 webkit.org/b/229166 webrtc/utf8-sdp.html [ Pass Failure ]
 
 #rdar://82032946 ([Mac wk2] webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html is a flaky image-only fail)

@@ -89,21 +89,21 @@ public:
         InboundRtpStreamStats() { type = RTCStatsReport::Type::InboundRtp; }
 
         String trackIdentifier;
+        String mid;
         String remoteId;
         std::optional<uint32_t> framesDecoded;
         std::optional<uint32_t> keyFramesDecoded;
+        std::optional<uint32_t> framesDropped;
         std::optional<uint32_t> frameWidth;
         std::optional<uint32_t> frameHeight;
-        std::optional<uint32_t> frameBitDepth;
         std::optional<double> framesPerSecond;
         std::optional<uint64_t> qpSum;
         std::optional<double> totalDecodeTime;
         std::optional<double> totalInterFrameDelay;
         std::optional<double> totalSquaredInterFrameDelay;
-        std::optional<bool>  voiceActivityFlag;
         std::optional<double> lastPacketReceivedTimestamp;
-        std::optional<double> averageRtcpInterval;
         std::optional<uint64_t> headerBytesReceived;
+        std::optional<uint64_t> packetsDiscarded;
         std::optional<uint64_t> fecPacketsReceived;
         std::optional<uint64_t> fecPacketsDiscarded;
         std::optional<uint64_t> bytesReceived;
@@ -112,7 +112,7 @@ public:
         std::optional<uint32_t> nackCount;
         std::optional<uint32_t> firCount;
         std::optional<uint32_t> pliCount;
-        std::optional<uint32_t> sliCount;
+        std::optional<double> totalProcessingDelay;
         std::optional<double> estimatedPlayoutTimestamp;
         std::optional<double> jitterBufferDelay;
         std::optional<uint64_t> jitterBufferEmittedCount;
@@ -128,8 +128,6 @@ public:
         std::optional<double> totalAudioEnergy;
         std::optional<double> totalSamplesDuration;
         std::optional<uint32_t> framesReceived;
-
-        String trackId;
     };
 
     struct RemoteInboundRtpStreamStats : ReceivedRtpStreamStats {
@@ -191,40 +189,6 @@ public:
         std::optional<uint32_t> pliCount;
         std::optional<uint32_t> sliCount;
         // DOMString encoderImplementation;
-
-        String trackId;
-    };
-
-    struct MediaStreamTrackStats : Stats {
-        MediaStreamTrackStats() { type = RTCStatsReport::Type::Track; }
-
-        String trackIdentifier;
-        String kind;
-        std::optional<bool> remoteSource;
-        std::optional<bool> ended;
-        std::optional<bool> detached;
-        std::optional<uint32_t> frameWidth;
-        std::optional<uint32_t> frameHeight;
-        std::optional<double> framesPerSecond;
-        std::optional<uint32_t> framesSent;
-        std::optional<uint32_t> framesReceived;
-        std::optional<uint32_t> framesDecoded;
-        std::optional<uint32_t> framesDropped;
-        std::optional<uint32_t> framesCorrupted;
-        std::optional<uint32_t> partialFramesLost;
-        std::optional<uint32_t> fullFramesLost;
-        std::optional<double> audioLevel;
-        std::optional<double> echoReturnLoss;
-        std::optional<double> echoReturnLossEnhancement;
-
-        std::optional<uint32_t> freezeCount;
-        std::optional<uint32_t> pauseCount;
-        std::optional<double> totalFreezesDuration;
-        std::optional<double> totalPausesDuration;
-        std::optional<double> totalFramesDuration;
-        std::optional<double> sumOfSquaredFramesDuration;
-
-        std::optional<uint64_t> jitterBufferFlushes;
     };
 
     struct DataChannelStats : Stats {

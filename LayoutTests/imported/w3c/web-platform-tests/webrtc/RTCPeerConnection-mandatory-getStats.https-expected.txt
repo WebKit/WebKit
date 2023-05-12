@@ -11,7 +11,7 @@ PASS RTCReceivedRtpStreamStats's jitter
 PASS RTCReceivedRtpStreamStats's packetsDiscarded
 PASS RTCReceivedRtpStreamStats's framesDropped
 FAIL RTCInboundRtpStreamStats's receiverId assert_true: Is receiverId present expected true got false
-FAIL RTCInboundRtpStreamStats's remoteId assert_true: Is remoteId present expected true got false
+PASS RTCInboundRtpStreamStats's remoteId
 PASS RTCInboundRtpStreamStats's framesDecoded
 PASS RTCInboundRtpStreamStats's nackCount
 PASS RTCInboundRtpStreamStats's framesReceived
