@@ -943,6 +943,9 @@
     io_service_open_extended
     mach_eventlink_associate
     mach_exception_raise
+#if PLATFORM(WATCHOS)
+    mach_make_memory_entry_64
+#endif
     mach_memory_entry_ownership
     mach_port_extract_right
     mach_port_get_context_from_user
