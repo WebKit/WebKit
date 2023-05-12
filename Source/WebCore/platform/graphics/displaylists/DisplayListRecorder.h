@@ -152,6 +152,7 @@ protected:
     virtual bool recordResourceUse(Font&) = 0;
     virtual bool recordResourceUse(DecomposedGlyphs&) = 0;
     virtual bool recordResourceUse(Gradient&) = 0;
+    virtual bool recordResourceUse(Filter&) = 0;
 
     struct ContextState {
         GraphicsContextState state;

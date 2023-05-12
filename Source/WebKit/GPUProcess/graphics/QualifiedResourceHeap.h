@@ -29,6 +29,7 @@
 
 #include "QualifiedRenderingResourceIdentifier.h"
 #include <WebCore/DecomposedGlyphs.h>
+#include <WebCore/Filter.h>
 #include <WebCore/Font.h>
 #include <WebCore/FontCustomPlatformData.h>
 #include <WebCore/Gradient.h>
@@ -65,6 +66,11 @@ public:
     void add(QualifiedRenderingResourceIdentifier renderingResourceIdentifier, Ref<WebCore::Gradient>&& gradient)
     {
         add<WebCore::RenderingResource>(renderingResourceIdentifier, WTFMove(gradient), m_renderingResourceCount);
+    }
+
+    void add(QualifiedRenderingResourceIdentifier renderingResourceIdentifier, Ref<WebCore::Filter>&& filter)
+    {
+        add<WebCore::RenderingResource>(renderingResourceIdentifier, WTFMove(filter), m_renderingResourceCount);
     }
 
     void add(QualifiedRenderingResourceIdentifier renderingResourceIdentifier, Ref<WebCore::Font>&& font)
@@ -117,6 +123,12 @@ public:
     {
         auto* renderingResource = get<WebCore::RenderingResource>(renderingResourceIdentifier);
         return dynamicDowncast<WebCore::Gradient>(renderingResource);
+    }
+
+    WebCore::Filter* getFilter(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
+    {
+        auto* renderingResource = get<WebCore::RenderingResource>(renderingResourceIdentifier);
+        return dynamicDowncast<WebCore::Filter>(renderingResource);
     }
 
     WebCore::FontCustomPlatformData* getFontCustomPlatformData(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const

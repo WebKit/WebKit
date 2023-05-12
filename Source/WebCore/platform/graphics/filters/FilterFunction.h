@@ -87,7 +87,7 @@ public:
 
     bool isCSSFilter() const { return m_filterType == Type::CSSFilter; }
     bool isSVGFilter() const { return m_filterType == Type::SVGFilter; }
-    bool isFilter() const { return m_filterType == Type::CSSFilter || m_filterType == Type::SVGFilter; }
+    bool isFilter() const override { return m_filterType == Type::CSSFilter || m_filterType == Type::SVGFilter; }
     bool isFilterEffect() const { return m_filterType >= Type::FEFirst && m_filterType <= Type::FELast; }
 
     static AtomString filterName(Type);

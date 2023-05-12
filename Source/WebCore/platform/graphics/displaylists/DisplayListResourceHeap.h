@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DecomposedGlyphs.h"
+#include "Filter.h"
 #include "Font.h"
 #include "Gradient.h"
 #include "ImageBuffer.h"
@@ -47,6 +48,7 @@ public:
     virtual std::optional<SourceImage> getSourceImage(RenderingResourceIdentifier) const = 0;
     virtual DecomposedGlyphs* getDecomposedGlyphs(RenderingResourceIdentifier) const = 0;
     virtual Gradient* getGradient(RenderingResourceIdentifier) const = 0;
+    virtual Filter* getFilter(RenderingResourceIdentifier) const = 0;
     virtual Font* getFont(RenderingResourceIdentifier) const = 0;
 };
 
@@ -70,6 +72,11 @@ public:
     void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<Gradient>&& gradient)
     {
         add<RenderingResource>(renderingResourceIdentifier, WTFMove(gradient));
+    }
+
+    void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<Filter>&& filter)
+    {
+        add<RenderingResource>(renderingResourceIdentifier, WTFMove(filter));
     }
 
     void add(RenderingResourceIdentifier renderingResourceIdentifier, Ref<Font>&& font)
@@ -112,6 +119,12 @@ public:
     {
         auto* renderingResource = get<RenderingResource>(renderingResourceIdentifier);
         return dynamicDowncast<Gradient>(renderingResource);
+    }
+
+    Filter* getFilter(RenderingResourceIdentifier renderingResourceIdentifier) const final
+    {
+        auto* renderingResource = get<RenderingResource>(renderingResourceIdentifier);
+        return dynamicDowncast<Filter>(renderingResource);
     }
 
     Font* getFont(RenderingResourceIdentifier renderingResourceIdentifier) const final

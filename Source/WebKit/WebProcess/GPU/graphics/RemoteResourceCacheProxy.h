@@ -33,6 +33,7 @@
 
 namespace WebCore {
 class DecomposedGlyphs;
+class Filter;
 class Font;
 class Gradient;
 class ImageBuffer;
@@ -62,6 +63,7 @@ public:
     void recordImageBufferUse(WebCore::ImageBuffer&);
     void recordDecomposedGlyphsUse(WebCore::DecomposedGlyphs&);
     void recordGradientUse(WebCore::Gradient&);
+    void recordFilterUse(WebCore::Filter&);
     void recordFontCustomPlatformDataUse(const WebCore::FontCustomPlatformData&);
 
     void didPaintLayers();

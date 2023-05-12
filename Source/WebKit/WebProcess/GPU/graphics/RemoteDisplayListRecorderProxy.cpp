@@ -505,9 +505,25 @@ bool RemoteDisplayListRecorderProxy::recordResourceUse(Gradient& gradient)
     return true;
 }
 
-void RemoteDisplayListRecorderProxy::flushContext(DisplayListRecorderFlushIdentifier identifier)
+bool RemoteDisplayListRecorderProxy::recordResourceUse(Filter& filter)
 {
-    send(Messages::RemoteDisplayListRecorder::FlushContext(identifier));
+    if (UNLIKELY(!m_renderingBackend)) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    m_renderingBackend->remoteResourceCacheProxy().recordFilterUse(filter);
+    return true;
+}
+
+void RemoteDisplayListRecorderProxy::flushContext(const IPC::Semaphore& semaphore)
+{
+    send(Messages::RemoteDisplayListRecorder::FlushContext(semaphore));
+}
+
+void RemoteDisplayListRecorderProxy::flushContextSync()
+{
+    sendSync(Messages::RemoteDisplayListRecorder::FlushContextSync());
 }
 
 RefPtr<ImageBuffer> RemoteDisplayListRecorderProxy::createImageBuffer(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, std::optional<RenderingMode> renderingMode, std::optional<RenderingMethod> renderingMethod) const

@@ -125,6 +125,7 @@ private:
     bool recordResourceUse(Font&) final;
     bool recordResourceUse(DecomposedGlyphs&) final;
     bool recordResourceUse(Gradient&) final;
+    bool recordResourceUse(Filter&) final;
 
     template<typename T, class... Args>
     void append(Args&&... args)

@@ -53,6 +53,7 @@ public:
     virtual bool isNativeImage() const { return false; }
     virtual bool isGradient() const { return false; }
     virtual bool isDecomposedGlyphs() const { return false; }
+    virtual bool isFilter() const { return false; }
 
     bool hasValidRenderingResourceIdentifier() const
     {
