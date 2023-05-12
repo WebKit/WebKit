@@ -22,6 +22,7 @@
 #pragma once
 
 #include "Filter.h"
+#include "FilterResults.h"
 #include "FloatRect.h"
 #include "SVGFilterExpression.h"
 #include "SVGUnitTypes.h"
@@ -49,6 +50,9 @@ public:
     const FilterEffectVector& effects() const { return m_effects; }
 
     FilterEffectVector effectsOfType(FilterFunction::Type) const final;
+
+    WEBCORE_EXPORT FilterResults& ensureResults(const FilterResultsCreator&);
+    void clearEffectResult(FilterEffect&);
 
     RefPtr<FilterImage> apply(FilterImage* sourceImage, FilterResults&) final;
     FilterStyleVector createFilterStyles(const FilterStyle& sourceStyle) const final;
@@ -78,6 +82,8 @@ private:
 
     SVGFilterExpression m_expression;
     FilterEffectVector m_effects;
+
+    std::unique_ptr<FilterResults> m_results;
 };
 
 } // namespace WebCore

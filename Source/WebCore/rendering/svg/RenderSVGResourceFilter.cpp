@@ -145,7 +145,11 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     auto colorSpace = DestinationColorSpace::SRGB();
 #endif
 
-    filterData->targetSwitcher = FilterTargetSwitcher::create(*context, *filterData->filter, filterData->sourceImageRect, colorSpace, &filterData->results);
+    auto& results = filterData->filter->ensureResults([&]() {
+        return makeUnique<FilterResults>();
+    });
+
+    filterData->targetSwitcher = FilterTargetSwitcher::create(*context, *filterData->filter, filterData->sourceImageRect, colorSpace, &results);
     if (!filterData->targetSwitcher) {
         m_rendererFilterDataMap.remove(&renderer);
         return false;
@@ -234,7 +238,7 @@ void RenderSVGResourceFilter::markFilterForRepaint(FilterEffect& effect)
         // Repaint the image on the screen.
         markClientForInvalidation(*objectFilterDataPair.key, RepaintInvalidation);
 
-        filterData->results.clearEffectResult(effect);
+        filterData->filter->clearEffectResult(effect);
     }
 }
 
