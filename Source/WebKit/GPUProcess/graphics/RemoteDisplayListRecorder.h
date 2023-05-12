@@ -132,7 +132,8 @@ public:
     void applyFillPattern();
 #endif
     void applyDeviceScaleFactor(float);
-    void flushContext(DisplayListRecorderFlushIdentifier);
+    void flushContext(IPC::Semaphore&&);
+    void flushContextSync(CompletionHandler<void()>&&);
 
 private:
     RemoteDisplayListRecorder(WebCore::ImageBuffer&, QualifiedRenderingResourceIdentifier, WebCore::ProcessIdentifier webProcessIdentifier, RemoteRenderingBackend&);
