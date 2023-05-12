@@ -27,52 +27,18 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "QualifiedRenderingResourceIdentifier.h"
-#include "RemoteRenderingBackend.h"
-#include "ScopedActiveMessageReceiveQueue.h"
 #include "ScopedRenderingResourcesRequest.h"
 #include <WebCore/ImageBuffer.h>
 
 namespace WebKit {
 
-class RemoteDisplayListRecorder;
-class RemoteRenderingBackend;
-
 class RemoteImageBuffer : public WebCore::ImageBuffer {
 public:
-    template<typename BackendType>
-    static RefPtr<RemoteImageBuffer> create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, WebCore::RenderingPurpose purpose, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier, WebCore::ImageBufferCreationContext context)
-    {
-        auto imageBuffer = ImageBuffer::create<BackendType, RemoteImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, context, remoteRenderingBackend, renderingResourceIdentifier);
-        if (!imageBuffer)
-            return nullptr;
-
-        auto backend = static_cast<BackendType*>(imageBuffer->backend());
-        ASSERT(backend);
-
-        remoteRenderingBackend.didCreateImageBufferBackend(backend->createBackendHandle(), renderingResourceIdentifier, *imageBuffer->m_remoteDisplayList.get());
-        return imageBuffer;
-    }
-
-    static RefPtr<RemoteImageBuffer> createTransfer(std::unique_ptr<WebCore::ImageBufferBackend>&&, const WebCore::ImageBufferBackend::Info&, RemoteRenderingBackend&, QualifiedRenderingResourceIdentifier);
-
-    RemoteImageBuffer(const WebCore::ImageBufferBackend::Parameters&, const WebCore::ImageBufferBackend::Info&, std::unique_ptr<WebCore::ImageBufferBackend>&&, RemoteRenderingBackend&, QualifiedRenderingResourceIdentifier);
+    using WebCore::ImageBuffer::ImageBuffer;
     ~RemoteImageBuffer();
 
 private:
-    QualifiedRenderingResourceIdentifier m_renderingResourceIdentifier;
-    IPC::ScopedActiveMessageReceiveQueue<RemoteDisplayListRecorder> m_remoteDisplayList;
-    ScopedRenderingResourcesRequest m_renderingResourcesRequest;
-};
-
-struct RemoteSerializedImageBuffer : public ThreadSafeRefCounted<RemoteSerializedImageBuffer> {
-    RemoteSerializedImageBuffer(std::unique_ptr<WebCore::ImageBufferBackend>&& backend, const WebCore::ImageBufferBackend::Info& info)
-        : m_backend(WTFMove(backend))
-        , m_info(info)
-    { }
-
-    std::unique_ptr<WebCore::ImageBufferBackend> m_backend;
-    WebCore::ImageBufferBackend::Info m_info;
+    ScopedRenderingResourcesRequest m_renderingResourcesRequest { ScopedRenderingResourcesRequest::acquire() };
 };
 
 } // namespace WebKit

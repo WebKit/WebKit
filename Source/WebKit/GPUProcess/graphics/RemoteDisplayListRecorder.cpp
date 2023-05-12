@@ -75,11 +75,6 @@ void RemoteDisplayListRecorder::stopListeningForIPC()
         renderingBackend->streamConnection().stopReceivingMessages(Messages::RemoteDisplayListRecorder::messageReceiverName(), m_imageBufferIdentifier.object().toUInt64());
 }
 
-void RemoteDisplayListRecorder::clearImageBufferReference()
-{
-    m_imageBuffer.clear();
-}
-
 void RemoteDisplayListRecorder::save()
 {
     handleItem(DisplayList::Save());

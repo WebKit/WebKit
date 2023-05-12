@@ -28,19 +28,8 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "PlatformImageBufferShareableBackend.h"
-#include "RemoteDisplayListRecorder.h"
-
 namespace WebKit {
 using namespace WebCore;
-
-RemoteImageBuffer::RemoteImageBuffer(const ImageBufferBackend::Parameters& parameters, const ImageBufferBackend::Info& info, std::unique_ptr<ImageBufferBackend>&& backend, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
-    : ImageBuffer(parameters, info, WTFMove(backend), renderingResourceIdentifier.object())
-    , m_renderingResourceIdentifier(renderingResourceIdentifier)
-    , m_remoteDisplayList({ RemoteDisplayListRecorder::create(*this, renderingResourceIdentifier, renderingResourceIdentifier.processIdentifier(), remoteRenderingBackend) })
-    , m_renderingResourcesRequest(ScopedRenderingResourcesRequest::acquire())
-{
-}
 
 RemoteImageBuffer::~RemoteImageBuffer()
 {
@@ -53,25 +42,6 @@ RemoteImageBuffer::~RemoteImageBuffer()
     // been flushed yet, or the web process may have terminated.
     while (context().stackSize())
         context().restore();
-}
-
-RefPtr<RemoteImageBuffer> RemoteImageBuffer::createTransfer(std::unique_ptr<ImageBufferBackend>&& backend, const ImageBufferBackend::Info& backendInfo, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
-{
-    auto context = WebCore::ImageBufferCreationContext { nullptr
-#if HAVE(IOSURFACE)
-        , &remoteRenderingBackend.ioSurfacePool()
-#endif
-    };
-    backend->transferToNewContext(context);
-    auto* sharing = backend->toBackendSharing();
-    ASSERT(sharing && is<ImageBufferBackendHandleSharing>(sharing));
-
-    auto backendHandle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
-
-    auto imageBuffer = adoptRef(new RemoteImageBuffer(backend->parameters() , backendInfo, WTFMove(backend), remoteRenderingBackend, renderingResourceIdentifier));
-
-    remoteRenderingBackend.didCreateImageBufferBackend(WTFMove(backendHandle), renderingResourceIdentifier, *imageBuffer->m_remoteDisplayList.get());
-    return imageBuffer;
 }
 
 } // namespace WebKit
