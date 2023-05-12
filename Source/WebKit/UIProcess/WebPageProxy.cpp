@@ -3288,10 +3288,10 @@ void WebPageProxy::continueWheelEventHandling(const WebWheelEvent& wheelEvent, c
     }
 
     auto rubberBandableEdges = rubberBandableEdgesRespectingHistorySwipe();
-    sendWheelEvent(wheelEvent, result.steps, rubberBandableEdges, willStartSwipe);
+    sendWheelEvent(wheelEvent, result.steps, rubberBandableEdges, willStartSwipe, result.wasHandled);
 }
 
-void WebPageProxy::sendWheelEvent(const WebWheelEvent& event, OptionSet<WebCore::WheelEventProcessingSteps> processingSteps, RectEdges<bool> rubberBandableEdges, std::optional<bool> willStartSwipe)
+void WebPageProxy::sendWheelEvent(const WebWheelEvent& event, OptionSet<WheelEventProcessingSteps> processingSteps, RectEdges<bool> rubberBandableEdges, std::optional<bool> willStartSwipe, bool wasHandledForScrolling)
 {
 #if HAVE(CVDISPLAYLINK)
     internals().wheelEventActivityHysteresis.impulse();
@@ -3305,25 +3305,39 @@ void WebPageProxy::sendWheelEvent(const WebWheelEvent& event, OptionSet<WebCore:
         sendWheelEventScrollingAccelerationCurveIfNecessary(event);
         connection->send(Messages::EventDispatcher::WheelEvent(webPageID(), event, rubberBandableEdges), 0, { }, Thread::QOS::UserInteractive);
     } else {
-        sendWithAsyncReply(Messages::WebPage::HandleWheelEvent(event, processingSteps, willStartSwipe), [weakThis = WeakPtr { *this }, platformWheelEvent = platform(event)](ScrollingNodeID nodeID, std::optional<WheelScrollGestureState> gestureState) {
+        sendWithAsyncReply(Messages::WebPage::HandleWheelEvent(event, processingSteps, willStartSwipe), [weakThis = WeakPtr { *this }, wheelEvent = event, wasHandledForScrolling](ScrollingNodeID nodeID, std::optional<WheelScrollGestureState> gestureState, bool handled) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
 
-#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
-            if (auto* scrollingCoordinatorProxy = protectedThis->scrollingCoordinatorProxy())
-                scrollingCoordinatorProxy->wheelEventHandlingCompleted(platformWheelEvent, nodeID, gestureState);
-#else
-            UNUSED_PARAM(platformWheelEvent);
-            UNUSED_PARAM(nodeID);
-            UNUSED_PARAM(gestureState);
-#endif
+            protectedThis->handleWheelEventReply(wheelEvent, nodeID, gestureState, wasHandledForScrolling, handled);
         });
     }
 
     // Manually ping the web process to check for responsiveness since our wheel
     // event will dispatch to a non-main thread, which always responds.
     m_process->isResponsiveWithLazyStop();
+}
+
+void WebPageProxy::handleWheelEventReply(const WebWheelEvent& event, ScrollingNodeID nodeID, std::optional<WheelScrollGestureState> gestureState, bool wasHandledForScrolling, bool wasHandledByWebProcess)
+{
+    LOG_WITH_STREAM(WheelEvents, stream << "WebPageProxy::handleWheelEventReply " << platform(event) << " - handled for scrolling " << wasHandledForScrolling << " handled by web process " << wasHandledByWebProcess << " nodeID " << nodeID << " gesture state " << gestureState);
+
+    MESSAGE_CHECK(m_process, wheelEventCoalescer().hasEventsBeingProcessed());
+
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
+    if (nodeID) {
+        if (auto* scrollingCoordinatorProxy = this->scrollingCoordinatorProxy()) {
+            scrollingCoordinatorProxy->wheelEventHandlingCompleted(platform(event), nodeID, gestureState);
+            return;
+        }
+    }
+#else
+    UNUSED_PARAM(event);
+    UNUSED_PARAM(nodeID);
+    UNUSED_PARAM(gestureState);
+#endif
+    wheelEventHandlingCompleted(wasHandledForScrolling || wasHandledByWebProcess);
 }
 
 void WebPageProxy::wheelEventHandlingCompleted(bool wasHandled)
@@ -8377,11 +8391,13 @@ void WebPageProxy::didReceiveEvent(WebEventType eventType, bool handled)
         break;
     }
 
-    case WebEventType::Wheel: {
+    case WebEventType::Wheel:
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
+        ASSERT(!scrollingCoordinatorProxy());
+#endif
         MESSAGE_CHECK(m_process, wheelEventCoalescer().hasEventsBeingProcessed());
         wheelEventHandlingCompleted(handled);
         break;
-    }
 
     case WebEventType::KeyDown:
     case WebEventType::KeyUp:

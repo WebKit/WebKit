@@ -294,9 +294,9 @@ void RemoteScrollingTreeMac::waitForEventDefaultHandlingCompletion(const Platfor
     LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingTreeMac::waitForEventDefaultHandlingCompletion took " << (MonotonicTime::now() - startTime).milliseconds() << "ms - timed out " << !receivedEvent << " gesture state is " << gestureState());
 }
 
-void RemoteScrollingTreeMac::wheelEventDefaultHandlingCompleted(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNodeID, std::optional<WheelScrollGestureState> gestureState)
+WheelEventHandlingResult RemoteScrollingTreeMac::handleWheelEventAfterDefaultHandling(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNodeID, std::optional<WheelScrollGestureState> gestureState)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingTreeMac::wheelEventDefaultHandlingCompleted - targetNodeID " << targetNodeID << " gestureState " << gestureState);
+    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingTreeMac::handleWheelEventAfterDefaultHandling - targetNodeID " << targetNodeID << " gestureState " << gestureState);
 
     ASSERT(ScrollingThread::isCurrentThread());
     
@@ -318,7 +318,7 @@ void RemoteScrollingTreeMac::wheelEventDefaultHandlingCompleted(const PlatformWh
 
     SetForScope disallowLatchingScope(m_allowLatching, allowLatching);
     RefPtr<ScrollingTreeNode> targetNode = nodeForID(targetNodeID);
-    handleWheelEventWithNode(wheelEvent, processingSteps, targetNode.get(), EventTargeting::NodeOnly);
+    return handleWheelEventWithNode(wheelEvent, processingSteps, targetNode.get(), EventTargeting::NodeOnly);
 }
 
 void RemoteScrollingTreeMac::deferWheelEventTestCompletionForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)

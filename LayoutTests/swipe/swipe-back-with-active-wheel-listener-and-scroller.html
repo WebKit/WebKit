@@ -1,0 +1,99 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<head>
+<style>
+    body, html {
+        height: 100%;
+    }
+    #swipeTarget {
+        position: absolute;
+        inset: 100px;
+        border: 1px solid black;
+        padding: 20px;
+    }
+    #scroller {
+        overflow-x: scroll;
+        width: 500px;
+        height: 300px;
+        border: 1px solid blue;
+    }
+    .contents {
+        width: 500%;
+    }
+</style>
+<script src="../resources/ui-helper.js"></script>
+<script src="resources/swipe-test.js"></script>
+<script>
+    var logElement;
+    function didBeginSwipeCallback()
+    {
+        log("didBeginSwipe");
+
+        completeSwipeGesture();
+    }
+
+    function willEndSwipeCallback()
+    {
+        log("willEndSwipe");
+
+        shouldBe(false, isFirstPage(), "The swipe should not yet have navigated away from the second page.");
+    }
+
+    function didEndSwipeCallback()
+    {
+        log("didEndSwipe");
+
+        testComplete(logElement);
+    }
+
+    function isFirstPage()
+    {
+        return window.location.href.indexOf("second") == -1;
+    }
+
+    window.onload = async function () {
+        logElement = document.getElementById('console');
+        logElement.innerHTML = isFirstPage() ? "first" : "second";
+
+        if (isFirstPage()) {
+            setTimeout(function () { 
+                window.location.href = window.location.href + "?second";
+            }, 0);
+
+            if (!window.eventSender || !window.testRunner)
+                return;
+
+            initializeSwipeTest();
+        
+            testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
+            testRunner.installWillEndSwipeCallback(willEndSwipeCallback);
+            testRunner.installDidEndSwipeCallback(didEndSwipeCallback);
+
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+
+            return;
+        }
+        
+        const scroller = document.getElementById('scroller');
+        scroller.scrollLeft = 500;
+
+        const swipeTarget = document.getElementById('swipeTarget');
+        swipeTarget.addEventListener('wheel', () => { }, { passive: false });
+
+        await startSlowSwipeGesture();
+        await completeSwipeGesture();
+
+        testComplete(logElement);
+    };
+</script>
+</head>
+<body>
+    <div id="swipeTarget">
+        <div id="scroller">
+            <div class="contents">
+                This test should not start a swipe, and instead scroll the horizontal overflow.
+            </div>
+        </div>
+    </div>
+    <div id="console">This test must be run in WebKitTestRunner.</div>
+</body>

@@ -4579,7 +4579,7 @@ void WebViewImpl::scrollWheel(NSEvent *event)
     if (m_allowsBackForwardNavigationGestures && ensureGestureController().handleScrollWheelEvent(event))
         return;
 
-    NativeWebWheelEvent webEvent = NativeWebWheelEvent(event, m_view.getAutoreleased());
+    auto webEvent = NativeWebWheelEvent(event, m_view.getAutoreleased());
     m_page->handleNativeWheelEvent(webEvent);
 }
 

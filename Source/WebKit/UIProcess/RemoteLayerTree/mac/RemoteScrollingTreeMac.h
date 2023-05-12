@@ -69,7 +69,7 @@ private:
     // "Default handling" here refers to sending the event to the web process for synchronous scrolling, and DOM event handling.
     void willSendEventForDefaultHandling(const WebCore::PlatformWheelEvent&) override;
     void waitForEventDefaultHandlingCompletion(const WebCore::PlatformWheelEvent&) override;
-    void wheelEventDefaultHandlingCompleted(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>) override;
+    WheelEventHandlingResult handleWheelEventAfterDefaultHandling(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>) override;
 
     void deferWheelEventTestCompletionForReason(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason) override;
     void removeWheelEventTestCompletionDeferralForReason(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason) override;

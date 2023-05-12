@@ -3388,7 +3388,7 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent, std::optional<Vector<S
     revokeSandboxExtensions(mouseEventSandboxExtensions);
 }
 
-void WebPage::handleWheelEvent(const WebWheelEvent& event, const OptionSet<WheelEventProcessingSteps>& processingSteps, std::optional<bool> willStartSwipe, CompletionHandler<void(WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>)>&& completionHandler)
+void WebPage::handleWheelEvent(const WebWheelEvent& event, const OptionSet<WheelEventProcessingSteps>& processingSteps, std::optional<bool> willStartSwipe, CompletionHandler<void(WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>, bool)>&& completionHandler)
 {
 #if ENABLE(ASYNC_SCROLLING)
     auto* remoteScrollingCoordinator = dynamicDowncast<RemoteScrollingCoordinator>(scrollingCoordinator());
@@ -3399,16 +3399,14 @@ void WebPage::handleWheelEvent(const WebWheelEvent& event, const OptionSet<Wheel
 #endif
 
     bool handled = wheelEvent(event, processingSteps, EventDispatcher::WheelEventOrigin::UIProcess);
-    // FIXME: Ideally we'd avoid sending both a reply, and a separate WebPageProxy::DidReceiveEvent IPC, but the latter is generic to all events.
 #if ENABLE(ASYNC_SCROLLING)
     if (remoteScrollingCoordinator) {
         auto gestureInfo = remoteScrollingCoordinator->takeCurrentWheelGestureInfo();
-        completionHandler(gestureInfo.wheelGestureNode, gestureInfo.wheelGestureState);
-    } else
+        completionHandler(gestureInfo.wheelGestureNode, gestureInfo.wheelGestureState, handled);
+        return;
+    }
 #endif
-        completionHandler(0, { });
-
-    send(Messages::WebPageProxy::DidReceiveEvent(event.type(), handled));
+    completionHandler(0, { }, handled);
 }
 
 bool WebPage::wheelEvent(const WebWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps, EventDispatcher::WheelEventOrigin wheelEventOrigin)

@@ -28,6 +28,7 @@
 #if ENABLE(UI_SIDE_COMPOSITING)
 
 #include <WebCore/ScrollingConstraints.h>
+#include <WebCore/ScrollingCoordinatorTypes.h>
 #include <WebCore/ScrollingTree.h>
 #include <WebCore/WheelEventTestMonitor.h>
 #include <wtf/WeakPtr.h>
@@ -53,7 +54,7 @@ public:
 
     virtual void willSendEventForDefaultHandling(const WebCore::PlatformWheelEvent&) { }
     virtual void waitForEventDefaultHandlingCompletion(const WebCore::PlatformWheelEvent&) { }
-    virtual void wheelEventDefaultHandlingCompleted(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>) { }
+    virtual WebCore::WheelEventHandlingResult handleWheelEventAfterDefaultHandling(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>) { return WebCore::WheelEventHandlingResult::unhandled(); }
 
     RemoteScrollingCoordinatorProxy* scrollingCoordinatorProxy() const;
 
