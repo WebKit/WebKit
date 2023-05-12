@@ -1757,14 +1757,25 @@ IntRect FrameSelection::absoluteCaretBounds(bool* insideFixed)
     return m_absCaretBounds;
 }
 
+static LayoutBoxExtent computeOutsetFromInnerOuterRect(const LayoutRect& innerRect, const LayoutRect& outerRect)
+{
+    LayoutBoxExtent result;
+    result.setLeft(std::max<LayoutUnit>(0, innerRect.x() - outerRect.x()));
+    result.setTop(std::max<LayoutUnit>(0, innerRect.y() - outerRect.y()));
+    result.setRight(std::max<LayoutUnit>(0, outerRect.width() - innerRect.width()));
+    result.setBottom(std::max<LayoutUnit>(0, outerRect.height() - innerRect.height()));
+
+    return result;
+}
+
 static void repaintCaretForLocalRect(Node* node, const LayoutRect& rect, CaretAnimator* caretAnimator)
 {
     if (auto* caretPainter = rendererForCaretPainting(node)) {
         LayoutRect adjustedRect = caretAnimator ? caretAnimator->caretRepaintRectForLocalRect(rect) : rect;
         if (adjustedRect == rect)
-            caretPainter->repaintRectangle(adjustedRect);
+            caretPainter->repaintRectangle(rect);
         else
-            caretPainter->repaintRectangle(adjustedRect, RenderObject::ClipRepaintToLayer::No, RenderObject::ForceRepaint::Yes, RenderObject::ClipRepaintToContainer::No);
+            caretPainter->repaintRectangle(rect, RenderObject::ClipRepaintToLayer::No, RenderObject::ForceRepaint::Yes, computeOutsetFromInnerOuterRect(rect, adjustedRect));
     }
 }
 

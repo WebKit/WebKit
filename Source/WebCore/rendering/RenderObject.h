@@ -661,10 +661,9 @@ public:
     // Repaint a specific subrectangle within a given object.  The rect |r| is in the object's coordinate space.
     WEBCORE_EXPORT void repaintRectangle(const LayoutRect&, bool shouldClipToLayer = true) const;
 
-    enum class ClipRepaintToContainer : bool { No, Yes };
     enum class ClipRepaintToLayer : bool { No, Yes };
     enum class ForceRepaint : bool { No, Yes };
-    void repaintRectangle(const LayoutRect&, ClipRepaintToLayer, ForceRepaint, ClipRepaintToContainer) const;
+    void repaintRectangle(const LayoutRect&, ClipRepaintToLayer, ForceRepaint, std::optional<LayoutBoxExtent> additionalRepaintOutsets = std::nullopt) const;
 
     // Repaint a slow repaint object, which, at this time, means we are repainting an object with background-attachment:fixed.
     void repaintSlowRepaintObject() const;
@@ -832,7 +831,7 @@ protected:
 
     bool isSetNeedsLayoutForbidden() const;
 
-    void issueRepaint(std::optional<LayoutRect> partialRepaintRect = std::nullopt, ClipRepaintToLayer = ClipRepaintToLayer::No, ForceRepaint = ForceRepaint::No, ClipRepaintToContainer = ClipRepaintToContainer::Yes) const;
+    void issueRepaint(std::optional<LayoutRect> partialRepaintRect = std::nullopt, ClipRepaintToLayer = ClipRepaintToLayer::No, ForceRepaint = ForceRepaint::No, std::optional<LayoutBoxExtent> additionalRepaintOutsets = std::nullopt) const;
 
 private:
     void addAbsoluteRectForLayer(LayoutRect& result);

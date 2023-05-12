@@ -1000,7 +1000,7 @@ static inline bool fullRepaintIsScheduled(const RenderObject& renderer)
     return false;
 }
 
-void RenderObject::issueRepaint(std::optional<LayoutRect> partialRepaintRect, ClipRepaintToLayer clipRepaintToLayer, ForceRepaint forceRepaint, ClipRepaintToContainer clipRepaintToContainer) const
+void RenderObject::issueRepaint(std::optional<LayoutRect> partialRepaintRect, ClipRepaintToLayer clipRepaintToLayer, ForceRepaint forceRepaint, std::optional<LayoutBoxExtent> additionalRepaintOutsets) const
 {
     auto repaintContainer = containerForRepaint();
     if (!repaintContainer.renderer)
@@ -1010,9 +1010,12 @@ void RenderObject::issueRepaint(std::optional<LayoutRect> partialRepaintRect, Cl
         return;
 
     LayoutRect repaintRect;
-    if (partialRepaintRect)
-        repaintRect = clipRepaintToContainer == ClipRepaintToContainer::No ? *partialRepaintRect : computeRectForRepaint(*partialRepaintRect, repaintContainer.renderer);
-    else
+
+    if (partialRepaintRect) {
+        repaintRect = computeRectForRepaint(*partialRepaintRect, repaintContainer.renderer);
+        if (additionalRepaintOutsets)
+            repaintRect.expand(*additionalRepaintOutsets);
+    } else
         repaintRect = clippedOverflowRectForRepaint(repaintContainer.renderer);
 
     repaintUsingContainer(repaintContainer.renderer, repaintRect, clipRepaintToLayer == ClipRepaintToLayer::Yes);
@@ -1028,10 +1031,10 @@ void RenderObject::repaint() const
 
 void RenderObject::repaintRectangle(const LayoutRect& repaintRect, bool shouldClipToLayer) const
 {
-    return repaintRectangle(repaintRect, shouldClipToLayer ? ClipRepaintToLayer::Yes : ClipRepaintToLayer::No, ForceRepaint::No, ClipRepaintToContainer::Yes);
+    return repaintRectangle(repaintRect, shouldClipToLayer ? ClipRepaintToLayer::Yes : ClipRepaintToLayer::No, ForceRepaint::No);
 }
 
-void RenderObject::repaintRectangle(const LayoutRect& repaintRect, ClipRepaintToLayer shouldClipToLayer, ForceRepaint forceRepaint, ClipRepaintToContainer shouldClipToContainer) const
+void RenderObject::repaintRectangle(const LayoutRect& repaintRect, ClipRepaintToLayer shouldClipToLayer, ForceRepaint forceRepaint, std::optional<LayoutBoxExtent> additionalRepaintOutsets) const
 {
     // Don't repaint if we're unrooted (note that view() still returns the view when unrooted)
     if (!isRooted() || view().printing())
@@ -1040,7 +1043,7 @@ void RenderObject::repaintRectangle(const LayoutRect& repaintRect, ClipRepaintTo
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
     auto dirtyRect = repaintRect;
     dirtyRect.move(view().frameView().layoutContext().layoutDelta());
-    issueRepaint(dirtyRect, shouldClipToLayer, forceRepaint, shouldClipToContainer);
+    issueRepaint(dirtyRect, shouldClipToLayer, forceRepaint, additionalRepaintOutsets);
 }
 
 void RenderObject::repaintSlowRepaintObject() const
