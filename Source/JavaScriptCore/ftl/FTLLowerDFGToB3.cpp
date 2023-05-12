@@ -4403,8 +4403,9 @@ private:
 
             slowCases.append(jit.branchIfNotCell(subscriptGPR));
             slowCases.append(jit.branchIfNotString(subscriptGPR));
-            jit.loadPtr(CCallHelpers::Address(subscriptGPR, JSString::offsetOfValue()), scratch5GPR);
+            jit.loadPtr(CCallHelpers::Address(subscriptGPR, JSString::offsetOfFiberAndLengthAndFlag()), scratch5GPR);
             slowCases.append(jit.branchIfRopeStringImpl(scratch5GPR));
+            jit.loadJSStringImpl(scratch5GPR, scratch5GPR);
             slowCases.append(jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch5GPR, StringImpl::flagsOffset()), CCallHelpers::TrustedImm32(StringImpl::flagIsAtom())));
 
             slowCases.append(jit.loadMegamorphicProperty(state->vm(), baseGPR, scratch5GPR, nullptr, resultGPR, scratch1GPR, scratch2GPR, scratch3GPR, scratch4GPR));

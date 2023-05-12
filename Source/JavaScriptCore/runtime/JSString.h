@@ -239,8 +239,8 @@ public:
     static ptrdiff_t offsetOfFiberAndLengthAndFlag() { return OBJECT_OFFSETOF(JSString, m_fiberAndLength); }
     static constexpr uint64_t fiberAndLengthAndFlagLengthMask = (~isRopeInPointer) & ((1ul << 32) - 1);
 #else
-    static ptrdiff_t offsetOfValue() { return OBJECT_OFFSETOF(JSString, m_data) + OBJECT_OFFSETOF(AtomicFiberData, value); }
-    static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(JSString, m_data) + OBJECT_OFFSETOF(AtomicFiberData, m_length); }
+    static constexpr ptrdiff_t offsetOfValue() { return OBJECT_OFFSETOF(JSString, m_data) + OBJECT_OFFSETOF(AtomicFiberData, value); }
+    static constexpr ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(JSString, m_data) + OBJECT_OFFSETOF(AtomicFiberData, m_length); }
 #endif
 
     DECLARE_EXPORT_INFO;

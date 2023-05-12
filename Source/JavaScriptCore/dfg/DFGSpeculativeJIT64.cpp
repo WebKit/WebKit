@@ -6693,8 +6693,9 @@ void SpeculativeJIT::compileGetByValWithThisMegamorphic(Node* node)
 
     slowCases.append(branchIfNotCell(subscriptRegs));
     slowCases.append(branchIfNotString(subscriptRegs.payloadGPR()));
-    loadPtr(Address(subscriptRegs.payloadGPR(), JSString::offsetOfValue()), scratch5GPR);
+    loadPtr(Address(subscriptRegs.payloadGPR(), JSString::offsetOfFiberAndLengthAndFlag()), scratch5GPR);
     slowCases.append(branchIfRopeStringImpl(scratch5GPR));
+    loadJSStringImpl(scratch5GPR, scratch5GPR);
     slowCases.append(branchTest32(Zero, Address(scratch5GPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIsAtom())));
 
     slowCases.append(loadMegamorphicProperty(vm(), baseGPR, scratch5GPR, nullptr, scratch3GPR, scratch1GPR, scratch2GPR, scratch3GPR, scratch4GPR));
