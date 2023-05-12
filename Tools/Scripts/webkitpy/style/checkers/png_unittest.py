@@ -63,70 +63,12 @@ class PNGCheckerTest(unittest.TestCase):
             error = (line_number, category, confidence, message)
             errors.append(error)
 
-        file_path = ''
-
         fs = MockFileSystem()
-
-        scm = MockSCMDetector('svn')
-        checker = PNGChecker(file_path, mock_handle_style_error, scm, MockSystemHost(filesystem=fs))
-        checker.check()
-        self.assertEqual(len(errors), 1)
-        self.assertEqual(errors[0],
-                          (0, 'image/png', 5, 'Set the svn:mime-type property (svn propset svn:mime-type image/png ).'))
-
-        files = {'/Users/mock/.subversion/config': 'enable-auto-props = yes\n*.png = svn:mime-type=image/png'}
-        fs = MockFileSystem(files)
-        scm = MockSCMDetector('git')
-        errors = []
-        checker = PNGChecker("config", mock_handle_style_error, scm, MockSystemHost(os_name='linux', filesystem=fs))
-        checker.check()
-        self.assertEqual(len(errors), 0)
-
-        files = {'/Users/mock/.subversion/config': '#enable-auto-props = yes'}
-        fs = MockFileSystem(files)
-        scm = MockSCMDetector('git')
-        errors = []
-        checker = PNGChecker("config", mock_handle_style_error, scm, MockSystemHost(os_name='linux', filesystem=fs))
-        checker.check()
-        self.assertEqual(len(errors), 1)
-
-        files = {'/Users/mock/.subversion/config': 'enable-auto-props = yes\n#enable-auto-props = yes\n*.png = svn:mime-type=image/png'}
-        fs = MockFileSystem(files)
-        scm = MockSCMDetector('git')
-        errors = []
-        checker = PNGChecker("config", mock_handle_style_error, scm, MockSystemHost(os_name='linux', filesystem=fs))
-        checker.check()
-        self.assertEqual(len(errors), 0)
-
-        files = {'/Users/mock/.subversion/config': '#enable-auto-props = yes\nenable-auto-props = yes\n*.png = svn:mime-type=image/png'}
-        fs = MockFileSystem(files)
-        scm = MockSCMDetector('git')
-        errors = []
-        checker = PNGChecker("config", mock_handle_style_error, scm, MockSystemHost(os_name='linux', filesystem=fs))
-        checker.check()
-        self.assertEqual(len(errors), 0)
-
-        files = {'/Users/mock/.subversion/config': 'enable-auto-props = no'}
-        fs = MockFileSystem(files)
-        scm = MockSCMDetector('git')
-        errors = []
-        checker = PNGChecker("config", mock_handle_style_error, scm, MockSystemHost(os_name='linux', filesystem=fs))
-        checker.check()
-        self.assertEqual(len(errors), 1)
-
-        file_path = "foo.png"
-        fs.write_binary_file(file_path, "Dummy binary data")
-        scm = MockSCMDetector('git')
-        errors = []
-        checker = PNGChecker(file_path, mock_handle_style_error, scm, MockSystemHost(os_name='linux', filesystem=fs))
-        checker.check()
-        self.assertEqual(len(errors), 1)
-
         file_path = "foo-expected.png"
         fs.write_binary_file(file_path, "Dummy binary data")
         scm = MockSCMDetector('git')
         errors = []
         checker = PNGChecker(file_path, mock_handle_style_error, scm, MockSystemHost(os_name='linux', filesystem=fs))
         checker.check()
-        self.assertEqual(len(errors), 2)
+        self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0], (0, 'image/png', 5, 'Image lacks a checksum. Generate pngs using run-webkit-tests to ensure they have a checksum.'))

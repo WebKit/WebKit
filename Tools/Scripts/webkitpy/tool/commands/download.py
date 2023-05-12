@@ -63,7 +63,6 @@ class LandUnsafe(AbstractSequencedCommand):
     argument_names = "[BUGID]"
     show_in_main_help = False
     steps = [
-        steps.AddSvnMimetypeForPng,
         steps.UpdateChangeLogsWithReviewer,
         steps.ValidateReviewer,
         steps.ValidateChangeLogs,  # We do this after UpdateChangeLogsWithReviewer to avoid not having to cache the diff twice.
