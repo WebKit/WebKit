@@ -7222,7 +7222,7 @@ WebGLUsingMetal:
       "HAVE(WEBGL_COMPATIBLE_METAL)": true
       default: false
 
-WebGPU:
+WebGPUEnabled:
   type: bool
   status: unstable
   humanReadableName: "WebGPU"

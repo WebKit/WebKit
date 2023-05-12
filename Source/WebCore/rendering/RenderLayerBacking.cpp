@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -586,7 +586,7 @@ bool RenderLayerBacking::shouldSetContentsDisplayDelegate() const
 #if ENABLE(WEBGL) || ENABLE(OFFSCREEN_CANVAS)
     return true;
 #else
-    return renderer().settings().webGPU();
+    return renderer().settings().webGPUEnabled();
 #endif
 }
 

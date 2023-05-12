@@ -366,7 +366,7 @@ GPU* Navigator::gpu()
         auto* frame = this->frame();
         if (!frame)
             return nullptr;
-        if (!frame->settings().webGPU())
+        if (!frame->settings().webGPUEnabled())
             return nullptr;
         auto* page = frame->page();
         if (!page)
