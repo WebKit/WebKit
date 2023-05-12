@@ -62,6 +62,9 @@ struct GPUProcessCreationParameters {
     Vector<SandboxExtension::Handle> dynamicIOKitExtensionHandles;
 #endif
     std::optional<SandboxExtension::Handle> mobileGestaltExtensionHandle;
+#if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
+    Vector<SandboxExtension::Handle> gpuToolsExtensionHandles;
+#endif
 
     String applicationVisibleName;
 #if PLATFORM(COCOA)

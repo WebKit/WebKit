@@ -414,6 +414,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (WebProcessProxy::shouldEnableRemoteInspector()) {
         auto handles = SandboxExtension::createHandlesForMachLookup({ "com.apple.webinspector"_s }, process.auditToken());
         parameters.enableRemoteWebInspectorExtensionHandles = WTFMove(handles);
+
+#if ENABLE(GPU_PROCESS)
+        if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated()) {
+            if (!gpuProcess->hasSentGPUToolsSandboxExtensions()) {
+                auto gpuToolsHandle = GPUProcessProxy::createGPUToolsSandboxExtensionHandlesIfNeeded();
+                gpuProcess->send(Messages::GPUProcess::UpdateSandboxAccess(gpuToolsHandle), 0);
+            }
+        }
+#endif
     }
 #endif
 
