@@ -72,7 +72,7 @@
 @property (nonatomic, assign) BOOL rewriteMutableArray;
 @property (nonatomic, assign) BOOL rewriteMutableData;
 @property (nonatomic, assign) BOOL rewriteMutableDictionary;
-@property (nonatomic, assign) BOOL rewriteMutableString;
+@property (nonatomic, assign) BOOL transformURLs;
 @end
 
 @interface WKSecureCodingURLWrapper : NSURL <NSSecureCoding>
@@ -90,11 +90,11 @@
 @synthesize rewriteMutableArray;
 @synthesize rewriteMutableData;
 @synthesize rewriteMutableDictionary;
-@synthesize rewriteMutableString;
+@synthesize transformURLs;
 
 - (id)archiver:(NSKeyedArchiver *)archiver willEncodeObject:(id)object
 {
-    if (auto unwrappedURL = dynamic_objc_cast<NSURL>(object))
+    if (auto unwrappedURL = dynamic_objc_cast<NSURL>(object); unwrappedURL && transformURLs)
         return adoptNS([[WKSecureCodingURLWrapper alloc] initWithURL:unwrappedURL]).autorelease();
 
     if (auto mutableArray = dynamic_objc_cast<NSMutableArray>(object); mutableArray && rewriteMutableArray)
@@ -105,9 +105,6 @@
 
     if (auto mutableDict = dynamic_objc_cast<NSMutableDictionary>(object); mutableDict && rewriteMutableDictionary)
         return adoptNS([mutableDict copy]).autorelease();
-
-    if (auto mutableStr = dynamic_objc_cast<NSMutableString>(object); mutableStr && rewriteMutableString)
-        return adoptNS([mutableStr copy]).autorelease();
 
     // We can't just return a WebCore::CocoaColor here, because the decoder would
     // have no way of distinguishing an authentic WebCore::CocoaColor vs a CGColor
@@ -136,7 +133,7 @@
         rewriteMutableArray = NO;
         rewriteMutableData = NO;
         rewriteMutableDictionary = NO;
-        rewriteMutableString = NO;
+        transformURLs = YES;
     }
 
     return self;
@@ -553,6 +550,12 @@ static void encodeSecureCodingInternal(Encoder& encoder, id <NSObject, NSSecureC
         [delegate setRewriteMutableArray:YES];
     }
 
+#if ENABLE(REVEAL)
+    // FIXME: This can be removed on operating systems that have rdar://109237983.
+    if (PAL::isRevealCoreFrameworkAvailable() && [object isKindOfClass:PAL::getRVItemClass()])
+        [delegate setTransformURLs:NO];
+#endif
+
     [archiver setDelegate:delegate.get()];
 
     [archiver encodeObject:object forKey:NSKeyedArchiveRootObjectKey];
@@ -607,7 +610,6 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
     static bool supportsDataDetectorsCore = false;
     static bool supportsDataDetectors = false;
     static bool supportsVisionKitCore = false;
-    static bool supportsRevealCore = false;
 
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
@@ -633,12 +635,6 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
         supportsVisionKitCore = PAL::isVisionKitCoreFrameworkAvailable();
 #else
         UNUSED_PARAM(supportsVisionKitCore);
-#endif
-
-#if ENABLE(REVEAL)
-        supportsRevealCore = PAL::isRevealCoreFrameworkAvailable();
-#else
-        UNUSED_PARAM(supportsRevealCore);
 #endif
     });
 
@@ -690,7 +686,7 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
 #endif // ENABLE(DATA_DETECTION)
 #if ENABLE(REVEAL)
     // rdar://107553310 - don't re-introduce rdar://107673064
-    if (supportsRevealCore && [allowedClasses containsObject:PAL::getRVItemClass()])
+    if (PAL::isRevealCoreFrameworkAvailable() && [allowedClasses containsObject:PAL::getRVItemClass()])
         return haveSecureActionContext() && strictSecureDecodingForAllObjCEnabled();
 #endif // ENABLE(REVEAL)
 
@@ -765,6 +761,11 @@ static std::optional<RetainPtr<id>> decodeSecureCodingInternal(Decoder& decoder,
     }
     if ([allowedClasses containsObject:NSURLRequest.class])
         [allowedClassSet addObject:WKSecureCodingURLWrapper.class];
+
+#if ENABLE(REVEAL)
+    if (PAL::isRevealCoreFrameworkAvailable() && [allowedClasses containsObject:PAL::getRVItemClass()])
+        [allowedClassSet addObject:WKSecureCodingURLWrapper.class];
+#endif
 
     if (shouldEnableStrictMode(decoder, allowedClasses))
         [unarchiver _enableStrictSecureDecodingMode];
