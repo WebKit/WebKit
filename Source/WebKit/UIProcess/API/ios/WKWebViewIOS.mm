@@ -1325,8 +1325,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
             contentOffsetInScrollViewCoordinates.y = scrollViewContentOffset.y;
 
         [_scrollView setContentOffset:contentOffsetInScrollViewCoordinates animated:animated];
-    } else {
-        // If we haven't changed anything, there would not be any VisibleContentRect update sent to the content.
+    } else if (!_perProcessState.didDeferUpdateVisibleContentRectsForAnyReason) {
+        // If we haven't changed anything, and are not deferring updates, there would not be any VisibleContentRect update sent to the content.
         // The WebProcess would keep the invalid contentOffset as its scroll position.
         // To synchronize the WebProcess with what is on screen, we send the VisibleContentRect again.
         _page->resendLastVisibleContentRects();
