@@ -639,6 +639,9 @@ std::optional<LayoutUnit> GridTrackSizingAlgorithm::estimatedGridAreaBreadthForC
 
 std::optional<LayoutUnit> GridTrackSizingAlgorithm::gridAreaBreadthForChild(const RenderBox& child, GridTrackSizingDirection direction) const
 {
+    if (m_renderGrid->areMasonryColumns())
+        return m_renderGrid->contentLogicalWidth();
+
     bool addContentAlignmentOffset =
         direction == ForColumns && (m_sizingState == RowSizingFirstIteration || m_sizingState == RowSizingExtraIterationForSizeContainment);
     // To determine the column track's size based on an orthogonal grid item we need it's logical
