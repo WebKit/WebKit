@@ -485,7 +485,9 @@ public:
     WebProcessWithAudibleMediaToken webProcessWithAudibleMediaToken() const;
     WebProcessWithMediaStreamingToken webProcessWithMediaStreamingToken() const;
 
-    void disableDelayedWebProcessLaunch() { m_isDelayedWebProcessLaunchDisabled = true; }
+    static bool globalDelaysWebProcessLaunchDefaultValue();
+    bool delaysWebProcessLaunchDefaultValue() const { return m_delaysWebProcessLaunchDefaultValue; }
+    void setDelaysWebProcessLaunchDefaultValue(bool delaysWebProcessLaunchDefaultValue) { m_delaysWebProcessLaunchDefaultValue = delaysWebProcessLaunchDefaultValue; }
 
     void setJavaScriptConfigurationDirectory(String&& directory) { m_javaScriptConfigurationDirectory = directory; }
     const String& javaScriptConfigurationDirectory() const { return m_javaScriptConfigurationDirectory; }
@@ -809,12 +811,8 @@ private:
     int32_t m_userId { -1 };
 #endif
 
-#if PLATFORM(IOS)
-    // FIXME: Delayed process launch is currently disabled on iOS for performance reasons (rdar://problem/49074131).
-    bool m_isDelayedWebProcessLaunchDisabled { true };
-#else
-    bool m_isDelayedWebProcessLaunchDisabled { false };
-#endif
+    bool m_delaysWebProcessLaunchDefaultValue { globalDelaysWebProcessLaunchDefaultValue() };
+
     static bool s_useSeparateServiceWorkerProcess;
     static bool s_didGlobalStaticInitialization;
 

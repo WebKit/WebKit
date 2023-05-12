@@ -4397,6 +4397,51 @@ TEST(ProcessSwap, WebInspectorDelayedProcessLaunch)
 
 #endif // !TARGET_OS_IPHONE
 
+TEST(ProcessSwap, DelayedProcessLaunchThenLaunchInitialProcessIfNecessary)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    webViewConfiguration.get()._delaysWebProcessLaunchUntilFirstLoad = YES;
+    [webViewConfiguration setProcessPool:processPool.get()];
+    webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+
+    EXPECT_EQ(0, [webView _webProcessIdentifier]);
+    TestWebKitAPI::Util::spinRunLoop(100);
+    EXPECT_EQ(0, [webView _webProcessIdentifier]);
+
+    [webView _launchInitialProcessIfNecessary];
+
+    while (![webView _webProcessIdentifier])
+        TestWebKitAPI::Util::spinRunLoop(10);
+    EXPECT_NE(0, [webView _webProcessIdentifier]);
+}
+
+TEST(ProcessSwap, DelayedProcessLaunchThenLoad)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    webViewConfiguration.get()._delaysWebProcessLaunchUntilFirstLoad = YES;
+    [webViewConfiguration setProcessPool:processPool.get()];
+    webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+
+    EXPECT_EQ(0, [webView _webProcessIdentifier]);
+    TestWebKitAPI::Util::spinRunLoop(100);
+    EXPECT_EQ(0, [webView _webProcessIdentifier]);
+
+    [webView loadHTMLString:@"test" baseURL:[NSURL URLWithString:@"about:blank"]];
+    [webView _test_waitForDidFinishNavigation];
+
+    EXPECT_NE(0, [webView _webProcessIdentifier]);
+}
+
 static const char* sameOriginBlobNavigationTestBytes = R"PSONRESOURCE(
 <!DOCTYPE html>
 <html>

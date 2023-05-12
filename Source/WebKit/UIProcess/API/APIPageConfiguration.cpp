@@ -28,6 +28,7 @@
 
 #include "APIProcessPoolConfiguration.h"
 #include "APIWebsitePolicies.h"
+#include "WebInspectorUtilities.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
@@ -247,6 +248,21 @@ bool PageConfiguration::lockdownModeEnabled() const
     if (m_defaultWebsitePolicies)
         return m_defaultWebsitePolicies->lockdownModeEnabled();
     return lockdownModeEnabledBySystem();
+}
+
+bool PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() const
+{
+    if (m_processPool && isInspectorProcessPool(*m_processPool)) {
+        // Never delay process launch for inspector pages as inspector pages do not know how to transition from a terminated process.
+        return false;
+    }
+    if (m_delaysWebProcessLaunchUntilFirstLoad) {
+        // If the client explicitly enabled / disabled the feature, then obey their directives.
+        return *m_delaysWebProcessLaunchUntilFirstLoad;
+    }
+    if (m_processPool)
+        return m_processPool->delaysWebProcessLaunchDefaultValue();
+    return WebProcessPool::globalDelaysWebProcessLaunchDefaultValue();
 }
 
 bool PageConfiguration::isLockdownModeExplicitlySet() const

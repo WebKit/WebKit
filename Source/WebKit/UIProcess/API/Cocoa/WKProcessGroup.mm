@@ -239,10 +239,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     _delegate = delegate;
 
-    // If the client can observe when the connection to the WebProcess injected bundle is established, then we cannot
-    // safely delay the launch of the WebProcess until something is loaded in the web view.
+    // If the client can observe when the connection to the WebProcess injected bundle is established, then
+    // delaying the launch of the WebProcess until something is loaded in the web view may not be safe.
+    // As a result, we disable the feature by default and let the client opt-in via WKWebViewConfiguration.
     if ([delegate respondsToSelector:@selector(processGroup:didCreateConnectionToWebProcessPlugIn:)])
-        _processPool->disableDelayedWebProcessLaunch();
+        _processPool->setDelaysWebProcessLaunchDefaultValue(false);
 }
 
 @end

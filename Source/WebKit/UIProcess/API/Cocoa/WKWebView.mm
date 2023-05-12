@@ -3079,6 +3079,12 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
     _page->simulateDeviceOrientationChange(alpha, beta, gamma);
 }
 
+- (void)_launchInitialProcessIfNecessary
+{
+    THROW_IF_SUSPENDED;
+    _page->launchInitialProcessIfNecessary();
+}
+
 + (BOOL)_handlesSafeBrowsing
 {
     return true;

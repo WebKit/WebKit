@@ -97,9 +97,6 @@ WebProcessPool& defaultInspectorProcessPool(unsigned inspectionLevel)
 
 void prepareProcessPoolForInspector(WebProcessPool& processPool)
 {
-    // Do not delay process launch for inspector pages as inspector pages do not know how to transition from a terminated process.
-    processPool.disableDelayedWebProcessLaunch();
-
     allInspectorProcessPools().add(processPool);
 }
 
