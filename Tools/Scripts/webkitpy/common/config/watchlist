@@ -381,8 +381,11 @@
         },
         "WebGPU": {
             "filename": r"Source/WebCore/Modules/webgpu/"
-                        r"|Source/WebCore/platform/graphics/gpu/"
-                        r"|Source/WebCore/platform/graphics/gpu/cocoa/",
+                        r"|Source/WebCore/PAL/pal/graphics/WebGPU/"
+                        r"|Source/WebGPU/"
+                        r"|Source/WebKit/Shared/WebGPU/"
+                        r"|Source/WebKit/WebProcess/GPU/graphics/WebGPU/"
+                        r"|Source/WebKit/GPUProcess/graphics/WebGPU/",
         },
         "WebPlatformTests": {
             "filename": r"LayoutTests/imported/w3c/web-platform-tests/((?!-expected\.txt).)*$",
