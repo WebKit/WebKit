@@ -34,7 +34,6 @@ namespace WebCore {
 
 class Scrollbar;
 class ScrollableArea;
-class ScrollingCoordinator;
 enum class ScrollbarOrientation : uint8_t;
 
 class ScrollbarsController {
