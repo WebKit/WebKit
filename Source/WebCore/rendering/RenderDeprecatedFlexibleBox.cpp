@@ -1023,7 +1023,7 @@ bool RenderDeprecatedFlexibleBox::applyModernLineClamp(FlexBoxIterator& iterator
 {
     auto* firstBlockFlowWithInlineChildren = [&] () -> RenderBlockFlow* {
         for (auto& descendant : descendantsOfType<RenderBlockFlow>(*this)) {
-            if (descendant.childrenInline())
+            if (descendant.firstInFlowChild() && descendant.childrenInline())
                 return &descendant;
         }
         return nullptr;
