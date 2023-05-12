@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ShareableBitmap.h"
 
+#include "Logging.h"
 #include <WebCore/BitmapImage.h>
 #include <WebCore/GraphicsContextCG.h>
 #include <WebCore/IOSurface.h>
@@ -119,9 +120,21 @@ RefPtr<ShareableBitmap> ShareableBitmap::createFromImagePixels(NativeImage& imag
         return nullptr;
 
     const auto* bytes = reinterpret_cast<const uint8_t*>(CFDataGetBytePtr(pixels.get()));
-    auto sizeInBytes = CFDataGetLength(pixels.get());
-    if (!bytes || !sizeInBytes)
+    CheckedUint32 sizeInBytes = CFDataGetLength(pixels.get());
+    if (!bytes || !sizeInBytes || sizeInBytes.hasOverflowed())
         return nullptr;
+
+    auto configuration = ShareableBitmapConfiguration(image);
+    if (configuration.sizeInBytes() != sizeInBytes) {
+        LOG_WITH_STREAM(Images, stream
+            << "ShareableBitmap::createFromImagePixels() " << image. platformImage().get()
+            << " CGImage size: " << configuration.size()
+            << " CGImage bytesPerRow: " << configuration.bytesPerRow()
+            << " CGImage sizeInBytes: " << configuration.sizeInBytes()
+            << " CGDataProvider sizeInBytes: " << sizeInBytes
+            << " CGImage and its CGDataProvider disagree about how many bytes are in pixels buffer. CGImage is a sub-image; bailing.");
+        return nullptr;
+    }
 
     RefPtr<SharedMemory> sharedMemory = SharedMemory::allocate(sizeInBytes);
     if (!sharedMemory)
@@ -129,7 +142,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::createFromImagePixels(NativeImage& imag
 
     memcpy(sharedMemory->data(), bytes, sizeInBytes);
 
-    return adoptRef(new ShareableBitmap(ShareableBitmapConfiguration(image), sharedMemory.releaseNonNull()));
+    return adoptRef(new ShareableBitmap(configuration, sharedMemory.releaseNonNull()));
 }
 
 std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
