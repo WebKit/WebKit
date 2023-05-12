@@ -1175,6 +1175,7 @@
 		F46128CB211D475100D9FADB /* TestDraggingInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = F46128CA211D475100D9FADB /* TestDraggingInfo.mm */; };
 		F46128D4211E40FD00D9FADB /* link-in-iframe-and-input.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F46128D1211E2D2500D9FADB /* link-in-iframe-and-input.html */; };
 		F4613F1D27DC2EDD007CCDE6 /* ContextMenuTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4613F1C27DC2EDD007CCDE6 /* ContextMenuTests.mm */; };
+		F4636A9A2A0DA61800C88CC0 /* GestureRecognizerTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4636A992A0DA61800C88CC0 /* GestureRecognizerTests.mm */; };
 		F464AF9220BB66EA007F9B18 /* RenderingProgressTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F464AF9120BB66EA007F9B18 /* RenderingProgressTests.mm */; };
 		F46512192A01E2220037CAD5 /* EditableLegacyWebView.mm in Sources */ = {isa = PBXBuildFile; fileRef = F46512182A01E2220037CAD5 /* EditableLegacyWebView.mm */; };
 		F46849BE1EEF58E400B937FE /* UIPasteboardTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F46849BD1EEF58E400B937FE /* UIPasteboardTests.mm */; };
@@ -3464,6 +3465,7 @@
 		F46128D6211E489C00D9FADB /* DragAndDropTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DragAndDropTests.mm; sourceTree = "<group>"; };
 		F46128D8211E496300D9FADB /* full-page-dropzone.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "full-page-dropzone.html"; sourceTree = "<group>"; };
 		F4613F1C27DC2EDD007CCDE6 /* ContextMenuTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenuTests.mm; sourceTree = "<group>"; };
+		F4636A992A0DA61800C88CC0 /* GestureRecognizerTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GestureRecognizerTests.mm; sourceTree = "<group>"; };
 		F464AF9120BB66EA007F9B18 /* RenderingProgressTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderingProgressTests.mm; sourceTree = "<group>"; };
 		F46512182A01E2220037CAD5 /* EditableLegacyWebView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EditableLegacyWebView.mm; sourceTree = "<group>"; };
 		F46849BD1EEF58E400B937FE /* UIPasteboardTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UIPasteboardTests.mm; sourceTree = "<group>"; };
@@ -4435,6 +4437,7 @@
 				F4CF327F2366552200D3AD07 /* EnterKeyHintTests.mm */,
 				F4BC0B132146C849002A0478 /* FocusPreservationTests.mm */,
 				CDA93DAC22F4EC2200490A69 /* FullscreenTouchSecheuristicTests.cpp */,
+				F4636A992A0DA61800C88CC0 /* GestureRecognizerTests.mm */,
 				F45E15722112CE2900307E82 /* KeyboardInputTestsIOS.mm */,
 				F4010B7F24DA24AC00A876E2 /* NavigationSwipeTests.mm */,
 				0F34077523037FDC0060A1A0 /* OverflowScrollViewTests.mm */,
@@ -6367,6 +6370,7 @@
 				CDBFCC451A9FF45300A7B691 /* FullscreenZoomInitialFrame.mm in Sources */,
 				83DB79691EF63B3C00BFA5E5 /* Function.cpp in Sources */,
 				7CCE7EF81A411AE600447C4C /* Geolocation.cpp in Sources */,
+				F4636A9A2A0DA61800C88CC0 /* GestureRecognizerTests.mm in Sources */,
 				7CCE7EE11A411A9A00447C4C /* GetBackingScaleFactor.mm in Sources */,
 				7CCE7EF91A411AE600447C4C /* GetInjectedBundleInitializationUserDataCallback.cpp in Sources */,
 				7CCE7EE21A411A9A00447C4C /* GetPIDAfterAbortedProcessLaunch.cpp in Sources */,

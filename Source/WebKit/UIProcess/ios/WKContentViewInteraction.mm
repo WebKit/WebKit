@@ -2580,7 +2580,9 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return ![self shouldDeferGestureDueToImageAnalysis:gestureRecognizer];
 #endif
 
-    if (gestureRecognizer == _singleTapGestureRecognizer && isBuiltInScrollViewPanGestureRecognizer(otherGestureRecognizer)
+    if (gestureRecognizer == _singleTapGestureRecognizer
+        && isBuiltInScrollViewPanGestureRecognizer(otherGestureRecognizer)
+        && [otherGestureRecognizer.view isKindOfClass:UIScrollView.class]
         && ![self _isInterruptingDecelerationForScrollViewOrAncestor:[_singleTapGestureRecognizer lastTouchedScrollView]])
         return YES;
 
@@ -11855,6 +11857,11 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 #if HAVE(CONTACTSUI)
     [_contactPicker dismissWithContacts:contacts];
 #endif
+}
+
+- (UITapGestureRecognizer *)singleTapGestureRecognizer
+{
+    return _singleTapGestureRecognizer.get();
 }
 
 - (void)_simulateSelectionStart

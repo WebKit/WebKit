@@ -868,6 +868,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 @property (nonatomic, readonly, getter=isAnimatingDragCancel) BOOL animatingDragCancel;
 #endif
 
+@property (nonatomic, readonly) UITapGestureRecognizer *singleTapGestureRecognizer;
 @property (nonatomic, readonly) UIWKTextInteractionAssistant *textInteractionAssistant;
 
 @end

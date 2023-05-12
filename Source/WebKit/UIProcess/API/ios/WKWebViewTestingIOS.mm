@@ -418,6 +418,11 @@ static void dumpUIView(TextStream& ts, UIView *view)
     return [_contentView imageAnalysisGestureRecognizer];
 }
 
+- (UITapGestureRecognizer *)_singleTapGestureRecognizer
+{
+    return [_contentView singleTapGestureRecognizer];
+}
+
 - (void)_simulateElementAction:(_WKElementActionType)actionType atLocation:(CGPoint)location
 {
     [_contentView _simulateElementAction:actionType atLocation:location];
