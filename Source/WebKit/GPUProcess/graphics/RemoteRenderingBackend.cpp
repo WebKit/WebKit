@@ -68,6 +68,10 @@
 #import <WebCore/TextDetectorImplementation.h>
 #endif
 
+#if PLATFORM(COCOA)
+#include "ImageBufferShareableMappedIOSurfaceBitmapBackend.h"
+#endif
+
 #if ENABLE(IPC_TESTING_API)
 #define WEB_PROCESS_TERMINATE_CONDITION !m_gpuConnectionToWebProcess->connection().ignoreInvalidMessageForTesting()
 #else
@@ -96,6 +100,18 @@
 
 namespace WebKit {
 using namespace WebCore;
+
+static bool isSmallLayerBacking(const ImageBufferBackendParameters& parameters)
+{
+#if PLATFORM(COCOA)
+    const unsigned maxSmallLayerBackingArea = 64u * 64u; // 4096 == 16kb backing store which equals 1 page on AS.
+    return parameters.purpose == RenderingPurpose::LayerBacking
+        && ImageBufferBackend::calculateBackendSize(parameters).area() <= maxSmallLayerBackingArea
+        && (parameters.pixelFormat == PixelFormat::BGRA8 || parameters.pixelFormat == PixelFormat::BGRX8);
+#else
+    return false;
+#endif
+}
 
 Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters, IPC::StreamServerConnection::Handle&& connectionHandle)
 {
@@ -224,7 +240,12 @@ void RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier(const Floa
     creationContext.resourceOwner = m_resourceOwner;
 
     if (renderingMode == RenderingMode::Accelerated) {
-        imageBuffer = RemoteImageBuffer::create<AcceleratedImageBufferShareableMappedBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, *this, imageBufferResourceIdentifier, creationContext);
+#if PLATFORM(COCOA)
+        if (isSmallLayerBacking({ logicalSize, resolutionScale, colorSpace, pixelFormat, purpose }))
+            imageBuffer = RemoteImageBuffer::create<ImageBufferShareableMappedIOSurfaceBitmapBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, *this, imageBufferResourceIdentifier, creationContext);
+#endif
+        if (!imageBuffer)
+            imageBuffer = RemoteImageBuffer::create<AcceleratedImageBufferShareableMappedBackend>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, *this, imageBufferResourceIdentifier, creationContext);
     }
 
     if (!imageBuffer)
@@ -524,8 +545,8 @@ void RemoteRenderingBackend::prepareLayerBuffersForDisplay(const PrepareBackingS
         outputData.displayRequirement = SwapBuffersDisplayRequirement::NeedsNoDisplay;
         return;
     }
-    
-    if (!frontBuffer || !inputData.supportsPartialRepaint)
+
+    if (!frontBuffer || !inputData.supportsPartialRepaint || isSmallLayerBacking(frontBuffer->parameters()))
         needsFullDisplay = true;
 
     if (!backBuffer || backBuffer->isInUse()) {
