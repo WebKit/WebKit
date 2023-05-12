@@ -66,10 +66,8 @@ static inline void fillRtpStreamStats(RTCStatsReport::RtpStreamStats& stats, con
         stats.transportId = fromStdString(*rtcStats.transport_id);
     if (rtcStats.codec_id.is_defined())
         stats.codecId = fromStdString(*rtcStats.codec_id);
-    if (rtcStats.media_type.is_defined()) {
-        stats.mediaType = fromStdString(*rtcStats.media_type);
-        stats.kind = stats.mediaType;
-    }
+    if (rtcStats.media_type.is_defined())
+        stats.kind = fromStdString(*rtcStats.kind);
 }
 
 static inline void fillReceivedRtpStreamStats(RTCStatsReport::ReceivedRtpStreamStats& stats, const webrtc::RTCReceivedRtpStreamStats& rtcStats)
@@ -366,8 +364,6 @@ static inline void fillRTCIceCandidatePairStats(RTCStatsReport::IceCandidatePair
     if (rtcStats.state.is_defined())
         stats.state = iceCandidatePairState(*rtcStats.state);
 
-    if (rtcStats.priority.is_defined())
-        stats.priority = *rtcStats.priority;
     if (rtcStats.nominated.is_defined())
         stats.nominated = *rtcStats.nominated;
     if (rtcStats.writable.is_defined())

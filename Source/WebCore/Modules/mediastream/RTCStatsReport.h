@@ -62,7 +62,6 @@ public:
     struct RtpStreamStats : Stats {
         uint32_t ssrc { 0 };
         String kind;
-        String mediaType;
         String transportId;
         String codecId;
     };
@@ -257,7 +256,6 @@ public:
         String localCandidateId;
         String remoteCandidateId;
         IceCandidatePairState state;
-        std::optional<uint64_t> priority;
         std::optional<bool> nominated;
         std::optional<bool> writable;
         std::optional<bool> readable;
@@ -287,7 +285,6 @@ public:
         std::optional<RTCIceCandidateType> candidateType;
         std::optional<int32_t> priority;
         String url;
-        bool deleted { false };
     };
 
     struct CertificateStats : Stats {

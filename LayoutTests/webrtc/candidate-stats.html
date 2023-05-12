@@ -26,7 +26,7 @@ promise_test(async (test) => {
     assert_true(!stats.address, "address is not exposed");
     assert_true(!stats.networkType, "networkType is not exposed");
 
-    assert_array_equals(Object.keys(stats), ["id","timestamp","type","candidateType","deleted","port","priority","protocol","transportId"], "local");
+    assert_array_equals(Object.keys(stats), ["id","timestamp","type","candidateType","port","priority","protocol","transportId"], "local");
 
     stats = await getTypedStats(firstConnection, "remote-candidate");
 
@@ -34,7 +34,7 @@ promise_test(async (test) => {
     assert_true(!stats.address, "address is not exposed");
     assert_true(!stats.networkType, "networkType is not exposed");
 
-    assert_array_equals(Object.keys(stats), ["id","timestamp","type","candidateType","deleted","port","priority","protocol","transportId"], "remote");
+    assert_array_equals(Object.keys(stats), ["id","timestamp","type","candidateType","port","priority","protocol","transportId"], "remote");
 }, "ICE candidate data channel stats");
         </script>
     </body>
