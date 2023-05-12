@@ -273,8 +273,6 @@ bool GStreamerMediaEndpoint::setConfiguration(MediaEndpointConfiguration& config
                 // FIXME: libnice currently doesn't seem to handle IPv6 addresses very well.
                 if (validURL.host().startsWith('['))
                     continue;
-                validURL.setUser(server.username);
-                validURL.setPassword(server.credential);
                 g_object_set(m_webrtcBin.get(), "stun-server", validURL.string().utf8().data(), nullptr);
                 stunSet = true;
             }
