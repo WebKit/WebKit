@@ -1410,6 +1410,16 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
     _pageConfiguration->setAllowTestOnlyIPC(allowTestOnlyIPC);
 }
 
+- (BOOL)_delaysWebProcessLaunchUntilFirstLoad
+{
+    return _pageConfiguration->delaysWebProcessLaunchUntilFirstLoad();
+}
+
+- (void)_setDelaysWebProcessLaunchUntilFirstLoad:(BOOL)delaysWebProcessLaunchUntilFirstLoad
+{
+    _pageConfiguration->setDelaysWebProcessLaunchUntilFirstLoad(delaysWebProcessLaunchUntilFirstLoad);
+}
+
 - (BOOL)_shouldRelaxThirdPartyCookieBlocking
 {
     return _pageConfiguration->shouldRelaxThirdPartyCookieBlocking() == WebCore::ShouldRelaxThirdPartyCookieBlocking::Yes;

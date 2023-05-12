@@ -193,6 +193,16 @@ static HashSet<String, ASCIICaseInsensitiveHash>& globalURLSchemesWithCustomProt
     return set;
 }
 
+bool WebProcessPool::globalDelaysWebProcessLaunchDefaultValue()
+{
+#if PLATFORM(IOS_FAMILY)
+    // FIXME: Delayed process launch is currently disabled on iOS for performance reasons (rdar://problem/49074131).
+    return false;
+#else
+    return true;
+#endif
+}
+
 Vector<String> WebProcessPool::urlSchemesWithCustomProtocolHandlers()
 {
     return copyToVector(globalURLSchemesWithCustomProtocolHandlers());
@@ -1114,7 +1124,8 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         // We do not support several WebsiteDataStores sharing a single process.
         ASSERT(process->isDummyProcessProxy() || pageConfiguration->websiteDataStore() == process->websiteDataStore());
         ASSERT(&pageConfiguration->relatedPage()->websiteDataStore() == pageConfiguration->websiteDataStore());
-    } else if (!m_isDelayedWebProcessLaunchDisabled) {
+    } else if (pageConfiguration->delaysWebProcessLaunchUntilFirstLoad()) {
+        WEBPROCESSPOOL_RELEASE_LOG(Process, "createWebPage: delaying WebProcess launch until first load");
         // In the common case, we delay process launch until something is actually loaded in the page.
         process = dummyProcessProxy(pageConfiguration->websiteDataStore()->sessionID());
         if (!process) {
@@ -1122,8 +1133,10 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
             m_dummyProcessProxies.add(pageConfiguration->websiteDataStore()->sessionID(), *process);
             m_processes.append(*process);
         }
-    } else
+    } else {
+        WEBPROCESSPOOL_RELEASE_LOG(Process, "createWebPage: Not delaying WebProcess launch");
         process = processForRegistrableDomain(*pageConfiguration->websiteDataStore(), { }, lockdownMode);
+    }
 
     RefPtr<WebUserContentControllerProxy> userContentController = pageConfiguration->userContentController();
     
