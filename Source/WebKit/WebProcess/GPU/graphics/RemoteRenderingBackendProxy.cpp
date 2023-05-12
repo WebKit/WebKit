@@ -268,6 +268,12 @@ void RemoteRenderingBackendProxy::cacheGradient(Ref<Gradient>&& gradient)
     send(Messages::RemoteRenderingBackend::CacheGradient(WTFMove(gradient), renderingResourceIdentifier));
 }
 
+void RemoteRenderingBackendProxy::cacheFilter(Ref<Filter>&& filter)
+{
+    auto renderingResourceIdentifier = filter->renderingResourceIdentifier();
+    send(Messages::RemoteRenderingBackend::CacheFilter(WTFMove(filter), renderingResourceIdentifier));
+}
+
 void RemoteRenderingBackendProxy::releaseAllRemoteResources()
 {
     if (!m_streamConnection)

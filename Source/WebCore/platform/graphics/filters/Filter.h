@@ -84,5 +84,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Filter)
-    static bool isType(const WebCore::FilterFunction& function) { return function.isFilter(); }
+    static bool isType(const WebCore::RenderingResource& renderingResource) { return renderingResource.isFilter(); }
 SPECIALIZE_TYPE_TRAITS_END()

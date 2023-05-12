@@ -102,6 +102,7 @@ public:
     void cacheFontCustomPlatformData(Ref<const WebCore::FontCustomPlatformData>&&);
     void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&);
     void cacheGradient(Ref<WebCore::Gradient>&&);
+    void cacheFilter(Ref<WebCore::Filter>&&);
     void releaseAllRemoteResources();
     void releaseAllImageResources();
     void releaseRenderingResource(WebCore::RenderingResourceIdentifier);

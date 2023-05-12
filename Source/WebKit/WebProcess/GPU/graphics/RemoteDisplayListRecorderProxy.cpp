@@ -515,6 +515,17 @@ bool RemoteDisplayListRecorderProxy::recordResourceUse(Gradient& gradient)
     return true;
 }
 
+bool RemoteDisplayListRecorderProxy::recordResourceUse(Filter& filter)
+{
+    if (UNLIKELY(!m_renderingBackend)) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    m_renderingBackend->remoteResourceCacheProxy().recordFilterUse(filter);
+    return true;
+}
+
 void RemoteDisplayListRecorderProxy::flushContext(const IPC::Semaphore& semaphore)
 {
     send(Messages::RemoteDisplayListRecorder::FlushContext(semaphore));

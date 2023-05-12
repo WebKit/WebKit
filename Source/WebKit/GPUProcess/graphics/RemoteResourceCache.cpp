@@ -75,6 +75,11 @@ void RemoteResourceCache::cacheGradient(Ref<Gradient>&& gradient, QualifiedRende
     m_resourceHeap.add(renderingResourceIdentifier, WTFMove(gradient));
 }
 
+void RemoteResourceCache::cacheFilter(Ref<Filter>&& filter, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+{
+    m_resourceHeap.add(renderingResourceIdentifier, WTFMove(filter));
+}
+
 NativeImage* RemoteResourceCache::cachedNativeImage(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_resourceHeap.getNativeImage(renderingResourceIdentifier);
@@ -115,6 +120,11 @@ DecomposedGlyphs* RemoteResourceCache::cachedDecomposedGlyphs(QualifiedRendering
 Gradient* RemoteResourceCache::cachedGradient(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_resourceHeap.getGradient(renderingResourceIdentifier);
+}
+
+Filter* RemoteResourceCache::cachedFilter(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
+{
+    return m_resourceHeap.getFilter(renderingResourceIdentifier);
 }
 
 void RemoteResourceCache::releaseAllResources()

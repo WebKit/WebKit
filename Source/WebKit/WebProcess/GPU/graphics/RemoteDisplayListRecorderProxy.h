@@ -144,6 +144,7 @@ private:
     bool recordResourceUse(WebCore::Font&) final;
     bool recordResourceUse(WebCore::DecomposedGlyphs&) final;
     bool recordResourceUse(WebCore::Gradient&) final;
+    bool recordResourceUse(WebCore::Filter&) final;
 
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, float resolutionScale, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMode>, std::optional<WebCore::RenderingMethod>) const final;
     RefPtr<WebCore::ImageBuffer> createAlignedImageBuffer(const WebCore::FloatSize&, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMethod>) const final;

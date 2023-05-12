@@ -149,6 +149,14 @@ void RemoteResourceCacheProxy::recordGradientUse(Gradient& gradient)
     }
 }
 
+void RemoteResourceCacheProxy::recordFilterUse(Filter& filter)
+{
+    if (m_renderingResources.add(filter.renderingResourceIdentifier(), filter).isNewEntry) {
+        filter.addObserver(*this);
+        m_remoteRenderingBackendProxy.cacheFilter(filter);
+    }
+}
+
 void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
 {
     WebProcess::singleton().deferNonVisibleProcessEarlyMemoryCleanupTimer();

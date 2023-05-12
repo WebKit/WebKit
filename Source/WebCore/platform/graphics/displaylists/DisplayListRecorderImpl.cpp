@@ -444,5 +444,11 @@ bool RecorderImpl::recordResourceUse(Gradient& gradient)
     return true;
 }
 
+bool RecorderImpl::recordResourceUse(Filter& filter)
+{
+    m_displayList.cacheFilter(filter);
+    return true;
+}
+
 } // namespace DisplayList
 } // namespace WebCore
