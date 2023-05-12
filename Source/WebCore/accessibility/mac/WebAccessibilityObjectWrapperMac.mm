@@ -1371,13 +1371,6 @@ static void WebTransformCGPathToNSBezierPath(void* info, const CGPathElement *el
     return makeNSArray(self.axBackingObject->children());
 }
 
-- (NSValue *)position
-{
-    if (auto* backingObject = self.axBackingObject)
-        return @(CGPoint(backingObject->screenRelativePosition()));
-    return nil;
-}
-
 - (NSString*)role
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -1752,8 +1745,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:NSAccessibilityPrimaryScreenHeightAttribute])
         return @(backingObject->primaryScreenRect().height());
 
-    if ([attributeName isEqualToString: NSAccessibilityPositionAttribute])
-        return [self position];
+    if ([attributeName isEqualToString:NSAccessibilityPositionAttribute])
+        return @(CGPoint(backingObject->screenRelativePosition()));
+
     if ([attributeName isEqualToString:NSAccessibilityPathAttribute])
         return [self path];
 

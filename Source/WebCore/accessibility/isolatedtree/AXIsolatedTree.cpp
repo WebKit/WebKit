@@ -75,14 +75,9 @@ Ref<AXIsolatedTree> AXIsolatedTree::createEmpty(AXObjectCache& axObjectCache)
 
     auto tree = adoptRef(*new AXIsolatedTree(axObjectCache));
 
-    auto* axRoot = axObjectCache.getOrCreate(axObjectCache.document().view());
-    if (axRoot) {
-        tree->m_unresolvedPendingAppends.set(axRoot->objectID(), AttachWrapper::OnMainThread);
-        tree->collectNodeChangesForChildrenMatching(*axRoot, [] (const auto& object) {
-            return object.roleValue() == AccessibilityRole::WebArea;
-        });
-        tree->queueRemovalsAndUnresolvedChanges({ });
-    }
+    RefPtr axRoot = axObjectCache.getOrCreate(axObjectCache.document().view());
+    if (axRoot)
+        tree->createEmptyContent(*axRoot);
 
     tree->updateLoadingProgress(axObjectCache.loadingProgress());
 
@@ -90,6 +85,25 @@ Ref<AXIsolatedTree> AXIsolatedTree::createEmpty(AXObjectCache& axObjectCache)
     storeTree(axObjectCache, tree);
 
     return tree;
+}
+
+void AXIsolatedTree::createEmptyContent(AccessibilityObject& axRoot)
+{
+    // Collect the ScrollView and WebArea objects.
+    m_unresolvedPendingAppends.set(axRoot.objectID(), AttachWrapper::OnMainThread);
+    collectNodeChangesForChildrenMatching(axRoot, [] (const auto& object) {
+        return object.roleValue() == AccessibilityRole::WebArea;
+    });
+
+    // Resolve the appends to create the corresponding IsolatedObjects.
+    auto appends = resolveAppends();
+
+    // Set the ScreenRelativePosition for the objects so that there is no need to hit the main thread on client's request.
+    for (auto& append : appends)
+        append.isolatedObject->setProperty(AXPropertyName::ScreenRelativePosition, axRoot.screenRelativePosition());
+
+    // Queue the appends to be performed on the AX thread.
+    queueAppendsAndRemovals(WTFMove(appends), { });
 }
 
 Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
@@ -314,23 +328,40 @@ void AXIsolatedTree::queueRemovalsAndUnresolvedChanges(Vector<AXID>&& subtreeRem
 {
     ASSERT(isMainThread());
 
+    queueAppendsAndRemovals(resolveAppends(), WTFMove(subtreeRemovals));
+}
+
+Vector<AXIsolatedTree::NodeChange> AXIsolatedTree::resolveAppends()
+{
+    ASSERT(isMainThread());
+
+    if (m_unresolvedPendingAppends.isEmpty())
+        return { };
+
+    auto* cache = axObjectCache();
+    if (!cache)
+        return { };
+
     Vector<NodeChange> resolvedAppends;
-    if (!m_unresolvedPendingAppends.isEmpty()) {
-        if (auto* cache = axObjectCache()) {
-            resolvedAppends.reserveInitialCapacity(m_unresolvedPendingAppends.size());
-            for (const auto& unresolvedAppend : m_unresolvedPendingAppends) {
-                if (auto* axObject = cache->objectForID(unresolvedAppend.key)) {
-                    if (auto nodeChange = nodeChangeForObject(*axObject, unresolvedAppend.value))
-                        resolvedAppends.uncheckedAppend(WTFMove(*nodeChange));
-                }
-            }
-            m_unresolvedPendingAppends.clear();
+    resolvedAppends.reserveInitialCapacity(m_unresolvedPendingAppends.size());
+    for (const auto& unresolvedAppend : m_unresolvedPendingAppends) {
+        if (auto* axObject = cache->objectForID(unresolvedAppend.key)) {
+            if (auto nodeChange = nodeChangeForObject(*axObject, unresolvedAppend.value))
+                resolvedAppends.uncheckedAppend(WTFMove(*nodeChange));
         }
     }
+    m_unresolvedPendingAppends.clear();
+
+    return resolvedAppends;
+}
+
+void AXIsolatedTree::queueAppendsAndRemovals(Vector<NodeChange>&& appends, Vector<AXID>&& subtreeRemovals)
+{
+    ASSERT(isMainThread());
 
     Locker locker { m_changeLogLock };
-    for (const auto& resolvedAppend : resolvedAppends)
-        queueChange(resolvedAppend);
+    for (const auto& append : appends)
+        queueChange(append);
     queueRemovalsLocked(WTFMove(subtreeRemovals));
 }
 

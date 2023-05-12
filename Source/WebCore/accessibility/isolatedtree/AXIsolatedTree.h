@@ -200,6 +200,7 @@ enum class AXPropertyName : uint16_t {
     RowHeaders,
     RowIndex,
     RowIndexRange,
+    ScreenRelativePosition,
     SelectedCells,
     SelectedChildren,
     SessionID,
@@ -238,7 +239,7 @@ enum class AXPropertyName : uint16_t {
     VisibleRows,
 };
 
-using AXPropertyValueVariant = std::variant<std::nullptr_t, AXID, String, bool, int, unsigned, double, float, uint64_t, AccessibilityButtonState, Color, URL, LayoutRect, FloatRect, PAL::SessionID, IntPoint, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<AXID, AXID>>, Vector<String>, Path, OptionSet<AXAncestorFlag>, RetainPtr<NSAttributedString>, InsideLink, IntRect>;
+using AXPropertyValueVariant = std::variant<std::nullptr_t, AXID, String, bool, int, unsigned, double, float, uint64_t, AccessibilityButtonState, Color, URL, LayoutRect, FloatPoint, FloatRect, IntPoint, IntRect, PAL::SessionID, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<AXID, AXID>>, Vector<String>, Path, OptionSet<AXAncestorFlag>, RetainPtr<NSAttributedString>, InsideLink>;
 using AXPropertyMap = HashMap<AXPropertyName, AXPropertyValueVariant, IntHash<AXPropertyName>, WTF::StrongEnumHashTraits<AXPropertyName>>;
 
 struct AXPropertyChange {
@@ -326,6 +327,7 @@ private:
 
     static HashMap<PageIdentifier, Ref<AXIsolatedTree>>& treePageCache() WTF_REQUIRES_LOCK(s_storeLock);
 
+    void createEmptyContent(AccessibilityObject&);
     enum class AttachWrapper : bool { OnMainThread, OnAXThread };
     std::optional<NodeChange> nodeChangeForObject(Ref<AccessibilityObject>, AttachWrapper = AttachWrapper::OnMainThread);
     void collectNodeChangesForSubtree(AXCoreObject&);
@@ -336,6 +338,8 @@ private:
     void queueRemovals(Vector<AXID>&&);
     void queueRemovalsLocked(Vector<AXID>&&) WTF_REQUIRES_LOCK(m_changeLogLock);
     void queueRemovalsAndUnresolvedChanges(Vector<AXID>&&);
+    Vector<NodeChange> resolveAppends();
+    void queueAppendsAndRemovals(Vector<NodeChange>&&, Vector<AXID>&&);
 
     unsigned m_maxTreeDepth { 0 };
     WeakPtr<AXObjectCache> m_axObjectCache;
