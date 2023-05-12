@@ -399,10 +399,8 @@ void HTMLFormControlElement::handlePopoverTargetAction() const
     bool canShow = action == showAtom() || action == toggleAtom();
     if (canHide && target->popoverData()->visibilityState() == PopoverVisibilityState::Showing)
         target->hidePopover();
-    else if (canShow && target->popoverData()->visibilityState() == PopoverVisibilityState::Hidden) {
-        target->popoverData()->setInvoker(this);
-        target->showPopover();
-    }
+    else if (canShow && target->popoverData()->visibilityState() == PopoverVisibilityState::Hidden)
+        target->showPopover(this);
 }
 
 // FIXME: We should remove the quirk once <rdar://problem/47334655> is fixed.

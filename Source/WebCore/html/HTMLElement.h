@@ -37,6 +37,7 @@ namespace WebCore {
 class ElementInternals;
 class FormListedElement;
 class FormAssociatedElement;
+class HTMLFormControlElement;
 class HTMLFormElement;
 class VisibleSelection;
 
@@ -148,7 +149,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<Ref<ElementInternals>> attachInternals();
 
     void queuePopoverToggleEventTask(PopoverVisibilityState oldState, PopoverVisibilityState newState);
-    ExceptionOr<void> showPopover();
+    ExceptionOr<void> showPopover(const HTMLFormControlElement* = nullptr);
     ExceptionOr<void> hidePopover();
     ExceptionOr<void> hidePopoverInternal(FocusPreviousElement, FireEvents);
     ExceptionOr<void> togglePopover(std::optional<bool> force);
