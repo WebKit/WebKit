@@ -340,8 +340,6 @@ imported/mozilla/svg/text/textpath-multiline.svg [ Pass ]
 imported/w3c/web-platform-tests/css/css-align/baseline-rules/grid-item-input-type-number.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-align/baseline-rules/grid-item-input-type-text.html [ Pass ]
 
-imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/align-content/masonry-align-content-004.html [ Pass ]
-
 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-properties.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-default.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-composited-dynamic1.html [ Pass ]
