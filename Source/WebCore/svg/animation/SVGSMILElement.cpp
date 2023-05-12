@@ -903,7 +903,7 @@ void SVGSMILElement::resolveFirstInterval()
     }
 }
 
-void SVGSMILElement::resolveNextInterval(bool notifyDependents)
+void SVGSMILElement::resolveNextInterval()
 {
     SMILTime begin;
     SMILTime end;
@@ -913,8 +913,7 @@ void SVGSMILElement::resolveNextInterval(bool notifyDependents)
     if (!begin.isUnresolved() && begin != m_intervalBegin) {
         m_intervalBegin = begin;
         m_intervalEnd = end;
-        if (notifyDependents)
-            notifyDependentsIntervalChanged(NewInterval);
+        notifyDependentsIntervalChanged(NewInterval);
         m_nextProgressTime = std::min(m_nextProgressTime, m_intervalBegin);
     }
 }
@@ -996,7 +995,7 @@ void SVGSMILElement::checkRestart(SMILTime elapsed)
     }
 
     if (elapsed >= m_intervalEnd)
-        resolveNextInterval(true);
+        resolveNextInterval();
 }
 
 void SVGSMILElement::seekToIntervalCorrespondingToTime(SMILTime elapsed)
@@ -1018,13 +1017,13 @@ void SVGSMILElement::seekToIntervalCorrespondingToTime(SMILTime elapsed)
         if (nextBegin < m_intervalEnd && elapsed >= nextBegin) {
             // End current interval, and start a new interval from the 'nextBegin' time.
             m_intervalEnd = nextBegin;
-            resolveNextInterval(false);
+            resolveNextInterval();
             continue;
         }
 
         // If the desired 'elapsed' time is past the current interval, advance to the next.
         if (elapsed >= m_intervalEnd) {
-            resolveNextInterval(false);
+            resolveNextInterval();
             continue;
         }
 
@@ -1101,6 +1100,9 @@ bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement& firstAnimation, 
 {
     ASSERT(m_timeContainer);
     ASSERT(m_isWaitingForFirstInterval || m_intervalBegin.isFinite());
+
+    if (!m_conditionsConnected)
+        connectConditions();
 
     if (!m_intervalBegin.isFinite()) {
         ASSERT(m_activeState == Inactive);
