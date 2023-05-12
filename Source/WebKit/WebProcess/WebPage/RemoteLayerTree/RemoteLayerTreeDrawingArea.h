@@ -58,6 +58,8 @@ public:
     TransactionID nextTransactionID() const { return m_currentTransactionID.next(); }
     TransactionID lastCommittedTransactionID() const { return m_currentTransactionID; }
 
+    void scheduleDisplayRefreshCallbacks();
+
 protected:
     void updateRendering();
 
@@ -106,6 +108,7 @@ private:
     void setExposedContentRect(const WebCore::FloatRect&) override;
 
     void displayDidRefresh() override;
+    void displayDidRefreshNew() override;
 
     void setDeviceScaleFactor(float) override;
 

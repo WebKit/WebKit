@@ -252,6 +252,15 @@ void RemoteLayerTreeDrawingAreaProxy::asyncSetLayerContents(WebCore::PlatformLay
     m_remoteLayerTreeHost->asyncSetLayerContents(layerID, WTFMove(handle), identifier);
 }
 
+void RemoteLayerTreeDrawingAreaProxy::scheduleDisplayRefresh()
+{
+    // Overwrite MissedCommit state, since if we're explicitly requesting
+    // a new display refresh, it means the 'missed commit' wasn't slow, it
+    // just didn't happen.
+    m_didUpdateMessageState = NeedsNewDidUpdate;
+    scheduleDisplayRefreshCallbacks();
+}
+
 void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier layerID, const String& key, MonotonicTime startTime)
 {
     m_webPageProxy.send(Messages::DrawingArea::AcceleratedAnimationDidStart(layerID, key, startTime), m_identifier);
@@ -387,20 +396,22 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay()
     if (!m_webPageProxy.hasRunningProcess())
         return;
 
-    if (m_didUpdateMessageState != NeedsDidUpdate) {
+    if (m_didUpdateMessageState != NeedsDidUpdate && m_didUpdateMessageState != NeedsNewDidUpdate) {
         m_didUpdateMessageState = MissedCommit;
-        pauseDisplayRefreshCallbacks();
         return;
     }
-    
-    m_didUpdateMessageState = DoesNotNeedDidUpdate;
 
     m_webPageProxy.scrollingCoordinatorProxy()->sendScrollingTreeNodeDidScroll();
 
     // Waiting for CA to commit is insufficient, because the render server can still be
     // using our backing store. We can improve this by waiting for the render server to commit
     // if we find API to do so, but for now we will make extra buffers if need be.
-    m_webPageProxy.send(Messages::DrawingArea::DisplayDidRefresh(), m_identifier);
+    if (m_didUpdateMessageState == NeedsNewDidUpdate)
+        m_webPageProxy.send(Messages::DrawingArea::DisplayDidRefreshNew(), m_identifier);
+    else
+        m_webPageProxy.send(Messages::DrawingArea::DisplayDidRefresh(), m_identifier);
+
+    m_didUpdateMessageState = DoesNotNeedDidUpdate;
 
 #if ASSERT_ENABLED
     m_lastVisibleTransactionID = m_transactionIDForPendingCACommit;

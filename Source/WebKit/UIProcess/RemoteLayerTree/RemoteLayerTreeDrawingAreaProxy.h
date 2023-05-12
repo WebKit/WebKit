@@ -124,11 +124,13 @@ private:
 
     void asyncSetLayerContents(WebCore::PlatformLayerIdentifier, ImageBufferBackendHandle&&, const WebCore::RenderingResourceIdentifier&);
 
+    void scheduleDisplayRefresh();
+
     void sendUpdateGeometry();
 
     std::unique_ptr<RemoteLayerTreeHost> m_remoteLayerTreeHost;
     bool m_isWaitingForDidUpdateGeometry { false };
-    enum DidUpdateMessageState { DoesNotNeedDidUpdate, NeedsDidUpdate, MissedCommit };
+    enum DidUpdateMessageState { DoesNotNeedDidUpdate, NeedsDidUpdate, MissedCommit, NeedsNewDidUpdate };
     DidUpdateMessageState m_didUpdateMessageState { DoesNotNeedDidUpdate };
 
     WebCore::IntSize m_lastSentSize;

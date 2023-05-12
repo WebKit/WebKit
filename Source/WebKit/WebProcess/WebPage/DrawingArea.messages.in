@@ -28,6 +28,7 @@ messages -> DrawingArea NotRefCounted {
 #endif
 
     DisplayDidRefresh()
+    DisplayDidRefreshNew()
 
 #if PLATFORM(COCOA)
     UpdateGeometry(WebCore::IntSize viewSize, bool flushSynchronously, MachSendRight fencePort) -> ()

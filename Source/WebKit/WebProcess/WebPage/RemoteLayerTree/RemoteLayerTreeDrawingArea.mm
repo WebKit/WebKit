@@ -123,6 +123,18 @@ void RemoteLayerTreeDrawingArea::setPreferredFramesPerSecond(FramesPerSecond pre
     send(Messages::RemoteLayerTreeDrawingAreaProxy::SetPreferredFramesPerSecond(preferredFramesPerSecond));
 }
 
+void RemoteLayerTreeDrawingArea::scheduleDisplayRefreshCallbacks()
+{
+    if (m_isRenderingSuspended) {
+        m_hasDeferredRenderingUpdate = true;
+        return;
+    }
+    if (m_waitingForBackingStoreSwap)
+        return;
+
+    send(Messages::RemoteLayerTreeDrawingAreaProxy::ScheduleDisplayRefresh());
+}
+
 void RemoteLayerTreeDrawingArea::updateRootLayers()
 {
     for (auto& rootLayer : m_rootLayers) {
@@ -432,12 +444,27 @@ void RemoteLayerTreeDrawingArea::didCompleteRenderingUpdateDisplay()
     DrawingArea::didCompleteRenderingUpdateDisplay();
 }
 
+void RemoteLayerTreeDrawingArea::displayDidRefreshNew()
+{
+    // This is confusing. This message is in response to a scheduleDisplayRefreshCallbacks request.
+    // In the meantime, some caller might have a forced a non-displayDidRefresh
+    // aligned paint using triggerRenderingUpdate.
+    // If that's the case, then we can (and need to) just ignore
+    // this response, since we'll get a normal displayDidRefresh
+    // response soon.
+    // Should we use async IPC replies instead of commitLayerTreeTransaction/displayDidRefresh, scheduleDisplayRefreshCallbacks/displayDidRefreshNew messages pairs?
+    if (m_waitingForBackingStoreSwap)
+        return;
+    displayDidRefresh();
+}
+
 void RemoteLayerTreeDrawingArea::displayDidRefresh()
 {
     // FIXME: This should use a counted replacement for setLayerTreeStateIsFrozen, but
     // the callers of that function are not strictly paired.
 
     m_waitingForBackingStoreSwap = false;
+    RELEASE_ASSERT(!m_pendingBackingStoreFlusher || m_pendingBackingStoreFlusher->hasFlushed());
 
     if (m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap) {
         triggerRenderingUpdate();

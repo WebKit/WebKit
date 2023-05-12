@@ -206,6 +206,7 @@ private:
     virtual void setDeviceScaleFactor(float) { }
 #endif
     virtual void displayDidRefresh() { }
+    virtual void displayDidRefreshNew() { }
 
     // DisplayRefreshMonitorFactory.
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) override;
