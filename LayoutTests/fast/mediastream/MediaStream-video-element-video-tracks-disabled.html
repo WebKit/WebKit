@@ -2,19 +2,15 @@
 <html>
 <head>
 <meta name="fuzzy" content="maxDifference=115;totalPixels=28000-29000" />
-<script src="../../webrtc/routines.js"></script>
 </head>
-
 <body>
+<div id=log></div>
 <p>Tests that the video frames of an HTMLVideoElement are black if no video MediaStreamTrack is enabled.</p>
-<video/>
-<canvas id="canvas"></div>
+<div style="width:200px;height:100px;overflow:hidden">
+<video id=video autoplay playsinline></video>
+</div>
 
 <script>
-    let mediaStream;
-    let video;
-    let canvas;
-
     function debug(msg)
     {
         let span = document.createElement('span');
@@ -22,51 +18,31 @@
         span.innerHTML = `${msg} <br />`;
     }
 
-    function canplaythrough()
+    async function start()
     {
-        mediaStream.getVideoTracks()[0].enabled = false;
-        setTimeout(() => {
-            waitForVideoSize(video, 320, 240).then(() => {
-                checkVideoIsEntirelyBlack(canvas, video).then(() => {
-                    window.testRunner.notifyDone();
-                });
-            });
-        }, 2000);
+        try {
+            const mediaStream = await navigator.mediaDevices.getUserMedia({video: {width: 320, height: 240}});
+            video.srcObject = mediaStream;
+            await video.play();
+
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            log.innerHTML = 'muted';
+            mediaStream.getVideoTracks()[0].enabled = false;
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            log.innerHTML = 'ok';
+        } catch (e) {
+            log.innerHTML = 'Failed with ' + e;
+        }
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
-    function canplay()
-    {
-        video.play();
-    }
-
-    function setupStream(stream)
-    {
-        mediaStream = stream;
-        video.srcObject = mediaStream;
-    }
-
-    function failedToSetupStream()
-    {
-        debug('Failed to setup stream');
-    }
-
-    function start()
-    {
-        canvas = document.getElementById("canvas");
-
-        video = document.querySelector('video');
-        video.addEventListener('canplay', canplay, false);
-        video.addEventListener('canplaythrough', canplaythrough, false);
-        navigator.mediaDevices.getUserMedia({video: {width: 320, height: 240}})
-            .then(setupStream)
-            .catch(failedToSetupStream);
-    }
-
-    if (window.testRunner) {
+    if (window.testRunner)
         window.testRunner.waitUntilDone();
-        window.testRunner.setUserMediaPermission(true);
-        start();
-    }
+    window.onload = start;
+
+
 </script>
 </body>
 </html>

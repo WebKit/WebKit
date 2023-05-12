@@ -282,6 +282,15 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoFrame(VideoFrame& videoFr
         m_shouldUpdateDisplayLayer = false;
     }
 
+    if (!m_isActiveVideoTrackEnabled) {
+        if (!m_hasEnqueuedBlackFrame) {
+            m_hasEnqueuedBlackFrame = true;
+            m_sampleBufferDisplayLayer->enqueueBlackFrameFrom(videoFrame);
+        }
+        return;
+    }
+
+    m_hasEnqueuedBlackFrame = false;
     m_sampleBufferDisplayLayer->enqueueVideoFrame(videoFrame);
 }
 
@@ -912,13 +921,15 @@ void MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack()
     if (oldVideoTrack != m_activeVideoTrack) {
         if (oldVideoTrack)
             oldVideoTrack->streamTrack().source().removeVideoFrameObserver(*this);
+        m_isActiveVideoTrackEnabled = m_activeVideoTrack ? m_activeVideoTrack->streamTrack().enabled() : true;
         if (m_activeVideoTrack) {
             if (m_sampleBufferDisplayLayer && m_activeVideoTrack->streamTrack().source().isCaptureSource())
                 m_sampleBufferDisplayLayer->setRenderPolicy(SampleBufferDisplayLayer::RenderPolicy::Immediately);
             m_activeVideoTrack->streamTrack().source().addVideoFrameObserver(*this);
             ALWAYS_LOG(LOGIDENTIFIER, "observing video source ", m_activeVideoTrack->streamTrack().logIdentifier());
         }
-    }
+    } else
+        m_isActiveVideoTrackEnabled = m_activeVideoTrack ? m_activeVideoTrack->streamTrack().enabled() : true;
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()

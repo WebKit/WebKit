@@ -128,6 +128,14 @@ void SampleBufferDisplayLayer::pause()
     m_connection->send(Messages::RemoteSampleBufferDisplayLayer::Pause { }, m_identifier);
 }
 
+void SampleBufferDisplayLayer::enqueueBlackFrameFrom(const VideoFrame& videoFrame)
+{
+    auto size = videoFrame.presentationSize();
+    WebCore::IntSize blackFrameSize { static_cast<int>(size.width()), static_cast<int>(size.height()) };
+    SharedVideoFrame sharedVideoFrame { videoFrame.presentationTime(), false, videoFrame.rotation(), blackFrameSize };
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueVideoFrame { sharedVideoFrame }, m_identifier);
+}
+
 void SampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)
 {
     if (m_paused)

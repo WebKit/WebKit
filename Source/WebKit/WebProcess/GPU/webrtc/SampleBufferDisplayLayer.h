@@ -74,6 +74,7 @@ private:
     void flushAndRemoveImage() final;
     void play() final;
     void pause() final;
+    void enqueueBlackFrameFrom(const WebCore::VideoFrame&) final;
     void enqueueVideoFrame(WebCore::VideoFrame&) final;
     void clearVideoFrames() final;
     PlatformLayer* rootLayer() final;
