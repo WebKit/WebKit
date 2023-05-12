@@ -953,6 +953,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/CachedHTMLCollection.h
     html/CachedHTMLCollectionInlines.h
     html/CanvasBase.h
+    html/CanvasNoiseInjection.h
     html/CanvasObserver.h
     html/CollectionTraversal.h
     html/CollectionTraversalInlines.h

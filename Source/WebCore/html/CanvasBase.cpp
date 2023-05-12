@@ -109,7 +109,8 @@ void CanvasBase::makeRenderingResultsAvailable()
 {
     if (auto* context = renderingContext()) {
         context->paintRenderingResultsToCanvas();
-        postProcessDirtyCanvasBuffer();
+        if (auto noiseInjectionHashSalt = scriptExecutionContext() ? scriptExecutionContext()->noiseInjectionHashSalt() : std::nullopt)
+            m_canvasNoiseInjection.postProcessDirtyCanvasBuffer(buffer(), *noiseInjectionHashSalt);
     }
 }
 
@@ -203,8 +204,12 @@ void CanvasBase::notifyObserversCanvasChanged(const std::optional<FloatRect>& re
 void CanvasBase::didDraw(const std::optional<FloatRect>& rect, ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
 {
     // FIXME: We should exclude rects with ShouldApplyPostProcessingToDirtyRect::No
-    if (shouldInjectNoiseBeforeReadback() && shouldApplyPostProcessingToDirtyRect == ShouldApplyPostProcessingToDirtyRect::Yes && rect)
-        m_postProcessDirtyRect.unite(*rect);
+    if (shouldInjectNoiseBeforeReadback() && shouldApplyPostProcessingToDirtyRect == ShouldApplyPostProcessingToDirtyRect::Yes) {
+        if (rect)
+            m_canvasNoiseInjection.updateDirtyRect(intersection(enclosingIntRect(*rect), { { }, size() }));
+        else
+            m_canvasNoiseInjection.updateDirtyRect({ { }, size() });
+    }
 }
 
 void CanvasBase::notifyObserversCanvasResized()
@@ -373,92 +378,11 @@ bool CanvasBase::shouldInjectNoiseBeforeReadback() const
     return scriptExecutionContext() && scriptExecutionContext()->noiseInjectionHashSalt();
 }
 
-void CanvasBase::postProcessDirtyCanvasBuffer() const
+bool CanvasBase::postProcessPixelBufferResults(Ref<PixelBuffer>&& pixelBuffer) const
 {
-    if (!shouldInjectNoiseBeforeReadback())
-        return;
-
-    if (m_postProcessDirtyRect.isEmpty())
-        return;
-
-    ImageBuffer* imageBuffer = buffer();
-    if (!imageBuffer)
-        return;
-
-    auto imageRect = enclosingIntRect(m_postProcessDirtyRect);
-    imageRect.intersect({ { }, size() });
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, imageBuffer->colorSpace() };
-    auto pixelBuffer = imageBuffer->getPixelBuffer(format, imageRect);
-    if (!is<ByteArrayPixelBuffer>(pixelBuffer))
-        return;
-
-    if (postProcessPixelBufferResults(*pixelBuffer, { })) {
-        imageBuffer->putPixelBuffer(*pixelBuffer, imageRect, imageRect.location());
-        m_postProcessDirtyRect = { };
-    }
-}
-
-bool CanvasBase::postProcessPixelBufferResults(Ref<PixelBuffer>&& pixelBuffer, const HashSet<uint32_t>& suppliedColors) const
-{
-    if (!shouldInjectNoiseBeforeReadback())
-        return false;
-
-    ASSERT(pixelBuffer->format().pixelFormat == PixelFormat::RGBA8);
-
-    constexpr auto contextString { "Canvas2DContextString"_s };
-    unsigned salt = computeHash<String, uint64_t>(contextString, *scriptExecutionContext()->noiseInjectionHashSalt());
-    constexpr int bytesPerPixel = 4;
-    auto* bytes = pixelBuffer->bytes();
-    HashMap<uint32_t, uint32_t> pixelColorMap;
-    bool wasPixelBufferModified { false };
-
-    for (size_t i = 0; i < pixelBuffer->sizeInBytes(); i += bytesPerPixel) {
-        auto& redChannel = bytes[i];
-        auto& greenChannel = bytes[i + 1];
-        auto& blueChannel = bytes[i + 2];
-        auto& alphaChannel = bytes[i + 3];
-        bool isBlack { !redChannel && !greenChannel && !blueChannel };
-
-        uint32_t pixel = (redChannel << 24) | (greenChannel << 16) | (blueChannel << 8) | alphaChannel;
-        // FIXME: Consider isEquivalentColor comparision instead of exact match
-        if (!pixel || !alphaChannel || !suppliedColors.isValidValue(pixel) || suppliedColors.contains(pixel))
-            continue;
-
-        if (auto color = pixelColorMap.get(pixel)) {
-            alphaChannel = static_cast<uint8_t>(color);
-            blueChannel = static_cast<uint8_t>(color >> 8);
-            greenChannel = static_cast<uint8_t>(color >> 16);
-            redChannel = static_cast<uint8_t>(color >> 24);
-            continue;
-        }
-
-        const uint64_t pixelHash = computeHash(salt, redChannel, greenChannel, blueChannel, alphaChannel);
-        // +/- ~13 is roughly 5% of the 255 max value.
-        const auto clampedFivePercent = static_cast<uint32_t>(((pixelHash * 26) / std::numeric_limits<uint32_t>::max()) - 13);
-
-        const auto clampedColorComponentOffset = [](int colorComponentOffset, int originalComponentValue) {
-            if (colorComponentOffset + originalComponentValue > std::numeric_limits<uint8_t>::max())
-                return std::numeric_limits<uint8_t>::max() - originalComponentValue;
-            if (colorComponentOffset + originalComponentValue < 0)
-                return -originalComponentValue;
-            return colorComponentOffset;
-        };
-
-        // If alpha is non-zero and the color channels are zero, then only tweak the alpha channel's value;
-        if (isBlack)
-            alphaChannel += clampedColorComponentOffset(clampedFivePercent, alphaChannel);
-        else {
-            // If alpha and any of the color channels are non-zero, then tweak all of the channels;
-            redChannel += clampedColorComponentOffset(clampedFivePercent, redChannel);
-            greenChannel += clampedColorComponentOffset(clampedFivePercent, greenChannel);
-            blueChannel += clampedColorComponentOffset(clampedFivePercent, blueChannel);
-            alphaChannel += clampedColorComponentOffset(clampedFivePercent, alphaChannel);
-        }
-        uint32_t modifiedPixel = (redChannel << 24) | (greenChannel << 16) | (blueChannel << 8) | alphaChannel;
-        pixelColorMap.set(pixel, modifiedPixel);
-        wasPixelBufferModified = true;
-    }
-    return wasPixelBufferModified;
+    if (auto noiseInjectionHashSalt = scriptExecutionContext() ? scriptExecutionContext()->noiseInjectionHashSalt() : std::nullopt)
+        return m_canvasNoiseInjection.postProcessPixelBufferResults(std::forward<Ref<PixelBuffer>>(pixelBuffer), *noiseInjectionHashSalt);
+    return false;
 }
 
 size_t CanvasBase::activePixelMemory()
