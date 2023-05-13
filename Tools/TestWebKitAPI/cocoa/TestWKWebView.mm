@@ -748,13 +748,12 @@ static UICalloutBar *suppressUICalloutBar()
 
 - (CGRect)caretViewRectInContentCoordinates
 {
-    UIView *caretView = [self.textInputContentView valueForKeyPath:@"interactionAssistant.selectionView.caretView"];
-
+    UIView *caretView = nil;
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
-    if (!caretView) {
-        if (auto view = self.textSelectionDisplayInteraction.cursorView; !view.hidden)
-            caretView = view;
-    }
+    if (auto view = self.textSelectionDisplayInteraction.cursorView; !view.hidden)
+        caretView = view;
+#else
+    caretView = [self.textInputContentView valueForKeyPath:@"interactionAssistant.selectionView.caretView"];
 #endif
 
     return [caretView convertRect:caretView.bounds toView:self.textInputContentView];
@@ -763,13 +762,12 @@ static UICalloutBar *suppressUICalloutBar()
 - (NSArray<NSValue *> *)selectionViewRectsInContentCoordinates
 {
     NSMutableArray *selectionRects = [NSMutableArray array];
-    NSArray<UITextSelectionRect *> *rects = [self.textInputContentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView.rects"];
-
+    NSArray<UITextSelectionRect *> *rects = nil;
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
-    if (!rects) {
-        if (auto view = self.textSelectionDisplayInteraction.highlightView; !view.hidden)
-            rects = view.selectionRects;
-    }
+    if (auto view = self.textSelectionDisplayInteraction.highlightView; !view.hidden)
+        rects = view.selectionRects;
+#else
+    rects = [self.textInputContentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView.rects"];
 #endif
 
     for (UITextSelectionRect *rect in rects)

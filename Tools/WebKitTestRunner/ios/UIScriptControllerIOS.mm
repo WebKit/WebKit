@@ -849,13 +849,13 @@ static void clipSelectionViewRectToContentView(CGRect& rect, UIView *contentView
 JSObjectRef UIScriptControllerIOS::selectionStartGrabberViewRect() const
 {
     UIView *contentView = platformContentView();
-    UIView *handleView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView.startGrabber"];
+    UIView *handleView = nil;
 
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
-    if (!handleView) {
-        if (auto view = textSelectionDisplayInteraction().handleViews.firstObject; !isHiddenOrHasHiddenAncestor(view))
-            handleView = view;
-    }
+    if (auto view = textSelectionDisplayInteraction().handleViews.firstObject; !isHiddenOrHasHiddenAncestor(view))
+        handleView = view;
+#else
+    handleView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView.startGrabber"];
 #endif
 
     auto frameInContentViewCoordinates = [handleView convertRect:handleView.bounds toView:contentView];
@@ -867,13 +867,13 @@ JSObjectRef UIScriptControllerIOS::selectionStartGrabberViewRect() const
 JSObjectRef UIScriptControllerIOS::selectionEndGrabberViewRect() const
 {
     UIView *contentView = platformContentView();
-    UIView *handleView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView.endGrabber"];
+    UIView *handleView = nil;
 
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
-    if (!handleView) {
-        if (auto view = textSelectionDisplayInteraction().handleViews.lastObject; !isHiddenOrHasHiddenAncestor(view))
-            handleView = view;
-    }
+    if (auto view = textSelectionDisplayInteraction().handleViews.lastObject; !isHiddenOrHasHiddenAncestor(view))
+        handleView = view;
+#else
+    handleView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView.endGrabber"];
 #endif
 
     auto frameInContentViewCoordinates = [handleView convertRect:handleView.bounds toView:contentView];
@@ -885,13 +885,13 @@ JSObjectRef UIScriptControllerIOS::selectionEndGrabberViewRect() const
 JSObjectRef UIScriptControllerIOS::selectionCaretViewRect() const
 {
     UIView *contentView = platformContentView();
-    UIView *caretView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.caretView"];
+    UIView *caretView = nil;
 
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
-    if (!caretView) {
-        if (auto view = textSelectionDisplayInteraction().cursorView; !isHiddenOrHasHiddenAncestor(view))
-            caretView = view;
-    }
+    if (auto view = textSelectionDisplayInteraction().cursorView; !isHiddenOrHasHiddenAncestor(view))
+        caretView = view;
+#else
+    caretView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.caretView"];
 #endif
 
     auto rectInContentViewCoordinates = CGRectIntersection([caretView convertRect:caretView.bounds toView:contentView], contentView.bounds);
@@ -902,17 +902,20 @@ JSObjectRef UIScriptControllerIOS::selectionCaretViewRect() const
 JSObjectRef UIScriptControllerIOS::selectionRangeViewRects() const
 {
     UIView *contentView = platformContentView();
-    UIView *rangeView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView"];
+    UIView *rangeView = nil;
     auto rectsAsDictionaries = adoptNS([[NSMutableArray alloc] init]);
-    NSArray<UITextSelectionRect *> *textRectInfoArray = [rangeView valueForKeyPath:@"rects"];
+    NSArray<UITextSelectionRect *> *textRectInfoArray = nil;
 
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     if (!textRectInfoArray) {
         if (auto view = textSelectionDisplayInteraction().highlightView; !isHiddenOrHasHiddenAncestor(view)) {
-            textRectInfoArray = view.selectionRects;
             rangeView = view;
+            textRectInfoArray = view.selectionRects;
         }
     }
+#else
+    rangeView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView"];
+    textRectInfoArray = [rangeView valueForKeyPath:@"rects"];
 #endif
 
     for (UITextSelectionRect *textRectInfo in textRectInfoArray) {
@@ -1327,13 +1330,13 @@ bool UIScriptControllerIOS::isAnimatingDragCancel() const
 
 JSRetainPtr<JSStringRef> UIScriptControllerIOS::selectionCaretBackgroundColor() const
 {
-    auto contentView = platformContentView();
-    UIColor *backgroundColor = [contentView valueForKeyPath:@"textInteractionAssistant.selectionView.caretView.backgroundColor"];
+    UIColor *backgroundColor = nil;
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
-    if (!backgroundColor) {
-        if (auto view = textSelectionDisplayInteraction().cursorView; !isHiddenOrHasHiddenAncestor(view))
-            backgroundColor = view.tintColor;
-    }
+    if (auto view = textSelectionDisplayInteraction().cursorView; !isHiddenOrHasHiddenAncestor(view))
+        backgroundColor = view.tintColor;
+#else
+    auto contentView = platformContentView();
+    backgroundColor = [contentView valueForKeyPath:@"textInteractionAssistant.selectionView.caretView.backgroundColor"];
 #endif
 
     if (!backgroundColor)
