@@ -652,7 +652,7 @@ public:
     WEBCORE_EXPORT Ref<CSSStyleDeclaration> createCSSStyleDeclaration();
     Ref<Text> createEditingTextNode(String&&);
 
-    enum class ResolveStyleType { Normal, Rebuild };
+    enum class ResolveStyleType : bool { Normal, Rebuild };
     WEBCORE_EXPORT void resolveStyle(ResolveStyleType = ResolveStyleType::Normal);
     WEBCORE_EXPORT bool updateStyleIfNeeded();
     bool needsStyleRecalc() const;
@@ -662,7 +662,7 @@ public:
     
     // updateLayoutIgnorePendingStylesheets() forces layout even if we are waiting for pending stylesheet loads,
     // so calling this may cause a flash of unstyled content (FOUC).
-    enum class RunPostLayoutTasks { Asynchronously, Synchronously };
+    enum class RunPostLayoutTasks : bool { Asynchronously, Synchronously };
     WEBCORE_EXPORT void updateLayoutIgnorePendingStylesheets(RunPostLayoutTasks = RunPostLayoutTasks::Asynchronously);
 
     std::unique_ptr<RenderStyle> styleForElementIgnoringPendingStylesheets(Element&, const RenderStyle* parentStyle, PseudoId = PseudoId::None);
@@ -854,7 +854,7 @@ public:
     void didRejectSyncXHRDuringPageDismissal();
     bool shouldIgnoreSyncXHRs() const;
 
-    enum class NodeRemoval { Node, ChildrenOfNode };
+    enum class NodeRemoval : bool { Node, ChildrenOfNode };
     void adjustFocusedNodeOnNodeRemoval(Node&, NodeRemoval = NodeRemoval::Node);
     void adjustFocusNavigationNodeOnNodeRemoval(Node&, NodeRemoval = NodeRemoval::Node);
 
@@ -911,7 +911,7 @@ public:
     void nodeWillBeRemoved(Node&);
     void parentlessNodeMovedToNewDocument(Node&);
 
-    enum class AcceptChildOperation { Replace, InsertOrAdd };
+    enum class AcceptChildOperation : bool { Replace, InsertOrAdd };
     bool canAcceptChild(const Node& newChild, const Node* refChild, AcceptChildOperation) const;
 
     void textInserted(Node&, unsigned offset, unsigned length);
@@ -1780,8 +1780,11 @@ public:
 #endif
 
 protected:
-    enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
-    WEBCORE_EXPORT Document(LocalFrame*, const Settings&, const URL&, DocumentClasses = { }, unsigned constructionFlags = 0, ScriptExecutionContextIdentifier = { });
+    enum class ConstructionFlag : uint8_t {
+        Synthesized = 1 << 0,
+        NonRenderedPlaceholder = 1 << 1
+    };
+    WEBCORE_EXPORT Document(LocalFrame*, const Settings&, const URL&, DocumentClasses = { }, OptionSet<ConstructionFlag> = { }, ScriptExecutionContextIdentifier = { });
 
     void clearXMLVersion() { m_xmlVersion = String(); }
 

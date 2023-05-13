@@ -89,12 +89,12 @@ using namespace HTMLNames;
 
 Ref<HTMLDocument> HTMLDocument::createSynthesizedDocument(LocalFrame& frame, const URL& url)
 {
-    auto document = adoptRef(*new HTMLDocument(&frame, frame.settings(), url, { }, { DocumentClass::HTML }, Synthesized));
+    auto document = adoptRef(*new HTMLDocument(&frame, frame.settings(), url, { }, { DocumentClass::HTML }, { ConstructionFlag::Synthesized }));
     document->addToContextsMap();
     return document;
 }
 
-HTMLDocument::HTMLDocument(LocalFrame* frame, const Settings& settings, const URL& url, ScriptExecutionContextIdentifier documentIdentifier, DocumentClasses documentClasses, unsigned constructionFlags)
+HTMLDocument::HTMLDocument(LocalFrame* frame, const Settings& settings, const URL& url, ScriptExecutionContextIdentifier documentIdentifier, DocumentClasses documentClasses, OptionSet<ConstructionFlag> constructionFlags)
     : Document(frame, settings, url, documentClasses | DocumentClasses(DocumentClass::HTML), constructionFlags, documentIdentifier)
 {
     clearXMLVersion();

@@ -583,7 +583,7 @@ static Ref<CachedResourceLoader> createCachedResourceLoader(LocalFrame* frame)
     return CachedResourceLoader::create(nullptr);
 }
 
-Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, DocumentClasses documentClasses, unsigned constructionFlags, ScriptExecutionContextIdentifier identifier)
+Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, DocumentClasses documentClasses, OptionSet<ConstructionFlag> constructionFlags, ScriptExecutionContextIdentifier identifier)
     : ContainerNode(*this, CreateDocument)
     , TreeScope(*this)
     , ScriptExecutionContext(identifier)
@@ -638,8 +638,8 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
 #if ENABLE(DOM_AUDIO_SESSION)
     , m_audioSessionType { DOMAudioSession::Type::Auto }
 #endif
-    , m_isSynthesized(constructionFlags & Synthesized)
-    , m_isNonRenderedPlaceholder(constructionFlags & NonRenderedPlaceholder)
+    , m_isSynthesized(constructionFlags.contains(ConstructionFlag::Synthesized))
+    , m_isNonRenderedPlaceholder(constructionFlags.contains(ConstructionFlag::NonRenderedPlaceholder))
 {
     addToDocumentsMap();
 
@@ -687,7 +687,7 @@ Ref<Document> Document::create(Document& contextDocument)
 
 Ref<Document> Document::createNonRenderedPlaceholder(LocalFrame& frame, const URL& url)
 {
-    auto document = adoptRef(*new Document(&frame, frame.settings(), url, { }, NonRenderedPlaceholder));
+    auto document = adoptRef(*new Document(&frame, frame.settings(), url, { }, { ConstructionFlag::NonRenderedPlaceholder }));
     document->addToContextsMap();
     return document;
 }
