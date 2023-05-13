@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
  *           (C) 2000 Stefan Schimanski (1Stein@gmx.de)
- * Copyright (C) 2004, 2005, 2006, 2013 Apple Inc.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -174,9 +174,9 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, const Length* grid, int availabl
     int gridLen = axis.m_sizes.size();
     ASSERT(gridLen);
 
-    int totalRelative = 0;
-    int totalFixed = 0;
-    int totalPercent = 0;
+    uint64_t totalRelative = 0;
+    uint64_t totalFixed = 0;
+    uint64_t totalPercent = 0;
     int countRelative = 0;
     int countFixed = 0;
     int countPercent = 0;
@@ -187,7 +187,7 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, const Length* grid, int availabl
         // Count the total length of all of the fixed columns/rows -> totalFixed
         // Count the number of columns/rows which are fixed -> countFixed
         if (grid[i].isFixed()) {
-            gridLayout[i] = std::max(grid[i].intValue(), 0);
+            gridLayout[i] = clampTo<int>(std::max(grid[i].intValue(), 0));
             totalFixed += gridLayout[i];
             countFixed++;
         }
@@ -195,7 +195,7 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, const Length* grid, int availabl
         // Count the total percentage of all of the percentage columns/rows -> totalPercent
         // Count the number of columns/rows which are percentages -> countPercent
         if (grid[i].isPercentOrCalculated()) {
-            gridLayout[i] = std::max(intValueForLength(grid[i], availableLen), 0);
+            gridLayout[i] = clampTo<int>(std::max(intValueForLength(grid[i], availableLen), 0));
             totalPercent += gridLayout[i];
             countPercent++;
         }
@@ -208,7 +208,7 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, const Length* grid, int availabl
         }            
     }
 
-    int remainingLen = availableLen;
+    size_t remainingLen = availableLen;
 
     // Fixed columns/rows are our first priority. If there is not enough space to fit all fixed
     // columns/rows we need to proportionally adjust their size. 
