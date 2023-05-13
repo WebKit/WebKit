@@ -84,6 +84,7 @@
 		0F5651F91FCE513500310FBC /* scroll-to-anchor.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0F5651F81FCE50E800310FBC /* scroll-to-anchor.html */; };
 		0FEFAF64271FC2CD005704D7 /* ScrollingCoordinatorTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FEFAF63271FC2CD005704D7 /* ScrollingCoordinatorTests.mm */; };
 		0FF1134E22D68679009A81DA /* ScrollViewScrollabilityTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FF1134D22D68679009A81DA /* ScrollViewScrollabilityTests.mm */; };
+		0FF332932A0EFCCF00C048D8 /* HysteresisActivityTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF3328B2A0EFCCF00C048D8 /* HysteresisActivityTests.cpp */; };
 		115EB3431EE0BA03003C2C0A /* ViewportSizeForViewportUnits.mm in Sources */ = {isa = PBXBuildFile; fileRef = 115EB3421EE0B720003C2C0A /* ViewportSizeForViewportUnits.mm */; };
 		1171B24F219F49CD00CB897D /* FirstMeaningfulPaintMilestone_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11B7FD21219F46DD0069B27F /* FirstMeaningfulPaintMilestone_Bundle.cpp */; };
 		118153442208B7AC00B2CCD2 /* deferred-script-load.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 118153432208B7AC00B2CCD2 /* deferred-script-load.html */; };
@@ -2001,6 +2002,7 @@
 		0FEAE3671B7D19CB00CE17F2 /* Condition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Condition.cpp; sourceTree = "<group>"; };
 		0FEFAF63271FC2CD005704D7 /* ScrollingCoordinatorTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingCoordinatorTests.mm; sourceTree = "<group>"; };
 		0FF1134D22D68679009A81DA /* ScrollViewScrollabilityTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollViewScrollabilityTests.mm; sourceTree = "<group>"; };
+		0FF3328B2A0EFCCF00C048D8 /* HysteresisActivityTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HysteresisActivityTests.cpp; sourceTree = "<group>"; };
 		0FFC45A41B73EBE20085BD62 /* Lock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Lock.cpp; sourceTree = "<group>"; };
 		115EB3421EE0B720003C2C0A /* ViewportSizeForViewportUnits.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewportSizeForViewportUnits.mm; sourceTree = "<group>"; };
 		118153432208B7AC00B2CCD2 /* deferred-script-load.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "deferred-script-load.html"; sourceTree = "<group>"; };
@@ -4275,6 +4277,7 @@
 				5CA1DEC71F71F40700E71BD3 /* HTTPHeaderField.cpp */,
 				46FA2FED23846C9A000CCB0C /* HTTPHeaderMap.cpp */,
 				6B9ABE112086952F00D75DE6 /* HTTPParsers.cpp */,
+				0FF3328B2A0EFCCF00C048D8 /* HysteresisActivityTests.cpp */,
 				7B18417B2673860200ED4F8D /* ImageBufferTests.cpp */,
 				7A909A731D877475007E10F8 /* IntPointTests.cpp */,
 				7A909A741D877475007E10F8 /* IntRectTests.cpp */,
@@ -6390,6 +6393,7 @@
 				46FA2FEE23846CA5000CCB0C /* HTTPHeaderMap.cpp in Sources */,
 				6B9ABE122086952F00D75DE6 /* HTTPParsers.cpp in Sources */,
 				5C7C24FC237C975400599C91 /* HTTPServer.mm in Sources */,
+				0FF332932A0EFCCF00C048D8 /* HysteresisActivityTests.cpp in Sources */,
 				7B18417C2673860200ED4F8D /* ImageBufferTests.cpp in Sources */,
 				41EBA9F228ABA06700953013 /* ImageRotationSessionVT.cpp in Sources */,
 				F44A9AF72649BBDD00E7CB16 /* ImmediateActionTests.mm in Sources */,

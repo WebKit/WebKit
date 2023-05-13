@@ -71,8 +71,11 @@ public:
         if (m_active)
             return;
 
-        if (state() == HysteresisState::Stopped)
+        if (state() == HysteresisState::Stopped) {
+            m_active = true;
             m_callback(HysteresisState::Started);
+            m_active = false;
+        }
 
         m_timer.startOneShot(m_hysteresisSeconds);
     }
