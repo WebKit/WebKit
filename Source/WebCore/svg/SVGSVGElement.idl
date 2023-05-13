@@ -34,9 +34,6 @@
 
     attribute float currentScale;
     [SameObject] readonly attribute SVGPoint currentTranslate;
-    
-    readonly attribute boolean useCurrentView;
-    readonly attribute SVGViewSpec currentView;
 
     NodeList getIntersectionList(SVGRect rect, SVGElement? referenceElement);
     NodeList getEnclosureList(SVGRect rect, SVGElement? referenceElement);

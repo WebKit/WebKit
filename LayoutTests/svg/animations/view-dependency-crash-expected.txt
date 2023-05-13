@@ -1,2 +1,3 @@
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'view.viewBox')
 This test passes if it does not crash
 

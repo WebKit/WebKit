@@ -45,12 +45,12 @@ PASS SVGElement.prototype.xmlspace must be removed
 FAIL SVGGraphicsElement.prototype.getTransformToElement must be removed assert_false: expected false got true
 FAIL SVGGraphicsElement.prototype.hasExtension must be removed assert_false: expected false got true
 FAIL SVGGraphicsElement.prototype.requiredFeatures must be removed assert_false: expected false got true
-FAIL SVGSVGElement.prototype.currentView must be removed assert_false: expected false got true
+PASS SVGSVGElement.prototype.currentView must be removed
 PASS SVGSVGElement.prototype.pixelUnitToMillimeterX must be removed
 PASS SVGSVGElement.prototype.pixelUnitToMillimeterY must be removed
 PASS SVGSVGElement.prototype.screenPixelToMillimeterX must be removed
 PASS SVGSVGElement.prototype.screenPixelToMillimeterY must be removed
-FAIL SVGSVGElement.prototype.useCurrentView must be removed assert_false: expected false got true
+PASS SVGSVGElement.prototype.useCurrentView must be removed
 PASS SVGSVGElement.prototype.viewport must be removed
 PASS SVGViewElement.prototype.viewTarget must be removed
 PASS SVGPathElement.prototype.getPointAtLength must be moved to SVGGeometryElement.prototype
