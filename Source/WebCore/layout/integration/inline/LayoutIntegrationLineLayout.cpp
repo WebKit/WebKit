@@ -792,26 +792,50 @@ bool LineLayout::isPaginated() const
     return m_inlineContent && m_inlineContent->isPaginated;
 }
 
+std::optional<LayoutUnit> LineLayout::clampedContentLogicalHeight() const
+{
+    if (!m_inlineContent)
+        return { };
+
+    auto& lines = m_inlineContent->displayContent().lines;
+    if (lines.isEmpty()) {
+        // Out-of-flow only content (and/or with floats) may produce blank inline content.
+        return { };
+    }
+
+    auto firstTruncatedLineIndex = [&]() -> std::optional<size_t> {
+        for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
+            if (lines[lineIndex].isTruncatedInBlockDirection())
+                return lineIndex;
+        }
+        return { };
+    }();
+    if (!firstTruncatedLineIndex)
+        return { };
+    if (!*firstTruncatedLineIndex) {
+        // This content is fully truncated in the block direction.
+        return LayoutUnit { };
+    }
+
+    auto contentHeight = lines[*firstTruncatedLineIndex - 1].lineBoxLogicalRect().maxY() - lines.first().lineBoxLogicalRect().y();
+    auto additionalHeight = m_inlineContent->firstLinePaginationOffset + m_inlineContent->clearGapBeforeFirstLine + m_inlineContent->clearGapAfterLastLine;
+    return LayoutUnit { contentHeight + additionalHeight };
+}
+
 LayoutUnit LineLayout::contentBoxLogicalHeight() const
 {
     if (!m_inlineContent)
         return { };
 
     auto& lines = m_inlineContent->displayContent().lines;
-    auto nonTruncatedRange = [&]() -> WTF::Range<size_t> {
-        for (size_t lineIndex = lines.size(); lineIndex--;) {
-            if (!lines[lineIndex].isTruncatedInBlockDirection())
-                return { 0, lineIndex + 1 };
-        }
-        // Out-of-flow only content (and/or with floats) and line-clamp can produce blank inline content.
+    if (lines.isEmpty()) {
+        // Out-of-flow only content (and/or with floats) may produce blank inline content.
         return { };
-    }();
-    if (!nonTruncatedRange)
-        return { };
+    }
 
-    auto lineBoxHeight = lines[nonTruncatedRange.end() - 1].lineBoxLogicalRect().maxY() - lines[nonTruncatedRange.begin()].lineBoxLogicalRect().y();
+    auto contentHeight = lines.last().lineBoxLogicalRect().maxY() - lines.first().lineBoxLogicalRect().y();
     auto additionalHeight = m_inlineContent->firstLinePaginationOffset + m_inlineContent->clearGapBeforeFirstLine + m_inlineContent->clearGapAfterLastLine;
-    return LayoutUnit { lineBoxHeight + additionalHeight };
+    return LayoutUnit { contentHeight + additionalHeight };
 }
 
 size_t LineLayout::lineCount() const

@@ -4155,8 +4155,25 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
     updateRepaintTopAndBottomIfNeeded();
 
     setLogicalHeight(newBorderBoxBottom);
-    if (auto lineClamp = layoutState.lineClamp())
-        layoutState.setLineClamp(RenderLayoutState::LineClamp { lineClamp->maximumLineCount, lineClamp->currentLineCount + layoutFormattingContextLineLayout.lineCount() });
+    if (auto lineClamp = layoutState.lineClamp()) {
+        lineClamp->currentLineCount += layoutFormattingContextLineLayout.lineCount();
+        if (!lineClamp->clampedRenderer) {
+            auto clampedContentHeight = [&]() -> std::optional<LayoutUnit> {
+                if (auto clampedHeight = layoutFormattingContextLineLayout.clampedContentLogicalHeight())
+                    return clampedHeight;
+                if (lineClamp->currentLineCount == lineClamp->maximumLineCount) {
+                    // Even if we did not truncate the content, this might be our clamping position.
+                    return computeContentHeight();
+                }
+                return { };
+            };
+            if (auto clampedHeight = clampedContentHeight()) {
+                lineClamp->clampedContentLogicalHeight = clampedHeight;
+                lineClamp->clampedRenderer = this;
+            }
+        }
+        layoutState.setLineClamp(*lineClamp);
+    }
 }
 
 #if ENABLE(TREE_DEBUGGING)

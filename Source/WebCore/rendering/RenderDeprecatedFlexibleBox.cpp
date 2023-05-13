@@ -704,8 +704,9 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
     // We confine the line clamp ugliness to vertical flexible boxes (thus keeping it out of
     // mainstream block layout); this is not really part of the XUL box model.
     bool haveLineClamp = !style().lineClamp().isNone();
+    auto clampedContent = std::optional<ClampedContent> { };
     if (haveLineClamp)
-        applyLineClamp(iterator, relayoutChildren);
+        clampedContent = applyLineClamp(iterator, relayoutChildren);
 
     beginUpdateScrollInfoAfterLayoutTransaction();
 
@@ -932,6 +933,24 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
     // a height change, we revert our height back to the intrinsic height before returning.
     if (heightSpecified)
         setHeight(oldHeight);
+    else if (clampedContent) {
+        auto contentOffset = [&] {
+            auto* clampedRenderer = clampedContent->renderer.get();
+            if (!clampedRenderer) {
+                ASSERT_NOT_REACHED();
+                return contentBoxLocation().y();
+            }
+            auto contentLogicalTop = clampedRenderer->logicalTop() + clampedRenderer->contentBoxLocation().y();
+            for (auto* ancestor = clampedRenderer->containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+                if (ancestor == this)
+                    return contentLogicalTop;
+                contentLogicalTop += ancestor->logicalTop();
+            }
+            ASSERT_NOT_REACHED();
+            return contentBoxLocation().y();
+        };
+        setHeight(contentOffset() + clampedContent->contentHeight + borderBottom() + paddingBottom());
+    }
 }
 
 static bool shouldIncludeLinesForParentLineCount(const RenderBlockFlow& blockFlow)
@@ -1019,7 +1038,7 @@ static size_t lineCountFor(const RenderBlockFlow& blockFlow)
     return count;
 }
 
-bool RenderDeprecatedFlexibleBox::applyModernLineClamp(FlexBoxIterator& iterator)
+std::optional<RenderDeprecatedFlexibleBox::ClampedContent> RenderDeprecatedFlexibleBox::applyModernLineClamp(FlexBoxIterator& iterator)
 {
     auto* firstBlockFlowWithInlineChildren = [&] () -> RenderBlockFlow* {
         for (auto& descendant : descendantsOfType<RenderBlockFlow>(*this)) {
@@ -1029,13 +1048,13 @@ bool RenderDeprecatedFlexibleBox::applyModernLineClamp(FlexBoxIterator& iterator
         return nullptr;
     }();
     if (!firstBlockFlowWithInlineChildren)
-        return false;
+        return { };
 
     // If the first block with inline content supports modern line layout, all siblings (and descendants) do as well.
     // see LayoutIntegrationCoverage::canUseForStyle.
     firstBlockFlowWithInlineChildren->computeAndSetLineLayoutPath();
     if (firstBlockFlowWithInlineChildren->lineLayoutPath() != RenderBlockFlow::ModernPath)
-        return false;
+        return { };
 
     auto& layoutState = *view().frameView().layoutContext().layoutState();
     auto ancestorLineClamp = layoutState.lineClamp();
@@ -1062,17 +1081,21 @@ bool RenderDeprecatedFlexibleBox::applyModernLineClamp(FlexBoxIterator& iterator
         return std::max<size_t>(1, (numberOfLines + 1) * lineClamp.value() / 100.f);
     };
 
-    layoutState.setLineClamp(RenderLayoutState::LineClamp { lineCountForLineClamp(), { } });
+    layoutState.setLineClamp(RenderLayoutState::LineClamp { lineCountForLineClamp(), { }, { }, { } });
     for (auto* child = iterator.first(); child; child = iterator.next()) {
         if (childDoesNotAffectWidthOrFlexing(child))
             continue;
 
         child->layoutIfNeeded();
     }
-    return true;
+
+    auto lineClamp = *layoutState.lineClamp();
+    if (!lineClamp.clampedContentLogicalHeight)
+        return { };
+    return RenderDeprecatedFlexibleBox::ClampedContent { *lineClamp.clampedContentLogicalHeight, lineClamp.clampedRenderer };
 }
 
-void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool relayoutChildren)
+std::optional<RenderDeprecatedFlexibleBox::ClampedContent> RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool relayoutChildren)
 {
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
         if (childDoesNotAffectWidthOrFlexing(child))
@@ -1091,8 +1114,8 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
         }
     }
 
-    if (applyModernLineClamp(iterator))
-        return;
+    if (auto clampedContent = applyModernLineClamp(iterator))
+        return clampedContent;
 
     size_t maxLineCount = 0;
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
@@ -1115,7 +1138,7 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
         numVisibleLines = std::max<size_t>(1, (maxLineCount + 1) * percentValue / 100.f);
     }
     if (numVisibleLines >= maxLineCount)
-        return;
+        return { };
 
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
         if (childDoesNotAffectWidthOrFlexing(child) || !child->style().height().isAuto() || !is<RenderBlockFlow>(*child))
@@ -1190,6 +1213,7 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
         lastVisibleLine->placeEllipsis(anchorBox ? ellipsisAndSpaceStr : ellipsisStr, leftToRight, blockLeftEdge, blockRightEdge, totalWidth, anchorBox);
         destBlock.setHasMarkupTruncation(true);
     }
+    return { };
 }
 
 void RenderDeprecatedFlexibleBox::clearLineClamp()

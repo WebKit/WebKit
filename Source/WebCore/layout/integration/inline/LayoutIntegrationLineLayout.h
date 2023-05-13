@@ -103,6 +103,8 @@ public:
     LayoutRect visualOverflowBoundingBoxRectFor(const RenderInline&) const;
     Vector<FloatRect> collectInlineBoxRects(const RenderInline&) const;
 
+    std::optional<LayoutUnit> clampedContentLogicalHeight() const;
+
     bool isPaginated() const;
     LayoutUnit contentBoxLogicalHeight() const;
     size_t lineCount() const;

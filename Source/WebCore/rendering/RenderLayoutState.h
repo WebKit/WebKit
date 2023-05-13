@@ -50,6 +50,8 @@ public:
     struct LineClamp {
         size_t maximumLineCount { 0 };
         size_t currentLineCount { 0 };
+        std::optional<LayoutUnit> clampedContentLogicalHeight;
+        WeakPtr<const RenderBlockFlow> clampedRenderer;
     };
 
     RenderLayoutState()

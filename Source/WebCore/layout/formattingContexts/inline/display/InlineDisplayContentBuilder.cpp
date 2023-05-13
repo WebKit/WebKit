@@ -86,7 +86,6 @@ InlineDisplayContentBuilder::InlineDisplayContentBuilder(const InlineFormattingC
     , m_formattingState(formattingState)
     , m_displayLine(displayLine)
     , m_lineIndex(lineIndex)
-    , m_lineIsFullyTruncatedInBlockDirection(displayLine.isTruncatedInBlockDirection())
 {
 }
 
