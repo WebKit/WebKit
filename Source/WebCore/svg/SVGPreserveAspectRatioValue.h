@@ -59,6 +59,8 @@ public:
     SVGPreserveAspectRatioValue(StringView);
     WEBCORE_EXPORT SVGPreserveAspectRatioValue(SVGPreserveAspectRatioType, SVGMeetOrSliceType);
 
+    bool operator==(const SVGPreserveAspectRatioValue&) const = default;
+
     ExceptionOr<void> setAlign(unsigned short);
     unsigned short align() const { return m_align; }
 

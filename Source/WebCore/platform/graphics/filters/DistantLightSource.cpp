@@ -47,6 +47,13 @@ DistantLightSource::DistantLightSource(float azimuth, float elevation)
 {
 }
 
+bool DistantLightSource::operator==(const DistantLightSource& other) const
+{
+    return LightSource::operator==(other)
+        && m_azimuth == other.m_azimuth
+        && m_elevation == other.m_elevation;
+}
+
 void DistantLightSource::initPaintingData(const Filter&, const FilterImage&, PaintingData& paintingData) const
 {
     float azimuth = deg2rad(m_azimuth);

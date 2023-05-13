@@ -44,6 +44,11 @@ FEBlend::FEBlend(BlendMode mode)
 {
 }
 
+bool FEBlend::operator==(const FEBlend& other) const
+{
+    return FilterEffect::operator==(other) && m_mode == other.m_mode;
+}
+
 bool FEBlend::setBlendMode(BlendMode mode)
 {
     if (m_mode == mode)

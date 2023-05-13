@@ -34,6 +34,13 @@
 
 namespace WebCore {
 
+bool FilterEffect::operator==(const FilterEffect& other) const
+{
+    if (filterType() != other.filterType())
+        return false;
+    return m_operatingColorSpace == other.m_operatingColorSpace;
+}
+
 FilterImageVector FilterEffect::takeImageInputs(FilterImageVector& stack) const
 {
     unsigned inputsSize = numberOfImageInputs();

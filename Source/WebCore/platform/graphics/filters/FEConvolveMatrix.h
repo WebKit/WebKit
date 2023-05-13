@@ -40,6 +40,8 @@ class FEConvolveMatrix : public FilterEffect {
 public:
     WEBCORE_EXPORT static Ref<FEConvolveMatrix> create(const IntSize& kernelSize, float divisor, float bias, const IntPoint& targetOffset, EdgeModeType, const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix);
 
+    bool operator==(const FEConvolveMatrix&) const;
+
     IntSize kernelSize() const { return m_kernelSize; }
     void setKernelSize(const IntSize&);
 
@@ -66,6 +68,8 @@ public:
 
 private:
     FEConvolveMatrix(const IntSize& kernelSize, float divisor, float bias, const IntPoint& targetOffset, EdgeModeType, const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix);
+
+    bool operator==(const FilterEffect& other) const override { return areEqual<FEConvolveMatrix>(*this, other); }
 
     FloatRect calculateImageRect(const Filter&, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
 

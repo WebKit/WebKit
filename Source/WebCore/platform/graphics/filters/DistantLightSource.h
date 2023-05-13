@@ -29,8 +29,12 @@
 namespace WebCore {
 
 class DistantLightSource : public LightSource {
+    friend struct IPC::ArgumentCoder<DistantLightSource, void>;
+
 public:
     WEBCORE_EXPORT static Ref<DistantLightSource> create(float azimuth, float elevation);
+
+    bool operator==(const DistantLightSource&) const;
 
     // These are in degrees.
     float azimuth() const { return m_azimuth; }
@@ -45,8 +49,9 @@ public:
     WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;
 
 private:
-    friend struct IPC::ArgumentCoder<DistantLightSource, void>;
     DistantLightSource(float azimuth, float elevation);
+
+    bool operator==(const LightSource& other) const override { return areEqual<DistantLightSource>(*this, other); }
 
     float m_azimuth;
     float m_elevation;

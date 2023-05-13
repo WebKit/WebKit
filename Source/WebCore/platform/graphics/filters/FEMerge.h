@@ -30,10 +30,14 @@ class FEMerge : public FilterEffect {
 public:
     WEBCORE_EXPORT static Ref<FEMerge> create(unsigned numberOfEffectInputs);
 
+    bool operator==(const FEMerge&) const;
+
     unsigned numberOfEffectInputs() const override { return m_numberOfEffectInputs; }
 
 private:
     FEMerge(unsigned numberOfEffectInputs);
+
+    bool operator==(const FilterEffect& other) const override { return areEqual<FEMerge>(*this, other); }
 
     std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
 

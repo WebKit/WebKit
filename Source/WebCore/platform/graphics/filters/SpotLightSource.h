@@ -32,6 +32,8 @@ class SpotLightSource : public LightSource {
 public:
     WEBCORE_EXPORT static Ref<SpotLightSource> create(const FloatPoint3D& position, const FloatPoint3D& pointsAt, float specularExponent, float limitingConeAngle);
 
+    bool operator==(const SpotLightSource&) const;
+
     const FloatPoint3D& position() const { return m_position; }
     const FloatPoint3D& direction() const { return m_pointsAt; }
     float specularExponent() const { return m_specularExponent; }
@@ -54,6 +56,8 @@ public:
 
 private:
     SpotLightSource(const FloatPoint3D& position, const FloatPoint3D& direction, float specularExponent, float limitingConeAngle);
+
+    bool operator==(const LightSource& other) const override { return areEqual<SpotLightSource>(*this, other); }
 
     FloatPoint3D m_position;
     FloatPoint3D m_pointsAt;

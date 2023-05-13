@@ -64,6 +64,11 @@ public:
 
     virtual ~LightSource() = default;
 
+    virtual bool operator==(const LightSource& other) const
+    {
+        return m_type == other.m_type;
+    }
+
     LightType type() const { return m_type; }
     virtual WTF::TextStream& externalRepresentation(WTF::TextStream&) const = 0;
 
@@ -86,6 +91,15 @@ public:
     
     virtual bool setSpecularExponent(float) { return false; }
     virtual bool setLimitingConeAngle(float) { return false; }
+
+protected:
+    template<typename LightSourceType>
+    static bool areEqual(const LightSourceType& a, const LightSource& b)
+    {
+        if (!is<LightSourceType>(b))
+            return false;
+        return a.operator==(downcast<LightSourceType>(b));
+    }
 
 private:
     LightType m_type;

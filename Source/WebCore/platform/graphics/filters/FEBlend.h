@@ -32,11 +32,15 @@ class FEBlend : public FilterEffect {
 public:
     WEBCORE_EXPORT static Ref<FEBlend> create(BlendMode);
 
+    bool operator==(const FEBlend&) const;
+
     BlendMode blendMode() const { return m_mode; }
     bool setBlendMode(BlendMode);
 
 private:
     FEBlend(BlendMode);
+
+    bool operator==(const FilterEffect& other) const override { return areEqual<FEBlend>(*this, other); }
 
     unsigned numberOfEffectInputs() const override { return 2; }
 

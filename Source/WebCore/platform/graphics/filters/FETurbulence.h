@@ -39,6 +39,8 @@ class FETurbulence : public FilterEffect {
 public:
     WEBCORE_EXPORT static Ref<FETurbulence> create(TurbulenceType, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles);
 
+    bool operator==(const FETurbulence&) const;
+
     TurbulenceType type() const { return m_type; }
     bool setType(TurbulenceType);
 
@@ -59,6 +61,8 @@ public:
 
 private:
     FETurbulence(TurbulenceType, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles);
+
+    bool operator==(const FilterEffect& other) const override { return areEqual<FETurbulence>(*this, other); }
 
     unsigned numberOfEffectInputs() const override { return 0; }
 

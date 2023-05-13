@@ -51,6 +51,19 @@ FEConvolveMatrix::FEConvolveMatrix(const IntSize& kernelSize, float divisor, flo
     ASSERT(m_kernelSize.height() > 0);
 }
 
+bool FEConvolveMatrix::operator==(const FEConvolveMatrix& other) const
+{
+    return FilterEffect::operator==(other)
+        && m_kernelSize == other.m_kernelSize
+        && m_divisor == other.m_divisor
+        && m_bias == other.m_bias
+        && m_targetOffset == other.m_targetOffset
+        && m_edgeMode == other.m_edgeMode
+        && m_kernelUnitLength == other.m_kernelUnitLength
+        && m_preserveAlpha == other.m_preserveAlpha
+        && m_kernelMatrix == other.m_kernelMatrix;
+}
+
 void FEConvolveMatrix::setKernelSize(const IntSize& kernelSize)
 {
     ASSERT(kernelSize.width() > 0);

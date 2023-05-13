@@ -57,6 +57,11 @@ FEComponentTransfer::FEComponentTransfer(ComponentTransferFunctions&& functions)
 {
 }
 
+bool FEComponentTransfer::operator==(const FEComponentTransfer& other) const
+{
+    return FilterEffect::operator==(other) && m_functions == other.m_functions;
+}
+
 OptionSet<FilterRenderingMode> FEComponentTransfer::supportedFilterRenderingModes() const
 {
     OptionSet<FilterRenderingMode> modes = FilterRenderingMode::Software;

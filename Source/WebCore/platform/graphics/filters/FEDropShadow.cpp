@@ -45,6 +45,17 @@ FEDropShadow::FEDropShadow(float stdX, float stdY, float dx, float dy, const Col
 {
 }
 
+bool FEDropShadow::operator==(const FEDropShadow& other) const
+{
+    return FilterEffect::operator==(other)
+        && m_stdX == other.m_stdX
+        && m_stdY == other.m_stdY
+        && m_dx == other.m_dx
+        && m_dy == other.m_dy
+        && m_shadowColor == other.m_shadowColor
+        && m_shadowOpacity == other.m_shadowOpacity;
+}
+
 bool FEDropShadow::setStdDeviationX(float stdX)
 {
     if (m_stdX == stdX)

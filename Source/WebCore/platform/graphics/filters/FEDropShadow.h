@@ -29,6 +29,8 @@ class FEDropShadow : public FilterEffect {
 public:
     WEBCORE_EXPORT static Ref<FEDropShadow> create(float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity);
 
+    bool operator==(const FEDropShadow&) const;
+
     float stdDeviationX() const { return m_stdX; }
     bool setStdDeviationX(float);
 
@@ -51,6 +53,8 @@ public:
 
 private:
     FEDropShadow(float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity);
+
+    bool operator==(const FilterEffect& other) const override { return areEqual<FEDropShadow>(*this, other); }
 
     FloatRect calculateImageRect(const Filter&, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
 
