@@ -192,7 +192,7 @@ void LocalFrameViewLayoutContext::layout()
 void LocalFrameViewLayoutContext::performLayout()
 {
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!frame().document()->inRenderTreeUpdate());
-    ASSERT(LayoutDisallowedScope::isLayoutAllowed());
+    RELEASE_ASSERT(LayoutDisallowedScope::isLayoutAllowed());
     ASSERT(!view().isPainting());
     ASSERT(frame().view() == &view());
     ASSERT(frame().document());
@@ -246,6 +246,7 @@ void LocalFrameViewLayoutContext::performLayout()
     {
         SetForScope layoutPhase(m_layoutPhase, LayoutPhase::InRenderTreeLayout);
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+        LayoutDisallowedScope layoutDisallowedScope(LayoutDisallowedScope::Reason::ReentrancyAvoidance);
         SubtreeLayoutStateMaintainer subtreeLayoutStateMaintainer(subtreeLayoutRoot());
         RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
 #ifndef NDEBUG
