@@ -463,6 +463,7 @@ inline void Structure::cacheSpecialProperty(JSGlobalObject* globalObject, VM& vm
 template<Structure::ShouldPin shouldPin, typename Func>
 inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned attributes, const Func& func)
 {
+    ASSERT(!isCompilationThread());
     PropertyTable* table = ensurePropertyTable(vm);
 
     GCSafeConcurrentJSLocker locker(m_lock, vm);
@@ -513,6 +514,7 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
 template<Structure::ShouldPin shouldPin, typename Func>
 inline PropertyOffset Structure::remove(VM& vm, PropertyName propertyName, const Func& func)
 {
+    ASSERT(!isCompilationThread());
     PropertyTable* table = ensurePropertyTable(vm);
     GCSafeConcurrentJSLocker locker(m_lock, vm);
 
@@ -554,6 +556,7 @@ inline PropertyOffset Structure::remove(VM& vm, PropertyName propertyName, const
 template<Structure::ShouldPin shouldPin, typename Func>
 inline PropertyOffset Structure::attributeChange(VM& vm, PropertyName propertyName, unsigned attributes, const Func& func)
 {
+    ASSERT(!isCompilationThread());
     PropertyTable* table = ensurePropertyTable(vm);
 
     GCSafeConcurrentJSLocker locker(m_lock, vm);
@@ -609,6 +612,53 @@ inline PropertyOffset Structure::removePropertyWithoutTransition(VM& vm, Propert
     ASSERT(propertyTableOrNull());
     
     return remove<ShouldPin::Yes>(vm, propertyName, func);
+}
+
+template<typename Func>
+ALWAYS_INLINE auto Structure::addOrReplacePropertyWithoutTransition(VM& vm, PropertyName propertyName, unsigned newAttributes, const Func& func) -> decltype(auto)
+{
+    ASSERT(!isCompilationThread());
+    PropertyTable* table = ensurePropertyTable(vm);
+
+    auto rep = propertyName.uid();
+    auto findResult = table->find(rep);
+    if (findResult.offset != invalidOffset)
+        return std::tuple { findResult.offset, findResult.attributes, false };
+
+    GCSafeConcurrentJSLocker locker(m_lock, vm);
+
+    pin(locker, vm, table);
+
+    ASSERT(!JSC::isValidOffset(get(vm, propertyName)));
+
+    checkConsistency();
+    if (newAttributes & PropertyAttribute::DontEnum || propertyName.isSymbol())
+        setIsQuickPropertyAccessAllowedForEnumeration(false);
+    if (newAttributes & PropertyAttribute::DontDelete) {
+        setHasNonConfigurableProperties(true);
+        if (newAttributes & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessorOrValue)
+            setHasNonConfigurableReadOnlyOrGetterSetterProperties(true);
+    }
+    if (propertyName == vm.propertyNames->underscoreProto)
+        setHasUnderscoreProtoPropertyExcludingOriginalProto(true);
+
+    PropertyOffset newOffset = table->nextOffset(m_inlineCapacity);
+
+    m_propertyHash = m_propertyHash ^ rep->existingSymbolAwareHash();
+    m_seenProperties.add(CompactPtr<UniquedStringImpl>::encode(rep));
+
+    auto [offset, attributes, result] = table->addAfterFind(vm, PropertyTableEntry(rep, newOffset, newAttributes), WTFMove(findResult));
+    ASSERT_UNUSED(result, result);
+    ASSERT_UNUSED(offset, offset == newOffset);
+    UNUSED_VARIABLE(attributes);
+    auto newMaxOffset = std::max(newOffset, maxOffset());
+
+    func(locker, newOffset, newMaxOffset);
+
+    ASSERT(maxOffset() == newMaxOffset);
+
+    checkConsistency();
+    return std::tuple { newOffset, newAttributes, true };
 }
 
 template<typename Func>

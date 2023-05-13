@@ -4175,4 +4175,26 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, const RefPtr<UniquedStringImpl
     }
 }
 
+ASCIILiteral JSObject::putDirectToDictionaryWithoutExtensibility(VM& vm, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+{
+    unsigned currentAttributes;
+    Structure* structure = this->structure();
+    PropertyOffset offset = structure->get(vm, propertyName, currentAttributes);
+    if (offset != invalidOffset) {
+        if (currentAttributes & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessor)
+            return ReadonlyPropertyChangeError;
+
+        putDirectOffset(vm, offset, value);
+        structure->didReplaceProperty(offset);
+
+        // FIXME: Check attributes against PropertyAttribute::CustomAccessorOrValue. Changing GetterSetter should work w/o transition.
+        // https://bugs.webkit.org/show_bug.cgi?id=214342
+        ASSERT(!(currentAttributes & PropertyAttribute::AccessorOrCustomAccessorOrValue));
+        slot.setExistingProperty(this, offset);
+        return { };
+    }
+
+    return NonExtensibleObjectPropertyDefineError;
+}
+
 } // namespace JSC

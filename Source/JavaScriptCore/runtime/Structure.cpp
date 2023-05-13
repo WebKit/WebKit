@@ -394,6 +394,7 @@ bool Structure::findStructuresAndMapForMaterialization(Vector<Structure*, 8>& st
 
 PropertyTable* Structure::materializePropertyTable(VM& vm, bool setPropertyTable)
 {
+    ASSERT(!isCompilationThread());
     ASSERT(structure()->classInfoForCells() == info());
     ASSERT(!protectPropertyTableWhileTransitioning());
     
@@ -910,6 +911,7 @@ bool Structure::isFrozen(VM& vm)
 
 Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
 {
+    ASSERT(!isCompilationThread());
     checkOffsetConsistency();
     ASSERT(isDictionary());
     ASSERT(object->structure() == this);
@@ -1152,6 +1154,8 @@ PropertyOffset Structure::getConcurrently(UniquedStringImpl* uid, unsigned& attr
         assertIsHeld(tableStructure->m_lock); // Sadly Clang needs some help here.
         // Because uid is UniquedStringImpl, it is guaranteed that the hash is already computed.
         // So we can use PropertyTable::get even from the concurrent compilers.
+        // Even though taking a lock, all you can do is getting value from this table. We must not modify the table
+        // from non mutator thread.
         auto [offset, entryAttributes] = table->get(uid);
         if (offset != invalidOffset) {
             result = offset;

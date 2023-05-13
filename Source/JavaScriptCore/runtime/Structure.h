@@ -295,6 +295,8 @@ public:
     PropertyOffset removePropertyWithoutTransition(VM&, PropertyName, const Func&);
     template<typename Func>
     PropertyOffset attributeChangeWithoutTransition(VM&, PropertyName, unsigned attributes, const Func&);
+    template<typename Func>
+    auto addOrReplacePropertyWithoutTransition(VM&, PropertyName, unsigned attributes, const Func&) -> decltype(auto);
     void setPrototypeWithoutTransition(VM&, JSValue prototype);
         
     bool isDictionary() const { return dictionaryKind() != NoneDictionaryKind; }
