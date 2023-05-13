@@ -65,7 +65,10 @@ int main()
         NULL,
         0,
         NULL,
-        NULL,
+        NULL, {
+            NULL,
+            NULL,
+        },
     };
     // FIXME: Update this when device creation is actually asynchronous
     __block WGPUDevice device = NULL;
@@ -96,7 +99,7 @@ int main()
     WGPUBuffer downloadBuffer = wgpuDeviceCreateBuffer(device, &downloadBufferDescriptor);
 
     wgpuBufferMapAsyncWithBlock(uploadBuffer, WGPUMapMode_Write, 0, sizeof(int32_t), ^(WGPUBufferMapAsyncStatus status) {
-        assert(status == WGPUQueueWorkDoneStatus_Success);
+        assert(status == WGPUBufferMapAsyncStatus_Success);
         int32_t * writePointer = wgpuBufferGetMappedRange(uploadBuffer, 0, sizeof(int32_t));
         writePointer[0] = 17;
         wgpuBufferUnmap(uploadBuffer);
@@ -116,11 +119,11 @@ int main()
         WGPUCommandBuffer commands[] = { commandBuffer };
         wgpuQueueSubmit(wgpuDeviceGetQueue(device), sizeof(commands) / sizeof(commands[0]), commands);
 
-        wgpuQueueOnSubmittedWorkDoneWithBlock(wgpuDeviceGetQueue(device), 0, ^(WGPUQueueWorkDoneStatus status) {
+        wgpuQueueOnSubmittedWorkDoneWithBlock(wgpuDeviceGetQueue(device), ^(WGPUQueueWorkDoneStatus status) {
             assert(status == WGPUQueueWorkDoneStatus_Success);
             wgpuBufferMapAsyncWithBlock(downloadBuffer, WGPUMapMode_Read, 0, sizeof(int32_t), ^(WGPUBufferMapAsyncStatus status) {
                 assert(status == WGPUBufferMapAsyncStatus_Success);
-                int32_t * readPointer = wgpuBufferGetMappedRange(downloadBuffer, 0, sizeof(int32_t));
+                const int32_t* readPointer = wgpuBufferGetConstMappedRange(downloadBuffer, 0, sizeof(int32_t));
                 printf("Result: %" PRId32 "\n", readPointer[0]);
                 wgpuBufferUnmap(downloadBuffer);
                 wgpuDevicePopErrorScopeWithBlock(device, ^(WGPUErrorType type, const char* message) {

@@ -102,7 +102,10 @@
                 NULL,
                 0,
                 NULL,
-                NULL,
+                NULL, {
+                    NULL,
+                    NULL,
+                },
             };
             wgpuAdapterRequestDeviceWithBlock(self->adapter, &deviceDescriptor, ^(WGPURequestDeviceStatus status, WGPUDevice localDevice, const char* message) {
                 assert(status == WGPURequestAdapterStatus_Success);
@@ -186,7 +189,7 @@
     };
     WGPURenderPassEncoder renderPassEncoder = wgpuCommandEncoderBeginRenderPass(commandEncoder, &renderPassDescriptor);
 
-    wgpuRenderPassEncoderEndPass(renderPassEncoder);
+    wgpuRenderPassEncoderEnd(renderPassEncoder);
 
     WGPUCommandBufferDescriptor commandBufferDescriptor = {
         NULL,
