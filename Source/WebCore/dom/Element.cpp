@@ -1370,7 +1370,7 @@ int Element::offsetTop()
 
 int Element::offsetWidth()
 {
-    document().updateLayoutIfDimensionsOutOfDate(*this, WidthDimensionsCheck);
+    document().updateLayoutIfDimensionsOutOfDate(*this, DimensionsCheck::Width);
     if (RenderBoxModelObject* renderer = renderBoxModelObject()) {
         auto offsetWidth = LayoutUnit { roundToInt(renderer->offsetWidth()) };
         return convertToNonSubpixelValue(adjustLayoutUnitForAbsoluteZoom(offsetWidth, *renderer).toDouble());
@@ -1380,7 +1380,7 @@ int Element::offsetWidth()
 
 int Element::offsetHeight()
 {
-    document().updateLayoutIfDimensionsOutOfDate(*this, HeightDimensionsCheck);
+    document().updateLayoutIfDimensionsOutOfDate(*this, DimensionsCheck::Height);
     if (RenderBoxModelObject* renderer = renderBoxModelObject()) {
         auto offsetHeight = LayoutUnit { roundToInt(renderer->offsetHeight()) };
         return convertToNonSubpixelValue(adjustLayoutUnitForAbsoluteZoom(offsetHeight, *renderer).toDouble());
@@ -1434,7 +1434,7 @@ int Element::clientTop()
 
 int Element::clientWidth()
 {
-    document().updateLayoutIfDimensionsOutOfDate(*this, WidthDimensionsCheck);
+    document().updateLayoutIfDimensionsOutOfDate(*this, DimensionsCheck::Width);
 
     if (!document().hasLivingRenderTree())
         return 0;
@@ -1468,7 +1468,7 @@ int Element::clientWidth()
 
 int Element::clientHeight()
 {
-    document().updateLayoutIfDimensionsOutOfDate(*this, HeightDimensionsCheck);
+    document().updateLayoutIfDimensionsOutOfDate(*this, DimensionsCheck::Height);
     if (!document().hasLivingRenderTree())
         return 0;
 
@@ -1583,7 +1583,7 @@ void Element::setScrollTop(int newTop)
 
 int Element::scrollWidth()
 {
-    document().updateLayoutIfDimensionsOutOfDate(*this, WidthDimensionsCheck);
+    document().updateLayoutIfDimensionsOutOfDate(*this, DimensionsCheck::Width);
 
     if (document().scrollingElement() == this) {
         // FIXME (webkit.org/b/182289): updateLayoutIfDimensionsOutOfDate seems to ignore zoom level change.
@@ -1600,7 +1600,7 @@ int Element::scrollWidth()
 
 int Element::scrollHeight()
 {
-    document().updateLayoutIfDimensionsOutOfDate(*this, HeightDimensionsCheck);
+    document().updateLayoutIfDimensionsOutOfDate(*this, DimensionsCheck::Height);
 
     if (document().scrollingElement() == this) {
         // FIXME (webkit.org/b/182289): updateLayoutIfDimensionsOutOfDate seems to ignore zoom level change.

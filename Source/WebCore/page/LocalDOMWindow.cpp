@@ -1323,7 +1323,7 @@ int LocalDOMWindow::innerHeight() const
     
     // Force enough layout in the parent document to ensure that the FrameView has been resized.
     if (RefPtr ownerElement = frameElement())
-        ownerElement->document().updateLayoutIfDimensionsOutOfDate(*ownerElement, HeightDimensionsCheck);
+        ownerElement->document().updateLayoutIfDimensionsOutOfDate(*ownerElement, { DimensionsCheck::Height });
 
     RefPtr frame = this->frame();
     if (!frame)
@@ -1343,7 +1343,7 @@ int LocalDOMWindow::innerWidth() const
 
     // Force enough layout in the parent document to ensure that the FrameView has been resized.
     if (RefPtr ownerElement = frameElement())
-        ownerElement->document().updateLayoutIfDimensionsOutOfDate(*ownerElement, WidthDimensionsCheck);
+        ownerElement->document().updateLayoutIfDimensionsOutOfDate(*ownerElement, { DimensionsCheck::Width });
 
     RefPtr frame = this->frame();
     if (!frame)

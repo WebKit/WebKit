@@ -316,7 +316,7 @@ enum class NodeListInvalidationType : uint8_t {
 };
 const uint8_t numNodeListInvalidationTypes = static_cast<uint8_t>(NodeListInvalidationType::InvalidateOnAnyAttrChange) + 1;
 
-enum class EventHandlerRemoval { One, All };
+enum class EventHandlerRemoval : bool { One, All };
 using EventTargetSet = HashCountedSet<Node*>;
 
 enum class DocumentCompatibilityMode : uint8_t {
@@ -325,7 +325,11 @@ enum class DocumentCompatibilityMode : uint8_t {
     LimitedQuirksMode = 1 << 2
 };
 
-enum DimensionsCheck { WidthDimensionsCheck = 1 << 0, HeightDimensionsCheck = 1 << 1, AllDimensionsCheck = 1 << 2 };
+enum class DimensionsCheck : uint8_t {
+    Width = 1 << 0,
+    Height = 1 << 1,
+    All = 1 << 2, // FIXME: This is probably meant to be Width | Height instead.
+};
 
 enum class HttpEquivPolicy {
     Enabled,
@@ -697,9 +701,9 @@ public:
     bool renderTreeBeingDestroyed() const { return m_renderTreeBeingDestroyed; }
     bool hasLivingRenderTree() const { return renderView() && !renderTreeBeingDestroyed(); }
     void updateRenderTree(std::unique_ptr<const Style::Update> styleUpdate);
-    
-    bool updateLayoutIfDimensionsOutOfDate(Element&, DimensionsCheck = AllDimensionsCheck);
-    
+
+    bool updateLayoutIfDimensionsOutOfDate(Element&, OptionSet<DimensionsCheck> = { DimensionsCheck::All });
+
     inline AXObjectCache* existingAXObjectCache() const;
     WEBCORE_EXPORT AXObjectCache* axObjectCache() const;
     void clearAXObjectCache();
