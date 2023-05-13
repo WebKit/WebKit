@@ -38,6 +38,8 @@ class FEImage final : public FilterEffect {
 public:
     WEBCORE_EXPORT static Ref<FEImage> create(SourceImage&&, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue&);
 
+    bool operator==(const FEImage&) const;
+
     const SourceImage& sourceImage() const { return m_sourceImage; }
     void setImageSource(SourceImage&& sourceImage) { m_sourceImage = WTFMove(sourceImage); }
 
@@ -46,6 +48,8 @@ public:
 
 private:
     FEImage(SourceImage&&, const FloatRect& sourceImageRect, const SVGPreserveAspectRatioValue&);
+
+    bool operator==(const FilterEffect& other) const override { return areEqual<FEImage>(*this, other); }
 
     unsigned numberOfEffectInputs() const override { return 0; }
 

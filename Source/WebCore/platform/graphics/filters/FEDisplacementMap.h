@@ -39,6 +39,8 @@ class FEDisplacementMap : public FilterEffect {
 public:
     WEBCORE_EXPORT static Ref<FEDisplacementMap> create(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale);
 
+    bool operator==(const FEDisplacementMap&) const;
+
     ChannelSelectorType xChannelSelector() const { return m_xChannelSelector; }
     bool setXChannelSelector(const ChannelSelectorType);
 
@@ -50,6 +52,8 @@ public:
 
 private:
     FEDisplacementMap(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
+
+    bool operator==(const FilterEffect& other) const override { return areEqual<FEDisplacementMap>(*this, other); }
 
     unsigned numberOfEffectInputs() const override { return 2; }
 

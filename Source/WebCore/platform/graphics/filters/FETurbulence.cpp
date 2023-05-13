@@ -48,6 +48,17 @@ FETurbulence::FETurbulence(TurbulenceType type, float baseFrequencyX, float base
 {
 }
 
+bool FETurbulence::operator==(const FETurbulence& other) const
+{
+    return FilterEffect::operator==(other)
+        && m_type == other.m_type
+        && m_baseFrequencyX == other.m_baseFrequencyX
+        && m_baseFrequencyY == other.m_baseFrequencyY
+        && m_numOctaves == other.m_numOctaves
+        && m_seed == other.m_seed
+        && m_stitchTiles == other.m_stitchTiles;
+}
+
 bool FETurbulence::setType(TurbulenceType type)
 {
     if (m_type == type)

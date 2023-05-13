@@ -44,6 +44,14 @@ FEMorphology::FEMorphology(MorphologyOperatorType type, float radiusX, float rad
 {
 }
 
+bool FEMorphology::operator==(const FEMorphology& other) const
+{
+    return FilterEffect::operator==(other)
+        && m_type == other.m_type
+        && m_radiusX == other.m_radiusX
+        && m_radiusY == other.m_radiusY;
+}
+
 bool FEMorphology::setMorphologyOperator(MorphologyOperatorType type)
 {
     if (m_type == type)

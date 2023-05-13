@@ -32,6 +32,8 @@ class FEDiffuseLighting : public FELighting {
 public:
     WEBCORE_EXPORT static Ref<FEDiffuseLighting> create(const Color& lightingColor, float surfaceScale, float diffuseConstant, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&);
 
+    bool operator==(const FEDiffuseLighting& other) const { return FELighting::operator==(other); }
+
     float diffuseConstant() const { return m_diffuseConstant; }
     bool setDiffuseConstant(float);
 
@@ -39,6 +41,8 @@ public:
 
 private:
     FEDiffuseLighting(const Color& lightingColor, float surfaceScale, float diffuseConstant, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&);
+
+    bool operator==(const FilterEffect& other) const override { return areEqual<FEDiffuseLighting>(*this, other); }
 };
 
 } // namespace WebCore

@@ -43,6 +43,13 @@ FEOffset::FEOffset(float dx, float dy)
 {
 }
 
+bool FEOffset::operator==(const FEOffset& other) const
+{
+    return FilterEffect::operator==(other)
+        && m_dx == other.m_dx
+        && m_dy == other.m_dy;
+}
+
 bool FEOffset::setDx(float dx)
 {
     if (m_dx == dx)

@@ -39,6 +39,8 @@ struct FELightingPaintingDataForNeon;
 
 class FELighting : public FilterEffect {
 public:
+    bool operator==(const FELighting&) const;
+
     const Color& lightingColor() const { return m_lightingColor; }
     bool setLightingColor(const Color&);
 

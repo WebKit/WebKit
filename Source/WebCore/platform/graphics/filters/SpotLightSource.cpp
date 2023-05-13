@@ -58,6 +58,15 @@ SpotLightSource::SpotLightSource(const FloatPoint3D& position, const FloatPoint3
 {
 }
 
+bool SpotLightSource::operator==(const SpotLightSource& other) const
+{
+    return LightSource::operator==(other)
+        && m_position == other.m_position
+        && m_pointsAt == other.m_pointsAt
+        && m_specularExponent == other.m_specularExponent
+        && m_limitingConeAngle == other.m_limitingConeAngle;
+}
+
 void SpotLightSource::initPaintingData(const Filter& filter, const FilterImage& result, PaintingData& paintingData) const
 {
     auto position = filter.resolvedPoint3D(m_position);

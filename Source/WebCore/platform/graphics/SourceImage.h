@@ -41,6 +41,8 @@ public:
 
     SourceImage(ImageVariant&&);
 
+    bool operator==(const SourceImage&) const;
+
     NativeImage* nativeImageIfExists() const;
     NativeImage* nativeImage() const;
 

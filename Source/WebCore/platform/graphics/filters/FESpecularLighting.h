@@ -30,6 +30,8 @@ class FESpecularLighting : public FELighting {
 public:
     WEBCORE_EXPORT static Ref<FESpecularLighting> create(const Color& lightingColor, float surfaceScale, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&);
 
+    bool operator==(const FESpecularLighting& other) const { return FELighting::operator==(other); }
+
     float specularConstant() const { return m_specularConstant; }
     bool setSpecularConstant(float);
 
@@ -40,6 +42,8 @@ public:
 
 private:
     FESpecularLighting(const Color& lightingColor, float surfaceScale, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&);
+
+    bool operator==(const FilterEffect& other) const override { return areEqual<FESpecularLighting>(*this, other); }
 };
 
 } // namespace WebCore
