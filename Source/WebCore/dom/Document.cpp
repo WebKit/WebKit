@@ -1408,7 +1408,7 @@ void Document::setReadyState(ReadyState readyState)
         return;
 
     switch (readyState) {
-    case Loading:
+    case ReadyState::Loading:
         if (!m_eventTiming.domLoading) {
             auto now = MonotonicTime::now();
             m_eventTiming.domLoading = now;
@@ -1416,7 +1416,7 @@ void Document::setReadyState(ReadyState readyState)
                 eventTiming->domLoading = now;
         }
         break;
-    case Complete:
+    case ReadyState::Complete:
         if (!m_eventTiming.domComplete) {
             auto now = MonotonicTime::now();
             m_eventTiming.domComplete = now;
@@ -1424,7 +1424,7 @@ void Document::setReadyState(ReadyState readyState)
                 eventTiming->domComplete = now;
         }
         FALLTHROUGH;
-    case Interactive:
+    case ReadyState::Interactive:
         if (!m_eventTiming.domInteractive) {
             auto now = MonotonicTime::now();
             m_eventTiming.domInteractive = now;
@@ -1447,15 +1447,15 @@ void Document::setVisualUpdatesAllowed(ReadyState readyState)
 {
     ASSERT(settings().suppressesIncrementalRendering());
     switch (readyState) {
-    case Loading:
+    case ReadyState::Loading:
         ASSERT(!m_visualUpdatesSuppressionTimer.isActive());
         ASSERT(m_visualUpdatesAllowed);
         setVisualUpdatesAllowed(false);
         break;
-    case Interactive:
+    case ReadyState::Interactive:
         ASSERT(m_visualUpdatesSuppressionTimer.isActive() || m_visualUpdatesAllowed);
         break;
-    case Complete:
+    case ReadyState::Complete:
         if (m_visualUpdatesSuppressionTimer.isActive()) {
             ASSERT(!m_visualUpdatesAllowed);
 
@@ -3163,7 +3163,7 @@ void Document::implicitOpen()
         m_parser->didBeginYieldingParser();
 
     setParsing(true);
-    setReadyState(Loading);
+    setReadyState(ReadyState::Loading);
 }
 
 std::unique_ptr<FontLoadRequest> Document::fontLoadRequest(const String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource loadedFromOpaqueSource)
@@ -3259,7 +3259,7 @@ void Document::explicitClose()
         // Because we have no frame, we don't know if all loading has completed,
         // so we just call implicitClose() immediately. FIXME: This might fire
         // the load event prematurely <http://bugs.webkit.org/show_bug.cgi?id=14568>.
-        setReadyState(Complete);
+        setReadyState(ReadyState::Complete);
         implicitClose();
         return;
     }
@@ -6444,7 +6444,7 @@ Ref<HTMLCollection> Document::documentNamedItems(const AtomString& name)
 void Document::finishedParsing()
 {
     ASSERT(!scriptableDocumentParser() || !m_parser->isParsing());
-    ASSERT(!scriptableDocumentParser() || m_readyState != Loading);
+    ASSERT(!scriptableDocumentParser() || m_readyState != ReadyState::Loading);
     setParsing(false);
 
     Ref<Document> protectedThis(*this);
@@ -8526,7 +8526,7 @@ void Document::updateIntersectionObservations()
 
 void Document::scheduleInitialIntersectionObservationUpdate()
 {
-    if (m_readyState == Complete)
+    if (m_readyState == ReadyState::Complete)
         scheduleRenderingUpdate(RenderingUpdateStep::IntersectionObservations);
     else if (!m_intersectionObserversInitialUpdateTimer.isActive())
         m_intersectionObserversInitialUpdateTimer.startOneShot(intersectionObserversInitialUpdateDelay);

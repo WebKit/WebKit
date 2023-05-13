@@ -474,7 +474,7 @@ public:
     WEBCORE_EXPORT Element* scrollingElementForAPI();
     WEBCORE_EXPORT Element* scrollingElement();
 
-    enum ReadyState : uint8_t { Loading, Interactive,  Complete };
+    enum class ReadyState : uint8_t { Loading, Interactive, Complete };
     ReadyState readyState() const { return m_readyState; }
 
     WEBCORE_EXPORT String defaultCharsetForLegacyBindings() const;
@@ -2276,7 +2276,7 @@ private:
 
     DesignMode m_designMode { DesignMode::Off };
     BackForwardCacheState m_backForwardCacheState { NotInBackForwardCache };
-    ReadyState m_readyState { Complete };
+    ReadyState m_readyState { ReadyState::Complete };
 
     MutationObserverOptions m_mutationObserverTypes;
 

@@ -307,11 +307,11 @@
     WebCore::JSMainThreadNullState state;
     auto readyState = IMPL->readyState();
     switch (readyState) {
-    case WebCore::Document::Loading:
+    case WebCore::Document::ReadyState::Loading:
         return @"loading";
-    case WebCore::Document::Interactive:
+    case WebCore::Document::ReadyState::Interactive:
         return @"interactive";
-    case WebCore::Document::Complete:
+    case WebCore::Document::ReadyState::Complete:
         return @"complete";
     }
     ASSERT_NOT_REACHED();

@@ -140,7 +140,7 @@ void HTMLDocumentParser::prepareToStopParsing()
 
     // We will not have a scriptRunner when parsing a DocumentFragment.
     if (m_scriptRunner)
-        document()->setReadyState(Document::Interactive);
+        document()->setReadyState(Document::ReadyState::Interactive);
 
     // Setting the ready state above can fire mutation event and detach us
     // from underneath. In that case, just bail out.

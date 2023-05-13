@@ -5062,7 +5062,8 @@ void LocalFrameView::checkAndDispatchDidReachVisuallyNonEmptyState()
         if (document.styleScope().hasPendingSheetsBeforeBody())
             return false;
 
-        auto finishedParsingMainDocument = m_frame->loader().stateMachine().committedFirstRealDocumentLoad() && (document.readyState() == Document::Interactive || document.readyState() == Document::Complete);
+        auto finishedParsingMainDocument = m_frame->loader().stateMachine().committedFirstRealDocumentLoad()
+            && (document.readyState() == Document::ReadyState::Interactive || document.readyState() == Document::ReadyState::Complete);
         // Ensure that we always fire visually non-empty milestone eventually.
         if (finishedParsingMainDocument && m_frame->loader().isComplete())
             return true;

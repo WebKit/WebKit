@@ -759,7 +759,7 @@ void FrameLoader::didBeginDocument(bool dispatch)
     m_needsClear = true;
     m_isComplete = false;
     m_didCallImplicitClose = false;
-    m_frame.document()->setReadyState(Document::Loading);
+    m_frame.document()->setReadyState(Document::ReadyState::Loading);
 
     if (dispatch)
         dispatchDidClearWindowObjectsInAllWorlds();
@@ -922,7 +922,7 @@ void FrameLoader::checkCompleted()
     // OK, completed.
     m_isComplete = true;
     m_requestedHistoryItem = nullptr;
-    m_frame.document()->setReadyState(Document::Complete);
+    m_frame.document()->setReadyState(Document::ReadyState::Complete);
 
     checkCallImplicitClose(); // if we didn't do it before
 
