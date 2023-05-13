@@ -193,14 +193,15 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     if (!matchedElement)
         return std::nullopt;
 
-    if (auto* linkElement = matchedElement->enclosingLinkEventParentOrSelf())
-        matchedElement = linkElement;
-    if (auto* buttonElement = ancestorsOfType<HTMLButtonElement>(*matchedElement).first())
-        matchedElement = buttonElement;
-
-    if (is<HTMLElement>(originalElement) && downcast<HTMLElement>(originalElement)->isLabelable()) {
-        if (auto* labelElement = ancestorsOfType<HTMLLabelElement>(*originalElement).first())
-            matchedElement = labelElement;
+    bool isLabelable = is<HTMLElement>(matchedElement) && downcast<HTMLElement>(matchedElement)->isLabelable();
+    for (Node* node = matchedElement; node; node = node->parentInComposedTree()) {
+        bool matchedButton = is<HTMLButtonElement>(node);
+        bool matchedLabel = isLabelable && is<HTMLLabelElement>(node);
+        bool matchedLink = node->isLink();
+        if (matchedButton || matchedLabel || matchedLink) {
+            matchedElement = downcast<Element>(node);
+            break;
+        }
     }
 
     if (!shouldAllowElement(*matchedElement))

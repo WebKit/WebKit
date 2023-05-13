@@ -113,7 +113,61 @@
                                               (layer bounds [x: 0 y: 0 width: 800 height: 20])
                                               (layer position [x: 400 y: 400]))))))))))))))))))
             (
-              (layer bounds [x: 0 y: 0 width: 0 height: 0]))))
+              (layer bounds [x: 0 y: 0 width: 0 height: 0]))
+            (
+              (layer bounds [x: 0 y: 0 width: 0 height: 0])
+              (sublayers
+                (
+                  (layer bounds [x: 0 y: 0 width: 0 height: 0]))))
+            (
+              (layer bounds [x: 0 y: 0 width: 0 height: 0])
+              (sublayers
+                (
+                  (layer bounds [x: 0 y: 0 width: 0 height: 0]))))
+            (
+              (layer bounds [x: 0 y: 0 width: 0 height: 0])
+              (layer opacity 0.32)
+              (sublayers
+                (
+                  (layer bounds [x: 0 y: 0 width: 0 height: 0]))))
+            (
+              (layer bounds [x: 0 y: 0 width: 0 height: 0])
+              (sublayers
+                (
+                  (layer bounds [x: 0 y: 0 width: 2 height: 0])
+                  (layer position [x: 1 y: 1]))
+                (
+                  (layer bounds [x: 0 y: 0 width: 0 height: 0])
+                  (sublayers
+                    (
+                      (layer bounds [x: 0 y: 0 width: 0 height: 0]))))))
+            (
+              (layer bounds [x: 0 y: 0 width: 0 height: 0])
+              (sublayers
+                (
+                  (layer bounds [x: 0 y: 0 width: 0 height: 0])
+                  (sublayers
+                    (
+                      (layer bounds [x: 0 y: 0 width: 0 height: 0]))
+                    (
+                      (layer bounds [x: 0 y: 0 width: 20 height: 20])
+                      (layer position [x: 0 y: 0]))))
+                (
+                  (layer bounds [x: 0 y: 0 width: 0 height: 0])
+                  (sublayers
+                    (
+                      (layer bounds [x: 0 y: 0 width: 0 height: 0]))
+                    (
+                      (layer bounds [x: 0 y: 0 width: 20 height: 20])
+                      (layer position [x: 0 y: 0]))))))
+            (
+              (layer bounds [x: 0 y: 0 width: 0 height: 0])
+              (sublayers
+                (
+                  (layer bounds [x: 0 y: 0 width: 0 height: 0])
+                  (sublayers
+                    (
+                      (layer bounds [x: 0 y: 0 width: 0 height: 0]))))))))
         (
           (layer bounds [x: 0 y: 0 width: 0 height: 0])
           (layer anchorPoint [x: 0 y: 0]))

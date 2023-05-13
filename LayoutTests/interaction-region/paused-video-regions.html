@@ -7,13 +7,16 @@
 <pre id="results"></pre>
 <script src="../media/media-file.js"></script>
 <script src="../media/video-test.js"></script>
+<script src="../resources/ui-helper.js"></script>
 <script>
     if (window.testRunner) {
         testRunner.waitUntilDone();
         testRunner.dumpAsText();
     }
 
-    waitForEvent('canplaythrough', function () {
+    waitForEvent('canplaythrough', async function () {
+        await UIHelper.animationFrame();
+
         if (window.internals)
             results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
         
