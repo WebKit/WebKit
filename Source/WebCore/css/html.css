@@ -306,8 +306,6 @@ ul, menu, dir {
     list-style-type: disc;
     margin-block-start: 1__qem;
     margin-block-end: 1em;
-    margin-inline-start: 0;
-    margin-inline-end: 0;
     padding-inline-start: 40px;
 }
 
@@ -316,8 +314,6 @@ ol {
     list-style-type: decimal;
     margin-block-start: 1__qem;
     margin-block-end: 1em;
-    margin-inline-start: 0;
-    margin-inline-end: 0;
     padding-inline-start: 40px;
 }
 
@@ -326,21 +322,16 @@ li {
     text-align: match-parent;
 }
 
-/* FIXME: this should also match ::before::marker and ::after::marker but we don't support
-   this yet. When we do, we can remove the code specific to ::before and ::after in
-   RenderListItem::computeMarkerStyle(), see bugs.webkit.org/b/218897. */
-::marker {
-    unicode-bidi: isolate;
-    font-variant-numeric: tabular-nums;
-    white-space: pre;
-    text-transform: none;
+:is(dir, dl, menu, ol, ul) :is(dir, dl, menu, ol, ul) {
+    margin-block-start: 0;
+    margin-block-end: 0;
 }
 
-ul ul, ol ul {
+:is(dir, menu, ol, ul) :is(dir, menu, ul) {
     list-style-type: circle;
 }
 
-ol ol ul, ol ul ul, ul ol ul, ul ul ul {
+:is(dir, menu, ol, ul) :is(dir, menu, ol, ul) :is(dir, menu, ul) {
     list-style-type: square;
 }
 
@@ -353,17 +344,20 @@ dl {
     display: block;
     margin-block-start: 1__qem;
     margin-block-end: 1em;
-    margin-inline-start: 0;
-    margin-inline-end: 0;
 }
 
 dt {
     display: block;
 }
 
-ol ul, ul ol, ul ul, ol ol {
-    margin-block-start: 0;
-    margin-block-end: 0;
+/* FIXME: this should also match ::before::marker and ::after::marker but we don't support
+   this yet. When we do, we can remove the code specific to ::before and ::after in
+   RenderListItem::computeMarkerStyle(), see bugs.webkit.org/b/218897. */
+::marker {
+    unicode-bidi: isolate;
+    font-variant-numeric: tabular-nums;
+    white-space: pre;
+    text-transform: none;
 }
 
 /* form elements */
