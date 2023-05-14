@@ -1157,24 +1157,27 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     [NSApp registerServicesMenuSendTypes:PasteboardTypes::forSelection() returnTypes:PasteboardTypes::forEditing()];
 
+    auto useRemoteLayerTree = [&]() {
+        bool result = false;
 #if ENABLE(REMOTE_LAYER_TREE_ON_MAC_BY_DEFAULT)
-    bool useRemoteLayerTree = true;
-#else
-    bool useRemoteLayerTree = false;
+        result = WTF::numberOfPhysicalProcessorCores() >= 4;
 #endif
-    if (id useRemoteLayerTreeBoolean = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseRemoteLayerTreeDrawingArea"])
-        useRemoteLayerTree = [useRemoteLayerTreeBoolean boolValue];
-    if (m_page->preferences().siteIsolationEnabled())
-        useRemoteLayerTree = true;
+        if (id useRemoteLayerTreeBoolean = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseRemoteLayerTreeDrawingArea"])
+            result = [useRemoteLayerTreeBoolean boolValue];
 
-    if (isInRecoveryOS()) {
-        // Temporarily disable UI side compositing in Recovery OS.
-        // FIXME: remove this workaround once a proper fix is in place.
-        WTFLogAlways("Disabling UI side compositing in Recovery OS");
-        useRemoteLayerTree = false;
-    }
+        if (m_page->preferences().siteIsolationEnabled())
+            result = true;
 
-    if (useRemoteLayerTree)
+        if (isInRecoveryOS()) {
+            // Temporarily disable UI side compositing in Recovery OS <rdar://107964149>.
+            WTFLogAlways("Disabling UI side compositing in Recovery OS");
+            result = false;
+        }
+
+        return result;
+    };
+
+    if (useRemoteLayerTree())
         m_drawingAreaType = DrawingAreaType::RemoteLayerTree;
 
     [view addTrackingArea:m_primaryTrackingArea.get()];
