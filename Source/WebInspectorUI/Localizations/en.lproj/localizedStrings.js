@@ -1218,6 +1218,7 @@ localizedStrings["Pick color from screen"] = "Pick color from screen";
 localizedStrings["Ping"] = "Ping";
 localizedStrings["Ping Frame"] = "Ping Frame";
 localizedStrings["Pings"] = "Pings";
+localizedStrings["Placeholder"] = "Placeholder";
 localizedStrings["Play Sound"] = "Play Sound";
 /* Tooltip for a time range bar that represents when the playback of a audio/video element is running */
 localizedStrings["Playing"] = "Playing";

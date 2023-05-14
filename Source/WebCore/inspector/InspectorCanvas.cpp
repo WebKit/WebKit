@@ -100,6 +100,7 @@
 #include "JSOffscreenCanvasRenderingContext2D.h"
 #include "OffscreenCanvas.h"
 #include "OffscreenCanvasRenderingContext2D.h"
+#include "PlaceholderRenderingContext.h"
 #endif
 
 namespace WebCore {
@@ -883,6 +884,8 @@ Ref<Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(bool capture
 #if ENABLE(OFFSCREEN_CANVAS)
         if (is<OffscreenCanvasRenderingContext2D>(m_context))
             return Protocol::Canvas::ContextType::OffscreenCanvas2D;
+        if (is<PlaceholderRenderingContext>(m_context))
+            return Protocol::Canvas::ContextType::Placeholder;
 #endif
         if (is<ImageBitmapRenderingContext>(m_context))
             return Protocol::Canvas::ContextType::BitmapRenderer;

@@ -82,6 +82,9 @@ WI.Canvas = class Canvas extends WI.Object
         case InspectorBackend.Enum.Canvas.ContextType.WebMetal:
             contextType = WI.Canvas.ContextType.WebMetal;
             break;
+        case InspectorBackend.Enum.Canvas.ContextType.Placeholder:
+            contextType = WI.Canvas.ContextType.Placeholder;
+            break;
         default:
             console.error("Invalid canvas context type", payload.contextType);
         }
@@ -116,6 +119,8 @@ WI.Canvas = class Canvas extends WI.Object
             return WI.unlocalizedString("Web GPU");
         case WI.Canvas.ContextType.WebMetal:
             return WI.unlocalizedString("WebMetal");
+        case WI.Canvas.ContextType.Placeholder:
+            return WI.unlocalizedString("Placeholder");
         }
 
         console.assert(false, "Unknown canvas context type", contextType);
@@ -481,6 +486,7 @@ WI.Canvas.ContextType = {
     WebGL2: "webgl2",
     WebGPU: "webgpu",
     WebMetal: "webmetal",
+    Placeholder: "placeholder",
 };
 
 WI.Canvas.ColorSpace = {
