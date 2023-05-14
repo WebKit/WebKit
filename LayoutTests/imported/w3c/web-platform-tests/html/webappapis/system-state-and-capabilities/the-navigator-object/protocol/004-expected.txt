@@ -1,3 +1,0 @@
-
-FAIL Non-matching url in isProtocolHandlerRegistered navigator.registerProtocolHandler is not a function. (In 'navigator.registerProtocolHandler(scheme, url, 'Ignore dialog')', 'navigator.registerProtocolHandler' is undefined)
-
