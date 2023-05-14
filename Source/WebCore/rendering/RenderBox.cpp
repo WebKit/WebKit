@@ -5215,6 +5215,12 @@ bool RenderBox::hasUnsplittableScrollingOverflow() const
     if ((isHorizontal && !scrollsOverflowY()) || (!isHorizontal && !scrollsOverflowX()))
         return false;
     
+    // Fragmenting scrollbars is only problematic in interactive media, e.g. multicol on a
+    // screen. If we're printing, which is non-interactive media, we should allow objects with
+    // non-visible overflow to be paginated as normally.
+    if (document().printing())
+        return false;
+
     // We do have overflow. We'll still be willing to paginate as long as the block
     // has auto logical height, auto or undefined max-logical-height and a zero or auto min-logical-height.
     // Note this is just a heuristic, and it's still possible to have overflow under these
