@@ -141,7 +141,6 @@ inline FetchRequest::FetchRequest(ScriptExecutionContext& context, std::optional
     , m_signal(AbortSignal::create(&context))
 {
     m_request.setRequester(ResourceRequestRequester::Fetch);
-    updateContentType();
 }
 
 ExceptionOr<void> FetchRequest::initializeOptions(const Init& init)
@@ -215,7 +214,6 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
             return setBodyResult.releaseException();
     }
 
-    updateContentType();
     return { };
 }
 
@@ -254,7 +252,6 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
     if (setBodyResult.hasException())
         return setBodyResult;
 
-    updateContentType();
     return { };
 }
 
