@@ -71,6 +71,7 @@ class GeneratorPrototype;
 class GetterSetter;
 class ImportMap;
 class IntlCollator;
+class IntlNumberFormat;
 class IteratorPrototype;
 class JSArrayBuffer;
 class JSCallee;
@@ -220,6 +221,7 @@ public:
     WriteBarrier<StringConstructor> m_stringConstructor;
 
     LazyProperty<JSGlobalObject, IntlCollator> m_defaultCollator;
+    LazyProperty<JSGlobalObject, IntlNumberFormat> m_defaultNumberFormat;
     LazyProperty<JSGlobalObject, Structure> m_collatorStructure;
     LazyProperty<JSGlobalObject, Structure> m_displayNamesStructure;
     LazyProperty<JSGlobalObject, Structure> m_durationFormatStructure;
@@ -638,6 +640,7 @@ public:
     JSInternalPromiseConstructor* internalPromiseConstructor() const { return m_internalPromiseConstructor.get(); }
 
     IntlCollator* defaultCollator() const { return m_defaultCollator.get(this); }
+    IntlNumberFormat* defaultNumberFormat() const { return m_defaultNumberFormat.get(this); }
 
     NullGetterFunction* nullGetterFunction() const { return m_nullGetterFunction.get(); }
     NullSetterFunction* nullSetterFunction() const { return m_nullSetterFunction.get(); }

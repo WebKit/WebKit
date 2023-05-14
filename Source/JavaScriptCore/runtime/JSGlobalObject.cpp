@@ -1285,6 +1285,17 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
             init.set(collator);
         });
 
+    m_defaultNumberFormat.initLater(
+        [] (const Initializer<IntlNumberFormat>& init) {
+            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            VM& vm = init.vm;
+            auto scope = DECLARE_THROW_SCOPE(vm);
+            auto* numberFormat = IntlNumberFormat::create(vm, globalObject->numberFormatStructure());
+            numberFormat->initializeNumberFormat(globalObject, jsUndefined(), jsUndefined());
+            RETURN_IF_EXCEPTION(scope, void());
+            init.set(numberFormat);
+        });
+
     IntlObject* intl = IntlObject::create(vm, this, IntlObject::createStructure(vm, this, m_objectPrototype.get()));
     putDirectWithoutTransition(vm, vm.propertyNames->Intl, intl, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
@@ -2330,6 +2341,7 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     visitor.append(thisObject->m_stringConstructor);
 
     thisObject->m_defaultCollator.visit(visitor);
+    thisObject->m_defaultNumberFormat.visit(visitor);
     thisObject->m_collatorStructure.visit(visitor);
     thisObject->m_displayNamesStructure.visit(visitor);
     thisObject->m_durationFormatStructure.visit(visitor);
