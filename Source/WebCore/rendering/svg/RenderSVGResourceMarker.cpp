@@ -2,6 +2,8 @@
  * Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Rob Buis <buis@kde.org>
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -92,23 +94,20 @@ FloatPoint RenderSVGResourceMarker::referencePoint() const
     return FloatPoint(markerElement().refX().value(lengthContext), markerElement().refY().value(lengthContext));
 }
 
-float RenderSVGResourceMarker::angle() const
+std::optional<float> RenderSVGResourceMarker::angle() const
 {
-    float angle = -1;
     if (markerElement().orientType() == SVGMarkerOrientAngle)
-        angle = markerElement().orientAngle().value();
-
-    return angle;
+        return markerElement().orientAngle().value();
+    return std::nullopt;
 }
 
 AffineTransform RenderSVGResourceMarker::markerTransformation(const FloatPoint& origin, float autoAngle, float strokeWidth) const
 {
-    float markerAngle = angle();
     bool useStrokeWidth = markerElement().markerUnits() == SVGMarkerUnitsStrokeWidth;
 
     AffineTransform transform;
     transform.translate(origin);
-    transform.rotate(markerAngle == -1 ? autoAngle : markerAngle);
+    transform.rotate(angle().value_or(autoAngle));
     transform = markerContentTransformation(transform, referencePoint(), useStrokeWidth ? strokeWidth : -1);
     return transform;
 }

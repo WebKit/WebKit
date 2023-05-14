@@ -54,7 +54,7 @@ public:
     FloatRect resourceBoundingBox(const RenderObject&) override { return FloatRect(); }
 
     FloatPoint referencePoint() const;
-    float angle() const;
+    std::optional<float> angle() const;
     inline SVGMarkerUnitsType markerUnits() const;
 
     RenderSVGResourceType resourceType() const override { return MarkerResourceType; }
