@@ -1786,7 +1786,10 @@ void AssemblyHelpers::getArityPadding(VM& vm, unsigned numberOfParameters, GPRRe
     and32(TrustedImm32(~1U), scratchGPR0);
     lshiftPtr(TrustedImm32(3), scratchGPR0);
     subPtr(stackPointerRegister, scratchGPR0, scratchGPR1);
-    stackOverflow.append(branchPtr(Above, AbsoluteAddress(vm.addressOfSoftStackLimit()), scratchGPR1));
+    if (vm.usingAPI())
+        stackOverflow.append(branchPtr(Above, AbsoluteAddress(vm.addressOfSoftStackLimit()), scratchGPR1));
+    else
+        stackOverflow.append(branchPtr(BelowOrEqual, scratchGPR1, TrustedImmPtr(vm.softStackLimit())));
 }
 
 #if USE(JSVALUE64)

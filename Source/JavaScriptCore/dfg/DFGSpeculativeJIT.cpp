@@ -127,7 +127,10 @@ static void emitStackOverflowCheck(JITCompiler& jit, MacroAssembler::JumpList& s
     jit.addPtr(MacroAssembler::TrustedImm32(frameTopOffset), GPRInfo::callFrameRegister, GPRInfo::regT1);
     if (UNLIKELY(maxFrameSize > Options::reservedZoneSize()))
         stackOverflow.append(jit.branchPtr(MacroAssembler::Above, GPRInfo::regT1, GPRInfo::callFrameRegister));
-    stackOverflow.append(jit.branchPtr(MacroAssembler::Above, MacroAssembler::AbsoluteAddress(jit.vm().addressOfSoftStackLimit()), GPRInfo::regT1));
+    if (jit.vm().usingAPI())
+        stackOverflow.append(jit.branchPtr(MacroAssembler::Above, MacroAssembler::AbsoluteAddress(jit.vm().addressOfSoftStackLimit()), GPRInfo::regT1));
+    else
+        stackOverflow.append(jit.branchPtr(MacroAssembler::BelowOrEqual, GPRInfo::regT1, CCallHelpers::TrustedImmPtr(jit.vm().softStackLimit())));
 }
 
 void SpeculativeJIT::compile()
