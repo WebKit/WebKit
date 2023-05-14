@@ -101,6 +101,7 @@ bool defaultLiveRangeSelectionEnabled();
 
 bool defaultShouldEnableScreenOrientationAPI();
 bool defaultPopoverAttributeEnabled();
+bool defaultUseGPUProcessForDOMRenderingEnabled();
 
 #if HAVE(SC_CONTENT_SHARING_PICKER)
 bool defaultUseSCContentSharingPicker();

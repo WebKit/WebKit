@@ -22,6 +22,11 @@
 
 namespace WTF {
 
+// This counts logical cores.
 WTF_EXPORT_PRIVATE int numberOfProcessorCores();
+
+#if OS(DARWIN)
+WTF_EXPORT_PRIVATE int numberOfPhysicalProcessorCores();
+#endif
 
 }

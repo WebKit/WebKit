@@ -27,6 +27,7 @@
 #include <wtf/NumberOfCores.h>
 
 #include <cstdio>
+#include <mutex>
 
 #if OS(DARWIN)
 #include <sys/sysctl.h>
@@ -80,5 +81,23 @@ int numberOfProcessorCores()
 #endif
     return s_numberOfCores;
 }
+
+#if OS(DARWIN)
+int numberOfPhysicalProcessorCores()
+{
+    const int32_t defaultIfUnavailable = 1;
+
+    static int32_t numCores = 0;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        size_t valueSize = sizeof(numCores);
+        int result = sysctlbyname("hw.physicalcpu_max", &numCores, &valueSize, nullptr, 0);
+        if (result < 0)
+            numCores = defaultIfUnavailable;
+    });
+
+    return numCores;
+}
+#endif
 
 }
