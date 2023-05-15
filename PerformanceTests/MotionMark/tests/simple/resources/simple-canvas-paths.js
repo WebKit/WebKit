@@ -269,23 +269,39 @@ CanvasEllipseFill = Utilities.createClass(
     }
 });
 
-CanvasSheetCells = Utilities.createClass(
+CanvasSpreadSheets = Utilities.createClass(
     function(stage) {
+        // Some good dark color for writing text in spreadsheet.
+        var dark_colors = ['#000000', '#404040', '#00008B', '#442D16', '#7E0000'];
+        // Some good light color for filling cells in spreadsheet.
+        var light_colors = ['#ADFF2F', '#ADD8E6', '#FFC0CB', '#E3C8C8', '#EBEEAF'];
+        // Possible text alignment in spreadsheet.
+        var align = ['left', 'right', 'center', 'start' , 'end']
+        this._text_color = dark_colors[Stage.randomInt(0, 5)];
+        this._fill_color = light_colors[Stage.randomInt(0, 5)];
+        this._text_align = align[Stage.randomInt(0, 5)];
         this._start = Stage.randomPosition(stage.size)
-        this._color = Stage.randomColor()
-        this._cell_width = Stage.randomInt(90, 150)
-        this._cell_height = Stage.randomInt(20, 30)
+        this._color = Stage.randomColor();
+        this._cell_width = Stage.randomInt(90, 150);
+        this._cell_height = Stage.randomInt(20, 30);
         this._font = Stage.randomInt(10, 40) + 'px Arial';
         this._border_style_index = Stage.randomInt(0, 3);
         this._color = Stage.randomColor();
     }, {
-
     draw: function(context) {
         context.save();
         rectPath = new Path2D();
         rectPath.rect(this._start.x, this._start.y, this._cell_width, this._cell_height);
         context.clip(rectPath);
         context.beginPath();
+        context.globalAlpha = 0.5;
+        context.fillStyle = this._fill_color;
+        context.fill(rectPath);
+        context.globalAlpha = 1;
+        context.font = this._font;
+        context.fillStyle = this._text_color;
+        context.textAlign = this._text_align;
+        context.fillText("hello world", (this._start.x + this._start.x + this._cell_width)/2, this._start.y + this._cell_height);
         if (this._border_style_index === 0) {
             context.setLineDash([5, 5]);
         } else if (this._border_style_index === 1) {
@@ -293,14 +309,7 @@ CanvasSheetCells = Utilities.createClass(
         } else {
             context.strokeStyle = "#000000";
         }
-        context.rect(this._start.x, this._start.y, this._cell_width, this._cell_height);
-        context.stroke();
-        context.globalAlpha = 0.5;
-        context.fillStyle = this._color;
-        context.fillRect(this._start.x, this._start.y, this._cell_width, this._cell_height);
-        context.globalAlpha = 1;
-        context.font = this._font;
-        context.fillText("hello world", this._start.x, this._start.y + this._cell_height);
+        context.stroke(rectPath);
         context.restore();
     }
 });
@@ -496,8 +505,8 @@ CanvasPathBenchmark = Utilities.createSubclass(Benchmark,
         case "ellipseFill":
             stage = new SimpleCanvasStage(CanvasEllipseFill);
             break;
-        case "sheetCells":
-            stage = new SimpleCanvasStage(CanvasSheetCells);
+        case "spreadSheets":
+            stage = new SimpleCanvasStage(CanvasSpreadSheets);
             break;
         case "strokes":
             stage = new SimpleCanvasStage(CanvasStroke);
