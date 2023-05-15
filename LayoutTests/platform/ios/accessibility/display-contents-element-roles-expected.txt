@@ -70,7 +70,7 @@ This test ensures elements with CSS display: contents have the correct role.
     Mark
 
 <menu class="testcase" type="toolbar" id="menu-toolbar"></menu>
-    Toolbar
+    List
 
 <nav class="testcase" id="nav"></nav>
     LandmarkNavigation

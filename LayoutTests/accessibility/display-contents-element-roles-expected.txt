@@ -100,8 +100,8 @@ This test ensures elements with CSS display: contents have the correct role.
     computedRoleString: mark
 
 <menu class="testcase" type="toolbar" id="menu-toolbar"></menu>
-    AXRole: AXToolbar
-    computedRoleString: toolbar
+    AXRole: AXList
+    computedRoleString: list
 
 <nav class="testcase" id="nav"></nav>
     AXRole: AXGroup

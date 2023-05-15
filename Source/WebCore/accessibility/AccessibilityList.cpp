@@ -67,7 +67,7 @@ bool AccessibilityList::isUnorderedList() const
         return true;
 
     auto* node = this->node();
-    return node && node->hasTagName(ulTag);
+    return node && (node->hasTagName(menuTag) || node->hasTagName(ulTag));
 }
 
 bool AccessibilityList::isOrderedList() const

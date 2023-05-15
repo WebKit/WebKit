@@ -2311,7 +2311,7 @@ bool AccessibilityRenderObject::inheritsPresentationalRole() const
     switch (roleValue()) {
     case AccessibilityRole::ListItem:
     case AccessibilityRole::ListMarker: {
-        static constexpr std::array listItemParents { &dlTag, &olTag, &ulTag };
+        static constexpr std::array listItemParents { &dlTag, &menuTag, &olTag, &ulTag };
         parentTags = listItemParents;
         break;
     }

@@ -6,7 +6,7 @@
 <body>
 
 <!-- ==================================================================================================== -->
-<!-- HTML elements in alphabetical order, excepting the need for nesting (e.g. <li> is with its <ol> and <ul> parents) -->
+<!-- HTML elements in alphabetical order, excepting the need for nesting (e.g., <li> is with its <menu>, <ol>, and <ul> parents) -->
 <!-- ==================================================================================================== -->
 <a data-platform="atspi,mac" href="#" data-note="[href]" class="ex">X</a>
 <a data-platform="atspi,mac" data-note=":not([href])" class="ex">X</a>
@@ -142,7 +142,9 @@
   </mtable>
 </math>
 </div>
-<!-- skipped <menu> -->
+<menu data-platform="atspi,mac" class="ex">
+    <li data-platform="atspi,mac" class="ex">X</li>
+</menu>
 <!-- skipped <meta> -->
 <!-- reenable for atspi after http://webkit.org/b/163383 fixed --><meter data-platform="mac" class="ex" value="0.75">X</meter>
 <nav data-platform="atspi,mac" class="ex">X</nav>

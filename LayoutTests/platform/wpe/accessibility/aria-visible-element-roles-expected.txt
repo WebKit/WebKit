@@ -181,8 +181,8 @@ This test ensures ARIA visible elements (e.g. those with both `hidden` and `aria
     computedRoleString: status
 
 <menu hidden="" aria-hidden="false" type="toolbar" id="menu-toolbar"></menu>
-    AXRole: AXToolbar
-    computedRoleString: toolbar
+    AXRole: AXList
+    computedRoleString: list
 
 <hr hidden="" aria-hidden="false" id="hr">
     AXRole: AXSeparator

@@ -353,7 +353,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::DescriptionListTerm;
     if (node()->hasTagName(dlTag))
         return AccessibilityRole::DescriptionList;
-    if (node()->hasTagName(olTag) || node()->hasTagName(ulTag))
+    if (node()->hasTagName(menuTag) || node()->hasTagName(olTag) || node()->hasTagName(ulTag))
         return AccessibilityRole::List;
     if (node()->hasTagName(fieldsetTag))
         return AccessibilityRole::Group;
@@ -434,9 +434,6 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::Footer;
     }
 
-    // menu tags with toolbar type should have Toolbar role.
-    if (node()->hasTagName(menuTag) && equalLettersIgnoringASCIICase(getAttribute(typeAttr), "toolbar"_s))
-        return AccessibilityRole::Toolbar;
     if (node()->hasTagName(timeTag))
         return AccessibilityRole::Time;
     if (node()->hasTagName(hrTag))
