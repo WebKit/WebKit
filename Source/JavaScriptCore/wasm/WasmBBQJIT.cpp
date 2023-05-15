@@ -5447,11 +5447,9 @@ public:
             "I32Popcnt", TypeKind::I32,
             BLOCK(Value::fromI32(__builtin_popcount(operand.asI32()))),
             BLOCK(
-#if CPU(X86_64)
                 if (m_jit.supportsCountPopulation())
                     m_jit.countPopulation32(operandLocation.asGPR(), resultLocation.asGPR());
                 else
-#endif
                     emitCCall(&operationPopcount32, Vector<Value> { operand }, TypeKind::I32, result);
             )
         )
@@ -5463,11 +5461,9 @@ public:
             "I64Popcnt", TypeKind::I64,
             BLOCK(Value::fromI64(__builtin_popcountll(operand.asI64()))),
             BLOCK(
-#if CPU(X86_64)
                 if (m_jit.supportsCountPopulation())
                     m_jit.countPopulation64(operandLocation.asGPR(), resultLocation.asGPR());
                 else
-#endif
                     emitCCall(&operationPopcount64, Vector<Value> { operand }, TypeKind::I32, result);
             )
         )

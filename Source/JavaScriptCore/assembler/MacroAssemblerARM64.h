@@ -869,6 +869,22 @@ public:
         m_assembler.illegalInstruction();
     }
 
+    void countPopulation32(RegisterID src, RegisterID dst)
+    {
+        move32ToFloat(src, fpTempRegister);
+        m_assembler.vectorCnt(fpTempRegister, fpTempRegister, SIMDLane::i8x16);
+        m_assembler.addv(fpTempRegister, fpTempRegister, SIMDLane::i8x16);
+        moveFloatTo32(fpTempRegister, dst);
+    }
+
+    void countPopulation64(RegisterID src, RegisterID dst)
+    {
+        move64ToDouble(src, fpTempRegister);
+        m_assembler.vectorCnt(fpTempRegister, fpTempRegister, SIMDLane::i8x16);
+        m_assembler.addv(fpTempRegister, fpTempRegister, SIMDLane::i8x16);
+        moveDoubleTo64(fpTempRegister, dst);
+    }
+
     void lshift32(RegisterID src, RegisterID shiftAmount, RegisterID dest)
     {
         m_assembler.lsl<32>(dest, src, shiftAmount);
@@ -2357,7 +2373,7 @@ public:
     static bool supportsFloatingPointSqrt() { return true; }
     static bool supportsFloatingPointAbs() { return true; }
     static bool supportsFloatingPointRounding() { return true; }
-    static bool supportsCountPopulation() { return false; }
+    static bool supportsCountPopulation() { return true; }
 
     enum BranchTruncateType { BranchIfTruncateFailed, BranchIfTruncateSuccessful };
 
