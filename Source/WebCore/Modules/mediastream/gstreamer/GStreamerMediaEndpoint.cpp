@@ -388,9 +388,18 @@ void GStreamerMediaEndpoint::doSetLocalDescription(const RTCSessionDescription* 
             }
         }
 
+        // Notify the backend in case all m-lines of the current local description have signalled
+        // all their ICE candidates.
+        std::optional<bool> isIceGatheringComplete;
+        if (descriptions && !descriptions->currentLocalDescriptionSdp.isEmpty())
+            isIceGatheringComplete = this->isIceGatheringComplete(descriptions->currentLocalDescriptionSdp);
+
         GRefPtr<GstWebRTCSCTPTransport> transport;
         g_object_get(m_webrtcBin.get(), "sctp-transport", &transport.outPtr(), nullptr);
         m_peerConnectionBackend.setLocalDescriptionSucceeded(WTFMove(descriptions), { }, transport ? makeUnique<GStreamerSctpTransportBackend>(WTFMove(transport)) : nullptr);
+
+        if (isIceGatheringComplete && *isIceGatheringComplete)
+            m_peerConnectionBackend.doneGatheringCandidates();
     }, [protectedThis = Ref(*this), this](const GError* error) {
         if (protectedThis->isStopped())
             return;
@@ -462,9 +471,18 @@ void GStreamerMediaEndpoint::doSetRemoteDescription(const RTCSessionDescription&
             }
         }
 
+        // Notify the backend in case all m-lines of the current local description have signalled
+        // all their ICE candidates.
+        std::optional<bool> isIceGatheringComplete;
+        if (descriptions && !descriptions->currentLocalDescriptionSdp.isEmpty())
+            isIceGatheringComplete = this->isIceGatheringComplete(descriptions->currentLocalDescriptionSdp);
+
         GRefPtr<GstWebRTCSCTPTransport> transport;
         g_object_get(m_webrtcBin.get(), "sctp-transport", &transport.outPtr(), nullptr);
         m_peerConnectionBackend.setRemoteDescriptionSucceeded(WTFMove(descriptions), { }, transport ? makeUnique<GStreamerSctpTransportBackend>(WTFMove(transport)) : nullptr);
+
+        if (isIceGatheringComplete && *isIceGatheringComplete)
+            m_peerConnectionBackend.doneGatheringCandidates();
     }, [protectedThis = Ref(*this), this](const GError* error) {
         if (protectedThis->isStopped())
             return;
@@ -685,6 +703,23 @@ GRefPtr<GstPad> GStreamerMediaEndpoint::requestPad(std::optional<unsigned> mLine
     g_object_get(sinkPad.get(), "transceiver", &transceiver.outPtr(), nullptr);
     g_object_set(transceiver.get(), "codec-preferences", caps.get(), nullptr);
     return sinkPad;
+}
+
+std::optional<bool> GStreamerMediaEndpoint::isIceGatheringComplete(const String& currentLocalDescription)
+{
+    GUniqueOutPtr<GstSDPMessage> message;
+    if (gst_sdp_message_new_from_text(reinterpret_cast<const char*>(currentLocalDescription.characters8()), &message.outPtr()) != GST_SDP_OK)
+        return { };
+
+    unsigned numberOfMedias = gst_sdp_message_medias_len(message.get());
+    for (unsigned i = 0; i < numberOfMedias; i++) {
+        const auto* media = gst_sdp_message_get_media(message.get(), i);
+        const char* value = gst_sdp_media_get_attribute_val_n(media, "end-of-candidates", 0);
+        if (!value)
+            return false;
+    }
+
+    return true;
 }
 
 bool GStreamerMediaEndpoint::addTrack(GStreamerRtpSenderBackend& sender, MediaStreamTrack& track, const FixedVector<String>& mediaStreamIds)
@@ -1352,7 +1387,13 @@ void GStreamerMediaEndpoint::onIceCandidate(guint sdpMLineIndex, gchararray cand
     if (isStopped())
         return;
 
-    callOnMainThread([protectedThis = Ref(*this), this, sdp = makeString(candidate), sdpMLineIndex]() mutable {
+    auto candidateString = makeString(candidate);
+    if (candidateString.isEmpty()) {
+        // webrtcbin notifies an empty ICE candidate when gathering is complete.
+        return;
+    }
+
+    callOnMainThread([protectedThis = Ref(*this), this, sdp = WTFMove(candidateString), sdpMLineIndex]() mutable {
         if (isStopped())
             return;
 

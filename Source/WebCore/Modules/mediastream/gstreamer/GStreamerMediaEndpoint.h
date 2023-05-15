@@ -151,6 +151,8 @@ private:
 
     GRefPtr<GstPad> requestPad(std::optional<unsigned> mlineIndex, const GRefPtr<GstCaps>&, const String& mediaStreamID);
 
+    std::optional<bool> isIceGatheringComplete(const String& currentLocalDescription);
+
 #if !RELEASE_LOG_DISABLED
     void gatherStatsForLogging();
     void startLoggingStats();
