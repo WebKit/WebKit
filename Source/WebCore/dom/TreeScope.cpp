@@ -555,9 +555,9 @@ CSSStyleSheetObservableArray& TreeScope::ensureAdoptedStyleSheets()
     return *m_adoptedStyleSheets;
 }
 
-Span<const RefPtr<CSSStyleSheet>> TreeScope::adoptedStyleSheets() const
+std::span<const RefPtr<CSSStyleSheet>> TreeScope::adoptedStyleSheets() const
 {
-    return m_adoptedStyleSheets ? m_adoptedStyleSheets->sheets().span() : Span<const RefPtr<CSSStyleSheet>> { };
+    return m_adoptedStyleSheets ? m_adoptedStyleSheets->sheets().span() : std::span<const RefPtr<CSSStyleSheet>> { };
 }
 
 JSC::JSValue TreeScope::adoptedStyleSheetWrapper(JSDOMGlobalObject& lexicalGlobalObject)

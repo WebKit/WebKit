@@ -48,7 +48,7 @@ class URL;
 namespace IPC {
 class Connection;
 class Decoder;
-using DataReference = Span<const uint8_t>;
+using DataReference = std::span<const uint8_t>;
 }
 
 namespace WebKit {

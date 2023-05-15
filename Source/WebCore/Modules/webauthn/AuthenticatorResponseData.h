@@ -68,7 +68,7 @@ static void encodeArrayBuffer(Encoder& encoder, const ArrayBuffer& buffer)
 template<class Decoder>
 RefPtr<ArrayBuffer> WARN_UNUSED_RETURN decodeArrayBuffer(Decoder& decoder)
 {
-    std::optional<Span<const uint8_t>> buffer;
+    std::optional<std::span<const uint8_t>> buffer;
     decoder >> buffer;
     if (!buffer)
         return nullptr;

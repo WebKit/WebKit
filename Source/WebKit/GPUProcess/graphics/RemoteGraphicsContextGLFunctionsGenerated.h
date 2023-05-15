@@ -721,7 +721,7 @@
     void vertexAttrib1fv(uint32_t index, IPC::ArrayReference<float, 1>&& values)
     {
         assertIsCurrent(workQueue());
-        m_context->vertexAttrib1fv(index, Span<const GCGLfloat, 1> { reinterpret_cast<const GCGLfloat*>(values.data()), 1 });
+        m_context->vertexAttrib1fv(index, std::span<const GCGLfloat, 1> { reinterpret_cast<const GCGLfloat*>(values.data()), 1 });
     }
     void vertexAttrib2f(uint32_t index, float x, float y)
     {
@@ -731,7 +731,7 @@
     void vertexAttrib2fv(uint32_t index, IPC::ArrayReference<float, 2>&& values)
     {
         assertIsCurrent(workQueue());
-        m_context->vertexAttrib2fv(index, Span<const GCGLfloat, 2> { reinterpret_cast<const GCGLfloat*>(values.data()), 2 });
+        m_context->vertexAttrib2fv(index, std::span<const GCGLfloat, 2> { reinterpret_cast<const GCGLfloat*>(values.data()), 2 });
     }
     void vertexAttrib3f(uint32_t index, float x, float y, float z)
     {
@@ -741,7 +741,7 @@
     void vertexAttrib3fv(uint32_t index, IPC::ArrayReference<float, 3>&& values)
     {
         assertIsCurrent(workQueue());
-        m_context->vertexAttrib3fv(index, Span<const GCGLfloat, 3> { reinterpret_cast<const GCGLfloat*>(values.data()), 3 });
+        m_context->vertexAttrib3fv(index, std::span<const GCGLfloat, 3> { reinterpret_cast<const GCGLfloat*>(values.data()), 3 });
     }
     void vertexAttrib4f(uint32_t index, float x, float y, float z, float w)
     {
@@ -751,7 +751,7 @@
     void vertexAttrib4fv(uint32_t index, IPC::ArrayReference<float, 4>&& values)
     {
         assertIsCurrent(workQueue());
-        m_context->vertexAttrib4fv(index, Span<const GCGLfloat, 4> { reinterpret_cast<const GCGLfloat*>(values.data()), 4 });
+        m_context->vertexAttrib4fv(index, std::span<const GCGLfloat, 4> { reinterpret_cast<const GCGLfloat*>(values.data()), 4 });
     }
     void vertexAttribPointer(uint32_t index, int32_t size, uint32_t type, bool normalized, int32_t stride, uint64_t offset)
     {
@@ -1039,7 +1039,7 @@
     void vertexAttribI4iv(uint32_t index, IPC::ArrayReference<int32_t, 4>&& values)
     {
         assertIsCurrent(workQueue());
-        m_context->vertexAttribI4iv(index, Span<const GCGLint, 4> { reinterpret_cast<const GCGLint*>(values.data()), 4 });
+        m_context->vertexAttribI4iv(index, std::span<const GCGLint, 4> { reinterpret_cast<const GCGLint*>(values.data()), 4 });
     }
     void vertexAttribI4ui(uint32_t index, uint32_t x, uint32_t y, uint32_t z, uint32_t w)
     {
@@ -1049,7 +1049,7 @@
     void vertexAttribI4uiv(uint32_t index, IPC::ArrayReference<uint32_t, 4>&& values)
     {
         assertIsCurrent(workQueue());
-        m_context->vertexAttribI4uiv(index, Span<const GCGLuint, 4> { reinterpret_cast<const GCGLuint*>(values.data()), 4 });
+        m_context->vertexAttribI4uiv(index, std::span<const GCGLuint, 4> { reinterpret_cast<const GCGLuint*>(values.data()), 4 });
     }
     void vertexAttribIPointer(uint32_t index, int32_t size, uint32_t type, int32_t stride, uint64_t offset)
     {

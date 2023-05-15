@@ -56,7 +56,7 @@ private:
     // FEImage results are always in DestinationColorSpace::SRGB()
     void setOperatingColorSpace(const DestinationColorSpace&) override { }
 
-    FloatRect calculateImageRect(const Filter&, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
+    FloatRect calculateImageRect(const Filter&, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
 
     std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const final;
 

@@ -66,7 +66,7 @@ bool FEFlood::setFloodOpacity(float floodOpacity)
     return true;
 }
 
-FloatRect FEFlood::calculateImageRect(const Filter& filter, Span<const FloatRect>, const FloatRect& primitiveSubregion) const
+FloatRect FEFlood::calculateImageRect(const Filter& filter, std::span<const FloatRect>, const FloatRect& primitiveSubregion) const
 {
     return filter.maxEffectRect(primitiveSubregion);
 }

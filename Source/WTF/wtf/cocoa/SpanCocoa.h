@@ -31,17 +31,17 @@
 
 namespace WTF {
 
-inline Span<const std::byte> asBytes(NSData *data)
+inline std::span<const std::byte> asBytes(NSData *data)
 {
     return { reinterpret_cast<const std::byte*>(data.bytes), data.length };
 }
 
-inline Span<const std::byte> asBytes(const RetainPtr<NSData>& data)
+inline std::span<const std::byte> asBytes(const RetainPtr<NSData>& data)
 {
     return asBytes(data.get());
 }
 
-inline Span<const uint8_t> asUInt8Span(NSData* data)
+inline std::span<const uint8_t> asUInt8Span(NSData* data)
 {
     return { reinterpret_cast<const uint8_t*>(data.bytes), data.length };
 }

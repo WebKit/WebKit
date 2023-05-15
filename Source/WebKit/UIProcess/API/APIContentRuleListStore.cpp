@@ -145,12 +145,12 @@ static WebKit::NetworkCache::Data encodeContentRuleListMetaData(const ContentRul
     return WebKit::NetworkCache::Data(encoder.buffer(), encoder.bufferSize());
 }
 
-template<typename T> void getData(const T&, const Function<bool(Span<const uint8_t>)>&);
-template<> void getData(const WebKit::NetworkCache::Data& data, const Function<bool(Span<const uint8_t>)>& function)
+template<typename T> void getData(const T&, const Function<bool(std::span<const uint8_t>)>&);
+template<> void getData(const WebKit::NetworkCache::Data& data, const Function<bool(std::span<const uint8_t>)>& function)
 {
     data.apply(function);
 }
-template<> void getData(const WebCore::SharedBuffer& data, const Function<bool(Span<const uint8_t>)>& function)
+template<> void getData(const WebCore::SharedBuffer& data, const Function<bool(std::span<const uint8_t>)>& function)
 {
     function({ data.data(), data.size() });
 }
@@ -243,7 +243,7 @@ static std::optional<MappedData> openAndMapContentRuleList(const WTF::String& pa
 static bool writeDataToFile(const WebKit::NetworkCache::Data& fileData, PlatformFileHandle fd)
 {
     bool success = true;
-    fileData.apply([fd, &success](Span<const uint8_t> span) {
+    fileData.apply([fd, &success](std::span<const uint8_t> span) {
         if (writeToFile(fd, span.data(), span.size()) == -1) {
             success = false;
             return false;

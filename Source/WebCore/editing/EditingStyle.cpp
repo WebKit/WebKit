@@ -992,7 +992,7 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement& element, Ref
     return conflicts;
 }
 
-static Span<const HTMLElementEquivalent* const> htmlElementEquivalents()
+static std::span<const HTMLElementEquivalent* const> htmlElementEquivalents()
 {
     static const HTMLElementEquivalent* const equivalents[] = {
         new HTMLFontWeightEquivalent(HTMLNames::bTag),
@@ -1026,7 +1026,7 @@ bool EditingStyle::conflictsWithImplicitStyleOfElement(HTMLElement& element, Edi
     return false;
 }
 
-static Span<const HTMLAttributeEquivalent* const> htmlAttributeEquivalents()
+static std::span<const HTMLAttributeEquivalent* const> htmlAttributeEquivalents()
 {
     static const HTMLAttributeEquivalent* const equivalents[] = {
         // elementIsStyledSpanOrHTMLEquivalent depends on the fact each HTMLAttriuteEquivalent matches exactly one attribute

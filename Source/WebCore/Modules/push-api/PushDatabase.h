@@ -87,7 +87,7 @@ public:
     WEBCORE_EXPORT ~PushDatabase();
 
     enum class PublicTokenChanged : bool { No, Yes };
-    WEBCORE_EXPORT void updatePublicToken(Span<const uint8_t>, CompletionHandler<void(PublicTokenChanged)>&&);
+    WEBCORE_EXPORT void updatePublicToken(std::span<const uint8_t>, CompletionHandler<void(PublicTokenChanged)>&&);
     WEBCORE_EXPORT void getPublicToken(CompletionHandler<void(Vector<uint8_t>&&)>&&);
 
     WEBCORE_EXPORT void insertRecord(const PushRecord&, CompletionHandler<void(std::optional<PushRecord>&&)>&&);

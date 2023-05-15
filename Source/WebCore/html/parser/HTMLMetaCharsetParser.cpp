@@ -91,7 +91,7 @@ bool HTMLMetaCharsetParser::processMeta(HTMLToken& token)
     return m_encoding.isValid();
 }
 
-PAL::TextEncoding HTMLMetaCharsetParser::encodingFromMetaAttributes(Span<const std::pair<StringView, StringView>> attributes)
+PAL::TextEncoding HTMLMetaCharsetParser::encodingFromMetaAttributes(std::span<const std::pair<StringView, StringView>> attributes)
 {
     bool gotPragma = false;
     enum { None, Charset, Pragma } mode = None;

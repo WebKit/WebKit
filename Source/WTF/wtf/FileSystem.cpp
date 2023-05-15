@@ -473,7 +473,7 @@ void finalizeMappedFileData(MappedFileData& mappedFileData, size_t bytesSize)
 #endif
 }
 
-MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(const Function<bool(Span<const uint8_t>)>&)>&& apply, PlatformFileHandle* outputHandle)
+MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(const Function<bool(std::span<const uint8_t>)>&)>&& apply, PlatformFileHandle* outputHandle)
 {
     auto mappedFile = createMappedFileData(path, bytesSize, outputHandle);
     if (!mappedFile)
@@ -482,7 +482,7 @@ MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(con
     void* map = const_cast<void*>(mappedFile.data());
     uint8_t* mapData = static_cast<uint8_t*>(map);
 
-    apply([&mapData](Span<const uint8_t> chunk) {
+    apply([&mapData](std::span<const uint8_t> chunk) {
         memcpy(mapData, chunk.data(), chunk.size());
         mapData += chunk.size();
         return true;
@@ -562,7 +562,7 @@ std::optional<Vector<uint8_t>> readEntireFile(const String& path)
     return contents;
 }
 
-int overwriteEntireFile(const String& path, Span<uint8_t> span)
+int overwriteEntireFile(const String& path, std::span<uint8_t> span)
 {
     auto fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::Truncate);
     auto closeFile = makeScopeExit([&] {

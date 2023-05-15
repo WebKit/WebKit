@@ -87,7 +87,7 @@ static bool isValidDecoderConfig(const WebCodecsVideoDecoderConfig& config, cons
 
 static VideoDecoder::Config createVideoDecoderConfig(const WebCodecsVideoDecoderConfig& config)
 {
-    Span<const uint8_t> description;
+    std::span<const uint8_t> description;
     if (config.description) {
         auto* data = std::visit([](auto& buffer) -> const uint8_t* {
             return buffer ? static_cast<const uint8_t*>(buffer->data()) : nullptr;

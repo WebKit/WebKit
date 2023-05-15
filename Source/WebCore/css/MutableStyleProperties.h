@@ -69,7 +69,7 @@ public:
     bool setProperty(const CSSProperty&, CSSProperty* slot = nullptr);
 
     bool removeProperty(CSSPropertyID, String* returnText = nullptr);
-    bool removeProperties(Span<const CSSPropertyID>);
+    bool removeProperties(std::span<const CSSPropertyID>);
 
     void mergeAndOverrideOnConflict(const StyleProperties&);
 

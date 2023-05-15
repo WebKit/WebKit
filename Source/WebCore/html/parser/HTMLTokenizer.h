@@ -159,7 +159,7 @@ private:
 
     void bufferASCIICharacter(UChar);
     void bufferCharacter(UChar);
-    template<typename CharacterType> void bufferCharacters(Span<const CharacterType>);
+    template<typename CharacterType> void bufferCharacters(std::span<const CharacterType>);
     void bufferCharacters(ASCIILiteral literal) { bufferCharacters(literal.span8()); }
 
     bool emitAndResumeInDataState(SegmentedString&);

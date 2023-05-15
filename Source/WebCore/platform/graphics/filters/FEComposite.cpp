@@ -96,7 +96,7 @@ bool FEComposite::setK4(float k4)
     return true;
 }
 
-FloatRect FEComposite::calculateImageRect(const Filter& filter, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const
+FloatRect FEComposite::calculateImageRect(const Filter& filter, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const
 {
     switch (m_type) {
     case FECOMPOSITE_OPERATOR_IN:

@@ -1813,7 +1813,7 @@ JSC_DEFINE_HOST_FUNCTION(functionWriteFile, (JSGlobalObject* globalObject, CallF
     String fileName = callFrame->argument(0).toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    std::variant<String, Span<const uint8_t>> data;
+    std::variant<String, std::span<const uint8_t>> data;
     JSValue dataValue = callFrame->argument(1);
 
     if (dataValue.isString()) {
@@ -1843,7 +1843,7 @@ JSC_DEFINE_HOST_FUNCTION(functionWriteFile, (JSGlobalObject* globalObject, CallF
     int size = std::visit(WTF::makeVisitor([&](const String& string) {
         CString utf8 = string.utf8();
         return FileSystem::writeToFile(handle, utf8.data(), utf8.length());
-    }, [&] (const Span<const uint8_t>& data) {
+    }, [&] (const std::span<const uint8_t>& data) {
         return FileSystem::writeToFile(handle, data.data(), data.size());
     }), data);
 

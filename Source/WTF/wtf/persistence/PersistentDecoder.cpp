@@ -30,7 +30,7 @@
 
 namespace WTF::Persistence {
 
-Decoder::Decoder(Span<const uint8_t> span)
+Decoder::Decoder(std::span<const uint8_t> span)
     : m_buffer(span)
     , m_bufferPosition(span.begin())
 {
@@ -57,7 +57,7 @@ const uint8_t* Decoder::bufferPointerForDirectRead(size_t size)
     return data;
 }
 
-bool Decoder::decodeFixedLengthData(Span<uint8_t> span)
+bool Decoder::decodeFixedLengthData(std::span<uint8_t> span)
 {
     auto buffer = bufferPointerForDirectRead(span.size());
     if (!buffer)

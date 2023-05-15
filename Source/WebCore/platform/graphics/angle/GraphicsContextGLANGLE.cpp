@@ -371,21 +371,21 @@ void GraphicsContextGLANGLE::renderbufferStorage(GCGLenum target, GCGLenum inter
     GL_RenderbufferStorage(target, internalformat, width, height);
 }
 
-void GraphicsContextGLANGLE::getIntegerv(GCGLenum pname, Span<GCGLint> value)
+void GraphicsContextGLANGLE::getIntegerv(GCGLenum pname, std::span<GCGLint> value)
 {
     if (!makeContextCurrent())
         return;
     GL_GetIntegervRobustANGLE(pname, value.size(), nullptr, value.data());
 }
 
-void GraphicsContextGLANGLE::getIntegeri_v(GCGLenum pname, GCGLuint index, Span<GCGLint, 4> value) // NOLINT
+void GraphicsContextGLANGLE::getIntegeri_v(GCGLenum pname, GCGLuint index, std::span<GCGLint, 4> value) // NOLINT
 {
     if (!makeContextCurrent())
         return;
     GL_GetIntegeri_vRobustANGLE(pname, index, value.size(), nullptr, value.data());
 }
 
-void GraphicsContextGLANGLE::getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, Span<GCGLint, 2> range, GCGLint* precision)
+void GraphicsContextGLANGLE::getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, std::span<GCGLint, 2> range, GCGLint* precision)
 {
     if (!makeContextCurrent())
         return;
@@ -393,7 +393,7 @@ void GraphicsContextGLANGLE::getShaderPrecisionFormat(GCGLenum shaderType, GCGLe
     GL_GetShaderPrecisionFormat(shaderType, precisionType, range.data(), precision);
 }
 
-void GraphicsContextGLANGLE::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, Span<const uint8_t> pixels)
+void GraphicsContextGLANGLE::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels)
 {
     if (!m_isForWebGL2)
         internalformat = adjustWebGL1TextureInternalFormat(internalformat, format, type);
@@ -413,7 +413,7 @@ void GraphicsContextGLANGLE::texImage2D(GCGLenum target, GCGLint level, GCGLenum
     invalidateKnownTextureContent(m_state.currentBoundTexture());
 }
 
-void GraphicsContextGLANGLE::texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoff, GCGLint yoff, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, Span<const uint8_t> pixels)
+void GraphicsContextGLANGLE::texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoff, GCGLint yoff, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels)
 {
     if (!makeContextCurrent())
         return;
@@ -431,7 +431,7 @@ void GraphicsContextGLANGLE::texSubImage2D(GCGLenum target, GCGLint level, GCGLi
     invalidateKnownTextureContent(m_state.currentBoundTexture());
 }
 
-void GraphicsContextGLANGLE::compressedTexImage2D(GCGLenum target, int level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, int border, GCGLsizei imageSize, Span<const uint8_t> data)
+void GraphicsContextGLANGLE::compressedTexImage2D(GCGLenum target, int level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, int border, GCGLsizei imageSize, std::span<const uint8_t> data)
 {
     if (!makeContextCurrent())
         return;
@@ -447,7 +447,7 @@ void GraphicsContextGLANGLE::compressedTexImage2D(GCGLenum target, int level, GC
     invalidateKnownTextureContent(m_state.currentBoundTexture());
 }
 
-void GraphicsContextGLANGLE::compressedTexSubImage2D(GCGLenum target, int level, int xoffset, int yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, Span<const uint8_t> data)
+void GraphicsContextGLANGLE::compressedTexSubImage2D(GCGLenum target, int level, int xoffset, int yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, std::span<const uint8_t> data)
 {
     if (!makeContextCurrent())
         return;
@@ -479,12 +479,12 @@ void GraphicsContextGLANGLE::clearDepth(GCGLclampf depth)
     GL_ClearDepthf(static_cast<float>(depth));
 }
 
-void GraphicsContextGLANGLE::readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, Span<uint8_t> data)
+void GraphicsContextGLANGLE::readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, std::span<uint8_t> data)
 {
     readnPixelsImpl(x, y, width, height, format, type, data.size(), nullptr, nullptr, nullptr, data.data(), false);
 }
 
-bool GraphicsContextGLANGLE::readnPixelsWithStatus(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, Span<uint8_t> data)
+bool GraphicsContextGLANGLE::readnPixelsWithStatus(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, std::span<uint8_t> data)
 {
     return readnPixelsImpl(x, y, width, height, format, type, data.size(), nullptr, nullptr, nullptr, data.data(), false);
 }
@@ -827,7 +827,7 @@ void GraphicsContextGLANGLE::bufferData(GCGLenum target, GCGLsizeiptr size, GCGL
     GL_BufferData(target, size, 0, usage);
 }
 
-void GraphicsContextGLANGLE::bufferData(GCGLenum target, Span<const uint8_t> data, GCGLenum usage)
+void GraphicsContextGLANGLE::bufferData(GCGLenum target, std::span<const uint8_t> data, GCGLenum usage)
 {
     if (!makeContextCurrent())
         return;
@@ -835,7 +835,7 @@ void GraphicsContextGLANGLE::bufferData(GCGLenum target, Span<const uint8_t> dat
     GL_BufferData(target, data.size(), data.data(), usage);
 }
 
-void GraphicsContextGLANGLE::bufferSubData(GCGLenum target, GCGLintptr offset, Span<const uint8_t> data)
+void GraphicsContextGLANGLE::bufferSubData(GCGLenum target, GCGLintptr offset, std::span<const uint8_t> data)
 {
     if (!makeContextCurrent())
         return;
@@ -843,7 +843,7 @@ void GraphicsContextGLANGLE::bufferSubData(GCGLenum target, GCGLintptr offset, S
     GL_BufferSubData(target, offset, data.size(), data.data());
 }
 
-void GraphicsContextGLANGLE::getBufferSubData(GCGLenum target, GCGLintptr offset, Span<uint8_t> data)
+void GraphicsContextGLANGLE::getBufferSubData(GCGLenum target, GCGLintptr offset, std::span<uint8_t> data)
 {
     if (!makeContextCurrent())
         return;
@@ -863,7 +863,7 @@ void GraphicsContextGLANGLE::copyBufferSubData(GCGLenum readTarget, GCGLenum wri
     GL_CopyBufferSubData(readTarget, writeTarget, readOffset, writeOffset, size);
 }
 
-void GraphicsContextGLANGLE::getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, Span<GCGLint> data)
+void GraphicsContextGLANGLE::getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, std::span<GCGLint> data)
 {
     if (!makeContextCurrent())
         return;
@@ -896,7 +896,7 @@ void GraphicsContextGLANGLE::texStorage3D(GCGLenum target, GCGLsizei levels, GCG
     invalidateKnownTextureContent(m_state.currentBoundTexture());
 }
 
-void GraphicsContextGLANGLE::texImage3D(GCGLenum target, int level, int internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, int border, GCGLenum format, GCGLenum type, Span<const uint8_t> pixels)
+void GraphicsContextGLANGLE::texImage3D(GCGLenum target, int level, int internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, int border, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels)
 {
     if (!makeContextCurrent())
         return;
@@ -910,7 +910,7 @@ void GraphicsContextGLANGLE::texImage3D(GCGLenum target, int level, int internal
     GL_TexImage3DRobustANGLE(target, level, internalformat, width, height, depth, border, format, type, 0, reinterpret_cast<GLvoid*>(offset));
 }
 
-void GraphicsContextGLANGLE::texSubImage3D(GCGLenum target, int level, int xoffset, int yoffset, int zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, Span<const uint8_t> pixels)
+void GraphicsContextGLANGLE::texSubImage3D(GCGLenum target, int level, int xoffset, int yoffset, int zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels)
 {
     if (!makeContextCurrent())
         return;
@@ -924,7 +924,7 @@ void GraphicsContextGLANGLE::texSubImage3D(GCGLenum target, int level, int xoffs
     GL_TexSubImage3DRobustANGLE(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, 0, reinterpret_cast<GLvoid*>(offset));
 }
 
-void GraphicsContextGLANGLE::compressedTexImage3D(GCGLenum target, int level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, int border, GCGLsizei imageSize, Span<const uint8_t> data)
+void GraphicsContextGLANGLE::compressedTexImage3D(GCGLenum target, int level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, int border, GCGLsizei imageSize, std::span<const uint8_t> data)
 {
     if (!makeContextCurrent())
         return;
@@ -938,7 +938,7 @@ void GraphicsContextGLANGLE::compressedTexImage3D(GCGLenum target, int level, GC
     GL_CompressedTexImage3DRobustANGLE(target, level, internalformat, width, height, depth, border, imageSize, 0, reinterpret_cast<GLvoid*>(offset));
 }
 
-void GraphicsContextGLANGLE::compressedTexSubImage3D(GCGLenum target, int level, int xoffset, int yoffset, int zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLsizei imageSize, Span<const uint8_t> data)
+void GraphicsContextGLANGLE::compressedTexSubImage3D(GCGLenum target, int level, int xoffset, int yoffset, int zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLsizei imageSize, std::span<const uint8_t> data)
 {
     if (!makeContextCurrent())
         return;
@@ -1527,7 +1527,7 @@ void GraphicsContextGLANGLE::uniform1f(GCGLint location, GCGLfloat v0)
     GL_Uniform1f(location, v0);
 }
 
-void GraphicsContextGLANGLE::uniform1fv(GCGLint location, Span<const GCGLfloat> array)
+void GraphicsContextGLANGLE::uniform1fv(GCGLint location, std::span<const GCGLfloat> array)
 {
     if (!makeContextCurrent())
         return;
@@ -1543,7 +1543,7 @@ void GraphicsContextGLANGLE::uniform2f(GCGLint location, GCGLfloat v0, GCGLfloat
     GL_Uniform2f(location, v0, v1);
 }
 
-void GraphicsContextGLANGLE::uniform2fv(GCGLint location, Span<const GCGLfloat> array)
+void GraphicsContextGLANGLE::uniform2fv(GCGLint location, std::span<const GCGLfloat> array)
 {
     ASSERT(!(array.size() % 2));
     if (!makeContextCurrent())
@@ -1560,7 +1560,7 @@ void GraphicsContextGLANGLE::uniform3f(GCGLint location, GCGLfloat v0, GCGLfloat
     GL_Uniform3f(location, v0, v1, v2);
 }
 
-void GraphicsContextGLANGLE::uniform3fv(GCGLint location, Span<const GCGLfloat> array)
+void GraphicsContextGLANGLE::uniform3fv(GCGLint location, std::span<const GCGLfloat> array)
 {
     ASSERT(!(array.size() % 3));
     if (!makeContextCurrent())
@@ -1577,7 +1577,7 @@ void GraphicsContextGLANGLE::uniform4f(GCGLint location, GCGLfloat v0, GCGLfloat
     GL_Uniform4f(location, v0, v1, v2, v3);
 }
 
-void GraphicsContextGLANGLE::uniform4fv(GCGLint location, Span<const GCGLfloat> array)
+void GraphicsContextGLANGLE::uniform4fv(GCGLint location, std::span<const GCGLfloat> array)
 {
     ASSERT(!(array.size() % 4));
     if (!makeContextCurrent())
@@ -1594,7 +1594,7 @@ void GraphicsContextGLANGLE::uniform1i(GCGLint location, GCGLint v0)
     GL_Uniform1i(location, v0);
 }
 
-void GraphicsContextGLANGLE::uniform1iv(GCGLint location, Span<const GCGLint> array)
+void GraphicsContextGLANGLE::uniform1iv(GCGLint location, std::span<const GCGLint> array)
 {
     if (!makeContextCurrent())
         return;
@@ -1610,7 +1610,7 @@ void GraphicsContextGLANGLE::uniform2i(GCGLint location, GCGLint v0, GCGLint v1)
     GL_Uniform2i(location, v0, v1);
 }
 
-void GraphicsContextGLANGLE::uniform2iv(GCGLint location, Span<const GCGLint> array)
+void GraphicsContextGLANGLE::uniform2iv(GCGLint location, std::span<const GCGLint> array)
 {
     ASSERT(!(array.size() % 2));
     if (!makeContextCurrent())
@@ -1627,7 +1627,7 @@ void GraphicsContextGLANGLE::uniform3i(GCGLint location, GCGLint v0, GCGLint v1,
     GL_Uniform3i(location, v0, v1, v2);
 }
 
-void GraphicsContextGLANGLE::uniform3iv(GCGLint location, Span<const GCGLint> array)
+void GraphicsContextGLANGLE::uniform3iv(GCGLint location, std::span<const GCGLint> array)
 {
     ASSERT(!(array.size() % 3));
     if (!makeContextCurrent())
@@ -1644,7 +1644,7 @@ void GraphicsContextGLANGLE::uniform4i(GCGLint location, GCGLint v0, GCGLint v1,
     GL_Uniform4i(location, v0, v1, v2, v3);
 }
 
-void GraphicsContextGLANGLE::uniform4iv(GCGLint location, Span<const GCGLint> array)
+void GraphicsContextGLANGLE::uniform4iv(GCGLint location, std::span<const GCGLint> array)
 {
     ASSERT(!(array.size() % 4));
     if (!makeContextCurrent())
@@ -1653,7 +1653,7 @@ void GraphicsContextGLANGLE::uniform4iv(GCGLint location, Span<const GCGLint> ar
     GL_Uniform4iv(location, array.size() / 4, array.data());
 }
 
-void GraphicsContextGLANGLE::uniformMatrix2fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> array)
+void GraphicsContextGLANGLE::uniformMatrix2fv(GCGLint location, GCGLboolean transpose, std::span<const GCGLfloat> array)
 {
     if (!makeContextCurrent())
         return;
@@ -1661,7 +1661,7 @@ void GraphicsContextGLANGLE::uniformMatrix2fv(GCGLint location, GCGLboolean tran
     GL_UniformMatrix2fv(location, array.size() / 4, transpose, array.data());
 }
 
-void GraphicsContextGLANGLE::uniformMatrix3fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> array)
+void GraphicsContextGLANGLE::uniformMatrix3fv(GCGLint location, GCGLboolean transpose, std::span<const GCGLfloat> array)
 {
     ASSERT(!(array.size() % 9));
     if (!makeContextCurrent())
@@ -1670,7 +1670,7 @@ void GraphicsContextGLANGLE::uniformMatrix3fv(GCGLint location, GCGLboolean tran
     GL_UniformMatrix3fv(location, array.size() / 9, transpose, array.data());
 }
 
-void GraphicsContextGLANGLE::uniformMatrix4fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> array)
+void GraphicsContextGLANGLE::uniformMatrix4fv(GCGLint location, GCGLboolean transpose, std::span<const GCGLfloat> array)
 {
     ASSERT(!(array.size() % 16));
     if (!makeContextCurrent())
@@ -1705,7 +1705,7 @@ void GraphicsContextGLANGLE::vertexAttrib1f(GCGLuint index, GCGLfloat v0)
     GL_VertexAttrib1f(index, v0);
 }
 
-void GraphicsContextGLANGLE::vertexAttrib1fv(GCGLuint index, Span<const GCGLfloat, 1> array)
+void GraphicsContextGLANGLE::vertexAttrib1fv(GCGLuint index, std::span<const GCGLfloat, 1> array)
 {
     if (!makeContextCurrent())
         return;
@@ -1721,7 +1721,7 @@ void GraphicsContextGLANGLE::vertexAttrib2f(GCGLuint index, GCGLfloat v0, GCGLfl
     GL_VertexAttrib2f(index, v0, v1);
 }
 
-void GraphicsContextGLANGLE::vertexAttrib2fv(GCGLuint index, Span<const GCGLfloat, 2> array)
+void GraphicsContextGLANGLE::vertexAttrib2fv(GCGLuint index, std::span<const GCGLfloat, 2> array)
 {
     if (!makeContextCurrent())
         return;
@@ -1737,7 +1737,7 @@ void GraphicsContextGLANGLE::vertexAttrib3f(GCGLuint index, GCGLfloat v0, GCGLfl
     GL_VertexAttrib3f(index, v0, v1, v2);
 }
 
-void GraphicsContextGLANGLE::vertexAttrib3fv(GCGLuint index, Span<const GCGLfloat, 3> array)
+void GraphicsContextGLANGLE::vertexAttrib3fv(GCGLuint index, std::span<const GCGLfloat, 3> array)
 {
     if (!makeContextCurrent())
         return;
@@ -1753,7 +1753,7 @@ void GraphicsContextGLANGLE::vertexAttrib4f(GCGLuint index, GCGLfloat v0, GCGLfl
     GL_VertexAttrib4f(index, v0, v1, v2, v3);
 }
 
-void GraphicsContextGLANGLE::vertexAttrib4fv(GCGLuint index, Span<const GCGLfloat, 4> array)
+void GraphicsContextGLANGLE::vertexAttrib4fv(GCGLuint index, std::span<const GCGLfloat, 4> array)
 {
     if (!makeContextCurrent())
         return;
@@ -1832,7 +1832,7 @@ void GraphicsContextGLANGLE::bindVertexArray(PlatformGLObject array)
         GL_BindVertexArrayOES(array);
 }
 
-void GraphicsContextGLANGLE::getBooleanv(GCGLenum pname, Span<GCGLboolean> value)
+void GraphicsContextGLANGLE::getBooleanv(GCGLenum pname, std::span<GCGLboolean> value)
 {
     if (!makeContextCurrent())
         return;
@@ -1849,7 +1849,7 @@ GCGLint GraphicsContextGLANGLE::getBufferParameteri(GCGLenum target, GCGLenum pn
     return value;
 }
 
-void GraphicsContextGLANGLE::getFloatv(GCGLenum pname, Span<GCGLfloat> value)
+void GraphicsContextGLANGLE::getFloatv(GCGLenum pname, std::span<GCGLfloat> value)
 {
     if (!makeContextCurrent())
         return;
@@ -2000,7 +2000,7 @@ GCGLint GraphicsContextGLANGLE::getTexParameteri(GCGLenum target, GCGLenum pname
     return value;
 }
 
-void GraphicsContextGLANGLE::getUniformfv(PlatformGLObject program, GCGLint location, Span<GCGLfloat> value)
+void GraphicsContextGLANGLE::getUniformfv(PlatformGLObject program, GCGLint location, std::span<GCGLfloat> value)
 {
     if (!makeContextCurrent())
         return;
@@ -2009,7 +2009,7 @@ void GraphicsContextGLANGLE::getUniformfv(PlatformGLObject program, GCGLint loca
     GL_GetUniformfvRobustANGLE(program, location, bufSize, nullptr, value.data());
 }
 
-void GraphicsContextGLANGLE::getUniformiv(PlatformGLObject program, GCGLint location, Span<GCGLint> value)
+void GraphicsContextGLANGLE::getUniformiv(PlatformGLObject program, GCGLint location, std::span<GCGLint> value)
 {
     if (!makeContextCurrent())
         return;
@@ -2018,7 +2018,7 @@ void GraphicsContextGLANGLE::getUniformiv(PlatformGLObject program, GCGLint loca
     GL_GetUniformivRobustANGLE(program, location, bufSize, nullptr, value.data());
 }
 
-void GraphicsContextGLANGLE::getUniformuiv(PlatformGLObject program, GCGLint location, Span<GCGLuint> value)
+void GraphicsContextGLANGLE::getUniformuiv(PlatformGLObject program, GCGLint location, std::span<GCGLuint> value)
 {
     if (!makeContextCurrent())
         return;
@@ -2388,7 +2388,7 @@ void GraphicsContextGLANGLE::framebufferTextureLayer(GCGLenum target, GCGLenum a
     GL_FramebufferTextureLayer(target, attachment, texture, level, layer);
 }
 
-void GraphicsContextGLANGLE::invalidateFramebuffer(GCGLenum target, Span<const GCGLenum> attachments)
+void GraphicsContextGLANGLE::invalidateFramebuffer(GCGLenum target, std::span<const GCGLenum> attachments)
 {
     if (!makeContextCurrent())
         return;
@@ -2396,7 +2396,7 @@ void GraphicsContextGLANGLE::invalidateFramebuffer(GCGLenum target, Span<const G
     GL_InvalidateFramebuffer(target, attachments.size(), attachments.data());
 }
 
-void GraphicsContextGLANGLE::invalidateSubFramebuffer(GCGLenum target, Span<const GCGLenum> attachments, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height)
+void GraphicsContextGLANGLE::invalidateSubFramebuffer(GCGLenum target, std::span<const GCGLenum> attachments, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height)
 {
     if (!makeContextCurrent())
         return;
@@ -2469,7 +2469,7 @@ void GraphicsContextGLANGLE::uniform4ui(GCGLint location, GCGLuint v0, GCGLuint 
     GL_Uniform4ui(location, v0, v1, v2, v3);
 }
 
-void GraphicsContextGLANGLE::uniform1uiv(GCGLint location, Span<const GCGLuint> data)
+void GraphicsContextGLANGLE::uniform1uiv(GCGLint location, std::span<const GCGLuint> data)
 {
     if (!makeContextCurrent())
         return;
@@ -2477,7 +2477,7 @@ void GraphicsContextGLANGLE::uniform1uiv(GCGLint location, Span<const GCGLuint> 
     GL_Uniform1uiv(location, data.size(), data.data());
 }
 
-void GraphicsContextGLANGLE::uniform2uiv(GCGLint location, Span<const GCGLuint> data)
+void GraphicsContextGLANGLE::uniform2uiv(GCGLint location, std::span<const GCGLuint> data)
 {
     ASSERT(!(data.size() % 2));
     if (!makeContextCurrent())
@@ -2486,7 +2486,7 @@ void GraphicsContextGLANGLE::uniform2uiv(GCGLint location, Span<const GCGLuint> 
     GL_Uniform2uiv(location, data.size() / 2, data.data());
 }
 
-void GraphicsContextGLANGLE::uniform3uiv(GCGLint location, Span<const GCGLuint> data)
+void GraphicsContextGLANGLE::uniform3uiv(GCGLint location, std::span<const GCGLuint> data)
 {
     ASSERT(!(data.size() % 3));
     if (!makeContextCurrent())
@@ -2495,7 +2495,7 @@ void GraphicsContextGLANGLE::uniform3uiv(GCGLint location, Span<const GCGLuint> 
     GL_Uniform3uiv(location, data.size() / 3, data.data());
 }
 
-void GraphicsContextGLANGLE::uniform4uiv(GCGLint location, Span<const GCGLuint> data)
+void GraphicsContextGLANGLE::uniform4uiv(GCGLint location, std::span<const GCGLuint> data)
 {
     ASSERT(!(data.size() % 4));
     if (!makeContextCurrent())
@@ -2504,7 +2504,7 @@ void GraphicsContextGLANGLE::uniform4uiv(GCGLint location, Span<const GCGLuint> 
     GL_Uniform4uiv(location, data.size() / 4, data.data());
 }
 
-void GraphicsContextGLANGLE::uniformMatrix2x3fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> data)
+void GraphicsContextGLANGLE::uniformMatrix2x3fv(GCGLint location, GCGLboolean transpose, std::span<const GCGLfloat> data)
 {
     ASSERT(!(data.size() % 6));
     if (!makeContextCurrent())
@@ -2513,7 +2513,7 @@ void GraphicsContextGLANGLE::uniformMatrix2x3fv(GCGLint location, GCGLboolean tr
     GL_UniformMatrix2x3fv(location, data.size() / 6, transpose, data.data());
 }
 
-void GraphicsContextGLANGLE::uniformMatrix3x2fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> data)
+void GraphicsContextGLANGLE::uniformMatrix3x2fv(GCGLint location, GCGLboolean transpose, std::span<const GCGLfloat> data)
 {
     ASSERT(!(data.size() % 6));
     if (!makeContextCurrent())
@@ -2522,7 +2522,7 @@ void GraphicsContextGLANGLE::uniformMatrix3x2fv(GCGLint location, GCGLboolean tr
     GL_UniformMatrix3x2fv(location, data.size() / 6, transpose, data.data());
 }
 
-void GraphicsContextGLANGLE::uniformMatrix2x4fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> data)
+void GraphicsContextGLANGLE::uniformMatrix2x4fv(GCGLint location, GCGLboolean transpose, std::span<const GCGLfloat> data)
 {
     ASSERT(!(data.size() % 8));
     if (!makeContextCurrent())
@@ -2531,7 +2531,7 @@ void GraphicsContextGLANGLE::uniformMatrix2x4fv(GCGLint location, GCGLboolean tr
     GL_UniformMatrix2x4fv(location, data.size() / 8, transpose, data.data());
 }
 
-void GraphicsContextGLANGLE::uniformMatrix4x2fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> data)
+void GraphicsContextGLANGLE::uniformMatrix4x2fv(GCGLint location, GCGLboolean transpose, std::span<const GCGLfloat> data)
 {
     ASSERT(!(data.size() % 8));
     if (!makeContextCurrent())
@@ -2540,7 +2540,7 @@ void GraphicsContextGLANGLE::uniformMatrix4x2fv(GCGLint location, GCGLboolean tr
     GL_UniformMatrix4x2fv(location, data.size() / 8, transpose, data.data());
 }
 
-void GraphicsContextGLANGLE::uniformMatrix3x4fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> data)
+void GraphicsContextGLANGLE::uniformMatrix3x4fv(GCGLint location, GCGLboolean transpose, std::span<const GCGLfloat> data)
 {
     ASSERT(!(data.size() % 12));
     if (!makeContextCurrent())
@@ -2549,7 +2549,7 @@ void GraphicsContextGLANGLE::uniformMatrix3x4fv(GCGLint location, GCGLboolean tr
     GL_UniformMatrix3x4fv(location, data.size() / 12, transpose, data.data());
 }
 
-void GraphicsContextGLANGLE::uniformMatrix4x3fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> data)
+void GraphicsContextGLANGLE::uniformMatrix4x3fv(GCGLint location, GCGLboolean transpose, std::span<const GCGLfloat> data)
 {
     ASSERT(!(data.size() % 12));
     if (!makeContextCurrent())
@@ -2566,7 +2566,7 @@ void GraphicsContextGLANGLE::vertexAttribI4i(GCGLuint index, GCGLint x, GCGLint 
     GL_VertexAttribI4i(index, x, y, z, w);
 }
 
-void GraphicsContextGLANGLE::vertexAttribI4iv(GCGLuint index, Span<const GCGLint, 4> values)
+void GraphicsContextGLANGLE::vertexAttribI4iv(GCGLuint index, std::span<const GCGLint, 4> values)
 {
     if (!makeContextCurrent())
         return;
@@ -2582,7 +2582,7 @@ void GraphicsContextGLANGLE::vertexAttribI4ui(GCGLuint index, GCGLuint x, GCGLui
     GL_VertexAttribI4ui(index, x, y, z, w);
 }
 
-void GraphicsContextGLANGLE::vertexAttribI4uiv(GCGLuint index, Span<const GCGLuint, 4> values)
+void GraphicsContextGLANGLE::vertexAttribI4uiv(GCGLuint index, std::span<const GCGLuint, 4> values)
 {
     if (!makeContextCurrent())
         return;
@@ -2599,7 +2599,7 @@ void GraphicsContextGLANGLE::drawRangeElements(GCGLenum mode, GCGLuint start, GC
     checkGPUStatus();
 }
 
-void GraphicsContextGLANGLE::drawBuffers(Span<const GCGLenum> bufs)
+void GraphicsContextGLANGLE::drawBuffers(std::span<const GCGLenum> bufs)
 {
     if (!makeContextCurrent())
         return;
@@ -2607,7 +2607,7 @@ void GraphicsContextGLANGLE::drawBuffers(Span<const GCGLenum> bufs)
     GL_DrawBuffers(bufs.size(), bufs.data());
 }
 
-void GraphicsContextGLANGLE::clearBufferiv(GCGLenum buffer, GCGLint drawbuffer, Span<const GCGLint> values)
+void GraphicsContextGLANGLE::clearBufferiv(GCGLenum buffer, GCGLint drawbuffer, std::span<const GCGLint> values)
 {
     if (!makeContextCurrent())
         return;
@@ -2616,7 +2616,7 @@ void GraphicsContextGLANGLE::clearBufferiv(GCGLenum buffer, GCGLint drawbuffer, 
     checkGPUStatus();
 }
 
-void GraphicsContextGLANGLE::clearBufferuiv(GCGLenum buffer, GCGLint drawbuffer, Span<const GCGLuint> values)
+void GraphicsContextGLANGLE::clearBufferuiv(GCGLenum buffer, GCGLint drawbuffer, std::span<const GCGLuint> values)
 {
     if (!makeContextCurrent())
         return;
@@ -2625,7 +2625,7 @@ void GraphicsContextGLANGLE::clearBufferuiv(GCGLenum buffer, GCGLint drawbuffer,
     checkGPUStatus();
 }
 
-void GraphicsContextGLANGLE::clearBufferfv(GCGLenum buffer, GCGLint drawbuffer, Span<const GCGLfloat> values)
+void GraphicsContextGLANGLE::clearBufferfv(GCGLenum buffer, GCGLint drawbuffer, std::span<const GCGLfloat> values)
 {
     if (!makeContextCurrent())
         return;
@@ -2826,7 +2826,7 @@ Vector<GCGLuint> GraphicsContextGLANGLE::getUniformIndices(PlatformGLObject prog
     return result;
 }
 
-void GraphicsContextGLANGLE::getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, Span<GCGLint> params)
+void GraphicsContextGLANGLE::getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, std::span<GCGLint> params)
 {
     if (!makeContextCurrent())
         return;
@@ -2926,7 +2926,7 @@ String GraphicsContextGLANGLE::getTranslatedShaderSourceANGLE(PlatformGLObject s
     return String(name.data(), returnedLength);
 }
 
-void GraphicsContextGLANGLE::drawBuffersEXT(Span<const GCGLenum> bufs)
+void GraphicsContextGLANGLE::drawBuffersEXT(std::span<const GCGLenum> bufs)
 {
     if (!makeContextCurrent())
         return;

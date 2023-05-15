@@ -69,7 +69,7 @@ bool Data::isNull() const
     return !m_dispatchData;
 }
 
-bool Data::apply(const Function<bool(Span<const uint8_t>)>& applier) const
+bool Data::apply(const Function<bool(std::span<const uint8_t>)>& applier) const
 {
     if (!m_size)
         return false;

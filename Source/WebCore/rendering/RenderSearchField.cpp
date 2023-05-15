@@ -171,7 +171,7 @@ LayoutUnit RenderSearchField::computeControlLogicalHeight(LayoutUnit lineHeight,
     return lineHeight + nonContentHeight;
 }
     
-Span<const RecentSearch> RenderSearchField::recentSearches()
+std::span<const RecentSearch> RenderSearchField::recentSearches()
 {
     if (!m_searchPopup)
         m_searchPopup = page().chrome().createSearchPopupMenu(*this);

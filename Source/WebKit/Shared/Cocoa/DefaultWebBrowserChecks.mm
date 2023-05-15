@@ -50,7 +50,7 @@ bool isRunningTest(const String& bundleID)
     return bundleID == "com.apple.WebKit.TestWebKitAPI"_s || bundleID == "com.apple.WebKit.WebKitTestRunner"_s || bundleID == "org.webkit.WebKitTestRunnerApp"_s;
 }
 
-Span<const WebCore::RegistrableDomain> appBoundDomainsForTesting(const String& bundleID)
+std::span<const WebCore::RegistrableDomain> appBoundDomainsForTesting(const String& bundleID)
 {
     if (bundleID == "inAppBrowserPrivacyTestIdentifier"_s) {
         static NeverDestroyed domains = std::array {

@@ -54,7 +54,7 @@ RefPtr<SharedMemory> SharedMemory::copyBuffer(const FragmentedSharedBuffer& buff
         return nullptr;
 
     auto sharedMemoryPtr = static_cast<char*>(sharedMemory->data());
-    buffer.forEachSegment([sharedMemoryPtr] (Span<const uint8_t> segment) mutable {
+    buffer.forEachSegment([sharedMemoryPtr] (std::span<const uint8_t> segment) mutable {
         memcpy(sharedMemoryPtr, segment.data(), segment.size());
         sharedMemoryPtr += segment.size();
     });

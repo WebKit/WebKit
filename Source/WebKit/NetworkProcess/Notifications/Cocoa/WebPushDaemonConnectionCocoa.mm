@@ -70,7 +70,7 @@ END
 } // namespace MessageInfo
 
 template<typename Info>
-void handleWebPushDaemonMessage(WebKit::WebPushD::Connection* connection, Span<const uint8_t> encodedMessage)
+void handleWebPushDaemonMessage(WebKit::WebPushD::Connection* connection, std::span<const uint8_t> encodedMessage)
 {
     WebKit::Daemon::Decoder decoder(encodedMessage);
 
@@ -95,7 +95,7 @@ void Connection::connectionReceivedEvent(xpc_object_t request)
     auto messageType { static_cast<DaemonMessageType>(xpc_dictionary_get_uint64(request, protocolMessageTypeKey)) };
     size_t dataSize { 0 };
     const void* data = xpc_dictionary_get_data(request, protocolEncodedMessageKey, &dataSize);
-    Span<const uint8_t> encodedMessage { static_cast<const uint8_t*>(data), dataSize };
+    std::span<const uint8_t> encodedMessage { static_cast<const uint8_t*>(data), dataSize };
 
     ASSERT(!daemonMessageTypeSendsReply(messageType));
 

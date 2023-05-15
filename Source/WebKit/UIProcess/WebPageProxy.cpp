@@ -9086,7 +9086,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 
 #if PLATFORM(COCOA) && !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
 
-static Span<const ASCIILiteral> gpuIOKitClasses()
+static std::span<const ASCIILiteral> gpuIOKitClasses()
 {
     static constexpr std::array services {
 #if PLATFORM(IOS_FAMILY)
@@ -9121,7 +9121,7 @@ static Span<const ASCIILiteral> gpuIOKitClasses()
     return services;
 }
 
-static Span<const ASCIILiteral> gpuMachServices()
+static std::span<const ASCIILiteral> gpuMachServices()
 {
     static constexpr std::array services {
         "com.apple.MTLCompilerService"_s,

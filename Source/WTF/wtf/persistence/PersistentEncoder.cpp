@@ -45,14 +45,14 @@ uint8_t* Encoder::grow(size_t size)
     return m_buffer.data() + newPosition;
 }
 
-void Encoder::updateChecksumForData(SHA1& sha1, Span<const uint8_t> span)
+void Encoder::updateChecksumForData(SHA1& sha1, std::span<const uint8_t> span)
 {
     auto typeSalt = Salt<uint8_t*>::value;
     sha1.addBytes(reinterpret_cast<uint8_t*>(&typeSalt), sizeof(typeSalt));
     sha1.addBytes(span.data(), span.size());
 }
 
-void Encoder::encodeFixedLengthData(Span<const uint8_t> span)
+void Encoder::encodeFixedLengthData(std::span<const uint8_t> span)
 {
     updateChecksumForData(m_sha1, span);
 

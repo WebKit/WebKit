@@ -63,12 +63,12 @@ std::optional<StreamConnectionBuffer::Handle> StreamConnectionBuffer::Handle::de
     return Handle { WTFMove(*handle) };
 }
 
-Span<uint8_t> StreamConnectionBuffer::headerForTesting()
+std::span<uint8_t> StreamConnectionBuffer::headerForTesting()
 {
     return { static_cast<uint8_t*>(m_sharedMemory->data()), headerSize() };
 }
 
-Span<uint8_t> StreamConnectionBuffer::dataForTesting()
+std::span<uint8_t> StreamConnectionBuffer::dataForTesting()
 {
     return { data(), m_sharedMemory->size() - headerSize() };
 }

@@ -50,13 +50,13 @@ String CSSGridLineNamesValue::customCSSText() const
     return result.toString();
 }
 
-CSSGridLineNamesValue::CSSGridLineNamesValue(Span<const String> names)
+CSSGridLineNamesValue::CSSGridLineNamesValue(std::span<const String> names)
     : CSSValue(GridLineNamesClass)
     , m_names(names.begin(), names.end())
 {
 }
 
-Ref<CSSGridLineNamesValue> CSSGridLineNamesValue::create(Span<const String> names)
+Ref<CSSGridLineNamesValue> CSSGridLineNamesValue::create(std::span<const String> names)
 {
     return adoptRef(*new CSSGridLineNamesValue(names));
 }

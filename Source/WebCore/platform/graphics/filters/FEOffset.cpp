@@ -66,7 +66,7 @@ bool FEOffset::setDy(float dy)
     return true;
 }
 
-FloatRect FEOffset::calculateImageRect(const Filter& filter, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const
+FloatRect FEOffset::calculateImageRect(const Filter& filter, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const
 {
     auto imageRect = inputImageRects[0];
     imageRect.move(filter.resolvedSize({ m_dx, m_dy }));

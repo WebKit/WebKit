@@ -67,9 +67,9 @@ protected:
 
     virtual unsigned numberOfEffectInputs() const { return 1; }
 
-    FloatRect calculatePrimitiveSubregion(const Filter&, Span<const FloatRect> inputPrimitiveSubregions, const std::optional<FilterEffectGeometry>&) const;
+    FloatRect calculatePrimitiveSubregion(const Filter&, std::span<const FloatRect> inputPrimitiveSubregions, const std::optional<FilterEffectGeometry>&) const;
 
-    virtual FloatRect calculateImageRect(const Filter&, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const;
+    virtual FloatRect calculateImageRect(const Filter&, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const;
 
     // Solid black image with different alpha values.
     virtual bool resultIsAlphaImage(const FilterImageVector&) const { return false; }

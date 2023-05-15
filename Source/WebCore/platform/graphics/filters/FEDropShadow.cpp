@@ -104,7 +104,7 @@ bool FEDropShadow::setShadowOpacity(float shadowOpacity)
     return true;
 }
 
-FloatRect FEDropShadow::calculateImageRect(const Filter& filter, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const
+FloatRect FEDropShadow::calculateImageRect(const Filter& filter, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const
 {
     auto imageRect = inputImageRects[0];
     auto imageRectWithOffset(imageRect);

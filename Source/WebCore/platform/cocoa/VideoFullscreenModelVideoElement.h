@@ -99,7 +99,7 @@ private:
     void willExitPictureInPicture() override;
     void didExitPictureInPicture() override;
 
-    static Span<const AtomString> observedEventNames();
+    static std::span<const AtomString> observedEventNames();
     const AtomString& eventNameAll();
 
     RefPtr<HTMLVideoElement> m_videoElement;

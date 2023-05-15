@@ -147,7 +147,7 @@ static double colorDifference(const Lab<float>& lhs, const Lab<float>& rhs)
     return sqrt(pow(resolvedRightHandSide.lightness - resolvedLeftHandSide.lightness, 2) + pow(resolvedRightHandSide.a - resolvedLeftHandSide.a, 2) + pow(resolvedRightHandSide.b - resolvedLeftHandSide.b, 2));
 }
 
-static Lab<float> averageColor(Span<Lab<float>> colors)
+static Lab<float> averageColor(std::span<Lab<float>> colors)
 {
     ColorComponents<float, 3> totals { };
     for (auto color : colors)

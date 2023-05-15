@@ -48,7 +48,7 @@ public:
 
 class ReadableStreamToSharedBufferSink final : public ReadableStreamSink {
 public:
-    using Callback = Function<void(ExceptionOr<Span<const uint8_t>*>&&)>;
+    using Callback = Function<void(ExceptionOr<std::span<const uint8_t>*>&&)>;
     static Ref<ReadableStreamToSharedBufferSink> create(Callback&& callback) { return adoptRef(*new ReadableStreamToSharedBufferSink(WTFMove(callback))); }
     void pipeFrom(ReadableStream&);
     void clearCallback() { m_callback = { }; }

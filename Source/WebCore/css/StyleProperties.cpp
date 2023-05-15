@@ -363,7 +363,7 @@ Ref<MutableStyleProperties> StyleProperties::mutableCopy() const
     return adoptRef(*new MutableStyleProperties(*this));
 }
 
-Ref<MutableStyleProperties> StyleProperties::copyProperties(Span<const CSSPropertyID> properties) const
+Ref<MutableStyleProperties> StyleProperties::copyProperties(std::span<const CSSPropertyID> properties) const
 {
     Vector<CSSProperty> vector;
     vector.reserveInitialCapacity(properties.size());

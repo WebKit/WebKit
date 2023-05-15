@@ -45,8 +45,8 @@ template<typename T> struct ActionWithoutMetadata {
     T isolatedCopy() const { return { }; }
     bool operator==(const ActionWithoutMetadata&) const { return true; }
     void serialize(Vector<uint8_t>&) const { }
-    static T deserialize(Span<const uint8_t>) { return { }; }
-    static size_t serializedLength(Span<const uint8_t>) { return 0; }
+    static T deserialize(std::span<const uint8_t>) { return { }; }
+    static size_t serializedLength(std::span<const uint8_t>) { return 0; }
 };
 
 template<typename T> struct ActionWithStringMetadata {
@@ -55,8 +55,8 @@ template<typename T> struct ActionWithStringMetadata {
     T isolatedCopy() && { return { { WTFMove(string).isolatedCopy() } }; }
     bool operator==(const ActionWithStringMetadata& other) const { return other.string == this->string; }
     void serialize(Vector<uint8_t>& vector) const { serializeString(vector, string); }
-    static T deserialize(Span<const uint8_t> span) { return { { deserializeString(span) } }; }
-    static size_t serializedLength(Span<const uint8_t> span) { return stringSerializedLength(span); }
+    static T deserialize(std::span<const uint8_t> span) { return { { deserializeString(span) } }; }
+    static size_t serializedLength(std::span<const uint8_t> span) { return stringSerializedLength(span); }
 };
 
 struct BlockLoadAction : public ActionWithoutMetadata<BlockLoadAction> { };
@@ -101,8 +101,8 @@ struct WEBCORE_EXPORT ModifyHeadersAction {
         ModifyHeaderInfo isolatedCopy() &&;
         bool operator==(const ModifyHeaderInfo&) const;
         void serialize(Vector<uint8_t>&) const;
-        static ModifyHeaderInfo deserialize(Span<const uint8_t>);
-        static size_t serializedLength(Span<const uint8_t>);
+        static ModifyHeaderInfo deserialize(std::span<const uint8_t>);
+        static size_t serializedLength(std::span<const uint8_t>);
         void applyToRequest(ResourceRequest&, HashMap<String, ModifyHeadersOperationType>&);
     };
 
@@ -128,8 +128,8 @@ struct WEBCORE_EXPORT ModifyHeadersAction {
     ModifyHeadersAction isolatedCopy() &&;
     bool operator==(const ModifyHeadersAction&) const;
     void serialize(Vector<uint8_t>&) const;
-    static ModifyHeadersAction deserialize(Span<const uint8_t>);
-    static size_t serializedLength(Span<const uint8_t>);
+    static ModifyHeadersAction deserialize(std::span<const uint8_t>);
+    static size_t serializedLength(std::span<const uint8_t>);
     void applyToRequest(ResourceRequest&, HashMap<String, ModifyHeadersOperationType>&);
 };
 
@@ -148,7 +148,7 @@ struct WEBCORE_EXPORT RedirectAction {
         RegexSubstitutionAction isolatedCopy() const & { return { regexSubstitution.isolatedCopy(), regexFilter.isolatedCopy() }; }
         RegexSubstitutionAction isolatedCopy() && { return { WTFMove(regexSubstitution).isolatedCopy(), WTFMove(regexFilter).isolatedCopy() }; }
         void serialize(Vector<uint8_t>&) const;
-        static RegexSubstitutionAction deserialize(Span<const uint8_t>);
+        static RegexSubstitutionAction deserialize(std::span<const uint8_t>);
         bool operator==(const RegexSubstitutionAction& other) const { return other.regexSubstitution == this->regexSubstitution && other.regexFilter == this->regexFilter; }
         WEBCORE_EXPORT void applyToURL(URL&) const;
     };
@@ -164,8 +164,8 @@ struct WEBCORE_EXPORT RedirectAction {
                 QueryKeyValue isolatedCopy() && { return { WTFMove(key).isolatedCopy(), replaceOnly, WTFMove(value).isolatedCopy() }; }
                 bool operator==(const QueryKeyValue&) const;
                 void serialize(Vector<uint8_t>&) const;
-                static QueryKeyValue deserialize(Span<const uint8_t>);
-                static size_t serializedLength(Span<const uint8_t>);
+                static QueryKeyValue deserialize(std::span<const uint8_t>);
+                static size_t serializedLength(std::span<const uint8_t>);
             };
 
             Vector<QueryKeyValue> addOrReplaceParams;
@@ -176,8 +176,8 @@ struct WEBCORE_EXPORT RedirectAction {
             QueryTransform isolatedCopy() &&;
             bool operator==(const QueryTransform&) const;
             void serialize(Vector<uint8_t>&) const;
-            static QueryTransform deserialize(Span<const uint8_t>);
-            static size_t serializedLength(Span<const uint8_t>);
+            static QueryTransform deserialize(std::span<const uint8_t>);
+            static size_t serializedLength(std::span<const uint8_t>);
             void applyToURL(URL&) const;
         };
 
@@ -196,8 +196,8 @@ struct WEBCORE_EXPORT RedirectAction {
         URLTransformAction isolatedCopy() &&;
         bool operator==(const URLTransformAction&) const;
         void serialize(Vector<uint8_t>&) const;
-        static URLTransformAction deserialize(Span<const uint8_t>);
-        static size_t serializedLength(Span<const uint8_t>);
+        static URLTransformAction deserialize(std::span<const uint8_t>);
+        static size_t serializedLength(std::span<const uint8_t>);
         void applyToURL(URL&) const;
     };
     struct URLAction {
@@ -227,8 +227,8 @@ struct WEBCORE_EXPORT RedirectAction {
     RedirectAction isolatedCopy() &&;
     bool operator==(const RedirectAction&) const;
     void serialize(Vector<uint8_t>&) const;
-    static RedirectAction deserialize(Span<const uint8_t>);
-    static size_t serializedLength(Span<const uint8_t>);
+    static RedirectAction deserialize(std::span<const uint8_t>);
+    static size_t serializedLength(std::span<const uint8_t>);
     void applyToRequest(ResourceRequest&, const URL&);
 };
 

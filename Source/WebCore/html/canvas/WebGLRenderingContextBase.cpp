@@ -2904,28 +2904,28 @@ WebGLAny WebGLRenderingContextBase::getUniform(WebGLProgram& program, const WebG
     switch (baseType) {
     case GraphicsContextGL::FLOAT: {
         GCGLfloat value[16] = {0};
-        m_context->getUniformfv(program.object(), location, Span<GCGLfloat> { value, length });
+        m_context->getUniformfv(program.object(), location, std::span<GCGLfloat> { value, length });
         if (length == 1)
             return value[0];
         return Float32Array::tryCreate(value, length);
     }
     case GraphicsContextGL::INT: {
         GCGLint value[4] = {0};
-        m_context->getUniformiv(program.object(), location, Span<GCGLint> { value, length });
+        m_context->getUniformiv(program.object(), location, std::span<GCGLint> { value, length });
         if (length == 1)
             return value[0];
         return Int32Array::tryCreate(value, length);
     }
     case GraphicsContextGL::UNSIGNED_INT: {
         GCGLuint value[4] = {0};
-        m_context->getUniformuiv(program.object(), location, Span<GCGLuint> { value, length });
+        m_context->getUniformuiv(program.object(), location, std::span<GCGLuint> { value, length });
         if (length == 1)
             return value[0];
         return Uint32Array::tryCreate(value, length);
     }
     case GraphicsContextGL::BOOL: {
         GCGLint value[4] = {0};
-        m_context->getUniformiv(program.object(), location, Span<GCGLint> { value, length });
+        m_context->getUniformiv(program.object(), location, std::span<GCGLint> { value, length });
         if (length > 1) {
             Vector<bool> vector(length);
             for (unsigned j = 0; j < length; j++)
@@ -3643,7 +3643,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     if (m_unpackFlipY)
         adjustedSourceImageRect.setY(source.height() - adjustedSourceImageRect.maxY());
 
-    Span<const uint8_t> imageData { source.data().data(), source.data().byteLength() };
+    std::span<const uint8_t> imageData { source.data().data(), source.data().byteLength() };
     Vector<uint8_t> data;
 
     // The data from ImageData is always of format RGBA8.
@@ -3657,7 +3657,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "texImage2D", "bad image data");
             return { };
         }
-        imageData = Span<const uint8_t> { data.data(), data.size() };
+        imageData = std::span<const uint8_t> { data.data(), data.size() };
     }
     ScopedUnpackParametersResetRestore temporaryResetUnpack(this);
     if (functionID == TexImageFunctionID::TexImage2D) {
@@ -3955,13 +3955,13 @@ void WebGLRenderingContextBase::texImageImpl(TexImageFunctionID functionID, GCGL
         return;
     }
 
-    Span<const uint8_t> pixels { imagePixelData, imagePixelByteLength };
+    std::span<const uint8_t> pixels { imagePixelData, imagePixelByteLength };
     if (type != GraphicsContextGL::UNSIGNED_BYTE || sourceDataFormat != GraphicsContextGL::DataFormat::RGBA8 || format != GraphicsContextGL::RGBA || alphaOp != GraphicsContextGL::AlphaOp::DoNothing || flipY || selectingSubRectangle || depth != 1) {
         if (!m_context->packImageData(image, imagePixelData, format, type, flipY, alphaOp, sourceDataFormat, imageExtractor.imageWidth(), imageExtractor.imageHeight(), adjustedSourceImageRect, depth, imageExtractor.imageSourceUnpackAlignment(), unpackImageHeight, data)) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "packImage error");
             return;
         }
-        pixels = Span<const uint8_t> { data.data(), data.size() };
+        pixels = std::span<const uint8_t> { data.data(), data.size() };
     }
 
     ScopedUnpackParametersResetRestore temporaryResetUnpack(this, true);
@@ -3988,12 +3988,12 @@ void WebGLRenderingContextBase::texImageImpl(TexImageFunctionID functionID, GCGL
     }
 }
 
-void WebGLRenderingContextBase::texImage2DBase(GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, Span<const uint8_t> pixels)
+void WebGLRenderingContextBase::texImage2DBase(GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels)
 {
     m_context->texImage2D(target, level, internalFormat, width, height, border, format, type, pixels);
 }
 
-void WebGLRenderingContextBase::texSubImage2DBase(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum internalFormat, GCGLenum format, GCGLenum type, Span<const uint8_t> pixels)
+void WebGLRenderingContextBase::texSubImage2DBase(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum internalFormat, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels)
 {
     ASSERT(!isContextLost());
     UNUSED_PARAM(internalFormat);
@@ -4210,7 +4210,7 @@ bool WebGLRenderingContextBase::validateTypeAndArrayBufferType(const char* funct
     return false;
 }
 
-std::optional<Span<const uint8_t>> WebGLRenderingContextBase::validateTexFuncData(const char* functionName, TexImageDimension texDimension, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, ArrayBufferView* pixels, NullDisposition disposition, GCGLuint srcOffset)
+std::optional<std::span<const uint8_t>> WebGLRenderingContextBase::validateTexFuncData(const char* functionName, TexImageDimension texDimension, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, ArrayBufferView* pixels, NullDisposition disposition, GCGLuint srcOffset)
 {
     // All calling functions check isContextLost, so a duplicate check is not
     // needed here.
@@ -4245,7 +4245,7 @@ std::optional<Span<const uint8_t>> WebGLRenderingContextBase::validateTexFuncDat
     }
 
     if (!pixels)
-        return Span<const uint8_t> { };
+        return std::span<const uint8_t> { };
 
     if (pixels->byteLength() < total) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "ArrayBufferView not big enough for request");
@@ -5466,7 +5466,7 @@ bool WebGLRenderingContextBase::validateCapability(const char* functionName, GCG
 }
 
 template<typename T, typename TypedListType>
-std::optional<Span<const T>> WebGLRenderingContextBase::validateUniformMatrixParameters(const char* functionName, const WebGLUniformLocation* location, GCGLboolean transpose, const TypedList<TypedListType, T>& values, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength)
+std::optional<std::span<const T>> WebGLRenderingContextBase::validateUniformMatrixParameters(const char* functionName, const WebGLUniformLocation* location, GCGLboolean transpose, const TypedList<TypedListType, T>& values, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength)
 {
     if (!validateUniformLocation(functionName, location))
         return { };
@@ -5494,17 +5494,17 @@ std::optional<Span<const T>> WebGLRenderingContextBase::validateUniformMatrixPar
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "invalid size");
         return { };
     }
-    return Span<const T> { values.data() + srcOffset, static_cast<size_t>(actualSize) };
+    return std::span<const T> { values.data() + srcOffset, static_cast<size_t>(actualSize) };
 }
 
 template
-std::optional<Span<const GCGLuint>> WebGLRenderingContextBase::validateUniformMatrixParameters<GCGLuint, Uint32Array>(const char* functionName, const WebGLUniformLocation*, GCGLboolean transpose, const TypedList<Uint32Array, uint32_t>& values, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength);
+std::optional<std::span<const GCGLuint>> WebGLRenderingContextBase::validateUniformMatrixParameters<GCGLuint, Uint32Array>(const char* functionName, const WebGLUniformLocation*, GCGLboolean transpose, const TypedList<Uint32Array, uint32_t>& values, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength);
 
 template
-std::optional<Span<const GCGLint>> WebGLRenderingContextBase::validateUniformMatrixParameters<GCGLint, Int32Array>(const char* functionName, const WebGLUniformLocation*, GCGLboolean transpose, const TypedList<Int32Array, int32_t>& values, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength);
+std::optional<std::span<const GCGLint>> WebGLRenderingContextBase::validateUniformMatrixParameters<GCGLint, Int32Array>(const char* functionName, const WebGLUniformLocation*, GCGLboolean transpose, const TypedList<Int32Array, int32_t>& values, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength);
 
 template
-std::optional<Span<const GCGLfloat>> WebGLRenderingContextBase::validateUniformMatrixParameters<GCGLfloat, Float32Array>(const char* functionName, const WebGLUniformLocation*, GCGLboolean transpose, const TypedList<Float32Array, float>& values, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength);
+std::optional<std::span<const GCGLfloat>> WebGLRenderingContextBase::validateUniformMatrixParameters<GCGLfloat, Float32Array>(const char* functionName, const WebGLUniformLocation*, GCGLboolean transpose, const TypedList<Float32Array, float>& values, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength);
 
 WebGLBuffer* WebGLRenderingContextBase::validateBufferDataParameters(const char* functionName, GCGLenum target, GCGLenum usage)
 {
@@ -5645,16 +5645,16 @@ void WebGLRenderingContextBase::vertexAttribfvImpl(const char* functionName, GCG
     }
     switch (expectedSize) {
     case 1:
-        m_context->vertexAttrib1fv(index, Span<const GCGLfloat, 1> { data, 1 });
+        m_context->vertexAttrib1fv(index, std::span<const GCGLfloat, 1> { data, 1 });
         break;
     case 2:
-        m_context->vertexAttrib2fv(index, Span<const GCGLfloat, 2> { data, 2 });
+        m_context->vertexAttrib2fv(index, std::span<const GCGLfloat, 2> { data, 2 });
         break;
     case 3:
-        m_context->vertexAttrib3fv(index, Span<const GCGLfloat, 3> { data, 3 });
+        m_context->vertexAttrib3fv(index, std::span<const GCGLfloat, 3> { data, 3 });
         break;
     case 4:
-        m_context->vertexAttrib4fv(index, Span<const GCGLfloat, 4> { data, 4 });
+        m_context->vertexAttrib4fv(index, std::span<const GCGLfloat, 4> { data, 4 });
         break;
     }
     VertexAttribValue& attribValue = m_vertexAttribValue[index];

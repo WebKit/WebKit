@@ -188,9 +188,9 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ShareableElementData);
 class ShareableElementData : public ElementData {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ShareableElementData);
 public:
-    static Ref<ShareableElementData> createWithAttributes(Span<const Attribute>);
+    static Ref<ShareableElementData> createWithAttributes(std::span<const Attribute>);
 
-    explicit ShareableElementData(Span<const Attribute>);
+    explicit ShareableElementData(std::span<const Attribute>);
     explicit ShareableElementData(const UniqueElementData&);
     ~ShareableElementData();
 

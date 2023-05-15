@@ -2478,7 +2478,7 @@ void Element::stripScriptingAttributes(Vector<Attribute>& attributeVector) const
     });
 }
 
-void Element::parserSetAttributes(Span<const Attribute> attributes)
+void Element::parserSetAttributes(std::span<const Attribute> attributes)
 {
     ASSERT(!isConnected());
     ASSERT(!parentNode());

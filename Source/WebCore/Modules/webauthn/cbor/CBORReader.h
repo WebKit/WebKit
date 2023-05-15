@@ -72,7 +72,7 @@ namespace cbor {
 class CBORReader {
     WTF_MAKE_NONCOPYABLE(CBORReader);
 public:
-    using Bytes = Span<const uint8_t>;
+    using Bytes = std::span<const uint8_t>;
 
     enum class DecoderError {
         CBORNoError = 0,

@@ -82,7 +82,7 @@ template<class Decoder> std::optional<Ref<ByteArrayPixelBuffer>> ByteArrayPixelB
     if (computedBufferSize.hasOverflowed())
         return std::nullopt;
 
-    std::optional<Span<const uint8_t>> data;
+    std::optional<std::span<const uint8_t>> data;
     decoder >> data;
     if (!data || data->size_bytes() != computedBufferSize.value())
         return std::nullopt;

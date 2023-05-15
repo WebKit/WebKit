@@ -846,7 +846,7 @@ bool isFontBinaryAllowed(const void* data, size_t size, DownloadableBinaryFontAl
     return false;
 }
 
-bool isFontBinaryAllowed(Span<const uint8_t> data, DownloadableBinaryFontAllowedTypes allowedType)
+bool isFontBinaryAllowed(std::span<const uint8_t> data, DownloadableBinaryFontAllowedTypes allowedType)
 {
     return isFontBinaryAllowed(data.data(), data.size(), allowedType);
 }

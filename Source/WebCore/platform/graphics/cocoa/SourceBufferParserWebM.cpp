@@ -492,7 +492,7 @@ private:
     webm::TrackEntry m_track;
 };
 
-Span<const ASCIILiteral> SourceBufferParserWebM::supportedMIMETypes()
+std::span<const ASCIILiteral> SourceBufferParserWebM::supportedMIMETypes()
 {
 #if !(ENABLE(VP9) || ENABLE(VORBIS) || ENABLE(OPUS))
     return { };

@@ -44,7 +44,7 @@ struct AuthenticationExtensionsClientInputs {
     std::optional<AuthenticationExtensionsClientInputs::LargeBlobInputs> largeBlob;
 
     WEBCORE_EXPORT Vector<uint8_t> toCBOR() const;
-    WEBCORE_EXPORT static std::optional<AuthenticationExtensionsClientInputs> fromCBOR(Span<const uint8_t>);
+    WEBCORE_EXPORT static std::optional<AuthenticationExtensionsClientInputs> fromCBOR(std::span<const uint8_t>);
 };
 
 } // namespace WebCore

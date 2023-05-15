@@ -714,7 +714,7 @@ public:
             TypeOperations::uninitializedCopy(data, data + dataSize, begin());
     }
 
-    Vector(Span<const T> span)
+    Vector(std::span<const T> span)
         : Vector(span.data(), span.size()) { }
 
     Vector(std::initializer_list<T> initializerList)
@@ -770,7 +770,7 @@ public:
     static ptrdiff_t sizeMemoryOffset() { return OBJECT_OFFSETOF(Vector, m_size); }
     size_t capacity() const { return Base::capacity(); }
     bool isEmpty() const { return !size(); }
-    Span<const T> span() const { return { data(), size() }; }
+    std::span<const T> span() const { return { data(), size() }; }
 
     T& at(size_t i)
     {
@@ -848,8 +848,8 @@ public:
 
     template<typename U> ALWAYS_INLINE void append(const U* u, size_t size) { append<FailureAction::Crash>(u, size); }
     template<typename U> ALWAYS_INLINE bool tryAppend(const U* u, size_t size) { return append<FailureAction::Report>(u, size); }
-    template<typename U> ALWAYS_INLINE void append(Span<const U> span) { append(span.data(), span.size()); }
-    template<typename U> ALWAYS_INLINE void uncheckedAppend(Span<const U> span) { uncheckedAppend<FailureAction::Crash>(span.data(), span.size()); }
+    template<typename U> ALWAYS_INLINE void append(std::span<const U> span) { append(span.data(), span.size()); }
+    template<typename U> ALWAYS_INLINE void uncheckedAppend(std::span<const U> span) { uncheckedAppend<FailureAction::Crash>(span.data(), span.size()); }
     template<typename U, size_t otherCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc> void appendVector(const Vector<U, otherCapacity, OtherOverflowHandler, otherMinCapacity, OtherMalloc>&);
     template<typename U, size_t otherCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc> void appendVector(Vector<U, otherCapacity, OtherOverflowHandler, otherMinCapacity, OtherMalloc>&&);
 

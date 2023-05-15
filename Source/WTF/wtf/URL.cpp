@@ -558,7 +558,7 @@ template<typename StringType>
 static String percentEncodeCharacters(const StringType& input, bool(*shouldEncode)(UChar))
 {
     auto encode = [shouldEncode] (const StringType& input) {
-        auto result = input.tryGetUTF8([&](Span<const char> span) -> String {
+        auto result = input.tryGetUTF8([&](std::span<const char> span) -> String {
             StringBuilder builder;
             for (unsigned j = 0; j < span.size(); j++) {
                 auto c = span[j];

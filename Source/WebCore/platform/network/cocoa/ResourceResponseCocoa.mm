@@ -75,7 +75,7 @@ void ResourceResponse::disableLazyInitialization()
     lazyInit(AllFields);
 }
 
-CertificateInfo ResourceResponse::platformCertificateInfo(Span<const std::byte> auditToken) const
+CertificateInfo ResourceResponse::platformCertificateInfo(std::span<const std::byte> auditToken) const
 {
     CFURLResponseRef cfResponse = [m_nsResponse _CFURLResponse];
     if (!cfResponse)

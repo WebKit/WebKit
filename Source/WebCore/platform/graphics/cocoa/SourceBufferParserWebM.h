@@ -316,7 +316,7 @@ class SourceBufferParserWebM
 public:
     static bool isWebMFormatReaderAvailable();
     static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&);
-    static Span<const ASCIILiteral> supportedMIMETypes();
+    static std::span<const ASCIILiteral> supportedMIMETypes();
     WEBCORE_EXPORT static RefPtr<SourceBufferParserWebM> create(const ContentType&);
 
     SourceBufferParserWebM();

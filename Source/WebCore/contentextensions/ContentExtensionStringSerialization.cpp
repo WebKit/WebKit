@@ -30,7 +30,7 @@
 
 namespace WebCore::ContentExtensions {
 
-String deserializeString(Span<const uint8_t> span)
+String deserializeString(std::span<const uint8_t> span)
 {
     auto serializedLength = *reinterpret_cast<const uint32_t*>(span.data());
     return String::fromUTF8(span.data() + sizeof(uint32_t), serializedLength - sizeof(uint32_t));
@@ -41,11 +41,11 @@ void serializeString(Vector<uint8_t>& actions, const String& string)
     auto utf8 = string.utf8();
     uint32_t serializedLength = sizeof(uint32_t) + utf8.length();
     actions.reserveCapacity(actions.size() + serializedLength);
-    actions.uncheckedAppend(Span<const uint8_t> { reinterpret_cast<const uint8_t*>(&serializedLength), sizeof(serializedLength) });
-    actions.uncheckedAppend(Span<const uint8_t> { reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length() });
+    actions.uncheckedAppend(std::span<const uint8_t> { reinterpret_cast<const uint8_t*>(&serializedLength), sizeof(serializedLength) });
+    actions.uncheckedAppend(std::span<const uint8_t> { reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length() });
 }
 
-size_t stringSerializedLength(Span<const uint8_t> span)
+size_t stringSerializedLength(std::span<const uint8_t> span)
 {
     return *reinterpret_cast<const uint32_t*>(span.data());
 }

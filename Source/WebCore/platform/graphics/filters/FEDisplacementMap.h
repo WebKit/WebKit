@@ -57,7 +57,7 @@ private:
 
     unsigned numberOfEffectInputs() const override { return 2; }
 
-    FloatRect calculateImageRect(const Filter&, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
+    FloatRect calculateImageRect(const Filter&, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
 
     const DestinationColorSpace& resultColorSpace(const FilterImageVector&) const override;
     void transformInputsColorSpace(const FilterImageVector& inputs) const override;

@@ -39,22 +39,22 @@ P256DHKeyPair P256DHKeyPair::generate(void)
     return { };
 }
 
-bool validateP256DHPublicKey(Span<const uint8_t>)
+bool validateP256DHPublicKey(std::span<const uint8_t>)
 {
     return false;
 }
 
-std::optional<Vector<uint8_t>> computeP256DHSharedSecret(Span<const uint8_t>, const P256DHKeyPair&)
+std::optional<Vector<uint8_t>> computeP256DHSharedSecret(std::span<const uint8_t>, const P256DHKeyPair&)
 {
     return std::nullopt;
 }
 
-Vector<uint8_t> hmacSHA256(Span<const uint8_t>, Span<const uint8_t>)
+Vector<uint8_t> hmacSHA256(std::span<const uint8_t>, std::span<const uint8_t>)
 {
     return { };
 }
 
-std::optional<Vector<uint8_t>> decryptAES128GCM(Span<const uint8_t>, Span<const uint8_t>, Span<const uint8_t>)
+std::optional<Vector<uint8_t>> decryptAES128GCM(std::span<const uint8_t>, std::span<const uint8_t>, std::span<const uint8_t>)
 {
     return std::nullopt;
 }

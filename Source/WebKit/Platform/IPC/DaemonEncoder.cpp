@@ -28,7 +28,7 @@
 
 namespace WebKit::Daemon {
 
-void Encoder::encodeFixedLengthData(Span<const uint8_t> span)
+void Encoder::encodeFixedLengthData(std::span<const uint8_t> span)
 {
     m_buffer.append(span);
 }

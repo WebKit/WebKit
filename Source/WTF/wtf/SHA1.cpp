@@ -47,7 +47,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-void SHA1::addBytes(Span<const std::byte> input)
+void SHA1::addBytes(std::span<const std::byte> input)
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     CC_SHA1_Update(&m_context, input.data(), input.size());
@@ -102,7 +102,7 @@ SHA1::SHA1()
     reset();
 }
 
-void SHA1::addBytes(Span<const std::byte> input)
+void SHA1::addBytes(std::span<const std::byte> input)
 {
     for (auto byte : input) {
         ASSERT(m_cursor < 64);

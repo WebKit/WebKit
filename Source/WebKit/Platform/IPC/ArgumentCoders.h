@@ -71,9 +71,9 @@ template<typename T> struct SimpleArgumentCoder {
     }
 };
 
-template<typename T, size_t Extent> struct ArgumentCoder<Span<T, Extent>> {
+template<typename T, size_t Extent> struct ArgumentCoder<std::span<T, Extent>> {
     template<typename Encoder>
-    static void encode(Encoder& encoder, const Span<T, Extent>& span)
+    static void encode(Encoder& encoder, const std::span<T, Extent>& span)
     {
         static_assert(Extent, "Can't encode a fixed size of 0");
 
@@ -87,7 +87,7 @@ template<typename T, size_t Extent> struct ArgumentCoder<Span<T, Extent>> {
     }
 
     template<typename Decoder>
-    static std::optional<Span<T, Extent>> decode(Decoder& decoder)
+    static std::optional<std::span<T, Extent>> decode(Decoder& decoder)
     {
         static_assert(Extent, "Can't decode a fixed size of 0");
 
@@ -99,7 +99,7 @@ template<typename T, size_t Extent> struct ArgumentCoder<Span<T, Extent>> {
 
             size = *decodedSize;
             if (!size)
-                return Span<T, Extent> { };
+                return std::span<T, Extent> { };
         }
 
         auto data = decoder.template decodeSpan<T>(size);
@@ -109,7 +109,7 @@ template<typename T, size_t Extent> struct ArgumentCoder<Span<T, Extent>> {
         if constexpr (Extent == WTF::dynamic_extent)
             return data;
         else
-            return Span<T, Extent> { data.data(), Extent };
+            return std::span<T, Extent> { data.data(), Extent };
     }
 };
 
@@ -503,7 +503,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
     template<typename Decoder>
     static std::optional<Vector<T, inlineCapacity, OverflowHandler, minCapacity>> decode(Decoder& decoder)
     {
-        auto data = decoder.template decode<Span<const T>>();
+        auto data = decoder.template decode<std::span<const T>>();
         if (!data)
             return std::nullopt;
         return std::make_optional<Vector<T, inlineCapacity, OverflowHandler, minCapacity>>(*data);

@@ -938,7 +938,7 @@ sub printTagNameHeaderFile
     print F "inline LazyNeverDestroyed<EnumeratedArray<TagName, AtomString, lastTagNameEnumValue>> tagNameStrings;\n";
     print F "\n";
     print F "WEBCORE_EXPORT void initializeTagNameStrings();\n";
-    print F "TagName findTagName(Span<const UChar>);\n";
+    print F "TagName findTagName(std::span<const UChar>);\n";
     print F "#if ASSERT_ENABLED\n";
     print F "TagName findTagName(const String&);\n";
     print F "#endif\n";
@@ -1021,12 +1021,12 @@ sub printTagNameCppFile
     print F "}\n";
     print F "\n";
     print F "template <typename characterType>\n";
-    print F "static inline TagName findTagFromBuffer(Span<const characterType> buffer)\n";
+    print F "static inline TagName findTagFromBuffer(std::span<const characterType> buffer)\n";
     print F "{\n";
     generateFindBody(\%allElements, \&byElementNameOrder, "parsedTagName", "TagName", "parsedTagEnumValue");
     print F "}\n";
     print F "\n";
-    print F "TagName findTagName(Span<const UChar> buffer)\n";
+    print F "TagName findTagName(std::span<const UChar> buffer)\n";
     print F "{\n";
     print F "    return findTagFromBuffer(buffer);\n";
     print F "}\n";
@@ -1108,8 +1108,8 @@ sub printNodeNameHeaderFile
     print F "} // namespace AttributeNames\n";
     print F "\n";
     print F "NodeName findNodeName(Namespace, const String&);\n";
-    print F "ElementName findHTMLElementName(Span<const LChar>);\n";
-    print F "ElementName findHTMLElementName(Span<const UChar>);\n";
+    print F "ElementName findHTMLElementName(std::span<const LChar>);\n";
+    print F "ElementName findHTMLElementName(std::span<const UChar>);\n";
     print F "TagName tagNameForElementName(ElementName);\n";
     print F "ElementName elementNameForTag(Namespace, TagName);\n";
     print F "const QualifiedName& qualifiedNameForNodeName(NodeName);\n";
@@ -1207,7 +1207,7 @@ sub printNodeNameCppFile
     for my $namespace (@allNamespaces) {
         my $namespaceIdentifier = $namespace eq "" ? "NoNamespace" : $namespace;
         print F "template <typename characterType>\n";
-        print F "static inline NodeName find${namespaceIdentifier}NodeName(Span<const characterType> buffer)\n";
+        print F "static inline NodeName find${namespaceIdentifier}NodeName(std::span<const characterType> buffer)\n";
         print F "{\n";
         my %allNodesInNamespace = ();
         for my $elementTag (keys %{$allElementsPerNamespace{$namespace}}) {
@@ -1221,7 +1221,7 @@ sub printNodeNameCppFile
         print F "\n";
     }
     print F "template <typename characterType>\n";
-    print F "static inline NodeName findNodeNameFromBuffer(Namespace ns, Span<const characterType> buffer)\n";
+    print F "static inline NodeName findNodeNameFromBuffer(Namespace ns, std::span<const characterType> buffer)\n";
     print F "{\n";
     print F "    switch (ns) {\n";
     for my $namespace (@allNamespaces) {
@@ -1242,12 +1242,12 @@ sub printNodeNameCppFile
     print F "    return findNodeNameFromBuffer(ns, makeSpan(name.characters16(), name.length()));\n";
     print F "}\n";
     print F "\n";
-    print F "ElementName findHTMLElementName(Span<const LChar> buffer)\n";
+    print F "ElementName findHTMLElementName(std::span<const LChar> buffer)\n";
     print F "{\n";
     print F "    return findHTMLNodeName(buffer);\n";
     print F "}\n";
     print F "\n";
-    print F "ElementName findHTMLElementName(Span<const UChar> buffer)\n";
+    print F "ElementName findHTMLElementName(std::span<const UChar> buffer)\n";
     print F "{\n";
     print F "    return findHTMLNodeName(buffer);\n";
     print F "}\n";

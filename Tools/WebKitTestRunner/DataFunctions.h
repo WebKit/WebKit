@@ -43,7 +43,7 @@ inline WKDataRef dataValue(WKTypeRef value)
 inline UUID dataToUUID(WKDataRef data)
 {
     RELEASE_ASSERT(WKDataGetSize(data) == 16);
-    return UUID { Span<const uint8_t, 16> { WKDataGetBytes(data), 16 } };
+    return UUID { std::span<const uint8_t, 16> { WKDataGetBytes(data), 16 } };
 }
 
 inline WKRetainPtr<WKDataRef> uuidToData(const UUID& uuid)

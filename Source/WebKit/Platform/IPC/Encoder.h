@@ -68,7 +68,7 @@ public:
     void wrapForTesting(UniqueRef<Encoder>&&);
 
     template<typename T, size_t Extent>
-    void encodeSpan(const Span<T, Extent>&);
+    void encodeSpan(const std::span<T, Extent>&);
     template<typename T>
     void encodeObject(const T&);
 
@@ -112,7 +112,7 @@ private:
 };
 
 template<typename T, size_t Extent>
-inline void Encoder::encodeSpan(const Span<T, Extent>& span)
+inline void Encoder::encodeSpan(const std::span<T, Extent>& span)
 {
     auto* data = reinterpret_cast<const uint8_t*>(span.data());
     size_t size = span.size_bytes();

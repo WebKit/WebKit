@@ -43,12 +43,12 @@ public:
 private:
     WebCompiledContentRuleList(WebCompiledContentRuleListData&&);
 
-    Span<const uint8_t> urlFiltersBytecode() const final;
-    Span<const uint8_t> topURLFiltersBytecode() const final;
-    Span<const uint8_t> frameURLFiltersBytecode() const final;
-    Span<const uint8_t> serializedActions() const final;
+    std::span<const uint8_t> urlFiltersBytecode() const final;
+    std::span<const uint8_t> topURLFiltersBytecode() const final;
+    std::span<const uint8_t> frameURLFiltersBytecode() const final;
+    std::span<const uint8_t> serializedActions() const final;
     
-    Span<const uint8_t> spanWithOffsetAndLength(size_t, size_t) const;
+    std::span<const uint8_t> spanWithOffsetAndLength(size_t, size_t) const;
 
     WebCompiledContentRuleListData m_data;
 };

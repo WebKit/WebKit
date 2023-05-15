@@ -45,13 +45,13 @@ namespace WebCore {
 // FIXME: URLSchemesMap is a peculiar type name given that it is a set.
 
 static const URLSchemesMap& builtinLocalURLSchemes();
-static Span<const ASCIILiteral> builtinSecureSchemes();
-static Span<const ASCIILiteral> builtinSchemesWithUniqueOrigins();
-static Span<const ASCIILiteral> builtinEmptyDocumentSchemes();
-static Span<const ASCIILiteral> builtinCanDisplayOnlyIfCanRequestSchemes();
-static Span<const ASCIILiteral> builtinCORSEnabledSchemes();
+static std::span<const ASCIILiteral> builtinSecureSchemes();
+static std::span<const ASCIILiteral> builtinSchemesWithUniqueOrigins();
+static std::span<const ASCIILiteral> builtinEmptyDocumentSchemes();
+static std::span<const ASCIILiteral> builtinCanDisplayOnlyIfCanRequestSchemes();
+static std::span<const ASCIILiteral> builtinCORSEnabledSchemes();
 
-using ASCIILiteralSpanFunction = Span<const ASCIILiteral> (*)();
+using ASCIILiteralSpanFunction = std::span<const ASCIILiteral> (*)();
 
 static void add(URLSchemesMap& set, ASCIILiteralSpanFunction function)
 {
@@ -134,7 +134,7 @@ static URLSchemesMap& displayIsolatedURLSchemes() WTF_REQUIRES_LOCK(schemeRegist
     return displayIsolatedSchemes;
 }
 
-static Span<const ASCIILiteral> builtinSecureSchemes()
+static std::span<const ASCIILiteral> builtinSecureSchemes()
 {
     static constexpr std::array schemes {
         "https"_s,
@@ -158,7 +158,7 @@ static URLSchemesMap& secureSchemes() WTF_REQUIRES_LOCK(schemeRegistryLock)
     return secureSchemes;
 }
 
-static Span<const ASCIILiteral> builtinSchemesWithUniqueOrigins()
+static std::span<const ASCIILiteral> builtinSchemesWithUniqueOrigins()
 {
     static constexpr std::array schemes {
         "about"_s,
@@ -177,7 +177,7 @@ static URLSchemesMap& schemesWithUniqueOrigins() WTF_REQUIRES_LOCK(schemeRegistr
     return schemesWithUniqueOrigins;
 }
 
-static Span<const ASCIILiteral> builtinEmptyDocumentSchemes()
+static std::span<const ASCIILiteral> builtinEmptyDocumentSchemes()
 {
     static constexpr std::array schemes { "about"_s };
     return schemes;
@@ -197,7 +197,7 @@ static URLSchemesMap& schemesForbiddenFromDomainRelaxation()
     return schemes;
 }
 
-static Span<const ASCIILiteral> builtinCanDisplayOnlyIfCanRequestSchemes()
+static std::span<const ASCIILiteral> builtinCanDisplayOnlyIfCanRequestSchemes()
 {
     static constexpr std::array schemes { "blob"_s };
     return schemes;
@@ -262,7 +262,7 @@ static URLSchemesMap& schemesAllowingDatabaseAccessInPrivateBrowsing()
     return schemesAllowingDatabaseAccessInPrivateBrowsing;
 }
 
-static Span<const ASCIILiteral> builtinCORSEnabledSchemes()
+static std::span<const ASCIILiteral> builtinCORSEnabledSchemes()
 {
     static constexpr std::array schemes { "http"_s, "https"_s };
     return schemes;
@@ -277,7 +277,7 @@ static URLSchemesMap& CORSEnabledSchemes()
 }
 
 #if ENABLE(PDFJS)
-static Span<const ASCIILiteral> builtinCSPBypassingSchemes()
+static std::span<const ASCIILiteral> builtinCSPBypassingSchemes()
 {
     static constexpr std::array schemes { "webkit-pdfjs-viewer"_s };
     return schemes;

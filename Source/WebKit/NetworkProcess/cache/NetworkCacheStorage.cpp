@@ -465,7 +465,7 @@ struct RecordMetaData {
 static WARN_UNUSED_RETURN bool decodeRecordMetaData(RecordMetaData& metaData, const Data& fileData)
 {
     bool success = false;
-    fileData.apply([&metaData, &success](Span<const uint8_t> span) {
+    fileData.apply([&metaData, &success](std::span<const uint8_t> span) {
         WTF::Persistence::Decoder decoder(span);
         
         std::optional<unsigned> cacheStorageVersion;

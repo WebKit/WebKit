@@ -34,22 +34,22 @@ namespace WebCore {
 
 class HTMLNameCache {
 public:
-    ALWAYS_INLINE static QualifiedName makeAttributeQualifiedName(Span<const UChar> string)
+    ALWAYS_INLINE static QualifiedName makeAttributeQualifiedName(std::span<const UChar> string)
     {
         return makeQualifiedName(string);
     }
 
-    ALWAYS_INLINE static QualifiedName makeAttributeQualifiedName(Span<const LChar> string)
+    ALWAYS_INLINE static QualifiedName makeAttributeQualifiedName(std::span<const LChar> string)
     {
         return makeQualifiedName(string);
     }
 
-    ALWAYS_INLINE static AtomString makeAttributeValue(Span<const UChar> string)
+    ALWAYS_INLINE static AtomString makeAttributeValue(std::span<const UChar> string)
     {
         return makeAtomString(string);
     }
 
-    ALWAYS_INLINE static AtomString makeAttributeValue(Span<const LChar> string)
+    ALWAYS_INLINE static AtomString makeAttributeValue(std::span<const LChar> string)
     {
         return makeAtomString(string);
     }
@@ -63,7 +63,7 @@ public:
 
 private:
     template<typename CharacterType>
-    ALWAYS_INLINE static AtomString makeAtomString(Span<const CharacterType> string)
+    ALWAYS_INLINE static AtomString makeAtomString(std::span<const CharacterType> string)
     {
         if (string.empty())
             return emptyAtom();
@@ -85,7 +85,7 @@ private:
     }
 
     template<typename CharacterType>
-    ALWAYS_INLINE static QualifiedName makeQualifiedName(Span<const CharacterType> string)
+    ALWAYS_INLINE static QualifiedName makeQualifiedName(std::span<const CharacterType> string)
     {
         if (string.empty())
             return nullQName();

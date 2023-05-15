@@ -75,7 +75,7 @@ protected:
 
     void dispatchVideoFrameToObservers(VideoFrame&, VideoFrameTimeMetadata);
 
-    static Span<const IntSize> standardVideoSizes();
+    static std::span<const IntSize> standardVideoSizes();
 
 private:
     struct CaptureSizeFrameRateAndZoom {

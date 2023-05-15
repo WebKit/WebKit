@@ -70,7 +70,7 @@ void RealtimeVideoCaptureSource::setSupportedPresets(Vector<VideoPreset>&& prese
         preset.sortFrameRateRanges();
 }
 
-Span<const IntSize> RealtimeVideoCaptureSource::standardVideoSizes()
+std::span<const IntSize> RealtimeVideoCaptureSource::standardVideoSizes()
 {
     static constexpr IntSize sizes[] = {
         { 112, 112 },

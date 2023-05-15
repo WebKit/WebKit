@@ -38,15 +38,15 @@ namespace WebCore {
 
 class CSSGridLineNamesValue final : public CSSValue {
 public:
-    static Ref<CSSGridLineNamesValue> create(Span<const String>);
+    static Ref<CSSGridLineNamesValue> create(std::span<const String>);
 
-    Span<const String> names() const { return m_names; }
+    std::span<const String> names() const { return m_names; }
 
     String customCSSText() const;
     bool equals(const CSSGridLineNamesValue& other) const { return m_names == other.m_names; }
 
 private:
-    explicit CSSGridLineNamesValue(Span<const String>);
+    explicit CSSGridLineNamesValue(std::span<const String>);
 
     FixedVector<String> m_names;
 };

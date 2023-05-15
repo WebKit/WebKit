@@ -71,7 +71,7 @@ namespace IPC {
 class Decoder;
 class FormDataReference;
 class SharedBufferReference;
-using DataReference = Span<const uint8_t>;
+using DataReference = std::span<const uint8_t>;
 }
 
 namespace PAL {

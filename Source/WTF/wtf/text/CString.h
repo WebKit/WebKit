@@ -76,14 +76,14 @@ public:
 
     const uint8_t* dataAsUInt8Ptr() const { return reinterpret_cast<const uint8_t*>(data()); }
 
-    Span<const uint8_t> bytes() const
+    std::span<const uint8_t> bytes() const
     {
         if (m_buffer)
             return { reinterpret_cast<const uint8_t*>(m_buffer->data()), m_buffer->length() };
         return { };
     }
 
-    Span<const uint8_t> bytesInludingNullTerminator() const
+    std::span<const uint8_t> bytesInludingNullTerminator() const
     {
         if (m_buffer)
             return { reinterpret_cast<const uint8_t*>(m_buffer->data()), m_buffer->length() + 1 };

@@ -121,7 +121,7 @@ public:
     WEBCORE_EXPORT Ref<MutableStyleProperties> mutableCopy() const;
     Ref<ImmutableStyleProperties> immutableCopyIfNeeded() const;
 
-    Ref<MutableStyleProperties> copyProperties(Span<const CSSPropertyID>) const;
+    Ref<MutableStyleProperties> copyProperties(std::span<const CSSPropertyID>) const;
     
     String asText() const;
     AtomString asTextAtom() const;

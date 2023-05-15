@@ -1229,13 +1229,13 @@ public:
 
     // getParameter
     virtual String getString(GCGLenum name) = 0;
-    virtual void getFloatv(GCGLenum pname, Span<GCGLfloat> value) = 0;
-    virtual void getIntegerv(GCGLenum pname, Span<GCGLint> value) = 0;
-    virtual void getIntegeri_v(GCGLenum pname, GCGLuint index, Span<GCGLint, 4> value) = 0; // NOLINT
+    virtual void getFloatv(GCGLenum pname, std::span<GCGLfloat> value) = 0;
+    virtual void getIntegerv(GCGLenum pname, std::span<GCGLint> value) = 0;
+    virtual void getIntegeri_v(GCGLenum pname, GCGLuint index, std::span<GCGLint, 4> value) = 0; // NOLINT
     virtual GCGLint64 getInteger64(GCGLenum pname) = 0;
     virtual GCGLint64 getInteger64i(GCGLenum pname, GCGLuint index) = 0;
     virtual GCGLint getProgrami(PlatformGLObject program, GCGLenum pname) = 0;
-    virtual void getBooleanv(GCGLenum pname, Span<GCGLboolean> value) = 0;
+    virtual void getBooleanv(GCGLenum pname, std::span<GCGLboolean> value) = 0;
 
     virtual GCGLErrorCodeSet getErrors() = 0;
 
@@ -1252,7 +1252,7 @@ public:
     virtual GCGLint getShaderi(PlatformGLObject, GCGLenum pname) = 0;
 
     virtual String getShaderInfoLog(PlatformGLObject) = 0;
-    virtual void getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, Span<GCGLint, 2> range, GCGLint* precision) = 0;
+    virtual void getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, std::span<GCGLint, 2> range, GCGLint* precision) = 0;
 
     virtual String getShaderSource(PlatformGLObject) = 0;
 
@@ -1261,9 +1261,9 @@ public:
     virtual GCGLint getTexParameteri(GCGLenum target, GCGLenum pname) = 0;
 
     // getUniform
-    virtual void getUniformfv(PlatformGLObject program, GCGLint location, Span<GCGLfloat> value) = 0;
-    virtual void getUniformiv(PlatformGLObject program, GCGLint location, Span<GCGLint> value) = 0;
-    virtual void getUniformuiv(PlatformGLObject program, GCGLint location, Span<GCGLuint> value) = 0;
+    virtual void getUniformfv(PlatformGLObject program, GCGLint location, std::span<GCGLfloat> value) = 0;
+    virtual void getUniformiv(PlatformGLObject program, GCGLint location, std::span<GCGLint> value) = 0;
+    virtual void getUniformuiv(PlatformGLObject program, GCGLint location, std::span<GCGLuint> value) = 0;
 
     virtual GCGLint getUniformLocation(PlatformGLObject, const String& name) = 0;
 
@@ -1299,55 +1299,55 @@ public:
     virtual void texParameteri(GCGLenum target, GCGLenum pname, GCGLint param) = 0;
 
     virtual void uniform1f(GCGLint location, GCGLfloat x) = 0;
-    virtual void uniform1fv(GCGLint location, Span<const GCGLfloat> v) = 0;
+    virtual void uniform1fv(GCGLint location, std::span<const GCGLfloat> v) = 0;
     virtual void uniform1i(GCGLint location, GCGLint x) = 0;
-    virtual void uniform1iv(GCGLint location, Span<const GCGLint> v) = 0;
+    virtual void uniform1iv(GCGLint location, std::span<const GCGLint> v) = 0;
     virtual void uniform2f(GCGLint location, GCGLfloat x, GCGLfloat y) = 0;
-    virtual void uniform2fv(GCGLint location, Span<const GCGLfloat> v) = 0;
+    virtual void uniform2fv(GCGLint location, std::span<const GCGLfloat> v) = 0;
     virtual void uniform2i(GCGLint location, GCGLint x, GCGLint y) = 0;
-    virtual void uniform2iv(GCGLint location, Span<const GCGLint> v) = 0;
+    virtual void uniform2iv(GCGLint location, std::span<const GCGLint> v) = 0;
     virtual void uniform3f(GCGLint location, GCGLfloat x, GCGLfloat y, GCGLfloat z) = 0;
-    virtual void uniform3fv(GCGLint location, Span<const GCGLfloat> v) = 0;
+    virtual void uniform3fv(GCGLint location, std::span<const GCGLfloat> v) = 0;
     virtual void uniform3i(GCGLint location, GCGLint x, GCGLint y, GCGLint z) = 0;
-    virtual void uniform3iv(GCGLint location, Span<const GCGLint> v) = 0;
+    virtual void uniform3iv(GCGLint location, std::span<const GCGLint> v) = 0;
     virtual void uniform4f(GCGLint location, GCGLfloat x, GCGLfloat y, GCGLfloat z, GCGLfloat w) = 0;
-    virtual void uniform4fv(GCGLint location, Span<const GCGLfloat> v) = 0;
+    virtual void uniform4fv(GCGLint location, std::span<const GCGLfloat> v) = 0;
     virtual void uniform4i(GCGLint location, GCGLint x, GCGLint y, GCGLint z, GCGLint w) = 0;
-    virtual void uniform4iv(GCGLint location, Span<const GCGLint> v) = 0;
-    virtual void uniformMatrix2fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> value) = 0;
-    virtual void uniformMatrix3fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> value) = 0;
-    virtual void uniformMatrix4fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> value) = 0;
+    virtual void uniform4iv(GCGLint location, std::span<const GCGLint> v) = 0;
+    virtual void uniformMatrix2fv(GCGLint location, GCGLboolean transpose, std::span<const GCGLfloat> value) = 0;
+    virtual void uniformMatrix3fv(GCGLint location, GCGLboolean transpose, std::span<const GCGLfloat> value) = 0;
+    virtual void uniformMatrix4fv(GCGLint location, GCGLboolean transpose, std::span<const GCGLfloat> value) = 0;
 
     virtual void useProgram(PlatformGLObject) = 0;
     virtual void validateProgram(PlatformGLObject) = 0;
 
     virtual void vertexAttrib1f(GCGLuint index, GCGLfloat x) = 0;
-    virtual void vertexAttrib1fv(GCGLuint index, Span<const GCGLfloat, 1> values) = 0;
+    virtual void vertexAttrib1fv(GCGLuint index, std::span<const GCGLfloat, 1> values) = 0;
     virtual void vertexAttrib2f(GCGLuint index, GCGLfloat x, GCGLfloat y) = 0;
-    virtual void vertexAttrib2fv(GCGLuint index, Span<const GCGLfloat, 2> values) = 0;
+    virtual void vertexAttrib2fv(GCGLuint index, std::span<const GCGLfloat, 2> values) = 0;
     virtual void vertexAttrib3f(GCGLuint index, GCGLfloat x, GCGLfloat y, GCGLfloat z) = 0;
-    virtual void vertexAttrib3fv(GCGLuint index, Span<const GCGLfloat, 3> values) = 0;
+    virtual void vertexAttrib3fv(GCGLuint index, std::span<const GCGLfloat, 3> values) = 0;
     virtual void vertexAttrib4f(GCGLuint index, GCGLfloat x, GCGLfloat y, GCGLfloat z, GCGLfloat w) = 0;
-    virtual void vertexAttrib4fv(GCGLuint index, Span<const GCGLfloat, 4> values) = 0;
+    virtual void vertexAttrib4fv(GCGLuint index, std::span<const GCGLfloat, 4> values) = 0;
 
     virtual void vertexAttribPointer(GCGLuint index, GCGLint size, GCGLenum type, GCGLboolean normalized, GCGLsizei stride, GCGLintptr offset) = 0;
 
     virtual void viewport(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) = 0;
 
     virtual void bufferData(GCGLenum target, GCGLsizeiptr, GCGLenum usage) = 0;
-    virtual void bufferData(GCGLenum target, Span<const uint8_t> data, GCGLenum usage) = 0;
-    virtual void bufferSubData(GCGLenum target, GCGLintptr offset, Span<const uint8_t> data) = 0;
+    virtual void bufferData(GCGLenum target, std::span<const uint8_t> data, GCGLenum usage) = 0;
+    virtual void bufferSubData(GCGLenum target, GCGLintptr offset, std::span<const uint8_t> data) = 0;
 
-    virtual void readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, Span<uint8_t> data) = 0;
+    virtual void readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, std::span<uint8_t> data) = 0;
     virtual void readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset) = 0;
 
-    virtual void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type,  Span<const uint8_t> pixels) = 0;
+    virtual void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type,  std::span<const uint8_t> pixels) = 0;
     virtual void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLintptr offset) = 0;
-    virtual void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, Span<const uint8_t> pixels) = 0;
+    virtual void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels) = 0;
     virtual void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset) = 0;
-    virtual void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLsizei imageSize, Span<const uint8_t> data) = 0;
+    virtual void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLsizei imageSize, std::span<const uint8_t> data) = 0;
     virtual void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLsizei imageSize, GCGLintptr offset) = 0;
-    virtual void compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, Span<const uint8_t> data) = 0;
+    virtual void compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, std::span<const uint8_t> data) = 0;
     virtual void compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLsizei imageSize, GCGLintptr offset) = 0;
 
     virtual void drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount) = 0;
@@ -1363,29 +1363,29 @@ public:
     // ========== WebGL 2 entry points.
 
     virtual void copyBufferSubData(GCGLenum readTarget, GCGLenum writeTarget, GCGLintptr readOffset, GCGLintptr writeOffset, GCGLsizeiptr size) = 0;
-    virtual void getBufferSubData(GCGLenum target, GCGLintptr offset, Span<uint8_t> data) = 0;
+    virtual void getBufferSubData(GCGLenum target, GCGLintptr offset, std::span<uint8_t> data) = 0;
 
     virtual void blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter) = 0;
     virtual void framebufferTextureLayer(GCGLenum target, GCGLenum attachment, PlatformGLObject texture, GCGLint level, GCGLint layer) = 0;
-    virtual void invalidateFramebuffer(GCGLenum target, Span<const GCGLenum> attachments) = 0;
-    virtual void invalidateSubFramebuffer(GCGLenum target, Span<const GCGLenum> attachments, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) = 0;
+    virtual void invalidateFramebuffer(GCGLenum target, std::span<const GCGLenum> attachments) = 0;
+    virtual void invalidateSubFramebuffer(GCGLenum target, std::span<const GCGLenum> attachments, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) = 0;
     virtual void readBuffer(GCGLenum src) = 0;
 
     // getInternalFormatParameter
-    virtual void getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, Span<GCGLint> data) = 0;
+    virtual void getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, std::span<GCGLint> data) = 0;
     virtual void renderbufferStorageMultisample(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) = 0;
 
     virtual void texStorage2D(GCGLenum target, GCGLsizei levels, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) = 0;
     virtual void texStorage3D(GCGLenum target, GCGLsizei levels, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth) = 0;
 
-    virtual void texImage3D(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, Span<const uint8_t> pixels) = 0;
+    virtual void texImage3D(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels) = 0;
     virtual void texImage3D(GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, GCGLintptr offset) = 0;
-    virtual void texSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, Span<const uint8_t> pixels) = 0;
+    virtual void texSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels) = 0;
     virtual void texSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, GCGLintptr offset) = 0;
     virtual void copyTexSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) = 0;
-    virtual void compressedTexImage3D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLsizei imageSize, Span<const uint8_t> data) = 0;
+    virtual void compressedTexImage3D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLsizei imageSize, std::span<const uint8_t> data) = 0;
     virtual void compressedTexImage3D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLsizei imageSize, GCGLintptr offset) = 0;
-    virtual void compressedTexSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLsizei imageSize, Span<const uint8_t> data) = 0;
+    virtual void compressedTexSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLsizei imageSize, std::span<const uint8_t> data) = 0;
     virtual void compressedTexSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLsizei imageSize, GCGLintptr offset) = 0;
 
     virtual GCGLint getFragDataLocation(PlatformGLObject program, const String& name) = 0;
@@ -1394,28 +1394,28 @@ public:
     virtual void uniform2ui(GCGLint location, GCGLuint v0, GCGLuint v1) = 0;
     virtual void uniform3ui(GCGLint location, GCGLuint v0, GCGLuint v1, GCGLuint v2) = 0;
     virtual void uniform4ui(GCGLint location, GCGLuint v0, GCGLuint v1, GCGLuint v2, GCGLuint v3) = 0;
-    virtual void uniform1uiv(GCGLint location, Span<const GCGLuint> data) = 0;
-    virtual void uniform2uiv(GCGLint location, Span<const GCGLuint> data) = 0;
-    virtual void uniform3uiv(GCGLint location, Span<const GCGLuint> data) = 0;
-    virtual void uniform4uiv(GCGLint location, Span<const GCGLuint> data) = 0;
-    virtual void uniformMatrix2x3fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> data) = 0;
-    virtual void uniformMatrix3x2fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> data) = 0;
-    virtual void uniformMatrix2x4fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> data) = 0;
-    virtual void uniformMatrix4x2fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> data) = 0;
-    virtual void uniformMatrix3x4fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> data) = 0;
-    virtual void uniformMatrix4x3fv(GCGLint location, GCGLboolean transpose, Span<const GCGLfloat> data) = 0;
+    virtual void uniform1uiv(GCGLint location, std::span<const GCGLuint> data) = 0;
+    virtual void uniform2uiv(GCGLint location, std::span<const GCGLuint> data) = 0;
+    virtual void uniform3uiv(GCGLint location, std::span<const GCGLuint> data) = 0;
+    virtual void uniform4uiv(GCGLint location, std::span<const GCGLuint> data) = 0;
+    virtual void uniformMatrix2x3fv(GCGLint location, GCGLboolean transpose, std::span<const GCGLfloat> data) = 0;
+    virtual void uniformMatrix3x2fv(GCGLint location, GCGLboolean transpose, std::span<const GCGLfloat> data) = 0;
+    virtual void uniformMatrix2x4fv(GCGLint location, GCGLboolean transpose, std::span<const GCGLfloat> data) = 0;
+    virtual void uniformMatrix4x2fv(GCGLint location, GCGLboolean transpose, std::span<const GCGLfloat> data) = 0;
+    virtual void uniformMatrix3x4fv(GCGLint location, GCGLboolean transpose, std::span<const GCGLfloat> data) = 0;
+    virtual void uniformMatrix4x3fv(GCGLint location, GCGLboolean transpose, std::span<const GCGLfloat> data) = 0;
     virtual void vertexAttribI4i(GCGLuint index, GCGLint x, GCGLint y, GCGLint z, GCGLint w) = 0;
-    virtual void vertexAttribI4iv(GCGLuint index, Span<const GCGLint, 4> values) = 0;
+    virtual void vertexAttribI4iv(GCGLuint index, std::span<const GCGLint, 4> values) = 0;
     virtual void vertexAttribI4ui(GCGLuint index, GCGLuint x, GCGLuint y, GCGLuint z, GCGLuint w) = 0;
-    virtual void vertexAttribI4uiv(GCGLuint index, Span<const GCGLuint, 4> values) = 0;
+    virtual void vertexAttribI4uiv(GCGLuint index, std::span<const GCGLuint, 4> values) = 0;
     virtual void vertexAttribIPointer(GCGLuint index, GCGLint size, GCGLenum type, GCGLsizei stride, GCGLintptr offset) = 0;
 
     virtual void drawRangeElements(GCGLenum mode, GCGLuint start, GCGLuint end, GCGLsizei count, GCGLenum type, GCGLintptr offset) = 0;
 
-    virtual void drawBuffers(Span<const GCGLenum> bufs) = 0;
-    virtual void clearBufferiv(GCGLenum buffer, GCGLint drawbuffer, Span<const GCGLint> values) = 0;
-    virtual void clearBufferuiv(GCGLenum buffer, GCGLint drawbuffer, Span<const GCGLuint> values) = 0;
-    virtual void clearBufferfv(GCGLenum buffer, GCGLint drawbuffer, Span<const GCGLfloat> values) = 0;
+    virtual void drawBuffers(std::span<const GCGLenum> bufs) = 0;
+    virtual void clearBufferiv(GCGLenum buffer, GCGLint drawbuffer, std::span<const GCGLint> values) = 0;
+    virtual void clearBufferuiv(GCGLenum buffer, GCGLint drawbuffer, std::span<const GCGLuint> values) = 0;
+    virtual void clearBufferfv(GCGLenum buffer, GCGLint drawbuffer, std::span<const GCGLfloat> values) = 0;
     virtual void clearBufferfi(GCGLenum buffer, GCGLint drawbuffer, GCGLfloat depth, GCGLint stencil) = 0;
 
     virtual PlatformGLObject createQuery() = 0;
@@ -1467,7 +1467,7 @@ public:
     virtual String getActiveUniformBlockName(PlatformGLObject program, GCGLuint uniformBlockIndex) = 0;
     virtual void uniformBlockBinding(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding) = 0;
 
-    virtual void getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, Span<GCGLint> params) = 0;
+    virtual void getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, std::span<GCGLint> params) = 0;
 
     // ========== Extension related entry points.
 
@@ -1491,7 +1491,7 @@ public:
     virtual String getTranslatedShaderSourceANGLE(PlatformGLObject) = 0;
 
     // GL_ARB_draw_buffers / GL_EXT_draw_buffers
-    virtual void drawBuffersEXT(Span<const GCGLenum> bufs) = 0;
+    virtual void drawBuffersEXT(std::span<const GCGLenum> bufs) = 0;
 
     // GL_EXT_disjoint_timer_query
     virtual PlatformGLObject createQueryEXT() = 0;
@@ -1619,7 +1619,7 @@ public:
     // If the data is not tightly packed according to the passed
     // unpackParams, the output data will be tightly packed.
     // Returns true if successful, false if any error occurred.
-    static bool extractTextureData(unsigned width, unsigned height, GCGLenum format, GCGLenum type, const PixelStoreParams& unpackParams, bool flipY, bool premultiplyAlpha, Span<const uint8_t> pixels, Vector<uint8_t>& data);
+    static bool extractTextureData(unsigned width, unsigned height, GCGLenum format, GCGLenum type, const PixelStoreParams& unpackParams, bool flipY, bool premultiplyAlpha, std::span<const uint8_t> pixels, Vector<uint8_t>& data);
 
     // Packs the contents of the given Image which is passed in |pixels| into the passed Vector
     // according to the given format and type, and obeying the flipY and AlphaOp flags.

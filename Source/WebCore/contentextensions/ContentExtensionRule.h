@@ -139,8 +139,8 @@ private:
 };
 
 struct DeserializedAction : public Action {
-    static DeserializedAction deserialize(Span<const uint8_t>, uint32_t location);
-    static size_t serializedLength(Span<const uint8_t>, uint32_t location);
+    static DeserializedAction deserialize(std::span<const uint8_t>, uint32_t location);
+    static size_t serializedLength(std::span<const uint8_t>, uint32_t location);
 
     uint32_t actionID() const { return m_actionID; }
 

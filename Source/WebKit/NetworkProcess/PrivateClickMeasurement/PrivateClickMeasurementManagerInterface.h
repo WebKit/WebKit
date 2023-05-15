@@ -108,7 +108,7 @@ enum class MessageType : uint8_t {
 constexpr const char* protocolEncodedMessageKey { "encoded message" };
 using EncodedMessage = Vector<uint8_t>;
 
-void decodeMessageAndSendToManager(const Daemon::Connection&, MessageType, Span<const uint8_t> encodedMessage, CompletionHandler<void(Vector<uint8_t>&&)>&&);
+void decodeMessageAndSendToManager(const Daemon::Connection&, MessageType, std::span<const uint8_t> encodedMessage, CompletionHandler<void(Vector<uint8_t>&&)>&&);
 void doDailyActivityInManager();
 bool messageTypeSendsReply(MessageType);
 

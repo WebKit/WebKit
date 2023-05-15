@@ -46,7 +46,7 @@ public:
     explicit InjectedBundlePageUIClient(const WKBundlePageUIClientBase*);
 
     void willAddMessageToConsole(WebPage*, MessageSource, MessageLevel, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceID) override;
-    void willAddMessageWithArgumentsToConsole(WebPage*, MessageSource, MessageLevel, const String& message, Span<const String> messageArguments, unsigned lineNumber, unsigned columnNumber, const String& sourceID) override;
+    void willAddMessageWithArgumentsToConsole(WebPage*, MessageSource, MessageLevel, const String& message, std::span<const String> messageArguments, unsigned lineNumber, unsigned columnNumber, const String& sourceID) override;
     void willSetStatusbarText(WebPage*, const String&) override;
     void willRunJavaScriptAlert(WebPage*, const String&, WebFrame*) override;
     void willRunJavaScriptConfirm(WebPage*, const String&, WebFrame*) override;

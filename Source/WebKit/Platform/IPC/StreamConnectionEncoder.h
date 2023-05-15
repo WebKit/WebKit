@@ -55,7 +55,7 @@ public:
     ~StreamConnectionEncoder() = default;
 
     template<typename T, size_t Extent>
-    bool encodeSpan(const Span<T, Extent>& span)
+    bool encodeSpan(const std::span<T, Extent>& span)
     {
         auto* data = reinterpret_cast<const uint8_t*>(span.data());
         size_t size = span.size_bytes();

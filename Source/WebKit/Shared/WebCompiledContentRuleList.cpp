@@ -44,27 +44,27 @@ WebCompiledContentRuleList::~WebCompiledContentRuleList()
 {
 }
 
-Span<const uint8_t> WebCompiledContentRuleList::urlFiltersBytecode() const
+std::span<const uint8_t> WebCompiledContentRuleList::urlFiltersBytecode() const
 {
     return spanWithOffsetAndLength(m_data.urlFiltersBytecodeOffset, m_data.urlFiltersBytecodeSize);
 }
 
-Span<const uint8_t> WebCompiledContentRuleList::topURLFiltersBytecode() const
+std::span<const uint8_t> WebCompiledContentRuleList::topURLFiltersBytecode() const
 {
     return spanWithOffsetAndLength(m_data.topURLFiltersBytecodeOffset, m_data.topURLFiltersBytecodeSize);
 }
 
-Span<const uint8_t> WebCompiledContentRuleList::frameURLFiltersBytecode() const
+std::span<const uint8_t> WebCompiledContentRuleList::frameURLFiltersBytecode() const
 {
     return spanWithOffsetAndLength(m_data.frameURLFiltersBytecodeOffset, m_data.frameURLFiltersBytecodeSize);
 }
 
-Span<const uint8_t> WebCompiledContentRuleList::serializedActions() const
+std::span<const uint8_t> WebCompiledContentRuleList::serializedActions() const
 {
     return spanWithOffsetAndLength(m_data.actionsOffset, m_data.actionsSize);
 }
 
-Span<const uint8_t> WebCompiledContentRuleList::spanWithOffsetAndLength(size_t offset, size_t length) const
+std::span<const uint8_t> WebCompiledContentRuleList::spanWithOffsetAndLength(size_t offset, size_t length) const
 {
     RELEASE_ASSERT(offset + length <= m_data.data->size());
     return { static_cast<const uint8_t*>(m_data.data->data()) + offset, length };

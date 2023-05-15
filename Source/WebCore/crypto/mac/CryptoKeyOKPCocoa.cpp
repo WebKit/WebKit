@@ -138,7 +138,7 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importSpki(CryptoAlgorithmIdentifier identifi
         return nullptr;
     ++index;
 
-    return create(identifier, namedCurve, CryptoKeyType::Public, Span<const uint8_t> { keyData.data() + index, keyData.size() - index }, extractable, usages);
+    return create(identifier, namedCurve, CryptoKeyType::Public, std::span<const uint8_t> { keyData.data() + index, keyData.size() - index }, extractable, usages);
 }
 
 constexpr uint8_t OKPOIDFirstByte = 6;
@@ -265,7 +265,7 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importPkcs8(CryptoAlgorithmIdentifier identif
     if (keyData.size() < index + 1)
         return nullptr;
 
-    return create(identifier, namedCurve, CryptoKeyType::Private, Span<const uint8_t> { keyData.data() + index, keyData.size() - index }, extractable, usages);
+    return create(identifier, namedCurve, CryptoKeyType::Private, std::span<const uint8_t> { keyData.data() + index, keyData.size() - index }, extractable, usages);
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportPkcs8() const
@@ -319,7 +319,7 @@ String CryptoKeyOKP::generateJwkX() const
     ccec25519pubkey publicKey;
     cced25519_make_pub(di, publicKey, m_data.data());
 
-    return base64URLEncodeToString(Span<const uint8_t> { publicKey, sizeof(publicKey) });
+    return base64URLEncodeToString(std::span<const uint8_t> { publicKey, sizeof(publicKey) });
 }
 
 Vector<uint8_t> CryptoKeyOKP::platformExportRaw() const

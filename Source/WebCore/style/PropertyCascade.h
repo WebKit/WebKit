@@ -67,7 +67,7 @@ public:
     bool hasCustomProperty(const AtomString&) const;
     const Property& customProperty(const AtomString&) const;
 
-    Span<const CSSPropertyID> deferredPropertyIDs() const;
+    std::span<const CSSPropertyID> deferredPropertyIDs() const;
     const HashMap<AtomString, Property>& customProperties() const { return m_customProperties; }
 
     const HashSet<AnimatableProperty> overriddenAnimatedProperties() const;
@@ -165,7 +165,7 @@ inline const PropertyCascade::Property& PropertyCascade::deferredProperty(CSSPro
     return m_properties[id];
 }
 
-inline Span<const CSSPropertyID> PropertyCascade::deferredPropertyIDs() const
+inline std::span<const CSSPropertyID> PropertyCascade::deferredPropertyIDs() const
 {
     return { m_deferredPropertyIDs.data(), m_seenDeferredPropertyCount };
 }

@@ -106,7 +106,7 @@ public:
     void appendToAttributeName(UChar);
     void appendToAttributeValue(UChar);
     void appendToAttributeValue(unsigned index, StringView value);
-    template<typename CharacterType> void appendToAttributeValue(Span<const CharacterType>);
+    template<typename CharacterType> void appendToAttributeValue(std::span<const CharacterType>);
     void endAttribute();
 
     void setSelfClosing();
@@ -123,7 +123,7 @@ public:
     void appendToCharacter(LChar);
     void appendToCharacter(UChar);
     void appendToCharacter(const Vector<LChar, 32>&);
-    template<typename CharacterType> void appendToCharacter(Span<const CharacterType>);
+    template<typename CharacterType> void appendToCharacter(std::span<const CharacterType>);
 
     // Comment.
 
@@ -326,7 +326,7 @@ inline void HTMLToken::appendToAttributeValue(UChar character)
 }
 
 template<typename CharacterType>
-inline void HTMLToken::appendToAttributeValue(Span<const CharacterType> characters)
+inline void HTMLToken::appendToAttributeValue(std::span<const CharacterType> characters)
 {
     ASSERT(m_type == Type::StartTag || m_type == Type::EndTag);
     ASSERT(m_currentAttribute);
@@ -381,7 +381,7 @@ inline void HTMLToken::appendToCharacter(const Vector<LChar, 32>& characters)
 }
 
 template<typename CharacterType>
-inline void HTMLToken::appendToCharacter(Span<const CharacterType> characters)
+inline void HTMLToken::appendToCharacter(std::span<const CharacterType> characters)
 {
     m_type = Type::Character;
     m_data.append(characters);
@@ -432,7 +432,7 @@ inline void HTMLToken::appendToComment(UChar character)
     m_data8BitCheck |= character;
 }
 
-inline const HTMLToken::Attribute* findAttribute(const HTMLToken::AttributeList& attributes, Span<const UChar> name)
+inline const HTMLToken::Attribute* findAttribute(const HTMLToken::AttributeList& attributes, std::span<const UChar> name)
 {
     for (auto& attribute : attributes) {
         // FIXME: The one caller that uses this probably wants to ignore letter case.

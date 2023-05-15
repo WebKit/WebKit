@@ -110,7 +110,7 @@ static constexpr ASCIILiteral pushDatabaseSchemaV5Statements[] = {
     "DROP TABLE SubscriptionSetsOld"_s,
 };
 
-static constexpr Span<const ASCIILiteral> pushDatabaseSchemaStatements[] = {
+static constexpr std::span<const ASCIILiteral> pushDatabaseSchemaStatements[] = {
     { pushDatabaseSchemaV1Statements },
     { pushDatabaseSchemaV2Statements },
     { pushDatabaseSchemaV3Statements },
@@ -337,7 +337,7 @@ WebCore::SQLiteStatementAutoResetScope PushDatabase::bindStatementOnQueue(ASCIIL
     return sql;
 }
 
-static Span<const uint8_t> uuidToSpan(const std::optional<UUID>& uuid)
+static std::span<const uint8_t> uuidToSpan(const std::optional<UUID>& uuid)
 {
     if (!uuid) {
         // We store a null UUID as a zero-length blob rather than a SQL NULL. This is because the
@@ -354,7 +354,7 @@ static Span<const uint8_t> uuidToSpan(const std::optional<UUID>& uuid)
     return uuid->toSpan();
 }
 
-static std::optional<UUID> uuidFromSpan(Span<const uint8_t> span)
+static std::optional<UUID> uuidFromSpan(std::span<const uint8_t> span)
 {
     if (span.size() != 16)
         return std::nullopt;
@@ -387,7 +387,7 @@ static void completeOnMainQueue(CompletionHandler<void(T)>&& completionHandler, 
     });
 }
 
-void PushDatabase::updatePublicToken(Span<const uint8_t> publicToken, CompletionHandler<void(PublicTokenChanged)>&& completionHandler)
+void PushDatabase::updatePublicToken(std::span<const uint8_t> publicToken, CompletionHandler<void(PublicTokenChanged)>&& completionHandler)
 {
     dispatchOnWorkQueue([this, newPublicToken = Vector<uint8_t> { publicToken }, completionHandler = WTFMove(completionHandler)]() mutable {
         SQLiteTransaction transaction(m_db);

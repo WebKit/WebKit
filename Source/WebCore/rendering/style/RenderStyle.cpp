@@ -2956,7 +2956,7 @@ bool RenderStyle::shouldPlaceVerticalScrollbarOnLeft() const
     return (!isLeftToRightDirection() && isHorizontalWritingMode()) || writingMode() == WritingMode::RightToLeft;
 }
 
-Span<const PaintType, 3> RenderStyle::paintTypesForPaintOrder(PaintOrder order)
+std::span<const PaintType, 3> RenderStyle::paintTypesForPaintOrder(PaintOrder order)
 {
     static constexpr std::array fill { PaintType::Fill, PaintType::Stroke, PaintType::Markers };
     static constexpr std::array fillMarkers { PaintType::Fill, PaintType::Markers, PaintType::Stroke };

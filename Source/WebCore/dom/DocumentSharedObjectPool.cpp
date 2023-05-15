@@ -62,7 +62,7 @@ ALWAYS_INLINE bool equalAttributes(const uint8_t* a, const uint8_t* b, unsigned 
 struct DocumentSharedObjectPool::ShareableElementDataHash {
     static unsigned hash(const Ref<ShareableElementData>& data)
     {
-        return computeHash(Span<const Attribute> { data->m_attributeArray, data->length() });
+        return computeHash(std::span<const Attribute> { data->m_attributeArray, data->length() });
     }
     static bool equal(const Ref<ShareableElementData>& a, const Ref<ShareableElementData>& b)
     {
@@ -74,25 +74,25 @@ struct DocumentSharedObjectPool::ShareableElementDataHash {
 };
 
 struct AttributeSpanTranslator {
-    static unsigned hash(Span<const Attribute> attributes)
+    static unsigned hash(std::span<const Attribute> attributes)
     {
         return computeHash(attributes);
     }
 
-    static bool equal(const Ref<ShareableElementData>& a, Span<const Attribute> b)
+    static bool equal(const Ref<ShareableElementData>& a, std::span<const Attribute> b)
     {
         if (a->length() != b.size())
             return false;
         return equalAttributes(reinterpret_cast<const uint8_t*>(a->m_attributeArray), reinterpret_cast<const uint8_t*>(b.data()), b.size() * sizeof(Attribute));
     }
 
-    static void translate(Ref<ShareableElementData>& location, Span<const Attribute> attributes, unsigned /*hash*/)
+    static void translate(Ref<ShareableElementData>& location, std::span<const Attribute> attributes, unsigned /*hash*/)
     {
         location = ShareableElementData::createWithAttributes(attributes);
     }
 };
 
-Ref<ShareableElementData> DocumentSharedObjectPool::cachedShareableElementDataWithAttributes(Span<const Attribute> attributes)
+Ref<ShareableElementData> DocumentSharedObjectPool::cachedShareableElementDataWithAttributes(std::span<const Attribute> attributes)
 {
     ASSERT(!attributes.empty());
 

@@ -102,9 +102,9 @@ public:
     WEBCORE_EXPORT bool containsMappedFileData() const;
 
 private:
-    void iterate(const Function<void(const Span<const uint8_t>&)>& apply) const;
+    void iterate(const Function<void(const std::span<const uint8_t>&)>& apply) const;
 #if USE(FOUNDATION)
-    void iterate(CFDataRef, const Function<void(const Span<const uint8_t>&)>& apply) const;
+    void iterate(CFDataRef, const Function<void(const std::span<const uint8_t>&)>& apply) const;
 #endif
 
     explicit DataSegment(Vector<uint8_t>&& data)
@@ -184,8 +184,8 @@ public:
     WEBCORE_EXPORT void copyTo(void* destination, size_t length) const;
     WEBCORE_EXPORT void copyTo(void* destination, size_t offset, size_t length) const;
 
-    WEBCORE_EXPORT void forEachSegment(const Function<void(const Span<const uint8_t>&)>&) const;
-    WEBCORE_EXPORT bool startsWith(const Span<const uint8_t>& prefix) const;
+    WEBCORE_EXPORT void forEachSegment(const Function<void(const std::span<const uint8_t>&)>&) const;
+    WEBCORE_EXPORT bool startsWith(const std::span<const uint8_t>& prefix) const;
     WEBCORE_EXPORT void forEachSegmentAsSharedBuffer(const Function<void(Ref<SharedBuffer>&&)>&) const;
 
     using DataSegment = WebCore::DataSegment; // To keep backward compatibility when using FragmentedSharedBuffer::DataSegment
@@ -239,7 +239,7 @@ private:
     friend class SharedBufferBuilder;
     WEBCORE_EXPORT void append(const FragmentedSharedBuffer&);
     WEBCORE_EXPORT void append(const uint8_t*, size_t);
-    void append(Span<const uint8_t> value) { append(value.data(), value.size()); }
+    void append(std::span<const uint8_t> value) { append(value.data(), value.size()); }
     void append(const char* data, size_t length) { append(reinterpret_cast<const uint8_t*>(data), length); }
     WEBCORE_EXPORT void append(Vector<uint8_t>&&);
 #if USE(FOUNDATION)
@@ -282,7 +282,7 @@ public:
 
     WEBCORE_EXPORT const uint8_t* data() const;
     const char* dataAsCharPtr() const { return reinterpret_cast<const char*>(data()); }
-    Span<const uint8_t> dataAsSpanForContiguousData() const { RELEASE_ASSERT(isContiguous()); return makeSpan(data(), size()); }
+    std::span<const uint8_t> dataAsSpanForContiguousData() const { RELEASE_ASSERT(isContiguous()); return makeSpan(data(), size()); }
     WTF::Persistence::Decoder decoder() const;
 
     enum class MayUseFileMapping : bool { No, Yes };

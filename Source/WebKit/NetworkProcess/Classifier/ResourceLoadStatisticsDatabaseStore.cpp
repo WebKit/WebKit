@@ -253,7 +253,7 @@ const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& Resour
     return expectedTableAndIndexQueries;
 }
 
-Span<const ASCIILiteral> ResourceLoadStatisticsDatabaseStore::sortedTables()
+std::span<const ASCIILiteral> ResourceLoadStatisticsDatabaseStore::sortedTables()
 {
     static constexpr std::array sortedTables {
         "ObservedDomains"_s,

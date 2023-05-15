@@ -124,7 +124,7 @@ public:
 
 private:
     const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& expectedTableAndIndexQueries() final;
-    Span<const ASCIILiteral> sortedTables() final;
+    std::span<const ASCIILiteral> sortedTables() final;
     void includeTodayAsOperatingDateIfNecessary() override;
     bool hasStatisticsExpired(WallTime mostRecentUserInteractionTime, OperatingDatesWindow) const override;
     void updateOperatingDatesParameters();

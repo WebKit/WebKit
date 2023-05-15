@@ -90,7 +90,7 @@ public:
         return m_namedNodes.get(id);
     }
 
-    std::optional<NodeVector> getNamedNodes(Span<const AtomString> names) const
+    std::optional<NodeVector> getNamedNodes(std::span<const AtomString> names) const
     {
         NodeVector nodes;
 

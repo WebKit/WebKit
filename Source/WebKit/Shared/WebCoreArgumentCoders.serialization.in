@@ -3189,7 +3189,7 @@ enum class WebCore::MediaDecodingType : uint8_t {
 enum class WebCore::MediaEncodingType : bool;
 
 class WebCore::BufferSource {
-    Span<const uint8_t> span()
+    std::span<const uint8_t> span()
 }
 
 struct WebCore::FontShadow {

@@ -1541,7 +1541,7 @@ public:
     inline void setPaintOrder(PaintOrder);
     inline PaintOrder paintOrder() const;
     static constexpr PaintOrder initialPaintOrder();
-    static Span<const PaintType, 3> paintTypesForPaintOrder(PaintOrder);
+    static std::span<const PaintType, 3> paintTypesForPaintOrder(PaintOrder);
     
     inline void setCapStyle(LineCap);
     inline LineCap capStyle() const;

@@ -449,7 +449,7 @@ Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(CSSPropertyID propertyID)
     return adoptRef(*new CSSPrimitiveValue(propertyID));
 }
 
-static CSSPrimitiveValue* valueFromPool(Span<LazyNeverDestroyed<CSSPrimitiveValue>> pool, double value)
+static CSSPrimitiveValue* valueFromPool(std::span<LazyNeverDestroyed<CSSPrimitiveValue>> pool, double value)
 {
     // Casting to a signed integer first since casting a negative floating point value to an unsigned
     // integer is undefined behavior.

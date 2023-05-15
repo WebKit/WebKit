@@ -82,7 +82,7 @@ inline void HTMLTokenizer::bufferCharacter(UChar character)
 }
 
 template<typename CharacterType>
-inline void HTMLTokenizer::bufferCharacters(Span<const CharacterType> characters)
+inline void HTMLTokenizer::bufferCharacters(std::span<const CharacterType> characters)
 {
 #if ASSERT_ENABLED
     for (auto character : characters)

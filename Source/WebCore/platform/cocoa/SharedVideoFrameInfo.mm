@@ -90,7 +90,7 @@ void SharedVideoFrameInfo::encode(uint8_t* destination)
     std::memcpy(destination, encoder.buffer(), encoder.bufferSize());
 }
 
-std::optional<SharedVideoFrameInfo> SharedVideoFrameInfo::decode(Span<const uint8_t> span)
+std::optional<SharedVideoFrameInfo> SharedVideoFrameInfo::decode(std::span<const uint8_t> span)
 {
     WTF::Persistence::Decoder decoder(span);
 

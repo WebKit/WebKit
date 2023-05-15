@@ -51,7 +51,7 @@ bool FEImage::operator==(const FEImage& other) const
         && m_preserveAspectRatio == other.m_preserveAspectRatio;
 }
 
-FloatRect FEImage::calculateImageRect(const Filter& filter, Span<const FloatRect>, const FloatRect& primitiveSubregion) const
+FloatRect FEImage::calculateImageRect(const Filter& filter, std::span<const FloatRect>, const FloatRect& primitiveSubregion) const
 {
     if (m_sourceImage.nativeImageIfExists()) {
         auto imageRect = primitiveSubregion;
