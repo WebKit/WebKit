@@ -53,6 +53,7 @@ public:
 
     WEBCORE_EXPORT FilterResults& ensureResults(const FilterResultsCreator&);
     void clearEffectResult(FilterEffect&);
+    WEBCORE_EXPORT void mergeEffects(const FilterEffectVector&);
 
     RefPtr<FilterImage> apply(FilterImage* sourceImage, FilterResults&) final;
     FilterStyleVector createFilterStyles(const FilterStyle& sourceStyle) const final;
