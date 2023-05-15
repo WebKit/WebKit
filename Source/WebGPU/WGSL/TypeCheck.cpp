@@ -395,6 +395,33 @@ void TypeChecker::visit(AST::CallExpression& call)
             target.m_resolvedType = result;
             return;
         }
+
+        if (isNamedType) {
+            auto* targetType = resolve(target);
+            if (auto* structType = std::get_if<Types::Struct>(targetType)) {
+                auto numberOfArguments = call.arguments().size();
+                auto numberOfFields = structType->fields.size();
+                if (numberOfArguments != numberOfFields) {
+                    const char* errorKind = numberOfArguments < numberOfFields ? "few" : "many";
+                    typeError(call.span(), "struct initializer has too ", errorKind, " inputs: expected ", String::number(numberOfFields), ", found ", String::number(numberOfArguments));
+                    return;
+                }
+
+                for (unsigned i = 0; i < numberOfArguments; ++i) {
+                    auto& argument = call.arguments()[i];
+                    auto& member = structType->structure.members()[i];
+                    auto* fieldType = structType->fields.get(member.name());
+                    auto* argumentType = infer(argument);
+                    if (!unify(fieldType, argumentType)) {
+                        typeError(argument.span(), "type in struct initializer does not match struct member type: expected '", *fieldType, "', found '", *argumentType, "'");
+                        return;
+                    }
+                    argument.m_inferredType = fieldType;
+                }
+                inferred(targetType);
+                return;
+            }
+        }
     }
 
     if (is<AST::ArrayTypeName>(target)) {

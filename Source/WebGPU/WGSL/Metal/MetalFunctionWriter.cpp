@@ -467,7 +467,14 @@ static void visitArguments(FunctionDefinitionWriter* writer, AST::CallExpression
 
 void FunctionDefinitionWriter::visit(AST::CallExpression& call)
 {
-    if (is<AST::ArrayTypeName>(call.target())) {
+    auto isArray = is<AST::ArrayTypeName>(call.target());
+    auto isStruct = !isArray && std::holds_alternative<Types::Struct>(*call.target().resolvedType());
+    if (isArray || isStruct) {
+        if (isStruct) {
+            visit(call.target().resolvedType());
+            m_stringBuilder.append(" ");
+        }
+
         m_stringBuilder.append("{\n");
         {
             IndentationScope scope(m_indent);
