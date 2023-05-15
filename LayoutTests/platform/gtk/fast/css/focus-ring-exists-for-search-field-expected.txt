@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 742x35
-          text run at (0,0) width 742: "Assuming the port-specific theme draws focus rings, this test can be used to ensure that a focus ring is drawn around a"
-          text run at (0,18) width 76: "search field."
+        RenderText {#text} at (0,0) size 758x35
+          text run at (0,0) width 758: "Assuming the port-specific theme draws focus rings, this test can be used to ensure that a focus ring is drawn around a"
+          text run at (0,18) width 79: "search field."
       RenderBlock (anonymous) at (0,52) size 784x24
         RenderTextControl {INPUT} at (0,0) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 186x18

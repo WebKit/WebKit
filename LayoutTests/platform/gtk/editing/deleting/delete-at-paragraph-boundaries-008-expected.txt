@@ -19,21 +19,21 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x233 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x81
-          RenderText {#text} at (0,0) size 59x26
-            text run at (0,0) width 59: "Tests:"
-          RenderBR {BR} at (58,0) size 1x26
-          RenderText {#text} at (0,27) size 690x53
-            text run at (0,27) width 690: "Deleting when a selection starts in the middle of the last paragraph and"
-            text run at (0,54) width 348: "extends to the end of that paragraph"
+          RenderText {#text} at (0,0) size 60x26
+            text run at (0,0) width 60: "Tests:"
+          RenderBR {BR} at (59,0) size 1x26
+          RenderText {#text} at (0,27) size 682x53
+            text run at (0,27) width 682: "Deleting when a selection starts in the middle of the last paragraph and"
+            text run at (0,54) width 344: "extends to the end of that paragraph"
         RenderBlock {DIV} at (14,111) size 756x108
-          RenderText {#text} at (0,0) size 183x26
-            text run at (0,0) width 183: "Expected Results:"
-          RenderBR {BR} at (182,0) size 1x26
-          RenderText {#text} at (0,27) size 738x80
-            text run at (0,27) width 738: "Should see the four lines in the red box. First line should be \"one\". Next one"
+          RenderText {#text} at (0,0) size 184x26
+            text run at (0,0) width 184: "Expected Results:"
+          RenderBR {BR} at (183,0) size 1x26
+          RenderText {#text} at (0,27) size 733x80
+            text run at (0,27) width 733: "Should see the four lines in the red box. First line should be \"one\". Next one"
             text run at (0,54) width 167: "should be \"two\". "
-            text run at (166,54) width 509: "Next one should be \"three\". Last one should be \"fo\"."
-            text run at (0,81) width 668: "Insertion point should be blinking at the start of the fourth (last) line."
+            text run at (166,54) width 504: "Next one should be \"three\". Last one should be \"fo\"."
+            text run at (0,81) width 661: "Insertion point should be blinking at the start of the fourth (last) line."
       RenderBlock {DIV} at (0,257) size 784x112
         RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #FF0000)]
           RenderBlock (anonymous) at (2,2) size 780x27
@@ -43,8 +43,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 36x26
               text run at (0,0) width 36: "two"
           RenderBlock {P} at (2,56) size 780x27
-            RenderText {#text} at (0,0) size 49x26
-              text run at (0,0) width 49: "three"
+            RenderText {#text} at (0,0) size 48x26
+              text run at (0,0) width 48: "three"
           RenderBlock {P} at (2,83) size 780x27
             RenderText {#text} at (0,0) size 20x26
               text run at (0,0) width 20: "fo"

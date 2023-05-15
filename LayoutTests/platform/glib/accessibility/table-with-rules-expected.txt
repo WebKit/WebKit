@@ -9,7 +9,7 @@ AXRole: AXTable
 AXParent: AXWebArea
 AXChildren: 1
 AXPosition: { 8.00000, 28.0000 }
-AXSize: { 57.0000, 20.0000 }
+AXSize: { 58.0000, 20.0000 }
 AXTitle:
 AXDescription:
 AXFocusable: 0
@@ -27,7 +27,7 @@ AXRole: AXTable
 AXParent: AXWebArea
 AXChildren: 1
 AXPosition: { 8.00000, 48.0000 }
-AXSize: { 62.0000, 24.0000 }
+AXSize: { 63.0000, 24.0000 }
 AXTitle:
 AXDescription:
 AXFocusable: 0
@@ -45,7 +45,7 @@ AXRole: AXTable
 AXParent: AXWebArea
 AXChildren: 1
 AXPosition: { 8.00000, 72.0000 }
-AXSize: { 56.0000, 20.0000 }
+AXSize: { 57.0000, 20.0000 }
 AXTitle:
 AXDescription:
 AXFocusable: 0
@@ -63,7 +63,7 @@ AXRole: AXSection
 AXParent: AXWebArea
 AXChildren: 0
 AXPosition: { 10.0000, 94.0000 }
-AXSize: { 28.0000, 20.0000 }
+AXSize: { 29.0000, 20.0000 }
 AXTitle:
 AXDescription:
 AXValue: asdf
@@ -82,7 +82,7 @@ AXRole: AXSection
 AXParent: AXWebArea
 AXChildren: 0
 AXPosition: { 40.0000, 94.0000 }
-AXSize: { 28.0000, 20.0000 }
+AXSize: { 30.0000, 20.0000 }
 AXTitle:
 AXDescription:
 AXValue: asdf

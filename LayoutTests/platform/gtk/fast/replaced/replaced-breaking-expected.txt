@@ -19,14 +19,14 @@ layer at (0,0) size 800x600
             RenderText at (0,0) size 35x17
               text run at (0,0) width 35: "input"
         RenderText {#text} at (0,0) size 0x0
-        RenderButton {BUTTON} at (1,157) size 60x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 44x18
-            RenderText {#text} at (0,0) size 44x17
-              text run at (0,0) width 44: "button"
-        RenderButton {BUTTON} at (1,184) size 60x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 44x18
-            RenderText {#text} at (0,0) size 44x17
-              text run at (0,0) width 44: "button"
+        RenderButton {BUTTON} at (1,157) size 61x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 45x18
+            RenderText {#text} at (0,0) size 45x17
+              text run at (0,0) width 45: "button"
+        RenderButton {BUTTON} at (1,184) size 61x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 45x18
+            RenderText {#text} at (0,0) size 45x17
+              text run at (0,0) width 45: "button"
         RenderText {#text} at (0,0) size 0x0
         RenderMenuList {SELECT} at (1,211) size 70x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 68x28

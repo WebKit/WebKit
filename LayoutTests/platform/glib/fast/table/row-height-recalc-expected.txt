@@ -4,17 +4,17 @@ layer at (0,0) size 800x168
   RenderBlock {HTML} at (0,0) size 800x168
     RenderBody {BODY} at (8,16) size 784x144
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 52x17
-          text run at (0,0) width 52: "Test for "
-        RenderInline {I} at (0,0) size 667x17
-          RenderInline {A} at (0,0) size 349x17 [color=#0000EE]
-            RenderText {#text} at (51,0) size 349x17
-              text run at (51,0) width 349: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9012"
-          RenderText {#text} at (399,0) size 319x17
-            text run at (399,0) width 5: " "
-            text run at (403,0) width 315: "Row height not updated when cell heights change"
-        RenderText {#text} at (717,0) size 5x17
-          text run at (717,0) width 5: "."
+        RenderText {#text} at (0,0) size 54x17
+          text run at (0,0) width 54: "Test for "
+        RenderInline {I} at (0,0) size 675x17
+          RenderInline {A} at (0,0) size 353x17 [color=#0000EE]
+            RenderText {#text} at (53,0) size 353x17
+              text run at (53,0) width 353: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9012"
+          RenderText {#text} at (405,0) size 323x17
+            text run at (405,0) width 5: " "
+            text run at (409,0) width 319: "Row height not updated when cell heights change"
+        RenderText {#text} at (727,0) size 5x17
+          text run at (727,0) width 5: "."
       RenderTable {TABLE} at (0,44) size 100x100
         RenderTableSection {TBODY} at (0,0) size 100x100
           RenderTableRow {TR} at (0,0) size 100x0 [bgcolor=#FF0000]

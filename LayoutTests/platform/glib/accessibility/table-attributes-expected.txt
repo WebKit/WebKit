@@ -1,8 +1,8 @@
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
-AXPosition:  { 234.000, 27.0000 }
-AXSize: { 144.000, 66.0000 }
+AXPosition:  { 232.000, 27.0000 }
+AXSize: { 145.000, 66.0000 }
 AXTitle:
 AXDescription:
 AXValue: Ruritanian<\n>Population<\n>Survey
@@ -20,8 +20,8 @@ AXPlatformAttributes: computed-role:columnheader, tag:th
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
-AXPosition:  { 234.000, 27.0000 }
-AXSize: { 144.000, 66.0000 }
+AXPosition:  { 232.000, 27.0000 }
+AXSize: { 145.000, 66.0000 }
 AXTitle:
 AXDescription:
 AXValue: Ruritanian<\n>Population<\n>Survey
@@ -39,8 +39,8 @@ AXPlatformAttributes: computed-role:columnheader, tag:th
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
-AXPosition:  { 377.000, 27.0000 }
-AXSize: { 70.0000, 66.0000 }
+AXPosition:  { 376.000, 27.0000 }
+AXSize: { 71.0000, 66.0000 }
 AXTitle:
 AXDescription:
 AXValue: All<\n>Genders
@@ -59,7 +59,7 @@ AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition:  { 446.000, 27.0000 }
-AXSize: { 120.000, 30.0000 }
+AXSize: { 122.000, 30.0000 }
 AXTitle:
 AXDescription:
 AXValue: By Gender
@@ -78,7 +78,7 @@ AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition:  { 446.000, 27.0000 }
-AXSize: { 120.000, 30.0000 }
+AXSize: { 122.000, 30.0000 }
 AXTitle:
 AXDescription:
 AXValue: By Gender
@@ -97,8 +97,8 @@ AXPlatformAttributes: computed-role:columnheader, tag:th
 AXRole: AXRowHeader
 AXParent: AXRow
 AXChildren: 0
-AXPosition:  { 234.000, 93.0000 }
-AXSize: { 91.0000, 60.0000 }
+AXPosition:  { 232.000, 93.0000 }
+AXSize: { 92.0000, 60.0000 }
 AXTitle:
 AXDescription:
 AXValue: All Regions
@@ -116,7 +116,7 @@ AXPlatformAttributes: computed-role:rowheader, tag:th
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
-AXPosition:  { 324.000, 123.000 }
+AXPosition:  { 323.000, 123.000 }
 AXSize: { 54.0000, 30.0000 }
 AXTitle:
 AXDescription:
@@ -137,8 +137,8 @@ AXPlatformAttributes: computed-role:cell, tag:th
 AXRole: AXRow
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 3
-AXPosition:  { 234.000, 27.0000 }
-AXSize: { 332.000, 30.0000 }
+AXPosition:  { 232.000, 27.0000 }
+AXSize: { 335.000, 30.0000 }
 AXTitle:
 AXDescription:
 AXFocusable: 0
@@ -155,8 +155,8 @@ AXPlatformAttributes: computed-role:row, tag:tr
 AXRole: AXRow
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 2
-AXPosition:  { 234.000, 57.0000 }
-AXSize: { 332.000, 36.0000 }
+AXPosition:  { 232.000, 57.0000 }
+AXSize: { 335.000, 36.0000 }
 AXTitle:
 AXDescription:
 AXFocusable: 0
@@ -173,8 +173,8 @@ AXPlatformAttributes: computed-role:row, tag:tr
 AXRole: AXRow
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 5
-AXPosition:  { 234.000, 93.0000 }
-AXSize: { 332.000, 30.0000 }
+AXPosition:  { 232.000, 93.0000 }
+AXSize: { 335.000, 30.0000 }
 AXTitle:
 AXDescription:
 AXFocusable: 0
@@ -191,8 +191,8 @@ AXPlatformAttributes: computed-role:row, tag:tr
 AXRole: AXRow
 AXParent: AXTable: Example #1: Nested Stubs
 AXChildren: 4
-AXPosition:  { 234.000, 123.000 }
-AXSize: { 332.000, 30.0000 }
+AXPosition:  { 232.000, 123.000 }
+AXSize: { 335.000, 30.0000 }
 AXTitle:
 AXDescription:
 AXFocusable: 0
@@ -210,8 +210,8 @@ AXPlatformAttributes: computed-role:row, tag:tr
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
-AXPosition:  { 234.000, 27.0000 }
-AXSize: { 144.000, 66.0000 }
+AXPosition:  { 232.000, 27.0000 }
+AXSize: { 145.000, 66.0000 }
 AXTitle:
 AXDescription:
 AXValue: Ruritanian<\n>Population<\n>Survey
@@ -229,8 +229,8 @@ AXPlatformAttributes: computed-role:columnheader, tag:th
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
-AXPosition:  { 377.000, 27.0000 }
-AXSize: { 70.0000, 66.0000 }
+AXPosition:  { 376.000, 27.0000 }
+AXSize: { 71.0000, 66.0000 }
 AXTitle:
 AXDescription:
 AXValue: All<\n>Genders
@@ -249,7 +249,7 @@ AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
 AXPosition:  { 446.000, 27.0000 }
-AXSize: { 120.000, 30.0000 }
+AXSize: { 122.000, 30.0000 }
 AXTitle:
 AXDescription:
 AXValue: By Gender
@@ -268,7 +268,7 @@ AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition:  { 446.000, 57.0000 }
-AXSize: { 53.0000, 36.0000 }
+AXSize: { 54.0000, 36.0000 }
 AXTitle:
 AXDescription:
 AXValue: Males
@@ -286,8 +286,8 @@ AXPlatformAttributes: computed-role:cell, tag:th
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
-AXPosition:  { 498.000, 57.0000 }
-AXSize: { 68.0000, 36.0000 }
+AXPosition:  { 499.000, 57.0000 }
+AXSize: { 69.0000, 36.0000 }
 AXTitle:
 AXDescription:
 AXValue: Females
@@ -305,8 +305,8 @@ AXPlatformAttributes: computed-role:cell, tag:th
 AXRole: AXRowHeader
 AXParent: AXRow
 AXChildren: 0
-AXPosition:  { 234.000, 93.0000 }
-AXSize: { 91.0000, 60.0000 }
+AXPosition:  { 232.000, 93.0000 }
+AXSize: { 92.0000, 60.0000 }
 AXTitle:
 AXDescription:
 AXValue: All Regions
@@ -324,7 +324,7 @@ AXPlatformAttributes: computed-role:rowheader, tag:th
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
-AXPosition:  { 324.000, 93.0000 }
+AXPosition:  { 323.000, 93.0000 }
 AXSize: { 54.0000, 30.0000 }
 AXTitle:
 AXDescription:
@@ -343,8 +343,8 @@ AXPlatformAttributes: computed-role:cell, tag:th
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
-AXPosition:  { 377.000, 93.0000 }
-AXSize: { 70.0000, 30.0000 }
+AXPosition:  { 376.000, 93.0000 }
+AXSize: { 71.0000, 30.0000 }
 AXTitle:
 AXDescription:
 AXValue: 3333
@@ -363,7 +363,7 @@ AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition:  { 446.000, 93.0000 }
-AXSize: { 53.0000, 30.0000 }
+AXSize: { 54.0000, 30.0000 }
 AXTitle:
 AXDescription:
 AXValue: 1111
@@ -381,8 +381,8 @@ AXPlatformAttributes: computed-role:cell, tag:td
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
-AXPosition:  { 498.000, 93.0000 }
-AXSize: { 68.0000, 30.0000 }
+AXPosition:  { 499.000, 93.0000 }
+AXSize: { 69.0000, 30.0000 }
 AXTitle:
 AXDescription:
 AXValue: 2222
@@ -400,7 +400,7 @@ AXPlatformAttributes: computed-role:cell, tag:td
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
-AXPosition:  { 324.000, 123.000 }
+AXPosition:  { 323.000, 123.000 }
 AXSize: { 54.0000, 30.0000 }
 AXTitle:
 AXDescription:
@@ -419,8 +419,8 @@ AXPlatformAttributes: computed-role:cell, tag:th
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
-AXPosition:  { 377.000, 123.000 }
-AXSize: { 70.0000, 30.0000 }
+AXPosition:  { 376.000, 123.000 }
+AXSize: { 71.0000, 30.0000 }
 AXTitle:
 AXDescription:
 AXValue: 3333
@@ -439,7 +439,7 @@ AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
 AXPosition:  { 446.000, 123.000 }
-AXSize: { 53.0000, 30.0000 }
+AXSize: { 54.0000, 30.0000 }
 AXTitle:
 AXDescription:
 AXValue: 1111
@@ -457,8 +457,8 @@ AXPlatformAttributes: computed-role:cell, tag:td
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
-AXPosition:  { 498.000, 123.000 }
-AXSize: { 68.0000, 30.0000 }
+AXPosition:  { 499.000, 123.000 }
+AXSize: { 69.0000, 30.0000 }
 AXTitle:
 AXDescription:
 AXValue: 2222

@@ -3,24 +3,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 777x35
-        text run at (0,0) width 777: "This tests the width of a breaking space after a Hindi character to ensure that it's measured properly and enough space is left"
-        text run at (0,18) width 752: "for it. Neither the Hindi on the button below nor the same text on two lines below that should be truncated at either end."
-      RenderBR {BR} at (752,18) size 0x17
-      RenderButton {INPUT} at (0,36) size 130x28 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-        RenderBlock (anonymous) at (8,4) size 114x19
-          RenderText at (0,1) size 114x17
-            text run at (0,1) width 114: "\x{915}\x{93F}\x{938}\x{940} \x{92D}\x{940} \x{924}\x{930}\x{939} \x{906}\x{917}\x{947} \x{92C}"
-      RenderBR {BR} at (130,41) size 0x17
-      RenderInline {SPAN} at (0,0) size 114x17
-        RenderText {#text} at (0,65) size 114x17
-          text run at (0,65) width 114: "\x{915}\x{93F}\x{938}\x{940} \x{92D}\x{940} \x{924}\x{930}\x{939} \x{906}\x{917}\x{947} \x{92C}"
-      RenderText {#text} at (114,65) size 25x17
-        text run at (114,65) width 25: "Foo"
-      RenderBR {BR} at (139,65) size 0x17
-      RenderInline {SPAN} at (0,0) size 114x17
-        RenderText {#text} at (0,84) size 114x17
-          text run at (0,84) width 114: "\x{915}\x{93F}\x{938}\x{940} \x{92D}\x{940} \x{924}\x{930}\x{939} \x{906}\x{917}\x{947} \x{92C}"
-      RenderText {#text} at (114,84) size 25x17
-        text run at (114,84) width 25: "Foo"
-      RenderBR {BR} at (139,84) size 0x17
+      RenderText {#text} at (0,0) size 769x53
+        text run at (0,0) width 769: "This tests the width of a breaking space after a Hindi character to ensure that it's measured properly and enough space is"
+        text run at (0,18) width 761: "left for it. Neither the Hindi on the button below nor the same text on two lines below that should be truncated at either"
+        text run at (0,36) width 28: "end."
+      RenderBR {BR} at (27,36) size 1x17
+      RenderButton {INPUT} at (0,54) size 131x28 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderBlock (anonymous) at (8,4) size 115x19
+          RenderText at (0,1) size 115x17
+            text run at (0,1) width 115: "\x{915}\x{93F}\x{938}\x{940} \x{92D}\x{940} \x{924}\x{930}\x{939} \x{906}\x{917}\x{947} \x{92C}"
+      RenderBR {BR} at (130,59) size 1x17
+      RenderInline {SPAN} at (0,0) size 113x17
+        RenderText {#text} at (0,83) size 113x17
+          text run at (0,83) width 113: "\x{915}\x{93F}\x{938}\x{940} \x{92D}\x{940} \x{924}\x{930}\x{939} \x{906}\x{917}\x{947} \x{92C}"
+      RenderText {#text} at (112,83) size 26x17
+        text run at (112,83) width 26: "Foo"
+      RenderBR {BR} at (137,83) size 1x17
+      RenderInline {SPAN} at (0,0) size 113x17
+        RenderText {#text} at (0,102) size 113x17
+          text run at (0,102) width 113: "\x{915}\x{93F}\x{938}\x{940} \x{92D}\x{940} \x{924}\x{930}\x{939} \x{906}\x{917}\x{947} \x{92C}"
+      RenderText {#text} at (112,102) size 26x17
+        text run at (112,102) width 26: "Foo"
+      RenderBR {BR} at (137,102) size 1x17

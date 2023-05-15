@@ -4,20 +4,20 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 104x17
-          text run at (0,0) width 104: "This is a test for "
-        RenderInline {I} at (0,0) size 753x35
-          RenderInline {A} at (0,0) size 347x17 [color=#0000EE]
-            RenderText {#text} at (104,0) size 347x17
-              text run at (104,0) width 347: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8118"
-          RenderText {#text} at (450,0) size 753x35
-            text run at (450,0) width 303: " REGRESSION (r13595): Inline block's clipped"
-            text run at (0,18) width 224: "overflow increases table row height"
-        RenderText {#text} at (223,18) size 5x17
-          text run at (223,18) width 5: "."
+        RenderText {#text} at (0,0) size 108x17
+          text run at (0,0) width 108: "This is a test for "
+        RenderInline {I} at (0,0) size 764x35
+          RenderInline {A} at (0,0) size 352x17 [color=#0000EE]
+            RenderText {#text} at (107,0) size 352x17
+              text run at (107,0) width 352: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8118"
+          RenderText {#text} at (458,0) size 764x35
+            text run at (458,0) width 306: " REGRESSION (r13595): Inline block's clipped"
+            text run at (0,18) width 229: "overflow increases table row height"
+        RenderText {#text} at (228,18) size 5x17
+          text run at (228,18) width 5: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 267x17
-          text run at (0,0) width 267: "You should see a green square and no red."
+        RenderText {#text} at (0,0) size 269x17
+          text run at (0,0) width 269: "You should see a green square and no red."
       RenderTable {TABLE} at (0,86) size 100x100 [bgcolor=#FF0000]
         RenderTableSection {TBODY} at (0,0) size 100x100
           RenderTableRow {TR} at (0,0) size 100x100

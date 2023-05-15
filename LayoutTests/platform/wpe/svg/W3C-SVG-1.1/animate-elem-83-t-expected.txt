@@ -2,77 +2,77 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGText {text} at (10,304) size 269x45 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 269x45
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 268.20: "$Revision: 1.6 $"
+    RenderSVGText {text} at (10,304) size 265x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 265x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.66: "$Revision: 1.6 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
-    RenderSVGText {text} at (127,10) size 226x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 225x18
-        chunk 1 (middle anchor) text run 1 at (127.80,25.00) startOffset 0 endOffset 33 width 224.40: "<animate> on <path>'s d attribute"
+    RenderSVGText {text} at (130,10) size 220x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 220x18
+        chunk 1 (middle anchor) text run 1 at (130.29,25.00) startOffset 0 endOffset 33 width 219.41: "<animate> on <path>'s d attribute"
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (0,0) size 75x75
         RenderSVGEllipse {circle} at (0,0) size 69x69 [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=2.00]}] [cx=0.00] [cy=0.00] [r=40.00]
         RenderSVGPath {line} at (0,0) size 75x1 [stroke={[type=SOLID] [color=#C0C0C0]}] [x1=-45.00] [y1=0.00] [x2=45.00] [y2=0.00]
         RenderSVGPath {line} at (0,0) size 1x75 [stroke={[type=SOLID] [color=#C0C0C0]}] [x1=0.00] [y1=-45.00] [x2=0.00] [y2=45.00]
-    RenderSVGContainer {g} at (77,75) size 646x415
-      RenderSVGContainer {g} at (77,105) size 246x151 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,90.00)}]
+    RenderSVGContainer {g} at (80,75) size 640x415
+      RenderSVGContainer {g} at (80,105) size 240x151 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,90.00)}]
         RenderSVGPath {path} at (175,125) size 50x50 [fill={[type=SOLID] [color=#E6E6E6]}] [data="M -15 0 C -15 0 0 -15 0 -15 C 0 -15 15 0 15 0 C 15 0 0 15 0 15 C 0 15 -15 0 -15 0 Z"]
         RenderSVGPath {path} at (173,123) size 54x54 [stroke={[type=SOLID] [color=#FFB400]}] [data="M -15 0 C -15 0 0 -15 0 -15 C 0 -15 15 0 15 0 C 15 0 0 15 0 15 C 0 15 -15 0 -15 0 Z"]
         RenderSVGPath {path} at (155,105) size 90x90 [stroke={[type=SOLID] [color=#FFB400]}] [data="M 0 0 C -50 -15 -15 -50 0 0 C 15 -50 50 -15 0 0 C 50 15 15 50 0 0 C -15 50 -50 15 0 0 Z"]
-        RenderSVGText {text} at (-74,45) size 148x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 147x18
-            chunk 1 (middle anchor) text run 1 at (-73.50,60.00) startOffset 0 endOffset 21 width 147.00: "#1: from-to animation"
-      RenderSVGContainer {g} at (308,105) size 184x151 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,90.00)}]
+        RenderSVGText {text} at (-72,45) size 144x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 144x18
+            chunk 1 (middle anchor) text run 1 at (-71.54,60.00) startOffset 0 endOffset 21 width 143.07: "#1: from-to animation"
+      RenderSVGContainer {g} at (311,105) size 178x151 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,90.00)}]
         RenderSVGPath {path} at (375,125) size 50x50 [fill={[type=SOLID] [color=#E6E6E6]}] [data="M -15 0 C -15 0 0 -15 0 -15 C 0 -15 15 0 15 0 C 15 0 0 15 0 15 C 0 15 -15 0 -15 0 Z"]
         RenderSVGPath {path} at (373,123) size 54x54 [stroke={[type=SOLID] [color=#FFB400]}] [data="M -15 0 C -15 0 0 -15 0 -15 C 0 -15 15 0 15 0 C 15 0 0 15 0 15 C 0 15 -15 0 -15 0 Z"]
         RenderSVGPath {path} at (355,105) size 90x90 [stroke={[type=SOLID] [color=#FFB400]}] [data="M 0 0 C -50 -15 -15 -50 0 0 C 15 -50 50 -15 0 0 C 50 15 15 50 0 0 C -15 50 -50 15 0 0 Z"]
-        RenderSVGText {text} at (-55,45) size 110x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 110x18
-            chunk 1 (middle anchor) text run 1 at (-54.90,60.00) startOffset 0 endOffset 16 width 109.80: "#2: to animation"
-      RenderSVGContainer {g} at (483,75) size 234x181 [transform={m=((1.00,0.00)(0.00,1.00)) t=(360.00,90.00)}]
+        RenderSVGText {text} at (-54,45) size 108x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 107x18
+            chunk 1 (middle anchor) text run 1 at (-53.09,60.00) startOffset 0 endOffset 16 width 106.19: "#2: to animation"
+      RenderSVGContainer {g} at (487,75) size 226x181 [transform={m=((1.00,0.00)(0.00,1.00)) t=(360.00,90.00)}]
         RenderSVGPath {path} at (575,125) size 50x50 [fill={[type=SOLID] [color=#E6E6E6]}] [data="M -15 0 C -15 0 0 -15 0 -15 C 0 -15 15 0 15 0 C 15 0 0 15 0 15 C 0 15 -15 0 -15 0 Z"]
         RenderSVGPath {path} at (573,123) size 54x54 [stroke={[type=SOLID] [color=#FFB400]}] [data="M -15 0 C -15 0 0 -15 0 -15 C 0 -15 15 0 15 0 C 15 0 0 15 0 15 C 0 15 -15 0 -15 0 Z"]
         RenderSVGPath {path} at (555,105) size 90x90 [stroke={[type=SOLID] [color=#FFB400]}] [data="M 0 0 C -50 -15 -15 -50 0 0 C 15 -50 50 -15 0 0 C 50 15 15 50 0 0 C -15 50 -50 15 0 0 Z"]
         RenderSVGPath {path} at (525,75) size 150x150 [stroke={[type=SOLID] [color=#FFB400]}] [data="M -45 0 C -15 0 0 -15 0 -45 C 0 -15 15 0 45 0 C 15 0 0 15 0 45 C 0 15 -15 0 -45 0 Z"]
-        RenderSVGText {text} at (-70,45) size 140x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 140x18
-            chunk 1 (middle anchor) text run 1 at (-69.60,60.00) startOffset 0 endOffset 20 width 139.20: "#3: values animation"
-      RenderSVGContainer {g} at (77,281) size 246x209 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,200.00)}]
+        RenderSVGText {text} at (-68,45) size 136x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 135x18
+            chunk 1 (middle anchor) text run 1 at (-67.49,60.00) startOffset 0 endOffset 20 width 134.97: "#3: values animation"
+      RenderSVGContainer {g} at (80,281) size 240x209 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,200.00)}]
         RenderSVGPath {path} at (150,283) size 100x101 [fill={[type=SOLID] [color=#E6E6E6]}] [data="M -30 -30 L 30 0 L 30 30 L 0 30 Z"]
         RenderSVGPath {path} at (148,281) size 103x104 [stroke={[type=SOLID] [color=#FFB400]}] [data="M -30 -30 L 30 0 L 30 30 L 0 30 Z"]
         RenderSVGPath {path} at (149,282) size 103x104 [stroke={[type=SOLID] [color=#FFB400]}] [data="M 30 30 L -30 0 L -30 -30 L 0 -30 Z"]
-        RenderSVGText {text} at (-74,45) size 148x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 147x18
-            chunk 1 (middle anchor) text run 1 at (-73.50,60.00) startOffset 0 endOffset 21 width 147.00: "#4: from-to animation"
-        RenderSVGText {text} at (-70,60) size 140x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 140x18
-            chunk 1 (middle anchor) text run 1 at (-69.97,75.00) startOffset 0 endOffset 20 width 139.95: "compatible H/h, V/v,"
-        RenderSVGText {text} at (-43,75) size 86x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 86x18
-            chunk 1 (middle anchor) text run 1 at (-42.90,90.00) startOffset 0 endOffset 12 width 85.80: "L/l segments"
-      RenderSVGContainer {g} at (277,299) size 246x191 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,200.00)}]
+        RenderSVGText {text} at (-72,45) size 144x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 144x18
+            chunk 1 (middle anchor) text run 1 at (-71.54,60.00) startOffset 0 endOffset 21 width 143.07: "#4: from-to animation"
+        RenderSVGText {text} at (-68,60) size 136x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 136x18
+            chunk 1 (middle anchor) text run 1 at (-67.86,75.00) startOffset 0 endOffset 20 width 135.72: "compatible H/h, V/v,"
+        RenderSVGText {text} at (-42,75) size 84x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 84x18
+            chunk 1 (middle anchor) text run 1 at (-41.62,90.00) startOffset 0 endOffset 12 width 83.24: "L/l segments"
+      RenderSVGContainer {g} at (280,299) size 240x191 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,200.00)}]
         RenderSVGPath {path} at (366,300) size 68x106 [fill={[type=SOLID] [color=#E6E6E6]}] [data="M -20 -20 C 20 -20 20 -20 20 20 C 20 60 20 40 -20 20 Z"]
         RenderSVGPath {path} at (365,299) size 70x107 [stroke={[type=SOLID] [color=#FFB400]}] [data="M -20 -20 C 20 -20 20 -20 20 20 C 20 60 20 40 -20 20 Z"]
         RenderSVGPath {path} at (365,299) size 120x69 [stroke={[type=SOLID] [color=#FFB400]}] [data="M -20 -20 C -20 20 -20 20 20 20 C 60 20 60 20 20 -20 Z"]
-        RenderSVGText {text} at (-74,45) size 148x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 147x18
-            chunk 1 (middle anchor) text run 1 at (-73.50,60.00) startOffset 0 endOffset 21 width 147.00: "#5: from-to animation"
-        RenderSVGText {text} at (-51,60) size 102x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 101x18
-            chunk 1 (middle anchor) text run 1 at (-50.40,75.00) startOffset 0 endOffset 14 width 100.80: "compatible C/c"
-        RenderSVGText {text} at (-44,75) size 88x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 87x18
-            chunk 1 (middle anchor) text run 1 at (-43.20,90.00) startOffset 0 endOffset 12 width 86.40: "s/S segments"
-      RenderSVGContainer {g} at (477,282) size 246x208 [transform={m=((1.00,0.00)(0.00,1.00)) t=(360.00,200.00)}]
+        RenderSVGText {text} at (-72,45) size 144x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 144x18
+            chunk 1 (middle anchor) text run 1 at (-71.54,60.00) startOffset 0 endOffset 21 width 143.07: "#5: from-to animation"
+        RenderSVGText {text} at (-50,60) size 100x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 99x18
+            chunk 1 (middle anchor) text run 1 at (-49.26,75.00) startOffset 0 endOffset 14 width 98.52: "compatible C/c"
+        RenderSVGText {text} at (-43,75) size 86x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 85x18
+            chunk 1 (middle anchor) text run 1 at (-42.08,90.00) startOffset 0 endOffset 12 width 84.16: "s/S segments"
+      RenderSVGContainer {g} at (480,282) size 240x208 [transform={m=((1.00,0.00)(0.00,1.00)) t=(360.00,200.00)}]
         RenderSVGPath {path} at (550,283) size 100x101 [fill={[type=SOLID] [color=#E6E6E6]}] [data="M -30 -30 C 10 -30 30 -20 30 0 C 30 20 10 30 -30 30 Z"]
         RenderSVGPath {path} at (549,282) size 102x103 [stroke={[type=SOLID] [color=#FFB400]}] [data="M -30 -30 C 10 -30 30 -20 30 0 C 30 20 10 30 -30 30 Z"]
         RenderSVGPath {path} at (550,282) size 51x103 [stroke={[type=SOLID] [color=#FFB400]}] [data="M -30 -30 C -10 -30 0 -20 0 0 C 0 20 -10 30 -30 30"]
-        RenderSVGText {text} at (-74,45) size 148x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 147x18
-            chunk 1 (middle anchor) text run 1 at (-73.50,60.00) startOffset 0 endOffset 21 width 147.00: "#6: from-to animation"
-        RenderSVGText {text} at (-66,60) size 132x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 132x18
-            chunk 1 (middle anchor) text run 1 at (-65.70,75.00) startOffset 0 endOffset 19 width 131.40: "compatible Q/q, T/t"
+        RenderSVGText {text} at (-72,45) size 144x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 144x18
+            chunk 1 (middle anchor) text run 1 at (-71.54,60.00) startOffset 0 endOffset 21 width 143.07: "#6: from-to animation"
+        RenderSVGText {text} at (-64,60) size 128x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 128x18
+            chunk 1 (middle anchor) text run 1 at (-63.66,75.00) startOffset 0 endOffset 19 width 127.32: "compatible Q/q, T/t"
         RenderSVGText {text} at (-31,75) size 62x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 62x18
-            chunk 1 (middle anchor) text run 1 at (-30.90,90.00) startOffset 0 endOffset 8 width 61.80: "segments"
+          RenderSVGInlineText {#text} at (0,0) size 61x18
+            chunk 1 (middle anchor) text run 1 at (-30.15,90.00) startOffset 0 endOffset 8 width 60.29: "segments"

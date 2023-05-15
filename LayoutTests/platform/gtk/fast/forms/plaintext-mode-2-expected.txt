@@ -8,33 +8,33 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (600,3) size 0x17
       RenderBlock {DIV} at (0,24) size 784x18
-        RenderText {#text} at (0,0) size 32x17
-          text run at (0,0) width 32: "This "
-        RenderInline {B} at (0,0) size 66x17
-          RenderText {#text} at (32,0) size 43x17
-            text run at (32,0) width 43: "styled "
-          RenderInline {I} at (0,0) size 23x17
-            RenderText {#text} at (75,0) size 23x17
-              text run at (75,0) width 23: "text"
-        RenderText {#text} at (98,0) size 35x17
-          text run at (98,0) width 35: ", and "
-        RenderInline {A} at (0,0) size 24x17 [color=#0000EE]
-          RenderText {#text} at (133,0) size 24x17
-            text run at (133,0) width 24: "link"
-        RenderText {#text} at (157,0) size 403x17
-          text run at (157,0) width 205: " will be pasted into the textfield. "
-          text run at (362,0) width 198: "All richness should be stripped."
+        RenderText {#text} at (0,0) size 33x17
+          text run at (0,0) width 33: "This "
+        RenderInline {B} at (0,0) size 69x17
+          RenderText {#text} at (32,0) size 45x17
+            text run at (32,0) width 45: "styled "
+          RenderInline {I} at (0,0) size 25x17
+            RenderText {#text} at (76,0) size 25x17
+              text run at (76,0) width 25: "text"
+        RenderText {#text} at (100,0) size 36x17
+          text run at (100,0) width 36: ", and "
+        RenderInline {A} at (0,0) size 26x17 [color=#0000EE]
+          RenderText {#text} at (135,0) size 26x17
+            text run at (135,0) width 26: "link"
+        RenderText {#text} at (160,0) size 414x17
+          text run at (160,0) width 212: " will be pasted into the textfield. "
+          text run at (371,0) width 203: "All richness should be stripped."
       RenderBlock {OL} at (0,58) size 784x36
         RenderListItem {LI} at (40,0) size 744x18
           RenderListMarker at (-20,0) size 16x17: "1"
-          RenderText {#text} at (0,0) size 328x17
-            text run at (0,0) width 328: "Success: document.execCommand(\"Copy\") == true"
+          RenderText {#text} at (0,0) size 332x17
+            text run at (0,0) width 332: "Success: document.execCommand(\"Copy\") == true"
         RenderListItem {LI} at (40,18) size 744x18
           RenderListMarker at (-20,0) size 16x17: "2"
-          RenderText {#text} at (0,0) size 326x17
-            text run at (0,0) width 326: "Success: document.execCommand(\"Paste\") == true"
-layer at (11,11) size 594x18 scrollX 24 scrollWidth 618
+          RenderText {#text} at (0,0) size 331x17
+            text run at (0,0) width 331: "Success: document.execCommand(\"Paste\") == true"
+layer at (11,11) size 594x18 scrollX 26 scrollWidth 620
   RenderBlock {DIV} at (3,3) size 594x18
-    RenderText {#text} at (0,0) size 617x17
-      text run at (0,0) width 617: "This styled text, and link will be pasted into the textfield. All richness should be stripped."
+    RenderText {#text} at (0,0) size 619x17
+      text run at (0,0) width 619: "This styled text, and link will be pasted into the textfield. All richness should be stripped."
 caret: position 94 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 0 {INPUT} of body

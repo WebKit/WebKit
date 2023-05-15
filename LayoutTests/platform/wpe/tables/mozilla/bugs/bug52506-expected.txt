@@ -4,14 +4,14 @@ layer at (0,0) size 800x132
   RenderBlock {HTML} at (0,0) size 800x132
     RenderBody {BODY} at (8,8) size 784x116
       RenderBlock {FORM} at (0,0) size 784x54
-        RenderButton {INPUT} at (0,0) size 211x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 195x18
-            RenderText at (0,0) size 195x17
-              text run at (0,0) width 195: "[Step 1] Set cell height to 60px"
-        RenderButton {INPUT} at (0,27) size 211x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 195x18
-            RenderText at (0,0) size 195x17
-              text run at (0,0) width 195: "[Step 2] Set cell height to 20px"
+        RenderButton {INPUT} at (0,0) size 216x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 200x18
+            RenderText at (0,0) size 200x17
+              text run at (0,0) width 200: "[Step 1] Set cell height to 60px"
+        RenderButton {INPUT} at (0,27) size 216x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 200x18
+            RenderText at (0,0) size 200x17
+              text run at (0,0) width 200: "[Step 2] Set cell height to 20px"
       RenderTable {TABLE} at (0,54) size 42x62
         RenderTableSection {TBODY} at (0,0) size 42x62
           RenderTableRow {TR} at (0,2) size 42x28

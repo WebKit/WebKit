@@ -4,31 +4,30 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 355x17
-          text run at (0,0) width 355: "The style declarations which apply to the text below are:"
+        RenderText {#text} at (0,0) size 363x17
+          text run at (0,0) width 363: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 784x45
-        RenderText {#text} at (0,0) size 304x45
-          text run at (0,0) width 304: ".one {border-top: purple double 10px;}"
-          text run at (304,0) width 0: " "
-          text run at (0,15) width 296: ".two {border-top: purple thin solid;}"
-          text run at (296,15) width 0: " "
+        RenderText {#text} at (0,0) size 297x45
+          text run at (0,0) width 297: ".one {border-top: purple double 10px;}"
+          text run at (296,0) width 1: " "
+          text run at (0,15) width 289: ".two {border-top: purple thin solid;}"
+          text run at (288,15) width 1: " "
           text run at (0,30) width 0: " "
       RenderBlock {P} at (0,110) size 784x54 [bgcolor=#C0C0C0]
-        RenderText {#text} at (0,0) size 666x17
-          text run at (0,0) width 666: "This is an unstyled element, save for the background color, and containing inline elements with classes of "
-        RenderInline {SPAN} at (0,0) size 58x27 [border: (10px double #800080) none]
-          RenderText {#text} at (665,0) size 58x17
-            text run at (665,0) width 58: "class one"
-        RenderText {#text} at (722,0) size 770x35
-          text run at (722,0) width 48: ", which"
-          text run at (0,18) width 338: "should have a 10-pixel purple double top border; and "
-        RenderInline {SPAN} at (0,0) size 58x18 [border: (1px solid #800080) none]
-          RenderText {#text} at (338,18) size 58x17
-            text run at (338,18) width 58: "class two"
-        RenderText {#text} at (396,18) size 774x35
-          text run at (396,18) width 321: ", which should have a thin solid purple top border. "
-          text run at (716,18) width 58: "The line-"
-          text run at (0,36) width 372: "height of the parent element should not change on any line."
+        RenderText {#text} at (0,0) size 680x17
+          text run at (0,0) width 680: "This is an unstyled element, save for the background color, and containing inline elements with classes of "
+        RenderInline {SPAN} at (0,0) size 59x27 [border: (10px double #800080) none]
+          RenderText {#text} at (679,0) size 59x17
+            text run at (679,0) width 59: "class one"
+        RenderText {#text} at (737,0) size 742x35
+          text run at (737,0) width 5: ","
+          text run at (0,18) width 387: "which should have a 10-pixel purple double top border; and "
+        RenderInline {SPAN} at (0,0) size 60x18 [border: (1px solid #800080) none]
+          RenderText {#text} at (386,18) size 60x17
+            text run at (386,18) width 60: "class two"
+        RenderText {#text} at (445,18) size 767x35
+          text run at (445,18) width 322: ", which should have a thin solid purple top border."
+          text run at (0,36) width 438: "The line-height of the parent element should not change on any line."
       RenderTable {TABLE} at (0,180) size 784x90 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x88
           RenderTableRow {TR} at (0,0) size 782x26
@@ -42,19 +41,20 @@ layer at (0,0) size 800x600
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 770x62 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x54 [bgcolor=#C0C0C0]
-                RenderText {#text} at (0,0) size 666x17
-                  text run at (0,0) width 666: "This is an unstyled element, save for the background color, and containing inline elements with classes of "
-                RenderInline {SPAN} at (0,0) size 58x27 [border: (10px double #800080) none]
-                  RenderText {#text} at (665,0) size 58x17
-                    text run at (665,0) width 58: "class one"
-                RenderText {#text} at (722,0) size 727x35
-                  text run at (722,0) width 5: ","
-                  text run at (0,18) width 381: "which should have a 10-pixel purple double top border; and "
-                RenderInline {SPAN} at (0,0) size 58x18 [border: (1px solid #800080) none]
-                  RenderText {#text} at (381,18) size 58x17
-                    text run at (381,18) width 58: "class two"
-                RenderText {#text} at (439,18) size 756x35
-                  text run at (439,18) width 317: ", which should have a thin solid purple top border."
-                  text run at (0,36) width 429: "The line-height of the parent element should not change on any line."
+                RenderText {#text} at (0,0) size 680x17
+                  text run at (0,0) width 680: "This is an unstyled element, save for the background color, and containing inline elements with classes of "
+                RenderInline {SPAN} at (0,0) size 59x27 [border: (10px double #800080) none]
+                  RenderText {#text} at (679,0) size 59x17
+                    text run at (679,0) width 59: "class one"
+                RenderText {#text} at (737,0) size 742x35
+                  text run at (737,0) width 5: ","
+                  text run at (0,18) width 387: "which should have a 10-pixel purple double top border; and "
+                RenderInline {SPAN} at (0,0) size 60x18 [border: (1px solid #800080) none]
+                  RenderText {#text} at (386,18) size 60x17
+                    text run at (386,18) width 60: "class two"
+                RenderText {#text} at (445,18) size 719x35
+                  text run at (445,18) width 274: ", which should have a thin solid purple top"
+                  text run at (0,36) width 49: "border. "
+                  text run at (48,36) width 439: "The line-height of the parent element should not change on any line."
 layer at (8,100) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]

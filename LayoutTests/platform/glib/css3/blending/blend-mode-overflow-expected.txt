@@ -7,30 +7,30 @@ layer at (0,0) size 800x576 isolatesBlending
         RenderBlock {OL} at (40,0) size 744x144
           RenderListItem {LI} at (40,0) size 704x18
             RenderListMarker at (-20,0) size 16x17: "1"
-            RenderText {#text} at (0,0) size 316x17
-              text run at (0,0) width 316: "No blending. Duck should be yellow everywhere."
+            RenderText {#text} at (0,0) size 319x17
+              text run at (0,0) width 319: "No blending. Duck should be yellow everywhere."
           RenderListItem {LI} at (40,18) size 704x18
             RenderListMarker at (-20,0) size 16x17: "2"
-            RenderText {#text} at (0,0) size 532x17
-              text run at (0,0) width 532: "Simple blending. Duck should be a horizontal rainbow inside, and blue on overflow."
+            RenderText {#text} at (0,0) size 540x17
+              text run at (0,0) width 540: "Simple blending. Duck should be a horizontal rainbow inside, and blue on overflow."
           RenderListItem {LI} at (40,36) size 704x36
             RenderListMarker at (-20,0) size 16x17: "3"
-            RenderText {#text} at (0,0) size 703x35
-              text run at (0,0) width 703: "Parent is a stacking context. Duck should be a horizontal rainbow inside, and yellow on overflow (since there is"
-              text run at (0,18) width 226: "no background there to blend with)."
+            RenderText {#text} at (0,0) size 701x35
+              text run at (0,0) width 701: "Parent is a stacking context. Duck should be a horizontal rainbow inside, and yellow on overflow (since there"
+              text run at (0,18) width 244: "is no background there to blend with)."
           RenderListItem {LI} at (40,72) size 704x18
             RenderListMarker at (-20,0) size 16x17: "4"
-            RenderText {#text} at (0,0) size 667x17
-              text run at (0,0) width 667: "Intermediate parent - no stacking context. Duck should be a vertical gradient inside, and blue on overflow."
+            RenderText {#text} at (0,0) size 681x17
+              text run at (0,0) width 681: "Intermediate parent - no stacking context. Duck should be a vertical gradient inside, and blue on overflow."
           RenderListItem {LI} at (40,90) size 704x36
             RenderListMarker at (-20,0) size 16x17: "5"
-            RenderText {#text} at (0,0) size 701x35
-              text run at (0,0) width 701: "Intermediate parent with grandparent stacking context. Duck should be a vertical gradient inside, and yellow on"
-              text run at (0,18) width 60: "overflow."
+            RenderText {#text} at (0,0) size 695x35
+              text run at (0,0) width 695: "Intermediate parent with grandparent stacking context. Duck should be a vertical gradient inside, and yellow"
+              text run at (0,18) width 81: "on overflow."
           RenderListItem {LI} at (40,126) size 704x18
             RenderListMarker at (-20,0) size 16x17: "6"
-            RenderText {#text} at (0,0) size 628x17
-              text run at (0,0) width 628: "Intermediate parent has overflow. Duck should be a vertical gradient inside, and overflow is hidden."
+            RenderText {#text} at (0,0) size 641x17
+              text run at (0,0) width 641: "Intermediate parent has overflow. Duck should be a vertical gradient inside, and overflow is hidden."
         RenderBlock (anonymous) at (40,176) size 744x368
           RenderBlock {DIV} at (0,0) size 180x180
           RenderText {#text} at (180,166) size 4x17

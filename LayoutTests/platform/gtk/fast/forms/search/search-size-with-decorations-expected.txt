@@ -37,24 +37,24 @@ layer at (11,11) size 186x18
   RenderBlock {DIV} at (0,0) size 186x18
 layer at (11,35) size 186x18
   RenderBlock {DIV} at (0,0) size 186x18
-    RenderText {#text} at (0,0) size 180x17
-      text run at (0,0) width 180: "12345678901234567890"
+    RenderText {#text} at (0,0) size 178x17
+      text run at (0,0) width 178: "12345678901234567890"
 layer at (27,59) size 186x18
   RenderBlock {DIV} at (0,0) size 186x18
 layer at (27,83) size 186x18
   RenderBlock {DIV} at (0,0) size 186x18
-    RenderText {#text} at (0,0) size 180x17
-      text run at (0,0) width 180: "12345678901234567890"
+    RenderText {#text} at (0,0) size 178x17
+      text run at (0,0) width 178: "12345678901234567890"
 layer at (27,107) size 186x18
   RenderBlock {DIV} at (0,0) size 186x18
 layer at (27,131) size 186x18
   RenderBlock {DIV} at (0,0) size 186x18
-    RenderText {#text} at (0,0) size 180x17
-      text run at (0,0) width 180: "12345678901234567890"
+    RenderText {#text} at (0,0) size 178x17
+      text run at (0,0) width 178: "12345678901234567890"
 layer at (27,155) size 366x18
   RenderBlock {DIV} at (0,0) size 366x18
-    RenderText {#text} at (0,0) size 360x17
-      text run at (0,0) width 360: "1234567890123456789012345678901234567890"
+    RenderText {#text} at (0,0) size 356x17
+      text run at (0,0) width 356: "1234567890123456789012345678901234567890"
 layer at (197,36) size 16x16
   RenderBlock {DIV} at (186,1) size 16x16 [bgcolor=#000000]
 layer at (11,60) size 16x16

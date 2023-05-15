@@ -76,9 +76,9 @@ PASS mphantom layout is not affected by children with "position: fixed" style
 PASS mroot preferred width calculation is not affected by children with "display: none" style
 PASS mroot layout is not affected by children with "display: none" style
 PASS mroot preferred width calculation is not affected by children with "position: absolute" style
-FAIL mroot layout is not affected by children with "position: absolute" style assert_approx_equals: inline size expected 8.546875 +/- 1 but got 0
+FAIL mroot layout is not affected by children with "position: absolute" style assert_approx_equals: inline size expected 8.859375 +/- 1 but got 0
 PASS mroot preferred width calculation is not affected by children with "position: fixed" style
-FAIL mroot layout is not affected by children with "position: fixed" style assert_approx_equals: inline size expected 8.546875 +/- 1 but got 0
+FAIL mroot layout is not affected by children with "position: fixed" style assert_approx_equals: inline size expected 8.859375 +/- 1 but got 0
 PASS mrow preferred width calculation is not affected by children with "display: none" style
 PASS mrow layout is not affected by children with "display: none" style
 PASS mrow preferred width calculation is not affected by children with "display: contents" style

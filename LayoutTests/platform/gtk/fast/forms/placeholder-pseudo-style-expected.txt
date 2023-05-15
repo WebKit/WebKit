@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 328x17
-        text run at (0,0) width 328: "This tests that you can set the placeholder text color."
-      RenderBR {BR} at (327,0) size 1x17
+      RenderText {#text} at (0,0) size 336x17
+        text run at (0,0) width 336: "This tests that you can set the placeholder text color."
+      RenderBR {BR} at (335,0) size 1x17
       RenderTextControl {INPUT} at (0,18) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
       RenderText {#text} at (192,21) size 4x17
         text run at (192,21) width 4: " "
@@ -29,14 +29,14 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 0x0
 layer at (11,29) size 186x18
   RenderBlock {DIV} at (3,3) size 186x18 [color=#640000]
-    RenderText {#text} at (0,0) size 25x17
-      text run at (0,0) width 25: "text"
+    RenderText {#text} at (0,0) size 26x17
+      text run at (0,0) width 26: "text"
 layer at (11,29) size 186x18
   RenderBlock {DIV} at (3,3) size 186x18
 layer at (207,29) size 170x18
   RenderBlock {DIV} at (3,3) size 170x18 [color=#640000]
-    RenderText {#text} at (0,0) size 48x17
-      text run at (0,0) width 48: "search"
+    RenderText {#text} at (0,0) size 49x17
+      text run at (0,0) width 49: "search"
 layer at (207,29) size 170x18
   RenderBlock {DIV} at (0,0) size 170x18
 layer at (403,29) size 186x18
@@ -53,8 +53,8 @@ layer at (599,29) size 185x18
   RenderBlock {DIV} at (3,3) size 185x18
 layer at (11,53) size 186x18
   RenderBlock {DIV} at (3,3) size 186x18 [color=#A9A9A9]
-    RenderText {#text} at (0,0) size 48x17
-      text run at (0,0) width 48: "default"
+    RenderText {#text} at (0,0) size 49x17
+      text run at (0,0) width 49: "default"
 layer at (11,53) size 186x18
   RenderBlock {DIV} at (3,3) size 186x18
 layer at (207,53) size 186x18

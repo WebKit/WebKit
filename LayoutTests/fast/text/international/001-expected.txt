@@ -21,6 +21,6 @@ layer at (0,0) size 800x600
       RenderInline {A} at (0,0) size 32x17 [color=#0000EE]
         RenderText {#text} at (136,0) size 32x17
           text run at (136,0) width 32: "\x{6587}\x{5B66}"
-      RenderText {#text} at (168,0) size 23x17
+      RenderText {#text} at (168,0) size 24x17
         text run at (168,0) width 4: " "
-        text run at (172,0) width 19: "...a"
+        text run at (172,0) width 20: "...a"

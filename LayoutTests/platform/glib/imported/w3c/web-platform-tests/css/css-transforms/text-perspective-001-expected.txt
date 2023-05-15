@@ -8,5 +8,5 @@ layer at (0,0) size 785x115
 layer at (0,0) size 785x115
   RenderBlock {DIV} at (0,0) size 785x115
     RenderBlock {H1} at (0,0) size 785x115
-      RenderText {#text} at (0,2) size 72x111
-        text run at (0,2) width 72: "X"
+      RenderText {#text} at (0,2) size 73x111
+        text run at (0,2) width 73: "X"

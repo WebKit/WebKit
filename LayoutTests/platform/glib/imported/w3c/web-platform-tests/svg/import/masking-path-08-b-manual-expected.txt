@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (183,56) size 434x378
+    RenderSVGContainer {g} at (186,56) size 428x378
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGResourceClipper {clipPath} [id="emptyclip"] [clipPathUnits=userSpaceOnUse]
         RenderSVGResourceClipper {clipPath} [id="hiddenclip"] [clipPathUnits=userSpaceOnUse]
@@ -19,9 +19,9 @@ layer at (0,0) size 800x600
           RenderSVGRect {rect} at (0,0) size 167x167 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=80.00]}] [fill={[type=SOLID] [color=#000000]}] [x=40.00] [y=40.00] [width=20.00] [height=20.00]
         RenderSVGResourceClipper {clipPath} [id="fillopacityclip"] [clipPathUnits=userSpaceOnUse]
           RenderSVGRect {rect} at (0,0) size 167x167 [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
-      RenderSVGText {text} at (110,33) size 260x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 260x21
-          chunk 1 (middle anchor) text run 1 at (110.40,50.00) startOffset 0 endOffset 32 width 259.20: "Establishing a new clipping path"
+      RenderSVGText {text} at (111,33) size 258x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 257x21
+          chunk 1 (middle anchor) text run 1 at (111.92,50.00) startOffset 0 endOffset 32 width 256.17: "Establishing a new clipping path"
       RenderSVGContainer {g} at (266,166) size 268x268 [transform={m=((0.50,0.00)(0.00,0.50)) t=(160.00,100.00)}]
         RenderSVGRect {rect} at (266,166) size 84x84 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
         RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
@@ -60,8 +60,8 @@ layer at (0,0) size 800x600
           RenderSVGRect {rect} at (450,350) size 84x84 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
             [clipPath="fillopacityclip"] RenderSVGResourceClipper {clipPath} at (0,0) size 100x100
         RenderSVGRect {rect} at (266,166) size 268x268 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=320.00] [height=320.00]
-    RenderSVGContainer {g} at (16,518) size 380x60
-      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 228x36
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.7 $"
+    RenderSVGContainer {g} at (16,518) size 381x60
+      RenderSVGText {text} at (10,311) size 229x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 229x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

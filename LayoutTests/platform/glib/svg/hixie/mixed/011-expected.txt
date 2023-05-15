@@ -13,6 +13,7 @@ layer at (0,0) size 800x420
         RenderText {#text} at (0,0) size 0x0
 layer at (8,8) size 200x200
   RenderBlock (positioned) {div} at (8,8) size 200x200 [bgcolor=#FFFFFF]
-    RenderText {#text} at (0,0) size 199x35
-      text run at (0,0) width 190: "There should be a green circle"
-      text run at (0,18) width 199: "below with no red on this page."
+    RenderText {#text} at (0,0) size 194x53
+      text run at (0,0) width 194: "There should be a green circle"
+      text run at (0,18) width 164: "below with no red on this"
+      text run at (0,36) width 35: "page."

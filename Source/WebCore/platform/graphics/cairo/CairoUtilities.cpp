@@ -71,7 +71,7 @@ static bool s_disableCairoFontHintingForTesting = false;
 
 void disableCairoFontHintingForTesting()
 {
-    cairo_font_options_set_hint_metrics(defaultCairoFontOptions(), CAIRO_HINT_METRICS_ON);
+    cairo_font_options_set_hint_metrics(defaultCairoFontOptions(), CAIRO_HINT_METRICS_OFF);
     cairo_font_options_set_hint_style(defaultCairoFontOptions(), CAIRO_HINT_STYLE_NONE);
 
     s_disableCairoFontHintingForTesting = true;

@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (0,12) size 718x491
-      RenderSVGText {text} at (0,7) size 431x41 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 431x41
-          chunk 1 text run 1 at (0.00,40.00) startOffset 0 endOffset 31 width 430.41: "Test 'baseline-shift' (vertic.)"
+    RenderSVGContainer {g} at (0,12) size 720x491
+      RenderSVGText {text} at (0,7) size 432x41 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 432x41
+          chunk 1 text run 1 at (0.00,40.00) startOffset 0 endOffset 31 width 431.88: "Test 'baseline-shift' (vertic.)"
       RenderSVGContainer {g} at (138,100) size 479x403
         RenderSVGContainer {g} at (138,100) size 479x403 [transform={m=((1.00,0.00)(0.00,1.00)) t=(90.00,60.00)}]
           RenderSVGText {text} at (-7,0) size 21x135 contains 1 chunk(s)
@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
             RenderSVGInlineText {#text} at (20,0) size 14x54
               chunk 1 (vertical) text run 1 at (71.68,0.00) startOffset 0 endOffset 1 height 26.81: "t"
               chunk 1 (vertical) text run 2 at (71.68,26.81) startOffset 1 endOffset 2 height 26.81: "e"
-            RenderSVGTSpan {tspan} at (0,0) size 108x23
+            RenderSVGTSpan {tspan} at (0,0) size 108x22
               RenderSVGInlineText {#text} at (0,53) size 22x108
                 chunk 1 (vertical) text run 1 at (54.88,53.63) startOffset 0 endOffset 1 height 26.81: "-"
                 chunk 1 (vertical) text run 2 at (54.88,80.44) startOffset 1 endOffset 2 height 26.81: "7"
@@ -46,7 +46,7 @@ layer at (0,0) size 800x600
                 chunk 1 (vertical) text run 1 at (171.68,134.06) startOffset 0 endOffset 1 height 26.81: "x"
             RenderSVGInlineText {#text} at (16,160) size 7x27
               chunk 1 (vertical) text run 1 at (171.68,160.88) startOffset 0 endOffset 1 height 26.81: "t"
-          RenderSVGText {text} at (253,0) size 27x242 contains 1 chunk(s)
+          RenderSVGText {text} at (253,0) size 28x242 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 14x54
               chunk 1 (vertical) text run 1 at (251.68,0.00) startOffset 0 endOffset 1 height 26.81: "t"
               chunk 1 (vertical) text run 2 at (251.68,26.81) startOffset 1 endOffset 2 height 26.81: "e"
@@ -62,8 +62,8 @@ layer at (0,0) size 800x600
                 chunk 1 (vertical) text run 1 at (251.68,187.69) startOffset 0 endOffset 1 height 26.81: "x"
             RenderSVGInlineText {#text} at (3,214) size 7x27
               chunk 1 (vertical) text run 1 at (251.68,214.50) startOffset 0 endOffset 1 height 26.81: "t"
-    RenderSVGContainer {g} at (16,518) size 380x60
-      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 228x36
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.7 $"
+    RenderSVGContainer {g} at (16,518) size 381x60
+      RenderSVGText {text} at (10,311) size 229x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 229x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

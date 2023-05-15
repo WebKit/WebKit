@@ -12,6 +12,6 @@ layer at (0,0) size 800x110 layerType: foreground only
         RenderBlock {DIV} at (20,0) size 736x0
           RenderBlock {DIV} at (0,0) size 736x0
       RenderBlock (floating) {DIV} at (0,0) size 320x64 [color=#FFFFFF] [bgcolor=#008000]
-        RenderText {#text} at (0,0) size 175x17
-          text run at (0,0) width 175: "This block should be green."
+        RenderText {#text} at (0,0) size 178x17
+          text run at (0,0) width 178: "This block should be green."
       RenderBlock {DIV} at (50,0) size 680x0

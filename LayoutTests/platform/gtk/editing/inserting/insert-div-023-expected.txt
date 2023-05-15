@@ -30,19 +30,19 @@ layer at (0,0) size 785x678
   RenderBlock {HTML} at (0,0) size 785x678
     RenderBody {BODY} at (8,8) size 769x646
       RenderBlock (anonymous) at (0,0) size 769x81
-        RenderText {#text} at (0,0) size 765x53
-          text run at (0,0) width 765: "Test inserting paragraphs and managing typing style correctly: \"x\" under \"line "
-          text run at (0,27) width 344: "2\" should be bold. Fix for this bug: "
-        RenderInline {A} at (0,0) size 261x26 [color=#0000EE]
-          RenderText {#text} at (343,27) size 261x26
-            text run at (343,27) width 261: "<rdar://problem/3939523>"
-        RenderText {#text} at (603,27) size 755x53
-          text run at (603,27) width 152: " in some cases, "
-          text run at (0,54) width 543: "text does not retain style info after pressing return twice"
+        RenderText {#text} at (0,0) size 755x53
+          text run at (0,0) width 755: "Test inserting paragraphs and managing typing style correctly: \"x\" under \"line "
+          text run at (0,27) width 343: "2\" should be bold. Fix for this bug: "
+        RenderInline {A} at (0,0) size 257x26 [color=#0000EE]
+          RenderText {#text} at (342,27) size 257x26
+            text run at (342,27) width 257: "<rdar://problem/3939523>"
+        RenderText {#text} at (598,27) size 749x53
+          text run at (598,27) width 151: " in some cases, "
+          text run at (0,54) width 537: "text does not retain style info after pressing return twice"
       RenderBlock {DIV} at (0,81) size 769x12
       RenderBlock {P} at (0,117) size 769x55 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 55x26
-          text run at (14,14) width 55: "line 1"
+        RenderText {#text} at (14,14) size 54x26
+          text run at (14,14) width 54: "line 1"
       RenderBlock {P} at (0,196) size 769x55 [border: (2px solid #0000FF)]
         RenderBR {BR} at (14,14) size 0x26 [bgcolor=#008000]
       RenderBlock {P} at (0,275) size 769x55 [border: (2px solid #0000FF)]
@@ -59,6 +59,6 @@ layer at (0,0) size 785x678
       RenderBlock {P} at (0,512) size 769x55 [border: (2px solid #0000FF)]
         RenderBR {BR} at (14,14) size 0x26 [bgcolor=#008000]
       RenderBlock {P} at (0,591) size 769x55 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 55x26
-          text run at (14,14) width 55: "line 3"
+        RenderText {#text} at (14,14) size 54x26
+          text run at (14,14) width 54: "line 3"
 caret: position 1 of child 0 {#text} of child 0 {B} of child 11 {P} of body

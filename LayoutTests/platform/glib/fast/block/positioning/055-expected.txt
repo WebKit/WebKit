@@ -4,8 +4,8 @@ layer at (0,0) size 785x600
   RenderBlock {HTML} at (0,0) size 785x600
     RenderBody {BODY} at (8,8) size 769x584
       RenderBlock (anonymous) at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 119x17
-          text run at (0,0) width 119: "Content at the end."
+        RenderText {#text} at (0,0) size 121x17
+          text run at (0,0) width 121: "Content at the end."
 layer at (8,8) size 16x2160
   RenderBlock (positioned) {DIV} at (0,0) size 16x2160
     RenderText {#text} at (0,0) size 8x17

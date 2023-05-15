@@ -185,7 +185,7 @@ AXRole: AXSection
 AXParent: AXWebArea
 AXChildren: 0
 AXPosition:  { 35.0000, 294.000 }
-AXSize: { 22.0000, 21.0000 }
+AXSize: { 23.0000, 21.0000 }
 AXTitle:
 AXDescription:
 AXValue: bar

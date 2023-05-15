@@ -4,16 +4,16 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 207x17
-          text run at (0,0) width 207: "This tests for regressions against "
-        RenderInline {I} at (0,0) size 541x17
-          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
-            RenderText {#text} at (207,0) size 348x17
-              text run at (207,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7943"
-          RenderText {#text} at (554,0) size 194x17
-            text run at (554,0) width 194: " Layer outline does not repaint"
-        RenderText {#text} at (747,0) size 5x17
-          text run at (747,0) width 5: "."
+        RenderText {#text} at (0,0) size 213x17
+          text run at (0,0) width 213: "This tests for regressions against "
+        RenderInline {I} at (0,0) size 551x17
+          RenderInline {A} at (0,0) size 354x17 [color=#0000EE]
+            RenderText {#text} at (212,0) size 354x17
+              text run at (212,0) width 354: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7943"
+          RenderText {#text} at (565,0) size 198x17
+            text run at (565,0) width 198: " Layer outline does not repaint"
+        RenderText {#text} at (762,0) size 5x17
+          text run at (762,0) width 5: "."
 layer at (8,42) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,34) size 784x2 [border: (1px inset #000000)]
 layer at (18,192) size 100x100 clip at (19,193) size 98x98

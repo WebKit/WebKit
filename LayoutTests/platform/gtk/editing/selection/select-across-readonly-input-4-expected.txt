@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 776x35
-          text run at (0,0) width 776: "This test ensures selection that crosses the shadow DOM boundary of a readonly input element cannot be made by a mouse"
-          text run at (0,18) width 32: "drag."
+        RenderText {#text} at (0,0) size 744x35
+          text run at (0,0) width 744: "This test ensures selection that crosses the shadow DOM boundary of a readonly input element cannot be made by a"
+          text run at (0,18) width 79: "mouse drag."
       RenderBlock {P} at (0,52) size 784x36
-        RenderText {#text} at (0,0) size 783x35
-          text run at (0,0) width 783: "To manually test, select text by a mouse drag starting in \"hello\" and ending in \"WebKit\". Selection should extend only in the"
-          text run at (0,18) width 221: "input element that contains \"hello\"."
+        RenderText {#text} at (0,0) size 773x35
+          text run at (0,0) width 773: "To manually test, select text by a mouse drag starting in \"hello\" and ending in \"WebKit\". Selection should extend only in"
+          text run at (0,18) width 250: "the input element that contains \"hello\"."
       RenderBlock {DIV} at (0,104) size 784x24
         RenderTextControl {INPUT} at (0,0) size 60x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (59,3) size 5x17
@@ -24,9 +24,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
 layer at (11,115) size 53x18
   RenderBlock {DIV} at (3,3) size 54x18
-    RenderText {#text} at (0,0) size 35x17
-      text run at (0,0) width 35: "hello"
-layer at (115,115) size 53x18
+    RenderText {#text} at (0,0) size 34x17
+      text run at (0,0) width 34: "hello"
+layer at (116,115) size 53x18
   RenderBlock {DIV} at (3,3) size 54x18
     RenderText {#text} at (0,0) size 52x17
       text run at (0,0) width 52: "WebKit"

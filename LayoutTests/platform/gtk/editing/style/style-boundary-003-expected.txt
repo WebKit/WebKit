@@ -13,22 +13,22 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x152 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x54
-          RenderText {#text} at (0,0) size 59x26
-            text run at (0,0) width 59: "Tests:"
-          RenderBR {BR} at (58,0) size 1x26
-          RenderText {#text} at (0,27) size 600x26
-            text run at (0,27) width 600: "Style checks performed on boundaries between style changes."
+          RenderText {#text} at (0,0) size 60x26
+            text run at (0,0) width 60: "Tests:"
+          RenderBR {BR} at (59,0) size 1x26
+          RenderText {#text} at (0,27) size 595x26
+            text run at (0,27) width 595: "Style checks performed on boundaries between style changes."
         RenderBlock {DIV} at (14,84) size 756x54
-          RenderText {#text} at (0,0) size 183x26
-            text run at (0,0) width 183: "Expected Results:"
-          RenderBR {BR} at (182,0) size 1x26
-          RenderText {#text} at (0,27) size 442x26
-            text run at (0,27) width 442: "Should see this content in the red box below: "
+          RenderText {#text} at (0,0) size 184x26
+            text run at (0,0) width 184: "Expected Results:"
+          RenderBR {BR} at (183,0) size 1x26
+          RenderText {#text} at (0,27) size 438x26
+            text run at (0,27) width 438: "Should see this content in the red box below: "
           RenderInline {B} at (0,0) size 13x26
-            RenderText {#text} at (441,27) size 13x26
-              text run at (441,27) width 13: "a"
-          RenderText {#text} at (453,27) size 24x26
-            text run at (453,27) width 24: "bc"
+            RenderText {#text} at (437,27) size 13x26
+              text run at (437,27) width 13: "a"
+          RenderText {#text} at (449,27) size 24x26
+            text run at (449,27) width 24: "bc"
       RenderBlock {DIV} at (0,176) size 784x31
         RenderBlock {DIV} at (0,0) size 784x31 [border: (2px solid #FF0000)]
           RenderInline {B} at (0,0) size 12x26

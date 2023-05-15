@@ -4,23 +4,23 @@ layer at (0,0) size 800x186
   RenderBlock {HTML} at (0,0) size 800x186
     RenderBody {BODY} at (8,16) size 784x36
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 106x17
-          text run at (0,0) width 106: "There should be "
-        RenderInline {STRONG} at (0,0) size 143x17
-          RenderText {#text} at (106,0) size 143x17
-            text run at (106,0) width 143: "5 filled green squares"
-        RenderText {#text} at (248,0) size 186x17
-          text run at (248,0) width 186: " with the same width and the "
-        RenderInline {STRONG} at (0,0) size 81x17
-          RenderText {#text} at (433,0) size 81x17
-            text run at (433,0) width 81: "same height"
-        RenderText {#text} at (513,0) size 237x17
-          text run at (513,0) width 237: ". The 5 filled green squares should be"
-        RenderInline {STRONG} at (0,0) size 57x17
-          RenderText {#text} at (0,18) size 57x17
-            text run at (0,18) width 57: "identical"
-        RenderText {#text} at (57,18) size 445x17
-          text run at (57,18) width 445: " to each other. This should still remain true even after a window resize."
+        RenderText {#text} at (0,0) size 108x17
+          text run at (0,0) width 108: "There should be "
+        RenderInline {STRONG} at (0,0) size 145x17
+          RenderText {#text} at (107,0) size 145x17
+            text run at (107,0) width 145: "5 filled green squares"
+        RenderText {#text} at (251,0) size 189x17
+          text run at (251,0) width 189: " with the same width and the "
+        RenderInline {STRONG} at (0,0) size 83x17
+          RenderText {#text} at (439,0) size 83x17
+            text run at (439,0) width 83: "same height"
+        RenderText {#text} at (521,0) size 241x17
+          text run at (521,0) width 241: ". The 5 filled green squares should be"
+        RenderInline {STRONG} at (0,0) size 59x17
+          RenderText {#text} at (0,18) size 59x17
+            text run at (0,18) width 59: "identical"
+        RenderText {#text} at (58,18) size 455x17
+          text run at (58,18) width 455: " to each other. This should still remain true even after a window resize."
       RenderBlock {DIV} at (0,52) size 784x0
         RenderImage {IMG} at (0,0) size 118x118
         RenderImage {IMG} at (117,0) size 6x5

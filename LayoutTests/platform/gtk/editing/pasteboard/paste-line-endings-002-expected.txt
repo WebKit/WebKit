@@ -21,30 +21,30 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x206 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x81
-          RenderText {#text} at (0,0) size 59x26
-            text run at (0,0) width 59: "Tests:"
-          RenderBR {BR} at (58,0) size 1x26
+          RenderText {#text} at (0,0) size 60x26
+            text run at (0,0) width 60: "Tests:"
+          RenderBR {BR} at (59,0) size 1x26
           RenderText {#text} at (0,27) size 162x26
             text run at (0,27) width 162: "Fix for this bug: "
-          RenderInline {A} at (0,0) size 261x26 [color=#0000EE]
-            RenderText {#text} at (161,27) size 261x26
-              text run at (161,27) width 261: "<rdar://problem/4045511>"
-          RenderText {#text} at (421,27) size 705x53
-            text run at (421,27) width 284: " Copying and pasting end-of-"
-            text run at (0,54) width 533: "paragraph selection puts insertion point in wrong place"
+          RenderInline {A} at (0,0) size 256x26 [color=#0000EE]
+            RenderText {#text} at (161,27) size 256x26
+              text run at (161,27) width 256: "<rdar://problem/4045511>"
+          RenderText {#text} at (416,27) size 699x53
+            text run at (416,27) width 283: " Copying and pasting end-of-"
+            text run at (0,54) width 528: "paragraph selection puts insertion point in wrong place"
         RenderBlock {DIV} at (14,111) size 756x81
-          RenderText {#text} at (0,0) size 183x26
-            text run at (0,0) width 183: "Expected Results:"
-          RenderBR {BR} at (182,0) size 1x26
-          RenderText {#text} at (0,27) size 715x53
-            text run at (0,27) width 707: "Should see two lines of text below, self-documenting themselves as \"line"
-            text run at (0,54) width 715: "one\" and \"line two\". The insertion point must be at the start of \"line two\"."
+          RenderText {#text} at (0,0) size 184x26
+            text run at (0,0) width 184: "Expected Results:"
+          RenderBR {BR} at (183,0) size 1x26
+          RenderText {#text} at (0,27) size 750x53
+            text run at (0,27) width 750: "Should see two lines of text below, self-documenting themselves as \"line one\""
+            text run at (0,54) width 656: "and \"line two\". The insertion point must be at the start of \"line two\"."
       RenderBlock {DIV} at (0,230) size 784x58
         RenderBlock {DIV} at (0,0) size 784x58 [border: (2px solid #FF0000)]
           RenderBlock (anonymous) at (2,2) size 780x27
-            RenderText {#text} at (0,0) size 78x26
-              text run at (0,0) width 78: "line one"
+            RenderText {#text} at (0,0) size 77x26
+              text run at (0,0) width 77: "line one"
           RenderBlock {DIV} at (2,29) size 780x27
-            RenderText {#text} at (0,0) size 79x26
-              text run at (0,0) width 79: "line two"
+            RenderText {#text} at (0,0) size 78x26
+              text run at (0,0) width 78: "line two"
 caret: position 0 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body

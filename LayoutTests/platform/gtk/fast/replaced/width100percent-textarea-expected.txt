@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 252x17
-          text run at (0,0) width 252: "The textareas below should not overlap."
+        RenderText {#text} at (0,0) size 256x17
+          text run at (0,0) width 256: "The textareas below should not overlap."
       RenderTable {TABLE} at (0,18) size 784x46
         RenderTableSection {TBODY} at (0,0) size 784x46
           RenderTableRow {TR} at (0,1) size 784x44
@@ -38,16 +38,16 @@ layer at (19,28) size 6x42 clip at (0,0) size 0x0 scrollWidth 14 scrollHeight 58
   RenderTextControl {TEXTAREA} at (1,1) size 6x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 0x54
       RenderText {#text} at (0,0) size 12x53
-        text run at (0,0) width 4: "t"
+        text run at (0,0) width 5: "t"
         text run at (0,18) width 12: "w"
         text run at (0,36) width 9: "o"
 layer at (28,28) size 6x42 clip at (0,0) size 0x0 scrollWidth 11 scrollHeight 94
   RenderTextControl {TEXTAREA} at (1,1) size 6x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 0x90
       RenderText {#text} at (0,0) size 9x89
-        text run at (0,0) width 4: "t"
+        text run at (0,0) width 5: "t"
         text run at (0,18) width 9: "h"
-        text run at (0,36) width 5: "r"
+        text run at (0,36) width 6: "r"
         text run at (0,54) width 9: "e"
         text run at (0,72) width 9: "e"
 layer at (10,110) size 6x42 clip at (0,0) size 0x0 scrollWidth 14 scrollHeight 238
@@ -58,28 +58,28 @@ layer at (10,110) size 6x42 clip at (0,0) size 0x0 scrollWidth 14 scrollHeight 2
         text run at (0,18) width 9: "n"
         text run at (0,36) width 9: "e"
         text run at (0,54) width 0: " "
-        text run at (0,72) width 4: "t"
+        text run at (0,72) width 5: "t"
         text run at (0,90) width 12: "w"
         text run at (0,108) width 9: "o"
         text run at (0,126) width 0: " "
-        text run at (0,144) width 4: "t"
+        text run at (0,144) width 5: "t"
         text run at (0,162) width 9: "h"
-        text run at (0,180) width 5: "r"
+        text run at (0,180) width 6: "r"
         text run at (0,198) width 9: "e"
         text run at (0,216) width 9: "e"
 layer at (19,110) size 6x42 clip at (0,0) size 0x0 scrollWidth 14 scrollHeight 58
   RenderTextControl {TEXTAREA} at (1,1) size 6x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 0x54
       RenderText {#text} at (0,0) size 12x53
-        text run at (0,0) width 4: "t"
+        text run at (0,0) width 5: "t"
         text run at (0,18) width 12: "w"
         text run at (0,36) width 9: "o"
 layer at (28,110) size 6x42 clip at (0,0) size 0x0 scrollWidth 11 scrollHeight 94
   RenderTextControl {TEXTAREA} at (1,1) size 6x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 0x90
       RenderText {#text} at (0,0) size 9x89
-        text run at (0,0) width 4: "t"
+        text run at (0,0) width 5: "t"
         text run at (0,18) width 9: "h"
-        text run at (0,36) width 5: "r"
+        text run at (0,36) width 6: "r"
         text run at (0,54) width 9: "e"
         text run at (0,72) width 9: "e"

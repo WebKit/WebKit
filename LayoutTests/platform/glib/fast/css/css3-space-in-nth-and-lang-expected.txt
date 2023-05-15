@@ -7,17 +7,17 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 109x17
           text run at (0,0) width 109: "Green on Yellow"
       RenderBlock {DIV} at (0,18) size 784x18 [color=#0000FF] [bgcolor=#C0C0C0]
-        RenderText {#text} at (0,0) size 91x17
-          text run at (0,0) width 91: "Blue on Silver"
+        RenderText {#text} at (0,0) size 93x17
+          text run at (0,0) width 93: "Blue on Silver"
       RenderBlock {DIV} at (0,36) size 784x18 [color=#008000]
-        RenderText {#text} at (0,0) size 39x17
-          text run at (0,0) width 39: "Green"
+        RenderText {#text} at (0,0) size 40x17
+          text run at (0,0) width 40: "Green"
       RenderBlock {DIV} at (0,54) size 784x18 [color=#0000FF]
-        RenderText {#text} at (0,0) size 30x17
-          text run at (0,0) width 30: "Blue"
+        RenderText {#text} at (0,0) size 31x17
+          text run at (0,0) width 31: "Blue"
       RenderBlock {DIV} at (0,72) size 784x18 [color=#008000]
-        RenderText {#text} at (0,0) size 39x17
-          text run at (0,0) width 39: "Green"
+        RenderText {#text} at (0,0) size 40x17
+          text run at (0,0) width 40: "Green"
       RenderBlock {DIV} at (0,90) size 784x18 [color=#0000FF]
-        RenderText {#text} at (0,0) size 30x17
-          text run at (0,0) width 30: "Blue"
+        RenderText {#text} at (0,0) size 31x17
+          text run at (0,0) width 31: "Blue"

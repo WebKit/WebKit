@@ -2,4 +2,4 @@ This tests text with characters that have multiple glyphs.
 
 [คำผ]
 [คำ]
-PASS
+FAIL: width was 45 instead of 43.67999267578125

@@ -45,23 +45,23 @@ layer at (0,0) size 800x600
             [filter="Identity"] RenderSVGResourceFilter {filter} at (10,10) size 580x40
           RenderSVGText {text} at (10,53) size 161x34 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 161x34
-              chunk 1 text run 1 at (10.00,80.00) startOffset 0 endOffset 14 width 160.44: "type: identity"
+              chunk 1 text run 1 at (10.00,80.00) startOffset 0 endOffset 14 width 160.41: "type: identity"
           RenderSVGRect {rect} at (36,139) size 692x48 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=10.00] [y=110.00] [width=580.00] [height=40.00]
             [filter="Table"] RenderSVGResourceFilter {filter} at (10,110) size 580x40
           RenderSVGText {text} at (10,153) size 127x34 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 127x34
-              chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 11 width 126.84: "type: table"
+              chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 11 width 126.79: "type: table"
           RenderSVGRect {rect} at (36,258) size 692x48 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=10.00] [y=210.00] [width=580.00] [height=40.00]
             [filter="Linear"] RenderSVGResourceFilter {filter} at (10,210) size 580x40
           RenderSVGText {text} at (10,253) size 458x34 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 458x34
-              chunk 1 text run 1 at (10.00,280.00) startOffset 0 endOffset 40 width 457.80: "type:linear slope:.5 intercepts:.25/0/.5"
+              chunk 1 text run 1 at (10.00,280.00) startOffset 0 endOffset 40 width 457.69: "type:linear slope:.5 intercepts:.25/0/.5"
           RenderSVGRect {rect} at (36,377) size 692x48 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=10.00] [y=310.00] [width=580.00] [height=40.00]
             [filter="Gamma"] RenderSVGResourceFilter {filter} at (10,310) size 580x40
           RenderSVGText {text} at (10,353) size 450x34 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 450x34
-              chunk 1 text run 1 at (10.00,380.00) startOffset 0 endOffset 34 width 449.40: "type: gamma ampl:2 exponents:5/3/1"
-    RenderSVGText {text} at (10,304) size 269x45 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 269x45
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 268.20: "$Revision: 1.6 $"
+              chunk 1 text run 1 at (10.00,380.00) startOffset 0 endOffset 34 width 449.32: "type: gamma ampl:2 exponents:5/3/1"
+    RenderSVGText {text} at (10,304) size 265x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 265x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.66: "$Revision: 1.6 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
