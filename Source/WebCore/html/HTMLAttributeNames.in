@@ -123,7 +123,6 @@ dirname
 disabled
 disablepictureinpicture
 disableremoteplayback
-disposition
 download
 draggable
 dropzone
@@ -164,11 +163,6 @@ integrity
 interactive
 is
 ismap
-itemid
-itemprop
-itemref
-itemscope
-itemtype
 keytype
 kind
 label
@@ -349,9 +343,6 @@ onwebkitmouseforcewillbegin
 onwebkitneedkey
 onwebkitplaybacktargetavailabilitychanged
 onwebkitpresentationmodechanged
-onwebkitsourceclose
-onwebkitsourceended
-onwebkitsourceopen
 onwebkittransitionend
 onwheel
 open
@@ -362,16 +353,12 @@ ping
 placeholder
 playcount
 playsinline
-pluginspage
-pluginurl
 popover
 popovertarget
 popovertargetaction
 poster
 preload
-primary
 progress
-prompt
 pseudo
 readonly
 referrerpolicy
@@ -400,8 +387,6 @@ shape
 size
 sizes
 slot
-sortable
-sortdirection
 span
 spellcheck
 src
@@ -415,11 +400,9 @@ style
 subtitle
 summary
 tabindex
-tableborder
 target
 text
 title
-top
 topmargin
 translate
 truespeed
@@ -447,7 +430,4 @@ x-apple-data-detectors-type
 x-apple-pdf-annotation
 x-itunes-inherit-uri-query-component
 x-webkit-airplay
-x-webkit-grammar
-x-webkit-imagemenu
-x-webkit-speech
 x-webkit-wirelessvideoplaybackdisabled
