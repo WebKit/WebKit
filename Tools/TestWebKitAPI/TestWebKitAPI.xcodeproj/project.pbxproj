@@ -1221,6 +1221,7 @@
 		F4CB8A7D2856462B0017ECD3 /* TestPDFHostViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4CB8A7C285644FB0017ECD3 /* TestPDFHostViewController.mm */; };
 		F4CD74C620FDACFA00DE3794 /* text-with-async-script.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4CD74C520FDACF500DE3794 /* text-with-async-script.html */; };
 		F4CDF3D227E97C7E00191928 /* SpellCheckerDocumentTag.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4CDF3D127E97C7E00191928 /* SpellCheckerDocumentTag.mm */; };
+		F4CEF1572A1030A400A370BE /* editable-body-mixed-text.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4CEF1562A102F4E00A370BE /* editable-body-mixed-text.html */; };
 		F4CF32802366552200D3AD07 /* EnterKeyHintTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4CF327F2366552200D3AD07 /* EnterKeyHintTests.mm */; };
 		F4CFCDDA249FC9E400527482 /* SpaceOnly.otf in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4CFCDD8249FC9D900527482 /* SpaceOnly.otf */; };
 		F4D060082734A1AB008FA67A /* simple-editor.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4D060072734A08C008FA67A /* simple-editor.html */; };
@@ -1563,6 +1564,7 @@
 				F4194AD11F5A320100ADD83F /* drop-targets.html in Copy Resources */,
 				2EB29D5E1F762DB90023A5F1 /* dump-datatransfer-types.html in Copy Resources */,
 				A155022C1E050D0300A24C57 /* duplicate-completion-handler-calls.html in Copy Resources */,
+				F4CEF1572A1030A400A370BE /* editable-body-mixed-text.html in Copy Resources */,
 				9984FACE1CFFB090008D198C /* editable-body.html in Copy Resources */,
 				F4D9818F2196B920008230FC /* editable-nested-lists.html in Copy Resources */,
 				CEDA12412437C9FB00C28A9E /* editable-region-composited-and-non-composited-overlap.html in Copy Resources */,
@@ -3525,6 +3527,7 @@
 		F4CD74C820FDB49600DE3794 /* TestURLSchemeHandler.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestURLSchemeHandler.mm; sourceTree = "<group>"; };
 		F4CDAB3322489FE10057A2D9 /* UserInterfaceSwizzler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserInterfaceSwizzler.h; sourceTree = "<group>"; };
 		F4CDF3D127E97C7E00191928 /* SpellCheckerDocumentTag.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SpellCheckerDocumentTag.mm; sourceTree = "<group>"; };
+		F4CEF1562A102F4E00A370BE /* editable-body-mixed-text.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "editable-body-mixed-text.html"; sourceTree = "<group>"; };
 		F4CF327F2366552200D3AD07 /* EnterKeyHintTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = EnterKeyHintTests.mm; sourceTree = "<group>"; };
 		F4CFCDD8249FC9D900527482 /* SpaceOnly.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SpaceOnly.otf; sourceTree = "<group>"; };
 		F4CFCDD9249FC9D900527482 /* Ahem.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Ahem.ttf; sourceTree = "<group>"; };
@@ -4643,6 +4646,7 @@
 				F4194AD01F5A2EA500ADD83F /* drop-targets.html */,
 				2EB29D5D1F762DA50023A5F1 /* dump-datatransfer-types.html */,
 				A155022B1E050BC500A24C57 /* duplicate-completion-handler-calls.html */,
+				F4CEF1562A102F4E00A370BE /* editable-body-mixed-text.html */,
 				9984FACD1CFFB038008D198C /* editable-body.html */,
 				F4D9818E2196B911008230FC /* editable-nested-lists.html */,
 				F4352F9E26D4037000E605E4 /* editable-responsive-body.html */,

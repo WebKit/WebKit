@@ -38,6 +38,7 @@
 #include "InlineIteratorLineBoxInlines.h"
 #include "InlineIteratorLogicalOrderTraversal.h"
 #include "InlineIteratorTextBox.h"
+#include "InlineIteratorTextBoxInlines.h"
 #include "InlineRunAndOffset.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LegacyEllipsisBox.h"
@@ -334,7 +335,10 @@ void RenderText::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumu
 
 Vector<IntRect> RenderText::absoluteRectsForRange(unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
 {
-    return absoluteQuadsForRange(start, end, useSelectionHeight, false /* ignoreEmptyTextSelections */, wasFixed).map([](auto& quad) {
+    OptionSet<RenderObject::BoundingRectBehavior> behavior;
+    if (useSelectionHeight)
+        behavior.add(RenderObject::BoundingRectBehavior::UseSelectionHeight);
+    return absoluteQuadsForRange(start, end, behavior, wasFixed).map([](auto& quad) {
         return quad.enclosingBoundingBox();
     });
 }
@@ -487,8 +491,33 @@ static FloatRect localQuadForTextRun(const InlineIterator::TextBox& run, unsigne
     return boxSelectionRect;
 }
 
-Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end, bool useSelectionHeight, bool ignoreEmptyTextSelections, bool* wasFixed) const
+static Vector<LayoutRect> characterRects(const InlineIterator::TextBox& run, unsigned rangeStart, unsigned rangeEnd)
 {
+    auto [clampedStart, clampedEnd] = run.selectableRange().clamp(rangeStart, rangeEnd);
+    if (clampedStart >= clampedEnd)
+        return { };
+
+    if (auto* svgTextBox = dynamicDowncast<SVGInlineTextBox>(run.legacyInlineBox())) {
+        Vector<LayoutRect> rects;
+        rects.reserveInitialCapacity(clampedEnd - clampedStart);
+        for (auto index = clampedStart; index < clampedEnd; ++index)
+            rects.uncheckedAppend(svgTextBox->localSelectionRect(index, index + 1));
+        return rects;
+    }
+
+    auto lineSelectionRect = LineSelection::logicalRect(*run.lineBox());
+    auto selectionRect = LayoutRect { run.logicalLeftIgnoringInlineDirection(), lineSelectionRect.y(), run.logicalWidth(), lineSelectionRect.height() };
+    return run.fontCascade().characterSelectionRectsForText(run.textRun(), selectionRect, clampedStart, clampedEnd).map([&](auto& characterRect) {
+        return snappedSelectionRect(characterRect, run.logicalRightIgnoringInlineDirection(), lineSelectionRect.y(), lineSelectionRect.height(), run.isHorizontal());
+    });
+}
+
+Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end, OptionSet<RenderObject::BoundingRectBehavior> behavior, bool* wasFixed) const
+{
+    bool useSelectionHeight = behavior.contains(RenderObject::BoundingRectBehavior::UseSelectionHeight);
+    bool ignoreEmptyTextSelections = behavior.contains(RenderObject::BoundingRectBehavior::IgnoreEmptyTextSelections);
+    bool computeIndividualCharacterRects = behavior.contains(RenderObject::BoundingRectBehavior::ComputeIndividualCharacterRects);
+
     // Work around signed/unsigned issues. This function takes unsigneds, and is often passed UINT_MAX
     // to mean "all the way to the end". LegacyInlineTextBox coordinates are unsigneds, so changing this
     // function to take ints causes various internal mismatches. But selectionRect takes ints, and
@@ -511,6 +540,32 @@ Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end
     for (auto& run : InlineIterator::textBoxesFor(*this)) {
         if (ignoreEmptyTextSelections && !run.selectableRange().intersects(start, end))
             continue;
+
+        if (computeIndividualCharacterRects) {
+            auto rects = characterRects(run, start, end);
+            if (!quads.tryReserveCapacity(quads.size() + rects.size()))
+                continue;
+
+            if (!useSelectionHeight) {
+                for (auto& rect : rects) {
+                    auto visualRect = run.visualRectIgnoringBlockDirection();
+                    if (run.isHorizontal()) {
+                        rect.setHeight(visualRect.height());
+                        rect.setY(visualRect.y());
+                    } else {
+                        rect.setWidth(visualRect.width());
+                        rect.setX(visualRect.x());
+                    }
+                }
+            }
+
+            for (auto& rect : rects) {
+                if (FloatRect localRect { rect }; !localRect.isZero())
+                    quads.uncheckedAppend(localToAbsoluteQuad(localRect, UseTransforms, wasFixed));
+            }
+            continue;
+        }
+
         if (start <= run.start() && run.end() <= end) {
             auto boundaries = boundariesForTextRun(run);
 

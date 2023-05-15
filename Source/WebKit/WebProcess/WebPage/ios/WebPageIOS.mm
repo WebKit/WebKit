@@ -4950,19 +4950,23 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
 
     auto characterRectsForRange = [](const SimpleRange& range, unsigned startOffset) {
         Vector<DocumentEditingContext::TextRectAndRange> rects;
-        CharacterIterator iterator { range };
         unsigned offsetSoFar = startOffset;
-        const int stride = 1;
-        while (!iterator.atEnd()) {
-            if (!iterator.text().isEmpty()) {
-                IntRect absoluteBoundingBox;
-                if (iterator.range().collapsed())
-                    absoluteBoundingBox = VisiblePosition(makeContainerOffsetPosition(iterator.range().start)).absoluteCaretBounds();
-                else
-                    absoluteBoundingBox = unionRectIgnoringZeroRects(RenderObject::absoluteTextRects(iterator.range(), RenderObject::BoundingRectBehavior::IgnoreEmptyTextSelections));
-                rects.append({ iterator.range().start.document().view()->contentsToRootView(absoluteBoundingBox), { offsetSoFar++, stride } });
+        for (TextIterator iterator { range }; !iterator.atEnd(); iterator.advance()) {
+            if (iterator.text().isEmpty())
+                continue;
+
+            Vector<IntRect> absoluteRects;
+            if (iterator.range().collapsed())
+                absoluteRects = { VisiblePosition(makeContainerOffsetPosition(iterator.range().start)).absoluteCaretBounds() };
+            else {
+                absoluteRects = RenderObject::absoluteTextRects(iterator.range(), {
+                    RenderObject::BoundingRectBehavior::IgnoreEmptyTextSelections,
+                    RenderObject::BoundingRectBehavior::ComputeIndividualCharacterRects,
+                });
             }
-            iterator.advance(stride);
+
+            for (auto& absoluteRect : absoluteRects)
+                rects.append({ iterator.range().start.document().view()->contentsToRootView(absoluteRect), { offsetSoFar++, 1 } });
         }
         return rects;
     };
