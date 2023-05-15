@@ -62,6 +62,7 @@ public:
     void visit(AST::StageAttribute&) override;
     void visit(AST::GroupAttribute&) override;
     void visit(AST::BindingAttribute&) override;
+    void visit(AST::WorkgroupSizeAttribute&) override;
 
     void visit(AST::Function&) override;
     void visit(AST::Structure&) override;
@@ -303,6 +304,12 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
         }
     }
     m_stringBuilder.append("[[attribute(", location.location(), ")]]");
+}
+
+void FunctionDefinitionWriter::visit(AST::WorkgroupSizeAttribute&)
+{
+    // This attribute shouldn't generate any code. The workgroup size is passed
+    // to the API through the EntryPointInformation.
 }
 
 // Types
