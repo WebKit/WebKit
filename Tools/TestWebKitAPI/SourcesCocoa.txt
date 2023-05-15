@@ -27,6 +27,7 @@ WKWebViewConfigurationExtras.mm
 
 cocoa/CGImagePixelReader.cpp
 cocoa/DaemonTestUtilities.mm
+cocoa/DragAndDropSimulator.mm
 cocoa/EnableUISideCompositingScope.mm
 cocoa/ImageAnalysisTestingUtilities.mm
 cocoa/NSItemProviderAdditions.mm

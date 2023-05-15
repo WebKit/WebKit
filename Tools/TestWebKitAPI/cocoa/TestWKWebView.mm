@@ -706,6 +706,20 @@ static UICalloutBar *suppressUICalloutBar()
 #endif
 }
 
+- (std::optional<CGPoint>)getElementMidpoint:(NSString *)selector
+{
+    NSArray<NSNumber *> *midpoint = [self objectByEvaluatingJavaScript:[NSString stringWithFormat:@"(() => {"
+        "    let element = document.querySelector('%@');"
+        "    if (!element)"
+        "        return [];"
+        "    const rect = element.getBoundingClientRect();"
+        "    return [rect.left + (rect.width / 2), rect.top + (rect.height / 2)];"
+        "})()", selector]];
+    if (midpoint.count != 2)
+        return std::nullopt;
+    return CGPointMake(midpoint.firstObject.doubleValue, midpoint.lastObject.doubleValue);
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 - (void)didStartFormControlInteraction

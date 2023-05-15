@@ -109,6 +109,7 @@
 - (void)clickOnElementID:(NSString *)elementID;
 - (void)waitForPendingMouseEvents;
 - (void)focus;
+- (std::optional<CGPoint>)getElementMidpoint:(NSString *)selector;
 @end
 
 #if PLATFORM(IOS_FAMILY)

@@ -1211,7 +1211,7 @@ TEST(DragAndDropTests, ExternalSourceDataTransferItemGetFolderAsEntry)
 
         auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
         [simulator setExternalItemProviders:@[ itemProvider.get() ]];
-        [simulator runFrom:CGPointMake(50, 50) to:CGPointMake(150, 50)];
+        [simulator runFromElement:@"#output" toElement:@"#droparea"];
     });
 
     TestWebKitAPI::Util::run(&done);
@@ -1241,7 +1241,7 @@ TEST(DragAndDropTests, ExternalSourceDataTransferItemGetPlainTextFileAsEntry)
 
         auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
         [simulator setExternalItemProviders:@[ itemProvider.get() ]];
-        [simulator runFrom:CGPointMake(50, 50) to:CGPointMake(150, 50)];
+        [simulator runFromElement:@"#output" toElement:@"#droparea"];
     });
 
     TestWebKitAPI::Util::run(&done);
