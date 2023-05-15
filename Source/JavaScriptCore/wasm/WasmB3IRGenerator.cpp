@@ -2991,12 +2991,9 @@ auto B3IRGenerator::addArrayNew(uint32_t typeIndex, ExpressionType size, Express
 
     Value* initValue = get(value);
     if (value->type() == B3::Float || value->type() == B3::Double) {
-        PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, B3::Int64, origin());
-        patchpoint->appendSomeRegister(initValue);
-        patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-            jit.moveDoubleTo64(params[1].fpr(), params[0].gpr());
-        });
-        initValue = patchpoint;
+        initValue = m_currentBlock->appendNew<Value>(m_proc, BitwiseCast, origin(), initValue);
+        if (initValue->type() == B3::Int32)
+            initValue = m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), initValue);
     }
 
     result = pushArrayNew(typeIndex, initValue, size);
@@ -3109,24 +3106,17 @@ auto B3IRGenerator::addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, Ex
         instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
         get(arrayref), get(index));
 
-    switch (toB3Type(resultType).kind()) {
+    auto b3Type = toB3Type(resultType);
+    switch (b3Type.kind()) {
     case B3::Float:
     case B3::Double: {
-        PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, toB3Type(resultType), origin());
-        patchpoint->appendSomeRegister(arrayResult);
-        patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-            jit.move64ToDouble(params[1].gpr(), params[0].fpr());
-        });
-        result = push(patchpoint);
+        if (b3Type == B3::Float)
+            arrayResult = m_currentBlock->appendNew<Value>(m_proc, Trunc, origin(), arrayResult);
+        result = push(m_currentBlock->appendNew<Value>(m_proc, BitwiseCast, origin(), arrayResult));
         break;
     }
     case B3::Int32: {
-        PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, toB3Type(resultType), origin());
-        patchpoint->appendSomeRegister(arrayResult);
-        patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-            jit.move(params[1].gpr(), params[0].gpr());
-        });
-        Value* postProcess = patchpoint;
+        Value* postProcess = m_currentBlock->appendNew<Value>(m_proc, Trunc, origin(), arrayResult);
         switch (arrayGetKind) {
         case ExtGCOpType::ArrayGet:
         case ExtGCOpType::ArrayGetU:
@@ -3134,7 +3124,7 @@ auto B3IRGenerator::addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, Ex
         case ExtGCOpType::ArrayGetS: {
             size_t elementSize = elementType.as<PackedType>() == PackedType::I8 ? sizeof(uint8_t) : sizeof(uint16_t);
             uint8_t bitShift = (sizeof(uint32_t) - elementSize) * 8;
-            Value* shiftLeft = m_currentBlock->appendNew<Value>(m_proc, B3::Shl, origin(), patchpoint, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), bitShift));
+            Value* shiftLeft = m_currentBlock->appendNew<Value>(m_proc, B3::Shl, origin(), postProcess, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), bitShift));
             postProcess = m_currentBlock->appendNew<Value>(m_proc, B3::SShr, origin(), shiftLeft, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), bitShift));
             break;
         }
@@ -3170,12 +3160,9 @@ void B3IRGenerator::emitArrayNullCheck(Value* arrayref)
 void B3IRGenerator::emitArraySetUnchecked(uint32_t typeIndex, Value* arrayref, Value* index, Value* setValue)
 {
     if (setValue->type() == B3::Float || setValue->type() == B3::Double) {
-        PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, B3::Int64, origin());
-        patchpoint->appendSomeRegister(setValue);
-        patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-            jit.moveDoubleTo64(params[1].fpr(), params[0].gpr());
-        });
-        setValue = patchpoint;
+        setValue = m_currentBlock->appendNew<Value>(m_proc, BitwiseCast, origin(), setValue);
+        if (setValue->type() == B3::Int32)
+            setValue = m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), setValue);
     }
 
     // FIXME: Emit this inline.
