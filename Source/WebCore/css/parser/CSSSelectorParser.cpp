@@ -33,6 +33,7 @@
 #include "CommonAtomStrings.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
+#include "SelectorPseudoTypeMap.h"
 #include <memory>
 #include <wtf/OptionSet.h>
 #include <wtf/SetForScope.h>
@@ -1203,8 +1204,13 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::splitCompoundAtImplicitSha
 bool CSSSelectorParser::containsUnknownWebKitPseudoElements(const CSSSelector& complexSelector)
 {
     for (auto current = &complexSelector; current; current = current->tagHistory()) {
-        if (current->match() == CSSSelector::PseudoElement && current->pseudoElementType() == CSSSelector::PseudoElementWebKitCustom)
-            return true;
+        if (current->match() == CSSSelector::PseudoElement) {
+            if (current->pseudoElementType() != CSSSelector::PseudoElementWebKitCustom)
+                continue;
+
+            if (parsePseudoElementString(StringView(current->value())) == CSSSelector::PseudoElementUnknown)
+                return true;
+        }
     }
 
     return false;
