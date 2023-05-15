@@ -1053,6 +1053,28 @@ private:
                 break;
             }
 
+            case StrCat: {
+                bool goodToGo = true;
+                m_graph.doToChildren(
+                    node,
+                    [&](Edge& edge) {
+                        if (m_state.forNode(edge).isType(SpecString))
+                            return;
+                        goodToGo = false;
+                    });
+                if (!goodToGo)
+                    break;
+
+                node->setOpAndDefaultFlags(MakeRope);
+                m_graph.doToChildren(
+                    node,
+                    [&] (Edge& edge) {
+                        edge.setUseKind(KnownStringUse);
+                    });
+                changed = true;
+                FALLTHROUGH;
+            }
+
             case MakeRope: {
                 for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
                     Edge& edge = node->children.child(i);

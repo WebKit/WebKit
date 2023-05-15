@@ -810,6 +810,16 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
 
     case StrCat: {
+        bool goodToGo = true;
+        m_graph.doToChildren(
+            node,
+            [&](Edge& edge) {
+                if (m_state.forNode(edge).isType(SpecString))
+                    return;
+                goodToGo = false;
+            });
+        if (goodToGo)
+            m_state.setShouldTryConstantFolding(true);
         setTypeForNode(node, SpecString);
         break;
     }
