@@ -510,6 +510,7 @@ void NetworkStorageManager::performEviction(HashMap<WebCore::SecurityOriginData,
         ++deletedOriginCount;
     }
 
+    UNUSED_PARAM(deletedOriginCount);
     RELEASE_LOG(Storage, "%p - NetworkStorageManager::performEviction evicts %" PRIu64 " origins, current usage %" PRIu64 ", total quota %" PRIu64, this, deletedOriginCount, valueOrDefault(m_totalUsage), m_totalQuota);
 }
 
