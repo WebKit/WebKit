@@ -32,6 +32,7 @@
 
 #import <WebGPU/WebGPU.h>
 #import <wtf/DataLog.h>
+#import <wtf/StringPrintStream.h>
 
 namespace WebGPU {
 
@@ -123,10 +124,12 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
         }
     } else {
         auto& failedCheck = std::get<WGSL::FailedCheck>(checkResult);
+        StringPrintStream message;
+        message.print(String::number(failedCheck.errors.size()), " error", failedCheck.errors.size() != 1 ? "s" : "", " generated while compiling the shader:"_s);
         for (const auto& error : failedCheck.errors) {
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250442
-            dataLogLn(error);
+            message.print("\n"_s, error);
         }
+        generateAValidationError(message.toString());
         return ShaderModule::createInvalid(*this);
     }
 

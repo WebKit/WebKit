@@ -75,8 +75,12 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
     constexpr size_t stageCount = std::size(stages);
     ShaderStageArray<NSUInteger> bindingIndexForStage = std::array<NSUInteger, stageCount>();
     const auto& bindGroupLayout = WebGPU::fromAPI(descriptor.layout);
-    Vector<BindableResource> resources;
+    if (!bindGroupLayout.isValid()) {
+        generateAValidationError("invalid BindGroupLayout createBindGroup"_s);
+        return BindGroup::createInvalid(*this);
+    }
 
+    Vector<BindableResource> resources;
     ShaderStageArray<id<MTLArgumentEncoder>> argumentEncoder = std::array<id<MTLArgumentEncoder>, stageCount>({ bindGroupLayout.vertexArgumentEncoder(), bindGroupLayout.fragmentArgumentEncoder(), bindGroupLayout.computeArgumentEncoder() });
     ShaderStageArray<id<MTLBuffer>> argumentBuffer;
     for (ShaderStage stage : stages) {

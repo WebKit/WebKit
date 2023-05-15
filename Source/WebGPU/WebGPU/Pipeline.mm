@@ -42,8 +42,7 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
     }
 
     auto* ast = shaderModule.ast();
-    if (!ast)
-        return std::nullopt;
+    RELEASE_ASSERT(ast);
 
     std::optional<WGSL::PipelineLayout> wgslPipelineLayout { std::nullopt };
     if (pipelineLayout)

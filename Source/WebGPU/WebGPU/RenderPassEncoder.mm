@@ -163,6 +163,12 @@ bool RenderPassEncoder::validatePopDebugGroup() const
     return true;
 }
 
+void RenderPassEncoder::makeInvalid()
+{
+    [m_renderCommandEncoder endEncoding];
+    m_renderCommandEncoder = nil;
+}
+
 void RenderPassEncoder::popDebugGroup()
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-popdebuggroup
@@ -219,6 +225,12 @@ void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
 {
     // FIXME: validation according to
     // https://gpuweb.github.io/gpuweb/#dom-gpurendercommandsmixin-setpipeline.
+    if (!pipeline.isValid()) {
+        m_device->generateAValidationError("invalid RenderPipeline in RenderPassEncoder.setPipeline"_s);
+        makeInvalid();
+        return;
+    }
+
     if (!pipeline.validateDepthStencilState(m_depthReadOnly, m_stencilReadOnly))
         return;
 
