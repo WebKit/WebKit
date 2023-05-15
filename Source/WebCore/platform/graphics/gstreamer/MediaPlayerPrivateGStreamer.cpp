@@ -4046,7 +4046,7 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
         m_isUsingFallbackVideoSink = true;
         m_videoSink = webkitVideoSinkNew();
         g_signal_connect_swapped(m_videoSink.get(), "repaint-requested", G_CALLBACK(+[](MediaPlayerPrivateGStreamer* player, GstSample* sample) {
-            player->triggerRepaint(adoptGRef(sample));
+            player->triggerRepaint(GRefPtr<GstSample>(sample));
         }), this);
         g_signal_connect_swapped(m_videoSink.get(), "repaint-cancelled", G_CALLBACK(repaintCancelledCallback), this);
     }
