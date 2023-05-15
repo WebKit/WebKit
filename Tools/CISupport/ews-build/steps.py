@@ -767,7 +767,7 @@ class CleanUpGitIndexLock(shell.ShellCommand):
             print('Error in sending email for git issue: {}'.format(e))
 
 
-class CheckOutSpecificRevision(shell.ShellCommand):
+class CheckOutSpecificRevision(shell.ShellCommandNewStyle):
     name = 'checkout-specific-revision'
     descriptionDone = ['Checked out required revision']
     flunkOnFailure = False
@@ -792,9 +792,9 @@ class CheckOutSpecificRevision(shell.ShellCommand):
             result['stdioLogName'] = None
         return result
 
-    def start(self):
-        self.setCommand(['git', 'checkout', self.getProperty('ews_revision')])
-        return shell.ShellCommand.start(self)
+    def run(self):
+        self.command = ['git', 'checkout', self.getProperty('ews_revision')]
+        return super().run()
 
 
 class FetchBranches(steps.ShellSequence, ShellMixin):
@@ -934,7 +934,7 @@ class InstallHooks(steps.ShellSequence):
         return {'step': 'Failed to install hooks to checkout'}
 
 
-class CleanWorkingDirectory(shell.ShellCommand):
+class CleanWorkingDirectory(shell.ShellCommandNewStyle):
     name = 'clean-working-directory'
     description = ['clean-working-directory running']
     descriptionDone = ['Cleaned working directory']
@@ -945,11 +945,11 @@ class CleanWorkingDirectory(shell.ShellCommand):
     def __init__(self, **kwargs):
         super().__init__(logEnviron=False, **kwargs)
 
-    def start(self):
+    def run(self):
         platform = self.getProperty('platform')
         if platform in ('gtk', 'wpe'):
             self.setCommand(self.command + ['--keep-jhbuild-directory'])
-        return shell.ShellCommand.start(self)
+        return super().run()
 
 
 class UpdateWorkingDirectory(steps.ShellSequence, ShellMixin):
@@ -2451,7 +2451,7 @@ class RunEWSUnitTests(shell.ShellCommandNewStyle):
         return {'step': 'Failed EWS unit tests'}
 
 
-class RunBuildbotCheckConfig(shell.ShellCommand):
+class RunBuildbotCheckConfig(shell.ShellCommandNewStyle):
     name = 'buildbot-check-config'
     description = ['buildbot-checkconfig running']
     command = ['python3', '../buildbot-cmd', 'checkconfig']
@@ -2461,9 +2461,9 @@ class RunBuildbotCheckConfig(shell.ShellCommand):
     def __init__(self, **kwargs):
         super().__init__(workdir=self.directory, timeout=self.timeout, logEnviron=False, **kwargs)
 
-    def start(self):
-        self.workerEnvironment['LC_CTYPE'] = 'en_US.UTF-8'
-        return shell.ShellCommand.start(self)
+    def run(self):
+        self.env['LC_CTYPE'] = 'en_US.UTF-8'
+        return super().run()
 
     def getResultSummary(self):
         if self.results == SUCCESS:
@@ -2573,7 +2573,7 @@ class RunWebKitPyPython3Tests(WebKitPyTest):
     command = ['python3', 'Tools/Scripts/test-webkitpy', '--verbose', '--json-output={0}'.format(jsonFileName)]
 
 
-class InstallGtkDependencies(shell.ShellCommand):
+class InstallGtkDependencies(shell.ShellCommandNewStyle):
     name = 'jhbuild'
     description = ['updating gtk dependencies']
     descriptionDone = ['Updated gtk dependencies']
@@ -2584,7 +2584,7 @@ class InstallGtkDependencies(shell.ShellCommand):
         super().__init__(logEnviron=False, **kwargs)
 
 
-class InstallWpeDependencies(shell.ShellCommand):
+class InstallWpeDependencies(shell.ShellCommandNewStyle):
     name = 'jhbuild'
     description = ['updating wpe dependencies']
     descriptionDone = ['Updated wpe dependencies']
@@ -3222,7 +3222,7 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep, AddToLogMixin):
             print('Error in sending email for pre-existing failure: {}'.format(e))
 
 
-class InstallBuiltProduct(shell.ShellCommand):
+class InstallBuiltProduct(shell.ShellCommandNewStyle):
     name = 'install-built-product'
     description = ['Installing Built Product']
     descriptionDone = ['Installed Built Product']
@@ -4355,7 +4355,7 @@ class AnalyzeLayoutTestsResultsRedTree(AnalyzeLayoutTestsResults):
         return defer.returnValue(self.report_success())
 
 
-class ArchiveBuiltProduct(shell.ShellCommand):
+class ArchiveBuiltProduct(shell.ShellCommandNewStyle):
     command = ['python3', 'Tools/CISupport/built-product-archive',
                WithProperties('--platform=%(fullPlatform)s'), WithProperties('--%(configuration)s'), 'archive']
     name = 'archive-built-product'
@@ -4555,7 +4555,7 @@ class DownloadBuiltProductFromMaster(transfer.FileDownload):
         return super().getResultSummary()
 
 
-class ExtractBuiltProduct(shell.ShellCommand):
+class ExtractBuiltProduct(shell.ShellCommandNewStyle):
     command = ['python3', 'Tools/CISupport/built-product-archive',
                WithProperties('--platform=%(fullPlatform)s'), WithProperties('--%(configuration)s'), 'extract']
     name = 'extract-built-product'
@@ -4886,7 +4886,7 @@ class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
             print('Error in sending email for pre-existing failure: {}'.format(e))
 
 
-class ArchiveTestResults(shell.ShellCommand):
+class ArchiveTestResults(shell.ShellCommandNewStyle):
     command = ['python3', 'Tools/CISupport/test-result-archive',
                Interpolate('--platform=%(prop:platform)s'), Interpolate('--%(prop:configuration)s'), 'archive']
     name = 'archive-test-results'
@@ -5068,7 +5068,7 @@ class CleanGitRepo(steps.ShellSequence, ShellMixin):
         return {'step': 'Cleaned up git repository'}
 
 
-class ApplyWatchList(shell.ShellCommand):
+class ApplyWatchList(shell.ShellCommandNewStyle):
     name = 'apply-watch-list'
     description = ['applying watchilist']
     descriptionDone = ['Applied WatchList']
@@ -5818,23 +5818,23 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
         return super().getResultSummary()
 
 
-class PushPullRequestBranch(shell.ShellCommand):
+class PushPullRequestBranch(shell.ShellCommandNewStyle):
     name = 'push-pull-request-branch'
     haltOnFailure = True
 
     def __init__(self, **kwargs):
         super().__init__(logEnviron=False, timeout=300, **kwargs)
 
-    def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
+    def run(self, BufferLogObserverClass=logobserver.BufferLogObserver):
         remote = self.getProperty('github.head.repo.full_name').split('/')[0]
         head_ref = self.getProperty('github.head.ref')
         self.command = ['git', 'push', '-f', remote, f'HEAD:{head_ref}']
 
         username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
-        self.workerEnvironment['GIT_USER'] = username
-        self.workerEnvironment['GIT_PASSWORD'] = access_token
+        self.env['GIT_USER'] = username
+        self.env['GIT_PASSWORD'] = access_token
 
-        return super().start()
+        return super().run()
 
     def getResultSummary(self):
         if self.results == SUCCESS:
