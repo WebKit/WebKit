@@ -426,6 +426,9 @@ void RenderGrid::layoutMasonry(bool relayoutChildren)
 
         LayoutUnit availableSpaceForColumns = availableLogicalWidth();
         placeItemsOnGrid(availableSpaceForColumns);
+        // Size in the masonry axis is the masonry content size
+        if (areMasonryColumns() && style().logicalWidth().isAuto())
+            setLogicalWidth(m_masonryLayout.gridContentSize() + borderAndPaddingLogicalWidth());
 
         m_trackSizingAlgorithm.setAvailableSpace(ForColumns, availableSpaceForColumns);
         performGridItemsPreLayout(m_trackSizingAlgorithm);
