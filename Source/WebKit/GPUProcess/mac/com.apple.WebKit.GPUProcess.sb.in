@@ -793,6 +793,7 @@
         "com.apple.CoreServices.coreservicesd"
         "com.apple.DiskArbitration.diskarbitrationd"
         "com.apple.ViewBridgeAuxiliary"
+        "com.apple.audioanalyticsd"
         "com.apple.coreservices.launchservicesd"
         "com.apple.windowserver.active"))
         
