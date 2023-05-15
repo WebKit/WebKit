@@ -300,7 +300,7 @@ void SVGFontFaceElement::rebuildFontFace()
 
 Node::InsertedIntoAncestorResult SVGFontFaceElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    SVGElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    auto result = SVGElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (!insertionType.connectedToDocument) {
         ASSERT(!m_fontElement);
         return InsertedIntoAncestorResult::Done;
@@ -308,7 +308,7 @@ Node::InsertedIntoAncestorResult SVGFontFaceElement::insertedIntoAncestor(Insert
     document().accessSVGExtensions().registerSVGFontFaceElement(*this);
 
     rebuildFontFace();
-    return InsertedIntoAncestorResult::Done;
+    return result;
 }
 
 void SVGFontFaceElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)

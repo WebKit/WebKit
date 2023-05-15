@@ -248,14 +248,15 @@ void SVGTRefElement::buildPendingResource()
 
 Node::InsertedIntoAncestorResult SVGTRefElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    SVGElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    auto result = SVGElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument)
         return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
-    return InsertedIntoAncestorResult::Done;
+    return result;
 }
 
 void SVGTRefElement::didFinishInsertingNode()
 {
+    SVGTextPositioningElement::didFinishInsertingNode();
     buildPendingResource();
 }
 

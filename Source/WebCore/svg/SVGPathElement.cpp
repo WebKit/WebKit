@@ -95,9 +95,9 @@ void SVGPathElement::invalidateMPathDependencies()
 
 Node::InsertedIntoAncestorResult SVGPathElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    SVGGeometryElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    auto result = SVGGeometryElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     invalidateMPathDependencies();
-    return InsertedIntoAncestorResult::Done;
+    return result;
 }
 
 void SVGPathElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)

@@ -64,8 +64,9 @@ void SVGScriptElement::svgAttributeChanged(const QualifiedName& attrName)
 
 Node::InsertedIntoAncestorResult SVGScriptElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    SVGElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
-    return ScriptElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    auto result1 = SVGElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    auto result2 = ScriptElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    return result1 == InsertedIntoAncestorResult::NeedsPostInsertionCallback ? result1 : result2;
 }
 
 void SVGScriptElement::didFinishInsertingNode()

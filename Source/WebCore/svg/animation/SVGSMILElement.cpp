@@ -291,6 +291,7 @@ Node::InsertedIntoAncestorResult SVGSMILElement::insertedIntoAncestor(InsertionT
 
 void SVGSMILElement::didFinishInsertingNode()
 {
+    SVGElement::didFinishInsertingNode();
     buildPendingResource();
 }
 

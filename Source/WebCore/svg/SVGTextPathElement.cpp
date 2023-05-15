@@ -168,6 +168,7 @@ Node::InsertedIntoAncestorResult SVGTextPathElement::insertedIntoAncestor(Insert
 
 void SVGTextPathElement::didFinishInsertingNode()
 {
+    SVGTextContentElement::buildPendingResource();
     buildPendingResource();
 }
 

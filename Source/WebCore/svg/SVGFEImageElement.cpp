@@ -150,6 +150,7 @@ Node::InsertedIntoAncestorResult SVGFEImageElement::insertedIntoAncestor(Inserti
 
 void SVGFEImageElement::didFinishInsertingNode()
 {
+    SVGFilterPrimitiveStandardAttributes::didFinishInsertingNode();
     buildPendingResource();
 }
 

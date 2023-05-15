@@ -109,7 +109,7 @@ void SVGUseElement::attributeChanged(const QualifiedName& name, const AtomString
 
 Node::InsertedIntoAncestorResult SVGUseElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    SVGGraphicsElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    auto result = SVGGraphicsElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument) {
         if (m_shadowTreeNeedsUpdate)
             document().addElementWithPendingUserAgentShadowTreeUpdate(*this);
@@ -117,11 +117,12 @@ Node::InsertedIntoAncestorResult SVGUseElement::insertedIntoAncestor(InsertionTy
         // FIXME: Move back the call to updateExternalDocument() here once notifyFinished is made always async.
         return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
     }
-    return InsertedIntoAncestorResult::Done;
+    return result;
 }
 
 void SVGUseElement::didFinishInsertingNode()
 {
+    SVGGraphicsElement::didFinishInsertingNode();
     updateExternalDocument();
 }
 
