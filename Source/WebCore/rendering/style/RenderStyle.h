@@ -962,6 +962,8 @@ public:
     const ScrollSnapAlign& scrollSnapAlign() const;
     ScrollSnapStop scrollSnapStop() const;
 
+    ScrollbarWidth scrollbarWidth() const { return m_nonInheritedData->rareData->scrollbarWidth; }
+
 #if ENABLE(TOUCH_EVENTS)
     inline StyleColor tapHighlightColor() const;
 #endif
@@ -1506,6 +1508,8 @@ public:
     void setScrollSnapAlign(const ScrollSnapAlign&);
     void setScrollSnapStop(ScrollSnapStop);
 
+    void setScrollbarWidth(const ScrollbarWidth);
+
 #if ENABLE(TOUCH_EVENTS)
     inline void setTapHighlightColor(const StyleColor&);
 #endif
@@ -1935,6 +1939,8 @@ public:
     static ScrollSnapType initialScrollSnapType();
     static ScrollSnapAlign initialScrollSnapAlign();
     static ScrollSnapStop initialScrollSnapStop();
+
+    static ScrollbarWidth initialScrollbarWidth();
 
 #if ENABLE(APPLE_PAY)
     static constexpr ApplePayButtonStyle initialApplePayButtonStyle();

@@ -1,0 +1,16 @@
+Test scrollbar-width: both scrollbars, vertical-lr
+auto
+thin
+none
+Test scrollbar-width: both scrollbars, vertical-rl
+auto
+thin
+none
+
+PASS vertical-lr, scrollbar-width auto
+PASS vertical-lr, scrollbar-width thin
+PASS vertical-lr, scrollbar-width none
+PASS vertical-rl, scrollbar-width auto
+PASS vertical-rl, scrollbar-width thin
+PASS vertical-rl, scrollbar-width none
+

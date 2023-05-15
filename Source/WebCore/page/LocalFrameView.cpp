@@ -529,17 +529,27 @@ RefPtr<Element> LocalFrameView::rootElementForCustomScrollbarPartStyle(PseudoId 
 
 Ref<Scrollbar> LocalFrameView::createScrollbar(ScrollbarOrientation orientation)
 {
+    auto* document = m_frame->document();
+    auto* documentElement = document ? document->documentElement() : nullptr;
+
+    if (scrollbarWidth() == ScrollbarWidth::None)
+        return RenderScrollbar::createCustomScrollbar(*this, orientation, documentElement);
+
     if (auto element = rootElementForCustomScrollbarPartStyle(PseudoId::Scrollbar))
         return RenderScrollbar::createCustomScrollbar(*this, orientation, element.get());
-    
+
     // If we have an owning iframe/frame element, then it can set the custom scrollbar also.
     // FIXME: Seems bad to do this for cross-origin frames.
     RenderWidget* frameRenderer = m_frame->ownerRenderer();
     if (frameRenderer && frameRenderer->style().hasPseudoStyle(PseudoId::Scrollbar))
         return RenderScrollbar::createCustomScrollbar(*this, orientation, nullptr, m_frame.ptr());
 
+    ScrollbarControlSize size = scrollbarWidth() == ScrollbarWidth::Thin
+        ? ScrollbarControlSize::Small
+        : ScrollbarControlSize::Regular;
+
     // Nobody set a custom style, so we just use a native scrollbar.
-    return ScrollView::createScrollbar(orientation);
+    return Scrollbar::createNativeScrollbar(*this, orientation, size);
 }
 
 void LocalFrameView::didRestoreFromBackForwardCache()
@@ -6290,6 +6300,15 @@ OverscrollBehavior LocalFrameView::verticalOverscrollBehavior()  const
     if (scrollingObject && renderView())
         return scrollingObject->style().overscrollBehaviorY();
     return OverscrollBehavior::Auto;
+}
+
+ScrollbarWidth LocalFrameView::scrollbarWidth()  const
+{
+    auto* document = m_frame->document();
+    auto scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
+    if (scrollingObject && renderView())
+        return scrollingObject->style().scrollbarWidth();
+    return ScrollbarWidth::Auto;
 }
 
 bool LocalFrameView::isVisibleToHitTesting() const

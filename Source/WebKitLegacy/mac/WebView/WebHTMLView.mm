@@ -2452,6 +2452,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return _private->paginateScreenContent;
 }
 
+- (BOOL)_scrollbarWidthNone
+{
+    auto* frame = core([self _frame]);
+
+    if (!frame || !frame->document() || !frame->document()->documentElement() || !frame->document()->documentElement()->renderer())
+        return NO;
+
+    return frame->document()->documentElement()->renderer()->style().scrollbarWidth() == WebCore::ScrollbarWidth::None;
+}
+
 - (BOOL)_beginScreenPaginationModeWithPageSize:(CGSize)pageSize shrinkToFit:(BOOL)shrinkToFit
 {
     auto* frame = core([self _frame]);

@@ -4182,6 +4182,17 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return createConvertingToCSSValueID(style.scrollSnapStop());
     case CSSPropertyScrollSnapType:
         return valueForScrollSnapType(style.scrollSnapType());
+    case CSSPropertyScrollbarWidth:
+        switch (style.scrollbarWidth()) {
+        case ScrollbarWidth::Auto:
+            return CSSPrimitiveValue::create(CSSValueAuto);
+        case ScrollbarWidth::Thin:
+            return CSSPrimitiveValue::create(CSSValueThin);
+        case ScrollbarWidth::None:
+            return CSSPrimitiveValue::create(CSSValueNone);
+        }
+        ASSERT_NOT_REACHED();
+        return nullptr;
     case CSSPropertyOverflowAnchor:
         return createConvertingToCSSValueID(style.overflowAnchor());
     case CSSPropertyTextBoxEdge:

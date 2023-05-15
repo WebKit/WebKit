@@ -1,0 +1,18 @@
+Test scrollbar-width: vertical scrollbar, ltr direction
+auto
+thin
+none
+Test scrollbar-width: vertical scrollbar, rtl direction
+auto
+thin
+none
+
+PASS horizontal-tb, ltr, scrollbar-width auto
+PASS horizontal-tb, ltr, scrollbar-width thin
+PASS horizontal-tb, ltr, scrollbar-width "thin" is same or thinner than "auto"
+PASS horizontal-tb, ltr, scrollbar-width none
+PASS horizontal-tb, rtl, scrollbar-width auto
+PASS horizontal-tb, rtl, scrollbar-width thin
+PASS horizontal-tb, rtl, scrollbar-width "thin" is same or thinner than "auto"
+PASS horizontal-tb, rtl, scrollbar-width none
+

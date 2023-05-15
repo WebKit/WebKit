@@ -134,6 +134,7 @@ extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
 - (BOOL)_isInScreenPaginationMode;
 - (BOOL)_beginScreenPaginationModeWithPageSize:(CGSize)pageSize shrinkToFit:(BOOL)shrinkToFit;
 - (void)_endScreenPaginationMode;
+- (BOOL)_scrollbarWidthNone;
 
 #if !TARGET_OS_IPHONE
 - (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard;

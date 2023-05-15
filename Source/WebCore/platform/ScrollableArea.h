@@ -142,6 +142,8 @@ public:
     virtual OverscrollBehavior horizontalOverscrollBehavior() const { return OverscrollBehavior::Auto; }
     virtual OverscrollBehavior verticalOverscrollBehavior() const { return OverscrollBehavior::Auto; }
 
+    virtual ScrollbarWidth scrollbarWidth() const { return ScrollbarWidth::Auto; }
+
     bool allowsHorizontalScrolling() const;
     bool allowsVerticalScrolling() const;
 

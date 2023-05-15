@@ -2242,6 +2242,12 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
+#define TYPE ScrollbarWidth
+#define FOR_EACH(CASE) CASE(Auto) CASE(Thin) CASE(None)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
+
 constexpr CSSValueID toCSSValueID(TextBoxEdgeType textBoxEdgeType)
 {
     switch (textBoxEdgeType) {
