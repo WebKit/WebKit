@@ -2205,3 +2205,4 @@ imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-
 
 webkit.org/b/249477 media/audioSession/audioSessionType.html [ Skip ]
 webkit.org/b/253832 media/media-source/media-source-webm-configuration-change.html [ Failure ]
+webkit.org/b/253832 media/media-source/media-source-webm-configuration-vp9-header-color.html [ Failure ]
