@@ -55,6 +55,19 @@ static UIWKDocumentRequest *makeRequest(UIWKDocumentRequestFlags flags, UITextGr
     return request.autorelease();
 }
 
+@implementation NSString (TestWebKitAPIHelpers)
+
+- (Vector<NSRange>)composedCharacterRanges
+{
+    __block Vector<NSRange> result;
+    [self enumerateSubstringsInRange:NSMakeRange(0, self.length) options:NSStringEnumerationByComposedCharacterSequences usingBlock:^(NSString *, NSRange substringRange, NSRange, BOOL *) {
+        result.append(substringRange);
+    }];
+    return result;
+}
+
+@end
+
 @interface UIWKDocumentContext (TestRunner)
 @property (nonatomic, readonly) NSArray<NSValue *> *markedTextRects;
 @property (nonatomic, readonly) NSArray<NSValue *> *textRects;
@@ -114,6 +127,14 @@ static UIWKDocumentRequest *makeRequest(UIWKDocumentRequestFlags flags, UITextGr
     return result.autorelease();
 }
 
+- (CGRect)boundingRectForCharacterRange:(NSRange)range
+{
+    auto bounds = CGRectNull;
+    for (NSValue *rectValue in [self characterRectsForCharacterRange:range])
+        bounds = CGRectUnion(bounds, rectValue.CGRectValue);
+    return bounds;
+}
+
 @end
 
 @implementation TestWKWebView (SynchronousDocumentContext)
@@ -158,6 +179,21 @@ static UIWKDocumentRequest *makeRequest(UIWKDocumentRequestFlags flags, UITextGr
         finished = true;
     }];
     TestWebKitAPI::Util::run(&finished);
+}
+
+- (CGRect)firstSelectionRect
+{
+    return self.selectionViewRectsInContentCoordinates.firstObject.CGRectValue;
+}
+
+- (CGRect)waitForFirstSelectionRectToChange:(CGRect)previousRect
+{
+    auto newRect = previousRect;
+    while (CGRectEqualToRect(newRect, previousRect)) {
+        [self waitForNextPresentationUpdate];
+        newRect = self.firstSelectionRect;
+    }
+    return newRect;
 }
 
 @end
@@ -1415,6 +1451,69 @@ TEST(DocumentEditingContext, RequestSentencesAfterTextInsertion)
     EXPECT_NSSTRING_EQ("F", context.contextBefore);
     EXPECT_NULL(context.selectedText);
     EXPECT_NSSTRING_EQ("\nThis is a test.", context.contextAfter);
+}
+
+static void checkThatAllCharacterRectsAreConsistentWithSelectionRects(TestWKWebView *webView)
+{
+    [webView becomeFirstResponder];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestRects, UITextGranularitySentence, 2)];
+    EXPECT_NOT_NULL(context);
+
+    RetainPtr contextString = [NSString stringWithFormat:@"%@%@%@", [context contextBefore] ?: @"", [context selectedText] ?: @"", [context contextAfter] ?: @""];
+    EXPECT_GT([contextString length], 0U);
+
+    auto composedCharacterRanges = [contextString composedCharacterRanges];
+    for (auto range : composedCharacterRanges) {
+        auto previousSelectionRect = webView.firstSelectionRect;
+        auto rectFromContext = [context boundingRectForCharacterRange:range];
+        [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"setSelection(%ld, %ld)", range.location, range.location + range.length]];
+        auto selectionRect = [webView waitForFirstSelectionRectToChange:previousSelectionRect];
+        BOOL rectsAreConsistent = CGRectEqualToRect(rectFromContext, selectionRect);
+        EXPECT_TRUE(rectsAreConsistent);
+        if (!rectsAreConsistent) {
+            NSLog(@"FAIL: Observed inconsistent document context character rects.");
+            NSLog(@"> rect from document context:   %@", NSStringFromCGRect(rectFromContext));
+            NSLog(@"> actual selection rect:        %@", NSStringFromCGRect(selectionRect));
+            NSLog(@"> substring:                    '%@' in range [%ld, %ld]", [contextString substringWithRange:range], range.location, range.location + range.length);
+        }
+    }
+}
+
+TEST(DocumentEditingContext, CharacterRectConsistency)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 300)]);
+    [webView synchronouslyLoadTestPageNamed:@"editable-body-mixed-text"];
+
+    checkThatAllCharacterRectsAreConsistentWithSelectionRects(webView.get());
+}
+
+TEST(DocumentEditingContext, CharacterRectConsistencyWithRTL)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 300)]);
+    [webView synchronouslyLoadTestPageNamed:@"editable-body-mixed-text"];
+    [webView stringByEvaluatingJavaScript:@"document.body.style = 'direction: rtl;'"];
+
+    checkThatAllCharacterRectsAreConsistentWithSelectionRects(webView.get());
+}
+
+TEST(DocumentEditingContext, CharacterRectConsistencyWithVerticalText)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 300)]);
+    [webView synchronouslyLoadTestPageNamed:@"editable-body-mixed-text"];
+    [webView stringByEvaluatingJavaScript:@"document.body.style = 'writing-mode: vertical-rl;'"];
+
+    checkThatAllCharacterRectsAreConsistentWithSelectionRects(webView.get());
+}
+
+TEST(DocumentEditingContext, CharacterRectConsistencyWithRTLAndVerticalText)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 300)]);
+    [webView synchronouslyLoadTestPageNamed:@"editable-body-mixed-text"];
+    [webView stringByEvaluatingJavaScript:@"document.body.style = 'writing-mode: vertical-rl; direction: rtl;'"];
+
+    checkThatAllCharacterRectsAreConsistentWithSelectionRects(webView.get());
 }
 
 #endif // PLATFORM(IOS_FAMILY) && HAVE(UI_WK_DOCUMENT_CONTEXT)

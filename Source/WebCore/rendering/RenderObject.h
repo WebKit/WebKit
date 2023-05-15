@@ -622,6 +622,7 @@ public:
         IgnoreTinyRects = 1 << 2,
         IgnoreEmptyTextSelections = 1 << 3,
         UseSelectionHeight = 1 << 4,
+        ComputeIndividualCharacterRects = 1 << 5,
     };
     WEBCORE_EXPORT static Vector<FloatQuad> absoluteTextQuads(const SimpleRange&, OptionSet<BoundingRectBehavior> = { });
     WEBCORE_EXPORT static Vector<IntRect> absoluteTextRects(const SimpleRange&, OptionSet<BoundingRectBehavior> = { });

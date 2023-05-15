@@ -2192,9 +2192,9 @@ Vector<FloatQuad> RenderObject::absoluteTextQuads(const SimpleRange& range, Opti
         auto renderer = node.renderer();
         if (renderer && renderer->isBR())
             downcast<RenderLineBreak>(*renderer).absoluteQuads(quads);
-        else if (is<RenderText>(renderer)) {
+        else if (auto* renderText = dynamicDowncast<RenderText>(renderer)) {
             auto offsetRange = characterDataOffsetRange(range, downcast<CharacterData>(node));
-            quads.appendVector(downcast<RenderText>(*renderer).absoluteQuadsForRange(offsetRange.start, offsetRange.end, behavior.contains(BoundingRectBehavior::UseSelectionHeight)));
+            quads.appendVector(renderText->absoluteQuadsForRange(offsetRange.start, offsetRange.end, behavior));
         }
     }
     return quads;
@@ -2207,7 +2207,7 @@ static Vector<FloatRect> absoluteRectsForRangeInText(const SimpleRange& range, T
         return { };
 
     auto offsetRange = characterDataOffsetRange(range, node);
-    auto textQuads = renderer->absoluteQuadsForRange(offsetRange.start, offsetRange.end, behavior.contains(RenderObject::BoundingRectBehavior::UseSelectionHeight), behavior.contains(RenderObject::BoundingRectBehavior::IgnoreEmptyTextSelections));
+    auto textQuads = renderer->absoluteQuadsForRange(offsetRange.start, offsetRange.end, behavior);
 
     if (behavior.contains(RenderObject::BoundingRectBehavior::RespectClipping)) {
         auto absoluteClippedOverflowRect = renderer->absoluteClippedOverflowRectForRepaint();
