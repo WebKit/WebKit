@@ -182,6 +182,8 @@ public:
 
     CacheModel cacheModel() const { return m_cacheModel; }
 
+    const HashSet<String>& localhostAliasesForTesting() const { return m_localhostAliasesForTesting; }
+
     // Diagnostic messages logging.
     void logDiagnosticMessage(WebPageProxyIdentifier, const String& message, const String& description, WebCore::ShouldSample);
     void logDiagnosticMessageWithResult(WebPageProxyIdentifier, const String& message, const String& description, WebCore::DiagnosticLoggingResultType, WebCore::ShouldSample);
@@ -566,6 +568,7 @@ private:
 
     HashMap<WebCore::PageIdentifier, Vector<WebCore::UserContentURLPattern>> m_extensionCORSDisablingPatterns;
     HashSet<RefPtr<NetworkStorageManager>> m_closingStorageManagers;
+    HashSet<String> m_localhostAliasesForTesting;
 
     bool m_privateClickMeasurementEnabled { true };
     bool m_ftpEnabled { false };

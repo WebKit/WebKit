@@ -60,6 +60,10 @@
 
 #else // !USE(APPLE_INTERNAL_SDK)
 
+#if HAVE(CFNETWORK_HOSTOVERRIDE)
+#include <Network/Network.h>
+#endif
+
 #if HAVE(NSURLSESSION_EFFECTIVE_CONFIGURATION_OBJECT) && defined(__OBJC__)
 @interface NSURLSessionEffectiveConfiguration : NSObject <NSCopying>
 - (instancetype)_initWithConfiguration:(NSURLSessionConfiguration *)config;
@@ -142,6 +146,9 @@ typedef enum {
 
 @interface NSURLSessionTask ()
 @property (readonly, retain) NSURLSessionTaskMetrics* _incompleteTaskMetrics;
+#if HAVE(CFNETWORK_HOSTOVERRIDE)
+@property (nullable, nonatomic, retain) nw_endpoint_t _hostOverride;
+#endif
 @end
 
 @interface NSURLCache ()

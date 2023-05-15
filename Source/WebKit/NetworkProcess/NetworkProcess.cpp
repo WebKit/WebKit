@@ -353,6 +353,8 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     for (auto&& websiteDataStoreParameters : WTFMove(parameters.websiteDataStoreParameters))
         addWebsiteDataStore(WTFMove(websiteDataStoreParameters));
 
+    m_localhostAliasesForTesting = WTFMove(parameters.localhostAliasesForTesting);
+
     RELEASE_LOG(Process, "%p - NetworkProcess::initializeNetworkProcess: Presenting processPID=%d", this, WebCore::presentingApplicationPID());
 }
 
