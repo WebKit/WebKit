@@ -1,3 +1,5 @@
+// RUN: %wgslc
+
 fn testAdd() {
   {
     _ = 1 + 2;

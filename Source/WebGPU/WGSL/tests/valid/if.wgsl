@@ -1,3 +1,5 @@
+// RUN: %wgslc
+
 fn testIfStmt() -> i32 {
     if true {
         return 42;

@@ -1,3 +1,5 @@
+// RUN: %not %wgslc | %check
+
 fn testArrayLengthMismatch() {
   // CHECK-L: array count must be greater than 0
   let x1 = array<i32, 0>();
