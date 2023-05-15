@@ -100,4 +100,11 @@ TEST(WTF_StringCommon, Find16NonASCII)
 }
 #endif
 
+TEST(WTF_StringCommon, FindIgnoringASCIICaseWithoutLengthIdentical)
+{
+    EXPECT_EQ(WTF::findIgnoringASCIICaseWithoutLength("needle", "needle"), 0UL);
+    EXPECT_EQ(WTF::findIgnoringASCIICaseWithoutLength("needle", "needley"), WTF::notFound);
+    EXPECT_EQ(WTF::findIgnoringASCIICaseWithoutLength("needley", "needle"), 0UL);
+}
+
 } // namespace
