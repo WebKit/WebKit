@@ -570,10 +570,18 @@ static void encodeSecureCodingInternal(Encoder& encoder, id <NSObject, NSSecureC
     }
 
 #if ENABLE(REVEAL)
-    // FIXME: This can be removed on operating systems that have rdar://109237983.
+    // FIXME: This can be removed for RVItem on operating systems that have rdar://109237983.
     if (PAL::isRevealCoreFrameworkAvailable() && [object isKindOfClass:PAL::getRVItemClass()])
         [delegate setTransformURLs:NO];
 #endif
+#if ENABLE(DATA_DETECTION)
+    if (PAL::isDataDetectorsCoreFrameworkAvailable() && [object isKindOfClass:PAL::getDDScannerResultClass()])
+        [delegate setTransformURLs:NO];
+#if PLATFORM(MAC)
+    if (PAL::isDataDetectorsFrameworkAvailable() && [object isKindOfClass:PAL::getWKDDActionContextClass()])
+        [delegate setTransformURLs:NO];
+#endif
+#endif // ENABLE(DATA_DETECTION)
 
     [archiver setDelegate:delegate.get()];
 
@@ -747,11 +755,6 @@ static std::optional<RetainPtr<id>> decodeSecureCodingInternal(Decoder& decoder,
         [allowedClassSet addObject:NSMutableDictionary.class];
         [allowedClassSet addObject:NSMutableData.class];
     }
-
-#if ENABLE(REVEAL)
-    if (PAL::isRevealCoreFrameworkAvailable() && [allowedClasses containsObject:PAL::getRVItemClass()])
-        [allowedClassSet addObject:WKSecureCodingURLWrapper.class];
-#endif
 
     if (shouldEnableStrictMode(decoder, allowedClasses))
         [unarchiver _enableStrictSecureDecodingMode];
