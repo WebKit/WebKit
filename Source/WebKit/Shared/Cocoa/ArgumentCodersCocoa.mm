@@ -72,6 +72,7 @@
 @property (nonatomic, assign) BOOL rewriteMutableArray;
 @property (nonatomic, assign) BOOL rewriteMutableData;
 @property (nonatomic, assign) BOOL rewriteMutableDictionary;
+@property (nonatomic, assign) BOOL rewriteMutableString;
 @property (nonatomic, assign) BOOL transformURLs;
 @end
 
@@ -90,6 +91,7 @@
 @synthesize rewriteMutableArray;
 @synthesize rewriteMutableData;
 @synthesize rewriteMutableDictionary;
+@synthesize rewriteMutableString;
 @synthesize transformURLs;
 
 - (id)archiver:(NSKeyedArchiver *)archiver willEncodeObject:(id)object
@@ -97,14 +99,25 @@
     if (auto unwrappedURL = dynamic_objc_cast<NSURL>(object); unwrappedURL && transformURLs)
         return adoptNS([[WKSecureCodingURLWrapper alloc] initWithURL:unwrappedURL]).autorelease();
 
-    if (auto mutableArray = dynamic_objc_cast<NSMutableArray>(object); mutableArray && rewriteMutableArray)
-        return adoptNS([mutableArray copy]).autorelease();
+    if (rewriteMutableArray) {
+        if (auto mutableArray = dynamic_objc_cast<NSMutableArray>(object))
+            return adoptNS([mutableArray copy]).autorelease();
+    }
 
-    if (auto mutableData = dynamic_objc_cast<NSMutableData>(object); mutableData && rewriteMutableData)
-        return adoptNS([mutableData copy]).autorelease();
+    if (rewriteMutableData) {
+        if (auto mutableData = dynamic_objc_cast<NSMutableData>(object))
+            return adoptNS([mutableData copy]).autorelease();
+    }
 
-    if (auto mutableDict = dynamic_objc_cast<NSMutableDictionary>(object); mutableDict && rewriteMutableDictionary)
-        return adoptNS([mutableDict copy]).autorelease();
+    if (rewriteMutableDictionary) {
+        if (auto mutableDict = dynamic_objc_cast<NSMutableDictionary>(object))
+            return adoptNS([mutableDict copy]).autorelease();
+    }
+
+    if (rewriteMutableString) {
+        if (auto mutableString = dynamic_objc_cast<NSMutableString>(object))
+            return adoptNS([mutableString copy]).autorelease();
+    }
 
     // We can't just return a WebCore::CocoaColor here, because the decoder would
     // have no way of distinguishing an authentic WebCore::CocoaColor vs a CGColor
@@ -133,6 +146,7 @@
         rewriteMutableArray = NO;
         rewriteMutableData = NO;
         rewriteMutableDictionary = NO;
+        rewriteMutableString = NO;
         transformURLs = YES;
     }
 
@@ -545,6 +559,11 @@ static void encodeSecureCodingInternal(Encoder& encoder, id <NSObject, NSSecureC
         || [object isKindOfClass:NSURLProtectionSpace.class])
         [delegate setRewriteMutableDictionary:YES];
 
+#if ENABLE(DATA_DETECTION)
+    if (PAL::isDataDetectorsCoreFrameworkAvailable() && [object isKindOfClass:PAL::getDDScannerResultClass()])
+        [delegate setRewriteMutableString:YES];
+#endif
+
     if ([object isKindOfClass:NSTextAttachment.class]) {
         [delegate setRewriteMutableData:YES];
         [delegate setRewriteMutableArray:YES];
@@ -606,38 +625,6 @@ static bool haveStrictDecodableNSTextTable()
 
 static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClasses)
 {
-    static bool supportsPassKitCore = false;
-    static bool supportsDataDetectorsCore = false;
-    static bool supportsDataDetectors = false;
-    static bool supportsVisionKitCore = false;
-
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-#if ENABLE(APPLE_PAY)
-        supportsPassKitCore = PAL::isPassKitCoreFrameworkAvailable();
-#else
-        UNUSED_PARAM(supportsPassKitCore);
-#endif
-
-#if ENABLE(DATA_DETECTION)
-        supportsDataDetectorsCore = PAL::isDataDetectorsCoreFrameworkAvailable();
-#else
-        UNUSED_PARAM(supportsDataDetectorsCore);
-#endif
-
-#if ENABLE(DATA_DETECTION) && PLATFORM(MAC)
-        supportsDataDetectors = PAL::isDataDetectorsFrameworkAvailable();
-#else
-        UNUSED_PARAM(supportsDataDetectors);
-#endif
-
-#if ENABLE(IMAGE_ANALYSIS) && HAVE(VK_IMAGE_ANALYSIS)
-        supportsVisionKitCore = PAL::isVisionKitCoreFrameworkAvailable();
-#else
-        UNUSED_PARAM(supportsVisionKitCore);
-#endif
-    });
-
 #if ENABLE(IMAGE_ANALYSIS) && HAVE(VK_IMAGE_ANALYSIS)
     auto isDecodingKnownVKCImageAnalysisMessageFromUIProcess = [] (auto& decoder) {
         auto messageName = decoder.messageName();
@@ -667,7 +654,7 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
 
 #if ENABLE(IMAGE_ANALYSIS) && HAVE(VK_IMAGE_ANALYSIS)
     // blocked by rdar://108673895
-    if (supportsVisionKitCore
+    if (PAL::isVisionKitCoreFrameworkAvailable()
         && [allowedClasses containsObject:PAL::getVKCImageAnalysisClass()]
         && isDecodingKnownVKCImageAnalysisMessageFromUIProcess(decoder)
         && isInWebProcess())
@@ -676,11 +663,11 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
 
 #if ENABLE(DATA_DETECTION)
     // rdar://107553330 - don't re-introduce rdar://107676726
-    if (supportsDataDetectorsCore && [allowedClasses containsObject:PAL::getDDScannerResultClass()])
+    if (PAL::isDataDetectorsCoreFrameworkAvailable() && [allowedClasses containsObject:PAL::getDDScannerResultClass()])
         return haveSecureActionContext() && strictSecureDecodingForAllObjCEnabled();
 #if PLATFORM(MAC)
     // rdar://107553348 - don't re-introduce rdar://107676726
-    if (supportsDataDetectors && [allowedClasses containsObject:PAL::getWKDDActionContextClass()])
+    if (PAL::isDataDetectorsFrameworkAvailable() && [allowedClasses containsObject:PAL::getWKDDActionContextClass()])
         return haveSecureActionContext() && strictSecureDecodingForAllObjCEnabled();
 #endif // PLATFORM(MAC)
 #endif // ENABLE(DATA_DETECTION)
@@ -692,11 +679,11 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
 
 #if ENABLE(APPLE_PAY)
     // rdar://107553480 Don't reintroduce rdar://108235706
-    if (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentMethodClass()])
+    if (PAL::isPassKitCoreFrameworkAvailable() && [allowedClasses containsObject:PAL::getPKPaymentMethodClass()])
         return haveStrictDecodableCNContact() && strictSecureDecodingForAllObjCEnabled();
 
     // Don't reintroduce rdar://108660074
-    if (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKContactClass()])
+    if (PAL::isPassKitCoreFrameworkAvailable() && [allowedClasses containsObject:PAL::getPKContactClass()])
         return haveStrictDecodablePKContact() && strictSecureDecodingForAllObjCEnabled();
 #endif
 
@@ -719,9 +706,9 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
     if ([allowedClasses containsObject:NSShadow.class] // rdar://107553244
         || [allowedClasses containsObject:NSTextAttachment.class] // rdar://107553273
 #if ENABLE(APPLE_PAY)
-        || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentSetupFeatureClass()]) // rdar://107553409
-        || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentMerchantSessionClass()]) // rdar://107553452
-        || (supportsPassKitCore && [allowedClasses containsObject:PAL::getPKPaymentClass()] && isInWebProcess())
+        || (PAL::isPassKitCoreFrameworkAvailable() && [allowedClasses containsObject:PAL::getPKPaymentSetupFeatureClass()]) // rdar://107553409
+        || (PAL::isPassKitCoreFrameworkAvailable() && [allowedClasses containsObject:PAL::getPKPaymentMerchantSessionClass()]) // rdar://107553452
+        || (PAL::isPassKitCoreFrameworkAvailable() && [allowedClasses containsObject:PAL::getPKPaymentClass()] && isInWebProcess())
 #endif // ENABLE(APPLE_PAY)
         || ([allowedClasses containsObject:NSURLCredential.class] && isDecodingKnownNSURLCredentialMessage(decoder))) // rdar://107553367
         return true;
@@ -752,15 +739,14 @@ static std::optional<RetainPtr<id>> decodeSecureCodingInternal(Decoder& decoder,
 
     auto allowedClassSet = adoptNS([[NSMutableSet alloc] initWithArray:allowedClasses]);
 
-    if ([allowedClasses containsObject:NSMutableURLRequest.class]) {
+    if ([allowedClasses containsObject:NSMutableURLRequest.class]
+        || [allowedClasses containsObject:NSURLRequest.class]) {
         [allowedClassSet addObject:WKSecureCodingURLWrapper.class];
         [allowedClassSet addObject:NSMutableString.class];
         [allowedClassSet addObject:NSMutableArray.class];
         [allowedClassSet addObject:NSMutableDictionary.class];
         [allowedClassSet addObject:NSMutableData.class];
     }
-    if ([allowedClasses containsObject:NSURLRequest.class])
-        [allowedClassSet addObject:WKSecureCodingURLWrapper.class];
 
 #if ENABLE(REVEAL)
     if (PAL::isRevealCoreFrameworkAvailable() && [allowedClasses containsObject:PAL::getRVItemClass()])
