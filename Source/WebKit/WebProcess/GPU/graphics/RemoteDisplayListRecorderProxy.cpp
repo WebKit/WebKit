@@ -41,6 +41,7 @@
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/SVGFilter.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
 
@@ -205,6 +206,11 @@ void RemoteDisplayListRecorderProxy::recordDrawFilteredImageBuffer(ImageBuffer* 
     std::optional<RenderingResourceIdentifier> identifier;
     if (sourceImage)
         identifier = sourceImage->renderingResourceIdentifier();
+
+    auto* svgFilter = dynamicDowncast<SVGFilter>(filter);
+    if (svgFilter && svgFilter->hasValidRenderingResourceIdentifier())
+        recordResourceUse(filter);
+
     send(Messages::RemoteDisplayListRecorder::DrawFilteredImageBuffer(WTFMove(identifier), sourceImageRect, filter));
 }
 

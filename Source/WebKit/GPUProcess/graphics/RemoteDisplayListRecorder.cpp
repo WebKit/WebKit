@@ -35,6 +35,7 @@
 #include <WebCore/BitmapImage.h>
 #include <WebCore/FEImage.h>
 #include <WebCore/FilterResults.h>
+#include <WebCore/SVGFilter.h>
 
 #if USE(SYSTEM_PREVIEW)
 #include <WebCore/ARKitBadgeSystemImage.h>
@@ -229,7 +230,7 @@ void RemoteDisplayListRecorder::resetClip()
     handleItem(DisplayList::ResetClip());
 }
 
-void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Ref<Filter> filter)
+void RemoteDisplayListRecorder::drawFilteredImageBufferInternal(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Filter& filter, FilterResults& results)
 {
     RefPtr<ImageBuffer> sourceImage;
 
@@ -241,7 +242,7 @@ void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingR
         }
     }
 
-    for (auto& effect : filter->effectsOfType(FilterEffect::Type::FEImage)) {
+    for (auto& effect : filter.effectsOfType(FilterEffect::Type::FEImage)) {
         auto& feImage = downcast<FEImage>(effect.get());
 
         auto sourceImage = resourceCache().cachedSourceImage({ feImage.sourceImage().imageIdentifier(), m_webProcessIdentifier });
@@ -253,8 +254,34 @@ void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingR
         feImage.setImageSource(WTFMove(*sourceImage));
     }
 
-    FilterResults results(makeUnique<ImageBufferShareableAllocator>(m_renderingBackend->resourceOwner()));
-    handleItem(DisplayList::DrawFilteredImageBuffer(sourceImageIdentifier, sourceImageRect, WTFMove(filter)), sourceImage.get(), results);
+    handleItem(DisplayList::DrawFilteredImageBuffer(sourceImageIdentifier, sourceImageRect, filter), sourceImage.get(), results);
+}
+
+void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Ref<Filter> filter)
+{
+    auto* svgFilter = dynamicDowncast<SVGFilter>(filter.get());
+
+    if (!svgFilter || !svgFilter->hasValidRenderingResourceIdentifier()) {
+        FilterResults results(makeUnique<ImageBufferShareableAllocator>(m_renderingBackend->resourceOwner()));
+        drawFilteredImageBufferInternal(sourceImageIdentifier, sourceImageRect, filter, results);
+        return;
+    }
+
+    RefPtr cachedFilter = resourceCache().cachedFilter({ filter->renderingResourceIdentifier(), m_webProcessIdentifier });
+    auto* cachedSVGFilter = dynamicDowncast<SVGFilter>(cachedFilter.get());
+    if (!cachedSVGFilter) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    cachedSVGFilter->mergeEffects(svgFilter->effects());
+
+    auto& results = cachedSVGFilter->ensureResults([&]() {
+        auto allocator = makeUnique<ImageBufferShareableAllocator>(m_renderingBackend->resourceOwner());
+        return makeUnique<FilterResults>(WTFMove(allocator));
+    });
+
+    drawFilteredImageBufferInternal(sourceImageIdentifier, sourceImageRect, *cachedSVGFilter, results);
 }
 
 void RemoteDisplayListRecorder::drawGlyphs(DisplayList::DrawGlyphs&& item)

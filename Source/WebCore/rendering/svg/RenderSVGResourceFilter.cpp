@@ -131,7 +131,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     auto preferredFilterModes = renderer.page().preferredFilterRenderingModes();
 
     // Create the SVGFilter object.
-    filterData->filter = SVGFilter::create(filterElement(), preferredFilterModes, filterScale, filterRegion, targetBoundingBox, *context);
+    filterData->filter = SVGFilter::create(filterElement(), preferredFilterModes, filterScale, filterRegion, targetBoundingBox, *context, RenderingResourceIdentifier::generate());
     if (!filterData->filter) {
         m_rendererFilterDataMap.remove(&renderer);
         return false;

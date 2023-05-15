@@ -257,6 +257,19 @@ void SVGFilter::clearEffectResult(FilterEffect& effect)
         m_results->clearEffectResult(effect);
 }
 
+void SVGFilter::mergeEffects(const FilterEffectVector& effects)
+{
+    ASSERT(m_effects.size() == effects.size());
+
+    for (unsigned index = 0; index < m_effects.size(); ++index) {
+        if (m_effects[index].get() == effects[index].get())
+            continue;
+
+        clearEffectResult(m_effects[index]);
+        m_effects[index] = effects[index];
+    }
+}
+
 RefPtr<FilterImage> SVGFilter::apply(const Filter&, FilterImage& sourceImage, FilterResults& results)
 {
     return apply(&sourceImage, results);
