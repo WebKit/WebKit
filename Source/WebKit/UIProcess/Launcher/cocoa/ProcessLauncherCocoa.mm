@@ -180,10 +180,11 @@ void ProcessLauncher::launchProcess()
     xpc_dictionary_set_string(bootstrapMessage.get(), "client-bundle-identifier", WebCore::applicationBundleIdentifier().utf8().data());
     xpc_dictionary_set_string(bootstrapMessage.get(), "process-identifier", String::number(m_launchOptions.processIdentifier.toUInt64()).utf8().data());
 #if PLATFORM(MAC)
-    xpc_dictionary_set_string(bootstrapMessage.get(), "ui-process-name", [[[NSRunningApplication currentApplication] localizedName] UTF8String]);
-#else
-    xpc_dictionary_set_string(bootstrapMessage.get(), "ui-process-name", [[[NSProcessInfo processInfo] processName] UTF8String]);
+    if (auto* applicationName = [[[NSRunningApplication currentApplication] localizedName] UTF8String])
+        xpc_dictionary_set_string(bootstrapMessage.get(), "ui-process-name", applicationName);
+    else
 #endif
+    xpc_dictionary_set_string(bootstrapMessage.get(), "ui-process-name", [[[NSProcessInfo processInfo] processName] UTF8String]);
     xpc_dictionary_set_string(bootstrapMessage.get(), "service-name", name);
 
     if (m_launchOptions.processType == ProcessLauncher::ProcessType::Web) {
