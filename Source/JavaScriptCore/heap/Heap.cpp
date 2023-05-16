@@ -2868,7 +2868,6 @@ void Heap::addCoreConstraints()
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::StrongReferences);
                 if (vm.smallStrings.needsToBeVisited(*m_collectionScope))
                     vm.smallStrings.visitStrongReferences(visitor);
-                vm.visitAggregate(visitor);
             }
             
             {
@@ -2908,6 +2907,7 @@ void Heap::addCoreConstraints()
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             SetRootMarkReasonScope rootScope(visitor, RootMarkReason::StrongHandles);
             m_handleSet.visitStrongHandles(visitor);
+            vm().visitAggregate(visitor);
         })),
         ConstraintVolatility::GreyedByExecution);
     

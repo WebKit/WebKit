@@ -70,20 +70,20 @@ public:
     typedef uint8_t InlineTypeFlags;
     typedef uint16_t OutOfLineTypeFlags;
 
-    TypeInfo(JSType type, unsigned flags)
+    constexpr TypeInfo(JSType type, unsigned flags)
         : TypeInfo(type, flags & 0xff, flags >> numberOfInlineBits)
     {
-        ASSERT(!(flags >> 24));
+        ASSERT_UNDER_CONSTEXPR_CONTEXT(!(flags >> 24));
     }
 
-    TypeInfo(JSType type, InlineTypeFlags inlineTypeFlags, OutOfLineTypeFlags outOfLineTypeFlags)
+    constexpr TypeInfo(JSType type, InlineTypeFlags inlineTypeFlags, OutOfLineTypeFlags outOfLineTypeFlags)
         : m_type(type)
         , m_flags(inlineTypeFlags)
         , m_flags2(outOfLineTypeFlags)
     {
     }
 
-    JSType type() const { return static_cast<JSType>(m_type); }
+    constexpr JSType type() const { return static_cast<JSType>(m_type); }
     bool isObject() const { return isObject(type()); }
     static bool isObject(JSType type) { return type >= ObjectType; }
     bool isFinalObject() const { return type() == FinalObjectType; }
@@ -138,8 +138,8 @@ public:
         return structureFlags | (oldCellFlags & static_cast<InlineTypeFlags>(TypeInfoPerCellBit));
     }
 
-    InlineTypeFlags inlineTypeFlags() const { return m_flags; }
-    OutOfLineTypeFlags outOfLineTypeFlags() const { return m_flags2; }
+    constexpr InlineTypeFlags inlineTypeFlags() const { return m_flags; }
+    constexpr OutOfLineTypeFlags outOfLineTypeFlags() const { return m_flags2; }
 
 private:
     friend class LLIntOffsetsExtractor;

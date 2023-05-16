@@ -1020,7 +1020,13 @@ protected:
     // To instantiate objects you likely want JSFinalObject, below.
     // To create derived types you likely want JSNonFinalObject, below.
     JSObject(VM&, Structure*, Butterfly* = nullptr);
-    
+
+    JSObject(CreatingWellDefinedBuiltinCellTag, StructureID structureID, int32_t blob)
+        : JSCell(CreatingWellDefinedBuiltinCell, structureID, blob)
+        , m_butterfly(nullptr, WriteBarrierEarlyInit)
+    {
+    }
+
     // Visits the butterfly unless there is a race. Returns the structure if there was no race.
     template<typename Visitor> Structure* visitButterfly(Visitor&);
     
@@ -1234,9 +1240,13 @@ public:
         return sizeof(JSObject) + inlineCapacity * sizeof(WriteBarrierBase<Unknown>);
     }
 
-    static inline const TypeInfo typeInfo() { return TypeInfo(FinalObjectType, StructureFlags); }
+    static inline constexpr TypeInfo typeInfo() { return TypeInfo(FinalObjectType, StructureFlags); }
     static constexpr IndexingType defaultIndexingType = NonArray;
-        
+    static constexpr int32_t defaultTypeInfoBlob()
+    {
+        return TypeInfoBlob::typeInfoBlob(defaultIndexingType, typeInfo().type(), typeInfo().inlineTypeFlags());
+    }
+
     static constexpr unsigned defaultSizeInBytes = 64;
     static constexpr unsigned defaultInlineCapacity = (defaultSizeInBytes - sizeof(JSObject)) / sizeof(WriteBarrier<Unknown>);
     static_assert(defaultInlineCapacity < firstOutOfLineOffset);
@@ -1267,6 +1277,13 @@ private:
         // We do not need to use gcSafeMemcpy since this object is not exposed yet.
         memset(inlineStorageUnsafe(), 0, inlineCapacity * sizeof(EncodedJSValue));
     }
+
+    explicit JSFinalObject(CreatingWellDefinedBuiltinCellTag, StructureID structureID)
+        : JSObject(CreatingWellDefinedBuiltinCell, structureID, defaultTypeInfoBlob())
+    {
+        // We do not need to use gcSafeMemcpy since this object is not exposed yet.
+        memset(inlineStorageUnsafe(), 0, defaultInlineCapacity * sizeof(EncodedJSValue));
+     }
 
 #if ASSERT_ENABLED
     void finishCreation(VM& vm)

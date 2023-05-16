@@ -22311,7 +22311,7 @@ IGNORE_CLANG_WARNINGS_END
         LValue maskedStructureID = structureID;
         if constexpr (structureHeapAddressSize < 4 * GB)
             maskedStructureID = m_out.bitAnd(structureID, m_out.constInt32(StructureID::structureIDMask));
-        return m_out.bitOr(m_out.constIntPtr(g_jscConfig.startOfStructureHeap), m_out.zeroExtPtr(maskedStructureID));
+        return m_out.bitOr(m_out.constIntPtr(startOfStructureHeap()), m_out.zeroExtPtr(maskedStructureID));
 #endif
     }
 

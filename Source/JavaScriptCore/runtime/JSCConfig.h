@@ -131,6 +131,11 @@ constexpr size_t offsetOfJSCConfigInitializeHasBeenCalled = offsetof(JSC::Config
 constexpr size_t offsetOfJSCConfigGateMap = offsetof(JSC::Config, llint.gateMap);
 constexpr size_t offsetOfJSCConfigStartOfStructureHeap = offsetof(JSC::Config, startOfStructureHeap);
 
+ALWAYS_INLINE PURE_FUNCTION uintptr_t startOfStructureHeap()
+{
+    return g_jscConfig.startOfStructureHeap;
+}
+
 } // namespace JSC
 
 #if !ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)

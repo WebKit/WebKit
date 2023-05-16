@@ -345,7 +345,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
         if (value.isInfinite() || value.size() != 1)
             return false;
 
-        return value[0].get() == graph.m_vm.getterSetterStructure;
+        return value[0].get() == graph.m_vm.getterSetterStructure.get();
     }
 
     case BottomValue:

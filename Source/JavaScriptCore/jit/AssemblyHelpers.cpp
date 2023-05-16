@@ -545,7 +545,7 @@ void AssemblyHelpers::emitNonNullDecodeZeroExtendedStructureID(RegisterID source
         move(source, dest);
     } else
         and32(TrustedImm32(StructureID::structureIDMask), source, dest);
-    or64(TrustedImm64(g_jscConfig.startOfStructureHeap), dest);
+    or64(TrustedImm64(startOfStructureHeap()), dest);
 #else // not CPU(ADDRESS64)
     move(source, dest);
 #endif

@@ -56,6 +56,7 @@
 #include "VMTraps.h"
 #include "WasmContext.h"
 #include "WeakGCMap.h"
+#include "WriteBarrier.h"
 #include <variant>
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/CheckedArithmetic.h>
@@ -490,56 +491,56 @@ public:
 #if ENABLE(WEBASSEMBLY)
     Wasm::Context wasmContext;
 #endif
-    Strong<Structure> structureStructure;
-    Strong<Structure> structureRareDataStructure;
-    Strong<Structure> stringStructure;
-    Strong<Structure> propertyNameEnumeratorStructure;
-    Strong<Structure> getterSetterStructure;
-    Strong<Structure> customGetterSetterStructure;
-    Strong<Structure> domAttributeGetterSetterStructure;
-    Strong<Structure> scopedArgumentsTableStructure;
-    Strong<Structure> apiWrapperStructure;
-    Strong<Structure> nativeExecutableStructure;
-    Strong<Structure> evalExecutableStructure;
-    Strong<Structure> programExecutableStructure;
-    Strong<Structure> functionExecutableStructure;
+    WriteBarrier<Structure> structureStructure;
+    WriteBarrier<Structure> structureRareDataStructure;
+    WriteBarrier<Structure> stringStructure;
+    WriteBarrier<Structure> propertyNameEnumeratorStructure;
+    WriteBarrier<Structure> getterSetterStructure;
+    WriteBarrier<Structure> customGetterSetterStructure;
+    WriteBarrier<Structure> domAttributeGetterSetterStructure;
+    WriteBarrier<Structure> scopedArgumentsTableStructure;
+    WriteBarrier<Structure> apiWrapperStructure;
+    WriteBarrier<Structure> nativeExecutableStructure;
+    WriteBarrier<Structure> evalExecutableStructure;
+    WriteBarrier<Structure> programExecutableStructure;
+    WriteBarrier<Structure> functionExecutableStructure;
 #if ENABLE(WEBASSEMBLY)
-    Strong<Structure> webAssemblyCalleeGroupStructure;
+    WriteBarrier<Structure> webAssemblyCalleeGroupStructure;
 #endif
-    Strong<Structure> moduleProgramExecutableStructure;
-    Strong<Structure> regExpStructure;
-    Strong<Structure> symbolStructure;
-    Strong<Structure> symbolTableStructure;
-    Strong<Structure> immutableButterflyStructures[NumberOfCopyOnWriteIndexingModes];
-    Strong<Structure> sourceCodeStructure;
-    Strong<Structure> scriptFetcherStructure;
-    Strong<Structure> scriptFetchParametersStructure;
-    Strong<Structure> structureChainStructure;
-    Strong<Structure> sparseArrayValueMapStructure;
-    Strong<Structure> templateObjectDescriptorStructure;
-    Strong<Structure> unlinkedFunctionExecutableStructure;
-    Strong<Structure> unlinkedProgramCodeBlockStructure;
-    Strong<Structure> unlinkedEvalCodeBlockStructure;
-    Strong<Structure> unlinkedFunctionCodeBlockStructure;
-    Strong<Structure> unlinkedModuleProgramCodeBlockStructure;
-    Strong<Structure> propertyTableStructure;
-    Strong<Structure> functionRareDataStructure;
-    Strong<Structure> exceptionStructure;
-    Strong<Structure> programCodeBlockStructure;
-    Strong<Structure> moduleProgramCodeBlockStructure;
-    Strong<Structure> evalCodeBlockStructure;
-    Strong<Structure> functionCodeBlockStructure;
-    Strong<Structure> hashMapBucketSetStructure;
-    Strong<Structure> hashMapBucketMapStructure;
-    Strong<Structure> bigIntStructure;
+    WriteBarrier<Structure> moduleProgramExecutableStructure;
+    WriteBarrier<Structure> regExpStructure;
+    WriteBarrier<Structure> symbolStructure;
+    WriteBarrier<Structure> symbolTableStructure;
+    WriteBarrier<Structure> immutableButterflyStructures[NumberOfCopyOnWriteIndexingModes];
+    WriteBarrier<Structure> sourceCodeStructure;
+    WriteBarrier<Structure> scriptFetcherStructure;
+    WriteBarrier<Structure> scriptFetchParametersStructure;
+    WriteBarrier<Structure> structureChainStructure;
+    WriteBarrier<Structure> sparseArrayValueMapStructure;
+    WriteBarrier<Structure> templateObjectDescriptorStructure;
+    WriteBarrier<Structure> unlinkedFunctionExecutableStructure;
+    WriteBarrier<Structure> unlinkedProgramCodeBlockStructure;
+    WriteBarrier<Structure> unlinkedEvalCodeBlockStructure;
+    WriteBarrier<Structure> unlinkedFunctionCodeBlockStructure;
+    WriteBarrier<Structure> unlinkedModuleProgramCodeBlockStructure;
+    WriteBarrier<Structure> propertyTableStructure;
+    WriteBarrier<Structure> functionRareDataStructure;
+    WriteBarrier<Structure> exceptionStructure;
+    WriteBarrier<Structure> programCodeBlockStructure;
+    WriteBarrier<Structure> moduleProgramCodeBlockStructure;
+    WriteBarrier<Structure> evalCodeBlockStructure;
+    WriteBarrier<Structure> functionCodeBlockStructure;
+    WriteBarrier<Structure> hashMapBucketSetStructure;
+    WriteBarrier<Structure> hashMapBucketMapStructure;
+    WriteBarrier<Structure> bigIntStructure;
 
-    Strong<JSPropertyNameEnumerator> m_emptyPropertyNameEnumerator;
+    WriteBarrier<JSPropertyNameEnumerator> m_emptyPropertyNameEnumerator;
 
-    Strong<JSCell> m_sentinelSetBucket;
-    Strong<JSCell> m_sentinelMapBucket;
+    WriteBarrier<JSCell> m_sentinelSetBucket;
+    WriteBarrier<JSCell> m_sentinelMapBucket;
 
-    Strong<NativeExecutable> m_fastCanConstructBoundExecutable;
-    Strong<NativeExecutable> m_slowCanConstructBoundExecutable;
+    WriteBarrier<NativeExecutable> m_fastCanConstructBoundExecutable;
+    WriteBarrier<NativeExecutable> m_slowCanConstructBoundExecutable;
 
     Weak<NativeExecutable> m_fastRemoteFunctionExecutable;
     Weak<NativeExecutable> m_slowRemoteFunctionExecutable;
@@ -557,7 +558,7 @@ public:
     SmallStrings smallStrings;
     NumericStrings numericStrings;
     std::unique_ptr<SimpleStats> machineCodeBytesPerBytecodeWordForBaselineJIT;
-    Strong<JSString> lastCachedString;
+    WriteBarrier<JSString> lastCachedString;
     Ref<StringImpl> lastAtomizedIdentifierStringImpl { *StringImpl::empty() };
     Ref<AtomStringImpl> lastAtomizedIdentifierAtomStringImpl { *static_cast<AtomStringImpl*>(StringImpl::empty()) };
     JSONAtomStringCache jsonAtomStringCache;
@@ -566,7 +567,7 @@ public:
     WTF::SymbolRegistry& symbolRegistry() { return m_symbolRegistry; }
     WTF::SymbolRegistry& privateSymbolRegistry() { return m_privateSymbolRegistry; }
 
-    Strong<JSBigInt> heapBigIntConstantOne;
+    WriteBarrier<JSBigInt> heapBigIntConstantOne;
 
     JSCell* sentinelSetBucket()
     {

@@ -722,6 +722,7 @@ public:
     Structure* scopedArgumentsStructure() const { return m_scopedArgumentsStructure.get(); }
     Structure* clonedArgumentsStructure() const { return m_clonedArgumentsStructure.get(); }
     Structure* objectStructureForObjectConstructor() const { return m_objectStructureForObjectConstructor.get(); }
+    StructureID objectStructureIDForObjectConstructor() const { return m_objectStructureForObjectConstructor.value(); }
     Structure* originalArrayStructureForIndexingType(IndexingType indexingType) const
     {
         ASSERT(indexingType & IsArray);

@@ -56,23 +56,10 @@ inline JSCell::JSCell(CreatingEarlyCellTag)
 }
 
 inline JSCell::JSCell(VM&, Structure* structure)
-    : m_structureID(structure->id())
+    : JSCell(CreatingWellDefinedBuiltinCell, structure->id(), structure->typeInfoBlob())
 {
-#if CPU(ARM64) || CPU(X86_64)
-    uint32_t blob = structure->typeInfoBlob();
-    m_indexingTypeAndMisc = bitwise_cast<IndexingType>(static_cast<uint8_t>(blob));
-    m_type = bitwise_cast<JSType>(static_cast<uint8_t>(blob >> 8));
-    m_flags = bitwise_cast<TypeInfo::InlineTypeFlags>(static_cast<uint8_t>(blob >> 16));
-    m_cellState = bitwise_cast<CellState>(static_cast<uint8_t>(blob >> 24));
-    ASSERT(m_cellState == CellState::DefinitelyWhite);
-#else
-    m_indexingTypeAndMisc = structure->indexingModeIncludingHistory();
-    m_type = structure->typeInfo().type();
-    m_flags = structure->typeInfo().inlineTypeFlags();
-    m_cellState = CellState::DefinitelyWhite;
-#endif
-
     ASSERT(!isCompilationThread());
+    ASSERT(m_cellState == CellState::DefinitelyWhite);
 
     // Note that in the constructor initializer list above, we are only using values
     // inside structure but not necessarily the structure pointer itself. All these
@@ -86,6 +73,24 @@ inline JSCell::JSCell(VM&, Structure* structure)
     // structure pointer is still alive at this point.
     ensureStillAliveHere(structure);
     static_assert(JSCell::atomSize >= MarkedBlock::atomSize);
+}
+
+// This constructor should not be used directly. Exceptions are for quite few well-defined builtin objects, e.g. JSString, empty JSFinalObject etc.
+// Structure must be kept alive somehow (e.g. by JSGlobalObject, or ensureStillAliveHere).
+ALWAYS_INLINE JSCell::JSCell(CreatingWellDefinedBuiltinCellTag, StructureID structureID, int32_t blob)
+    : m_structureID(structureID)
+#if CPU(LITTLE_ENDIAN)
+    , m_indexingTypeAndMisc(static_cast<uint8_t>(blob >> 0))
+    , m_type(bitwise_cast<JSType>(static_cast<uint8_t>(blob >> 8)))
+    , m_flags(bitwise_cast<TypeInfo::InlineTypeFlags>(static_cast<uint8_t>(blob >> 16)))
+    , m_cellState(bitwise_cast<CellState>(static_cast<uint8_t>(blob >> 24)))
+#else
+    , m_indexingTypeAndMisc(static_cast<uint8_t>(blob >> 24))
+    , m_type(bitwise_cast<JSType>(static_cast<uint8_t>(blob >> 16)))
+    , m_flags(bitwise_cast<TypeInfo::InlineTypeFlags>(static_cast<uint8_t>(blob >> 8)))
+    , m_cellState(bitwise_cast<CellState>(static_cast<uint8_t>(blob >> 0)))
+#endif
+{
 }
 
 inline void JSCell::finishCreation(VM& vm)

@@ -110,7 +110,9 @@ public:
 
     enum CreatingEarlyCellTag { CreatingEarlyCell };
     JSCell(CreatingEarlyCellTag);
-    
+    enum CreatingWellDefinedBuiltinCellTag { CreatingWellDefinedBuiltinCell };
+    JSCell(CreatingWellDefinedBuiltinCellTag, StructureID, int32_t typeInfoBlob);
+
     JS_EXPORT_PRIVATE static void destroy(JSCell*);
 
 protected:

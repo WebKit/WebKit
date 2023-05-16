@@ -36,7 +36,7 @@ const ClassInfo JSString::s_info = { "string"_s, nullptr, nullptr, nullptr, CREA
 
 Structure* JSString::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
 {
-    return Structure::create(vm, globalObject, proto, TypeInfo(StringType, StructureFlags), info());
+    return Structure::create(vm, globalObject, proto, defaultTypeInfo(), info());
 }
 
 JSString* JSString::createEmptyString(VM& vm)
@@ -399,7 +399,7 @@ JSString* jsStringWithCacheSlowCase(VM& vm, StringImpl& stringImpl)
 {
     ASSERT(stringImpl.length() > 1 || (stringImpl.length() == 1 && stringImpl[0] > maxSingleCharacterString));
     JSString* string = JSString::create(vm, stringImpl);
-    vm.lastCachedString.set(vm, string);
+    vm.lastCachedString.setWithoutWriteBarrier(string);
     return string;
 }
 

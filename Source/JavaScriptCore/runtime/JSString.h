@@ -143,14 +143,20 @@ private:
         return uninitializedValueInternal();
     }
 
+    static constexpr TypeInfo defaultTypeInfo() { return TypeInfo(StringType, StructureFlags); }
+    static constexpr int32_t defaultTypeInfoBlob()
+    {
+        return TypeInfoBlob::typeInfoBlob(NonArray, defaultTypeInfo().type(), defaultTypeInfo().inlineTypeFlags());
+    }
+
     JSString(VM& vm, Ref<StringImpl>&& value)
-        : JSCell(vm, vm.stringStructure.get())
+        : JSCell(CreatingWellDefinedBuiltinCell, vm.stringStructure.get()->id(), defaultTypeInfoBlob())
     {
         new (&uninitializedValueInternal()) String(WTFMove(value));
     }
 
     JSString(VM& vm)
-        : JSCell(vm, vm.stringStructure.get())
+        : JSCell(CreatingWellDefinedBuiltinCell, vm.stringStructure.get()->id(), defaultTypeInfoBlob())
         , m_fiber(isRopeInPointer)
     {
     }

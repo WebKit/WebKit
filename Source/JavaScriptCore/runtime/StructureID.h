@@ -129,7 +129,7 @@ ALWAYS_INLINE Structure* StructureID::decode() const
 {
     // Take care to only use the bits from m_bits in the structure's address reservation.
     ASSERT(decontaminate());
-    return reinterpret_cast<Structure*>((static_cast<uintptr_t>(decontaminate().m_bits) & structureIDMask) + g_jscConfig.startOfStructureHeap);
+    return reinterpret_cast<Structure*>((static_cast<uintptr_t>(decontaminate().m_bits) & structureIDMask) + startOfStructureHeap());
 }
 
 ALWAYS_INLINE Structure* StructureID::tryDecode() const
@@ -138,13 +138,13 @@ ALWAYS_INLINE Structure* StructureID::tryDecode() const
     uintptr_t offset = static_cast<uintptr_t>(decontaminate().m_bits);
     if (offset < MarkedBlock::blockSize || offset >= g_jscConfig.sizeOfStructureHeap)
         return nullptr;
-    return reinterpret_cast<Structure*>((offset & structureIDMask) + g_jscConfig.startOfStructureHeap);
+    return reinterpret_cast<Structure*>((offset & structureIDMask) + startOfStructureHeap());
 }
 
 ALWAYS_INLINE StructureID StructureID::encode(const Structure* structure)
 {
     ASSERT(structure);
-    ASSERT(g_jscConfig.startOfStructureHeap <= reinterpret_cast<uintptr_t>(structure) && reinterpret_cast<uintptr_t>(structure) < g_jscConfig.startOfStructureHeap + structureHeapAddressSize);
+    ASSERT(g_jscConfig.startOfStructureHeap <= reinterpret_cast<uintptr_t>(structure) && reinterpret_cast<uintptr_t>(structure) < startOfStructureHeap() + structureHeapAddressSize);
     auto result = StructureID(reinterpret_cast<uintptr_t>(structure) & structureIDMask);
     ASSERT(result.decode() == structure);
     return result;

@@ -861,8 +861,9 @@ bool JSObject::fastForEachPropertyWithSideEffectFreeFunctor(VM& vm, const Functo
 ALWAYS_INLINE JSFinalObject* JSFinalObject::createDefaultEmptyObject(JSGlobalObject* globalObject)
 {
     VM& vm = getVM(globalObject);
-    JSFinalObject* finalObject = new (NotNull, allocateCell<JSFinalObject>(vm, allocationSize(defaultInlineCapacity))) JSFinalObject(vm, globalObject->objectStructureForObjectConstructor(), nullptr, defaultInlineCapacity);
+    JSFinalObject* finalObject = new (NotNull, allocateCell<JSFinalObject>(vm, allocationSize(defaultInlineCapacity))) JSFinalObject(CreatingWellDefinedBuiltinCell, globalObject->objectStructureIDForObjectConstructor());
     finalObject->finishCreation(vm);
+    ASSERT(globalObject->objectStructureForObjectConstructor()->id() == globalObject->objectStructureIDForObjectConstructor());
     ASSERT(globalObject->objectStructureForObjectConstructor()->inlineCapacity() == defaultInlineCapacity);
     return finalObject;
 }
