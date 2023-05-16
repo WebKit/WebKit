@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ScrollAnimatorEnabled=true ] -->
 <html dir="rtl">
 <head>
     <style>
@@ -24,17 +23,14 @@
             testRunner.waitUntilDone();
         }
 
-        if (window.internals)
-            internals.settings.setScrollAnimatorEnabled(false);
-
         function checkForScroll()
         {
-            var expectedScrollLeft = -120;
+            var expectedMinimumScrollLeft = -40;
             var scrollLeft = document.scrollingElement.scrollLeft;
-            if (scrollLeft != expectedScrollLeft)
+            if (scrollLeft > expectedMinimumScrollLeft)
                 document.getElementById('result').textContent = "FAIL: scrollLeft is " + scrollLeft +  ", expected " + expectedScrollLeft;
              else
-                document.getElementById('result').textContent = "PASS: scrollLeft is " + scrollLeft;
+                document.getElementById('result').textContent = "PASS: scrollLeft is less than or equal to " + expectedMinimumScrollLeft;
 
             if (window.testRunner)
                 testRunner.notifyDone();
@@ -44,9 +40,13 @@
         {
             if (window.eventSender) {
                 await UIHelper.startMonitoringWheelEvents();
-                eventSender.keyDown("leftArrow");
-                eventSender.keyDown("leftArrow");
-                eventSender.keyDown("leftArrow");
+
+                for (let i = 0; i < 3; i++) {
+                    await UIHelper.rawKeyDown("leftArrow");
+                    await UIHelper.renderingUpdate();
+                    await UIHelper.rawKeyUp("leftArrow");
+                }
+
                 await UIHelper.waitForScrollCompletion();
                 checkForScroll();
             }

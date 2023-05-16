@@ -42,7 +42,9 @@
                 checkSuccessfulScroll(scrollObj);
             });
             
-            await UIHelper.keyDown("downArrow");
+            await UIHelper.rawKeyDown("downArrow");
+            await UIHelper.renderingUpdate();
+            await UIHelper.rawKeyUp("downArrow");
         }
     </script>
     <style>
