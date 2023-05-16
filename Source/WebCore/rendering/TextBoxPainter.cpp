@@ -465,7 +465,7 @@ void TextBoxPainter<TextBoxPath>::paintForeground(const StyledMarkedText& marked
     if (!emphasisMark.isEmpty())
         emphasisMarkOffset = *m_emphasisMarkExistsAndIsAbove ? -font.metricsOfPrimaryFont().ascent() - font.emphasisMarkDescent(emphasisMark) : font.metricsOfPrimaryFont().descent() + font.emphasisMarkAscent(emphasisMark);
 
-    TextPainter textPainter { context, font };
+    TextPainter textPainter { context, font, m_style };
     textPainter.setStyle(markedText.style.textStyles);
     textPainter.setIsHorizontal(textBox().isHorizontal());
     if (markedText.style.textShadow) {
@@ -637,7 +637,7 @@ void TextBoxPainter<TextBoxPath>::paintBackgroundDecorations(TextDecorationPaint
             };
         };
 
-        decorationPainter.paintBackgroundDecorations(textRun, computedBackgroundDecorationGeometry(), computedTextDecorationType, decoratingBox.textDecorationStyles);
+        decorationPainter.paintBackgroundDecorations(m_style, textRun, computedBackgroundDecorationGeometry(), computedTextDecorationType, decoratingBox.textDecorationStyles);
     }
 
     if (m_isCombinedText)

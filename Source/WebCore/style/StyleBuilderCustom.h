@@ -922,13 +922,12 @@ inline void BuilderCustom::applyTextOrBoxShadowValue(BuilderState& builderState,
         auto blur = shadowValue.blur ? shadowValue.blur->computeLength<Length>(conversionData) : Length(0, LengthType::Fixed);
         auto spread = shadowValue.spread ? shadowValue.spread->computeLength<Length>(conversionData) : Length(0, LengthType::Fixed);
         ShadowStyle shadowStyle = shadowValue.style && shadowValue.style->valueID() == CSSValueInset ? ShadowStyle::Inset : ShadowStyle::Normal;
-        Color color;
+        // If no color value is specified, the color is currentColor
+        auto color = StyleColor::currentColor();
         if (shadowValue.color)
-            color = builderState.colorFromPrimitiveValueWithResolvedCurrentColor(*shadowValue.color);
-        else
-            color = builderState.style().color();
+            color = builderState.colorFromPrimitiveValue(*shadowValue.color);
 
-        auto shadowData = makeUnique<ShadowData>(LengthPoint(x, y), blur, spread, shadowStyle, property == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparentBlack);
+        auto shadowData = makeUnique<ShadowData>(LengthPoint(x, y), blur, spread, shadowStyle, property == CSSPropertyWebkitBoxShadow, color);
         if (property == CSSPropertyTextShadow)
             builderState.style().setTextShadow(WTFMove(shadowData), !isFirstEntry); // add to the list if this is not the first entry
         else

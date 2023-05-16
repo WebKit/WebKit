@@ -200,7 +200,7 @@ TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, const Fon
 }
 
 // Paint text-shadow, underline, overline
-void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, const BackgroundDecorationGeometry& decorationGeometry, OptionSet<TextDecorationLine> decorationType, const Styles& decorationStyle)
+void TextDecorationPainter::paintBackgroundDecorations(const RenderStyle& style, const TextRun& textRun, const BackgroundDecorationGeometry& decorationGeometry, OptionSet<TextDecorationLine> decorationType, const Styles& decorationStyle)
 {
     auto paintDecoration = [&] (auto decoration, auto style, auto& color, auto& rect) {
         m_context.setStrokeColor(color);
@@ -270,7 +270,7 @@ void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, c
                 boxOrigin.move(0, -extraOffset);
                 extraOffset = 0;
             }
-            auto shadowColor = shadow->color();
+            auto shadowColor = style.colorResolvingCurrentColor(shadow->color());
             if (m_shadowColorFilter)
                 m_shadowColorFilter->transformColor(shadowColor);
 

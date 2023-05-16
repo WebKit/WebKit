@@ -160,7 +160,7 @@ static inline ShadowStyle blendFunc(ShadowStyle from, ShadowStyle to, const CSSP
     return result > 0 ? ShadowStyle::Normal : ShadowStyle::Inset;
 }
 
-static inline std::unique_ptr<ShadowData> blendFunc(const ShadowData* from, const ShadowData* to, const CSSPropertyBlendingContext& context)
+static inline std::unique_ptr<ShadowData> blendFunc(const ShadowData* from, const ShadowData* to, const RenderStyle& fromStyle, const RenderStyle& toStyle, const CSSPropertyBlendingContext& context)
 {
     ASSERT(from && to);
     ASSERT(from->style() == to->style());
@@ -170,7 +170,7 @@ static inline std::unique_ptr<ShadowData> blendFunc(const ShadowData* from, cons
         blend(from->spread(), to->spread(), context),
         blendFunc(from->style(), to->style(), context),
         from->isWebkitBoxShadow(),
-        blend(from->color(), to->color(), context));
+        blend(fromStyle.colorResolvingCurrentColor(from->color()), toStyle.colorResolvingCurrentColor(to->color()), context));
 }
 
 static inline TransformOperations blendFunc(const TransformOperations& from, const TransformOperations& to, const CSSPropertyBlendingContext& context)
@@ -1579,11 +1579,11 @@ private:
         int toLength = shadowListLength(toShadow);
 
         if (fromLength == toLength || (fromLength <= 1 && toLength <= 1)) {
-            (destination.*m_setter)(blendSimpleOrMatchedShadowLists(fromShadow, toShadow, context), false);
+            (destination.*m_setter)(blendSimpleOrMatchedShadowLists(fromShadow, toShadow, from, to, context), false);
             return;
         }
 
-        (destination.*m_setter)(blendMismatchedShadowLists(fromShadow, toShadow, fromLength, toLength, context), false);
+        (destination.*m_setter)(blendMismatchedShadowLists(fromShadow, toShadow, fromLength, toLength, from, to, context), false);
     }
 
 #if !LOG_DISABLED
@@ -1616,7 +1616,7 @@ private:
         return newShadowData;
     }
 
-    std::unique_ptr<ShadowData> blendSimpleOrMatchedShadowLists(const ShadowData* shadowA, const ShadowData* shadowB, const CSSPropertyBlendingContext& context) const
+    std::unique_ptr<ShadowData> blendSimpleOrMatchedShadowLists(const ShadowData* shadowA, const ShadowData* shadowB, const RenderStyle& styleA, const RenderStyle& styleB, const CSSPropertyBlendingContext& context) const
     {
         // from or to might be null in which case we don't want to do additivity, but do replace instead.
         if (shadowA && shadowB && context.compositeOperation == CompositeOperation::Add)
@@ -1629,7 +1629,7 @@ private:
             const ShadowData* srcShadow = shadowForBlending(shadowA, shadowB);
             const ShadowData* dstShadow = shadowForBlending(shadowB, shadowA);
 
-            std::unique_ptr<ShadowData> blendedShadow = blendFunc(srcShadow, dstShadow, context);
+            std::unique_ptr<ShadowData> blendedShadow = blendFunc(srcShadow, dstShadow, styleA, styleB, context);
             ShadowData* blendedShadowPtr = blendedShadow.get();
 
             if (!lastShadow)
@@ -1646,7 +1646,7 @@ private:
         return newShadowData;
     }
 
-    std::unique_ptr<ShadowData> blendMismatchedShadowLists(const ShadowData* shadowA, const ShadowData* shadowB, int fromLength, int toLength, const CSSPropertyBlendingContext& context) const
+    std::unique_ptr<ShadowData> blendMismatchedShadowLists(const ShadowData* shadowA, const ShadowData* shadowB, int fromLength, int toLength, const RenderStyle& styleA, const RenderStyle& styleB, const CSSPropertyBlendingContext& context) const
     {
         if (shadowA && shadowB && context.compositeOperation != CompositeOperation::Replace)
             return addShadowLists(shadowA, shadowB);
@@ -1675,7 +1675,7 @@ private:
             const ShadowData* srcShadow = shadowForBlending(fromShadow, toShadow);
             const ShadowData* dstShadow = shadowForBlending(toShadow, fromShadow);
 
-            std::unique_ptr<ShadowData> blendedShadow = blendFunc(srcShadow, dstShadow, context);
+            std::unique_ptr<ShadowData> blendedShadow = blendFunc(srcShadow, dstShadow, styleA, styleB, context);
             // Insert at the start of the list to preserve the order.
             blendedShadow->setNext(WTFMove(newShadowData));
             newShadowData = WTFMove(blendedShadow);

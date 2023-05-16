@@ -555,7 +555,7 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext& context, const Rend
             break;
 
         {
-            ShadowApplier shadowApplier(*usedContext, shadow, nullptr, shadowRect);
+            ShadowApplier shadowApplier(style, *usedContext, shadow, nullptr, shadowRect);
 
             if (!shadowApplier.didSaveContext())
                 usedContext->save();

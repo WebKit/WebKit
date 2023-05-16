@@ -5961,7 +5961,6 @@ imported/w3c/web-platform-tests/clipboard-apis/feature-policy/clipboard-write/cl
 imported/w3c/web-platform-tests/html/infrastructure/urls/terminology-0/document-base-url-initiated-grand-parent.https.window.html [ DumpJSConsoleLogInStdErr ]
 
 # text-shadow
-imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/currentcolor.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/decorations-multiple-zorder.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/quirks-decor-noblur.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-shadow/standards-decor-noblur.html [ ImageOnlyFailure ]
@@ -6342,7 +6341,6 @@ webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/border-r
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-near-zero-gradient.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-near-zero-png.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-near-zero-svg.html [ ImageOnlyFailure ]
-webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-currentcolor.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-radius-000.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-radius-001.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-block-fragmentation-001.html [ ImageOnlyFailure ]

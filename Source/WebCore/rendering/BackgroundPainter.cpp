@@ -159,7 +159,7 @@ static void applyBoxShadowForBackground(GraphicsContext& context, const RenderSt
         boxShadow = boxShadow->next();
 
     FloatSize shadowOffset(boxShadow->x().value(), boxShadow->y().value());
-    context.setShadow(shadowOffset, boxShadow->radius().value(), style.colorByApplyingColorFilter(boxShadow->color()), boxShadow->isWebkitBoxShadow() ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default);
+    context.setShadow(shadowOffset, boxShadow->radius().value(), style.colorWithColorFilter(boxShadow->color()), boxShadow->isWebkitBoxShadow() ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default);
 }
 
 void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLayer, const LayoutRect& rect,
@@ -817,7 +817,7 @@ void BackgroundPainter::paintBoxShadow(const LayoutRect& paintRect, const Render
         if (shadowOffset.isZero() && !shadowRadius && !shadowSpread)
             continue;
 
-        Color shadowColor = style.colorByApplyingColorFilter(shadow->color());
+        Color shadowColor = style.colorWithColorFilter(shadow->color());
 
         if (shadow->style() == ShadowStyle::Normal) {
             auto fillRect = borderRect;

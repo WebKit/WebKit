@@ -66,7 +66,7 @@ public:
         float clippingOffset { 0.f };
         WavyStrokeParameters wavyStrokeParameters;
     };
-    void paintBackgroundDecorations(const TextRun&, const BackgroundDecorationGeometry&, OptionSet<TextDecorationLine>, const Styles&);
+    void paintBackgroundDecorations(const RenderStyle&, const TextRun&, const BackgroundDecorationGeometry&, OptionSet<TextDecorationLine>, const Styles&);
 
     struct ForegroundDecorationGeometry {
         FloatPoint boxOrigin;
