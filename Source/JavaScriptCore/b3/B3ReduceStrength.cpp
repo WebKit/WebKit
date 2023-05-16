@@ -100,6 +100,7 @@ public:
         : m_min(min)
         , m_max(max)
     {
+        ASSERT(m_min <= m_max);
     }
 
     template<typename T>
@@ -448,9 +449,15 @@ public:
     {
         ASSERT(m_min >= INT32_MIN);
         ASSERT(m_max <= INT32_MAX);
-        int32_t min = m_min;
-        int32_t max = m_max;
-        return IntRange(static_cast<uint64_t>(static_cast<uint32_t>(min)), static_cast<uint64_t>(static_cast<uint32_t>(max)));
+        uint64_t min = static_cast<uint64_t>(static_cast<uint32_t>(m_min));
+        uint64_t max = static_cast<uint64_t>(static_cast<uint32_t>(m_max));
+        if (m_max < 0 || m_min >= 0) {
+            // m_min = -2, m_max = -1 then should return [0xFFFF_FFFE, 0xFFFF_FFFF]
+            // m_min =  1, m_max =  2 then should return [1, 2]
+            return IntRange(min, max);
+        }
+        // m_min = a negative integer, m_max >= 0 then should return [0, 0xFFFF_FFFF]
+        return IntRange(0, std::numeric_limits<uint32_t>::max());
     }
 
 private:
