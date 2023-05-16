@@ -31,6 +31,8 @@
 #include "config.h"
 #include "RenderFlexibleBox.h"
 
+#include "BaselineAlignment.h"
+#include "BaselineAlignmentInlines.h"
 #include "FlexibleBoxAlgorithm.h"
 #include "FontBaseline.h"
 #include "HitTestResult.h"
@@ -62,19 +64,17 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFlexibleBox);
 
 struct RenderFlexibleBox::LineContext {
-    LineContext(LayoutUnit crossAxisOffset, LayoutUnit crossAxisExtent, LayoutUnit maxAscent, LayoutUnit lastBaselineMaxAscent, Vector<FlexItem>&& flexItems)
+    LineContext(LayoutUnit crossAxisOffset, LayoutUnit crossAxisExtent, std::optional<BaselineContext> baselineContext, Vector<FlexItem>&& flexItems)
         : crossAxisOffset(crossAxisOffset)
         , crossAxisExtent(crossAxisExtent)
-        , maxAscent(maxAscent)
-        , lastBaselineMaxAscent(lastBaselineMaxAscent)
+        , baselineContext(baselineContext)
         , flexItems(flexItems)
     {
     }
     
     LayoutUnit crossAxisOffset;
     LayoutUnit crossAxisExtent;
-    LayoutUnit maxAscent;
-    LayoutUnit lastBaselineMaxAscent;
+    std::optional<BaselineContext> baselineContext;
     Vector<FlexItem> flexItems;
 };
 
@@ -2160,6 +2160,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vect
 
     LayoutUnit totalMainExtent = mainAxisExtent();
     LayoutUnit maxAscent, maxDescent, lastBaselineMaxAscent; // Used when align-items: baseline.
+    std::optional<BaselineContext> baselineContext;
     LayoutUnit maxChildCrossAxisExtent;
     ContentDistribution distribution = style().resolvedJustifyContentDistribution(contentAlignmentNormalBehavior());
     bool shouldFlipMainAxis = !isColumnFlow() && !isLeftToRightFlow();
@@ -2210,6 +2211,12 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vect
             LayoutUnit ascent = marginBoxAscentForChild(child);
             LayoutUnit descent = (crossAxisMarginExtentForChild(child) + crossAxisExtentForChild(child)) - ascent;
             maxDescent = std::max(maxDescent, descent);
+
+            if (baselineContext)
+                baselineContext->updateSharedGroup(child, alignment, ascent);
+            else
+                baselineContext = { child, alignment, ascent };
+
             if (alignment == ItemPosition::Baseline) {
                 maxAscent =  std::max(maxAscent, ascent);
                 childCrossAxisMarginBoxExtent = maxAscent + maxDescent;
@@ -2257,7 +2264,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vect
     if (!m_numberOfInFlowChildrenOnFirstLine)
         m_numberOfInFlowChildrenOnFirstLine = numberOfItemsOnLine;
     m_numberOfInFlowChildrenOnLastLine = numberOfItemsOnLine;
-    lineContexts.append(LineContext(crossAxisOffset, maxChildCrossAxisExtent, maxAscent, lastBaselineMaxAscent, WTFMove(children)));
+    lineContexts.append(LineContext(crossAxisOffset, maxChildCrossAxisExtent, baselineContext, WTFMove(children)));
     crossAxisOffset += maxChildCrossAxisExtent;
 }
 
@@ -2369,7 +2376,7 @@ void RenderFlexibleBox::alignChildren(const Vector<LineContext>& lineContexts)
     for (const LineContext& lineContext : lineContexts) {
         LayoutUnit minMarginAfterBaseline = LayoutUnit::max();
         LayoutUnit lineCrossAxisExtent = lineContext.crossAxisExtent;
-        
+        auto baselineContext = lineContext.baselineContext;
         for (const auto& flexItem : lineContext.flexItems) {
             ASSERT(!flexItem.box.isOutOfFlowPositioned());
             
@@ -2377,7 +2384,9 @@ void RenderFlexibleBox::alignChildren(const Vector<LineContext>& lineContexts)
                 continue;
             
             ItemPosition position = alignmentForChild(flexItem.box);
-            LayoutUnit maxAscent = position == ItemPosition::LastBaseline ? lineContext.lastBaselineMaxAscent : lineContext.maxAscent;
+            LayoutUnit maxAscent;
+            if (baselineContext && isBaselinePosition(position))
+                maxAscent = baselineContext.value().sharedGroup(flexItem.box, position).maxAscent();
             if (position == ItemPosition::Stretch)
                 applyStretchAlignmentToChild(flexItem.box, lineCrossAxisExtent);
             LayoutUnit availableSpace = availableAlignmentSpaceForChild(lineCrossAxisExtent, flexItem.box);
