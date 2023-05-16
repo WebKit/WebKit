@@ -1424,10 +1424,12 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
 
     ASSERT(popoverData());
 
-    if (popoverState() == PopoverState::Auto) {
-        document().hideAllPopoversUntil(this, focusPreviousElement, fireEvents);
+    auto* originalDocument = &document();
 
-        check = checkPopoverValidity(*this, PopoverVisibilityState::Showing);
+    if (popoverState() == PopoverState::Auto) {
+        originalDocument->hideAllPopoversUntil(this, focusPreviousElement, fireEvents);
+
+        check = checkPopoverValidity(*this, PopoverVisibilityState::Showing, originalDocument);
         if (check.hasException())
             return check.releaseException();
         if (!check.returnValue())
@@ -1439,7 +1441,7 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
     if (fireEvents == FireEvents::Yes)
         dispatchEvent(ToggleEvent::create(eventNames().beforetoggleEvent, { EventInit { }, "open"_s, "closed"_s }, Event::IsCancelable::No));
 
-    check = checkPopoverValidity(*this, PopoverVisibilityState::Showing);
+    check = checkPopoverValidity(*this, PopoverVisibilityState::Showing, originalDocument);
     if (check.hasException())
         return check.releaseException();
     if (!check.returnValue())
@@ -1456,7 +1458,7 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
         queuePopoverToggleEventTask(PopoverVisibilityState::Showing, PopoverVisibilityState::Hidden);
 
     if (RefPtr element = popoverData()->previouslyFocusedElement()) {
-        if (focusPreviousElement == FocusPreviousElement::Yes && containsIncludingShadowDOM(document().focusedElement())) {
+        if (focusPreviousElement == FocusPreviousElement::Yes && containsIncludingShadowDOM(originalDocument->focusedElement())) {
             FocusOptions options;
             options.preventScroll = true;
             element->focus(options);
