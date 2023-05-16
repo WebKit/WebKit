@@ -1324,7 +1324,7 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
             view->setScrollPosition(origin);
 #if USE(COORDINATED_GRAPHICS)
         else
-            view->requestScrollPositionUpdate(origin);
+            view->requestScrollToPosition(origin);
 #endif
     }
 

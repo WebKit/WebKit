@@ -3080,12 +3080,12 @@ bool LocalFrameView::requestStopKeyboardScrollAnimation(bool immediate)
     return false;
 }
 
-bool LocalFrameView::requestScrollPositionUpdate(const ScrollPosition& position, ScrollType scrollType, ScrollClamping clamping)
+bool LocalFrameView::requestScrollToPosition(const ScrollPosition& position, ScrollType scrollType, ScrollClamping clamping, ScrollIsAnimated animated)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "LocalFrameView::requestScrollPositionUpdate " << position);
+    LOG_WITH_STREAM(Scrolling, stream << "LocalFrameView::requestScrollToPosition " << position << " animated  " << (animated == ScrollIsAnimated::Yes));
 
 #if ENABLE(ASYNC_SCROLLING)
-    if (TiledBacking* tiledBacking = this->tiledBacking()) {
+    if (auto* tiledBacking = this->tiledBacking(); tiledBacking && animated == ScrollIsAnimated::No) {
 #if PLATFORM(IOS_FAMILY)
         auto contentSize = exposedContentRect().size();
 #else
@@ -3097,26 +3097,12 @@ bool LocalFrameView::requestScrollPositionUpdate(const ScrollPosition& position,
 
 #if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
     if (auto scrollingCoordinator = this->scrollingCoordinator())
-        return scrollingCoordinator->requestScrollPositionUpdate(*this, position, scrollType, clamping);
+        return scrollingCoordinator->requestScrollToPosition(*this, position, scrollType, clamping, animated);
 #else
     UNUSED_PARAM(position);
     UNUSED_PARAM(scrollType);
     UNUSED_PARAM(clamping);
-#endif
-
-    return false;
-}
-
-bool LocalFrameView::requestAnimatedScrollToPosition(const ScrollPosition& destinationPosition, ScrollClamping clamping)
-{
-    LOG_WITH_STREAM(Scrolling, stream << "LocalFrameView::requestAnimatedScrollToPosition " << destinationPosition);
-
-#if ENABLE(ASYNC_SCROLLING)
-    if (auto scrollingCoordinator = this->scrollingCoordinator())
-        return scrollingCoordinator->requestAnimatedScrollToPosition(*this, destinationPosition, clamping);
-#else
-    UNUSED_PARAM(destinationPosition);
-    UNUSED_PARAM(clamping);
+    UNUSED_PARAM(animated);
 #endif
 
     return false;

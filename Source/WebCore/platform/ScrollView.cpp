@@ -504,7 +504,7 @@ void ScrollView::scrollTo(const ScrollPosition& newPosition)
 
 #if USE(COORDINATED_GRAPHICS)
     if (delegatesScrolling()) {
-        requestScrollPositionUpdate(newPosition);
+        requestScrollToPosition(newPosition);
         return;
     }
 #endif
@@ -549,7 +549,7 @@ void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition, const S
         return;
     }
 
-    if (!requestScrollPositionUpdate(newScrollPosition, currentScrollType(), options.clamping))
+    if (!requestScrollToPosition(newScrollPosition, currentScrollType(), options.clamping))
         updateScrollbars(newScrollPosition);
 }
 

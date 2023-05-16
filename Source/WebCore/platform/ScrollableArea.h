@@ -87,8 +87,7 @@ public:
     // Allows subclasses to handle scroll position updates themselves. If this member function
     // returns true, the scrollable area won't actually update the scroll position and instead
     // expect it to happen sometime in the future.
-    virtual bool requestScrollPositionUpdate(const ScrollPosition&, ScrollType = ScrollType::User, ScrollClamping = ScrollClamping::Clamped) { return false; }
-    virtual bool requestAnimatedScrollToPosition(const ScrollPosition&, ScrollClamping = ScrollClamping::Clamped) { return false; }
+    virtual bool requestScrollToPosition(const ScrollPosition&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped, ScrollIsAnimated = ScrollIsAnimated::No) { return false; }
     virtual void stopAsyncAnimatedScroll() { }
 
     virtual bool requestStartKeyboardScrollAnimation(const KeyboardScroll&) { return false; }

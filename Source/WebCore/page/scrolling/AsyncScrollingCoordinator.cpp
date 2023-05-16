@@ -303,21 +303,7 @@ bool AsyncScrollingCoordinator::requestStopKeyboardScrollAnimation(ScrollableAre
     return true;
 }
 
-void AsyncScrollingCoordinator::setMouseIsOverScrollbar(Scrollbar* scrollbar, bool isOverScrollbar)
-{
-    ASSERT(isMainThread());
-    ASSERT(m_page);
-    auto scrollingNodeID = scrollbar->scrollableArea().scrollingNodeID();
-    if (!scrollingNodeID)
-        return;
-
-    auto stateNode = dynamicDowncast<ScrollingStateScrollingNode>(m_scrollingStateTree->stateNodeForID(scrollingNodeID));
-    if (!stateNode)
-        return;
-    stateNode->setScrollbarHoverState({ scrollbar->orientation() == ScrollbarOrientation::Vertical ? false : isOverScrollbar, scrollbar->orientation() == ScrollbarOrientation::Vertical ? isOverScrollbar : false });
-}
-
-bool AsyncScrollingCoordinator::requestScrollPositionUpdate(ScrollableArea& scrollableArea, const ScrollPosition& scrollPosition, ScrollType scrollType, ScrollClamping clamping)
+bool AsyncScrollingCoordinator::requestScrollToPosition(ScrollableArea& scrollableArea, const ScrollPosition& scrollPosition, ScrollType scrollType, ScrollClamping clamping, ScrollIsAnimated animated)
 {
     ASSERT(isMainThread());
     ASSERT(m_page);
@@ -338,7 +324,8 @@ bool AsyncScrollingCoordinator::requestScrollPositionUpdate(ScrollableArea& scro
     bool inBackForwardCache = localFrame && localFrame->document()->backForwardCacheState() != Document::NotInBackForwardCache;
     bool isSnapshotting = m_page->isTakingSnapshotsForApplicationSuspension();
     bool inProgrammaticScroll = scrollableArea.currentScrollType() == ScrollType::Programmatic;
-    if (inProgrammaticScroll || inBackForwardCache) {
+
+    if ((inProgrammaticScroll && animated == ScrollIsAnimated::No) || inBackForwardCache) {
         auto scrollUpdate = ScrollUpdate { scrollingNodeID, scrollPosition, { }, ScrollUpdateType::PositionUpdate, ScrollingLayerPositionAction::Set };
         applyScrollUpdate(WTFMove(scrollUpdate), ScrollType::Programmatic);
     }
@@ -347,71 +334,14 @@ bool AsyncScrollingCoordinator::requestScrollPositionUpdate(ScrollableArea& scro
 
     // If this frame view's document is being put into the back/forward cache, we don't want to update our
     // main frame scroll position. Just let the FrameView think that we did.
-    if (inBackForwardCache || isSnapshotting)
+    if (isSnapshotting)
         return true;
 
     auto stateNode = dynamicDowncast<ScrollingStateScrollingNode>(m_scrollingStateTree->stateNodeForID(scrollingNodeID));
     if (!stateNode)
         return false;
 
-    stateNode->setRequestedScrollData({ ScrollRequestType::PositionUpdate, scrollPosition, scrollType, clamping, ScrollIsAnimated::No });
-    // FIXME: This should schedule a rendering update
-    commitTreeStateIfNeeded();
-    return true;
-}
-
-void AsyncScrollingCoordinator::setMouseIsOverContentArea(ScrollableArea& scrollableArea, bool isOverContentArea)
-{
-    ASSERT(isMainThread());
-    ASSERT(m_page);
-    auto scrollingNodeID = scrollableArea.scrollingNodeID();
-    if (!scrollingNodeID)
-        return;
-    
-    auto stateNode = dynamicDowncast<ScrollingStateScrollingNode>(m_scrollingStateTree->stateNodeForID(scrollingNodeID));
-    if (!stateNode)
-        return;
-    stateNode->setMouseIsOverContentArea(isOverContentArea);
-}
-
-void AsyncScrollingCoordinator::setMouseMovedInContentArea(ScrollableArea& scrollableArea)
-{
-    ASSERT(isMainThread());
-    ASSERT(m_page);
-    auto scrollingNodeID = scrollableArea.scrollingNodeID();
-    if (!scrollingNodeID)
-        return;
-    
-    auto stateNode = dynamicDowncast<ScrollingStateScrollingNode>(m_scrollingStateTree->stateNodeForID(scrollingNodeID));
-    if (!stateNode)
-        return;
-    
-    auto mousePosition = scrollableArea.lastKnownMousePositionInView();
-    auto horizontalScrollbar = scrollableArea.horizontalScrollbar();
-    auto verticalScrollbar = scrollableArea.verticalScrollbar();
-    
-    MouseLocationState state = { horizontalScrollbar ? horizontalScrollbar->convertFromContainingView(mousePosition) : IntPoint(), verticalScrollbar ? verticalScrollbar->convertFromContainingView(mousePosition) : IntPoint() };
-    stateNode->setMouseMovedInContentArea(state);
-}
-
-bool AsyncScrollingCoordinator::requestAnimatedScrollToPosition(ScrollableArea& scrollableArea, const ScrollPosition& scrollPosition, ScrollClamping clamping)
-{
-    ASSERT(isMainThread());
-    ASSERT(m_page);
-    auto scrollingNodeID = scrollableArea.scrollingNodeID();
-    if (!scrollingNodeID)
-        return false;
-
-    auto* frameView = frameViewForScrollingNode(scrollingNodeID);
-    if (!frameView || !coordinatesScrollingForFrameView(*frameView))
-        return false;
-
-    auto stateNode = dynamicDowncast<ScrollingStateScrollingNode>(m_scrollingStateTree->stateNodeForID(scrollingNodeID));
-    if (!stateNode)
-        return false;
-
-    // Animated scrolls are always programmatic.
-    stateNode->setRequestedScrollData({ ScrollRequestType::PositionUpdate, scrollPosition, ScrollType::Programmatic, clamping, ScrollIsAnimated::Yes });
+    stateNode->setRequestedScrollData({ ScrollRequestType::PositionUpdate, scrollPosition, scrollType, clamping, animated });
     // FIXME: This should schedule a rendering update
     commitTreeStateIfNeeded();
     return true;
@@ -437,6 +367,54 @@ void AsyncScrollingCoordinator::stopAnimatedScroll(ScrollableArea& scrollableAre
     stateNode->setRequestedScrollData({ ScrollRequestType::CancelAnimatedScroll, { } });
     // FIXME: This should schedule a rendering update
     commitTreeStateIfNeeded();
+}
+
+void AsyncScrollingCoordinator::setMouseIsOverScrollbar(Scrollbar* scrollbar, bool isOverScrollbar)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+    auto scrollingNodeID = scrollbar->scrollableArea().scrollingNodeID();
+    if (!scrollingNodeID)
+        return;
+
+    auto stateNode = dynamicDowncast<ScrollingStateScrollingNode>(m_scrollingStateTree->stateNodeForID(scrollingNodeID));
+    if (!stateNode)
+        return;
+    stateNode->setScrollbarHoverState({ scrollbar->orientation() == ScrollbarOrientation::Vertical ? false : isOverScrollbar, scrollbar->orientation() == ScrollbarOrientation::Vertical ? isOverScrollbar : false });
+}
+
+void AsyncScrollingCoordinator::setMouseIsOverContentArea(ScrollableArea& scrollableArea, bool isOverContentArea)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+    auto scrollingNodeID = scrollableArea.scrollingNodeID();
+    if (!scrollingNodeID)
+        return;
+
+    auto stateNode = dynamicDowncast<ScrollingStateScrollingNode>(m_scrollingStateTree->stateNodeForID(scrollingNodeID));
+    if (!stateNode)
+        return;
+    stateNode->setMouseIsOverContentArea(isOverContentArea);
+}
+
+void AsyncScrollingCoordinator::setMouseMovedInContentArea(ScrollableArea& scrollableArea)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+    auto scrollingNodeID = scrollableArea.scrollingNodeID();
+    if (!scrollingNodeID)
+        return;
+
+    auto stateNode = dynamicDowncast<ScrollingStateScrollingNode>(m_scrollingStateTree->stateNodeForID(scrollingNodeID));
+    if (!stateNode)
+        return;
+
+    auto mousePosition = scrollableArea.lastKnownMousePositionInView();
+    auto horizontalScrollbar = scrollableArea.horizontalScrollbar();
+    auto verticalScrollbar = scrollableArea.verticalScrollbar();
+
+    MouseLocationState state = { horizontalScrollbar ? horizontalScrollbar->convertFromContainingView(mousePosition) : IntPoint(), verticalScrollbar ? verticalScrollbar->convertFromContainingView(mousePosition) : IntPoint() };
+    stateNode->setMouseMovedInContentArea(state);
 }
 
 void AsyncScrollingCoordinator::applyScrollingTreeLayerPositions()
