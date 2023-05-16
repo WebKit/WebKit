@@ -101,7 +101,7 @@ private:
 
     Document* contextForParsingSession();
 
-    enum SynchronousMode { AllowYield, ForceSynchronous };
+    enum class SynchronousMode : bool { AllowYield, ForceSynchronous };
     void append(RefPtr<StringImpl>&&, SynchronousMode);
 
     void pumpTokenizer(SynchronousMode);

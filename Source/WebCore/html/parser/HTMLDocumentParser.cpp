@@ -131,7 +131,7 @@ void HTMLDocumentParser::prepareToStopParsing()
 
     // NOTE: This pump should only ever emit buffered character tokens,
     // so ForceSynchronous vs. AllowYield should be meaningless.
-    pumpTokenizerIfPossible(ForceSynchronous);
+    pumpTokenizerIfPossible(SynchronousMode::ForceSynchronous);
 
     if (isStopped())
         return;
@@ -189,7 +189,7 @@ void HTMLDocumentParser::pumpTokenizerIfPossible(SynchronousMode mode)
 
     // Once a resume is scheduled, HTMLParserScheduler controls when we next pump.
     if (isScheduledForResume()) {
-        ASSERT(mode == AllowYield);
+        ASSERT(mode == SynchronousMode::AllowYield);
         return;
     }
 
@@ -210,7 +210,7 @@ void HTMLDocumentParser::resumeParsingAfterYield()
 
     // We should never be here unless we can pump immediately.
     // Call pumpTokenizer() directly so that ASSERTS will fire if we're wrong.
-    pumpTokenizer(AllowYield);
+    pumpTokenizer(SynchronousMode::AllowYield);
     endIfDelayed();
 }
 
@@ -259,7 +259,7 @@ bool HTMLDocumentParser::pumpTokenizerLoop(SynchronousMode mode, bool parsingFra
 {
     do {
         if (UNLIKELY(isWaitingForScripts())) {
-            if (mode == AllowYield && m_parserScheduler->shouldYieldBeforeExecutingScript(m_treeBuilder->scriptToProcess(), session))
+            if (mode == SynchronousMode::AllowYield && m_parserScheduler->shouldYieldBeforeExecutingScript(m_treeBuilder->scriptToProcess(), session))
                 return true;
             
             runScriptsForPausedTreeBuilder();
@@ -275,7 +275,7 @@ bool HTMLDocumentParser::pumpTokenizerLoop(SynchronousMode mode, bool parsingFra
         if (UNLIKELY(!parsingFragment && document()->frame() && document()->frame()->navigationScheduler().locationChangePending()))
             return false;
 
-        if (UNLIKELY(mode == AllowYield && m_parserScheduler->shouldYieldBeforeToken(session)))
+        if (UNLIKELY(mode == SynchronousMode::AllowYield && m_parserScheduler->shouldYieldBeforeToken(session)))
             return true;
 
         auto token = m_tokenizer.nextToken(m_input.current());
@@ -376,7 +376,7 @@ void HTMLDocumentParser::insert(SegmentedString&& source)
 
     source.setExcludeLineNumbers();
     m_input.insertAtCurrentInsertionPoint(WTFMove(source));
-    pumpTokenizerIfPossible(ForceSynchronous);
+    pumpTokenizerIfPossible(SynchronousMode::ForceSynchronous);
 
     if (isWaitingForScripts() && !isDetached()) {
         // Check the document.write() output with a separate preload scanner as
@@ -392,12 +392,12 @@ void HTMLDocumentParser::insert(SegmentedString&& source)
 
 void HTMLDocumentParser::append(RefPtr<StringImpl>&& inputSource)
 {
-    append(WTFMove(inputSource), AllowYield);
+    append(WTFMove(inputSource), SynchronousMode::AllowYield);
 }
 
 void HTMLDocumentParser::appendSynchronously(RefPtr<StringImpl>&& inputSource)
 {
-    append(WTFMove(inputSource), ForceSynchronous);
+    append(WTFMove(inputSource), SynchronousMode::ForceSynchronous);
 }
 
 void HTMLDocumentParser::append(RefPtr<StringImpl>&& inputSource, SynchronousMode synchronousMode)
@@ -542,7 +542,7 @@ void HTMLDocumentParser::resumeParsingAfterScriptExecution()
     Ref<HTMLDocumentParser> protectedThis(*this);
 
     m_insertionPreloadScanner = nullptr;
-    pumpTokenizerIfPossible(AllowYield);
+    pumpTokenizerIfPossible(SynchronousMode::AllowYield);
     endIfDelayed();
 }
 
