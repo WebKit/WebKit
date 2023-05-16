@@ -1,0 +1,45 @@
+<style>
+.container {
+  margin-bottom: 80px;
+}
+.float {
+  width: 40px;
+  height: 100px;
+  background-color: green;
+  float: left;
+}
+
+div {
+  width: 20px;
+  height: 20px;
+}
+
+.clip {
+  overflow: clip;
+}
+</style>
+<div class="clip container">
+  <div class=float></div>
+</div>
+
+<div class="clip container">
+  <div>
+    <div class=float></div>
+  </div>
+</div>
+
+<div class="clip container">
+  <div>
+    <div>
+      <div class=float></div>
+    </div>
+  </div>
+</div>
+
+<div class=container>
+  <div class=clip>
+    <div>
+      <div class=float></div>
+    </div>
+  </div>
+</div>

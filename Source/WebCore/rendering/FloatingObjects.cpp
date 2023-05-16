@@ -50,12 +50,6 @@ static_assert(sizeof(WeakPtr<LegacyRootInlineBox>) == sizeof(void*), "WeakPtr sh
 
 FloatingObject::FloatingObject(RenderBox& renderer)
     : m_renderer(renderer)
-    , m_paintsFloat(true)
-    , m_isDescendant(false)
-    , m_isPlaced(false)
-#if ASSERT_ENABLED
-    , m_isInPlacedTree(false)
-#endif
 {
     UsedFloat type = RenderStyle::usedFloat(renderer);
     ASSERT(type != UsedFloat::None);
@@ -63,9 +57,11 @@ FloatingObject::FloatingObject(RenderBox& renderer)
         m_type = FloatLeft;
     else if (type == UsedFloat::Right)
         m_type = FloatRight;
+    if (auto* containingBlock = renderer.containingBlock())
+        m_hasAncestorWithOverflowClip = containingBlock->effectiveOverflowX() == Overflow::Clip || containingBlock->effectiveOverflowY() == Overflow::Clip;
 }
 
-FloatingObject::FloatingObject(RenderBox& renderer, Type type, const LayoutRect& frameRect, const LayoutSize& marginOffset, bool shouldPaint, bool isDescendant)
+FloatingObject::FloatingObject(RenderBox& renderer, Type type, const LayoutRect& frameRect, const LayoutSize& marginOffset, bool shouldPaint, bool isDescendant, bool overflowClipped)
     : m_renderer(renderer)
     , m_frameRect(frameRect)
     , m_marginOffset(marginOffset)
@@ -73,9 +69,7 @@ FloatingObject::FloatingObject(RenderBox& renderer, Type type, const LayoutRect&
     , m_paintsFloat(shouldPaint)
     , m_isDescendant(isDescendant)
     , m_isPlaced(true)
-#if ASSERT_ENABLED
-    , m_isInPlacedTree(false)
-#endif
+    , m_hasAncestorWithOverflowClip(overflowClipped)
 {
 }
 
@@ -86,14 +80,14 @@ std::unique_ptr<FloatingObject> FloatingObject::create(RenderBox& renderer)
     return object;
 }
 
-std::unique_ptr<FloatingObject> FloatingObject::copyToNewContainer(LayoutSize offset, bool shouldPaint, bool isDescendant) const
+std::unique_ptr<FloatingObject> FloatingObject::copyToNewContainer(LayoutSize offset, bool shouldPaint, bool isDescendant, bool overflowClipped) const
 {
-    return makeUnique<FloatingObject>(renderer(), type(), LayoutRect(frameRect().location() - offset, frameRect().size()), marginOffset(), shouldPaint, isDescendant);
+    return makeUnique<FloatingObject>(renderer(), type(), LayoutRect(frameRect().location() - offset, frameRect().size()), marginOffset(), shouldPaint, isDescendant, overflowClipped);
 }
 
 std::unique_ptr<FloatingObject> FloatingObject::cloneForNewParent() const
 {
-    auto cloneObject = makeUnique<FloatingObject>(renderer(), type(), m_frameRect, m_marginOffset, m_paintsFloat, m_isDescendant);
+    auto cloneObject = makeUnique<FloatingObject>(renderer(), type(), m_frameRect, m_marginOffset, m_paintsFloat, m_isDescendant, m_hasAncestorWithOverflowClip);
     cloneObject->m_paginationStrut = m_paginationStrut;
     cloneObject->m_isPlaced = m_isPlaced;
     return cloneObject;
