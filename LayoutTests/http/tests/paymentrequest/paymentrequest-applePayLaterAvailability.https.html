@@ -46,7 +46,7 @@ user_activation_test(async (test) => {
 
 user_activation_test(async (test) => {
     const method = validPaymentMethod();
-    method.data.applePayLaterAvailability = "unavailableMerchantIneligible";
+    method.data.applePayLaterAvailability = "unavailableRecurringTransaction";
 
     let request = new PaymentRequest([method], validPaymentDetails());
     request.addEventListener("merchantvalidation", (event) => {

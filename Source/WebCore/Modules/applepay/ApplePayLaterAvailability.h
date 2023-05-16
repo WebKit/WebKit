@@ -33,7 +33,6 @@ namespace WebCore {
 
 enum class ApplePayLaterAvailability : uint8_t {
     Available,
-    UnavailableMerchantIneligible,
     UnavailableItemIneligible,
     UnavailableRecurringTransaction,
 };
@@ -46,7 +45,6 @@ template<> struct EnumTraits<WebCore::ApplePayLaterAvailability> {
     using values = EnumValues<
         WebCore::ApplePayLaterAvailability,
         WebCore::ApplePayLaterAvailability::Available,
-        WebCore::ApplePayLaterAvailability::UnavailableMerchantIneligible,
         WebCore::ApplePayLaterAvailability::UnavailableItemIneligible,
         WebCore::ApplePayLaterAvailability::UnavailableRecurringTransaction
     >;

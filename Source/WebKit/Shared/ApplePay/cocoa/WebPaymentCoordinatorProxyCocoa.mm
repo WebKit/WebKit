@@ -58,17 +58,6 @@
 @property (nonatomic, strong) NSURL *thumbnailURL;
 @end
 
-#if HAVE(PASSKIT_APPLE_PAY_LATER_AVAILABILITY)
-
-// FIXME: rdar://107955442 Remove staging code.
-
-#define PKApplePayLaterAvailable 0
-#define PKApplePayLaterUnavailableMerchantIneligible 1
-#define PKApplePayLaterUnavailableItemIneligible 2
-#define PKApplePayLaterUnavailableRecurringTransaction 3
-
-#endif
-
 namespace WebKit {
 
 WebPaymentCoordinatorProxy::WebPaymentCoordinatorProxy(WebPaymentCoordinatorProxy::Client& client)
@@ -261,19 +250,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 static PKApplePayLaterAvailability toPKApplePayLaterAvailability(WebCore::ApplePayLaterAvailability applePayLaterAvailability)
 {
-    // FIXME: rdar://107955442 Remove staging code.
     switch (applePayLaterAvailability) {
     case WebCore::ApplePayLaterAvailability::Available:
-        return (PKApplePayLaterAvailability)PKApplePayLaterAvailable;
-
-    case WebCore::ApplePayLaterAvailability::UnavailableMerchantIneligible:
-        return (PKApplePayLaterAvailability)PKApplePayLaterUnavailableMerchantIneligible;
+        return PKApplePayLaterAvailable;
 
     case WebCore::ApplePayLaterAvailability::UnavailableItemIneligible:
-        return (PKApplePayLaterAvailability)PKApplePayLaterUnavailableItemIneligible;
+        return PKApplePayLaterUnavailableItemIneligible;
 
     case WebCore::ApplePayLaterAvailability::UnavailableRecurringTransaction:
-        return (PKApplePayLaterAvailability)PKApplePayLaterUnavailableRecurringTransaction;
+        return PKApplePayLaterUnavailableRecurringTransaction;
     }
 }
 
@@ -385,9 +370,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if HAVE(PASSKIT_APPLE_PAY_LATER_AVAILABILITY)
     if (auto& applePayLaterAvailability = paymentRequest.applePayLaterAvailability()) {
-        // FIXME: rdar://107955442 Remove staging code.
-        if ([result respondsToSelector:@selector(setApplePayLaterAvailability:)])
-            [result setApplePayLaterAvailability:toPKApplePayLaterAvailability(*applePayLaterAvailability)];
+        [result setApplePayLaterAvailability:toPKApplePayLaterAvailability(*applePayLaterAvailability)];
     }
 #endif
 

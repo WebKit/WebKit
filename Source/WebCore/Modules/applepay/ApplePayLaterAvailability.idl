@@ -28,7 +28,6 @@
     ExportMacro=WEBCORE_EXPORT,
 ] enum ApplePayLaterAvailability {
     "available",
-    "unavailableMerchantIneligible",
     "unavailableItemIneligible",
     "unavailableRecurringTransaction"
 };

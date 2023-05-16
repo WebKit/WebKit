@@ -300,6 +300,20 @@ typedef NS_ENUM(NSInteger, PKPaymentSetupFeatureType) {
 @end
 #endif
 
+#if HAVE(PASSKIT_APPLE_PAY_LATER_AVAILABILITY)
+
+typedef NS_ENUM(NSInteger, PKApplePayLaterAvailability) {
+    PKApplePayLaterAvailable,
+    PKApplePayLaterUnavailableItemIneligible,
+    PKApplePayLaterUnavailableRecurringTransaction,
+};
+
+@interface PKPaymentRequest ()
+@property (nonatomic, assign) PKApplePayLaterAvailability applePayLaterAvailability;
+@end
+
+#endif
+
 NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
@@ -340,18 +354,6 @@ typedef void(^PKCanMakePaymentsCompletion)(BOOL isValid, NSError *);
 @interface PKDeferredPaymentRequest (Staging_104652810)
 @property (nonatomic, strong, nullable) NSTimeZone *freeCancellationDateTimeZone;
 @end
-#endif
-
-#if HAVE(PASSKIT_APPLE_PAY_LATER_AVAILABILITY)
-
-// FIXME: rdar://107955442 Remove staging code.
-
-typedef NS_ENUM(NSInteger, PKApplePayLaterAvailability);
-
-@interface PKPaymentRequest (Staging_107259773)
-@property (nonatomic, assign) PKApplePayLaterAvailability applePayLaterAvailability;
-@end
-
 #endif
 
 NS_ASSUME_NONNULL_END
