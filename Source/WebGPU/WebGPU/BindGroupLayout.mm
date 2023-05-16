@@ -273,7 +273,7 @@ WGPUBindGroupLayoutEntry BindGroupLayout::createEntryFromStructMember(MTLStructM
     case MTLDataTypePointer:
         entry.buffer.type = WGPUBufferBindingType_Uniform;
         break;
-    case MTLDataTypeFloat3x3:
+    case MTLDataTypeFloat3x2:
         entry.buffer.type = static_cast<decltype(entry.buffer.type)>(WGPUBufferBindingType_Float3x2);
         break;
     case MTLDataTypeFloat4x3:
