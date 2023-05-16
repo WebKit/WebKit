@@ -691,6 +691,14 @@ ALWAYS_INLINE void Structure::setPreviousID(VM& vm, Structure* structure)
         m_previousOrRareData.set(vm, this, structure);
 }
 
+inline void Structure::pin(const AbstractLocker&, VM& vm, PropertyTable* table)
+{
+    setIsPinnedPropertyTable(true);
+    setPropertyTable(vm, table);
+    clearPreviousID();
+    m_transitionPropertyName = nullptr;
+}
+
 ALWAYS_INLINE bool Structure::shouldConvertToPolyProto(const Structure* a, const Structure* b)
 {
     if (!a || !b)

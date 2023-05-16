@@ -168,9 +168,7 @@ void Structure::validateFlags()
         && methodTable.getPrototype != JSCell::getPrototype;
     RELEASE_ASSERT(overridesGetPrototype == typeInfo().overridesGetPrototype());
 
-    bool overridesPut =
-        methodTable.put != JSObject::put
-        && methodTable.put != JSCell::put;
+    bool overridesPut = methodTable.put != JSObject::put && ((typeInfo().type() == StringType || typeInfo().type() == SymbolType || typeInfo().type() == HeapBigIntType) || methodTable.put != JSCell::put);
     RELEASE_ASSERT(overridesPut == typeInfo().overridesPut());
 
     bool overridesIsExtensible =
@@ -980,14 +978,6 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
     vm.writeBarrier(object);
 
     return this;
-}
-
-void Structure::pin(const AbstractLocker&, VM& vm, PropertyTable* table)
-{
-    setIsPinnedPropertyTable(true);
-    setPropertyTable(vm, table);
-    clearPreviousID();
-    m_transitionPropertyName = nullptr;
 }
 
 void Structure::pinForCaching(const AbstractLocker&, VM& vm, PropertyTable* table)

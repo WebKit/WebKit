@@ -470,10 +470,10 @@ ALWAYS_INLINE JSString* JSCell::toStringInline(JSGlobalObject* globalObject) con
 
 ALWAYS_INLINE bool JSCell::putInline(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    auto putMethod = methodTable()->put;
-    if (LIKELY(putMethod == JSObject::put))
+    Structure* structure = this->structure();
+    if (LIKELY(!structure->typeInfo().overridesPut()))
         return JSObject::putInlineForJSObject(asObject(this), globalObject, propertyName, value, slot);
-    return putMethod(this, globalObject, propertyName, value, slot);
+    return structure->methodTable()->put(this, globalObject, propertyName, value, slot);
 }
 
 inline bool isWebAssemblyInstance(const JSCell* cell)

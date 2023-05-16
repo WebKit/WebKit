@@ -988,7 +988,8 @@ private:
     bool isValid(JSGlobalObject*, StructureChain* cachedPrototypeChain, JSObject* base) const;
 
     // You have to hold the structure lock to do these.
-    JS_EXPORT_PRIVATE void pin(const AbstractLocker&, VM&, PropertyTable*);
+    // Keep them inlined function since they are used in the critical path of Dictionary JSObject modification.
+    void pin(const AbstractLocker&, VM&, PropertyTable*);
     void pinForCaching(const AbstractLocker&, VM&, PropertyTable*);
     
     static bool isRareData(JSCell* cell)
