@@ -93,6 +93,8 @@ public:
     
     WEBCORE_EXPORT virtual void setScrollbarVisibilityState(ScrollbarOrientation, bool) { }
 
+    WEBCORE_EXPORT virtual bool shouldDrawIntoScrollbarLayer(Scrollbar&) const { return true; }
+
 private:
     ScrollableArea& m_scrollableArea;
     bool m_scrollbarAnimationsUnsuspendedByUserInteraction { true };

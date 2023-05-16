@@ -87,5 +87,12 @@ void RemoteScrollbarsController::setScrollbarVisibilityState(WebCore::ScrollbarO
         m_verticalOverlayScrollbarIsVisible = isVisible;
 }
 
+bool RemoteScrollbarsController::shouldDrawIntoScrollbarLayer(WebCore::Scrollbar& scrollbar) const
+{
+    // For UI-side compositing we only draw scrollbars in the web process
+    // for custom scrollbars
+    return scrollbar.isCustomScrollbar();
+}
+
 }
 #endif // PLATFORM(MAC)

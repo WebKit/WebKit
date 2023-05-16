@@ -420,6 +420,9 @@ bool ScrollableArea::useDarkAppearanceForScrollbars() const
 
 void ScrollableArea::invalidateScrollbar(Scrollbar& scrollbar, const IntRect& rect)
 {
+    if (!scrollbarsController().shouldDrawIntoScrollbarLayer(scrollbar))
+        return;
+
     if (&scrollbar == horizontalScrollbar()) {
         if (GraphicsLayer* graphicsLayer = layerForHorizontalScrollbar()) {
             graphicsLayer->setNeedsDisplay();
