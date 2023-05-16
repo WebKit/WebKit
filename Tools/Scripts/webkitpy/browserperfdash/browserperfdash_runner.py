@@ -59,6 +59,8 @@ def parse_args():
     mutual_group.add_argument('--plan', dest='plan', help='Benchmark plan to run. e.g. speedometer, jetstream')
     mutual_group.add_argument('--plans-from-config', action='store_true', help='Run the list of plans specified in the config file.')
     mutual_group.add_argument('--allplans', action='store_true', help='Run all available benchmark plans sequentially')
+
+    parser.add_argument('browser_args', nargs='*', help='Additional arguments to pass to the browser process. These are positional arguments and must follow all other arguments. If the pass through arguments begin with a dash, use `--` before the argument list begins.')
     args = parser.parse_args()
     return args
 
@@ -243,7 +245,16 @@ class BrowserPerfDashRunner(object):
                 # Run test and save test info
                 with tempfile.NamedTemporaryFile() as temp_result_file:
                     benchmark_runner_class = benchmark_runner_subclasses[self._args.driver]
-                    runner = benchmark_runner_class(plan, self._args.localCopy, self._args.countOverride, self._args.timeoutOverride, self._args.buildDir, temp_result_file.name, self._args.platform, self._args.browser, None)
+                    runner = benchmark_runner_class(plan,
+                                                    self._args.localCopy,
+                                                    self._args.countOverride,
+                                                    self._args.timeoutOverride,
+                                                    self._args.buildDir,
+                                                    temp_result_file.name,
+                                                    self._args.platform,
+                                                    self._args.browser,
+                                                    None,
+                                                    browser_args=self._args.browser_args)
                     runner.execute()
                     _log.info('Finished benchmark plan: {plan_name}'.format(plan_name=plan))
                     # Fill test info for upload

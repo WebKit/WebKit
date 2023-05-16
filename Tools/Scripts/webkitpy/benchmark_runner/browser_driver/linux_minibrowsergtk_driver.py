@@ -32,11 +32,11 @@ class GTKMiniBrowserDriver(LinuxBrowserDriver):
     process_search_list = ['Tools/Scripts/run-minibrowser', 'MiniBrowser']
 
     def launch_url(self, url, options, browser_build_path, browser_path):
-        self._browser_arguments = []
+        self._default_browser_arguments = []
         if self.process_name.endswith('run-minibrowser'):
-            self._browser_arguments.append('--gtk')
-        self._browser_arguments.append('--full-screen')
-        self._browser_arguments.append(url)
+            self._default_browser_arguments.append('--gtk')
+        self._default_browser_arguments.append('--full-screen')
+        self._default_browser_arguments.append(url)
         super(GTKMiniBrowserDriver, self).launch_url(url, options, browser_build_path, browser_path)
 
     def launch_driver(self, url, options, browser_build_path):

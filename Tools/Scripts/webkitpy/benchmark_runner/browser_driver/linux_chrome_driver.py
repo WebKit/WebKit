@@ -31,10 +31,10 @@ from webkitpy.benchmark_runner.browser_driver.linux_browser_driver import LinuxB
 
 class LinuxChromeDriver(LinuxBrowserDriver):
     browser_name = 'chrome'
-    process_search_list = ['chromium', 'chromium-browser', 'chrome']
+    process_search_list = ['chromium', 'chromium-browser', 'chrome', 'google-chrome']
 
     def launch_url(self, url, options, browser_build_path, browser_path):
-        self._browser_arguments = ['--temp-profile', '--start-maximized',
+        self._default_browser_arguments = ['--temp-profile', '--start-maximized',
                                    '--homepage', url]
         super(LinuxChromeDriver, self).launch_url(url, options, browser_build_path, browser_path)
 

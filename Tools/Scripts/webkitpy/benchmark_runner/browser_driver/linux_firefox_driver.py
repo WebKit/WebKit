@@ -34,7 +34,7 @@ class LinuxFirefoxDriver(LinuxBrowserDriver):
     process_search_list = ['firefox', 'firefox-bin']
 
     def launch_url(self, url, options, browser_build_path, browser_path):
-        self._browser_arguments = ['-new-instance', '-profile', self._temp_profiledir,
+        self._default_browser_arguments = ['-new-instance', '-profile', self._temp_profiledir,
                                    '-width', str(self._screen_size().width),
                                    '-height', str(self._screen_size().height),
                                    url]

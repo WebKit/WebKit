@@ -34,10 +34,10 @@ class CogBrowserDriver(LinuxBrowserDriver):
     # If you want to execute Cog with a specific platform plugin (drm, wayland, etc)
     # Then set the environment variables COG_PLATFORM_NAME and COG_PLATFORM_PARAMS
     def launch_url(self, url, options, browser_build_path, browser_path):
-        self._browser_arguments = []
+        self._default_browser_arguments = []
         if self.process_name.endswith('run-minibrowser'):
-            self._browser_arguments.append('--wpe')
-        self._browser_arguments.append(url)
+            self._default_browser_arguments.append('--wpe')
+        self._default_browser_arguments.append(url)
         super(CogBrowserDriver, self).launch_url(url, options, browser_build_path, browser_path)
 
     def launch_driver(self, url, options, browser_build_path):
