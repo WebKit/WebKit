@@ -52,9 +52,13 @@ class Publish(Command):
             '--user', dest='user', type=str, default=None,
             help="Run 'git push' as the specified user with https. Program will prompt for a password.",
         )
+        parser.add_argument(
+            '--exclude', action='append', type=str, default=[],
+            help='Exclude inferred branch or tag from publication',
+        )
 
     @classmethod
-    def branches_on(cls, repository, ref):
+    def branches_on(cls, repository, ref, exclude):
         output = run(
             [repository.executable(), 'branch', '-a', '--format', '%(refname)', '--merged', ref],
             cwd=repository.root_path,
@@ -69,13 +73,15 @@ class Publish(Command):
             _, typ, name = line.split('/', 2)
             if typ == 'remotes':
                 remote, name = name.split('/', 1)
-                result[remote].add(name)
             else:
-                result[None].add(name)
+                remote = None
+            if name in exclude:
+                continue
+            result[remote].add(name)
         return result
 
     @classmethod
-    def tags_on(cls, repository, ref):
+    def tags_on(cls, repository, ref, exclude):
         result = run(
             [repository.executable(), 'tag', '--merged', ref],
             cwd=repository.root_path,
@@ -83,7 +89,7 @@ class Publish(Command):
             encoding='utf-8',
         )
         if not result.returncode:
-            return result.stdout.splitlines()
+            return [tag for tag in result.stdout.splitlines() if tag not in exclude]
         sys.stderr.write(result.stderr)
         return []
 
@@ -127,12 +133,16 @@ class Publish(Command):
             sys.stderr.write("Cannot run a command which invokes `git push` with an out-of-date pre-push hook\n")
             sys.stderr.write("Please re-run `git-webkit setup` to update all local hooks\n")
             return 1
+        args.exclude.append(repository.default_branch)
 
         commits = set()
         branches_to_publish = {}
         tags_to_publish = set()
         for ref in args.arguments:
             try:
+                if ref in args.exclude:
+                    sys.stderr.write("'{}' has been explicitly excluded from publication\n".format(ref))
+                    continue
                 commit = repository.find(ref)
                 commits.add(commit)
                 if ref in repository.tags():
@@ -188,19 +198,23 @@ class Publish(Command):
         existing_tags = set(repository.tags(remote=args.remote))
         tags_to_publish = tags_to_publish - existing_tags
         for commit in commits:
-            tags_to_publish |= set(cls.tags_on(repository, commit.hash)) - existing_tags
+            tags_to_publish |= set(cls.tags_on(repository, commit.hash, exclude=args.exclude)) - existing_tags
             intersection = cls.parental_intersection(repository, commit)
-            if intersection and intersection.branch != repository.default_branch:
+            if intersection and intersection.branch not in args.exclude:
                 cls._add_branch_ref_to(
                     mapping=branches_to_publish,
                     repository=repository,
                     branch=intersection.branch, commit=intersection,
                 )
-            for remote, branches in cls.branches_on(repository, commit.hash).items():
+            for remote, branches in cls.branches_on(repository, commit.hash, exclude=args.exclude).items():
                 if remote is not None and remote not in repository.source_remotes():
                     continue
                 for branch in branches:
+                    if branch in args.exclude:
+                        continue
                     commit = repository.find('remotes/{}/{}'.format(remote, branch) if remote else branch)
+                    if commit.branch == repository.default_branch:
+                        continue
                     cls._add_branch_ref_to(
                         mapping=branches_to_publish,
                         repository=repository,
