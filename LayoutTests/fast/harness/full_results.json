@@ -115,7 +115,7 @@ ADD_RESULTS({
                     "actual": "LEAK",
                     "reftest_type": ["!="],
                     "leaks": [{
-                        "document": "file:///Volumes/Data/slave/highsierra-release-tests-wk2/build/LayoutTests/editing/spelling/spelling-leaky-ref.html"
+                        "document": "file:///Volumes/Data/worker/highsierra-release-tests-wk2/build/LayoutTests/editing/spelling/spelling-leaky-ref.html"
                     }]
                 }
             }
@@ -190,7 +190,7 @@ ADD_RESULTS({
     },
     "interrupted": false,
     "num_missing": 1,
-    "layout_tests_dir": "/Volumes/Data/slave/highsierra-release-tests-wk2/build/LayoutTests",
+    "layout_tests_dir": "/Volumes/Data/worker/highsierra-release-tests-wk2/build/LayoutTests",
     "version": 4,
     "num_passes": 49387,
     "pixel_tests_enabled": false,
@@ -201,4 +201,3 @@ ADD_RESULTS({
     "uses_expectations_file": true,
     "revision": "234905"
 });
-
