@@ -322,6 +322,11 @@ map
 area
       Could not get AX element.
 
+main
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkMain
+      AXRoleDescription: main
+
 mark
       AXRole: AXGroup
       AXSubrole:
@@ -550,6 +555,11 @@ samp
       AXRole: AXGroup
       AXSubrole: AXSampleStyleGroup
       AXRoleDescription: group
+
+search
+      AXRole: AXGroup
+      AXSubrole: AXLandmarkSearch
+      AXRoleDescription: search
 
 section:not([aria-label]:not([aria-labelledby])
       AXRole: AXGroup

@@ -110,6 +110,7 @@ ruby interfaceName=RubyElement, JSInterfaceName=HTMLElement
 s interfaceName=HTMLElement
 samp interfaceName=HTMLElement
 script constructorNeedsCreatedByParser
+search interfaceName=HTMLElement
 section interfaceName=HTMLElement
 select constructorNeedsFormElement
 slot

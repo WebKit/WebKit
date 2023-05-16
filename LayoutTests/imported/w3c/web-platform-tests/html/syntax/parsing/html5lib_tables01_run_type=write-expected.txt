@@ -18,4 +18,5 @@ PASS html5lib_tables01.html 6595dc192b10c479a543dbe25e67e6e0b6923ea8
 PASS html5lib_tables01.html 9fcd09d757401684bcc28eaec005ed82718e836f
 PASS html5lib_tables01.html 4be18eaaf0aa53f224b4ff8aeaf47d44ba854260
 PASS html5lib_tables01.html 8e743c4f0ab5783b8973533640f669c92acb3797
+PASS html5lib_tables01.html 201737ac5662941cdf6ece5d6721ea8b0647f0ce
 

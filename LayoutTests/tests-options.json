@@ -4304,6 +4304,9 @@
     "imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_innerHTML_svg.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_innerHTML_template.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_innerHTML_tests4.html": [
         "slow"
     ],
@@ -4353,6 +4356,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_scripted_webkit01.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_search-element.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_tables01.html": [

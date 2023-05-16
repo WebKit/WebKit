@@ -377,6 +377,8 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::LandmarkNavigation;
     if (node()->hasTagName(asideTag))
         return AccessibilityRole::LandmarkComplementary;
+    if (node()->hasTagName(searchTag))
+        return AccessibilityRole::LandmarkSearch;
 
     // The default role attribute value for the section element, region, became a landmark in ARIA 1.1.
     // The HTML AAM spec says it is "strongly recommended" that ATs only convey and provide navigation

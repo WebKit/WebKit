@@ -696,6 +696,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomHTMLToken&& token)
     case TagName::nav:
     case TagName::ol:
     case TagName::p:
+    case TagName::search:
     case TagName::section:
     case TagName::summary:
     case TagName::ul:
@@ -1931,6 +1932,7 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomHTMLToken&& token)
     case TagName::nav:
     case TagName::ol:
     case TagName::pre:
+    case TagName::search:
     case TagName::section:
     case TagName::summary:
     case TagName::ul:

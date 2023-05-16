@@ -1,0 +1,12 @@
+
+PASS <search> - display
+PASS <search> - margin-top
+PASS <search> - margin-right
+PASS <search> - margin-bottom
+PASS <search> - margin-left
+PASS <search> - padding-top
+PASS <search> - padding-right
+PASS <search> - padding-bottom
+PASS <search> - padding-left
+FAIL <search> - unicode-bidi assert_equals: expected "isolate" but got "normal"
+
