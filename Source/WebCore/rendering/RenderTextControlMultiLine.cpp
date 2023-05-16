@@ -86,7 +86,13 @@ float RenderTextControlMultiLine::getAverageCharWidth()
 
 LayoutUnit RenderTextControlMultiLine::preferredContentLogicalWidth(float charWidth) const
 {
-    return LayoutUnit(ceilf(charWidth * textAreaElement().cols()) + scrollbarThickness());
+    float width = ceilf(charWidth * textAreaElement().cols());
+
+    // We are able to have a vertical scrollbar if the overflow style is scroll or auto
+    if ((style().overflowY() == Overflow::Scroll) || (style().overflowY() == Overflow::Auto))
+        width += scrollbarThickness();
+
+    return LayoutUnit(width);
 }
 
 LayoutUnit RenderTextControlMultiLine::computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const
