@@ -104,13 +104,15 @@ void StyleCrossfadeImage::load(CachedResourceLoader& loader, const ResourceLoade
     auto oldCachedToImage = m_cachedToImage;
 
     if (m_from) {
-        m_from->load(loader, options);
+        if (m_from->isPending())
+            m_from->load(loader, options);
         m_cachedFromImage = m_from->cachedImage();
     } else
         m_cachedFromImage = nullptr;
 
     if (m_to) {
-        m_to->load(loader, options);
+        if (m_to->isPending())
+            m_to->load(loader, options);
         m_cachedToImage = m_to->cachedImage();
     } else
         m_cachedToImage = nullptr;

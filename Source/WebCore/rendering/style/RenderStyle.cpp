@@ -2734,8 +2734,6 @@ void RenderStyle::deduplicateCustomProperties(const RenderStyle& other)
         if (properties.ptr() == otherProperties.ptr() || *properties != *otherProperties)
             return;
         properties = otherProperties;
-        if (data == otherData)
-            const_cast<DataRef<T>&>(data) = otherData;
     };
 
     deduplicate(m_rareInheritedData, other.m_rareInheritedData);
