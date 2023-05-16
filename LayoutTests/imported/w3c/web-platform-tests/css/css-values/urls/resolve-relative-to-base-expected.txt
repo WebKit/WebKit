@@ -1,4 +1,4 @@
 
-FAIL base-relative URL: relative-image-url Type error
-FAIL base-relative URL: relative-image-variable-url Type error
+FAIL base-relative URL: relative-image-url "images/test.png" cannot be parsed as a URL.
+FAIL base-relative URL: relative-image-variable-url "images/test.png" cannot be parsed as a URL.
 
