@@ -54,7 +54,7 @@ public:
 
     void flush() final
     {
-        m_flushState->waitForDidFlush(m_targetFlushIdentifier, Seconds::infinity());
+        m_flushState->waitForDidFlush(m_targetFlushIdentifier, RemoteDisplayListRecorderProxy::defaultSendTimeout);
     }
 
 private:

@@ -32,6 +32,7 @@
 #include "GPUConnectionToWebProcess.h"
 #include "Logging.h"
 #include "PlatformImageBufferShareableBackend.h"
+#include "RemoteDisplayListRecorderProxy.h"
 #include "RemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
@@ -480,7 +481,7 @@ void RemoteRenderingBackendProxy::didInitialize(IPC::Semaphore&& wakeUp, IPC::Se
 void RemoteRenderingBackendProxy::addPendingFlush(RemoteImageBufferProxyFlushState& flushState, IPC::Semaphore&& semaphore, DisplayListRecorderFlushIdentifier identifier)
 {
     m_flushWorkQueue->dispatch([flushState = Ref { flushState }, semaphore = WTFMove(semaphore), identifier] () mutable {
-        if (semaphore.wait())
+        if (semaphore.waitFor(RemoteDisplayListRecorderProxy::defaultSendTimeout))
             flushState->markCompletedFlush(identifier);
         else
             flushState->cancel();
