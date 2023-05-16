@@ -64,7 +64,7 @@ public:
     void setRelatedTarget(Node*);
 
 #if ENABLE(TOUCH_EVENTS)
-    enum TouchListType { Touches, TargetTouches, ChangedTouches };
+    enum class TouchListType : uint8_t { Touches, TargetTouches, ChangedTouches };
     TouchList& touchList(TouchListType);
 #endif
 
@@ -136,11 +136,11 @@ inline void EventContext::setRelatedTarget(Node* relatedTarget)
 inline TouchList& EventContext::touchList(TouchListType type)
 {
     switch (type) {
-    case Touches:
+    case TouchListType::Touches:
         return *m_touches;
-    case TargetTouches:
+    case TouchListType::TargetTouches:
         return *m_targetTouches;
-    case ChangedTouches:
+    case TouchListType::ChangedTouches:
         return *m_changedTouches;
     }
     ASSERT_NOT_REACHED();
