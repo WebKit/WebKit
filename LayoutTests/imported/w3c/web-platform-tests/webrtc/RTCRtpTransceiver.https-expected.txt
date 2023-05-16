@@ -3,7 +3,6 @@ PASS checkAddTransceiverNoTrack
 PASS checkAddTransceiverWithTrack
 PASS checkAddTransceiverWithAddTrack
 PASS checkAddTransceiverWithDirection
-FAIL checkMsidNoTrackId promise_test: Unhandled rejection with value: object "SyntaxError: Expects 2 fields."
 PASS checkAddTransceiverWithSetRemoteOfferSending
 PASS checkAddTransceiverWithSetRemoteOfferNoSend
 PASS checkAddTransceiverBadKind

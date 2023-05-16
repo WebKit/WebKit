@@ -376,27 +376,6 @@
     hasProps(pc.getTransceivers(), []);
   };
 
-  const checkMsidNoTrackId = async t => {
-    const pc1 = new RTCPeerConnection();
-    const pc2 = new RTCPeerConnection();
-    t.add_cleanup(() => pc1.close());
-    t.add_cleanup(() => pc2.close());
-    const stream = await getNoiseStream({audio: true});
-    t.add_cleanup(() => stopTracks(stream));
-    const track = stream.getAudioTracks()[0];
-    pc1.addTrack(track, stream);
-    const offer = await pc1.createOffer();
-    await pc1.setLocalDescription(offer);
-    // Remove track-id from msid
-    // Fixate stream-id so that error message is consistent.
-    offer.sdp = offer.sdp.replace(/(a=msid:[^ \t]+).*\r\n/g,
-                                  "a=msid:fake-stream-id\r\n");
-    await pc2.setRemoteDescription(offer);
-    const answer = await pc2.createAnswer();
-    await pc1.setRemoteDescription(answer);
-    await pc2.setLocalDescription(answer);
-  };
-
   const checkNoMidOffer = async t => {
     const pc1 = new RTCPeerConnection();
     const pc2 = new RTCPeerConnection();
@@ -1182,10 +1161,13 @@
     pc1.getTransceivers()[1].direction = "sendrecv";
     offer = await pc1.createOffer();
     await pc2.setRemoteDescription(offer);
-    await pc1.setLocalDescription(offer);
-    answer = await pc2.createAnswer();
+    // Set these up before sLD, since that sets [[Receptive]] to true, which
+    // could allow an unmute to occur from a packet that was sent before we
+    // negotiated inactive!
     gotUnmuteAudio1 = gotUnmuteEvent(pc1.getTransceivers()[0].receiver.track);
     gotUnmuteVideo1 = gotUnmuteEvent(pc1.getTransceivers()[1].receiver.track);
+    await pc1.setLocalDescription(offer);
+    answer = await pc2.createAnswer();
     gotUnmuteAudio2 = gotUnmuteEvent(pc2.getTransceivers()[0].receiver.track);
     gotUnmuteVideo2 = gotUnmuteEvent(pc2.getTransceivers()[1].receiver.track);
     await pc1.setRemoteDescription(answer);
@@ -2277,7 +2259,6 @@ const tests = [
   checkAddTransceiverWithTrack,
   checkAddTransceiverWithAddTrack,
   checkAddTransceiverWithDirection,
-  checkMsidNoTrackId,
   checkAddTransceiverWithSetRemoteOfferSending,
   checkAddTransceiverWithSetRemoteOfferNoSend,
   checkAddTransceiverBadKind,

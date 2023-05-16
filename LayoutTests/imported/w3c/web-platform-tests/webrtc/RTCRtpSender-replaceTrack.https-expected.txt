@@ -9,4 +9,5 @@ PASS Calling replaceTrack(null) on sender set to session description should reso
 PASS Calling replaceTrack on sender with stopped track and and set to session description should resolve with sender.track set to given track
 PASS Calling replaceTrack on sender with similar track and and set to session description should resolve with sender.track set to new track
 PASS ReplaceTrack transmits the new track not the old track
+PASS ReplaceTrack null -> new track transmits the new track
 

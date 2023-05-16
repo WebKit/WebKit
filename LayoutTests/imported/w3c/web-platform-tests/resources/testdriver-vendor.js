@@ -398,6 +398,11 @@ window.test_driver_internal.set_permission = async function(permission_params)
     case "screen-wake-lock":
         testRunner.setScreenWakeLockPermission(permission_params.state == "granted");
         break;
+    case "camera":
+        // FIXME: add camera and microphone separate permissions
+    case "microphone":
+        testRunner.setUserMediaPermission(permission_params.state == "granted");
+        break;
     default:
         throw new Error(`Unsupported permission name "${permission_params.descriptor.name}".`);
     }

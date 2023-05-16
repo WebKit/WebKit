@@ -61,6 +61,8 @@ media/audioSession [ Skip ]
 
 # Media Stream API testing is not supported for WK1 yet.
 fast/mediastream
+imported/w3c/web-platform-tests/feature-policy/reporting/camera-reporting.https.html [ Skip ]
+imported/w3c/web-platform-tests/feature-policy/reporting/microphone-reporting.https.html [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-streams
 http/tests/media/media-stream
 http/tests/ssl/media-stream

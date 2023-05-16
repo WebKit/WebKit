@@ -1,0 +1,6 @@
+
+PASS MID header extension is supported.
+PASS Audio level header extension is supported.
+PASS Video orientation header extension is supported.
+PASS Negotiates the subset of supported extensions offered
+

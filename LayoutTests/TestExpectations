@@ -2315,6 +2315,11 @@ fast/mediastream/RTCPeerConnection-overloaded-operations-params.html [ Skip ]
 fast/mediastream/RTCRtpSender-replaceTrack.html [ Skip ]
 fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only.html [ Failure ]
 
+imported/w3c/web-platform-tests/webrtc/simulcast/rid-manipulation.html
+imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-encodings.https.html
+imported/w3c/web-platform-tests/webrtc/simulcast/vp9-scalability-mode.https.html
+imported/w3c/web-platform-tests/webrtc/simulcast/vp9.https.html
+
 # Missing API support.
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-capture-video.https.html [ Skip ]
 
