@@ -43,6 +43,8 @@ public:
     const EventContext& contextAt(size_t i) const { return m_path[i]; }
     EventContext& contextAt(size_t i) { return m_path[i]; }
 
+    void adjustForDisabledFormControl();
+
     Vector<Ref<EventTarget>> computePathUnclosedToTarget(const EventTarget&) const;
 
     static Node* eventTargetRespectingTargetRules(Node&);

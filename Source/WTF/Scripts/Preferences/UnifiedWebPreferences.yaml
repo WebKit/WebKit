@@ -5563,6 +5563,20 @@ SelectionFlippingEnabled:
       "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
       default: true
 
+SendMouseEventsToDisabledFormControlsEnabled:
+  type: bool
+  status: preview
+  category: html
+  humanReadableName: "Send mouse events to disabled form controls"
+  humanReadableDescription: "Send mouse events to disabled form controls"
+  defaultValue:
+    WebKit:
+      default: false
+    WebKitLegacy:
+      default: false
+    WebCore:
+      default: false
+
 SerifFontFamily:
   type: String
   status: embedder

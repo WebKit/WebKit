@@ -460,7 +460,7 @@ static ShouldIgnoreMouseEvent dispatchPointerEventIfNeeded(Element& element, con
 
 bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget, IsSyntheticClick isSyntheticClick)
 {
-    if (isDisabledFormControl())
+    if (isDisabledFormControl() && !document().settings().sendMouseEventsToDisabledFormControlsEnabled())
         return false;
 
     if (isForceEvent(platformEvent) && !document().hasListenerTypeForEventType(platformEvent.type()))

@@ -44,6 +44,7 @@ private:
     HTMLFieldSetElement(const QualifiedName&, Document&, HTMLFormElement*);
     ~HTMLFieldSetElement();
 
+    bool isDisabledFormControl() const final;
     bool isEnumeratable() const final { return true; }
     bool supportsFocus() const final;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;

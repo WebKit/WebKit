@@ -159,6 +159,11 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
 
     EventPath eventPath { node, event };
 
+    if (node.document().settings().sendMouseEventsToDisabledFormControlsEnabled() && event.isTrusted() && event.isMouseEvent()
+        && (event.type() == eventNames().mousedownEvent || event.type() == eventNames().mouseupEvent || event.type() == eventNames().clickEvent)) {
+        eventPath.adjustForDisabledFormControl();
+    }
+
     bool shouldClearTargetsAfterDispatch = false;
     for (size_t i = eventPath.size(); i > 0; --i) {
         const EventContext& eventContext = eventPath.contextAt(i - 1);
