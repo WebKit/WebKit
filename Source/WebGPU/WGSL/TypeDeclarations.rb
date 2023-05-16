@@ -102,14 +102,14 @@ operator :textureSample, {
 
 operator :vec2, {
     [T < Scalar].(T) => Vector[T, 2],
-    [S < Scalar, T < ConcreteScalar].(Vector[S, 2]) => Vector[T, 2],
+    [T < ConcreteScalar, S < Scalar].(Vector[S, 2]) => Vector[T, 2],
     [S < Scalar].(Vector[S, 2]) => Vector[S, 2],
     [T < Scalar].(T, T) => Vector[T, 2],
 }
 
 operator :vec3, {
     [T < Scalar].(T) => Vector[T, 3],
-    [S < Scalar, T < ConcreteScalar].(Vector[S, 3]) => Vector[T, 3],
+    [T < ConcreteScalar, S < Scalar].(Vector[S, 3]) => Vector[T, 3],
     [S < Scalar].(Vector[S, 3]) => Vector[S, 3],
     [T < Scalar].(T, T, T) => Vector[T, 3],
     [T < Scalar].(Vector[T, 2], T) => Vector[T, 3],
@@ -118,7 +118,7 @@ operator :vec3, {
 
 operator :vec4, {
     [T < Scalar].(T) => Vector[T, 4],
-    [S < Scalar, T < ConcreteScalar].(Vector[S, 4]) => Vector[T, 4],
+    [T < ConcreteScalar, S < Scalar].(Vector[S, 4]) => Vector[T, 4],
     [S < Scalar].(Vector[S, 4]) => Vector[S, 4],
     [T < Scalar].(T, T, T, T) => Vector[T, 4],
     [T < Scalar].(T, Vector[T, 2], T) => Vector[T, 4],

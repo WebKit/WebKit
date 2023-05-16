@@ -149,7 +149,7 @@ fn testTextureSample() {
 fn testVec2() {
   _ = vec2<f32>(0);
   _ = vec2<f32>(0, 0);
-  _ = vec2<i32>(vec2(0, 0));
+  _ = vec2<i32>(vec2<f32>(0));
   _ = vec2(vec2(0, 0));
   _ = vec2(0, 0);
 }
@@ -157,7 +157,7 @@ fn testVec2() {
 fn testVec3() {
   _ = vec3<f32>(0);
   _ = vec3<f32>(0, 0, 0);
-  _ = vec3<i32>(vec3(0, 0, 0));
+  _ = vec3<i32>(vec3<f32>(0));
   _ = vec3(vec3(0, 0, 0));
   _ = vec3(0, 0, 0);
   _ = vec3(vec2(0, 0), 0);
@@ -167,7 +167,7 @@ fn testVec3() {
 fn testVec4() {
   _ = vec4<f32>(0);
   _ = vec4<f32>(0, 0, 0, 0);
-  _ = vec4<i32>(vec4(0, 0, 0, 0));
+  _ = vec4<i32>(vec4<f32>(0));
   _ = vec4(vec4(0, 0, 0, 0));
   _ = vec4(0, 0, 0, 0);
   _ = vec4(0, vec2(0, 0), 0);
