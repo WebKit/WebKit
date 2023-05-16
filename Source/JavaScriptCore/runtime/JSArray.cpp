@@ -758,19 +758,24 @@ JSArray* JSArray::fastSlice(JSGlobalObject* globalObject, JSObject* source, uint
             return nullptr;
 
         ASSERT(!globalObject->isHavingABadTime());
-        ObjectInitializationScope scope(vm);
-        JSArray* resultArray = JSArray::tryCreateUninitializedRestricted(scope, resultStructure, static_cast<uint32_t>(count));
-        if (UNLIKELY(!resultArray))
-            return nullptr;
+        {
+            // This will ensure that (1) we do not invoke GC operation except for JSArray's one and (2) will issue mutatorFence when this scope ends.
+            // This means that the allocated array and butterfly will not be exposed until this scope finishes.
+            // So, instead of using gcSafeMemcpy, we can use memcpy.
+            ObjectInitializationScope scope(vm);
+            JSArray* resultArray = JSArray::tryCreateUninitializedRestricted(scope, resultStructure, static_cast<uint32_t>(count));
+            if (UNLIKELY(!resultArray))
+                return nullptr;
 
-        auto& resultButterfly = *resultArray->butterfly();
-        if (arrayType == ArrayWithDouble)
-            gcSafeMemcpy(resultButterfly.contiguousDouble().data(), source->butterfly()->contiguousDouble().data() + startIndex, sizeof(JSValue) * static_cast<uint32_t>(count));
-        else
-            gcSafeMemcpy(resultButterfly.contiguous().data(), source->butterfly()->contiguous().data() + startIndex, sizeof(JSValue) * static_cast<uint32_t>(count));
+            auto& resultButterfly = *resultArray->butterfly();
+            if (arrayType == ArrayWithDouble)
+                memcpy(resultButterfly.contiguousDouble().data(), source->butterfly()->contiguousDouble().data() + startIndex, sizeof(JSValue) * static_cast<uint32_t>(count));
+            else
+                memcpy(resultButterfly.contiguous().data(), source->butterfly()->contiguous().data() + startIndex, sizeof(JSValue) * static_cast<uint32_t>(count));
 
-        ASSERT(resultButterfly.publicLength() == count);
-        return resultArray;
+            ASSERT(resultButterfly.publicLength() == count);
+            return resultArray;
+        }
     }
     case ArrayWithArrayStorage: {
         if (count >= MIN_SPARSE_ARRAY_INDEX || sourceStructure->holesMustForwardToPrototype(source))
@@ -784,13 +789,18 @@ JSArray* JSArray::fastSlice(JSGlobalObject* globalObject, JSObject* source, uint
             return nullptr;
 
         ASSERT(!globalObject->isHavingABadTime());
-        ObjectInitializationScope scope(vm);
-        JSArray* resultArray = JSArray::tryCreateUninitializedRestricted(scope, resultStructure, static_cast<uint32_t>(count));
-        if (UNLIKELY(!resultArray))
-            return nullptr;
-        gcSafeMemcpy(resultArray->butterfly()->contiguous().data(), source->butterfly()->arrayStorage()->m_vector + startIndex, sizeof(JSValue) * static_cast<uint32_t>(count));
-        ASSERT(resultArray->butterfly()->publicLength() == count);
-        return resultArray;
+        {
+            // This will ensure that (1) we do not invoke GC operation except for JSArray's one and (2) will issue mutatorFence when this scope ends.
+            // This means that the allocated array and butterfly will not be exposed until this scope finishes.
+            // So, instead of using gcSafeMemcpy, we can use memcpy.
+            ObjectInitializationScope scope(vm);
+            JSArray* resultArray = JSArray::tryCreateUninitializedRestricted(scope, resultStructure, static_cast<uint32_t>(count));
+            if (UNLIKELY(!resultArray))
+                return nullptr;
+            memcpy(resultArray->butterfly()->contiguous().data(), source->butterfly()->arrayStorage()->m_vector + startIndex, sizeof(JSValue) * static_cast<uint32_t>(count));
+            ASSERT(resultArray->butterfly()->publicLength() == count);
+            return resultArray;
+        }
     }
     case ArrayWithUndecided: {
         if (count)

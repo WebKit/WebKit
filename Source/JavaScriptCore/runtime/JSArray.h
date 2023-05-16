@@ -230,10 +230,22 @@ inline JSArray* JSArray::tryCreate(VM& vm, Structure* structure, unsigned initia
         butterfly = Butterfly::fromBase(temp, 0, outOfLineStorage);
         butterfly->setVectorLength(vectorLength);
         butterfly->setPublicLength(initialLength);
+#if OS(DARWIN)
+        // This butterfly is not set to array yet. This means that this is not exposed to GC.
+        // We do not need to use GC-safe memset.
+        if (hasDouble(indexingType)) {
+            double pattern = PNaN;
+            memset_pattern8(butterfly->contiguousDouble().data(), &pattern, vectorLength * sizeof(double));
+        } else {
+            ASSERT(JSValue::encode(JSValue()) == 0);
+            memset(butterfly->contiguous().data(), 0, vectorLength * sizeof(EncodedJSValue));
+        }
+#else
         if (hasDouble(indexingType))
             clearArray(butterfly->contiguousDouble().data(), vectorLength);
         else
             clearArray(butterfly->contiguous().data(), vectorLength);
+#endif
     } else {
         ASSERT(
             indexingType == ArrayWithSlowPutArrayStorage

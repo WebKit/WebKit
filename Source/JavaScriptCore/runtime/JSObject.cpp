@@ -1347,7 +1347,8 @@ ArrayStorage* JSObject::constructConvertedArrayStorageWithoutCopyingElements(VM&
 
     Butterfly* newButterfly = Butterfly::createUninitialized(vm, this, 0, propertyCapacity, true, ArrayStorage::sizeFor(neededLength));
     
-    gcSafeMemcpy(
+    // This butterfly is not set to JSObject, thus, we do not need to use gcSafeMemcpy.
+    memcpy(
         static_cast<JSValue*>(newButterfly->base(0, propertyCapacity)),
         static_cast<JSValue*>(m_butterfly->base(0, propertyCapacity)),
         propertyCapacity * sizeof(EncodedJSValue));
@@ -1665,7 +1666,8 @@ void JSObject::convertFromCopyOnWrite(VM& vm)
     unsigned newVectorLength = Butterfly::optimalContiguousVectorLength(propertyCapacity, std::min(oldButterfly->vectorLength() * 2, MAX_STORAGE_VECTOR_LENGTH));
     Butterfly* newButterfly = Butterfly::createUninitialized(vm, this, 0, propertyCapacity, hasIndexingHeader, newVectorLength * sizeof(JSValue));
 
-    gcSafeMemcpy(newButterfly->propertyStorage(), oldButterfly->propertyStorage(), oldButterfly->vectorLength() * sizeof(JSValue) + sizeof(IndexingHeader));
+    // This butterfly is not set to JSObject, thus, we do not need to use gcSafeMemcpy.
+    memcpy(newButterfly->propertyStorage(), oldButterfly->propertyStorage(), oldButterfly->vectorLength() * sizeof(JSValue) + sizeof(IndexingHeader));
 
     WTF::storeStoreFence();
     TransitionKind transition = ([&] () {
@@ -3981,8 +3983,9 @@ void JSObject::shiftButterflyAfterFlattening(const GCSafeConcurrentJSLocker&, VM
     void* currentBase = oldButterfly->base(0, outOfLineCapacityAfter);
     void* newBase = newButterfly->base(0, outOfLineCapacityAfter);
 
-    gcSafeMemcpy(static_cast<JSValue*>(newBase), static_cast<JSValue*>(currentBase), Butterfly::totalSize(0, outOfLineCapacityAfter, hasIndexingHeader, indexingPayloadSizeInBytes));
-    
+    // This butterfly is not set to JSObject, thus, we do not need to use gcSafeMemcpy.
+    memcpy(static_cast<JSValue*>(newBase), static_cast<JSValue*>(currentBase), Butterfly::totalSize(0, outOfLineCapacityAfter, hasIndexingHeader, indexingPayloadSizeInBytes));
+
     setButterfly(vm, newButterfly);
 }
 

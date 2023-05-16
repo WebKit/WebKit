@@ -205,13 +205,16 @@ JSArray* DirectArguments::fastSlice(JSGlobalObject* globalObject, DirectArgument
     if (UNLIKELY(hasAnyArrayStorage(resultStructure->indexingType())))
         return nullptr;
 
+    // This will ensure that (1) we do not invoke GC operation except for JSArray's one and (2) will issue mutatorFence when this scope ends.
+    // This means that the allocated array and butterfly will not be exposed until this scope finishes.
+    // So, instead of using gcSafeMemcpy, we can use memcpy.
     ObjectInitializationScope scope(globalObject->vm());
     JSArray* resultArray = JSArray::tryCreateUninitializedRestricted(scope, resultStructure, static_cast<uint32_t>(count));
     if (UNLIKELY(!resultArray))
         return nullptr;
 
     auto& resultButterfly = *resultArray->butterfly();
-    gcSafeMemcpy(resultButterfly.contiguous().data(), arguments->storage() + startIndex, sizeof(JSValue) * static_cast<uint32_t>(count));
+    memcpy(resultButterfly.contiguous().data(), arguments->storage() + startIndex, sizeof(JSValue) * static_cast<uint32_t>(count));
 
     ASSERT(resultButterfly.publicLength() == count);
     return resultArray;
