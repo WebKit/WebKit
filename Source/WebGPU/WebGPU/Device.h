@@ -29,6 +29,9 @@
 #import "HardwareCapabilities.h"
 #import <IOSurface/IOSurfaceRef.h>
 #import "Queue.h"
+#import <CoreVideo/CVMetalTextureCache.h>
+#import <CoreVideo/CoreVideo.h>
+#import <simd/matrix_types.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Function.h>
@@ -48,6 +51,7 @@ class BindGroupLayout;
 class Buffer;
 class CommandEncoder;
 class ComputePipeline;
+class ExternalTexture;
 class Instance;
 class PipelineLayout;
 class PresentationContext;
@@ -76,6 +80,7 @@ public:
     Ref<CommandEncoder> createCommandEncoder(const WGPUCommandEncoderDescriptor&);
     Ref<ComputePipeline> createComputePipeline(const WGPUComputePipelineDescriptor&);
     void createComputePipelineAsync(const WGPUComputePipelineDescriptor&, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<ComputePipeline>&&, String&& message)>&& callback);
+    Ref<ExternalTexture> createExternalTexture(const WGPUExternalTextureDescriptor&);
     Ref<PipelineLayout> createPipelineLayout(const WGPUPipelineLayoutDescriptor&);
     Ref<QuerySet> createQuerySet(const WGPUQuerySetDescriptor&);
     Ref<RenderBundleEncoder> createRenderBundleEncoder(const WGPURenderBundleEncoderDescriptor&);
@@ -130,6 +135,13 @@ private:
 
     void loseTheDevice(WGPUDeviceLostReason);
     void captureFrameIfNeeded() const;
+    struct ExternalTextureData {
+        id<MTLTexture> texture0 { nil };
+        id<MTLTexture> texture1 { nil };
+        simd::float3x2 uvRemappingMatrix;
+        simd::float4x3 colorSpaceConversionMatrix;
+    };
+    ExternalTextureData createExternalTextureFromPixelBuffer(CVPixelBufferRef, WGPUColorSpace) const;
 
     struct Error {
         WGPUErrorType type;
@@ -153,6 +165,9 @@ private:
     HardwareCapabilities m_capabilities { };
 
     const Ref<Adapter> m_adapter;
+#if HAVE(COREVIDEO_METAL_SUPPORT)
+    RetainPtr<CVMetalTextureCacheRef> m_coreVideoTextureCache;
+#endif
 };
 
 } // namespace WebGPU

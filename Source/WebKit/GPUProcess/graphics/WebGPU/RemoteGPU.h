@@ -35,6 +35,7 @@
 #include "WebGPUObjectHeap.h"
 #include "WebGPUSupportedFeatures.h"
 #include "WebGPUSupportedLimits.h"
+#include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
@@ -49,7 +50,13 @@ namespace IPC {
 class StreamServerConnection;
 }
 
+namespace WebCore {
+class MediaPlayer;
+}
+
 namespace WebKit {
+
+class RemoteRenderingBackend;
 
 namespace WebGPU {
 class ObjectHeap;
@@ -59,9 +66,9 @@ struct RequestAdapterOptions;
 class RemoteGPU final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteGPU> create(WebGPUIdentifier identifier, IPC::StreamServerConnection::Handle&& serverConnection)
+    static Ref<RemoteGPU> create(Function<void(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&)>&& performWithMediaPlayerOnMainThread, WebGPUIdentifier identifier, IPC::StreamServerConnection::Handle&& serverConnection)
     {
-        auto result = adoptRef(*new RemoteGPU(identifier, WTFMove(serverConnection)));
+        auto result = adoptRef(*new RemoteGPU(WTFMove(performWithMediaPlayerOnMainThread), identifier, WTFMove(serverConnection)));
         result->initialize();
         return result;
     }
@@ -73,7 +80,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteGPU(WebGPUIdentifier, IPC::StreamServerConnection::Handle&&);
+    RemoteGPU(Function<void(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&)>&&, WebGPUIdentifier, IPC::StreamServerConnection::Handle&&);
 
     RemoteGPU(const RemoteGPU&) = delete;
     RemoteGPU(RemoteGPU&&) = delete;
@@ -103,6 +110,7 @@ private:
     RefPtr<IPC::StreamServerConnection> m_streamConnection;
     RefPtr<PAL::WebGPU::GPU> m_backing WTF_GUARDED_BY_CAPABILITY(workQueue());
     Ref<WebGPU::ObjectHeap> m_objectHeap WTF_GUARDED_BY_CAPABILITY(workQueue());
+    Function<void(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&)> m_performWithMediaPlayerOnMainThread;
     const WebGPUIdentifier m_identifier;
 };
 

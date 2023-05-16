@@ -40,6 +40,7 @@
 #include "WebGPUComputePipelineImpl.h"
 #include "WebGPUConvertToBackingContext.h"
 #include "WebGPUExtent3D.h"
+#include "WebGPUExternalTextureDescriptor.h"
 #include "WebGPUExternalTextureImpl.h"
 #include "WebGPUOutOfMemoryError.h"
 #include "WebGPUPipelineLayoutDescriptor.h"
@@ -59,6 +60,7 @@
 #include "WebGPUTextureImpl.h"
 #include "WebGPUTextureViewImpl.h"
 #include "WebGPUValidationError.h"
+#include <CoreGraphics/CGColorSpace.h>
 #include <WebGPU/WebGPUExt.h>
 #include <wtf/BlockPtr.h>
 
@@ -146,9 +148,27 @@ Ref<Sampler> DeviceImpl::createSampler(const SamplerDescriptor& descriptor)
     return SamplerImpl::create(wgpuDeviceCreateSampler(m_backing, &backingDescriptor), m_convertToBackingContext);
 }
 
-Ref<ExternalTexture> DeviceImpl::importExternalTexture(const ExternalTextureDescriptor&)
+static WGPUColorSpace convertToWGPUColorSpace(const PredefinedColorSpace& colorSpace)
 {
-    return ExternalTextureImpl::create(m_convertToBackingContext);
+    switch (colorSpace) {
+    case PredefinedColorSpace::SRGB:
+        return WGPUColorSpace::SRGB;
+    case PredefinedColorSpace::DisplayP3:
+        return WGPUColorSpace::DisplayP3;
+    }
+}
+
+Ref<ExternalTexture> DeviceImpl::importExternalTexture(const ExternalTextureDescriptor& descriptor)
+{
+    auto label = descriptor.label.utf8();
+
+    WGPUExternalTextureDescriptor backingDescriptor {
+        .nextInChain = nullptr,
+        label.data(),
+        .pixelBuffer = descriptor.pixelBuffer,
+        .colorSpace = convertToWGPUColorSpace(descriptor.colorSpace),
+    };
+    return ExternalTextureImpl::create(wgpuDeviceImportExternalTexture(backing(), &backingDescriptor), descriptor, m_convertToBackingContext);
 }
 
 Ref<BindGroupLayout> DeviceImpl::createBindGroupLayout(const BindGroupLayoutDescriptor& descriptor)
@@ -169,8 +189,8 @@ Ref<BindGroupLayout> DeviceImpl::createBindGroupLayout(const BindGroupLayoutDesc
                 entry.sampler ? m_convertToBackingContext->convertToBacking(entry.sampler->type) : WGPUSamplerBindingType_Undefined,
             }, {
                 nullptr,
-                entry.texture ? m_convertToBackingContext->convertToBacking(entry.texture->sampleType) : WGPUTextureSampleType_Undefined,
-                entry.texture ? m_convertToBackingContext->convertToBacking(entry.texture->viewDimension) : WGPUTextureViewDimension_Undefined,
+                entry.texture ? m_convertToBackingContext->convertToBacking(entry.texture->sampleType) : (entry.externalTexture ? WGPUTextureSampleType_Float : WGPUTextureSampleType_Undefined),
+                entry.texture ? m_convertToBackingContext->convertToBacking(entry.texture->viewDimension) : (entry.externalTexture ? WGPUTextureViewDimension_2D : WGPUTextureViewDimension_Undefined),
                 entry.texture ? entry.texture->multisampled : false,
             }, {
                 nullptr,
@@ -213,9 +233,18 @@ Ref<BindGroup> DeviceImpl::createBindGroup(const BindGroupDescriptor& descriptor
 {
     auto label = descriptor.label.utf8();
 
-    auto backingEntries = descriptor.entries.map([this] (const auto& bindGroupEntry) {
+    Vector<WGPUBindGroupExternalTextureEntry> chainedEntries;
+    auto backingEntries = descriptor.entries.map([this, &chainedEntries] (const auto& bindGroupEntry) {
+        auto externalTexture = std::holds_alternative<std::reference_wrapper<ExternalTexture>>(bindGroupEntry.resource) ? m_convertToBackingContext->convertToBacking(std::get<std::reference_wrapper<ExternalTexture>>(bindGroupEntry.resource).get()) : nullptr;
+        chainedEntries.append(WGPUBindGroupExternalTextureEntry {
+            {
+                .next = nullptr,
+                .sType = static_cast<WGPUSType>(WGPUSTypeExtended_BindGroupEntryExternalTexture)
+            },
+            .externalTexture = externalTexture,
+        });
         return WGPUBindGroupEntry {
-            nullptr,
+            externalTexture ? reinterpret_cast<WGPUChainedStruct*>(&chainedEntries.last()) : nullptr,
             bindGroupEntry.binding,
             std::holds_alternative<BufferBinding>(bindGroupEntry.resource) ? m_convertToBackingContext->convertToBacking(std::get<BufferBinding>(bindGroupEntry.resource).buffer) : nullptr,
             std::holds_alternative<BufferBinding>(bindGroupEntry.resource) ? std::get<BufferBinding>(bindGroupEntry.resource).offset : 0,

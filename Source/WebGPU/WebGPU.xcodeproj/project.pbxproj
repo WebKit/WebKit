@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D30F93729F1F94A0055D9F1 /* ExternalTexture.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0D30F93629F1F94A0055D9F1 /* ExternalTexture.mm */; };
+		0D30F93929F1FAC50055D9F1 /* ExternalTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D30F93829F1FAC50055D9F1 /* ExternalTexture.h */; };
+		0D30F93B29F1FBE40055D9F1 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D30F93A29F1FBE40055D9F1 /* CoreVideo.framework */; };
 		1C0F41EE280940650005886D /* HardwareCapabilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C0F41EC280940650005886D /* HardwareCapabilities.mm */; };
 		1C2CEDEE271E8A7300EDC16F /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C2CEDED271E8A7300EDC16F /* Metal.framework */; };
 		1C582FF927E04131009B40F0 /* CommandsMixin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C582FF727E04131009B40F0 /* CommandsMixin.mm */; };
@@ -205,6 +208,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0D30F93629F1F94A0055D9F1 /* ExternalTexture.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ExternalTexture.mm; sourceTree = "<group>"; };
+		0D30F93829F1FAC50055D9F1 /* ExternalTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalTexture.h; sourceTree = "<group>"; };
+		0D30F93A29F1FBE40055D9F1 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		0D4D2E80294A89CF0000A1AB /* BindableResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BindableResource.h; sourceTree = "<group>"; };
 		1C0F41EC280940650005886D /* HardwareCapabilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HardwareCapabilities.mm; sourceTree = "<group>"; };
 		1C0F41ED280940650005886D /* HardwareCapabilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HardwareCapabilities.h; sourceTree = "<group>"; };
@@ -400,6 +406,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0D30F93B29F1FBE40055D9F1 /* CoreVideo.framework in Frameworks */,
 				664C92FD286A66090008D143 /* IOSurface.framework in Frameworks */,
 				1CBAB0922718CCA0006080BB /* JavaScriptCore.framework in Frameworks */,
 				1CEBD8262716CACC00A5254D /* libwgsl.a in Frameworks */,
@@ -475,6 +482,8 @@
 				1C5ACA9B273A426D0095F8D5 /* Device.h */,
 				1C5ACAA3273A426D0095F8D5 /* Device.mm */,
 				1CEBD80B2716C37900A5254D /* ExportMacros.h */,
+				0D30F93829F1FAC50055D9F1 /* ExternalTexture.h */,
+				0D30F93629F1F94A0055D9F1 /* ExternalTexture.mm */,
 				1C0F41ED280940650005886D /* HardwareCapabilities.h */,
 				1C0F41EC280940650005886D /* HardwareCapabilities.mm */,
 				1C5ACAA0273A426D0095F8D5 /* Instance.h */,
@@ -581,6 +590,7 @@
 			isa = PBXGroup;
 			children = (
 				1CEBD82B2716CAFB00A5254D /* CoreFoundation.framework */,
+				0D30F93A29F1FBE40055D9F1 /* CoreVideo.framework */,
 				1CEBD82D2716CB1600A5254D /* Foundation.framework */,
 				664C92FC286A66090008D143 /* IOSurface.framework */,
 				1CBAB0912718CCA0006080BB /* JavaScriptCore.framework */,
@@ -692,6 +702,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1CEBD7E72716AFBA00A5254D /* WebGPU.h in Headers */,
+				0D30F93929F1FAC50055D9F1 /* ExternalTexture.h in Headers */,
 				973F784729C8A78200166C66 /* Pipeline.h in Headers */,
 				1C5ACAD3273A4C860095F8D5 /* WebGPUExt.h in Headers */,
 			);
@@ -933,6 +944,7 @@
 				1C5ACAC6273A426D0095F8D5 /* ComputePassEncoder.mm in Sources */,
 				1C5ACAC0273A426D0095F8D5 /* ComputePipeline.mm in Sources */,
 				1C5ACAC1273A426D0095F8D5 /* Device.mm in Sources */,
+				0D30F93729F1F94A0055D9F1 /* ExternalTexture.mm in Sources */,
 				1C0F41EE280940650005886D /* HardwareCapabilities.mm in Sources */,
 				1C5ACA94273A41C20095F8D5 /* Instance.mm in Sources */,
 				973F784829C8A78200166C66 /* Pipeline.mm in Sources */,

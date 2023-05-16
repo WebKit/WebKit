@@ -50,6 +50,7 @@ public:
     WGPUComputePassEncoder convertToBacking(const ComputePassEncoder&) final;
     WGPUComputePipeline convertToBacking(const ComputePipeline&) final;
     WGPUDevice convertToBacking(const Device&) final;
+    WGPUExternalTexture convertToBacking(const ExternalTexture&) final;
     WGPUInstance convertToBacking(const GPU&) final;
     WGPUPipelineLayout convertToBacking(const PipelineLayout&) final;
     WGPUSurface convertToBacking(const PresentationContext&) final;

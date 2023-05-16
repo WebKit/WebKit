@@ -38,9 +38,10 @@ class HTMLVideoElement;
 struct GPUExternalTextureDescriptor : public GPUObjectDescriptorBase {
     PAL::WebGPU::ExternalTextureDescriptor convertToBacking() const
     {
+        auto playerIdentifier = source->playerIdentifier();
         return {
             { label },
-            // FIXME: Handle the video element.
+            playerIdentifier.has_value() ? playerIdentifier->toUInt64() : 0,
             WebCore::convertToBacking(colorSpace),
         };
     }

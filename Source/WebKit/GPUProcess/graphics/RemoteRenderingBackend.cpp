@@ -628,7 +628,9 @@ void RemoteRenderingBackend::lowMemoryHandler(Critical, Synchronous)
 void RemoteRenderingBackend::createRemoteGPU(WebGPUIdentifier identifier, IPC::StreamServerConnection::Handle&& connectionHandle)
 {
     auto addResult = m_remoteGPUMap.ensure(identifier, [&] {
-        return IPC::ScopedActiveMessageReceiveQueue { RemoteGPU::create(identifier, WTFMove(connectionHandle)) };
+        return IPC::ScopedActiveMessageReceiveQueue { RemoteGPU::create([this] (MediaPlayerIdentifier identifier, Function<void(MediaPlayer&)>&& callback) mutable {
+            this->performWithMediaPlayerOnMainThread(identifier, WTFMove(callback));
+        }, identifier, WTFMove(connectionHandle)) };
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }

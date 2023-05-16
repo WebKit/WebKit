@@ -66,6 +66,69 @@ static MTLRenderStages metalRenderStage(ShaderStage shaderStage)
 template <typename T>
 using ShaderStageArray = EnumeratedArray<ShaderStage, T, ShaderStage::Compute>;
 
+#if HAVE(COREVIDEO_METAL_SUPPORT)
+static simd::float4x3 colorSpaceConversionMatrixForPixelBuffer(CVPixelBufferRef pixelBuffer)
+{
+    auto format = CVPixelBufferGetPixelFormatType(pixelBuffer);
+    UNUSED_PARAM(format);
+
+    // FIXME: Implement other formats after https://bugs.webkit.org/show_bug.cgi?id=256724 is implemented
+    return simd::float4x3(simd::make_float3(+1.16895f, +1.16895f, +1.16895f),
+        simd::make_float3(-0.00012f, -0.21399f, +2.12073f),
+        simd::make_float3(+1.79968f, -0.53503f, +0.00012f),
+        simd::make_float3(-0.97284f, 0.30145f, -1.13348f));
+}
+#endif
+
+Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixelBufferRef pixelBuffer, WGPUColorSpace colorSpace) const
+{
+#if HAVE(COREVIDEO_METAL_SUPPORT)
+    UNUSED_PARAM(colorSpace);
+
+    id<MTLTexture> mtlTexture0 = nil;
+    id<MTLTexture> mtlTexture1 = nil;
+
+    CVMetalTextureRef plane0 = nullptr;
+    CVMetalTextureRef plane1 = nullptr;
+
+    CVReturn status1 = CVMetalTextureCacheCreateTextureFromImage(nullptr, m_coreVideoTextureCache.get(), pixelBuffer, nullptr, MTLPixelFormatR8Unorm, CVPixelBufferGetWidthOfPlane(pixelBuffer, 0), CVPixelBufferGetHeightOfPlane(pixelBuffer, 0), 0, &plane0);
+    CVReturn status2 = CVMetalTextureCacheCreateTextureFromImage(nullptr, m_coreVideoTextureCache.get(), pixelBuffer, nullptr, MTLPixelFormatRG8Unorm, CVPixelBufferGetWidthOfPlane(pixelBuffer, 1), CVPixelBufferGetHeightOfPlane(pixelBuffer, 1), 1, &plane1);
+
+    Boolean isFlipped = false;
+
+    if (status1 == kCVReturnSuccess) {
+        mtlTexture0 = CVMetalTextureGetTexture(plane0);
+        isFlipped = CVMetalTextureIsFlipped(plane0);
+    }
+
+    if (status2 == kCVReturnSuccess) {
+        mtlTexture1 = CVMetalTextureGetTexture(plane1);
+        ASSERT(isFlipped == CVMetalTextureIsFlipped(plane1));
+    }
+
+    m_defaultQueue->onSubmittedWorkDone([plane0, plane1](WGPUQueueWorkDoneStatus) {
+        if (plane0)
+            CFRelease(plane0);
+
+        if (plane1)
+            CFRelease(plane1);
+    });
+
+    simd::float3x2 uvRemappingMatrix;
+    if (isFlipped)
+        uvRemappingMatrix = simd::float3x2(simd::make_float2(1.f, 0.f), simd::make_float2(0.f, -1.f), simd::make_float2(0.f, 1.f));
+    else
+        uvRemappingMatrix = simd::make_float2(1.f, 1.f);
+    simd::float4x3 colorSpaceConversionMatrix = colorSpaceConversionMatrixForPixelBuffer(pixelBuffer);
+
+    return { mtlTexture0, mtlTexture1, uvRemappingMatrix, colorSpaceConversionMatrix };
+#else
+    UNUSED_PARAM(pixelBuffer);
+    UNUSED_PARAM(colorSpace);
+    return { };
+#endif
+}
+
 Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor)
 {
     if (descriptor.nextInChain)
@@ -92,13 +155,19 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
     for (uint32_t i = 0, entryCount = descriptor.entryCount; i < entryCount; ++i) {
         const WGPUBindGroupEntry& entry = descriptor.entries[i];
 
-        if (entry.nextInChain)
-            return BindGroup::createInvalid(*this);
+        WGPUExternalTexture wgpuExternalTexture = nullptr;
+        if (entry.nextInChain) {
+            if (entry.nextInChain->sType != static_cast<WGPUSType>(WGPUSTypeExtended_BindGroupEntryExternalTexture))
+                return BindGroup::createInvalid(*this);
+
+            wgpuExternalTexture = reinterpret_cast<WGPUBindGroupExternalTextureEntry *>(const_cast<WGPUChainedStruct*>(entry.nextInChain))->externalTexture;
+        }
 
         bool bufferIsPresent = WebGPU::bufferIsPresent(entry);
         bool samplerIsPresent = WebGPU::samplerIsPresent(entry);
         bool textureViewIsPresent = WebGPU::textureViewIsPresent(entry);
-        if (bufferIsPresent + samplerIsPresent + textureViewIsPresent != 1)
+        bool externalTextureIsPresent = !!wgpuExternalTexture;
+        if (bufferIsPresent + samplerIsPresent + textureViewIsPresent + externalTextureIsPresent != 1)
             return BindGroup::createInvalid(*this);
 
         for (ShaderStage stage : stages) {
@@ -120,6 +189,25 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                 id<MTLTexture> texture = WebGPU::fromAPI(entry.textureView).texture();
                 [argumentEncoder[stage] setTexture:texture atIndex:index++];
                 resources.append({ texture, MTLResourceUsageRead, metalRenderStage(stage) });
+            } else if (externalTextureIsPresent) {
+                auto& externalTexture = WebGPU::fromAPI(wgpuExternalTexture);
+                auto textureData = createExternalTextureFromPixelBuffer(externalTexture.pixelBuffer(), externalTexture.colorSpace());
+                [argumentEncoder[stage] setTexture:textureData.texture0 atIndex:index++];
+                [argumentEncoder[stage] setTexture:textureData.texture1 atIndex:index++];
+                ASSERT(textureData.texture0);
+                ASSERT(textureData.texture1);
+                if (textureData.texture0)
+                    resources.append({ textureData.texture0, MTLResourceUsageRead, metalRenderStage(stage) });
+                if (textureData.texture1)
+                    resources.append({ textureData.texture1, MTLResourceUsageRead, metalRenderStage(stage) });
+                // FIXME: encode CSC and UV remapping after https://bugs.webkit.org/show_bug.cgi?id=256721 is implemented
+                // simd::float3x2* uvRemapAddress =  (simd::float3x2*)[argumentEncoder[stage] constantDataAtIndex:index++];
+                // *uvRemapAddress = textureData.uvRemappingMatrix;
+                index++;
+
+                // simd::float4x3* cscMatrixAddress =  (simd::float4x3*)[argumentEncoder[stage] constantDataAtIndex:index++];
+                // *cscMatrixAddress = textureData.colorSpaceConversionMatrix;
+                index++;
             }
         }
     }

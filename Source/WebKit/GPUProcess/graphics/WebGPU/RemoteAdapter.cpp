@@ -41,10 +41,11 @@
 
 namespace WebKit {
 
-RemoteAdapter::RemoteAdapter(PAL::WebGPU::Adapter& adapter, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteAdapter::RemoteAdapter(Function<void(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&)>& performWithMediaPlayerOnMainThread, PAL::WebGPU::Adapter& adapter, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(adapter)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))
+    , m_performWithMediaPlayerOnMainThread(performWithMediaPlayerOnMainThread)
     , m_identifier(identifier)
 {
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteAdapter::messageReceiverName(), m_identifier.toUInt64());
@@ -71,14 +72,14 @@ void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, We
         return;
     }
 
-    m_backing->requestDevice(*convertedDescriptor, [callback = WTFMove(callback), objectHeap = Ref { m_objectHeap }, streamConnection = m_streamConnection.copyRef(), identifier, queueIdentifier] (RefPtr<PAL::WebGPU::Device>&& devicePtr) mutable {
+    m_backing->requestDevice(*convertedDescriptor, [callback = WTFMove(callback), objectHeap = Ref { m_objectHeap }, streamConnection = m_streamConnection.copyRef(), identifier, queueIdentifier, &performWithMediaPlayerOnMainThread = m_performWithMediaPlayerOnMainThread] (RefPtr<PAL::WebGPU::Device>&& devicePtr) mutable {
         if (!devicePtr.get()) {
             callback({ }, { });
             return;
         }
 
         auto device = devicePtr.releaseNonNull();
-        auto remoteDevice = RemoteDevice::create(device, objectHeap, WTFMove(streamConnection), identifier, queueIdentifier);
+        auto remoteDevice = RemoteDevice::create(performWithMediaPlayerOnMainThread, device, objectHeap, WTFMove(streamConnection), identifier, queueIdentifier);
         objectHeap->addObject(identifier, remoteDevice);
         objectHeap->addObject(queueIdentifier, remoteDevice->queue());
         const auto& features = device->features();

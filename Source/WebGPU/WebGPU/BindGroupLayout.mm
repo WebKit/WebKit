@@ -42,10 +42,19 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUBufferBindingLa
         return nil;
 
     auto descriptor = [MTLArgumentDescriptor new];
-    descriptor.dataType = MTLDataTypePointer;
+    auto bufferType = buffer.type;
+    if (bufferType == static_cast<uint32_t>(WGPUBufferBindingType_Float3x2)) {
+        descriptor.dataType = MTLDataTypeFloat3x2;
+        bufferType = WGPUBufferBindingType_Uniform;
+    } else if (bufferType == static_cast<uint32_t>(WGPUBufferBindingType_Float4x3)) {
+        descriptor.dataType = MTLDataTypeFloat4x3;
+        bufferType = WGPUBufferBindingType_Uniform;
+    } else
+        descriptor.dataType = MTLDataTypePointer;
+
     // FIXME: Handle hasDynamicOffset.
     // FIXME: Handle minBindingSize.
-    switch (buffer.type) {
+    switch (bufferType) {
     case WGPUBufferBindingType_Uniform:
     case WGPUBufferBindingType_ReadOnlyStorage:
 #if USE(METAL_ARGUMENT_ACCESS_ENUMS)
@@ -263,6 +272,12 @@ WGPUBindGroupLayoutEntry BindGroupLayout::createEntryFromStructMember(MTLStructM
         break;
     case MTLDataTypePointer:
         entry.buffer.type = WGPUBufferBindingType_Uniform;
+        break;
+    case MTLDataTypeFloat3x3:
+        entry.buffer.type = static_cast<decltype(entry.buffer.type)>(WGPUBufferBindingType_Float3x2);
+        break;
+    case MTLDataTypeFloat4x3:
+        entry.buffer.type = static_cast<decltype(entry.buffer.type)>(WGPUBufferBindingType_Float4x3);
         break;
     default:
         ASSERT_NOT_REACHED();

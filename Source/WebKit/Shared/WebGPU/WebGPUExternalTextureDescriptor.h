@@ -28,12 +28,14 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUObjectDescriptorBase.h"
+#include <WebCore/MediaPlayerIdentifier.h>
 #include <optional>
 #include <pal/graphics/WebGPU/WebGPUPredefinedColorSpace.h>
 
 namespace WebKit::WebGPU {
 
 struct ExternalTextureDescriptor : public ObjectDescriptorBase {
+    WebCore::MediaPlayerIdentifier mediaIdentifier { 0 };
     PAL::WebGPU::PredefinedColorSpace colorSpace { PAL::WebGPU::PredefinedColorSpace::SRGB };
 };
 

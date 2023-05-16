@@ -31,6 +31,7 @@
 #include "StreamMessageReceiver.h"
 #include "WebGPUError.h"
 #include "WebGPUIdentifier.h"
+#include <WebCore/MediaPlayerIdentifier.h>
 #include <pal/graphics/WebGPU/WebGPUErrorFilter.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
@@ -45,7 +46,13 @@ namespace IPC {
 class StreamServerConnection;
 }
 
+namespace WebCore {
+class MediaPlayer;
+}
+
 namespace WebKit {
+
+class RemoteGPU;
 
 namespace WebGPU {
 struct BindGroupDescriptor;
@@ -67,9 +74,9 @@ struct TextureDescriptor;
 class RemoteDevice final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteDevice> create(PAL::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
+    static Ref<RemoteDevice> create(Function<void(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&)>& performWithMediaPlayerOnMainThread, PAL::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
     {
-        return adoptRef(*new RemoteDevice(device, objectHeap, WTFMove(streamConnection), identifier, queueIdentifier));
+        return adoptRef(*new RemoteDevice(performWithMediaPlayerOnMainThread, device, objectHeap, WTFMove(streamConnection), identifier, queueIdentifier));
     }
 
     ~RemoteDevice();
@@ -81,7 +88,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteDevice(PAL::WebGPU::Device&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier, WebGPUIdentifier queueIdentifier);
+    RemoteDevice(Function<void(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&)>&, PAL::WebGPU::Device&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier, WebGPUIdentifier queueIdentifier);
 
     RemoteDevice(const RemoteDevice&) = delete;
     RemoteDevice(RemoteDevice&&) = delete;
@@ -126,6 +133,7 @@ private:
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;
     Ref<RemoteQueue> m_queue;
+    Function<void(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&)>& m_performWithMediaPlayerOnMainThread;
 };
 
 } // namespace WebKit

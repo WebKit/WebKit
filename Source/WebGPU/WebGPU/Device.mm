@@ -42,6 +42,7 @@
 #import "Sampler.h"
 #import "ShaderModule.h"
 #import "Texture.h"
+#import <CoreVideo/CVPixelBuffer.h>
 #import <algorithm>
 #import <notify.h>
 #import <wtf/StdLibExtras.h>
@@ -151,6 +152,12 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
 #endif
 #endif
 
+#if HAVE(COREVIDEO_METAL_SUPPORT)
+    CVMetalTextureCacheRef coreVideoTextureCache;
+    CVReturn result = CVMetalTextureCacheCreate(nullptr, nullptr, device, nullptr, &coreVideoTextureCache);
+    ASSERT_UNUSED(result, result == kCVReturnSuccess);
+    m_coreVideoTextureCache = coreVideoTextureCache;
+#endif
     GPUFrameCapture::registerForFrameCapture(m_device);
 }
 
@@ -445,6 +452,11 @@ void wgpuDeviceCreateRenderPipelineAsyncWithBlock(WGPUDevice device, WGPURenderP
 WGPUSampler wgpuDeviceCreateSampler(WGPUDevice device, const WGPUSamplerDescriptor* descriptor)
 {
     return WebGPU::releaseToAPI(WebGPU::fromAPI(device).createSampler(*descriptor));
+}
+
+WGPUExternalTexture wgpuDeviceImportExternalTexture(WGPUDevice device, const WGPUExternalTextureDescriptor* descriptor)
+{
+    return WebGPU::releaseToAPI(WebGPU::fromAPI(device).createExternalTexture(*descriptor));
 }
 
 WGPUShaderModule wgpuDeviceCreateShaderModule(WGPUDevice device, const WGPUShaderModuleDescriptor* descriptor)

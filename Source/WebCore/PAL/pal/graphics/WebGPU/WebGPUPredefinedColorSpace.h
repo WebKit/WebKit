@@ -32,6 +32,7 @@ namespace PAL::WebGPU {
 
 enum class PredefinedColorSpace : uint8_t {
     SRGB,
+    DisplayP3,
 };
 
 } // namespace PAL::WebGPU
