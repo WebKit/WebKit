@@ -1735,7 +1735,7 @@ bool RenderGrid::isBaselineAlignmentForChild(const RenderBox& child, GridAxis ba
         return false;
     ItemPosition align = selfAlignmentForChild(baselineAxis, child).position();
     bool hasAutoMargins = baselineAxis == GridColumnAxis ? hasAutoMarginsInColumnAxis(child) : hasAutoMarginsInRowAxis(child);
-    bool isBaseline = allowed == FirstLine ? isFirstBaselinePosition(align) : isBaselinePosition(align);
+    bool isBaseline = allowed == AllowedBaseLine::FirstLine ? isFirstBaselinePosition(align) : isBaselinePosition(align);
     return isBaseline && !hasAutoMargins;
 }
 
@@ -1806,7 +1806,7 @@ WeakPtr<RenderBox> RenderGrid::getBaselineChild(ItemPosition alignment) const
         for (auto& child : cell) {
             ASSERT(child.get());
             // If an item participates in baseline alignment, we select such item.
-            if (isBaselineAlignmentForChild(*child, GridColumnAxis, FirstLine)) {
+            if (isBaselineAlignmentForChild(*child, GridColumnAxis, AllowedBaseLine::FirstLine)) {
                 // FIXME: self-baseline and content-baseline alignment not implemented yet.
                 baselineChild = child.get();
                 break;
