@@ -409,6 +409,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         else
             parameters.presentingApplicationBundleIdentifier = bundleProxy.bundleIdentifier;
     }
+#if PLATFORM(MAC)
+    else
+        parameters.presentingApplicationBundleIdentifier = [NSRunningApplication currentApplication].bundleIdentifier;
+#endif
 
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
     if (WebProcessProxy::shouldEnableRemoteInspector()) {
