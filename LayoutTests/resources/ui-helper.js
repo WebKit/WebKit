@@ -597,10 +597,22 @@ window.UIHelper = class UIHelper {
         });
     }
 
-    static activateAndWaitForInputSessionAt(x, y)
+    static async activateAndWaitForInputSessionAt(x, y)
     {
         if (!this.isWebKit2() || !this.isIOSFamily())
             return this.activateAt(x, y);
+
+        if (testRunner.isKeyboardImmediatelyAvailable) {
+            await new Promise(resolve => {
+                testRunner.runUIScript(`
+                    (function() {
+                        uiController.singleTapAtPoint(${x}, ${y}, function() { });
+                        uiController.uiScriptComplete();
+                    })()`, resolve);
+            });
+            await this.ensureStablePresentationUpdate();
+            return;
+        }
 
         return new Promise(resolve => {
             testRunner.runUIScript(`

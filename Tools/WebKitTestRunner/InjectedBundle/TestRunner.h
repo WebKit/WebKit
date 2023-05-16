@@ -57,6 +57,15 @@ public:
 #endif
     }
 
+    bool isKeyboardImmediatelyAvailable()
+    {
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+        return true;
+#else
+        return false;
+#endif
+    }
+
     bool isWebKit2() const { return true; }
 
     // The basics.
