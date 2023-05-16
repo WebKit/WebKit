@@ -26,4 +26,6 @@ PASS DocumentFragment.replaceChildren() without any argument, on a parent having
 PASS DocumentFragment.replaceChildren() with null as an argument, on a parent having a child.
 PASS DocumentFragment.replaceChildren() with one element and text as argument, on a parent having a child.
 PASS DocumentFragment.replaceChildren() should move nodes in the right order
+PASS There should be a MutationRecord for the node removed from another parent node.
+PASS There should be MutationRecords for the nodes removed from another parent node.
 

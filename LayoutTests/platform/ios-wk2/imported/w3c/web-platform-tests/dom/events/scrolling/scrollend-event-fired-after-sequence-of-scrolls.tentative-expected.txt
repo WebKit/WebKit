@@ -1,0 +1,4 @@
+
+FAIL Move down, up and down again, receive scrollend event only once promise_test: Unhandled rejection with value: "No pointercancel event received for target [object HTMLDivElement]"
+FAIL Move right, left and right again, receive scrollend event only once promise_test: Unhandled rejection with value: "No pointercancel event received for target [object HTMLDivElement]"
+

@@ -29,6 +29,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ChildNode-replaceWith.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Comment-Text-constructor.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Comment-constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Comment-in-doctype.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/DOMImplementation-createDocument-with-null-browsing-context-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/DOMImplementation-createDocument.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/DOMImplementation-createDocumentType.html
@@ -139,6 +140,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-callback-arguments.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-characterData.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-childList.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-cross-realm-callback-report-exception.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-disconnect.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-document.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/MutationObserver-inner-outer.html
@@ -182,6 +184,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Node-textContent.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/NodeList-Iterable.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/NodeList-live-mutations.window.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-1.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-2.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-3.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-1.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-2.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-3.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ParentNode-append.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ParentNode-children.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ParentNode-prepend.html
@@ -199,6 +207,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ParentNode-querySelectors-space-and-dash-attribute-value.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ParentNode-replaceChildren.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ProcessingInstruction-escapes-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ProcessingInstruction-in-doctype.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ProcessingInstruction-literal-1.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/ProcessingInstruction-literal-2.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Text-constructor.html

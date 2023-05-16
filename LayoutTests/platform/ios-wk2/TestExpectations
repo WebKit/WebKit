@@ -2391,6 +2391,9 @@ webkit.org/b/243494 [ Debug ] compositing/layer-creation/scale-rotation-animatio
 # Early hints require network callbacks that are only present in macOS 12 / iOS 15 or greater.
 http/wpt/loading/early-hints [ Pass ]
 
+# Test timing out on iOS since its import.
+imported/w3c/web-platform-tests/dom/events/no-focus-events-at-clicking-editable-content-in-link.html [ Skip ]
+
 webkit.org/b/253533 imported/w3c/web-platform-tests/fetch/api/basic/status.h2.any.html [ Pass ]
 webkit.org/b/253533 imported/w3c/web-platform-tests/fetch/api/basic/status.h2.any.worker.html [ Pass ]
 webkit.org/b/253533 imported/w3c/web-platform-tests/xhr/status.h2.window.html [ Pass ]
