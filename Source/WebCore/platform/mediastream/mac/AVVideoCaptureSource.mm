@@ -281,9 +281,11 @@ const RealtimeMediaSourceSettings& AVVideoCaptureSource::settings()
     settings.setWidth(size.width());
     settings.setHeight(size.height());
     settings.setDeviceId(hashedId());
+    settings.setGroupId(captureDevice().groupId());
 
     RealtimeMediaSourceSupportedConstraints supportedConstraints;
     supportedConstraints.setSupportsDeviceId(true);
+    supportedConstraints.setSupportsGroupId(true);
     supportedConstraints.setSupportsFacingMode([device() position] != AVCaptureDevicePositionUnspecified);
     supportedConstraints.setSupportsWidth(true);
     supportedConstraints.setSupportsHeight(true);

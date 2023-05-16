@@ -92,6 +92,7 @@ public:
     MediaTrackSupportedConstraints getSupportedConstraints();
 
     String deviceIdToPersistentId(const String& deviceId) const { return m_audioOutputDeviceIdToPersistentId.get(deviceId); }
+    String hashedGroupId(const String& groupId);
 
     using RefCounted<MediaDevices>::ref;
     using RefCounted<MediaDevices>::deref;

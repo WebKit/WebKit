@@ -79,7 +79,7 @@ public:
     WEBCORE_EXPORT OptionSet<RealtimeMediaSourceSettings::Flag> difference(const RealtimeMediaSourceSettings&) const;
 
     RealtimeMediaSourceSettings() = default;
-    RealtimeMediaSourceSettings(uint32_t width, uint32_t height, float frameRate, VideoFacingMode facingMode, double volume, uint32_t sampleRate, uint32_t sampleSize, bool echoCancellation, AtomString&& deviceId, AtomString&& groupId, AtomString&& label, DisplaySurfaceType displaySurface, bool logicalSurface, double zoom, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
+    RealtimeMediaSourceSettings(uint32_t width, uint32_t height, float frameRate, VideoFacingMode facingMode, double volume, uint32_t sampleRate, uint32_t sampleSize, bool echoCancellation, AtomString&& deviceId, String&& groupId, AtomString&& label, DisplaySurfaceType displaySurface, bool logicalSurface, double zoom, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
         : m_width(width)
         , m_height(height)
         , m_frameRate(frameRate)
@@ -137,8 +137,8 @@ public:
     void setDeviceId(const AtomString& deviceId) { m_deviceId = deviceId; }
 
     bool supportsGroupId() const { return m_supportedConstraints.supportsGroupId(); }
-    const AtomString& groupId() const { return m_groupId; }
-    void setGroupId(const AtomString& groupId) { m_groupId = groupId; }
+    const String& groupId() const { return m_groupId; }
+    void setGroupId(const String& groupId) { m_groupId = groupId; }
 
     bool supportsDisplaySurface() const { return m_supportedConstraints.supportsDisplaySurface(); }
     DisplaySurfaceType displaySurface() const { return m_displaySurface; }
@@ -171,7 +171,7 @@ private:
     bool m_echoCancellation { 0 };
 
     AtomString m_deviceId;
-    AtomString m_groupId;
+    String m_groupId;
     AtomString m_label;
 
     DisplaySurfaceType m_displaySurface { DisplaySurfaceType::Invalid };

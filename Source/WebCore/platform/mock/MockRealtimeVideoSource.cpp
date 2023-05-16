@@ -190,6 +190,8 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
         settings.setLogicalSurface(false);
     }
     settings.setDeviceId(hashedId());
+    settings.setGroupId(captureDevice().groupId());
+
     settings.setFrameRate(frameRate());
     auto size = this->size();
     if (mockCamera()) {
@@ -206,6 +208,7 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
     if (mockCamera())
         supportedConstraints.setSupportsAspectRatio(true);
     supportedConstraints.setSupportsDeviceId(true);
+    supportedConstraints.setSupportsGroupId(true);
     if (mockCamera()) {
         if (facingMode() != VideoFacingMode::Unknown)
             supportedConstraints.setSupportsFacingMode(true);

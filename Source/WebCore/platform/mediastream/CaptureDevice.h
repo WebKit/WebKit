@@ -63,7 +63,7 @@ public:
     }
 
     void setGroupId(const String& groupId) { m_groupId = groupId; }
-    const String& groupId() const { return m_groupId; }
+    const String& groupId() const { return m_groupId.isEmpty() ? m_persistentId : m_groupId; }
 
     DeviceType type() const { return m_type; }
 

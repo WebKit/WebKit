@@ -25,7 +25,7 @@
             {
                 debug(`${track.kind} track settings:`);
                 forEachNativeProperty(track.getSettings(), (property, value) => {
-                    if (property == "deviceId")
+                    if (property == "deviceId" || property == "groupId")
                         value = "&lt;UUID>";
                     else
                         value = limitPrecision(value, 3);

@@ -8,12 +8,14 @@ video track settings:
   settings.deviceId = <UUID>
   settings.facingMode = user
   settings.frameRate = 30
+  settings.groupId = <UUID>
   settings.height = 480
   settings.width = 640
 
 audio track settings:
   settings.deviceId = <UUID>
   settings.echoCancellation = true
+  settings.groupId = <UUID>
   settings.sampleRate = 44100
   settings.volume = 1
 
@@ -23,16 +25,19 @@ PASS "aspectRatio" in track.getCapabilities() is true
 PASS "deviceId" in track.getCapabilities() is true
 PASS "facingMode" in track.getCapabilities() is true
 PASS "frameRate" in track.getCapabilities() is true
+PASS "groupId" in track.getCapabilities() is true
 PASS "height" in track.getCapabilities() is true
 PASS "width" in track.getCapabilities() is true
 PASS "deviceId" in track.getCapabilities() is true
 PASS "echoCancellation" in track.getCapabilities() is true
+PASS "groupId" in track.getCapabilities() is true
 PASS "sampleRate" in track.getCapabilities() is true
 PASS "volume" in track.getCapabilities() is true
 Validate sampleRate constraints appears correctly in track settings
 audio track settings:
   settings.deviceId = <UUID>
   settings.echoCancellation = true
+  settings.groupId = <UUID>
   settings.sampleRate = 48000
   settings.volume = 1
 

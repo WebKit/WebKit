@@ -11,7 +11,7 @@
             .then((devices) => {
                 assert_greater_than(devices.length, 0);
                 let device = devices[0];
-                
+
                 assert_true(device instanceof MediaDeviceInfo);
                 assert_class_string(device, "InputDeviceInfo");
                 assert_true('deviceId' in device);
@@ -19,7 +19,7 @@
                 assert_true('label' in device);
                 assert_true('groupId' in device);
                 assert_true('toJSON' in device);
-                
+
                 let serializedResult = device.toJSON();
                 assert_equals(serializedResult['deviceId'], device.deviceId);
                 assert_equals(serializedResult['kind'], device.kind);
@@ -35,6 +35,40 @@
         assert_equals(devices[0].kind, "audioinput");
         assert_equals(devices[1].kind, "videoinput");
     }, "Ensure enumerateDevices exposes both microphone and camera");
+
+    function getDeviceFromTrack(track, devices)
+    {
+        let matchingDevice;
+        const settings = track.getSettings();
+        devices.forEach(device => {
+            if (device.deviceId === settings.deviceId)
+                matchingDevice = device;
+        });
+        return matchingDevice;
+    }
+
+    promise_test(async (test) => {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio:true, video:true });
+        const devices = await navigator.mediaDevices.enumerateDevices();
+
+        const audioTrack = stream.getAudioTracks()[0];
+        assert_equals(audioTrack.getSettings().deviceId, audioTrack.getCapabilities().deviceId, "audio deviceId");
+        assert_equals(audioTrack.getSettings().groupId, audioTrack.getCapabilities().groupId, "audio groupId");
+
+        const videoTrack = stream.getVideoTracks()[0];
+        assert_equals(videoTrack.getSettings().deviceId, videoTrack.getCapabilities().deviceId, "video deviceId");
+        assert_equals(videoTrack.getSettings().groupId, videoTrack.getCapabilities().groupId, "video groupId");
+
+        const audioDevice = getDeviceFromTrack(audioTrack, devices);
+        assert_true(audioDevice !== undefined, "audio device found");
+        assert_equals(audioDevice.deviceId, audioTrack.getSettings().deviceId, "audio device info deviceId");
+        assert_equals(audioDevice.groupId, audioTrack.getSettings().groupId, "audio device info groupId");
+
+        const videoDevice = getDeviceFromTrack(videoTrack, devices);
+        assert_true(videoDevice !== undefined, "video device found");
+        assert_equals(videoDevice.deviceId, videoTrack.getSettings().deviceId, "video device info deviceId");
+        assert_equals(videoDevice.groupId, videoTrack.getSettings().groupId, "video device info groupId");
+    }, "Ensure enumerateDevices and getUserMedia MediaStreamTrack expose the same deviceId and groupIds");
     </script>
 </head>
 <body>
