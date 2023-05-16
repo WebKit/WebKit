@@ -116,9 +116,9 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
 
     simd::float3x2 uvRemappingMatrix;
     if (isFlipped)
-        uvRemappingMatrix = simd::float3x2(simd::make_float2(1.f, 0.f), simd::make_float2(0.f, -1.f), simd::make_float2(0.f, 1.f));
-    else
         uvRemappingMatrix = simd::make_float2(1.f, 1.f);
+    else
+        uvRemappingMatrix = simd::float3x2(simd::make_float2(1.f, 0.f), simd::make_float2(0.f, -1.f), simd::make_float2(0.f, 1.f));
     simd::float4x3 colorSpaceConversionMatrix = colorSpaceConversionMatrixForPixelBuffer(pixelBuffer);
 
     return { mtlTexture0, mtlTexture1, uvRemappingMatrix, colorSpaceConversionMatrix };
