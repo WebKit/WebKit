@@ -2442,6 +2442,7 @@ plugins/PluginInfoProvider.cpp
 rendering/AccessibilityRegionContext.cpp
 rendering/AutoTableLayout.cpp
 rendering/BackgroundPainter.cpp
+rendering/BaselineAlignment.cpp
 rendering/BidiRun.cpp
 rendering/BorderEdge.cpp
 rendering/BorderPainter.cpp

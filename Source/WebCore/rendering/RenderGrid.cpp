@@ -35,6 +35,7 @@
 #include "LayoutRepainter.h"
 #include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"
+#include "RenderElementInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
 #include "RenderTreeBuilder.h"

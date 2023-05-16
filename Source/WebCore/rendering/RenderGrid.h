@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "BaselineAlignmentInlines.h"
 #include "Grid.h"
 #include "GridMasonryLayout.h"
 #include "GridTrackSizingAlgorithm.h"

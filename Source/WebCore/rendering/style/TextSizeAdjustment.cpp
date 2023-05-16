@@ -29,6 +29,7 @@
 #if ENABLE(TEXT_AUTOSIZING)
 
 #include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 
