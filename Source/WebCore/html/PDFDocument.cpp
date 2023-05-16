@@ -207,16 +207,16 @@ void PDFDocument::postMessageToIframe(const String& name, JSC::JSObject* data)
 
 void PDFDocument::sendPDFArrayBuffer()
 {
-    auto arrayBuffer = loader()->mainResourceData()->tryCreateArrayBuffer();
-    if (!arrayBuffer) {
-        ASSERT_NOT_REACHED();
-        return;
+    auto* documentLoader = loader();
+    ASSERT(documentLoader);
+    if (auto mainResourceData = documentLoader->mainResourceData()) {
+        if (auto arrayBuffer = mainResourceData->tryCreateArrayBuffer()) {
+            auto& vm = globalObject()->vm();
+            JSC::JSLockHolder lock(vm);
+            auto* dataObject = JSC::JSArrayBuffer::create(vm, globalObject()->arrayBufferStructure(arrayBuffer->sharingMode()), WTFMove(arrayBuffer));
+            postMessageToIframe("open-pdf"_s, dataObject);
+        }
     }
-
-    auto& vm = globalObject()->vm();
-    JSC::JSLockHolder lock(vm);
-    auto* dataObject = JSC::JSArrayBuffer::create(vm, globalObject()->arrayBufferStructure(arrayBuffer->sharingMode()), WTFMove(arrayBuffer));
-    postMessageToIframe("open-pdf"_s, dataObject);
 }
 
 void PDFDocument::injectStyleAndContentScript()
