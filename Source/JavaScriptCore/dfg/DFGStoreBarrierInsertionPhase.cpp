@@ -234,7 +234,8 @@ private:
             switch (m_node->op()) {
             case PutByValDirect:
             case PutByVal:
-            case PutByValAlias: {
+            case PutByValAlias:
+            case PutByValMegamorphic: {
                 switch (m_node->arrayMode().modeForPut().type()) {
                 case Array::Generic:
                 case Array::BigInt64Array:
@@ -298,7 +299,8 @@ private:
             case PutById:
             case PutByIdFlush:
             case PutByIdDirect:
-            case PutStructure: {
+            case PutStructure:
+            case PutByIdMegamorphic: {
                 considerBarrier(m_node->child1());
                 break;
             }

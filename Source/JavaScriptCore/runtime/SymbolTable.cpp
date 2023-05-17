@@ -81,7 +81,7 @@ SymbolTableEntry::FatEntry* SymbolTableEntry::inflateSlow()
 
 SymbolTable::SymbolTable(VM& vm)
     : JSCell(vm, vm.symbolTableStructure.get())
-    , m_usesNonStrictEval(false)
+    , m_usesSloppyEval(false)
     , m_nestedLexicalScope(false)
     , m_scopeType(VarScope)
 {
@@ -141,7 +141,7 @@ SymbolTable* SymbolTable::cloneScopePart(VM& vm)
 {
     SymbolTable* result = SymbolTable::create(vm);
     
-    result->m_usesNonStrictEval = m_usesNonStrictEval;
+    result->m_usesSloppyEval = m_usesSloppyEval;
     result->m_nestedLexicalScope = m_nestedLexicalScope;
     result->m_scopeType = m_scopeType;
 

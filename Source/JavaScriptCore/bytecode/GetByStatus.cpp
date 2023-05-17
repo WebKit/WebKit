@@ -217,20 +217,6 @@ GetByStatus::GetByStatus(const ProxyObjectAccessCase&)
 {
 }
 
-static bool isSameStyledCodeOrigin(CodeOrigin lhs, CodeOrigin rhs)
-{
-    while (true) {
-        if (lhs.bytecodeIndex() != rhs.bytecodeIndex())
-            return false;
-        if (!!lhs.inlineCallFrame() != !!rhs.inlineCallFrame())
-            return false;
-        if (!lhs.inlineCallFrame())
-            return true;
-        lhs = lhs.inlineCallFrame()->directCaller;
-        rhs = rhs.inlineCallFrame()->directCaller;
-    }
-}
-
 GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CallLinkStatus::ExitSiteData callExitSiteData, CodeOrigin codeOrigin)
 {
     StubInfoSummary summary = StructureStubInfo::summary(profiledBlock->vm(), stubInfo);
