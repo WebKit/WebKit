@@ -977,9 +977,9 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertTrue(RunTest.has_test_of_type(batch_tests_run_http, 'http'))
         self.assertTrue(RunTest.has_test_of_type(batch_tests_run_http, 'websocket'))
 
-    def serial_test_platform_tests_are_found(self):
+    def serial_test_platform_tests_are_not_found(self):
         tests_run = get_tests_run(['--platform', 'test-mac-leopard', 'http'])
-        self.assertTrue('platform/test-mac-leopard/http/test.html' in tests_run)
+        self.assertFalse('platform/test-mac-leopard/http/test.html' in tests_run)
         self.assertFalse('platform/test-win-win7/http/test.html' in tests_run)
 
     def test_output_diffs(self):

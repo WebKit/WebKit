@@ -106,7 +106,6 @@ class LayoutTestFinder(object):
 
     def find_tests_by_path(self, paths, device_type=None):
         """Return the list of tests found. Both generic and platform-specific tests matching paths should be returned."""
-        expanded_paths = self._expanded_paths(paths, device_type=device_type)
         return [
             Test(
                 test_file,
@@ -115,7 +114,7 @@ class LayoutTestFinder(object):
                 is_wpt_test=self._is_wpt_test(test_file),
                 is_wpt_crash_test=self._is_wpt_crash_test(test_file),
             )
-            for test_file in self._real_tests(expanded_paths)
+            for test_file in self._real_tests(paths)
         ]
 
     def _is_wpt_test(self, test_file):
@@ -127,19 +126,6 @@ class LayoutTestFinder(object):
         filename, _ = self._filesystem.splitext(test_file)
         crashtests_dirname = self._port.TEST_PATH_SEPARATOR + 'crashtests' + self._port.TEST_PATH_SEPARATOR
         return filename.endswith('-crash') or crashtests_dirname in test_file
-
-    def _expanded_paths(self, paths, device_type=None):
-        expanded_paths = []
-        fs = self._port._filesystem
-        all_platform_dirs = [path for path in fs.glob(fs.join(self._port.layout_tests_dir(), 'platform', '*')) if fs.isdir(path)]
-        for path in paths:
-            expanded_paths.append(path)
-            if self._port.test_isdir(path) and not path.startswith('platform') and not fs.isabs(path):
-                for platform_dir in all_platform_dirs:
-                    if fs.isdir(fs.join(platform_dir, path)) and platform_dir in self._port.baseline_search_path(device_type=device_type):
-                        expanded_paths.append(self._port.relative_test_filename(fs.join(platform_dir, path)))
-
-        return expanded_paths
 
     def _expand_variants(self, files):
         expanded = []

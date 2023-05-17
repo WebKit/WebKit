@@ -172,11 +172,6 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
             ],
         )
 
-    def test_find_platform_specific(self):
-        finder = self.finder
-        tests = [t.test_path for t in finder.find_tests_by_path(['http/test.html'])]
-        self.assertEqual(tests, [])
-
     def test_find_platform_specific_directory(self):
         finder = self.finder
         tests = [t.test_path for t in finder.find_tests_by_path(['platform-specific-dir'])]
@@ -186,8 +181,12 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
         with_star = [t.test_path for t in finder.find_tests_by_path(['platform-specific-dir/*'])]
         self.assertEqual(tests, with_star)
 
-    def test_find_directory_includes_platform_specific(self):
-        # contrast with test_find_platform_specific above
+    def test_find_file_excludes_platform_specific(self):
+        finder = self.finder
+        tests = [t.test_path for t in finder.find_tests_by_path(['http/test.html'])]
+        self.assertEqual(tests, [])
+
+    def test_find_directory_excludes_platform_specific(self):
         finder = self.finder
         tests = [t.test_path for t in finder.find_tests_by_path(['http'])]
         self.assertEqual(
@@ -196,7 +195,6 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
                 'http/tests/passes/image.html',
                 'http/tests/passes/text.html',
                 'http/tests/ssl/text.html',
-                'platform/test-mac-leopard/http/test.html',
             ],
         )
 
