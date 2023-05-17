@@ -1466,10 +1466,6 @@ void Page::didCommitLoad()
     m_isEditableRegionEnabled = false;
 #endif
 
-#if HAVE(OS_DARK_MODE_SUPPORT)
-    setUseDarkAppearanceOverride(std::nullopt);
-#endif
-
     resetSeenPlugins();
     resetSeenMediaEngines();
 

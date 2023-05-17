@@ -56,8 +56,6 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         // COMPATIBILITY (macOS 13.0, iOS 16.0): `Page.overrideUserPreference` did not exist yet.
         this._overrideUserPreferencesNavigationItem = new WI.ActivateButtonNavigationItem("toggle-user-preferences", WI.UIString("Override user preferences"), WI.UIString("User preferences overridden"), "Images/AppearanceOverride.svg", 16, 16);
         this._overrideUserPreferencesNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleOverrideUserPreferencesButtonClicked, this);
-        // COMPATIBILITY (macOS 13, iOS 16.0): `Page.setForcedAppearance()` was removed in favor of `Page.overrideUserPreference()`
-        this._overrideUserPreferencesNavigationItem.enabled = WI.cssManager.supportsOverrideUserPreference || WI.cssManager.supportsOverrideColorScheme;
         this._overrideUserPreferencesNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
         this._compositingBordersButtonNavigationItem = new WI.ActivateButtonNavigationItem("layer-borders", WI.UIString("Show compositing borders"), WI.UIString("Hide compositing borders"), "Images/LayerBorders.svg", 13, 13);
@@ -88,7 +86,10 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         WI.domManager.addEventListener(WI.DOMManager.Event.CharacterDataModified, this._domNodeChanged, this);
 
         WI.cssManager.addEventListener(WI.CSSManager.Event.DefaultUserPreferencesDidChange, this._defaultUserPreferencesDidChange, this);
+        this._defaultUserPreferencesDidChange();
+
         WI.cssManager.addEventListener(WI.CSSManager.Event.OverriddenUserPreferencesDidChange, this._overriddenUserPreferencesDidChange, this);
+        this._overriddenUserPreferencesDidChange();
 
         this._lastSelectedNodePathSetting = new WI.Setting("last-selected-node-path", null);
 
