@@ -1000,10 +1000,6 @@ public:
     bool getOwnNonIndexPropertySlot(VM&, Structure*, PropertyName, PropertySlot&);
     bool getNonIndexPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&);
 
-    JS_EXPORT_PRIVATE NEVER_INLINE bool putInlineSlow(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
-    JS_EXPORT_PRIVATE NEVER_INLINE bool putInlineFastReplacingStaticPropertyIfNeeded(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
-    bool putInlineFast(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
-
 protected:
 #if ASSERT_ENABLED
     void finishCreation(VM& vm)
@@ -1160,6 +1156,11 @@ private:
     ASCIILiteral putDirectInternal(VM&, PropertyName, JSValue, unsigned attr, PutPropertySlot&);
 
     JS_EXPORT_PRIVATE NEVER_INLINE ASCIILiteral putDirectToDictionaryWithoutExtensibility(VM&, PropertyName, JSValue, PutPropertySlot&);
+
+    JS_EXPORT_PRIVATE NEVER_INLINE bool putInlineSlow(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    JS_EXPORT_PRIVATE NEVER_INLINE bool putInlineFastReplacingStaticPropertyIfNeeded(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    bool putInlineFast(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+
     JS_EXPORT_PRIVATE void fillGetterPropertySlot(VM&, PropertySlot&, JSCell*, unsigned, PropertyOffset);
     void fillCustomGetterPropertySlot(PropertySlot&, CustomGetterSetter*, unsigned, Structure*);
 

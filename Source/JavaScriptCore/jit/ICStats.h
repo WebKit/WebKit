@@ -57,15 +57,15 @@ namespace JSC {
     macro(OperationInByIdGeneric) \
     macro(OperationInByIdOptimize) \
     macro(OperationPutByIdStrict) \
-    macro(OperationPutByIdSloppy) \
+    macro(OperationPutByIdNonStrict) \
     macro(OperationPutByIdDirectStrict) \
-    macro(OperationPutByIdDirectSloppy) \
+    macro(OperationPutByIdDirectNonStrict) \
     macro(OperationPutByIdStrictOptimize) \
-    macro(OperationPutByIdSloppyOptimize) \
+    macro(OperationPutByIdNonStrictOptimize) \
     macro(OperationPutByIdDirectStrictOptimize) \
-    macro(OperationPutByIdDirectSloppyOptimize) \
+    macro(OperationPutByIdDirectNonStrictOptimize) \
     macro(OperationPutByIdStrictBuildList) \
-    macro(OperationPutByIdSloppyBuildList) \
+    macro(OperationPutByIdNonStrictBuildList) \
     macro(OperationPutByIdDefinePrivateFieldStrictOptimize) \
     macro(OperationPutByIdPutPrivateFieldStrictOptimize) \
     macro(PutByAddAccessCase) \

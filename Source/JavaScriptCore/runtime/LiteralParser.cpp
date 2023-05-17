@@ -831,7 +831,7 @@ ALWAYS_INLINE void setParserTokenString<UChar>(LiteralParserToken<UChar>& token,
     token.stringStart16 = string;
 }
 
-enum class SafeStringCharacterSet { Strict, Sloppy };
+enum class SafeStringCharacterSet { Strict, NonStrict };
 
 template <SafeStringCharacterSet set>
 static ALWAYS_INLINE bool isSafeStringCharacter(LChar c, LChar terminator)
@@ -864,7 +864,7 @@ ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lexString(LiteralParserT
         while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::Strict>(*m_ptr, '"'))
             ++m_ptr;
     } else {
-        while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::Sloppy>(*m_ptr, terminator))
+        while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::NonStrict>(*m_ptr, terminator))
             ++m_ptr;
     }
 
@@ -888,7 +888,7 @@ TokenType LiteralParser<CharType>::Lexer::lexStringSlow(LiteralParserToken<CharT
             while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::Strict>(*m_ptr, terminator))
                 ++m_ptr;
         } else {
-            while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::Sloppy>(*m_ptr, terminator))
+            while (m_ptr < m_end && isSafeStringCharacter<SafeStringCharacterSet::NonStrict>(*m_ptr, terminator))
                 ++m_ptr;
         }
 
@@ -896,7 +896,7 @@ TokenType LiteralParser<CharType>::Lexer::lexStringSlow(LiteralParserToken<CharT
             m_builder.appendCharacters(runStart, m_ptr - runStart);
 
 slowPathBegin:
-        if ((m_mode != SloppyJSON) && m_ptr < m_end && *m_ptr == '\\') {
+        if ((m_mode != NonStrictJSON) && m_ptr < m_end && *m_ptr == '\\') {
             if (m_builder.isEmpty() && runStart < m_ptr)
                 m_builder.appendCharacters(runStart, m_ptr - runStart);
             ++m_ptr;
@@ -963,7 +963,7 @@ slowPathBegin:
                     return TokError;
             }
         }
-    } while ((m_mode != SloppyJSON) && m_ptr != runStart && (m_ptr < m_end) && *m_ptr != terminator);
+    } while ((m_mode != NonStrictJSON) && m_ptr != runStart && (m_ptr < m_end) && *m_ptr != terminator);
 
     if (m_ptr >= m_end || *m_ptr != terminator) {
         m_lexErrorMessage = "Unterminated string"_s;

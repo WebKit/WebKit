@@ -122,10 +122,8 @@ PutByStatus::PutByStatus(StubInfoSummary summary, StructureStubInfo& stubInfo)
     case StubInfoSummary::NoInformation:
         m_state = NoInformation;
         return;
-    case StubInfoSummary::Megamorphic:
-        m_state = Megamorphic;
-        return;
     case StubInfoSummary::Simple:
+    case StubInfoSummary::Megamorphic:
     case StubInfoSummary::MakesCalls:
         RELEASE_ASSERT_NOT_REACHED();
         return;
@@ -150,7 +148,8 @@ PutByStatus PutByStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, 
         return PutByStatus(LikelyTakesSlowPath);
     
     StructureStubInfo* stubInfo = map.get(CodeOrigin(bytecodeIndex)).stubInfo;
-    PutByStatus result = computeForStubInfo(locker, profiledBlock, stubInfo, callExitSiteData, CodeOrigin(bytecodeIndex));
+    PutByStatus result = computeForStubInfo(
+        locker, profiledBlock, stubInfo, callExitSiteData);
     if (!result)
         return computeFromLLInt(profiledBlock, bytecodeIndex);
     
@@ -165,10 +164,12 @@ PutByStatus PutByStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, 
 
 PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, CodeBlock* baselineBlock, StructureStubInfo* stubInfo, CodeOrigin codeOrigin)
 {
-    return computeForStubInfo(locker, baselineBlock, stubInfo, CallLinkStatus::computeExitSiteData(baselineBlock, codeOrigin.bytecodeIndex()), codeOrigin);
+    return computeForStubInfo(
+        locker, baselineBlock, stubInfo,
+        CallLinkStatus::computeExitSiteData(baselineBlock, codeOrigin.bytecodeIndex()));
 }
 
-PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CallLinkStatus::ExitSiteData callExitSiteData, CodeOrigin codeOrigin)
+PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CallLinkStatus::ExitSiteData callExitSiteData)
 {
     StubInfoSummary summary = StructureStubInfo::summary(profiledBlock->vm(), stubInfo);
     if (!isInlineable(summary))
@@ -195,30 +196,7 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
 
         PutByStatus result;
         result.m_state = Simple;
-
-        if (list->size() == 1) {
-            const AccessCase& access = list->at(0);
-            switch (access.type()) {
-            case AccessCase::StoreMegamorphic:
-            case AccessCase::IndexedMegamorphicStore: {
-                // Emitting StoreMegamorphic means that we give up polymorphic IC optimization. So this needs very careful handling.
-                // It is possible that one function can be inlined from the other function, and then it gets limited # of structures.
-                // In this case, continue using IC is better than falling back to megamorphic case. But if the function gets compiled before,
-                // and even optimizing JIT saw the megamorphism, then this is likely that this function continues having megamorphic behavior,
-                // and inlined megamorphic code is faster. Currently, we use StoreMegamorphic only when the exact same form of CodeOrigin gets
-                // this megamorphic GetById before (same level of inlining etc.). This is very conservative but effective since IC is very fast
-                // when it worked well (but costly if it doesn't work and get megamorphic). Once this cost-benefit tradeoff gets changed (via
-                // handler IC), we can revisit this condition.
-                // FIXME: Add this thing.
-                if (isSameStyledCodeOrigin(stubInfo->codeOrigin, codeOrigin) && !stubInfo->tookSlowPath)
-                    return PutByStatus(Megamorphic);
-                break;
-            }
-            default:
-                break;
-            }
-        }
-
+        
         for (unsigned i = 0; i < list->size(); ++i) {
             const AccessCase& access = list->at(i);
             if (access.viaGlobalProxy())
@@ -318,7 +296,9 @@ PutByStatus PutByStatus::computeFor(CodeBlock* baselineBlock, ICStatusMap& basel
         
         auto bless = [&] (const PutByStatus& result) -> PutByStatus {
             if (!context->isInlined(codeOrigin)) {
-                PutByStatus baselineResult = computeFor(baselineBlock, baselineMap, bytecodeIndex, didExit, callExitSiteData);
+                PutByStatus baselineResult = computeFor(
+                    baselineBlock, baselineMap, bytecodeIndex, didExit,
+                    callExitSiteData);
                 baselineResult.merge(result);
                 return baselineResult;
             }
@@ -331,7 +311,8 @@ PutByStatus PutByStatus::computeFor(CodeBlock* baselineBlock, ICStatusMap& basel
             PutByStatus result;
             {
                 ConcurrentJSLocker locker(context->optimizedCodeBlock->m_lock);
-                result = computeForStubInfo(locker, context->optimizedCodeBlock, status.stubInfo, callExitSiteData, codeOrigin);
+                result = computeForStubInfo(
+                    locker, context->optimizedCodeBlock, status.stubInfo, callExitSiteData);
             }
             if (result.isSet())
                 return bless(result);
@@ -453,7 +434,6 @@ bool PutByStatus::makesCalls() const
         return false;
     case MakesCalls:
     case ObservedSlowPathAndMakesCalls:
-    case Megamorphic:
         return true;
     case Simple: {
         for (unsigned i = m_variants.size(); i--;) {
@@ -523,16 +503,6 @@ void PutByStatus::merge(const PutByStatus& other)
     case NoInformation:
         *this = other;
         return;
-
-    case Megamorphic:
-        if (m_state != other.m_state) {
-            if (other.m_state == Simple) {
-                *this = other;
-                return;
-            }
-            return mergeSlow();
-        }
-        return;
         
     case Simple:
         if (other.m_state != Simple)
@@ -574,9 +544,6 @@ void PutByStatus::dump(PrintStream& out) const
         return;
     case Simple:
         out.print("(", listDump(m_variants), ")");
-        return;
-    case Megamorphic:
-        out.print("Megamorphic");
         return;
     case LikelyTakesSlowPath:
         out.print("LikelyTakesSlowPath");

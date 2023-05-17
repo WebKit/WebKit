@@ -4279,8 +4279,6 @@ void SpeculativeJIT::compile(Node* node)
     case GetByIdWithThisMegamorphic:
     case GetByValMegamorphic:
     case GetByValWithThisMegamorphic:
-    case PutByIdMegamorphic:
-    case PutByValMegamorphic:
         DFG_CRASH(m_graph, node, "unexpected node in DFG backend");
         break;
     }

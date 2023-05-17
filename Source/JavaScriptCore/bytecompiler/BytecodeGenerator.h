@@ -1321,7 +1321,7 @@ namespace JSC {
         bool m_usesExceptions { false };
         bool m_expressionTooDeep { false };
         bool m_isBuiltinFunction { false };
-        bool m_usesSloppyEval { false };
+        bool m_usesNonStrictEval { false };
         bool m_inTailPosition { false };
         bool m_needsToUpdateArrowFunctionContext : 1;
         ECMAMode m_ecmaMode;

@@ -345,7 +345,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
     , m_isBuiltinFunction(false)
-    , m_usesSloppyEval(false)
+    , m_usesNonStrictEval(false)
     , m_inTailPosition(false)
     , m_needsToUpdateArrowFunctionContext(programNode->usesArrowFunction() || programNode->usesEval())
     , m_ecmaMode(ECMAMode::fromBool(programNode->isStrictMode()))
@@ -390,7 +390,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
     , m_isBuiltinFunction(codeBlock->isBuiltinFunction())
-    , m_usesSloppyEval(functionNode->usesEval() && !functionNode->isStrictMode())
+    , m_usesNonStrictEval(functionNode->usesEval() && !functionNode->isStrictMode())
     // FIXME: We should be able to have tail call elimination with the profiler
     // enabled. This is currently not possible because the profiler expects
     // op_will_call / op_did_call pairs before and after a call, which are not
@@ -407,7 +407,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     pushPrivateAccessNames(parentPrivateNameEnvironment);
 
     SymbolTable* functionSymbolTable = SymbolTable::create(m_vm);
-    functionSymbolTable->setUsesSloppyEval(m_usesSloppyEval);
+    functionSymbolTable->setUsesNonStrictEval(m_usesNonStrictEval);
     int symbolTableConstantIndex = 0;
 
     m_cachedParentTDZ = parentScopeTDZVariables;
@@ -894,7 +894,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
     , m_isBuiltinFunction(false)
-    , m_usesSloppyEval(evalNode->usesEval() && !evalNode->isStrictMode())
+    , m_usesNonStrictEval(evalNode->usesEval() && !evalNode->isStrictMode())
     , m_inTailPosition(false)
     , m_needsToUpdateArrowFunctionContext(evalNode->usesArrowFunction() || evalNode->usesEval())
     , m_ecmaMode(ECMAMode::fromBool(evalNode->isStrictMode()))
@@ -957,7 +957,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
     , m_isBuiltinFunction(false)
-    , m_usesSloppyEval(false)
+    , m_usesNonStrictEval(false)
     , m_inTailPosition(false)
     , m_needsToUpdateArrowFunctionContext(moduleProgramNode->usesArrowFunction() || moduleProgramNode->usesEval())
     , m_ecmaMode(ECMAMode::strict())
@@ -965,7 +965,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
     ASSERT_UNUSED(parentScopeTDZVariables, !parentScopeTDZVariables);
 
     SymbolTable* moduleEnvironmentSymbolTable = SymbolTable::create(m_vm);
-    moduleEnvironmentSymbolTable->setUsesSloppyEval(m_usesSloppyEval);
+    moduleEnvironmentSymbolTable->setUsesNonStrictEval(m_usesNonStrictEval);
     moduleEnvironmentSymbolTable->setScopeType(SymbolTable::ScopeType::LexicalScope);
 
     bool shouldCaptureAllOfTheThings = shouldEmitDebugHooks() || usesEval();
@@ -2383,7 +2383,7 @@ Variable BytecodeGenerator::variable(const Identifier& property, ThisResolutionT
             continue;
         bool resultIsCallee = false;
         if (symbolTable->scopeType() == SymbolTable::ScopeType::FunctionNameScope) {
-            if (m_usesSloppyEval) {
+            if (m_usesNonStrictEval) {
                 // We don't know if an eval has introduced a "var" named the same thing as the function name scope variable name.
                 // We resort to dynamic lookup to answer this question.
                 Variable result = Variable(property);
@@ -2469,7 +2469,7 @@ ResolveType BytecodeGenerator::resolveType()
     for (unsigned i = m_lexicalScopeStack.size(); i--; ) {
         if (m_lexicalScopeStack[i].m_isWithScope)
             return Dynamic;
-        if (m_usesSloppyEval && m_lexicalScopeStack[i].m_symbolTable->scopeType() == SymbolTable::ScopeType::FunctionNameScope) {
+        if (m_usesNonStrictEval && m_lexicalScopeStack[i].m_symbolTable->scopeType() == SymbolTable::ScopeType::FunctionNameScope) {
             // We never want to assign to a FunctionNameScope. Returning Dynamic here achieves this goal.
             // If we aren't in non-strict eval mode, then NodesCodeGen needs to take care not to emit
             // a put_to_scope with the destination being the function name scope variable.
@@ -2477,7 +2477,7 @@ ResolveType BytecodeGenerator::resolveType()
         }
     }
 
-    if (m_usesSloppyEval)
+    if (m_usesNonStrictEval)
         return GlobalPropertyWithVarInjectionChecks;
     return GlobalProperty;
 }

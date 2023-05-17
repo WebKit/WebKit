@@ -715,8 +715,8 @@ public:
     RefPtr<TypeSet> globalTypeSetForOffset(const ConcurrentJSLocker&, VarOffset, VM&);
     RefPtr<TypeSet> globalTypeSetForVariable(const ConcurrentJSLocker&, UniquedStringImpl* key, VM&);
 
-    bool usesSloppyEval() const { return m_usesSloppyEval; }
-    void setUsesSloppyEval(bool usesSloppyEval) { m_usesSloppyEval = usesSloppyEval; }
+    bool usesNonStrictEval() const { return m_usesNonStrictEval; }
+    void setUsesNonStrictEval(bool usesNonStrictEval) { m_usesNonStrictEval = usesNonStrictEval; }
 
     bool isNestedLexicalScope() const { return m_nestedLexicalScope; }
     void markIsNestedLexicalScope() { ASSERT(scopeType() == LexicalScope); m_nestedLexicalScope = true; }
@@ -780,7 +780,7 @@ public:
     mutable ConcurrentJSLock m_lock;
 
 private:
-    unsigned m_usesSloppyEval : 1;
+    unsigned m_usesNonStrictEval : 1;
     unsigned m_nestedLexicalScope : 1; // Non-function LexicalScope.
     unsigned m_scopeType : 3; // ScopeType
 

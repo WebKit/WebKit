@@ -3582,12 +3582,7 @@ void SpeculativeJIT::compile(Node* node)
         compilePutByVal(node);
         break;
     }
-
-    case PutByValMegamorphic: {
-        compilePutByValMegamorphic(node);
-        break;
-    }
-
+        
     case AtomicsAdd:
     case AtomicsAnd:
     case AtomicsCompareExchange:
@@ -4672,11 +4667,6 @@ void SpeculativeJIT::compile(Node* node)
         
     case PutById: {
         compilePutById(node);
-        break;
-    }
-
-    case PutByIdMegamorphic: {
-        compilePutByIdMegamorphic(node);
         break;
     }
 
@@ -6855,23 +6845,13 @@ void SpeculativeJIT::compileEnumeratorPutByVal(Node* node)
 
             auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
             JITPutByValGenerator gen(
-                codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, ecmaMode.isStrict() ? AccessType::PutByValStrict : AccessType::PutByValSloppy, usedRegisters,
-                baseRegs, propertyRegs, valueRegs, InvalidGPRReg, scratchGPR, ecmaMode);
-
-            std::visit([&](auto* stubInfo) {
-                if (m_state.forNode(m_graph.varArgChild(node, 1)).isType(SpecString))
-                    stubInfo->propertyIsString = true;
-                else if (m_state.forNode(m_graph.varArgChild(node, 1)).isType(SpecInt32Only))
-                    stubInfo->propertyIsInt32 = true;
-                else if (m_state.forNode(m_graph.varArgChild(node, 1)).isType(SpecSymbol))
-                    stubInfo->propertyIsSymbol = true;
-                stubInfo->isEnumerator = true;
-            }, stubInfo);
+                codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, AccessType::PutByVal, usedRegisters,
+                baseRegs, propertyRegs, valueRegs, InvalidGPRReg, scratchGPR, PutKind::NotDirect, ecmaMode, PrivateFieldPutKind::none());
 
             JumpList slowCases;
 
             std::unique_ptr<SlowPathGenerator> slowPath;
-            auto operation = ecmaMode.isStrict() ? operationPutByValStrictOptimize : operationPutByValSloppyOptimize;
+            auto operation = ecmaMode.isStrict() ? operationPutByValStrictOptimize : operationPutByValNonStrictOptimize;
             if (m_graph.m_plan.isUnlinked()) {
                 gen.generateDFGDataICFastPath(*this, stubInfoConstant.index(), scratchGPR);
                 gen.m_unlinkedStubInfoConstantIndex = stubInfoConstant.index();
@@ -6910,61 +6890,6 @@ void SpeculativeJIT::compileEnumeratorPutByVal(Node* node)
         JSValueOperand base(this, baseEdge);
         generate(base.regs());
     }
-    noResult(node);
-}
-
-void SpeculativeJIT::compilePutByIdMegamorphic(Node* node)
-{
-    SpeculateCellOperand base(this, m_graph.child(node, 0));
-    JSValueOperand value(this, m_graph.child(node, 1));
-    GPRTemporary scratch1(this);
-    GPRTemporary scratch2(this);
-    GPRTemporary scratch3(this);
-    GPRTemporary scratch4(this);
-
-    GPRReg baseGPR = base.gpr();
-    JSValueRegs valueRegs = value.jsValueRegs();
-    GPRReg scratch1GPR = scratch1.gpr();
-    GPRReg scratch2GPR = scratch2.gpr();
-    GPRReg scratch3GPR = scratch3.gpr();
-    GPRReg scratch4GPR = scratch4.gpr();
-
-    UniquedStringImpl* uid = node->cacheableIdentifier().uid();
-    JumpList slowCases = storeMegamorphicProperty(vm(), baseGPR, InvalidGPRReg, uid, valueRegs.payloadGPR(), scratch1GPR, scratch2GPR, scratch3GPR, scratch4GPR);
-    addSlowPathGenerator(slowPathCall(slowCases, this, node->ecmaMode().isStrict() ? operationPutByIdMegamorphicStrict : operationPutByIdMegamorphicSloppy, NoResult, LinkableConstant::globalObject(*this, node), TrustedImmPtr(nullptr), valueRegs, baseGPR, node->cacheableIdentifier().rawBits()));
-    noResult(node);
-}
-
-void SpeculativeJIT::compilePutByValMegamorphic(Node* node)
-{
-    SpeculateCellOperand base(this, m_graph.child(node, 0));
-    SpeculateCellOperand subscript(this, m_graph.child(node, 1));
-    JSValueOperand value(this, m_graph.child(node, 2));
-    GPRTemporary scratch1(this);
-    GPRTemporary scratch2(this);
-    GPRTemporary scratch3(this);
-    GPRTemporary scratch4(this);
-    GPRTemporary scratch5(this);
-
-    GPRReg baseGPR = base.gpr();
-    GPRReg subscriptGPR = subscript.gpr();
-    JSValueRegs valueRegs = value.jsValueRegs();
-    GPRReg scratch1GPR = scratch1.gpr();
-    GPRReg scratch2GPR = scratch2.gpr();
-    GPRReg scratch3GPR = scratch3.gpr();
-    GPRReg scratch4GPR = scratch4.gpr();
-    GPRReg scratch5GPR = scratch5.gpr();
-
-    speculateString(m_graph.child(node, 1), subscriptGPR);
-
-    JumpList slowCases;
-
-    loadPtr(Address(subscriptGPR, JSString::offsetOfValue()), scratch5GPR);
-    slowCases.append(branchIfRopeStringImpl(scratch5GPR));
-    slowCases.append(branchTest32(Zero, Address(scratch5GPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIsAtom())));
-
-    slowCases.append(storeMegamorphicProperty(vm(), baseGPR, scratch5GPR, nullptr, valueRegs.payloadGPR(), scratch1GPR, scratch2GPR, scratch3GPR, scratch4GPR));
-    addSlowPathGenerator(slowPathCall(slowCases, this, node->ecmaMode().isStrict() ? operationPutByValMegamorphicStrict : operationPutByValMegamorphicSloppy, NoResult, LinkableConstant::globalObject(*this, node), baseGPR, subscriptGPR, valueRegs, TrustedImmPtr(nullptr), TrustedImmPtr(nullptr)));
     noResult(node);
 }
 

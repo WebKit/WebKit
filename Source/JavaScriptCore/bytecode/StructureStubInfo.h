@@ -33,6 +33,7 @@
 #include "JITStubRoutine.h"
 #include "MacroAssembler.h"
 #include "Options.h"
+#include "PutKind.h"
 #include "RegisterSet.h"
 #include "Structure.h"
 #include "StructureSet.h"
@@ -60,18 +61,9 @@ enum class AccessType : int8_t {
     TryGetById,
     GetByVal,
     GetByValWithThis,
-    PutByIdStrict,
-    PutByIdSloppy,
-    PutByIdDirectStrict,
-    PutByIdDirectSloppy,
-    PutByValStrict,
-    PutByValSloppy,
-    PutByValDirectStrict,
-    PutByValDirectSloppy,
-    DefinePrivateNameByVal,
-    DefinePrivateNameById,
-    SetPrivateNameByVal,
-    SetPrivateNameById,
+    PutById,
+    PutByVal,
+    PutPrivateName,
     InById,
     InByVal,
     HasPrivateName,
@@ -520,6 +512,8 @@ inline auto appropriateGenericGetByIdFunction(AccessType type) -> decltype(&oper
 
 struct UnlinkedStructureStubInfo {
     AccessType accessType;
+    PutKind putKind { PutKind::Direct };
+    PrivateFieldPutKind privateFieldPutKind { PrivateFieldPutKind::none() };
     ECMAMode ecmaMode { ECMAMode::sloppy() };
     bool propertyIsInt32 : 1 { false };
     bool propertyIsString : 1 { false };

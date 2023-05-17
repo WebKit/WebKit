@@ -213,7 +213,6 @@ namespace JSC { namespace DFG {
     macro(PutByValDirect, NodeMustGenerate | NodeHasVarArgs) \
     macro(PutByVal, NodeMustGenerate | NodeHasVarArgs) \
     macro(PutByValAlias, NodeMustGenerate | NodeHasVarArgs) \
-    macro(PutByValMegamorphic, NodeMustGenerate | NodeHasVarArgs) \
     macro(PutPrivateName, NodeMustGenerate) \
     macro(PutPrivateNameById, NodeMustGenerate) \
     macro(CheckPrivateBrand, NodeMustGenerate) \
@@ -230,7 +229,6 @@ namespace JSC { namespace DFG {
     macro(PutByIdFlush, NodeMustGenerate) \
     macro(PutByIdDirect, NodeMustGenerate) \
     macro(PutByIdWithThis, NodeMustGenerate) \
-    macro(PutByIdMegamorphic, NodeMustGenerate) \
     macro(PutByValWithThis, NodeMustGenerate | NodeHasVarArgs) \
     macro(PutGetterById, NodeMustGenerate) \
     macro(PutSetterById, NodeMustGenerate) \

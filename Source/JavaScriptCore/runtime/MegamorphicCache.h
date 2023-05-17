@@ -42,13 +42,6 @@ public:
     static constexpr uint32_t primaryMask = primarySize - 1;
     static constexpr uint32_t secondaryMask = secondarySize - 1;
 
-    static constexpr uint32_t storeCachePrimarySize = 2048;
-    static constexpr uint32_t storeCacheSecondarySize = 512;
-    static_assert(hasOneBitSet(storeCachePrimarySize), "size should be a power of two.");
-    static_assert(hasOneBitSet(storeCacheSecondarySize), "size should be a power of two.");
-    static constexpr uint32_t storeCachePrimaryMask = storeCachePrimarySize - 1;
-    static constexpr uint32_t storeCacheSecondaryMask = storeCacheSecondarySize - 1;
-
     static constexpr uint16_t invalidEpoch = 0;
     static constexpr PropertyOffset maxOffset = UINT16_MAX;
 
@@ -84,33 +77,8 @@ public:
         JSCell* m_holder { nullptr };
     };
 
-    struct StoreEntry {
-        static ptrdiff_t offsetOfUid() { return OBJECT_OFFSETOF(StoreEntry, m_uid); }
-        static ptrdiff_t offsetOfOldStructureID() { return OBJECT_OFFSETOF(StoreEntry, m_oldStructureID); }
-        static ptrdiff_t offsetOfNewStructureID() { return OBJECT_OFFSETOF(StoreEntry, m_newStructureID); }
-        static ptrdiff_t offsetOfEpoch() { return OBJECT_OFFSETOF(StoreEntry, m_epoch); }
-        static ptrdiff_t offsetOfOffset() { return OBJECT_OFFSETOF(StoreEntry, m_offset); }
-
-        void init(StructureID oldStructureID, StructureID newStructureID, UniquedStringImpl* uid, uint16_t epoch, uint16_t offset)
-        {
-            m_uid = uid;
-            m_oldStructureID = oldStructureID;
-            m_newStructureID = newStructureID;
-            m_epoch = epoch;
-            m_offset = offset;
-        }
-
-        RefPtr<UniquedStringImpl> m_uid;
-        StructureID m_oldStructureID { };
-        StructureID m_newStructureID { };
-        uint16_t m_epoch { invalidEpoch };
-        uint16_t m_offset { 0 };
-    };
-
     static ptrdiff_t offsetOfPrimaryEntries() { return OBJECT_OFFSETOF(MegamorphicCache, m_primaryEntries); }
     static ptrdiff_t offsetOfSecondaryEntries() { return OBJECT_OFFSETOF(MegamorphicCache, m_secondaryEntries); }
-    static ptrdiff_t offsetOfStoreCachePrimaryEntries() { return OBJECT_OFFSETOF(MegamorphicCache, m_storeCachePrimaryEntries); }
-    static ptrdiff_t offsetOfStoreCacheSecondaryEntries() { return OBJECT_OFFSETOF(MegamorphicCache, m_storeCacheSecondaryEntries); }
     static ptrdiff_t offsetOfEpoch() { return OBJECT_OFFSETOF(MegamorphicCache, m_epoch); }
 
     MegamorphicCache() = default;
@@ -126,10 +94,6 @@ public:
 
     static constexpr unsigned structureIDHashShift3 = structureIDHashShift1 + 9;
 
-    static constexpr unsigned structureIDHashShift4 = structureIDHashShift1 + 11;
-
-    static constexpr unsigned structureIDHashShift5 = structureIDHashShift1 + 9;
-
     ALWAYS_INLINE static uint32_t primaryHash(StructureID structureID, UniquedStringImpl* uid)
     {
         uint32_t sid = bitwise_cast<uint32_t>(structureID);
@@ -140,18 +104,6 @@ public:
     {
         uint32_t key = bitwise_cast<uint32_t>(structureID) + static_cast<uint32_t>(bitwise_cast<uintptr_t>(uid));
         return key + (key >> structureIDHashShift3);
-    }
-
-    ALWAYS_INLINE static uint32_t storeCachePrimaryHash(StructureID structureID, UniquedStringImpl* uid)
-    {
-        uint32_t sid = bitwise_cast<uint32_t>(structureID);
-        return ((sid >> structureIDHashShift1) ^ (sid >> structureIDHashShift4)) + uid->hash();
-    }
-
-    ALWAYS_INLINE static uint32_t storeCacheSecondaryHash(StructureID structureID, UniquedStringImpl* uid)
-    {
-        uint32_t key = bitwise_cast<uint32_t>(structureID) + static_cast<uint32_t>(bitwise_cast<uintptr_t>(uid));
-        return key + (key >> structureIDHashShift5);
     }
 
     JS_EXPORT_PRIVATE void age(CollectionScope);
@@ -178,28 +130,6 @@ public:
         m_primaryEntries[primaryIndex].initAsHit(structureID, uid, m_epoch, holder, offset, ownProperty);
     }
 
-    void initAsTransition(StructureID oldStructureID, StructureID newStructureID, UniquedStringImpl* uid, uint16_t offset)
-    {
-        uint32_t primaryIndex = MegamorphicCache::storeCachePrimaryHash(oldStructureID, uid) & storeCachePrimaryMask;
-        auto& entry = m_storeCachePrimaryEntries[primaryIndex];
-        if (entry.m_epoch == m_epoch) {
-            uint32_t secondaryIndex = MegamorphicCache::storeCacheSecondaryHash(entry.m_oldStructureID, entry.m_uid.get()) & storeCacheSecondaryMask;
-            m_storeCacheSecondaryEntries[secondaryIndex] = WTFMove(entry);
-        }
-        m_storeCachePrimaryEntries[primaryIndex].init(oldStructureID, newStructureID, uid, m_epoch, offset);
-    }
-
-    void initAsReplace(StructureID structureID, UniquedStringImpl* uid, uint16_t offset)
-    {
-        uint32_t primaryIndex = MegamorphicCache::storeCachePrimaryHash(structureID, uid) & storeCachePrimaryMask;
-        auto& entry = m_storeCachePrimaryEntries[primaryIndex];
-        if (entry.m_epoch == m_epoch) {
-            uint32_t secondaryIndex = MegamorphicCache::storeCacheSecondaryHash(entry.m_oldStructureID, entry.m_uid.get()) & storeCacheSecondaryMask;
-            m_storeCacheSecondaryEntries[secondaryIndex] = WTFMove(entry);
-        }
-        m_storeCachePrimaryEntries[primaryIndex].init(structureID, structureID, uid, m_epoch, offset);
-    }
-
     uint16_t epoch() const { return m_epoch; }
 
     void bumpEpoch()
@@ -214,8 +144,6 @@ private:
 
     std::array<Entry, primarySize> m_primaryEntries { };
     std::array<Entry, secondarySize> m_secondaryEntries { };
-    std::array<StoreEntry, storeCachePrimarySize> m_storeCachePrimaryEntries { };
-    std::array<StoreEntry, storeCacheSecondarySize> m_storeCacheSecondaryEntries { };
     uint16_t m_epoch { 1 };
 };
 

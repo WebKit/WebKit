@@ -497,8 +497,7 @@ private:
 
         case EnumeratorPutByVal:
         case PutByValDirect:
-        case PutByVal:
-        case PutByValMegamorphic: {
+        case PutByVal: {
             m_graph.varArgChild(node, 0)->mergeFlags(NodeBytecodeUsesAsValue);
             m_graph.varArgChild(node, 1)->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt | NodeBytecodeUsesAsArrayIndex);
             m_graph.varArgChild(node, 2)->mergeFlags(NodeBytecodeUsesAsValue);

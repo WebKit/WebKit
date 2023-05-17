@@ -40,8 +40,8 @@
 
 namespace JSC {
 
-JITInlineCacheGenerator::JITInlineCacheGenerator(CodeBlock*, CompileTimeStructureStubInfo stubInfo, JITType, CodeOrigin, AccessType accessType)
-    : m_accessType(accessType)
+JITInlineCacheGenerator::JITInlineCacheGenerator(
+    CodeBlock*, CompileTimeStructureStubInfo stubInfo, JITType, CodeOrigin, AccessType)
 {
     std::visit(WTF::makeVisitor(
         [&](StructureStubInfo* stubInfo) {
@@ -237,11 +237,13 @@ void JITGetByIdWithThisGenerator::generateDFGDataICFastPath(DFG::JITCompiler& ji
 JITPutByIdGenerator::JITPutByIdGenerator(
     CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSetBuilder& usedRegisters, CacheableIdentifier,
     JSValueRegs base, JSValueRegs value, GPRReg stubInfoGPR, GPRReg scratch, 
-    ECMAMode ecmaMode, AccessType accessType)
-        : JITByIdGenerator(codeBlock, stubInfo, jitType, codeOrigin, accessType, base, value)
+    ECMAMode ecmaMode, PutKind putKind)
+        : JITByIdGenerator(codeBlock, stubInfo, jitType, codeOrigin, AccessType::PutById, base, value)
+        , m_ecmaMode(ecmaMode)
+        , m_putKind(putKind)
 {
     std::visit([&](auto* stubInfo) {
-        setUpStubInfo(*stubInfo, accessType, codeOrigin, callSite, usedRegisters, base, value, stubInfoGPR, scratch, ecmaMode);
+        setUpStubInfo(*stubInfo, AccessType::PutById, codeOrigin, callSite, usedRegisters, base, value, stubInfoGPR, scratch, ecmaMode, putKind);
     }, stubInfo);
 }
 
@@ -298,21 +300,21 @@ void JITPutByIdGenerator::generateFastPath(CCallHelpers& jit, GPRReg scratchGPR,
 
 V_JITOperation_GSsiJJC JITPutByIdGenerator::slowPathFunction()
 {
-    switch (m_accessType) {
-    case AccessType::PutByIdStrict:
-        return operationPutByIdStrictOptimize;
-    case AccessType::PutByIdSloppy:
-        return operationPutByIdSloppyOptimize;
-    case AccessType::PutByIdDirectStrict:
-        return operationPutByIdDirectStrictOptimize;
-    case AccessType::PutByIdDirectSloppy:
-        return operationPutByIdDirectSloppyOptimize;
-    case AccessType::DefinePrivateNameById:
+    switch (m_putKind) {
+    case PutKind::NotDirect:
+        if (m_ecmaMode.isStrict())
+            return operationPutByIdStrictOptimize;
+        return operationPutByIdNonStrictOptimize;
+    case PutKind::Direct:
+        if (m_ecmaMode.isStrict())
+            return operationPutByIdDirectStrictOptimize;
+        return operationPutByIdDirectNonStrictOptimize;
+    case PutKind::DirectPrivateFieldDefine:
+        ASSERT(m_ecmaMode.isStrict());
         return operationPutByIdDefinePrivateFieldStrictOptimize;
-    case AccessType::SetPrivateNameById:
+    case PutKind::DirectPrivateFieldSet:
+        ASSERT(m_ecmaMode.isStrict());
         return operationPutByIdSetPrivateFieldStrictOptimize;
-    default:
-        break;
     }
     // Make win port compiler happy
     RELEASE_ASSERT_NOT_REACHED();
@@ -582,13 +584,13 @@ void JITGetByValWithThisGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& sl
         m_stubInfo->m_codePtr = m_stubInfo->slowPathStartLocation;
 }
 
-JITPutByValGenerator::JITPutByValGenerator(CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, AccessType accessType, const RegisterSetBuilder& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs value, GPRReg arrayProfileGPR, GPRReg stubInfoGPR, ECMAMode ecmaMode)
+JITPutByValGenerator::JITPutByValGenerator(CodeBlock* codeBlock, CompileTimeStructureStubInfo stubInfo, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, AccessType accessType, const RegisterSetBuilder& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs value, GPRReg arrayProfileGPR, GPRReg stubInfoGPR, PutKind putKind, ECMAMode ecmaMode, PrivateFieldPutKind privateFieldPutKind)
     : Base(codeBlock, stubInfo, jitType, codeOrigin, accessType)
     , m_base(base)
     , m_value(value)
 {
     std::visit([&](auto* stubInfo) {
-        setUpStubInfo(*stubInfo, accessType, codeOrigin, callSiteIndex, usedRegisters, base, property, value, arrayProfileGPR, stubInfoGPR, ecmaMode);
+        setUpStubInfo(*stubInfo, accessType, codeOrigin, callSiteIndex, usedRegisters, base, property, value, arrayProfileGPR, stubInfoGPR, putKind, ecmaMode, privateFieldPutKind);
     }, stubInfo);
 }
 

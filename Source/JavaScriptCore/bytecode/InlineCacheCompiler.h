@@ -184,17 +184,6 @@ private:
     std::unique_ptr<WatchpointsOnStructureStubInfo> m_watchpoints;
 };
 
-inline bool canUseMegamorphicGetById(VM& vm, UniquedStringImpl* uid)
-{
-    return !parseIndex(*uid) && uid != vm.propertyNames->length && uid != vm.propertyNames->name && uid != vm.propertyNames->prototype && uid != vm.propertyNames->underscoreProto;
-}
-
-inline bool canUseMegamorphicPutById(VM& vm, UniquedStringImpl* uid)
-{
-    return !parseIndex(*uid) && uid != vm.propertyNames->underscoreProto;
-}
-
-
 class InlineCacheCompiler {
 public:
     InlineCacheCompiler(VM& vm, JSGlobalObject* globalObject, ECMAMode ecmaMode, StructureStubInfo& stubInfo)

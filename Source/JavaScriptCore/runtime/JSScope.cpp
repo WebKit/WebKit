@@ -99,7 +99,7 @@ static inline bool abstractAccess(JSGlobalObject* globalObject, JSScope* scope, 
             }
         }
 
-        if (symbolTable->usesSloppyEval())
+        if (symbolTable->usesNonStrictEval())
             needsVarInjectionChecks = true;
         return false;
     }

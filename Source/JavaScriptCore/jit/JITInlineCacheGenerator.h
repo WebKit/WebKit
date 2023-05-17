@@ -33,6 +33,7 @@
 #include "JITOperationValidation.h"
 #include "JITOperations.h"
 #include "JSCJSValue.h"
+#include "PutKind.h"
 #include "RegisterSet.h"
 
 namespace JSC {
@@ -100,7 +101,6 @@ public:
 
 protected:
     StructureStubInfo* m_stubInfo { nullptr };
-    AccessType m_accessType;
 
 public:
     CCallHelpers::Label m_start;
@@ -224,7 +224,7 @@ public:
 
     JITPutByIdGenerator(
         CodeBlock*, CompileTimeStructureStubInfo, JITType, CodeOrigin, CallSiteIndex, const RegisterSetBuilder& usedRegisters, CacheableIdentifier,
-        JSValueRegs base, JSValueRegs value, GPRReg stubInfoGPR, GPRReg scratch, ECMAMode, AccessType);
+        JSValueRegs base, JSValueRegs value, GPRReg stubInfoGPR, GPRReg scratch, ECMAMode, PutKind);
     
     void generateFastPath(CCallHelpers&, GPRReg scratchGPR, GPRReg scratch2GPR);
     void generateBaselineDataICFastPath(JIT&, unsigned stubInfoConstant, GPRReg stubInfoGPR);
@@ -237,18 +237,25 @@ public:
     template<typename StubInfo>
     static void setUpStubInfo(StubInfo& stubInfo,
         AccessType accessType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, const RegisterSetBuilder& usedRegisters,
-        JSValueRegs baseRegs, JSValueRegs valueRegs, GPRReg stubInfoGPR, GPRReg scratchGPR, ECMAMode ecmaMode)
+        JSValueRegs baseRegs, JSValueRegs valueRegs, GPRReg stubInfoGPR, GPRReg scratchGPR, ECMAMode ecmaMode, PutKind putKind)
     {
         JITByIdGenerator::setUpStubInfoImpl(stubInfo, accessType, codeOrigin, callSiteIndex, usedRegisters, baseRegs, valueRegs, stubInfoGPR);
         if constexpr (!std::is_same_v<std::decay_t<StubInfo>, BaselineUnlinkedStructureStubInfo>)
             stubInfo.usedRegisters.remove(scratchGPR);
         else
             UNUSED_PARAM(scratchGPR);
-        if constexpr (!std::is_same_v<std::decay_t<StubInfo>, StructureStubInfo>)
+        if constexpr (!std::is_same_v<std::decay_t<StubInfo>, StructureStubInfo>) {
             stubInfo.ecmaMode = ecmaMode;
-        else
+            stubInfo.putKind = putKind;
+        } else {
             UNUSED_PARAM(ecmaMode);
+            UNUSED_PARAM(putKind);
+        }
     }
+
+private:
+    ECMAMode m_ecmaMode { ECMAMode::strict() };
+    PutKind m_putKind;
 };
 
 class JITPutByValGenerator final : public JITInlineCacheGenerator {
@@ -258,7 +265,7 @@ public:
 
     JITPutByValGenerator(
         CodeBlock*, CompileTimeStructureStubInfo, JITType, CodeOrigin, CallSiteIndex, AccessType, const RegisterSetBuilder& usedRegisters,
-        JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg arrayProfileGPR, GPRReg stubInfoGPR, ECMAMode);
+        JSValueRegs base, JSValueRegs property, JSValueRegs result, GPRReg arrayProfileGPR, GPRReg stubInfoGPR, PutKind, ECMAMode, PrivateFieldPutKind);
 
     CCallHelpers::Jump slowPathJump() const
     {
@@ -273,7 +280,7 @@ public:
     template<typename StubInfo>
     static void setUpStubInfo(StubInfo& stubInfo,
         AccessType accessType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, const RegisterSetBuilder& usedRegisters,
-        JSValueRegs baseRegs, JSValueRegs propertyRegs, JSValueRegs valueRegs, GPRReg arrayProfileGPR, GPRReg stubInfoGPR, ECMAMode ecmaMode)
+        JSValueRegs baseRegs, JSValueRegs propertyRegs, JSValueRegs valueRegs, GPRReg arrayProfileGPR, GPRReg stubInfoGPR, PutKind putKind, ECMAMode ecmaMode, PrivateFieldPutKind privateFieldPutKind)
     {
         JITInlineCacheGenerator::setUpStubInfoImpl(stubInfo, accessType, codeOrigin, callSiteIndex, usedRegisters);
         if constexpr (!std::is_same_v<std::decay_t<StubInfo>, BaselineUnlinkedStructureStubInfo>) {
@@ -298,10 +305,15 @@ public:
             UNUSED_PARAM(stubInfoGPR);
             UNUSED_PARAM(arrayProfileGPR);
         }
-        if constexpr (!std::is_same_v<std::decay_t<StubInfo>, StructureStubInfo>)
+        if constexpr (!std::is_same_v<std::decay_t<StubInfo>, StructureStubInfo>) {
+            stubInfo.putKind = putKind;
             stubInfo.ecmaMode = ecmaMode;
-        else
+            stubInfo.privateFieldPutKind = privateFieldPutKind;
+        } else {
+            UNUSED_PARAM(putKind);
             UNUSED_PARAM(ecmaMode);
+            UNUSED_PARAM(privateFieldPutKind);
+        }
     }
 
     JSValueRegs m_base;
