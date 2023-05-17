@@ -839,6 +839,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSGlobalObjectDebuggable.h
     inspector/JSGlobalObjectDebugger.h
 
+
     inspector/agents/InspectorAgent.h
     inspector/agents/InspectorAuditAgent.h
     inspector/agents/InspectorConsoleAgent.h
