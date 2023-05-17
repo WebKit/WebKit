@@ -704,7 +704,8 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
 
     _forEachPropertyDescriptor(object, collectionMode, callback, {nativeGettersAsValues, includeProto})
     {
-        if (InjectedScriptHost.subtype(object) === "proxy")
+        let subtype = RemoteObject.subtype(object);
+        if (subtype === "proxy" || subtype === "weakref")
             return;
 
         let nameProcessed = new @Set;
@@ -807,7 +808,7 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
 
         let isArrayLike = false;
         try {
-            isArrayLike = RemoteObject.subtype(object) === "array" && @isFinite(object.length) && object.length > 0;
+            isArrayLike = subtype === "array" && @isFinite(object.length) && object.length > 0;
         } catch { }
 
         for (let o = object; isDefined(o); o = @Object.@getPrototypeOf(o)) {
@@ -1043,6 +1044,9 @@ let RemoteObject = class RemoteObject extends PrototypelessObjectBase
             if (subtype === "proxy") {
                 this.preview = this._generatePreview(InjectedScriptHost.proxyTargetValue(object));
                 this.preview.lossless = false;
+            } else if (subtype === "weakref") {
+                this.preview = this._generatePreview(InjectedScriptHost.weakRefTargetValue(object));
+                this.preview.lossless = false;
             } else
                 this.preview = this._generatePreview(object, @undefined, columnNames);
         }
@@ -1124,6 +1128,9 @@ let RemoteObject = class RemoteObject extends PrototypelessObjectBase
 
         if (subtype === "proxy")
             return "Proxy";
+
+        if (subtype === "weakref")
+            return "WeakRef";
 
         if (subtype === "node")
             return RemoteObject.nodePreview(value);

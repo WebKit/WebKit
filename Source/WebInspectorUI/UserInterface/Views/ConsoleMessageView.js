@@ -720,6 +720,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
             "iterator": this._formatParameterAsObject,
             "class": this._formatParameterAsObject,
             "proxy": this._formatParameterAsObject,
+            "weakref": this._formatParameterAsObject,
             "array": this._formatParameterAsArray,
             "node": this._formatParameterAsNode,
             "string": this._formatParameterAsString,

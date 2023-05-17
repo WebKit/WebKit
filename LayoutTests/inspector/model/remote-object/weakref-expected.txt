@@ -1,0 +1,59 @@
+
+-----------------------------------------------------
+EXPRESSION: new WeakRef({x:1, y:1})
+{
+  "_type": "object",
+  "_subtype": "weakref",
+  "_objectId": "<filtered>",
+  "_description": "WeakRef",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "weakref",
+    "_description": "WeakRef",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "x",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "y",
+        "_type": "number",
+        "_value": "1"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new WeakRef(new WeakRef({x:1, y:1}))
+{
+  "_type": "object",
+  "_subtype": "weakref",
+  "_objectId": "<filtered>",
+  "_description": "WeakRef",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "weakref",
+    "_description": "WeakRef",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "x",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "y",
+        "_type": "number",
+        "_value": "1"
+      }
+    ],
+    "_entries": null
+  }
+}
+
