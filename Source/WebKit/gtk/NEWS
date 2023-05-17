@@ -1,4 +1,20 @@
 ================
+WebKitGTK 2.41.4
+================
+
+What's new in WebKitGTK 2.41.4?
+
+  - Add new API to configure experimental features at runtime.
+  - Add support for prefers-reduced-motion media query.
+  - Split hardware acceleration information in webkit://gpu.
+  - Fix CPU usage on autoplaying videos.
+  - Fix video rendering when GL is disabled.
+  - Choose amount of painting threads depending on available CPU cores on GTK4.
+  - Add memory usage of images in web inspector memory timeline.
+  - Fix the build with X11 target disabled.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.41.3
 ================
 
