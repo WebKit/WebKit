@@ -1238,6 +1238,20 @@ CSSScrollAnchoringEnabled:
     WebCore:
       default: false
 
+CSSScrollbarWidthEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS scrollbar-width property"
+  humanReadableDescription: "Enable scrollbar-width CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSTextAlignLastEnabled:
   type: bool
   status: stable
