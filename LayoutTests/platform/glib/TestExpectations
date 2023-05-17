@@ -1672,7 +1672,7 @@ fast/mediastream/microphone-change-while-capturing.html [ Failure ]
 fast/mediastream/microphone-change-while-muted.html [ Failure ]
 fast/mediastream/device-change-event-2.html [ Failure ]
 
-fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ Failure ]
+# Regressions introduced by https://commits.webkit.org/263750@main
 fast/mediastream/apply-constraints-advanced.html [ Failure ]
 fast/mediastream/apply-constraints-video.html [ Failure ]
 fast/mediastream/cloned-video-stream-aspect-ratio.html [ Failure ]
@@ -1684,9 +1684,10 @@ fast/mediastream/getUserMedia-frame-rate.html [ Failure ]
 fast/mediastream/get-user-media-constraints.html [ Failure ]
 fast/mediastream/get-user-media-ideal-constraints.html [ Failure ]
 fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html [ Failure ]
-fast/mediastream/video-rotation.html [ Failure ]
-
+fast/mediastream/video-rotation.html [ Skip ]
 webrtc/video-rotation-no-cvo.html [ Failure ]
+
+webkit.org/b/256758 fast/mediastream/captureStream/canvas3d.html [ Failure ]
 
 webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
 
