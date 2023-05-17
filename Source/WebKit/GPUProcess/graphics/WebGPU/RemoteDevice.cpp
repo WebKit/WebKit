@@ -83,7 +83,7 @@
 
 namespace WebKit {
 
-RemoteDevice::RemoteDevice(Function<void(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&)>& performWithMediaPlayerOnMainThread, PAL::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
+RemoteDevice::RemoteDevice(PerformWithMediaPlayerOnMainThread& performWithMediaPlayerOnMainThread, PAL::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
     : m_backing(device)
     , m_objectHeap(objectHeap)
     , m_streamConnection(streamConnection.copyRef())

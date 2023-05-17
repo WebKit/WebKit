@@ -71,10 +71,13 @@ struct ShaderModuleDescriptor;
 struct TextureDescriptor;
 }
 
+using MediaPlayerAccessor = Function<void(WebCore::MediaPlayer&)>;
+using PerformWithMediaPlayerOnMainThread = Function<void(WebCore::MediaPlayerIdentifier, MediaPlayerAccessor&&)>;
+
 class RemoteDevice final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteDevice> create(Function<void(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&)>& performWithMediaPlayerOnMainThread, PAL::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
+    static Ref<RemoteDevice> create(PerformWithMediaPlayerOnMainThread& performWithMediaPlayerOnMainThread, PAL::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
     {
         return adoptRef(*new RemoteDevice(performWithMediaPlayerOnMainThread, device, objectHeap, WTFMove(streamConnection), identifier, queueIdentifier));
     }
@@ -88,7 +91,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteDevice(Function<void(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&)>&, PAL::WebGPU::Device&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier, WebGPUIdentifier queueIdentifier);
+    RemoteDevice(PerformWithMediaPlayerOnMainThread&, PAL::WebGPU::Device&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier, WebGPUIdentifier queueIdentifier);
 
     RemoteDevice(const RemoteDevice&) = delete;
     RemoteDevice(RemoteDevice&&) = delete;
@@ -133,7 +136,7 @@ private:
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;
     Ref<RemoteQueue> m_queue;
-    Function<void(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&)>& m_performWithMediaPlayerOnMainThread;
+    PerformWithMediaPlayerOnMainThread& m_performWithMediaPlayerOnMainThread;
 };
 
 } // namespace WebKit

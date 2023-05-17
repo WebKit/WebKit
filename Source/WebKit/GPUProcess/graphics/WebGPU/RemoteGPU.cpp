@@ -47,7 +47,7 @@
 
 namespace WebKit {
 
-RemoteGPU::RemoteGPU(Function<void(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&)>&& performWithMediaPlayerOnMainThread, WebGPUIdentifier identifier, IPC::StreamServerConnection::Handle&& connectionHandle)
+RemoteGPU::RemoteGPU(PerformWithMediaPlayerOnMainThread&& performWithMediaPlayerOnMainThread, WebGPUIdentifier identifier, IPC::StreamServerConnection::Handle&& connectionHandle)
     : m_workQueue(IPC::StreamConnectionWorkQueue::create("WebGPU work queue"))
     , m_streamConnection(IPC::StreamServerConnection::create(WTFMove(connectionHandle), workQueue()))
     , m_objectHeap(WebGPU::ObjectHeap::create())

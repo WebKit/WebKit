@@ -41,7 +41,7 @@
 
 namespace WebKit {
 
-RemoteAdapter::RemoteAdapter(Function<void(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&)>& performWithMediaPlayerOnMainThread, PAL::WebGPU::Adapter& adapter, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteAdapter::RemoteAdapter(PerformWithMediaPlayerOnMainThread& performWithMediaPlayerOnMainThread, PAL::WebGPU::Adapter& adapter, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(adapter)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))

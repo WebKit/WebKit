@@ -53,7 +53,7 @@ struct SupportedLimits;
 class RemoteAdapter final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteAdapter> create(Function<void(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&)>& performWithMediaPlayerOnMainThread, PAL::WebGPU::Adapter& adapter, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteAdapter> create(PerformWithMediaPlayerOnMainThread& performWithMediaPlayerOnMainThread, PAL::WebGPU::Adapter& adapter, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteAdapter(performWithMediaPlayerOnMainThread, adapter, objectHeap, WTFMove(streamConnection), identifier));
     }
@@ -65,7 +65,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteAdapter(Function<void(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&)>&, PAL::WebGPU::Adapter&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteAdapter(PerformWithMediaPlayerOnMainThread&, PAL::WebGPU::Adapter&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteAdapter(const RemoteAdapter&) = delete;
     RemoteAdapter(RemoteAdapter&&) = delete;
@@ -82,7 +82,7 @@ private:
     Ref<PAL::WebGPU::Adapter> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
-    Function<void(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&)>& m_performWithMediaPlayerOnMainThread;
+    PerformWithMediaPlayerOnMainThread& m_performWithMediaPlayerOnMainThread;
     WebGPUIdentifier m_identifier;
 };
 
