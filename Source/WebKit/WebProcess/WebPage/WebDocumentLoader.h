@@ -37,6 +37,7 @@ public:
         return adoptRef(*new WebDocumentLoader(request, data));
     }
 
+    uint64_t takeNavigationID() { return std::exchange(m_navigationID, 0); }
     uint64_t navigationID() const { return m_navigationID; }
     void setNavigationID(uint64_t);
 

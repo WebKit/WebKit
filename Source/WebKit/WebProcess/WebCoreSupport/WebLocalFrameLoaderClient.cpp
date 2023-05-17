@@ -663,7 +663,7 @@ void WebLocalFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceErr
     uint64_t navigationID = 0;
     ResourceRequest request;
     if (auto documentLoader = m_frame->coreFrame()->loader().provisionalDocumentLoader()) {
-        navigationID = static_cast<WebDocumentLoader*>(documentLoader)->navigationID();
+        navigationID = static_cast<WebDocumentLoader*>(documentLoader)->takeNavigationID();
         request = documentLoader->request();
     }
 
@@ -687,7 +687,7 @@ void WebLocalFrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
     RefPtr<API::Object> userData;
 
     auto& documentLoader = static_cast<WebDocumentLoader&>(*m_frame->coreFrame()->loader().documentLoader());
-    auto navigationID = documentLoader.navigationID();
+    auto navigationID = documentLoader.takeNavigationID();
 
     // Notify the bundle client.
     webPage->injectedBundleLoaderClient().didFailLoadWithErrorForFrame(*webPage, m_frame, error, userData);
@@ -734,7 +734,7 @@ void WebLocalFrameLoaderClient::dispatchDidFinishLoad()
     RefPtr<API::Object> userData;
 
     Ref documentLoader = static_cast<WebDocumentLoader&>(*m_frame->coreFrame()->loader().documentLoader());
-    auto navigationID = documentLoader->navigationID();
+    auto navigationID = documentLoader->takeNavigationID();
 
     // Notify the bundle client.
     webPage->injectedBundleLoaderClient().didFinishLoadForFrame(*webPage, m_frame, userData);

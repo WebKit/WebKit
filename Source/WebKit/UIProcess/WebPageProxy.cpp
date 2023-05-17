@@ -5792,7 +5792,7 @@ void WebPageProxy::didFinishLoadForFrame(FrameIdentifier frameID, FrameInfoData&
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the back/forward cache.
     RefPtr<API::Navigation> navigation;
     if (frame->isMainFrame() && navigationID && navigationState().hasNavigation(navigationID))
-        navigation = navigationState().navigation(navigationID);
+        navigation = navigationState().takeNavigation(navigationID);
 
     bool isMainFrame = frame->isMainFrame();
     if (!isMainFrame || !navigationID || navigation) {
@@ -5852,7 +5852,7 @@ void WebPageProxy::didFailLoadForFrame(FrameIdentifier frameID, FrameInfoData&& 
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the back/forward cache.
     RefPtr<API::Navigation> navigation;
     if (frame->isMainFrame() && navigationID)
-        navigation = navigationState().navigation(navigationID);
+        navigation = navigationState().takeNavigation(navigationID);
 
     auto transaction = internals().pageLoadState.transaction();
 

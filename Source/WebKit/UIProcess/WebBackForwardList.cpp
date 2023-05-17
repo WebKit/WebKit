@@ -70,6 +70,9 @@ WebBackForwardListItem* WebBackForwardList::itemForID(const BackForwardItemIdent
     if (!item)
         return nullptr;
 
+    if (!m_entries.containsIf([&](auto& entry) { return entry.ptr() == item; }))
+        return nullptr;
+
     ASSERT(item->pageID() == m_page->identifier());
     return item;
 }
