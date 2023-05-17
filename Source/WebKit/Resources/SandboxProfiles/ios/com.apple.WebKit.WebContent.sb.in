@@ -718,6 +718,13 @@
 (deny sysctl-read (with no-report)
     (sysctl-name "vm.task_no_footprint_for_debug"))
 
+#if HAVE(SANDBOX_STATE_FLAGS)
+(with-filter (require-not (state-flag "WebContentProcessLaunched"))
+    (allow sysctl-read (sysctl-name "vm.malloc_ranges"))) ;; <rdar://problem/105161083>
+#else
+(allow sysctl-read (sysctl-name "vm.malloc_ranges")) ;; <rdar://problem/105161083>
+#endif
+
 (allow iokit-get-properties
     (iokit-property "AAPL,DisplayPipe")
     (iokit-property "AAPL,OpenCLdisabled")
@@ -1385,6 +1392,7 @@
         host_get_special_port
         host_info
         io_server_version
+        (when (defined? 'mach_vm_range_create) mach_vm_range_create) ;; <rdar://105161083>
         task_restartable_ranges_register
         task_set_special_port))
 

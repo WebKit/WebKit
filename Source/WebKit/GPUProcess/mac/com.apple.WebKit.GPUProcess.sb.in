@@ -226,7 +226,8 @@
         "kern.osproductversion"
         "kern.osrelease"
         "kern.ostype"
-        "kern.version")
+        "kern.version"
+        "vm.malloc_ranges") ;; <rdar://problem/105161083>
     (sysctl-name-prefix "hw.optional.") ;; <rdar://problem/71462790>
     (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76783596>
 )
@@ -1091,6 +1092,9 @@
                 mach_port_set_attributes
                 mach_vm_copy
                 mach_vm_map_external
+#if HAVE(MACH_RANGE_CREATE)
+                (when (defined? 'mach_vm_range_create) mach_vm_range_create) ;; <rdar://105161083>
+#endif
                 mach_vm_remap_external
                 semaphore_create
                 semaphore_destroy
