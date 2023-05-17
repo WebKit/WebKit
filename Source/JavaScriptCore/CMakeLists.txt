@@ -834,11 +834,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     inspector/ScriptCallFrame.h
     inspector/ScriptCallStack.h
     inspector/ScriptCallStackFactory.h
-    
-    inspector/JSGlobalObjectInspectorController.h
-    runtime/JSGlobalObjectDebuggable.h
-    inspector/JSGlobalObjectDebugger.h
-
+    inspector/ScriptFunctionCall.h
 
     inspector/agents/InspectorAgent.h
     inspector/agents/InspectorAuditAgent.h
@@ -981,7 +977,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/CatchScope.h
     runtime/CellSize.h
     runtime/ClassInfo.h
-    runtime/CodeCache.h
+    runtime/ClonedArguments.h
     runtime/CodeSpecializationKind.h
     runtime/CommonIdentifiers.h
     runtime/CompilationResult.h
@@ -1016,7 +1012,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/EnsureStillAliveHere.h
     runtime/EnumerationMode.h
     runtime/Error.h
-    runtime/ErrorConstructor.h
     runtime/ErrorHandlingScope.h
     runtime/ErrorInstance.h
     runtime/ErrorPrototype.h
@@ -1260,8 +1255,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/WeakGCMapInlines.h
     runtime/WeakGCSet.h
     runtime/WeakGCSetInlines.h
-    runtime/WeakMapImpl.h
-    runtime/WeakMapImplInlines.h
     runtime/WriteBarrier.h
     runtime/WriteBarrierInlines.h
 
@@ -1318,58 +1311,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     yarr/YarrParser.h
     yarr/YarrPattern.h
     yarr/YarrUnicodeProperties.h
-
-    bytecode/Opcode.h
-    llint/LLIntOpcode.h
-
-    runtime/LazyClassStructureInlines.h
-    runtime/LazyPropertyInlines.h
-    runtime/JSTypedArrayViewPrototype.h
-    runtime/JSTypedArrayPrototypes.h
-    API/JSWeakValue.h
-
-    jit/JIT.h
-    bytecode/StructureStubInfo.h
-    bytecode/AccessCase.h
-    bytecode/ObjectPropertyConditionSet.h
-    bytecode/PolyProtoAccessChain.h
-    bytecode/PutKind.h
-    bytecode/StructureStubClearingWatchpoint.h
-    bytecode/AdaptiveInferredPropertyValueWatchpointBase.h
-    bytecode/InlineCacheCompiler.h
-    bytecode/StubInfoSummary.h
-    runtime/CommonSlowPaths.h
-    runtime/DirectArguments.h
-    runtime/GenericArguments.h
-    runtime/ScopedArguments.h
-    runtime/JSLexicalEnvironment.h
-    jit/JITDisassembler.h
-    jit/JITInlineCacheGenerator.h
-    jit/JITMathIC.h
-    jit/JITAddGenerator.h
-    jit/JITMathICInlineResult.h
-    jit/SnippetOperand.h
-    jit/JITMulGenerator.h
-    jit/JITNegGenerator.h
-    jit/JITSubGenerator.h
-    bytecode/Repatch.h
-    jit/JITRightShiftGenerator.h
-    jit/JITBitBinaryOpGenerator.h
-    jit/JSInterfaceJIT.h
-    llint/LLIntData.h
-    bytecode/FunctionCodeBlock.h
-
-    dfg/DFGAbstractHeap.h
-    bytecode/OperandsInlines.h
-    bytecode/Operands.h
-    domjit/DOMJITHeapRange.h
-    runtime/JSModuleNamespaceObject.h
-    runtime/SamplingProfiler.h
-    runtime/GeneratorFunctionPrototype.h
-    runtime/AsyncFunctionPrototype.h
-
-    jit/Width.h
-    runtime/ClonedArguments.h
 )
 
 if (USE_INSPECTOR_SOCKET_SERVER)
