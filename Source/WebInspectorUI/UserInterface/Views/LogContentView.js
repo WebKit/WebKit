@@ -60,8 +60,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         this._logViewController = new WI.JavaScriptLogViewController(this.messagesElement, this.messagesElement, this.prompt, this, "console-prompt-history");
         this._lastMessageView = null;
 
-        const fixed = true;
-        this._findBanner = new WI.FindBanner(this, "console-find-banner", fixed);
+        this._findBanner = new WI.FindBanner(this, {alwaysShowing: true, className: "console"});
         this._findBanner.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._findBanner.targetElement = this.element;
 
