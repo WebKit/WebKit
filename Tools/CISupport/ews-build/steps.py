@@ -1540,16 +1540,21 @@ class BugzillaMixin(AddToLogMixin):
         try:
             builder_name = self.getProperty('buildername', '')
             worker_name = self.getProperty('workername', '')
+            pr_number = self.getProperty('github.number')
+            sha = self.getProperty('github.head.sha', '')[:HASH_LENGTH_TO_DISPLAY]
+            owners = self.getProperty('owners', [])
+            author = owners[0] if owners else '?'
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
-            email_subject = 'Infrastructure issue at {}'.format(builder_name)
-            email_text = 'The following infrastructure issue happened at:\n\n'
-            email_text += '    - Build : <a href="{}">{}</a>\n'.format(build_url, build_url)
-            email_text += '    - Builder : {}\n'.format(builder_name)
-            email_text += '    - Worker : {}\n'.format(worker_name)
-            email_text += '    - Issue: {}\n'.format(infrastructure_issue_text)
-            send_email_to_bot_watchers(email_subject, email_text, builder_name, 'infrastructure-{}'.format(builder_name))
+            email_subject = f'Infrastructure issue at {builder_name}'
+            email_text = f'The following infrastructure issue happened at:\n\n'
+            email_text += f'    - Build : <a href="{build_url}">{build_url}</a>\n'
+            email_text += f'    - Builder : {builder_name}\n'
+            email_text += f'    - Worker : {worker_name}\n'
+            email_text += f'    - PR: {pr_number}, Hash: {sha}, By: {author}\n'
+            email_text += f'    - Issue: {infrastructure_issue_text}\n'
+            send_email_to_bot_watchers(email_subject, email_text, builder_name, f'infrastructure-{builder_name}')
         except Exception as e:
-            print('Error in sending email for infrastructure issue: {}'.format(e))
+            print(f'Error in sending email for infrastructure issue: {e}')
 
     def get_bugzilla_api_key(self):
         try:
