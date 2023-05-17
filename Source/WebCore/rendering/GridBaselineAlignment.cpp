@@ -141,7 +141,7 @@ LayoutUnit GridBaselineAlignment::baselineOffsetForChild(ItemPosition preference
 {
     ASSERT(isBaselinePosition(preference));
     auto& group = baselineGroupForChild(preference, sharedContext, child, baselineAxis);
-    if (group.size() > 1)
+    if (group.computeSize() > 1)
         return group.maxAscent() - logicalAscentForChild(child, baselineAxis, preference);
     return LayoutUnit();
 }

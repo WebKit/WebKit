@@ -36,7 +36,7 @@ BaselineGroup::BaselineGroup(WritingMode blockFlow, ItemPosition childPreference
 
 void BaselineGroup::update(const RenderBox& child, LayoutUnit ascent)
 {
-    if (m_items.add(&child).isNewEntry)
+    if (m_items.add(child).isNewEntry)
         m_maxAscent = std::max(m_maxAscent, ascent);
 }
 
@@ -72,7 +72,7 @@ bool BaselineGroup::isOrthogonalBlockFlow(WritingMode blockFlow) const
 bool BaselineGroup::isCompatible(WritingMode childBlockFlow, ItemPosition childPreference) const
 {
     ASSERT(isBaselinePosition(childPreference));
-    ASSERT(size() > 0);
+    ASSERT(computeSize() > 0);
     return ((m_blockFlow == childBlockFlow || isOrthogonalBlockFlow(childBlockFlow)) && m_preference == childPreference) || (isOppositeBlockFlow(childBlockFlow) && m_preference != childPreference);
 }
 

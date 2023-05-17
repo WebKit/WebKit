@@ -49,7 +49,7 @@ public:
     // baseline-sharing group.
     void update(const RenderBox&, LayoutUnit ascent);
     LayoutUnit maxAscent() const { return m_maxAscent; }
-    int size() const { return m_items.size(); }
+    int computeSize() const { return m_items.computeSize(); }
 
 private:
     friend class BaselineContext;
@@ -70,7 +70,7 @@ private:
     WritingMode m_blockFlow;
     ItemPosition m_preference;
     LayoutUnit m_maxAscent;
-    HashSet<const RenderBox*> m_items;
+    WeakHashSet<const RenderBox> m_items;
 };
 
 // https://drafts.csswg.org/css-align-3/#shared-alignment-context
