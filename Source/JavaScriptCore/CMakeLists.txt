@@ -626,10 +626,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     b3/B3Type.h
     b3/B3ValueRep.h
 
-    bindings/ScriptFunctionCall.h
-    bindings/ScriptObject.h
-    bindings/ScriptValue.h
-
     builtins/BuiltinNames.h
     builtins/BuiltinUtils.h
 
@@ -839,6 +835,12 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     inspector/ScriptCallStack.h
     inspector/ScriptCallStackFactory.h
     
+    
+    inspector/JSGlobalObjectInspectorController.h
+    runtime/JSGlobalObjectDebuggable.h
+    inspector/JSGlobalObjectDebugger.h
+
+
     inspector/JSGlobalObjectInspectorController.h
     runtime/JSGlobalObjectDebuggable.h
     inspector/JSGlobalObjectDebugger.h
@@ -910,36 +912,23 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     jit/SpillRegistersMode.h
     jit/TagRegistersMode.h
     jit/ThunkGenerator.h
-    
+    jit/Width.h
 
     llint/LLIntOpcode.h
+    llint/LLIntThunks.h
 
-
-    bytecode/UnlinkedFunctionCodeBlock.h
-    bytecode/UnlinkedModuleProgramCodeBlock.h
-    bytecode/UnlinkedProgramCodeBlock.h
-    bytecode/ParseHash.h
-    bytecompiler/Label.h
-
-    parser/ExecutableInfo.h
     parser/Lexer.h
-    parser/ModuleScopeData.h
-    parser/Nodes.h
-    parser/Parser.h
     parser/ParserArena.h
     parser/ParserError.h
-    parser/ParserFunctionInfo.h
     parser/ParserModes.h
     parser/ParserTokens.h
     parser/ResultType.h
     parser/SourceCode.h
-    parser/SourceCodeKey.h
     parser/SourceProvider.h
     parser/SourceProviderCache.h
     parser/SourceProviderCacheItem.h
     parser/UnlinkedSourceCode.h
     parser/VariableEnvironment.h
-
 
     profiler/ProfilerBytecode.h
     profiler/ProfilerBytecodeSequence.h
@@ -957,8 +946,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     profiler/ProfilerOriginStack.h
     profiler/ProfilerProfiledBytecodes.h
     profiler/ProfilerUID.h
-
-    runtime/AggregateError.h
 
     runtime/AbstractModuleRecord.h
     runtime/ArgList.h
@@ -1121,6 +1108,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSGlobalObject.h
     runtime/JSGlobalObjectFunctions.h
     runtime/JSGlobalObjectInlines.h
+    runtime/JSGlobalProxy.h
     runtime/JSImmutableButterfly.h
     runtime/JSInternalFieldObjectImpl.h
     runtime/JSInternalPromise.h
@@ -1140,7 +1128,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSPromise.h
     runtime/JSPromiseConstructor.h
     runtime/JSPropertyNameEnumerator.h
-    runtime/JSProxy.h
     runtime/JSRemoteFunction.h
     runtime/JSRunLoopTimer.h
     runtime/JSScope.h
@@ -1389,8 +1376,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     jit/Width.h
     runtime/ClonedArguments.h
 )
-
-
 
 if (USE_INSPECTOR_SOCKET_SERVER)
     list(APPEND JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
