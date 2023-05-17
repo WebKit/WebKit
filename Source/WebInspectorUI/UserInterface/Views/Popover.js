@@ -48,6 +48,8 @@ WI.Popover = class Popover extends WI.Object
         this._container = this._element.appendChild(document.createElement("div"));
         this._container.className = "container";
 
+        this._backgroundCanvasContext = null;
+
         this._drawBackgroundAnimationIdentifier = undefined;
     }
 
@@ -167,6 +169,8 @@ WI.Popover = class Popover extends WI.Object
 
         if (this.delegate && typeof this.delegate.willDismissPopover === "function")
             this.delegate.willDismissPopover(this);
+
+        WI.Popover._visibleInstance = null;
     }
 
     handleEvent(event)
@@ -195,6 +199,11 @@ WI.Popover = class Popover extends WI.Object
                     this.delegate.didDismissPopover(this);
 
                 this._dismissing = false;
+
+                if (this._backgroundCanvasContext) {
+                    WI.Popover._backgroundCanvasContexts.push(new WeakRef(this._backgroundCanvasContext));
+                    this._backgroundCanvasContext = null;
+                }
                 break;
             }
             break;
@@ -203,22 +212,13 @@ WI.Popover = class Popover extends WI.Object
 
     // Private
 
-    static _getCanvasContext(width, height)
-    {
-        let context = WI.Popover._canvasContext?.deref();
-        if (!context) {
-            context = document.createElement("canvas").getContext("2d");
-            context.canvas.className = "background-canvas";
-            WI.Popover._canvasContext = new WeakRef(context);
-        }
-
-        context.canvas.width = width;
-        context.canvas.height = height;
-        return context;
-    }
-
     _update(shouldAnimate)
     {
+        if (WI.Popover._visibleInstance !== this) {
+            WI.Popover._visibleInstance?.dismiss();
+            WI.Popover._visibleInstance = this;
+        }
+
         if (shouldAnimate)
             var previousEdge = this._edge;
 
@@ -439,35 +439,44 @@ WI.Popover = class Popover extends WI.Object
         bounds = bounds.inset(WI.Popover.ShadowEdgeInsets);
         let computedStyle = window.getComputedStyle(this._element, null);
 
-        let context = WI.Popover._getCanvasContext(scaledWidth, scaledHeight);
-        this._element.appendChild(context.canvas);
-
-        context.clearRect(0, 0, scaledWidth, scaledHeight);
-
-        function isolate(callback) {
-            context.save();
-            callback();
-            context.restore();
+        if (!this._backgroundCanvasContext) {
+            this._backgroundCanvasContext = WI.Popover._backgroundCanvasContexts.pop()?.deref();
+            if (!this._backgroundCanvasContext) {
+                this._backgroundCanvasContext = document.createElement("canvas").getContext("2d");
+                this._backgroundCanvasContext.canvas.className = "background-canvas";
+            }
         }
 
+        this._backgroundCanvasContext.canvas.width = scaledWidth;
+        this._backgroundCanvasContext.canvas.height = scaledHeight;
+        this._backgroundCanvasContext.clearRect(0, 0, scaledWidth, scaledHeight);
+
+        let isolate = (callback) => {
+            this._backgroundCanvasContext.save();
+            callback();
+            this._backgroundCanvasContext.restore();
+        };
+
         isolate(() => {
-            context.scale(scaleFactor, scaleFactor);
-            this._drawFrame(context, bounds, this._edge, this._anchorPoint);
+            this._backgroundCanvasContext.scale(scaleFactor, scaleFactor);
+            this._drawFrame(bounds);
 
             isolate(() => {
-                context.shadowBlur = 4;
-                context.shadowColor = computedStyle.getPropertyValue("--popover-shadow-color").trim();
+                this._backgroundCanvasContext.shadowBlur = 4;
+                this._backgroundCanvasContext.shadowColor = computedStyle.getPropertyValue("--popover-shadow-color").trim();
 
-                context.strokeStyle = computedStyle.getPropertyValue("--popover-border-color").trim();
-                context.lineWidth = 2;
-                context.stroke();
+                this._backgroundCanvasContext.strokeStyle = computedStyle.getPropertyValue("--popover-border-color").trim();
+                this._backgroundCanvasContext.lineWidth = 2;
+                this._backgroundCanvasContext.stroke();
             });
 
             isolate(() => {
-                context.fillStyle = computedStyle.getPropertyValue("--popover-background-color").trim();
-                context.fill();
+                this._backgroundCanvasContext.fillStyle = computedStyle.getPropertyValue("--popover-background-color").trim();
+                this._backgroundCanvasContext.fill();
             });
         });
+
+        this._element.appendChild(this._backgroundCanvasContext.canvas);
     }
 
     _bestMetricsForEdge(preferredSize, targetFrame, containerFrame, edge)
@@ -531,62 +540,64 @@ WI.Popover = class Popover extends WI.Object
         };
     }
 
-    _drawFrame(ctx, bounds, anchorEdge)
+    _drawFrame(bounds)
     {
         let cornerRadius = WI.Popover.CornerRadius;
-        let anchorPoint = this._anchorPoint;
+
+        let anchorPointX = this._anchorPoint.x;
+        let anchorPointY = this._anchorPoint.y;
 
         // Prevent the arrow from being positioned against one of the popover's rounded corners.
         let arrowPadding = cornerRadius + WI.Popover.AnchorSize;
-        if (anchorEdge === WI.RectEdge.MIN_Y || anchorEdge === WI.RectEdge.MAX_Y)
-            anchorPoint.x = Number.constrain(anchorPoint.x, bounds.minX() + arrowPadding, bounds.maxX() - arrowPadding);
+        if (this._edge === WI.RectEdge.MIN_Y || this._edge === WI.RectEdge.MAX_Y)
+            anchorPointX = Number.constrain(anchorPointX, bounds.minX() + arrowPadding, bounds.maxX() - arrowPadding);
         else
-            anchorPoint.y = Number.constrain(anchorPoint.y, bounds.minY() + arrowPadding, bounds.maxY() - arrowPadding);
+            anchorPointY = Number.constrain(anchorPointY, bounds.minY() + arrowPadding, bounds.maxY() - arrowPadding);
 
-        ctx.beginPath();
-        switch (anchorEdge) {
+        this._backgroundCanvasContext.beginPath();
+        switch (this._edge) {
         case WI.RectEdge.MIN_X: // Displayed on the left of the target, arrow points right.
-            ctx.moveTo(bounds.maxX(), bounds.minY() + cornerRadius);
-            ctx.lineTo(bounds.maxX(), anchorPoint.y - WI.Popover.AnchorSize);
-            ctx.lineTo(anchorPoint.x, anchorPoint.y);
-            ctx.lineTo(bounds.maxX(), anchorPoint.y + WI.Popover.AnchorSize);
-            ctx.arcTo(bounds.maxX(), bounds.maxY(), bounds.minX(), bounds.maxY(), cornerRadius);
-            ctx.arcTo(bounds.minX(), bounds.maxY(), bounds.minX(), bounds.minY(), cornerRadius);
-            ctx.arcTo(bounds.minX(), bounds.minY(), bounds.maxX(), bounds.minY(), cornerRadius);
-            ctx.arcTo(bounds.maxX(), bounds.minY(), bounds.maxX(), bounds.maxY(), cornerRadius);
+            this._backgroundCanvasContext.moveTo(bounds.maxX(), bounds.minY() + cornerRadius);
+            this._backgroundCanvasContext.lineTo(bounds.maxX(), anchorPointY - WI.Popover.AnchorSize);
+            this._backgroundCanvasContext.lineTo(anchorPointX, anchorPointY);
+            this._backgroundCanvasContext.lineTo(bounds.maxX(), anchorPointY + WI.Popover.AnchorSize);
+            this._backgroundCanvasContext.arcTo(bounds.maxX(), bounds.maxY(), bounds.minX(), bounds.maxY(), cornerRadius);
+            this._backgroundCanvasContext.arcTo(bounds.minX(), bounds.maxY(), bounds.minX(), bounds.minY(), cornerRadius);
+            this._backgroundCanvasContext.arcTo(bounds.minX(), bounds.minY(), bounds.maxX(), bounds.minY(), cornerRadius);
+            this._backgroundCanvasContext.arcTo(bounds.maxX(), bounds.minY(), bounds.maxX(), bounds.maxY(), cornerRadius);
             break;
         case WI.RectEdge.MAX_X: // Displayed on the right of the target, arrow points left.
-            ctx.moveTo(bounds.minX(), bounds.maxY() - cornerRadius);
-            ctx.lineTo(bounds.minX(), anchorPoint.y + WI.Popover.AnchorSize);
-            ctx.lineTo(anchorPoint.x, anchorPoint.y);
-            ctx.lineTo(bounds.minX(), anchorPoint.y - WI.Popover.AnchorSize);
-            ctx.arcTo(bounds.minX(), bounds.minY(), bounds.maxX(), bounds.minY(), cornerRadius);
-            ctx.arcTo(bounds.maxX(), bounds.minY(), bounds.maxX(), bounds.maxY(), cornerRadius);
-            ctx.arcTo(bounds.maxX(), bounds.maxY(), bounds.minX(), bounds.maxY(), cornerRadius);
-            ctx.arcTo(bounds.minX(), bounds.maxY(), bounds.minX(), bounds.minY(), cornerRadius);
+            this._backgroundCanvasContext.moveTo(bounds.minX(), bounds.maxY() - cornerRadius);
+            this._backgroundCanvasContext.lineTo(bounds.minX(), anchorPointY + WI.Popover.AnchorSize);
+            this._backgroundCanvasContext.lineTo(anchorPointX, anchorPointY);
+            this._backgroundCanvasContext.lineTo(bounds.minX(), anchorPointY - WI.Popover.AnchorSize);
+            this._backgroundCanvasContext.arcTo(bounds.minX(), bounds.minY(), bounds.maxX(), bounds.minY(), cornerRadius);
+            this._backgroundCanvasContext.arcTo(bounds.maxX(), bounds.minY(), bounds.maxX(), bounds.maxY(), cornerRadius);
+            this._backgroundCanvasContext.arcTo(bounds.maxX(), bounds.maxY(), bounds.minX(), bounds.maxY(), cornerRadius);
+            this._backgroundCanvasContext.arcTo(bounds.minX(), bounds.maxY(), bounds.minX(), bounds.minY(), cornerRadius);
             break;
         case WI.RectEdge.MIN_Y: // Displayed above the target, arrow points down.
-            ctx.moveTo(bounds.maxX() - cornerRadius, bounds.maxY());
-            ctx.lineTo(anchorPoint.x + WI.Popover.AnchorSize, bounds.maxY());
-            ctx.lineTo(anchorPoint.x, anchorPoint.y);
-            ctx.lineTo(anchorPoint.x - WI.Popover.AnchorSize, bounds.maxY());
-            ctx.arcTo(bounds.minX(), bounds.maxY(), bounds.minX(), bounds.minY(), cornerRadius);
-            ctx.arcTo(bounds.minX(), bounds.minY(), bounds.maxX(), bounds.minY(), cornerRadius);
-            ctx.arcTo(bounds.maxX(), bounds.minY(), bounds.maxX(), bounds.maxY(), cornerRadius);
-            ctx.arcTo(bounds.maxX(), bounds.maxY(), bounds.minX(), bounds.maxY(), cornerRadius);
+            this._backgroundCanvasContext.moveTo(bounds.maxX() - cornerRadius, bounds.maxY());
+            this._backgroundCanvasContext.lineTo(anchorPointX + WI.Popover.AnchorSize, bounds.maxY());
+            this._backgroundCanvasContext.lineTo(anchorPointX, anchorPointY);
+            this._backgroundCanvasContext.lineTo(anchorPointX - WI.Popover.AnchorSize, bounds.maxY());
+            this._backgroundCanvasContext.arcTo(bounds.minX(), bounds.maxY(), bounds.minX(), bounds.minY(), cornerRadius);
+            this._backgroundCanvasContext.arcTo(bounds.minX(), bounds.minY(), bounds.maxX(), bounds.minY(), cornerRadius);
+            this._backgroundCanvasContext.arcTo(bounds.maxX(), bounds.minY(), bounds.maxX(), bounds.maxY(), cornerRadius);
+            this._backgroundCanvasContext.arcTo(bounds.maxX(), bounds.maxY(), bounds.minX(), bounds.maxY(), cornerRadius);
             break;
         case WI.RectEdge.MAX_Y: // Displayed below the target, arrow points up.
-            ctx.moveTo(bounds.minX() + cornerRadius, bounds.minY());
-            ctx.lineTo(anchorPoint.x - WI.Popover.AnchorSize, bounds.minY());
-            ctx.lineTo(anchorPoint.x, anchorPoint.y);
-            ctx.lineTo(anchorPoint.x + WI.Popover.AnchorSize, bounds.minY());
-            ctx.arcTo(bounds.maxX(), bounds.minY(), bounds.maxX(), bounds.maxY(), cornerRadius);
-            ctx.arcTo(bounds.maxX(), bounds.maxY(), bounds.minX(), bounds.maxY(), cornerRadius);
-            ctx.arcTo(bounds.minX(), bounds.maxY(), bounds.minX(), bounds.minY(), cornerRadius);
-            ctx.arcTo(bounds.minX(), bounds.minY(), bounds.maxX(), bounds.minY(), cornerRadius);
+            this._backgroundCanvasContext.moveTo(bounds.minX() + cornerRadius, bounds.minY());
+            this._backgroundCanvasContext.lineTo(anchorPointX - WI.Popover.AnchorSize, bounds.minY());
+            this._backgroundCanvasContext.lineTo(anchorPointX, anchorPointY);
+            this._backgroundCanvasContext.lineTo(anchorPointX + WI.Popover.AnchorSize, bounds.minY());
+            this._backgroundCanvasContext.arcTo(bounds.maxX(), bounds.minY(), bounds.maxX(), bounds.maxY(), cornerRadius);
+            this._backgroundCanvasContext.arcTo(bounds.maxX(), bounds.maxY(), bounds.minX(), bounds.maxY(), cornerRadius);
+            this._backgroundCanvasContext.arcTo(bounds.minX(), bounds.maxY(), bounds.minX(), bounds.minY(), cornerRadius);
+            this._backgroundCanvasContext.arcTo(bounds.minX(), bounds.minY(), bounds.maxX(), bounds.minY(), cornerRadius);
             break;
         }
-        ctx.closePath();
+        this._backgroundCanvasContext.closePath();
     }
 
     _addListenersIfNeeded()
@@ -610,6 +621,9 @@ WI.Popover = class Popover extends WI.Object
         }
     }
 };
+
+WI.Popover._visibleInstance = null;
+WI.Popover._backgroundCanvasContexts = [];
 
 WI.Popover.FadeOutClassName = "fade-out";
 WI.Popover.CornerRadius = 5;
