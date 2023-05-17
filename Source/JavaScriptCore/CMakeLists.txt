@@ -1330,7 +1330,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/AccessCase.h
     bytecode/ObjectPropertyConditionSet.h
     bytecode/PolyProtoAccessChain.h
-    bytecode/PutKind.h
     bytecode/StructureStubClearingWatchpoint.h
     bytecode/AdaptiveInferredPropertyValueWatchpointBase.h
     bytecode/InlineCacheCompiler.h
