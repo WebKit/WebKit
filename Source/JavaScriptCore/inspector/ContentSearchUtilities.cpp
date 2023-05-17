@@ -143,7 +143,7 @@ RegularExpression createRegularExpressionForSearchString(const String& searchStr
         pattern = escapeStringForRegularExpressionSource(searchString);
         break;
     }
-    return RegularExpression(pattern, caseSensitive ? TextCaseSensitive : TextCaseInsensitive);
+    return caseSensitive ? RegularExpression(pattern) : RegularExpression(pattern, { Flags::IgnoreCase });
 }
 
 int countRegularExpressionMatches(const RegularExpression& regex, const String& content)

@@ -47,7 +47,7 @@ static bool isValidEmailAddress(const String& address)
     if (!addressLength)
         return false;
 
-    static NeverDestroyed<const JSC::Yarr::RegularExpression> regExp(StringView { emailPattern }, JSC::Yarr::TextCaseInsensitive);
+    static NeverDestroyed<const JSC::Yarr::RegularExpression> regExp(StringView { emailPattern }, OptionSet<JSC::Yarr::Flags> { JSC::Yarr::Flags::IgnoreCase });
 
     int matchLength;
     int matchOffset = regExp.get().match(address, 0, &matchLength);

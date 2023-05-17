@@ -29,7 +29,6 @@
 #include "RegularExpression.h"
 
 #include "Yarr.h"
-#include "YarrFlags.h"
 #include "YarrInterpreter.h"
 #include <wtf/Assertions.h>
 #include <wtf/BumpPointerAllocator.h>
@@ -38,52 +37,43 @@ namespace JSC { namespace Yarr {
 
 class RegularExpression::Private : public RefCounted<RegularExpression::Private> {
 public:
-    static Ref<Private> create(StringView pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
+    static Ref<Private> create(StringView pattern, OptionSet<Flags> flags)
     {
-        return adoptRef(*new Private(pattern, caseSensitivity, multilineMode, unicodeMode));
+        return adoptRef(*new Private(pattern, flags));
     }
 
 private:
-    Private(StringView pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
-        : m_regExpByteCode(compile(pattern, caseSensitivity, multilineMode, unicodeMode))
+    Private(StringView pattern, OptionSet<Flags> flags)
+        : m_regExpByteCode(compile(pattern, flags))
     {
     }
 
-    std::unique_ptr<JSC::Yarr::BytecodePattern> compile(StringView patternString, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
+    std::unique_ptr<BytecodePattern> compile(StringView patternString, OptionSet<Flags> flags)
     {
-        OptionSet<JSC::Yarr::Flags> flags;
+        ASSERT(!(flags - OptionSet<Flags> { Flags::IgnoreCase, Flags::Multiline, Flags::Unicode }));
 
-        if (caseSensitivity == TextCaseInsensitive)
-            flags.add(Flags::IgnoreCase);
-
-        if (multilineMode == MultilineEnabled)
-            flags.add(Flags::Multiline);
-
-        if (unicodeMode == UnicodeAwareMode)
-            flags.add(Flags::Unicode);
-
-        JSC::Yarr::YarrPattern pattern(patternString, flags, m_constructionErrorCode);
-        if (JSC::Yarr::hasError(m_constructionErrorCode)) {
-            LOG_ERROR("RegularExpression: YARR compile failed with '%s'", JSC::Yarr::errorMessage(m_constructionErrorCode).characters());
+        YarrPattern pattern(patternString, flags, m_constructionErrorCode);
+        if (hasError(m_constructionErrorCode)) {
+            LOG_ERROR("RegularExpression: YARR compile failed with '%s'", errorMessage(m_constructionErrorCode).characters());
             return nullptr;
         }
 
         m_numSubpatterns = pattern.m_numSubpatterns;
 
-        return JSC::Yarr::byteCompile(pattern, &m_regexAllocator, m_constructionErrorCode);
+        return byteCompile(pattern, &m_regexAllocator, m_constructionErrorCode);
     }
 
-    JSC::Yarr::ErrorCode m_constructionErrorCode { Yarr::ErrorCode::NoError };
+    ErrorCode m_constructionErrorCode { Yarr::ErrorCode::NoError };
     BumpPointerAllocator m_regexAllocator;
 
 public:
     int lastMatchLength { -1 };
     unsigned m_numSubpatterns;
-    std::unique_ptr<JSC::Yarr::BytecodePattern> m_regExpByteCode;
+    std::unique_ptr<BytecodePattern> m_regExpByteCode;
 };
 
-RegularExpression::RegularExpression(StringView pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
-    : d(Private::create(pattern, caseSensitivity, multilineMode, unicodeMode))
+RegularExpression::RegularExpression(StringView pattern, OptionSet<Flags> flags)
+    : d(Private::create(pattern, flags))
 {
 }
 
@@ -119,18 +109,18 @@ int RegularExpression::match(StringView str, int startFrom, int* matchLength) co
 
     ASSERT(offsetVector);
     for (unsigned j = 0, i = 0; i < d->m_numSubpatterns + 1; j += 2, i++)
-        offsetVector[j] = JSC::Yarr::offsetNoMatch;
+        offsetVector[j] = offsetNoMatch;
 
     unsigned result;
     if (str.length() <= INT_MAX)
-        result = JSC::Yarr::interpret(d->m_regExpByteCode.get(), str, startFrom, offsetVector);
+        result = interpret(d->m_regExpByteCode.get(), str, startFrom, offsetVector);
     else {
         // This code can't handle unsigned offsets. Limit our processing to strings with offsets that
         // can be represented as ints.
-        result = JSC::Yarr::offsetNoMatch;
+        result = offsetNoMatch;
     }
 
-    if (result == JSC::Yarr::offsetNoMatch) {
+    if (result == offsetNoMatch) {
         d->lastMatchLength = -1;
         return -1;
     }

@@ -1304,7 +1304,7 @@ static Ref<Protocol::CSS::CSSSelector> buildObjectForSelectorHelper(const String
 
 static Ref<JSON::ArrayOf<Protocol::CSS::CSSSelector>> selectorsFromSource(const CSSRuleSourceData* sourceData, const String& sheetText, const Vector<const CSSSelector*> selectors)
 {
-    static NeverDestroyed<JSC::Yarr::RegularExpression> comment("/\\*[^]*?\\*/"_s, JSC::Yarr::TextCaseSensitive, JSC::Yarr::MultilineEnabled);
+    static NeverDestroyed<JSC::Yarr::RegularExpression> comment("/\\*[^]*?\\*/"_s, OptionSet<JSC::Yarr::Flags> { JSC::Yarr::Flags::Multiline });
 
     auto result = JSON::ArrayOf<Protocol::CSS::CSSSelector>::create();
     unsigned selectorIndex = 0;
