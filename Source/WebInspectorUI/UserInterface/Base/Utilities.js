@@ -580,6 +580,19 @@ Object.defineProperty(DocumentFragment.prototype, "createChild",
     });
 })();
 
+Object.defineProperty(HTMLCollection.prototype, "indexOf",
+{
+    value(element)
+    {
+        let length = this.length;
+        for (let i = 0; i < length; ++i) {
+            if (this[i] === element)
+                return i;
+        }
+        return -1;
+    }
+});
+
 Object.defineProperty(Event.prototype, "stop",
 {
     value()

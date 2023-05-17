@@ -39,10 +39,11 @@ WI.DOMStorageContentView = class DOMStorageContentView extends WI.ContentView
 
         let columns = {};
         columns.key = {title: WI.UIString("Key"), sortable: true};
-        columns.value = {title: WI.UIString("Value"), sortable: true};
+        columns.displayValue = {title: WI.UIString("Value"), sortable: true};
 
         this._dataGrid = new WI.DataGrid(columns, {
-            editCallback: this._editingCallback.bind(this),
+            beforeEditCallback: this._beforeEditCallback.bind(this),
+            afterEditCallback: this._afterEditCallback.bind(this),
             copyCallback: this._dataGridCopy.bind(this),
             deleteCallback: this._deleteCallback.bind(this),
         });
@@ -116,8 +117,7 @@ WI.DOMStorageContentView = class DOMStorageContentView extends WI.ContentView
     itemAdded(event)
     {
         let {key, value} = event.data;
-        let originalValue = value;
-        value = this._truncateValue(value);
+        let displayValue = this._truncateValue(value);
 
         // Enforce key uniqueness.
         for (let node of this._dataGrid.children) {
@@ -125,15 +125,14 @@ WI.DOMStorageContentView = class DOMStorageContentView extends WI.ContentView
                 return;
         }
 
-        this._dataGrid.appendChild(new WI.DataGridNode({key, value, originalValue}));
+        this._dataGrid.appendChild(new WI.DataGridNode({key, value, displayValue}));
         this._sortDataGrid();
     }
 
     itemUpdated(event)
     {
         let {key, newValue: value} = event.data;
-        let originalValue = value;
-        value = this._truncateValue(value);
+        let displayValue = this._truncateValue(value);
 
         let keyFound = false;
         for (let childNode of this._dataGrid.children) {
@@ -146,7 +145,7 @@ WI.DOMStorageContentView = class DOMStorageContentView extends WI.ContentView
 
                 keyFound = true;
                 childNode.data.value = value;
-                childNode.data.originalValue = originalValue;
+                childNode.data.displayValue = displayValue;
                 childNode.refresh();
             }
         }
@@ -170,9 +169,8 @@ WI.DOMStorageContentView = class DOMStorageContentView extends WI.ContentView
                 if (!key || !value)
                     continue;
 
-                let originalValue = value;
-                value = this._truncateValue(value);
-                let node = new WI.DataGridNode({key, value, originalValue});
+                let displayValue = this._truncateValue(value);
+                let node = new WI.DataGridNode({key, value, displayValue});
                 this._dataGrid.appendChild(node);
             }
 
@@ -204,10 +202,20 @@ WI.DOMStorageContentView = class DOMStorageContentView extends WI.ContentView
         }
     }
 
-    _editingCallback(editingNode, columnIdentifier, oldText, newText, moveDirection)
+    _beforeEditCallback(editingNode, columnIdentifier)
+    {
+        switch (columnIdentifier) {
+        case "displayValue":
+            editingNode.data.displayValue = editingNode.data.value;
+            editingNode.refresh();
+            break;
+        }
+    }
+
+    _afterEditCallback(editingNode, columnIdentifier, oldText, newText, moveDirection)
     {
         var key = editingNode.data["key"].trim().removeWordBreakCharacters();
-        var value = editingNode.data["value"].trim().removeWordBreakCharacters();
+        var value = editingNode.data["displayValue"].trim().removeWordBreakCharacters();
         var previousValue = oldText.trim().removeWordBreakCharacters();
         var enteredValue = newText.trim().removeWordBreakCharacters();
         var hasUncommittedEdits = editingNode.__hasUncommittedEdits;
@@ -215,6 +223,12 @@ WI.DOMStorageContentView = class DOMStorageContentView extends WI.ContentView
         var isEditingKey = columnIdentifier === "key";
         var isEditingValue = !isEditingKey;
         var domStorage = this.representedObject;
+
+        if (isEditingValue) {
+            editingNode.data.value = value;
+            editingNode.data.displayValue = this._truncateValue(value);
+            editingNode.needsRefresh();
+        }
 
         // Nothing changed, just bail.
         if (!hasChange && !hasUncommittedEdits)
@@ -292,8 +306,8 @@ WI.DOMStorageContentView = class DOMStorageContentView extends WI.ContentView
 
     _dataGridCopy(node, columnIdentifier, text)
     {
-        if (columnIdentifier === "value" && node.data.originalValue)
-            return node.data.originalValue;
+        if (columnIdentifier === "displayValue" && node.data.value)
+            return node.data.value;
         return text;
     }
 
