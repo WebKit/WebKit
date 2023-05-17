@@ -81,46 +81,58 @@ class TestParser(object):
         if ref_contents is not None:
             self.ref_doc = Parser(ref_contents)
 
-        matches = self.reference_links_of_type('match') + self.reference_links_of_type('mismatch')
+        matches = self.reference_links_of_type('match')
+        mismatches = self.reference_links_of_type('mismatch')
 
         # Manual tests may also have properties that make them look like non-manual reference or JS
         # tests, so exclude them first.
         if self.is_wpt_manualtest() and not self.is_reference_filename():
             test_info = {'test': self.filename, 'manualtest': True}
-        elif matches:
-            if len(matches) > 1:
+
+        elif matches or mismatches:
+            if len(matches) > 1 or len(mismatches) > 1:
                 # FIXME: Is this actually true? We should fix this.
-                _log.warning('Multiple references are not supported. Importing the first ref defined in %s',
+                _log.warning('Multiple references of the same type are not supported. Importing the first ref defined in %s',
                              self.filesystem.basename(self.filename))
 
-            try:
-                href_match_file = matches[0]['href'].strip()
-                if href_match_file.startswith('/'):
-                    ref_file = self.filesystem.join(self.source_root_directory, href_match_file.lstrip('/'))
-                else:
-                    ref_file = self.filesystem.join(self.filesystem.dirname(self.filename), href_match_file)
+            refs_to_import = []
+            if matches:
+                refs_to_import.append(matches[0])
+            if mismatches:
+                refs_to_import.append(mismatches[0])
 
-                reference_type = matches[0]['rel'][0] if isinstance(matches[0]['rel'], list) else matches[0]['rel']
-            except KeyError as e:
-                # FIXME: Figure out what to do w/ invalid test files.
-                _log.error('%s has a reference link but is missing the "href"', self.filesystem)
-                return None
+            test_info = {'test': self.filename}
 
-            if (ref_file == self.filename):
-                return {'referencefile': self.filename}
+            for ref_to_import in refs_to_import:
+                try:
+                    href_match_file = ref_to_import['href'].strip()
+                    if href_match_file.startswith('/'):
+                        ref_file = self.filesystem.join(self.source_root_directory, href_match_file.lstrip('/'))
+                    else:
+                        ref_file = self.filesystem.join(self.filesystem.dirname(self.filename), href_match_file)
 
-            if self.ref_doc is None:
-                self.load_file(ref_file, True)
+                    reference_type = ref_to_import['rel'][0] if isinstance(ref_to_import['rel'], list) else ref_to_import['rel']
+                except KeyError as e:
+                    # FIXME: Figure out what to do w/ invalid test files.
+                    _log.error('%s has a reference link but is missing the "href"', self.filesystem)
+                    return None
 
-            test_info = {'test': self.filename, 'reference': ref_file, 'type': reference_type}
+                if (ref_file == self.filename):
+                    return {'referencefile': self.filename}
 
-            # If the ref file does not live in the same directory as the test file, check it for support files
-            test_info['reference_support_info'] = {}
-            if self.filesystem.dirname(ref_file) != self.filesystem.dirname(self.filename):
-                reference_support_files = self.support_files(self.ref_doc)
-                if len(reference_support_files) > 0:
-                    reference_relpath = self.filesystem.relpath(self.filesystem.dirname(self.filename), self.filesystem.dirname(ref_file)) + self.filesystem.sep
-                    test_info['reference_support_info'] = {'reference_relpath': reference_relpath, 'files': reference_support_files}
+                if self.ref_doc is None:
+                    self.load_file(ref_file, True)
+
+                test_info[reference_type + '_reference'] = ref_file
+                test_info[reference_type + '_reference_support_info'] = {}
+
+                # If the ref file does not live in the same directory as the test file, check it for support files
+                if self.filesystem.dirname(ref_file) != self.filesystem.dirname(self.filename):
+                    reference_support_files = self.support_files(self.ref_doc)
+                    if len(reference_support_files) > 0:
+                        reference_relpath = self.filesystem.relpath(self.filesystem.dirname(self.filename), self.filesystem.dirname(ref_file)) + self.filesystem.sep
+                        test_info[reference_type + '_reference_support_info'] = {'reference_relpath': reference_relpath, 'files': reference_support_files}
+
         elif self.is_wpt_crashtest():
             test_info = {'test': self.filename, 'crashtest': True}
         elif self.is_jstest():
