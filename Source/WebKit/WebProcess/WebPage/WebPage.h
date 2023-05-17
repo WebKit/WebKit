@@ -603,7 +603,7 @@ public:
     void getFrameInfo(WebCore::FrameIdentifier, CompletionHandler<void(FrameInfoData&&)>&&);
     void getFrameTree(CompletionHandler<void(FrameTreeNodeData&&)>&&);
     void continueWillSubmitForm(WebCore::FrameIdentifier, WebKit::FormSubmitListenerIdentifier);
-    void didCommitLoadInAnotherProcess(WebCore::FrameIdentifier, WebCore::LayerHostingContextIdentifier, WebCore::ProcessIdentifier remoteProcessIdentifier);
+    void didCommitLoadInAnotherProcess(WebCore::FrameIdentifier, std::optional<WebCore::LayerHostingContextIdentifier>, WebCore::ProcessIdentifier remoteProcessIdentifier);
     void didFinishLoadInAnotherProcess(WebCore::FrameIdentifier);
 
     std::optional<WebCore::SimpleRange> currentSelectionAsRange();

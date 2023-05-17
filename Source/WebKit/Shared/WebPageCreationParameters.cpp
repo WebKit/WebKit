@@ -202,6 +202,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 
     encoder << contentSecurityPolicyModeForExtension;
     encoder << subframeProcessFrameTreeCreationParameters;
+    encoder << openerFrameIdentifier;
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     encoder << lookalikeCharacterStrings;
@@ -650,6 +651,9 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
 
     if (!decoder.decode(parameters.subframeProcessFrameTreeCreationParameters))
+        return std::nullopt;
+
+    if (!decoder.decode(parameters.openerFrameIdentifier))
         return std::nullopt;
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)

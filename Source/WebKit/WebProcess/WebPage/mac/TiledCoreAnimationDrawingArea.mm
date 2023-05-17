@@ -365,8 +365,10 @@ void TiledCoreAnimationDrawingArea::updateRendering(UpdateRenderingType flushTyp
         }
 
         FloatRect visibleRect = [m_hostingLayer frame];
-        if (auto exposedRect = m_webPage.mainFrameView()->viewExposedRect())
-            visibleRect.intersect(*exposedRect);
+        if (auto mainFrameView = m_webPage.mainFrameView()) {
+            if (auto exposedRect = mainFrameView->viewExposedRect())
+                visibleRect.intersect(*exposedRect);
+        }
 
         // Because our view-relative overlay root layer is not attached to the main GraphicsLayer tree, we need to flush it manually.
         if (m_viewOverlayRootLayer)

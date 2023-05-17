@@ -48,6 +48,17 @@ static void enableSiteIsolation(WKWebViewConfiguration *configuration)
     }
 }
 
+static void enableWindowOpenPSON(WKWebViewConfiguration *configuration)
+{
+    auto preferences = [configuration preferences];
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"ProcessSwapOnCrossSiteWindowOpenEnabled"]) {
+            [preferences _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+}
+
 enum RemoteFrameTag { RemoteFrame };
 struct ExpectedFrameTree {
     std::variant<RemoteFrameTag, String> remoteOrOrigin;
@@ -200,6 +211,79 @@ TEST(SiteIsolation, LoadingCallbacksAndPostMessage)
             { { "https://webkit.org"_s } }
         },
     });
+}
+
+TEST(SiteIsolation, BasicPostMessageWindowOpen)
+{
+    auto exampleHTML = "<script>"
+    "    w = window.open('https://webkit.org/webkit');"
+    "    window.addEventListener('message', (event) => {"
+        "    w.postMessage('pong', '*');"
+    "    }, false);"
+    "</script>"_s;
+
+    auto webkitHTML = "<script>"
+    "    window.addEventListener('message', (event) => {"
+    "        alert('parent frame received ' + event.data);"
+    "    }, false);"
+    "    window.opener.postMessage('ping', '*');"
+    "</script>"_s;
+
+    bool finishedLoading { false };
+    HTTPServer server({
+        { "/example"_s, { exampleHTML } },
+        { "/webkit"_s, { webkitHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    bool handledInitialRequest { false };
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    navigationDelegate.get().didFinishNavigation = makeBlockPtr([&](WKWebView *, WKNavigation *navigation) {
+        if (navigation._request) {
+            if (handledInitialRequest) {
+                EXPECT_WK_STREQ(navigation._request.URL.absoluteString, "https://webkit.org/webkit");
+                finishedLoading = true;
+            } else {
+                EXPECT_WK_STREQ(navigation._request.URL.absoluteString, "https://example.com/example");
+                handledInitialRequest = true;
+            }
+        }
+    }).get();
+
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    enableWindowOpenPSON(configuration);
+
+    __block RetainPtr<NSString> alert;
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().runJavaScriptAlertPanelWithMessage = ^(WKWebView *, NSString *message, WKFrameInfo *, void (^completionHandler)(void)) {
+        alert = message;
+        completionHandler();
+    };
+    __block RetainPtr<WKWebView> openedWebView;
+
+    uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        openedWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        openedWebView.get().UIDelegate = uiDelegate.get();
+        [openedWebView setNavigationDelegate:navigationDelegate.get()];
+        return openedWebView.get();
+    };
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    webView.get().UIDelegate = uiDelegate.get();
+    [webView configuration].preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    Util::run(&finishedLoading);
+
+    while (!alert)
+        Util::spinRunLoop();
+    EXPECT_WK_STREQ(alert.get(), "parent frame received pong");
+    auto pid1 = [webView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid1);
+    auto pid2 = [openedWebView _webProcessIdentifier];
+    EXPECT_TRUE(!!pid2);
+
+    EXPECT_NE(pid1, pid2);
 }
 
 TEST(SiteIsolation, PostMessageWithMessagePorts)
