@@ -120,10 +120,12 @@
     [_avPlayerViewController view].autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 }
 
+#if !HAVE(UIKIT_WEBKIT_INTERNALS)
 - (BOOL)prefersStatusBarHidden
 {
     return YES;
 }
+#endif
 
 @end
 
