@@ -100,6 +100,11 @@ operator :textureSample, {
     # https://bugs.webkit.org/show_bug.cgi?id=254515
 }
 
+operator :textureSampleBaseClampToEdge, {
+  [].(TextureExternal, Sampler, Vector[F32, 2]) => Vector[F32, 4],
+  [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2]) => Vector[F32, 4],
+}
+
 operator :vec2, {
     [T < Scalar].(T) => Vector[T, 2],
     [T < ConcreteScalar, S < Scalar].(Vector[S, 2]) => Vector[T, 2],

@@ -97,6 +97,7 @@ public:
     void visitArgumentBufferParameter(AST::Parameter&);
 
     StringBuilder& stringBuilder() { return m_stringBuilder; }
+    Indentation<4>& indent() { return m_indent; }
 
 private:
     void visit(const Type*);
@@ -515,6 +516,44 @@ void FunctionDefinitionWriter::visit(AST::CallExpression& call)
                 writer->visit(call.arguments()[0]);
                 writer->stringBuilder().append(".sample");
                 visitArguments(writer, call, 1);
+            } },
+            { "textureSampleBaseClampToEdge", [](FunctionDefinitionWriter* writer, AST::CallExpression& call) {
+                // FIXME: we need to handle `texture2d<T>` here too, not only `texture_external`
+                auto& texture = call.arguments()[0];
+                auto& sampler = call.arguments()[1];
+                auto& coordinates = call.arguments()[2];
+                writer->stringBuilder().append("({\n");
+                {
+                    IndentationScope scope(writer->indent());
+                    {
+                        writer->stringBuilder().append(writer->indent(), "auto __coords = (");
+                        writer->visit(texture);
+                        writer->stringBuilder().append("_UVRemapMatrix * float3(");
+                        writer->visit(coordinates);
+                        writer->stringBuilder().append(", 1)).xy;\n");
+                    }
+                    {
+                        writer->stringBuilder().append(writer->indent(), "auto __y = float(");
+                        writer->visit(texture);
+                        writer->stringBuilder().append("_FirstPlane.sample(");
+                        writer->visit(sampler);
+                        writer->stringBuilder().append(", __coords).r);\n");
+                    }
+                    {
+                        writer->stringBuilder().append(writer->indent(), "auto __cbcr = float2(");
+                        writer->visit(texture);
+                        writer->stringBuilder().append("_SecondPlane.sample(");
+                        writer->visit(sampler);
+                        writer->stringBuilder().append(", __coords).rg);\n");
+                    }
+                    writer->stringBuilder().append(writer->indent(), "auto __ycbcr = float3(__y, __cbcr);\n");
+                    {
+                        writer->stringBuilder().append(writer->indent(), "float4(");
+                        writer->visit(texture);
+                        writer->stringBuilder().append("_ColorSpaceConversionMatrix * float4(__ycbcr, 1), 1);\n");
+                    }
+                }
+                writer->stringBuilder().append(writer->indent(), "})");
             } },
         };
         static constexpr SortedArrayMap builtins { builtinMappings };
