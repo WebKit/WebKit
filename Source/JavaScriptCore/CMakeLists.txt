@@ -47,9 +47,9 @@ set(JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
     "${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr"
 )
 
-if (USE_CAPSTONE)
+if(USE_CAPSTONE)
     list(APPEND JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES "${THIRDPARTY_DIR}/capstone/Source/include")
-endif ()
+endif()
 
 set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/ArrayConstructor.cpp
@@ -159,30 +159,29 @@ add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCBytecodeCacheVersion.cpp
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/runtime/JSCBytecodeCacheVersion.cpp.in
     COMMAND ${PERL_EXECUTABLE} -pe s/CACHED_TYPES_CKSUM/__TIMESTAMP__/ ${JAVASCRIPTCORE_DIR}/runtime/JSCBytecodeCacheVersion.cpp.in > ${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCBytecodeCacheVersion.cpp
-            VERBATIM
+    VERBATIM
 )
-
 
 set(JavaScriptCore_FRAMEWORKS
     WTF
 )
-if (NOT USE_SYSTEM_MALLOC)
+
+if(NOT USE_SYSTEM_MALLOC)
     list(APPEND JavaScriptCore_FRAMEWORKS bmalloc)
-endif ()
+endif()
 
-if (USE_CAPSTONE)
+if(USE_CAPSTONE)
     list(APPEND JavaScriptCore_LIBRARIES capstone)
-endif ()
+endif()
 
-if (ATOMICS_REQUIRE_LIBATOMIC)
+if(ATOMICS_REQUIRE_LIBATOMIC)
     list(APPEND JavaScriptCore_LIBRARIES atomic)
-endif ()
+endif()
 
 set(JavaScriptCore_SCRIPTS_SOURCES_DIR "${JAVASCRIPTCORE_DIR}/Scripts")
 
 # Globbing relies on the fact that generator-specific file names are prefixed with their directory.
 # Top-level scripts should have a file extension, since they are invoked during the build.
-
 set(JavaScriptCore_SCRIPTS_SOURCES_PATHS
     ${JavaScriptCore_SCRIPTS_SOURCES_DIR}/*.pl
     ${JavaScriptCore_SCRIPTS_SOURCES_DIR}/*.py
@@ -191,10 +190,9 @@ set(JavaScriptCore_SCRIPTS_SOURCES_PATHS
 )
 
 # The directory flattening performed below mirrors what the Mac port does with private headers.
-
 file(GLOB JavaScriptCore_SCRIPTS_SOURCES ${JavaScriptCore_SCRIPTS_SOURCES_PATHS})
 
-foreach (_file ${JavaScriptCore_SCRIPTS_SOURCES})
+foreach(_file ${JavaScriptCore_SCRIPTS_SOURCES})
     get_filename_component(_script "${_file}" NAME)
     add_custom_command(
         OUTPUT ${JavaScriptCore_SCRIPTS_DIR}/${_script}
@@ -203,7 +201,7 @@ foreach (_file ${JavaScriptCore_SCRIPTS_SOURCES})
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${_file} ${JavaScriptCore_SCRIPTS_DIR}/${_script}
         VERBATIM)
     list(APPEND JavaScriptCore_SCRIPTS ${JavaScriptCore_SCRIPTS_DIR}/${_script})
-endforeach ()
+endforeach()
 
 # This is the default build variant for Xcode builds.
 set(BUILD_VARIANTS
@@ -275,29 +273,29 @@ list(APPEND JavaScriptCore_HEADERS
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h
 )
 
-if (WIN32)
+if(WIN32)
     set(OFFLINE_ASM_BACKEND "X86_WIN, X86_64_WIN, C_LOOP_WIN")
-else ()
-    if (WTF_CPU_X86)
+else()
+    if(WTF_CPU_X86)
         set(OFFLINE_ASM_BACKEND "X86")
-    elseif (WTF_CPU_X86_64)
+    elseif(WTF_CPU_X86_64)
         set(OFFLINE_ASM_BACKEND "X86_64")
-    elseif (WTF_CPU_ARM64)
+    elseif(WTF_CPU_ARM64)
         set(OFFLINE_ASM_BACKEND "ARM64")
-    elseif (ARM_THUMB2_DETECTED)
+    elseif(ARM_THUMB2_DETECTED)
         set(OFFLINE_ASM_BACKEND "ARMv7")
-    elseif (WTF_CPU_MIPS)
+    elseif(WTF_CPU_MIPS)
         set(OFFLINE_ASM_BACKEND "MIPS")
-    elseif (WTF_CPU_RISCV64)
+    elseif(WTF_CPU_RISCV64)
         set(OFFLINE_ASM_BACKEND "RISCV64")
-    endif ()
+    endif()
 
-    if (NOT ENABLE_JIT)
-        if (ENABLE_C_LOOP)
+    if(NOT ENABLE_JIT)
+        if(ENABLE_C_LOOP)
             set(OFFLINE_ASM_BACKEND "C_LOOP")
-        endif ()
-    endif ()
-endif ()
+        endif()
+    endif()
+endif()
 
 add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/AirOpcode.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/AirOpcodeGenerated.h
@@ -327,7 +325,6 @@ add_custom_command(
     VERBATIM)
 
 # JSCBuiltins
-
 set(BUILTINS_GENERATOR_SCRIPTS
     ${JavaScriptCore_SCRIPTS_DIR}/wkbuiltins.py
     ${JavaScriptCore_SCRIPTS_DIR}/builtins_generator.py
@@ -402,7 +399,6 @@ add_custom_target(JSCBuiltins DEPENDS "${JavaScriptCore_DERIVED_SOURCES_DIR}/JSC
 # Additionally, setting the OBJECT_DEPENDS property will make the .h files a Makefile
 # dependency of both LLIntOffsetsExtractor and LLIntOffsetsExtractor.cpp, so the command will
 # actually be run multiple times!
-
 WEBKIT_EXECUTABLE_DECLARE(LLIntSettingsExtractor)
 set(LLIntSettingsExtractor_SOURCES
     ${JAVASCRIPTCORE_DIR}/llint/LLIntSettingsExtractor.cpp
@@ -441,16 +437,16 @@ WEBKIT_EXECUTABLE(LLIntOffsetsExtractor)
 # LLIntOffsetsExtractor matches, no output is generated. To make this target consistent and avoid
 # running this command for every build, we artificially update LLIntAssembly.h's mtime (using touch)
 # after every asm.rb run.
-if (MSVC AND NOT ENABLE_C_LOOP)
+if(MSVC AND NOT ENABLE_C_LOOP)
     set(LLIntOutput LowLevelInterpreterWin.asm)
     set(OFFLINE_ASM_ARGS --assembler=MASM)
-else ()
+else()
     set(LLIntOutput LLIntAssembly.h)
-endif ()
+endif()
 
-if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
     set(OFFLINE_ASM_ARGS --binary-format=ELF)
-endif ()
+endif()
 
 add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/${LLIntOutput}
@@ -465,16 +461,18 @@ add_custom_command(
 # the .cpp files below is similar to the one in the previous comment. However, since these .cpp
 # files are used to build JavaScriptCore itself, we can just add LLIntAssembly.h to JSC_HEADERS
 # since it is used in the add_library() call at the end of this file.
-if (MSVC AND NOT ENABLE_C_LOOP)
+if(MSVC AND NOT ENABLE_C_LOOP)
     enable_language(ASM_MASM)
-    if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+
+    if(CMAKE_SIZEOF_VOID_P EQUAL 4)
         # Win32 needs /safeseh with assembly, but Win64 does not.
         set(MASM_EXECUTABLE ml)
         set(LLINT_MASM_FLAGS /safeseh /c /Fo)
-    else ()
+    else()
         set(MASM_EXECUTABLE ml64)
         set(LLINT_MASM_FLAGS /c /Fo)
-    endif ()
+    endif()
+
     add_custom_command(
         OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/LowLevelInterpreterWin.obj
         DEPENDS ${JavaScriptCore_DERIVED_SOURCES_DIR}/LowLevelInterpreterWin.asm
@@ -482,7 +480,7 @@ if (MSVC AND NOT ENABLE_C_LOOP)
         VERBATIM)
     list(APPEND JavaScriptCore_SOURCES ${JavaScriptCore_DERIVED_SOURCES_DIR}/LowLevelInterpreterWin.obj)
     add_library(LowLevelInterpreterLib OBJECT llint/LowLevelInterpreter.cpp)
-else ()
+else()
     # As there's poor toolchain support for using `.file` directives in
     # inline asm (i.e. there's no way to avoid clashes with the `.file`
     # directives generated by the C code in the compilation unit), we
@@ -492,10 +490,9 @@ else ()
     # single source file, so we need to create a separate target for it.
     add_library(LowLevelInterpreterLib OBJECT llint/LowLevelInterpreter.cpp
         ${JavaScriptCore_DERIVED_SOURCES_DIR}/${LLIntOutput})
-endif ()
+endif()
 
 # WebAssembly generator
-
 macro(GENERATE_PYTHON _generator _additional_deps _input _output)
     add_custom_command(
         OUTPUT ${_output}
@@ -506,12 +503,13 @@ macro(GENERATE_PYTHON _generator _additional_deps _input _output)
     list(APPEND JavaScriptCore_HEADERS ${_output})
     WEBKIT_ADD_SOURCE_DEPENDENCIES(${_input} ${_output})
 endmacro()
+
 GENERATE_PYTHON(${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasmOpsHeader.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasm.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/wasm.json ${JavaScriptCore_DERIVED_SOURCES_DIR}/WasmOps.h)
 GENERATE_PYTHON(${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasmB3IRGeneratorInlinesHeader.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasm.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/wasm.json ${JavaScriptCore_DERIVED_SOURCES_DIR}/WasmB3IRGeneratorInlines.h)
 
 # LUT generator
-
 set(HASH_LUT_GENERATOR ${CMAKE_CURRENT_SOURCE_DIR}/create_hash_table)
+
 macro(GENERATE_HASH_LUT _input _output)
     add_custom_command(
         OUTPUT ${_output}
@@ -524,11 +522,10 @@ macro(GENERATE_HASH_LUT _input _output)
 endmacro()
 
 # GENERATOR 1-A: LUT creator
-
-foreach (_file ${JavaScriptCore_OBJECT_LUT_SOURCES})
+foreach(_file ${JavaScriptCore_OBJECT_LUT_SOURCES})
     get_filename_component(_name ${_file} NAME_WE)
     GENERATE_HASH_LUT(${CMAKE_CURRENT_SOURCE_DIR}/${_file} ${JavaScriptCore_DERIVED_SOURCES_DIR}/${_name}.lut.h)
-endforeach ()
+endforeach()
 
 set(JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS
     API/JSBase.h
@@ -685,6 +682,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/UnlinkedCodeBlock.h
     bytecode/UnlinkedEvalCodeBlock.h
     bytecode/UnlinkedFunctionExecutable.h
+    bytecode/UnlinkedFunctionCodeBlock.h
     bytecode/UnlinkedGlobalCodeBlock.h
     bytecode/UnlinkedMetadataTable.h
     bytecode/ValueProfile.h
@@ -834,8 +832,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     inspector/ScriptCallFrame.h
     inspector/ScriptCallStack.h
     inspector/ScriptCallStackFactory.h
-    
-    inspector/augmentable/AugmentableInspectorController.h
+
     inspector/JSGlobalObjectInspectorController.h
     runtime/JSGlobalObjectDebuggable.h
     inspector/JSGlobalObjectDebugger.h
@@ -942,6 +939,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     profiler/ProfilerProfiledBytecodes.h
     profiler/ProfilerUID.h
 
+    runtime/AggregateError.h
     runtime/AbstractModuleRecord.h
     runtime/ArgList.h
     runtime/ArgumentsMode.h
@@ -981,7 +979,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/CatchScope.h
     runtime/CellSize.h
     runtime/ClassInfo.h
-    runtime/ClonedArguments.h
+    runtime/CodeCache.h
     runtime/CodeSpecializationKind.h
     runtime/CommonIdentifiers.h
     runtime/CompilationResult.h
@@ -1016,6 +1014,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/EnsureStillAliveHere.h
     runtime/EnumerationMode.h
     runtime/Error.h
+    runtime/ErrorConstructor.h
     runtime/ErrorHandlingScope.h
     runtime/ErrorInstance.h
     runtime/ErrorPrototype.h
@@ -1259,6 +1258,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/WeakGCMapInlines.h
     runtime/WeakGCSet.h
     runtime/WeakGCSetInlines.h
+    runtime/WeakMapImpl.h
+    runtime/WeakMapImplInlines.h
     runtime/WriteBarrier.h
     runtime/WriteBarrierInlines.h
 
@@ -1304,7 +1305,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/js/JSWebAssemblyModule.h
     wasm/js/WebAssemblyModuleRecord.h
 
-
     yarr/RegularExpression.h
     yarr/Yarr.h
     yarr/YarrErrorCode.h
@@ -1315,20 +1315,72 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     yarr/YarrParser.h
     yarr/YarrPattern.h
     yarr/YarrUnicodeProperties.h
+
+    bytecode/Opcode.h
+    llint/LLIntOpcode.h
+
+    runtime/LazyClassStructureInlines.h
+    runtime/LazyPropertyInlines.h
+    runtime/JSTypedArrayViewPrototype.h
+    runtime/JSTypedArrayPrototypes.h
+    API/JSWeakValue.h
+
+    jit/JIT.h
+    bytecode/StructureStubInfo.h
+    bytecode/AccessCase.h
+    bytecode/ObjectPropertyConditionSet.h
+    bytecode/PolyProtoAccessChain.h
+    bytecode/PutKind.h
+    bytecode/StructureStubClearingWatchpoint.h
+    bytecode/AdaptiveInferredPropertyValueWatchpointBase.h
+    bytecode/InlineCacheCompiler.h
+    bytecode/StubInfoSummary.h
+    runtime/CommonSlowPaths.h
+    runtime/DirectArguments.h
+    runtime/GenericArguments.h
+    runtime/ScopedArguments.h
+    runtime/JSLexicalEnvironment.h
+    jit/JITDisassembler.h
+    jit/JITInlineCacheGenerator.h
+    jit/JITMathIC.h
+    jit/JITAddGenerator.h
+    jit/JITMathICInlineResult.h
+    jit/SnippetOperand.h
+    jit/JITMulGenerator.h
+    jit/JITNegGenerator.h
+    jit/JITSubGenerator.h
+    bytecode/Repatch.h
+    jit/JITRightShiftGenerator.h
+    jit/JITBitBinaryOpGenerator.h
+    jit/JSInterfaceJIT.h
+    llint/LLIntData.h
+    bytecode/FunctionCodeBlock.h
+
+    dfg/DFGAbstractHeap.h
+    bytecode/OperandsInlines.h
+    bytecode/Operands.h
+    domjit/DOMJITHeapRange.h
+    runtime/JSModuleNamespaceObject.h
+    runtime/SamplingProfiler.h
+    runtime/GeneratorFunctionPrototype.h
+    runtime/AsyncFunctionPrototype.h
+
+    jit/Width.h
+    runtime/ClonedArguments.h
 )
 
-if (USE_INSPECTOR_SOCKET_SERVER)
+if(USE_INSPECTOR_SOCKET_SERVER)
     list(APPEND JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
         API/JSRemoteInspectorServer.h
     )
-endif ()
+endif()
 
 # GENERATOR 1-B: particular LUT creator (for 1 file only)
 GENERATE_HASH_LUT(${CMAKE_CURRENT_SOURCE_DIR}/parser/Keywords.table ${JavaScriptCore_DERIVED_SOURCES_DIR}/Lexer.lut.h)
 
 file(MAKE_DIRECTORY ${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr)
 
-#GENERATOR: "RegExpJitTables.h": tables used by Yarr
+# GENERATOR: "RegExpJitTables.h": tables used by Yarr
 add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr/RegExpJitTables.h
     MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/yarr/create_regex_tables
@@ -1353,7 +1405,7 @@ add_custom_command(
     COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/yarr/generateYarrCanonicalizeUnicode ${JAVASCRIPTCORE_DIR}/ucd/CaseFolding.txt ${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr/YarrCanonicalizeUnicode.cpp
     VERBATIM)
 
-#GENERATOR: "KeywordLookup.h": keyword decision tree used by the lexer
+# GENERATOR: "KeywordLookup.h": keyword decision tree used by the lexer
 add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/KeywordLookup.h
     MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/KeywordLookupGenerator.py
@@ -1363,9 +1415,7 @@ add_custom_command(
 list(APPEND JavaScriptCore_HEADERS ${JavaScriptCore_DERIVED_SOURCES_DIR}/KeywordLookup.h)
 WEBKIT_ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/parser/Lexer.cpp ${JavaScriptCore_DERIVED_SOURCES_DIR}/KeywordLookup.h)
 
-
 # Inspector Interfaces
-
 set(JavaScriptCore_INSPECTOR_SCRIPTS_DIR "${JAVASCRIPTCORE_DIR}/inspector/scripts")
 
 set(JavaScriptCore_INSPECTOR_PROTOCOL_SCRIPTS
@@ -1428,19 +1478,19 @@ add_custom_command(
 file(MAKE_DIRECTORY ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector)
 add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendDispatchers.cpp
-           ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendDispatchers.h
-           ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorFrontendDispatchers.cpp
-           ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorFrontendDispatchers.h
-           ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorProtocolObjects.cpp
-           ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorProtocolObjects.h
-           ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendCommands.js
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendDispatchers.h
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorFrontendDispatchers.cpp
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorFrontendDispatchers.h
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorProtocolObjects.cpp
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorProtocolObjects.h
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendCommands.js
     MAIN_DEPENDENCY ${JavaScriptCore_DERIVED_SOURCES_DIR}/CombinedDomains.json
     DEPENDS ${JavaScriptCore_INSPECTOR_PROTOCOL_SCRIPTS}
     COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py --outputDir "${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector" --framework JavaScriptCore ${JavaScriptCore_DERIVED_SOURCES_DIR}/CombinedDomains.json
     VERBATIM)
 
-if (WTF_CPU_X86_64)
-    if (MSVC AND NOT ENABLE_C_LOOP)
+if(WTF_CPU_X86_64)
+    if(MSVC AND NOT ENABLE_C_LOOP)
         add_custom_command(
             OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/JITStubsMSVC64.obj
             MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/jit/JITStubsMSVC64.asm
@@ -1448,8 +1498,8 @@ if (WTF_CPU_X86_64)
             VERBATIM)
 
         list(APPEND JavaScriptCore_SOURCES ${JavaScriptCore_DERIVED_SOURCES_DIR}/JITStubsMSVC64.obj)
-    endif ()
-endif ()
+    endif()
+endif()
 
 set(JavaScriptCore_INTERFACE_LIBRARIES JavaScriptCore)
 set(JavaScriptCore_INTERFACE_INCLUDE_DIRECTORIES
@@ -1464,21 +1514,21 @@ set(JavaScriptCore_INTERFACE_DEPENDENCIES
 WEBKIT_FRAMEWORK_DECLARE(JavaScriptCore)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
-if (COMPILER_IS_GCC_OR_CLANG)
+if(COMPILER_IS_GCC_OR_CLANG)
     # Avoid using fused multiply-add instructions since this could give different results
     # for e.g. parseInt depending on the platform and compilation flags.
-    if (WTF_CPU_LOONGARCH64)
+    if(WTF_CPU_LOONGARCH64)
         WEBKIT_ADD_TARGET_CXX_FLAGS(JavaScriptCore -ffp-contract=off)
-    else ()
+    else()
         WEBKIT_ADD_TARGET_CXX_FLAGS(JavaScriptCore -ffp-contract=off -fno-slp-vectorize)
-    endif ()
+    endif()
 
     # On MIPS we have to explicitly disable madd4, since some versions of gcc still generate
     # such instructions despite -ffp-contract=off
-    if (WTF_CPU_MIPS)
+    if(WTF_CPU_MIPS)
         WEBKIT_ADD_TARGET_CXX_FLAGS(JavaScriptCore -mno-madd4)
-    endif ()
-endif ()
+    endif()
+endif()
 
 WEBKIT_COPY_FILES(JavaScriptCore_CopyHeaders
     DESTINATION ${JavaScriptCore_FRAMEWORK_HEADERS_DIR}/JavaScriptCore
@@ -1492,29 +1542,33 @@ WEBKIT_COPY_FILES(JavaScriptCore_CopyPrivateHeaders
     FLATTENED
 )
 add_dependencies(JavaScriptCore_CopyPrivateHeaders Bytecodes JSCBuiltins)
+
 # JavaScriptCore_CopyPrivateHeaders needs to have a direct or indirect
 # dependency of JavaScriptCore for CMake Visual Studio generator to
 # eliminate duplicated custom commands. Otherwise,
 # CombinedDomains.json will be generated in both projects.
-if (NOT INTERNAL_BUILD)
+if(NOT INTERNAL_BUILD)
     add_dependencies(JavaScriptCore_CopyPrivateHeaders JavaScriptCore)
-endif ()
+endif()
 
 target_include_directories(LowLevelInterpreterLib
     PRIVATE "$<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>")
 add_dependencies(LowLevelInterpreterLib Bytecodes JSCBuiltins)
-if (TARGET WTF_CopyHeaders)
-    add_dependencies(LowLevelInterpreterLib WTF_CopyHeaders)
-endif ()
 
-if (CMAKE_COMPILER_IS_GNUCXX AND GCC_OFFLINEASM_SOURCE_MAP)
+if(TARGET WTF_CopyHeaders)
+    add_dependencies(LowLevelInterpreterLib WTF_CopyHeaders)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX AND GCC_OFFLINEASM_SOURCE_MAP)
     message(STATUS "Enabling asm postprocessing")
 
     set(LowLevelInterpreter_LAUNCHER "${RUBY_EXECUTABLE} ${JavaScriptCore_SCRIPTS_SOURCES_DIR}/postprocess-asm")
     get_target_property(PROP_RULE_LAUNCH_COMPILE LowLevelInterpreterLib RULE_LAUNCH_COMPILE)
-    if (PROP_RULE_LAUNCH_COMPILE)
+
+    if(PROP_RULE_LAUNCH_COMPILE)
         set(LowLevelInterpreter_LAUNCHER "${LowLevelInterpreter_LAUNCHER} ${PROP_RULE_LAUNCH_COMPILE}")
-    endif ()
+    endif()
+
     set_property(TARGET LowLevelInterpreterLib
         PROPERTY RULE_LAUNCH_COMPILE "${LowLevelInterpreter_LAUNCHER}")
 
@@ -1525,40 +1579,39 @@ if (CMAKE_COMPILER_IS_GNUCXX AND GCC_OFFLINEASM_SOURCE_MAP)
         PROPERTIES
         COMPILE_DEFINITIONS "POSTPROCESS_ASM=llint/LowLevelInterpreter.cpp"
         COMPILE_OPTIONS "-fno-lto")
-endif ()
+endif()
 
 # When building JavaScriptCore as an object library, we need to make sure the
 # lowlevelinterpreter lib objects get propogated.
-if (${JavaScriptCore_LIBRARY_TYPE} STREQUAL "OBJECT")
+if(${JavaScriptCore_LIBRARY_TYPE} STREQUAL "OBJECT")
     list(APPEND JavaScriptCore_PRIVATE_LIBRARIES $<TARGET_OBJECTS:LowLevelInterpreterLib>)
-else ()
+else()
     list(APPEND JavaScriptCore_SOURCES $<TARGET_OBJECTS:LowLevelInterpreterLib>)
-endif ()
+endif()
 
 WEBKIT_COMPUTE_SOURCES(JavaScriptCore)
 WEBKIT_FRAMEWORK(JavaScriptCore)
 
 target_precompile_headers(JavaScriptCore PRIVATE JavaScriptCorePrefix.h)
 
-if (NOT "${PORT}" STREQUAL "Mac")
-    if (${JavaScriptCore_LIBRARY_TYPE} STREQUAL "SHARED")
+if(NOT "${PORT}" STREQUAL "Mac")
+    if(${JavaScriptCore_LIBRARY_TYPE} STREQUAL "SHARED")
         WEBKIT_POPULATE_LIBRARY_VERSION(JAVASCRIPTCORE)
         set_target_properties(JavaScriptCore PROPERTIES VERSION ${JAVASCRIPTCORE_VERSION} SOVERSION ${JAVASCRIPTCORE_VERSION_MAJOR})
         install(TARGETS JavaScriptCore DESTINATION "${LIB_INSTALL_DIR}")
-    endif ()
-endif ()
+    endif()
+endif()
 
 # Force staging of shared scripts, even if they aren't directly used to build JavaScriptCore.
-
 add_custom_target(JavaScriptCoreSharedScripts DEPENDS ${JavaScriptCore_SCRIPTS})
 add_dependencies(JavaScriptCore JavaScriptCoreSharedScripts ${JavaScriptCore_EXTRA_DEPENDENCIES})
 
-if (CMAKE_GENERATOR MATCHES "Visual Studio")
+if(CMAKE_GENERATOR MATCHES "Visual Studio")
     # JavaScriptCoreSharedScripts and JSCBuiltins targets need to have
     # a direct or indirect dependency for CMake Visual Studio
     # generator to eliminate duplicated custom commands. Otherwise,
     # JavaScriptCore_SCRIPTS will be generated in both projects.
     add_dependencies(JavaScriptCoreSharedScripts JSCBuiltins)
-endif ()
+endif()
 
 add_subdirectory(shell)
