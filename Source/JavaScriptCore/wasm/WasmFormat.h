@@ -57,7 +57,7 @@ struct UnlinkedHandlerInfo;
 
 using BlockSignature = const TypeDefinition*;
 
-enum class TableElementType : uint8_t {
+enum class TableElementType : bool {
     Externref,
     Funcref
 };

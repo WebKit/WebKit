@@ -27,7 +27,7 @@
 
 namespace JSC {
 
-enum class ArgumentsMode {
+enum class ArgumentsMode : bool {
     Cloned,
     FakeValues
 };

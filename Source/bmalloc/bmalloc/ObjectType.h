@@ -35,7 +35,7 @@ namespace bmalloc {
 
 class Heap;
 
-enum class ObjectType : unsigned char { Small, Large };
+enum class ObjectType : bool { Small, Large };
 
 ObjectType objectType(Heap&, void*);
 

@@ -2043,7 +2043,7 @@ LLINT_SLOW_PATH_DECL(slow_path_size_frame_for_forward_arguments)
     LLINT_RETURN_CALLEE_FRAME(calleeFrame);
 }
 
-enum class SetArgumentsWith {
+enum class SetArgumentsWith : bool {
     Object,
     CurrentArguments
 };

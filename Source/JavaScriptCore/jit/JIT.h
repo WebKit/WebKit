@@ -834,7 +834,7 @@ namespace JSC {
             return call;
         }
 
-        enum class ProfilingPolicy {
+        enum class ProfilingPolicy : bool {
             ShouldEmitProfiling,
             NoProfiling
         };

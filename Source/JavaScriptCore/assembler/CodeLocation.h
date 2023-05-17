@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-enum class NearCallMode : uint8_t { Regular, Tail };
+enum class NearCallMode : bool { Regular, Tail };
 
 template<PtrTag> class CodeLocationInstruction;
 template<PtrTag> class CodeLocationLabel;

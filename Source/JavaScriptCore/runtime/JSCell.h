@@ -54,7 +54,7 @@ class PropertyNameArray;
 class Structure;
 class JSCellLock;
 
-enum class GCDeferralContextArgPresense {
+enum class GCDeferralContextArgPresense : bool {
     HasArg,
     DoesNotHaveArg
 };

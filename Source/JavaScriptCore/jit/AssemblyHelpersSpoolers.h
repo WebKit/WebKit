@@ -296,7 +296,7 @@ public:
         template<typename RegType> RegType getReg() { return RegDispatch<RegType>::get(reg); };
     };
 
-    enum class BufferRegs {
+    enum class BufferRegs : bool {
         NeedPreservation,
         AllowModification
     };

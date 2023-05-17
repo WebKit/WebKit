@@ -63,7 +63,7 @@ public:
     JSValue formatToParts(JSGlobalObject*, ISO8601::Duration) const;
     JSObject* resolvedOptions(JSGlobalObject*) const;
 
-    enum class Display : uint8_t { Always, Auto };
+    enum class Display : bool { Always, Auto };
     enum class Style : uint8_t { Long, Short, Narrow, Digital };
     enum class UnitStyle : uint8_t { Long, Short, Narrow, Numeric, TwoDigit };
     static constexpr unsigned numberOfUnitStyles = 5;

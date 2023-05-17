@@ -796,7 +796,7 @@ public:
         clearBits64WithMask(scratchForMask, dest);
     }
 
-    enum class ClearBitsAttributes {
+    enum class ClearBitsAttributes : bool {
         OKToClobberMask,
         MustPreserveMask
     };

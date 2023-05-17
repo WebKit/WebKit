@@ -32,7 +32,7 @@
 
 namespace Inspector {
 class FrontendChannel;
-enum class DisconnectReason;
+enum class DisconnectReason : bool;
 }
 
 namespace JSC {

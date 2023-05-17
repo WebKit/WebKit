@@ -252,7 +252,7 @@ std::optional<Duration> parseDuration(StringView string)
 }
 
 
-enum class Second60Mode { Accept, Reject };
+enum class Second60Mode : bool { Accept, Reject };
 template<typename CharacterType>
 static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>& buffer, Second60Mode second60Mode)
 {

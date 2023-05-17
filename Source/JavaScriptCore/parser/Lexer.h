@@ -79,7 +79,7 @@ public:
     int lastLineNumber() const { return m_lastLineNumber; }
     bool hasLineTerminatorBeforeToken() const { return m_hasLineTerminatorBeforeToken; }
     JSTokenType scanRegExp(JSToken*, UChar patternPrefix = 0);
-    enum class RawStringsBuildMode { BuildRawStrings, DontBuildRawStrings };
+    enum class RawStringsBuildMode : bool { BuildRawStrings, DontBuildRawStrings };
     JSTokenType scanTemplateString(JSToken*, RawStringsBuildMode);
 
     // Functions for use after parsing.

@@ -65,7 +65,7 @@ public:
 
     RegisterSet usedRegisters() const { return m_usedRegisters; }
     
-    enum class ExtraStackSpace { SpaceForCCall, NoExtraSpace };
+    enum class ExtraStackSpace : bool { SpaceForCCall, NoExtraSpace };
 
     struct PreservedState {
         PreservedState()

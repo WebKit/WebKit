@@ -64,7 +64,7 @@ private:
     PartialResult WARN_UNUSED_RETURN parseGlobalType(GlobalInformation&);
     PartialResult WARN_UNUSED_RETURN parseMemoryHelper(bool isImport);
     PartialResult WARN_UNUSED_RETURN parseTableHelper(bool isImport);
-    enum class LimitsType { Memory, Table };
+    enum class LimitsType : bool { Memory, Table };
     PartialResult WARN_UNUSED_RETURN parseResizableLimits(uint32_t& initial, std::optional<uint32_t>& maximum, bool& isShared, LimitsType);
     PartialResult WARN_UNUSED_RETURN parseInitExpr(uint8_t&, uint64_t&, v128_t&, Type& initExprType);
     PartialResult WARN_UNUSED_RETURN parseI32InitExpr(std::optional<I32InitExpr>&, ASCIILiteral failMessage);

@@ -88,7 +88,7 @@ private:
     static Vector<String> sortLocaleData(const String&, RelevantExtensionKey);
     static Vector<String> searchLocaleData(const String&, RelevantExtensionKey);
 
-    enum class Usage : uint8_t { Sort, Search };
+    enum class Usage : bool { Sort, Search };
     enum class Sensitivity : uint8_t { Base, Accent, Case, Variant };
     enum class CaseFirst : uint8_t { Upper, Lower, False };
 

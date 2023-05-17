@@ -27,7 +27,7 @@
 
 namespace JSC {
 
-enum class AllocationFailureMode {
+enum class AllocationFailureMode : bool {
     Assert,
     ReturnNull
 };

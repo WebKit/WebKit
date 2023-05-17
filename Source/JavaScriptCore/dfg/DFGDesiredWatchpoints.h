@@ -42,7 +42,7 @@ namespace JSC { namespace DFG {
 class Graph;
 struct Prefix;
 
-enum class WatchpointRegistrationMode : uint8_t { Collect, Add };
+enum class WatchpointRegistrationMode : bool { Collect, Add };
 class WatchpointCollector final {
     WTF_MAKE_NONCOPYABLE(WatchpointCollector);
 public:

@@ -34,7 +34,7 @@ namespace JSC {
 JS_EXPORT_PRIVATE const ClassInfo* getHashMapBucketKeyClassInfo();
 JS_EXPORT_PRIVATE const ClassInfo* getHashMapBucketKeyValueClassInfo();
 
-enum class HashTableType {
+enum class HashTableType : bool {
     Key,
     KeyValue
 };
@@ -359,7 +359,7 @@ private:
 
     ALWAYS_INLINE HashMapBucketType** findBucketAlreadyHashedAndNormalized(JSGlobalObject*, JSValue key, uint32_t hash);
 
-    enum class RehashMode { BeforeAddition, AfterRemoval };
+    enum class RehashMode : bool { BeforeAddition, AfterRemoval };
     void rehash(JSGlobalObject*, RehashMode);
 
     ALWAYS_INLINE void checkConsistency() const;

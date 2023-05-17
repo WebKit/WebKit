@@ -60,7 +60,7 @@ enum class PutByKind {
     SetPrivateNameByVal,
 };
 
-enum class DelByKind {
+enum class DelByKind : bool {
     ById,
     ByVal
 };

@@ -27,6 +27,6 @@
 
 namespace bmalloc {
 
-enum class FailureAction { Crash, ReturnNull };
+enum class FailureAction : bool { Crash, ReturnNull };
 
 } // namespace bmalloc

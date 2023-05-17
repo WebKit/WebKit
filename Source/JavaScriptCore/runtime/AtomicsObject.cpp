@@ -136,7 +136,7 @@ static unsigned validateAtomicAccess(JSGlobalObject* globalObject, VM& vm, JSArr
     return accessIndex;
 }
 
-enum class TypedArrayOperationMode { ReadWrite, Wait };
+enum class TypedArrayOperationMode : bool { ReadWrite, Wait };
 template<TypedArrayOperationMode mode>
 inline JSArrayBufferView* validateIntegerTypedArray(JSGlobalObject* globalObject, JSValue typedArrayValue)
 {

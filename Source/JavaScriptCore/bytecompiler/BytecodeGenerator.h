@@ -72,8 +72,8 @@ namespace JSC {
     enum class EmitAwait : bool { No, Yes };
 
     enum class DebuggableCall : bool { No, Yes };
-    enum class ThisResolutionType { Local, Scoped };
-    enum class InvalidPrototypeMode : uint8_t { Throw, Ignore };
+    enum class ThisResolutionType : bool { Local, Scoped };
+    enum class InvalidPrototypeMode : bool { Throw, Ignore };
     enum class LinkTimeConstant : int32_t;
     
     class CallArguments {
@@ -831,7 +831,7 @@ namespace JSC {
         RegisterID* emitGetTemplateObject(RegisterID* dst, TaggedTemplateNode*);
         RegisterID* emitGetGlobalPrivate(RegisterID* dst, const Identifier& property);
 
-        enum class ReturnFrom { Normal, Finally };
+        enum class ReturnFrom : bool { Normal, Finally };
         RegisterID* emitReturn(RegisterID* src, ReturnFrom = ReturnFrom::Normal);
         RegisterID* emitEnd(RegisterID* src);
 
@@ -1033,12 +1033,12 @@ namespace JSC {
         bool isDerivedClassContext() { return m_derivedContextType == DerivedContextType::DerivedMethodContext; }
         bool isArrowFunction() { return m_codeBlock->isArrowFunction(); }
 
-        enum class TDZCheckOptimization { Optimize, DoNotOptimize };
-        enum class NestedScopeType { IsNested, IsNotNested };
+        enum class TDZCheckOptimization : bool { Optimize, DoNotOptimize };
+        enum class NestedScopeType : bool { IsNested, IsNotNested };
         enum class ScopeType { CatchScope, LetConstScope, FunctionNameScope, ClassScope };
     private:
-        enum class TDZRequirement { UnderTDZ, NotUnderTDZ };
-        enum class ScopeRegisterType { Var, Block };
+        enum class TDZRequirement : bool { UnderTDZ, NotUnderTDZ };
+        enum class ScopeRegisterType : bool { Var, Block };
         void pushLexicalScopeInternal(VariableEnvironment&, TDZCheckOptimization, NestedScopeType, RegisterID** constantSymbolTableResult, TDZRequirement, ScopeType, ScopeRegisterType);
         void initializeBlockScopedFunctions(VariableEnvironment&, FunctionStack&, RegisterID* constantSymbolTable);
         void popLexicalScopeInternal(VariableEnvironment&);

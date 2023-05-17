@@ -303,7 +303,7 @@ private:
         return m_buffer->buffer();
     }
 
-    enum class IterationState { Continue, Stop };
+    enum class IterationState : bool { Continue, Stop };
     template<typename Functor>
     void forEach(Functor functor)
     {
@@ -369,7 +369,7 @@ private:
         return nullptr;
     }
 
-    enum class RehashMode { Normal, RemoveBatching };
+    enum class RehashMode : bool { Normal, RemoveBatching };
     void rehash(RehashMode = RehashMode::Normal);
 
     ALWAYS_INLINE void checkConsistency() const

@@ -56,7 +56,7 @@ struct JSAgentContext : public AgentContext {
     JSC::JSGlobalObject& inspectedGlobalObject;
 };
 
-enum class DisconnectReason {
+enum class DisconnectReason : bool {
     InspectedTargetDestroyed,
     InspectorDestroyed
 };

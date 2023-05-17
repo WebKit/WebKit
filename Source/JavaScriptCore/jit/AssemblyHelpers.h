@@ -2040,7 +2040,7 @@ public:
 protected:
     void copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(GPRReg calleeSavesBuffer);
 
-    enum class TypedArrayField { Length, ByteLength };
+    enum class TypedArrayField : bool { Length, ByteLength };
     void loadTypedArrayByteLengthImpl(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, GPRReg scratch2GPR, std::optional<TypedArrayType>, TypedArrayField);
 
     CodeBlock* const m_codeBlock;

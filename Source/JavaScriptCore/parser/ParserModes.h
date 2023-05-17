@@ -31,13 +31,13 @@
 
 namespace JSC {
 
-enum class JSParserStrictMode { NotStrict, Strict };
-enum class JSParserBuiltinMode { NotBuiltin, Builtin };
-enum class JSParserScriptMode { Classic, Module };
+enum class JSParserStrictMode : bool { NotStrict, Strict };
+enum class JSParserBuiltinMode : bool { NotBuiltin, Builtin };
+enum class JSParserScriptMode : bool { Classic, Module };
 
-enum class SuperBinding { Needed, NotNeeded };
+enum class SuperBinding : bool { Needed, NotNeeded };
 
-enum class PrivateBrandRequirement { None, Needed };
+enum class PrivateBrandRequirement : bool { None, Needed };
 
 enum class CodeGenerationMode : uint8_t {
     Debugger = 1 << 0,

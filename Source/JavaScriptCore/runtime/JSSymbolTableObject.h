@@ -134,7 +134,7 @@ ALWAYS_INLINE void symbolTablePutInvalidateWatchpointSet(VM& vm, SymbolTableObje
         set->invalidate(vm, VariableWriteFireDetail(object, propertyName)); // Don't mess around - if we had found this statically, we would have invalidated it.
 }
 
-enum class SymbolTablePutMode {
+enum class SymbolTablePutMode : bool {
     Touch,
     Invalidate
 };

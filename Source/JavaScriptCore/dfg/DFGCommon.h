@@ -250,7 +250,7 @@ inline KillStatus killStatusForDoesKill(bool doesKill)
     return doesKill ? DoesKill : DoesNotKill;
 }
 
-enum class PlanStage {
+enum class PlanStage : bool {
     Initial,
     AfterFixup
 };

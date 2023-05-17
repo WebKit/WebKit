@@ -98,7 +98,7 @@ protected:
     MacroAssembler::Label m_to;
 };
 
-enum class ExceptionCheckRequirement : uint8_t {
+enum class ExceptionCheckRequirement : bool {
     CheckNeeded,
     CheckNotNeeded
 };

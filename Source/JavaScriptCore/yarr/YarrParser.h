@@ -36,7 +36,7 @@
 
 namespace JSC { namespace Yarr {
 
-enum class CreateDisjunctionPurpose : uint8_t { NotForNextAlternative, ForNextAlternative };
+enum class CreateDisjunctionPurpose : bool { NotForNextAlternative, ForNextAlternative };
 
 enum class CharacterClassSetOp : uint8_t {
     Default,
@@ -52,7 +52,7 @@ private:
     template<class FriendDelegate>
     friend ErrorCode parse(FriendDelegate&, StringView pattern, CompileMode, unsigned backReferenceLimit, bool isNamedForwardReferenceAllowed);
 
-    enum class UnicodeParseContext : uint8_t { PatternCodePoint, GroupName };
+    enum class UnicodeParseContext : bool { PatternCodePoint, GroupName };
 
     enum class ParseEscapeMode : uint8_t { Normal, CharacterClass, ClassStringDisjunction };
 

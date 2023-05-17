@@ -834,7 +834,7 @@ private:
             validateStackmapConstraint(stackmap, child);
     }
     
-    enum class ConstraintRole {
+    enum class ConstraintRole : bool {
         Use,
         Def
     };

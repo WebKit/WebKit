@@ -32,7 +32,7 @@
 #include "JSGlobalObjectInspectorController.h"
 #include "JSValueRef.h"
 
-enum class ExceptionStatus {
+enum class ExceptionStatus : bool {
     DidThrow,
     DidNotThrow
 };

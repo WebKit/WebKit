@@ -29,7 +29,7 @@
 
 namespace JSC { namespace Wasm {
 
-enum class CreationMode {
+enum class CreationMode : bool {
     FromJS,
     FromModuleLoader
 };

@@ -37,7 +37,7 @@ enum class HandlerType : uint8_t {
     SynthesizedFinally = 3
 };
 
-enum class RequiredHandler {
+enum class RequiredHandler : bool {
     CatchHandler,
     AnyHandler
 };

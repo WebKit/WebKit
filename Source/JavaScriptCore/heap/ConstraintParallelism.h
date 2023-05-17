@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-enum class ConstraintParallelism : uint8_t {
+enum class ConstraintParallelism : bool {
     Sequential,
     Parallel
 };

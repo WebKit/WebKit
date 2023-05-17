@@ -220,11 +220,11 @@ private:
     static Vector<String> localeData(const String&, RelevantExtensionKey);
 
     enum class CurrencyDisplay : uint8_t { Code, Symbol, NarrowSymbol, Name };
-    enum class CurrencySign : uint8_t { Standard, Accounting };
+    enum class CurrencySign : bool { Standard, Accounting };
     enum class UnitDisplay : uint8_t { Short, Narrow, Long };
-    enum class CompactDisplay : uint8_t { Short, Long };
+    enum class CompactDisplay : bool { Short, Long };
     enum class SignDisplay : uint8_t { Auto, Never, Always, ExceptZero, Negative };
-    enum class TrailingZeroDisplay : uint8_t { Auto, StripIfInteger };
+    enum class TrailingZeroDisplay : bool { Auto, StripIfInteger };
     enum class UseGrouping : uint8_t { False, Min2, Auto, Always };
 
     static ASCIILiteral styleString(Style);

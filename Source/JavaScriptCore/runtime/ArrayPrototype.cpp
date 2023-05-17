@@ -1223,7 +1223,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncUnShift, (JSGlobalObject* globalObject, C
     return JSValue::encode(jsNumber(newLength));
 }
 
-enum class IndexOfDirection { Forward, Backward };
+enum class IndexOfDirection : bool { Forward, Backward };
 template<IndexOfDirection direction>
 ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray* array, uint64_t length64, JSValue searchElement, uint64_t index64)
 {

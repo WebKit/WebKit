@@ -791,7 +791,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorCreate, (JSGlobalObject* globalObject,
     RELEASE_AND_RETURN(scope, JSValue::encode(defineProperties(globalObject, newObject, properties)));
 }
 
-enum class IntegrityLevel {
+enum class IntegrityLevel : bool {
     Sealed,
     Frozen
 };

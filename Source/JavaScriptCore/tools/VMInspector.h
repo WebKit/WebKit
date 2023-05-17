@@ -39,7 +39,7 @@ class VMInspector {
     WTF_MAKE_NONCOPYABLE(VMInspector);
     VMInspector() = default;
 public:
-    enum class Error {
+    enum class Error : bool {
         None,
         TimedOut
     };

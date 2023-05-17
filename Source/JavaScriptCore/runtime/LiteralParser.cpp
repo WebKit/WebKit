@@ -831,7 +831,7 @@ ALWAYS_INLINE void setParserTokenString<UChar>(LiteralParserToken<UChar>& token,
     token.stringStart16 = string;
 }
 
-enum class SafeStringCharacterSet { Strict, Sloppy };
+enum class SafeStringCharacterSet : bool { Strict, Sloppy };
 
 template <SafeStringCharacterSet set>
 static ALWAYS_INLINE bool isSafeStringCharacter(LChar c, LChar terminator)

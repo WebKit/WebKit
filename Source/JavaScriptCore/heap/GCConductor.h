@@ -30,7 +30,7 @@ namespace JSC {
 // Either the mutator has the conn (https://en.wikipedia.org/wiki/Conn_(nautical)), meaning that the
 // mutator will incrementally drive the collector when it calls into slow paths; or the collector has the
 // conn, meaning that the collector thread will drive the collector.
-enum class GCConductor : uint8_t {
+enum class GCConductor : bool {
     Mutator,
     Collector
 };

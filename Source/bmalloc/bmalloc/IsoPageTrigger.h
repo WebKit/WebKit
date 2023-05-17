@@ -29,7 +29,7 @@
 
 namespace bmalloc {
 
-enum class IsoPageTrigger {
+enum class IsoPageTrigger : bool {
     Eligible,
     Empty
 };

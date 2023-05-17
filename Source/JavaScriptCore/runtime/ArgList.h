@@ -37,7 +37,7 @@ class alignas(alignof(EncodedJSValue)) MarkedVectorBase {
     friend class ArgList;
 
 protected:
-    enum class Status { Success, Overflowed };
+    enum class Status : bool { Success, Overflowed };
 public:
     typedef HashSet<MarkedVectorBase*> ListSet;
 

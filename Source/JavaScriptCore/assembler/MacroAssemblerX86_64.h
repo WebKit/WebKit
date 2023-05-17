@@ -522,7 +522,7 @@ public:
         m_assembler.btrq_rr(dst, bitToClear);
     }
 
-    enum class ClearBitsAttributes {
+    enum class ClearBitsAttributes : bool {
         OKToClobberMask,
         MustPreserveMask
     };

@@ -187,7 +187,7 @@ private:
 
     TargetID nextAvailableTargetIdentifier();
 
-    enum class StopSource { API, XPCMessage };
+    enum class StopSource : bool { API, XPCMessage };
     void stopInternal(StopSource) WTF_REQUIRES_LOCK(m_mutex);
 
 #if PLATFORM(COCOA)

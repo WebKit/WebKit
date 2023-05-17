@@ -296,7 +296,7 @@ struct CallDOMGetterData {
     const ClassInfo* requiredClassInfo { nullptr };
 };
 
-enum class BucketOwnerType : uint32_t {
+enum class BucketOwnerType : bool {
     Map,
     Set
 };

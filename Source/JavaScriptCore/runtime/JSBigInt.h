@@ -58,7 +58,7 @@ public:
         return &vm.bigIntSpace();
     }
 
-    enum class InitializationType { None, WithZero };
+    enum class InitializationType : bool { None, WithZero };
     void initialize(InitializationType);
 
     static size_t estimatedSize(JSCell*, VM&);
@@ -130,13 +130,13 @@ public:
         return JSBigInt::createFrom(globalObject, value);
     }
 
-    enum class ErrorParseMode {
+    enum class ErrorParseMode : bool {
         ThrowExceptions,
         IgnoreExceptions
     };
 
-    enum class ParseIntMode { DisallowEmptyString, AllowEmptyString };
-    enum class ParseIntSign { Unsigned, Signed };
+    enum class ParseIntMode : bool { DisallowEmptyString, AllowEmptyString };
+    enum class ParseIntSign : bool { Unsigned, Signed };
 
     static JSValue parseInt(JSGlobalObject*, VM&, StringView, uint8_t radix, ErrorParseMode = ErrorParseMode::ThrowExceptions, ParseIntSign = ParseIntSign::Unsigned);
     static JSValue parseInt(JSGlobalObject*, StringView, ErrorParseMode = ErrorParseMode::ThrowExceptions);
@@ -146,7 +146,7 @@ public:
 
     String toString(JSGlobalObject*, unsigned radix);
     
-    enum class ComparisonMode {
+    enum class ComparisonMode : bool {
         LessThan,
         LessThanOrEqual
     };
@@ -516,7 +516,7 @@ private:
     template <typename BigIntImpl1>
     static void absoluteDivWithBigIntDivisor(JSGlobalObject*, BigIntImpl1 dividend, JSBigInt* divisor, JSBigInt** quotient, JSBigInt** remainder);
     
-    enum class LeftShiftMode {
+    enum class LeftShiftMode : bool {
         SameSizeResult,
         AlwaysAddOneDigit
     };
@@ -537,7 +537,7 @@ private:
 
     static RoundingResult decideRounding(JSBigInt*, int32_t mantissaBitsUnset, int32_t digitIndex, uint64_t currentDigit);
 
-    enum class ExtraDigitsHandling {
+    enum class ExtraDigitsHandling : bool {
         Copy,
         Skip
     };
@@ -554,7 +554,7 @@ private:
     template <typename BigIntImpl1, typename BigIntImpl2>
     static JSBigInt* absoluteXor(JSGlobalObject*, BigIntImpl1 x, BigIntImpl2 y);
 
-    enum class SignOption {
+    enum class SignOption : bool {
         Signed,
         Unsigned
     };

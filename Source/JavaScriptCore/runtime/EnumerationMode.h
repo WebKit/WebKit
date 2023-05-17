@@ -33,12 +33,12 @@ enum class PropertyNameMode : uint8_t {
     StringsAndSymbols = Symbols | Strings,
 };
 
-enum class PrivateSymbolMode : uint8_t {
+enum class PrivateSymbolMode : bool {
     Include,
     Exclude
 };
 
-enum class DontEnumPropertiesMode : uint8_t {
+enum class DontEnumPropertiesMode : bool {
     Include,
     Exclude
 };

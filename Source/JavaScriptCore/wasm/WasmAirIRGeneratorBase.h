@@ -319,7 +319,7 @@ struct AirIRGeneratorBase {
         B3::ValueRep rep;
     };
 
-    enum class CastKind { Cast, Test };
+    enum class CastKind : bool { Cast, Test };
 
     ////////////////////////////////////////////////////////////////////////////////
     // Get concrete instance
@@ -896,7 +896,7 @@ protected:
     template <typename IntType>
     void emitChecksForModOrDiv(bool isSignedDiv, ExpressionType left, ExpressionType right);
 
-    enum class MinOrMax { Min, Max };
+    enum class MinOrMax : bool { Min, Max };
     PartialResult addFloatingPointMinOrMax(Type, MinOrMax, ExpressionType lhs, ExpressionType rhs, ExpressionType& result);
 
     int32_t WARN_UNUSED_RETURN fixupPointerPlusOffset(ExpressionType&, uint32_t);

@@ -35,7 +35,7 @@ class BackendDispatcher;
 class FrontendRouter;
 class InspectorAgentBase;
 
-enum class DisconnectReason;
+enum class DisconnectReason : bool;
 
 class JS_EXPORT_PRIVATE AgentRegistry {
 public:

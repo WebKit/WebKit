@@ -118,7 +118,7 @@ public:
     void stepOverStatement();
     void stepOutOfFunction();
 
-    enum class BlackboxType { Deferred, Ignored };
+    enum class BlackboxType : bool { Deferred, Ignored };
     void setBlackboxType(SourceID, std::optional<BlackboxType>);
     void setBlackboxBreakpointEvaluations(bool);
     void clearBlackbox();

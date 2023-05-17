@@ -86,7 +86,7 @@ public:
 protected:
     JS_EXPORT_PRIVATE InternalFunction(VM&, Structure*, NativeFunction functionForCall, NativeFunction functionForConstruct = nullptr);
 
-    enum class PropertyAdditionMode { WithStructureTransition, WithoutStructureTransition };
+    enum class PropertyAdditionMode : bool { WithStructureTransition, WithoutStructureTransition };
     JS_EXPORT_PRIVATE void finishCreation(VM&, unsigned length, const String& name, PropertyAdditionMode = PropertyAdditionMode::WithStructureTransition);
     DECLARE_DEFAULT_FINISH_CREATION;
 

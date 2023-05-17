@@ -313,7 +313,7 @@ public:
 
     static ExpressionType emptyExpression() { return nullptr; };
 
-    enum class CastKind { Cast, Test };
+    enum class CastKind : bool { Cast, Test };
 
     template <typename ...Args>
     NEVER_INLINE UnexpectedResult WARN_UNUSED_RETURN fail(Args... args) const

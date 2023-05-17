@@ -66,8 +66,8 @@ private:
 
     enum class Style : uint8_t { Narrow, Short, Long };
     enum class Type : uint8_t { Language, Region, Script, Currency, Calendar, DateTimeField };
-    enum class Fallback : uint8_t { Code, None };
-    enum class LanguageDisplay : uint8_t { Dialect, Standard };
+    enum class Fallback : bool { Code, None };
+    enum class LanguageDisplay : bool { Dialect, Standard };
 
     static ASCIILiteral styleString(Style);
     static ASCIILiteral typeString(Type);

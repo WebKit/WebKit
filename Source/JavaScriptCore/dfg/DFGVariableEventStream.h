@@ -53,7 +53,7 @@ public:
     unsigned reconstruct(CodeBlock*, CodeOrigin, MinifiedGraph&, unsigned index, Operands<ValueRecovery>&, Vector<UndefinedOperandSpan>*) const;
 
 private:
-    enum class ReconstructionStyle {
+    enum class ReconstructionStyle : bool {
         Combined,
         Separated
     };

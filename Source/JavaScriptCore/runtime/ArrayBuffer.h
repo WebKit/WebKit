@@ -234,7 +234,7 @@ private:
 
     friend class ArrayBuffer;
 
-    enum class InitializationPolicy : uint8_t {
+    enum class InitializationPolicy : bool {
         ZeroInitialize,
         DontInitialize
     };

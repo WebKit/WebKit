@@ -164,7 +164,7 @@ public:
     virtual bool canSwapCodeRefForDebugger() const { return false; }
     virtual CodeRef<JSEntryPtrTag> swapCodeRefForDebugger(CodeRef<JSEntryPtrTag>);
     
-    enum class ShareAttribute : uint8_t {
+    enum class ShareAttribute : bool {
         NotShared,
         Shared
     };

@@ -115,7 +115,7 @@ public:
         DoubleLessThanOrEqualOrUnordered
     };
 
-    enum class LoadAddressMode {
+    enum class LoadAddressMode : bool {
         ScaleAndAddOffsetIfOffsetIsOutOfBounds,
         Scale
     };

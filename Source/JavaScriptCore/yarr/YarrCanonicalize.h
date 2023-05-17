@@ -59,7 +59,7 @@ extern const size_t UNICODE_CANONICALIZATION_RANGES;
 extern const UChar32* const unicodeCharacterSetInfo[];
 extern const CanonicalizationRange unicodeRangeInfo[];
 
-enum class CanonicalMode { UCS2, Unicode };
+enum class CanonicalMode : bool { UCS2, Unicode };
 
 inline const UChar32* canonicalCharacterSetInfo(unsigned index, CanonicalMode canonicalMode)
 {

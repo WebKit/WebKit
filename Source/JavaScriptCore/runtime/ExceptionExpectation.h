@@ -27,7 +27,7 @@
 
 namespace JSC {
 
-enum class ExceptionExpectation {
+enum class ExceptionExpectation : bool {
     CanThrow,
     ShouldNotThrow
 };

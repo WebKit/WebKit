@@ -206,7 +206,7 @@ public:
     ALWAYS_INLINE bool maybeNeedHandling() const { return m_trapBits.loadRelaxed(); }
     void* trapBitsAddress() { return &m_trapBits; }
 
-    enum class DeferAction {
+    enum class DeferAction : bool {
         DeferForAWhile,
         DeferUntilEndOfScope
     };

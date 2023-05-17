@@ -1960,7 +1960,7 @@ IterationStatus GlobalObjectDependencyFinder::operator()(HeapCell* cell, HeapCel
     return IterationStatus::Continue;
 }
 
-enum class BadTimeFinderMode {
+enum class BadTimeFinderMode : bool {
     SingleGlobal,
     MultipleGlobals
 };

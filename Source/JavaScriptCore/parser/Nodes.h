@@ -77,7 +77,7 @@ namespace JSC {
         URShift
     };
     
-    enum class LogicalOperator : uint8_t {
+    enum class LogicalOperator : bool {
         And,
         Or
     };
@@ -878,7 +878,7 @@ namespace JSC {
         bool m_subscriptHasAssignments;
     };
 
-    enum class DotType { Name, PrivateMember };
+    enum class DotType : bool { Name, PrivateMember };
     class BaseDotNode : public ExpressionNode {
     public:
         BaseDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, DotType);
@@ -1063,7 +1063,7 @@ namespace JSC {
 
     class BytecodeIntrinsicNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
-        enum class Type : uint8_t {
+        enum class Type : bool {
             Constant,
             Function
         };
@@ -2505,7 +2505,7 @@ namespace JSC {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(ObjectPatternNode);
     public:
         ObjectPatternNode();
-        enum class BindingType : uint8_t {
+        enum class BindingType : bool {
             Element,
             RestElement
         };

@@ -493,7 +493,7 @@ public:
         return result;
     }
 
-    enum class PrivateAccessorType { Setter, Getter };
+    enum class PrivateAccessorType : bool { Setter, Getter };
 
     DeclarationResultMask declarePrivateAccessor(const Identifier& ident, ClassElementTag tag, PrivateAccessorType accessorType)
     {
@@ -972,7 +972,7 @@ private:
     unsigned m_index;
 };
 
-enum class ArgumentType { Normal, Spread };
+enum class ArgumentType : bool { Normal, Spread };
 enum class ParsingContext { Program, FunctionConstructor, Eval };
 
 template <typename LexerType>
@@ -1748,9 +1748,9 @@ private:
     template <class TreeBuilder> TreeSourceElements parseClassFieldInitializerSourceElements(TreeBuilder&, const FixedVector<JSTextPosition>&);
     template <class TreeBuilder> TreeStatement parseStatementListItem(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength);
     template <class TreeBuilder> TreeStatement parseStatement(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength = nullptr);
-    enum class ExportType { Exported, NotExported };
+    enum class ExportType : bool { Exported, NotExported };
     template <class TreeBuilder> TreeStatement parseClassDeclaration(TreeBuilder&, ExportType = ExportType::NotExported, DeclarationDefaultContext = DeclarationDefaultContext::Standard);
-    enum class FunctionDeclarationType { Declaration, Statement };
+    enum class FunctionDeclarationType : bool { Declaration, Statement };
     template <class TreeBuilder> TreeStatement parseFunctionDeclaration(TreeBuilder&, FunctionDeclarationType = FunctionDeclarationType::Declaration, ExportType = ExportType::NotExported, DeclarationDefaultContext = DeclarationDefaultContext::Standard, std::optional<int> functionConstructorParametersEndPosition = std::nullopt);
     template <class TreeBuilder> TreeStatement parseFunctionDeclarationStatement(TreeBuilder&, bool parentAllowsFunctionDeclarationAsStatement);
     template <class TreeBuilder> TreeStatement parseAsyncFunctionDeclaration(TreeBuilder&, ExportType = ExportType::NotExported, DeclarationDefaultContext = DeclarationDefaultContext::Standard, std::optional<int> functionConstructorParametersEndPosition = std::nullopt);
@@ -1976,7 +1976,7 @@ private:
         return *m_token.m_data.ident == m_vm.propertyNames->arguments;
     }
 
-    enum class FunctionParsePhase { Parameters, Body };
+    enum class FunctionParsePhase : bool { Parameters, Body };
     struct ParserState {
         int assignmentCount { 0 };
         int nonLHSCount { 0 };

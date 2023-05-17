@@ -89,7 +89,7 @@ public:
         Identifier localName;
     };
 
-    enum class ImportEntryType { Single, Namespace };
+    enum class ImportEntryType : bool { Single, Namespace };
     struct ImportEntry {
         ImportEntryType type;
         Identifier moduleRequest;

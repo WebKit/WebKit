@@ -2383,7 +2383,7 @@ JSC_DEFINE_JIT_OPERATION(operationTryOSREnterAtCatchAndValueProfile, UGPRPair, (
 
 #endif
 
-enum class AccessorType {
+enum class AccessorType : bool {
     Getter,
     Setter
 };

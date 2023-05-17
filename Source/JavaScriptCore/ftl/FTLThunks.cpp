@@ -40,7 +40,7 @@ namespace JSC { namespace FTL {
 
 using namespace DFG;
 
-enum class FrameAndStackAdjustmentRequirement {
+enum class FrameAndStackAdjustmentRequirement : bool {
     Needed, 
     NotNeeded 
 };

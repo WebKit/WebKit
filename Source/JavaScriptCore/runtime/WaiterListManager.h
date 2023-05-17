@@ -33,8 +33,8 @@
 
 namespace JSC {
 
-enum class AtomicsWaitType : uint8_t { Sync, Async };
-enum class AtomicsWaitValidation : uint8_t { Pass, Fail };
+enum class AtomicsWaitType : bool { Sync, Async };
+enum class AtomicsWaitValidation : bool { Pass, Fail };
 
 class Waiter final : public WTF::BasicRawSentinelNode<Waiter>, public ThreadSafeRefCounted<Waiter> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -218,7 +218,7 @@ public:
     JS_EXPORT_PRIVATE JSValue waitAsync(JSGlobalObject*, VM&, int32_t* ptr, int32_t expected, Seconds timeout);
     JS_EXPORT_PRIVATE JSValue waitAsync(JSGlobalObject*, VM&, int64_t* ptr, int64_t expected, Seconds timeout);
 
-    enum class ResolveResult : uint8_t { Ok, Timeout };
+    enum class ResolveResult : bool { Ok, Timeout };
     unsigned notifyWaiter(void* ptr, unsigned count);
 
     size_t waiterListSize(void* ptr);

@@ -103,7 +103,7 @@ namespace JSC {
 
 namespace Probe {
 
-enum class SavedFPWidth {
+enum class SavedFPWidth : bool {
     SaveVectors,
     DontSaveVectors
 };

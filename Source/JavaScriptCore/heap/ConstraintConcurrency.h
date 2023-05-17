@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-enum class ConstraintConcurrency : uint8_t {
+enum class ConstraintConcurrency : bool {
     Sequential,
     Concurrent
 };

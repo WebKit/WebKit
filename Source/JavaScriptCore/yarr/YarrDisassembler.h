@@ -74,7 +74,7 @@ public:
     void dump(PrintStream&, LinkBuffer&);
 
 private:
-    enum class VectorOrder {
+    enum class VectorOrder : bool {
         IterateForward,
         IterateReverse
     };

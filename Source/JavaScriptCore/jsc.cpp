@@ -404,17 +404,17 @@ static JSC_DECLARE_HOST_FUNCTION(functionAsDoubleNumber);
 static JSC_DECLARE_HOST_FUNCTION(functionDropAllLocks);
 
 struct Script {
-    enum class StrictMode {
+    enum class StrictMode : bool {
         Strict,
         Sloppy
     };
 
-    enum class ScriptType {
+    enum class ScriptType : bool {
         Script,
         Module
     };
 
-    enum class CodeSource {
+    enum class CodeSource : bool {
         File,
         CommandLine
     };

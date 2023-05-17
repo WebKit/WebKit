@@ -85,7 +85,7 @@ namespace JSC { namespace LLInt {
         : callFrame->r(virtualRegister))
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
-enum class RequiredWasmJIT { Any, OMG };
+enum class RequiredWasmJIT : bool { Any, OMG };
 
 extern "C" void wasm_log_crash(CallFrame*, Wasm::Instance* instance)
 {

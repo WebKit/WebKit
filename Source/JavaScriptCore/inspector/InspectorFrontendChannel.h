@@ -35,7 +35,7 @@ namespace Inspector {
 class FrontendChannel {
 public:
 
-    enum class ConnectionType {
+    enum class ConnectionType : bool {
         Remote,
         Local
     };

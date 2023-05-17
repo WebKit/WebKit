@@ -280,7 +280,7 @@ class Heap;
 typedef HashCountedSet<JSCell*> ProtectCountSet;
 typedef HashCountedSet<const char*> TypeCountSet;
 
-enum class HeapType : uint8_t { Small, Large };
+enum class HeapType : bool { Small, Large };
 
 class HeapUtil;
 
@@ -727,7 +727,7 @@ private:
     
     void addCoreConstraints();
 
-    enum class MemoryThresholdCallType {
+    enum class MemoryThresholdCallType : bool {
         Cached,
         Direct
     };
