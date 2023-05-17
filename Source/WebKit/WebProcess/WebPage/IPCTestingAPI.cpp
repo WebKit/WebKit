@@ -1884,7 +1884,7 @@ static bool encodeTypedArray(IPC::Encoder& encoder, JSContextRef context, JSValu
     if (!data.buffer)
         return false;
 
-    encoder.encodeSpan(makeSpan(reinterpret_cast<const uint8_t*>(data.buffer), data.length));
+    encoder.encodeSpan(std::span(reinterpret_cast<const uint8_t*>(data.buffer), data.length));
     return true;
 }
 

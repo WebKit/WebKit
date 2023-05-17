@@ -692,7 +692,7 @@ void WebGL2RenderingContext::getBufferSubData(GCGLenum target, long long srcByte
         return;
 
     // FIXME: Coalesce multiple getBufferSubData() calls to use a single map() call
-    m_context->getBufferSubData(target, srcByteOffset, makeSpan(static_cast<uint8_t*>(dstData->baseAddress()) + dstOffset * elementSize, copyLength * elementSize));
+    m_context->getBufferSubData(target, srcByteOffset, std::span(static_cast<uint8_t*>(dstData->baseAddress()) + dstOffset * elementSize, copyLength * elementSize));
 }
 
 void WebGL2RenderingContext::bindFramebuffer(GCGLenum target, WebGLFramebuffer* buffer)
@@ -1219,7 +1219,7 @@ void WebGL2RenderingContext::compressedTexImage2D(GCGLenum target, GCGLint level
     auto slice = sliceArrayBufferView("compressedTexImage2D", srcData, srcOffset, srcLengthOverride);
     if (!slice)
         return;
-    m_context->compressedTexImage2D(target, level, internalformat, width, height, border, slice->byteLength(), makeSpan(static_cast<const uint8_t*>(slice->baseAddress()), slice->byteLength()));
+    m_context->compressedTexImage2D(target, level, internalformat, width, height, border, slice->byteLength(), std::span(static_cast<const uint8_t*>(slice->baseAddress()), slice->byteLength()));
 }
 
 void WebGL2RenderingContext::compressedTexImage3D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLsizei imageSize, GCGLint64 offset)
@@ -1252,7 +1252,7 @@ void WebGL2RenderingContext::compressedTexImage3D(GCGLenum target, GCGLint level
     auto slice = sliceArrayBufferView("compressedTexImage3D", srcData, srcOffset, srcLengthOverride);
     if (!slice)
         return;
-    m_context->compressedTexImage3D(target, level, internalformat, width, height, depth, border, slice->byteLength(), makeSpan(static_cast<const uint8_t*>(slice->baseAddress()), slice->byteLength()));
+    m_context->compressedTexImage3D(target, level, internalformat, width, height, depth, border, slice->byteLength(), std::span(static_cast<const uint8_t*>(slice->baseAddress()), slice->byteLength()));
 }
 
 void WebGL2RenderingContext::compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, ArrayBufferView& srcData)
@@ -1298,7 +1298,7 @@ void WebGL2RenderingContext::compressedTexSubImage2D(GCGLenum target, GCGLint le
     auto slice = sliceArrayBufferView("compressedTexSubImage2D", srcData, srcOffset, srcLengthOverride);
     if (!slice)
         return;
-    m_context->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, slice->byteLength(), makeSpan(static_cast<const uint8_t*>(slice->baseAddress()), slice->byteLength()));
+    m_context->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, slice->byteLength(), std::span(static_cast<const uint8_t*>(slice->baseAddress()), slice->byteLength()));
 }
 
 void WebGL2RenderingContext::compressedTexSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLsizei imageSize, GCGLint64 offset)
@@ -1331,7 +1331,7 @@ void WebGL2RenderingContext::compressedTexSubImage3D(GCGLenum target, GCGLint le
     auto slice = sliceArrayBufferView("compressedTexSubImage3D", srcData, srcOffset, srcLengthOverride);
     if (!slice)
         return;
-    m_context->compressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, slice->byteLength(), makeSpan(static_cast<const uint8_t*>(slice->baseAddress()), slice->byteLength()));
+    m_context->compressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, slice->byteLength(), std::span(static_cast<const uint8_t*>(slice->baseAddress()), slice->byteLength()));
 }
 
 GCGLint WebGL2RenderingContext::getFragDataLocation(WebGLProgram& program, const String& name)

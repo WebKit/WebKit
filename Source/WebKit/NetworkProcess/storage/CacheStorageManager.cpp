@@ -117,7 +117,7 @@ static bool writeCachesList(const String& cachesListDirectoryPath, const Vector<
         encoder << caches[index]->uniqueName();
     }
 
-    FileSystem::overwriteEntireFile(cachesListFilePath, makeSpan(const_cast<uint8_t*>(encoder.buffer()), encoder.bufferSize()));
+    FileSystem::overwriteEntireFile(cachesListFilePath, std::span(const_cast<uint8_t*>(encoder.buffer()), encoder.bufferSize()));
     return true;
 }
 
@@ -144,7 +144,7 @@ static bool writeSizeFile(const String& sizeDirectoryPath, uint64_t size)
 
     auto sizeFilePath = FileSystem::pathByAppendingComponent(sizeDirectoryPath, sizeFileName);
     auto value = String::number(size).utf8();
-    return FileSystem::overwriteEntireFile(sizeFilePath, makeSpan(reinterpret_cast<uint8_t*>(const_cast<char*>(value.data())), value.length())) != -1;
+    return FileSystem::overwriteEntireFile(sizeFilePath, std::span(reinterpret_cast<uint8_t*>(const_cast<char*>(value.data())), value.length())) != -1;
 }
 
 static String saltFilePath(const String& saltDirectory)

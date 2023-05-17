@@ -28,9 +28,9 @@
 
 #include "ExceptionOr.h"
 #include <JavaScriptCore/Forward.h>
+#include <span>
 #include <wtf/Function.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Span.h>
 
 namespace WebCore {
 

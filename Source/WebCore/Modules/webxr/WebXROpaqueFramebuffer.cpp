@@ -111,8 +111,8 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
 
     GCGLint boundFBO { 0 };
     GCGLint boundTexture { 0 };
-    gl.getIntegerv(GL::FRAMEBUFFER_BINDING, makeSpan(&boundFBO, 1));
-    gl.getIntegerv(textureTargetBinding, makeSpan(&boundTexture, 1));
+    gl.getIntegerv(GL::FRAMEBUFFER_BINDING, std::span(&boundFBO, 1));
+    gl.getIntegerv(textureTargetBinding, std::span(&boundTexture, 1));
 
     auto scopedBindings = makeScopeExit([&gl, boundFBO, boundTexture, textureTarget]() {
         gl.bindFramebuffer(GL::FRAMEBUFFER, boundFBO);
@@ -215,9 +215,9 @@ void WebXROpaqueFramebuffer::endFrame()
         GCGLint boundFBO { 0 };
         GCGLint boundReadFBO { 0 };
         GCGLint boundDrawFBO { 0 };
-        gl.getIntegerv(GL::FRAMEBUFFER_BINDING, makeSpan(&boundFBO, 1));
-        gl.getIntegerv(GL::READ_FRAMEBUFFER_BINDING, makeSpan(&boundReadFBO, 1));
-        gl.getIntegerv(GL::DRAW_FRAMEBUFFER_BINDING, makeSpan(&boundDrawFBO, 1));
+        gl.getIntegerv(GL::FRAMEBUFFER_BINDING, std::span(&boundFBO, 1));
+        gl.getIntegerv(GL::READ_FRAMEBUFFER_BINDING, std::span(&boundReadFBO, 1));
+        gl.getIntegerv(GL::DRAW_FRAMEBUFFER_BINDING, std::span(&boundDrawFBO, 1));
 
         auto scopedBindings = makeScopeExit([&gl, boundFBO, boundReadFBO, boundDrawFBO]() {
             gl.bindFramebuffer(GL::FRAMEBUFFER, boundFBO);
@@ -275,8 +275,8 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
     // Restore bindings when exiting the function.
     GCGLint boundFBO { 0 };
     GCGLint boundRenderbuffer { 0 };
-    gl.getIntegerv(GL::FRAMEBUFFER_BINDING, makeSpan(&boundFBO, 1));
-    gl.getIntegerv(GL::RENDERBUFFER_BINDING, makeSpan(&boundRenderbuffer, 1));
+    gl.getIntegerv(GL::FRAMEBUFFER_BINDING, std::span(&boundFBO, 1));
+    gl.getIntegerv(GL::RENDERBUFFER_BINDING, std::span(&boundRenderbuffer, 1));
 
     auto scopedBindings = makeScopeExit([&gl, boundFBO, boundRenderbuffer]() {
         gl.bindFramebuffer(GL::FRAMEBUFFER, boundFBO);
@@ -293,7 +293,7 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
     // FIXME: check if we can get recommended values from each device platform.
     if (m_attributes.antialias) {
         GCGLint maxSampleCount;
-        gl.getIntegerv(GL::MAX_SAMPLES, makeSpan(&maxSampleCount, 1));
+        gl.getIntegerv(GL::MAX_SAMPLES, std::span(&maxSampleCount, 1));
         // Cap the maxiumum multisample count at 4. Any more than this is likely overkill and will impact performance.
         m_sampleCount = std::min(4, maxSampleCount);
     }

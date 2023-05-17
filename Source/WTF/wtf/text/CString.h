@@ -25,11 +25,11 @@
 
 #pragma once
 
+#include <span>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Span.h>
 
 namespace WTF {
 

@@ -27,12 +27,12 @@
 #pragma once
 
 #include <JavaScriptCore/Forward.h>
+#include <span>
 #include <utility>
 #include <variant>
 #include <wtf/FileSystem.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
-#include <wtf/Span.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
@@ -282,7 +282,7 @@ public:
 
     WEBCORE_EXPORT const uint8_t* data() const;
     const char* dataAsCharPtr() const { return reinterpret_cast<const char*>(data()); }
-    std::span<const uint8_t> dataAsSpanForContiguousData() const { RELEASE_ASSERT(isContiguous()); return makeSpan(data(), size()); }
+    std::span<const uint8_t> dataAsSpanForContiguousData() const { RELEASE_ASSERT(isContiguous()); return std::span(data(), size()); }
     WTF::Persistence::Decoder decoder() const;
 
     enum class MayUseFileMapping : bool { No, Yes };

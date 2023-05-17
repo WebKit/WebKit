@@ -27,8 +27,8 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include <span>
 #include <wtf/Forward.h>
-#include <wtf/Span.h>
 #include <wtf/Vector.h>
 
 namespace WebCore::PushCrypto {

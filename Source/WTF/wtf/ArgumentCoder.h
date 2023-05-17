@@ -26,8 +26,8 @@
 #pragma once
 
 #include <optional>
+#include <span>
 #include <wtf/EnumTraits.h>
-#include <wtf/Span.h>
 
 namespace IPC {
 

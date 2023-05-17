@@ -27,9 +27,9 @@
 
 #include "ExceptionOr.h"
 #include "ScriptExecutionContextIdentifier.h"
+#include <span>
 #include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
-#include <wtf/Span.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
 

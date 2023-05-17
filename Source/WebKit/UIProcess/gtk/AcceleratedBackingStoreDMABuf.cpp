@@ -112,7 +112,7 @@ AcceleratedBackingStoreDMABuf::Texture::Texture(GdkGLContext* glContext, const U
                 EGL_DMA_BUF_PLANE0_MODIFIER_HI_EXT, static_cast<EGLAttrib>(modifier >> 32),
                 EGL_DMA_BUF_PLANE0_MODIFIER_LO_EXT, static_cast<EGLAttrib>(modifier & 0xffffffff),
             };
-            attributes.append(Span<const EGLAttrib> { modifierAttributes });
+            attributes.append(std::span<const EGLAttrib> { modifierAttributes });
         }
         attributes.append(EGL_NONE);
 

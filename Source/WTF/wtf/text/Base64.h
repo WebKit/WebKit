@@ -118,12 +118,12 @@ Base64Specification base64URLEncoded(const void*, unsigned);
 
 inline Vector<uint8_t> base64EncodeToVector(std::span<const uint8_t> input, Base64EncodeMode mode)
 {
-    return base64EncodeToVector(asBytes(input), mode);
+    return base64EncodeToVector(std::as_bytes(input), mode);
 }
 
 inline Vector<uint8_t> base64EncodeToVector(std::span<const char> input, Base64EncodeMode mode)
 {
-    return base64EncodeToVector(asBytes(input), mode);
+    return base64EncodeToVector(std::as_bytes(input), mode);
 }
 
 inline Vector<uint8_t> base64EncodeToVector(const CString& input, Base64EncodeMode mode)
@@ -138,17 +138,17 @@ inline Vector<uint8_t> base64EncodeToVector(const void* input, unsigned length, 
 
 inline String base64EncodeToString(std::span<const uint8_t> input, Base64EncodeMode mode)
 {
-    return base64EncodeToString(asBytes(input), mode);
+    return base64EncodeToString(std::as_bytes(input), mode);
 }
 
 inline String base64EncodeToStringReturnNullIfOverflow(std::span<const uint8_t> input, Base64EncodeMode mode)
 {
-    return base64EncodeToStringReturnNullIfOverflow(asBytes(input), mode);
+    return base64EncodeToStringReturnNullIfOverflow(std::as_bytes(input), mode);
 }
 
 inline String base64EncodeToString(std::span<const char> input, Base64EncodeMode mode)
 {
-    return base64EncodeToString(asBytes(input), mode);
+    return base64EncodeToString(std::as_bytes(input), mode);
 }
 
 inline String base64EncodeToString(const CString& input, Base64EncodeMode mode)
@@ -168,12 +168,12 @@ inline String base64EncodeToString(const void* input, unsigned length, Base64Enc
 
 inline std::optional<Vector<uint8_t>> base64Decode(std::span<const uint8_t> input, Base64DecodeMode mode)
 {
-    return base64Decode(asBytes(input), mode);
+    return base64Decode(std::as_bytes(input), mode);
 }
 
 inline std::optional<Vector<uint8_t>> base64Decode(std::span<const char> input, Base64DecodeMode mode)
 {
-    return base64Decode(asBytes(input), mode);
+    return base64Decode(std::as_bytes(input), mode);
 }
 
 inline std::optional<Vector<uint8_t>> base64Decode(const void* input, unsigned length, Base64DecodeMode mode)
@@ -296,7 +296,7 @@ inline Base64Specification base64Encoded(std::span<const std::byte> input, Base6
 
 inline Base64Specification base64Encoded(std::span<const uint8_t> input, Base64EncodeMode mode)
 {
-    return base64Encoded(asBytes(input), mode);
+    return base64Encoded(std::as_bytes(input), mode);
 }
 
 inline Base64Specification base64Encoded(const CString& input, Base64EncodeMode mode)
@@ -342,7 +342,7 @@ public:
 
     template<typename CharacterType> void writeTo(CharacterType* destination) const
     {
-        base64Encode(m_base64.input, makeSpan(destination, m_encodedLength), m_base64.mode);
+        base64Encode(m_base64.input, std::span(destination, m_encodedLength), m_base64.mode);
     }
 
 private:

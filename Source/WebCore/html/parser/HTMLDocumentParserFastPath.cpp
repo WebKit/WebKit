@@ -56,7 +56,7 @@
 #include "ParsingUtilities.h"
 #include "QualifiedName.h"
 #include "Settings.h"
-#include <wtf/Span.h>
+#include <span>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/StringParsingBuffer.h>

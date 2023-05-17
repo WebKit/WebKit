@@ -27,10 +27,10 @@
 
 #include "ContextDestructionObserver.h"
 #include "ExceptionCode.h"
+#include <span>
 #include <variant>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
-#include <wtf/Span.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/CString.h>

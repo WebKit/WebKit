@@ -27,7 +27,7 @@
 #pragma once
 
 #include <optional>
-#include <wtf/Span.h>
+#include <span>
 #include <wtf/SystemFree.h>
 
 #if HAVE(BACKTRACE_SYMBOLS) || HAVE(BACKTRACE)

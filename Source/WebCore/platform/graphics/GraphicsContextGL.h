@@ -36,10 +36,10 @@
 #include "Image.h"
 #include "IntRect.h"
 #include "IntSize.h"
+#include <span>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Span.h>
 #include <wtf/text/WTFString.h>
 
 #if OS(WINDOWS)

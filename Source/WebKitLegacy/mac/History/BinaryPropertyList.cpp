@@ -77,7 +77,7 @@ inline bool operator==(const IntegerArray& a, const IntegerArray& b)
 
 inline void add(Hasher& hasher, const IntegerArray& array)
 {
-    add(hasher, makeSpan(array));
+    add(hasher, std::span(array.data(), array.size()));
 }
 
 struct IntegerArrayHashTraits : HashTraits<IntegerArray> {

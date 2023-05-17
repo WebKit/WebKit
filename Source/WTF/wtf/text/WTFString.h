@@ -502,7 +502,7 @@ inline Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8Conversio
 {
     if (!m_impl) {
         constexpr const char* emptyString = "";
-        return function(makeSpan(emptyString, emptyString));
+        return function(std::span(emptyString, emptyString));
     }
     return m_impl->tryGetUTF8(function, mode);
 }

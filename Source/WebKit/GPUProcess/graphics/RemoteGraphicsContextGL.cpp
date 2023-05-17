@@ -323,7 +323,7 @@ void RemoteGraphicsContextGL::readnPixels2(int32_t x, int32_t y, int32_t width, 
     if (!handle.isNull()) {
         handle.setOwnershipOfMemory(m_resourceOwner, WebKit::MemoryLedger::Default);
         if (auto buffer = SharedMemory::map(WTFMove(handle), SharedMemory::Protection::ReadWrite))
-            success = m_context->readnPixelsWithStatus(x, y, width, height, format, type, makeSpan(static_cast<uint8_t*>(buffer->data()), buffer->size()));
+            success = m_context->readnPixelsWithStatus(x, y, width, height, format, type, std::span(static_cast<uint8_t*>(buffer->data()), buffer->size()));
         else
             m_context->addError(GCGLErrorCode::InvalidOperation);
     } else

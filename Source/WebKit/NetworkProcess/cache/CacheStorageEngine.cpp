@@ -499,7 +499,7 @@ void Engine::writeSizeFile(String&& path, uint64_t size, CompletionHandler<void(
     m_ioQueue->dispatch([path = WTFMove(path).isolatedCopy(), size, completionHandler = WTFMove(completionHandler)]() mutable {
         Locker locker { globalSizeFileLock };
         auto value = String::number(size).utf8();
-        FileSystem::overwriteEntireFile(path, makeSpan(reinterpret_cast<uint8_t*>(const_cast<char*>(value.data())), value.length()));
+        FileSystem::overwriteEntireFile(path, std::span(reinterpret_cast<uint8_t*>(const_cast<char*>(value.data())), value.length()));
         RunLoop::main().dispatch(WTFMove(completionHandler));
     });
 }

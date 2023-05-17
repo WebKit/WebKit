@@ -45,9 +45,9 @@
 #include "StreamClientConnection.h"
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <WebCore/Timer.h>
+#include <span>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
-#include <wtf/Span.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
 

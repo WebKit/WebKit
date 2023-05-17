@@ -28,9 +28,9 @@
 
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ArrayBufferView.h>
+#include <span>
 #include <variant>
 #include <wtf/RefPtr.h>
-#include <wtf/Span.h>
 
 #if PLATFORM(COCOA) && defined(__OBJC__)
 OBJC_CLASS NSData;

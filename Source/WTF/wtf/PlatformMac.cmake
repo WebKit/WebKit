@@ -13,7 +13,6 @@ list(APPEND WTF_PUBLIC_HEADERS
     WeakObjCPtr.h
 
     cf/CFURLExtras.h
-    cf/SpanCF.h
     cf/TypeCastsCF.h
     cf/VectorCF.h
 
@@ -22,7 +21,6 @@ list(APPEND WTF_PUBLIC_HEADERS
     cocoa/NSURLExtras.h
     cocoa/RuntimeApplicationChecksCocoa.h
     cocoa/SoftLinking.h
-    cocoa/SpanCocoa.h
     cocoa/TollFreeBridging.h
     cocoa/TypeCastsCocoa.h
     cocoa/VectorCocoa.h

@@ -27,8 +27,8 @@
 
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
 
+#include <span>
 #include <wtf/RetainPtr.h>
-#include <wtf/Span.h>
 
 typedef struct __CVBuffer* CVPixelBufferRef;
 typedef struct __CVPixelBufferPool* CVPixelBufferPoolRef;

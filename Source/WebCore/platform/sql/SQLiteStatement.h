@@ -27,7 +27,7 @@
 
 #include "SQLValue.h"
 #include "SQLiteDatabase.h"
-#include <wtf/Span.h>
+#include <span>
 
 struct sqlite3_stmt;
 

@@ -81,6 +81,7 @@
 #include "WasmCapabilities.h"
 #include "WasmFaultSignalHandler.h"
 #include "WasmMemory.h"
+#include <span>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -94,7 +95,6 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/SafeStrerror.h>
 #include <wtf/Scope.h>
-#include <wtf/Span.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/URL.h>
 #include <wtf/WTFProcess.h>
@@ -1824,13 +1824,13 @@ JSC_DEFINE_HOST_FUNCTION(functionWriteFile, (JSGlobalObject* globalObject, CallF
         if (arrayBuffer->impl()->isDetached())
             data = emptyString();
         else
-            data = makeSpan(static_cast<const uint8_t*>(arrayBuffer->impl()->data()), arrayBuffer->impl()->byteLength());
+            data = std::span(static_cast<const uint8_t*>(arrayBuffer->impl()->data()), arrayBuffer->impl()->byteLength());
     } else if (dataValue.inherits<JSArrayBufferView>()) {
         auto* view = jsCast<JSArrayBufferView*>(dataValue);
         if (view->isDetached())
             data = emptyString();
         else
-            data = makeSpan(static_cast<const uint8_t*>(view->vector()), view->byteLength());
+            data = std::span(static_cast<const uint8_t*>(view->vector()), view->byteLength());
     } else {
         data = dataValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });

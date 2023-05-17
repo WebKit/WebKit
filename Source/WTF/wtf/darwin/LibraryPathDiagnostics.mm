@@ -29,9 +29,9 @@
 #include <dlfcn.h>
 #include <notify.h>
 #include <os/log.h>
+#include <span>
 #include <wtf/FileSystem.h>
 #include <wtf/JSONValues.h>
-#include <wtf/Span.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/UUID.h>
 #include <wtf/cf/TypeCastsCF.h>

@@ -180,7 +180,7 @@ void SerializedScriptValue::encode(Encoder& encoder) const
     if (hasArray) {
         encoder << static_cast<uint64_t>(m_arrayBufferContentsArray->size());
         for (const auto& arrayBufferContents : *m_arrayBufferContentsArray)
-            encoder << makeSpan(reinterpret_cast<const uint8_t*>(arrayBufferContents.data()), arrayBufferContents.sizeInBytes());
+            encoder << std::span(reinterpret_cast<const uint8_t*>(arrayBufferContents.data()), arrayBufferContents.sizeInBytes());
     }
 
 #if ENABLE(WEB_RTC)

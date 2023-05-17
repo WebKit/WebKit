@@ -669,7 +669,8 @@ TYPED_TEST_SUITE_P(ArgumentCoderVectorTest);
 
 TYPED_TEST_P(ArgumentCoderVectorTest, VectorTooBig)
 {
-    TestFixture::encoder() << makeSpan(std::array<uint8_t, 9> { 255, 255, 255, 255, 255, 255, 255, 255, 255 });
+    std::array<uint8_t, 9> bytes { 255, 255, 255, 255, 255, 255, 255, 255, 255 };
+    TestFixture::encoder() << std::span<uint8_t, 9>(bytes);
     auto optionalVector = TestFixture::createDecoder()->template decode<Vector<String>>();
     ASSERT_FALSE(optionalVector);
 }

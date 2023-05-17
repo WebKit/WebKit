@@ -25,10 +25,10 @@
 
 #pragma once
 
+#include <span>
 #include <type_traits>
 #include <wtf/ASCIICType.h>
 #include <wtf/Forward.h>
-#include <wtf/Span.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {

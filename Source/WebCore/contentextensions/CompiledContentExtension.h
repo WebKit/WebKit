@@ -29,7 +29,7 @@
 
 #include "ContentExtensionRule.h"
 #include "DFABytecode.h"
-#include <wtf/Span.h>
+#include <span>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore::ContentExtensions {

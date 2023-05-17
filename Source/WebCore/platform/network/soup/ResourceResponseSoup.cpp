@@ -93,7 +93,7 @@ void ResourceResponse::updateFromSoupMessageHeaders(SoupMessageHeaders* soupHead
         addHTTPHeaderField(String::fromLatin1(headerName), String::fromLatin1(headerValue));
 }
 
-CertificateInfo ResourceResponse::platformCertificateInfo(Span<const std::byte>) const
+CertificateInfo ResourceResponse::platformCertificateInfo(std::span<const std::byte>) const
 {
     return CertificateInfo(m_certificate.get(), m_tlsErrors);
 }

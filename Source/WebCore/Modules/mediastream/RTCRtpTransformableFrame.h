@@ -26,8 +26,8 @@
 
 #if ENABLE(WEB_RTC)
 
+#include <span>
 #include <wtf/RefCounted.h>
-#include <wtf/Span.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

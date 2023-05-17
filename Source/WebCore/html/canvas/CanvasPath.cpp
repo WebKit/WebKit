@@ -241,7 +241,7 @@ void CanvasPath::rect(float x, float y, float width, float height)
 
 ExceptionOr<void> CanvasPath::roundRect(float x, float y, float width, float height, const RadiusVariant& radii)
 {
-    return roundRect(x, y, width, height, makeSpan(&radii, 1));
+    return roundRect(x, y, width, height, std::span(&radii, 1));
 }
 
 ExceptionOr<void> CanvasPath::roundRect(float x, float y, float width, float height, const std::span<const RadiusVariant>& radii)

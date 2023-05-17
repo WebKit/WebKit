@@ -1035,8 +1035,8 @@ sub printTagNameCppFile
     print F "TagName findTagName(const String& name)\n";
     print F "{\n";
     print F "    if (name.is8Bit())\n";
-    print F "        return findTagFromBuffer(makeSpan(name.characters8(), name.length()));\n";
-    print F "    return findTagFromBuffer(makeSpan(name.characters16(), name.length()));\n";
+    print F "        return findTagFromBuffer(std::span(name.characters8(), name.length()));\n";
+    print F "    return findTagFromBuffer(std::span(name.characters16(), name.length()));\n";
     print F "}\n";
     print F "#endif\n";
     print F "\n";
@@ -1238,8 +1238,8 @@ sub printNodeNameCppFile
     print F "NodeName findNodeName(Namespace ns, const String& name)\n";
     print F "{\n";
     print F "    if (name.is8Bit())\n";
-    print F "        return findNodeNameFromBuffer(ns, makeSpan(name.characters8(), name.length()));\n";
-    print F "    return findNodeNameFromBuffer(ns, makeSpan(name.characters16(), name.length()));\n";
+    print F "        return findNodeNameFromBuffer(ns, std::span(name.characters8(), name.length()));\n";
+    print F "    return findNodeNameFromBuffer(ns, std::span(name.characters16(), name.length()));\n";
     print F "}\n";
     print F "\n";
     print F "ElementName findHTMLElementName(std::span<const LChar> buffer)\n";

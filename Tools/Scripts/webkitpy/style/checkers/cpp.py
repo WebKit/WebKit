@@ -2815,50 +2815,6 @@ def check_ismainthread(filename, clean_lines, line_number, file_state, error):
     error(line_number, 'runtime/ismainthread', 4, "Use 'isMainRunLoop()' instead of 'isMainThread()' in Source/WebKit.")
 
 
-def check_wtf_make_span(clean_lines, line_number, file_state, error):
-    """Looks for use of 'Span' or 'std::span' constructors which should be replaced with 'WTF::makeSpan()'.
-
-    Args:
-      clean_lines: A CleansedLines instance containing the file.
-      line_number: The number of the line to check.
-      file_state: A _FileState instance which maintains information about
-                  the state of things in the file.
-      error: The function to call with any errors found.
-    """
-
-    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
-
-    using_wtf_span_ctor_with_type_inference_search = search(r'\b(Span|std::span)\s*(([A-Za-z_][A-Za-z0-9_]+)\s*)?{\s*([^}]+)\s*}', line)
-    if using_wtf_span_ctor_with_type_inference_search:
-        class_name = using_wtf_span_ctor_with_type_inference_search.group(1)
-        variable = using_wtf_span_ctor_with_type_inference_search.group(3).strip() if using_wtf_span_ctor_with_type_inference_search.group(3) else None
-        args = using_wtf_span_ctor_with_type_inference_search.group(4).strip()
-        if variable:
-            error(line_number, 'runtime/wtf_make_span', 5,
-                  "Use 'auto {variable} = makeSpan({args})' instead of '{class_name} {variable} {{ {args} }}'.".format(
-                      args=args, class_name=class_name, variable=variable))
-        else:
-            error(line_number, 'runtime/wtf_make_span', 5,
-                  "Use 'makeSpan({args})' instead of '{class_name} {{ {args} }}'.".format(
-                      args=args, class_name=class_name))
-
-    using_wtf_span_ctor_with_type_inference_search = search(r'\b(Span|std::span)\s*(([A-Za-z_][A-Za-z0-9_]+)\s*)?\((.+)\s*\)', line)
-    if using_wtf_span_ctor_with_type_inference_search:
-        class_name = using_wtf_span_ctor_with_type_inference_search.group(1)
-        variable = using_wtf_span_ctor_with_type_inference_search.group(3).strip() if using_wtf_span_ctor_with_type_inference_search.group(3) else None
-        args = using_wtf_span_ctor_with_type_inference_search.group(4).strip()
-        if args.count('(') < args.count(')'):
-            args = args[:-1]
-        if variable:
-            error(line_number, 'runtime/wtf_make_span', 5,
-                  "Use 'auto {variable} = makeSpan({args})' instead of '{class_name} {variable}({args})'.".format(
-                      args=args, class_name=class_name, variable=variable))
-        else:
-            error(line_number, 'runtime/wtf_make_span', 5,
-                  "Use 'makeSpan({args})' instead of '{class_name}({args})'.".format(
-                      args=args, class_name=class_name))
-
-
 def check_wtf_make_unique(clean_lines, line_number, file_state, error):
     """Looks for use of 'std::make_unique<>' which should be replaced with 'WTF::makeUnique<>'.
 
@@ -3538,7 +3494,6 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_max_min_macros(clean_lines, line_number, file_state, error)
     check_wtf_checked_size(clean_lines, line_number, file_state, error)
     check_wtf_move(clean_lines, line_number, file_state, error)
-    check_wtf_make_span(clean_lines, line_number, file_state, error)
     check_wtf_make_unique(clean_lines, line_number, file_state, error)
     check_wtf_never_destroyed(clean_lines, line_number, file_state, error)
     check_lock_guard(clean_lines, line_number, file_state, error)
@@ -4778,7 +4733,6 @@ class CppChecker(object):
         'runtime/unsigned',
         'runtime/virtual',
         'runtime/wtf_checked_size',
-        'runtime/wtf_make_span',
         'runtime/wtf_make_unique',
         'runtime/wtf_move',
         'runtime/wtf_never_destroyed',

@@ -63,7 +63,6 @@
 #import <pal/crypto/CryptoDigest.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/Base64.h>
@@ -922,6 +921,13 @@ static WebCore::CredentialRequestOptions::MediationRequirement toWebCore(_WKWebA
         ASSERT_NOT_REACHED();
         return WebCore::CredentialRequestOptions::MediationRequirement::Optional;
     }
+}
+#endif
+
+#if ENABLE(WEB_AUTHN)
+static std::span<const uint8_t> asUInt8Span(NSData* data)
+{
+    return { reinterpret_cast<const uint8_t*>(data.bytes), data.length };
 }
 #endif
 

@@ -32,11 +32,11 @@
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
 #include "SQLiteStatementAutoResetScope.h"
+#include <span>
 #include <wtf/CompletionHandler.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/Span.h>
 #include <wtf/UUID.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>

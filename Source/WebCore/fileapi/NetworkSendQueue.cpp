@@ -54,7 +54,7 @@ void NetworkSendQueue::enqueue(const JSC::ArrayBuffer& binaryData, unsigned byte
 {
     if (m_queue.isEmpty()) {
         auto* data = static_cast<const uint8_t*>(binaryData.data());
-        m_writeRawData(makeSpan(data + byteOffset, byteLength));
+        m_writeRawData(std::span(data + byteOffset, byteLength));
         return;
     }
     m_queue.append(SharedBuffer::create(static_cast<const uint8_t*>(binaryData.data()) + byteOffset, byteLength));
@@ -104,7 +104,7 @@ void NetworkSendQueue::processMessages()
             }
 
             if (const auto& result = loader->arrayBufferResult()) {
-                m_writeRawData(makeSpan(static_cast<const uint8_t*>(result->data()), result->byteLength()));
+                m_writeRawData(std::span(static_cast<const uint8_t*>(result->data()), result->byteLength()));
                 return;
             }
             ASSERT(errorCode);

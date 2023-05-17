@@ -33,7 +33,7 @@
 #include "ReadableStreamSink.h"
 #include "ResourceResponse.h"
 #include <JavaScriptCore/TypedArrays.h>
-#include <wtf/Span.h>
+#include <span>
 #include <wtf/WeakPtr.h>
 
 namespace JSC {

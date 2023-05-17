@@ -131,7 +131,7 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
                 EGL_DMA_BUF_PLANE0_MODIFIER_HI_EXT, static_cast<EGLAttrib>(metadata.modifier >> 32),
                 EGL_DMA_BUF_PLANE0_MODIFIER_LO_EXT, static_cast<EGLAttrib>(metadata.modifier & 0xffffffff),
             };
-            attributes.append(Span<const EGLAttrib> { modifierAttributes });
+            attributes.append(std::span<const EGLAttrib> { modifierAttributes });
         }
         attributes.append(EGL_NONE);
 

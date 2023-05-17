@@ -23,6 +23,7 @@
 #include <initializer_list>
 #include <limits>
 #include <optional>
+#include <span>
 #include <string.h>
 #include <type_traits>
 #include <utility>
@@ -34,7 +35,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/NotFound.h>
-#include <wtf/Span.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ValueCheck.h>
 #include <wtf/VectorTraits.h>
