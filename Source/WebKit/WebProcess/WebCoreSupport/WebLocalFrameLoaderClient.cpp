@@ -116,14 +116,13 @@
 #define WEBPAGEID (WEBPAGE ? WEBPAGE->identifier().toUInt64() : 0)
 
 #define WebLocalFrameLoaderClient_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, PREFIX_PARAMETERS fmt, this, WEBFRAME, WEBFRAMEID, WEBPAGE, WEBPAGEID, ##__VA_ARGS__)
-#define WebLocalFrameLoaderClient_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, PREFIX_PARAMETERS fmt, this, WEBFRAME, WEBFRAMEID, WEBPAGE, WEBPAGEID, ##__VA_ARGS__)
 #define WebLocalFrameLoaderClient_RELEASE_LOG_FAULT(channel, fmt, ...) RELEASE_LOG_FAULT(channel, PREFIX_PARAMETERS fmt, this, WEBFRAME, WEBFRAMEID, WEBPAGE, WEBPAGEID, ##__VA_ARGS__)
 
 namespace WebKit {
 using namespace WebCore;
 
 WebLocalFrameLoaderClient::WebLocalFrameLoaderClient(Ref<WebFrame>&& frame, ScopeExit<Function<void()>>&& invalidator)
-    : m_frame(WTFMove(frame))
+    : WebFrameLoaderClient(WTFMove(frame))
     , m_frameInvalidator(WTFMove(invalidator))
 {
 }
@@ -923,23 +922,6 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRe
     }
 }
 
-#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-static std::optional<WebKit::WebHitTestResultData> webHitTestResultDataInNavigationActionData(const NavigationAction& navigationAction, NavigationActionData& navigationActionData, WebCore::LocalFrame* coreFrame)
-{
-    if (!coreFrame)
-        return std::nullopt;
-
-    auto mouseEventData = navigationAction.mouseEventData();
-    if (!mouseEventData)
-        return std::nullopt;
-
-    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
-    HitTestResult hitTestResult = coreFrame->eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation, hitType);
-
-    return WebKit::WebHitTestResultData(hitTestResult, false);
-}
-#endif
-
 void WebLocalFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction& navigationAction, const ResourceRequest& request,
     FormState* formState, const String& frameName, WebCore::PolicyCheckIdentifier identifier, FramePolicyFunction&& function)
 {
@@ -978,7 +960,7 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Nav
         navigationAction.privateClickMeasurement(),
         { }, /* networkConnectionIntegrityPolicy */
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-        webHitTestResultDataInNavigationActionData(navigationAction, navigationActionData, m_frame->coreFrame()),
+        WebHitTestResultData::fromNavigationActionAndLocalFrame(navigationAction, m_frame->coreFrame()),
 #endif
     };
 
@@ -1011,116 +993,7 @@ WebCore::AllowsContentJavaScript WebLocalFrameLoaderClient::allowsContentJavaScr
 void WebLocalFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const NavigationAction& navigationAction, const ResourceRequest& request, const ResourceResponse& redirectResponse,
     FormState* formState, PolicyDecisionMode policyDecisionMode, WebCore::PolicyCheckIdentifier requestIdentifier, FramePolicyFunction&& function)
 {
-    auto* webPage = m_frame->page();
-    if (!webPage) {
-        WebLocalFrameLoaderClient_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because there's no web page");
-        function(PolicyAction::Ignore, requestIdentifier);
-        return;
-    }
-
-    LOG(Loading, "WebProcess %i - dispatchDecidePolicyForNavigationAction to request url %s", getCurrentProcessID(), request.url().string().utf8().data());
-
-    // Always ignore requests with empty URLs. 
-    if (request.isEmpty()) {
-        WebLocalFrameLoaderClient_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because request is empty");
-        function(PolicyAction::Ignore, requestIdentifier);
-        return;
-    }
-
-    uint64_t listenerID = m_frame->setUpPolicyListener(requestIdentifier, WTFMove(function), WebFrame::ForNavigationAction::Yes);
-
-    ASSERT(navigationAction.requester());
-    auto& requester = navigationAction.requester().value();
-
-    auto* requestingFrame = requester.globalFrameIdentifier && requester.globalFrameIdentifier->frameID ? WebProcess::singleton().webFrame(requester.globalFrameIdentifier->frameID) : nullptr;
-    std::optional<WebCore::FrameIdentifier> originatingFrameID;
-    std::optional<WebCore::FrameIdentifier> parentFrameID;
-    if (requestingFrame) {
-        originatingFrameID = requestingFrame->frameID();
-        if (auto* parentFrame = requestingFrame->parentFrame())
-            parentFrameID = parentFrame->frameID();
-    }
-
-    FrameInfoData originatingFrameInfoData {
-        navigationAction.initiatedByMainFrame() == InitiatedByMainFrame::Yes,
-        FrameType::Local,
-        ResourceRequest { requester.url },
-        requester.securityOrigin->data(),
-        { },
-        WTFMove(originatingFrameID),
-        WTFMove(parentFrameID),
-    };
-
-    std::optional<WebPageProxyIdentifier> originatingPageID;
-    if (requester.globalFrameIdentifier && requester.globalFrameIdentifier->pageID) {
-        if (auto* webPage = WebProcess::singleton().webPage(requester.globalFrameIdentifier->pageID))
-            originatingPageID = webPage->webPageProxyIdentifier();
-    }
-
-    RefPtr coreFrame = m_frame->coreFrame();
-    if (!coreFrame)
-        return function(PolicyAction::Ignore, requestIdentifier);
-
-    WebDocumentLoader* documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().policyDocumentLoader());
-    if (!documentLoader) {
-        // FIXME: When we receive a redirect after the navigation policy has been decided for the initial request,
-        // the provisional load's DocumentLoader needs to receive navigation policy decisions. We need a better model for this state.
-        documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().provisionalDocumentLoader());
-    }
-    if (!documentLoader)
-        documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().documentLoader());
-
-    auto& mouseEventData = navigationAction.mouseEventData();
-    NavigationActionData navigationActionData {
-        navigationAction.type(),
-        modifiersForNavigationAction(navigationAction),
-        mouseButton(navigationAction),
-        syntheticClickType(navigationAction),
-        WebProcess::singleton().userGestureTokenIdentifier(navigationAction.userGestureToken()),
-        navigationAction.userGestureToken() ? navigationAction.userGestureToken()->authorizationToken() : std::nullopt,
-        webPage->canHandleRequest(request),
-        navigationAction.shouldOpenExternalURLsPolicy(),
-        navigationAction.downloadAttribute(),
-        mouseEventData ? mouseEventData->locationInRootViewCoordinates : FloatPoint(),
-        !redirectResponse.isNull(), /* isRedirect */
-        navigationAction.treatAsSameOriginNavigation(),
-        navigationAction.hasOpenedFrames(),
-        navigationAction.openedByDOMWithOpener(),
-        !!coreFrame->loader().opener(), /* hasOpener */
-        requester.securityOrigin->data(),
-        navigationAction.targetBackForwardItemIdentifier(),
-        navigationAction.sourceBackForwardItemIdentifier(),
-        navigationAction.lockHistory(),
-        navigationAction.lockBackForwardList(),
-        documentLoader->clientRedirectSourceForHistory(),
-        coreFrame->loader().effectiveSandboxFlags(),
-        navigationAction.privateClickMeasurement(),
-        requestingFrame ? requestingFrame->networkConnectionIntegrityPolicy() : OptionSet<NetworkConnectionIntegrity> { },
-#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-        webHitTestResultDataInNavigationActionData(navigationAction, navigationActionData, coreFrame.get()),
-#endif
-    };
-
-    // Notify the UIProcess.
-    if (policyDecisionMode == PolicyDecisionMode::Synchronous) {
-        auto sendResult = webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationActionSync(m_frame->frameID(), m_frame->isMainFrame(), m_frame->info(), requestIdentifier, documentLoader->navigationID(), navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }, redirectResponse));
-        if (!sendResult) {
-            WebLocalFrameLoaderClient_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because of failing to send sync IPC");
-            m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { requestIdentifier });
-            return;
-        }
-
-        auto [policyDecision] = sendResult.takeReply();
-        WebLocalFrameLoaderClient_RELEASE_LOG(Network, "dispatchDecidePolicyForNavigationAction: Got policyAction %u from sync IPC", (unsigned)policyDecision.policyAction);
-        m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { policyDecision.identifier, policyDecision.isNavigatingToAppBoundDomain, policyDecision.policyAction, 0, policyDecision.downloadID });
-        return;
-    }
-
-    ASSERT(policyDecisionMode == PolicyDecisionMode::Asynchronous);
-    if (!webPage->send(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(m_frame->frameID(), m_frame->info(), requestIdentifier, documentLoader->navigationID(), navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }, redirectResponse, listenerID))) {
-        WebLocalFrameLoaderClient_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because of failing to send async IPC");
-        m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { requestIdentifier });
-    }
+    WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(navigationAction, request, redirectResponse, formState, policyDecisionMode, requestIdentifier, WTFMove(function));
 }
 
 void WebLocalFrameLoaderClient::cancelPolicyCheck()

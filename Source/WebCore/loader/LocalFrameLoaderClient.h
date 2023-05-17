@@ -29,7 +29,7 @@
 
 #pragma once
 
-#include "FrameLoaderTypes.h"
+#include "FrameLoaderClient.h"
 #include "LayoutMilestone.h"
 #include "LinkIcon.h"
 #include "RegistrableDomain.h"
@@ -75,7 +75,6 @@ class DOMWindowExtension;
 class DOMWrapperWorld;
 class DocumentLoader;
 class Element;
-class FormState;
 class FrameLoader;
 class FrameNetworkingContext;
 class HTMLFormElement;
@@ -86,30 +85,24 @@ class IntSize;
 class LegacyPreviewLoaderClient;
 class LocalFrame;
 class MessageEvent;
-class NavigationAction;
 class Page;
 class ProtectionSpace;
 class RegistrableDomain;
 class RTCPeerConnectionHandler;
 class ResourceError;
 class ResourceHandle;
-class ResourceRequest;
-class ResourceResponse;
 class SecurityOrigin;
 class SharedBuffer;
 class SubstituteData;
 class Widget;
 
 enum class LockBackForwardList : bool;
-enum class PolicyDecisionMode;
 enum class UsedLegacyTLS : bool;
 enum class WasPrivateRelayed : bool;
 
 struct StringWithDirection;
 
-typedef Function<void (PolicyAction, PolicyCheckIdentifier)> FramePolicyFunction;
-
-class WEBCORE_EXPORT LocalFrameLoaderClient {
+class WEBCORE_EXPORT LocalFrameLoaderClient : public FrameLoaderClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     // An inline function cannot be the first non-abstract virtual function declared
@@ -117,8 +110,6 @@ public:
     // This hurts performance (in Mac OS X at least, when loading frameworks), so we
     // don't want to do it in WebKit.
     virtual bool hasHTMLView() const;
-
-    virtual ~LocalFrameLoaderClient() = default;
 
     virtual bool hasWebView() const = 0; // mainly for assertions
 
@@ -189,7 +180,6 @@ public:
 
     virtual void dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, PolicyCheckIdentifier, const String& downloadAttribute, FramePolicyFunction&&) = 0;
     virtual void dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String& frameName, PolicyCheckIdentifier, FramePolicyFunction&&) = 0;
-    virtual void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse& redirectResponse, FormState*, PolicyDecisionMode, PolicyCheckIdentifier, FramePolicyFunction&&) = 0;
     virtual void cancelPolicyCheck() = 0;
 
     virtual void dispatchUnableToImplementPolicy(const ResourceError&) = 0;

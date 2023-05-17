@@ -26,6 +26,7 @@
 #pragma once
 
 #include "SameDocumentNavigationType.h"
+#include "WebFrameLoaderClient.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/LocalFrameLoaderClient.h>
@@ -38,12 +39,10 @@ class PluginView;
 class WebFrame;
 struct WebsitePoliciesData;
     
-class WebLocalFrameLoaderClient final : public WebCore::LocalFrameLoaderClient {
+class WebLocalFrameLoaderClient final : public WebCore::LocalFrameLoaderClient, public WebFrameLoaderClient {
 public:
     explicit WebLocalFrameLoaderClient(Ref<WebFrame>&&, ScopeExit<Function<void()>>&&);
     ~WebLocalFrameLoaderClient();
-
-    WebFrame& webFrame() const { return m_frame.get(); }
 
     bool frameHasCustomContentProvider() const { return m_frameHasCustomContentProvider; }
 
@@ -276,7 +275,6 @@ private:
 
     inline bool hasPlugInView() const;
 
-    Ref<WebFrame> m_frame;
     ScopeExit<Function<void()>> m_frameInvalidator;
 
 #if ENABLE(PDFKIT_PLUGIN)

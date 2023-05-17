@@ -24,9 +24,11 @@
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/Document.h>
 #include <WebCore/ElementInlines.h>
+#include <WebCore/EventHandler.h>
 #include <WebCore/HitTestResult.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameView.h>
+#include <WebCore/NavigationAction.h>
 #include <WebCore/Node.h>
 #include <WebCore/RenderImage.h>
 #include <WebCore/SharedBuffer.h>
@@ -178,5 +180,22 @@ std::optional<WebKit::SharedMemory::Handle> WebHitTestResultData::getImageShared
     }
     return imageHandle;
 }
+
+#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+std::optional<WebKit::WebHitTestResultData> WebHitTestResultData::fromNavigationActionAndLocalFrame(const NavigationAction& navigationAction, WebCore::LocalFrame* coreFrame)
+{
+    if (!coreFrame)
+        return std::nullopt;
+
+    auto mouseEventData = navigationAction.mouseEventData();
+    if (!mouseEventData)
+        return std::nullopt;
+
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
+    HitTestResult hitTestResult = coreFrame->eventHandler().hitTestResultAtPoint(mouseEventData->absoluteLocation, hitType);
+
+    return WebKit::WebHitTestResultData(hitTestResult, false);
+}
+#endif
 
 } // WebKit

@@ -814,6 +814,7 @@ WebProcess/WebCoreSupport/WebDiagnosticLoggingClient.cpp
 WebProcess/WebCoreSupport/WebDragClient.cpp
 WebProcess/WebCoreSupport/WebEditorClient.cpp
 WebProcess/WebCoreSupport/WebFileSystemStorageConnection.cpp
+WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp
 WebProcess/WebCoreSupport/WebGeolocationClient.cpp
 WebProcess/WebCoreSupport/WebLocalFrameLoaderClient.cpp
 WebProcess/WebCoreSupport/WebMediaKeySystemClient.cpp
