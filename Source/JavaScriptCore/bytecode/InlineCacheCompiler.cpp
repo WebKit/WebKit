@@ -374,6 +374,7 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
 
     JSGlobalObject* globalObject = m_globalObject;
     CCallHelpers& jit = *m_jit;
+    JIT_COMMENT(jit, "Begin generateWithGuard");
     StructureStubInfo& stubInfo = *m_stubInfo;
     VM& vm = m_vm;
     JSValueRegs valueRegs = stubInfo.valueRegs();
@@ -3103,7 +3104,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> code = FINALIZE_CODE_FOR(
         codeBlock, linkBuffer, JITStubRoutinePtrTag,
-        "%s", toCString("Access stub for ", *codeBlock, " ", m_stubInfo->codeOrigin, " with return point ", successLabel, ": ", listDump(cases)).data());
+        "%s", toCString("Access stub for ", *codeBlock, " ", m_stubInfo->codeOrigin, "with start: ", m_stubInfo->startLocation, " with return point ", successLabel, ": ", listDump(cases)).data());
 
     stub = createICJITStubRoutine(code, WTFMove(keys), WTFMove(weakStructures), vm(), codeBlock, doesCalls, cellsToMark, WTFMove(m_callLinkInfos), codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
 

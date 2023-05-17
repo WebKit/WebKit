@@ -3853,6 +3853,7 @@ private:
         patchpoint->appendSomeRegister(val);
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                JIT_COMMENT(jit, "AssertNotEmpty");
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 GPRReg input = params[0].gpr();
                 CCallHelpers::Jump done = jit.branchIfNotEmpty(input);
@@ -4044,6 +4045,7 @@ private:
         CodeOrigin nodeSemanticOrigin = m_node->origin.semantic;
         CacheableIdentifier identifier = m_node->cacheableIdentifier();
         patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            JIT_COMMENT(jit, "GetByIdMegamorphic");
             AllowMacroScratchRegisterUsage allowScratch(jit);
 
             CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(nodeSemanticOrigin);
@@ -4100,6 +4102,7 @@ private:
         State* state = &m_ftlState;
         CodeOrigin nodeSemanticOrigin = m_node->origin.semantic;
         patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            JIT_COMMENT(jit, "GetByValMegamorphic");
             AllowMacroScratchRegisterUsage allowScratch(jit);
 
             CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(nodeSemanticOrigin);
@@ -4280,6 +4283,7 @@ private:
         State* state = &m_ftlState;
         CodeOrigin nodeSemanticOrigin = node->origin.semantic;
         patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            JIT_COMMENT(jit, "GetByValWithThis");
             AllowMacroScratchRegisterUsage allowScratch(jit);
 
             CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(nodeSemanticOrigin);
@@ -4437,6 +4441,7 @@ private:
         bool baseIsCell = abstractValue(node->child1()).isType(SpecCell);
         CodeOrigin nodeSemanticOrigin = node->origin.semantic;
         patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                JIT_COMMENT(jit, "GetPrivateName");
                 AllowMacroScratchRegisterUsage allowScratch(jit);
 
                 CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(nodeSemanticOrigin);
@@ -4585,6 +4590,7 @@ private:
         bool baseIsCell = abstractValue(m_node->child1()).isType(SpecCell);
         CodeOrigin nodeSemanticOrigin = node->origin.semantic;
         patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            JIT_COMMENT(jit, "PrivateBrandAccess");
             AllowMacroScratchRegisterUsage allowScratch(jit);
 
             CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(nodeSemanticOrigin);
@@ -4747,6 +4753,7 @@ private:
         PrivateFieldPutKind privateFieldPutKind = m_node->privateFieldPutKind();
         auto operation = privateFieldPutKind.isDefine() ? operationPutByValDefinePrivateFieldOptimize : operationPutByValSetPrivateFieldOptimize;
         patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            JIT_COMMENT(jit, "PutPrivateName");
             AllowMacroScratchRegisterUsage allowScratch(jit);
 
             CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(nodeSemanticOrigin);
@@ -5099,6 +5106,7 @@ private:
         CodeOrigin nodeSemanticOrigin = node->origin.semantic;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                JIT_COMMENT(jit, "cachedPutById");
                 AllowMacroScratchRegisterUsage allowScratch(jit);
 
                 CallSiteIndex callSiteIndex =
@@ -5290,6 +5298,7 @@ private:
             patchpoint->numGPScratchRegisters = 2;
 
             patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                JIT_COMMENT(jit, "emitGetTypedArrayByteOffsetExceptSettingResult");
                 AllowMacroScratchRegisterUsage allowScratch(jit);
 
                 GPRReg resultGPR = params[0].gpr();
@@ -5485,6 +5494,7 @@ IGNORE_CLANG_WARNINGS_END
             patchpoint->numGPScratchRegisters = 2;
 
             patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                JIT_COMMENT(jit, "typedArrayLength");
                 AllowMacroScratchRegisterUsage allowScratch(jit);
 
                 GPRReg resultGPR = params[0].gpr();
@@ -5933,6 +5943,7 @@ IGNORE_CLANG_WARNINGS_END
             State* state = &m_ftlState;
             CodeOrigin nodeSemanticOrigin = node->origin.semantic;
             patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                JIT_COMMENT(jit, "GetByValImpl: unavailable registers: ", params.unavailableRegisters(), " used: ", params.usedRegisters());
                 AllowMacroScratchRegisterUsage allowScratch(jit);
 
                 CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(nodeSemanticOrigin);
@@ -6293,6 +6304,7 @@ IGNORE_CLANG_WARNINGS_END
             bool isDirect = m_node->op() == PutByValDirect;
             PutKind putKind = isDirect ? PutKind::Direct : PutKind::NotDirect;
             patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                JIT_COMMENT(jit, "PutByVal");
                 AllowMacroScratchRegisterUsage allowScratch(jit);
 
                 CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(nodeSemanticOrigin);
@@ -6672,6 +6684,7 @@ IGNORE_CLANG_WARNINGS_END
         auto ecmaMode = node->ecmaMode().value();
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                JIT_COMMENT(jit, "DelBy");
                 AllowMacroScratchRegisterUsage allowScratch(jit);
 
                 CallSiteIndex callSiteIndex =
@@ -10496,13 +10509,13 @@ IGNORE_CLANG_WARNINGS_END
             setBoolean(m_out.equal(left, right));
             return;
         }
-        
+
         if (m_node->isBinaryUseKind(DoubleRepUse)) {
             setBoolean(
                 m_out.doubleEqual(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
             return;
         }
-        
+
         if (m_node->isBinaryUseKind(StringIdentUse)) {
             setBoolean(
                 m_out.equal(lowStringIdent(m_node->child1()), lowStringIdent(m_node->child2())));
@@ -10525,7 +10538,7 @@ IGNORE_CLANG_WARNINGS_END
             LBasicBlock lastNext = m_out.appendTo(notTriviallyEqualCase, continuation);
 
             speculateString(m_node->child2(), right);
-            
+
             ValueFromBlock slowResult = m_out.anchor(stringsEqual(left, right, m_node->child1(), m_node->child2()));
             m_out.jump(continuation);
 
@@ -10541,7 +10554,7 @@ IGNORE_CLANG_WARNINGS_END
                     lowJSValue(m_node->child2())));
             return;
         }
-        
+
         if (m_node->isBinaryUseKind(UntypedUse, ObjectUse)) {
             setBoolean(
                 m_out.equal(
@@ -10557,7 +10570,7 @@ IGNORE_CLANG_WARNINGS_END
                     lowNonNullObject(m_node->child2())));
             return;
         }
-        
+
         if (m_node->isBinaryUseKind(BooleanUse)) {
             setBoolean(
                 m_out.equal(lowBoolean(m_node->child1()), lowBoolean(m_node->child2())));
@@ -10570,7 +10583,7 @@ IGNORE_CLANG_WARNINGS_END
             setBoolean(m_out.equal(leftSymbol, rightSymbol));
             return;
         }
-        
+
         if (m_node->isBinaryUseKind(HeapBigIntUse)) {
             // FIXME: [ESNext][BigInt] Create specialized version of strict equals for big ints
             // https://bugs.webkit.org/show_bug.cgi?id=182895
@@ -10600,14 +10613,14 @@ IGNORE_CLANG_WARNINGS_END
             Edge untypedEdge = m_node->child2();
             if (symbolEdge.useKind() != SymbolUse)
                 std::swap(symbolEdge, untypedEdge);
-            
+
             LValue leftSymbol = lowSymbol(symbolEdge);
             LValue untypedValue = lowJSValue(untypedEdge);
 
             setBoolean(m_out.equal(leftSymbol, untypedValue));
             return;
         }
-        
+
         if (m_node->isBinaryUseKind(MiscUse, UntypedUse)
             || m_node->isBinaryUseKind(UntypedUse, MiscUse)
 #if !USE(BIGINT32)
@@ -10623,36 +10636,36 @@ IGNORE_CLANG_WARNINGS_END
             setBoolean(m_out.equal(left, right));
             return;
         }
-        
+
         if (m_node->isBinaryUseKind(StringIdentUse, NotStringVarUse)
             || m_node->isBinaryUseKind(NotStringVarUse, StringIdentUse)) {
             Edge leftEdge = m_node->childFor(StringIdentUse);
             Edge rightEdge = m_node->childFor(NotStringVarUse);
-            
-            LValue left = lowStringIdent(leftEdge);
+
+            LValue leftImpl = lowStringIdent(leftEdge);
             LValue rightValue = lowJSValue(rightEdge, ManualOperandSpeculation);
-            
+
             LBasicBlock isCellCase = m_out.newBlock();
             LBasicBlock isStringCase = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
-            
+
             ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
             m_out.branch(
                 isCell(rightValue, provenType(rightEdge)),
                 unsure(isCellCase), unsure(continuation));
-            
+
             LBasicBlock lastNext = m_out.appendTo(isCellCase, isStringCase);
             ValueFromBlock notStringResult = m_out.anchor(m_out.booleanFalse);
             m_out.branch(
                 isString(rightValue, provenType(rightEdge)),
                 unsure(isStringCase), unsure(continuation));
-            
+
             m_out.appendTo(isStringCase, continuation);
-            LValue right = m_out.loadPtr(rightValue, m_heaps.JSString_value);
-            speculateStringIdent(rightEdge, rightValue, right);
-            ValueFromBlock isStringResult = m_out.anchor(m_out.equal(left, right));
+            LValue rightImpl = m_out.loadPtr(rightValue, m_heaps.JSString_value);
+            speculateStringIdent(rightEdge, rightValue, rightImpl);
+            ValueFromBlock isStringResult = m_out.anchor(m_out.equal(leftImpl, rightImpl));
             m_out.jump(continuation);
-            
+
             m_out.appendTo(continuation, lastNext);
             setBoolean(m_out.phi(Int32, notCellResult, notStringResult, isStringResult));
             return;
@@ -10991,6 +11004,7 @@ IGNORE_CLANG_WARNINGS_END
         auto nodeOp = node->op();
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                JIT_COMMENT(jit, "CallOrConstruct");
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(codeOrigin);
 
@@ -11103,6 +11117,7 @@ IGNORE_CLANG_WARNINGS_END
         State* state = &m_ftlState;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                JIT_COMMENT(jit, "DirectCallOrConstruct");
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(codeOrigin);
                 
@@ -11272,6 +11287,7 @@ IGNORE_CLANG_WARNINGS_END
         CodeOrigin semanticNodeOrigin = node->origin.semantic;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                JIT_COMMENT(jit, "TailCall");
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(codeOrigin);
 
@@ -12875,6 +12891,7 @@ IGNORE_CLANG_WARNINGS_END
         auto nodeIndex = m_nodeIndexInGraph;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+                JIT_COMMENT(jit, "InvalidationPoint");
                 // The MacroAssembler knows more about this than B3 does. The watchpointLabel() method
                 // will ensure that this is followed by a nop shadow but only when this is actually
                 // necessary.
@@ -12971,6 +12988,7 @@ IGNORE_CLANG_WARNINGS_END
         patchpoint->numFPScratchRegisters = 1;
         patchpoint->effects = Effects::none();
         patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            JIT_COMMENT(jit, "NumberIsInteger");
             GPRReg result = params[0].gpr();
             FPRReg input = params[1].fpr();
             FPRReg temp = params.fpScratch(0);
@@ -13859,6 +13877,7 @@ IGNORE_CLANG_WARNINGS_END
         CodeOrigin semanticNodeOrigin = node->origin.semantic;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                JIT_COMMENT(jit, "InBy");
                 AllowMacroScratchRegisterUsage allowScratch(jit);
 
                 CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(semanticNodeOrigin);
@@ -14230,6 +14249,7 @@ IGNORE_CLANG_WARNINGS_END
         CodeOrigin semanticNodeOrigin = node->origin.semantic;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                JIT_COMMENT(jit, "InstanceOf");
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 
                 GPRReg resultGPR = params[0].gpr();
@@ -14995,6 +15015,7 @@ IGNORE_CLANG_WARNINGS_END
         ECMAMode ecmaMode = m_node->ecmaMode();
         PutKind putKind = PutKind::NotDirect;
         patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            JIT_COMMENT(jit, "EnumeratorPutByVal");
             AllowMacroScratchRegisterUsage allowScratch(jit);
 
             CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(nodeSemanticOrigin);
@@ -16370,6 +16391,7 @@ IGNORE_CLANG_WARNINGS_END
         CodeOrigin semanticNodeOrigin = node->origin.semantic;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                JIT_COMMENT(jit, "GetById");
                 AllowMacroScratchRegisterUsage allowScratch(jit);
 
                 CallSiteIndex callSiteIndex =
@@ -16461,6 +16483,7 @@ IGNORE_CLANG_WARNINGS_END
         CodeOrigin semanticNodeOrigin = node->origin.semantic;
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                JIT_COMMENT(jit, "GetByIdWithThis");
                 AllowMacroScratchRegisterUsage allowScratch(jit);
 
                 CallSiteIndex callSiteIndex =

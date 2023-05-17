@@ -92,6 +92,7 @@ public:
 
     void applyBlockOrder();
 
+    void probeDebugPrint(const String& str, LValue value);
     LBasicBlock appendTo(LBasicBlock, LBasicBlock nextBlock);
     void appendTo(LBasicBlock);
 
