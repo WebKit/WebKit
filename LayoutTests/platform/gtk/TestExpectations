@@ -996,7 +996,6 @@ webkit.org/b/243466 imported/w3c/web-platform-tests/css/css-contain/contain-size
 webkit.org/b/243466 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-elem-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/229732 imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-failure-fallback.html [ Failure ]
-webkit.org/b/229732 fast/text/font-promises-gc.html [ Failure ]
 
 webkit.org/b/229738 fast/text/whitespace/pre-break-word.html [ Failure ]
 

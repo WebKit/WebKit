@@ -3281,8 +3281,6 @@ webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_put
 media/audio-session-category-unmute-mute.html [ Skip ]
 webkit.org/b/229761 http/tests/media/media-stream/audio-capture-and-category.https.html [ Skip ]
 
-webkit.org/b/229732 fast/text/font-promises-gc.html [ Failure ]
-
 # Flaky tests detected both on GTK and WPE from 29Jan2023 to 23Feb2023
 webkit.org/b/252878 fast/css/caret-color-fallback-to-color.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 fast/css/caret-color.html [ ImageOnlyFailure Pass ]
