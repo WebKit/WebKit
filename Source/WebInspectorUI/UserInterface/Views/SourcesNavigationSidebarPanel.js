@@ -2614,14 +2614,18 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         let newDebuggerTreeElement = null;
         if (debuggerObject instanceof WI.JavaScriptBreakpoint) {
             oldDebuggerTreeElement = this._breakpointsTreeOutline.findTreeElement(debuggerObject);
-            if (oldDebuggerTreeElement)
-                wasSelected = oldDebuggerTreeElement.selected;
+            if (!oldDebuggerTreeElement)
+                return;
+
+            wasSelected = oldDebuggerTreeElement.selected;
 
             newDebuggerTreeElement = this._addBreakpoint(debuggerObject);
         } else if (debuggerObject instanceof WI.IssueMessage) {
             oldDebuggerTreeElement = this._resourcesTreeOutline.findTreeElement(debuggerObject);
-            if (oldDebuggerTreeElement)
-                wasSelected = oldDebuggerTreeElement.selected;
+            if (!oldDebuggerTreeElement)
+                return;
+
+            wasSelected = oldDebuggerTreeElement.selected;
 
             newDebuggerTreeElement = this._addIssue(debuggerObject);
         }
