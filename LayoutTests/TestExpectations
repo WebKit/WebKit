@@ -6335,6 +6335,10 @@ imported/w3c/web-platform-tests/css/css-ruby/ruby-whitespace-002.html [ ImageOnl
 imported/w3c/web-platform-tests/css/css-ruby/ruby-with-floats-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-with-floats-003.html [ ImageOnlyFailure ]
 
+# These tests are trying to use a WPT domain that are infrastructure doesn't support.
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-submit-cross-frame-crossorigin.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-submit-popup-crossorigin.sub.html [ Skip ]
+
 webkit.org/b/242658 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Slow Pass Failure ]
 
 # This test is crashing in debug since its import.
