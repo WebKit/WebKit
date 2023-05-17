@@ -775,9 +775,14 @@ unsigned InjectedBundle::imageCountInGeneralPasteboard() const
     return uint64Value(adoptWK(result).get());
 }
 
-void InjectedBundle::setUserMediaPermission(bool enabled)
+void InjectedBundle::setCameraPermission(bool enabled)
 {
-    postPageMessage("SetUserMediaPermission", adoptWK(WKBooleanCreate(enabled)));
+    postPageMessage("SetCameraPermission", adoptWK(WKBooleanCreate(enabled)));
+}
+
+void InjectedBundle::setMicrophonePermission(bool enabled)
+{
+    postPageMessage("SetMicrophonePermission", adoptWK(WKBooleanCreate(enabled)));
 }
 
 void InjectedBundle::resetUserMediaPermission()

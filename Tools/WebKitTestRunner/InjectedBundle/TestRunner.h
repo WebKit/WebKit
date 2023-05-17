@@ -328,6 +328,8 @@ public:
     void setScreenWakeLockPermission(bool);
 
     // MediaStream
+    void setCameraPermission(bool);
+    void setMicrophonePermission(bool);
     void setUserMediaPermission(bool);
     void resetUserMediaPermission();
     void setUserMediaPersistentPermissionForOrigin(bool permission, JSStringRef origin, JSStringRef parentOrigin);

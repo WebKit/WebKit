@@ -443,8 +443,13 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "SetUserMediaPermission")) {
-        TestController::singleton().setUserMediaPermission(booleanValue(messageBody));
+    if (WKStringIsEqualToUTF8CString(messageName, "SetCameraPermission")) {
+        TestController::singleton().setCameraPermission(booleanValue(messageBody));
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetMicrophonePermission")) {
+        TestController::singleton().setMicrophonePermission(booleanValue(messageBody));
         return;
     }
 

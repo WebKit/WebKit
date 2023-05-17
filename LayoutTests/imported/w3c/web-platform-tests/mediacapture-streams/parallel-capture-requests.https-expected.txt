@@ -1,0 +1,5 @@
+User gesture
+
+FAIL getDisplayMedia() and parallel getUserMedia() promise_test: Unhandled rejection with value: object "InvalidAccessError: getDisplayMedia must be called from a user gesture handler."
+FAIL getUserMedia() and parallel getDisplayMedia() promise_test: Unhandled rejection with value: object "InvalidAccessError: getDisplayMedia must be called from a user gesture handler."
+

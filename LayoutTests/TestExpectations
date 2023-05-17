@@ -1190,6 +1190,8 @@ imported/w3c/web-platform-tests/resource-timing/iframe-failed-commit.html [ Pass
 imported/w3c/web-platform-tests/resource-timing/fetch-cross-origin-redirect.https.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-default-feature-policy.https.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-video-is-black.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/mediacapture-streams/MediaDevices-enumerateDevices-per-origin-ids.sub.https.html [ Skip ]
 
 # These fetch tests are flaky or fail.
 webkit.org/b/247290 imported/w3c/web-platform-tests/fetch/api/basic/response-null-body.any.html [ Pass Failure ]
@@ -6125,7 +6127,6 @@ imported/w3c/web-platform-tests/imagebitmap-renderingcontext/toBlob-origin-clean
 imported/w3c/web-platform-tests/mathml/relations/html5-tree/tabindex-002.html [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record/passthrough/MediaRecorder-passthrough.https.html [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https.html [ Skip ]
-imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-end-manual.https.html [ Skip ]
 imported/w3c/web-platform-tests/navigation-timing/nav2_test_redirect_chain_xserver_final_original_origin.html [ Skip ]
 imported/w3c/web-platform-tests/navigation-timing/supported_navigation_type.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/notifications/constructor-non-secure.html [ Skip ]

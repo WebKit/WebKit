@@ -1194,7 +1194,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     // Reset UserMedia permissions.
     m_userMediaPermissionRequests.clear();
     m_cachedUserMediaPermissions.clear();
-    setUserMediaPermission(true);
+    setCameraPermission(true);
+    setMicrophonePermission(true);
 
     // Reset Custom Policy Delegate.
     setCustomPolicyDelegate(false, false);
@@ -2625,16 +2626,25 @@ static String userMediaOriginHash(WKStringRef userMediaDocumentOriginString, WKS
     return userMediaOriginHash(userMediaDocumentOrigin.get(), topLevelDocumentOrigin.get());
 }
 
-void TestController::setUserMediaPermission(bool enabled)
+void TestController::setCameraPermission(bool enabled)
 {
     m_isUserMediaPermissionSet = true;
-    m_isUserMediaPermissionAllowed = enabled;
+    m_isCameraPermissionAllowed = enabled;
+    decidePolicyForUserMediaPermissionRequestIfPossible();
+}
+
+void TestController::setMicrophonePermission(bool enabled)
+{
+    m_isUserMediaPermissionSet = true;
+    m_isMicrophonePermissionAllowed = enabled;
     decidePolicyForUserMediaPermissionRequestIfPossible();
 }
 
 void TestController::resetUserMediaPermission()
 {
     m_isUserMediaPermissionSet = false;
+    m_isCameraPermissionAllowed = true;
+    m_isMicrophonePermissionAllowed = true;
 }
 
 void TestController::setShouldDismissJavaScriptAlertsAsynchronously(bool value)
@@ -2770,7 +2780,12 @@ void TestController::decidePolicyForUserMediaPermissionRequestIfPossible()
         auto& settings = settingsForOrigin(originHash);
         settings.incrementRequestCount();
 
-        if (!m_isUserMediaPermissionAllowed && !settings.persistentPermission()) {
+        if (m_isUserMediaPermissionSet && WKUserMediaPermissionRequestRequiresCameraCapture(request) && !m_isCameraPermissionAllowed) {
+            WKUserMediaPermissionRequestDeny(request, kWKPermissionDenied);
+            continue;
+        }
+
+        if (m_isUserMediaPermissionSet && WKUserMediaPermissionRequestRequiresMicrophoneCapture(request) && !m_isMicrophonePermissionAllowed) {
             WKUserMediaPermissionRequestDeny(request, kWKPermissionDenied);
             continue;
         }

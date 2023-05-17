@@ -995,15 +995,24 @@ void TestRunner::setMockGeolocationPositionUnavailableError(JSStringRef message)
     InjectedBundle::singleton().setMockGeolocationPositionUnavailableError(toWK(message).get());
 }
 
+void TestRunner::setCameraPermission(bool enabled)
+{
+    InjectedBundle::singleton().setCameraPermission(enabled);
+}
+
+void TestRunner::setMicrophonePermission(bool enabled)
+{
+    InjectedBundle::singleton().setCameraPermission(enabled);
+}
+
 void TestRunner::setUserMediaPermission(bool enabled)
 {
-    // FIXME: This should be done by frame.
-    InjectedBundle::singleton().setUserMediaPermission(enabled);
+    InjectedBundle::singleton().setCameraPermission(enabled);
+    InjectedBundle::singleton().setMicrophonePermission(enabled);
 }
 
 void TestRunner::resetUserMediaPermission()
 {
-    // FIXME: This should be done by frame.
     InjectedBundle::singleton().resetUserMediaPermission();
 }
 

@@ -1,0 +1,9 @@
+Blocked access to external URL https://www1.localhost:9443/mediacapture-streams/iframe-enumerate.html
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT enumerateDevices has stable deviceIds across same-origin iframe Test timed out
+NOTRUN enumerateDevices rotates deviceId across different-origin iframe
+NOTRUN enumerateDevices rotates deviceId after clearing site data
+

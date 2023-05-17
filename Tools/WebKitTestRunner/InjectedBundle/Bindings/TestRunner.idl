@@ -237,6 +237,8 @@ interface TestRunner {
     undefined setScreenWakeLockPermission(boolean value);
 
     // MediaStream
+    undefined setCameraPermission(boolean value);
+    undefined setMicrophonePermission(boolean value);
     undefined setUserMediaPermission(boolean value);
     undefined resetUserMediaPermission();
     undefined setUserMediaPersistentPermissionForOrigin(boolean permission, DOMString origin, DOMString parentOrigin);

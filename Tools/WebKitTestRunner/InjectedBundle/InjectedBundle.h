@@ -109,7 +109,8 @@ public:
     void setScreenWakeLockPermission(bool);
 
     // MediaStream.
-    void setUserMediaPermission(bool);
+    void setCameraPermission(bool);
+    void setMicrophonePermission(bool);
     void resetUserMediaPermission();
     void setUserMediaPersistentPermissionForOrigin(bool permission, WKStringRef origin, WKStringRef parentOrigin);
     unsigned userMediaPermissionRequestCountForOrigin(WKStringRef origin, WKStringRef parentOrigin) const;

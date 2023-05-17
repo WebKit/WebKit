@@ -1795,7 +1795,9 @@ webkit.org/b/177533 webrtc/video-interruption.html
 webkit.org/b/229346 webkit.org/b/235885 webrtc/multi-audio.html [ Timeout Pass Failure ]
 webkit.org/b/224074 webrtc/concurrentVideoPlayback2.html [ Timeout Pass ]
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-removetrack.https.html [ Crash Failure Timeout ]
-webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none-manual.https.html [ Crash Failure Pass ]
+
+imported/w3c/web-platform-tests/mediacapture-streams/GUM-required-constraint-with-ideal-value.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none.https.html [ Pass Failure ]
 
 # Playback pipeline mishandles the video track caps change.
 webkit.org/b/254212 webrtc/video-disabled-black.html [ Skip ]

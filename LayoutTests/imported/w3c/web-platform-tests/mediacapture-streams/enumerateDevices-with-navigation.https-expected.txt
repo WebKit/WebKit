@@ -1,0 +1,3 @@
+
+FAIL enumerateDevices with navigation assert_equals: Promise state while inactive expected "pending" but got "resolved"
+

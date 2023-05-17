@@ -2,9 +2,11 @@ When prompted, accept to share your video stream.
 
 Description
 
-This test checks that a disabled video track in a MediaStream is rendered as blackness.
+This test checks that a disabled video track in a MediaStream is handled correctly by HTMLVideoElement.
 
 
 
 PASS Tests that a disabled video track in a MediaStream is rendered as blackness
+PASS Test that a video element rendering a disabled video track reports correct intrinsic dimensions
+FAIL Test that frames don't flow for a disabled video track assert_equals: expected 0 but got 1
 
