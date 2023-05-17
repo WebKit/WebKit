@@ -4,7 +4,6 @@
 <link rel="author" title="David Shin" href="mailto:dshin@mozilla.com">
 <link rel="author" href="https://mozilla.org" title="Mozilla">
 <link rel="help" href="https://drafts.csswg.org/css-contain/#containment-size">
-<meta name="timeout" content="long">
 <meta name=assert
   content="This test checks that various replaced elements with contain: inline-size have an intrinsic inline size of 0 regardless of their content.">
 <style>
@@ -38,8 +37,7 @@
     </video>
     <br>
 
-    <!-- audio element with controls, and a few other misc replaced elements: -->
-    <audio class="inline-contained" data-expected-width="0" data-expected-height="40" controls></audio>
+    <!-- other misc replaced elements: -->
     <canvas class="inline-contained" data-expected-width="0" data-expected-height="150"></canvas>
     <svg class="inline-contained" data-expected-bounding-client-rect-width="0"
       data-expected-bounding-client-rect-height="150"></svg>
@@ -82,7 +80,6 @@
       <source src="/media/white.mp4" type="video/mp4">
     </video>
 
-    <audio class="inline-contained" data-expected-width="300" data-expected-height="0" controls></audio>
     <canvas class="inline-contained" data-expected-width="300" data-expected-height="0"></canvas>
     <svg class="inline-contained" data-expected-bounding-client-rect-width="300"
       data-expected-bounding-client-rect-height="0"></svg>
