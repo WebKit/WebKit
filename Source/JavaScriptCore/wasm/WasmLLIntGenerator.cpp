@@ -1224,7 +1224,7 @@ auto LLIntGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& a
     // delayed moves, but the wasm_throw opcode expects all the arguments to be contiguous
     // in the stack. The reason we don't call materializeConstantsAndLocals here is that
     // it expects a stack, not a vector of ExpressionType arguments.
-    walkExpressionStack(args, [&](VirtualRegister& arg, VirtualRegister slot) {
+    walkExpressionStack(args, m_stackSize + args.size(), [&](VirtualRegister& arg, VirtualRegister slot) {
         if (arg == slot)
             return;
         WasmMov::emit(this, slot, arg);
