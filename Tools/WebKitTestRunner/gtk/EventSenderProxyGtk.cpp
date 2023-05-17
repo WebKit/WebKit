@@ -244,18 +244,12 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers,
     webkitWebViewBaseSynthesizeKeyEvent(toWebKitGLibAPI(m_testController->mainWebView()->platformView()), KeyEventType::Insert, gdkKeySym, modifiers, ShouldTranslateKeyboardState::No);
 }
 
-void EventSenderProxy::rawKeyDown(WKStringRef keyRef, WKEventModifiers wkModifiers, unsigned location)
+void EventSenderProxy::rawKeyDown(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation)
 {
-    guint modifiers = webkitModifiersToGDKModifiers(wkModifiers);
-    int gdkKeySym = getGDKKeySymForKeyRef(keyRef, location, &modifiers);
-    webkitWebViewBaseSynthesizeKeyEvent(toWebKitGLibAPI(m_testController->mainWebView()->platformView()), KeyEventType::Press, gdkKeySym, modifiers, ShouldTranslateKeyboardState::No);
 }
 
-void EventSenderProxy::rawKeyUp(WKStringRef keyRef, WKEventModifiers wkModifiers, unsigned location)
+void EventSenderProxy::rawKeyUp(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation)
 {
-    guint modifiers = webkitModifiersToGDKModifiers(wkModifiers);
-    int gdkKeySym = getGDKKeySymForKeyRef(keyRef, location, &modifiers);
-    webkitWebViewBaseSynthesizeKeyEvent(toWebKitGLibAPI(m_testController->mainWebView()->platformView()), KeyEventType::Release, gdkKeySym, modifiers, ShouldTranslateKeyboardState::No);
 }
 
 void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers, WKStringRef pointerType)
