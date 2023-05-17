@@ -73,6 +73,7 @@ public:
         , m_hasShowNotificationSelector([m_delegate.get() respondsToSelector:@selector(websiteDataStore:showNotification:)])
         , m_hasNotificationPermissionsSelector([m_delegate.get() respondsToSelector:@selector(notificationPermissionsForWebsiteDataStore:)])
         , m_hasWorkerUpdatedAppBadgeSelector([m_delegate.get() respondsToSelector:@selector(websiteDataStore:workerOrigin:updatedAppBadge:)])
+        , m_hasGetDisplayedNotificationsSelector([m_delegate.get() respondsToSelector:@selector(websiteDataStore:getDisplayedNotificationsForWorkerOrigin:completionHandler:)])
         , m_hasRequestBackgroundFetchPermissionSelector([m_delegate.get() respondsToSelector:@selector(requestBackgroundFetchPermission:frameOrigin:decisionHandler:)])
         , m_hasNotifyBackgroundFetchChangeSelector([m_delegate.get() respondsToSelector:@selector(notifyBackgroundFetchChange:change:)])
     {
@@ -173,6 +174,32 @@ private:
         return result;
     }
 
+    bool hasGetDisplayedNotifications() const
+    {
+        return m_hasGetDisplayedNotificationsSelector;
+    }
+
+    void getDisplayedNotifications(const WebCore::SecurityOriginData& origin, CompletionHandler<void(Vector<WebCore::NotificationData>&&)>&& completionHandler) final
+    {
+        if (!m_hasGetDisplayedNotificationsSelector || !m_delegate || !m_dataStore) {
+            completionHandler({ });
+            return;
+        }
+
+        auto apiOrigin = API::SecurityOrigin::create(origin);
+        auto delegateCompletionHandler = makeBlockPtr([completionHandler = WTFMove(completionHandler)] (NSArray<NSDictionary *> *notifications) mutable {
+            Vector<WebCore::NotificationData> notificationDatas;
+            for (id notificationDictionary in notifications) {
+                auto notification = WebCore::NotificationData::fromDictionary(notificationDictionary);
+                RELEASE_ASSERT_WITH_MESSAGE(notification, "getDisplayedNotificationsForWorkerOrigin: Invalid notification dictionary passed back to WebKit");
+                notificationDatas.append(*notification);
+            }
+            completionHandler(WTFMove(notificationDatas));
+        });
+
+        [m_delegate.getAutoreleased() websiteDataStore:m_dataStore.getAutoreleased() getDisplayedNotificationsForWorkerOrigin:wrapper(apiOrigin.get()) completionHandler:delegateCompletionHandler.get()];
+    }
+
     void workerUpdatedAppBadge(const WebCore::SecurityOriginData& origin, std::optional<uint64_t> badge) final
     {
         if (!m_hasWorkerUpdatedAppBadgeSelector || !m_delegate || !m_dataStore)
@@ -235,6 +262,7 @@ private:
     bool m_hasShowNotificationSelector { false };
     bool m_hasNotificationPermissionsSelector { false };
     bool m_hasWorkerUpdatedAppBadgeSelector { false };
+    bool m_hasGetDisplayedNotificationsSelector { false };
     bool m_hasRequestBackgroundFetchPermissionSelector { false };
     bool m_hasNotifyBackgroundFetchChangeSelector { false };
 };

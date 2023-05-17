@@ -2363,6 +2363,16 @@ void WebsiteDataStore::workerUpdatedAppBadge(const WebCore::SecurityOriginData& 
     m_client->workerUpdatedAppBadge(origin, badge);
 }
 
+bool WebsiteDataStore::hasClientGetDisplayedNotifications() const
+{
+    return m_client->hasGetDisplayedNotifications();
+}
+
+void WebsiteDataStore::getNotifications(const URL& registrationalURL, CompletionHandler<void(Vector<WebCore::NotificationData>&&)>&& completionHandler)
+{
+    m_client->getDisplayedNotifications(WebCore::SecurityOriginData::fromURL(registrationalURL), WTFMove(completionHandler));
+}
+
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
 void WebsiteDataStore::setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit)
