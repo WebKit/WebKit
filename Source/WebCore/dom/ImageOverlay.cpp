@@ -280,6 +280,9 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
 #endif // ENABLE(MODERN_MEDIA_CONTROLS)
 
     if (RefPtr shadowRoot = element.shadowRoot()) {
+        if (auto* renderer = dynamicDowncast<RenderImage>(element.renderer()))
+            renderer->setHasImageOverlay();
+
         if (hasOverlay(element)) {
             RefPtr<ContainerNode> containerForImageOverlay;
             if (mediaControlsContainer)
