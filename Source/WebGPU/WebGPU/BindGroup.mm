@@ -205,14 +205,12 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                     resources.append({ textureData.texture0, MTLResourceUsageRead, metalRenderStage(stage) });
                 if (textureData.texture1)
                     resources.append({ textureData.texture1, MTLResourceUsageRead, metalRenderStage(stage) });
-                // FIXME: encode CSC and UV remapping after https://bugs.webkit.org/show_bug.cgi?id=256721 is implemented
-                // simd::float3x2* uvRemapAddress =  (simd::float3x2*)[argumentEncoder[stage] constantDataAtIndex:index++];
-                // *uvRemapAddress = textureData.uvRemappingMatrix;
-                index++;
 
-                // simd::float4x3* cscMatrixAddress =  (simd::float4x3*)[argumentEncoder[stage] constantDataAtIndex:index++];
-                // *cscMatrixAddress = textureData.colorSpaceConversionMatrix;
-                index++;
+                simd::float3x2* uvRemapAddress =  (simd::float3x2*)[argumentEncoder[stage] constantDataAtIndex:index++];
+                *uvRemapAddress = textureData.uvRemappingMatrix;
+
+                simd::float4x3* cscMatrixAddress =  (simd::float4x3*)[argumentEncoder[stage] constantDataAtIndex:index++];
+                *cscMatrixAddress = textureData.colorSpaceConversionMatrix;
             }
         }
     }
