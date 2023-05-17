@@ -397,7 +397,7 @@ private:
             flushCachedCharacterIfNeeded();
             m_setOp = CharacterClassSetOp::Subtraction;
             m_delegate.atomCharacterClassSetOp(m_setOp);
-            m_state = ClassSetConstructionState::Empty;
+            m_state = ClassSetConstructionState::AfterSetOperator;
         }
 
         void setIntersectionOp()
@@ -410,7 +410,7 @@ private:
             flushCachedCharacterIfNeeded();
             m_setOp = CharacterClassSetOp::Intersection;
             m_delegate.atomCharacterClassSetOp(m_setOp);
-            m_state = ClassSetConstructionState::Empty;
+            m_state = ClassSetConstructionState::AfterSetOperator;
         }
 
         void flushCachedCharacterIfNeeded()
@@ -433,6 +433,7 @@ private:
 
             switch (m_state) {
             case ClassSetConstructionState::Empty:
+            case ClassSetConstructionState::AfterSetOperator:
                 return true;
 
             case ClassSetConstructionState::CachedCharacter:
@@ -504,6 +505,7 @@ private:
                 FALLTHROUGH;
 
             case ClassSetConstructionState::Empty:
+            case ClassSetConstructionState::AfterSetOperator:
                 if (!processingEscape && ch == '-') {
                     m_errorCode = ErrorCode::InvalidClassSetCharacter;
                     return;
@@ -600,6 +602,7 @@ private:
 
             case ClassSetConstructionState::Empty:
             case ClassSetConstructionState::AfterCharacterClass:
+            case ClassSetConstructionState::AfterSetOperator:
                 processBuiltInCharacterClass();
                 return;
 
@@ -640,7 +643,9 @@ private:
             else if (m_state == ClassSetConstructionState::CachedCharacterHyphen) {
                 m_delegate.atomCharacterClassAtom(m_character);
                 m_delegate.atomCharacterClassAtom('-');
-            }
+            } else if (m_state == ClassSetConstructionState::AfterSetOperator)
+                m_errorCode = ErrorCode::InvalidClassSetCharacter;
+
             m_delegate.atomCharacterClassEnd();
         }
 
@@ -664,6 +669,7 @@ private:
             AfterCharacterClassHyphen,
             AfterSetRange,
             AfterSetOperand,
+            AfterSetOperator,
         };
         ClassSetConstructionState m_state;
         CharacterClassSetOp m_setOp;
