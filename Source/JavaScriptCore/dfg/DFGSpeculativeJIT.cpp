@@ -8854,7 +8854,7 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
 #if USE(LARGE_TYPED_ARRAYS)
         load64(Address(baseGPR, JSArrayBufferView::offsetOfByteOffset()), resultGPR);
         // AI promises that the result of GetTypedArrayByteOffset will be Int32, so we must uphold that promise here.
-        speculationCheck(ExitKind::Overflow, JSValueRegs(), nullptr, branch32(Above, resultGPR, TrustedImm32(std::numeric_limits<int32_t>::max())));
+        speculationCheck(ExitKind::Overflow, JSValueRegs(), nullptr, branch64(Above, resultGPR, TrustedImm32(std::numeric_limits<int32_t>::max())));
 #else
         load32(Address(baseGPR, JSArrayBufferView::offsetOfByteOffset()), resultGPR);
 #endif
@@ -8880,7 +8880,7 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
 #if USE(LARGE_TYPED_ARRAYS)
     load64(Address(baseGPR, JSArrayBufferView::offsetOfByteOffset()), resultGPR);
     // AI promises that the result of GetTypedArrayByteOffset will be Int32, so we must uphold that promise here.
-    speculationCheck(ExitKind::Overflow, JSValueRegs(), nullptr, branch32(Above, resultGPR, TrustedImm32(std::numeric_limits<int32_t>::max())));
+    speculationCheck(ExitKind::Overflow, JSValueRegs(), nullptr, branch64(Above, resultGPR, TrustedImm32(std::numeric_limits<int32_t>::max())));
 #else
     load32(Address(baseGPR, JSArrayBufferView::offsetOfByteOffset()), resultGPR);
 #endif
