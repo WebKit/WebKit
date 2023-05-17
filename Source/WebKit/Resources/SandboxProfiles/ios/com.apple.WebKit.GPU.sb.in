@@ -923,6 +923,14 @@
 (when (defined? 'MSC_mach_msg2_trap)
     (allow syscall-mach (machtrap-number MSC_mach_msg2_trap)))
 
+(define (kernel-mig-routine-in-use-watchos)
+    (kernel-mig-routine
+        io_connect_set_notification_port
+        mach_make_memory_entry
+        mach_make_memory_entry_64
+        vm_copy
+        vm_remap_external))
+
 (deny syscall-mig (with telemetry))
 (allow syscall-mig (kernel-mig-routine
     _mach_make_memory_entry
@@ -946,9 +954,6 @@
     io_service_open_extended
     mach_eventlink_associate
     mach_exception_raise
-#if PLATFORM(WATCHOS)
-    mach_make_memory_entry_64
-#endif
     mach_memory_entry_ownership
     mach_port_extract_right
     mach_port_get_context_from_user
@@ -971,6 +976,11 @@
     thread_policy_set
     thread_resume
     thread_suspend))
+
+#if PLATFORM(WATCHOS)
+    (allow syscall-mig
+        (kernel-mig-routine-in-use-watchos))
+#endif
 
 #if ENABLE(SYSTEM_CONTENT_PATH_SANDBOX_RULES)
 #include <WebKitAdditions/SystemContentSandbox-ios.defs>
