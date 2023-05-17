@@ -124,6 +124,7 @@
 @end
 
 @interface TestWKWebView (IOSOnly)
+@property (nonatomic) UIEdgeInsets overrideSafeAreaInset;
 @property (nonatomic, readonly) CGRect caretViewRectInContentCoordinates;
 @property (nonatomic, readonly) NSArray<NSValue *> *selectionViewRectsInContentCoordinates;
 - (_WKActivatedElementInfo *)activatedElementAtPosition:(CGPoint)position;

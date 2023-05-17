@@ -476,6 +476,7 @@ static InputSessionChangeCount nextInputSessionChangeCount()
 #if PLATFORM(IOS_FAMILY)
     std::unique_ptr<ClassMethodSwizzler> _sharedCalloutBarSwizzler;
     InputSessionChangeCount _inputSessionChangeCount;
+    UIEdgeInsets _overrideSafeAreaInset;
 #endif
 #if PLATFORM(MAC)
     BOOL _forceWindowToBecomeKey;
@@ -516,6 +517,9 @@ static UICalloutBar *suppressUICalloutBar()
     // FIXME: Remove this workaround once <https://webkit.org/b/175204> is fixed.
     _sharedCalloutBarSwizzler = makeUnique<ClassMethodSwizzler>([UICalloutBar class], @selector(sharedCalloutBar), reinterpret_cast<IMP>(suppressUICalloutBar));
     _inputSessionChangeCount = 0;
+    // We suppress safe area insets by default in order to ensure consistent results when running against device models
+    // that may or may not have safe area insets, have insets with different values (e.g. iOS devices with a notch).
+    _overrideSafeAreaInset = UIEdgeInsetsZero;
 #endif
 
     return self;
@@ -758,6 +762,21 @@ static UICalloutBar *suppressUICalloutBar()
         NSLog(@"Warning: expecting input session change count to differ from %lu", static_cast<unsigned long>(initialChangeCount));
         hasEmittedWarning = YES;
     }
+}
+
+- (UIEdgeInsets)overrideSafeAreaInset
+{
+    return _overrideSafeAreaInset;
+}
+
+- (void)setOverrideSafeAreaInset:(UIEdgeInsets)inset
+{
+    _overrideSafeAreaInset = inset;
+}
+
+- (UIEdgeInsets)safeAreaInsets
+{
+    return _overrideSafeAreaInset;
 }
 
 - (CGRect)caretViewRectInContentCoordinates
