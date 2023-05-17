@@ -379,7 +379,6 @@ set(WTF_PUBLIC_HEADERS
     text/CodePointIterator.h
     text/ConversionMode.h
     text/EscapedFormsForJSON.h
-    text/ExternalStringImpl.h
     text/IntegerToStringConversion.h
     text/LChar.h
     text/LineBreakIteratorPoolICU.h
@@ -545,7 +544,6 @@ set(WTF_SOURCES
     text/AtomStringTable.cpp
     text/Base64.cpp
     text/CString.cpp
-    text/ExternalStringImpl.cpp
     text/LineBreakIteratorPoolICU.cpp
     text/LineEnding.cpp
     text/StringBuffer.cpp

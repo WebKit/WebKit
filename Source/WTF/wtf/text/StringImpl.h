@@ -188,7 +188,6 @@ class StringImpl : private StringImplShape {
     friend class PrivateSymbolImpl;
     friend class RegisteredSymbolImpl;
     friend class SymbolImpl;
-    friend class ExternalStringImpl;
 
     friend struct WTF::CStringTranslator;
     friend struct WTF::HashAndUTF8CharactersTranslator;
@@ -202,7 +201,7 @@ class StringImpl : private StringImplShape {
     template<typename> friend struct WTF::HashAndCharactersTranslator;
 
 public:
-    enum BufferOwnership { BufferInternal, BufferOwned, BufferSubstring, BufferExternal };
+    enum BufferOwnership { BufferInternal, BufferOwned, BufferSubstring };
 
     static constexpr unsigned MaxLength = StringImplShape::MaxLength;
 
@@ -321,8 +320,6 @@ public:
     bool isAtom() const { return m_hashAndFlags & s_hashFlagStringKindIsAtom; }
     void setIsAtom(bool);
     
-    bool isExternal() const { return bufferOwnership() == BufferExternal; }
-
     bool isSubString() const { return bufferOwnership() == BufferSubstring; }
 
     static WTF_EXPORT_PRIVATE Expected<CString, UTF8ConversionError> utf8ForCharacters(const LChar* characters, unsigned length);

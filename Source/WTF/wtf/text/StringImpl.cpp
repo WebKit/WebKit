@@ -28,7 +28,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/ExternalStringImpl.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/SymbolImpl.h>
@@ -137,12 +136,6 @@ StringImpl::~StringImpl()
         ASSERT(m_data8);
         StringImplMalloc::free(const_cast<LChar*>(m_data8));
         break;
-    case BufferExternal: {
-        auto* external = static_cast<ExternalStringImpl*>(this);
-        external->freeExternalBuffer(const_cast<LChar*>(m_data8), sizeInBytes());
-        external->m_free.~ExternalStringImplFreeFunction();
-        break;
-    }
     case BufferSubstring:
         ASSERT(substringBuffer());
         substringBuffer()->deref();

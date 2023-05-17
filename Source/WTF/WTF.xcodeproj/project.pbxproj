@@ -74,7 +74,6 @@
 		4655743627F5FC4A002D5522 /* ASCIILiteralCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4655743527F5FC4A002D5522 /* ASCIILiteralCocoa.mm */; };
 		46BEB6EB22FFE24900269867 /* RefCounted.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46BEB6E922FFDDD500269867 /* RefCounted.cpp */; };
 		46E93049271F1205005BA6E5 /* SafeStrerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46E43647271F10AA00C88C90 /* SafeStrerror.cpp */; };
-		50DE35F5215BB01500B979C7 /* ExternalStringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50DE35F3215BB01500B979C7 /* ExternalStringImpl.cpp */; };
 		515F794E1CFC9F4A00CCED93 /* CrossThreadCopier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515F794B1CFC9F4A00CCED93 /* CrossThreadCopier.cpp */; };
 		517F82D71FD22F3000DA3DEA /* CrossThreadTaskHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517F82D51FD22F2F00DA3DEA /* CrossThreadTaskHandler.cpp */; };
 		51F1752B1F3D486000C74950 /* PersistentCoders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F175261F3D486000C74950 /* PersistentCoders.cpp */; };
@@ -564,7 +563,6 @@
 		DDF307C527C086DF006A526F /* StringToIntegerConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = CD00360D21501F7800F4ED4C /* StringToIntegerConversion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307C627C086DF006A526F /* ConversionMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8F2B9B172F2594007DBDA5 /* ConversionMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307C727C086DF006A526F /* StringParsingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3B06E824A116E600FD26C7 /* StringParsingBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF307C827C086DF006A526F /* ExternalStringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 50DE35F4215BB01500B979C7 /* ExternalStringImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307C927C086DF006A526F /* StringHasher.h in Headers */ = {isa = PBXBuildFile; fileRef = 933D63191FCB6AB90032ECD6 /* StringHasher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307CA27C086DF006A526F /* AtomStringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47320151A825B004123FF /* AtomStringImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307CB27C086DF006A526F /* StringImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47329151A825B004123FF /* StringImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1130,8 +1128,6 @@
 		46BEB6E922FFDDD500269867 /* RefCounted.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RefCounted.cpp; sourceTree = "<group>"; };
 		46E43646271F10AA00C88C90 /* SafeStrerror.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SafeStrerror.h; sourceTree = "<group>"; };
 		46E43647271F10AA00C88C90 /* SafeStrerror.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SafeStrerror.cpp; sourceTree = "<group>"; };
-		50DE35F3215BB01500B979C7 /* ExternalStringImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExternalStringImpl.cpp; sourceTree = "<group>"; };
-		50DE35F4215BB01500B979C7 /* ExternalStringImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalStringImpl.h; sourceTree = "<group>"; };
 		513E170A1CD7D5BF00E3650B /* LoggingAccumulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggingAccumulator.h; sourceTree = "<group>"; };
 		515F794B1CFC9F4A00CCED93 /* CrossThreadCopier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossThreadCopier.cpp; sourceTree = "<group>"; };
 		515F794C1CFC9F4A00CCED93 /* CrossThreadCopier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadCopier.h; sourceTree = "<group>"; };
@@ -2471,8 +2467,6 @@
 				A8A47321151A825B004123FF /* CString.cpp */,
 				A8A47322151A825B004123FF /* CString.h */,
 				93853DD228755A6600FF4E2B /* EscapedFormsForJSON.h */,
-				50DE35F3215BB01500B979C7 /* ExternalStringImpl.cpp */,
-				50DE35F4215BB01500B979C7 /* ExternalStringImpl.h */,
 				26147B0815DDCCDC00DDB907 /* IntegerToStringConversion.h */,
 				93AC91A718942FC400244939 /* LChar.h */,
 				E3B8E41C24E7CE92003655D8 /* LineBreakIteratorPoolICU.cpp */,
@@ -3027,7 +3021,6 @@
 				DD3DC87C27A4BF8E007E5B61 /* Expected.h in Headers */,
 				DD3DC8FB27A4BF8E007E5B61 /* ExperimentalFeatureNames.h in Headers */,
 				DD3DC97327A4BF8E007E5B61 /* ExportMacros.h in Headers */,
-				DDF307C827C086DF006A526F /* ExternalStringImpl.h in Headers */,
 				DD3DC94027A4BF8E007E5B61 /* FailureAction.h in Headers */,
 				DDF3076C27C086CD006A526F /* fast-dtoa.h in Headers */,
 				E361DB61289115D000B2A2B8 /* fast_float.h in Headers */,
@@ -3728,7 +3721,6 @@
 				A8A473BA151A825B004123FF /* dtoa.cpp in Sources */,
 				0F0C03D029981BEB0064230A /* EmbeddedFixedVector.cpp in Sources */,
 				143DDE9620C8BC37007F76FA /* Entitlements.mm in Sources */,
-				50DE35F5215BB01500B979C7 /* ExternalStringImpl.cpp in Sources */,
 				A8A473B3151A825B004123FF /* fast-dtoa.cc in Sources */,
 				0F7C5FB61D885CF20044F5E2 /* FastBitVector.cpp in Sources */,
 				E361DB532891159C00B2A2B8 /* FastFloat.cpp in Sources */,
