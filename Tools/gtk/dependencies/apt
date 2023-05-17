@@ -55,12 +55,10 @@ PACKAGES+=(
     gobject-introspection
     icon-naming-utils
     libcups2-dev
-    libdrm-dev
     libevdev-dev
     libgbm-dev
     libgnutls28-dev
     libgpg-error-dev
-    libinput-dev
     libjson-glib-dev
     libmtdev-dev
     libp11-kit-dev

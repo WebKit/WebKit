@@ -122,7 +122,9 @@
                   { "name": "wpe-linux-bot-11", "platform": "wpe" },
                   { "name": "wpe-linux-bot-12", "platform": "wpe" },
                   { "name": "wpe-linux-bot-13", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-14", "platform": "wpe" }
+                  { "name": "wpe-linux-bot-14", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-15", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-16", "platform": "wpe" }
                 ],
 
   "builders":   [
@@ -579,6 +581,18 @@
                     "name": "WPE-Linux-64-bit-Debug-WebDriver-Tests", "factory": "TestWebDriverFactory",
                     "platform": "wpe", "configuration": "debug", "architectures": ["x86_64"],
                     "workernames": ["wpe-linux-bot-14"]
+                  },
+                  {
+                    "name": "WPE-Linux-ARM64-bit-Release-Debian-Stable-Build", "factory": "BuildFactory",
+                    "platform": "wpe", "configuration": "release", "architectures": ["arm64"],
+                    "additionalArguments": ["--no-experimental-features"],
+                    "workernames": ["wpe-linux-bot-15"]
+                  },
+                  {
+                    "name": "WPE-Linux-ARM32-bit-Release-Debian-Stable-Build", "factory": "BuildFactory",
+                    "platform": "wpe", "configuration": "release", "architectures": ["armv7"],
+                    "additionalArguments": ["--no-experimental-features"],
+                    "workernames": ["wpe-linux-bot-16"]
                   }
                 ],
 

@@ -1565,6 +1565,28 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'jhbuild',
             'compile-webkit'
         ],
+        'WPE-Linux-ARM32-bit-Release-Debian-Stable-Build': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'compile-webkit'
+        ],
+        'WPE-Linux-ARM64-bit-Release-Debian-Stable-Build': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'compile-webkit'
+        ],
     }
 
     def setUp(self):
