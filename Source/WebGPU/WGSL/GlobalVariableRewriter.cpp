@@ -127,11 +127,13 @@ void RewriteGlobalVariables::visit(AST::Variable& variable)
 
 void RewriteGlobalVariables::visit(AST::IdentifierExpression& identifier)
 {
-    auto name = identifier.identifier();
+    String name = identifier.identifier();
     if (Global* global = read(name)) {
         if (auto resource = global->resource) {
+            if (auto* primitive = std::get_if<Types::Primitive>(identifier.inferredType()); primitive && primitive->kind == Types::Primitive::TextureExternal)
+                name = makeString("__"_s, WTFMove(name));
             auto& base = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(identifier.span(), argumentBufferParameterName(resource->group));
-            auto& structureAccess = m_callGraph.ast().astBuilder().construct<AST::FieldAccessExpression>(identifier.span(), base, WTFMove(name));
+            auto& structureAccess = m_callGraph.ast().astBuilder().construct<AST::FieldAccessExpression>(identifier.span(), base, AST::Identifier::make(WTFMove(name)));
             m_callGraph.ast().replace(identifier, structureAccess);
         }
     }
@@ -273,6 +275,7 @@ void RewriteGlobalVariables::usesOverride(AST::Variable& variable)
     case Types::Primitive::AbstractInt:
     case Types::Primitive::AbstractFloat:
     case Types::Primitive::Sampler:
+    case Types::Primitive::TextureExternal:
         RELEASE_ASSERT_NOT_REACHED();
     }
     m_entryPointInformation->specializationConstants.add(variable.name(), Reflection::SpecializationConstant { String(), constantType });
@@ -302,11 +305,27 @@ void RewriteGlobalVariables::insertStructs(const UsedGlobals& usedGlobals)
 
             auto* type = global->declaration->maybeTypeName()->resolvedType();
             bool shouldBeReference = true;
+            String name = global->declaration->name();
             if (std::get_if<Types::Texture>(type))
                 shouldBeReference = false;
             else if (auto* primitive = std::get_if<Types::Primitive>(type)) {
                 if (primitive->kind == Types::Primitive::Sampler)
                     shouldBeReference = false;
+                else if (primitive->kind == Types::Primitive::TextureExternal) {
+                    // Since we'll use the texture_external variable's name to construct
+                    // the names of the argument buffer's fields, we have to make sure
+                    // that there won't be a naming collision. We do so by prefixing the
+                    // variable's name with `__`, which is not valid according to the
+                    // grammar, so the user can't have another variable with this name.
+                    //
+                    // e.g. @group(0) @binding(0) var t : texture_external;
+                    //
+                    // From `t` we will derive `t_FirstPlane`, `t_SecondPlane`, etc.
+                    // which could colid with user-defined variables. By converting
+                    // it to `__t_FirstPlane` there is no such risk.
+                    shouldBeReference = false;
+                    name = makeString("__"_s, WTFMove(name));
+                }
             }
 
             AST::TypeName::Ref memberType = *global->declaration->maybeTypeName();
@@ -314,7 +333,7 @@ void RewriteGlobalVariables::insertStructs(const UsedGlobals& usedGlobals)
                 memberType = m_callGraph.ast().astBuilder().construct<AST::ReferenceTypeName>(span, WTFMove(memberType));
             structMembers.append(m_callGraph.ast().astBuilder().construct<AST::StructureMember>(
                 span,
-                AST::Identifier::make(global->declaration->name()),
+                AST::Identifier::make(WTFMove(name)),
                 WTFMove(memberType),
                 AST::Attribute::List {
                     m_callGraph.ast().astBuilder().construct<AST::BindingAttribute>(span, binding)

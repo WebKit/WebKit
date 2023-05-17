@@ -54,6 +54,7 @@ bool satisfies(const Type* type, Constraint constraint)
 
     case Types::Primitive::Void:
     case Types::Primitive::Sampler:
+    case Types::Primitive::TextureExternal:
         return false;
     }
 }
@@ -118,6 +119,7 @@ Type* satisfyOrPromote(Type* type, Constraint constraint, const TypeStore& types
 
     case Types::Primitive::Void:
     case Types::Primitive::Sampler:
+    case Types::Primitive::TextureExternal:
         return nullptr;
     }
 }

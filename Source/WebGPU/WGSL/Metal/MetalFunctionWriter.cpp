@@ -170,6 +170,16 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
     {
         IndentationScope scope(m_indent);
         for (auto& member : structDecl.members()) {
+            auto* type = member.type().resolvedType();
+            if (auto* primitive = std::get_if<Types::Primitive>(type); primitive && primitive->kind == Types::Primitive::TextureExternal) {
+                auto& name = member.name();
+                m_stringBuilder.append(m_indent, "texture2d<half> ", name, "_FirstPlane;\n");
+                m_stringBuilder.append(m_indent, "texture2d<half> ", name, "_SecondPlane;\n");
+                m_stringBuilder.append(m_indent, "float3x2 ", name, "_UVRemapMatrix;\n");
+                m_stringBuilder.append(m_indent, "float4x3 ", name, "_ColorSpaceConversionMatrix;\n");
+                continue;
+            }
+
             m_stringBuilder.append(m_indent);
             visit(member.type());
             m_stringBuilder.append(" ", member.name());
@@ -350,6 +360,9 @@ void FunctionDefinitionWriter::visit(const Type* type)
             case Types::Primitive::Sampler:
                 m_stringBuilder.append(*type);
                 break;
+
+            case Types::Primitive::TextureExternal:
+                RELEASE_ASSERT_NOT_REACHED();
             }
         },
         [&](const Vector& vector) {

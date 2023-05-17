@@ -126,6 +126,7 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
     introduceVariable(AST::Identifier::make("u32"_s), m_types.u32Type());
     introduceVariable(AST::Identifier::make("f32"_s), m_types.f32Type());
     introduceVariable(AST::Identifier::make("sampler"_s), m_types.samplerType());
+    introduceVariable(AST::Identifier::make("texture_external"_s), m_types.textureExternalType());
 
     // This file contains the declarations generated from `TypeDeclarations.rb`
 #include "TypeDeclarations.h" // NOLINT

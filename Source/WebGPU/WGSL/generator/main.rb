@@ -278,6 +278,7 @@ module DSL
         U32 = PrimitiveType.new(:U32)
         F32 = PrimitiveType.new(:F32)
         Sampler = PrimitiveType.new(:Sampler)
+        TextureExternal = PrimitiveType.new(:TextureExternal)
         AbstractInt = PrimitiveType.new(:AbstractInt)
         AbstractFloat = PrimitiveType.new(:AbstractFloat)
 
