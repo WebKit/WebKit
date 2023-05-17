@@ -91,7 +91,7 @@ void DrawingAreaWC::setRootCompositingLayer(WebCore::Frame&, GraphicsLayer* root
     updateRootLayers();
 }
 
-void DrawingAreaWC::attachViewOverlayGraphicsLayer(GraphicsLayer* layer)
+void DrawingAreaWC::attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, GraphicsLayer* layer)
 {
     m_viewOverlayRootLayer = layer;
     updateRootLayers();
@@ -120,7 +120,7 @@ void DrawingAreaWC::setLayerTreeStateIsFrozen(bool isFrozen)
     }
 }
 
-void DrawingAreaWC::updateGeometry(uint64_t backingStoreStateID, IntSize viewSize)
+void DrawingAreaWC::updateGeometryWC(uint64_t backingStoreStateID, IntSize viewSize)
 {
     m_backingStoreStateID = backingStoreStateID;
     m_webPage.setSize(viewSize);
@@ -345,7 +345,7 @@ void DrawingAreaWC::sendUpdateNonAC()
                 if (is<ImageBufferBackendHandleSharing>(sharing))
                     handle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
             }
-            updateInfo.bitmapHandle = std::get<ShareableBitmapHandle>(WTFMove(handle));
+            updateInfo.bitmapHandle = std::get<ShareableBitmap::Handle>(WTFMove(handle));
             send(Messages::DrawingAreaProxy::Update(stateID, WTFMove(updateInfo)));
         });
     });

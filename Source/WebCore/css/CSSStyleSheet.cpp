@@ -34,6 +34,7 @@
 #include "MediaList.h"
 #include "MediaQueryParser.h"
 #include "Node.h"
+#include "OriginAccessPatterns.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGStyleElement.h"
 #include "SecurityOrigin.h"
@@ -184,6 +185,7 @@ RefPtr<StyleRuleWithNesting> CSSStyleSheet::prepareChildStyleRuleForNesting(Styl
         if (rules[i] == &styleRule) {
             auto styleRuleWithNesting = StyleRuleWithNesting::create(WTFMove(styleRule));
             rules[i] = styleRuleWithNesting.ptr();
+            m_contents->setHasNestingRules();
             return styleRuleWithNesting;
         }        
     }
@@ -332,7 +334,7 @@ bool CSSStyleSheet::canAccessRules() const
     Document* document = ownerDocument();
     if (!document)
         return true;
-    return document->securityOrigin().canRequest(baseURL);
+    return document->securityOrigin().canRequest(baseURL, OriginAccessPatternsForWebProcess::singleton());
 }
 
 ExceptionOr<unsigned> CSSStyleSheet::insertRule(const String& ruleString, unsigned index)

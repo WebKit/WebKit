@@ -48,7 +48,7 @@ enum class NewLoadInProgress : bool { No, Yes };
 class NavigationScheduler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit NavigationScheduler(LocalFrame&);
+    explicit NavigationScheduler(Frame&);
     ~NavigationScheduler();
 
     bool redirectScheduledDuringLoad();
@@ -75,9 +75,9 @@ private:
     void timerFired();
     void schedule(std::unique_ptr<ScheduledNavigation>);
 
-    static LockBackForwardList mustLockBackForwardList(LocalFrame& targetFrame);
+    static LockBackForwardList mustLockBackForwardList(Frame& targetFrame);
 
-    LocalFrame& m_frame;
+    Frame& m_frame;
     Timer m_timer;
     std::unique_ptr<ScheduledNavigation> m_redirect;
 };

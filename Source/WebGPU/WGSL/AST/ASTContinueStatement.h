@@ -32,13 +32,14 @@
 namespace WGSL::AST {
 
 class ContinueStatement final : public Statement {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(ContinueStatement);
 public:
+    NodeKind kind() const override;
+
+private:
     ContinueStatement(SourceSpan span)
         : Statement(span)
     { }
-
-    NodeKind kind() const override;
 };
 
 } // namespace WGSL::AST

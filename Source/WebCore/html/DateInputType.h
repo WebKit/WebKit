@@ -37,11 +37,15 @@
 namespace WebCore {
 
 class DateInputType final : public BaseDateAndTimeInputType {
-    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
-    explicit DateInputType(HTMLInputElement&);
+    static Ref<DateInputType> create(HTMLInputElement& element)
+    {
+        return adoptRef(*new DateInputType(element));
+    }
 
 private:
+    explicit DateInputType(HTMLInputElement&);
+
     const AtomString& formControlType() const final;
     DateComponentsType dateType() const final;
     StepRange createStepRange(AnyStepHandling) const final;

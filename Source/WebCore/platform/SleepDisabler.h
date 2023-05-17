@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "PageIdentifier.h"
 #include "SleepDisablerIdentifier.h"
 #include <pal/system/SleepDisabler.h>
 
@@ -33,7 +34,7 @@ namespace WebCore {
 class SleepDisabler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT SleepDisabler(const String&, PAL::SleepDisabler::Type);
+    WEBCORE_EXPORT SleepDisabler(const String&, PAL::SleepDisabler::Type, std::optional<PageIdentifier>);
     WEBCORE_EXPORT ~SleepDisabler();
 
     PAL::SleepDisabler::Type type() const { return m_type; }
@@ -42,6 +43,7 @@ private:
     std::unique_ptr<PAL::SleepDisabler> m_platformSleepDisabler;
     SleepDisablerIdentifier m_identifier;
     PAL::SleepDisabler::Type m_type;
+    std::optional<PageIdentifier> m_pageID;
 };
 
 } // namespace WebCore

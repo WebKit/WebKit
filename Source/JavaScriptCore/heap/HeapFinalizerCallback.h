@@ -46,11 +46,6 @@ public:
             && m_userData == other.m_userData;
     }
     
-    bool operator!=(const HeapFinalizerCallback& other) const
-    {
-        return !(*this == other);
-    }
-    
     explicit operator bool() const
     {
         return *this != HeapFinalizerCallback();

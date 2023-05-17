@@ -31,6 +31,7 @@
 #include "SecurityPolicyViolationEvent.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/JSONValues.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -39,8 +40,7 @@ using Init = SecurityPolicyViolationEventInit;
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSPViolationReportBody);
 
 CSPViolationReportBody::CSPViolationReportBody(Init&& init)
-    : ReportBody(ViolationReportType::ContentSecurityPolicy)
-    , m_documentURL(WTFMove(init.documentURI))
+    : m_documentURL(WTFMove(init.documentURI))
     , m_referrer(init.referrer.isNull() ? emptyString() : WTFMove(init.referrer))
     , m_blockedURL(WTFMove(init.blockedURI))
     , m_effectiveDirective(WTFMove(init.effectiveDirective))
@@ -55,8 +55,7 @@ CSPViolationReportBody::CSPViolationReportBody(Init&& init)
 }
 
 CSPViolationReportBody::CSPViolationReportBody(String&& documentURL, String&& referrer, String&& blockedURL, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition disposition, unsigned short statusCode, unsigned long lineNumber, unsigned long columnNumber)
-    : ReportBody(ViolationReportType::ContentSecurityPolicy)
-    , m_documentURL(WTFMove(documentURL))
+    : m_documentURL(WTFMove(documentURL))
     , m_referrer(WTFMove(referrer))
     , m_blockedURL(WTFMove(blockedURL))
     , m_effectiveDirective(WTFMove(effectiveDirective))

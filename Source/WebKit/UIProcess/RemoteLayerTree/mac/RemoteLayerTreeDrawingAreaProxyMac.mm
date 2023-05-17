@@ -305,12 +305,17 @@ void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, Float
     NSValue *transformValue = [NSValue valueWithCATransform3D:transform];
     [renderViewAnimationCA setToValue:transformValue];
     
-    [CATransaction setCompletionBlock:[layerForPageScale, this, scale, constrainedOrigin, transform] () {
-        layerForPageScale.transform = transform;
-        [layerForPageScale removeAnimationForKey:transientAnimationKey];
-        [layerForPageScale removeAnimationForKey:@"transientZoomCommit"];
-        m_transactionIDAfterEndingTransientZoom = nextLayerTreeTransactionID();
-        m_webPageProxy.send(Messages::DrawingArea::CommitTransientZoom(scale, constrainedOrigin), m_identifier);
+    [CATransaction setCompletionBlock:[scale, constrainedOrigin, transform, protectedWebPageProxy = Ref { m_webPageProxy }] () {
+        if (RemoteLayerTreeDrawingAreaProxyMac* drawingArea = static_cast<RemoteLayerTreeDrawingAreaProxyMac*>(protectedWebPageProxy->drawingArea())) {
+            CALayer *layerForPageScale = drawingArea->remoteLayerTreeHost().layerForID(drawingArea->pageScalingLayerID());
+            if (layerForPageScale) {
+                layerForPageScale.transform = transform;
+                [layerForPageScale removeAnimationForKey:transientAnimationKey];
+                [layerForPageScale removeAnimationForKey:@"transientZoomCommit"];
+            }
+            drawingArea->updateZoomTransactionID();
+            protectedWebPageProxy->send(Messages::DrawingArea::CommitTransientZoom(scale, constrainedOrigin), drawingArea->identifier());
+        }
     }];
 
     [layerForPageScale addAnimation:renderViewAnimationCA.get() forKey:@"transientZoomCommit"];
@@ -450,6 +455,11 @@ MachSendRight RemoteLayerTreeDrawingAreaProxyMac::createFence()
     } forPhase:kCATransactionPhasePostCommit];
 
     return fencePort;
+}
+
+void RemoteLayerTreeDrawingAreaProxyMac::updateZoomTransactionID()
+{
+    m_transactionIDAfterEndingTransientZoom = nextLayerTreeTransactionID();
 }
 
 

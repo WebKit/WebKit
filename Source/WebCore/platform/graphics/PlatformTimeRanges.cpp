@@ -318,9 +318,4 @@ bool PlatformTimeRanges::operator==(const PlatformTimeRanges& other) const
     return m_ranges == other.m_ranges;
 }
 
-bool PlatformTimeRanges::operator!=(const PlatformTimeRanges& other) const
-{
-    return !operator==(other);
-}
-
 }

@@ -119,7 +119,7 @@ Element* CachedHTMLCollection<HTMLCollectionClass, traversalType>::namedItem(con
                 if ((candidate = treeScope.getElementByName(name))) {
                     if (!is<HTMLElement>(*candidate))
                         candidate = nullptr;
-                    else if (type() == DocAll && !nameShouldBeVisibleInDocumentAll(*candidate))
+                    else if (type() == CollectionType::DocAll && !nameShouldBeVisibleInDocumentAll(*candidate))
                         candidate = nullptr;
                 }
             }

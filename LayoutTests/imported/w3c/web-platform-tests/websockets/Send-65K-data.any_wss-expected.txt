@@ -1,0 +1,3 @@
+
+PASS Send 65K data on a WebSocket - Connection should be closed
+

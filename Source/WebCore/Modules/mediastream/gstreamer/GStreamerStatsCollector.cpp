@@ -57,10 +57,8 @@ static inline void fillRTCRTPStreamStats(RTCStatsReport::RtpStreamStats& stats, 
     if (gst_structure_get_uint(structure, "ssrc", &value))
         stats.ssrc = value;
 
-    if (const char* kind = gst_structure_get_string(structure, "kind")) {
+    if (const char* kind = gst_structure_get_string(structure, "kind"))
         stats.kind = String::fromLatin1(kind);
-        stats.mediaType = stats.kind;
-    }
 }
 
 static inline void fillRTCCodecStats(RTCStatsReport::CodecStats& stats, const GstStructure* structure)
@@ -287,10 +285,6 @@ static inline void fillRTCCandidateStats(RTCStatsReport::IceCandidateStats& stat
 
     auto candidateType = String::fromLatin1(gst_structure_get_string(structure, "candidate-type"));
     stats.candidateType = iceCandidateType(candidateType);
-
-    uint64_t priority;
-    if (gst_structure_get_uint64(structure, "priority", &priority))
-        stats.priority = priority;
 }
 
 static inline void fillRTCCandidatePairStats(RTCStatsReport::IceCandidatePairStats& stats, const GstStructure* structure)

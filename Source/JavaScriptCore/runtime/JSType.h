@@ -66,7 +66,7 @@ enum JSType : uint8_t {
     BooleanObjectType,
     NumberObjectType,
     ErrorInstanceType,
-    PureForwardingProxyType,
+    GlobalProxyType,
     DirectArgumentsType,
     ScopedArgumentsType,
     ClonedArgumentsType,

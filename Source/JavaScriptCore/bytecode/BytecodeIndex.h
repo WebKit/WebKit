@@ -70,7 +70,6 @@ public:
     // Comparison operators.
     explicit operator bool() const { return m_packedBits != invalidOffset && m_packedBits != deletedValue().offset(); }
     bool operator ==(const BytecodeIndex& other) const { return asBits() == other.asBits(); }
-    bool operator !=(const BytecodeIndex& other) const { return !(*this == other); }
 
     bool operator <(const BytecodeIndex& other) const { return asBits() < other.asBits(); }
     bool operator >(const BytecodeIndex& other) const { return asBits() > other.asBits(); }

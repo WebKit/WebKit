@@ -33,6 +33,7 @@
 #include "NetworkRTCProvider.h"
 #include "WebRTCMonitorMessages.h"
 #include <wtf/Function.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/WeakHashSet.h>
 
 ALLOW_COMMA_BEGIN

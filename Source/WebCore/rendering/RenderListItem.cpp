@@ -31,7 +31,7 @@
 #include "HTMLOListElement.h"
 #include "HTMLUListElement.h"
 #include "PseudoElement.h"
-#include "RenderStyleConstants.h"
+#include "RenderStyleSetters.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
@@ -79,7 +79,7 @@ RenderStyle RenderListItem::computeMarkerStyle() const
     markerStyle.fontCascade().update(&document().fontSelector());
     markerStyle.setUnicodeBidi(UnicodeBidi::Isolate);
     markerStyle.setWhiteSpace(WhiteSpace::Pre);
-    markerStyle.setTextTransform(TextTransform::None);
+    markerStyle.setTextTransform({ });
     return markerStyle;
 }
 

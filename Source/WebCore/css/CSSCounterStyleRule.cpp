@@ -76,6 +76,16 @@ CSSCounterStyleDescriptors::System toCounterStyleSystemEnum(const CSSValue* syst
         return CSSCounterStyleDescriptors::System::Numeric;
     case CSSValueAdditive:
         return CSSCounterStyleDescriptors::System::Additive;
+    case CSSValueInternalSimplifiedChineseInformal:
+        return CSSCounterStyleDescriptors::System::SimplifiedChineseInformal;
+    case CSSValueInternalSimplifiedChineseFormal:
+        return CSSCounterStyleDescriptors::System::SimplifiedChineseFormal;
+    case CSSValueInternalTraditionalChineseInformal:
+        return CSSCounterStyleDescriptors::System::TraditionalChineseInformal;
+    case CSSValueInternalTraditionalChineseFormal:
+        return CSSCounterStyleDescriptors::System::TraditionalChineseFormal;
+    case CSSValueInternalEthiopicNumeric:
+        return CSSCounterStyleDescriptors::System::EthiopicNumeric;
     case CSSValueExtends:
         return CSSCounterStyleDescriptors::System::Extends;
     default:

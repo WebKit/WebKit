@@ -106,7 +106,7 @@ public:
 #endif
 
     // Used for rendering
-    void didDraw(const std::optional<FloatRect>&) final;
+    void didDraw(const std::optional<FloatRect>&, ShouldApplyPostProcessingToDirtyRect) final;
 
     void paint(GraphicsContext&, const LayoutRect&, CompositeOperator);
 
@@ -137,9 +137,6 @@ public:
 
     bool isControlledByOffscreen() const;
 
-#if PLATFORM(COCOA)
-    GraphicsContext* drawingContext() const final;
-#endif
     WEBCORE_EXPORT void setAvoidIOSurfaceSizeCheckInWebProcessForTesting();
 
     void queueTaskKeepingObjectAlive(TaskSource, Function<void()>&&) final;
@@ -201,9 +198,6 @@ private:
     bool m_hasRelevantWebGLEventListener { false };
 #endif
     bool m_isSnapshotting { false };
-#if PLATFORM(COCOA)
-    mutable bool m_mustGuardAgainstUseByPendingLayerTransaction { false };
-#endif
 };
 
 WebCoreOpaqueRoot root(HTMLCanvasElement*);

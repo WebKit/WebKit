@@ -21,24 +21,24 @@
 [
     Exposed=Window
 ] interface HTMLTableElement : HTMLElement {
-    [CEReactions] attribute HTMLTableCaptionElement? caption;
+    [CEReactions=Needed] attribute HTMLTableCaptionElement? caption;
     HTMLTableCaptionElement createCaption();
-    [CEReactions] undefined deleteCaption();
+    [CEReactions=Needed] undefined deleteCaption();
 
-    [CEReactions] attribute HTMLTableSectionElement? tHead;
+    [CEReactions=Needed] attribute HTMLTableSectionElement? tHead;
     HTMLTableSectionElement createTHead();
-    [CEReactions] undefined deleteTHead();
+    [CEReactions=Needed] undefined deleteTHead();
 
-    [CEReactions] attribute HTMLTableSectionElement? tFoot;
+    [CEReactions=Needed] attribute HTMLTableSectionElement? tFoot;
     HTMLTableSectionElement createTFoot();
-    [CEReactions] undefined deleteTFoot();
+    [CEReactions=Needed] undefined deleteTFoot();
 
     readonly attribute HTMLCollection tBodies;
     HTMLTableSectionElement createTBody();
 
     readonly attribute HTMLCollection rows;
     HTMLTableRowElement insertRow(optional long index = -1);
-    [CEReactions] undefined deleteRow(long index);
+    [CEReactions=Needed] undefined deleteRow(long index);
 
     // Obsolete members
     [CEReactions=NotNeeded, Reflect] attribute DOMString align;

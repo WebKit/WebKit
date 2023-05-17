@@ -423,7 +423,7 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
         m_suggestedToActualURLMap.set(suggestedURLCopy, actualURL);
 
         if (base64Encoded) {
-            auto decodedData = base64Decode(contentCopy, Base64DecodeOptions::ValidatePadding);
+            auto decodedData = base64Decode(contentCopy, Base64DecodeMode::DefaultValidatePadding);
             if (!decodedData)
                 return;
             RetainPtr<NSData> dataContent = adoptNS([[NSData alloc] initWithBytes:decodedData->data() length:decodedData->size()]);

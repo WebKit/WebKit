@@ -42,6 +42,7 @@
 #import "Sampler.h"
 #import "ShaderModule.h"
 #import "Texture.h"
+#import <CoreVideo/CVPixelBuffer.h>
 #import <algorithm>
 #import <notify.h>
 #import <wtf/StdLibExtras.h>
@@ -151,6 +152,12 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
 #endif
 #endif
 
+#if HAVE(COREVIDEO_METAL_SUPPORT)
+    CVMetalTextureCacheRef coreVideoTextureCache;
+    CVReturn result = CVMetalTextureCacheCreate(nullptr, nullptr, device, nullptr, &coreVideoTextureCache);
+    ASSERT_UNUSED(result, result == kCVReturnSuccess);
+    m_coreVideoTextureCache = coreVideoTextureCache;
+#endif
     GPUFrameCapture::registerForFrameCapture(m_device);
 }
 
@@ -158,6 +165,8 @@ Device::Device(Adapter& adapter)
     : m_defaultQueue(Queue::createInvalid(*this))
     , m_adapter(adapter)
 {
+    if (!m_adapter->isValid())
+        makeInvalid();
 }
 
 Device::~Device()
@@ -165,6 +174,10 @@ Device::~Device()
 #if PLATFORM(MAC)
     MTLRemoveDeviceObserver(m_deviceObserver);
 #endif
+    if (m_deviceLostCallback) {
+        m_deviceLostCallback(WGPUDeviceLostReason_Destroyed, ""_s);
+        m_deviceLostCallback = nullptr;
+    }
 }
 
 void Device::loseTheDevice(WGPUDeviceLostReason reason)
@@ -179,6 +192,7 @@ void Device::loseTheDevice(WGPUDeviceLostReason reason)
         instance().scheduleWork([deviceLostCallback = WTFMove(m_deviceLostCallback), reason]() {
             deviceLostCallback(reason, "Device lost."_s);
         });
+        m_deviceLostCallback = nullptr;
     }
 
     // FIXME: The spec doesn't actually say to do this, but it's pretty important because
@@ -337,6 +351,10 @@ void Device::pushErrorScope(WGPUErrorFilter filter)
 void Device::setDeviceLostCallback(Function<void(WGPUDeviceLostReason, String&&)>&& callback)
 {
     m_deviceLostCallback = WTFMove(callback);
+    if (m_isLost)
+        loseTheDevice(WGPUDeviceLostReason_Destroyed);
+    else if (!m_adapter->isValid())
+        loseTheDevice(WGPUDeviceLostReason_Undefined);
 }
 
 void Device::setUncapturedErrorCallback(Function<void(WGPUErrorType, String&&)>&& callback)
@@ -434,6 +452,11 @@ void wgpuDeviceCreateRenderPipelineAsyncWithBlock(WGPUDevice device, WGPURenderP
 WGPUSampler wgpuDeviceCreateSampler(WGPUDevice device, const WGPUSamplerDescriptor* descriptor)
 {
     return WebGPU::releaseToAPI(WebGPU::fromAPI(device).createSampler(*descriptor));
+}
+
+WGPUExternalTexture wgpuDeviceImportExternalTexture(WGPUDevice device, const WGPUExternalTextureDescriptor* descriptor)
+{
+    return WebGPU::releaseToAPI(WebGPU::fromAPI(device).createExternalTexture(*descriptor));
 }
 
 WGPUShaderModule wgpuDeviceCreateShaderModule(WGPUDevice device, const WGPUShaderModuleDescriptor* descriptor)

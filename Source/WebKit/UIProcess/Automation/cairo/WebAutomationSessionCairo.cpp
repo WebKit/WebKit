@@ -52,9 +52,9 @@ static std::optional<String> base64EncodedPNGData(cairo_surface_t* surface)
     return base64EncodeToString(pngData);
 }
 
-std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmapHandle& handle)
+std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(ShareableBitmap::Handle&& handle)
 {
-    auto bitmap = ShareableBitmap::create(handle, SharedMemory::Protection::ReadOnly);
+    auto bitmap = ShareableBitmap::create(WTFMove(handle), SharedMemory::Protection::ReadOnly);
     if (!bitmap)
         return std::nullopt;
 

@@ -162,9 +162,9 @@ private:
     void encodedDataStatusChanged(EncodedDataStatus);
 
     void setNativeImage(Ref<NativeImage>&&);
-    void cacheMetadataAtIndex(size_t, SubsamplingLevel, DecodingStatus = DecodingStatus::Invalid);
-    void cachePlatformImageAtIndex(PlatformImagePtr&&, size_t, SubsamplingLevel, const DecodingOptions&, DecodingStatus = DecodingStatus::Invalid);
-    void cachePlatformImageAtIndexAsync(PlatformImagePtr&&, size_t, SubsamplingLevel, const DecodingOptions&, DecodingStatus);
+    void cacheMetadataAtIndex(size_t, SubsamplingLevel);
+    void cachePlatformImageAtIndex(PlatformImagePtr&&, size_t, SubsamplingLevel, const DecodingOptions&);
+    void cachePlatformImageAtIndexAsync(PlatformImagePtr&&, size_t, SubsamplingLevel, const DecodingOptions&);
 
     struct ImageFrameRequest;
     static const int BufferSize = 8;
@@ -190,10 +190,9 @@ private:
         size_t index;
         SubsamplingLevel subsamplingLevel;
         DecodingOptions decodingOptions;
-        DecodingStatus decodingStatus;
         bool operator==(const ImageFrameRequest& other) const
         {
-            return index == other.index && subsamplingLevel == other.subsamplingLevel && decodingOptions == other.decodingOptions && decodingStatus == other.decodingStatus;
+            return index == other.index && subsamplingLevel == other.subsamplingLevel && decodingOptions == other.decodingOptions;
         }
     };
     using FrameRequestQueue = SynchronizedFixedQueue<ImageFrameRequest, BufferSize>;
@@ -225,4 +224,4 @@ private:
     RunLoop& m_runLoop;
 };
 
-}
+} // namespace WebCore

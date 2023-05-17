@@ -50,7 +50,6 @@
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementAnimationRareData.h"
 #include "ElementChildIteratorInlines.h"
-#include "ElementName.h"
 #include "ElementRareData.h"
 #include "EventDispatcher.h"
 #include "EventHandler.h"
@@ -91,6 +90,7 @@
 #include "Logging.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
+#include "NodeName.h"
 #include "NodeRenderStyle.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
@@ -100,6 +100,8 @@
 #include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "Quirks.h"
+#include "RenderBoxInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
@@ -111,6 +113,7 @@
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "ResolvedStyle.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
@@ -410,7 +413,7 @@ bool Element::isMouseFocusable() const
 
 bool Element::shouldUseInputMethod()
 {
-    return computeEditability(UserSelectAllIsAlwaysNonEditable, ShouldUpdateStyle::Update) != Editability::ReadOnly;
+    return computeEditability(UserSelectAllTreatment::NotEditable, ShouldUpdateStyle::Update) != Editability::ReadOnly;
 }
 
 static bool isForceEvent(const PlatformMouseEvent& platformEvent)
@@ -457,7 +460,7 @@ static ShouldIgnoreMouseEvent dispatchPointerEventIfNeeded(Element& element, con
 
 bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget, IsSyntheticClick isSyntheticClick)
 {
-    if (isDisabledFormControl())
+    if (isDisabledFormControl() && !document().settings().sendMouseEventsToDisabledFormControlsEnabled())
         return false;
 
     if (isForceEvent(platformEvent) && !document().hasListenerTypeForEventType(platformEvent.type()))
@@ -1367,7 +1370,7 @@ int Element::offsetTop()
 
 int Element::offsetWidth()
 {
-    document().updateLayoutIfDimensionsOutOfDate(*this, WidthDimensionsCheck);
+    document().updateLayoutIfDimensionsOutOfDate(*this, DimensionsCheck::Width);
     if (RenderBoxModelObject* renderer = renderBoxModelObject()) {
         auto offsetWidth = LayoutUnit { roundToInt(renderer->offsetWidth()) };
         return convertToNonSubpixelValue(adjustLayoutUnitForAbsoluteZoom(offsetWidth, *renderer).toDouble());
@@ -1377,7 +1380,7 @@ int Element::offsetWidth()
 
 int Element::offsetHeight()
 {
-    document().updateLayoutIfDimensionsOutOfDate(*this, HeightDimensionsCheck);
+    document().updateLayoutIfDimensionsOutOfDate(*this, DimensionsCheck::Height);
     if (RenderBoxModelObject* renderer = renderBoxModelObject()) {
         auto offsetHeight = LayoutUnit { roundToInt(renderer->offsetHeight()) };
         return convertToNonSubpixelValue(adjustLayoutUnitForAbsoluteZoom(offsetHeight, *renderer).toDouble());
@@ -1431,7 +1434,7 @@ int Element::clientTop()
 
 int Element::clientWidth()
 {
-    document().updateLayoutIfDimensionsOutOfDate(*this, WidthDimensionsCheck);
+    document().updateLayoutIfDimensionsOutOfDate(*this, DimensionsCheck::Width);
 
     if (!document().hasLivingRenderTree())
         return 0;
@@ -1465,7 +1468,7 @@ int Element::clientWidth()
 
 int Element::clientHeight()
 {
-    document().updateLayoutIfDimensionsOutOfDate(*this, HeightDimensionsCheck);
+    document().updateLayoutIfDimensionsOutOfDate(*this, DimensionsCheck::Height);
     if (!document().hasLivingRenderTree())
         return 0;
 
@@ -1580,7 +1583,7 @@ void Element::setScrollTop(int newTop)
 
 int Element::scrollWidth()
 {
-    document().updateLayoutIfDimensionsOutOfDate(*this, WidthDimensionsCheck);
+    document().updateLayoutIfDimensionsOutOfDate(*this, DimensionsCheck::Width);
 
     if (document().scrollingElement() == this) {
         // FIXME (webkit.org/b/182289): updateLayoutIfDimensionsOutOfDate seems to ignore zoom level change.
@@ -1597,7 +1600,7 @@ int Element::scrollWidth()
 
 int Element::scrollHeight()
 {
-    document().updateLayoutIfDimensionsOutOfDate(*this, HeightDimensionsCheck);
+    document().updateLayoutIfDimensionsOutOfDate(*this, DimensionsCheck::Height);
 
     if (document().scrollingElement() == this) {
         // FIXME (webkit.org/b/182289): updateLayoutIfDimensionsOutOfDate seems to ignore zoom level change.
@@ -1918,7 +1921,7 @@ const AtomString& Element::getAttributeNS(const AtomString& namespaceURI, const 
 ExceptionOr<bool> Element::toggleAttribute(const AtomString& qualifiedName, std::optional<bool> force)
 {
     if (!Document::isValidName(qualifiedName))
-        return Exception { InvalidCharacterError };
+        return Exception { InvalidCharacterError, makeString("Invalid qualified name: '", qualifiedName, "'") };
 
     synchronizeAttribute(qualifiedName);
 
@@ -1942,7 +1945,7 @@ ExceptionOr<bool> Element::toggleAttribute(const AtomString& qualifiedName, std:
 ExceptionOr<void> Element::setAttribute(const AtomString& qualifiedName, const AtomString& value)
 {
     if (!Document::isValidName(qualifiedName))
-        return Exception { InvalidCharacterError };
+        return Exception { InvalidCharacterError, makeString("Invalid qualified name: '", qualifiedName, "'") };
 
     synchronizeAttribute(qualifiedName);
     auto caseAdjustedQualifiedName = shouldIgnoreAttributeCase(*this) ? qualifiedName.convertToASCIILowercase() : qualifiedName;
@@ -2030,83 +2033,109 @@ bool Element::isElementsArrayReflectionAttribute(const Settings& settings, const
 {
     if (!settings.ariaReflectionForElementReferencesEnabled())
         return false;
-    return name == HTMLNames::aria_controlsAttr
-        || name == HTMLNames::aria_describedbyAttr
-        || name == HTMLNames::aria_detailsAttr
-        || name == HTMLNames::aria_errormessageAttr
-        || name == HTMLNames::aria_flowtoAttr
-        || name == HTMLNames::aria_labelledbyAttr
-        || name == HTMLNames::aria_ownsAttr;
+
+    switch (name.nodeName()) {
+    case AttributeNames::aria_controlsAttr:
+    case AttributeNames::aria_describedbyAttr:
+    case AttributeNames::aria_detailsAttr:
+    case AttributeNames::aria_errormessageAttr:
+    case AttributeNames::aria_flowtoAttr:
+    case AttributeNames::aria_labelledbyAttr:
+    case AttributeNames::aria_ownsAttr:
+        return true;
+    default:
+        break;
+    }
+    return false;
 }
 
-void Element::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason)
+void Element::notifyAttributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
 {
-    bool valueIsSameAsBefore = oldValue == newValue;
-
-    if (!valueIsSameAsBefore) {
-        if (name == HTMLNames::accesskeyAttr)
-            document().invalidateAccessKeyCache();
-        else if (name == HTMLNames::classAttr)
-            classAttributeChanged(newValue);
-        else if (name == HTMLNames::idAttr) {
-            AtomString oldId = elementData()->idForStyleResolution();
-            AtomString newId = makeIdForStyleResolution(newValue, document().inQuirksMode());
-            if (newId != oldId) {
-                Style::IdChangeInvalidation styleInvalidation(*this, oldId, newId);
-                elementData()->setIdForStyleResolution(newId);
-            }
-
-            if (!oldValue.isEmpty())
-                treeScope().idTargetObserverRegistry().notifyObservers(*oldValue.impl());
-            if (!newValue.isEmpty())
-                treeScope().idTargetObserverRegistry().notifyObservers(*newValue.impl());
-        } else if (name == HTMLNames::nameAttr)
-            elementData()->setHasNameAttribute(!newValue.isNull());
-        else if (name == HTMLNames::nonceAttr) {
-            if (is<HTMLElement>(*this) || is<SVGElement>(*this))
-                setNonce(newValue.isNull() ? emptyAtom() : newValue);
-        } else if (name == HTMLNames::pseudoAttr) {
-            if (needsStyleInvalidation() && isInShadowTree())
-                invalidateStyleForSubtree();
-        } else if (name == HTMLNames::slotAttr) {
-            if (auto* parent = parentElement()) {
-                if (auto* shadowRoot = parent->shadowRoot())
-                    shadowRoot->hostChildElementDidChangeSlotAttribute(*this, oldValue, newValue);
-            }
-        } else if (name == HTMLNames::partAttr)
-            partAttributeChanged(newValue);
-        else if (isElementReflectionAttribute(document().settings(), name) || isElementsArrayReflectionAttribute(document().settings(), name)) {
-            if (auto* map = explicitlySetAttrElementsMapIfExists())
-                map->remove(name);
-        } else if (name == HTMLNames::exportpartsAttr) {
-            if (auto* shadowRoot = this->shadowRoot()) {
-                shadowRoot->invalidatePartMappings();
-                Style::Invalidator::invalidateShadowParts(*shadowRoot);
-            }
-        } else if (name == HTMLNames::langAttr || name.matches(XMLNames::langAttr)) {
-            if (name == HTMLNames::langAttr)
-                setHasLangAttr(!newValue.isNull());
-            else
-                setHasXMLLangAttr(!newValue.isNull());
-            if (document().documentElement() == this)
-                document().setDocumentElementLanguage(langFromAttribute());
-            else
-                updateEffectiveLangStateAndPropagateToDescendants();
-        }
-    }
+    attributeChanged(name, oldValue, newValue, reason);
 
     document().incDOMTreeVersion();
 
     if (UNLIKELY(isDefinedCustomElement()))
         CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(*this, name, oldValue, newValue);
 
-    if (valueIsSameAsBefore)
+    if (oldValue != newValue) {
+        invalidateNodeListAndCollectionCachesInAncestorsForAttribute(name);
+
+        if (auto* cache = document().existingAXObjectCache())
+            cache->deferAttributeChangeIfNeeded(this, name, oldValue, newValue);
+    }
+}
+
+void Element::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason)
+{
+    if (oldValue == newValue)
         return;
 
-    invalidateNodeListAndCollectionCachesInAncestorsForAttribute(name);
+    switch (name.nodeName()) {
+    case AttributeNames::classAttr:
+        classAttributeChanged(newValue);
+        break;
+    case AttributeNames::idAttr: {
+        AtomString oldId = elementData()->idForStyleResolution();
+        AtomString newId = makeIdForStyleResolution(newValue, document().inQuirksMode());
+        if (newId != oldId) {
+            Style::IdChangeInvalidation styleInvalidation(*this, oldId, newId);
+            elementData()->setIdForStyleResolution(newId);
+        }
 
-    if (AXObjectCache* cache = document().existingAXObjectCache())
-        cache->deferAttributeChangeIfNeeded(this, name, oldValue, newValue);
+        if (!oldValue.isEmpty())
+            treeScope().idTargetObserverRegistry().notifyObservers(*oldValue.impl());
+        if (!newValue.isEmpty())
+            treeScope().idTargetObserverRegistry().notifyObservers(*newValue.impl());
+        break;
+    }
+    case AttributeNames::nameAttr:
+        elementData()->setHasNameAttribute(!newValue.isNull());
+        break;
+    case AttributeNames::nonceAttr:
+        if (is<HTMLElement>(*this) || is<SVGElement>(*this))
+            setNonce(newValue.isNull() ? emptyAtom() : newValue);
+        break;
+    case AttributeNames::pseudoAttr:
+        if (needsStyleInvalidation() && isInShadowTree())
+            invalidateStyleForSubtree();
+        break;
+    case AttributeNames::slotAttr:
+        if (auto* parent = parentElement()) {
+            if (auto* shadowRoot = parent->shadowRoot())
+                shadowRoot->hostChildElementDidChangeSlotAttribute(*this, oldValue, newValue);
+        }
+        break;
+    case AttributeNames::partAttr:
+        partAttributeChanged(newValue);
+        break;
+    case AttributeNames::exportpartsAttr:
+        if (auto* shadowRoot = this->shadowRoot()) {
+            shadowRoot->invalidatePartMappings();
+            Style::Invalidator::invalidateShadowParts(*shadowRoot);
+        }
+        break;
+    case AttributeNames::accesskeyAttr:
+        document().invalidateAccessKeyCache();
+        break;
+    case AttributeNames::XML::langAttr:
+    case AttributeNames::langAttr:
+        if (name == HTMLNames::langAttr)
+            setHasLangAttr(!newValue.isNull());
+        else
+            setHasXMLLangAttr(!newValue.isNull());
+        if (document().documentElement() == this)
+            document().setDocumentElementLanguage(langFromAttribute());
+        else
+            updateEffectiveLangStateAndPropagateToDescendants();
+        break;
+    default:
+        if (isElementReflectionAttribute(document().settings(), name) || isElementsArrayReflectionAttribute(document().settings(), name)) {
+            if (auto* map = explicitlySetAttrElementsMapIfExists())
+                map->remove(name);
+        }
+        break;
+    }
 }
 
 void Element::updateEffectiveLangStateAndPropagateToDescendants()
@@ -2449,7 +2478,7 @@ void Element::stripScriptingAttributes(Vector<Attribute>& attributeVector) const
     });
 }
 
-void Element::parserSetAttributes(Span<const Attribute> attributes)
+void Element::parserSetAttributes(std::span<const Attribute> attributes)
 {
     ASSERT(!isConnected());
     ASSERT(!parentNode());
@@ -2467,7 +2496,7 @@ void Element::parserSetAttributes(Span<const Attribute> attributes)
 
     // Use attributes instead of m_elementData because attributeChanged might modify m_elementData.
     for (const auto& attribute : attributes)
-        attributeChanged(attribute.name(), nullAtom(), attribute.value(), ModifiedDirectly);
+        notifyAttributeChanged(attribute.name(), nullAtom(), attribute.value(), AttributeModificationReason::Directly);
 }
 
 void Element::parserDidSetAttributes()
@@ -2482,9 +2511,9 @@ void Element::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
         ensureUniqueElementData();
         // ElementData::m_classNames or ElementData::m_idForStyleResolution need to be updated with the right case.
         if (hasID())
-            attributeChanged(idAttr, nullAtom(), getIdAttribute());
+            notifyAttributeChanged(idAttr, nullAtom(), getIdAttribute());
         if (hasClass())
-            attributeChanged(classAttr, nullAtom(), getAttribute(classAttr));
+            notifyAttributeChanged(classAttr, nullAtom(), getAttribute(classAttr));
     }
 
     if (UNLIKELY(isDefinedCustomElement()))
@@ -2822,7 +2851,7 @@ static bool canAttachAuthorShadowRoot(const Element& element)
     if (!is<HTMLElement>(element))
         return false;
 
-    switch (element.tagQName().elementName()) {
+    switch (element.elementName()) {
     case HTML::article:
     case HTML::aside:
     case HTML::blockquote:
@@ -3602,7 +3631,7 @@ void Element::runFocusingStepsForAutofocus()
 
 void Element::dispatchFocusInEventIfNeeded(RefPtr<Element>&& oldFocusedElement)
 {
-    if (!document().hasListenerType(Document::FOCUSIN_LISTENER))
+    if (!document().hasListenerType(Document::ListenerType::FocusIn))
         return;
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed() || !isInWebProcess());
     dispatchScopedEvent(FocusEvent::create(eventNames().focusinEvent, Event::CanBubble::Yes, Event::IsCancelable::No, document().windowProxy(), 0, WTFMove(oldFocusedElement)));
@@ -3610,7 +3639,7 @@ void Element::dispatchFocusInEventIfNeeded(RefPtr<Element>&& oldFocusedElement)
 
 void Element::dispatchFocusOutEventIfNeeded(RefPtr<Element>&& newFocusedElement)
 {
-    if (!document().hasListenerType(Document::FOCUSOUT_LISTENER))
+    if (!document().hasListenerType(Document::ListenerType::FocusOut))
         return;
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed() || !isInWebProcess());
     dispatchScopedEvent(FocusEvent::create(eventNames().focusoutEvent, Event::CanBubble::Yes, Event::IsCancelable::No, document().windowProxy(), 0, WTFMove(newFocusedElement)));
@@ -3639,7 +3668,7 @@ void Element::dispatchWebKitImageReadyEventForTesting()
 bool Element::dispatchMouseForceWillBegin()
 {
 #if ENABLE(MOUSE_FORCE_EVENTS)
-    if (!document().hasListenerType(Document::FORCEWILLBEGIN_LISTENER))
+    if (!document().hasListenerType(Document::ListenerType::ForceWillBegin))
         return false;
 
     auto* frame = document().frame();
@@ -3973,7 +4002,6 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
     // FIXME: This is not as efficient as it could be. For example if an ancestor has a non-inherited style change but
     // the styles are otherwise clean we would not need to re-resolve descendants.
     for (auto& element : makeReversedRange(elementsRequiringComputedStyle)) {
-        bool hadDisplayContents = element->hasDisplayContents();
         auto style = document().styleForElementIgnoringPendingStylesheets(*element, computedStyle);
         computedStyle = style.get();
         ElementRareData& rareData = element->ensureElementRareData();
@@ -3989,8 +4017,6 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
         }
         rareData.setComputedStyle(WTFMove(style));
         element->clearNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
-        if (hadDisplayContents && computedStyle->display() != DisplayType::Contents)
-            element->setDisplayContentsChanged();
 
         if (mode == ResolveComputedStyleMode::RenderedOnly && computedStyle->display() == DisplayType::None)
             return nullptr;
@@ -4080,8 +4106,7 @@ bool Element::hasFlagsSetDuringStylingOfChildren() const
         || childrenAffectedByForwardPositionalRules()
         || descendantsAffectedByForwardPositionalRules()
         || childrenAffectedByBackwardPositionalRules()
-        || descendantsAffectedByBackwardPositionalRules()
-        || childrenAffectedByPropertyBasedBackwardPositionalRules();
+        || descendantsAffectedByBackwardPositionalRules();
 }
 
 unsigned Element::rareDataChildIndex() const
@@ -4767,21 +4792,21 @@ void Element::willModifyAttribute(const QualifiedName& name, const AtomString& o
 
 void Element::didAddAttribute(const QualifiedName& name, const AtomString& value)
 {
-    attributeChanged(name, nullAtom(), value);
+    notifyAttributeChanged(name, nullAtom(), value);
     InspectorInstrumentation::didModifyDOMAttr(document(), *this, name.toAtomString(), value);
     dispatchSubtreeModifiedEvent();
 }
 
 void Element::didModifyAttribute(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue)
 {
-    attributeChanged(name, oldValue, newValue);
+    notifyAttributeChanged(name, oldValue, newValue);
     InspectorInstrumentation::didModifyDOMAttr(document(), *this, name.toAtomString(), newValue);
     // Do not dispatch a DOMSubtreeModified event here; see bug 81141.
 }
 
 void Element::didRemoveAttribute(const QualifiedName& name, const AtomString& oldValue)
 {
-    attributeChanged(name, oldValue, nullAtom());
+    notifyAttributeChanged(name, oldValue, nullAtom());
     InspectorInstrumentation::didRemoveDOMAttr(document(), *this, name.toAtomString());
     dispatchSubtreeModifiedEvent();
 }
@@ -4882,8 +4907,7 @@ void Element::resetChildStyleRelations()
         NodeStyleFlag::ChildrenAffectedByFirstChildRules,
         NodeStyleFlag::ChildrenAffectedByLastChildRules,
         NodeStyleFlag::ChildrenAffectedByForwardPositionalRules,
-        NodeStyleFlag::ChildrenAffectedByBackwardPositionalRules,
-        NodeStyleFlag::ChildrenAffectedByPropertyBasedBackwardPositionalRules
+        NodeStyleFlag::ChildrenAffectedByBackwardPositionalRules
     });
 }
 
@@ -4989,7 +5013,7 @@ void Element::cloneAttributesFromElement(const Element& other)
         m_elementData = other.m_elementData->makeUniqueCopy();
 
     for (const Attribute& attribute : attributesIterator())
-        attributeChanged(attribute.name(), nullAtom(), attribute.value(), ModifiedByCloning);
+        notifyAttributeChanged(attribute.name(), nullAtom(), attribute.value(), AttributeModificationReason::ByCloning);
 
     setNonce(other.nonce());
 }
@@ -5326,16 +5350,6 @@ bool Element::hasDuplicateAttribute() const
 void Element::setHasDuplicateAttribute(bool hasDuplicateAttribute)
 {
     setEventTargetFlag(EventTargetFlag::HasDuplicateAttribute, hasDuplicateAttribute);
-}
-
-bool Element::displayContentsChanged() const
-{
-    return hasEventTargetFlag(EventTargetFlag::DisplayContentsChanged);
-}
-
-void Element::setDisplayContentsChanged(bool changed)
-{
-    setEventTargetFlag(EventTargetFlag::DisplayContentsChanged, changed);
 }
 
 } // namespace WebCore

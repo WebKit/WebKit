@@ -86,9 +86,12 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     }
 #endif
 
+#if USE(GBM)
+    parameters.renderDeviceFile = WebCore::PlatformDisplay::sharedDisplay().drmRenderNodeFile();
+#endif
+
 #if PLATFORM(GTK) && USE(GBM)
-    if (AcceleratedBackingStoreDMABuf::checkRequirements())
-        parameters.useDMABufSurfaceForCompositing = true;
+    parameters.useDMABufSurfaceForCompositing = AcceleratedBackingStoreDMABuf::checkRequirements();
 #endif
 
 #if PLATFORM(WAYLAND)

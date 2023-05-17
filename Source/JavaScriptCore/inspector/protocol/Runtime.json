@@ -49,6 +49,7 @@
                 { "name": "subtype", "type": "string", "optional": true, "enum": ["array", "null", "node", "regexp", "date", "error", "map", "set", "weakmap", "weakset", "iterator", "class", "proxy"], "description": "Object subtype hint. Specified for <code>object</code> type values only." },
                 { "name": "value", "type": "string", "optional": true, "description": "User-friendly property value string." },
                 { "name": "valuePreview", "$ref": "ObjectPreview", "optional": true, "description": "Nested value preview." },
+                { "name": "isPrivate", "type": "boolean", "optional": true, "description": "True if this is a private field." },
                 { "name": "internal", "type": "boolean", "optional": true, "description": "True if this is an internal property." }
             ]
         },

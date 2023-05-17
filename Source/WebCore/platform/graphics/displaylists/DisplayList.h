@@ -29,6 +29,7 @@
 #include "DisplayListItemBuffer.h"
 #include "DisplayListItemType.h"
 #include "DisplayListResourceHeap.h"
+#include "Filter.h"
 #include "FloatRect.h"
 #include "Font.h"
 #include "GraphicsContext.h"
@@ -118,6 +119,11 @@ private:
     void cacheGradient(Gradient& gradient)
     {
         m_resourceHeap.add(gradient.renderingResourceIdentifier(), Ref { gradient });
+    }
+
+    void cacheFilter(Filter& filter)
+    {
+        m_resourceHeap.add(filter.renderingResourceIdentifier(), Ref { filter });
     }
 
     static bool shouldDumpForFlags(OptionSet<AsTextFlag>, ItemHandle);

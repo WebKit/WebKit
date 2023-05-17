@@ -291,6 +291,8 @@ private:
     bool m_isVisibleInViewPort { false };
     bool m_haveSeenMetadata { false };
     bool m_waitingForFirstImage { false };
+    bool m_isActiveVideoTrackEnabled { true };
+    bool m_hasEnqueuedBlackFrame { false };
 
     uint64_t m_sampleCount { 0 };
     uint64_t m_lastVideoFrameMetadataSampleCount { 0 };

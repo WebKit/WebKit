@@ -28,6 +28,7 @@
 #if ENABLE(UI_SIDE_COMPOSITING)
 
 #include <WebCore/ScrollingConstraints.h>
+#include <WebCore/ScrollingCoordinatorTypes.h>
 #include <WebCore/ScrollingTree.h>
 #include <WebCore/WheelEventTestMonitor.h>
 #include <wtf/WeakPtr.h>
@@ -53,7 +54,7 @@ public:
 
     virtual void willSendEventForDefaultHandling(const WebCore::PlatformWheelEvent&) { }
     virtual void waitForEventDefaultHandlingCompletion(const WebCore::PlatformWheelEvent&) { }
-    virtual void wheelEventDefaultHandlingCompleted(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>) { }
+    virtual WebCore::WheelEventHandlingResult handleWheelEventAfterDefaultHandling(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>) { return WebCore::WheelEventHandlingResult::unhandled(); }
 
     RemoteScrollingCoordinatorProxy* scrollingCoordinatorProxy() const;
 
@@ -65,11 +66,17 @@ public:
     void scrollingTreeNodeWillStartScroll(WebCore::ScrollingNodeID) override;
     void scrollingTreeNodeDidEndScroll(WebCore::ScrollingNodeID) override;
 
+    void scrollingTreeNodeDidBeginScrollSnapping(WebCore::ScrollingNodeID) override;
+    void scrollingTreeNodeDidEndScrollSnapping(WebCore::ScrollingNodeID) override;
+
     void currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical) override;
     void reportExposedUnfilledArea(MonotonicTime, unsigned unfilledArea) override;
     void reportSynchronousScrollingReasonsChanged(MonotonicTime, OptionSet<WebCore::SynchronousScrollingReason>) override;
 
     void tryToApplyLayerPositions();
+
+    virtual void beginTransactionOnScrollingThread() { }
+    virtual void commitTransactionOnScrollingThread() { }
 
 protected:
     explicit RemoteScrollingTree(RemoteScrollingCoordinatorProxy&);
@@ -97,6 +104,23 @@ public:
     ~RemoteLayerTreeHitTestLocker()
     {
         m_scrollingTree->unlockLayersForHitTesting();
+    }
+
+private:
+    Ref<RemoteScrollingTree> m_scrollingTree;
+};
+
+class RemoteScrollingTreeTransactionHolder {
+public:
+    RemoteScrollingTreeTransactionHolder(RemoteScrollingTree& scrollingTree)
+        : m_scrollingTree(scrollingTree)
+    {
+        m_scrollingTree->beginTransactionOnScrollingThread();
+    }
+
+    ~RemoteScrollingTreeTransactionHolder()
+    {
+        m_scrollingTree->commitTransactionOnScrollingThread();
     }
 
 private:

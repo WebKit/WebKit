@@ -1262,8 +1262,7 @@ angle::Result CommandQueue::flushOutsideRPCommands(
     std::lock_guard<std::mutex> lock(mMutex);
     ANGLE_TRY(ensurePrimaryCommandBufferValid(context, protectionType, priority));
     CommandsState &state = mCommandsStateMap[priority][protectionType];
-    return (*outsideRPCommands)
-        ->flushToPrimary(context, &state.primaryCommands, &state.secondaryCommands);
+    return (*outsideRPCommands)->flushToPrimary(context, &state);
 }
 
 angle::Result CommandQueue::flushRenderPassCommands(
@@ -1276,8 +1275,7 @@ angle::Result CommandQueue::flushRenderPassCommands(
     std::lock_guard<std::mutex> lock(mMutex);
     ANGLE_TRY(ensurePrimaryCommandBufferValid(context, protectionType, priority));
     CommandsState &state = mCommandsStateMap[priority][protectionType];
-    return (*renderPassCommands)
-        ->flushToPrimary(context, &state.primaryCommands, &renderPass, &state.secondaryCommands);
+    return (*renderPassCommands)->flushToPrimary(context, &state, &renderPass);
 }
 
 angle::Result CommandQueue::submitCommands(Context *context,
@@ -1313,6 +1311,8 @@ angle::Result CommandQueue::submitCommands(Context *context,
     std::vector<VkPipelineStageFlags> waitSemaphoreStageMasks =
         std::move(state.waitSemaphoreStageMasks);
 
+    mPerfCounters.commandQueueWaitSemaphoresTotal += waitSemaphores.size();
+
     // Don't make a submission if there is nothing to submit.
     const bool needsQueueSubmit = batch.primaryCommands.valid() ||
                                   signalSemaphore != VK_NULL_HANDLE || !waitSemaphores.empty();
@@ -1330,7 +1330,8 @@ angle::Result CommandQueue::submitCommands(Context *context,
         InitializeSubmitInfo(&submitInfo, batch.primaryCommands, waitSemaphores,
                              waitSemaphoreStageMasks, signalSemaphore);
 
-        if (protectionType == ProtectionType::Protected)
+        // No need protected submission if no commands to submit.
+        if (protectionType == ProtectionType::Protected && batch.primaryCommands.valid())
         {
             protectedSubmitInfo.sType           = VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO;
             protectedSubmitInfo.pNext           = nullptr;

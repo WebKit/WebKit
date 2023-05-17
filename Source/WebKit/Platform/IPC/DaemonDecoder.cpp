@@ -49,7 +49,7 @@ bool Decoder::decodeFixedLengthData(uint8_t* data, size_t size)
     return true;
 }
 
-Span<const uint8_t> Decoder::decodeFixedLengthReference(size_t size)
+std::span<const uint8_t> Decoder::decodeFixedLengthReference(size_t size)
 {
     if (!bufferIsLargeEnoughToContainBytes(size))
         return { };

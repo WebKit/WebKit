@@ -44,7 +44,6 @@ public:
     WEBCORE_EXPORT static ServiceWorkerRegistrationKey emptyKey();
 
     WEBCORE_EXPORT bool operator==(const ServiceWorkerRegistrationKey&) const;
-    bool operator!=(const ServiceWorkerRegistrationKey& key) const { return !(*this == key); }
     bool isEmpty() const { return *this == emptyKey(); }
     WEBCORE_EXPORT bool isMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const;
     bool originIsMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const;

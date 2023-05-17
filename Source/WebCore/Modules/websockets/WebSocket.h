@@ -88,8 +88,9 @@ public:
     String protocol() const;
     String extensions() const;
 
-    String binaryType() const;
-    ExceptionOr<void> setBinaryType(const String&);
+    enum class BinaryType : bool { Blob, Arraybuffer };
+    BinaryType binaryType() const { return m_binaryType; }
+    ExceptionOr<void> setBinaryType(BinaryType);
 
     ScriptExecutionContext* scriptExecutionContext() const final;
 
@@ -124,8 +125,6 @@ private:
     size_t getFramingOverhead(size_t payloadSize);
 
     void failAsynchronously();
-
-    enum class BinaryType { Blob, ArrayBuffer };
 
     static Lock s_allActiveWebSocketsLock;
     RefPtr<ThreadableWebSocketChannel> m_channel;

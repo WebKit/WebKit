@@ -27,7 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "GPUProcessConnection.h"
+#include "RemoteRenderingBackendProxy.h"
 #include "RenderingBackendIdentifier.h"
 #include "StreamClientConnection.h"
 #include "WebGPUIdentifier.h"
@@ -36,31 +36,28 @@
 #include <wtf/Deque.h>
 
 namespace WebKit {
-class GPUProcessConnection;
-}
-
-namespace WebKit {
+class RemoteRenderingBackendProxy;
 
 namespace WebGPU {
 class ConvertToBackingContext;
 class DowncastConvertToBackingContext;
 }
 
-class RemoteGPUProxy final : public PAL::WebGPU::GPU, private IPC::Connection::Client, private GPUProcessConnection::Client {
+class RemoteGPUProxy final : public PAL::WebGPU::GPU, private IPC::Connection::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<RemoteGPUProxy> create(GPUProcessConnection&, WebGPU::ConvertToBackingContext&, WebGPUIdentifier, RenderingBackendIdentifier);
+    static RefPtr<RemoteGPUProxy> create(Ref<IPC::StreamClientConnection>&& remoteRenderingBackendStreamClientConnection, RenderingBackendIdentifier, WebGPU::ConvertToBackingContext&, WebGPUIdentifier, RenderingBackendIdentifier);
 
     virtual ~RemoteGPUProxy();
 
     RemoteGPUProxy& root() { return *this; }
 
-    IPC::StreamClientConnection& streamClientConnection() { return *m_streamConnection; }
+    IPC::StreamClientConnection& streamClientConnection() { return m_streamConnectionForGPU; }
 
 private:
     friend class WebGPU::DowncastConvertToBackingContext;
 
-    RemoteGPUProxy(GPUProcessConnection&, Ref<IPC::StreamClientConnection>, WebGPU::ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteGPUProxy(Ref<IPC::StreamClientConnection>&& remoteRenderingBackendStreamClientConnection, Ref<IPC::StreamClientConnection>&& streamConnectionForGPU, RenderingBackendIdentifier, WebGPU::ConvertToBackingContext&, WebGPUIdentifier);
     void initializeIPC(IPC::StreamServerConnection::Handle&&, RenderingBackendIdentifier);
 
     RemoteGPUProxy(const RemoteGPUProxy&) = delete;
@@ -70,11 +67,8 @@ private:
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void didClose(IPC::Connection&) final { }
+    void didClose(IPC::Connection&) final;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { }
-
-    // GPUProcessConnection::Client
-    void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
     // Messages to be received.
     void wasCreated(bool didSucceed, IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore);
@@ -94,7 +88,6 @@ private:
     {
         return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
-    IPC::Connection& connection() const { return m_gpuProcessConnection->connection(); }
 
     void requestAdapter(const PAL::WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<PAL::WebGPU::Adapter>&&)>&&) final;
 
@@ -102,17 +95,15 @@ private:
 
     Ref<PAL::WebGPU::CompositorIntegration> createCompositorIntegration() final;
 
-    void abandonGPUProcess();
-    void disconnectGpuProcessIfNeeded();
-
     Deque<CompletionHandler<void(RefPtr<PAL::WebGPU::Adapter>&&)>> m_callbacks;
 
     WebGPUIdentifier m_backing;
     Ref<WebGPU::ConvertToBackingContext> m_convertToBackingContext;
-    GPUProcessConnection* m_gpuProcessConnection;
+    Ref<IPC::StreamClientConnection> m_remoteRenderingBackendStreamClientConnection;
+    Ref<IPC::StreamClientConnection> m_streamConnectionForGPU;
+    RenderingBackendIdentifier m_renderingBackendIdentifier;
     bool m_didInitialize { false };
     bool m_lost { false };
-    RefPtr<IPC::StreamClientConnection> m_streamConnection;
 };
 
 } // namespace WebKit

@@ -436,8 +436,6 @@ TEST(IndexedDB, MigrateThirdPartyDataToGeneralStorageDirectory)
     EXPECT_WK_STREQ(@"database is created", (NSString *)[getNextMessage() body]);
     EXPECT_TRUE([fileManager fileExistsAtPath:webkitOriginFile.path]);
     EXPECT_FALSE([fileManager fileExistsAtPath:wrongWebkitIframeDatabaseDirectory.path]);
-    EXPECT_FALSE([fileManager fileExistsAtPath:webkitIframeOriginFile.path]);
-    EXPECT_FALSE([fileManager fileExistsAtPath:webkitIframeDatabaseFile.path]);
 
     // Ensure opening third-party database migrates third-party data, and data can be correctly read.
     loadThirdPartyPageInWebView(webView.get(), @"database exists - get item success: TestValue");

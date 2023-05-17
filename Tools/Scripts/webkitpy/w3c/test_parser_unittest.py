@@ -51,10 +51,8 @@ class TestParserTest(unittest.TestCase):
 
         self.assertNotEqual(test_info, None, 'did not find a test')
         self.assertTrue('test' in test_info.keys(), 'did not find a test file')
-        self.assertTrue('reference' in test_info.keys(), 'did not find a reference file')
-        self.assertTrue(test_info['reference'].startswith(test_path), 'reference path is not correct')
-        self.assertTrue('type' in test_info.keys(), 'did not find a reference type')
-        self.assertEqual(test_info['type'], 'match', 'reference type is not correct')
+        self.assertTrue('match_reference' in test_info.keys(), 'did not find a reference file')
+        self.assertTrue(test_info['match_reference'].startswith(test_path), 'reference path is not correct')
         self.assertFalse('refsupport' in test_info.keys(), 'there should be no refsupport files for this test')
         self.assertFalse('jstest' in test_info.keys(), 'test should not have been analyzed as a jstest')
 
@@ -69,10 +67,8 @@ class TestParserTest(unittest.TestCase):
 
         self.assertNotEqual(test_info, None, 'did not find a test')
         self.assertTrue('test' in test_info.keys(), 'did not find a test file')
-        self.assertTrue('reference' in test_info.keys(), 'did not find a reference file')
-        self.assertTrue(test_info['reference'].startswith(test_path), 'reference path is not correct')
-        self.assertTrue('type' in test_info.keys(), 'did not find a reference type')
-        self.assertEqual(test_info['type'], 'mismatch', 'reference type is not correct')
+        self.assertTrue('mismatch_reference' in test_info.keys(), 'did not find a reference file')
+        self.assertTrue(test_info['mismatch_reference'].startswith(test_path), 'reference path is not correct')
         self.assertFalse('refsupport' in test_info.keys(), 'there should be no refsupport files for this test')
         self.assertFalse('jstest' in test_info.keys(), 'test should not have been analyzed as a jstest')
 
@@ -90,14 +86,14 @@ class TestParserTest(unittest.TestCase):
 
         self.assertNotEqual(test_info, None, 'did not find a test')
         self.assertTrue('test' in test_info.keys(), 'did not find a test file')
-        self.assertTrue('reference' in test_info.keys(), 'did not find a reference file')
-        self.assertTrue(test_info['reference'].startswith(test_path), 'reference path is not correct')
+        self.assertTrue('match_reference' in test_info.keys(), 'did not find a reference file')
+        self.assertTrue(test_info['match_reference'].startswith(test_path), 'reference path is not correct')
         self.assertFalse('refsupport' in test_info.keys(), 'there should be no refsupport files for this test')
         self.assertFalse('jstest' in test_info.keys(), 'test should not have been analyzed as a jstest')
 
         self.assertEqual(
             captured.root.log.getvalue(),
-            'Multiple references are not supported. Importing the first ref defined in somefile.html\n',
+            'Multiple references of the same type are not supported. Importing the first ref defined in somefile.html\n',
         )
 
     def test_analyze_test_reftest_match_and_mismatch(self):
@@ -114,14 +110,16 @@ class TestParserTest(unittest.TestCase):
 
         self.assertNotEqual(test_info, None, 'did not find a test')
         self.assertTrue('test' in test_info.keys(), 'did not find a test file')
-        self.assertTrue('reference' in test_info.keys(), 'did not find a reference file')
-        self.assertTrue(test_info['reference'].startswith(test_path), 'reference path is not correct')
+        self.assertTrue('match_reference' in test_info.keys(), 'did not find a reference file')
+        self.assertTrue(test_info['match_reference'].startswith(test_path), 'reference path is not correct')
+        self.assertTrue('mismatch_reference' in test_info.keys(), 'did not find a reference file')
+        self.assertTrue(test_info['mismatch_reference'].startswith(test_path), 'reference path is not correct')
         self.assertFalse('refsupport' in test_info.keys(), 'there should be no refsupport files for this test')
         self.assertFalse('jstest' in test_info.keys(), 'test should not have been analyzed as a jstest')
 
         self.assertEqual(
             captured.root.log.getvalue(),
-            'Multiple references are not supported. Importing the first ref defined in somefile.html\n',
+            'Multiple references of the same type are not supported. Importing the first ref defined in somefile.html\n',
         )
 
     def test_analyze_test_reftest_with_ref_support_Files(self):
@@ -150,10 +148,10 @@ class TestParserTest(unittest.TestCase):
 
         self.assertNotEqual(test_info, None, 'did not find a test')
         self.assertTrue('test' in test_info.keys(), 'did not find a test file')
-        self.assertTrue('reference' in test_info.keys(), 'did not find a reference file')
-        self.assertTrue(test_info['reference'].startswith(test_path), 'reference path is not correct')
-        self.assertTrue('reference_support_info' in test_info.keys(), 'there should be reference_support_info for this test')
-        self.assertEqual(len(test_info['reference_support_info']['files']), 4, 'there should be 4 support files in this reference')
+        self.assertTrue('match_reference' in test_info.keys(), 'did not find a reference file')
+        self.assertTrue(test_info['match_reference'].startswith(test_path), 'reference path is not correct')
+        self.assertTrue('match_reference_support_info' in test_info.keys(), 'there should be reference_support_info for this test')
+        self.assertEqual(len(test_info['match_reference_support_info']['files']), 4, 'there should be 4 support files in this reference')
         self.assertFalse('jstest' in test_info.keys(), 'test should not have been analyzed as a jstest')
 
     def test_analyze_jstest(self):
@@ -170,7 +168,8 @@ class TestParserTest(unittest.TestCase):
 
         self.assertNotEqual(test_info, None, 'test_info is None')
         self.assertTrue('test' in test_info.keys(), 'did not find a test file')
-        self.assertFalse('reference' in test_info.keys(), 'shold not have found a reference file')
+        self.assertFalse('match_reference' in test_info.keys(), 'shold not have found a reference file')
+        self.assertFalse('mismatch_reference' in test_info.keys(), 'shold not have found a reference file')
         self.assertFalse('refsupport' in test_info.keys(), 'there should be no refsupport files for this test')
         self.assertTrue('jstest' in test_info.keys(), 'test should be a jstest')
 
@@ -286,7 +285,8 @@ CONTENT OF TEST
 
             self.assertNotEqual(test_info, None, 'test_info is None')
             self.assertTrue('test' in test_info.keys(), 'did not find a test file')
-            self.assertFalse('reference' in test_info.keys(), 'shold not have found a reference file')
+            self.assertFalse('match_reference' in test_info.keys(), 'shold not have found a reference file')
+            self.assertFalse('mismatch_reference' in test_info.keys(), 'shold not have found a reference file')
             self.assertFalse('refsupport' in test_info.keys(), 'there should be no refsupport files for this test')
             self.assertFalse('jstest' in test_info.keys(), 'test should not be a jstest')
         finally:

@@ -20,9 +20,10 @@
  */
 
 #include "config.h"
-#include "StyleBackgroundData.h"
+#include "StyleMarqueeData.h"
 
-#include "RenderStyle.h"
+#include "RenderStyleConstants.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 
@@ -43,6 +44,11 @@ inline StyleMarqueeData::StyleMarqueeData(const StyleMarqueeData& o)
     , behavior(o.behavior)
     , direction(o.direction) 
 {
+}
+
+Ref<StyleMarqueeData> StyleMarqueeData::create()
+{
+    return adoptRef(*new StyleMarqueeData);
 }
 
 Ref<StyleMarqueeData> StyleMarqueeData::copy() const

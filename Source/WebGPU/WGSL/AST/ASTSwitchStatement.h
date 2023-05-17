@@ -30,13 +30,14 @@
 namespace WGSL::AST {
 
 class SwitchStatement final : public Statement {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(SwitchStatement);
 public:
+    NodeKind kind() const final;
+
+private:
     SwitchStatement(SourceSpan span)
         : Statement(span)
     { }
-
-    NodeKind kind() const final;
 };
 
 } // namespace WGSL::AST

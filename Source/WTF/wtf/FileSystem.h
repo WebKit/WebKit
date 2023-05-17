@@ -57,19 +57,13 @@ OBJC_CLASS NSString;
 typedef void *HANDLE;
 #endif
 
-#if USE(GLIB)
-typedef struct _GFileIOStream GFileIOStream;
-#endif
 
 namespace WTF {
 
 namespace FileSystemImpl {
 
 // PlatformFileHandle
-#if USE(GLIB) && !OS(WINDOWS)
-typedef GFileIOStream* PlatformFileHandle;
-const PlatformFileHandle invalidPlatformFileHandle = nullptr;
-#elif OS(WINDOWS)
+#if OS(WINDOWS)
 typedef HANDLE PlatformFileHandle;
 // FIXME: -1 is INVALID_HANDLE_VALUE, defined in <winbase.h>. Chromium tries to
 // avoid using Windows headers in headers. We'd rather move this into the .cpp.
@@ -80,9 +74,7 @@ const PlatformFileHandle invalidPlatformFileHandle = -1;
 #endif
 
 // PlatformFileID
-#if USE(GLIB) && !OS(WINDOWS)
-typedef CString PlatformFileID;
-#elif OS(WINDOWS)
+#if OS(WINDOWS)
 typedef FILE_ID_128 PlatformFileID;
 #else
 typedef ino_t PlatformFileID;
@@ -167,7 +159,7 @@ using Salt = std::array<uint8_t, 8>;
 WTF_EXPORT_PRIVATE std::optional<Salt> readOrMakeSalt(const String& path);
 WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> readEntireFile(PlatformFileHandle);
 WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> readEntireFile(const String& path);
-WTF_EXPORT_PRIVATE int overwriteEntireFile(const String& path, Span<uint8_t>);
+WTF_EXPORT_PRIVATE int overwriteEntireFile(const String& path, std::span<uint8_t>);
 
 // Prefix is what the filename should be prefixed with, not the full path.
 WTF_EXPORT_PRIVATE String openTemporaryFile(StringView prefix, PlatformFileHandle&, StringView suffix = { });
@@ -204,6 +196,10 @@ WTF_EXPORT_PRIVATE String encodeForFileName(const String&);
 WTF_EXPORT_PRIVATE String decodeFromFilename(const String&);
 
 WTF_EXPORT_PRIVATE bool filesHaveSameVolume(const String&, const String&);
+
+#if !OS(WINDOWS)
+WTF_EXPORT_PRIVATE int posixFileDescriptor(PlatformFileHandle);
+#endif
 
 #if USE(CF)
 WTF_EXPORT_PRIVATE RetainPtr<CFURLRef> pathAsURL(const String&);
@@ -308,7 +304,7 @@ inline MappedFileData& MappedFileData::operator=(MappedFileData&& other)
 
 // This creates the destination file, maps it, write the provided data to it and returns the mapped file.
 // This function fails if there is already a file at the destination path.
-WTF_EXPORT_PRIVATE MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(const Function<bool(Span<const uint8_t>)>&)>&& apply, PlatformFileHandle* = nullptr);
+WTF_EXPORT_PRIVATE MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(const Function<bool(std::span<const uint8_t>)>&)>&& apply, PlatformFileHandle* = nullptr);
 
 WTF_EXPORT_PRIVATE MappedFileData createMappedFileData(const String&, size_t, PlatformFileHandle* = nullptr);
 WTF_EXPORT_PRIVATE void finalizeMappedFileData(MappedFileData&, size_t);

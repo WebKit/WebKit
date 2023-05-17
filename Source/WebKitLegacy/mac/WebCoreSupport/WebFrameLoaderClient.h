@@ -68,8 +68,6 @@ public:
 private:
     bool hasWebView() const final; // mainly for assertions
 
-    std::optional<WebCore::PageIdentifier> pageID() const final;
-
     void makeRepresentation(WebCore::DocumentLoader*) final;
     bool hasHTMLView() const final;
 #if PLATFORM(IOS_FAMILY)
@@ -222,7 +220,10 @@ private:
 #endif
 
     RemoteAXObjectRef accessibilityRemoteObject() final { return 0; }
-    
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    void setAXIsolatedTreeRoot(WebCore::AXCoreObject*) final { }
+#endif
+
     RetainPtr<WebFramePolicyListener> setUpPolicyListener(WebCore::PolicyCheckIdentifier, WebCore::FramePolicyFunction&&, WebCore::PolicyAction defaultPolicy, NSURL *appLinkURL = nil);
 
     NSDictionary *actionDictionary(const WebCore::NavigationAction&, WebCore::FormState*) const;

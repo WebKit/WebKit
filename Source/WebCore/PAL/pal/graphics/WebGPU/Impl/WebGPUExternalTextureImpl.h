@@ -28,26 +28,32 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUExternalTexture.h"
+#include "WebGPUExternalTextureDescriptor.h"
+#include "WebGPUPredefinedColorSpace.h"
 #include <WebGPU/WebGPU.h>
+#include <WebGPU/WebGPUExt.h>
 
 namespace PAL::WebGPU {
 
 class ConvertToBackingContext;
+struct ExternalTextureDescriptor;
 
 class ExternalTextureImpl final : public ExternalTexture {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ExternalTextureImpl> create(ConvertToBackingContext& convertToBackingContext)
+    static Ref<ExternalTextureImpl> create(WGPUExternalTexture externalTexture, const ExternalTextureDescriptor& descriptor, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new ExternalTextureImpl(convertToBackingContext));
+        return adoptRef(*new ExternalTextureImpl(externalTexture, descriptor, convertToBackingContext));
     }
 
     virtual ~ExternalTextureImpl();
 
+    WGPUExternalTexture backing() const { return m_backing; };
+
 private:
     friend class DowncastConvertToBackingContext;
 
-    ExternalTextureImpl(ConvertToBackingContext&);
+    ExternalTextureImpl(WGPUExternalTexture, const ExternalTextureDescriptor&, ConvertToBackingContext&);
 
     ExternalTextureImpl(const ExternalTextureImpl&) = delete;
     ExternalTextureImpl(ExternalTextureImpl&&) = delete;
@@ -57,6 +63,9 @@ private:
     void setLabelInternal(const String&) final;
 
     Ref<ConvertToBackingContext> m_convertToBackingContext;
+
+    WGPUExternalTexture m_backing;
+    PredefinedColorSpace m_colorSpace;
 };
 
 } // namespace PAL::WebGPU

@@ -26,6 +26,10 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
+#if CPU(MIPS)
+
 #define RegisterNames MIPSRegisters
 
 #define FOR_EACH_REGISTER(macro)                \
@@ -141,3 +145,5 @@
     macro(f29, "f29", 0, 0)                     \
     macro(f30, "f30", 0, 0)                     \
     macro(f31, "f31", 0, 0)
+
+#endif // CPU(MIPS)

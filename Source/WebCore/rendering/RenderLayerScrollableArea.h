@@ -211,8 +211,7 @@ public:
     bool requestStartKeyboardScrollAnimation(const KeyboardScroll&) final;
     bool requestStopKeyboardScrollAnimation(bool immediate) final;
 
-    bool requestScrollPositionUpdate(const ScrollPosition&, ScrollType = ScrollType::User, ScrollClamping = ScrollClamping::Clamped) final;
-    bool requestAnimatedScrollToPosition(const ScrollPosition&, ScrollClamping = ScrollClamping::Clamped) final;
+    bool requestScrollToPosition(const ScrollPosition&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped, ScrollIsAnimated = ScrollIsAnimated::No) final;
     void stopAsyncAnimatedScroll() final;
 
     bool containsDirtyOverlayScrollbars() const { return m_containsDirtyOverlayScrollbars; }
@@ -236,7 +235,7 @@ public:
 
     bool scrollingMayRevealBackground() const;
 
-    void computeHasCompositedScrollableOverflow();
+    void computeHasCompositedScrollableOverflow(LayoutUpToDate);
 
     // NOTE: This should only be called by the overridden setScrollOffset from ScrollableArea.
     void scrollTo(const ScrollPosition&);
@@ -276,6 +275,8 @@ private:
 
     void updateScrollbarPresenceAndState(std::optional<bool> hasHorizontalOverflow = std::nullopt, std::optional<bool> hasVerticalOverflow = std::nullopt);
     void registerScrollableAreaForAnimatedScroll();
+
+    float deviceScaleFactor() const final;
 
 private:
     bool m_scrollDimensionsDirty { true };

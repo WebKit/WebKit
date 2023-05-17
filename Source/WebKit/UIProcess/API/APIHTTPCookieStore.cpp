@@ -64,7 +64,7 @@ void HTTPCookieStore::filterAppBoundCookies(Vector<WebCore::Cookie>&& cookies, C
         return completionHandler({ });
     m_owningDataStore->getAppBoundDomains([cookies = WTFMove(cookies), completionHandler = WTFMove(completionHandler)] (auto& domains) mutable {
         Vector<WebCore::Cookie> appBoundCookies;
-        if (!domains.isEmpty() && !isFullWebBrowser()) {
+        if (!domains.isEmpty() && !isFullWebBrowserOrRunningTest()) {
             for (auto& cookie : WTFMove(cookies)) {
                 if (domains.contains(WebCore::RegistrableDomain::uncheckedCreateFromHost(cookie.domain)))
                     appBoundCookies.append(WTFMove(cookie));

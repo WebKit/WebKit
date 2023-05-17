@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -85,12 +85,14 @@
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/HitTestResult.h>
+#import <WebCore/JSLocalDOMWindow.h>
 #import <WebCore/JSNode.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/LocalFrame.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/MutableStyleProperties.h>
+#import <WebCore/OriginAccessPatterns.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/PluginData.h>
@@ -99,6 +101,7 @@
 #import <WebCore/RenderLayer.h>
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderLayerScrollableArea.h>
+#import <WebCore/RenderStyleInlines.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
 #import <WebCore/RenderedDocumentMarker.h>
@@ -447,9 +450,9 @@ static NSURL *createUniqueWebDataURL();
         if (auto* view = frame->view()) {
             view->setTransparent(!drawsBackground);
 #if !PLATFORM(IOS_FAMILY)
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             auto color = WebCore::colorFromCocoaColor([backgroundColor colorUsingColorSpaceName:NSDeviceRGBColorSpace]);
-            ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else
             WebCore::Color color(WebCore::roundAndClampToSRGBALossy(backgroundColor));
 #endif
@@ -642,14 +645,8 @@ static NSURL *createUniqueWebDataURL();
     if (auto* parentFrame = dynamicDowncast<WebCore::LocalFrame>(_private->coreFrame->tree().parent())) {
         // For subframes, we need to inherit the paint behavior from our parent
         if (auto* parentView = parentFrame ? parentFrame->view() : nullptr) {
-            if (parentView->paintBehavior().contains(WebCore::PaintBehavior::FlattenCompositingLayers))
-                paintBehavior.add(WebCore::PaintBehavior::FlattenCompositingLayers);
-            
-            if (parentView->paintBehavior().contains(WebCore::PaintBehavior::Snapshotting))
-                paintBehavior.add(WebCore::PaintBehavior::Snapshotting);
-            
-            if (parentView->paintBehavior().contains(WebCore::PaintBehavior::TileFirstPaint))
-                paintBehavior.add(WebCore::PaintBehavior::TileFirstPaint);
+            constexpr OptionSet<WebCore::PaintBehavior> flagsToCopy { WebCore::PaintBehavior::FlattenCompositingLayers, WebCore::PaintBehavior::Snapshotting, WebCore::PaintBehavior::DefaultAsynchronousImageDecode, WebCore::PaintBehavior::ForceSynchronousImageDecode };
+            paintBehavior.add(parentView->paintBehavior() & flagsToCopy);
         }
     } else
         paintBehavior.add([self _paintBehaviorForDestinationContext:ctx]);
@@ -2033,7 +2030,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 {
     if (!_private->coreFrame)
         return YES;
-    return _private->coreFrame->document()->securityOrigin().canDisplay(URL);
+    return _private->coreFrame->document()->securityOrigin().canDisplay(URL, WebCore::OriginAccessPatternsForWebProcess::singleton());
 }
 
 - (NSString *)_stringByEvaluatingJavaScriptFromString:(NSString *)string withGlobalObject:(JSObjectRef)globalObjectRef inScriptWorld:(WebScriptWorld *)world
@@ -2056,7 +2053,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
         return @"";
 
     // Get the frame frome the global object we've settled on.
-    auto* frame = anyWorldGlobalObject->wrapped().frame();
+    auto* frame = JSC::jsCast<WebCore::JSLocalDOMWindow*>(anyWorldGlobalObject)->wrapped().frame();
     ASSERT(frame->document());
     RetainPtr<WebFrame> webFrame(kit(frame)); // Running arbitrary JavaScript can destroy the frame.
 
@@ -2162,9 +2159,9 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     if (!WebCore::AXObjectCache::accessibilityEnabled()) {
         WebCore::AXObjectCache::enableAccessibility();
 #if !PLATFORM(IOS_FAMILY)
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         WebCore::AXObjectCache::setEnhancedUserInterfaceAccessibility([[NSApp accessibilityAttributeValue:NSAccessibilityEnhancedUserInterfaceAttribute] boolValue]);
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     }
     

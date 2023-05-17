@@ -44,6 +44,7 @@ public:
 #endif
 
     RefPtr<BitmapTexture> acquireTexture(const IntSize&, const BitmapTexture::Flags);
+    void releaseUnusedTexturesTimerFired();
 
 private:
     struct Entry {
@@ -59,7 +60,6 @@ private:
     };
 
     void scheduleReleaseUnusedTextures();
-    void releaseUnusedTexturesTimerFired();
     RefPtr<BitmapTexture> createTexture(const BitmapTexture::Flags);
 
 #if USE(TEXTURE_MAPPER_GL)

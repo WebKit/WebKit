@@ -6,7 +6,6 @@
 <script src="/resources/testdriver.js"></script>
 <script src="/resources/testdriver-actions.js"></script>
 <script src="/resources/testdriver-vendor.js"></script>
-<script src="resources/wait-for.js"></script>
 <script src="resources/scrolling.js"></script>
 <style>
   html, body {
@@ -26,7 +25,7 @@
   <div style="height: 200vh"></div>
 </div>
 <script>
-  runTest({
+  document.body.onload = () => runTest({
     target: document.getElementById('div'),
     eventName: 'wheel',
     passive: true,

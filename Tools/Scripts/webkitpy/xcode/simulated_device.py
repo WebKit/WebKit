@@ -272,24 +272,24 @@ class SimulatedDeviceManager(object):
                 return type_id
         return None
 
-    @staticmethod
-    def _create_or_find_device_for_request(request, host=None, name_base='Managed'):
+    @classmethod
+    def _create_or_find_device_for_request(cls, request, host=None, name_base='Managed'):
         assert isinstance(request, DeviceRequest)
         host = host or SystemHost.get_default()
 
-        device = SimulatedDeviceManager._find_exisiting_device_for_request(request)
+        device = cls._find_exisiting_device_for_request(request)
         if device:
             return device
 
-        name = SimulatedDeviceManager._find_available_name(name_base)
-        device_type = SimulatedDeviceManager._disambiguate_device_type(request.device_type)
-        runtime = SimulatedDeviceManager.get_runtime_for_device_type(device_type)
-        device_identifier = SimulatedDeviceManager._get_device_identifier_for_type(device_type)
+        name = cls._find_available_name(name_base)
+        device_type = cls._disambiguate_device_type(request.device_type)
+        runtime = cls.get_runtime_for_device_type(device_type)
+        device_identifier = cls._get_device_identifier_for_type(device_type)
 
         assert runtime is not None
         assert device_identifier is not None
 
-        for device in SimulatedDeviceManager.available_devices(host):
+        for device in cls.available_devices(host):
             if device.platform_device.name == name:
                 device.platform_device._delete()
                 break
@@ -298,8 +298,8 @@ class SimulatedDeviceManager(object):
         host.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'create', name, device_identifier, runtime.identifier])
 
         # We just added a device, so our list of _available_devices needs to be re-synced.
-        SimulatedDeviceManager.populate_available_devices(host)
-        for device in SimulatedDeviceManager.available_devices(host):
+        cls.populate_available_devices(host)
+        for device in cls.available_devices(host):
             if device.platform_device.name == name:
                 device.platform_device.managed_by_script = True
                 return device
@@ -382,8 +382,8 @@ class SimulatedDeviceManager(object):
                 return SimulatedDeviceManager.max_supported_simulators(host)
         return 0
 
-    @staticmethod
-    def initialize_devices(requests, host=None, name_base='Managed', simulator_ui=True, timeout=SIMULATOR_BOOT_TIMEOUT, **kwargs):
+    @classmethod
+    def initialize_devices(cls, requests, host=None, name_base='Managed', simulator_ui=True, timeout=SIMULATOR_BOOT_TIMEOUT, **kwargs):
         host = host or SystemHost.get_default()
         if SimulatedDeviceManager.INITIALIZED_DEVICES is not None:
             return SimulatedDeviceManager.INITIALIZED_DEVICES
@@ -399,8 +399,8 @@ class SimulatedDeviceManager(object):
             requests = [requests]
 
         # Check running sims
-        for device in SimulatedDeviceManager.available_devices(host):
-            matched_request = SimulatedDeviceManager._does_fulfill_request(device, requests)
+        for device in cls.available_devices(host):
+            matched_request = cls._does_fulfill_request(device, requests)
             if matched_request is None:
                 continue
             requests.remove(matched_request)
@@ -424,17 +424,17 @@ class SimulatedDeviceManager(object):
                 requests.remove(request)
 
         for request in requests:
-            device = SimulatedDeviceManager._create_or_find_device_for_request(request, host, name_base)
+            device = cls._create_or_find_device_for_request(request, host, name_base)
             assert device is not None
 
-            SimulatedDeviceManager._boot_device(device, host)
+            cls._boot_device(device, host)
 
         if simulator_ui and host.executive.run_command(['killall', '-0', 'Simulator.app'], return_exit_code=True) != 0:
             SimulatedDeviceManager._managing_simulator_app = not host.executive.run_command(['open', '-g', '-b', SimulatedDeviceManager.simulator_bundle_id, '--args', '-PasteboardAutomaticSync', '0'], return_exit_code=True)
 
         deadline = time.time() + timeout
         for device in SimulatedDeviceManager.INITIALIZED_DEVICES:
-            SimulatedDeviceManager._wait_until_device_is_usable(device, deadline)
+            cls._wait_until_device_is_usable(device, deadline)
 
         return SimulatedDeviceManager.INITIALIZED_DEVICES
 

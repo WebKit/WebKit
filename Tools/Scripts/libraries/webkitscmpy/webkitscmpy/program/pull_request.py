@@ -30,7 +30,7 @@ from .install_hooks import InstallHooks
 from .squash import Squash
 
 from webkitbugspy import Tracker, radar
-from webkitcorepy import arguments, run, Terminal
+from webkitcorepy import arguments, run, Terminal, OutputCapture
 from webkitscmpy import local, log, remote
 
 
@@ -399,7 +399,7 @@ class PullRequest(Command):
         for candidate in issues:
             if getattr(candidate.redacted, 'exemption', False):
                 redaction_exemption = candidate
-            if candidate.redacted:
+            elif candidate.redacted:
                 redacted_issue = candidate
         if redaction_exemption:
             print('A commit you are uploading references {}'.format(redaction_exemption.link))
@@ -417,19 +417,15 @@ class PullRequest(Command):
             print("Pull request needs to be sent to a secure remote for review")
             original_remote = source_remote
             if len(repository.source_remotes()) < 2:
-                sys.stderr.write("Error. You do not have access to a secure remote to make a pull request for a redacted issue\n")
-                if args.defaults or Terminal.choose(
-                    "Would you like to proceed anyways? \n",
-                    default='No',
-                ) == 'No':
-                    sys.stderr.write("Failed to create pull request due to unsuitable remote\n")
-                    return 1
+                sys.stderr.write('Error. You do not have access to a secure remote to make a pull request for a redacted issue\n')
+                sys.stderr.write('Please consult repository administers to gain access to a secure remote to make this fix against\n')
+                return 1
             else:
                 source_remote = repository.source_remotes()[-1]
                 if args.defaults or Terminal.choose(
                     "Would you like to make a pull request against '{}' instead of '{}'? \n".format(source_remote, original_remote),
-                    default='Yes',
-                ) == 'No':
+                    default='Yes', options=('Yes', 'Cancel')
+                ) == 'Cancel':
                     sys.stderr.write("User declined to create a pull request against the secure remote '{}'\n".format(source_remote))
                     return 1
                 remote_repo = repository.remote(name=source_remote)
@@ -558,6 +554,25 @@ class PullRequest(Command):
         push_env = os.environ.copy()
         push_env["VERBOSITY"] = str(args.verbose)
 
+        if target.endswith('fork') and repository.config().get('webkitscmpy.update-fork', 'false') == 'true':
+            # If our remote is a GitHub repository, we can use the API and save ourselves a push
+            fork_remote = repository.remote(name=target)
+            did_update_branch = False
+            if isinstance(fork_remote, remote.GitHub):
+                log.info("Updating '{}' on '{}'".format(branch_point.branch, fork_remote.url))
+                with OutputCapture():
+                    did_update_branch = fork_remote.request(
+                        method='POST', path='merge-upstream',
+                        json=dict(branch=branch_point.branch),
+                        authenticated=True,
+                    ) is not None
+                if did_update_branch and run([repository.executable(), 'fetch', target, branch_point.branch], cwd=repository.root_path, capture_output=True).returncode:
+                    sys.stderr.write("Failed to fetch '{}' for '{}.' Error is non fatal, continuing...\n".format(target, branch_point.branch))
+            if not did_update_branch and rebasing:
+                log.info("Syncing '{}' to remote '{}'".format(branch_point.branch, target))
+                if run([repository.executable(), 'push', target, '{branch}:{branch}'.format(branch=branch_point.branch)], cwd=repository.root_path, env=push_env).returncode:
+                    sys.stderr.write("Failed to sync '{}' to '{}.' Error is non fatal, continuing...\n".format(branch_point.branch, target))
+
         log.info("Pushing '{}' to '{}'...".format(repository.branch, target))
         if run(
             [repository.executable(), "push", "-f"]
@@ -570,11 +585,6 @@ class PullRequest(Command):
             sys.stderr.write("Your checkout may be mis-configured, try re-running 'git-webkit setup' or\n")
             sys.stderr.write("your checkout may not have permission to push to '{}'\n".format(repository.url(name=target)))
             return 1
-
-        if rebasing and target.endswith('fork') and repository.config().get('webkitscmpy.update-fork', 'false') == 'true':
-            log.info("Syncing '{}' to remote '{}'".format(branch_point.branch, target))
-            if run([repository.executable(), 'push', target, '{branch}:{branch}'.format(branch=branch_point.branch)], cwd=repository.root_path, env=push_env).returncode:
-                sys.stderr.write("Failed to sync '{}' to '{}.' Error is non fatal, continuing...\n".format(branch_point.branch, target))
 
         if args.history or (target != source_remote and args.history is None and args.technique == 'overwrite'):
             regex = re.compile(r'^{}-(?P<count>\d+)$'.format(repository.branch))

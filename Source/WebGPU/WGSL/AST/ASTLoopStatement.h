@@ -31,19 +31,19 @@
 namespace WGSL::AST {
 
 class LoopStatement final : public Statement {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(LoopStatement);
 public:
+    NodeKind kind() const override;
+    CompoundStatement& body() { return m_body.get(); }
+    CompoundStatement& continuingBody() { return m_continuingBody.get(); }
+
+private:
     LoopStatement(SourceSpan span, CompoundStatement::Ref&& body, CompoundStatement::Ref&& continuingBody)
         : Statement(span)
         , m_body(WTFMove(body))
         , m_continuingBody(WTFMove(continuingBody))
     { }
 
-    NodeKind kind() const override;
-    CompoundStatement& body() { return m_body.get(); }
-    CompoundStatement& continuingBody() { return m_continuingBody.get(); }
-
-private:
     CompoundStatement::Ref m_body;
     CompoundStatement::Ref m_continuingBody;
 };

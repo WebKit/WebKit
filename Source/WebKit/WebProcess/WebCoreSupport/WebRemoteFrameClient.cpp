@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "WebRemoteFrameClient.h"
+
+#include "MessageSenderInlines.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 

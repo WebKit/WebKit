@@ -11,13 +11,13 @@ PASS Same-origin top-level module script loading with "same-origin" referrer pol
 PASS Same-origin static import with "no-referrer" referrer policy.
 PASS Same-origin static import with "origin" referrer policy.
 PASS Same-origin static import with "same-origin" referrer policy.
-FAIL Cross-origin static import with "no-referrer" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Cross-origin static import with "origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Cross-origin static import with "same-origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Cross-origin static import with "no-referrer" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: "ERROR" cannot be parsed as a URL."
+FAIL Cross-origin static import with "origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: "ERROR" cannot be parsed as a URL."
+FAIL Cross-origin static import with "same-origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: "ERROR" cannot be parsed as a URL."
 PASS Same-origin dynamic import with "no-referrer" referrer policy.
 PASS Same-origin dynamic import with "origin" referrer policy.
 PASS Same-origin dynamic import with "same-origin" referrer policy.
-FAIL Cross-origin dynamic import with "no-referrer" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Cross-origin dynamic import with "origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Cross-origin dynamic import with "same-origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Cross-origin dynamic import with "no-referrer" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: "Import failed: TypeError: Cross-origin script load denied by Cross-Origin Resource Sharing policy." cannot be parsed as a URL."
+FAIL Cross-origin dynamic import with "origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: "Import failed: TypeError: Cross-origin script load denied by Cross-Origin Resource Sharing policy." cannot be parsed as a URL."
+FAIL Cross-origin dynamic import with "same-origin" referrer policy. promise_test: Unhandled rejection with value: object "TypeError: "Import failed: TypeError: Cross-origin script load denied by Cross-Origin Resource Sharing policy." cannot be parsed as a URL."
 

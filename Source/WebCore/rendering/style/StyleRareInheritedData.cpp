@@ -24,14 +24,11 @@
 
 #include "CursorList.h"
 #include "QuotesData.h"
-#include "RenderStyle.h"
 #include "RenderStyleConstants.h"
+#include "RenderStyleInlines.h"
 #include "ShadowData.h"
-#include "StyleColorScheme.h"
-#include "StyleCustomPropertyData.h"
 #include "StyleFilterData.h"
 #include "StyleImage.h"
-#include <wtf/DataRef.h>
 #include <wtf/PointerComparison.h>
 
 namespace WebCore {
@@ -47,7 +44,7 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
     Length lengths[2];
     float secondFloat;
     TextUnderlineOffset offset;
-    TextEdge textEdge;
+    TextBoxEdge textBoxEdge;
     void* customPropertyDataRefs[1];
     unsigned bitfields[7];
     short pagedMediaShorts[2];
@@ -88,13 +85,13 @@ StyleRareInheritedData::StyleRareInheritedData()
     , visitedLinkTextStrokeColor(RenderStyle::initialTextStrokeColor())
     , visitedLinkTextFillColor(RenderStyle::initialTextFillColor())
     , visitedLinkTextEmphasisColor(RenderStyle::initialTextEmphasisColor())
-    , caretColor(RenderStyle::currentColor())
-    , visitedLinkCaretColor(RenderStyle::currentColor())
-    , accentColor(RenderStyle::currentColor())
+    , caretColor(StyleColor::currentColor())
+    , visitedLinkCaretColor(StyleColor::currentColor())
+    , accentColor(StyleColor::currentColor())
     , indent(RenderStyle::initialTextIndent())
     , effectiveZoom(RenderStyle::initialZoom())
     , textUnderlineOffset(RenderStyle::initialTextUnderlineOffset())
-    , textEdge(RenderStyle::initialTextEdge())
+    , textBoxEdge(RenderStyle::initialTextBoxEdge())
     , miterLimit(RenderStyle::initialStrokeMiterLimit())
     , customProperties(StyleCustomPropertyData::create())
     , widows(RenderStyle::initialWidows())
@@ -108,7 +105,6 @@ StyleRareInheritedData::StyleRareInheritedData()
     , nbspMode(static_cast<unsigned>(NBSPMode::Normal))
     , lineBreak(static_cast<unsigned>(LineBreak::Auto))
     , userSelect(static_cast<unsigned>(RenderStyle::initialUserSelect()))
-    , speakAs(RenderStyle::initialSpeakAs().toRaw())
     , hyphens(static_cast<unsigned>(Hyphens::Manual))
     , textCombine(static_cast<unsigned>(RenderStyle::initialTextCombine()))
     , textEmphasisFill(static_cast<unsigned>(TextEmphasisFill::Filled))
@@ -194,7 +190,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , indent(o.indent)
     , effectiveZoom(o.effectiveZoom)
     , textUnderlineOffset(o.textUnderlineOffset)
-    , textEdge(o.textEdge)
+    , textBoxEdge(o.textBoxEdge)
     , miterLimit(o.miterLimit)
     , customProperties(o.customProperties)
     , widows(o.widows)
@@ -310,7 +306,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && indent == o.indent
         && effectiveZoom == o.effectiveZoom
         && textUnderlineOffset == o.textUnderlineOffset
-        && textEdge == o.textEdge
+        && textBoxEdge == o.textBoxEdge
         && wordSpacing == o.wordSpacing
         && miterLimit == o.miterLimit
         && widows == o.widows

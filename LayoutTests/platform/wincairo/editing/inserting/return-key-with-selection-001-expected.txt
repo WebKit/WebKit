@@ -13,9 +13,9 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x294 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x83
-          RenderText {#text} at (0,0) size 65x26
-            text run at (0,0) width 65: "Tests: "
-          RenderBR {BR} at (65,0) size 0x26
+          RenderText {#text} at (0,0) size 59x26
+            text run at (0,0) width 59: "Tests:"
+          RenderBR {BR} at (59,0) size 0x26
           RenderText {#text} at (0,27) size 162x27
             text run at (0,27) width 162: "Fix for this bug: "
           RenderInline {A} at (0,0) size 260x27 [color=#0000EE]
@@ -26,9 +26,9 @@ layer at (0,0) size 800x600
             text run at (0,55) width 426: "selected does not add blank line as it should"
         RenderBlock {DIV} at (14,113) size 756x167
           RenderBlock (anonymous) at (0,0) size 756x83
-            RenderText {#text} at (0,0) size 189x26
-              text run at (0,0) width 189: "Expected Results: "
-            RenderBR {BR} at (189,0) size 0x26
+            RenderText {#text} at (0,0) size 183x26
+              text run at (0,0) width 183: "Expected Results:"
+            RenderBR {BR} at (183,0) size 0x26
             RenderText {#text} at (0,27) size 711x55
               text run at (0,27) width 711: "Should see this content in the red box below (note that the insertion point"
               text run at (0,55) width 670: "should be at the start of the third line, immediately preceding \"baz\"):"

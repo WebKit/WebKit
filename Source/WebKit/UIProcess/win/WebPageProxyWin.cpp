@@ -71,10 +71,12 @@ void WebPageProxy::didUpdateEditorState(const EditorState&, const EditorState&)
 {
 }
 
-HWND WebPageProxy::viewWidget()
+#if USE(GRAPHICS_LAYER_TEXTURE_MAPPER) || USE(GRAPHICS_LAYER_WC)
+uint64_t WebPageProxy::viewWidget()
 {
-    return static_cast<PageClientImpl&>(pageClient()).viewWidget();
+    return reinterpret_cast<uint64_t>(static_cast<PageClientImpl&>(pageClient()).viewWidget());
 }
+#endif
 
 void WebPageProxy::dispatchPendingCharEvents(const NativeWebKeyboardEvent& keydownEvent)
 {

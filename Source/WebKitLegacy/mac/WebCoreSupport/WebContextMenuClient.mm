@@ -51,8 +51,7 @@
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/Page.h>
-#import <WebCore/RenderBox.h>
-#import <WebCore/RenderObject.h>
+#import <WebCore/RenderBoxInlines.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/SimpleRange.h>

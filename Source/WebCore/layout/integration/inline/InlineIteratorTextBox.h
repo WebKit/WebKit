@@ -52,7 +52,7 @@ public:
     bool isCombinedText() const;
     const FontCascade& fontCascade() const;
 
-    TextRun textRun(TextRunMode = TextRunMode::Painting) const;
+    inline TextRun textRun(TextRunMode = TextRunMode::Painting) const;
 
     const RenderText& renderer() const { return downcast<RenderText>(Box::renderer()); }
 
@@ -150,13 +150,6 @@ inline TextBoxSelectableRange TextBox::selectableRange() const
 {
     return WTF::switchOn(m_pathVariant, [&](auto& path) {
         return path.selectableRange();
-    });
-}
-
-inline TextRun TextBox::textRun(TextRunMode mode) const
-{
-    return WTF::switchOn(m_pathVariant, [&](auto& path) {
-        return path.textRun(mode);
     });
 }
 

@@ -30,7 +30,6 @@
 #if ENABLE(MATHML)
 
 #include "ElementInlines.h"
-#include "HTMLParserIdioms.h"
 #include "MathMLNames.h"
 #include "RenderMathMLMenclose.h"
 #include <wtf/IsoMallocInlines.h>
@@ -114,12 +113,12 @@ void MathMLMencloseElement::parseNotationAttribute()
     unsigned length = value.length();
     unsigned start = 0;
     while (start < length) {
-        if (isHTMLSpace(value[start])) {
+        if (isASCIIWhitespace(value[start])) {
             start++;
             continue;
         }
         unsigned end = start + 1;
-        while (end < length && !isHTMLSpace(value[end]))
+        while (end < length && !isASCIIWhitespace(value[end]))
             end++;
         addNotationFlags(value.substring(start, end - start));
         start = end;

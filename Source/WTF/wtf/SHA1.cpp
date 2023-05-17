@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -42,23 +42,23 @@ namespace WTF {
 
 SHA1::SHA1()
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     CC_SHA1_Init(&m_context);
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-void SHA1::addBytes(Span<const std::byte> input)
+void SHA1::addBytes(std::span<const std::byte> input)
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     CC_SHA1_Update(&m_context, input.data(), input.size());
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 void SHA1::computeHash(Digest& hash)
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     CC_SHA1_Final(hash.data(), &m_context);
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #else
@@ -102,7 +102,7 @@ SHA1::SHA1()
     reset();
 }
 
-void SHA1::addBytes(Span<const std::byte> input)
+void SHA1::addBytes(std::span<const std::byte> input)
 {
     for (auto byte : input) {
         ASSERT(m_cursor < 64);

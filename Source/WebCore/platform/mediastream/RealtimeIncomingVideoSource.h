@@ -89,8 +89,9 @@ private:
     std::optional<RealtimeMediaSourceSettings> m_currentSettings;
     rtc::scoped_refptr<webrtc::VideoTrackInterface> m_videoTrack;
 
-#if !RELEASE_LOG_DISABLED
     std::unique_ptr<FrameRateMonitor> m_frameRateMonitor;
+#if !RELEASE_LOG_DISABLED
+    bool m_enableFrameRatedMonitoringLogging { false };
     mutable RefPtr<const Logger> m_logger;
     const void* m_logIdentifier;
 #endif

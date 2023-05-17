@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -211,7 +211,7 @@ PKShippingMethods *toPKShippingMethods(const Vector<WebCore::ApplePayShippingMet
             defaultMethod = pkShippingMethod;
         return pkShippingMethod;
     });
-    return [PAL::allocPKShippingMethodsInstance() initWithMethods:methods.get() defaultMethod:defaultMethod.get()];
+    return adoptNS([PAL::allocPKShippingMethodsInstance() initWithMethods:methods.get() defaultMethod:defaultMethod.get()]).autorelease();
 }
 
 #endif // HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
@@ -223,10 +223,9 @@ static PKShippingContactEditingMode toPKShippingContactEditingMode(WebCore::Appl
     switch (shippingContactEditingMode) {
     case WebCore::ApplePayShippingContactEditingMode::Enabled:
 #if USE(PKSHIPPINGCONTACTEDITINGMODEENABLED)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return PKShippingContactEditingModeEnabled;
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else
         return PKShippingContactEditingModeAvailable;
 #endif
@@ -237,10 +236,9 @@ static PKShippingContactEditingMode toPKShippingContactEditingMode(WebCore::Appl
 
     ASSERT_NOT_REACHED();
 #if USE(PKSHIPPINGCONTACTEDITINGMODEENABLED)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return PKShippingContactEditingModeEnabled;
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     return PKShippingContactEditingModeAvailable;
 #endif
@@ -248,26 +246,23 @@ static PKShippingContactEditingMode toPKShippingContactEditingMode(WebCore::Appl
 
 #endif // HAVE(PASSKIT_SHIPPING_CONTACT_EDITING_MODE)
 
-#if HAVE(PASSKIT_APPLE_PAY_LATER_MODE)
+#if HAVE(PASSKIT_APPLE_PAY_LATER_AVAILABILITY)
 
-static PKApplePayLaterMode toPKApplePayLaterMode(WebCore::ApplePayLaterMode applePayLaterMode)
+static PKApplePayLaterAvailability toPKApplePayLaterAvailability(WebCore::ApplePayLaterAvailability applePayLaterAvailability)
 {
-    switch (applePayLaterMode) {
-    case WebCore::ApplePayLaterMode::Enabled:
-        return PKApplePayLaterModeEnabled;
+    switch (applePayLaterAvailability) {
+    case WebCore::ApplePayLaterAvailability::Available:
+        return PKApplePayLaterAvailable;
 
-    case WebCore::ApplePayLaterMode::DisabledMerchantIneligible:
-        return PKApplePayLaterModeDisabledMerchantIneligible;
+    case WebCore::ApplePayLaterAvailability::UnavailableItemIneligible:
+        return PKApplePayLaterUnavailableItemIneligible;
 
-    case WebCore::ApplePayLaterMode::DisabledItemIneligible:
-        return PKApplePayLaterModeDisabledItemIneligible;
-
-    case WebCore::ApplePayLaterMode::DisabledRecurringTransaction:
-        return PKApplePayLaterModeDisabledRecurringTransaction;
+    case WebCore::ApplePayLaterAvailability::UnavailableRecurringTransaction:
+        return PKApplePayLaterUnavailableRecurringTransaction;
     }
 }
 
-#endif // HAVE(PASSKIT_APPLE_PAY_LATER_MODE)
+#endif // HAVE(PASSKIT_APPLE_PAY_LATER_AVAILABILITY)
 
 static RetainPtr<NSSet> toNSSet(const Vector<String>& strings)
 {
@@ -323,9 +318,9 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
 
     [result setPaymentSummaryItems:WebCore::platformSummaryItems(paymentRequest.total(), paymentRequest.lineItems())];
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [result setExpectsMerchantSession:YES];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (!paymentRequest.applicationData().isNull()) {
         auto applicationData = adoptNS([[NSData alloc] initWithBase64EncodedString:paymentRequest.applicationData() options:0]);
@@ -354,8 +349,8 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
 #endif
 
 #if HAVE(PASSKIT_INSTALLMENTS)
-    if (PKPaymentInstallmentConfiguration *configuration = paymentRequest.installmentConfiguration().platformConfiguration()) {
-        [result setInstallmentConfiguration:configuration];
+    if (auto configuration = paymentRequest.installmentConfiguration().platformConfiguration()) {
+        [result setInstallmentConfiguration:configuration.get()];
         [result setRequestType:PKPaymentRequestTypeInstallment];
     }
 #endif
@@ -373,9 +368,10 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
         [result setShippingContactEditingMode:toPKShippingContactEditingMode(*shippingContactEditingMode)];
 #endif
 
-#if HAVE(PASSKIT_APPLE_PAY_LATER_MODE)
-    if (auto& applePayLaterMode = paymentRequest.applePayLaterMode())
-        [result setApplePayLaterMode:toPKApplePayLaterMode(*applePayLaterMode)];
+#if HAVE(PASSKIT_APPLE_PAY_LATER_AVAILABILITY)
+    if (auto& applePayLaterAvailability = paymentRequest.applePayLaterAvailability()) {
+        [result setApplePayLaterAvailability:toPKApplePayLaterAvailability(*applePayLaterAvailability)];
+    }
 #endif
 
 #if HAVE(PASSKIT_RECURRING_PAYMENTS)

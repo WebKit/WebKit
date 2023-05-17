@@ -30,12 +30,12 @@
 namespace WebCore {
 
 // HTMLCollection that limits to a particular tag.
-class TagCollection final : public CachedHTMLCollection<TagCollection, CollectionTypeTraits<ByTag>::traversalType> {
+class TagCollection final : public CachedHTMLCollection<TagCollection, CollectionTypeTraits<CollectionType::ByTag>::traversalType> {
     WTF_MAKE_ISO_ALLOCATED(TagCollection);
 public:
     static Ref<TagCollection> create(ContainerNode& rootNode, CollectionType type, const AtomString& qualifiedName)
     {
-        ASSERT_UNUSED(type, type == ByTag);
+        ASSERT_UNUSED(type, type == CollectionType::ByTag);
         return adoptRef(*new TagCollection(rootNode, qualifiedName));
     }
 
@@ -48,7 +48,7 @@ private:
     AtomString m_qualifiedName;
 };
 
-class TagCollectionNS final : public CachedHTMLCollection<TagCollectionNS, CollectionTypeTraits<ByTag>::traversalType> {
+class TagCollectionNS final : public CachedHTMLCollection<TagCollectionNS, CollectionTypeTraits<CollectionType::ByTag>::traversalType> {
     WTF_MAKE_ISO_ALLOCATED(TagCollectionNS);
 public:
     static Ref<TagCollectionNS> create(ContainerNode& rootNode, const AtomString& namespaceURI, const AtomString& localName)
@@ -66,12 +66,12 @@ private:
     AtomString m_localName;
 };
 
-class HTMLTagCollection final : public CachedHTMLCollection<HTMLTagCollection, CollectionTypeTraits<ByHTMLTag>::traversalType> {
+class HTMLTagCollection final : public CachedHTMLCollection<HTMLTagCollection, CollectionTypeTraits<CollectionType::ByHTMLTag>::traversalType> {
     WTF_MAKE_ISO_ALLOCATED(HTMLTagCollection);
 public:
     static Ref<HTMLTagCollection> create(ContainerNode& rootNode, CollectionType type, const AtomString& qualifiedName)
     {
-        ASSERT_UNUSED(type, type == ByHTMLTag);
+        ASSERT_UNUSED(type, type == CollectionType::ByHTMLTag);
         return adoptRef(*new HTMLTagCollection(rootNode, qualifiedName));
     }
 

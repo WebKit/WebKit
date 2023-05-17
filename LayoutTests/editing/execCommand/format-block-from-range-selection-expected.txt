@@ -36,7 +36,7 @@ after FormatBlock:
 |   "\ndar"
 |   <br>
 |   "\n"
-|   "yar<#selection-focus>"
+|   "ya<#selection-focus>r"
 | "\n"
 | "\n"
 | "\n"

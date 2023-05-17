@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,6 +59,8 @@
 #include "ProgressTracker.h"
 #include "RemoteFrame.h"
 #include "RenderAncestorIterator.h"
+#include "RenderBoxInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderFragmentContainer.h"
 #include "RenderFragmentedFlow.h"
@@ -66,6 +68,7 @@
 #include "RenderIFrame.h"
 #include "RenderImage.h"
 #include "RenderLayerCompositor.h"
+#include "RenderLayerInlines.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderMedia.h"
 #include "RenderModel.h"
@@ -583,7 +586,7 @@ bool RenderLayerBacking::shouldSetContentsDisplayDelegate() const
 #if ENABLE(WEBGL) || ENABLE(OFFSCREEN_CANVAS)
     return true;
 #else
-    return renderer().settings().webGPU();
+    return renderer().settings().webGPUEnabled();
 #endif
 }
 
@@ -674,7 +677,7 @@ void RenderLayerBacking::updateTransform(const RenderStyle& style)
 {
     TransformationMatrix t;
     if (m_owningLayer.isTransformed())
-        m_owningLayer.updateTransformFromStyle(t, style, RenderStyle::individualTransformOperations);
+        m_owningLayer.updateTransformFromStyle(t, style, RenderStyle::individualTransformOperations());
     
     if (m_contentsContainmentLayer) {
         m_contentsContainmentLayer->setTransform(t);
@@ -2111,11 +2114,13 @@ bool RenderLayerBacking::updateAncestorClipping(bool needsAncestorClip, const Re
             layersChanged = true;
         }
     } else if (m_ancestorClippingStack) {
-        removeClippingStackLayers(*m_ancestorClippingStack);
+        auto* scrollingCoordinator = m_owningLayer.page().scrollingCoordinator();
+
+        m_ancestorClippingStack->clear(scrollingCoordinator);
         m_ancestorClippingStack = nullptr;
         
         if (m_overflowControlsHostLayerAncestorClippingStack) {
-            removeClippingStackLayers(*m_overflowControlsHostLayerAncestorClippingStack);
+            m_overflowControlsHostLayerAncestorClippingStack->clear(scrollingCoordinator);
             m_overflowControlsHostLayerAncestorClippingStack = nullptr;
         }
         
@@ -3059,23 +3064,7 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
 
 bool RenderLayerBacking::isBitmapOnly() const
 {
-    if (m_owningLayer.hasVisibleBoxDecorationsOrBackground())
-        return false;
-
-    if (is<RenderHTMLCanvas>(renderer()))
-        return true;
-
-    if (is<RenderImage>(renderer())) {
-        auto& imageRenderer = downcast<RenderImage>(renderer());
-        if (auto* cachedImage = imageRenderer.cachedImage()) {
-            if (!cachedImage->hasImage())
-                return false;
-            return is<BitmapImage>(cachedImage->imageForRenderer(&imageRenderer));
-        }
-        return false;
-    }
-
-    return false;
+    return m_owningLayer.isBitmapOnly();
 }
 
 
@@ -3408,7 +3397,7 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const LayoutRect& r, Graph
 
 void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, GraphicsContext& context,
     const IntRect& paintDirtyRect, // In the coords of rootLayer.
-    OptionSet<PaintBehavior> paintBehavior, EventRegionContext* eventRegionContext)
+    OptionSet<PaintBehavior> paintBehavior, RegionContext* regionContext)
 {
 #if USE(OWNING_LAYER_BEAR_TRAP)
     RELEASE_ASSERT_WITH_MESSAGE(m_owningLayerBearTrap == BEAR_TRAP_VALUE, "RenderLayerBacking::paintIntoLayer(): m_owningLayerBearTrap caught the bear (55699292)");
@@ -3427,33 +3416,33 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
 
     auto paintFlags = paintFlagsForLayer(*graphicsLayer);
 
-    if (eventRegionContext)
+    if (is<EventRegionContext>(regionContext))
         paintFlags.add(RenderLayer::PaintLayerFlag::CollectingEventRegion);
 
     RenderObject::SetLayoutNeededForbiddenScope forbidSetNeedsLayout(renderer());
 
     auto paintOneLayer = [&](RenderLayer& layer, OptionSet<RenderLayer::PaintLayerFlag> paintFlags) {
         LocalFrameView::PaintingState paintingState;
-        if (!eventRegionContext) {
+        if (!regionContext) {
             InspectorInstrumentation::willPaint(layer.renderer());
 
             if (layer.isRenderViewLayer())
-                renderer().view().frameView().willPaintContents(context, paintDirtyRect, paintingState);
+                renderer().view().frameView().willPaintContents(context, paintDirtyRect, paintingState, regionContext);
         }
 
         RenderLayer::LayerPaintingInfo paintingInfo(&m_owningLayer, paintDirtyRect, paintBehavior, -m_subpixelOffsetFromRenderer);
-        paintingInfo.eventRegionContext = eventRegionContext;
+        paintingInfo.regionContext = regionContext;
 
         if (&layer == &m_owningLayer) {
             layer.paintLayerContents(context, paintingInfo, paintFlags);
 
             auto* scrollableArea = layer.scrollableArea();
-            if (scrollableArea && scrollableArea->containsDirtyOverlayScrollbars() && !eventRegionContext)
+            if (scrollableArea && scrollableArea->containsDirtyOverlayScrollbars() && !regionContext)
                 layer.paintLayerContents(context, paintingInfo, paintFlags | RenderLayer::PaintLayerFlag::PaintingOverlayScrollbars);
         } else
             layer.paintLayerWithEffects(context, paintingInfo, paintFlags);
 
-        if (!eventRegionContext) {
+        if (!regionContext) {
             if (layer.isRenderViewLayer())
                 renderer().view().frameView().didPaintContents(context, paintDirtyRect, paintingState);
 
@@ -3475,14 +3464,14 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
 
         if (graphicsLayer->paintingPhase().contains(GraphicsLayerPaintingPhase::OverflowContents))
             sharingLayerPaintFlags.add(RenderLayer::PaintLayerFlag::PaintingOverflowContents);
-        if (eventRegionContext)
+        if (is<EventRegionContext>(regionContext))
             sharingLayerPaintFlags.add(RenderLayer::PaintLayerFlag::CollectingEventRegion);
 
         for (auto& layerWeakPtr : m_backingSharingLayers)
             paintOneLayer(*layerWeakPtr, sharingLayerPaintFlags);
     }
 
-    if (!eventRegionContext)
+    if (!regionContext)
         compositor().didPaintBacking(this);
 
 #if USE(OWNING_LAYER_BEAR_TRAP)
@@ -3708,7 +3697,7 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
 }
 
 // Up-call from compositing layer drawing callback.
-void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, const FloatRect& clip, GraphicsLayerPaintBehavior layerPaintBehavior)
+void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, const FloatRect& clip, OptionSet<GraphicsLayerPaintBehavior> layerPaintBehavior)
 {
 #ifndef NDEBUG
     renderer().page().setIsPainting(true);
@@ -3723,8 +3712,10 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
     adjustedClipRect.move(m_subpixelOffsetFromRenderer);
     IntRect dirtyRect = enclosingIntRect(adjustedClipRect);
 
-    if (!graphicsLayer->repaintCount())
-        layerPaintBehavior |= GraphicsLayerPaintFirstTilePaint;
+    if (!layerPaintBehavior.contains(GraphicsLayerPaintBehavior::ForceSynchronousImageDecode)) {
+        if (!graphicsLayer->repaintCount())
+            layerPaintBehavior.add(GraphicsLayerPaintBehavior::DefaultAsynchronousImageDecode);
+    }
 
     if (graphicsLayer == m_graphicsLayer.get()
         || graphicsLayer == m_foregroundLayer.get()
@@ -3737,11 +3728,10 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
 
         // We have to use the same root as for hit testing, because both methods can compute and cache clipRects.
         OptionSet<PaintBehavior> behavior = PaintBehavior::Normal;
-        if (layerPaintBehavior == GraphicsLayerPaintSnapshotting)
-            behavior.add(PaintBehavior::Snapshotting);
-        
-        if (layerPaintBehavior == GraphicsLayerPaintFirstTilePaint)
-            behavior.add(PaintBehavior::TileFirstPaint);
+        if (layerPaintBehavior.contains(GraphicsLayerPaintBehavior::ForceSynchronousImageDecode))
+            behavior.add(PaintBehavior::ForceSynchronousImageDecode);
+        else if (layerPaintBehavior.contains(GraphicsLayerPaintBehavior::DefaultAsynchronousImageDecode))
+            behavior.add(PaintBehavior::DefaultAsynchronousImageDecode);
 
         paintIntoLayer(graphicsLayer, context, dirtyRect, behavior);
 
@@ -3817,7 +3807,7 @@ bool RenderLayerBacking::getCurrentTransform(const GraphicsLayer* graphicsLayer,
         return false;
 
     if (m_owningLayer.isTransformed()) {
-        transform = m_owningLayer.currentTransform(RenderStyle::individualTransformOperations);
+        transform = m_owningLayer.currentTransform(RenderStyle::individualTransformOperations());
         return true;
     }
     return false;

@@ -322,7 +322,7 @@ void ResourceResponseBase::setType(Type type)
     m_type = type;
 }
 
-void ResourceResponseBase::includeCertificateInfo(Span<const std::byte> auditToken) const
+void ResourceResponseBase::includeCertificateInfo(std::span<const std::byte> auditToken) const
 {
     if (m_certificateInfo)
         return;

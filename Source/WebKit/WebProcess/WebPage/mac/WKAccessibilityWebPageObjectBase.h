@@ -23,21 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebCore/FloatPoint.h>
 #import <WebCore/PageIdentifier.h>
+#import <wtf/Lock.h>
 #import <wtf/NakedPtr.h>
 
 namespace WebKit {
 class WebPage;
 }
 
+namespace WebCore {
+class AXCoreObject;
+}
+
 @interface WKAccessibilityWebPageObjectBase : NSObject {
     NakedPtr<WebKit::WebPage> m_page;
     WebCore::PageIdentifier m_pageID;
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    Lock m_cacheLock;
+    WebCore::FloatPoint m_position WTF_GUARDED_BY_LOCK(m_cacheLock);
+    WebCore::IntSize m_size WTF_GUARDED_BY_LOCK(m_cacheLock);
+    NakedPtr<WebCore::AXCoreObject> m_isolatedTreeRoot WTF_GUARDED_BY_LOCK(m_cacheLock);
+#endif
     RetainPtr<id> m_parent;
     bool m_hasMainFramePlugin;
 }
 
 - (void)setWebPage:(NakedPtr<WebKit::WebPage>)page;
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+- (void)setPosition:(const WebCore::FloatPoint&)point;
+- (void)setSize:(const WebCore::IntSize&)size;
+- (void)setIsolatedTreeRoot:(NakedPtr<WebCore::AXCoreObject>)root;
+#endif
 - (void)setRemoteParent:(id)parent;
 - (void)setHasMainFramePlugin:(bool)hasPlugin;
 

@@ -26,21 +26,68 @@
 #include "config.h"
 #include "FaceDetector.h"
 
+#include "Chrome.h"
+#include "DetectedFace.h"
+#include "Document.h"
+#include "FaceDetectorOptions.h"
+#include "ImageBitmap.h"
+#include "ImageBitmapOptions.h"
+#include "JSDOMPromiseDeferred.h"
+#include "JSDetectedFace.h"
+#include "Page.h"
+#include "ScriptExecutionContext.h"
+#include "WorkerGlobalScope.h"
+
 namespace WebCore {
 
-Ref<FaceDetector> FaceDetector::create(const FaceDetectorOptions& faceDetectorOptions)
+ExceptionOr<Ref<FaceDetector>> FaceDetector::create(ScriptExecutionContext& scriptExecutionContext, const FaceDetectorOptions& faceDetectorOptions)
 {
-    return adoptRef(*new FaceDetector(faceDetectorOptions));
+    if (is<Document>(scriptExecutionContext)) {
+        const auto& document = downcast<Document>(scriptExecutionContext);
+        const auto* page = document.page();
+        if (!page)
+            return Exception { AbortError };
+        auto backing = page->chrome().createFaceDetector(faceDetectorOptions.convertToBacking());
+        if (!backing)
+            return Exception { AbortError };
+        return adoptRef(*new FaceDetector(backing.releaseNonNull()));
+    }
+
+    if (is<WorkerGlobalScope>(scriptExecutionContext)) {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=255380 Make the Shape Detection API work in Workers
+        return Exception { AbortError };
+    }
+
+    return Exception { AbortError };
 }
 
-FaceDetector::FaceDetector(const FaceDetectorOptions&)
+FaceDetector::FaceDetector(Ref<ShapeDetection::FaceDetector>&& backing)
+    : m_backing(WTFMove(backing))
 {
 }
 
 FaceDetector::~FaceDetector() = default;
 
-void FaceDetector::detect(const ImageBitmap::Source&, DetectPromise&&)
+void FaceDetector::detect(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, DetectPromise&& promise)
 {
+    ImageBitmap::createCompletionHandler(scriptExecutionContext, WTFMove(source), { }, [backing = m_backing.copyRef(), promise = WTFMove(promise)](ExceptionOr<Ref<ImageBitmap>>&& imageBitmap) mutable {
+        if (imageBitmap.hasException()) {
+            promise.resolve({ });
+            return;
+        }
+
+        auto imageBuffer = imageBitmap.releaseReturnValue()->takeImageBuffer();
+        if (!imageBuffer) {
+            promise.resolve({ });
+            return;
+        }
+
+        backing->detect(imageBuffer.releaseNonNull(), [promise = WTFMove(promise)](Vector<ShapeDetection::DetectedFace>&& detectedFaces) mutable {
+            promise.resolve(detectedFaces.map([](const auto& detectedFace) {
+                return convertFromBacking(detectedFace);
+            }));
+        });
+    });
 }
 
 } // namespace WebCore

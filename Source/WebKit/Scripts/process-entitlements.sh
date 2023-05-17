@@ -120,6 +120,7 @@ function mac_process_gpu_entitlements()
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 140000 ))
         then
             plistbuddy add :com.apple.private.disable.screencapturekit.alert bool YES
+            plistbuddy add :com.apple.aneuserd.private.allow bool YES
         fi
 
         plistbuddy Add :com.apple.private.memory.ownership_transfer bool YES
@@ -157,6 +158,11 @@ function mac_process_network_entitlements()
             plistbuddy Add :com.apple.private.assets.bypass-asset-types-check bool YES
             plistbuddy Add :com.apple.private.assets.accessible-asset-types array
             plistbuddy Add :com.apple.private.assets.accessible-asset-types:0 string com.apple.MobileAsset.WebContentRestrictions
+        fi
+
+        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 140000 ))
+        then
+            plistbuddy Add :com.apple.private.ciphermld.allow bool YES
         fi
 
         plistbuddy Add :com.apple.private.launchservices.allowedtochangethesekeysinotherapplications array
@@ -376,8 +382,11 @@ function ios_family_process_webcontent_shared_entitlements()
 
 function ios_family_process_webcontent_entitlements()
 {
-    plistbuddy Add :com.apple.private.verified-jit bool YES
-    plistbuddy Add :dynamic-codesigning bool YES
+    if [[ "${WK_PLATFORM_NAME}" != watchos ]]
+    then
+        plistbuddy Add :com.apple.private.verified-jit bool YES
+        plistbuddy Add :dynamic-codesigning bool YES
+    fi
 
     ios_family_process_webcontent_shared_entitlements
 }
@@ -456,6 +465,7 @@ function ios_family_process_network_entitlements()
     plistbuddy Add :com.apple.multitasking.systemappassertions bool YES
     plistbuddy Add :com.apple.payment.all-access bool YES
     plistbuddy Add :com.apple.private.accounts.bundleidspoofing bool YES
+    plistbuddy Add :com.apple.private.ciphermld.allow bool YES
     plistbuddy Add :com.apple.private.dmd.policy bool YES
     plistbuddy Add :com.apple.private.memorystatus bool YES
     plistbuddy Add :com.apple.private.network.socket-delegate bool YES

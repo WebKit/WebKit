@@ -99,7 +99,7 @@
 
 #endif /* COMPILER(GCC) */
 
-#if COMPILER(GCC_COMPATIBLE) && defined(NDEBUG) && !defined(__OPTIMIZE__) && !defined(RELEASE_WITHOUT_OPTIMIZATIONS)
+#if COMPILER(GCC_COMPATIBLE) && !defined(__clang_tapi__) && defined(NDEBUG) && !defined(__OPTIMIZE__) && !defined(RELEASE_WITHOUT_OPTIMIZATIONS)
 #error "Building release without compiler optimizations: WebKit will be slow. Set -DRELEASE_WITHOUT_OPTIMIZATIONS if this is intended."
 #endif
 

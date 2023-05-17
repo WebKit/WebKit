@@ -180,9 +180,6 @@ public:
 
     template<typename OtherCollection>
     bool operator==(const OtherCollection&) const;
-    
-    template<typename OtherCollection>
-    bool operator!=(const OtherCollection&) const;
 
     void checkConsistency() const;
 
@@ -519,13 +516,6 @@ inline bool HashSet<T, U, V, W>::operator==(const OtherCollection& otherCollecti
             return false;
     }
     return true;
-}
-
-template<typename T, typename U, typename V, typename W>
-template<typename OtherCollection>
-inline bool HashSet<T, U, V, W>::operator!=(const OtherCollection& otherCollection) const
-{
-    return !(*this == otherCollection);
 }
 
 template<typename T, typename U, typename V, typename W>

@@ -40,7 +40,6 @@ OBJC_CLASS NSScrollerImpPair;
 OBJC_CLASS WebScrollerImpPairDelegateMac;
 
 namespace WebCore {
-class PlatformMouseEvent;
 class PlatformWheelEvent;
 class ScrollingTreeScrollingNode;
 }
@@ -62,7 +61,6 @@ public:
     ~ScrollerPairMac();
 
     void handleWheelEventPhase(PlatformWheelEventPhase);
-    bool handleMouseEvent(const PlatformMouseEvent&);
 
     void setUsePresentationValues(bool);
     bool isUsingPresentationValues() const { return m_usingPresentationValues; }
@@ -73,7 +71,6 @@ public:
     void updateValues();
 
     FloatSize visibleSize() const;
-    IntPoint lastKnownMousePosition() const { return m_lastKnownMousePosition; }
     bool useDarkAppearance() const;
 
     struct Values {
@@ -105,11 +102,14 @@ public:
     
     void mouseEnteredContentArea();
     void mouseExitedContentArea();
-    void mouseMovedInContentArea();
+    void mouseMovedInContentArea(const MouseLocationState&);
     void mouseIsInScrollbar(ScrollbarHoverState);
 
     NSScrollerImpPair *scrollerImpPair() const { return m_scrollerImpPair.get(); }
     void ensureOnMainThreadWithProtectedThis(Function<void()>&&);
+    ScrollingTreeScrollingNode& node() const { return m_scrollingNode; }
+    
+    bool mouseInContentArea() const { return m_mouseInContentArea; }
 
 private:
     ScrollerPairMac(ScrollingTreeScrollingNode&);
@@ -125,7 +125,6 @@ private:
     ScrollerMac m_verticalScroller;
     ScrollerMac m_horizontalScroller;
 
-    IntPoint m_lastKnownMousePosition;
     std::optional<FloatPoint> m_lastScrollOffset;
 
     RetainPtr<NSScrollerImpPair> m_scrollerImpPair;
@@ -134,6 +133,7 @@ private:
     std::atomic<bool> m_usingPresentationValues { false };
     std::atomic<ScrollbarStyle> m_scrollbarStyle { ScrollbarStyle::AlwaysVisible };
     bool m_inLiveResize { false };
+    bool m_mouseInContentArea { false };
 };
 
 }

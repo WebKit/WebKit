@@ -1661,10 +1661,8 @@ GLuint GL_APIENTRY GL_GenLists(GLsizei range)
     if (context)
     {
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLGenLists) &&
-              ValidateGenLists(context, angle::EntryPoint::GLGenLists, range)));
+        bool isCallValid = (context->skipValidation() ||
+                            ValidateGenLists(context, angle::EntryPoint::GLGenLists, range));
         if (isCallValid)
         {
             returnValue = context->genLists(range);

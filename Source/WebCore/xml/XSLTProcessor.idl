@@ -37,8 +37,8 @@
 
     // FIXME: In Gecko and the specification, those 2 operations do not return nullable types and instead throw an nsIXSLTException
     // in case of error.
-    [CEReactions] DocumentFragment? transformToFragment(Node source, Document output);
-    [CEReactions] Document? transformToDocument(Node source);
+    [CEReactions=Needed] DocumentFragment? transformToFragment(Node source, Document output);
+    [CEReactions=Needed] Document? transformToDocument(Node source);
 
     // FIXME: Per the specification, value should have type 'any', not 'DOMString'.
     undefined setParameter([LegacyNullToEmptyString] DOMString namespaceURI, DOMString localName, DOMString value);

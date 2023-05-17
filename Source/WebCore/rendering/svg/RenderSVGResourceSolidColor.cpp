@@ -26,6 +26,7 @@
 #include "RenderElement.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
+#include "SVGRenderStyle.h"
 #include "SVGRenderSupport.h"
 
 namespace WebCore {

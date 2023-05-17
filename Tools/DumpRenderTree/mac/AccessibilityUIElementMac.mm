@@ -38,6 +38,10 @@
 #import <wtf/Vector.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+#if HAVE(ACCESSIBILITY_FRAMEWORK)
+#import <Accessibility/Accessibility.h>
+#endif
+
 #ifndef NSAccessibilityDOMIdentifierAttribute
 #define NSAccessibilityDOMIdentifierAttribute @"AXDOMIdentifier"
 #endif
@@ -170,15 +174,6 @@ static NSString* attributesOfElement(id accessibilityObject)
     return attributesString;
 }
 
-template<typename T> static JSObjectRef convertVectorToObjectArray(JSContextRef context, Vector<T> const& elements)
-{
-    auto array = JSObjectMakeArray(context, 0, nullptr, nullptr);
-    unsigned size = elements.size();
-    for (unsigned i = 0; i < size; ++i)
-        JSObjectSetPropertyAtIndex(context, array, i, JSObjectMake(context, elements[i].getJSClass(), new T(elements[i])), nullptr);
-    return array;
-}
-
 static JSRetainPtr<JSStringRef> concatenateAttributeAndValue(NSString *attribute, NSString *value)
 {
     Vector<UniChar> buffer([attribute length]);
@@ -203,6 +198,15 @@ static JSRetainPtr<JSStringRef> descriptionOfElements(Vector<AccessibilityUIElem
     }
     
     return [allElementString createJSStringRef];
+}
+
+template<typename T> static JSObjectRef convertVectorToObjectArray(JSContextRef context, Vector<T> const& elements)
+{
+    auto array = JSObjectMakeArray(context, 0, nullptr, nullptr);
+    unsigned size = elements.size();
+    for (unsigned i = 0; i < size; ++i)
+        JSObjectSetPropertyAtIndex(context, array, i, JSObjectMake(context, elements[i].getJSClass(), new T(elements[i])), nullptr);
+    return array;
 }
 
 static NSDictionary *selectTextParameterizedAttributeForCriteria(JSContextRef context, JSStringRef ambiguityResolution, JSValueRef searchStrings, JSStringRef replacementString, JSStringRef activity)
@@ -509,6 +513,17 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(NSString *
     return nullptr;
 }
 
+JSValueRef AccessibilityUIElement::selectedCells(JSContextRef context) const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id value = [m_element accessibilityAttributeValue:NSAccessibilitySelectedCellsAttribute];
+    if ([value isKindOfClass:[NSArray class]])
+        return convertVectorToObjectArray(context, makeVector<AccessibilityUIElement>(value));
+    END_AX_OBJC_EXCEPTIONS
+    return nullptr;
+}
+
+
 void AccessibilityUIElement::rowHeaders(Vector<AccessibilityUIElement>& elements) const
 {
     BEGIN_AX_OBJC_EXCEPTIONS
@@ -730,6 +745,18 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::helpText() const
     END_AX_OBJC_EXCEPTIONS
     
     return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::customContent() const
+{
+#if HAVE(ACCESSIBILITY_FRAMEWORK)
+    auto customContent = adoptNS([[NSMutableArray alloc] init]);
+    for (AXCustomContent *content in [m_element accessibilityCustomContent])
+        [customContent addObject:[NSString stringWithFormat:@"%@: %@", content.label, content.value]];
+    return [[customContent.get() componentsJoinedByString:@"\n"] createJSStringRef];
+#else
+    return nullptr;
+#endif
 }
 
 double AccessibilityUIElement::x()

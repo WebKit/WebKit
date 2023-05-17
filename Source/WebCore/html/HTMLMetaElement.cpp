@@ -25,6 +25,7 @@
 #include "HTMLMetaElement.h"
 
 #include "Attribute.h"
+#include "CSSParser.h"
 #include "Color.h"
 #include "Document.h"
 #include "ElementInlines.h"
@@ -36,6 +37,7 @@
 #include "MediaQueryEvaluator.h"
 #include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
+#include "NodeName.h"
 #include "RenderStyle.h"
 #include "Settings.h"
 #include "StyleResolveForDocument.h"
@@ -97,30 +99,27 @@ void HTMLMetaElement::attributeChanged(const QualifiedName& name, const AtomStri
 {
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == nameAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::nameAttr:
         process();
         if (isInDocumentTree()) {
             if (equalLettersIgnoringASCIICase(oldValue, "theme-color"_s) && !equalLettersIgnoringASCIICase(newValue, "theme-color"_s))
                 document().metaElementThemeColorChanged(*this);
         }
-        return;
-    }
-
-    if (name == contentAttr) {
+        break;
+    case AttributeNames::contentAttr:
         m_contentColor = std::nullopt;
         process();
-        return;
-    }
-
-    if (name == http_equivAttr) {
+        break;
+    case AttributeNames::http_equivAttr:
         process();
-        return;
-    }
-
-    if (name == mediaAttr) {
+        break;
+    case AttributeNames::mediaAttr:
         m_mediaQueryList = { };
         process();
-        return;
+        break;
+    default:
+        break;
     }
 }
 

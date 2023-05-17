@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "BarcodeDetectorInterface.h"
+#include "ExceptionOr.h"
 #include "ImageBitmap.h"
 #include "JSDOMPromiseDeferredForward.h"
 #include <wtf/Ref.h>
@@ -35,21 +37,24 @@ namespace WebCore {
 struct BarcodeDetectorOptions;
 enum class BarcodeFormat : uint8_t;
 struct DetectedBarcode;
+class ScriptExecutionContext;
 
 class BarcodeDetector : public RefCounted<BarcodeDetector> {
 public:
-    static Ref<BarcodeDetector> create(const BarcodeDetectorOptions&);
+    static ExceptionOr<Ref<BarcodeDetector>> create(ScriptExecutionContext&, const BarcodeDetectorOptions&);
 
     ~BarcodeDetector();
 
-    using GetSupportedFormatsPromise = DOMPromiseDeferred<IDLSequence<IDLInterface<BarcodeFormat>>>;
-    static void getSupportedFormats(GetSupportedFormatsPromise&&);
+    using GetSupportedFormatsPromise = DOMPromiseDeferred<IDLSequence<IDLEnumeration<BarcodeFormat>>>;
+    static ExceptionOr<void> getSupportedFormats(ScriptExecutionContext&, GetSupportedFormatsPromise&&);
 
     using DetectPromise = DOMPromiseDeferred<IDLSequence<IDLDictionary<DetectedBarcode>>>;
-    void detect(const ImageBitmap::Source&, DetectPromise&&);
+    void detect(ScriptExecutionContext&, ImageBitmap::Source&&, DetectPromise&&);
 
 private:
-    BarcodeDetector(const BarcodeDetectorOptions&);
+    BarcodeDetector(Ref<ShapeDetection::BarcodeDetector>&&);
+
+    Ref<ShapeDetection::BarcodeDetector> m_backing;
 };
 
 } // namespace WebCore

@@ -70,7 +70,7 @@ bool Watchdog::shouldTerminate(JSGlobalObject* globalObject)
     // but it is a fact that only Windows is experiencing the issue.
     epsilon = Seconds::fromMilliseconds(20);
 #endif
-    if (MonotonicTime::now() + epsilon < m_deadline)
+    if (MonotonicTime::timePointFromNow(epsilon) < m_deadline)
         return false; // Just a stale timer firing. Nothing to do.
 
     // Set m_deadline to MonotonicTime::infinity() here so that we can reject all future

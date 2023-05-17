@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="element" class="box"></div>
+<div id="host" class="box"></div>
+<style>
+.box { width: 100px; height: 50px; background: green; }
+.box:dir(rtl) { background: red; }
+</style>
+<script>
+document.documentElement.setAttribute('dir', 'rtl');
+host.attachShadow({mode: 'closed'}).innerHTML = '<div class="box"></div><style>.box { width: 100px; height: 50px; background: green; } .box:dir(rtl) { background: red; }</style>'
+element.getBoundingClientRect();
+document.documentElement.removeAttribute('dir');
+</script>
+</body>
+</html>

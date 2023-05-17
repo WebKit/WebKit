@@ -52,7 +52,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << httpProxy;
     encoder << httpsProxy;
 #endif
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
     encoder << alternativeServiceDirectory;
     encoder << alternativeServiceDirectoryExtensionHandle;
 #endif
@@ -164,7 +164,7 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
         return std::nullopt;
 #endif
 
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
     std::optional<String> alternativeServiceDirectory;
     decoder >> alternativeServiceDirectory;
     if (!alternativeServiceDirectory)
@@ -462,7 +462,7 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
         , WTFMove(*httpProxy)
         , WTFMove(*httpsProxy)
 #endif
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
         , WTFMove(*alternativeServiceDirectory)
         , WTFMove(*alternativeServiceDirectoryExtensionHandle)
 #endif

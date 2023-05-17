@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import collections
+import getpass
 import os
 import re
 import sys
@@ -47,11 +48,19 @@ class Publish(Command):
             '--remote', dest='remote', type=str, default=None,
             help='Publish content to the specified remote',
         )
+        parser.add_argument(
+            '--user', dest='user', type=str, default=None,
+            help="Run 'git push' as the specified user with https. Program will prompt for a password.",
+        )
+        parser.add_argument(
+            '--exclude', action='append', type=str, default=[],
+            help='Exclude inferred branch or tag from publication',
+        )
 
     @classmethod
-    def branches_on(cls, repository, ref):
+    def branches_on(cls, repository, ref, exclude):
         output = run(
-            [repository.executable(), 'branch', '-a', '--merged', '--format=%(refname)', ref],
+            [repository.executable(), 'branch', '-a', '--format', '%(refname)', '--merged', ref],
             cwd=repository.root_path,
             capture_output=True,
             encoding='utf-8',
@@ -64,13 +73,15 @@ class Publish(Command):
             _, typ, name = line.split('/', 2)
             if typ == 'remotes':
                 remote, name = name.split('/', 1)
-                result[remote].add(name)
             else:
-                result[None].add(name)
+                remote = None
+            if name in exclude:
+                continue
+            result[remote].add(name)
         return result
 
     @classmethod
-    def tags_on(cls, repository, ref):
+    def tags_on(cls, repository, ref, exclude):
         result = run(
             [repository.executable(), 'tag', '--merged', ref],
             cwd=repository.root_path,
@@ -78,7 +89,7 @@ class Publish(Command):
             encoding='utf-8',
         )
         if not result.returncode:
-            return result.stdout.splitlines()
+            return [tag for tag in result.stdout.splitlines() if tag not in exclude]
         sys.stderr.write(result.stderr)
         return []
 
@@ -122,12 +133,16 @@ class Publish(Command):
             sys.stderr.write("Cannot run a command which invokes `git push` with an out-of-date pre-push hook\n")
             sys.stderr.write("Please re-run `git-webkit setup` to update all local hooks\n")
             return 1
+        args.exclude.append(repository.default_branch)
 
         commits = set()
         branches_to_publish = {}
         tags_to_publish = set()
         for ref in args.arguments:
             try:
+                if ref in args.exclude:
+                    sys.stderr.write("'{}' has been explicitly excluded from publication\n".format(ref))
+                    continue
                 commit = repository.find(ref)
                 commits.add(commit)
                 if ref in repository.tags():
@@ -183,19 +198,23 @@ class Publish(Command):
         existing_tags = set(repository.tags(remote=args.remote))
         tags_to_publish = tags_to_publish - existing_tags
         for commit in commits:
-            tags_to_publish |= set(cls.tags_on(repository, commit.hash)) - existing_tags
+            tags_to_publish |= set(cls.tags_on(repository, commit.hash, exclude=args.exclude)) - existing_tags
             intersection = cls.parental_intersection(repository, commit)
-            if intersection and intersection.branch != repository.default_branch:
+            if intersection and intersection.branch not in args.exclude:
                 cls._add_branch_ref_to(
                     mapping=branches_to_publish,
                     repository=repository,
                     branch=intersection.branch, commit=intersection,
                 )
-            for remote, branches in cls.branches_on(repository, commit.hash).items():
+            for remote, branches in cls.branches_on(repository, commit.hash, exclude=args.exclude).items():
                 if remote is not None and remote not in repository.source_remotes():
                     continue
                 for branch in branches:
+                    if branch in args.exclude:
+                        continue
                     commit = repository.find('remotes/{}/{}'.format(remote, branch) if remote else branch)
+                    if commit.branch == repository.default_branch:
+                        continue
                     cls._add_branch_ref_to(
                         mapping=branches_to_publish,
                         repository=repository,
@@ -235,10 +254,23 @@ class Publish(Command):
         push_env = os.environ.copy()
         push_env['VERBOSITY'] = str(args.verbose)
         push_env['PUSH_HOOK_MODE'] = 'publish'
+        remote_arg = args.remote
+
+        if args.user:
+            remote = repository.remote(remote_arg)
+            if not remote or not getattr(remote, 'domain', None):
+                sys.stderr.write("Cannot convert '{}' to an ephemeral HTTP url\n".format(remote_arg))
+                return 1
+            remote_arg = remote.checkout_url(http=True)
+
+            credentials = (args.user, getpass.getpass('API token for {}: '.format(args.user)).strip())
+            tokenized_domain = remote.domain.replace('.', '_').upper()
+            push_env['{}_USERNAME'.format(tokenized_domain)] = credentials[0]
+            push_env['{}_TOKEN'.format(tokenized_domain)] = credentials[1]
 
         return_code = 0
         print('Pushing branches to {}...'.format(args.remote))
-        command = [repository.executable(), 'push', '--atomic', args.remote] + [
+        command = [repository.executable(), 'push', '--atomic', remote_arg] + [
             '{}:refs/heads/{}'.format(commit.hash[:commit.HASH_LABEL_SIZE], branch) for branch, commit in branches_to_publish.items()
         ]
         log.info("Invoking '{}'".format(' '.join(command)))
@@ -251,9 +283,9 @@ class Publish(Command):
             sys.stderr.write('Failed to push branches to {}\n'.format(args.remote))
             return_code += 1
 
-        if tags_to_publish:
+        if not return_code and tags_to_publish:
             print('Pushing tags to {}...'.format(args.remote))
-            command = [repository.executable(), 'push', '--atomic', args.remote] + list(tags_to_publish)
+            command = [repository.executable(), 'push', '--atomic', remote_arg] + list(tags_to_publish)
             log.info("Invoking '{}'".format(' '.join(command)))
             if run(
                 command,

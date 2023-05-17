@@ -85,8 +85,8 @@ private:
     // Checks whether there is an "i" or "u" coming, and return the right kind of literal token
     Token parseIntegerLiteralSuffix(double literalValue);
 
-    static bool isIdentifierStart(T character) { return isASCIIAlpha(character); }
-    static bool isValidIdentifierCharacter(T character) { return isASCIIAlphanumeric(character) || character == '_'; }
+    static bool isIdentifierStart(T character) { return isASCIIAlpha(character) || character == '_'; }
+    static bool isIdentifierContinue(T character) { return isASCIIAlphanumeric(character) || character == '_'; }
     static unsigned readDecimal(T character)
     {
         ASSERT(isASCIIDigit(character));

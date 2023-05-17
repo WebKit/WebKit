@@ -27,17 +27,16 @@
 
 #include "ASTNode.h"
 
-#include <wtf/RefCounted.h>
-#include <wtf/RefVector.h>
+#include <wtf/ReferenceWrapperVector.h>
 
 namespace WGSL::AST {
 
-class Attribute : public Node, public RefCounted<Attribute> {
-    WTF_MAKE_FAST_ALLOCATED;
+class Attribute : public Node {
 public:
-    using Ref = WTF::Ref<Attribute>;
-    using List = RefVector<Attribute, 2>;
+    using Ref = std::reference_wrapper<Attribute>;
+    using List = ReferenceWrapperVector<Attribute>;
 
+protected:
     Attribute(SourceSpan span)
         : Node(span)
     { }

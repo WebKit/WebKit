@@ -29,12 +29,9 @@ namespace JSC {
 
 namespace GCClient {
 
-ALWAYS_INLINE void* IsoSubspace::allocate(VM& vm, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
+ALWAYS_INLINE void* IsoSubspace::allocate(VM& vm, size_t cellSize, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
-    RELEASE_ASSERT(size <= cellSize());
-    Allocator allocator = allocatorFor(size, AllocatorForMode::MustAlreadyHaveAllocator);
-    void* result = allocator.allocate(vm.heap, deferralContext, failureMode);
-    return result;
+    return m_localAllocator.allocate(vm.heap, cellSize, deferralContext, failureMode);
 }
 
 } // namespace GCClient

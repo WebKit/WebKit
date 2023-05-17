@@ -87,12 +87,16 @@ void WebProcessProxy::setDisplayLinkForDisplayWantsFullSpeedUpdates(WebCore::Pla
 
 void WebProcessProxy::platformSuspendProcess()
 {
-    // FIXME: Adopt RunningBoard on macOS to support process suspension.
+    m_platformSuspendDidReleaseNearSuspendedAssertion = throttler().isHoldingNearSuspendedAssertion();
+    throttler().setShouldTakeNearSuspendedAssertion(false);
 }
 
 void WebProcessProxy::platformResumeProcess()
 {
-    // FIXME: Adopt RunningBoard on macOS to support process suspension.
+    if (m_platformSuspendDidReleaseNearSuspendedAssertion) {
+        m_platformSuspendDidReleaseNearSuspendedAssertion = false;
+        throttler().setShouldTakeNearSuspendedAssertion(true);
+    }
 }
 
 } // namespace WebKit

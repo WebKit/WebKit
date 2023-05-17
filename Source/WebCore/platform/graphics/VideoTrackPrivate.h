@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+struct VideoInfo;
+
 class VideoTrackPrivate : public TrackPrivateBase {
 public:
     void setClient(VideoTrackPrivateClient& client) { m_client = client; }
@@ -80,6 +82,8 @@ public:
     }
 
     Type type() const final { return Type::Video; }
+
+    virtual void setFormatDescription(Ref<VideoInfo>&&) { }
 
 protected:
     VideoTrackPrivate() = default;

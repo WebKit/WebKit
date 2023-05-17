@@ -62,18 +62,18 @@ public:
     FloatRect visualRect() const;
     FloatRect visualRectIgnoringBlockDirection() const;
     // Visual in inline direction, logical for writing mode.
-    FloatRect logicalRectIgnoringInlineDirection() const;
+    inline FloatRect logicalRectIgnoringInlineDirection() const;
 
-    float logicalTop() const { return logicalRectIgnoringInlineDirection().y(); }
-    float logicalBottom() const { return logicalRectIgnoringInlineDirection().maxY(); }
-    float logicalHeight() const { return logicalRectIgnoringInlineDirection().height(); }
-    float logicalWidth() const { return logicalRectIgnoringInlineDirection().width(); }
+    inline float logicalTop() const;
+    inline float logicalBottom() const;
+    inline float logicalHeight() const;
+    inline float logicalWidth() const;
 
     // Return visual left/right coords in inline direction (they are still considered logical values as there's no flip for writing mode).
-    float logicalLeftIgnoringInlineDirection() const { return logicalRectIgnoringInlineDirection().x(); }
-    float logicalRightIgnoringInlineDirection() const { return logicalRectIgnoringInlineDirection().maxX(); }
+    inline float logicalLeftIgnoringInlineDirection() const;
+    inline float logicalRightIgnoringInlineDirection() const;
 
-    bool isHorizontal() const;
+    inline bool isHorizontal() const;
 
     unsigned minimumCaretOffset() const;
     unsigned maximumCaretOffset() const;
@@ -120,10 +120,7 @@ public:
     explicit operator bool() const { return !atEnd(); }
 
     bool operator==(const BoxIterator&) const;
-    bool operator!=(const BoxIterator& other) const { return !(*this == other); }
-
     bool operator==(EndIterator) const { return atEnd(); }
-    bool operator!=(EndIterator) const { return !atEnd(); }
 
     const Box& operator*() const { return m_box; }
     const Box* operator->() const { return &m_box; }
@@ -186,22 +183,6 @@ inline FloatRect Box::visualRectIgnoringBlockDirection() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.visualRectIgnoringBlockDirection();
-    });
-}
-
-inline FloatRect Box::logicalRectIgnoringInlineDirection() const
-{
-    auto visualRectIgnoringBlockDirection = this->visualRectIgnoringBlockDirection();
-    if (isHorizontal())
-        return visualRectIgnoringBlockDirection;
-
-    return { visualRectIgnoringBlockDirection.y(), visualRectIgnoringBlockDirection.x(), visualRectIgnoringBlockDirection.height(), visualRectIgnoringBlockDirection.width() };
-}
-
-inline bool Box::isHorizontal() const
-{
-    return WTF::switchOn(m_pathVariant, [](auto& path) {
-        return path.isHorizontal();
     });
 }
 

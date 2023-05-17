@@ -80,7 +80,6 @@ public:
     const InlineLevelBoxList& nonRootInlineLevelBoxes() const { return m_nonRootInlineLevelBoxList; }
 
     FontBaseline baselineType() const { return m_baselineType; }
-    bool isHorizontal() const { return m_rootInlineBox.layoutBox().style().isHorizontalWritingMode(); }
 
     const InlineRect& logicalRect() const { return m_logicalRect; }
 

@@ -18,14 +18,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/README
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/broken-symbols-expected.htm
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/broken-symbols.htm
-/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-additive-symbols-syntax.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-fallback.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-name-syntax.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-negative-syntax.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-pad-syntax.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-prefix-suffix-syntax.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-range-syntax.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-speak-as-syntax.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-symbols-syntax.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-system-syntax.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/idlharness.html

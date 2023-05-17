@@ -25,28 +25,19 @@
 #pragma once
 
 #include "Length.h"
-#include "RenderStyleConstants.h"
-#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class StyleMarqueeData : public RefCounted<StyleMarqueeData> {
-public:
-    static Ref<StyleMarqueeData> create() { return adoptRef(*new StyleMarqueeData); }
+struct StyleMarqueeData : RefCounted<StyleMarqueeData> {
+    static Ref<StyleMarqueeData> create();
     Ref<StyleMarqueeData> copy() const;
 
-    bool operator==(const StyleMarqueeData& o) const;
-    bool operator!=(const StyleMarqueeData& o) const
-    {
-        return !(*this == o);
-    }
+    bool operator==(const StyleMarqueeData&) const;
 
     Length increment;
     int speed;
-
     int loops; // -1 means infinite.
-
     unsigned behavior : 2; // MarqueeBehavior 
     unsigned direction : 3; // MarqueeDirection
 

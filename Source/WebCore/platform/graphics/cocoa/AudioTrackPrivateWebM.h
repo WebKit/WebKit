@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+struct AudioInfo;
+
 class AudioTrackPrivateWebM final : public AudioTrackPrivate {
 public:
     static Ref<AudioTrackPrivateWebM> create(webm::TrackEntry&&);
@@ -49,7 +51,15 @@ public:
 
 private:
     AudioTrackPrivateWebM(webm::TrackEntry&&);
+
+    String codec() const;
+    uint32_t sampleRate() const;
+    uint32_t numberOfChannels() const;
+    void setFormatDescription(Ref<AudioInfo>&&) final;
+    void updateConfiguration();
+
     webm::TrackEntry m_track;
+    RefPtr<AudioInfo> m_formatDescription;
     MediaTime m_discardPadding { MediaTime::invalidTime() };
     mutable AtomString m_trackID;
     mutable AtomString m_label;

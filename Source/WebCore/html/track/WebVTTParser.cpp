@@ -37,7 +37,6 @@
 
 #include "CommonAtomStrings.h"
 #include "Document.h"
-#include "HTMLParserIdioms.h"
 #include "ISOVTTCue.h"
 #include "ProcessingInstruction.h"
 #include "StylePropertiesInlines.h"
@@ -251,7 +250,7 @@ bool WebVTTParser::hasRequiredFileIdentifier(const String& line)
     // and any number of characters that are not line terminators ...
     if (!line.startsWith(fileIdentifier))
         return false;
-    if (line.length() > fileIdentifierLength && !isHTMLSpace(line[fileIdentifierLength]))
+    if (line.length() > fileIdentifierLength && !isASCIIWhitespace(line[fileIdentifierLength]))
         return false;
     return true;
 }
@@ -327,7 +326,7 @@ bool WebVTTParser::checkAndCreateRegion(StringView line)
     // line starts with the substring "REGION" and remaining characters
     // zero or more U+0020 SPACE characters or U+0009 CHARACTER TABULATION
     // (tab) characters expected other than these characters it is invalid.
-    if (line.startsWith("REGION"_s) && line.substring(regionIdentifierLength).isAllSpecialCharacters<isASpace>()) {
+    if (line.startsWith("REGION"_s) && line.substring(regionIdentifierLength).isAllSpecialCharacters<isASCIIWhitespace>()) {
         m_currentRegion = VTTRegion::create(m_document);
         return true;
     }
@@ -356,7 +355,7 @@ bool WebVTTParser::checkStyleSheet(StringView line)
     // line starts with the substring "STYLE" and remaining characters
     // zero or more U+0020 SPACE characters or U+0009 CHARACTER TABULATION
     // (tab) characters expected other than these characters it is invalid.
-    if (line.startsWith("STYLE"_s) && line.substring(styleIdentifierLength).isAllSpecialCharacters<isASpace>())
+    if (line.startsWith("STYLE"_s) && line.substring(styleIdentifierLength).isAllSpecialCharacters<isASCIIWhitespace>())
         return true;
 
     return false;
@@ -434,25 +433,25 @@ WebVTTParser::ParseState WebVTTParser::collectTimingsAndSettings(const String& l
 
     // Collect WebVTT cue timings and settings. (5.3 WebVTT cue timings and settings parsing.)
     // Steps 1 - 3 - Let input be the string being parsed and position be a pointer into input
-    input.skipWhile<isHTMLSpace<UChar>>();
+    input.skipWhile<isASCIIWhitespace<UChar>>();
 
     // Steps 4 - 5 - Collect a WebVTT timestamp. If that fails, then abort and return failure. Otherwise, let cue's text track cue start time be the collected time.
     if (!collectTimeStamp(input, m_currentStartTime))
         return BadCue;
     
-    input.skipWhile<isHTMLSpace<UChar>>();
+    input.skipWhile<isASCIIWhitespace<UChar>>();
 
     // Steps 6 - 9 - If the next three characters are not "-->", abort and return failure.
     if (!input.scan("-->"))
         return BadCue;
     
-    input.skipWhile<isHTMLSpace<UChar>>();
+    input.skipWhile<isASCIIWhitespace<UChar>>();
 
     // Steps 10 - 11 - Collect a WebVTT timestamp. If that fails, then abort and return failure. Otherwise, let cue's text track cue end time be the collected time.
     if (!collectTimeStamp(input, m_currentEndTime))
         return BadCue;
 
-    input.skipWhile<isHTMLSpace<UChar>>();
+    input.skipWhile<isASCIIWhitespace<UChar>>();
 
     // Step 12 - Parse the WebVTT settings for the cue (conducted in TextTrackCue).
     m_currentSettings = input.restOfInputAsString();

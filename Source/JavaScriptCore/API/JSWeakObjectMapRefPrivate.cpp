@@ -59,7 +59,7 @@ void JSWeakObjectMapSet(JSContextRef ctx, JSWeakObjectMapRef map, void* key, JSO
     JSObject* obj = toJS(object);
     if (!obj)
         return;
-    ASSERT(obj->inherits<JSProxy>()
+    ASSERT(obj->inherits<JSGlobalProxy>()
         || obj->inherits<JSCallbackObject<JSGlobalObject>>()
         || obj->inherits<JSCallbackObject<JSNonFinalObject>>());
     map->map().set(key, obj);
@@ -83,13 +83,6 @@ void JSWeakObjectMapRemove(JSContextRef ctx, JSWeakObjectMapRef map, void* key)
     }
     
     map->map().remove(key);
-}
-
-// We need to keep this function in the build to keep the nightlies running.
-JS_EXPORT bool JSWeakObjectMapClear(JSContextRef, JSWeakObjectMapRef, void*, JSObjectRef);
-bool JSWeakObjectMapClear(JSContextRef, JSWeakObjectMapRef, void*, JSObjectRef)
-{
-    return true;
 }
 
 #ifdef __cplusplus

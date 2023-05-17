@@ -24,6 +24,9 @@
 
 #include "HTMLTextFormControlElement.h"
 #include "HitTestResult.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderText.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
@@ -232,5 +235,11 @@ int RenderTextControl::innerLineHeight() const
     return style().computedLineHeight();
 }
 #endif
+
+RenderTextControlInnerContainer::RenderTextControlInnerContainer(Element& element, RenderStyle&& style)
+    : RenderFlexibleBox(element, WTFMove(style))
+{
+
+}
 
 } // namespace WebCore

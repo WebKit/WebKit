@@ -88,7 +88,7 @@ public:
     void markInvalid() { m_bufferPos = nullptr; }
 
     template<typename T>
-    WARN_UNUSED_RETURN Span<const T> decodeSpan(size_t);
+    WARN_UNUSED_RETURN std::span<const T> decodeSpan(size_t);
 
     template<typename T>
     WARN_UNUSED_RETURN std::optional<T> decodeObject();
@@ -175,7 +175,7 @@ inline bool alignedBufferIsLargeEnoughToContain(const uint8_t* alignedPosition, 
 }
 
 template<typename T>
-inline Span<const T> Decoder::decodeSpan(size_t size)
+inline std::span<const T> Decoder::decodeSpan(size_t size)
 {
     if (size > std::numeric_limits<size_t>::max() / sizeof(T))
         return { };

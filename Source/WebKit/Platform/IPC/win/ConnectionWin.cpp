@@ -371,7 +371,7 @@ std::optional<Connection::ConnectionIdentifierPair> Connection::createConnection
         LOG_ERROR("Failed to create server and client identifiers");
         return std::nullopt;
     }
-    return ConnectionIdentifierPair { Identifier { Win32Handle { serverIdentifier } }, Win32Handle { clientIdentifier } };
+    return ConnectionIdentifierPair { Identifier { Win32Handle::adopt(serverIdentifier) }, Win32Handle::adopt(clientIdentifier) };
 }
 
 } // namespace IPC

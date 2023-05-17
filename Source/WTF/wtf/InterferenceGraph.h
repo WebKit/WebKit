@@ -134,11 +134,6 @@ public:
                 return m_index == other.m_index;
             }
 
-            bool operator!=(const iterator& other) const
-            {
-                return !(*this == other);
-            }
-
             const Iterable& m_iterable;
             unsigned m_index;
         };

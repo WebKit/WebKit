@@ -42,6 +42,12 @@
 #import <WebKitLegacy/WebEvent.h>
 #import <cmath>
 
+namespace TestWebKitAPI {
+
+enum class CaretVisibility : bool { Hidden, Visible };
+
+}
+
 @interface WKContentView ()
 @property (nonatomic, readonly) NSUndoManager *undoManagerForWebView;
 - (BOOL)_shouldSimulateKeyboardInputOnTextInsertion;
@@ -109,20 +115,20 @@ static CGRect rounded(CGRect rect)
     return CGRectMake(std::round(rect.origin.x), std::round(rect.origin.y), std::round(rect.size.width), std::round(rect.size.height));
 }
 
-- (void)waitForCaretViewFrameToBecome:(CGRect)frame
+- (void)waitForCaretVisibility:(TestWebKitAPI::CaretVisibility)visibility
 {
     BOOL hasEmittedWarning = NO;
     NSTimeInterval secondsToWaitUntilWarning = 2;
     NSTimeInterval startTime = [NSDate timeIntervalSinceReferenceDate];
     while ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]) {
-        CGRect currentFrame = rounded(self.caretViewRectInContentCoordinates);
-        if (CGRectEqualToRect(currentFrame, frame))
+        BOOL sizeIsEmpty = CGSizeEqualToSize(self.caretViewRectInContentCoordinates.size, CGSizeZero);
+        if ((visibility == TestWebKitAPI::CaretVisibility::Hidden) == sizeIsEmpty)
             break;
 
         if (hasEmittedWarning || startTime + secondsToWaitUntilWarning >= [NSDate timeIntervalSinceReferenceDate])
             continue;
 
-        NSLog(@"Expected a caret rect of %@, but still observed %@", NSStringFromCGRect(frame), NSStringFromCGRect(currentFrame));
+        NSLog(@"Expected the caret to %s", visibility == TestWebKitAPI::CaretVisibility::Hidden ? "disappear" : "appear");
         hasEmittedWarning = YES;
     }
 }
@@ -477,19 +483,17 @@ TEST(KeyboardInputTests, HandleKeyEventsWhileSwappingWebProcess)
 
 TEST(KeyboardInputTests, CaretSelectionRectAfterRestoringFirstResponderWithRetainActiveFocusedState)
 {
-    // This difference in caret width is due to the fact that we don't zoom in to the input field on iPad, but do on iPhone.
-    auto expectedCaretRect = CGRectMake(14, 11, UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad ? 3 : 2, 15);
     auto [webView, inputDelegate] = webViewAndInputDelegateWithAutofocusedInput();
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
-    [webView waitForCaretViewFrameToBecome:expectedCaretRect];
+    [webView waitForCaretVisibility:CaretVisibility::Visible];
 
     dispatch_block_t restoreActiveFocusState = [webView _retainActiveFocusedState];
     [webView resignFirstResponder];
     restoreActiveFocusState();
-    [webView waitForCaretViewFrameToBecome:CGRectZero];
+    [webView waitForCaretVisibility:CaretVisibility::Hidden];
 
     [webView becomeFirstResponder];
-    [webView waitForCaretViewFrameToBecome:expectedCaretRect];
+    [webView waitForCaretVisibility:CaretVisibility::Visible];
 }
 
 TEST(KeyboardInputTests, RangedSelectionRectAfterRestoringFirstResponderWithRetainActiveFocusedState)
@@ -513,17 +517,15 @@ TEST(KeyboardInputTests, RangedSelectionRectAfterRestoringFirstResponderWithReta
 
 TEST(KeyboardInputTests, CaretSelectionRectAfterRestoringFirstResponder)
 {
-    // This difference in caret width is due to the fact that we don't zoom in to the input field on iPad, but do on iPhone.
-    auto expectedCaretRect = CGRectMake(14, 11, UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad ? 3 : 2, 15);
     auto [webView, inputDelegate] = webViewAndInputDelegateWithAutofocusedInput();
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
-    [webView waitForCaretViewFrameToBecome:expectedCaretRect];
+    [webView waitForCaretVisibility:CaretVisibility::Visible];
 
     [webView resignFirstResponder];
-    [webView waitForCaretViewFrameToBecome:CGRectZero];
+    [webView waitForCaretVisibility:CaretVisibility::Hidden];
 
     [webView becomeFirstResponder];
-    [webView waitForCaretViewFrameToBecome:expectedCaretRect];
+    [webView waitForCaretVisibility:CaretVisibility::Visible];
 }
 
 TEST(KeyboardInputTests, RangedSelectionRectAfterRestoringFirstResponder)

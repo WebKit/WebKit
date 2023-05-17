@@ -30,6 +30,7 @@
 #include "LocalFrame.h"
 #include "Page.h"
 #include "RenderBoxModelObject.h"
+#include "RenderStyleInlines.h"
 #include "RenderView.h"
 
 namespace WebCore {

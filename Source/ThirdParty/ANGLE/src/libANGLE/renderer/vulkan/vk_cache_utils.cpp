@@ -5682,7 +5682,8 @@ void UpdatePreCacheActiveTextures(const gl::ProgramExecutable &executable,
                     ImageOrBufferViewSubresourceSerial imageViewSerial =
                         textureVk->getImageViewSubresourceSerial(samplerState);
 
-                    // Layout is implicit.
+                    ImageLayout imageLayout = textureVk->getImage().getCurrentImageLayout();
+                    SetBitField(infoDesc.imageLayoutOrRange, imageLayout);
 
                     infoDesc.imageViewSerialOrOffset = imageViewSerial.viewSerial.getValue();
                     infoDesc.samplerOrBufferSerial   = samplerHelper.getSamplerSerial().getValue();

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "PageIdentifier.h"
 #include "VisibilityChangeClient.h"
 #include "WakeLockType.h"
 #include <wtf/HashMap.h>
@@ -43,7 +44,7 @@ public:
     explicit WakeLockManager(Document&);
     ~WakeLockManager();
 
-    void addWakeLock(Ref<WakeLockSentinel>&&);
+    void addWakeLock(Ref<WakeLockSentinel>&&, std::optional<PageIdentifier>);
     void removeWakeLock(WakeLockSentinel&);
 
     void releaseAllLocks(WakeLockType);

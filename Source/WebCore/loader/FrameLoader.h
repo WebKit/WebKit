@@ -132,7 +132,7 @@ public:
     ResourceLoaderIdentifier loadResourceSynchronously(const ResourceRequest&, ClientCredentialPolicy, const FetchOptions&, const HTTPHeaderMap&, ResourceError&, ResourceResponse&, RefPtr<SharedBuffer>& data);
 
     bool upgradeRequestforHTTPSOnlyIfNeeded(const URL&, ResourceRequest&) const;
-    WEBCORE_EXPORT void changeLocation(const URL&, const AtomString& target, Event*, const ReferrerPolicy&, ShouldOpenExternalURLsPolicy, std::optional<NewFrameOpenerPolicy> = std::nullopt, const AtomString& downloadAttribute = nullAtom(), const SystemPreviewInfo& = { }, std::optional<PrivateClickMeasurement>&& = std::nullopt);
+    WEBCORE_EXPORT void changeLocation(const URL&, const AtomString& target, Event*, const ReferrerPolicy&, ShouldOpenExternalURLsPolicy, std::optional<NewFrameOpenerPolicy> = std::nullopt, const AtomString& downloadAttribute = nullAtom(), std::optional<PrivateClickMeasurement>&& = std::nullopt);
     void changeLocation(FrameLoadRequest&&, Event* = nullptr, std::optional<PrivateClickMeasurement>&& = std::nullopt);
     void submitForm(Ref<FormSubmission>&&);
 
@@ -203,6 +203,8 @@ public:
 
     void didReachLayoutMilestone(OptionSet<LayoutMilestone>);
     void didFirstLayout();
+    void restoreScrollPositionAndViewStateSoon();
+    void restoreScrollPositionAndViewStateNowIfNeeded();
     void didReachVisuallyNonEmptyState();
 
     void loadedResourceFromMemoryCache(CachedResource&, ResourceRequest& newRequest, ResourceError&);
@@ -218,7 +220,6 @@ public:
     const FrameLoaderClient& client() const { return m_client.get(); }
     FrameLoaderClient& client() { return m_client.get(); }
 
-    WEBCORE_EXPORT std::optional<PageIdentifier> pageID() const;
     WEBCORE_EXPORT FrameIdentifier frameID() const;
 
     void setDefersLoading(bool);
@@ -246,9 +247,9 @@ public:
 
     bool checkIfFormActionAllowedByCSP(const URL&, bool didReceiveRedirectResponse, const URL& preRedirectURL) const;
 
-    WEBCORE_EXPORT LocalFrame* opener();
-    WEBCORE_EXPORT const LocalFrame* opener() const;
-    WEBCORE_EXPORT void setOpener(LocalFrame*);
+    WEBCORE_EXPORT Frame* opener();
+    WEBCORE_EXPORT const Frame* opener() const;
+    WEBCORE_EXPORT void setOpener(Frame*);
     WEBCORE_EXPORT void detachFromAllOpenedFrames();
 
     void resetMultipleFormSubmissionProtection();
@@ -340,6 +341,7 @@ private:
         MayNotAttemptCacheOnlyLoadForFormSubmissionItem
     };
 
+    std::optional<PageIdentifier> pageID() const;
     void executeJavaScriptURL(const URL&, const NavigationAction&);
 
     bool allChildrenAreComplete() const; // immediate children, not all descendants
@@ -463,37 +465,38 @@ private:
 
     URL m_provisionalLoadErrorBeingHandledURL;
 
-    bool m_quickRedirectComing;
-    bool m_sentRedirectNotification;
-    bool m_inStopAllLoaders;
+    bool m_quickRedirectComing { false };
+    bool m_sentRedirectNotification { false };
+    bool m_inStopAllLoaders { false };
     bool m_inClearProvisionalLoadForPolicyCheck { false };
     bool m_shouldReportResourceTimingToParentFrame { true };
+    bool m_provisionalLoadHappeningInAnotherProcess { false };
 
     String m_outgoingReferrer;
 
-    bool m_isExecutingJavaScriptFormAction;
+    bool m_isExecutingJavaScriptFormAction { false };
 
-    bool m_didCallImplicitClose;
-    bool m_wasUnloadEventEmitted;
+    bool m_didCallImplicitClose { true };
+    bool m_wasUnloadEventEmitted { false };
 
     PageDismissalType m_pageDismissalEventBeingDispatched { PageDismissalType::None };
-    bool m_isComplete;
-    bool m_needsClear;
+    bool m_isComplete { false };
+    bool m_needsClear { false };
 
     URL m_submittedFormURL;
 
     Timer m_checkTimer;
-    bool m_shouldCallCheckCompleted;
-    bool m_shouldCallCheckLoadComplete;
+    bool m_shouldCallCheckCompleted { false };
+    bool m_shouldCallCheckLoadComplete { false };
 
-    WeakPtr<LocalFrame> m_opener;
-    WeakHashSet<LocalFrame> m_openedFrames;
+    WeakPtr<Frame> m_opener;
+    WeakHashSet<Frame> m_openedFrames;
 
-    bool m_loadingFromCachedPage;
+    bool m_loadingFromCachedPage { false };
 
-    bool m_currentNavigationHasShownBeforeUnloadConfirmPanel;
+    bool m_currentNavigationHasShownBeforeUnloadConfirmPanel { false };
 
-    bool m_loadsSynchronously;
+    bool m_loadsSynchronously { false };
 
     SandboxFlags m_forcedSandboxFlags;
 
@@ -514,6 +517,7 @@ private:
 
     bool m_inStopForBackForwardCache { false };
     bool m_isHTTPFallbackInProgress { false };
+    bool m_shouldRestoreScrollPositionAndViewState { false };
 };
 
 // This function is called by createWindow() in JSDOMWindowBase.cpp, for example, for

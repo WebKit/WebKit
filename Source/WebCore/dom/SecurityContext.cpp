@@ -28,7 +28,6 @@
 #include "SecurityContext.h"
 
 #include "ContentSecurityPolicy.h"
-#include "HTMLParserIdioms.h"
 #include "PolicyContainer.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginPolicy.h"
@@ -107,12 +106,12 @@ SandboxFlags SecurityContext::parseSandboxPolicy(StringView policy, String& inva
     unsigned numberOfTokenErrors = 0;
     StringBuilder tokenErrors;
     while (true) {
-        while (start < length && isHTMLSpace(policy[start]))
+        while (start < length && isASCIIWhitespace(policy[start]))
             ++start;
         if (start >= length)
             break;
         unsigned end = start + 1;
-        while (end < length && !isHTMLSpace(policy[end]))
+        while (end < length && !isASCIIWhitespace(policy[end]))
             ++end;
 
         // Turn off the corresponding sandbox flag if it's set as "allowed".

@@ -48,6 +48,10 @@ extern "C" {
     void jitCagePtrGateAfter(void);
     void vmEntryToJavaScriptGateAfter(void);
 
+    // WebCore calls these from SelectorCompiler, so they are not hidden like normal LLInt symbols.
+    JS_EXPORT_PRIVATE unsigned vmEntryToCSSJIT(uintptr_t, uintptr_t, uintptr_t, const void* codePtr);
+    JS_EXPORT_PRIVATE void vmEntryToCSSJITAfter(void);
+
     void llint_function_for_call_arity_checkUntagGateAfter(void);
     void llint_function_for_call_arity_checkTagGateAfter(void);
     void llint_function_for_construct_arity_checkUntagGateAfter(void);

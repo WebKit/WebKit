@@ -186,6 +186,12 @@ inline bool nodeMatchesBasicTest(Node& node, Step::Axis axis, const Step::NodeTe
                 if (name == starAtom())
                     return namespaceURI.isEmpty() || node.namespaceURI() == namespaceURI;
 
+                auto& attr = downcast<Attr>(node);
+                if (attr.document().isHTMLDocument() && attr.ownerElement() && attr.ownerElement()->isHTMLElement()
+                    && namespaceURI.isNull() && attr.namespaceURI().isNull()) {
+                    return equalIgnoringASCIICase(attr.localName(), name);
+                }
+
                 return node.localName() == name && node.namespaceURI() == namespaceURI;
             }
 
@@ -348,7 +354,13 @@ void Step::nodesInAxis(Node& context, NodeSet& nodes) const
 
             // Avoid lazily creating attribute nodes for attributes that we do not need anyway.
             if (m_nodeTest.m_kind == NodeTest::NameTest && m_nodeTest.m_data != starAtom()) {
-                auto attr = contextElement.getAttributeNodeNS(m_nodeTest.m_namespaceURI, m_nodeTest.m_data);
+                RefPtr<Attr> attr;
+                // We need this branch because getAttributeNodeNS() doesn't do
+                // ignore-case matching even for an HTML element in an HTML document.
+                if (m_nodeTest.m_namespaceURI.isNull())
+                    attr = contextElement.getAttributeNode(m_nodeTest.m_data);
+                else
+                    attr = contextElement.getAttributeNodeNS(m_nodeTest.m_namespaceURI, m_nodeTest.m_data);
                 if (attr && attr->namespaceURI() != XMLNSNames::xmlnsNamespaceURI) { // In XPath land, namespace nodes are not accessible on the attribute axis.
                     if (nodeMatches(*attr, AttributeAxis, m_nodeTest)) // Still need to check merged predicates.
                         nodes.append(WTFMove(attr));

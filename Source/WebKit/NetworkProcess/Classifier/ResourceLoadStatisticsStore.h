@@ -109,7 +109,6 @@ public:
 
     virtual void updateCookieBlocking(CompletionHandler<void()>&&) = 0;
     void updateCookieBlockingForDomains(RegistrableDomainsToBlockCookiesFor&&, CompletionHandler<void()>&&);
-    void clearBlockingStateForDomains(const Vector<RegistrableDomain>& domains, CompletionHandler<void()>&&);
 
     void processStatisticsAndDataRecords();
 
@@ -206,7 +205,6 @@ public:
     virtual bool isDatabaseStore()const { return false; }
 
     virtual void includeTodayAsOperatingDateIfNecessary() = 0;
-    virtual void clearOperatingDates() = 0;
     virtual bool hasStatisticsExpired(WallTime mostRecentUserInteractionTime, OperatingDatesWindow) const = 0;
     virtual void insertExpiredStatisticForTesting(const RegistrableDomain&, unsigned numberOfOperatingDaysPassed, bool hasUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool) = 0;
 
@@ -249,7 +247,6 @@ protected:
     const Parameters& parameters() const { return m_parameters; }
     WallTime& endOfGrandfatheringTimestamp() { return m_endOfGrandfatheringTimestamp; }
     const WallTime& endOfGrandfatheringTimestamp() const { return m_endOfGrandfatheringTimestamp; }
-    void setEndOfGrandfatheringTimestamp(const WallTime& grandfatheringTime) { m_endOfGrandfatheringTimestamp = grandfatheringTime; }
     void clearEndOfGrandfatheringTimeStamp() { m_endOfGrandfatheringTimestamp = { }; }
     const RegistrableDomain& debugManualPrevalentResource() const { return m_debugManualPrevalentResource; }
     const RegistrableDomain& debugStaticPrevalentResource() const { return m_debugStaticPrevalentResource; }

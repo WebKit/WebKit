@@ -35,6 +35,7 @@
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"
 #include "Logging.h"
+#include "RenderStyleInlines.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -79,11 +80,9 @@ ContentHeightAndMargin BlockFormattingGeometry::inFlowNonReplacedContentHeightAn
 
         // 1. the bottom edge of the last line box, if the box establishes a inline formatting context with one or more lines
         if (layoutBox.establishesInlineFormattingContext()) {
-            auto& inlineFormattingState = layoutState().formattingStateForInlineFormattingContext(layoutBox);
-            auto& lines = inlineFormattingState.lines();
-            // Even empty containers generate one line. 
-            ASSERT(!lines.isEmpty());
-            return { toLayoutUnit(lines.last().bottom() + inlineFormattingState.clearGapAfterLastLine()) - borderAndPaddingTop, nonCollapsedMargin };
+            // FIXME: Need access to display content.
+            ASSERT_NOT_IMPLEMENTED_YET();
+            return { };
         }
 
         // 2. the bottom edge of the bottom (possibly collapsed) margin of its last in-flow child, if the child's bottom margin...

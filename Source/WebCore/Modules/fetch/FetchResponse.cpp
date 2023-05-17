@@ -58,7 +58,6 @@ Ref<FetchResponse> FetchResponse::create(ScriptExecutionContext* context, std::o
 
     auto fetchResponse = adoptRef(*new FetchResponse(context, WTFMove(body), WTFMove(headers), WTFMove(response)));
     fetchResponse->suspendIfNeeded();
-    fetchResponse->updateContentType();
     if (!isSynthetic)
         fetchResponse->m_filteredResponse = ResourceResponseBase::filter(fetchResponse->m_internalResponse, ResourceResponse::PerformExposeAllHeadersCheck::Yes);
     if (isOpaque)
@@ -111,7 +110,6 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::create(ScriptExecutionContext& co
     auto r = adoptRef(*new FetchResponse(&context, WTFMove(body), WTFMove(headers), { }));
     r->suspendIfNeeded();
 
-    r->m_contentType = contentType;
     AtomString mimeType { extractMIMETypeFromMediaType(contentType) };
     r->m_internalResponse.setMimeType(mimeType.isEmpty() ? AtomString { defaultMIMEType() } : mimeType);
     r->m_internalResponse.setTextEncodingName(extractCharsetFromMediaType(contentType).toAtomString());
@@ -208,6 +206,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::clone()
 
     auto clone = FetchResponse::create(scriptExecutionContext(), std::nullopt, headers().guard(), ResourceResponse { m_internalResponse });
     clone->cloneBody(*this);
+    clone->m_headers = FetchHeaders::create(headers());
     clone->m_opaqueLoadIdentifier = m_opaqueLoadIdentifier;
     clone->m_bodySizeWithPadding = m_bodySizeWithPadding;
     return clone;
@@ -341,7 +340,6 @@ void FetchResponse::setReceivedInternalResponse(const ResourceResponse& resource
     }
 
     m_headers->filterAndFill(m_filteredResponse->httpHeaderFields(), FetchHeaders::Guard::Response);
-    updateContentType();
 }
 
 FetchResponse::Loader::Loader(FetchResponse& response, NotificationCallback&& responseCallback)

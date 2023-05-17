@@ -71,7 +71,7 @@ public:
 protected:
     JSTestPluginInterface(JSC::Structure*, JSDOMGlobalObject&, Ref<TestPluginInterface>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestPluginInterfaceOwner final : public JSC::WeakHandleOwner {

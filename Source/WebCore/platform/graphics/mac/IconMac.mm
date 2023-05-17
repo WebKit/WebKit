@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -65,9 +65,9 @@ RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
 
 RefPtr<Icon> Icon::createIconForFileExtension(const String& fileExtension)
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSImage *image = [[NSWorkspace sharedWorkspace] iconForFileType:[@"." stringByAppendingString:fileExtension]];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     if (!image)
         return nullptr;
 
@@ -76,9 +76,9 @@ RefPtr<Icon> Icon::createIconForFileExtension(const String& fileExtension)
 
 RefPtr<Icon> Icon::createIconForUTI(const String& UTI)
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSImage *image = [[NSWorkspace sharedWorkspace] iconForFileType:UTI];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     if (!image)
         return nullptr;
 

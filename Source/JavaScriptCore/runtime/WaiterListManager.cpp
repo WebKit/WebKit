@@ -55,7 +55,7 @@ WaiterListManager::WaitSyncResult WaiterListManager::waitSyncImpl(VM& vm, ValueT
 {
     Ref<Waiter> syncWaiter = vm.syncWaiter();
     Ref<WaiterList> list = findOrCreateList(ptr);
-    MonotonicTime time = MonotonicTime::now() + timeout;
+    MonotonicTime time = MonotonicTime::timePointFromNow(timeout);
 
     {
         Locker listLocker { list->lock };

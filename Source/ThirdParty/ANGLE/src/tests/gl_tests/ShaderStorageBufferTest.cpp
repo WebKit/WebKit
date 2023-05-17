@@ -3147,6 +3147,8 @@ void main() {
     glDispatchCompute(1, 1, 1);
     ASSERT_GL_NO_ERROR();
 
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, shaderStorageBuffer[0]);
     const void *buffer0Data =
         glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kSize[0], GL_MAP_READ_BIT);
@@ -3164,7 +3166,166 @@ void main() {
     EXPECT_GL_NO_ERROR();
 }
 
+// Test that buffer self-copy works when buffer is used as SSBO
+TEST_P(ShaderStorageBufferTest31, CopyBufferSubDataSelfDependency)
+{
+    constexpr char kCS[] = R"(#version 310 es
+
+layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
+
+layout(binding = 0, std430) buffer SSBO
+{
+    uvec4 data[128];
+};
+
+void main()
+{
+    data[12] += uvec4(1);
+    data[12+64] += uvec4(10);
+}
+)";
+
+    ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
+    glUseProgram(program);
+
+    constexpr uint32_t kUVec4Size   = 4 * sizeof(uint32_t);
+    constexpr uint32_t kSSBOSize    = 128 * kUVec4Size;
+    constexpr uint32_t kData1Offset = 12 * kUVec4Size;
+    constexpr uint32_t kData2Offset = 76 * kUVec4Size;
+
+    // Init data is 4 times the size of SSBO as the buffer is created larger than the SSBO
+    // throughout the test.
+    constexpr uint32_t kInitValue = 12345;
+    const std::vector<uint32_t> kInitData(kSSBOSize, kInitValue);
+
+    // Set up a throw-away buffer just to make buffer suballocations not use offset 0.
+    GLBuffer throwaway;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, throwaway);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, 1024, nullptr, GL_DYNAMIC_DRAW);
+
+    // Set up the buffer
+    GLBuffer buffer;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, kSSBOSize * 2, kInitData.data(), GL_DYNAMIC_DRAW);
+
+    // Bind at offset 0.  After the dispatch call: [12] is +1, [76] is +10
+    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, buffer, 0, kSSBOSize);
+    glDispatchCompute(1, 1, 1);
+
+    // Duplicate the buffer in the second half.  Barrier needed for glCopyBufferSubData.  After the
+    // copy: [128+12] is +1, [128+76] is +10
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    glCopyBufferSubData(GL_SHADER_STORAGE_BUFFER, GL_SHADER_STORAGE_BUFFER, 0, kSSBOSize,
+                        kSSBOSize);
+
+    // Barrier needed before writing to the buffer in the shader.
+    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
+    // Bind at offset 128.  After the dispatch call: [128+12] is +2, [128+76] is +20
+    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, buffer, kSSBOSize, kSSBOSize);
+    glDispatchCompute(1, 1, 1);
+
+    // Do a small self-copy.  Barrier needed for glCopyBufferSubData.
+    // After the copy: [64+12] = [128+12] (i.e. +2)
+    constexpr uint32_t kCopySrcOffset = (128 + 4) * kUVec4Size;
+    constexpr uint32_t kCopyDstOffset = (64 + 4) * kUVec4Size;
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    glCopyBufferSubData(GL_SHADER_STORAGE_BUFFER, GL_SHADER_STORAGE_BUFFER, kCopySrcOffset,
+                        kCopyDstOffset, kData1Offset);
+
+    // Barrier needed before writing to the buffer in the shader.
+    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
+    // Bind at offset 64.  After the dispatch call: [64+12] is +3, [64+76] (i.e. [128+12]) is +12
+    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, buffer, kCopySrcOffset - kCopyDstOffset,
+                      kSSBOSize);
+    glDispatchCompute(1, 1, 1);
+
+    // Validate results.  Barrier needed for glMapBufferRange
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    std::vector<uint32_t> result(kSSBOSize / 2);
+    const void *bufferData =
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kSSBOSize * 2, GL_MAP_READ_BIT);
+    memcpy(result.data(), bufferData, kSSBOSize * 2);
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+    for (size_t index = 0; index < kSSBOSize * 2 / kUVec4Size; ++index)
+    {
+        size_t offset      = index * 4;
+        uint32_t increment = 0;
+        if (index == kData1Offset / kUVec4Size)
+        {
+            increment = 1;
+        }
+        else if (index == kData2Offset / kUVec4Size)
+        {
+            increment = 3;
+        }
+        else if (index == (kSSBOSize + kData1Offset) / kUVec4Size)
+        {
+            increment = 12;
+        }
+        else if (index == (kSSBOSize + kData2Offset) / kUVec4Size)
+        {
+            increment = 20;
+        }
+
+        for (size_t component = 0; component < 4; ++component)
+        {
+            EXPECT_EQ(result[offset + component], kInitValue + increment)
+                << component << " " << index << " " << increment;
+        }
+    }
+
+    // Do a big copy again, but this time the buffer is unused by the GPU.
+    // After this call: [12] is +12, [76] is +20
+    glCopyBufferSubData(GL_SHADER_STORAGE_BUFFER, GL_SHADER_STORAGE_BUFFER, kSSBOSize, 0,
+                        kSSBOSize);
+
+    // Barrier needed before writing to the buffer in the shader.
+    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
+    // Bind at offset 0.  After the dispatch call: [12] is +13, [76] is +30
+    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, 0, buffer, 0, kSSBOSize);
+    glDispatchCompute(1, 1, 1);
+
+    // Validate results.  Barrier needed for glMapBufferRange
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    bufferData = glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, kSSBOSize * 2, GL_MAP_READ_BIT);
+    memcpy(result.data(), bufferData, kSSBOSize * 2);
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+    for (size_t index = 0; index < kSSBOSize * 2 / kUVec4Size; ++index)
+    {
+        size_t offset      = index * 4;
+        uint32_t increment = 0;
+        if (index == kData1Offset / kUVec4Size)
+        {
+            increment = 13;
+        }
+        else if (index == kData2Offset / kUVec4Size)
+        {
+            increment = 30;
+        }
+        else if (index == (kSSBOSize + kData1Offset) / kUVec4Size)
+        {
+            increment = 12;
+        }
+        else if (index == (kSSBOSize + kData2Offset) / kUVec4Size)
+        {
+            increment = 20;
+        }
+
+        for (size_t component = 0; component < 4; ++component)
+        {
+            EXPECT_EQ(result[offset + component], kInitValue + increment)
+                << component << " " << index << " " << increment;
+        }
+    }
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ShaderStorageBufferTest31);
-ANGLE_INSTANTIATE_TEST_ES31(ShaderStorageBufferTest31);
+ANGLE_INSTANTIATE_TEST_ES31_AND(ShaderStorageBufferTest31,
+                                ES31_VULKAN().enable(Feature::PreferCPUForBufferSubData));
 
 }  // namespace

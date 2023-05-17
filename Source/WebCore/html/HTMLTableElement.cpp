@@ -38,6 +38,7 @@
 #include "HTMLTableRowsCollection.h"
 #include "HTMLTableSectionElement.h"
 #include "MutableStyleProperties.h"
+#include "NodeName.h"
 #include "NodeRareData.h"
 #include "RenderTable.h"
 #include <wtf/IsoMallocInlines.h>
@@ -306,28 +307,36 @@ static bool getBordersFromFrameAttributeValue(const AtomString& value, bool& bor
 
 void HTMLTableElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
-    if (name == widthAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::widthAttr:
         addHTMLLengthToStyle(style, CSSPropertyWidth, value, AllowZeroValue::No);
-    else if (name == heightAttr)
+        break;
+    case AttributeNames::heightAttr:
         addHTMLLengthToStyle(style, CSSPropertyHeight, value);
-    else if (name == borderAttr) 
+        break;
+    case AttributeNames::borderAttr:
         addPropertyToPresentationalHintStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(value), CSSUnitType::CSS_PX);
-    else if (name == bordercolorAttr) {
+        break;
+    case AttributeNames::bordercolorAttr:
         if (!value.isEmpty())
             addHTMLColorToStyle(style, CSSPropertyBorderColor, value);
-    } else if (name == bgcolorAttr)
+        break;
+    case AttributeNames::bgcolorAttr:
         addHTMLColorToStyle(style, CSSPropertyBackgroundColor, value);
-    else if (name == backgroundAttr) {
-        String url = stripLeadingAndTrailingHTMLSpaces(value);
-        if (!url.isEmpty())
+        break;
+    case AttributeNames::backgroundAttr:
+        if (String url = stripLeadingAndTrailingHTMLSpaces(value); !url.isEmpty())
             style.setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(document().completeURL(url), LoadedFromOpaqueSource::No)));
-    } else if (name == valignAttr) {
+        break;
+    case AttributeNames::valignAttr:
         if (!value.isEmpty())
             addPropertyToPresentationalHintStyle(style, CSSPropertyVerticalAlign, value);
-    } else if (name == cellspacingAttr) {
+        break;
+    case AttributeNames::cellspacingAttr:
         if (!value.isEmpty())
             addHTMLPixelsToStyle(style, CSSPropertyBorderSpacing, value);
-    } else if (name == alignAttr) {
+        break;
+    case AttributeNames::alignAttr:
         if (!value.isEmpty()) {
             if (equalLettersIgnoringASCIICase(value, "center"_s)) {
                 addPropertyToPresentationalHintStyle(style, CSSPropertyMarginInlineStart, CSSValueAuto);
@@ -335,11 +344,13 @@ void HTMLTableElement::collectPresentationalHintsForAttribute(const QualifiedNam
             } else
                 addPropertyToPresentationalHintStyle(style, CSSPropertyFloat, value);
         }
-    } else if (name == rulesAttr) {
+        break;
+    case AttributeNames::rulesAttr:
         // The presence of a valid rules attribute causes border collapsing to be enabled.
         if (m_rulesAttr != UnsetRules)
             addPropertyToPresentationalHintStyle(style, CSSPropertyBorderCollapse, CSSValueCollapse);
-    } else if (name == frameAttr) {
+        break;
+    case AttributeNames::frameAttr: {
         bool borderTop;
         bool borderRight;
         bool borderBottom;
@@ -351,14 +362,33 @@ void HTMLTableElement::collectPresentationalHintsForAttribute(const QualifiedNam
             addPropertyToPresentationalHintStyle(style, CSSPropertyBorderLeftStyle, borderLeft ? CSSValueSolid : CSSValueHidden);
             addPropertyToPresentationalHintStyle(style, CSSPropertyBorderRightStyle, borderRight ? CSSValueSolid : CSSValueHidden);
         }
-    } else
+        break;
+    }
+    default:
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
+        break;
+    }
 }
 
 bool HTMLTableElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
-    if (name == widthAttr || name == heightAttr || name == bgcolorAttr || name == backgroundAttr || name == valignAttr || name == vspaceAttr || name == hspaceAttr || name == cellspacingAttr || name == borderAttr || name == bordercolorAttr || name == frameAttr || name == rulesAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::widthAttr:
+    case AttributeNames::heightAttr:
+    case AttributeNames::bgcolorAttr:
+    case AttributeNames::backgroundAttr:
+    case AttributeNames::valignAttr:
+    case AttributeNames::vspaceAttr:
+    case AttributeNames::hspaceAttr:
+    case AttributeNames::cellspacingAttr:
+    case AttributeNames::borderAttr:
+    case AttributeNames::bordercolorAttr:
+    case AttributeNames::frameAttr:
+    case AttributeNames::rulesAttr:
         return true;
+    default:
+        break;
+    }
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
@@ -369,19 +399,24 @@ void HTMLTableElement::attributeChanged(const QualifiedName& name, const AtomStr
     CellBorders bordersBefore = cellBorders();
     unsigned short oldPadding = m_padding;
 
-    if (name == borderAttr)  {
+    switch (name.nodeName()) {
+    case AttributeNames::borderAttr:
         // FIXME: This attribute is a mess.
         m_borderAttr = parseBorderWidthAttribute(newValue);
-    } else if (name == bordercolorAttr) {
+        break;
+    case AttributeNames::bordercolorAttr:
         m_borderColorAttr = !newValue.isEmpty();
-    } else if (name == frameAttr) {
+        break;
+    case AttributeNames::frameAttr: {
         // FIXME: This attribute is a mess.
         bool borderTop;
         bool borderRight;
         bool borderBottom;
         bool borderLeft;
         m_frameAttr = getBordersFromFrameAttributeValue(newValue, borderTop, borderRight, borderBottom, borderLeft);
-    } else if (name == rulesAttr) {
+        break;
+    }
+    case AttributeNames::rulesAttr:
         m_rulesAttr = UnsetRules;
         if (equalLettersIgnoringASCIICase(newValue, "none"_s))
             m_rulesAttr = NoneRules;
@@ -393,11 +428,15 @@ void HTMLTableElement::attributeChanged(const QualifiedName& name, const AtomStr
             m_rulesAttr = ColsRules;
         else if (equalLettersIgnoringASCIICase(newValue, "all"_s))
             m_rulesAttr = AllRules;
-    } else if (name == cellpaddingAttr) {
+        break;
+    case AttributeNames::cellpaddingAttr:
         if (!newValue.isEmpty())
             m_padding = std::max(0, parseHTMLInteger(newValue).value_or(0));
         else
             m_padding = 1;
+        break;
+    default:
+        break;
     }
 
     if (bordersBefore != cellBorders() || oldPadding != m_padding) {
@@ -549,12 +588,12 @@ bool HTMLTableElement::isURLAttribute(const Attribute& attribute) const
 
 Ref<HTMLCollection> HTMLTableElement::rows()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLTableRowsCollection>(*this, TableRows);
+    return ensureRareData().ensureNodeLists().addCachedCollection<HTMLTableRowsCollection>(*this, CollectionType::TableRows);
 }
 
 Ref<HTMLCollection> HTMLTableElement::tBodies()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<TableTBodies>::traversalType>>(*this, TableTBodies);
+    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<CollectionType::TableTBodies>::traversalType>>(*this, CollectionType::TableTBodies);
 }
 
 const AtomString& HTMLTableElement::rules() const

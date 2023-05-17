@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that loading a data URL with a PDF MIME type inside an <object> does not dispatch an error event.");
+jsTestIsAsync = true;
+
+let object = document.createElement("object");
+object.data = "data:application/pdf;base64,aG1t";
+object.onerror = () => {
+    testFailed("Error event dispatched");
+    finishJSTest();
+};
+
+document.body.append(object);
+setTimeout(() => {
+    object.remove();
+    testPassed("No error event dispatched");
+    finishJSTest();
+}, 1000);
+</script>
+</body>
+</html>

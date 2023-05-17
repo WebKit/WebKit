@@ -271,7 +271,7 @@ void BackgroundFetchEngine::retrieveRecordResponseBody(BackgroundFetchRecordIden
     record->retrieveRecordResponseBody(m_store.get(), WTFMove(callback));
 }
 
-void BackgroundFetchEngine::addFetchFromStore(Span<const uint8_t> data, CompletionHandler<void(const ServiceWorkerRegistrationKey&, const String&)>&& callback)
+void BackgroundFetchEngine::addFetchFromStore(std::span<const uint8_t> data, CompletionHandler<void(const ServiceWorkerRegistrationKey&, const String&)>&& callback)
 {
     auto fetch = BackgroundFetch::createFromStore(data, *m_server, m_store.get(), [weakThis = WeakPtr { *this }](auto& fetch) {
         if (weakThis)

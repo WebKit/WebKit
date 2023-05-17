@@ -41,7 +41,6 @@ public:
     Ref<StyleMultiColData> copy() const;
     
     bool operator==(const StyleMultiColData&) const;
-    bool operator!=(const StyleMultiColData& other) const { return !(*this == other); }
 
     unsigned short ruleWidth() const
     {

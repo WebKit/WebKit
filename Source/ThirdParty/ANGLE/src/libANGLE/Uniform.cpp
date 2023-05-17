@@ -15,7 +15,7 @@ ActiveVariable::ActiveVariable() {}
 
 ActiveVariable::~ActiveVariable() {}
 
-ActiveVariable::ActiveVariable(const ActiveVariable &rhs) = default;
+ActiveVariable::ActiveVariable(const ActiveVariable &rhs)            = default;
 ActiveVariable &ActiveVariable::operator=(const ActiveVariable &rhs) = default;
 
 void ActiveVariable::setActive(ShaderType shaderType, bool used)
@@ -94,12 +94,12 @@ LinkedUniform::LinkedUniform(const LinkedUniform &uniform)
 LinkedUniform &LinkedUniform::operator=(const LinkedUniform &uniform)
 {
     sh::ShaderVariable::operator=(uniform);
-    ActiveVariable::operator    =(uniform);
-    typeInfo                    = uniform.typeInfo;
-    bufferIndex                 = uniform.bufferIndex;
-    blockInfo                   = uniform.blockInfo;
-    outerArraySizes             = uniform.outerArraySizes;
-    outerArrayOffset            = uniform.outerArrayOffset;
+    ActiveVariable::operator=(uniform);
+    typeInfo         = uniform.typeInfo;
+    bufferIndex      = uniform.bufferIndex;
+    blockInfo        = uniform.blockInfo;
+    outerArraySizes  = uniform.outerArraySizes;
+    outerArrayOffset = uniform.outerArrayOffset;
     return *this;
 }
 
@@ -136,22 +136,26 @@ int ShaderVariableBuffer::numActiveVariables() const
     return static_cast<int>(memberIndexes.size());
 }
 
-InterfaceBlock::InterfaceBlock() : isArray(false), arrayElement(0) {}
+InterfaceBlock::InterfaceBlock() : isArray(false), isReadOnly(false), arrayElement(0) {}
 
 InterfaceBlock::InterfaceBlock(const std::string &nameIn,
                                const std::string &mappedNameIn,
                                bool isArrayIn,
+                               bool isReadOnlyIn,
                                unsigned int arrayElementIn,
                                unsigned int firstFieldArraySizeIn,
                                int bindingIn)
     : name(nameIn),
       mappedName(mappedNameIn),
       isArray(isArrayIn),
+      isReadOnly(isReadOnlyIn),
       arrayElement(arrayElementIn),
       firstFieldArraySize(firstFieldArraySizeIn)
 {
     binding = bindingIn;
 }
+
+InterfaceBlock::InterfaceBlock(const InterfaceBlock &other) = default;
 
 std::string InterfaceBlock::nameWithArrayIndex() const
 {

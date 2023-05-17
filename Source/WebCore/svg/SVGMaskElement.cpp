@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SVGMaskElement.h"
 
+#include "NodeName.h"
 #include "RenderSVGResourceMaskerInlines.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
@@ -69,30 +70,36 @@ void SVGMaskElement::attributeChanged(const QualifiedName& name, const AtomStrin
     SVGTests::parseAttribute(name, newValue);
     SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == SVGNames::maskUnitsAttr) {
+
+    SVGParsingError parseError = NoError;
+    switch (name.nodeName()) {
+    case AttributeNames::maskUnitsAttr: {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(newValue);
         if (propertyValue > 0)
             m_maskUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
         return;
     }
-    if (name == SVGNames::maskContentUnitsAttr) {
+    case AttributeNames::maskContentUnitsAttr: {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(newValue);
         if (propertyValue > 0)
             m_maskContentUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
         return;
     }
-
-    SVGParsingError parseError = NoError;
-
-    if (name == SVGNames::xAttr)
+    case AttributeNames::xAttr:
         m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
-    else if (name == SVGNames::yAttr)
+        break;
+    case AttributeNames::yAttr:
         m_y->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
-    else if (name == SVGNames::widthAttr)
+        break;
+    case AttributeNames::widthAttr:
         m_width->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
-    else if (name == SVGNames::heightAttr)
+        break;
+    case AttributeNames::heightAttr:
         m_height->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
-
+        break;
+    default:
+        break;
+    }
     reportAttributeParsingError(parseError, name, newValue);
 }
 

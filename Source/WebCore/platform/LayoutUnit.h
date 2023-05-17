@@ -79,10 +79,6 @@ public:
     {
         m_value = clampTo<int>(value * kFixedPointDenominator);
     }
-    explicit LayoutUnit(float value)
-    {
-        m_value = clampToInteger(value * kFixedPointDenominator);
-    }
     explicit LayoutUnit(double value)
     {
         m_value = clampToInteger(value * kFixedPointDenominator);
@@ -376,31 +372,6 @@ inline bool operator>(const float a, const LayoutUnit& b)
 inline bool operator>(const double a, const LayoutUnit& b)
 {
     return a > b.toDouble();
-}
-
-inline bool operator!=(const LayoutUnit& a, const LayoutUnit& b)
-{
-    return a.rawValue() != b.rawValue();
-}
-
-inline bool operator!=(const float a, const LayoutUnit& b)
-{
-    return LayoutUnit(a) != b;
-}
-
-inline bool operator!=(const LayoutUnit& a, float b)
-{
-    return a != LayoutUnit(b);
-}
-
-inline bool operator!=(const int a, const LayoutUnit& b)
-{
-    return LayoutUnit(a) != b;
-}
-
-inline bool operator!=(const LayoutUnit& a, int b)
-{
-    return a != LayoutUnit(b);
 }
 
 inline bool operator==(const LayoutUnit& a, const LayoutUnit& b)

@@ -2,5 +2,5 @@
 PASS @counter-style unlayered overrides layered
 PASS @counter-style override between layers
 PASS @counter-style override update with appended sheet 1
-FAIL @counter-style override update with appended sheet 2 assert_equals: expected "31.21875px" but got "23.40625px"
+PASS @counter-style override update with appended sheet 2
 

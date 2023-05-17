@@ -40,7 +40,7 @@ JSApplePayInstallmentConfiguration.cpp
 JSApplePayInstallmentItem.cpp
 JSApplePayInstallmentItemType.cpp
 JSApplePayInstallmentRetailChannel.cpp
-JSApplePayLaterMode.cpp
+JSApplePayLaterAvailability.cpp
 JSApplePayLineItem.cpp
 JSApplePayMerchantCapability.cpp
 JSApplePayModifier.cpp
@@ -80,6 +80,10 @@ JSSpeechSynthesisErrorCode.cpp
 JSSpeechSynthesisErrorEvent.cpp
 JSSpeechSynthesisErrorEventInit.cpp
 JSSpeechSynthesisEventInit.cpp
+Modules/ShapeDetection/Implementation/Cocoa/BarcodeDetectorImplementation.mm
+Modules/ShapeDetection/Implementation/Cocoa/FaceDetectorImplementation.mm
+Modules/ShapeDetection/Implementation/Cocoa/TextDetectorImplementation.mm
+Modules/ShapeDetection/Implementation/Cocoa/VisionUtilities.mm
 Modules/airplay/WebMediaSessionManager.cpp
 Modules/applepay/ApplePayCouponCodeChangedEvent.cpp
 Modules/applepay/ApplePayCancelEvent.cpp
@@ -415,7 +419,6 @@ platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp
 platform/graphics/cocoa/FontFamilySpecificationCoreTextCache.cpp
 platform/graphics/cocoa/FontPlatformDataCocoa.mm
 platform/graphics/cocoa/GraphicsContextCocoa.mm
-platform/graphics/cocoa/GraphicsContextGLIOSurfaceSwapChain.cpp
 platform/graphics/cocoa/HEVCUtilitiesCocoa.mm
 platform/graphics/cocoa/IOSurface.mm
 platform/graphics/cocoa/IOSurfacePoolCocoa.mm
@@ -441,6 +444,7 @@ platform/graphics/cocoa/controls/ControlFactoryCocoa.mm
 platform/graphics/coretext/DrawGlyphsRecorderCoreText.cpp
 platform/graphics/coretext/FontCascadeCoreText.cpp
 platform/graphics/coretext/FontCoreText.cpp
+platform/graphics/coretext/FontCustomPlatformDataCoreText.cpp
 platform/graphics/coretext/FontPlatformDataCoreText.cpp
 platform/graphics/coretext/GlyphPageCoreText.cpp
 platform/graphics/cv/CVUtilities.mm
@@ -461,7 +465,6 @@ platform/graphics/mac/ComplexTextControllerCoreText.mm
 platform/graphics/mac/DisplayConfigurationMonitor.cpp
 platform/graphics/mac/FloatPointMac.mm
 platform/graphics/mac/FloatSizeMac.mm
-platform/graphics/mac/FontCustomPlatformDataMac.cpp
 platform/graphics/mac/GraphicsChecksMac.cpp
 platform/graphics/mac/IconMac.mm
 platform/graphics/mac/ImageMac.mm

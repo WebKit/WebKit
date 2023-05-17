@@ -217,8 +217,6 @@ template<> struct ArgumentCoder<WebCore::FontPlatformData::Attributes> {
 template<> struct ArgumentCoder<WebCore::FontCustomPlatformData> {
     static void encode(Encoder&, const WebCore::FontCustomPlatformData&);
     static std::optional<Ref<WebCore::FontCustomPlatformData>> decode(Decoder&);
-    static void encodePlatformData(Encoder&, const WebCore::FontCustomPlatformData&);
-    static std::optional<Ref<WebCore::FontCustomPlatformData>> decodePlatformData(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::ResourceError> {
@@ -467,13 +465,6 @@ template<> struct ArgumentCoder<WebCore::DataDetectorElementInfo> {
 template<> struct ArgumentCoder<WebCore::CDMInstanceSession::Message> {
     static void encode(Encoder&, const WebCore::CDMInstanceSession::Message&);
     static std::optional<WebCore::CDMInstanceSession::Message> decode(Decoder&);
-};
-#endif
-
-#if HAVE(PASSKIT_INSTALLMENTS)
-template<> struct ArgumentCoder<WebCore::PaymentInstallmentConfiguration> {
-    static void encode(Encoder&, const WebCore::PaymentInstallmentConfiguration&);
-    static std::optional<WebCore::PaymentInstallmentConfiguration> decode(Decoder&);
 };
 #endif
 

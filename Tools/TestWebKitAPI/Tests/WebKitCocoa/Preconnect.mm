@@ -33,6 +33,7 @@
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
 
@@ -260,5 +261,9 @@ TEST(Preconnect, DisablePreconnect)
         configuration._loadsSubresources = NO;
     });
 }
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/PreconnectAdditions.mm>)
+#import <WebKitAdditions/PreconnectAdditions.mm>
+#endif
 
 }

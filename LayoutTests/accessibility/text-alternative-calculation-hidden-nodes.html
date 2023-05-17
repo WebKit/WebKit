@@ -42,7 +42,10 @@
                 axElement = accessibilityController.accessibleElementById("test" + i);
                 output += "Test " + i + "\n";
                 output += "\tW3C Name: " + platformValueForW3CName(axElement) + "\n";
-                output += "\tW3C Description: " + platformValueForW3CDescription(axElement) + "\n";
+                if (accessibilityController.platformName == "mac")
+                    output += "\tCustom content: " + axElement.customContent + "\n";
+                else
+                   output += "\tW3C Description: " + platformValueForW3CDescription(axElement) + "\n";
             }
             debug(output);
             document.getElementById("content").style.visibility = "hidden";

@@ -155,9 +155,8 @@ public:
     int stackOffset() const;
     
     unsigned hash() const;
-    bool operator==(const CodeOrigin& other) const;
-    bool operator!=(const CodeOrigin& other) const { return !(*this == other); }
-    
+    bool operator==(const CodeOrigin&) const;
+
     // This checks if the two code origins correspond to the same stack trace snippets,
     // but ignore whether the InlineCallFrame's are identical.
     bool isApproximatelyEqualTo(const CodeOrigin& other, InlineCallFrame* terminal = nullptr) const;

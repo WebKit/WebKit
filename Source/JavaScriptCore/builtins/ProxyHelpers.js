@@ -44,7 +44,9 @@ function performProxyObjectHas(propertyName)
     if (trap.@call(handler, target, propertyName))
         return true;
 
-    @handleNegativeProxyHasTrapResult(target, propertyName);
+    if (@mustValidateResultOfProxyTrapsExceptGetAndSet(target))
+        @handleNegativeProxyHasTrapResult(target, propertyName);
+
     return false;
 }
 
@@ -68,9 +70,35 @@ function performProxyObjectGet(propertyName, receiver)
 
     var trapResult = trap.@call(handler, target, propertyName, receiver);
 
-    // FIXME: Add op_get_own_property bytecode and IC, which returns two values, value and attributes.
-    // Then we can implement it fully in JS.
-    @handleProxyGetTrapResult(trapResult, target, propertyName);
+    if (@mustValidateResultOfProxyGetAndSetTraps(target))
+        @handleProxyGetTrapResult(trapResult, target, propertyName);
+
+    return trapResult;
+}
+
+@linkTimeConstant
+function performProxyObjectGetByVal(propertyName, receiver)
+{
+    "use strict";
+
+    var target = @getProxyInternalField(this, @proxyFieldTarget);
+    var handler = @getProxyInternalField(this, @proxyFieldHandler);
+    var propertyName = @toPropertyKey(propertyName);
+
+    if (handler === null)
+        @throwTypeError("Proxy has already been revoked. No more operations are allowed to be performed on it");
+
+    var trap = handler.get;
+    if (@isUndefinedOrNull(trap))
+        return @getByValWithThis(target, receiver, propertyName);
+
+    if (!@isCallable(trap))
+        @throwTypeError("'get' property of a Proxy's handler should be callable");
+
+    var trapResult = trap.@call(handler, target, propertyName, receiver);
+
+    if (@mustValidateResultOfProxyGetAndSetTraps(target))
+        @handleProxyGetTrapResult(trapResult, target, propertyName);
 
     return trapResult;
 }
@@ -95,9 +123,11 @@ function performProxyObjectSetSloppy(propertyName, receiver, value)
     if (!@isCallable(trap))
         @throwTypeError("'set' property of a Proxy's handler should be callable");
 
-    var trapResult = trap.@call(handler, target, propertyName, value, receiver);
+    if (!trap.@call(handler, target, propertyName, value, receiver))
+        return;
 
-    @handleProxySetTrapResultSloppy(trapResult, target, propertyName, value);
+    if (@mustValidateResultOfProxyGetAndSetTraps(target))
+        @handlePositiveProxySetTrapResult(target, propertyName, value);
 }
 
 @linkTimeConstant
@@ -120,7 +150,9 @@ function performProxyObjectSetStrict(propertyName, receiver, value)
     if (!@isCallable(trap))
         @throwTypeError("'set' property of a Proxy's handler should be callable");
 
-    var trapResult = trap.@call(handler, target, propertyName, value, receiver);
+    if (!trap.@call(handler, target, propertyName, value, receiver))
+        @throwTypeError("Proxy object's 'set' trap returned falsy value for property '" + @String(propertyName) + "'");
 
-    @handleProxySetTrapResultStrict(trapResult, target, propertyName, value);
+    if (@mustValidateResultOfProxyGetAndSetTraps(target))
+        @handlePositiveProxySetTrapResult(target, propertyName, value);
 }

@@ -362,10 +362,8 @@ void GL_APIENTRY GL_GenProgramPipelines(GLsizei n, GLuint *pipelines)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context,
-                                                angle::EntryPoint::GLGenProgramPipelines) &&
-              ValidateGenProgramPipelines(context, angle::EntryPoint::GLGenProgramPipelines, n,
-                                          pipelinesPacked)));
+             ValidateGenProgramPipelines(context, angle::EntryPoint::GLGenProgramPipelines, n,
+                                         pipelinesPacked));
         if (isCallValid)
         {
             context->genProgramPipelines(n, pipelinesPacked);

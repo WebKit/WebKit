@@ -160,6 +160,7 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
     documentLoader.setColorSchemePreference(websitePolicies.colorSchemePreference);
     documentLoader.setAllowContentChangeObserverQuirk(websitePolicies.allowContentChangeObserverQuirk);
     documentLoader.setNetworkConnectionIntegrityPolicy(websitePolicies.networkConnectionIntegrityPolicy);
+    documentLoader.setOriginatorNetworkConnectionIntegrityPolicy(websitePolicies.networkConnectionIntegrityPolicy);
     documentLoader.setIdempotentModeAutosizingOnlyHonorsPercentages(websitePolicies.idempotentModeAutosizingOnlyHonorsPercentages);
 
     if (!documentLoader.frame())

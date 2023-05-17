@@ -32,6 +32,7 @@
 #include <WebCore/CacheQueryOptions.h>
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/HTTPHeaderMap.h>
+#include <WebCore/OriginAccessPatterns.h>
 #include <WebCore/ResourceError.h>
 #include <wtf/Scope.h>
 
@@ -188,7 +189,7 @@ void CacheStorageCache::retrieveRecords(WebCore::RetrieveRecordsOptions&& option
             }
 
             if (record.response.type == WebCore::ResourceResponse::Type::Opaque) {
-                if (WebCore::validateCrossOriginResourcePolicy(options.crossOriginEmbedderPolicy.value, options.sourceOrigin, record.request.url(), false, record.response.url, record.response.httpHeaderFields.get(WebCore::HTTPHeaderName::CrossOriginResourcePolicy), WebCore::ForNavigation::No))
+                if (WebCore::validateCrossOriginResourcePolicy(options.crossOriginEmbedderPolicy.value, options.sourceOrigin, record.request.url(), false, record.response.url, record.response.httpHeaderFields.get(WebCore::HTTPHeaderName::CrossOriginResourcePolicy), WebCore::ForNavigation::No, WebCore::EmptyOriginAccessPatterns::singleton()))
                     return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::CORP));
             }
 

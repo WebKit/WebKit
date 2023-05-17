@@ -24,6 +24,7 @@
 #include "SVGFEBlendElement.h"
 
 #include "FEBlend.h"
+#include "NodeName.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -53,21 +54,21 @@ void SVGFEBlendElement::attributeChanged(const QualifiedName& name, const AtomSt
 {
     SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == SVGNames::modeAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::modeAttr: {
         BlendMode mode = BlendMode::Normal;
         if (parseBlendMode(newValue, mode))
             m_mode->setBaseValInternal<BlendMode>(mode);
-        return;
+        break;
     }
-
-    if (name == SVGNames::inAttr) {
+    case AttributeNames::inAttr:
         m_in1->setBaseValInternal(newValue);
-        return;
-    }
-
-    if (name == SVGNames::in2Attr) {
+        break;
+    case AttributeNames::in2Attr:
         m_in2->setBaseValInternal(newValue);
-        return;
+        break;
+    default:
+        break;
     }
 }
 

@@ -81,7 +81,7 @@ static size_t computeAES128GCMPaddingLength(const uint8_t *begin, size_t length)
     return end - cur;
 }
 
-std::optional<Vector<uint8_t>> decryptAES128GCMPayload(const ClientKeys& clientKeys, Span<const uint8_t> payload)
+std::optional<Vector<uint8_t>> decryptAES128GCMPayload(const ClientKeys& clientKeys, std::span<const uint8_t> payload)
 {
     if (!areClientKeyLengthsValid(clientKeys))
         return std::nullopt;
@@ -212,7 +212,7 @@ static size_t computeAESGCMPaddingLength(const uint8_t *begin, size_t length)
     return cur - begin;
 }
 
-std::optional<Vector<uint8_t>> decryptAESGCMPayload(const ClientKeys& clientKeys, Span<const uint8_t> serverP256DHPublicKey, Span<const uint8_t> salt, Span<const uint8_t> payload)
+std::optional<Vector<uint8_t>> decryptAESGCMPayload(const ClientKeys& clientKeys, std::span<const uint8_t> serverP256DHPublicKey, std::span<const uint8_t> salt, std::span<const uint8_t> payload)
 {
     if (!areClientKeyLengthsValid(clientKeys) || serverP256DHPublicKey.size() != p256dhPublicKeyLength || salt.size() != saltLength)
         return std::nullopt;

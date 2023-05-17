@@ -208,22 +208,12 @@ bool CAAudioStreamDescription::operator==(const AudioStreamBasicDescription& oth
     return m_streamDescription == other;
 }
 
-bool CAAudioStreamDescription::operator!=(const AudioStreamBasicDescription& other) const
-{
-    return !operator==(other);
-}
-
 bool CAAudioStreamDescription::operator==(const AudioStreamDescription& other) const
 {
     if (other.platformDescription().type != PlatformDescription::CAAudioStreamBasicType)
         return false;
 
     return operator==(*std::get<const AudioStreamBasicDescription*>(other.platformDescription().description));
-}
-
-bool CAAudioStreamDescription::operator!=(const AudioStreamDescription& other) const
-{
-    return !operator==(other);
 }
 
 const AudioStreamBasicDescription& CAAudioStreamDescription::streamDescription() const

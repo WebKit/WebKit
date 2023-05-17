@@ -385,7 +385,7 @@ static RegularExpression* regExpForLabels(NSArray *labels)
             pattern.append(i ? "|" : "", startsWithWordCharacter ? "\\b" : "", label, endsWithWordCharacter ? "\\b" : "");
         }
         pattern.append(')');
-        result = new RegularExpression(pattern.toString(), JSC::Yarr::TextCaseInsensitive);
+        result = new RegularExpression(pattern.toString(), { JSC::Yarr::Flags::IgnoreCase });
     }
 
     // add regexp to the cache, making sure it is at the front for LRU ordering

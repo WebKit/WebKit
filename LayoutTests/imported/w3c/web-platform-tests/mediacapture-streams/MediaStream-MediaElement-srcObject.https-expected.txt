@@ -19,6 +19,7 @@ NOTRUN Tests that a media element with an assigned MediaStream reports the playe
 NOTRUN Tests that a media element with an assigned MediaStream reports the currentTime attribute as expected
 NOTRUN Tests that a media element with an assigned MediaStream starts its timeline at 0 regardless of when the MediaStream was created
 NOTRUN Tests that a media element with an assigned MediaStream does not advance currentTime while paused
+NOTRUN Tests that a media element with an assigned MediaStream does not start advancing currentTime until potentially playing
 NOTRUN Tests that the loop attribute has no effect on a media element with an assigned MediaStream
 NOTRUN Tests that a media element with an assigned MediaStream ends when the MediaStream becomes inactive through tracks ending
 NOTRUN Tests that an audio element with an assigned MediaStream ends when the MediaStream becomes inaudible through audio tracks ending

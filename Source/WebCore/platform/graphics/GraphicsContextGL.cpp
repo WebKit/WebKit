@@ -578,7 +578,7 @@ bool GraphicsContextGL::extractPixelBuffer(const PixelBuffer& pixelBuffer, DataF
     return true;
 }
 
-bool GraphicsContextGL::extractTextureData(unsigned width, unsigned height, GCGLenum format, GCGLenum type, const PixelStoreParams& unpackParams, bool flipY, bool premultiplyAlpha, Span<const uint8_t> pixels, Vector<uint8_t>& data)
+bool GraphicsContextGL::extractTextureData(unsigned width, unsigned height, GCGLenum format, GCGLenum type, const PixelStoreParams& unpackParams, bool flipY, bool premultiplyAlpha, std::span<const uint8_t> pixels, Vector<uint8_t>& data)
 {
     // Assumes format, type, etc. have already been validated.
     DataFormat sourceDataFormat = getDataFormat(format, type);
@@ -681,8 +681,6 @@ void GraphicsContextGL::markLayerComposited()
         if (attrs.stencil)
             m_buffersToAutoClear |= GraphicsContextGL::STENCIL_BUFFER_BIT;
     }
-    if (m_client)
-        m_client->didComposite();
 }
 
 void GraphicsContextGL::paintToCanvas(NativeImage& image, const IntSize& canvasSize, GraphicsContext& context)

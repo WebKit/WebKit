@@ -94,10 +94,11 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     };
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    if ([layer valueForKey:@"WKInteractionRegionGroupName"])
-        ts.dumpProperty("type", "interaction");
-    else if ([layer valueForKey:@"WKInteractionRegionType"])
-        ts.dumpProperty("type", "occlusion");
+    NSNumber *interactionRegionLayerType = [layer valueForKey:@"WKInteractionRegionType"];
+    if (interactionRegionLayerType) {
+        ts.dumpProperty("type", interactionRegionLayerType);
+        traverse = false;
+    }
 #endif
 
     ts.dumpProperty("layer bounds", rectToString(layer.bounds));
@@ -394,7 +395,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (BOOL)_hasSleepDisabler
 {
-    return _page && _page->process().hasSleepDisabler();
+    return _page && _page->hasSleepDisabler();
 }
 
 - (NSString*)_scrollbarStateForScrollingNodeID:(uint64_t)scrollingNodeID isVertical:(bool)isVertical
@@ -565,6 +566,13 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     WebKit::WindowServerConnection::singleton().hardwareConsoleStateChanged(connected ? WebKit::WindowServerConnection::HardwareConsoleState::Connected : WebKit::WindowServerConnection::HardwareConsoleState::Disconnected);
+#endif
+}
+
+- (void)_setSystemPreviewCompletionHandlerForLoadTesting:(void(^)(bool))completionHandler
+{
+#if USE(SYSTEM_PREVIEW)
+    _page->setSystemPreviewCompletionHandlerForLoadTesting(makeBlockPtr(completionHandler));
 #endif
 }
 

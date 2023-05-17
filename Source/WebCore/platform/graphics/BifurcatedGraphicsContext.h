@@ -82,6 +82,7 @@ public:
 
     RenderingMode renderingMode() const final;
 
+    void resetClip() final;
     void clip(const FloatRect&) final;
     void clipOut(const FloatRect&) final;
 

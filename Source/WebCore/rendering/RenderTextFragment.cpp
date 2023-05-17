@@ -26,6 +26,7 @@
 #include "RenderBlock.h"
 #include "RenderIterator.h"
 #include "RenderMultiColumnFlow.h"
+#include "RenderStyleInlines.h"
 #include "RenderTreeBuilder.h"
 #include "Text.h"
 #include <wtf/IsoMallocInlines.h>

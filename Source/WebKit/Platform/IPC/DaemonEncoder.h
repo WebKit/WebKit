@@ -49,7 +49,7 @@ public:
 
     Vector<uint8_t> takeBuffer() { return std::exchange(m_buffer, { }); }
 
-    void encodeFixedLengthData(Span<const uint8_t>);
+    void encodeFixedLengthData(std::span<const uint8_t>);
 
 private:
     Vector<uint8_t> m_buffer;

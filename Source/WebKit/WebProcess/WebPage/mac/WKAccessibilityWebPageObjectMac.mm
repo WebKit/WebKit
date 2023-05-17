@@ -51,20 +51,47 @@
 
 namespace ax = WebCore::Accessibility;
 
-@interface WKAccessibilityWebPageObject()
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-@property (nonatomic, strong) NSArray *cachedParameterizedAttributeNames;
-#endif
-@end
-
 @implementation WKAccessibilityWebPageObject
 
 #define PROTECTED_SELF protectedSelf = RetainPtr<WKAccessibilityWebPageObject>(self)
+
+- (instancetype)init
+{
+    self = [super init];
+    if (!self)
+        return self;
+
+    self->m_attributeNames = adoptNS([[NSArray alloc] initWithObjects:
+        NSAccessibilityRoleAttribute, NSAccessibilityRoleDescriptionAttribute, NSAccessibilityFocusedAttribute,
+        NSAccessibilityParentAttribute, NSAccessibilityWindowAttribute, NSAccessibilityTopLevelUIElementAttribute,
+        NSAccessibilityPositionAttribute, NSAccessibilitySizeAttribute, NSAccessibilityChildrenAttribute, NSAccessibilityChildrenInNavigationOrderAttribute, NSAccessibilityPrimaryScreenHeightAttribute, nil]);
+    return self;
+}
 
 - (void)dealloc
 {
     NSAccessibilityUnregisterUniqueIdForUIElement(self);
     [super dealloc];
+}
+
+- (void)setWebPage:(NakedPtr<WebKit::WebPage>)page
+{
+    ASSERT(isMainRunLoop());
+    [super setWebPage:page];
+
+    if (!page) {
+        m_parameterizedAttributeNames = @[];
+        return;
+    }
+
+    auto* corePage = page->corePage();
+    if (!corePage) {
+        m_parameterizedAttributeNames = @[];
+        return;
+    }
+
+    m_parameterizedAttributeNames = createNSArray(corePage->pageOverlayController().copyAccessibilityAttributesNames(true));
+    // FIXME: m_parameterizedAttributeNames needs to be updated when page overlays are added or removed, although this is a property that doesn't change much.
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -78,41 +105,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray *)accessibilityAttributeNames
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    if (!m_attributeNames)
-        m_attributeNames = adoptNS([[NSArray alloc] initWithObjects:
-                            NSAccessibilityRoleAttribute, NSAccessibilityRoleDescriptionAttribute, NSAccessibilityFocusedAttribute,
-                            NSAccessibilityParentAttribute, NSAccessibilityWindowAttribute, NSAccessibilityTopLevelUIElementAttribute,
-                            NSAccessibilityPositionAttribute, NSAccessibilitySizeAttribute, NSAccessibilityChildrenAttribute, NSAccessibilityChildrenInNavigationOrderAttribute, NSAccessibilityPrimaryScreenHeightAttribute, nil]);
-    
-    return m_attributeNames.get();
+    return m_attributeNames.autorelease();
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray *)accessibilityParameterizedAttributeNames
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (id cachedNames = self.cachedParameterizedAttributeNames)
-        return cachedNames;
-#endif
-
-    auto names = ax::retrieveValueFromMainThread<RetainPtr<id>>([PROTECTED_SELF] () -> RetainPtr<id> {
-        auto page = protectedSelf->m_page;
-        if (!page)
-            return @[];
-
-        auto corePage = page->corePage();
-        if (!corePage)
-            return @[];
-
-        return createNSArray(corePage->pageOverlayController().copyAccessibilityAttributesNames(true));
-    });
-
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    self.cachedParameterizedAttributeNames = names.get();
-#endif
-
-    return names.autorelease();
+    return m_parameterizedAttributeNames.autorelease();
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -147,10 +147,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (NSArray *)accessibilityChildren
 {
     id wrapper = [self accessibilityRootObjectWrapper];
-    if (!wrapper)
-        return @[];
-    
-    return @[wrapper];
+    return wrapper ? @[wrapper] : @[];
 }
 
 - (NSArray *)accessibilityChildrenInNavigationOrder
@@ -207,20 +204,34 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSValue *)accessibilityAttributeSizeValue
 {
-    return ax::retrieveValueFromMainThread<RetainPtr<id>>([PROTECTED_SELF] () -> RetainPtr<id> {
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (!isMainRunLoop()) {
+        Locker lock { m_cacheLock };
+        return [NSValue valueWithSize:(NSSize)m_size];
+    }
+#endif
+
+    return ax::retrieveAutoreleasedValueFromMainThread<id>([PROTECTED_SELF] () -> RetainPtr<id> {
         if (!protectedSelf->m_page)
             return nil;
         return [NSValue valueWithSize:(NSSize)protectedSelf->m_page->size()];
-    }).autorelease();
+    });
 }
 
 - (NSValue *)accessibilityAttributePositionValue
 {
-    return ax::retrieveValueFromMainThread<RetainPtr<id>>([PROTECTED_SELF] () -> RetainPtr<id> {
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (!isMainRunLoop()) {
+        Locker lock { m_cacheLock };
+        return [NSValue valueWithPoint:(NSPoint)m_position];
+    }
+#endif
+
+    return ax::retrieveAutoreleasedValueFromMainThread<id>([PROTECTED_SELF] () -> RetainPtr<id> {
         if (!protectedSelf->m_page)
             return nil;
         return [NSValue valueWithPoint:(NSPoint)protectedSelf->m_page->accessibilityPosition()];
-    }).autorelease();
+    });
 }
 
 - (id)accessibilityDataDetectorValue:(NSString *)attribute point:(WebCore::FloatPoint&)point

@@ -29,8 +29,8 @@
 #include "FormattingGeometry.h"
 #include "FormattingQuirks.h"
 #include "FormattingState.h"
-#include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
+#include "LayoutBoxInlines.h"
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutContext.h"
 #include "LayoutDescendantIterator.h"
@@ -38,6 +38,7 @@
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutState.h"
 #include "Logging.h"
+#include "RenderStyleInlines.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>
 

@@ -324,6 +324,25 @@ void CSSFontFace::setFeatureSettings(CSSValue& featureSettings)
     });
 }
 
+void CSSFontFace::setSizeAdjust(CSSValue& value)
+{
+    ASSERT(is<CSSPrimitiveValue>(value));
+
+    mutableProperties().setProperty(CSSPropertySizeAdjust, &value);
+
+    auto& sizeAdjustValue = downcast<CSSPrimitiveValue>(value);
+    auto sizeAdjust = sizeAdjustValue.floatValue() / 100;
+
+    if (m_sizeAdjust == sizeAdjust)
+        return;
+
+    m_sizeAdjust = sizeAdjust;
+
+    iterateClients(m_clients, [&](Client& client) {
+        client.fontPropertyChanged(*this);
+    });
+}
+
 void CSSFontFace::setDisplay(CSSPrimitiveValue& loadingBehaviorValue)
 {
     mutableProperties().setProperty(CSSPropertyFontDisplay, &loadingBehaviorValue);
@@ -377,6 +396,11 @@ String CSSFontFace::unicodeRange() const
 String CSSFontFace::featureSettings() const
 {
     return properties().getPropertyValue(CSSPropertyFontFeatureSettings);
+}
+
+String CSSFontFace::sizeAdjust() const
+{
+    return properties().getPropertyValue(CSSPropertySizeAdjust);
 }
 
 String CSSFontFace::display() const
@@ -722,7 +746,7 @@ RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool synt
             return Font::create(FontCache::forCurrentThread().lastResortFallbackFont(fontDescription)->platformData(), Font::Origin::Local, Font::Interstitial::Yes, visibility);
         }
         case CSSFontFaceSource::Status::Success: {
-            FontCreationContext fontCreationContext { m_featureSettings, m_fontSelectionCapabilities, fontPaletteValues, fontFeatureValues };
+            FontCreationContext fontCreationContext { m_featureSettings, m_fontSelectionCapabilities, fontPaletteValues, fontFeatureValues, m_sizeAdjust };
             if (auto result = source->font(fontDescription, syntheticBold, syntheticItalic, fontCreationContext))
                 return result;
             break;

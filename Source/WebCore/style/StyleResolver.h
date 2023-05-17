@@ -26,7 +26,6 @@
 #include "InspectorCSSOMWrappers.h"
 #include "MatchedDeclarationsCache.h"
 #include "MediaQueryEvaluator.h"
-#include "RenderStyle.h"
 #include "RuleSet.h"
 #include "StyleScopeRuleSets.h"
 #include <memory>
@@ -43,6 +42,7 @@ class Document;
 class Element;
 class KeyframeList;
 class KeyframeValue;
+class RenderStyle;
 class RuleData;
 class RuleSet;
 class SelectorFilter;
@@ -68,13 +68,8 @@ enum class RuleMatchingBehavior: uint8_t {
 
 namespace Style {
 
+struct ResolvedStyle;
 struct SelectorMatchingState;
-
-struct ResolvedStyle {
-    std::unique_ptr<RenderStyle> style;
-    std::unique_ptr<Relations> relations { };
-    std::unique_ptr<MatchResult> matchResult { };
-};
 
 struct ResolutionContext {
     const RenderStyle* parentStyle;

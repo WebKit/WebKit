@@ -18,9 +18,8 @@ layer at (0,0) size 800x600
                   RenderBlock (anonymous) at (12,3) size 22x14
                     RenderText at (0,0) size 22x14
                       text run at (0,0) width 22: " Go "
-                RenderText {#text} at (155,0) size 5x19
-                  text run at (155,0) width 5: " "
-                RenderBR {BR} at (159,0) size 1x19
+                RenderText {#text} at (0,0) size 0x0
+                RenderBR {BR} at (155,0) size 1x19
                 RenderText {#text} at (0,22) size 190x19
                   text run at (0,22) width 190: "Enter City Name or Zip Code"
           RenderTableRow {TR} at (0,64) size 196x0
@@ -39,9 +38,8 @@ layer at (0,0) size 800x600
                   RenderBlock (anonymous) at (12,3) size 22x14
                     RenderText at (0,0) size 22x14
                       text run at (0,0) width 22: " Go "
-                RenderText {#text} at (155,0) size 5x19
-                  text run at (155,0) width 5: " "
-                RenderBR {BR} at (159,0) size 1x19
+                RenderText {#text} at (0,0) size 0x0
+                RenderBR {BR} at (155,0) size 1x19
                 RenderText {#text} at (0,22) size 190x19
                   text run at (0,22) width 190: "Enter City Name or Zip Code"
           RenderTableRow {TR} at (0,64) size 196x0

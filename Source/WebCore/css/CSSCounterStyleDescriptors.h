@@ -44,7 +44,6 @@ struct CSSCounterStyleDescriptors {
         bool isCustomIdent { false };
         String text;
         bool operator==(const Symbol& other) const { return isCustomIdent == other.isCustomIdent && text == other.text; }
-        bool operator!=(const Symbol& other) const { return !(*this == other); }
         String cssText() const;
     };
     using AdditiveSymbols = Vector<std::pair<Symbol, unsigned>>;
@@ -55,6 +54,11 @@ struct CSSCounterStyleDescriptors {
         Symbolic,
         Additive,
         Fixed,
+        SimplifiedChineseInformal,
+        SimplifiedChineseFormal,
+        TraditionalChineseInformal,
+        TraditionalChineseFormal,
+        EthiopicNumeric,
         Extends
     };
     enum class SpeakAs : uint8_t {
@@ -69,14 +73,12 @@ struct CSSCounterStyleDescriptors {
         unsigned m_padMinimumLength = 0;
         Symbol m_padSymbol;
         bool operator==(const Pad& other) const { return m_padMinimumLength == other.m_padMinimumLength && m_padSymbol == other.m_padSymbol; }
-        bool operator!=(const Pad& other) const { return !(*this == other); }
         String cssText() const;
     };
     struct NegativeSymbols {
         Symbol m_prefix = { false, "-"_s };
         Symbol m_suffix;
         bool operator==(const NegativeSymbols& other) const { return m_prefix == other.m_prefix && m_suffix == other.m_suffix; }
-        bool operator!=(const NegativeSymbols& other) const { return !(*this == other); }
     };
     enum class ExplicitlySetDescriptors: uint16_t {
         System = 1 << 0,
@@ -110,7 +112,6 @@ struct CSSCounterStyleDescriptors {
             && m_fixedSystemFirstSymbolValue == other.m_fixedSystemFirstSymbolValue
             && m_explicitlySetDescriptors == other.m_explicitlySetDescriptors;
     }
-    bool operator!=(const CSSCounterStyleDescriptors& other) const { return !(*this == other); }
     void setExplicitlySetDescriptors(const StyleProperties&);
     bool isValid() const;
     static bool areSymbolsValidForSystem(System, const Vector<Symbol>&, const AdditiveSymbols&);

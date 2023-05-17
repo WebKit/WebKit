@@ -63,9 +63,6 @@ public:
     void scheduleSubtreeLayout(RenderElement& layoutRoot);
     void unscheduleLayout();
 
-    void startDisallowingLayout() { ++m_layoutDisallowedCount; }
-    void endDisallowingLayout() { ASSERT(m_layoutDisallowedCount > 0); --m_layoutDisallowedCount; }
-    
     void disableSetNeedsLayout();
     void enableSetNeedsLayout();
 
@@ -96,7 +93,7 @@ public:
     void setNeedsFullRepaint() { m_needsFullRepaint = true; }
     bool needsFullRepaint() const { return m_needsFullRepaint; }
 
-    void flushAsynchronousTasks();
+    void flushPostLayoutTasks();
 
     RenderLayoutState* layoutState() const PURE_FUNCTION;
     // Returns true if layoutState should be used for its cached offset and clip.
@@ -125,11 +122,10 @@ private:
 
     void performLayout();
     bool canPerformLayout() const;
-    bool layoutDisallowed() const { return m_layoutDisallowedCount; }
     bool isLayoutSchedulingEnabled() const { return m_layoutSchedulingIsEnabled; }
 
     void layoutTimerFired();
-    void runAsynchronousTasks();
+    void runPostLayoutTasks();
     void runOrScheduleAsynchronousTasks();
     bool inAsynchronousTasks() const { return m_inAsynchronousTasks; }
 
@@ -163,7 +159,7 @@ private:
 
     LocalFrameView& m_frameView;
     Timer m_layoutTimer;
-    Timer m_asynchronousTasksTimer;
+    Timer m_postLayoutTaskTimer;
     WeakPtr<RenderElement> m_subtreeLayoutRoot;
 
     bool m_layoutSchedulingIsEnabled { true };
@@ -176,7 +172,6 @@ private:
     LayoutNestedState m_layoutNestedState { LayoutNestedState::NotInLayout };
     unsigned m_layoutCount { 0 };
     unsigned m_disableSetNeedsLayoutCount { 0 };
-    int m_layoutDisallowedCount { 0 };
     unsigned m_paintOffsetCacheDisableCount { 0 };
     LayoutStateStack m_layoutStateStack;
     std::unique_ptr<Layout::LayoutTree> m_layoutTree;

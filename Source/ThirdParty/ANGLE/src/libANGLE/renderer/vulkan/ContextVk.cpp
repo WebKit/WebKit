@@ -2670,8 +2670,9 @@ void ContextVk::handleDirtyShaderBufferResourcesImpl(CommandBufferT *commandBuff
     // Process buffer barriers.
     for (const gl::ShaderType shaderType : executable->getLinkedShaderStages())
     {
-        const std::vector<gl::InterfaceBlock> &ubos = executable->getUniformBlocks();
+        const vk::PipelineStage pipelineStage = vk::GetPipelineStage(shaderType);
 
+        const std::vector<gl::InterfaceBlock> &ubos = executable->getUniformBlocks();
         for (const gl::InterfaceBlock &ubo : ubos)
         {
             const gl::OffsetBindingPointer<gl::Buffer> &bufferBinding =
@@ -2690,8 +2691,8 @@ void ContextVk::handleDirtyShaderBufferResourcesImpl(CommandBufferT *commandBuff
             BufferVk *bufferVk             = vk::GetImpl(bufferBinding.get());
             vk::BufferHelper &bufferHelper = bufferVk->getBuffer();
 
-            commandBufferHelper->bufferRead(this, VK_ACCESS_UNIFORM_READ_BIT,
-                                            vk::GetPipelineStage(shaderType), &bufferHelper);
+            commandBufferHelper->bufferRead(this, VK_ACCESS_UNIFORM_READ_BIT, pipelineStage,
+                                            &bufferHelper);
         }
 
         const std::vector<gl::InterfaceBlock> &ssbos = executable->getShaderStorageBlocks();
@@ -2713,10 +2714,21 @@ void ContextVk::handleDirtyShaderBufferResourcesImpl(CommandBufferT *commandBuff
             BufferVk *bufferVk             = vk::GetImpl(bufferBinding.get());
             vk::BufferHelper &bufferHelper = bufferVk->getBuffer();
 
-            // We set the SHADER_READ_BIT to be conservative.
-            VkAccessFlags accessFlags = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
-            commandBufferHelper->bufferWrite(this, accessFlags, vk::GetPipelineStage(shaderType),
-                                             &bufferHelper);
+            if (ssbo.isReadOnly)
+            {
+                // Avoid unnecessary barriers for readonly SSBOs by making sure the buffers are
+                // marked read-only.  This also helps BufferVk make better decisions during buffer
+                // data uploads and copies by knowing that the buffers are not actually being
+                // written to.
+                commandBufferHelper->bufferRead(this, VK_ACCESS_SHADER_READ_BIT, pipelineStage,
+                                                &bufferHelper);
+            }
+            else
+            {
+                // We set the SHADER_READ_BIT to be conservative.
+                VkAccessFlags accessFlags = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
+                commandBufferHelper->bufferWrite(this, accessFlags, pipelineStage, &bufferHelper);
+            }
         }
 
         const std::vector<gl::AtomicCounterBuffer> &acbs = executable->getAtomicCounterBuffers();
@@ -2737,7 +2749,7 @@ void ContextVk::handleDirtyShaderBufferResourcesImpl(CommandBufferT *commandBuff
             // We set SHADER_READ_BIT to be conservative.
             commandBufferHelper->bufferWrite(this,
                                              VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT,
-                                             vk::GetPipelineStage(shaderType), &bufferHelper);
+                                             pipelineStage, &bufferHelper);
         }
     }
 }
@@ -2946,9 +2958,15 @@ angle::Result ContextVk::handleDirtyGraphicsDynamicDepthBias(DirtyBits::Iterator
                                                              DirtyBits dirtyBitMask)
 {
     const gl::RasterizerState &rasterState = mState.getRasterizerState();
+
+    float depthBiasConstantFactor = rasterState.polygonOffsetUnits;
+    if (getFeatures().doubleDepthBiasConstantFactor.enabled)
+    {
+        depthBiasConstantFactor *= 2.0f;
+    }
+
     // Note: depth bias clamp is only exposed in EXT_polygon_offset_clamp.
-    mRenderPassCommandBuffer->setDepthBias(rasterState.polygonOffsetUnits,
-                                           rasterState.polygonOffsetClamp,
+    mRenderPassCommandBuffer->setDepthBias(depthBiasConstantFactor, rasterState.polygonOffsetClamp,
                                            rasterState.polygonOffsetFactor);
     return angle::Result::Continue;
 }
@@ -3295,6 +3313,8 @@ void ContextVk::syncObjectPerfCounters(const angle::VulkanPerfCounters &commandQ
         commandQueuePerfCounters.commandQueueSubmitCallsPerFrame;
     mPerfCounters.vkQueueSubmitCallsTotal    = commandQueuePerfCounters.vkQueueSubmitCallsTotal;
     mPerfCounters.vkQueueSubmitCallsPerFrame = commandQueuePerfCounters.vkQueueSubmitCallsPerFrame;
+    mPerfCounters.commandQueueWaitSemaphoresTotal =
+        commandQueuePerfCounters.commandQueueWaitSemaphoresTotal;
 
     // Return current drawFramebuffer's cache stats
     mPerfCounters.framebufferCacheSize = mShareGroupVk->getFramebufferCache().getSize();
@@ -3602,7 +3622,7 @@ angle::Result ContextVk::synchronizeCpuGpuTime()
         // vkEvent's are externally synchronized, therefore need work to be submitted before calling
         // vkGetEventStatus
         ANGLE_TRY(mRenderer->queueSubmitOneOff(this, std::move(commandBuffer), getProtectionType(),
-                                               mContextPriority, nullptr, 0, nullptr,
+                                               mContextPriority, VK_NULL_HANDLE, 0, nullptr,
                                                vk::SubmitPolicy::EnsureSubmitted, &submitSerial));
 
         // Track it with the submitSerial.
@@ -4680,12 +4700,19 @@ void ContextVk::updateSampleMaskWithRasterizationSamples(const uint32_t rasteriz
     ASSERT(mState.getMaxSampleMaskWords() == 1);
 
     uint32_t mask = std::numeric_limits<uint16_t>::max();
-    if (mState.isSampleMaskEnabled() && rasterizationSamples > 1)
-    {
-        mask = mState.getSampleMaskWord(0) & angle::BitMask<uint32_t>(rasterizationSamples);
-    }
 
-    ApplySampleCoverage(mState, coverageSampleCount, &mask);
+    // The following assumes that supported sample counts for multisampled
+    // rendering does not include 1. This is true in the Vulkan backend,
+    // where 1x multisampling is disallowed.
+    if (rasterizationSamples > 1)
+    {
+        if (mState.isSampleMaskEnabled())
+        {
+            mask = mState.getSampleMaskWord(0) & angle::BitMask<uint32_t>(rasterizationSamples);
+        }
+
+        ApplySampleCoverage(mState, coverageSampleCount, &mask);
+    }
 
     mGraphicsPipelineDesc->updateSampleMask(&mGraphicsPipelineTransition, 0, mask);
 }
@@ -5409,7 +5436,11 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                 }
 
                 onRenderPassFinished(RenderPassClosureReason::FramebufferBindingChange);
-                if (getFeatures().preferSubmitAtFBOBoundary.enabled &&
+                // If we are switching from user FBO to system frame buffer, we always submit work
+                // first so that these FBO rendering will not have to wait for ANI semaphore (which
+                // draw to system frame buffer must wait for).
+                if ((getFeatures().preferSubmitAtFBOBoundary.enabled ||
+                     mState.getDrawFramebuffer()->isDefault()) &&
                     mRenderPassCommands->started())
                 {
                     // This will behave as if user called glFlush, but the actual flush will be
@@ -7172,7 +7203,7 @@ angle::Result ContextVk::getTimestamp(uint64_t *timestampOut)
 
     QueueSerial submitQueueSerial;
     ANGLE_TRY(mRenderer->queueSubmitOneOff(this, std::move(commandBuffer), getProtectionType(),
-                                           mContextPriority, nullptr, 0, nullptr,
+                                           mContextPriority, VK_NULL_HANDLE, 0, nullptr,
                                            vk::SubmitPolicy::AllowDeferred, &submitQueueSerial));
     // Track it with the submitSerial.
     timestampQuery.setQueueSerial(submitQueueSerial);
@@ -7871,15 +7902,12 @@ angle::Result ContextVk::onResourceAccess(const vk::CommandBufferAccess &access)
 {
     ANGLE_TRY(flushCommandBuffersIfNecessary(access));
 
-    vk::OutsideRenderPassCommandBuffer *commandBuffer =
-        &mOutsideRenderPassCommands->getCommandBuffer();
-
     for (const vk::CommandBufferImageAccess &imageAccess : access.getReadImages())
     {
         ASSERT(!isRenderPassStartedAndUsesImage(*imageAccess.image));
 
         imageAccess.image->recordReadBarrier(this, imageAccess.aspectFlags, imageAccess.imageLayout,
-                                             commandBuffer);
+                                             mOutsideRenderPassCommands);
         mOutsideRenderPassCommands->retainResource(imageAccess.image);
     }
 
@@ -7888,7 +7916,8 @@ angle::Result ContextVk::onResourceAccess(const vk::CommandBufferAccess &access)
         ASSERT(!isRenderPassStartedAndUsesImage(*imageWrite.access.image));
 
         imageWrite.access.image->recordWriteBarrier(this, imageWrite.access.aspectFlags,
-                                                    imageWrite.access.imageLayout, commandBuffer);
+                                                    imageWrite.access.imageLayout,
+                                                    mOutsideRenderPassCommands);
         mOutsideRenderPassCommands->retainResource(imageWrite.access.image);
         imageWrite.access.image->onWrite(imageWrite.levelStart, imageWrite.levelCount,
                                          imageWrite.layerStart, imageWrite.layerCount,

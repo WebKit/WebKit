@@ -35,13 +35,13 @@
 @class UIGestureRecognizer;
 @class UIWKDocumentContext;
 @class UIWKDocumentRequest;
+@class UITapGestureRecognizer;
 
 @interface WKWebView (WKTestingIOS)
 
 @property (nonatomic, readonly) NSString *textContentTypeForTesting;
 @property (nonatomic, readonly) NSString *selectFormPopoverTitle;
 @property (nonatomic, readonly) NSString *formInputLabel;
-@property (nonatomic, readonly) NSArray<NSValue *> *_uiTextSelectionRects;
 @property (nonatomic, readonly) CGRect _inputViewBoundsInWindow;
 @property (nonatomic, readonly) NSString *_uiViewTreeAsText;
 @property (nonatomic, readonly) NSNumber *_stableStateOverride;
@@ -49,6 +49,7 @@
 @property (nonatomic, readonly, getter=_isAnimatingDragCancel) BOOL _animatingDragCancel;
 @property (nonatomic, readonly) CGRect _tapHighlightViewRect;
 @property (nonatomic, readonly) UIGestureRecognizer *_imageAnalysisGestureRecognizer;
+@property (nonatomic, readonly) UITapGestureRecognizer *_singleTapGestureRecognizer;
 
 - (void)keyboardAccessoryBarNext;
 - (void)keyboardAccessoryBarPrevious;
@@ -86,8 +87,6 @@
 - (void)_setDeviceOrientationUserPermissionHandlerForTesting:(BOOL (^)(void))handler;
 
 - (void)_setDeviceHasAGXCompilerServiceForTesting;
-
-- (NSString *)_serializedSelectionCaretBackgroundColorForTesting;
 
 - (BOOL)_hasResizeAssertion;
 - (void)_simulateSelectionStart;

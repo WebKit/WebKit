@@ -197,7 +197,7 @@ void *OpenSystemLibraryWithExtensionAndGetError(const char *libraryName,
     std::string directory;
     if (searchType == SearchType::ModuleDir)
     {
-#if ANGLE_PLATFORM_APPLE_EMBEDDED
+#if ANGLE_PLATFORM_IOS_FAMILY
         // On iOS, shared libraries must be loaded from within the app bundle.
         directory = GetExecutableDirectory() + "/Frameworks/";
 #elif ANGLE_PLATFORM_FUCHSIA
@@ -302,12 +302,18 @@ Optional<std::string> GetTempDirectory()
 
 Optional<std::string> CreateTemporaryFileInDirectory(const std::string &directory)
 {
-    std::string tempFileTemplate = directory + "/.angle.XXXXXX";
+    return CreateTemporaryFileInDirectoryWithExtension(directory, std::string());
+}
+
+Optional<std::string> CreateTemporaryFileInDirectoryWithExtension(const std::string &directory,
+                                                                  const std::string &extension)
+{
+    std::string tempFileTemplate = directory + "/.angle.XXXXXX" + extension;
 
     char tempFile[1000];
     strcpy(tempFile, tempFileTemplate.c_str());
 
-    int fd = mkstemp(tempFile);
+    int fd = mkstemps(tempFile, static_cast<int>(extension.size()));
     close(fd);
 
     if (fd != -1)

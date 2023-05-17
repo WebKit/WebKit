@@ -53,11 +53,6 @@ public:
             && m_raceName == other.m_raceName;
     }
     
-    bool operator!=(const VisitRaceKey& other) const
-    {
-        return !(*this == other);
-    }
-    
     explicit operator bool() const
     {
         return *this != VisitRaceKey();

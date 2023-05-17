@@ -39,6 +39,14 @@ Page* CaretAnimator::page() const
     return nullptr;
 }
 
+void CaretAnimator::stop(CaretAnimatorStopReason)
+{
+    if (!m_isActive)
+        return;
+
+    didEnd();
+}
+
 void CaretAnimator::serviceCaretAnimation(ReducedResolutionSeconds timestamp)
 {
     if (!isActive())
@@ -58,7 +66,7 @@ void CaretAnimator::paint(const Node&, GraphicsContext& context, const FloatRect
     context.fillRect(caret, color);
 }
 
-LayoutRect CaretAnimator::repaintCaretRectForLocalRect(LayoutRect rect) const
+LayoutRect CaretAnimator::caretRepaintRectForLocalRect(LayoutRect rect) const
 {
     return rect;
 }

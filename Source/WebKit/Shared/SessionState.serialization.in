@@ -80,7 +80,9 @@ header: "SessionState.h"
 
     WebKit::PageState pageState;
     bool hasCachedPage;
-    # snapshot is not serialized.
+#if PLATFORM(COCOA) || PLATFORM(GTK)
+    [NotSerialized] RefPtr<WebKit::ViewSnapshot> snapshot;
+#endif
 };
 
 [CustomHeader] struct WebKit::BackForwardListState {

@@ -25,6 +25,7 @@
 #include "common/string_utils.h"
 #include "common/system_utils.h"
 #include "gpu_info_util/SystemInfo.h"
+#include "image_util/storeimage.h"
 #include "libANGLE/Config.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Context.inl.h"
@@ -3128,7 +3129,7 @@ void CaptureTextureContents(std::vector<CallCapture> *setupCalls,
         (index.getType() == gl::TextureType::_3D || index.getType() == gl::TextureType::_2DArray ||
          index.getType() == gl::TextureType::CubeMapArray);
 
-    if (format.compressed)
+    if (format.compressed || format.paletted)
     {
         if (is3D)
         {
@@ -3597,6 +3598,100 @@ void CaptureDefaultVertexAttribs(const gl::State &replayState,
     }
 }
 
+void CompressPalettedTexture(angle::MemoryBuffer &data,
+                             angle::MemoryBuffer &tmp,
+                             const gl::InternalFormat &compressedFormat,
+                             const gl::Extents &extents)
+{
+    constexpr int uncompressedChannelCount = 4;
+
+    uint32_t indexBits = 0, redBlueBits = 0, greenBits = 0, alphaBits = 0;
+    switch (compressedFormat.internalFormat)
+    {
+        case GL_PALETTE4_RGB8_OES:
+            indexBits   = 4;
+            redBlueBits = 8;
+            greenBits   = 8;
+            alphaBits   = 0;
+            break;
+        case GL_PALETTE4_RGBA8_OES:
+            indexBits   = 4;
+            redBlueBits = 8;
+            greenBits   = 8;
+            alphaBits   = 8;
+            break;
+        case GL_PALETTE4_R5_G6_B5_OES:
+            indexBits   = 4;
+            redBlueBits = 5;
+            greenBits   = 6;
+            alphaBits   = 0;
+            break;
+        case GL_PALETTE4_RGBA4_OES:
+            indexBits   = 4;
+            redBlueBits = 4;
+            greenBits   = 4;
+            alphaBits   = 4;
+            break;
+        case GL_PALETTE4_RGB5_A1_OES:
+            indexBits   = 4;
+            redBlueBits = 5;
+            greenBits   = 5;
+            alphaBits   = 1;
+            break;
+        case GL_PALETTE8_RGB8_OES:
+            indexBits   = 8;
+            redBlueBits = 8;
+            greenBits   = 8;
+            alphaBits   = 0;
+            break;
+        case GL_PALETTE8_RGBA8_OES:
+            indexBits   = 8;
+            redBlueBits = 8;
+            greenBits   = 8;
+            alphaBits   = 8;
+            break;
+        case GL_PALETTE8_R5_G6_B5_OES:
+            indexBits   = 8;
+            redBlueBits = 5;
+            greenBits   = 6;
+            alphaBits   = 0;
+            break;
+        case GL_PALETTE8_RGBA4_OES:
+            indexBits   = 8;
+            redBlueBits = 4;
+            greenBits   = 4;
+            alphaBits   = 4;
+            break;
+        case GL_PALETTE8_RGB5_A1_OES:
+            indexBits   = 8;
+            redBlueBits = 5;
+            greenBits   = 5;
+            alphaBits   = 1;
+            break;
+
+        default:
+            UNREACHABLE();
+            break;
+    }
+
+    bool result = data.resize(
+        // Palette size
+        (1 << indexBits) * (2 * redBlueBits + greenBits + alphaBits) / 8 +
+        // Texels size
+        indexBits * extents.width * extents.height * extents.depth / 8);
+    ASSERT(result);
+
+    angle::StoreRGBA8ToPalettedImpl(
+        extents.width, extents.height, extents.depth, indexBits, redBlueBits, greenBits, alphaBits,
+        tmp.data(),
+        uncompressedChannelCount * extents.width,                   // inputRowPitch
+        uncompressedChannelCount * extents.width * extents.height,  // inputDepthPitch
+        data.data(),                                                // output
+        indexBits * extents.width / 8,                              // outputRowPitch
+        indexBits * extents.width * extents.height / 8              // outputDepthPitch
+    );
+}
+
 // Capture the setup of the state that's shared by all of the contexts in the share group
 // See IsSharedObjectResource for the list of objects covered here.
 void CaptureShareGroupMidExecutionSetup(
@@ -3953,7 +4048,24 @@ void CaptureShareGroupMidExecutionSetup(
                 gl::PixelPackState packState;
                 packState.alignment = 1;
 
-                if (format.compressed)
+                if (format.paletted)
+                {
+                    // Read back the uncompressed texture, then re-compress it
+                    // to store in the trace.
+
+                    angle::MemoryBuffer tmp;
+
+                    // The uncompressed format (R8G8B8A8) is 4 bytes per texel
+                    bool result = tmp.resize(4 * extents.width * extents.height * extents.depth);
+                    ASSERT(result);
+
+                    (void)texture->getTexImage(context, packState, nullptr, index.getTarget(),
+                                               index.getLevelIndex(), GL_RGBA, GL_UNSIGNED_BYTE,
+                                               tmp.data());
+
+                    CompressPalettedTexture(data, tmp, format, extents);
+                }
+                else if (format.compressed)
                 {
                     // Calculate the size needed to store the compressed level
                     GLuint sizeInBytes;

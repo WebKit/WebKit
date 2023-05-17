@@ -58,7 +58,6 @@
 #include "WebProcessProxyMessages.h"
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/SharedBuffer.h>
-#include <wtf/Language.h>
 
 #if ENABLE(ENCRYPTED_MEDIA)
 #include "RemoteCDMInstanceSessionMessages.h"
@@ -104,17 +103,11 @@
 namespace WebKit {
 using namespace WebCore;
 
-static void languagesChanged(void* context)
-{
-    static_cast<GPUProcessConnection*>(context)->connection().send(Messages::GPUConnectionToWebProcess::SetUserPreferredLanguages(userPreferredLanguages()), { });
-}
-
 static GPUProcessConnectionParameters getGPUProcessConnectionParameters()
 {
     GPUProcessConnectionParameters parameters;
 #if PLATFORM(COCOA)
     parameters.webProcessIdentity = ProcessIdentity { ProcessIdentity::CurrentProcess };
-    parameters.overrideLanguages = userPreferredLanguagesOverride();
 #endif
     return parameters;
 }
@@ -140,8 +133,6 @@ GPUProcessConnection::GPUProcessConnection(IPC::Connection::Identifier&& connect
 {
     m_connection->open(*this);
 
-    addLanguageChangeObserver(this, languagesChanged);
-
     if (WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::MediaPainting)) {
 #if ENABLE(VP9)
         enableVP9Decoders(PlatformMediaSessionManager::shouldEnableVP8Decoder(), PlatformMediaSessionManager::shouldEnableVP9Decoder(), PlatformMediaSessionManager::shouldEnableVP9SWDecoder());
@@ -156,7 +147,6 @@ GPUProcessConnection::~GPUProcessConnection()
     if (m_audioSourceProviderManager)
         m_audioSourceProviderManager->stopListeningForIPC();
 #endif
-    removeLanguageChangeObserver(this);
 }
 
 #if HAVE(AUDIT_TOKEN)

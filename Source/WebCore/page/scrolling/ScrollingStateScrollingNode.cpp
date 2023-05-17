@@ -49,6 +49,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_snapOffsetsInfo(stateNode.m_snapOffsetsInfo)
 #if PLATFORM(MAC)
     , m_scrollbarHoverState(stateNode.scrollbarHoverState())
+    , m_mouseLocationState(stateNode.mouseLocationState())
     , m_verticalScrollerImp(stateNode.verticalScrollerImp())
     , m_horizontalScrollerImp(stateNode.horizontalScrollerImp())
 #endif
@@ -286,8 +287,9 @@ void ScrollingStateScrollingNode::setMouseIsOverContentArea(bool flag)
     setPropertyChanged(Property::ContentAreaHoverState);
 }
 
-void ScrollingStateScrollingNode::setMouseMovedInContentArea()
+void ScrollingStateScrollingNode::setMouseMovedInContentArea(const MouseLocationState& mouseLocationState)
 {
+    m_mouseLocationState = mouseLocationState;
     setPropertyChanged(Property::MouseActivityState);
 }
     

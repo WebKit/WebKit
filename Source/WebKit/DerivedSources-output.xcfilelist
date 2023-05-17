@@ -156,6 +156,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteAudioSourceProviderManagerMess
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteAudioSourceProviderManagerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteAudioTrackProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteAudioTrackProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteBarcodeDetectorMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteBarcodeDetectorMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteBindGroupLayoutMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteBindGroupLayoutMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteBindGroupMessageReceiver.cpp
@@ -192,6 +194,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteDisplayListRecorderMessageRece
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteDisplayListRecorderMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteExternalTextureMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteExternalTextureMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteFaceDetectorMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteFaceDetectorMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteGPUMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteGPUMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteGPUProxyMessageReceiver.cpp
@@ -284,6 +288,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteSurfaceMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteSurfaceMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteSwapChainMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteSwapChainMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteTextDetectorMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteTextDetectorMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteTextTrackProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteTextTrackProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteTextureMessageReceiver.cpp

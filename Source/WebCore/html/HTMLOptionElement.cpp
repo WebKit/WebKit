@@ -36,6 +36,7 @@
 #include "HTMLOptGroupElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSelectElement.h"
+#include "NodeName.h"
 #include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
 #include "PseudoClassChangeInvalidation.h"
@@ -108,7 +109,7 @@ String HTMLOptionElement::text() const
 
     // FIXME: Is displayStringModifiedByEncoding helpful here?
     // If it's correct here, then isn't it needed in the value and label functions too?
-    return stripLeadingAndTrailingHTMLSpaces(document().displayStringModifiedByEncoding(text)).simplifyWhiteSpace(isHTMLSpace);
+    return stripLeadingAndTrailingHTMLSpaces(document().displayStringModifiedByEncoding(text)).simplifyWhiteSpace(isASCIIWhitespace);
 }
 
 void HTMLOptionElement::setText(String&& text)
@@ -175,13 +176,8 @@ int HTMLOptionElement::index() const
 
 void HTMLOptionElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-#if ENABLE(DATALIST_ELEMENT)
-    if (name == valueAttr) {
-        for (auto& dataList : ancestorsOfType<HTMLDataListElement>(*this))
-            dataList.optionElementChildrenChanged();
-    } else
-#endif
-    if (name == disabledAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::disabledAttr: {
         bool newDisabled = !newValue.isNull();
         if (m_disabled != newDisabled) {
             Style::PseudoClassChangeInvalidation disabledInvalidation(*this, { { CSSSelector::PseudoClassDisabled, newDisabled },  { CSSSelector::PseudoClassEnabled, !newDisabled } });
@@ -189,7 +185,9 @@ void HTMLOptionElement::attributeChanged(const QualifiedName& name, const AtomSt
             if (renderer() && renderer()->style().hasEffectiveAppearance())
                 renderer()->theme().stateChanged(*renderer(), ControlStates::States::Enabled);
         }
-    } else if (name == selectedAttr) {
+        break;
+    }
+    case AttributeNames::selectedAttr: {
         // FIXME: Use PseudoClassChangeInvalidation in other elements that implement matchesDefaultPseudoClass().
         Style::PseudoClassChangeInvalidation defaultInvalidation(*this, CSSSelector::PseudoClassDefault, !newValue.isNull());
         m_isDefault = !newValue.isNull();
@@ -199,8 +197,18 @@ void HTMLOptionElement::attributeChanged(const QualifiedName& name, const AtomSt
         // changing the value of a selected attribute that is already present
         // has no effect on whether the element is selected.
         setSelectedState(!newValue.isNull());
-    } else
+        break;
+    }
+#if ENABLE(DATALIST_ELEMENT)
+    case AttributeNames::valueAttr:
+        for (auto& dataList : ancestorsOfType<HTMLDataListElement>(*this))
+            dataList.optionElementChildrenChanged();
+        break;
+#endif
+    default:
         HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+        break;
+    }
 }
 
 String HTMLOptionElement::value() const
@@ -208,7 +216,7 @@ String HTMLOptionElement::value() const
     const AtomString& value = attributeWithoutSynchronization(valueAttr);
     if (!value.isNull())
         return value;
-    return stripLeadingAndTrailingHTMLSpaces(collectOptionInnerText()).simplifyWhiteSpace(isHTMLSpace);
+    return stripLeadingAndTrailingHTMLSpaces(collectOptionInnerText()).simplifyWhiteSpace(isASCIIWhitespace);
 }
 
 void HTMLOptionElement::setValue(const AtomString& value)
@@ -279,14 +287,14 @@ String HTMLOptionElement::label() const
     String label = attributeWithoutSynchronization(labelAttr);
     if (!label.isNull())
         return stripLeadingAndTrailingHTMLSpaces(label);
-    return stripLeadingAndTrailingHTMLSpaces(collectOptionInnerText()).simplifyWhiteSpace(isHTMLSpace);
+    return stripLeadingAndTrailingHTMLSpaces(collectOptionInnerText()).simplifyWhiteSpace(isASCIIWhitespace);
 }
 
 // Same as label() but ignores the label content attribute in quirks mode for compatibility with other browsers.
 String HTMLOptionElement::displayLabel() const
 {
     if (document().inQuirksMode())
-        return stripLeadingAndTrailingHTMLSpaces(collectOptionInnerText()).simplifyWhiteSpace(isHTMLSpace);
+        return stripLeadingAndTrailingHTMLSpaces(collectOptionInnerText()).simplifyWhiteSpace(isASCIIWhitespace);
     return label();
 }
 

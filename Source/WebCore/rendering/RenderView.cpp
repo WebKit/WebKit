@@ -40,7 +40,11 @@
 #include "LocalFrameView.h"
 #include "NodeTraversal.h"
 #include "Page.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
+#include "RenderCounter.h"
 #include "RenderDescendantIterator.h"
+#include "RenderElementInlines.h"
 #include "RenderGeometryMap.h"
 #include "RenderImage.h"
 #include "RenderIterator.h"
@@ -53,6 +57,7 @@
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderQuote.h"
 #include "RenderSVGRoot.h"
+#include "RenderStyleInlines.h"
 #include "RenderTreeBuilder.h"
 #include "RenderWidget.h"
 #include "SVGElementTypeHelpers.h"
@@ -146,6 +151,11 @@ void RenderView::lazyRepaintTimerFired()
 RenderBox::LogicalExtentComputedValues RenderView::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit) const
 {
     return { !shouldUsePrintingLayout() ? LayoutUnit(viewLogicalHeight()) : logicalHeight, 0_lu, ComputedMarginValues() };
+}
+
+inline int RenderView::viewLogicalWidth() const
+{
+    return style().isHorizontalWritingMode() ? viewWidth() : viewHeight();
 }
 
 void RenderView::updateLogicalWidth()
@@ -1105,6 +1115,16 @@ void RenderView::registerContainerQueryBox(const RenderBox& box)
 void RenderView::unregisterContainerQueryBox(const RenderBox& box)
 {
     m_containerQueryBoxes.remove(box);
+}
+
+void RenderView::addCounterNeedingUpdate(RenderCounter& renderer)
+{
+    m_countersNeedingUpdate.add(renderer);
+}
+
+WeakHashSet<RenderCounter> RenderView::takeCountersNeedingUpdate()
+{
+    return std::exchange(m_countersNeedingUpdate, { });
 }
 
 } // namespace WebCore

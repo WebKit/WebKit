@@ -7,6 +7,14 @@ function test()
 {
     let suite = InspectorTest.createAsyncSuite("DOM.showGridOverlay");
 
+    const allEnabledOverlayOptions = {
+        showLineNames: true,
+        showLineNumbers: true,
+        showExtendedGridLines: true,
+        showTrackSizes: true,
+        showAreaNames: true,
+    };
+
     async function getGridContainerNode() {
         let doc = await WI.domManager.requestDocument();
         let nodeId = await doc.querySelector(".grid-container");
@@ -46,12 +54,12 @@ function test()
             let container = await getGridContainerNode();
 
             InspectorTest.log("Requesting to show grid overlay for first .grid-container");
-            await container.showLayoutOverlay({color: WI.Color.fromString("magenta")});
+            await container.showLayoutOverlay({color: WI.Color.fromString("magenta"), ...allEnabledOverlayOptions});
             await checkGridOverlayCount(1);
 
             // No error should occur if showing grid overlay for a node that already has one.
             InspectorTest.log("Requesting to show a different grid overlay for first .grid-container");
-            await container.showLayoutOverlay({color: WI.Color.fromString("green")});
+            await container.showLayoutOverlay({color: WI.Color.fromString("green"), ...allEnabledOverlayOptions});
             await checkGridOverlayCount(1);
 
             // No error should occur when hiding the grid overlay.
@@ -69,11 +77,11 @@ function test()
             let [first, second] = await getAllGridContainerNodes();
 
             InspectorTest.log("Requesting to show first grid overlay");
-            await first.showLayoutOverlay({color: WI.Color.fromString("magenta")});
+            await first.showLayoutOverlay({color: WI.Color.fromString("magenta"), ...allEnabledOverlayOptions});
             await checkGridOverlayCount(1);
 
             InspectorTest.log("Requesting to show second grid overlay");
-            await second.showLayoutOverlay({color: WI.Color.fromString("green")});
+            await second.showLayoutOverlay({color: WI.Color.fromString("green"), ...allEnabledOverlayOptions});
             await checkGridOverlayCount(2);
 
             // No error should occur when hiding the grid overlay.
@@ -96,11 +104,11 @@ function test()
             let [first, second] = await getAllGridContainerNodes();
 
             InspectorTest.log("Requesting to show grid overlay");
-            await first.showLayoutOverlay({color: WI.Color.fromString("magenta")});
+            await first.showLayoutOverlay({color: WI.Color.fromString("magenta"), ...allEnabledOverlayOptions});
             await checkGridOverlayCount(1);
 
             InspectorTest.log("Requesting to show a different grid overlay");
-            await second.showLayoutOverlay({color: WI.Color.fromString("green")});
+            await second.showLayoutOverlay({color: WI.Color.fromString("green"), ...allEnabledOverlayOptions});
             await checkGridOverlayCount(2);
 
             // No error should occur when hiding the grid overlay.
@@ -142,7 +150,7 @@ function test()
 
             InspectorTest.log("Requesting to show grid overlay for invalid nodeId -1");
             await InspectorTest.expectException(async () => {
-                await DOMAgent.showGridOverlay(-1, { gridColor: WI.Color.fromString("magenta").toProtocol() });
+                await DOMAgent.showGridOverlay(-1, { gridColor: WI.Color.fromString("magenta").toProtocol(), ...allEnabledOverlayOptions });
             });
 
         await checkGridOverlayCount(0);
@@ -161,8 +169,8 @@ function test()
         .grid-container {
             display: grid;
             grid-gap: 10px;
-            grid-template-columns: 100px 100px 100px;
-            grid-template-rows: repeat(2, 10px) repeat(auto-fit, 50px);
+            grid-auto-columns: minmax(100px, auto);
+            grid-template-rows: 100px repeat(2, 10px) repeat(auto-fit, 50px);
             background-color: white;
             color: gray;
         }

@@ -468,6 +468,19 @@ private:
     WindRule m_windRule;
 };
 
+class ResetClip {
+public:
+    static constexpr ItemType itemType = ItemType::ResetClip;
+    static constexpr bool isInlineItem = true;
+    static constexpr bool isDrawingItem = false;
+
+    ResetClip()
+    {
+    }
+
+    WEBCORE_EXPORT void apply(GraphicsContext&) const;
+};
+
 class DrawFilteredImageBuffer {
 public:
     static constexpr ItemType itemType = ItemType::DrawFilteredImageBuffer;
@@ -1419,6 +1432,7 @@ using DisplayListItem = std::variant
     , FillRectWithGradient
     , FillRectWithRoundedHole
     , FillRoundedRect
+    , ResetClip
     , Restore
     , Rotate
     , Save
@@ -1479,6 +1493,7 @@ WEBCORE_EXPORT void dumpItem(TextStream&, const ClipOut&, OptionSet<AsTextFlag>)
 WEBCORE_EXPORT void dumpItem(TextStream&, const ClipToImageBuffer&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const ClipOutToPath&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const ClipPath&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const ResetClip&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const DrawControlPart&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const DrawFilteredImageBuffer&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const DrawGlyphs&, OptionSet<AsTextFlag>);
@@ -1569,6 +1584,7 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::ClipToImageBuffer,
     WebCore::DisplayList::ItemType::ClipOutToPath,
     WebCore::DisplayList::ItemType::ClipPath,
+    WebCore::DisplayList::ItemType::ResetClip,
     WebCore::DisplayList::ItemType::DrawGlyphs,
     WebCore::DisplayList::ItemType::DrawDecomposedGlyphs,
     WebCore::DisplayList::ItemType::DrawImageBuffer,

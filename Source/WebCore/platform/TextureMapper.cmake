@@ -67,7 +67,6 @@ if (USE_COORDINATED_GRAPHICS)
     )
     list(APPEND WebCore_SOURCES
         platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp
-        platform/graphics/texmap/TextureMapperPlatformLayerDmabuf.cpp
         platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp
         platform/graphics/texmap/TextureMapperPlatformLayerProxyGL.cpp
 
@@ -151,7 +150,7 @@ if (USE_GRAPHICS_LAYER_WC)
     )
 endif ()
 
-if (USE_LIBGBM)
+if (USE_GBM)
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
         platform/graphics/gbm/DMABufColorSpace.h
         platform/graphics/gbm/DMABufEGLUtilities.h

@@ -26,7 +26,6 @@
 #import "config.h"
 #import "RenderThemeCocoa.h"
 
-#import "ApplePayLogoSystemImage.h"
 #import "AttachmentLayout.h"
 #import "DrawGlyphsRecorder.h"
 #import "FloatRoundedRect.h"
@@ -43,20 +42,26 @@
 #import <pal/spi/cocoa/FeatureFlagsSPI.h>
 #import <wtf/Language.h>
 
+#if ENABLE(APPLE_PAY)
+#import "ApplePayButtonPart.h"
+#import "ApplePayLogoSystemImage.h"
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+#import <UIKit/UIFont.h>
+#endif
+
 #if ENABLE(VIDEO)
 #import "LocalizedStrings.h"
 #import <wtf/BlockObjCExceptions.h>
 #endif
 
-#if PLATFORM(MAC)
-#import <AppKit/NSFont.h>
-#else
-#import <UIKit/UIFont.h>
-#import <pal/ios/UIKitSoftLink.h>
-#endif
-
 #if ENABLE(APPLE_PAY)
 #import <pal/cocoa/PassKitSoftLink.h>
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+#import <pal/ios/UIKitSoftLink.h>
 #endif
 
 @interface WebCoreRenderThemeBundle : NSObject
@@ -259,12 +264,6 @@ Color RenderThemeCocoa::platformSpellingMarkerColor(OptionSet<StyleColorOptions>
 }
 
 Color RenderThemeCocoa::platformDictationAlternativesMarkerColor(OptionSet<StyleColorOptions> options) const
-{
-    auto useDarkMode = options.contains(StyleColorOptions::UseDarkAppearance);
-    return useDarkMode ? SRGBA<uint8_t> { 40, 145, 255, 217 } : SRGBA<uint8_t> { 0, 122, 255, 191 };
-}
-
-Color RenderThemeCocoa::platformAutocorrectionReplacementMarkerColor(OptionSet<StyleColorOptions> options) const
 {
     auto useDarkMode = options.contains(StyleColorOptions::UseDarkAppearance);
     return useDarkMode ? SRGBA<uint8_t> { 40, 145, 255, 217 } : SRGBA<uint8_t> { 0, 122, 255, 191 };

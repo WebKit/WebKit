@@ -27,6 +27,7 @@
 
 #include "LayoutBoxGeometry.h"
 #include "LayoutElementBox.h"
+#include "Shape.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/OptionSet.h>
 
@@ -54,8 +55,8 @@ public:
     public:
         // FIXME: This c'tor is only used by the render tree integation codepath.
         enum class Position { Left, Right };
-        FloatItem(Position, BoxGeometry absoluteBoxGeometry, const Shape*);
-        FloatItem(const Box&, Position, BoxGeometry absoluteBoxGeometry);
+        FloatItem(Position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft, const Shape*);
+        FloatItem(const Box&, Position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft);
 
         ~FloatItem();
 
@@ -63,20 +64,22 @@ public:
         bool isRightPositioned() const { return m_position == Position::Right; }
         bool isInFormattingContextOf(const ElementBox& formattingContextRoot) const;
 
-        Rect rectWithMargin() const { return BoxGeometry::marginBoxRect(m_absoluteBoxGeometry); }
-        Rect borderBoxRect() const { return BoxGeometry::borderBoxRect(m_absoluteBoxGeometry); }
+        BoxGeometry boxGeometry() const;
+
+        Rect absoluteRectWithMargin() const { return BoxGeometry::marginBoxRect(m_absoluteBoxGeometry); }
+        Rect absoluteBorderBoxRect() const { return BoxGeometry::borderBoxRect(m_absoluteBoxGeometry); }
         BoxGeometry::HorizontalMargin horizontalMargin() const { return m_absoluteBoxGeometry.horizontalMargin(); }
-        PositionInContextRoot bottom() const { return { rectWithMargin().bottom() }; }
+        PositionInContextRoot absoluteBottom() const { return { absoluteRectWithMargin().bottom() }; }
 
         const Shape* shape() const { return m_shape.get(); }
 
-#if ASSERT_ENABLED
-        const Box* floatBox() const { return m_layoutBox.get(); }
-#endif
+        const Box* layoutBox() const { return m_layoutBox.get(); }
+
     private:
         CheckedPtr<const Box> m_layoutBox;
         Position m_position;
         BoxGeometry m_absoluteBoxGeometry;
+        LayoutPoint m_localTopLeft;
         RefPtr<const Shape> m_shape;
     };
     using FloatList = Vector<FloatItem>;

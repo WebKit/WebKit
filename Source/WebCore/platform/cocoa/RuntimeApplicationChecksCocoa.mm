@@ -227,6 +227,12 @@ bool IOSApplication::isIMDb()
     return isIMDb;
 }
 
+bool IOSApplication::isGmail()
+{
+    static bool isGmail = applicationBundleIsEqualTo("com.google.Gmail"_s);
+    return isGmail;
+}
+
 bool IOSApplication::isWebBookmarksD()
 {
     static bool isWebBookmarksD = applicationBundleIsEqualTo("com.apple.webbookmarksd"_s);
@@ -299,6 +305,12 @@ bool IOSApplication::isFirefox()
 {
     static bool isFirefox = applicationBundleIsEqualTo("org.mozilla.ios.Firefox"_s);
     return isFirefox;
+}
+
+bool IOSApplication::isHoYoLAB()
+{
+    static bool isHoYoLAB = applicationBundleIsEqualTo("com.miHoYo.HoYoLAB"_s);
+    return isHoYoLAB;
 }
 
 bool IOSApplication::isAppleApplication()

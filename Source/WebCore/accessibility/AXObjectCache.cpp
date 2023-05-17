@@ -85,7 +85,6 @@
 #include "HTMLNames.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLProgressElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTableElement.h"
@@ -230,6 +229,10 @@ AXObjectCache::AXObjectCache(Document& document)
     , m_liveRegionChangedPostTimer(*this, &AXObjectCache::liveRegionChangedNotificationPostTimerFired)
     , m_currentModalElement(nullptr)
     , m_performCacheUpdateTimer(*this, &AXObjectCache::performCacheUpdateTimerFired)
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    , m_buildIsolatedTreeTimer(*this, &AXObjectCache::buildIsolatedTree)
+    , m_geometryManager(AXGeometryManager::create(*this))
+#endif
 {
     AXTRACE(makeString("AXObjectCache::AXObjectCache 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
 #ifndef NDEBUG
@@ -594,9 +597,9 @@ Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* r
     Node* node = renderer->node();
 
     // If the node is aria role="list" or the aria role is empty and its a
-    // ul/ol/dl type (it shouldn't be a list if aria says otherwise).
+    // menu/ul/ol/dl type (it shouldn't be a list if aria says otherwise).
     if (node && ((nodeHasRole(node, "list"_s) || nodeHasRole(node, "directory"_s))
-        || (nodeHasRole(node, nullAtom()) && (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(dlTag)))))
+        || (nodeHasRole(node, nullAtom()) && (node->hasTagName(menuTag) || node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(dlTag)))))
         return AccessibilityList::create(renderer);
 
     // aria tables
@@ -825,21 +828,51 @@ AXCoreObject* AXObjectCache::rootObject()
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree() const
+RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree()
 {
     AXTRACE(makeString("AXObjectCache::getOrCreateIsolatedTree 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
+    ASSERT(isMainThread());
+
     if (!m_pageID)
         return nullptr;
 
     RefPtr tree = AXIsolatedTree::treeForPageID(m_pageID);
-    if (!tree) {
-        tree = Accessibility::retrieveValueFromMainThread<RefPtr<AXIsolatedTree>>([this] () -> RefPtr<AXIsolatedTree> {
-            return AXIsolatedTree::create(const_cast<AXObjectCache*>(this));
-        });
-        AXObjectCache::initializeSecondaryAXThread();
-    }
+    if (tree)
+        return tree;
+
+    // A new isolated tree needs to be created. Initialize the GeometryManager primary screen rect to be ready when needed.
+    m_geometryManager->initializePrimaryScreenRect();
+
+    // This method can be called as the result of a client request. Since creating the isolated tree can take long,
+    // especially for large documents, for real clients we build a temporary "empty" isolated tree consisting only of the ScrollView and the WebArea objects.
+    // Then we schedule building the entire isolated tree on a Timer.
+    // For test clients, LayoutTests or XCTests, build the whole isolated tree.
+    if (!isTestClient()) {
+        tree = AXIsolatedTree::createEmpty(*this);
+        if (!m_buildIsolatedTreeTimer.isActive())
+            m_buildIsolatedTreeTimer.startOneShot(0_s);
+    } else
+        tree = AXIsolatedTree::create(*this);
+    setIsolatedTreeRoot(tree->rootNode().get());
+    // Schedule a paint to cache the rects for the objects in this new isolated tree.
+    scheduleObjectRegionsUpdate(true /* scheduleImmediately */);
+
+    AXObjectCache::initializeSecondaryAXThread();
 
     return tree;
+}
+
+void AXObjectCache::buildIsolatedTree()
+{
+    m_buildIsolatedTreeTimer.stop();
+
+    if (!m_pageID)
+        return;
+
+    auto tree = AXIsolatedTree::create(*this);
+    setIsolatedTreeRoot(tree->rootNode().get());
+
+    postPlatformNotification(tree->rootNode().get(), AXNotification::AXLoadComplete);
 }
 
 AXCoreObject* AXObjectCache::isolatedTreeRootObject()
@@ -850,6 +883,13 @@ AXCoreObject* AXObjectCache::isolatedTreeRootObject()
     // Should not get here, couldn't create the IsolatedTree.
     ASSERT_NOT_REACHED();
     return nullptr;
+}
+
+void AXObjectCache::setIsolatedTreeRoot(AXCoreObject* root)
+{
+    ASSERT(isMainThread());
+    if (auto* frame = m_document.frame())
+        frame->loader().client().setAXIsolatedTreeRoot(root);
 }
 #endif
 
@@ -921,6 +961,9 @@ void AXObjectCache::remove(AXID axID)
     object->detach(AccessibilityDetachmentType::ElementDestroyed);
 
     m_idsInUse.remove(axID);
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    m_geometryManager->remove(axID);
+#endif
     ASSERT(m_objects.size() >= m_idsInUse.size());
 }
     
@@ -1455,7 +1498,7 @@ static bool isARIATableCell(Node* node)
 void AXObjectCache::onSelectedChanged(Node* node)
 {
     if (isARIATableCell(node))
-        postNotification(node, AXSelectedCellChanged);
+        postNotification(node, AXSelectedCellsChanged);
     else if (is<HTMLOptionElement>(node))
         postNotification(node, AXSelectedStateChanged);
     else if (auto* axObject = getOrCreate(node)) {
@@ -1974,6 +2017,14 @@ void AXObjectCache::handleActiveDescendantChanged(Element& element)
 #endif
 
         postPlatformNotification(target, AXNotification::AXActiveDescendantChanged);
+        
+        // Table cell active descendant changes should trigger selected cell changes.
+        if (target->isTable() && activeDescendant->isTableCell()) {
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+            updateIsolatedTree(target, AXNotification::AXSelectedCellsChanged);
+#endif
+            postPlatformNotification(target, AXSelectedCellsChanged);
+        }
     }
 }
 
@@ -2102,8 +2153,9 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
 #if !LOG_DISABLED
         updateIsolatedTree(get(element), AXIdAttributeChanged);
 #endif
-    }
-#endif
+    } else if (attrName == accesskeyAttr)
+        updateIsolatedTree(get(element), AXAccessKeyChanged);
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     else if (attrName == openAttr && is<HTMLDialogElement>(*element)) {
         deferModalChange(element);
         recomputeIsIgnored(element->parentNode());
@@ -2350,7 +2402,7 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(const SimpleRange& range,
         } else {
             // Ignore space, new line, tag node.
             if (currentLength == 1) {
-                if (isHTMLSpace(iterator.text()[0])) {
+                if (isASCIIWhitespace(iterator.text()[0])) {
                     // If the node has BR tag, we want to set the currentNode to it.
                     Node* childNode = iterator.node();
                     if (childNode && childNode->renderer() && childNode->renderer()->isBR()) {
@@ -2660,6 +2712,9 @@ bool AXObjectCache::shouldSkipBoundary(const CharacterOffset& previous, const Ch
 
 TextMarkerData AXObjectCache::textMarkerDataForNextCharacterOffset(const CharacterOffset& characterOffset)
 {
+    if (characterOffset.isNull())
+        return { };
+
     TextMarkerData data;
     auto next = characterOffset;
     auto previous = characterOffset;
@@ -2667,8 +2722,14 @@ TextMarkerData AXObjectCache::textMarkerDataForNextCharacterOffset(const Charact
     do {
         shouldContinue = false;
         next = nextCharacterOffset(next, false);
+        if (next.isNull())
+            return { };
+
         if (shouldSkipBoundary(previous, next))
             next = nextCharacterOffset(next, false);
+        if (next.isNull() || next.isEqual(previous))
+            return { };
+
         data = textMarkerDataForCharacterOffset(next);
 
         // We should skip next CharacterOffset if it's visually the same.
@@ -2688,6 +2749,9 @@ AXTextMarker AXObjectCache::nextTextMarker(const AXTextMarker& marker)
 
 TextMarkerData AXObjectCache::textMarkerDataForPreviousCharacterOffset(const CharacterOffset& characterOffset)
 {
+    if (characterOffset.isNull())
+        return { };
+
     TextMarkerData data;
     auto previous = characterOffset;
     auto next = characterOffset;
@@ -2695,6 +2759,9 @@ TextMarkerData AXObjectCache::textMarkerDataForPreviousCharacterOffset(const Cha
     do {
         shouldContinue = false;
         previous = previousCharacterOffset(previous, false);
+        if (previous.isNull() || previous.isEqual(next))
+            return { };
+
         data = textMarkerDataForCharacterOffset(previous);
 
         // We should skip previous CharacterOffset if it's visually the same.
@@ -3682,6 +3749,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             continue;
 
         switch (notification.second) {
+        case AXAccessKeyChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::AccessKey);
+            break;
         case AXAutofillTypeChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::ValueAutofillButtonType);
             break;
@@ -3733,7 +3803,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXRowIndexChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::AXRowIndex);
             break;
-        case AXSelectedCellChanged:
+        case AXSelectedCellsChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::SelectedCells);
+            break;
         case AXSelectedStateChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsSelected);
             break;
@@ -3794,7 +3866,21 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         }
     }
 }
-#endif
+
+void AXObjectCache::onPaint(const RenderObject& renderer, IntRect&& paintRect) const
+{
+    if (!m_pageID)
+        return;
+    m_geometryManager->onPaint(m_renderObjectMapping.get(const_cast<RenderObject*>(&renderer)), WTFMove(paintRect));
+}
+
+void AXObjectCache::onPaint(const Widget& widget, IntRect&& paintRect) const
+{
+    if (!m_pageID)
+        return;
+    m_geometryManager->onPaint(m_widgetObjectMapping.get(const_cast<Widget*>(&widget)), WTFMove(paintRect));
+}
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 void AXObjectCache::deferRecomputeIsIgnoredIfNeeded(Element* element)
 {

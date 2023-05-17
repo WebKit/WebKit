@@ -113,12 +113,18 @@ JSC_DEFINE_HOST_FUNCTION(functionProtoFuncBind, (JSGlobalObject* globalObject, C
         return throwVMTypeError(globalObject, scope, "|this| is not a function inside Function.prototype.bind"_s);
     JSObject* target = asObject(thisValue);
 
-    JSValue boundThis = callFrame->argument(0);
-    unsigned argumentCount = callFrame->argumentCount();
-    unsigned numBoundArgs = 0;
-    ArgList boundArgs { };
-    if (argumentCount > 1)
+    JSValue boundThis;
+    ArgList boundArgs;
+    size_t numBoundArgs;
+    if (size_t argCount = callFrame->argumentCount(); argCount > 1) {
+        boundThis = callFrame->uncheckedArgument(0);
         boundArgs = ArgList(callFrame, 1);
+        numBoundArgs = argCount - 1;
+    } else {
+        boundThis = callFrame->argument(0);
+        boundArgs = ArgList();
+        numBoundArgs = 0;
+    }
 
     double length = 0;
     JSString* name = nullptr;

@@ -28,7 +28,6 @@
 #include "HTMLMetaCharsetParser.h"
 
 #include "HTMLNames.h"
-#include "HTMLParserIdioms.h"
 #include <pal/text/TextCodec.h>
 #include <pal/text/TextEncodingRegistry.h>
 
@@ -92,7 +91,7 @@ bool HTMLMetaCharsetParser::processMeta(HTMLToken& token)
     return m_encoding.isValid();
 }
 
-PAL::TextEncoding HTMLMetaCharsetParser::encodingFromMetaAttributes(Span<const std::pair<StringView, StringView>> attributes)
+PAL::TextEncoding HTMLMetaCharsetParser::encodingFromMetaAttributes(std::span<const std::pair<StringView, StringView>> attributes)
 {
     bool gotPragma = false;
     enum { None, Charset, Pragma } mode = None;
@@ -118,7 +117,7 @@ PAL::TextEncoding HTMLMetaCharsetParser::encodingFromMetaAttributes(Span<const s
     }
 
     if (mode == Charset || (mode == Pragma && gotPragma))
-        return charset.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
+        return charset.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>);
 
     return PAL::TextEncoding();
 }

@@ -31,6 +31,7 @@
 #include "IntSize.h"
 #include "LengthFunctions.h"
 #include "Path.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 

@@ -41,6 +41,7 @@
 #include "HTMLParserIdioms.h"
 #include "LocalFrame.h"
 #include "LocalizedStrings.h"
+#include "NodeName.h"
 #include "RenderTextControlMultiLine.h"
 #include "ShadowRoot.h"
 #include "Text.h"
@@ -146,21 +147,27 @@ void HTMLTextAreaElement::collectPresentationalHintsForAttribute(const Qualified
 void HTMLTextAreaElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     HTMLTextFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-    if (name == rowsAttr) {
+
+    switch (name.nodeName()) {
+    case AttributeNames::rowsAttr: {
         unsigned rows = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(newValue, defaultRows);
         if (m_rows != rows) {
             m_rows = rows;
             if (renderer())
                 renderer()->setNeedsLayoutAndPrefWidthsRecalc();
         }
-    } else if (name == colsAttr) {
+        break;
+    }
+    case AttributeNames::colsAttr: {
         unsigned cols = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(newValue, defaultCols);
         if (m_cols != cols) {
             m_cols = cols;
             if (renderer())
                 renderer()->setNeedsLayoutAndPrefWidthsRecalc();
         }
-    } else if (name == wrapAttr) {
+        break;
+    }
+    case AttributeNames::wrapAttr: {
         // The virtual/physical values were a Netscape extension of HTML 3.0, now deprecated.
         // The soft/hard /off values are a recommendation for HTML 4 extension by IE and NS 4.
         WrapMethod wrap;
@@ -175,12 +182,18 @@ void HTMLTextAreaElement::attributeChanged(const QualifiedName& name, const Atom
             if (renderer())
                 renderer()->setNeedsLayoutAndPrefWidthsRecalc();
         }
-    } else if (name == maxlengthAttr) {
+        break;
+    }
+    case AttributeNames::maxlengthAttr:
         internalSetMaxLength(parseHTMLNonNegativeInteger(newValue).value_or(-1));
         updateValidity();
-    } else if (name == minlengthAttr) {
+        break;
+    case AttributeNames::minlengthAttr:
         internalSetMinLength(parseHTMLNonNegativeInteger(newValue).value_or(-1));
         updateValidity();
+        break;
+    default:
+        break;
     }
 }
 

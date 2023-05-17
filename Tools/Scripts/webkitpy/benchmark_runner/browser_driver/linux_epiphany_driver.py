@@ -32,7 +32,7 @@ class EpiphanyBrowserDriver(LinuxBrowserDriver):
     process_search_list = ['epiphany', 'epiphany-browser']
 
     def launch_url(self, url, options, browser_build_path, browser_path):
-        self._browser_arguments = ['--new-window', '-p',
+        self._default_browser_arguments = ['--new-window', '-p',
                                    '--profile={profile}'.format(profile=self._temp_profiledir),
                                    url]
         super(EpiphanyBrowserDriver, self).launch_url(url, options, browser_build_path, browser_path)

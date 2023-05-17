@@ -160,7 +160,7 @@ private:
 
 class JITData final : public TrailingArray<JITData, void*> {
     WTF_MAKE_FAST_ALLOCATED;
-    friend class LLIntOffsetsExtractor;
+    friend class JSC::LLIntOffsetsExtractor;
 public:
     using Base = TrailingArray<JITData, void*>;
     using ExitVector = FixedVector<MacroAssemblerCodeRef<OSRExitPtrTag>>;

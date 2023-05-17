@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,7 @@
 #include <wtf/MetaAllocator.h>
 #endif
 
-#if HAVE(IOS_JIT_RESTRICTIONS)
+#if HAVE(IOS_JIT_RESTRICTIONS) || HAVE(MAC_JIT_RESTRICTIONS)
 #include <wtf/cocoa/Entitlements.h>
 #endif
 
@@ -151,10 +151,11 @@ static bool isJITEnabled()
 {
     bool jitEnabled = !g_jscConfig.jitDisabled;
 #if HAVE(IOS_JIT_RESTRICTIONS)
-    return processHasEntitlement("dynamic-codesigning"_s) && jitEnabled;
-#else
-    return jitEnabled;
+    jitEnabled = jitEnabled && processHasEntitlement("dynamic-codesigning"_s);
+#elif HAVE(MAC_JIT_RESTRICTIONS) && USE(APPLE_INTERNAL_SDK)
+    jitEnabled = jitEnabled && processHasEntitlement("com.apple.security.cs.allow-jit"_s);
 #endif
+    return jitEnabled;
 }
 
 void ExecutableAllocator::disableJIT()
@@ -168,8 +169,13 @@ void ExecutableAllocator::disableJIT()
     g_jscConfig.jitDisabled = true;
     Options::useJIT() = false;
 
+#if HAVE(IOS_JIT_RESTRICTIONS) || HAVE(MAC_JIT_RESTRICTIONS) && USE(APPLE_INTERNAL_SDK)
 #if HAVE(IOS_JIT_RESTRICTIONS)
-    if (processHasEntitlement("dynamic-codesigning"_s)) {
+    bool hasJITEntitlement = processHasEntitlement("dynamic-codesigning"_s);
+#else
+    bool hasJITEntitlement = processHasEntitlement("com.apple.security.cs.allow-jit"_s);
+#endif
+    if (hasJITEntitlement) {
         // Because of an OS quirk, even after the JIT region has been unmapped,
         // the OS thinks that region is reserved, and as such, can cause Gigacage
         // allocation to fail. We work around this by initializing the Gigacage

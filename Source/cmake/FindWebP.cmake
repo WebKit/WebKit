@@ -68,7 +68,7 @@ find_path(WebP_INCLUDE_DIR
 )
 
 find_library(WebP_LIBRARY
-    NAMES ${WebP_NAMES} webp
+    NAMES ${WebP_NAMES} webp libwebp
     HINTS ${PC_WEBP_LIBDIR} ${PC_WEBP_LIBRARY_DIRS}
 )
 
@@ -94,7 +94,7 @@ endif ()
 
 if ("demux" IN_LIST WebP_FIND_COMPONENTS)
     find_library(WebP_DEMUX_LIBRARY
-        NAMES ${WebP_DEMUX_NAMES} webpdemux
+        NAMES ${WebP_DEMUX_NAMES} webpdemux libwebpdemux
         HINTS ${PC_WEBP_LIBDIR} ${PC_WEBP_LIBRARY_DIRS}
     )
 

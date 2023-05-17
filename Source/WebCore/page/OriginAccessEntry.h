@@ -73,9 +73,4 @@ inline bool operator==(const OriginAccessEntry& a, const OriginAccessEntry& b)
         && a.ipAddressSettings() == b.ipAddressSettings();
 }
 
-inline bool operator!=(const OriginAccessEntry& a, const OriginAccessEntry& b)
-{
-    return !(a == b);
-}
-
 } // namespace WebCore

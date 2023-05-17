@@ -29,10 +29,10 @@
 
 namespace WebCore {
 
-class HTMLOptionsCollection final : public CachedHTMLCollection<HTMLOptionsCollection, CollectionTypeTraits<SelectOptions>::traversalType> {
+class HTMLOptionsCollection final : public CachedHTMLCollection<HTMLOptionsCollection, CollectionTypeTraits<CollectionType::SelectOptions>::traversalType> {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(HTMLOptionsCollection, WEBCORE_EXPORT);
 public:
-    using Base = CachedHTMLCollection<HTMLOptionsCollection, CollectionTypeTraits<SelectOptions>::traversalType>;
+    using Base = CachedHTMLCollection<HTMLOptionsCollection, CollectionTypeTraits<CollectionType::SelectOptions>::traversalType>;
 
     static Ref<HTMLOptionsCollection> create(HTMLSelectElement&, CollectionType);
 
@@ -64,4 +64,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLOptionsCollection, SelectOptions)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLOptionsCollection, CollectionType::SelectOptions)

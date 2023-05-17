@@ -33,7 +33,6 @@
 #include "JITStubRoutine.h"
 #include "MacroAssembler.h"
 #include "Options.h"
-#include "PutKind.h"
 #include "RegisterSet.h"
 #include "Structure.h"
 #include "StructureSet.h"
@@ -61,9 +60,18 @@ enum class AccessType : int8_t {
     TryGetById,
     GetByVal,
     GetByValWithThis,
-    PutById,
-    PutByVal,
-    PutPrivateName,
+    PutByIdStrict,
+    PutByIdSloppy,
+    PutByIdDirectStrict,
+    PutByIdDirectSloppy,
+    PutByValStrict,
+    PutByValSloppy,
+    PutByValDirectStrict,
+    PutByValDirectSloppy,
+    DefinePrivateNameByVal,
+    DefinePrivateNameById,
+    SetPrivateNameByVal,
+    SetPrivateNameById,
     InById,
     InByVal,
     HasPrivateName,
@@ -338,11 +346,6 @@ private:
             return a.m_structure == b.m_structure && a.m_byValId == b.m_byValId;
         }
 
-        friend bool operator!=(const BufferedStructure& a, const BufferedStructure& b)
-        {
-            return !(a == b);
-        }
-
         struct Hash {
             static unsigned hash(const BufferedStructure& key)
             {
@@ -469,6 +472,8 @@ public:
     bool propertyIsString : 1 { false };
     bool propertyIsInt32 : 1 { false };
     bool propertyIsSymbol : 1 { false };
+    bool canBeMegamorphic : 1 { false };
+    bool isEnumerator : 1 { false };
     bool useDataIC : 1 { false };
 };
 
@@ -515,14 +520,13 @@ inline auto appropriateGenericGetByIdFunction(AccessType type) -> decltype(&oper
 
 struct UnlinkedStructureStubInfo {
     AccessType accessType;
-    PutKind putKind { PutKind::Direct };
-    PrivateFieldPutKind privateFieldPutKind { PrivateFieldPutKind::none() };
     ECMAMode ecmaMode { ECMAMode::sloppy() };
     bool propertyIsInt32 : 1 { false };
     bool propertyIsString : 1 { false };
     bool propertyIsSymbol : 1 { false };
     bool prototypeIsKnownObject : 1 { false };
-    bool tookSlowPath : 1 { false };
+    bool canBeMegamorphic : 1 { false };
+    bool isEnumerator : 1 { false };
     CodeLocationLabel<JSInternalPtrTag> doneLocation;
     CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation;
 };

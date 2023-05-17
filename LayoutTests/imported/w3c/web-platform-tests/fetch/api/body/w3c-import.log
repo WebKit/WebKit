@@ -14,5 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/body/cloned-any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/body/formdata.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/body/mime-type.any.js

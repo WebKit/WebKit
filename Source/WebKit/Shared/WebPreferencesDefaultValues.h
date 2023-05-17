@@ -95,11 +95,13 @@ bool defaultGamepadVibrationActuatorEnabled();
 #endif
 
 bool defaultRunningBoardThrottlingEnabled();
-bool defaultShouldDropSuspendedAssertionAfterDelay();
+bool defaultShouldDropNearSuspendedAssertionAfterDelay();
 bool defaultShowModalDialogEnabled();
+bool defaultLiveRangeSelectionEnabled();
 
 bool defaultShouldEnableScreenOrientationAPI();
 bool defaultPopoverAttributeEnabled();
+bool defaultUseGPUProcessForDOMRenderingEnabled();
 
 #if HAVE(SC_CONTENT_SHARING_PICKER)
 bool defaultUseSCContentSharingPicker();
@@ -107,10 +109,6 @@ bool defaultUseSCContentSharingPicker();
 
 #if USE(LIBWEBRTC)
 bool defaultPeerConnectionEnabledAvailable();
-#endif
-
-#if HAVE(AVCONTENTKEYSPECIFIER)
-bool defaultSampleBufferContentKeySessionSupportEnabled();
 #endif
 
 } // namespace WebKit

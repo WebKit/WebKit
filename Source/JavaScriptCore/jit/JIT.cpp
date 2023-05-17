@@ -342,6 +342,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_enumerator_next)
         DEFINE_OP(op_enumerator_get_by_val)
         DEFINE_OP(op_enumerator_in_by_val)
+        DEFINE_OP(op_enumerator_put_by_val)
         DEFINE_OP(op_enumerator_has_own_property)
         DEFINE_OP(op_get_private_name)
         DEFINE_OP(op_set_private_brand)
@@ -357,6 +358,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_is_big_int)
         DEFINE_OP(op_is_object)
         DEFINE_OP(op_is_cell_with_type)
+        DEFINE_OP(op_has_structure_with_flags)
         DEFINE_OP(op_jeq_null)
         DEFINE_OP(op_jfalse)
         DEFINE_OP(op_jmp)
@@ -556,6 +558,7 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_get_by_val)
         DEFINE_SLOWCASE_OP(op_get_by_val_with_this)
         DEFINE_SLOWCASE_OP(op_enumerator_get_by_val)
+        DEFINE_SLOWCASE_OP(op_enumerator_put_by_val)
         DEFINE_SLOWCASE_OP(op_get_private_name)
         DEFINE_SLOWCASE_OP(op_set_private_brand)
         DEFINE_SLOWCASE_OP(op_check_private_brand)
@@ -586,7 +589,7 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_neq)
         DEFINE_SLOWCASE_OP(op_new_object)
         DEFINE_SLOWCASE_OP(op_put_by_id)
-        case op_put_by_val_direct:
+        DEFINE_SLOWCASE_OP(op_put_by_val_direct)
         DEFINE_SLOWCASE_OP(op_put_by_val)
         DEFINE_SLOWCASE_OP(op_put_private_name)
         DEFINE_SLOWCASE_OP(op_del_by_val)
@@ -728,7 +731,7 @@ void JIT::emitConsistencyCheck()
 }
 #endif
 
-void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
+std::tuple<std::unique_ptr<LinkBuffer>, RefPtr<BaselineJITCode>> JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
 {
     DFG::CapabilityLevel level = m_profiledCodeBlock->capabilityLevel();
     switch (level) {
@@ -880,16 +883,15 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
         m_disassembler->setEndOfCode(label());
     m_pcToCodeOriginMapBuilder.appendItem(label(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
 
-    m_linkBuffer = makeUnique<LinkBuffer>(*this, m_unlinkedCodeBlock, LinkBuffer::Profile::BaselineJIT, effort);
-    link();
+    auto linkBuffer = makeUnique<LinkBuffer>(*this, m_unlinkedCodeBlock, LinkBuffer::Profile::BaselineJIT, effort);
+    auto jitCode = link(*linkBuffer);
+    return std::tuple { WTFMove(linkBuffer), WTFMove(jitCode) };
 }
 
-void JIT::link()
+RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
 {
-    LinkBuffer& patchBuffer = *m_linkBuffer;
-    
     if (patchBuffer.didFailToAllocate())
-        return;
+        return nullptr;
 
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
     for (auto& record : m_switches) {
@@ -994,8 +996,9 @@ void JIT::link()
         m_vm->m_perBytecodeProfiler->addCompilation(m_profiledCodeBlock, *m_compilation);
     }
 
+    std::unique_ptr<PCToCodeOriginMap> pcToCodeOriginMap;
     if (m_pcToCodeOriginMapBuilder.didBuildMapping())
-        m_pcToCodeOriginMap = makeUnique<PCToCodeOriginMap>(WTFMove(m_pcToCodeOriginMapBuilder), patchBuffer);
+        pcToCodeOriginMap = makeUnique<PCToCodeOriginMap>(WTFMove(m_pcToCodeOriginMapBuilder), patchBuffer);
     
     // FIXME: Make a version of CodeBlockWithJITType that knows about UnlinkedCodeBlock.
     CodeRef<JSEntryPtrTag> result = FINALIZE_CODE(
@@ -1003,65 +1006,57 @@ void JIT::link()
         "Baseline JIT code for %s", toCString(CodeBlockWithJITType(m_profiledCodeBlock, JITType::BaselineJIT)).data());
     
     CodePtr<JSEntryPtrTag> withArityCheck = patchBuffer.locationOf<JSEntryPtrTag>(m_arityCheck);
-    m_jitCode = adoptRef(*new BaselineJITCode(result, withArityCheck));
+    auto jitCode = adoptRef(*new BaselineJITCode(result, withArityCheck));
 
-    m_jitCode->m_unlinkedCalls = FixedVector<BaselineUnlinkedCallLinkInfo>(m_unlinkedCalls.size());
-    if (m_jitCode->m_unlinkedCalls.size())
-        std::move(m_unlinkedCalls.begin(), m_unlinkedCalls.end(), m_jitCode->m_unlinkedCalls.begin());
-    m_jitCode->m_unlinkedStubInfos = FixedVector<BaselineUnlinkedStructureStubInfo>(m_unlinkedStubInfos.size());
-    if (m_jitCode->m_unlinkedStubInfos.size())
-        std::move(m_unlinkedStubInfos.begin(), m_unlinkedStubInfos.end(), m_jitCode->m_unlinkedStubInfos.begin());
-    m_jitCode->m_switchJumpTables = WTFMove(m_switchJumpTables);
-    m_jitCode->m_stringSwitchJumpTables = WTFMove(m_stringSwitchJumpTables);
-    m_jitCode->m_jitCodeMap = jitCodeMapBuilder.finalize();
-    m_jitCode->adoptMathICs(m_mathICs);
-    m_jitCode->m_constantPool = WTFMove(m_constantPool);
-    m_jitCode->m_isShareable = m_isShareable;
+    jitCode->m_unlinkedCalls = FixedVector<BaselineUnlinkedCallLinkInfo>(m_unlinkedCalls.size());
+    if (jitCode->m_unlinkedCalls.size())
+        std::move(m_unlinkedCalls.begin(), m_unlinkedCalls.end(), jitCode->m_unlinkedCalls.begin());
+    jitCode->m_unlinkedStubInfos = FixedVector<BaselineUnlinkedStructureStubInfo>(m_unlinkedStubInfos.size());
+    if (jitCode->m_unlinkedStubInfos.size())
+        std::move(m_unlinkedStubInfos.begin(), m_unlinkedStubInfos.end(), jitCode->m_unlinkedStubInfos.begin());
+    jitCode->m_switchJumpTables = WTFMove(m_switchJumpTables);
+    jitCode->m_stringSwitchJumpTables = WTFMove(m_stringSwitchJumpTables);
+    jitCode->m_jitCodeMap = jitCodeMapBuilder.finalize();
+    jitCode->adoptMathICs(m_mathICs);
+    jitCode->m_constantPool = WTFMove(m_constantPool);
+    jitCode->m_isShareable = m_isShareable;
+    jitCode->m_pcToCodeOriginMap = WTFMove(pcToCodeOriginMap);
 
     if (JITInternal::verbose)
         dataLogF("JIT generated code for %p at [%p, %p).\n", m_unlinkedCodeBlock, result.executableMemory()->start().untaggedPtr(), result.executableMemory()->end().untaggedPtr());
+    return jitCode;
 }
 
-CompilationResult JIT::finalizeOnMainThread(CodeBlock* codeBlock)
+CompilationResult JIT::finalizeOnMainThread(CodeBlock* codeBlock, LinkBuffer& linkBuffer, RefPtr<BaselineJITCode> jitCode)
 {
     RELEASE_ASSERT(!isCompilationThread());
 
-    if (!m_jitCode)
+    if (!jitCode)
         return CompilationFailed;
 
-    m_linkBuffer->runMainThreadFinalizationTasks();
+    linkBuffer.runMainThreadFinalizationTasks();
 
-    if (m_pcToCodeOriginMap)
-        m_jitCode->m_pcToCodeOriginMap = WTFMove(m_pcToCodeOriginMap);
+    codeBlock->vm().machineCodeBytesPerBytecodeWordForBaselineJIT->add(
+        static_cast<double>(jitCode->size()) /
+        static_cast<double>(codeBlock->unlinkedCodeBlock()->instructionsSize()));
 
-    m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT->add(
-        static_cast<double>(m_jitCode->size()) /
-        static_cast<double>(m_unlinkedCodeBlock->instructionsSize()));
-
-    codeBlock->setupWithUnlinkedBaselineCode(m_jitCode.releaseNonNull());
+    codeBlock->setupWithUnlinkedBaselineCode(jitCode.releaseNonNull());
 
     return CompilationSuccessful;
 }
 
-size_t JIT::codeSize() const
-{
-    if (!m_linkBuffer)
-        return 0;
-    return m_linkBuffer->size();
-}
-
 CompilationResult JIT::privateCompile(CodeBlock* codeBlock, JITCompilationEffort effort)
 {
-    doMainThreadPreparationBeforeCompile();
-    compileAndLinkWithoutFinalizing(effort);
-    return finalizeOnMainThread(codeBlock);
+    doMainThreadPreparationBeforeCompile(vm());
+    auto [ linkBuffer, jitCode ] = compileAndLinkWithoutFinalizing(effort);
+    return JIT::finalizeOnMainThread(codeBlock, *linkBuffer, WTFMove(jitCode));
 }
 
-void JIT::doMainThreadPreparationBeforeCompile()
+void JIT::doMainThreadPreparationBeforeCompile(VM& vm)
 {
     // This ensures that we have the most up to date type information when performing typecheck optimizations for op_profile_type.
-    if (m_vm->typeProfiler())
-        m_vm->typeProfilerLog()->processLogEntries(*m_vm, "Preparing for JIT compilation."_s);
+    if (vm.typeProfiler())
+        vm.typeProfilerLog()->processLogEntries(vm, "Preparing for JIT compilation."_s);
 }
 
 unsigned JIT::frameRegisterCountFor(UnlinkedCodeBlock* codeBlock)

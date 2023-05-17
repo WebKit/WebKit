@@ -37,7 +37,7 @@ public:
     static Ref<StyleRuleCounterStyle> create(const AtomString&, CSSCounterStyleDescriptors&&);
     ~StyleRuleCounterStyle();
 
-    Ref<StyleRuleCounterStyle> copy() const { RELEASE_ASSERT_NOT_REACHED(); }
+    Ref<StyleRuleCounterStyle> copy() const { return adoptRef(*new StyleRuleCounterStyle(*this)); }
 
     const CSSCounterStyleDescriptors& descriptors() const { return m_descriptors; };
     CSSCounterStyleDescriptors& mutableDescriptors() { return m_descriptors; };
@@ -59,6 +59,7 @@ public:
 
 private:
     explicit StyleRuleCounterStyle(const AtomString&, CSSCounterStyleDescriptors&&);
+    StyleRuleCounterStyle(const StyleRuleCounterStyle&) = default;
 
     AtomString m_name;
     CSSCounterStyleDescriptors m_descriptors;

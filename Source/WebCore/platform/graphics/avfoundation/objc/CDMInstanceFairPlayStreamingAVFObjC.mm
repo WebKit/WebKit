@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -257,12 +257,11 @@ AVContentKeySession* CDMInstanceFairPlayStreamingAVFObjC::contentKeySession()
     auto storageURL = this->storageURL();
 #if HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE) && HAVE(AVCONTENTKEYSPECIFIER)
     if (!MediaSessionManagerCocoa::sampleBufferContentKeySessionSupportEnabled()) {
-        if (!persistentStateAllowed() || !storageURL)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnonnull"
+        if (!persistentStateAllowed() || !storageURL) {
+            IGNORE_NULL_CHECK_WARNINGS_BEGIN
             m_session = [PAL::getAVContentKeySessionClass() contentKeySessionWithLegacyWebKitCompatibilityModeAndKeySystem:AVContentKeySystemFairPlayStreaming storageDirectoryAtURL:nil];
-#pragma clang diagnostic pop
-        else
+            IGNORE_NULL_CHECK_WARNINGS_END
+        } else
             m_session = [PAL::getAVContentKeySessionClass() contentKeySessionWithLegacyWebKitCompatibilityModeAndKeySystem:AVContentKeySystemFairPlayStreaming storageDirectoryAtURL:storageURL];
     } else
 #endif
@@ -459,9 +458,9 @@ const String& CDMInstanceFairPlayStreamingAVFObjC::keySystem() const
 static AVContentKeyReportGroup* groupForRequest(AVContentKeyRequest* request)
 {
     ASSERT([request respondsToSelector:@selector(options)]);
-    ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     auto group = (AVContentKeyReportGroup*)[request.options valueForKey:ContentKeyReportGroupKey];
-    ALLOW_NEW_API_WITHOUT_GUARDS_END
+ALLOW_NEW_API_WITHOUT_GUARDS_END
     return group;
 }
 #endif
@@ -750,9 +749,9 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::requestLicense(LicenseType lice
         ALWAYS_LOG(LOGIDENTIFIER, " found unexpectedRequest matching initData");
 #if HAVE(AVCONTENTKEYREPORTGROUP)
         if (m_group) {
-            ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
             [m_group associateContentKeyRequest:unexpectedRequest.get()];
-            ALLOW_NEW_API_WITHOUT_GUARDS_END
+ALLOW_NEW_API_WITHOUT_GUARDS_END
         }
 #endif
         m_requestLicenseCallback = WTFMove(callback);
@@ -1617,12 +1616,11 @@ bool CDMInstanceSessionFairPlayStreamingAVFObjC::ensureSessionOrGroup()
     auto storageURL = m_instance->storageURL();
 #if HAVE(AVCONTENTKEYREQUEST_COMPATABILITIY_MODE) && HAVE(AVCONTENTKEYSPECIFIER)
     if (!MediaSessionManagerCocoa::sampleBufferContentKeySessionSupportEnabled()) {
-        if (!m_instance->persistentStateAllowed() || !storageURL)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnonnull"
+        if (!m_instance->persistentStateAllowed() || !storageURL) {
+            IGNORE_NULL_CHECK_WARNINGS_BEGIN
             m_session = [PAL::getAVContentKeySessionClass() contentKeySessionWithLegacyWebKitCompatibilityModeAndKeySystem:AVContentKeySystemFairPlayStreaming storageDirectoryAtURL:nil];
-#pragma clang diagnostic pop
-        else
+            IGNORE_NULL_CHECK_WARNINGS_END
+        } else
             m_session = [PAL::getAVContentKeySessionClass() contentKeySessionWithLegacyWebKitCompatibilityModeAndKeySystem:AVContentKeySystemFairPlayStreaming storageDirectoryAtURL:storageURL];
     } else
 #endif

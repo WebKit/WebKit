@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Tests -webkit-text-size-adjust (auto value) interaction with @font-face size-adjust.</title>
+<style>
+@font-face {
+  font-family: adjusted-font;
+  src: local(Ahem), url(/fonts/Ahem.ttf), local(Times);
+}
+span {
+  font-size: 60px;
+}
+.ffsa {
+  font-family: adjusted-font;
+}
+.tsa {
+    -webkit-text-size-adjust: auto;
+}
+</style>
+
+<div>
+  <span class="ffsa tsa">x</span>
+</div>

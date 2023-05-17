@@ -32,7 +32,9 @@
 #include "LayoutIntegrationBoxTree.h"
 #include "LayoutIntegrationInlineContent.h"
 #include "LayoutState.h"
-#include "RenderBlockFlow.h"
+#include "RenderBlockFlowInlines.h"
+#include "RenderBoxInlines.h"
+#include "RenderStyleInlines.h"
 #include "StringTruncator.h"
 
 namespace WebCore {

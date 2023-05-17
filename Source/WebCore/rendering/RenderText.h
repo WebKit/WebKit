@@ -80,7 +80,7 @@ public:
 #endif
 
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const final;
-    Vector<FloatQuad> absoluteQuadsForRange(unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false, bool ignoreEmptyTextSelections = false, bool* wasFixed = nullptr) const;
+    Vector<FloatQuad> absoluteQuadsForRange(unsigned startOffset = 0, unsigned endOffset = UINT_MAX, OptionSet<RenderObject::BoundingRectBehavior> = { }, bool* wasFixed = nullptr) const;
 
     Vector<FloatQuad> absoluteQuadsClippedToEllipsis() const;
 
@@ -128,8 +128,8 @@ public:
 
     LayoutRect collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<FloatQuad>&);
 
-    LayoutUnit marginLeft() const { return minimumValueForLength(style().marginLeft(), 0); }
-    LayoutUnit marginRight() const { return minimumValueForLength(style().marginRight(), 0); }
+    inline LayoutUnit marginLeft() const;
+    inline LayoutUnit marginRight() const;
 
     LegacyInlineTextBox* firstTextBox() const { return m_lineBoxes.first(); }
     LegacyInlineTextBox* lastTextBox() const { return m_lineBoxes.last(); }
@@ -182,8 +182,10 @@ public:
 
     static std::optional<bool> emphasisMarkExistsAndIsAbove(const RenderText&, const RenderStyle&);
 
+    void resetMinMaxWidth();
+
 protected:
-    virtual void computePreferredLogicalWidths(float leadWidth);
+    virtual void computePreferredLogicalWidths(float leadWidth, bool forcedMinMaxWidthComputation = false);
     void willBeDestroyed() override;
 
     virtual void setRenderedText(const String&);
@@ -206,7 +208,7 @@ private:
     LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) final;
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const final;
 
-    void computePreferredLogicalWidths(float leadWidth, HashSet<const Font*>& fallbackFonts, GlyphOverflow&);
+    void computePreferredLogicalWidths(float leadWidth, HashSet<const Font*>& fallbackFonts, GlyphOverflow&, bool forcedMinMaxWidthComputation = false);
 
     bool computeCanUseSimpleFontCodePath() const;
     
@@ -314,6 +316,12 @@ inline std::unique_ptr<RenderStyle> RenderText::selectionPseudoStyle() const
 inline RenderText* Text::renderer() const
 {
     return downcast<RenderText>(Node::renderer());
+}
+
+inline void RenderText::resetMinMaxWidth()
+{
+    m_minWidth = { };
+    m_maxWidth = { };
 }
 
 } // namespace WebCore

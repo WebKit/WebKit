@@ -29,7 +29,7 @@
 
 #if ENABLE(MATHML)
 
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "StyleInheritedData.h"
 
 static const unsigned kRadicalOperator = 0x221A;

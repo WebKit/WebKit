@@ -308,8 +308,8 @@ static NSString *nullableNSString(const WTF::String& string)
 
 - (NSArray<_WKApplicationManifestIcon *> *)icons
 {
-    return createNSArray(_applicationManifest->applicationManifest().icons, [] (auto& coreIcon) -> id {
-        return adoptNS([[_WKApplicationManifestIcon alloc] initWithCoreIcon:&coreIcon]).autorelease();
+    return createNSArray(_applicationManifest->applicationManifest().icons, [] (auto& coreIcon) {
+        return adoptNS([[_WKApplicationManifestIcon alloc] initWithCoreIcon:&coreIcon]);
     }).autorelease();
 }
 

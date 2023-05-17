@@ -83,7 +83,7 @@ Ref<MutableStyleProperties> MutableStyleProperties::createEmpty()
 }
 
 // FIXME: Change StylePropertyShorthand::properties to return a Span and delete this.
-static inline Span<const CSSPropertyID> span(const StylePropertyShorthand& shorthand)
+static inline std::span<const CSSPropertyID> span(const StylePropertyShorthand& shorthand)
 {
     return { shorthand.properties(), shorthand.length() };
 }
@@ -275,7 +275,7 @@ void MutableStyleProperties::clear()
     m_propertyVector.clear();
 }
 
-bool MutableStyleProperties::removeProperties(Span<const CSSPropertyID> properties)
+bool MutableStyleProperties::removeProperties(std::span<const CSSPropertyID> properties)
 {
     if (m_propertyVector.isEmpty())
         return false;

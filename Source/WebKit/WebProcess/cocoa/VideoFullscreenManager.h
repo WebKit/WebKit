@@ -140,7 +140,7 @@ public:
     void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WTF::CompletionHandler<void(bool)>&& = [](bool) { });
     void exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
 
-    void updateTextTrackRepresentationForVideoElement(WebCore::HTMLVideoElement&, const ShareableBitmapHandle&);
+    void updateTextTrackRepresentationForVideoElement(WebCore::HTMLVideoElement&, ShareableBitmapHandle&&);
     void setTextTrackRepresentationContentScaleForVideoElement(WebCore::HTMLVideoElement&, float scale);
     void setTextTrackRepresentationIsHiddenForVideoElement(WebCore::HTMLVideoElement&, bool hidden);
 
@@ -185,6 +185,13 @@ protected:
     void requestRouteSharingPolicyAndContextUID(PlaybackSessionContextIdentifier, CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&&);
 
     void setCurrentlyInFullscreen(VideoFullscreenInterfaceContext&, bool);
+
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const;
+    const void* logIdentifier() const;
+    const char* logClassName() const;
+    WTFLogChannel& logChannel() const;
+#endif
 
     WebPage* m_page;
     Ref<PlaybackSessionManager> m_playbackSessionManager;

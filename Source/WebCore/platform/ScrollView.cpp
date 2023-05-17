@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ScrollView.h"
 
+#include "AccessibilityRegionContext.h"
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
@@ -340,6 +341,15 @@ IntRect ScrollView::visibleContentRectInternal(VisibleContentRectIncludesScrollb
     return unobscuredContentRect(scrollbarInclusion);
 }
 
+IntRect ScrollView::frameRectShrunkByInset() const
+{
+    auto rect = frameRect();
+    float inset = topContentInset();
+    rect.move(0, inset);
+    rect.contract(0, inset);
+    return rect;
+}
+
 IntSize ScrollView::layoutSize() const
 {
     return m_fixedLayoutSize.isEmpty() || !m_useFixedLayout ? sizeForUnobscuredContent() : m_fixedLayoutSize;
@@ -494,7 +504,7 @@ void ScrollView::scrollTo(const ScrollPosition& newPosition)
 
 #if USE(COORDINATED_GRAPHICS)
     if (delegatesScrolling()) {
-        requestScrollPositionUpdate(newPosition);
+        requestScrollToPosition(newPosition);
         return;
     }
 #endif
@@ -539,7 +549,7 @@ void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition, const S
         return;
     }
 
-    if (!requestScrollPositionUpdate(newScrollPosition, currentScrollType(), options.clamping))
+    if (!requestScrollToPosition(newScrollPosition, currentScrollType(), options.clamping))
         updateScrollbars(newScrollPosition);
 }
 
@@ -1276,14 +1286,14 @@ void ScrollView::paintPanScrollIcon(GraphicsContext& context)
     context.drawImage(panScrollIcon, iconGCPoint);
 }
 
-void ScrollView::paint(GraphicsContext& context, const IntRect& rect, SecurityOriginPaintPolicy securityOriginPaintPolicy, EventRegionContext* eventRegionContext)
+void ScrollView::paint(GraphicsContext& context, const IntRect& rect, SecurityOriginPaintPolicy securityOriginPaintPolicy, RegionContext* regionContext)
 {
     if (platformWidget()) {
         Widget::paint(context, rect);
         return;
     }
 
-    if (context.paintingDisabled() && !context.performingPaintInvalidation() && !eventRegionContext)
+    if (context.paintingDisabled() && !context.performingPaintInvalidation() && !regionContext)
         return;
 
     IntRect documentDirtyRect = rect;
@@ -1306,7 +1316,7 @@ void ScrollView::paint(GraphicsContext& context, const IntRect& rect, SecurityOr
             context.clip(visibleContentRect(LegacyIOSDocumentVisibleRect));
         }
 
-        paintContents(context, documentDirtyRect, securityOriginPaintPolicy, eventRegionContext);
+        paintContents(context, documentDirtyRect, securityOriginPaintPolicy, regionContext);
     }
 
 #if HAVE(RUBBER_BANDING)
@@ -1332,6 +1342,9 @@ void ScrollView::paint(GraphicsContext& context, const IntRect& rect, SecurityOr
     // Paint the panScroll Icon
     if (m_drawPanScrollIcon)
         paintPanScrollIcon(context);
+
+    if (auto* axRegionContext = dynamicDowncast<AccessibilityRegionContext>(regionContext))
+        axRegionContext->onPaint(*this);
 }
 
 void ScrollView::calculateOverhangAreasForPainting(IntRect& horizontalOverhangRect, IntRect& verticalOverhangRect)

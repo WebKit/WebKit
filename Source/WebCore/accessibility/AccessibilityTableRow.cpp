@@ -112,39 +112,22 @@ AccessibilityTable* AccessibilityTableRow::parentTable() const
 
 AXCoreObject* AccessibilityTableRow::headerObject()
 {
-    if (!m_renderer || !m_renderer->isTableRow())
-        return nullptr;
-    
     const auto& rowChildren = children();
     if (!rowChildren.size())
         return nullptr;
     
-    // check the first element in the row to see if it is a TH element
-    AXCoreObject* cell = rowChildren[0].get();
-    if (!is<AccessibilityTableCell>(*cell))
-        return nullptr;
-    
-    RenderObject* cellRenderer = downcast<AccessibilityTableCell>(*cell).renderer();
-    if (!cellRenderer)
-        return nullptr;
-    
-    Node* cellNode = cellRenderer->node();
-    if (!cellNode || !cellNode->hasTagName(thTag))
+    auto* cell = rowChildren[0].get();
+    if (!is<AccessibilityTableCell>(cell) || !cell->node() || !cell->node()->hasTagName(thTag))
         return nullptr;
     
     // Verify that the row header is not part of an entire row of headers.
     // In that case, it is unlikely this is a row header.
-    bool allHeadersInRow = true;
-    for (const auto& cell : rowChildren) {
-        if (cell->node() && !cell->node()->hasTagName(thTag)) {
-            allHeadersInRow = false;
-            break;
-        }
+    for (const auto& child : rowChildren) {
+        // We found a non-header cell, so this is not an entire row of headers -- return the original header cell.
+        if (child->node() && !child->node()->hasTagName(thTag))
+            return cell;
     }
-    if (allHeadersInRow)
-        return nullptr;
-    
-    return cell;
+    return nullptr;
 }
 
 void AccessibilityTableRow::addChildren()
@@ -168,8 +151,8 @@ void AccessibilityTableRow::addChildren()
 
     unsigned index = 0;
     for (const auto& cell : children()) {
-        if (is<AccessibilityTableCell>(*cell))
-            downcast<AccessibilityTableCell>(*cell).setAXColIndexFromRow(colIndex + index);
+        if (auto* tableCell = dynamicDowncast<AccessibilityTableCell>(cell.get()))
+            tableCell->setAXColIndexFromRow(colIndex + index);
         index++;
     }
 }

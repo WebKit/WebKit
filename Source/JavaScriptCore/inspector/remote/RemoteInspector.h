@@ -157,7 +157,6 @@ public:
     ProcessID parentProcessIdentifier() const { return m_parentProcessIdentifier; }
     RetainPtr<CFDataRef> parentProcessAuditData() const { return m_parentProcessAuditData; }
     void setParentProcessInformation(ProcessID, RetainPtr<CFDataRef> auditData);
-    void setParentProcessInfomationIsDelayed();
     std::optional<audit_token_t> parentProcessAuditToken();
 
     void setUsePerTargetPresentingApplicationPIDs(bool usePerTargetPresentingApplicationPIDs) { m_usePerTargetPresentingApplicationPIDs = usePerTargetPresentingApplicationPIDs; }

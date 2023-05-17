@@ -44,6 +44,7 @@ list(APPEND WTF_SOURCES
     glib/URLGLib.cpp
 
     posix/CPUTimePOSIX.cpp
+    posix/FileSystemPOSIX.cpp
     posix/OSAllocatorPOSIX.cpp
     posix/ThreadingPOSIX.cpp
 

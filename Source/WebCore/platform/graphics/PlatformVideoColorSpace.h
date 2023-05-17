@@ -49,9 +49,5 @@ inline bool operator==(const PlatformVideoColorSpace& a, const PlatformVideoColo
         && a.fullRange == b.fullRange;
 }
 
-inline bool operator!=(const PlatformVideoColorSpace& a, const PlatformVideoColorSpace& b)
-{
-    return !(a == b);
-}
 
 }

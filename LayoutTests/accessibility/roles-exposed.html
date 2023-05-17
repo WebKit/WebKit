@@ -6,7 +6,7 @@
 <body>
 
 <!-- ==================================================================================================== -->
-<!-- HTML elements in alphabetical order, excepting the need for nesting (e.g. <li> is with its <ol> and <ul> parents) -->
+<!-- HTML elements in alphabetical order, excepting the need for nesting (e.g., <li> is with its <menu>, <ol>, and <ul> parents) -->
 <!-- ==================================================================================================== -->
 <a data-platform="atspi,mac" href="#" data-note="[href]" class="ex">X</a>
 <a data-platform="atspi,mac" data-note=":not([href])" class="ex">X</a>
@@ -97,6 +97,7 @@
 <map data-platform="atspi,mac" class="ex" name="imagemap">
   <area data-platform="atspi,mac" class="ex" shape="rect" coords="0,0,10,10" href="#" title="x" />
 </map>
+<main data-platform="atspi,mac" class="ex">X</main>
 <!-- http://webkit.org/b/109018 --><mark data-platform="atspi,mac" class="ex">X</mark>
 <!-- Some MathML elements do not become hidden by display: none, so hide them after the test via a parent element. http://webkit.org/b/139403 --><div class="ex">
 <math data-platform="atspi,mac" class="ex"><mi>X</mi></math>
@@ -142,7 +143,9 @@
   </mtable>
 </math>
 </div>
-<!-- skipped <menu> -->
+<menu data-platform="atspi,mac" class="ex">
+    <li data-platform="atspi,mac" class="ex">X</li>
+</menu>
 <!-- skipped <meta> -->
 <!-- reenable for atspi after http://webkit.org/b/163383 fixed --><meter data-platform="mac" class="ex" value="0.75">X</meter>
 <nav data-platform="atspi,mac" class="ex">X</nav>
@@ -163,6 +166,7 @@
 <s data-platform="atspi,mac" class="ex">X</s>
 <samp data-platform="atspi,mac" class="ex">X</samp>
 <!-- skipped <script> -->
+<search data-platform="atspi,mac" class="ex">X</search>
 <!-- http://webkit.org/b/109024 --><section data-platform="atspi,mac" data-note=":not([aria-label]:not([aria-labelledby])" class="ex">X</section>
 <section data-platform="atspi,mac" class="ex" aria-label="x" data-note="[aria-label]">X</section>
 <section data-platform="atspi,mac" class="ex" aria-labelledby="section-label" data-note="[aria-labelledby]">

@@ -1028,6 +1028,12 @@ void CollectVariablesTraverser::recordInterfaceBlock(const char *instanceName,
         interfaceBlock->layout           = GetBlockLayoutType(blockType->blockStorage());
     }
 
+    // Consider an SSBO readonly if all its fields are readonly.  Note that ANGLE doesn't keep the
+    // readonly qualifier applied to the interface block itself, but rather applies it to the
+    // fields.
+    ASSERT(!interfaceBlockType.getMemoryQualifier().readonly);
+    bool isReadOnly = true;
+
     // Gather field information
     bool anyFieldStaticallyUsed = false;
 
@@ -1056,10 +1062,20 @@ void CollectVariablesTraverser::recordInterfaceBlock(const char *instanceName,
         fieldVariable.isRowMajorLayout =
             (fieldType.getLayoutQualifier().matrixPacking == EmpRowMajor);
         interfaceBlock->fields.push_back(fieldVariable);
+
+        // The SSBO is not readonly if any field is not readonly.
+        if (!fieldType.getMemoryQualifier().readonly)
+        {
+            isReadOnly = false;
+        }
     }
     if (anyFieldStaticallyUsed)
     {
         interfaceBlock->staticUse = true;
+    }
+    if (interfaceBlock->blockType == BlockType::BLOCK_BUFFER)
+    {
+        interfaceBlock->isReadOnly = isReadOnly;
     }
 }
 

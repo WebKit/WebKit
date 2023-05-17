@@ -29,6 +29,8 @@
 #if ENABLE(MATHML)
 
 #include "GraphicsContext.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

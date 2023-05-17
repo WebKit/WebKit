@@ -147,8 +147,8 @@ layer at (0,0) size 785x1113
         RenderBlock {DIV} at (1,388) size 352x47 [border: (1px solid #FF0000)]
           RenderText {#text} at (1,31) size 14x15
             text run at (1,31) width 14: "A "
-          RenderText {#text} at (215,31) size 14x15
-            text run at (215,31) width 14: " B"
+          RenderText {#text} at (200,31) size 14x15
+            text run at (200,31) width 14: " B"
         RenderBlock (anonymous) at (1,435) size 350x14
           RenderText {#text} at (0,-1) size 132x15
             text run at (0,-1) width 132: "style=\"overflow:scroll\""
@@ -558,15 +558,15 @@ layer at (375,318) size 60x60 clip at (376,319) size 43x58 scrollHeight 346
         text run at (0,306) width 32: "opqr"
         text run at (0,324) width 29: "stuv"
         text run at (29,324) width 4: " "
-layer at (375,397) size 201x42 clip at (376,398) size 199x40 scrollHeight 76
-  RenderTextControl {TEXTAREA} at (14,1) size 202x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (3,3) size 195x72
-      RenderText {#text} at (0,0) size 195x71
+layer at (375,397) size 186x42 clip at (376,398) size 184x40 scrollHeight 76
+  RenderTextControl {TEXTAREA} at (14,1) size 187x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 180x72
+      RenderText {#text} at (0,0) size 173x71
         text run at (0,0) width 132: "Lorem ipsum dolor"
         text run at (132,0) width 4: " "
-        text run at (0,18) width 195: "ABCDEFGHIJKLMNOPQR"
-        text run at (0,36) width 91: "STUVWXYZ"
-        text run at (91,36) width 4: " "
+        text run at (0,18) width 171: "ABCDEFGHIJKLMNOP"
+        text run at (0,36) width 115: "QRSTUVWXYZ"
+        text run at (115,36) width 4: " "
         text run at (0,54) width 169: "abcdefghijklmnopqrstuv"
         text run at (169,54) width 4: " "
 layer at (375,458) size 201x57 clip at (376,459) size 184x40 scrollHeight 76

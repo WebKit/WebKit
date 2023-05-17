@@ -39,6 +39,8 @@ class FEColorMatrix : public FilterEffect {
 public:
     WEBCORE_EXPORT static Ref<FEColorMatrix> create(ColorMatrixType, Vector<float>&&);
 
+    bool operator==(const FEColorMatrix&) const;
+
     ColorMatrixType type() const { return m_type; }
     bool setType(ColorMatrixType);
 
@@ -51,6 +53,8 @@ public:
 
 private:
     FEColorMatrix(ColorMatrixType, Vector<float>&&);
+
+    bool operator==(const FilterEffect& other) const override { return areEqual<FEColorMatrix>(*this, other); }
 
     bool resultIsAlphaImage(const FilterImageVector& inputs) const override;
 

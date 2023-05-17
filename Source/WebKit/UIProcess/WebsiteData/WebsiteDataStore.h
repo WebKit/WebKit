@@ -385,6 +385,8 @@ public:
     static String defaultJavaScriptConfigurationDirectory(const String& baseDataDirectory = nullString());
 
     static constexpr uint64_t defaultPerOriginQuota() { return 1000 * MB; }
+    static std::optional<double> defaultOriginQuotaRatio();
+    static std::optional<double> defaultTotalQuotaRatio();
     static UnifiedOriginStorageLevel defaultUnifiedOriginStorageLevel();
 
 #if USE(GLIB)
@@ -448,8 +450,9 @@ public:
 
 #if HAVE(NW_PROXY_CONFIG)
     void clearProxyConfigData();
-    void setProxyConfigData(const API::Data&, uuid_t proxyIdentifier);
+    void setProxyConfigData(Vector<std::pair<Vector<uint8_t>, UUID>>&&);
 #endif
+    void setCompletionHandlerForRemovalFromNetworkProcess(CompletionHandler<void(String&&)>&&);
     
 private:
     enum class ForceReinitialization : bool { No, Yes };
@@ -574,6 +577,7 @@ private:
     Ref<WebCore::LocalWebLockRegistry> m_webLockRegistry;
 
     RefPtr<WebPreferences> m_serviceWorkerOverridePreferences;
+    CompletionHandler<void(String&&)> m_completionHandlerForRemovalFromNetworkProcess;
 };
 
 }

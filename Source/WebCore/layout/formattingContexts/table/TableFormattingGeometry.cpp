@@ -31,6 +31,7 @@
 #include "LayoutContext.h"
 #include "LayoutDescendantIterator.h"
 #include "LayoutInitialContainingBlock.h"
+#include "RenderStyleInlines.h"
 #include "TableFormattingContext.h"
 #include "TableFormattingQuirks.h"
 
@@ -53,8 +54,8 @@ LayoutUnit TableFormattingGeometry::cellBoxContentHeight(const ElementBox& cellB
         auto& firstInFlowChildGeometry = formattingContext.geometryForBox(firstInFlowChild, FormattingContext::EscapeReason::TableQuirkNeedsGeometryFromEstablishedFormattingContext);
         auto& lastInFlowChildGeometry = formattingContext.geometryForBox(lastInFlowChild, FormattingContext::EscapeReason::TableQuirkNeedsGeometryFromEstablishedFormattingContext);
 
-        auto top = firstInFlowChild.style().hasMarginBeforeQuirk() ? BoxGeometry::borderBoxRect(firstInFlowChildGeometry).top() : BoxGeometry::marginBoxRect(firstInFlowChildGeometry).top();
-        auto bottom = lastInFlowChild.style().hasMarginAfterQuirk() ? BoxGeometry::borderBoxRect(lastInFlowChildGeometry).bottom() : BoxGeometry::marginBoxRect(lastInFlowChildGeometry).bottom();
+        auto top = firstInFlowChild.style().marginBefore().hasQuirk() ? BoxGeometry::borderBoxRect(firstInFlowChildGeometry).top() : BoxGeometry::marginBoxRect(firstInFlowChildGeometry).top();
+        auto bottom = lastInFlowChild.style().marginAfter().hasQuirk() ? BoxGeometry::borderBoxRect(lastInFlowChildGeometry).bottom() : BoxGeometry::marginBoxRect(lastInFlowChildGeometry).bottom();
         return bottom - top;
     }
     return contentHeightForFormattingContextRoot(cellBox);
@@ -130,13 +131,16 @@ InlineLayoutUnit TableFormattingGeometry::usedBaselineForCell(const ElementBox& 
     // The baseline of a cell is defined as the baseline of the first in-flow line box in the cell,
     // or the first in-flow table-row in the cell, whichever comes first.
     // If there is no such line box, the baseline is the bottom of content edge of the cell box.
-    if (cellBox.establishesInlineFormattingContext())
-        return layoutState().formattingStateForInlineFormattingContext(cellBox).lines()[0].baseline();
+    if (cellBox.establishesInlineFormattingContext()) {
+        // FIXME: Check for baseline value based on display content.
+        ASSERT_NOT_IMPLEMENTED_YET();
+        return { };
+    }
     for (auto& cellDescendant : descendantsOfType<ElementBox>(cellBox)) {
         if (cellDescendant.establishesInlineFormattingContext()) {
-            auto& inlineFormattingStateForCell = layoutState().formattingStateForInlineFormattingContext(cellDescendant);
-            if (!inlineFormattingStateForCell.lines().isEmpty())
-                return inlineFormattingStateForCell.lines()[0].baseline();
+            // FIXME: Check for baseline value based on display content.
+            ASSERT_NOT_IMPLEMENTED_YET();
+            return { };
         }
         if (cellDescendant.establishesTableFormattingContext())
             return layoutState().formattingStateForTableFormattingContext(cellDescendant).tableGrid().rows().list()[0].baseline();

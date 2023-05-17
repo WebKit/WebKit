@@ -209,11 +209,6 @@ constexpr bool operator==(const IntSize& a, const IntSize& b)
     return a.width() == b.width() && a.height() == b.height();
 }
 
-constexpr bool operator!=(const IntSize& a, const IntSize& b)
-{
-    return a.width() != b.width() || a.height() != b.height();
-}
-
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const IntSize&);
 
 } // namespace WebCore

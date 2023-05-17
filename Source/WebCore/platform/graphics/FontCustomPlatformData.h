@@ -49,7 +49,7 @@ namespace WebCore {
 class SharedBuffer;
 class FontDescription;
 class FontCreationContext;
-class FragmentedSharedBuffer;
+enum class FontTechnology : uint8_t;
 
 template <typename T> class FontTaggedSettings;
 typedef FontTaggedSettings<int> FontFeatureSettings;
@@ -68,23 +68,23 @@ public:
     {
     }
 #else
-    FontCustomPlatformData(FT_Face, FragmentedSharedBuffer&);
+    FontCustomPlatformData(FT_Face, FontPlatformData::CreationData&&);
 #endif
     WEBCORE_EXPORT ~FontCustomPlatformData();
 
     FontPlatformData fontPlatformData(const FontDescription&, bool bold, bool italic, const FontCreationContext&);
 
     static bool supportsFormat(const String&);
+    static bool supportsTechnology(const FontTechnology&);
 
 #if PLATFORM(WIN)
     String name;
-    FontPlatformData::CreationData creationData;
 #elif USE(CORE_TEXT)
     RetainPtr<CTFontDescriptorRef> fontDescriptor;
-    FontPlatformData::CreationData creationData;
 #else
     RefPtr<cairo_font_face_t> m_fontFace;
 #endif
+    FontPlatformData::CreationData creationData;
 
     RenderingResourceIdentifier m_renderingResourceIdentifier;
 };

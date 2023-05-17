@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Testing change of device while capturing.</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+    <video id="video"></video>
+    <script>
+    let setup = async (test) => {
+        if (!window.testRunner)
+            return Promise.reject("test requires internal API");
+
+        test.add_cleanup(() => { testRunner.resetMockMediaDevices(); });
+    }
+
+    async function getDeviceId(label)
+    {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        let deviceId;
+        devices.forEach(device => {
+            if (device.label === "my USB microphone")
+                deviceId = device.deviceId;
+        });
+
+        stream.getAudioTracks()[0].stop();
+
+        return deviceId;
+    }
+
+    promise_test(async (test) => {
+        await setup(test);
+
+        testRunner.addMockMicrophoneDevice("usbmic", "my USB microphone");
+
+        const deviceId = await getDeviceId("my USB microphone");
+        video.srcObject = await navigator.mediaDevices.getUserMedia({ audio: { deviceId } });
+        await video.play();
+
+        if (window.internals)
+            internals.setPageMuted("capturedevices");
+
+        await new Promise(resolve => video.srcObject.getAudioTracks()[0].onmute = resolve);
+
+        testRunner.removeMockMediaDevice("usbmic");
+        return new Promise((resolve, reject) => {
+            video.srcObject.getAudioTracks()[0].onended = resolve;
+            setTimeout(() => reject("track did not end"), 2000);
+        });
+    }, "Detection of missing capturing device should trigger capture to fail even if track is muted");
+    </script>
+</body>
+</html>

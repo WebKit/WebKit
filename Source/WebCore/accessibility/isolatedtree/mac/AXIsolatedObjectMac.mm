@@ -41,7 +41,12 @@ void AXIsolatedObject::initializePlatformProperties(const Ref<const Accessibilit
 
     RetainPtr<NSAttributedString> attributedText;
     if (object->hasAttributedText()) {
-        if (auto range = object->simpleRange()) {
+        std::optional<SimpleRange> range;
+        if (isTextControl())
+            range = rangeForPlainTextRange({ 0, object->text().length() });
+        else
+            range = object->simpleRange();
+        if (range) {
             if ((attributedText = object->attributedStringForRange(*range, SpellCheck::Yes)))
                 setProperty(AXPropertyName::AttributedText, attributedText);
         }
@@ -75,6 +80,12 @@ RemoteAXObjectRef AXIsolatedObject::remoteParentObject() const
         return object.isScrollView();
     });
     return is<AXIsolatedObject>(scrollView) ? downcast<AXIsolatedObject>(scrollView)->m_remoteParent.get() : nil;
+}
+
+FloatRect AXIsolatedObject::primaryScreenRect() const
+{
+    RefPtr geometryManager = tree()->geometryManager();
+    return geometryManager ? geometryManager->primaryScreenRect() : FloatRect();
 }
 
 FloatRect AXIsolatedObject::convertRectToPlatformSpace(const FloatRect& rect, AccessibilityConversionSpace space) const
@@ -118,15 +129,8 @@ AXTextMarkerRange AXIsolatedObject::textMarkerRange() const
         return { };
     }
 
-    if (auto text = textContent()) {
-        TextMarkerData start(tree()->treeID(), objectID(),
-            nullptr, 0, Position::PositionIsOffsetInAnchor, Affinity::Downstream,
-            0, 0);
-        TextMarkerData end(tree()->treeID(), objectID(),
-            nullptr, text->length(), Position::PositionIsOffsetInAnchor, Affinity::Downstream,
-            0, text->length());
-        return { { start }, { end } };
-    }
+    if (auto text = textContent())
+        return { tree()->treeID(), objectID(), 0, text->length() };
 
     return Accessibility::retrieveValueFromMainThread<AXTextMarkerRange>([this] () {
         auto* axObject = associatedAXObject();
@@ -134,11 +138,21 @@ AXTextMarkerRange AXIsolatedObject::textMarkerRange() const
     });
 }
 
-AXTextMarkerRangeRef AXIsolatedObject::textMarkerRangeForNSRange(const NSRange& range) const
+AXTextMarkerRange AXIsolatedObject::textMarkerRangeForNSRange(const NSRange& range) const
 {
-    return Accessibility::retrieveAutoreleasedValueFromMainThread<AXTextMarkerRangeRef>([&range, this] () -> RetainPtr<AXTextMarkerRangeRef> {
+    if (range.location == NSNotFound)
+        return { };
+
+    if (auto text = textContent()) {
+        unsigned start = range.location;
+        unsigned end = range.location + range.length;
+        if (start < text->length() && end <= text->length())
+            return { tree()->treeID(), objectID(), start, end };
+    }
+
+    return Accessibility::retrieveValueFromMainThread<AXTextMarkerRange>([&range, this] () -> AXTextMarkerRange {
         auto* axObject = associatedAXObject();
-        return axObject ? axObject->textMarkerRangeForNSRange(range) : nullptr;
+        return axObject ? axObject->textMarkerRangeForNSRange(range) : AXTextMarkerRange();
     });
 }
 
@@ -160,39 +174,49 @@ unsigned AXIsolatedObject::textLength() const
 
 RetainPtr<NSAttributedString> AXIsolatedObject::attributedStringForTextMarkerRange(AXTextMarkerRange&& markerRange, SpellCheck spellCheck) const
 {
-    if (NSAttributedString *cachedString = cachedAttributedStringForTextMarkerRange(markerRange, spellCheck))
-        return cachedString;
+    if (!markerRange)
+        return nil;
 
-    return Accessibility::retrieveValueFromMainThread<RetainPtr<NSAttributedString>>([markerRange = WTFMove(markerRange), &spellCheck, this] () mutable -> RetainPtr<NSAttributedString> {
-        if (RefPtr axObject = associatedAXObject())
-            return axObject->attributedStringForTextMarkerRange(WTFMove(markerRange), spellCheck);
-        return { };
-    });
-}
-
-NSAttributedString *AXIsolatedObject::cachedAttributedStringForTextMarkerRange(const AXTextMarkerRange& markerRange, SpellCheck spellCheck) const
-{
     // At the moment we are only handling ranges that are contained in a single object, and for which we cached the AttributeString.
     // FIXME: Extend to cases where the range expands multiple objects.
 
+    auto attributedText = propertyValue<RetainPtr<NSAttributedString>>(AXPropertyName::AttributedText);
+    if (!attributedText) {
+        return Accessibility::retrieveValueFromMainThread<RetainPtr<NSAttributedString>>([markerRange = WTFMove(markerRange), &spellCheck, this] () mutable -> RetainPtr<NSAttributedString> {
+            if (RefPtr axObject = associatedAXObject())
+                return axObject->attributedStringForTextMarkerRange(WTFMove(markerRange), spellCheck);
+            return { };
+        });
+    }
+
     auto nsRange = markerRange.nsRange();
     if (!nsRange)
-        return nil;
-
-    auto attributedText = propertyValue<RetainPtr<NSAttributedString>>(AXPropertyName::AttributedText);
-    if (!attributedText)
         return nil;
 
     if (!attributedStringContainsRange(attributedText.get(), *nsRange))
         return nil;
 
     NSMutableAttributedString *result = [[NSMutableAttributedString alloc] initWithAttributedString:[attributedText attributedSubstringFromRange:*nsRange]];
+    if (!result.length)
+        return result;
 
+    auto resultRange = NSMakeRange(0, result.length);
     // The AttributedString is cached with spelling info. If the caller does not request spelling info, we have to remove it before returning.
     if (spellCheck == SpellCheck::No) {
-        auto fullRange = NSMakeRange(0, result.length);
-        [result removeAttribute:NSAccessibilityMisspelledTextAttribute range:fullRange];
-        [result removeAttribute:NSAccessibilityMarkedMisspelledTextAttribute range:fullRange];
+        [result removeAttribute:NSAccessibilityMisspelledTextAttribute range:resultRange];
+        [result removeAttribute:NSAccessibilityMarkedMisspelledTextAttribute range:resultRange];
+        return result;
+    }
+
+    // For any nsRange different from the full range, remove exissting spell check attribute and spell check the text.
+    auto fullRange = NSMakeRange(0, [attributedText length]);
+    if (!NSEqualRanges(*nsRange, fullRange)) {
+        [result removeAttribute:NSAccessibilityMisspelledTextAttribute range:resultRange];
+        [result removeAttribute:NSAccessibilityMarkedMisspelledTextAttribute range:resultRange];
+        // FIXME: pull attributedStringSetSpelling off the main thread.
+        performFunctionOnMainThreadAndWait([result = retainPtr(result), &resultRange] (AccessibilityObject* axObject) {
+            attributedStringSetSpelling(result.get(), axObject->node(), String { [result string] }, resultRange);
+        });
     }
 
     return result;
@@ -203,9 +227,9 @@ void AXIsolatedObject::setPreventKeyboardDOMEventDispatch(bool value)
     ASSERT(!isMainThread());
     ASSERT(isWebArea());
 
-    performFunctionOnMainThread([&value, this](AXCoreObject* object) {
+    setProperty(AXPropertyName::PreventKeyboardDOMEventDispatch, value);
+    performFunctionOnMainThread([value] (auto* object) {
         object->setPreventKeyboardDOMEventDispatch(value);
-        setProperty(AXPropertyName::PreventKeyboardDOMEventDispatch, value);
     });
 }
 
@@ -214,9 +238,9 @@ void AXIsolatedObject::setCaretBrowsingEnabled(bool value)
     ASSERT(!isMainThread());
     ASSERT(isWebArea());
 
-    performFunctionOnMainThread([&value, this](AXCoreObject* object) {
+    setProperty(AXPropertyName::CaretBrowsingEnabled, value);
+    performFunctionOnMainThread([value] (auto* object) {
         object->setCaretBrowsingEnabled(value);
-        setProperty(AXPropertyName::CaretBrowsingEnabled, value);
     });
 }
 

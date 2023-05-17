@@ -468,6 +468,7 @@ struct WebCore::ShareData {
     String title;
     String text;
     String url;
+    [NotSerialized] Vector<RefPtr<WebCore::File>> files;
 };
 
 enum class WebCore::ShareDataOriginator : bool
@@ -562,7 +563,8 @@ class WebCore::PrivateClickMeasurement {
     std::optional<WebCore::RegistrableDomain> sourceRegistrableDomain;
     std::optional<WebCore::PCM::EphemeralNonce> ephemeralDestinationNonce;
     std::optional<WebCore::RegistrableDomain> destinationSite;
-# destinationUnlinkableToken and destinationSecretToken are not serialized.
+    [NotSerialized] std::optional<WebCore::PCM::DestinationUnlinkableToken> destinationUnlinkableToken;
+    [NotSerialized] std::optional<WebCore::PCM::DestinationSecretToken> destinationSecretToken;
 }
 
 [CustomHeader] struct WebCore::PCM::AttributionTimeToSendData {
@@ -769,6 +771,49 @@ enum class WebCore::ApplePayErrorCode : uint8_t {
 };
 #endif // ENABLE(APPLE_PAY)
 
+#if ENABLE(APPLE_PAY_INSTALLMENTS)
+header: <WebCore/ApplePayInstallmentConfigurationWebCore.h>
+[CustomHeader] struct WebCore::ApplePayInstallmentConfiguration {
+    WebCore::ApplePaySetupFeatureType featureType;
+    String merchandisingImageData;
+    String openToBuyThresholdAmount;
+    String bindingTotalAmount;
+    String currencyCode;
+    bool isInStorePurchase;
+    String merchantIdentifier;
+    String referrerIdentifier;
+    Vector<WebCore::ApplePayInstallmentItem> items;
+    String applicationMetadata;
+    WebCore::ApplePayInstallmentRetailChannel retailChannel;
+};
+header: <WebCore/PaymentInstallmentConfigurationWebCore.h>
+[CustomHeader] class WebCore::PaymentInstallmentConfiguration {
+    std::optional<WebCore::ApplePayInstallmentConfiguration> applePayInstallmentConfiguration()
+}
+struct WebCore::ApplePayInstallmentItem {
+    WebCore::ApplePayInstallmentItemType type;
+    String amount;
+    String currencyCode;
+    String programIdentifier;
+    String apr;
+    String programTerms;
+};
+enum class WebCore::ApplePaySetupFeatureType : bool
+enum class WebCore::ApplePayInstallmentItemType : uint8_t {
+    Generic,
+    Phone,
+    Pad,
+    Watch,
+    Mac,
+};
+enum class WebCore::ApplePayInstallmentRetailChannel : uint8_t {
+    Unknown,
+    App,
+    Web,
+    InStore,
+};
+#endif // ENABLE(APPLE_PAY_INSTALLMENTS)
+
 #if ENABLE(APPLE_PAY_COUPON_CODE)
 struct WebCore::ApplePayCouponCodeUpdate : WebCore::ApplePayDetailsUpdateBase {
     Vector<RefPtr<WebCore::ApplePayError>> errors;
@@ -903,6 +948,7 @@ struct WebCore::NotificationData {
     PAL::SessionID sourceSession;
     MonotonicTime creationTime;
     Vector<uint8_t> data;
+    std::optional<bool> silent;
 };
 
 struct WebCore::PermissionDescriptor {
@@ -995,6 +1041,7 @@ struct WebCore::WebLockManagerSnapshot {
 
 [LegacyPopulateFromEmptyConstructor] struct WebCore::AuthenticationExtensionsClientInputs {
     String appid;
+    [NotSerialized] bool credProps;
     std::optional<WebCore::AuthenticationExtensionsClientInputs::LargeBlobInputs> largeBlob;
 }
 
@@ -1080,6 +1127,7 @@ struct WebCore::PublicKeyCredentialRequestOptions {
     Vector<WebCore::PublicKeyCredentialDescriptor> allowCredentials;
     WebCore::UserVerificationRequirement userVerification;
     std::optional<WebCore::AuthenticationExtensionsClientInputs> extensions;
+    [NotSerialized] std::optional<WebCore::AuthenticatorAttachment> authenticatorAttachment;
 #endif // ENABLE(WEB_AUTHN)
 };
 
@@ -1151,7 +1199,8 @@ enum class WebCore::RenderingPurpose : uint8_t {
     LayerBacking,
     Snapshot,
     ShareableSnapshot,
-    MediaPainting
+    ShareableLocalSnapshot,
+    MediaPainting,
 };
 
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
@@ -1320,6 +1369,11 @@ struct WebCore::ElementContext {
     WebCore::ElementIdentifier elementIdentifier;
 };
 
+struct WebCore::ElementAnimationContext {
+    WebCore::ElementContext element;
+    bool isAnimating;
+};
+
 header: <WebCore/FrameLoaderTypes.h>
 [CustomHeader] struct WebCore::SystemPreviewInfo {
     WebCore::ElementContext element;
@@ -1342,6 +1396,8 @@ header: <WebCore/ResourceRequest.h>
     [BitField] bool m_allowCookies;
     [BitField] bool m_isTopSite;
     [BitField] bool m_isAppInitiated;
+    [BitField] bool m_privacyProxyFailClosedForUnreachableNonMainHosts;
+    [BitField] bool m_useNetworkConnectionIntegrity;
 };
 
 #if USE(SOUP)
@@ -1353,16 +1409,7 @@ header: <WebCore/ResourceRequest.h>
 };
 #endif
 
-#if PLATFORM(COCOA) && USE(SYSTEM_PREVIEW)
-[CreateUsing=fromResourceRequestData] class WebCore::ResourceRequest {
-    std::variant<WebCore::ResourceRequest::RequestData, WebCore::ResourceRequestPlatformData> getRequestDataToSerialize();
-    String cachePartition();
-    bool hiddenFromInspector();
-    std::optional<WebCore::SystemPreviewInfo> systemPreviewInfo();
-};
-#endif
-
-#if PLATFORM(COCOA) && !USE(SYSTEM_PREVIEW)
+#if PLATFORM(COCOA)
 [CreateUsing=fromResourceRequestData] class WebCore::ResourceRequest {
     std::variant<WebCore::ResourceRequest::RequestData, WebCore::ResourceRequestPlatformData> getRequestDataToSerialize();
     String cachePartition();
@@ -1423,6 +1470,10 @@ struct WebCore::WindowFeatures {
 
     bool fullscreen;
     bool dialog;
+    [NotSerialized] bool noopener;
+    [NotSerialized] bool noreferrer;
+
+    [NotSerialized] Vector<String> additionalFeatures;
 };
 
 [Nested] enum class WebCore::CompositionUnderlineColor : bool
@@ -1976,6 +2027,7 @@ header: <WebCore/KeyboardScroll.h>
 };
 
 [RefCounted] class WebCore::IdentityTransformOperation {
+    [NotSerialized] WebCore::TransformOperation::Type type();
 }
 
 [RefCounted] class WebCore::TranslateTransformOperation {
@@ -2106,6 +2158,7 @@ struct WebCore::GraphicsContextGLAttributes {
     bool xrCompatible;
 #endif
     bool failPlatformContextCreationForTesting;
+    [NotSerialized] unsigned remoteIPCBufferSizeLog2ForTesting;
 };
 #endif // ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
@@ -3136,7 +3189,7 @@ enum class WebCore::MediaDecodingType : uint8_t {
 enum class WebCore::MediaEncodingType : bool;
 
 class WebCore::BufferSource {
-    Span<const uint8_t> span()
+    std::span<const uint8_t> span()
 }
 
 struct WebCore::FontShadow {
@@ -3609,6 +3662,12 @@ enum class WebCore::AudioSessionCategory : uint8_t {
     RecordAudio,
     PlayAndRecord,
     AudioProcessing,
+};
+
+enum class WebCore::AudioSessionMode : uint8_t {
+    Default,
+    VideoChat,
+    MoviePlayback,
 };
 
 [Nested] enum class WebCore::AudioSession::MayResume : bool;
@@ -4207,7 +4266,6 @@ enum class WebCore::DisplaySurfaceType : uint8_t {
 class WebCore::RealtimeMediaSourceSettings {
     uint32_t width();
     uint32_t height();
-    float aspectRatio();
     float frameRate();
     WebCore::VideoFacingMode facingMode();
     double volume();
@@ -4215,7 +4273,7 @@ class WebCore::RealtimeMediaSourceSettings {
     uint32_t sampleSize();
     bool echoCancellation();
     AtomString deviceId();
-    AtomString groupId();
+    String groupId();
     AtomString label();
     WebCore::DisplaySurfaceType displaySurface();
     bool logicalSurface();
@@ -4367,11 +4425,11 @@ struct WebCore::RTCDataChannelIdentifier {
 
 #endif // ENABLE(WEB_RTC)
 
-header: <WebCore/SVGFilterExpressionReference.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::SVGFilterExpressionNode {
+header: <WebCore/SVGFilterExpression.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::SVGFilterExpressionTerm {
     unsigned index;
-    std::optional<WebCore::FilterEffectGeometry> geometry;
     unsigned level;
+    std::optional<WebCore::FilterEffectGeometry> geometry;
 };
 
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::SVGPreserveAspectRatioValue {
@@ -4395,6 +4453,8 @@ header: <WebCore/SVGFilterExpressionReference.h>
     bool madeHTTPS;
     bool blockedCookies;
     bool hasNotifications;
+    [NotSerialized] Vector<WebCore::ContentExtensions::ModifyHeadersAction> modifyHeadersActions;
+    [NotSerialized] Vector<std::pair<WebCore::ContentExtensions::RedirectAction, URL>> redirectActions;
 };
 
 struct WebCore::ContentRuleListResults {
@@ -4752,7 +4812,11 @@ struct WebCore::GlobalWindowIdentifier {
     WebCore::WindowIdentifier windowIdentifier;
 };
 
-[Nested] enum class WebCore::InteractionRegion::Type : bool;
+[Nested] enum class WebCore::InteractionRegion::Type : uint8_t {
+    Interaction,
+    Occlusion,
+    Guard
+};
 [Nested, OptionSet] enum class WebCore::InteractionRegion::CornerMask : uint8_t {
     MinXMinYCorner
     MaxXMinYCorner
@@ -5043,3 +5107,68 @@ class WebCore::ProtectionSpace {
     std::optional<WebCore::ProtectionSpace::PlatformData> getPlatformDataToSerialize();
 #endif
 };
+
+#if ENABLE(GPU_PROCESS)
+header: <WebCore/BarcodeDetectorOptionsInterface.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ShapeDetection::BarcodeDetectorOptions {
+    Vector<WebCore::ShapeDetection::BarcodeFormat> formats;
+};
+
+header: <WebCore/BarcodeFormatInterface.h>
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::ShapeDetection::BarcodeFormat : uint8_t {
+    Aztec,
+    Code_128,
+    Code_39,
+    Code_93,
+    Codabar,
+    Data_matrix,
+    Ean_13,
+    Ean_8,
+    Itf,
+    Pdf417,
+    Qr_code,
+    Unknown,
+    Upc_a,
+    Upc_e,
+};
+
+header: <WebCore/DetectedBarcodeInterface.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ShapeDetection::DetectedBarcode {
+    WebCore::FloatRect boundingBox;
+    String rawValue;
+    WebCore::ShapeDetection::BarcodeFormat format;
+    Vector<WebCore::FloatPoint> cornerPoints;
+};
+
+header: <WebCore/DetectedFaceInterface.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ShapeDetection::DetectedFace {
+    WebCore::FloatRect boundingBox;
+    std::optional<Vector<WebCore::ShapeDetection::Landmark>> landmarks;
+};
+
+header: <WebCore/DetectedTextInterface.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ShapeDetection::DetectedText {
+    WebCore::FloatRect boundingBox;
+    String rawValue;
+    Vector<WebCore::FloatPoint> cornerPoints;
+};
+
+header: <WebCore/FaceDetectorOptionsInterface.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ShapeDetection::FaceDetectorOptions {
+    uint16_t maxDetectedFaces;
+    bool fastMode;
+};
+
+header: <WebCore/LandmarkInterface.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ShapeDetection::Landmark {
+    Vector<WebCore::FloatPoint> locations;
+    WebCore::ShapeDetection::LandmarkType type;
+};
+
+header: <WebCore/LandmarkTypeInterface.h>
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::ShapeDetection::LandmarkType : uint8_t {
+    Mouth,
+    Eye,
+    Nose,
+};
+#endif // GPU_PROCESS

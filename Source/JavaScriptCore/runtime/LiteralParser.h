@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "ArgList.h"
+#include "GetVM.h"
 #include "Identifier.h"
 #include "JSCJSValue.h"
 #include <array>
@@ -33,7 +35,7 @@
 
 namespace JSC {
 
-enum ParserMode : uint8_t { StrictJSON, NonStrictJSON, JSONP };
+enum ParserMode : uint8_t { StrictJSON, SloppyJSON, JSONP };
 
 enum JSONPPathEntryType : uint8_t {
     JSONPPathEntryTypeDeclareVar, // var pathEntryName = JSON
@@ -74,18 +76,13 @@ public:
     LiteralParserToken() = default;
 
     TokenType type;
-    const CharType* start;
-    const CharType* end;
+    unsigned stringIs8Bit : 1; // Only used for TokString.
+    unsigned stringOrIdentifierLength : 31;
     union {
-        double numberToken;
-        struct {
-            union {
-                const LChar* stringToken8;
-                const UChar* stringToken16;
-            };
-            unsigned stringIs8Bit : 1;
-            unsigned stringLength : 31;
-        };
+        double numberToken; // Only used for TokNumber.
+        const CharType* identifierStart;
+        const LChar* stringStart8;
+        const UChar* stringStart16;
     };
 };
 
@@ -115,9 +112,15 @@ public:
     JSValue tryLiteralParse()
     {
         m_lexer.next();
-        JSValue result = parse(m_mode == StrictJSON ? StartParseExpression : StartParseStatement);
-        if (m_lexer.currentToken()->type == TokSemi)
-            m_lexer.next();
+        JSValue result;
+        VM& vm = getVM(m_globalObject);
+        if (m_mode == StrictJSON)
+            result = parseRecursivelyEntry(vm);
+        else {
+            result = parse(vm, StartParseStatement);
+            if (m_lexer.currentToken()->type == TokSemi)
+                m_lexer.next();
+        }
         if (m_lexer.currentToken()->type != TokEnd)
             return JSValue();
         return result;
@@ -193,7 +196,9 @@ private:
     };
     
     class StackGuard;
-    JSValue parse(ParserState);
+    JSValue parseRecursivelyEntry(VM&);
+    JSValue parseRecursively(VM&, uint8_t* stackLimit);
+    JSValue parse(VM&, ParserState);
 
     JSValue parsePrimitiveValue(VM&);
 
@@ -207,6 +212,10 @@ private:
     typename LiteralParser<CharType>::Lexer m_lexer;
     const ParserMode m_mode;
     String m_parseErrorMessage;
+    HashSet<JSObject*> m_visitedUnderscoreProto;
+    MarkedArgumentBuffer m_objectStack;
+    Vector<ParserState, 16, UnsafeVectorOverflow> m_stateStack;
+    Vector<Identifier, 16, UnsafeVectorOverflow> m_identifierStack;
 };
 
 } // namespace JSC

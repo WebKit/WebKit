@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<canvas id="onscreen" width="200" height="200" style="border: 1px solid black; clip-path: circle(30%); background-color:blue"></canvas>
+<script>
+const canvas = document.getElementById('onscreen');
+
+const context = canvas.getContext('2d');
+
+const square = new Path2D();
+square.rect(50, 50, 100, 100);
+context.fillStyle = 'red';
+context.fill(square);
+
+</script>
+</body>
+</html>

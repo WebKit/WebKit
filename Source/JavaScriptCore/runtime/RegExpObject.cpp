@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2021 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003-2023 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -30,7 +30,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(RegExpObject);
 const ClassInfo RegExpObject::s_info = { "RegExp"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RegExpObject) };
 
 static JSC_DECLARE_CUSTOM_SETTER(regExpObjectSetLastIndexStrict);
-static JSC_DECLARE_CUSTOM_SETTER(regExpObjectSetLastIndexNonStrict);
+static JSC_DECLARE_CUSTOM_SETTER(regExpObjectSetLastIndexSloppy);
 
 RegExpObject::RegExpObject(VM& vm, Structure* structure, RegExp* regExp, bool areLegacyFeaturesEnabled)
     : JSNonFinalObject(vm, structure)
@@ -39,12 +39,14 @@ RegExpObject::RegExpObject(VM& vm, Structure* structure, RegExp* regExp, bool ar
     m_lastIndex.setWithoutWriteBarrier(jsNumber(0));
 }
 
+#if ASSERT_ENABLED
 void RegExpObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     ASSERT(type() == RegExpObjectType);
 }
+#endif
 
 template<typename Visitor>
 void RegExpObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
@@ -126,7 +128,7 @@ JSC_DEFINE_CUSTOM_SETTER(regExpObjectSetLastIndexStrict, (JSGlobalObject* global
     return jsCast<RegExpObject*>(JSValue::decode(thisValue))->setLastIndex(globalObject, JSValue::decode(value), true);
 }
 
-JSC_DEFINE_CUSTOM_SETTER(regExpObjectSetLastIndexNonStrict, (JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value, PropertyName))
+JSC_DEFINE_CUSTOM_SETTER(regExpObjectSetLastIndexSloppy, (JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value, PropertyName))
 {
     return jsCast<RegExpObject*>(JSValue::decode(thisValue))->setLastIndex(globalObject, JSValue::decode(value), false);
 }
@@ -148,7 +150,7 @@ bool RegExpObject::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName 
         RETURN_IF_EXCEPTION(scope, false);
         slot.setCustomValue(thisObject, slot.isStrictMode()
             ? regExpObjectSetLastIndexStrict
-            : regExpObjectSetLastIndexNonStrict);
+            : regExpObjectSetLastIndexSloppy);
         return result;
     }
     RELEASE_AND_RETURN(scope, Base::put(cell, globalObject, propertyName, value, slot));

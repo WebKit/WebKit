@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -37,7 +37,7 @@ InternalFunction::InternalFunction(VM& vm, Structure* structure, NativeFunction 
     : Base(vm, structure)
     , m_functionForCall(toTagged(functionForCall))
     , m_functionForConstruct(functionForConstruct ? toTagged(functionForConstruct) : callHostFunctionAsConstructor)
-    , m_globalObject(vm, this, structure->globalObject())
+    , m_globalObject(structure->globalObject(), WriteBarrierEarlyInit)
 {
     ASSERT_WITH_MESSAGE(m_functionForCall, "[[Call]] must be implemented");
     ASSERT(m_functionForConstruct);
@@ -63,11 +63,6 @@ void InternalFunction::finishCreation(VM& vm, unsigned length, const String& nam
         putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(length), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
         putDirectWithoutTransition(vm, vm.propertyNames->name, nameString, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
     }
-}
-
-void InternalFunction::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
 }
 
 template<typename Visitor>

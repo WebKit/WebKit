@@ -27,7 +27,9 @@
 #include "LegacyRootInlineBox.h"
 #include "LocalFrame.h"
 #include "RenderBlockFlow.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderLineBreak.h"
+#include "RenderStyleInlines.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>
 

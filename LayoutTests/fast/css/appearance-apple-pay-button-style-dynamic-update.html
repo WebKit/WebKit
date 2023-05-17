@@ -1,0 +1,33 @@
+<style>
+
+#button {
+    -webkit-appearance: -apple-pay-button;
+}
+
+.white {
+    -apple-pay-button-style: white;
+}
+
+.black {
+    -apple-pay-button-style: black;
+}
+
+</style>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function load()
+{
+    setTimeout(() => {
+        button.className = "white";
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}
+
+</script>
+<body onload="load()">
+<button id="button" class="black"></button>

@@ -31,8 +31,14 @@
 namespace WGSL::AST {
 
 class CompoundAssignmentStatement : public Statement {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(CompoundAssignmentStatement);
 public:
+    NodeKind kind() const override;
+    Expression& leftExpression() { return m_leftExpression; }
+    Expression& rightExpression() { return m_rightExpression; }
+    BinaryOperation operation() const { return m_operation; }
+
+private:
     CompoundAssignmentStatement(SourceSpan span, Expression::Ref&& lhs, Expression::Ref&& rhs, BinaryOperation operation)
         : Statement(span)
         , m_leftExpression(WTFMove(lhs))
@@ -40,12 +46,6 @@ public:
         , m_operation(operation)
     { }
 
-    NodeKind kind() const override;
-    Expression& leftExpression() { return m_leftExpression; }
-    Expression& rightExpression() { return m_rightExpression; }
-    BinaryOperation operation() const { return m_operation; }
-
-private:
     Expression::Ref m_leftExpression;
     Expression::Ref m_rightExpression;
     BinaryOperation m_operation;

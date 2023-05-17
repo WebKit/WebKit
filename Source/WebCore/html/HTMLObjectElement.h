@@ -80,8 +80,6 @@ private:
     // so that we can better share code between <object> and <embed>.
     void parametersForPlugin(Vector<AtomString>& paramNames, Vector<AtomString>& paramValues, String& url, String& serviceType);
 
-    bool hasValidClassId();
-
     void refFormAssociatedElement() const final { ref(); }
     void derefFormAssociatedElement() const final { deref(); }
 

@@ -76,14 +76,7 @@ const ClassInfo JSTestNamespaceConst::s_info = { "TestNamespaceConst"_s, &Base::
 JSTestNamespaceConst::JSTestNamespaceConst(Structure* structure, JSDOMGlobalObject& globalObject)
     : JSDOMObject(structure, globalObject) { }
 
-void JSTestNamespaceConst::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-
-    static_assert(!std::is_base_of<ActiveDOMObject, TestNamespaceConst>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
-
-}
+static_assert(!std::is_base_of<ActiveDOMObject, TestNamespaceConst>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 JSValue JSTestNamespaceConst::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {

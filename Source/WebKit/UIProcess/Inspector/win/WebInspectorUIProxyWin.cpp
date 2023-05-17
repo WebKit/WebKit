@@ -293,12 +293,12 @@ WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
 
     RECT r = { 0, 0, static_cast<LONG>(initialWindowWidth), static_cast<LONG>(initialWindowHeight) };
     auto page = inspectedPage();
-    m_inspectedViewWindow = page->viewWidget();
+    m_inspectedViewWindow = reinterpret_cast<HWND>(page->viewWidget());
     m_inspectedViewParentWindow = ::GetParent(m_inspectedViewWindow);
     auto view = WebView::create(r, pageConfiguration, m_inspectedViewParentWindow);
     m_inspectorView = &view.leakRef();
     auto inspectorPage = m_inspectorView->page();
-    m_inspectorViewWindow = inspectorPage->viewWidget();
+    m_inspectorViewWindow = reinterpret_cast<HWND>(inspectorPage->viewWidget());
     WKPageSetPageNavigationClient(toAPI(inspectorPage), &navigationClient.base);
 
     inspectorPage->setURLSchemeHandlerForScheme(InspectorResourceURLSchemeHandler::create(), "inspector-resource"_s);

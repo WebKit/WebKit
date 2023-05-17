@@ -49,6 +49,11 @@ PointLightSource::PointLightSource(const FloatPoint3D& position)
 {
 }
 
+bool PointLightSource::operator==(const PointLightSource& other) const
+{
+    return LightSource::operator==(other) && m_position == other.m_position;
+}
+
 void PointLightSource::initPaintingData(const Filter& filter, const FilterImage& result, PaintingData&) const
 {
     auto position = filter.resolvedPoint3D(m_position);

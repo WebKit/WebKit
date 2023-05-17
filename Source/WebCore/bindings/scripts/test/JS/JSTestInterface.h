@@ -88,7 +88,7 @@ public:
 protected:
     JSTestInterface(JSC::Structure*, JSDOMGlobalObject&, Ref<TestInterface>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class WEBCORE_EXPORT JSTestInterfaceOwner final : public JSC::WeakHandleOwner {

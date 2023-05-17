@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -76,7 +76,7 @@
 #import "RenderObject.h"
 #import "RenderProgress.h"
 #import "RenderSlider.h"
-#import "RenderStyle.h"
+#import "RenderStyleSetters.h"
 #import "RenderView.h"
 #import "Settings.h"
 #import "Theme.h"
@@ -342,6 +342,7 @@ void RenderThemeIOS::adjustStyleForAlternateFormControlDesignTransition(RenderSt
 void RenderThemeIOS::adjustCheckboxStyle(RenderStyle& style, const Element* element) const
 {
     adjustStyleForAlternateFormControlDesignTransition(style, element);
+    adjustMinimumIntrinsicSizeForAppearance(StyleAppearance::Checkbox, style);
 
     if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
@@ -488,9 +489,19 @@ bool RenderThemeIOS::isControlStyled(const RenderStyle& style, const RenderStyle
     return RenderTheme::isControlStyled(style, userAgentStyle);
 }
 
+void RenderThemeIOS::adjustMinimumIntrinsicSizeForAppearance(StyleAppearance appearance, RenderStyle& style) const
+{
+    auto minControlSize = Theme::singleton().minimumControlSize(appearance, style.fontCascade(), { style.minWidth(), style.minHeight() }, { style.width(), style.height() }, style.effectiveZoom());
+    if (minControlSize.width.value() > style.minWidth().value())
+        style.setMinWidth(WTFMove(minControlSize.width));
+    if (minControlSize.height.value() > style.minHeight().value())
+        style.setMinHeight(WTFMove(minControlSize.height));
+}
+
 void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element* element) const
 {
     adjustStyleForAlternateFormControlDesignTransition(style, element);
+    adjustMinimumIntrinsicSizeForAppearance(StyleAppearance::Radio, style);
 
     if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
@@ -561,7 +572,7 @@ void RenderThemeIOS::adjustTextFieldStyle(RenderStyle& style, const Element* ele
 
     auto adjustBackgroundColor = [&] {
         auto styleColorOptions = element->document().styleColorOptions(&style);
-        if (!style.backgroundColorEqualsToColorIgnoringVisited(systemColor(CSSValueAppleSystemOpaqueTertiaryFill, styleColorOptions)))
+        if (style.backgroundColor() != systemColor(CSSValueAppleSystemOpaqueTertiaryFill, styleColorOptions))
             return;
 
         style.setBackgroundColor(systemColor(CSSValueWebkitControlBackground, styleColorOptions));
@@ -1333,6 +1344,12 @@ static std::optional<Color>& cachedFocusRingColor()
     return color;
 }
 
+static std::optional<Color>& cachedInsertionPointColor()
+{
+    static NeverDestroyed<std::optional<Color>> color;
+    return color;
+}
+
 Color RenderThemeIOS::systemFocusRingColor()
 {
     if (!cachedFocusRingColor().has_value()) {
@@ -1345,6 +1362,36 @@ Color RenderThemeIOS::systemFocusRingColor()
 Color RenderThemeIOS::platformFocusRingColor(OptionSet<StyleColorOptions>) const
 {
     return systemFocusRingColor();
+}
+
+Color RenderThemeIOS::insertionPointColor()
+{
+    if (!cachedInsertionPointColor().has_value())
+        cachedInsertionPointColor() = Color::transparentBlack;
+    return *cachedInsertionPointColor();
+}
+
+Color RenderThemeIOS::autocorrectionReplacementMarkerColor(const RenderText& renderer) const
+{
+    auto caretColor = CaretBase::computeCaretColor(renderer.style(), renderer.textNode());
+    if (!caretColor.isValid())
+        caretColor = insertionPointColor();
+
+    auto hsla = caretColor.toColorTypeLossy<HSLA<float>>().resolved();
+    if (hsla.hue) {
+        hsla.saturation = 100;
+        if (renderer.styleColorOptions().contains(StyleColorOptions::UseDarkAppearance)) {
+            hsla.lightness = 50;
+            hsla.alpha = 0.5f;
+        } else {
+            hsla.lightness = 41;
+            hsla.alpha = 0.3f;
+        }
+
+        return hsla;
+    }
+
+    return caretColor.colorWithAlpha(0.3);
 }
 
 Color RenderThemeIOS::platformAnnotationHighlightColor(OptionSet<StyleColorOptions>) const
@@ -1414,6 +1461,7 @@ static const Vector<CSSValueSystemColorInformation>& cssValueSystemColorInformat
             // FIXME: <rdar://problem/75538507> UIKit should expose this color so that we maintain parity with system buttons.
             { CSSValueAppleSystemOpaqueSecondaryFillDisabled, @selector(secondarySystemFillColor), true, 0.75f },
             { CSSValueAppleSystemOpaqueTertiaryFill, @selector(tertiarySystemFillColor), true },
+            { CSSValueAppleSystemTertiaryFill, @selector(tertiarySystemFillColor) },
             { CSSValueAppleSystemQuaternaryFill, @selector(quaternarySystemFillColor) },
             { CSSValueAppleSystemGroupedBackground, @selector(systemGroupedBackgroundColor) },
             { CSSValueAppleSystemSecondaryGroupedBackground, @selector(secondarySystemGroupedBackgroundColor) },
@@ -1504,6 +1552,11 @@ void RenderThemeIOS::setFocusRingColor(const Color& color)
     cachedFocusRingColor() = color;
 }
 
+void RenderThemeIOS::setInsertionPointColor(const Color& color)
+{
+    cachedInsertionPointColor() = color;
+}
+
 Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOptions> options) const
 {
     const bool forVisitedLink = options.contains(StyleColorOptions::ForVisitedLink);
@@ -1550,9 +1603,9 @@ Color RenderThemeIOS::controlTintColor(const RenderStyle& style, OptionSet<Style
 
 RenderThemeIOS::IconAndSize RenderThemeIOS::iconForAttachment(const String& fileName, const String& attachmentType, const String& title)
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto documentInteractionController = adoptNS([PAL::allocUIDocumentInteractionControllerInstance() init]);
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     [documentInteractionController setName:fileName.isEmpty() ? title : fileName];
 

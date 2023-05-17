@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(FTL_JIT)
+
 #include "CodeBlock.h"
 #include "CodeLocation.h"
 #include "FTLLazySlowPath.h"
@@ -50,3 +52,5 @@ Ref<LazySlowPath::Generator> createLazyCallGenerator(
 }
 
 } } // namespace JSC::FTL
+
+#endif // ENABLE(FTL_JIT)

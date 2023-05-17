@@ -7,17 +7,13 @@
 // PBufferSurfaceEAGL.cpp: an implementation of egl::Surface for PBuffers for the EAGL backend,
 //                      currently implemented using renderbuffers
 
-#import "common/platform.h"
+#include "libANGLE/renderer/gl/eagl/PbufferSurfaceEAGL.h"
 
-#if defined(ANGLE_ENABLE_EAGL)
-
-#    include "libANGLE/renderer/gl/eagl/PbufferSurfaceEAGL.h"
-
-#    include "common/debug.h"
-#    include "libANGLE/renderer/gl/FramebufferGL.h"
-#    include "libANGLE/renderer/gl/FunctionsGL.h"
-#    include "libANGLE/renderer/gl/RendererGL.h"
-#    include "libANGLE/renderer/gl/StateManagerGL.h"
+#include "common/debug.h"
+#include "libANGLE/renderer/gl/FramebufferGL.h"
+#include "libANGLE/renderer/gl/FunctionsGL.h"
+#include "libANGLE/renderer/gl/RendererGL.h"
+#include "libANGLE/renderer/gl/StateManagerGL.h"
 
 namespace rx
 {
@@ -160,5 +156,3 @@ egl::Error PbufferSurfaceEAGL::detachFromFramebuffer(const gl::Context *context,
 }
 
 }  // namespace rx
-
-#endif  // defined(ANGLE_ENABLE_EAGL)

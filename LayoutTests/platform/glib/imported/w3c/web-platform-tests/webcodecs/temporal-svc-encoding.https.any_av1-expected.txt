@@ -1,0 +1,54 @@
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+CONSOLE MESSAGE: Error: assert_own_property: expected property "svc" missing
+
+Harness Error (FAIL), message = Error: assert_own_property: expected property "svc" missing
+
+FAIL SVC L1T2 assert_equals: expected 12 but got 0
+FAIL SVC L1T3 assert_equals: expected 6 but got 0
+

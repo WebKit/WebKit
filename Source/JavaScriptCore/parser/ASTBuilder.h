@@ -29,6 +29,7 @@
 #include "BytecodeIntrinsicRegistry.h"
 #include "MathCommon.h"
 #include "NodeConstructors.h"
+#include "Parser.h"
 #include "SyntaxChecker.h"
 #include "VariableEnvironment.h"
 #include <utility>

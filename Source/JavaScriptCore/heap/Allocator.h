@@ -46,14 +46,13 @@ public:
     {
     }
     
-    void* allocate(Heap&, GCDeferralContext*, AllocationFailureMode) const;
+    void* allocate(Heap&, size_t cellSize, GCDeferralContext*, AllocationFailureMode) const;
     
     unsigned cellSize() const;
     
     LocalAllocator* localAllocator() const { return m_localAllocator; }
     
     bool operator==(const Allocator& other) const { return m_localAllocator == other.localAllocator(); }
-    bool operator!=(const Allocator& other) const { return !(*this == other); }
     explicit operator bool() const { return *this != Allocator(); }
     
 private:

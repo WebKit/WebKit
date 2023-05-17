@@ -28,6 +28,7 @@
 #include "LocalFrameView.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFitToViewBox.h"
+#include "SVGRenderStyle.h"
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"

@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,6 @@
 #pragma once
 
 #include <wtf/DataRef.h>
-#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -42,11 +41,10 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleNonInheritedData);
 class StyleNonInheritedData : public RefCounted<StyleNonInheritedData> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleNonInheritedData);
 public:
-    static Ref<StyleNonInheritedData> create() { return adoptRef(*new StyleNonInheritedData); }
+    static Ref<StyleNonInheritedData> create();
     Ref<StyleNonInheritedData> copy() const;
 
     bool operator==(const StyleNonInheritedData&) const;
-    bool operator!=(const StyleNonInheritedData& other) const { return !(*this == other); }
 
     DataRef<StyleBoxData> boxData;
     DataRef<StyleBackgroundData> backgroundData;

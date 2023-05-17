@@ -1,0 +1,13 @@
+<style>
+.line_clamp{
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+}
+</style>
+PASS if no assert.
+<div class=line_clamp><div></div></div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>

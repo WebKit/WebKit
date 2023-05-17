@@ -280,7 +280,7 @@ angle::Result SyncHelperNativeFence::initializeWithFd(ContextVk *contextVk, int 
     // EnsureSubmitted here.
     ANGLE_TRY(renderer->queueSubmitOneOff(contextVk, vk::PrimaryCommandBuffer(),
                                           contextVk->getProtectionType(), contextVk->getPriority(),
-                                          nullptr, 0, &fence.get(),
+                                          VK_NULL_HANDLE, 0, &fence.get(),
                                           vk::SubmitPolicy::EnsureSubmitted, &queueSerialOut));
 
     VkFenceGetFdInfoKHR fenceGetFdInfo = {};

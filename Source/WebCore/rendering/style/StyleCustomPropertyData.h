@@ -38,8 +38,7 @@ public:
     static Ref<StyleCustomPropertyData> create() { return adoptRef(*new StyleCustomPropertyData); }
     Ref<StyleCustomPropertyData> copy() const { return adoptRef(*new StyleCustomPropertyData(*this)); }
 
-    bool operator==(const StyleCustomPropertyData& other) const;
-    bool operator!=(const StyleCustomPropertyData& other) const { return !(*this == other); }
+    bool operator==(const StyleCustomPropertyData&) const;
 
     const CSSCustomPropertyValue* get(const AtomString&) const;
     void set(const AtomString&, Ref<const CSSCustomPropertyValue>&&);

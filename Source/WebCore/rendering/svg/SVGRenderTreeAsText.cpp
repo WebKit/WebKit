@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Google Inc. All rights reserved.
  *           (C) 2005 Rob Buis <buis@kde.org>
  *           (C) 2006 Alexander Kellett <lypanov@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
@@ -30,7 +31,6 @@
 #include "SVGRenderTreeAsText.h"
 
 #include "ColorSerialization.h"
-#include "GraphicsTypes.h"
 #include "LegacyRenderSVGImage.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShapeInlines.h"
@@ -52,6 +52,7 @@
 #include "RenderSVGRoot.h"
 #include "RenderSVGShapeInlines.h"
 #include "RenderSVGText.h"
+#include "RenderStyleInlines.h"
 #include "SVGCircleElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGEllipseElement.h"
@@ -61,10 +62,10 @@
 #include "SVGPathUtilities.h"
 #include "SVGPolyElement.h"
 #include "SVGRectElement.h"
+#include "SVGRenderStyle.h"
 #include "SVGRootInlineBox.h"
 #include "SVGStopElement.h"
 #include "StyleCachedImage.h"
-
 #include <math.h>
 
 namespace WebCore {
@@ -488,10 +489,10 @@ void writeSVGResourceContainer(TextStream& ts, const RenderSVGResourceContainer&
         writeNameValuePair(ts, "markerUnits", marker.markerUnits());
         ts << " [ref at " << marker.referencePoint() << "]";
         ts << " [angle=";
-        if (marker.angle() == -1)
-            ts << "auto" << "]\n";
+        if (auto angle = marker.angle())
+            ts << *angle << "]\n";
         else
-            ts << marker.angle() << "]\n";
+            ts << "auto" << "]\n";
     } else if (resource.resourceType() == PatternResourceType) {
         const auto& pattern = static_cast<const RenderSVGResourcePattern&>(resource);
 

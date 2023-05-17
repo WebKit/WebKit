@@ -228,24 +228,6 @@ inline bool operator==(T* a, const RefPtr<X, Y, Z>& b)
     return a == b.m_ptr;
 }
 
-template<typename T, typename U, typename V, typename X, typename Y, typename Z>
-inline bool operator!=(const RefPtr<T, U, V>& a, const RefPtr<X, Y, Z>& b)
-{
-    return !(a == b);
-}
-
-template<typename T, typename U, typename V, typename X>
-inline bool operator!=(const RefPtr<T, U, V>& a, X* b)
-{
-    return !(a == b);
-}
-
-template<typename T, typename X, typename Y, typename Z>
-inline bool operator!=(T* a, const RefPtr<X, Y, Z>& b)
-{
-    return !(a == b);
-}
-
 template<typename T, typename U, typename V>
 inline RefPtr<T, U, V> adoptRef(T* p)
 {

@@ -39,6 +39,8 @@ class FEDisplacementMap : public FilterEffect {
 public:
     WEBCORE_EXPORT static Ref<FEDisplacementMap> create(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale);
 
+    bool operator==(const FEDisplacementMap&) const;
+
     ChannelSelectorType xChannelSelector() const { return m_xChannelSelector; }
     bool setXChannelSelector(const ChannelSelectorType);
 
@@ -51,9 +53,11 @@ public:
 private:
     FEDisplacementMap(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float);
 
+    bool operator==(const FilterEffect& other) const override { return areEqual<FEDisplacementMap>(*this, other); }
+
     unsigned numberOfEffectInputs() const override { return 2; }
 
-    FloatRect calculateImageRect(const Filter&, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
+    FloatRect calculateImageRect(const Filter&, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
 
     const DestinationColorSpace& resultColorSpace(const FilterImageVector&) const override;
     void transformInputsColorSpace(const FilterImageVector& inputs) const override;

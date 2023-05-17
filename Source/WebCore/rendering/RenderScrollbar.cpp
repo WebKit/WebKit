@@ -30,6 +30,7 @@
 #include "LocalFrameView.h"
 #include "RenderScrollbarPart.h"
 #include "RenderScrollbarTheme.h"
+#include "RenderStyleSetters.h"
 #include "RenderWidget.h"
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"
@@ -100,7 +101,7 @@ void RenderScrollbar::styleChanged()
     updateScrollbarParts();
 }
 
-void RenderScrollbar::paint(GraphicsContext& context, const IntRect& damageRect, Widget::SecurityOriginPaintPolicy, EventRegionContext*)
+void RenderScrollbar::paint(GraphicsContext& context, const IntRect& damageRect, Widget::SecurityOriginPaintPolicy, RegionContext*)
 {
     if (context.invalidatingControlTints()) {
         updateScrollbarParts();

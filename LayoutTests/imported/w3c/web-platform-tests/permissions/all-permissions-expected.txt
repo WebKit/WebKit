@@ -2,7 +2,7 @@
 PASS Query "geolocation" permission
 PASS Query "notifications" permission
 FAIL Query "persistent-storage" permission promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Query "push" permission promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Query "push" permission
 FAIL Query "accelerometer" permission promise_test: Unhandled rejection with value: object "NotSupportedError: Permissions::query does not support this API"
 FAIL Query "ambient-light-sensor" permission promise_test: Unhandled rejection with value: object "TypeError: Type error"
 FAIL Query "background-fetch" permission promise_test: Unhandled rejection with value: object "NotSupportedError: Permissions::query does not support this API"

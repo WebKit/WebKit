@@ -54,10 +54,11 @@ private:
     void computeRootInlineBoxVerticalPosition(LineBox&, const LineBoxAlignmentContent&) const;
     void alignInlineLevelBoxes(LineBox&, InlineLayoutUnit lineBoxLogicalHeight) const;
     InlineLayoutUnit adjustForAnnotationIfNeeded(LineBox&, InlineLayoutUnit lineBoxHeight) const;
-    InlineLevelBox::LayoutBounds layoutBoundsForInlineBoxSubtree(const LineBox::InlineLevelBoxList& nonRootInlineLevelBoxes, size_t inlineBoxIndex) const;
+    InlineLevelBox::AscentAndDescent layoutBoundsForInlineBoxSubtree(const LineBox::InlineLevelBoxList& nonRootInlineLevelBoxes, size_t inlineBoxIndex) const;
 
     const InlineFormattingGeometry& formattingGeometry() const { return m_inlineFormattingGeometry; }
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
+    const ElementBox& rootBox() const { return formattingContext().root(); }
     const LayoutState& layoutState() const { return formattingContext().layoutState(); }
 
 private:

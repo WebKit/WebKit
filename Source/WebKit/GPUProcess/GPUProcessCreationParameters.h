@@ -62,8 +62,19 @@ struct GPUProcessCreationParameters {
     Vector<SandboxExtension::Handle> dynamicIOKitExtensionHandles;
 #endif
     std::optional<SandboxExtension::Handle> mobileGestaltExtensionHandle;
+#if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
+    Vector<SandboxExtension::Handle> gpuToolsExtensionHandles;
+#endif
 
     String applicationVisibleName;
+#if PLATFORM(COCOA)
+    bool strictSecureDecodingForAllObjCEnabled { false };
+#endif
+
+#if USE(GBM)
+    String renderDeviceFile;
+#endif
+    Vector<String> overrideLanguages;
 
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, GPUProcessCreationParameters&);

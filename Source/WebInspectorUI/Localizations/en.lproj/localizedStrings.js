@@ -102,6 +102,7 @@ localizedStrings["0 Console warnings"] = "0 Console warnings";
 localizedStrings["1 match"] = "1 match";
 localizedStrings["1080p"] = "1080p";
 localizedStrings["2D"] = "2D";
+localizedStrings["2D (Offscreen)"] = "2D (Offscreen)";
 /* Label indicating that network activity is being simulated with 3G connectivity. */
 localizedStrings["3G"] = "3G";
 localizedStrings["720p"] = "720p";
@@ -393,6 +394,8 @@ localizedStrings["Compute Shader"] = "Compute Shader";
 localizedStrings["Computed"] = "Computed";
 localizedStrings["Condition"] = "Condition";
 localizedStrings["Conditional expression"] = "Conditional expression";
+/* Part of the tooltip indicating that the hovered property is configurable. */
+localizedStrings["Configurable @ Object Tree Property"] = "Configurable";
 localizedStrings["Conic Gradient"] = "Conic Gradient";
 localizedStrings["Connecting"] = "Connecting";
 localizedStrings["Connection"] = "Connection";
@@ -668,6 +671,8 @@ localizedStrings["Ensure that only one live region is used on the page."] = "Ens
 localizedStrings["Ensure that only one main content section is used on the page."] = "Ensure that only one main content section is used on the page.";
 localizedStrings["Ensure that values for \u201C%s\u201D are valid."] = "Ensure that values for \u201C%s\u201D are valid.";
 localizedStrings["Entire Recording"] = "Entire Recording";
+/* Part of the tooltip indicating that the hovered property is enumerable. */
+localizedStrings["Enumerable @ Object Tree Property"] = "Enumerable";
 localizedStrings["Error"] = "Error";
 /* Title of icon indicating that the selected audit threw an error. */
 localizedStrings["Error @ Audit Tab - Test Case"] = "Error";
@@ -1104,7 +1109,13 @@ localizedStrings["Nodes"] = "Nodes";
 localizedStrings["None"] = "None";
 /* Property value for any `normal` CSS value. */
 localizedStrings["Normal @ Font Details Sidebar Property Value"] = "Normal";
+/* Part of the tooltip indicating that the hovered property is not configurable. */
+localizedStrings["Not configurable @ Object Tree Property"] = "Not configurable";
+/* Part of the tooltip indicating that the hovered property is not enumerable. */
+localizedStrings["Not enumerable @ Object Tree Property"] = "Not enumerable";
 localizedStrings["Not found"] = "Not found";
+/* Part of the tooltip indicating that the hovered property is not writable. */
+localizedStrings["Not writable @ Object Tree Property"] = "Not writable";
 /* Title of icon indicating that the selected audit has not been run yet. */
 localizedStrings["Not yet run @ Audit Tab - Test Case"] = "Not yet run";
 /* Section header for the group of CSS variables with numbers as values */
@@ -1119,9 +1130,9 @@ localizedStrings["Observer Callback"] = "Observer Callback";
 localizedStrings["Observer Handlers:"] = "Observer Handlers:";
 localizedStrings["Observers:"] = "Observers:";
 localizedStrings["Off"] = "Off";
-localizedStrings["2D"] = "2D (Offscreen)";
 /* Label for a preference that is turned off. */
 localizedStrings["Off @ User Preferences Overrides"] = "Off";
+localizedStrings["Offscreen2D"] = "Offscreen2D";
 /* Input label for the x-axis of the offset of a CSS box shadow */
 localizedStrings["Offset X @ Box Shadow Editor"] = "Offset X";
 /* Input label for the y-axis of the offset of a CSS box shadow */
@@ -1159,6 +1170,7 @@ localizedStrings["Other Issue"] = "Other Issue";
 localizedStrings["Other Threads"] = "Other Threads";
 localizedStrings["Other filter options\u2026"] = "Other filter options\u2026";
 localizedStrings["Other: %s"] = "Other: %s";
+localizedStrings["Other\u2026"] = "Other\u2026";
 localizedStrings["Outgoing message"] = "Outgoing message";
 localizedStrings["Output: "] = "Output: ";
 localizedStrings["Over 1 ms"] = "Over 1 ms";
@@ -1868,6 +1880,8 @@ localizedStrings["Worker: %s"] = "Worker: %s";
 /* Title for list of JavaScript web worker execution contexts */
 localizedStrings["Workers @ Execution Context Picker"] = "Workers";
 localizedStrings["Wrap lines to editor width"] = "Wrap lines to editor width";
+/* Part of the tooltip indicating that the hovered property is writable. */
+localizedStrings["Writable @ Object Tree Property"] = "Writable";
 localizedStrings["XBM"] = "XBM";
 localizedStrings["XHR"] = "XHR";
 localizedStrings["XHR Breakpoint\u2026"] = "XHR Breakpoint\u2026";

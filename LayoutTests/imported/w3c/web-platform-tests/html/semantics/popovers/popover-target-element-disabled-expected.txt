@@ -2,11 +2,10 @@ form
 helloother button
 
 PASS Disabled popover*target buttons should not affect the popover heirarchy.
-PASS Disabling popover*target buttons when popovers are open should still cause all popovers to be closed when the formerly outer popover is closed.
-PASS Disabling popover*target buttons when popovers are open should still cause all popovers to be closed when the formerly inner popover is closed.
-PASS Setting the form attribute on popover*target buttons when popovers are open should close all popovers.
-PASS Changing the input type on a popover*target button when popovers are open should close all popovers.
-PASS Disconnecting popover*target buttons when popovers are open should close all popovers.
-PASS Changing the popovertarget attribute to break the chain should close all popovers.
+PASS Disabling popover*target buttons when popovers are open should not cause popovers to be closed.
+PASS Setting the form attribute on popover*target buttons when popovers are open should not close them.
+PASS Changing the input type on a popover*target button when popovers are open should not close anything.
+PASS Disconnecting popover*target buttons when popovers are open should not close anything.
+PASS Changing the popovertarget attribute to break the chain should not close anything.
 PASS Modifying popovertarget on a button which doesn't break the chain shouldn't close any popovers.
 

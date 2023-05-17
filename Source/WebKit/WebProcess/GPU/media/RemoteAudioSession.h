@@ -43,6 +43,7 @@ class WebProcess;
 
 class RemoteAudioSession final
     : public WebCore::AudioSession
+    , public WebCore::AudioSession::InterruptionObserver
     , public GPUProcessConnection::Client
     , IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
@@ -65,8 +66,9 @@ private:
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
     // AudioSession
-    void setCategory(CategoryType, WebCore::RouteSharingPolicy) final;
+    void setCategory(CategoryType, Mode, WebCore::RouteSharingPolicy) final;
     CategoryType category() const final;
+    Mode mode() const final;
 
     WebCore::RouteSharingPolicy routeSharingPolicy() const final { return m_routeSharingPolicy; }
     String routingContextUID() const final { return configuration().routingContextUID; }
@@ -97,11 +99,18 @@ private:
     RemoteAudioSessionConfiguration& configuration();
     void initializeConfigurationIfNecessary();
 
+    void beginInterruptionRemote();
+    void endInterruptionRemote(MayResume);
+
+    // InterruptionObserver
+    void beginAudioSessionInterruption() final;
+    void endAudioSessionInterruption(WebCore::AudioSession::MayResume) final;
 
     WebProcess& m_process;
 
     WeakHashSet<ConfigurationChangeObserver> m_configurationChangeObservers;
     CategoryType m_category { CategoryType::None };
+    Mode m_mode { Mode::Default };
     WebCore::RouteSharingPolicy m_routeSharingPolicy { WebCore::RouteSharingPolicy::Default };
     bool m_isPlayingToBluetoothOverrideChanged { false };
     std::optional<RemoteAudioSessionConfiguration> m_configuration;

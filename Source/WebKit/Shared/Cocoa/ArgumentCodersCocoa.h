@@ -31,6 +31,7 @@
 
 namespace IPC {
 
+#ifdef __OBJC__
 void encodeObject(Encoder&, id);
 std::optional<RetainPtr<id>> decodeObject(Decoder&, NSArray<Class> *allowedClasses);
 
@@ -108,6 +109,10 @@ template<typename T> struct ArgumentCoder<RetainPtr<T>> {
         return IPC::decode<U>(decoder);
     }
 };
+#endif // __OBJC__
+
+void setStrictSecureDecodingForAllObjCEnabled(bool);
+bool strictSecureDecodingForAllObjCEnabled();
 
 } // namespace IPC
 

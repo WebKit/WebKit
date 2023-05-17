@@ -35,6 +35,7 @@
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebCore/CertificateInfo.h>
+#import <WebKit/WKContextPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKURLSchemeHandler.h>
@@ -1479,6 +1480,7 @@ TEST(ServiceWorkers, NonDefaultSessionID)
     RetainPtr<_WKWebsiteDataStoreConfiguration> websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     websiteDataStoreConfiguration.get()._serviceWorkerRegistrationDirectory = serviceWorkersPath;
     websiteDataStoreConfiguration.get()._indexedDBDatabaseDirectory = idbPath;
+    websiteDataStoreConfiguration.get().unifiedOriginStorageLevel = _WKUnifiedOriginStorageLevelBasic;
 
     configuration.get().websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).get();
 
@@ -1985,14 +1987,17 @@ TEST(ServiceWorkers, SuspendNetworkProcess)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     // Start with a clean slate data store
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    websiteDataStoreConfiguration.get().unifiedOriginStorageLevel = _WKUnifiedOriginStorageLevelBasic;
+    auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    [websiteDataStore.get() removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-
+    [configuration setWebsiteDataStore:websiteDataStore.get()];
     RetainPtr<SWMessageHandler> messageHandler = adoptNS([[SWMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
@@ -2433,6 +2438,7 @@ TEST(ServiceWorkers, CustomDataStorePathsVersusCompletionHandlers)
     [[NSFileManager defaultManager] createDirectoryAtURL:swPath withIntermediateDirectories:YES attributes:nil error:nil];
 
     auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    websiteDataStoreConfiguration.get().unifiedOriginStorageLevel = _WKUnifiedOriginStorageLevelBasic;
     websiteDataStoreConfiguration.get()._serviceWorkerRegistrationDirectory = swPath;
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
 
@@ -2941,6 +2947,81 @@ TEST(ServiceWorker, ExtensionServiceWorkerFailureViewDestroyed)
     }
     TestWebKitAPI::Util::run(&done);
 }
+
+#if WK_HAVE_C_SPI
+static constexpr auto RemovalOfSameRegistrableDomainButDifferentOriginMainPage =
+"<div>test page</div>"
+"<script>"
+"async function test() {"
+"    try {"
+"        const registration = await navigator.serviceWorker.register('/sw.js');"
+"        if (registration.active) {"
+"            alert('already active');"
+"            return;"
+"        }"
+"        const worker = registration.installing;"
+"        worker.addEventListener('statechange', () => {"
+"            if (worker.state == 'activated')"
+"                alert('successfully registered');"
+"        });"
+"    } catch(e) {"
+"        alert('Exception: ' + e);"
+"    }"
+"}"
+"window.onload = test;"
+"</script>"_s;
+TEST(ServiceWorker, RemovalOfSameRegistrableDomainButDifferentOrigin)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [[WKWebsiteDataStore defaultDataStore] _terminateNetworkProcess];
+
+    auto localhostAliases = adoptWK(WKMutableArrayCreate());
+    WKArrayAppendItem(localhostAliases.get(), TestWebKitAPI::Util::toWK("a.amazon.com").get());
+    WKArrayAppendItem(localhostAliases.get(), TestWebKitAPI::Util::toWK("b.amazon.com").get());
+    WKContextSetLocalhostAliases(nullptr, localhostAliases.get());
+
+    TestWebKitAPI::HTTPServer server({
+        { "/main.html"_s, { RemovalOfSameRegistrableDomainButDifferentOriginMainPage } },
+        { "/other.html"_s, { "<div>other page<div><script>alert('loaded')</script>"_s } },
+        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, "onfetch = () => { };"_s } }
+    });
+
+    auto mainViewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [mainViewConfiguration.get().processPool _setUseSeparateServiceWorkerProcess: true];
+    [mainViewConfiguration.get().preferences _setSecureContextChecksEnabled:NO];
+
+    // Load main page which will register the service worker in another process.
+    auto mainWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:mainViewConfiguration.get()]);
+    [mainWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://a.amazon.com:%d/main.html", server.port()]]]];
+    EXPECT_WK_STREQ([mainWebView _test_waitForAlert], "successfully registered");
+
+    [mainWebView _setThrottleStateForTesting:1];
+
+    // Load other page with different origin but same registrable domain in the same process as main page.
+    mainViewConfiguration.get()._relatedWebView = mainWebView.get();
+    auto otherWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:mainViewConfiguration.get()]);
+    [otherWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://b.amazon.com:%d/other.html", server.port()]]]];
+    EXPECT_WK_STREQ([otherWebView _test_waitForAlert], "loaded");
+
+    // Navigate other page to remove the client with different origin but same registrable domain.
+    [otherWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://a.amazon.com:%d/main.html", server.port()]]]];
+    EXPECT_WK_STREQ([otherWebView _test_waitForAlert], "already active");
+
+    // Wait a bit.
+    TestWebKitAPI::Util::runFor(0.5_s);
+
+    // Verify the process running the service worker is not suspended.
+    ASSERT_TRUE([mainWebView _hasServiceWorkerForegroundActivityForTesting] || [mainWebView _hasServiceWorkerBackgroundActivityForTesting]);
+}
+#endif // WK_HAVE_C_SPI
 
 static constexpr auto ServiceWorkerWindowClientFocusMain =
 "<div>test page</div>"

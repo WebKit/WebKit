@@ -56,15 +56,6 @@ inline bool webkitGstCheckVersion(guint major, guint minor, guint micro)
     return true;
 }
 
-// gst_video_format_info_component() is GStreamer 1.18 API, so for older versions we use a local
-// vendored copy of the function.
-#if !GST_CHECK_VERSION(1, 18, 0)
-#define GST_VIDEO_MAX_COMPONENTS 4
-void webkitGstVideoFormatInfoComponent(const GstVideoFormatInfo*, guint, gint components[GST_VIDEO_MAX_COMPONENTS]);
-
-#define gst_video_format_info_component webkitGstVideoFormatInfoComponent
-#endif
-
 #define GST_VIDEO_CAPS_TYPE_PREFIX  "video/"
 #define GST_AUDIO_CAPS_TYPE_PREFIX  "audio/"
 #define GST_TEXT_CAPS_TYPE_PREFIX   "text/"
@@ -331,13 +322,6 @@ GstElement* makeGStreamerElement(const char* factoryName, const char* name);
 GstElement* makeGStreamerBin(const char* description, bool ghostUnlinkedPads);
 
 String gstStructureToJSONString(const GstStructure*);
-
-// gst_element_get_current_running_time() is GStreamer 1.18 API, so for older versions we use a local
-// vendored copy of the function.
-#if !GST_CHECK_VERSION(1, 18, 0)
-GstClockTime webkitGstElementGetCurrentRunningTime(GstElement*);
-#define gst_element_get_current_running_time webkitGstElementGetCurrentRunningTime
-#endif
 
 GstClockTime webkitGstInitTime();
 

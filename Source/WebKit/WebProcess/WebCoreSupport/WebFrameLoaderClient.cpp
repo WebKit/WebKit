@@ -36,6 +36,7 @@
 #include "InjectedBundle.h"
 #include "InjectedBundleDOMWindowExtension.h"
 #include "Logging.h"
+#include "MessageSenderInlines.h"
 #include "NavigationActionData.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
@@ -121,11 +122,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebFrameLoaderClient::WebFrameLoaderClient(Ref<WebFrame>&& frame)
+WebFrameLoaderClient::WebFrameLoaderClient(Ref<WebFrame>&& frame, ScopeExit<Function<void()>>&& invalidator)
     : m_frame(WTFMove(frame))
-    , m_frameInvalidator(makeScopeExit<Function<void()>>([frame = m_frame] {
-        frame->invalidate();
-    }))
+    , m_frameInvalidator(WTFMove(invalidator))
 {
 }
 
@@ -135,14 +134,6 @@ std::optional<WebPageProxyIdentifier> WebFrameLoaderClient::webPageProxyID() con
 {
     if (m_frame->page())
         return m_frame->page()->webPageProxyIdentifier();
-
-    return std::nullopt;
-}
-
-std::optional<PageIdentifier> WebFrameLoaderClient::pageID() const
-{
-    if (m_frame->page())
-        return m_frame->page()->identifier();
 
     return std::nullopt;
 }
@@ -504,6 +495,7 @@ void WebFrameLoaderClient::didSameDocumentNavigationForFrameViaJSHistoryAPI(Same
         { }, /* clientRedirectSourceForHistory */
         0, /* effectiveSandboxFlags */
         std::nullopt, /* privateClickMeasurement */
+        { }, /* networkConnectionIntegrityPolicy */
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         std::nullopt, /* webHitTestResultData */
 #endif
@@ -984,6 +976,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Navigati
         { }, /* clientRedirectSourceForHistory */
         0, /* effectiveSandboxFlags */
         navigationAction.privateClickMeasurement(),
+        { }, /* networkConnectionIntegrityPolicy */
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         webHitTestResultDataInNavigationActionData(navigationAction, navigationActionData, m_frame->coreFrame()),
 #endif
@@ -1050,6 +1043,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
 
     FrameInfoData originatingFrameInfoData {
         navigationAction.initiatedByMainFrame() == InitiatedByMainFrame::Yes,
+        FrameType::Local,
         ResourceRequest { requester.url },
         requester.securityOrigin->data(),
         { },
@@ -1101,6 +1095,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         documentLoader->clientRedirectSourceForHistory(),
         coreFrame->loader().effectiveSandboxFlags(),
         navigationAction.privateClickMeasurement(),
+        requestingFrame ? requestingFrame->networkConnectionIntegrityPolicy() : OptionSet<NetworkConnectionIntegrity> { },
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         webHitTestResultDataInNavigationActionData(navigationAction, navigationActionData, coreFrame.get()),
 #endif
@@ -1903,7 +1898,16 @@ RemoteAXObjectRef WebFrameLoaderClient::accessibilityRemoteObject()
     
     return webPage->accessibilityRemoteObject();
 }
-    
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+void WebFrameLoaderClient::setAXIsolatedTreeRoot(WebCore::AXCoreObject* axObject)
+{
+    ASSERT(isMainRunLoop());
+    if (auto* webPage = m_frame->page())
+        webPage->setAXIsolatedTreeRoot(axObject);
+}
+#endif
+
 void WebFrameLoaderClient::willCacheResponse(DocumentLoader*, ResourceLoaderIdentifier identifier, NSCachedURLResponse* response, CompletionHandler<void(NSCachedURLResponse *)>&& completionHandler) const
 {
     WebPage* webPage = m_frame->page();
@@ -1913,13 +1917,13 @@ void WebFrameLoaderClient::willCacheResponse(DocumentLoader*, ResourceLoaderIden
     return completionHandler(webPage->injectedBundleResourceLoadClient().shouldCacheResponse(*webPage, m_frame, identifier) ? response : nil);
 }
 
-NSDictionary *WebFrameLoaderClient::dataDetectionContext()
+std::optional<double> WebFrameLoaderClient::dataDetectionReferenceDate()
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
-        return nil;
+        return std::nullopt;
 
-    return webPage->dataDetectionContext();
+    return webPage->dataDetectionReferenceDate();
 }
 
 #endif // PLATFORM(COCOA)

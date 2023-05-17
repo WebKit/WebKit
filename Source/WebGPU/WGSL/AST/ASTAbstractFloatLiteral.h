@@ -33,17 +33,17 @@ namespace WGSL::AST {
 // floating point numbers.
 // https://gpuweb.github.io/gpuweb/wgsl/#abstractfloat
 class AbstractFloatLiteral final : public Expression {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(AbstractFloatLiteral);
 public:
+    NodeKind kind() const final;
+    double value() const { return m_value; }
+
+private:
     AbstractFloatLiteral(SourceSpan span, double value)
         : Expression(span)
         , m_value(value)
     { }
 
-    NodeKind kind() const final;
-    double value() const { return m_value; }
-
-private:
     double m_value;
 };
 

@@ -72,11 +72,14 @@ constexpr ASCIILiteral toASCIILiteral(BinaryOperation op)
 void printInternal(PrintStream&, BinaryOperation);
 
 class BinaryExpression : public Expression {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(BinaryExpression);
 public:
-    using Ref = UniqueRef<Expression>;
-    using List = UniqueRefVector<Expression>;
+    NodeKind kind() const override;
+    BinaryOperation operation() const { return m_operation; }
+    Expression& leftExpression() { return m_lhs.get(); }
+    Expression& rightExpression() { return m_rhs.get(); }
 
+private:
     BinaryExpression(SourceSpan span, Expression::Ref&& lhs, Expression::Ref&& rhs, BinaryOperation operation)
         : Expression(span)
         , m_lhs(WTFMove(lhs))
@@ -84,12 +87,6 @@ public:
         , m_operation(operation)
     { }
 
-    NodeKind kind() const override;
-    BinaryOperation operation() const { return m_operation; }
-    Expression& leftExpression() { return m_lhs.get(); }
-    Expression& rightExpression() { return m_rhs.get(); }
-
-private:
     Expression::Ref m_lhs;
     Expression::Ref m_rhs;
     BinaryOperation m_operation;

@@ -166,11 +166,6 @@ public:
         m_storage->fill(val);
     }
 
-    bool operator!=(const FixedVector<T>& other) const
-    {
-        return !(*this == other);
-    }
-
     bool operator==(const FixedVector<T>& other) const
     {
         if (!m_storage) {

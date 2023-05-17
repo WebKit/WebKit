@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>media-source-webm-configuration-color-vp9-header</title>
+    <script src="../../media/media-source/media-source-loader.js"></script>
+    <script src="../../media/video-test.js"></script>
+    <script>
+    var sourceBuffer;
+    var mediaSegmentDuration;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    async function runTest() {
+        findMediaElement();
+
+        waitFor(video, 'error').then(failTest);
+
+        let loadAndCheckColor = async (manifest, colorValues) => {
+            let source = new MediaSource();
+            video.src = URL.createObjectURL(source);
+            await waitFor(source, 'sourceopen', true);
+
+            let loader = new MediaSourceLoader(manifest);
+            await loader.load();
+            await loader.loadMediaData();
+
+            consoleWrite(`TEST("${manifest}")`)
+            sourceBuffer = source.addSourceBuffer(loader.type());
+            sourceBuffer.appendBuffer(loader.initSegment());
+            await waitFor(sourceBuffer, 'update', true);
+            sourceBuffer.appendBuffer(loader.mediaSegment(0));
+            await waitFor(sourceBuffer, 'update', true);
+
+            testExpected('video.videoTracks[0].configuration.colorSpace.matrix', colorValues.matrix);
+            testExpected('video.videoTracks[0].configuration.colorSpace.primaries', colorValues.primaries);
+            testExpected('video.videoTracks[0].configuration.colorSpace.transfer', colorValues.transfer);
+
+            source.removeSourceBuffer(sourceBuffer);
+        };
+
+        await loadAndCheckColor('content/test-vp9-profile0-stripped-manifest.json', {matrix: 'bt709', primaries: 'bt709', transfer: 'bt709'});
+        await loadAndCheckColor('content/test-vp9-profile2-stripped-manifest.json', {matrix: 'bt2020-ncl', primaries: 'bt2020', transfer: 'bt2020_10bit'});
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            await runTest();
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>

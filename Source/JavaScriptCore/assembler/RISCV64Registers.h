@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
+#if CPU(RISCV64)
+
 // More on the RISC-V calling convention and registers:
 // https://riscv.org/wp-content/uploads/2015/01/riscv-calling.pdf
 // https://riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf (Chapter 20)
@@ -110,3 +114,5 @@
     macro(f29, "f29", 0, 0)         \
     macro(f30, "f30", 0, 0)         \
     macro(f31, "f31", 0, 0)
+
+#endif // CPU(RISCV64)

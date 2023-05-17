@@ -54,10 +54,15 @@ public:
     AbstractValue& fastForward(AbstractValue& value) { return value; }
     
     AbstractValue& forNode(NodeFlowProjection);
-    AbstractValue& forNode(Edge edge) { return forNode(edge.node()); }
+    AbstractValue& forNode(Edge edge)
+    {
+        ASSERT(!edge.node()->isTuple());
+        return forNode(edge.node());
+    }
     
     ALWAYS_INLINE AbstractValue& forNodeWithoutFastForward(NodeFlowProjection node)
     {
+        ASSERT(!node->isTuple());
         return forNode(node);
     }
     
@@ -73,6 +78,7 @@ public:
     
     ALWAYS_INLINE void clearForNode(NodeFlowProjection node)
     {
+        ASSERT(!node->isTuple());
         forNode(node).clear();
     }
     
@@ -84,6 +90,7 @@ public:
     template<typename... Arguments>
     ALWAYS_INLINE void setForNode(NodeFlowProjection node, Arguments&&... arguments)
     {
+        ASSERT(!node->isTuple());
         forNode(node).set(m_graph, std::forward<Arguments>(arguments)...);
     }
 
@@ -135,6 +142,11 @@ public:
     ALWAYS_INLINE void makeHeapTopForNode(Edge edge)
     {
         makeHeapTopForNode(edge.node());
+    }
+
+    ALWAYS_INLINE AbstractValue& forTupleNodeWithoutFastForward(NodeFlowProjection node, unsigned index)
+    {
+        return forTupleNode(node, index);
     }
 
     ALWAYS_INLINE AbstractValue& forTupleNode(NodeFlowProjection node, unsigned index)

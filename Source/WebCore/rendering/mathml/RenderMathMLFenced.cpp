@@ -32,6 +32,8 @@
 #include "FontSelector.h"
 #include "MathMLNames.h"
 #include "MathMLRowElement.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderInline.h"
 #include "RenderMathMLFencedOperator.h"
 #include "RenderText.h"

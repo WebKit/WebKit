@@ -736,6 +736,24 @@
       },
     },
 
+    'angle_restricted_trace_gold_interpreted_isolated_scripts': {
+      'angle_restricted_trace_gold_interpreted_tests': {
+        'android_args': [
+          '-v',
+        ],
+        'args': [
+          '--test-machine-name',
+          '${buildername}',
+          '--trace-interpreter=gz',
+          '--filter=fishdom:geometry_dash:merge_dragons:minecraft_bedrock:new_legend_of_the_condor_heroes:street_fighter_duel:teslagrad:vainglory',
+        ],
+        'mixins': [
+          'angle_skia_gold_test',
+        ],
+        'test': 'angle_restricted_trace_gold_tests',
+      }
+    },
+
     'angle_restricted_trace_gold_isolated_scripts': {
       'angle_restricted_trace_gold_tests': {
         'android_args': [
@@ -759,7 +777,7 @@
         'args': [
           '--log=debug',
           'interpret',
-          'among_us:dota_underlords:genshin_impact:manhattan_10:trex_200',
+          'among_us:catalyst_black:cut_the_rope:dota_underlords:fishdom:genshin_impact:harry_potter_hogwarts_mystery:manhattan_10:trex_200',
           '-L=2',
           '--show-test-stdout',
         ],
@@ -1170,6 +1188,7 @@
     'common_isolated_scripts': [
       'angle_perf_smoke_isolated_scripts',
       'angle_restricted_trace_gold_isolated_scripts',
+      'angle_restricted_trace_gold_interpreted_isolated_scripts',
       'angle_trace_interpreter_isolated_scripts',
       'angle_trace_perf_native_smoke_isolated_scripts',
       'angle_trace_perf_vulkan_smoke_isolated_scripts',

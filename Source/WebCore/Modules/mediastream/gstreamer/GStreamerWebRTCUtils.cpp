@@ -185,7 +185,8 @@ RTCRtpSendParameters toRTCRtpSendParameters(const GstStructure* rtcParameters)
     unsigned size = gst_value_list_get_size(encodings);
     for (unsigned i = 0; i < size; i++) {
         const auto* value = gst_value_list_get_value(encodings, i);
-        parameters.encodings.append(toRTCEncodingParameters(GST_STRUCTURE_CAST(value)));
+        RELEASE_ASSERT(GST_VALUE_HOLDS_STRUCTURE(value));
+        parameters.encodings.append(toRTCEncodingParameters(gst_value_get_structure(value)));
     }
 
     // FIXME: Handle rtcParameters.degradation_preference.
@@ -205,8 +206,10 @@ std::optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
 {
     ensureDebugCategoryInitialized();
     GST_TRACE("Parsing ICE Candidate: %s", sdp.utf8().data());
-    if (!sdp.startsWith("candidate:"_s))
+    if (!sdp.startsWith("candidate:"_s)) {
+        GST_WARNING("Invalid SDP ICE candidate format, must start with candidate: prefix");
         return { };
+    }
 
     String foundation;
     unsigned componentId = 0;
@@ -231,8 +234,10 @@ std::optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
         case 1:
             if (auto value = parseInteger<unsigned>(token))
                 componentId = *value;
-            else
+            else {
+                GST_WARNING("Invalid SDP candidate component ID: %s", token.ascii().data());
                 return { };
+            }
             break;
         case 2:
             transport = token;
@@ -240,8 +245,10 @@ std::optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
         case 3:
             if (auto value = parseInteger<unsigned>(token))
                 priority = *value;
-            else
+            else {
+                GST_WARNING("Invalid SDP candidate priority: %s", token.ascii().data());
                 return { };
+            }
             break;
         case 4:
             address = token;
@@ -249,12 +256,16 @@ std::optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
         case 5:
             if (auto value = parseInteger<unsigned>(token))
                 port = *value;
-            else
+            else {
+                GST_WARNING("Invalid SDP candidate port: %s", token.ascii().data());
                 return { };
+            }
             break;
         default:
-            if (it + 1 == tokens.end())
+            if (it + 1 == tokens.end()) {
+                GST_WARNING("Incomplete SDP candidate");
                 return { };
+            }
 
             it++;
             if (token == "typ"_s)
@@ -271,8 +282,10 @@ std::optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
         }
     }
 
-    if (type.isEmpty())
+    if (type.isEmpty()) {
+        GST_WARNING("Unable to parse candidate type");
         return { };
+    }
 
     RTCIceCandidate::Fields fields;
     fields.foundation = foundation;
@@ -459,6 +472,20 @@ uint32_t UniqueSSRCGenerator::generateSSRC()
     return std::numeric_limits<uint32_t>::max();
 }
 
+std::optional<int> payloadTypeForEncodingName(const char* encodingName)
+{
+    static HashMap<String, int> staticPayloadTypes = {
+        { "PCMU"_s, 0 },
+        { "PCMA"_s, 8 },
+        { "G722"_s, 9 },
+    };
+
+    auto key = String::fromLatin1(encodingName);
+    if (staticPayloadTypes.contains(key))
+        return staticPayloadTypes.get(key);
+    return { };
+}
+
 GRefPtr<GstCaps> capsFromRtpCapabilities(RefPtr<UniqueSSRCGenerator> ssrcGenerator, const RTCRtpCapabilities& capabilities, Function<void(GstStructure*)> supplementCapsCallback)
 {
     auto caps = adoptGRef(gst_caps_new_empty());
@@ -480,6 +507,10 @@ GRefPtr<GstCaps> capsFromRtpCapabilities(RefPtr<UniqueSSRCGenerator> ssrcGenerat
 
         if (codec.channels && *codec.channels > 1)
             gst_structure_set(codecStructure, "encoding-params", G_TYPE_STRING, makeString(*codec.channels).ascii().data(), nullptr);
+
+        const char* encodingName = gst_structure_get_string(codecStructure, "encoding-name");
+        if (auto payloadType = payloadTypeForEncodingName(encodingName))
+            gst_structure_set(codecStructure, "payload", G_TYPE_INT, *payloadType, nullptr);
 
         supplementCapsCallback(codecStructure);
 
@@ -526,7 +557,7 @@ GRefPtr<GstCaps> capsFromSDPMedia(const GstSDPMedia* media)
         auto rtpMap = StringView::fromLatin1(rtpMapValue);
         auto components = rtpMap.split(' ');
         auto payloadType = parseInteger<int>(*components.begin());
-        if (!payloadType || !*payloadType) {
+        if (!payloadType) {
             GST_WARNING("Invalid payload type in rtpmap %s", rtpMap.utf8().data());
             continue;
         }
@@ -547,7 +578,7 @@ GRefPtr<GstCaps> capsFromSDPMedia(const GstSDPMedia* media)
             // Remove attributes unrelated with codec preferences, potentially leading to internal
             // webrtcbin confusions such as duplicated RTP direction attributes for instance.
             gst_structure_remove_fields(structure, "a-setup", "a-ice-ufrag", "a-ice-pwd", "a-sendrecv", "a-inactive",
-                "a-sendonly", "a-recvonly", nullptr);
+                "a-sendonly", "a-recvonly", "a-end-of-candidates", nullptr);
 
             // Remove ssrc- attributes that end up being accumulated in fmtp SDP media parameters.
             gst_structure_filter_and_map_in_place(structure, reinterpret_cast<GstStructureFilterMapFunc>(+[](GQuark quark, GValue*, gpointer) -> gboolean {

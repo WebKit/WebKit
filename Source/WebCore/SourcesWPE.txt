@@ -38,6 +38,8 @@ accessibility/atspi/AccessibilityObjectValueAtspi.cpp
 accessibility/atspi/AccessibilityRootAtspi.cpp
 accessibility/atspi/AXObjectCacheAtspi.cpp
 
+dom/wpe/PointerEventWPE.cpp
+
 editing/atspi/FrameSelectionAtspi.cpp
 editing/libwpe/EditorLibWPE.cpp
 

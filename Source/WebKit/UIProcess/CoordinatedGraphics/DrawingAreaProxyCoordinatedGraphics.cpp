@@ -36,7 +36,6 @@
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebProcessProxy.h"
-#include <WebCore/PlatformDisplay.h>
 #include <WebCore/Region.h>
 
 #if PLATFORM(GTK)
@@ -76,35 +75,8 @@ void DrawingAreaProxyCoordinatedGraphics::paint(BackingStore::PlatformGraphicsCo
     if (isInAcceleratedCompositingMode())
         return;
 
-    ASSERT(m_currentBackingStoreStateID <= m_nextBackingStoreStateID);
-    if (m_currentBackingStoreStateID < m_nextBackingStoreStateID) {
-        // Tell the web process to do a full backing store update now, in case we previously told
-        // it about our next state but didn't request an immediate update.
-        sendUpdateBackingStoreState(RespondImmediately);
-
-        // If we haven't yet received our first bits from the WebProcess then don't paint anything.
-        if (!m_hasReceivedFirstUpdate)
-            return;
-
-        if (m_isWaitingForDidUpdateBackingStoreState) {
-            // Wait for a DidUpdateBackingStoreState message that contains the new bits before we paint
-            // what's currently in the backing store.
-            waitForAndDispatchDidUpdateBackingStoreState();
-        }
-
-        // Dispatching DidUpdateBackingStoreState (either beneath sendUpdateBackingStoreState or
-        // beneath waitForAndDispatchDidUpdateBackingStoreState) could destroy our backing store or
-        // change the compositing mode.
-        if (!m_backingStore || isInAcceleratedCompositingMode())
-            return;
-    } else {
-        ASSERT(!m_isWaitingForDidUpdateBackingStoreState);
-        if (!m_backingStore) {
-            // The view has asked us to paint before the web process has painted anything. There's
-            // nothing we can do.
-            return;
-        }
-    }
+    if (!m_backingStore)
+        return;
 
     m_backingStore->paint(context, rect);
     unpaintedRegion.subtract(IntRect(IntPoint(), m_backingStore->size()));
@@ -115,12 +87,18 @@ void DrawingAreaProxyCoordinatedGraphics::paint(BackingStore::PlatformGraphicsCo
 
 void DrawingAreaProxyCoordinatedGraphics::sizeDidChange()
 {
-    backingStoreStateDidChange(RespondImmediately);
+    if (!m_webPageProxy.hasRunningProcess())
+        return;
+
+    if (m_isWaitingForDidUpdateGeometry)
+        return;
+
+    sendUpdateGeometry();
 }
 
 void DrawingAreaProxyCoordinatedGraphics::deviceScaleFactorDidChange()
 {
-    backingStoreStateDidChange(RespondImmediately);
+    m_webPageProxy.send(Messages::DrawingArea::SetDeviceScaleFactor(m_webPageProxy.deviceScaleFactor()), m_identifier);
 }
 
 void DrawingAreaProxyCoordinatedGraphics::waitForBackingStoreUpdateOnNextPaint()
@@ -154,89 +132,38 @@ void DrawingAreaProxyCoordinatedGraphics::commitTransientZoom(double scale, Floa
 }
 #endif
 
-void DrawingAreaProxyCoordinatedGraphics::update(uint64_t backingStoreStateID, const UpdateInfo& updateInfo)
+void DrawingAreaProxyCoordinatedGraphics::update(uint64_t, UpdateInfo&& updateInfo)
 {
-    ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_currentBackingStoreStateID);
-    if (backingStoreStateID < m_currentBackingStoreStateID)
+    if (m_isWaitingForDidUpdateGeometry && updateInfo.viewSize != m_lastSentSize) {
+        m_webPageProxy.send(Messages::DrawingArea::DisplayDidRefresh(), m_identifier);
         return;
+    }
 
     // FIXME: Handle the case where the view is hidden.
 
 #if !PLATFORM(WPE)
-    incorporateUpdate(updateInfo);
+    incorporateUpdate(WTFMove(updateInfo));
 #endif
-    m_webPageProxy.send(Messages::DrawingArea::DisplayDidRefresh(), m_identifier);
+
+    if (!m_isWaitingForDidUpdateGeometry)
+        m_webPageProxy.send(Messages::DrawingArea::DisplayDidRefresh(), m_identifier);
 }
 
-void DrawingAreaProxyCoordinatedGraphics::didUpdateBackingStoreState(uint64_t backingStoreStateID, const UpdateInfo& updateInfo, const LayerTreeContext& layerTreeContext)
+void DrawingAreaProxyCoordinatedGraphics::enterAcceleratedCompositingMode(uint64_t, const LayerTreeContext& layerTreeContext)
 {
-    ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_nextBackingStoreStateID);
-    ASSERT_ARG(backingStoreStateID, backingStoreStateID > m_currentBackingStoreStateID);
-    m_currentBackingStoreStateID = backingStoreStateID;
-
-    m_isWaitingForDidUpdateBackingStoreState = false;
-
-    // Stop the responsiveness timer that was started in sendUpdateBackingStoreState.
-    m_webPageProxy.process().stopResponsivenessTimer();
-
-    if (layerTreeContext != m_layerTreeContext) {
-        if (layerTreeContext.isEmpty() && !m_layerTreeContext.isEmpty()) {
-            exitAcceleratedCompositingMode();
-            ASSERT(m_layerTreeContext.isEmpty());
-        } else if (!layerTreeContext.isEmpty() && m_layerTreeContext.isEmpty()) {
-            enterAcceleratedCompositingMode(layerTreeContext);
-            ASSERT(layerTreeContext == m_layerTreeContext);
-        } else {
-            updateAcceleratedCompositingMode(layerTreeContext);
-            ASSERT(layerTreeContext == m_layerTreeContext);
-        }
-    }
-
-    if (m_nextBackingStoreStateID != m_currentBackingStoreStateID)
-        sendUpdateBackingStoreState(RespondImmediately);
-    else
-        m_hasReceivedFirstUpdate = true;
-
-#if !PLATFORM(WPE)
-    if (isInAcceleratedCompositingMode()) {
-        ASSERT(!m_backingStore);
-        return;
-    }
-
-    // If we have a backing store the right size, reuse it.
-    if (m_backingStore && (m_backingStore->size() != updateInfo.viewSize || m_backingStore->deviceScaleFactor() != updateInfo.deviceScaleFactor))
-        m_backingStore = nullptr;
-    incorporateUpdate(updateInfo);
-#endif
-}
-
-void DrawingAreaProxyCoordinatedGraphics::enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext& layerTreeContext)
-{
-    ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_currentBackingStoreStateID);
-    if (backingStoreStateID < m_currentBackingStoreStateID)
-        return;
-
     enterAcceleratedCompositingMode(layerTreeContext);
 }
 
-void DrawingAreaProxyCoordinatedGraphics::exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo& updateInfo)
+void DrawingAreaProxyCoordinatedGraphics::exitAcceleratedCompositingMode(uint64_t, UpdateInfo&& updateInfo)
 {
-    ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_currentBackingStoreStateID);
-    if (backingStoreStateID < m_currentBackingStoreStateID)
-        return;
-
     exitAcceleratedCompositingMode();
 #if !PLATFORM(WPE)
-    incorporateUpdate(updateInfo);
+    incorporateUpdate(WTFMove(updateInfo));
 #endif
 }
 
-void DrawingAreaProxyCoordinatedGraphics::updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext& layerTreeContext)
+void DrawingAreaProxyCoordinatedGraphics::updateAcceleratedCompositingMode(uint64_t, const LayerTreeContext& layerTreeContext)
 {
-    ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_currentBackingStoreStateID);
-    if (backingStoreStateID < m_currentBackingStoreStateID)
-        return;
-
     updateAcceleratedCompositingMode(layerTreeContext);
 }
 
@@ -246,17 +173,15 @@ void DrawingAreaProxyCoordinatedGraphics::targetRefreshRateDidChange(unsigned ra
 }
 
 #if !PLATFORM(WPE)
-void DrawingAreaProxyCoordinatedGraphics::incorporateUpdate(const UpdateInfo& updateInfo)
+void DrawingAreaProxyCoordinatedGraphics::incorporateUpdate(UpdateInfo&& updateInfo)
 {
     ASSERT(!isInAcceleratedCompositingMode());
 
     if (updateInfo.updateRectBounds.isEmpty())
         return;
 
-    if (!m_backingStore)
+    if (!m_backingStore || m_backingStore->size() != updateInfo.viewSize)
         m_backingStore = makeUnique<BackingStore>(updateInfo.viewSize, updateInfo.deviceScaleFactor, m_webPageProxy);
-
-    m_backingStore->incorporateUpdate(updateInfo);
 
     Region damageRegion;
     if (updateInfo.scrollRect.isEmpty()) {
@@ -264,6 +189,9 @@ void DrawingAreaProxyCoordinatedGraphics::incorporateUpdate(const UpdateInfo& up
             damageRegion.unite(rect);
     } else
         damageRegion = IntRect(IntPoint(), m_webPageProxy.viewSize());
+
+    m_backingStore->incorporateUpdate(WTFMove(updateInfo));
+
     m_webPageProxy.setViewNeedsDisplay(damageRegion);
 }
 #endif
@@ -277,7 +205,7 @@ void DrawingAreaProxyCoordinatedGraphics::enterAcceleratedCompositingMode(const 
 {
     ASSERT(!isInAcceleratedCompositingMode());
 #if !PLATFORM(WPE)
-    m_backingStore = nullptr;
+    discardBackingStore();
 #endif
     m_layerTreeContext = layerTreeContext;
     m_webPageProxy.enterAcceleratedCompositingMode(layerTreeContext);
@@ -299,67 +227,29 @@ void DrawingAreaProxyCoordinatedGraphics::updateAcceleratedCompositingMode(const
     m_webPageProxy.updateAcceleratedCompositingMode(layerTreeContext);
 }
 
-void DrawingAreaProxyCoordinatedGraphics::backingStoreStateDidChange(RespondImmediatelyOrNot respondImmediatelyOrNot)
+void DrawingAreaProxyCoordinatedGraphics::sendUpdateGeometry()
 {
-    ++m_nextBackingStoreStateID;
-    sendUpdateBackingStoreState(respondImmediatelyOrNot);
+    ASSERT(!m_isWaitingForDidUpdateGeometry);
+    m_lastSentSize = m_size;
+    m_isWaitingForDidUpdateGeometry = true;
+
+    m_webPageProxy.sendWithAsyncReply(Messages::DrawingArea::UpdateGeometry(m_size), [weakThis = WeakPtr { *this }] {
+        if (!weakThis)
+            return;
+        weakThis->didUpdateGeometry();
+    }, m_identifier);
 }
 
-void DrawingAreaProxyCoordinatedGraphics::sendUpdateBackingStoreState(RespondImmediatelyOrNot respondImmediatelyOrNot)
+void DrawingAreaProxyCoordinatedGraphics::didUpdateGeometry()
 {
-    ASSERT(m_currentBackingStoreStateID < m_nextBackingStoreStateID);
+    ASSERT(m_isWaitingForDidUpdateGeometry);
 
-    if (!m_webPageProxy.hasRunningProcess())
-        return;
+    m_isWaitingForDidUpdateGeometry = false;
 
-    if (m_isWaitingForDidUpdateBackingStoreState)
-        return;
-
-    if (m_webPageProxy.viewSize().isEmpty() && !m_webPageProxy.useFixedLayout())
-        return;
-
-    m_isWaitingForDidUpdateBackingStoreState = respondImmediatelyOrNot == RespondImmediately;
-
-    m_webPageProxy.send(Messages::DrawingArea::UpdateBackingStoreState(m_nextBackingStoreStateID, respondImmediatelyOrNot == RespondImmediately, m_webPageProxy.deviceScaleFactor(), m_size, m_scrollOffset), m_identifier);
-    m_scrollOffset = IntSize();
-
-    if (m_isWaitingForDidUpdateBackingStoreState) {
-        // Start the responsiveness timer. We will stop it when we hear back from the WebProcess
-        // in didUpdateBackingStoreState.
-        m_webPageProxy.process().startResponsivenessTimer();
-    }
-
-    if (m_isWaitingForDidUpdateBackingStoreState && !m_layerTreeContext.isEmpty()) {
-        // Wait for the DidUpdateBackingStoreState message. Normally we do this in DrawingAreaProxyCoordinatedGraphics::paint, but that
-        // function is never called when in accelerated compositing mode.
-        waitForAndDispatchDidUpdateBackingStoreState();
-    }
-}
-
-void DrawingAreaProxyCoordinatedGraphics::waitForAndDispatchDidUpdateBackingStoreState()
-{
-    ASSERT(m_isWaitingForDidUpdateBackingStoreState);
-
-    if (!m_webPageProxy.hasRunningProcess())
-        return;
-    if (m_webPageProxy.process().state() == WebProcessProxy::State::Launching)
-        return;
-    if (!m_webPageProxy.isViewVisible())
-        return;
-#if PLATFORM(WAYLAND) && USE(EGL)
-    // Never block the UI process in Wayland when waiting for DidUpdateBackingStoreState after a resize,
-    // because the nested compositor needs to handle the web process requests that happens while resizing.
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland && isInAcceleratedCompositingMode())
-        return;
-#endif
-
-    // FIXME: waitForAndDispatchImmediately will always return the oldest DidUpdateBackingStoreState message that
-    // hasn't yet been processed. But it might be better to skip ahead to some other DidUpdateBackingStoreState
-    // message, if multiple DidUpdateBackingStoreState messages are waiting to be processed. For instance, we could
-    // choose the most recent one, or the one that is closest to our current size.
-
-    // The timeout, in seconds, we use when waiting for a DidUpdateBackingStoreState message when we're asked to paint.
-    m_webPageProxy.process().connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateBackingStoreState>(m_identifier.toUInt64(), Seconds::fromMilliseconds(500));
+    // If the view was resized while we were waiting for a DidUpdateGeometry reply from the web process,
+    // we need to resend the new size here.
+    if (m_lastSentSize != m_size)
+        sendUpdateGeometry();
 }
 
 #if !PLATFORM(WPE)
@@ -377,10 +267,7 @@ void DrawingAreaProxyCoordinatedGraphics::discardBackingStoreSoon()
 
 void DrawingAreaProxyCoordinatedGraphics::discardBackingStore()
 {
-    if (!m_backingStore)
-        return;
     m_backingStore = nullptr;
-    backingStoreStateDidChange(DoNotRespondImmediately);
 }
 #endif
 

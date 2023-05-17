@@ -111,7 +111,7 @@ public:
 
     inline DoubleElementDescendantIterator(SingleIterator&&, SingleIterator&&);
     inline ReferenceProxy operator*() const;
-    constexpr bool operator!=(std::nullptr_t) const;
+    constexpr bool operator==(std::nullptr_t) const;
     inline DoubleElementDescendantIterator& operator++();
 
 private:

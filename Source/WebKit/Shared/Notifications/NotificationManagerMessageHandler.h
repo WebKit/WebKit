@@ -46,6 +46,7 @@ public:
     virtual void cancelNotification(const UUID& notificationID) = 0;
     virtual void clearNotifications(const Vector<UUID>& notificationIDs) = 0;
     virtual void didDestroyNotification(const UUID& notificationID) = 0;
+    virtual void pageWasNotifiedOfNotificationPermission() = 0;
 
 private:
     // IPC::MessageReceiver

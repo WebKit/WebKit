@@ -5,6 +5,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 AXRole: AXTabGroup has 1 selected child(ren)
 	second (AXRole: AXRadioButton) isSelectable: true isSelected: true
+AXRole: AXTabGroup has 1 selected child(ren)
+	second (AXRole: AXRadioButton) isSelectable: true isSelected: true
 AXRole: AXOutline has 2 selected child(ren)
 	first (AXRole: AXRow) isSelectable: true isSelected: true
 	third (AXRole: AXRow) isSelectable: true isSelected: true

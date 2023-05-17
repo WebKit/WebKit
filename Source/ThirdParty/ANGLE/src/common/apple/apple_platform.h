@@ -11,14 +11,14 @@
 
 #import "common/platform.h"
 
-#if ((defined(ANGLE_PLATFORM_MACOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000) || \
-     (((defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_IOS_SIMULATOR)) ||    \
-       defined(ANGLE_PLATFORM_MACCATALYST)) &&                                       \
-      __IPHONE_OS_VERSION_MIN_REQUIRED >= 150000) ||                                 \
-     (defined(ANGLE_PLATFORM_WATCH) && !defined(ANGLE_PLATFORM_IOS_SIMULATOR) &&     \
-      __WATCH_OS_VERSION_MIN_REQUIRED >= 80000) ||                                   \
-     (defined(ANGLE_PLATFORM_APPLETV) && !defined(ANGLE_PLATFORM_IOS_SIMULATOR) &&   \
-      __TV_OS_VERSION_MIN_REQUIRED >= 150000)) &&                                    \
+#if ((ANGLE_PLATFORM_MACOS && __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000) ||   \
+     (((ANGLE_PLATFORM_IOS_FAMILY && !ANGLE_PLATFORM_IOS_FAMILY_SIMULATOR) || \
+       ANGLE_PLATFORM_MACCATALYST) &&                                         \
+      __IPHONE_OS_VERSION_MIN_REQUIRED >= 150000) ||                          \
+     (ANGLE_PLATFORM_WATCHOS && !ANGLE_PLATFORM_IOS_FAMILY_SIMULATOR &&       \
+      __WATCH_OS_VERSION_MIN_REQUIRED >= 80000) ||                            \
+     (TARGET_OS_TV && !ANGLE_PLATFORM_IOS_FAMILY_SIMULATOR &&                 \
+      __TV_OS_VERSION_MIN_REQUIRED >= 150000)) &&                             \
     (defined(__has_include) && __has_include(<Metal/MTLResource_Private.h>))
 #    define ANGLE_HAVE_MTLRESOURCE_SET_OWNERSHIP_IDENTITY 1
 #else

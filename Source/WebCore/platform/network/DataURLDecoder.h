@@ -51,9 +51,8 @@ struct ScheduleContext {
 #endif
 };
 
-enum class Mode { Legacy, ForgivingBase64 };
-void decode(const URL&, const ScheduleContext&, Mode, DecodeCompletionHandler&&);
-WEBCORE_EXPORT std::optional<Result> decode(const URL&, Mode);
+WEBCORE_EXPORT void decode(const URL&, const ScheduleContext&, DecodeCompletionHandler&&);
+WEBCORE_EXPORT std::optional<Result> decode(const URL&);
 
 }
 

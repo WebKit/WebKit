@@ -48,7 +48,7 @@ static String stripLeadingAndTrailingHTMLSpaces(String string, CharType characte
     unsigned numTrailingSpaces = 0;
 
     for (; numLeadingSpaces < length; ++numLeadingSpaces) {
-        if (isNotHTMLSpace(characters[numLeadingSpaces]))
+        if (!isASCIIWhitespace(characters[numLeadingSpaces]))
             break;
     }
 
@@ -56,7 +56,7 @@ static String stripLeadingAndTrailingHTMLSpaces(String string, CharType characte
         return string.isNull() ? string : emptyAtom().string();
 
     for (; numTrailingSpaces < length; ++numTrailingSpaces) {
-        if (isNotHTMLSpace(characters[length - numTrailingSpaces - 1]))
+        if (!isASCIIWhitespace(characters[length - numTrailingSpaces - 1]))
             break;
     }
 
@@ -170,7 +170,7 @@ double parseToDoubleForNumberType(StringView string)
 template <typename CharacterType>
 static Expected<int, HTMLIntegerParsingError> parseHTMLIntegerInternal(const CharacterType* position, const CharacterType* end)
 {
-    while (position < end && isHTMLSpace(*position))
+    while (position < end && isASCIIWhitespace(*position))
         ++position;
 
     if (position == end)
@@ -296,7 +296,7 @@ std::optional<double> parseValidHTMLFloatingPointNumber(StringView input)
 
 static inline bool isHTMLSpaceOrDelimiter(UChar character)
 {
-    return isHTMLSpace(character) || character == ',' || character == ';';
+    return isASCIIWhitespace(character) || character == ',' || character == ';';
 }
 
 static inline bool isNumberStart(UChar character)
@@ -373,7 +373,7 @@ String parseCORSSettingsAttribute(const AtomString& value)
 template <typename CharacterType>
 static bool parseHTTPRefreshInternal(const CharacterType* position, const CharacterType* end, double& parsedDelay, String& parsedURL)
 {
-    while (position < end && isHTMLSpace(*position))
+    while (position < end && isASCIIWhitespace(*position))
         ++position;
 
     unsigned time = 0;
@@ -401,18 +401,18 @@ static bool parseHTTPRefreshInternal(const CharacterType* position, const Charac
         return true;
     }
 
-    if (*position != ';' && *position != ',' && !isHTMLSpace(*position))
+    if (*position != ';' && *position != ',' && !isASCIIWhitespace(*position))
         return false;
 
     parsedDelay = time;
 
-    while (position < end && isHTMLSpace(*position))
+    while (position < end && isASCIIWhitespace(*position))
         ++position;
 
     if (position < end && (*position == ';' || *position == ','))
         ++position;
 
-    while (position < end && isHTMLSpace(*position))
+    while (position < end && isASCIIWhitespace(*position))
         ++position;
 
     if (position == end)
@@ -437,7 +437,7 @@ static bool parseHTTPRefreshInternal(const CharacterType* position, const Charac
             return true;
         }
 
-        while (position < end && isHTMLSpace(*position))
+        while (position < end && isASCIIWhitespace(*position))
             ++position;
 
         if (position < end && *position == '=')
@@ -447,7 +447,7 @@ static bool parseHTTPRefreshInternal(const CharacterType* position, const Charac
             return true;
         }
 
-        while (position < end && isHTMLSpace(*position))
+        while (position < end && isASCIIWhitespace(*position))
             ++position;
     }
 
@@ -503,7 +503,7 @@ static std::optional<HTMLDimensionParsingResult> parseHTMLDimensionNumber(const 
 
     const auto* begin = position;
     const auto* end = position + length;
-    skipWhile<isHTMLSpace>(position, end);
+    skipWhile<isASCIIWhitespace>(position, end);
     if (position == end)
         return std::nullopt;
 

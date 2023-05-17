@@ -190,7 +190,7 @@ private:
             return false;
 
         while (true) {
-            while (m_srcPtr != m_bufferEnd && isASCIISpace(*m_srcPtr))
+            while (m_srcPtr != m_bufferEnd && isUnicodeCompatibleASCIIWhitespace(*m_srcPtr))
                 m_srcPtr++;
 
             if (m_srcPtr != m_bufferEnd)
@@ -312,12 +312,12 @@ void ConfigFile::parse()
 
                     char* optionNameStart = p;
 
-                    while (*p && !isASCIISpace(*p) && *p != '=')
+                    while (*p && !isUnicodeCompatibleASCIIWhitespace(*p) && *p != '=')
                         p++;
 
                     builder.appendCharacters(optionNameStart, p - optionNameStart);
 
-                    while (*p && isASCIISpace(*p) && *p != '=')
+                    while (*p && isUnicodeCompatibleASCIIWhitespace(*p) && *p != '=')
                         p++;
 
                     if (!*p)
@@ -326,7 +326,7 @@ void ConfigFile::parse()
 
                     builder.append('=');
 
-                    while (*p && isASCIISpace(*p))
+                    while (*p && isUnicodeCompatibleASCIIWhitespace(*p))
                         p++;
 
                     if (!*p)
@@ -334,13 +334,13 @@ void ConfigFile::parse()
 
                     char* optionValueStart = p;
 
-                    while (*p && !isASCIISpace(*p))
+                    while (*p && !isUnicodeCompatibleASCIIWhitespace(*p))
                         p++;
 
                     builder.appendCharacters(optionValueStart, p - optionValueStart);
                     builder.append('\n');
 
-                    while (*p && isASCIISpace(*p))
+                    while (*p && isUnicodeCompatibleASCIIWhitespace(*p))
                         p++;
                 } while (*p);
 

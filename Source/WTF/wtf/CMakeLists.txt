@@ -234,6 +234,7 @@ set(WTF_PUBLIC_HEADERS
     RefCounter.h
     RefPtr.h
     RefVector.h
+    ReferenceWrapperVector.h
     ResourceUsage.h
     RetainPtr.h
     RobinHoodHashMap.h

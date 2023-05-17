@@ -68,7 +68,9 @@ std::unique_ptr<RTCDtlsTransportBackend> GStreamerRtpReceiverBackend::dtlsTransp
 {
     GRefPtr<GstWebRTCDTLSTransport> transport;
     g_object_get(m_rtcReceiver.get(), "transport", &transport.outPtr(), nullptr);
-    return transport ? makeUnique<GStreamerDtlsTransportBackend>(transport) : nullptr;
+    if (!transport)
+        return nullptr;
+    return makeUnique<GStreamerDtlsTransportBackend>(WTFMove(transport));
 }
 
 } // namespace WebCore

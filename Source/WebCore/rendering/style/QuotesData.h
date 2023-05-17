@@ -55,9 +55,4 @@ private:
 #pragma warning(pop)
 #endif
 
-inline bool operator!=(const QuotesData& a, const QuotesData& b)
-{
-    return !(a == b);
-}
-
 } // namespace WebCore

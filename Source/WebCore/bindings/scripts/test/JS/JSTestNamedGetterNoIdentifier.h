@@ -65,7 +65,7 @@ public:
 protected:
     JSTestNamedGetterNoIdentifier(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedGetterNoIdentifier>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestNamedGetterNoIdentifierOwner final : public JSC::WeakHandleOwner {

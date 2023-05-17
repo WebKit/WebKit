@@ -122,7 +122,7 @@ void PageConsoleClient::addMessage(std::unique_ptr<Inspector::ConsoleMessage>&& 
 {
     if (!m_page.usesEphemeralSession()) {
         String message;
-        Span<const String> additionalArguments;
+        std::span<const String> additionalArguments;
         Vector<String> messageArgumentsVector;
         if (consoleMessage->type() == MessageType::Image) {
             ASSERT(consoleMessage->arguments());
@@ -183,7 +183,7 @@ void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, con
 void PageConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::JSGlobalObject* lexicalGlobalObject, Ref<Inspector::ScriptArguments>&& arguments)
 {
     String messageText;
-    Span<const String> additionalArguments;
+    std::span<const String> additionalArguments;
     Vector<String> messageArgumentsVector = arguments->getArgumentsAsStrings();
     if (!messageArgumentsVector.isEmpty()) {
         messageText = messageArgumentsVector.first();
@@ -318,7 +318,7 @@ void PageConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Ref
     String dataURL;
     JSC::JSValue target;
 
-    auto timestamp = m_page.inspectorController().executionStopwatch().elapsedTime();
+    auto timestamp = WallTime::now();
 
     if (arguments->argumentCount()) {
         auto possibleTarget = arguments->argumentAt(0);

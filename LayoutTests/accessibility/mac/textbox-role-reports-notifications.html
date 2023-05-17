@@ -15,14 +15,16 @@
 
         var ariaTextBox = document.getElementById("ariaTextBox");
         ariaTextBox.focus();
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
         textboxAxElement = accessibilityController.focusedElement;
         textboxAxElement.addNotificationListener(logNotification);
         pendingNotifications = 3;
         ariaTextBox.firstChild.deleteData(0, 5);
-        ariaTextBox.offsetWidth;
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
         ariaTextBox.textContent = "changed textContent";
-        ariaTextBox.offsetWidth;
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
         ariaTextBox.innerText = "changed innerText";
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
     }
 
     function logNotification(notification) {

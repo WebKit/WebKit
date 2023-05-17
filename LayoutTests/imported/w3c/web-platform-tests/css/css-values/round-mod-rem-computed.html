@@ -43,6 +43,9 @@ test_math_used('calc(rem(mod(18,5),5))', '3', {type:'number'});
 test_math_used('calc(rem(mod(18,5),mod(17,5)))', '1', {type:'number'});
 test_math_used('calc(mod(-140,-90))', '-50', {type:'number'});
 test_math_used('calc(mod(rem(1,18)* -1,5))', '-1', {type:'number'});
+test_math_used('calc(round(1px + 0%, 1px + 0%))', '1px');
+test_math_used('calc(mod(1px + 0%, 1px + 0%))', '0px');
+test_math_used('calc(rem(1px + 0%, 1px + 0%))', '0px');
 
 // Type check
 test_math_used('round(10px,6px)', '12px');

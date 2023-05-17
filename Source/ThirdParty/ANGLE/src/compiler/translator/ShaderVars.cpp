@@ -484,6 +484,7 @@ InterfaceBlock::InterfaceBlock()
       binding(-1),
       staticUse(false),
       active(false),
+      isReadOnly(false),
       blockType(BlockType::BLOCK_UNIFORM)
 {}
 
@@ -499,6 +500,7 @@ InterfaceBlock::InterfaceBlock(const InterfaceBlock &other)
       binding(other.binding),
       staticUse(other.staticUse),
       active(other.active),
+      isReadOnly(other.isReadOnly),
       blockType(other.blockType),
       fields(other.fields)
 {}
@@ -514,6 +516,7 @@ InterfaceBlock &InterfaceBlock::operator=(const InterfaceBlock &other)
     binding          = other.binding;
     staticUse        = other.staticUse;
     active           = other.active;
+    isReadOnly       = other.isReadOnly;
     blockType        = other.blockType;
     fields           = other.fields;
     return *this;

@@ -37,7 +37,7 @@
 #include <JavaScriptCore/GlobalObjectMethodTable.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
-#include <JavaScriptCore/JSProxy.h>
+#include <JavaScriptCore/JSGlobalProxy.h>
 #include <JavaScriptCore/Microtask.h>
 #include <wtf/Language.h>
 
@@ -83,7 +83,7 @@ JSWorkerGlobalScopeBase::JSWorkerGlobalScopeBase(JSC::VM& vm, JSC::Structure* st
 {
 }
 
-void JSWorkerGlobalScopeBase::finishCreation(VM& vm, JSProxy* proxy)
+void JSWorkerGlobalScopeBase::finishCreation(VM& vm, JSGlobalProxy* proxy)
 {
     m_proxy.set(vm, this, proxy);
 

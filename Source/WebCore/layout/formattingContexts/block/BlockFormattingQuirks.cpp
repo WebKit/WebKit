@@ -34,6 +34,7 @@
 #include "LayoutElementBox.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutState.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 namespace Layout {
@@ -114,7 +115,7 @@ static inline bool hasQuirkMarginToCollapse(const ElementBox& layoutBox, Vertica
     if (!layoutBox.isInFlow())
         return false;
     auto& style = layoutBox.style();
-    return (verticalMargin == VerticalMargin::Before && style.hasMarginBeforeQuirk()) || (verticalMargin == VerticalMargin::After && style.hasMarginAfterQuirk());
+    return (verticalMargin == VerticalMargin::Before && style.marginBefore().hasQuirk()) || (verticalMargin == VerticalMargin::After && style.marginAfter().hasQuirk());
 }
 
 bool BlockFormattingQuirks::shouldCollapseMarginBeforeWithParentMarginBefore(const ElementBox& layoutBox)

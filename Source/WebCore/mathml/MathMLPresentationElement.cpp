@@ -35,11 +35,10 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
-#include "HTMLParserIdioms.h"
 #include "HTTPParsers.h"
 #include "MathMLMathElement.h"
 #include "MathMLNames.h"
-#include "RenderMathMLBlock.h"
+#include "RenderMathMLBlockInlines.h"
 #include "RenderTableCell.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
@@ -183,7 +182,6 @@ bool MathMLPresentationElement::isFlowContent(const Node& node)
         || htmlElement.hasTagName(HTMLNames::pTag)
         || htmlElement.hasTagName(HTMLNames::preTag)
         || htmlElement.hasTagName(HTMLNames::sectionTag)
-        || (htmlElement.hasTagName(HTMLNames::styleTag) && htmlElement.hasAttribute(HTMLNames::scopedAttr))
         || htmlElement.hasTagName(HTMLNames::tableTag)
         || htmlElement.hasTagName(HTMLNames::ulTag);
 }
@@ -298,7 +296,7 @@ MathMLElement::Length MathMLPresentationElement::parseMathMLLength(const String&
     //   pattern = '\s*((-?[0-9]*([0-9]\.?|\.[0-9])[0-9]*(e[mx]|in|cm|mm|p[xtc]|%)?)|(negative)?((very){0,2}thi(n|ck)|medium)mathspace)\s*'
     //
     // We do not perform a strict verification of the syntax of whitespaces and number.
-    // Instead, we just use isHTMLSpace and toFloat to parse these parts.
+    // Instead, we just use isASCIIWhitespace and toFloat to parse these parts.
 
     // We first skip whitespace from both ends of the string.
     StringView stringView = string;
@@ -364,11 +362,11 @@ std::optional<MathMLElement::MathVariant> MathMLPresentationElement::specifiedMa
 
 void MathMLPresentationElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    bool mathVariantAttribute = name == mathvariantAttr && acceptsMathVariantAttribute();
-    if (mathVariantAttribute)
+    if (name == mathvariantAttr && acceptsMathVariantAttribute()) {
         m_mathVariant = std::nullopt;
-    if ((mathVariantAttribute) && renderer())
-        MathMLStyle::resolveMathMLStyleTree(renderer());
+        if (renderer())
+            MathMLStyle::resolveMathMLStyleTree(renderer());
+    }
 
     MathMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }

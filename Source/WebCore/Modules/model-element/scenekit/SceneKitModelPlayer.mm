@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -185,9 +185,9 @@ Vector<RetainPtr<id>> SceneKitModelPlayer::accessibilityChildren()
 #if PLATFORM(IOS_FAMILY)
     NSArray *children = [m_model->defaultScene() accessibilityElements];
 #else
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSArray *children = [m_model->defaultScene() accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     return makeVector<RetainPtr<id>>(children);
 }

@@ -28,6 +28,7 @@
 
 #if ENABLE(MATHML)
 
+#include "RenderMathMLBlockInlines.h"
 #include <cmath>
 #include <wtf/IsoMallocInlines.h>
 

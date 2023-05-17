@@ -26,6 +26,7 @@
 
 #include "CSSPropertyNames.h"
 #include "LegacyRenderSVGImage.h"
+#include "NodeName.h"
 #include "RenderImageResource.h"
 #include "RenderSVGImage.h"
 #include "RenderSVGResource.h"
@@ -94,22 +95,26 @@ void SVGImageElement::attributeChanged(const QualifiedName& name, const AtomStri
     SVGURIReference::parseAttribute(name, newValue);
     SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == SVGNames::preserveAspectRatioAttr) {
+    SVGParsingError parseError = NoError;
+    switch (name.nodeName()) {
+    case AttributeNames::preserveAspectRatioAttr:
         m_preserveAspectRatio->setBaseValInternal(SVGPreserveAspectRatioValue { newValue });
         return;
-    }
-
-    SVGParsingError parseError = NoError;
-
-    if (name == SVGNames::xAttr)
+    case AttributeNames::xAttr:
         m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
-    else if (name == SVGNames::yAttr)
+        break;
+    case AttributeNames::yAttr:
         m_y->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
-    else if (name == SVGNames::widthAttr)
+        break;
+    case AttributeNames::widthAttr:
         m_width->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError, SVGLengthNegativeValuesMode::Forbid));
-    else if (name == SVGNames::heightAttr)
+        break;
+    case AttributeNames::heightAttr:
         m_height->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError, SVGLengthNegativeValuesMode::Forbid));
-
+        break;
+    default:
+        break;
+    }
     reportAttributeParsingError(parseError, name, newValue);
 }
 
@@ -179,13 +184,13 @@ void SVGImageElement::didAttachRenderers()
 
 Node::InsertedIntoAncestorResult SVGImageElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
-    SVGGraphicsElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+    auto result = SVGGraphicsElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (!insertionType.connectedToDocument)
         return InsertedIntoAncestorResult::Done;
     // Update image loader, as soon as we're living in the tree.
     // We can only resolve base URIs properly, after that!
     m_imageLoader.updateFromElement();
-    return InsertedIntoAncestorResult::Done;
+    return result;
 }
 
 const AtomString& SVGImageElement::imageSourceURL() const

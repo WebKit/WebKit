@@ -26,5 +26,16 @@
 [Conditional=VIDEO] enum VideoColorPrimaries {
   "bt709",
   "bt470bg",
-  "smpte170m"
+  "smpte170m",
+  "bt470m",
+  "smpte240m",
+  "film",
+  "bt2020",
+  "smpteSt4281",
+  "smpteRp431",
+  "smpteEg432",
+  "jedecP22Phosphors",
+  "unspecified",
 };
+
+

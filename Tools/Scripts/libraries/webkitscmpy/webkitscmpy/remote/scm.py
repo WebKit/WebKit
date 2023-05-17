@@ -90,3 +90,6 @@ class Scm(ScmBase):
             raise ValueError("Expected 'url' to be a string type, not '{}'".format(type(url)))
         self.url = url
         self.pull_requests = None
+
+    def checkout_url(self, ssh=False, http=False):
+        raise NotImplementedError()

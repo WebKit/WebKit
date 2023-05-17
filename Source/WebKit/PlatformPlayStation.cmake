@@ -35,6 +35,8 @@ list(APPEND WebKit_SOURCES
     GPUProcess/playstation/GPUProcessMainPlayStation.cpp
     GPUProcess/playstation/GPUProcessPlayStation.cpp
 
+    NetworkProcess/NetworkDataTaskDataURL.cpp
+
     NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
 
     NetworkProcess/Cookies/curl/WebCookieManagerCurl.cpp
@@ -70,13 +72,13 @@ list(APPEND WebKit_SOURCES
 
     Shared/curl/WebCoreArgumentCodersCurl.cpp
 
+    Shared/freetype/WebCoreArgumentCodersFreeType.cpp
+
     Shared/libwpe/NativeWebKeyboardEventLibWPE.cpp
     Shared/libwpe/NativeWebMouseEventLibWPE.cpp
     Shared/libwpe/NativeWebTouchEventLibWPE.cpp
     Shared/libwpe/NativeWebWheelEventLibWPE.cpp
     Shared/libwpe/WebEventFactory.cpp
-
-    Shared/playstation/WebCoreArgumentCodersPlayStation.cpp
 
     Shared/unix/AuxiliaryProcessMain.cpp
 

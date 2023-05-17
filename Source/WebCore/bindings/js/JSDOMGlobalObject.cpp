@@ -699,8 +699,8 @@ JSC::JSGlobalObject* JSDOMGlobalObject::deriveShadowRealmGlobalObject(JSC::JSGlo
     auto scope = ShadowRealmGlobalScope::create(domGlobalObject, scriptModuleLoader(domGlobalObject));
 
     auto structure = JSShadowRealmGlobalScope::createStructure(vm, nullptr, JSC::jsNull());
-    auto proxyStructure = JSProxy::createStructure(vm, nullptr, JSC::jsNull());
-    auto proxy = JSProxy::create(vm, proxyStructure);
+    auto proxyStructure = JSGlobalProxy::createStructure(vm, nullptr, JSC::jsNull());
+    auto proxy = JSGlobalProxy::create(vm, proxyStructure);
     auto wrapper = JSShadowRealmGlobalScope::create(vm, structure, WTFMove(scope), proxy);
 
     wrapper->setPrototypeDirect(vm, wrapper->objectPrototype());

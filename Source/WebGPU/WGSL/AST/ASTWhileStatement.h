@@ -31,19 +31,19 @@
 namespace WGSL::AST {
 
 class WhileStatement final : public Statement {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(WhileStatement);
 public:
+    NodeKind kind() const final;
+    Expression& test() { return m_test.get(); }
+    CompoundStatement& body() { return m_body.get(); }
+
+private:
     WhileStatement(SourceSpan span, Expression::Ref&& test, CompoundStatement::Ref&& body)
         : Statement(span)
         , m_test(WTFMove(test))
         , m_body(WTFMove(body))
     { }
 
-    NodeKind kind() const final;
-    Expression& test() { return m_test.get(); }
-    CompoundStatement& body() { return m_body.get(); }
-
-private:
     Expression::Ref m_test;
     CompoundStatement::Ref m_body;
 };

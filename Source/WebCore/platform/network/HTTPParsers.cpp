@@ -66,7 +66,7 @@ static inline bool skipWhile(const String& str, unsigned& pos, const Function<bo
 // Note: Might return pos == str.length()
 static inline bool skipWhiteSpace(const String& str, unsigned& pos)
 {
-    skipWhile(str, pos, RFC7230::isWhitespace<UChar>);
+    skipWhile(str, pos, isTabOrSpace<UChar>);
     return pos < str.length();
 }
 
@@ -104,7 +104,7 @@ static inline bool skipValue(const String& str, unsigned& pos)
     unsigned start = pos;
     unsigned len = str.length();
     while (pos < len) {
-        if (str[pos] == ' ' || str[pos] == '\t' || str[pos] == ';')
+        if (isTabOrSpace(str[pos]) || str[pos] == ';')
             break;
         ++pos;
     }
@@ -126,10 +126,10 @@ bool isValidReasonPhrase(const String& value)
 bool isValidHTTPHeaderValue(const String& value)
 {
     UChar c = value[0];
-    if (c == ' ' || c == '\t')
+    if (isTabOrSpace(c))
         return false;
     c = value[value.length() - 1];
-    if (c == ' ' || c == '\t')
+    if (isTabOrSpace(c))
         return false;
     for (unsigned i = 0; i < value.length(); ++i) {
         c = value[i];
@@ -367,7 +367,7 @@ String extractMIMETypeFromMediaType(const String& mediaType)
 
     for (; position < length; ++position) {
         UChar c = mediaType[position];
-        if (c != '\t' && c != ' ')
+        if (!isTabOrSpace(c))
             break;
     }
 
@@ -389,7 +389,7 @@ String extractMIMETypeFromMediaType(const String& mediaType)
         if (c == ',')
             break;
 
-        if (c == '\t' || c == ' ' || c == ';')
+        if (isTabOrSpace(c) || c == ';')
             break;
 
         typeEnd = position + 1;
@@ -610,11 +610,6 @@ OptionSet<ClearSiteDataValue> parseClearSiteDataHeader(const ResourceResponse& r
     return result;
 }
 
-static bool isTabOrSpace(UChar value)
-{
-    return value == '\t' || value == ' ';
-}
-
 // Implements <https://fetch.spec.whatwg.org/#simple-range-header-value>.
 // FIXME: this whole function could be more efficient by walking through the range value once.
 bool parseRange(StringView range, RangeAllowWhitespace allowWhitespace, long long& rangeStart, long long& rangeEnd)
@@ -622,7 +617,7 @@ bool parseRange(StringView range, RangeAllowWhitespace allowWhitespace, long lon
     rangeStart = rangeEnd = -1;
 
     // Only 0x20 and 0x09 matter as newlines are already gone by the time we parse a header value.
-    if (allowWhitespace == RangeAllowWhitespace::No && range.find(isTabOrSpace) != notFound)
+    if (allowWhitespace == RangeAllowWhitespace::No && range.find(isTabOrSpace<UChar>) != notFound)
         return false;
 
     // The "bytes" unit identifier should be present.

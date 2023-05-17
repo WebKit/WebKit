@@ -109,11 +109,6 @@ public:
             return m_iter == other.m_iter;
         }
 
-        bool operator!=(const iterator& other) const
-        {
-            return !(*this == other);
-        }
-        
     private:
         typename SentinelLinkedList<Node>::iterator m_iter;
     };

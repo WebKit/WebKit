@@ -27,8 +27,14 @@
 
 #include "LegacyRenderSVGShape.h"
 #include "SVGGraphicsElement.h"
+#include "SVGRenderStyle.h"
 
 namespace WebCore {
+
+inline bool LegacyRenderSVGShape::hasNonScalingStroke() const
+{
+    return style().svgStyle().vectorEffect() == VectorEffect::NonScalingStroke;
+}
 
 inline SVGGraphicsElement& LegacyRenderSVGShape::graphicsElement() const
 {

@@ -18,8 +18,8 @@ layer at (0,0) size 785x6064
           RenderInline {B} at (0,0) size 758x39
             RenderText {#text} at (0,60) size 758x39
               text run at (0,60) width 758: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y"
-              text run at (0,80) width 422: "Z [ \\ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } > "
-          RenderBR {BR} at (422,80) size 0x19
+              text run at (0,80) width 418: "Z [ \\ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } >"
+          RenderBR {BR} at (418,80) size 0x19
           RenderInline {I} at (0,0) size 769x39
             RenderText {#text} at (0,100) size 769x39
               text run at (0,100) width 769: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z [ \\"
@@ -38,8 +38,8 @@ layer at (0,0) size 785x6064
           RenderInline {B} at (0,0) size 758x39
             RenderText {#text} at (0,60) size 758x39
               text run at (0,60) width 758: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y"
-              text run at (0,80) width 422: "Z [ \\ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } > "
-          RenderBR {BR} at (422,80) size 0x19
+              text run at (0,80) width 418: "Z [ \\ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } >"
+          RenderBR {BR} at (418,80) size 0x19
           RenderInline {I} at (0,0) size 769x39
             RenderText {#text} at (0,100) size 769x39
               text run at (0,100) width 769: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z [ \\"

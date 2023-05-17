@@ -414,8 +414,7 @@ bool PropertyCondition::isWatchableWhenValid(
             set = structure->propertyReplacementWatchpointSet(offset);
             break;
         case EnsureWatchability:
-            set = structure->ensurePropertyReplacementWatchpointSet(structure->vm(), offset);
-            set->fireAll(vm, "Firing replacement to ensure validity");
+            set = structure->firePropertyReplacementWatchpointSet(structure->vm(), offset, "Firing replacement to ensure validity");
             break;
         }
 

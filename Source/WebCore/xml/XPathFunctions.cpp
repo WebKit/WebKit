@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2005 Frerich Raabe <raabe@kde.org>
  * Copyright (C) 2006, 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Google Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -564,13 +565,13 @@ Value FunStringLength::evaluate() const
 
 Value FunNormalizeSpace::evaluate() const
 {
+    // https://www.w3.org/TR/1999/REC-xpath-19991116/#function-normalize-space
     if (!argumentCount()) {
         String s = Value(Expression::evaluationContext().node.get()).toString();
-        return s.simplifyWhiteSpace();
+        return s.simplifyWhiteSpace(isXMLSpace);
     }
-
     String s = argument(0).evaluate().toString();
-    return s.simplifyWhiteSpace();
+    return s.simplifyWhiteSpace(isXMLSpace);
 }
 
 Value FunTranslate::evaluate() const

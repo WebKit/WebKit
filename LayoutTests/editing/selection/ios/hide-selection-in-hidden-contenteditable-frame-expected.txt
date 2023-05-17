@@ -1,3 +1,8 @@
+CONSOLE MESSAGE: 1. Waiting for selection after showing keyboard
+CONSOLE MESSAGE: 2. Selecting all in subframe
+CONSOLE MESSAGE: 3. Collapsing selection in subframe
+CONSOLE MESSAGE: 4. Tapping in subframe
+CONSOLE MESSAGE: 5. Blurring focused element in subframe and waiting for keyboard to dismiss
 
 Verifies that selection UI is suppressed when the editable root is transparent. To manually test, focus the box above and verify that:
 

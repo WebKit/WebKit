@@ -123,6 +123,25 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "PausedCallFrameScope.PrivateField",
+        async test() {
+            let evaluatePromise = InspectorTest.evaluateInPage(`
+(new class {
+    static #SHOULD_NOT_LIST_STATIC_PROPERTY = "static";
+    static #SHOULD_NOT_LIST_STATIC_METHOD() { }
+    #SHOULD_NOT_LIST_INSTANCE_PROPERTY = "instance";
+    #SHOULD_NOT_LIST_INSTANCE_METHOD() { }
+    pause() { debugger; }
+}).pause()
+            `);
+            await WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+            await dumpCallFrames();
+            await WI.debuggerManager.resume();
+            await evaluatePromise;
+        },
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

@@ -56,13 +56,10 @@ inline JSCell::JSCell(CreatingEarlyCellTag)
 }
 
 inline JSCell::JSCell(VM&, Structure* structure)
-    : m_structureID(structure->id())
-    , m_indexingTypeAndMisc(structure->indexingModeIncludingHistory())
-    , m_type(structure->typeInfo().type())
-    , m_flags(structure->typeInfo().inlineTypeFlags())
-    , m_cellState(CellState::DefinitelyWhite)
+    : JSCell(CreatingWellDefinedBuiltinCell, structure->id(), structure->typeInfoBlob())
 {
     ASSERT(!isCompilationThread());
+    ASSERT(m_cellState == CellState::DefinitelyWhite);
 
     // Note that in the constructor initializer list above, we are only using values
     // inside structure but not necessarily the structure pointer itself. All these
@@ -76,6 +73,24 @@ inline JSCell::JSCell(VM&, Structure* structure)
     // structure pointer is still alive at this point.
     ensureStillAliveHere(structure);
     static_assert(JSCell::atomSize >= MarkedBlock::atomSize);
+}
+
+// This constructor should not be used directly. Exceptions are for quite few well-defined builtin objects, e.g. JSString, empty JSFinalObject etc.
+// Structure must be kept alive somehow (e.g. by JSGlobalObject, or ensureStillAliveHere).
+ALWAYS_INLINE JSCell::JSCell(CreatingWellDefinedBuiltinCellTag, StructureID structureID, int32_t blob)
+    : m_structureID(structureID)
+#if CPU(LITTLE_ENDIAN)
+    , m_indexingTypeAndMisc(static_cast<uint8_t>(blob >> 0))
+    , m_type(bitwise_cast<JSType>(static_cast<uint8_t>(blob >> 8)))
+    , m_flags(bitwise_cast<TypeInfo::InlineTypeFlags>(static_cast<uint8_t>(blob >> 16)))
+    , m_cellState(bitwise_cast<CellState>(static_cast<uint8_t>(blob >> 24)))
+#else
+    , m_indexingTypeAndMisc(static_cast<uint8_t>(blob >> 24))
+    , m_type(bitwise_cast<JSType>(static_cast<uint8_t>(blob >> 16)))
+    , m_flags(bitwise_cast<TypeInfo::InlineTypeFlags>(static_cast<uint8_t>(blob >> 8)))
+    , m_cellState(bitwise_cast<CellState>(static_cast<uint8_t>(blob >> 0)))
+#endif
+{
 }
 
 inline void JSCell::finishCreation(VM& vm)
@@ -172,7 +187,7 @@ ALWAYS_INLINE void* tryAllocateCellHelper(VM& vm, size_t size, GCDeferralContext
 {
     ASSERT(deferralContext || vm.heap.isDeferred() || !DisallowGC::isInEffectOnCurrentThread());
     ASSERT(size >= sizeof(T));
-    JSCell* result = static_cast<JSCell*>(subspaceFor<T>(vm)->allocate(vm, size, deferralContext, failureMode));
+    JSCell* result = static_cast<JSCell*>(subspaceFor<T>(vm)->allocate(vm, WTF::roundUpToMultipleOf<T::atomSize>(size), deferralContext, failureMode));
     if constexpr (failureMode == AllocationFailureMode::ReturnNull) {
         if (!result)
             return nullptr;
@@ -241,7 +256,7 @@ inline bool JSCell::isCustomGetterSetter() const
 
 inline bool JSCell::isProxy() const
 {
-    return m_type == PureForwardingProxyType || m_type == ProxyObjectType;
+    return m_type == GlobalProxyType || m_type == ProxyObjectType;
 }
 
 // FIXME: Consider making getCallData concurrency-safe once NPAPI support is removed.
@@ -434,12 +449,31 @@ inline JSObject* JSCell::toObject(JSGlobalObject* globalObject) const
     return toObjectSlow(globalObject);
 }
 
+ALWAYS_INLINE JSString* JSCell::toStringInline(JSGlobalObject* globalObject) const
+{
+    Structure* structure = this->structure();
+    if (structure->hasRareData()) {
+        auto* rareData = structure->rareData();
+        if (rareData->cachedSpecialProperty(CachedSpecialPropertyKey::ToPrimitive).isUndefinedOrNull()) {
+            if (rareData->cachedSpecialProperty(CachedSpecialPropertyKey::ToString) == globalObject->objectProtoToStringFunction()) {
+                if (auto result = rareData->cachedSpecialProperty(CachedSpecialPropertyKey::ToStringTag))
+                    return asString(result);
+            }
+        }
+    }
+    if (isObject())
+        return asObject(this)->toString(globalObject);
+    if (isString())
+        return asString(this);
+    return toStringSlowCase(globalObject);
+}
+
 ALWAYS_INLINE bool JSCell::putInline(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    auto putMethod = methodTable()->put;
-    if (LIKELY(putMethod == JSObject::put))
+    Structure* structure = this->structure();
+    if (LIKELY(!structure->typeInfo().overridesPut()))
         return JSObject::putInlineForJSObject(asObject(this), globalObject, propertyName, value, slot);
-    return putMethod(this, globalObject, propertyName, value, slot);
+    return structure->methodTable()->put(this, globalObject, propertyName, value, slot);
 }
 
 inline bool isWebAssemblyInstance(const JSCell* cell)

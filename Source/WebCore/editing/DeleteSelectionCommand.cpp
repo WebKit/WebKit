@@ -42,6 +42,7 @@
 #include "LocalFrame.h"
 #include "NodeTraversal.h"
 #include "Range.h"
+#include "RenderBoxInlines.h"
 #include "RenderTableCell.h"
 #include "RenderText.h"
 #include "RenderedDocumentMarker.h"
@@ -608,8 +609,7 @@ void DeleteSelectionCommand::makeStylingElementsDirectChildrenOfEditableRootToPr
     auto nodes = intersectingNodes(*range).begin();
     while (nodes) {
         Ref node = *nodes;
-        auto shouldMove = is<HTMLLinkElement>(node)
-            || (is<HTMLStyleElement>(node) && !downcast<HTMLStyleElement>(node.get()).hasAttributeWithoutSynchronization(scopedAttr));
+        auto shouldMove = is<HTMLLinkElement>(node) || is<HTMLStyleElement>(node);
         if (!shouldMove)
             nodes.advance();
         else {

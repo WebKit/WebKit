@@ -38,7 +38,7 @@ jsTestIsAsync = true;
     }
 
     UIHelper.activateAndWaitForInputSessionAt(innerWidth / 2, 30)
-    .then(() => UIHelper.getUICaretRect())
+    .then(() => UIHelper.getUICaretViewRect())
     .then((rect) => {
         initialCaretRect = rect;
         shouldBe("initialCaretRect.left", "6");
@@ -46,7 +46,7 @@ jsTestIsAsync = true;
         shouldBe("initialCaretRect.width", "3");
         shouldBe("initialCaretRect.height", "15");
         document.scrollingElement.scrollTop += 5000;
-        return UIHelper.getUICaretRect();
+        return UIHelper.getUICaretViewRect();
     })
     .then((rect) => {
         finalCaretRect = rect;

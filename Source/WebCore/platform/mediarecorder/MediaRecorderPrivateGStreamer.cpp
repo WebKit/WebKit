@@ -275,6 +275,10 @@ void MediaRecorderPrivateGStreamer::setSink(GstElement* element)
         },
         // new_event
         nullptr,
+#if GST_CHECK_VERSION(1, 23, 0)
+        // propose_allocation
+        nullptr,
+#endif
         { nullptr }
     };
     gst_app_sink_set_callbacks(GST_APP_SINK(element), &callbacks, this, nullptr);

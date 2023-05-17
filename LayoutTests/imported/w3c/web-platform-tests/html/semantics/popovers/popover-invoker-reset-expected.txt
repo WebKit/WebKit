@@ -1,0 +1,4 @@
+Popover 2
+
+PASS Invoker gets reset appropriately
+

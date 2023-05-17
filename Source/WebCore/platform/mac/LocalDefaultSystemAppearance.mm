@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,14 +40,14 @@ LocalDefaultSystemAppearance::LocalDefaultSystemAppearance(bool useDarkAppearanc
     m_savedSystemAppearance = [NSAppearance currentDrawingAppearance];
     m_usingDarkAppearance = useDarkAppearance;
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSAppearance *appearance = [NSAppearance appearanceNamed:m_usingDarkAppearance ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua];
 
     if (tintColor.isValid())
         appearance = [appearance appearanceByApplyingTintColor:cocoaColor(tintColor).get()];
 
     [NSAppearance setCurrentAppearance:appearance];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     UNUSED_PARAM(useDarkAppearance);
     UNUSED_PARAM(tintColor);
@@ -57,9 +57,9 @@ LocalDefaultSystemAppearance::LocalDefaultSystemAppearance(bool useDarkAppearanc
 LocalDefaultSystemAppearance::~LocalDefaultSystemAppearance()
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [NSAppearance setCurrentAppearance:m_savedSystemAppearance.get()];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 

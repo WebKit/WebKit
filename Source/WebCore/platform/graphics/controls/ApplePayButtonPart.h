@@ -59,11 +59,17 @@ enum class ApplePayButtonStyle : uint8_t {
 
 class ApplePayButtonPart : public ControlPart {
 public:
+    static Ref<ApplePayButtonPart> create();
     WEBCORE_EXPORT static Ref<ApplePayButtonPart> create(ApplePayButtonType, ApplePayButtonStyle, const String& locale);
 
     ApplePayButtonType buttonType() const { return m_buttonType; }
+    void setButtonType(ApplePayButtonType buttonType) { m_buttonType = buttonType; }
+
     ApplePayButtonStyle buttonStyle() const { return m_buttonStyle; }
+    void setButtonStyle(ApplePayButtonStyle buttonStyle) { m_buttonStyle = buttonStyle; }
+
     String locale() const { return m_locale; }
+    void setLocale(String locale) { m_locale = locale; }
 
 private:
     ApplePayButtonPart(ApplePayButtonType, ApplePayButtonStyle, const String& locale);

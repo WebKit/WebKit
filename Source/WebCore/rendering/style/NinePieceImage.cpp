@@ -26,8 +26,9 @@
 
 #include "GraphicsContext.h"
 #include "ImageQualityController.h"
+#include "LayoutRect.h"
 #include "LengthFunctions.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PointerComparison.h>
 #include <wtf/text/TextStream.h>

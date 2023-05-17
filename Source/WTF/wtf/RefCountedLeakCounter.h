@@ -38,7 +38,9 @@ struct RefCountedLeakCounter {
 #ifndef NDEBUG
 private:
     std::atomic<int> m_count;
+#if !LOG_DISABLED
     const char* m_description;
+#endif
 #endif
 };
 

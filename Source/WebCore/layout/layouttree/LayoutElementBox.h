@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class CachedImage;
 class RenderStyle;
 
 namespace Layout {

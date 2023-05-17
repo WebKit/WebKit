@@ -24,7 +24,7 @@ function dumpAccessibilityTree(accessibilityObject, stopElement, indent, allAttr
     str += accessibilityObject.role;
     if (includeSubrole === true && accessibilityObject.subrole)
         str += " " + accessibilityObject.subrole;
-    str += " " + (getValueFromTitle === true ? accessibilityObject.title : accessibilityObject.stringValue);
+    str += " " + (getValueFromTitle === true ? accessibilityObject.title : accessibilityController.platformName === "ios" ? accessibilityObject.description : accessibilityObject.stringValue);
     str += allAttributesIfNeeded && accessibilityObject.role == '' ? accessibilityObject.allAttributes() : '';
     str += "\n";
 
@@ -150,12 +150,38 @@ async function waitForElementById(id) {
 // but returns the result as a string rather than `debug`ing to a console DOM element.
 function expect(expression, expectedValue) {
     if (typeof expression !== "string")
-        debug("WARN: The expression arg in bufferShouldBe() should be a string.");
+        debug("WARN: The expression arg in expect() should be a string.");
 
     const evalExpression = `${expression} === ${expectedValue}`;
     if (eval(evalExpression))
         return `PASS: ${evalExpression}\n`;
     return `FAIL: ${expression} !== ${expectedValue}, was ${eval(expression)}\n`;
+}
+
+function expectRectWithVariance(expression, x, y, width, height, allowedVariance) {
+    if (typeof expression !== "string")
+        debug("WARN: The expression arg in expectRectWithVariance() must be a string.");
+    if (typeof x !== "number" || typeof y !== "number" || typeof width !== "number" || typeof height !== "number" || typeof allowedVariance !== "number")
+        debug("WARN: The x, y, width, height, and allowedVariance arguments in expectRectWithVariance must be numbers.");
+
+    const expectedRect = `(x: ${x}, y: ${y}, w: ${width}, h: ${height})`;
+
+    const result = eval(expression);
+    const parsedResult = result
+        .replaceAll(/{|}/g, '') // Eliminate curly braces because they break parseFloat.
+        .split(/[ ,]+/) // Split on whitespace and commas.
+        .map(token => parseFloat(token))
+        .filter(float => !isNaN(float));
+
+    if (parsedResult.length !== 4)
+        debug(`FAIL: Expression ${expression} didn't produce a string result with four numbers (was ${result}).\n`);
+    else if (Math.abs(x - parsedResult[0])      > allowedVariance ||
+             Math.abs(y - parsedResult[1])      > allowedVariance ||
+             Math.abs(width - parsedResult[2])  > allowedVariance ||
+             Math.abs(height - parsedResult[3]) > allowedVariance)
+        return `FAIL: ${expression} varied more than allowed variance ${allowedVariance}. Was: ${result}, expected ${expectedRect}\n`;
+    else
+        return `PASS: ${expression} was ${allowedVariance === 0 ? "equal" : "equal or approximately equal"} to ${expectedRect}.\n`;
 }
 
 async function expectAsync(expression, expectedValue) {
@@ -182,10 +208,12 @@ async function expectAsyncExpression(expression, expectedValue) {
 
 async function waitForFocus(id) {
     document.getElementById(id).focus();
+    let focusedElement;
     await waitFor(() => {
-        const focusedElement = accessibilityController.focusedElement;
+        focusedElement = accessibilityController.focusedElement;
         return focusedElement && focusedElement.domIdentifier === id;
     });
+    return focusedElement;
 }
 
 function evalAndReturn(expression) {

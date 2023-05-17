@@ -1,0 +1,10 @@
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  onload = () => {
+    CSSStyleValue.parse('offset-path', 'circle()');
+    d.attributeStyleMap.set('offset-path', 'circle()');
+  };
+</script>
+<div id="d">This test passes if it doesn't crash.</div>

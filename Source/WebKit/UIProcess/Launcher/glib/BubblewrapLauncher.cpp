@@ -29,6 +29,7 @@
 #include <sys/mman.h>
 #include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/UUID.h>
 #include <wtf/UniStdExtras.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -124,20 +125,31 @@ int argumentsToFileDescriptor(const Vector<CString>& args, const char* name)
     return memfd;
 }
 
-static const char* applicationId(GError** error)
+static String effectiveApplicationId()
 {
-    GApplication* app = g_application_get_default();
-    if (!app) {
-        g_set_error_literal(error, G_IO_ERROR, G_IO_ERROR_INVALID_DATA, "GApplication is required.");
-        return nullptr;
+    if (auto* app = g_application_get_default()) {
+        if (const char* appID = g_application_get_application_id(app))
+            return String::fromUTF8(appID);
     }
 
-    const char* appID = g_application_get_application_id(app);
-    if (!appID) {
-        g_set_error_literal(error, G_IO_ERROR, G_IO_ERROR_INVALID_DATA, "GApplication must have a valid ID.");
-        return nullptr;
+    const char* programName = g_get_prgname();
+    if (programName && g_application_id_is_valid(programName))
+        return String::fromUTF8(programName);
+
+    // There must be some id for xdg-desktop-portal to function.
+    // xdg-desktop-portal uses this id for permissions.
+    // This creates a somewhat reliable id based on the executable path
+    // which will avoid potentially gaining permissions from another app
+    // and won't flood xdg-desktop-portal with new ids.
+    if (auto executablePath = FileSystem::currentExecutablePath(); !executablePath.isNull()) {
+        GUniquePtr<char> digest(g_compute_checksum_for_data(G_CHECKSUM_SHA256, reinterpret_cast<const uint8_t*>(executablePath.data()), executablePath.length()));
+        return makeString("org.webkit.app-", digest.get());
     }
-    return appID;
+
+    // If it is not possible to obtain the executable path, generate
+    // a random identifier as a fallback.
+    auto uuid = UUID::createVersion4Weak();
+    return makeString("org.webkit.app-", uuid.toString());
 }
 
 static int createFlatpakInfo()
@@ -146,15 +158,8 @@ static int createFlatpakInfo()
     static size_t size;
 
     if (!data.get()) {
-        // xdg-desktop-portal relates your name to certain permissions so we want
-        // them to be application unique which is best done via GApplication.
-        GUniqueOutPtr<GError> error;
-        const char* appID = applicationId(&error.outPtr());
-        if (!appID)
-            g_error("Unable to configure xdg-desktop-portal access in the WebKit sandbox: %s", error->message);
-
         GUniquePtr<GKeyFile> keyFile(g_key_file_new());
-        g_key_file_set_string(keyFile.get(), "Application", "name", appID);
+        g_key_file_set_string(keyFile.get(), "Application", "name", effectiveApplicationId().utf8().data());
         data->reset(g_key_file_to_data(keyFile.get(), &size, nullptr));
     }
 

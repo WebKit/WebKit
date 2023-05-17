@@ -38,8 +38,16 @@
 
 namespace WebCore {
 
-typedef HashMap<String, Vector<unsigned>> NamedGridLinesMap;
-typedef HashMap<unsigned, Vector<String>, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> OrderedNamedGridLinesMap;
+struct NamedGridLinesMap {
+    HashMap<String, Vector<unsigned>> map;
+};
+
+inline bool operator==(const NamedGridLinesMap& a, const NamedGridLinesMap& b) { return a.map == b.map; }
+inline bool operator!=(const NamedGridLinesMap& a, const NamedGridLinesMap& b) { return a.map != b.map; }
+
+struct OrderedNamedGridLinesMap {
+    HashMap<unsigned, Vector<String>, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> map;
+};
 
 typedef std::variant<GridTrackSize, Vector<String>> RepeatEntry;
 typedef Vector<RepeatEntry> RepeatTrackList;
@@ -89,10 +97,14 @@ struct MasonryAutoFlow {
 };
 
 typedef std::variant<GridTrackSize, Vector<String>, GridTrackEntryRepeat, GridTrackEntryAutoRepeat, GridTrackEntrySubgrid, GridTrackEntryMasonry> GridTrackEntry;
-typedef Vector<GridTrackEntry> GridTrackList;
+struct GridTrackList {
+    Vector<GridTrackEntry> list;
+};
+inline bool operator==(const GridTrackList& a, const GridTrackList& b) { return a.list == b.list; }
+inline WTF::TextStream& operator<<(WTF::TextStream& stream, const GridTrackList& list) { return stream << list.list; }
 
-WTF::TextStream& operator<<(WTF::TextStream&, const RepeatEntry& item);
-WTF::TextStream& operator<<(WTF::TextStream&, const GridTrackEntry& item);
+WTF::TextStream& operator<<(WTF::TextStream&, const RepeatEntry&);
+WTF::TextStream& operator<<(WTF::TextStream&, const GridTrackEntry&);
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleGridData);
 class StyleGridData : public RefCounted<StyleGridData> {
@@ -103,12 +115,7 @@ public:
 
     bool operator==(const StyleGridData& o) const
     {
-        return columns() == o.columns() && rows() == o.rows() && implicitNamedGridColumnLines == o.implicitNamedGridColumnLines && implicitNamedGridRowLines == o.implicitNamedGridRowLines && gridAutoFlow == o.gridAutoFlow && gridAutoRows == o.gridAutoRows && gridAutoColumns == o.gridAutoColumns && namedGridArea == o.namedGridArea && namedGridAreaRowCount == o.namedGridAreaRowCount && namedGridAreaColumnCount == o.namedGridAreaColumnCount && m_masonryRows == o.m_masonryRows && m_masonryColumns == o.m_masonryColumns && masonryAutoFlow == o.masonryAutoFlow && alignTracks == o.alignTracks && justifyTracks == o.justifyTracks;
-    }
-
-    bool operator!=(const StyleGridData& o) const
-    {
-        return !(*this == o);
+        return m_columns.list == o.m_columns.list && m_rows.list == o.m_rows.list && implicitNamedGridColumnLines.map == o.implicitNamedGridColumnLines.map && implicitNamedGridRowLines.map == o.implicitNamedGridRowLines.map && gridAutoFlow == o.gridAutoFlow && gridAutoRows == o.gridAutoRows && gridAutoColumns == o.gridAutoColumns && namedGridArea.map == o.namedGridArea.map && namedGridAreaRowCount == o.namedGridAreaRowCount && namedGridAreaColumnCount == o.namedGridAreaColumnCount && m_masonryRows == o.m_masonryRows && m_masonryColumns == o.m_masonryColumns && masonryAutoFlow == o.masonryAutoFlow && alignTracks == o.alignTracks && justifyTracks == o.justifyTracks;
     }
 
     void setRows(const GridTrackList&);
@@ -143,8 +150,8 @@ public:
     bool masonryRows() const { return m_masonryRows; }
     bool masonryColumns() const { return m_masonryColumns; }
 
-    const GridTrackList& columns() const { return m_columns; };
-    const GridTrackList& rows() const { return m_rows; };
+    const GridTrackList& columns() const { return m_columns; }
+    const GridTrackList& rows() const { return m_rows; }
 
     NamedGridLinesMap implicitNamedGridColumnLines;
     NamedGridLinesMap implicitNamedGridRowLines;
@@ -165,7 +172,6 @@ public:
     unsigned namedGridAreaColumnCount;
 
 private:
-
     void computeCachedTrackData(const GridTrackList&, Vector<GridTrackSize>& sizes, NamedGridLinesMap& namedLines, OrderedNamedGridLinesMap& orderedNamedLines, Vector<GridTrackSize>& autoRepeatSizes, NamedGridLinesMap& autoRepeatNamedLines, OrderedNamedGridLinesMap& autoRepeatOrderedNamedLines, unsigned& autoRepeatInsertionPoint, AutoRepeatType&, bool& subgrid, bool& masonry);
 
     GridTrackList m_columns;

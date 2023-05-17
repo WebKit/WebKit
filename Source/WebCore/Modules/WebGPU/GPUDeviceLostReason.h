@@ -31,12 +31,15 @@
 namespace WebCore {
 
 enum class GPUDeviceLostReason : uint8_t {
+    Unknown,
     Destroyed,
 };
 
 inline PAL::WebGPU::DeviceLostReason convertToBacking(GPUDeviceLostReason deviceLostReason)
 {
     switch (deviceLostReason) {
+    case GPUDeviceLostReason::Unknown:
+        return PAL::WebGPU::DeviceLostReason::Unknown;
     case GPUDeviceLostReason::Destroyed:
         return PAL::WebGPU::DeviceLostReason::Destroyed;
     }

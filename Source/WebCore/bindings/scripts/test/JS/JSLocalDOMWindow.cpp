@@ -42,7 +42,6 @@
 #include "JSTestNode.h"
 #include "JSTestObj.h"
 #include "JSTestPromiseRejectionEvent.h"
-#include "JSWindowProxy.h"
 #include "ScriptExecutionContext.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/HeapAnalyzer.h>
@@ -194,11 +193,11 @@ JSLocalDOMWindow::JSLocalDOMWindow(VM& vm, Structure* structure, Ref<LocalDOMWin
 {
 }
 
+static_assert(!std::is_base_of<ActiveDOMObject, LocalDOMWindow>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
+
 void JSLocalDOMWindow::finishCreation(VM& vm, JSWindowProxy* proxy)
 {
     Base::finishCreation(vm, proxy);
-
-    static_assert(!std::is_base_of<ActiveDOMObject, LocalDOMWindow>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
     if ((jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext() && TestEnabledForContext::enabledForContext(*jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())))
         putDirectCustomAccessor(vm, builtinNames(vm).TestEnabledForContextPublicName(), CustomGetterSetter::create(vm, jsLocalDOMWindow_TestEnabledForContextConstructor, nullptr), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)));

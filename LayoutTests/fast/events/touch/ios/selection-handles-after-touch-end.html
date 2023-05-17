@@ -25,7 +25,7 @@ jsTestIsAsync = true;
 observedTouchEnd = false;
 
 document.addEventListener("touchend", async () => {
-    selectionRects = await UIHelper.getUISelectionRects();
+    selectionRects = await UIHelper.getUISelectionViewRects();
     shouldBe("selectionRects.length", "1");
     shouldBe("Math.round(selectionRects[0].left)", "0");
     shouldBe("Math.round(selectionRects[0].top)", "3");

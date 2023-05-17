@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2008, 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009 Torch Mobile, Inc. http://www.torchmobile.com/
- * Copyright (C) 2010 Google Inc. All Rights Reserved.
+ * Copyright (C) 2010-2021 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -185,7 +185,7 @@ private:
         if (match(attributeName, srcAttr))
             setURLToLoad(attributeValue);
         else if (match(attributeName, crossoriginAttr))
-            m_crossOriginMode = attributeValue.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>).toString();
+            m_crossOriginMode = attributeValue.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>).toString();
         else if (match(attributeName, charsetAttr))
             m_charset = attributeValue.toString();
     }
@@ -207,7 +207,7 @@ private:
                 m_sizesAttribute = attributeValue.toString();
                 break;
             }
-            if (match(attributeName, fetchpriorityAttr) && m_document.settings().priorityHintsEnabled()) {
+            if (match(attributeName, fetchpriorityAttr) && m_document.settings().fetchPriorityEnabled()) {
                 m_fetchPriorityHint = parseEnumerationFromString<RequestPriority>(attributeValue.toString()).value_or(RequestPriority::Auto);
                 break;
             }
@@ -262,7 +262,7 @@ private:
             } else if (match(attributeName, asyncAttr)) {
                 m_scriptIsAsync = true;
                 break;
-            } else if (match(attributeName, fetchpriorityAttr) && m_document.settings().priorityHintsEnabled()) {
+            } else if (match(attributeName, fetchpriorityAttr) && m_document.settings().fetchPriorityEnabled()) {
                 m_fetchPriorityHint = parseEnumerationFromString<RequestPriority>(attributeValue.toString()).value_or(RequestPriority::Auto);
                 break;
             }
@@ -280,7 +280,7 @@ private:
             else if (match(attributeName, charsetAttr))
                 m_charset = attributeValue.toString();
             else if (match(attributeName, crossoriginAttr))
-                m_crossOriginMode = attributeValue.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>).toString();
+                m_crossOriginMode = attributeValue.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>).toString();
             else if (match(attributeName, nonceAttr))
                 m_nonceAttribute = attributeValue.toString();
             else if (match(attributeName, asAttr))
@@ -289,7 +289,7 @@ private:
                 m_typeAttribute = attributeValue.toString();
             else if (match(attributeName, referrerpolicyAttr))
                 m_referrerPolicy = parseReferrerPolicy(attributeValue, ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
-            else if (match(attributeName, fetchpriorityAttr) && m_document.settings().priorityHintsEnabled())
+            else if (match(attributeName, fetchpriorityAttr) && m_document.settings().fetchPriorityEnabled())
                 m_fetchPriorityHint = parseEnumerationFromString<RequestPriority>(attributeValue.toString()).value_or(RequestPriority::Auto);
             break;
         case TagId::Input:
@@ -331,7 +331,7 @@ private:
 
     void setURLToLoadAllowingReplacement(StringView value)
     {
-        auto strippedURL = value.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
+        auto strippedURL = value.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>);
         if (strippedURL.isEmpty())
             return;
         m_urlToLoad = strippedURL.toString();
@@ -451,13 +451,13 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
     }
 
     case HTMLToken::Type::StartTag: {
-        if (m_templateCount)
-            return;
         TagId tagId = tagIdFor(token.name());
         if (tagId == TagId::Template) {
             ++m_templateCount;
             return;
         }
+        if (m_templateCount)
+            return;
         if (tagId == TagId::Style) {
             m_inStyle = true;
             return;

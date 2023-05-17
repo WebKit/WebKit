@@ -30,39 +30,42 @@
 #import <wtf/Vector.h>
 
 #if PLATFORM(MAC)
-#define PlatformColor               NSColor
-#define PlatformColorClass          NSColor.class
-#define PlatformFont                NSFont
-#define PlatformFontClass           NSFont.class
-#define PlatformImageClass          NSImage
-#define PlatformNSColorClass        NSColor
-#define PlatformNSParagraphStyle    NSParagraphStyle.class
-#define PlatformNSShadow            NSShadow.class
-#define PlatformNSTextAttachment    NSTextAttachment.class
-#define PlatformNSTextList          NSTextList
-#define PlatformNSTextTab           NSTextTab
-#define PlatformNSTextTable         NSTextTable
-#define PlatformNSTextTableBlock    NSTextTableBlock
+#define PlatformColor                   NSColor
+#define PlatformColorClass              NSColor.class
+#define PlatformFont                    NSFont
+#define PlatformFontClass               NSFont.class
+#define PlatformImageClass              NSImage
+#define PlatformNSColorClass            NSColor
+#define PlatformNSParagraphStyle        NSParagraphStyle.class
+#define PlatformNSPresentationIntent    NSPresentationIntent.class
+#define PlatformNSShadow                NSShadow.class
+#define PlatformNSTextAttachment        NSTextAttachment.class
+#define PlatformNSTextList              NSTextList
+#define PlatformNSTextTab               NSTextTab
+#define PlatformNSTextTable             NSTextTable
+#define PlatformNSTextTableBlock        NSTextTableBlock
 #else
-#define PlatformColor               UIColor
-#define PlatformColorClass          PAL::getUIColorClass()
-#define PlatformFont                UIFont
-#define PlatformFontClass           PAL::getUIFontClass()
-#define PlatformImageClass          PAL::getUIImageClass()
-#define PlatformNSColorClass        getNSColorClass()
-#define PlatformNSParagraphStyle    PAL::getNSParagraphStyleClass()
-#define PlatformNSShadow            PAL::getNSShadowClass()
-#define PlatformNSTextAttachment    getNSTextAttachmentClass()
-#define PlatformNSTextList          getNSTextListClass()
-#define PlatformNSTextTab           getNSTextTabClass()
-#define PlatformNSTextTable         getNSTextTableClass()
-#define PlatformNSTextTableBlock    getNSTextTableBlockClass()
+#define PlatformColor                   UIColor
+#define PlatformColorClass              PAL::getUIColorClass()
+#define PlatformFont                    UIFont
+#define PlatformFontClass               PAL::getUIFontClass()
+#define PlatformImageClass              PAL::getUIImageClass()
+#define PlatformNSColorClass            getNSColorClass()
+#define PlatformNSParagraphStyle        PAL::getNSParagraphStyleClass()
+#define PlatformNSPresentationIntent    PAL::getNSPresentationIntentClass()
+#define PlatformNSShadow                PAL::getNSShadowClass()
+#define PlatformNSTextAttachment        getNSTextAttachmentClass()
+#define PlatformNSTextList              getNSTextListClass()
+#define PlatformNSTextTab               getNSTextTabClass()
+#define PlatformNSTextTable             getNSTextTableClass()
+#define PlatformNSTextTableBlock        getNSTextTableBlockClass()
 #endif
 
 OBJC_CLASS NSAttributedString;
 OBJC_CLASS NSDate;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSParagraphStyle;
+OBJC_CLASS NSPresentationIntent;
 OBJC_CLASS NSShadow;
 OBJC_CLASS NSTextAttachment;
 OBJC_CLASS PlatformColor;
@@ -85,6 +88,7 @@ struct WEBCORE_EXPORT AttributedString {
             Vector<String>,
             Vector<double>,
             RetainPtr<NSParagraphStyle>,
+            RetainPtr<NSPresentationIntent>,
             RetainPtr<NSTextAttachment>,
             RetainPtr<NSShadow>,
             RetainPtr<NSDate>,

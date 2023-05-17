@@ -34,6 +34,8 @@
 #include "RemoteCommandListenerGLib.h"
 #endif
 
+#include <wtf/NeverDestroyed.h>
+
 namespace WebCore {
 
 static RemoteCommandListener::CreationFunction& remoteCommandListenerCreationFunction()

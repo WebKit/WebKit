@@ -104,6 +104,8 @@ imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-taint
 
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-descendant-text-mutated-001.html [ Pass ]
 
+webkit.org/b/256310 imported/w3c/web-platform-tests/css/css-fonts/parsing/font-face-src-tech.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See below where to put expected failures.
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -139,6 +141,7 @@ webkit.org/b/235941 accessibility/gtk/caret-offsets.html [ Timeout ]
 # canvas
 webkit.org/b/215462 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.html [ Failure ]
 webkit.org/b/238208 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.CSSHSL.html [ Failure ]
+fast/canvas/offscreen-clipped.html [ Failure ]
 
 # CSS
 webkit.org/b/216161 imported/w3c/web-platform-tests/css/css-pseudo/text-selection.html [ Failure Pass ]
@@ -276,7 +279,6 @@ fast/images/object-image.html [ WontFix Pass ]
 
 # platformLayerTreeAsText is only implemented for Cocoa ports.
 fast/harness/platform-layer-tree-as-text.html [ Skip ]
-model-element/model-element-graphics-layers-opacity.html [ Skip ]
 
 # This test requires Mac ObjC bindings, although it currently passes
 Bug(GTK) http/tests/security/dataTransfer-set-data-file-url.html [ WontFix Pass ]
@@ -421,7 +423,6 @@ webkit.org/b/245840 webgl/max-active-contexts-webglcontextlost-prevent-default.h
 webkit.org/b/245840 webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure ]
 webkit.org/b/245840 webgl/webgl2-primitive-restart.html [ ImageOnlyFailure ]
 webkit.org/b/245840 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Failure ]
-webkit.org/b/245840 fast/canvas/webgl/copy-tex-image-and-sub-image-2d-bad-input.html [ Failure ]
 webkit.org/b/245840 fast/canvas/webgl/drawElements-empty-vertex-data.html [ Failure ]
 webkit.org/b/245840 fast/canvas/webgl/drawingbuffer-test.html [ Failure ]
 webkit.org/b/245840 fast/canvas/webgl/largeBuffer.html [ Failure ]
@@ -434,8 +435,6 @@ webkit.org/b/245840 fast/canvas/webgl/tex-image-with-greyscale-image.html [ Fail
 webkit.org/b/245840 fast/canvas/webgl/tex-sub-image-2d.html [ Failure ]
 webkit.org/b/245840 fast/canvas/webgl/tex-sub-image-cube-maps.html [ Failure ]
 webkit.org/b/245840 fast/canvas/webgl/vertexAttribPointer-with-bad-offset.html [ Failure ]
-webkit.org/b/245840 fast/canvas/webgl/webgl-drawarrays-crash-2.html [ Failure ]
-webkit.org/b/245840 fast/canvas/webgl/webgl-drawarrays-crash.html [ Failure ]
 
 # WebGL ANGLE backed flaky tests
 webkit.org/b/245840 webgl/1.0.3/conformance/textures/copy-tex-image-2d-formats.html [ Failure Pass ]
@@ -812,6 +811,9 @@ webkit.org/b/161962 fast/forms/implicit-submission.html [ Failure ]
 
 webkit.org/b/169531 fast/text/font-selection-font-face-parse.html [ Skip ]
 
+# @font-face: missing integration between size-adjust and optical-size
+ webkit.org/b/256457 imported/w3c/web-platform-tests/css/css-fonts/variations/variable-opsz-size-adjust.html [ ImageOnlyFailure ]
+
 # CSS image-orientation is not yet enabled.
 webkit.org/b/89052 fast/css/image-orientation [ Skip ]
 
@@ -983,10 +985,6 @@ webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-values/ch-unit-002.h
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-values/ch-unit-011.html [ ImageOnlyFailure ]
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-border-image.html [ ImageOnlyFailure ]
 
-webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-018.html [ ImageOnlyFailure ]
-webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-025.html [ ImageOnlyFailure ]
-webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-027.html [ ImageOnlyFailure ]
-
 webkit.org/b/219614 inspector/css/getComputedPrimaryFontForNode.html [ Failure ]
 
 webkit.org/b/223252 imported/w3c/web-platform-tests/css/css-contain/contain-size-grid-003.html [ Failure ]
@@ -1006,7 +1004,6 @@ webkit.org/b/232386 fast/text/line-breaks-after-white-space.html [ Failure ]
 
 webkit.org/b/236298 fast/forms/basic-textareas-quirks-simple-lines.html [ ImageOnlyFailure ]
 webkit.org/b/236298 fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
-webkit.org/b/236298 fast/text/simple-lines-text-transform.html [ ImageOnlyFailure ]
 webkit.org/b/236298 fast/text/simple-line-wordspacing.html [ ImageOnlyFailure ]
 webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-fonts/first-available-font-003.html [ ImageOnlyFailure ]
 
@@ -1031,12 +1028,6 @@ webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/
 webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/sharedworker-import.https.html [ Failure ]
 webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-import.http.html [ Failure ]
 webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-import.https.html [ Failure ]
-
-webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/constructor/010.html [ Failure ]
-webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/017.html [ Failure ]
-webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/018.html [ Failure ]
-webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/opening-handshake/001.html [ Failure ]
-webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/security/001.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
@@ -1113,8 +1104,6 @@ webkit.org/b/158918 fast/css3-text/css3-text-decoration/text-decoration-dotted.h
 webkit.org/b/170337 fast/repaint/obscured-background-no-repaint.html [ Failure ]
 
 webkit.org/b/172283 inspector/worker/debugger-multiple-targets-pause.html [ Timeout Pass Failure ]
-
-webkit.org/b/182761 accessibility/gtk/aria-busy-changed-notification.html [ Pass Failure ]
 
 webkit.org/b/186136 compositing/animation/layer-for-filling-animation.html [ Failure ]
 
@@ -1429,44 +1418,6 @@ webkit.org/b/252878 imported/w3c/web-platform-tests/wasm/jsapi/exception/basic.t
 webkit.org/b/252878 imported/w3c/web-platform-tests/wasm/jsapi/exception/basic.tentative.any.worker.html [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.html [ Failure Pass Timeout ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/wasm/jsapi/instance/constructor-bad-imports.any.worker.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-1005.any.worker.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-2999-reason.any.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-2999-reason.any.worker.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-3000-reason.any.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-3000-reason.any.worker.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-3000-verify-code.any.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-3000-verify-code.any.worker.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-4999-reason.any.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-4999-reason.any.worker.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-onlyReason.any.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-onlyReason.any.worker.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-readyState-Closed.any.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-readyState-Closed.any.worker.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-readyState-Closing.any.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-readyState-Closing.any.worker.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-Reason-124Bytes.any.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-Reason-124Bytes.any.worker.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-reason-unpaired-surrogates.any.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-reason-unpaired-surrogates.any.worker.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-server-initiated-close.any.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-server-initiated-close.any.worker.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-undefined.any.worker.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/constructor/016.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Create-blocked-port.any.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Create-blocked-port.any.worker.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Create-extensions-empty.any.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Create-extensions-empty.any.worker.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Create-valid-url-array-protocols.any.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Create-valid-url-array-protocols.any.worker.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/readyState/008.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/send/005.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/send/008.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/send/010.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/multi-globals/message-received.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/opening-handshake/003-sets-origin.worker.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/opening-handshake/005.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/unload-a-document/003.html [ Failure Pass ]
-webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/unload-a-document/004.html [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/xhr/access-control-and-redirects-async-same-origin.any.html [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/xhr/access-control-and-redirects-async-same-origin.any.worker.html [ Failure Pass ]
 webkit.org/b/252878 inspector/css/modify-css-property.html [ Failure Pass ]
@@ -1781,6 +1732,7 @@ Bug(GTK) fast/events/wheel/platform-wheelevent-paging-y-in-non-scrolling-div.htm
 Bug(GTK) fast/events/wheel/platform-wheelevent-paging-y-in-non-scrolling-page.html [ Failure ]
 Bug(GTK) fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-div.html [ Failure ]
 Bug(GTK) fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-page.html [ Failure ]
+css3/scroll-snap/resnap-after-layout.html [ Skip ]
 
 # Need to add functionality to DumpRenderTree to handle scrollbar policy changes
 Bug(GTK) fast/overflow/scrollbar-restored-and-then-locked.html [ Failure ]
@@ -2158,13 +2110,7 @@ webkit.org/b/234782 imported/w3c/web-platform-tests/css/css-writing-modes/text-s
 imported/w3c/web-platform-tests/css/css-pseudo/selection-background-painting-order.html [ ImageOnlyFailure ]
 
 # Failing preload tests
-imported/w3c/web-platform-tests/preload/link-header-preload-nonce.html [ Failure ]
 imported/w3c/web-platform-tests/preload/onerror-event.html [ Failure ]
-imported/w3c/web-platform-tests/preload/prefetch-headers.html [ Failure ]
-imported/w3c/web-platform-tests/preload/prefetch-types.html [ Failure ]
-imported/w3c/web-platform-tests/preload/preload-csp.sub.html [ Failure ]
-imported/w3c/web-platform-tests/preload/preload-default-csp.sub.html [ Failure ]
-imported/w3c/web-platform-tests/preload/preload-dynamic-csp.html [ Failure ]
 imported/w3c/web-platform-tests/preload/preload-font-crossorigin.html [ Failure ]
 imported/w3c/web-platform-tests/preload/preload-time-to-fetch.https.html [ Failure ]
 imported/w3c/web-platform-tests/preload/preload-type-match.html [ Failure ]
@@ -2198,6 +2144,7 @@ webkit.org/b/160119 fast/repaint/selection-gap-flipped-fixed-child.html [ Failur
 
 webkit.org/b/240270 imported/w3c/web-platform-tests/css/motion/offset-rotate-001.html [ ImageOnlyFailure ]
 webkit.org/b/240270 imported/w3c/web-platform-tests/css/motion/offset-rotate-002.html [ ImageOnlyFailure ]
+webkit.org/b/256225 imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-004.html [ ImageOnlyFailure ]
 
 # These failures occur on GTK only (moved from LayoutTests/TestExpectations)
 webkit.org/b/200208 imported/w3c/web-platform-tests/css/css-images/gradients-with-transparent.html [ ImageOnlyFailure ]
@@ -2257,3 +2204,5 @@ webkit.org/b/246766 imported/w3c/web-platform-tests/reporting/generateTestReport
 imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-native-computed-style.optional.html [ Failure ]
 
 webkit.org/b/249477 media/audioSession/audioSessionType.html [ Skip ]
+webkit.org/b/253832 media/media-source/media-source-webm-configuration-change.html [ Failure ]
+webkit.org/b/253832 media/media-source/media-source-webm-configuration-vp9-header-color.html [ Failure ]

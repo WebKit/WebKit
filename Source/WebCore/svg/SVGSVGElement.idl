@@ -64,9 +64,10 @@
     float getCurrentTime();
     undefined setCurrentTime(float seconds);
 
-    // Deprecated SVG redrawing
-    unsigned long suspendRedraw(optional unsigned long maxWaitMilliseconds = 0);
-    undefined unsuspendRedraw(optional unsigned long suspendHandleId = 0);
+    // Deprecated SVG redrawing methods that have no effect when called,
+    // but which are kept for compatibility reasons.
+    unsigned long suspendRedraw(unsigned long maxWaitMilliseconds);
+    undefined unsuspendRedraw(unsigned long suspendHandleId);
     undefined unsuspendRedrawAll();
     undefined forceRedraw();
 };

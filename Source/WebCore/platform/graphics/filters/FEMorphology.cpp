@@ -44,6 +44,14 @@ FEMorphology::FEMorphology(MorphologyOperatorType type, float radiusX, float rad
 {
 }
 
+bool FEMorphology::operator==(const FEMorphology& other) const
+{
+    return FilterEffect::operator==(other)
+        && m_type == other.m_type
+        && m_radiusX == other.m_radiusX
+        && m_radiusY == other.m_radiusY;
+}
+
 bool FEMorphology::setMorphologyOperator(MorphologyOperatorType type)
 {
     if (m_type == type)
@@ -68,7 +76,7 @@ bool FEMorphology::setRadiusY(float radiusY)
     return true;
 }
 
-FloatRect FEMorphology::calculateImageRect(const Filter& filter, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const
+FloatRect FEMorphology::calculateImageRect(const Filter& filter, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const
 {
     auto imageRect = inputImageRects[0];
     imageRect.inflate(filter.resolvedSize({ m_radiusX, m_radiusY }));

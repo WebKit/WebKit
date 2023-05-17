@@ -35,7 +35,9 @@
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"
+#include "LengthFunctions.h"
 #include "Logging.h"
+#include "RenderStyleInlines.h"
 #include "TableFormattingState.h"
 
 namespace WebCore {

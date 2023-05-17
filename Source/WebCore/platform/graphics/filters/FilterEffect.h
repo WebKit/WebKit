@@ -41,6 +41,8 @@ class FilterEffect : public FilterFunction {
     using FilterFunction::apply;
 
 public:
+    virtual bool operator==(const FilterEffect&) const;
+
     const DestinationColorSpace& operatingColorSpace() const { return m_operatingColorSpace; }
     virtual void setOperatingColorSpace(const DestinationColorSpace& colorSpace) { m_operatingColorSpace = colorSpace; }
 
@@ -55,11 +57,19 @@ public:
 protected:
     using FilterFunction::FilterFunction;
 
+    template<typename FilterEffectType>
+    static bool areEqual(const FilterEffectType& a, const FilterEffect& b)
+    {
+        if (!is<FilterEffectType>(b))
+            return false;
+        return a.operator==(downcast<FilterEffectType>(b));
+    }
+
     virtual unsigned numberOfEffectInputs() const { return 1; }
 
-    FloatRect calculatePrimitiveSubregion(const Filter&, Span<const FloatRect> inputPrimitiveSubregions, const std::optional<FilterEffectGeometry>&) const;
+    FloatRect calculatePrimitiveSubregion(const Filter&, std::span<const FloatRect> inputPrimitiveSubregions, const std::optional<FilterEffectGeometry>&) const;
 
-    virtual FloatRect calculateImageRect(const Filter&, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const;
+    virtual FloatRect calculateImageRect(const Filter&, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const;
 
     // Solid black image with different alpha values.
     virtual bool resultIsAlphaImage(const FilterImageVector&) const { return false; }

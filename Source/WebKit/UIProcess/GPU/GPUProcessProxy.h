@@ -116,7 +116,12 @@ public:
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
 
 #if ENABLE(VIDEO)
-    void requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(const ShareableBitmapHandle&)>&&);
+    void requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(ShareableBitmap::Handle&&)>&&);
+#endif
+
+#if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
+    bool hasSentGPUToolsSandboxExtensions() const { return m_hasSentGPUToolsSandboxExtensions; }
+    static Vector<SandboxExtension::Handle> createGPUToolsSandboxExtensionHandlesIfNeeded();
 #endif
 
 private:
@@ -182,6 +187,7 @@ private:
     bool m_hasSentCameraSandboxExtension { false };
     bool m_hasSentMicrophoneSandboxExtension { false };
     bool m_hasSentDisplayCaptureSandboxExtension { false };
+    bool m_hasSentGPUToolsSandboxExtensions { false };
 #endif
 
 #if HAVE(SCREEN_CAPTURE_KIT)

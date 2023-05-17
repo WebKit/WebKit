@@ -8,21 +8,20 @@ PASS RTCRtpStreamStats's codecId
 PASS RTCReceivedRtpStreamStats's packetsReceived
 PASS RTCReceivedRtpStreamStats's packetsLost
 PASS RTCReceivedRtpStreamStats's jitter
-PASS RTCReceivedRtpStreamStats's packetsDiscarded
-PASS RTCReceivedRtpStreamStats's framesDropped
-FAIL RTCInboundRtpStreamStats's receiverId assert_true: Is receiverId present expected true got false
-FAIL RTCInboundRtpStreamStats's remoteId assert_true: Is remoteId present expected true got false
+PASS RTCInboundRtpStreamStats's trackIdentifier
+PASS RTCInboundRtpStreamStats's remoteId
 PASS RTCInboundRtpStreamStats's framesDecoded
+PASS RTCInboundRtpStreamStats's framesDropped
 PASS RTCInboundRtpStreamStats's nackCount
 PASS RTCInboundRtpStreamStats's framesReceived
 PASS RTCInboundRtpStreamStats's bytesReceived
 PASS RTCInboundRtpStreamStats's totalAudioEnergy
 PASS RTCInboundRtpStreamStats's totalSamplesDuration
+PASS RTCInboundRtpStreamStats's packetsDiscarded
 PASS RTCRemoteInboundRtpStreamStats's localId
 PASS RTCRemoteInboundRtpStreamStats's roundTripTime
 PASS RTCSentRtpStreamStats's packetsSent
 PASS RTCSentRtpStreamStats's bytesSent
-FAIL RTCOutboundRtpStreamStats's senderId assert_true: Is senderId present expected true got false
 PASS RTCOutboundRtpStreamStats's remoteId
 PASS RTCOutboundRtpStreamStats's framesEncoded
 PASS RTCOutboundRtpStreamStats's nackCount
@@ -46,7 +45,6 @@ FAIL RTCAudioSourceStats's totalSamplesDuration assert_true: Is totalSamplesDura
 FAIL RTCVideoSourceStats's width assert_true: Is width present expected true got false
 FAIL RTCVideoSourceStats's height assert_true: Is height present expected true got false
 FAIL RTCVideoSourceStats's framesPerSecond assert_true: Is framesPerSecond present expected true got false
-FAIL RTCMediaHandlerStats's trackIdentifier assert_true: Is trackIdentifier present expected true got false
 PASS RTCCodecStats's payloadType
 PASS RTCCodecStats's mimeType
 PASS RTCCodecStats's clockRate

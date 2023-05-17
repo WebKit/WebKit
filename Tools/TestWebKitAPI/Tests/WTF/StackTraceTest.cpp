@@ -62,7 +62,7 @@ struct Frame {
 };
 }
 
-static void expectEqualFrames(Span<void* const> expectedStack, StackTrace& testedStack, bool skipFirstFrameAddress)
+static void expectEqualFrames(std::span<void* const> expectedStack, StackTrace& testedStack, bool skipFirstFrameAddress)
 {
     Vector<Frame> expected;
     StackTraceSymbolResolver { expectedStack }.forEach([&expected](int number, void* address, const char* name) {
@@ -100,7 +100,7 @@ TEST(StackTraceTest, MAYBE(CaptureStackTraceLimitAndSkip))
 
     // Test odd case where StackTrace::captureStackTrace(0) returns 1 result.
     {
-        Span<void* const> expected { expectedStack, 1 };
+        std::span<void* const> expected { expectedStack, 1 };
         {
             SCOPED_TRACE("Zero returns one result case");
             auto tested = StackTrace::captureStackTrace(0);
@@ -122,7 +122,7 @@ TEST(StackTraceTest, MAYBE(CaptureStackTraceLimitAndSkip))
             SCOPED_TRACE(makeString("maxFrames: ", maxFrames, " skipFrames: ", skipFrames));
             size_t expectedFrameCount = std::min(maxFrames + skipFrames, static_cast<size_t>(frames));
             size_t expectedSkipFrames = std::min(skipFrames, expectedFrameCount);
-            Span<void* const> expected { expectedStack + expectedSkipFrames, expectedFrameCount - expectedSkipFrames };
+            std::span<void* const> expected { expectedStack + expectedSkipFrames, expectedFrameCount - expectedSkipFrames };
 
             auto tested = StackTrace::captureStackTrace(maxFrames, skipFrames);
 

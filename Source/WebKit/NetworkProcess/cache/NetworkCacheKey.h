@@ -84,7 +84,6 @@ public:
     String partitionHashAsString() const { return hashAsString(m_partitionHash); }
 
     bool operator==(const Key&) const;
-    bool operator!=(const Key& other) const { return !(*this == other); }
 
     static String partitionToPartitionHashAsString(const String& partition, const Salt&);
 

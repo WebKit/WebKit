@@ -33,7 +33,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLMeterElement.h"
 #include "HTMLNames.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLProgressElement.h"
 #include "HTMLSlotElement.h"
 #include "LoaderStrategy.h"
@@ -43,7 +42,8 @@
 #include "PlatformStrategies.h"
 #include "Quirks.h"
 #include "RenderElement.h"
-#include "RenderStyle.h"
+#include "RenderStyleSetters.h"
+#include "ResolvedStyle.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StyleAdjuster.h"
@@ -182,8 +182,6 @@ static bool affectsRenderedSubtree(Element& element, const RenderStyle& newStyle
     if (newStyle.display() != DisplayType::None)
         return true;
     if (element.renderOrDisplayContentsStyle())
-        return true;
-    if (element.displayContentsChanged())
         return true;
     if (element.rendererIsNeeded(newStyle))
         return true;
@@ -837,7 +835,7 @@ void TreeResolver::resolveComposedTree()
                 m_update->addText(text, parent.element, WTFMove(textUpdate));
             }
 
-            if (!text.data().isAllSpecialCharacters<isHTMLSpace>())
+            if (!text.data().isAllSpecialCharacters<isASCIIWhitespace>())
                 parent.resolvedFirstLineAndLetterChild = true;
 
             text.setHasValidStyle();

@@ -188,7 +188,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
         trackingParameters.webPageProxyID = valueOrDefault(webFrameLoaderClient->webPageProxyID());
     else if (is<RemoteWorkerFrameLoaderClient>(frameLoaderClient))
         trackingParameters.webPageProxyID = downcast<RemoteWorkerFrameLoaderClient>(frameLoaderClient).webPageProxyID();
-    trackingParameters.pageID = valueOrDefault(frameLoaderClient.pageID());
+    trackingParameters.pageID = valueOrDefault(frameLoader->frame().pageID());
     trackingParameters.frameID = frameLoader->frameID();
     trackingParameters.resourceID = identifier;
 
@@ -327,7 +327,11 @@ static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadPara
     if (!mainFrameDocumentLoader || !isMainFrameNavigation)
         mainFrameDocumentLoader = mainFrame.loader().documentLoader();
 
-    parameters.allowPrivacyProxy = mainFrameDocumentLoader ? mainFrameDocumentLoader->allowPrivacyProxy() : true;
+    auto* policySourceDocumentLoader = mainFrameDocumentLoader;
+    if (policySourceDocumentLoader && !policySourceDocumentLoader->request().url().hasSpecialScheme() && frame->document()->url().protocolIsInHTTPFamily())
+        policySourceDocumentLoader = frame->loader().documentLoader();
+
+    parameters.allowPrivacyProxy = policySourceDocumentLoader ? policySourceDocumentLoader->allowPrivacyProxy() : true;
 
     if (auto* document = frame->document()) {
         parameters.crossOriginEmbedderPolicy = document->crossOriginEmbedderPolicy();
@@ -348,7 +352,7 @@ static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadPara
         }
     }
 
-    auto networkConnectionIntegrityPolicy = mainFrameDocumentLoader ? mainFrameDocumentLoader->networkConnectionIntegrityPolicy() : OptionSet<NetworkConnectionIntegrity> { };
+    auto networkConnectionIntegrityPolicy = policySourceDocumentLoader ? policySourceDocumentLoader->networkConnectionIntegrityPolicy() : OptionSet<NetworkConnectionIntegrity> { };
     parameters.networkConnectionIntegrityPolicy = networkConnectionIntegrityPolicy;
 
     if (isMainFrameNavigation)
@@ -494,7 +498,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.isDisplayingInitialEmptyDocument = frame && frame->loader().stateMachine().isDisplayingInitialEmptyDocument();
     if (frame)
         loadParameters.effectiveSandboxFlags = frame->loader().effectiveSandboxFlags();
-    if (auto openerFrame = frame ? frame->loader().opener() : nullptr) {
+    if (auto* openerFrame = frame ? dynamicDowncast<LocalFrame>(frame->loader().opener()) : nullptr) {
         if (auto openerDocument = openerFrame->document())
             loadParameters.openerURL = openerDocument->url();
     }
@@ -651,12 +655,8 @@ static bool shouldClearReferrerOnHTTPSToHTTPRedirect(LocalFrame* frame)
 
 WebLoaderStrategy::SyncLoadResult WebLoaderStrategy::loadDataURLSynchronously(const ResourceRequest& request)
 {
-    auto mode = DataURLDecoder::Mode::Legacy;
-    if (request.requester() == ResourceRequestRequester::Fetch)
-        mode = DataURLDecoder::Mode::ForgivingBase64;
-
     SyncLoadResult result;
-    auto decodeResult = DataURLDecoder::decode(request.url(), mode);
+    auto decodeResult = DataURLDecoder::decode(request.url());
     if (!decodeResult) {
         WEBLOADERSTRATEGY_RELEASE_LOG_BASIC("loadDataURLSynchronously: decoding of data failed");
         result.error = internalError(request.url());

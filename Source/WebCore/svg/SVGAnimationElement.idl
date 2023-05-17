@@ -24,19 +24,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// https://svgwg.org/specs/animations/#InterfaceSVGAnimationElement
+
 [
     Exposed=Window
 ] interface SVGAnimationElement : SVGElement {
-    readonly attribute SVGElement targetElement;
+    readonly attribute SVGElement? targetElement;
 
-    unrestricted float getStartTime();
-    unrestricted float getCurrentTime();
-    unrestricted float getSimpleDuration();
+    float getStartTime();
+    float getCurrentTime();
+    float getSimpleDuration();
 
     undefined beginElement();
-    undefined beginElementAt(optional unrestricted float offset = NaN);
+    undefined beginElementAt(float offset);
     undefined endElement();
-    undefined endElementAt(optional unrestricted float offset = NaN);
+    undefined endElementAt(float offset);
 };
 
 SVGAnimationElement includes SVGTests;

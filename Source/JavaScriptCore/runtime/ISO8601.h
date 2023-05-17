@@ -165,10 +165,6 @@ public:
     {
         return m_epochNanoseconds == other.m_epochNanoseconds;
     }
-    constexpr bool operator!=(ExactTime other) const
-    {
-        return m_epochNanoseconds != other.m_epochNanoseconds;
-    }
     constexpr bool operator>=(ExactTime other) const
     {
         return m_epochNanoseconds >= other.m_epochNanoseconds;
@@ -230,7 +226,6 @@ public:
             && lhs.microsecond() == rhs.microsecond()
             && lhs.nanosecond() == rhs.nanosecond();
     }
-    friend bool operator!=(PlainTime lhs, PlainTime rhs) { return !(lhs == rhs); }
 
 private:
     uint8_t m_hour { 0 };
@@ -267,7 +262,6 @@ public:
             && lhs.month() == rhs.month()
             && lhs.day() == rhs.day();
     }
-    friend bool operator!=(PlainDate lhs, PlainDate rhs) { return !(lhs == rhs); }
 
     int32_t year() const { return m_year; }
     uint8_t month() const { return m_month; }

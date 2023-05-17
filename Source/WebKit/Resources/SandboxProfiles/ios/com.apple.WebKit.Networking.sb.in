@@ -54,10 +54,20 @@
 (allow socket-option-set (with telemetry) (with report))
 (allow socket-option-get (with telemetry) (with report))
 
+(allow socket-option-get
+    (require-all
+        (socket-option-level SOL_SOCKET)
+        (socket-option-name SO_NREAD)))
+
+(allow socket-option-get
+    (require-all
+        (socket-option-level IPPROTO_IPV6)
+        (socket-option-name 125)))
+
 (allow socket-option-set
     (require-all
         (socket-option-level IPPROTO_IPV6)
-        (socket-option-name 27 61)))
+        (socket-option-name 27 35 36 61 62)))
 
 (allow socket-option-set
     (require-all
@@ -652,6 +662,10 @@
  ;; <rdar://problem/101780002>
 (allow mach-lookup 
     (global-name "com.apple.mobileasset.autoasset"))
+
+;; <rdar://106216542>
+(allow mach-lookup
+    (global-name "com.apple.ciphermld"))
 
 ;; <rdar://problem/103895412>
 (allow file-read*

@@ -51,8 +51,7 @@ public:
     JSObject* function() { return m_function.get(); }
 
 private:
-    WebAssemblyWrapperFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, WasmToWasmImportableFunction, RefPtr<const Wasm::RTT>);
-    void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSObject*, JSWebAssemblyInstance*);
+    WebAssemblyWrapperFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSWebAssemblyInstance*, JSObject* function, WasmToWasmImportableFunction, RefPtr<const Wasm::RTT>);
     DECLARE_VISIT_CHILDREN;
 
     WriteBarrier<JSObject> m_function;

@@ -22,12 +22,13 @@
 #include "config.h"
 #include "AutoTableLayout.h"
 
+#include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"
 #include "RenderFlexibleBox.h"
 #include "RenderGrid.h"
-#include "RenderTable.h"
-#include "RenderTableCell.h"
+#include "RenderTableCellInlines.h"
 #include "RenderTableCol.h"
+#include "RenderTableInlines.h"
 #include "RenderTableSection.h"
 #include "RenderView.h"
 
@@ -274,10 +275,10 @@ void AutoTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, Layout
 
 void AutoTableLayout::applyPreferredLogicalWidthQuirks(LayoutUnit& minWidth, LayoutUnit& maxWidth) const
 {
-    if (m_table->hasOverridingLogicalWidth())
-        minWidth = maxWidth = std::max(minWidth, m_table->overridingLogicalWidth());
-    else if (auto tableLogicalWidth = m_table->style().logicalWidth(); tableLogicalWidth.isFixed() && tableLogicalWidth.isPositive())
-        minWidth = maxWidth = std::max(minWidth, LayoutUnit(tableLogicalWidth.value()));
+    if (auto tableLogicalWidth = m_table->style().logicalWidth(); tableLogicalWidth.isFixed() && tableLogicalWidth.isPositive()) {
+        minWidth = std::max(minWidth, m_table->hasOverridingLogicalWidth() ? m_table->overridingLogicalWidth() : LayoutUnit(tableLogicalWidth.value()));
+        maxWidth = minWidth;
+    }
 }
 
 /*

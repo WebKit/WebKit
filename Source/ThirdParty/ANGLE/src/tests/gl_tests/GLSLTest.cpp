@@ -9590,7 +9590,7 @@ TEST_P(GLSLTest_ES31, ExceedCombinedShaderOutputResourcesInVSAndFS)
 
 // Test that assigning an assignment expression to a swizzled vector field in a user-defined
 // function works correctly.
-TEST_P(GLSLTest_ES3, AssignAssignmentToSwizzled)
+TEST_P(GLSLTest_ES3, AssignToSwizzled)
 {
     constexpr char kFS[] = R"(#version 300 es
 precision highp float;
@@ -9617,6 +9617,36 @@ void main()
     ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
     drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
+}
+
+// Similar to AssignToSwizzled, but uses other assignment operators than `=`.
+TEST_P(GLSLTest_ES3, AssignToSwizzled2)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 my_FragColor;
+
+uniform float uzero;
+
+vec3 fun(float s, float v)
+{
+    vec3 r = vec3(0.125, 0.5, 0.);
+    if (s < 1.0) {
+        r.x /= r.y *= r.z += v;
+        return r;
+    }
+    return r;
+}
+
+void main()
+{
+    my_FragColor.a = 1.0;
+    my_FragColor.rgb = fun(uzero, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program.get(), essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_NEAR(0, 0, 63, 127, 255, 255, 1);
 }
 
 // Test a fragment shader that returns inside if (that being the only branch that actually gets

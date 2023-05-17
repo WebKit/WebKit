@@ -63,7 +63,6 @@ public:
     bool isNativeImage() const;
     bool isNativeTextControl() const override;
     bool isSecureField() const override;
-    bool isProgressIndicator() const override;
     bool isSearchField() const override;
 
     bool isChecked() const override;
@@ -71,7 +70,13 @@ public:
     bool isIndeterminate() const override;
     bool isPressed() const override;
     bool isRequired() const override;
+    bool supportsARIAOwns() const final;
     bool supportsRequiredAttribute() const override;
+
+    bool supportsDropping() const override;
+    bool supportsDragging() const override;
+    bool isGrabbed() override;
+    Vector<String> determineDropEffects() const override;
 
     bool canSetSelectedAttribute() const override;
 
@@ -96,6 +101,7 @@ public:
 
     AccessibilityButtonState checkboxOrRadioValue() const override;
 
+    URL url() const override;
     unsigned hierarchicalLevel() const override;
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override;
     String accessibilityDescriptionForChildren() const;
@@ -114,6 +120,10 @@ public:
     Element* actionElement() const override;
     Element* mouseButtonListener(MouseButtonListenerResultFilter = ExcludeBodyElement) const;
     Element* anchorElement() const override;
+    AccessibilityObject* internalLinkElement() const;
+    void addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const;
+    void addRadioButtonGroupChildren(AXCoreObject&, AccessibilityChildrenVector&) const;
+    AccessibilityChildrenVector linkedObjects() const override;
     AccessibilityObject* menuForMenuButton() const;
    
     virtual void changeValueByPercent(float percentChange);
@@ -138,7 +148,6 @@ protected:
     void detachRemoteParts(AccessibilityDetachmentType) override;
 
     AccessibilityRole m_ariaRole { AccessibilityRole::Unknown };
-    mutable AccessibilityRole m_roleForMSAA { AccessibilityRole::Unknown };
 #ifndef NDEBUG
     bool m_initialized { false };
 #endif
@@ -156,6 +165,7 @@ protected:
     void clearChildren() override;
     void updateChildrenIfNecessary() override;
     bool canHaveChildren() const override;
+    AccessibilityChildrenVector visibleChildren() override;
     bool isDescendantOfBarrenParent() const override;
     void updateOwnedChildren();
     AccessibilityObject* ownerParentObject() const;
@@ -172,6 +182,7 @@ protected:
     const String liveRegionRelevant() const override;
     bool liveRegionAtomic() const override;
 
+    String accessKey() const final;
     bool isLabelable() const;
     AccessibilityObject* correspondingControlForLabelElement() const override;
     AccessibilityObject* correspondingLabelForControlElement() const override;
@@ -190,6 +201,7 @@ protected:
     AccessibilityObject* menuButtonForMenu() const;
     AccessibilityObject* captionForFigure() const;
     virtual void titleElementText(Vector<AccessibilityText>&) const;
+    AccessibilityObject* titleUIElement() const override;
     bool exposesTitleUIElement() const override;
 
 private:
@@ -217,4 +229,6 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityNodeObject, isAccessibilityNodeObject())
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AccessibilityNodeObject) \
+    static bool isType(const WebCore::AccessibilityObject& object) { return object.isAccessibilityNodeObject(); } \
+SPECIALIZE_TYPE_TRAITS_END()

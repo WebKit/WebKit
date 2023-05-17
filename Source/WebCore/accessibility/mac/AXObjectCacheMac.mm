@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -300,9 +300,9 @@ static void exerciseIsIgnored(AccessibilityObject& object)
 {
     object.updateBackingStore();
     if (object.isAttachment()) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [[object.wrapper() attachmentView] accessibilityIsIgnored];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
         return;
     }
@@ -366,7 +366,7 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotificatio
         else
             macNotification = NSAccessibilitySelectedChildrenChangedNotification;
         break;
-    case AXSelectedCellChanged:
+    case AXSelectedCellsChanged:
         macNotification = NSAccessibilitySelectedCellsChangedNotification;
         break;
     case AXSelectedTextChanged:
@@ -574,6 +574,8 @@ static void postUserInfoForChanges(AXCoreObject& rootWebArea, AXCoreObject& obje
         [userInfo setObject:wrapper forKey:NSAccessibilityTextChangeElement];
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         createIsolatedObjectIfNeeded(object, pageID);
+#else
+        UNUSED_PARAM(pageID);
 #endif
     }
 
@@ -662,6 +664,12 @@ bool AXObjectCache::clientSupportsIsolatedTree()
         || client == kAXClientTypeXCTest);
 }
 
+bool AXObjectCache::isTestClient()
+{
+    auto client = _AXGetClientForCurrentRequestUntrusted();
+    return UNLIKELY(client == kAXClientTypeWebKitTesting || client == kAXClientTypeXCTest);
+}
+
 bool AXObjectCache::isIsolatedTreeEnabled()
 {
     static std::atomic<bool> enabled { false };
@@ -700,21 +708,14 @@ bool AXObjectCache::usedOnAXThread()
 // TextMarker and TextMarkerRange funcstions.
 // FIXME: TextMarker and TextMarkerRange should become classes wrapping the system objects.
 
-static RetainPtr<AXTextMarkerRangeRef> AXTextMarkerRange(AXTextMarkerRef startMarker, AXTextMarkerRef endMarker)
+RetainPtr<AXTextMarkerRangeRef> textMarkerRangeFromMarkers(AXTextMarkerRef startMarker, AXTextMarkerRef endMarker)
 {
-    ASSERT(startMarker);
-    ASSERT(endMarker);
+    if (!startMarker || !endMarker)
+        return nil;
+
     ASSERT(CFGetTypeID((__bridge CFTypeRef)startMarker) == AXTextMarkerGetTypeID());
     ASSERT(CFGetTypeID((__bridge CFTypeRef)endMarker) == AXTextMarkerGetTypeID());
     return adoptCF(AXTextMarkerRangeCreate(kCFAllocatorDefault, startMarker, endMarker));
-}
-
-RetainPtr<AXTextMarkerRangeRef> textMarkerRangeFromMarkers(AXTextMarkerRef textMarker1, AXTextMarkerRef textMarker2)
-{
-    if (!textMarker1 || !textMarker2)
-        return nil;
-
-    return AXTextMarkerRange(textMarker1, textMarker2);
 }
 
 static RetainPtr<AXTextMarkerRef> AXTextMarkerRangeStart(AXTextMarkerRangeRef textMarkerRange)

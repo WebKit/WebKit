@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *  Copyright (C) 2015 Canon Inc. All rights reserved.
@@ -104,7 +104,7 @@ JSFunction::JSFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* glo
     ASSERT(structure->globalObject() == globalObject);
 }
 
-
+#if ASSERT_ENABLED
 void JSFunction::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
@@ -114,6 +114,7 @@ void JSFunction::finishCreation(VM& vm)
     ASSERT(methodTable()->getConstructData == &JSFunction::getConstructData);
     ASSERT(methodTable()->getCallData == &JSFunction::getCallData);
 }
+#endif
 
 void JSFunction::finishCreation(VM& vm, NativeExecutable*, unsigned length, const String& name)
 {

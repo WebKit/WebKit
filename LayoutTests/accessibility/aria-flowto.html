@@ -10,33 +10,38 @@
 <div>Item 2</div>
 <div>Item 3</div>
 
+<div tabindex=0 id="display-contents-img" role="img" aria-flowto="extra3" style="display:contents">Foo img</div>
+
 <div id="extra" role="button">BUTTON</div>
 <div id="extra2" role="radio">RADIO BUTTON</div>
+<div id="extra3" role="button">Foo button</div>
 
 <script>
-    var testOutput = "This tests that aria-flowto correctly identifies the right elements.\n\n";
+var output = "This tests that aria-flowto correctly identifies the right elements.\n\n";
 
-    if (window.accessibilityController) {
-        window.jsTestIsAsync = true;
-        var item;
-        setTimeout(function() {
-            item = accessibilityController.accessibleElementById("item1");
-            testOutput += expect("item.ariaFlowToElementAtIndex(0).role", "'AXRole: AXButton'");
-            testOutput += expect("item.ariaFlowToElementAtIndex(0).title", "'AXTitle: BUTTON'");
-            testOutput += expect("item.ariaFlowToElementAtIndex(1).role", "'AXRole: AXRadioButton'");
-            testOutput += expect("item.ariaFlowToElementAtIndex(1).title", "'AXTitle: RADIO BUTTON'");
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    var item, displayContentsImg;
+    setTimeout(async function() {
+        item = accessibilityController.accessibleElementById("item1");
+        displayContentsImg = accessibilityController.accessibleElementById("display-contents-img");
+        output += expect("item.ariaFlowToElementAtIndex(0).role", "'AXRole: AXButton'");
+        output += expect("item.ariaFlowToElementAtIndex(0).title", "'AXTitle: BUTTON'");
+        output += expect("item.ariaFlowToElementAtIndex(1).role", "'AXRole: AXRadioButton'");
+        output += expect("item.ariaFlowToElementAtIndex(1).title", "'AXTitle: RADIO BUTTON'");
+        output += expect("displayContentsImg.ariaFlowToElementAtIndex(0).role", "'AXRole: AXButton'");
+        output += expect("displayContentsImg.ariaFlowToElementAtIndex(0).title", "'AXTitle: Foo button'");
 
-            testOutput += "\nRemoving id 'extra' from #item1's aria-flowto.\n";
+        output += "\nRemoving id 'extra' from #item1's aria-flowto.\n";
 
-            document.getElementById("item1").setAttribute("aria-flowto", "extra2");
+        document.getElementById("item1").setAttribute("aria-flowto", "extra2");
+        output += await expectAsync("item.ariaFlowToElementAtIndex(0).role", "'AXRole: AXRadioButton'");
+        output += await expectAsync("item.ariaFlowToElementAtIndex(0).title", "'AXTitle: RADIO BUTTON'");
 
-            testOutput += expect("item.ariaFlowToElementAtIndex(0).role", "'AXRole: AXRadioButton'");
-            testOutput += expect("item.ariaFlowToElementAtIndex(0).title", "'AXTitle: RADIO BUTTON'");
-
-            debug(testOutput);
-            finishJSTest();
-        }, 0);
-    }
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
 </body>
 </html>

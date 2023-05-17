@@ -113,7 +113,6 @@ public:
     void setNeedsDisplay(const WebCore::IntRect);
     void setNeedsDisplay();
 
-    void setDelegatedContentsFinishedEvent(const WebCore::PlatformCALayerDelegatedContentsFinishedEvent&);
     void setDelegatedContents(const WebCore::PlatformCALayerDelegatedContents&);
 
     // Returns true if we need to encode the buffer.
@@ -181,6 +180,7 @@ private:
 
     struct Buffer {
         RefPtr<WebCore::ImageBuffer> imageBuffer;
+        bool isCleared { false };
 
         explicit operator bool() const
         {
@@ -208,9 +208,12 @@ private:
     Buffer m_backBuffer;
     Buffer m_secondaryBackBuffer;
 
-    // FIXME: This should be removed and m_bufferHandle should be used to ref the buffer once ShareableBitmapHandle
+    std::optional<WebCore::IntRect> m_previouslyPaintedRect;
+
+    // FIXME: This should be removed and m_bufferHandle should be used to ref the buffer once ShareableBitmap::Handle
     // can be encoded multiple times. http://webkit.org/b/234169
     std::optional<MachSendRight> m_contentsBufferHandle;
+    std::optional<WebCore::RenderingResourceIdentifier> m_contentsRenderingResourceIdentifier;
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     RefPtr<WebCore::ImageBuffer> m_displayListBuffer;
@@ -234,7 +237,7 @@ public:
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RemoteLayerBackingStoreProperties&);
 
     enum class LayerContentsType { IOSurface, CAMachPort, CachedIOSurface };
-    void applyBackingStoreToLayer(CALayer *, LayerContentsType, bool replayCGDisplayListsIntoBackingStore);
+    void applyBackingStoreToLayer(CALayer *, LayerContentsType, std::optional<WebCore::RenderingResourceIdentifier>, bool replayCGDisplayListsIntoBackingStore);
 
     void updateCachedBuffers(RemoteLayerTreeNode&, LayerContentsType);
 

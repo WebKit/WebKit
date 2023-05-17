@@ -241,10 +241,9 @@ static void drawViewlessCell(GraphicsContext& context, const FloatRect& rect, fl
     // FIXME: rdar://106067079 - Remove un-flipping the flipped coordinates.
     performDrawingWithUnflippedContext(context, rect, [&](const FloatRect& adjustedRect) {
         // FIXME: rdar://105250010 - Needs a nullable version of [NSCell drawFocusRingMaskWithFrame].
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnonnull"
+        IGNORE_NULL_CHECK_WARNINGS_BEGIN
         [cell drawWithFrame:adjustedRect inView:nil];
-#pragma clang diagnostic pop
+        IGNORE_NULL_CHECK_WARNINGS_END
     });
 }
 
@@ -279,10 +278,9 @@ static void drawViewlessCellFocusRing(GraphicsContext& context, const FloatRect&
     // FIXME: rdar://106067079 - Remove un-flipping the flipped coordinates.
     performDrawingWithUnflippedContext(context, rect, [&](const FloatRect& adjustedRect) {
         // FIXME: rdar://105250010 - Needs a nullable version of [NSCell drawFocusRingMaskWithFrame].
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnonnull"
+IGNORE_NULL_CHECK_WARNINGS_BEGIN
         [cell drawFocusRingMaskWithFrame:adjustedRect inView:nil];
-#pragma clang diagnostic pop
+IGNORE_NULL_CHECK_WARNINGS_END
     });
 }
 

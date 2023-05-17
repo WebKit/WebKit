@@ -57,11 +57,6 @@ struct Kind {
             && effects == other.effects;
     }
     
-    bool operator!=(const Kind& other) const
-    {
-        return !(*this == other);
-    }
-    
     unsigned hash() const
     {
         return static_cast<unsigned>(opcode) + (static_cast<unsigned>(effects) << 16);

@@ -106,6 +106,11 @@ public:
     CurlRequestScheduler& scheduler() { return *m_scheduler; }
     WEBCORE_EXPORT CurlStreamScheduler& streamScheduler();
 
+    // Alt-Svc
+    const String& alternativeServicesStorageFile() const { return m_alternativeServicesStorageFile; }
+    void setAlternativeServicesStorageFile(const String& cacheFile) { m_alternativeServicesStorageFile = cacheFile; }
+    void clearAlternativeServicesStorageFile();
+
     // Proxy
     const CurlProxySettings& proxySettings() const { return m_proxySettings; }
     void setProxySettings(const CurlProxySettings& settings) { m_proxySettings = settings; }
@@ -116,8 +121,10 @@ public:
     // SSL
     CurlSSLHandle& sslHandle() { return m_sslHandle; }
 
-    // HTTP/2
-    bool isHttp2Enabled() const;
+    // Supported features
+    bool isAltSvcEnabled() const { return m_isAltSvcEnabled; }
+    bool isHttp2Enabled() const { return m_isHttp2Enabled; }
+    bool isHttp3Enabled() const { return m_isHttp3Enabled; }
 
     // Timeout
     Seconds dnsCacheTimeout() const { return m_dnsCacheTimeout; }
@@ -138,9 +145,15 @@ private:
     CurlSSLHandle m_sslHandle;
     std::unique_ptr<CurlRequestScheduler> m_scheduler;
 
+    bool m_isAltSvcEnabled { false };
+    bool m_isHttp2Enabled { false };
+    bool m_isHttp3Enabled { false };
+
     Seconds m_dnsCacheTimeout { Seconds::fromMinutes(5) };
     Seconds m_connectTimeout { 30.0 };
     Seconds m_defaultTimeoutInterval { 60.0 };
+
+    String m_alternativeServicesStorageFile;
 
 #ifndef NDEBUG
     FILE* m_logFile { nullptr };
@@ -165,7 +178,6 @@ public:
     CURLMcode addHandle(CURL*);
     CURLMcode removeHandle(CURL*);
 
-    CURLMcode getFdSet(fd_set&, fd_set&, fd_set&, int&);
     CURLMcode poll(const Vector<curl_waitfd>&, int);
     CURLMcode wakeUp();
     CURLMcode perform(int&);
@@ -248,7 +260,6 @@ public:
     void enableHttpGetRequest();
     void enableHttpHeadRequest();
     void enableHttpPostRequest();
-    void setPostFields(const uint8_t*, long);
     void setPostFieldLarge(curl_off_t);
     void enableHttpPutRequest();
     void setInFileSizeLarge(curl_off_t);
@@ -258,6 +269,7 @@ public:
 
     void enableAcceptEncoding();
     void enableAllowedProtocols();
+    void enableAltSvc();
 
     void setHttpAuthUserPass(const String&, const String&, long authType = CURLAUTH_ANY);
 
@@ -298,8 +310,6 @@ public:
     void addExtraNetworkLoadMetrics(NetworkLoadMetrics&);
 
     std::optional<CertificateInfo> certificateInfo() const;
-
-    static long long maxCurlOffT();
 
     // socket
     Expected<curl_socket_t, CURLcode> getActiveSocket();

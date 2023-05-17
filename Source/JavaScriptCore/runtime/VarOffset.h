@@ -196,11 +196,6 @@ public:
             && m_offset == other.m_offset;
     }
     
-    bool operator!=(const VarOffset& other) const
-    {
-        return !(*this == other);
-    }
-    
     unsigned hash() const
     {
         return WTF::IntHash<unsigned>::hash((static_cast<unsigned>(m_kind) << 20) + m_offset);

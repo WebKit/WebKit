@@ -28,6 +28,7 @@
 
 #import "CookieStorageUtilsCF.h"
 #import "DefaultWebBrowserChecks.h"
+#import "LegacyGlobalSettings.h"
 #import "NetworkProcessProxy.h"
 #import "SandboxUtilities.h"
 #import "UnifiedOriginStorageLevel.h"
@@ -62,6 +63,11 @@
 
 namespace WebKit {
 
+static constexpr double defaultBrowserTotalQuotaRatio = 0.8;
+static constexpr double defaultBrowserOriginQuotaRatio = 0.6;
+static constexpr double defaultAppTotalQuotaRatio = 0.2;
+static constexpr double defaultAppOriginQuotaRatio = 0.15;
+
 static HashSet<WebsiteDataStore*>& dataStores()
 {
     static NeverDestroyed<HashSet<WebsiteDataStore*>> dataStores;
@@ -89,7 +95,7 @@ static std::atomic<bool> hasInitializedManagedDomains = false;
 static std::atomic<bool> managedKeyExists = false;
 #endif
 
-static bool experimentalFeatureEnabled(const String& key, bool defaultValue = false)
+bool experimentalFeatureEnabled(const String& key, bool defaultValue)
 {
     auto defaultsKey = adoptNS([[NSString alloc] initWithFormat:@"WebKitExperimental%@", static_cast<NSString *>(key)]);
     if ([[NSUserDefaults standardUserDefaults] objectForKey:defaultsKey.get()] != nil)
@@ -179,7 +185,7 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     if (!httpsProxy.isValid() && (isSafari || isMiniBrowser))
         httpsProxy = URL { [defaults stringForKey:(NSString *)WebKit2HTTPSProxyDefaultsKey] };
 
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
     SandboxExtension::Handle alternativeServiceStorageDirectoryExtensionHandle;
     String alternativeServiceStorageDirectory = resolvedAlternativeServicesStorageDirectory();
     createHandleFromResolvedPathIfPossible(alternativeServiceStorageDirectory, alternativeServiceStorageDirectoryExtensionHandle);
@@ -193,7 +199,7 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     parameters.networkSessionParameters.shouldLogCookieInformation = shouldLogCookieInformation;
     parameters.networkSessionParameters.httpProxy = WTFMove(httpProxy);
     parameters.networkSessionParameters.httpsProxy = WTFMove(httpsProxy);
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
     parameters.networkSessionParameters.alternativeServiceDirectory = WTFMove(alternativeServiceStorageDirectory);
     parameters.networkSessionParameters.alternativeServiceDirectoryExtensionHandle = WTFMove(alternativeServiceStorageDirectoryExtensionHandle);
 #endif
@@ -847,9 +853,19 @@ bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String& enti
     return WTF::hasEntitlement(networkProcess().connection()->xpcConnection(), entitlement);
 }
 
+std::optional<double> WebsiteDataStore::defaultOriginQuotaRatio()
+{
+    return isFullWebBrowserOrRunningTest() ? defaultBrowserOriginQuotaRatio : defaultAppOriginQuotaRatio;
+}
+
+std::optional<double> WebsiteDataStore::defaultTotalQuotaRatio()
+{
+    return isFullWebBrowserOrRunningTest() ? defaultBrowserTotalQuotaRatio : defaultAppTotalQuotaRatio;
+}
+
 UnifiedOriginStorageLevel WebsiteDataStore::defaultUnifiedOriginStorageLevel()
 {
-    auto defaultUnifiedOriginStorageLevelValue = UnifiedOriginStorageLevel::Basic;
+    auto defaultUnifiedOriginStorageLevelValue = UnifiedOriginStorageLevel::Standard;
     NSString* unifiedOriginStorageLevelKey = @"WebKitDebugUnifiedOriginStorageLevel";
     if ([[NSUserDefaults standardUserDefaults] objectForKey:unifiedOriginStorageLevelKey] == nil)
         return defaultUnifiedOriginStorageLevelValue;

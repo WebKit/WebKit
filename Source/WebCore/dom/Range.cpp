@@ -44,6 +44,7 @@
 #include "NodeWithIndex.h"
 #include "ProcessingInstruction.h"
 #include "ScopedEventQueue.h"
+#include "ShadowRoot.h"
 #include "TextIterator.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "VisibleUnits.h"
@@ -179,7 +180,7 @@ ExceptionOr<short> Range::comparePoint(Node& container, unsigned offset) const
     auto ordering = treeOrder({ container, offset }, makeSimpleRange(*this));
     if (is_lt(ordering))
         return -1;
-    if (is_eq(ordering))
+    if (WebCore::is_eq(ordering))
         return 0;
     if (is_gt(ordering))
         return 1;
@@ -247,7 +248,7 @@ ExceptionOr<short> Range::compareBoundaryPoints(unsigned short how, const Range&
     auto ordering = treeOrder(makeBoundaryPoint(*thisPoint), makeBoundaryPoint(*otherPoint));
     if (is_lt(ordering))
         return -1;
-    if (is_eq(ordering))
+    if (WebCore::is_eq(ordering))
         return 0;
     if (is_gt(ordering))
         return 1;
@@ -575,6 +576,10 @@ ExceptionOr<RefPtr<Node>> processAncestorsAndTheirSiblings(Range::ActionType act
     RefPtr<Node> firstChildInAncestorToProcess = direction == ProcessContentsForward ? container->nextSibling() : container->previousSibling();
     for (auto& ancestor : ancestors) {
         if (action == Range::Extract || action == Range::Clone) {
+            if (auto shadowRoot = dynamicDowncast<ShadowRoot>(ancestor.get())) {
+                if (!shadowRoot->isCloneable())
+                    continue;
+            }
             auto clonedAncestor = ancestor->cloneNode(false); // Might have been removed already during mutation event.
             if (clonedContainer) {
                 auto result = clonedAncestor->appendChild(*clonedContainer);

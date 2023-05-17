@@ -525,6 +525,11 @@ JSValueRef AccessibilityUIElement::columnHeaders() const
     return makeJSArray({ });
 }
 
+JSValueRef AccessibilityUIElement::selectedCells() const
+{
+    return makeJSArray({ });
+}
+
 static JSValueRef elementsForRelation(WebCore::AccessibilityObjectAtspi* element, WebCore::Atspi::Relation relation)
 {
     element->updateBackingStore();

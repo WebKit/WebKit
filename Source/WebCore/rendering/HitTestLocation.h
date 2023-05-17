@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "FloatQuad.h"
 #include "RoundedRect.h"
 
 namespace WebCore {

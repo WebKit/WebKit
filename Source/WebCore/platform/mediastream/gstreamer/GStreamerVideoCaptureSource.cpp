@@ -247,7 +247,6 @@ const RealtimeMediaSourceSettings& GStreamerVideoCaptureSource::settings()
     m_currentSettings->setWidth(size().width());
     m_currentSettings->setHeight(size().height());
     m_currentSettings->setFrameRate(frameRate());
-    m_currentSettings->setAspectRatio(aspectRatio());
     m_currentSettings->setFacingMode(facingMode());
     return m_currentSettings.value();
 }

@@ -17,7 +17,7 @@ AXPosition: { 234.000, 27.0000 }
 AXSize: { 144.000, 66.0000 }
 AXTitle:
 AXDescription:
-AXValue: Ruritanian<\n>Population <\n>Survey
+AXValue: Ruritanian<\n>Population<\n>Survey
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
@@ -57,7 +57,7 @@ AXPosition: { 227.000, 27.0000 }
 AXSize: { 143.000, 66.0000 }
 AXTitle:
 AXDescription:
-AXValue: Ruritanian<\n>Population <\n>Survey
+AXValue: Ruritanian<\n>Population<\n>Survey
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0

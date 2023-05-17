@@ -57,8 +57,9 @@ public:
     DECLARE_VISIT_CHILDREN;
 
 private:
-    IntlSegments(VM&, Structure*, std::unique_ptr<UBreakIterator, UBreakIteratorDeleter>&&, Box<Vector<UChar>>&&, IntlSegmenter::Granularity);
-    void finishCreation(VM&, JSString*);
+    IntlSegments(VM&, Structure*, std::unique_ptr<UBreakIterator, UBreakIteratorDeleter>&&, Box<Vector<UChar>>&&, IntlSegmenter::Granularity, JSString*);
+
+    DECLARE_DEFAULT_FINISH_CREATION;
 
     std::unique_ptr<UBreakIterator, UBreakIteratorDeleter> m_segmenter;
     Box<Vector<UChar>> m_buffer;

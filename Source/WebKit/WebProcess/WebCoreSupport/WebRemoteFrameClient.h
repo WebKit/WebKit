@@ -40,6 +40,7 @@ public:
     ~WebRemoteFrameClient();
 
     WebFrame& webFrame() const { return m_frame.get(); }
+    ScopeExit<Function<void()>> takeFrameInvalidator() { return WTFMove(m_frameInvalidator); }
 
 private:
     void frameDetached() final;

@@ -75,7 +75,6 @@ struct MarkedText {
     AtomString highlightName { };
 
     bool isEmpty() const { return endOffset <= startOffset; }
-    bool operator!=(const MarkedText& other) const { return !(*this == other); }
     bool operator==(const MarkedText& other) const
     {
         return startOffset == other.startOffset && endOffset == other.endOffset && type == other.type && marker == other.marker && highlightName == other.highlightName;

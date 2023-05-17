@@ -2134,8 +2134,12 @@ angle::Result FramebufferVk::syncState(const gl::Context *context,
         // multisampled-render-to-texture, then srcFramebuffer->getSamples(context) gives > 1, but
         // there's no resolve happening as the read buffer's single sampled image will be used as
         // blit src. FramebufferVk::blit() will handle those details for us.
-        ANGLE_TRY(
-            contextVk->flushCommandsAndEndRenderPass(RenderPassClosureReason::FramebufferChange));
+
+        // ContextVk::onFramebufferChange will end up calling onRenderPassFinished if necessary,
+        // whih will trigger ending of current render pass if needed. But we still need to reset
+        // mLastRenderPassQueueSerial so that it will not get reactivated, since the
+        // mCurrentFramebufferDesc has changed.
+        mLastRenderPassQueueSerial = QueueSerial();
     }
 
     updateRenderPassDesc(contextVk);

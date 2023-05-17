@@ -60,5 +60,5 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLAllCollection, DocAll)
-SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLAllNamedSubCollection, DocumentAllNamedItems)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLAllCollection, CollectionType::DocAll)
+SPECIALIZE_TYPE_TRAITS_HTMLCOLLECTION(HTMLAllNamedSubCollection, CollectionType::DocumentAllNamedItems)

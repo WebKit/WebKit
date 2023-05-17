@@ -1,5 +1,0 @@
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT WebSockets: sending non-ascii, combining chars and non-BMP Test timed out
-

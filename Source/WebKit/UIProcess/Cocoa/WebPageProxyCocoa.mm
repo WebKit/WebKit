@@ -36,7 +36,6 @@
 #import "InsertTextOptions.h"
 #import "LoadParameters.h"
 #import "MessageSenderInlines.h"
-#import "ModalContainerControlClassifier.h"
 #import "NetworkConnectionIntegrityHelpers.h"
 #import "PageClient.h"
 #import "PlaybackSessionManagerProxy.h"
@@ -241,7 +240,7 @@ void WebPageProxy::contentFilterDidBlockLoadForFrameShared(Ref<WebProcessProxy>&
 
 void WebPageProxy::addPlatformLoadParameters(WebProcessProxy& process, LoadParameters& loadParameters)
 {
-    loadParameters.dataDetectionContext = m_uiClient->dataDetectionContext();
+    loadParameters.dataDetectionReferenceDate = m_uiClient->dataDetectionReferenceDate();
 
 #if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     loadParameters.networkExtensionSandboxExtensionHandles = createNetworkExtensionsSandboxExtensions(process);
@@ -293,9 +292,9 @@ bool WebPageProxy::scrollingUpdatesDisabledForTesting()
 
 #if ENABLE(DRAG_SUPPORT)
 
-void WebPageProxy::startDrag(const DragItem& dragItem, const ShareableBitmapHandle& dragImageHandle)
+void WebPageProxy::startDrag(const DragItem& dragItem, ShareableBitmap::Handle&& dragImageHandle)
 {
-    pageClient().startDrag(dragItem, dragImageHandle);
+    pageClient().startDrag(dragItem, WTFMove(dragImageHandle));
 }
 
 #endif
@@ -604,7 +603,7 @@ void WebPageProxy::fullscreenVideoTextRecognitionTimerFired()
         return;
 
     auto identifier = *internals().currentFullscreenVideoSessionIdentifier;
-    m_videoFullscreenManager->requestBitmapImageForCurrentTime(identifier, [identifier, weakThis = WeakPtr { *this }](auto& imageHandle) {
+    m_videoFullscreenManager->requestBitmapImageForCurrentTime(identifier, [identifier, weakThis = WeakPtr { *this }](auto&& imageHandle) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || protectedThis->internals().currentFullscreenVideoSessionIdentifier != identifier)
             return;
@@ -615,7 +614,7 @@ void WebPageProxy::fullscreenVideoTextRecognitionTimerFired()
 
 #if PLATFORM(IOS_FAMILY)
         if (RetainPtr controller = fullscreenManager->playerViewController(identifier))
-            protectedThis->pageClient().beginTextRecognitionForFullscreenVideo(imageHandle, controller.get());
+            protectedThis->pageClient().beginTextRecognitionForFullscreenVideo(WTFMove(imageHandle), controller.get());
 #endif
     });
 }
@@ -942,11 +941,6 @@ bool WebPageProxy::isQuarantinedAndNotUserApproved(const String& fileURLString)
     return true;
 }
 #endif
-
-void WebPageProxy::classifyModalContainerControls(Vector<String>&& texts, CompletionHandler<void(Vector<ModalContainerControlType>&&)>&& completion)
-{
-    ModalContainerControlClassifier::sharedClassifier().classify(WTFMove(texts), WTFMove(completion));
-}
 
 void WebPageProxy::replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference& data)
 {

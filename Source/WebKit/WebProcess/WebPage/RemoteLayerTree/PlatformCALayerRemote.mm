@@ -724,13 +724,6 @@ void PlatformCALayerRemote::setContents(CFTypeRef value)
         m_properties.backingStore->clearBackingStore();
 }
 
-void PlatformCALayerRemote::setDelegatedContentsFinishedEvent(const PlatformCALayerDelegatedContentsFinishedEvent& event)
-{
-    ASSERT(m_acceleratesDrawing);
-    ensureBackingStore();
-    m_properties.backingStore->setDelegatedContentsFinishedEvent(event);
-}
-
 void PlatformCALayerRemote::setDelegatedContents(const PlatformCALayerDelegatedContents& contents)
 {
     ASSERT(m_acceleratesDrawing);

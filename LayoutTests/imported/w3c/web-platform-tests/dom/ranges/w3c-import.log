@@ -31,6 +31,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-insertNode.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-intersectsNode-2.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-intersectsNode-binding.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-intersectsNode-shadow.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-intersectsNode.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-isPointInRange.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/ranges/Range-mutations-appendChild.html

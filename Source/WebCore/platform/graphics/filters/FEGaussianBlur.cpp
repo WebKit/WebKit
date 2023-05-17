@@ -45,6 +45,14 @@ FEGaussianBlur::FEGaussianBlur(float x, float y, EdgeModeType edgeMode)
 {
 }
 
+bool FEGaussianBlur::operator==(const FEGaussianBlur& other) const
+{
+    return FilterEffect::operator==(other)
+        && m_stdX == other.m_stdX
+        && m_stdY == other.m_stdY
+        && m_edgeMode == other.m_edgeMode;
+}
+
 bool FEGaussianBlur::setStdDeviationX(float stdX)
 {
     if (m_stdX == stdX)
@@ -112,7 +120,7 @@ IntSize FEGaussianBlur::calculateOutsetSize(FloatSize stdDeviation)
     return { 3 * kernelSize.width() / 2, 3 * kernelSize.height() / 2 };
 }
 
-FloatRect FEGaussianBlur::calculateImageRect(const Filter& filter, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const
+FloatRect FEGaussianBlur::calculateImageRect(const Filter& filter, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const
 {
     auto imageRect = inputImageRects[0];
 

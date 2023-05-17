@@ -291,12 +291,7 @@ public:
         }
         return true;
     }
-    
-    bool operator!=(const FastBitVectorImpl& other) const
-    {
-        return !(*this == other);
-    }
-    
+
     bool at(size_t index) const
     {
         return atImpl(index);

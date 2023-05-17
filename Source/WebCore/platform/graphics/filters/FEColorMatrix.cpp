@@ -47,6 +47,13 @@ FEColorMatrix::FEColorMatrix(ColorMatrixType type, Vector<float>&& values)
 {
 }
 
+bool FEColorMatrix::operator==(const FEColorMatrix& other) const
+{
+    return FilterEffect::operator==(other)
+        && m_type == other.m_type
+        && m_values == other.m_values;
+}
+
 bool FEColorMatrix::setType(ColorMatrixType type)
 {
     if (m_type == type)

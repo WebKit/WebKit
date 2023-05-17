@@ -242,14 +242,25 @@ bool JSGenericTypedArrayView<Adaptor>::setWithSpecificType(
     }
     
     // Fail: we need an intermediate transfer buffer (i.e. case (3)).
-    Vector<typename Adaptor::Type, 32> transferBuffer(length);
-    for (size_t i = length; i--;) {
-        transferBuffer[i] = OtherAdaptor::template convertTo<Adaptor>(
-            other->getIndexQuicklyAsNativeValue(i + otherOffset));
+    auto transfer = [&] (auto& buffer) {
+        for (size_t i = length; i--;) {
+            buffer[i] = OtherAdaptor::template convertTo<Adaptor>(
+                other->getIndexQuicklyAsNativeValue(i + otherOffset));
+        }
+        for (size_t i = length; i--;)
+            setIndexQuicklyToNativeValue(offset + i, buffer[i]);
+    };
+
+    if (WTF::isValidCapacityForVector<typename Adaptor::Type>(length)) {
+        Vector<typename Adaptor::Type, 32> buffer(length);
+        transfer(buffer);
+    } else {
+        Checked<size_t> sizeToAllocate = length;
+        sizeToAllocate *= sizeof(typename Adaptor::Type);
+        UniqueArray<typename Adaptor::Type> buffer = makeUniqueArray<typename Adaptor::Type>(sizeToAllocate);
+        transfer(buffer);
     }
-    for (size_t i = length; i--;)
-        setIndexQuicklyToNativeValue(offset + i, transferBuffer[i]);
-    
+
     return true;
 }
 

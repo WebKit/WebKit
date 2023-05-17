@@ -1,5 +1,4 @@
 
-RUN(internals.setUserPreferredLanguages(["jp", "fr", "es-EN", "en"]))
 EVENT(canplaythrough)
 EXPECTED (video.audioTracks.length == '3') OK
 EXPECTED (video.audioTracks[0].enabled == 'false') OK

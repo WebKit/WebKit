@@ -3086,7 +3086,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 149C282D08902B0F008A9EFC /* Build configuration list for PBXNativeTarget "WebKitLegacy" */;
 			buildPhases = (
-				5D2F7DB70C687A5A00B5B72B /* Update Info.plist with version information */,
 				7C02321B251B9A8A00BA7BB6 /* Generate Preferences */,
 				9398100D0824BF01008DF038 /* Headers */,
 				DD7AF5CF298C51C90059E87E /* Migrate WebCore Headers and Generate Export List */,
@@ -3296,22 +3295,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../../Tools/Scripts/check-for-weak-vtables-and-externals || exit $?\nfi\n";
-		};
-		5D2F7DB70C687A5A00B5B72B /* Update Info.plist with version information */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/../../Configurations/Version.xcconfig",
-			);
-			name = "Update Info.plist with version information";
-			outputPaths = (
-				"$(SRCROOT)/mac/Info.plist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\nif [[ \"${CONFIGURATION}\" != \"Production\" ]]; then\n    touch \"${SRCROOT}/mac/Info.plist\";\nfi;\n";
 		};
 		650473452789431C00AF78A2 /* Create Symlink to Alt Root Path */ = {
 			isa = PBXShellScriptBuildPhase;

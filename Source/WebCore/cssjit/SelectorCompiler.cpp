@@ -40,7 +40,6 @@
 #include "FunctionCall.h"
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
-#include "HTMLParserIdioms.h"
 #include "InspectorInstrumentation.h"
 #include "NodeRenderStyle.h"
 #include "QualifiedName.h"
@@ -1507,7 +1506,7 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             break;
         }
         case CSSSelector::List:
-            if (selector->value().find(isHTMLSpace<UChar>) != notFound)
+            if (selector->value().find(isASCIIWhitespace<UChar>) != notFound)
                 return FunctionType::CannotMatchAnything;
             FALLTHROUGH;
         case CSSSelector::Begin:
@@ -2267,7 +2266,7 @@ inline void SelectorCodeGenerator::generateReturn()
 {
 #if CPU(ARM64E)
     if (JSC::Options::useJITCage()) {
-        m_assembler.farJump(Assembler::TrustedImmPtr(retagCodePtr<void*, CFunctionPtrTag, JSC::OperationPtrTag>(&vmEntryToCSSJITAfter)), JSC::OperationPtrTag);
+        m_assembler.farJump(Assembler::TrustedImmPtr(retagCodePtr<void*, CFunctionPtrTag, JSC::OperationPtrTag>(&JSC::vmEntryToCSSJITAfter)), JSC::OperationPtrTag);
         return;
     }
 #endif
@@ -3503,9 +3502,9 @@ static bool attributeValueSpaceSeparatedListContains(const Attribute* attribute,
             foundPos = value.findIgnoringASCIICase(expectedString, startSearchAt);
         if (foundPos == notFound)
             return false;
-        if (!foundPos || isHTMLSpace(value[foundPos - 1])) {
+        if (!foundPos || isASCIIWhitespace(value[foundPos - 1])) {
             unsigned endStr = foundPos + expectedString->length();
-            if (endStr == value.length() || isHTMLSpace(value[endStr]))
+            if (endStr == value.length() || isASCIIWhitespace(value[endStr]))
                 return true;
         }
         startSearchAt = foundPos + 1;

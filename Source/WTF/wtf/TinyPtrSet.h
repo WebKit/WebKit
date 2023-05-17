@@ -334,8 +334,7 @@ public:
             return *this;
         }
         bool operator==(const iterator& other) const { return m_index == other.m_index; }
-        bool operator!=(const iterator& other) const { return !(*this == other); }
-        
+
     private:
         const TinyPtrSet* m_set;
         size_t m_index;
@@ -349,11 +348,6 @@ public:
         if (size() != other.size())
             return false;
         return isSubsetOf(other);
-    }
-    
-    bool operator!=(const TinyPtrSet& other) const
-    {
-        return !(*this == other);
     }
     
 private:

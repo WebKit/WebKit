@@ -1,0 +1,29 @@
+This package was debianized by Peter Hawkins <peterh@debian.org> on
+Fri, 27 Sep 2002 12:42:49 +1000.
+
+It was downloaded from http://savannah.gnu.org/projects/freefont/
+
+Upstream Author: Primoz Peterlin <primoz.peterlin@biofiz.mf.uni-lj.si>
+Current Upstream Maintainer: Steve White <stevan.white@googlemail.com>
+
+Copyright:
+Freefont is a collection of free Universal Character Set outline fonts.
+Copyright © 2002-2009 Free Software Foundation.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+02110-1301, USA.
+
+On Debian GNU/Linux systems, the complete text of the GNU General
+Public License can be found in `/usr/share/common-licenses/GPL-3'.

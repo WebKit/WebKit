@@ -46,6 +46,11 @@ public:
         return m_screenSleepDisablerCount.count();
     }
 
+    void setScreenWakeLockHandler(Function<bool(bool shouldKeepScreenAwake)>&& screenWakeLockHandler)
+    {
+        m_screenWakeLockHandler = WTFMove(screenWakeLockHandler);
+    }
+
 private:
     friend NeverDestroyed<ScreenSleepDisabler, WTF::MainThreadAccessTraits>;
 
@@ -58,17 +63,25 @@ private:
         if (m_screenSleepDisablerCount.value() > 1)
             return;
 
-        bool idleTimerDisabled = !!m_screenSleepDisablerCount.value();
-        ensureOnMainRunLoop([idleTimerDisabled] {
-            [PAL::getUIApplicationClass() sharedApplication].idleTimerDisabled = idleTimerDisabled;
+        bool shouldKeepScreenAwake = !!m_screenSleepDisablerCount.value();
+        ensureOnMainRunLoop([this, shouldKeepScreenAwake] {
+            if (m_screenWakeLockHandler && m_screenWakeLockHandler(shouldKeepScreenAwake))
+                return;
+            [PAL::getUIApplicationClass() sharedApplication].idleTimerDisabled = shouldKeepScreenAwake;
         });
     }
     ScreenSleepDisablerCounter m_screenSleepDisablerCount;
+    Function<bool(bool shouldKeepScreenAwake)> m_screenWakeLockHandler;
 };
 
 void SleepDisablerCocoa::takeScreenSleepDisablingAssertion(const String&)
 {
     m_screenSleepDisablerToken = ScreenSleepDisabler::shared().takeAssertion();
+}
+
+void SleepDisablerCocoa::setScreenWakeLockHandler(Function<bool(bool shouldKeepScreenAwake)>&& screenWakeLockHandler)
+{
+    ScreenSleepDisabler::shared().setScreenWakeLockHandler(WTFMove(screenWakeLockHandler));
 }
 
 } // namespace PAL

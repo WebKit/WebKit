@@ -37,7 +37,7 @@ namespace WebCore::ContentExtensions {
 
 class DFABytecodeInterpreter {
 public:
-    DFABytecodeInterpreter(Span<const uint8_t> bytecode)
+    DFABytecodeInterpreter(std::span<const uint8_t> bytecode)
         : m_bytecode(bytecode) { }
 
     using Actions = HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
@@ -50,9 +50,9 @@ private:
     void interpretTestFlagsAndAppendAction(unsigned& programCounter, ResourceFlags, Actions&);
 
     template<bool caseSensitive>
-    void interpetJumpTable(Span<const char> url, uint32_t& urlIndex, uint32_t& programCounter);
+    void interpetJumpTable(std::span<const char> url, uint32_t& urlIndex, uint32_t& programCounter);
 
-    const Span<const uint8_t> m_bytecode;
+    const std::span<const uint8_t> m_bytecode;
 };
 
 } // namespace WebCore::ContentExtensions

@@ -29,6 +29,7 @@
 
 #if ENABLE(MATHML)
 
+#include "NodeName.h"
 #include "RenderMathMLPadded.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -75,17 +76,25 @@ const MathMLElement::Length& MathMLPaddedElement::voffset()
 
 void MathMLPaddedElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == widthAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::widthAttr:
         m_width = std::nullopt;
-    else if (name == heightAttr)
+        break;
+    case AttributeNames::heightAttr:
         m_height = std::nullopt;
-    else if (name == depthAttr)
+        break;
+    case AttributeNames::depthAttr:
         m_depth = std::nullopt;
-    else if (name == lspaceAttr)
+        break;
+    case AttributeNames::lspaceAttr:
         m_lspace = std::nullopt;
-    else if (name == voffsetAttr)
+        break;
+    case AttributeNames::voffsetAttr:
         m_voffset = std::nullopt;
-
+        break;
+    default:
+        break;
+    }
     MathMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 

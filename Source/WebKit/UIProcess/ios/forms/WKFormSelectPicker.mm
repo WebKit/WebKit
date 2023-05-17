@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -157,14 +157,18 @@ static const float GroupOptionTextColorAlpha = 0.5;
     [self _setUsesCheckedSelection:YES];
 
     [self _setMagnifierEnabled:NO];
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     UITextWritingDirection writingDirection = UITextWritingDirectionLeftToRight;
     // FIXME: retrieve from WebProcess writing direction.
     _textAlignment = (writingDirection == UITextWritingDirectionLeftToRight) ? NSTextAlignmentLeft : NSTextAlignmentRight;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     [self setAllowsMultipleSelection:_allowsMultipleSelection];
-    [self setSize:[UIKeyboard defaultSizeForInterfaceOrientation:view.interfaceOrientation]];
+
+    CGRect frame = self.frame;
+    frame.size = [UIKeyboard defaultSizeForInterfaceOrientation:view.interfaceOrientation];
+    [self setFrame:frame];
+
     [self reloadAllComponents];
 
     if (!_allowsMultipleSelection) {
@@ -277,7 +281,9 @@ static const float GroupOptionTextColorAlpha = 0.5;
     return itemIndex;
 }
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)pickerView:(UIPickerView *)pickerView row:(int)rowIndex column:(int)columnIndex checked:(BOOL)isChecked
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     auto numberOfOptions = static_cast<NSUInteger>([_view focusedSelectElementOptions].size());
     if (numberOfOptions <= static_cast<NSUInteger>(rowIndex))
@@ -321,7 +327,9 @@ static const float GroupOptionTextColorAlpha = 0.5;
     // FIXME: handle extendingSelection.
     [self selectRow:rowIndex inComponent:0 animated:NO];
     // Progammatic selection changes don't call the delegate, so do that manually.
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [self pickerView:self row:rowIndex column:0 checked:YES];
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (BOOL)selectFormAccessoryHasCheckedItemAtRow:(long)rowIndex
@@ -1167,11 +1175,11 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 
         UIPresentationController *presentationController = [_navigationController presentationController];
         presentationController.delegate = self;
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([presentationController isKindOfClass:[_UISheetPresentationController class]]) {
             _UISheetPresentationController *sheetPresentationController = (_UISheetPresentationController *)presentationController;
             sheetPresentationController._detents = @[_UISheetDetent._mediumDetent, _UISheetDetent._largeDetent];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
             sheetPresentationController._widthFollowsPreferredContentSizeWhenBottomAttached = YES;
             sheetPresentationController._wantsBottomAttachedInCompactHeight = YES;
         }

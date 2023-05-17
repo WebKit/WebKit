@@ -1,8 +1,10 @@
 // This should not crash.
 
-let o = $vm.createProxy({});
-o.__proto__ = o;
-
 try {
+    var object = { };
+    let global = $vm.createGlobalObject(object);
+    let o = $vm.createGlobalProxy(global);
+    object.__proto__ = o;
+
     for (let q in o) { }
 } catch { }

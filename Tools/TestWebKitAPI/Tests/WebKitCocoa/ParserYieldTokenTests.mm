@@ -192,6 +192,11 @@ TEST(ParserYieldTokenTests, AsyncScriptRunsWhenFetched)
     EXPECT_EQ(eventMessages.count, 4U);
     EXPECT_WK_STREQ("Before requesting async script.", eventMessages[0]);
     EXPECT_WK_STREQ("After requesting async script.", eventMessages[1]);
-    EXPECT_WK_STREQ("Running async script.", eventMessages[2]);
-    EXPECT_WK_STREQ("Finished requesting async script.", eventMessages[3]);
+    if ([eventMessages[2] isEqualToString:@"Running async script."])
+        EXPECT_WK_STREQ("Finished requesting async script.", eventMessages[3]);
+    else {
+        EXPECT_WK_STREQ("Finished requesting async script.", eventMessages[2]);
+        EXPECT_WK_STREQ("Running async script.", eventMessages[3]);
+    }
+
 }

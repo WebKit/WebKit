@@ -51,11 +51,6 @@ struct FontFamilySpecificationKey {
         return safeCFEqual(fontDescriptor.get(), other.fontDescriptor.get()) && fontDescriptionKey == other.fontDescriptionKey;
     }
 
-    bool operator!=(const FontFamilySpecificationKey& other) const
-    {
-        return !(*this == other);
-    }
-
     bool isHashTableDeletedValue() const { return fontDescriptionKey.isHashTableDeletedValue(); }
 };
 

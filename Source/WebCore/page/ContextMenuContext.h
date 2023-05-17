@@ -82,7 +82,7 @@ private:
     HitTestResult m_hitTestResult;
     RefPtr<Event> m_event;
     String m_selectedText;
-    bool m_hasEntireImage;
+    bool m_hasEntireImage { false };
 
 #if ENABLE(SERVICE_CONTROLS)
     RefPtr<Image> m_controlledImage;

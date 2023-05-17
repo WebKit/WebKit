@@ -5,6 +5,6 @@ Test 2 Popover 1
 PASS Popovers located inside shadow DOM can still be shown
 PASS anchor references do not cross shadow boundaries
 FAIL anchor references use the flat tree not the DOM tree assert_true: expected true got false
-FAIL The popover stack is preserved across shadow-inclusive ancestors assert_true: popover1 not open expected true got false
-FAIL Popover ancestor relationships are within a root, not within the document assert_true: popover1 not open expected true got false
+PASS The popover stack is preserved across shadow-inclusive ancestors
+PASS Popover ancestor relationships are within a root, not within the document
 

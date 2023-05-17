@@ -40,7 +40,6 @@ public:
     const T* operator->() const;
 
     bool operator==(const LayoutIterator& other) const;
-    bool operator!=(const LayoutIterator& other) const;
 
     LayoutIterator& traverseNext();
     LayoutIterator& traverseNextSibling();
@@ -188,12 +187,6 @@ inline bool LayoutIterator<T>::operator==(const LayoutIterator& other) const
 {
     ASSERT(m_root == other.m_root);
     return m_current == other.m_current;
-}
-
-template <typename T>
-inline bool LayoutIterator<T>::operator!=(const LayoutIterator& other) const
-{
-    return !(*this == other);
 }
 
 }

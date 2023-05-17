@@ -1,6 +1,4 @@
-var createProxy = $vm.createProxy;
-
-let foo = {};
+let foo = $vm.createGlobalObject();
 let properties = [];
 let p = new Proxy(foo, { get:(target, property) => {
     properties.push(property.toString());
@@ -19,7 +17,7 @@ for (i = 0; i < 5; i++) {
     properties = [];
 }
 
-p = createProxy(foo);
+p = $vm.createGlobalProxy(foo);
 
 for (i = 0; i < 5; i++) {
     let str = "bad things" + i;

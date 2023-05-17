@@ -56,6 +56,7 @@ SOFT_LINK_CONSTANT(MediaExperience, AVSystemController_PickableRouteType_Default
 
 SOFT_LINK_PRIVATE_FRAMEWORK(AudioSession)
 SOFT_LINK_CONSTANT(AudioSession, AVAudioSessionPortBuiltInMic, NSString *)
+SOFT_LINK_CONSTANT(AudioSession, AVAudioSessionPortHeadsetMic, NSString *)
 
 @interface WebAVAudioSessionAvailableInputsListener : NSObject {
     WebCore::AVAudioSessionCaptureDeviceManager* _callback;
@@ -291,12 +292,23 @@ Vector<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::retrieve
 
     auto availableInputs = [m_audioSession availableInputs];
 
+    NSString* builtinMicrophoneDefaultPortType = getAVAudioSessionPortBuiltInMic();
+    if (defaultMicrophoneInformation && defaultMicrophoneInformation->isBuiltInMicrophoneDefault) {
+        for (AVAudioSessionPortDescription *portDescription in availableInputs) {
+            if (portDescription.portType == getAVAudioSessionPortHeadsetMic()) {
+                RELEASE_LOG_INFO(WebRTC, "AVAudioSessionCaptureDeviceManager using headset microphone as builtin default");
+                builtinMicrophoneDefaultPortType = getAVAudioSessionPortHeadsetMic();
+                break;
+            }
+        }
+    }
+
     Vector<AVAudioSessionCaptureDevice> newAudioDevices;
     newAudioDevices.reserveInitialCapacity(availableInputs.count);
     for (AVAudioSessionPortDescription *portDescription in availableInputs) {
         auto device = AVAudioSessionCaptureDevice::create(portDescription, currentInput);
         if (defaultMicrophoneInformation)
-            device.setIsDefault((defaultMicrophoneInformation->isBuiltInMicrophoneDefault && portDescription.portType == getAVAudioSessionPortBuiltInMic()) || [portDescription.UID isEqualToString: defaultMicrophoneInformation->routeUID]);
+            device.setIsDefault((defaultMicrophoneInformation->isBuiltInMicrophoneDefault && portDescription.portType == builtinMicrophoneDefaultPortType) || [portDescription.UID isEqualToString: defaultMicrophoneInformation->routeUID]);
         newAudioDevices.uncheckedAppend(WTFMove(device));
     }
 

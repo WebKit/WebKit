@@ -42,11 +42,11 @@ public:
     enum Type { FloatLeft = 1, FloatRight = 2, FloatLeftRight = 3 };
 
     static std::unique_ptr<FloatingObject> create(RenderBox&);
-    std::unique_ptr<FloatingObject> copyToNewContainer(LayoutSize, bool shouldPaint = false, bool isDescendant = false) const;
+    std::unique_ptr<FloatingObject> copyToNewContainer(LayoutSize, bool shouldPaint = false, bool isDescendant = false, bool overflowClipped = false) const;
     std::unique_ptr<FloatingObject> cloneForNewParent() const;
 
     explicit FloatingObject(RenderBox&);
-    FloatingObject(RenderBox&, Type, const LayoutRect&, const LayoutSize&, bool shouldPaint, bool isDescendant);
+    FloatingObject(RenderBox&, Type, const LayoutRect&, const LayoutSize&, bool shouldPaint, bool isDescendant, bool overflowClipped);
 
     Type type() const { return static_cast<Type>(m_type); }
     RenderBox& renderer() const { ASSERT(m_renderer); return *m_renderer; }
@@ -84,6 +84,8 @@ public:
     bool paintsFloat() const { return m_paintsFloat; }
     void setPaintsFloat(bool paintsFloat) { m_paintsFloat = paintsFloat; }
 
+    bool hasAncestorWithOverflowClip() const { return m_hasAncestorWithOverflowClip; }
+
     bool isDescendant() const { return m_isDescendant; }
     void setIsDescendant(bool isDescendant) { m_isDescendant = isDescendant; }
 
@@ -109,11 +111,12 @@ private:
     LayoutUnit m_paginationStrut;
     LayoutSize m_marginOffset;
     unsigned m_type : 2; // Type (left or right aligned)
-    unsigned m_paintsFloat : 1;
-    unsigned m_isDescendant : 1;
-    unsigned m_isPlaced : 1;
+    unsigned m_paintsFloat : 1 { true };
+    unsigned m_isDescendant : 1 { false };
+    unsigned m_isPlaced : 1 { false };
+    unsigned m_hasAncestorWithOverflowClip : 1 { false };
 #if ASSERT_ENABLED
-    unsigned m_isInPlacedTree : 1;
+    unsigned m_isInPlacedTree : 1 { false };
 #endif
 };
 

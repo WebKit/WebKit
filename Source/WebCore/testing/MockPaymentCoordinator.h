@@ -28,7 +28,7 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePayInstallmentConfigurationWebCore.h"
-#include "ApplePayLaterMode.h"
+#include "ApplePayLaterAvailability.h"
 #include "ApplePayLineItem.h"
 #include "ApplePaySetupConfiguration.h"
 #include "ApplePayShippingContactEditingMode.h"
@@ -103,9 +103,11 @@ public:
     const std::optional<ApplePayDeferredPaymentRequest>& deferredPaymentRequest() const { return m_deferredPaymentRequest; }
 #endif
 
-#if ENABLE(APPLE_PAY_LATER_MODE)
-    const std::optional<ApplePayLaterMode> applePayLaterMode() const { return m_applePayLaterMode; }
+#if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
+    const std::optional<ApplePayLaterAvailability> applePayLaterAvailability() const { return m_applePayLaterAvailability; }
 #endif
+
+    bool installmentConfigurationReturnsNil() const;
 
     void ref() const { }
     void deref() const { }
@@ -174,8 +176,8 @@ private:
     std::optional<ApplePayDeferredPaymentRequest> m_deferredPaymentRequest;
 #endif
 
-#if ENABLE(APPLE_PAY_LATER_MODE)
-    std::optional<ApplePayLaterMode> m_applePayLaterMode;
+#if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
+    std::optional<ApplePayLaterAvailability> m_applePayLaterAvailability;
 #endif
 };
 

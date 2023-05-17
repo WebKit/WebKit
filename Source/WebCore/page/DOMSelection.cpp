@@ -30,6 +30,7 @@
 #include "config.h"
 #include "DOMSelection.h"
 
+#include "CommonAtomStrings.h"
 #include "Document.h"
 #include "Editing.h"
 #include "FrameSelection.h"
@@ -510,7 +511,7 @@ String DOMSelection::toString() const
     if (!frame)
         return String();
     if (frame->settings().liveRangeSelectionEnabled()) {
-        auto range = this->range();
+        auto range = frame->selection().selection().range();
         return range ? plainText(*range, TextIteratorBehavior::IgnoresUserSelectNone) : emptyString();
     }
     auto range = frame->selection().selection().firstRange();

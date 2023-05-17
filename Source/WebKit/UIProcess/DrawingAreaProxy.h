@@ -87,8 +87,6 @@ public:
     bool setSize(const WebCore::IntSize&, const WebCore::IntSize& scrollOffset = { });
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-    // The timeout we use when waiting for a UpdateGeometry reply.
-    static constexpr Seconds didUpdateBackingStoreStateTimeout() { return Seconds::fromMilliseconds(500); }
     virtual void targetRefreshRateDidChange(unsigned) { }
 #endif
 
@@ -161,9 +159,8 @@ private:
 #endif // PLATFORM(MAC)
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-    virtual void update(uint64_t /* backingStoreStateID */, const UpdateInfo&) { }
-    virtual void didUpdateBackingStoreState(uint64_t /* backingStoreStateID */, const UpdateInfo&, const LayerTreeContext&) { }
-    virtual void exitAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const UpdateInfo&) { }
+    virtual void update(uint64_t /* backingStoreStateID */, UpdateInfo&&) { }
+    virtual void exitAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, UpdateInfo&&) { }
 #endif
 };
 

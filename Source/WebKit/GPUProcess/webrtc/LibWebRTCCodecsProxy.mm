@@ -370,7 +370,7 @@ void LibWebRTCCodecsProxy::setSharedVideoFrameSemaphore(VideoEncoderIdentifier i
     encoder->frameReader->setSemaphore(WTFMove(semaphore));
 }
 
-void LibWebRTCCodecsProxy::setSharedVideoFrameMemory(VideoEncoderIdentifier identifier, const SharedMemory::Handle& handle)
+void LibWebRTCCodecsProxy::setSharedVideoFrameMemory(VideoEncoderIdentifier identifier, SharedMemory::Handle&& handle)
 {
     assertIsCurrent(workQueue());
     auto* encoder = findEncoder(identifier);
@@ -379,7 +379,7 @@ void LibWebRTCCodecsProxy::setSharedVideoFrameMemory(VideoEncoderIdentifier iden
         return;
     }
 
-    encoder->frameReader->setSharedMemory(handle);
+    encoder->frameReader->setSharedMemory(WTFMove(handle));
 }
 
 bool LibWebRTCCodecsProxy::allowsExitUnderMemoryPressure() const

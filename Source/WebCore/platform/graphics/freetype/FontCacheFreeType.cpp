@@ -463,10 +463,10 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     }
 #endif
 
-    auto size = fontDescription.computedPixelSize();
+    auto size = fontDescription.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
     FontPlatformData platformData(fontFace.get(), WTFMove(resultPattern), size, fixedWidth, syntheticBold, syntheticOblique, fontDescription.orientation());
 
-    platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust());
+    platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.computedPixelSize());
     auto platformDataUniquePtr = makeUnique<FontPlatformData>(platformData);
 
     // Verify that this font has an encoding compatible with Fontconfig. Fontconfig currently

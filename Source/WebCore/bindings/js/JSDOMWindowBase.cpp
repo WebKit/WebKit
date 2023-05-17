@@ -319,7 +319,7 @@ JSValue toJS(JSGlobalObject* lexicalGlobalObject, LocalDOMWindow& domWindow)
 
 JSLocalDOMWindow* toJSLocalDOMWindow(LocalFrame& frame, DOMWrapperWorld& world)
 {
-    return frame.script().globalObject(world);
+    return JSC::jsCast<JSLocalDOMWindow*>(frame.script().globalObject(world));
 }
 
 LocalDOMWindow& incumbentDOMWindow(JSGlobalObject& fallbackGlobalObject, CallFrame& callFrame)

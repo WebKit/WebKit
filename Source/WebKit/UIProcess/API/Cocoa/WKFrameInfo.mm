@@ -105,4 +105,9 @@
     return frame ? frame->processIdentifier() : 0;
 }
 
+- (BOOL)_isLocalFrame
+{
+    return _frameInfo->isLocalFrame();
+}
+
 @end

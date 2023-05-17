@@ -134,6 +134,11 @@ void RecorderImpl::recordClearShadow()
     append<ClearShadow>();
 }
 
+void RecorderImpl::recordResetClip()
+{
+    append<ResetClip>();
+}
+
 void RecorderImpl::recordClip(const FloatRect& clipRect)
 {
     append<Clip>(clipRect);
@@ -436,6 +441,12 @@ bool RecorderImpl::recordResourceUse(DecomposedGlyphs& decomposedGlyphs)
 bool RecorderImpl::recordResourceUse(Gradient& gradient)
 {
     m_displayList.cacheGradient(gradient);
+    return true;
+}
+
+bool RecorderImpl::recordResourceUse(Filter& filter)
+{
+    m_displayList.cacheFilter(filter);
     return true;
 }
 

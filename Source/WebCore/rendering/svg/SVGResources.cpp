@@ -48,7 +48,7 @@ SVGResources::SVGResources()
 {
 }
 
-static MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> tagSet(Span<decltype(SVGNames::aTag)* const> tags)
+static MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> tagSet(std::span<decltype(SVGNames::aTag)* const> tags)
 {
     MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
     set.reserveInitialCapacity(tags.size());

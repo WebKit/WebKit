@@ -300,17 +300,16 @@ typedef NS_ENUM(NSInteger, PKPaymentSetupFeatureType) {
 @end
 #endif
 
-#if HAVE(PASSKIT_APPLE_PAY_LATER_MODE)
+#if HAVE(PASSKIT_APPLE_PAY_LATER_AVAILABILITY)
 
-typedef NS_ENUM(NSUInteger, PKApplePayLaterMode) {
-    PKApplePayLaterModeEnabled,
-    PKApplePayLaterModeDisabledMerchantIneligible,
-    PKApplePayLaterModeDisabledItemIneligible,
-    PKApplePayLaterModeDisabledRecurringTransaction,
+typedef NS_ENUM(NSInteger, PKApplePayLaterAvailability) {
+    PKApplePayLaterAvailable,
+    PKApplePayLaterUnavailableItemIneligible,
+    PKApplePayLaterUnavailableRecurringTransaction,
 };
 
 @interface PKPaymentRequest ()
-@property (nonatomic, assign) PKApplePayLaterMode applePayLaterMode;
+@property (nonatomic, assign) PKApplePayLaterAvailability applePayLaterAvailability;
 @end
 
 #endif

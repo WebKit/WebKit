@@ -34,16 +34,15 @@ namespace JSC {
 BrandedStructure::BrandedStructure(VM& vm, Structure* previous, UniquedStringImpl* brandUid)
     : Structure(vm, previous)
     , m_brand(brandUid)
+    , m_parentBrand(previous->isBrandedStructure() ? previous : nullptr, WriteBarrierEarlyInit)
 {
-    if (previous->isBrandedStructure())
-        m_parentBrand.set(vm, this, previous);
     this->setIsBrandedStructure(true);
 }
 
 BrandedStructure::BrandedStructure(VM& vm, BrandedStructure* previous)
     : Structure(vm, previous)
     , m_brand(previous->m_brand)
-    , m_parentBrand(vm, this, previous->m_parentBrand.get(), WriteBarrierStructureID::MayBeNull)
+    , m_parentBrand(previous->m_parentBrand.get(), WriteBarrierEarlyInit)
 {
     this->setIsBrandedStructure(true);
 }

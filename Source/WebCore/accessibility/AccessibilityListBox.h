@@ -41,8 +41,8 @@ public:
     WEBCORE_EXPORT void setSelectedChildren(const AccessibilityChildrenVector&) override;
     AccessibilityRole roleValue() const override { return AccessibilityRole::ListBox; }
         
-    void selectedChildren(AccessibilityChildrenVector&) override;
-    void visibleChildren(AccessibilityChildrenVector&) override;
+    AccessibilityChildrenVector selectedChildren() final;
+    AccessibilityChildrenVector visibleChildren() final;
     
     void addChildren() override;
 
@@ -56,4 +56,6 @@ private:
     
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityListBox, isAccessibilityListBoxInstance())
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AccessibilityListBox) \
+    static bool isType(const WebCore::AccessibilityObject& object) { return object.isAccessibilityListBoxInstance(); } \
+SPECIALIZE_TYPE_TRAITS_END()

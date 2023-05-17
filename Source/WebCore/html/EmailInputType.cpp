@@ -26,6 +26,7 @@
 #include "EmailInputType.h"
 
 #include "HTMLInputElement.h"
+#include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "InputTypeNames.h"
 #include "LocalizedStrings.h"
@@ -34,6 +35,8 @@
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 // From https://html.spec.whatwg.org/#valid-e-mail-address.
 static constexpr ASCIILiteral emailPattern = "^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"_s;
@@ -44,7 +47,7 @@ static bool isValidEmailAddress(const String& address)
     if (!addressLength)
         return false;
 
-    static NeverDestroyed<const JSC::Yarr::RegularExpression> regExp(StringView { emailPattern }, JSC::Yarr::TextCaseInsensitive);
+    static NeverDestroyed<const JSC::Yarr::RegularExpression> regExp(StringView { emailPattern }, OptionSet<JSC::Yarr::Flags> { JSC::Yarr::Flags::IgnoreCase });
 
     int matchLength;
     int matchOffset = regExp.get().match(address, 0, &matchLength);
@@ -86,6 +89,14 @@ String EmailInputType::typeMismatchText() const
 bool EmailInputType::supportsSelectionAPI() const
 {
     return false;
+}
+
+void EmailInputType::attributeChanged(const QualifiedName& name)
+{
+    if (name == multipleAttr)
+        element()->setValueFromRenderer(sanitizeValue(element()->value()));
+
+    BaseTextInputType::attributeChanged(name);
 }
 
 String EmailInputType::sanitizeValue(const String& proposedValue) const

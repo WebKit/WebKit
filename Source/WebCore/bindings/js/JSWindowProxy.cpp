@@ -53,7 +53,7 @@ using namespace JSC;
 const ClassInfo JSWindowProxy::s_info = { "JSWindowProxy"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWindowProxy) };
 
 inline JSWindowProxy::JSWindowProxy(VM& vm, Structure& structure, DOMWrapperWorld& world)
-    : Base(vm, &structure)
+    : Base(vm, &structure, nullptr)
     , m_world(world)
 {
 }
@@ -67,7 +67,7 @@ void JSWindowProxy::finishCreation(VM& vm, DOMWindow& window)
 
 JSWindowProxy& JSWindowProxy::create(VM& vm, DOMWindow& window, DOMWrapperWorld& world)
 {
-    auto& structure = *Structure::create(vm, 0, jsNull(), TypeInfo(PureForwardingProxyType, StructureFlags), info());
+    auto& structure = *Structure::create(vm, 0, jsNull(), TypeInfo(GlobalProxyType, StructureFlags), info());
     auto& proxy = *new (NotNull, allocateCell<JSWindowProxy>(vm)) JSWindowProxy(vm, structure, world);
     proxy.finishCreation(vm, window);
     return proxy;

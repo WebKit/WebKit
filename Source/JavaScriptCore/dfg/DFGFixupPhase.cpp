@@ -1037,7 +1037,8 @@ private:
             FALLTHROUGH;
         }
 
-        case GetByVal: {
+        case GetByVal:
+        case GetByValMegamorphic: {
             if (!node->prediction()) {
                 m_insertionSet.insertNode(
                     m_indexInBlock, SpecNone, ForceOSRExit, node->origin);
@@ -1089,6 +1090,9 @@ private:
                 break;
             }
 
+            if (node->op() == GetByValMegamorphic)
+                node->setArrayMode(node->arrayMode().withType(Array::Generic));
+
             if (node->arrayMode().type() == Array::String) {
                 // Rewrite first child with ResolveRope.
                 blessArrayOperation(m_graph.varArgChild(node, 0), m_graph.varArgChild(node, 1), m_graph.varArgChild(node, 0));
@@ -1121,17 +1125,22 @@ private:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
             case Array::Generic:
-                if (m_graph.varArgChild(node, 0)->shouldSpeculateObject()) {
-                    if (m_graph.varArgChild(node, 1)->shouldSpeculateString()) {
-                        fixEdge<ObjectUse>(m_graph.varArgChild(node, 0));
-                        fixEdge<StringUse>(m_graph.varArgChild(node, 1));
-                        break;
-                    }
+                if (node->op() == GetByValMegamorphic) {
+                    fixEdge<ObjectUse>(m_graph.varArgChild(node, 0));
+                    fixEdge<StringUse>(m_graph.varArgChild(node, 1));
+                } else {
+                    if (m_graph.varArgChild(node, 0)->shouldSpeculateObject()) {
+                        if (m_graph.varArgChild(node, 1)->shouldSpeculateString()) {
+                            fixEdge<ObjectUse>(m_graph.varArgChild(node, 0));
+                            fixEdge<StringUse>(m_graph.varArgChild(node, 1));
+                            break;
+                        }
 
-                    if (m_graph.varArgChild(node, 1)->shouldSpeculateSymbol()) {
-                        fixEdge<ObjectUse>(m_graph.varArgChild(node, 0));
-                        fixEdge<SymbolUse>(m_graph.varArgChild(node, 1));
-                        break;
+                        if (m_graph.varArgChild(node, 1)->shouldSpeculateSymbol()) {
+                            fixEdge<ObjectUse>(m_graph.varArgChild(node, 0));
+                            fixEdge<SymbolUse>(m_graph.varArgChild(node, 1));
+                            break;
+                        }
                     }
                 }
                 break;
@@ -1161,7 +1170,7 @@ private:
 
             // Don't set a non-JSValue result for EnumeratorGetByVal as the indexing mode doesn't tell us about the type of OwnStructure
             // properties. This isn't an issue for IndexedMode only as BytecodeParsing will emit a normal GetByVal if we've profiled that.
-            if (node->op() == EnumeratorGetByVal)
+            if (node->op() == EnumeratorGetByVal || node->op() == GetByValMegamorphic)
                 break;
             switch (arrayMode.type()) {
             case Array::Double:
@@ -1191,7 +1200,27 @@ private:
             break;
         }
 
-        case GetByValWithThis: {
+        case GetByValWithThis:
+            break;
+
+        case GetByValWithThisMegamorphic:
+            fixEdge<CellUse>(node->child1());
+            break;
+
+        case EnumeratorPutByVal: {
+            fixEdge<CellUse>(m_graph.varArgChild(node, 0));
+            fixEdge<KnownInt32Use>(m_graph.varArgChild(node, 4));
+            fixEdge<KnownInt32Use>(m_graph.varArgChild(node, 5));
+            fixEdge<KnownCellUse>(m_graph.varArgChild(node, 6));
+            break;
+        }
+
+        case PutByValMegamorphic: {
+            Edge& child1 = m_graph.varArgChild(node, 0);
+            Edge& child2 = m_graph.varArgChild(node, 1);
+            node->setArrayMode(ArrayMode(Array::Generic, node->arrayMode().action()));
+            fixEdge<CellUse>(child1);
+            fixEdge<StringUse>(child2);
             break;
         }
 
@@ -1237,7 +1266,7 @@ private:
             default:
                 break;
             }
-            
+
             blessArrayOperation(child1, child2, m_graph.varArgChild(node, 3));
             
             switch (node->arrayMode().modeForPut().type()) {
@@ -1946,7 +1975,11 @@ private:
                 fixEdge<CellUse>(node->child1());
             break;
         }
-        
+
+        case GetByIdMegamorphic:
+            fixEdge<CellUse>(node->child1());
+            break;
+
         case GetByIdWithThis: {
             if (node->child1()->shouldSpeculateCell() && node->child2()->shouldSpeculateCell()) {
                 fixEdge<CellUse>(node->child1());
@@ -1954,6 +1987,14 @@ private:
             }
             break;
         }
+
+        case GetByIdWithThisMegamorphic:
+            fixEdge<CellUse>(node->child1());
+            break;
+
+        case PutByIdMegamorphic:
+            fixEdge<CellUse>(node->child1());
+            break;
 
         case PutById:
         case PutByIdFlush:
@@ -2059,8 +2100,10 @@ private:
             break;
         }
 
+        case ObjectKeys:
         case ObjectGetOwnPropertyNames:
-        case ObjectKeys: {
+        case ObjectGetOwnPropertySymbols:
+        case ReflectOwnKeys: {
             if (node->child1()->shouldSpeculateObject()) {
                 watchHavingABadTime(node);
                 fixEdge<ObjectUse>(node->child1());
@@ -2358,6 +2401,11 @@ private:
 
         case IsCellWithType: {
             fixupIsCellWithType(node);
+            break;
+        }
+
+        case HasStructureWithFlags: {
+            fixEdge<KnownCellUse>(node->child1());
             break;
         }
 

@@ -678,7 +678,7 @@
                 "url": "https://www.w3.org/TR/css-fonts-4/#font-stretch-prop"
             }
         },
-        "text-edge": {
+        "text-box-edge": {
             "values": [
                 "leading",
                 "text",
@@ -689,9 +689,9 @@
                 "cap"
             ],
             "codegen-properties": {
-                "converter": "TextEdge",
-                "settings-flag": "cssLeadingTrimEnabled",
-                "parser-function": "consumeTextEdge",
+                "converter": "TextBoxEdge",
+                "settings-flag": "cssTextBoxTrimEnabled",
+                "parser-function": "consumeTextBoxEdge",
                 "parser-grammar-unused": "leading | [ [ text | cap | ex | ideographic | ideographic-ink ] [ text | alphabetic | ideographic | ideographic-ink ]? ]",
                 "parser-grammar-unused-reason": "Needs support for 'groups' and 'optional'."
             },
@@ -3353,7 +3353,7 @@
         },
         "cx": {
             "codegen-properties": {
-                "initial": "initialZeroLength",
+                "initial": "zeroLength",
                 "converter": "Length",
                 "parser-grammar": "<length-percentage>"
             },
@@ -3364,7 +3364,7 @@
         },
         "cy": {
             "codegen-properties": {
-                "initial": "initialZeroLength",
+                "initial": "zeroLength",
                 "converter": "Length",
                 "parser-grammar": "<length-percentage>"
             },
@@ -3788,15 +3788,15 @@
                 "url": "https://www.w3.org/TR/SVG11/text.html#KerningProperty"
             }
         },
-        "leading-trim": {
+        "text-box-trim": {
             "values": [
-                "normal",
+                "none",
                 "start",
                 "end",
                 "both"
             ],
             "codegen-properties": {
-                "settings-flag": "cssLeadingTrimEnabled",
+                "settings-flag": "cssTextBoxTrimEnabled",
                 "parser-grammar": "<<values>>"
             },
             "specification": {
@@ -5356,7 +5356,7 @@
         },
         "r": {
             "codegen-properties": {
-                "initial": "initialZeroLength",
+                "initial": "zeroLength",
                 "converter": "Length",
                 "parser-grammar": "<length-percentage [0,inf]>"
             },
@@ -5533,7 +5533,7 @@
         "stroke-dashoffset": {
             "inherited": true,
             "codegen-properties": {
-                "initial": "initialZeroLength",
+                "initial": "zeroLength",
                 "name-for-methods": "StrokeDashOffset",
                 "converter": "LengthAllowingNumber",
                 "parser-grammar": "<length-percentage> | <number>"
@@ -5627,7 +5627,7 @@
             "inherited": true,
             "codegen-properties": {
                 "custom": "Value",
-                "initial": "initialOneLength",
+                "initial": "oneLength",
                 "converter": "LengthAllowingNumber",
                 "parser-grammar": "<length-percentage [0,inf]> | <number [0,inf]>"
             },
@@ -6377,7 +6377,7 @@
         },
         "x": {
             "codegen-properties": {
-                "initial": "initialZeroLength",
+                "initial": "zeroLength",
                 "converter": "Length",
                 "parser-grammar": "<length-percentage>"
             },
@@ -6388,7 +6388,7 @@
         },
         "y": {
             "codegen-properties": {
-                "initial": "initialZeroLength",
+                "initial": "zeroLength",
                 "converter": "Length",
                 "parser-grammar": "<length-percentage>"
             },
@@ -9617,6 +9617,7 @@
                 "codegen-properties": {
                     "settings-flag": "cssCounterStyleAtRulesEnabled",
                     "parser-function": "consumeCounterStyleSystem",
+                    "parser-function-requires-context": true,
                     "parser-grammar-unused": "cyclic | numeric | alphabetic | symbolic | additive | [ fixed <integer>? ] | [ extends <counter-style-name> ]",
                     "parser-grammar-unused-reason": "Needs support for ordered groups, optionals and applying restrictions to <custom-ident>."
                 },
@@ -9923,6 +9924,16 @@
                     "url": "https://www.w3.org/TR/css-fonts-4/#src-desc"
                 }
             },
+            "size-adjust": {
+                "codegen-properties": {
+                    "settings-flag": "cssFontFaceSizeAdjustEnabled",
+                    "parser-grammar": "<percentage [0,inf]>"
+                },
+                "specification": {
+                    "category": "css-fonts-5",
+                    "url": "https://www.w3.org/TR/css-fonts-5/#size-adjust-desc"
+                }
+            },
             "unicode-range": {
                 "codegen-properties": {
                     "parser-function": "consumeFontFaceUnicodeRange",
@@ -10103,6 +10114,11 @@
             "shortname": "CSS Fonts Level 4",
             "longname": "CSS Fonts Module Level 4",
             "url": "https://drafts.csswg.org/css-fonts-4"
+        },
+        "css-fonts-5": {
+            "shortname": "CSS Fonts Level 5",
+            "longname": "CSS Fonts Module Level 5",
+            "url": "https://www.w3.org/TR/css-fonts-5"
         },
         "css-grid": {
             "shortname": "CSS Grid Layout",

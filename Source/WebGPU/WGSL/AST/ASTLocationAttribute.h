@@ -26,22 +26,23 @@
 #pragma once
 
 #include "ASTAttribute.h"
+#include "ASTBuilder.h"
 #include "ASTExpression.h"
 
 namespace WGSL::AST {
 
 class LocationAttribute final : public Attribute {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(LocationAttribute);
 public:
+    NodeKind kind() const override;
+    unsigned location() const { return m_value; }
+
+private:
     LocationAttribute(SourceSpan span, unsigned value)
         : Attribute(span)
         , m_value(value)
     { }
 
-    NodeKind kind() const override;
-    unsigned location() const { return m_value; }
-
-private:
     unsigned m_value;
 };
 

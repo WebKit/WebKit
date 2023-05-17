@@ -415,8 +415,8 @@ PASS SVGSVGElement interface: operation createSVGRect()
 PASS SVGSVGElement interface: operation createSVGTransform()
 PASS SVGSVGElement interface: operation createSVGTransformFromMatrix(optional DOMMatrix2DInit)
 PASS SVGSVGElement interface: operation getElementById(DOMString)
-FAIL SVGSVGElement interface: operation suspendRedraw(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
-FAIL SVGSVGElement interface: operation unsuspendRedraw(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
+PASS SVGSVGElement interface: operation suspendRedraw(unsigned long)
+PASS SVGSVGElement interface: operation unsuspendRedraw(unsigned long)
 PASS SVGSVGElement interface: operation unsuspendRedrawAll()
 PASS SVGSVGElement interface: operation forceRedraw()
 PASS SVGSVGElement interface: attribute viewBox
@@ -450,13 +450,9 @@ PASS SVGSVGElement interface: calling createSVGTransformFromMatrix(optional DOMM
 PASS SVGSVGElement interface: objects.svg must inherit property "getElementById(DOMString)" with the proper type
 PASS SVGSVGElement interface: calling getElementById(DOMString) on objects.svg with too few arguments must throw TypeError
 PASS SVGSVGElement interface: objects.svg must inherit property "suspendRedraw(unsigned long)" with the proper type
-FAIL SVGSVGElement interface: calling suspendRedraw(unsigned long) on objects.svg with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS SVGSVGElement interface: calling suspendRedraw(unsigned long) on objects.svg with too few arguments must throw TypeError
 PASS SVGSVGElement interface: objects.svg must inherit property "unsuspendRedraw(unsigned long)" with the proper type
-FAIL SVGSVGElement interface: calling unsuspendRedraw(unsigned long) on objects.svg with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS SVGSVGElement interface: calling unsuspendRedraw(unsigned long) on objects.svg with too few arguments must throw TypeError
 PASS SVGSVGElement interface: objects.svg must inherit property "unsuspendRedrawAll()" with the proper type
 PASS SVGSVGElement interface: objects.svg must inherit property "forceRedraw()" with the proper type
 PASS SVGSVGElement interface: objects.svg must inherit property "viewBox" with the proper type
@@ -1116,13 +1112,13 @@ PASS SVGTextContentElement interface: attribute textLength
 PASS SVGTextContentElement interface: attribute lengthAdjust
 PASS SVGTextContentElement interface: operation getNumberOfChars()
 PASS SVGTextContentElement interface: operation getComputedTextLength()
-FAIL SVGTextContentElement interface: operation getSubStringLength(unsigned long, unsigned long) assert_equals: property has wrong .length expected 2 but got 0
-FAIL SVGTextContentElement interface: operation getStartPositionOfChar(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
-FAIL SVGTextContentElement interface: operation getEndPositionOfChar(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
-FAIL SVGTextContentElement interface: operation getExtentOfChar(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
-FAIL SVGTextContentElement interface: operation getRotationOfChar(unsigned long) assert_equals: property has wrong .length expected 1 but got 0
-FAIL SVGTextContentElement interface: operation getCharNumAtPosition(optional DOMPointInit) assert_equals: property has wrong .length expected 0 but got 1
-FAIL SVGTextContentElement interface: operation selectSubString(unsigned long, unsigned long) assert_equals: property has wrong .length expected 2 but got 0
+PASS SVGTextContentElement interface: operation getSubStringLength(unsigned long, unsigned long)
+PASS SVGTextContentElement interface: operation getStartPositionOfChar(unsigned long)
+PASS SVGTextContentElement interface: operation getEndPositionOfChar(unsigned long)
+PASS SVGTextContentElement interface: operation getExtentOfChar(unsigned long)
+PASS SVGTextContentElement interface: operation getRotationOfChar(unsigned long)
+PASS SVGTextContentElement interface: operation getCharNumAtPosition(optional DOMPointInit)
+PASS SVGTextContentElement interface: operation selectSubString(unsigned long, unsigned long)
 PASS SVGTextPositioningElement interface: existence and properties of interface object
 PASS SVGTextPositioningElement interface object length
 PASS SVGTextPositioningElement interface object name
@@ -1155,35 +1151,19 @@ PASS SVGTextContentElement interface: objects.text must inherit property "length
 PASS SVGTextContentElement interface: objects.text must inherit property "getNumberOfChars()" with the proper type
 PASS SVGTextContentElement interface: objects.text must inherit property "getComputedTextLength()" with the proper type
 PASS SVGTextContentElement interface: objects.text must inherit property "getSubStringLength(unsigned long, unsigned long)" with the proper type
-FAIL SVGTextContentElement interface: calling getSubStringLength(unsigned long, unsigned long) on objects.text with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "IndexSizeError: The index is not in the allowed range." ("IndexSizeError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS SVGTextContentElement interface: calling getSubStringLength(unsigned long, unsigned long) on objects.text with too few arguments must throw TypeError
 PASS SVGTextContentElement interface: objects.text must inherit property "getStartPositionOfChar(unsigned long)" with the proper type
-FAIL SVGTextContentElement interface: calling getStartPositionOfChar(unsigned long) on objects.text with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS SVGTextContentElement interface: calling getStartPositionOfChar(unsigned long) on objects.text with too few arguments must throw TypeError
 PASS SVGTextContentElement interface: objects.text must inherit property "getEndPositionOfChar(unsigned long)" with the proper type
-FAIL SVGTextContentElement interface: calling getEndPositionOfChar(unsigned long) on objects.text with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS SVGTextContentElement interface: calling getEndPositionOfChar(unsigned long) on objects.text with too few arguments must throw TypeError
 PASS SVGTextContentElement interface: objects.text must inherit property "getExtentOfChar(unsigned long)" with the proper type
-FAIL SVGTextContentElement interface: calling getExtentOfChar(unsigned long) on objects.text with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS SVGTextContentElement interface: calling getExtentOfChar(unsigned long) on objects.text with too few arguments must throw TypeError
 PASS SVGTextContentElement interface: objects.text must inherit property "getRotationOfChar(unsigned long)" with the proper type
-FAIL SVGTextContentElement interface: calling getRotationOfChar(unsigned long) on objects.text with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS SVGTextContentElement interface: calling getRotationOfChar(unsigned long) on objects.text with too few arguments must throw TypeError
 PASS SVGTextContentElement interface: objects.text must inherit property "getCharNumAtPosition(optional DOMPointInit)" with the proper type
 PASS SVGTextContentElement interface: calling getCharNumAtPosition(optional DOMPointInit) on objects.text with too few arguments must throw TypeError
 PASS SVGTextContentElement interface: objects.text must inherit property "selectSubString(unsigned long, unsigned long)" with the proper type
-FAIL SVGTextContentElement interface: calling selectSubString(unsigned long, unsigned long) on objects.text with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "IndexSizeError: The index is not in the allowed range." ("IndexSizeError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS SVGTextContentElement interface: calling selectSubString(unsigned long, unsigned long) on objects.text with too few arguments must throw TypeError
 PASS SVGGraphicsElement interface: objects.text must inherit property "transform" with the proper type
 PASS SVGGraphicsElement interface: objects.text must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type
 PASS SVGGraphicsElement interface: calling getBBox(optional SVGBoundingBoxOptions) on objects.text with too few arguments must throw TypeError
@@ -1217,35 +1197,19 @@ PASS SVGTextContentElement interface: objects.tspan must inherit property "lengt
 PASS SVGTextContentElement interface: objects.tspan must inherit property "getNumberOfChars()" with the proper type
 PASS SVGTextContentElement interface: objects.tspan must inherit property "getComputedTextLength()" with the proper type
 PASS SVGTextContentElement interface: objects.tspan must inherit property "getSubStringLength(unsigned long, unsigned long)" with the proper type
-FAIL SVGTextContentElement interface: calling getSubStringLength(unsigned long, unsigned long) on objects.tspan with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "IndexSizeError: The index is not in the allowed range." ("IndexSizeError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS SVGTextContentElement interface: calling getSubStringLength(unsigned long, unsigned long) on objects.tspan with too few arguments must throw TypeError
 PASS SVGTextContentElement interface: objects.tspan must inherit property "getStartPositionOfChar(unsigned long)" with the proper type
-FAIL SVGTextContentElement interface: calling getStartPositionOfChar(unsigned long) on objects.tspan with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS SVGTextContentElement interface: calling getStartPositionOfChar(unsigned long) on objects.tspan with too few arguments must throw TypeError
 PASS SVGTextContentElement interface: objects.tspan must inherit property "getEndPositionOfChar(unsigned long)" with the proper type
-FAIL SVGTextContentElement interface: calling getEndPositionOfChar(unsigned long) on objects.tspan with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS SVGTextContentElement interface: calling getEndPositionOfChar(unsigned long) on objects.tspan with too few arguments must throw TypeError
 PASS SVGTextContentElement interface: objects.tspan must inherit property "getExtentOfChar(unsigned long)" with the proper type
-FAIL SVGTextContentElement interface: calling getExtentOfChar(unsigned long) on objects.tspan with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS SVGTextContentElement interface: calling getExtentOfChar(unsigned long) on objects.tspan with too few arguments must throw TypeError
 PASS SVGTextContentElement interface: objects.tspan must inherit property "getRotationOfChar(unsigned long)" with the proper type
-FAIL SVGTextContentElement interface: calling getRotationOfChar(unsigned long) on objects.tspan with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS SVGTextContentElement interface: calling getRotationOfChar(unsigned long) on objects.tspan with too few arguments must throw TypeError
 PASS SVGTextContentElement interface: objects.tspan must inherit property "getCharNumAtPosition(optional DOMPointInit)" with the proper type
 PASS SVGTextContentElement interface: calling getCharNumAtPosition(optional DOMPointInit) on objects.tspan with too few arguments must throw TypeError
 PASS SVGTextContentElement interface: objects.tspan must inherit property "selectSubString(unsigned long, unsigned long)" with the proper type
-FAIL SVGTextContentElement interface: calling selectSubString(unsigned long, unsigned long) on objects.tspan with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "IndexSizeError: The index is not in the allowed range." ("IndexSizeError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS SVGTextContentElement interface: calling selectSubString(unsigned long, unsigned long) on objects.tspan with too few arguments must throw TypeError
 PASS SVGGraphicsElement interface: objects.tspan must inherit property "transform" with the proper type
 PASS SVGGraphicsElement interface: objects.tspan must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type
 PASS SVGGraphicsElement interface: calling getBBox(optional SVGBoundingBoxOptions) on objects.tspan with too few arguments must throw TypeError
@@ -1300,35 +1264,19 @@ PASS SVGTextContentElement interface: objects.textPath must inherit property "le
 PASS SVGTextContentElement interface: objects.textPath must inherit property "getNumberOfChars()" with the proper type
 PASS SVGTextContentElement interface: objects.textPath must inherit property "getComputedTextLength()" with the proper type
 PASS SVGTextContentElement interface: objects.textPath must inherit property "getSubStringLength(unsigned long, unsigned long)" with the proper type
-FAIL SVGTextContentElement interface: calling getSubStringLength(unsigned long, unsigned long) on objects.textPath with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "IndexSizeError: The index is not in the allowed range." ("IndexSizeError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS SVGTextContentElement interface: calling getSubStringLength(unsigned long, unsigned long) on objects.textPath with too few arguments must throw TypeError
 PASS SVGTextContentElement interface: objects.textPath must inherit property "getStartPositionOfChar(unsigned long)" with the proper type
-FAIL SVGTextContentElement interface: calling getStartPositionOfChar(unsigned long) on objects.textPath with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS SVGTextContentElement interface: calling getStartPositionOfChar(unsigned long) on objects.textPath with too few arguments must throw TypeError
 PASS SVGTextContentElement interface: objects.textPath must inherit property "getEndPositionOfChar(unsigned long)" with the proper type
-FAIL SVGTextContentElement interface: calling getEndPositionOfChar(unsigned long) on objects.textPath with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS SVGTextContentElement interface: calling getEndPositionOfChar(unsigned long) on objects.textPath with too few arguments must throw TypeError
 PASS SVGTextContentElement interface: objects.textPath must inherit property "getExtentOfChar(unsigned long)" with the proper type
-FAIL SVGTextContentElement interface: calling getExtentOfChar(unsigned long) on objects.textPath with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS SVGTextContentElement interface: calling getExtentOfChar(unsigned long) on objects.textPath with too few arguments must throw TypeError
 PASS SVGTextContentElement interface: objects.textPath must inherit property "getRotationOfChar(unsigned long)" with the proper type
-FAIL SVGTextContentElement interface: calling getRotationOfChar(unsigned long) on objects.textPath with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS SVGTextContentElement interface: calling getRotationOfChar(unsigned long) on objects.textPath with too few arguments must throw TypeError
 PASS SVGTextContentElement interface: objects.textPath must inherit property "getCharNumAtPosition(optional DOMPointInit)" with the proper type
 PASS SVGTextContentElement interface: calling getCharNumAtPosition(optional DOMPointInit) on objects.textPath with too few arguments must throw TypeError
 PASS SVGTextContentElement interface: objects.textPath must inherit property "selectSubString(unsigned long, unsigned long)" with the proper type
-FAIL SVGTextContentElement interface: calling selectSubString(unsigned long, unsigned long) on objects.textPath with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" threw object "IndexSizeError: The index is not in the allowed range." ("IndexSizeError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS SVGTextContentElement interface: calling selectSubString(unsigned long, unsigned long) on objects.textPath with too few arguments must throw TypeError
 PASS SVGGraphicsElement interface: objects.textPath must inherit property "transform" with the proper type
 PASS SVGGraphicsElement interface: objects.textPath must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type
 PASS SVGGraphicsElement interface: calling getBBox(optional SVGBoundingBoxOptions) on objects.textPath with too few arguments must throw TypeError

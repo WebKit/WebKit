@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc.  All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2011 University of Szeged. All rights reserved.
  *
@@ -75,7 +75,7 @@ static String createWithFormatAndArguments(const char* format, va_list args)
     va_list argsCopy;
     va_copy(argsCopy, args);
 
-    ALLOW_NONLITERAL_FORMAT_BEGIN
+ALLOW_NONLITERAL_FORMAT_BEGIN
 
 #if USE(CF)
     if (strstr(format, "%@")) {
@@ -111,7 +111,7 @@ static String createWithFormatAndArguments(const char* format, va_list args)
     vsnprintf(buffer.data(), buffer.size(), format, argsCopy);
     va_end(argsCopy);
 
-    ALLOW_NONLITERAL_FORMAT_END
+ALLOW_NONLITERAL_FORMAT_END
 
     return StringImpl::create(reinterpret_cast<const LChar*>(buffer.data()), length);
 }
@@ -142,9 +142,9 @@ static void vprintf_stderr_common(const char* format, va_list args)
     if (strstr(format, "%@")) {
         auto cfFormat = adoptCF(CFStringCreateWithCString(nullptr, format, kCFStringEncodingUTF8));
 
-        ALLOW_NONLITERAL_FORMAT_BEGIN
+ALLOW_NONLITERAL_FORMAT_BEGIN
         auto str = adoptCF(CFStringCreateWithFormatAndArguments(nullptr, nullptr, cfFormat.get(), args));
-        ALLOW_NONLITERAL_FORMAT_END
+ALLOW_NONLITERAL_FORMAT_END
         CFIndex length = CFStringGetMaximumSizeForEncoding(CFStringGetLength(str.get()), kCFStringEncodingUTF8);
         constexpr unsigned InitialBufferSize { 256 };
         Vector<char, InitialBufferSize> buffer(length + 1);
@@ -193,9 +193,9 @@ static void vprintf_stderr_with_prefix(const char* prefix, const char* format, v
     memcpy(formatWithPrefix.data() + prefixLength, format, formatLength);
     formatWithPrefix[prefixLength + formatLength] = 0;
 
-    ALLOW_NONLITERAL_FORMAT_BEGIN
+ALLOW_NONLITERAL_FORMAT_BEGIN
     vprintf_stderr_common(formatWithPrefix.data(), args);
-    ALLOW_NONLITERAL_FORMAT_END
+ALLOW_NONLITERAL_FORMAT_END
 }
 
 WTF_ATTRIBUTE_PRINTF(1, 0)
@@ -212,9 +212,9 @@ static void vprintf_stderr_with_trailing_newline(const char* format, va_list arg
     formatWithNewline[formatLength] = '\n';
     formatWithNewline[formatLength + 1] = 0;
 
-    ALLOW_NONLITERAL_FORMAT_BEGIN
+ALLOW_NONLITERAL_FORMAT_BEGIN
     vprintf_stderr_common(formatWithNewline.data(), args);
-    ALLOW_NONLITERAL_FORMAT_END
+ALLOW_NONLITERAL_FORMAT_END
 }
 
 WTF_ATTRIBUTE_PRINTF(1, 2)
@@ -446,9 +446,9 @@ void WTFLogWithLevel(WTFLogChannel* channel, WTFLogLevel level, const char* form
     va_list args;
     va_start(args, format);
 
-    ALLOW_NONLITERAL_FORMAT_BEGIN
+ALLOW_NONLITERAL_FORMAT_BEGIN
     WTFLog(channel, format, args);
-    ALLOW_NONLITERAL_FORMAT_END
+ALLOW_NONLITERAL_FORMAT_END
 
     va_end(args);
 }
@@ -466,9 +466,9 @@ static void WTFLogVaList(WTFLogChannel* channel, const char* format, va_list arg
 
     ASSERT(channel->state == WTFLogChannelState::OnWithAccumulation);
 
-    ALLOW_NONLITERAL_FORMAT_BEGIN
+ALLOW_NONLITERAL_FORMAT_BEGIN
     String loggingString = WTF::createWithFormatAndArguments(format, args);
-    ALLOW_NONLITERAL_FORMAT_END
+ALLOW_NONLITERAL_FORMAT_END
 
     if (!loggingString.endsWith('\n'))
         loggingString = makeString(loggingString, '\n');
@@ -496,9 +496,9 @@ void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChann
     va_list args;
     va_start(args, format);
 
-    ALLOW_NONLITERAL_FORMAT_BEGIN
+ALLOW_NONLITERAL_FORMAT_BEGIN
     WTFLogVaList(channel, format, args);
-    ALLOW_NONLITERAL_FORMAT_END
+ALLOW_NONLITERAL_FORMAT_END
 
     va_end(args);
 

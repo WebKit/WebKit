@@ -198,12 +198,6 @@ constexpr bool operator==(const ColorType& a, const ColorType& b)
     return asColorComponents(a.unresolved()) == asColorComponents(b.unresolved());
 }
 
-template<typename ColorType, typename std::enable_if_t<IsConvertibleToColorComponents<ColorType>>* = nullptr>
-constexpr bool operator!=(const ColorType& a, const ColorType& b)
-{
-    return !(a == b);
-}
-
 
 // MARK: - RGB Color Types.
 

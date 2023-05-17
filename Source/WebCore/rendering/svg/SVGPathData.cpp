@@ -36,6 +36,7 @@
 #include "SVGPolygonElement.h"
 #include "SVGPolylineElement.h"
 #include "SVGRectElement.h"
+#include "SVGRenderStyle.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {

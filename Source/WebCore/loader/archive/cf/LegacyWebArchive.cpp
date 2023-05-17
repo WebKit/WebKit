@@ -267,7 +267,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const URL&, FragmentedSharedBu
 
     RetainPtr<CFDictionaryRef> plist = adoptCF(static_cast<CFDictionaryRef>(CFPropertyListCreateWithData(0, cfData.get(), kCFPropertyListImmutable, 0, &error)));
     if (!plist) {
-#ifndef NDEBUG
+#if !LOG_DISABLED
         RetainPtr<CFStringRef> errorString = error ? adoptCF(CFErrorCopyDescription(error)) : 0;
         const char* cError = errorString ? CFStringGetCStringPtr(errorString.get(), kCFStringEncodingUTF8) : "unknown error";
         LOG(Archives, "LegacyWebArchive - Error parsing PropertyList from archive data - %s", cError);

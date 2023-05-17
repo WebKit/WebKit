@@ -32,11 +32,15 @@ class WPEMiniBrowserDriver(LinuxBrowserDriver):
     process_search_list = ['Tools/Scripts/run-minibrowser', 'MiniBrowser']
 
     def launch_url(self, url, options, browser_build_path, browser_path):
-        self._browser_arguments = []
+        self._default_browser_arguments = []
         if self.process_name.endswith('run-minibrowser'):
-            self._browser_arguments.append('--wpe')
-        self._browser_arguments.append(url)
+            self._default_browser_arguments.append('--wpe')
+        self._default_browser_arguments.append(url)
         super(WPEMiniBrowserDriver, self).launch_url(url, options, browser_build_path, browser_path)
 
     def launch_driver(self, url, options, browser_build_path):
         raise ValueError("Browser {browser} is not available with webdriver".format(browser=self.browser_name))
+
+    def prepare_env(self, config):
+        super(WPEMiniBrowserDriver, self).prepare_env(config)
+        self._test_environ['WPE_BROWSER'] = 'minibrowser'

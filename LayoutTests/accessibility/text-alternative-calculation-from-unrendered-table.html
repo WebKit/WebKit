@@ -30,7 +30,10 @@
         debug("Test 1 - W3C Name: " + platformValueForW3CName(test1));
 
         var test2 = accessibilityController.accessibleElementById("test2");
-        debug("Test 2 - W3C Description: " + platformValueForW3CDescription(test2));
+        if (accessibilityController.platformName == "mac")
+           debug("Test 2 - Custom content: " + test2.customContent);
+        else
+           debug("Test 2 - W3C Description: " + platformValueForW3CDescription(test2));
     
         document.getElementById("content").style.visibility = "hidden";
     }

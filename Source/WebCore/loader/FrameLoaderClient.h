@@ -32,7 +32,6 @@
 #include "FrameLoaderTypes.h"
 #include "LayoutMilestone.h"
 #include "LinkIcon.h"
-#include "PageIdentifier.h"
 #include "RegistrableDomain.h"
 #include "ResourceLoaderIdentifier.h"
 #include <wtf/Expected.h>
@@ -66,6 +65,7 @@ OBJC_CLASS NSView;
 
 namespace WebCore {
 
+class AXCoreObject;
 class AuthenticationChallenge;
 class CachedFrame;
 class CachedResourceRequest;
@@ -123,8 +123,6 @@ public:
     virtual bool hasWebView() const = 0; // mainly for assertions
 
     virtual void makeRepresentation(DocumentLoader*) = 0;
-
-    virtual std::optional<PageIdentifier> pageID() const = 0;
 
 #if PLATFORM(IOS_FAMILY)
     // Returns true if the client forced the layout.
@@ -297,8 +295,11 @@ public:
 #if PLATFORM(COCOA)
     // Allow an accessibility object to retrieve a Frame parent if there's no PlatformWidget.
     virtual RemoteAXObjectRef accessibilityRemoteObject() = 0;
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    virtual void setAXIsolatedTreeRoot(AXCoreObject*) = 0;
+#endif
     virtual void willCacheResponse(DocumentLoader*, ResourceLoaderIdentifier, NSCachedURLResponse*, CompletionHandler<void(NSCachedURLResponse *)>&&) const = 0;
-    virtual NSDictionary *dataDetectionContext() { return nullptr; }
+    virtual std::optional<double> dataDetectionReferenceDate() { return std::nullopt; }
 #endif
 
     virtual bool shouldAlwaysUsePluginDocument(const String& /*mimeType*/) const { return false; }

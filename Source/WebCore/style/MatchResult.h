@@ -63,11 +63,6 @@ inline bool operator==(const MatchResult& a, const MatchResult& b)
         && a.authorDeclarations == b.authorDeclarations;
 }
 
-inline bool operator!=(const MatchResult& a, const MatchResult& b)
-{
-    return !(a == b);
-}
-
 inline bool operator==(const MatchedProperties& a, const MatchedProperties& b)
 {
     return a.properties == b.properties
@@ -76,11 +71,6 @@ inline bool operator==(const MatchedProperties& a, const MatchedProperties& b)
         && a.styleScopeOrdinal == b.styleScopeOrdinal
         && a.fromStyleAttribute == b.fromStyleAttribute
         && a.cascadeLayerPriority == b.cascadeLayerPriority;
-}
-
-inline bool operator!=(const MatchedProperties& a, const MatchedProperties& b)
-{
-    return !(a == b);
 }
 
 inline void add(Hasher& hasher, const MatchedProperties& matchedProperties)

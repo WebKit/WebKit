@@ -323,11 +323,6 @@ private:
                 && frequency == other.frequency;
         }
 
-        bool operator!=(const CoalescableMove& other) const
-        {
-            return !(*this == other);
-        }
-
         explicit operator bool() const
         {
             return *this != CoalescableMove();

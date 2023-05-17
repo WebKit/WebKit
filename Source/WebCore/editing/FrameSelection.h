@@ -161,7 +161,7 @@ public:
     enum class RevealSelectionAfterUpdate : bool { NotForced, Forced };
     void setNeedsSelectionUpdate(RevealSelectionAfterUpdate = RevealSelectionAfterUpdate::NotForced);
 
-    bool contains(const LayoutPoint&) const;
+    WEBCORE_EXPORT bool contains(const LayoutPoint&) const;
 
     WEBCORE_EXPORT bool modify(EAlteration, SelectionDirection, TextGranularity, EUserTriggered = NotUserTriggered);
     enum VerticalDirection { DirectionUp, DirectionDown };

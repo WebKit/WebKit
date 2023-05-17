@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    font-size: 18px;
+}
+</style>
+<script>
+addEventListener("DOMContentLoaded", () => {
+    getSelection().setPosition(document.body, 0);
+});
+
+function setSelection(start, end) {
+    const text = document.body.childNodes[0];
+    getSelection().setBaseAndExtent(text, start, text, end);
+}
+</script>
+</head>
+<body contenteditable>Foo שלוםעולם ✍🏻🔥 𐐗𐑀𐐿𐐘 Bar</body>
+</html>

@@ -203,11 +203,17 @@ SWRegistrationDatabase::SWRegistrationDatabase(const String& path)
 
 SWRegistrationDatabase::~SWRegistrationDatabase()
 {
+    close();
+}
+
+void SWRegistrationDatabase::close()
+{
     ASSERT(!isMainRunLoop());
 
     for (size_t i = 0; i < static_cast<size_t>(StatementType::Invalid); ++i)
         m_cachedStatements[i] = nullptr;
     m_database = nullptr;
+    m_scriptStorage = nullptr;
 }
 
 SWScriptStorage& SWRegistrationDatabase::scriptStorage()
@@ -485,6 +491,14 @@ std::optional<Vector<ServiceWorkerScripts>> SWRegistrationDatabase::updateRegist
     }
 
     return result;
+}
+
+void SWRegistrationDatabase::clearAllRegistrations()
+{
+    close();
+    FileSystem::deleteFile(databaseFilePath(m_directory));
+    FileSystem::deleteNonEmptyDirectory(scriptDirectoryPath(m_directory));
+    FileSystem::deleteEmptyDirectory(m_directory);
 }
 
 } // namespace WebCore

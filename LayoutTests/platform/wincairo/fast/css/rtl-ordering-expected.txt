@@ -23,9 +23,8 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (8,4) size 33x16
             RenderText {#text} at (0,0) size 33x16
               text run at (0,0) width 33: "\x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
-        RenderText {#text} at (49,2) size 4x19
-          text run at (49,2) width 4: " "
-        RenderBR {BR} at (53,2) size 0x19
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (49,2) size 0x19
         RenderButton {INPUT} at (0,25) size 49x25 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 33x16
             RenderText at (0,0) size 33x16

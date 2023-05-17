@@ -61,11 +61,6 @@ void ScrollingTreeOverflowScrollingNodeRemoteMac::handleWheelEventPhase(const Pl
     m_delegate->handleWheelEventPhase(phase);
 }
 
-bool ScrollingTreeOverflowScrollingNodeRemoteMac::handleMouseEvent(const PlatformMouseEvent& mouseEvent)
-{
-    return m_delegate->handleMouseEventForScrollbars(mouseEvent);
-}
-
 String ScrollingTreeOverflowScrollingNodeRemoteMac::scrollbarStateForOrientation(ScrollbarOrientation orientation) const
 {
     return m_delegate->scrollbarStateForOrientation(orientation);

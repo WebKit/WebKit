@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/AddEventListenerOptions-once.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/AddEventListenerOptions-passive.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/AddEventListenerOptions-signal.any.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Body-FrameSet-Event-Handlers.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/CustomEvent.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-cancelBubble.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-constants.html
@@ -81,13 +82,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-disabled-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global-extra.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global-is-still-set-when-coercing-beforeunload-result.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global-is-still-set-when-reporting-exception-onerror.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global-set-before-handleEvent-lookup.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/event-global.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/focus-event-document-move.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/keypress-dispatch-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/legacy-pre-activation-behavior.window.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/mouse-event-retarget.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/no-focus-events-at-clicking-editable-content-in-link.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/passive-by-default.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/preventDefault-during-activation-behavior.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/relatedTarget.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/replace-event-listener-null-browsing-context-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/shadow-relatedTarget.html

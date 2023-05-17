@@ -29,6 +29,7 @@
 #include "CSSValue.h"
 #include "CachedResourceHandle.h"
 #include "ResourceLoaderOptions.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -59,9 +60,56 @@ private:
     WeakPtr<SVGFontFaceElement, WeakPtrImplWithEventTargetData> m_element;
 };
 
+enum class FontTechnology : uint8_t {
+    ColorColrv0,
+    ColorColrv1,
+    ColorCbdt,
+    ColorSbix,
+    ColorSvg,
+    FeaturesAat,
+    FeaturesGraphite,
+    FeaturesOpentype,
+    Incremental,
+    Palettes,
+    Variations,
+    // Reserved for invalid conversion result.
+    Invalid
+};
+
+inline ASCIILiteral cssTextFromFontTech(FontTechnology tech)
+{
+    switch (tech) {
+    case FontTechnology::ColorColrv0:
+        return "color-colrv0"_s;
+    case FontTechnology::ColorColrv1:
+        return "color-colrv1"_s;
+    case FontTechnology::ColorCbdt:
+        return "color-cbdt"_s;
+    case FontTechnology::ColorSbix:
+        return "color-sbix"_s;
+    case FontTechnology::ColorSvg:
+        return "color-svg"_s;
+    case FontTechnology::FeaturesAat:
+        return "features-aat"_s;
+    case FontTechnology::FeaturesGraphite:
+        return "features-graphite"_s;
+    case FontTechnology::FeaturesOpentype:
+        return "features-opentype"_s;
+    case FontTechnology::Incremental:
+        return "incremental"_s;
+    case FontTechnology::Palettes:
+        return "palettes"_s;
+    case FontTechnology::Variations:
+        return "variations"_s;
+    default:
+        return ""_s;
+    }
+}
+
 class CSSFontFaceSrcResourceValue final : public CSSValue {
 public:
-    static Ref<CSSFontFaceSrcResourceValue> create(ResolvedURL, String format, LoadedFromOpaqueSource = LoadedFromOpaqueSource::No);
+
+    static Ref<CSSFontFaceSrcResourceValue> create(ResolvedURL, String format, Vector<FontTechnology>&& technologies, LoadedFromOpaqueSource = LoadedFromOpaqueSource::No);
 
     bool isEmpty() const { return m_location.specifiedURLString.isEmpty(); }
     std::unique_ptr<FontLoadRequest> fontLoadRequest(ScriptExecutionContext&, bool isInitiatingElementInUserAgentShadowTree);
@@ -71,10 +119,11 @@ public:
     bool equals(const CSSFontFaceSrcResourceValue&) const;
 
 private:
-    explicit CSSFontFaceSrcResourceValue(ResolvedURL&&, String&& format, LoadedFromOpaqueSource);
+    explicit CSSFontFaceSrcResourceValue(ResolvedURL&&, String&& format, Vector<FontTechnology>&& technologies, LoadedFromOpaqueSource);
 
     ResolvedURL m_location;
     String m_format;
+    Vector<FontTechnology> m_technologies;
     LoadedFromOpaqueSource m_loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
     CachedResourceHandle<CachedFont> m_cachedFont;
 };

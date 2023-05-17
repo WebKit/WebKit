@@ -42,6 +42,8 @@ class FEComposite : public FilterEffect {
 public:
     WEBCORE_EXPORT static Ref<FEComposite> create(const CompositeOperationType&, float k1, float k2, float k3, float k4);
 
+    bool operator==(const FEComposite&) const;
+
     CompositeOperationType operation() const { return m_type; }
     bool setOperation(CompositeOperationType);
 
@@ -60,9 +62,11 @@ public:
 private:
     FEComposite(const CompositeOperationType&, float k1, float k2, float k3, float k4);
 
+    bool operator==(const FilterEffect& other) const override { return areEqual<FEComposite>(*this, other); }
+
     unsigned numberOfEffectInputs() const override { return 2; }
 
-    FloatRect calculateImageRect(const Filter&, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
+    FloatRect calculateImageRect(const Filter&, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
 
     bool resultIsValidPremultiplied() const override { return m_type != FECOMPOSITE_OPERATOR_ARITHMETIC; }
 

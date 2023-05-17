@@ -98,6 +98,9 @@ ResourceResponse::ResourceResponse(CurlResponse& response)
     case CURL_HTTP_VERSION_2_0:
         setHTTPVersion("HTTP/2"_s);
         break;
+    case CURL_HTTP_VERSION_3:
+        setHTTPVersion("HTTP/3"_s);
+        break;
     case CURL_HTTP_VERSION_NONE:
     default:
         break;

@@ -24,7 +24,7 @@
 
 namespace WebCore {
 
-enum CollectionType {
+enum class CollectionType : uint8_t {
     // Unnamed HTMLCollection types cached in the document.
     DocImages,    // all <img> elements in the document
     DocEmbeds,    // all <embed> elements
@@ -66,32 +66,32 @@ struct CollectionTypeTraits {
 };
 
 template<>
-struct CollectionTypeTraits<NodeChildren> {
+struct CollectionTypeTraits<CollectionType::NodeChildren> {
     static const CollectionTraversalType traversalType = CollectionTraversalType::ChildrenOnly;
 };
 
 template<>
-struct CollectionTypeTraits<TRCells> {
+struct CollectionTypeTraits<CollectionType::TRCells> {
     static const CollectionTraversalType traversalType = CollectionTraversalType::ChildrenOnly;
 };
 
 template<>
-struct CollectionTypeTraits<TSectionRows> {
+struct CollectionTypeTraits<CollectionType::TSectionRows> {
     static const CollectionTraversalType traversalType = CollectionTraversalType::ChildrenOnly;
 };
 
 template<>
-struct CollectionTypeTraits<TableTBodies> {
+struct CollectionTypeTraits<CollectionType::TableTBodies> {
     static const CollectionTraversalType traversalType = CollectionTraversalType::ChildrenOnly;
 };
 
 template<>
-struct CollectionTypeTraits<TableRows> {
+struct CollectionTypeTraits<CollectionType::TableRows> {
     static const CollectionTraversalType traversalType = CollectionTraversalType::CustomForwardOnly;
 };
 
 template<>
-struct CollectionTypeTraits<FormControls> {
+struct CollectionTypeTraits<CollectionType::FormControls> {
     static const CollectionTraversalType traversalType = CollectionTraversalType::CustomForwardOnly;
 };
 

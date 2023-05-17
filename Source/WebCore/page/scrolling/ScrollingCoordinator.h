@@ -126,8 +126,7 @@ public:
     virtual bool requestStartKeyboardScrollAnimation(ScrollableArea&, const KeyboardScroll&) { return false; }
     virtual bool requestStopKeyboardScrollAnimation(ScrollableArea&, bool) { return false; }
 
-    virtual bool requestScrollPositionUpdate(ScrollableArea&, const ScrollPosition&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped) { return false; }
-    virtual bool requestAnimatedScrollToPosition(ScrollableArea&, const ScrollPosition&, ScrollClamping) { return false; }
+    virtual bool requestScrollToPosition(ScrollableArea&, const ScrollPosition&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped, ScrollIsAnimated = ScrollIsAnimated::No) { return false; }
     virtual void stopAnimatedScroll(ScrollableArea&) { }
 
     virtual WheelEventHandlingResult handleWheelEventForScrolling(const PlatformWheelEvent&, ScrollingNodeID, std::optional<WheelScrollGestureState>) { return WheelEventHandlingResult::unhandled(WheelEventProcessingSteps::SynchronousScrolling); }

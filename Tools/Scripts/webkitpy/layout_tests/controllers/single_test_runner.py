@@ -422,6 +422,9 @@ class SingleTestRunner(object):
 
     @staticmethod
     def _test_passes_fuzzy_matching(allowed_fuzzy_values, fuzzy_result):
+        if not fuzzy_result:
+            _log.error('fuzzy_result is {}'.format(fuzzy_result))
+            return False
         maxDifferenceMin = allowed_fuzzy_values['max_difference'][0]
         maxDifferenceMax = allowed_fuzzy_values['max_difference'][1]
 

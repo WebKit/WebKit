@@ -135,6 +135,17 @@ class Button extends LayoutItem
         return {};
     }
 
+    get circular()
+    {
+        return this.element.classList.contains("circular");
+    }
+
+    set circular(circular)
+    {
+        this.element.classList.toggle("circular", circular);
+        this._updateImageMetrics();
+    }
+
     // Protected
 
     handleEvent(event)
@@ -202,6 +213,9 @@ class Button extends LayoutItem
 
     _updateImageMetrics()
     {
+        if (!this._imageSource)
+            return;
+
         let width = this._imageSource.width * this._scaleFactor;
         let height = this._imageSource.height * this._scaleFactor;
 
@@ -212,6 +226,11 @@ class Button extends LayoutItem
 
         if (this.image.width === width && this.image.height === height)
             return;
+
+        if (this.circular) {
+            width = Math.max(width, height);
+            height = width;
+        }
 
         this.image.width = width;
         this.image.height = height;

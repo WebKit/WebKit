@@ -55,7 +55,6 @@ public:
         return !m_resourceNumber && !m_idbConnectionIdentifier;
     }
 
-    bool operator!=(const IDBResourceIdentifier& other) const { return !(*this == other); }
     bool operator==(const IDBResourceIdentifier& other) const
     {
         return m_idbConnectionIdentifier == other.m_idbConnectionIdentifier

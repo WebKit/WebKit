@@ -552,6 +552,80 @@ TEST(WebKit, LockdownModeAskAgainFirstUseMessage)
 
 #endif // PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000
 
+#if PLATFORM(IOS_FAMILY)
+
+static bool gShouldKeepScreenAwake = false;
+
+@interface SetShouldKeepScreenAwakeDelegate : NSObject <WKUIDelegatePrivate>
+@end
+
+@implementation SetShouldKeepScreenAwakeDelegate
+
+- (void)_webView:(WKWebView *)webView setShouldKeepScreenAwake:(BOOL)shouldKeepScreenAwake
+{
+    EXPECT_NE(gShouldKeepScreenAwake, shouldKeepScreenAwake);
+    gShouldKeepScreenAwake = shouldKeepScreenAwake;
+}
+
+@end
+
+TEST(WebKit, SetShouldKeepScreenAwake)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+    auto delegate = adoptNS([SetShouldKeepScreenAwakeDelegate new]);
+    [webView setUIDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<body></body>"];
+    [webView evaluateJavaScript:@"navigator.wakeLock.request('screen').then((wakeLock) => { window.lock = wakeLock; }); true;" completionHandler:nil];
+    TestWebKitAPI::Util::run(&gShouldKeepScreenAwake);
+    [webView evaluateJavaScript:@"window.lock.release(); true;" completionHandler:nil];
+    while (gShouldKeepScreenAwake)
+        TestWebKitAPI::Util::spinRunLoop(10);
+}
+
+TEST(WebKit, SetShouldKeepScreenAwakeLastPageIsClosed)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+    auto delegate = adoptNS([SetShouldKeepScreenAwakeDelegate new]);
+    [webView setUIDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<body></body>"];
+    [webView evaluateJavaScript:@"navigator.wakeLock.request('screen').then((wakeLock) => { window.lock = wakeLock; }); true;" completionHandler:nil];
+    TestWebKitAPI::Util::run(&gShouldKeepScreenAwake);
+
+    [webView evaluateJavaScript:@"navigator.wakeLock.request('screen').then((wakeLock) => { window.lock = wakeLock; }); true;" completionHandler:nil];
+    TestWebKitAPI::Util::run(&gShouldKeepScreenAwake);
+
+    // Close the last page while holding the lock.
+    [webView _close];
+    webView = nil;
+
+    while (gShouldKeepScreenAwake)
+        TestWebKitAPI::Util::spinRunLoop(10);
+}
+
+TEST(WebKit, SetShouldKeepScreenAwakeWebProcessCrash)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+    auto delegate = adoptNS([SetShouldKeepScreenAwakeDelegate new]);
+    [webView setUIDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<body></body>"];
+    [webView evaluateJavaScript:@"navigator.wakeLock.request('screen').then((wakeLock) => { window.lock = wakeLock; }); true;" completionHandler:nil];
+    TestWebKitAPI::Util::run(&gShouldKeepScreenAwake);
+
+    [webView evaluateJavaScript:@"navigator.wakeLock.request('screen').then((wakeLock) => { window.lock = wakeLock; }); true;" completionHandler:nil];
+    TestWebKitAPI::Util::run(&gShouldKeepScreenAwake);
+
+    // Kill the WebProcess while holding the screen lock.
+    kill([webView _webProcessIdentifier], 9);
+
+    while (gShouldKeepScreenAwake)
+        TestWebKitAPI::Util::spinRunLoop(10);
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
 #if PLATFORM(MAC)
 
 @class UITestDelegate;

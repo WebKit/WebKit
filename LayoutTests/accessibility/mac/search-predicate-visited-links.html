@@ -1,45 +1,67 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-    <script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body id="body">
-<a href="#image">link</a>
-
-<p id="description"></p>
-<div id="console"></div>
+<a id="link" href="#image">link</a>
+<a id="display-contents-link" style="display:contents" href="#foo">display:contents link</a>
 
 <script>
-    description("This tests the ability to search for accessible elements by key or text.");
+var output = "This tests the ability to search for accessible elements by key or text.\n\n";
 
-    if (window.accessibilityController) {
-        jsTestIsAsync = true;
-        window.testRunner.keepWebHistory();
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    window.testRunner.keepWebHistory();
+    var firstLinkText, resultElement, webArea;
 
-        document.getElementById("body").focus();
-        var containerElement = accessibilityController.focusedElement;
-        var startElement;
-        var resultElement;
+    document.getElementById("body").focus();
+    setTimeout(async function() {
+        await waitFor(() => {
+            webArea = accessibilityController.focusedElement;
+            return webArea && webArea.role && webArea.role.includes("WebArea");
+        });
 
-        // Unvisited link.
-        startElement = accessibilityController.focusedElement.childAtIndex(0);
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXUnvisitedLinkSearchKey", "", false);
-        shouldBe("resultElement.boolAttributeValue('AXVisited')", "false");
-        shouldBe("resultElement.stringValue", "'AXValue: link'");
+        // Start search for the second link from the text of the first link.
+        // This works around a quirky difference between display:contents links and non-display:contents links.
+        // The text within a non-display:contents link takes the style from its parent, and the style is how we determine whether a link is visited or unvisited.
+        // This means AXUnvisitedLinkSearchKey / AXVisitedLinkSearchKey will match for the link itself, and the text within. The same does not happen for text within display:contents links.
+        // This might not be the right behavior (especially for macOS -- but may be fine for iOS). https://bugs.webkit.org/show_bug.cgi?id=255579
+        firstLinkText = webArea.childAtIndex(0).childAtIndex(0);
 
-        // Visited link.
-        accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0).press();
-        setTimeout(function() {
+        resultElement = webArea.uiElementForSearchPredicate(webArea, true, "AXUnvisitedLinkSearchKey", "", false);
+        output += expect("resultElement.boolAttributeValue('AXVisited')", "false");
+        output += expect("resultElement.domIdentifier", "'link'");
 
-            resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXVisitedLinkSearchKey", "", false);
-            shouldBe("resultElement.boolAttributeValue('AXVisited')", "true");
-            shouldBe("resultElement.stringValue", "'AXValue: link'");
+        resultElement = webArea.uiElementForSearchPredicate(firstLinkText, true, "AXUnvisitedLinkSearchKey", "", false);
+        output += expect("resultElement.boolAttributeValue('AXVisited')", "false");
+        output += expect("resultElement.domIdentifier", "'display-contents-link'");
 
-            finishJSTest();
-        }, 50);
-    }
+        // Visit the links.
+        webArea.childAtIndex(0).press();
+        webArea.childAtIndex(1).press();
+
+        // Wait for them to be visited.
+        await waitFor(() => {
+            resultElement = webArea.uiElementForSearchPredicate(webArea, true, "AXVisitedLinkSearchKey", "", false);
+            return resultElement;
+        })
+        output += expect("resultElement.boolAttributeValue('AXVisited')", "true");
+        output += expect("resultElement.domIdentifier", "'link'");
+
+        await waitFor(() => {
+            resultElement = webArea.uiElementForSearchPredicate(firstLinkText, true, "AXVisitedLinkSearchKey", "", false);
+            return resultElement;
+        })
+        output += expect("resultElement.boolAttributeValue('AXVisited')", "true");
+        output += expect("resultElement.domIdentifier", "'display-contents-link'");
+
+        debug(output);
+        finishJSTest();
+    });
+}
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
+

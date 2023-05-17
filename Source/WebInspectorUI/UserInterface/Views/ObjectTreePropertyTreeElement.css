@@ -84,8 +84,8 @@
     font-size: 12px;
 }
 
-.object-tree-property .property-name:is(.private, .not-enumerable) {
-    opacity: 0.6;
+.object-tree-property .property-name:is(.private, .internal) {
+    color: var(--text-color-secondary);
 }
 
 .item.object-tree-property.prototype-property {

@@ -46,6 +46,7 @@
 #include "CSSCursorImageValue.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSFilterImageValue.h"
+#include "CSSFontFaceSrcValue.h"
 #include "CSSFontPaletteValuesOverrideColorsValue.h"
 #include "CSSFontVariantAlternatesValue.h"
 #include "CSSFontVariantLigaturesParser.h"
@@ -84,6 +85,7 @@
 #include "ColorInterpolation.h"
 #include "ColorLuminance.h"
 #include "ColorNormalization.h"
+#include "FontCustomPlatformData.h"
 #include "FontFace.h"
 #include "Logging.h"
 #include "RenderStyleConstants.h"
@@ -4901,21 +4903,12 @@ RefPtr<CSSValue> consumeFontSizeAdjust(CSSParserTokenRange& range)
     if (range.peek().id() == CSSValueNone || range.peek().id() == CSSValueFromFont)
         return consumeIdent(range);
 
-    if (auto value = consumeNumber(range, ValueRange::NonNegative))
-        return value;
-
     auto metric = consumeIdent<CSSValueExHeight, CSSValueCapHeight, CSSValueChWidth, CSSValueIcWidth, CSSValueIcHeight>(range);
-    if (!metric)
-        return nullptr;
-
     auto value = consumeNumber(range, ValueRange::NonNegative);
-    if (!value) {
+    if (!value)
         value = consumeIdent<CSSValueFromFont>(range);
-        if (!value)
-            return nullptr;
-    }
 
-    if (metric->valueID() == CSSValueExHeight)
+    if (!value || !metric || metric->valueID() == CSSValueExHeight)
         return value;
 
     return CSSValuePair::create(metric.releaseNonNull(), value.releaseNonNull());
@@ -6668,7 +6661,7 @@ RefPtr<CSSValue> consumeScrollSnapType(CSSParserTokenRange& range)
     return CSSValueList::createSpaceSeparated(firstValue.releaseNonNull());
 }
 
-RefPtr<CSSValue> consumeTextEdge(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeTextBoxEdge(CSSParserTokenRange& range)
 {
     if (range.peek().id() == CSSValueLeading)
         return CSSValueList::createSpaceSeparated(consumeIdent(range).releaseNonNull());
@@ -6957,10 +6950,10 @@ RefPtr<CSSValue> consumeListStyleType(CSSParserTokenRange& range, const CSSParse
     if (range.peek().type() == StringToken)
         return consumeString(range);
 
-    if (auto predefinedValues = consumeIdentRange(range, CSSValueDisc, CSSValueEthiopicNumeric))
+    if (auto predefinedValues = consumeIdent(range, isPredefinedCounterStyle))
         return predefinedValues;
 
-    if (context.counterStyleAtRuleEnabled)
+    if (context.propertySettings.cssCounterStyleAtRulesEnabled)
         return consumeCustomIdent(range);
 
     return nullptr;
@@ -7589,11 +7582,11 @@ bool parseGridTemplateAreasRow(StringView gridRowNames, NamedGridAreaMap& gridAr
         while (lookAheadColumn < columnCount && columnNames[lookAheadColumn] == gridAreaName)
             lookAheadColumn++;
 
-        auto gridAreaIt = gridAreaMap.find(gridAreaName);
-        if (gridAreaIt == gridAreaMap.end())
-            gridAreaMap.add(gridAreaName, GridArea(GridSpan::translatedDefiniteGridSpan(rowCount, rowCount + 1), GridSpan::translatedDefiniteGridSpan(currentColumn, lookAheadColumn)));
-        else {
-            auto& gridArea = gridAreaIt->value;
+        auto result = gridAreaMap.map.ensure(gridAreaName, [&] {
+            return GridArea(GridSpan::translatedDefiniteGridSpan(rowCount, rowCount + 1), GridSpan::translatedDefiniteGridSpan(currentColumn, lookAheadColumn));
+        });
+        if (!result.isNewEntry) {
+            auto& gridArea = result.iterator->value;
 
             // The following checks test that the grid area is a single filled-in rectangle.
             // 1. The new row is adjacent to the previously parsed row.
@@ -8200,17 +8193,38 @@ RefPtr<CSSValue> consumeFontFaceFontFamily(CSSParserTokenRange& range)
     return CSSValueList::createCommaSeparated(name.releaseNonNull());
 }
 
-bool identMatchesSupportedFontFormat(CSSValueID id)
+
+Vector<FontTechnology> consumeFontTech(CSSParserTokenRange& range, bool singleValue)
 {
-    return identMatches<
-        CSSValueCollection,
-        CSSValueEmbeddedOpentype,
-        CSSValueOpentype,
-        CSSValueSvg,
-        CSSValueTruetype,
-        CSSValueWoff,
-        CSSValueWoff2
-    >(id);
+    Vector<FontTechnology> technologies;
+    auto args = consumeFunction(range);
+    do {
+        auto& arg = args.consumeIncludingWhitespace();
+        if (arg.type() != IdentToken)
+            return { };
+        auto technology = fromCSSValueID<FontTechnology>(arg.id());
+        if (technology != FontTechnology::Invalid && FontCustomPlatformData::supportsTechnology(technology))
+            technologies.append(technology);
+    } while (consumeCommaIncludingWhitespace(args) && !singleValue);
+    if (!args.atEnd())
+        return { };
+    return technologies;
+}
+
+String consumeFontFormat(CSSParserTokenRange& range, bool rejectStringValues)
+{
+    // https://drafts.csswg.org/css-fonts/#descdef-font-face-src
+    // FIXME: We allow any identifier here and convert to strings; specification calls for certain keywords and legacy compatibility strings.
+    auto args = CSSPropertyParserHelpers::consumeFunction(range);
+    auto& arg = args.consumeIncludingWhitespace();
+    if (!args.atEnd())
+        return nullString();
+    if (arg.type() != IdentToken && (rejectStringValues || arg.type() != StringToken))
+        return nullString();
+    auto format = arg.value().toString();
+    if (arg.type() == IdentToken && !FontCustomPlatformData::supportsFormat(format))
+        return nullString();
+    return format;
 }
 
 // MARK: @font-palette-values
@@ -8234,12 +8248,24 @@ RefPtr<CSSValue> consumeFontPaletteValuesOverrideColors(CSSParserTokenRange& ran
 // MARK: @counter-style
 
 // https://www.w3.org/TR/css-counter-styles-3/#counter-style-system
-RefPtr<CSSValue> consumeCounterStyleSystem(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeCounterStyleSystem(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // cyclic | numeric | alphabetic | symbolic | additive | [fixed <integer>?] | [ extends <counter-style-name> ]
 
     if (auto ident = consumeIdent<CSSValueCyclic, CSSValueNumeric, CSSValueAlphabetic, CSSValueSymbolic, CSSValueAdditive>(range))
         return ident;
+
+    if (isUASheetBehavior(context.mode)) {
+        auto internalKeyword = consumeIdent<
+            CSSValueInternalSimplifiedChineseInformal,
+            CSSValueInternalSimplifiedChineseFormal,
+            CSSValueInternalTraditionalChineseInformal,
+            CSSValueInternalTraditionalChineseFormal,
+            CSSValueInternalEthiopicNumeric
+        >(range);
+        if (internalKeyword)
+            return internalKeyword;
+    }
 
     if (auto ident = consumeIdent<CSSValueFixed>(range)) {
         if (range.atEnd())
@@ -8253,8 +8279,6 @@ RefPtr<CSSValue> consumeCounterStyleSystem(CSSParserTokenRange& range)
     }
 
     if (auto ident = consumeIdent<CSSValueExtends>(range)) {
-        // FIXME: (rdar://103020193) "If a @counter-style uses the extends system, it must not contain a symbols or additive-symbols descriptor, or else the @counter-style rule is invalid." (https://www.w3.org/TR/css-counter-styles-3/#extends-system)
-
         // There must be a `<counter-style-name>` following the `extends` keyword. If there isn't, this value is invalid.
         auto parsedCounterStyleName = consumeCounterStyleName(range);
         if (!parsedCounterStyleName)

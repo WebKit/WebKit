@@ -30,6 +30,7 @@
 
 #import "ArgumentCoders.h"
 #import "GraphicsLayerCARemote.h"
+#import "Logging.h"
 #import "RemoteLayerTreeDrawingArea.h"
 #import "RemoteScrollingCoordinatorMessages.h"
 #import "RemoteScrollingCoordinatorTransaction.h"
@@ -183,6 +184,11 @@ WheelEventHandlingResult RemoteScrollingCoordinator::handleWheelEventForScrollin
 
     m_currentWheelGestureInfo = NodeAndGestureState { targetNodeID, gestureState };
     return WheelEventHandlingResult::handled();
+}
+
+void RemoteScrollingCoordinator::scrollingTreeNodeScrollbarVisibilityDidChange(ScrollingNodeID nodeID, WebCore::ScrollbarOrientation orientation, bool isVisible)
+{
+    AsyncScrollingCoordinator::scrollingTreeNodeScrollbarVisibilityDidChange(nodeID, orientation, isVisible);
 }
 
 } // namespace WebKit

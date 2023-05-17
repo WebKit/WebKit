@@ -1,3 +1,0 @@
-
-FAIL isContentHandlerRegistered for content type that is not yet accepted navigator.registerContentHandler is not a function. (In 'navigator.registerContentHandler(ctype, url, 'test')', 'navigator.registerContentHandler' is undefined)
-

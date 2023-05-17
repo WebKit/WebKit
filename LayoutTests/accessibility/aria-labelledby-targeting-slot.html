@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<x-button>slot<span>with child</span></x-button>
+
+<script>
+class XButton extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open", delegatesFocus: true });
+        const fragment = document.createRange().createContextualFragment("<input id='button' aria-labelledby='slot' type=button><slot id='slot'></slot>");
+        this.shadowRoot.append(fragment.cloneNode(true));
+    }
+}
+customElements.define("x-button", XButton);
+
+var output = "This test ensures we compute the correct accessible name when aria-labelledby targets a slot element.\n\n";
+if (window.accessibilityController) {
+    output += `#button accessible name: ${platformValueForW3CName(accessibilityController.accessibleElementById("button"))}`;
+    debug(output);
+}
+</script>
+</body>
+</html>
+
+

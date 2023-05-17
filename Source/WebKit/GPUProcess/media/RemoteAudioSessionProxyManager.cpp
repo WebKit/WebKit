@@ -76,16 +76,16 @@ void RemoteAudioSessionProxyManager::removeProxy(RemoteAudioSessionProxy& proxy)
 
 void RemoteAudioSessionProxyManager::updateCategory()
 {
-    AudioSession::CategoryType category = AudioSession::CategoryType::None;
-    RouteSharingPolicy policy = RouteSharingPolicy::Default;
-
     HashCountedSet<AudioSession::CategoryType, WTF::IntHash<AudioSession::CategoryType>, WTF::StrongEnumHashTraits<AudioSession::CategoryType>> categoryCounts;
+    HashCountedSet<AudioSession::Mode, WTF::IntHash<AudioSession::Mode>, WTF::StrongEnumHashTraits<AudioSession::Mode>> modeCounts;
     HashCountedSet<RouteSharingPolicy, WTF::IntHash<RouteSharingPolicy>, WTF::StrongEnumHashTraits<RouteSharingPolicy>> policyCounts;
     for (auto& otherProxy : m_proxies) {
         categoryCounts.add(otherProxy.category());
+        modeCounts.add(otherProxy.mode());
         policyCounts.add(otherProxy.routeSharingPolicy());
     }
 
+    AudioSession::CategoryType category = AudioSession::CategoryType::None;
     if (categoryCounts.contains(AudioSession::CategoryType::PlayAndRecord))
         category = AudioSession::CategoryType::PlayAndRecord;
     else if (categoryCounts.contains(AudioSession::CategoryType::RecordAudio))
@@ -98,10 +98,14 @@ void RemoteAudioSessionProxyManager::updateCategory()
         category = AudioSession::CategoryType::AmbientSound;
     else if (categoryCounts.contains(AudioSession::CategoryType::AudioProcessing))
         category = AudioSession::CategoryType::AudioProcessing;
-    else
-        category = AudioSession::CategoryType::None;
 
-    policy = RouteSharingPolicy::Default;
+    AudioSession::Mode mode = AudioSession::Mode::Default;
+    if (modeCounts.contains(AudioSession::Mode::MoviePlayback))
+        mode = AudioSession::Mode::MoviePlayback;
+    else if (modeCounts.contains(AudioSession::Mode::VideoChat))
+        mode = AudioSession::Mode::VideoChat;
+
+    RouteSharingPolicy policy = RouteSharingPolicy::Default;
     if (policyCounts.contains(RouteSharingPolicy::LongFormVideo))
         policy = RouteSharingPolicy::LongFormVideo;
     else if (policyCounts.contains(RouteSharingPolicy::LongFormAudio))
@@ -109,7 +113,7 @@ void RemoteAudioSessionProxyManager::updateCategory()
     else if (policyCounts.contains(RouteSharingPolicy::Independent))
         ASSERT_NOT_REACHED();
 
-    AudioSession::sharedSession().setCategory(category, policy);
+    AudioSession::sharedSession().setCategory(category, mode, policy);
 }
 
 void RemoteAudioSessionProxyManager::updatePreferredBufferSizeForProcess()
@@ -207,6 +211,24 @@ void RemoteAudioSessionProxyManager::updatePresentingProcesses()
             presentingProcesses.append(*token);
     });
     AudioSession::sharedSession().setPresentingProcesses(WTFMove(presentingProcesses));
+}
+
+void RemoteAudioSessionProxyManager::beginInterruptionRemote()
+{
+    auto& session = this->session();
+    // Temporarily remove as an observer to avoid a spurious IPC back to the web process.
+    session.removeInterruptionObserver(*this);
+    session.beginInterruption();
+    session.addInterruptionObserver(*this);
+}
+
+void RemoteAudioSessionProxyManager::endInterruptionRemote(AudioSession::MayResume mayResume)
+{
+    auto& session = this->session();
+    // Temporarily remove as an observer to avoid a spurious IPC back to the web process.
+    session.removeInterruptionObserver(*this);
+    session.endInterruption(mayResume);
+    session.addInterruptionObserver(*this);
 }
 
 void RemoteAudioSessionProxyManager::beginAudioSessionInterruption()

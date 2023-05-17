@@ -57,7 +57,6 @@ public:
             ASSERT(&dfa  == &other.dfa);
             return position == other.position;
         }
-        bool operator!=(const ConstRangeIterator& other) const { return !(*this == other); }
 
         ConstRangeIterator& operator++()
         {
@@ -98,7 +97,6 @@ public:
             ASSERT(&dfa  == &other.dfa);
             return position == other.position;
         }
-        bool operator!=(const RangeIterator& other) const { return !(*this == other); }
 
         RangeIterator& operator++()
         {
@@ -163,7 +161,7 @@ private:
     uint8_t m_transitionsLength { 0 };
     
     uint8_t m_flags { 0 };
-    const uint8_t IsKilled = 0x01;
+    static constexpr uint8_t IsKilled = 0x01;
 };
 
 static_assert(sizeof(DFANode) <= 16, "Keep the DFANodes small");

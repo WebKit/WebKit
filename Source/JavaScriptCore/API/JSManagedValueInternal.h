@@ -27,6 +27,7 @@
 #define JSManagedValueInternal_h
 
 #import <JavaScriptCore/JSBase.h>
+#import <JavaScriptCore/JSManagedValue.h>
 
 #if JSC_OBJC_API_ENABLED
 

@@ -27,6 +27,7 @@
 #include "config.h"
 #include "WebProcess.h"
 
+#include "Logging.h"
 #include "WebKitWebProcessExtensionPrivate.h"
 #include "WebPage.h"
 #include "WebProcessCreationParameters.h"
@@ -48,8 +49,13 @@
 #include <wpe/wpe.h>
 #endif
 
-#if PLATFORM(GTK) && USE(EGL)
-#include <WebCore/PlatformDisplayHeadless.h>
+#if USE(GBM)
+#include <WebCore/GBMDevice.h>
+#endif
+
+#if PLATFORM(GTK)
+#include <WebCore/PlatformDisplayGBM.h>
+#include <WebCore/PlatformDisplaySurfaceless.h>
 #endif
 
 #if PLATFORM(GTK) && !USE(GTK4)
@@ -58,6 +64,10 @@
 
 #if ENABLE(MEDIA_STREAM)
 #include "UserMediaCaptureManager.h"
+#endif
+
+#if HAVE(MALLOC_TRIM)
+#include <malloc.h>
 #endif
 
 #if OS(LINUX)
@@ -74,6 +84,10 @@
 #endif
 
 #include <WebCore/CairoUtilities.h>
+
+#define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
+#define WEBPROCESS_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
+#define WEBPROCESS_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
 
 namespace WebKit {
 
@@ -123,9 +137,17 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     }
 #endif
 
-#if PLATFORM(GTK) && USE(EGL)
-    if (parameters.useDMABufSurfaceForCompositing)
-        m_displayForCompositing = WebCore::PlatformDisplayHeadless::create();
+#if USE(GBM)
+    WebCore::GBMDevice::singleton().initialize(parameters.renderDeviceFile);
+#endif
+
+#if PLATFORM(GTK) && USE(GBM)
+    if (parameters.useDMABufSurfaceForCompositing) {
+        if (auto* device = WebCore::GBMDevice::singleton().device())
+            m_displayForCompositing = WebCore::PlatformDisplayGBM::create(device);
+        else
+            m_displayForCompositing = WebCore::PlatformDisplaySurfaceless::create();
+    }
 #endif
 
 #if PLATFORM(WAYLAND)
@@ -207,4 +229,24 @@ void WebProcess::switchFromStaticFontRegistryToUserFontRegistry(Vector<WebKit::S
 {
 }
 
+void WebProcess::releaseSystemMallocMemory()
+{
+#if HAVE(MALLOC_TRIM)
+#if !RELEASE_LOG_DISABLED
+    const auto startTime = MonotonicTime::now();
+#endif
+
+    malloc_trim(0);
+
+#if !RELEASE_LOG_DISABLED
+    const auto endTime = MonotonicTime::now();
+    WEBPROCESS_RELEASE_LOG(ProcessSuspension, "releaseSystemMallocMemory: took %.2fms", (endTime - startTime).milliseconds());
+#endif
+#endif
+}
+
 } // namespace WebKit
+
+#undef RELEASE_LOG_SESSION_ID
+#undef WEBPROCESS_RELEASE_LOG
+#undef WEBPROCESS_RELEASE_LOG_ERROR

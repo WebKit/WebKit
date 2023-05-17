@@ -214,8 +214,7 @@ public:
     explicit JSValue(unsigned long long);
 
     explicit operator bool() const;
-    bool operator==(const JSValue& other) const;
-    bool operator!=(const JSValue& other) const;
+    bool operator==(const JSValue&) const;
 
     bool isInt32() const;
     bool isUInt32() const;
@@ -687,10 +686,6 @@ ALWAYS_INLINE EncodedJSValue encodedJSValue()
 
 inline bool operator==(const JSValue a, const JSCell* b) { return a == JSValue(b); }
 inline bool operator==(const JSCell* a, const JSValue b) { return JSValue(a) == b; }
-
-inline bool operator!=(const JSValue a, const JSCell* b) { return a != JSValue(b); }
-inline bool operator!=(const JSCell* a, const JSValue b) { return JSValue(a) != b; }
-
 
 bool isThisValueAltered(const PutPropertySlot&, JSObject* baseObject);
 

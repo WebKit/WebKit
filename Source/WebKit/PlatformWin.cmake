@@ -19,6 +19,8 @@ list(APPEND WebKit_SOURCES
     GPUProcess/win/GPUProcessMainWin.cpp
     GPUProcess/win/GPUProcessWin.cpp
 
+    NetworkProcess/NetworkDataTaskDataURL.cpp
+
     NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
 
     NetworkProcess/Cookies/curl/WebCookieManagerCurl.cpp

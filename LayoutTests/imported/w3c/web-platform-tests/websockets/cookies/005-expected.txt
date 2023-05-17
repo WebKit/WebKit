@@ -1,3 +1,0 @@
-
-FAIL WebSockets: setting HttpOnly cookies in ws response, checking ws request assert_regexp_match: expected object "/ws_test_1560300651419.0.18655922318368579=test/" but got "(none)"
-

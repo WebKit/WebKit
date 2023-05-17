@@ -134,9 +134,12 @@ static void handleMenuDidHideNotification(CFNotificationCenterRef, void*, CFStri
 
 void TestController::notifyDone()
 {
+    // FIXME: Do we still require this workaround?
+#if !HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     UIView *contentView = mainWebView()->platformView().contentView;
     UIView *selectionView = [contentView valueForKeyPath:@"interactionAssistant.selectionView"];
     [selectionView _removeAllAnimations:YES];
+#endif
 }
 
 void TestController::platformInitialize(const Options& options)
@@ -335,12 +338,17 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         [scrollView setZoomScale:1 animated:NO];
         scrollView.firstResponderKeyboardAvoidanceEnabled = YES;
 
-        auto currentContentInset = scrollView.contentInset;
         auto contentInsetTop = options.contentInsetTop();
-        if (currentContentInset.top != contentInsetTop) {
-            currentContentInset.top = contentInsetTop;
-            scrollView.contentInset = currentContentInset;
-            scrollView.contentOffset = CGPointMake(-currentContentInset.left, -currentContentInset.top);
+        if (auto contentInset = scrollView.contentInset; contentInset.top != contentInsetTop) {
+            contentInset.top = contentInsetTop;
+            scrollView.contentInset = contentInset;
+            scrollView.contentOffset = CGPointMake(-contentInset.left, -contentInset.top);
+        }
+
+        auto obscuredInsetTop = options.obscuredInsetTop();
+        if (auto obscuredInset = webView._obscuredInsets; obscuredInset.top != obscuredInsetTop) {
+            obscuredInset.top = obscuredInsetTop;
+            webView._obscuredInsets = obscuredInset;
         }
 
         if (webView.interactingWithFormControl) {
@@ -527,10 +535,10 @@ void TestController::lockScreenOrientation(WKScreenOrientationType orientation)
         webView.supportedInterfaceOrientations = UIInterfaceOrientationMaskPortraitUpsideDown;
         break;
     case kWKScreenOrientationTypeLandscapePrimary:
-        webView.supportedInterfaceOrientations = UIInterfaceOrientationMaskLandscapeLeft;
+        webView.supportedInterfaceOrientations = UIInterfaceOrientationMaskLandscapeRight;
         break;
     case kWKScreenOrientationTypeLandscapeSecondary:
-        webView.supportedInterfaceOrientations = UIInterfaceOrientationMaskLandscapeRight;
+        webView.supportedInterfaceOrientations = UIInterfaceOrientationMaskLandscapeLeft;
         break;
     }
     [UIView performWithoutAnimation:^{

@@ -41,6 +41,7 @@
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementChildIteratorInlines.h"
 #include "Event.h"
+#include "EventHandler.h"
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "FrameLoader.h"
@@ -58,6 +59,7 @@
 #include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSelectElement.h"
+#include "HTMLSlotElement.h"
 #include "HTMLSummaryElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
@@ -351,7 +353,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::DescriptionListTerm;
     if (node()->hasTagName(dlTag))
         return AccessibilityRole::DescriptionList;
-    if (node()->hasTagName(olTag) || node()->hasTagName(ulTag))
+    if (node()->hasTagName(menuTag) || node()->hasTagName(olTag) || node()->hasTagName(ulTag))
         return AccessibilityRole::List;
     if (node()->hasTagName(fieldsetTag))
         return AccessibilityRole::Group;
@@ -375,6 +377,8 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::LandmarkNavigation;
     if (node()->hasTagName(asideTag))
         return AccessibilityRole::LandmarkComplementary;
+    if (node()->hasTagName(searchTag))
+        return AccessibilityRole::LandmarkSearch;
 
     // The default role attribute value for the section element, region, became a landmark in ARIA 1.1.
     // The HTML AAM spec says it is "strongly recommended" that ATs only convey and provide navigation
@@ -432,9 +436,6 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::Footer;
     }
 
-    // menu tags with toolbar type should have Toolbar role.
-    if (node()->hasTagName(menuTag) && equalLettersIgnoringASCIICase(getAttribute(typeAttr), "toolbar"_s))
-        return AccessibilityRole::Toolbar;
     if (node()->hasTagName(timeTag))
         return AccessibilityRole::Time;
     if (node()->hasTagName(hrTag))
@@ -544,6 +545,24 @@ bool AccessibilityNodeObject::canHaveChildren() const
     default:
         return true;
     }
+}
+
+AXCoreObject::AccessibilityChildrenVector AccessibilityNodeObject::visibleChildren()
+{
+    // Only listboxes are asked for their visible children.
+    // Native list boxes would be AccessibilityListBoxes, so only check for aria list boxes.
+    if (ariaRoleAttribute() != AccessibilityRole::ListBox)
+        return { };
+
+    if (!childrenInitialized())
+        addChildren();
+
+    AccessibilityChildrenVector result;
+    for (const auto& child : children()) {
+        if (!child->isOffScreen())
+            result.append(child);
+    }
+    return result;
 }
 
 bool AccessibilityNodeObject::computeAccessibilityIsIgnored() const
@@ -677,11 +696,6 @@ bool AccessibilityNodeObject::isInputImage() const
     return false;
 }
 
-bool AccessibilityNodeObject::isProgressIndicator() const
-{
-    return roleValue() == AccessibilityRole::ProgressIndicator || roleValue() == AccessibilityRole::Meter;
-}
-
 bool AccessibilityNodeObject::isEnabled() const
 {
     // ARIA says that the disabled status applies to the current element and all descendant elements.
@@ -796,6 +810,56 @@ bool AccessibilityNodeObject::isRequired() const
         return downcast<HTMLFormControlElement>(*n).isRequired();
 
     return false;
+}
+
+String AccessibilityNodeObject::accessKey() const
+{
+    auto* element = this->element();
+    return element ? element->attributeWithoutSynchronization(accesskeyAttr) : String();
+}
+
+bool AccessibilityNodeObject::supportsDropping() const
+{
+    return determineDropEffects().size();
+}
+
+bool AccessibilityNodeObject::supportsDragging() const
+{
+    const AtomString& grabbed = getAttribute(aria_grabbedAttr);
+    return equalLettersIgnoringASCIICase(grabbed, "true"_s) || equalLettersIgnoringASCIICase(grabbed, "false"_s) || hasAttribute(draggableAttr);
+}
+
+bool AccessibilityNodeObject::isGrabbed()
+{
+#if ENABLE(DRAG_SUPPORT)
+    if (mainFrame() && mainFrame()->eventHandler().draggingElement() == element())
+        return true;
+#endif
+
+    return elementAttributeValue(aria_grabbedAttr);
+}
+
+Vector<String> AccessibilityNodeObject::determineDropEffects() const
+{
+    // Order is aria-dropeffect, dropzone, webkitdropzone
+    const AtomString& dropEffects = getAttribute(aria_dropeffectAttr);
+    if (!dropEffects.isEmpty())
+        return makeStringByReplacingAll(dropEffects.string(), '\n', ' ').split(' ');
+
+    auto dropzone = getAttribute(dropzoneAttr);
+    if (!dropzone.isEmpty())
+        return Vector<String> { dropzone };
+
+    auto webkitdropzone = getAttribute(webkitdropzoneAttr);
+    if (!webkitdropzone.isEmpty())
+        return Vector<String> { webkitdropzone };
+
+    return { };
+}
+
+bool AccessibilityNodeObject::supportsARIAOwns() const
+{
+    return !getAttribute(aria_ownsAttr).isEmpty();
 }
 
 bool AccessibilityNodeObject::supportsRequiredAttribute() const
@@ -1017,6 +1081,77 @@ Element* AccessibilityNodeObject::anchorElement() const
     }
 
     return nullptr;
+}
+
+AccessibilityObject* AccessibilityNodeObject::internalLinkElement() const
+{
+    // We don't currently support ARIA links as internal link elements, so exit early if anchorElement() is not a native HTMLAnchorElement.
+    WeakPtr anchor = dynamicDowncast<HTMLAnchorElement>(anchorElement());
+    if (!anchor)
+        return nullptr;
+
+    auto linkURL = anchor->href();
+    auto fragmentIdentifier = linkURL.fragmentIdentifier();
+    if (fragmentIdentifier.isEmpty())
+        return nullptr;
+
+    // Check if URL is the same as current URL
+    auto* document = this->document();
+    if (!document || !equalIgnoringFragmentIdentifier(document->url(), linkURL))
+        return nullptr;
+
+    auto linkedNode = document->findAnchor(fragmentIdentifier);
+    if (!linkedNode)
+        return nullptr;
+
+    // The element we find may not be accessible, so find the first accessible object.
+    return firstAccessibleObjectFromNode(linkedNode);
+}
+
+void AccessibilityNodeObject::addRadioButtonGroupChildren(AXCoreObject& parent, AccessibilityChildrenVector& linkedUIElements) const
+{
+    for (const auto& child : parent.children()) {
+        if (child->roleValue() == AccessibilityRole::RadioButton)
+            linkedUIElements.append(child);
+        else
+            addRadioButtonGroupChildren(*child, linkedUIElements);
+    }
+}
+
+void AccessibilityNodeObject::addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const
+{
+    if (roleValue() != AccessibilityRole::RadioButton)
+        return;
+
+    WeakPtr node = this->node();
+    if (auto* input = dynamicDowncast<HTMLInputElement>(node.get())) {
+        for (auto& radioSibling : input->radioButtonGroup()) {
+            if (auto* object = axObjectCache()->getOrCreate(radioSibling.ptr()))
+                linkedUIElements.append(object);
+        }
+    } else {
+        // If we didn't find any radio button siblings with the traditional naming, lets search for a radio group role and find its children.
+        for (auto* parent = parentObject(); parent; parent = parent->parentObject()) {
+            if (parent->roleValue() == AccessibilityRole::RadioGroup)
+                addRadioButtonGroupChildren(*parent, linkedUIElements);
+        }
+    }
+}
+
+AXCoreObject::AccessibilityChildrenVector AccessibilityNodeObject::linkedObjects() const
+{
+    auto linkedObjects = flowToObjects();
+
+    if (isLink()) {
+        if (auto* linkedAXElement = internalLinkElement())
+            linkedObjects.append(linkedAXElement);
+    }
+
+    if (roleValue() == AccessibilityRole::RadioButton)
+        addRadioButtonGroupMembers(linkedObjects);
+
+    linkedObjects.appendVector(controlledObjects());
+    return linkedObjects;
 }
 
 static bool isNodeActionElement(Node* node)
@@ -1362,7 +1497,7 @@ AccessibilityObject* AccessibilityNodeObject::correspondingLabelForControlElemen
 
 HTMLLabelElement* AccessibilityNodeObject::labelForElement(Element* element) const
 {
-    if (!is<HTMLElement>(*element) || !downcast<HTMLElement>(*element).isLabelable())
+    if (!is<HTMLElement>(element) || !downcast<HTMLElement>(element)->isLabelable())
         return nullptr;
 
     const AtomString& id = element->getIdAttribute();
@@ -1537,6 +1672,17 @@ void AccessibilityNodeObject::titleElementText(Vector<AccessibilityText>& textOr
     AccessibilityObject* titleUIElement = this->titleUIElement();
     if (titleUIElement)
         textOrder.append(AccessibilityText(String(), AccessibilityTextSource::LabelByElement));
+}
+
+AccessibilityObject* AccessibilityNodeObject::titleUIElement() const
+{
+    if (!exposesTitleUIElement())
+        return nullptr;
+
+    if (isFigureElement())
+        return captionForFigure();
+
+    return axObjectCache()->getOrCreate(labelForElement(dynamicDowncast<Element>(node())));
 }
 
 bool AccessibilityNodeObject::exposesTitleUIElement() const
@@ -1715,11 +1861,14 @@ void AccessibilityNodeObject::helpText(Vector<AccessibilityText>& textOrder) con
     const AtomString& ariaHelp = getAttribute(aria_helpAttr);
     if (!ariaHelp.isEmpty())
         textOrder.append(AccessibilityText(ariaHelp, AccessibilityTextSource::Help));
-    
+
+#if !PLATFORM(COCOA)
     String describedBy = ariaDescribedByAttribute();
     if (!describedBy.isEmpty())
         textOrder.append(AccessibilityText(describedBy, AccessibilityTextSource::Summary));
-    else if (isControl()) {
+#endif
+
+    if (isControl()) {
         // For controls, use their fieldset parent's described-by text if available.
         auto matchFunc = [] (const AccessibilityObject& object) {
             return object.isFieldset() && !object.ariaDescribedByAttribute().isEmpty();
@@ -1902,6 +2051,26 @@ String AccessibilityNodeObject::helpText() const
     }
 
     return { };
+}
+
+URL AccessibilityNodeObject::url() const
+{
+    auto* node = this->node();
+    if (isLink() && is<HTMLAnchorElement>(node))
+        return downcast<HTMLAnchorElement>(node)->href();
+
+    if (isImage() && is<HTMLImageElement>(node))
+        return downcast<HTMLImageElement>(node)->src();
+
+    if (isInputImage() && is<HTMLInputElement>(node))
+        return downcast<HTMLInputElement>(node)->src();
+
+#if ENABLE(VIDEO)
+    if (isVideo() && is<HTMLVideoElement>(node))
+        return downcast<HTMLVideoElement>(node)->currentSrc();
+#endif
+
+    return URL();
 }
 
 unsigned AccessibilityNodeObject::hierarchicalLevel() const
@@ -2215,21 +2384,19 @@ SRGBA<uint8_t> AccessibilityNodeObject::colorValue() const
 static String accessibleNameForNode(Node* node, Node* labelledbyNode)
 {
     ASSERT(node);
-    if (!is<Element>(node))
-        return String();
-    
-    Element& element = downcast<Element>(*node);
-    const AtomString& ariaLabel = element.attributeWithoutSynchronization(aria_labelAttr);
+
+    auto* element = dynamicDowncast<Element>(node);
+    const AtomString& ariaLabel = element ? element->attributeWithoutSynchronization(aria_labelAttr) : nullAtom();
     if (!ariaLabel.isEmpty())
         return ariaLabel;
     
-    const AtomString& alt = element.attributeWithoutSynchronization(altAttr);
+    const AtomString& alt = element ? element->attributeWithoutSynchronization(altAttr) : nullAtom();
     if (!alt.isEmpty())
         return alt;
 
     // If the node can be turned into an AX object, we can use standard name computation rules.
     // If however, the node cannot (because there's no renderer e.g.) fallback to using the basic text underneath.
-    auto axObject = element.document().axObjectCache()->getOrCreate(&element);
+    auto* axObject = node->document().axObjectCache()->getOrCreate(node);
     if (axObject) {
         String valueDescription = axObject->valueDescription();
         if (!valueDescription.isEmpty())
@@ -2237,13 +2404,13 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
 
         // The Accname specification states that if the name is being calculated for a combobox
         // or listbox inside a labeling element, return the text alternative of the chosen option.
-        AccessibilityObject::AccessibilityChildrenVector children;
+        AccessibilityObject::AccessibilityChildrenVector selectedChildren;
         if (axObject->isListBox())
-            axObject->selectedChildren(children);
+            selectedChildren = axObject->selectedChildren();
         else if (axObject->isComboBox()) {
             for (const auto& child : axObject->children()) {
                 if (child->isListBox()) {
-                    child->selectedChildren(children);
+                    selectedChildren = child->selectedChildren();
                     break;
                 }
             }
@@ -2251,7 +2418,7 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
 
         StringBuilder builder;
         String childText;
-        for (const auto& child : children)
+        for (const auto& child : selectedChildren)
             appendNameToStringBuilder(builder, accessibleNameForNode(child->node()));
 
         childText = builder.toString();
@@ -2278,14 +2445,26 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
         if (axObject->accessibleNameDerivesFromContent())
             text = axObject->textUnderElement(AccessibilityTextUnderElementMode(AccessibilityTextUnderElementMode::TextUnderElementModeIncludeNameFromContentsChildren, true, labelledbyNode));
     } else
-        text = element.innerText().simplifyWhiteSpace();
+        text = (element ? element->innerText() : node->textContent()).simplifyWhiteSpace();
 
     if (!text.isEmpty())
         return text;
     
-    const AtomString& title = element.attributeWithoutSynchronization(titleAttr);
+    const AtomString& title = element ? element->attributeWithoutSynchronization(titleAttr) : nullAtom();
     if (!title.isEmpty())
         return title;
+
+    auto* slotElement = dynamicDowncast<HTMLSlotElement>(node);
+    // Compute the accessible name for a slot's contents only if it's being used to label another node.
+    if (auto* assignedNodes = (slotElement && labelledbyNode) ? slotElement->assignedNodes() : nullptr) {
+        StringBuilder builder;
+        for (const auto& assignedNode : *assignedNodes)
+            appendNameToStringBuilder(builder, accessibleNameForNode(assignedNode.get()));
+
+        auto assignedNodesText = builder.toString();
+        if (!assignedNodesText.isEmpty())
+            return assignedNodesText;
+    }
     
     return String();
 }

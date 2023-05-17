@@ -24,6 +24,7 @@
 #include "RenderQuote.h"
 
 #include "QuotesData.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderTextFragment.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"

@@ -241,7 +241,7 @@ public:
     bool isProxy() const
     {
         JSType type = m_blob.type();
-        return type == PureForwardingProxyType || type == ProxyObjectType;
+        return type == GlobalProxyType || type == ProxyObjectType;
     }
 
     static void dumpStatistics();
@@ -295,6 +295,8 @@ public:
     PropertyOffset removePropertyWithoutTransition(VM&, PropertyName, const Func&);
     template<typename Func>
     PropertyOffset attributeChangeWithoutTransition(VM&, PropertyName, unsigned attributes, const Func&);
+    template<typename Func>
+    auto addOrReplacePropertyWithoutTransition(VM&, PropertyName, unsigned attributes, const Func&) -> decltype(auto);
     void setPrototypeWithoutTransition(VM&, JSValue prototype);
         
     bool isDictionary() const { return dictionaryKind() != NoneDictionaryKind; }
@@ -340,11 +342,22 @@ public:
     {
         return typeInfo().hasStaticPropertyTable() && !staticPropertiesReified();
     }
-    
+
+    bool isNonExtensibleOrHasNonConfigurableProperties() const
+    {
+        return didPreventExtensions() || hasNonConfigurableProperties();
+    }
+
+    bool hasAnyOfBitFieldFlags(unsigned flags) const
+    {
+        return m_bitField & flags;
+    }
+
     // Type accessors.
     TypeInfo typeInfo() const { return m_blob.typeInfo(m_outOfLineTypeFlags); }
     bool isObject() const { return typeInfo().isObject(); }
     const ClassInfo* classInfoForCells() const { return m_classInfo.get(); }
+    CellState typeInfoDefaultCellState() const { return m_blob.defaultCellState(); }
 protected:
     // You probably want typeInfo().type()
     JSType type() { return JSCell::type(); }
@@ -698,6 +711,16 @@ public:
         return OBJECT_OFFSETOF(Structure, m_previousOrRareData);
     }
 
+    static ptrdiff_t bitFieldOffset()
+    {
+        return OBJECT_OFFSETOF(Structure, m_bitField);
+    }
+
+    static ptrdiff_t propertyHashOffset()
+    {
+        return OBJECT_OFFSETOF(Structure, m_propertyHash);
+    }
+
     static Structure* createStructure(VM&);
         
     bool transitionWatchpointSetHasBeenInvalidated() const
@@ -762,6 +785,8 @@ public:
     }
     void startWatchingPropertyForReplacements(VM&, PropertyName);
     WatchpointSet* propertyReplacementWatchpointSet(PropertyOffset);
+    JS_EXPORT_PRIVATE WatchpointSet* firePropertyReplacementWatchpointSet(VM&, PropertyOffset, const char* reason);
+
     void didReplaceProperty(PropertyOffset);
     void didCachePropertyReplacement(VM&, PropertyOffset);
     
@@ -807,6 +832,7 @@ public:
 #define DEFINE_BITFIELD(type, lowerName, upperName, width, offset) \
     static constexpr uint32_t s_##lowerName##Shift = offset;\
     static constexpr uint32_t s_##lowerName##Mask = ((1 << (width - 1)) | ((1 << (width - 1)) - 1));\
+    static constexpr uint32_t s_##lowerName##Bits = s_##lowerName##Mask << s_##lowerName##Shift;\
     static constexpr uint32_t s_bitWidthOf##upperName = width;\
     type lowerName() const { return static_cast<type>((m_bitField >> offset) & s_##lowerName##Mask); }\
     void set##upperName(type newValue) \
@@ -820,22 +846,38 @@ public:
     DEFINE_BITFIELD(bool, hasAnyKindOfGetterSetterProperties, HasAnyKindOfGetterSetterProperties, 1, 3);
     DEFINE_BITFIELD(bool, hasReadOnlyOrGetterSetterPropertiesExcludingProto, HasReadOnlyOrGetterSetterPropertiesExcludingProto, 1, 4);
     DEFINE_BITFIELD(bool, isQuickPropertyAccessAllowedForEnumeration, IsQuickPropertyAccessAllowedForEnumeration, 1, 5);
-    DEFINE_BITFIELD(TransitionPropertyAttributes, transitionPropertyAttributes, TransitionPropertyAttributes, 8, 6);
-    DEFINE_BITFIELD(TransitionKind, transitionKind, TransitionKind, 5, 14);
+    DEFINE_BITFIELD(TransitionPropertyAttributes, transitionPropertyAttributes, TransitionPropertyAttributes, 7, 6);
+    DEFINE_BITFIELD(TransitionKind, transitionKind, TransitionKind, 5, 13);
+    DEFINE_BITFIELD(bool, isWatchingReplacement, IsWatchingReplacement, 1, 18); // This flag can be fliped on the main thread at any timing.
     DEFINE_BITFIELD(bool, mayBePrototype, MayBePrototype, 1, 19);
     DEFINE_BITFIELD(bool, didPreventExtensions, DidPreventExtensions, 1, 20);
     DEFINE_BITFIELD(bool, didTransition, DidTransition, 1, 21);
     DEFINE_BITFIELD(bool, staticPropertiesReified, StaticPropertiesReified, 1, 22);
     DEFINE_BITFIELD(bool, hasBeenFlattenedBefore, HasBeenFlattenedBefore, 1, 23);
+    DEFINE_BITFIELD(bool, isBrandedStructure, IsBrandedStructure, 1, 24);
     DEFINE_BITFIELD(bool, didWatchInternalProperties, DidWatchInternalProperties, 1, 25);
     DEFINE_BITFIELD(bool, transitionWatchpointIsLikelyToBeFired, TransitionWatchpointIsLikelyToBeFired, 1, 26);
     DEFINE_BITFIELD(bool, hasBeenDictionary, HasBeenDictionary, 1, 27);
     DEFINE_BITFIELD(bool, protectPropertyTableWhileTransitioning, ProtectPropertyTableWhileTransitioning, 1, 28);
     DEFINE_BITFIELD(bool, hasUnderscoreProtoPropertyExcludingOriginalProto, HasUnderscoreProtoPropertyExcludingOriginalProto, 1, 29);
-    DEFINE_BITFIELD(bool, isBrandedStructure, IsBrandedStructure, 1, 30);
+    DEFINE_BITFIELD(bool, hasNonConfigurableProperties, HasNonConfigurableProperties, 1, 30);
+    DEFINE_BITFIELD(bool, hasNonConfigurableReadOnlyOrGetterSetterProperties, HasNonConfigurableReadOnlyOrGetterSetterProperties, 1, 31);
 
     static_assert(s_bitWidthOfTransitionPropertyAttributes <= sizeof(TransitionPropertyAttributes) * 8);
     static_assert(s_bitWidthOfTransitionKind <= sizeof(TransitionKind) * 8);
+
+    static bool bitFieldFlagsCantBeChangedWithoutTransition(unsigned flags)
+    {
+        return flags == (flags & (
+            s_didPreventExtensionsBits
+            | s_isQuickPropertyAccessAllowedForEnumerationBits
+            | s_hasAnyKindOfGetterSetterPropertiesBits
+            | s_hasReadOnlyOrGetterSetterPropertiesExcludingProtoBits
+            | s_hasUnderscoreProtoPropertyExcludingOriginalProtoBits
+            | s_hasNonConfigurablePropertiesBits
+            | s_hasNonConfigurableReadOnlyOrGetterSetterPropertiesBits
+        ));
+    }
 
     int transitionCountEstimate() const
     {
@@ -946,7 +988,8 @@ private:
     bool isValid(JSGlobalObject*, StructureChain* cachedPrototypeChain, JSObject* base) const;
 
     // You have to hold the structure lock to do these.
-    JS_EXPORT_PRIVATE void pin(const AbstractLocker&, VM&, PropertyTable*);
+    // Keep them inlined function since they are used in the critical path of Dictionary JSObject modification.
+    void pin(const AbstractLocker&, VM&, PropertyTable*);
     void pinForCaching(const AbstractLocker&, VM&, PropertyTable*);
     
     static bool isRareData(JSCell* cell)

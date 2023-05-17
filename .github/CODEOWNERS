@@ -204,3 +204,15 @@ wpe/ @WebKit/glib-reviewers @zdobersek
 /LayoutTests/platform/gtk-wayland/
 /LayoutTests/platform/gtk-wk2/
 /LayoutTests/platform/wpe/
+
+# ================================================================================
+# WebGPU
+
+/Source/WebCore/Modules/webgpu @litherum @mwyrzykowski
+/Source/WebCore/PAL/pal/graphics/WebGPU @litherum @mwyrzykowski
+/Source/WebGPU @litherum @mwyrzykowski
+/Source/WebKit/Shared/WebGPU @litherum @mwyrzykowski
+/Source/WebKit/WebProcess/GPU/graphics/WebGPU @litherum @mwyrzykowski
+/Source/WebKit/GPUProcess/graphics/WebGPU @litherum @mwyrzykowski
+
+/Source/WebGPU/WGSL @litherum @djg @tadeuzagallo

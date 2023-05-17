@@ -106,21 +106,6 @@ inline bool operator==(PropertyName a, const char* b)
     return equal(a.uid(), b);
 }
 
-inline bool operator!=(PropertyName a, const Identifier& b)
-{
-    return a.uid() != b.impl();
-}
-
-inline bool operator!=(const Identifier& a, PropertyName b)
-{
-    return a.impl() != b.uid();
-}
-
-inline bool operator!=(PropertyName a, PropertyName b)
-{
-    return a.uid() != b.uid();
-}
-
 ALWAYS_INLINE std::optional<uint32_t> parseIndex(PropertyName propertyName)
 {
     auto uid = propertyName.uid();

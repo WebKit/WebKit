@@ -39,7 +39,7 @@
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "RenderObject.h"
-#include "RenderStyle.h"
+#include "RenderStyleSetters.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include "StyleAdjuster.h"

@@ -2285,10 +2285,6 @@ namespace JSC {
         unsigned lastLine() const { return m_lastLine; }
 
         bool operator==(const FunctionMetadataNode&) const;
-        bool operator!=(const FunctionMetadataNode& other) const
-        {
-            return !(*this == other);
-        }
 
     public:
         unsigned m_implementationVisibility : bitWidthOfImplementationVisibility;

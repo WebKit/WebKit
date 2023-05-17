@@ -29,7 +29,8 @@
 #include "ElementInlines.h"
 #include "HTMLFrameOwnerElement.h"
 #include "Logging.h"
-#include "RenderBox.h"
+#include "RenderBoxInlines.h"
+#include "RenderElementInlines.h"
 #include "SVGElement.h"
 
 namespace WebCore {
@@ -137,11 +138,12 @@ std::optional<ResizeObservation::BoxSizes> ResizeObservation::elementSizeChanged
     return { };
 }
 
+// https://drafts.csswg.org/resize-observer/#calculate-depth-for-node
 size_t ResizeObservation::targetElementDepth() const
 {
     unsigned depth = 0;
     for (Element* ownerElement = m_target.get(); ownerElement; ownerElement = ownerElement->document().ownerElement()) {
-        for (Element* parent = ownerElement; parent; parent = parent->parentElement())
+        for (Element* parent = ownerElement; parent; parent = parent->parentElementInComposedTree())
             ++depth;
     }
 

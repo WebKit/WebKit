@@ -1449,11 +1449,6 @@ public:
             return m_indexIterator == other.m_indexIterator;
         }
 
-        bool operator!=(const IndexToTmpIteratorAdaptor& other) const
-        {
-            return !(*this == other);
-        }
-
     private:
         IndexIterator m_indexIterator;
     };

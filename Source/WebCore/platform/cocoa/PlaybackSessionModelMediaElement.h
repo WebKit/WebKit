@@ -111,6 +111,11 @@ private:
     static const Vector<AtomString>& observedEventNames();
     const AtomString& eventNameAll();
 
+#if !RELEASE_LOG_DISABLED
+    const void* logIdentifier() const final;
+    const Logger* loggerPtr() const final;
+#endif
+
     RefPtr<HTMLMediaElement> m_mediaElement;
     bool m_isListening { false };
     HashSet<PlaybackSessionModelClient*> m_clients;

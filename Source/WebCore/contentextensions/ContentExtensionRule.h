@@ -128,7 +128,6 @@ struct Action {
         : m_data(WTFMove(data)) { }
 
     bool operator==(const Action& other) const { return m_data == other.m_data; }
-    bool operator!=(const Action& other) const { return !(*this == other); }
 
     const ActionData& data() const { return m_data; }
 
@@ -140,8 +139,8 @@ private:
 };
 
 struct DeserializedAction : public Action {
-    static DeserializedAction deserialize(Span<const uint8_t>, uint32_t location);
-    static size_t serializedLength(Span<const uint8_t>, uint32_t location);
+    static DeserializedAction deserialize(std::span<const uint8_t>, uint32_t location);
+    static size_t serializedLength(std::span<const uint8_t>, uint32_t location);
 
     uint32_t actionID() const { return m_actionID; }
 

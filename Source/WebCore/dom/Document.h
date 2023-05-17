@@ -88,7 +88,6 @@ class Attr;
 class CanvasBase;
 class CDATASection;
 class CSSCounterStyleRegistry;
-class CSSCustomPropertyValue;
 class CSSFontSelector;
 class CSSStyleDeclaration;
 class CSSStyleSheet;
@@ -174,7 +173,6 @@ class MediaProducer;
 class MediaQueryList;
 class MediaQueryMatcher;
 class MessagePortChannelProvider;
-class ModalContainerObserver;
 class MouseEventWithHitTestResults;
 class NodeFilter;
 class NodeIterator;
@@ -223,6 +221,7 @@ class TextResourceDecoder;
 class TransformSource;
 class TreeWalker;
 class UndoManager;
+class ValidationMessage;
 class VisibilityChangeClient;
 class VisitedLinkState;
 class WakeLockManager;
@@ -263,7 +262,7 @@ struct SystemPreviewInfo;
 
 template<typename> class ExceptionOr;
 
-enum CollectionType;
+enum class CollectionType : uint8_t;
 enum CSSPropertyID : uint16_t;
 
 enum class CompositeOperator : uint8_t;
@@ -303,9 +302,9 @@ class Scope;
 class Update;
 }
 
-enum PageshowEventPersistence { PageshowEventNotPersisted, PageshowEventPersisted };
+enum class PageshowEventPersistence : bool { NotPersisted, Persisted };
 
-enum NodeListInvalidationType {
+enum class NodeListInvalidationType : uint8_t {
     DoNotInvalidateOnAttributeChanges,
     InvalidateOnClassAttrChange,
     InvalidateOnIdNameAttrChange,
@@ -315,9 +314,9 @@ enum NodeListInvalidationType {
     InvalidateOnHRefAttrChange,
     InvalidateOnAnyAttrChange,
 };
-const int numNodeListInvalidationTypes = InvalidateOnAnyAttrChange + 1;
+const uint8_t numNodeListInvalidationTypes = static_cast<uint8_t>(NodeListInvalidationType::InvalidateOnAnyAttrChange) + 1;
 
-enum class EventHandlerRemoval { One, All };
+enum class EventHandlerRemoval : bool { One, All };
 using EventTargetSet = HashCountedSet<Node*>;
 
 enum class DocumentCompatibilityMode : uint8_t {
@@ -326,7 +325,11 @@ enum class DocumentCompatibilityMode : uint8_t {
     LimitedQuirksMode = 1 << 2
 };
 
-enum DimensionsCheck { WidthDimensionsCheck = 1 << 0, HeightDimensionsCheck = 1 << 1, AllDimensionsCheck = 1 << 2 };
+enum class DimensionsCheck : uint8_t {
+    Width = 1 << 0,
+    Height = 1 << 1,
+    All = 1 << 2, // FIXME: This is probably meant to be Width | Height instead.
+};
 
 enum class HttpEquivPolicy {
     Enabled,
@@ -471,7 +474,7 @@ public:
     WEBCORE_EXPORT Element* scrollingElementForAPI();
     WEBCORE_EXPORT Element* scrollingElement();
 
-    enum ReadyState : uint8_t { Loading, Interactive,  Complete };
+    enum class ReadyState : uint8_t { Loading, Interactive, Complete };
     ReadyState readyState() const { return m_readyState; }
 
     WEBCORE_EXPORT String defaultCharsetForLegacyBindings() const;
@@ -649,7 +652,7 @@ public:
     WEBCORE_EXPORT Ref<CSSStyleDeclaration> createCSSStyleDeclaration();
     Ref<Text> createEditingTextNode(String&&);
 
-    enum class ResolveStyleType { Normal, Rebuild };
+    enum class ResolveStyleType : bool { Normal, Rebuild };
     WEBCORE_EXPORT void resolveStyle(ResolveStyleType = ResolveStyleType::Normal);
     WEBCORE_EXPORT bool updateStyleIfNeeded();
     bool needsStyleRecalc() const;
@@ -659,7 +662,7 @@ public:
     
     // updateLayoutIgnorePendingStylesheets() forces layout even if we are waiting for pending stylesheet loads,
     // so calling this may cause a flash of unstyled content (FOUC).
-    enum class RunPostLayoutTasks { Asynchronously, Synchronously };
+    enum class RunPostLayoutTasks : bool { Asynchronously, Synchronously };
     WEBCORE_EXPORT void updateLayoutIgnorePendingStylesheets(RunPostLayoutTasks = RunPostLayoutTasks::Asynchronously);
 
     std::unique_ptr<RenderStyle> styleForElementIgnoringPendingStylesheets(Element&, const RenderStyle* parentStyle, PseudoId = PseudoId::None);
@@ -698,9 +701,9 @@ public:
     bool renderTreeBeingDestroyed() const { return m_renderTreeBeingDestroyed; }
     bool hasLivingRenderTree() const { return renderView() && !renderTreeBeingDestroyed(); }
     void updateRenderTree(std::unique_ptr<const Style::Update> styleUpdate);
-    
-    bool updateLayoutIfDimensionsOutOfDate(Element&, DimensionsCheck = AllDimensionsCheck);
-    
+
+    bool updateLayoutIfDimensionsOutOfDate(Element&, OptionSet<DimensionsCheck> = { DimensionsCheck::All });
+
     inline AXObjectCache* existingAXObjectCache() const;
     WEBCORE_EXPORT AXObjectCache* axObjectCache() const;
     void clearAXObjectCache();
@@ -851,7 +854,7 @@ public:
     void didRejectSyncXHRDuringPageDismissal();
     bool shouldIgnoreSyncXHRs() const;
 
-    enum class NodeRemoval { Node, ChildrenOfNode };
+    enum class NodeRemoval : bool { Node, ChildrenOfNode };
     void adjustFocusedNodeOnNodeRemoval(Node&, NodeRemoval = NodeRemoval::Node);
     void adjustFocusNavigationNodeOnNodeRemoval(Node&, NodeRemoval = NodeRemoval::Node);
 
@@ -908,7 +911,7 @@ public:
     void nodeWillBeRemoved(Node&);
     void parentlessNodeMovedToNewDocument(Node&);
 
-    enum class AcceptChildOperation { Replace, InsertOrAdd };
+    enum class AcceptChildOperation : bool { Replace, InsertOrAdd };
     bool canAcceptChild(const Node& newChild, const Node* refChild, AcceptChildOperation) const;
 
     void textInserted(Node&, unsigned offset, unsigned length);
@@ -941,27 +944,27 @@ public:
     // keep track of what types of event listeners are registered, so we don't
     // dispatch events unnecessarily
     // FIXME: Consider using OptionSet.
-    enum ListenerType {
-        DOMSUBTREEMODIFIED_LISTENER          = 1 << 0,
-        DOMNODEINSERTED_LISTENER             = 1 << 1,
-        DOMNODEREMOVED_LISTENER              = 1 << 2,
-        DOMNODEREMOVEDFROMDOCUMENT_LISTENER  = 1 << 3,
-        DOMNODEINSERTEDINTODOCUMENT_LISTENER = 1 << 4,
-        DOMCHARACTERDATAMODIFIED_LISTENER    = 1 << 5,
-        OVERFLOWCHANGED_LISTENER             = 1 << 6,
-        TRANSITIONEND_LISTENER               = 1 << 7,
-        SCROLL_LISTENER                      = 1 << 8,
-        FORCEWILLBEGIN_LISTENER              = 1 << 9,
-        FORCECHANGED_LISTENER                = 1 << 10,
-        FORCEDOWN_LISTENER                   = 1 << 11,
-        FORCEUP_LISTENER                     = 1 << 12,
-        FOCUSIN_LISTENER                     = 1 << 13,
-        FOCUSOUT_LISTENER                    = 1 << 14,
-        CSS_TRANSITION_LISTENER              = 1 << 15,
-        CSS_ANIMATION_LISTENER               = 1 << 16
+    enum class ListenerType : uint16_t {
+        DOMSubtreeModified = 1 << 0,
+        DOMNodeInserted = 1 << 1,
+        DOMNodeRemoved = 1 << 2,
+        DOMNodeRemovedFromDocument = 1 << 3,
+        DOMNodeInsertedIntoDocument = 1 << 4,
+        DOMCharacterDataModified = 1 << 5,
+        OverflowChanged = 1 << 6,
+        Scroll = 1 << 7,
+        ForceWillBegin = 1 << 8,
+        ForceChanged = 1 << 9,
+        ForceDown = 1 << 10,
+        ForceUp = 1 << 11,
+        FocusIn = 1 << 12,
+        FocusOut = 1 << 13,
+        CSSTransition = 1 << 14,
+        CSSAnimation = 1 << 15,
     };
 
-    bool hasListenerType(ListenerType listenerType) const { return (m_listenerTypes & listenerType); }
+    bool hasListenerType(ListenerType listenerType) const { return m_listenerTypes.contains(listenerType); }
+    bool hasAnyListenerOfType(OptionSet<ListenerType> listenerTypes) const { return m_listenerTypes.containsAny(listenerTypes); }
     bool hasListenerTypeForEventType(PlatformEventType) const;
     void addListenerTypeIfNeeded(const AtomString& eventType);
 
@@ -1125,8 +1128,6 @@ public:
     void pushCurrentScript(Element*);
     void popCurrentScript();
 
-    bool mayBeExecutingThirdPartyScript() const;
-
     bool shouldDeferAsynchronousScriptsUntilParsingFinishes() const;
 
     bool supportsPaintTiming() const;
@@ -1226,6 +1227,10 @@ public:
 
     WEBCORE_EXPORT String displayStringModifiedByEncoding(const String&) const;
 
+    void scheduleDeferredAXObjectCacheUpdate();
+    WEBCORE_EXPORT void flushDeferredAXObjectCacheUpdate();
+
+    void updateAccessibilityObjectRegions();
     void updateEventRegions();
 
     void invalidateRenderingDependentRegions();
@@ -1490,6 +1495,9 @@ public:
 
     void invalidateScrollbars();
 
+    void scheduleToAdjustValidationMessagePosition(ValidationMessage&);
+    void adjustValidationMessagePositions();
+
     WEBCORE_EXPORT void addAudioProducer(MediaProducer&);
     WEBCORE_EXPORT void removeAudioProducer(MediaProducer&);
     void setActiveSpeechRecognition(SpeechRecognition*);
@@ -1746,9 +1754,6 @@ public:
 
     URL fallbackBaseURL() const;
 
-    WEBCORE_EXPORT ModalContainerObserver* modalContainerObserver();
-    ModalContainerObserver* modalContainerObserverIfExists() const;
-
     void createNewIdentifier();
 
     WEBCORE_EXPORT bool hasElementWithPendingUserAgentShadowTreeUpdate(Element&) const;
@@ -1775,8 +1780,11 @@ public:
 #endif
 
 protected:
-    enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
-    WEBCORE_EXPORT Document(LocalFrame*, const Settings&, const URL&, DocumentClasses = { }, unsigned constructionFlags = 0, ScriptExecutionContextIdentifier = { });
+    enum class ConstructionFlag : uint8_t {
+        Synthesized = 1 << 0,
+        NonRenderedPlaceholder = 1 << 1
+    };
+    WEBCORE_EXPORT Document(LocalFrame*, const Settings&, const URL&, DocumentClasses = { }, OptionSet<ConstructionFlag> = { }, ScriptExecutionContextIdentifier = { });
 
     void clearXMLVersion() { m_xmlVersion = String(); }
 
@@ -1857,7 +1865,7 @@ private:
     void setVisualUpdatesAllowed(bool);
     void visualUpdatesSuppressionTimerFired();
 
-    void addListenerType(ListenerType listenerType) { m_listenerTypes |= listenerType; }
+    void addListenerType(ListenerType listenerType) { m_listenerTypes.add(listenerType); }
 
     void didAssociateFormControlsTimerFired();
 
@@ -2223,7 +2231,6 @@ private:
 
     Ref<ReportingScope> m_reportingScope;
 
-    std::unique_ptr<ModalContainerObserver> m_modalContainerObserver;
     std::unique_ptr<WakeLockManager> m_wakeLockManager;
     std::unique_ptr<SleepDisabler> m_sleepDisabler;
 
@@ -2235,6 +2242,8 @@ private:
     struct PendingScrollEventTargetList;
     std::unique_ptr<PendingScrollEventTargetList> m_pendingScrollEventTargetList;
 
+    WeakHashSet<ValidationMessage> m_validationMessagesToPosition;
+
     MediaProducerMediaStateFlags m_mediaState;
 
     unsigned m_writeRecursionDepth { 0 };
@@ -2244,7 +2253,7 @@ private:
     unsigned m_disabledFieldsetElementsCount { 0 };
     unsigned m_dataListElementCount { 0 };
 
-    unsigned m_listenerTypes { 0 };
+    OptionSet<ListenerType> m_listenerTypes;
     unsigned m_referencingNodeCount { 0 };
     int m_loadEventDelayCount { 0 };
     unsigned m_lastStyleUpdateSizeForTesting { 0 };
@@ -2270,7 +2279,7 @@ private:
 
     DesignMode m_designMode { DesignMode::Off };
     BackForwardCacheState m_backForwardCacheState { NotInBackForwardCache };
-    ReadyState m_readyState { Complete };
+    ReadyState m_readyState { ReadyState::Complete };
 
     MutationObserverOptions m_mutationObserverTypes;
 
@@ -2398,6 +2407,8 @@ private:
     bool m_didDispatchViewportPropertiesChanged { false };
 #endif
     bool m_isDirAttributeDirty { false };
+
+    bool m_scheduledDeferredAXObjectCacheUpdate { false };
 
     static bool hasEverCreatedAnAXObjectCache;
 

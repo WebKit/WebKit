@@ -33,6 +33,7 @@
 #include "HTTPParsers.h"
 #include "JSAbortSignal.h"
 #include "Logging.h"
+#include "OriginAccessPatterns.h"
 #include "Quirks.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
@@ -64,7 +65,7 @@ static ExceptionOr<String> computeReferrer(ScriptExecutionContext& context, cons
     if (referrerURL.protocolIsAbout() && referrerURL.path() == "client"_s)
         return "client"_str;
 
-    if (!(context.securityOrigin() && context.securityOrigin()->canRequest(referrerURL)))
+    if (!(context.securityOrigin() && context.securityOrigin()->canRequest(referrerURL, OriginAccessPatternsForWebProcess::singleton())))
         return "client"_str;
 
     return String { referrerURL.string() };
@@ -140,7 +141,6 @@ inline FetchRequest::FetchRequest(ScriptExecutionContext& context, std::optional
     , m_signal(AbortSignal::create(&context))
 {
     m_request.setRequester(ResourceRequestRequester::Fetch);
-    updateContentType();
 }
 
 ExceptionOr<void> FetchRequest::initializeOptions(const Init& init)
@@ -214,7 +214,6 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
             return setBodyResult.releaseException();
     }
 
-    updateContentType();
     return { };
 }
 
@@ -253,7 +252,6 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
     if (setBodyResult.hasException())
         return setBodyResult;
 
-    updateContentType();
     return { };
 }
 

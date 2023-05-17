@@ -72,8 +72,7 @@ public:
     explicit operator bool() const { return m_gpr != InvalidGPRReg; }
 
     constexpr bool operator==(JSValueRegs other) const { return m_gpr == other.m_gpr; }
-    constexpr bool operator!=(JSValueRegs other) const { return !(*this == other); }
-    
+
     constexpr GPRReg gpr() const { return m_gpr; }
     constexpr GPRReg tagGPR() const { return InvalidGPRReg; }
     constexpr GPRReg payloadGPR() const { return m_gpr; }
@@ -202,7 +201,6 @@ public:
         return m_tagGPR == other.m_tagGPR
             && m_payloadGPR == other.m_payloadGPR;
     }
-    constexpr bool operator!=(JSValueRegs other) const { return !(*this == other); }
     
     constexpr GPRReg tagGPR() const { return m_tagGPR; }
     constexpr GPRReg payloadGPR() const { return m_payloadGPR; }

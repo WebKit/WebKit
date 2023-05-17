@@ -24,7 +24,7 @@
                   { "name": "bot138", "platform": "mac-monterey" },
                   { "name": "bot139", "platform": "mac-monterey" },
                   { "name": "bot141", "platform": "mac-monterey" },
-                  { "name": "bot179", "platform": "mac-monterey" },
+                  { "name": "bot179", "platform": "mac-ventura" },
                   { "name": "bot185", "platform": "mac-monterey" },
                   { "name": "bot187", "platform": "mac-monterey" },
                   { "name": "bot198", "platform": "mac-monterey" },
@@ -122,7 +122,9 @@
                   { "name": "wpe-linux-bot-11", "platform": "wpe" },
                   { "name": "wpe-linux-bot-12", "platform": "wpe" },
                   { "name": "wpe-linux-bot-13", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-14", "platform": "wpe" }
+                  { "name": "wpe-linux-bot-14", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-15", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-16", "platform": "wpe" }
                 ],
 
   "builders":   [
@@ -131,7 +133,7 @@
                   "triggers": [
                       "ventura-release-tests-wk1", "ventura-release-tests-wk2", "ventura-release-perf-tests",
                       "ventura-release-applesilicon-tests-wk1", "ventura-release-applesilicon-tests-wk2",
-                      "ventura-applesilicon-release-tests-test262"
+                      "ventura-applesilicon-release-tests-test262", "ventura-release-tests-wk2-accessibility-isolated-tree"
                   ],
                   "workernames": ["bot245", "bot246"]
                   },
@@ -205,8 +207,8 @@
                     "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
                     "triggers": [
                         "monterey-release-tests-test262", "monterey-release-tests-wk1", "monterey-release-tests-wk2",
-                        "monterey-release-applesilicon-tests-wk1", "monterey-release-applesilicon-tests-wk2", "monterey-applesilicon-release-tests-jsc",
-                        "monterey-release-tests-wk2-accessibility-isolated-tree"
+                        "monterey-release-applesilicon-tests-wk1", "monterey-release-applesilicon-tests-wk2", "monterey-applesilicon-release-tests-jsc"
+                        
                     ],
                     "workernames": ["bot185", "bot187"]
                   },
@@ -234,8 +236,8 @@
                     "additionalArguments": ["--no-retry-failures"],
                     "workernames": ["bot1023"]
                   },
-                  { "name": "Apple-Monterey-Release-WK2-Accessibility-Isolated-Tree-Tests", "factory": "TestLayoutFactory",
-                    "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                  { "name": "Apple-Ventura-Release-WK2-Accessibility-Isolated-Tree-Tests", "factory": "TestLayoutFactory",
+                    "platform": "mac-ventura", "configuration": "release", "architectures": ["x86_64", "arm64"],
                     "additionalArguments": ["--no-retry-failures", "--accessibility-isolated-tree", "accessibility/"],
                     "workernames": ["bot179"]
                   },
@@ -579,6 +581,18 @@
                     "name": "WPE-Linux-64-bit-Debug-WebDriver-Tests", "factory": "TestWebDriverFactory",
                     "platform": "wpe", "configuration": "debug", "architectures": ["x86_64"],
                     "workernames": ["wpe-linux-bot-14"]
+                  },
+                  {
+                    "name": "WPE-Linux-ARM64-bit-Release-Debian-Stable-Build", "factory": "BuildFactory",
+                    "platform": "wpe", "configuration": "release", "architectures": ["arm64"],
+                    "additionalArguments": ["--no-experimental-features"],
+                    "workernames": ["wpe-linux-bot-15"]
+                  },
+                  {
+                    "name": "WPE-Linux-ARM32-bit-Release-Debian-Stable-Build", "factory": "BuildFactory",
+                    "platform": "wpe", "configuration": "release", "architectures": ["armv7"],
+                    "additionalArguments": ["--no-experimental-features"],
+                    "workernames": ["wpe-linux-bot-16"]
                   }
                 ],
 
@@ -648,8 +662,8 @@
                   { "type": "Triggerable", "name": "monterey-release-applesilicon-tests-wk2",
                     "builderNames": ["Apple-Monterey-Release-AppleSilicon-WK2-Tests"]
                   },
-                  { "type": "Triggerable", "name": "monterey-release-tests-wk2-accessibility-isolated-tree",
-                    "builderNames": ["Apple-Monterey-Release-WK2-Accessibility-Isolated-Tree-Tests"]
+                  { "type": "Triggerable", "name": "ventura-release-tests-wk2-accessibility-isolated-tree",
+                    "builderNames": ["Apple-Ventura-Release-WK2-Accessibility-Isolated-Tree-Tests"]
                   },
                   { "type": "Triggerable", "name": "monterey-debug-tests-wk1",
                     "builderNames": ["Apple-Monterey-Debug-WK1-Tests"]

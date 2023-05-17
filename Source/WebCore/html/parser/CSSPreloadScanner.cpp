@@ -28,7 +28,6 @@
 #include "config.h"
 #include "CSSPreloadScanner.h"
 
-#include "HTMLParserIdioms.h"
 #include <wtf/SetForScope.h>
 
 namespace WebCore {
@@ -67,7 +66,7 @@ inline void CSSPreloadScanner::tokenize(UChar c)
     // Searching for other types of resources is probably low payoff.
     switch (m_state) {
     case Initial:
-        if (isHTMLSpace(c))
+        if (isASCIIWhitespace(c))
             break;
         if (c == '@')
             m_state = RuleStart;
@@ -105,7 +104,7 @@ inline void CSSPreloadScanner::tokenize(UChar c)
             m_state = Initial;
         break;
     case Rule:
-        if (isHTMLSpace(c))
+        if (isASCIIWhitespace(c))
             m_state = AfterRule;
         else if (c == ';')
             m_state = Initial;
@@ -113,7 +112,7 @@ inline void CSSPreloadScanner::tokenize(UChar c)
             m_rule.append(c);
         break;
     case AfterRule:
-        if (isHTMLSpace(c))
+        if (isASCIIWhitespace(c))
             break;
         if (c == ';')
             m_state = Initial;
@@ -125,7 +124,7 @@ inline void CSSPreloadScanner::tokenize(UChar c)
         }
         break;
     case RuleValue:
-        if (isHTMLSpace(c))
+        if (isASCIIWhitespace(c))
             m_state = AfterRuleValue;
         else if (c == ';')
             emitRule();
@@ -133,7 +132,7 @@ inline void CSSPreloadScanner::tokenize(UChar c)
             m_ruleValue.append(c);
         break;
     case AfterRuleValue:
-        if (isHTMLSpace(c))
+        if (isASCIIWhitespace(c))
             break;
         if (c == ';')
             emitRule();
@@ -164,12 +163,12 @@ static String parseCSSStringOrURL(const UChar* characters, size_t length)
     size_t reducedLength = length;
 
     // Remove whitespace from the rule start
-    while (reducedLength && isHTMLSpace(characters[offset])) {
+    while (reducedLength && isASCIIWhitespace(characters[offset])) {
         ++offset;
         --reducedLength;
     }
     // Remove whitespace from the rule end
-    while (reducedLength && isHTMLSpace(characters[offset + reducedLength - 1]))
+    while (reducedLength && isASCIIWhitespace(characters[offset + reducedLength - 1]))
         --reducedLength;
 
     // Skip the "url(" prefix and the ")" suffix
@@ -184,11 +183,11 @@ static String parseCSSStringOrURL(const UChar* characters, size_t length)
     }
 
     // Skip whitespace before and after the URL inside the "url()" parenthesis.
-    while (reducedLength && isHTMLSpace(characters[offset])) {
+    while (reducedLength && isASCIIWhitespace(characters[offset])) {
         ++offset;
         --reducedLength;
     }
-    while (reducedLength && isHTMLSpace(characters[offset + reducedLength - 1]))
+    while (reducedLength && isASCIIWhitespace(characters[offset + reducedLength - 1]))
         --reducedLength;
     
     // Remove single-quotes or double-quotes from the URL
@@ -207,7 +206,7 @@ static bool hasValidImportConditions(StringView conditions)
     if (conditions.isEmpty())
         return true;
 
-    conditions = conditions.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
+    conditions = conditions.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>);
 
     // FIXME: Support multiple conditions.
     // FIXME: Support media queries.

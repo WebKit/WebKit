@@ -73,6 +73,7 @@ public:
     virtual void play() = 0;
     virtual void pause() = 0;
 
+    virtual void enqueueBlackFrameFrom(const VideoFrame&) { };
     virtual void enqueueVideoFrame(VideoFrame&) = 0;
     virtual void clearVideoFrames() = 0;
 

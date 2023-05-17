@@ -126,6 +126,8 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     } else if (encoding == "h265"_s) {
         encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-h265"));
         // FIXME: profile tier level?
+    } else if (encoding == "av1"_s) {
+        encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-av1"));
     } else {
         GST_ERROR_OBJECT(m_bin.get(), "Unsupported outgoing video encoding: %s", encodingName);
         return false;

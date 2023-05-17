@@ -28,7 +28,6 @@
 #if PLATFORM(WAYLAND)
 
 #include "PlatformDisplay.h"
-#include "WlUniquePtr.h"
 #include <wayland-client.h>
 
 namespace WebCore {
@@ -38,35 +37,29 @@ public:
     static std::unique_ptr<PlatformDisplay> create();
 #if PLATFORM(GTK)
     static std::unique_ptr<PlatformDisplay> create(GdkDisplay*);
+    explicit PlatformDisplayWayland(GdkDisplay*);
 #endif
+    explicit PlatformDisplayWayland(struct wl_display*);
 
     virtual ~PlatformDisplayWayland();
 
     struct wl_display* native() const { return m_display; }
 
-    WlUniquePtr<struct wl_surface> createSurface() const;
-
 private:
-    static const struct wl_registry_listener s_registryListener;
-
-    Type type() const final { return PlatformDisplay::Type::Wayland; }
-
-    void registryGlobal(const char* interface, uint32_t name);
-
-protected:
-    explicit PlatformDisplayWayland(struct wl_display*);
 #if PLATFORM(GTK)
-    explicit PlatformDisplayWayland(GdkDisplay*);
-
     void sharedDisplayDidClose() override;
 #endif
 
-    void initialize();
+    Type type() const final { return PlatformDisplay::Type::Wayland; }
 
-private:
-    struct wl_display* m_display;
-    WlUniquePtr<struct wl_registry> m_registry;
-    WlUniquePtr<struct wl_compositor> m_compositor;
+#if USE(EGL)
+#if PLATFORM(GTK)
+    EGLDisplay gtkEGLDisplay() override;
+#endif
+    void initializeEGLDisplay() override;
+#endif
+
+    struct wl_display* m_display { nullptr };
 };
 
 } // namespace WebCore

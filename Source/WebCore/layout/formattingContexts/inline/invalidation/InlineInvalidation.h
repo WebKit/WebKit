@@ -48,12 +48,11 @@ public:
 
     void styleChanged(const Box&, const RenderStyle& oldStyle);
 
-    void textInserted(const InlineTextBox& newOrDamagedInlineTextBox, std::optional<size_t> offset = { });
-    void textWillBeRemoved(const InlineTextBox&, std::optional<size_t> offset = { });
-    void textWillBeRemoved(UniqueRef<Box>&&);
+    bool textInserted(const InlineTextBox& newOrDamagedInlineTextBox, std::optional<size_t> offset = { });
+    bool textWillBeRemoved(const InlineTextBox&, std::optional<size_t> offset = { });
 
-    void inlineLevelBoxInserted(const Box&);
-    void inlineLevelBoxWillBeRemoved(UniqueRef<Box>&&);
+    bool inlineLevelBoxInserted(const Box&);
+    bool inlineLevelBoxWillBeRemoved(const Box&);
 
     void horizontalConstraintChanged();
 

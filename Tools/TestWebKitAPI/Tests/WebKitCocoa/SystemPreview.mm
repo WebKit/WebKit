@@ -82,13 +82,73 @@ static String documentID;
 
 @end
 
+@interface TestSystemPreviewUIDelegate : NSObject <WKUIDelegate>
+@property (nonatomic, weak) UIViewController *viewController;
+@end
+
+@implementation TestSystemPreviewUIDelegate
+- (UIViewController *)_presentingViewControllerForWebView:(WKWebView *)webView
+{
+    return _viewController;
+}
+@end
+
 namespace TestWebKitAPI {
+
+TEST(WebKit, SystemPreviewLoad)
+{
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [configuration _setSystemPreviewEnabled:YES];
+
+    auto viewController = adoptNS([[UIViewController alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    auto uiDelegate = adoptNS([[TestSystemPreviewUIDelegate alloc] init]);
+    uiDelegate.get().viewController = viewController.get();
+    [webView setUIDelegate:uiDelegate.get()];
+    [viewController setView:webView.get()];
+
+    [webView synchronouslyLoadTestPageNamed:@"system-preview"];
+
+    [webView _setSystemPreviewCompletionHandlerForLoadTesting:^(bool success) {
+        EXPECT_TRUE(success);
+        wasTriggered = true;
+    }];
+
+    [webView evaluateJavaScript:@"arlink.click()" completionHandler:nil];
+
+    Util::run(&wasTriggered);
+}
+
+TEST(WebKit, SystemPreviewFail)
+{
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [configuration _setSystemPreviewEnabled:YES];
+
+    auto viewController = adoptNS([[UIViewController alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    auto uiDelegate = adoptNS([[TestSystemPreviewUIDelegate alloc] init]);
+    uiDelegate.get().viewController = viewController.get();
+    [webView setUIDelegate:uiDelegate.get()];
+    [viewController setView:webView.get()];
+
+    [webView synchronouslyLoadTestPageNamed:@"system-preview"];
+
+    [webView _setSystemPreviewCompletionHandlerForLoadTesting:^(bool success) {
+        EXPECT_FALSE(success);
+        wasTriggered = true;
+    }];
+
+    [webView evaluateJavaScript:@"badlink.click()" completionHandler:nil];
+
+    Util::run(&wasTriggered);
+}
 
 TEST(WebKit, SystemPreviewTriggered)
 {
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     auto messageHandler = adoptNS([[TestSystemPreviewTriggeredHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testSystemPreview"];
+    [configuration _setSystemPreviewEnabled:YES];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
     [webView synchronouslyLoadTestPageNamed:@"system-preview-trigger"];
@@ -103,6 +163,7 @@ TEST(WebKit, SystemPreviewTriggeredOnDetachedElement)
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     auto messageHandler = adoptNS([[TestSystemPreviewTriggeredOnDetachedElementHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testSystemPreview"];
+    [configuration _setSystemPreviewEnabled:YES];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
     [webView synchronouslyLoadTestPageNamed:@"system-preview-trigger"];

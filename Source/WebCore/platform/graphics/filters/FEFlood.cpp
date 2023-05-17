@@ -43,6 +43,13 @@ FEFlood::FEFlood(const Color& floodColor, float floodOpacity)
 {
 }
 
+bool FEFlood::operator==(const FEFlood& other) const
+{
+    return FilterEffect::operator==(other)
+        && m_floodColor == other.m_floodColor
+        && m_floodOpacity == other.m_floodOpacity;
+}
+
 bool FEFlood::setFloodColor(const Color& color)
 {
     if (m_floodColor == color)
@@ -59,7 +66,7 @@ bool FEFlood::setFloodOpacity(float floodOpacity)
     return true;
 }
 
-FloatRect FEFlood::calculateImageRect(const Filter& filter, Span<const FloatRect>, const FloatRect& primitiveSubregion) const
+FloatRect FEFlood::calculateImageRect(const Filter& filter, std::span<const FloatRect>, const FloatRect& primitiveSubregion) const
 {
     return filter.maxEffectRect(primitiveSubregion);
 }

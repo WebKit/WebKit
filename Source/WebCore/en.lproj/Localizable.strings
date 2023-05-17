@@ -292,6 +292,9 @@
 /* Lockdown Mode alert message */
 "Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings." = "Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings.";
 
+/* Lockdown Mode alert message (MacCatalyst) */
+"Certain experiences and features may not function as expected. You can manage Lockdown Mode in Settings." = "Certain experiences and features may not function as expected. You can manage Lockdown Mode in Settings.";
+
 /* Undo action name */
 "Change Attributes (Undo action name)" = "Change Attributes";
 

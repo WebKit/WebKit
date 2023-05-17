@@ -65,6 +65,8 @@
                     if (capabilities.hasOwnProperty(property) || capabilities.__proto__.hasOwnProperty(property))
                         if (property === "deviceId" && validateDeviceId(capabilities[property], track.kind))
                             value = "&lt;UUID>";
+                        else if (property === "groupId")
+                            value = "&lt;UUID>";
                         else if (typeof capabilities[property] === "object")
                             value = capabilityRange(property, capabilities[property]);
                         else

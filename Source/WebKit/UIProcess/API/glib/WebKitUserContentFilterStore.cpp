@@ -216,7 +216,7 @@ static void webkitUserContentFilterStoreSaveBytes(GRefPtr<GTask>&& task, String&
  * @source: #GBytes containing the rule set in JSON format
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when saving is completed
- * @user_data: (closure): the data to pass to the callback function
+ * @user_data: the data to pass to the callback function
  *
  * Asynchronously save a content filter from a set source rule.
  *
@@ -282,7 +282,7 @@ WEBKIT_DEFINE_ASYNC_DATA_STRUCT(SaveTaskData)
  * @file: a #GFile containing the rule set in JSON format
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when saving is completed
- * @user_data: (closure): the data to pass to the callback function
+ * @user_data: the data to pass to the callback function
  *
  * Asynchronously save a content filter from the contents of a file.
  *
@@ -365,7 +365,7 @@ WebKitUserContentFilter* webkit_user_content_filter_store_save_from_file_finish(
  * @identifier: a filter identifier
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the removal is completed
- * @user_data: (closure): the data to pass to the callback function
+ * @user_data: the data to pass to the callback function
  *
  * Asynchronously remove a content filter given its @identifier.
  *
@@ -424,7 +424,7 @@ gboolean webkit_user_content_filter_store_remove_finish(WebKitUserContentFilterS
  * @identifier: a filter identifier
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the load is completed
- * @user_data: (closure): the data to pass to the callback function
+ * @user_data: the data to pass to the callback function
  *
  * Asynchronously load a content filter given its @identifier.
  *
@@ -485,7 +485,7 @@ WebKitUserContentFilter* webkit_user_content_filter_store_load_finish(WebKitUser
  * @store: a #WebKitUserContentFilterStore
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the removal is completed
- * @user_data: (closure): the data to pass to the callback function
+ * @user_data: the data to pass to the callback function
  *
  * Asynchronously retrieve a list of the identifiers for all the stored filters.
  *

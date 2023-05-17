@@ -5,6 +5,6 @@
         }
     });
 
-    for (var i = 0; i < 1e6; ++i)
+    for (var i = 0; i < 1e7; ++i)
         proxy.test = i;
 })();

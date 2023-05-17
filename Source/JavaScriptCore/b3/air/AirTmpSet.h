@@ -104,11 +104,6 @@ public:
                 && m_fpIter == other.m_fpIter;
         }
         
-        bool operator!=(const iterator& other) const
-        {
-            return !(*this == other);
-        }
-        
     private:
         BitVector::iterator m_gpIter;
         BitVector::iterator m_fpIter;

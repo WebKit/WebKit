@@ -14,6 +14,9 @@ PASS event type: mousemove, movementX: 25, movementY: 30, target: target1, recei
      With a lock in place send a click.
 PASS event type: mousedown, target: target1, received on: target1
 PASS event type: mousedown, target: target1, received on: body
+     With a lock in place send a right click.
+PASS event type: mousedown, target: target1, received on: target1
+PASS event type: mousedown, target: target1, received on: body
 PASS document.onpointerlockchange event received.
 PASS document.pointerLockElement is targetdiv2
      With a lock in place send a wheel event.

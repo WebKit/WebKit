@@ -38,10 +38,12 @@ GST_DEBUG_CATEGORY(webkit_webrtc_data_channel_debug);
 #define DC_DEBUG(...) GST_DEBUG_ID(m_channelId.ascii().data(), __VA_ARGS__)
 #define DC_TRACE(...) GST_TRACE_ID(m_channelId.ascii().data(), __VA_ARGS__)
 #define DC_WARNING(...) GST_WARNING_ID(m_channelId.ascii().data(), __VA_ARGS__)
+#define DC_MEMDUMP(...) GST_MEMDUMP_ID(m_channelId.ascii().data(), __VA_ARGS__)
 #else
 #define DC_DEBUG(...) GST_DEBUG(__VA_ARGS__)
 #define DC_TRACE(...) GST_TRACE(__VA_ARGS__)
 #define DC_WARNING(...) GST_WARNING(__VA_ARGS__)
+#define DC_MEMDUMP(...) GST_MEMDUMP(__VA_ARGS__)
 #endif
 
 namespace WebCore {
@@ -159,12 +161,15 @@ void GStreamerDataChannelHandler::setClient(RTCDataChannelHandlerClient& client,
     m_client = client;
     m_contextIdentifier = contextIdentifier;
 
-    checkState();
+    auto readyStateDispatched = checkState();
 
-    for (auto& message : m_pendingMessages) {
+    auto messages = WTFMove(m_pendingMessages);
+    for (auto& message : messages) {
         switchOn(message, [&](Ref<FragmentedSharedBuffer>& data) {
             DC_DEBUG("Notifying queued raw data (size: %zu)", data->size());
-            client.didReceiveRawData(data->makeContiguous()->data(), data->size());
+            const auto* rawData = data->makeContiguous()->data();
+            DC_MEMDUMP("Notifying raw data", rawData, data->size());
+            client.didReceiveRawData(rawData, data->size());
         }, [&](String& text) {
             DC_DEBUG("Notifying queued string of size %d", text.sizeInBytes());
             DC_TRACE("Notifying queued string %s", text.ascii().data());
@@ -173,12 +178,14 @@ void GStreamerDataChannelHandler::setClient(RTCDataChannelHandlerClient& client,
             if (stateChange.error) {
                 if (auto rtcError = toRTCError(*stateChange.error))
                     client.didDetectError(rtcError.releaseNonNull());
+                return;
             }
-            DC_DEBUG("Dispatching state change to %d on channel %p", static_cast<int>(stateChange.state), m_channel.get());
-            client.didChangeReadyState(stateChange.state);
+            if (!readyStateDispatched) {
+                DC_DEBUG("Dispatching state change to %d on channel %p", static_cast<int>(stateChange.state), m_channel.get());
+                client.didChangeReadyState(stateChange.state);
+            }
         });
     }
-    m_pendingMessages.clear();
 }
 
 bool GStreamerDataChannelHandler::sendStringData(const CString& text)
@@ -192,6 +199,7 @@ bool GStreamerDataChannelHandler::sendStringData(const CString& text)
 bool GStreamerDataChannelHandler::sendRawData(const uint8_t* data, size_t length)
 {
     DC_DEBUG("Sending raw data of length: %zu", length);
+    DC_MEMDUMP("Sending raw data", data, length);
     auto bytes = adoptGRef(g_bytes_new(data, length));
     g_signal_emit_by_name(m_channel.get(), "send-data", bytes.get());
     return true;
@@ -216,14 +224,14 @@ std::optional<unsigned short> GStreamerDataChannelHandler::id() const
     return id != -1 ? std::make_optional(id) : std::nullopt;
 }
 
-void GStreamerDataChannelHandler::checkState()
+bool GStreamerDataChannelHandler::checkState()
 {
     ASSERT(m_clientLock.isHeld());
 
     DC_DEBUG("Checking state.");
     if (!m_channel) {
         DC_DEBUG("No channel.");
-        return;
+        return false;
     }
 
     GstWebRTCDataChannelState channelState;
@@ -252,17 +260,17 @@ void GStreamerDataChannelHandler::checkState()
     if (!m_client) {
         DC_DEBUG("No client yet on channel %p, queueing state", m_channel.get());
         m_pendingMessages.append(StateChange { state, { } });
-        return;
+        return false;
     }
 
     if (channelState == GST_WEBRTC_DATA_CHANNEL_STATE_OPEN && m_closing) {
         DC_DEBUG("Ignoring open state notification on channel %p because it was pending to be closed", m_channel.get());
-        return;
+        return false;
     }
 
     if (!*m_client) {
         DC_DEBUG("Client is empty.");
-        return;
+        return false;
     }
 
 #ifndef GST_DISABLE_GST_DEBUG
@@ -276,6 +284,7 @@ void GStreamerDataChannelHandler::checkState()
         }
         client.value()->didChangeReadyState(state);
     });
+    return true;
 }
 
 void GStreamerDataChannelHandler::readyStateChanged()
@@ -328,11 +337,13 @@ void GStreamerDataChannelHandler::onMessageData(GBytes* bytes)
     if (!*m_client)
         return;
 
-    postTask([client = m_client, bytes = GRefPtr<GBytes>(bytes)] {
+    postTask([this, client = m_client, bytes = GRefPtr<GBytes>(bytes)] {
+        UNUSED_VARIABLE(this); // Conditionally used in DC_MEMDUMP.
         if (!*client)
             return;
         gsize size = 0;
         const auto* data = reinterpret_cast<const uint8_t*>(g_bytes_get_data(bytes.get(), &size));
+        DC_MEMDUMP("Incoming raw data", data, size);
         client.value()->didReceiveRawData(data, size);
     });
 }

@@ -37,13 +37,13 @@ public:
     StreamClientConnectionBuffer(StreamClientConnectionBuffer&&) = default;
     StreamClientConnectionBuffer& operator=(StreamClientConnectionBuffer&&) = default;
 
-    std::optional<Span<uint8_t>> tryAcquire(Timeout);
-    std::optional<Span<uint8_t>> tryAcquireAll(Timeout);
+    std::optional<std::span<uint8_t>> tryAcquire(Timeout);
+    std::optional<std::span<uint8_t>> tryAcquireAll(Timeout);
 
     enum class WakeUpServer : bool { No, Yes };
     WakeUpServer release(size_t writeSize);
     void resetClientOffset();
-    Span<uint8_t> alignedSpan(size_t offset, size_t limit);
+    std::span<uint8_t> alignedSpan(size_t offset, size_t limit);
     void setSemaphores(IPC::Semaphore&& wakeUp, IPC::Semaphore&& clientWait);
     bool hasSemaphores() const { return m_semaphores.has_value(); }
     void wakeUpServer();
@@ -98,7 +98,7 @@ inline StreamClientConnectionBuffer::StreamClientConnectionBuffer(Ref<WebKit::Sh
     sharedClientLimit().store(static_cast<ClientLimit>(0), std::memory_order_relaxed);
 }
 
-inline std::optional<Span<uint8_t>> StreamClientConnectionBuffer::tryAcquire(Timeout timeout)
+inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquire(Timeout timeout)
 {
     ClientLimit clientLimit = sharedClientLimit().load(std::memory_order_acquire);
     // This would mean we try to send messages after a timeout. It is a programming error.
@@ -129,7 +129,7 @@ inline std::optional<Span<uint8_t>> StreamClientConnectionBuffer::tryAcquire(Tim
     return std::nullopt;
 }
 
-inline std::optional<Span<uint8_t>> StreamClientConnectionBuffer::tryAcquireAll(Timeout timeout)
+inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquireAll(Timeout timeout)
 {
     // This would mean we try to send messages after a timeout. It is a programming error.
     // Since the value is trusted, we only assert.
@@ -177,7 +177,7 @@ inline void StreamClientConnectionBuffer::resetClientOffset()
     m_clientOffset = 0;
 }
 
-inline Span<uint8_t> StreamClientConnectionBuffer::alignedSpan(size_t offset, size_t limit)
+inline std::span<uint8_t> StreamClientConnectionBuffer::alignedSpan(size_t offset, size_t limit)
 {
     ASSERT(offset < dataSize());
     ASSERT(limit < dataSize());

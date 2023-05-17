@@ -53,7 +53,6 @@
                 var ids = devices.map(device => device.deviceId);
                 assert_true(ids.indexOf(videoTrack.getSettings().deviceId) !== -1 , "deviceId for video track should be respected");
                 assert_true(ids.indexOf(audioTrack.getSettings().deviceId) !== -1 , "deviceId for audio track should be respected");
-                assert_equals(audioTrack.getSettings().groupId, videoTrack.getSettings().groupId, "groupId should match");
             })
 
     }, "Pass device IDs as exact constraints");

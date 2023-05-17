@@ -265,7 +265,7 @@ WebPushD::EncodedMessage removePushSubscriptionsForOrigin::encodeReply(unsigned 
 } // namespace MessageInfo
 
 template<typename Info>
-void handleWebPushDMessageWithReply(ClientConnection* connection, Span<const uint8_t> encodedMessage, CompletionHandler<void(WebPushD::EncodedMessage&&)>&& replySender)
+void handleWebPushDMessageWithReply(ClientConnection* connection, std::span<const uint8_t> encodedMessage, CompletionHandler<void(WebPushD::EncodedMessage&&)>&& replySender)
 {
     WebKit::Daemon::Decoder decoder(encodedMessage);
 
@@ -282,7 +282,7 @@ void handleWebPushDMessageWithReply(ClientConnection* connection, Span<const uin
 }
 
 template<typename Info>
-void handleWebPushDMessage(ClientConnection* connection, Span<const uint8_t> encodedMessage)
+void handleWebPushDMessage(ClientConnection* connection, std::span<const uint8_t> encodedMessage)
 {
     WebKit::Daemon::Decoder decoder(encodedMessage);
 
@@ -413,7 +413,7 @@ void Daemon::connectionEventHandler(xpc_object_t request)
     auto messageType { static_cast<MessageType>(messageTypeValue) };
     size_t dataSize { 0 };
     const void* data = xpc_dictionary_get_data(request, protocolEncodedMessageKey, &dataSize);
-    Span<const uint8_t> encodedMessage { static_cast<const uint8_t*>(data), dataSize };
+    std::span<const uint8_t> encodedMessage { static_cast<const uint8_t*>(data), dataSize };
     
     decodeAndHandleMessage(xpc_dictionary_get_remote_connection(request), messageType, encodedMessage, createReplySender(messageType, request));
 }
@@ -456,7 +456,7 @@ void Daemon::decodeAndHandleRawXPCMessage(RawXPCMessageType messageType, OSObjec
     }
 }
 
-void Daemon::decodeAndHandleMessage(xpc_connection_t connection, MessageType messageType, Span<const uint8_t> encodedMessage, CompletionHandler<void(EncodedMessage&&)>&& replySender)
+void Daemon::decodeAndHandleMessage(xpc_connection_t connection, MessageType messageType, std::span<const uint8_t> encodedMessage, CompletionHandler<void(EncodedMessage&&)>&& replySender)
 {
     ASSERT(messageTypeSendsReply(messageType) == !!replySender);
 

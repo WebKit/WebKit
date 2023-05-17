@@ -405,7 +405,7 @@
     if (!PAL::isDataDetectorsFrameworkAvailable())
         return nil;
 
-    DDActionContext *actionContext = _hitTestResultData.platformData.detectedDataActionContext.get();
+    WKDDActionContext *actionContext = _hitTestResultData.platformData.detectedDataActionContext.get();
     if (!actionContext)
         return nil;
 
@@ -416,7 +416,7 @@
 
     RefPtr<WebKit::WebPageProxy> page = _page.get();
     WebCore::PageOverlay::PageOverlayID overlayID = _hitTestResultData.platformData.detectedDataOriginatingPageOverlay;
-    _currentActionContext = [actionContext contextForView:_view altMode:YES interactionStartedHandler:^() {
+    _currentActionContext = (WKDDActionContext *)[actionContext contextForView:_view altMode:YES interactionStartedHandler:^() {
         page->send(Messages::WebPage::DataDetectorsDidPresentUI(overlayID));
     } interactionChangedHandler:^() {
         if (_hitTestResultData.platformData.detectedDataTextIndicator)
@@ -442,8 +442,7 @@
     if (!PAL::isDataDetectorsFrameworkAvailable())
         return nil;
 
-    auto actionContext = adoptNS([PAL::allocDDActionContextInstance() init]);
-
+    auto actionContext = adoptNS([PAL::allocWKDDActionContextInstance() init]);
     if (!actionContext)
         return nil;
 
@@ -451,7 +450,7 @@
     [actionContext setImmediate:YES];
 
     RefPtr<WebKit::WebPageProxy> page = _page.get();
-    _currentActionContext = [actionContext contextForView:_view altMode:YES interactionStartedHandler:^() {
+    _currentActionContext = (WKDDActionContext *)[actionContext contextForView:_view altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {
         if (_hitTestResultData.linkTextIndicator)
             page->setTextIndicator(_hitTestResultData.linkTextIndicator->data());

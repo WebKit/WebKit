@@ -1,4 +1,5 @@
 
 PASS Test properties of MediaDeviceInfo
 PASS Ensure enumerateDevices exposes both microphone and camera
+PASS Ensure enumerateDevices and getUserMedia MediaStreamTrack expose the same deviceId and groupIds
 

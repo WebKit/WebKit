@@ -4,7 +4,8 @@
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2010 Zoltan Herczeg <zherczeg@webkit.org>
- * Copyright (C) 2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -55,7 +56,6 @@ public:
         FloatPoint3D directionVector;
         float coneCutOffLimit;
         float coneFullLight;
-        int specularExponent;
     };
 
     LightSource(LightType type)
@@ -63,6 +63,11 @@ public:
     { }
 
     virtual ~LightSource() = default;
+
+    virtual bool operator==(const LightSource& other) const
+    {
+        return m_type == other.m_type;
+    }
 
     LightType type() const { return m_type; }
     virtual WTF::TextStream& externalRepresentation(WTF::TextStream&) const = 0;
@@ -86,6 +91,15 @@ public:
     
     virtual bool setSpecularExponent(float) { return false; }
     virtual bool setLimitingConeAngle(float) { return false; }
+
+protected:
+    template<typename LightSourceType>
+    static bool areEqual(const LightSourceType& a, const LightSource& b)
+    {
+        if (!is<LightSourceType>(b))
+            return false;
+        return a.operator==(downcast<LightSourceType>(b));
+    }
 
 private:
     LightType m_type;

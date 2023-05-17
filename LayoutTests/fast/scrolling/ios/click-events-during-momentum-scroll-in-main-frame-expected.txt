@@ -3,7 +3,7 @@ Verifies that tapping the page during momentum scrolling does not dispatch click
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.scrollingElement.scrollTop passed 1000
+PASS document.scrollingElement.scrollTop > minimumExpectedScrollTop became true
 PASS successfullyParsed is true
 
 TEST COMPLETE

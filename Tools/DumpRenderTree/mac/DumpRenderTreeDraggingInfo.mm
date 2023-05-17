@@ -141,12 +141,16 @@ static std::pair<NSURL *, NSError *> copyFile(NSURL *sourceURL, NSURL *destinati
 
 - (id)initWithImage:(NSImage *)anImage offset:(NSSize)o pasteboard:(NSPasteboard *)pboard source:(id)source
 {
+    self = [super init];
+    if (!self)
+        return nil;
+
     draggedImage = [anImage retain];
     draggingPasteboard = [pboard retain];
     draggingSource = [source retain];
     offset = o;
-    
-    return [super init];
+
+    return self;
 }
 
 - (void)dealloc

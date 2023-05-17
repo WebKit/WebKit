@@ -388,7 +388,6 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::disable()
     inspectedPageSettings.setScriptEnabledInspectorOverride(std::nullopt);
     inspectedPageSettings.setShowDebugBordersInspectorOverride(std::nullopt);
     inspectedPageSettings.setShowRepaintCounterInspectorOverride(std::nullopt);
-    inspectedPageSettings.setWebRTCEncryptionEnabledInspectorOverride(std::nullopt);
     inspectedPageSettings.setWebSecurityEnabledInspectorOverride(std::nullopt);
     inspectedPageSettings.setForcedPrefersReducedMotionAccessibilityValue(ForcedAccessibilityValue::System);
     inspectedPageSettings.setForcedPrefersContrastAccessibilityValue(ForcedAccessibilityValue::System);
@@ -492,10 +491,6 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::overrideSetting(Protocol::Page
 
     case Protocol::Page::Setting::ShowRepaintCounter:
         inspectedPageSettings.setShowRepaintCounterInspectorOverride(value);
-        return { };
-
-    case Protocol::Page::Setting::WebRTCEncryptionEnabled:
-        inspectedPageSettings.setWebRTCEncryptionEnabledInspectorOverride(value);
         return { };
 
     case Protocol::Page::Setting::WebSecurityEnabled:
@@ -916,23 +911,23 @@ void InspectorPageAgent::frameNavigated(LocalFrame& frame)
 
 void InspectorPageAgent::frameDetached(LocalFrame& frame)
 {
-    auto identifier = m_frameToIdentifier.take(&frame);
+    auto identifier = m_frameToIdentifier.take(frame);
     if (identifier.isNull())
         return;
     m_frontendDispatcher->frameDetached(identifier);
     m_identifierToFrame.remove(identifier);
 }
 
-LocalFrame* InspectorPageAgent::frameForId(const Protocol::Network::FrameId& frameId)
+Frame* InspectorPageAgent::frameForId(const Protocol::Network::FrameId& frameId)
 {
     return frameId.isEmpty() ? nullptr : m_identifierToFrame.get(frameId).get();
 }
 
-String InspectorPageAgent::frameId(LocalFrame* frame)
+String InspectorPageAgent::frameId(Frame* frame)
 {
     if (!frame)
         return emptyString();
-    return m_frameToIdentifier.ensure(frame, [this, frame] {
+    return m_frameToIdentifier.ensure(*frame, [this, frame] {
         auto identifier = IdentifiersFactory::createIdentifier();
         m_identifierToFrame.set(identifier, frame);
         return identifier;
@@ -950,7 +945,7 @@ String InspectorPageAgent::loaderId(DocumentLoader* loader)
 
 LocalFrame* InspectorPageAgent::assertFrame(Protocol::ErrorString& errorString, const Protocol::Network::FrameId& frameId)
 {
-    auto* frame = frameForId(frameId);
+    auto* frame = dynamicDowncast<LocalFrame>(frameForId(frameId));
     if (!frame)
         errorString = "Missing frame for given frameId"_s;
     return frame;
@@ -971,12 +966,12 @@ void InspectorPageAgent::frameStoppedLoading(LocalFrame& frame)
     m_frontendDispatcher->frameStoppedLoading(frameId(&frame));
 }
 
-void InspectorPageAgent::frameScheduledNavigation(LocalFrame& frame, Seconds delay)
+void InspectorPageAgent::frameScheduledNavigation(Frame& frame, Seconds delay)
 {
     m_frontendDispatcher->frameScheduledNavigation(frameId(&frame), delay.value());
 }
 
-void InspectorPageAgent::frameClearedScheduledNavigation(LocalFrame& frame)
+void InspectorPageAgent::frameClearedScheduledNavigation(Frame& frame)
 {
     m_frontendDispatcher->frameClearedScheduledNavigation(frameId(&frame));
 }

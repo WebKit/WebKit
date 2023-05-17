@@ -30,6 +30,7 @@
 #include "GCIncomingRefCounted.h"
 #include "Watchpoint.h"
 #include "Weak.h"
+#include "WeakImpl.h"
 #include <wtf/CagedPtr.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/PackedRefPtr.h>

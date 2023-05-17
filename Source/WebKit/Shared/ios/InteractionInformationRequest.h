@@ -45,6 +45,7 @@ struct InteractionInformationRequest {
     bool includeHasDoubleClickHandler { true };
     bool includeImageData { false };
 
+    bool gatherAnimations { false };
     bool linkIndicatorShouldHaveLegacyMargins { false };
     bool disallowUserAgentShadowContent { false };
 

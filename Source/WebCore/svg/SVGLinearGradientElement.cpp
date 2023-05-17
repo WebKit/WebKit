@@ -28,6 +28,7 @@
 #include "Document.h"
 #include "FloatPoint.h"
 #include "LinearGradientAttributes.h"
+#include "NodeName.h"
 #include "RenderSVGResourceLinearGradient.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGLengthValue.h"
@@ -64,15 +65,22 @@ void SVGLinearGradientElement::attributeChanged(const QualifiedName& name, const
 {
     SVGParsingError parseError = NoError;
 
-    if (name == SVGNames::x1Attr)
+    switch (name.nodeName()) {
+    case AttributeNames::x1Attr:
         m_x1->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
-    else if (name == SVGNames::y1Attr)
+        break;
+    case AttributeNames::y1Attr:
         m_y1->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
-    else if (name == SVGNames::x2Attr)
+        break;
+    case AttributeNames::x2Attr:
         m_x2->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
-    else if (name == SVGNames::y2Attr)
+        break;
+    case AttributeNames::y2Attr:
         m_y2->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
-
+        break;
+    default:
+        break;
+    }
     reportAttributeParsingError(parseError, name, newValue);
 
     SVGGradientElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);

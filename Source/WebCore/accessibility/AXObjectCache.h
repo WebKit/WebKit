@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AXGeometryManager.h"
 #include "AXIsolatedTree.h"
 #include "AXTextMarker.h"
 #include "AXTextStateChangeIntent.h"
@@ -34,6 +35,7 @@
 #include "Timer.h"
 #include "VisibleUnits.h"
 #include <limits.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
@@ -132,7 +134,7 @@ enum AXTextChange { AXTextInserted, AXTextDeleted, AXTextAttributesChanged };
 
 enum class PostTarget { Element, ObservableParent };
 
-class AXObjectCache : public CanMakeWeakPtr<AXObjectCache>
+class AXObjectCache : public CanMakeWeakPtr<AXObjectCache>, public CanMakeCheckedPtr
     , public AXTreeStore<AXObjectCache> {
     WTF_MAKE_NONCOPYABLE(AXObjectCache);
     WTF_MAKE_FAST_ALLOCATED;
@@ -242,6 +244,15 @@ public:
     AccessibilityObject* objectForID(const AXID id) const { return m_objects.get(id); }
     Vector<RefPtr<AXCoreObject>> objectsForIDs(const Vector<AXID>&) const;
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    std::optional<IntRect> paintRectForID(AXID axID) { return m_geometryManager->paintRectForID(axID); }
+    void onPaint(const RenderObject&, IntRect&&) const;
+    void onPaint(const Widget&, IntRect&&) const;
+#else
+    NO_RETURN_DUE_TO_ASSERT void onPaint(const RenderObject&, IntRect&&) const { ASSERT_NOT_REACHED(); }
+    NO_RETURN_DUE_TO_ASSERT void onPaint(const Widget&, IntRect&&) const { ASSERT_NOT_REACHED(); }
+#endif
+
     // Text marker utilities.
     std::optional<TextMarkerData> textMarkerDataForVisiblePosition(const VisiblePosition&);
     std::optional<TextMarkerData> textMarkerDataForFirstPositionInTextControl(HTMLTextFormControlElement&);
@@ -291,6 +302,7 @@ public:
     CharacterOffset characterOffsetForIndex(int, const AXCoreObject*);
 
     enum AXNotification {
+        AXAccessKeyChanged,
         AXActiveDescendantChanged,
         AXAutocorrectionOccured,
         AXAutofillTypeChanged,
@@ -326,7 +338,7 @@ public:
         AXRowIndexChanged,
         AXRowSpanChanged,
         AXSelectedChildrenChanged,
-        AXSelectedCellChanged,
+        AXSelectedCellsChanged,
         AXSelectedStateChanged,
         AXSelectedTextChanged,
         AXSetSizeChanged,
@@ -402,7 +414,7 @@ public:
     AXComputedObjectAttributeCache* computedObjectAttributeCache() { return m_computedObjectAttributeCache.get(); }
 
     Document& document() const { return m_document; }
-    std::optional<PageIdentifier> pageID() const { return m_pageID; }
+    constexpr const std::optional<PageIdentifier>& pageID() const { return m_pageID; }
 
 #if PLATFORM(MAC)
     static void setShouldRepostNotificationsForTests(bool value);
@@ -426,13 +438,19 @@ public:
     void updateRelations(Element&, const QualifiedName&);
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    void scheduleObjectRegionsUpdate(bool scheduleImmediately = false) { m_geometryManager->scheduleObjectRegionsUpdate(scheduleImmediately); }
+    void willUpdateObjectRegions() { m_geometryManager->willUpdateObjectRegions(); }
     WEBCORE_EXPORT static bool isIsolatedTreeEnabled();
     WEBCORE_EXPORT static bool usedOnAXThread();
 private:
     static bool clientSupportsIsolatedTree();
+    static bool isTestClient();
     AXCoreObject* isolatedTreeRootObject();
+    // Propagates the root of the isolated tree back into the Core and WebKit.
+    void setIsolatedTreeRoot(AXCoreObject*);
     void setIsolatedTreeFocusedObject(Node*);
-    RefPtr<AXIsolatedTree> getOrCreateIsolatedTree() const;
+    RefPtr<AXIsolatedTree> getOrCreateIsolatedTree();
+    void buildIsolatedTree();
     void updateIsolatedTree(AccessibilityObject&, AXNotification);
     void updateIsolatedTree(AccessibilityObject*, AXNotification);
     void updateIsolatedTree(const Vector<std::pair<RefPtr<AccessibilityObject>, AXNotification>>&);
@@ -498,7 +516,7 @@ private:
     void notificationPostTimerFired();
 
     void liveRegionChangedNotificationPostTimerFired();
-    
+
     void focusCurrentModal();
     
     void performCacheUpdateTimerFired();
@@ -609,7 +627,9 @@ private:
     std::optional<std::pair<WeakPtr<Node, WeakPtrImplWithEventTargetData>, WeakPtr<Node, WeakPtrImplWithEventTargetData>>> m_deferredFocusedNodeChange;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    Timer m_buildIsolatedTreeTimer;
     bool m_deferredRegenerateIsolatedTree { false };
+    Ref<AXGeometryManager> m_geometryManager;
 #endif
     bool m_isSynchronizingSelection { false };
     bool m_performingDeferredCacheUpdate { false };

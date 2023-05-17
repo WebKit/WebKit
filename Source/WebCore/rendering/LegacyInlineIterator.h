@@ -27,6 +27,7 @@
 #include "RenderChildIterator.h"
 #include "RenderInline.h"
 #include "RenderText.h"
+#include "UnicodeBidi.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -97,15 +98,8 @@ public:
     void fastDecrement();
     bool atEnd() const;
 
-    bool atTextParagraphSeparator() const
-    {
-        return is<RenderText>(m_renderer) && m_renderer->preservesNewline() && downcast<RenderText>(*m_renderer).characterAt(m_pos) == '\n';
-    }
-    
-    bool atParagraphSeparator() const
-    {
-        return (m_renderer && m_renderer->isBR()) || atTextParagraphSeparator();
-    }
+    inline bool atTextParagraphSeparator() const;
+    inline bool atParagraphSeparator() const;
 
     UChar current() const;
     UChar previousInSameNode() const;
@@ -133,11 +127,6 @@ private:
 inline bool operator==(const LegacyInlineIterator& it1, const LegacyInlineIterator& it2)
 {
     return it1.offset() == it2.offset() && it1.renderer() == it2.renderer();
-}
-
-inline bool operator!=(const LegacyInlineIterator& it1, const LegacyInlineIterator& it2)
-{
-    return it1.offset() != it2.offset() || it1.renderer() != it2.renderer();
 }
 
 static inline UCharDirection embedCharFromDirection(TextDirection direction, UnicodeBidi unicodeBidi)
@@ -437,68 +426,12 @@ public:
     void embed(UCharDirection, BidiEmbeddingSource) { }
     void commitExplicitEmbedding() { }
 
-    void addFakeRunIfNecessary(RenderObject& obj, unsigned pos, unsigned end, RenderElement& root, InlineBidiResolver& resolver)
-    {
-        // We only need to add a fake run for a given isolated span once during each call to createBidiRunsForLine.
-        // We'll be called for every span inside the isolated span so we just ignore subsequent calls.
-        // We also avoid creating a fake run until we hit a child that warrants one, e.g. we skip floats.
-        if (RenderBlock::shouldSkipCreatingRunsForObject(obj))
-            return;
-        if (!m_haveAddedFakeRunForRootIsolate) {
-            // obj and pos together denote a single position in the inline, from which the parsing of the isolate will start.
-            // We don't need to mark the end of the run because this is implicit: it is either endOfLine or the end of the
-            // isolate, when we call createBidiRunsForLine it will stop at whichever comes first.
-            addPlaceholderRunForIsolatedInline(resolver, obj, pos, root);
-        }
-        m_haveAddedFakeRunForRootIsolate = true;
-        LegacyLineLayout::appendRunsForObject(nullptr, pos, end, obj, resolver);
-    }
+    inline void addFakeRunIfNecessary(RenderObject&, unsigned position, unsigned end, RenderElement& root, InlineBidiResolver&);
 
 private:
     unsigned m_nestedIsolateCount;
     bool m_haveAddedFakeRunForRootIsolate;
 };
-
-template<>
-inline void InlineBidiResolver::appendRunInternal()
-{
-    if (!m_emptyRun && !m_eor.atEnd() && !m_reachedEndOfLine) {
-        // Keep track of when we enter/leave "unicode-bidi: isolate" inlines.
-        // Initialize our state depending on if we're starting in the middle of such an inline.
-        // FIXME: Could this initialize from this->inIsolate() instead of walking up the render tree?
-        IsolateTracker isolateTracker(numberOfIsolateAncestors(m_sor));
-        int start = m_sor.offset();
-        RenderObject* obj = m_sor.renderer();
-        while (obj && obj != m_eor.renderer() && obj != endOfLine.renderer()) {
-            if (isolateTracker.inIsolate())
-                isolateTracker.addFakeRunIfNecessary(*obj, start, obj->length(), *m_sor.root(), *this);
-            else
-                LegacyLineLayout::appendRunsForObject(&m_runs, start, obj->length(), *obj, *this);
-            // FIXME: start/obj should be an LegacyInlineIterator instead of two separate variables.
-            start = 0;
-            obj = nextInlineRendererSkippingEmpty(*m_sor.root(), obj, &isolateTracker);
-        }
-        if (obj) {
-            unsigned pos = obj == m_eor.renderer() ? m_eor.offset() : UINT_MAX;
-            if (obj == endOfLine.renderer() && endOfLine.offset() <= pos) {
-                m_reachedEndOfLine = true;
-                pos = endOfLine.offset();
-            }
-            // It's OK to add runs for zero-length RenderObjects, just don't make the run larger than it should be
-            int end = obj->length() ? pos + 1 : 0;
-            if (isolateTracker.inIsolate())
-                isolateTracker.addFakeRunIfNecessary(*obj, start, obj->length(), *m_sor.root(), *this);
-            else
-                LegacyLineLayout::appendRunsForObject(&m_runs, start, end, *obj, *this);
-        }
-
-        m_eor.increment();
-        m_sor = m_eor;
-    }
-
-    m_direction = U_OTHER_NEUTRAL;
-    m_status.eor = U_OTHER_NEUTRAL;
-}
 
 template<>
 inline bool InlineBidiResolver::needsContinuePastEndInternal() const

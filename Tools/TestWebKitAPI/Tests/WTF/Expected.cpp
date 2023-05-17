@@ -298,7 +298,6 @@ struct NonCopyable {
     NonCopyable& operator=(const NonCopyable&) = delete;
     NonCopyable& operator=(NonCopyable&&) = default;
     bool operator==(const NonCopyable<T>& other) const { return value == other.value; }
-    bool operator!=(const NonCopyable<T>& other) const { return value != other.value; }
     T value;
 };
 

@@ -52,13 +52,22 @@ Token Lexer<T>::lex()
         return makeToken(TokenType::Bang);
     case '%':
         shift();
-        return makeToken(TokenType::Modulo);
+        switch (m_current) {
+        case '=':
+            shift();
+            return makeToken(TokenType::ModuloEq);
+        default:
+            return makeToken(TokenType::Modulo);
+        }
     case '&':
         shift();
         switch (m_current) {
         case '&':
             shift();
             return makeToken(TokenType::AndAnd);
+        case '=':
+            shift();
+            return makeToken(TokenType::AndEq);
         default:
             return makeToken(TokenType::And);
         }
@@ -104,7 +113,13 @@ Token Lexer<T>::lex()
             return makeToken(TokenType::GtEq);
         case '>':
             shift();
-            return makeToken(TokenType::GtGt);
+            switch (m_current) {
+            case '=':
+                shift();
+                return makeToken(TokenType::GtGtEq);
+            default:
+                return makeToken(TokenType::GtGt);
+            }
         default:
             return makeToken(TokenType::Gt);
         }
@@ -116,7 +131,13 @@ Token Lexer<T>::lex()
             return makeToken(TokenType::LtEq);
         case '<':
             shift();
-            return makeToken(TokenType::LtLt);
+            switch (m_current) {
+            case '=':
+                shift();
+                return makeToken(TokenType::LtLtEq);
+            default:
+                return makeToken(TokenType::LtLt);
+            }
         default:
             return makeToken(TokenType::Lt);
         }
@@ -125,11 +146,23 @@ Token Lexer<T>::lex()
         return makeToken(TokenType::Attribute);
     case '*':
         shift();
-        // FIXME: Report unbalanced block comments, such as "this is an unbalanced comment. */"
-        return makeToken(TokenType::Star);
+        switch (m_current) {
+        case '=':
+            shift();
+            return makeToken(TokenType::StarEq);
+        default:
+            // FIXME: Report unbalanced block comments, such as "this is an unbalanced comment. */"
+            return makeToken(TokenType::Star);
+        }
     case '/':
         shift();
-        return makeToken(TokenType::Slash);
+        switch (m_current) {
+        case '=':
+            shift();
+            return makeToken(TokenType::SlashEq);
+        default:
+            return makeToken(TokenType::Slash);
+        }
     case '.': {
         shift();
         unsigned offset = currentOffset();
@@ -152,31 +185,49 @@ Token Lexer<T>::lex()
     }
     case '-':
         shift();
-        if (m_current == '>') {
+        switch (m_current) {
+        case '>':
             shift();
             return makeToken(TokenType::Arrow);
-        }
-        if (m_current == '-') {
+        case '-':
             shift();
             return makeToken(TokenType::MinusMinus);
+        case '=':
+            shift();
+            return makeToken(TokenType::MinusEq);
+        default:
+            return makeToken(TokenType::Minus);
         }
-        return makeToken(TokenType::Minus);
     case '+':
         shift();
-        if (m_current == '+') {
+        switch (m_current) {
+        case '+':
             shift();
             return makeToken(TokenType::PlusPlus);
+        case '=':
+            shift();
+            return makeToken(TokenType::PlusEq);
+        default:
+            return makeToken(TokenType::Plus);
         }
-        return makeToken(TokenType::Plus);
     case '^':
         shift();
-        return makeToken(TokenType::Xor);
+        switch (m_current) {
+        case '=':
+            shift();
+            return makeToken(TokenType::XorEq);
+        default:
+            return makeToken(TokenType::Xor);
+        }
     case '|':
         shift();
         switch (m_current) {
         case '|':
             shift();
             return makeToken(TokenType::OrOr);
+        case '=':
+            shift();
+            return makeToken(TokenType::OrEq);
         default:
             return makeToken(TokenType::Or);
         }
@@ -270,13 +321,14 @@ Token Lexer<T>::lex()
         } else if (isIdentifierStart(m_current)) {
             const T* startOfToken = m_code;
             shift();
-            while (isValidIdentifierCharacter(m_current))
+            while (isIdentifierContinue(m_current))
                 shift();
             // FIXME: a trie would be more efficient here, look at JavaScriptCore/KeywordLookupGenerator.py for an example of code autogeneration that produces such a trie.
             String view(StringImpl::createWithoutCopying(startOfToken, currentTokenLength()));
             // FIXME: I don't think that true/false/f32/u32/i32/bool need to be their own tokens, they could just be regular identifiers.
 
             static constexpr std::pair<ComparableASCIILiteral, TokenType> wordMappings[] {
+                { "_", TokenType::Underbar },
                 { "array", TokenType::KeywordArray },
                 { "asm", TokenType::ReservedWord },
                 { "bf16", TokenType::ReservedWord },
@@ -290,6 +342,7 @@ Token Lexer<T>::lex()
                 { "f64", TokenType::ReservedWord },
                 { "false", TokenType::LiteralFalse },
                 { "fn", TokenType::KeywordFn },
+                { "for", TokenType::KeywordFor },
                 { "function", TokenType::KeywordFunction },
                 { "handle", TokenType::ReservedWord },
                 { "i16", TokenType::ReservedWord },
@@ -408,7 +461,7 @@ template <typename T>
 void Lexer<T>::skipWhitespaceAndComments()
 {
     while (!isAtEndOfFile()) {
-        if (isASCIISpace(m_current)) {
+        if (isUnicodeCompatibleASCIIWhitespace(m_current)) {
             if (shift() == '\n')
                 newLine();
         } else if (peek(0) == '/') {

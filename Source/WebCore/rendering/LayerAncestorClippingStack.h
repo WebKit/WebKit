@@ -54,11 +54,6 @@ struct CompositedClipData {
             && isOverflowScroll == other.isOverflowScroll;
     }
     
-    bool operator!=(const CompositedClipData& other) const
-    {
-        return !(*this == other);
-    }
-
     WeakPtr<RenderLayer> clippingLayer; // For scroller entries, the scrolling layer. For other entries, the most-descendant layer that has a clip.
     RoundedRect clipRect; // In the coordinate system of the RenderLayer that owns the stack.
     bool isOverflowScroll { false };

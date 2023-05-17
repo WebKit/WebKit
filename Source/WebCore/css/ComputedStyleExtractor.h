@@ -68,7 +68,7 @@ public:
     RefPtr<CSSValue> customPropertyValue(const AtomString& propertyName);
 
     // Helper methods for HTML editing.
-    Ref<MutableStyleProperties> copyProperties(Span<const CSSPropertyID>);
+    Ref<MutableStyleProperties> copyProperties(std::span<const CSSPropertyID>);
     Ref<MutableStyleProperties> copyProperties();
     RefPtr<CSSPrimitiveValue> getFontSizeCSSValuePreferringKeyword();
     bool useFixedFontDefaultSize();

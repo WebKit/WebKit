@@ -39,6 +39,8 @@ class FETurbulence : public FilterEffect {
 public:
     WEBCORE_EXPORT static Ref<FETurbulence> create(TurbulenceType, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles);
 
+    bool operator==(const FETurbulence&) const;
+
     TurbulenceType type() const { return m_type; }
     bool setType(TurbulenceType);
 
@@ -60,9 +62,11 @@ public:
 private:
     FETurbulence(TurbulenceType, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles);
 
+    bool operator==(const FilterEffect& other) const override { return areEqual<FETurbulence>(*this, other); }
+
     unsigned numberOfEffectInputs() const override { return 0; }
 
-    FloatRect calculateImageRect(const Filter&, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
+    FloatRect calculateImageRect(const Filter&, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
 
     std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
 

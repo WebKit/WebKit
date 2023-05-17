@@ -333,4 +333,33 @@ CALLFRAME: entry
 
 
 -- Running test case: PausedCallFrameScope.Complete
+-- Running test case: PausedCallFrameScope.PrivateField
+CALLFRAME: pause
+
+---- Scope Chain ----
+  SCOPE: Name (pause) - Type (Local) - Hash (pause:<sourceID>:7:10)
+  SCOPE: Name (<global>) - Type (Block) - Hash (<global>:<sourceID>:1:1)
+  SCOPE: Name () - Type (GlobalLexicalEnvironment) - Hash ()
+    - globalLet2
+  SCOPE: Name () - Type (Global) - Hash ()
+
+---- Merged Scope Chain ----
+  SCOPE: Name (pause) - Type (Local) - Hash (pause:<sourceID>:7:10)
+  SCOPE: Name (<global>) - Type (Block) - Hash (<global>:<sourceID>:1:1)
+  SCOPE: Name () - Type (GlobalLexicalEnvironment) - Hash ()
+    - globalLet2
+  SCOPE: Name () - Type (Global) - Hash ()
+
+CALLFRAME: Global Code
+
+---- Scope Chain ----
+  SCOPE: Name () - Type (GlobalLexicalEnvironment) - Hash ()
+    - globalLet2
+  SCOPE: Name () - Type (Global) - Hash ()
+
+---- Merged Scope Chain ----
+  SCOPE: Name () - Type (GlobalLexicalEnvironment) - Hash ()
+    - globalLet2
+  SCOPE: Name () - Type (Global) - Hash ()
+
 

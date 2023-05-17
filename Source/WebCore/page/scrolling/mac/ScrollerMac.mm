@@ -28,13 +28,14 @@
 
 #if PLATFORM(MAC)
 
+#import "FloatPoint.h"
+#import "IntRect.h"
+#import "NSScrollerImpDetails.h"
+#import "PlatformWheelEvent.h"
 #import "ScrollTypesMac.h"
 #import "ScrollerPairMac.h"
+#import "ScrollingTreeScrollingNode.h"
 #import <QuartzCore/CALayer.h>
-#import <WebCore/FloatPoint.h>
-#import <WebCore/IntRect.h>
-#import <WebCore/NSScrollerImpDetails.h>
-#import <WebCore/PlatformWheelEvent.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 
@@ -181,7 +182,7 @@ enum class FeatureToAnimate {
 
     ASSERT_UNUSED(scrollerImp, scrollerImp == _scroller->scrollerImp());
 
-    return _scroller->convertFromContent(_scroller->pair().lastKnownMousePosition());
+    return _scroller->lastKnownMousePositionInScrollbar();
 }
 
 - (NSRect)convertRectToLayer:(NSRect)rect
@@ -232,6 +233,7 @@ enum class FeatureToAnimate {
         return;
 
     ASSERT_UNUSED(scrollerImp, scrollerImp == _scroller->scrollerImp());
+    _scroller->visibilityChanged(newKnobAlpha > 0);
     [self setUpAlphaAnimation:_knobAlphaAnimation featureToAnimate:FeatureToAnimate::KnobAlpha animateAlphaTo:newKnobAlpha duration:duration];
 }
 
@@ -323,8 +325,6 @@ ScrollerMac::ScrollerMac(ScrollerPairMac& pair, ScrollbarOrientation orientation
 
 ScrollerMac::~ScrollerMac()
 {
-    [m_scrollerImpDelegate invalidate];
-    [m_scrollerImp setDelegate:nil];
 }
 
 void ScrollerMac::attach()
@@ -332,6 +332,12 @@ void ScrollerMac::attach()
     m_scrollerImpDelegate = adoptNS([[WebScrollerImpDelegateMac alloc] initWithScroller:this]);
     m_scrollerImp = [NSScrollerImp scrollerImpWithStyle:nsScrollerStyle(m_pair.scrollbarStyle()) controlSize:NSControlSizeRegular horizontal:m_orientation == ScrollbarOrientation::Horizontal replacingScrollerImp:nil];
     [m_scrollerImp setDelegate:m_scrollerImpDelegate.get()];
+}
+
+void ScrollerMac::detach()
+{
+    [m_scrollerImpDelegate invalidate];
+    [m_scrollerImp setDelegate:nil];
 }
 
 void ScrollerMac::setHostLayer(CALayer *layer)
@@ -365,11 +371,6 @@ void ScrollerMac::updateScrollbarStyle()
 {
     m_scrollerImp = [NSScrollerImp scrollerImpWithStyle:nsScrollerStyle(m_pair.scrollbarStyle()) controlSize:NSControlSizeRegular horizontal:m_orientation == ScrollbarOrientation::Horizontal replacingScrollerImp:takeScrollerImp().get()];
     updatePairScrollerImps();
-}
-
-FloatPoint ScrollerMac::convertFromContent(const FloatPoint& point) const
-{
-    return FloatPoint { [m_hostLayer convertPoint:point fromLayer:[m_hostLayer superlayer]] };
 }
 
 void ScrollerMac::updatePairScrollerImps()
@@ -407,6 +408,23 @@ void ScrollerMac::mouseExitedScrollbar()
 
         [m_scrollerImp mouseExitedScroller];
     });
+}
+
+IntPoint ScrollerMac::lastKnownMousePositionInScrollbar() const
+{
+    // When we dont have an update from the Web Process, return
+    // a point outside of the scrollbars
+    if (!m_pair.mouseInContentArea())
+        return { -1, -1 };
+    return m_lastKnownMousePositionInScrollbar;
+}
+
+void ScrollerMac::visibilityChanged(bool isVisible)
+{
+    if (m_isVisible == isVisible)
+        return;
+    m_isVisible = isVisible;
+    m_pair.node().scrollbarVisibilityDidChange(m_orientation, isVisible);
 }
 
 String ScrollerMac::scrollbarState() const

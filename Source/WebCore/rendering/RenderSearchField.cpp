@@ -38,12 +38,15 @@
 #include "LocalizedStrings.h"
 #include "Page.h"
 #include "PopupMenu.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderLayer.h"
 #include "RenderScrollbar.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "StyleResolver.h"
 #include "TextControlInnerElements.h"
+#include "UnicodeBidi.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -168,7 +171,7 @@ LayoutUnit RenderSearchField::computeControlLogicalHeight(LayoutUnit lineHeight,
     return lineHeight + nonContentHeight;
 }
     
-Span<const RecentSearch> RenderSearchField::recentSearches()
+std::span<const RecentSearch> RenderSearchField::recentSearches()
 {
     if (!m_searchPopup)
         m_searchPopup = page().chrome().createSearchPopupMenu(*this);

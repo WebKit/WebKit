@@ -199,7 +199,7 @@ void Entry::initializeBufferFromStorageRecord() const
 {
 #if ENABLE(SHAREABLE_RESOURCE)
     if (!shareableResourceHandle().isNull()) {
-        m_buffer = m_shareableResourceHandle.tryWrapInSharedBuffer();
+        m_buffer = WTFMove(m_shareableResourceHandle).tryWrapInSharedBuffer();
         if (m_buffer)
             return;
     }

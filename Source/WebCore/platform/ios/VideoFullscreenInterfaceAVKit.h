@@ -165,6 +165,13 @@ public:
     WEBCORE_EXPORT AVPlayerViewController *avPlayerViewController() const;
     WebAVPlayerController *playerController() const;
 
+#if !RELEASE_LOG_DISABLED
+    const void* logIdentifier() const;
+    const Logger* loggerPtr() const;
+    const char* logClassName() const { return "VideoFullscreenInterfaceAVKit"; };
+    WTFLogChannel& logChannel() const;
+#endif
+
 private:
     WEBCORE_EXPORT VideoFullscreenInterfaceAVKit(PlaybackSessionInterfaceAVKit&);
 

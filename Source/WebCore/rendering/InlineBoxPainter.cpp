@@ -28,9 +28,11 @@
 #include "BackgroundPainter.h"
 #include "BorderPainter.h"
 #include "GraphicsContext.h"
+#include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorLineBox.h"
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
+#include "RenderElementInlines.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
@@ -100,6 +102,15 @@ void InlineBoxPainter::paint()
 
     if (m_paintInfo.phase == PaintPhase::Mask) {
         paintMask();
+        return;
+    }
+
+    if (m_paintInfo.phase == PaintPhase::Accessibility) {
+        if (auto* renderInline = dynamicDowncast<RenderInline>(m_renderer)) {
+            auto linesBoundingBox = enclosingIntRect(renderInline->linesVisualOverflowBoundingBox());
+            linesBoundingBox.moveBy(roundedIntPoint(m_paintOffset));
+            m_paintInfo.accessibilityRegionContext()->takeBounds(dynamicDowncast<RenderInline>(m_renderer), WTFMove(linesBoundingBox));
+        }
         return;
     }
 

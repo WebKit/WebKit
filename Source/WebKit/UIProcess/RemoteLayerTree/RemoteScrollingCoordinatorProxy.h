@@ -124,6 +124,9 @@ public:
     virtual void scrollingTreeNodeDidEndScroll(WebCore::ScrollingNodeID) { }
     virtual void hasNodeWithAnimatedScrollChanged(bool) { }
     virtual void setRootNodeIsInUserScroll(bool) { }
+
+    virtual void scrollingTreeNodeDidBeginScrollSnapping(WebCore::ScrollingNodeID) { }
+    virtual void scrollingTreeNodeDidEndScrollSnapping(WebCore::ScrollingNodeID) { }
     
     virtual void willCommitLayerAndScrollingTrees() { }
     virtual void didCommitLayerAndScrollingTrees() { }
@@ -160,6 +163,8 @@ public:
     bool overlayScrollbarsEnabled();
 
     void sendScrollingTreeNodeDidScroll();
+    
+    void scrollingTreeNodeScrollbarVisibilityDidChange(WebCore::ScrollingNodeID, WebCore::ScrollbarOrientation, bool);
 
 protected:
     RemoteScrollingTree* scrollingTree() const { return m_scrollingTree.get(); }

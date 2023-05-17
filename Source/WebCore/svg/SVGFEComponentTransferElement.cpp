@@ -23,8 +23,8 @@
 #include "SVGFEComponentTransferElement.h"
 
 #include "ElementChildIteratorInlines.h"
-#include "ElementName.h"
 #include "FEComponentTransfer.h"
+#include "NodeName.h"
 #include "SVGComponentTransferFunctionElement.h"
 #include "SVGComponentTransferFunctionElementInlines.h"
 #include "SVGElementTypeHelpers.h"
@@ -94,7 +94,7 @@ static bool isRelevantTransferFunctionElement(const Element& child)
     return true;
 }
 
-bool SVGFEComponentTransferElement::setFilterEffectAttributeFromChild(FilterEffect& effect, const Element& childElement, const QualifiedName& attrName)
+bool SVGFEComponentTransferElement::setFilterEffectAttributeFromChild(FilterEffect& filterEffect, const Element& childElement, const QualifiedName& attrName)
 {
     ASSERT(isRelevantTransferFunctionElement(childElement));
 
@@ -103,30 +103,27 @@ bool SVGFEComponentTransferElement::setFilterEffectAttributeFromChild(FilterEffe
         return false;
     }
 
-    auto& feComponentTransfer = downcast<FEComponentTransfer>(effect);
+    auto& effect = downcast<FEComponentTransfer>(filterEffect);
     auto& child = downcast<SVGComponentTransferFunctionElement>(childElement);
 
-    if (attrName == SVGNames::typeAttr)
-        return feComponentTransfer.setType(child.channel(), child.type());
-
-    if (attrName == SVGNames::slopeAttr)
-        return feComponentTransfer.setSlope(child.channel(), child.slope());
-
-    if (attrName == SVGNames::interceptAttr)
-        return feComponentTransfer.setIntercept(child.channel(), child.intercept());
-
-    if (attrName == SVGNames::amplitudeAttr)
-        return feComponentTransfer.setAmplitude(child.channel(), child.amplitude());
-
-    if (attrName == SVGNames::exponentAttr)
-        return feComponentTransfer.setExponent(child.channel(), child.exponent());
-
-    if (attrName == SVGNames::offsetAttr)
-        return feComponentTransfer.setOffset(child.channel(), child.offset());
-
-    if (attrName == SVGNames::tableValuesAttr)
-        return feComponentTransfer.setTableValues(child.channel(), child.tableValues());
-
+    switch (attrName.nodeName()) {
+    case AttributeNames::typeAttr:
+        return effect.setType(child.channel(), child.type());
+    case AttributeNames::slopeAttr:
+        return effect.setSlope(child.channel(), child.slope());
+    case AttributeNames::interceptAttr:
+        return effect.setIntercept(child.channel(), child.intercept());
+    case AttributeNames::amplitudeAttr:
+        return effect.setAmplitude(child.channel(), child.amplitude());
+    case AttributeNames::exponentAttr:
+        return effect.setExponent(child.channel(), child.exponent());
+    case AttributeNames::offsetAttr:
+        return effect.setOffset(child.channel(), child.offset());
+    case AttributeNames::tableValuesAttr:
+        return effect.setTableValues(child.channel(), child.tableValues());
+    default:
+        break;
+    }
     return false;
 }
 

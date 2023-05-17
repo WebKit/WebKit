@@ -53,7 +53,7 @@ ExceptionOr<RefPtr<Uint8Array>> CompressionStreamEncoder::encode(const BufferSou
 
 ExceptionOr<RefPtr<Uint8Array>> CompressionStreamEncoder::flush()
 {
-    m_finish = true;
+    m_didFinish = true;
 
     auto compressedDataCheck = compress(0, 0);
     if (compressedDataCheck.hasException())
@@ -95,9 +95,25 @@ ExceptionOr<bool> CompressionStreamEncoder::initialize()
     return true;
 }
 
+// The compression algorithm is broken up into 2 steps.
+// 1. Compression of Data
+// 2. Flush Remaining Data
+//
+// When avail_in is empty we can normally exit performing compression, but during the flush
+// step we may have data buffered and will need to continue to keep flushing out the rest.
+bool CompressionStreamEncoder::didDeflateFinish(int result) const
+{
+    return !m_zstream.avail_in && (!m_didFinish || (m_didFinish && result == Z_STREAM_END));
+}
+
+// See https://www.zlib.net/manual.html#Constants
+static bool didDeflateFail(int result)
+{
+    return result != Z_OK && result != Z_STREAM_END && result != Z_BUF_ERROR;
+}
+
 ExceptionOr<RefPtr<JSC::ArrayBuffer>> CompressionStreamEncoder::compress(const uint8_t* input, const size_t inputLength)
 {
-
     size_t allocateSize = (inputLength < startingAllocationSize) ? startingAllocationSize : inputLength;
     auto storage = SharedBufferBuilder();
 
@@ -129,11 +145,12 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> CompressionStreamEncoder::compress(const u
         m_zstream.next_out = output.data();
         m_zstream.avail_out = output.size();
 
-        result = deflate(&m_zstream, (m_finish) ? Z_FINISH : Z_NO_FLUSH);
-        if (result != Z_OK && result != Z_STREAM_END && result != Z_BUF_ERROR)
+        result = deflate(&m_zstream, m_didFinish ? Z_FINISH : Z_NO_FLUSH);
+
+        if (didDeflateFail(result))
             return Exception { TypeError, "Failed to compress data."_s };
 
-        if (!m_zstream.avail_in) {
+        if (didDeflateFinish(result)) {
             shouldCompress = false;
             output.resize(allocateSize - m_zstream.avail_out);
         }

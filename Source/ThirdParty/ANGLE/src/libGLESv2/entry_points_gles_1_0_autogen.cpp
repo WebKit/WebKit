@@ -1690,8 +1690,7 @@ void GL_APIENTRY GL_PolygonOffsetx(GLfixed factor, GLfixed units)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLPolygonOffsetx) &&
-              ValidatePolygonOffsetx(context, angle::EntryPoint::GLPolygonOffsetx, factor, units)));
+             ValidatePolygonOffsetx(context, angle::EntryPoint::GLPolygonOffsetx, factor, units));
         if (isCallValid)
         {
             context->polygonOffsetx(factor, units);

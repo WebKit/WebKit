@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests failing cases for qualified name validation.");
+
+shouldThrowErrorName("document.createElement('@foo')", "InvalidCharacterError");
+shouldThrowErrorName("document.createElementNS('ns', '@foo')", "InvalidCharacterError");
+shouldThrowErrorName("document.createElementNS('ns', 'f@ast')", "InvalidCharacterError");
+shouldThrowErrorName("document.createAttribute('@foo')", "InvalidCharacterError");
+shouldThrowErrorName("document.createAttributeNS('ns', '@foo')", "InvalidCharacterError");
+shouldThrowErrorName("document.createAttributeNS('ns', 'f@ast')", "InvalidCharacterError");
+shouldThrowErrorName("document.body.setAttribute('@foo', 'test')", "InvalidCharacterError");
+shouldThrowErrorName("document.body.setAttributeNS('ns', '@foo', 'test')", "InvalidCharacterError");
+shouldThrowErrorName("document.body.setAttributeNS('ns', 'f@st', 'test')", "InvalidCharacterError");
+shouldThrowErrorName("document.createProcessingInstruction('@foo', 'test')", "InvalidCharacterError");
+</script>
+</body>
+</html>

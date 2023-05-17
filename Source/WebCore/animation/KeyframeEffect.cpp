@@ -56,7 +56,7 @@
 #include "RenderBox.h"
 #include "RenderBoxModelObject.h"
 #include "RenderElement.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "Settings.h"
 #include "StyleAdjuster.h"
 #include "StylePendingResources.h"
@@ -66,7 +66,6 @@
 #include "StyledElement.h"
 #include "TimingFunction.h"
 #include "TranslateTransformOperation.h"
-#include "WillChangeData.h"
 #include <JavaScriptCore/Exception.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/UUID.h>
@@ -2701,7 +2700,7 @@ KeyframeEffect::CanBeAcceleratedMutationScope::~CanBeAcceleratedMutationScope()
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 static bool acceleratedPropertyDidChange(AnimatableProperty property, const RenderStyle& previousStyle, const RenderStyle& currentStyle, const Settings& settings)
 {
-#if !defined(NDEBUG)
+#if ASSERT_ENABLED
     ASSERT(CSSPropertyAnimation::animationOfPropertyIsAccelerated(property, settings));
 #else
     UNUSED_PARAM(settings);

@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+struct VideoInfo;
+
 class VideoTrackPrivateWebM final : public VideoTrackPrivate {
 public:
     static Ref<VideoTrackPrivateWebM> create(webm::TrackEntry&&);
@@ -47,16 +49,20 @@ public:
 private:
     VideoTrackPrivateWebM(webm::TrackEntry&&);
 
+    void setFormatDescription(Ref<VideoInfo>&&);
+
     String codec() const;
     uint32_t width() const;
     uint32_t height() const;
     double framerate() const;
+    PlatformVideoColorSpace colorSpace() const;
     void updateConfiguration();
 
     webm::TrackEntry m_track;
     mutable AtomString m_trackID;
     mutable AtomString m_label;
     mutable AtomString m_language;
+    RefPtr<VideoInfo> m_formatDescription;
 };
 
 }

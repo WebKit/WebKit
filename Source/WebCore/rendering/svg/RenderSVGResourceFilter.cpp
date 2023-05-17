@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "RenderSVGResourceFilterInlines.h"
 #include "SVGElementTypeHelpers.h"
+#include "SVGRenderStyle.h"
 #include "SVGRenderingContext.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>
@@ -130,7 +131,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     auto preferredFilterModes = renderer.page().preferredFilterRenderingModes();
 
     // Create the SVGFilter object.
-    filterData->filter = SVGFilter::create(filterElement(), preferredFilterModes, filterScale, filterRegion, targetBoundingBox, *context);
+    filterData->filter = SVGFilter::create(filterElement(), preferredFilterModes, filterScale, filterRegion, targetBoundingBox, *context, RenderingResourceIdentifier::generate());
     if (!filterData->filter) {
         m_rendererFilterDataMap.remove(&renderer);
         return false;
@@ -144,7 +145,11 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     auto colorSpace = DestinationColorSpace::SRGB();
 #endif
 
-    filterData->targetSwitcher = FilterTargetSwitcher::create(*context, *filterData->filter, filterData->sourceImageRect, colorSpace, &filterData->results);
+    auto& results = filterData->filter->ensureResults([&]() {
+        return makeUnique<FilterResults>();
+    });
+
+    filterData->targetSwitcher = FilterTargetSwitcher::create(*context, *filterData->filter, filterData->sourceImageRect, colorSpace, &results);
     if (!filterData->targetSwitcher) {
         m_rendererFilterDataMap.remove(&renderer);
         return false;
@@ -233,7 +238,7 @@ void RenderSVGResourceFilter::markFilterForRepaint(FilterEffect& effect)
         // Repaint the image on the screen.
         markClientForInvalidation(*objectFilterDataPair.key, RepaintInvalidation);
 
-        filterData->results.clearEffectResult(effect);
+        filterData->filter->clearEffectResult(effect);
     }
 }
 

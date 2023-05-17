@@ -123,11 +123,6 @@ inline bool operator==(const BidiStatus& status1, const BidiStatus& status2)
     return status1.eor == status2.eor && status1.last == status2.last && status1.lastStrong == status2.lastStrong && *(status1.context) == *(status2.context);
 }
 
-inline bool operator!=(const BidiStatus& status1, const BidiStatus& status2)
-{
-    return !(status1 == status2);
-}
-
 struct BidiCharacterRun {
     WTF_MAKE_FAST_ALLOCATED;
 public:

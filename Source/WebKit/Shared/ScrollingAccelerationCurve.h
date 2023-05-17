@@ -64,8 +64,6 @@ public:
             && m_parameters.resolution == other.m_parameters.resolution
             && m_parameters.frameRate == other.m_parameters.frameRate;
     }
-
-    bool operator!=(const ScrollingAccelerationCurve& other) const { return !(*this == other); }
     
 private:
     friend TextStream& operator<<(TextStream&, const ScrollingAccelerationCurve&);

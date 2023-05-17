@@ -38,12 +38,12 @@ class AuxiliaryProcess;
 
 bool hasRequestedCrossWebsiteTrackingPermission();
 bool hasProhibitedUsageStrings();
-Span<const WebCore::RegistrableDomain> appBoundDomainsForTesting(const String&);
+std::span<const WebCore::RegistrableDomain> appBoundDomainsForTesting(const String&);
 bool isRunningTest(const String& bundleID);
 void determineTrackingPreventionState();
 bool doesAppHaveTrackingPreventionEnabled();
 bool doesParentProcessHaveTrackingPreventionEnabled(AuxiliaryProcess&, bool hasRequestedCrossWebsiteTrackingPermission);
-bool isFullWebBrowser();
+bool isFullWebBrowserOrRunningTest();
 bool isParentProcessAFullWebBrowser(AuxiliaryProcess&);
 
 } // namespace WebKit

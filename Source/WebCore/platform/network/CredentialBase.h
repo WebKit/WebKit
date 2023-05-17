@@ -67,7 +67,6 @@ private:
 };
 
 inline bool operator==(const Credential& a, const Credential& b) { return CredentialBase::compare(a, b); }
-inline bool operator!=(const Credential& a, const Credential& b) { return !(a == b); }
     
 } // namespace WebCore
 

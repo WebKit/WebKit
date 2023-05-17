@@ -31,7 +31,6 @@
 
 #include "GStreamerCommon.h"
 #include "MediaPlayerPrivateGStreamer.h"
-#include <gst/pbutils/pbutils.h>
 #include <wtf/Scope.h>
 
 namespace WebCore {
@@ -59,66 +58,69 @@ VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivat
     , m_player(player)
 {
     ensureDebugCategoryInitialized();
-    int kind;
-    auto tags = adoptGRef(gst_stream_get_tags(m_stream.get()));
-
-    if (tags && gst_tag_list_get_int(tags.get(), "webkit-media-stream-kind", &kind) && kind == static_cast<int>(VideoTrackPrivate::Kind::Main)) {
-        auto streamFlags = gst_stream_get_stream_flags(m_stream.get());
-        gst_stream_set_stream_flags(m_stream.get(), static_cast<GstStreamFlags>(streamFlags | GST_STREAM_FLAG_SELECT));
-    }
 
     g_signal_connect_swapped(m_stream.get(), "notify::caps", G_CALLBACK(+[](VideoTrackPrivateGStreamer* track) {
         track->m_taskQueue.enqueueTask([track]() {
-            track->updateConfigurationFromCaps();
+            auto caps = adoptGRef(gst_stream_get_caps(track->m_stream.get()));
+            track->capsChanged(String::fromLatin1(gst_stream_get_stream_id(track->m_stream.get())), caps);
         });
     }), this);
     g_signal_connect_swapped(m_stream.get(), "notify::tags", G_CALLBACK(+[](VideoTrackPrivateGStreamer* track) {
+        auto tags = adoptGRef(gst_stream_get_tags(track->m_stream.get()));
         if (isMainThread())
-            track->updateConfigurationFromTags();
+            track->updateConfigurationFromTags(tags);
         else
-            track->m_taskQueue.enqueueTask([track]() {
-                track->updateConfigurationFromTags();
+            track->m_taskQueue.enqueueTask([track, tags = WTFMove(tags)]() {
+                track->updateConfigurationFromTags(tags);
             });
     }), this);
 
-    updateConfigurationFromCaps();
-    updateConfigurationFromTags();
-}
-
-void VideoTrackPrivateGStreamer::updateConfigurationFromTags()
-{
-    ASSERT(isMainThread());
-    if (!m_stream)
-        return;
+    auto caps = adoptGRef(gst_stream_get_caps(m_stream.get()));
+    updateConfigurationFromCaps(caps);
 
     auto tags = adoptGRef(gst_stream_get_tags(m_stream.get()));
-    unsigned bitrate;
-    if (!tags || !gst_tag_list_get_uint(tags.get(), GST_TAG_BITRATE, &bitrate))
+    updateConfigurationFromTags(tags);
+}
+
+void VideoTrackPrivateGStreamer::capsChanged(const String& streamId, const GRefPtr<GstCaps>& caps)
+{
+    ASSERT(isMainThread());
+    updateConfigurationFromCaps(caps);
+
+    auto codec = m_player->codecForStreamId(streamId);
+    if (codec.isEmpty())
         return;
 
-    GST_DEBUG_OBJECT(m_stream.get(), "Setting bitrate to %u", bitrate);
+    auto configuration = this->configuration();
+    GST_DEBUG_OBJECT(objectForLogging(), "Setting codec to %s", codec.ascii().data());
+    configuration.codec = WTFMove(codec);
+    setConfiguration(WTFMove(configuration));
+}
+
+void VideoTrackPrivateGStreamer::updateConfigurationFromTags(const GRefPtr<GstTagList>& tags)
+{
+    ASSERT(isMainThread());
+    GST_DEBUG_OBJECT(objectForLogging(), "Updating video configuration from %" GST_PTR_FORMAT, tags.get());
+    if (!tags)
+        return;
+
+    unsigned bitrate;
+    if (!gst_tag_list_get_uint(tags.get(), GST_TAG_BITRATE, &bitrate))
+        return;
+
+    GST_DEBUG_OBJECT(objectForLogging(), "Setting bitrate to %u", bitrate);
     auto configuration = this->configuration();
     configuration.bitrate = bitrate;
     setConfiguration(WTFMove(configuration));
 }
 
-void VideoTrackPrivateGStreamer::updateConfigurationFromCaps()
+void VideoTrackPrivateGStreamer::updateConfigurationFromCaps(const GRefPtr<GstCaps>& caps)
 {
     ASSERT(isMainThread());
-    if (!m_stream)
-        return;
-
-    auto caps = adoptGRef(gst_stream_get_caps(m_stream.get()));
     if (!caps || !gst_caps_is_fixed(caps.get()))
         return;
 
-    // We might be notified of RTP caps here, when an incoming video track is re-enabled. Since
-    // those caps most likely do not contain the information we need (width, height, colorimetry,
-    // ...), keep previous configuration and return early.
-    if (!doCapsHaveType(caps.get(), GST_VIDEO_CAPS_TYPE_PREFIX))
-        return;
-
-    GST_DEBUG_OBJECT(m_stream.get(), "Updating video configuration from %" GST_PTR_FORMAT, caps.get());
+    GST_DEBUG_OBJECT(objectForLogging(), "Updating video configuration from %" GST_PTR_FORMAT, caps.get());
     auto configuration = this->configuration();
     auto scopeExit = makeScopeExit([&] {
         setConfiguration(WTFMove(configuration));
@@ -141,12 +143,6 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromCaps()
         configuration.height = GST_VIDEO_INFO_HEIGHT(&info);
         configuration.colorSpace = videoColorSpaceFromInfo(info);
     }
-
-#if GST_CHECK_VERSION(1, 20, 0)
-    GUniquePtr<char> codec(gst_codec_utils_caps_get_mime_codec(caps.get()));
-    GST_DEBUG_OBJECT(m_stream.get(), "Setting codec to %s", codec.get());
-    configuration.codec = String::fromLatin1(codec.get());
-#endif
 }
 
 VideoTrackPrivate::Kind VideoTrackPrivateGStreamer::kind() const

@@ -97,6 +97,7 @@ public:
         IsNonDisplaying = 1 << 1,
         HasAlpha = 1 << 2,
         HasSyncInfo = 1 << 3,
+        IsProtected = 1 << 4,
     };
     virtual SampleFlags flags() const = 0;
     virtual PlatformSample platformSample() const = 0;
@@ -112,6 +113,7 @@ public:
     bool isNonDisplaying() const { return flags() & IsNonDisplaying; }
     bool hasAlpha() const { return flags() & HasAlpha; }
     bool hasSyncInfo() const { return flags() & HasSyncInfo; }
+    bool isProtected() const { return flags() & IsProtected; }
 
     virtual void dump(PrintStream& out) const
     {
@@ -149,9 +151,9 @@ struct TrackInfo : public ThreadSafeRefCounted<TrackInfo> {
             return false;
         return equalTo(other);
     }
-    bool operator!=(const TrackInfo& other) const { return !(*this == other); }
 
     FourCC codecName;
+    String codecString;
     uint64_t trackID { 0 };
 
     virtual ~TrackInfo() = default;

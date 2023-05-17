@@ -91,7 +91,10 @@ static Vector<WebKitTestRunnerWindow *> allWindows;
     [super dealloc];
 }
 
+// FIXME: <https://webkit.org/b/255832> Is this override really necessary?
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)setFrameOrigin:(CGPoint)point
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     _fakeOrigin = point;
 }
@@ -397,6 +400,8 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
     RELEASE_ASSERT(viewSize.width);
     RELEASE_ASSERT(viewSize.height);
 
+    // FIXME: Do we still require this workaround?
+#if !HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     UIView *selectionView = [platformView().contentView valueForKeyPath:@"interactionAssistant.selectionView"];
     UIView *startGrabberView = [selectionView valueForKeyPath:@"rangeView.startGrabber"];
     UIView *endGrabberView = [selectionView valueForKeyPath:@"rangeView.endGrabber"];
@@ -415,6 +420,7 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
         [endGrabberView setHidden:YES];
         viewsToUnhide.uncheckedAppend(endGrabberView);
     }
+#endif
 
     __block bool isDone = false;
     __block RetainPtr<CGImageRef> result;
@@ -435,8 +441,10 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
     while (!isDone)
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
 
+#if !HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     for (auto view : viewsToUnhide)
         [view setHidden:NO];
+#endif
 
     return result;
 }

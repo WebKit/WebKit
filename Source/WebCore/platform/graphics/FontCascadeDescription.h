@@ -50,7 +50,6 @@ public:
     WEBCORE_EXPORT FontCascadeDescription();
 
     bool operator==(const FontCascadeDescription&) const;
-    bool operator!=(const FontCascadeDescription& other) const { return !(*this == other); }
 
     unsigned familyCount() const { return m_families->size(); }
     const AtomString& firstFamily() const { return familyAt(0); }
@@ -137,7 +136,7 @@ public:
     static FontOpticalSizing initialOpticalSizing() { return FontOpticalSizing::Enabled; }
     static const AtomString& initialSpecifiedLocale() { return nullAtom(); }
     static FontPalette initialFontPalette() { return { FontPalette::Type::Normal, nullAtom() }; }
-    static FontSizeAdjust initialFontSizeAdjust() { return { FontSizeAdjust::Metric::ExHeight, std::nullopt }; }
+    static FontSizeAdjust initialFontSizeAdjust() { return { FontSizeAdjust::Metric::ExHeight }; }
 
 private:
     Ref<RefCountedFixedVector<AtomString>> m_families;

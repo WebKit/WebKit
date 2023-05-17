@@ -84,7 +84,6 @@ public:
     Length& operator*=(float);
 
     bool operator==(const Length&) const;
-    bool operator!=(const Length&) const;
 
     float value() const;
     int intValue() const;
@@ -314,11 +313,6 @@ inline bool Length::operator==(const Length& other) const
     if (isCalculated())
         return isCalculatedEqual(other);
     return value() == other.value();
-}
-
-inline bool Length::operator!=(const Length& other) const
-{
-    return !(*this == other);
 }
 
 inline Length& Length::operator*=(float value)

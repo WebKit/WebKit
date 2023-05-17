@@ -70,17 +70,20 @@ void JSLexicalEnvironment::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 void JSLexicalEnvironment::getOwnSpecialPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
 {
     JSLexicalEnvironment* thisObject = jsCast<JSLexicalEnvironment*>(object);
+    SymbolTable* symbolTable = thisObject->symbolTable();
 
     {
-        ConcurrentJSLocker locker(thisObject->symbolTable()->m_lock);
-        SymbolTable::Map::iterator end = thisObject->symbolTable()->end(locker);
+        ConcurrentJSLocker locker(symbolTable->m_lock);
+        SymbolTable::Map::iterator end = symbolTable->end(locker);
         VM& vm = globalObject->vm();
-        for (SymbolTable::Map::iterator it = thisObject->symbolTable()->begin(locker); it != end; ++it) {
+        for (SymbolTable::Map::iterator it = symbolTable->begin(locker); it != end; ++it) {
             if (mode == DontEnumPropertiesMode::Exclude && it->value.isDontEnum())
                 continue;
             if (!thisObject->isValidScopeOffset(it->value.scopeOffset()))
                 continue;
-            if (it->key->isSymbol() && !propertyNames.includeSymbolProperties())
+            if (!propertyNames.includeSymbolProperties() && it->key->isSymbol())
+                continue;
+            if (propertyNames.privateSymbolMode() == PrivateSymbolMode::Exclude && symbolTable->hasPrivateName(it->key))
                 continue;
             propertyNames.add(Identifier::fromUid(vm, it->key.get()));
         }

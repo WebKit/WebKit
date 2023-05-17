@@ -137,8 +137,14 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& url, const 
         if (!mainFrame)
             return ConnectStatus::KO; 
         if (auto* mainFrameDocumentLoader = mainFrame->document() ? mainFrame->document()->loader() : nullptr) {
-            allowPrivacyProxy = mainFrameDocumentLoader->allowPrivacyProxy();
-            networkConnectionIntegrityPolicy = mainFrameDocumentLoader->networkConnectionIntegrityPolicy();
+            auto* policySourceDocumentLoader = mainFrameDocumentLoader;
+            if (!policySourceDocumentLoader->request().url().hasSpecialScheme() && frame->document()->url().protocolIsInHTTPFamily())
+                policySourceDocumentLoader = frame->document()->loader();
+
+            if (policySourceDocumentLoader) {
+                allowPrivacyProxy = policySourceDocumentLoader->allowPrivacyProxy();
+                networkConnectionIntegrityPolicy = policySourceDocumentLoader->networkConnectionIntegrityPolicy();
+            }
         }
     }
 

@@ -34,40 +34,42 @@
 #if HAVE(UI_TEXT_SELECTION_RECT_CUSTOM_HANDLE_INFO)
 
 @interface WKTextSelectionRectCustomHandleInfo : UITextSelectionRectCustomHandleInfo
-- (instancetype)initWithFloatQuad:(const WebCore::FloatQuad&)quad;
+- (instancetype)initWithFloatQuad:(const WebCore::FloatQuad&)quad isHorizontal:(BOOL)isHorizontal;
 @end
 
 @implementation WKTextSelectionRectCustomHandleInfo {
     WebCore::FloatQuad _quad;
+    BOOL _isHorizontal;
 }
 
-- (instancetype)initWithFloatQuad:(const WebCore::FloatQuad&)quad
+- (instancetype)initWithFloatQuad:(const WebCore::FloatQuad&)quad isHorizontal:(BOOL)isHorizontal
 {
     if (!(self = [super init]))
         return nil;
 
     _quad = quad;
+    _isHorizontal = isHorizontal;
     return self;
 }
 
 - (CGPoint)bottomLeft
 {
-    return _quad.p4();
+    return _isHorizontal ? _quad.p4() : _quad.p2();
 }
 
 - (CGPoint)topLeft
 {
-    return _quad.p1();
+    return _isHorizontal ? _quad.p1() : _quad.p3();
 }
 
 - (CGPoint)bottomRight
 {
-    return _quad.p3();
+    return _isHorizontal ? _quad.p3() : _quad.p1();
 }
 
 - (CGPoint)topRight
 {
-    return _quad.p2();
+    return _isHorizontal ? _quad.p2() : _quad.p4();
 }
 
 @end
@@ -125,7 +127,7 @@
 
     auto scaledQuad = _selectionGeometry.quad();
     scaledQuad.scale(_scaleFactor);
-    return adoptNS([[WKTextSelectionRectCustomHandleInfo alloc] initWithFloatQuad:scaledQuad]).autorelease();
+    return adoptNS([[WKTextSelectionRectCustomHandleInfo alloc] initWithFloatQuad:scaledQuad isHorizontal:_selectionGeometry.isHorizontal()]).autorelease();
 }
 
 #endif // HAVE(UI_TEXT_SELECTION_RECT_CUSTOM_HANDLE_INFO)
@@ -159,6 +161,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)isVertical
 {
+    if (_selectionGeometry.behavior() == WebCore::SelectionRenderingBehavior::UseIndividualQuads) {
+        // FIXME: Use `!_selectionGeometry.isHorizontal()` for this once rdar://106847585 is fixed.
+        return NO;
+    }
+
     return !_selectionGeometry.isHorizontal();
 }
 

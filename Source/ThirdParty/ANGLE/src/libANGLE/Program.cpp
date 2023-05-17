@@ -1333,7 +1333,7 @@ void Program::resolveLinkImpl(const Context *context)
     std::lock_guard<std::mutex> cacheLock(context->getProgramCacheMutex());
     MemoryProgramCache *cache = context->getMemoryProgramCache();
     // TODO: http://anglebug.com/4530: Enable program caching for separable programs
-    if (cache && !isSeparable() &&
+    if (cache && !isSeparable() && !context->getFrontendFeatures().disableProgramCaching.enabled &&
         (mState.mExecutable->mLinkedTransformFeedbackVaryings.empty() ||
          !context->getFrontendFeatures().disableProgramCachingForTransformFeedback.enabled))
     {

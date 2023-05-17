@@ -68,7 +68,7 @@ public:
 protected:
     JSTestIndexedSetterWithIdentifier(JSC::Structure*, JSDOMGlobalObject&, Ref<TestIndexedSetterWithIdentifier>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestIndexedSetterWithIdentifierOwner final : public JSC::WeakHandleOwner {

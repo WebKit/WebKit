@@ -159,11 +159,6 @@ public:
                 && m_value == other.m_value;
         }
         
-        bool operator!=(const Payload& other) const
-        {
-            return !(*this == other);
-        }
-        
         bool operator<(const Payload& other) const
         {
             if (isTop())
@@ -294,11 +289,6 @@ public:
     bool operator==(const AbstractHeap& other) const
     {
         return m_value == other.m_value;
-    }
-    
-    bool operator!=(const AbstractHeap& other) const
-    {
-        return !(*this == other);
     }
     
     bool operator<(const AbstractHeap& other) const

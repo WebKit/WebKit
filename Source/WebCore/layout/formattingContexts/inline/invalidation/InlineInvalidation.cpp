@@ -53,7 +53,8 @@ void InlineInvalidation::styleChanged(const Box& layoutBox, const RenderStyle& o
 
 struct DamagedContent {
     const Box& layoutBox;
-    size_t offset { 0 };
+    // Only text type of boxes may have offset. No offset also simply points to the end of the layout box.
+    std::optional<size_t> offset { };
     enum class Type : uint8_t {
         Insertion,
         Removal
@@ -96,12 +97,12 @@ static std::optional<size_t> damagedLineIndex(std::optional<DamagedContent> dama
         if (damagedContent->type == DamagedContent::Type::Insertion || !damagedDisplayBox.lineIndex())
             return { damagedDisplayBox.lineIndex() };
         if (!displayBoxes[damagedDisplayBoxIndex - 1].isRootInlineBox()) {
-            // There's more content in front.
+            // There's more content in front, it's safe to stay on the current line.
             ASSERT(displayBoxes[damagedDisplayBoxIndex - 1].lineIndex() == damagedDisplayBox.lineIndex());
             return { damagedDisplayBox.lineIndex() };
         }
-        auto lineWillBeVisuallyEmpty = !damagedDisplayBox.isText() || damagedDisplayBox.text().start() == damagedContent->offset;
-        return { lineWillBeVisuallyEmpty ? damagedDisplayBox.lineIndex() - 1 : damagedDisplayBox.lineIndex() };
+        auto damagedContentIsFirstContentOnLine = !damagedDisplayBox.isText() || (damagedContent->offset && (!*damagedContent->offset || damagedDisplayBox.text().start() == *damagedContent->offset));
+        return { damagedContentIsFirstContentOnLine ? damagedDisplayBox.lineIndex() - 1 : damagedDisplayBox.lineIndex() };
     };
 
     auto leadingIndexForDisplayBox = *lastDisplayBoxIndex;
@@ -111,6 +112,9 @@ static std::optional<size_t> damagedLineIndex(std::optional<DamagedContent> dama
     }
 
     if (is<InlineTextBox>(damagedContent->layoutBox)) {
+        if (!damagedContent->offset)
+            return candidateLineIndex(leadingIndexForDisplayBox);
+
         for (auto index = leadingIndexForDisplayBox; index > 0; --index) {
             auto& displayBox = displayBoxes[index];
             if (displayBox.isRootInlineBox() || (displayBox.isInlineBox() && !displayBox.isFirstForLayoutBox())) {
@@ -124,7 +128,7 @@ static std::optional<size_t> damagedLineIndex(std::optional<DamagedContent> dama
             ASSERT(displayBox.isTextOrSoftLineBreak());
             // Find out which display box has the damaged offset position.
             auto startOffset = displayBox.text().start();
-            if (startOffset <= damagedContent->offset) {
+            if (startOffset <= *damagedContent->offset) {
                 // FIXME: Add support for leading inline box deletion too.
                 return candidateLineIndex(index);
             }
@@ -217,7 +221,11 @@ static std::optional<InlineItemPosition> inlineItemPositionForDamagedContentPosi
     if (&candidateInlineItem.layoutBox() != &damagedContent.layoutBox || !is<InlineTextItem>(candidateInlineItem))
         return candidatePosition;
     auto& inlineTextItem = downcast<InlineTextItem>(candidateInlineItem);
-    if (inlineTextItem.start() + candidatePosition.offset <= damagedContent.offset)
+    if (!damagedContent.offset) {
+        // When damage points to "after" the layout box, whatever InlineItem we found is surely before the damage.
+        return candidatePosition;
+    }
+    if (inlineTextItem.start() + candidatePosition.offset <= *damagedContent.offset)
         return candidatePosition;
     // The damage offset is in front of the first display box we managed to find for this layout box.
     // Let's adjust the candidate position by moving it over to the damaged offset.
@@ -228,7 +236,7 @@ static std::optional<InlineItemPosition> inlineItemPositionForDamagedContentPosi
             return { };
         }
         auto& previousInlineItem = downcast<InlineTextItem>(inlineItems[index]);
-        if (previousInlineItem.start() <= damagedContent.offset)
+        if (previousInlineItem.start() <= *damagedContent.offset)
             return InlineItemPosition { index, { } };
     }
     return { };
@@ -332,10 +340,10 @@ bool InlineInvalidation::applyFullDamageIfNeeded(const Box& layoutBox)
     return false;
 }
 
-void InlineInvalidation::textInserted(const InlineTextBox& newOrDamagedInlineTextBox, std::optional<size_t> offset)
+bool InlineInvalidation::textInserted(const InlineTextBox& newOrDamagedInlineTextBox, std::optional<size_t> offset)
 {
     if (applyFullDamageIfNeeded(newOrDamagedInlineTextBox))
-        return;
+        return false;
 
     auto damagedLine = std::optional<DamagedLine> { };
     if (offset) {
@@ -348,31 +356,27 @@ void InlineInvalidation::textInserted(const InlineTextBox& newOrDamagedInlineTex
         damagedLine = DamagedLine { };
         // New text box got inserted. Let's damage existing content starting from the previous sibling.
         if (auto* previousSibling = newOrDamagedInlineTextBox.previousInFlowSibling())
-            damagedLine = leadingInlineItemPositionByDamagedBox({ *previousSibling, { } }, m_inlineItems, displayBoxes());
+            damagedLine = leadingInlineItemPositionByDamagedBox({ *previousSibling }, m_inlineItems, displayBoxes());
     }
 
     updateInlineDamage(!damagedLine ? InlineDamage::Type::Invalid : InlineDamage::Type::NeedsContentUpdateAndLineLayout, damagedLine, offset ? ShouldApplyRangeLayout::No : ShouldApplyRangeLayout::Yes);
+    return damagedLine.has_value();
 }
 
-void InlineInvalidation::textWillBeRemoved(UniqueRef<Box>&& inlineTextBox)
-{
-    InlineInvalidation::textWillBeRemoved(downcast<InlineTextBox>(inlineTextBox.get()), { });
-    m_inlineDamage.addDetachedBox(WTFMove(inlineTextBox));
-}
-
-void InlineInvalidation::textWillBeRemoved(const InlineTextBox& damagedInlineTextBox, std::optional<size_t> offset)
+bool InlineInvalidation::textWillBeRemoved(const InlineTextBox& damagedInlineTextBox, std::optional<size_t> offset)
 {
     if (applyFullDamageIfNeeded(damagedInlineTextBox))
-        return;
+        return false;
 
     auto damagedLine = leadingInlineItemPositionByDamagedBox({ damagedInlineTextBox, offset.value_or(0), DamagedContent::Type::Removal }, m_inlineItems, displayBoxes());
     updateInlineDamage(!damagedLine ? InlineDamage::Type::Invalid : InlineDamage::Type::NeedsContentUpdateAndLineLayout, damagedLine, ShouldApplyRangeLayout::Yes);
+    return damagedLine.has_value();
 }
 
-void InlineInvalidation::inlineLevelBoxInserted(const Box& layoutBox)
+bool InlineInvalidation::inlineLevelBoxInserted(const Box& layoutBox)
 {
     if (applyFullDamageIfNeeded(layoutBox))
-        return;
+        return false;
 
     auto damagedLine = std::optional<DamagedLine> { };
     if (!layoutBox.nextInFlowSibling()) {
@@ -382,19 +386,20 @@ void InlineInvalidation::inlineLevelBoxInserted(const Box& layoutBox)
         damagedLine = DamagedLine { };
         // New box got inserted. Let's damage existing content starting from the previous sibling.
         if (auto* previousSibling = layoutBox.previousInFlowSibling())
-            damagedLine = leadingInlineItemPositionByDamagedBox({ *previousSibling, { } }, m_inlineItems, displayBoxes());
+            damagedLine = leadingInlineItemPositionByDamagedBox({ *previousSibling }, m_inlineItems, displayBoxes());
     }
     updateInlineDamage(!damagedLine ? InlineDamage::Type::Invalid : InlineDamage::Type::NeedsContentUpdateAndLineLayout, damagedLine, ShouldApplyRangeLayout::Yes);
+    return damagedLine.has_value();
 }
 
-void InlineInvalidation::inlineLevelBoxWillBeRemoved(UniqueRef<Box>&& layoutBox)
+bool InlineInvalidation::inlineLevelBoxWillBeRemoved(const Box& layoutBox)
 {
     if (applyFullDamageIfNeeded(layoutBox))
-        return;
+        return false;
 
     auto damagedLine = leadingInlineItemPositionByDamagedBox({ layoutBox, { }, DamagedContent::Type::Removal }, m_inlineItems, displayBoxes());
-    m_inlineDamage.addDetachedBox(WTFMove(layoutBox));
     updateInlineDamage(!damagedLine ? InlineDamage::Type::Invalid : InlineDamage::Type::NeedsContentUpdateAndLineLayout, damagedLine, ShouldApplyRangeLayout::Yes);
+    return damagedLine.has_value();
 }
 
 void InlineInvalidation::horizontalConstraintChanged()

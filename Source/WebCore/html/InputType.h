@@ -155,7 +155,7 @@ public:
     };
 
     static RefPtr<InputType> createIfDifferent(HTMLInputElement&, const AtomString&, InputType* currentInputType = nullptr);
-    static Ref<InputType> createText(HTMLInputElement&);
+
     virtual ~InputType();
 
     void detachFromElement() { m_element = nullptr; }
@@ -232,11 +232,11 @@ public:
     // Validation functions.
 
     virtual String validationMessage() const;
-    virtual bool typeMismatchFor(const String&) const;
+    virtual bool typeMismatchFor(const String&) const { return false; }
     virtual bool supportsRequired() const;
-    virtual bool valueMissing(const String&) const;
-    virtual bool hasBadInput() const;
-    virtual bool patternMismatch(const String&) const;
+    virtual bool valueMissing(const String&) const { return false; }
+    virtual bool hasBadInput() const { return false; }
+    virtual bool patternMismatch(const String&) const { return false; }
     bool rangeUnderflow(const String&) const;
     bool rangeOverflow(const String&) const;
     bool isInRange(const String&) const;
@@ -261,7 +261,7 @@ public:
 
     // Type check for the current input value. We do nothing for some types
     // though typeMismatchFor() does something for them because of value sanitization.
-    virtual bool typeMismatch() const;
+    virtual bool typeMismatch() const { return false; }
 
     // Return value of null string means "use the default value".
     // This function must be called only by HTMLInputElement::sanitizeValue().
@@ -421,13 +421,6 @@ private:
     // m_element is null if this InputType is no longer associated with an element (either the element died or changed input type).
     WeakPtr<HTMLInputElement, WeakPtrImplWithEventTargetData> m_element;
 };
-
-template<typename DowncastedType>
-ALWAYS_INLINE bool isInvalidInputType(const InputType& baseInputType, const String& value)
-{
-    auto& inputType = static_cast<const DowncastedType&>(baseInputType);
-    return inputType.typeMismatch() || inputType.stepMismatch(value) || inputType.rangeUnderflow(value) || inputType.rangeOverflow(value) || inputType.patternMismatch(value) || inputType.valueMissing(value) || inputType.hasBadInput();
-}
 
 } // namespace WebCore
 

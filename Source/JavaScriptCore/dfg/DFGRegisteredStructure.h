@@ -45,11 +45,6 @@ public:
         return get() == other.get();
     }
 
-    bool operator!=(const RegisteredStructure& other) const
-    {
-        return !(*this == other);
-    }
-
     explicit operator bool() const
     {
         return !!get();

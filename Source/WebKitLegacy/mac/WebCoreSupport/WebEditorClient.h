@@ -45,7 +45,7 @@
 @class WebView;
 @class WebEditorUndoTarget;
 
-class WebEditorClient final : public WebCore::EditorClient, public WebCore::TextCheckerClient, public CanMakeWeakPtr<WebEditorClient> {
+class WebEditorClient final : public WebCore::EditorClient, public WebCore::TextCheckerClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WebEditorClient(WebView *);
@@ -202,6 +202,10 @@ private:
     RetainPtr<NSString> m_paragraphContextForCandidateRequest;
     NSRange m_rangeForCandidates;
     NSInteger m_lastCandidateRequestSequenceNumber;
+#endif
+
+#if ENABLE(TEXT_CARET)
+    bool m_lastSelectionWasPainted { false };
 #endif
 
     enum class EditorStateIsContentEditable { No, Yes, Unset };

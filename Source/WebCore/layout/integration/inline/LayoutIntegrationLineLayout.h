@@ -103,6 +103,8 @@ public:
     LayoutRect visualOverflowBoundingBoxRectFor(const RenderInline&) const;
     Vector<FloatRect> collectInlineBoxRects(const RenderInline&) const;
 
+    std::optional<LayoutUnit> clampedContentLogicalHeight() const;
+
     bool isPaginated() const;
     LayoutUnit contentBoxLogicalHeight() const;
     size_t lineCount() const;
@@ -149,7 +151,7 @@ private:
 
     void prepareLayoutState();
     void prepareFloatingState();
-    FloatRect constructContent(Layout::InlineLayoutResult&&);
+    FloatRect constructContent(const Layout::InlineLayoutState&, Layout::InlineLayoutResult&&);
     Vector<LineAdjustment> adjustContent();
     void updateRenderTreePositions(const Vector<LineAdjustment>&);
 
@@ -164,7 +166,6 @@ private:
     Layout::ElementBox& rootLayoutBox();
     void clearInlineContent();
     void releaseCaches();
-    std::optional<size_t> lastLineIndexForContentHeight() const;
 
     LayoutUnit physicalBaselineForLine(const InlineDisplay::Line&) const;
     
@@ -176,6 +177,7 @@ private:
     // FIXME: This should be part of LayoutState.
     std::unique_ptr<Layout::InlineDamage> m_lineDamage;
     std::unique_ptr<InlineContent> m_inlineContent;
+    HashMap<const Layout::ElementBox*, LayoutUnit> m_nestedListMarkerOffsets;
 };
 
 }

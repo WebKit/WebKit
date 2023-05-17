@@ -30,10 +30,10 @@
 
 #import "Logging.h"
 #import "ScrollTypesMac.h"
+#import "ScrollingTreeFrameScrollingNode.h"
 #import <WebCore/FloatPoint.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/NSScrollerImpDetails.h>
-#import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/PlatformWheelEvent.h>
 #import <WebCore/ScrollTypes.h>
 #import <WebCore/ScrollableArea.h>
@@ -81,15 +81,15 @@
 - (NSPoint)mouseLocationInContentAreaForScrollerImpPair:(NSScrollerImpPair *)scrollerImpPair
 {
     UNUSED_PARAM(scrollerImpPair);
-    if (!_scrollerPair)
-        return NSZeroPoint;
-
-    return _scrollerPair->lastKnownMousePosition();
+    // This location is only used when calling mouseLocationInScrollerForScrollerImp,
+    // where we will use the converted mouse position from the Web Process
+    return NSZeroPoint;
 }
 
 - (NSPoint)scrollerImpPair:(NSScrollerImpPair *)scrollerImpPair convertContentPoint:(NSPoint)pointInContentArea toScrollerImp:(NSScrollerImp *)scrollerImp
 {
     UNUSED_PARAM(scrollerImpPair);
+    UNUSED_PARAM(pointInContentArea);
 
     if (!_scrollerPair || !scrollerImp)
         return NSZeroPoint;
@@ -102,7 +102,7 @@
 
     ASSERT(scrollerImp == scroller->scrollerImp());
 
-    return scroller->convertFromContent(WebCore::IntPoint(pointInContentArea));
+    return scroller->lastKnownMousePositionInScrollbar();
 }
 
 - (void)scrollerImpPair:(NSScrollerImpPair *)scrollerImpPair setContentAreaNeedsDisplayInRect:(NSRect)rect
@@ -147,8 +147,11 @@ ScrollerPairMac::~ScrollerPairMac()
 {
     [m_scrollerImpPairDelegate invalidate];
     [m_scrollerImpPair setDelegate:nil];
+    
+    m_verticalScroller.detach();
+    m_horizontalScroller.detach();
 
-    ensureOnMainThread([scrollerImpPair = std::exchange(m_scrollerImpPair, nil)] {
+    ensureOnMainThread([scrollerImpPair = std::exchange(m_scrollerImpPair, nil), verticalScrollerImp = verticalScroller().takeScrollerImp(), horizontalScrollerImp = horizontalScroller().takeScrollerImp()] {
     });
 }
 
@@ -211,21 +214,6 @@ void ScrollerPairMac::contentsSizeChanged()
 
         [m_scrollerImpPair contentAreaDidResize];
     });
-}
-
-bool ScrollerPairMac::handleMouseEvent(const PlatformMouseEvent& event)
-{
-    if (event.type() != PlatformEvent::Type::MouseMoved)
-        return false;
-
-    m_lastKnownMousePosition = event.position();
-
-    ensureOnMainThreadWithProtectedThis([this] {
-        [m_scrollerImpPair mouseMovedInContentArea];
-    });
-
-    // FIXME: this needs to return whether the event was handled.
-    return true;
 }
 
 void ScrollerPairMac::setUsePresentationValues(bool inMomentumPhase)
@@ -362,6 +350,7 @@ void ScrollerPairMac::mouseEnteredContentArea()
 
 void ScrollerPairMac::mouseExitedContentArea()
 {
+    m_mouseInContentArea = false;
     LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollerPairMac for [" << m_scrollingNode.scrollingNodeID() << "] mouseExitedContentArea");
     
     ensureOnMainThreadWithProtectedThis([this] {
@@ -372,8 +361,12 @@ void ScrollerPairMac::mouseExitedContentArea()
     });
 }
 
-void ScrollerPairMac::mouseMovedInContentArea()
+void ScrollerPairMac::mouseMovedInContentArea(const MouseLocationState& state)
 {
+    m_mouseInContentArea = true;
+    horizontalScroller().setLastKnownMousePositionInScrollbar(state.locationInHorizontalScrollbar);
+    verticalScroller().setLastKnownMousePositionInScrollbar(state.locationInVerticalScrollbar);
+
     ensureOnMainThreadWithProtectedThis([this] {
         if ([m_scrollerImpPair overlayScrollerStateIsLocked])
             return;

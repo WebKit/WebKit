@@ -45,6 +45,8 @@ namespace IPC {
 class Decoder;
 class Encoder;
 class Connection;
+
+template<typename, typename> struct ArgumentCoder;
 }
 
 namespace WebCore {
@@ -58,7 +60,23 @@ namespace WebKit {
 enum class MemoryLedger { None, Default, Network, Media, Graphics, Neural };
 
 class SharedMemoryHandle {
+    WTF_MAKE_NONCOPYABLE(SharedMemoryHandle);
 public:
+    using Type =
+#if USE(UNIX_DOMAIN_SOCKETS)
+        UnixFileDescriptor;
+#elif OS(DARWIN)
+        MachSendRight;
+#elif OS(WINDOWS)
+        Win32Handle;
+#endif
+
+    SharedMemoryHandle() = default;
+    SharedMemoryHandle(SharedMemoryHandle&&) = default;
+    SharedMemoryHandle(SharedMemoryHandle::Type&&, size_t);
+
+    SharedMemoryHandle& operator=(SharedMemoryHandle&&) = default;
+
     bool isNull() const;
 
     size_t size() const { return m_size; }
@@ -67,27 +85,19 @@ public:
     void takeOwnershipOfMemory(MemoryLedger) const;
     void setOwnershipOfMemory(const WebCore::ProcessIdentity&, MemoryLedger) const;
 
-    void clear();
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, SharedMemoryHandle&);
 #if USE(UNIX_DOMAIN_SOCKETS)
     UnixFileDescriptor releaseHandle();
 #endif
 
 private:
-#if USE(UNIX_DOMAIN_SOCKETS)
-    mutable UnixFileDescriptor m_handle;
-#elif OS(DARWIN)
-    mutable MachSendRight m_handle;
-#elif OS(WINDOWS)
-    mutable Win32Handle m_handle;
-#endif
-    size_t m_size { 0 };
+    friend struct IPC::ArgumentCoder<SharedMemoryHandle, void>;
     friend class SharedMemory;
 #if USE(UNIX_DOMAIN_SOCKETS)
     friend class IPC::Connection;
 #endif
+
+    mutable Type m_handle;
+    size_t m_size { 0 };
 };
 
 class SharedMemory : public ThreadSafeRefCounted<SharedMemory> {
@@ -99,7 +109,7 @@ public:
     // FIXME: Change these factory functions to return Ref<SharedMemory> and crash on failure.
     static RefPtr<SharedMemory> allocate(size_t);
     static RefPtr<SharedMemory> copyBuffer(const WebCore::FragmentedSharedBuffer&);
-    static RefPtr<SharedMemory> map(const Handle&, Protection);
+    static RefPtr<SharedMemory> map(Handle&&, Protection);
 #if USE(UNIX_DOMAIN_SOCKETS)
     static RefPtr<SharedMemory> wrapMap(void*, size_t, int fileDescriptor);
 #elif OS(DARWIN)
@@ -151,4 +161,14 @@ private:
 #endif
 };
 
+} // namespace WebKit
+
+namespace IPC {
+
+template<> struct ArgumentCoder<WebKit::SharedMemoryHandle, void> {
+    static void encode(Encoder&, const WebKit::SharedMemoryHandle&);
+    static void encode(Encoder&, WebKit::SharedMemoryHandle&&);
+    static std::optional<WebKit::SharedMemoryHandle> decode(Decoder&);
 };
+
+} // namespace IPC

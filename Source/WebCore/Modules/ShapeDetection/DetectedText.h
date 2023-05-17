@@ -25,19 +25,49 @@
 
 #pragma once
 
+#include "DOMRectReadOnly.h"
+#include "DetectedTextInterface.h"
+#include "Point2D.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class DOMRectReadOnly;
 struct Point2D;
 
 struct DetectedText {
+    ShapeDetection::DetectedText convertToBacking() const
+    {
+        ASSERT(boundingBox);
+        return {
+            {
+                static_cast<float>(boundingBox->x()),
+                static_cast<float>(boundingBox->y()),
+                static_cast<float>(boundingBox->width()),
+                static_cast<float>(boundingBox->height()),
+            },
+            rawValue,
+            cornerPoints.map([] (const auto& cornerPoint) {
+                return cornerPoint.convertToBacking();
+            }),
+        };
+    }
+
     RefPtr<DOMRectReadOnly> boundingBox;
     String rawValue;
     Vector<Point2D> cornerPoints;
 };
+
+inline DetectedText convertFromBacking(const ShapeDetection::DetectedText& detectedText)
+{
+    return {
+        DOMRectReadOnly::create(detectedText.boundingBox.x(), detectedText.boundingBox.y(), detectedText.boundingBox.width(), detectedText.boundingBox.height()),
+        detectedText.rawValue,
+        detectedText.cornerPoints.map([] (const auto& cornerPoint) {
+            return Point2D { cornerPoint.x(), cornerPoint.y() };
+        }),
+    };
+}
 
 } // namespace WebCore

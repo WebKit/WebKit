@@ -27,6 +27,7 @@
 #include "CSSValueKeywords.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "NodeName.h"
 #include "RenderListItem.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -85,20 +86,27 @@ void HTMLOListElement::collectPresentationalHintsForAttribute(const QualifiedNam
 
 void HTMLOListElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == startAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::startAttr: {
         int oldStart = start();
         m_start = optionalValue(parseHTMLInteger(newValue));
         if (oldStart == start())
             return;
         RenderListItem::updateItemValuesForOrderedList(*this);
-    } else if (name == reversedAttr) {
+        break;
+    }
+    case AttributeNames::reversedAttr: {
         bool reversed = !newValue.isNull();
         if (reversed == m_isReversed)
             return;
         m_isReversed = reversed;
         RenderListItem::updateItemValuesForOrderedList(*this);
-    } else
+        break;
+    }
+    default:
         HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+        break;
+    }
 }
 
 void HTMLOListElement::setStartForBindings(int start)

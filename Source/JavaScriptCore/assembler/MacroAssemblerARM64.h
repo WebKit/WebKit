@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(ASSEMBLER)
+#if ENABLE(ASSEMBLER) && CPU(ARM64)
 
 #include "ARM64Assembler.h"
 #include "AbstractMacroAssembler.h"
@@ -66,7 +66,7 @@ protected:
     static constexpr size_t INSTRUCTION_SIZE = 4;
 
     // N instructions to load the pointer + 1 call instruction.
-    static constexpr ptrdiff_t REPATCH_OFFSET_CALL_TO_POINTER = -((Assembler::MAX_POINTER_BITS / 16 + 1) * INSTRUCTION_SIZE);
+    static constexpr ptrdiff_t REPATCH_OFFSET_CALL_TO_POINTER = -((Assembler::NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS + 1) * INSTRUCTION_SIZE);
 
 public:
     MacroAssemblerARM64()
@@ -300,6 +300,23 @@ public:
         m_assembler.add<64>(dest, src, dataTempRegister);
     }
 
+    void add64(TrustedImm64 imm, RegisterID src, RegisterID dest)
+    {
+        intptr_t immediate = imm.m_value;
+
+        if (isUInt12(immediate)) {
+            m_assembler.add<64>(dest, src, UInt12(static_cast<int32_t>(immediate)));
+            return;
+        }
+        if (isUInt12(-immediate)) {
+            m_assembler.sub<64>(dest, src, UInt12(static_cast<int32_t>(-immediate)));
+            return;
+        }
+
+        move(imm, getCachedDataTempRegisterIDAndInvalidate());
+        m_assembler.add<64>(dest, src, dataTempRegister);
+    }
+
     void add64(TrustedImm32 imm, Address address)
     {
         load64(address, getCachedDataTempRegisterIDAndInvalidate());
@@ -358,6 +375,13 @@ public:
     {
         load64(src, getCachedDataTempRegisterIDAndInvalidate());
         m_assembler.add<64>(dest, dest, dataTempRegister);
+    }
+
+    void add64(RegisterID src, Address dest)
+    {
+        load64(dest, getCachedDataTempRegisterIDAndInvalidate());
+        m_assembler.add<64>(src, dataTempRegister, dataTempRegister);
+        store64(dataTempRegister, dest);
     }
 
     void add64(AbsoluteAddress src, RegisterID dest)
@@ -843,6 +867,22 @@ public:
     void illegalInstruction()
     {
         m_assembler.illegalInstruction();
+    }
+
+    void countPopulation32(RegisterID src, RegisterID dst)
+    {
+        move32ToFloat(src, fpTempRegister);
+        m_assembler.vectorCnt(fpTempRegister, fpTempRegister, SIMDLane::i8x16);
+        m_assembler.addv(fpTempRegister, fpTempRegister, SIMDLane::i8x16);
+        moveFloatTo32(fpTempRegister, dst);
+    }
+
+    void countPopulation64(RegisterID src, RegisterID dst)
+    {
+        move64ToDouble(src, fpTempRegister);
+        m_assembler.vectorCnt(fpTempRegister, fpTempRegister, SIMDLane::i8x16);
+        m_assembler.addv(fpTempRegister, fpTempRegister, SIMDLane::i8x16);
+        moveDoubleTo64(fpTempRegister, dst);
     }
 
     void lshift32(RegisterID src, RegisterID shiftAmount, RegisterID dest)
@@ -2333,7 +2373,7 @@ public:
     static bool supportsFloatingPointSqrt() { return true; }
     static bool supportsFloatingPointAbs() { return true; }
     static bool supportsFloatingPointRounding() { return true; }
-    static bool supportsCountPopulation() { return false; }
+    static bool supportsCountPopulation() { return true; }
 
     enum BranchTruncateType { BranchIfTruncateFailed, BranchIfTruncateSuccessful };
 
@@ -5901,8 +5941,9 @@ protected:
         intptr_t value = reinterpret_cast<intptr_t>(imm.m_value);
         m_assembler.movz<64>(dest, getHalfword(value, 0));
         m_assembler.movk<64>(dest, getHalfword(value, 1), 16);
-        m_assembler.movk<64>(dest, getHalfword(value, 2), 32);
-        if (Assembler::MAX_POINTER_BITS > 48)
+        if constexpr (Assembler::NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS > 2)
+            m_assembler.movk<64>(dest, getHalfword(value, 2), 32);
+        if constexpr (Assembler::NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS > 3)
             m_assembler.movk<64>(dest, getHalfword(value, 3), 48);
     }
 
@@ -6483,4 +6524,4 @@ inline MacroAssemblerARM64::Jump MacroAssemblerARM64::branch<64>(RelationalCondi
 
 } // namespace JSC
 
-#endif // ENABLE(ASSEMBLER)
+#endif // ENABLE(ASSEMBLER) && CPU(ARM64)

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "APIData.h"
 #include "AccessibilityPreferences.h"
 #include "AuxiliaryProcessCreationParameters.h"
 #include "CacheModel.h"
@@ -62,22 +63,9 @@ namespace API {
 class Data;
 }
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
 namespace WebKit {
 
 struct WebProcessCreationParameters {
-    WebProcessCreationParameters();
-    ~WebProcessCreationParameters();
-    WebProcessCreationParameters(WebProcessCreationParameters&&);
-    WebProcessCreationParameters& operator=(WebProcessCreationParameters&&);
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebProcessCreationParameters&);
-
     AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
     String injectedBundlePath;
     SandboxExtension::Handle injectedBundlePathExtensionHandle;
@@ -216,6 +204,7 @@ struct WebProcessCreationParameters {
 #if PLATFORM(COCOA)
     bool systemHasBattery { false };
     bool systemHasAC { false };
+    bool strictSecureDecodingForAllObjCEnabled { false };
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -225,6 +214,10 @@ struct WebProcessCreationParameters {
     WebCore::Color focusRingColor;
     String localizedDeviceModel;
     String contentSizeCategory;
+#endif
+
+#if USE(GBM)
+    String renderDeviceFile;
 #endif
 
 #if PLATFORM(GTK)

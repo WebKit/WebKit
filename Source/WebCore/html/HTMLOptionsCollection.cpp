@@ -30,7 +30,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLOptionsCollection);
 
 HTMLOptionsCollection::HTMLOptionsCollection(HTMLSelectElement& select)
-    : CachedHTMLCollection(select, SelectOptions)
+    : CachedHTMLCollection(select, CollectionType::SelectOptions)
 {
 }
 

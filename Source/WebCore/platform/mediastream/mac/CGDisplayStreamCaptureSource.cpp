@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,10 +65,10 @@ void CGDisplayStreamCaptureSource::stop()
     if (!m_isRunning)
         return;
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (m_displayStream)
         CGDisplayStreamStop(m_displayStream.get());
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     m_isRunning = false;
 }
@@ -94,9 +94,9 @@ bool CGDisplayStreamCaptureSource::startDisplayStream()
         }
     }
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto err = CGDisplayStreamStart(m_displayStream.get());
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (err) {
         ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "CGDisplayStreamStart failed with error ", static_cast<int>(err));
@@ -117,9 +117,9 @@ void CGDisplayStreamCaptureSource::commitConfiguration(const RealtimeMediaSource
     m_frameRate = settings.frameRate();
 
     if (m_displayStream) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         CGDisplayStreamStop(m_displayStream.get());
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         m_displayStream = nullptr;
     }
 
@@ -171,9 +171,9 @@ CGDisplayStreamFrameAvailableHandler CGDisplayStreamCaptureSource::frameAvailabl
             return;
 
         size_t count;
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         auto* rects = CGDisplayStreamUpdateGetRects(updateRef, kCGDisplayStreamUpdateDirtyRects, &count);
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         if (!rects || !count)
             return;
 

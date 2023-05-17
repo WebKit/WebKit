@@ -34,6 +34,7 @@
 #include "HighlightData.h"
 #include "HighlightRegister.h"
 #include "RenderBoxModelObject.h"
+#include "RenderStyleInlines.h"
 #include "RenderText.h"
 #include "RenderedDocumentMarker.h"
 #include "TextBoxSelectableRange.h"

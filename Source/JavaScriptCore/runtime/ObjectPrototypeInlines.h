@@ -35,32 +35,53 @@ namespace JSC {
 bool isPokerBros();
 #endif
 
-inline ASCIILiteral inferBuiltinTag(JSGlobalObject* globalObject, JSObject* object)
+inline std::tuple<ASCIILiteral, JSString*> inferBuiltinTag(JSGlobalObject* globalObject, JSObject* object)
 {
     VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
 #if PLATFORM(IOS)
     static bool needsOldBuiltinTag = isPokerBros();
     if (UNLIKELY(needsOldBuiltinTag))
-        return object->className();
+        return std::tuple { object->className(), nullptr };
 #endif
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    bool objectIsArray = isArray(globalObject, object);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (objectIsArray)
-        return "Array"_s;
-    if (object->isCallable())
-        return "Function"_s;
-    JSType type = object->type();
-    if (TypeInfo::isArgumentsType(type)
-        || type == ErrorInstanceType
-        || type == BooleanObjectType
-        || type == NumberObjectType
-        || type == StringObjectType
-        || type == DerivedStringObjectType
-        || type == JSDateType
-        || type == RegExpObjectType)
-        return object->className();
-    return "Object"_s;
+
+    switch (object->type()) {
+    case ArrayType:
+    case DerivedArrayType:
+        return std::tuple { "Array"_s, vm.smallStrings.objectArrayString() };
+    case DirectArgumentsType:
+    case ScopedArgumentsType:
+    case ClonedArgumentsType:
+        return std::tuple { "Arguments"_s, vm.smallStrings.objectArgumentsString() };
+    case JSFunctionType:
+    case InternalFunctionType:
+        return std::tuple { "Function"_s, vm.smallStrings.objectFunctionString() };
+    case ErrorInstanceType:
+        return std::tuple { "Error"_s, vm.smallStrings.objectErrorString() };
+    case JSDateType:
+        return std::tuple { "Date"_s, vm.smallStrings.objectDateString() };
+    case RegExpObjectType:
+        return std::tuple { "RegExp"_s, vm.smallStrings.objectRegExpString() };
+    case BooleanObjectType:
+        return std::tuple { "Boolean"_s, vm.smallStrings.objectBooleanString() };
+    case NumberObjectType:
+        return std::tuple { "Number"_s, vm.smallStrings.objectNumberString() };
+    case StringObjectType:
+    case DerivedStringObjectType:
+        return std::tuple { "String"_s, vm.smallStrings.objectStringString() };
+    case FinalObjectType:
+        return std::tuple { "Object"_s, vm.smallStrings.objectObjectString() };
+    default: {
+        bool objectIsArray = isArray(globalObject, object);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (objectIsArray)
+            return std::tuple { "Array"_s, vm.smallStrings.objectArrayString() };
+        if (object->isCallable())
+            return std::tuple { "Function"_s, vm.smallStrings.objectFunctionString() };
+        return std::tuple { "Object"_s, vm.smallStrings.objectObjectString() };
+    }
+    }
 }
 
 ALWAYS_INLINE JSString* objectPrototypeToStringSlow(JSGlobalObject* globalObject, JSObject* thisObject)
@@ -68,7 +89,7 @@ ALWAYS_INLINE JSString* objectPrototypeToStringSlow(JSGlobalObject* globalObject
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    ASCIILiteral tag = inferBuiltinTag(globalObject, thisObject);
+    auto [ tag, jsCommonTag ] = inferBuiltinTag(globalObject, thisObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
     JSString* jsTag = nullptr;
 
@@ -82,11 +103,19 @@ ALWAYS_INLINE JSString* objectPrototypeToStringSlow(JSGlobalObject* globalObject
             jsTag = asString(tagValue);
     }
 
-    if (!jsTag)
-        jsTag = jsString(vm, AtomStringImpl::add(tag));
+    JSString* jsResult = nullptr;
+    if (!jsTag) {
+        if (jsCommonTag)
+            jsResult = jsCommonTag;
+        else
+            jsTag = jsString(vm, AtomStringImpl::add(tag));
+    }
 
-    JSString* jsResult = jsString(globalObject, vm.smallStrings.objectStringStart(), jsTag, vm.smallStrings.singleCharacterString(']'));
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    if (!jsResult) {
+        jsResult = jsString(globalObject, vm.smallStrings.objectStringStart(), jsTag, vm.smallStrings.singleCharacterString(']'));
+        RETURN_IF_EXCEPTION(scope, nullptr);
+    }
+
     thisObject->structure()->cacheSpecialProperty(globalObject, vm, jsResult, CachedSpecialPropertyKey::ToStringTag, slot);
     return jsResult;
 }
@@ -97,9 +126,9 @@ ALWAYS_INLINE JSString* objectPrototypeToString(JSGlobalObject* globalObject, JS
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (thisValue.isUndefined())
-        return vm.smallStrings.undefinedObjectString();
+        return vm.smallStrings.objectUndefinedString();
     if (thisValue.isNull())
-        return vm.smallStrings.nullObjectString();
+        return vm.smallStrings.objectNullString();
 
     JSObject* thisObject = thisValue.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);

@@ -104,33 +104,38 @@ TEST_P(PalettedTextureTest, PalettedTextureSampling)
     glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glFrustumf(-1, 1, -1, 1, 5.0, 60.0);
+    for (int i = 0; i < 10; i++)
+    {
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glFrustumf(-1, 1, -1, 1, 5.0, 60.0);
 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glTranslatef(0.0f, 0.0f, -8.0f);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        glTranslatef(0.0f, 0.0f, -8.0f);
 
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    std::vector<Vertex> vertices = {
-        {{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f}},
-        {{-1.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
-        {{1.0f, -1.0f, 0.0f}, {1.0f, 0.0f}},
-        {{1.0f, 1.0f, 0.0f}, {1.0f, 1.0f}},
-    };
-    glVertexPointer(3, GL_FLOAT, sizeof vertices[0], &vertices[0].position);
-    glTexCoordPointer(2, GL_FLOAT, sizeof vertices[0], &vertices[0].uv);
+        std::vector<Vertex> vertices = {
+            {{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f}},
+            {{-1.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
+            {{1.0f, -1.0f, 0.0f}, {1.0f, 0.0f}},
+            {{1.0f, 1.0f, 0.0f}, {1.0f, 1.0f}},
+        };
+        glVertexPointer(3, GL_FLOAT, sizeof vertices[0], &vertices[0].position);
+        glTexCoordPointer(2, GL_FLOAT, sizeof vertices[0], &vertices[0].uv);
 
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size());
-    EXPECT_GL_NO_ERROR();
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size());
+        EXPECT_GL_NO_ERROR();
 
-    EXPECT_PIXEL_COLOR_NEAR(8, 8, testImage.palette[0], 0);
-    EXPECT_PIXEL_COLOR_NEAR(24, 8, testImage.palette[1], 0);
-    EXPECT_PIXEL_COLOR_NEAR(8, 24, testImage.palette[2], 0);
-    EXPECT_PIXEL_COLOR_NEAR(24, 24, testImage.palette[3], 0);
+        EXPECT_PIXEL_COLOR_NEAR(8, 8, testImage.palette[0], 0);
+        EXPECT_PIXEL_COLOR_NEAR(24, 8, testImage.palette[1], 0);
+        EXPECT_PIXEL_COLOR_NEAR(8, 24, testImage.palette[2], 0);
+        EXPECT_PIXEL_COLOR_NEAR(24, 24, testImage.palette[3], 0);
+
+        swapBuffers();
+    }
 }
 
 ANGLE_INSTANTIATE_TEST_ES1(PalettedTextureTest);

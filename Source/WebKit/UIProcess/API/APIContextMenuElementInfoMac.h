@@ -52,7 +52,7 @@ private:
 
     WebKit::WebHitTestResultData m_hitTestResultData;
     WTF::String m_qrCodePayloadString;
-    bool m_hasEntireImage;
+    bool m_hasEntireImage { false };
 };
 
 } // namespace API

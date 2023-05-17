@@ -59,6 +59,7 @@ struct NetworkProcessCreationParameters {
 #if PLATFORM(COCOA)
     String uiProcessBundleIdentifier;
     RetainPtr<CFDataRef> networkATSContext;
+    bool strictSecureDecodingForAllObjCEnabled { false };
 #endif
 
 #if USE(SOUP)

@@ -45,6 +45,8 @@ private:
     friend struct IPC::ArgumentCoder<COEPInheritenceViolationReportBody, void>;
     COEPInheritenceViolationReportBody(COEPDisposition, const URL& blockedURL, const String& type);
 
+    ViolationReportType reportBodyType() const final { return ViolationReportType::COEPInheritenceViolation; }
+
     COEPDisposition m_disposition;
     URL m_blockedURL;
     String m_type;

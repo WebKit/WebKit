@@ -74,11 +74,15 @@ AXSearchTextWithCriteria
 AXTextOperation
 
 ----------------------
-{{-1.000000, -1.000000}, {60.000000, 18.000000}}
-{{-1.000000, -1.000000}, {220.000000, 18.000000}}
-{{-1.000000, -1.000000}, {11.000000, 18.000000}}
-{{-1.000000, -1.000000}, {731.000000, 36.000000}}
-{{-1.000000, -1.000000}, {1.000000, 18.000000}}
+PASS: textChild.boundsForRange(6, 10) was equal or approximately equal to (x: -1, y: -1, w: 60, h: 18).
+PASS: textChild.boundsForRange(1, 35) was equal or approximately equal to (x: -1, y: -1, w: 221, h: 18).
+PASS: textChild.boundsForRange(0, 1) was equal to (x: -1, y: -1, w: 11, h: 18).
+PASS: textChild.boundsForRange(0, 100000) was equal to (x: -1, y: -1, w: 731, h: 36).
+PASS: textChild.boundsForRange(5, 0) was equal or approximately equal to (x: -1, y: -1, w: 2, h: 18).
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
 
 
 

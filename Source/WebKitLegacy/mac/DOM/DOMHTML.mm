@@ -295,7 +295,7 @@ static WebAutocapitalizeType webAutocapitalizeType(WebCore::AutocapitalizeType t
 
 Class kitClass(WebCore::HTMLCollection* collection)
 {
-    if (collection->type() == WebCore::SelectOptions)
+    if (collection->type() == WebCore::CollectionType::SelectOptions)
         return [DOMHTMLOptionsCollection class];
     return [DOMHTMLCollection class];
 }

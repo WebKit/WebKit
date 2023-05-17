@@ -128,9 +128,8 @@ using namespace WebCore;
 
 namespace WebCore {
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability-new"
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 bool ScreenCaptureKitCaptureSource::isAvailable()
 {
@@ -483,7 +482,8 @@ std::optional<CaptureDevice> ScreenCaptureKitCaptureSource::windowCaptureDeviceW
     return CaptureDevice(String::number(windowID.value()), CaptureDevice::DeviceType::Window, emptyString(), emptyString(), true);
 }
 
-#pragma clang diagnostic pop
+ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 } // namespace WebCore
 

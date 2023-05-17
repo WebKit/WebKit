@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2020 Sony Interactive Entertainment Inc.
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,12 +61,6 @@ Structure* IntlLocale::createStructure(VM& vm, JSGlobalObject* globalObject, JSV
 IntlLocale::IntlLocale(VM& vm, Structure* structure)
     : Base(vm, structure)
 {
-}
-
-void IntlLocale::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
 }
 
 template<typename Visitor>

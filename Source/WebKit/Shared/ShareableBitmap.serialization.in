@@ -34,7 +34,7 @@ header: "ShareableBitmap.h"
 }
 
 [CustomHeader] class WebKit::ShareableBitmapHandle {
-    WebKit::SharedMemory::Handle m_handle;
+    WebKit::SharedMemoryHandle m_handle;
     [Validator='!m_configuration->sizeInBytes().hasOverflowed() && m_handle->size() >= m_configuration->sizeInBytes()'] WebKit::ShareableBitmapConfiguration m_configuration;
 }
 

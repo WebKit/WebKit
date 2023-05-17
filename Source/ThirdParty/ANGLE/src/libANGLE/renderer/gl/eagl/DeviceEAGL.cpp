@@ -6,15 +6,11 @@
 
 // DeviceEAGL.cpp: EAGL implementation of egl::Device
 
-#import "common/platform.h"
+#include "libANGLE/renderer/gl/eagl/DeviceEAGL.h"
 
-#if defined(ANGLE_ENABLE_EAGL)
+#include <EGL/eglext.h>
 
-#    include "libANGLE/renderer/gl/eagl/DeviceEAGL.h"
-
-#    include "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
-
-#    include <EGL/eglext.h>
+#include "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
 
 namespace rx
 {
@@ -55,5 +51,3 @@ void DeviceEAGL::generateExtensions(egl::DeviceExtensions *outExtensions) const
 }
 
 }  // namespace rx
-
-#endif  // defined(ANGLE_ENABLE_EAGL)

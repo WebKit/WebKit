@@ -29,6 +29,10 @@
 #include "FlexFormattingContext.h"
 #include "FlexRect.h"
 #include "LayoutContext.h"
+#include "LengthFunctions.h"
+#include "RenderStyleInlines.h"
+#include "StyleContentAlignmentData.h"
+#include "StyleSelfAlignmentData.h"
 
 namespace WebCore {
 namespace Layout {

@@ -129,16 +129,22 @@
     self.contentsOpaque = NO;
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-    if ([self valueForKeyPath:WKCGDisplayListContentsKey]) {
-        // FIXME: Remove this workaround (and the -setNeedsDisplay call) once rdar://105807616 is fixed.
-        auto emptyCommandsContext = adoptCF(WKCGCommandsContextCreate(CGSizeZero, nil));
-        auto emptyCommandsData = adoptCF(RECGCommandsContextCopyEncodedData(emptyCommandsContext.get()));
-        [self setValue:(id)emptyCommandsData.get() forKeyPath:WKCGDisplayListContentsKey];
-        [self setValue:nil forKeyPath:WKCGDisplayListPortsKey];
-        [self setNeedsDisplay];
-    }
+    [self _web_clearCGDisplayListIfNeeded];
 #endif
+
 }
+
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+- (void)_web_clearCGDisplayListIfNeeded
+{
+    if (![self valueForKeyPath:WKCGDisplayListContentsKey])
+        return;
+    [self setValue:nil forKeyPath:WKCGDisplayListContentsKey];
+    [self setValue:nil forKeyPath:WKCGDisplayListPortsKey];
+    [self setValue:@NO forKeyPath:WKCGDisplayListEnabledKey];
+    [self setValue:@NO forKeyPath:WKCGDisplayListBifurcationEnabledKey];
+}
+#endif
 
 @end
 

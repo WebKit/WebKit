@@ -37,6 +37,7 @@
 #include "WebGPUShaderStage.h"
 #include "WebGPUTextureUsage.h"
 #include <WebGPU/WebGPU.h>
+#include <WebGPU/WebGPUExt.h>
 #include <cstdint>
 #include <wtf/RefCounted.h>
 
@@ -62,6 +63,7 @@ class ComputePipeline;
 enum class CullMode : uint8_t;
 class Device;
 enum class ErrorFilter : uint8_t;
+class ExternalTexture;
 enum class FeatureName : uint8_t;
 enum class FilterMode : uint8_t;
 enum class FrontFace : uint8_t;
@@ -154,6 +156,7 @@ public:
     virtual WGPUComputePassEncoder convertToBacking(const ComputePassEncoder&) = 0;
     virtual WGPUComputePipeline convertToBacking(const ComputePipeline&) = 0;
     virtual WGPUDevice convertToBacking(const Device&) = 0;
+    virtual WGPUExternalTexture convertToBacking(const ExternalTexture&) = 0;
     virtual WGPUInstance convertToBacking(const GPU&) = 0;
     virtual WGPUPipelineLayout convertToBacking(const PipelineLayout&) = 0;
     virtual WGPUQuerySet convertToBacking(const QuerySet&) = 0;

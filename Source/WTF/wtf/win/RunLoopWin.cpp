@@ -90,20 +90,16 @@ void RunLoop::stop()
 
 void RunLoop::registerRunLoopMessageWindowClass()
 {
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        WNDCLASS windowClass = { };
-        windowClass.lpfnWndProc     = RunLoop::RunLoopWndProc;
-        windowClass.cbWndExtra      = sizeof(RunLoop*);
-        windowClass.lpszClassName   = kRunLoopMessageWindowClassName;
-        bool result = ::RegisterClass(&windowClass);
-        RELEASE_ASSERT(result);
-    });
+    WNDCLASS windowClass = { };
+    windowClass.lpfnWndProc = RunLoop::RunLoopWndProc;
+    windowClass.cbWndExtra = sizeof(RunLoop*);
+    windowClass.lpszClassName = kRunLoopMessageWindowClassName;
+    bool result = ::RegisterClass(&windowClass);
+    RELEASE_ASSERT(result);
 }
 
 RunLoop::RunLoop()
 {
-    registerRunLoopMessageWindowClass();
     m_runLoopMessageWindow = ::CreateWindow(kRunLoopMessageWindowClassName, nullptr, 0,
         CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, HWND_MESSAGE, nullptr, nullptr, this);
     RELEASE_ASSERT(::IsWindow(m_runLoopMessageWindow));
@@ -111,6 +107,7 @@ RunLoop::RunLoop()
 
 RunLoop::~RunLoop()
 {
+    ::DestroyWindow(m_runLoopMessageWindow);
 }
 
 void RunLoop::wakeUp()
@@ -150,7 +147,7 @@ void RunLoop::TimerBase::timerFired()
             m_isActive = false;
             ::KillTimer(m_runLoop->m_runLoopMessageWindow, bitwise_cast<uintptr_t>(this));
         } else
-            m_nextFireDate = MonotonicTime::now() + m_interval;
+            m_nextFireDate = MonotonicTime::timePointFromNow(m_interval);
     }
 
     fired();
@@ -172,7 +169,7 @@ void RunLoop::TimerBase::start(Seconds interval, bool repeat)
     m_isRepeating = repeat;
     m_isActive = true;
     m_interval = interval;
-    m_nextFireDate = MonotonicTime::now() + m_interval;
+    m_nextFireDate = MonotonicTime::timePointFromNow(m_interval);
     ::SetTimer(m_runLoop->m_runLoopMessageWindow, bitwise_cast<uintptr_t>(this), interval.millisecondsAs<UINT>(), nullptr);
 }
 

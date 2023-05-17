@@ -48,7 +48,6 @@ struct Relation {
         ChildrenAffectedByBackwardPositionalRules,
         DescendantsAffectedByBackwardPositionalRules,
         ChildrenAffectedByFirstChildRules,
-        ChildrenAffectedByPropertyBasedBackwardPositionalRules,
         ChildrenAffectedByLastChildRules,
         FirstChild,
         LastChild,

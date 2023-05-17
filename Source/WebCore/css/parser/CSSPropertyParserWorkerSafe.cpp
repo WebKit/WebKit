@@ -44,6 +44,7 @@
 #include "CSSTokenizer.h"
 #include "CSSUnicodeRangeValue.h"
 #include "Document.h"
+#include "FontCustomPlatformData.h"
 #include "ParsingUtilities.h"
 #include "ScriptExecutionContext.h"
 #include "StyleSheetContents.h"
@@ -207,6 +208,21 @@ RefPtr<CSSPrimitiveValue> CSSPropertyParserWorkerSafe::parseFontFaceDisplay(cons
     return parsedValue;
 }
 
+RefPtr<CSSValue> CSSPropertyParserWorkerSafe::parseFontFaceSizeAdjust(const String& string, ScriptExecutionContext& context)
+{
+    CSSParserContext parserContext(parserMode(context));
+    CSSParserImpl parser(parserContext, string);
+    CSSParserTokenRange range = parser.tokenizer()->tokenRange();
+    range.consumeWhitespace();
+    if (range.atEnd())
+        return nullptr;
+    auto parsedValue = CSSPropertyParserHelpers::consumePercent(range, ValueRange::NonNegative);
+    if (!parsedValue || !range.atEnd())
+        return nullptr;
+
+    return parsedValue;
+}
+
 namespace CSSPropertyParserHelpersWorkerSafe {
 
 static RefPtr<CSSFontFaceSrcResourceValue> consumeFontFaceSrcURI(CSSParserTokenRange& range, const CSSParserContext& context)
@@ -218,24 +234,21 @@ static RefPtr<CSSFontFaceSrcResourceValue> consumeFontFaceSrcURI(CSSParserTokenR
         return nullptr;
 
     String format;
+    Vector<FontTechnology> supportedTechnologies;
     if (range.peek().functionId() == CSSValueFormat) {
-        // https://drafts.csswg.org/css-fonts/#descdef-font-face-src
-        // FIXME: We allow any identifier here and convert to strings; specification calls for certain keywords and legacy compatibility strings.
-        auto args = CSSPropertyParserHelpers::consumeFunction(range);
-        auto& arg = args.consumeIncludingWhitespace();
-        if (!args.atEnd())
+        format = CSSPropertyParserHelpers::consumeFontFormat(range);
+        if (format.isNull())
             return nullptr;
-        if (arg.type() == IdentToken) {
-            if (!CSSPropertyParserHelpers::identMatchesSupportedFontFormat(arg.id()))
-                return nullptr;
-        } else if (arg.type() != StringToken)
+    }
+    if (range.peek().functionId() == CSSValueTech) {
+        supportedTechnologies = CSSPropertyParserHelpers::consumeFontTech(range);
+        if (supportedTechnologies.isEmpty())
             return nullptr;
-        format = arg.value().toString();
     }
     if (!range.atEnd())
         return nullptr;
 
-    return CSSFontFaceSrcResourceValue::create(WTFMove(location), WTFMove(format), context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
+    return CSSFontFaceSrcResourceValue::create(WTFMove(location), WTFMove(format), WTFMove(supportedTechnologies), context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
 }
 
 static RefPtr<CSSValue> consumeFontFaceSrcLocal(CSSParserTokenRange& range)

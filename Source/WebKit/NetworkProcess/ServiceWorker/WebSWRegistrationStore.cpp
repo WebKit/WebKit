@@ -30,7 +30,6 @@
 
 #include "NetworkStorageManager.h"
 #include <WebCore/SWServer.h>
-#include <wtf/CompletionHandler.h>
 
 namespace WebKit {
 
@@ -76,13 +75,13 @@ void WebSWRegistrationStore::importRegistrations(CompletionHandler<void(std::opt
     m_manager->importServiceWorkerRegistrations(WTFMove(callback));
 }
 
-void WebSWRegistrationStore::updateRegistration(const ServiceWorkerContextData& registration)
+void WebSWRegistrationStore::updateRegistration(const WebCore::ServiceWorkerContextData& registration)
 {
     m_updates.set(registration.registration.key, registration);
     scheduleUpdateIfNecessary();
 }
 
-void WebSWRegistrationStore::removeRegistration(const ServiceWorkerRegistrationKey& key)
+void WebSWRegistrationStore::removeRegistration(const WebCore::ServiceWorkerRegistrationKey& key)
 {
     m_updates.set(key, std::nullopt);
     scheduleUpdateIfNecessary();
@@ -102,8 +101,8 @@ void WebSWRegistrationStore::updateToStorage(CompletionHandler<void()>&& callbac
 {
     ASSERT(RunLoop::isMain());
 
-    Vector<ServiceWorkerRegistrationKey> registrationsToDelete;
-    Vector<ServiceWorkerContextData> registrationsToUpdate;
+    Vector<WebCore::ServiceWorkerRegistrationKey> registrationsToDelete;
+    Vector<WebCore::ServiceWorkerContextData> registrationsToUpdate;
     for (auto& [key, registation] : m_updates) {
         if (!registation)
             registrationsToDelete.append(key);

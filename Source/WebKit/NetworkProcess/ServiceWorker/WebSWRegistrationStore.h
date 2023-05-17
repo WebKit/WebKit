@@ -30,6 +30,7 @@
 #include <WebCore/SWRegistrationStore.h>
 #include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/Timer.h>
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 class SWServer;

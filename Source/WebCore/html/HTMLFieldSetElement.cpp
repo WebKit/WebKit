@@ -62,6 +62,17 @@ Ref<HTMLFieldSetElement> HTMLFieldSetElement::create(const QualifiedName& tagNam
     return adoptRef(*new HTMLFieldSetElement(tagName, document, form));
 }
 
+bool HTMLFieldSetElement::isDisabledFormControl() const
+{
+    if (document().settings().sendMouseEventsToDisabledFormControlsEnabled()) {
+        // The fieldset element itself should never be considered disabled, it is
+        // only supposed to affect its descendants:
+        // https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#concept-fe-disabled
+        return false;
+    }
+    return HTMLFormControlElement::isDisabledFormControl();
+}
+
 static void updateFromControlElementsAncestorDisabledStateUnder(HTMLElement& startNode, bool isDisabled)
 {
     auto range = inclusiveDescendantsOfType<Element>(startNode);
@@ -177,7 +188,7 @@ HTMLLegendElement* HTMLFieldSetElement::legend() const
 
 Ref<HTMLCollection> HTMLFieldSetElement::elements()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<FieldSetElements>::traversalType>>(*this, FieldSetElements);
+    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<CollectionType::FieldSetElements>::traversalType>>(*this, CollectionType::FieldSetElements);
 }
 
 void HTMLFieldSetElement::addInvalidDescendant(const HTMLElement& invalidFormControlElement)

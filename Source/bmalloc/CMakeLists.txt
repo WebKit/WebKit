@@ -149,6 +149,7 @@ set(bmalloc_SOURCES
     libpas/src/libpas/pas_random.c
     libpas/src/libpas/pas_red_black_tree.c
     libpas/src/libpas/pas_redundant_local_allocator_node.c
+    libpas/src/libpas/pas_report_crash.c
     libpas/src/libpas/pas_reserved_memory_provider.c
     libpas/src/libpas/pas_root.c
     libpas/src/libpas/pas_scavenger.c
@@ -567,6 +568,8 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_reallocate_heap_teleport_rule.h
     libpas/src/libpas/pas_red_black_tree.h
     libpas/src/libpas/pas_redundant_local_allocator_node.h
+    libpas/src/libpas/pas_report_crash.h
+    libpas/src/libpas/pas_report_crash_pgm_report.h
     libpas/src/libpas/pas_reserved_memory_provider.h
     libpas/src/libpas/pas_root.h
     libpas/src/libpas/pas_scavenger.h
@@ -675,6 +678,11 @@ set(bmalloc_INTERFACE_INCLUDE_DIRECTORIES ${bmalloc_FRAMEWORK_HEADERS_DIR})
 set(bmalloc_INTERFACE_DEPENDENCIES bmalloc_CopyHeaders)
 
 add_definitions(-D_GNU_SOURCE)
+add_definitions(-DPAS_BMALLOC=1)
+
+if (MSVC)
+    add_compile_options(/wd4206)
+endif ()
 
 set_source_files_properties(
     libpas/src/libpas/pas_bitfit_page_config_kind.c

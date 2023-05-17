@@ -42,5 +42,9 @@ messages -> PlaybackSessionManagerProxy {
     ClearPlaybackControlsManager()
 
     HandleControlledElementIDResponse(WebKit::PlaybackSessionContextIdentifier contextId, String id)
+    
+#if !RELEASE_LOG_DISABLED
+    SetLogIdentifier(WebKit::PlaybackSessionContextIdentifier contextId, uint64_t logIdentifier)
+#endif
 }
 #endif

@@ -477,6 +477,44 @@ TEST(AnimatedResize, AnimatedResizeBlocksDoAfterNextPresentationUpdate)
     TestWebKitAPI::Util::run(&didGetCommitAfterEndAnimatedResize);
 }
 
+TEST(AnimatedResize, ResizeWithContentHiddenWhileScrolling)
+{
+    auto webView = createAnimatedResizeWebView();
+    [webView setUIDelegate:webView.get()];
+
+    [webView loadHTMLString:@"<head><meta name='viewport' content='initial-scale=1'></head>" baseURL:nil];
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [window addSubview:webView.get()];
+    [window setHidden:NO];
+
+    __block bool done = false;
+    [webView _doAfterNextPresentationUpdate:^{
+        [webView _resizeWhileHidingContentWithUpdates:^{
+            [webView setFrame:CGRectMake(0, 0, 100, 200)];
+        }];
+
+        [webView evaluateJavaScript:@"window.scrollTo(10, 0)" completionHandler:nil];
+
+        [webView _doAfterNextPresentationUpdate:^{
+            [webView evaluateJavaScript:@"[window.innerWidth, window.innerHeight]" completionHandler:^(id value, NSError *error) {
+                CGFloat innerWidth = [[value objectAtIndex:0] floatValue];
+                CGFloat innerHeight = [[value objectAtIndex:1] floatValue];
+
+                EXPECT_EQ(innerWidth, 100);
+                EXPECT_EQ(innerHeight, 200);
+
+                done = true;
+            }];
+        }];
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+}
+
 TEST(AnimatedResize, CreateWebPageAfterAnimatedResize)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 1024, 768)]);

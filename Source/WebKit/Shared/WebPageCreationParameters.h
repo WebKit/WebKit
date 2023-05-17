@@ -185,6 +185,7 @@ struct WebPageCreationParameters {
     bool keyboardIsAttached { false };
     bool canShowWhileLocked { false };
     bool isCapturingScreen { false };
+    WebCore::Color insertionPointColor;
 #endif
 #if PLATFORM(COCOA)
     bool smartInsertDeleteEnabled;
@@ -289,15 +290,7 @@ struct WebPageCreationParameters {
 
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
 
-    struct SubframeProcessFrameTreeInitializationParameters {
-        WebCore::FrameIdentifier localFrameIdentifier;
-        FrameTreeCreationParameters treeCreationParameters;
-        WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier;
-
-        void encode(IPC::Encoder&) const;
-        static std::optional<SubframeProcessFrameTreeInitializationParameters> decode(IPC::Decoder&);
-    };
-    std::optional<SubframeProcessFrameTreeInitializationParameters> subframeProcessFrameTreeInitializationParameters;
+    std::optional<FrameTreeCreationParameters> subframeProcessFrameTreeCreationParameters;
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     Vector<WebCore::LookalikeCharactersSanitizationData> lookalikeCharacterStrings;

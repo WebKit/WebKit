@@ -48,7 +48,7 @@ class ProgramPrelude : public TIntermTraverser
                 transform_feedback_guard();
                 break;
             case MetalShaderType::Fragment:
-                writeSampleMask();
+                functionConstants();
                 break;
             case MetalShaderType::Compute:
                 ASSERT(0 && "compute shaders not currently supported");
@@ -179,7 +179,6 @@ class ProgramPrelude : public TIntermTraverser
     void castMatrix();
     void functionConstants();
     void gradient();
-    void writeSampleMask();
     void textureEnv();
     void texelFetch();
     void texelFetchOffset();
@@ -1491,19 +1490,6 @@ template <int N>
 using ANGLE_gradient = typename ANGLE_gradient_traits<N>::type;
 )")
 
-PROGRAM_PRELUDE_DECLARE(writeSampleMask,
-                        R"(
-ANGLE_ALWAYS_INLINE void ANGLE_writeSampleMask(const uint32_t mask,
-                                               thread uint& gl_SampleMask)
-{
-    if (ANGLECoverageMaskEnabled)
-    {
-        gl_SampleMask = as_type<int>(mask);
-    }
-}
-)",
-                        functionConstants())
-
 PROGRAM_PRELUDE_DECLARE(textureEnv,
                         R"(
 template <typename T>
@@ -1519,14 +1505,16 @@ PROGRAM_PRELUDE_DECLARE(functionConstants,
 #define ANGLE_SAMPLE_COMPARE_GRADIENT_INDEX 0
 #define ANGLE_SAMPLE_COMPARE_LOD_INDEX      1
 #define ANGLE_RASTERIZATION_DISCARD_INDEX   2
-#define ANGLE_COVERAGE_MASK_ENABLED_INDEX   3
+#define ANGLE_SAMPLE_MASK_ENABLED_INDEX     3
 #define ANGLE_DEPTH_WRITE_ENABLED_INDEX     4
 
 constant bool ANGLEUseSampleCompareGradient [[function_constant(ANGLE_SAMPLE_COMPARE_GRADIENT_INDEX)]];
 constant bool ANGLEUseSampleCompareLod      [[function_constant(ANGLE_SAMPLE_COMPARE_LOD_INDEX)]];
 constant bool ANGLERasterizerDisabled       [[function_constant(ANGLE_RASTERIZATION_DISCARD_INDEX)]];
-constant bool ANGLECoverageMaskEnabled      [[function_constant(ANGLE_COVERAGE_MASK_ENABLED_INDEX)]];
+constant bool ANGLESampleMaskEnabled        [[function_constant(ANGLE_SAMPLE_MASK_ENABLED_INDEX)]];
 constant bool ANGLEDepthWriteEnabled        [[function_constant(ANGLE_DEPTH_WRITE_ENABLED_INDEX)]];
+
+#define ANGLE_ALPHA0
 )")
 
 PROGRAM_PRELUDE_DECLARE(texelFetch,
@@ -3632,6 +3620,7 @@ void ProgramPrelude::visitOperator(TOperator op,
         case TOperator::EOpFract:
         case TOperator::EOpRound:
         case TOperator::EOpRoundEven:
+        case TOperator::EOpSaturate:
         case TOperator::EOpModf:
         case TOperator::EOpLdexp:
         case TOperator::EOpFrexp:

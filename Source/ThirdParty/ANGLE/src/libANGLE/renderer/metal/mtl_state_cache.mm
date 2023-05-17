@@ -1026,8 +1026,6 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
         RenderPipelineDesc desc = originalDesc;
         if (desc.outputDescriptor.sampleCount == 1)
         {
-            // Disable sample coverage if the output is not multisample
-            desc.emulateCoverageMask    = false;
             desc.alphaToCoverageEnabled = false;
         }
 

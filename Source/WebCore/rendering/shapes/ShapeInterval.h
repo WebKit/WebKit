@@ -91,7 +91,6 @@ public:
     }
 
     bool operator==(const ShapeInterval<T>& other) const { return x1() == other.x1() && x2() == other.x2(); }
-    bool operator!=(const ShapeInterval<T>& other) const { return !operator==(other); }
 
 private:
     T m_x1;

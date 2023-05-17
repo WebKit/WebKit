@@ -21,6 +21,7 @@
 #include "config.h"
 #include "SVGFEDropShadowElement.h"
 
+#include "NodeName.h"
 #include "RenderStyle.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
@@ -61,77 +62,74 @@ void SVGFEDropShadowElement::attributeChanged(const QualifiedName& name, const A
 {
     SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == SVGNames::stdDeviationAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::stdDeviationAttr:
         if (auto result = parseNumberOptionalNumber(newValue)) {
             m_stdDeviationX->setBaseValInternal(result->first);
             m_stdDeviationY->setBaseValInternal(result->second);
         }
-        return;
-    }
-
-    if (name == SVGNames::inAttr) {
+        break;
+    case AttributeNames::inAttr:
         m_in1->setBaseValInternal(newValue);
-        return;
-    }
-
-    if (name == SVGNames::dxAttr) {
+        break;
+    case AttributeNames::dxAttr:
         m_dx->setBaseValInternal(newValue.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::dyAttr) {
+        break;
+    case AttributeNames::dyAttr:
         m_dy->setBaseValInternal(newValue.toFloat());
-        return;
+        break;
+    default:
+        break;
     }
 }
 
 void SVGFEDropShadowElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::inAttr) {
+    switch (attrName.nodeName()) {
+    case AttributeNames::inAttr: {
         InstanceInvalidationGuard guard(*this);
         updateSVGRendererForElementChange();
-        return;
+        break;
     }
-
-    if (attrName == SVGNames::stdDeviationAttr && (stdDeviationX() < 0 || stdDeviationY() < 0)) {
-        InstanceInvalidationGuard guard(*this);
-        markFilterEffectForRebuild();
-        return;
+    case AttributeNames::stdDeviationAttr: {
+        if (stdDeviationX() < 0 || stdDeviationY() < 0) {
+            InstanceInvalidationGuard guard(*this);
+            markFilterEffectForRebuild();
+            return;
+        }
+        FALLTHROUGH;
     }
-
-    if (attrName == SVGNames::stdDeviationAttr || attrName == SVGNames::dxAttr || attrName == SVGNames::dyAttr) {
+    case AttributeNames::dxAttr:
+    case AttributeNames::dyAttr: {
         InstanceInvalidationGuard guard(*this);
         primitiveAttributeChanged(attrName);
-        return;
+        break;
     }
-
-    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+    default:
+        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+        break;
+    }
 }
 
-bool SVGFEDropShadowElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)
+bool SVGFEDropShadowElement::setFilterEffectAttribute(FilterEffect& filterEffect, const QualifiedName& attrName)
 {
-    auto& feDropShadow = downcast<FEDropShadow>(effect);
-
-    if (attrName == SVGNames::stdDeviationAttr) {
-        bool stdDeviationXChanged = feDropShadow.setStdDeviationX(stdDeviationX());
-        bool stdDeviationYChanged = feDropShadow.setStdDeviationY(stdDeviationY());
-        return stdDeviationXChanged || stdDeviationYChanged;
+    auto& effect = downcast<FEDropShadow>(filterEffect);
+    switch (attrName.nodeName()) {
+    case AttributeNames::stdDeviationAttr:
+        return effect.setStdDeviationX(stdDeviationX()) || effect.setStdDeviationY(stdDeviationY());
+    case AttributeNames::dxAttr:
+        return effect.setDx(dx());
+    case AttributeNames::dyAttr:
+        return effect.setDy(dy());
+    case AttributeNames::flood_colorAttr: {
+        auto& style = renderer()->style();
+        return effect.setShadowColor(style.colorResolvingCurrentColor(style.svgStyle().floodColor()));
     }
-
-    if (attrName == SVGNames::dxAttr)
-        return feDropShadow.setDx(dx());
-    if (attrName == SVGNames::dyAttr)
-        return feDropShadow.setDy(dy());
-
-    RenderObject* renderer = this->renderer();
-    ASSERT(renderer);
-    const RenderStyle& style = renderer->style();
-
-    if (attrName == SVGNames::flood_colorAttr)
-        return feDropShadow.setShadowColor(style.colorResolvingCurrentColor(style.svgStyle().floodColor()));
-    if (attrName == SVGNames::flood_opacityAttr)
-        return feDropShadow.setShadowOpacity(style.svgStyle().floodOpacity());
-
+    case AttributeNames::flood_opacityAttr:
+        return effect.setShadowOpacity(renderer()->style().svgStyle().floodOpacity());
+    default:
+        break;
+    }
     ASSERT_NOT_REACHED();
     return false;
 }

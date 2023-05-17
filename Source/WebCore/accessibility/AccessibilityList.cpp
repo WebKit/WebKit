@@ -32,10 +32,10 @@
 #include "AXObjectCache.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
-#include "HTMLParserIdioms.h"
+#include "ListStyleType.h"
 #include "PseudoElement.h"
 #include "RenderListItem.h"
-#include "RenderObject.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
     
@@ -67,7 +67,7 @@ bool AccessibilityList::isUnorderedList() const
         return true;
 
     auto* node = this->node();
-    return node && node->hasTagName(ulTag);
+    return node && (node->hasTagName(menuTag) || node->hasTagName(ulTag));
 }
 
 bool AccessibilityList::isOrderedList() const
@@ -110,7 +110,7 @@ bool AccessibilityList::childHasPseudoVisibleListItemMarkers(Node* node)
     // those renderers as "ignored" objects.
 #if USE(ATSPI)
     String text = axBeforePseudo->textUnderElement();
-    return !text.isEmpty() && !text.isAllSpecialCharacters<isHTMLSpace>();
+    return !text.isEmpty() && !text.isAllSpecialCharacters<isASCIIWhitespace>();
 #else
     return false;
 #endif

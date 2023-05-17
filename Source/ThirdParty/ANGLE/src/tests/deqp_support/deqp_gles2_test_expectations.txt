@@ -314,6 +314,3 @@
 6678 UBSAN : dEQP-GLES2.functional.shaders.random.* = SKIP
 6678 UBSAN : dEQP-GLES2.functional.fragment_ops.interaction.basic_shader.* = SKIP
 6678 UBSAN : dEQP-GLES2.functional.shaders.texture_functions.vertex.texture2dprojlod_vec3 = SKIP
-
-// Pixel 6 test expectations
-7867 PIXEL6 : dEQP-GLES2.functional.shaders.algorithm.rgb_to_hsl_vertex = SKIP

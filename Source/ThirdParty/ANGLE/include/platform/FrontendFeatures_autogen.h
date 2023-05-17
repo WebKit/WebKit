@@ -117,6 +117,10 @@ struct FrontendFeatures : FeatureSetBase
         "enableShaderSubstitution", FeatureCategory::FrontendWorkarounds,
         "Check the filesystem for shaders to use instead of those provided through glShaderSource",
         &members, "http://anglebug.com/7761"};
+
+    FeatureInfo disableProgramCaching = {"disableProgramCaching", FeatureCategory::FrontendFeatures,
+                                         "Disables saving programs to the cache", &members,
+                                         "http://anglebug.com/1423136"};
 };
 
 inline FrontendFeatures::FrontendFeatures()  = default;

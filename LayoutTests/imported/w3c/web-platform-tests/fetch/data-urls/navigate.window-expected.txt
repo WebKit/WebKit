@@ -1,0 +1,9 @@
+
+PASS Nothing fancy
+PASS base64
+PASS base64 with code points that differ from base64url
+PASS ASCII whitespace in the input is removed
+PASS base64 with incorrect padding
+PASS base64url is not supported
+PASS Vertical tab in the input leads to an error
+

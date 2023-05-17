@@ -501,7 +501,7 @@ uint32_t VideoFrameGStreamer::pixelFormat() const
     return m_cachedVideoFormat;
 }
 
-RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::resizeTo(const IntSize& destinationSize)
+GRefPtr<GstSample> VideoFrameGStreamer::resizedSample(const IntSize& destinationSize)
 {
     auto* caps = gst_sample_get_caps(m_sample.get());
 
@@ -536,41 +536,13 @@ RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::resizeTo(const IntSize& destina
 
     auto presentationTime = this->presentationTime();
     setBufferFields(outputBuffer.get(), presentationTime, frameRate);
-    auto sample = adoptGRef(gst_sample_new(outputBuffer.get(), outputCaps.get(), nullptr, nullptr));
-    return VideoFrameGStreamer::create(WTFMove(sample), destinationSize, presentationTime, rotation(), isMirrored());
+    return adoptGRef(gst_sample_new(outputBuffer.get(), outputCaps.get(), nullptr, nullptr));
 }
 
-RefPtr<JSC::Uint8ClampedArray> VideoFrameGStreamer::computeRGBAImageData() const
+RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::resizeTo(const IntSize& destinationSize)
 {
-    auto* caps = gst_sample_get_caps(m_sample.get());
-    GstVideoInfo inputInfo;
-    if (!gst_video_info_from_caps(&inputInfo, caps))
-        return nullptr;
-
-    // We could check the input format is RGBA before attempting a conversion, but it is very
-    // unlikely to pay off. The input format is likely to be BGRA (when the samples are created as a
-    // result of mediastream captureStream) or some YUV format if the sample is from a video capture
-    // device. This method is called only by internals during layout tests, it is thus not critical
-    // to optimize this code path.
-
-    auto outputCaps = adoptGRef(gst_caps_copy(caps));
-    gst_caps_set_simple(outputCaps.get(), "format", G_TYPE_STRING, "RGBA", nullptr);
-
-    GstVideoInfo outputInfo;
-    if (!gst_video_info_from_caps(&outputInfo, outputCaps.get()))
-        return nullptr;
-
-    int width = GST_VIDEO_INFO_WIDTH(&inputInfo);
-    int height = GST_VIDEO_INFO_HEIGHT(&inputInfo);
-    unsigned byteLength = GST_VIDEO_INFO_SIZE(&inputInfo);
-    auto bufferStorage = JSC::ArrayBuffer::create(width * height, 4);
-    auto outputBuffer = adoptGRef(gst_buffer_new_wrapped_full(GST_MEMORY_FLAG_NO_SHARE, bufferStorage->data(), byteLength, 0, byteLength, nullptr, [](gpointer) { }));
-    GstMappedFrame outputFrame(outputBuffer.get(), outputInfo, GST_MAP_WRITE);
-
-    GUniquePtr<GstVideoConverter> converter(gst_video_converter_new(&inputInfo, &outputInfo, nullptr));
-    GstMappedFrame inputFrame(gst_sample_get_buffer(m_sample.get()), inputInfo, GST_MAP_READ);
-    gst_video_converter_frame(converter.get(), inputFrame.get(), outputFrame.get());
-    return JSC::Uint8ClampedArray::tryCreate(WTFMove(bufferStorage), 0, byteLength);
+    auto presentationTime = this->presentationTime();
+    return VideoFrameGStreamer::create(resizedSample(destinationSize), destinationSize, presentationTime, rotation(), isMirrored());
 }
 
 RefPtr<ImageGStreamer> VideoFrameGStreamer::convertToImage()

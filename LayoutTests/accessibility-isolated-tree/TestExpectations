@@ -55,10 +55,13 @@ accessibility/title-ui-element-correctness.html [ Failure ]
 accessibility/text-alternative-calculation-hidden-nodes.html [ Failure ]
 accessibility/math-multiscript-attributes.html [ Failure ]
 
+# Frames are off by 1px vs. non-ITM mode.
+accessibility/table-cells.html [ Failure ]
+accessibility/mac/document-links.html [ Failure ]
+
 # Fails because aria-labelledby text changes don't update in isolated tree mode
 accessibility/aria-labelledby-on-password-input.html [ Failure ]
 
 accessibility/aria-selected-menu-items.html [ Failure ]
-accessibility/aria-flowto.html [ Failure ]
 accessibility/aria-owns-hierarchy-remap.html [ Failure ]
 accessibility/element-reflection-ariaactivedescendant.html [ Failure ]

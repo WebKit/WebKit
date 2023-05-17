@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,9 +86,9 @@
 @interface WebAVSampleBufferErrorListener : NSObject {
     WeakPtr<WebCore::SourceBufferPrivateAVFObjC> _parent;
     Vector<RetainPtr<AVSampleBufferDisplayLayer>> _layers;
-    ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     Vector<RetainPtr<AVSampleBufferAudioRenderer>> _renderers;
-    ALLOW_NEW_API_WITHOUT_GUARDS_END
+ALLOW_NEW_API_WITHOUT_GUARDS_END
 }
 
 - (id)initWithParent:(WeakPtr<WebCore::SourceBufferPrivateAVFObjC>&&)parent;
@@ -214,9 +214,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
             ASSERT_NOT_REACHED();
 
     } else if ([object isKindOfClass:PAL::getAVSampleBufferAudioRendererClass()]) {
-        ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
         RetainPtr<AVSampleBufferAudioRenderer> renderer = (AVSampleBufferAudioRenderer *)object;
-        ALLOW_NEW_API_WITHOUT_GUARDS_END
+ALLOW_NEW_API_WITHOUT_GUARDS_END
         RetainPtr<NSError> error = [change valueForKey:NSKeyValueChangeNewKey];
         if ([error isKindOfClass:[NSNull class]])
             return;
@@ -485,6 +485,22 @@ bool SourceBufferPrivateAVFObjC::isMediaSampleAllowed(const MediaSample& sample)
     return trackId == m_enabledVideoTrackID || m_audioRenderers.contains(trackId);
 }
 
+void SourceBufferPrivateAVFObjC::didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&& formatDescription, uint64_t trackId)
+{
+    if (is<VideoInfo>(formatDescription)) {
+        auto result = m_videoTracks.find(AtomString::number(trackId));
+        if (result != m_videoTracks.end())
+            result->value->setFormatDescription(downcast<VideoInfo>(formatDescription.get()));
+        return;
+    }
+
+    if (is<AudioInfo>(formatDescription)) {
+        auto result = m_audioTracks.find(AtomString::number(trackId));
+        if (result != m_audioTracks.end())
+            result->value->setFormatDescription(downcast<AudioInfo>(formatDescription.get()));
+    }
+}
+
 void SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataForTrackID(uint64_t trackID)
 {
     if (!m_mediaSource)
@@ -600,6 +616,13 @@ void SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>&& data)
         if (!weakThis)
             return;
         weakThis->didProvideMediaDataForTrackId(WTFMove(sample), trackId, mediaType);
+    });
+
+    m_parser->setDidUpdateFormatDescriptionForTrackIDCallback([weakThis = WeakPtr { *this }, abortCalled = m_abortCalled] (Ref<TrackInfo>&& formatDescription, uint64_t trackId) {
+        ASSERT(isMainThread());
+        if (!weakThis || abortCalled != weakThis->m_abortCalled)
+            return;
+        weakThis->didUpdateFormatDescriptionForTrackId(WTFMove(formatDescription), trackId);
     });
 
     m_abortSemaphore = Box<Semaphore>::create(0);
@@ -835,17 +858,17 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivate& track,
     ALWAYS_LOG(LOGIDENTIFIER, "audio trackID = ", trackID, ", enabled = ", enabled);
 
     if (!enabled) {
-        ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
         RetainPtr<AVSampleBufferAudioRenderer> renderer = m_audioRenderers.get(trackID);
-        ALLOW_NEW_API_WITHOUT_GUARDS_END
+ALLOW_NEW_API_WITHOUT_GUARDS_END
         m_parser->setShouldProvideMediaDataForTrackID(false, trackID);
         if (auto player = this->player())
             player->removeAudioRenderer(renderer.get());
     } else {
         m_parser->setShouldProvideMediaDataForTrackID(true, trackID);
-        ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
         RetainPtr<AVSampleBufferAudioRenderer> renderer;
-        ALLOW_NEW_API_WITHOUT_GUARDS_END
+ALLOW_NEW_API_WITHOUT_GUARDS_END
         if (!m_audioRenderers.contains(trackID)) {
             renderer = adoptNS([PAL::allocAVSampleBufferAudioRendererInstance() init]);
 
@@ -1172,12 +1195,12 @@ void SourceBufferPrivateAVFObjC::keyStatusesChanged()
 bool SourceBufferPrivateAVFObjC::canEnqueueSample(uint64_t trackID, const MediaSampleAVFObjC& sample)
 {
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    // If sample buffers don't support AVContentKeySession: enqueue sample
-    if (!sampleBufferRenderersSupportKeySession())
+    // if sample is unencrytped: enqueue sample
+    if (!sample.isProtected())
         return true;
 
-    // if sample is unencrytped: enqueue sample
-    if (sample.keyIDs().isEmpty())
+    // If sample buffers don't support AVContentKeySession: enqueue sample
+    if (!sampleBufferRenderersSupportKeySession())
         return true;
 
     // if sample is encrypted, but we are not attached to a CDM: do not enqueue sample.
@@ -1216,7 +1239,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const 
         return;
 
     Ref<MediaSampleAVFObjC> sampleAVFObjC = static_reference_cast<MediaSampleAVFObjC>(WTFMove(sample));
-    if (!sampleAVFObjC->keyIDs().isEmpty() && !canEnqueueSample(trackID, sampleAVFObjC)) {
+    if (!canEnqueueSample(trackID, sampleAVFObjC)) {
         m_blockedSamples.append({ trackID, WTFMove(sampleAVFObjC) });
         return;
     }

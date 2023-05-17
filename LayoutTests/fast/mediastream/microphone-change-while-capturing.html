@@ -16,16 +16,32 @@
         test.add_cleanup(() => { testRunner.resetMockMediaDevices(); });
     }
 
+    async function getDeviceId(label)
+    {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        let deviceId;
+        devices.forEach(device => {
+            if (device.label === "my USB microphone")
+                deviceId = device.deviceId;
+        });
+
+        stream.getAudioTracks()[0].stop();
+
+        return deviceId;
+    }
+
     promise_test(async (test) => {
         await setup(test);
 
         testRunner.addMockMicrophoneDevice("usbmic", "my USB microphone");
-        video.srcObject = await navigator.mediaDevices.getUserMedia({ audio: { deviceId: "usbmic" } });
+        const deviceId = await getDeviceId("my USB microphone");
+        video.srcObject = await navigator.mediaDevices.getUserMedia({ audio: { deviceId } });
         await video.play();
 
         testRunner.removeMockMediaDevice("usbmic");
         return new Promise((resolve, reject) => {
-            video.srcObject.getAudioTracks()[0].onended = resolve();
+            video.srcObject.getAudioTracks()[0].onended = resolve;
             setTimeout(reject, 2000);
         });
     }, "Detection of missing capturing device should trigger capture to fail");
@@ -35,7 +51,8 @@
 
         testRunner.addMockMicrophoneDevice("usbmic1", "my USB microphone");
         testRunner.addMockMicrophoneDevice("usbmic2", "my second USB microphone");
-        video.srcObject = await navigator.mediaDevices.getUserMedia({ audio: { deviceId: "usbmic1" } });
+        const deviceId = await getDeviceId("my USB microphone");
+        video.srcObject = await navigator.mediaDevices.getUserMedia({ audio: { deviceId } });
         await video.play();
         testRunner.removeMockMediaDevice("usbmic2");
         testRunner.addMockMicrophoneDevice("usbmic3", "my third USB microphone");

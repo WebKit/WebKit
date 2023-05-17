@@ -64,7 +64,7 @@ public:
     ~LibWebRTCVPXInternalVideoDecoder() = default;
 
     void postTask(Function<void()>&& task) { m_postTaskCallback(WTFMove(task)); }
-    void decode(Span<const uint8_t>, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration,  VideoDecoder::DecodeCallback&&);
+    void decode(std::span<const uint8_t>, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration,  VideoDecoder::DecodeCallback&&);
     void close() { m_isClosed = true; }
 private:
     LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXVideoDecoder::Type, VideoDecoder::OutputCallback&&, VideoDecoder::PostTaskCallback&&);
@@ -123,7 +123,7 @@ void LibWebRTCVPXVideoDecoder::close()
 }
 
 
-void LibWebRTCVPXInternalVideoDecoder::decode(Span<const uint8_t> data, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration,  VideoDecoder::DecodeCallback&& callback)
+void LibWebRTCVPXInternalVideoDecoder::decode(std::span<const uint8_t> data, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration,  VideoDecoder::DecodeCallback&& callback)
 {
     m_timestamp = timestamp;
     m_duration = duration;

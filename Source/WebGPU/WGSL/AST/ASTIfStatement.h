@@ -32,25 +32,25 @@
 namespace WGSL::AST {
 
 class IfStatement final : public Statement {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(IfStatement);
 public:
-    IfStatement(SourceSpan span, Expression::Ref&& test, CompoundStatement&& trueBody, Statement::Ptr&& falseBody, Attribute::List&& attributes)
-        : Statement(span)
-        , m_test(WTFMove(test))
-        , m_trueBody(WTFMove(trueBody))
-        , m_falseBody(WTFMove(falseBody))
-        , m_attributes(WTFMove(attributes))
-    { }
-
     NodeKind kind() const override;
     Expression& test() { return m_test.get(); }
-    CompoundStatement& trueBody() { return m_trueBody; }
-    Statement* maybeFalseBody() { return m_falseBody.get(); }
+    CompoundStatement& trueBody() { return m_trueBody.get(); }
+    Statement* maybeFalseBody() { return m_falseBody; }
     Attribute::List& attributes() { return m_attributes; }
 
 private:
+    IfStatement(SourceSpan span, Expression::Ref&& test, CompoundStatement::Ref&& trueBody, Statement::Ptr falseBody, Attribute::List&& attributes)
+        : Statement(span)
+        , m_test(WTFMove(test))
+        , m_trueBody(WTFMove(trueBody))
+        , m_falseBody(falseBody)
+        , m_attributes(WTFMove(attributes))
+    { }
+
     Expression::Ref m_test;
-    CompoundStatement m_trueBody;
+    CompoundStatement::Ref m_trueBody;
     Statement::Ptr m_falseBody;
     Attribute::List m_attributes;
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -338,9 +338,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (WebKit::PDFPluginAnnotation* activeAnnotation = _pdfPlugin->activeAnnotation()) {
         if (WebCore::AXObjectCache* existingCache = _pdfPlugin->axObjectCache()) {
             if (WebCore::AccessibilityObject* object = existingCache->getOrCreate(activeAnnotation->element()))
-                ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 return [object->wrapper() accessibilityAttributeValue:@"_AXAssociatedPluginParent"];
-                ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         }
     }
     return nil;
@@ -425,6 +425,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 @property (assign) WebKit::PDFPlugin* pdfPlugin;
 
+@property (nonatomic) BOOL shouldFlipAnnotations;
+
 - (id)initWithPDFPlugin:(WebKit::PDFPlugin *)plugin;
 
 @end
@@ -439,7 +441,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return nil;
     
     _pdfPlugin = plugin;
-    
     return self;
 }
 
@@ -509,6 +510,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (void)pdfLayerController:(PDFLayerController *)pdfLayerController didChangeSelection:(PDFSelection *)selection
 {
     _pdfPlugin->notifySelectionChanged(selection);
+}
+
+- (void)pdfLayerController:(PDFLayerController *)pdfLayerController didUpdateLayer:(CALayer *)layer forAnnotation:(PDFAnnotation *)annotation
+{
+    // Due to an issue where the annotations are flipped using UI-side compositing
+    // flip the transform in this case.
+    if (_shouldFlipAnnotations)
+        [layer setAffineTransform:CGAffineTransformMakeScale(1, -1)];
 }
 
 - (void)setMouseCursor:(PDFLayerControllerCursorType)cursorType
@@ -787,6 +796,9 @@ void PDFPlugin::receivedNonLinearizedPDFSentinel()
         return;
 
     m_pdfDocument = adoptNS([allocPDFDocumentInstance() initWithData:rawData()]);
+    if (!m_pdfDocument)
+        return;
+
     installPDFDocument();
     tryRunScriptsInPDFDocument();
 }
@@ -1635,7 +1647,8 @@ void PDFPlugin::streamDidFinishLoading()
 #endif
     {
         m_pdfDocument = adoptNS([allocPDFDocumentInstance() initWithData:rawData()]);
-        installPDFDocument();
+        if (m_pdfDocument)
+            installPDFDocument();
     }
 
     tryRunScriptsInPDFDocument();
@@ -1857,6 +1870,9 @@ void PDFPlugin::setView(PluginView& view)
 {
     ASSERT(!m_view);
     m_view = view;
+
+    if (view.isUsingUISideCompositing())
+        [m_pdfLayerControllerDelegate setShouldFlipAnnotations:YES];
 }
 
 void PDFPlugin::willDetachRenderer()
@@ -2439,12 +2455,12 @@ void PDFPlugin::setActiveAnnotation(PDFAnnotation *annotation)
         m_activeAnnotation->commit();
 
     if (annotation) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([annotation isKindOfClass:getPDFAnnotationTextWidgetClass()] && static_cast<PDFAnnotationTextWidget *>(annotation).isReadOnly) {
             m_activeAnnotation = nullptr;
             return;
         }
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
         auto activeAnnotation = PDFPluginAnnotation::create(annotation, m_pdfLayerController.get(), this);
         m_activeAnnotation = activeAnnotation.get();
@@ -2772,9 +2788,9 @@ std::tuple<String, PDFSelection *, NSDictionary *> PDFPlugin::lookupTextAtLocati
         if (!NSPointInRect(pointInPageSpace, bounds))
             continue;
 
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         PDFAnnotationLink *linkAnnotation = (PDFAnnotationLink *)annotation;
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         NSURL *url = linkAnnotation.URL;
         if (!url)
             continue;

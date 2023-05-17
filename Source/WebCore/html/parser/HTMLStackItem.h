@@ -29,8 +29,8 @@
 #include "AtomHTMLToken.h"
 #include "DocumentFragment.h"
 #include "Element.h"
-#include "ElementName.h"
 #include "Namespace.h"
+#include "NodeName.h"
 #include "TagName.h"
 
 namespace WebCore {

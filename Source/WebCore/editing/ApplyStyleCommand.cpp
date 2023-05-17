@@ -363,7 +363,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
     // is performed in the following loops below.
     if (beyondEnd) {
         auto treeOrderPos = treeOrder(*startNode, *beyondEnd);
-        if (is_gt(treeOrderPos) || is_eq(treeOrderPos))
+        if (is_gteq(treeOrderPos))
             return;
     }
     

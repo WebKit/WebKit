@@ -31,7 +31,7 @@ class JSWorkletGlobalScope : public JSEventTarget {
 public:
     using Base = JSEventTarget;
     using DOMWrapped = WorkletGlobalScope;
-    static JSWorkletGlobalScope* create(JSC::VM& vm, JSC::Structure* structure, Ref<WorkletGlobalScope>&& impl, JSC::JSProxy* proxy)
+    static JSWorkletGlobalScope* create(JSC::VM& vm, JSC::Structure* structure, Ref<WorkletGlobalScope>&& impl, JSC::JSGlobalProxy* proxy)
     {
         JSWorkletGlobalScope* ptr = new (NotNull, JSC::allocateCell<JSWorkletGlobalScope>(vm)) JSWorkletGlobalScope(vm, structure, WTFMove(impl));
         ptr->finishCreation(vm, proxy);
@@ -66,7 +66,9 @@ public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 protected:
     JSWorkletGlobalScope(JSC::VM&, JSC::Structure*, Ref<WorkletGlobalScope>&&);
-    void finishCreation(JSC::VM&, JSC::JSProxy*);
+#if ASSERT_ENABLED
+    void finishCreation(JSC::VM&, JSC::JSGlobalProxy*);
+#endif
 };
 
 

@@ -115,6 +115,12 @@ bool ComputePassEncoder::validatePopDebugGroup() const
     return true;
 }
 
+void ComputePassEncoder::makeInvalid()
+{
+    [m_computeCommandEncoder endEncoding];
+    m_computeCommandEncoder = nil;
+}
+
 void ComputePassEncoder::popDebugGroup()
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-popdebuggroup
@@ -151,6 +157,12 @@ void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& grou
 
 void ComputePassEncoder::setPipeline(const ComputePipeline& pipeline)
 {
+    if (!pipeline.isValid()) {
+        m_device->generateAValidationError("invalid ComputePipeline in ComputePassEncoder.setPipeline"_s);
+        makeInvalid();
+        return;
+    }
+
     ASSERT(pipeline.computePipelineState());
     [m_computeCommandEncoder setComputePipelineState:pipeline.computePipelineState()];
     m_threadsPerThreadgroup = pipeline.threadsPerThreadgroup();

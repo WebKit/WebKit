@@ -40,7 +40,6 @@ public:
 
     JS_EXPORT_PRIVATE CachePayload(CachePayload&&);
     JS_EXPORT_PRIVATE ~CachePayload();
-    JS_EXPORT_PRIVATE CachePayload& operator=(CachePayload&& other);
 
     JS_EXPORT_PRIVATE const uint8_t* data() const;
     JS_EXPORT_PRIVATE size_t size() const;

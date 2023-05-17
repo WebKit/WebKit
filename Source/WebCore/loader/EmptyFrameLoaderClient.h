@@ -33,8 +33,6 @@ class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
 private:
     Ref<DocumentLoader> createDocumentLoader(const ResourceRequest&, const SubstituteData&) override;
 
-    std::optional<PageIdentifier> pageID() const override;
-
     bool hasWebView() const final;
 
     void makeRepresentation(DocumentLoader*) final;
@@ -181,6 +179,9 @@ private:
 
 #if PLATFORM(COCOA)
     RemoteAXObjectRef accessibilityRemoteObject() final;
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    void setAXIsolatedTreeRoot(WebCore::AXCoreObject*) final;
+#endif
     void willCacheResponse(DocumentLoader*, ResourceLoaderIdentifier, NSCachedURLResponse *, CompletionHandler<void(NSCachedURLResponse *)>&&) const final;
 #endif
 

@@ -142,8 +142,7 @@ RefPtr<SharedMemory> Data::tryCreateSharedMemory() const
     if (isNull() || !isMap())
         return nullptr;
 
-    GInputStream* inputStream = g_io_stream_get_input_stream(G_IO_STREAM(m_fileDescriptor));
-    int fd = g_file_descriptor_based_get_fd(G_FILE_DESCRIPTOR_BASED(inputStream));
+    int fd = FileSystem::posixFileDescriptor(m_fileDescriptor);
     gsize length;
     const auto* data = g_bytes_get_data(m_buffer.get(), &length);
     return SharedMemory::wrapMap(const_cast<void*>(data), length, fd);

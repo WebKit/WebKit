@@ -29,7 +29,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://html.spec.whatwg.org/multipage/comms.html#the-websocket-interface
+// https://websockets.spec.whatwg.org/#the-websocket-interface
+
+enum BinaryType { "blob", "arraybuffer" };
 
 [
     ActiveDOMObject,
@@ -38,31 +40,29 @@
 ] interface WebSocket : EventTarget {
     [CallWith=CurrentScriptExecutionContext] constructor(USVString url, optional sequence<DOMString> protocols = []);
     [CallWith=CurrentScriptExecutionContext] constructor(USVString url, DOMString protocol);
-
     readonly attribute USVString url;
 
+    // ready state
     const unsigned short CONNECTING = 0;
     const unsigned short OPEN = 1;
     const unsigned short CLOSING = 2;
     const unsigned short CLOSED = 3;
     readonly attribute unsigned short readyState;
-
     readonly attribute unsigned long bufferedAmount;
 
+    // networking
     attribute EventHandler onopen;
-    attribute EventHandler onmessage;
     attribute EventHandler onerror;
     attribute EventHandler onclose;
+    readonly attribute DOMString protocol;
+    readonly attribute DOMString extensions;
+    undefined close(optional [Clamp] unsigned short code, optional USVString reason);
 
-    readonly attribute DOMString? protocol;
-    readonly attribute DOMString? extensions;
-
-    attribute DOMString binaryType;
-
+    // messaging
+    attribute EventHandler onmessage;
+    attribute BinaryType binaryType;
     undefined send(ArrayBuffer data);
     undefined send(ArrayBufferView data);
     undefined send(Blob data);
     undefined send(USVString data);
-
-    undefined close(optional [Clamp] unsigned short code, optional USVString reason);
 };

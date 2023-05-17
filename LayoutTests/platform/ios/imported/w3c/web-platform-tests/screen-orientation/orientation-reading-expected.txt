@@ -1,8 +1,8 @@
 
-PASS Test screen.orientation properties
-PASS Test screen.orientation default values.
-PASS Test the orientations and associated angles
-FAIL Test that screen.orientation properties are not writable Attempted to assign to readonly property.
-PASS Test that screen.orientation is always the same object
-PASS Test that screen.orientation values change if the orientation changes
+PASS screen.orientation attributes are present
+PASS Test the orientations and associated angles when the natural orientation is 'portrait'
+PASS Test the orientations and associated angles when the natural orientation is 'landscape'
+PASS Test that ScreenOrientation properties are not writable
+PASS Test that ScreenOrientation is always the same object
+PASS Test that ScreenOrientation's attribute values change after 'change' event fires
 

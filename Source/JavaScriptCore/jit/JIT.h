@@ -165,11 +165,10 @@ namespace JSC {
 
         VM& vm() { return *JSInterfaceJIT::vm(); }
 
-        void compileAndLinkWithoutFinalizing(JITCompilationEffort);
-        CompilationResult finalizeOnMainThread(CodeBlock*);
-        size_t codeSize() const;
+        std::tuple<std::unique_ptr<LinkBuffer>, RefPtr<BaselineJITCode>> compileAndLinkWithoutFinalizing(JITCompilationEffort);
+        static CompilationResult finalizeOnMainThread(CodeBlock*, LinkBuffer&, RefPtr<BaselineJITCode>);
 
-        void doMainThreadPreparationBeforeCompile();
+        static void doMainThreadPreparationBeforeCompile(VM&);
         
         static CompilationResult compile(VM& vm, CodeBlock* codeBlock, JITCompilationEffort effort)
         {
@@ -192,7 +191,7 @@ namespace JSC {
         void privateCompileMainPass();
         void privateCompileLinkPass();
         void privateCompileSlowCases();
-        void link();
+        RefPtr<BaselineJITCode> link(LinkBuffer&);
         CompilationResult privateCompile(CodeBlock*, JITCompilationEffort);
 
         // Add a call out from JIT code, without an exception check.
@@ -440,6 +439,7 @@ namespace JSC {
 #endif
         void emit_op_is_object(const JSInstruction*);
         void emit_op_is_cell_with_type(const JSInstruction*);
+        void emit_op_has_structure_with_flags(const JSInstruction*);
         void emit_op_jeq_null(const JSInstruction*);
         void emit_op_jfalse(const JSInstruction*);
         void emit_op_jmp(const JSInstruction*);
@@ -546,6 +546,11 @@ namespace JSC {
         void emit_op_enumerator_in_by_val(const JSInstruction*);
         void emit_op_enumerator_has_own_property(const JSInstruction*);
 
+        template<typename OpcodeType>
+        void generatePutByValSlowCase(const OpcodeType&, Vector<SlowCaseEntry>::iterator&);
+        void emit_op_enumerator_put_by_val(const JSInstruction*);
+        void emitSlow_op_enumerator_put_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+
         void emitSlow_op_add(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_call(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_tail_call(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
@@ -599,6 +604,7 @@ namespace JSC {
         void emitSlow_op_new_object(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_put_by_id(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_put_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_put_by_val_direct(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_put_private_name(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_sub(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
 
@@ -948,13 +954,11 @@ namespace JSC {
         unsigned m_bytecodeCountHavingSlowCase { 0 };
         
         Label m_arityCheck;
-        std::unique_ptr<LinkBuffer> m_linkBuffer;
 
         std::unique_ptr<JITDisassembler> m_disassembler;
         RefPtr<Profiler::Compilation> m_compilation;
 
         PCToCodeOriginMapBuilder m_pcToCodeOriginMapBuilder;
-        std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
 
         HashMap<const JSInstruction*, void*> m_instructionToMathIC;
         HashMap<const JSInstruction*, UniqueRef<MathICGenerationState>> m_instructionToMathICGenerationState;
@@ -967,7 +971,6 @@ namespace JSC {
         UnlinkedCodeBlock* const m_unlinkedCodeBlock { nullptr };
 
         MathICHolder m_mathICs;
-        RefPtr<BaselineJITCode> m_jitCode;
 
         Vector<JITConstantPool::Value> m_constantPool;
         SegmentedVector<BaselineUnlinkedCallLinkInfo> m_unlinkedCalls;

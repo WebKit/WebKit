@@ -177,6 +177,17 @@ void EventPath::setRelatedTarget(Node& origin, Node& relatedNode)
     }
 }
 
+void EventPath::adjustForDisabledFormControl()
+{
+    for (unsigned i = 0; i < m_path.size(); ++i) {
+        auto* element = dynamicDowncast<Element>(m_path[i].node());
+        if (element && element->isDisabledFormControl()) {
+            m_path.shrink(i);
+            return;
+        }
+    }
+}
+
 #if ENABLE(TOUCH_EVENTS)
 
 void EventPath::retargetTouch(EventContext::TouchListType type, const Touch& touch)

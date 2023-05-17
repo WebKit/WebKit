@@ -128,6 +128,14 @@ void SampleBufferDisplayLayer::pause()
     m_connection->send(Messages::RemoteSampleBufferDisplayLayer::Pause { }, m_identifier);
 }
 
+void SampleBufferDisplayLayer::enqueueBlackFrameFrom(const VideoFrame& videoFrame)
+{
+    auto size = videoFrame.presentationSize();
+    WebCore::IntSize blackFrameSize { static_cast<int>(size.width()), static_cast<int>(size.height()) };
+    SharedVideoFrame sharedVideoFrame { videoFrame.presentationTime(), false, videoFrame.rotation(), blackFrameSize };
+    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::EnqueueVideoFrame { sharedVideoFrame }, m_identifier);
+}
+
 void SampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)
 {
     if (m_paused)
@@ -135,7 +143,7 @@ void SampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)
 
     auto sharedVideoFrame = m_sharedVideoFrameWriter.write(videoFrame,
         [this](auto& semaphore) { m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetSharedVideoFrameSemaphore { semaphore }, m_identifier); },
-        [this](auto& handle) { m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetSharedVideoFrameMemory { handle }, m_identifier); }
+        [this](auto&& handle) { m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetSharedVideoFrameMemory { WTFMove(handle) }, m_identifier); }
     );
     if (!sharedVideoFrame)
         return;

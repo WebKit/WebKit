@@ -26,11 +26,12 @@
 #pragma once
 
 #include "ASTAttribute.h"
+#include "ASTBuilder.h"
 
 namespace WGSL::AST {
 
 class InterpolateAttribute final : public Attribute {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(InterpolateAttribute);
 public:
     enum class Type : uint8_t {
         Flat,
@@ -44,17 +45,17 @@ public:
         Sample,
     };
 
+    NodeKind kind() const override;
+    Type type() const { return m_type; }
+    Sampling sampling() const { return m_sampling; }
+
+private:
     InterpolateAttribute(SourceSpan span, Type type, Sampling sampling)
         : Attribute(span)
         , m_type(type)
         , m_sampling(sampling)
     { }
 
-    NodeKind kind() const override;
-    Type type() const { return m_type; }
-    Sampling sampling() const { return m_sampling; }
-
-private:
     Type m_type;
     Sampling m_sampling;
 };

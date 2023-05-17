@@ -33,8 +33,8 @@ namespace WebCore {
 
 WEBCORE_EXPORT bool deviceHasAGXCompilerService();
 WEBCORE_EXPORT void setDeviceHasAGXCompilerServiceForTesting();
-WEBCORE_EXPORT Span<const ASCIILiteral> agxCompilerServices();
-WEBCORE_EXPORT Span<const ASCIILiteral> agxCompilerClasses();
+WEBCORE_EXPORT std::span<const ASCIILiteral> agxCompilerServices();
+WEBCORE_EXPORT std::span<const ASCIILiteral> agxCompilerClasses();
 
 }
 

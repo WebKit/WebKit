@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #import "WebProcess.h"
 
 #import "AccessibilitySupportSPI.h"
+#import "ArgumentCodersCocoa.h"
 #import "DefaultWebBrowserChecks.h"
 #import "LegacyCustomProtocolManager.h"
 #import "LogInitialization.h"
@@ -161,7 +162,7 @@
 #endif
 
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
-#import <pal/spi/ios/DataDetectorsUISPI.h>
+#import <pal/spi/ios/DataDetectorsUISoftLink.h>
 #endif
 
 #import <WebCore/MediaAccessibilitySoftLink.h>
@@ -240,7 +241,7 @@ static void softlinkDataDetectorsFrameworks()
 #if ENABLE(DATA_DETECTION)
     PAL::isDataDetectorsCoreFrameworkAvailable();
 #if PLATFORM(IOS_FAMILY)
-    DataDetectorsUILibrary();
+    PAL::isDataDetectorsUIFrameworkAvailable();
 #endif // PLATFORM(IOS_FAMILY)
 #endif // ENABLE(DATA_DETECTION)
 }
@@ -278,17 +279,23 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 #if HAVE(VIDEO_RESTRICTED_DECODING)
 #if PLATFORM(MAC)
+    OSObjectPtr<dispatch_semaphore_t> codeCheckSemaphore;
     if (SandboxExtension::consumePermanently(parameters.trustdExtensionHandle)) {
         // Open up a Mach connection to trustd by doing a code check validation on the main bundle.
         // This is required since launchd will be blocked after process launch, which prevents new Mach connections to be created.
         // FIXME: remove this once <rdar://90127163> is fixed.
-        auto bundleURL = adoptCF(CFBundleCopyBundleURL(CFBundleGetMainBundle()));
-        SecStaticCodeRef code = nullptr;
-        SecStaticCodeCreateWithPath(bundleURL.get(), kSecCSDefaultFlags, &code);
-        if (code) {
-            SecStaticCodeCheckValidity(code, kSecCSDoNotValidateResources, nullptr);
-            CFRelease(code);
-        }
+        // Dispatch this work on a thread to avoid blocking the main thread. We will wait for this to complete at the end of this method.
+        codeCheckSemaphore = adoptOSObject(dispatch_semaphore_create(0));
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0), [codeCheckSemaphore = codeCheckSemaphore] {
+            auto bundleURL = adoptCF(CFBundleCopyExecutableURL(CFBundleGetMainBundle()));
+            SecStaticCodeRef code = nullptr;
+            SecStaticCodeCreateWithPath(bundleURL.get(), kSecCSDefaultFlags, &code);
+            if (code) {
+                SecStaticCodeCheckValidity(code, kSecCSDoNotValidateResources | kSecCSDoNotValidateExecutable, nullptr);
+                CFRelease(code);
+            }
+            dispatch_semaphore_signal(codeCheckSemaphore.get());
+        });
     }
 #endif // PLATFORM(MAC)
 #if USE(APPLE_INTERNAL_SDK)
@@ -436,6 +443,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     
     setSystemHasBattery(parameters.systemHasBattery);
     setSystemHasAC(parameters.systemHasAC);
+    IPC::setStrictSecureDecodingForAllObjCEnabled(parameters.strictSecureDecodingForAllObjCEnabled);
 
 #if PLATFORM(IOS_FAMILY)
     RenderThemeIOS::setCSSValueToSystemColorMap(WTFMove(parameters.cssValueToSystemColorMap));
@@ -475,6 +483,11 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     // Soft link frameworks related to Data Detection before we disconnect from launchd because these frameworks connect to
     // launchd temporarily at link time to register XPC services. See rdar://93598951 (my feature request to stop doing that)
     softlinkDataDetectorsFrameworks();
+
+#if HAVE(VIDEO_RESTRICTED_DECODING) && PLATFORM(MAC)
+    if (codeCheckSemaphore)
+        dispatch_semaphore_wait(codeCheckSemaphore.get(), DISPATCH_TIME_FOREVER);
+#endif
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&& parameters)
@@ -947,10 +960,10 @@ RefPtr<ObjCObjectGraph> WebProcess::transformHandlesToObjects(ObjCObjectGraph& o
             if (dynamic_objc_cast<WKBrowsingContextHandle>(object))
                 return true;
 
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (dynamic_objc_cast<WKTypeRefWrapper>(object))
                 return true;
-            ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
             return false;
         }
 
@@ -963,10 +976,10 @@ RefPtr<ObjCObjectGraph> WebProcess::transformHandlesToObjects(ObjCObjectGraph& o
                 return [NSNull null];
             }
 
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (auto* wrapper = dynamic_objc_cast<WKTypeRefWrapper>(object))
                 return adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(m_webProcess.transformHandlesToObjects(toImpl(wrapper.object)).get())]);
-            ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
             return object;
         }
 
@@ -984,10 +997,10 @@ RefPtr<ObjCObjectGraph> WebProcess::transformObjectsToHandles(ObjCObjectGraph& o
             if (dynamic_objc_cast<WKWebProcessPlugInBrowserContextController>(object))
                 return true;
 
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (dynamic_objc_cast<WKTypeRefWrapper>(object))
                 return true;
-            ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
             return false;
         }
 
@@ -996,10 +1009,10 @@ RefPtr<ObjCObjectGraph> WebProcess::transformObjectsToHandles(ObjCObjectGraph& o
             if (auto* controller = dynamic_objc_cast<WKWebProcessPlugInBrowserContextController>(object))
                 return controller.handle;
 
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (auto* wrapper = dynamic_objc_cast<WKTypeRefWrapper>(object))
                 return adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(transformObjectsToHandles(toImpl(wrapper.object)).get())]);
-            ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
             return object;
         }
     };

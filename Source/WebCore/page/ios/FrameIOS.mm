@@ -647,7 +647,7 @@ void LocalFrame::dispatchPageHideEventBeforePause()
         return;
 
     Page::forEachDocumentFromMainFrame(*this, [](Document& document) {
-        document.dispatchPagehideEvent(PageshowEventPersisted);
+        document.dispatchPagehideEvent(PageshowEventPersistence::Persisted);
     });
 }
 
@@ -658,7 +658,7 @@ void LocalFrame::dispatchPageShowEventBeforeResume()
         return;
 
     Page::forEachDocumentFromMainFrame(*this, [](Document& document) {
-        document.dispatchPageshowEvent(PageshowEventPersisted);
+        document.dispatchPageshowEvent(PageshowEventPersistence::Persisted);
     });
 }
 

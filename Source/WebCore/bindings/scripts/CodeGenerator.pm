@@ -1110,6 +1110,7 @@ sub GetterExpression
 
     my $functionName;
     if ($attribute->extendedAttributes->{"URL"}) {
+        $implIncludes->{"ElementInlines.h"} = 1;
         $functionName = "getURLAttributeForBindings";
     } elsif ($attributeType->name eq "boolean") {
         $implIncludes->{"ElementInlines.h"} = 1;
@@ -1127,6 +1128,7 @@ sub GetterExpression
             $functionName = "getIdAttribute";
             $contentAttributeName = "";
         } elsif ($contentAttributeName eq "WebCore::HTMLNames::nameAttr") {
+            $implIncludes->{"ElementInlines.h"} = 1;
             $functionName = "getNameAttribute";
             $contentAttributeName = "";
         } elsif ($generator->IsSVGAnimatedType($attributeType)) {

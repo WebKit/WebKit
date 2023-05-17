@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BaselineAlignment.h"
 #include "GridLayoutFunctions.h"
 #include "RenderStyleConstants.h"
 #include "WritingMode.h"
@@ -33,103 +34,8 @@
 
 namespace WebCore {
 
-// These classes are used to implement the Baseline Alignment logic, as described in the CSS Box Alignment
-// specification.
-// https://drafts.csswg.org/css-align/#baseline-terms
-//
-// A baseline-sharing group is composed of boxes that participate in baseline alignment together. This is
-// possible only if they:
-//
-//   * Share an alignment context along an axis perpendicular to their baseline alignment axis.
-//   * Have compatible baseline alignment preferences (i.e., the baselines that want to align are on the same
-//     side of the alignment context).
-//
-// Once the BaselineGroup is instantiated, defined by a 'block-direction' (WritingMode) and a 'baseline-preference'
-// (first/last baseline), it's ready to collect the items that will participate in the Baseline Alignment logic.
-//
-class BaselineGroup {
-public:
-    // It stores an item (if not already present) and update the max_ascent associated to this
-    // baseline-sharing group.
-    void update(const RenderBox&, LayoutUnit ascent);
-    LayoutUnit maxAscent() const { return m_maxAscent; }
-    int size() const { return m_items.size(); }
-
-private:
-    friend class BaselineContext;
-    BaselineGroup(WritingMode blockFlow, ItemPosition childPreference);
-
-    // Determines whether a baseline-sharing group is compatible with an item, based on its 'block-flow' and
-    // 'baseline-preference'
-    bool isCompatible(WritingMode, ItemPosition) const;
-
-    // Determines whether the baseline-sharing group's associated block-flow is opposite (LR vs RL) to particular
-    // item's writing-mode.
-    bool isOppositeBlockFlow(WritingMode blockFlow) const;
-
-    // Determines whether the baseline-sharing group's associated block-flow is orthogonal (vertical vs horizontal)
-    // to particular item's writing-mode.
-    bool isOrthogonalBlockFlow(WritingMode blockFlow) const;
-
-    WritingMode m_blockFlow;
-    ItemPosition m_preference;
-    LayoutUnit m_maxAscent;
-    HashSet<const RenderBox*> m_items;
-};
-
-// https://drafts.csswg.org/css-align-3/#shared-alignment-context
-// Boxes share an alignment context along a particular axis when they are:
-//
-//  * table cells in the same row, along the table's row (inline) axis
-//  * table cells in the same column, along the table's column (block) axis
-//  * grid items in the same row, along the grid's row (inline) axis
-//  * grid items in the same column, along the grid's colum (block) axis
-//  * flex items in the same flex line, along the flex container's main axis
-//
-// https://drafts.csswg.org/css-align-3/#baseline-sharing-group
-// A Baseline alignment-context may handle several baseline-sharing groups. In order to create an instance, we
-// need to pass the required data to define the first baseline-sharing group; a Baseline Context must have at
-// least one baseline-sharing group.
-//
-// By adding new items to a Baseline Context, the baseline-sharing groups it handles are automatically updated,
-// if there is one that is compatible with such item. Otherwise, a new baseline-sharing group is created,
-// compatible with the new item.
-class BaselineContext {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    BaselineContext(const RenderBox& child, ItemPosition preference, LayoutUnit ascent);
-    const BaselineGroup& sharedGroup(const RenderBox& child, ItemPosition preference) const;
-
-    // Updates the baseline-sharing group compatible with the item.
-    // We pass the item's baseline-preference to avoid dependencies with the LayoutGrid class, which is the one
-    // managing the alignment behavior of the Grid Items.
-    void updateSharedGroup(const RenderBox& child, ItemPosition preference, LayoutUnit ascent);
-
-private:
-    // Returns the baseline-sharing group compatible with an item.
-    // We pass the item's baseline-preference to avoid dependencies with the LayoutGrid class, which is the one
-    // managing the alignment behavior of the Grid Items.
-    // FIXME: Properly implement baseline-group compatibility.
-    // See https://github.com/w3c/csswg-drafts/issues/721
-    BaselineGroup& findCompatibleSharedGroup(const RenderBox& child, ItemPosition preference);
-
-    Vector<BaselineGroup> m_sharedGroups;
-};
-
-enum AllowedBaseLine {FirstLine, LastLine, BothLines};
-
-static inline bool isBaselinePosition(ItemPosition position)
-{
-    return position == ItemPosition::Baseline || position == ItemPosition::LastBaseline;
-}
-
-static inline bool isFirstBaselinePosition(ItemPosition position)
-{
-    return position == ItemPosition::Baseline;
-}
-
 // This is the class that implements the Baseline Alignment logic, using internally the BaselineContext and
-// BaselineGroupd classes (described above).
+// BaselineGroup classes.
 //
 // The first phase is to collect the items that will participate in baseline alignment together. During this
 // phase the required baseline-sharing groups will be created for each Baseline alignment-context shared by

@@ -86,11 +86,6 @@ public:
             && m_endOffset == other.m_endOffset;
     }
 
-    bool operator!=(const SourceCode& other) const
-    {
-        return !(*this == other);
-    }
-
 private:
     OrdinalNumber m_firstLine;
     OrdinalNumber m_startColumn;

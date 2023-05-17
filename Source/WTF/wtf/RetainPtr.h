@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005-2021 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -99,7 +99,27 @@ public:
     ~RetainPtr();
 
     void clear();
-    PtrType leakRef() WARN_UNUSED_RETURN;
+
+#ifdef __OBJC__
+    template<typename U = T>
+    std::enable_if_t<std::is_convertible_v<U, id>, PtrType> leakRef() NS_RETURNS_RETAINED WARN_UNUSED_RETURN {
+        static_assert(std::is_same_v<T, U>, "explicit specialization not allowed");
+        return fromStorageType(std::exchange(m_ptr, nullptr));
+    }
+#else
+    template<typename U = T>
+    std::enable_if_t<std::is_same_v<U, id>, PtrType> leakRef() CF_RETURNS_RETAINED WARN_UNUSED_RETURN {
+        static_assert(std::is_same_v<T, U>, "explicit specialization not allowed");
+        return fromStorageType(std::exchange(m_ptr, nullptr));
+    }
+#endif
+
+    template<typename U = T>
+    std::enable_if_t<!std::is_convertible_v<U, id>, PtrType> leakRef() CF_RETURNS_RETAINED WARN_UNUSED_RETURN {
+        static_assert(std::is_same_v<T, U>, "explicit specialization not allowed");
+        return fromStorageType(std::exchange(m_ptr, nullptr));
+    }
+
 #if HAVE(CFAUTORELEASE)
     PtrType autorelease();
 #endif
@@ -201,11 +221,6 @@ template<typename T> inline void RetainPtr<T>::clear()
         CFRelease(ptr);
 }
 
-template<typename T> inline auto RetainPtr<T>::leakRef() -> PtrType
-{
-    return fromStorageType(std::exchange(m_ptr, nullptr));
-}
-
 #if HAVE(CFAUTORELEASE)
 template<typename T> inline auto RetainPtr<T>::autorelease() -> PtrType
 {
@@ -295,21 +310,6 @@ template<typename T, typename U> constexpr bool operator==(const RetainPtr<T>& a
 template<typename T, typename U> constexpr bool operator==(T* a, const RetainPtr<U>& b)
 {
     return a == b.get(); 
-}
-
-template<typename T, typename U> constexpr bool operator!=(const RetainPtr<T>& a, const RetainPtr<U>& b)
-{ 
-    return a.get() != b.get(); 
-}
-
-template<typename T, typename U> constexpr bool operator!=(const RetainPtr<T>& a, U* b)
-{
-    return a.get() != b; 
-}
-
-template<typename T, typename U> constexpr bool operator!=(T* a, const RetainPtr<U>& b)
-{ 
-    return a != b.get(); 
 }
 
 template<typename T> constexpr RetainPtr<T> adoptCF(T CF_RELEASES_ARGUMENT ptr)

@@ -71,6 +71,7 @@ class GeneratorPrototype;
 class GetterSetter;
 class ImportMap;
 class IntlCollator;
+class IntlNumberFormat;
 class IteratorPrototype;
 class JSArrayBuffer;
 class JSCallee;
@@ -220,6 +221,7 @@ public:
     WriteBarrier<StringConstructor> m_stringConstructor;
 
     LazyProperty<JSGlobalObject, IntlCollator> m_defaultCollator;
+    LazyProperty<JSGlobalObject, IntlNumberFormat> m_defaultNumberFormat;
     LazyProperty<JSGlobalObject, Structure> m_collatorStructure;
     LazyProperty<JSGlobalObject, Structure> m_displayNamesStructure;
     LazyProperty<JSGlobalObject, Structure> m_durationFormatStructure;
@@ -638,6 +640,7 @@ public:
     JSInternalPromiseConstructor* internalPromiseConstructor() const { return m_internalPromiseConstructor.get(); }
 
     IntlCollator* defaultCollator() const { return m_defaultCollator.get(this); }
+    IntlNumberFormat* defaultNumberFormat() const { return m_defaultNumberFormat.get(this); }
 
     NullGetterFunction* nullGetterFunction() const { return m_nullGetterFunction.get(); }
     NullSetterFunction* nullSetterFunction() const { return m_nullSetterFunction.get(); }
@@ -669,6 +672,8 @@ public:
     JSFunction* performProxyObjectHasFunction() const;
     JSFunction* performProxyObjectGetFunction() const;
     JSFunction* performProxyObjectGetFunctionConcurrently() const;
+    JSFunction* performProxyObjectGetByValFunction() const;
+    JSFunction* performProxyObjectGetByValFunctionConcurrently() const;
     JSFunction* performProxyObjectSetSloppyFunction() const;
     JSFunction* performProxyObjectSetSloppyFunctionConcurrently() const;
     JSFunction* performProxyObjectSetStrictFunction() const;
@@ -717,6 +722,7 @@ public:
     Structure* scopedArgumentsStructure() const { return m_scopedArgumentsStructure.get(); }
     Structure* clonedArgumentsStructure() const { return m_clonedArgumentsStructure.get(); }
     Structure* objectStructureForObjectConstructor() const { return m_objectStructureForObjectConstructor.get(); }
+    StructureID objectStructureIDForObjectConstructor() const { return m_objectStructureForObjectConstructor.value(); }
     Structure* originalArrayStructureForIndexingType(IndexingType indexingType) const
     {
         ASSERT(indexingType & IsArray);
@@ -1037,7 +1043,6 @@ public:
             return m_importMapStatusPromise.get(this);
         return nullptr;
     }
-    JS_EXPORT_PRIVATE void registerImportMap() const;
     JS_EXPORT_PRIVATE bool isAcquiringImportMaps() const;
     JS_EXPORT_PRIVATE void setAcquiringImportMaps();
     JS_EXPORT_PRIVATE void setPendingImportMaps();

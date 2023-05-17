@@ -42,9 +42,10 @@
 #import <wtf/WorkQueue.h>
 
 #if PLATFORM(IOS_FAMILY)
+#import "LinkPresentationSPI.h"
 #import "UIKitSPI.h"
 #import "WKContentViewInteraction.h"
-#import <LinkPresentation/LPLinkMetadata.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #else
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #endif
@@ -57,10 +58,7 @@
 
 SOFT_LINK_FRAMEWORK(LinkPresentation)
 SOFT_LINK_CLASS(LinkPresentation, LPLinkMetadata)
-
-@interface LPLinkMetadata (Staging_102382126)
-- (void)_setIncomplete:(BOOL)incomplete;
-@end
+SOFT_LINK_CLASS(LinkPresentation, LPMetadataProvider)
 
 @interface WKShareSheetFileItemProvider : UIActivityItemProvider
 - (instancetype)initWithURL:(NSURL *)url;
@@ -68,18 +66,20 @@ SOFT_LINK_CLASS(LinkPresentation, LPLinkMetadata)
 
 @implementation WKShareSheetFileItemProvider {
     RetainPtr<NSURL> _url;
+    RetainPtr<LPLinkMetadata> _headerMetadata;
 }
 
 - (instancetype)initWithURL:(NSURL *)url
 {
-    NSURL *placeholderURL = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
-    placeholderURL = [placeholderURL URLByAppendingPathComponent:[NSUUID UUID].UUIDString isDirectory:YES];
-    placeholderURL = [placeholderURL URLByAppendingPathComponent:url.lastPathComponent isDirectory:NO];
-
-    if (!(self = [super initWithPlaceholderItem:placeholderURL]))
+    if (!(self = [super initWithPlaceholderItem:[NSData data]]))
         return nil;
 
     _url = url;
+
+    RetainPtr provider = adoptNS([allocLPMetadataProviderInstance() init]);
+    [provider setShouldFetchSubresources:NO];
+
+    _headerMetadata = [provider _startFetchingMetadataForURL:url completionHandler:^(NSError *) { }];
 
     return self;
 }
@@ -87,6 +87,27 @@ SOFT_LINK_CLASS(LinkPresentation, LPLinkMetadata)
 - (id)item
 {
     return _url.get();
+}
+
+- (NSString *)activityViewController:(UIActivityViewController *)activityViewController dataTypeIdentifierForActivityType:(UIActivityType)activityType
+{
+    NSString *typeIdentifier = nil;
+    [_url getPromisedItemResourceValue:&typeIdentifier forKey:NSURLTypeIdentifierKey error:nil];
+
+    if (typeIdentifier)
+        return typeIdentifier;
+
+    if (NSString *pathExtension = [_url pathExtension]) {
+        if (UTType *type = [UTType typeWithFilenameExtension:pathExtension])
+            return type.identifier;
+    }
+
+    return UTTypeData.identifier;
+}
+
+- (LPLinkMetadata *)activityViewControllerLinkMetadata:(UIActivityViewController *)activityViewController
+{
+    return _headerMetadata.get();
 }
 
 @end
@@ -110,8 +131,7 @@ SOFT_LINK_CLASS(LinkPresentation, LPLinkMetadata)
     [_metadata setURL:url];
     [_metadata setTitle:url._title];
 
-    if ([_metadata respondsToSelector:@selector(_setIncomplete:)])
-        [_metadata _setIncomplete:YES];
+    [_metadata _setIncomplete:YES];
 
     _url = url;
 

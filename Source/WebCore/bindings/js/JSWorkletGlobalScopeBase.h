@@ -63,7 +63,7 @@ public:
 
 protected:
     JSWorkletGlobalScopeBase(JSC::VM&, JSC::Structure*, RefPtr<WorkletGlobalScope>&&);
-    void finishCreation(JSC::VM&, JSC::JSProxy*);
+    void finishCreation(JSC::VM&, JSC::JSGlobalProxy*);
 
     DECLARE_VISIT_CHILDREN;
 

@@ -30,6 +30,11 @@
 
 namespace WebCore {
 
+Ref<ProgressBarPart> ProgressBarPart::create()
+{
+    return adoptRef(*new ProgressBarPart(0, 0_s));
+}
+
 Ref<ProgressBarPart> ProgressBarPart::create(double position, const Seconds& animationStartTime)
 {
     return adoptRef(*new ProgressBarPart(position, animationStartTime));

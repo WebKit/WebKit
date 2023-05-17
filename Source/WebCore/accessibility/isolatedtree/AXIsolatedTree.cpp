@@ -43,10 +43,11 @@ HashMap<PageIdentifier, Ref<AXIsolatedTree>>& AXIsolatedTree::treePageCache()
     return map;
 }
 
-AXIsolatedTree::AXIsolatedTree(AXObjectCache* axObjectCache)
-    : AXTreeStore(axObjectCache->treeID())
-    , m_axObjectCache(axObjectCache)
-    , m_usedOnAXThread(axObjectCache->usedOnAXThread())
+AXIsolatedTree::AXIsolatedTree(AXObjectCache& axObjectCache)
+    : AXTreeStore(axObjectCache.treeID())
+    , m_axObjectCache(&axObjectCache)
+    , m_geometryManager(axObjectCache.m_geometryManager.ptr())
+    , m_usedOnAXThread(axObjectCache.usedOnAXThread())
 {
     AXTRACE("AXIsolatedTree::AXIsolatedTree"_s);
     ASSERT(isMainThread());
@@ -66,15 +67,54 @@ void AXIsolatedTree::queueForDestruction()
     m_queuedForDestruction = true;
 }
 
-Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache* axObjectCache)
+Ref<AXIsolatedTree> AXIsolatedTree::createEmpty(AXObjectCache& axObjectCache)
 {
-    AXTRACE("AXIsolatedTree::create"_s);
+    AXTRACE("AXIsolatedTree::createEmpty"_s);
     ASSERT(isMainThread());
-    ASSERT(axObjectCache && axObjectCache->pageID());
+    ASSERT(axObjectCache.pageID());
 
     auto tree = adoptRef(*new AXIsolatedTree(axObjectCache));
 
-    auto& document = axObjectCache->document();
+    RefPtr axRoot = axObjectCache.getOrCreate(axObjectCache.document().view());
+    if (axRoot)
+        tree->createEmptyContent(*axRoot);
+
+    tree->updateLoadingProgress(axObjectCache.loadingProgress());
+
+    // Now that the tree is ready to take client requests, add it to the tree maps so that it can be found.
+    storeTree(axObjectCache, tree);
+
+    return tree;
+}
+
+void AXIsolatedTree::createEmptyContent(AccessibilityObject& axRoot)
+{
+    // Collect the ScrollView and WebArea objects.
+    m_unresolvedPendingAppends.set(axRoot.objectID(), AttachWrapper::OnMainThread);
+    collectNodeChangesForChildrenMatching(axRoot, [] (const auto& object) {
+        return object.roleValue() == AccessibilityRole::WebArea;
+    });
+
+    // Resolve the appends to create the corresponding IsolatedObjects.
+    auto appends = resolveAppends();
+
+    // Set the ScreenRelativePosition for the objects so that there is no need to hit the main thread on client's request.
+    for (auto& append : appends)
+        append.isolatedObject->setProperty(AXPropertyName::ScreenRelativePosition, axRoot.screenRelativePosition());
+
+    // Queue the appends to be performed on the AX thread.
+    queueAppendsAndRemovals(WTFMove(appends), { });
+}
+
+Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
+{
+    AXTRACE("AXIsolatedTree::create"_s);
+    ASSERT(isMainThread());
+    ASSERT(axObjectCache.pageID());
+
+    auto tree = adoptRef(*new AXIsolatedTree(axObjectCache));
+
+    auto& document = axObjectCache.document();
     if (!document.view()->layoutContext().isInRenderTreeLayout() && !document.inRenderTreeUpdate() && !document.inStyleRecalc())
         document.updateLayoutIgnorePendingStylesheets();
 
@@ -83,23 +123,26 @@ Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache* axObjectCache)
 
     // Generate the nodes of the tree and set its root and focused objects.
     // For this, we need the root and focused objects of the AXObject tree.
-    auto* axRoot = axObjectCache->getOrCreate(axObjectCache->document().view());
+    auto* axRoot = axObjectCache.getOrCreate(document.view());
     if (axRoot)
         tree->generateSubtree(*axRoot);
-    auto* axFocus = axObjectCache->focusedObjectForPage(axObjectCache->document().page());
+    auto* axFocus = axObjectCache.focusedObjectForPage(document.page());
     if (axFocus)
         tree->setFocusedNodeID(axFocus->objectID());
 
-    // Now that the tree is ready to take client requests, add it to the tree
-    // maps so that it can be found.
-    AXTreeStore::add(tree->treeID(), tree.ptr());
-    auto pageID = axObjectCache->pageID();
-    Locker locker { s_storeLock };
-    ASSERT(!treePageCache().contains(*pageID));
-    treePageCache().set(*pageID, tree.copyRef());
-    tree->updateLoadingProgress(axObjectCache->loadingProgress());
+    tree->updateLoadingProgress(axObjectCache.loadingProgress());
+
+    // Now that the tree is ready to take client requests, add it to the tree maps so that it can be found.
+    storeTree(axObjectCache, tree);
 
     return tree;
+}
+
+void AXIsolatedTree::storeTree(AXObjectCache& axObjectCache, const Ref<AXIsolatedTree>& tree)
+{
+    AXTreeStore::set(tree->treeID(), tree.ptr());
+    Locker locker { s_storeLock };
+    treePageCache().set(*axObjectCache.pageID(), tree.copyRef());
 }
 
 void AXIsolatedTree::removeTreeForPageID(PageIdentifier pageID)
@@ -108,8 +151,10 @@ void AXIsolatedTree::removeTreeForPageID(PageIdentifier pageID)
     ASSERT(isMainThread());
 
     Locker locker { s_storeLock };
-    if (auto tree = treePageCache().take(pageID))
+    if (auto tree = treePageCache().take(pageID)) {
+        tree->m_geometryManager = nullptr;
         tree->queueForDestruction();
+    }
 }
 
 RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(PageIdentifier pageID)
@@ -283,24 +328,63 @@ void AXIsolatedTree::queueRemovalsAndUnresolvedChanges(Vector<AXID>&& subtreeRem
 {
     ASSERT(isMainThread());
 
+    queueAppendsAndRemovals(resolveAppends(), WTFMove(subtreeRemovals));
+}
+
+Vector<AXIsolatedTree::NodeChange> AXIsolatedTree::resolveAppends()
+{
+    ASSERT(isMainThread());
+
+    if (m_unresolvedPendingAppends.isEmpty())
+        return { };
+
+    auto* cache = axObjectCache();
+    if (!cache)
+        return { };
+
     Vector<NodeChange> resolvedAppends;
-    if (!m_unresolvedPendingAppends.isEmpty()) {
-        if (auto* cache = axObjectCache()) {
-            resolvedAppends.reserveInitialCapacity(m_unresolvedPendingAppends.size());
-            for (const auto& unresolvedAppend : m_unresolvedPendingAppends) {
-                if (auto* axObject = cache->objectForID(unresolvedAppend.key)) {
-                    if (auto nodeChange = nodeChangeForObject(*axObject, unresolvedAppend.value))
-                        resolvedAppends.uncheckedAppend(WTFMove(*nodeChange));
-                }
-            }
-            m_unresolvedPendingAppends.clear();
+    resolvedAppends.reserveInitialCapacity(m_unresolvedPendingAppends.size());
+    for (const auto& unresolvedAppend : m_unresolvedPendingAppends) {
+        if (auto* axObject = cache->objectForID(unresolvedAppend.key)) {
+            if (auto nodeChange = nodeChangeForObject(*axObject, unresolvedAppend.value))
+                resolvedAppends.uncheckedAppend(WTFMove(*nodeChange));
         }
     }
+    m_unresolvedPendingAppends.clear();
+
+    return resolvedAppends;
+}
+
+void AXIsolatedTree::queueAppendsAndRemovals(Vector<NodeChange>&& appends, Vector<AXID>&& subtreeRemovals)
+{
+    ASSERT(isMainThread());
 
     Locker locker { m_changeLogLock };
-    for (const auto& resolvedAppend : resolvedAppends)
-        queueChange(resolvedAppend);
+    for (const auto& append : appends)
+        queueChange(append);
     queueRemovalsLocked(WTFMove(subtreeRemovals));
+}
+
+template <typename F>
+void AXIsolatedTree::collectNodeChangesForChildrenMatching(AccessibilityObject& axObject, F&& matches)
+{
+    ASSERT(isMainThread());
+
+    auto axChildrenCopy = axObject.children();
+    Vector<AXID> axChildrenIDs;
+    axChildrenIDs.reserveInitialCapacity(axChildrenCopy.size());
+    for (const auto& axChild : axChildrenCopy) {
+        if (!matches(*axChild))
+            continue;
+
+        axChildrenIDs.uncheckedAppend(axChild->objectID());
+        m_unresolvedPendingAppends.set(axChild->objectID(), AttachWrapper::OnMainThread);
+    }
+    axChildrenIDs.shrinkToFit();
+
+    // Update the m_nodeMap.
+    auto* axParent = axObject.parentObjectUnignored();
+    m_nodeMap.set(axObject.objectID(), ParentChildrenIDs { axParent ? axParent->objectID() : AXID(), WTFMove(axChildrenIDs) });
 }
 
 void AXIsolatedTree::collectNodeChangesForSubtree(AXCoreObject& axObject)
@@ -393,6 +477,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const Vector<A
     AXPropertyMap propertyMap;
     for (const auto& property : properties) {
         switch (property) {
+        case AXPropertyName::AccessKey:
+            propertyMap.set(AXPropertyName::AccessKey, axObject.accessKey().isolatedCopy());
+            break;
         case AXPropertyName::ARIATreeItemContent:
             propertyMap.set(AXPropertyName::ARIATreeItemContent, axIDs(axObject.ariaTreeItemContent()));
             break;
@@ -670,6 +757,16 @@ void AXIsolatedTree::updateLoadingProgress(double newProgressValue)
     ASSERT(isMainThread());
 
     m_loadingProgress = newProgressValue;
+}
+
+void AXIsolatedTree::updateFrame(AXID axID, IntRect&& newFrame)
+{
+    ASSERT(isMainThread());
+
+    AXPropertyMap propertyMap;
+    propertyMap.set(AXPropertyName::RelativeFrame, WTFMove(newFrame));
+    Locker locker { m_changeLogLock };
+    m_pendingPropertyChanges.append({ axID, WTFMove(propertyMap) });
 }
 
 void AXIsolatedTree::removeNode(const AccessibilityObject& axObject)

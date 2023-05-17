@@ -218,7 +218,7 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::decode(Decoder& decoder)
 
         arrayBufferContentsArray = makeUnique<ArrayBufferContentsArray>();
         while (arrayLength--) {
-            Span<const uint8_t> data;
+            std::span<const uint8_t> data;
             if (!decoder.decode(data))
                 return nullptr;
 
@@ -226,7 +226,7 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::decode(Decoder& decoder)
             if (!buffer)
                 return nullptr;
 
-            static_assert(sizeof(Span<const uint8_t>::element_type) == 1);
+            static_assert(sizeof(std::span<const uint8_t>::element_type) == 1);
             memcpy(buffer, data.data(), data.size_bytes());
             JSC::ArrayBufferDestructorFunction destructor = ArrayBuffer::primitiveGigacageDestructor();
             arrayBufferContentsArray->append({ buffer, data.size_bytes(), std::nullopt, WTFMove(destructor) });

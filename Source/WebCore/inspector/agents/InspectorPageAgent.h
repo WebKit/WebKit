@@ -45,6 +45,7 @@ namespace WebCore {
 
 class DOMWrapperWorld;
 class DocumentLoader;
+class Frame;
 class InspectorClient;
 class InspectorOverlay;
 class LocalFrame;
@@ -131,8 +132,8 @@ public:
     void loaderDetachedFromFrame(DocumentLoader&);
     void frameStartedLoading(LocalFrame&);
     void frameStoppedLoading(LocalFrame&);
-    void frameScheduledNavigation(LocalFrame&, Seconds delay);
-    void frameClearedScheduledNavigation(LocalFrame&);
+    void frameScheduledNavigation(Frame&, Seconds delay);
+    void frameClearedScheduledNavigation(Frame&);
     void accessibilitySettingsDidChange();
     void defaultUserPreferencesDidChange();
 #if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
@@ -146,8 +147,8 @@ public:
     void didScroll();
     void didRecalculateStyle();
 
-    LocalFrame* frameForId(const Inspector::Protocol::Network::FrameId&);
-    WEBCORE_EXPORT String frameId(LocalFrame*);
+    Frame* frameForId(const Inspector::Protocol::Network::FrameId&);
+    WEBCORE_EXPORT String frameId(Frame*);
     String loaderId(DocumentLoader*);
     LocalFrame* assertFrame(Inspector::Protocol::ErrorString&, const Inspector::Protocol::Network::FrameId&);
 
@@ -171,9 +172,8 @@ private:
     InspectorClient* m_client { nullptr };
     InspectorOverlay* m_overlay { nullptr };
 
-    // FIXME: Make a WeakHashMap and use it for m_frameToIdentifier and m_loaderToIdentifier.
-    HashMap<LocalFrame*, String> m_frameToIdentifier;
-    MemoryCompactRobinHoodHashMap<String, WeakPtr<LocalFrame>> m_identifierToFrame;
+    WeakHashMap<Frame, String> m_frameToIdentifier;
+    MemoryCompactRobinHoodHashMap<String, WeakPtr<Frame>> m_identifierToFrame;
     HashMap<DocumentLoader*, String> m_loaderToIdentifier;
     String m_userAgentOverride;
     AtomString m_emulatedMedia;

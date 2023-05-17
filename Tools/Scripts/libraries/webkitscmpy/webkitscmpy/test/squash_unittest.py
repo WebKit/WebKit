@@ -81,8 +81,8 @@ class TestSquash(testing.PathTestCase):
                 'No pre-PR checks to run',
                 'Checking if PR already exists...',
                 'PR not found.',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
                 "Pushing 'eng/squash-branch' to 'fork'...",
-                "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/squash-branch'..."
             ],
         )
@@ -129,8 +129,8 @@ class TestSquash(testing.PathTestCase):
                 'No pre-PR checks to run',
                 'Checking if PR already exists...',
                 'PR not found.',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
                 "Pushing 'eng/squash-branch' to 'fork'...",
-                "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/squash-branch'..."
             ],
         )
@@ -174,8 +174,8 @@ class TestSquash(testing.PathTestCase):
                 'No pre-PR checks to run',
                 'Checking if PR already exists...',
                 'PR not found.',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
                 "Pushing 'eng/squash-branch' to 'fork'...",
-                "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/squash-branch'..."
             ],
         )

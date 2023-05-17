@@ -796,8 +796,8 @@ JSC_DEFINE_CUSTOM_SETTER(testCustomAccessorSetter, (JSGlobalObject* lexicalGloba
 {
     RELEASE_ASSERT(JSValue::decode(thisValue).isCell());
     JSCell* thisCell = JSValue::decode(thisValue).asCell();
-    RELEASE_ASSERT(thisCell->type() == PureForwardingProxyType);
-    GlobalObject* thisObject = jsDynamicCast<GlobalObject*>(jsCast<JSProxy*>(thisCell)->target());
+    RELEASE_ASSERT(thisCell->type() == GlobalProxyType);
+    GlobalObject* thisObject = jsDynamicCast<GlobalObject*>(jsCast<JSGlobalProxy*>(thisCell)->target());
     RELEASE_ASSERT(thisObject);
     return GlobalObject::testCustomSetterImpl(lexicalGlobalObject, thisObject, encodedValue, "_testCustomAccessorSetter"_s);
 }
@@ -1410,7 +1410,7 @@ JSC_DEFINE_HOST_FUNCTION(functionAtob, (JSGlobalObject* globalObject, CallFrame*
     if (encodedString.isNull())
         return JSValue::encode(jsEmptyString(vm));
 
-    auto decodedData = base64Decode(encodedString, { Base64DecodeOptions::ValidatePadding, Base64DecodeOptions::IgnoreSpacesAndNewLines, Base64DecodeOptions::DiscardVerticalTab });
+    auto decodedData = base64Decode(encodedString, Base64DecodeMode::DefaultValidatePaddingAndIgnoreWhitespace);
     if (!decodedData)
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Invalid character in argument for atob."_s)));
 
@@ -1436,7 +1436,10 @@ JSC_DEFINE_HOST_FUNCTION(functionBtoa, (JSGlobalObject* globalObject, CallFrame*
     if (!stringToEncode.isAllLatin1())
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Invalid character in argument for btoa."_s)));
 
-    String encodedString = base64EncodeToString(stringToEncode.latin1());
+    String encodedString = base64EncodeToStringReturnNullIfOverflow(stringToEncode.latin1());
+    if (!encodedString)
+        return JSValue::encode(throwException(globalObject, scope, createOutOfMemoryError(globalObject)));
+
     return JSValue::encode(jsString(vm, encodedString));
 }
 
@@ -1810,7 +1813,7 @@ JSC_DEFINE_HOST_FUNCTION(functionWriteFile, (JSGlobalObject* globalObject, CallF
     String fileName = callFrame->argument(0).toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    std::variant<String, Span<const uint8_t>> data;
+    std::variant<String, std::span<const uint8_t>> data;
     JSValue dataValue = callFrame->argument(1);
 
     if (dataValue.isString()) {
@@ -1840,7 +1843,7 @@ JSC_DEFINE_HOST_FUNCTION(functionWriteFile, (JSGlobalObject* globalObject, CallF
     int size = std::visit(WTF::makeVisitor([&](const String& string) {
         CString utf8 = string.utf8();
         return FileSystem::writeToFile(handle, utf8.data(), utf8.length());
-    }, [&] (const Span<const uint8_t>& data) {
+    }, [&] (const std::span<const uint8_t>& data) {
         return FileSystem::writeToFile(handle, data.data(), data.size());
     }), data);
 
@@ -2211,8 +2214,8 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarEvalScript, (JSGlobalObject* globalObject
     
     JSValue global = callFrame->thisValue().get(globalObject, Identifier::fromString(vm, "global"_s));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    while (global.inherits<JSProxy>())
-        global = jsCast<JSProxy*>(global)->target();
+    while (global.inherits<JSGlobalProxy>())
+        global = jsCast<JSGlobalProxy*>(global)->target();
     GlobalObject* realm = jsDynamicCast<GlobalObject*>(global);
     if (!realm)
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Expected global to point to a global object"_s)));
@@ -3234,6 +3237,18 @@ int main(int argc, char** argv)
     WTF::disableForwardingVPrintfStdErrToOSLog();
 #endif
 
+#if OS(UNIX)
+    if (getenv("JS_SHELL_WAIT_FOR_SIGUSR2_TO_EXIT")) {
+        initializeSignalHandling();
+        addSignalHandler(Signal::Usr, SignalHandler([&] (Signal, SigInfo&, PlatformRegisters&) {
+            dataLogLn("Signal handler hit, we can exit now.");
+            waitToExit.signal();
+            return SignalAction::Handled;
+        }));
+        activateSignalHandlersFor(Signal::Usr);
+    }
+#endif
+
     // We can't use destructors in the following code because it uses Windows
     // Structured Exception Handling
     int res = EXIT_SUCCESS;
@@ -3962,18 +3977,6 @@ int jscmain(int argc, char** argv)
     // Needed for complex.yaml tests.
     if (char* tz = getenv("TZ"))
         setTimeZoneOverride(StringView::fromLatin1(tz));
-#endif
-
-#if OS(UNIX)
-    if (getenv("JS_SHELL_WAIT_FOR_SIGUSR2_TO_EXIT")) {
-        initializeSignalHandling();
-        addSignalHandler(Signal::Usr, SignalHandler([&] (Signal, SigInfo&, PlatformRegisters&) {
-            dataLogLn("Signal handler hit, we can exit now.");
-            waitToExit.signal();
-            return SignalAction::Handled;
-        }));
-        activateSignalHandlersFor(Signal::Usr);
-    }
 #endif
 
     {

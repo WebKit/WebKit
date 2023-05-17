@@ -26,17 +26,19 @@
 #pragma once
 
 #include "ASTAttribute.h"
+#include "ASTBuilder.h"
 
 namespace WGSL::AST {
 
 class ConstAttribute final : public Attribute {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(ConstAttribute);
 public:
+    NodeKind kind() const override;
+
+private:
     ConstAttribute(SourceSpan span)
         : Attribute(span)
     { }
-
-    NodeKind kind() const override;
 };
 
 } // namespace WGSL::AST

@@ -26,19 +26,67 @@
 #include "config.h"
 #include "TextDetector.h"
 
+#include "Chrome.h"
+#include "DetectedText.h"
+#include "Document.h"
+#include "ImageBitmap.h"
+#include "ImageBitmapOptions.h"
+#include "JSDOMPromiseDeferred.h"
+#include "JSDetectedText.h"
+#include "Page.h"
+#include "ScriptExecutionContext.h"
+#include "WorkerGlobalScope.h"
+
 namespace WebCore {
 
-Ref<TextDetector> TextDetector::create()
+ExceptionOr<Ref<TextDetector>> TextDetector::create(ScriptExecutionContext& scriptExecutionContext)
 {
-    return adoptRef(*new TextDetector);
+    if (is<Document>(scriptExecutionContext)) {
+        const auto& document = downcast<Document>(scriptExecutionContext);
+        const auto* page = document.page();
+        if (!page)
+            return Exception { AbortError };
+        auto backing = page->chrome().createTextDetector();
+        if (!backing)
+            return Exception { AbortError };
+        return adoptRef(*new TextDetector(backing.releaseNonNull()));
+    }
+
+    if (is<WorkerGlobalScope>(scriptExecutionContext)) {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=255380 Make the Shape Detection API work in Workers
+        return Exception { AbortError };
+    }
+
+    return Exception { AbortError };
 }
 
-TextDetector::TextDetector() = default;
+TextDetector::TextDetector(Ref<ShapeDetection::TextDetector>&& backing)
+    : m_backing(WTFMove(backing))
+{
+}
 
 TextDetector::~TextDetector() = default;
 
-void TextDetector::detect(const ImageBitmap::Source&, DetectPromise&&)
+void TextDetector::detect(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, DetectPromise&& promise)
 {
+    ImageBitmap::createCompletionHandler(scriptExecutionContext, WTFMove(source), { }, [backing = m_backing.copyRef(), promise = WTFMove(promise)](ExceptionOr<Ref<ImageBitmap>>&& imageBitmap) mutable {
+        if (imageBitmap.hasException()) {
+            promise.resolve({ });
+            return;
+        }
+
+        auto imageBuffer = imageBitmap.releaseReturnValue()->takeImageBuffer();
+        if (!imageBuffer) {
+            promise.resolve({ });
+            return;
+        }
+
+        backing->detect(imageBuffer.releaseNonNull(), [promise = WTFMove(promise)](Vector<ShapeDetection::DetectedText>&& detectedText) mutable {
+            promise.resolve(detectedText.map([](const auto& detectedText) {
+                return convertFromBacking(detectedText);
+            }));
+        });
+    });
 }
 
 } // namespace WebCore

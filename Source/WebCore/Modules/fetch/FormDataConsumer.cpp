@@ -54,7 +54,7 @@ void FormDataConsumer::read()
     ASSERT(!m_blobLoader);
 
     if (m_currentElementIndex >= m_formData->elements().size()) {
-        m_callback(Span<const uint8_t> { });
+        m_callback(std::span<const uint8_t> { });
         return;
     }
 
@@ -105,7 +105,7 @@ void FormDataConsumer::consumeBlob(const URL& blobURL)
         }
 
         if (auto data = loader->arrayBufferResult())
-            weakThis->consume(Span<const uint8_t> { static_cast<const uint8_t*>(data->data()), data->byteLength() });
+            weakThis->consume(std::span<const uint8_t> { static_cast<const uint8_t*>(data->data()), data->byteLength() });
     });
 
     m_blobLoader->start(blobURL, m_context.get(), FileReaderLoader::ReadAsArrayBuffer);
@@ -114,7 +114,7 @@ void FormDataConsumer::consumeBlob(const URL& blobURL)
         didFail(Exception { InvalidStateError, "Unable to read form data blob"_s });
 }
 
-void FormDataConsumer::consume(Span<const uint8_t> content)
+void FormDataConsumer::consume(std::span<const uint8_t> content)
 {
     if (!m_callback)
         return;

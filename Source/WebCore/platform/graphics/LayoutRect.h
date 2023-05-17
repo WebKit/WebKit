@@ -233,11 +233,6 @@ inline bool operator==(const LayoutRect& a, const LayoutRect& b)
     return a.location() == b.location() && a.size() == b.size();
 }
 
-inline bool operator!=(const LayoutRect& a, const LayoutRect& b)
-{
-    return a.location() != b.location() || a.size() != b.size();
-}
-
 inline bool LayoutRect::isInfinite() const
 {
     return *this == LayoutRect::infiniteRect();

@@ -512,7 +512,8 @@ void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
     m_cachedState.networkState = state.networkState;
     m_cachedState.readyState = state.readyState;
     m_cachedState.paused = state.paused;
-    m_cachedState.naturalSize = state.naturalSize;
+    if (m_cachedState.naturalSize != state.naturalSize)
+        sizeChanged(state.naturalSize);
     m_cachedState.movieLoadType = state.movieLoadType;
     m_cachedState.wirelessPlaybackTargetType = state.wirelessPlaybackTargetType;
     m_cachedState.wirelessPlaybackTargetName = state.wirelessPlaybackTargetName;

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Tests for providing `applePayLaterAvailability` in `data` as part of `PaymentMethodData`.</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+setup({ explicit_done: true, explicit_timeout: true });
+
+test((test) => {
+    const method = validPaymentMethod();
+    method.data.features = ["applePayLaterAvailability"];
+    new PaymentRequest([method], validPaymentDetails());
+}, "Should have a feature for `applePayLaterAvailability`.");
+
+test((test) => {
+    const method = validPaymentMethod();
+    method.data.applePayLaterAvailability = "invalid";
+    assert_throws_js(
+        TypeError,
+        () => {
+            new PaymentRequest([method], validPaymentDetails());
+        },
+    );
+}, "Should throw `TypeError` when invalid `applePayLaterAvailability` is set.");
+
+user_activation_test(async (test) => {
+    let request = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+    request.addEventListener("merchantvalidation", (event) => {
+        event.complete({ });
+    });
+    request.addEventListener("shippingaddresschange", (event) => {
+        assert_equals(internals.mockPaymentCoordinator.applePayLaterAvailability, null, "check that the `applePayLaterAvailability` is still `null` after an update");
+        event.updateWith({ });
+        internals.mockPaymentCoordinator.acceptPayment();
+    });
+
+    let response = await request.show();
+
+    assert_equals(internals.mockPaymentCoordinator.applePayLaterAvailability, null, "check that the `applePayLaterAvailability` is still `null` after the payment is accepted");
+
+    await response.complete("success");
+}, "Should not have a default value for `applePayLaterAvailability`.");
+
+user_activation_test(async (test) => {
+    const method = validPaymentMethod();
+    method.data.applePayLaterAvailability = "unavailableRecurringTransaction";
+
+    let request = new PaymentRequest([method], validPaymentDetails());
+    request.addEventListener("merchantvalidation", (event) => {
+        event.complete({ });
+    });
+    request.addEventListener("shippingaddresschange", (event) => {
+        assert_equals(internals.mockPaymentCoordinator.applePayLaterAvailability, method.data.applePayLaterAvailability, "check that the `applePayLaterAvailability` still matches after an update");
+        event.updateWith({ });
+        internals.mockPaymentCoordinator.acceptPayment();
+    });
+
+    let response = await request.show();
+
+    assert_equals(internals.mockPaymentCoordinator.applePayLaterAvailability, method.data.applePayLaterAvailability, "check that the `applePayLaterAvailability` still matches after the payment is accepted");
+
+    await response.complete("success");
+}, "Should propagate `applePayLaterAvailability` if provided.");
+
+done();
+</script>
+

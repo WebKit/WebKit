@@ -30,17 +30,18 @@
 #include "BreakingContext.h"
 #include "DocumentInlines.h"
 #include "FloatingObjects.h"
-#include "HTMLParserIdioms.h"
-#include "InlineIteratorBox.h"
+#include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorTextBox.h"
 #include "InlineTextBoxStyle.h"
 #include "InlineWalker.h"
 #include "LegacyInlineElementBox.h"
+#include "LegacyInlineFlowBoxInlines.h"
 #include "LegacyInlineIterator.h"
 #include "LegacyInlineTextBox.h"
+#include "LineInlineHeaders.h"
 #include "LineLayoutState.h"
 #include "Logging.h"
-#include "RenderBlockFlow.h"
+#include "RenderBlockFlowInlines.h"
 #include "RenderFragmentContainer.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderLayoutState.h"
@@ -191,7 +192,6 @@ static inline void dirtyLineBoxesForRenderer(RenderObject& renderer, bool fullLa
 {
     if (is<RenderText>(renderer)) {
         RenderText& renderText = downcast<RenderText>(renderer);
-        updateCounterIfNeeded(renderText);
         renderText.dirtyLineBoxes(fullLayout);
     } else if (is<RenderLineBreak>(renderer))
         downcast<RenderLineBreak>(renderer).dirtyLineBoxes(fullLayout);
@@ -272,7 +272,7 @@ LegacyInlineFlowBox* LegacyLineLayout::createLineBoxes(RenderObject* obj, const 
 template<typename CharacterType> static inline bool endsWithHTMLSpaces(const CharacterType* characters, unsigned position, unsigned end)
 {
     for (unsigned i = position; i < end; ++i) {
-        if (!isHTMLSpace(characters[i]))
+        if (!isASCIIWhitespace(characters[i]))
             return false;
     }
     return true;

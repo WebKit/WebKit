@@ -31,12 +31,12 @@
 
 namespace WTF {
 
-inline Span<const std::byte> asBytes(CFDataRef data)
+inline std::span<const std::byte> asBytes(CFDataRef data)
 {
     return { reinterpret_cast<const std::byte*>(CFDataGetBytePtr(data)), static_cast<size_t>(CFDataGetLength(data)) };
 }
 
-inline Span<const std::byte> asBytes(const RetainPtr<CFDataRef>& data)
+inline std::span<const std::byte> asBytes(const RetainPtr<CFDataRef>& data)
 {
     return asBytes(data.get());
 }

@@ -121,6 +121,8 @@ public:
         m_menuTypeForEvent = webEvent.menuTypeForEvent();
 #elif PLATFORM(GTK)
         m_isTouchEvent = webEvent.isTouchEvent();
+#elif PLATFORM(WPE)
+        m_syntheticClickType = static_cast<WebCore::SyntheticClickType>(webEvent.syntheticClickType());
 #endif
         m_modifierFlags = 0;
         if (webEvent.shiftKey())

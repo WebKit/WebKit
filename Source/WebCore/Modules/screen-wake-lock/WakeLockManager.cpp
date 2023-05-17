@@ -44,7 +44,7 @@ WakeLockManager::~WakeLockManager()
     m_document.unregisterForVisibilityStateChangedCallbacks(*this);
 }
 
-void WakeLockManager::addWakeLock(Ref<WakeLockSentinel>&& lock)
+void WakeLockManager::addWakeLock(Ref<WakeLockSentinel>&& lock, std::optional<PageIdentifier> pageID)
 {
     auto type = lock->type();
     auto& locks = m_wakeLocks.ensure(type, [] { return Vector<RefPtr<WakeLockSentinel>>(); }).iterator->value;
@@ -56,7 +56,7 @@ void WakeLockManager::addWakeLock(Ref<WakeLockSentinel>&& lock)
 
     switch (type) {
     case WakeLockType::Screen:
-        m_screenLockDisabler = makeUnique<SleepDisabler>("Screen Wake Lock"_s, PAL::SleepDisabler::Type::Display);
+        m_screenLockDisabler = makeUnique<SleepDisabler>("Screen Wake Lock"_s, PAL::SleepDisabler::Type::Display, pageID);
         break;
     }
 }

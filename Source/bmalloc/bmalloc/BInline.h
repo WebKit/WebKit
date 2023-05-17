@@ -25,6 +25,12 @@
 
 #pragma once
 
-#define BINLINE __attribute__((always_inline)) inline
+#include "BCompiler.h"
 
+#if BCOMPILER(GCC_COMPATIBLE)
+#define BINLINE __attribute__((always_inline)) inline
 #define BNO_INLINE __attribute__((noinline))
+#elif BCOMPILER(MSVC)
+#define BINLINE __forceinline
+#define BNO_INLINE __declspec(noinline)
+#endif

@@ -61,7 +61,7 @@ public:
 
     bool waitFor(Seconds relativeTimeout)
     {
-        return waitUntil(MonotonicTime::now() + relativeTimeout);
+        return waitUntil(MonotonicTime::timePointFromNow(relativeTimeout));
     }
 
     void wait()

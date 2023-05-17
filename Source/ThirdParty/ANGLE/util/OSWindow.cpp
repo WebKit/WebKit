@@ -461,7 +461,7 @@ bool FindTestDataPath(const char *searchPath, char *dataPathOut, size_t maxDataP
     const std::string searchPaths[] = {
         AndroidWindow::GetExternalStorageDirectory(),
         AndroidWindow::GetExternalStorageDirectory() + "/third_party/angle"};
-#elif defined(ANGLE_PLATFORM_IOS)
+#elif ANGLE_PLATFORM_IOS_FAMILY
     const std::string searchPaths[] = {GetExecutableDirectory(),
                                        GetExecutableDirectory() + "/third_party/angle"};
 #else

@@ -37,8 +37,8 @@ const ClassInfo Exception::s_info = { "Exception"_s, nullptr, nullptr, nullptr, 
 
 Exception* Exception::create(VM& vm, JSValue thrownValue, StackCaptureAction action)
 {
-    Exception* result = new (NotNull, allocateCell<Exception>(vm)) Exception(vm);
-    result->finishCreation(vm, thrownValue, action);
+    Exception* result = new (NotNull, allocateCell<Exception>(vm)) Exception(vm, thrownValue);
+    result->finishCreation(vm, action);
     return result;
 }
 
@@ -67,20 +67,17 @@ void Exception::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(Exception);
 
-Exception::Exception(VM& vm)
+Exception::Exception(VM& vm, JSValue thrownValue)
     : Base(vm, vm.exceptionStructure.get())
+    , m_value(thrownValue, WriteBarrierEarlyInit)
 {
 }
 
-Exception::~Exception()
-{
-}
+Exception::~Exception() = default;
 
-void Exception::finishCreation(VM& vm, JSValue thrownValue, StackCaptureAction action)
+void Exception::finishCreation(VM& vm, StackCaptureAction action)
 {
     Base::finishCreation(vm);
-
-    m_value.set(vm, this, thrownValue);
 
     Vector<StackFrame> stackTrace;
     if (action == StackCaptureAction::CaptureStack)

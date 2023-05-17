@@ -56,7 +56,6 @@ public:
     virtual Ref<PathOperation> clone() const = 0;
 
     virtual bool operator==(const PathOperation&) const = 0;
-    bool operator!=(const PathOperation& o) const { return !(*this == o); }
 
     virtual bool canBlend(const PathOperation&) const { return false; }
     virtual RefPtr<PathOperation> blend(const PathOperation*, const BlendingContext&) const { return nullptr; }

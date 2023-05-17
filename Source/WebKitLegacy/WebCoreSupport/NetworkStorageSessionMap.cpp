@@ -100,11 +100,6 @@ void NetworkStorageSessionMap::ensureSession(PAL::SessionID sessionID, const Str
     }
 
     addResult.iterator->value = makeUnique<WebCore::NetworkStorageSession>(sessionID, WTFMove(storageSession), WTFMove(cookieStorage));
-
-#elif USE(CURL)
-    globalSessionMap().ensure(sessionID, [sessionID] {
-        return makeUnique<WebCore::NetworkStorageSession>(sessionID);
-    });
 #endif
 }
 

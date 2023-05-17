@@ -67,7 +67,7 @@ private:
     // fixed position content uses the <fO> as ancestor layer (when computing offsets from the container).
     bool needsHasSVGTransformFlags() const final { return true; }
 
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const final;
+    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const final;
 
     FloatRect m_viewport;
     AffineTransform m_supplementalLayerTransform;

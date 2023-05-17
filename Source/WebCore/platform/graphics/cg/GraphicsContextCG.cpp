@@ -969,6 +969,11 @@ void GraphicsContextCG::fillRectWithRoundedHole(const FloatRect& rect, const Flo
     setFillColor(oldFillColor);
 }
 
+void GraphicsContextCG::resetClip()
+{
+    CGContextResetClip(platformContext());
+}
+
 void GraphicsContextCG::clip(const FloatRect& rect)
 {
     CGContextClipToRect(platformContext(), rect);

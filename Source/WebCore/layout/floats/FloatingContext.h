@@ -48,14 +48,14 @@ public:
 
     const FloatingState& floatingState() const { return m_floatingState; }
 
-    LayoutPoint positionForFloat(const Box&, const HorizontalConstraints&) const;
-    LayoutPoint positionForNonFloatingFloatAvoider(const Box&) const;
+    LayoutPoint positionForFloat(const Box&, const BoxGeometry&, const HorizontalConstraints&) const;
+    LayoutPoint positionForNonFloatingFloatAvoider(const Box&, const BoxGeometry&) const;
 
     struct PositionWithClearance {
         LayoutUnit position;
         std::optional<LayoutUnit> clearance;
     };
-    std::optional<PositionWithClearance> verticalPositionWithClearance(const Box&) const;
+    std::optional<PositionWithClearance> verticalPositionWithClearance(const Box&, const BoxGeometry&) const;
 
     std::optional<LayoutUnit> top() const;
     std::optional<LayoutUnit> leftBottom() const { return bottom(Clear::Left); }
@@ -71,7 +71,7 @@ public:
     enum class MayBeAboveLastFloat : bool { No, Yes };
     Constraints constraints(LayoutUnit candidateTop, LayoutUnit candidateBottom, MayBeAboveLastFloat) const;
 
-    FloatingState::FloatItem toFloatItem(const Box& floatBox) const;
+    FloatingState::FloatItem toFloatItem(const Box& floatBox, const BoxGeometry&) const;
 
     bool isLogicalLeftPositioned(const Box& floatBox) const;
 
@@ -88,8 +88,8 @@ private:
     void findPositionForFormattingContextRoot(FloatAvoider&) const;
 
     struct AbsoluteCoordinateValuesForFloatAvoider;
-    AbsoluteCoordinateValuesForFloatAvoider absoluteCoordinates(const Box&) const;
-    LayoutPoint mapTopLeftToFloatingStateRoot(const Box&) const;
+    AbsoluteCoordinateValuesForFloatAvoider absoluteCoordinates(const Box&, LayoutPoint borderBoxTopLeft) const;
+    LayoutPoint mapTopLeftToFloatingStateRoot(const Box&, LayoutPoint borderBoxTopLeft) const;
     Point mapPointFromFormattingContextRootToFloatingStateRoot(Point) const;
 
     const FormattingContext& m_formattingContext;

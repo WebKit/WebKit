@@ -29,9 +29,12 @@
 #include "JSCInlines.h"
 #include "MarkedBlockInlines.h"
 #include "SubspaceInlines.h"
+#include "Symbol.h"
 #include <wtf/LockAlgorithmInlines.h>
 
 namespace JSC {
+
+const ASCIILiteral SymbolCoercionError { "Cannot convert a symbol to a string"_s };
 
 static_assert(sizeof(JSCell) == sizeof(uint64_t), "jscell is eight bytes");
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSCell);
@@ -238,6 +241,26 @@ bool JSCell::setPrototype(JSObject*, JSGlobalObject*, JSValue, bool)
 JSValue JSCell::getPrototype(JSObject*, JSGlobalObject*)
 {
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+JSString* JSCell::toStringSlowCase(JSGlobalObject* globalObject) const
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(isSymbol() || isHeapBigInt());
+    auto* emptyString = jsEmptyString(vm);
+    if (auto* bigInt = jsDynamicCast<JSBigInt*>(const_cast<JSCell*>(this))) {
+        // FIXME: we should rather have two cases here: one-character string vs jsNonTrivialString for everything else.
+        auto string = bigInt->toString(globalObject, 10);
+        RETURN_IF_EXCEPTION(scope, emptyString);
+        JSString* returnString = JSString::create(vm, string.releaseImpl().releaseNonNull());
+        RETURN_IF_EXCEPTION(scope, emptyString);
+        return returnString;
+    }
+    ASSERT(isSymbol());
+    throwTypeError(globalObject, scope, SymbolCoercionError);
+    return emptyString;
 }
 
 void JSCellLock::lockSlow()

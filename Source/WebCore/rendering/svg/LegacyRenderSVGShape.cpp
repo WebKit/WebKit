@@ -39,7 +39,9 @@
 #include "PointerEventsHitRules.h"
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceSolidColor.h"
+#include "RenderStyleInlines.h"
 #include "SVGPathData.h"
+#include "SVGRenderStyle.h"
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
@@ -263,9 +265,8 @@ void LegacyRenderSVGShape::strokeShape(GraphicsContext& context)
 
 void LegacyRenderSVGShape::fillStrokeMarkers(PaintInfo& childPaintInfo)
 {
-    auto paintOrder = RenderStyle::paintTypesForPaintOrder(style().paintOrder());
-    for (unsigned i = 0; i < paintOrder.size(); ++i) {
-        switch (paintOrder.at(i)) {
+    for (auto type : RenderStyle::paintTypesForPaintOrder(style().paintOrder())) {
+        switch (type) {
         case PaintType::Fill:
             fillShape(style(), childPaintInfo.context());
             break;
@@ -460,9 +461,9 @@ bool LegacyRenderSVGShape::hasSmoothStroke() const
 {
     const SVGRenderStyle& svgStyle = style().svgStyle();
     return svgStyle.strokeDashArray().isEmpty()
-        && style().strokeMiterLimit() == style().initialStrokeMiterLimit()
-        && style().joinStyle() == style().initialJoinStyle()
-        && style().capStyle() == style().initialCapStyle();
+        && style().strokeMiterLimit() == defaultMiterLimit
+        && style().joinStyle() == LineJoin::Miter
+        && style().capStyle() == LineCap::Butt;
 }
 
 void LegacyRenderSVGShape::drawMarkers(PaintInfo& paintInfo)

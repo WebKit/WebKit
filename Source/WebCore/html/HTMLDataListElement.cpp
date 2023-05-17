@@ -72,7 +72,7 @@ void HTMLDataListElement::didMoveToNewDocument(Document& oldDocument, Document& 
 
 Ref<HTMLCollection> HTMLDataListElement::options()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<DataListOptions>::traversalType>>(*this, DataListOptions);
+    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<CollectionType::DataListOptions>::traversalType>>(*this, CollectionType::DataListOptions);
 }
 
 void HTMLDataListElement::optionElementChildrenChanged()

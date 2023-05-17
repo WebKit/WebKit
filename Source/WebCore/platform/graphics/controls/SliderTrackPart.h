@@ -32,11 +32,17 @@ namespace WebCore {
 
 class SliderTrackPart : public ControlPart {
 public:
+    static Ref<SliderTrackPart> create(StyleAppearance);
     WEBCORE_EXPORT static Ref<SliderTrackPart> create(StyleAppearance, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios);
 
     IntSize thumbSize() const { return m_thumbSize; }
+    void setThumbSize(IntSize thumbSize) { m_thumbSize = thumbSize; }
+
     IntRect trackBounds() const { return m_trackBounds; }
+    void setTrackBounds(IntRect trackBounds) { m_trackBounds = trackBounds; }
+
     const Vector<double>& tickRatios() const { return m_tickRatios; }
+    void setTickRatios(Vector<double>&& tickRatios) { m_tickRatios = WTFMove(tickRatios); }
 
 #if ENABLE(DATALIST_ELEMENT)
     void drawTicks(GraphicsContext&, const FloatRect&, const ControlStyle&) const;

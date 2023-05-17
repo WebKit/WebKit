@@ -285,7 +285,7 @@ bool SecurityOrigin::passesFileCheck(const SecurityOrigin& other) const
     return !m_enforcesFilePathSeparation && !other.m_enforcesFilePathSeparation;
 }
 
-bool SecurityOrigin::canRequest(const URL& url) const
+bool SecurityOrigin::canRequest(const URL& url, const OriginAccessPatterns& patterns) const
 {
     if (m_universalAccess)
         return true;
@@ -306,7 +306,7 @@ bool SecurityOrigin::canRequest(const URL& url) const
     if (isSameSchemeHostPort(targetOrigin.get()))
         return true;
 
-    if (SecurityPolicy::isAccessAllowed(*this, targetOrigin.get(), url))
+    if (SecurityPolicy::isAccessAllowed(*this, targetOrigin.get(), url, patterns))
         return true;
 
     return false;
@@ -345,7 +345,7 @@ static bool isFeedWithNestedProtocolInHTTPFamily(const URL& url)
         || startsWithLettersIgnoringASCIICase(string, "feedsearch:https:"_s);
 }
 
-bool SecurityOrigin::canDisplay(const URL& url) const
+bool SecurityOrigin::canDisplay(const URL& url, const OriginAccessPatterns& patterns) const
 {
     ASSERT(!isInNetworkProcess());
     if (m_universalAccess)
@@ -365,10 +365,10 @@ bool SecurityOrigin::canDisplay(const URL& url) const
     auto protocol = url.protocol();
 
     if (LegacySchemeRegistry::canDisplayOnlyIfCanRequest(protocol))
-        return canRequest(url);
+        return canRequest(url, patterns);
 
     if (LegacySchemeRegistry::shouldTreatURLSchemeAsDisplayIsolated(protocol))
-        return equalIgnoringASCIICase(m_data.protocol(), protocol) || SecurityPolicy::isAccessAllowed(*this, url);
+        return equalIgnoringASCIICase(m_data.protocol(), protocol) || SecurityPolicy::isAccessAllowed(*this, url, patterns);
 
     if (!SecurityPolicy::restrictAccessToLocal())
         return true;
@@ -377,7 +377,7 @@ bool SecurityOrigin::canDisplay(const URL& url) const
         return true;
 
     if (LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(protocol))
-        return canLoadLocalResources() || SecurityPolicy::isAccessAllowed(*this, url);
+        return canLoadLocalResources() || SecurityPolicy::isAccessAllowed(*this, url, patterns);
 
     return true;
 }

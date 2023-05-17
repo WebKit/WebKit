@@ -83,9 +83,9 @@ void VisitedLinkTableController::addVisitedLink(Page& page, SharedStringHash lin
     WebProcess::singleton().parentProcessConnection()->send(Messages::VisitedLinkStore::AddVisitedLinkHashFromPage(WebPage::fromCorePage(page)->webPageProxyIdentifier(), linkHash), m_identifier);
 }
 
-void VisitedLinkTableController::setVisitedLinkTable(const SharedMemory::Handle& handle)
+void VisitedLinkTableController::setVisitedLinkTable(SharedMemory::Handle&& handle)
 {
-    auto sharedMemory = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
+    auto sharedMemory = SharedMemory::map(WTFMove(handle), SharedMemory::Protection::ReadOnly);
     if (!sharedMemory)
         return;
 

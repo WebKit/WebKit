@@ -30,7 +30,7 @@ namespace TestWebKitAPI {
 
 TEST(WTFSpan, Constructor)
 {
-    Span<uint8_t> aSpan;
+    std::span<uint8_t> aSpan;
     EXPECT_EQ(aSpan.size(), 0u);
 }
 

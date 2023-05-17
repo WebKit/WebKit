@@ -55,6 +55,7 @@ public:
     WEBCORE_EXPORT static void setCSSValueToSystemColorMap(CSSValueToSystemColorMap&&);
 
     WEBCORE_EXPORT static void setFocusRingColor(const Color&);
+    WEBCORE_EXPORT static void setInsertionPointColor(const Color&);
 
     WEBCORE_EXPORT static Color systemFocusRingColor();
 
@@ -158,6 +159,10 @@ private:
 
     bool supportsBoxShadow(const RenderStyle&) const final;
 
+    static Color insertionPointColor();
+
+    Color autocorrectionReplacementMarkerColor(const RenderText&) const final;
+
     Color platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const override;
     Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const override;
     Color platformFocusRingColor(OptionSet<StyleColorOptions>) const final;
@@ -204,6 +209,7 @@ private:
     Color controlTintColor(const RenderStyle&, OptionSet<StyleColorOptions>) const;
 
     void adjustStyleForAlternateFormControlDesignTransition(RenderStyle&, const Element*) const;
+    void adjustMinimumIntrinsicSizeForAppearance(StyleAppearance, RenderStyle&) const;
 };
 
 }

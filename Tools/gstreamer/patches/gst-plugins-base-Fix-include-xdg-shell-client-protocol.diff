@@ -1,0 +1,13 @@
+diff --git a/gst-libs/gst/gl/wayland/gstglwindow_wayland_egl.h b/gst-libs/gst/gl/wayland/gstglwindow_wayland_egl.h
+index 0212744..ab892e1 100644
+--- a/gst-libs/gst/gl/wayland/gstglwindow_wayland_egl.h
++++ b/gst-libs/gst/gl/wayland/gstglwindow_wayland_egl.h
+@@ -22,7 +22,7 @@
+ #define __GST_GL_WINDOW_WAYLAND_EGL_H__
+ 
+ #include <wayland-client.h>
+-#include "xdg-shell-client-protocol.h"
++#include <gst/gl/xdg-shell-client-protocol.h>
+ #include <wayland-egl.h>
+ #include <wayland-cursor.h>
+ 

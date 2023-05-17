@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE moduleset SYSTEM "moduleset.dtd">
+<?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
+<moduleset>
+
+  <include href="jhbuild-minimal.modules"/>
+  <include href="../gstreamer/jhbuild.modules"/>
+
+  <metamodule id="webkitgtk-minimal-plus-gstreamer-dependencies">
+    <dependencies>
+      <dep package="webkitgtk-minimal-dependencies"/>
+      <dep package="webkit-gstreamer-testing-dependencies"/>
+    </dependencies>
+  </metamodule>
+
+  <metamodule id="webkitwpe-minimal-plus-gstreamer-dependencies">
+    <dependencies>
+      <dep package="webkitwpe-minimal-dependencies"/>
+      <dep package="webkit-gstreamer-testing-dependencies"/>
+    </dependencies>
+  </metamodule>
+
+</moduleset>

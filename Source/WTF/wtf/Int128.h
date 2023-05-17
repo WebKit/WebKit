@@ -685,8 +685,6 @@ constexpr bool operator==(UInt128Impl lhs, UInt128Impl rhs) {
           UInt128High64(lhs) == UInt128High64(rhs));
 }
 
-constexpr bool operator!=(UInt128Impl lhs, UInt128Impl rhs) { return !(lhs == rhs); }
-
 constexpr bool operator<(UInt128Impl lhs, UInt128Impl rhs) {
   return (UInt128High64(lhs) == UInt128High64(rhs))
              ? (UInt128Low64(lhs) < UInt128Low64(rhs))
@@ -942,9 +940,6 @@ inline Int128Impl& Int128Impl::operator>>=(int amount) {
   return *this;
 }
 
-// Forward declaration for comparison operators.
-constexpr bool operator!=(Int128Impl lhs, Int128Impl rhs);
-
 namespace int128_internal {
 
 // Casts from unsigned to signed while preserving the underlying binary
@@ -1115,8 +1110,6 @@ constexpr bool operator==(Int128Impl lhs, Int128Impl rhs) {
   return (Int128Low64(lhs) == Int128Low64(rhs) &&
           Int128High64(lhs) == Int128High64(rhs));
 }
-
-constexpr bool operator!=(Int128Impl lhs, Int128Impl rhs) { return !(lhs == rhs); }
 
 constexpr bool operator<(Int128Impl lhs, Int128Impl rhs) {
   return (Int128High64(lhs) == Int128High64(rhs))

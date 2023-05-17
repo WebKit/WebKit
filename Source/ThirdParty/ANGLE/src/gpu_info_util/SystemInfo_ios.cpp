@@ -6,11 +6,7 @@
 
 // SystemInfo_ios.cpp: implementation of the iOS-specific parts of SystemInfo.h
 
-#include "common/platform.h"
-
-#if defined(ANGLE_PLATFORM_APPLE_EMBEDDED) || (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))
-
-#    include "gpu_info_util/SystemInfo_internal.h"
+#include "gpu_info_util/SystemInfo_internal.h"
 
 namespace angle
 {
@@ -29,6 +25,3 @@ bool GetSystemInfo_ios(SystemInfo *info)
 }
 
 }  // namespace angle
-
-#endif  // defined(ANGLE_PLATFORM_APPLE_EMBEDDED) ||
-        // (defined(ANGLE_PLATFORM_MACCATALYST) && defined(ANGLE_CPU_ARM64))

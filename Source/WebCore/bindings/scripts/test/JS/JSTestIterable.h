@@ -60,7 +60,7 @@ public:
 protected:
     JSTestIterable(JSC::Structure*, JSDOMGlobalObject&, Ref<TestIterable>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestIterableOwner final : public JSC::WeakHandleOwner {

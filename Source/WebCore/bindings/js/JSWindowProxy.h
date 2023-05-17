@@ -31,7 +31,7 @@
 #include "JSDOMConvertInterface.h"
 #include "JSLocalDOMWindow.h"
 #include "WindowProxy.h"
-#include <JavaScriptCore/JSProxy.h>
+#include <JavaScriptCore/JSGlobalProxy.h>
 
 namespace JSC {
 class Debugger;
@@ -42,9 +42,9 @@ namespace WebCore {
 class DOMWindow;
 class Frame;
 
-class WEBCORE_EXPORT JSWindowProxy final : public JSC::JSProxy {
+class WEBCORE_EXPORT JSWindowProxy final : public JSC::JSGlobalProxy {
 public:
-    using Base = JSC::JSProxy;
+    using Base = JSC::JSGlobalProxy;
     static constexpr bool needsDestruction = true;
     static void destroy(JSCell*);
 

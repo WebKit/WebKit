@@ -56,12 +56,12 @@ enum class FontSmoothingMode : uint8_t {
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, FontSmoothingMode);
 
-enum class FontOrientation : uint8_t {
+enum class FontOrientation : bool {
     Horizontal,
     Vertical
 };
 
-enum class NonCJKGlyphOrientation : uint8_t {
+enum class NonCJKGlyphOrientation : bool {
     Mixed,
     Upright
 };
@@ -177,11 +177,6 @@ struct FontVariantAlternatesValues {
             && ornaments == other.ornaments
             && annotation == other.annotation
             && historicalForms == other.historicalForms;
-    }
-
-    bool operator!=(const FontVariantAlternatesValues& other) const
-    {
-        return !(*this == other);
     }
 
     String stylistic;
@@ -372,8 +367,6 @@ struct FontVariantSettings {
             && eastAsianWidth == other.eastAsianWidth
             && eastAsianRuby == other.eastAsianRuby;
     }
-
-    bool operator!=(const FontVariantSettings& other) const { return !(*this == other); }
 
     FontVariantLigatures commonLigatures;
     FontVariantLigatures discretionaryLigatures;

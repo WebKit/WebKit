@@ -573,9 +573,17 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToLocaleString, (JSGlobalObject* globalO
     if (!toThisNumber(callFrame->thisValue(), x))
         return throwVMToThisNumberError(globalObject, scope, callFrame->thisValue());
 
-    auto* numberFormat = IntlNumberFormat::create(vm, globalObject->numberFormatStructure());
-    numberFormat->initializeNumberFormat(globalObject, callFrame->argument(0), callFrame->argument(1));
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    JSValue locales = callFrame->argument(0);
+    JSValue options = callFrame->argument(1);
+    IntlNumberFormat* numberFormat = nullptr;
+    if (locales.isUndefined() && options.isUndefined())
+        numberFormat = globalObject->defaultNumberFormat();
+    else {
+        numberFormat = IntlNumberFormat::create(vm, globalObject->numberFormatStructure());
+        numberFormat->initializeNumberFormat(globalObject, locales, options);
+    }
+    RETURN_IF_EXCEPTION(scope, { });
+
     RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->format(globalObject, x)));
 }
 

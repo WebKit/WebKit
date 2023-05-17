@@ -46,13 +46,13 @@ angle_source_set("angle_metal_backend") {
   cflags_objc += objc_flags
   cflags_objcc += objc_flags
 
-  if (is_mac) {
+  if (is_apple) {
     frameworks = [
-      "Cocoa.framework",
       "IOSurface.framework",
       "QuartzCore.framework",
     ]
+    if (is_mac) {
+      frameworks += [ "Cocoa.framework" ]
+    }
   }
-
-  # TODO(hqle): iOS support.
 }

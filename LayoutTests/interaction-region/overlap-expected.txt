@@ -14,7 +14,7 @@
         (occlusion (0,0) width=200 height=100)
         (borderRadius 0.00),
         (interaction (0,0) width=200 height=100)
-        (borderRadius 8.00)])
+        (borderRadius 0.00)])
       )
     )
   )

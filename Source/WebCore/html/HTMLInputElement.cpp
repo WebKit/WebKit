@@ -61,11 +61,13 @@
 #include "LocalFrameView.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
+#include "NodeName.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "RadioInputType.h"
+#include "RenderStyleSetters.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "ScopedEventQueue.h"
@@ -74,6 +76,7 @@
 #include "StepRange.h"
 #include "StyleGradientImage.h"
 #include "TextControlInnerElements.h"
+#include "TextInputType.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
@@ -111,7 +114,7 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document& docum
     , m_parsingInProgress(createdByParser)
     // m_inputType is lazily created when constructed by the parser to avoid constructing unnecessarily a text inputType,
     // just to destroy them when the |type| attribute gets set by the parser to something else than 'text'.
-    , m_inputType(createdByParser ? nullptr : RefPtr { InputType::createText(*this) })
+    , m_inputType(createdByParser ? nullptr : RefPtr { TextInputType::create(*this) })
 {
     ASSERT(hasTagName(inputTag));
 }
@@ -500,14 +503,14 @@ void HTMLInputElement::resignStrongPasswordAppearance()
         page->chrome().client().inputElementDidResignStrongPasswordAppearance(*this);
 }
 
-void HTMLInputElement::updateType()
+void HTMLInputElement::updateType(const AtomString& typeAttributeValue)
 {
     ASSERT(m_inputType);
-    auto newType = InputType::createIfDifferent(*this, attributeWithoutSynchronization(typeAttr), m_inputType.get());
+    auto newType = InputType::createIfDifferent(*this, typeAttributeValue, m_inputType.get());
     m_hasType = true;
     if (!newType)
         return;
-    ASSERT(m_inputType->formControlType() != newType->formControlType());
+    ASSERT(m_inputType->type() != newType->type());
 
     removeFromRadioButtonGroup();
     resignStrongPasswordAppearance();
@@ -587,8 +590,6 @@ void HTMLInputElement::updateType()
     }
 
     updateValidity();
-
-    checkAndPossiblyClosePopoverStack();
 }
 
 inline void HTMLInputElement::runPostTypeUpdateTasks()
@@ -664,40 +665,59 @@ bool HTMLInputElement::accessKeyAction(bool sendMouseEvents)
 
 bool HTMLInputElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
-    if (name == vspaceAttr || name == hspaceAttr || name == widthAttr || name == heightAttr || (name == borderAttr && isImageButton()))
+    switch (name.nodeName()) {
+    case AttributeNames::vspaceAttr:
+    case AttributeNames::hspaceAttr:
+    case AttributeNames::widthAttr:
+    case AttributeNames::heightAttr:
         return true;
-    return HTMLTextFormControlElement::hasPresentationalHintsForAttribute(name);
+    case AttributeNames::borderAttr:
+        return isImageButton();
+    default:
+        return HTMLTextFormControlElement::hasPresentationalHintsForAttribute(name);
+        break;
+    }
 }
 
 void HTMLInputElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
-    if (name == vspaceAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::vspaceAttr:
         if (isImageButton()) {
             addHTMLLengthToStyle(style, CSSPropertyMarginTop, value);
             addHTMLLengthToStyle(style, CSSPropertyMarginBottom, value);
         }
-    } else if (name == hspaceAttr) {
+        break;
+    case AttributeNames::hspaceAttr:
         if (isImageButton()) {
-        addHTMLLengthToStyle(style, CSSPropertyMarginLeft, value);
-        addHTMLLengthToStyle(style, CSSPropertyMarginRight, value);
+            addHTMLLengthToStyle(style, CSSPropertyMarginLeft, value);
+            addHTMLLengthToStyle(style, CSSPropertyMarginRight, value);
         }
-    } else if (name == alignAttr) {
+        break;
+    case AttributeNames::alignAttr:
         if (m_inputType->shouldRespectAlignAttribute())
             applyAlignmentAttributeToStyle(value, style);
-    } else if (name == widthAttr) {
+        break;
+    case AttributeNames::widthAttr:
         if (m_inputType->shouldRespectHeightAndWidthAttributes())
             addHTMLLengthToStyle(style, CSSPropertyWidth, value);
         if (isImageButton())
             applyAspectRatioFromWidthAndHeightAttributesToStyle(value, attributeWithoutSynchronization(heightAttr), style);
-    } else if (name == heightAttr) {
+        break;
+    case AttributeNames::heightAttr:
         if (m_inputType->shouldRespectHeightAndWidthAttributes())
             addHTMLLengthToStyle(style, CSSPropertyHeight, value);
         if (isImageButton())
             applyAspectRatioFromWidthAndHeightAttributesToStyle(attributeWithoutSynchronization(widthAttr), value, style);
-    } else if (name == borderAttr && isImageButton())
-        applyBorderAttributeToStyle(value, style);
-    else
+        break;
+    case AttributeNames::borderAttr:
+        if (isImageButton())
+            applyBorderAttributeToStyle(value, style);
+        break;
+    default:
         HTMLTextFormControlElement::collectPresentationalHintsForAttribute(name, value, style);
+        break;
+    }
 }
 
 inline void HTMLInputElement::initializeInputType()
@@ -707,7 +727,7 @@ inline void HTMLInputElement::initializeInputType()
 
     auto& type = attributeWithoutSynchronization(typeAttr);
     if (type.isNull()) {
-        m_inputType = InputType::createText(*this);
+        m_inputType = TextInputType::create(*this);
         updateWillValidateAndValidity();
         return;
     }
@@ -722,34 +742,19 @@ inline void HTMLInputElement::initializeInputType()
 
 void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
+    if (oldValue == newValue)
+        return;
+
     ASSERT(m_inputType);
     Ref protectedInputType { *m_inputType };
 
     HTMLTextFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == nameAttr) {
-        removeFromRadioButtonGroup();
-        m_name = newValue;
-        addToRadioButtonGroup();
-        HTMLTextFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-    } else if (name == autocompleteAttr) {
-        if (equalLettersIgnoringASCIICase(newValue, "off"_s)) {
-            m_autocomplete = Off;
-            registerForSuspensionCallbackIfNeeded();
-        } else {
-            bool needsToUnregister = m_autocomplete == Off;
-
-            if (newValue.isEmpty())
-                m_autocomplete = Uninitialized;
-            else
-                m_autocomplete = On;
-
-            if (needsToUnregister)
-                unregisterForSuspensionCallbackIfNeeded();
-        }
-    } else if (name == typeAttr)
-        updateType();
-    else if (name == valueAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::typeAttr:
+        updateType(newValue);
+        break;
+    case AttributeNames::valueAttr:
         // Changes to the value attribute may change whether or not this element has a default value.
         // If this field is autocomplete=off that might affect the return value of needsSuspensionCallback.
         if (m_autocomplete == Off) {
@@ -764,7 +769,14 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
         }
         updateValidity();
         m_valueAttributeWasUpdatedAfterParsing = !m_parsingInProgress;
-    } else if (name == checkedAttr) {
+        break;
+    case AttributeNames::nameAttr:
+        removeFromRadioButtonGroup();
+        m_name = newValue;
+        addToRadioButtonGroup();
+        HTMLTextFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+        break;
+    case AttributeNames::checkedAttr:
         if (m_inputType->isCheckable())
             invalidateStyleForSubtree();
         // Another radio button in the same group might be checked by state
@@ -776,30 +788,62 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
             // setChecked() above sets the dirty checkedness flag so we need to reset it.
             m_dirtyCheckednessFlag = false;
         }
-    } else if (name == maxlengthAttr)
+        break;
+    case AttributeNames::autocompleteAttr:
+        if (equalLettersIgnoringASCIICase(newValue, "off"_s)) {
+            m_autocomplete = Off;
+            registerForSuspensionCallbackIfNeeded();
+        } else {
+            bool needsToUnregister = m_autocomplete == Off;
+
+            if (newValue.isEmpty())
+                m_autocomplete = Uninitialized;
+            else
+                m_autocomplete = On;
+
+            if (needsToUnregister)
+                unregisterForSuspensionCallbackIfNeeded();
+        }
+        break;
+    case AttributeNames::maxlengthAttr:
         maxLengthAttributeChanged(newValue);
-    else if (name == minlengthAttr)
+        break;
+    case AttributeNames::minlengthAttr:
         minLengthAttributeChanged(newValue);
-    else if (name == sizeAttr) {
+        break;
+    case AttributeNames::sizeAttr: {
         unsigned oldSize = m_size;
         m_size = limitToOnlyHTMLNonNegativeNumbersGreaterThanZero(newValue, defaultSize);
         if (m_size != oldSize && renderer())
             renderer()->setNeedsLayoutAndPrefWidthsRecalc();
-    } else if (name == resultsAttr)
+        break;
+    }
+    case AttributeNames::resultsAttr:
         m_maxResults = newValue.isNull() ? -1 : std::min(parseHTMLInteger(newValue).value_or(0), maxSavedResults);
-    else if (name == autosaveAttr || name == incrementalAttr)
+        break;
+    case AttributeNames::autosaveAttr:
+    case AttributeNames::incrementalAttr:
         invalidateStyleForSubtree();
-    else if (name == maxAttr || name == minAttr || name == multipleAttr || name == patternAttr || name == stepAttr)
+        break;
+    case AttributeNames::maxAttr:
+    case AttributeNames::minAttr:
+    case AttributeNames::multipleAttr:
+    case AttributeNames::patternAttr:
+    case AttributeNames::stepAttr:
         updateValidity();
+        break;
 #if ENABLE(DATALIST_ELEMENT)
-    else if (name == listAttr) {
+    case AttributeNames::listAttr:
         m_hasNonEmptyList = !newValue.isEmpty();
         if (m_hasNonEmptyList) {
             resetListAttributeTargetObserver();
             dataListMayHaveChanged();
         }
-    }
+        break;
 #endif
+    default:
+        break;
+    }
 
     m_inputType->attributeChanged(name);
 }
@@ -854,7 +898,7 @@ RenderPtr<RenderElement> HTMLInputElement::createElementRenderer(RenderStyle&& s
 void HTMLInputElement::willAttachRenderers()
 {
     if (!m_hasType)
-        updateType();
+        updateType(attributeWithoutSynchronization(typeAttr));
 }
 
 void HTMLInputElement::didAttachRenderers()
@@ -864,7 +908,10 @@ void HTMLInputElement::didAttachRenderers()
     m_inputType->attach();
 
     if (document().focusedElement() == this) {
-        document().view()->queuePostLayoutCallback([protectedThis = Ref { *this }] {
+        document().eventLoop().queueTask(TaskSource::UserInteraction, [weakThis = WeakPtr { *this }]() {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis || protectedThis->document().focusedElement() != protectedThis)
+                return;
             protectedThis->updateFocusAppearance(SelectionRestorationMode::RestoreOrSelectAll, SelectionRevealMode::Reveal);
         });
     }
@@ -1325,7 +1372,7 @@ static Vector<String> parseAcceptAttribute(StringView acceptString, bool (*predi
         return types;
 
     for (auto splitType : acceptString.split(',')) {
-        auto trimmedType = splitType.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
+        auto trimmedType = splitType.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>);
         if (trimmedType.isEmpty())
             continue;
         if (!predicate(trimmedType))

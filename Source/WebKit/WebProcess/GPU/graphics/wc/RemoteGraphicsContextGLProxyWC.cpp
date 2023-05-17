@@ -67,9 +67,6 @@ public:
     // RemoteGraphicsContextGLProxy overrides.
     void prepareForDisplay() final;
     RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return m_layerContentsDisplayDelegate.ptr(); }
-#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
-    RefPtr<WebCore::VideoFrame> paintCompositedResultsToVideoFrame() final { return nullptr; }
-#endif
 private:
     RemoteGraphicsContextGLProxyWC(IPC::Connection& connection, Ref<IPC::StreamClientConnection> streamConnection, const WebCore::GraphicsContextGLAttributes& attributes
 #if ENABLE(VIDEO)

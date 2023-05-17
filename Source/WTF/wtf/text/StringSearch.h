@@ -74,7 +74,7 @@ public:
 
 private:
     template<typename CharacterType>
-    constexpr void initializeTable(Span<CharacterType> pattern)
+    constexpr void initializeTable(std::span<CharacterType> pattern)
     {
         size_t length = pattern.size();
         ASSERT_UNDER_CONSTEXPR_CONTEXT(length <= maxPatternLength);

@@ -29,6 +29,8 @@
 
 #include "GraphicsContextGLANGLE.h"
 #include "IOSurface.h"
+#include "ProcessIdentity.h"
+#include <array>
 
 #if PLATFORM(MAC)
 #include "ScopedHighPerformanceGPURequest.h"
@@ -38,10 +40,11 @@
 #include <memory>
 #endif
 
+OBJC_CLASS MTLSharedEventListener;
+
 namespace WebCore {
 
 class GraphicsLayerContentsDisplayDelegate;
-class ProcessIdentity;
 
 #if ENABLE(VIDEO)
 class GraphicsContextGLCVCocoa;
@@ -55,8 +58,7 @@ class WEBCORE_EXPORT GraphicsContextGLCocoa : public GraphicsContextGLANGLE {
 public:
     static RefPtr<GraphicsContextGLCocoa> create(WebCore::GraphicsContextGLAttributes&&, ProcessIdentity&& resourceOwner);
     ~GraphicsContextGLCocoa();
-    IOSurface* displayBuffer();
-    void markDisplayBufferInUse();
+    IOSurface* displayBufferSurface();
 
     enum class PbufferAttachmentUsage { Read, Write, ReadWrite };
     // Returns a handle which, if non-null, must be released via the
@@ -68,12 +70,11 @@ public:
     IOSurfaceTextureAttachment attachIOSurfaceToSharedTexture(GCGLenum target, IOSurface*);
     void detachIOSurfaceFromSharedTexture(void* handle);
 #endif
-#if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
+
     RetainPtr<id> newSharedEventWithMachPort(mach_port_t);
-    void* createSyncWithSharedEvent(const RetainPtr<id>& sharedEvent, uint64_t signalValue);
+    void* createSyncWithSharedEvent(id sharedEvent, uint64_t signalValue);
     bool destroySync(void* sync);
     void clientWaitSyncWithFlush(void* sync, uint64_t timeout);
-#endif
 
     void waitUntilWorkScheduled();
 
@@ -88,16 +89,21 @@ public:
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> paintCompositedResultsToVideoFrame() final;
 #endif
+    RefPtr<PixelBuffer> readCompositedResults() final;
     void setContextVisibility(bool) final;
     void setDrawingBufferColorSpace(const DestinationColorSpace&) final;
     void prepareForDisplay() override;
 
-    void withDrawingBufferAsNativeImage(std::function<void(NativeImage&)>) override;
-    void withDisplayBufferAsNativeImage(std::function<void(NativeImage&)>) override;
+    void withDrawingBufferAsNativeImage(Function<void(NativeImage&)>) override;
+    void withDisplayBufferAsNativeImage(Function<void(NativeImage&)>) override;
 
 #if PLATFORM(MAC)
     void updateContextOnDisplayReconfiguration();
 #endif
+
+    // Prepares current frame for display. The `finishedSignal` will be invoked once the frame has finished rendering.
+    void prepareForDisplayWithFinishedSignal(Function<void()> finishedSignal);
+
 protected:
     GraphicsContextGLCocoa(WebCore::GraphicsContextGLAttributes&&, ProcessIdentity&& resourceOwner);
 
@@ -105,9 +111,24 @@ protected:
     bool platformInitializeContext() final;
     bool platformInitialize() final;
     void invalidateKnownTextureContent(GCGLuint) final;
-    bool reshapeDisplayBufferBacking() final;
-    bool allocateAndBindDisplayBufferBacking();
-    bool bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer);
+    bool reshapeDrawingBuffer() final;
+
+    // IOSurface backing store for an image of a texture.
+    // When preserveDrawingBuffer == false, this is the drawing buffer backing store.
+    // When preserveDrawingBuffer == true, this is blitted to during display prepare.
+    struct IOSurfacePbuffer {
+        std::unique_ptr<IOSurface> surface;
+        void* pbuffer { nullptr };
+        operator bool() const { return !!surface; }
+    };
+    IOSurfacePbuffer& drawingBuffer();
+    IOSurfacePbuffer& displayBuffer();
+    bool bindNextDrawingBuffer();
+    void freeDrawingBuffers();
+
+    // Inserts new fence that will invoke `signal` from a background thread when completed.
+    // If not possible, calls the `signal`.
+    void insertFinishedSignalOrInvoke(Function<void()> signal);
 
     ProcessIdentity m_resourceOwner;
     DestinationColorSpace m_drawingBufferColorSpace;
@@ -122,7 +143,12 @@ protected:
     std::unique_ptr<ImageRotationSessionVT> m_mediaSampleRotationSession;
     IntSize m_mediaSampleRotationSessionSize;
 #endif
+    RetainPtr<MTLSharedEventListener> m_finishedMetalSharedEventListener;
+    RetainPtr<id> m_finishedMetalSharedEvent; // FIXME: Remove all C++ includees and use id<MTLSharedEvent>.
 
+    static constexpr size_t maxReusedDrawingBuffers { 3 };
+    size_t m_currentDrawingBufferIndex { 0 };
+    std::array<IOSurfacePbuffer, maxReusedDrawingBuffers> m_drawingBuffers;
     friend class GraphicsContextGLCVCocoa;
 };
 

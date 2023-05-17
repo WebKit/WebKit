@@ -33,7 +33,6 @@
 #include "CSSCalcPrimitiveValueNode.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
-#include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserHelpers.h"
 #include "Logging.h"

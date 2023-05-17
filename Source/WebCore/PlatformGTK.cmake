@@ -47,7 +47,9 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/glib/ApplicationGLib.h
 
-    platform/graphics/egl/PlatformDisplayHeadless.h
+    platform/graphics/egl/PlatformDisplaySurfaceless.h
+
+    platform/graphics/gbm/PlatformDisplayGBM.h
 
     platform/graphics/gtk/GdkCairoUtilities.h
 
@@ -181,7 +183,7 @@ if (USE_ATSPI)
     )
 endif ()
 
-if (USE_LIBGBM)
+if (USE_GBM)
     list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
         ${LIBDRM_INCLUDE_DIR}
     )

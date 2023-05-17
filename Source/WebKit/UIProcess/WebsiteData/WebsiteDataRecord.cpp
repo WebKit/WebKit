@@ -98,7 +98,7 @@ void WebsiteDataRecord::addHSTSCacheHostname(const String& hostName)
 
 void WebsiteDataRecord::addAlternativeServicesHostname(const String& hostName)
 {
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
     types.add(WebsiteDataType::AlternativeServices);
     alternativeServicesHostNames.add(hostName);
 #else

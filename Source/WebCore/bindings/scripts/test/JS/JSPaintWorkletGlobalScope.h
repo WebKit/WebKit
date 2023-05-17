@@ -31,7 +31,7 @@ class JSPaintWorkletGlobalScope : public JSWorkletGlobalScope {
 public:
     using Base = JSWorkletGlobalScope;
     using DOMWrapped = PaintWorkletGlobalScope;
-    static JSPaintWorkletGlobalScope* create(JSC::VM& vm, JSC::Structure* structure, Ref<PaintWorkletGlobalScope>&& impl, JSC::JSProxy* proxy)
+    static JSPaintWorkletGlobalScope* create(JSC::VM& vm, JSC::Structure* structure, Ref<PaintWorkletGlobalScope>&& impl, JSC::JSGlobalProxy* proxy)
     {
         JSPaintWorkletGlobalScope* ptr = new (NotNull, JSC::allocateCell<JSPaintWorkletGlobalScope>(vm)) JSPaintWorkletGlobalScope(vm, structure, WTFMove(impl));
         ptr->finishCreation(vm, proxy);
@@ -63,7 +63,9 @@ public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 protected:
     JSPaintWorkletGlobalScope(JSC::VM&, JSC::Structure*, Ref<PaintWorkletGlobalScope>&&);
-    void finishCreation(JSC::VM&, JSC::JSProxy*);
+#if ASSERT_ENABLED
+    void finishCreation(JSC::VM&, JSC::JSGlobalProxy*);
+#endif
 };
 
 

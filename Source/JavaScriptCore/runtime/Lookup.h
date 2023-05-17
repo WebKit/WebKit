@@ -388,10 +388,10 @@ struct HashTable {
             return value();
         }
 
-        bool operator!=(const ConstIterator& other) const
+        bool operator==(const ConstIterator& other) const
         {
             ASSERT(m_table == other.m_table);
-            return m_position != other.m_position;
+            return m_position == other.m_position;
         }
 
         ConstIterator& operator++()

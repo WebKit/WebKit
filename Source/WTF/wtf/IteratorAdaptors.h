@@ -60,7 +60,6 @@ public:
     }
 
     inline bool operator==(const FilterIterator& other) const { return m_iter == other.m_iter; }
-    inline bool operator!=(const FilterIterator& other) const { return m_iter != other.m_iter; }
 
 private:
     const Predicate m_pred;
@@ -96,7 +95,6 @@ public:
     }
 
     inline bool operator==(const TransformIterator& other) const { return m_iter == other.m_iter; }
-    inline bool operator!=(const TransformIterator& other) const { return m_iter != other.m_iter; }
 
 private:
     const Transform m_transform;

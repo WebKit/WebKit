@@ -1115,9 +1115,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (id)_web_superAccessibilityAttributeValue:(NSString *)attribute
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return [super accessibilityAttributeValue:attribute];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (void)_web_superDoCommandBySelector:(SEL)selector

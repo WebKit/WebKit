@@ -31,11 +31,6 @@
 
 namespace WebCore {
 
-enum class CaretAnimatorType : uint8_t {
-    Default,
-    Alternate
-};
-
 class CaretAnimator;
 class Color;
 class Document;
@@ -43,6 +38,16 @@ class FloatRect;
 class GraphicsContext;
 class Node;
 class Page;
+
+enum class CaretAnimatorType : uint8_t {
+    Default,
+    Alternate
+};
+
+enum class CaretAnimatorStopReason : uint8_t {
+    Default,
+    CaretRectChanged,
+};
 
 class CaretAnimationClient {
 public:
@@ -70,12 +75,7 @@ public:
 
     virtual void start(ReducedResolutionSeconds currentTime) = 0;
 
-    void stop()
-    {
-        if (!m_isActive)
-            return;
-        didEnd();
-    }
+    virtual void stop(CaretAnimatorStopReason = CaretAnimatorStopReason::Default);
 
     bool isActive() const { return m_isActive; }
 
@@ -90,8 +90,7 @@ public:
 
     PresentationProperties presentationProperties() const { return m_presentationProperties; }
     virtual void paint(const Node&, GraphicsContext&, const FloatRect&, const Color&, const LayoutPoint&) const;
-    virtual LayoutRect repaintCaretRectForLocalRect(LayoutRect) const;
-    virtual void addLine(float, float, TextDirection) const { }
+    virtual LayoutRect caretRepaintRectForLocalRect(LayoutRect) const;
 
 protected:
     explicit CaretAnimator(CaretAnimationClient& client)
@@ -101,11 +100,13 @@ protected:
 
     virtual void updateAnimationProperties(ReducedResolutionSeconds) = 0;
 
-    void didStart(ReducedResolutionSeconds currentTime, Seconds interval)
+    void didStart(ReducedResolutionSeconds currentTime, std::optional<Seconds> interval)
     {
         m_startTime = currentTime;
         m_isActive = true;
-        m_blinkTimer.startOneShot(interval);
+        setBlinkingSuspended(!interval);
+        if (interval)
+            m_blinkTimer.startOneShot(*interval);
     }
 
     void didEnd()

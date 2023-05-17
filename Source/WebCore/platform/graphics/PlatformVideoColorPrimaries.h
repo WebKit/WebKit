@@ -42,6 +42,9 @@ enum class PlatformVideoColorPrimaries : uint8_t {
     SmpteEg432,
     JedecP22Phosphors,
     Unspecified,
+
+    // Aliases for WebIDL bindings
+    Smpte432 = SmpteEg432,
 };
 
 } // namespace WebCore

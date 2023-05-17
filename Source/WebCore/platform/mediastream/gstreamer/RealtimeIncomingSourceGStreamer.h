@@ -29,9 +29,12 @@ namespace WebCore {
 class RealtimeIncomingSourceGStreamer : public RealtimeMediaSource {
 public:
     GstElement* bin() { return m_bin.get(); }
-    void registerClient();
 
-    void handleUpstreamEvent(GRefPtr<GstEvent>&&);
+    int registerClient(GRefPtr<GstElement>&&);
+    void unregisterClient(int);
+
+    void handleUpstreamEvent(GRefPtr<GstEvent>&&, int clientId);
+    bool handleUpstreamQuery(GstQuery*, int clientId);
 
 protected:
     RealtimeIncomingSourceGStreamer(const CaptureDevice&);
@@ -43,11 +46,12 @@ private:
     const RealtimeMediaSourceCapabilities& capabilities() final;
 
     virtual void dispatchSample(GRefPtr<GstSample>&&) { }
-    void handleDownstreamEvent(GRefPtr<GstEvent>&&);
 
     GRefPtr<GstElement> m_bin;
     GRefPtr<GstElement> m_valve;
     GRefPtr<GstElement> m_tee;
+    GQuark m_clientQuark { 0 };
+    HashMap<int, GRefPtr<GstElement>> m_clients;
 };
 
 } // namespace WebCore

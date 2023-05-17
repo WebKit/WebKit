@@ -66,7 +66,6 @@ public:
     RefPtr<JSC::ArrayBuffer> takeAsArrayBuffer();
     String takeAsText();
 
-    void setContentType(const String& contentType) { m_contentType = contentType; }
     void setType(Type type) { m_type = type; }
 
     void clean();
@@ -88,11 +87,10 @@ public:
     static RefPtr<DOMFormData> packageFormData(ScriptExecutionContext*, const String& contentType, const uint8_t* data, size_t length);
 
 private:
-    Ref<Blob> takeAsBlob(ScriptExecutionContext*);
+    Ref<Blob> takeAsBlob(ScriptExecutionContext*, const String& contentType);
     void resetConsumePromise();
 
     Type m_type;
-    String m_contentType;
     SharedBufferBuilder m_buffer;
     RefPtr<DeferredPromise> m_consumePromise;
     RefPtr<ReadableStreamToSharedBufferSink> m_sink;

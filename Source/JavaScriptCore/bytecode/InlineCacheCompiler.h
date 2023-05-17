@@ -87,11 +87,6 @@ public:
         return m_kind == other.m_kind && m_code == other.m_code;
     }
 
-    bool operator!=(const AccessGenerationResult& other) const
-    {
-        return !(*this == other);
-    }
-
     explicit operator bool() const
     {
         return *this != AccessGenerationResult();
@@ -188,6 +183,17 @@ private:
     RefPtr<PolymorphicAccessJITStubRoutine> m_stubRoutine;
     std::unique_ptr<WatchpointsOnStructureStubInfo> m_watchpoints;
 };
+
+inline bool canUseMegamorphicGetById(VM& vm, UniquedStringImpl* uid)
+{
+    return !parseIndex(*uid) && uid != vm.propertyNames->length && uid != vm.propertyNames->name && uid != vm.propertyNames->prototype && uid != vm.propertyNames->underscoreProto;
+}
+
+inline bool canUseMegamorphicPutById(VM& vm, UniquedStringImpl* uid)
+{
+    return !parseIndex(*uid) && uid != vm.propertyNames->underscoreProto;
+}
+
 
 class InlineCacheCompiler {
 public:

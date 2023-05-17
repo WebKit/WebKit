@@ -30,6 +30,7 @@
 #if ENABLE(MATHML)
 
 #include "ElementInlines.h"
+#include "NodeName.h"
 #include "RenderMathMLOperator.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -210,44 +211,56 @@ void MathMLOperatorElement::childrenChanged(const ChildChange& change)
     MathMLTokenElement::childrenChanged(change);
 }
 
-static std::optional<MathMLOperatorDictionary::Flag> attributeNameToPropertyFlag(const QualifiedName& name)
-{
-    if (name == accentAttr)
-        return Accent;
-    if (name == fenceAttr)
-        return Fence;
-    if (name == largeopAttr)
-        return LargeOp;
-    if (name == movablelimitsAttr)
-        return MovableLimits;
-    if (name == separatorAttr)
-        return Separator;
-    if (name == stretchyAttr)
-        return Stretchy;
-    if (name == symmetricAttr)
-        return Symmetric;
-    return std::nullopt;
-}
-
 void MathMLOperatorElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == formAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::formAttr:
         m_dictionaryProperty = std::nullopt;
         m_properties.dirtyFlags = MathMLOperatorDictionary::allFlags;
-    } else if (auto flag = attributeNameToPropertyFlag(name))
-        m_properties.dirtyFlags |= flag.value();
-    else if (name == lspaceAttr)
+        break;
+    case AttributeNames::lspaceAttr:
         m_leadingSpace = std::nullopt;
-    else if (name == rspaceAttr)
+        if (renderer())
+            downcast<RenderMathMLOperator>(*renderer()).updateFromElement();
+        break;
+    case AttributeNames::rspaceAttr:
         m_trailingSpace = std::nullopt;
-    else if (name == minsizeAttr)
+        if (renderer())
+            downcast<RenderMathMLOperator>(*renderer()).updateFromElement();
+        break;
+    case AttributeNames::minsizeAttr:
         m_minSize = std::nullopt;
-    else if (name == maxsizeAttr)
+        break;
+    case AttributeNames::maxsizeAttr:
         m_maxSize = std::nullopt;
-
-    if ((name == stretchyAttr || name == lspaceAttr || name == rspaceAttr || name == movablelimitsAttr) && renderer()) {
-        downcast<RenderMathMLOperator>(*renderer()).updateFromElement();
-        return;
+        break;
+    case AttributeNames::stretchyAttr:
+        m_properties.dirtyFlags |= Stretchy;
+        if (renderer())
+            downcast<RenderMathMLOperator>(*renderer()).updateFromElement();
+        break;
+    case AttributeNames::movablelimitsAttr:
+        m_properties.dirtyFlags |= MovableLimits;
+        if (renderer())
+            downcast<RenderMathMLOperator>(*renderer()).updateFromElement();
+        break;
+    case AttributeNames::accentAttr:
+        m_properties.dirtyFlags |= Accent;
+        break;
+    case AttributeNames::fenceAttr:
+        m_properties.dirtyFlags |= Fence;
+        break;
+    case AttributeNames::largeopAttr:
+        m_properties.dirtyFlags |= LargeOp;
+        break;
+    case AttributeNames::separatorAttr:
+        m_properties.dirtyFlags |= Separator;
+        break;
+    case AttributeNames::symmetricAttr:
+        m_properties.dirtyFlags |= Symmetric;
+        break;
+    default:
+        break;
     }
 
     MathMLTokenElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);

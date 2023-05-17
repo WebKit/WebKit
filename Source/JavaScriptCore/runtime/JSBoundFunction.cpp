@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -232,9 +232,9 @@ bool JSBoundFunction::customHasInstance(JSObject* object, JSGlobalObject* global
 
 JSBoundFunction::JSBoundFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, JSObject* targetFunction, JSValue boundThis, unsigned boundArgsLength, JSValue arg0, JSValue arg1, JSValue arg2, JSString* nameMayBeNull, double length)
     : Base(vm, executable, globalObject, structure)
-    , m_targetFunction(vm, this, targetFunction)
-    , m_boundThis(vm, this, boundThis)
-    , m_nameMayBeNull(vm, this, nameMayBeNull, WriteBarrier<JSString>::MayBeNull)
+    , m_targetFunction(targetFunction, WriteBarrierEarlyInit)
+    , m_boundThis(boundThis, WriteBarrierEarlyInit)
+    , m_nameMayBeNull(nameMayBeNull, WriteBarrierEarlyInit)
     , m_length(length)
     , m_boundArgsLength(boundArgsLength)
 {
@@ -257,12 +257,6 @@ JSArray* JSBoundFunction::boundArgsCopy(JSGlobalObject* globalObject)
     });
     RETURN_IF_EXCEPTION(scope, nullptr);
     return result;
-}
-
-void JSBoundFunction::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
 }
 
 JSString* JSBoundFunction::nameSlow(VM& vm)

@@ -149,7 +149,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
 
     if (VIDEO_DECODING_LIMIT)
         # Specify video decoding limits.
-        set_source_files_properties(platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp PROPERTIES COMPILE_DEFINITIONS VIDEO_DECODING_LIMIT="${VIDEO_DECODING_LIMIT}")
+        set_source_files_properties(platform/graphics/gstreamer/GStreamerRegistryScanner.cpp PROPERTIES COMPILE_DEFINITIONS VIDEO_DECODING_LIMIT="${VIDEO_DECODING_LIMIT}")
     endif ()
 endif ()
 

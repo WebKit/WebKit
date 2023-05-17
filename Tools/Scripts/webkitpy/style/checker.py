@@ -107,7 +107,6 @@ _BASE_FILTER_RULES = [
     '-runtime/threadsafe_fn',
     '-runtime/rtti',
     '-whitespace/blank_line',
-    '-whitespace/end_of_line',
     # List Python pep8 categories last.
     #
     # Because much of WebKit's Python code base does not abide by the
@@ -317,6 +316,13 @@ _PATH_RULES_SPECIFIER = [
      os.path.join('Tools', 'Scripts', 'webkitpy', 'binary_bundling', 'dlopenwrap')],
      ["-readability/naming/underscores",
       "-whitespace/tab"]),
+
+    ([  # The GTK/WPE MiniBrowser uses public API and GLib-style conventions and indentation.
+     os.path.join('Tools', 'MiniBrowser', 'gtk'),
+     os.path.join('Tools', 'MiniBrowser', 'wpe')],
+     ["-readability/enum_casing",
+      "-readability/naming/underscores",
+      "-whitespace/indent"]),
 
     ([  # MiniBrowser doesn't use WTF, but only public WebKit API.
      os.path.join('Tools', 'MiniBrowser')],

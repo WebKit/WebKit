@@ -85,34 +85,45 @@ public:
     
     class Locker {
     public:
-        enum class AccessMode {
-            ReadOnly,
-            ReadWrite
+        enum class AccessMode : uint32_t {
+            ReadWrite = 0,
+            ReadOnly = kIOSurfaceLockReadOnly,
         };
 
-        Locker(IOSurface& surface, AccessMode mode = AccessMode::ReadOnly)
-            : m_surface(surface)
-            , m_flags(flagsFromMode(mode))
+        explicit Locker(IOSurface& surface, AccessMode mode = AccessMode::ReadOnly)
+            : m_surface(surface.surface())
+            , m_flags(static_cast<uint32_t>(mode))
         {
-            IOSurfaceLock(m_surface.surface(), m_flags, nullptr);
+            IOSurfaceLock(m_surface, m_flags, nullptr);
+        }
+
+        Locker(Locker&& other)
+            : m_surface(std::exchange(other.m_surface, nullptr))
+            , m_flags(other.m_flags)
+        {
         }
 
         ~Locker()
         {
-            IOSurfaceUnlock(m_surface.surface(), m_flags, nullptr);
+            if (!m_surface)
+                return;
+            IOSurfaceUnlock(m_surface, m_flags, nullptr);
+        }
+
+        Locker& operator=(Locker&& other)
+        {
+            m_surface = std::exchange(other.m_surface, nullptr);
+            m_flags = other.m_flags;
+            return *this;
         }
 
         void * surfaceBaseAddress() const
         {
-            return IOSurfaceGetBaseAddress(m_surface.surface());
+            return IOSurfaceGetBaseAddress(m_surface);
         }
 
     private:
-        static uint32_t flagsFromMode(AccessMode mode)
-        {
-            return mode == AccessMode::ReadOnly ? kIOSurfaceLockReadOnly : 0;
-        }
-        IOSurface& m_surface;
+        IOSurfaceRef m_surface;
         uint32_t m_flags;
     };
 
@@ -153,6 +164,12 @@ public:
     IOSurfaceRef surface() const { return m_surface.get(); }
 
     WEBCORE_EXPORT RetainPtr<CGContextRef> createPlatformContext(PlatformDisplayID = 0);
+
+    struct LockAndContext {
+        IOSurface::Locker lock;
+        RetainPtr<CGContextRef> context;
+    };
+    WEBCORE_EXPORT std::optional<LockAndContext> createBitmapPlatformContext();
 
     // Querying volatility can be expensive, so in cases where the surface is
     // going to be used immediately, use the return value of setVolatile to

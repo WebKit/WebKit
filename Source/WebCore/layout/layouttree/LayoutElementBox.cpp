@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LayoutElementBox.h"
 
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

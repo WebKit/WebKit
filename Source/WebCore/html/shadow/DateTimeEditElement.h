@@ -73,6 +73,7 @@ public:
     void setEmptyValue(const LayoutParameters&);
     void setValueAsDate(const LayoutParameters&, const DateComponents&);
     String value() const;
+    bool editableFieldsHaveValues() const;
 
 private:
     // Datetime can be represented by at most 8 fields:

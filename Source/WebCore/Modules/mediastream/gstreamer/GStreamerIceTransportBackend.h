@@ -31,7 +31,7 @@ class GStreamerIceTransportBackend final : public RTCIceTransportBackend, public
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    explicit GStreamerIceTransportBackend(const GRefPtr<GstWebRTCDTLSTransport>&);
+    explicit GStreamerIceTransportBackend(GRefPtr<GstWebRTCDTLSTransport>&&);
     ~GStreamerIceTransportBackend();
 
 private:

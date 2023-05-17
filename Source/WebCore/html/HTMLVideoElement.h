@@ -122,8 +122,8 @@ public:
 private:
     HTMLVideoElement(const QualifiedName&, Document&, bool createdByParser);
 
-    void scheduleResizeEvent() final;
-    void scheduleResizeEventIfSizeChanged() final;
+    void scheduleResizeEvent(const FloatSize&) final;
+    void scheduleResizeEventIfSizeChanged(const FloatSize&) final;
     bool rendererIsNeeded(const RenderStyle&) final;
     void didAttachRenderers() final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
@@ -148,8 +148,7 @@ private:
 
     AtomString m_defaultPosterURL;
 
-    unsigned m_lastReportedVideoWidth { 0 };
-    unsigned m_lastReportedVideoHeight { 0 };
+    FloatSize m_lastReportedNaturalSize { };
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     bool m_enteringPictureInPicture { false };

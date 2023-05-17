@@ -33,9 +33,15 @@
 #import <ScreenCaptureKit/SCContentSharingSession.h>
 #import <ScreenCaptureKit/SCStream_Private.h>
 
-#if HAVE(SC_CONTENT_PICKER)
-#import <ScreenCaptureKit/SCContentPicker.h>
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+#if __has_include(<ScreenCaptureKit/SCContentSharingPicker.h>)
+#import <ScreenCaptureKit/SCContentSharingPicker.h>
 #endif
+
+#if __has_include(<ScreenCaptureKit/SCContentSharingPicker_Private.h>)
+#import <ScreenCaptureKit/SCContentSharingPicker_Private.h>
+#endif
+#endif // HAVE(SC_CONTENT_SHARING_PICKER)
 
 #else // USE(APPLE_INTERNAL_SDK)
 

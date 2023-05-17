@@ -56,7 +56,7 @@ list(APPEND WebKit_MESSAGES_IN_FILES
     WebProcess/WebPage/ViewGestureGeometryCollector
 )
 
-if (USE_LIBGBM)
+if (USE_GBM)
     list(APPEND WebKit_MESSAGES_IN_FILES
         UIProcess/gtk/AcceleratedBackingStoreDMABuf
     )
@@ -136,6 +136,7 @@ set(WebKitGTK_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitEditorState.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitError.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFaviconDatabase.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFeature.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFileChooserRequest.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFindController.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFormSubmissionRequest.h.in

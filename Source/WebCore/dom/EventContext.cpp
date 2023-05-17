@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "FocusEvent.h"
+#include "HTMLFieldSetElement.h"
 #include "HTMLFormElement.h"
 #include "LocalDOMWindow.h"
 #include "MouseEvent.h"
@@ -89,8 +90,7 @@ void EventContext::handleLocalEvents(Event& event, EventInvokePhase phase) const
     if (!m_node->hasEventTargetData())
         return;
 
-    // FIXME: Should we deliver wheel events to disabled form controls or not?
-    if (event.isTrusted() && is<Element>(m_node) && downcast<Element>(*m_node).isDisabledFormControl() && event.isMouseEvent() && !event.isWheelEvent())
+    if (event.isTrusted() && is<Element>(m_node) && downcast<Element>(*m_node).isDisabledFormControl() && event.isMouseEvent() && !event.isWheelEvent() && !m_node->document().settings().sendMouseEventsToDisabledFormControlsEnabled())
         return;
 
     m_node->fireEventListeners(event, phase);

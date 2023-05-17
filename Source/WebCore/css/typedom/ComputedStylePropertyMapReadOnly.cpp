@@ -30,7 +30,7 @@
 #include "CSSPropertyParser.h"
 #include "Document.h"
 #include "Element.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "StylePropertyShorthand.h"
 #include "StyleScope.h"
 #include <wtf/KeyValuePair.h>

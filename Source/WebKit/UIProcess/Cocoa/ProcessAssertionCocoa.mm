@@ -318,10 +318,15 @@ namespace WebKit {
 static NSString *runningBoardNameForAssertionType(ProcessAssertionType assertionType)
 {
     switch (assertionType) {
-    case ProcessAssertionType::Suspended:
-        return @"Suspended";
+    case ProcessAssertionType::NearSuspended:
+        return @"Suspended"; // FIXME: This name is confusing since it doesn't cause suspension.
     case ProcessAssertionType::Background:
+#if PLATFORM(MAC)
+        // The background assertions time out after 30 seconds on iOS but not macOS.
+        return @"IndefiniteBackground";
+#else
         return @"Background";
+#endif
     case ProcessAssertionType::UnboundedNetworking:
         return @"UnboundedNetworking";
     case ProcessAssertionType::Foreground:
@@ -338,7 +343,7 @@ static NSString *runningBoardNameForAssertionType(ProcessAssertionType assertion
 static NSString *runningBoardDomainForAssertionType(ProcessAssertionType assertionType)
 {
     switch (assertionType) {
-    case ProcessAssertionType::Suspended:
+    case ProcessAssertionType::NearSuspended:
     case ProcessAssertionType::Background:
     case ProcessAssertionType::UnboundedNetworking:
     case ProcessAssertionType::Foreground:
@@ -484,7 +489,7 @@ ProcessAndUIAssertion::~ProcessAndUIAssertion()
 #if PLATFORM(IOS_FAMILY)
 void ProcessAndUIAssertion::updateRunInBackgroundCount()
 {
-    bool shouldHoldBackgroundTask = isValid() && type() != ProcessAssertionType::Suspended;
+    bool shouldHoldBackgroundTask = isValid() && type() != ProcessAssertionType::NearSuspended;
     if (m_isHoldingBackgroundTask == shouldHoldBackgroundTask)
         return;
 

@@ -21,6 +21,7 @@
 #include "config.h"
 #include "SVGGlyphRefElement.h"
 
+#include "NodeName.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGGlyphElement.h"
 #include "SVGNames.h"
@@ -66,14 +67,22 @@ void SVGGlyphRefElement::attributeChanged(const QualifiedName& name, const AtomS
     SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
     // FIXME: Is the error handling in parseFloat correct for these attributes?
-    if (name == SVGNames::xAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::xAttr:
         m_x = parseFloat(newValue);
-    else if (name == SVGNames::yAttr)
+        break;
+    case AttributeNames::yAttr:
         m_y = parseFloat(newValue);
-    else if (name == SVGNames::dxAttr)
+        break;
+    case AttributeNames::dxAttr:
         m_dx = parseFloat(newValue);
-    else if (name == SVGNames::dyAttr)
+        break;
+    case AttributeNames::dyAttr:
         m_dy = parseFloat(newValue);
+        break;
+    default:
+        break;
+    }
 }
 
 void SVGGlyphRefElement::setX(float x)

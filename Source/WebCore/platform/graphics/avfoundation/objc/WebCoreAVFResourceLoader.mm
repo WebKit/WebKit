@@ -233,7 +233,7 @@ DataURLResourceMediaLoader::DataURLResourceMediaLoader(WebCoreAVFResourceLoader&
 {
     RELEASE_ASSERT(request.url().protocolIsData());
 
-    if (auto result = DataURLDecoder::decode(request.url(), DataURLDecoder::Mode::ForgivingBase64)) {
+    if (auto result = DataURLDecoder::decode(request.url())) {
         m_response = ResourceResponse::dataURLResponse(request.url(), *result);
         m_buffer = SharedBuffer::create(WTFMove(result->data));
     }

@@ -65,7 +65,7 @@ P256DHKeyPair P256DHKeyPair::generate(void)
     };
 }
 
-bool validateP256DHPublicKey(Span<const uint8_t> publicKey)
+bool validateP256DHPublicKey(std::span<const uint8_t> publicKey)
 {
     CCECCryptorRef ccPublicKey = nullptr;
     CCCryptorStatus status = CCECCryptorImportKey(kCCImportKeyBinary, publicKey.data(), publicKey.size(), ccECKeyPublic, &ccPublicKey);
@@ -75,7 +75,7 @@ bool validateP256DHPublicKey(Span<const uint8_t> publicKey)
     return status == kCCSuccess;
 }
 
-std::optional<Vector<uint8_t>> computeP256DHSharedSecret(Span<const uint8_t> publicKey, const P256DHKeyPair& keyPair)
+std::optional<Vector<uint8_t>> computeP256DHSharedSecret(std::span<const uint8_t> publicKey, const P256DHKeyPair& keyPair)
 {
     if (publicKey.size() != p256dhPublicKeyLength || keyPair.publicKey.size() != p256dhPublicKeyLength || keyPair.privateKey.size() != p256dhPrivateKeyLength)
         return std::nullopt;
@@ -107,14 +107,14 @@ std::optional<Vector<uint8_t>> computeP256DHSharedSecret(Span<const uint8_t> pub
     return sharedSecret;
 }
 
-Vector<uint8_t> hmacSHA256(Span<const uint8_t> key, Span<const uint8_t> message)
+Vector<uint8_t> hmacSHA256(std::span<const uint8_t> key, std::span<const uint8_t> message)
 {
     Vector<uint8_t> result(sha256DigestLength);
     CCHmac(kCCHmacAlgSHA256, key.data(), key.size(), message.data(), message.size(), result.begin());
     return result;
 }
 
-std::optional<Vector<uint8_t>> decryptAES128GCM(Span<const uint8_t> key, Span<const uint8_t> iv, Span<const uint8_t> cipherTextWithTag)
+std::optional<Vector<uint8_t>> decryptAES128GCM(std::span<const uint8_t> key, std::span<const uint8_t> iv, std::span<const uint8_t> cipherTextWithTag)
 {
     if (cipherTextWithTag.size() < aes128GCMTagLength)
         return std::nullopt;

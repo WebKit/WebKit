@@ -50,8 +50,6 @@ public:
         return m_offset == other.m_offset && m_textRun == other.m_textRun;
     }
 
-    bool operator!=(const TextBoxIterator& other) const { return !operator==(other); }
-
 private:
     const TextRun* m_textRun { nullptr };
     unsigned m_offset { 0 };

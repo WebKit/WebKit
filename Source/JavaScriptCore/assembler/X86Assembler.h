@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -6367,11 +6367,6 @@ public:
         relinkJump(from, to);
     }
 
-    static void repatchInt32(void* where, int32_t value)
-    {
-        setInt32(where, value);
-    }
-
     static void repatchPointer(void* where, void* value)
     {
         setPointer(where, value);
@@ -6482,43 +6477,7 @@ public:
         for (unsigned i = opcodeBytes + modRMBytes; i < static_cast<unsigned>(maxJumpReplacementSize()); ++i)
             ptr[i] = u.asBytes[i - opcodeBytes - modRMBytes];
     }
-    
-    static void replaceWithLoad(void* instructionStart)
-    {
-        uint8_t* ptr = reinterpret_cast<uint8_t*>(instructionStart);
-#if CPU(X86_64)
-        if ((*ptr & ~15) == PRE_REX)
-            ptr++;
-#endif
-        switch (*ptr) {
-        case OP_MOV_GvEv:
-            break;
-        case OP_LEA:
-            *ptr = OP_MOV_GvEv;
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-    }
-    
-    static void replaceWithAddressComputation(void* instructionStart)
-    {
-        uint8_t* ptr = reinterpret_cast<uint8_t*>(instructionStart);
-#if CPU(X86_64)
-        if ((*ptr & ~15) == PRE_REX)
-            ptr++;
-#endif
-        switch (*ptr) {
-        case OP_MOV_GvEv:
-            *ptr = OP_LEA;
-            break;
-        case OP_LEA:
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-    }
-    
+
     static unsigned getCallReturnOffset(AssemblerLabel call)
     {
         ASSERT(call.isSet());

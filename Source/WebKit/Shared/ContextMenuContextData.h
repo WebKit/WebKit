@@ -110,7 +110,7 @@ private:
 
     std::optional<WebHitTestResultData> m_webHitTestResultData;
     String m_selectedText;
-    bool m_hasEntireImage;
+    bool m_hasEntireImage { false };
 
 #if ENABLE(SERVICE_CONTROLS)
     void setImage(WebCore::Image&);

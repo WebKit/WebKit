@@ -368,7 +368,6 @@ void PrintSystemInfo(const SystemInfo &info)
     std::cout << "Optimus: " << (info.isOptimus ? "true" : "false") << "\n";
     std::cout << "AMD Switchable: " << (info.isAMDSwitchable ? "true" : "false") << "\n";
     std::cout << "Mac Switchable: " << (info.isMacSwitchable ? "true" : "false") << "\n";
-    std::cout << "Needs EAGL on Mac: " << (info.needsEAGLOnMac ? "true" : "false") << "\n";
 
     std::cout << "\n";
     if (!info.machineManufacturer.empty())

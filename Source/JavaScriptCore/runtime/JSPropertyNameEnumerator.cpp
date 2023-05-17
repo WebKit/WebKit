@@ -49,8 +49,8 @@ JSPropertyNameEnumerator* JSPropertyNameEnumerator::create(VM& vm, Structure* st
 
 JSPropertyNameEnumerator::JSPropertyNameEnumerator(VM& vm, Structure* structure, uint32_t indexedLength, uint32_t numberStructureProperties, WriteBarrier<JSString>* propertyNamesBuffer, unsigned propertyNamesSize)
     : JSCell(vm, vm.propertyNameEnumeratorStructure.get())
-    , m_propertyNames(vm, this, propertyNamesBuffer)
-    , m_cachedStructureID(vm, this, structure, WriteBarrierStructureID::MayBeNull)
+    , m_propertyNames(propertyNamesBuffer, WriteBarrierEarlyInit)
+    , m_cachedStructureID(structure, WriteBarrierEarlyInit)
     , m_indexedLength(indexedLength)
     , m_endStructurePropertyIndex(numberStructureProperties)
     , m_endGenericPropertyIndex(propertyNamesSize)

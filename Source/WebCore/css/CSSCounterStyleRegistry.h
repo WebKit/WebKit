@@ -64,6 +64,4 @@ private:
     bool m_hasUnresolvedReferences { true };
 };
 
-bool isCounterStyleUnsupportedByUserAgent(CSSValueID);
-
 } // namespace WebCore

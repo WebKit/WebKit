@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// https://svgwg.org/svg2-draft/text.html#InterfaceSVGTextContentElement
+
 [
     Exposed=Window
 ] interface SVGTextContentElement : SVGGraphicsElement {
@@ -31,16 +33,17 @@
     const unsigned short LENGTHADJUST_SPACING = 1;
     const unsigned short LENGTHADJUST_SPACINGANDGLYPHS = 2;
 
-    readonly attribute SVGAnimatedLength textLength;
-    readonly attribute SVGAnimatedEnumeration lengthAdjust;
+    [SameObject] readonly attribute SVGAnimatedLength textLength;
+    [SameObject] readonly attribute SVGAnimatedEnumeration lengthAdjust;
 
     long getNumberOfChars();
-    unrestricted float getComputedTextLength();
-    unrestricted float getSubStringLength(optional unsigned long offset = 0, optional unsigned long length = 0);
-    [NewObject] SVGPoint getStartPositionOfChar(optional unsigned long offset = 0);
-    [NewObject] SVGPoint getEndPositionOfChar(optional unsigned long offset = 0);
-    [NewObject] SVGRect getExtentOfChar(optional unsigned long offset = 0);
-    unrestricted float getRotationOfChar(optional unsigned long offset = 0);
-    long getCharNumAtPosition(DOMPointInit point);
-    undefined selectSubString(optional unsigned long offset = 0, optional unsigned long length = 0);
+    float getComputedTextLength();
+    float getSubStringLength(unsigned long charnum, unsigned long nchars);
+    // FIXME: SVGPoint/SVGRect should be DOMPoint/DOMRect as per web-spec.
+    SVGPoint getStartPositionOfChar(unsigned long charnum);
+    SVGPoint getEndPositionOfChar(unsigned long charnum);
+    SVGRect getExtentOfChar(unsigned long charnum);
+    float getRotationOfChar(unsigned long charnum);
+    long getCharNumAtPosition(optional DOMPointInit point = {});
+    undefined selectSubString(unsigned long charnum, unsigned long nchars);
 };

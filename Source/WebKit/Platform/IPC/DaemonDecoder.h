@@ -31,7 +31,7 @@ namespace WebKit::Daemon {
 
 class Decoder {
 public:
-    Decoder(Span<const uint8_t> buffer)
+    Decoder(std::span<const uint8_t> buffer)
         : m_buffer(buffer) { }
     ~Decoder();
 
@@ -60,12 +60,12 @@ public:
     }
 
     WARN_UNUSED_RETURN bool decodeFixedLengthData(uint8_t* data, size_t);
-    Span<const uint8_t> decodeFixedLengthReference(size_t);
+    std::span<const uint8_t> decodeFixedLengthReference(size_t);
 
 private:
     WARN_UNUSED_RETURN bool bufferIsLargeEnoughToContainBytes(size_t) const;
 
-    Span<const uint8_t> m_buffer;
+    std::span<const uint8_t> m_buffer;
     size_t m_bufferPosition { 0 };
 };
 

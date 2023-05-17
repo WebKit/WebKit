@@ -33,22 +33,22 @@ namespace WebCore {
 ALWAYS_INLINE bool shouldInvalidateTypeOnAttributeChange(NodeListInvalidationType type, const QualifiedName& attrName)
 {
     switch (type) {
-    case InvalidateOnClassAttrChange:
+    case NodeListInvalidationType::InvalidateOnClassAttrChange:
         return attrName == HTMLNames::classAttr;
-    case InvalidateOnNameAttrChange:
+    case NodeListInvalidationType::InvalidateOnNameAttrChange:
         return attrName == HTMLNames::nameAttr;
-    case InvalidateOnIdNameAttrChange:
+    case NodeListInvalidationType::InvalidateOnIdNameAttrChange:
         return attrName == HTMLNames::idAttr || attrName == HTMLNames::nameAttr;
-    case InvalidateOnForTypeAttrChange:
+    case NodeListInvalidationType::InvalidateOnForTypeAttrChange:
         return attrName == HTMLNames::forAttr || attrName == HTMLNames::typeAttr;
-    case InvalidateForFormControls:
+    case NodeListInvalidationType::InvalidateForFormControls:
         return attrName == HTMLNames::nameAttr || attrName == HTMLNames::idAttr || attrName == HTMLNames::forAttr
             || attrName == HTMLNames::formAttr || attrName == HTMLNames::typeAttr;
-    case InvalidateOnHRefAttrChange:
+    case NodeListInvalidationType::InvalidateOnHRefAttrChange:
         return attrName == HTMLNames::hrefAttr;
-    case DoNotInvalidateOnAttributeChanges:
+    case NodeListInvalidationType::DoNotInvalidateOnAttributeChanges:
         return false;
-    case InvalidateOnAnyAttrChange:
+    case NodeListInvalidationType::InvalidateOnAnyAttrChange:
         return true;
     }
     return false;

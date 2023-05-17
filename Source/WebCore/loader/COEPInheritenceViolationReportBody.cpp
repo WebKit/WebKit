@@ -39,8 +39,7 @@ Ref<COEPInheritenceViolationReportBody> COEPInheritenceViolationReportBody::crea
 }
 
 COEPInheritenceViolationReportBody::COEPInheritenceViolationReportBody(COEPDisposition disposition, const URL& blockedURL, const String& type)
-    : ReportBody(ViolationReportType::COEPInheritenceViolation)
-    , m_disposition(disposition)
+    : m_disposition(disposition)
     , m_blockedURL(blockedURL)
     , m_type(type)
 {

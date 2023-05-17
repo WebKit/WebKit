@@ -22,9 +22,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
- /* https://www.w3.org/TR/css-counter-styles-3/#predefined-counters */
-
-/* Once a style is added here, make sure it is not listed at isCounterStyleUnsupportedByUserAgent() */
+/*** NOTE: New counter styles should also be added in CSSValueKeywords.in, and isPredefinedCounterStyle() should also be updated if needed. ***/
+/*** Built-in the spec: https://www.w3.org/TR/css-counter-styles-3/#predefined-counters ***/
 
 @counter-style decimal {
     system: numeric;
@@ -332,7 +331,7 @@
     additive-symbols: 9000 \AD6C\CC9C, 8000 \D314\CC9C, 7000 \CE60\CC9C, 6000 \C721\CC9C, 5000 \C624\CC9C, 4000 \C0AC\CC9C, 3000 \C0BC\CC9C, 2000 \C774\CC9C, 1000 \C77C\CC9C, 900 \AD6C\BC31, 800 \D314\BC31, 700 \CE60\BC31, 600 \C721\BC31, 500 \C624\BC31, 400 \C0AC\BC31, 300 \C0BC\BC31, 200 \C774\BC31, 100 \C77C\BC31, 90 \AD6C\C2ED, 80 \D314\C2ED, 70 \CE60\C2ED, 60 \C721\C2ED, 50 \C624\C2ED, 40 \C0AC\C2ED, 30 \C0BC\C2ED, 20 \C774\C2ED, 10 \C77C\C2ED, 9 \AD6C, 8 \D314, 7 \CE60, 6 \C721, 5 \C624, 4 \C0AC, 3 \C0BC, 2 \C774, 1 \C77C, 0 \C601;
     /* 9000 구천, 8000 팔천, 7000 칠천, 6000 육천, 5000 오천, 4000 사천, 3000 삼천, 2000 이천, 1000 일천, 900 구백, 800 팔백, 700 칠백, 600 육백, 500 오백, 400 사백, 300 삼백, 200 이백, 100 일백, 90 구십, 80 팔십, 70 칠십, 60 육십, 50 오십, 40 사십, 30 삼십, 20 이십, 10 일십, 9 구, 8 팔, 7 칠, 6 육, 5 오, 4 사, 3 삼, 2 이, 1 일, 0 영 */
     suffix: ', ';
-    negative: "\B9C8\C774\B108\C2A4  ";
+    negative: "\B9C8\C774\B108\C2A4 \20";
     /* 마이너스 (followed by a space) */
 }
 
@@ -342,7 +341,7 @@
     additive-symbols: 9000 \4E5D\5343, 8000 \516B\5343, 7000 \4E03\5343, 6000 \516D\5343, 5000 \4E94\5343, 4000 \56DB\5343, 3000 \4E09\5343, 2000 \4E8C\5343, 1000 \5343, 900 \4E5D\767E, 800 \516B\767E, 700 \4E03\767E, 600 \516D\767E, 500 \4E94\767E, 400 \56DB\767E, 300 \4E09\767E, 200 \4E8C\767E, 100 \767E, 90 \4E5D\5341, 80 \516B\5341, 70 \4E03\5341, 60 \516D\5341, 50 \4E94\5341, 40 \56DB\5341, 30 \4E09\5341, 20 \4E8C\5341, 10 \5341, 9 \4E5D, 8 \516B, 7 \4E03, 6 \516D, 5 \4E94, 4 \56DB, 3 \4E09, 2 \4E8C, 1 \4E00, 0 \96F6;
     /* 9000 九千, 8000 八千, 7000 七千, 6000 六千, 5000 五千, 4000 四千, 3000 三千, 2000 二千, 1000 千, 900 九百, 800 八百, 700 七百, 600 六百, 500 五百, 400 四百, 300 三百, 200 二百, 100 百, 90 九十, 80 八十, 70 七十, 60 六十, 50 五十, 40 四十, 30 三十, 20 二十, 10 十, 9 九, 8 八, 7 七, 6 六, 5 五, 4 四, 3 三, 2 二, 1 一, 0 零 */
     suffix: ', ';
-    negative: "\B9C8\C774\B108\C2A4  ";
+    negative: "\B9C8\C774\B108\C2A4 \20";
     /* 마이너스 (followed by a space) */
 }
 
@@ -352,6 +351,291 @@
     additive-symbols: 9000 \4E5D\4EDF, 8000 \516B\4EDF, 7000 \4E03\4EDF, 6000 \516D\4EDF, 5000 \4E94\4EDF, 4000 \56DB\4EDF, 3000 \53C3\4EDF, 2000 \8CB3\4EDF, 1000 \58F9\4EDF, 900 \4E5D\767E, 800 \516B\767E, 700 \4E03\767E, 600 \516D\767E, 500 \4E94\767E, 400 \56DB\767E, 300 \53C3\767E, 200 \8CB3\767E, 100 \58F9\767E, 90 \4E5D\62FE, 80 \516B\62FE, 70 \4E03\62FE, 60 \516D\62FE, 50 \4E94\62FE, 40 \56DB\62FE, 30 \53C3\62FE, 20 \8CB3\62FE, 10 \58F9\62FE, 9 \4E5D, 8 \516B, 7 \4E03, 6 \516D, 5 \4E94, 4 \56DB, 3 \53C3, 2 \8CB3, 1 \58F9, 0 \96F6;
     /* 9000 九仟, 8000 八仟, 7000 七仟, 6000 六仟, 5000 五仟, 4000 四仟, 3000 參仟, 2000 貳仟, 1000 壹仟, 900 九百, 800 八百, 700 七百, 600 六百, 500 五百, 400 四百, 300 參百, 200 貳百, 100 壹百, 90 九拾, 80 八拾, 70 七拾, 60 六拾, 50 五拾, 40 四拾, 30 參拾, 20 貳拾, 10 壹拾, 9 九, 8 八, 7 七, 6 六, 5 五, 4 四, 3 參, 2 貳, 1 壹, 0 零 */
     suffix: ', ';
-    negative: "\B9C8\C774\B108\C2A4  ";
+    negative: "\B9C8\C774\B108\C2A4 \20";
     /* 마이너스 (followed by a space) */
+}
+
+/*** Complex counter style systems ***/
+
+@counter-style simp-chinese-informal {
+    system: -internal-simplified-chinese-informal;
+    range: -9999 9999;
+    suffix: '\3001'; /* '、' */
+    negative: '\8D1F'; /* '负' */
+    fallback: cjk-decimal;
+}
+
+@counter-style simp-chinese-formal {
+    system: -internal-simplified-chinese-formal;
+    range: -9999 9999;
+    suffix: '\3001'; /* '、' */
+    negative: '\8D1F'; /* '负' */
+    fallback: cjk-decimal;
+}
+
+@counter-style trad-chinese-informal {
+    system: -internal-traditional-chinese-informal;
+    range: -9999 9999;
+    suffix: '\3001'; /* '、' */
+    negative: '\8CA0'; /* '負' */
+    fallback: cjk-decimal;
+}
+
+@counter-style trad-chinese-formal {
+    system: -internal-traditional-chinese-formal;
+    range: -9999 9999;
+    suffix: '\3001'; /* '、' */
+    negative: '\8CA0'; /* '負' */
+    fallback: cjk-decimal;
+}
+
+/* identical to trad-chinese-informal */
+@counter-style cjk-ideographic {
+    system: -internal-traditional-chinese-informal;
+    range: -9999 9999;
+    suffix: '\3001'; /* '、' */
+    negative: '\8CA0'; /* '負' */
+    fallback: cjk-decimal;
+}
+
+@counter-style ethiopic-numeric {
+    system: -internal-ethiopic-numeric;
+    range: 1 infinite;
+    suffix: '\002F\20'; /* '/ ' (followed by space) */
+}
+
+/*** Subset of Ready-made Counter Styles: https://www.w3.org/TR/predefined-counter-styles/ ***/
+
+@counter-style binary {
+    system: numeric;
+    symbols: '\30' '\31';
+    /* '0' '1' */
+}
+
+@counter-style lower-hexadecimal {
+    system: numeric;
+    symbols: '\30' '\31' '\32' '\33' '\34' '\35' '\36' '\37' '\38' '\39' '\61' '\62' '\63' '\64' '\65' '\66';
+    /* '0' '1' '2' '3' '4' '5' '6' '7' '8' '9' 'a' 'b' 'c' 'd' 'e' 'f' */
+}
+
+@counter-style upper-hexadecimal {
+    system: numeric;
+    symbols: '\30' '\31' '\32' '\33' '\34' '\35' '\36' '\37' '\38' '\39' '\41' '\42' '\43' '\44' '\45' '\46';
+    /* '0' '1' '2' '3' '4' '5' '6' '7' '8' '9' 'A' 'B' 'C' 'D' 'E' 'F' */
+}
+
+@counter-style octal {
+    system: numeric;
+    symbols: '\30' '\31' '\32' '\33' '\34' '\35' '\36' '\37';
+    /* '0' '1' '2' '3' '4' '5' '6' '7' */
+}
+
+@counter-style hangul {
+    system: alphabetic;
+    symbols: '\AC00' '\B098' '\B2E4' '\B77C' '\B9C8' '\BC14' '\C0AC' '\C544' '\C790' '\CC28' '\CE74' '\D0C0' '\D30C' '\D558';
+    /* '가' '나' '다' '라' '마' '바' '사' '아' '자' '차' '카' '타' '파' '하' */
+}
+
+@counter-style hangul-consonant {
+    system: alphabetic;
+    symbols: '\3131' '\3134' '\3137' '\3139' '\3141' '\3142' '\3145' '\3147' '\3148' '\314A' '\314B' '\314C' '\314D' '\314E';
+    /* 'ㄱ' 'ㄴ' 'ㄷ' 'ㄹ' 'ㅁ' 'ㅂ' 'ㅅ' 'ㅇ' 'ㅈ' 'ㅊ' 'ㅋ' 'ㅌ' 'ㅍ' 'ㅎ' */
+}
+
+/** Ethiopic ready-made Counter Styles **/
+
+/* FIXME: The W3C definition adds '\12F8' ('ዸ') between '\12F0' ('ደ') & '\1308' ('ገ') */
+@counter-style afar {
+    system: alphabetic;
+    symbols: '\1200' '\1208' '\1210' '\1218' '\1228' '\1230' '\1260' '\1270' '\1290' '\12A0' '\12A8' '\12C8' '\12D0' '\12E8' '\12F0' '\1308' '\1338' '\1348';
+    /* 'ሀ' 'ለ' 'ሐ' 'መ' 'ረ' 'ሰ' 'በ' 'ተ' 'ነ' 'አ' 'ከ' 'ወ' 'ዐ' 'የ' 'ደ' 'ገ' 'ጸ' 'ፈ' */
+    suffix: '\1366 '; /* ፦ */
+}
+
+@counter-style ethiopic-halehame-ti-er {
+    system: alphabetic;
+    symbols: '\1200' '\1208' '\1210' '\1218' '\1228' '\1230' '\1238' '\1240' '\1250' '\1260' '\1270' '\1278' '\1290' '\1298' '\12A0' '\12A8' '\12B8' '\12C8' '\12D0' '\12D8' '\12E0' '\12E8' '\12F0' '\1300' '\1308' '\1320' '\1328' '\1330' '\1338' '\1348' '\1350';
+    /* 'ሀ' 'ለ' 'ሐ' 'መ' 'ረ' 'ሰ' 'ሸ' 'ቀ' 'ቐ' 'በ' 'ተ' 'ቸ' 'ነ' 'ኘ' 'አ' 'ከ' 'ኸ' 'ወ' 'ዐ' 'ዘ' 'ዠ' 'የ' 'ደ' 'ጀ' 'ገ' 'ጠ' 'ጨ' 'ጰ' 'ጸ' 'ፈ' 'ፐ' */
+    suffix: '\1366 '; /* ፦ */
+}
+
+/* FIXME: The W3C definition does not have a suffix */
+@counter-style ethiopic-halehame-ti-et {
+    system: alphabetic;
+    symbols: '\1200' '\1208' '\1210' '\1218' '\1220' '\1228' '\1230' '\1238' '\1240' '\1250' '\1260' '\1270' '\1278' '\1280' '\1290' '\1298' '\12A0' '\12A8' '\12B8' '\12C8' '\12D0' '\12D8' '\12E0' '\12E8' '\12F0' '\1300' '\1308' '\1320' '\1328' '\1330' '\1338' '\1340' '\1348' '\1350';
+    /* 'ሀ' 'ለ' 'ሐ' 'መ' 'ሠ' 'ረ' 'ሰ' 'ሸ' 'ቀ' 'ቐ' 'በ' 'ተ' 'ቸ' 'ኀ' 'ነ' 'ኘ' 'አ' 'ከ' 'ኸ' 'ወ' 'ዐ' 'ዘ' 'ዠ' 'የ' 'ደ' 'ጀ' 'ገ' 'ጠ' 'ጨ' 'ጰ' 'ጸ' 'ፀ' 'ፈ' 'ፐ' */
+    suffix: '\1366 '; /* ፦ */
+}
+
+/* FIXME: The W3C definition has '\1338' ('ጰ') & '\1330' ('ጸ') swapped */
+@counter-style oromo {
+    system: alphabetic;
+    symbols: '\1200' '\1208' '\1218' '\1228' '\1230' '\1238' '\1240' '\1260' '\1270' '\1278' '\1290' '\1298' '\12A0' '\12A8' '\12C8' '\12E8' '\12F0' '\12F8' '\1300' '\1308' '\1320' '\1328' '\1338' '\1330' '\1348';
+    /* 'ሀ' 'ለ' 'መ' 'ረ' 'ሰ' 'ሸ' 'ቀ' 'በ' 'ተ' 'ቸ' 'ነ' 'ኘ' 'አ' 'ከ' 'ወ' 'የ' 'ደ' 'ዸ' 'ጀ' 'ገ' 'ጠ' 'ጨ' 'ጸ' 'ጰ' 'ፈ' */
+    suffix: '\1366 '; /* ፦ */
+}
+
+/* FIXME: The W3C definition has '\1338' ('ጰ') & '\1330' ('ጸ') swapped and removes '\1210' ('ሐ') */
+@counter-style sidama {
+    system: alphabetic;
+    symbols: '\1200' '\1208' '\1210' '\1218' '\1228' '\1230' '\1238' '\1240' '\1260' '\1270' '\1278' '\1290' '\1298' '\12A0' '\12A8' '\12C8' '\12E8' '\12F0' '\12F8' '\1300' '\1308' '\1320' '\1328' '\1338' '\1330' '\1348';
+    /* 'ሀ' 'ለ' 'ሐ' 'መ' 'ረ' 'ሰ' 'ሸ' 'ቀ' 'በ' 'ተ' 'ቸ' 'ነ' 'ኘ' 'አ' 'ከ' 'ወ' 'የ' 'ደ' 'ዸ' 'ጀ' 'ገ' 'ጠ' 'ጨ' 'ጸ' 'ጰ' 'ፈ' */
+    suffix: '\1366 '; /* ፦ */
+}
+
+/* FIXME: The W3C definition has '\1338' ('ጰ') & '\1330' ('ጸ') swapped */
+@counter-style tigre {
+    system: alphabetic;
+    symbols: '\1200' '\1208' '\1210' '\1218' '\1228' '\1230' '\1238' '\1240' '\1260' '\1270' '\1278' '\1290' '\12A0' '\12A8' '\12C8' '\12D0' '\12D8' '\12E8' '\12F0' '\1300' '\1308' '\1320' '\1328' '\1338' '\1330' '\1348' '\1350';
+    /* 'ሀ' 'ለ' 'ሐ' 'መ' 'ረ' 'ሰ' 'ሸ' 'ቀ' 'በ' 'ተ' 'ቸ' 'ነ' 'አ' 'ከ' 'ወ' 'ዐ' 'ዘ' 'የ' 'ደ' 'ጀ' 'ገ' 'ጠ' 'ጨ' 'ጸ' 'ጰ' 'ፈ' 'ፐ' */
+    suffix: '\1366 '; /* ፦ */
+}
+
+/*** WebKit specific ***/
+
+@counter-style asterisks {
+    system: symbolic;
+    symbols: '\2A';
+    /* '*' */
+    suffix: ' ';
+}
+
+@counter-style footnotes {
+    system: symbolic;
+    symbols: '\2A' '\2051' '\2020' '\2021';
+    /* '*' '⁑' '†' '‡' */
+    suffix: ' ';
+}
+
+@counter-style lower-norwegian {
+    system: alphabetic;
+    symbols: '\61' '\62' '\63' '\64' '\65' '\66' '\67' '\68' '\69' '\6A' '\6B' '\6C' '\6D' '\6E' '\6F' '\70' '\71' '\72' '\73' '\74' '\75' '\76' '\77' '\78' '\79' '\7A' '\E6' '\F8' '\E5';
+    /* 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 'k' 'l' 'm' 'n' 'o' 'p' 'q' 'r' 's' 't' 'u' 'v' 'w' 'x' 'y' 'z' 'æ' 'ø' 'å' */
+    suffix: ' ';
+}
+
+@counter-style upper-greek {
+    system: alphabetic;
+    symbols: '\0391' '\0392' '\0393' '\0394' '\0395' '\0396' '\0397' '\0398' '\0399' '\039A' '\039B' '\039C' '\039D' '\039E' '\039F' '\03A0' '\03A1' '\03A3' '\03A4' '\03A5' '\03A6' '\03A7' '\03A8' '\03A9';
+    /* 'Α' 'Β' 'Γ' 'Δ' 'Ε' 'Ζ' 'Η' 'Θ' 'Ι' 'Κ' 'Λ' 'Μ' 'Ν' 'Ξ' 'Ο' 'Π' 'Ρ' 'Σ' 'Τ' 'Υ' 'Φ' 'Χ' 'Ψ' 'Ω' */
+}
+
+@counter-style upper-norwegian {
+    system: alphabetic;
+    symbols: '\41' '\42' '\43' '\44' '\45' '\46' '\47' '\48' '\49' '\4A' '\4B' '\4C' '\4D' '\4E' '\4F' '\50' '\51' '\52' '\53' '\54' '\55' '\56' '\57' '\58' '\59' '\5A' '\C6' '\D8' '\C5';
+    /* 'A' 'B' 'C' 'D' 'E' 'F' 'G' 'H' 'I' 'J' 'K' 'L' 'M' 'N' 'O' 'P' 'Q' 'R' 'S' 'T' 'U' 'V' 'W' 'X' 'Y' 'Z' 'Æ' 'Ø' 'Å' */
+    suffix: ' ';
+}
+
+@counter-style urdu {
+    system: extends persian;
+}
+
+/** Ethiopic WebKit-specific styles/aliases **/
+
+/* The W3C definition is named ethiopic-haleme-am */
+@counter-style amharic {
+    system: alphabetic;
+    symbols: '\1200' '\1208' '\1210' '\1218' '\1220' '\1228' '\1230' '\1238' '\1240' '\1260' '\1270' '\1278' '\1280' '\1290' '\1298' '\12A0' '\12A8' '\12B8' '\12C8' '\12D0' '\12D8' '\12E0' '\12E8' '\12F0' '\1300' '\1308' '\1320' '\1328' '\1330' '\1338' '\1340' '\1348' '\1350';
+    /* 'ሀ' 'ለ' 'ሐ' 'መ' 'ሠ' 'ረ' 'ሰ' 'ሸ' 'ቀ' 'በ' 'ተ' 'ቸ' 'ኀ' 'ነ' 'ኘ' 'አ' 'ከ' 'ኸ' 'ወ' 'ዐ' 'ዘ' 'ዠ' 'የ' 'ደ' 'ጀ' 'ገ' 'ጠ' 'ጨ' 'ጰ' 'ጸ' 'ፀ' 'ፈ' 'ፐ' */
+    suffix: '\1366 '; /* ፦ */
+}
+
+@counter-style amharic-abegede {
+    system: alphabetic;
+    symbols: '\12A0' '\1260' '\1308' '\12F0' '\1300' '\1200' '\12C8' '\12D8' '\12E0' '\1210' '\1320' '\1328' '\12E8' '\12A8' '\12B8' '\1208' '\1218' '\1290' '\1298' '\1220' '\12D0' '\1348' '\1338' '\1240' '\1228' '\1230' '\1238' '\1270' '\1278' '\1280' '\1340' '\1330' '\1350';
+    /* 'አ' 'በ' 'ገ' 'ደ' 'ጀ' 'ሀ' 'ወ' 'ዘ' 'ዠ' 'ሐ' 'ጠ' 'ጨ' 'የ' 'ከ' 'ኸ' 'ለ' 'መ' 'ነ' 'ኘ' 'ሠ' 'ዐ' 'ፈ' 'ጸ' 'ቀ' 'ረ' 'ሰ' 'ሸ' 'ተ' 'ቸ' 'ኀ' 'ፀ' 'ጰ' 'ፐ' */
+    suffix: '\1366 '; /* ፦ */
+}
+
+/* The W3C definition is named ethiopic-haleme */
+@counter-style ethiopic {
+    system: alphabetic;
+    symbols: '\1200' '\1208' '\1210' '\1218' '\1220' '\1228' '\1230' '\1240' '\1260' '\1270' '\1280' '\1290' '\12A0' '\12A8' '\12C8' '\12D0' '\12D8' '\12E8' '\12F0' '\1308' '\1320' '\1330' '\1338' '\1340' '\1348' '\1350';
+    /* 'ሀ' 'ለ' 'ሐ' 'መ' 'ሠ' 'ረ' 'ሰ' 'ቀ' 'በ' 'ተ' 'ኀ' 'ነ' 'አ' 'ከ' 'ወ' 'ዐ' 'ዘ' 'የ' 'ደ' 'ገ' 'ጠ' 'ጰ' 'ጸ' 'ፀ' 'ፈ' 'ፐ' */
+    suffix: '\1366 '; /* ፦ */
+}
+
+@counter-style ethiopic-abegede {
+    system: alphabetic;
+    symbols: '\12A0' '\1260' '\1308' '\12F0' '\1200' '\12C8' '\12D8' '\1210' '\1320' '\12E8' '\12A8' '\1208' '\1218' '\1290' '\1220' '\12D0' '\1348' '\1338' '\1240' '\1228' '\1230' '\1270' '\1280' '\1340' '\1330' '\1350';
+    /* 'አ' 'በ' 'ገ' 'ደ' 'ሀ' 'ወ' 'ዘ' 'ሐ' 'ጠ' 'የ' 'ከ' 'ለ' 'መ' 'ነ' 'ሠ' 'ዐ' 'ፈ' 'ጸ' 'ቀ' 'ረ' 'ሰ' 'ተ' 'ኀ' 'ፀ' 'ጰ' 'ፐ' */
+    suffix: '\1366 '; /* ፦ */
+}
+
+@counter-style somali {
+    system: alphabetic;
+    symbols: '\1200' '\1208' '\1210' '\1218' '\1228' '\1230' '\1238' '\1240' '\1260' '\1270' '\1290' '\12A0' '\12A8' '\12B8' '\12C8' '\12D0' '\12E8' '\12F0' '\1300' '\1308' '\1338' '\1348';
+    /* 'ሀ' 'ለ' 'ሐ' 'መ' 'ረ' 'ሰ' 'ሸ' 'ቀ' 'በ' 'ተ' 'ነ' 'አ' 'ከ' 'ኸ' 'ወ' 'ዐ' 'የ' 'ደ' 'ጀ' 'ገ' 'ጸ' 'ፈ' */
+    suffix: '\1366 '; /* ፦ */
+}
+
+@counter-style tigrinya-er-abegede {
+    system: alphabetic;
+    symbols: '\12A0' '\1260' '\1308' '\12F0' '\1300' '\1200' '\12C8' '\12D8' '\12E0' '\1210' '\1320' '\1328' '\12E8' '\12A8' '\12B8' '\1208' '\1218' '\1290' '\1298' '\12D0' '\1348' '\1338' '\1240' '\1250' '\1228' '\1230' '\1238' '\1270' '\1278' '\1330' '\1350';
+    /* 'አ' 'በ' 'ገ' 'ደ' 'ጀ' 'ሀ' 'ወ' 'ዘ' 'ዠ' 'ሐ' 'ጠ' 'ጨ' 'የ' 'ከ' 'ኸ' 'ለ' 'መ' 'ነ' 'ኘ' 'ዐ' 'ፈ' 'ጸ' 'ቀ' 'ቐ' 'ረ' 'ሰ' 'ሸ' 'ተ' 'ቸ' 'ጰ' 'ፐ' */
+    suffix: '\1366 '; /* ፦ */
+}
+
+@counter-style tigrinya-et-abegede {
+    system: alphabetic;
+    symbols: '\12A0' '\1260' '\1308' '\12F0' '\1300' '\1200' '\12C8' '\12D8' '\12E0' '\1210' '\1320' '\1328' '\12E8' '\12A8' '\12B8' '\1208' '\1218' '\1290' '\1298' '\1220' '\12D0' '\1348' '\1338' '\1240' '\1250' '\1228' '\1230' '\1238' '\1270' '\1278' '\1280' '\1340' '\1330' '\1350';
+    /* 'አ' 'በ' 'ገ' 'ደ' 'ጀ' 'ሀ' 'ወ' 'ዘ' 'ዠ' 'ሐ' 'ጠ' 'ጨ' 'የ' 'ከ' 'ኸ' 'ለ' 'መ' 'ነ' 'ኘ' 'ሠ' 'ዐ' 'ፈ' 'ጸ' 'ቀ' 'ቐ' 'ረ' 'ሰ' 'ሸ' 'ተ' 'ቸ' 'ኀ' 'ፀ' 'ጰ' 'ፐ' */
+    suffix: '\1366 '; /* ፦ */
+}
+
+@counter-style ethiopic-abegede-gez {
+    system: extends ethiopic-abegede;
+}
+
+@counter-style ethiopic-abegede-am-et {
+    system: extends amharic-abegede;
+}
+
+@counter-style ethiopic-abegede-ti-er {
+    system: extends tigrinya-er-abegede;
+}
+
+@counter-style ethiopic-abegede-ti-et {
+    system: extends tigrinya-et-abegede;
+}
+
+@counter-style ethiopic-halehame-aa-et {
+    system: extends afar;
+}
+
+@counter-style ethiopic-halehame-aa-er {
+    system: extends afar;
+}
+
+@counter-style ethiopic-halehame-am-et {
+    system: extends amharic;
+}
+
+@counter-style ethiopic-halehame-gez {
+    system: extends ethiopic;
+}
+
+@counter-style ethiopic-halehame-om-et {
+    system: extends oromo;
+}
+
+@counter-style ethiopic-halehame-sid-et {
+    system: extends sidama;
+}
+
+@counter-style ethiopic-halehame-so-et {
+    system: extends somali;
+}
+
+@counter-style ethiopic-halehame-tig {
+    system: extends tigre;
+}
+
+@counter-style tigrinya-er {
+    system: extends ethiopic-halehame-ti-er;
+}
+
+@counter-style tigrinya-et {
+    system: extends ethiopic-halehame-ti-et;
 }

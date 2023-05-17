@@ -29,7 +29,7 @@
 #include "RenderStyleConstants.h"
 #include "StyleColor.h"
 #include "StyleCustomPropertyData.h"
-#include "StyleTextEdge.h"
+#include "StyleTextBoxEdge.h"
 #include "TabSize.h"
 #include "TextSpacing.h"
 #include "TextUnderlineOffset.h"
@@ -67,10 +67,6 @@ public:
     ~StyleRareInheritedData();
 
     bool operator==(const StyleRareInheritedData& o) const;
-    bool operator!=(const StyleRareInheritedData& o) const
-    {
-        return !(*this == o);
-    }
 
     bool hasColorFilters() const;
 
@@ -99,7 +95,7 @@ public:
 
     TextUnderlineOffset textUnderlineOffset;
 
-    TextEdge textEdge;
+    TextBoxEdge textBoxEdge;
     
     Length wordSpacing;
     float miterLimit;
@@ -120,7 +116,7 @@ public:
     unsigned lineBreak : 3; // LineBreak
     unsigned userSelect : 2; // UserSelect
     unsigned colorSpace : 1; // ColorSpace
-    unsigned speakAs : 4; // ESpeakAs
+    unsigned speakAs : 4 { 0 }; // OptionSet<SpeakAs>
     unsigned hyphens : 2; // Hyphens
     unsigned textCombine : 1; // text-combine-upright
     unsigned textEmphasisFill : 1; // TextEmphasisFill

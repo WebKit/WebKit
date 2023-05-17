@@ -76,6 +76,8 @@ public:
     virtual bool canCreateControlPartForDecorations(const RenderObject&) const { return false; }
     RefPtr<ControlPart> createControlPart(const RenderObject&) const;
 
+    void updateControlPartForRenderer(ControlPart&, const RenderObject&) const;
+
     OptionSet<ControlStyle::State> extractControlStyleStatesForRenderer(const RenderObject&) const;
     ControlStyle extractControlStyleForRenderer(const RenderBox&) const;
 
@@ -184,7 +186,7 @@ public:
 
     Color datePlaceholderTextColor(const Color& textColor, const Color& backgroundColor) const;
 
-    Color documentMarkerLineColor(DocumentMarkerLineStyleMode, OptionSet<StyleColorOptions>) const;
+    Color documentMarkerLineColor(const RenderText&, DocumentMarkerLineStyleMode) const;
 
     WEBCORE_EXPORT Color focusRingColor(OptionSet<StyleColorOptions>) const;
     virtual Color platformFocusRingColor(OptionSet<StyleColorOptions>) const { return Color::black; }
@@ -197,7 +199,7 @@ public:
 #endif
     virtual void platformColorsDidChange();
 
-    virtual Seconds caretBlinkInterval() const { return 500_ms; }
+    virtual std::optional<Seconds> caretBlinkInterval() const { return { 500_ms }; }
 
     // System fonts and colors for CSS.
     virtual Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const;
@@ -443,13 +445,14 @@ protected:
 
     virtual ColorCache& colorCache(OptionSet<StyleColorOptions>) const;
 
+    virtual Color autocorrectionReplacementMarkerColor(const RenderText&) const;
+
 private:
     StyleAppearance autoAppearanceForElement(RenderStyle&, const Element*) const;
     StyleAppearance adjustAppearanceForElement(RenderStyle&, const Element*, StyleAppearance) const;
 
     Color spellingMarkerColor(OptionSet<StyleColorOptions>) const;
     Color dictationAlternativesMarkerColor(OptionSet<StyleColorOptions>) const;
-    Color autocorrectionReplacementMarkerColor(OptionSet<StyleColorOptions>) const;
     Color grammarMarkerColor(OptionSet<StyleColorOptions>) const;
 
     mutable HashMap<uint8_t, ColorCache, DefaultHash<uint8_t>, WTF::UnsignedWithZeroKeyHashTraits<uint8_t>> m_colorCacheMap;

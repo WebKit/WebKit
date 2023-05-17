@@ -187,7 +187,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
         if (!this._timestampElement) {
             this._timestampElement = document.createElement("span");
             this._timestampElement.classList.add("timestamp");
-            this._messageBodyElement.insertBefore(this._timestampElement, this._messageBodyElement.firstChild);
+            this._element.insertBefore(this._timestampElement, this._element.firstChild);
         }
     
         let date = new Date(this._timestamp * 1000);

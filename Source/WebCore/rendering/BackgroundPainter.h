@@ -27,6 +27,13 @@
 
 namespace WebCore {
 
+class GraphicsContext;
+class FloatRoundedRect;
+
+enum class ShadowStyle : uint8_t;
+
+class FloatRoundedRect;
+
 struct BackgroundImageGeometry {
     BackgroundImageGeometry(const LayoutRect& destinationRect, const LayoutSize& tileSizeWithoutPixelSnapping, const LayoutSize& tileSize, const LayoutSize& phase, const LayoutSize& spaceSize, bool fixedAttachment);
 

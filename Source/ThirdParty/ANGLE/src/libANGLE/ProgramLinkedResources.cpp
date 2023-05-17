@@ -1374,17 +1374,17 @@ void InterfaceBlockLinker::defineInterfaceBlock(const GetBlockSizeFunc &getBlock
     size_t blockSize = 0;
     std::vector<unsigned int> blockIndexes;
 
-    int blockIndex = static_cast<int>(mBlocksOut->size());
+    const int blockIndex = static_cast<int>(mBlocksOut->size());
     // Track the first and last block member index to determine the range of active block members in
     // the block.
-    size_t firstBlockMemberIndex = getCurrentBlockMemberIndex();
+    const size_t firstBlockMemberIndex = getCurrentBlockMemberIndex();
 
     std::unique_ptr<sh::ShaderVariableVisitor> visitor(
         getVisitor(getMemberInfo, interfaceBlock.fieldPrefix(), interfaceBlock.fieldMappedPrefix(),
                    shaderType, blockIndex));
     sh::TraverseShaderVariables(interfaceBlock.fields, false, visitor.get());
 
-    size_t lastBlockMemberIndex = getCurrentBlockMemberIndex();
+    const size_t lastBlockMemberIndex = getCurrentBlockMemberIndex();
 
     for (size_t blockMemberIndex = firstBlockMemberIndex; blockMemberIndex < lastBlockMemberIndex;
          ++blockMemberIndex)
@@ -1392,7 +1392,7 @@ void InterfaceBlockLinker::defineInterfaceBlock(const GetBlockSizeFunc &getBlock
         blockIndexes.push_back(static_cast<unsigned int>(blockMemberIndex));
     }
 
-    unsigned int firstFieldArraySize = interfaceBlock.fields[0].getArraySizeProduct();
+    const unsigned int firstFieldArraySize = interfaceBlock.fields[0].getArraySizeProduct();
 
     for (unsigned int arrayElement = 0; arrayElement < interfaceBlock.elementCount();
          ++arrayElement)
@@ -1414,11 +1414,11 @@ void InterfaceBlockLinker::defineInterfaceBlock(const GetBlockSizeFunc &getBlock
         // ESSL 3.10 section 4.4.4 page 58:
         // Any uniform or shader storage block declared without a binding qualifier is initially
         // assigned to block binding point zero.
-        int blockBinding =
+        const int blockBinding =
             (interfaceBlock.binding == -1 ? 0 : interfaceBlock.binding + arrayElement);
         InterfaceBlock block(interfaceBlock.name, interfaceBlock.mappedName,
-                             interfaceBlock.isArray(), arrayElement, firstFieldArraySize,
-                             blockBinding);
+                             interfaceBlock.isArray(), interfaceBlock.isReadOnly, arrayElement,
+                             firstFieldArraySize, blockBinding);
         block.memberIndexes = blockIndexes;
         block.setActive(shaderType, interfaceBlock.active);
 

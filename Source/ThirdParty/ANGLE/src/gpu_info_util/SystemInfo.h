@@ -78,8 +78,6 @@ struct SystemInfo
     bool isAMDSwitchable = false;
     // Only true on dual-GPU Mac laptops.
     bool isMacSwitchable = false;
-    // Only true on Apple Silicon Macs when running in macCatalyst.
-    bool needsEAGLOnMac = false;
 
     // Only available on Android
     std::string machineManufacturer;
@@ -160,17 +158,6 @@ void PrintSystemInfo(const SystemInfo &info);
 
 VersionInfo ParseNvidiaDriverVersion(uint32_t version);
 VersionInfo ParseMesaDriverVersion(uint32_t version);
-
-#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
-// Helper to get the active GPU ID from a given Core Graphics display ID.
-uint64_t GetGpuIDFromDisplayID(uint32_t displayID);
-
-// Helper to get the active GPU ID from an OpenGL display mask.
-uint64_t GetGpuIDFromOpenGLDisplayMask(uint32_t displayMask);
-
-// Get VendorID from metal device's registry ID
-VendorID GetVendorIDFromMetalDeviceRegistryID(uint64_t registryID);
-#endif
 
 uint64_t GetSystemDeviceIdFromParts(uint32_t highPart, uint32_t lowPart);
 uint32_t GetSystemDeviceIdHighPart(uint64_t systemDeviceId);

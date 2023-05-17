@@ -24,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Close-3000-verify-code.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Close-4999-reason.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Close-Reason-124Bytes.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Close-delayed.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Close-onlyReason.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Close-readyState-Closed.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Close-readyState-Closing.any.js
@@ -33,6 +34,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Create-asciiSep-protocol-string.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Create-blocked-port.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Create-extensions-empty.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-http-urls.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Create-invalid-urls.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Create-non-absolute-url.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Create-nonAscii-protocol-string.any.js
@@ -41,6 +43,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Create-protocols-repeated-case-insensitive.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Create-protocols-repeated.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Create-url-with-space.any.js
+/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-url-with-windows-1252-encoding.html
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Create-valid-url-array-protocols.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Create-valid-url-binaryType-blob.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Create-valid-url-protocol-empty.any.js
@@ -48,7 +51,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Create-valid-url-protocol-string.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Create-valid-url-protocol.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Create-valid-url.any.js
-/LayoutTests/imported/w3c/web-platform-tests/websockets/Create-wrong-scheme.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/websockets/README.md
 /LayoutTests/imported/w3c/web-platform-tests/websockets/Send-0byte-data.any.js
@@ -80,5 +82,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/websockets/constructor.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/eventhandlers.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/extended-payload-length.html
+/LayoutTests/imported/w3c/web-platform-tests/websockets/idlharness.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/referrer.any.js
 /LayoutTests/imported/w3c/web-platform-tests/websockets/remove-own-iframe-during-onerror.window.js

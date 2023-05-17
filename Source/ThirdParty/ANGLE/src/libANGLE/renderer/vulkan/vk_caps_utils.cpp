@@ -1288,7 +1288,7 @@ egl::Config GenerateDefaultConfig(DisplayVk *display,
 
     config.renderTargetFormat = colorFormat.internalFormat;
     config.depthStencilFormat = depthStencilFormat.internalFormat;
-    config.bufferSize         = colorFormat.pixelBytes * 8;
+    config.bufferSize         = colorFormat.getEGLConfigBufferSize();
     config.redSize            = colorFormat.redBits;
     config.greenSize          = colorFormat.greenBits;
     config.blueSize           = colorFormat.blueBits;

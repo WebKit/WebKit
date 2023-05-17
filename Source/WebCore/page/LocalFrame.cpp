@@ -72,7 +72,6 @@
 #include "LocalDOMWindow.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
-#include "NavigationScheduler.h"
 #include "Navigator.h"
 #include "NodeList.h"
 #include "NodeTraversal.h"
@@ -152,7 +151,6 @@ static inline float parentTextZoomFactor(LocalFrame* frame)
 LocalFrame::LocalFrame(Page& page, UniqueRef<FrameLoaderClient>&& frameLoaderClient, FrameIdentifier identifier, HTMLFrameOwnerElement* ownerElement, Frame* parent)
     : Frame(page, identifier, FrameType::Local, ownerElement, parent)
     , m_loader(makeUniqueRef<FrameLoader>(*this, WTFMove(frameLoaderClient)))
-    , m_navigationScheduler(makeUniqueRef<NavigationScheduler>(*this))
     , m_script(makeUniqueRef<ScriptController>(*this))
     , m_pageZoomFactor(parentPageZoomFactor(this))
     , m_textZoomFactor(parentTextZoomFactor(this))
@@ -199,7 +197,6 @@ Ref<LocalFrame> LocalFrame::createSubframeHostedInAnotherProcess(Page& page, Uni
 LocalFrame::~LocalFrame()
 {
     setView(nullptr);
-    navigationScheduler().cancel();
 
     if (!loader().isComplete())
         loader().closeURL();
@@ -401,7 +398,7 @@ static JSC::Yarr::RegularExpression createRegExpForLabels(const Vector<String>& 
         pattern.append(i ? "|" : "", startsWithWordCharacter ? "\\b" : "", label, endsWithWordCharacter ? "\\b" : "");
     }
     pattern.append(')');
-    return JSC::Yarr::RegularExpression(pattern.toString(), JSC::Yarr::TextCaseInsensitive);
+    return JSC::Yarr::RegularExpression(pattern.toString(), { JSC::Yarr::Flags::IgnoreCase });
 }
 
 String LocalFrame::searchForLabelsAboveCell(const JSC::Yarr::RegularExpression& regExp, HTMLTableCellElement* cell, size_t* resultDistanceFromStartOfCell)
@@ -716,11 +713,6 @@ void LocalFrame::injectUserScriptsAwaitingNotification()
 {
     for (const auto& [world, script] : std::exchange(m_userScriptsAwaitingNotification, { }))
         injectUserScriptImmediately(world, script.get());
-}
-
-std::optional<PageIdentifier> LocalFrame::pageID() const
-{
-    return loader().pageID();
 }
 
 RenderView* LocalFrame::contentRenderer() const

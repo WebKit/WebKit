@@ -100,7 +100,7 @@ private:
 
     CompletionHandler<void(EncodedMessage&&)> createReplySender(WebKit::WebPushD::MessageType, OSObjectPtr<xpc_object_t>&& request);
     void decodeAndHandleRawXPCMessage(WebKit::WebPushD::RawXPCMessageType, OSObjectPtr<xpc_object_t>&&);
-    void decodeAndHandleMessage(xpc_connection_t, WebKit::WebPushD::MessageType, Span<const uint8_t> encodedMessage, CompletionHandler<void(EncodedMessage&&)>&&);
+    void decodeAndHandleMessage(xpc_connection_t, WebKit::WebPushD::MessageType, std::span<const uint8_t> encodedMessage, CompletionHandler<void(EncodedMessage&&)>&&);
 
     bool canRegisterForNotifications(ClientConnection&);
 

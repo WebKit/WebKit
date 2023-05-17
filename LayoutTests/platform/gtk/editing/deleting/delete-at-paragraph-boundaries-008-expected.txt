@@ -19,16 +19,16 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x233 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x81
-          RenderText {#text} at (0,0) size 65x26
-            text run at (0,0) width 65: "Tests: "
-          RenderBR {BR} at (64,0) size 1x26
+          RenderText {#text} at (0,0) size 59x26
+            text run at (0,0) width 59: "Tests:"
+          RenderBR {BR} at (58,0) size 1x26
           RenderText {#text} at (0,27) size 690x53
             text run at (0,27) width 690: "Deleting when a selection starts in the middle of the last paragraph and"
             text run at (0,54) width 348: "extends to the end of that paragraph"
         RenderBlock {DIV} at (14,111) size 756x108
-          RenderText {#text} at (0,0) size 189x26
-            text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (188,0) size 1x26
+          RenderText {#text} at (0,0) size 183x26
+            text run at (0,0) width 183: "Expected Results:"
+          RenderBR {BR} at (182,0) size 1x26
           RenderText {#text} at (0,27) size 738x80
             text run at (0,27) width 738: "Should see the four lines in the red box. First line should be \"one\". Next one"
             text run at (0,54) width 167: "should be \"two\". "

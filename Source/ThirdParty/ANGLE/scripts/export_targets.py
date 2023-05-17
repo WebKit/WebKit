@@ -192,7 +192,6 @@ IGNORED_INCLUDES = {
     b'libANGLE/renderer/d3d/DeviceD3D.h',
     b'libANGLE/renderer/d3d/DisplayD3D.h',
     b'libANGLE/renderer/d3d/RenderTargetD3D.h',
-    b'libANGLE/renderer/gl/apple/DisplayApple_api.h',
     b'libANGLE/renderer/gl/cgl/DisplayCGL.h',
     b'libANGLE/renderer/gl/eagl/DisplayEAGL.h',
     b'libANGLE/renderer/gl/egl/android/DisplayAndroid.h',

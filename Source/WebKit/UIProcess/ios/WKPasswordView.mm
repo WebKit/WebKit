@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "UIAlertControllerUtilities.h"
 #import "UIKitSPI.h"
 #import "WKContentView.h"
 #import "WKWebViewContentProvider.h"
@@ -104,9 +105,9 @@ const CGFloat passwordEntryFieldPadding = 10;
 #if HAVE(OS_DARK_MODE_SUPPORT)
     [_scrollView setBackgroundColor:UIColor.systemGroupedBackgroundColor];
 #else
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [_scrollView setBackgroundColor:UIColor.groupTableViewBackgroundColor];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
     [scrollView addSubview:self];
@@ -129,13 +130,13 @@ const CGFloat passwordEntryFieldPadding = 10;
 - (void)showPasswordFailureAlert
 {
     [[_passwordView passwordField] setText:@""];
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:WEB_UI_STRING("The document could not be opened with that password.", "document password failure alert message") message:@"" preferredStyle:UIAlertControllerStyleAlert];
+    auto alert = WebKit::createUIAlertController(WEB_UI_STRING("The document could not be opened with that password.", "document password failure alert message"), @"");
 
     UIAlertAction *defaultAction = [UIAlertAction actionWithTitle:WEB_UI_STRING_KEY("OK", "OK (password failure alert)", "OK button label in document password failure alert") style:UIAlertActionStyleDefault handler:[](UIAlertAction *) { }];
 
     [alert addAction:defaultAction];
 
-    [self.window.rootViewController presentViewController:alert animated:YES completion:nil];
+    [self.window.rootViewController presentViewController:alert.get() animated:YES completion:nil];
 }
 
 - (void)_keyboardDidShow:(NSNotification *)notification

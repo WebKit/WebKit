@@ -32,8 +32,8 @@ namespace WebCore {
 
 std::optional<HTTPHeaderField> HTTPHeaderField::create(String&& unparsedName, String&& unparsedValue)
 {
-    StringView strippedName = StringView(unparsedName).stripLeadingAndTrailingMatchedCharacters(RFC7230::isWhitespace<UChar>);
-    StringView strippedValue = StringView(unparsedValue).stripLeadingAndTrailingMatchedCharacters(RFC7230::isWhitespace<UChar>);
+    StringView strippedName = StringView(unparsedName).stripLeadingAndTrailingMatchedCharacters(isTabOrSpace<UChar>);
+    StringView strippedValue = StringView(unparsedValue).stripLeadingAndTrailingMatchedCharacters(isTabOrSpace<UChar>);
     if (!RFC7230::isValidName(strippedName) || !RFC7230::isValidValue(strippedValue))
         return std::nullopt;
 

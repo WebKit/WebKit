@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "AudioSession.h"
+#include "CaptureDeviceManager.h"
 #include "CoreAudioCaptureSource.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Logging.h"
@@ -40,6 +41,12 @@ namespace WebCore {
 BaseAudioSharedUnit::BaseAudioSharedUnit()
     : m_sampleRate(AudioSession::sharedSession().sampleRate())
 {
+    RealtimeMediaSourceCenter::singleton().addDevicesChangedObserver(*this);
+}
+
+BaseAudioSharedUnit::~BaseAudioSharedUnit()
+{
+    RealtimeMediaSourceCenter::singleton().removeDevicesChangedObserver(*this);
 }
 
 void BaseAudioSharedUnit::addClient(CoreAudioCaptureSource& client)
@@ -150,12 +157,13 @@ void BaseAudioSharedUnit::setCaptureDevice(String&& persistentID, uint32_t captu
         captureDeviceChanged();
 }
 
-void BaseAudioSharedUnit::devicesChanged(const Vector<CaptureDevice>& devices)
+void BaseAudioSharedUnit::devicesChanged()
 {
-    if (!m_producingCount)
+    auto devices = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().audioCaptureDeviceManager().captureDevices();
+    auto persistentID = this->persistentID();
+    if (persistentID.isEmpty())
         return;
 
-    auto persistentID = this->persistentID();
     if (WTF::anyOf(devices, [&persistentID] (auto& device) { return persistentID == device.persistentId(); })) {
         validateOutputDevice(m_outputDeviceID);
         return;

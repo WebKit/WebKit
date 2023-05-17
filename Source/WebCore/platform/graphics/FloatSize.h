@@ -59,31 +59,27 @@ class IntSize;
 
 class FloatSize {
 public:
-    FloatSize() { }
-    FloatSize(float width, float height) 
-        : m_width(width)
-        , m_height(height) { }
-    FloatSize(const IntSize& size) 
-        : m_width(size.width())
-        , m_height(size.height()) { }
+    constexpr FloatSize() = default;
+    constexpr FloatSize(float width, float height) : m_width(width), m_height(height) { }
+    constexpr FloatSize(const IntSize& size) : m_width(size.width()), m_height(size.height()) { }
 
     static FloatSize narrowPrecision(double width, double height);
 
-    float width() const { return m_width; }
-    float height() const { return m_height; }
+    constexpr float width() const { return m_width; }
+    constexpr float height() const { return m_height; }
 
-    float minDimension() const { return std::min(m_width, m_height); }
-    float maxDimension() const { return std::max(m_width, m_height); }
+    constexpr float minDimension() const { return std::min(m_width, m_height); }
+    constexpr float maxDimension() const { return std::max(m_width, m_height); }
 
     void setWidth(float width) { m_width = width; }
     void setHeight(float height) { m_height = height; }
 
-    bool isEmpty() const { return m_width <= 0 || m_height <= 0; }
+    constexpr bool isEmpty() const { return m_width <= 0 || m_height <= 0; }
     WEBCORE_EXPORT bool isZero() const;
     bool isExpressibleAsIntSize() const;
 
-    float aspectRatio() const { return m_width / m_height; }
-    double aspectRatioDouble() const { return m_width / static_cast<double>(m_height); }
+    constexpr float aspectRatio() const { return m_width / m_height; }
+    constexpr double aspectRatioDouble() const { return m_width / static_cast<double>(m_height); }
 
     void expand(float width, float height)
     {
@@ -103,25 +99,25 @@ public:
         m_height *= scaleY;
     }
 
-    FloatSize scaled(float s) const
+    constexpr FloatSize scaled(float s) const
     {
         return { m_width * s, m_height * s };
     }
 
-    FloatSize scaled(float scaleX, float scaleY) const
+    constexpr FloatSize scaled(float scaleX, float scaleY) const
     {
         return { m_width * scaleX, m_height * scaleY };
     }
 
     WEBCORE_EXPORT FloatSize constrainedBetween(const FloatSize& min, const FloatSize& max) const;
 
-    FloatSize expandedTo(const FloatSize& other) const
+    constexpr FloatSize expandedTo(const FloatSize& other) const
     {
         return FloatSize(m_width > other.m_width ? m_width : other.m_width,
             m_height > other.m_height ? m_height : other.m_height);
     }
 
-    FloatSize shrunkTo(const FloatSize& other) const
+    constexpr FloatSize shrunkTo(const FloatSize& other) const
     {
        return FloatSize(m_width < other.m_width ? m_width : other.m_width,
            m_height < other.m_height ? m_height : other.m_height);
@@ -132,17 +128,17 @@ public:
         return std::hypot(m_width, m_height);
     }
 
-    float diagonalLengthSquared() const
+    constexpr float diagonalLengthSquared() const
     {
         return m_width * m_width + m_height * m_height;
     }
-    
-    float area() const
+
+    constexpr float area() const
     {
         return m_width * m_height;
     }
 
-    FloatSize transposedSize() const
+    constexpr FloatSize transposedSize() const
     {
         return FloatSize(m_height, m_width);
     }
@@ -157,7 +153,7 @@ public:
     operator NSSize() const;
 #endif
 
-    String toJSONString() const;
+    WEBCORE_EXPORT String toJSONString() const;
     WEBCORE_EXPORT Ref<JSON::Object> toJSONObject() const;
 
 private:
@@ -179,47 +175,47 @@ inline FloatSize& operator-=(FloatSize& a, const FloatSize& b)
     return a;
 }
 
-inline FloatSize operator+(const FloatSize& a, const FloatSize& b)
+constexpr FloatSize operator+(const FloatSize& a, const FloatSize& b)
 {
     return FloatSize(a.width() + b.width(), a.height() + b.height());
 }
 
-inline FloatSize operator-(const FloatSize& a, const FloatSize& b)
+constexpr FloatSize operator-(const FloatSize& a, const FloatSize& b)
 {
     return FloatSize(a.width() - b.width(), a.height() - b.height());
 }
 
-inline FloatSize operator-(const FloatSize& size)
+constexpr FloatSize operator-(const FloatSize& size)
 {
     return FloatSize(-size.width(), -size.height());
 }
 
-inline FloatSize operator*(const FloatSize& a, float b)
+constexpr FloatSize operator*(const FloatSize& a, float b)
 {
     return FloatSize(a.width() * b, a.height() * b);
 }
 
-inline FloatSize operator*(float a, const FloatSize& b)
+constexpr FloatSize operator*(float a, const FloatSize& b)
 {
     return FloatSize(a * b.width(), a * b.height());
 }
 
-inline FloatSize operator*(const FloatSize& a, const FloatSize& b)
+constexpr FloatSize operator*(const FloatSize& a, const FloatSize& b)
 {
     return FloatSize(a.width() * b.width(), a.height() * b.height());
 }
 
-inline FloatSize operator/(const FloatSize& a, const FloatSize& b)
+constexpr FloatSize operator/(const FloatSize& a, const FloatSize& b)
 {
     return FloatSize(a.width() / b.width(), a.height() / b.height());
 }
 
-inline FloatSize operator/(const FloatSize& a, float b)
+constexpr FloatSize operator/(const FloatSize& a, float b)
 {
     return FloatSize(a.width() / b, a.height() / b);
 }
 
-inline FloatSize operator/(float a, const FloatSize& b)
+constexpr FloatSize operator/(float a, const FloatSize& b)
 {
     return FloatSize(a / b.width(), a / b.height());
 }
@@ -232,11 +228,6 @@ inline bool operator==(const FloatSize& a, const FloatSize& b)
 inline bool areEssentiallyEqual(const FloatSize& a, const FloatSize& b)
 {
     return WTF::areEssentiallyEqual(a.width(), b.width()) && WTF::areEssentiallyEqual(a.height(), b.height());
-}
-
-inline bool operator!=(const FloatSize& a, const FloatSize& b)
-{
-    return a.width() != b.width() || a.height() != b.height();
 }
 
 inline IntSize roundedIntSize(const FloatSize& p)
@@ -264,6 +255,7 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatSize&);
 } // namespace WebCore
 
 namespace WTF {
+
 template<> struct DefaultHash<WebCore::FloatSize>;
 template<> struct HashTraits<WebCore::FloatSize>;
 

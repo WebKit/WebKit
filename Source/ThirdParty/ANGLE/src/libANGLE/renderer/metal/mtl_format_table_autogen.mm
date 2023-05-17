@@ -3719,13 +3719,14 @@ void FormatTable::initNativeFormatCapsAutogen(const DisplayMtl *display)
                   /** multisample*/ true, /** resolve*/ true, /** colorRenderable*/ true,
                   /** depthRenderable*/ false);
 
-    setFormatCaps(MTLPixelFormatRGB9E5Float, /** filterable*/ true,
-                  /** writable*/ display->supportsAppleGPUFamily(3),
-                  /** blendable*/ display->supportsAppleGPUFamily(1),
-                  /** multisample*/ display->supportsAppleGPUFamily(1),
-                  /** resolve*/ display->supportsAppleGPUFamily(1),
-                  /** colorRenderable*/ display->supportsAppleGPUFamily(1),
-                  /** depthRenderable*/ false);
+    setFormatCaps(
+        MTLPixelFormatRGB9E5Float, /** filterable*/ true,
+        /** writable*/ display->supportsAppleGPUFamily(3),
+        /** blendable*/ display->supportsAppleGPUFamily(1),
+        /** multisample*/ display->supportsAppleGPUFamily(1),
+        /** resolve*/ display->supportsAppleGPUFamily(1),
+        /** colorRenderable*/ display->supportsAppleGPUFamily(1) && !display->isSimulator(),
+        /** depthRenderable*/ false);
 
     setFormatCaps(MTLPixelFormatRGBA16Float, /** filterable*/ true, /** writable*/ true,
                   /** blendable*/ true, /** multisample*/ true, /** resolve*/ true,

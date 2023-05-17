@@ -32,6 +32,7 @@
 
 #include "AXObjectCache.h"
 #include "MathMLNames.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 

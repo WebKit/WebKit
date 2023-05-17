@@ -26,6 +26,7 @@
 #include "CSSStyleSheet.h"
 #include "CommonAtomStrings.h"
 #include "Document.h"
+#include "NodeName.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
@@ -95,18 +96,19 @@ void SVGStyleElement::attributeChanged(const QualifiedName& name, const AtomStri
 {
     SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == SVGNames::titleAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::titleAttr:
         if (sheet() && !isInShadowTree())
             sheet()->setTitle(newValue);
-        return;
-    }
-    if (name == SVGNames::typeAttr) {
+        break;
+    case AttributeNames::typeAttr:
         m_styleSheetOwner.setContentType(newValue);
-        return;
-    }
-    if (name == SVGNames::mediaAttr) {
+        break;
+    case AttributeNames::mediaAttr:
         m_styleSheetOwner.setMedia(newValue);
-        return;
+        break;
+    default:
+        break;
     }
 }
 

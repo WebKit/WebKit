@@ -38,6 +38,7 @@
 #include <epoxy/egl.h>
 
 #if PLATFORM(GTK)
+#include <gtk/gtk.h>
 #if USE(GTK4)
 #include <gdk/wayland/gdkwayland.h>
 #else
@@ -47,34 +48,19 @@
 
 namespace WebCore {
 
-const struct wl_registry_listener PlatformDisplayWayland::s_registryListener = {
-    // globalCallback
-    [](void* data, struct wl_registry*, uint32_t name, const char* interface, uint32_t) {
-        static_cast<PlatformDisplayWayland*>(data)->registryGlobal(interface, name);
-    },
-    // globalRemoveCallback
-    [](void*, struct wl_registry*, uint32_t)
-    {
-    }
-};
-
 std::unique_ptr<PlatformDisplay> PlatformDisplayWayland::create()
 {
     struct wl_display* display = wl_display_connect(nullptr);
     if (!display)
         return nullptr;
 
-    auto platformDisplay = std::unique_ptr<PlatformDisplayWayland>(new PlatformDisplayWayland(display));
-    platformDisplay->initialize();
-    return platformDisplay;
+    return makeUnique<PlatformDisplayWayland>(display);
 }
 
 #if PLATFORM(GTK)
 std::unique_ptr<PlatformDisplay> PlatformDisplayWayland::create(GdkDisplay* display)
 {
-    auto platformDisplay = std::unique_ptr<PlatformDisplayWayland>(new PlatformDisplayWayland(display));
-    platformDisplay->initialize();
-    return platformDisplay;
+    return makeUnique<PlatformDisplayWayland>(display);
 }
 #endif
 
@@ -99,11 +85,8 @@ PlatformDisplayWayland::~PlatformDisplayWayland()
     bool nativeDisplayOwned = true;
 #endif
 
-    if (nativeDisplayOwned && m_display) {
-        m_compositor = nullptr;
-        m_registry = nullptr;
+    if (nativeDisplayOwned && m_display)
         wl_display_disconnect(m_display);
-    }
 }
 
 #if PLATFORM(GTK)
@@ -112,16 +95,42 @@ void PlatformDisplayWayland::sharedDisplayDidClose()
     PlatformDisplay::sharedDisplayDidClose();
     m_display = nullptr;
 }
+
+EGLDisplay PlatformDisplayWayland::gtkEGLDisplay()
+{
+    if (m_eglDisplay != EGL_NO_DISPLAY)
+        return m_eglDisplayOwned ? EGL_NO_DISPLAY : m_eglDisplay;
+
+    if (!m_sharedDisplay)
+        return EGL_NO_DISPLAY;
+
+#if USE(GTK4)
+    m_eglDisplay = gdk_wayland_display_get_egl_display(m_sharedDisplay.get());
+#else
+    auto* window = gtk_window_new(GTK_WINDOW_POPUP);
+    gtk_widget_realize(window);
+    if (auto context = adoptGRef(gdk_window_create_gl_context(gtk_widget_get_window(window), nullptr))) {
+        gdk_gl_context_make_current(context.get());
+        m_eglDisplay = eglGetCurrentDisplay();
+    }
+    gtk_widget_destroy(window);
 #endif
 
-void PlatformDisplayWayland::initialize()
-{
-    if (!m_display)
-        return;
+    if (m_eglDisplay == EGL_NO_DISPLAY)
+        return EGL_NO_DISPLAY;
 
-    m_registry.reset(wl_display_get_registry(m_display));
-    wl_registry_add_listener(m_registry.get(), &s_registryListener, this);
-    wl_display_roundtrip(m_display);
+    m_eglDisplayOwned = false;
+    PlatformDisplay::initializeEGLDisplay();
+    return m_eglDisplay;
+}
+#endif
+
+void PlatformDisplayWayland::initializeEGLDisplay()
+{
+#if PLATFORM(GTK)
+    if (gtkEGLDisplay() != EGL_NO_DISPLAY)
+        return;
+#endif
 
     const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
     if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
@@ -134,20 +143,6 @@ void PlatformDisplayWayland::initialize()
         m_eglDisplay = eglGetDisplay(m_display);
 
     PlatformDisplay::initializeEGLDisplay();
-}
-
-void PlatformDisplayWayland::registryGlobal(const char* interface, uint32_t name)
-{
-    if (!std::strcmp(interface, "wl_compositor"))
-        m_compositor.reset(static_cast<struct wl_compositor*>(wl_registry_bind(m_registry.get(), name, &wl_compositor_interface, 1)));
-}
-
-WlUniquePtr<struct wl_surface> PlatformDisplayWayland::createSurface() const
-{
-    if (!m_compositor)
-        return nullptr;
-
-    return WlUniquePtr<struct wl_surface>(wl_compositor_create_surface(m_compositor.get()));
 }
 
 } // namespace WebCore

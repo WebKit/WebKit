@@ -1,0 +1,4 @@
+
+
+PASS Check default cameras in case of default device having an unknown facing mode
+

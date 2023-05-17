@@ -23,9 +23,8 @@ layer at (0,0) size 800x156
         RenderInline {SPAN} at (0,0) size 316x18
           RenderText {#text} at (0,52) size 316x18
             text run at (0,52) width 316: "The highlight should be on this line, not above it."
-        RenderText {#text} at (315,52) size 5x18
-          text run at (315,52) width 5: " "
-        RenderBR {BR} at (319,52) size 1x18
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (315,52) size 1x18
 layer at (8,68) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
 selection start: position 0 of child 0 {#text} of child 6 {SPAN} of child 5 {DIV} of body

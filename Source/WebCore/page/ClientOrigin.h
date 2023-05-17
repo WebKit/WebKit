@@ -37,7 +37,6 @@ struct ClientOrigin {
     static ClientOrigin emptyKey() { return { }; }
 
     bool operator==(const ClientOrigin&) const;
-    bool operator!=(const ClientOrigin& other) const { return !(*this == other); }
 
     ClientOrigin isolatedCopy() const & { return { topOrigin.isolatedCopy(), clientOrigin.isolatedCopy() }; }
     ClientOrigin isolatedCopy() && { return { WTFMove(topOrigin).isolatedCopy(), WTFMove(clientOrigin).isolatedCopy() }; }

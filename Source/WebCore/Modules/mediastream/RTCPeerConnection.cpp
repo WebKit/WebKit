@@ -564,7 +564,7 @@ ExceptionOr<Ref<RTCDataChannel>> RTCPeerConnection::createDataChannel(String&& l
     if (!channelHandler)
         return Exception { OperationError };
 
-    return RTCDataChannel::create(*document(), WTFMove(channelHandler), WTFMove(label), WTFMove(options));
+    return RTCDataChannel::create(*document(), WTFMove(channelHandler), WTFMove(label), WTFMove(options), RTCDataChannelState::Connecting);
 }
 
 bool RTCPeerConnection::doClose()

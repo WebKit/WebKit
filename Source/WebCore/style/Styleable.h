@@ -63,11 +63,6 @@ struct Styleable {
         return (&element == &other.element && pseudoId == other.pseudoId);
     }
 
-    bool operator!=(const Styleable& other) const
-    {
-        return !(*this == other);
-    }
-
     RenderElement* renderer() const;
 
     std::unique_ptr<RenderStyle> computeAnimatedStyle() const;

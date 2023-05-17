@@ -1,3 +1,5 @@
+// RUN: %wgslc
+
 fn testScope() {
     {
         let x : i32;

@@ -54,9 +54,12 @@ public:
 
     // Statements
     void visit(AST::AssignmentStatement&) override;
+    void visit(AST::CompoundAssignmentStatement&) override;
     void visit(AST::IfStatement&) override;
+    void visit(AST::PhonyAssignmentStatement&) override;
     void visit(AST::ReturnStatement&) override;
     void visit(AST::CompoundStatement&) override;
+    void visit(AST::ForStatement&) override;
 
     // Expressions
     void visit(AST::Expression&) override;
@@ -123,6 +126,7 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
     introduceVariable(AST::Identifier::make("u32"_s), m_types.u32Type());
     introduceVariable(AST::Identifier::make("f32"_s), m_types.f32Type());
     introduceVariable(AST::Identifier::make("sampler"_s), m_types.samplerType());
+    introduceVariable(AST::Identifier::make("texture_external"_s), m_types.textureExternalType());
 
     // This file contains the declarations generated from `TypeDeclarations.rb`
 #include "TypeDeclarations.h" // NOLINT
@@ -229,6 +233,14 @@ void TypeChecker::visit(AST::AssignmentStatement& statement)
         typeError(InferBottom::No, statement.span(), "cannot assign value of type '", *rhs, "' to '", *lhs, "'");
 }
 
+void TypeChecker::visit(AST::CompoundAssignmentStatement& statement)
+{
+    // FIXME: Implement type checking - infer is called to avoid ASSERT in
+    // TypeChecker::visit(AST::Expression&)
+    infer(statement.leftExpression());
+    infer(statement.rightExpression());
+}
+
 void TypeChecker::visit(AST::IfStatement& statement)
 {
     auto* test = infer(statement.test());
@@ -239,6 +251,13 @@ void TypeChecker::visit(AST::IfStatement& statement)
     AST::Visitor::visit(statement.trueBody());
     if (statement.maybeFalseBody())
         AST::Visitor::visit(*statement.maybeFalseBody());
+}
+
+void TypeChecker::visit(AST::PhonyAssignmentStatement& statement)
+{
+    infer(statement.rhs());
+    // There is nothing to unify with since result of the right-hand side is
+    // discarded.
 }
 
 void TypeChecker::visit(AST::ReturnStatement& statement)
@@ -254,6 +273,23 @@ void TypeChecker::visit(AST::CompoundStatement& statement)
 {
     ContextScope blockScope(this);
     AST::Visitor::visit(statement);
+}
+
+void TypeChecker::visit(AST::ForStatement& statement)
+{
+    if (auto* initializer = statement.maybeInitializer())
+        AST::Visitor::visit(*initializer);
+
+    if (auto* test = statement.maybeTest()) {
+        auto* testType = infer(*test);
+        if (!unify(m_types.boolType(), testType))
+            typeError(test->span(), "for-loop condition must be bool, got ", *testType);
+    }
+
+    if (auto* update = statement.maybeUpdate())
+        AST::Visitor::visit(*update);
+
+    visit(statement.body());
 }
 
 // Expressions
@@ -302,7 +338,7 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
         return;
     }
 
-    if (!unify(index, m_types.i32Type()) && !unify(index, m_types.u32Type()) && !unify(index, m_types.abstractIntType())) {
+    if (!unify(m_types.i32Type(), index) && !unify(m_types.u32Type(), index) && !unify(m_types.abstractIntType(), index)) {
         typeError(access.span(), "index must be of type 'i32' or 'u32', found: '", *index, "'");
         return;
     }
@@ -314,13 +350,20 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
         return;
     }
 
+    if (std::holds_alternative<Types::Vector>(*base)) {
+        // FIXME: check bounds if index is constant
+        auto& vector = std::get<Types::Vector>(*base);
+        inferred(vector.element);
+        return;
+    }
+
     // FIXME: Implement reference and matrix accesses
     typeError(access.span(), "cannot index type '", *base, "'");
 }
 
 void TypeChecker::visit(AST::BinaryExpression& binary)
 {
-    chooseOverload("operator", binary.span(), toString(binary.operation()), Vector<AST::Expression*> { &binary.leftExpression(), &binary.rightExpression() }, { });
+    chooseOverload("operator", binary.span(), toString(binary.operation()), ReferenceWrapperVector<AST::Expression, 2> { binary.leftExpression(), binary.rightExpression() }, { });
 }
 
 void TypeChecker::visit(AST::IdentifierExpression& identifier)
@@ -352,6 +395,33 @@ void TypeChecker::visit(AST::CallExpression& call)
         if (result) {
             target.m_resolvedType = result;
             return;
+        }
+
+        if (isNamedType) {
+            auto* targetType = resolve(target);
+            if (auto* structType = std::get_if<Types::Struct>(targetType)) {
+                auto numberOfArguments = call.arguments().size();
+                auto numberOfFields = structType->fields.size();
+                if (numberOfArguments != numberOfFields) {
+                    const char* errorKind = numberOfArguments < numberOfFields ? "few" : "many";
+                    typeError(call.span(), "struct initializer has too ", errorKind, " inputs: expected ", String::number(numberOfFields), ", found ", String::number(numberOfArguments));
+                    return;
+                }
+
+                for (unsigned i = 0; i < numberOfArguments; ++i) {
+                    auto& argument = call.arguments()[i];
+                    auto& member = structType->structure.members()[i];
+                    auto* fieldType = structType->fields.get(member.name());
+                    auto* argumentType = infer(argument);
+                    if (!unify(fieldType, argumentType)) {
+                        typeError(argument.span(), "type in struct initializer does not match struct member type: expected '", *fieldType, "', found '", *argumentType, "'");
+                        return;
+                    }
+                    argument.m_inferredType = fieldType;
+                }
+                inferred(targetType);
+                return;
+            }
         }
     }
 
@@ -421,7 +491,7 @@ void TypeChecker::visit(AST::CallExpression& call)
 
 void TypeChecker::visit(AST::UnaryExpression& unary)
 {
-    chooseOverload("operator", unary.span(), toString(unary.operation()), Vector<AST::Expression*> { &unary.expression() }, { });
+    chooseOverload("operator", unary.span(), toString(unary.operation()), ReferenceWrapperVector<AST::Expression, 1> { unary.expression() }, { });
 }
 
 // Literal Expressions
@@ -591,7 +661,7 @@ Type* TypeChecker::chooseOverload(const char* kind, const SourceSpan& span, cons
     Vector<Type*> valueArguments;
     valueArguments.reserveInitialCapacity(callArguments.size());
     for (unsigned i = 0; i < callArguments.size(); ++i) {
-        auto* type = infer(*callArguments.Vector::at(i));
+        auto* type = infer(callArguments[i]);
         if (isBottom(type)) {
             inferred(m_types.bottomType());
             return m_types.bottomType();
@@ -603,7 +673,7 @@ Type* TypeChecker::chooseOverload(const char* kind, const SourceSpan& span, cons
     if (overload.has_value()) {
         ASSERT(overload->parameters.size() == callArguments.size());
         for (unsigned i = 0; i < callArguments.size(); ++i)
-            callArguments.Vector::at(i)->m_inferredType = overload->parameters[i];
+            callArguments[i].m_inferredType = overload->parameters[i];
         inferred(overload->result);
         return overload->result;
     }

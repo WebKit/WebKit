@@ -91,8 +91,8 @@ public:
         Length logicalHeight;
     };
 
-    const BorderValue& borderAdjoiningTableStart() const;
-    const BorderValue& borderAdjoiningTableEnd() const;
+    inline const BorderValue& borderAdjoiningTableStart() const;
+    inline const BorderValue& borderAdjoiningTableEnd() const;
     const BorderValue& borderAdjoiningStartCell(const RenderTableCell&) const;
     const BorderValue& borderAdjoiningEndCell(const RenderTableCell&) const;
 
@@ -118,10 +118,10 @@ public:
     LayoutUnit outerBorderStart() const { return m_outerBorderStart; }
     LayoutUnit outerBorderEnd() const { return m_outerBorderEnd; }
 
-    LayoutUnit outerBorderLeft(const RenderStyle* styleForCellFlow) const;
-    LayoutUnit outerBorderRight(const RenderStyle* styleForCellFlow) const;
-    LayoutUnit outerBorderTop(const RenderStyle* styleForCellFlow) const;
-    LayoutUnit outerBorderBottom(const RenderStyle* styleForCellFlow) const;
+    inline LayoutUnit outerBorderLeft(const RenderStyle* styleForCellFlow) const;
+    inline LayoutUnit outerBorderRight(const RenderStyle* styleForCellFlow) const;
+    inline LayoutUnit outerBorderTop(const RenderStyle* styleForCellFlow) const;
+    inline LayoutUnit outerBorderBottom(const RenderStyle* styleForCellFlow) const;
 
     unsigned numRows() const;
     unsigned numColumns() const;
@@ -245,20 +245,6 @@ private:
     bool m_needsCellRecalc  { false };
 };
 
-inline const BorderValue& RenderTableSection::borderAdjoiningTableStart() const
-{
-    if (isDirectionSame(this, table()))
-        return style().borderStart();
-    return style().borderEnd();
-}
-
-inline const BorderValue& RenderTableSection::borderAdjoiningTableEnd() const
-{
-    if (isDirectionSame(this, table()))
-        return style().borderEnd();
-    return style().borderStart();
-}
-
 inline RenderTableSection::CellStruct& RenderTableSection::cellAt(unsigned row,  unsigned col)
 {
     recalcCellsIfNeeded();
@@ -282,34 +268,6 @@ inline RenderTableRow* RenderTableSection::rowRendererAt(unsigned row) const
 {
     ASSERT(!m_needsCellRecalc);
     return m_grid[row].rowRenderer;
-}
-
-inline LayoutUnit RenderTableSection::outerBorderLeft(const RenderStyle* styleForCellFlow) const
-{
-    if (styleForCellFlow->isHorizontalWritingMode())
-        return styleForCellFlow->isLeftToRightDirection() ? outerBorderStart() : outerBorderEnd();
-    return styleForCellFlow->isFlippedBlocksWritingMode() ? outerBorderAfter() : outerBorderBefore();
-}
-
-inline LayoutUnit RenderTableSection::outerBorderRight(const RenderStyle* styleForCellFlow) const
-{
-    if (styleForCellFlow->isHorizontalWritingMode())
-        return styleForCellFlow->isLeftToRightDirection() ? outerBorderEnd() : outerBorderStart();
-    return styleForCellFlow->isFlippedBlocksWritingMode() ? outerBorderBefore() : outerBorderAfter();
-}
-
-inline LayoutUnit RenderTableSection::outerBorderTop(const RenderStyle* styleForCellFlow) const
-{
-    if (styleForCellFlow->isHorizontalWritingMode())
-        return styleForCellFlow->isFlippedBlocksWritingMode() ? outerBorderAfter() : outerBorderBefore();
-    return styleForCellFlow->isLeftToRightDirection() ? outerBorderStart() : outerBorderEnd();
-}
-
-inline LayoutUnit RenderTableSection::outerBorderBottom(const RenderStyle* styleForCellFlow) const
-{
-    if (styleForCellFlow->isHorizontalWritingMode())
-        return styleForCellFlow->isFlippedBlocksWritingMode() ? outerBorderBefore() : outerBorderAfter();
-    return styleForCellFlow->isLeftToRightDirection() ? outerBorderEnd() : outerBorderStart();
 }
 
 inline unsigned RenderTableSection::numRows() const

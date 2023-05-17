@@ -72,6 +72,23 @@ static Vector<Ref<CSSCalcExpressionNode>> createCSS(const Vector<std::unique_ptr
     });
 }
 
+static RefPtr<CSSCalcExpressionNode> createCSSIgnoringZeroLength(const CalcExpressionNode& node, const RenderStyle& style)
+{
+    if (node.type() == CalcExpressionNodeType::Length) {
+        auto& length = downcast<CalcExpressionLength>(node).length();
+        if (!length.isPercent() && length.isZero())
+            return nullptr;
+    }
+    return createCSS(node, style);
+}
+
+static Vector<Ref<CSSCalcExpressionNode>> createCSSIgnoringZeroLengths(const Vector<std::unique_ptr<CalcExpressionNode>>& nodes, const RenderStyle& style)
+{
+    return WTF::compactMap(nodes, [&](auto& node) -> RefPtr<CSSCalcExpressionNode> {
+        return createCSSIgnoringZeroLength(*node, style);
+    });
+}
+
 static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, const RenderStyle& style)
 {
     switch (node.type()) {
@@ -81,8 +98,6 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
     }
     case CalcExpressionNodeType::Length: {
         auto& length = downcast<CalcExpressionLength>(node).length();
-        if (!length.isPercent() && length.isZero())
-            return nullptr;
         return createCSS(length, style);
     }
 
@@ -105,7 +120,7 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
         
         switch (op) {
         case CalcOperator::Add: {
-            auto children = createCSS(operationChildren, style);
+            auto children = createCSSIgnoringZeroLengths(operationChildren, style);
             if (children.isEmpty())
                 return nullptr;
             if (children.size() == 1)
@@ -119,7 +134,7 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
             values.reserveInitialCapacity(operationChildren.size());
             
             auto firstChild = createCSS(*operationChildren[0], style);
-            auto secondChild = createCSS(*operationChildren[1], style);
+            auto secondChild = createCSSIgnoringZeroLength(*operationChildren[1], style);
 
             if (!secondChild)
                 return firstChild;

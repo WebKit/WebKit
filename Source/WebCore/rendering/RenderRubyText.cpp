@@ -30,9 +30,11 @@
  */
 
 #include "config.h"
-
 #include "RenderRubyText.h"
+
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderRubyRun.h"
+#include "RenderStyleInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -59,9 +61,8 @@ bool RenderRubyText::isChildAllowed(const RenderObject& child, const RenderStyle
 
 std::optional<TextAlignMode> RenderRubyText::overrideTextAlignmentForLine(bool) const
 {
-    TextAlignMode textAlign = style().textAlign();
     // FIXME: This check is bogus since user can set the initial value.
-    if (textAlign != RenderStyle::initialTextAlign())
+    if (style().textAlign() != TextAlignMode::Start)
         return { };
 
     // The default behavior is to allow ruby text to expand if it is shorter than the ruby base.
@@ -70,9 +71,8 @@ std::optional<TextAlignMode> RenderRubyText::overrideTextAlignmentForLine(bool) 
 
 void RenderRubyText::adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const
 {
-    TextAlignMode textAlign = style().textAlign();
     // FIXME: This check is bogus since user can set the initial value.
-    if (textAlign != RenderStyle::initialTextAlign())
+    if (style().textAlign() != TextAlignMode::Start)
         return RenderBlockFlow::adjustInlineDirectionLineBounds(expansionOpportunityCount, logicalLeft, logicalWidth);
 
     auto maxPreferredLogicalWidth = this->maxPreferredLogicalWidth();

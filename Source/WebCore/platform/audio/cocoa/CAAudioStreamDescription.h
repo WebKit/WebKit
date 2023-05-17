@@ -31,7 +31,6 @@
 namespace WebCore {
 
 WEBCORE_EXPORT bool operator==(const AudioStreamBasicDescription&, const AudioStreamBasicDescription&);
-inline bool operator!=(const AudioStreamBasicDescription& a, const AudioStreamBasicDescription& b) { return !(a == b); }
 
 class WEBCORE_EXPORT CAAudioStreamDescription final : public AudioStreamDescription {
     WTF_MAKE_FAST_ALLOCATED;
@@ -60,10 +59,8 @@ public:
     uint32_t formatFlags() const;
 
     bool operator==(const CAAudioStreamDescription& other) const { return operator==(static_cast<const AudioStreamDescription&>(other)); }
-    bool operator==(const AudioStreamBasicDescription& other) const;
-    bool operator!=(const AudioStreamBasicDescription& other) const;
-    bool operator==(const AudioStreamDescription& other) const;
-    bool operator!=(const AudioStreamDescription& other) const;
+    bool operator==(const AudioStreamBasicDescription&) const;
+    bool operator==(const AudioStreamDescription&) const;
 
     const AudioStreamBasicDescription& streamDescription() const;
     AudioStreamBasicDescription& streamDescription();

@@ -26,6 +26,7 @@
 #include "WebContextMenu.h"
 
 #include "ContextMenuContextData.h"
+#include "MessageSenderInlines.h"
 #include "UserData.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"

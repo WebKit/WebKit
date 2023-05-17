@@ -119,11 +119,6 @@ public:
             && string() == other.string();
     }
 
-    bool operator!=(const SourceCodeKey& other) const
-    {
-        return !(*this == other);
-    }
-
     struct Hash {
         static unsigned hash(const SourceCodeKey& key) { return key.hash(); }
         static bool equal(const SourceCodeKey& a, const SourceCodeKey& b) { return a == b; }

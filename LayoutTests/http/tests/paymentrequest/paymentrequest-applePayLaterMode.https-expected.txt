@@ -1,6 +1,0 @@
-
-PASS Should have a feature for `applePayLaterMode`.
-PASS Should throw `TypeError` when invalid `applePayLaterMode` is set.
-PASS Should not have a default value for `applePayLaterMode`.
-PASS Should propagate `applePayLaterMode` if provided.
-

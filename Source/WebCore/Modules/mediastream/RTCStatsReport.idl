@@ -60,8 +60,6 @@ dictionary RTCStats {
 dictionary RTCRtpStreamStats : RTCStats {
     required unsigned long ssrc;
     required DOMString kind;
-    // We should obsolete this field
-    required DOMString mediaType;
     DOMString transportId;
     DOMString codecId;
 };
@@ -71,7 +69,6 @@ dictionary RTCReceivedRtpStreamStats : RTCRtpStreamStats {
     unsigned long long packetsReceived;
     long long packetsLost;
     double jitter;
-    unsigned long long packetsDiscarded;
     unsigned long long packetsRepaired;
     unsigned long long burstPacketsLost;
     unsigned long long burstPacketsDiscarded;
@@ -81,7 +78,6 @@ dictionary RTCReceivedRtpStreamStats : RTCRtpStreamStats {
     double burstDiscardRate;
     double gapLossRate;
     double gapDiscardRate;
-    unsigned long framesDropped;
     unsigned long partialFramesLost;
     unsigned long fullFramesLost;
 };
@@ -89,36 +85,32 @@ dictionary RTCReceivedRtpStreamStats : RTCRtpStreamStats {
 [ JSGenerateToJSObject ]
 dictionary RTCInboundRtpStreamStats : RTCReceivedRtpStreamStats {
     required DOMString trackIdentifier;
+    DOMString mid;
+    DOMString remoteId;
     unsigned long framesDecoded;
     unsigned long keyFramesDecoded;
+    unsigned long framesDropped;
     unsigned long frameWidth;
     unsigned long frameHeight;
-    unsigned long frameBitDepth;
     double framesPerSecond;
     unsigned long long qpSum;
     double totalDecodeTime;
     double totalInterFrameDelay;
     double totalSquaredInterFrameDelay;
-    boolean voiceActivityFlag;
     DOMHighResTimeStamp lastPacketReceivedTimestamp;
-    double averageRtcpInterval;
     unsigned long long headerBytesReceived;
+    unsigned long long packetsDiscarded;
     unsigned long long fecPacketsReceived;
     unsigned long long fecPacketsDiscarded;
     unsigned long long bytesReceived;
-    unsigned long long packetsFailedDecryption;
-    unsigned long long packetsDuplicated;
-    // record<USVString, unsigned long long> perDscpPacketsReceived;
     unsigned long nackCount;
     unsigned long firCount;
     unsigned long pliCount;
-    unsigned long sliCount;
+    double totalProcessingDelay;
     DOMHighResTimeStamp estimatedPlayoutTimestamp;
     double jitterBufferDelay;
     unsigned long long jitterBufferEmittedCount;
     unsigned long long totalSamplesReceived;
-    unsigned long long samplesDecodedWithSilk;
-    unsigned long long samplesDecodedWithCelt;
     unsigned long long concealedSamples;
     unsigned long long silentConcealedSamples;
     unsigned long long concealmentEvents;
@@ -128,10 +120,6 @@ dictionary RTCInboundRtpStreamStats : RTCReceivedRtpStreamStats {
     double totalAudioEnergy;
     double totalSamplesDuration;
     unsigned long framesReceived;
-    // DOMString decoderImplementation;
-
-    // To be removed as obsolete.
-    DOMString trackId;
 };
 
 [ JSGenerateToJSObject ]
@@ -192,42 +180,6 @@ dictionary RTCOutboundRtpStreamStats : RTCSentRtpStreamStats {
     unsigned long pliCount;
     unsigned long sliCount;
     // DOMString encoderImplementation;
-
-    // To be removed as obsolete.
-    DOMString trackId;
-};
-
-[ JSGenerateToJSObject ]
-dictionary RTCMediaStreamTrackStats : RTCStats {
-    DOMString trackIdentifier;
-    DOMString kind;
-    boolean remoteSource;
-    boolean ended;
-    boolean detached;
-    // FIXME: Add sequence<DOMString> ssrcIds;
-    unsigned long frameWidth;
-    unsigned long frameHeight;
-    double framesPerSecond;
-    unsigned long framesSent;
-    unsigned long framesReceived;
-    unsigned long framesDecoded;
-    unsigned long framesDropped;
-    unsigned long framesCorrupted;
-    unsigned long partialFramesLost;
-    unsigned long fullFramesLost;
-    double audioLevel;
-    double echoReturnLoss;
-    double echoReturnLossEnhancement;
-
-    // FIXME: Introduce RTCVideoReceiverStats
-    unsigned long freezeCount;
-    unsigned long pauseCount;
-    double totalFreezesDuration;
-    double totalPausesDuration;
-    double totalFramesDuration;
-    double sumOfSquaredFramesDuration;
-    // FIXME: Introduce RTCAudioReceiverStats
-    unsigned long long jitterBufferFlushes;
 };
 
 [ JSGenerateToJSObject ]
@@ -258,7 +210,6 @@ dictionary RTCIceCandidatePairStats : RTCStats {
     DOMString localCandidateId;
     DOMString remoteCandidateId;
     RTCStatsIceCandidatePairState state;
-    unsigned long long priority;
     boolean nominated;
     boolean writable;
     boolean readable;
@@ -286,7 +237,6 @@ dictionary RTCIceCandidateStats : RTCStats {
     RTCIceCandidateType candidateType;
     long priority;
     DOMString url;
-    boolean deleted = false;
 };
 
 [ JSGenerateToJSObject ]
@@ -366,5 +316,3 @@ dictionary RTCVideoSourceStats : RTCMediaSourceStats {
     unsigned long frames;
     double framesPerSecond;
 };
-
-// FIXME 169662: missing RTCMediaStreamStats

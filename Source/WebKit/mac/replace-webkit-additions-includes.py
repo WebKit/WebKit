@@ -29,6 +29,10 @@ import re
 import sys
 
 
+# Enable this if `FeatureNeededForHeaderReplacement` should be taken into account.
+should_restrict_header_replacement_based_on_feature = False
+
+
 def read_content_from_webkit_additions(built_products_directory, sdk_root_directory, filename):
     additions_path = os.path.join("usr/local/include/WebKitAdditions", filename)
     try:
@@ -43,6 +47,8 @@ def read_content_from_webkit_additions(built_products_directory, sdk_root_direct
 
 
 def check_should_do_replacement(built_products_directory, sdk_root_directory):
+    if not should_restrict_header_replacement_based_on_feature:
+        return True
     feature_name = read_content_from_webkit_additions(built_products_directory, sdk_root_directory, 'FeatureNeededForHeaderReplacement').strip()
     return os.environ.get(feature_name) == '1'
 

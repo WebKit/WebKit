@@ -270,12 +270,6 @@ inline bool operator==(const PackedPtr<T>& a, const PackedPtr<U>& b)
 }
 
 template<typename T, typename U>
-inline bool operator!=(const PackedPtr<T>& a, const PackedPtr<U>& b)
-{
-    return a.get() != b.get();
-}
-
-template<typename T, typename U>
 inline bool operator==(const PackedPtr<T>& a, U* b)
 {
     return a.get() == b;
@@ -285,18 +279,6 @@ template<typename T, typename U>
 inline bool operator==(T* a, const PackedPtr<U>& b)
 {
     return a == b.get();
-}
-
-template<typename T, typename U>
-inline bool operator!=(const PackedPtr<T>& a, U* b)
-{
-    return !(a == b);
-}
-
-template<typename T, typename U>
-inline bool operator!=(T* a, const PackedPtr<U>& b)
-{
-    return !(a == b);
 }
 
 template<typename T>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,5 @@
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, CoreML, PAL_EXPORT)
-SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, CoreML, MLFeatureValue, PAL_EXPORT)
-SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, CoreML, MLModel, PAL_EXPORT)
-SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, CoreML, MLModelConfiguration, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(PAL, CoreML, MLCPUComputeDevice)
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(PAL, CoreML, MLGPUComputeDevice)

@@ -400,6 +400,35 @@ bool FontCascade::fastAverageCharWidthIfAvailable(float& width) const
     return success;
 }
 
+Vector<LayoutRect> FontCascade::characterSelectionRectsForText(const TextRun& run, const LayoutRect& selectionRect, unsigned from, std::optional<unsigned> toOrEndOfRun) const
+{
+    unsigned to = toOrEndOfRun.value_or(run.length());
+    ASSERT(from <= to);
+
+    bool rtl = run.rtl();
+
+    Vector<LayoutRect> characterRects;
+    characterRects.reserveInitialCapacity(to - from);
+
+    // FIXME: We could further optimize this by using the simple text codepath when applicable.
+    ComplexTextController controller(*this, run);
+    controller.advance(from);
+
+    for (auto current = from + 1; current <= to; ++current) {
+        auto characterRect = selectionRect;
+        auto beforeWidth = controller.runWidthSoFar();
+
+        controller.advance(current);
+        auto afterWidth = controller.runWidthSoFar();
+
+        characterRect.move(rtl ? controller.totalAdvance().width() - afterWidth : beforeWidth, 0);
+        characterRect.setWidth(LayoutUnit::fromFloatCeil(afterWidth - beforeWidth));
+        characterRects.uncheckedAppend(WTFMove(characterRect));
+    }
+
+    return characterRects;
+}
+
 void FontCascade::adjustSelectionRectForText(const TextRun& run, LayoutRect& selectionRect, unsigned from, std::optional<unsigned> to) const
 {
     unsigned destination = to.value_or(run.length());
@@ -1377,13 +1406,18 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer&
     FloatPoint startPoint(point.x() + middleOfLastGlyph - offsetToMiddleOfGlyph(*markFontData, markGlyph), point.y());
 
     GlyphBuffer markBuffer;
+    auto glyphForMarker = [&](unsigned index) {
+        auto glyph = glyphBuffer.glyphAt(index);
+        return (glyph && glyph != deletedGlyph) ? markGlyph : spaceGlyph;
+    };
+
     for (unsigned i = 0; i + 1 < glyphBuffer.size(); ++i) {
         float middleOfNextGlyph = offsetToMiddleOfGlyphAtIndex(glyphBuffer, i + 1);
         float advance = WebCore::width(glyphBuffer.advanceAt(i)) - middleOfLastGlyph + middleOfNextGlyph;
-        markBuffer.add(glyphBuffer.glyphAt(i) ? markGlyph : spaceGlyph, *markFontData, advance);
+        markBuffer.add(glyphForMarker(i), *markFontData, advance);
         middleOfLastGlyph = middleOfNextGlyph;
     }
-    markBuffer.add(glyphBuffer.glyphAt(glyphBuffer.size() - 1) ? markGlyph : spaceGlyph, *markFontData, 0);
+    markBuffer.add(glyphForMarker(glyphBuffer.size() - 1), *markFontData, 0);
 
     drawGlyphBuffer(context, markBuffer, startPoint, CustomFontNotReadyAction::DoNotPaintIfFontNotReady);
 }

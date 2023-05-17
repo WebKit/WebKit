@@ -2719,6 +2719,10 @@ angle::Result UtilsVk::blitResolveImpl(ContextVk *contextVk,
     // ContextVk::startRenderPass. As such, occlusion queries are not enabled.
     commandBuffer->draw(3, 0);
 
+    // Don't allow this render pass to be reactivated by the user's draw call due to test flakiness
+    // on win/intel bot.
+    contextVk->disableRenderPassReactivation();
+
     return angle::Result::Continue;
 }
 

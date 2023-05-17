@@ -1,4 +1,5 @@
 
 PASS Has basics
 PASS has() following delete()
+PASS Two-argument has()
 

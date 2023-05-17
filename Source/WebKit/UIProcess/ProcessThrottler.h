@@ -50,6 +50,9 @@ enum ProcessSuppressionDisabledCounterType { };
 using ProcessSuppressionDisabledCounter = RefCounter<ProcessSuppressionDisabledCounterType>;
 using ProcessSuppressionDisabledToken = ProcessSuppressionDisabledCounter::Token;
 
+enum PageAllowedToRunInTheBackgroundCounterType { };
+using PageAllowedToRunInTheBackgroundCounter = RefCounter<PageAllowedToRunInTheBackgroundCounterType>;
+
 enum class IsSuspensionImminent : bool { No, Yes };
 enum class ProcessThrottleState : uint8_t { Suspended, Background, Foreground };
 enum class ProcessThrottlerActivityType : bool { Background, Foreground };
@@ -82,27 +85,14 @@ private:
     ProcessThrottlerActivityType m_type;
 };
 
-class ProcessThrottler : public CanMakeWeakPtr<ProcessThrottler> {
-public:
-    ProcessThrottler(ProcessThrottlerClient&, bool shouldTakeUIBackgroundAssertion);
-    ~ProcessThrottler();
-
+class ProcessThrottlerTimedActivity {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(ProcessThrottlerTimedActivity);
     using Activity = ProcessThrottlerActivity;
-
-    using ForegroundActivity = Activity;
-    UniqueRef<Activity> foregroundActivity(ASCIILiteral name);
-
-    using BackgroundActivity = Activity;
-    UniqueRef<Activity> backgroundActivity(ASCIILiteral name);
-
     using ActivityVariant = std::variant<std::nullptr_t, UniqueRef<Activity>>;
-    static bool isValidBackgroundActivity(const ActivityVariant&);
-    static bool isValidForegroundActivity(const ActivityVariant&);
-
-    class TimedActivity {
     public:
-        explicit TimedActivity(Seconds timeout, ActivityVariant&& = nullptr);
-        TimedActivity& operator=(ActivityVariant&&);
+        explicit ProcessThrottlerTimedActivity(Seconds timeout, ActivityVariant&& = nullptr);
+        ProcessThrottlerTimedActivity& operator=(ActivityVariant&&);
 
     private:
         void activityTimedOut();
@@ -111,16 +101,43 @@ public:
         RunLoop::Timer m_timer;
         Seconds m_timeout;
         ActivityVariant m_activity;
-    };
+};
+
+class ProcessThrottler : public CanMakeWeakPtr<ProcessThrottler> {
+public:
+    ProcessThrottler(ProcessThrottlerClient&, bool shouldTakeUIBackgroundAssertion);
+    ~ProcessThrottler();
+
+    using Activity = ProcessThrottlerActivity;
+    using ActivityVariant = std::variant<std::nullptr_t, UniqueRef<Activity>>;
+
+    using ForegroundActivity = Activity;
+    UniqueRef<Activity> foregroundActivity(ASCIILiteral name);
+
+    using BackgroundActivity = Activity;
+    UniqueRef<Activity> backgroundActivity(ASCIILiteral name);
+
+    static bool isValidBackgroundActivity(const ActivityVariant&);
+    static bool isValidForegroundActivity(const ActivityVariant&);
+
+    // If any page holds one of these tokens, we will never release the "suspended" assertion which
+    // means that the page will not be suspended when in the background, except if the application
+    // also gets backgrounded.
+    PageAllowedToRunInTheBackgroundCounter::Token pageAllowedToRunInTheBackgroundToken();
+
+    using TimedActivity = ProcessThrottlerTimedActivity;
 
     void didConnectToProcess(ProcessID);
     void didDisconnectFromProcess();
     bool shouldBeRunnable() const { return m_foregroundActivities.size() || m_backgroundActivities.size(); }
     void setAllowsActivities(bool);
-    void setShouldDropSuspendedAssertionAfterDelay(bool shouldDropAfterDelay) { m_shouldDropSuspendedAssertionAfterDelay = shouldDropAfterDelay; }
-    void setShouldTakeSuspendedAssertion(bool);
-    void delaySuspension();
+    void setShouldDropNearSuspendedAssertionAfterDelay(bool);
+    void setShouldTakeNearSuspendedAssertion(bool);
     bool isSuspended() const { return m_processIdentifier && !m_assertion; }
+    ProcessThrottleState currentState() const { return m_state; }
+    bool isHoldingNearSuspendedAssertion() const { return m_assertion && m_assertion->type() == ProcessAssertionType::NearSuspended; }
+
+    void invalidateAllActivitiesAndDropAssertion();
 
 private:
     friend class ProcessThrottlerActivity;
@@ -132,7 +149,8 @@ private:
     void setAssertionType(ProcessAssertionType);
     void setThrottleState(ProcessThrottleState);
     void prepareToSuspendTimeoutTimerFired();
-    void dropSuspendedAssertionTimerFired();
+    void dropNearSuspendedAssertionTimerFired();
+    void prepareToDropLastAssertionTimeoutTimerFired();
     void sendPrepareToSuspendIPC(IsSuspensionImminent);
     void processReadyToSuspend();
 
@@ -146,19 +164,24 @@ private:
     void assertionWasInvalidated();
 
     void clearPendingRequestToSuspend();
+    void numberOfPagesAllowedToRunInTheBackgroundChanged();
+    void clearAssertion();
 
     ProcessThrottlerClient& m_process;
     ProcessID m_processIdentifier { 0 };
     RefPtr<ProcessAssertion> m_assertion;
+    RefPtr<ProcessAssertion> m_assertionToClearAfterPrepareToDropLastAssertion;
     RunLoop::Timer m_prepareToSuspendTimeoutTimer;
-    RunLoop::Timer m_dropSuspendedAssertionTimer;
+    RunLoop::Timer m_dropNearSuspendedAssertionTimer;
+    RunLoop::Timer m_prepareToDropLastAssertionTimeoutTimer;
     HashSet<Activity*> m_foregroundActivities;
     HashSet<Activity*> m_backgroundActivities;
     std::optional<uint64_t> m_pendingRequestToSuspendID;
     ProcessThrottleState m_state { ProcessThrottleState::Suspended };
-    bool m_shouldDropSuspendedAssertionAfterDelay { false };
+    PageAllowedToRunInTheBackgroundCounter m_pageAllowedToRunInTheBackgroundCounter;
+    bool m_shouldDropNearSuspendedAssertionAfterDelay { false };
     bool m_shouldTakeUIBackgroundAssertion { false };
-    bool m_shouldTakeSuspendedAssertion { true };
+    bool m_shouldTakeNearSuspendedAssertion { true };
     bool m_allowsActivities { true };
 };
 

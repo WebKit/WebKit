@@ -26,7 +26,8 @@
 // https://wicg.github.io/shape-detection-api/#dictdef-landmark
 
 [
-    EnabledBySetting=ShapeDetection
+    EnabledBySetting=ShapeDetection,
+    JSGenerateToJSObject
 ]
 dictionary Landmark {
     required FrozenArray<Point2D> locations;

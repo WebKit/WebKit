@@ -67,6 +67,7 @@ public:
     void setStyle(CSSValue&);
     void setWeight(CSSValue&);
     void setStretch(CSSValue&);
+    void setSizeAdjust(CSSValue&);
     void setUnicodeRange(CSSValueList&);
     void setFeatureSettings(CSSValue&);
     void setDisplay(CSSPrimitiveValue&);
@@ -78,6 +79,7 @@ public:
     String unicodeRange() const;
     String featureSettings() const;
     String display() const;
+    String sizeAdjust() const;
 
     // Pending => Loading  => TimedOut
     //              ||  \\    //  ||
@@ -93,7 +95,7 @@ public:
     struct UnicodeRange;
 
     RefPtr<CSSValueList> families() const;
-    Span<const UnicodeRange> ranges() const { ASSERT(m_status != Status::Failure); return m_ranges.span(); }
+    std::span<const UnicodeRange> ranges() const { ASSERT(m_status != Status::Failure); return m_ranges.span(); }
 
     void setFontSelectionCapabilities(FontSelectionCapabilities capabilities) { m_fontSelectionCapabilities = capabilities; }
     FontSelectionCapabilities fontSelectionCapabilities() const { ASSERT(m_status != Status::Failure); return m_fontSelectionCapabilities.computeFontSelectionCapabilities(); }
@@ -137,7 +139,6 @@ public:
         UChar32 from;
         UChar32 to;
         bool operator==(const UnicodeRange& other) const { return from == other.from && to == other.to; }
-        bool operator!=(const UnicodeRange& other) const { return !(*this == other); }
     };
 
     bool rangesMatchCodePoint(UChar32) const;
@@ -186,6 +187,8 @@ private:
 
     FontFeatureSettings m_featureSettings;
     FontLoadingBehavior m_loadingBehavior { FontLoadingBehavior::Auto };
+
+    float m_sizeAdjust { 1.0 };
 
     Vector<std::unique_ptr<CSSFontFaceSource>, 0, CrashOnOverflow, 0> m_sources;
     WeakHashSet<Client> m_clients;

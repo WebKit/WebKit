@@ -16,17 +16,17 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x254 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x120
-          RenderText {#text} at (0,1) size 66x28
-            text run at (0,1) width 66: "Tests: "
-          RenderBR {BR} at (65,1) size 1x28
+          RenderText {#text} at (0,1) size 60x28
+            text run at (0,1) width 60: "Tests:"
+          RenderBR {BR} at (59,1) size 1x28
           RenderText {#text} at (0,31) size 742x88
             text run at (0,31) width 731: "Deleting when a selection starts in a blank line created by a BR element and"
             text run at (0,61) width 742: "extends to a character that is not at the end of a block. This ensures that some"
             text run at (0,91) width 504: "of our \"special-case\" code does not run for this case."
         RenderBlock {DIV} at (14,150) size 756x90
-          RenderText {#text} at (0,1) size 190x28
-            text run at (0,1) width 190: "Expected Results: "
-          RenderBR {BR} at (189,1) size 1x28
+          RenderText {#text} at (0,1) size 184x28
+            text run at (0,1) width 184: "Expected Results:"
+          RenderBR {BR} at (183,1) size 1x28
           RenderText {#text} at (0,31) size 675x58
             text run at (0,31) width 675: "Should see the two lines in the red box. Each should contain \"A\" only."
             text run at (0,61) width 614: "Insertion point should be blinking at the start of the second line."

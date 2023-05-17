@@ -83,7 +83,7 @@ using namespace metal;
 [[fragment]] void function0(unsigned parameter0 [[sample_mask]], unsigned parameter1 [[sample_id]], vec<float, 4> parameter2 [[position]])
 {
     vec<float, 4> local0 = parameter2;
-    unsigned local1 = parameter1 + parameter0;
+    unsigned local1 = (parameter1 + parameter0);
 }
 
 )"_s);

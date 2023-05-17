@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(DFG_JIT)
+
 #include "DFGCombinedLiveness.h"
 #include "DFGGraph.h"
 #include "DFGOSRAvailabilityAnalysisPhase.h"
@@ -197,3 +199,5 @@ void forAllKillsInBlock(
 }
 
 } } // namespace JSC::DFG
+
+#endif // ENABLE(DFG_JIT)

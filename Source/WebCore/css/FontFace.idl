@@ -39,6 +39,7 @@ dictionary FontFaceDescriptors {
     DOMString unicodeRange = "U+0-10FFFF";
     DOMString featureSettings = "normal";
     DOMString display = "auto";
+    DOMString sizeAdjust = "100%";
 };
 
 [
@@ -54,6 +55,7 @@ dictionary FontFaceDescriptors {
     [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString unicodeRange;
     [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString featureSettings;
     [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString display;
+    [EnabledBySetting=CSSFontFaceSizeAdjustEnabled, SetterCallWith=CurrentScriptExecutionContext] attribute DOMString sizeAdjust;
 
     readonly attribute FontFaceLoadStatus status;
 

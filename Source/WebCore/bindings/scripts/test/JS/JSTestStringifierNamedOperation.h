@@ -60,7 +60,7 @@ public:
 protected:
     JSTestStringifierNamedOperation(JSC::Structure*, JSDOMGlobalObject&, Ref<TestStringifierNamedOperation>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestStringifierNamedOperationOwner final : public JSC::WeakHandleOwner {

@@ -70,11 +70,6 @@ bool operator==(const CSSUnresolvedColorMix& a, const CSSUnresolvedColorMix& b)
         && a.mixComponents2 == b.mixComponents2;
 }
 
-bool operator!=(const CSSUnresolvedColorMix& a, const CSSUnresolvedColorMix& b)
-{
-    return !(a == b);
-}
-
 StyleColor createStyleColor(const CSSUnresolvedColorMix& unresolved, const Document& document, RenderStyle& style, Style::ForVisitedLink forVisitedLink)
 {
     auto resolvePercentage = [](auto& percentage) -> std::optional<double> {

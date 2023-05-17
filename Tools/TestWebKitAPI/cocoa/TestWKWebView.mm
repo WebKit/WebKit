@@ -476,6 +476,7 @@ static InputSessionChangeCount nextInputSessionChangeCount()
 #if PLATFORM(IOS_FAMILY)
     std::unique_ptr<ClassMethodSwizzler> _sharedCalloutBarSwizzler;
     InputSessionChangeCount _inputSessionChangeCount;
+    UIEdgeInsets _overrideSafeAreaInset;
 #endif
 #if PLATFORM(MAC)
     BOOL _forceWindowToBecomeKey;
@@ -516,6 +517,9 @@ static UICalloutBar *suppressUICalloutBar()
     // FIXME: Remove this workaround once <https://webkit.org/b/175204> is fixed.
     _sharedCalloutBarSwizzler = makeUnique<ClassMethodSwizzler>([UICalloutBar class], @selector(sharedCalloutBar), reinterpret_cast<IMP>(suppressUICalloutBar));
     _inputSessionChangeCount = 0;
+    // We suppress safe area insets by default in order to ensure consistent results when running against device models
+    // that may or may not have safe area insets, have insets with different values (e.g. iOS devices with a notch).
+    _overrideSafeAreaInset = UIEdgeInsetsZero;
 #endif
 
     return self;
@@ -706,6 +710,20 @@ static UICalloutBar *suppressUICalloutBar()
 #endif
 }
 
+- (std::optional<CGPoint>)getElementMidpoint:(NSString *)selector
+{
+    NSArray<NSNumber *> *midpoint = [self objectByEvaluatingJavaScript:[NSString stringWithFormat:@"(() => {"
+        "    let element = document.querySelector('%@');"
+        "    if (!element)"
+        "        return [];"
+        "    const rect = element.getBoundingClientRect();"
+        "    return [rect.left + (rect.width / 2), rect.top + (rect.height / 2)];"
+        "})()", selector]];
+    if (midpoint.count != 2)
+        return std::nullopt;
+    return CGPointMake(midpoint.firstObject.doubleValue, midpoint.lastObject.doubleValue);
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 - (void)didStartFormControlInteraction
@@ -746,32 +764,45 @@ static UICalloutBar *suppressUICalloutBar()
     }
 }
 
-- (RetainPtr<NSArray>)selectionRectsAfterPresentationUpdate
+- (UIEdgeInsets)overrideSafeAreaInset
 {
-    RetainPtr<TestWKWebView> retainedSelf = self;
+    return _overrideSafeAreaInset;
+}
 
-    __block bool isDone = false;
-    __block RetainPtr<NSArray> selectionRects;
-    [self _doAfterNextPresentationUpdate:^() {
-        selectionRects = [retainedSelf _uiTextSelectionRects];
-        isDone = true;
-    }];
+- (void)setOverrideSafeAreaInset:(UIEdgeInsets)inset
+{
+    _overrideSafeAreaInset = inset;
+}
 
-    TestWebKitAPI::Util::run(&isDone);
-    return selectionRects;
+- (UIEdgeInsets)safeAreaInsets
+{
+    return _overrideSafeAreaInset;
 }
 
 - (CGRect)caretViewRectInContentCoordinates
 {
-    UIView *selectionView = [self.textInputContentView valueForKeyPath:@"interactionAssistant.selectionView"];
-    CGRect caretFrame = [[selectionView valueForKeyPath:@"caretView.frame"] CGRectValue];
-    return [selectionView convertRect:caretFrame toView:self.textInputContentView];
+    UIView *caretView = nil;
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+    if (auto view = self.textSelectionDisplayInteraction.cursorView; !view.hidden)
+        caretView = view;
+#else
+    caretView = [self.textInputContentView valueForKeyPath:@"interactionAssistant.selectionView.caretView"];
+#endif
+
+    return [caretView convertRect:caretView.bounds toView:self.textInputContentView];
 }
 
 - (NSArray<NSValue *> *)selectionViewRectsInContentCoordinates
 {
     NSMutableArray *selectionRects = [NSMutableArray array];
-    NSArray<UITextSelectionRect *> *rects = [self.textInputContentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView.rects"];
+    NSArray<UITextSelectionRect *> *rects = nil;
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+    if (auto view = self.textSelectionDisplayInteraction.highlightView; !view.hidden)
+        rects = view.selectionRects;
+#else
+    rects = [self.textInputContentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView.rects"];
+#endif
+
     for (UITextSelectionRect *rect in rects)
         [selectionRects addObject:[NSValue valueWithCGRect:rect.rect]];
     return selectionRects;
@@ -789,6 +820,15 @@ static UICalloutBar *suppressUICalloutBar()
     TestWebKitAPI::Util::run(&finished);
     return info.autorelease();
 }
+
+#if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
+
+- (UITextSelectionDisplayInteraction *)textSelectionDisplayInteraction
+{
+    return dynamic_objc_cast<UITextSelectionDisplayInteraction>([self.textInputContentView valueForKeyPath:@"interactionAssistant._selectionViewManager"]);
+}
+
+#endif
 
 static WKContentView *recursiveFindWKContentView(UIView *view)
 {
@@ -811,7 +851,7 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
 
 @end
 
-#endif
+#endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(MAC)
 

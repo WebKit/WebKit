@@ -540,6 +540,28 @@ webkit_settings_get_disable_web_security                       (WebKitSettings *
 WEBKIT_API void
 webkit_settings_set_disable_web_security                       (WebKitSettings *settings,
                                                                 gboolean        disabled);
+
+typedef struct _WebKitFeature WebKitFeature;
+typedef struct _WebKitFeatureList WebKitFeatureList;
+
+WEBKIT_API void
+webkit_settings_set_feature_enabled                            (WebKitSettings *settings,
+                                                                WebKitFeature  *feature,
+                                                                gboolean        enabled);
+
+WEBKIT_API gboolean
+webkit_settings_get_feature_enabled                            (WebKitSettings *settings,
+                                                                WebKitFeature  *feature);
+
+WEBKIT_API WebKitFeatureList *
+webkit_settings_get_all_features                               (void);
+
+WEBKIT_API WebKitFeatureList *
+webkit_settings_get_experimental_features                      (void);
+
+WEBKIT_API WebKitFeatureList *
+webkit_settings_get_development_features                       (void);
+
 G_END_DECLS
 
 #endif /* WebKitSettings_h */

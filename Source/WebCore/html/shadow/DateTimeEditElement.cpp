@@ -404,6 +404,15 @@ DateTimeFieldsState DateTimeEditElement::valueAsDateTimeFieldsState() const
     return dateTimeFieldsState;
 }
 
+bool DateTimeEditElement::editableFieldsHaveValues() const
+{
+    for (auto& field : m_fields) {
+        if (field->hasValue())
+            return true;
+    }
+    return false;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(DATE_AND_TIME_INPUT_TYPES)

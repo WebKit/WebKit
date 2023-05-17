@@ -40,7 +40,6 @@ struct FourCC {
 };
 
 constexpr bool operator==(FourCC, FourCC);
-constexpr bool operator!=(FourCC, FourCC);
 
 constexpr FourCC::FourCC(const char (&data)[5])
     : value(data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3])
@@ -64,7 +63,6 @@ constexpr std::array<char, 5> FourCC::string() const
 }
 
 constexpr bool operator==(FourCC a, FourCC b) { return a.value == b.value; }
-constexpr bool operator!=(FourCC a, FourCC b) { return a.value != b.value; }
 
 } // namespace WebCore
 

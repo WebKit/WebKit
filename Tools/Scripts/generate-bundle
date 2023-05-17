@@ -482,19 +482,24 @@ class BundleCreator(object):
         return libc_libraries
 
     def _get_mesa_libraries(self):
-        mesa_library_names = ['libglapi', 'libEGL', 'libGL', 'libGLESv2', 'libEGL_mesa']
+        mesa_library_names = ['libglapi', 'libEGL', 'libGL', 'libGLESv2', 'libGLX', 'libdrm', 'libgbm', 'libMesaOpenCL']
         mesa_libraries = []
         lib_dir_dri = self._get_pkg_config_var('dri', 'libdir')
-        # Some versions of the flatpak SDK ships the Mesa libraries into a non-standard path.
+        # Some versions of the flatpak SDK ship the Mesa libraries into a non-standard path.
         candidate_lib_dirs = [ lib_dir_dri, os.path.join(lib_dir_dri, 'GL/default/lib') ]
         for lib_dir in candidate_lib_dirs:
             if os.path.isdir(lib_dir):
                 for entry in os.listdir(lib_dir):
-                    if any(entry.startswith(l+'.so.') for l in mesa_library_names):
-                        mesa_libraries.append(os.path.join(lib_dir, entry))
-        for mesa_library_prefix in mesa_library_names:
-            if not any(os.path.basename(l).startswith(mesa_library_prefix+'.so.') for l in mesa_libraries):
-                raise RuntimeError('Unable to find mesa library %s' % mesa_library_prefix)
+                    if '.so.' in entry:
+                        entry_libname = entry.split('.so.', 1)[0]
+                        # Mesa libraries are either named as "libNAME.so.1" or have a suffix like "libNAME_mesa.so.0" or "libNAME_indirect.so.0"
+                        # Hypothetical future suffixes are unknown so we match any library named "libNAME" or any library that starts with "libNAME_"
+                        if any((entry_libname == l or entry_libname.startswith(l+'_')) for l in mesa_library_names):
+                            mesa_libraries.append(os.path.join(lib_dir, entry))
+        _log.debug('Found the following mesa libraries: %s' % ', '.join(mesa_libraries))
+        for required_mesa_library_prefix in ['libGL', 'libGLESv2']:
+            if not any(os.path.basename(l).startswith(required_mesa_library_prefix+'.so.') for l in mesa_libraries):
+                raise RuntimeError('Unable to find mesa library with prefix %s' % required_mesa_library_prefix)
         return mesa_libraries
 
     def _get_mesa_dri_drivers(self):

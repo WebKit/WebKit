@@ -24,6 +24,8 @@ use Bugzilla::Bug;
 use Bugzilla::Attachment;
 use Bugzilla::Attachment::PatchReader;
 use Bugzilla::Token;
+# WEBKIT_CHANGES: Back ported from Bugzilla Harmony main branch - Encode filename using RFC2231/RFC5987 UTF-8
+use Mojo::Util qw(url_escape);
 
 use Encode qw(encode find_encoding);
 use Encode::MIME::Header; # Required to alter Encode::Encoding{'MIME-Q'}.
@@ -362,12 +364,9 @@ sub view {
     $filename =~ s/\\/\\\\/g; # escape backslashes
     $filename =~ s/"/\\"/g; # escape quotes
 
-    # Avoid line wrapping done by Encode, which we don't need for HTTP
-    # headers. See discussion in bug 328628 for details.
-    local $Encode::Encoding{'MIME-Q'}->{'bpl'} = 10000;
-    $filename = encode('MIME-Q', $filename);
-
     my $disposition = Bugzilla->params->{'allow_attachment_display'} ? 'inline' : 'attachment';
+# WEBKIT_CHANGES: Back ported from Bugzilla Harmony main branch - Encode filename using RFC2231/RFC5987 UTF-8
+    my $filename_star = qq{UTF-8''} . url_escape(encode('UTF-8', $filename));
 
     # Don't send a charset header with attachments--they might not be UTF-8.
     # However, we do allow people to explicitly specify a charset if they
@@ -383,8 +382,9 @@ sub view {
             }
         }
     }
-    print $cgi->header(-type=>"$contenttype; name=\"$filename\"",
-                       -content_disposition=> "$disposition; filename=\"$filename\"",
+# WEBKIT_CHANGES: Back ported from Bugzilla Harmony main branch - Encode filename using RFC2231/RFC5987 UTF-8
+    print $cgi->header(-type=> $contenttype,
+                       -content_disposition=> "$disposition; filename*=$filename_star",
                        -content_length => $attachment->datasize);
     disable_utf8();
     print $attachment->data;

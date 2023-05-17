@@ -83,10 +83,9 @@ function rectToString(rect) {
     return `(left = ${Math.round(rect.left)}, top = ${Math.round(rect.top)}, width = ${Math.round(rect.width)}, height = ${Math.round(rect.height)})`;
 }
 
-async function waitForSelectionChangeInSubframe(actions)
-{
+async function waitForSelectionChangeInSubframe(actions) {
     const previousSelectionChangeCount = currentSelectionChangeCount;
-    actions();
+    await actions();
     while (previousSelectionChangeCount == currentSelectionChangeCount)
         await new Promise(requestAnimationFrame);
 }
@@ -101,19 +100,27 @@ async function runTest() {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
 
+    console.log("1. Waiting for selection after showing keyboard");
     await waitForSelectionChangeInSubframe(async () => await UIHelper.activateAndWaitForInputSessionAt(160, 160));
     document.querySelector("#caret-rect").textContent = rectToString(await UIHelper.getUICaretViewRect());
 
+    console.log("2. Selecting all in subframe");
     await waitForSelectionChangeInSubframe(() => document.querySelector("iframe").contentWindow.selectAll());
     document.querySelector("#start-grabber-rect").textContent = rectToString(await UIHelper.getSelectionStartGrabberViewRect());
     document.querySelector("#end-grabber-rect").textContent = rectToString(await UIHelper.getSelectionEndGrabberViewRect());
 
+    console.log("3. Collapsing selection in subframe");
     await waitForSelectionChangeInSubframe(() => document.querySelector("iframe").contentWindow.collapseToEnd());
     document.querySelector("#selection-before").textContent = currentSelectionAsString;
 
+    console.log("4. Tapping in subframe");
     await UIHelper.tapAt(32, 32);
     await new Promise(requestAnimationFrame);
     document.querySelector("#selection-after").textContent = currentSelectionAsString;
+
+    console.log("5. Blurring focused element in subframe and waiting for keyboard to dismiss");
+    document.querySelector("iframe").contentWindow.document.activeElement.blur();
+    await UIHelper.waitForKeyboardToHide();
 
     testRunner.notifyDone();
 }

@@ -38,6 +38,7 @@
 #include "WebPage.h"
 #include "WebPageOverlay.h"
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/ImageBuffer.h>
 #include <WebCore/PageOverlay.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/Range.h>
@@ -90,7 +91,15 @@ private:
         if (!m_client.drawRect)
             return;
 
-        m_client.drawRect(toAPI(&pageOverlay), graphicsContext.platformContext(), WebKit::toAPI(dirtyRect), m_client.base.clientInfo);
+        auto imageBuffer = graphicsContext.createAlignedImageBuffer(dirtyRect.size(), WebCore::DestinationColorSpace::SRGB(), WebCore::RenderingMethod::Local);
+        if (!imageBuffer)
+            return;
+
+        auto& imageBufferContext = imageBuffer->context();
+        imageBufferContext.translate(-dirtyRect.location());
+        m_client.drawRect(toAPI(&pageOverlay), imageBufferContext.platformContext(), WebKit::toAPI(dirtyRect), m_client.base.clientInfo);
+
+        graphicsContext.drawConsumingImageBuffer(WTFMove(imageBuffer), dirtyRect);
     }
     
     bool mouseEvent(WebKit::WebPageOverlay& pageOverlay, const WebCore::PlatformMouseEvent& event) override
@@ -135,7 +144,7 @@ private:
             return std::nullopt;
 
         WKBundleRangeHandleRef apiRange = nullptr;
-        auto actionContext = (DDActionContext *)m_client.actionContextForResultAtPoint(toAPI(&pageOverlay), WKPointMake(location.x(), location.y()), &apiRange, m_client.base.clientInfo);
+        auto actionContext = (WKDDActionContext *)m_client.actionContextForResultAtPoint(toAPI(&pageOverlay), WKPointMake(location.x(), location.y()), &apiRange, m_client.base.clientInfo);
         if (!actionContext || !apiRange)
             return std::nullopt;
 

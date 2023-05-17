@@ -56,13 +56,13 @@ imported/w3c/web-platform-tests/css/css-properties-values-api/ [ Skip ]
 css-custom-properties-api [ Skip ]
 css-typedom [ Skip ]
 css-dark-mode [ Skip ]
-model-element [ Skip ]
-http/tests/model [ Skip ]
 
 media/audioSession [ Skip ]
 
 # Media Stream API testing is not supported for WK1 yet.
 fast/mediastream
+imported/w3c/web-platform-tests/feature-policy/reporting/camera-reporting.https.html [ Skip ]
+imported/w3c/web-platform-tests/feature-policy/reporting/microphone-reporting.https.html [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-streams
 http/tests/media/media-stream
 http/tests/ssl/media-stream
@@ -812,6 +812,7 @@ accessibility/progress-indeterminate-value.html [ Skip ]
 accessibility/mac/date-input-increment-decrement.html [ Skip ]
 
 accessibility/display-contents-dynamically-added-children.html [ Skip ]
+accessibility/display-contents-aria-owns.html [ Skip ]
 
 # DOM paste access requests are not implemented in WebKit1.
 editing/async-clipboard/clipboard-change-data-while-reading.html [ Skip ]
@@ -1001,6 +1002,8 @@ webkit.org/b/112533 media/auto-play-in-sandbox-with-allow-scripts.html [ Pass Ti
 
 webkit.org/b/139778 fullscreen/exit-full-screen-iframe.html [ Skip ]
 
+webkit.org/b/139778 fullscreen/enter-fullscreen-main-frame-window-open-iframe.html [ Skip ]
+
 webkit.org/b/139862 editing/spelling/grammar-edit-word.html [ Skip ]
 
 webkit.org/b/144127 compositing/scrolling/touch-scroll-to-clip.html [ Pass Failure ]
@@ -1014,6 +1017,30 @@ webkit.org/b/152485 webaudio/audiocontext-state-interrupted.html [ Pass Crash ]
 webkit.org/b/152789 webarchive/adopt-attribute-styled-body-webarchive.html [ Pass Crash ]
 
 webkit.org/b/155196 security/contentSecurityPolicy/video-with-blob-url-allowed-by-media-src-star.html [ Skip ]
+
+# webkit.org/b/255554 22x editing/run tests are constant timeouts.
+imported/w3c/web-platform-tests/editing/run/delete.html?1-1000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/delete.html?1001-2000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/delete.html?2001-3000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/delete.html?3001-4000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/delete.html?4001-5000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/delete.html?5001-6000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/delete.html?7001-last [ Slow ]
+imported/w3c/web-platform-tests/editing/run/forwarddelete.html?1001-2000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/forwarddelete.html?2001-3000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/forwarddelete.html?3001-4000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/forwarddelete.html?5001-6000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/forwarddelete.html?6001-last [ Slow ]
+imported/w3c/web-platform-tests/editing/run/insertparagraph.html?1001-2000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/insertparagraph.html?2001-3000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/multitest.html?1-1000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/multitest.html?1001-2000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/multitest.html?2001-3000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/multitest.html?3001-4000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/multitest.html?4001-5000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/multitest.html?5001-6000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/multitest.html?6001-7000 [ Slow ]
+imported/w3c/web-platform-tests/editing/run/multitest.html?7001-8000 [ Slow ]
 
 # FIXME: Needs bugzilla (<rdar://problem/18273139>)
 storage/websql/sql-error-codes.html [ Failure ]
@@ -1445,7 +1472,10 @@ accessibility/node-only-inert-object.html [ Failure ]
 
 # AccessibilityUIElement::stringDescriptionOfAttributeValue is not implemented.
 accessibility/mac/aria-owned-object-relative-frame.html [ Skip ]
+accessibility/mac/display-contents-relative-frame.html [ Skip ]
+accessibility/mac/dynamic-transform-relative-frame.html [ Skip ]
 accessibility/mac/iframe-relative-frame.html [ Skip ]
+accessibility/mac/position-fixed-top-bottom-properties-relative-frame.html [ Skip ]
 accessibility/mac/shadow-dom-relative-frame.html [ Skip ]
 accessibility/mac/svg-relative-frame.html [ Skip ]
 accessibility/mac/table-relative-frame.html [ Skip ]
@@ -1455,7 +1485,6 @@ accessibility/visible-character-range-basic.html [ Skip ]
 accessibility/visible-character-range-height-changes.html [ Skip ]
 accessibility/visible-character-range-scrolling.html [ Skip ]
 accessibility/visible-character-range-width-changes.html [ Skip ]
-accessibility/model-element-attributes.html [ Skip ]
 accessibility/aria-description.html [ Skip ]
 
 # Missing AccessibilityUIElement::focusableAncestor implementation.
@@ -1903,6 +1932,7 @@ accessibility/element-reflection-ariaerrormessage.html [ Skip ]
 accessibility/mac/pseudo-element-text-markers.html [ Skip ]
 accessibility/nested-textareas-value-changed-notifications.html [ Skip ]
 accessibility/selected-state-changed-notifications.html [ Skip ]
+accessibility/display-contents-descendant-menu-item.html [ Skip ]
 accessibility/element-line-rects-and-text.html [ Skip ]
 accessibility/mac/line-index-for-textmarker.html [ Skip ]
 accessibility/mac/mathml-elements.html [ Skip ]
@@ -1968,8 +1998,6 @@ webkit.org/b/215033 imported/w3c/web-platform-tests/websockets/cookies/third-par
 
 webkit.org/b/215296 media/modern-media-controls/placard/placard-ltr.html [ Pass Timeout ]
 
-webkit.org/b/215299 imported/w3c/web-platform-tests/css/css-logical/parsing/margin-block-inline-computed.html [ Pass Failure ]
-
 webkit.org/b/215336 [ Release ] svg/text/hidpi-text-selection-rect-position.html [ Pass Failure ]
 
 webkit.org/b/215392 webaudio/oscillator-sawtooth.html [ Pass Failure ]
@@ -1996,18 +2024,18 @@ compositing/animation/matrix-animation.html [ Pass ImageOnlyFailure ]
 webkit.org/b/68278 http/tests/history/back-with-fragment-change.py [ Failure ]
 
 # <rdar://problem/60169524> REGRESSION: (20A211?) [ wk1 ] fast/scrolling/scrollable-area-frame-zero-size-and-border.html is failing.
-[ BigSur+ ] fast/scrolling/scrollable-area-frame-zero-size-and-border.html [ Pass Failure ]
+[ Monterey+ ] fast/scrolling/scrollable-area-frame-zero-size-and-border.html [ Pass Failure ]
 
 # <rdar://problem/48603627> FuzzDragon -- Null Ptr Deref @ WebCore::genericFamily -- DOS parseWebKit
-[ BigSur+ ] imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cj-loose.html [ Pass Crash ]
+[ Monterey+ ] imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cj-loose.html [ Pass Crash ]
 
 # <rdar://problem/63022026> REGRESSION: [ 20A267-20A279 ]: multiple fast tests are failing with scrolling related diffs.
-[ BigSur+ ] fast/dom/horizontal-scrollbar-in-rtl.html [ Failure ]
-[ BigSur+ ] fast/multicol/pagination/RightToLeft-tb.html [ Failure ]
-[ BigSur+ ] fast/multicol/pagination/RightToLeft-rl.html [ Failure ]
+[ Monterey+ ] fast/dom/horizontal-scrollbar-in-rtl.html [ Failure ]
+[ Monterey+ ] fast/multicol/pagination/RightToLeft-tb.html [ Failure ]
+[ Monterey+ ] fast/multicol/pagination/RightToLeft-rl.html [ Failure ]
 
 # rdar://66868787 ([ Layout Tests ] REGRESSION: fast/images/image-copy-memory-usage.html is a flaky failure)
-[ BigSur+ ] fast/images/image-copy-memory-usage.html [ Failure ]
+[ Monterey+ ] fast/images/image-copy-memory-usage.html [ Failure ]
 
 # rdar://65642935 15 canvas layout tests consistently failing
 [ arm64 ] fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
@@ -2030,14 +2058,14 @@ webkit.org/b/215778 fast/overflow/horizontal-scroll-after-back.html [ Pass Timeo
 
 webkit.org/b/215926 svg/custom/object-sizing.xhtml [ Pass Failure ]
 
-# rdar://problem/66487888 [ BigSur+ ] media/media-source/media-source-webm.html is a constant failure
-[ BigSur+ ] media/media-source/media-source-webm.html [ Failure ]
+# rdar://problem/66487888 [ Monterey+ ] media/media-source/media-source-webm.html is a constant failure
+[ Monterey+ ] media/media-source/media-source-webm.html [ Failure ]
 
 # rdar://65188503
-[ BigSur+ ] platform/mac/media/media-source/is-type-supported-vp9-codec-check.html [ Skip ]
+[ Monterey+ ] platform/mac/media/media-source/is-type-supported-vp9-codec-check.html [ Skip ]
 
 # rdar://65188503
-[ BigSur+ ] platform/mac/media/mediacapabilities/vp9-decodingInfo-sw.html [ Skip ]
+[ Monterey+ ] platform/mac/media/mediacapabilities/vp9-decodingInfo-sw.html [ Skip ]
 
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/collapse-45.html [ Slow ]
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/collapse-15.html [ Slow ]
@@ -2050,16 +2078,6 @@ webkit.org/b/217934 inspector/debugger/breakpoint-resolve-when-script-added.html
 
 webkit.org/b/218341 [ Debug ] inspector/dom-debugger/attribute-modified-style.html [ Pass Timeout ]
 
-# These tests fail because of missing painting features in LFC (they still pass the layout ASSERT test).
-# webkit.org/b/216471
-fast/layoutformattingcontext/br-and-wbr-simple.html [ ImageOnlyFailure ]
-fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html [ ImageOnlyFailure ]
-fast/layoutformattingcontext/inlin-box-content-fits-but-the-box-does-not.html [ ImageOnlyFailure ]
-fast/layoutformattingcontext/intrusive-floats-takes-entire-horizontal-space.html [ ImageOnlyFailure ]
-fast/layoutformattingcontext/quirk-margin-not-collapse-when-floating.html [ ImageOnlyFailure ]
-fast/layoutformattingcontext/run-expansion-extends-line-content-width.html [ ImageOnlyFailure ]
-fast/layoutformattingcontext/wbr-simple.html [ ImageOnlyFailure ]
-
 webkit.org/b/219498 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-003.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/244538 [ Debug ] imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-003.html [ Pass ImageOnlyFailure ]
@@ -2068,22 +2086,22 @@ webkit.org/b/245034 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-t
 
 webkit.org/b/221009 fast/harness/render-tree-as-text-options.html [ Pass Failure ]
 
-webkit.org/b/221095 [ BigSur+ ] media/mediacapabilities/vp9.html [ Skip ]
+webkit.org/b/221095 [ Monterey+ ] media/mediacapabilities/vp9.html [ Skip ]
 
 webkit.org/b/221146 [ BigSur ] imported/w3c/web-platform-tests/media-source/mediasource-invalid-codec.html [ Failure ]
 
-webkit.org/b/221369 [ BigSur+ ] media/media-source/media-source-webm-append-buffer-after-abort.html [ Skip ]
-webkit.org/b/220552 [ BigSur+ ] media/media-source/media-source-webm-init-inside-segment.html [ Skip ]
+webkit.org/b/221369 [ Monterey+ ] media/media-source/media-source-webm-append-buffer-after-abort.html [ Skip ]
+webkit.org/b/220552 [ Monterey+ ] media/media-source/media-source-webm-init-inside-segment.html [ Skip ]
 
 webkit.org/b/221347 imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-006.html [ Pass Failure ]
 
 webkit.org/b/221368 [ BigSur ] media/video-multiple-concurrent-playback.html [ Pass Failure ]
 
-webkit.org/b/221717 [ BigSur+ ] http/tests/security/http-0.9/default-port-script-blocked.html [ Pass Timeout ]
+webkit.org/b/221717 [ Monterey+ ] http/tests/security/http-0.9/default-port-script-blocked.html [ Pass Timeout ]
 
 webkit.org/b/221506 [ BigSur ] svg/clip-path/resource-clipper-multiple-repaints.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/222493 [ BigSur+ ] media/media-source/media-source-webm-vp8-malformed-header.html [ Skip ]
+webkit.org/b/222493 [ Monterey+ ] media/media-source/media-source-webm-vp8-malformed-header.html [ Skip ]
 
 webkit.org/b/222693 [ BigSur Release ] media/video-aspect-ratio.html [ Failure Timeout ]
 
@@ -2134,9 +2152,9 @@ webkit.org/b/223816 [ arm64 ] platform/mac/fast/objc/webScriptObject-hasWebScrip
 http/tests/websocket/tests/hybi/client-close-2.html [ Pass Failure ]
 
 # webkit.org/b/221300 Updating tests expectations for 3 tests
-[ BigSur+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-bitrate.html [ Skip ]
-[ BigSur+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html [ Skip ]
-[ BigSur+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Skip ]
+[ Monterey+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-bitrate.html [ Skip ]
+[ Monterey+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html [ Skip ]
+[ Monterey+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Skip ]
 
 [ BigSur ] imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-filter-order.html [ Pass ImageOnlyFailure ]
 
@@ -2180,7 +2198,7 @@ webkit.org/b/228042 [ Release ] media/modern-media-controls/volume-support/volum
 
 webkit.org/b/228091 [ Release ] media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Pass Timeout Failure ]
 
-webkit.org/b/228796 [ BigSur+ ] webaudio/silent-audio-interrupted-in-background.html [ Pass Timeout ]
+webkit.org/b/228796 [ Monterey+ ] webaudio/silent-audio-interrupted-in-background.html [ Pass Timeout ]
 
 webkit.org/b/227136 media/video-pause-immediately.html [ Pass Failure ]
 
@@ -2205,8 +2223,6 @@ webkit.org/b/228238 [ BigSur Debug arm64 ] imported/w3c/web-platform-tests/Index
 webkit.org/b/244499 [ Debug ]  imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-referrer.html [ Pass Crash ]
 
 webkit.org/b/228260 [ BigSur Debug ] imported/w3c/web-platform-tests/IndexedDB/idb_binary_key_conversion.htm [ Pass Timeout ]
-
-webkit.org/b/227762 imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/document-with-fragment-valid.html [ Pass Failure ]
 
 webkit.org/b/232276 imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/spin-by-blocking-style-sheet.html [ Pass Failure ]
 
@@ -2271,8 +2287,8 @@ imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-pause-resume.tentativ
 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ ImageOnlyFailure ]
 
 # webkit.org/b/235733 Skip 2 editing/execCommand tests for making subsequent tests fail on wk1 Apple Silicon macs.  
-[ BigSur+ release ] editing/execCommand/insert-newline-in-quoted-content-crash.html [ Skip ]
-[ BigSur+ release ] editing/execCommand/paste-as-quotation-disconnected-paragraph-ancestor-crash.html [ Skip ]
+[ Monterey+ release ] editing/execCommand/insert-newline-in-quoted-content-crash.html [ Skip ]
+[ Monterey+ release ] editing/execCommand/paste-as-quotation-disconnected-paragraph-ancestor-crash.html [ Skip ]
 
 # Push subscription tests don't work without service worker support.
 http/tests/push-api [ Skip ]
@@ -2422,6 +2438,11 @@ http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe.html [ P
 http/tests/security/contentSecurityPolicy/script-src-parsing-implicit-and-explicit-port-number.html [ DumpJSConsoleLogInStdErr ]
 
 # These tests have been flaky on WK1 since their import.
+imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/basic-auth.any.serviceworker.html?wss [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/basic-auth.any.sharedworker.html?wss [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/basic-auth.any.worker.html?wss [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/bufferedAmount-unchanged-by-sync-xhr.any.sharedworker.html?wss [ Pass Failure ]
 imported/w3c/web-platform-tests/websockets/cookies/005.html?wss&wpt_flags=https [ Pass Failure ]
 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-arraybuffer.html?wss [ Pass Failure ]
 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-blob.html?wss [ Pass Failure ]
@@ -2446,20 +2467,19 @@ imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/b
 [ Ventura+ ] media/track/track-legacyapi-with-automatic-mode.html  [ Crash ]
 [ Ventura+ ] media/track/track-long-captions-file.html  [ Crash ]
 [ Ventura+ ] media/track/track-mode-disabled-crash.html  [ Crash ]
-[ BigSur+ ] imported/w3c/web-platform-tests/secure-contexts/basic-popup-and-iframe-tests.html [ Pass Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/secure-contexts/basic-popup-and-iframe-tests.html [ Pass Failure ]
 [ Ventura+ ] http/wpt/webaudio/audioworklet-addModule-cors.sub.https.html
 [ Monterey+ ] http/wpt/fetch/fetch-metadata-websocket.html [ Failure ]
-[ BigSur+ ] http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image-https.html [ Pass Failure ]
+[ Monterey+ ] http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image-https.html [ Pass Failure ]
 [ Monterey+ ] http/tests/media/hls/hls-webvtt-seek-backwards.html [ Timeout Crash ]
 [ Ventura+ ] http/tests/media/hls/hls-webvtt-default.html [ Crash ]
 [ Ventura+ ] http/tests/inspector/network/resource-timing.html [ Failure ]
 [ Monterey+ ] http/tests/inspector/network/resource-security-certificate.html [ Pass Failure ]
 [ Ventura+ ] http/tests/inspector/network/getSerializedCertificate.html [ Failure ]
-[ Ventura+ ] fast/shrink-wrap/rect-shrink-wrap.html [ ImageOnlyFailure ]
 [ Ventura+ arm64 ] fast/writing-mode/english-bt-text-with-spelling-marker.html [ ImageOnlyFailure ]
-[ BigSur+ ] css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
+[ Monterey+ ] css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
 [ Ventura+ ] compositing/fixed-with-main-thread-scrolling.html [ ImageOnlyFailure ]
-[ BigSur+ Debug x86_64 ] editing/execCommand/delete-non-editable-range-crash.html [ Pass Timeout ]
+[ Monterey+ Debug x86_64 ] editing/execCommand/delete-non-editable-range-crash.html [ Pass Timeout ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=249544
 # Generic Permissions API is not supported in WK1
@@ -2494,3 +2514,6 @@ webkit.org/b/255228 [ Monterey+ ] imported/w3c/web-platform-tests/html/semantics
 webkit.org/b/255228 [ Monterey+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-quirks-mode.html [ Failure ]
 webkit.org/b/255228 [ Monterey+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-standards-mode.html [ Failure ]
 webkit.org/b/255228 [ Monterey+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-width-1000px.html [ Failure ]
+
+# Discrete wheel events don't trigger scroll snapping on the root in WK1
+webkit.org/b/255498 css3/scroll-snap/scroll-snap-discrete-wheel-event-in-mainframe.html [ Skip ]

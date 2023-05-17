@@ -1,3 +1,5 @@
 
+
 PASS Ensure getDisplayMedia generate frames
+PASS Ensure getDisplayMedia generate frames with valid frame rate and size in case of clones
 

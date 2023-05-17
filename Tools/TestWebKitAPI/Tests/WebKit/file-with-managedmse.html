@@ -9,15 +9,15 @@
 
       function isMP4Supported()
       {
-        return MediaSource.isTypeSupported('video/mp4;codecs="avc1.4D4001,mp4a.40.2"');
+        return ManagedMediaSource.isTypeSupported('video/mp4;codecs="avc1.4D4001,mp4a.40.2"');
       }
       function isWebMVP9Supported()
       {
-        return MediaSource.isTypeSupported('video/webm;codecs="vp9,opus"');
+        return ManagedMediaSource.isTypeSupported('video/webm;codecs="vp9,opus"');
       }
       function isWebMOpusSupported()
       {
-        return MediaSource.isTypeSupported('video/webm;codecs="opus"');
+        return ManagedMediaSource.isTypeSupported('video/webm;codecs="opus"');
       }
       function loadVideo()
       {

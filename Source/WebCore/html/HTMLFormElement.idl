@@ -33,7 +33,7 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
     [CEReactions=NotNeeded, Reflect] attribute boolean noValidate;
     [CEReactions=NotNeeded, Reflect] attribute DOMString target;
-    [CEReactions, Reflect] attribute DOMString rel;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString rel;
     [SameObject, PutForwards=value] readonly attribute DOMTokenList relList;
 
     readonly attribute HTMLFormControlsCollection elements;
@@ -43,7 +43,7 @@
 
     [ImplementedAs=submitFromJavaScript] undefined submit();
     [EnabledBySetting=RequestSubmitEnabled] undefined requestSubmit(optional HTMLElement? submitter);
-    [CEReactions] undefined reset();
+    [CEReactions=Needed] undefined reset();
     boolean checkValidity();
     [EnabledBySetting=InteractiveFormValidationEnabled] boolean reportValidity();
 };

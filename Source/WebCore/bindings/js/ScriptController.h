@@ -69,7 +69,7 @@ enum class RunAsAsyncFunction : bool;
 struct ExceptionDetails;
 struct RunJavaScriptParameters;
 
-enum ReasonForCallingCanExecuteScripts {
+enum class ReasonForCallingCanExecuteScripts : uint8_t {
     AboutToCreateEventListener,
     AboutToExecuteScript,
     NotAboutToExecuteScript
@@ -89,9 +89,9 @@ public:
     enum class WorldType { User, Internal };
     WEBCORE_EXPORT static Ref<DOMWrapperWorld> createWorld(const String& name, WorldType = WorldType::Internal);
 
-    JSLocalDOMWindow* globalObject(DOMWrapperWorld& world)
+    JSDOMGlobalObject* globalObject(DOMWrapperWorld& world)
     {
-        return JSC::jsCast<JSLocalDOMWindow*>(jsWindowProxy(world).window());
+        return jsWindowProxy(world).window();
     }
 
     static void getAllWorlds(Vector<Ref<DOMWrapperWorld>>&);

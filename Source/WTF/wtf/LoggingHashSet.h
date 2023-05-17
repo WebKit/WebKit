@@ -235,12 +235,6 @@ public:
         return true;
     }
     
-    template<typename OtherCollection>
-    bool operator!=(const OtherCollection& other) const
-    {
-        return !(*this == other);
-    }
-    
 private:
     HashSet m_set;
     LoggingHashID m_id;

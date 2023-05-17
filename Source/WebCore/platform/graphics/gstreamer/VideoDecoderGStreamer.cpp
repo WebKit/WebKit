@@ -227,7 +227,7 @@ void GStreamerInternalVideoDecoder::flush(Function<void()>&& callback)
         return;
     }
 
-    m_harness->flush();
+    m_harness->flushBuffers();
     m_postTaskCallback(WTFMove(callback));
 }
 

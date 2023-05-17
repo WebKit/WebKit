@@ -34,6 +34,7 @@
 #include "ColorSerialization.h"
 #include "ComputedStyleExtractor.h"
 #include "RenderStyle.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -71,6 +72,14 @@ String CSSCustomPropertyValue::customCSSText() const
 {
     auto serializeSyntaxValue = [](const SyntaxValue& syntaxValue) -> String {
         return WTF::switchOn(syntaxValue, [&](const Length& value) {
+            if (value.type() == LengthType::Calculated) {
+                auto calcValue = CSSCalcValue::create(value.calculationValue(), RenderStyle::defaultStyle());
+                if (!calcValue) {
+                    ASSERT_NOT_REACHED();
+                    return emptyString();
+                }
+                return calcValue->cssText();
+            }
             return CSSPrimitiveValue::create(value, RenderStyle::defaultStyle())->cssText();
         }, [&](const NumericSyntaxValue& value) {
             return CSSPrimitiveValue::create(value.value, value.unitType)->cssText();

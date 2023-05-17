@@ -109,11 +109,6 @@ public:
             return m_index == other.m_index;
         }
         
-        constexpr bool operator!=(const iterator& other) const
-        {
-            return !(*this == other);
-        }
-
     private:
         const Bitmap* m_bitmap;
         size_t m_index;
@@ -129,7 +124,6 @@ public:
     void setEachNthBit(size_t n, size_t start = 0, size_t end = bitmapSize);
 
     constexpr bool operator==(const Bitmap&) const;
-    constexpr bool operator!=(const Bitmap&) const;
 
     constexpr void operator|=(const Bitmap&);
     constexpr void operator&=(const Bitmap&);
@@ -513,12 +507,6 @@ inline constexpr bool Bitmap<bitmapSize, WordType>::operator==(const Bitmap& oth
             return false;
     }
     return true;
-}
-
-template<size_t bitmapSize, typename WordType>
-inline constexpr bool Bitmap<bitmapSize, WordType>::operator!=(const Bitmap& other) const
-{
-    return !(*this == other);
 }
 
 template<size_t bitmapSize, typename WordType>

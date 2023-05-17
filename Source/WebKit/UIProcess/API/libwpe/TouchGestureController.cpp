@@ -38,6 +38,7 @@ static constexpr uint32_t scrollCaptureThreshold { 200 };
 static constexpr uint32_t axisLockMovementThreshold { 8 };
 static constexpr uint32_t axisLockActivationThreshold { 15 };
 static constexpr uint32_t axisLockReleaseThreshold { 30 };
+static constexpr uint32_t contextMenuThreshold { 500 };
 
 TouchGestureController::EventVariant TouchGestureController::handleEvent(const struct wpe_input_touch_event_raw* touchPoint)
 {
@@ -73,6 +74,8 @@ TouchGestureController::EventVariant TouchGestureController::handleEvent(const s
             m_gesturedEvent = GesturedEvent::Axis;
             FALLTHROUGH;
         }
+        case GesturedEvent::ContextMenu:
+            break;
         case GesturedEvent::Axis:
         {
             AxisEvent generatedEvent;
@@ -121,9 +124,30 @@ TouchGestureController::EventVariant TouchGestureController::handleEvent(const s
             break;
         case GesturedEvent::Click:
         {
+            bool generateClick = true;
+
+#if ENABLE(CONTEXT_MENUS)
+            generateClick = (touchPoint->time - m_start.time) < contextMenuThreshold;
+#endif
+
+            if (generateClick) {
+                m_gesturedEvent = GesturedEvent::None;
+
+                ClickEvent generatedEvent;
+                generatedEvent.event = {
+                    wpe_input_pointer_event_type_null, touchPoint->time, touchPoint->x, touchPoint->y,
+                    0, 0, 0,
+                };
+                return generatedEvent;
+            }
+
+            FALLTHROUGH;
+        }
+        case GesturedEvent::ContextMenu:
+        {
             m_gesturedEvent = GesturedEvent::None;
 
-            ClickEvent generatedEvent;
+            ContextMenuEvent generatedEvent;
             generatedEvent.event = {
                 wpe_input_pointer_event_type_null, touchPoint->time, touchPoint->x, touchPoint->y,
                 0, 0, 0,

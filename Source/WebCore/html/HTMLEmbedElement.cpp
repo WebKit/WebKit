@@ -33,6 +33,7 @@
 #include "HTMLParserIdioms.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "NodeName.h"
 #include "PluginDocument.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderWidget.h"
@@ -98,23 +99,29 @@ static bool hasTypeOrSrc(const HTMLEmbedElement& embed)
 void HTMLEmbedElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     HTMLPlugInImageElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-    if (name == typeAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::typeAttr:
         m_serviceType = newValue.string().left(newValue.find(';')).convertToASCIILowercase();
         // FIXME: The only difference between this and HTMLObjectElement's corresponding
         // code is that HTMLObjectElement does setNeedsWidgetUpdate(true). Consider moving
         // this up to the HTMLPlugInImageElement to be shared.
         if (renderer() && !hasTypeOrSrc(*this))
             invalidateStyle();
-    } else if (name == codeAttr) {
+        break;
+    case AttributeNames::codeAttr:
         m_url = stripLeadingAndTrailingHTMLSpaces(newValue);
         // FIXME: Why no call to updateImageLoaderWithNewURLSoon?
         // FIXME: If both code and src attributes are specified, last one parsed/changed wins. That can't be right!
-    } else if (name == srcAttr) {
+        break;
+    case AttributeNames::srcAttr:
         m_url = stripLeadingAndTrailingHTMLSpaces(newValue);
         updateImageLoaderWithNewURLSoon();
         if (renderer() && !hasTypeOrSrc(*this))
             invalidateStyle();
         // FIXME: If both code and src attributes are specified, last one parsed/changed wins. That can't be right!
+        break;
+    default:
+        break;
     }
 }
 

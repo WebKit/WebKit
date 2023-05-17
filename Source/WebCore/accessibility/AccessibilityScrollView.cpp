@@ -228,16 +228,7 @@ AXCoreObject* AccessibilityScrollView::accessibilityHitTest(const IntPoint& poin
 LayoutRect AccessibilityScrollView::elementRect() const
 {
     auto* scrollView = currentScrollView();
-    if (!scrollView)
-        return LayoutRect();
-
-    LayoutRect rect = scrollView->frameRect();
-    float topContentInset = scrollView->topContentInset();
-
-    // Top content inset pushes the frame down and shrinks it.
-    rect.move(0, topContentInset);
-    rect.contract(0, topContentInset);
-    return rect;
+    return scrollView ? scrollView->frameRectShrunkByInset() : LayoutRect();
 }
 
 Document* AccessibilityScrollView::document() const

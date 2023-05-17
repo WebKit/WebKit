@@ -167,11 +167,6 @@ inline bool operator==(const VisibleSelection& a, const VisibleSelection& b)
     return a.start() == b.start() && a.end() == b.end() && a.affinity() == b.affinity() && a.isBaseFirst() == b.isBaseFirst() && a.isDirectional() == b.isDirectional();
 }
 
-inline bool operator!=(const VisibleSelection& a, const VisibleSelection& b)
-{
-    return !(a == b);
-}
-
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const VisibleSelection&);
 
 } // namespace WebCore

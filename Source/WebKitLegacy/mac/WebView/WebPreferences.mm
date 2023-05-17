@@ -1954,16 +1954,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     setWebKitLinkTimeVersion(version);
 }
 
-- (void)setLoadsSiteIconsIgnoringImageLoadingPreference: (BOOL)flag
-{
-    [self _setBoolValue: flag forKey: WebKitLoadSiteIconsKey];
-}
-
-- (BOOL)loadsSiteIconsIgnoringImageLoadingPreference
-{
-    return [self _boolValueForKey: WebKitLoadSiteIconsKey];
-}
-
 - (void)setAVFoundationEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitAVFoundationEnabledKey];
@@ -3390,5 +3380,15 @@ static RetainPtr<NSString>& classIBCreatorID()
 - (void)setWebGL2Enabled:(BOOL)enabled
 {
 }
+
+- (void)setLoadsSiteIconsIgnoringImageLoadingPreference: (BOOL)flag
+{
+}
+
+- (BOOL)loadsSiteIconsIgnoringImageLoadingPreference
+{
+    return NO;
+}
+
 
 @end

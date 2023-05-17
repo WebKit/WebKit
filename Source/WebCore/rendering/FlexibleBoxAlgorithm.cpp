@@ -32,6 +32,7 @@
 #include "FlexibleBoxAlgorithm.h"
 
 #include "RenderBox.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 

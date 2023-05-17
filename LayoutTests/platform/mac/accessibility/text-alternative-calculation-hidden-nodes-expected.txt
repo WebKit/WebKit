@@ -1,0 +1,25 @@
+This tests text alternative calculation with hidden nodes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test 1
+	W3C Name: foo
+	Custom content:
+Test 2
+	W3C Name:
+	Custom content: description: bar
+Test 3
+	W3C Name:
+	Custom content:
+Test 4
+	W3C Name: cell 1 cell 4
+	Custom content:
+Test 5
+	W3C Name:
+	Custom content: description: cell 1 cell 4
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

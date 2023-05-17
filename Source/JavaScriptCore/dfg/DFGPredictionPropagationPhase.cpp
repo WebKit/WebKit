@@ -801,9 +801,11 @@ private:
             break;
         }
 
+        case EnumeratorPutByVal:
         case PutByValDirect:
         case PutByVal:
-        case PutByValAlias: {
+        case PutByValAlias:
+        case PutByValMegamorphic: {
             Edge child1 = m_graph.varArgChild(node, 0);
             Edge child2 = m_graph.varArgChild(node, 1);
             Edge child3 = m_graph.varArgChild(node, 2);
@@ -914,6 +916,7 @@ private:
 
         case NewArrayWithSpecies:
         case EnumeratorGetByVal:
+        case GetByValMegamorphic:
         case ArrayPop:
         case ArrayPush:
         case RegExpExec:
@@ -927,11 +930,14 @@ private:
         case StringReplaceString:
         case GetById:
         case GetByIdFlush:
+        case GetByIdMegamorphic:
         case GetByIdWithThis:
+        case GetByIdWithThisMegamorphic:
         case GetByIdDirect:
         case GetByIdDirectFlush:
         case TryGetById:
         case GetByValWithThis:
+        case GetByValWithThisMegamorphic:
         case GetByOffset:
         case GetPrivateName:
         case GetPrivateNameById:
@@ -1129,6 +1135,7 @@ private:
         case IsConstructor:
         case IsCellWithType:
         case IsTypedArrayView:
+        case HasStructureWithFlags:
         case MatchStructure: {
             setPrediction(SpecBoolean);
             break;
@@ -1198,7 +1205,9 @@ private:
         case CreateRest:
         case NewArrayBuffer:
         case ObjectKeys:
-        case ObjectGetOwnPropertyNames: {
+        case ObjectGetOwnPropertyNames:
+        case ObjectGetOwnPropertySymbols:
+        case ReflectOwnKeys: {
             setPrediction(SpecArray);
             break;
         }
@@ -1461,8 +1470,10 @@ private:
         case PutByValWithThis:
         case PutByIdWithThis:
         case PutByVal:
+        case PutByValMegamorphic:
         case PutPrivateName:
         case PutPrivateNameById:
+        case EnumeratorPutByVal:
         case SetPrivateBrand:
         case CheckPrivateBrand:
         case PutClosureVar:
@@ -1478,6 +1489,7 @@ private:
         case PutById:
         case PutByIdFlush:
         case PutByIdDirect:
+        case PutByIdMegamorphic:
         case PutByOffset:
         case MultiPutByOffset:
         case PutGetterById:

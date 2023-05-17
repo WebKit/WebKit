@@ -1,3 +1,4 @@
+//@ skip if $memoryLimited
 function bench(string, func)
 {
     for (var i = 0; i < 1000; ++i)

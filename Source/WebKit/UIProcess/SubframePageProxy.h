@@ -27,6 +27,7 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 
 namespace IPC {
@@ -35,28 +36,51 @@ class Decoder;
 class Encoder;
 }
 
+namespace WebCore {
+enum class FrameLoadType : uint8_t;
+enum class HasInsecureContent : bool;
+enum class MouseEventPolicy : uint8_t;
+
+class CertificateInfo;
+class ResourceResponse;
+class ResourceRequest;
+
+struct PolicyCheckIdentifierType;
+
+using PolicyCheckIdentifier = ProcessQualified<ObjectIdentifier<PolicyCheckIdentifierType>>;
+}
+
 namespace WebKit {
 
+class UserData;
 class WebFrameProxy;
 class WebPageProxy;
 class WebProcessProxy;
 
+struct FrameInfoData;
+
 class SubframePageProxy : public IPC::MessageReceiver, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SubframePageProxy(WebFrameProxy&, WebPageProxy&, WebProcessProxy&);
+    SubframePageProxy(WebPageProxy&, WebProcessProxy&, bool isInSameProcessAsMainFrame);
     ~SubframePageProxy();
+
+    WebProcessProxy& process() { return m_process.get(); }
 
 private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
+    void decidePolicyForResponse(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, uint64_t listenerID);
+    void didCommitLoadForFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
 
     WebCore::PageIdentifier m_webPageID;
     Ref<WebProcessProxy> m_process;
-    WeakPtr<WebFrameProxy> m_frame;
     WeakPtr<WebPageProxy> m_page;
+
+    // FIXME: We shouldn't make a SubframePageProxy for frames in the same process as the main frame.
+    const bool m_isInSameProcessAsMainFrame { false };
 };
 
 }

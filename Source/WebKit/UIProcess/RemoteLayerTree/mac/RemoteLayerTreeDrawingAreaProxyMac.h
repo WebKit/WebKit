@@ -49,7 +49,9 @@ public:
     void didRefreshDisplay() override;
 
     DisplayLink& displayLink();
-
+    
+    void updateZoomTransactionID();
+    WebCore::PlatformLayerIdentifier pageScalingLayerID() { return m_pageScalingLayerID; }
 private:
     WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
     std::unique_ptr<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const override;

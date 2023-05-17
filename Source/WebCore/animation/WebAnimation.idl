@@ -71,5 +71,5 @@ typedef (double or CSSNumericValue) CSSNumberish;
     undefined updatePlaybackRate(double playbackRate);
     [ImplementedAs=bindingsReverse] undefined reverse();
     undefined persist();
-    [CEReactions] undefined commitStyles();
+    [CEReactions=Needed] undefined commitStyles();
 };

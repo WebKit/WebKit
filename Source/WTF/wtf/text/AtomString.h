@@ -154,14 +154,6 @@ inline bool operator==(const AtomString& a, const String& b) { return equal(a.im
 inline bool operator==(const String& a, const AtomString& b) { return equal(a.impl(), b.impl()); }
 inline bool operator==(const Vector<UChar>& a, const AtomString& b) { return b == a; }
 
-inline bool operator!=(const AtomString& a, const AtomString& b) { return a.impl() != b.impl(); }
-inline bool operator!=(const AtomString& a, ASCIILiteral b) { return !(a == b); }
-inline bool operator!=(const AtomString& a, const String& b) { return !equal(a.impl(), b.impl()); }
-inline bool operator!=(const AtomString& a, const Vector<UChar>& b) { return !(a == b); }
-inline bool operator!=(ASCIILiteral a, const AtomString& b) { return !(b == a); }
-inline bool operator!=(const String& a, const AtomString& b) { return !equal(a.impl(), b.impl()); }
-inline bool operator!=(const Vector<UChar>& a, const AtomString& b) { return !(a == b); }
-
 bool equalIgnoringASCIICase(const AtomString&, const AtomString&);
 bool equalIgnoringASCIICase(const AtomString&, const String&);
 bool equalIgnoringASCIICase(const String&, const AtomString&);

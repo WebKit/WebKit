@@ -83,3 +83,12 @@ index 6a7124c3fe..000bc697a3 100644
  
 -BBCLASSEXTEND = "native"
 +BBCLASSEXTEND = "native nativesdk"
+diff --git a/sources/meta-raspberrypi/recipes-graphics/mesa/mesa-demos_%.bbappend b/sources/meta-raspberrypi/recipes-graphics/mesa/mesa-demos_%.bbappend
+index abb11ec..ec0afa3 100644
+--- a/sources/meta-raspberrypi/recipes-graphics/mesa/mesa-demos_%.bbappend
++++ b/sources/meta-raspberrypi/recipes-graphics/mesa/mesa-demos_%.bbappend
+@@ -1,2 +1,2 @@
+-# mesa-demos need libgles1 and userland driver does not have it
+-COMPATIBLE_HOST:rpi = "${@bb.utils.contains('MACHINE_FEATURES', 'vc4graphics', '(.*)', 'null', d)}"
++# mesa-demos userland driver doesn't provide libgles1 and the EGL headers it provides break the mesa-demos build.
++PACKAGECONFIG:remove:rpi = "${@bb.utils.contains('MACHINE_FEATURES', 'vc4graphics', '', 'egl gles1', d)}"

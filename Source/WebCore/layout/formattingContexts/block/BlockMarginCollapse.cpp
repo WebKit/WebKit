@@ -28,6 +28,7 @@
 
 #include "BlockFormattingQuirks.h"
 #include "BlockFormattingState.h"
+#include "BorderValue.h"
 #include "FloatingState.h"
 #include "InlineFormattingState.h"
 #include "LayoutBox.h"
@@ -35,7 +36,7 @@
 #include "LayoutElementBox.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutUnit.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 namespace Layout {
@@ -409,24 +410,8 @@ bool BlockMarginCollapse::marginsCollapseThrough(const ElementBox& layoutBox) co
                 return false;
 
             auto isConsideredEmpty = [&] {
-                auto& inlineFormattingState = layoutState.formattingStateForInlineFormattingContext(layoutBox);
-                if (!inlineFormattingState.lines().isEmpty())
-                    return false;
-                // Any float box in this formatting context prevents collapsing through.
-                auto parentBlockFormattingState = [&] () -> BlockFormattingState& {
-                    if (layoutBox.establishesBlockFormattingContext())
-                        return layoutState.formattingStateForBlockFormattingContext(layoutBox);
-                    for (auto& containingBlock : containingBlockChain(layoutBox)) {
-                        if (containingBlock.establishesBlockFormattingContext())
-                            return layoutState.formattingStateForBlockFormattingContext(containingBlock);
-                    }
-                    ASSERT_NOT_REACHED();
-                    return layoutState.formattingStateForBlockFormattingContext(FormattingContext::initialContainingBlock(layoutBox));
-                };
-                for (auto& floatItem : parentBlockFormattingState().floatingState().floats()) {
-                    if (floatItem.isInFormattingContextOf(layoutBox))
-                        return false;
-                }
+                // FIXME: Check for non-empty inline formatting context if applicable.
+                // FIXME: Any float box in this formatting context prevents collapsing through.
                 return true;
             };
             return isConsideredEmpty();
@@ -515,9 +500,9 @@ UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::positiv
 
     UsedVerticalMargin::PositiveAndNegativePair::Values nonCollapsedBefore;
     if (nonCollapsedValues.before > 0)
-        nonCollapsedBefore = { nonCollapsedValues.before, { }, layoutBox.style().hasMarginBeforeQuirk() };
+        nonCollapsedBefore = { nonCollapsedValues.before, { }, layoutBox.style().marginBefore().hasQuirk() };
     else if (nonCollapsedValues.before < 0)
-        nonCollapsedBefore = { { }, nonCollapsedValues.before, layoutBox.style().hasMarginBeforeQuirk() };
+        nonCollapsedBefore = { { }, nonCollapsedValues.before, layoutBox.style().marginBefore().hasQuirk() };
 
     return computedPositiveAndNegativeMargin(collapsedMarginBefore, nonCollapsedBefore);
 }
@@ -534,9 +519,9 @@ UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::positiv
     // update it later when we compute the next sibling's margin before. See updateMarginAfterForPreviousSibling.
     UsedVerticalMargin::PositiveAndNegativePair::Values nonCollapsedAfter;
     if (nonCollapsedValues.after > 0)
-        nonCollapsedAfter = { nonCollapsedValues.after, { }, layoutBox.style().hasMarginAfterQuirk() };
+        nonCollapsedAfter = { nonCollapsedValues.after, { }, layoutBox.style().marginAfter().hasQuirk() };
     else if (nonCollapsedValues.after < 0)
-        nonCollapsedAfter = { { }, nonCollapsedValues.after, layoutBox.style().hasMarginAfterQuirk() };
+        nonCollapsedAfter = { { }, nonCollapsedValues.after, layoutBox.style().marginAfter().hasQuirk() };
 
     return computedPositiveAndNegativeMargin(lastChildCollapsedMarginAfter(), nonCollapsedAfter);
 }

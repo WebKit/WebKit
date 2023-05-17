@@ -26,20 +26,50 @@
 #pragma once
 
 #include "BarcodeFormat.h"
+#include "DOMRectReadOnly.h"
+#include "DetectedBarcodeInterface.h"
+#include "Point2D.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class DOMRectReadOnly;
-struct Point2D;
-
 struct DetectedBarcode {
+    ShapeDetection::DetectedBarcode convertToBacking() const
+    {
+        ASSERT(boundingBox);
+        return {
+            {
+                static_cast<float>(boundingBox->x()),
+                static_cast<float>(boundingBox->y()),
+                static_cast<float>(boundingBox->width()),
+                static_cast<float>(boundingBox->height()),
+            },
+            rawValue,
+            WebCore::convertToBacking(format),
+            cornerPoints.map([] (const auto& cornerPoint) {
+                return cornerPoint.convertToBacking();
+            }),
+        };
+    }
+
     RefPtr<DOMRectReadOnly> boundingBox;
     String rawValue;
     BarcodeFormat format { BarcodeFormat::Unknown };
     Vector<Point2D> cornerPoints;
 };
+
+inline DetectedBarcode convertFromBacking(const ShapeDetection::DetectedBarcode& detectedBarcode)
+{
+    return {
+        DOMRectReadOnly::create(detectedBarcode.boundingBox.x(), detectedBarcode.boundingBox.y(), detectedBarcode.boundingBox.width(), detectedBarcode.boundingBox.height()),
+        detectedBarcode.rawValue,
+        convertFromBacking(detectedBarcode.format),
+        detectedBarcode.cornerPoints.map([] (const auto& cornerPoint) {
+            return Point2D { cornerPoint.x(), cornerPoint.y() };
+        }),
+    };
+}
 
 } // namespace WebCore

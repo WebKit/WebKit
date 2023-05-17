@@ -34,7 +34,7 @@
 #include "FontMetrics.h"
 #include "FrameDestructionObserverInlines.h"
 #include "LocalFrame.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "Settings.h"
 
 namespace WebCore {

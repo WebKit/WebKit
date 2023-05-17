@@ -2140,6 +2140,9 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
     async _handleEventBadgeClicked(event)
     {
+        if (this._eventBadgePopover)
+            return;
+
         let {listeners} = await this.representedObject.getEventListeners({includeAncestors: false});
         console.assert(listeners.length, listeners);
 
@@ -2148,9 +2151,9 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             return WI.Rect.rectFromClientRect(this._elementForBadgeType.get(WI.DOMTreeElement.BadgeType.Event).getBoundingClientRect()).pad(2);
         };
 
-        let popover = new WI.Popover(this);
-        popover.windowResizeHandler = function(event) {
-            popover.present(calculateTargetFrame(), preferredEdges, {updateContent: true, shouldAnimate: false});
+        this._eventBadgePopover = new WI.Popover(this);
+        this._eventBadgePopover.windowResizeHandler = (event) => {
+            this._eventBadgePopover.present(calculateTargetFrame(), preferredEdges, {updateContent: true, shouldAnimate: false});
         };
 
         let sections = WI.EventListenerSectionGroup.groupIntoSectionsByEvent(listeners, {hideTarget: true});
@@ -2158,7 +2161,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             section.addEventListener(WI.DetailsSection.Event.CollapsedStateChanged, function(event) {
                 const shouldAnimate = false;
                 this.update(shouldAnimate);
-            }, popover);
+            }, this._eventBadgePopover);
         }
 
         const title = "";
@@ -2168,7 +2171,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         contentElement.className = "event-badge-popover-content";
         contentElement.appendChild(detailsSection.element);
 
-        popover.presentNewContentWithFrame(contentElement, calculateTargetFrame(), preferredEdges);
+        this._eventBadgePopover.presentNewContentWithFrame(contentElement, calculateTargetFrame(), preferredEdges);
     }
 
     _handleScrollableBadgeClicked(event)
@@ -2213,6 +2216,14 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
     _handleShownDOMTreeBadgesChanged(event)
     {
         this._createBadges();
+    }
+
+    // Popover delegate
+
+    didDismissPopover(popover)
+    {
+        if (popover === this._eventBadgePopover)
+            this._eventBadgePopover = null;
     }
 };
 

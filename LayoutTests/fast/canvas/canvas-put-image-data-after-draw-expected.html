@@ -1,0 +1,11 @@
+<body style="margin:0">
+<canvas id="a"></canvas>
+<script>
+const imageData = new ImageData(300, 150);
+imageData.data.forEach((item, index) => {
+    imageData.data[index] = 128;
+});
+const ctxA = a.getContext('2d');
+ctxA.putImageData(imageData, 0, 0);
+</script>
+</body>

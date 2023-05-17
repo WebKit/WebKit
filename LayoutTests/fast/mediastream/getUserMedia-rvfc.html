@@ -84,6 +84,25 @@ promise_test(async (test) => {
     await new Promise(resolve => video.requestVideoFrameCallback(resolve));
     assert_equals(counter, 1);
 }, "Validate callbacks are called only once");
+
+promise_test(async (test) => {
+    const localStream = await navigator.mediaDevices.getUserMedia({video: { width: 640, height: 480 } });
+    video.srcObject = localStream;
+    await video.play();
+    localStream.getVideoTracks()[0].enabled = false;
+
+    let counter = 0;
+    let wasCalled = true;
+    while (counter++ < 10 && wasCalled) {
+        wasCalled = await new Promise(resolve => {
+            video.requestVideoFrameCallback(() => resolve(true));
+            setTimeout(() => resolve(false), 500);
+        });
+        if (wasCalled)
+           await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    assert_true(wasCalled);
+}, "Validate callbacks are not called for enabled=false video track");
         </script>
     </body>
 </html>

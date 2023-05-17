@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ASTAttribute.h"
+#include "ASTBuilder.h"
 #include "ASTExpression.h"
 #include "ASTForward.h"
 #include "ASTStatement.h"
@@ -34,6 +35,7 @@
 #include "ASTVariable.h"
 #include "CompilationMessage.h"
 #include "Lexer.h"
+#include "WGSLShaderModule.h"
 #include <wtf/Ref.h>
 
 namespace WGSL {
@@ -45,6 +47,7 @@ class Parser {
 public:
     Parser(ShaderModule& shaderModule, Lexer& lexer)
         : m_shaderModule(shaderModule)
+        , m_builder(shaderModule.astBuilder())
         , m_lexer(lexer)
         , m_current(lexer.lex())
     {
@@ -58,22 +61,23 @@ public:
     Result<AST::Attribute::List> parseAttributes();
     Result<AST::Attribute::Ref> parseAttribute();
     Result<AST::Structure::Ref> parseStructure(AST::Attribute::List&&);
-    Result<AST::StructureMember> parseStructureMember();
+    Result<std::reference_wrapper<AST::StructureMember>> parseStructureMember();
     Result<AST::TypeName::Ref> parseTypeName();
     Result<AST::TypeName::Ref> parseTypeNameAfterIdentifier(AST::Identifier&&, SourcePosition start);
     Result<AST::TypeName::Ref> parseArrayType();
     Result<AST::Variable::Ref> parseVariable();
     Result<AST::Variable::Ref> parseVariableWithAttributes(AST::Attribute::List&&);
-    Result<AST::VariableQualifier> parseVariableQualifier();
+    Result<AST::VariableQualifier::Ref> parseVariableQualifier();
     Result<AST::StorageClass> parseStorageClass();
     Result<AST::AccessMode> parseAccessMode();
-    Result<AST::Function> parseFunction(AST::Attribute::List&&);
-    Result<Ref<AST::Parameter>> parseParameter();
+    Result<AST::Function::Ref> parseFunction(AST::Attribute::List&&);
+    Result<std::reference_wrapper<AST::Parameter>> parseParameter();
     Result<AST::Statement::Ref> parseStatement();
-    Result<AST::CompoundStatement> parseCompoundStatement();
-    Result<AST::IfStatement> parseIfStatement();
-    Result<AST::IfStatement> parseIfStatementWithAttributes(AST::Attribute::List&&, SourcePosition _startOfElementPosition);
-    Result<AST::ReturnStatement> parseReturnStatement();
+    Result<AST::CompoundStatement::Ref> parseCompoundStatement();
+    Result<AST::Statement::Ref> parseIfStatement();
+    Result<AST::Statement::Ref> parseIfStatementWithAttributes(AST::Attribute::List&&, SourcePosition _startOfElementPosition);
+    Result<AST::Statement::Ref> parseForStatement();
+    Result<AST::Statement::Ref> parseReturnStatement();
     Result<AST::Expression::Ref> parseShortCircuitExpression(AST::Expression::Ref&&, TokenType, AST::BinaryOperation);
     Result<AST::Expression::Ref> parseRelationalExpression();
     Result<AST::Expression::Ref> parseRelationalExpressionPostUnary(AST::Expression::Ref&& lhs);
@@ -100,10 +104,9 @@ private:
     Token& current() { return m_current; }
 
     ShaderModule& m_shaderModule;
+    AST::Builder& m_builder;
     Lexer& m_lexer;
     Token m_current;
 };
-
-Result<AST::Expression::Ref> parseExpression(const String& source);
 
 } // namespace WGSL

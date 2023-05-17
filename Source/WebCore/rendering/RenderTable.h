@@ -61,33 +61,10 @@ public:
     LayoutUnit borderBefore() const override;
     LayoutUnit borderAfter() const override;
 
-    LayoutUnit borderLeft() const override
-    {
-        if (style().isHorizontalWritingMode())
-            return style().isLeftToRightDirection() ? borderStart() : borderEnd();
-        return style().isFlippedBlocksWritingMode() ? borderAfter() : borderBefore();
-    }
-
-    LayoutUnit borderRight() const override
-    {
-        if (style().isHorizontalWritingMode())
-            return style().isLeftToRightDirection() ? borderEnd() : borderStart();
-        return style().isFlippedBlocksWritingMode() ? borderBefore() : borderAfter();
-    }
-
-    LayoutUnit borderTop() const override
-    {
-        if (style().isHorizontalWritingMode())
-            return style().isFlippedBlocksWritingMode() ? borderAfter() : borderBefore();
-        return style().isLeftToRightDirection() ? borderStart() : borderEnd();
-    }
-
-    LayoutUnit borderBottom() const override
-    {
-        if (style().isHorizontalWritingMode())
-            return style().isFlippedBlocksWritingMode() ? borderBefore() : borderAfter();
-        return style().isLeftToRightDirection() ? borderEnd() : borderStart();
-    }
+    inline LayoutUnit borderLeft() const override;
+    inline LayoutUnit borderRight() const override;
+    inline LayoutUnit borderTop() const override;
+    inline LayoutUnit borderBottom() const override;
 
     Color bgColor() const { return style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor); }
 
@@ -96,46 +73,14 @@ public:
     LayoutUnit outerBorderStart() const;
     LayoutUnit outerBorderEnd() const;
 
-    LayoutUnit outerBorderLeft() const
-    {
-        if (style().isHorizontalWritingMode())
-            return style().isLeftToRightDirection() ? outerBorderStart() : outerBorderEnd();
-        return style().isFlippedBlocksWritingMode() ? outerBorderAfter() : outerBorderBefore();
-    }
-
-    LayoutUnit outerBorderRight() const
-    {
-        if (style().isHorizontalWritingMode())
-            return style().isLeftToRightDirection() ? outerBorderEnd() : outerBorderStart();
-        return style().isFlippedBlocksWritingMode() ? outerBorderBefore() : outerBorderAfter();
-    }
-
-    LayoutUnit outerBorderTop() const
-    {
-        if (style().isHorizontalWritingMode())
-            return style().isFlippedBlocksWritingMode() ? outerBorderAfter() : outerBorderBefore();
-        return style().isLeftToRightDirection() ? outerBorderStart() : outerBorderEnd();
-    }
-
-    LayoutUnit outerBorderBottom() const
-    {
-        if (style().isHorizontalWritingMode())
-            return style().isFlippedBlocksWritingMode() ? outerBorderBefore() : outerBorderAfter();
-        return style().isLeftToRightDirection() ? outerBorderEnd() : outerBorderStart();
-    }
+    inline LayoutUnit outerBorderLeft() const;
+    inline LayoutUnit outerBorderRight() const;
+    inline LayoutUnit outerBorderTop() const;
+    inline LayoutUnit outerBorderBottom() const;
 
     LayoutUnit calcBorderStart() const;
     LayoutUnit calcBorderEnd() const;
     void recalcBordersInRowDirection();
-
-    struct ColumnStruct {
-        explicit ColumnStruct(unsigned initialSpan = 1)
-            : span(initialSpan)
-        {
-        }
-
-        unsigned span;
-    };
 
     void forceSectionsRecalc()
     {
@@ -143,6 +88,9 @@ public:
         recalcSections();
     }
 
+    struct ColumnStruct {
+        unsigned span { 1 };
+    };
     const Vector<ColumnStruct>& columns() const { return m_columns; }
     const Vector<LayoutUnit>& columnPositions() const { return m_columnPos; }
     void setColumnPosition(unsigned index, LayoutUnit position)
@@ -203,11 +151,7 @@ public:
         return 0;
     }
 
-    LayoutUnit bordersPaddingAndSpacingInRowDirection() const
-    {
-        // 'border-spacing' only applies to separate borders (see 17.6.1 The separated borders model).
-        return borderStart() + borderEnd() + (collapseBorders() ? 0_lu : (paddingStart() + paddingEnd() + borderSpacingInRowDirection()));
-    }
+    inline LayoutUnit bordersPaddingAndSpacingInRowDirection() const;
 
     // Return the first column or column-group.
     RenderTableCol* firstColumn() const;

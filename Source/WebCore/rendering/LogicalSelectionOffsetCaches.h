@@ -21,6 +21,7 @@
 #pragma once
 
 #include "RenderBlock.h"
+#include "RenderElementInlines.h"
 
 namespace WebCore {
 

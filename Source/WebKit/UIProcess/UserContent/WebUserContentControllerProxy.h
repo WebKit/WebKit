@@ -116,7 +116,6 @@ public:
     void contentWorldDestroyed(API::ContentWorld&);
 
     bool operator==(const WebUserContentControllerProxy& other) const { return (this == &other); }
-    bool operator!=(const WebUserContentControllerProxy& other) const { return !(this == &other); }
 
 private:
     // IPC::MessageReceiver.

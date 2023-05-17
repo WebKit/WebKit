@@ -36,8 +36,8 @@ public:
     static std::optional<StreamServerConnectionBuffer> map(Handle&&);
     StreamServerConnectionBuffer(StreamServerConnectionBuffer&&) = default;
     StreamServerConnectionBuffer& operator=(StreamServerConnectionBuffer&&) = default;
-    std::optional<Span<uint8_t>> tryAcquire();
-    Span<uint8_t> acquireAll();
+    std::optional<std::span<uint8_t>> tryAcquire();
+    std::span<uint8_t> acquireAll();
     enum class WakeUpClient : bool { No, Yes };
     WakeUpClient release(size_t readSize);
     WakeUpClient releaseAll();
@@ -46,7 +46,7 @@ private:
     using StreamConnectionBuffer::StreamConnectionBuffer;
     static constexpr size_t minimumMessageSize = StreamConnectionEncoder::minimumMessageSize;
     static constexpr size_t messageAlignment = StreamConnectionEncoder::messageAlignment;
-    Span<uint8_t> alignedSpan(size_t offset, size_t limit);
+    std::span<uint8_t> alignedSpan(size_t offset, size_t limit);
     size_t size(size_t offset, size_t limit);
     size_t alignOffset(size_t offset) const { return StreamConnectionBuffer::alignOffset<messageAlignment>(offset, minimumMessageSize); }
     using ServerLimit = ClientOffset;
@@ -59,13 +59,13 @@ private:
 
 inline std::optional<StreamServerConnectionBuffer> StreamServerConnectionBuffer::map(Handle&& handle)
 {
-    auto sharedMemory = WebKit::SharedMemory::map(handle.memory, WebKit::SharedMemory::Protection::ReadWrite);
+    auto sharedMemory = WebKit::SharedMemory::map(WTFMove(handle.memory), WebKit::SharedMemory::Protection::ReadWrite);
     if (UNLIKELY(!sharedMemory))
         return std::nullopt;
     return StreamServerConnectionBuffer { sharedMemory.releaseNonNull() };
 }
 
-inline std::optional<Span<uint8_t>> StreamServerConnectionBuffer::tryAcquire()
+inline std::optional<std::span<uint8_t>> StreamServerConnectionBuffer::tryAcquire()
 {
     ServerLimit serverLimit = sharedServerLimit().load(std::memory_order_acquire);
     if (serverLimit == ServerLimit::serverIsSleepingTag)
@@ -83,7 +83,7 @@ inline std::optional<Span<uint8_t>> StreamServerConnectionBuffer::tryAcquire()
     return result;
 }
 
-inline Span<uint8_t> StreamServerConnectionBuffer::acquireAll()
+inline std::span<uint8_t> StreamServerConnectionBuffer::acquireAll()
 {
     return alignedSpan(0, dataSize() - 1);
 }
@@ -120,7 +120,7 @@ inline StreamServerConnectionBuffer::WakeUpClient StreamServerConnectionBuffer::
     return wakeUpClient;
 }
 
-inline Span<uint8_t> StreamServerConnectionBuffer::alignedSpan(size_t offset, size_t limit)
+inline std::span<uint8_t> StreamServerConnectionBuffer::alignedSpan(size_t offset, size_t limit)
 {
     ASSERT(offset < dataSize());
     ASSERT(limit < dataSize());

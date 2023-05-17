@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT void WKAddMockMediaDevice(WKContextRef, WKStringRef persistentId, WKStringRef label, WKStringRef type);
+WK_EXPORT void WKAddMockMediaDevice(WKContextRef, WKStringRef persistentId, WKStringRef label, WKStringRef type, WKDictionaryRef properties);
 WK_EXPORT void WKClearMockMediaDevices(WKContextRef);
 WK_EXPORT void WKRemoveMockMediaDevice(WKContextRef, WKStringRef persistentId);
 WK_EXPORT void WKResetMockMediaDevices(WKContextRef);

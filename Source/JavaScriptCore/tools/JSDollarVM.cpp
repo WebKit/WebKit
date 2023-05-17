@@ -2012,7 +2012,7 @@ public:
 
     WasmStreamingCompiler(VM& vm, Structure* structure, Wasm::CompilerMode compilerMode, JSGlobalObject* globalObject, JSPromise* promise, JSObject* importObject)
         : Base(vm, structure)
-        , m_promise(vm, this, promise)
+        , m_promise(promise, WriteBarrierEarlyInit)
         , m_streamingCompiler(Wasm::StreamingCompiler::create(vm, compilerMode, globalObject, promise, importObject))
     {
         DollarVMAssertScope assertScope;
@@ -2965,12 +2965,15 @@ JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASA
 
 // Creates a new global object.
 // Usage: $vm.createGlobalObject()
-JSC_DEFINE_HOST_FUNCTION(functionCreateGlobalObject, (JSGlobalObject* globalObject, CallFrame*))
+JSC_DEFINE_HOST_FUNCTION(functionCreateGlobalObject, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
-    return JSValue::encode(JSGlobalObject::create(vm, JSGlobalObject::createStructure(vm, jsNull())));
+    JSValue prototype = jsNull();
+    if (JSObject* object = jsDynamicCast<JSObject*>(callFrame->argument(0)))
+        prototype = object;
+    return JSValue::encode(JSGlobalObject::create(vm, JSGlobalObject::createStructure(vm, prototype)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionCreateProxy, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -2978,13 +2981,11 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateProxy, (JSGlobalObject* globalObject, Cal
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
-    JSValue target = callFrame->argument(0);
-    if (!target.isObject())
+    JSGlobalObject* target = jsDynamicCast<JSGlobalObject*>(callFrame->argument(0));
+    if (UNLIKELY(!target))
         return JSValue::encode(jsUndefined());
-    JSObject* jsTarget = asObject(target.asCell());
-    Structure* structure = JSProxy::createStructure(vm, globalObject, jsTarget->getPrototypeDirect());
-    JSProxy* proxy = JSProxy::create(vm, structure, jsTarget);
-    return JSValue::encode(proxy);
+    Structure* structure = JSGlobalProxy::createStructure(vm, target, target->getPrototypeDirect());
+    return JSValue::encode(JSGlobalProxy::create(vm, structure, target));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionCreateRuntimeArray, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -4140,7 +4141,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "callWithStackSize"_s, functionCallWithStackSize, 2);
 
     addFunction(vm, "createGlobalObject"_s, functionCreateGlobalObject, 0);
-    addFunction(vm, "createProxy"_s, functionCreateProxy, 1);
+    addFunction(vm, "createGlobalProxy"_s, functionCreateProxy, 1);
     addFunction(vm, "createRuntimeArray"_s, functionCreateRuntimeArray, 0);
     addFunction(vm, "createNullRopeString"_s, functionCreateNullRopeString, 0);
 

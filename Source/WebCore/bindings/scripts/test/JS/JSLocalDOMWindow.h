@@ -22,12 +22,11 @@
 
 #include "JSDOMWrapper.h"
 #include "JSEventTarget.h"
+#include "JSWindowProxy.h"
 
 namespace WebCore {
 
 class LocalDOMWindow;
-
-class JSWindowProxy;
 
 class JSLocalDOMWindow : public JSEventTarget {
 public:

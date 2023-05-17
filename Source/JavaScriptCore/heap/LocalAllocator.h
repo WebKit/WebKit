@@ -43,7 +43,7 @@ public:
     LocalAllocator(BlockDirectory*);
     JS_EXPORT_PRIVATE ~LocalAllocator();
     
-    void* allocate(Heap&, GCDeferralContext*, AllocationFailureMode);
+    void* allocate(Heap&, size_t cellSize, GCDeferralContext*, AllocationFailureMode);
     
     unsigned cellSize() const { return m_freeList.cellSize(); }
 
@@ -63,11 +63,11 @@ private:
     friend class BlockDirectory;
     
     void reset();
-    JS_EXPORT_PRIVATE void* allocateSlowCase(Heap&, GCDeferralContext*, AllocationFailureMode);
+    JS_EXPORT_PRIVATE void* allocateSlowCase(Heap&, size_t, GCDeferralContext*, AllocationFailureMode);
     void didConsumeFreeList();
-    void* tryAllocateWithoutCollecting();
-    void* tryAllocateIn(MarkedBlock::Handle*);
-    void* allocateIn(MarkedBlock::Handle*);
+    void* tryAllocateWithoutCollecting(size_t);
+    void* tryAllocateIn(MarkedBlock::Handle*, size_t);
+    void* allocateIn(MarkedBlock::Handle*, size_t cellSize);
     ALWAYS_INLINE void doTestCollectionsIfNeeded(Heap&, GCDeferralContext*);
 
     BlockDirectory* m_directory;

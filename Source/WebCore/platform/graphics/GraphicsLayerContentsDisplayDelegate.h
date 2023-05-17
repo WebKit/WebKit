@@ -54,7 +54,7 @@ public:
 #endif
 };
 
-class WEBCORE_EXPORT GraphicsLayerAsyncContentsDisplayDelegate : public RefCounted<GraphicsLayerAsyncContentsDisplayDelegate> {
+class WEBCORE_EXPORT GraphicsLayerAsyncContentsDisplayDelegate : public GraphicsLayerContentsDisplayDelegate {
 public:
     virtual ~GraphicsLayerAsyncContentsDisplayDelegate() = default;
 

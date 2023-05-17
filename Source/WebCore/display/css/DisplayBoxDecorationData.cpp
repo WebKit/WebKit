@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DisplayBoxDecorationData.h"
 
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 namespace Display {

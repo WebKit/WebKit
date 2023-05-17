@@ -40,7 +40,7 @@ HeaderFieldTokenizer::HeaderFieldTokenizer(const String& headerField)
 
 bool HeaderFieldTokenizer::consume(UChar c)
 {
-    ASSERT(c != ' ' && c != '\t');
+    ASSERT(!isTabOrSpace(c));
 
     if (isConsumed() || m_input[m_index] != c)
         return false;
@@ -102,7 +102,7 @@ String HeaderFieldTokenizer::consumeTokenOrQuotedString()
 
 void HeaderFieldTokenizer::skipSpaces()
 {
-    while (!isConsumed() && RFC7230::isWhitespace(m_input[m_index]))
+    while (!isConsumed() && isTabOrSpace(m_input[m_index]))
         ++m_index;
 }
 

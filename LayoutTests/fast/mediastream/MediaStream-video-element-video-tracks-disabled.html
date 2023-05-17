@@ -2,37 +2,15 @@
 <html>
 <head>
 <meta name="fuzzy" content="maxDifference=115;totalPixels=28000-29000" />
-    <style>
-        video {
-            position: absolute;
-            left: 10px;
-            top: 50px;
-        }
-        
-        .masker {
-            position: absolute;
-            left: 10px;
-            top: 50px;
-            height: 360px;
-            width: 680px;
-            border-top: 50px solid white;
-            border-right: 100px solid white;
-            border-bottom: 250px solid white;
-            border-left: 100px solid white;
-            box-sizing: border-box;
-        }
-    </style>
 </head>
-
 <body>
+<div id=log></div>
 <p>Tests that the video frames of an HTMLVideoElement are black if no video MediaStreamTrack is enabled.</p>
-<video controls width="680" height="360"></video>
-<div class="masker"></div>
+<div style="width:200px;height:100px;overflow:hidden">
+<video id=video autoplay playsinline></video>
+</div>
 
 <script>
-    let mediaStream;
-    let video;
-
     function debug(msg)
     {
         let span = document.createElement('span');
@@ -40,43 +18,31 @@
         span.innerHTML = `${msg} <br />`;
     }
 
-    function canplaythrough()
-    {    
-        mediaStream.getVideoTracks()[0].enabled = false;
-        setTimeout(() => { window.testRunner.notifyDone(); }, 200);
-    }
-
-    function canplay()
+    async function start()
     {
-        video.play();
+        try {
+            const mediaStream = await navigator.mediaDevices.getUserMedia({video: {width: 320, height: 240}});
+            video.srcObject = mediaStream;
+            await video.play();
+
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            log.innerHTML = 'muted';
+            mediaStream.getVideoTracks()[0].enabled = false;
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            log.innerHTML = 'ok';
+        } catch (e) {
+            log.innerHTML = 'Failed with ' + e;
+        }
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
-    function setupStream(stream)
-    {
-        mediaStream = stream;
-        video.srcObject = mediaStream;
-    }
-
-    function failedToSetupStream()
-    {
-        debug('Failed to setup stream');
-    }
-
-    function start()
-    {
-        video = document.querySelector('video');
-        video.addEventListener('canplay', canplay, false);
-        video.addEventListener('canplaythrough', canplaythrough, false);
-        navigator.mediaDevices.getUserMedia({video:true})
-            .then(setupStream)
-            .catch(failedToSetupStream);
-    }
-
-    if (window.testRunner) {
+    if (window.testRunner)
         window.testRunner.waitUntilDone();
-        window.testRunner.setUserMediaPermission(true);
-        start();
-    }
+    window.onload = start;
+
+
 </script>
 </body>
 </html>

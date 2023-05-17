@@ -42,8 +42,7 @@ public:
 
     operator bool() const { return m_current; }
 
-    bool operator==(const RenderIterator& other) const;
-    bool operator!=(const RenderIterator& other) const;
+    bool operator==(const RenderIterator&) const;
 
     RenderIterator& traverseNext();
     RenderIterator& traverseNextSibling();
@@ -68,7 +67,6 @@ public:
     operator bool() const { return m_current; }
 
     bool operator==(const RenderConstIterator& other) const;
-    bool operator!=(const RenderConstIterator& other) const;
 
     RenderConstIterator& traverseNext();
     RenderConstIterator& traverseNextSibling();
@@ -290,12 +288,6 @@ inline bool RenderIterator<T>::operator==(const RenderIterator& other) const
     return m_current == other.m_current;
 }
 
-template <typename T>
-inline bool RenderIterator<T>::operator!=(const RenderIterator& other) const
-{
-    return !(*this == other);
-}
-
 // RenderConstIterator
 
 template <typename T>
@@ -373,12 +365,6 @@ inline bool RenderConstIterator<T>::operator==(const RenderConstIterator& other)
 {
     ASSERT(m_root == other.m_root);
     return m_current == other.m_current;
-}
-
-template <typename T>
-inline bool RenderConstIterator<T>::operator!=(const RenderConstIterator& other) const
-{
-    return !(*this == other);
 }
 
 } // namespace WebCore

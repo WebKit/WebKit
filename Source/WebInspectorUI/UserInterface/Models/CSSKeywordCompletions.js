@@ -276,7 +276,6 @@ WI.CSSKeywordCompletions.ShorthandNamesForLongHandProperty = new Map;
 WI.CSSKeywordCompletions.InheritedProperties = new Set([
     // Compatibility (iOS 12): `inherited` didn't exist on `CSSPropertyInfo`
     "-apple-color-filter",
-    "-webkit-animation-trigger",
     "-webkit-aspect-ratio",
     "-webkit-border-horizontal-spacing",
     "-webkit-border-vertical-spacing",
@@ -977,9 +976,6 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     ],
     "font-feature-settings": [
         "normal"
-    ],
-    "-webkit-animation-trigger": [
-        "auto", "container-scroll()"
     ],
 
     // iOS Properties

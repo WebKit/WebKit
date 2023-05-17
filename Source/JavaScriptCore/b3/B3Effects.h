@@ -119,7 +119,6 @@ struct Effects {
     bool interferes(const Effects&) const;
     
     JS_EXPORT_PRIVATE bool operator==(const Effects&) const;
-    JS_EXPORT_PRIVATE bool operator!=(const Effects&) const;
 
     JS_EXPORT_PRIVATE void dump(PrintStream& out) const;
 };

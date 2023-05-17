@@ -70,7 +70,6 @@ public:
     FontTaggedSetting(FontTag, T value);
 
     bool operator==(const FontTaggedSetting<T>& other) const;
-    bool operator!=(const FontTaggedSetting<T>& other) const { return !(*this == other); }
     bool operator<(const FontTaggedSetting<T>& other) const;
 
     FontTag tag() const { return m_tag; }
@@ -158,7 +157,6 @@ public:
 
     void insert(FontTaggedSetting<T>&&);
     bool operator==(const FontTaggedSettings<T>& other) const { return m_list == other.m_list; }
-    bool operator!=(const FontTaggedSettings<T>& other) const { return !(*this == other); }
 
     bool isEmpty() const { return !size(); }
     size_t size() const { return m_list.size(); }

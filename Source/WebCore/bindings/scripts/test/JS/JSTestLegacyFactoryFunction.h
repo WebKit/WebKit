@@ -61,7 +61,7 @@ public:
 protected:
     JSTestLegacyFactoryFunction(JSC::Structure*, JSDOMGlobalObject&, Ref<TestLegacyFactoryFunction>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestLegacyFactoryFunctionOwner final : public JSC::WeakHandleOwner {

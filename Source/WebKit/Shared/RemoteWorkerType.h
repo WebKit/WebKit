@@ -27,6 +27,9 @@
 
 namespace WebKit {
 
-enum class RemoteWorkerType : bool { ServiceWorker, SharedWorker };
+enum class RemoteWorkerType : uint8_t {
+    ServiceWorker = 1 << 0,
+    SharedWorker = 1 << 1
+};
 
 } // namespace WebKit

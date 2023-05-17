@@ -41,6 +41,7 @@
 #include "Editing.h"
 #include "Editor.h"
 #include "ElementInlines.h"
+#include "FilterOperations.h"
 #include "FontCache.h"
 #include "FontCascade.h"
 #include "HTMLFontElement.h"
@@ -564,9 +565,9 @@ void EditingStyle::init(Node* node, PropertiesToInclude propertiesToInclude)
 
 void EditingStyle::removeTextFillAndStrokeColorsIfNeeded(const RenderStyle* renderStyle)
 {
-    if (RenderStyle::isCurrentColor(renderStyle->textFillColor()))
+    if (renderStyle->textFillColor().isCurrentColor())
         m_mutableStyle->removeProperty(CSSPropertyWebkitTextFillColor);
-    if (RenderStyle::isCurrentColor(renderStyle->textStrokeColor()))
+    if (renderStyle->textStrokeColor().isCurrentColor())
         m_mutableStyle->removeProperty(CSSPropertyWebkitTextStrokeColor);
 }
 
@@ -991,7 +992,7 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement& element, Ref
     return conflicts;
 }
 
-static Span<const HTMLElementEquivalent* const> htmlElementEquivalents()
+static std::span<const HTMLElementEquivalent* const> htmlElementEquivalents()
 {
     static const HTMLElementEquivalent* const equivalents[] = {
         new HTMLFontWeightEquivalent(HTMLNames::bTag),
@@ -1025,7 +1026,7 @@ bool EditingStyle::conflictsWithImplicitStyleOfElement(HTMLElement& element, Edi
     return false;
 }
 
-static Span<const HTMLAttributeEquivalent* const> htmlAttributeEquivalents()
+static std::span<const HTMLAttributeEquivalent* const> htmlAttributeEquivalents()
 {
     static const HTMLAttributeEquivalent* const equivalents[] = {
         // elementIsStyledSpanOrHTMLEquivalent depends on the fact each HTMLAttriuteEquivalent matches exactly one attribute

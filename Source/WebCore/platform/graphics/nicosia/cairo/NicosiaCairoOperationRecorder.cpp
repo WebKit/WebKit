@@ -1048,6 +1048,11 @@ void CairoOperationRecorder::endTransparencyLayer()
     append(createCommand<EndTransparencyLayer>());
 }
 
+void CairoOperationRecorder::resetClip()
+{
+    ASSERT_NOT_REACHED("resetClip is not supported on Cairo");
+}
+
 void CairoOperationRecorder::clip(const FloatRect& rect)
 {
     struct Clip final : PaintingOperation, OperationData<FloatRect> {

@@ -203,9 +203,9 @@ void webkitFaviconDatabaseGetFaviconInternal(WebKitFaviconDatabase* database, co
  * @database: a #WebKitFaviconDatabase
  * @page_uri: URI of the page for which we want to retrieve the favicon
  * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @callback: (scope async): A #GAsyncReadyCallback to call when the request is
+ * @callback: (scope async) (nullable): A #GAsyncReadyCallback to call when the request is
  *            satisfied or %NULL if you don't care about the result.
- * @user_data: (closure): The data to pass to @callback.
+ * @user_data: The data to pass to @callback.
  *
  * Asynchronously obtains a favicon image.
  *

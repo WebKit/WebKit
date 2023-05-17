@@ -36,6 +36,7 @@ namespace WebCore {
 class ImageQualityController;
 class RenderLayerCompositor;
 class RenderLayoutState;
+class RenderCounter;
 class RenderQuote;
 
 namespace Layout {
@@ -64,7 +65,7 @@ public:
     // The same as the FrameView's layoutHeight/layoutWidth but with null check guards.
     int viewHeight() const;
     int viewWidth() const;
-    int viewLogicalWidth() const { return style().isHorizontalWritingMode() ? viewWidth() : viewHeight(); }
+    inline int viewLogicalWidth() const;
     int viewLogicalHeight() const;
 
     LayoutUnit clientLogicalWidthForFixedPosition() const;
@@ -157,13 +158,8 @@ public:
     bool hasQuotesNeedingUpdate() const { return m_hasQuotesNeedingUpdate; }
     void setHasQuotesNeedingUpdate(bool b) { m_hasQuotesNeedingUpdate = b; }
 
-    // FIXME: This is a work around because the current implementation of counters
-    // requires walking the entire tree repeatedly and most pages don't actually use either
-    // feature so we shouldn't take the performance hit when not needed. Long term we should
-    // rewrite the counter code.
-    void addRenderCounter() { ++m_renderCounterCount; }
-    void removeRenderCounter() { ASSERT(m_renderCounterCount > 0); --m_renderCounterCount; }
-    bool hasRenderCounters() const { return m_renderCounterCount; }
+    void addCounterNeedingUpdate(RenderCounter&);
+    WeakHashSet<RenderCounter> takeCountersNeedingUpdate();
 
     void incrementRendersWithOutline() { ++m_renderersWithOutlineCount; }
     void decrementRendersWithOutline() { ASSERT(m_renderersWithOutlineCount > 0); --m_renderersWithOutlineCount; }
@@ -272,6 +268,7 @@ private:
 
     bool m_hasQuotesNeedingUpdate { false };
 
+    WeakHashSet<RenderCounter> m_countersNeedingUpdate;
     unsigned m_renderCounterCount { 0 };
     unsigned m_renderersWithOutlineCount { 0 };
 

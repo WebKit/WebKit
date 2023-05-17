@@ -62,7 +62,7 @@ public:
 protected:
     JSTestTypedefs(JSC::Structure*, JSDOMGlobalObject&, Ref<TestTypedefs>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestTypedefsOwner final : public JSC::WeakHandleOwner {

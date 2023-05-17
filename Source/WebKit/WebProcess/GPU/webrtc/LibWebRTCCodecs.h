@@ -102,8 +102,8 @@ public:
     void registerDecodeFrameCallback(Decoder&, void* decodedImageCallback);
     void registerDecodedVideoFrameCallback(Decoder&, DecoderCallback&&);
 
-    using DescriptionCallback = Function<void(Span<const uint8_t>&&)>;
-    using EncoderCallback = Function<void(Span<const uint8_t>&&, bool isKeyFrame, int64_t timestamp)>;
+    using DescriptionCallback = Function<void(std::span<const uint8_t>&&)>;
+    using EncoderCallback = Function<void(std::span<const uint8_t>&&, bool isKeyFrame, int64_t timestamp)>;
     struct EncoderInitializationData {
         uint16_t width;
         uint16_t height;

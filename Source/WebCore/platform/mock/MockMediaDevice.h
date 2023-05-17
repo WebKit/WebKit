@@ -31,7 +31,7 @@
 
 #include "CaptureDevice.h"
 #include "RealtimeMediaSource.h"
-#include "RealtimeVideoSource.h"
+#include "VideoPreset.h"
 
 namespace WebCore {
 
@@ -196,6 +196,11 @@ struct MockMediaDevice {
     const MockSpeakerProperties* speakerProperties() const
     {
         return isSpeaker() ? &std::get<MockSpeakerProperties>(properties) : nullptr;
+    }
+
+    const MockCameraProperties* cameraProperties() const
+    {
+        return isCamera() ? &std::get<MockCameraProperties>(properties) : nullptr;
     }
 
     template<class Encoder>

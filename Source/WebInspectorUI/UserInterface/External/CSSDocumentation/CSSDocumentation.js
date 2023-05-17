@@ -1362,6 +1362,9 @@ CSSDocumentation = {
         "syntax": "auto | <string>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/hyphenate-character"
     },
+    "hyphenate-limit-chars": {
+        "syntax": "[ auto | <integer> ]{1,3}"
+    },
     "hyphens": {
         "description": "Controls whether hyphenation is allowed to create more break opportunities within a line of text.",
         "syntax": "none | manual | auto",

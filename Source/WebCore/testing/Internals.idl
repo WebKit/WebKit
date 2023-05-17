@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -114,6 +114,12 @@ enum AudioSessionCategory {
     "RecordAudio",
     "PlayAndRecord",
     "AudioProcessing"
+};
+
+enum AudioSessionMode {
+    "Default",
+    "VideoChat",
+    "MoviePlayback"
 };
 
 enum RouteSharingPolicy {
@@ -515,6 +521,11 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined advanceToNextMisspelling();
 
     sequence<DOMString> userPreferredLanguages();
+
+    // This only overrides the languages inside the WebProcess, not the GPUProcess.
+    // To override the language more globally, please add something like this to
+    // your test instead:
+    // <!-- webkit-test-runner [ language=jp,fr ] -->
     undefined setUserPreferredLanguages(sequence<DOMString> languages);
 
     sequence<DOMString> userPreferredAudioCharacteristics();
@@ -976,7 +987,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=MEDIA_STREAM] undefined setShouldInterruptAudioOnPageVisibilityChange(boolean shouldInterrupt);
     [Conditional=MEDIA_STREAM] undefined setCameraMediaStreamTrackOrientation(MediaStreamTrack track, short orientation);
     [Conditional=MEDIA_STREAM] undefined observeMediaStreamTrack(MediaStreamTrack track);
-    [Conditional=MEDIA_STREAM] Promise<ImageData> grabNextMediaStreamTrackFrame();
     [Conditional=MEDIA_STREAM] Promise<short> mediaStreamTrackVideoFrameRotation();
     [Conditional=MEDIA_STREAM] readonly attribute unsigned long trackAudioSampleCount;
     [Conditional=MEDIA_STREAM] readonly attribute unsigned long trackVideoSampleCount;
@@ -1026,7 +1036,9 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     readonly attribute boolean supportsAudioSession;
     AudioSessionCategory audioSessionCategory();
+    AudioSessionMode audioSessionMode();
     [Conditional=VIDEO] AudioSessionCategory categoryAtMostRecentPlayback(HTMLMediaElement element);
+    [Conditional=VIDEO] AudioSessionMode modeAtMostRecentPlayback(HTMLMediaElement element);
     RouteSharingPolicy routeSharingPolicy();
 
     double preferredAudioBufferSize();
@@ -1190,8 +1202,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined retainTextIteratorForDocumentContent();
 
     [Conditional=SERVICE_WORKER] PushSubscription createPushSubscription(USVString endpoint, EpochTimeStamp? expirationTime, ArrayBuffer serverVAPIDPublicKey, ArrayBuffer clientECDHPublicKey, ArrayBuffer auth);
-
-    undefined overrideModalContainerSearchTermForTesting([AtomString] DOMString term);
 
     [Conditional=ARKIT_INLINE_PREVIEW_MAC] Promise<sequence<DOMString>> modelInlinePreviewUUIDs();
     [Conditional=ARKIT_INLINE_PREVIEW_MAC] DOMString modelInlinePreviewUUIDForModelElement(HTMLModelElement modelElement);

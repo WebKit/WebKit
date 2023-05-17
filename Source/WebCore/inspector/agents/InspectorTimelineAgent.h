@@ -137,6 +137,7 @@ public:
     void timeEnd(LocalFrame&, const String&);
     void mainFrameStartedLoading();
     void mainFrameNavigated();
+    void didCompleteRenderingFrame();
 
     // Console
     void startFromConsole(JSC::JSGlobalObject*, const String& title);

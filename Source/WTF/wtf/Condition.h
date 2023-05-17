@@ -96,24 +96,24 @@ public:
     template<typename LockType, typename Functor>
     bool waitFor(LockType& lock, Seconds relativeTimeout, const Functor& predicate)
     {
-        return waitUntil(lock, MonotonicTime::now() + relativeTimeout, predicate);
+        return waitUntil(lock, MonotonicTime::timePointFromNow(relativeTimeout), predicate);
     }
 
     template<typename Functor>
     bool waitFor(Lock& lock, Seconds relativeTimeout, const Functor& predicate) WTF_REQUIRES_LOCK(lock)
     {
-        return waitUntil(lock, MonotonicTime::now() + relativeTimeout, predicate);
+        return waitUntil(lock, MonotonicTime::timePointFromNow(relativeTimeout), predicate);
     }
     
     template<typename LockType>
     bool waitFor(LockType& lock, Seconds relativeTimeout)
     {
-        return waitUntil(lock, MonotonicTime::now() + relativeTimeout);
+        return waitUntil(lock, MonotonicTime::timePointFromNow(relativeTimeout));
     }
 
     bool waitFor(Lock& lock, Seconds relativeTimeout) WTF_REQUIRES_LOCK(lock)
     {
-        return waitUntil(lock, MonotonicTime::now() + relativeTimeout);
+        return waitUntil(lock, MonotonicTime::timePointFromNow(relativeTimeout));
     }
 
     template<typename LockType>

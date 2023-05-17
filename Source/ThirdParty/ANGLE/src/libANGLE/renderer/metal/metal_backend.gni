@@ -75,6 +75,8 @@ metal_backend_sources = [
   "mtl_state_cache.mm",
   "mtl_utils.h",
   "mtl_utils.mm",
+  "process.cpp",
+  "process.h",
   "renderermtl_utils.cpp",
   "renderermtl_utils.h",
   "shaders/constants.h",

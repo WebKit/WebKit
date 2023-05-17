@@ -38,12 +38,17 @@ namespace WebCore {
 class SliderThumbElement;
 
 class RangeInputType final : public InputType {
-    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
-    explicit RangeInputType(HTMLInputElement&);
+    static Ref<RangeInputType> create(HTMLInputElement& element)
+    {
+        return adoptRef(*new RangeInputType(element));
+    }
+
     bool typeMismatchFor(const String&) const final;
 
 private:
+    explicit RangeInputType(HTMLInputElement&);
+
     const AtomString& formControlType() const final;
     double valueAsDouble() const final;
     ExceptionOr<void> setValueAsDecimal(const Decimal&, TextFieldEventBehavior) const final;

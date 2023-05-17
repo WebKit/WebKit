@@ -52,7 +52,7 @@ struct MediaTrackCapabilities {
     std::optional<DoubleRange> zoom;
 };
 
-MediaTrackCapabilities toMediaTrackCapabilities(const RealtimeMediaSourceCapabilities&);
+MediaTrackCapabilities toMediaTrackCapabilities(const RealtimeMediaSourceCapabilities&, const String& groupId);
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

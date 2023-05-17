@@ -31,8 +31,8 @@
 #include "DisplayStackingItem.h"
 #include "DisplayStyle.h"
 #include "DisplayTree.h"
-#include "InlineFormattingState.h"
 #include "LayoutBoxGeometry.h"
+#include "LayoutBoxInlines.h"
 #include "LayoutChildIterator.h"
 #include "LayoutElementBox.h"
 #include "LayoutInitialContainingBlock.h"
@@ -299,16 +299,14 @@ StackingItem* TreeBuilder::insertIntoTree(std::unique_ptr<Box>&& box, InsertionP
 
 void TreeBuilder::buildInlineDisplayTree(const Layout::LayoutState& layoutState, const Layout::ElementBox& inlineFormattingRoot, InsertionPosition& insertionPosition)
 {
-    auto& inlineFormattingState = layoutState.formattingStateForInlineFormattingContext(inlineFormattingRoot);
-
-    for (auto& box : inlineFormattingState.boxes()) {
+    for (auto& box : boxes(inlineFormattingRoot)) {
         if (box.isRootInlineBox()) {
             // Not supported yet.
             continue;
         }
 
         if (box.isTextOrSoftLineBreak()) {
-            auto& lineGeometry = inlineFormattingState.lines().at(box.lineIndex());
+            auto& lineGeometry = lines(inlineFormattingRoot).at(box.lineIndex());
             auto textBox = m_boxFactory.displayBoxForTextRun(box, lineGeometry, positioningContext().inFlowContainingBlockContext());
             insert(WTFMove(textBox), insertionPosition);
             accountForBoxPaintingExtent(*insertionPosition.currentChild);

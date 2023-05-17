@@ -59,11 +59,6 @@ void ScrollingTreeFrameScrollingNodeRemoteMac::handleWheelEventPhase(const Platf
     m_delegate->handleWheelEventPhase(phase);
 }
 
-bool ScrollingTreeFrameScrollingNodeRemoteMac::handleMouseEvent(const PlatformMouseEvent& mouseEvent)
-{
-    return m_delegate->handleMouseEventForScrollbars(mouseEvent);
-}
-
 void ScrollingTreeFrameScrollingNodeRemoteMac::viewWillStartLiveResize()
 {
     m_delegate->viewWillStartLiveResize();

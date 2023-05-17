@@ -58,7 +58,7 @@ bool deviceHasAGXCompilerService()
     return *hasAGXCompilerService;
 }
 
-Span<const ASCIILiteral> agxCompilerServices()
+std::span<const ASCIILiteral> agxCompilerServices()
 {
     static constexpr std::array services {
         "com.apple.AGXCompilerService"_s,
@@ -67,7 +67,7 @@ Span<const ASCIILiteral> agxCompilerServices()
     return services;
 }
 
-Span<const ASCIILiteral> agxCompilerClasses()
+std::span<const ASCIILiteral> agxCompilerClasses()
 {
     static constexpr std::array classes {
         "AGXCommandQueue"_s,

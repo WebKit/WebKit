@@ -1,8 +1,14 @@
-This test ensures that aria-description maps to appropriate attributes.
+This test ensures that aria-description maps to appropriate attributes and works with aria-describedby correctly.
 
-Custom content: null
+Help text:
+Help text: AXHelp: text
+Help text: AXHelp: text
 
 PASS successfullyParsed is true
 
 TEST COMPLETE
 button
+button
+text
+button
+text

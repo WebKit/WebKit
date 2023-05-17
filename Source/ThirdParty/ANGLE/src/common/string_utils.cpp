@@ -158,17 +158,18 @@ bool HexStringToUInt(const std::string &input, unsigned int *uintOut)
 
 bool ReadFileToString(const std::string &path, std::string *stringOut)
 {
-    std::ifstream inFile(path.c_str());
+    std::ifstream inFile(path.c_str(), std::ios::binary);
     if (inFile.fail())
     {
         return false;
     }
 
     inFile.seekg(0, std::ios::end);
-    stringOut->reserve(static_cast<std::string::size_type>(inFile.tellg()));
+    auto size = static_cast<std::string::size_type>(inFile.tellg());
+    stringOut->resize(size);
     inFile.seekg(0, std::ios::beg);
 
-    stringOut->assign(std::istreambuf_iterator<char>(inFile), std::istreambuf_iterator<char>());
+    inFile.read(stringOut->data(), size);
     return !inFile.fail();
 }
 

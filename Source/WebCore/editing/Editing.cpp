@@ -52,6 +52,7 @@
 #include "Range.h"
 #include "RenderBlock.h"
 #include "RenderElement.h"
+#include "RenderStyleInlines.h"
 #include "RenderTableCell.h"
 #include "RenderTextControlSingleLine.h"
 #include "ShadowRoot.h"
@@ -123,7 +124,7 @@ static bool isEditableToAccessibility(const Node& node)
 
 static bool computeEditability(const Node& node, EditableType editableType, Node::ShouldUpdateStyle shouldUpdateStyle)
 {
-    if (node.computeEditability(Node::UserSelectAllIsAlwaysNonEditable, shouldUpdateStyle) != Node::Editability::ReadOnly)
+    if (node.computeEditability(Node::UserSelectAllTreatment::NotEditable, shouldUpdateStyle) != Node::Editability::ReadOnly)
         return true;
 
     switch (editableType) {
@@ -783,9 +784,9 @@ bool isEmptyTableCell(const Node* node)
 Ref<HTMLElement> createDefaultParagraphElement(Document& document)
 {
     switch (document.editor().defaultParagraphSeparator()) {
-    case EditorParagraphSeparatorIsDiv:
+    case EditorParagraphSeparator::div:
         return HTMLDivElement::create(document);
-    case EditorParagraphSeparatorIsP:
+    case EditorParagraphSeparator::p:
         break;
     }
     return HTMLParagraphElement::create(document);

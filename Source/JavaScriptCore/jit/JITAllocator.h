@@ -59,11 +59,6 @@ public:
             && m_allocator == other.m_allocator;
     }
     
-    bool operator!=(const JITAllocator& other) const
-    {
-        return !(*this == other);
-    }
-    
     explicit operator bool() const
     {
         return *this != JITAllocator();

@@ -233,7 +233,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
     return rootLayerChanged;
 }
 
-void RemoteLayerTreeHost::asyncSetLayerContents(PlatformLayerIdentifier layerID, ImageBufferBackendHandle&& handle)
+void RemoteLayerTreeHost::asyncSetLayerContents(PlatformLayerIdentifier layerID, ImageBufferBackendHandle&& handle, const WebCore::RenderingResourceIdentifier& identifier)
 {
     auto* node = nodeForID(layerID);
     if (!node)
@@ -241,6 +241,7 @@ void RemoteLayerTreeHost::asyncSetLayerContents(PlatformLayerIdentifier layerID,
 
     RetainPtr<id> contents = RemoteLayerBackingStoreProperties::layerContentsBufferFromBackendHandle(WTFMove(handle), layerContentsType());
     node->layer().contents = contents.get();
+    node->setAsyncContentsIdentifier(identifier);
 }
 
 RemoteLayerTreeNode* RemoteLayerTreeHost::nodeForID(PlatformLayerIdentifier layerID) const

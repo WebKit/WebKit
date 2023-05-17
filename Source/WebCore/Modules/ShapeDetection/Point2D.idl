@@ -25,6 +25,9 @@
 
 // https://w3c.github.io/mediacapture-image/#dictdef-point2d
 
+[
+    JSGenerateToJSObject
+]
 dictionary Point2D {
     double x = 0.0;
     double y = 0.0;

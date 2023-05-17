@@ -32,9 +32,10 @@
 #include "AXObjectCache.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
-#include "RenderObject.h"
 #include "RenderSlider.h"
+#include "RenderStyleInlines.h"
 #include "SliderThumbElement.h"
+#include "StyleAppearance.h"
 
 namespace WebCore {
     
@@ -52,10 +53,6 @@ Ref<AccessibilitySlider> AccessibilitySlider::create(RenderObject* renderer)
 
 AccessibilityOrientation AccessibilitySlider::orientation() const
 {
-    // Default to horizontal in the unknown case.
-    if (!m_renderer)
-        return AccessibilityOrientation::Horizontal;
-    
     auto ariaOrientation = getAttribute(aria_orientationAttr);
     if (equalLettersIgnoringASCIICase(ariaOrientation, "horizontal"_s))
         return AccessibilityOrientation::Horizontal;
@@ -63,10 +60,13 @@ AccessibilityOrientation AccessibilitySlider::orientation() const
         return AccessibilityOrientation::Vertical;
     if (equalLettersIgnoringASCIICase(ariaOrientation, "undefined"_s))
         return AccessibilityOrientation::Undefined;
-    
-    const RenderStyle& style = m_renderer->style();
 
-    auto styleAppearance = style.effectiveAppearance();
+    const auto* style = this->style();
+    // Default to horizontal in the unknown case.
+    if (!style)
+        return AccessibilityOrientation::Horizontal;
+
+    auto styleAppearance = style->effectiveAppearance();
     switch (styleAppearance) {
     case StyleAppearance::SliderThumbHorizontal:
     case StyleAppearance::SliderHorizontal:
@@ -153,9 +153,7 @@ bool AccessibilitySlider::setValue(const String& value)
 
 HTMLInputElement* AccessibilitySlider::inputElement() const
 {
-    if (!m_renderer)
-        return nullptr;
-    return downcast<HTMLInputElement>(m_renderer->node());
+    return dynamicDowncast<HTMLInputElement>(node());
 }
 
 

@@ -1,0 +1,27 @@
+<style>
+.float_box {
+  float: right;
+  box-shadow: 0px 0px 8px red;
+  filter: drop-shadow(0 10px) blur(10px);
+}
+.inline { 
+  will-change: filter;
+  filter: drop-shadow(0 10px) blur(10px);
+}
+</style>PASS if no crash or assert.<div id=remove_this></div><span class=inline><div class=float_box></div></span>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+  testRunner.dumpAsText();
+}
+
+async function runTest() {
+  await UIHelper.renderingUpdate();
+  remove_this.remove();
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>

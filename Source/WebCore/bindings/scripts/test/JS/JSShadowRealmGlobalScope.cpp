@@ -95,11 +95,11 @@ JSShadowRealmGlobalScope::JSShadowRealmGlobalScope(VM& vm, Structure* structure,
 {
 }
 
-void JSShadowRealmGlobalScope::finishCreation(VM& vm, JSProxy* proxy)
+static_assert(!std::is_base_of<ActiveDOMObject, ShadowRealmGlobalScope>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
+
+void JSShadowRealmGlobalScope::finishCreation(VM& vm, JSGlobalProxy* proxy)
 {
     Base::finishCreation(vm, proxy);
-
-    static_assert(!std::is_base_of<ActiveDOMObject, ShadowRealmGlobalScope>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
     if (jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().webAPIsInShadowRealmEnabled)
         putDirectCustomAccessor(vm, builtinNames(vm).ExposedStarPublicName(), CustomGetterSetter::create(vm, jsShadowRealmGlobalScope_ExposedStarConstructor, nullptr), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)));

@@ -28,6 +28,8 @@
 
 #include "RenderFragmentedFlow.h"
 #include "RenderLayer.h"
+#include "RenderObjectInlines.h"
+#include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include "TransformState.h"
 #include <wtf/SetForScope.h>
@@ -111,7 +113,7 @@ FloatPoint RenderGeometryMap::mapToContainer(const FloatPoint& p, const RenderLa
         TransformState transformState(m_useCSS3DTransformInterop, TransformState::ApplyTransformDirection, p);
         mapToContainer(transformState, container);
         result = transformState.lastPlanarPoint();
-        ASSERT(areEssentiallyEqual(rendererMappedResult, result));
+        ASSERT(m_accumulatedOffsetMightBeSaturated ||  areEssentiallyEqual(rendererMappedResult, result));
     }
 
     return result;

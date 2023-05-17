@@ -40,6 +40,11 @@ FEMerge::FEMerge(unsigned numberOfEffectInputs)
 {
 }
 
+bool FEMerge::operator==(const FEMerge& other) const
+{
+    return FilterEffect::operator==(other) && m_numberOfEffectInputs == other.m_numberOfEffectInputs;
+}
+
 std::unique_ptr<FilterEffectApplier> FEMerge::createSoftwareApplier() const
 {
     return FilterEffectApplier::create<FEMergeSoftwareApplier>(*this);

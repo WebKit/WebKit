@@ -966,13 +966,13 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyFontVariantPosition:
     case CSSPropertyFontWeight:
     case CSSPropertyJustifyContent:
-    case CSSPropertyLeadingTrim:
     case CSSPropertyLetterSpacing:
     case CSSPropertyLineHeight:
     case CSSPropertyOverflowWrap:
     case CSSPropertyRowGap:
     case CSSPropertyScrollSnapStop:
     case CSSPropertySpeakAs:
+    case CSSPropertyTextBoxTrim:
     case CSSPropertyWhiteSpace:
     case CSSPropertyWordBreak:
     case CSSPropertyWordSpacing:
@@ -1208,7 +1208,7 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
         return CSSValueStart;
     case CSSPropertyTextDecorationStyle:
         return CSSValueSolid;
-    case CSSPropertyTextEdge:
+    case CSSPropertyTextBoxEdge:
         return CSSValueLeading;
     case CSSPropertyTextOrientation:
         return CSSValueMixed;

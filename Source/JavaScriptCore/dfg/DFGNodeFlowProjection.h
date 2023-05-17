@@ -77,11 +77,6 @@ public:
         return m_word == other.m_word;
     }
     
-    bool operator!=(NodeFlowProjection other) const
-    {
-        return !(*this == other);
-    }
-    
     bool operator<(NodeFlowProjection other) const
     {
         if (kind() != other.kind())

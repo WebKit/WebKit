@@ -30,7 +30,7 @@ class ShadowRealmGlobalScope;
 class JSShadowRealmGlobalScope : public JSDOMWrapper<ShadowRealmGlobalScope> {
 public:
     using Base = JSDOMWrapper<ShadowRealmGlobalScope>;
-    static JSShadowRealmGlobalScope* create(JSC::VM& vm, JSC::Structure* structure, Ref<ShadowRealmGlobalScope>&& impl, JSC::JSProxy* proxy)
+    static JSShadowRealmGlobalScope* create(JSC::VM& vm, JSC::Structure* structure, Ref<ShadowRealmGlobalScope>&& impl, JSC::JSGlobalProxy* proxy)
     {
         JSShadowRealmGlobalScope* ptr = new (NotNull, JSC::allocateCell<JSShadowRealmGlobalScope>(vm)) JSShadowRealmGlobalScope(vm, structure, WTFMove(impl));
         ptr->finishCreation(vm, proxy);
@@ -60,7 +60,7 @@ public:
     static constexpr unsigned StructureFlags = (Base::StructureFlags & ~JSC::IsImmutablePrototypeExoticObject) | JSC::HasStaticPropertyTable;
 protected:
     JSShadowRealmGlobalScope(JSC::VM&, JSC::Structure*, Ref<ShadowRealmGlobalScope>&&);
-    void finishCreation(JSC::VM&, JSC::JSProxy*);
+    void finishCreation(JSC::VM&, JSC::JSGlobalProxy*);
 };
 
 class JSShadowRealmGlobalScopeOwner final : public JSC::WeakHandleOwner {

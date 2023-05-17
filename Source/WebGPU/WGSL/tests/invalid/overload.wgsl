@@ -1,3 +1,5 @@
+// RUN: %not %wgslc | %check
+
 fn testExplicitTypeArguments() {
   // CHECK-L: no matching overload for initializer vec2<i32>(<AbstractFloat>, <AbstractFloat>)
   let v0 = vec2<i32>(0.0, 0.0);
@@ -33,9 +35,9 @@ fn testConstraints() {
 }
 
 fn testBottomOverload() {
-  // CHECK-L: no matching overload for initializer vec2<f32>(<AbstractInt>)
-  let m = vec2<f32>(0);
+  // CHECK-L: no matching overload for initializer vec2<f32>(i32)
+  let m = vec2<f32>(0i);
 
-  // CHECK-NOT-L: no matching overload for operator +(⊥, <AbstractInt>)
+  // CHECK-NOT-L: no matching overload for operator
   let x = m + 2;
 }

@@ -244,7 +244,7 @@ ExceptionOr<void> CanvasPath::roundRect(float x, float y, float width, float hei
     return roundRect(x, y, width, height, makeSpan(&radii, 1));
 }
 
-ExceptionOr<void> CanvasPath::roundRect(float x, float y, float width, float height, const Span<const RadiusVariant>& radii)
+ExceptionOr<void> CanvasPath::roundRect(float x, float y, float width, float height, const std::span<const RadiusVariant>& radii)
 {
     // Based on Nov 5th 2021 version of https://html.spec.whatwg.org/multipage/canvas.html#dom-context-2d-roundrect
     // 1. If any of x, y, w, or h are infinite or NaN, then return.

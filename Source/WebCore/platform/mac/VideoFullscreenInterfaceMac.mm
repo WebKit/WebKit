@@ -201,8 +201,9 @@ enum class PIPState {
     [_pipViewController setUserCanResize:YES];
     [_pipViewController setPlaying:_playing];
     [self setVideoDimensions:NSEqualSizes(_videoDimensions, NSZeroSize) ? frame.size : _videoDimensions];
-    if (_videoFullscreenInterfaceMac && _videoFullscreenInterfaceMac->videoFullscreenModel())
-        _videoFullscreenInterfaceMac->videoFullscreenModel()->setVideoLayerGravity(MediaPlayerEnums::VideoGravity::ResizeAspectFill);
+    auto* model = _videoFullscreenInterfaceMac ? _videoFullscreenInterfaceMac->videoFullscreenModel() : nullptr;
+    if (model)
+        model->setVideoLayerGravity(MediaPlayerEnums::VideoGravity::ResizeAspectFill);
 
     _videoViewContainer = adoptNS([[WebVideoViewContainer alloc] initWithFrame:frame]);
     [_videoViewContainer setVideoViewContainerDelegate:self];
@@ -213,7 +214,7 @@ enum class PIPState {
     _playerLayer = adoptNS([[WebAVPlayerLayer alloc] init]);
     [[_videoViewContainer layer] addSublayer:_playerLayer.get()];
     [_playerLayer setFrame:[_videoViewContainer layer].bounds];
-    [_playerLayer setFullscreenInterface:_videoFullscreenInterfaceMac];
+    [_playerLayer setFullscreenModel:model];
     [_playerLayer setVideoSublayer:videoView.layer];
     [_playerLayer setVideoDimensions:_videoDimensions];
     [_playerLayer setAutoresizingMask:(kCALayerWidthSizable | kCALayerHeightSizable)];
@@ -333,9 +334,6 @@ enum class PIPState {
         [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
             context.allowsImplicitAnimation = NO;
             [_videoViewContainer setFrame:_returningRect];
-            _videoFullscreenInterfaceMac->videoFullscreenModel()->setVideoLayerFrame([_videoViewContainer bounds]);
-            _videoFullscreenInterfaceMac->videoFullscreenModel()->setVideoLayerGravity(MediaPlayerEnums::VideoGravity::ResizeAspect);
-
             [[_returningWindow contentView] addSubview:_videoViewContainer.get() positioned:NSWindowAbove relativeTo:nil];
         } completionHandler:nil];
     }
@@ -601,6 +599,23 @@ bool VideoFullscreenInterfaceMac::isPlayingVideoInEnhancedFullscreen() const
 {
     return hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) && [m_webVideoFullscreenInterfaceObjC isPlaying];
 }
+
+#if !RELEASE_LOG_DISABLED
+const void* VideoFullscreenInterfaceMac::logIdentifier() const
+{
+    return m_playbackSessionInterface->logIdentifier();
+}
+
+const Logger* VideoFullscreenInterfaceMac::loggerPtr() const
+{
+    return m_playbackSessionInterface->loggerPtr();
+}
+
+WTFLogChannel& VideoFullscreenInterfaceMac::logChannel() const
+{
+    return LogFullscreen;
+}
+#endif
 
 bool supportsPictureInPicture()
 {

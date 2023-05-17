@@ -94,6 +94,7 @@ public:
 
 protected:
     bool parse(JSC::DataView&, unsigned& offset) override;
+    bool parseVersionAndFlags(JSC::DataView&, unsigned& offset);
 
     uint8_t m_version { 0 };
     uint32_t m_flags { 0 };

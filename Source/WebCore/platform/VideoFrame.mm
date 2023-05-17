@@ -37,25 +37,6 @@
 
 namespace WebCore {
 
-RefPtr<JSC::Uint8ClampedArray> VideoFrame::getRGBAImageData() const
-{
-    PixelBufferConformerCV pixelBufferConformer((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32RGBA) });
-
-    auto pixelBuffer = this->pixelBuffer();
-    auto rgbaPixelBuffer = pixelBufferConformer.convert(pixelBuffer);
-    auto status = CVPixelBufferLockBaseAddress(rgbaPixelBuffer.get(), kCVPixelBufferLock_ReadOnly);
-    ASSERT_UNUSED(status, status == noErr);
-
-    void* data = CVPixelBufferGetBaseAddressOfPlane(rgbaPixelBuffer.get(), 0);
-    size_t byteLength = CVPixelBufferGetHeight(pixelBuffer) * CVPixelBufferGetWidth(pixelBuffer) * 4;
-    auto result = JSC::Uint8ClampedArray::tryCreate(JSC::ArrayBuffer::create(data, byteLength), 0, byteLength);
-
-    status = CVPixelBufferUnlockBaseAddress(rgbaPixelBuffer.get(), kCVPixelBufferLock_ReadOnly);
-    ASSERT(status == noErr);
-
-    return result;
-}
-
 #if USE(AVFOUNDATION)
 RefPtr<VideoFrameCV> VideoFrame::asVideoFrameCV()
 {

@@ -29,6 +29,7 @@
 #include "FontCascade.h"
 #include "InlineIteratorLineBox.h"
 #include "RenderBlockFlow.h"
+#include "RenderStyleInlines.h"
 #include "RenderTableCell.h"
 
 namespace WebCore {

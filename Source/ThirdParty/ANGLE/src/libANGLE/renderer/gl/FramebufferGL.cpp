@@ -1327,8 +1327,17 @@ angle::Result FramebufferGL::syncState(const gl::Context *context,
                                                  mState.getDefaultLayers());
                 break;
             case Framebuffer::DIRTY_BIT_FLIP_Y:
-                functions->framebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_FLIP_Y_MESA,
-                                                 gl::ConvertToGLBoolean(mState.getFlipY()));
+                ASSERT(functions->framebufferParameteri || functions->framebufferParameteriMESA);
+                if (functions->framebufferParameteri)
+                {
+                    functions->framebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_FLIP_Y_MESA,
+                                                     gl::ConvertToGLBoolean(mState.getFlipY()));
+                }
+                else
+                {
+                    functions->framebufferParameteriMESA(GL_FRAMEBUFFER, GL_FRAMEBUFFER_FLIP_Y_MESA,
+                                                         gl::ConvertToGLBoolean(mState.getFlipY()));
+                }
                 break;
             default:
             {

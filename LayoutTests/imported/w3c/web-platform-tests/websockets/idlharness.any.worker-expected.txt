@@ -1,0 +1,78 @@
+
+PASS idl_test setup
+FAIL idl_test validation Validation error at line 2208 in html, inside `enum BinaryType`:
+enum BinaryType { "blob", "arraybuffer"
+     ^ The name "BinaryType" of type "enum" was already seen
+
+Validation error at line 2210 in html, inside `interface WebSocket`:
+interface WebSocket : EventTarget {
+          ^ The name "WebSocket" of type "interface" was already seen
+
+Validation error at line 2241 in html, inside `interface CloseEvent`:
+interface CloseEvent : Event {
+          ^ The name "CloseEvent" of type "interface" was already seen
+
+Validation error at line 2249 in html, inside `dictionary CloseEventInit`:
+dictionary CloseEventInit : EventInit {
+           ^ The name "CloseEventInit" of type "dictionary" was already seen
+PASS WebSocket interface: existence and properties of interface object
+PASS WebSocket interface object length
+PASS WebSocket interface object name
+PASS WebSocket interface: existence and properties of interface prototype object
+PASS WebSocket interface: existence and properties of interface prototype object's "constructor" property
+PASS WebSocket interface: existence and properties of interface prototype object's @@unscopables property
+PASS WebSocket interface: attribute url
+PASS WebSocket interface: constant CONNECTING on interface object
+PASS WebSocket interface: constant CONNECTING on interface prototype object
+PASS WebSocket interface: constant OPEN on interface object
+PASS WebSocket interface: constant OPEN on interface prototype object
+PASS WebSocket interface: constant CLOSING on interface object
+PASS WebSocket interface: constant CLOSING on interface prototype object
+PASS WebSocket interface: constant CLOSED on interface object
+PASS WebSocket interface: constant CLOSED on interface prototype object
+PASS WebSocket interface: attribute readyState
+PASS WebSocket interface: attribute bufferedAmount
+PASS WebSocket interface: attribute onopen
+PASS WebSocket interface: attribute onerror
+PASS WebSocket interface: attribute onclose
+PASS WebSocket interface: attribute extensions
+PASS WebSocket interface: attribute protocol
+PASS WebSocket interface: operation close(optional unsigned short, optional USVString)
+PASS WebSocket interface: attribute onmessage
+PASS WebSocket interface: attribute binaryType
+PASS WebSocket interface: operation send((BufferSource or Blob or USVString))
+PASS WebSocket must be primary interface of new WebSocket("ws://invalid")
+PASS Stringification of new WebSocket("ws://invalid")
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "url" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "CONNECTING" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "OPEN" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "CLOSING" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "CLOSED" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "readyState" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "bufferedAmount" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "onopen" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "onerror" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "onclose" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "extensions" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "protocol" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "close(optional unsigned short, optional USVString)" with the proper type
+PASS WebSocket interface: calling close(optional unsigned short, optional USVString) on new WebSocket("ws://invalid") with too few arguments must throw TypeError
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "onmessage" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "binaryType" with the proper type
+PASS WebSocket interface: new WebSocket("ws://invalid") must inherit property "send((BufferSource or Blob or USVString))" with the proper type
+PASS WebSocket interface: calling send((BufferSource or Blob or USVString)) on new WebSocket("ws://invalid") with too few arguments must throw TypeError
+PASS CloseEvent interface: existence and properties of interface object
+PASS CloseEvent interface object length
+PASS CloseEvent interface object name
+PASS CloseEvent interface: existence and properties of interface prototype object
+PASS CloseEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS CloseEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS CloseEvent interface: attribute wasClean
+PASS CloseEvent interface: attribute code
+PASS CloseEvent interface: attribute reason
+PASS CloseEvent must be primary interface of new CloseEvent("close")
+PASS Stringification of new CloseEvent("close")
+PASS CloseEvent interface: new CloseEvent("close") must inherit property "wasClean" with the proper type
+PASS CloseEvent interface: new CloseEvent("close") must inherit property "code" with the proper type
+PASS CloseEvent interface: new CloseEvent("close") must inherit property "reason" with the proper type
+

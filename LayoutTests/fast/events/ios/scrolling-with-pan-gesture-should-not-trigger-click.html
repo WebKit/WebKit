@@ -1,0 +1,87 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<style>
+body {
+    margin: 0;
+}
+
+.scroller {
+    width: 160px;
+    height: 160px;
+    overflow-y: scroll;
+    margin-bottom: 10px;
+}
+
+.target {
+    background: green;
+    width: 160px;
+    height: 160px;
+    box-sizing: border-box;
+    border: 1px solid lightgreen;
+}
+
+.tall {
+    height: 4096px;
+}
+</style>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+pageScrolled = false;
+overflowScrolled = false;
+
+addEventListener("load", async () => {
+    description(`This test verifies that scrolling a very short distance via pan gesture on iOS does
+        not dispatch a click event. To manually test, perform a quick, short-distance pan on each of
+        the green boxes below.`);
+
+    [...document.querySelectorAll(".target")].map(target => {
+        target.addEventListener("click", () => {
+            target.style.background = "red";
+            testFailed(`Observed click over ${target.id}`)
+        });
+    });
+
+    document.querySelector(".scroller").addEventListener("scroll", () => {
+        overflowScrolled = true;
+    }, { once: true });
+
+    document.addEventListener("scroll", () => {
+        pageScrolled = true;
+    }, { once: true });
+
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(80, 80)
+        .wait(0.2)
+        .move(80, 40, 0.2)
+        .wait(0.2)
+        .end()
+        .takeResult());
+    await shouldBecomeEqual("overflowScrolled", "true");
+
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(80, 250)
+        .wait(0.2)
+        .move(80, 210, 0.2)
+        .wait(0.2)
+        .end()
+        .takeResult());
+    await shouldBecomeEqual("pageScrolled", "true");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body class="tall">
+<div class="scroller">
+    <div class="target"></div>
+    <div class="tall"></div>
+</div>
+<div class="target"></div>
+<pre id="description"></pre>
+<pre id="console"></pre>
+</body>
+</html>

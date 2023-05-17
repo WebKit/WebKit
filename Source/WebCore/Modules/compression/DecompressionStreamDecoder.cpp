@@ -51,7 +51,7 @@ ExceptionOr<RefPtr<Uint8Array>> DecompressionStreamDecoder::decode(const BufferS
 
 ExceptionOr<RefPtr<Uint8Array>> DecompressionStreamDecoder::flush()
 {
-    m_finish = true;
+    m_didFinish = true;
 
     auto compressedDataCheck = decompress(0, 0);
     if (compressedDataCheck.hasException())
@@ -95,6 +95,28 @@ ExceptionOr<bool> DecompressionStreamDecoder::initialize()
     return true;
 }
 
+// The decompression algorithm is broken up into 2 steps.
+// 1. Decompression of Data
+// 2. Flush Remaining Data
+//
+// When avail_in is empty we can normally exit performing compression, but during the flush
+// step we may have data buffered and will need to continue to keep flushing out the rest.
+bool DecompressionStreamDecoder::didInflateFinish(int result) const
+{
+    return !m_zstream.avail_in && (!m_didFinish || (m_didFinish && result == Z_STREAM_END));
+}
+
+// See https://www.zlib.net/manual.html#Constants
+static bool didInflateFail(int result)
+{
+    return result != Z_OK && result != Z_STREAM_END && result != Z_BUF_ERROR;
+}
+
+bool DecompressionStreamDecoder::didInflateContainExtraBytes(int result) const
+{
+    return (result == Z_STREAM_END && m_zstream.avail_in) || (result == Z_BUF_ERROR && m_didFinish);
+}
+
 ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib(const uint8_t* input, const size_t inputLength)
 {
     size_t allocateSize = startingAllocationSize;
@@ -128,16 +150,15 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib
         m_zstream.next_out = output.data();
         m_zstream.avail_out = output.size();
 
-        result = inflate(&m_zstream, (m_finish) ? Z_FINISH : Z_NO_FLUSH);
+        result = inflate(&m_zstream, m_didFinish ? Z_FINISH : Z_NO_FLUSH);
         
-        if (result != Z_OK && result != Z_STREAM_END && result != Z_BUF_ERROR)
+        if (didInflateFail(result))
             return Exception { TypeError, "Failed to Decode Data."_s };
 
-        if ((result == Z_STREAM_END && m_zstream.avail_in)
-            || (result == Z_BUF_ERROR && m_finish))
+        if (didInflateContainExtraBytes(result))
             return Exception { TypeError, "Extra bytes past the end."_s };
 
-        if (!m_zstream.avail_in) {
+        if (didInflateFinish(result)) {
             shouldDecompress = false;
             output.resize(allocateSize - m_zstream.avail_out);
         } else {
@@ -200,13 +221,13 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressAppl
         m_stream.dst_ptr = output.data();
         m_stream.dst_size = output.size();
 
-        result = compression_stream_process(&m_stream, (m_finish) ? COMPRESSION_STREAM_FINALIZE : 0);
+        result = compression_stream_process(&m_stream, m_didFinish ? COMPRESSION_STREAM_FINALIZE : 0);
         
         if (result == COMPRESSION_STATUS_ERROR)
             return Exception { TypeError, "Failed to Decode Data."_s };
 
         if ((result == COMPRESSION_STATUS_END && m_stream.src_size)
-            || (m_finish && m_stream.src_size))
+            || (m_didFinish && m_stream.src_size))
             return Exception { TypeError, "Extra bytes past the end."_s };
 
         if (!m_stream.src_size) {

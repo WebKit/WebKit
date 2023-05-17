@@ -28,6 +28,7 @@
 
 #include "Exception.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSGPUAdapterInfo.h"
 #include "JSGPUDevice.h"
 
 namespace WebCore {
@@ -72,8 +73,7 @@ void GPUAdapter::requestDevice(ScriptExecutionContext&, const std::optional<GPUD
 
 void GPUAdapter::requestAdapterInfo(const std::optional<Vector<String>>&, RequestAdapterInfoPromise&& promise)
 {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=251377 - [WebGPU] Implement GPUAdapter.requestAdapterInfo
-    promise.resolve(nullptr);
+    promise.resolve(GPUAdapterInfo::create(name()));
 }
 
 }

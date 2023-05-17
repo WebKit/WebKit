@@ -10,7 +10,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRI
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
@@ -69,8 +69,8 @@ TEST(WebKit, MediaBufferingPolicy)
     // Suspending the process also forces a memory warning, which should purge whatever possible ASAP.
     [webView _processWillSuspendImminentlyForTesting];
 #if PLATFORM(MAC)
-    // Suspending the page on macOS shouldn't cause resource purging
-    waitUntilBufferingPolicyIsEqualTo(webView.get(), "Default");
+    // On macOS, we don't run the memory pressure logic on suspension.
+    waitUntilBufferingPolicyIsEqualTo(webView.get(), "LimitReadAhead");
 #else
     waitUntilBufferingPolicyIsEqualTo(webView.get(), "PurgeResources");
 #endif

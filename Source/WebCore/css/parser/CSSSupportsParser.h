@@ -68,6 +68,8 @@ private:
 
     // https://drafts.csswg.org/css-conditional-5/#typedef-supports-font-format-fn
     SupportsResult consumeSupportsFontFormatFunction(CSSParserTokenRange&);
+    // https://drafts.csswg.org/css-conditional-5/#typedef-supports-font-tech-fn
+    SupportsResult consumeSupportsFontTechFunction(CSSParserTokenRange&);
 
     SupportsResult consumeConditionInParenthesis(CSSParserTokenRange&, CSSParserTokenType);
 

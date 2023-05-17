@@ -87,15 +87,14 @@ class GLibPort(Port):
         environment['GSETTINGS_BACKEND'] = 'memory'
 
         environment['TEST_RUNNER_INJECTED_BUNDLE_FILENAME'] = self._build_path('lib', 'libTestRunnerInjectedBundle.so')
-        environment['TEST_RUNNER_TEST_PLUGIN_PATH'] = self._build_path('lib', 'plugins')
         environment['WEBKIT_EXEC_PATH'] = self._build_path('bin')
-        environment['WEBKIT_FONTS_CONF_DIR'] = self.path_from_webkit_base('Tools', 'WebKitTestRunner', 'gtk', 'fonts')
         environment['LD_LIBRARY_PATH'] = self._prepend_to_env_value(self._build_path('lib'), environment.get('LD_LIBRAY_PATH', ''))
         self._copy_value_from_environ_if_set(environment, 'LIBGL_ALWAYS_SOFTWARE')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_OUTPUTDIR')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_JHBUILD')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_TOP_LEVEL')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_DEBUG')
+        self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_DISABLE_GL_SINK')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_DMABUF_SINK_DISABLED')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_HARNESS_DUMP_DIR')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_USE_PLAYBIN3')
@@ -109,6 +108,8 @@ class GLibPort(Port):
         environment['GST_PLUGIN_FEATURE_RANK'] = 'fakeaudiosink:max'
         if gst_feature_rank_override:
             environment['GST_PLUGIN_FEATURE_RANK'] += ',%s' % gst_feature_rank_override
+
+        environment['WEBKIT_GST_ALLOW_PLAYBACK_OF_INVISIBLE_VIDEOS'] = '1'
 
         if self.get_option("leaks"):
             # Turn off GLib memory optimisations https://wiki.gnome.org/Valgrind.

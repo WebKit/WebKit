@@ -74,8 +74,11 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, AVURLAsset)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVDelegatingPlaybackCoordinator)
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if HAVE(AVAUDIOSESSION)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAudioSession)
+#endif
+
+#if PLATFORM(IOS_FAMILY)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVPersistableContentKeyRequest)
 #endif
 
@@ -310,6 +313,8 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAudioSessionCategoryAudioProc
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAudioSessionModeDefault, NSString *)
 #define AVAudioSessionModeDefault PAL::get_AVFoundation_AVAudioSessionModeDefault()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAudioSessionModeVideoChat, NSString *)
+#define AVAudioSessionModeMoviePlayback PAL::get_AVFoundation_AVAudioSessionModeMoviePlayback()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAudioSessionModeMoviePlayback, NSString *)
 #define AVAudioSessionModeVideoChat PAL::get_AVFoundation_AVAudioSessionModeVideoChat()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAudioSessionInterruptionNotification, NSString *)
 #define AVAudioSessionInterruptionNotification PAL::get_AVFoundation_AVAudioSessionInterruptionNotification()

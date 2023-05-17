@@ -64,6 +64,7 @@
 #if PLATFORM(GTK) || (PLATFORM(WPE) && !ENABLE(2022_GLIB_API))
 #include <@API_INCLUDE_PREFIX@/WebKitFaviconDatabase.h>
 #endif
+#include <@API_INCLUDE_PREFIX@/WebKitFeature.h>
 #if PLATFORM(GTK)
 #include <@API_INCLUDE_PREFIX@/WebKitFileChooserRequest.h>
 #endif

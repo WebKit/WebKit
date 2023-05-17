@@ -31,6 +31,8 @@
 #import "PipelineLayout.h"
 
 #import <WebGPU/WebGPU.h>
+#import <wtf/DataLog.h>
+#import <wtf/StringPrintStream.h>
 
 namespace WebGPU {
 
@@ -82,14 +84,17 @@ id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& m
 static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, const WGPUShaderModuleDescriptor& suppliedHints, String&& label)
 {
     HashMap<String, Ref<PipelineLayout>> hints;
-    HashMap<String, WGSL::PipelineLayout> wgslHints;
+    HashMap<String, std::optional<WGSL::PipelineLayout>> wgslHints;
     for (uint32_t i = 0; i < suppliedHints.hintCount; ++i) {
         const auto& hint = suppliedHints.hints[i];
         if (hint.nextInChain)
             return nullptr;
         auto hintKey = fromAPI(hint.entryPoint);
-        hints.add(hintKey, WebGPU::fromAPI(hint.layout));
-        auto convertedPipelineLayout = ShaderModule::convertPipelineLayout(WebGPU::fromAPI(hint.layout));
+        auto& layout = WebGPU::fromAPI(hint.layout);
+        hints.add(hintKey, layout);
+        std::optional<WGSL::PipelineLayout> convertedPipelineLayout { std::nullopt };
+        if (layout.numberOfBindGroupLayouts())
+            convertedPipelineLayout = ShaderModule::convertPipelineLayout(layout);
         wgslHints.add(hintKey, WTFMove(convertedPipelineLayout));
     }
 
@@ -111,15 +116,21 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
 
     auto checkResult = WGSL::staticCheck(fromAPI(shaderModuleParameters->wgsl.code), std::nullopt, { maxBuffersPlusVertexBuffersForVertexStage() });
 
-    if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult) && shaderModuleParameters->hints && descriptor.hintCount) {
-        // FIXME: re-enable early compilation later on once deferred compilation is fully implemented
-        // https://bugs.webkit.org/show_bug.cgi?id=254258
-        UNUSED_PARAM(earlyCompileShaderModule);
+    if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult)) {
+        if (shaderModuleParameters->hints && descriptor.hintCount) {
+            // FIXME: re-enable early compilation later on once deferred compilation is fully implemented
+            // https://bugs.webkit.org/show_bug.cgi?id=254258
+            UNUSED_PARAM(earlyCompileShaderModule);
+        }
     } else {
-        // FIXME: remove shader library generation from MSL after compiler bringup
-        auto library = ShaderModule::createLibrary(device(), String::fromUTF8(shaderModuleParameters->wgsl.code), fromAPI(descriptor.label));
-        if (library)
-            return ShaderModule::create(WTFMove(checkResult), { }, { }, library, *this);
+        auto& failedCheck = std::get<WGSL::FailedCheck>(checkResult);
+        StringPrintStream message;
+        message.print(String::number(failedCheck.errors.size()), " error", failedCheck.errors.size() != 1 ? "s" : "", " generated while compiling the shader:"_s);
+        for (const auto& error : failedCheck.errors) {
+            message.print("\n"_s, error);
+        }
+        generateAValidationError(message.toString());
+        return ShaderModule::createInvalid(*this);
     }
 
     return ShaderModule::create(WTFMove(checkResult), { }, { }, nil, *this);
@@ -240,61 +251,6 @@ void ShaderModule::setLabel(String&& label)
 {
     if (m_library)
         m_library.label = label;
-}
-
-id<MTLFunction> ShaderModule::getNamedFunction(const String& originalName, const HashMap<String, double>& keyValueReplacements) const
-{
-    const auto* information = entryPointInformation(originalName);
-    const String& name = information ? information->mangledName : originalName;
-    auto originalFunction = [m_library newFunctionWithName:name];
-
-    if (!keyValueReplacements.size())
-        return originalFunction;
-
-    NSDictionary<NSString *, MTLFunctionConstant *> *originalFunctionConstants = [originalFunction functionConstantsDictionary];
-    MTLFunctionConstantValues *constantValues = [MTLFunctionConstantValues new];
-    for (auto& kvp : keyValueReplacements) {
-        auto it = m_constantIdentifiersToNames.find(kvp.key);
-        auto& constantName = it != m_constantIdentifiersToNames.end() ? it->value : kvp.key;
-
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250444 - it would be preferable
-        // to get the type information from the WGSL compiler so we don't have to call
-        // -[MTLLibrary newFunctionWithName:] twice
-        MTLDataType dataType = [originalFunctionConstants objectForKey:constantName].type;
-        union {
-            bool b;
-            int32_t i;
-            uint32_t u;
-            float f;
-            __fp16 h;
-        } v;
-        if (dataType == MTLDataTypeFloat)
-            v.f = static_cast<decltype(v.f)>(kvp.value);
-        else if (dataType == MTLDataTypeHalf)
-            v.h = static_cast<decltype(v.h)>(kvp.value);
-        else if (dataType == MTLDataTypeInt)
-            v.i = static_cast<decltype(v.i)>(kvp.value);
-        else if (dataType == MTLDataTypeUInt)
-            v.u = static_cast<decltype(v.u)>(kvp.value);
-        else if (dataType == MTLDataTypeBool)
-            v.b = static_cast<decltype(v.b)>(kvp.value);
-        else {
-            ASSERT_NOT_REACHED("Unsupported MTLFunctionConstant data type");
-            return nil;
-        }
-
-        [constantValues setConstantValue:&v type:dataType withName:constantName];
-    }
-
-    NSError *error;
-    id<MTLFunction> result = [m_library newFunctionWithName:name constantValues:constantValues error:&error];
-
-    if (error) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250442
-        WTFLogAlways("MSL compilation error: %@", error);
-    }
-
-    return result;
 }
 
 static auto wgslBindingType(WGPUBufferBindingType bindingType)

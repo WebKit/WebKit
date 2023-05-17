@@ -837,6 +837,19 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
 
     builder.append(separator, rightSide);
 
+    auto separatorTextForNestingRelative = [&] () -> String {
+        switch (cs->relation()) {
+        case CSSSelector::Child:
+            return "> "_s;
+        case CSSSelector::DirectAdjacent:
+            return "+ "_s;
+        case CSSSelector::IndirectAdjacent:
+            return "~ "_s;
+        default:
+            return { };
+        }
+    };
+
     if (auto* previousSelector = cs->tagHistory()) {
         ASCIILiteral separator = ""_s;
         switch (cs->relation()) {
@@ -861,6 +874,9 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             break;
         }
         return previousSelector->selectorText(separator, builder);
+    } else if (auto separatorText = separatorTextForNestingRelative(); !separatorText.isNull()) {
+        // We have a separator but no tag history which can happen with implicit relative nesting selector
+        return separatorText + builder.toString();
     }
 
     return builder.toString();
@@ -969,11 +985,10 @@ CSSSelector::CSSSelector(const CSSSelector& other)
     , m_tagIsForNamespaceRule(other.m_tagIsForNamespaceRule)
     , m_caseInsensitiveAttributeValueMatching(other.m_caseInsensitiveAttributeValueMatching)
 {
-    if (other.m_hasRareData) {
-        auto copied = other.m_data.rareData->deepCopy(); 
-        m_data.rareData = &copied.leakRef();
-        m_data.rareData->ref();
-    } else if (other.match() == Tag) {
+    // Manually ref count the m_data union because they are stored as raw ptr, not as Ref.
+    if (other.m_hasRareData)
+        m_data.rareData = &other.m_data.rareData->deepCopy().leakRef();
+    else if (other.match() == Tag) {
         m_data.tagQName = other.m_data.tagQName;
         m_data.tagQName->ref();
     } else if (other.m_data.value) {

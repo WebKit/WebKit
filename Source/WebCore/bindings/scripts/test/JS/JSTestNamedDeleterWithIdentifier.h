@@ -67,7 +67,7 @@ public:
 protected:
     JSTestNamedDeleterWithIdentifier(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedDeleterWithIdentifier>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestNamedDeleterWithIdentifierOwner final : public JSC::WeakHandleOwner {

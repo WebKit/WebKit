@@ -24,6 +24,7 @@
 
 #include "DOMImplementation.h"
 #include "HTMLNames.h"
+#include "NodeName.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
 #include "SVGStringList.h"
@@ -141,12 +142,19 @@ bool SVGTests::isValid() const
 
 void SVGTests::parseAttribute(const QualifiedName& attributeName, const AtomString& value)
 {
-    if (attributeName == SVGNames::requiredFeaturesAttr)
+    switch (attributeName.nodeName()) {
+    case AttributeNames::requiredFeaturesAttr:
         requiredFeatures().reset(value);
-    if (attributeName == SVGNames::requiredExtensionsAttr)
+        break;
+    case AttributeNames::requiredExtensionsAttr:
         requiredExtensions().reset(value);
-    if (attributeName == SVGNames::systemLanguageAttr)
+        break;
+    case AttributeNames::systemLanguageAttr:
         systemLanguage().reset(value);
+        break;
+    default:
+        break;
+    }
 }
 
 void SVGTests::svgAttributeChanged(const QualifiedName& attrName)

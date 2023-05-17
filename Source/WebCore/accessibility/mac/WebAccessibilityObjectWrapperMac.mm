@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1003,7 +1003,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     static NeverDestroyed menuBarAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:commonMenuAttrs.get().get()]);
         [tempArray addObject:NSAccessibilitySelectedChildrenAttribute];
-        [tempArray addObject:NSAccessibilityVisibleChildrenAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
         return tempArray;
@@ -1011,7 +1010,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     static NeverDestroyed menuAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:commonMenuAttrs.get().get()]);
         [tempArray addObject:NSAccessibilitySelectedChildrenAttribute];
-        [tempArray addObject:NSAccessibilityVisibleChildrenAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityOrientationAttribute];
         return tempArray;
@@ -1081,6 +1079,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityRowCountAttribute];
         [tempArray addObject:NSAccessibilityARIAColumnCountAttribute];
         [tempArray addObject:NSAccessibilityARIARowCountAttribute];
+        [tempArray addObject:NSAccessibilitySelectedCellsAttribute];
         return tempArray;
     }();
     static NeverDestroyed tableRowAttrs = [] {
@@ -1272,9 +1271,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (child)
         return @[child];
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return [backingObject->platformWidget() accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (id)remoteAccessibilityParentObject
@@ -1362,16 +1361,6 @@ static void WebTransformCGPathToNSBezierPath(void* info, const CGPathElement *el
     return [self bezierPathFromPath:transformedPath];
 }
 
-- (NSNumber *)primaryScreenHeight
-{
-    // The rect for primary screen should not change in normal use. So cache it
-    // here to avoid hitting the main thread repeatedly.
-    static FloatRect screenRect = Accessibility::retrieveValueFromMainThread<FloatRect>([] () -> FloatRect {
-        return screenRectForPrimaryScreen();
-    });
-    return [NSNumber numberWithFloat:screenRect.height()];
-}
-
 - (size_t)childrenVectorSize
 {
     return self.axBackingObject->children().size();
@@ -1382,19 +1371,12 @@ static void WebTransformCGPathToNSBezierPath(void* info, const CGPathElement *el
     return makeNSArray(self.axBackingObject->children());
 }
 
-- (NSValue *)position
-{
-    if (auto* backingObject = self.axBackingObject)
-        return @(CGPoint(backingObject->screenRelativePosition()));
-    return nil;
-}
-
 - (NSString*)role
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (self.axBackingObject->isAttachment())
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityRoleAttribute];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     NSString *string = self.axBackingObject->rolePlatformString();
     if (string.length)
@@ -1442,11 +1424,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!backingObject)
         return nil;
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // attachments have the AXImage role, but a different subrole
     if (backingObject->isAttachment())
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityRoleDescriptionAttribute];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     String roleDescription = backingObject->roleDescription();
     if (!roleDescription.isEmpty())
@@ -1497,9 +1479,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (id)windowElement:(NSString*)attributeName
 {
     if (id remoteParent = self.remoteAccessibilityParentObject) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         return [remoteParent accessibilityAttributeValue:attributeName];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
@@ -1606,20 +1588,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attributeName isEqualToString: NSAccessibilitySelectedChildrenAttribute]) {
-        if (backingObject->canHaveSelectedChildren()) {
-            AccessibilityObject::AccessibilityChildrenVector selectedChildrenCopy;
-            backingObject->selectedChildren(selectedChildrenCopy);
-            return makeNSArray(selectedChildrenCopy);
-        }
+        if (backingObject->canHaveSelectedChildren())
+            return makeNSArray(backingObject->selectedChildren());
         return nil;
     }
 
     if ([attributeName isEqualToString: NSAccessibilityVisibleChildrenAttribute]) {
-        if (backingObject->isListBox()) {
-            AccessibilityObject::AccessibilityChildrenVector visibleChildrenCopy;
-            backingObject->visibleChildren(visibleChildrenCopy);
-            return makeNSArray(visibleChildrenCopy);
-        }
+        if (backingObject->isListBox())
+            return makeNSArray(backingObject->visibleChildren());
 
         if (backingObject->isList())
             return [self accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
@@ -1650,7 +1626,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if ([attributeName isEqualToString:NSAccessibilityNumberOfCharactersAttribute])
             return @(backingObject->textLength());
 
-        if ([attributeName isEqualToString: NSAccessibilitySelectedTextAttribute]) {
+        if ([attributeName isEqualToString:NSAccessibilitySelectedTextAttribute]) {
             String selectedText = backingObject->selectedText();
             if (selectedText.isNull())
                 return nil;
@@ -1766,10 +1742,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return [NSValue valueWithSize:NSMakeSize(size.width(), size.height())];
     }
 
-    if ([attributeName isEqualToString: NSAccessibilityPrimaryScreenHeightAttribute])
-        return [self primaryScreenHeight];
-    if ([attributeName isEqualToString: NSAccessibilityPositionAttribute])
-        return [self position];
+    if ([attributeName isEqualToString:NSAccessibilityPrimaryScreenHeightAttribute])
+        return @(backingObject->primaryScreenRect().height());
+
+    if ([attributeName isEqualToString:NSAccessibilityPositionAttribute])
+        return @(CGPoint(backingObject->screenRelativePosition()));
+
     if ([attributeName isEqualToString:NSAccessibilityPathAttribute])
         return [self path];
 
@@ -1819,16 +1797,15 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             || [attributeName isEqualToString:NSAccessibilityVisibleColumnsAttribute])
             return makeNSArray(backingObject->columns());
 
-        if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute]) {
-            AccessibilityObject::AccessibilityChildrenVector selectedChildrenCopy;
-            backingObject->selectedChildren(selectedChildrenCopy);
-            return makeNSArray(selectedChildrenCopy);
-        }
+        if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute])
+            return makeNSArray(backingObject->selectedChildren());
 
-        // HTML tables don't support these attributes.
-        if ([attributeName isEqualToString:NSAccessibilitySelectedColumnsAttribute]
-            || [attributeName isEqualToString:NSAccessibilitySelectedCellsAttribute])
+        // HTML tables don't support this attribute yet.
+        if ([attributeName isEqualToString:NSAccessibilitySelectedColumnsAttribute])
             return nil;
+
+        if ([attributeName isEqualToString:NSAccessibilitySelectedCellsAttribute])
+            return makeNSArray(backingObject->selectedCells());
 
         if ([attributeName isEqualToString:NSAccessibilityColumnHeaderUIElementsAttribute])
             return makeNSArray(backingObject->columnHeaders());
@@ -1897,11 +1874,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if (backingObject->isTree()) {
-        if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute]) {
-            AccessibilityObject::AccessibilityChildrenVector selectedChildrenCopy;
-            backingObject->selectedChildren(selectedChildrenCopy);
-            return makeNSArray(selectedChildrenCopy);
-        }
+        if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute])
+            return makeNSArray(backingObject->selectedChildren());
+
         if ([attributeName isEqualToString:NSAccessibilityRowsAttribute]) {
             AccessibilityObject::AccessibilityChildrenVector rowsCopy;
             backingObject->ariaTreeRows(rowsCopy);
@@ -2365,9 +2340,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute])
         return YES;
 
-    if ([attributeName isEqualToString: NSAccessibilitySelectedTextAttribute]
-        || [attributeName isEqualToString: NSAccessibilitySelectedTextRangeAttribute]
-        || [attributeName isEqualToString: NSAccessibilityVisibleCharacterRangeAttribute])
+    if ([attributeName isEqualToString:NSAccessibilitySelectedTextAttribute]
+        || [attributeName isEqualToString:NSAccessibilitySelectedTextRangeAttribute])
         return backingObject->canSetTextRangeAttributes();
 
     if ([attributeName isEqualToString:NSAccessibilityGrabbedAttribute])
@@ -2510,6 +2484,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 - (void)_accessibilityPerformPressAction
 {
+    ASSERT(isMainThread());
     auto* backingObject = self.updateObjectBackingStore;
     if (!backingObject)
         return;
@@ -2660,7 +2635,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     else if ([action isEqualToString:NSAccessibilityScrollToVisibleAction])
         [self accessibilityScrollToVisible];
     else if ([action isEqualToString:@"AXDismissAction"])
-        backingObject->performDismissAction();
+        backingObject->performDismissActionIgnoringResult();
 }
 
 - (BOOL)accessibilityReplaceRange:(NSRange)range withText:(NSString *)string
@@ -2730,9 +2705,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         backingObject->setFocused([number boolValue]);
     } else if ([attributeName isEqualToString: NSAccessibilityValueAttribute]) {
         if (number && backingObject->canSetNumericValue())
-            backingObject->setValue([number floatValue]);
+            backingObject->setValueIgnoringResult([number floatValue]);
         else if (string)
-            backingObject->setValue(string);
+            backingObject->setValueIgnoringResult(string);
     } else if ([attributeName isEqualToString: NSAccessibilitySelectedAttribute]) {
         if (!number)
             return;
@@ -2745,20 +2720,17 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         convertToVector(array, selectedChildren);
         backingObject->setSelectedChildren(selectedChildren);
     } else if (backingObject->isTextControl()) {
-        if ([attributeName isEqualToString: NSAccessibilitySelectedTextAttribute]) {
+        if ([attributeName isEqualToString:NSAccessibilitySelectedTextAttribute])
             backingObject->setSelectedText(string);
-        } else if ([attributeName isEqualToString: NSAccessibilitySelectedTextRangeAttribute]) {
+        else if ([attributeName isEqualToString:NSAccessibilitySelectedTextRangeAttribute])
             backingObject->setSelectedTextRange(PlainTextRange(range.location, range.length));
-        } else if ([attributeName isEqualToString: NSAccessibilityVisibleCharacterRangeAttribute]) {
-            backingObject->makeRangeVisible(PlainTextRange(range.location, range.length));
-        }
     } else if ([attributeName isEqualToString:NSAccessibilityDisclosingAttribute] || [attributeName isEqualToString:NSAccessibilityExpandedAttribute])
         backingObject->setIsExpanded([number boolValue]);
     else if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute]) {
         AccessibilityObject::AccessibilityChildrenVector selectedRows;
         convertToVector(array, selectedRows);
         if (backingObject->isTree() || (backingObject->isTable() && backingObject->isExposable()))
-            backingObject->setSelectedRows(selectedRows);
+            backingObject->setSelectedRows(WTFMove(selectedRows));
     } else if ([attributeName isEqualToString:NSAccessibilityGrabbedAttribute])
         backingObject->setARIAGrabbed([number boolValue]);
     else if (backingObject->isWebArea() && [attributeName isEqualToString:NSAccessibilityPreventKeyboardDOMEventDispatchAttribute])
@@ -2806,16 +2778,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 // The CFAttributedStringType representation of the text associated with this accessibility
 // object that is specified by the given range.
-- (NSAttributedString *)doAXAttributedStringForRange:(NSRange)range
+- (NSAttributedString *)attributedStringForNSRange:(const NSRange&)range
 {
-    return Accessibility::retrieveAutoreleasedValueFromMainThread<NSAttributedString *>([&range, protectedSelf = retainPtr(self)] () -> RetainPtr<NSAttributedString> {
-        auto* backingObject = protectedSelf.get().axBackingObject;
-        if (!backingObject)
-            return nil;
-
-        auto webRange = backingObject->rangeForPlainTextRange(range);
-        return [protectedSelf attributedStringForTextMarkerRange:textMarkerRangeFromRange(backingObject->axObjectCache(), webRange) spellCheck:AXCoreObject::SpellCheck::Yes];
-    });
+    auto* backingObject = self.axBackingObject;
+    if (!backingObject)
+        return nil;
+    return backingObject->attributedStringForTextMarkerRange(backingObject->textMarkerRangeForNSRange(range), AXCoreObject::SpellCheck::Yes).autorelease();
 }
 
 - (NSInteger)_indexForTextMarker:(AXTextMarkerRef)markerRef
@@ -2859,9 +2827,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 // The RTF representation of the text associated with this accessibility object that is
 // specified by the given range.
-- (NSData *)doAXRTFForRange:(NSRange)range
+- (NSData *)rtfForNSRange:(const NSRange&)range
 {
-    NSAttributedString *attrString = [self doAXAttributedStringForRange:range];
+    NSAttributedString *attrString = [self attributedStringForNSRange:range];
     return [attrString RTFFromRange:NSMakeRange(0, attrString.length) documentAttributes:@{ }];
 }
 
@@ -3237,7 +3205,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     // TextMarkerRange attributes.
     if ([attribute isEqualToString:AXTextMarkerRangeForNSRangeAttribute])
-        return (id)backingObject->textMarkerRangeForNSRange(range);
+        return backingObject->textMarkerRangeForNSRange(range).platformData().bridgingAutorelease();
 
     if ([attribute isEqualToString:AXLineTextMarkerRangeForTextMarkerAttribute])
         return (id)[self lineTextMarkerRangeForTextMarker:textMarker forUnit:TextUnit::Line];
@@ -3397,6 +3365,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             auto* cache = backingObject->axObjectCache();
             if (!cache)
                 return String();
+
             auto start = cache->characterOffsetForIndex(range.location, backingObject);
             auto end = cache->characterOffsetForIndex(range.location + range.length, backingObject);
             auto range = cache->rangeForUnorderedCharacterOffsets(start, end);
@@ -3632,11 +3601,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return [NSValue valueWithRect:rect];
         }
 
-        if ([attribute isEqualToString: (NSString*)kAXRTFForRangeParameterizedAttribute])
-            return rangeSet ? [self doAXRTFForRange:range] : nil;
+        if ([attribute isEqualToString:(NSString *)kAXRTFForRangeParameterizedAttribute])
+            return rangeSet ? [self rtfForNSRange:range] : nil;
 
         if ([attribute isEqualToString:(NSString *)kAXAttributedStringForRangeParameterizedAttribute])
-            return rangeSet ? [self doAXAttributedStringForRange:range] : nil;
+            return rangeSet ? [self attributedStringForNSRange:range] : nil;
 
         if ([attribute isEqualToString: (NSString*)kAXStyleRangeForIndexParameterizedAttribute]) {
             PlainTextRange textRange = backingObject->doAXStyleRangeForIndex([number intValue]);

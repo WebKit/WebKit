@@ -38,7 +38,6 @@
 #include "DFGSilentRegisterSavePlan.h"
 #include "JITMathIC.h"
 #include "JITOperations.h"
-#include "PutKind.h"
 #include "SpillRegistersMode.h"
 #include "StructureStubInfo.h"
 #include "ValueRecovery.h"
@@ -698,7 +697,7 @@ public:
     void compileCheckDetached(Node*);
 
     void cachedGetById(Node*, CodeOrigin, JSValueRegs base, JSValueRegs result, GPRReg stubInfoGPR, GPRReg scratchGPR, CacheableIdentifier, JITCompiler::Jump slowPathTarget, SpillRegistersMode, AccessType);
-    void cachedPutById(Node*, CodeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg stubInfoGPR, GPRReg scratchGPR, GPRReg scratch2GPR, CacheableIdentifier, PutKind, ECMAMode, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
+    void cachedPutById(Node*, CodeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg stubInfoGPR, GPRReg scratchGPR, GPRReg scratch2GPR, CacheableIdentifier, AccessType, ECMAMode, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
 
 #if USE(JSVALUE64)
     void cachedGetById(Node*, CodeOrigin, GPRReg baseGPR, GPRReg resultGPR, GPRReg stubInfoGPR, GPRReg scratchGPR, CacheableIdentifier, JITCompiler::Jump slowPathTarget, SpillRegistersMode, AccessType);
@@ -713,6 +712,8 @@ public:
     void compilePushWithScope(Node*);
     void compileGetById(Node*, AccessType);
     void compileGetByIdFlush(Node*, AccessType);
+    void compileGetByIdMegamorphic(Node*);
+    void compileGetByIdWithThisMegamorphic(Node*);
     void compileInById(Node*);
     void compileInByVal(Node*);
     void compileHasPrivate(Node*, AccessType);
@@ -1024,7 +1025,7 @@ public:
     }
 
 #if OS(WINDOWS) && CPU(X86_64)
-    JITCompiler::Call appendCallWithUGPRPair(Address address)
+    void appendCallWithUGPRPair(Address address)
     {
         prepareForExternalCall();
         emitStoreCodeOrigin(m_currentNode->origin.semantic);
@@ -1372,6 +1373,7 @@ public:
     }
     
     void compilePutByVal(Node*);
+    void compilePutByValMegamorphic(Node*);
 
     // We use a scopedLambda to placate register allocation validation.
     enum class CanUseFlush : bool { No, Yes };
@@ -1380,6 +1382,7 @@ public:
     void compileGetCharCodeAt(Node*);
     void compileGetByValOnString(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat preferredFormat)>& prefix);
     void compileFromCharCode(Node*); 
+    void compileGetByValMegamorphic(Node*);
 
     void compileGetByValOnDirectArguments(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat preferredFormat)>& prefix);
     void compileGetByValOnScopedArguments(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat, CanUseFlush>(DataFormat preferredFormat)>& prefix);
@@ -1400,6 +1403,7 @@ public:
 
     void compileCheckTypeInfoFlags(Node*);
     void compileCheckIdent(Node*);
+    void compileHasStructureWithFlags(Node*);
 
     void compileParseInt(Node*);
     
@@ -1472,6 +1476,7 @@ public:
     void compilePutByValForCellWithString(Node*);
     void compilePutByValForCellWithSymbol(Node*);
     void compileGetByValWithThis(Node*);
+    void compileGetByValWithThisMegamorphic(Node*);
     void compilePutPrivateName(Node*);
     void compilePutPrivateNameById(Node*);
     void compileCheckPrivateBrand(Node*);
@@ -1575,11 +1580,13 @@ public:
     void compileEnumeratorHasProperty(Node*, SlowPathFunctionType);
     void compileEnumeratorInByVal(Node*);
     void compileEnumeratorHasOwnProperty(Node*);
+    void compileEnumeratorPutByVal(Node*);
 
     void compilePutByIdFlush(Node*);
     void compilePutById(Node*);
     void compilePutByIdDirect(Node*);
     void compilePutByIdWithThis(Node*);
+    void compilePutByIdMegamorphic(Node*);
     void compileGetPropertyEnumerator(Node*);
     void compileGetExecutable(Node*);
     void compileGetGetter(Node*);
@@ -1594,7 +1601,7 @@ public:
     void compileNewArrayWithSpecies(Node*);
     void compileNewTypedArray(Node*);
     void compileToThis(Node*);
-    void compileObjectKeysOrObjectGetOwnPropertyNames(Node*);
+    void compileOwnPropertyKeysVariant(Node*);
     void compileObjectAssign(Node*);
     void compileObjectCreate(Node*);
     void compileObjectToString(Node*);

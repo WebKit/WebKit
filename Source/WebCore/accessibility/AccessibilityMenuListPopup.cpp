@@ -68,20 +68,21 @@ bool AccessibilityMenuListPopup::computeAccessibilityIsIgnored() const
     return accessibilityIsIgnoredByDefault();
 }
 
-void AccessibilityMenuListPopup::selectedChildren(AccessibilityChildrenVector& result)
+AXCoreObject::AccessibilityChildrenVector AccessibilityMenuListPopup::selectedChildren()
 {
-    ASSERT(result.isEmpty());
     if (!canHaveSelectedChildren())
-        return;
+        return { };
 
     if (!childrenInitialized())
         addChildren();
 
+    AccessibilityChildrenVector result;
     for (const auto& child : m_children) {
         auto* liveChild = dynamicDowncast<AccessibilityObject>(child.get());
         if (liveChild && liveChild->isMenuListOption() && liveChild->isSelected())
             result.append(child.get());
     }
+    return result;
 }
 
 AccessibilityMenuListOption* AccessibilityMenuListPopup::menuListOptionAccessibilityObject(HTMLElement* element) const

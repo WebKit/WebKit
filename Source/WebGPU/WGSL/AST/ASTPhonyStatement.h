@@ -31,17 +31,17 @@
 namespace WGSL::AST {
 
 class PhonyAssignmentStatement final : public Statement {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(PhonyAssignmentStatement);
 public:
+    NodeKind kind() const override;
+    Expression& rhs() { return m_rhs.get(); }
+
+private:
     PhonyAssignmentStatement(SourceSpan span, Expression::Ref&& rhs)
         : Statement(span)
         , m_rhs(WTFMove(rhs))
     { }
 
-    NodeKind kind() const override;
-    Expression& rhs() { return m_rhs.get(); }
-
-private:
     Expression::Ref m_rhs;
 };
 

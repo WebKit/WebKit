@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,8 +53,7 @@ void OSLogPrintStream::vprintf(const char* format, va_list argList)
     size_t freeBytes = m_string.length() - offset;
     va_list backup;
     va_copy(backup, argList);
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wformat-nonliteral"
+ALLOW_NONLITERAL_FORMAT_BEGIN
     size_t bytesWritten = vsnprintf(m_string.mutableData() + offset, freeBytes, format, argList);
     if (UNLIKELY(bytesWritten >= freeBytes)) {
         size_t newLength = std::max(bytesWritten + m_string.length(), m_string.length() * 2);
@@ -63,7 +62,7 @@ void OSLogPrintStream::vprintf(const char* format, va_list argList)
         bytesWritten = vsnprintf(m_string.mutableData() + offset, freeBytes, format, backup);
         ASSERT(bytesWritten < freeBytes);
     }
-#pragma clang diagnostic pop
+ALLOW_NONLITERAL_FORMAT_END
 
     size_t newOffset = offset + bytesWritten;
     char* buffer = m_string.mutableData();

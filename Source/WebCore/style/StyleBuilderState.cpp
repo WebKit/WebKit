@@ -48,6 +48,7 @@
 #include "FilterOperationsBuilder.h"
 #include "FontCache.h"
 #include "HTMLElement.h"
+#include "RenderStyleSetters.h"
 #include "RenderTheme.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"

@@ -77,14 +77,24 @@ private:
     ClonedArguments(VM&, Structure*, Butterfly*);
 
 public:
-    static ClonedArguments* createEmpty(VM&, Structure*, JSFunction* callee, unsigned length);
-    static ClonedArguments* createEmpty(JSGlobalObject*, JSFunction* callee, unsigned length);
+    static ClonedArguments* createEmpty(VM&, Structure*, JSFunction* callee, unsigned length, Butterfly*);
     static ClonedArguments* createWithInlineFrame(JSGlobalObject*, CallFrame* targetFrame, InlineCallFrame*, ArgumentsMode);
     static ClonedArguments* createWithMachineFrame(JSGlobalObject*, CallFrame* targetFrame, ArgumentsMode);
-    static ClonedArguments* createByCopyingFrom(JSGlobalObject*, Structure*, Register* argumentsStart, unsigned length, JSFunction* callee);
+    static ClonedArguments* createByCopyingFrom(JSGlobalObject*, Structure*, Register* argumentsStart, unsigned length, JSFunction* callee, Butterfly*);
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
     static Structure* createSlowPutStructure(VM&, JSGlobalObject*, JSValue prototype);
+
+    static ptrdiff_t offsetOfCallee()
+    {
+        return OBJECT_OFFSETOF(ClonedArguments, m_callee);
+    }
+
+    static size_t allocationSize(Checked<size_t> inlineCapacity)
+    {
+        ASSERT_UNUSED(inlineCapacity, !inlineCapacity);
+        return sizeof(ClonedArguments);
+    }
 
     DECLARE_VISIT_CHILDREN;
 

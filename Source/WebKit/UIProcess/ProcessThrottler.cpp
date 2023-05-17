@@ -53,7 +53,9 @@ static uint64_t generatePrepareToSuspendRequestID()
 ProcessThrottler::ProcessThrottler(ProcessThrottlerClient& process, bool shouldTakeUIBackgroundAssertion)
     : m_process(process)
     , m_prepareToSuspendTimeoutTimer(RunLoop::main(), this, &ProcessThrottler::prepareToSuspendTimeoutTimerFired)
-    , m_dropSuspendedAssertionTimer(RunLoop::main(), this, &ProcessThrottler::dropSuspendedAssertionTimerFired)
+    , m_dropNearSuspendedAssertionTimer(RunLoop::main(), this, &ProcessThrottler::dropNearSuspendedAssertionTimerFired)
+    , m_prepareToDropLastAssertionTimeoutTimer(RunLoop::main(), this, &ProcessThrottler::prepareToDropLastAssertionTimeoutTimerFired)
+    , m_pageAllowedToRunInTheBackgroundCounter([this](RefCounterEvent) { numberOfPagesAllowedToRunInTheBackgroundChanged(); })
     , m_shouldTakeUIBackgroundAssertion(shouldTakeUIBackgroundAssertion)
 {
 }
@@ -101,6 +103,15 @@ void ProcessThrottler::invalidateAllActivities()
     PROCESSTHROTTLER_RELEASE_LOG("invalidateAllActivities: END");
 }
 
+void ProcessThrottler::invalidateAllActivitiesAndDropAssertion()
+{
+    PROCESSTHROTTLER_RELEASE_LOG("invalidateAllActivitiesAndDropAssertion:");
+    invalidateAllActivities();
+    clearPendingRequestToSuspend();
+    m_dropNearSuspendedAssertionTimer.stop();
+    clearAssertion();
+}
+
 ProcessThrottleState ProcessThrottler::expectedThrottleState()
 {
     if (!m_foregroundActivities.isEmpty())
@@ -123,8 +134,8 @@ String ProcessThrottler::assertionName(ProcessAssertionType type) const
             return "Foreground"_s;
         case ProcessAssertionType::Background:
             return "Background"_s;
-        case ProcessAssertionType::Suspended:
-            return "Suspended"_s;
+        case ProcessAssertionType::NearSuspended:
+            return "NearSuspended"_s;
         case ProcessAssertionType::UnboundedNetworking:
         case ProcessAssertionType::MediaPlayback:
         case ProcessAssertionType::FinishTaskInterruptable:
@@ -146,7 +157,7 @@ ProcessAssertionType ProcessThrottler::assertionTypeForState(ProcessThrottleStat
     case ProcessThrottleState::Background:
         return ProcessAssertionType::Background;
     case ProcessThrottleState::Suspended:
-        return ProcessAssertionType::Suspended;
+        return ProcessAssertionType::NearSuspended;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -180,13 +191,13 @@ void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
             weakThis->assertionWasInvalidated();
     });
 
-    if (m_assertion->type() == ProcessAssertionType::Suspended) {
-        if (!m_shouldTakeSuspendedAssertion)
-            m_assertion = nullptr;
-        else
-            m_dropSuspendedAssertionTimer.startOneShot(removeAllAssertionsTimeout);
+    if (isHoldingNearSuspendedAssertion()) {
+        if (!m_shouldTakeNearSuspendedAssertion)
+            clearAssertion();
+        else if (m_shouldDropNearSuspendedAssertionAfterDelay)
+            m_dropNearSuspendedAssertionTimer.startOneShot(removeAllAssertionsTimeout);
     } else
-        m_dropSuspendedAssertionTimer.stop();
+        m_dropNearSuspendedAssertionTimer.stop();
 
     m_process.didChangeThrottleState(newState);
 }
@@ -226,14 +237,14 @@ void ProcessThrottler::didConnectToProcess(ProcessID pid)
 
     m_processIdentifier = pid;
     updateThrottleStateNow();
-    RELEASE_ASSERT(m_assertion || (m_state == ProcessThrottleState::Suspended && !m_shouldTakeSuspendedAssertion));
+    RELEASE_ASSERT(m_assertion || (m_state == ProcessThrottleState::Suspended && !m_shouldTakeNearSuspendedAssertion));
 }
 
 void ProcessThrottler::didDisconnectFromProcess()
 {
     PROCESSTHROTTLER_RELEASE_LOG_WITH_PID("didDisconnectFromProcess:", m_processIdentifier);
 
-    m_dropSuspendedAssertionTimer.stop();
+    m_dropNearSuspendedAssertionTimer.stop();
     clearPendingRequestToSuspend();
     m_processIdentifier = 0;
     m_assertion = nullptr;
@@ -246,11 +257,15 @@ void ProcessThrottler::prepareToSuspendTimeoutTimerFired()
     updateThrottleStateNow();
 }
 
-void ProcessThrottler::dropSuspendedAssertionTimerFired()
+void ProcessThrottler::dropNearSuspendedAssertionTimerFired()
 {
-    PROCESSTHROTTLER_RELEASE_LOG("dropSuspendedAssertionTimerFired: Removing suspended process assertion");
-    RELEASE_ASSERT(m_assertion && m_assertion->type() == ProcessAssertionType::Suspended);
-    m_assertion = nullptr;
+    PROCESSTHROTTLER_RELEASE_LOG("dropNearSuspendedAssertionTimerFired: Removing near-suspended process assertion");
+    RELEASE_ASSERT(isHoldingNearSuspendedAssertion());
+    ASSERT(m_shouldDropNearSuspendedAssertionAfterDelay);
+    if (m_pageAllowedToRunInTheBackgroundCounter.value())
+        PROCESSTHROTTLER_RELEASE_LOG("dropNearSuspendedAssertionTimerFired: Not releasing near-suspended assertion because a page is allowed to run in the background");
+    else
+        clearAssertion();
 }
 
 void ProcessThrottler::processReadyToSuspend()
@@ -331,40 +346,103 @@ void ProcessThrottler::setAllowsActivities(bool allow)
         invalidateAllActivities();
 }
 
-void ProcessThrottler::setShouldTakeSuspendedAssertion(bool shouldTakeSuspendedAssertion)
+void ProcessThrottler::setShouldTakeNearSuspendedAssertion(bool shouldTakeNearSuspendedAssertion)
 {
-    m_shouldTakeSuspendedAssertion = shouldTakeSuspendedAssertion;
+    m_shouldTakeNearSuspendedAssertion = shouldTakeNearSuspendedAssertion;
+    if (shouldTakeNearSuspendedAssertion) {
+        if (!m_assertion && m_processIdentifier) {
+            PROCESSTHROTTLER_RELEASE_LOG_WITH_PID("setShouldTakeNearSuspendedAssertion: Taking near-suspended assertion", m_processIdentifier);
+            setThrottleState(ProcessThrottleState::Suspended);
+        }
+    } else {
+        if (isHoldingNearSuspendedAssertion()) {
+            PROCESSTHROTTLER_RELEASE_LOG_WITH_PID("setShouldTakeNearSuspendedAssertion: Releasing near-suspended assertion", m_processIdentifier);
+            m_dropNearSuspendedAssertionTimer.stop();
+            clearAssertion();
+        }
+    }
 }
 
-void ProcessThrottler::delaySuspension()
+void ProcessThrottler::setShouldDropNearSuspendedAssertionAfterDelay(bool shouldDropAfterDelay)
 {
-    PROCESSTHROTTLER_RELEASE_LOG("delaySuspension");
-    if (m_dropSuspendedAssertionTimer.isActive())
-        m_dropSuspendedAssertionTimer.startOneShot(removeAllAssertionsTimeout);
+    if (m_shouldDropNearSuspendedAssertionAfterDelay == shouldDropAfterDelay)
+        return;
+
+    m_shouldDropNearSuspendedAssertionAfterDelay = shouldDropAfterDelay;
+    if (shouldDropAfterDelay) {
+        if (isHoldingNearSuspendedAssertion())
+            m_dropNearSuspendedAssertionTimer.startOneShot(removeAllAssertionsTimeout);
+    } else
+        m_dropNearSuspendedAssertionTimer.stop();
 }
 
-ProcessThrottler::TimedActivity::TimedActivity(Seconds timeout, ProcessThrottler::ActivityVariant&& activity)
-    : m_timer(RunLoop::main(), this, &TimedActivity::activityTimedOut)
+void ProcessThrottler::prepareToDropLastAssertionTimeoutTimerFired()
+{
+    PROCESSTHROTTLER_RELEASE_LOG("prepareToDropLastAssertionTimeoutTimerFired:");
+    m_assertionToClearAfterPrepareToDropLastAssertion = nullptr;
+}
+
+void ProcessThrottler::clearAssertion()
+{
+    if (!m_assertion)
+        return;
+
+    PROCESSTHROTTLER_RELEASE_LOG("clearAssertion:");
+
+    if (!m_prepareToDropLastAssertionTimeoutTimer.isActive())
+        m_prepareToDropLastAssertionTimeoutTimer.startOneShot(10_s);
+
+    m_assertionToClearAfterPrepareToDropLastAssertion = std::exchange(m_assertion, nullptr);
+    m_process.prepareToDropLastAssertion([this, weakThis = WeakPtr { *this }] {
+        if (!weakThis)
+            return;
+        PROCESSTHROTTLER_RELEASE_LOG("clearAssertion: Releasing near-suspended assertion");
+        m_prepareToDropLastAssertionTimeoutTimer.stop();
+        m_assertionToClearAfterPrepareToDropLastAssertion = nullptr;
+    });
+}
+
+PageAllowedToRunInTheBackgroundCounter::Token ProcessThrottler::pageAllowedToRunInTheBackgroundToken()
+{
+    return m_pageAllowedToRunInTheBackgroundCounter.count();
+}
+
+void ProcessThrottler::numberOfPagesAllowedToRunInTheBackgroundChanged()
+{
+    if (m_pageAllowedToRunInTheBackgroundCounter.value())
+        return;
+
+    if (m_dropNearSuspendedAssertionTimer.isActive())
+        return;
+
+    if (isHoldingNearSuspendedAssertion()) {
+        PROCESSTHROTTLER_RELEASE_LOG("numberOfPagesAllowedToRunInTheBackgroundChanged: Releasing near-suspended assertion");
+        clearAssertion();
+    }
+}
+
+ProcessThrottlerTimedActivity::ProcessThrottlerTimedActivity(Seconds timeout, ProcessThrottler::ActivityVariant&& activity)
+    : m_timer(RunLoop::main(), this, &ProcessThrottlerTimedActivity::activityTimedOut)
     , m_timeout(timeout)
     , m_activity(WTFMove(activity))
 {
     updateTimer();
 }
 
-auto ProcessThrottler::TimedActivity::operator=(ProcessThrottler::ActivityVariant&& activity) -> TimedActivity&
+auto ProcessThrottlerTimedActivity::operator=(ProcessThrottler::ActivityVariant&& activity) -> ProcessThrottlerTimedActivity&
 {
     m_activity = WTFMove(activity);
     updateTimer();
     return *this;
 }
 
-void ProcessThrottler::TimedActivity::activityTimedOut()
+void ProcessThrottlerTimedActivity::activityTimedOut()
 {
-    RELEASE_LOG_ERROR(ProcessSuspension, "%p - TimedActivity::activityTimedOut:", this);
+    RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessThrottlerTimedActivity::activityTimedOut:", this);
     m_activity = nullptr;
 }
 
-void ProcessThrottler::TimedActivity::updateTimer()
+void ProcessThrottlerTimedActivity::updateTimer()
 {
     if (std::holds_alternative<std::nullptr_t>(m_activity))
         m_timer.stop();

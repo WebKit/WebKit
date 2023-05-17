@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2010 University of Szeged
  * Copyright (C) 2010 Zoltan Herczeg
- * Copyright (C) 2018-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,13 +38,26 @@ FELighting::FELighting(Type type, const Color& lightingColor, float surfaceScale
     : FilterEffect(type)
     , m_lightingColor(lightingColor)
     , m_surfaceScale(surfaceScale)
-    , m_diffuseConstant(diffuseConstant)
-    , m_specularConstant(specularConstant)
-    , m_specularExponent(specularExponent)
+    , m_diffuseConstant(std::max(diffuseConstant, 0.0f))
+    , m_specularConstant(std::max(specularConstant, 0.0f))
+    , m_specularExponent(clampTo<float>(specularExponent, 1.0f, 128.0f))
     , m_kernelUnitLengthX(kernelUnitLengthX)
     , m_kernelUnitLengthY(kernelUnitLengthY)
     , m_lightSource(WTFMove(lightSource))
 {
+}
+
+bool FELighting::operator==(const FELighting& other) const
+{
+    return FilterEffect::operator==(other)
+        && m_lightingColor == other.m_lightingColor
+        && m_surfaceScale == other.m_surfaceScale
+        && m_diffuseConstant == other.m_diffuseConstant
+        && m_specularConstant == other.m_specularConstant
+        && m_specularExponent == other.m_specularExponent
+        && m_kernelUnitLengthX == other.m_kernelUnitLengthX
+        && m_kernelUnitLengthY == other.m_kernelUnitLengthY
+        && m_lightSource.get() == other.m_lightSource.get();
 }
 
 bool FELighting::setSurfaceScale(float surfaceScale)
@@ -82,7 +96,7 @@ bool FELighting::setKernelUnitLengthY(float kernelUnitLengthY)
     return true;
 }
 
-FloatRect FELighting::calculateImageRect(const Filter& filter, Span<const FloatRect>, const FloatRect& primitiveSubregion) const
+FloatRect FELighting::calculateImageRect(const Filter& filter, std::span<const FloatRect>, const FloatRect& primitiveSubregion) const
 {
     return filter.maxEffectRect(primitiveSubregion);
 }

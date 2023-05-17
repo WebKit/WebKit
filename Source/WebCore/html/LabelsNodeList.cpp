@@ -38,7 +38,7 @@ using namespace HTMLNames;
 WTF_MAKE_ISO_ALLOCATED_IMPL(LabelsNodeList);
 
 LabelsNodeList::LabelsNodeList(HTMLElement& element)
-    : CachedLiveNodeList(element, InvalidateOnForTypeAttrChange)
+    : CachedLiveNodeList(element, NodeListInvalidationType::InvalidateOnForTypeAttrChange)
 {
 }
 

@@ -7,7 +7,7 @@ PASS Inserting text when selection is collapsed in <br> which is followed by a t
 PASS Inserting text when selection is collapsed in <br> which follows an empty <span> element
 PASS Inserting text when selection is collapsed in <br> which follows a text node and an empty <span> element
 PASS Inserting text when selection is collapsed in <br> which follows a non-empty <span> element
-FAIL Inserting text when selection is collapsed in <br> which follows a text node, an empty <span> element and white-space only text node assert_in_array: The text should be inserted at end of the first text node with ignoring the empty <span> and invisible text node before <br> value "<div>abc<span></span>&nbsp;def<br></div>" not in array ["<div>abcdef<span></span></div>", "<div>abcdef<span></span><br></div>", "<div>abcdef<span></span> </div>", "<div>abcdef<span></span> <br></div>"]
+PASS Inserting text when selection is collapsed in <br> which follows a text node, an empty <span> element and white-space only text node
 FAIL Inserting text when selection is collapsed in <embed> which is only child assert_in_array: The text should be inserted before the <embed> element value "abc<div><embed></div>" not in array ["<div>abc<embed></div>", "<div>abc<embed><br></div>"]
 FAIL Inserting text when selection is collapsed in <embed> which is only child (explicitly flushes maybe pending layout) assert_in_array: The text should be inserted before the <embed> element value "abc<div><embed></div>" not in array ["<div>abc<embed></div>", "<div>abc<embed><br></div>"]
 PASS Inserting text when selection is collapsed in <embed> which follows a text node

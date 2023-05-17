@@ -25,42 +25,27 @@
               )
               (children 1
                 (GraphicsLayer
-                  (offsetFromRenderer width=-33 height=-33)
-                  (position 143.00 111.00)
-                  (bounds 136.00 136.00)
-                  (drawsContent 1)
-                  (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [-35.00 -35.00 0.00 1.00])
+                  (position 176.00 144.00)
+                  (bounds 51.00 51.00)
+                  (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [-25.50 -25.50 0.00 1.00])
                   (event region
-                    (rect (51,33) width=34 height=5)
-                    (rect (38,38) width=60 height=13)
-                    (rect (33,51) width=70 height=34)
-                    (rect (38,85) width=60 height=13)
-                    (rect (51,98) width=34 height=5)
+                    (rect (8,0) width=35 height=8)
+                    (rect (0,8) width=51 height=35)
+                    (rect (8,43) width=35 height=8)
 
                   (interaction regions [
-                    (interaction (33,33) width=70 height=70)
-                    (borderRadius 35.00)])
+                    (interaction (0,0) width=51 height=51)
+                    (borderRadius 25.50)])
                   )
-                  (children 3
+                  (children 1
                     (GraphicsLayer
-                      (position 33.00 33.00)
-                      (bounds 70.00 70.00)
-                      (drawsContent 1)
-                    )
-                    (GraphicsLayer
-                      (position 33.00 33.00)
-                      (bounds 70.00 70.00)
-                      (blendMode lighten)
-                      (drawsContent 1)
-                    )
-                    (GraphicsLayer
-                      (position 36.00 33.00)
-                      (bounds 70.00 70.00)
+                      (position 10.00 10.00)
+                      (bounds 31.00 31.00)
                       (contentsOpaque 1)
-                      (transform [0.40 0.00 0.00 0.00] [0.00 0.40 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+                      (transform [0.90 0.00 0.00 0.00] [0.00 0.90 0.00 0.00] [0.00 0.00 1.00 0.00] [2.48 0.00 0.00 1.00])
                       (mask layer)
                         (GraphicsLayer
-                          (bounds 70.00 70.00)
+                          (bounds 31.00 31.00)
                           (drawsContent 1)
                         )
                     )

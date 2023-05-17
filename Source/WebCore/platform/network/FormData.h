@@ -103,11 +103,7 @@ struct FormDataElement {
             return std::get<1>(data) == std::get<1>(other.data);
         return std::get<2>(data) == std::get<2>(other.data);
     }
-    bool operator!=(const FormDataElement& other) const
-    {
-        return !(*this == other);
-    }
-    
+
     Data data;
 };
 
@@ -217,11 +213,6 @@ private:
 inline bool operator==(const FormData& a, const FormData& b)
 {
     return a.elements() == b.elements();
-}
-
-inline bool operator!=(const FormData& a, const FormData& b)
-{
-    return !(a == b);
 }
 
 } // namespace WebCore

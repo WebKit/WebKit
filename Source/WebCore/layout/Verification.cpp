@@ -26,7 +26,8 @@
 #include "config.h"
 #include "LayoutState.h"
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
+
 #include "BlockFormattingState.h"
 #include "InlineFormattingState.h"
 #include "LayoutBox.h"
@@ -36,7 +37,7 @@
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutTreeBuilder.h"
 #include "LegacyInlineTextBox.h"
-#include "RenderBox.h"
+#include "RenderBoxInlines.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
 #include "RenderTableCell.h"
@@ -116,8 +117,10 @@ static void collectInlineBoxes(const RenderBlockFlow& root, Vector<WebCore::Lega
 
 static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, const LayoutState& layoutState, const RenderBlockFlow& blockFlow, const ElementBox& inlineFormattingRoot)
 {
-    auto& inlineFormattingState = layoutState.formattingStateForFormattingContext(inlineFormattingRoot);
-    auto& boxes = downcast<InlineFormattingState>(inlineFormattingState).boxes();
+    UNUSED_PARAM(layoutState);
+    UNUSED_PARAM(inlineFormattingRoot);
+    // FIXME: Populate display boxes.
+    auto boxes = InlineDisplay::Boxes { };
     // Collect inlineboxes.
     Vector<WebCore::LegacyInlineBox*> inlineBoxes;
     collectInlineBoxes(blockFlow, inlineBoxes);
@@ -349,5 +352,4 @@ void LayoutContext::verifyAndOutputMismatchingLayoutTree(const LayoutState& layo
 }
 }
 
-#endif
-
+#endif // ASSERT_ENABLED

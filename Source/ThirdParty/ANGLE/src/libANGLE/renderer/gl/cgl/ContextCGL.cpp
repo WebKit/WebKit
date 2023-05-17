@@ -13,8 +13,6 @@
 #include "libANGLE/Display.h"
 #include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
 
-#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
-
 namespace rx
 {
 
@@ -65,5 +63,3 @@ void ContextCGL::onDestroy(const gl::Context *context)
 }
 
 }  // namespace rx
-
-#endif  // defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)

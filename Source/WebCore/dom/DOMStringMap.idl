@@ -30,7 +30,7 @@
     Exposed=Window
 ] interface DOMStringMap {
     getter DOMString ([AtomString] DOMString name);
-    [CEReactions] setter undefined (DOMString name, [AtomString] DOMString value);
-    [CEReactions] deleter undefined (DOMString name);
+    [CEReactions=Needed] setter undefined (DOMString name, [AtomString] DOMString value);
+    [CEReactions=Needed] deleter undefined (DOMString name);
 };
 

@@ -100,7 +100,8 @@ public:
     TransformationMatrix* layerTransform() const;
 
     virtual void updateLayerTransform();
-    virtual void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const = 0;
+    virtual void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const = 0;
+    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox) const;
 
 protected:
     RenderLayerModelObject(Element&, RenderStyle&&, BaseTypeFlags);

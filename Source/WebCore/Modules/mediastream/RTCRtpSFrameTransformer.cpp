@@ -206,7 +206,7 @@ ExceptionOr<void> RTCRtpSFrameTransformer::updateEncryptionKey(const Vector<uint
     return { };
 }
 
-RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::decryptFrame(Span<const uint8_t> data)
+RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::decryptFrame(std::span<const uint8_t> data)
 {
     auto* frameData = data.data();
     auto frameSize = data.size();
@@ -279,7 +279,7 @@ RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::decryptFrame(S
     return result.releaseReturnValue();
 }
 
-RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::encryptFrame(Span<const uint8_t> data)
+RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::encryptFrame(std::span<const uint8_t> data)
 {
     auto* frameData = data.data();
     auto frameSize = data.size();
@@ -343,7 +343,7 @@ RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::encryptFrame(S
     return transformedData;
 }
 
-RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::transform(Span<const uint8_t> data)
+RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::transform(std::span<const uint8_t> data)
 {
     if (!m_hasKey)
         return makeUnexpected(ErrorInformation { Error::KeyID,  "Key is not initialized"_s, 0 });

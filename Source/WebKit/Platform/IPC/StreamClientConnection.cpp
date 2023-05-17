@@ -71,7 +71,7 @@ StreamClientConnection::StreamConnectionPair StreamClientConnection::create(unsi
     // The "Client" in StreamClientConnection means the party that mostly does sending, e.g. untrusted party.
     // The "Server" in StreamServerConnection means the party that mostly does receiving, e.g. the trusted party which holds the destination object to communicate with.
     auto dedicatedConnection = Connection::createServerConnection(connectionIdentifiers->server);
-    RefPtr<StreamClientConnection> clientConnection { new StreamClientConnection(WTFMove(dedicatedConnection), WTFMove(*buffer)) };
+    auto clientConnection = adoptRef(*new StreamClientConnection(WTFMove(dedicatedConnection), WTFMove(*buffer)));
     StreamServerConnection::Handle serverHandle {
         WTFMove(connectionIdentifiers->client),
         clientConnection->m_buffer.createHandle()

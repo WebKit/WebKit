@@ -1,0 +1,3 @@
+
+FAIL XML: Comment in doctype internal subset assert_equals: expected DocumentType node but got Comment node <!--x-->
+

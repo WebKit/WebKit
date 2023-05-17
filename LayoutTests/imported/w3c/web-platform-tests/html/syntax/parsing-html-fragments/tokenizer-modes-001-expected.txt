@@ -7,6 +7,6 @@ PASS </iframe> should not break out of iframe.
 PASS </noembed> should not break out of noembed.
 PASS </noframes> should not break out of noframes.
 PASS </script> should not break out of script.
-FAIL </noscript> should not break out of noscript. assert_equals: expected "</noscript><div>" but got "&lt;/noscript&gt;&lt;div&gt;"
+PASS </noscript> should not break out of noscript.
 PASS </plaintext> should not break out of plaintext.
 

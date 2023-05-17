@@ -39,11 +39,6 @@ struct Pagination {
         return mode == other.mode && behavesLikeColumns == other.behavesLikeColumns && pageLength == other.pageLength && gap == other.gap;
     }
 
-    bool operator!=(const Pagination& other) const
-    {
-        return !(*this == other);
-    }
-
     Mode mode { Unpaginated };
     bool behavesLikeColumns { false };
     unsigned pageLength { 0 };

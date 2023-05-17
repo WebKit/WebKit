@@ -1,11 +1,10 @@
-var createProxy = $vm.createProxy;
-
 var niters = 100000;
 
 // proxy -> target -> x
 function cacheOnTarget() {
-    var target = {x:42};
-    var proxy = createProxy(target);
+    var target = $vm.createGlobalObject();
+    target.x = 42;
+    var proxy = $vm.createGlobalProxy(target);
 
     var getX = function(o) { return o.x; };
     noInline(getX);
@@ -21,8 +20,8 @@ function cacheOnTarget() {
 // proxy -> target -> proto -> x
 function cacheOnPrototypeOfTarget() {
     var proto = {x:42};
-    var target = Object.create(proto);
-    var proxy = createProxy(target);
+    var target = $vm.createGlobalObject(proto);
+    var proxy = $vm.createGlobalProxy(target);
 
     var getX = function(o) { return o.x; };
     noInline(getX);
@@ -37,8 +36,9 @@ function cacheOnPrototypeOfTarget() {
 
 // base -> proto (proxy) -> target -> x
 function dontCacheOnProxyInPrototypeChain() {
-    var target = {x:42};
-    var protoProxy = createProxy(target);
+    var target = $vm.createGlobalObject();
+    target.x = 42;
+    var protoProxy = $vm.createGlobalProxy(target);
     var base = Object.create(protoProxy);
 
     var getX = function(o) { return o.x; };
@@ -54,10 +54,11 @@ function dontCacheOnProxyInPrototypeChain() {
 
 // proxy -> target 1 -> proto (proxy) -> target 2 -> x
 function dontCacheOnTargetOfProxyInPrototypeChainOfTarget() {
-    var target2 = {x:42};
-    var protoProxy = createProxy(target2);
-    var target1 = Object.create(protoProxy);
-    var proxy = createProxy(target1);
+    var target2 = $vm.createGlobalObject();
+    target2.x = 42;
+    var protoProxy = $vm.createGlobalProxy(target2);
+    var target1 = $vm.createGlobalObject(protoProxy);
+    var proxy = $vm.createGlobalProxy(target1);
 
     var getX = function(o) { return o.x; };
     noInline(getX);

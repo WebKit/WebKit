@@ -31,6 +31,8 @@ class FEFlood : public FilterEffect {
 public:
     WEBCORE_EXPORT static Ref<FEFlood> create(const Color& floodColor, float floodOpacity);
 
+    bool operator==(const FEFlood&) const;
+
     const Color& floodColor() const { return m_floodColor; }
     bool setFloodColor(const Color&);
 
@@ -46,9 +48,11 @@ public:
 private:
     FEFlood(const Color& floodColor, float floodOpacity);
 
+    bool operator==(const FilterEffect& other) const override { return areEqual<FEFlood>(*this, other); }
+
     unsigned numberOfEffectInputs() const override { return 0; }
 
-    FloatRect calculateImageRect(const Filter&, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
+    FloatRect calculateImageRect(const Filter&, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
 
     std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
 

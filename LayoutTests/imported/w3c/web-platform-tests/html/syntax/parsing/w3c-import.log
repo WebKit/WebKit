@@ -49,6 +49,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_innerHTML_foreign-fragment.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_innerHTML_math.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_innerHTML_svg.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_innerHTML_template.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_innerHTML_tests4.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_innerHTML_tests6.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_innerHTML_tests7.html
@@ -66,6 +67,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_scripted_adoption01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_scripted_ark.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_scripted_webkit01.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_search-element.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_tables01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_template.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_tests1.html
@@ -96,6 +98,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_webkit01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_webkit02.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/html_content_in_foreign_context.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/inhead-noscript-head.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/math-parse01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/math-parse03.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/meta-inhead-insertion-mode.html

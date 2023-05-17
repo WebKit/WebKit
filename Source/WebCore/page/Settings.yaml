@@ -29,6 +29,12 @@ AcceleratedCompositedAnimationsEnabled:
     WebCore:
       default: true
 
+AllowAnimationControlsOverride:
+  type: bool
+  defaultValue:
+    WebCore:
+      default: false
+
 AnimatedImageDebugCanvasDrawingEnabled:
   type: bool
   defaultValue:
@@ -285,7 +291,7 @@ MaximumSourceBufferSize:
   condition: ENABLE(MEDIA_SOURCE)
   defaultValue:
     WebCore:
-      default: 318767104
+      default: SettingsBase::defaultMaximumSourceBufferSize()
 
 MediaKeysStorageDirectory:
   type: String
@@ -510,7 +516,6 @@ WebGLErrorsToConsoleEnabled:
 
 WebRTCEncryptionEnabled:
   type: bool
-  inspectorOverride: true
   defaultValue:
     WebCore:
       default: true

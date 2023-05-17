@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -156,7 +156,6 @@
 #include "MockLibWebRTCPeerConnection.h"
 #include "MockPageOverlay.h"
 #include "MockPageOverlayClient.h"
-#include "ModalContainerObserver.h"
 #include "NavigatorBeacon.h"
 #include "NavigatorMediaDevices.h"
 #include "NetworkLoadInformation.h"
@@ -190,6 +189,7 @@
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
+#include "ResolvedStyle.h"
 #include "ResourceLoadObserver.h"
 #include "SMILTimeContainer.h"
 #include "SVGDocumentExtensions.h"
@@ -3977,6 +3977,8 @@ ExceptionOr<void> Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayou
         return Exception { TypeError };
 
     document->updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks::Synchronously);
+    document->flushDeferredAXObjectCacheUpdate();
+
     return { };
 }
 
@@ -5819,11 +5821,6 @@ void Internals::observeMediaStreamTrack(MediaStreamTrack& track)
     }
 }
 
-void Internals::grabNextMediaStreamTrackFrame(TrackFramePromise&& promise)
-{
-    m_nextTrackFramePromise = makeUnique<TrackFramePromise>(WTFMove(promise));
-}
-
 void Internals::mediaStreamTrackVideoFrameRotation(DOMPromiseDeferred<IDLShort>&& promise)
 {
     promise.resolve(m_trackVideoRotation);
@@ -5836,23 +5833,6 @@ void Internals::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetada
             return;
         m_trackVideoSampleCount++;
         m_trackVideoRotation = static_cast<int>(videoFrame->rotation());
-        if (!m_nextTrackFramePromise)
-            return;
-
-        auto& videoSettings = m_trackSource->settings();
-        if (!videoSettings.width() || !videoSettings.height())
-            return;
-
-        auto rgba = videoFrame->getRGBAImageData();
-        if (!rgba)
-            return;
-
-        auto imageData = ImageData::create(rgba.releaseNonNull(), videoSettings.width(), videoSettings.height(), { { PredefinedColorSpace::SRGB } });
-        if (!imageData.hasException())
-            m_nextTrackFramePromise->resolve(imageData.releaseReturnValue());
-        else
-            m_nextTrackFramePromise->reject(imageData.exception().code());
-        m_nextTrackFramePromise = nullptr;
     });
 }
 
@@ -5927,6 +5907,15 @@ auto Internals::audioSessionCategory() const -> AudioSessionCategory
 #endif
 }
 
+auto Internals::audioSessionMode() const -> AudioSessionMode
+{
+#if USE(AUDIO_SESSION)
+    return AudioSession::sharedSession().mode();
+#else
+    return AudioSessionMode::Default;
+#endif
+}
+
 auto Internals::routeSharingPolicy() const -> RouteSharingPolicy
 {
 #if USE(AUDIO_SESSION)
@@ -5944,6 +5933,17 @@ auto Internals::categoryAtMostRecentPlayback(HTMLMediaElement& element) const ->
 #else
     UNUSED_PARAM(element);
     return AudioSessionCategory::None;
+#endif
+}
+
+auto Internals::modeAtMostRecentPlayback(HTMLMediaElement& element) const -> AudioSessionMode
+{
+#if USE(AUDIO_SESSION)
+    WTFLogAlways("Internals::modeAtMostRecentPlayback");
+    return element.modeAtMostRecentPlayback();
+#else
+    UNUSED_PARAM(element);
+    return AudioSessionMode::Default;
 #endif
 }
 #endif
@@ -6747,10 +6747,14 @@ String Internals::focusRingColor()
     return serializationForCSS(RenderTheme::singleton().focusRingColor({ }));
 }
 
-unsigned Internals::createSleepDisabler(const String& reason, bool display)
+ExceptionOr<unsigned> Internals::createSleepDisabler(const String& reason, bool display)
 {
+    auto* document = contextDocument();
+    if (!document || !document->pageID())
+        return Exception { InvalidAccessError };
+
     static unsigned lastUsedIdentifier = 0;
-    auto sleepDisabler = makeUnique<WebCore::SleepDisabler>(reason, display ? PAL::SleepDisabler::Type::Display : PAL::SleepDisabler::Type::System);
+    auto sleepDisabler = makeUnique<WebCore::SleepDisabler>(reason, display ? PAL::SleepDisabler::Type::Display : PAL::SleepDisabler::Type::System, *document->pageID());
     m_sleepDisablers.add(++lastUsedIdentifier, WTFMove(sleepDisabler));
     return lastUsedIdentifier;
 }
@@ -6924,13 +6928,13 @@ ExceptionOr<void> Internals::setMockMediaSessionCoordinatorCommandsShouldFail(bo
 }
 #endif // ENABLE(MEDIA_SESSION)
 
-constexpr ASCIILiteral string(PartialOrdering ordering)
+constexpr ASCIILiteral string(std::partial_ordering ordering)
 {
     if (is_lt(ordering))
         return "less"_s;
     if (is_gt(ordering))
         return "greater"_s;
-    if (is_eq(ordering))
+    if (WebCore::is_eq(ordering))
         return "equivalent"_s;
     return "unordered"_s;
 }
@@ -7062,12 +7066,6 @@ RefPtr<PushSubscription> Internals::createPushSubscription(const String& endpoin
     return PushSubscription::create(PushSubscriptionData { { }, WTFMove(myEndpoint), expirationTime, WTFMove(myServerVAPIDPublicKey), WTFMove(myClientECDHPublicKey), WTFMove(myAuth) });
 }
 #endif
-
-void Internals::overrideModalContainerSearchTermForTesting(AtomString&& term)
-{
-    if (auto observer = contextDocument()->modalContainerObserver())
-        observer->overrideSearchTermForTesting(WTFMove(term));
-}
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 

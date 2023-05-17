@@ -26,7 +26,8 @@
 // https://wicg.github.io/shape-detection-api/#dictdef-detectedface
 
 [
-    EnabledBySetting=ShapeDetection
+    EnabledBySetting=ShapeDetection,
+    JSGenerateToJSObject
 ]
 dictionary DetectedFace {
     required DOMRectReadOnly boundingBox;

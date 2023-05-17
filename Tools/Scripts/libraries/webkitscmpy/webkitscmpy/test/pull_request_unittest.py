@@ -372,8 +372,8 @@ No pre-PR checks to run""")
                 'No pre-PR checks to run',
                 'Checking if PR already exists...',
                 'PR not found.',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
                 "Pushing 'eng/pr-branch' to 'fork'...",
-                "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/pr-branch'...",
             ],
         )
@@ -409,8 +409,8 @@ No pre-PR checks to run""")
                 'No pre-PR checks to run',
                 'Checking if PR already exists...',
                 'PR not found.',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
                 "Pushing 'eng/pr-branch' to 'fork'...",
-                "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/pr-branch'...",
             ],
         )
@@ -461,8 +461,8 @@ No pre-PR checks to run""")
                 'PR #1 found.',
                 'Checking PR labels for active labels...',
                 "Removing 'merging-blocked' from PR #1...",
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
                 "Pushing 'eng/pr-branch' to 'fork'...",
-                "Syncing 'main' to remote 'fork'",
                 "Updating pull-request for 'eng/pr-branch'...",
             ],
         )
@@ -557,8 +557,8 @@ No pre-PR checks to run""")
                 'Checking if PR already exists...',
                 'PR #1 found.',
                 'Checking PR labels for active labels...',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit-security'",
                 "Pushing 'eng/pr-branch' to 'security-fork'...",
-                "Syncing 'main' to remote 'security-fork'",
                 "Updating pull-request for 'eng/pr-branch'...",
             ],
         )
@@ -600,8 +600,8 @@ No pre-PR checks to run""")
                 'Checking if PR already exists...',
                 'PR #1 found.',
                 'Checking PR labels for active labels...',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
                 "Pushing 'eng/pr-branch' to 'fork'...",
-                "Syncing 'main' to remote 'fork'",
                 "Updating pull-request for 'eng/pr-branch'...",
             ],
         )
@@ -650,8 +650,8 @@ No pre-PR checks to run""")
                 'Checking if PR already exists...',
                 'PR #1 found.',
                 'Checking PR labels for active labels...',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
                 "Pushing 'eng/pr-branch' to 'fork'...",
-                "Syncing 'main' to remote 'fork'",
                 "Updating pull-request for 'eng/pr-branch'...",
             ],
         )
@@ -713,8 +713,8 @@ No pre-PR checks to run""")
                 'No pre-PR checks to run',
                 'Checking if PR already exists...',
                 'PR not found.',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
                 "Pushing 'eng/pr-branch' to 'fork'...",
-                "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/pr-branch'...",
                 'Checking issue assignee...',
                 'Checking for pull request link in associated issue...',
@@ -770,8 +770,8 @@ No pre-PR checks to run""")
                 'No pre-PR checks to run',
                 'Checking if PR already exists...',
                 'PR not found.',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
                 "Pushing 'eng/Example-issue-1' to 'fork'...",
-                "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/Example-issue-1'...",
                 'Checking issue assignee...',
                 'Checking for pull request link in associated issue...',
@@ -868,8 +868,8 @@ No pre-PR checks to run""")
                 'No pre-PR checks to run',
                 'Checking if PR already exists...',
                 'PR not found.',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
                 "Pushing 'eng/1' to 'fork'...",
-                "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/1'...",
                 'Checking issue assignee...',
                 'Checking for pull request link in associated issue...',
@@ -890,35 +890,26 @@ No pre-PR checks to run""")
         ), mocks.local.Git(
             self.path, remote='https://{}'.format(remote.remote),
             remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
-        ) as repo, mocks.local.Svn(), MockTerminal.input('y'):
+        ) as repo, mocks.local.Svn():
 
             repo.staged['added.txt'] = 'added'
-            self.assertEqual(0, program.main(
+            self.assertEqual(1, program.main(
                 args=('pull-request', '-i', 'https://bugs.example.com/show_bug.cgi?id=1', '-v', '--no-history'),
                 path=self.path,
             ))
 
-            self.assertEqual(
-                Tracker.instance().issue(1).comments[-1].content,
-                'Pull request: https://github.example.com/WebKit/WebKit/pull/1',
-            )
-            gh_issue = github.Tracker('https://github.example.com/WebKit/WebKit').issue(1)
-            self.assertEqual(gh_issue.project, 'WebKit')
-            self.assertEqual(gh_issue.component, 'Text')
-
         self.assertEqual(
             captured.stdout.getvalue(),
             "Created the local development branch 'eng/1'\n"
-            "A commit you are uploading references https://bugs.example.com/show_bug.cgi?id=1\n"
-            "https://bugs.example.com/show_bug.cgi?id=1 is a Bugzilla and is thus redacted\n"
-            "Pull request needs to be sent to a secure remote for review\n"
-            "Would you like to proceed anyways? \n"
-            " (Yes/[No]): \n"
-            "Created 'PR 1 | Example issue 1'!\n"
-            "Posted pull request link to https://bugs.example.com/show_bug.cgi?id=1\n"
-            "https://github.example.com/WebKit/WebKit/pull/1\n",
+            'A commit you are uploading references https://bugs.example.com/show_bug.cgi?id=1\n'
+            'https://bugs.example.com/show_bug.cgi?id=1 is a Bugzilla and is thus redacted\n'
+            'Pull request needs to be sent to a secure remote for review\n',
         )
-        self.assertEqual(captured.stderr.getvalue(), 'Error. You do not have access to a secure remote to make a pull request for a redacted issue\n')
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            'Error. You do not have access to a secure remote to make a pull request for a redacted issue\n'
+            'Please consult repository administers to gain access to a secure remote to make this fix against\n',
+        )
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
@@ -928,15 +919,6 @@ No pre-PR checks to run""")
                 "Rebased 'eng/1' on 'main!'",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
-                'Checking if PR already exists...',
-                'PR not found.',
-                "Pushing 'eng/1' to 'fork'...",
-                "Syncing 'main' to remote 'fork'",
-                "Creating pull-request for 'eng/1'...",
-                'Checking issue assignee...',
-                'Checking for pull request link in associated issue...',
-                'Syncing PR labels with issue component...',
-                'Synced PR labels with issue component!',
             ],
         )
 
@@ -968,32 +950,22 @@ No pre-PR checks to run""")
             ]
             repo.head = repo.commits['eng/pr-branch'][-1]
 
-            self.assertEqual(0, program.main(
+            self.assertEqual(1, program.main(
                 args=('pull-request', '-v', '--no-history'),
                 path=self.path,
             ))
 
-            self.assertEqual(
-                Tracker.instance().issue(2).comments[-1].content,
-                'Pull request: https://github.example.com/WebKit/WebKit/pull/1',
-            )
-            gh_issue = github.Tracker('https://github.example.com/WebKit/WebKit').issue(1)
-            self.assertEqual(gh_issue.project, 'WebKit')
-            self.assertEqual(gh_issue.component, 'Scrolling')
-
-        self.maxDiff = None
         self.assertEqual(
             captured.stdout.getvalue(),
             "A commit you are uploading references https://bugs.example.com/show_bug.cgi?id=1\n"
             "https://bugs.example.com/show_bug.cgi?id=1 matches 'component:Text' and is thus redacted\n"
-            "Pull request needs to be sent to a secure remote for review\n"
-            "Would you like to proceed anyways? \n"
-            " (Yes/[No]): \n"
-            "Created 'PR 1 | [Testing] Existing commit'!\n"
-            "Posted pull request link to https://bugs.example.com/show_bug.cgi?id=2\n"
-            "https://github.example.com/WebKit/WebKit/pull/1\n",
+            'Pull request needs to be sent to a secure remote for review\n',
         )
-        self.assertEqual(captured.stderr.getvalue(), 'Error. You do not have access to a secure remote to make a pull request for a redacted issue\n')
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            'Error. You do not have access to a secure remote to make a pull request for a redacted issue\n'
+            'Please consult repository administers to gain access to a secure remote to make this fix against\n',
+        )
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
@@ -1003,15 +975,6 @@ No pre-PR checks to run""")
                 "Rebased 'eng/pr-branch' on 'main!'",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
-                'Checking if PR already exists...',
-                'PR not found.',
-                "Pushing 'eng/pr-branch' to 'fork'...",
-                "Syncing 'main' to remote 'fork'",
-                "Creating pull-request for 'eng/pr-branch'...",
-                'Checking issue assignee...',
-                'Checking for pull request link in associated issue...',
-                'Syncing PR labels with issue component...',
-                'Synced PR labels with issue component!',
             ],
         )
 
@@ -1026,8 +989,8 @@ No pre-PR checks to run""")
         ), patch(
             'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(
                 self.BUGZILLA,
-                redact={'component:Text': True},
-                redact_exemption={'component:Scrolling': True},
+                redact={'component:Scrolling': True},
+                redact_exemption={'component:Text': True},
             )]
         ), mocks.local.Git(
             self.path, remote='https://{}'.format(remote.remote),
@@ -1063,16 +1026,16 @@ No pre-PR checks to run""")
         self.maxDiff = None
         self.assertEqual(
             captured.stdout.getvalue(),
-            "A commit you are uploading references https://bugs.example.com/show_bug.cgi?id=2\n"
-            "https://bugs.example.com/show_bug.cgi?id=2 matches 'component:Scrolling' and is exempt from redaction\n"
+            "A commit you are uploading references https://bugs.example.com/show_bug.cgi?id=1\n"
+            "https://bugs.example.com/show_bug.cgi?id=1 matches 'component:Text' and is exempt from redaction\n"
             "Created 'PR 1 | [Testing] Existing commit'!\n"
             "Posted pull request link to https://bugs.example.com/show_bug.cgi?id=2\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n",
         )
         self.assertEqual(
             captured.stderr.getvalue(),
-            'Redaction exemption overrides the redaction of https://bugs.example.com/show_bug.cgi?id=1\n'
-            "https://bugs.example.com/show_bug.cgi?id=1 matches 'component:Text' and is thus redacted\n",
+            'Redaction exemption overrides the redaction of https://bugs.example.com/show_bug.cgi?id=2\n'
+            "https://bugs.example.com/show_bug.cgi?id=2 matches 'component:Scrolling' and is thus redacted\n",
         )
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
@@ -1085,8 +1048,8 @@ No pre-PR checks to run""")
                 'No pre-PR checks to run',
                 'Checking if PR already exists...',
                 'PR not found.',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
                 "Pushing 'eng/pr-branch' to 'fork'...",
-                "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/pr-branch'...",
                 'Checking issue assignee...',
                 'Checking for pull request link in associated issue...',
@@ -1150,8 +1113,8 @@ No pre-PR checks to run""")
                 'No pre-PR checks to run',
                 'Checking if PR already exists...',
                 'PR not found.',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
                 "Pushing 'eng/pr-branch' to 'fork'...",
-                "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/pr-branch'...",
                 'Checking issue assignee...',
                 'Checking for pull request link in associated issue...',
@@ -1226,8 +1189,8 @@ No pre-PR checks to run""")
                 'CCing Radar WebKit Bug Importer',
                 'Checking if PR already exists...',
                 'PR not found.',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
                 "Pushing 'eng/pr-branch' to 'fork'...",
-                "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/pr-branch'...",
                 'Checking issue assignee...',
                 'Checking for pull request link in associated issue...',
@@ -1302,8 +1265,8 @@ No pre-PR checks to run""")
                 'No pre-PR checks to run',
                 'Checking if PR already exists...',
                 'PR not found.',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
                 "Pushing 'eng/pr-branch' to 'fork'...",
-                "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/pr-branch'...",
                 'Checking issue assignee...',
                 'Checking for pull request link in associated issue...',
@@ -1383,8 +1346,8 @@ No pre-PR checks to run""")
                 'CCing Radar WebKit Bug Importer',
                 'Checking if PR already exists...',
                 'PR not found.',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
                 "Pushing 'eng/pr-branch' to 'fork'...",
-                "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/pr-branch'...",
                 'Checking issue assignee...',
                 'Checking for pull request link in associated issue...',
@@ -1453,8 +1416,8 @@ No pre-PR checks to run""")
                 'No pre-PR checks to run',
                 'Checking if PR already exists...',
                 'PR not found.',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
                 "Pushing 'eng/pr-branch' to 'fork'...",
-                "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/pr-branch'...",
                 'Checking issue assignee...',
                 'Checking for pull request link in associated issue...',

@@ -85,6 +85,7 @@
 7699 WIN INTEL VULKAN : FramebufferTest_ES31.RenderingLimitToDefaultFBOSizeWithNoAttachments/* = SKIP
 7770 WIN INTEL VULKAN : VertexAttributeTestES31.MismatchingSignsChangingAttributeType/* = SKIP
 7770 WIN INTEL VULKAN : VertexAttributeTestES31.MismatchingSignsChangingProgramType/* = SKIP
+b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = SKIP
 7770 PIXEL6 VULKAN : VertexAttributeTestES31.MismatchingSignsChangingAttributeType/* = SKIP
 7770 PIXEL6 VULKAN : VertexAttributeTestES31.MismatchingSignsChangingProgramType/* = SKIP
 
@@ -249,6 +250,7 @@
 3496 MAC INTEL OPENGL : BlitFramebufferTest.ScissoredMultisampleStencil/* = SKIP
 3496 MAC AMD OPENGL : BlitFramebufferTest.ScissoredMultisampleStencil/* = SKIP
 7191 MAC NVIDIA OPENGL : BlitFramebufferTest.ScissoredMultisampleStencil/ES3_OpenGL = SKIP
+273808966 MAC AMD OPENGL : BlitFramebufferTest.scissorDrawBlitAndDrawAgain/* = SKIP
 
 // Mac Metal
 
@@ -315,14 +317,10 @@
 // Skipped because Intel GPUs fail sampling stencil textures from swizzled views
 8051 MAC METAL INTEL : Texture2DDepthStencilTestES3.TexSampleModesWithStencil8Swizzled/* = SKIP
 
-6447 MAC METAL : FramebufferTest_ES3.AttachmentsWithUnequalDimensions/* = SKIP
 6447 MAC METAL : FramebufferTest_ES3.RenderAndInvalidateImmutableTextureWithBellowBaseLevelLOD/* = SKIP
 6447 MAC METAL : FramebufferTest_ES3.RenderAndInvalidateImmutableTextureWithBeyondMaxLevel/* = SKIP
 6447 MAC METAL : FramebufferTest_ES3.RenderAndInvalidateImmutableTextureWithSubImageWithBeyondMaxLevel/* = SKIP
 6447 MAC METAL : FramebufferTest_ES3.RenderSampleDepthTextureWithExcludedLevel/* = SKIP
-
-5087 MAC METAL INTEL : MultisampleTest.AlphaToSampleCoverage/* = SKIP
-5087 MAC METAL AMD : MultisampleTest.AlphaToSampleCoverage/* = SKIP
 
 5100 MAC METAL NVIDIA : OcclusionQueriesTest.ClearNotCounted/* = SKIP
 5100 MAC METAL NVIDIA : OcclusionQueriesTest.CopyNotCounted/* = SKIP
@@ -594,7 +592,7 @@
 
 // Pixel 6 expectations.
 6931 PIXEL6 VULKAN : BlitFramebufferTest.OOBWrite/* = SKIP
-6931 PIXEL6 VULKAN : BufferDataTestES3.MapInvalidateThenBufferSubData/* = SKIP
+6931 PIXEL6 VULKAN : BufferSubDataTest.MapInvalidateThenBufferSubData/* = SKIP
 6931 PIXEL6 VULKAN : EGLSurfaceTest.ResizeWindowWithDraw/* = SKIP
 6931 PIXEL6 VULKAN : ExternalBufferTestES31.* = SKIP
 6931 PIXEL6 VULKAN : FramebufferMultiviewLayeredClearTest.ScissoredClearBufferfi/* = SKIP
@@ -625,7 +623,7 @@
 6931 PIXEL6 VULKAN : TransformFeedbackTestIOBlocks.Separate/* = SKIP
 6931 PIXEL6 VULKAN : WebGLCompatibilityTest.FramebufferFloatColorAttachmentMRT/* = SKIP
 7004 PIXEL6 VULKAN : EGLContextSharingTestNoSyncTextureUploads.NoSync/* = SKIP
-7096 PIXEL6 VULKAN : VulkanPerformanceCounterTest.MappingGpuReadOnlyBufferGhostsBuffer/* = SKIP
+7096 PIXEL6 VULKAN : VulkanPerformanceCounterTest.MappingGpuReadOnlyBufferGhostsBuffer*/* = SKIP
 7096 PIXEL6 VULKAN : VulkanPerformanceCounterTest.ClearThenScissoredDraw/* = SKIP
 7096 PIXEL6 VULKAN : VulkanPerformanceCounterTest.ReadOnlyDepthStencilFeedbackLoopUsesSingleRenderPass/* = SKIP
 7158 PIXEL6 VULKAN : ImageTestES3.SourceAHBCubeTargetCube/* = SKIP
@@ -787,8 +785,6 @@
 7853 IOS : FramebufferExtensionsTest.ColorBufferHalfFloat/ES2_OpenGL = SKIP
 
 // Some Metal tests fail on iOS Intel simulator
-7994 IOS METAL : CopyTextureTestES3.ES3FloatFormats/ES3_Metal = SKIP
-7994 IOS METAL : CopyTextureTestES3.CopySubTextureOffsetNonRenderableFloat/ES3_Metal = SKIP
 7994 IOS METAL : CubeMapTextureTest.SampleCoordinateTransformGrad/ES2_Metal = SKIP
 7994 IOS METAL : CubeMapTextureTest.SampleCoordinateTransformGrad/ES3_Metal = SKIP
 7994 IOS METAL : CubeMapTextureTest.SampleCoordinateTransformGrad_ES3/ES3_Metal = SKIP
@@ -805,12 +801,10 @@
 7994 IOS METAL : EGLDisplaySelectionTestDeviceId.DeviceIdConcurrently/ES3_Metal_NoFixture_HighPowerGPU = SKIP
 7994 IOS METAL : EGLDisplaySelectionTestDeviceId.DeviceIdConcurrently/ES3_Metal_NoFixture_LowPowerGPU = SKIP
 7994 IOS METAL : ETC1CompressedTextureTest.ETC1CompressedImageDraws/ES3_Metal = SKIP
-7994 IOS METAL : FramebufferTest_ES3.AttachmentsWithUnequalDimensions/ES3_Metal = SKIP
 7994 IOS METAL : FramebufferTest_ES3.RenderAndInvalidateImmutableTextureWithBellowBaseLevelLOD/ES3_Metal = SKIP
 7994 IOS METAL : FramebufferTest_ES3.RenderAndInvalidateImmutableTextureWithBeyondMaxLevel/ES3_Metal = SKIP
 7994 IOS METAL : FramebufferTest_ES3.RenderAndInvalidateImmutableTextureWithSubImageWithBeyondMaxLevel/ES3_Metal = SKIP
 7994 IOS METAL : FramebufferTest_ES3.RenderSampleDepthTextureWithExcludedLevel/ES3_Metal = SKIP
-7994 IOS METAL : FramebufferTest_ES3.SurfaceDimensionsChangeAndFragCoord/ES3_Metal = SKIP
 7994 IOS METAL : GLSLTest.EmbeddedStructUniformArray/ES2_Metal = SKIP
 7994 IOS METAL : GLSLTest.EmbeddedStructUniformArray/ES3_Metal = SKIP
 7994 IOS METAL : KTXCompressedTextureTest.CompressedTexImageETC1/ES2_Metal = SKIP
@@ -988,6 +982,9 @@
 6824 METAL INTEL : CubeMapTextureTest.SampleCoordinateTransformGrad/* = SKIP
 6824 METAL INTEL : CubeMapTextureTest.SampleCoordinateTransformGrad_ES3/* = SKIP
 
+// Staged texture uploads causes some incorrect texture data on Intel
+8109 MAC METAL INTEL : Texture2DTest.ManySupersedingTextureUpdates/ES2_Metal = SKIP
+
 2799 NVIDIA OPENGL WIN : RobustBufferAccessBehaviorTest.DrawElementsIndexOutOfRangeWithStaticDraw/* = SKIP
 2799 NVIDIA OPENGL WIN : RobustBufferAccessBehaviorTest.DrawElementsIndexOutOfRangeWithDynamicDraw/* = SKIP
 2861 ANDROID GLES : RobustBufferAccessBehaviorTest.NoBufferData/* = SKIP
@@ -1158,7 +1155,20 @@
 
 // Sample coverage must not affect single sample render targets
 8102 D3D11 : SimpleOperationTest.DrawSingleSampleWithCoverage/* = SKIP
-8102 VULKAN : SimpleOperationTest.DrawSingleSampleWithCoverage/* = SKIP
+8102 D3D11 : StateChangeTestES3.SampleCoverageFramebufferAttachmentSwitch/* = SKIP
+
+// Sample coverage is ignored when replacing a single-sample attachment with a multi-sample one
+8114 MAC INTEL OPENGL : StateChangeTestES3.SampleCoverageFramebufferAttachmentSwitch/* = SKIP
+
+// gl_NumSamples value is not synced with FBO state updates until the program is re-linked
+8097 WIN INTEL OPENGL : SampleVariablesTest.NumSamples/* = SKIP
+
+// Pipeline creation failure
+8120 PIXEL4ORXL VULKAN : SampleVariablesTest.SamplePosition/* = SKIP
+
+// Invalid gl_SampleMaskIn value when sample qualifier is present
+8131 LINUX INTEL : SampleMultisampleInterpolationTest.SampleMaskInPerSample/* = SKIP
+8131 LINUX INTEL : SampleMultisampleInterpolationTest.SampleMaskInPerSampleNoPerspective/* = SKIP
 
 // bits 24..31 from glClearValueuiv value don't work on Intel Metal.
 7794 MAC INTEL METAL : PixelLocalStorageTest.ClearValues_r32/* = SKIP
@@ -1168,6 +1178,10 @@
 
 // GL program cache failure with shader images.
 7797 WIN OPENGL : PixelLocalStorageTest.ProgramCache/* = SKIP
+
+// GL_TEXTURE_2D_ARRAY and GL_TEXTURE_3D shader images.
+8124 D3D11 : PixelLocalStorageTest.TextureLevelsAndLayers/* = SKIP
+8125 MAC METAL : PixelLocalStorageTest.TextureLevelsAndLayers/* = SKIP
 
 // Slow tests, should appear last in this file
 5076 : GLSLTest.VerifyMaxVertexUniformVectors* = TIMEOUT

@@ -27,9 +27,15 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include <optional>
+#include <wtf/Forward.h>
+
 namespace WebCore {
 
 class SWServerRegistration;
+class ServiceWorkerRegistrationKey;
+
+struct ServiceWorkerContextData;
 
 class SWRegistrationStore {
     WTF_MAKE_FAST_ALLOCATED;

@@ -47,7 +47,8 @@ static bool isSeparator(UChar character, FeatureMode mode)
     if (mode == FeatureMode::Viewport)
         return character == ' ' || character == '\t' || character == '\n' || character == '\r' || character == '=' || character == ',';
 
-    return isASCIISpace(character) || character == '=' || character == ',';
+    // FIXME: this should be isASCIIWhitespace
+    return isUnicodeCompatibleASCIIWhitespace(character) || character == '=' || character == ',';
 }
 
 WindowFeatures parseWindowFeatures(StringView featuresString)

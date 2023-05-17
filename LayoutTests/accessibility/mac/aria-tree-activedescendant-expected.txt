@@ -1,7 +1,7 @@
 This tests that the aria-activedescendant attributes works properly.
 
-PASS: axtree.selectedRowAtIndex(0).isEqual(activeDescendant) === true
-PASS: axtree.selectedRowAtIndex(0).isEqual(newActiveDescendant) === true
+PASS: axTree.selectedRowAtIndex(0).isEqual(activeDescendant) === true
+PASS: axTree.selectedRowAtIndex(0).isEqual(newActiveDescendant) === true
 
 PASS successfullyParsed is true
 

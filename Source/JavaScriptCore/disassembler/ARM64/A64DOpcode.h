@@ -25,8 +25,10 @@
 
 #pragma once
 
-#include <wtf/Assertions.h>
 #include <stdint.h>
+#include <wtf/Assertions.h>
+#include <wtf/DataLog.h>
+#include <wtf/FastMalloc.h>
 
 namespace JSC { namespace ARM64Disassembler {
 

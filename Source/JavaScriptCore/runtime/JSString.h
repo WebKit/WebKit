@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -108,7 +108,7 @@ public:
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=212956
     // Do we really need InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero?
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=212958
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | StructureIsImmortal | OverridesToThis;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | StructureIsImmortal | OverridesToThis | OverridesPut;
 
     static constexpr bool needsDestruction = true;
     static ALWAYS_INLINE void destroy(JSCell* cell)
@@ -144,14 +144,20 @@ private:
         return uninitializedValueInternal();
     }
 
+    static constexpr TypeInfo defaultTypeInfo() { return TypeInfo(StringType, StructureFlags); }
+    static constexpr int32_t defaultTypeInfoBlob()
+    {
+        return TypeInfoBlob::typeInfoBlob(NonArray, defaultTypeInfo().type(), defaultTypeInfo().inlineTypeFlags());
+    }
+
     JSString(VM& vm, Ref<StringImpl>&& value)
-        : JSCell(vm, vm.stringStructure.get())
+        : JSCell(CreatingWellDefinedBuiltinCell, vm.stringStructure.get()->id(), defaultTypeInfoBlob())
     {
         new (&uninitializedValueInternal()) String(WTFMove(value));
     }
 
     JSString(VM& vm)
-        : JSCell(vm, vm.stringStructure.get())
+        : JSCell(CreatingWellDefinedBuiltinCell, vm.stringStructure.get()->id(), defaultTypeInfoBlob())
         , m_fiber(isRopeInPointer)
     {
     }
@@ -191,10 +197,7 @@ private:
     }
 
 protected:
-    void finishCreation(VM& vm)
-    {
-        Base::finishCreation(vm);
-    }
+    DECLARE_DEFAULT_FINISH_CREATION;
 
 public:
     ~JSString();
@@ -249,6 +252,7 @@ public:
 
 protected:
     friend class JSValue;
+    friend class JSCell;
 
     JS_EXPORT_PRIVATE bool equalSlowCase(JSGlobalObject*, JSString* other) const;
     JS_EXPORT_PRIVATE bool equalSlowCase(JSGlobalObject*, const char* ptr, size_t len) const;
@@ -917,8 +921,7 @@ inline JSString* jsString(VM& vm, const String& s)
     if (!size)
         return vm.smallStrings.emptyString();
     if (size == 1) {
-        UChar c = s.characterAt(0);
-        if (c <= maxSingleCharacterString)
+        if (auto c = s.characterAt(0); c <= maxSingleCharacterString)
             return vm.smallStrings.singleCharacterString(c);
     }
     return JSString::create(vm, *s.impl());
@@ -930,8 +933,7 @@ inline JSString* jsString(VM& vm, String&& s)
     if (!size)
         return vm.smallStrings.emptyString();
     if (size == 1) {
-        UChar c = s.characterAt(0);
-        if (c <= maxSingleCharacterString)
+        if (auto c = s.characterAt(0); c <= maxSingleCharacterString)
             return vm.smallStrings.singleCharacterString(c);
     }
     return JSString::create(vm, s.releaseImpl().releaseNonNull());
@@ -953,8 +955,7 @@ inline JSString* jsString(VM& vm, StringView s)
     if (!size)
         return vm.smallStrings.emptyString();
     if (size == 1) {
-        UChar c = s.characterAt(0);
-        if (c <= maxSingleCharacterString)
+        if (auto c = s.characterAt(0); c <= maxSingleCharacterString)
             return vm.smallStrings.singleCharacterString(c);
     }
     auto impl = s.is8Bit() ? StringImpl::create(s.characters8(), s.length()) : StringImpl::create(s.characters16(), s.length());
@@ -1015,9 +1016,8 @@ inline JSString* jsSubstringOfResolved(VM& vm, GCDeferralContext* deferralContex
         return s;
     if (length == 1) {
         auto& base = s->valueInternal();
-        UChar character = base.characterAt(offset);
-        if (character <= maxSingleCharacterString)
-            return vm.smallStrings.singleCharacterString(character);
+        if (auto c = base.characterAt(offset); c <= maxSingleCharacterString)
+            return vm.smallStrings.singleCharacterString(c);
     }
     return JSRopeString::createSubstringOfResolved(vm, deferralContext, s, offset, length);
 }
@@ -1040,8 +1040,7 @@ inline JSString* jsSubstring(VM& vm, const String& s, unsigned offset, unsigned 
     if (!length)
         return vm.smallStrings.emptyString();
     if (length == 1) {
-        UChar c = s.characterAt(offset);
-        if (c <= maxSingleCharacterString)
+        if (auto c = s.characterAt(offset); c <= maxSingleCharacterString)
             return vm.smallStrings.singleCharacterString(c);
     }
     auto impl = StringImpl::createSubstringSharingImpl(*s.impl(), offset, length);
@@ -1056,8 +1055,7 @@ inline JSString* jsOwnedString(VM& vm, const String& s)
     if (!size)
         return vm.smallStrings.emptyString();
     if (size == 1) {
-        UChar c = s.characterAt(0);
-        if (c <= maxSingleCharacterString)
+        if (auto c = s.characterAt(0); c <= maxSingleCharacterString)
             return vm.smallStrings.singleCharacterString(c);
     }
     return JSString::createHasOtherOwner(vm, *s.impl());
@@ -1071,8 +1069,7 @@ ALWAYS_INLINE JSString* jsStringWithCache(VM& vm, const String& s)
 
     auto& stringImpl = *s.impl();
     if (length == 1) {
-        auto c = stringImpl[0];
-        if (c <= maxSingleCharacterString)
+        if (auto c = stringImpl[0]; c <= maxSingleCharacterString)
             return vm.smallStrings.singleCharacterString(c);
     }
 

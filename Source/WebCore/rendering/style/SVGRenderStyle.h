@@ -23,10 +23,11 @@
 
 #pragma once
 
+#include "RenderStyle.h"
 #include "RenderStyleConstants.h"
 #include "SVGRenderStyleDefs.h"
+#include "StyleRareInheritedData.h"
 #include "WindRule.h"
-#include <wtf/DataRef.h>
 
 namespace WebCore {
 
@@ -47,7 +48,6 @@ public:
     bool changeRequiresLayout(const SVGRenderStyle& other) const;
 
     bool operator==(const SVGRenderStyle&) const;
-    bool operator!=(const SVGRenderStyle& other) const { return !(*this == other); }
 
     // Initial values for all the properties
     static AlignmentBaseline initialAlignmentBaseline() { return AlignmentBaseline::Auto; }
@@ -193,7 +193,6 @@ private:
 
     struct InheritedFlags {
         bool operator==(const InheritedFlags&) const;
-        bool operator!=(const InheritedFlags& other) const { return !(*this == other); }
 
         unsigned shapeRendering : 2; // ShapeRendering
         unsigned clipRule : 1; // WindRule
@@ -208,7 +207,6 @@ private:
     struct NonInheritedFlags {
         // 32 bit non-inherited, don't add to the struct, or the operator will break.
         bool operator==(const NonInheritedFlags& other) const { return flags == other.flags; }
-        bool operator!=(const NonInheritedFlags& other) const { return flags != other.flags; }
 
         union {
             struct {
@@ -238,6 +236,53 @@ private:
     DataRef<StyleMiscData> m_miscData;
     DataRef<StyleLayoutData> m_layoutData;
 };
+
+inline SVGRenderStyle& RenderStyle::accessSVGStyle() { return m_svgStyle.access(); }
+inline SVGLengthValue RenderStyle::baselineShiftValue() const { return svgStyle().baselineShiftValue(); }
+inline const Length& RenderStyle::cx() const { return svgStyle().cx(); }
+inline const Length& RenderStyle::cy() const { return svgStyle().cy(); }
+inline float RenderStyle::fillOpacity() const { return svgStyle().fillOpacity(); }
+inline StyleColor RenderStyle::fillPaintColor() const { return svgStyle().fillPaintColor(); }
+inline SVGPaintType RenderStyle::fillPaintType() const { return svgStyle().fillPaintType(); }
+inline const StyleColor& RenderStyle::floodColor() const { return svgStyle().floodColor(); }
+inline float RenderStyle::floodOpacity() const { return svgStyle().floodOpacity(); }
+inline bool RenderStyle::hasExplicitlySetStrokeWidth() const { return m_rareInheritedData->hasSetStrokeWidth; }
+inline bool RenderStyle::hasVisibleStroke() const { return svgStyle().hasStroke() && !strokeWidth().isZero(); }
+inline SVGLengthValue RenderStyle::kerning() const { return svgStyle().kerning(); }
+inline const StyleColor& RenderStyle::lightingColor() const { return svgStyle().lightingColor(); }
+inline const Length& RenderStyle::r() const { return svgStyle().r(); }
+inline const Length& RenderStyle::rx() const { return svgStyle().rx(); }
+inline const Length& RenderStyle::ry() const { return svgStyle().ry(); }
+inline void RenderStyle::setBaselineShiftValue(SVGLengthValue s) { accessSVGStyle().setBaselineShiftValue(s); }
+inline void RenderStyle::setCx(Length&& cx) { accessSVGStyle().setCx(WTFMove(cx)); }
+inline void RenderStyle::setCy(Length&& cy) { accessSVGStyle().setCy(WTFMove(cy)); }
+inline void RenderStyle::setFillOpacity(float f) { accessSVGStyle().setFillOpacity(f); }
+inline void RenderStyle::setFillPaintColor(const StyleColor& color) { accessSVGStyle().setFillPaint(SVGPaintType::RGBColor, color, emptyString()); }
+inline void RenderStyle::setFloodColor(const StyleColor& c) { accessSVGStyle().setFloodColor(c); }
+inline void RenderStyle::setFloodOpacity(float f) { accessSVGStyle().setFloodOpacity(f); }
+inline void RenderStyle::setKerning(SVGLengthValue k) { accessSVGStyle().setKerning(k); }
+inline void RenderStyle::setLightingColor(const StyleColor& c) { accessSVGStyle().setLightingColor(c); }
+inline void RenderStyle::setR(Length&& r) { accessSVGStyle().setR(WTFMove(r)); }
+inline void RenderStyle::setRx(Length&& rx) { accessSVGStyle().setRx(WTFMove(rx)); }
+inline void RenderStyle::setRy(Length&& ry) { accessSVGStyle().setRy(WTFMove(ry)); }
+inline void RenderStyle::setStopColor(const StyleColor& c) { accessSVGStyle().setStopColor(c); }
+inline void RenderStyle::setStopOpacity(float f) { accessSVGStyle().setStopOpacity(f); }
+inline void RenderStyle::setStrokeDashArray(Vector<SVGLengthValue> array) { accessSVGStyle().setStrokeDashArray(array); }
+inline void RenderStyle::setStrokeDashOffset(Length&& d) { accessSVGStyle().setStrokeDashOffset(WTFMove(d)); }
+inline void RenderStyle::setStrokeOpacity(float f) { accessSVGStyle().setStrokeOpacity(f); }
+inline void RenderStyle::setStrokePaintColor(const StyleColor& color) { accessSVGStyle().setStrokePaint(SVGPaintType::RGBColor, color, emptyString()); }
+inline void RenderStyle::setX(Length&& x) { accessSVGStyle().setX(WTFMove(x)); }
+inline void RenderStyle::setY(Length&& y) { accessSVGStyle().setY(WTFMove(y)); }
+inline const StyleColor& RenderStyle::stopColor() const { return svgStyle().stopColor(); }
+inline float RenderStyle::stopOpacity() const { return svgStyle().stopOpacity(); }
+inline Vector<SVGLengthValue> RenderStyle::strokeDashArray() const { return svgStyle().strokeDashArray(); }
+inline const Length& RenderStyle::strokeDashOffset() const { return svgStyle().strokeDashOffset(); }
+inline float RenderStyle::strokeOpacity() const { return svgStyle().strokeOpacity(); }
+inline StyleColor RenderStyle::strokePaintColor() const { return svgStyle().strokePaintColor(); }
+inline SVGPaintType RenderStyle::strokePaintType() const { return svgStyle().strokePaintType(); }
+inline const Length& RenderStyle::strokeWidth() const { return m_rareInheritedData->strokeWidth; }
+inline const Length& RenderStyle::x() const { return svgStyle().x(); }
+inline const Length& RenderStyle::y() const { return svgStyle().y(); }
 
 inline void SVGRenderStyle::setCx(const Length& length)
 {

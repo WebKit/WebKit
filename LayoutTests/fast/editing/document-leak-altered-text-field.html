@@ -1,0 +1,46 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Make sure that the document doesn't leak if it contains a modified text input field.");
+jsTestIsAsync = true;
+
+onload = () => {
+    w = open("resources/document-leak-altered-text-field-popup.html");
+    w.onload = () => {
+        // The navigation needs to happen outside the load event in order to create a history item and put the
+        // page in the back/forward cache.
+        setTimeout(async () => {
+            documentIdentifier = internals.documentIdentifier(w.document);
+            // Type in the input field.
+            w.document.getElementById("textField").focus();
+            w.document.execCommand("InsertText", false, "test");
+            shouldBeEqualToString("w.document.getElementById('textField').value", "test");
+
+            // Submit the form, which will navigate the page.
+            w.document.getElementById("submitButton").click();
+
+            w = null;
+            handle = setInterval(() => {
+                internals.clearBackForwardCache();
+                gc();
+                if (!internals.isDocumentAlive(documentIdentifier)) {
+                    clearInterval(handle);
+                    clearTimeout(timeoutHandle);
+                    testPassed("The Document didn't leak");
+                    finishJSTest();
+                    return;
+                }
+            }, 50);
+            timeoutHandle = setTimeout(() => {
+                testFailed("The document leaked");
+                clearInterval(handle);
+                finishJSTest();
+            }, 10000);
+        }, 0);
+    };
+};
+</script>
+</body>
+</html>

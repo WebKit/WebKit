@@ -30,7 +30,7 @@ FAIL Notification interface: attribute badge assert_true: The prototype object m
 FAIL Notification interface: attribute vibrate assert_true: The prototype object must have a property "vibrate" expected true got false
 FAIL Notification interface: attribute timestamp assert_true: The prototype object must have a property "timestamp" expected true got false
 FAIL Notification interface: attribute renotify assert_true: The prototype object must have a property "renotify" expected true got false
-FAIL Notification interface: attribute silent assert_true: The prototype object must have a property "silent" expected true got false
+PASS Notification interface: attribute silent
 FAIL Notification interface: attribute requireInteraction assert_true: The prototype object must have a property "requireInteraction" expected true got false
 PASS Notification interface: attribute data
 FAIL Notification interface: attribute actions assert_true: The prototype object must have a property "actions" expected true got false

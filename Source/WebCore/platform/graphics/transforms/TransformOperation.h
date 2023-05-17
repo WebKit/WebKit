@@ -74,7 +74,6 @@ public:
     virtual Ref<TransformOperation> selfOrCopyWithResolvedCalculatedValues(const FloatSize&) { return *this; }
 
     virtual bool operator==(const TransformOperation&) const = 0;
-    bool operator!=(const TransformOperation& o) const { return !(*this == o); }
 
     virtual bool isIdentity() const = 0;
 

@@ -23,6 +23,7 @@
 #include "config.h"
 #include "SVGTextPositioningElement.h"
 
+#include "NodeName.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGText.h"
@@ -55,29 +56,24 @@ void SVGTextPositioningElement::attributeChanged(const QualifiedName& name, cons
 {
     SVGTextContentElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == SVGNames::xAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::xAttr:
         m_x->baseVal()->parse(newValue);
-        return;
-    }
-
-    if (name == SVGNames::yAttr) {
+        break;
+    case AttributeNames::yAttr:
         m_y->baseVal()->parse(newValue);
-        return;
-    }
-
-    if (name == SVGNames::dxAttr) {
+        break;
+    case AttributeNames::dxAttr:
         m_dx->baseVal()->parse(newValue);
-        return;
-    }
-
-    if (name == SVGNames::dyAttr) {
+        break;
+    case AttributeNames::dyAttr:
         m_dy->baseVal()->parse(newValue);
-        return;
-    }
-
-    if (name == SVGNames::rotateAttr) {
+        break;
+    case AttributeNames::rotateAttr:
         m_rotate->baseVal()->parse(newValue);
-        return;
+        break;
+    default:
+        break;
     }
 }
 

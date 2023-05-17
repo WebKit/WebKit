@@ -253,7 +253,7 @@ const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& Resour
     return expectedTableAndIndexQueries;
 }
 
-Span<const ASCIILiteral> ResourceLoadStatisticsDatabaseStore::sortedTables()
+std::span<const ASCIILiteral> ResourceLoadStatisticsDatabaseStore::sortedTables()
 {
     static constexpr std::array sortedTables {
         "ObservedDomains"_s,
@@ -586,6 +586,7 @@ bool ResourceLoadStatisticsDatabaseStore::createSchema()
         return false;
     }
 
+    // FIXME: drop TopLevelDomains table as it is not used.
     if (!m_database.executeCommand(createTopLevelDomains)) {
         LOG_ERROR("Could not create TopLevelDomains table in database (%i) - %s", m_database.lastError(), m_database.lastErrorMsg());
         return false;
@@ -658,7 +659,6 @@ void ResourceLoadStatisticsDatabaseStore::destroyStatements()
 
     m_observedDomainCountStatement = nullptr;
     m_insertObservedDomainStatement = nullptr;
-    m_insertTopLevelDomainStatement = nullptr;
     m_domainIDFromStringStatement = nullptr;
     m_subframeUnderTopFrameDomainExistsStatement = nullptr;
     m_subresourceUnderTopFrameDomainExistsStatement = nullptr;
@@ -2042,7 +2042,6 @@ void ResourceLoadStatisticsDatabaseStore::clear(CompletionHandler<void()>&& comp
     ASSERT(!RunLoop::isMain());
 
     clearDatabaseContents();
-    clearOperatingDates();
 
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 

@@ -37,6 +37,7 @@
 #include "JSHTMLBodyElement.h"
 #include "LocalDOMWindow.h"
 #include "MutableStyleProperties.h"
+#include "NodeName.h"
 #include "ResourceLoaderOptions.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
@@ -67,31 +68,52 @@ HTMLBodyElement::~HTMLBodyElement() = default;
 
 bool HTMLBodyElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
-    if (name == backgroundAttr || name == marginwidthAttr || name == leftmarginAttr || name == marginheightAttr || name == topmarginAttr || name == bgcolorAttr || name == textAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::backgroundAttr:
+    case AttributeNames::marginwidthAttr:
+    case AttributeNames::leftmarginAttr:
+    case AttributeNames::marginheightAttr:
+    case AttributeNames::topmarginAttr:
+    case AttributeNames::bgcolorAttr:
+    case AttributeNames::textAttr:
         return true;
+    default:
+        break;
+    }
     return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
 void HTMLBodyElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
-    if (name == backgroundAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::backgroundAttr: {
         String url = stripLeadingAndTrailingHTMLSpaces(value);
         if (!url.isEmpty()) {
             auto imageValue = CSSImageValue::create(document().completeURL(url), LoadedFromOpaqueSource::No, localName());
             style.setProperty(CSSProperty(CSSPropertyBackgroundImage, WTFMove(imageValue)));
         }
-    } else if (name == marginwidthAttr || name == leftmarginAttr) {
+        break;
+    }
+    case AttributeNames::marginwidthAttr:
+    case AttributeNames::leftmarginAttr:
         addHTMLLengthToStyle(style, CSSPropertyMarginRight, value);
         addHTMLLengthToStyle(style, CSSPropertyMarginLeft, value);
-    } else if (name == marginheightAttr || name == topmarginAttr) {
+        break;
+    case AttributeNames::marginheightAttr:
+    case AttributeNames::topmarginAttr:
         addHTMLLengthToStyle(style, CSSPropertyMarginBottom, value);
         addHTMLLengthToStyle(style, CSSPropertyMarginTop, value);
-    } else if (name == bgcolorAttr) {
+        break;
+    case AttributeNames::bgcolorAttr:
         addHTMLColorToStyle(style, CSSPropertyBackgroundColor, value);
-    } else if (name == textAttr) {
+        break;
+    case AttributeNames::textAttr:
         addHTMLColorToStyle(style, CSSPropertyColor, value);
-    } else
+        break;
+    default:
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
+        break;
+    }
 }
 
 const AtomString& HTMLBodyElement::eventNameForWindowEventHandlerAttribute(const QualifiedName& attributeName)
@@ -111,38 +133,38 @@ const AtomString& HTMLBodyElement::eventNameForWindowEventHandlerAttribute(const
 
 void HTMLBodyElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == vlinkAttr || name == alinkAttr || name == linkAttr) {
-        auto parsedColor = parseLegacyColorValue(newValue);
-        if (name == linkAttr) {
-            if (parsedColor)
-                document().setLinkColor(*parsedColor);
-            else
-                document().resetLinkColor();
-        } else if (name == vlinkAttr) {
-            if (parsedColor)
-                document().setVisitedLinkColor(*parsedColor);
-            else
-                document().resetVisitedLinkColor();
-        } else {
-            ASSERT(name == alinkAttr);
-            if (parsedColor)
-                document().setActiveLinkColor(*parsedColor);
-            else
-                document().resetActiveLinkColor();
-        }
+    switch (name.nodeName()) {
+    case AttributeNames::vlinkAttr:
+        if (auto parsedColor = parseLegacyColorValue(newValue))
+            document().setVisitedLinkColor(*parsedColor);
+        else
+            document().resetVisitedLinkColor();
         invalidateStyleForSubtree();
         return;
-    }
-
-    // FIXME: Emit "selectionchange" event at <input> / <textarea> elements and remove this special-case.
-    // https://bugs.webkit.org/show_bug.cgi?id=234348
-    if (name == onselectionchangeAttr) {
+    case AttributeNames::alinkAttr:
+        if (auto parsedColor = parseLegacyColorValue(newValue))
+            document().setActiveLinkColor(*parsedColor);
+        else
+            document().resetActiveLinkColor();
+        invalidateStyleForSubtree();
+        return;
+    case AttributeNames::linkAttr:
+        if (auto parsedColor = parseLegacyColorValue(newValue))
+            document().setLinkColor(*parsedColor);
+        else
+            document().resetLinkColor();
+        invalidateStyleForSubtree();
+        return;
+    case AttributeNames::onselectionchangeAttr:
+        // FIXME: Emit "selectionchange" event at <input> / <textarea> elements and remove this special-case.
+        // https://bugs.webkit.org/show_bug.cgi?id=234348
         document().setAttributeEventListener(eventNames().selectionchangeEvent, name, newValue, mainThreadNormalWorld());
         return;
+    default:
+        break;
     }
 
-    auto& eventName = eventNameForWindowEventHandlerAttribute(name);
-    if (!eventName.isNull()) {
+    if (auto& eventName = eventNameForWindowEventHandlerAttribute(name); !eventName.isNull()) {
         document().setWindowAttributeEventListener(eventName, name, newValue, mainThreadNormalWorld());
         return;
     }

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "JSArrayBuffer.h"
 #include "JSArrayBufferPrototype.h"
 #include "JSGlobalObject.h"
 

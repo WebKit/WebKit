@@ -51,6 +51,7 @@ Recorder::Recorder(const GraphicsContextState& state, const FloatRect& initialCl
     , m_initialScale(initialCTM.xScale())
     , m_colorSpace(colorSpace)
     , m_drawGlyphsMode(drawGlyphsMode)
+    , m_initialClip(initialClip)
 {
     ASSERT(!state.changes());
     m_stateStack.append({ state, initialCTM, initialCTM.mapRect(initialClip) });
@@ -300,18 +301,24 @@ void Recorder::restore()
 
 void Recorder::translate(float x, float y)
 {
+    if (!x && !y)
+        return;
     currentState().translate(x, y);
     recordTranslate(x, y);
 }
 
 void Recorder::rotate(float angleInRadians)
 {
+    if (WTF::areEssentiallyEqual(0.f, fmodf(angleInRadians, piFloat * 2.f)))
+        return;
     currentState().rotate(angleInRadians);
     recordRotate(angleInRadians);
 }
 
 void Recorder::scale(const FloatSize& size)
 {
+    if (areEssentiallyEqual(size, FloatSize { 1.f, 1.f }))
+        return;
     currentState().scale(size);
     recordScale(size);
 }
@@ -535,6 +542,13 @@ void Recorder::drawControlPart(ControlPart& part, const FloatRoundedRect& border
 {
     appendStateChangeItemIfNecessary();
     recordDrawControlPart(part, borderRect, deviceScaleFactor, style);
+}
+
+void Recorder::resetClip()
+{
+    currentState().clipBounds = m_initialClip;
+
+    recordResetClip();
 }
 
 void Recorder::clip(const FloatRect& rect)

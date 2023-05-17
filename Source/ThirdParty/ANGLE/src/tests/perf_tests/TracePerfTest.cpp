@@ -15,7 +15,6 @@
 #include "tests/perf_tests/ANGLEPerfTestArgs.h"
 #include "tests/perf_tests/DrawCallPerfParams.h"
 #include "util/capture/frame_capture_test_utils.h"
-#include "util/capture/trace_interpreter.h"
 #include "util/capture/traces_export.h"
 #include "util/egl_loader_autogen.h"
 #include "util/png_utils.h"
@@ -233,7 +232,7 @@ class TracePerfTest : public ANGLERenderTest
     uint32_t mTotalFrameCount                                           = 0;
     bool mScreenshotSaved                                               = false;
     uint32_t mScreenshotFrame                                           = gScreenshotFrame;
-    std::unique_ptr<TraceReplayInterface> mTraceReplay;
+    std::unique_ptr<TraceLibrary> mTraceReplay;
 };
 
 TracePerfTest *gCurrentTracePerfTest = nullptr;
@@ -1638,6 +1637,20 @@ void TracePerfTest::startTest()
     ASSERT(mCurrentFrame == mStartFrame);
 }
 
+std::string FindTraceGzPath(const std::string &traceName)
+{
+    std::stringstream pathStream;
+
+    char genDir[kMaxPath] = {};
+    if (!angle::FindTestDataPath("gen", genDir, kMaxPath))
+    {
+        return "";
+    }
+    pathStream << genDir << angle::GetPathSeparator() << "tracegz_" << traceName << ".gz";
+
+    return pathStream.str();
+}
+
 void TracePerfTest::initializeBenchmark()
 {
     const TraceInfo &traceInfo = mParams->traceInfo;
@@ -1651,14 +1664,24 @@ void TracePerfTest::initializeBenchmark()
 
     if (gTraceInterpreter)
     {
-        mTraceReplay.reset(new TraceInterpreter(traceInfo, testDataDir, gVerboseLogging));
+        mTraceReplay.reset(new TraceLibrary("angle_trace_interpreter", traceInfo));
+        if (strcmp(gTraceInterpreter, "gz") == 0)
+        {
+            std::string traceGzPath = FindTraceGzPath(traceInfo.name);
+            if (traceGzPath.empty())
+            {
+                failTest("Could not find trace gz.");
+                return;
+            }
+            mTraceReplay->setTraceGzPath(traceGzPath);
+        }
     }
     else
     {
         std::stringstream traceNameStr;
         traceNameStr << "angle_restricted_traces_" << traceInfo.name;
         std::string traceName = traceNameStr.str();
-        mTraceReplay.reset(new TraceLibrary(traceName.c_str()));
+        mTraceReplay.reset(new TraceLibrary(traceNameStr.str(), traceInfo));
     }
 
     LoadTraceEGL(TraceLoadProc);

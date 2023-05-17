@@ -33,8 +33,6 @@ namespace JSC {
 
 JS_EXPORT_PRIVATE const ClassInfo* getHashMapBucketKeyClassInfo();
 JS_EXPORT_PRIVATE const ClassInfo* getHashMapBucketKeyValueClassInfo();
-JS_EXPORT_PRIVATE const ClassInfo* getHashMapImplKeyClassInfo();
-JS_EXPORT_PRIVATE const ClassInfo* getHashMapImplKeyValueClassInfo();
 
 enum class HashTableType {
     Key,

@@ -118,18 +118,16 @@ layer at (0,0) size 800x336
         RenderText {#text} at (401,20) size 5x19
           text run at (401,20) width 5: " "
         RenderTextControl {INPUT} at (405,21) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-        RenderText {#text} at (559,20) size 5x19
-          text run at (559,20) width 5: " "
-        RenderBR {BR} at (563,20) size 1x19
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (559,20) size 1x19
         RenderText {#text} at (0,42) size 270x19
           text run at (0,42) width 270: "Ellipsis to clip (should not show ellipsis): "
         RenderTextControl {INPUT} at (269,43) size 156x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
         RenderText {#text} at (424,42) size 5x19
           text run at (424,42) width 5: " "
         RenderTextControl {INPUT} at (428,43) size 156x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
-        RenderText {#text} at (583,42) size 5x19
-          text run at (583,42) width 5: " "
-        RenderBR {BR} at (587,42) size 1x19
+        RenderText {#text} at (0,0) size 0x0
+        RenderBR {BR} at (583,42) size 1x19
 layer at (15,76) size 141x14 scrollWidth 288
   RenderBlock {DIV} at (6,3) size 143x15 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 288x14

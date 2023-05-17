@@ -227,11 +227,13 @@ WI.FontVariationDetailsSectionRow = class FontVariationDetailsSectionRow extends
 
         if (event.key === "ArrowUp") {
             this.value = Number.constrain(valueAsNumber + step, this._minimumValue, this._maximumValue);
+            this.dispatchEventToListeners(WI.FontVariationDetailsSectionRow.Event.VariationValueChanged, {tag: this._tag, value: this.value});
             event.preventDefault();
         }
 
         if (event.key === "ArrowDown") {
             this.value = Number.constrain(valueAsNumber - step, this._minimumValue, this._maximumValue);
+            this.dispatchEventToListeners(WI.FontVariationDetailsSectionRow.Event.VariationValueChanged, {tag: this._tag, value: this.value});
             event.preventDefault();
         }
     }

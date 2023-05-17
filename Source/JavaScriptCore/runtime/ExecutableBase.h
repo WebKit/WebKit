@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,6 +58,7 @@ class ExecutableBase : public JSCell {
     friend class JIT;
     friend class LLIntOffsetsExtractor;
     friend MacroAssemblerCodeRef<JSEntryPtrTag> boundFunctionCallGenerator(VM*);
+    using Base = JSCell;
 
 protected:
     ExecutableBase(VM& vm, Structure* structure)
@@ -65,13 +66,9 @@ protected:
     {
     }
 
-    void finishCreation(VM& vm)
-    {
-        Base::finishCreation(vm);
-    }
+    DECLARE_DEFAULT_FINISH_CREATION;
 
 public:
-    typedef JSCell Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     static constexpr bool needsDestruction = true;

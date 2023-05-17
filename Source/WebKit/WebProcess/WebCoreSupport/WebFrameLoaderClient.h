@@ -40,7 +40,7 @@ struct WebsitePoliciesData;
     
 class WebFrameLoaderClient final : public WebCore::FrameLoaderClient {
 public:
-    explicit WebFrameLoaderClient(Ref<WebFrame>&&);
+    explicit WebFrameLoaderClient(Ref<WebFrame>&&, ScopeExit<Function<void()>>&&);
     ~WebFrameLoaderClient();
 
     WebFrame& webFrame() const { return m_frame.get(); }
@@ -52,7 +52,6 @@ public:
     void applyToDocumentLoader(WebsitePoliciesData&&);
 
     std::optional<WebPageProxyIdentifier> webPageProxyID() const;
-    std::optional<WebCore::PageIdentifier> pageID() const final;
 
 #if ENABLE(TRACKING_PREVENTION)
     bool hasFrameSpecificStorageAccess() final { return !!m_frameSpecificStorageAccessIdentifier; }
@@ -242,10 +241,12 @@ private:
 
 #if PLATFORM(COCOA)
     RemoteAXObjectRef accessibilityRemoteObject() final;
-    
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    void setAXIsolatedTreeRoot(WebCore::AXCoreObject*) final;
+#endif
     void willCacheResponse(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier, NSCachedURLResponse*, CompletionHandler<void(NSCachedURLResponse *)>&&) const final;
 
-    NSDictionary *dataDetectionContext() final;
+    std::optional<double> dataDetectionReferenceDate() final;
 #endif
 
     void didChangeScrollOffset() final;

@@ -28,6 +28,8 @@
 
 #include <wtf/Platform.h>
 
+#if CPU(ARM64)
+
 #define RegisterNames ARM64Registers
 
 #define FOR_EACH_REGISTER(macro)                \
@@ -172,3 +174,4 @@
     macro(q30, "q30", 0, 0)                     \
     macro(q31, "q31", 0, 0)
 
+#endif // CPU(ARM64)

@@ -31,11 +31,11 @@
     readonly attribute unsigned long length;
     getter DOMString? item(unsigned long index);
     boolean contains([AtomString] DOMString token);
-    [CEReactions] undefined add([AtomString] DOMString... tokens);
-    [CEReactions] undefined remove([AtomString] DOMString... tokens);
-    [CEReactions] boolean toggle([AtomString] DOMString token, optional boolean force);
-    [CEReactions] boolean replace([AtomString] DOMString token, [AtomString] DOMString newToken);
+    [CEReactions=Needed] undefined add([AtomString] DOMString... tokens);
+    [CEReactions=Needed] undefined remove([AtomString] DOMString... tokens);
+    [CEReactions=Needed] boolean toggle([AtomString] DOMString token, optional boolean force);
+    [CEReactions=Needed] boolean replace([AtomString] DOMString token, [AtomString] DOMString newToken);
     boolean supports(DOMString token);
-    [CEReactions] stringifier attribute [AtomString] DOMString value;
+    [CEReactions=Needed] stringifier attribute [AtomString] DOMString value;
     iterable<DOMString>;
 };

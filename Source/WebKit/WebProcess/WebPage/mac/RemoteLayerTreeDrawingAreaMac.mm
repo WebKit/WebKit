@@ -64,7 +64,7 @@ std::optional<WebCore::DestinationColorSpace> RemoteLayerTreeDrawingAreaMac::dis
     return m_displayColorSpace;
 }
 
-void RemoteLayerTreeDrawingAreaMac::mainFrameContentSizeChanged(const WebCore::IntSize&)
+void RemoteLayerTreeDrawingAreaMac::mainFrameContentSizeChanged(WebCore::FrameIdentifier, const WebCore::IntSize&)
 {
     // Do nothing. This is only relevant to DelegatedToNativeScrollView implementations.
 }

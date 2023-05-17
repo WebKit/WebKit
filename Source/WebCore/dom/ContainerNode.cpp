@@ -125,7 +125,7 @@ ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
         }
     }
 
-    disconnectSubframesIfNeeded(*this, DescendantsOnly);
+    disconnectSubframesIfNeeded(*this, SubframeDisconnectPolicy::DescendantsOnly);
 
     ContainerNode::ChildChange childChange { ChildChange::Type::AllChildrenRemoved, nullptr, nullptr, nullptr, source, ContainerNode::ChildChange::AffectsElements::Unknown };
 
@@ -201,10 +201,10 @@ ALWAYS_INLINE bool ContainerNode::removeNodeWithScriptAssertion(Node& childToRem
 
     if (source == ChildChange::Source::Parser) {
         // FIXME: Merge these two code paths. It's a bug in the parser not to update connectedSubframeCount in time.
-        disconnectSubframesIfNeeded(*this, DescendantsOnly);
+        disconnectSubframesIfNeeded(*this, SubframeDisconnectPolicy::DescendantsOnly);
     } else {
         if (auto containerChild = dynamicDowncast<ContainerNode>(childToRemove))
-            disconnectSubframesIfNeeded(*containerChild, RootAndDescendants);
+            disconnectSubframesIfNeeded(*containerChild, SubframeDisconnectPolicy::RootAndDescendants);
     }
 
     if (childToRemove.parentNode() != this)
@@ -336,15 +336,15 @@ void ContainerNode::removeDetachedChildren()
     removeDetachedChildrenInContainer(*this);
 }
 
-static inline bool mayHaveDisplayContents(Element *element)
+static inline bool hasDisplayContents(Element *element)
 {
-    return element && (element->hasDisplayContents() || element->displayContentsChanged());
+    return element && element->hasDisplayContents();
 }
 
 static inline void destroyRenderTreeIfNeeded(Node& child)
 {
     auto childAsElement = dynamicDowncast<Element>(child);
-    if (!child.renderer() && !mayHaveDisplayContents(childAsElement))
+    if (!child.renderer() && !hasDisplayContents(childAsElement))
         return;
     if (childAsElement)
         RenderTreeUpdater::tearDownRenderers(*childAsElement);
@@ -655,7 +655,7 @@ ExceptionOr<void> ContainerNode::replaceChild(Node& newChild, Node& oldChild)
 
 void ContainerNode::disconnectDescendantFrames()
 {
-    disconnectSubframesIfNeeded(*this, RootAndDescendants);
+    disconnectSubframesIfNeeded(*this, SubframeDisconnectPolicy::RootAndDescendants);
 }
 
 ExceptionOr<void> ContainerNode::removeChild(Node& oldChild)
@@ -929,11 +929,11 @@ static void dispatchChildInsertionEvents(Node& child)
     RefPtr<Node> c = &child;
     Ref<Document> document(child.document());
 
-    if (c->parentNode() && document->hasListenerType(Document::DOMNODEINSERTED_LISTENER))
+    if (c->parentNode() && document->hasListenerType(Document::ListenerType::DOMNodeInserted))
         c->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeInsertedEvent, Event::CanBubble::Yes, c->parentNode()));
 
     // dispatch the DOMNodeInsertedIntoDocument event to all descendants
-    if (c->isConnected() && document->hasListenerType(Document::DOMNODEINSERTEDINTODOCUMENT_LISTENER)) {
+    if (c->isConnected() && document->hasListenerType(Document::ListenerType::DOMNodeInsertedIntoDocument)) {
         for (; c; c = NodeTraversal::next(*c, &child))
             c->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeInsertedIntoDocumentEvent, Event::CanBubble::No));
     }
@@ -950,11 +950,11 @@ static void dispatchChildRemovalEvents(Ref<Node>& child)
     Ref<Document> document = child->document();
 
     // dispatch pre-removal mutation events
-    if (child->parentNode() && document->hasListenerType(Document::DOMNODEREMOVED_LISTENER))
+    if (child->parentNode() && document->hasListenerType(Document::ListenerType::DOMNodeRemoved))
         child->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeRemovedEvent, Event::CanBubble::Yes, child->parentNode()));
 
     // dispatch the DOMNodeRemovedFromDocument event to all descendants
-    if (child->isConnected() && document->hasListenerType(Document::DOMNODEREMOVEDFROMDOCUMENT_LISTENER)) {
+    if (child->isConnected() && document->hasListenerType(Document::ListenerType::DOMNodeRemovedFromDocument)) {
         for (RefPtr<Node> currentNode = child.copyRef(); currentNode; currentNode = NodeTraversal::next(*currentNode, child.ptr()))
             currentNode->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeRemovedFromDocumentEvent, Event::CanBubble::No));
     }
@@ -981,11 +981,11 @@ Ref<HTMLCollection> ContainerNode::getElementsByTagName(const AtomString& qualif
     ASSERT(!qualifiedName.isNull());
 
     if (qualifiedName == starAtom())
-        return ensureRareData().ensureNodeLists().addCachedCollection<AllDescendantsCollection>(*this, AllDescendants);
+        return ensureRareData().ensureNodeLists().addCachedCollection<AllDescendantsCollection>(*this, CollectionType::AllDescendants);
 
     if (document().isHTMLDocument())
-        return ensureRareData().ensureNodeLists().addCachedCollection<HTMLTagCollection>(*this, ByHTMLTag, qualifiedName);
-    return ensureRareData().ensureNodeLists().addCachedCollection<TagCollection>(*this, ByTag, qualifiedName);
+        return ensureRareData().ensureNodeLists().addCachedCollection<HTMLTagCollection>(*this, CollectionType::ByHTMLTag, qualifiedName);
+    return ensureRareData().ensureNodeLists().addCachedCollection<TagCollection>(*this, CollectionType::ByTag, qualifiedName);
 }
 
 Ref<HTMLCollection> ContainerNode::getElementsByTagNameNS(const AtomString& namespaceURI, const AtomString& localName)
@@ -1001,7 +1001,7 @@ Ref<NodeList> ContainerNode::getElementsByName(const AtomString& elementName)
 
 Ref<HTMLCollection> ContainerNode::getElementsByClassName(const AtomString& classNames)
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<ClassCollection>(*this, ByClass, classNames);
+    return ensureRareData().ensureNodeLists().addCachedCollection<ClassCollection>(*this, CollectionType::ByClass, classNames);
 }
 
 Ref<RadioNodeList> ContainerNode::radioNodeList(const AtomString& name)
@@ -1012,7 +1012,7 @@ Ref<RadioNodeList> ContainerNode::radioNodeList(const AtomString& name)
 
 Ref<HTMLCollection> ContainerNode::children()
 {
-    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<NodeChildren>::traversalType>>(*this, NodeChildren);
+    return ensureRareData().ensureNodeLists().addCachedCollection<GenericCachedHTMLCollection<CollectionTypeTraits<CollectionType::NodeChildren>::traversalType>>(*this, CollectionType::NodeChildren);
 }
 
 Element* ContainerNode::firstElementChild() const

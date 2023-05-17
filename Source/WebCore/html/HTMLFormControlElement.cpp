@@ -141,7 +141,6 @@ void HTMLFormControlElement::removedFromAncestor(RemovalType removalType, Contai
 {
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     ValidatedFormListedElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
-    checkAndPossiblyClosePopoverStack();
 }
 
 void HTMLFormControlElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
@@ -153,9 +152,7 @@ void HTMLFormControlElement::attributeChanged(const QualifiedName& name, const A
             m_isRequired = newRequired;
             requiredStateChanged();
         }
-    } else if (name == popovertargetAttr)
-        checkAndPossiblyClosePopoverStack();
-    else {
+    } else {
         HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
         ValidatedFormListedElement::parseAttribute(name, newValue);
     }
@@ -173,7 +170,6 @@ void HTMLFormControlElement::disabledStateChanged()
     ValidatedFormListedElement::disabledStateChanged();
     if (renderer() && renderer()->style().hasEffectiveAppearance())
         renderer()->theme().stateChanged(*renderer(), ControlStates::States::Enabled);
-    checkAndPossiblyClosePopoverStack();
 }
 
 void HTMLFormControlElement::readOnlyStateChanged()
@@ -242,6 +238,8 @@ void HTMLFormControlElement::didRecalcStyle(Style::Change)
 
 bool HTMLFormControlElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
+    if (!!tabIndexSetExplicitly())
+        return Element::isKeyboardFocusable(event);
     return isFocusable()
         && document().frame()
         && document().frame()->eventHandler().tabsToAllFormControls(event);
@@ -252,7 +250,7 @@ bool HTMLFormControlElement::isMouseFocusable() const
 #if (PLATFORM(GTK) || PLATFORM(WPE))
     return HTMLElement::isMouseFocusable();
 #else
-    if (needsMouseFocusableQuirk())
+    if (!!tabIndexSetExplicitly() || needsMouseFocusableQuirk())
         return HTMLElement::isMouseFocusable();
     return false;
 #endif
@@ -348,6 +346,8 @@ static const AtomString& hideAtom()
 HTMLElement* HTMLFormControlElement::popoverTargetElement() const
 {
     auto canInvokePopovers = [](const HTMLFormControlElement& element) -> bool {
+        if (!element.document().settings().popoverAttributeEnabled() || element.document().quirks().shouldDisablePopoverAttributeQuirk())
+            return false;
         if (auto* inputElement = dynamicDowncast<HTMLInputElement>(element))
             return inputElement->isTextButton() || inputElement->isImageButton();
         return is<HTMLButtonElement>(element);
@@ -399,22 +399,14 @@ void HTMLFormControlElement::handlePopoverTargetAction() const
     bool canShow = action == showAtom() || action == toggleAtom();
     if (canHide && target->popoverData()->visibilityState() == PopoverVisibilityState::Showing)
         target->hidePopover();
-    else if (canShow && target->popoverData()->visibilityState() == PopoverVisibilityState::Hidden) {
-        target->popoverData()->setInvoker(this);
-        target->showPopover();
-    }
+    else if (canShow && target->popoverData()->visibilityState() == PopoverVisibilityState::Hidden)
+        target->showPopover(this);
 }
 
 // FIXME: We should remove the quirk once <rdar://problem/47334655> is fixed.
 bool HTMLFormControlElement::needsMouseFocusableQuirk() const
 {
     return document().quirks().needsFormControlToBeMouseFocusable();
-}
-
-void HTMLFormControlElement::didChangeForm()
-{
-    ValidatedFormListedElement::didChangeForm();
-    checkAndPossiblyClosePopoverStack();
 }
 
 } // namespace Webcore

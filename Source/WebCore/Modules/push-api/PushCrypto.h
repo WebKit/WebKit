@@ -46,13 +46,13 @@ struct P256DHKeyPair {
     static P256DHKeyPair generate(void);
 };
 
-bool validateP256DHPublicKey(Span<const uint8_t> publicKey);
+bool validateP256DHPublicKey(std::span<const uint8_t> publicKey);
 
-WEBCORE_EXPORT std::optional<Vector<uint8_t>> computeP256DHSharedSecret(Span<const uint8_t> publicKey, const P256DHKeyPair&);
+WEBCORE_EXPORT std::optional<Vector<uint8_t>> computeP256DHSharedSecret(std::span<const uint8_t> publicKey, const P256DHKeyPair&);
 
-WEBCORE_EXPORT Vector<uint8_t> hmacSHA256(Span<const uint8_t> key, Span<const uint8_t> message);
+WEBCORE_EXPORT Vector<uint8_t> hmacSHA256(std::span<const uint8_t> key, std::span<const uint8_t> message);
 
-WEBCORE_EXPORT std::optional<Vector<uint8_t>> decryptAES128GCM(Span<const uint8_t> key, Span<const uint8_t> iv, Span<const uint8_t> cipherTextWithTag);
+WEBCORE_EXPORT std::optional<Vector<uint8_t>> decryptAES128GCM(std::span<const uint8_t> key, std::span<const uint8_t> iv, std::span<const uint8_t> cipherTextWithTag);
 
 } // namespace WebCore::PushCrypto
 

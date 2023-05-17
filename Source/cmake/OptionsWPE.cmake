@@ -1,7 +1,7 @@
 include(GNUInstallDirs)
 include(VersioningUtils)
 
-SET_PROJECT_VERSION(2 41 0)
+SET_PROJECT_VERSION(2 41 2)
 
 # This is required because we use the DEPFILE argument to add_custom_command().
 # Remove after upgrading cmake_minimum_required() to 3.20.
@@ -14,11 +14,9 @@ set(USER_AGENT_BRANDING "" CACHE STRING "Branding to add to user agent string")
 find_package(Cairo 1.16.0 REQUIRED)
 find_package(Fontconfig 2.13.0 REQUIRED)
 find_package(Freetype 2.9.0 REQUIRED)
-find_package(GBM REQUIRED)
 find_package(HarfBuzz 1.4.2 REQUIRED COMPONENTS ICU)
 find_package(ICU 61.2 REQUIRED COMPONENTS data i18n uc)
 find_package(JPEG REQUIRED)
-find_package(LibDRM REQUIRED)
 find_package(LibEpoxy 1.4.0 REQUIRED)
 find_package(LibGcrypt 1.6.0 REQUIRED)
 find_package(LibXml2 2.8.0 REQUIRED)
@@ -97,6 +95,7 @@ WEBKIT_OPTION_DEFINE(ENABLE_INTROSPECTION "Whether to enable GObject introspecti
 WEBKIT_OPTION_DEFINE(ENABLE_JOURNALD_LOG "Whether to enable journald logging" PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_WPE_QT_API "Whether to enable support for the Qt5/QML plugin" PUBLIC ${ENABLE_DEVELOPER_MODE})
 WEBKIT_OPTION_DEFINE(ENABLE_WPE_1_1_API "Whether to build WPE 1.1 instead of WPE 2.0" PUBLIC OFF)
+WEBKIT_OPTION_DEFINE(USE_GBM "Whether to enable usage of GBM and libdrm." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_JPEGXL "Whether to enable support for JPEG-XL images." PUBLIC ${ENABLE_EXPERIMENTAL_FEATURES})
 WEBKIT_OPTION_DEFINE(USE_LCMS "Whether to enable support for image color management using libcms2." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_OPENJPEG "Whether to enable support for JPEG2000 images." PUBLIC ON)
@@ -194,11 +193,11 @@ endif ()
 find_package(GLIB ${GLIB_MINIMUM_VERSION} REQUIRED COMPONENTS gio gio-unix gobject gthread gmodule)
 
 if (WPE_API_VERSION VERSION_EQUAL "1.0")
-    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 24 0 21)
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 24 1 21)
 elseif (WPE_API_VERSION VERSION_EQUAL "1.1")
-    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 5 0 5)
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 5 1 5)
 else ()
-    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 2 0 1)
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 2 1 1)
 endif ()
 
 set(CMAKE_C_VISIBILITY_PRESET hidden)
@@ -357,7 +356,6 @@ SET_AND_EXPOSE_TO_BUILD(USE_CAIRO TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_EGL TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_GCRYPT TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_LIBEPOXY TRUE)
-SET_AND_EXPOSE_TO_BUILD(USE_LIBGBM TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_LIBWPE TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_OPENGL_ES TRUE)
 SET_AND_EXPOSE_TO_BUILD(HAVE_OPENGL_ES_3 TRUE)
@@ -376,12 +374,29 @@ endif ()
 
 SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER_GL TRUE)
-SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER_DMABUF TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_COORDINATED_GRAPHICS TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_NICOSIA TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_ANGLE ${ENABLE_WEBGL})
 SET_AND_EXPOSE_TO_BUILD(USE_THEME_ADWAITA TRUE)
 SET_AND_EXPOSE_TO_BUILD(HAVE_OS_DARK_MODE_SUPPORT 1)
+
+if (USE_GBM)
+    # ANGLE-backed WebGL depends on DMABuf support, which at the moment is leveraged
+    # through libgbm and libdrm dependencies. When libgbm is enabled, make
+    # libdrm a requirement and define the USE_LIBGBM and USE_TEXTURE_MAPPER_DMABUF
+    # macros. When not available, ANGLE will be used in slower software-rasterization mode.
+    find_package(GBM)
+    if (NOT GBM_FOUND)
+        message(FATAL_ERROR "GBM is required for USE_GBM")
+    endif ()
+
+    find_package(LibDRM)
+    if (NOT LIBDRM_FOUND)
+        message(FATAL_ERROR "libdrm is required for USE_GBM")
+    endif ()
+
+    SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER_DMABUF TRUE)
+endif ()
 
 # GUri is available in GLib since version 2.66, but we only want to use it if version is >= 2.67.1.
 if (PC_GLIB_VERSION VERSION_GREATER "2.67.1" OR PC_GLIB_VERSION STREQUAL "2.67.1")

@@ -517,6 +517,9 @@ public:
     void convertToIdentity();
     void convertToIdentityOn(Node*);
 
+    void convertToGetByIdMaybeMegamorphic(Graph&, CacheableIdentifier);
+    void convertToPutByIdMaybeMegamorphic(Graph&, CacheableIdentifier);
+
     bool mustGenerate() const
     {
         return m_flags & NodeMustGenerate;
@@ -554,6 +557,37 @@ public:
             // otherwise wouldn't take kindly to a node that doesn't compute a value.
             return true;
             
+        default:
+            return false;
+        }
+    }
+
+    bool isCheckNode()
+    {
+        switch (op()) {
+        case Check:
+        case CheckVarargs:
+        case CheckTierUpInLoop:
+        case CheckTierUpAndOSREnter:
+        case CheckTierUpAtReturn:
+        case CheckPrivateBrand:
+        case CheckStructure:
+        case CheckStructureOrEmpty:
+        case CheckArray:
+        case CheckArrayOrEmpty:
+        case CheckDetached:
+        case CheckIsConstant:
+        case CheckNotEmpty:
+        case CheckBadValue:
+        case CheckInBounds:
+        case CheckInBoundsInt52:
+        case CheckIdent:
+        case CheckTypeInfoFlags:
+        case CheckJSCast:
+        case CheckNotJSCast:
+        case CheckStructureImmediate:
+        case CheckTraps:
+            return true;
         default:
             return false;
         }
@@ -615,7 +649,7 @@ public:
     
     void convertToGetByOffset(StorageAccessData& data, Edge storage, Edge base)
     {
-        ASSERT(m_op == GetById || m_op == GetByIdFlush || m_op == GetByIdDirect || m_op == GetByIdDirectFlush || m_op == GetPrivateNameById || m_op == MultiGetByOffset);
+        ASSERT(m_op == GetById || m_op == GetByIdFlush || m_op == GetByIdDirect || m_op == GetByIdDirectFlush || m_op == GetPrivateNameById || m_op == MultiGetByOffset || m_op == GetByIdMegamorphic);
         m_opInfo = &data;
         children.setChild1(storage);
         children.setChild2(base);
@@ -625,7 +659,7 @@ public:
     
     void convertToMultiGetByOffset(MultiGetByOffsetData* data)
     {
-        RELEASE_ASSERT(m_op == GetById || m_op == GetByIdFlush || m_op == GetByIdDirect || m_op == GetByIdDirectFlush || m_op == GetPrivateNameById);
+        RELEASE_ASSERT(m_op == GetById || m_op == GetByIdFlush || m_op == GetByIdDirect || m_op == GetByIdDirectFlush || m_op == GetPrivateNameById || m_op == GetByIdMegamorphic);
         m_opInfo = data;
         child1().setUseKind(CellUse);
         m_op = MultiGetByOffset;
@@ -1103,7 +1137,9 @@ public:
         case TryGetById:
         case GetById:
         case GetByIdFlush:
+        case GetByIdMegamorphic:
         case GetByIdWithThis:
+        case GetByIdWithThisMegamorphic:
         case GetByIdDirect:
         case GetByIdDirectFlush:
         case GetPrivateNameById:
@@ -1112,6 +1148,7 @@ public:
         case PutById:
         case PutByIdFlush:
         case PutByIdDirect:
+        case PutByIdMegamorphic:
         case PutByIdWithThis:
         case PutPrivateNameById:
             return true;
@@ -1484,6 +1521,17 @@ public:
     {
         return speculationFromJSType(queriedType());
     }
+
+    bool hasStructureFlags()
+    {
+        return op() == HasStructureWithFlags;
+    }
+
+    uint32_t structureFlags()
+    {
+        ASSERT(hasStructureFlags());
+        return m_opInfo.as<uint32_t>();
+    }
     
     bool hasResult()
     {
@@ -1798,10 +1846,6 @@ public:
                 return m_index == other.m_index;
             }
             
-            bool operator!=(const iterator& other) const
-            {
-                return !(*this == other);
-            }
         private:
             Node* m_terminal;
             unsigned m_index;
@@ -1845,14 +1889,18 @@ public:
         case ArithTrunc:
         case GetById:
         case GetByIdFlush:
+        case GetByIdMegamorphic:
         case GetByIdWithThis:
+        case GetByIdWithThisMegamorphic:
         case GetByIdDirect:
         case GetByIdDirectFlush:
         case GetPrototypeOf:
         case TryGetById:
         case EnumeratorGetByVal:
         case GetByVal:
+        case GetByValMegamorphic:
         case GetByValWithThis:
+        case GetByValWithThisMegamorphic:
         case GetPrivateName:
         case GetPrivateNameById:
         case Call:
@@ -2048,10 +2096,13 @@ public:
     {
         switch (op()) {
         case EnumeratorGetByVal:
+        case EnumeratorPutByVal:
         case GetByVal:
+        case GetByValMegamorphic:
         case PutByValDirect:
         case PutByVal:
         case PutByValAlias:
+        case PutByValMegamorphic:
         case AtomicsAdd:
         case AtomicsAnd:
         case AtomicsCompareExchange:
@@ -2081,10 +2132,13 @@ public:
         switch (op()) {
         case EnumeratorGetByVal:
         case GetByVal:
+        case GetByValMegamorphic:
             return 2;
+        case EnumeratorPutByVal:
         case PutByValDirect:
         case PutByVal:
         case PutByValAlias:
+        case PutByValMegamorphic:
             return 3;
         case AtomicsAdd:
         case AtomicsAnd:
@@ -2383,7 +2437,10 @@ public:
         case PutByValDirect:
         case PutByVal:
         case PutByValAlias:
+        case PutByValMegamorphic:
+        case EnumeratorPutByVal:
         case GetByVal:
+        case GetByValMegamorphic:
         case EnumeratorNextUpdateIndexAndMode:
         case EnumeratorGetByVal:
         case EnumeratorInByVal:
@@ -2449,11 +2506,14 @@ public:
         case PutById:
         case PutByIdDirect:
         case PutByIdFlush:
+        case PutByIdMegamorphic:
         case PutByIdWithThis:
         case PutByVal:
         case PutByValAlias:
+        case PutByValMegamorphic:
         case PutByValDirect:
         case PutByValWithThis:
+        case EnumeratorPutByVal:
         case PutDynamicVar:
         case ToThis:
             return true;
@@ -2475,10 +2535,13 @@ public:
         case PutById:
         case PutByIdDirect:
         case PutByIdFlush:
+        case PutByIdMegamorphic:
         case PutByIdWithThis:
         case PutByVal:
         case PutByValAlias:
+        case PutByValMegamorphic:
         case PutByValDirect:
+        case EnumeratorPutByVal:
         case PutDynamicVar:
             return ECMAMode::fromByte(m_opInfo2.as<uint8_t>());
         default:
@@ -3398,6 +3461,23 @@ public:
     {
         ASSERT(hasEnumeratorMetadata());
         return OptionSet<JSPropertyNameEnumerator::Flag>::fromRaw(m_opInfo2.as<unsigned>());
+    }
+
+    CachedPropertyNamesKind cachedPropertyNamesKind() const
+    {
+        switch (op()) {
+        case ObjectKeys:
+            return CachedPropertyNamesKind::EnumerableStrings;
+        case ObjectGetOwnPropertyNames:
+            return CachedPropertyNamesKind::Strings;
+        case ObjectGetOwnPropertySymbols:
+            return CachedPropertyNamesKind::Symbols;
+        case ReflectOwnKeys:
+            return CachedPropertyNamesKind::StringsAndSymbols;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
     }
 
     void resetOpInfo()

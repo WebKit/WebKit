@@ -196,7 +196,7 @@ static bool hasDisallowedCharacters(const char* str, size_t length)
         // '{' is also disallowed, but we don't need to check for it because
         // parseClause() searches for '{' as the end of the start delimiter.
         // As a result, the parsed delimiter string will never include '{'.
-        if (c == '}' || isASCIISpace(c))
+        if (c == '}' || isUnicodeCompatibleASCIIWhitespace(c))
             return true;
     }
     return false;

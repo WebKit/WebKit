@@ -62,8 +62,20 @@ void GPUProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << dynamicIOKitExtensionHandles;
 #endif
     encoder << mobileGestaltExtensionHandle;
+#if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
+    encoder << gpuToolsExtensionHandles;
+#endif
 
     encoder << applicationVisibleName;
+#if PLATFORM(COCOA)
+    encoder << strictSecureDecodingForAllObjCEnabled;
+#endif
+
+#if USE(GBM)
+    encoder << renderDeviceFile;
+#endif
+
+    encoder << overrideLanguages;
 }
 
 bool GPUProcessCreationParameters::decode(IPC::Decoder& decoder, GPUProcessCreationParameters& result)
@@ -119,8 +131,35 @@ bool GPUProcessCreationParameters::decode(IPC::Decoder& decoder, GPUProcessCreat
         return false;
     result.mobileGestaltExtensionHandle = WTFMove(*mobileGestaltExtensionHandle);
 
+#if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
+    std::optional<Vector<SandboxExtension::Handle>> gpuToolsExtensionHandles;
+    decoder >> gpuToolsExtensionHandles;
+    if (!gpuToolsExtensionHandles)
+        return false;
+    result.gpuToolsExtensionHandles = WTFMove(*gpuToolsExtensionHandles);
+#endif
+
     if (!decoder.decode(result.applicationVisibleName))
         return false;
+
+#if PLATFORM(COCOA)
+    if (!decoder.decode(result.strictSecureDecodingForAllObjCEnabled))
+        return false;
+#endif
+
+#if USE(GBM)
+    std::optional<String> renderDeviceFile;
+    decoder >> renderDeviceFile;
+    if (!renderDeviceFile)
+        return false;
+    result.renderDeviceFile = WTFMove(*renderDeviceFile);
+#endif
+
+    std::optional<Vector<String>> overrideLanguages;
+    decoder >> overrideLanguages;
+    if (!overrideLanguages)
+        return false;
+    result.overrideLanguages = WTFMove(*overrideLanguages);
 
     return true;
 }

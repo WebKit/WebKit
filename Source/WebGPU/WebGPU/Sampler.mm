@@ -139,9 +139,9 @@ Ref<Sampler> Device::createSampler(const WGPUSamplerDescriptor& descriptor)
 
     MTLSamplerDescriptor *samplerDescriptor = [MTLSamplerDescriptor new];
 
-    samplerDescriptor.rAddressMode = addressMode(descriptor.addressModeU);
-    samplerDescriptor.sAddressMode = addressMode(descriptor.addressModeV);
-    samplerDescriptor.tAddressMode = addressMode(descriptor.addressModeW);
+    samplerDescriptor.sAddressMode = addressMode(descriptor.addressModeU);
+    samplerDescriptor.tAddressMode = addressMode(descriptor.addressModeV);
+    samplerDescriptor.rAddressMode = addressMode(descriptor.addressModeW);
     samplerDescriptor.magFilter = minMagFilter(descriptor.magFilter);
     samplerDescriptor.minFilter = minMagFilter(descriptor.minFilter);
     samplerDescriptor.mipFilter = mipFilter(descriptor.mipmapFilter);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,6 @@
 #import "CompletionHandlerCallChecker.h"
 #import "DownloadProxy.h"
 #import "Logging.h"
-#import "SystemPreviewController.h"
 #import "WKDownloadInternal.h"
 #import "WKNSURLAuthenticationChallenge.h"
 #import "WKNSURLExtras.h"
@@ -69,57 +68,20 @@ LegacyDownloadClient::LegacyDownloadClient(id <_WKDownloadDelegate> delegate)
     m_delegateMethods.downloadProcessDidCrash = [delegate respondsToSelector:@selector(_downloadProcessDidCrash:)];
 }
 
-#if USE(SYSTEM_PREVIEW)
-static SystemPreviewController* systemPreviewController(DownloadProxy& downloadProxy)
-{
-    auto* page = downloadProxy.originatingPage();
-    if (!page)
-        return nullptr;
-    return page->systemPreviewController();
-}
-#endif
-
 void LegacyDownloadClient::legacyDidStart(DownloadProxy& downloadProxy)
 {
-#if USE(SYSTEM_PREVIEW)
-    if (downloadProxy.isSystemPreviewDownload()) {
-        if (auto* webPage = downloadProxy.originatingPage()) {
-            // FIXME: Update the MIME-type once it is known in the ResourceResponse.
-            webPage->systemPreviewController()->start(URL { webPage->currentURL() }, "application/octet-stream"_s, downloadProxy.systemPreviewDownloadInfo());
-        }
-        takeActivityToken(downloadProxy);
-        return;
-    }
-#endif
-
     if (m_delegateMethods.downloadDidStart)
         [m_delegate _downloadDidStart:[_WKDownload downloadWithDownload:wrapper(downloadProxy)]];
 }
 
 void LegacyDownloadClient::didReceiveResponse(DownloadProxy& downloadProxy, const WebCore::ResourceResponse& response)
 {
-#if USE(SYSTEM_PREVIEW)
-    if (downloadProxy.isSystemPreviewDownload() && response.isSuccessful()) {
-        if (auto* controller = systemPreviewController(downloadProxy))
-            controller->updateProgress(0);
-        return;
-    }
-#endif
-
     if (m_delegateMethods.downloadDidReceiveResponse)
         [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] didReceiveResponse:response.nsURLResponse()];
 }
 
 void LegacyDownloadClient::didReceiveData(DownloadProxy& downloadProxy, uint64_t bytesWritten, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite)
 {
-#if USE(SYSTEM_PREVIEW)
-    if (downloadProxy.isSystemPreviewDownload()) {
-        if (auto* controller = systemPreviewController(downloadProxy))
-            controller->updateProgress(static_cast<float>(totalBytesWritten) / totalBytesExpectedToWrite);
-        return;
-    }
-#endif
-
     if (m_delegateMethods.downloadDidWriteDataTotalBytesWrittenTotalBytesExpectedToWrite)
         [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] didWriteData:bytesWritten totalBytesWritten:totalBytesWritten totalBytesExpectedToWrite:totalBytesExpectedToWrite];
     else if (m_delegateMethods.downloadDidReceiveData)
@@ -162,35 +124,12 @@ void LegacyDownloadClient::didReceiveAuthenticationChallenge(DownloadProxy& down
 
 void LegacyDownloadClient::didCreateDestination(DownloadProxy& downloadProxy, const String& destination)
 {
-#if USE(SYSTEM_PREVIEW)
-    if (downloadProxy.isSystemPreviewDownload()) {
-        downloadProxy.setDestinationFilename(destination);
-        if (auto* controller = systemPreviewController(downloadProxy)) {
-            auto destinationURL = URL::fileURLWithFileSystemPath(downloadProxy.destinationFilename());
-            auto& downloadURL = downloadProxy.request().url();
-            if (!destinationURL.hasFragmentIdentifier() && downloadURL.hasFragmentIdentifier())
-                destinationURL.setFragmentIdentifier(downloadURL.fragmentIdentifier());
-            controller->setDestinationURL(destinationURL);
-        }
-        return;
-    }
-#endif
-
     if (m_delegateMethods.downloadDidCreateDestination)
         [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] didCreateDestination:destination];
 }
 
 void LegacyDownloadClient::processDidCrash(DownloadProxy& downloadProxy)
 {
-#if USE(SYSTEM_PREVIEW)
-    if (downloadProxy.isSystemPreviewDownload()) {
-        if (auto* controller = systemPreviewController(downloadProxy))
-            controller->cancel();
-        releaseActivityTokenIfNecessary(downloadProxy);
-        return;
-    }
-#endif
-
     if (m_delegateMethods.downloadProcessDidCrash)
         [m_delegate _downloadProcessDidCrash:[_WKDownload downloadWithDownload:wrapper(downloadProxy)]];
 }
@@ -199,23 +138,14 @@ void LegacyDownloadClient::decideDestinationWithSuggestedFilename(DownloadProxy&
 {
     didReceiveResponse(downloadProxy, response);
 
-#if USE(SYSTEM_PREVIEW)
-    if (downloadProxy.isSystemPreviewDownload()) {
-        NSString *temporaryDirectory = FileSystem::createTemporaryDirectory(@"SystemPreviews");
-        NSString *destination = [temporaryDirectory stringByAppendingPathComponent:filename];
-        completionHandler(AllowOverwrite::Yes, destination);
-        return;
-    }
-#endif
-
     if (!m_delegateMethods.downloadDecideDestinationWithSuggestedFilenameAllowOverwrite && !m_delegateMethods.downloadDecideDestinationWithSuggestedFilenameCompletionHandler)
         return completionHandler(AllowOverwrite::No, { });
 
     if (m_delegateMethods.downloadDecideDestinationWithSuggestedFilenameAllowOverwrite) {
         BOOL allowOverwrite = NO;
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         NSString *destination = [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] decideDestinationWithSuggestedFilename:filename allowOverwrite:&allowOverwrite];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         completionHandler(allowOverwrite ? AllowOverwrite::Yes : AllowOverwrite::No, destination);
     } else {
         [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] decideDestinationWithSuggestedFilename:filename completionHandler:makeBlockPtr([checker = CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(_download:decideDestinationWithSuggestedFilename:completionHandler:)), completionHandler = WTFMove(completionHandler)] (BOOL allowOverwrite, NSString *destination) mutable {
@@ -229,50 +159,18 @@ void LegacyDownloadClient::decideDestinationWithSuggestedFilename(DownloadProxy&
 
 void LegacyDownloadClient::didFinish(DownloadProxy& downloadProxy)
 {
-#if USE(SYSTEM_PREVIEW)
-    if (downloadProxy.isSystemPreviewDownload()) {
-        if (auto* controller = systemPreviewController(downloadProxy)) {
-            auto destinationURL = URL::fileURLWithFileSystemPath(downloadProxy.destinationFilename());
-            auto& downloadURL = downloadProxy.request().url();
-            if (!destinationURL.hasFragmentIdentifier() && downloadURL.hasFragmentIdentifier())
-                destinationURL.setFragmentIdentifier(downloadURL.fragmentIdentifier());
-            controller->finish(destinationURL);
-        }
-        releaseActivityTokenIfNecessary(downloadProxy);
-        return;
-    }
-#endif
-
     if (m_delegateMethods.downloadDidFinish)
         [m_delegate _downloadDidFinish:[_WKDownload downloadWithDownload:wrapper(downloadProxy)]];
 }
 
 void LegacyDownloadClient::didFail(DownloadProxy& downloadProxy, const WebCore::ResourceError& error, API::Data*)
 {
-#if USE(SYSTEM_PREVIEW)
-    if (downloadProxy.isSystemPreviewDownload()) {
-        if (auto* controller = systemPreviewController(downloadProxy))
-            controller->fail(error);
-        releaseActivityTokenIfNecessary(downloadProxy);
-        return;
-    }
-#endif
-
     if (m_delegateMethods.downloadDidFail)
         [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] didFailWithError:error.nsError()];
 }
 
 void LegacyDownloadClient::legacyDidCancel(DownloadProxy& downloadProxy)
 {
-#if USE(SYSTEM_PREVIEW)
-    if (downloadProxy.isSystemPreviewDownload()) {
-        if (auto* controller = systemPreviewController(downloadProxy))
-            controller->cancel();
-        releaseActivityTokenIfNecessary(downloadProxy);
-        return;
-    }
-#endif
-
     if (m_delegateMethods.downloadDidCancel)
         [m_delegate _downloadDidCancel:[_WKDownload downloadWithDownload:wrapper(downloadProxy)]];
 }
@@ -284,33 +182,6 @@ void LegacyDownloadClient::willSendRequest(DownloadProxy& downloadProxy, WebCore
 
     completionHandler(WTFMove(request));
 }
-
-#if USE(SYSTEM_PREVIEW)
-void LegacyDownloadClient::takeActivityToken(DownloadProxy& downloadProxy)
-{
-#if USE(RUNNINGBOARD)
-    if (auto* webPage = downloadProxy.originatingPage()) {
-        RELEASE_LOG(ProcessSuspension, "%p - UIProcess is taking a background assertion because it is downloading a system preview", this);
-        ASSERT(!m_activity);
-        m_activity = webPage->process().throttler().backgroundActivity("System preview download"_s).moveToUniquePtr();
-    }
-#else
-    UNUSED_PARAM(downloadProxy);
-#endif
-}
-
-void LegacyDownloadClient::releaseActivityTokenIfNecessary(DownloadProxy& downloadProxy)
-{
-#if PLATFORM(IOS_FAMILY)
-    if (m_activity) {
-        RELEASE_LOG(ProcessSuspension, "%p UIProcess is releasing a background assertion because a system preview download completed", this);
-        m_activity = nullptr;
-    }
-#else
-    UNUSED_PARAM(downloadProxy);
-#endif
-}
-#endif
 
 ALLOW_DEPRECATED_DECLARATIONS_END
 

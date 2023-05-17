@@ -29,6 +29,7 @@
 #if USE(LIBWEBRTC)
 
 #include "LibWebRTCNetwork.h"
+#include "Logging.h"
 #include "NetworkProcessConnection.h"
 #include "NetworkRTCProviderMessages.h"
 #include "WebProcess.h"
@@ -49,9 +50,17 @@ void LibWebRTCResolver::Start(const rtc::SocketAddress& address)
     m_addressToResolve = address;
     m_port = address.port();
 
-    sendOnMainThread([identifier = m_identifier, address](IPC::Connection& connection) {
-        auto addressString = address.HostAsURIString();
-        connection.send(Messages::NetworkRTCProvider::CreateResolver(identifier, String(addressString.data(), addressString.length())), 0);
+    auto addressString = address.HostAsURIString();
+    String name { addressString.data(), static_cast<unsigned>(addressString.length()) };
+
+    if (name.endsWithIgnoringASCIICase(".local"_s) && !WTF::isVersion4UUID(StringView { name }.left(name.length() - 6))) {
+        RELEASE_LOG_ERROR(WebRTC, "mDNS candidate is not a Version 4 UUID");
+        setError(-1);
+        return;
+    }
+
+    sendOnMainThread([identifier = m_identifier, name = WTFMove(name).isolatedCopy()](IPC::Connection& connection) {
+        connection.send(Messages::NetworkRTCProvider::CreateResolver(identifier, name), 0);
     });
 }
 

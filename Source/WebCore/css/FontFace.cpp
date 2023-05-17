@@ -132,6 +132,11 @@ Ref<FontFace> FontFace::create(ScriptExecutionContext& context, const String& fa
         result->setErrorState();
         return result;
     }
+    auto setSizeAdjustResult = result->setSizeAdjust(context, descriptors.sizeAdjust.isEmpty() ? "100%"_s : descriptors.sizeAdjust);
+    if (setSizeAdjustResult.hasException()) {
+        result->setErrorState();
+        return result;
+    }
 
     if (!dataRequiresAsynchronousLoading) {
         result->backing().load();
@@ -233,6 +238,15 @@ ExceptionOr<void> FontFace::setDisplay(ScriptExecutionContext& context, const St
     return Exception { SyntaxError };
 }
 
+ExceptionOr<void> FontFace::setSizeAdjust(ScriptExecutionContext& context, const String& sizeAdjust)
+{
+    if (auto value = CSSPropertyParserWorkerSafe::parseFontFaceSizeAdjust(sizeAdjust, context)) {
+        m_backing->setSizeAdjust(*value);
+        return { };
+    }
+    return Exception { SyntaxError };
+}
+
 String FontFace::family() const
 {
     if (auto value = m_backing->family(); !value.isNull())
@@ -273,6 +287,13 @@ String FontFace::featureSettings() const
     if (auto value = m_backing->featureSettings(); !value.isNull())
         return value;
     return "normal"_s;
+}
+
+String FontFace::sizeAdjust() const
+{
+    if (auto value = m_backing->sizeAdjust(); !value.isNull())
+        return value;
+    return "100%"_s;
 }
 
 String FontFace::display() const

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FrameLoaderTypes.h"
+#include "NetworkConnectionIntegrity.h"
 #include "ReferrerPolicy.h"
 #include "ResourceRequest.h"
 #include "ShouldTreatAsContinuingLoad.h"
@@ -40,7 +41,7 @@ class SecurityOrigin;
 
 class FrameLoadRequest {
 public:
-    WEBCORE_EXPORT FrameLoadRequest(Document&, SecurityOrigin&, ResourceRequest&&, const AtomString& frameName, InitiatedByMainFrame, const AtomString& downloadAttribute = { }, const SystemPreviewInfo& = { });
+    WEBCORE_EXPORT FrameLoadRequest(Document&, SecurityOrigin&, ResourceRequest&&, const AtomString& frameName, InitiatedByMainFrame, const AtomString& downloadAttribute = { });
     WEBCORE_EXPORT FrameLoadRequest(LocalFrame&, const ResourceRequest&, const SubstituteData& = SubstituteData());
 
     WEBCORE_EXPORT ~FrameLoadRequest();
@@ -102,11 +103,11 @@ public:
 
     InitiatedByMainFrame initiatedByMainFrame() const { return m_initiatedByMainFrame; }
 
-    bool isSystemPreview() const { return m_systemPreviewInfo.isPreview; }
-    const SystemPreviewInfo& systemPreviewInfo() const { return m_systemPreviewInfo; }
-
     void setIsRequestFromClientOrUserInput() { m_isRequestFromClientOrUserInput = true; }
     bool isRequestFromClientOrUserInput() const { return m_isRequestFromClientOrUserInput; }
+
+    void setNetworkConnectionIntegrityPolicy(OptionSet<NetworkConnectionIntegrity> policy) { m_networkConnectionIntegrityPolicy = policy; }
+    OptionSet<NetworkConnectionIntegrity> networkConnectionIntegrityPolicy() const { return m_networkConnectionIntegrityPolicy; }
 
 private:
     Ref<Document> m_requester;
@@ -127,9 +128,9 @@ private:
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     AtomString m_downloadAttribute;
     InitiatedByMainFrame m_initiatedByMainFrame { InitiatedByMainFrame::Unknown };
-    SystemPreviewInfo m_systemPreviewInfo;
     bool m_isRequestFromClientOrUserInput { false };
     bool m_isInitialFrameSrcLoad { false };
+    OptionSet<NetworkConnectionIntegrity> m_networkConnectionIntegrityPolicy;
 };
 
 } // namespace WebCore

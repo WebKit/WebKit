@@ -618,12 +618,6 @@ bool operator==(const HashMap<T, U, V, W, X, Y>& a, const HashMap<T, U, V, W, X,
     return true;
 }
 
-template<typename T, typename U, typename V, typename W, typename X, typename Y>
-inline bool operator!=(const HashMap<T, U, V, W, X, Y>& a, const HashMap<T, U, V, W, X, Y>& b)
-{
-    return !(a == b);
-}
-
 } // namespace WTF
 
 using WTF::HashMap;

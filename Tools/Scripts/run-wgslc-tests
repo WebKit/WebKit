@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+BASE=$(python3 -m site --user-base)
+LIT=$BASE/bin/lit
+
+pushd "$(dirname "$0")/../.." &> /dev/null
+REPO_ROOT=$PWD
+popd &> /dev/null
+
+TESTS_PATH=$REPO_ROOT/Source/WebGPU/WGSL/tests
+
+if ! which "$LIT" &> /dev/null; then
+  echo "Installing requirements from \"$TESTS_PATH/requirements.txt\""
+  echo
+  pip3 install -r "$TESTS_PATH/requirements.txt"
+  echo
+
+  if ! which "$LIT" &> /dev/null; then
+    echo "ERROR: Failed to automatically install the requirements. Please run the following command:" >&2
+    echo "$ pip3 install -r \"$TESTS_PATH/requirements.txt\"" >&2
+    exit 1
+  fi
+fi
+
+LIT_TEST_DIR=$(mktemp -d)
+export LIT_TEST_DIR
+trap 'rm -rf -- "$LIT_TEST_DIR"' EXIT
+
+"$LIT" -v "$TESTS_PATH"

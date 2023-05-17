@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "Path.h"
 #include "RenderSVGInline.h"
 
 namespace WebCore {

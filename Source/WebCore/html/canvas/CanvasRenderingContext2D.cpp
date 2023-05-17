@@ -56,6 +56,7 @@
 #include "StyleTreeResolver.h"
 #include "TextMetrics.h"
 #include "TextRun.h"
+#include "UnicodeBidi.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>

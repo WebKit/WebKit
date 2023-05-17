@@ -28,6 +28,8 @@
 #if ENABLE(VIDEO)
 #include "RenderMedia.h"
 
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderView.h"
 #include <wtf/IsoMallocInlines.h>

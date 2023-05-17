@@ -44,7 +44,7 @@
 
 #if PLATFORM(COCOA)
 #include <WebCore/GraphicsContextGLCocoa.h>
-#elif USE(LIBGBM)
+#elif USE(GBM)
 #include <WebCore/GraphicsContextGLGBM.h>
 #else
 #include <WebCore/GraphicsContextGLTextureMapperANGLE.h>
@@ -104,7 +104,6 @@ protected:
     bool send(T&& message) const { return m_streamConnection->send(WTFMove(message), m_graphicsContextGLIdentifier); }
 
     // GraphicsContextGL::Client overrides.
-    void didComposite() final;
     void forceContextLost() final;
     void dispatchContextChangedNotification() final;
 
@@ -113,10 +112,10 @@ protected:
     void markContextChanged();
     void reshape(int32_t width, int32_t height);
 #if PLATFORM(COCOA)
-    virtual void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&) = 0;
+    virtual void prepareForDisplay(IPC::Semaphore&&, CompletionHandler<void(WTF::MachSendRight&&)>&&) = 0;
 #elif USE(GRAPHICS_LAYER_WC)
     virtual void prepareForDisplay(CompletionHandler<void(std::optional<WCContentBufferIdentifier>)>&&) = 0;
-#elif USE(LIBGBM)
+#elif USE(GBM)
     virtual void prepareForDisplay(CompletionHandler<void(WebCore::DMABufObject&&)>&&) = 0;
 #else
     void prepareForDisplay(CompletionHandler<void()>&&);
@@ -130,7 +129,7 @@ protected:
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
     void copyTextureFromVideoFrame(SharedVideoFrame&&, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&&);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(const SharedMemory::Handle&);
+    void setSharedVideoFrameMemory(SharedMemory::Handle&&);
 #endif
     void simulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting);
     void readnPixels0(int32_t x, int32_t y, int32_t width, int32_t height, uint32_t format, uint32_t type, IPC::ArrayReference<uint8_t>&& data, CompletionHandler<void(IPC::ArrayReference<uint8_t>)>&&);
@@ -146,9 +145,9 @@ protected:
 #include "RemoteGraphicsContextGLFunctionsGenerated.h" // NOLINT
 
 private:
-    void paintRenderingResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier, CompletionHandler<void()>&&);
-    void paintCompositedResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier, CompletionHandler<void()>&&);
-    void paintNativeImageToImageBuffer(WebCore::NativeImage&, QualifiedRenderingResourceIdentifier, CompletionHandler<void()>&&);
+    void paintRenderingResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier);
+    void paintCompositedResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier);
+    void paintNativeImageToImageBuffer(WebCore::NativeImage&, QualifiedRenderingResourceIdentifier);
 
 protected:
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
@@ -156,7 +155,7 @@ protected:
     RefPtr<IPC::StreamServerConnection> m_streamConnection;
 #if PLATFORM(COCOA)
     using GCGLContext = WebCore::GraphicsContextGLCocoa;
-#elif USE(LIBGBM)
+#elif USE(GBM)
     using GCGLContext = WebCore::GraphicsContextGLGBM;
 #else
     using GCGLContext = WebCore::GraphicsContextGLTextureMapperANGLE;

@@ -516,7 +516,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
         credentialId = digest->computeHash();
         m_provisionalCredentialId = toNSData(credentialId);
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
         auto query = adoptNS([[NSMutableDictionary alloc] init]);
         [query setDictionary:@{
             (id)kSecClass: (id)kSecClassKey,

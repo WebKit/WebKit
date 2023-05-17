@@ -324,8 +324,6 @@ protected:
 
     bool usesCSSCompatibilityParseMode() const { return m_usesCSSCompatibilityParseMode; }
 
-    void postProcessPixelBuffer() const final;
-
 private:
     void applyLineDash() const;
     void setShadow(const FloatSize& offset, float blur, const Color&);
@@ -336,8 +334,9 @@ private:
         ApplyTransform = 1 << 0,
         ApplyShadow = 1 << 1,
         ApplyClip = 1 << 2,
+        ApplyPostProcessing = 1 << 3,
     };
-    void didDraw(std::optional<FloatRect>, OptionSet<DidDrawOption> = { DidDrawOption::ApplyTransform, DidDrawOption::ApplyShadow, DidDrawOption::ApplyClip });
+    void didDraw(std::optional<FloatRect>, OptionSet<DidDrawOption> = { DidDrawOption::ApplyTransform, DidDrawOption::ApplyShadow, DidDrawOption::ApplyClip, DidDrawOption::ApplyPostProcessing });
     void didDrawEntireCanvas();
     void didDraw(bool entireCanvas, const FloatRect&);
     template<typename RectProvider> void didDraw(bool entireCanvas, RectProvider);
@@ -425,7 +424,6 @@ private:
     unsigned m_unrealizedSaveCount { 0 };
     bool m_usesCSSCompatibilityParseMode;
     bool m_usesDisplayListDrawing { false };
-    bool m_wasLastDrawPutImageData { false };
     mutable std::unique_ptr<DisplayList::DrawingContext> m_recordingContext;
     HashSet<uint32_t> m_suppliedColors;
     CanvasRenderingContext2DSettings m_settings;

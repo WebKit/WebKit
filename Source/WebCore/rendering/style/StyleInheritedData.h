@@ -38,7 +38,6 @@ public:
     Ref<StyleInheritedData> copy() const;
 
     bool operator==(const StyleInheritedData&) const;
-    bool operator!=(const StyleInheritedData& other) const { return !(*this == other); }
 
     bool fastPathInheritedEqual(const StyleInheritedData&) const;
     bool nonFastPathInheritedEqual(const StyleInheritedData&) const;

@@ -44,6 +44,7 @@
 #include "Page.h"
 #include "RenderAncestorIterator.h"
 #include "RenderObject.h"
+#include "RenderStyleInlines.h"
 #include "Settings.h"
 
 namespace WebCore {

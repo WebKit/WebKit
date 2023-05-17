@@ -52,9 +52,7 @@ private:
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
     RunLoop::Timer m_watchdogTimer;
-#if PLATFORM(IOS_FAMILY)
     Ref<ProcessAndUIAssertion> m_assertion;
-#endif
 };
 
 }

@@ -995,15 +995,24 @@ void TestRunner::setMockGeolocationPositionUnavailableError(JSStringRef message)
     InjectedBundle::singleton().setMockGeolocationPositionUnavailableError(toWK(message).get());
 }
 
+void TestRunner::setCameraPermission(bool enabled)
+{
+    InjectedBundle::singleton().setCameraPermission(enabled);
+}
+
+void TestRunner::setMicrophonePermission(bool enabled)
+{
+    InjectedBundle::singleton().setCameraPermission(enabled);
+}
+
 void TestRunner::setUserMediaPermission(bool enabled)
 {
-    // FIXME: This should be done by frame.
-    InjectedBundle::singleton().setUserMediaPermission(enabled);
+    InjectedBundle::singleton().setCameraPermission(enabled);
+    InjectedBundle::singleton().setMicrophonePermission(enabled);
 }
 
 void TestRunner::resetUserMediaPermission()
 {
-    // FIXME: This should be done by frame.
     InjectedBundle::singleton().resetUserMediaPermission();
 }
 
@@ -1865,28 +1874,55 @@ void TestRunner::callDidReceiveLoadedSubresourceDomainsCallback(Vector<String>&&
     callTestRunnerCallback(LoadedSubresourceDomainsCallbackID, 1, &result);
 }
 
-void TestRunner::addMockMediaDevice(JSStringRef persistentId, JSStringRef label, const char* type)
+void TestRunner::addMockMediaDevice(JSStringRef persistentId, JSStringRef label, const char* type, WKDictionaryRef properties)
 {
     postSynchronousMessage("AddMockMediaDevice", createWKDictionary({
         { "PersistentID", toWK(persistentId) },
         { "Label", toWK(label) },
         { "Type", toWK(type) },
+        { "Properties", properties },
     }));
 }
 
-void TestRunner::addMockCameraDevice(JSStringRef persistentId, JSStringRef label)
+void TestRunner::addMockCameraDevice(JSStringRef persistentId, JSStringRef label, JSValueRef properties)
 {
-    addMockMediaDevice(persistentId, label, "camera");
+    auto context = mainFrameJSContext();
+
+    Vector<WKRetainPtr<WKStringRef>> strings;
+    Vector<WKStringRef> keys;
+    Vector<WKTypeRef> values;
+
+    if (auto object = JSValueToObject(context, properties, nullptr)) {
+        JSPropertyNameArrayRef propertyNameArray = JSObjectCopyPropertyNames(context, object);
+        size_t length = JSPropertyNameArrayGetCount(propertyNameArray);
+
+        for (size_t i = 0; i < length; ++i) {
+            JSStringRef jsPropertyName = JSPropertyNameArrayGetNameAtIndex(propertyNameArray, i);
+            auto jsPropertyValue = JSObjectGetProperty(context, object, jsPropertyName, 0);
+            
+            auto propertyName = toWK(jsPropertyName);
+            auto propertyValue = toWKString(context, jsPropertyValue);
+            
+            keys.append(propertyName.get());
+            values.append(propertyValue.get());
+            strings.append(WTFMove(propertyName));
+            strings.append(WTFMove(propertyValue));
+        }
+        JSPropertyNameArrayRelease(propertyNameArray);
+    }
+
+    auto wkProperties = adoptWK(WKDictionaryCreate(keys.data(), values.data(), keys.size()));
+    addMockMediaDevice(persistentId, label, "camera", wkProperties.get());
 }
 
 void TestRunner::addMockMicrophoneDevice(JSStringRef persistentId, JSStringRef label)
 {
-    addMockMediaDevice(persistentId, label, "microphone");
+    addMockMediaDevice(persistentId, label, "microphone", nullptr);
 }
 
 void TestRunner::addMockScreenDevice(JSStringRef persistentId, JSStringRef label)
 {
-    addMockMediaDevice(persistentId, label, "screen");
+    addMockMediaDevice(persistentId, label, "screen", nullptr);
 }
 
 void TestRunner::clearMockMediaDevices()

@@ -66,6 +66,7 @@
 #import <AVFoundation/AVCaptureDevice.h>
 #import <AVFoundation/AVMediaFormat.h>
 #import <WebCore/AutoplayEvent.h>
+#import <WebCore/DataDetection.h>
 #import <WebCore/FontAttributes.h>
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/BlockPtr.h>
@@ -171,6 +172,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewActionsForElementDefaultActions = [delegate respondsToSelector:@selector(_webView:actionsForElement:defaultActions:)];
     m_delegateMethods.webViewDidNotHandleTapAsClickAtPoint = [delegate respondsToSelector:@selector(_webView:didNotHandleTapAsClickAtPoint:)];
     m_delegateMethods.webViewStatusBarWasTapped = [delegate respondsToSelector:@selector(_webViewStatusBarWasTapped:)];
+    m_delegateMethods.webViewSetShouldKeepScreenAwake = [delegate respondsToSelector:@selector(_webView:setShouldKeepScreenAwake:)];
 #endif
 #if PLATFORM(IOS)
     m_delegateMethods.webViewLockScreenOrientation = [delegate respondsToSelector:@selector(_webViewLockScreenOrientation:lockType:)];
@@ -214,7 +216,6 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
 #endif
     m_delegateMethods.webViewRequestNotificationPermissionForSecurityOriginDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestNotificationPermissionForSecurityOrigin:decisionHandler:)];
     m_delegateMethods.webViewRequestCookieConsentWithMoreInfoHandlerDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestCookieConsentWithMoreInfoHandler:decisionHandler:)];
-    m_delegateMethods.webViewDecidePolicyForModalContainerDecisionHandler = [delegate respondsToSelector:@selector(_webView:decidePolicyForModalContainer:decisionHandler:)];
 
     m_delegateMethods.webViewUpdatedAppBadge = [delegate respondsToSelector:@selector(_webView:updatedAppBadge:fromSecurityOrigin:)];
     m_delegateMethods.webViewUpdatedClientBadge = [delegate respondsToSelector:@selector(_webView:updatedClientBadge:fromSecurityOrigin:)];
@@ -256,12 +257,12 @@ void UIDelegate::ContextMenuClient::menuFromProposedMenu(WebPageProxy&, NSMenu *
         return;
     }
     
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (m_uiDelegate->m_delegateMethods.webViewContextMenuForElement)
         return completionHandler([(id<WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() contextMenu:menu forElement:wrapper(contextMenuElementInfo.get())]);
 
     completionHandler([(id<WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() contextMenu:menu forElement:wrapper(contextMenuElementInfo.get()) userInfo:userInfo ? static_cast<id<NSSecureCoding>>(userInfo->wrapper()) : nil]);
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 #endif
 
@@ -754,44 +755,6 @@ void UIDelegate::UIClient::requestCookieConsent(CompletionHandler<void(WebCore::
     }).get()];
 }
 
-static WebCore::ModalContainerDecision coreModalContainerDecision(_WKModalContainerDecision decision)
-{
-    switch (decision) {
-    case _WKModalContainerDecisionShow:
-        return WebCore::ModalContainerDecision::Show;
-    case _WKModalContainerDecisionHideAndIgnore:
-        return WebCore::ModalContainerDecision::HideAndIgnore;
-    case _WKModalContainerDecisionHideAndAllow:
-        return WebCore::ModalContainerDecision::HideAndAllow;
-    case _WKModalContainerDecisionHideAndDisallow:
-        return WebCore::ModalContainerDecision::HideAndDisallow;
-    }
-    return WebCore::ModalContainerDecision::Show;
-}
-
-void UIDelegate::UIClient::decidePolicyForModalContainer(OptionSet<WebCore::ModalContainerControlType> controlTypes, CompletionHandler<void(WebCore::ModalContainerDecision)>&& completion)
-{
-    if (!m_uiDelegate)
-        return completion(WebCore::ModalContainerDecision::Show);
-
-    if (!m_uiDelegate->m_delegateMethods.webViewDecidePolicyForModalContainerDecisionHandler)
-        return completion(WebCore::ModalContainerDecision::Show);
-
-    auto delegate = m_uiDelegate->m_delegate.get();
-    if (!delegate)
-        return completion(WebCore::ModalContainerDecision::Show);
-
-    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:decidePolicyForModalContainer:decisionHandler:));
-    auto info = adoptNS([[_WKModalContainerInfo alloc] initWithTypes:controlTypes]);
-    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() decidePolicyForModalContainer:info.get() decisionHandler:makeBlockPtr([completion = WTFMove(completion), checker = WTFMove(checker)] (_WKModalContainerDecision decision) mutable {
-        if (checker->completionHandlerHasBeenCalled())
-            return;
-
-        checker->didCallCompletionHandler();
-        completion(coreModalContainerDecision(decision));
-    }).get()];
-}
-
 #if PLATFORM(MAC)
 bool UIDelegate::UIClient::canRunModal() const
 {
@@ -1238,7 +1201,7 @@ void UIDelegate::UIClient::promptForDisplayCapturePermission(WebPageProxy& page,
     std::optional<WebCore::FrameIdentifier> mainFrameID;
     if (auto* mainFrame = frame.page() ? frame.page()->mainFrame() : nullptr)
         mainFrameID = mainFrame->frameID();
-    FrameInfoData frameInfo { frame.isMainFrame(), { }, userMediaOrigin.securityOrigin(), { }, frame.frameID(), mainFrameID };
+    FrameInfoData frameInfo { frame.isMainFrame(), FrameType::Local, { }, userMediaOrigin.securityOrigin(), { }, frame.frameID(), mainFrameID };
     RetainPtr<WKFrameInfo> frameInfoWrapper = wrapper(API::FrameInfo::create(WTFMove(frameInfo), frame.page()));
 
     BOOL requestSystemAudio = !!request.requiresDisplayCaptureWithAudio();
@@ -1304,7 +1267,7 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
         std::optional<WebCore::FrameIdentifier> mainFrameID;
         if (auto* mainFrame = frame.page() ? frame.page()->mainFrame() : nullptr)
             mainFrameID = mainFrame->frameID();
-        FrameInfoData frameInfo { frame.isMainFrame(), { }, userMediaOrigin.securityOrigin(), { }, frame.frameID(), mainFrameID };
+        FrameInfoData frameInfo { frame.isMainFrame(), FrameType::Local, { }, userMediaOrigin.securityOrigin(), { }, frame.frameID(), mainFrameID };
         RetainPtr<WKFrameInfo> frameInfoWrapper = wrapper(API::FrameInfo::create(WTFMove(frameInfo), frame.page()));
 
         WKMediaCaptureType type = WKMediaCaptureTypeCamera;
@@ -1594,6 +1557,22 @@ void UIDelegate::UIClient::statusBarWasTapped()
 
     [static_cast<id <WKUIDelegatePrivate>>(delegate) _webViewStatusBarWasTapped:m_uiDelegate->m_webView.get().get()];
 }
+
+bool UIDelegate::UIClient::setShouldKeepScreenAwake(bool shouldKeepScreenAwake)
+{
+    if (!m_uiDelegate)
+        return false;
+
+    if (!m_uiDelegate->m_delegateMethods.webViewSetShouldKeepScreenAwake)
+        return false;
+
+    auto delegate = m_uiDelegate->m_delegate.get();
+    if (!delegate)
+        return false;
+
+    [static_cast<id <WKUIDelegatePrivate>>(delegate) _webView:m_uiDelegate->m_webView.get().get() setShouldKeepScreenAwake:shouldKeepScreenAwake];
+    return true;
+}
 #endif // PLATFORM(IOS_FAMILY)
 
 PlatformViewController *UIDelegate::UIClient::presentingViewController()
@@ -1611,19 +1590,23 @@ PlatformViewController *UIDelegate::UIClient::presentingViewController()
     return [static_cast<id <WKUIDelegatePrivate>>(delegate) _presentingViewControllerForWebView:m_uiDelegate->m_webView.get().get()];
 }
 
-NSDictionary *UIDelegate::UIClient::dataDetectionContext()
+std::optional<double> UIDelegate::UIClient::dataDetectionReferenceDate()
 {
     if (!m_uiDelegate)
-        return nullptr;
+        return std::nullopt;
 
     if (!m_uiDelegate->m_delegateMethods.dataDetectionContextForWebView)
-        return nullptr;
+        return std::nullopt;
 
     auto delegate = m_uiDelegate->m_delegate.get();
     if (!delegate)
-        return nullptr;
+        return std::nullopt;
 
-    return [static_cast<id <WKUIDelegatePrivate>>(delegate) _dataDetectionContextForWebView:m_uiDelegate->m_webView.get().get()];
+#if ENABLE(DATA_DETECTION)
+    return WebCore::DataDetection::extractReferenceDate([static_cast<id<WKUIDelegatePrivate>>(delegate) _dataDetectionContextForWebView:m_uiDelegate->m_webView.get().get()]);
+#else
+    return std::nullopt;
+#endif
 }
 
 #if ENABLE(POINTER_LOCK)

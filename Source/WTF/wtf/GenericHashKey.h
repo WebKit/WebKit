@@ -79,11 +79,6 @@ public:
         return HashArg::equal(key(), other.key());
     }
 
-    constexpr bool operator!=(const GenericHashKey& other) const
-    {
-        return !(*this == other);
-    }
-
 private:
     std::variant<Key, EmptyKey, DeletedKey> m_value;
 };

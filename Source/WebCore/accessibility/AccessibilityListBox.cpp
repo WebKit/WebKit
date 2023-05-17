@@ -55,25 +55,19 @@ Ref<AccessibilityListBox> AccessibilityListBox::create(RenderObject* renderer)
 
 bool AccessibilityListBox::canSetSelectedChildren() const
 {
-    Node* selectNode = m_renderer->node();
-    if (!selectNode)
-        return false;
-    
-    return !downcast<HTMLSelectElement>(*selectNode).isDisabledFormControl();
+    auto* selectElement = dynamicDowncast<HTMLSelectElement>(node());
+    return selectElement && !selectElement->isDisabledFormControl();
 }
 
 void AccessibilityListBox::addChildren()
 {
-    if (!m_renderer)
-        return;
-
-    Node* selectNode = m_renderer->node();
-    if (!selectNode)
-        return;
-
     m_childrenInitialized = true;
 
-    for (const auto& listItem : downcast<HTMLSelectElement>(*selectNode).listItems())
+    auto* selectElement = dynamicDowncast<HTMLSelectElement>(node());
+    if (!selectElement)
+        return;
+
+    for (const auto& listItem : selectElement->listItems())
         addChild(listBoxOptionAccessibilityObject(listItem.get()), DescendIfIgnored::No);
 }
 
@@ -82,56 +76,61 @@ void AccessibilityListBox::setSelectedChildren(const AccessibilityChildrenVector
     if (!canSetSelectedChildren())
         return;
 
-    Node* selectNode = m_renderer->node();
-    if (!selectNode)
+    WeakPtr node = this->node();
+    if (!node)
         return;
     
     // disable any selected options
     for (const auto& child : m_children) {
-        auto& listBoxOption = downcast<AccessibilityListBoxOption>(*child);
-        if (listBoxOption.isSelected())
-            listBoxOption.setSelected(false);
+        auto* listBoxOption = dynamicDowncast<AccessibilityListBoxOption>(child.get());
+        if (listBoxOption->isSelected())
+            listBoxOption->setSelected(false);
     }
     
-    for (const auto& obj : children) {
-        if (obj->roleValue() != AccessibilityRole::ListBoxOption)
+    for (const auto& object : children) {
+        if (object->roleValue() != AccessibilityRole::ListBoxOption)
             continue;
-
-        downcast<AccessibilityListBoxOption>(*obj).setSelected(true);
+        dynamicDowncast<AccessibilityListBoxOption>(object)->setSelected(true);
     }
 }
     
-void AccessibilityListBox::selectedChildren(AccessibilityChildrenVector& result)
+AXCoreObject::AccessibilityChildrenVector AccessibilityListBox::selectedChildren()
 {
-    ASSERT(result.isEmpty());
-
     if (!childrenInitialized())
         addChildren();
 
+    AccessibilityChildrenVector result;
     for (const auto& child : m_children) {
         if (downcast<AccessibilityListBoxOption>(*child).isSelected())
             result.append(child.get());
-    }    
+    }
+    return result;
 }
 
-void AccessibilityListBox::visibleChildren(AccessibilityChildrenVector& result)
+AXCoreObject::AccessibilityChildrenVector AccessibilityListBox::visibleChildren()
 {
-    ASSERT(result.isEmpty());
-    
+    ASSERT(!m_renderer || is<RenderListBox>(m_renderer.get()));
+    auto* listBox = dynamicDowncast<RenderListBox>(m_renderer.get());
+    if (!listBox)
+        return { };
+
     if (!childrenInitialized())
         addChildren();
     
-    unsigned length = m_children.size();
-    for (unsigned i = 0; i < length; i++) {
-        if (downcast<RenderListBox>(*m_renderer).listIndexIsVisible(i))
+    AccessibilityChildrenVector result;
+    for (unsigned i = 0; i < m_children.size(); i++) {
+        if (listBox->listIndexIsVisible(i))
             result.append(m_children[i]);
     }
+    return result;
 }
 
 AccessibilityObject* AccessibilityListBox::listBoxOptionAccessibilityObject(HTMLElement* element) const
 {
     // FIXME: Why does AccessibilityMenuListPopup::menuListOptionAccessibilityObject check inRenderedDocument, but this does not?
-    return m_renderer->document().axObjectCache()->getOrCreate(element);
+    if (auto* document = this->document())
+        return document->axObjectCache()->getOrCreate(element);
+    return nullptr;
 }
 
 AXCoreObject* AccessibilityListBox::elementAccessibilityHitTest(const IntPoint& point) const

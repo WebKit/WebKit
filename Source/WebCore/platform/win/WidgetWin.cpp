@@ -39,6 +39,8 @@
 
 namespace WebCore {
 
+class RegionContext;
+
 Widget::~Widget() 
 {
     ASSERT(!parent());
@@ -67,7 +69,7 @@ void Widget::setCursor(const Cursor& cursor)
         view->hostWindow()->setCursor(cursor);
 }
 
-void Widget::paint(GraphicsContext&, const IntRect&, SecurityOriginPaintPolicy, EventRegionContext*)
+void Widget::paint(GraphicsContext&, const IntRect&, SecurityOriginPaintPolicy, RegionContext*)
 {
 }
 

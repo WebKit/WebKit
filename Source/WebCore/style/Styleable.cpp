@@ -44,13 +44,14 @@
 #include "RenderElement.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "StyleCustomPropertyData.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
+#include "WillChangeData.h"
 
 namespace WebCore {
 

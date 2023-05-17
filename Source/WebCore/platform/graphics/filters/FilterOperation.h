@@ -68,7 +68,6 @@ public:
     virtual Ref<FilterOperation> clone() const = 0;
 
     virtual bool operator==(const FilterOperation&) const = 0;
-    bool operator!=(const FilterOperation& o) const { return !(*this == o); }
 
     virtual RefPtr<FilterOperation> blend(const FilterOperation* /*from*/, const BlendingContext&, bool /*blendToPassthrough*/ = false)
     {

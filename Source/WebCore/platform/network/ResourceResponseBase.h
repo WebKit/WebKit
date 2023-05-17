@@ -200,7 +200,7 @@ public:
     WEBCORE_EXPORT String suggestedFilename() const;
     WEBCORE_EXPORT static String sanitizeSuggestedFilename(const String&);
 
-    WEBCORE_EXPORT void includeCertificateInfo(Span<const std::byte> = { }) const;
+    WEBCORE_EXPORT void includeCertificateInfo(std::span<const std::byte> = { }) const;
     void setCertificateInfo(CertificateInfo&& info) { m_certificateInfo = WTFMove(info); }
     const std::optional<CertificateInfo>& certificateInfo() const { return m_certificateInfo; };
     bool usedLegacyTLS() const { return m_usedLegacyTLS == UsedLegacyTLS::Yes; }
@@ -302,7 +302,7 @@ protected:
 
     // The ResourceResponse subclass should shadow these functions to lazily initialize platform specific fields
     void platformLazyInit(InitLevel) { }
-    CertificateInfo platformCertificateInfo(Span<const std::byte>) const { return CertificateInfo(); };
+    CertificateInfo platformCertificateInfo(std::span<const std::byte>) const { return CertificateInfo(); };
     String platformSuggestedFileName() const { return String(); }
 
     static bool platformCompare(const ResourceResponse&, const ResourceResponse&) { return true; }

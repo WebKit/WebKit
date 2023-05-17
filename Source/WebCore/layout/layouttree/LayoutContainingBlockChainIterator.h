@@ -40,7 +40,6 @@ public:
 
     LayoutContainingBlockChainIterator& operator++();
     bool operator==(const LayoutContainingBlockChainIterator& other) const { return m_current == other.m_current; }
-    bool operator!=(const LayoutContainingBlockChainIterator& other) const {  return !(*this == other); }
 
 private:
     const ElementBox* m_current { nullptr };

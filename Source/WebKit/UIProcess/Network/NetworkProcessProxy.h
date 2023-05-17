@@ -90,7 +90,7 @@ class WebUserContentControllerProxy;
 
 enum class BackgroundFetchChange : uint8_t;
 enum class ProcessTerminationReason : uint8_t;
-enum class RemoteWorkerType : bool;
+enum class RemoteWorkerType : uint8_t;
 enum class ShouldGrandfatherStatistics : bool;
 enum class StorageAccessStatus : uint8_t;
 enum class WebsiteDataFetchOption : uint8_t;
@@ -136,7 +136,7 @@ public:
     void renameOriginInWebsiteData(PAL::SessionID, const WebCore::SecurityOriginData&, const WebCore::SecurityOriginData&, OptionSet<WebsiteDataType>, CompletionHandler<void()>&&);
     void websiteDataOriginDirectoryForTesting(PAL::SessionID, WebCore::ClientOrigin&&, OptionSet<WebsiteDataType>, CompletionHandler<void(const String&)>&&);
 
-    void preconnectTo(PAL::SessionID, WebPageProxyIdentifier, WebCore::PageIdentifier, const URL&, const String&, WebCore::StoredCredentialsPolicy, std::optional<NavigatingToAppBoundDomain>, LastNavigationWasAppInitiated);
+    void preconnectTo(PAL::SessionID, WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::ResourceRequest&&, WebCore::StoredCredentialsPolicy, std::optional<NavigatingToAppBoundDomain>);
 
 #if ENABLE(TRACKING_PREVENTION)
     void clearPrevalentResource(PAL::SessionID, const RegistrableDomain&, CompletionHandler<void()>&&);
@@ -236,7 +236,7 @@ public:
 
     enum class SendParametersToNetworkProcess : bool { No, Yes };
     void addSession(WebsiteDataStore&, SendParametersToNetworkProcess);
-    void removeSession(WebsiteDataStore&);
+    void removeSession(WebsiteDataStore&, CompletionHandler<void(String&&)>&&);
     
     void createSymLinkForFileUpgrade(const String& indexedDatabaseDirectory);
 
@@ -373,6 +373,10 @@ private:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void contentExtensionRules(UserContentControllerIdentifier);
+#endif
+
+#if USE(RUNNINGBOARD)
+    void wakeUpWebProcessForIPC(WebCore::ProcessIdentifier);
 #endif
 
 #if ENABLE(SERVICE_WORKER)

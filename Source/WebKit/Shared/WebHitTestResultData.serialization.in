@@ -47,7 +47,7 @@ struct WebKit::WebHitTestResultData {
     String lookupText;
     String toolTipText;
     String imageText;
-    std::optional<WebKit::SharedMemory::Handle> getImageSharedMemoryHandle();
+    std::optional<WebKit::SharedMemoryHandle> getImageSharedMemoryHandle();
     RefPtr<WebKit::ShareableBitmap> imageBitmap;
     String sourceImageMIMEType;
     

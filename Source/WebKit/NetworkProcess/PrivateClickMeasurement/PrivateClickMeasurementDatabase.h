@@ -80,7 +80,7 @@ private:
     bool needsUpdatedSchema() final { return false; };
     bool createUniqueIndices() final;
     const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& expectedTableAndIndexQueries() final;
-    Span<const ASCIILiteral> sortedTables() final;
+    std::span<const ASCIILiteral> sortedTables() final;
 
     using Statement = std::unique_ptr<WebCore::SQLiteStatement>;
     mutable Statement m_setUnattributedPrivateClickMeasurementAsExpiredStatement;

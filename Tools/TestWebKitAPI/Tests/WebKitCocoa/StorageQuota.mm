@@ -249,6 +249,9 @@ TEST(WebKit, QuotaDelegateHidden)
     done = false;
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     [storeConfiguration setPerOriginStorageQuota:1024 * 400];
+    // Ensure quota is not calculated by ratio.
+    [storeConfiguration.get() setTotalQuotaRatio:nil];
+    [storeConfiguration.get() setOriginQuotaRatio:nil];
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
     [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
@@ -307,6 +310,9 @@ TEST(WebKit, QuotaDelegate)
     done = false;
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     [storeConfiguration setPerOriginStorageQuota:1024 * 400];
+    // Ensure quota is not calculated by ratio.
+    [storeConfiguration.get() setTotalQuotaRatio:nil];
+    [storeConfiguration.get() setOriginQuotaRatio:nil];
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
     [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
@@ -361,16 +367,14 @@ TEST(WebKit, QuotaDelegate)
     NSLog(@"QuotaDelegate 6");
 }
 
-// FIXME: Re-enable this test for iOS once webkit.org/b/250228 is resolved
-#if PLATFORM(IOS)
-TEST(WebKit, DISABLED_QuotaDelegateReload)
-#else
 TEST(WebKit, QuotaDelegateReload)
-#endif
 {
     done = false;
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     [storeConfiguration setPerOriginStorageQuota:1024 * 400];
+    // Ensure quota is not calculated by ratio.
+    [storeConfiguration.get() setTotalQuotaRatio:nil];
+    [storeConfiguration.get() setOriginQuotaRatio:nil];
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
     [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
@@ -392,14 +396,18 @@ TEST(WebKit, QuotaDelegateReload)
     [webView setUIDelegate:delegate.get()];
     setVisible(webView.get());
 
+    [messageHandler setExpectedMessage: @"start"];
+    receivedMessage = false;
     receivedQuotaDelegateCalled = false;
     [webView loadRequest:server.request()];
-    Util::run(&receivedQuotaDelegateCalled);
+    Util::run(&receivedMessage);
 
-    [delegate denyQuota];
-
+    while (!receivedQuotaDelegateCalled)
+        TestWebKitAPI::Util::spinRunLoop();
+    
     [messageHandler setExpectedMessage: @"fail"];
     receivedMessage = false;
+    [delegate denyQuota];
     Util::run(&receivedMessage);
 
     receivedQuotaDelegateCalled = false;
@@ -413,16 +421,14 @@ TEST(WebKit, QuotaDelegateReload)
     Util::run(&receivedMessage);
 }
 
-// FIXME: Re-enable this test for iOS once webkit.org/b/250228 is resolved
-#if PLATFORM(IOS)
-TEST(WebKit, DISABLED_QuotaDelegateNavigateFragment)
-#else
 TEST(WebKit, QuotaDelegateNavigateFragment)
-#endif
 {
     done = false;
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     [storeConfiguration setPerOriginStorageQuota:1024 * 400];
+    // Ensure quota is not calculated by ratio.
+    [storeConfiguration.get() setTotalQuotaRatio:nil];
+    [storeConfiguration.get() setOriginQuotaRatio:nil];
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
     [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
@@ -444,14 +450,18 @@ TEST(WebKit, QuotaDelegateNavigateFragment)
     [webView setUIDelegate:delegate.get()];
     setVisible(webView.get());
 
+    [messageHandler setExpectedMessage: @"start"];
+    receivedMessage = false;
     receivedQuotaDelegateCalled = false;
     [webView loadRequest:server.request("/main.html"_s)];
-    Util::run(&receivedQuotaDelegateCalled);
+    Util::run(&receivedMessage);
 
-    [delegate denyQuota];
+    while (!receivedQuotaDelegateCalled)
+        TestWebKitAPI::Util::spinRunLoop();
 
     [messageHandler setExpectedMessage: @"fail"];
     receivedMessage = false;
+    [delegate denyQuota];
     Util::run(&receivedMessage);
 
     receivedQuotaDelegateCalled = false;

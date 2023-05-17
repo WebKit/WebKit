@@ -86,11 +86,6 @@ inline bool operator==(const CompositeMode& a, const CompositeMode& b)
     return a.operation == b.operation && a.blendMode == b.blendMode;
 }
 
-inline bool operator!=(const CompositeMode& a, const CompositeMode& b)
-{
-    return !(a == b);
-}
-
 enum class DocumentMarkerLineStyleMode : uint8_t {
     TextCheckingDictationPhraseWithAlternatives,
     Spelling,
@@ -125,11 +120,6 @@ struct DropShadow {
 inline bool operator==(const DropShadow& a, const DropShadow& b)
 {
     return a.offset == b.offset && a.blurRadius == b.blurRadius && a.color == b.color && a.radiusMode == b.radiusMode;
-}
-
-inline bool operator!=(const DropShadow& a, const DropShadow& b)
-{
-    return !(a == b);
 }
 
 enum class GradientSpreadMethod : uint8_t {

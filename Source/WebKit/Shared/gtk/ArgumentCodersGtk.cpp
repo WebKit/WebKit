@@ -48,12 +48,12 @@ static void encodeImage(Encoder& encoder, Image& image)
 
 static WARN_UNUSED_RETURN bool decodeImage(Decoder& decoder, RefPtr<Image>& image)
 {
-    std::optional<std::optional<ShareableBitmapHandle>> handle;
+    std::optional<std::optional<ShareableBitmap::Handle>> handle;
     decoder >> handle;
     if (!handle || !*handle)
         return false;
 
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(**handle);
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(WTFMove(**handle));
     if (!bitmap)
         return false;
     image = bitmap->createImage();

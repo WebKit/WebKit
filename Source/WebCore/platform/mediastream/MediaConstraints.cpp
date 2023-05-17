@@ -364,26 +364,22 @@ bool MediaTrackConstraintSetMap::isEmpty() const
     return !size();
 }
 
-static inline void addDefaultVideoConstraints(MediaTrackConstraintSetMap& videoConstraints, bool addFrameRateConstraint, bool addSizeConstraint, bool addFacingModeConstraint)
+static inline void addDefaultVideoConstraints(MediaTrackConstraintSetMap& videoConstraints, bool addFrameRateConstraint, bool addWidthConstraint, bool addHeightConstraint)
 {
     if (addFrameRateConstraint) {
         DoubleConstraint frameRateConstraint({ }, MediaConstraintType::FrameRate);
         frameRateConstraint.setIdeal(30);
         videoConstraints.set(MediaConstraintType::FrameRate, WTFMove(frameRateConstraint));
     }
-    if (addSizeConstraint) {
+    if (addWidthConstraint) {
         IntConstraint widthConstraint({ }, MediaConstraintType::Width);
         widthConstraint.setIdeal(640);
         videoConstraints.set(MediaConstraintType::Width, WTFMove(widthConstraint));
-        
+    }
+    if (addHeightConstraint) {
         IntConstraint heightConstraint({ }, MediaConstraintType::Height);
         heightConstraint.setIdeal(480);
         videoConstraints.set(MediaConstraintType::Height, WTFMove(heightConstraint));
-    }
-    if (addFacingModeConstraint) {
-        StringConstraint facingModeConstraint({ }, MediaConstraintType::FacingMode);
-        facingModeConstraint.setIdeal("user"_s);
-        videoConstraints.set(MediaConstraintType::FacingMode, WTFMove(facingModeConstraint));
     }
 }
 
@@ -401,20 +397,20 @@ bool MediaConstraints::isConstraintSet(const Function<bool(const MediaTrackConst
 
 void MediaConstraints::setDefaultVideoConstraints()
 {
-    // 640x480, 30fps, front-facing camera
-    bool needsFrameRateConstraints = !isConstraintSet([](const MediaTrackConstraintSetMap& constraint) {
+    // 640x480, 30fps camera
+    bool needsFrameRateConstraint = !isConstraintSet([](const MediaTrackConstraintSetMap& constraint) {
         return !!constraint.frameRate() || !!constraint.width() || !!constraint.height();
     });
     
-    bool needsSizeConstraints = !isConstraintSet([](const MediaTrackConstraintSetMap& constraint) {
+    bool needsWidthConstraint = !isConstraintSet([](const MediaTrackConstraintSetMap& constraint) {
         return !!constraint.width() || !!constraint.height();
     });
     
-    bool needsFacingModeConstraints = !isConstraintSet([](const MediaTrackConstraintSetMap& constraint) {
-        return !!constraint.facingMode() || !!constraint.deviceId();
+    bool needsHeightConstraint = !isConstraintSet([](const MediaTrackConstraintSetMap& constraint) {
+        return !!constraint.width() || !!constraint.height() || !!constraint.aspectRatio();
     });
-    
-    addDefaultVideoConstraints(mandatoryConstraints, needsFrameRateConstraints, needsSizeConstraints, needsFacingModeConstraints);
+
+    addDefaultVideoConstraints(mandatoryConstraints, needsFrameRateConstraint, needsWidthConstraint, needsHeightConstraint);
 }
 
 void MediaConstraint::log() const

@@ -33,11 +33,12 @@
 #include "DocumentInlines.h"
 #include "DocumentMarkerController.h"
 #include "FloatQuad.h"
-#include "HTMLParserIdioms.h"
 #include "Hyphenation.h"
-#include "InlineIteratorLineBox.h"
+#include "InlineIteratorBoxInlines.h"
+#include "InlineIteratorLineBoxInlines.h"
 #include "InlineIteratorLogicalOrderTraversal.h"
 #include "InlineIteratorTextBox.h"
+#include "InlineIteratorTextBoxInlines.h"
 #include "InlineRunAndOffset.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LegacyEllipsisBox.h"
@@ -334,7 +335,10 @@ void RenderText::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumu
 
 Vector<IntRect> RenderText::absoluteRectsForRange(unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
 {
-    return absoluteQuadsForRange(start, end, useSelectionHeight, false /* ignoreEmptyTextSelections */, wasFixed).map([](auto& quad) {
+    OptionSet<RenderObject::BoundingRectBehavior> behavior;
+    if (useSelectionHeight)
+        behavior.add(RenderObject::BoundingRectBehavior::UseSelectionHeight);
+    return absoluteQuadsForRange(start, end, behavior, wasFixed).map([](auto& quad) {
         return quad.enclosingBoundingBox();
     });
 }
@@ -487,8 +491,33 @@ static FloatRect localQuadForTextRun(const InlineIterator::TextBox& run, unsigne
     return boxSelectionRect;
 }
 
-Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end, bool useSelectionHeight, bool ignoreEmptyTextSelections, bool* wasFixed) const
+static Vector<LayoutRect> characterRects(const InlineIterator::TextBox& run, unsigned rangeStart, unsigned rangeEnd)
 {
+    auto [clampedStart, clampedEnd] = run.selectableRange().clamp(rangeStart, rangeEnd);
+    if (clampedStart >= clampedEnd)
+        return { };
+
+    if (auto* svgTextBox = dynamicDowncast<SVGInlineTextBox>(run.legacyInlineBox())) {
+        Vector<LayoutRect> rects;
+        rects.reserveInitialCapacity(clampedEnd - clampedStart);
+        for (auto index = clampedStart; index < clampedEnd; ++index)
+            rects.uncheckedAppend(svgTextBox->localSelectionRect(index, index + 1));
+        return rects;
+    }
+
+    auto lineSelectionRect = LineSelection::logicalRect(*run.lineBox());
+    auto selectionRect = LayoutRect { run.logicalLeftIgnoringInlineDirection(), lineSelectionRect.y(), run.logicalWidth(), lineSelectionRect.height() };
+    return run.fontCascade().characterSelectionRectsForText(run.textRun(), selectionRect, clampedStart, clampedEnd).map([&](auto& characterRect) {
+        return snappedSelectionRect(characterRect, run.logicalRightIgnoringInlineDirection(), lineSelectionRect.y(), lineSelectionRect.height(), run.isHorizontal());
+    });
+}
+
+Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end, OptionSet<RenderObject::BoundingRectBehavior> behavior, bool* wasFixed) const
+{
+    bool useSelectionHeight = behavior.contains(RenderObject::BoundingRectBehavior::UseSelectionHeight);
+    bool ignoreEmptyTextSelections = behavior.contains(RenderObject::BoundingRectBehavior::IgnoreEmptyTextSelections);
+    bool computeIndividualCharacterRects = behavior.contains(RenderObject::BoundingRectBehavior::ComputeIndividualCharacterRects);
+
     // Work around signed/unsigned issues. This function takes unsigneds, and is often passed UINT_MAX
     // to mean "all the way to the end". LegacyInlineTextBox coordinates are unsigneds, so changing this
     // function to take ints causes various internal mismatches. But selectionRect takes ints, and
@@ -511,6 +540,32 @@ Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end
     for (auto& run : InlineIterator::textBoxesFor(*this)) {
         if (ignoreEmptyTextSelections && !run.selectableRange().intersects(start, end))
             continue;
+
+        if (computeIndividualCharacterRects) {
+            auto rects = characterRects(run, start, end);
+            if (!quads.tryReserveCapacity(quads.size() + rects.size()))
+                continue;
+
+            if (!useSelectionHeight) {
+                for (auto& rect : rects) {
+                    auto visualRect = run.visualRectIgnoringBlockDirection();
+                    if (run.isHorizontal()) {
+                        rect.setHeight(visualRect.height());
+                        rect.setY(visualRect.y());
+                    } else {
+                        rect.setWidth(visualRect.width());
+                        rect.setX(visualRect.x());
+                    }
+                }
+            }
+
+            for (auto& rect : rects) {
+                if (FloatRect localRect { rect }; !localRect.isZero())
+                    quads.uncheckedAppend(localToAbsoluteQuad(localRect, UseTransforms, wasFixed));
+            }
+            continue;
+        }
+
         if (start <= run.start() && run.end() <= end) {
             auto boundaries = boundariesForTextRun(run);
 
@@ -834,7 +889,7 @@ RenderText::Widths RenderText::trimmedPreferredWidths(float leadWidth, bool& str
 
     unsigned length = this->length();
 
-    if (!length || (stripFrontSpaces && text().isAllSpecialCharacters<isHTMLSpace>()))
+    if (!length || (stripFrontSpaces && text().isAllSpecialCharacters<isASCIIWhitespace>()))
         return widths;
 
     widths.min = m_minWidth.value_or(-1);
@@ -904,7 +959,7 @@ static inline bool isSpaceAccordingToStyle(UChar c, const RenderStyle& style)
 float RenderText::minLogicalWidth() const
 {
     if (preferredLogicalWidthsDirty() || !m_minWidth)
-        const_cast<RenderText*>(this)->computePreferredLogicalWidths(0);
+        const_cast<RenderText*>(this)->computePreferredLogicalWidths(0, !preferredLogicalWidthsDirty());
 
     return *m_minWidth;
 }
@@ -912,7 +967,7 @@ float RenderText::minLogicalWidth() const
 float RenderText::maxLogicalWidth() const
 {
     if (preferredLogicalWidthsDirty() || !m_maxWidth)
-        const_cast<RenderText*>(this)->computePreferredLogicalWidths(0);
+        const_cast<RenderText*>(this)->computePreferredLogicalWidths(0, !preferredLogicalWidthsDirty());
 
     return *m_maxWidth;
 }
@@ -935,11 +990,11 @@ LineBreakIteratorMode mapLineBreakToIteratorMode(LineBreak lineBreak)
     return LineBreakIteratorMode::Default;
 }
 
-void RenderText::computePreferredLogicalWidths(float leadWidth)
+void RenderText::computePreferredLogicalWidths(float leadWidth, bool forcedMinMaxWidthComputation)
 {
     HashSet<const Font*> fallbackFonts;
     GlyphOverflow glyphOverflow;
-    computePreferredLogicalWidths(leadWidth, fallbackFonts, glyphOverflow);
+    computePreferredLogicalWidths(leadWidth, fallbackFonts, glyphOverflow, forcedMinMaxWidthComputation);
     if (fallbackFonts.isEmpty() && !glyphOverflow.left && !glyphOverflow.right && !glyphOverflow.top && !glyphOverflow.bottom)
         m_knownToHaveNoOverflowAndNoFallbackFonts = true;
 }
@@ -1004,9 +1059,9 @@ float RenderText::maxWordFragmentWidth(const RenderStyle& style, const FontCasca
     return std::max(maxFragmentWidth, suffixWidth);
 }
 
-void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Font*>& fallbackFonts, GlyphOverflow& glyphOverflow)
+void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Font*>& fallbackFonts, GlyphOverflow& glyphOverflow, bool forcedMinMaxWidthComputation)
 {
-    ASSERT(m_hasTab || preferredLogicalWidthsDirty() || !m_knownToHaveNoOverflowAndNoFallbackFonts);
+    ASSERT_UNUSED(forcedMinMaxWidthComputation, m_hasTab || preferredLogicalWidthsDirty() || forcedMinMaxWidthComputation || !m_knownToHaveNoOverflowAndNoFallbackFonts);
 
     m_minWidth = 0;
     m_beginMinWidth = 0;
@@ -1430,7 +1485,7 @@ void RenderText::setRenderedText(const String& newText)
         m_text = makeStringByReplacingAll(m_text, '\\', yenSign);
     
     const auto& style = this->style();
-    if (style.textTransform() != TextTransform::None)
+    if (!style.textTransform().isEmpty())
         m_text = applyTextTransform(style, m_text, previousCharacter());
 
     // At rendering time, if certain fonts are used, these characters get swapped out with higher-quality PUA characters.
@@ -1570,7 +1625,7 @@ String RenderText::textWithoutConvertingBackslashToYenSymbol() const
     if (!m_useBackslashAsYenSymbol || style().textSecurity() != TextSecurity::None)
         return text();
 
-    if (style().textTransform() == TextTransform::None)
+    if (style().textTransform().isEmpty())
         return originalText();
 
     return applyTextTransform(style(), originalText(), previousCharacter());
@@ -1642,6 +1697,9 @@ float RenderText::width(unsigned from, unsigned length, const FontCascade& fontC
                     if (fallbackFonts->isEmpty() && !glyphOverflow->left && !glyphOverflow->right && !glyphOverflow->top && !glyphOverflow->bottom)
                         m_knownToHaveNoOverflowAndNoFallbackFonts = true;
                 }
+                // The rare case of when we switch between IFC and legacy preferred width computation.
+                if (!m_maxWidth)
+                    width = maxLogicalWidth();
                 width = *m_maxWidth;
             } else
                 width = maxLogicalWidth();

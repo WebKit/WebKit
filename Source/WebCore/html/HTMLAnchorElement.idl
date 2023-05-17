@@ -36,7 +36,7 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString target;
     [CEReactions=NotNeeded, Reflect] attribute DOMString type;
 
-    [CEReactions] attribute DOMString text;
+    [CEReactions=Needed] attribute DOMString text;
 
     [PutForwards=value] readonly attribute DOMTokenList relList;
 

@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id=video1 autoplay playsInline width=100px></video>
+        <video id=video2 autoplay playsInline width=100px></video>
+        <script>
+promise_test(async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { width:1280, height:720, frameRate : 30 } });
+    assert_equals(stream.getVideoTracks()[0].getSettings().frameRate, 30);
+
+    const stream2 = await navigator.mediaDevices.getUserMedia({ video: { width:640, height:480, frameRate : 1 } });
+    assert_equals(stream2.getVideoTracks()[0].getSettings().frameRate, 1);
+
+    video1.srcObject = stream;
+    video2.srcObject = stream2;
+
+    await video1.play();
+    await video2.play();
+
+    assert_equals(video1.videoWidth, 1280);
+    assert_equals(video1.videoHeight, 720);
+    assert_equals(video2.videoWidth, 640);
+    assert_equals(video2.videoHeight, 480);
+
+    if (!window.internals)
+        return;
+
+    internals.observeMediaStreamTrack(stream.getVideoTracks()[0]);
+    let currentCount = internals.trackVideoSampleCount;
+
+    let counter = 0;
+    while (internals.trackVideoSampleCount - currentCount <= 2 && counter++ < 20) {
+        currentCount = internals.trackVideoSampleCount;
+        await new Promise(resolve => setTimeout(resolve, 500));
+    }
+
+    assert_true(internals.trackVideoSampleCount - currentCount > 2);
+}, "Ensure getDisplayMedia generate frames with valid frame rate and size in case of clones");
+        </script>
+    </body>
+</html>

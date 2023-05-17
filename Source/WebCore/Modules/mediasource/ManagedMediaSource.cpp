@@ -47,10 +47,14 @@ Ref<ManagedMediaSource> ManagedMediaSource::create(ScriptExecutionContext& conte
 
 ManagedMediaSource::ManagedMediaSource(ScriptExecutionContext& context)
     : MediaSource(context)
+    , m_streamingTimer(*this, &ManagedMediaSource::streamingTimerFired)
 {
 }
 
-ManagedMediaSource::~ManagedMediaSource() = default;
+ManagedMediaSource::~ManagedMediaSource()
+{
+    m_streamingTimer.stop();
+}
 
 ExceptionOr<ManagedMediaSource::PreferredQuality> ManagedMediaSource::quality() const
 {
@@ -67,10 +71,18 @@ void ManagedMediaSource::setStreaming(bool streaming)
     if (m_streaming == streaming)
         return;
     m_streaming = streaming;
-    if (streaming)
+    if (streaming) {
         scheduleEvent(eventNames().startstreamingEvent);
-    else
+        if (m_streamingAllowed) {
+            ensurePrefsRead();
+            Seconds delay { *m_highThreshold };
+            m_streamingTimer.startOneShot(delay);
+        }
+    } else {
+        if (m_streamingTimer.isActive())
+            m_streamingTimer.stop();
         scheduleEvent(eventNames().endstreamingEvent);
+    }
     notifyElementUpdateMediaState();
 }
 
@@ -108,6 +120,14 @@ bool ManagedMediaSource::isBuffered(const PlatformTimeRanges& ranges) const
     return true;
 }
 
+void ManagedMediaSource::ensurePrefsRead()
+{
+    if (m_lowThreshold && m_highThreshold)
+        return;
+    m_lowThreshold = mediaElement()->document().settings().managedMediaSourceLowThreshold();
+    m_highThreshold = mediaElement()->document().settings().managedMediaSourceHighThreshold();
+}
+
 void ManagedMediaSource::monitorSourceBuffers()
 {
     if (isClosed()) {
@@ -123,23 +143,28 @@ void ManagedMediaSource::monitorSourceBuffers()
     }
     auto currentTime = this->currentTime();
 
-    if (!m_lowThreshold || !m_highThreshold) {
-        m_lowThreshold = mediaElement()->document().settings().managedMediaSourceLowThreshold();
-        m_highThreshold = mediaElement()->document().settings().managedMediaSourceHighThreshold();
-    }
+    ensurePrefsRead();
 
+    auto limitAhead = [&] (double upper) {
+        MediaTime aheadTime = currentTime + MediaTime::createWithDouble(upper);
+        return isEnded() ? std::min(duration(), aheadTime) : aheadTime;
+    };
     if (!m_streaming) {
-        MediaTime aheadTime = std::min(duration(), currentTime + MediaTime::createWithDouble(*m_lowThreshold));
-        PlatformTimeRanges neededBufferedRange { currentTime, std::max(currentTime, aheadTime) };
+        PlatformTimeRanges neededBufferedRange { currentTime, std::max(currentTime, limitAhead(*m_lowThreshold)) };
         if (!isBuffered(neededBufferedRange))
             setStreaming(true);
         return;
     }
 
-    MediaTime aheadTime = std::min(duration(), currentTime + MediaTime::createWithDouble(*m_highThreshold));
-    PlatformTimeRanges neededBufferedRange { currentTime, aheadTime };
+    PlatformTimeRanges neededBufferedRange { currentTime, limitAhead(*m_highThreshold) };
     if (isBuffered(neededBufferedRange))
         setStreaming(false);
+}
+
+void ManagedMediaSource::streamingTimerFired()
+{
+    m_streamingAllowed = false;
+    notifyElementUpdateMediaState();
 }
 
 }

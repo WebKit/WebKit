@@ -29,6 +29,7 @@
 #include "RemoteLayerBackingStoreCollection.h"
 #include "RemoteLayerTreeTransaction.h"
 #include <WebCore/FloatSize.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/GraphicsLayerFactory.h>
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/LayerPool.h>
@@ -68,7 +69,7 @@ public:
 
     DrawingAreaIdentifier drawingAreaIdentifier() const;
 
-    void buildTransaction(RemoteLayerTreeTransaction&, WebCore::PlatformCALayer& rootLayer, WebFrame* rootFrame);
+    void buildTransaction(RemoteLayerTreeTransaction&, WebCore::PlatformCALayer& rootLayer, WebCore::FrameIdentifier);
 
     void layerPropertyChangedWhileBuildingTransaction(PlatformCALayerRemote&);
 

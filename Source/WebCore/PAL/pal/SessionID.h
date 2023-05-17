@@ -71,7 +71,6 @@ public:
 
     uint64_t toUInt64() const { return m_identifier; }
     bool operator==(SessionID sessionID) const { return m_identifier == sessionID.m_identifier; }
-    bool operator!=(SessionID sessionID) const { return m_identifier != sessionID.m_identifier; }
     bool isAlwaysOnLoggingAllowed() const { return !isEphemeral(); }
 
     template<class Encoder> void encode(Encoder&) const;

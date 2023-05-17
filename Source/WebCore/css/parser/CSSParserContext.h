@@ -55,11 +55,6 @@ inline bool operator==(const ResolvedURL& a, const ResolvedURL& b)
     return a.specifiedURLString == b.specifiedURLString && a.resolvedURL == b.resolvedURL;
 }
 
-inline bool operator!=(const ResolvedURL& a, const ResolvedURL& b)
-{
-    return !(a == b);
-}
-
 struct CSSParserContext {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
@@ -81,7 +76,6 @@ struct CSSParserContext {
     bool colorMixEnabled { false };
     bool constantPropertiesEnabled { false };
     bool counterStyleAtRuleImageSymbolsEnabled { false };
-    bool counterStyleAtRuleEnabled { false };
     bool cssColor4 { false };
     bool relativeColorSyntaxEnabled { false };
     bool springTimingFunctionEnabled { false };
@@ -110,7 +104,6 @@ struct CSSParserContext {
 };
 
 bool operator==(const CSSParserContext&, const CSSParserContext&);
-inline bool operator!=(const CSSParserContext& a, const CSSParserContext& b) { return !(a == b); }
 
 void add(Hasher&, const CSSParserContext&);
 

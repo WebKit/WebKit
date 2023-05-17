@@ -184,7 +184,6 @@ private:
     }
 
     friend bool operator==(TimerHeapIterator, TimerHeapIterator);
-    friend bool operator!=(TimerHeapIterator, TimerHeapIterator);
     friend bool operator<(TimerHeapIterator, TimerHeapIterator);
     friend bool operator>(TimerHeapIterator, TimerHeapIterator);
     friend bool operator<=(TimerHeapIterator, TimerHeapIterator);
@@ -200,7 +199,6 @@ private:
 };
 
 inline bool operator==(TimerHeapIterator a, TimerHeapIterator b) { return a.m_pointer == b.m_pointer; }
-inline bool operator!=(TimerHeapIterator a, TimerHeapIterator b) { return a.m_pointer != b.m_pointer; }
 inline bool operator<(TimerHeapIterator a, TimerHeapIterator b) { return a.m_pointer < b.m_pointer; }
 inline bool operator>(TimerHeapIterator a, TimerHeapIterator b) { return a.m_pointer > b.m_pointer; }
 inline bool operator<=(TimerHeapIterator a, TimerHeapIterator b) { return a.m_pointer <= b.m_pointer; }

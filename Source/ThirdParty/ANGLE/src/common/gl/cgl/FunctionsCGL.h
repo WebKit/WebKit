@@ -9,13 +9,9 @@
 #ifndef CGL_FUNCTIONS_H_
 #define CGL_FUNCTIONS_H_
 
-#include "common/platform.h"
+#include <OpenGL/OpenGL.h>
 
-#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
-
-#    include <OpenGL/OpenGL.h>
-
-#    include "common/apple/SoftLinking.h"
+#include "common/apple/SoftLinking.h"
 
 SOFT_LINK_FRAMEWORK_HEADER(OpenGL)
 
@@ -79,7 +75,5 @@ SOFT_LINK_FUNCTION_HEADER(
      GLuint plane),
     (ctx, target, internal_format, width, height, format, type, ioSurface, plane))
 SOFT_LINK_FUNCTION_HEADER(OpenGL, CGLUpdateContext, CGLError, (CGLContextObj ctx), (ctx))
-
-#endif  // defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
 
 #endif  // CGL_FUNCTIONS_H_

@@ -27,10 +27,10 @@
 #include "CSSCounterStyleRegistry.h"
 
 #include "CSSCounterStyle.h"
-#include "CSSCounterStyleRule.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValuePair.h"
 #include "ListStyleType.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -165,68 +165,6 @@ CounterStyleMap& CSSCounterStyleRegistry::userAgentCounterStyles()
 bool CSSCounterStyleRegistry::operator==(const CSSCounterStyleRegistry& other) const
 {
     return m_authorCounterStyles == other.m_authorCounterStyles;
-}
-
-bool isCounterStyleUnsupportedByUserAgent(CSSValueID valueID)
-{
-    // This list has to be in sync with styles defined in counterStyles.css, once a style is added there, remove it from here.
-    switch (valueID) {
-    // FIXME: transform hard-coded styles into @counter-styles when possible (rdar://106708729).
-    case CSSValueBinary:
-    case CSSValueLowerHexadecimal:
-    case CSSValueOctal:
-    case CSSValueOriya:
-    case CSSValueUrdu:
-    case CSSValueUpperHexadecimal:
-    case CSSValueAfar:
-    case CSSValueEthiopicHalehameAaEt:
-    case CSSValueEthiopicHalehameAaEr:
-    case CSSValueAmharic:
-    case CSSValueEthiopicHalehameAmEt:
-    case CSSValueAmharicAbegede:
-    case CSSValueEthiopicAbegedeAmEt:
-    case CSSValueEthiopic:
-    case CSSValueEthiopicHalehameGez:
-    case CSSValueEthiopicAbegede:
-    case CSSValueEthiopicAbegedeGez:
-    case CSSValueHangulConsonant:
-    case CSSValueHangul:
-    case CSSValueLowerNorwegian:
-    case CSSValueOromo:
-    case CSSValueEthiopicHalehameOmEt:
-    case CSSValueSidama:
-    case CSSValueEthiopicHalehameSidEt:
-    case CSSValueSomali:
-    case CSSValueEthiopicHalehameSoEt:
-    case CSSValueTigre:
-    case CSSValueEthiopicHalehameTig:
-    case CSSValueTigrinyaEr:
-    case CSSValueEthiopicHalehameTiEr:
-    case CSSValueTigrinyaErAbegede:
-    case CSSValueEthiopicAbegedeTiEr:
-    case CSSValueTigrinyaEt:
-    case CSSValueEthiopicHalehameTiEt:
-    case CSSValueTigrinyaEtAbegede:
-    case CSSValueEthiopicAbegedeTiEt:
-    case CSSValueUpperGreek:
-    case CSSValueUpperNorwegian:
-    case CSSValueAsterisks:
-    case CSSValueFootnotes:
-    case CSSValueCjkIdeographic:
-    case CSSValueSimpChineseInformal:
-    case CSSValueSimpChineseFormal:
-    case CSSValueTradChineseInformal:
-    case CSSValueTradChineseFormal:
-    case CSSValueEthiopicNumeric:
-    // FIXME: enable korean styles rdar://106193134.
-    case CSSValueKoreanHangulFormal:
-    case CSSValueKoreanHanjaFormal:
-    case CSSValueKoreanHanjaInformal:
-    case CSSValueNone:
-        return true;
-    default:
-        return false;
-    }
 }
 
 void CSSCounterStyleRegistry::clearAuthorCounterStyles()

@@ -122,11 +122,6 @@ public:
             && m_type == other.m_type;
     }
     
-    bool operator!=(const TimeWithDynamicClockType& other) const
-    {
-        return !(*this == other);
-    }
-    
     // To do relative comparisons, you must be using times with the same clock type.
     WTF_EXPORT_PRIVATE bool operator<(const TimeWithDynamicClockType&) const;
     WTF_EXPORT_PRIVATE bool operator>(const TimeWithDynamicClockType&) const;

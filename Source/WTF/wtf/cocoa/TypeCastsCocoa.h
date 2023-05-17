@@ -35,7 +35,7 @@ namespace WTF {
 
 #if __has_feature(objc_arc)
 #define WTF_CF_TO_NS_BRIDGE_TRANSFER(type, value) ((__bridge_transfer type)value)
-#define WTF_NS_TO_CF_BRIDGE_TRANSFER(type, value) ((__bridge_retained type)value)
+#define WTF_NS_TO_CF_BRIDGE_TRANSFER(type, value) ((type)reinterpret_cast<uintptr_t>(value))
 #else
 #define WTF_CF_TO_NS_BRIDGE_TRANSFER(type, value) ((__bridge type)value)
 #define WTF_NS_TO_CF_BRIDGE_TRANSFER(type, value) ((__bridge type)value)

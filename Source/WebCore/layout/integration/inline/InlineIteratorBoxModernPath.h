@@ -52,7 +52,7 @@ public:
 
     FloatRect visualRectIgnoringBlockDirection() const { return box().visualRectIgnoringBlockDirection(); }
 
-    bool isHorizontal() const { return box().isHorizontal(); }
+    inline bool isHorizontal() const;
     bool isLineBreak() const { return box().isLineBreak(); }
 
     unsigned minimumCaretOffset() const { return isText() ? start() : 0; }
@@ -88,20 +88,7 @@ public:
         };
     }
 
-    TextRun textRun(TextRunMode mode = TextRunMode::Painting) const
-    {
-        auto& style = box().style();
-        auto expansion = box().expansion();
-        auto logicalLeft = [&] {
-            if (style.isLeftToRightDirection())
-                return visualRectIgnoringBlockDirection().x() - (line().lineBoxLeft() + line().contentLogicalLeft());
-            return line().lineBoxRight() - (visualRectIgnoringBlockDirection().maxX() + line().contentLogicalLeft());
-        };
-        auto characterScanForCodePath = isText() && !renderText().canUseSimpleFontCodePath();
-        auto textRun = TextRun { mode == TextRunMode::Editing ? originalText() : box().text().renderedContent(), logicalLeft(), expansion.horizontalExpansion, expansion.behavior, direction(), style.rtlOrdering() == Order::Visual, characterScanForCodePath };
-        textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
-        return textRun;
-    };
+    inline TextRun textRun(TextRunMode = TextRunMode::Painting) const;
 
     const RenderObject& renderer() const
     {

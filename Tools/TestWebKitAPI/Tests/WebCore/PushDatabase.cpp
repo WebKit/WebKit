@@ -116,7 +116,7 @@ static Vector<uint8_t> getPublicTokenSync(PushDatabase& database)
     return getResult;
 }
 
-static PushDatabase::PublicTokenChanged updatePublicTokenSync(PushDatabase& database, Span<const uint8_t> token)
+static PushDatabase::PublicTokenChanged updatePublicTokenSync(PushDatabase& database, std::span<const uint8_t> token)
 {
     bool done = false;
     auto updateResult = PushDatabase::PublicTokenChanged::No;
@@ -281,7 +281,7 @@ public:
         return getPublicTokenSync(*db);
     }
 
-    PushDatabase::PublicTokenChanged updatePublicToken(Span<const uint8_t> token)
+    PushDatabase::PublicTokenChanged updatePublicToken(std::span<const uint8_t> token)
     {
         return updatePublicTokenSync(*db, token);
     }

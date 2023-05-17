@@ -33,6 +33,7 @@
 #include "HitTestResult.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
+#include "RenderBoxInlines.h"
 #include "RenderFlexibleBox.h"
 
 namespace WebCore {

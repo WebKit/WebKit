@@ -39,9 +39,9 @@ partial interface Document {
 
     // DOM tree accessors
     // getter object (DOMString name);
-    [CEReactions] attribute DOMString title;
-    [CEReactions] attribute [AtomString] DOMString dir;
-    [CEReactions, DOMJIT=Getter, ImplementedAs=bodyOrFrameset] attribute HTMLElement? body;
+    [CEReactions=Needed] attribute DOMString title;
+    [CEReactions=Needed] attribute [AtomString] DOMString dir;
+    [CEReactions=Needed, DOMJIT=Getter, ImplementedAs=bodyOrFrameset] attribute HTMLElement? body;
     readonly attribute HTMLHeadElement? head;
     [SameObject] readonly attribute HTMLCollection images;
     [SameObject] readonly attribute HTMLCollection embeds;
@@ -58,17 +58,17 @@ partial interface Document {
     // FIXME: The HTML spec says this should consult the "responsible document". We should ensure
     // that the caller document matches those semantics. It is possible we should replace it with
     // the existing 'incumbent document' concept.
-    [CEReactions, CallWith=EntryDocument, ImplementedAs=openForBindings] Document open(optional DOMString unused1, optional DOMString unused2); // both arguments are ignored.
+    [CEReactions=Needed, CallWith=EntryDocument, ImplementedAs=openForBindings] Document open(optional DOMString unused1, optional DOMString unused2); // both arguments are ignored.
     [CallWith=ActiveWindow&FirstWindow, ImplementedAs=openForBindings] WindowProxy open(USVString url, [AtomString] DOMString name, DOMString features);
-    [CEReactions, ImplementedAs=closeForBindings] undefined close();
-    [CEReactions, CallWith=EntryDocument] undefined write(DOMString... text);
-    [CEReactions, CallWith=EntryDocument] undefined writeln(DOMString... text);
+    [CEReactions=Needed, ImplementedAs=closeForBindings] undefined close();
+    [CEReactions=Needed, CallWith=EntryDocument] undefined write(DOMString... text);
+    [CEReactions=Needed, CallWith=EntryDocument] undefined writeln(DOMString... text);
 
     // user interaction
     [ImplementedAs=windowProxy] readonly attribute WindowProxy? defaultView;
     boolean hasFocus();
-    [CEReactions] attribute DOMString designMode;
-    [CEReactions] boolean execCommand(DOMString commandId, optional boolean showUI = false, optional DOMString value = "");
+    [CEReactions=Needed] attribute DOMString designMode;
+    [CEReactions=Needed] boolean execCommand(DOMString commandId, optional boolean showUI = false, optional DOMString value = "");
     boolean queryCommandEnabled(DOMString commandId);
     boolean queryCommandIndeterm(DOMString commandId);
     boolean queryCommandState(DOMString commandId);

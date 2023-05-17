@@ -33,6 +33,7 @@
 #include "WebsitePoliciesData.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/NetworkConnectionIntegrity.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
 #include <WebCore/SubstituteData.h>
@@ -91,7 +92,7 @@ struct LoadParameters {
     bool isServiceWorkerLoad { false };
 
 #if PLATFORM(COCOA)
-    RetainPtr<NSDictionary> dataDetectionContext;
+    std::optional<double> dataDetectionReferenceDate;
 #if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     Vector<SandboxExtension::Handle> networkExtensionSandboxExtensionHandles;
 #if PLATFORM(IOS)
@@ -100,6 +101,8 @@ struct LoadParameters {
 #endif // PLATFORM(IOS)
 #endif // !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 #endif
+
+    OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy;
 };
 
 } // namespace WebKit

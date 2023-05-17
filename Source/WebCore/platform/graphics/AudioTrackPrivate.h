@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+struct AudioInfo;
+
 class AudioTrackPrivate : public TrackPrivateBase {
 public:
     static Ref<AudioTrackPrivate> create()
@@ -75,7 +77,9 @@ public:
         if (m_client)
             m_client->configurationChanged(m_configuration);
     }
-    
+
+    virtual void setFormatDescription(Ref<AudioInfo>&&) { }
+
     bool operator==(const AudioTrackPrivate& track) const
     {
         return TrackPrivateBase::operator==(track)

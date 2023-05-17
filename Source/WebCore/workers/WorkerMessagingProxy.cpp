@@ -289,15 +289,6 @@ RefPtr<CacheStorageConnection> WorkerMessagingProxy::createCacheStorageConnectio
     return document->page()->cacheStorageProvider().createCacheStorageConnection();
 }
 
-StorageConnection* WorkerMessagingProxy::storageConnection()
-{
-    ASSERT(isMainThread());
-    auto* document = dynamicDowncast<Document>(*m_scriptExecutionContext);
-    ASSERT(document);
-
-    return document ? document->storageConnection() : nullptr;
-}
-
 RefPtr<RTCDataChannelRemoteHandlerConnection> WorkerMessagingProxy::createRTCDataChannelRemoteHandlerConnection()
 {
     ASSERT(isMainThread());

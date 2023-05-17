@@ -113,11 +113,6 @@ struct NodeOrigin {
             && exitOK == other.exitOK;
     }
 
-    bool operator!=(const NodeOrigin& other) const
-    {
-        return !(*this == other);
-    }
-
     void dump(PrintStream&) const;
 
     // Used for determining what bytecode this came from. This is important for

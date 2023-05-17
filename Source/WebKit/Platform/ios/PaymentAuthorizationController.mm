@@ -85,6 +85,11 @@
     [self _didSelectPaymentMethod:paymentMethod completion:completion];
 }
 
+- (UIWindow *)presentationWindowForPaymentAuthorizationController:(PKPaymentAuthorizationController *)controller
+{
+    return nil;
+}
+
 #if HAVE(PASSKIT_COUPON_CODE)
 
 - (void)paymentAuthorizationController:(PKPaymentAuthorizationController *)controller didChangeCouponCode:(NSString *)couponCode handler:(void (^)(PKPaymentRequestCouponCodeUpdate *update))completion

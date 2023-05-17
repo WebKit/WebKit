@@ -29,18 +29,9 @@
 #if ENABLE(TEXT_AUTOSIZING)
 
 #include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
-
-AutosizeStatus::AutosizeStatus(OptionSet<Fields> fields)
-    : m_fields(fields)
-{
-}
-
-bool AutosizeStatus::contains(Fields fields) const
-{
-    return m_fields.contains(fields);
-}
 
 bool AutosizeStatus::probablyContainsASmallFixedNumberOfLines(const RenderStyle& style)
 {

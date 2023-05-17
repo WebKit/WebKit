@@ -256,6 +256,7 @@ namespace JSC {
         WTF_MAKE_NONCOPYABLE(ForInContext);
     public:
         using GetInst = std::tuple<unsigned, int>;
+        using PutInst = GetInst;
         using InInst = GetInst;
         using HasOwnPropertyJumpInst = std::tuple<unsigned, unsigned>;
 
@@ -272,6 +273,11 @@ namespace JSC {
         void addGetInst(unsigned instIndex, int propertyRegIndex)
         {
             m_getInsts.append(GetInst { instIndex, propertyRegIndex });
+        }
+
+        void addPutInst(unsigned instIndex, int propertyRegIndex)
+        {
+            m_putInsts.append(PutInst { instIndex, propertyRegIndex });
         }
 
         void addInInst(unsigned instIndex, int propertyRegIndex)
@@ -309,6 +315,7 @@ namespace JSC {
         unsigned m_bodyBytecodeStartOffset;
         Vector<InInst> m_inInsts;
         Vector<GetInst> m_getInsts;
+        Vector<PutInst> m_putInsts;
         Vector<HasOwnPropertyJumpInst> m_hasOwnPropertyJumpInsts;
     };
 
@@ -763,6 +770,7 @@ namespace JSC {
         RegisterID* emitPutByVal(RegisterID* base, RegisterID* property, RegisterID* value);
         RegisterID* emitPutByVal(RegisterID* base, RegisterID* thisValue, RegisterID* property, RegisterID* value);
         RegisterID* emitPutByValWithECMAMode(RegisterID* base, RegisterID* thisValue, RegisterID* property, RegisterID* value, ECMAMode);
+        RegisterID* emitEnumeratorPutByVal(ForInContext&, RegisterID* base, RegisterID* property, RegisterID* value);
         RegisterID* emitDirectPutByVal(RegisterID* base, RegisterID* property, RegisterID* value);
         RegisterID* emitDeleteByVal(RegisterID* dst, RegisterID* base, RegisterID* property);
 
@@ -772,6 +780,7 @@ namespace JSC {
         RegisterID* emitPrivateFieldPut(RegisterID* base, RegisterID* property, RegisterID* value);
         RegisterID* emitGetPrivateName(RegisterID* dst, RegisterID* base, RegisterID* property);
         RegisterID* emitHasPrivateName(RegisterID* dst, RegisterID* base, RegisterID* property);
+        RegisterID* emitHasStructureWithFlags(RegisterID* dst, RegisterID* src, unsigned flags);
 
         void emitCreatePrivateBrand(const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
         void emitInstallPrivateBrand(RegisterID* target);
@@ -1312,7 +1321,7 @@ namespace JSC {
         bool m_usesExceptions { false };
         bool m_expressionTooDeep { false };
         bool m_isBuiltinFunction { false };
-        bool m_usesNonStrictEval { false };
+        bool m_usesSloppyEval { false };
         bool m_inTailPosition { false };
         bool m_needsToUpdateArrowFunctionContext : 1;
         ECMAMode m_ecmaMode;

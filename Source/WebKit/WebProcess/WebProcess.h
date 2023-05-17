@@ -155,7 +155,7 @@ struct WebPreferencesStore;
 struct WebsiteData;
 struct WebsiteDataStoreParameters;
 
-enum class RemoteWorkerType : bool;
+enum class RemoteWorkerType : uint8_t;
 enum class WebsiteDataType : uint32_t;
 
 #if PLATFORM(IOS_FAMILY)
@@ -282,9 +282,12 @@ public:
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> sourceApplicationAuditData() const;
     void destroyRenderingResources();
-    void releaseSystemMallocMemory();
     void getProcessDisplayName(CompletionHandler<void(String&&)>&&);
     std::optional<audit_token_t> auditTokenForSelf();
+#endif
+
+#if PLATFORM(COCOA) || PLATFORM(WPE) || PLATFORM(GTK)
+    void releaseSystemMallocMemory();
 #endif
 
     const String& uiProcessBundleIdentifier() const { return m_uiProcessBundleIdentifier; }
@@ -295,6 +298,7 @@ public:
 
     void setHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds);
 
+    void releaseMemory(CompletionHandler<void()>&&);
     void prepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime, CompletionHandler<void()>&&);
     void processDidResume();
 

@@ -59,7 +59,7 @@ public:
     GraphicsContext* drawingContext() const final;
     GraphicsContext* existingDrawingContext() const final;
 
-    void didDraw(const std::optional<FloatRect>&) final { }
+    void didDraw(const std::optional<FloatRect>&, ShouldApplyPostProcessingToDirtyRect) final { }
 
     AffineTransform baseTransform() const final { ASSERT(m_destinationGraphicsContext && m_copiedBuffer); return m_copiedBuffer->baseTransform(); }
     Image* copiedImage() const final;

@@ -51,7 +51,7 @@ static bool shouldStoreBodyAsBlob(const Vector<uint8_t>& bodyData)
     return bodyData.size() > WTF::pageSize();
 }
 
-static SHA1::Digest computeSHA1(Span<const uint8_t> span, FileSystem::Salt salt)
+static SHA1::Digest computeSHA1(std::span<const uint8_t> span, FileSystem::Salt salt)
 {
     SHA1 sha1;
     sha1.addBytes(salt.data(), salt.size());
@@ -148,7 +148,7 @@ String CacheStorageDiskStore::blobFilePath(const String& blobFileName) const
     return FileSystem::pathByAppendingComponent(blobsDirectoryPath(), blobFileName);
 }
 
-static std::optional<RecordMetaData> decodeRecordMetaData(Span<const uint8_t> fileData)
+static std::optional<RecordMetaData> decodeRecordMetaData(std::span<const uint8_t> fileData)
 {
     WTF::Persistence::Decoder decoder(fileData);
     RecordMetaData metaData;
@@ -207,7 +207,7 @@ static std::optional<RecordMetaData> decodeRecordMetaData(Span<const uint8_t> fi
     return metaData;
 }
 
-static std::optional<RecordHeader> decodeRecordHeader(Span<const uint8_t> headerData)
+static std::optional<RecordHeader> decodeRecordHeader(std::span<const uint8_t> headerData)
 {
     WTF::Persistence::Decoder decoder(headerData);
     std::optional<double> insertionTime;

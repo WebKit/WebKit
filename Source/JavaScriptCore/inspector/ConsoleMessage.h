@@ -56,12 +56,12 @@ class JS_EXPORT_PRIVATE ConsoleMessage {
     WTF_MAKE_NONCOPYABLE(ConsoleMessage);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, unsigned long requestIdentifier = 0, Seconds timestamp = { });
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, const String& url, unsigned line, unsigned column, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0, Seconds timestamp = { });
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, Ref<ScriptCallStack>&&, unsigned long requestIdentifier = 0, Seconds timestamp = { });
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, Ref<ScriptArguments>&&, Ref<ScriptCallStack>&&, unsigned long requestIdentifier = 0, Seconds timestamp = { });
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, Ref<ScriptArguments>&&, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0, Seconds timestamp = { });
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, Vector<JSONLogValue>&&, JSC::JSGlobalObject*, unsigned long requestIdentifier = 0, Seconds timestamp = { });
+    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, unsigned long requestIdentifier = 0, WallTime timestamp = { });
+    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, const String& url, unsigned line, unsigned column, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0, WallTime timestamp = { });
+    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, Ref<ScriptCallStack>&&, unsigned long requestIdentifier = 0, WallTime timestamp = { });
+    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, Ref<ScriptArguments>&&, Ref<ScriptCallStack>&&, unsigned long requestIdentifier = 0, WallTime timestamp = { });
+    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, Ref<ScriptArguments>&&, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0, WallTime timestamp = { });
+    ConsoleMessage(MessageSource, MessageType, MessageLevel, Vector<JSONLogValue>&&, JSC::JSGlobalObject*, unsigned long requestIdentifier = 0, WallTime timestamp = { });
     ~ConsoleMessage();
 
     void addToFrontend(ConsoleFrontendDispatcher&, InjectedScriptManager&, bool generatePreview);
@@ -74,7 +74,7 @@ public:
     const String& url() const { return m_url; }
     unsigned line() const { return m_line; }
     unsigned column() const { return m_column; }
-    Seconds timestamp() const { return m_timestamp; }
+    WallTime timestamp() const { return m_timestamp; }
 
     JSC::JSGlobalObject* globalObject() const;
 
@@ -105,7 +105,7 @@ private:
     unsigned m_column { 0 };
     unsigned m_repeatCount { 1 };
     String m_requestId;
-    Seconds m_timestamp;
+    WallTime m_timestamp;
 };
 
 } // namespace Inspector

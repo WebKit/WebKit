@@ -1,0 +1,11 @@
+<style>
+.clamped {
+  font-family: Ahem;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+</style>
+<!-- PASS if a single line of TEST with ellipses -->
+<div class="clamped">TEST<br />CASE<br /><div></div>FAIL</div>

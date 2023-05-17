@@ -26,10 +26,10 @@
  */
 
 #include "config.h"
-#if USE(UNIX_DOMAIN_SOCKETS)
 #include "SharedMemory.h"
 
-#include "WebCoreArgumentCoders.h"
+#if USE(UNIX_DOMAIN_SOCKETS)
+
 #include <errno.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -52,38 +52,7 @@
 
 namespace WebKit {
 
-void SharedMemory::Handle::clear()
-{
-    *this = { };
-}
-
-bool SharedMemory::Handle::isNull() const
-{
-    return !m_handle;
-}
-
-void SharedMemory::Handle::encode(IPC::Encoder& encoder) const
-{
-    encoder << m_size << WTFMove(m_handle);
-}
-
-bool SharedMemory::Handle::decode(IPC::Decoder& decoder, SharedMemory::Handle& handle)
-{
-    ASSERT_ARG(handle, handle.isNull());
-    size_t size;
-    if (!decoder.decode(size))
-        return false;
-
-    auto fd = decoder.decode<UnixFileDescriptor>();
-    if (UNLIKELY(!decoder.isValid()))
-        return false;
-
-    handle.m_size = size;
-    handle.m_handle = WTFMove(*fd);
-    return true;
-}
-
-UnixFileDescriptor SharedMemory::Handle::releaseHandle()
+UnixFileDescriptor SharedMemoryHandle::releaseHandle()
 {
     return WTFMove(m_handle);
 }
@@ -168,16 +137,17 @@ RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
     return instance;
 }
 
-RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protection)
+RefPtr<SharedMemory> SharedMemory::map(Handle&& handle, Protection protection)
 {
     ASSERT(!handle.isNull());
     void* data = mmap(0, handle.size(), accessModeMMap(protection), MAP_SHARED, handle.m_handle.value(), 0);
-    handle.m_handle = { };
     if (data == MAP_FAILED)
         return nullptr;
 
-    RefPtr<SharedMemory> instance = wrapMap(data, handle.size(), -1);
-    instance->m_isWrappingMap = false;
+    RefPtr<SharedMemory> instance = adoptRef(new SharedMemory());
+    instance->m_data = data;
+    instance->m_size = handle.size();
+    instance->m_fileDescriptor = handle.releaseHandle();
     return instance;
 }
 
@@ -224,4 +194,3 @@ auto SharedMemory::createHandle(Protection) -> std::optional<Handle>
 } // namespace WebKit
 
 #endif
-

@@ -49,11 +49,7 @@ public:
 
     void dump(Structure* baseStructure, PrintStream& out) const;
 
-    bool operator==(const PolyProtoAccessChain& other) const;
-    bool operator!=(const PolyProtoAccessChain& other) const
-    {
-        return !(*this == other);
-    }
+    bool operator==(const PolyProtoAccessChain&) const;
 
     bool needImpurePropertyWatchpoint(VM&) const;
 

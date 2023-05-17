@@ -153,7 +153,7 @@ static bool isNotSpace(UChar character)
     if (character == noBreakSpace)
         return false;
 
-    return isNotHTMLSpace(character);
+    return !isASCIIWhitespace(character);
 }
 
 class ParagraphContentIterator {
@@ -413,7 +413,7 @@ void TextManipulationController::parse(ManipulationUnit& unit, const String& tex
                 startPositionOfCurrentToken = positionOfLastNonHTMLSpace + 1;
             }
 
-            while (index < text.length() && (isHTMLSpace(text[index]) || isInPrivateUseArea(text[index])))
+            while (index < text.length() && (isASCIIWhitespace(text[index]) || isInPrivateUseArea(text[index])))
                 ++index;
 
             --index;

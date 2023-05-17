@@ -46,6 +46,16 @@ FEComposite::FEComposite(const CompositeOperationType& type, float k1, float k2,
 {
 }
 
+bool FEComposite::operator==(const FEComposite& other) const
+{
+    return FilterEffect::operator==(other)
+        && m_type == other.m_type
+        && m_k1 == other.m_k1
+        && m_k2 == other.m_k2
+        && m_k3 == other.m_k3
+        && m_k4 == other.m_k4;
+}
+
 bool FEComposite::setOperation(CompositeOperationType type)
 {
     if (m_type == type)
@@ -86,7 +96,7 @@ bool FEComposite::setK4(float k4)
     return true;
 }
 
-FloatRect FEComposite::calculateImageRect(const Filter& filter, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const
+FloatRect FEComposite::calculateImageRect(const Filter& filter, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const
 {
     switch (m_type) {
     case FECOMPOSITE_OPERATOR_IN:

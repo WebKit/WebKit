@@ -13,3 +13,16 @@
 @font-face {
   font-family: Foo;
 }
+
+@counter-style fooCounter {
+  system: cyclic;
+  symbols: "A" "B" "C";
+  range: 1 2;
+  prefix: "--";
+  suffix: "..";
+  fallback: persian
+}
+
+@counter-style fooExtends {
+  system: extends circle;
+}

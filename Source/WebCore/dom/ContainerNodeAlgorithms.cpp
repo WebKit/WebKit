@@ -260,7 +260,7 @@ void disconnectSubframes(ContainerNode& root, SubframeDisconnectPolicy policy)
 
     Vector<Ref<HTMLFrameOwnerElement>> frameOwners;
 
-    if (policy == RootAndDescendants) {
+    if (policy == SubframeDisconnectPolicy::RootAndDescendants) {
         if (is<HTMLFrameOwnerElement>(root))
             frameOwners.append(downcast<HTMLFrameOwnerElement>(root));
     }

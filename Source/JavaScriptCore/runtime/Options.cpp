@@ -883,7 +883,7 @@ void Options::finalize()
 
 static bool isSeparator(char c)
 {
-    return isASCIISpace(c) || (c == ',');
+    return isUnicodeCompatibleASCIIWhitespace(c) || (c == ',');
 }
 
 bool Options::setOptions(const char* optionsStr)
@@ -1087,8 +1087,7 @@ struct OptionReader {
     public:
         void dump(StringBuilder&) const;
 
-        bool operator==(const Option& other) const;
-        bool operator!=(const Option& other) const { return !(*this == other); }
+        bool operator==(const Option&) const;
 
         const char* name() const { return Options::s_constMetaData[m_id].name; }
         const char* description() const { return Options::s_constMetaData[m_id].description; }

@@ -27,7 +27,8 @@
 }
 
 {
-    var obj3 = $vm.createProxy({})
+    var global = $vm.createGlobalObject();
+    var obj3 = $vm.createGlobalProxy(global)
     function foo3() {
         for (let i = 0; i < 5; ++i)
             delete obj3.x

@@ -47,7 +47,7 @@ public:
     using Base = JSCell;
     using Digit = UCPURegister;
 
-    static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal | OverridesToThis;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal | OverridesToThis | OverridesPut;
     friend class CachedBigInt;
 
     DECLARE_VISIT_CHILDREN;

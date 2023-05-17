@@ -165,7 +165,6 @@ private:
 };
 
 WEBCORE_EXPORT bool operator==(const SecurityOriginData&, const SecurityOriginData&);
-inline bool operator!=(const SecurityOriginData& first, const SecurityOriginData& second) { return !(first == second); }
 
 inline void add(Hasher& hasher, const SecurityOriginData& data)
 {

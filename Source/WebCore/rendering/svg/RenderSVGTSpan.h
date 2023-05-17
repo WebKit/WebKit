@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderSVGInline.h"
 #include "SVGTextPositioningElement.h"
 

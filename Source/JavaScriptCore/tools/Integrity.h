@@ -175,7 +175,7 @@ template<typename T> ALWAYS_INLINE T audit(T value) { return bitwise_cast<T>(doA
 template<typename T> ALWAYS_INLINE T audit(T value) { return value; }
 #endif
 
-#if COMPILER(MSVC) || !VA_OPT_SUPPORTED
+#if !VA_OPT_SUPPORTED
 
 #define IA_LOG(assertion, format, ...) do { \
         Integrity::logLnF("ERROR: %s @ %s:%d", #assertion, __FILE__, __LINE__); \
@@ -194,7 +194,7 @@ template<typename T> ALWAYS_INLINE T audit(T value) { return value; }
         RELEASE_ASSERT((assertion)); \
     })
 
-#else // not (COMPILER(MSVC) || !VA_OPT_SUPPORTED)
+#else // not !VA_OPT_SUPPORTED
 
 #define IA_LOG(assertion, format, ...) do { \
         Integrity::logLnF("ERROR: %s @ %s:%d", #assertion, __FILE__, __LINE__); \
@@ -214,7 +214,7 @@ template<typename T> ALWAYS_INLINE T audit(T value) { return value; }
         RELEASE_ASSERT((assertion) __VA_OPT__(,) __VA_ARGS__); \
     } __VA_OPT__(,) __VA_ARGS__)
 
-#endif // COMPILER(MSVC) || !VA_OPT_SUPPORTED
+#endif // !VA_OPT_SUPPORTED
 
 JS_EXPORT_PRIVATE WTF::PrintStream& logFile();
 JS_EXPORT_PRIVATE void logF(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);

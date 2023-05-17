@@ -25,18 +25,16 @@
 
 #pragma once
 
+#include "YarrFlags.h"
+#include <wtf/OptionSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC { namespace Yarr {
 
-enum MultilineMode { MultilineDisabled, MultilineEnabled };
-enum TextCaseSensitivity { TextCaseSensitive, TextCaseInsensitive };
-enum UnicodeMode { UnicodeUnawareMode, UnicodeAwareMode };
-
 class JS_EXPORT_PRIVATE RegularExpression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit RegularExpression(StringView, TextCaseSensitivity = TextCaseSensitive, MultilineMode = MultilineDisabled, UnicodeMode = UnicodeUnawareMode);
+    explicit RegularExpression(StringView, OptionSet<Flags> = { });
     ~RegularExpression();
 
     RegularExpression(const RegularExpression&);

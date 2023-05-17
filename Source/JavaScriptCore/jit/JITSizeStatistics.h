@@ -29,6 +29,7 @@
 #if ENABLE(JIT)
 
 #include "CCallHelpers.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/PrintStream.h>
 #include <wtf/text/WTFString.h>

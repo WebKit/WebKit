@@ -22,6 +22,7 @@
 #include "config.h"
 #include "RenderSVGInline.h"
 
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderSVGInlineInlines.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGResource.h"

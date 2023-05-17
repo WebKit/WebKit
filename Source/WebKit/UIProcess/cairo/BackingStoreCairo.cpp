@@ -73,7 +73,7 @@ void BackingStore::paint(cairo_t* context, const IntRect& rect)
     cairo_restore(context);
 }
 
-void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& updateInfo)
+void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, UpdateInfo&& updateInfo)
 {
     if (!m_backend)
         m_backend = createBackend();

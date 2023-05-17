@@ -121,30 +121,6 @@ std::optional<FontPlatformData> ArgumentCoder<Font>::decodePlatformData(Decoder&
     return FontPlatformData(WTFMove(gdiFont), *size, *syntheticBold, *syntheticOblique, fontCustomPlatformData.get());
 }
 
-void ArgumentCoder<WebCore::FontCustomPlatformData>::encodePlatformData(Encoder& encoder, const WebCore::FontCustomPlatformData& customPlatformData)
-{
-    encoder << customPlatformData.creationData.fontFaceData;
-    encoder << customPlatformData.creationData.itemInCollection;
-}
-
-std::optional<Ref<WebCore::FontCustomPlatformData>> ArgumentCoder<WebCore::FontCustomPlatformData>::decodePlatformData(Decoder& decoder)
-{
-    std::optional<Ref<SharedBuffer>> fontFaceData;
-    decoder >> fontFaceData;
-    if (!fontFaceData)
-        return std::nullopt;
-
-    std::optional<String> itemInCollection;
-    decoder >> itemInCollection;
-    if (!itemInCollection)
-        return std::nullopt;
-
-    auto fontCustomPlatformData = createFontCustomPlatformData(fontFaceData.value(), itemInCollection.value());
-    if (!fontCustomPlatformData)
-        return std::nullopt;
-    return fontCustomPlatformData.releaseNonNull();
-}
-
 void ArgumentCoder<WebCore::FontPlatformData::Attributes>::encodePlatformData(Encoder& encoder, const WebCore::FontPlatformData::Attributes& data)
 {
     encoder << data.m_font;

@@ -121,7 +121,7 @@ void ContextMenuContextData::encode(IPC::Encoder& encoder) const
     encoder << m_hasEntireImage;
 
 #if ENABLE(SERVICE_CONTROLS)
-    ShareableBitmapHandle handle;
+    ShareableBitmap::Handle handle;
     if (m_controlledImage) {
         if (auto imageHandle = m_controlledImage->createHandle(SharedMemory::Protection::ReadOnly))
             handle = WTFMove(*imageHandle);
@@ -137,14 +137,14 @@ void ContextMenuContextData::encode(IPC::Encoder& encoder) const
 #endif
 
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
-    ShareableBitmapHandle potentialQRCodeNodeSnapshotImageHandle;
+    ShareableBitmap::Handle potentialQRCodeNodeSnapshotImageHandle;
     if (m_potentialQRCodeNodeSnapshotImage) {
         if (auto imageHandle = m_potentialQRCodeNodeSnapshotImage->createHandle(SharedMemory::Protection::ReadOnly))
             potentialQRCodeNodeSnapshotImageHandle = WTFMove(*imageHandle);
     }
     encoder << potentialQRCodeNodeSnapshotImageHandle;
 
-    ShareableBitmapHandle potentialQRCodeViewportSnapshotImageHandle;
+    ShareableBitmap::Handle potentialQRCodeViewportSnapshotImageHandle;
     if (m_potentialQRCodeViewportSnapshotImage) {
         if (auto imageHandle = m_potentialQRCodeViewportSnapshotImage->createHandle(SharedMemory::Protection::ReadOnly))
             potentialQRCodeViewportSnapshotImageHandle = WTFMove(*imageHandle);
@@ -174,12 +174,12 @@ bool ContextMenuContextData::decode(IPC::Decoder& decoder, ContextMenuContextDat
         return false;
 
 #if ENABLE(SERVICE_CONTROLS)
-    ShareableBitmapHandle handle;
+    ShareableBitmap::Handle handle;
     if (!decoder.decode(handle))
         return false;
 
     if (!handle.isNull())
-        result.m_controlledImage = ShareableBitmap::create(handle, SharedMemory::Protection::ReadOnly);
+        result.m_controlledImage = ShareableBitmap::create(WTFMove(handle), SharedMemory::Protection::ReadOnly);
 
     if (!decoder.decode(result.m_controlledSelectionData))
         return false;
@@ -198,19 +198,19 @@ bool ContextMenuContextData::decode(IPC::Decoder& decoder, ContextMenuContextDat
 #endif
 
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
-    ShareableBitmapHandle potentialQRCodeNodeSnapshotImageHandle;
+    ShareableBitmap::Handle potentialQRCodeNodeSnapshotImageHandle;
     if (!decoder.decode(potentialQRCodeNodeSnapshotImageHandle))
         return false;
 
     if (!potentialQRCodeNodeSnapshotImageHandle.isNull())
-        result.m_potentialQRCodeNodeSnapshotImage = ShareableBitmap::create(potentialQRCodeNodeSnapshotImageHandle, SharedMemory::Protection::ReadOnly);
+        result.m_potentialQRCodeNodeSnapshotImage = ShareableBitmap::create(WTFMove(potentialQRCodeNodeSnapshotImageHandle), SharedMemory::Protection::ReadOnly);
 
-    ShareableBitmapHandle potentialQRCodeViewportSnapshotImageHandle;
+    ShareableBitmap::Handle potentialQRCodeViewportSnapshotImageHandle;
     if (!decoder.decode(potentialQRCodeViewportSnapshotImageHandle))
         return false;
 
     if (!potentialQRCodeViewportSnapshotImageHandle.isNull())
-        result.m_potentialQRCodeViewportSnapshotImage = ShareableBitmap::create(potentialQRCodeViewportSnapshotImageHandle, SharedMemory::Protection::ReadOnly);
+        result.m_potentialQRCodeViewportSnapshotImage = ShareableBitmap::create(WTFMove(potentialQRCodeViewportSnapshotImageHandle), SharedMemory::Protection::ReadOnly);
 #endif
 
     return true;

@@ -371,16 +371,19 @@ inline JSValue fastJoin(JSGlobalObject* globalObject, JSObject* thisObject, Stri
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    JSStringJoiner joiner(separator);
+
+    unsigned i = 0;
     switch (thisObject->indexingType()) {
     case ALL_INT32_INDEXING_TYPES: {
         auto& butterfly = *thisObject->butterfly();
         if (UNLIKELY(length > butterfly.publicLength()))
             break;
-        JSStringJoiner joiner(globalObject, separator, length);
+        joiner.reserveCapacity(globalObject, length);
         RETURN_IF_EXCEPTION(scope, { });
         auto data = butterfly.contiguous().data();
         bool holesKnownToBeOK = false;
-        for (unsigned i = 0; i < length; ++i) {
+        for (; i < length; ++i) {
             JSValue value = data[i].get();
             if (LIKELY(value))
                 joiner.appendNumber(vm, value.asInt32());
@@ -400,11 +403,9 @@ inline JSValue fastJoin(JSGlobalObject* globalObject, JSObject* thisObject, Stri
         auto& butterfly = *thisObject->butterfly();
         if (UNLIKELY(length > butterfly.publicLength()))
             break;
-        JSStringJoiner joiner(globalObject, separator, length);
-        RETURN_IF_EXCEPTION(scope, { });
         auto data = butterfly.contiguous().data();
         bool holesKnownToBeOK = false;
-        for (unsigned i = 0; i < length; ++i) {
+        for (; i < length; ++i) {
             if (JSValue value = data[i].get()) {
                 if (!joiner.appendWithoutSideEffects(globalObject, value))
                     goto generalCase;
@@ -425,11 +426,11 @@ inline JSValue fastJoin(JSGlobalObject* globalObject, JSObject* thisObject, Stri
         auto& butterfly = *thisObject->butterfly();
         if (UNLIKELY(length > butterfly.publicLength()))
             break;
-        JSStringJoiner joiner(globalObject, separator, length);
+        joiner.reserveCapacity(globalObject, length);
         RETURN_IF_EXCEPTION(scope, { });
         auto data = butterfly.contiguousDouble().data();
         bool holesKnownToBeOK = false;
-        for (unsigned i = 0; i < length; ++i) {
+        for (; i < length; ++i) {
             double value = data[i];
             if (LIKELY(!isHole(value)))
                 joiner.appendNumber(vm, value);
@@ -483,9 +484,7 @@ inline JSValue fastJoin(JSGlobalObject* globalObject, JSObject* thisObject, Stri
 
 generalCase:
     genericCase = true;
-    JSStringJoiner joiner(globalObject, separator, length);
-    RETURN_IF_EXCEPTION(scope, { });
-    for (unsigned i = 0; i < length; ++i) {
+    for (; i < length; ++i) {
         JSValue element = thisObject->getIndex(globalObject, i);
         RETURN_IF_EXCEPTION(scope, { });
         joiner.append(globalObject, element);
@@ -577,9 +576,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToString, (JSGlobalObject* globalObject, 
         return JSValue::encode(result);
     }
 
-    JSStringJoiner joiner(globalObject, ","_s, length);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
+    JSStringJoiner joiner(","_s);
     for (unsigned i = 0; i < length; ++i) {
         JSValue element = thisArray->tryGetIndexQuickly(i);
         if (!element) {

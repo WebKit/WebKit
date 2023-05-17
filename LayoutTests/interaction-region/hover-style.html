@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+
+    div {
+        width: 100px;
+        height: 100px;
+    }
+
+    #button {
+        background-color: green;
+        border-radius: 10px;
+    }
+    #button:hover {
+        background-color: blue;
+    }
+    #button-negation {
+        border: 4px blue solid;
+    }
+    #button-negation:not(:hover) {
+        border: 4px green solid;
+    }
+    #not-a-button:hover {
+        cursor: wait;
+    }
+    #scrollable {
+        border-right: 2px black solid;
+        height: 50px;
+        background: gray;
+        overflow-y: scroll;
+    }
+</style>
+<body>
+<div id="button" onclick="click()"></div>
+<div id="button-negation" onclick="click()"></div>
+<div id="not-a-button" onclick="click()">not a button</div>
+<div id="scrollable" onclick="click()">
+    <div></div>
+</div>
+
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+};
+</script>
+</body>
+</html>

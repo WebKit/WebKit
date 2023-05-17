@@ -6,27 +6,23 @@
 
 // DisplayEAGL.cpp: EAGL implementation of egl::Display
 
-#import "common/platform.h"
+#import "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
 
-#if defined(ANGLE_ENABLE_EAGL)
+#import <Foundation/Foundation.h>
+#import <QuartzCore/QuartzCore.h>
+#import <dlfcn.h>
 
-#    import "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
-
-#    import "common/debug.h"
-#    import "common/system_utils.h"
-#    import "gpu_info_util/SystemInfo.h"
-#    import "libANGLE/Display.h"
-#    import "libANGLE/renderer/gl/eagl/ContextEAGL.h"
-#    import "libANGLE/renderer/gl/eagl/DeviceEAGL.h"
-#    import "libANGLE/renderer/gl/eagl/FunctionsEAGL.h"
-#    import "libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.h"
-#    import "libANGLE/renderer/gl/eagl/PbufferSurfaceEAGL.h"
-#    import "libANGLE/renderer/gl/eagl/RendererEAGL.h"
-#    import "libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.h"
-
-#    import <Foundation/Foundation.h>
-#    import <QuartzCore/QuartzCore.h>
-#    import <dlfcn.h>
+#import "common/debug.h"
+#import "common/system_utils.h"
+#import "gpu_info_util/SystemInfo.h"
+#import "libANGLE/Display.h"
+#import "libANGLE/renderer/gl/eagl/ContextEAGL.h"
+#import "libANGLE/renderer/gl/eagl/DeviceEAGL.h"
+#import "libANGLE/renderer/gl/eagl/FunctionsEAGL.h"
+#import "libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.h"
+#import "libANGLE/renderer/gl/eagl/PbufferSurfaceEAGL.h"
+#import "libANGLE/renderer/gl/eagl/RendererEAGL.h"
+#import "libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.h"
 
 namespace
 {
@@ -407,5 +403,3 @@ RendererGL *DisplayEAGL::getRenderer() const
 }
 
 }  // namespace rx
-
-#endif  // defined(ANGLE_ENABLE_EAGL)

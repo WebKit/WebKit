@@ -19,6 +19,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/bundle.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/candidate-exchange.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/crypto-suite.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/dtls-certificates.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/dtls-fingerprint-validation.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/dtls-setup.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/h264-profile-levels.https.html
@@ -28,10 +29,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/ice-ufragpwd.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/jsep-initial-offer.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/missing-fields.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/msid-generate.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/msid-parse.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/rtp-clockrate.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/rtp-demuxing.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/rtp-extension-support.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/rtp-headerextensions.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/rtp-payloadtypes.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/rtx-codecs.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/sctp-format.html

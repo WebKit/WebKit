@@ -25,7 +25,7 @@
             "tentpole:.*Security.*": true
         },
         "redact_exemption" : {
-            "keywords:[^:]*WebKit Security Does Not Repro in Shipping" : true,
+            "keywords:[^:]*WebKit Security Does Not Apply to Shipping" : true,
             "keywords:[^:]*WebKit Security Merge-Back Approved" : true
         }
     }

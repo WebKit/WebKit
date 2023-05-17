@@ -42,11 +42,6 @@ public:
         return m_hotSpot == o.m_hotSpot && m_image == o.m_image;
     }
 
-    bool operator!=(const CursorData& o) const
-    {
-        return !(*this == o);
-    }
-
     StyleImage* image() const { return m_image.get(); }    
     void setImage(RefPtr<StyleImage>&& image) { m_image = WTFMove(image); }
 

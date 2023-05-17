@@ -68,8 +68,8 @@ public:
     StringView(const UChar*, unsigned length);
     StringView(const char*, unsigned length);
     StringView(ASCIILiteral);
-    ALWAYS_INLINE StringView(Span<const LChar> characters) : StringView(characters.data(), characters.size()) { }
-    ALWAYS_INLINE StringView(Span<const UChar> characters) : StringView(characters.data(), characters.size()) { }
+    ALWAYS_INLINE StringView(std::span<const LChar> characters) : StringView(characters.data(), characters.size()) { }
+    ALWAYS_INLINE StringView(std::span<const UChar> characters) : StringView(characters.data(), characters.size()) { }
 
     ALWAYS_INLINE static StringView fromLatin1(const char* characters) { return StringView { characters }; }
 
@@ -96,8 +96,8 @@ public:
     bool is8Bit() const;
     const LChar* characters8() const;
     const UChar* characters16() const;
-    Span<const LChar> span8() const { return { characters8(), length() }; }
-    Span<const UChar> span16() const { return { characters16(), length() }; }
+    std::span<const LChar> span8() const { return { characters8(), length() }; }
+    std::span<const UChar> span16() const { return { characters16(), length() }; }
 
     unsigned hash() const;
 
@@ -127,7 +127,7 @@ public:
     WTF_EXPORT_PRIVATE CString utf8(ConversionMode = LenientConversion) const;
 
     template<typename Func>
-    Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionError> tryGetUTF8(const Func&, ConversionMode = LenientConversion) const;
+    Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8ConversionError> tryGetUTF8(const Func&, ConversionMode = LenientConversion) const;
 
     class UpconvertedCharacters;
     UpconvertedCharacters upconvertedCharacters() const;
@@ -258,10 +258,6 @@ inline bool operator==(StringView a, StringView b) { return equal(a, b); }
 inline bool operator==(StringView a, ASCIILiteral b) { return equal(a, b); }
 inline bool operator==(ASCIILiteral a, StringView b) { return equal(b, a); }
 
-inline bool operator!=(StringView a, StringView b) { return !equal(a, b); }
-inline bool operator!=(StringView a, ASCIILiteral b) { return !equal(a, b); }
-inline bool operator!=(ASCIILiteral a, StringView b) { return !equal(b, a); }
-
 struct StringViewWithUnderlyingString;
 
 // This returns a StringView of the normalized result, and a String that is either
@@ -281,8 +277,13 @@ namespace WTF {
 
 struct StringViewWithUnderlyingString {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    StringView view;
+    StringViewWithUnderlyingString(StringView passedView, String passedUnderlyingString)
+        : underlyingString(WTFMove(passedUnderlyingString))
+        , view(WTFMove(passedView))
+    { }
+
     String underlyingString;
+    StringView view;
 
     String toString() const;
 };
@@ -833,7 +834,6 @@ public:
     WTF_EXPORT_PRIVATE Iterator& operator++();
 
     bool operator==(const Iterator&) const;
-    bool operator!=(const Iterator&) const;
 
 private:
     enum PositionTag { AtEnd };
@@ -866,7 +866,6 @@ public:
     WTF_EXPORT_PRIVATE Iterator& operator++();
 
     WTF_EXPORT_PRIVATE bool operator==(const Iterator&) const;
-    WTF_EXPORT_PRIVATE bool operator!=(const Iterator&) const;
 
 private:
     class Impl;
@@ -883,7 +882,6 @@ public:
     Iterator& operator++();
 
     bool operator==(const Iterator&) const;
-    bool operator!=(const Iterator&) const;
 
 private:
     const void* m_current;
@@ -903,7 +901,6 @@ public:
     Iterator& operator++();
 
     bool operator==(const Iterator&) const;
-    bool operator!=(const Iterator&) const;
 
 private:
     StringView m_stringView;
@@ -1003,11 +1000,6 @@ inline bool StringView::CodePoints::Iterator::operator==(const Iterator& other) 
     return m_current == other.m_current;
 }
 
-inline bool StringView::CodePoints::Iterator::operator!=(const Iterator& other) const
-{
-    return !(*this == other);
-}
-
 inline auto StringView::CodePoints::begin() const -> Iterator
 {
     return Iterator(m_stringView, 0);
@@ -1045,11 +1037,6 @@ inline bool StringView::CodeUnits::Iterator::operator==(const Iterator& other) c
     ASSERT(m_stringView.m_characters == other.m_stringView.m_characters);
     ASSERT(m_stringView.m_length == other.m_stringView.m_length);
     return m_index == other.m_index;
-}
-
-inline bool StringView::CodeUnits::Iterator::operator!=(const Iterator& other) const
-{
-    return !(*this == other);
 }
 
 inline auto StringView::CodeUnits::begin() const -> Iterator
@@ -1114,11 +1101,6 @@ inline bool StringView::SplitResult::Iterator::operator==(const Iterator& other)
 {
     ASSERT(&m_result == &other.m_result);
     return m_position == other.m_position && m_isDone == other.m_isDone;
-}
-
-inline bool StringView::SplitResult::Iterator::operator!=(const Iterator& other) const
-{
-    return !(*this == other);
 }
 
 template<typename CharacterType, typename MatchedCharacterPredicate>
@@ -1460,7 +1442,7 @@ inline bool AtomString::endsWithIgnoringASCIICase(StringView string) const
 }
 
 template<typename Func>
-inline Expected<std::invoke_result_t<Func, Span<const char>>, UTF8ConversionError> StringView::tryGetUTF8(const Func& function, ConversionMode mode) const
+inline Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8ConversionError> StringView::tryGetUTF8(const Func& function, ConversionMode mode) const
 {
     if (is8Bit())
         return StringImpl::tryGetUTF8ForCharacters(function, characters8(), length());

@@ -79,11 +79,6 @@ public:
             && m_end == other.m_end;
     }
 
-    bool operator!=(const Range& other) const
-    {
-        return !(*this == other);
-    }
-    
     explicit operator bool() const { return m_begin != m_end; }
 
     Range operator|(const Range& other) const

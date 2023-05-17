@@ -1,0 +1,12 @@
+[Worker] This test ensures StorageManager API works in nested dedicated workers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/nested-dedicated-workers.js
+PASS [Worker] estimate.quota is non-null.
+PASS [Worker] estimate.usage is non-null.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

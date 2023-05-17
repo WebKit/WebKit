@@ -7,4 +7,3 @@ depends:
 - test-infra/perl-cgi-pm.bst
 - test-infra/perl-http-date-pm.bst
 - test-infra/webkitgtk-test-dicts.bst
-- test-infra/webkitgtk-test-fonts.bst

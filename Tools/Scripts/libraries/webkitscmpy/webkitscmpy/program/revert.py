@@ -114,6 +114,13 @@ class Revert(Command):
         env = os.environ
         env['COMMIT_MESSAGE_TITLE'] = cls.REVERT_TITLE_TEMPLATE.format(commit, commit_title)
         env['COMMIT_MESSAGE_BUG'] = '\n'.join(bug_urls)
+
+        cls.write_branch_variables(
+            repository, repository.branch,
+            title=cls.REVERT_TITLE_TEMPLATE.format(commit, commit_title),
+            bug=bug_urls,
+        )
+
         result = run([repository.executable(), 'commit', '--date=now'], cwd=repository.root_path, env=env)
         if result.returncode:
             run([repository.executable(), 'revert', '--abort'], cwd=repository.root_path)

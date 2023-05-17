@@ -19,7 +19,7 @@ PASS align=texttop on replaced elements
 PASS align=texttop on non-replaced elements
 PASS align=absmiddle on replaced elements
 PASS align=absmiddle on non-replaced elements
-FAIL align=abscenter on replaced elements assert_equals: align=abscenter should map to vertical-align: middle expected "middle" but got "baseline"
+PASS align=abscenter on replaced elements
 PASS align=abscenter on non-replaced elements
 PASS align=absbottom on replaced elements
 PASS align=absbottom on non-replaced elements

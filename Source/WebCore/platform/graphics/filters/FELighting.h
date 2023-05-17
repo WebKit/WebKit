@@ -39,6 +39,8 @@ struct FELightingPaintingDataForNeon;
 
 class FELighting : public FilterEffect {
 public:
+    bool operator==(const FELighting&) const;
+
     const Color& lightingColor() const { return m_lightingColor; }
     bool setLightingColor(const Color&);
 
@@ -60,7 +62,7 @@ public:
 protected:
     FELighting(Type, const Color& lightingColor, float surfaceScale, float diffuseConstant, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&);
 
-    FloatRect calculateImageRect(const Filter&, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
+    FloatRect calculateImageRect(const Filter&, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
 
     std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
 

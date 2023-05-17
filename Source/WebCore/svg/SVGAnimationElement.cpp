@@ -6,7 +6,7 @@
  * Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2013-2014 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,6 +33,7 @@
 #include "Document.h"
 #include "FloatConversion.h"
 #include "HTMLParserIdioms.h"
+#include "NodeName.h"
 #include "RenderObject.h"
 #include "SVGAnimateColorElement.h"
 #include "SVGAnimateElement.h"
@@ -155,7 +156,7 @@ bool SVGAnimationElement::attributeContainsJavaScriptURL(const Attribute& attrib
 
     if (attribute.name() == SVGNames::valuesAttr) {
         for (auto innerValue : StringView(attribute.value()).split(';')) {
-            if (WTF::protocolIsJavaScript(innerValue.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>)))
+            if (WTF::protocolIsJavaScript(innerValue.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>)))
                 return true;
         }
         return false;
@@ -168,54 +169,46 @@ void SVGAnimationElement::attributeChanged(const QualifiedName& name, const Atom
     SVGTests::parseAttribute(name, newValue);
     SVGSMILElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == SVGNames::valuesAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::valuesAttr:
         // Per the SMIL specification, leading and trailing white space,
         // and white space before and after semicolon separators, is allowed and will be ignored.
         // http://www.w3.org/TR/SVG11/animate.html#ValuesAttribute
         m_values.clear();
         newValue.string().split(';', [this](StringView innerValue) {
-            m_values.append(innerValue.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>).toString());
+            m_values.append(innerValue.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>).toString());
         });
-
         updateAnimationMode();
-        return;
-    }
-
-    if (name == SVGNames::keyTimesAttr) {
+        break;
+    case AttributeNames::keyTimesAttr:
         m_keyTimesFromAttribute = parseKeyTimes(newValue, true);
-        return;
-    }
-
-    if (name == SVGNames::keyPointsAttr) {
+        break;
+    case AttributeNames::keyPointsAttr:
         if (hasTagName(SVGNames::animateMotionTag)) {
-            // This is specified to be an animateMotion attribute only but it is simpler to put it here 
+            // This is specified to be an animateMotion attribute only but it is simpler to put it here
             // where the other timing calculatations are.
             m_keyPoints = parseKeyTimes(newValue, false);
         }
-        return;
-    }
-
-    if (name == SVGNames::keySplinesAttr) {
+        break;
+    case AttributeNames::keySplinesAttr:
         if (auto keySplines = parseKeySplines(newValue))
             m_keySplines = WTFMove(*keySplines);
         else
             m_keySplines.clear();
-        return;
-    }
-
-    if (name == SVGNames::attributeTypeAttr) {
+        break;
+    case AttributeNames::attributeTypeAttr:
         setAttributeType(newValue);
-        return;
-    }
-
-    if (name == SVGNames::calcModeAttr) {
+        break;
+    case AttributeNames::calcModeAttr:
         setCalcMode(newValue);
-        return;
-    }
-
-    if (name == SVGNames::fromAttr || name == SVGNames::toAttr || name == SVGNames::byAttr) {
+        break;
+    case AttributeNames::fromAttr:
+    case AttributeNames::toAttr:
+    case AttributeNames::byAttr:
         updateAnimationMode();
-        return;
+        break;
+    default:
+        break;
     }
 }
 
@@ -258,7 +251,7 @@ void SVGAnimationElement::beginElement()
 
 void SVGAnimationElement::beginElementAt(float offset)
 {
-    if (std::isnan(offset))
+    if (!std::isfinite(offset))
         return;
     SMILTime elapsed = this->elapsed();
     addBeginTime(elapsed, elapsed + offset, SMILTimeWithOrigin::ScriptOrigin);
@@ -271,7 +264,7 @@ void SVGAnimationElement::endElement()
 
 void SVGAnimationElement::endElementAt(float offset)
 {
-    if (std::isnan(offset))
+    if (!std::isfinite(offset))
         return;
     SMILTime elapsed = this->elapsed();
     addEndTime(elapsed, elapsed + offset, SMILTimeWithOrigin::ScriptOrigin);

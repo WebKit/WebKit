@@ -858,11 +858,6 @@ public:
         return value() == Checked(rhs.value());
     }
 
-    template <typename U> bool operator!=(U rhs)
-    {
-        return !(*this == rhs);
-    }
-
     // Other comparisons
     template <typename V> bool operator<(Checked<T, V> rhs) const
     {

@@ -26,6 +26,7 @@
 interface TestRunner {
     readonly attribute boolean isWebKit2;
     readonly attribute boolean isIOSFamily;
+    readonly attribute boolean isKeyboardImmediatelyAvailable;
 
     // The basics.
     undefined dumpAsText(boolean dumpPixels);
@@ -236,6 +237,8 @@ interface TestRunner {
     undefined setScreenWakeLockPermission(boolean value);
 
     // MediaStream
+    undefined setCameraPermission(boolean value);
+    undefined setMicrophonePermission(boolean value);
     undefined setUserMediaPermission(boolean value);
     undefined resetUserMediaPermission();
     undefined setUserMediaPersistentPermissionForOrigin(boolean permission, DOMString origin, DOMString parentOrigin);
@@ -399,7 +402,7 @@ interface TestRunner {
 
     undefined installFakeHelvetica(DOMString configuration);
 
-    undefined addMockCameraDevice(DOMString persistentId, DOMString label);
+    undefined addMockCameraDevice(DOMString persistentId, DOMString label, object properties);
     undefined addMockMicrophoneDevice(DOMString persistentId, DOMString label);
     undefined addMockScreenDevice(DOMString persistentId, DOMString label);
     undefined clearMockMediaDevices();

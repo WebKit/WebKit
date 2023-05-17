@@ -29,6 +29,7 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "Logging.h"
+#include "MessageSenderInlines.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"

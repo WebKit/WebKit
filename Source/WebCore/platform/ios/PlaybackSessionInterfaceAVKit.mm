@@ -254,6 +254,23 @@ void PlaybackSessionInterfaceAVKit::modelDestroyed()
     ASSERT(!m_playbackSessionModel);
 }
 
+#if !RELEASE_LOG_DISABLED
+const void* PlaybackSessionInterfaceAVKit::logIdentifier() const
+{
+    return m_playbackSessionModel ? m_playbackSessionModel->logIdentifier() : nullptr;
+}
+
+const Logger* PlaybackSessionInterfaceAVKit::loggerPtr() const
+{
+    return m_playbackSessionModel ? m_playbackSessionModel->loggerPtr() : nullptr;
+}
+
+WTFLogChannel& PlaybackSessionInterfaceAVKit::logChannel() const
+{
+    return LogMedia;
+}
+#endif
+
 }
 
 #endif // PLATFORM(COCOA) && HAVE(AVKIT)

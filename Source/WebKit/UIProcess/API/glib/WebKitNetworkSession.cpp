@@ -553,7 +553,7 @@ void webkit_network_session_set_memory_pressure_settings(WebKitMemoryPressureSet
  * @session: a #WebKitNetworkSession
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
  * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
- * @user_data: (closure): the data to pass to callback function
+ * @user_data: the data to pass to callback function
  *
  * Asynchronously get the list of #WebKitITPThirdParty seen for @session.
  *

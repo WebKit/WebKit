@@ -98,9 +98,6 @@ public:
     // Check to see if a MIME type is suitable for being loaded using <track>>.
     WEBCORE_EXPORT static bool isSupportedTextTrackMIMEType(const String& mimeType);
 
-    // Check to see if a MIME type is a valid Java applet mime type.
-    WEBCORE_EXPORT static bool isJavaAppletMIMEType(const String& mimeType);
-
     // Check to see if a MIME type is a plugin implemented by the browser.
     static bool isApplicationPluginMIMEType(const String& mimeType);
 

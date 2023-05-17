@@ -30,6 +30,7 @@
 #include "ArrayConstructor.h"
 #include "BigIntObject.h"
 #include "BooleanObject.h"
+#include "GetterSetter.h"
 #include "JSArrayInlines.h"
 #include "JSCInlines.h"
 #include "LiteralParser.h"
@@ -37,6 +38,7 @@
 #include "ObjectConstructorInlines.h"
 #include "PropertyNameArray.h"
 #include "VMInlines.h"
+#include <charconv>
 #include <wtf/text/EscapedFormsForJSON.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -520,8 +522,9 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
             if (stringifier.m_usingArrayReplacer) {
                 m_propertyNames = stringifier.m_arrayReplacerPropertyNames.data();
                 m_size = m_propertyNames->propertyNameVector().size();
-            } else if (m_structure && m_object->structureID() == m_structure->id() && m_structure->canPerformFastPropertyEnumeration()) {
-                m_structure->forEachProperty(vm, [&](const PropertyTableEntry& entry) -> bool {
+            } else if (m_object->structure() == m_structure && canPerformFastPropertyNameEnumerationForJSONStringifyWithSideEffect(m_structure)) {
+                m_hasFastObjectProperties = m_structure->canPerformFastPropertyEnumeration();
+                m_structure->forEachProperty(vm, [&](const auto& entry) -> bool {
                     if (entry.attributes() & PropertyAttribute::DontEnum)
                         return true;
 
@@ -531,7 +534,6 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
                     m_propertiesAndOffsets.constructAndAppend(propertyName, entry.offset());
                     return true;
                 });
-                m_hasFastObjectProperties = true;
                 m_size = m_propertiesAndOffsets.size();
             } else {
                 PropertyNameArray objectPropertyNames(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
@@ -540,6 +542,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
                 m_propertyNames = objectPropertyNames.releaseData();
                 m_size = m_propertyNames->propertyNameVector().size();
             }
+
             builder.append('{');
         }
         stringifier.indent();
@@ -591,9 +594,27 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
                 RETURN_IF_EXCEPTION(scope, false);
             }
         } else {
-            propertyName = m_propertyNames->propertyNameVector()[index];
-            value = m_object->get(globalObject, propertyName);
-            RETURN_IF_EXCEPTION(scope, false);
+            if (m_propertyNames) {
+                propertyName = m_propertyNames->propertyNameVector()[index];
+                value = m_object->get(globalObject, propertyName);
+                RETURN_IF_EXCEPTION(scope, false);
+            } else {
+                propertyName = std::get<0>(m_propertiesAndOffsets[index]);
+                if (m_object->structureID() == m_structure->id()) {
+                    unsigned offset = std::get<1>(m_propertiesAndOffsets[index]);
+                    value = m_object->getDirect(offset);
+                    if (value.isGetterSetter()) {
+                        value = jsCast<GetterSetter*>(value)->callGetter(globalObject, m_object);
+                        RETURN_IF_EXCEPTION(scope, false);
+                    } else if (value.isCustomGetterSetter()) {
+                        value = m_object->get(globalObject, propertyName);
+                        RETURN_IF_EXCEPTION(scope, false);
+                    }
+                } else {
+                    value = m_object->get(globalObject, propertyName);
+                    RETURN_IF_EXCEPTION(scope, false);
+                }
+            }
         }
 
         rollBackPoint = builder.length();
@@ -953,13 +974,15 @@ void FastStringifier::append(JSValue value)
 
     if (value.isInt32()) {
         auto number = value.asInt32();
-        auto length = lengthOfIntegerAsString(number);
-        if (UNLIKELY(!hasRemainingCapacity(length))) {
+        constexpr unsigned maxInt32StringLength = 11; // -INT32_MIN, "-2147483648".
+        if (UNLIKELY(!hasRemainingCapacity(maxInt32StringLength))) {
             recordBufferFull();
             return;
         }
-        writeIntegerToBuffer(number, &m_buffer[m_length]);
-        m_length += length;
+        char* cursor = reinterpret_cast<char*>(m_buffer) + m_length;
+        auto result = std::to_chars(cursor, cursor + maxInt32StringLength, number);
+        ASSERT(result.ec != std::errc::value_too_large);
+        m_length += result.ptr - cursor;
         return;
     }
 
@@ -1001,7 +1024,8 @@ void FastStringifier::append(JSValue value)
             recordBufferFull();
             return;
         }
-        m_buffer[m_length] = '"';
+        auto* cursor = m_buffer + m_length;
+        *cursor++ = '"';
         auto* characters = string.characters8();
         for (unsigned i = 0; i < stringLength; ++i) {
             auto character = characters[i];
@@ -1009,9 +1033,9 @@ void FastStringifier::append(JSValue value)
                 recordFailure("string character needs escaping"_s);
                 return;
             }
-            m_buffer[m_length + 1 + i] = character;
+            *cursor++ = character;
         }
-        m_buffer[m_length + 1 + stringLength] = '"';
+        *cursor = '"';
         m_length += 1 + stringLength + 1;
         return;
     }
@@ -1048,7 +1072,7 @@ void FastStringifier::append(JSValue value)
             recordFastPropertyEnumerationFailure(object);
             return;
         }
-        structure.forEachProperty(m_vm, [&](const PropertyTableEntry& entry) -> bool {
+        structure.forEachProperty(m_vm, [&](const auto& entry) -> bool {
             if (entry.attributes() & PropertyAttribute::DontEnum)
                 return true;
             auto& name = *entry.key();

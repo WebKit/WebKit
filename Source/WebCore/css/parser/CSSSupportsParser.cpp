@@ -124,7 +124,7 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeNegation(CSSParserTo
     return result ? Unsupported : Supported;
 }
 
-// <function-token> <any-value>? | <supports-selector-fn> | <supports-font-format-fn>
+// <function-token> <any-value>? | <supports-selector-fn> | <supports-font-format-fn> | <supports-font-tech-fn>
 CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFunction(CSSParserTokenRange& range)
 {
     if (range.peek().type() != FunctionToken)
@@ -135,6 +135,8 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFunction(CSS
         return consumeSupportsSelectorFunction(range);
     case CSSValueFontFormat:
         return consumeSupportsFontFormatFunction(range);
+    case CSSValueFontTech:
+        return consumeSupportsFontTechFunction(range);
     default: // Unknown functions should parse as unsupported.
         range.consumeComponentValue();
         return Unsupported;
@@ -167,15 +169,16 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsSelectorFunc
 CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFontFormatFunction(CSSParserTokenRange& range)
 {
     ASSERT(range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueFontFormat);
+    auto format = CSSPropertyParserHelpers::consumeFontFormat(range, true);
+    return format.isNull() ? Unsupported : Supported;
+}
 
-    auto block = range.consumeBlock();
-    block.consumeWhitespace();
-
-    auto isSupported = CSSPropertyParserHelpers::consumeIdent(block, CSSPropertyParserHelpers::identMatchesSupportedFontFormat) ? Supported : Unsupported;
-    if (!block.atEnd())
-        return Unsupported;
-
-    return isSupported;
+// <supports-font-tech-fn>
+CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFontTechFunction(CSSParserTokenRange& range)
+{
+    ASSERT(range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueFontTech);
+    auto supportedTechnologies = CSSPropertyParserHelpers::consumeFontTech(range, true);
+    return supportedTechnologies.isEmpty() ? Unsupported : Supported;
 }
 
 // <supports-in-parens> = ( <supports-condition> ) | <supports-feature> | <general-enclosed>

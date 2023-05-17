@@ -30,11 +30,11 @@
 #include "Editing.h"
 #include "EditingStyle.h"
 #include "ElementInlines.h"
-#include "ElementName.h"
 #include "HTMLBRElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "InsertLineBreakCommand.h"
+#include "NodeName.h"
 #include "NodeTraversal.h"
 #include "RenderText.h"
 #include "Text.h"
@@ -152,7 +152,7 @@ static bool isPhrasingContent(const Node* node)
     if (!node || !is<Element>(*node))
         return false;
 
-    switch (downcast<Element>(*node).tagQName().elementName()) {
+    switch (downcast<Element>(*node).elementName()) {
     case ElementNames::HTML::a:
     case ElementNames::HTML::abbr:
     case ElementNames::HTML::area:

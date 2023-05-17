@@ -362,6 +362,7 @@ class GitHub(Scm):
         if not match:
             raise self.Exception("'{}' is not a valid GitHub project".format(url))
         self.api_url = 'https://api.github.{}'.format(match.group('domain'))
+        self.domain = 'github.{}'.format(match.group('domain'))
         self.owner = match.group('owner')
         self.name = match.group('repository')
         self.session = requests.Session()
@@ -394,6 +395,13 @@ class GitHub(Scm):
     @property
     def is_git(self):
         return True
+
+    def checkout_url(self, ssh=False, http=False):
+        if ssh and http:
+            raise ValueError('Cannot specify request both a ssh and http URL')
+        if http:
+            return 'https://{}/{}/{}.git'.format(self.domain, self.owner, self.name)
+        return 'git@{}:{}/{}.git'.format(self.domain, self.owner, self.name)
 
     def request(self, path=None, params=None, headers=None, authenticated=None, paginate=True, json=None, method='GET', endpoint_url=None, files=None, data=None, stream=False):
         headers = {key: value for key, value in headers.items()} if headers else dict()

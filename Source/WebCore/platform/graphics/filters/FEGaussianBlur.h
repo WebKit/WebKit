@@ -31,6 +31,8 @@ class FEGaussianBlur : public FilterEffect {
 public:
     WEBCORE_EXPORT static Ref<FEGaussianBlur> create(float x, float y, EdgeModeType);
 
+    bool operator==(const FEGaussianBlur&) const;
+
     float stdDeviationX() const { return m_stdX; }
     bool setStdDeviationX(float);
 
@@ -49,7 +51,9 @@ public:
 private:
     FEGaussianBlur(float x, float y, EdgeModeType);
 
-    FloatRect calculateImageRect(const Filter&, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
+    bool operator==(const FilterEffect& other) const override { return areEqual<FEGaussianBlur>(*this, other); }
+
+    FloatRect calculateImageRect(const Filter&, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
 
     bool resultIsAlphaImage(const FilterImageVector& inputs) const override;
 

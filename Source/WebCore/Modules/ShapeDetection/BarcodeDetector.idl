@@ -49,8 +49,8 @@ typedef (CanvasImageSource or Blob or ImageData) ImageBitmapSource;
     SecureContext
 ]
 interface BarcodeDetector {
-    constructor(optional BarcodeDetectorOptions barcodeDetectorOptions = {});
-    static Promise<sequence<BarcodeFormat>> getSupportedFormats();
+    [CallWith=CurrentScriptExecutionContext] constructor(optional BarcodeDetectorOptions barcodeDetectorOptions = {});
+    [CallWith=CurrentScriptExecutionContext] static Promise<sequence<BarcodeFormat>> getSupportedFormats();
 
-    Promise<sequence<DetectedBarcode>> detect(ImageBitmapSource image);
+    [CallWith=CurrentScriptExecutionContext] Promise<sequence<DetectedBarcode>> detect(ImageBitmapSource image);
 };

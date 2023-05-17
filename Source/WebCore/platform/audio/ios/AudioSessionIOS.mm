@@ -110,39 +110,11 @@ void AudioSessionIOS::addAudioSessionCategoryChangedObserver(const CategoryChang
     observer(AudioSession::sharedSession(), AudioSession::sharedSession().category());
 }
 
-static void setEligibleForSmartRouting(bool eligible)
-{
-#if PLATFORM(IOS)
-    if (!AudioSession::shouldManageAudioSessionCategory())
-        return;
-
-    AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
-    if (![session respondsToSelector:@selector(setEligibleForBTSmartRoutingConsideration:error:)]
-        || ![session respondsToSelector:@selector(eligibleForBTSmartRoutingConsideration)])
-        return;
-
-    if (session.eligibleForBTSmartRoutingConsideration == eligible)
-        return;
-
-    NSError *error = nil;
-    if (![session setEligibleForBTSmartRoutingConsideration:eligible error:&error])
-        RELEASE_LOG_ERROR(Media, "failed to set eligible to %d with error: %@", eligible, error.localizedDescription);
-#else
-    UNUSED_PARAM(eligible);
-#endif
-}
-
 AudioSessionIOS::AudioSessionIOS()
-    : m_workQueue(WorkQueue::create("AudioSession Activation Queue"))
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     m_interruptionObserverHelper = adoptNS([[WebInterruptionObserverHelper alloc] initWithCallback:this]);
     END_BLOCK_OBJC_EXCEPTIONS
-
-    m_workQueue->dispatch([] {
-        setEligibleForSmartRouting(false);
-    });
-
 }
 
 AudioSessionIOS::~AudioSessionIOS()
@@ -190,22 +162,21 @@ void AudioSessionIOS::setPresentingProcesses(Vector<audit_token_t>&& auditTokens
 #endif
 }
 
-void AudioSessionIOS::setCategory(CategoryType newCategory, RouteSharingPolicy policy)
+void AudioSessionIOS::setCategory(CategoryType newCategory, Mode newMode, RouteSharingPolicy policy)
 {
 #if !HAVE(ROUTE_SHARING_POLICY_LONG_FORM_VIDEO)
     if (policy == RouteSharingPolicy::LongFormVideo)
         policy = RouteSharingPolicy::LongFormAudio;
 #endif
 
-    LOG(Media, "AudioSession::setCategory() - category = %s", convertEnumerationToString(newCategory).ascii().data());
+    LOG(Media, "AudioSession::setCategory() - category = %s mode = %s", convertEnumerationToString(newCategory).ascii().data(), convertEnumerationToString(newMode).ascii().data());
 
-    if (categoryOverride() !=  CategoryType::None && categoryOverride() != newCategory) {
+    if (categoryOverride() != CategoryType::None && categoryOverride() != newCategory) {
         LOG(Media, "AudioSession::setCategory() - override set, NOT changing");
         return;
     }
 
     NSString *categoryString;
-    NSString *categoryMode = AVAudioSessionModeDefault;
     AVAudioSessionCategoryOptions options = 0;
 
     switch (newCategory) {
@@ -223,7 +194,6 @@ void AudioSessionIOS::setCategory(CategoryType newCategory, RouteSharingPolicy p
         break;
     case CategoryType::PlayAndRecord:
         categoryString = AVAudioSessionCategoryPlayAndRecord;
-        categoryMode = AVAudioSessionModeVideoChat;
         options |= AVAudioSessionCategoryOptionAllowBluetooth | AVAudioSessionCategoryOptionAllowBluetoothA2DP | AVAudioSessionCategoryOptionDefaultToSpeaker | AVAudioSessionCategoryOptionAllowAirPlay;
         break;
     case CategoryType::AudioProcessing:
@@ -231,6 +201,19 @@ void AudioSessionIOS::setCategory(CategoryType newCategory, RouteSharingPolicy p
         break;
     case CategoryType::None:
         categoryString = AVAudioSessionCategoryAmbient;
+        break;
+    }
+
+    NSString *modeString = AVAudioSessionModeDefault;
+    switch (newMode) {
+    case Mode::Default:
+        modeString = AVAudioSessionModeDefault;
+        break;
+    case Mode::MoviePlayback:
+        modeString = AVAudioSessionModeMoviePlayback;
+        break;
+    case Mode::VideoChat:
+        modeString = AVAudioSessionModeVideoChat;
         break;
     }
 
@@ -246,16 +229,17 @@ void AudioSessionIOS::setCategory(CategoryType newCategory, RouteSharingPolicy p
 
     AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
     auto *currentCategory = [session category];
+    auto *currentMode = [session mode];
     auto currentOptions = [session categoryOptions];
     auto currentPolicy = [session routeSharingPolicy];
-    auto needSessionUpdate = ![currentCategory isEqualToString:categoryString] || currentOptions != options || currentPolicy != static_cast<AVAudioSessionRouteSharingPolicy>(policy);
+    auto needSessionUpdate = ![currentCategory isEqualToString:categoryString] || ![currentMode isEqualToString:modeString] || currentOptions != options || currentPolicy != static_cast<AVAudioSessionRouteSharingPolicy>(policy);
 
     if (!needSessionUpdate && !needDeviceUpdate)
         return;
 
     if (needSessionUpdate) {
         NSError *error = nil;
-        [session setCategory:categoryString mode:categoryMode routeSharingPolicy:static_cast<AVAudioSessionRouteSharingPolicy>(policy) options:options error:&error];
+        [session setCategory:categoryString mode:modeString routeSharingPolicy:static_cast<AVAudioSessionRouteSharingPolicy>(policy) options:options error:&error];
 #if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
         ASSERT(!error);
 #endif
@@ -287,6 +271,17 @@ AudioSession::CategoryType AudioSessionIOS::category() const
     if ([categoryString isEqual:AVAudioSessionCategoryAudioProcessing])
         return CategoryType::AudioProcessing;
     return CategoryType::None;
+}
+
+AudioSession::Mode AudioSessionIOS::mode() const
+{
+    AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
+    NSString *modeString = [session mode];
+    if ([modeString isEqual:AVAudioSessionModeVideoChat])
+        return Mode::VideoChat;
+    if ([modeString isEqual:AVAudioSessionModeMoviePlayback])
+        return Mode::MoviePlayback;
+    return Mode::Default;
 }
 
 RouteSharingPolicy AudioSessionIOS::routeSharingPolicy() const
@@ -334,31 +329,6 @@ size_t AudioSessionIOS::numberOfOutputChannels() const
 size_t AudioSessionIOS::maximumNumberOfOutputChannels() const
 {
     return [[PAL::getAVAudioSessionClass() sharedInstance] maximumOutputNumberOfChannels];
-}
-
-bool AudioSessionIOS::tryToSetActiveInternal(bool active)
-{
-    // We need to deactivate the session on another queue because the AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation option
-    // means that AVAudioSession may synchronously unduck previously ducked clients. Activation needs to complete before this method
-    // returns, so do it synchronously on the same serial queue.
-    if (active) {
-        bool success = false;
-        m_workQueue->dispatchSync([&success] {
-            NSError *error = nil;
-            setEligibleForSmartRouting(true);
-            [[PAL::getAVAudioSessionClass() sharedInstance] setActive:YES withOptions:0 error:&error];
-            success = !error;
-        });
-        return success;
-    }
-
-    m_workQueue->dispatch([] {
-        NSError *error = nil;
-        [[PAL::getAVAudioSessionClass() sharedInstance] setActive:NO withOptions:0 error:&error];
-        setEligibleForSmartRouting(false);
-    });
-
-    return true;
 }
 
 size_t AudioSessionIOS::preferredBufferSize() const

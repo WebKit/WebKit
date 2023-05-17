@@ -25,6 +25,7 @@ window.addEventListener("load", () => {
   if (!window.internals)
     return;
   internals.settings.setImageAnimationControlEnabled(true);
+  internals.settings.setAllowAnimationControlsOverride(true);
 
   // Verify initial animation play-state.
   setTimeout(async () => {
@@ -44,6 +45,7 @@ window.addEventListener("load", () => {
     await shouldBecomeEqual("internals.isImageAnimating(gif)", "true");
     await shouldBecomeEqual("internals.isImageAnimating(png)", "true");
 
+    internals.settings.setAllowAnimationControlsOverride(false);
     internals.settings.setImageAnimationControlEnabled(false);
     internals.clearMemoryCache();
     finishJSTest();

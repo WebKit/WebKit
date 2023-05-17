@@ -81,9 +81,9 @@ std::optional<ScreenOrientationType> ScreenOrientationProvider::platformCurrentO
     case UIInterfaceOrientationPortraitUpsideDown:
         return WebCore::ScreenOrientationType::PortraitSecondary;
     case UIInterfaceOrientationLandscapeLeft:
-        return WebCore::ScreenOrientationType::LandscapePrimary;
-    case UIInterfaceOrientationLandscapeRight:
         return WebCore::ScreenOrientationType::LandscapeSecondary;
+    case UIInterfaceOrientationLandscapeRight:
+        return WebCore::ScreenOrientationType::LandscapePrimary;
     }
     return WebCore::ScreenOrientationType::PortraitPrimary;
 }

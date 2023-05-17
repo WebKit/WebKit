@@ -68,8 +68,8 @@ struct ApplePayRequestBase {
     std::optional<ApplePayShippingContactEditingMode> shippingContactEditingMode;
 #endif
 
-#if ENABLE(APPLE_PAY_LATER_MODE)
-    std::optional<ApplePayLaterMode> applePayLaterMode;
+#if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
+    std::optional<ApplePayLaterAvailability> applePayLaterAvailability;
 #endif
 };
 

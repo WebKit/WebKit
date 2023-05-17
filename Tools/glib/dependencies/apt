@@ -41,10 +41,12 @@ PACKAGES=(
     libasound2-dev
     libatk1.0-dev
     $(aptIfExists libavif-dev)
+    libdrm-dev
     $(aptIfExists libenchant-2-dev)
     libepoxy-dev
     libevent-dev
     libfile-copy-recursive-perl
+    libinput-dev
     $(aptIfElse libgcrypt20-dev libgcrypt11-dev)
     libgstreamer1.0-dev
     libgstreamer-plugins-bad1.0-dev
@@ -94,7 +96,7 @@ PACKAGES=(
     gyp
     libegl1-mesa-dev
     libexpat1-dev
-    libfdk-aac-dev
+    $(aptIfExists libfdk-aac-dev)
     libgles2-mesa-dev
     liborc-0.4-dev
     libproxy-dev

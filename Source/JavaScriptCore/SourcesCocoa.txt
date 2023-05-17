@@ -33,5 +33,6 @@ API/JSValue.mm
 API/JSVirtualMachine.mm
 API/JSWrapperMap.mm
 API/ObjCCallbackFunction.mm
+API/PASReportCrashPrivate.cpp
 
 // Use inspector/remote/SourcesCocoa.txt for Remote Inspector files

@@ -57,7 +57,7 @@ RefPtr<WebImage> WebImage::create(const IntSize& size, ImageOptions options, con
     return WebImage::create(buffer.releaseNonNull());
 }
 
-RefPtr<WebImage> WebImage::create(const ImageBufferBackend::Parameters& parameters, ShareableBitmapHandle&& handle)
+RefPtr<WebImage> WebImage::create(const ImageBufferBackend::Parameters& parameters, ShareableBitmap::Handle&& handle)
 {
     auto backend = ImageBufferShareableBitmapBackend::create(parameters, WTFMove(handle));
     if (!backend)
@@ -124,7 +124,7 @@ RefPtr<cairo_surface_t> WebImage::createCairoSurface()
 }
 #endif
 
-ShareableBitmapHandle WebImage::createHandle(SharedMemory::Protection protection) const
+ShareableBitmap::Handle WebImage::createHandle(SharedMemory::Protection protection) const
 {
     auto* backend = m_buffer->ensureBackendCreated();
     if (!backend)
@@ -138,7 +138,7 @@ ShareableBitmapHandle WebImage::createHandle(SharedMemory::Protection protection
 
     auto backendHandle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle(protection);
 
-    if (auto handle = std::get_if<ShareableBitmapHandle>(&backendHandle))
+    if (auto handle = std::get_if<ShareableBitmap::Handle>(&backendHandle))
         return WTFMove(*handle);
 
     return { };

@@ -32,24 +32,22 @@ namespace WebCore {
 
 class TextUnderlineOffset {
 public:
-    static TextUnderlineOffset createWithAuto()
+    static constexpr TextUnderlineOffset createWithAuto()
     {
-        return TextUnderlineOffset(Type::Auto);
+        return { std::nullopt };
     }
 
-    static TextUnderlineOffset createWithLength(float length)
+    static constexpr TextUnderlineOffset createWithLength(float length)
     {
-        TextUnderlineOffset result(Type::Length);
-        result.setLengthValue(length);
-        return result;
+        return { length };
     }
 
-    bool isAuto() const
+    constexpr bool isAuto() const
     {
         return !isLength();
     }
 
-    bool isLength() const
+    constexpr bool isLength() const
     {
         return static_cast<bool>(m_length);
     }
@@ -60,37 +58,26 @@ public:
         m_length = length;
     }
 
-    float lengthValue() const
+    constexpr float lengthValue() const
     {
         ASSERT(isLength());
         return *m_length;
     }
 
-    float lengthOr(float defaultValue) const
+    constexpr float lengthOr(float defaultValue) const
     {
         return m_length.value_or(defaultValue);
     }
 
-    bool operator==(const TextUnderlineOffset& other) const
+    constexpr bool operator==(const TextUnderlineOffset& other) const
     {
         return m_length == other.m_length;
     }
 
-    bool operator!=(const TextUnderlineOffset& other) const
-    {
-        return !(*this == other);
-    }
-
 private:
-    enum class Type {
-        Auto,
-        Length
-    };
-
-    TextUnderlineOffset(Type type)
+    constexpr TextUnderlineOffset(std::optional<float> length)
+        : m_length(length)
     {
-        if (type == Type::Length)
-            m_length = 0;
     }
 
     std::optional<float> m_length;

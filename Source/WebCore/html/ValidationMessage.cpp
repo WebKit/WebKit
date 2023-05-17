@@ -41,7 +41,7 @@
 #include "HTMLNames.h"
 #include "Page.h"
 #include "RenderBlock.h"
-#include "RenderObject.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "ShadowPseudoIds.h"
@@ -230,14 +230,7 @@ void ValidationMessage::buildBubbleTree()
     setMessageDOMAndStartTimer();
 
     // FIXME: Use transition to show the bubble.
-
-    if (!document.view())
-        return;
-    document.view()->queuePostLayoutCallback([weakThis = WeakPtr { *this }] {
-        if (!weakThis)
-            return;
-        weakThis->adjustBubblePosition();
-    });
+    document.scheduleToAdjustValidationMessagePosition(*this);
 }
 
 void ValidationMessage::requestToHideMessage()

@@ -177,12 +177,6 @@ constexpr bool operator==(const ColorComponents<T, N>& a, const ColorComponents<
     return true;
 }
 
-template<typename T, size_t N>
-constexpr bool operator!=(const ColorComponents<T, N>& a, const ColorComponents<T, N>& b)
-{
-    return !(a == b);
-}
-
 } // namespace WebCore
 
 namespace std {

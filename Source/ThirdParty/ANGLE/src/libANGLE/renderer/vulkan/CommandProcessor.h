@@ -469,14 +469,6 @@ class CommandQueue : angle::NonCopyable
                                                   ProtectionType protectionType,
                                                   egl::ContextPriority priority);
 
-    struct CommandsState
-    {
-        std::vector<VkSemaphore> waitSemaphores;
-        std::vector<VkPipelineStageFlags> waitSemaphoreStageMasks;
-        PrimaryCommandBuffer primaryCommands;
-        SecondaryCommandBufferCollector secondaryCommands;
-    };
-
     using CommandsStateMap =
         angle::PackedEnumMap<egl::ContextPriority,
                              angle::PackedEnumMap<ProtectionType, CommandsState>>;

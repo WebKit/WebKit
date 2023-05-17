@@ -1547,6 +1547,16 @@ void WebProcess::pageActivityStateDidChange(PageIdentifier, OptionSet<WebCore::A
     }
 }
 
+void WebProcess::releaseMemory(CompletionHandler<void()>&& completionHandler)
+{
+    WEBPROCESS_RELEASE_LOG(ProcessSuspension, "releaseMemory: BEGIN");
+    MemoryPressureHandler::singleton().releaseMemory(Critical::Yes, Synchronous::Yes);
+    for (auto& page : m_pageMap.values())
+        page->releaseMemory(Critical::Yes);
+    WEBPROCESS_RELEASE_LOG(ProcessSuspension, "releaseMemory: END");
+    completionHandler();
+}
+
 void WebProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime, CompletionHandler<void()>&& completionHandler)
 {
 #if !RELEASE_LOG_DISABLED
@@ -1703,8 +1713,10 @@ void WebProcess::nonVisibleProcessEarlyMemoryCleanupTimerFired()
 
     destroyDecodedDataForAllImages();
 
+#if PLATFORM(COCOA) || PLATFORM(WPE) || PLATFORM(GTK)
 #if PLATFORM(COCOA)
     destroyRenderingResources();
+#endif
     releaseSystemMallocMemory();
 #endif
 }

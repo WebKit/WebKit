@@ -114,10 +114,6 @@ public:
     }
 
     bool operator==(const IDBKeyData& other) const;
-    bool operator!=(const IDBKeyData& other) const
-    {
-        return !(*this == other);
-    }
 
     String string() const
     {

@@ -56,14 +56,23 @@
 #define BCOMPILER_GCC_COMPATIBLE 1
 #endif
 
-/* BNO_RETURN */
-
-#if !defined(BNO_RETURN) && BCOMPILER(GCC_COMPATIBLE)
-#define BNO_RETURN __attribute((__noreturn__))
+#if defined(_MSC_VER)
+#define BCOMPILER_MSVC 1
+#if _MSC_VER < 1910
+#error "Please use a newer version of Visual Studio. WebKit requires VS2017 or newer to compile."
+#endif
 #endif
 
+/* BNO_RETURN */
+
 #if !defined(BNO_RETURN)
+#if BCOMPILER(GCC_COMPATIBLE)
+#define BNO_RETURN __attribute((__noreturn__))
+#elif BCOMPILER(MSVC)
+#define BNO_RETURN __declspec(noreturn)
+#else
 #define BNO_RETURN
+#endif
 #endif
 
 /* BFALLTHROUGH */
@@ -92,4 +101,16 @@
 
 #if !defined(BUNUSED_TYPE_ALIAS)
 #define BUNUSED_TYPE_ALIAS
+#endif
+
+/* BFUNCTION_SIGNATURE */
+
+#if !defined(BFUNCTION_SIGNATURE)
+#if BCOMPILER(GCC_COMPATIBLE)
+#define BFUNCTION_SIGNATURE __PRETTY_FUNCTION__
+#elif BCOMPILER(MSVC)
+#define BFUNCTION_SIGNATURE __FUNCSIG__
+#else
+#error "Unsupported compiler"
+#endif
 #endif

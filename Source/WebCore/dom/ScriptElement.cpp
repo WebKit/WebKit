@@ -229,7 +229,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
 
     m_preparationTimeDocumentIdentifier = document.identifier();
 
-    if (!document.frame()->script().canExecuteScripts(AboutToExecuteScript))
+    if (!document.frame()->script().canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToExecuteScript))
         return false;
 
     if (scriptType == ScriptType::Classic && !isScriptForEventSupported())

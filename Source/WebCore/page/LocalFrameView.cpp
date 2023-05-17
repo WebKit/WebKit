@@ -3,7 +3,7 @@
  *                     1999 Lars Knoll <knoll@kde.org>
  *                     1999 Antti Koivisto <koivisto@kde.org>
  *                     2000 Dirk Mueller <mueller@kde.org>
- * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2009 Google Inc. All rights reserved.
@@ -43,6 +43,7 @@
 #include "DocumentSVG.h"
 #include "Editor.h"
 #include "EventHandler.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "FocusController.h"
@@ -61,7 +62,6 @@
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLPlugInImageElement.h"
 #include "HighlightRegister.h"
 #include "ImageDocument.h"
@@ -73,7 +73,6 @@
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "MemoryCache.h"
-#include "ModalContainerObserver.h"
 #include "NullGraphicsContext.h"
 #include "OverflowEvent.h"
 #include "Page.h"
@@ -81,6 +80,8 @@
 #include "PerformanceLoggingClient.h"
 #include "ProgressTracker.h"
 #include "Quirks.h"
+#include "RenderBoxInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderFlexibleBox.h"
 #include "RenderIFrame.h"
@@ -92,7 +93,7 @@
 #include "RenderSVGRoot.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarPart.h"
-#include "RenderStyle.h"
+#include "RenderStyleSetters.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -1345,6 +1346,8 @@ void LocalFrameView::willDoLayout(WeakPtr<RenderElement> layoutRoot)
 
 void LocalFrameView::didLayout(WeakPtr<RenderElement> layoutRoot)
 {
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
     auto* layoutRootEnclosingLayer = layoutRoot->enclosingLayer();
     layoutRootEnclosingLayer->updateLayerPositionsAfterLayout(!is<RenderView>(*layoutRoot), layoutContext().needsFullRepaint());
 
@@ -1367,7 +1370,7 @@ void LocalFrameView::didLayout(WeakPtr<RenderElement> layoutRoot)
     handleDeferredScrollbarsUpdate();
     handleDeferredPositionScrollbarLayers();
 
-    if (document->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
+    if (document->hasListenerType(Document::ListenerType::OverflowChanged))
         updateOverflowStatus(layoutWidth() < contentsWidth(), layoutHeight() < contentsHeight());
 
     document->markers().invalidateRectsForAllMarkers();
@@ -2411,7 +2414,9 @@ void LocalFrameView::maintainScrollPositionAtAnchor(ContainerNode* anchorNode)
     if (renderView && renderView->needsLayout())
         layoutContext().layout();
     else
-        scrollToAnchor();
+        scheduleScrollToAnchorAndTextFragment();
+
+    scrollToAnchorAndTextFragmentNowIfNeeded();
 }
 
 void LocalFrameView::maintainScrollPositionAtScrollToTextFragmentRange(SimpleRange& range)
@@ -3052,6 +3057,13 @@ bool LocalFrameView::isRubberBandInProgress() const
     return false;
 }
 
+bool LocalFrameView::isInStableState() const
+{
+    if (auto* page = m_frame->page())
+        return page->chrome().client().isInStableState();
+    return FrameView::isInStableState();
+}
+
 bool LocalFrameView::requestStartKeyboardScrollAnimation(const KeyboardScroll& scrollData)
 {
     if (auto scrollingCoordinator = this->scrollingCoordinator())
@@ -3068,12 +3080,12 @@ bool LocalFrameView::requestStopKeyboardScrollAnimation(bool immediate)
     return false;
 }
 
-bool LocalFrameView::requestScrollPositionUpdate(const ScrollPosition& position, ScrollType scrollType, ScrollClamping clamping)
+bool LocalFrameView::requestScrollToPosition(const ScrollPosition& position, ScrollType scrollType, ScrollClamping clamping, ScrollIsAnimated animated)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "LocalFrameView::requestScrollPositionUpdate " << position);
+    LOG_WITH_STREAM(Scrolling, stream << "LocalFrameView::requestScrollToPosition " << position << " animated  " << (animated == ScrollIsAnimated::Yes));
 
 #if ENABLE(ASYNC_SCROLLING)
-    if (TiledBacking* tiledBacking = this->tiledBacking()) {
+    if (auto* tiledBacking = this->tiledBacking(); tiledBacking && animated == ScrollIsAnimated::No) {
 #if PLATFORM(IOS_FAMILY)
         auto contentSize = exposedContentRect().size();
 #else
@@ -3085,26 +3097,12 @@ bool LocalFrameView::requestScrollPositionUpdate(const ScrollPosition& position,
 
 #if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
     if (auto scrollingCoordinator = this->scrollingCoordinator())
-        return scrollingCoordinator->requestScrollPositionUpdate(*this, position, scrollType, clamping);
+        return scrollingCoordinator->requestScrollToPosition(*this, position, scrollType, clamping, animated);
 #else
     UNUSED_PARAM(position);
     UNUSED_PARAM(scrollType);
     UNUSED_PARAM(clamping);
-#endif
-
-    return false;
-}
-
-bool LocalFrameView::requestAnimatedScrollToPosition(const ScrollPosition& destinationPosition, ScrollClamping clamping)
-{
-    LOG_WITH_STREAM(Scrolling, stream << "LocalFrameView::requestAnimatedScrollToPosition " << destinationPosition);
-
-#if ENABLE(ASYNC_SCROLLING)
-    if (auto scrollingCoordinator = this->scrollingCoordinator())
-        return scrollingCoordinator->requestAnimatedScrollToPosition(*this, destinationPosition, clamping);
-#else
-    UNUSED_PARAM(destinationPosition);
-    UNUSED_PARAM(clamping);
+    UNUSED_PARAM(animated);
 #endif
 
     return false;
@@ -3643,6 +3641,33 @@ bool LocalFrameView::safeToPropagateScrollToParent() const
     return document->securityOrigin().isSameOriginDomain(parentDocument->securityOrigin());
 }
 
+void LocalFrameView::scheduleScrollToAnchorAndTextFragment()
+{
+    if (m_scheduledToScrollToAnchor)
+        return;
+
+    RefPtr document = m_frame->document();
+    ASSERT(document);
+
+    m_scheduledToScrollToAnchor = true;
+    document->eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        protectedThis->scrollToAnchorAndTextFragmentNowIfNeeded();
+    });
+}
+
+void LocalFrameView::scrollToAnchorAndTextFragmentNowIfNeeded()
+{
+    if (!m_scheduledToScrollToAnchor)
+        return;
+
+    m_scheduledToScrollToAnchor = false;
+    scrollToAnchor();
+    scrollToTextFragmentRange();
+}
+
 void LocalFrameView::scrollToAnchor()
 {
     RefPtr<ContainerNode> anchorNode = m_maintainScrollPositionAnchor;
@@ -3767,36 +3792,18 @@ void LocalFrameView::updateEmbeddedObjectsTimerFired()
 
 void LocalFrameView::flushAnyPendingPostLayoutTasks()
 {
-    layoutContext().flushAsynchronousTasks();
+    layoutContext().flushPostLayoutTasks();
     if (m_updateEmbeddedObjectsTimer.isActive())
         updateEmbeddedObjectsTimerFired();
 }
 
-void LocalFrameView::queuePostLayoutCallback(Function<void()>&& callback)
-{
-    m_postLayoutCallbackQueue.append(WTFMove(callback));
-}
-
-void LocalFrameView::flushPostLayoutTasksQueue()
-{
-    if (layoutContext().isLayoutNested())
-        return;
-
-    if (!m_postLayoutCallbackQueue.size())
-        return;
-
-    Vector<Function<void()>> queue = WTFMove(m_postLayoutCallbackQueue);
-    for (auto& task : queue)
-        task();
-}
-
 void LocalFrameView::performPostLayoutTasks()
 {
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
     // FIXME: We should not run any JavaScript code in this function.
     LOG(Layout, "LocalFrameView %p performPostLayoutTasks", this);
     updateHasReachedSignificantRenderedTextThreshold();
-
-    flushPostLayoutTasksQueue();
 
     if (!layoutContext().isLayoutNested() && m_frame->document()->documentElement())
         fireLayoutRelatedMilestonesIfNeeded();
@@ -3829,22 +3836,16 @@ void LocalFrameView::performPostLayoutTasks()
             renderView->compositor().frameViewDidLayout();
     }
 
-    scrollToAnchor();
-    
-    scrollToTextFragmentRange();
+    scheduleScrollToAnchorAndTextFragment();
 
     scheduleResizeEventIfNeeded();
-    
+
     updateLayoutViewport();
     viewportContentsChanged();
 
     resnapAfterLayout();
 
-    if (AXObjectCache* cache = m_frame->document()->existingAXObjectCache())
-        cache->performDeferredCacheUpdate();
-
-    if (auto* observer = m_frame->document()->modalContainerObserver())
-        observer->updateModalContainerIfNeeded(*this);
+    m_frame->document()->scheduleDeferredAXObjectCacheUpdate();
 }
 
 IntSize LocalFrameView::sizeForResizeEvent() const
@@ -4670,6 +4671,18 @@ void LocalFrameView::invalidateImagesWithAsyncDecodes()
     traverseForPaintInvalidation(NullGraphicsContext::PaintInvalidationReasons::InvalidatingImagesWithAsyncDecodes);
 }
 
+void LocalFrameView::updateAccessibilityObjectRegions()
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (!AXObjectCache::accessibilityEnabled() || !AXObjectCache::isIsolatedTreeEnabled())
+        return;
+
+    NullGraphicsContext graphicsContext;
+    AccessibilityRegionContext accessibilityRegionContext;
+    paint(graphicsContext, frameRect(), SecurityOriginPaintPolicy::AnyOrigin, &accessibilityRegionContext);
+#endif
+}
+
 void LocalFrameView::traverseForPaintInvalidation(NullGraphicsContext::PaintInvalidationReasons paintInvalidationReasons)
 {
     if (needsLayout())
@@ -4702,7 +4715,7 @@ void LocalFrameView::setWasScrolledByUser(bool wasScrolledByUser)
     adjustTiledBackingCoverage();
 }
 
-void LocalFrameView::willPaintContents(GraphicsContext& context, const IntRect&, PaintingState& paintingState)
+void LocalFrameView::willPaintContents(GraphicsContext& context, const IntRect&, PaintingState& paintingState, RegionContext* regionContext)
 {
     Document* document = m_frame->document();
 
@@ -4717,20 +4730,17 @@ void LocalFrameView::willPaintContents(GraphicsContext& context, const IntRect&,
     paintingState.paintBehavior = m_paintBehavior;
     
     if (auto* parentView = parentFrameView()) {
-        if (parentView->paintBehavior() & PaintBehavior::FlattenCompositingLayers)
-            m_paintBehavior.add(PaintBehavior::FlattenCompositingLayers);
-        
-        if (parentView->paintBehavior() & PaintBehavior::Snapshotting)
-            m_paintBehavior.add(PaintBehavior::Snapshotting);
-        
-        if (parentView->paintBehavior() & PaintBehavior::TileFirstPaint)
-            m_paintBehavior.add(PaintBehavior::TileFirstPaint);
+        constexpr OptionSet<PaintBehavior> flagsToCopy { PaintBehavior::FlattenCompositingLayers, PaintBehavior::Snapshotting, PaintBehavior::DefaultAsynchronousImageDecode, PaintBehavior::ForceSynchronousImageDecode };
+        m_paintBehavior.add(parentView->paintBehavior() & flagsToCopy);
     }
 
     if (document->printing()) {
         m_paintBehavior.add(PaintBehavior::FlattenCompositingLayers);
         m_paintBehavior.add(PaintBehavior::Snapshotting);
     }
+
+    if (is<AccessibilityRegionContext>(regionContext))
+        m_paintBehavior.add(PaintBehavior::FlattenCompositingLayers);
 
     paintingState.isFlatteningPaintOfRootFrame = (m_paintBehavior & PaintBehavior::FlattenCompositingLayers) && !m_frame->ownerElement() && !context.detectingContentfulPaint();
     if (paintingState.isFlatteningPaintOfRootFrame)
@@ -4760,7 +4770,7 @@ void LocalFrameView::didPaintContents(GraphicsContext& context, const IntRect& d
     }
 }
 
-void LocalFrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect, SecurityOriginPaintPolicy securityOriginPaintPolicy, EventRegionContext* eventRegionContext)
+void LocalFrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect, SecurityOriginPaintPolicy securityOriginPaintPolicy, RegionContext* regionContext)
 {
 #ifndef NDEBUG
     bool fillWithWarningColor;
@@ -4800,7 +4810,7 @@ void LocalFrameView::paintContents(GraphicsContext& context, const IntRect& dirt
     }
 
     PaintingState paintingState;
-    willPaintContents(context, dirtyRect, paintingState);
+    willPaintContents(context, dirtyRect, paintingState, regionContext);
 
     // m_nodeToDraw is used to draw only one element (and its descendants)
     RenderObject* renderer = m_nodeToDraw ? m_nodeToDraw->renderer() : nullptr;
@@ -4808,9 +4818,9 @@ void LocalFrameView::paintContents(GraphicsContext& context, const IntRect& dirt
 
     RenderObject::SetLayoutNeededForbiddenScope forbidSetNeedsLayout(rootLayer->renderer());
 
-    rootLayer->paint(context, dirtyRect, LayoutSize(), m_paintBehavior, renderer, { }, securityOriginPaintPolicy == SecurityOriginPaintPolicy::AnyOrigin ? RenderLayer::SecurityOriginPaintPolicy::AnyOrigin : RenderLayer::SecurityOriginPaintPolicy::AccessibleOriginOnly, eventRegionContext);
+    rootLayer->paint(context, dirtyRect, LayoutSize(), m_paintBehavior, renderer, { }, securityOriginPaintPolicy == SecurityOriginPaintPolicy::AnyOrigin ? RenderLayer::SecurityOriginPaintPolicy::AnyOrigin : RenderLayer::SecurityOriginPaintPolicy::AccessibleOriginOnly, regionContext);
     if (auto* scrollableRootLayer = rootLayer->scrollableArea()) {
-        if (scrollableRootLayer->containsDirtyOverlayScrollbars() && !eventRegionContext)
+        if (scrollableRootLayer->containsDirtyOverlayScrollbars() && !regionContext)
             scrollableRootLayer->paintOverlayScrollbars(context, dirtyRect, m_paintBehavior, renderer);
     }
 
@@ -4977,7 +4987,7 @@ void LocalFrameView::incrementVisuallyNonEmptyCharacterCount(const String& inlin
     auto nonWhitespaceLength = [](auto& inlineText) {
         auto length = inlineText.length();
         for (unsigned i = 0; i < inlineText.length(); ++i) {
-            if (isNotHTMLSpace(inlineText[i]))
+            if (!isASCIIWhitespace(inlineText[i]))
                 continue;
             --length;
         }
@@ -5038,7 +5048,8 @@ void LocalFrameView::checkAndDispatchDidReachVisuallyNonEmptyState()
         if (document.styleScope().hasPendingSheetsBeforeBody())
             return false;
 
-        auto finishedParsingMainDocument = m_frame->loader().stateMachine().committedFirstRealDocumentLoad() && (document.readyState() == Document::Interactive || document.readyState() == Document::Complete);
+        auto finishedParsingMainDocument = m_frame->loader().stateMachine().committedFirstRealDocumentLoad()
+            && (document.readyState() == Document::ReadyState::Interactive || document.readyState() == Document::ReadyState::Complete);
         // Ensure that we always fire visually non-empty milestone eventually.
         if (finishedParsingMainDocument && m_frame->loader().isComplete())
             return true;
@@ -5939,6 +5950,7 @@ Display::View* LocalFrameView::existingDisplayView() const
 
 Display::View& LocalFrameView::displayView()
 {
+    ASSERT(m_frame->settings().layoutFormattingContextEnabled());
     if (!m_displayView)
         m_displayView = makeUnique<Display::View>(*this);
     return *m_displayView;
@@ -6309,6 +6321,13 @@ LayoutRect LocalFrameView::getPossiblyFixedRectToExpose(const LayoutRect& visibl
     requiredVisualViewport.scale(frameScaleFactor());
     requiredVisualViewport.move(0, headerHeight());
     return requiredVisualViewport;
+}
+
+float LocalFrameView::deviceScaleFactor() const
+{
+    if (auto* page = m_frame->page())
+        return page->deviceScaleFactor();
+    return 1;
 }
 
 } // namespace WebCore

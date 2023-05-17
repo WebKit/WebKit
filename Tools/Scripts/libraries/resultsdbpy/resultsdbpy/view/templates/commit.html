@@ -77,7 +77,7 @@ let commits = [
         timestamp: {{ commit.timestamp }},
         author: {
             name: unescapeJinjaText('{{ commit.author.name }}'),
-            emails: [{% for e in commit.author.emails %} unescapeJinjaText('{{ e }}') {% endfor %}],
+            emails: [{% for e in commit.author.emails %} unescapeJinjaText('{{ e }}'), {% endfor %}],
         }, order: {{ commit.order }},
         message: unescapeJinjaText('{{ commit.message | replace("\\", "\\\\") | replace("\n", "\\n") }}'),
     }),

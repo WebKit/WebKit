@@ -53,7 +53,7 @@ public:
     void display(PlatformCALayer& layer) final
     {
         if (m_displayBuffer)
-            layer.setDelegatedContents({ m_displayBuffer, { } });
+            layer.setDelegatedContents({ m_displayBuffer, { }, std::nullopt });
         else
             layer.clearContents();
     }

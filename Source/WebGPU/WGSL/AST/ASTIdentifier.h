@@ -26,14 +26,14 @@
 #pragma once
 
 #include "ASTNode.h"
-
+#include <wtf/ForbidHeapAllocation.h>
 #include <wtf/PrintStream.h>
 #include <wtf/text/WTFString.h>
 
 namespace WGSL::AST {
 
 class Identifier : public Node {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_FORBID_HEAP_ALLOCATION;
 public:
     static Identifier make(String& id) { return { SourceSpan::empty(), String(id) }; }
     static Identifier make(String&& id) { return { SourceSpan::empty(), WTFMove(id) }; }
@@ -49,12 +49,12 @@ public:
     void dump(PrintStream&) const;
 
 private:
-    Identifier(SourceSpan span, String&& id)
+    Identifier(const SourceSpan& span, String&& id)
         : Node(span)
         , m_id(WTFMove(id))
     { }
 
-    Identifier(SourceSpan span, StringView id)
+    Identifier(const SourceSpan& span, StringView id)
         : Identifier(span, id.toString())
     { }
 

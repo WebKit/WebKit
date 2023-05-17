@@ -98,6 +98,11 @@ public:
     virtual double volume() const = 0;
     virtual bool isPictureInPictureSupported() const = 0;
     virtual bool isPictureInPictureActive() const = 0;
+
+#if !RELEASE_LOG_DISABLED
+    virtual const void* logIdentifier() const { return nullptr; }
+    virtual const Logger* loggerPtr() const { return nullptr; }
+#endif
 };
 
 class PlaybackSessionModelClient {

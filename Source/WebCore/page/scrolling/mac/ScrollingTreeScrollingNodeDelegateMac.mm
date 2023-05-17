@@ -48,7 +48,6 @@ ScrollingTreeScrollingNodeDelegateMac::ScrollingTreeScrollingNodeDelegateMac(Scr
 
 ScrollingTreeScrollingNodeDelegateMac::~ScrollingTreeScrollingNodeDelegateMac()
 {
-    m_scrollerPair->releaseReferencesToScrollerImpsOnTheMainThread();
 }
 
 void ScrollingTreeScrollingNodeDelegateMac::nodeWillBeDestroyed()
@@ -92,7 +91,7 @@ void ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode(const ScrollingS
     }
     
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::MouseActivityState))
-        m_scrollerPair->mouseMovedInContentArea();
+        m_scrollerPair->mouseMovedInContentArea(scrollingStateNode.mouseLocationState());
 
     m_scrollerPair->updateValues();
 
@@ -326,11 +325,6 @@ void ScrollingTreeScrollingNodeDelegateMac::updateScrollbarLayers()
 void ScrollingTreeScrollingNodeDelegateMac::handleWheelEventPhase(const PlatformWheelEventPhase wheelEventPhase)
 {
     m_scrollerPair->handleWheelEventPhase(wheelEventPhase);
-}
-
-bool ScrollingTreeScrollingNodeDelegateMac::handleMouseEventForScrollbars(const PlatformMouseEvent& mouseEvent)
-{
-    return m_scrollerPair->handleMouseEvent(mouseEvent);
 }
 
 void ScrollingTreeScrollingNodeDelegateMac::viewWillStartLiveResize()

@@ -33,9 +33,11 @@
 #include "RenderSVGModelObject.h"
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
+
 #include "RenderGeometryMap.h"
 #include "RenderLayer.h"
 #include "RenderLayerModelObject.h"
+#include "RenderObjectInlines.h"
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResource.h"
 #include "RenderView.h"

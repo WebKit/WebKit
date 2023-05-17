@@ -47,12 +47,14 @@ public:
     void requestToEnd(Observer&) final;
     bool isProducingData() const final { return m_source->isProducingData(); }
     void setMuted(bool isMuted) final;
+    const IntSize size() const final { return m_source->size(); }
 
 protected:
     // RealtimeMediaSource::VideoFrameObserver
     void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) final;
 
     void generatePresets() override { };
+    const Vector<VideoPreset>& presets() final { return m_presets; }
 
 private:
     MockDisplayCaptureSourceGStreamer(const CaptureDevice&, Ref<MockRealtimeVideoSourceGStreamer>&&, MediaDeviceHashSalts&&, PageIdentifier);
@@ -70,6 +72,7 @@ private:
     const char* logClassName() const final { return "MockDisplayCaptureSourceGStreamer"; }
 #endif
 
+    Vector<VideoPreset> m_presets;
     Ref<MockRealtimeVideoSourceGStreamer> m_source;
     CaptureDevice::DeviceType m_deviceType;
     std::optional<RealtimeMediaSourceCapabilities> m_capabilities;

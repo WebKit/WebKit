@@ -1,0 +1,40 @@
+
+
+
+** <video> element test **
+
+** Check category before anything has loaded.
+EXPECTED (internals.audioSessionCategory() == 'None') OK
+
+** Check category when a muted, paused, element has loaded.
+EVENT(canplaythrough)
+EXPECTED (internals.audioSessionCategory() == 'None') OK
+EXPECTED (internals.audioSessionMode() == 'Default') OK
+
+** Check category when a muted element is playing.
+RUN(video.play())
+EVENT(playing)
+EXPECTED (internals.audioSessionCategory() == 'None') OK
+EXPECTED (internals.audioSessionMode() == 'Default') OK
+EXPECTED (internals.routeSharingPolicy() == 'Default') OK
+
+** Check category when an unmuted element is playing.
+RUN(video.muted = false)
+EVENT(volumechange)
+
+EXPECTED (internals.audioSessionCategory() == 'MediaPlayback') OK
+EXPECTED (internals.audioSessionMode() == 'MoviePlayback') OK
+EXPECTED (internals.routeSharingPolicy() == 'LongFormAudio') OK
+
+** Mute the element, check again after 500ms.
+RUN(video.pause())
+RUN(video.muted = true)
+EXPECTED (internals.audioSessionCategory() == 'MoviePlayback'), OBSERVED 'MediaPlayback' FAIL
+EXPECTED (internals.audioSessionMode() == 'Default') OK
+EXPECTED (internals.routeSharingPolicy() == 'LongFormAudio') OK
+
+** And check again after 3 seconds.
+EXPECTED (internals.audioSessionCategory() == 'None') OK
+EXPECTED (internals.routeSharingPolicy() == 'Default') OK
+END OF TEST
+

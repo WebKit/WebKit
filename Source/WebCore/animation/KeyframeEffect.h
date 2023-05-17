@@ -48,6 +48,7 @@ namespace WebCore {
 class Element;
 class FilterOperations;
 class MutableStyleProperties;
+class RenderStyle;
 
 namespace Style {
 struct ResolutionContext;

@@ -26,11 +26,14 @@
 #ifndef WEBGPUEXT_H_
 #define WEBGPUEXT_H_
 
+#include <CoreVideo/CoreVideo.h>
 #include <IOSurface/IOSurfaceRef.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef struct WGPUExternalTextureImpl* WGPUExternalTexture;
 
 typedef void (^WGPUBufferMapBlockCallback)(WGPUBufferMapAsyncStatus status);
 typedef void (^WGPUCompilationInfoBlockCallback)(WGPUCompilationInfoRequestStatus status, WGPUCompilationInfo const * compilationInfo);
@@ -45,9 +48,20 @@ typedef void (^WGPURequestInvalidDeviceBlockCallback)(WGPUDevice device);
 typedef void (^WGPUWorkItem)(void);
 typedef void (^WGPUScheduleWorkBlock)(WGPUWorkItem workItem);
 
+typedef enum WGPUBufferBindingTypeExtended {
+    WGPUBufferBindingType_Float3x2 = WGPUBufferBindingType_Force32 - 1,
+    WGPUBufferBindingType_Float4x3 = WGPUBufferBindingType_Force32 - 2,
+} WGPUBufferBindingTypeExtended;
+
+typedef enum WGPUColorSpace {
+    SRGB,
+    DisplayP3,
+} WGPUColorSpace;
+
 typedef enum WGPUSTypeExtended {
     WGPUSTypeExtended_InstanceCocoaDescriptor = 0x151BBC00, // Random
     WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking = 0x017E9710, // Random
+    WGPUSTypeExtended_BindGroupEntryExternalTexture = 0xF7A6EBF9, // Random
     WGPUSTypeExtended_Force32 = 0x7FFFFFFF
 } WGPUSTypeExtended;
 
@@ -70,6 +84,18 @@ typedef struct WGPUSurfaceDescriptorCocoaCustomSurface {
     WGPUChainedStruct chain;
     WGPUCompositorIntegrationRegisterBlockCallback compositorIntegrationRegister;
 } WGPUSurfaceDescriptorCocoaCustomSurface;
+
+typedef struct WGPUBindGroupExternalTextureEntry {
+    WGPUChainedStruct chain;
+    WGPUExternalTexture externalTexture;
+} WGPUBindGroupExternalTextureEntry;
+
+typedef struct WGPUExternalTextureDescriptor {
+    WGPUChainedStruct const * nextInChain;
+    char const * label; // nullable
+    CVPixelBufferRef pixelBuffer;
+    WGPUColorSpace colorSpace;
+} WGPUExternalTextureDescriptor;
 
 #if !defined(WGPU_SKIP_PROCS)
 
@@ -177,6 +203,7 @@ WGPU_EXPORT void wgpuAdapterRequestDeviceWithBlock(WGPUAdapter adapter, WGPUDevi
 WGPU_EXPORT void wgpuBufferMapAsyncWithBlock(WGPUBuffer buffer, WGPUMapModeFlags mode, size_t offset, size_t size, WGPUBufferMapBlockCallback callback);
 WGPU_EXPORT void wgpuDeviceCreateComputePipelineAsyncWithBlock(WGPUDevice device, WGPUComputePipelineDescriptor const * descriptor, WGPUCreateComputePipelineAsyncBlockCallback callback);
 WGPU_EXPORT void wgpuDeviceCreateRenderPipelineAsyncWithBlock(WGPUDevice device, WGPURenderPipelineDescriptor const * descriptor, WGPUCreateRenderPipelineAsyncBlockCallback callback);
+WGPU_EXPORT WGPUExternalTexture wgpuDeviceImportExternalTexture(WGPUDevice device, const WGPUExternalTextureDescriptor* descriptor);
 WGPU_EXPORT bool wgpuDevicePopErrorScopeWithBlock(WGPUDevice device, WGPUErrorBlockCallback callback);
 WGPU_EXPORT void wgpuDeviceSetDeviceLostCallbackWithBlock(WGPUDevice device, WGPUDeviceLostBlockCallback callback);
 WGPU_EXPORT void wgpuDeviceSetUncapturedErrorCallbackWithBlock(WGPUDevice device, WGPUErrorBlockCallback callback);

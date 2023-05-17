@@ -165,11 +165,6 @@ constexpr bool operator==(FontSelectionValue a, FontSelectionValue b)
     return a.rawValue() == b.rawValue();
 }
 
-constexpr bool operator!=(FontSelectionValue a, FontSelectionValue b)
-{
-    return a.rawValue() != b.rawValue();
-}
-
 constexpr bool operator<(FontSelectionValue a, FontSelectionValue b)
 {
     return a.rawValue() < b.rawValue();
@@ -413,11 +408,6 @@ inline bool operator==(const FontSelectionRequest& a, const FontSelectionRequest
     return a.tied() == b.tied();
 }
 
-inline bool operator!=(const FontSelectionRequest& a, const FontSelectionRequest& b)
-{
-    return !(a == b);
-}
-
 inline void add(Hasher& hasher, const FontSelectionRequest& request)
 {
     add(hasher, request.tied());
@@ -446,11 +436,6 @@ struct FontSelectionCapabilities {
 constexpr bool operator==(const FontSelectionCapabilities& a, const FontSelectionCapabilities& b)
 {
     return a.tied() == b.tied();
-}
-
-constexpr bool operator!=(const FontSelectionCapabilities& a, const FontSelectionCapabilities& b)
-{
-    return !(a == b);
 }
 
 struct FontSelectionSpecifiedCapabilities {
@@ -537,11 +522,6 @@ std::optional<FontSelectionSpecifiedCapabilities> FontSelectionSpecifiedCapabili
 constexpr bool operator==(const FontSelectionSpecifiedCapabilities& a, const FontSelectionSpecifiedCapabilities& b)
 {
     return a.tied() == b.tied();
-}
-
-constexpr bool operator!=(const FontSelectionSpecifiedCapabilities& a, const FontSelectionSpecifiedCapabilities& b)
-{
-    return !(a == b);
 }
 
 class FontSelectionAlgorithm {

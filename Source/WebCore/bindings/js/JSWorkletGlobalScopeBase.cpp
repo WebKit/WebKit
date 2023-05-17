@@ -79,7 +79,7 @@ JSWorkletGlobalScopeBase::JSWorkletGlobalScopeBase(JSC::VM& vm, JSC::Structure* 
 {
 }
 
-void JSWorkletGlobalScopeBase::finishCreation(VM& vm, JSProxy* proxy)
+void JSWorkletGlobalScopeBase::finishCreation(VM& vm, JSGlobalProxy* proxy)
 {
     m_proxy.set(vm, this, proxy);
 

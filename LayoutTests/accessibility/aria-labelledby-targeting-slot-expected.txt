@@ -1,0 +1,7 @@
+This test ensures we compute the correct accessible name when aria-labelledby targets a slot element.
+
+#button accessible name: slot with child
+PASS successfullyParsed is true
+
+TEST COMPLETE
+slotwith child

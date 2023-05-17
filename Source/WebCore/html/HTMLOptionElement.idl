@@ -31,6 +31,6 @@
     attribute boolean selected;
     [CEReactions=NotNeeded] attribute [AtomString] DOMString value;
 
-    [CEReactions=NotNeeded, CEReactions] attribute DOMString text;
+    [CEReactions=Needed] attribute DOMString text;
     readonly attribute long index;
 };

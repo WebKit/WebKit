@@ -33,7 +33,13 @@
 #import <wtf/OptionSet.h>
 #import <wtf/RetainPtr.h>
 
+#if HAVE(SECURE_ACTION_CONTEXT)
+OBJC_CLASS DDSecureActionContext;
+using WKDDActionContext = DDSecureActionContext;
+#else
 OBJC_CLASS DDActionContext;
+using WKDDActionContext = DDActionContext;
+#endif
 OBJC_CLASS NSArray;
 OBJC_CLASS NSDictionary;
 
@@ -47,7 +53,7 @@ class QualifiedName;
 struct TextRecognitionDataDetector;
 
 struct DetectedItem {
-    RetainPtr<DDActionContext> actionContext;
+    RetainPtr<WKDDActionContext> actionContext;
     FloatRect boundingBox;
     SimpleRange range;
 };
@@ -57,7 +63,8 @@ public:
 #if PLATFORM(MAC)
     WEBCORE_EXPORT static std::optional<DetectedItem> detectItemAroundHitTestResult(const HitTestResult&);
 #endif
-    WEBCORE_EXPORT static NSArray *detectContentInRange(const SimpleRange&, OptionSet<DataDetectorType>, NSDictionary *context);
+    WEBCORE_EXPORT static NSArray *detectContentInRange(const SimpleRange&, OptionSet<DataDetectorType>, std::optional<double> referenceDate);
+    WEBCORE_EXPORT static std::optional<double> extractReferenceDate(NSDictionary *);
     WEBCORE_EXPORT static void removeDataDetectedLinksInDocument(Document&);
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT static bool canBePresentedByDataDetectors(const URL&);

@@ -68,6 +68,7 @@ public:
         String tag;
         String icon;
         JSC::JSValue data;
+        std::optional<bool> silent;
     };
     // For JS constructor only.
     static ExceptionOr<Ref<Notification>> create(ScriptExecutionContext&, String&& title, Options&&);
@@ -87,6 +88,7 @@ public:
     const String& tag() const { return m_tag; }
     const URL& icon() const { return m_icon; }
     JSC::JSValue dataForBindings(JSC::JSGlobalObject&);
+    bool silent() const { return m_silent == std::nullopt ? false : *m_silent; }
 
     TextDirection direction() const { return m_direction == Direction::Rtl ? TextDirection::RTL : TextDirection::LTR; }
 
@@ -146,6 +148,7 @@ private:
     String m_tag;
     URL m_icon;
     Ref<SerializedScriptValue> m_dataForBindings;
+    std::optional<bool> m_silent;
 
     enum State { Idle, Showing, Closed };
     State m_state { Idle };

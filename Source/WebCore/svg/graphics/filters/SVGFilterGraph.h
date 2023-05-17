@@ -47,6 +47,7 @@ public:
         m_sourceNodes.add(SourceGraphic::effectName(), WTFMove(sourceGraphic));
         m_sourceNodes.add(SourceAlpha::effectName(), WTFMove(sourceAlpha));
 
+        setNodeInputs(*this->sourceGraphic(), NodeVector { });
         setNodeInputs(*this->sourceAlpha(), NodeVector { *this->sourceGraphic() });
     }
 
@@ -89,7 +90,7 @@ public:
         return m_namedNodes.get(id);
     }
 
-    std::optional<NodeVector> getNamedNodes(Span<const AtomString> names) const
+    std::optional<NodeVector> getNamedNodes(std::span<const AtomString> names) const
     {
         NodeVector nodes;
 
@@ -115,8 +116,15 @@ public:
         return m_nodeInputs.get(node);
     }
 
+    NodeVector nodes() const
+    {
+        return WTF::map(m_nodeInputs, [] (auto& pair) -> Ref<NodeType> {
+            return pair.key;
+        });
+    }
+
     NodeType* lastNode() const { return m_lastNode.get(); }
-    
+
     template<typename Callback>
     bool visit(Callback callback)
     {

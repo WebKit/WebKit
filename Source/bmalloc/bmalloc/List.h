@@ -45,7 +45,7 @@ class List {
         T* operator*() { return static_cast<T*>(m_node); }
         T* operator->() { return static_cast<T*>(m_node); }
 
-        bool operator!=(const iterator& other) const { return m_node != other.m_node; }
+        bool operator==(const iterator& other) const { return m_node == other.m_node; }
 
         iterator& operator++()
         {

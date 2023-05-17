@@ -81,7 +81,7 @@ function testSetResult(getTarget, key, expectedResult) {
     testSetResultInternal(getTargetWithPoisonedSetterOnPrototype, t => Object.create(Object.create(t)), key, expectedResult);
     testSetResultInternal(getTargetWithPoisonedSetterOnPrototype, t => new Proxy(t, {}), key, expectedResult);
     testSetResultInternal(getTargetWithPoisonedSetterOnPrototype, t => new Proxy(t, Reflect), key, expectedResult);
-    testSetResultInternal(getTargetWithPoisonedSetterOnPrototype, t => $vm.createProxy(Object.create(t)), key, expectedResult);
+    testSetResultInternal(getTargetWithPoisonedSetterOnPrototype, t => $vm.createGlobalProxy($vm.createGlobalObject(t)), key, expectedResult);
 }
 
 function withSetterOnPrototype(getTarget, key, set) {

@@ -44,6 +44,7 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     ClipToImageBuffer(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, WebCore::FloatRect destinationRect)
     ClipOutToPath(WebCore::Path path)
     ClipPath(WebCore::Path path, enum:bool WebCore::WindRule windRule)
+    ResetClip()
     DrawGlyphs(WebCore::DisplayList::DrawGlyphs item)
     DrawDecomposedGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, WebCore::RenderingResourceIdentifier decomposedGlyphsIdentifier)
     DrawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, WebCore::FloatRect sourceImageRect, Ref<WebCore::Filter> filter)
@@ -97,7 +98,8 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     ApplyFillPattern()
 #endif
     ApplyDeviceScaleFactor(float scaleFactor)
-    FlushContext(WebKit::DisplayListRecorderFlushIdentifier identifier)
+    FlushContext(IPC::Semaphore semaphore) NotStreamEncodable
+    FlushContextSync() -> () Synchronous
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     PaintVideoFrame(struct WebKit::SharedVideoFrame frame, WebCore::FloatRect rect, bool shouldDiscardAlpha) NotStreamEncodable

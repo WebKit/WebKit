@@ -30,6 +30,7 @@
 #include "config.h"
 #include "StyleBuilder.h"
 
+#include "CSSCustomPropertyValue.h"
 #include "CSSFontSelector.h"
 #include "CSSPaintImageValue.h"
 #include "CSSPendingSubstitutionValue.h"
@@ -40,6 +41,7 @@
 #include "Document.h"
 #include "HTMLElement.h"
 #include "PaintWorkletGlobalScope.h"
+#include "RenderStyle.h"
 #include "Settings.h"
 #include "StyleBuilderGenerated.h"
 #include "StyleFontSizeFunctions.h"

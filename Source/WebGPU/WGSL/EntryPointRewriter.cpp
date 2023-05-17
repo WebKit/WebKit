@@ -46,7 +46,7 @@ public:
 private:
     struct MemberOrParameter {
         AST::Identifier name;
-        AST::TypeName::Ref type;
+        AST::TypeName& type;
         AST::Attribute::List attributes;
     };
 
@@ -111,16 +111,16 @@ void EntryPointRewriter::rewrite()
     appendBuiltins();
 
     // add parameter to builtins: ${structName} : ${structType}
-    auto type = adoptRef(*new AST::NamedTypeName(SourceSpan::empty(), AST::Identifier::make(m_structTypeName)));
-    type->m_resolvedType = m_structType;
-    auto parameter = adoptRef(*new AST::Parameter(
+    auto& type = m_shaderModule.astBuilder().construct<AST::NamedTypeName>(SourceSpan::empty(), AST::Identifier::make(m_structTypeName));
+    type.m_resolvedType = m_structType;
+    auto& parameter = m_shaderModule.astBuilder().construct<AST::Parameter>(
         SourceSpan::empty(),
         AST::Identifier::make(m_structParameterName),
         type,
         AST::Attribute::List { },
         AST::ParameterRole::StageIn
-    ));
-    m_shaderModule.append(m_function.parameters(), WTFMove(parameter));
+    );
+    m_shaderModule.append(m_function.parameters(), parameter);
 
     while (m_materializations.size())
         m_shaderModule.insert(m_function.body().statements(), 0, m_materializations.takeLast());
@@ -134,9 +134,9 @@ Reflection::EntryPointInformation EntryPointRewriter::takeEntryPointInformation(
 void EntryPointRewriter::collectParameters()
 {
     while (m_function.parameters().size()) {
-        auto parameter = m_shaderModule.takeLast(m_function.parameters());
+        AST::Parameter& parameter = m_shaderModule.takeLast(m_function.parameters());
         Vector<String> path;
-        visit(path, MemberOrParameter { parameter->name(), parameter->typeName(), parameter->attributes() });
+        visit(path, MemberOrParameter { parameter.name(), parameter.typeName(), parameter.attributes() });
     }
 }
 
@@ -159,10 +159,10 @@ void EntryPointRewriter::constructInputStruct()
     // insert `var ${parameter.name()} = ${structName}.${parameter.name()}`
     AST::StructureMember::List structMembers;
     for (auto& parameter : m_parameters) {
-        structMembers.append(makeUniqueRef<AST::StructureMember>(
+        structMembers.append(m_shaderModule.astBuilder().construct<AST::StructureMember>(
             SourceSpan::empty(),
             WTFMove(parameter.name),
-            WTFMove(parameter.type),
+            parameter.type,
             WTFMove(parameter.attributes)
         ));
     }
@@ -180,7 +180,7 @@ void EntryPointRewriter::constructInputStruct()
         break;
     }
 
-    m_shaderModule.append(m_shaderModule.structures(), makeUniqueRef<AST::Structure>(
+    m_shaderModule.append(m_shaderModule.structures(), m_shaderModule.astBuilder().construct<AST::Structure>(
         SourceSpan::empty(),
         AST::Identifier::make(m_structTypeName),
         WTFMove(structMembers),
@@ -192,27 +192,27 @@ void EntryPointRewriter::constructInputStruct()
 
 void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& data, IsBuiltin isBuiltin)
 {
-    std::unique_ptr<AST::Expression> rhs;
+    AST::Expression::Ptr rhs;
     if (isBuiltin == IsBuiltin::Yes)
-        rhs = makeUnique<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(data.name));
+        rhs = &m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(data.name));
     else {
-        rhs = makeUnique<AST::FieldAccessExpression>(
+        rhs = &m_shaderModule.astBuilder().construct<AST::FieldAccessExpression>(
             SourceSpan::empty(),
-            makeUniqueRef<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(m_structParameterName)),
+            m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(m_structParameterName)),
             AST::Identifier::make(data.name)
         );
     }
 
     if (!path.size()) {
-        m_materializations.append(makeUniqueRef<AST::VariableStatement>(
+        m_materializations.append(m_shaderModule.astBuilder().construct<AST::VariableStatement>(
             SourceSpan::empty(),
-            makeUniqueRef<AST::Variable>(
+            m_shaderModule.astBuilder().construct<AST::Variable>(
                 SourceSpan::empty(),
                 AST::VariableFlavor::Var,
                 AST::Identifier::make(data.name),
                 nullptr, // TODO: do we need a VariableQualifier?
-                data.type.copyRef(),
-                WTFMove(rhs),
+                &data.type,
+                rhs,
                 AST::Attribute::List { }
             )
         ));
@@ -221,33 +221,33 @@ void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& da
 
     path.append(data.name);
     unsigned i = 0;
-    UniqueRef<AST::Expression> lhs = makeUniqueRef<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(path[i++]));
+    AST::Expression::Ref lhs = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make(path[i++]));
     while (i < path.size()) {
-        lhs = makeUniqueRef<AST::FieldAccessExpression>(
+        lhs = m_shaderModule.astBuilder().construct<AST::FieldAccessExpression>(
             SourceSpan::empty(),
             WTFMove(lhs),
             AST::Identifier::make(path[i++])
         );
     }
     path.removeLast();
-    m_materializations.append(makeUniqueRef<AST::AssignmentStatement>(
+    m_materializations.append(m_shaderModule.astBuilder().construct<AST::AssignmentStatement>(
         SourceSpan::empty(),
         WTFMove(lhs),
-        makeUniqueRefFromNonNullUniquePtr(WTFMove(rhs))
+        *rhs
     ));
 }
 
 void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
 {
-    if (auto* structType = std::get_if<Types::Struct>(data.type->resolvedType())) {
-        m_materializations.append(makeUniqueRef<AST::VariableStatement>(
+    if (auto* structType = std::get_if<Types::Struct>(data.type.resolvedType())) {
+        m_materializations.append(m_shaderModule.astBuilder().construct<AST::VariableStatement>(
             SourceSpan::empty(),
-            makeUniqueRef<AST::Variable>(
+            m_shaderModule.astBuilder().construct<AST::Variable>(
                 SourceSpan::empty(),
                 AST::VariableFlavor::Var,
                 AST::Identifier::make(data.name),
                 nullptr,
-                data.type.copyRef(),
+                &data.type,
                 nullptr,
                 AST::Attribute::List { }
             )
@@ -287,13 +287,13 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
 void EntryPointRewriter::appendBuiltins()
 {
     for (auto& data : m_builtins) {
-        m_shaderModule.append(m_function.parameters(), adoptRef(*new AST::Parameter(
+        m_shaderModule.append(m_function.parameters(), m_shaderModule.astBuilder().construct<AST::Parameter>(
             SourceSpan::empty(),
             AST::Identifier::make(data.name),
-            WTFMove(data.type),
+            data.type,
             WTFMove(data.attributes),
             AST::ParameterRole::UserDefined
-        )));
+        ));
     }
 }
 

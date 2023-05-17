@@ -36,6 +36,7 @@
 #include "CSSValuePair.h"
 #include "CSSValuePool.h"
 #include "CalculationValue.h"
+#include "LengthFunctions.h"
 #include "RenderStyle.h"
 #include "SVGPathByteStream.h"
 

@@ -40,10 +40,6 @@ public:
 
     void fillUnsetProperties();
     bool operator==(const AnimationList&) const;
-    bool operator!=(const AnimationList& other) const
-    {
-        return !(*this == other);
-    }
     
     size_t size() const { return m_animations.size(); }
     bool isEmpty() const { return m_animations.isEmpty(); }

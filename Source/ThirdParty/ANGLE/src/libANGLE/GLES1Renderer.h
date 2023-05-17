@@ -67,28 +67,28 @@ struct GLES1ShaderState
     using BoolLightArray     = bool[kLightCount];
     using BoolTexArray       = bool[kTexUnitCount];
     using BoolClipPlaneArray = bool[kClipPlaneCount];
-    using IntTexArray        = int[kTexUnitCount];
+    using UintTexArray       = uint16_t[kTexUnitCount];
 
     BoolTexArray tex2DEnables   = {false, false, false, false};
     BoolTexArray texCubeEnables = {false, false, false, false};
 
-    IntTexArray tex2DFormats = {GL_RGBA, GL_RGBA, GL_RGBA, GL_RGBA};
+    UintTexArray tex2DFormats = {GL_RGBA, GL_RGBA, GL_RGBA, GL_RGBA};
 
-    IntTexArray texEnvModes          = {};
-    IntTexArray texCombineRgbs       = {};
-    IntTexArray texCombineAlphas     = {};
-    IntTexArray texCombineSrc0Rgbs   = {};
-    IntTexArray texCombineSrc0Alphas = {};
-    IntTexArray texCombineSrc1Rgbs   = {};
-    IntTexArray texCombineSrc1Alphas = {};
-    IntTexArray texCombineSrc2Rgbs   = {};
-    IntTexArray texCombineSrc2Alphas = {};
-    IntTexArray texCombineOp0Rgbs    = {};
-    IntTexArray texCombineOp0Alphas  = {};
-    IntTexArray texCombineOp1Rgbs    = {};
-    IntTexArray texCombineOp1Alphas  = {};
-    IntTexArray texCombineOp2Rgbs    = {};
-    IntTexArray texCombineOp2Alphas  = {};
+    UintTexArray texEnvModes          = {};
+    UintTexArray texCombineRgbs       = {};
+    UintTexArray texCombineAlphas     = {};
+    UintTexArray texCombineSrc0Rgbs   = {};
+    UintTexArray texCombineSrc0Alphas = {};
+    UintTexArray texCombineSrc1Rgbs   = {};
+    UintTexArray texCombineSrc1Alphas = {};
+    UintTexArray texCombineSrc2Rgbs   = {};
+    UintTexArray texCombineSrc2Alphas = {};
+    UintTexArray texCombineOp0Rgbs    = {};
+    UintTexArray texCombineOp0Alphas  = {};
+    UintTexArray texCombineOp1Rgbs    = {};
+    UintTexArray texCombineOp1Alphas  = {};
+    UintTexArray texCombineOp2Rgbs    = {};
+    UintTexArray texCombineOp2Alphas  = {};
 
     BoolTexArray pointSpriteCoordReplaces = {};
 
@@ -210,10 +210,10 @@ class GLES1Renderer final : angle::NonCopyable
     void addShaderDefine(std::stringstream &outStream,
                          GLES1StateEnables state,
                          const char *enableString);
-    void addShaderInt(std::stringstream &outStream, const char *name, int value);
-    void addShaderIntTexArray(std::stringstream &outStream,
-                              const char *texString,
-                              GLES1ShaderState::IntTexArray &texState);
+    void addShaderUint(std::stringstream &outStream, const char *name, uint16_t value);
+    void addShaderUintTexArray(std::stringstream &outStream,
+                               const char *texString,
+                               GLES1ShaderState::UintTexArray &texState);
     void addShaderBoolTexArray(std::stringstream &outStream,
                                const char *texString,
                                GLES1ShaderState::BoolTexArray &texState);

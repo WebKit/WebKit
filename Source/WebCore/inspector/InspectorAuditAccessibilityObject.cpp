@@ -337,8 +337,7 @@ ExceptionOr<std::optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObje
     if (auto* axObject = accessibilityObjectForNode(node)) {
         Vector<RefPtr<Node>> selectedChildNodes;
 
-        AXCoreObject::AccessibilityChildrenVector selectedChildren;
-        axObject->selectedChildren(selectedChildren);
+        auto selectedChildren = axObject->selectedChildren();
         for (auto& selectedChildObject : selectedChildren) {
             if (Node* selectedChildNode = selectedChildObject->node())
                 selectedChildNodes.append(selectedChildNode);

@@ -38,6 +38,7 @@
 #include "SVGClipPathElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
+#include "SVGRenderStyle.h"
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
@@ -141,7 +142,7 @@ bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, const 
     return true;
 }
 
-ClipperData::Inputs RenderSVGResourceClipper::computeInputs(RenderElement& renderer, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float effectiveZoom)
+ClipperData::Inputs RenderSVGResourceClipper::computeInputs(const GraphicsContext& context, const RenderElement& renderer, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float effectiveZoom)
 {
     AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
 
@@ -151,7 +152,7 @@ ClipperData::Inputs RenderSVGResourceClipper::computeInputs(RenderElement& rende
     // Determine scale factor for the clipper. The size of intermediate ImageBuffers shouldn't be bigger than kMaxFilterSize.
     ImageBuffer::sizeNeedsClamping(objectBoundingBox.size(), scale);
 
-    return { objectBoundingBox, clippedContentBounds, scale, effectiveZoom };
+    return { objectBoundingBox, clippedContentBounds, scale, effectiveZoom, context.paintingDisabled() };
 }
 
 bool RenderSVGResourceClipper::applyClippingToContext(GraphicsContext& context, RenderElement& renderer, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float effectiveZoom)
@@ -167,7 +168,7 @@ bool RenderSVGResourceClipper::applyClippingToContext(GraphicsContext& context, 
     if (!clipperData.imageBuffer && pathOnlyClipping(context, animatedLocalTransform, objectBoundingBox, effectiveZoom))
         return true;
 
-    if (clipperData.invalidate(computeInputs(renderer, objectBoundingBox, clippedContentBounds, effectiveZoom))) {
+    if (clipperData.invalidate(computeInputs(context, renderer, objectBoundingBox, clippedContentBounds, effectiveZoom))) {
         // FIXME (149469): This image buffer should not be unconditionally unaccelerated. Making it match the context breaks nested clipping, though.
         clipperData.imageBuffer = context.createScaledImageBuffer(clippedContentBounds, clipperData.inputs.scale, DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated); // FIXME
         if (!clipperData.imageBuffer)

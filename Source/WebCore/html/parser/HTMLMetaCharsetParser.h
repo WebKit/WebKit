@@ -46,7 +46,7 @@ public:
     const PAL::TextEncoding& encoding() { return m_encoding; }
 
     // The returned encoding might not be valid.
-    static PAL::TextEncoding encodingFromMetaAttributes(Span<const std::pair<StringView, StringView>>);
+    static PAL::TextEncoding encodingFromMetaAttributes(std::span<const std::pair<StringView, StringView>>);
 
 private:
     bool processMeta(HTMLToken&);

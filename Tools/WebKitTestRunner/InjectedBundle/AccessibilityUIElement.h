@@ -243,6 +243,7 @@ public:
     JSValueRef rowHeaders() const;
     JSValueRef columnHeaders() const;
     JSRetainPtr<JSStringRef> customContent() const;
+    JSValueRef selectedCells() const;
 
     // Tree/Outline specific attributes
     RefPtr<AccessibilityUIElement> selectedRowAtIndex(unsigned);

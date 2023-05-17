@@ -42,9 +42,18 @@ enum {
     SETTINGS_LIST_N_COLUMNS
 };
 
+enum {
+    FEATURES_LIST_COLUMN_NAME,
+    FEATURES_LIST_COLUMN_DETAILS,
+    FEATURES_LIST_COLUMN_FEATURE,
+
+    FEATURES_LIST_N_COLUMNS,
+};
+
 struct _BrowserSettingsDialog {
     GtkDialog parent;
 
+    GtkWidget *stack;
     GtkWidget *settingsList;
     WebKitSettings *settings;
 };
@@ -113,6 +122,34 @@ static void cellRendererChanged(GtkCellRenderer *renderer, const char *path, con
     gtk_tree_path_free(treePath);
 }
 
+static void featureTreeViewRowActivated(GtkTreeView *tree, GtkTreePath *path, GtkTreeViewColumn *column, BrowserSettingsDialog *dialog)
+{
+    g_autoptr(WebKitFeature) feature = NULL;
+    GtkTreeModel *model = gtk_tree_view_get_model(tree);
+    GtkTreeIter iter;
+    gtk_tree_model_get_iter(model, &iter, path);
+    gtk_tree_model_get(model, &iter,
+                       FEATURES_LIST_COLUMN_FEATURE, &feature,
+                       -1);
+    gboolean enabled = webkit_settings_get_feature_enabled(dialog->settings, feature);
+    webkit_settings_set_feature_enabled(dialog->settings, feature, !enabled);
+    gtk_tree_model_row_changed(model, path, &iter);
+}
+
+static void cellRendererToggled(GtkCellRendererToggle *renderer, const char *path, BrowserSettingsDialog *dialog)
+{
+    GtkWidget *scrolledWindow = gtk_stack_get_visible_child(GTK_STACK(dialog->stack));
+
+#if GTK_CHECK_VERSION(3, 98, 5)
+    GtkTreeView *tree = GTK_TREE_VIEW(gtk_scrolled_window_get_child(GTK_SCROLLED_WINDOW(scrolledWindow)));
+#else
+    GtkTreeView *tree = GTK_TREE_VIEW(gtk_bin_get_child(GTK_BIN(scrolledWindow)));
+#endif
+
+    g_autoptr(GtkTreePath) treePath = gtk_tree_path_new_from_string(path);
+    featureTreeViewRowActivated(tree, treePath, NULL, dialog);
+}
+
 static void browserSettingsDialogSetProperty(GObject *object, guint propId, const GValue *value, GParamSpec *pspec)
 {
     BrowserSettingsDialog *dialog = BROWSER_SETTINGS_DIALOG(object);
@@ -126,34 +163,148 @@ static void browserSettingsDialogSetProperty(GObject *object, guint propId, cons
     }
 }
 
+static void featureTreeViewRenderEnabledData(GtkTreeViewColumn *column, GtkCellRenderer *renderer, GtkTreeModel *model, GtkTreeIter *iter, gpointer data)
+{
+    g_autoptr(WebKitFeature) feature = NULL;
+    gtk_tree_model_get(model, iter, FEATURES_LIST_COLUMN_FEATURE, &feature, -1);
+    gtk_cell_renderer_toggle_set_active(GTK_CELL_RENDERER_TOGGLE(renderer),
+                                        webkit_settings_get_feature_enabled(data, feature));
+}
+
+static void featureTreeViewRenderStatusData(GtkTreeViewColumn *column, GtkCellRenderer *renderer, GtkTreeModel *model, GtkTreeIter *iter, gpointer data)
+{
+    g_autoptr(WebKitFeature) feature = NULL;
+    gtk_tree_model_get(model, iter, FEATURES_LIST_COLUMN_FEATURE, &feature, -1);
+    g_autoptr(GEnumClass) enumClass = g_type_class_ref(WEBKIT_TYPE_FEATURE_STATUS);
+    g_object_set(renderer,
+                 "markup", NULL,
+                 "text", g_enum_get_value(enumClass, webkit_feature_get_status(feature))->value_nick,
+                 NULL);
+}
+
+static void featureTreeViewRenderCategoryData(GtkTreeViewColumn *column, GtkCellRenderer *renderer, GtkTreeModel *model, GtkTreeIter *iter, gpointer data)
+{
+    g_autoptr(WebKitFeature) feature = NULL;
+    gtk_tree_model_get(model, iter, FEATURES_LIST_COLUMN_FEATURE, &feature, -1);
+    g_object_set(renderer,
+                 "markup", NULL,
+                 "text", webkit_feature_get_category(feature),
+                 NULL);
+}
+
+static gboolean featureTreeViewSearchMatchSubstring(GtkTreeModel *model, gint column, const char *key, GtkTreeIter *iter, gpointer data)
+{
+    g_autoptr(WebKitFeature) feature = NULL;
+    gtk_tree_model_get(model, iter, FEATURES_LIST_COLUMN_FEATURE, &feature, -1);
+
+    if (g_str_match_string(key, webkit_feature_get_name(feature), TRUE))
+        return FALSE;
+
+    if (!webkit_feature_get_details(feature))
+        return TRUE;
+
+    return !g_str_match_string(key, webkit_feature_get_details(feature), TRUE);
+}
+
+static GtkWidget* createFeatureTreeView(BrowserSettingsDialog *dialog, WebKitFeatureList *featureList)
+{
+    g_autoptr(GtkListStore) model = gtk_list_store_new(FEATURES_LIST_N_COLUMNS,
+                                                       G_TYPE_STRING,  /* name */
+                                                       G_TYPE_STRING,  /* details */
+                                                       WEBKIT_TYPE_FEATURE);
+    for (gsize i = 0; i < webkit_feature_list_get_length(featureList); i++) {
+        WebKitFeature *feature = webkit_feature_list_get(featureList, i);
+        g_autofree char *featureName = webkit_feature_get_name(feature)
+            ? g_markup_escape_text(webkit_feature_get_name(feature), -1)
+            : g_strdup(webkit_feature_get_identifier(feature));
+        g_autofree char* featureDetails = webkit_feature_get_details(feature)
+            ? g_markup_escape_text(webkit_feature_get_details(feature), -1)
+            : NULL;
+
+        GtkTreeIter iter;
+        gtk_list_store_append(model, &iter);
+        gtk_list_store_set(model, &iter,
+                           FEATURES_LIST_COLUMN_NAME, featureName,
+                           FEATURES_LIST_COLUMN_DETAILS, featureDetails,
+                           FEATURES_LIST_COLUMN_FEATURE, feature,
+                           -1);
+    }
+    webkit_feature_list_unref(featureList);
+
+    GtkWidget *tree = g_object_new(GTK_TYPE_TREE_VIEW,
+                                   "model", model,
+                                   "search-column", FEATURES_LIST_COLUMN_NAME,
+                                   "tooltip-column", FEATURES_LIST_COLUMN_DETAILS,
+                                   NULL);
+    g_signal_connect(tree, "row-activated", G_CALLBACK(featureTreeViewRowActivated), dialog);
+    gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(tree), featureTreeViewSearchMatchSubstring, NULL, NULL);
+
+    GtkCellRenderer *textRenderer = gtk_cell_renderer_text_new();
+    GtkCellRenderer *toggleRenderer = gtk_cell_renderer_toggle_new();
+    g_signal_connect(toggleRenderer, "toggled", G_CALLBACK(cellRendererToggled), dialog);
+
+    gtk_tree_view_insert_column_with_data_func(GTK_TREE_VIEW(tree),
+                                               -1, "Enabled", toggleRenderer,
+                                               featureTreeViewRenderEnabledData,
+                                               dialog->settings, NULL);
+    gtk_tree_view_insert_column_with_data_func(GTK_TREE_VIEW(tree),
+                                               -1, "Category", textRenderer,
+                                               featureTreeViewRenderCategoryData,
+                                               NULL, NULL);
+    gtk_tree_view_insert_column_with_data_func(GTK_TREE_VIEW(tree),
+                                               -1, "Status", textRenderer,
+                                               featureTreeViewRenderStatusData,
+                                               NULL, NULL);
+
+    guint n = gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(tree),
+                                                          -1, "Feature", textRenderer,
+                                                          "markup", FEATURES_LIST_COLUMN_NAME,
+                                                          NULL);
+    GtkTreeViewColumn *column = gtk_tree_view_get_column(GTK_TREE_VIEW(tree), n - 1);
+    gtk_tree_view_column_set_sort_column_id(column, FEATURES_LIST_COLUMN_NAME);
+    gtk_tree_view_column_set_expand(column, TRUE);
+
+    return g_object_new(GTK_TYPE_SCROLLED_WINDOW,
+                        "halign", GTK_ALIGN_FILL,
+                        "valign", GTK_ALIGN_FILL,
+                        "hexpand", TRUE,
+                        "vexpand", TRUE,
+                        "child", tree,
+                        NULL);
+}
+
+static gboolean settingsTreeViewSearchMatchSubstring(GtkTreeModel *model, gint column, const char *key, GtkTreeIter *iter, gpointer data)
+{
+    g_autofree char *nick = NULL;
+    g_autofree char *blurb = NULL;
+    gtk_tree_model_get(model, iter,
+                       SETTINGS_LIST_COLUMN_NICK, &nick,
+                       SETTINGS_LIST_COLUMN_BLURB, &blurb,
+                       -1);
+
+    if (g_str_match_string(key, nick, TRUE))
+        return FALSE;
+
+    return blurb ? !g_str_match_string(key, blurb, TRUE) : TRUE;
+
+}
+
 static void browser_settings_dialog_init(BrowserSettingsDialog *dialog)
 {
-    GtkBox *contentArea = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog)));
-    gtk_box_set_spacing(contentArea, 2);
-
     gtk_window_set_default_size(GTK_WINDOW(dialog), 600, 400);
 #if !GTK_CHECK_VERSION(3, 98, 5)
     gtk_window_set_type_hint(GTK_WINDOW(dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
 #endif
-    gtk_window_set_title(GTK_WINDOW(dialog), "WebKit View Settings");
+    gtk_window_set_title(GTK_WINDOW(dialog), "WebKit Settings");
     gtk_window_set_destroy_with_parent(GTK_WINDOW(dialog), TRUE);
-    gtk_dialog_add_button(GTK_DIALOG(dialog), "_Close", GTK_RESPONSE_CLOSE);
-    gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_CLOSE);
 
-#if GTK_CHECK_VERSION(3, 98, 5)
-    GtkWidget *scrolledWindow = gtk_scrolled_window_new();
-#else
-    GtkWidget *scrolledWindow = gtk_scrolled_window_new(NULL, NULL);
-#endif
-    gtk_widget_set_margin_start(scrolledWindow, 5);
-    gtk_widget_set_margin_end(scrolledWindow, 5);
-    gtk_widget_set_margin_top(scrolledWindow, 5);
-    gtk_widget_set_margin_bottom(scrolledWindow, 5);
-    gtk_widget_set_halign(scrolledWindow, GTK_ALIGN_FILL);
-    gtk_widget_set_valign(scrolledWindow, GTK_ALIGN_FILL);
-    gtk_widget_set_hexpand(scrolledWindow, TRUE);
-    gtk_widget_set_vexpand(scrolledWindow, TRUE);
-    dialog->settingsList = gtk_tree_view_new();
+    /* Settings list */
+    dialog->settingsList = g_object_new(GTK_TYPE_TREE_VIEW,
+                                        "search-column", SETTINGS_LIST_COLUMN_NICK,
+                                        "tooltip-column", SETTINGS_LIST_COLUMN_BLURB,
+                                        NULL);
+    gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(dialog->settingsList),
+                                        settingsTreeViewSearchMatchSubstring, NULL, NULL);
     GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
     gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(dialog->settingsList),
                                                 0, "Name", renderer,
@@ -166,25 +317,6 @@ static void browser_settings_dialog_init(BrowserSettingsDialog *dialog)
                                                 "value", SETTINGS_LIST_COLUMN_VALUE,
                                                 "adjustment", SETTINGS_LIST_COLUMN_ADJUSTMENT,
                                                 NULL);
-    gtk_tree_view_set_tooltip_column(GTK_TREE_VIEW(dialog->settingsList), SETTINGS_LIST_COLUMN_BLURB);
-
-#if GTK_CHECK_VERSION(3, 98, 5)
-    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolledWindow), dialog->settingsList);
-#else
-    gtk_container_add(GTK_CONTAINER(scrolledWindow), dialog->settingsList);
-    gtk_widget_show(dialog->settingsList);
-#endif
-
-#if GTK_CHECK_VERSION(3, 98, 5)
-    gtk_box_append(contentArea, scrolledWindow);
-
-    g_signal_connect(dialog, "response", G_CALLBACK(gtk_window_destroy), NULL);
-#else
-    gtk_box_pack_start(contentArea, scrolledWindow, TRUE, TRUE, 0);
-    gtk_widget_show(scrolledWindow);
-
-    g_signal_connect(dialog, "response", G_CALLBACK(gtk_widget_destroy), NULL);
-#endif
 }
 
 static void browserSettingsDialogConstructed(GObject *object)
@@ -193,6 +325,8 @@ static void browserSettingsDialogConstructed(GObject *object)
 
     BrowserSettingsDialog *dialog = BROWSER_SETTINGS_DIALOG(object);
     WebKitSettings *settings = dialog->settings;
+
+    /* Settings */
     GtkListStore *model = gtk_list_store_new(SETTINGS_LIST_N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,
                                              G_TYPE_VALUE, G_TYPE_OBJECT);
     guint propertiesCount;
@@ -239,6 +373,42 @@ static void browserSettingsDialogConstructed(GObject *object)
 
     gtk_tree_view_set_model(GTK_TREE_VIEW(dialog->settingsList), GTK_TREE_MODEL(model));
     g_object_unref(model);
+
+    dialog->stack = gtk_stack_new();
+
+    /* Settings list */
+    gtk_stack_add_titled(GTK_STACK(dialog->stack),
+                         g_object_new(GTK_TYPE_SCROLLED_WINDOW,
+                                      "halign", GTK_ALIGN_FILL,
+                                      "valign", GTK_ALIGN_FILL,
+                                      "hexpand", TRUE,
+                                      "vexpand", TRUE,
+                                      "child", dialog->settingsList,
+                                      NULL),
+                         "settings",
+                         "Settings");
+
+    /* Experimental and development features */
+    gtk_stack_add_titled(GTK_STACK(dialog->stack),
+                         createFeatureTreeView(dialog, webkit_settings_get_experimental_features()),
+                         "experimental", "Experimental");
+    gtk_stack_add_titled(GTK_STACK(dialog->stack),
+                         createFeatureTreeView(dialog, webkit_settings_get_development_features()),
+                         "development", "Development");
+
+    GtkWidget *switcher = g_object_new(GTK_TYPE_STACK_SWITCHER, "stack", dialog->stack, NULL);
+    GtkHeaderBar *header = GTK_HEADER_BAR(gtk_dialog_get_header_bar(GTK_DIALOG(dialog)));
+
+    GtkBox *contentArea = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog)));
+#if GTK_CHECK_VERSION(3, 98, 5)
+    gtk_box_append(contentArea, dialog->stack);
+    gtk_header_bar_set_title_widget(header, switcher);
+#else
+    gtk_box_pack_start(contentArea, dialog->stack, TRUE, TRUE, 0);
+    gtk_widget_show_all(GTK_WIDGET(contentArea));
+    gtk_header_bar_set_custom_title(header, switcher);
+    gtk_widget_show_all(GTK_WIDGET(header));
+#endif
 }
 
 static void browser_settings_dialog_class_init(BrowserSettingsDialogClass *klass)
@@ -260,5 +430,8 @@ GtkWidget *browser_settings_dialog_new(WebKitSettings *settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), NULL);
 
-    return GTK_WIDGET(g_object_new(BROWSER_TYPE_SETTINGS_DIALOG, "settings", settings, NULL));
+    return GTK_WIDGET(g_object_new(BROWSER_TYPE_SETTINGS_DIALOG,
+                                   "settings", settings,
+                                   "use-header-bar", TRUE,
+                                   NULL));
 }

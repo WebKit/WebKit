@@ -44,7 +44,6 @@ public:
 
     struct Styles {
         bool operator==(const Styles&) const;
-        bool operator!=(const Styles& other) const { return !(*this == other); }
 
         struct DecorationStyleAndColor {
             Color color;
@@ -67,7 +66,7 @@ public:
         float clippingOffset { 0.f };
         WavyStrokeParameters wavyStrokeParameters;
     };
-    void paintBackgroundDecorations(const TextRun&, const BackgroundDecorationGeometry&, OptionSet<TextDecorationLine>, const Styles&);
+    void paintBackgroundDecorations(const RenderStyle&, const TextRun&, const BackgroundDecorationGeometry&, OptionSet<TextDecorationLine>, const Styles&);
 
     struct ForegroundDecorationGeometry {
         FloatPoint boxOrigin;

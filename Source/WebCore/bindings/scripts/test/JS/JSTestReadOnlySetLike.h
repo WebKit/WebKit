@@ -60,7 +60,7 @@ public:
 protected:
     JSTestReadOnlySetLike(JSC::Structure*, JSDOMGlobalObject&, Ref<TestReadOnlySetLike>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestReadOnlySetLikeOwner final : public JSC::WeakHandleOwner {

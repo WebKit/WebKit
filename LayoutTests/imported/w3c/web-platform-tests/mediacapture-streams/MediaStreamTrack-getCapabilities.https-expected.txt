@@ -49,8 +49,8 @@ FAIL Audio track getCapabilities() channelCount property present. assert_true: e
 FAIL Audio track getCapabilities() channelCount properly supported. assert_equals: expected "object" but got "undefined"
 PASS Audio track getCapabilities() deviceId property present.
 PASS Audio track getCapabilities() deviceId properly supported.
-FAIL Audio track getCapabilities() groupId property present. assert_true: expected true got false
-FAIL Audio track getCapabilities() groupId properly supported. assert_equals: expected "string" but got "undefined"
+PASS Audio track getCapabilities() groupId property present.
+PASS Audio track getCapabilities() groupId properly supported.
 PASS Video track getCapabilities() width property present.
 PASS Video track getCapabilities() width properly supported.
 PASS Video track getCapabilities() height property present.
@@ -67,8 +67,8 @@ FAIL Video track getCapabilities() resizeMode properly supported. Value: none un
 FAIL Video track getCapabilities() resizeMode properly supported. Value: crop-and-scale undefined is not an object (evaluating 'expected.indexOf')
 PASS Video track getCapabilities() deviceId property present.
 PASS Video track getCapabilities() deviceId properly supported.
-FAIL Video track getCapabilities() groupId property present. assert_true: expected true got false
-FAIL Video track getCapabilities() groupId properly supported. assert_equals: expected "string" but got "undefined"
+PASS Video track getCapabilities() groupId property present.
+PASS Video track getCapabilities() groupId properly supported.
 PASS Audio device getCapabilities() sampleRate property present.
 PASS Audio device getCapabilities() sampleRate properly supported.
 FAIL Audio device getCapabilities() sampleSize property present. assert_true: expected true got false
@@ -85,8 +85,8 @@ FAIL Audio device getCapabilities() channelCount property present. assert_true: 
 FAIL Audio device getCapabilities() channelCount properly supported. assert_equals: expected "object" but got "undefined"
 PASS Audio device getCapabilities() deviceId property present.
 PASS Audio device getCapabilities() deviceId properly supported.
-FAIL Audio device getCapabilities() groupId property present. assert_true: expected true got false
-FAIL Audio device getCapabilities() groupId properly supported. assert_equals: expected "string" but got "undefined"
+PASS Audio device getCapabilities() groupId property present.
+PASS Audio device getCapabilities() groupId properly supported.
 PASS Video device getCapabilities() width property present.
 PASS Video device getCapabilities() width properly supported.
 PASS Video device getCapabilities() height property present.
@@ -103,6 +103,6 @@ FAIL Video device getCapabilities() resizeMode properly supported. Value: none u
 FAIL Video device getCapabilities() resizeMode properly supported. Value: crop-and-scale undefined is not an object (evaluating 'expected.indexOf')
 PASS Video device getCapabilities() deviceId property present.
 PASS Video device getCapabilities() deviceId properly supported.
-FAIL Video device getCapabilities() groupId property present. assert_true: expected true got false
-FAIL Video device getCapabilities() groupId properly supported. assert_equals: expected "string" but got "undefined"
+PASS Video device getCapabilities() groupId property present.
+PASS Video device getCapabilities() groupId properly supported.
 

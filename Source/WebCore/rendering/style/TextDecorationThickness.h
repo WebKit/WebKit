@@ -33,32 +33,30 @@ namespace WebCore {
 
 class TextDecorationThickness {
 public:
-    static TextDecorationThickness createWithAuto()
+    static constexpr TextDecorationThickness createWithAuto()
     {
         return TextDecorationThickness(Type::Auto);
     }
-    static TextDecorationThickness createFromFont()
+    static constexpr TextDecorationThickness createFromFont()
     {
         return TextDecorationThickness(Type::FromFont);
     }
-    static TextDecorationThickness createWithLength(float length)
+    static constexpr TextDecorationThickness createWithLength(float length)
     {
-        TextDecorationThickness result(Type::Length);
-        result.setLengthValue(length);
-        return result;
+        return { Type::Length, length };
     }
 
-    bool isAuto() const
+    constexpr bool isAuto() const
     {
         return m_type == Type::Auto;
     }
 
-    bool isFromFont() const
+    constexpr bool isFromFont() const
     {
         return m_type == Type::FromFont;
     }
 
-    bool isLength() const
+    constexpr bool isLength() const
     {
         return m_type == Type::Length;
     }
@@ -69,7 +67,7 @@ public:
         m_length = length;
     }
 
-    float lengthValue() const
+    constexpr float lengthValue() const
     {
         ASSERT(isLength());
         return m_length;
@@ -87,7 +85,7 @@ public:
         return m_length;
     }
 
-    bool operator==(const TextDecorationThickness& other) const
+    constexpr bool operator==(const TextDecorationThickness& other) const
     {
         switch (m_type) {
         case Type::Auto:
@@ -101,11 +99,6 @@ public:
         }
     }
 
-    bool operator!=(const TextDecorationThickness& other) const
-    {
-        return !(*this == other);
-    }
-
 private:
     enum class Type : uint8_t {
         Auto,
@@ -113,8 +106,9 @@ private:
         Length
     };
 
-    TextDecorationThickness(Type type)
+    constexpr TextDecorationThickness(Type type, float length = 0)
         : m_type { type }
+        , m_length { length }
     {
     }
 

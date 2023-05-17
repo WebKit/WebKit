@@ -1,0 +1,3 @@
+
+PASS Changing the popover attribute should always update the auto/manual behavior.
+

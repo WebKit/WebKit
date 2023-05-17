@@ -45,7 +45,7 @@ class Page;
 class RenderObject;
 
 struct InteractionRegion {
-    enum class Type : bool { Interaction, Occlusion };
+    enum class Type : uint8_t { Interaction, Occlusion, Guard };
     enum class CornerMask : uint8_t {
         MinXMinYCorner = 1 << 0,
         MaxXMinYCorner = 1 << 1,
@@ -75,4 +75,8 @@ WEBCORE_EXPORT std::optional<InteractionRegion> interactionRegionForRenderedRegi
 
 WTF::TextStream& operator<<(WTF::TextStream&, const InteractionRegion&);
 
+}
+namespace WTF {
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<WebCore::InteractionRegion::Type> : IntHash<WebCore::InteractionRegion::Type> { };
 }

@@ -36,6 +36,10 @@
 #include "LengthSize.h"
 #include <wtf/NeverDestroyed.h>
 
+#if PLATFORM(GTK)
+#include <gtk/gtk.h>
+#endif
+
 namespace WebCore {
 
 static const double focusRingOpacity = 0.8; // Keep in sync with focusRingOpacity in RenderThemeAdwaita.
@@ -81,6 +85,33 @@ Theme& Theme::singleton()
     static NeverDestroyed<ThemeAdwaita> theme;
     return theme;
 }
+
+ThemeAdwaita::ThemeAdwaita()
+{
+#if PLATFORM(GTK)
+    if (auto* settings = gtk_settings_get_default()) {
+        refreshGtkSettings();
+
+        // Note that Theme is NeverDestroy'd so the destructor will never be called to disconnect this.
+        g_signal_connect_swapped(G_OBJECT(settings), "notify::gtk-enable-animations", G_CALLBACK(+[](ThemeAdwaita* theme, GParamSpec*, GObject*) {
+            theme->refreshGtkSettings();
+        }), this);
+    }
+#endif
+}
+
+#if PLATFORM(GTK)
+
+void ThemeAdwaita::refreshGtkSettings()
+{
+    if (auto* settings = gtk_settings_get_default()) {
+        gboolean enableAnimations;
+        g_object_get(settings, "gtk-enable-animations", &enableAnimations, nullptr);
+        m_prefersReducedMotion = !enableAnimations;
+    }
+}
+
+#endif
 
 Color ThemeAdwaita::focusColor(const Color& accentColor)
 {
@@ -545,6 +576,11 @@ void ThemeAdwaita::setAccentColor(const Color& color)
 Color ThemeAdwaita::accentColor()
 {
     return m_accentColor;
+}
+
+bool ThemeAdwaita::userPrefersReducedMotion() const
+{
+    return m_prefersReducedMotion;
 }
 
 } // namespace WebCore

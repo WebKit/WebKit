@@ -33,13 +33,14 @@
 namespace WGSL::AST {
 
 class BreakStatement final : public Statement {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(BreakStatement);
 public:
+    NodeKind kind() const override;
+
+private:
     BreakStatement(SourceSpan span)
         : Statement(span)
     { }
-
-    NodeKind kind() const override;
 };
 
 } // namespace WGSL::AST

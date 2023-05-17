@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+promise_test(async t => {
+    // Does not have permission, should reject.
+    await promise_rejects_dom(t, "NotAllowedError", navigator.wakeLock.request('screen'));
+
+    // Trigger transient activation.
+    internals.withUserGesture(() => { });
+
+    assert_true(internals.hasTransientActivation(), "has transient activation");
+    let lock = await navigator.wakeLock.request('screen');
+
+    // Consume transient activation.
+    assert_true(internals.consumeTransientActivation());
+
+    await lock.release();
+
+    // This document was previously authorized so it should be able to require the wake lock again.
+    assert_false(internals.hasTransientActivation(), "does not have transient activation");
+    lock = await navigator.wakeLock.request('screen');
+});
+</script>

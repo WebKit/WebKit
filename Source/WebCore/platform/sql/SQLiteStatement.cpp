@@ -92,7 +92,7 @@ bool SQLiteStatement::executeCommand()
     return step() == SQLITE_DONE;
 }
 
-int SQLiteStatement::bindBlob(int index, Span<const uint8_t> blob)
+int SQLiteStatement::bindBlob(int index, std::span<const uint8_t> blob)
 {
     ASSERT(index > 0);
     ASSERT(static_cast<unsigned>(index) <= bindParameterCount());
@@ -292,7 +292,7 @@ Vector<uint8_t> SQLiteStatement::columnBlob(int col)
     return { span.data(), span.size() };
 }
 
-Span<const uint8_t> SQLiteStatement::columnBlobAsSpan(int col)
+std::span<const uint8_t> SQLiteStatement::columnBlobAsSpan(int col)
 {
     ASSERT(col >= 0);
 

@@ -2027,6 +2027,24 @@ CREATE_INTRINSIC_FOR_BRAND_CHECK(isUndefinedOrNull, IsUndefinedOrNull)
 
 #undef CREATE_INTRINSIC_FOR_BRAND_CHECK
 
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_mustValidateResultOfProxyGetAndSetTraps(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> src = generator.emitNode(node);
+    ASSERT(!node->m_next);
+
+    return generator.move(dst, generator.emitHasStructureWithFlags(generator.tempDestination(dst), src.get(), Structure::s_hasNonConfigurableReadOnlyOrGetterSetterPropertiesBits));
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_mustValidateResultOfProxyTrapsExceptGetAndSet(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> src = generator.emitNode(node);
+    ASSERT(!node->m_next);
+
+    return generator.move(dst, generator.emitHasStructureWithFlags(generator.tempDestination(dst), src.get(), Structure::s_hasNonConfigurablePropertiesBits | Structure::s_didPreventExtensionsBits));
+}
+
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_newArrayWithSize(JSC::BytecodeGenerator& generator, JSC::RegisterID* dst)
 {
     ArgumentListNode* node = m_args->m_listNode;
@@ -3828,6 +3846,15 @@ RegisterID* AssignErrorNode::emitBytecode(BytecodeGenerator& generator, Register
 
 RegisterID* AssignBracketNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
+    ForInContext* context = nullptr;
+    if (m_subscript->isResolveNode()) {
+        Variable argumentVariable = generator.variable(static_cast<ResolveNode*>(m_subscript)->identifier());
+        if (argumentVariable.isLocal()) {
+            RegisterID* property = argumentVariable.local();
+            context = generator.findForInContext(property);
+        }
+    }
+
     RefPtr<RegisterID> base = generator.emitNodeForLeftHandSide(m_base, m_subscriptHasAssignments || m_rightHasAssignments, m_subscript->isPure(generator) && m_right->isPure(generator));
     RefPtr<RegisterID> property = generator.emitNodeForLeftHandSideForProperty(m_subscript, m_rightHasAssignments, m_right->isPure(generator));
     RefPtr<RegisterID> value = generator.destinationForAssignResult(dst);
@@ -3846,8 +3873,12 @@ RegisterID* AssignBracketNode::emitBytecode(BytecodeGenerator& generator, Regist
         if (m_base->isSuperNode()) {
             RefPtr<RegisterID> thisValue = generator.ensureThis();
             generator.emitPutByVal(base.get(), thisValue.get(), property.get(), forwardResult);
-        } else
-            generator.emitPutByVal(base.get(), property.get(), forwardResult);
+        } else {
+            if (context)
+                generator.emitEnumeratorPutByVal(*context, base.get(), property.get(), forwardResult);
+            else
+                generator.emitPutByVal(base.get(), property.get(), forwardResult);
+        }
     }
 
     generator.emitProfileType(forwardResult, divotStart(), divotEnd());

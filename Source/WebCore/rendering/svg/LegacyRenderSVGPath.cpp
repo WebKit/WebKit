@@ -29,7 +29,10 @@
 #include "LegacyRenderSVGPath.h"
 
 #include "Gradient.h"
+#include "LegacyRenderSVGShapeInlines.h"
+#include "RenderStyleInlines.h"
 #include "SVGPathElement.h"
+#include "SVGRenderStyle.h"
 #include "SVGSubpathData.h"
 #include <wtf/IsoMallocInlines.h>
 

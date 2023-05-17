@@ -323,8 +323,8 @@ Vector<Path> PathUtilities::pathsWithShrinkWrappedRects(const Vector<FloatRect>&
 
             // Clamp the radius to no more than half the length of either adjacent edge,
             // because we want a smooth curve and don't want unequal radii.
-            float clampedRadius = std::min(radius, std::abs(fromEdgeVec.x() ? fromEdgeVec.x() : fromEdgeVec.y()) / 2);
-            clampedRadius = std::min(clampedRadius, std::abs(toEdgeVec.x() ? toEdgeVec.x() : toEdgeVec.y()) / 2);
+            float clampedRadius = std::min(radius, fromEdgeVec.length() / 2);
+            clampedRadius = std::min(clampedRadius, toEdgeVec.length() / 2);
 
             FloatPoint fromEdgeNorm = fromEdgeVec;
             fromEdgeNorm.normalize();
@@ -443,7 +443,7 @@ static std::pair<FloatPoint, FloatPoint> controlPointsForBezierCurve(CornerType 
     return std::make_pair(cp1, cp2);
 }
 
-static FloatRoundedRect::Radii adjustedtRadiiForHuggingCurve(const FloatSize& topLeftRadius, const FloatSize& topRightRadius,
+static FloatRoundedRect::Radii adjustedRadiiForHuggingCurve(const FloatSize& topLeftRadius, const FloatSize& topRightRadius,
     const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius, float outlineOffset)
 {
     FloatRoundedRect::Radii radii;
@@ -502,7 +502,7 @@ Path PathUtilities::pathWithShrinkWrappedRectsForOutline(const Vector<FloatRect>
 
     auto roundedRect = [topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius, outlineOffset, deviceScaleFactor] (const FloatRect& rect)
     {
-        auto radii = adjustedtRadiiForHuggingCurve(topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius, outlineOffset);
+        auto radii = adjustedRadiiForHuggingCurve(topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius, outlineOffset);
         radii.scale(calcBorderRadiiConstraintScaleFor(rect, radii));
         RoundedRect roundedRect(LayoutRect(rect),
             RoundedRect::Radii(LayoutSize(radii.topLeft()), LayoutSize(radii.topRight()), LayoutSize(radii.bottomLeft()), LayoutSize(radii.bottomRight())));

@@ -176,11 +176,6 @@ const Vector<CaptureDevice>& CoreAudioCaptureSourceFactory::speakerDevices() con
 #endif
 }
 
-void CoreAudioCaptureSourceFactory::devicesChanged(const Vector<CaptureDevice>& devices)
-{
-    CoreAudioSharedUnit::unit().devicesChanged(devices);
-}
-
 void CoreAudioCaptureSourceFactory::registerSpeakerSamplesProducer(CoreAudioSpeakerSamplesProducer& producer)
 {
     CoreAudioSharedUnit::unit().registerSpeakerSamplesProducer(producer);
@@ -291,11 +286,13 @@ const RealtimeMediaSourceSettings& CoreAudioCaptureSource::settings()
         settings.setVolume(volume());
         settings.setSampleRate(unit().isRenderingAudio() ? unit().actualSampleRate() : sampleRate());
         settings.setDeviceId(hashedId());
+        settings.setGroupId(captureDevice().groupId());
         settings.setLabel(name());
         settings.setEchoCancellation(echoCancellation());
 
         RealtimeMediaSourceSupportedConstraints supportedConstraints;
         supportedConstraints.setSupportsDeviceId(true);
+        supportedConstraints.setSupportsGroupId(true);
         supportedConstraints.setSupportsEchoCancellation(true);
         supportedConstraints.setSupportsVolume(true);
         supportedConstraints.setSupportsSampleRate(true);

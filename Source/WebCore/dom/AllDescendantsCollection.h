@@ -29,12 +29,12 @@
 
 namespace WebCore {
 
-class AllDescendantsCollection : public CachedHTMLCollection<AllDescendantsCollection, CollectionTypeTraits<AllDescendants>::traversalType> {
+class AllDescendantsCollection : public CachedHTMLCollection<AllDescendantsCollection, CollectionTypeTraits<CollectionType::AllDescendants>::traversalType> {
     WTF_MAKE_ISO_ALLOCATED(AllDescendantsCollection);
 public:
     static Ref<AllDescendantsCollection> create(ContainerNode& rootNode, CollectionType type)
     {
-        ASSERT_UNUSED(type, type == AllDescendants);
+        ASSERT_UNUSED(type, type == CollectionType::AllDescendants);
         return adoptRef(*new AllDescendantsCollection(rootNode, type));
     }
 

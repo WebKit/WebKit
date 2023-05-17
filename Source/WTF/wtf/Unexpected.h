@@ -88,7 +88,6 @@ private:
 };
 
 template<class E> constexpr bool operator==(const unexpected<E>& lhs, const unexpected<E>& rhs) { return lhs.value() == rhs.value(); }
-template<class E> constexpr bool operator!=(const unexpected<E>& lhs, const unexpected<E>& rhs) { return lhs.value() != rhs.value(); }
 
 }}} // namespace std::experimental::fundamentals_v3
 

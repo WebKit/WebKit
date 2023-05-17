@@ -103,6 +103,16 @@ public:
         m_cachedContentsBuffers = WTFMove(buffers);
     }
 
+    std::optional<WebCore::RenderingResourceIdentifier> asyncContentsIdentifier() const
+    {
+        return m_asyncContentsIdentifier;
+    }
+
+    void setAsyncContentsIdentifier(const WebCore::RenderingResourceIdentifier& identifier)
+    {
+        m_asyncContentsIdentifier = identifier;
+    }
+
 private:
     void initializeLayer();
 
@@ -128,6 +138,7 @@ private:
     Vector<WebCore::PlatformLayerIdentifier> m_stationaryScrollContainerIDs;
 
     Vector<CachedContentsBuffer> m_cachedContentsBuffers;
+    std::optional<WebCore::RenderingResourceIdentifier> m_asyncContentsIdentifier;
 };
 
 }

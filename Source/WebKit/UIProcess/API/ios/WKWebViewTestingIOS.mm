@@ -217,14 +217,6 @@ static void dumpSeparatedLayerProperties(TextStream&, CALayer *) { }
     return _inputViewBoundsInWindow;
 }
 
-- (NSArray<NSValue *> *)_uiTextSelectionRects
-{
-    // Force the selection view to update if needed.
-    [_contentView _updateChangedSelection];
-
-    return [_contentView _uiTextSelectionRects];
-}
-
 static String allowListedClassToString(UIView *view)
 {
     static constexpr ComparableASCIILiteral allowedClassesArray[] = {
@@ -426,6 +418,11 @@ static void dumpUIView(TextStream& ts, UIView *view)
     return [_contentView imageAnalysisGestureRecognizer];
 }
 
+- (UITapGestureRecognizer *)_singleTapGestureRecognizer
+{
+    return [_contentView singleTapGestureRecognizer];
+}
+
 - (void)_simulateElementAction:(_WKElementActionType)actionType atLocation:(CGPoint)location
 {
     [_contentView _simulateElementAction:actionType atLocation:location];
@@ -463,15 +460,6 @@ static void dumpUIView(TextStream& ts, UIView *view)
 {
     if (_page)
         _page->setDeviceHasAGXCompilerServiceForTesting();
-}
-
-- (NSString *)_serializedSelectionCaretBackgroundColorForTesting
-{
-    UIColor *backgroundColor = [[_contentView textInteractionAssistant].selectionView valueForKeyPath:@"caretView.backgroundColor"];
-    if (!backgroundColor)
-        return nil;
-
-    return serializationForCSS(WebCore::colorFromCocoaColor(backgroundColor));
 }
 
 - (BOOL)_hasResizeAssertion

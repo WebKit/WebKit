@@ -30,7 +30,7 @@
 #include "RenderInline.h"
 #include "RenderRubyRun.h"
 #include "RenderSVGText.h"
-#include "RenderStyle.h"
+#include "RenderStyleSetters.h"
 #include "RenderTable.h"
 #include "RenderTextFragment.h"
 #include "RenderTreeBuilder.h"

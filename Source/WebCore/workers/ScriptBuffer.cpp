@@ -64,7 +64,7 @@ bool ScriptBuffer::containsSingleFileMappedSegment() const
 
 void ScriptBuffer::append(const String& string)
 {
-    auto result = string.tryGetUTF8([&](Span<const char> span) -> bool {
+    auto result = string.tryGetUTF8([&](std::span<const char> span) -> bool {
         m_buffer.append(span.data(), span.size());
         return true;
     });
@@ -83,11 +83,6 @@ bool operator==(const ScriptBuffer& a, const ScriptBuffer& b)
     if (!a.buffer() || !b.buffer())
         return false;
     return *a.buffer() == *b.buffer();
-}
-
-bool operator!=(const ScriptBuffer& a, const ScriptBuffer& b)
-{
-    return !(a == b);
 }
 
 } // namespace WebCore

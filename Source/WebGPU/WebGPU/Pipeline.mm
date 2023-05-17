@@ -42,8 +42,7 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
     }
 
     auto* ast = shaderModule.ast();
-    if (!ast)
-        return std::nullopt;
+    RELEASE_ASSERT(ast);
 
     std::optional<WGSL::PipelineLayout> wgslPipelineLayout { std::nullopt };
     if (pipelineLayout)
@@ -66,11 +65,7 @@ MTLFunctionConstantValues *createConstantValues(uint32_t constantCount, const WG
     auto constantValues = [MTLFunctionConstantValues new];
     for (uint32_t i = 0; i < constantCount; ++i) {
         const auto& entry = constants[i];
-        auto nameIterator = entryPointInformation.specializationConstantIndices.find(fromAPI(entry.key));
-        if (nameIterator == entryPointInformation.specializationConstantIndices.end())
-            return nullptr;
-        auto specializationConstantIndex = nameIterator->value;
-        auto indexIterator = entryPointInformation.specializationConstants.find(specializationConstantIndex);
+        auto indexIterator = entryPointInformation.specializationConstants.find(fromAPI(entry.key));
         if (indexIterator == entryPointInformation.specializationConstants.end())
             return nullptr;
         const auto& specializationConstant = indexIterator->value;
@@ -100,12 +95,12 @@ MTLFunctionConstantValues *createConstantValues(uint32_t constantCount, const WG
     return constantValues;
 }
 
-id<MTLFunction> createFunction(id<MTLLibrary> library, const WGSL::Reflection::EntryPointInformation& entryPointInformation, const WGPUProgrammableStageDescriptor* compute, NSString *label)
+id<MTLFunction> createFunction(id<MTLLibrary> library, const WGSL::Reflection::EntryPointInformation& entryPointInformation, unsigned constantCount, const WGPUConstantEntry* constants, NSString *label)
 {
     auto functionDescriptor = [MTLFunctionDescriptor new];
     functionDescriptor.name = entryPointInformation.mangledName;
-    if (compute && compute->constantCount) {
-        auto constantValues = createConstantValues(compute->constantCount, compute->constants, entryPointInformation);
+    if (constantCount) {
+        auto constantValues = createConstantValues(constantCount, constants, entryPointInformation);
         if (!constantValues)
             return nullptr;
         functionDescriptor.constantValues = constantValues;

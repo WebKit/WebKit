@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("ConsoleMessage.Timestamp");
+
+    suite.addTestCase({
+        name: "ConsoleMessage.Timestamp.Basic",
+        async test() {
+            let before = Date.now();
+            let [event] = await Promise.all([
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                InspectorTest.evaluateInPage(`console.log(42)`),
+            ]);
+            let after = Date.now();
+
+            let {message} = event.data;
+
+            InspectorTest.expectGreaterThanOrEqual(message.timestamp * 1000, before, "Should be after pre-captured timestamp.");
+            InspectorTest.expectLessThanOrEqual(message.timestamp * 1000, after, "Should be before post-captured timestamp.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test for the ConsoleMessage.timestamp event.</p>
+</body>
+</html>

@@ -67,6 +67,11 @@ def configure_logging(selected_log_level='info'):
     logger.setLevel(log_level)
     return handler
 
+def set_env_var(env_key, env_value, loginfo=False):
+    os.environ[env_key] = env_value
+    if loginfo:
+        _log.info('export {env_key}="{env_value}"'.format(env_key=env_key, env_value=env_value))
+
 
 class YoctoTargetsConfig():
 
@@ -78,7 +83,7 @@ class YoctoTargetsConfig():
         self._directory_config_file = os.path.realpath(os.path.dirname(config_file))
         self._available_targets = []
         self._source_files_for_hash = source_files_for_hash
-        required_keys = ['repo_manifest_path', 'conf_bblayers_path', 'conf_local_path', 'image_basename', 'image_extension']
+        required_keys = ['repo_manifest_path', 'conf_bblayers_path', 'conf_local_path', 'image_basename', 'image_types']
         for target in self._config_parser.sections():
             if not all(k in self._config_parser[target].keys() for k in required_keys):
                 _log.warning('Ignoring target {target} because it has not defined all the required config sections: "{required_keys}"'.format(target=target, required_keys=', '.join(required_keys)))
@@ -118,8 +123,8 @@ class YoctoTargetsConfig():
     def get_image_basename(self, target):
         return self._get_value(target, 'image_basename')
 
-    def get_image_extension(self, target):
-        return self._get_value(target, 'image_extension')
+    def get_image_types(self, target):
+        return self._get_value(target, 'image_types').split()
 
     def get_patch(self, target):
         return self._get_value(target, 'patch_file_path')
@@ -136,7 +141,7 @@ class YoctoTargetsConfig():
                 environment_dic[env_key] = key_value
         return environment_dic
 
-    def generate_and_export_hash_version_identifier(self, target):
+    def get_hash_for_target(self, target):
         hash_for_target = hashlib.md5()
         for key in self._config_parser[target]:
             key_value = self._get_value(target, key)
@@ -150,9 +155,12 @@ class YoctoTargetsConfig():
         for source_file in self._source_files_for_hash:
             with open(source_file, 'r', encoding='utf-8') as f:
                 hash_for_target.update(f.read().encode('utf-8', errors='ignore'))
-        hash_version = hash_for_target.hexdigest()
+        return hash_for_target.hexdigest()
+
+    def generate_and_export_hash_version_identifier(self, target):
+        hash_version = self.get_hash_for_target(target)
         # We use this env variable to pass the version info to a few bitbake/Yocto recipes
-        os.environ['WEBKIT_CROSS_VERSION'] = '{hash_version}'.format(hash_version=hash_version)
+        set_env_var('WEBKIT_CROSS_VERSION', '{hash_version}'.format(hash_version=hash_version))
         return '{target_name} {hash_version}'.format(target_name=target, hash_version=hash_version)
 
     def list_target_configs_available(self):
@@ -161,22 +169,29 @@ class YoctoTargetsConfig():
 
 class YoctoCrossBuilder():
 
-    def __init__(self, targets_config, target, no_wipe, no_export_environment):
+    def __init__(self, targets_config, target, no_wipe, no_export_environment, skip_init):
+        self._running_image_info_version_full_path = '/usr/share/cross-target-info-version'
         self._targets_config = targets_config
         self._target = target
         self._webkit_dir = top_level_directory
         self._webkitbuild_dir = os.path.join(self._webkit_dir, 'WebKitBuild')
+        if self._target == None:
+            _log.debug('Initializing YoctoCrossBuilder without target. Building disabled')
+            return
         self._workdir = os.path.join(self._webkitbuild_dir, 'CrossToolChains', target)
         self._workdir_version_file = os.path.join(self._workdir, '.target-info-version')
         self._workdir_path_file = os.path.join(self._workdir, '.path')
         self._workdir_build_yoctodir = os.path.join(self._workdir, 'build')
+        self._workdir_info_last_image_deployed = os.path.join(self._workdir, '.last-image-deployed-info-version')
         self._image_directory = os.path.join(self._workdir_build_yoctodir, 'image')
         self._image_basename = targets_config.get_image_basename(self._target)
-        self._image_extension = targets_config.get_image_extension(self._target)
-        self._image_path = os.path.join(self._image_directory, self._image_basename + '.' + self._image_extension.lstrip('.'))
+        self._image_types = targets_config.get_image_types(self._target)
         self._toolchain_directory = os.path.join(self._workdir, 'build', 'toolchain')
         self._initialize_environment_for_target(no_export_environment)
         self._hash_version_for_current_target = targets_config.generate_and_export_hash_version_identifier(self._target)
+        if skip_init:
+            _log.debug('skipping initializing the build environment because skip_init was passed.')
+            return
         # Initialize the workdir at __init__() time, but only when is not previously built or is built with an old configuration.
         if not self._is_workdir_initialized_at_current_version():
             if not self._initialize_workdir(no_wipe):
@@ -212,10 +227,9 @@ class YoctoCrossBuilder():
             else:
                 _log.info('Adding defined environment for {target}: '.format(target=self._target))
                 for env_key in environment_for_target:
-                    os.environ[env_key] = environment_for_target[env_key]
-                    _log.info('export {env_key}="{env_value}"'.format(env_key=env_key, env_value=os.environ[env_key]))
+                    set_env_var(env_key, environment_for_target[env_key], loginfo=True)
         # We use this env var in build-webkit script (webkitdirs.pm) to avoid entering into flatpak
-        os.environ['WEBKIT_CROSS_TARGET'] = '{target}'.format(target=self._target)
+        set_env_var('WEBKIT_CROSS_TARGET', '{target}'.format(target=self._target))
 
     def _is_workdir_initialized_at_current_version(self):
         if os.path.isfile(self._workdir_version_file) and os.path.isfile(self._workdir_path_file):
@@ -227,8 +241,21 @@ class YoctoCrossBuilder():
                 return path_saved == self._workdir
         return False
 
+    # Executes the command and returns 0 if it was sucessful, otherwise returns a number => 1
     def _run_cmd(self, cmd):
-        return os.WEXITSTATUS(os.system(cmd))
+        sys_retcode = os.system(cmd)
+        if os.WIFEXITED(sys_retcode):
+            return abs(os.WEXITSTATUS(sys_retcode))
+        if os.WIFSIGNALED(sys_retcode):
+            signumber = os.WTERMSIG(sys_retcode)
+            _log.error('The process "{cmd}" was terminated with signal: {signal}'.format(cmd=cmd, signal=signumber))
+            return abs(signumber)
+        if os.WIFSTOPPED(status):
+            signumber = os.WSTOPSIG(sys_retcode)
+            _log.error('The process "{cmd}" was stopped with signal: {signal}'.format(cmd=cmd, signal=signumber))
+            return abs(signumber)
+        return max(sys_retcode, 1)
+
 
     def _add_recipe_to_include_version_file_into_image(self, local_conf_path):
         poky_meta_dir = os.path.join(self._workdir, 'sources', 'poky', 'meta')
@@ -251,9 +278,9 @@ class YoctoCrossBuilder():
             f.write('SRC_URI = "file://${TOPDIR}/../.target-info-version"\n')
             f.write('do_install() {\n')
             f.write('    mkdir -p "${D}/${datadir}"\n')
-            f.write('    cp "${TOPDIR}/../.target-info-version" "${D}/${datadir}/webkit-target-info-version"\n')
+            f.write('    cp "${TOPDIR}/../.target-info-version" "${D}/' + self._running_image_info_version_full_path + '"\n')
             f.write('}\n')
-            f.write('FILES:${PN} = "${datadir}/webkit-target-info-version"\n')
+            f.write('FILES:${PN} = "' + self._running_image_info_version_full_path + '"\n')
             f.write('BBCLASSEXTEND = "native nativesdk"\n')
 
     # This is only meant to be executed once on the first run or when the configuration changes.
@@ -354,30 +381,47 @@ class YoctoCrossBuilder():
                     files_found.append(os.path.join(root, file))
         return files_found
 
+    def _get_list_of_built_images(self):
+        images_found = []
+        for image_type in self._image_types:
+            image_path = os.path.join(self._image_directory, self._image_basename + '.' + image_type.lstrip('.'))
+            if os.path.isfile(image_path):
+                images_found.append(image_path)
+        return images_found
+
+    def _check_if_image_built_and_print_paths(self):
+        if not os.path.isdir(self._image_directory):
+            return False
+        images_found = self._get_list_of_built_images()
+        if len(images_found) == len(self._image_types) and len(images_found) > 0:
+            _log.info('Image{s} built at:'.format(s='s' if len(images_found) > 0 else ''))
+            for image_found in images_found:
+                _log.info('  -   {image_path}'.format(image_path=image_found))
+            return True
+        return False
+
     def build_image(self):
-        if os.path.isfile(self._image_path):
-            _log.info('Image already built at: {image_path}'.format(image_path=self._image_path))
+        if self._check_if_image_built_and_print_paths():
             return True
         if not self._do_bitbake('bitbake {image}'.format(image=self._image_basename)):
             _log.error('Bitbake command returned error')
             return False
         tmp_images_dir = os.path.join(self._workdir, 'build', 'tmp', 'deploy', 'images')
-        images_found = self._find_files_inside_directory_match_str_suffix(tmp_images_dir, self._image_basename, self._image_extension)
-        if len(images_found) == 0:
-            _log.error('Unable to find an image starting with "{image_basename}" and ending with "{image_extension}" in directory {image_directory}'.format(
-                        image_basename=self._image_basename, image_extension=self._image_extension, image_directory=tmp_images_dir))
-            return False
-        else:
-            # Pick the most recent one
-            last_generated_image_file = sorted(images_found, key=lambda t: -os.stat(t).st_mtime)[0]
-            _log.info('Copying image {generated_image} to {dest_image}'.format(generated_image=last_generated_image_file, dest_image=self._image_path))
-            os.makedirs(self._image_directory)
-            shutil.copy2(last_generated_image_file, self._image_path)
-            # Copy also the bmap file if available
-            bmap_image_file = last_generated_image_file.rsplit('.', 1)[0] + '.bmap'
-            if os.path.isfile(bmap_image_file):
-                shutil.copy2(bmap_image_file, self._image_path.rsplit('.', 1)[0] + '.bmap')
-            return True
+        for image_type in self._image_types:
+            matching_files_found = self._find_files_inside_directory_match_str_suffix(tmp_images_dir, self._image_basename, image_type)
+            if len(matching_files_found) == 0:
+                _log.error('Unable to find an image starting with "{image_basename}" and ending with "{image_extension}" in directory {image_directory}'.format(
+                            image_basename=self._image_basename, image_extension=image_type, image_directory=tmp_images_dir))
+                return False
+            else:
+                # Pick the most recent one
+                image_path = os.path.join(self._image_directory, self._image_basename + '.' + image_type.lstrip('.'))
+                last_generated_image_file = sorted(matching_files_found, key=lambda t: -os.stat(t).st_mtime)[0]
+                _log.info('Copying image {generated_image} to {dest_image}'.format(generated_image=last_generated_image_file, dest_image=image_path))
+                if not os.path.isdir(self._image_directory):
+                    os.makedirs(self._image_directory)
+                shutil.copy2(last_generated_image_file, image_path)
+        return self._check_if_image_built_and_print_paths()
 
     def build_toolchain(self):
         toolchain_path_configured_check_file = os.path.join(self._toolchain_directory, '.toolchain_path_configured')
@@ -519,6 +563,95 @@ class YoctoCrossBuilder():
         _log.info('Running inside cross-toolchain env: {command}'.format(command=command))
         return self._run_cmd('/bin/bash -c \'. {cross_setup_env_path} ; {command}\''.format(cross_setup_env_path=cross_setup_env_path, command=command))
 
+    def execute_deploy_script(self, script_path):
+        if os.path.isdir(script_path) or not os.access(script_path, os.R_OK | os.X_OK):
+            _log.error('The script "{script}" can not be found or executed due to permissions'.format(script=script_path))
+            return 1
+        if not self.build_image():
+            _log.error('Unable to build the image. Not executing deploy script')
+            return 1
+        images_found = self._get_list_of_built_images()
+        set_env_var('WEBKIT_CROSS_BUILT_IMAGES', ' '.join(images_found), loginfo=True)
+        _log.info('Executing script "{script}"'.format(script=script_path))
+        retcode = self._run_cmd(os.path.realpath(script_path))
+        if retcode == 0:
+            _log.info('Deploy script ended with SUCESSS. Storing current image as correctly deployed')
+            with open(self._workdir_info_last_image_deployed, 'w') as f:
+                f.write('{target_ver}\n'.format(target_ver=self._hash_version_for_current_target))
+        else:
+            _log.error('Deploy script ended with return code {retcode}'.format(retcode=retcode))
+        return retcode
+
+
+    # If image_type has value 'deployed' then checks the last image deployed. This is intended for the builder bot
+    # If image_type has value 'running' then checks the running image deployed. This is intended for the tester bot
+    def check_if_image_is_updated(self, image_type):
+        RETCODE_IMAGE_VALID_AND_UPDATED = 0
+        RETCODE_IMAGE_VALID_NOT_UPDATED = 1
+        RETCODE_IMAGE_NOT_VALID = 2
+
+        targets_available = self._targets_config.list_target_configs_available()
+
+        if image_type == 'running':
+            image_info_hash_path = self._running_image_info_version_full_path
+        elif image_type == 'deployed':
+            image_info_hash_path = self._workdir_info_last_image_deployed
+        else:
+            raise NotImplementedError('Unkown image type {image_type}'.format(image_type=image_type))
+
+
+        _log.info('Checking if {image_type} image is updated from info file "{info}"'.format(image_type=image_type, info=image_info_hash_path))
+        if not (os.path.isfile(image_info_hash_path) and os.access(image_info_hash_path, os.R_OK)):
+            _log.error('The file "{info}" can not be found or read due to permissions'.format(info=image_info_hash_path))
+            return RETCODE_IMAGE_NOT_VALID
+
+        line_found = False
+        with open(image_info_hash_path, 'r', encoding='utf-8') as f:
+            while True:
+                line = f.readline().strip()
+                if line.startswith('#'):
+                    continue
+                if len(line) == 0:
+                    break  # EOF
+                if len(line) > 32:
+                    line_found = True
+                    break
+
+        if not line_found:
+            _log.error('Unable to find expected line with image info at {info}'.format(info=image_info_hash_path))
+            return RETCODE_IMAGE_NOT_VALID
+
+        line_info_arr = line.split(' ')
+
+        if len(line_info_arr) != 2:
+            _log.error('Unexpected format for the line with image info "{line}" at {info}'.format(
+                        line=line, info=image_info_hash_path))
+            return RETCODE_IMAGE_NOT_VALID
+
+        image_target = line_info_arr[0]
+        image_hash = line_info_arr[1]
+        if image_type == 'deployed' and image_target != self._target:
+            _log.error('The target "{target}" obtained from file at {info} does not match the passed target fron the command line {argument_target}'.format(
+                        target=image_target, info=image_info_hash_path, argument_target=self._target))
+            return RETCODE_IMAGE_NOT_VALID
+        if image_target not in targets_available:
+            _log.error('The target "{target}" obtained from file at {info} is not valid. Valid targets are: "{targets}"'.format(
+                        target=image_target, info=image_info_hash_path, targets=', '.join(targets_available)))
+            return RETCODE_IMAGE_NOT_VALID
+
+        current_hash_for_target = self._targets_config.get_hash_for_target(image_target)
+        _log.info('The current {image_type} image is valid for target: {target}'.format(image_type=image_type, target=image_target))
+        _log.info('Hash obtained for current image: {hash}'.format(hash=image_hash))
+        _log.info('Hash for the last image version: {hash}'.format(hash=current_hash_for_target))
+
+        if image_hash != current_hash_for_target:
+            _log.info('Hashes do NOT match: {image_type} image needs to be updated'.format(image_type=image_type))
+            return RETCODE_IMAGE_VALID_NOT_UPDATED
+
+        _log.info('Hashes match: {image_type} image is updated'.format(image_type=image_type))
+        return RETCODE_IMAGE_VALID_AND_UPDATED
+
+
 
 # argparse has issues parsing strings like '--'
 # we convert anything after cmd_key to a quoted string to workaround the issue.
@@ -588,6 +721,13 @@ def main(args):
                         help='Start a shell to develop with bitbake inside the built-in Yocto environment.')
     action.add_argument('--cross-dev-shell', action='store_true', dest='cross_dev_shell',
                         help='Start a shell to directly build WebKit or any other software for the target.')
+    action.add_argument('--deploy-image-with-script', type=str, dest='script_path',
+                        help='Ensure that the image is built for the target and then execute the given script. '
+                             'The environment var WEBKIT_CROSS_BUILT_IMAGES is set with the list of images built for the target.')
+    action.add_argument('--check-if-image-is-updated', choices=['running', 'deployed'],  dest='check_if_image_is_updated',
+                        help='Pass value "running" on the board, to check if the running image is valid and updated. '
+                             'Pass value "deployed" on the builder, to check if the deployed image is valid and updated. '
+                             'It will return: true (zero) if the image is valid and updated, false (1) if is valid but not updated or false (2) if is not valid.')
     action.add_argument(run_cmd_key, action='store', dest='execute_inside_cross_toolchain_environment_cmd', nargs=argparse.REMAINDER,
                         help='Build the cross toolchain (only if still not built) and then execute \"command\" inside cross environment. '
                              '\033[91mIMPORTANT\033[0m: This argument is the last one, any strings after it, even if separated by spaces or quotes will be considered part of the command to be executed. '
@@ -605,19 +745,24 @@ def main(args):
         return 0
 
     if not options.bitbake_dev_shell and not options.cross_dev_shell and not options.generate_toolchain \
-       and not options.generate_image and options.execute_inside_cross_toolchain_environment_cmd is None:
+       and not options.generate_image and options.execute_inside_cross_toolchain_environment_cmd is None \
+       and options.script_path is None and not options.check_if_image_is_updated:
         parser.error('Need to specify an action')
 
-    if not options.target:
-        env_target = os.environ.get('WEBKIT_CROSS_TARGET')
-        if env_target:
-            _log.info('Using cross-target "{env_target}" from environment variable WEBKIT_CROSS_TARGET'.format(env_target=env_target))
-            options.target = env_target
-        else:
-            parser.error('--cross-target is a required parameter for this action. Choose one from "{targets}"'.format(target=options.target, targets='", "'.join(cross_targets_available)))
+    if options.check_if_image_is_updated == 'running':
+        if options.target:
+            parser.error('Incompatible argument "--cross-target" with "--check-if-image-is-updated=running"')
+    else:
+        if not options.target:
+            env_target = os.environ.get('WEBKIT_CROSS_TARGET')
+            if env_target:
+                _log.info('Using cross-target "{env_target}" from environment variable WEBKIT_CROSS_TARGET'.format(env_target=env_target))
+                options.target = env_target
+            else:
+                parser.error('--cross-target is a required parameter for this action. Choose one from "{targets}"'.format(target=options.target, targets='", "'.join(cross_targets_available)))
 
-    if options.target not in cross_targets_available:
-        parser.error('Invalid cross-target "{target}". Choose from "{targets}"'.format(target=options.target, targets='", "'.join(cross_targets_available)))
+        if options.target not in cross_targets_available:
+            parser.error('Invalid cross-target "{target}". Choose from "{targets}"'.format(target=options.target, targets='", "'.join(cross_targets_available)))
 
     if options.bitbake_dev_shell and options.cross_dev_shell:
         parser.error('Only one type of devshell can be launched at the same time')
@@ -625,7 +770,15 @@ def main(args):
     retcode = 0
     no_wipe = (options.no_wipe) or (os.environ.get('WEBKIT_CROSS_WIPE_ON_CHANGE', '1') == '0')
     no_export_environment = (options.no_export_environment) or (os.environ.get('WEBKIT_CROSS_EXPORT_ENV', '1') == '0')
-    builder = YoctoCrossBuilder(targets_config, options.target, no_wipe, no_export_environment)
+    skip_init = options.check_if_image_is_updated in ['running', 'deployed']
+    builder = YoctoCrossBuilder(targets_config, options.target, no_wipe, no_export_environment, skip_init)
+
+    if options.check_if_image_is_updated in ['running', 'deployed']:
+        if options.bitbake_dev_shell or options.cross_dev_shell or options.generate_toolchain \
+           or options.generate_image or options.execute_inside_cross_toolchain_environment_cmd is not None \
+           or options.script_path is not None:
+               parser.error('Incompatible argument with "--check-if-image-is-updated" specified.')
+        return builder.check_if_image_is_updated(options.check_if_image_is_updated)
 
     if options.generate_toolchain:
         if not builder.build_toolchain():
@@ -648,6 +801,10 @@ def main(args):
                 raise ValueError('Unexpected error when parsing the command to be executed. str_command has value: {str_command}'.format(str_command=str_command))
             str_command = str_command[0]
         retcode += builder.execute_cmd_inside_cross_toolchain_env(str_command)
+
+    if options.script_path:
+        retcode += builder.execute_deploy_script(options.script_path)
+
     return retcode
 
 if __name__ == '__main__':

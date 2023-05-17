@@ -67,7 +67,6 @@ struct SVGPathTransformedByteStream {
     { 
         return other.offset == offset && other.zoom == zoom && other.rawStream == rawStream;
     }
-    bool operator!=(const SVGPathTransformedByteStream& other) const { return !(*this == other); }
     bool isEmpty() const { return rawStream.isEmpty(); }
 
     Path path() const

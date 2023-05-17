@@ -82,7 +82,7 @@ void GraphicsContextGLANGLE::platformReleaseThreadResources()
 {
 }
 
-RefPtr<PixelBuffer> GraphicsContextGLANGLE::readCompositedResults()
+RefPtr<PixelBuffer> GraphicsContextGLTextureMapperANGLE::readCompositedResults()
 {
     return readRenderingResults();
 }
@@ -348,7 +348,7 @@ void GraphicsContextGLTextureMapperANGLE::setContextVisibility(bool)
 {
 }
 
-bool GraphicsContextGLTextureMapperANGLE::reshapeDisplayBufferBacking()
+bool GraphicsContextGLTextureMapperANGLE::reshapeDrawingBuffer()
 {
     auto attrs = contextAttributes();
     const auto size = getInternalFramebufferSize();

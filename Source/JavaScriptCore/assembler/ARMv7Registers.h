@@ -27,6 +27,8 @@
 
 #include <wtf/Platform.h>
 
+#if CPU(ARM_THUMB2)
+
 #define RegisterNames ARMRegisters
 
 #define FOR_EACH_REGISTER(macro)                \
@@ -194,3 +196,5 @@
     macro(q14, "q14", 0, 0)                     \
     macro(q15, "q15", 0, 0)
 #endif
+
+#endif // CPU(ARM_THUMB2)

@@ -62,7 +62,7 @@ public:
 protected:
     JSTestGenerateAddOpaqueRoot(JSC::Structure*, JSDOMGlobalObject&, Ref<TestGenerateAddOpaqueRoot>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestGenerateAddOpaqueRootOwner final : public JSC::WeakHandleOwner {

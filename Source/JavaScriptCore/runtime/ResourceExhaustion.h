@@ -29,6 +29,7 @@ namespace JSC {
 
 enum ResourceExhaustionCode {
     StructureIDExhaustion = 30,
+    MemoryExhaustion = 31,
 };
 
 #define RELEASE_ASSERT_RESOURCE_AVAILABLE(assertion, resourceExhaustionCode, failureMessage) do { \

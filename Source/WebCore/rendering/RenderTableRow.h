@@ -54,8 +54,8 @@ public:
     bool rowIndexWasSet() const { return m_rowIndex != unsetRowIndex; }
     unsigned rowIndex() const;
 
-    const BorderValue& borderAdjoiningTableStart() const;
-    const BorderValue& borderAdjoiningTableEnd() const;
+    inline const BorderValue& borderAdjoiningTableStart() const;
+    inline const BorderValue& borderAdjoiningTableEnd() const;
     const BorderValue& borderAdjoiningStartCell(const RenderTableCell&) const;
     const BorderValue& borderAdjoiningEndCell(const RenderTableCell&) const;
 
@@ -69,19 +69,13 @@ private:
     static RenderPtr<RenderTableRow> createTableRowWithStyle(Document&, const RenderStyle&);
 
     ASCIILiteral renderName() const override { return (isAnonymous() || isPseudoElement()) ? "RenderTableRow (anonymous)"_s : "RenderTableRow"_s; }
-
     bool canHaveChildren() const override { return true; }
     void willBeRemovedFromTree(IsInternalMove) override;
-
     void layout() override;
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;
-
-    bool requiresLayer() const override { return hasNonVisibleOverflow() || hasTransformRelatedProperty() || hasHiddenBackface() || hasClipPath() || createsGroup() || isStickilyPositioned(); }
-
+    bool requiresLayer() const final;
     void paint(PaintInfo&, const LayoutPoint&) override;
-
     void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
-
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
     void firstChild() const = delete;
@@ -103,20 +97,6 @@ inline unsigned RenderTableRow::rowIndex() const
 {
     ASSERT(rowIndexWasSet());
     return m_rowIndex;
-}
-
-inline const BorderValue& RenderTableRow::borderAdjoiningTableStart() const
-{
-    if (isDirectionSame(section(), table()))
-        return style().borderStart();
-    return style().borderEnd();
-}
-
-inline const BorderValue& RenderTableRow::borderAdjoiningTableEnd() const
-{
-    if (isDirectionSame(section(), table()))
-        return style().borderEnd();
-    return style().borderStart();
 }
 
 inline RenderTable* RenderTableRow::table() const
@@ -145,11 +125,6 @@ inline RenderTableRow* RenderTableSection::firstRow() const
 inline RenderTableRow* RenderTableSection::lastRow() const
 {
     return downcast<RenderTableRow>(RenderBox::lastChild());
-}
-
-inline RenderPtr<RenderBox> RenderTableRow::createAnonymousBoxWithSameTypeAs(const RenderBox& renderer) const
-{
-    return RenderTableRow::createTableRowWithStyle(renderer.document(), renderer.style());
 }
 
 } // namespace WebCore

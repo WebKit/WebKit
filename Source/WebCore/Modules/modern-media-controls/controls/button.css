@@ -87,6 +87,13 @@ button.rounded {
     height: var(--inline-controls-bar-height) !important;
 }
 
+/* Circular style */
+
+button.circular {
+    aspect-ratio: 1;
+    border-radius: 50%;
+}
+
 /* Center style */
 
 button.center,

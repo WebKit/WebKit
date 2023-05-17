@@ -1,0 +1,12 @@
+This test verifies that scrolling a very short distance via pan gesture on iOS does
+        not dispatch a click event. To manually test, perform a quick, short-distance pan on each of
+        the green boxes below.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS overflowScrolled became true
+PASS pageScrolled became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

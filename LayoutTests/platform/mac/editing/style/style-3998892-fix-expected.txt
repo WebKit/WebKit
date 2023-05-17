@@ -15,9 +15,9 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x184 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x84
-          RenderText {#text} at (0,0) size 66x28
-            text run at (0,0) width 66: "Tests: "
-          RenderBR {BR} at (65,0) size 1x28
+          RenderText {#text} at (0,0) size 60x28
+            text run at (0,0) width 60: "Tests:"
+          RenderBR {BR} at (59,0) size 1x28
           RenderText {#text} at (0,28) size 112x28
             text run at (0,28) width 112: "Bug fix for "
           RenderInline {A} at (0,0) size 257x28 [color=#0000EE]
@@ -28,9 +28,9 @@ layer at (0,0) size 800x600
             text run at (0,56) width 92: "selection "
             text run at (91,56) width 545: "from end of line changes unselected text on starting line."
         RenderBlock {DIV} at (14,114) size 756x56
-          RenderText {#text} at (0,0) size 190x28
-            text run at (0,0) width 190: "Expected Results: "
-          RenderBR {BR} at (189,0) size 1x28
+          RenderText {#text} at (0,0) size 184x28
+            text run at (0,0) width 184: "Expected Results:"
+          RenderBR {BR} at (183,0) size 1x28
           RenderText {#text} at (0,28) size 598x28
             text run at (0,28) width 598: "Should see first line (\"foo\") not bold; second line (\"bar\") bold."
       RenderBlock {DIV} at (0,208) size 784x60

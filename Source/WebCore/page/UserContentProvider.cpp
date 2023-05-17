@@ -115,8 +115,12 @@ static ContentExtensions::ContentExtensionsBackend::RuleListFilter ruleListFilte
         };
     }
 
-    auto& exceptions = mainLoader->contentExtensionEnablement().second;
-    switch (mainLoader->contentExtensionEnablement().first) {
+    auto policySourceLoader = mainLoader;
+    if (!mainLoader->request().url().hasSpecialScheme() && documentLoader.request().url().protocolIsInHTTPFamily())
+        policySourceLoader = &documentLoader;
+
+    auto& exceptions = policySourceLoader->contentExtensionEnablement().second;
+    switch (policySourceLoader->contentExtensionEnablement().first) {
     case ContentExtensionDefaultEnablement::Disabled:
         return [&](auto& identifier) {
             return exceptions.contains(identifier)

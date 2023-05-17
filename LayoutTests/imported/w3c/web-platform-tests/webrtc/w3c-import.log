@@ -42,6 +42,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCIceCandidate-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCIceConnectionState-candidate-pair.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCIceTransport.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-GC.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-SLD-SRD-timing.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-add-track-no-deadlock.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-connectionSetup.html
@@ -100,7 +101,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-simulcast.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-tracks.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription.html
-/LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-track-stats.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-transceivers.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-transport-stats.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-videoDetectorTest.html
@@ -149,3 +149,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/recvonly-transceiver-can-become-sendrecv.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/simplecall-no-ssrcs.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/simplecall.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/toJSON.html

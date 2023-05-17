@@ -63,6 +63,7 @@ struct NotificationData {
     PAL::SessionID sourceSession;
     MonotonicTime creationTime;
     Vector<uint8_t> data;
+    std::optional<bool> silent;
 };
 
 } // namespace WebCore

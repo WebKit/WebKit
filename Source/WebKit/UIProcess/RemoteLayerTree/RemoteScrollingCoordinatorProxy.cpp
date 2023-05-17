@@ -434,6 +434,11 @@ bool RemoteScrollingCoordinatorProxy::scrollingPerformanceTestingEnabled() const
     return m_scrollingTree->scrollingPerformanceTestingEnabled();
 }
 
+void RemoteScrollingCoordinatorProxy::scrollingTreeNodeScrollbarVisibilityDidChange(WebCore::ScrollingNodeID nodeID, ScrollbarOrientation orientation, bool isVisible)
+{
+    m_webPageProxy.send(Messages::RemoteScrollingCoordinator::ScrollingTreeNodeScrollbarVisibilityDidChange(nodeID, orientation, isVisible));
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(UI_SIDE_COMPOSITING)

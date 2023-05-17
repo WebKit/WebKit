@@ -26,7 +26,6 @@
  */
 
 @namespace "http://www.w3.org/2000/svg";
-@namespace html "http://www.w3.org/1999/xhtml";
 
 /*
     When an outermost SVG 'svg' element is stand-alone or embedded inline within a parent XML grammar 

@@ -35,6 +35,7 @@
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
+#include "NodeName.h"
 #include "Page.h"
 #include "PluginData.h"
 #include "PluginReplacement.h"
@@ -134,27 +135,43 @@ RenderWidget* HTMLPlugInElement::renderWidgetLoadingPlugin() const
 
 bool HTMLPlugInElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
-    if (name == widthAttr || name == heightAttr || name == vspaceAttr || name == hspaceAttr || name == alignAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::widthAttr:
+    case AttributeNames::heightAttr:
+    case AttributeNames::vspaceAttr:
+    case AttributeNames::hspaceAttr:
+    case AttributeNames::alignAttr:
         return true;
+    default:
+        break;
+    }
     return HTMLFrameOwnerElement::hasPresentationalHintsForAttribute(name);
 }
 
 void HTMLPlugInElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
-    if (name == widthAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::widthAttr:
         addHTMLLengthToStyle(style, CSSPropertyWidth, value);
-    else if (name == heightAttr)
+        break;
+    case AttributeNames::heightAttr:
         addHTMLLengthToStyle(style, CSSPropertyHeight, value);
-    else if (name == vspaceAttr) {
+        break;
+    case AttributeNames::vspaceAttr:
         addHTMLLengthToStyle(style, CSSPropertyMarginTop, value);
         addHTMLLengthToStyle(style, CSSPropertyMarginBottom, value);
-    } else if (name == hspaceAttr) {
+        break;
+    case AttributeNames::hspaceAttr:
         addHTMLLengthToStyle(style, CSSPropertyMarginLeft, value);
         addHTMLLengthToStyle(style, CSSPropertyMarginRight, value);
-    } else if (name == alignAttr)
+        break;
+    case AttributeNames::alignAttr:
         applyAlignmentAttributeToStyle(value, style);
-    else
+        break;
+    default:
         HTMLFrameOwnerElement::collectPresentationalHintsForAttribute(name, value, style);
+        break;
+    }
 }
 
 void HTMLPlugInElement::defaultEventHandler(Event& event)

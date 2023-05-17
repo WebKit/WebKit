@@ -61,11 +61,6 @@ struct SourceSpan {
             && offset == other.offset
             && length == other.length);
     }
-
-    constexpr bool operator!=(const SourceSpan& other) const
-    {
-        return !(*this == other);
-    }
 };
 
 }

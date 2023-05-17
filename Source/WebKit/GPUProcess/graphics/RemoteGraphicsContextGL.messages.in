@@ -27,15 +27,15 @@
 messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void Reshape(int32_t width, int32_t height)
 #if PLATFORM(COCOA)
-    void PrepareForDisplay() -> (MachSendRight displayBuffer) Synchronous NotStreamEncodableReply
+    void PrepareForDisplay(IPC::Semaphore finishedFence) -> (MachSendRight displayBuffer) Synchronous NotStreamEncodable NotStreamEncodableReply
 #endif
 #if USE(GRAPHICS_LAYER_WC)
     void PrepareForDisplay() -> (std::optional<WebKit::WCContentBufferIdentifier> contentBuffer) Synchronous
 #endif
-#if USE(LIBGBM)
+#if USE(GBM)
     void PrepareForDisplay() -> (WebCore::DMABufObject dmabufObject) Synchronous NotStreamEncodableReply
 #endif
-#if !PLATFORM(COCOA) && !USE(GRAPHICS_LAYER_WC) && !USE(LIBGBM)
+#if !PLATFORM(COCOA) && !USE(GRAPHICS_LAYER_WC) && !USE(GBM)
     void PrepareForDisplay() -> () Synchronous
 #endif
     void EnsureExtensionEnabled(String extension)
@@ -48,7 +48,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
     void SetSharedVideoFrameMemory(WebKit::SharedMemory::Handle storageHandle) NotStreamEncodable
 #endif
-#if ENABLE(MEDIA_STREAM)
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     void PaintCompositedResultsToVideoFrame() -> (std::optional<WebKit::RemoteVideoFrameProxy::Properties> properties) Synchronous
 #endif
     void SimulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting event)

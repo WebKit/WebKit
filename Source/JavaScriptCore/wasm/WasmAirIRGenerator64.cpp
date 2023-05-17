@@ -59,10 +59,6 @@ public:
     {
         return m_tmp == other.m_tmp && m_type == other.m_type;
     }
-    bool operator!=(const TypedTmp& other) const
-    {
-        return !(*this == other);
-    }
 
     explicit operator bool() const { return !!tmp(); }
 

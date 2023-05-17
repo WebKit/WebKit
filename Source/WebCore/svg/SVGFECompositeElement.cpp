@@ -23,6 +23,7 @@
 #include "SVGFECompositeElement.h"
 
 #include "FEComposite.h"
+#include "NodeName.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -56,58 +57,53 @@ void SVGFECompositeElement::attributeChanged(const QualifiedName& name, const At
 {
     SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == SVGNames::operatorAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::operatorAttr: {
         CompositeOperationType propertyValue = SVGPropertyTraits<CompositeOperationType>::fromString(newValue);
         if (propertyValue > 0)
             m_svgOperator->setBaseValInternal<CompositeOperationType>(propertyValue);
-        return;
+        break;
     }
-
-    if (name == SVGNames::inAttr) {
+    case AttributeNames::inAttr:
         m_in1->setBaseValInternal(newValue);
-        return;
-    }
-
-    if (name == SVGNames::in2Attr) {
+        break;
+    case AttributeNames::in2Attr:
         m_in2->setBaseValInternal(newValue);
-        return;
-    }
-
-    if (name == SVGNames::k1Attr) {
+        break;
+    case AttributeNames::k1Attr:
         m_k1->setBaseValInternal(newValue.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::k2Attr) {
+        break;
+    case AttributeNames::k2Attr:
         m_k2->setBaseValInternal(newValue.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::k3Attr) {
+        break;
+    case AttributeNames::k3Attr:
         m_k3->setBaseValInternal(newValue.toFloat());
-        return;
-    }
-
-    if (name == SVGNames::k4Attr) {
+        break;
+    case AttributeNames::k4Attr:
         m_k4->setBaseValInternal(newValue.toFloat());
-        return;
+        break;
+    default:
+        break;
     }
 }
 
-bool SVGFECompositeElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)
+bool SVGFECompositeElement::setFilterEffectAttribute(FilterEffect& filterEffect, const QualifiedName& attrName)
 {
-    auto& feComposite = downcast<FEComposite>(effect);
-    if (attrName == SVGNames::operatorAttr)
-        return feComposite.setOperation(svgOperator());
-    if (attrName == SVGNames::k1Attr)
-        return feComposite.setK1(k1());
-    if (attrName == SVGNames::k2Attr)
-        return feComposite.setK2(k2());
-    if (attrName == SVGNames::k3Attr)
-        return feComposite.setK3(k3());
-    if (attrName == SVGNames::k4Attr)
-        return feComposite.setK4(k4());
-
+    auto& effect = downcast<FEComposite>(filterEffect);
+    switch (attrName.nodeName()) {
+    case AttributeNames::operatorAttr:
+        return effect.setOperation(svgOperator());
+    case AttributeNames::k1Attr:
+        return effect.setK1(k1());
+    case AttributeNames::k2Attr:
+        return effect.setK2(k2());
+    case AttributeNames::k3Attr:
+        return effect.setK3(k3());
+    case AttributeNames::k4Attr:
+        return effect.setK4(k4());
+    default:
+        break;
+    }
     ASSERT_NOT_REACHED();
     return false;
 }
@@ -115,19 +111,26 @@ bool SVGFECompositeElement::setFilterEffectAttribute(FilterEffect& effect, const
 
 void SVGFECompositeElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::inAttr || attrName == SVGNames::in2Attr) {
+    switch (attrName.nodeName()) {
+    case AttributeNames::inAttr:
+    case AttributeNames::in2Attr: {
         InstanceInvalidationGuard guard(*this);
         updateSVGRendererForElementChange();
-        return;
+        break;
     }
-
-    if (attrName == SVGNames::k1Attr || attrName == SVGNames::k2Attr || attrName == SVGNames::k3Attr || attrName == SVGNames::k4Attr || attrName == SVGNames::operatorAttr) {
+    case AttributeNames::k1Attr:
+    case AttributeNames::k2Attr:
+    case AttributeNames::k3Attr:
+    case AttributeNames::k4Attr:
+    case AttributeNames::operatorAttr: {
         InstanceInvalidationGuard guard(*this);
         primitiveAttributeChanged(attrName);
-        return;
+        break;
     }
-
-    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+    default:
+        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+        break;
+    }
 }
 
 RefPtr<FilterEffect> SVGFECompositeElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const

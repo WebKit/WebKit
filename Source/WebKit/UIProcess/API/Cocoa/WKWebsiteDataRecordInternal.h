@@ -77,7 +77,7 @@ static inline std::optional<WebsiteDataType> toWebsiteDataType(NSString *website
         return WebsiteDataType::PrivateClickMeasurements;
     if ([websiteDataType isEqualToString:_WKWebsiteDataTypePrivateClickMeasurements])
         return WebsiteDataType::PrivateClickMeasurements;
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
     if ([websiteDataType isEqualToString:_WKWebsiteDataTypeAlternativeServices])
         return WebsiteDataType::AlternativeServices;
 #endif
@@ -138,7 +138,7 @@ static inline RetainPtr<NSSet> toWKWebsiteDataTypes(OptionSet<WebKit::WebsiteDat
         [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeCredentials];
     if (websiteDataTypes.contains(WebsiteDataType::PrivateClickMeasurements))
         [wkWebsiteDataTypes addObject:_WKWebsiteDataTypePrivateClickMeasurements];
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
     if (websiteDataTypes.contains(WebsiteDataType::AlternativeServices))
         [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeAlternativeServices];
 #endif

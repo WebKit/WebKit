@@ -28,13 +28,14 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
     GetPixelBufferForImageBufferWithNewMemory(WebCore::RenderingResourceIdentifier imageBuffer, WebKit::SharedMemory::Handle handle, struct WebCore::PixelBufferFormat outputFormat, WebCore::IntRect srcRect) -> () Synchronous NotStreamEncodable
     DestroyGetPixelBufferSharedMemory()
     PutPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, Ref<WebCore::PixelBuffer> pixelBuffer,  WebCore::IntRect srcRect, WebCore::IntPoint destPoint, enum:uint8_t WebCore::AlphaPremultiplication destFormat)
-    GetShareableBitmapForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, enum:bool WebCore::PreserveResolution preserveResolution) -> (WebKit::ShareableBitmapHandle handle) Synchronous NotStreamEncodableReply
-    GetFilteredImageForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, Ref<WebCore::Filter> filter) -> (WebKit::ShareableBitmapHandle handle) Synchronous NotStreamEncodableReply
-    CacheNativeImage(WebKit::ShareableBitmapHandle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
+    GetShareableBitmapForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, enum:bool WebCore::PreserveResolution preserveResolution) -> (WebKit::ShareableBitmap::Handle handle) Synchronous NotStreamEncodableReply
+    GetFilteredImageForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, Ref<WebCore::Filter> filter) -> (WebKit::ShareableBitmap::Handle handle) Synchronous NotStreamEncodableReply
+    CacheNativeImage(WebKit::ShareableBitmap::Handle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
     CacheFont(WebCore::Font::Attributes data, WebCore::FontPlatformData::Attributes platformData, std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifier) NotStreamEncodable
     CacheFontCustomPlatformData(Ref<WebCore::FontCustomPlatformData> customPlatformData) NotStreamEncodable
     CacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs> decomposedGlyphs) NotStreamEncodable
     CacheGradient(Ref<WebCore::Gradient> gradient, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
+    CacheFilter(Ref<WebCore::Filter> filter, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
     ReleaseAllResources()
     ReleaseAllImageResources()
     ReleaseRenderingResource(WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
@@ -48,6 +49,17 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
 
     MoveToSerializedBuffer(WebCore::RenderingResourceIdentifier sourceImageBuffer, WebKit::RemoteSerializedImageBufferWriteReference destination)
     MoveToImageBuffer(WebKit::RemoteSerializedImageBufferWriteReference source, WebCore::RenderingResourceIdentifier destinationImageBuffer)
+
+    CreateRemoteGPU(WebKit::WebGPUIdentifier identifier, IPC::StreamServerConnection::Handle serverConnection) AllowedWhenWaitingForSyncReply NotStreamEncodable
+    ReleaseRemoteGPU(WebKit::WebGPUIdentifier identifier) AllowedWhenWaitingForSyncReply
+
+    CreateRemoteBarcodeDetector(WebKit::ShapeDetectionIdentifier identifier, WebCore::ShapeDetection::BarcodeDetectorOptions barcodeDetectorOptions) AllowedWhenWaitingForSyncReply
+    ReleaseRemoteBarcodeDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply
+    GetRemoteBarcodeDetectorSupportedFormats() -> (Vector<WebCore::ShapeDetection::BarcodeFormat> formats) Async
+    CreateRemoteFaceDetector(WebKit::ShapeDetectionIdentifier identifier, WebCore::ShapeDetection::FaceDetectorOptions faceDetectorOptions) AllowedWhenWaitingForSyncReply
+    ReleaseRemoteFaceDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply
+    CreateRemoteTextDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply
+    ReleaseRemoteTextDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply
 }
 
 #endif // ENABLE(GPU_PROCESS)

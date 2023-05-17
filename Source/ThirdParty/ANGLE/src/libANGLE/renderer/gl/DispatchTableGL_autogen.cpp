@@ -2818,6 +2818,11 @@ void DispatchTableGL::initProcsSharedExtensions(const std::set<std::string> &ext
         ASSIGN("glMaxShaderCompilerThreadsKHR", maxShaderCompilerThreadsKHR);
     }
 
+    if (extensions.count("GL_MESA_framebuffer_flip_y") != 0)
+    {
+        ASSIGN("glFramebufferParameteriMESA", framebufferParameteriMESA);
+    }
+
     if (extensions.count("GL_NV_fence") != 0)
     {
         ASSIGN("glDeleteFencesNV", deleteFencesNV);
@@ -5632,6 +5637,11 @@ void DispatchTableGL::initProcsSharedExtensionsNULL(const std::set<std::string> 
     if (extensions.count("GL_KHR_parallel_shader_compile") != 0)
     {
         maxShaderCompilerThreadsKHR = &glMaxShaderCompilerThreadsKHRNULL;
+    }
+
+    if (extensions.count("GL_MESA_framebuffer_flip_y") != 0)
+    {
+        framebufferParameteriMESA = &glFramebufferParameteriMESANULL;
     }
 
     if (extensions.count("GL_NV_fence") != 0)

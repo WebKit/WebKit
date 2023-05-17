@@ -173,8 +173,6 @@ public:
             && m_transform[5] == m2.m_transform[5]);
     }
 
-    bool operator!=(const AffineTransform& other) const { return !(*this == other); }
-
     // *this = *this * t (i.e., a multRight)
     AffineTransform& operator*=(const AffineTransform& t)
     {

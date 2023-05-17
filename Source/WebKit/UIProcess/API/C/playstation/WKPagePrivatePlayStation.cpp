@@ -38,6 +38,10 @@
 #include <cairo.h>
 #include <wpe/wpe.h>
 
+#if USE(GRAPHICS_LAYER_WC)
+#include "DrawingAreaProxyWC.h"
+#endif
+
 static void drawPageBackground(cairo_t* ctx, const std::optional<WebCore::Color>& backgroundColor, const WebCore::IntRect& rect)
 {
     if (!backgroundColor || backgroundColor.value().isVisible())
@@ -172,10 +176,15 @@ void WKPagePaint(WKPageRef pageRef, unsigned char* surfaceData, WKSize wkSurface
     auto page = WebKit::toImpl(pageRef);
     auto& backgroundColor = page->backgroundColor();
     page->endPrinting();
-    if (auto* drawingArea = static_cast<WebKit::DrawingAreaProxyCoordinatedGraphics*>(page->drawingArea())) {
+
+    if (auto* drawingArea = page->drawingArea()) {
         // FIXME: We should port WebKit1's rect coalescing logic here.
         WebCore::Region unpaintedRegion;
-        drawingArea->paint(ctx, paintRect, unpaintedRegion);
+#if USE(GRAPHICS_LAYER_WC)
+        downcast<WebKit::DrawingAreaProxyWC>(drawingArea)->paint(ctx, paintRect, unpaintedRegion);
+#else
+        downcast<WebKit::DrawingAreaProxyCoordinatedGraphics>(drawingArea)->paint(ctx, paintRect, unpaintedRegion);
+#endif
 
         for (const auto& rect : unpaintedRegion.rects())
             drawPageBackground(ctx, backgroundColor, rect);

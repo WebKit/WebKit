@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(ASSEMBLER)
+#if ENABLE(ASSEMBLER) && (CPU(X86) || CPU(X86_64))
 
 #include "X86Assembler.h"
 #include "AbstractMacroAssembler.h"
@@ -4613,4 +4613,4 @@ private:
 
 } // namespace JSC
 
-#endif // ENABLE(ASSEMBLER)
+#endif // ENABLE(ASSEMBLER) && (CPU(X86) || CPU(X86_64))

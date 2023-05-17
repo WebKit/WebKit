@@ -26,7 +26,10 @@ from webkitpy.port import configuration_options, platform_options, factory
 from webkitcorepy.string_utils import decode
 
 def main(argv):
-    option_parser = argparse.ArgumentParser(usage="%(prog)s [options] [url]", add_help=False)
+    option_parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+                                            usage="%(prog)s [options] [url] [-- [minibrowser_options]]",
+                                            epilog="MiniBrowser options:    Pass them after two dashes.\n  Example:"
+                                                   "{spaces}run-minibrowser --wpe -- --platform=drm http://url.com".format(spaces=" " * 14))
     groups = [("Platform options", platform_options()), ("Configuration options", configuration_options())]
 
     # Convert options to argparse, so that we can use parse_known_args() which is not supported in optparse.

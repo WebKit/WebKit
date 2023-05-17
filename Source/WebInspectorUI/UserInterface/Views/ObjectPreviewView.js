@@ -230,6 +230,11 @@ WI.ObjectPreviewView = class ObjectPreviewView extends WI.Object
                 let nameElement = element.appendChild(document.createElement("span"));
                 nameElement.className = "name";
                 nameElement.textContent = property.name;
+                if (property.private)
+                    nameElement.classList.add("private");
+                if (property.internal)
+                    nameElement.classList.add("internal");
+
                 element.append(": ");
             }
 

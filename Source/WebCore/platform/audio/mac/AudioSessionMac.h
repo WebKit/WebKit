@@ -27,7 +27,7 @@
 
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
 
-#include "AudioSession.h"
+#include "AudioSessionCocoa.h"
 #include <pal/spi/cf/CoreAudioSPI.h>
 
 typedef UInt32 AudioObjectID;
@@ -35,7 +35,7 @@ typedef struct AudioObjectPropertyAddress AudioObjectPropertyAddress;
 
 namespace WebCore {
 
-class AudioSessionMac final : public AudioSession {
+class AudioSessionMac final : public AudioSessionCocoa {
 public:
     AudioSessionMac() = default;
     virtual ~AudioSessionMac() = default;
@@ -68,12 +68,11 @@ private:
     RouteSharingPolicy routeSharingPolicy() const { return m_policy; }
     void audioOutputDeviceChanged() final;
     void setIsPlayingToBluetoothOverride(std::optional<bool>) final;
-    void setCategory(CategoryType, RouteSharingPolicy) final;
+    void setCategory(CategoryType, Mode, RouteSharingPolicy) final;
     float sampleRate() const final;
     size_t bufferSize() const final;
     size_t numberOfOutputChannels() const final;
     size_t maximumNumberOfOutputChannels() const final;
-    bool tryToSetActiveInternal(bool) final;
     String routingContextUID() const final;
     size_t preferredBufferSize() const final;
     void setPreferredBufferSize(size_t) final;

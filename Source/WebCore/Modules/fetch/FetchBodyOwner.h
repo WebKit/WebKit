@@ -75,7 +75,7 @@ public:
     ResourceError loadingError() const;
     std::optional<Exception> loadingException() const;
 
-    const String& contentType() const { return m_contentType; }
+    String contentType() const { return m_headers->fastGet(HTTPHeaderName::ContentType); }
 
 protected:
     FetchBodyOwner(ScriptExecutionContext*, std::optional<FetchBody>&&, Ref<FetchHeaders>&&);
@@ -87,7 +87,6 @@ protected:
     void cloneBody(FetchBodyOwner&);
 
     ExceptionOr<void> extractBody(FetchBody::Init&&);
-    void updateContentType();
     void consumeOnceLoadingFinished(FetchBodyConsumer::Type, Ref<DeferredPromise>&&);
 
     void setBody(FetchBody&& body) { m_body = WTFMove(body); }
@@ -129,7 +128,6 @@ private:
 
 protected:
     std::optional<FetchBody> m_body;
-    String m_contentType;
     bool m_isDisturbed { false };
     RefPtr<FetchBodySource> m_readableStreamSource;
     Ref<FetchHeaders> m_headers;

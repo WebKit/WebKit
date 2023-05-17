@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -200,9 +200,9 @@ void WKNotifyHistoryItemChanged(HistoryItem&)
 #if !PLATFORM(IOS_FAMILY)
 - (NSImage *)icon
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return [[WebIconDatabase sharedIconDatabase] iconForURL:[self URLString] withSize:WebIconSmallSize];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 #endif
 

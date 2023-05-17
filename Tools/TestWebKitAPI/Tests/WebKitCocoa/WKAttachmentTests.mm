@@ -1152,6 +1152,8 @@ TEST(WKAttachmentTests, MovePastedImageByDragging)
 
     platformCopyPNG();
     [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+    [webView waitForImageElementSizeToBecome:CGSizeMake(215, 174)];
+
     [webView _executeEditCommand:@"InsertParagraph" argument:nil completion:nil];
     [webView _executeEditCommand:@"InsertHTML" argument:@"<strong>text</strong>" completion:nil];
     [webView _synchronouslyExecuteEditCommand:@"InsertParagraph" argument:nil];

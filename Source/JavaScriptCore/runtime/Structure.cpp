@@ -168,10 +168,13 @@ void Structure::validateFlags()
         && methodTable.getPrototype != JSCell::getPrototype;
     RELEASE_ASSERT(overridesGetPrototype == typeInfo().overridesGetPrototype());
 
-    bool overridesPut =
-        methodTable.put != JSObject::put
-        && methodTable.put != JSCell::put;
+    bool overridesPut = methodTable.put != JSObject::put && ((typeInfo().type() == StringType || typeInfo().type() == SymbolType || typeInfo().type() == HeapBigIntType) || methodTable.put != JSCell::put);
     RELEASE_ASSERT(overridesPut == typeInfo().overridesPut());
+
+    bool overridesIsExtensible =
+        methodTable.isExtensible != static_cast<MethodTable::IsExtensibleFunctionPtr>(JSObject::isExtensible)
+        && methodTable.isExtensible != JSCell::isExtensible;
+    RELEASE_ASSERT(overridesIsExtensible == typeInfo().overridesIsExtensible());
 }
 #else
 inline void Structure::validateFlags() { }
@@ -184,21 +187,25 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     , m_inlineCapacity(inlineCapacity)
     , m_bitField(0)
     , m_propertyHash(0)
-    , m_globalObject(vm, this, globalObject, WriteBarrier<JSGlobalObject>::MayBeNull)
-    , m_prototype(vm, this, prototype)
+    , m_globalObject(globalObject, WriteBarrierEarlyInit)
+    , m_prototype(prototype, WriteBarrierEarlyInit)
     , m_classInfo(classInfo)
     , m_transitionWatchpointSet(IsWatched)
 {
+    bool hasStaticNonConfigurableProperty = m_classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::DontDelete));
+
     setDictionaryKind(NoneDictionaryKind);
     setIsPinnedPropertyTable(false);
     setHasAnyKindOfGetterSetterProperties(classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::AccessorOrCustomAccessorOrValue)));
     setHasReadOnlyOrGetterSetterPropertiesExcludingProto(hasAnyKindOfGetterSetterProperties() || classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::ReadOnly)));
+    setHasNonConfigurableProperties(hasStaticNonConfigurableProperty || typeInfo.overridesGetOwnPropertySlot());
+    setHasNonConfigurableReadOnlyOrGetterSetterProperties(hasStaticNonConfigurableProperty || (typeInfo.overridesGetOwnPropertySlot() && typeInfo.type() != ArrayType));
     setHasUnderscoreProtoPropertyExcludingOriginalProto(false);
     setIsQuickPropertyAccessAllowedForEnumeration(true);
     setTransitionPropertyAttributes(0);
     setTransitionKind(TransitionKind::Unknown);
     setMayBePrototype(false);
-    setDidPreventExtensions(false);
+    setDidPreventExtensions(typeInfo.overridesIsExtensible());
     setDidTransition(false);
     setStaticPropertiesReified(false);
     setTransitionWatchpointIsLikelyToBeFired(false);
@@ -211,7 +218,7 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     ASSERT(static_cast<PropertyOffset>(inlineCapacity) < firstOutOfLineOffset);
     ASSERT(!hasRareData());
     ASSERT(hasAnyKindOfGetterSetterProperties() == m_classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::AccessorOrCustomAccessorOrValue)));
-    ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() == m_classInfo->hasStaticPropertyWithAnyOfAttributes(PropertyAttribute::ReadOnly | PropertyAttribute::AccessorOrCustomAccessorOrValue));
+    ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() == m_classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessorOrValue)));
 
     validateFlags();
 
@@ -227,20 +234,25 @@ Structure::Structure(VM& vm, CreatingEarlyCellTag)
     , m_inlineCapacity(0)
     , m_bitField(0)
     , m_propertyHash(0)
-    , m_prototype(vm, this, jsNull())
+    , m_prototype(jsNull(), WriteBarrierEarlyInit)
     , m_classInfo(info())
     , m_transitionWatchpointSet(IsWatched)
 {
+    TypeInfo typeInfo { StructureType, StructureFlags };
+    bool hasStaticNonConfigurableProperty = m_classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::DontDelete));
+
     setDictionaryKind(NoneDictionaryKind);
     setIsPinnedPropertyTable(false);
     setHasAnyKindOfGetterSetterProperties(m_classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::AccessorOrCustomAccessorOrValue)));
     setHasReadOnlyOrGetterSetterPropertiesExcludingProto(hasAnyKindOfGetterSetterProperties() || m_classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::ReadOnly)));
+    setHasNonConfigurableProperties(hasStaticNonConfigurableProperty || typeInfo.overridesGetOwnPropertySlot());
+    setHasNonConfigurableReadOnlyOrGetterSetterProperties(hasStaticNonConfigurableProperty || (typeInfo.overridesGetOwnPropertySlot() && typeInfo.type() != ArrayType));
     setHasUnderscoreProtoPropertyExcludingOriginalProto(false);
     setIsQuickPropertyAccessAllowedForEnumeration(true);
     setTransitionPropertyAttributes(0);
     setTransitionKind(TransitionKind::Unknown);
     setMayBePrototype(false);
-    setDidPreventExtensions(false);
+    setDidPreventExtensions(typeInfo.overridesIsExtensible());
     setDidTransition(false);
     setStaticPropertiesReified(false);
     setTransitionWatchpointIsLikelyToBeFired(false);
@@ -249,12 +261,11 @@ Structure::Structure(VM& vm, CreatingEarlyCellTag)
     setTransitionOffset(vm, invalidOffset);
     setMaxOffset(vm, invalidOffset);
  
-    TypeInfo typeInfo = TypeInfo(StructureType, StructureFlags);
     m_blob = TypeInfoBlob(0, typeInfo);
     m_outOfLineTypeFlags = typeInfo.outOfLineTypeFlags();
 
     ASSERT(hasAnyKindOfGetterSetterProperties() == m_classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::AccessorOrCustomAccessorOrValue)));
-    ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() == m_classInfo->hasStaticPropertyWithAnyOfAttributes(PropertyAttribute::ReadOnly | PropertyAttribute::AccessorOrCustomAccessorOrValue));
+    ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() == m_classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessorOrValue)));
     ASSERT(!this->typeInfo().overridesGetCallData() || m_classInfo->methodTable.getCallData != &JSCell::getCallData);
 
 #if ENABLE(STRUCTURE_ID_WITH_SHIFT)
@@ -268,7 +279,7 @@ Structure::Structure(VM& vm, Structure* previous)
     , m_bitField(0)
     , m_propertyHash(previous->m_propertyHash)
     , m_seenProperties(previous->m_seenProperties)
-    , m_prototype(vm, this, previous->m_prototype.get())
+    , m_prototype(previous->m_prototype.get(), WriteBarrierEarlyInit)
     , m_classInfo(previous->m_classInfo)
     , m_transitionWatchpointSet(IsWatched)
 {
@@ -277,6 +288,8 @@ Structure::Structure(VM& vm, Structure* previous)
     setHasBeenFlattenedBefore(previous->hasBeenFlattenedBefore());
     setHasAnyKindOfGetterSetterProperties(previous->hasAnyKindOfGetterSetterProperties());
     setHasReadOnlyOrGetterSetterPropertiesExcludingProto(previous->hasReadOnlyOrGetterSetterPropertiesExcludingProto());
+    setHasNonConfigurableProperties(previous->hasNonConfigurableProperties());
+    setHasNonConfigurableReadOnlyOrGetterSetterProperties(previous->hasNonConfigurableReadOnlyOrGetterSetterProperties());
     setHasUnderscoreProtoPropertyExcludingOriginalProto(previous->hasUnderscoreProtoPropertyExcludingOriginalProto());
     setIsQuickPropertyAccessAllowedForEnumeration(previous->isQuickPropertyAccessAllowedForEnumeration());
     setTransitionPropertyAttributes(0);
@@ -307,7 +320,7 @@ Structure::Structure(VM& vm, Structure* previous)
     if (previous->m_globalObject)
         m_globalObject.set(vm, this, previous->m_globalObject.get());
     ASSERT(hasAnyKindOfGetterSetterProperties() || !m_classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::AccessorOrCustomAccessorOrValue)));
-    ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() || !m_classInfo->hasStaticPropertyWithAnyOfAttributes(PropertyAttribute::ReadOnly | PropertyAttribute::AccessorOrCustomAccessorOrValue));
+    ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() || !m_classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessorOrValue)));
     ASSERT(!this->typeInfo().overridesGetCallData() || m_classInfo->methodTable.getCallData != &JSCell::getCallData);
 
 #if ENABLE(STRUCTURE_ID_WITH_SHIFT)
@@ -379,6 +392,7 @@ bool Structure::findStructuresAndMapForMaterialization(Vector<Structure*, 8>& st
 
 PropertyTable* Structure::materializePropertyTable(VM& vm, bool setPropertyTable)
 {
+    ASSERT(!isCompilationThread());
     ASSERT(structure()->classInfoForCells() == info());
     ASSERT(!protectPropertyTableWhileTransitioning());
     
@@ -814,6 +828,11 @@ Structure* Structure::nonPropertyTransitionSlow(VM& vm, Structure* structure, Tr
     Structure* transition = Structure::create(vm, structure, deferred);
     transition->setTransitionKind(transitionKind);
     transition->m_blob.setIndexingModeIncludingHistory(indexingModeIncludingHistory);
+
+    if (changesIndexingType(transitionKind) && hasAnyArrayStorage(indexingModeIncludingHistory)) {
+        transition->setHasNonConfigurableProperties(true);
+        transition->setHasNonConfigurableReadOnlyOrGetterSetterProperties(true);
+    }
     
     if (preventsExtensions(transitionKind))
         transition->setDidPreventExtensions(true);
@@ -839,6 +858,9 @@ Structure* Structure::nonPropertyTransitionSlow(VM& vm, Structure* structure, Tr
             table->seal();
         else
             table->freeze();
+
+        transition->setHasNonConfigurableProperties(true);
+        transition->setHasNonConfigurableReadOnlyOrGetterSetterProperties(true);
     } else {
         transition->setPropertyTable(vm, structure->takePropertyTableOrCloneIfPinned(vm));
         transition->setMaxOffset(vm, structure->maxOffset());
@@ -887,6 +909,7 @@ bool Structure::isFrozen(VM& vm)
 
 Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
 {
+    ASSERT(!isCompilationThread());
     checkOffsetConsistency();
     ASSERT(isDictionary());
     ASSERT(object->structure() == this);
@@ -957,14 +980,6 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
     return this;
 }
 
-void Structure::pin(const AbstractLocker&, VM& vm, PropertyTable* table)
-{
-    setIsPinnedPropertyTable(true);
-    setPropertyTable(vm, table);
-    clearPreviousID();
-    m_transitionPropertyName = nullptr;
-}
-
 void Structure::pinForCaching(const AbstractLocker&, VM& vm, PropertyTable* table)
 {
     setIsPinnedPropertyTable(true);
@@ -992,11 +1007,29 @@ WatchpointSet* Structure::ensurePropertyReplacementWatchpointSet(VM& vm, Propert
     if (!hasRareData())
         allocateRareData(vm);
     ConcurrentJSLocker locker(m_lock);
-    StructureRareData* rareData = this->rareData();
+    Structure* structure = this;
+    StructureRareData* rareData = structure->rareData();
     auto result = rareData->m_replacementWatchpointSets.add(offset, nullptr);
-    if (result.isNewEntry)
+    if (result.isNewEntry) {
         result.iterator->value = WatchpointSet::create(IsWatched);
+        rareData->incrementActiveReplacementWatchpointSet();
+        structure->setIsWatchingReplacement(true);
+    }
     return result.iterator->value.get();
+}
+
+WatchpointSet* Structure::firePropertyReplacementWatchpointSet(VM& vm, PropertyOffset offset, const char* reason)
+{
+    ASSERT(!isCompilationThread());
+    auto* structure = this;
+    auto* watchpointSet = structure->ensurePropertyReplacementWatchpointSet(vm, offset);
+    if (watchpointSet && watchpointSet->state() == IsWatched) {
+        StructureRareData* rareData = structure->rareData();
+        watchpointSet->fireAll(vm, reason);
+        if (!rareData->decrementActiveReplacementWatchpointSet())
+            structure->setIsWatchingReplacement(false);
+    }
+    return watchpointSet;
 }
 
 void Structure::startWatchingPropertyForReplacements(VM& vm, PropertyName propertyName)
@@ -1009,7 +1042,7 @@ void Structure::startWatchingPropertyForReplacements(VM& vm, PropertyName proper
 void Structure::didCachePropertyReplacement(VM& vm, PropertyOffset offset)
 {
     RELEASE_ASSERT(isValidOffset(offset));
-    ensurePropertyReplacementWatchpointSet(vm, offset)->fireAll(vm, "Did cache property replacement");
+    firePropertyReplacementWatchpointSet(vm, offset, "Did cache property replacement");
 }
 
 void Structure::startWatchingInternalProperties(VM& vm)
@@ -1111,6 +1144,8 @@ PropertyOffset Structure::getConcurrently(UniquedStringImpl* uid, unsigned& attr
         assertIsHeld(tableStructure->m_lock); // Sadly Clang needs some help here.
         // Because uid is UniquedStringImpl, it is guaranteed that the hash is already computed.
         // So we can use PropertyTable::get even from the concurrent compilers.
+        // Even though taking a lock, all you can do is getting value from this table. We must not modify the table
+        // from non mutator thread.
         auto [offset, entryAttributes] = table->get(uid);
         if (offset != invalidOffset) {
             result = offset;

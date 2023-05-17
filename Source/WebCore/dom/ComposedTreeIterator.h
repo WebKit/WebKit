@@ -45,7 +45,6 @@ public:
     Node* operator->() { return &current(); }
 
     bool operator==(const ComposedTreeIterator& other) const { return context().iterator == other.context().iterator; }
-    bool operator!=(const ComposedTreeIterator& other) const { return context().iterator != other.context().iterator; }
 
     ComposedTreeIterator& operator++() { return traverseNext(); }
 

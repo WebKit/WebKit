@@ -25,10 +25,10 @@
 #include "config.h"
 #include "SerializedTypeInfo.h"
 
+#include "CommonHeader.h"
 #if ENABLE(TEST_FEATURE)
 #include "CommonHeader.h"
 #endif
-#include "CommonHeader.h"
 #if ENABLE(TEST_FEATURE)
 #include "FirstMemberType.h"
 #endif
@@ -185,13 +185,13 @@ Vector<SerializedTypeInfo> allSerializedTypes()
                 "value"_s
             }
         } },
-        { "Namesapce::CommonClass"_s, {
+        { "Namespace::CommonClass"_s, {
             {
                 "int"_s,
                 "value"_s
             }
         } },
-        { "Namesapce::AnotherCommonClass"_s, {
+        { "Namespace::AnotherCommonClass"_s, {
             {
                 "int"_s,
                 "value"_s

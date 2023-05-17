@@ -562,13 +562,6 @@ bool FramebufferMtl::totalBitsUsedIsLessThanOrEqualToMaxBitsSupported(
 
 gl::FramebufferStatus FramebufferMtl::checkStatus(const gl::Context *context) const
 {
-    if (!mState.attachmentsHaveSameDimensions())
-    {
-        return gl::FramebufferStatus::Incomplete(
-            GL_FRAMEBUFFER_UNSUPPORTED,
-            gl::err::kFramebufferIncompleteUnsupportedMissmatchedDimensions);
-    }
-
     ContextMtl *contextMtl = mtl::GetImpl(context);
     if (!contextMtl->getDisplay()->getFeatures().allowSeparateDepthStencilBuffers.enabled &&
         mState.hasSeparateDepthAndStencilAttachments())

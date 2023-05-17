@@ -35,7 +35,7 @@ using namespace HTMLNames;
 WTF_MAKE_ISO_ALLOCATED_IMPL(NameNodeList);
 
 NameNodeList::NameNodeList(ContainerNode& rootNode, const AtomString& name)
-    : CachedLiveNodeList(rootNode, InvalidateOnNameAttrChange)
+    : CachedLiveNodeList(rootNode, NodeListInvalidationType::InvalidateOnNameAttrChange)
     , m_name(name)
 {
 }

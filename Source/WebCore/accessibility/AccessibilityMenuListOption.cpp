@@ -92,11 +92,6 @@ void AccessibilityMenuListOption::setSelected(bool selected)
     m_element->setSelected(selected);
 }
 
-String AccessibilityMenuListOption::nameForMSAA() const
-{
-    return stringValue();
-}
-
 bool AccessibilityMenuListOption::canSetSelectedAttribute() const
 {
     return isEnabled();

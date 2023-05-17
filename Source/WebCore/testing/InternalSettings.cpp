@@ -333,6 +333,14 @@ ExceptionOr<void> InternalSettings::setFontLoadTimingOverride(FontLoadTimingOver
     return { };
 }
 
+ExceptionOr<void> InternalSettings::setAllowAnimationControlsOverride(bool allowAnimationControls)
+{
+    if (!m_page)
+        return Exception { InvalidAccessError };
+    settings().setAllowAnimationControlsOverride(allowAnimationControls);
+    return { };
+}
+
 ExceptionOr<void> InternalSettings::setUserInterfaceDirectionPolicy(UserInterfaceDirectionPolicy policy)
 {
     if (!m_page)

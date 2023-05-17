@@ -52,6 +52,7 @@
 #include "ReferencedSVGResources.h"
 #include "RenderChildIterator.h"
 #include "RenderCounter.h"
+#include "RenderElementInlines.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderGeometryMap.h"
 #include "RenderInline.h"
@@ -926,9 +927,9 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
             renderer = renderMultiColumnPlaceholder;
         }
 
-        bool rendererHasOutlineAutoAncestor = renderer->hasOutlineAutoAncestor();
+        bool rendererHasOutlineAutoAncestor = renderer->hasOutlineAutoAncestor() || originalRenderer->hasOutlineAutoAncestor();
         ASSERT(rendererHasOutlineAutoAncestor
-            || renderer->outlineStyleForRepaint().outlineStyleIsAuto() == OutlineIsAuto::On
+            || originalRenderer->outlineStyleForRepaint().outlineStyleIsAuto() == OutlineIsAuto::On
             || (is<RenderBoxModelObject>(*renderer) && downcast<RenderBoxModelObject>(*renderer).isContinuation()));
         if (originalRenderer == &repaintContainer && rendererHasOutlineAutoAncestor)
             repaintRectNeedsConverting = true;
@@ -936,11 +937,11 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
             continue;
         // Issue repaint on the correct repaint container.
         LayoutRect adjustedRepaintRect = repaintRect;
-        adjustedRepaintRect.inflate(renderer->outlineStyleForRepaint().outlineSize());
+        adjustedRepaintRect.inflate(originalRenderer->outlineStyleForRepaint().outlineSize());
         if (!repaintRectNeedsConverting)
             repaintContainer.repaintRectangle(adjustedRepaintRect);
-        else if (is<RenderLayerModelObject>(renderer)) {
-            const auto& rendererWithOutline = downcast<RenderLayerModelObject>(*renderer);
+        else if (is<RenderLayerModelObject>(originalRenderer)) {
+            const auto& rendererWithOutline = downcast<RenderLayerModelObject>(*originalRenderer);
             adjustedRepaintRect = LayoutRect(repaintContainer.localToContainerQuad(FloatRect(adjustedRepaintRect), &rendererWithOutline).boundingBox());
             rendererWithOutline.repaintRectangle(adjustedRepaintRect);
         }
@@ -999,7 +1000,7 @@ static inline bool fullRepaintIsScheduled(const RenderObject& renderer)
     return false;
 }
 
-void RenderObject::issueRepaint(std::optional<LayoutRect> partialRepaintRect, ClipRepaintToLayer clipRepaintToLayer, ForceRepaint forceRepaint) const
+void RenderObject::issueRepaint(std::optional<LayoutRect> partialRepaintRect, ClipRepaintToLayer clipRepaintToLayer, ForceRepaint forceRepaint, std::optional<LayoutBoxExtent> additionalRepaintOutsets) const
 {
     auto repaintContainer = containerForRepaint();
     if (!repaintContainer.renderer)
@@ -1008,7 +1009,15 @@ void RenderObject::issueRepaint(std::optional<LayoutRect> partialRepaintRect, Cl
     if (repaintContainer.fullRepaintIsScheduled && forceRepaint == ForceRepaint::No)
         return;
 
-    auto repaintRect = partialRepaintRect ? computeRectForRepaint(*partialRepaintRect, repaintContainer.renderer) : clippedOverflowRectForRepaint(repaintContainer.renderer);
+    LayoutRect repaintRect;
+
+    if (partialRepaintRect) {
+        repaintRect = computeRectForRepaint(*partialRepaintRect, repaintContainer.renderer);
+        if (additionalRepaintOutsets)
+            repaintRect.expand(*additionalRepaintOutsets);
+    } else
+        repaintRect = clippedOverflowRectForRepaint(repaintContainer.renderer);
+
     repaintUsingContainer(repaintContainer.renderer, repaintRect, clipRepaintToLayer == ClipRepaintToLayer::Yes);
 }
 
@@ -1022,6 +1031,11 @@ void RenderObject::repaint() const
 
 void RenderObject::repaintRectangle(const LayoutRect& repaintRect, bool shouldClipToLayer) const
 {
+    return repaintRectangle(repaintRect, shouldClipToLayer ? ClipRepaintToLayer::Yes : ClipRepaintToLayer::No, ForceRepaint::No);
+}
+
+void RenderObject::repaintRectangle(const LayoutRect& repaintRect, ClipRepaintToLayer shouldClipToLayer, ForceRepaint forceRepaint, std::optional<LayoutBoxExtent> additionalRepaintOutsets) const
+{
     // Don't repaint if we're unrooted (note that view() still returns the view when unrooted)
     if (!isRooted() || view().printing())
         return;
@@ -1029,7 +1043,7 @@ void RenderObject::repaintRectangle(const LayoutRect& repaintRect, bool shouldCl
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
     auto dirtyRect = repaintRect;
     dirtyRect.move(view().frameView().layoutContext().layoutDelta());
-    issueRepaint(dirtyRect, shouldClipToLayer ? ClipRepaintToLayer::Yes : ClipRepaintToLayer::No);
+    issueRepaint(dirtyRect, shouldClipToLayer, forceRepaint, additionalRepaintOutsets);
 }
 
 void RenderObject::repaintSlowRepaintObject() const
@@ -2181,9 +2195,9 @@ Vector<FloatQuad> RenderObject::absoluteTextQuads(const SimpleRange& range, Opti
         auto renderer = node.renderer();
         if (renderer && renderer->isBR())
             downcast<RenderLineBreak>(*renderer).absoluteQuads(quads);
-        else if (is<RenderText>(renderer)) {
+        else if (auto* renderText = dynamicDowncast<RenderText>(renderer)) {
             auto offsetRange = characterDataOffsetRange(range, downcast<CharacterData>(node));
-            quads.appendVector(downcast<RenderText>(*renderer).absoluteQuadsForRange(offsetRange.start, offsetRange.end, behavior.contains(BoundingRectBehavior::UseSelectionHeight)));
+            quads.appendVector(renderText->absoluteQuadsForRange(offsetRange.start, offsetRange.end, behavior));
         }
     }
     return quads;
@@ -2196,7 +2210,7 @@ static Vector<FloatRect> absoluteRectsForRangeInText(const SimpleRange& range, T
         return { };
 
     auto offsetRange = characterDataOffsetRange(range, node);
-    auto textQuads = renderer->absoluteQuadsForRange(offsetRange.start, offsetRange.end, behavior.contains(RenderObject::BoundingRectBehavior::UseSelectionHeight), behavior.contains(RenderObject::BoundingRectBehavior::IgnoreEmptyTextSelections));
+    auto textQuads = renderer->absoluteQuadsForRange(offsetRange.start, offsetRange.end, behavior);
 
     if (behavior.contains(RenderObject::BoundingRectBehavior::RespectClipping)) {
         auto absoluteClippedOverflowRect = renderer->absoluteClippedOverflowRectForRepaint();
@@ -2348,7 +2362,7 @@ static inline void adjustLineHeightOfSelectionGeometries(Vector<SelectionGeometr
         --i;
         if (geometries[i].lineNumber())
             break;
-        if (geometries[i].behavior() == SelectionRenderingBehavior::UseIndividualQuads && geometries[i].isHorizontal())
+        if (geometries[i].behavior() == SelectionRenderingBehavior::UseIndividualQuads)
             continue;
         geometries[i].setLineNumber(lineNumber);
         geometries[i].setLogicalTop(lineTop);
@@ -2410,8 +2424,10 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
     // The range could span nodes with different writing modes.
     // If this is the case, we use the writing mode of the common ancestor.
     if (containsDifferentWritingModes) {
-        if (auto ancestor = commonInclusiveAncestor<ComposedTree>(range))
-            hasFlippedWritingMode = ancestor->renderer()->style().isFlippedBlocksWritingMode();
+        if (auto ancestor = commonInclusiveAncestor<ComposedTree>(range)) {
+            if (auto* renderer = ancestor->renderer())
+                hasFlippedWritingMode = renderer->style().isFlippedBlocksWritingMode();
+        }
     }
 
     auto numberOfGeometries = geometries.size();
@@ -2505,7 +2521,7 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
     for (size_t j = 1; j < numberOfGeometries; ++j) {
         if (geometries[j].lineNumber() != geometries[j - 1].lineNumber())
             continue;
-        if (geometries[j].behavior() == SelectionRenderingBehavior::UseIndividualQuads && geometries[j].isHorizontal())
+        if (geometries[j].behavior() == SelectionRenderingBehavior::UseIndividualQuads)
             continue;
         auto& previousRect = geometries[j - 1];
         bool previousRectMayNotReachRightEdge = (previousRect.direction() == TextDirection::LTR && previousRect.containsEnd()) || (previousRect.direction() == TextDirection::RTL && previousRect.containsStart());
@@ -2523,7 +2539,7 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
         auto& selectionGeometry = geometries[i];
         if (!selectionGeometry.isLineBreak() && selectionGeometry.lineNumber() >= maxLineNumber)
             continue;
-        if (selectionGeometry.behavior() == SelectionRenderingBehavior::UseIndividualQuads && selectionGeometry.isHorizontal())
+        if (selectionGeometry.behavior() == SelectionRenderingBehavior::UseIndividualQuads)
             continue;
         if (selectionGeometry.direction() == TextDirection::RTL && selectionGeometry.isFirstOnLine()) {
             selectionGeometry.setLogicalWidth(selectionGeometry.logicalWidth() + selectionGeometry.logicalLeft() - selectionGeometry.minX());
@@ -2546,11 +2562,34 @@ static bool coalesceSelectionGeometryWithAdjacentQuadsIfPossible(SelectionGeomet
         return (first - second).diagonalLengthSquared() <= maxDistanceBetweenBoundaryPoints * maxDistanceBetweenBoundaryPoints;
     };
 
+    auto leadingAndTrailingEdgesOverlap = [](const FloatQuad& first, const FloatQuad& second) {
+        bool intersects = false;
+
+        for (const auto& p : { first.p1(), first.p2(), first.p3(), first.p4() }) {
+            if (second.containsPoint(p))
+                intersects = true;
+        }
+
+        for (const auto& p : { second.p1(), second.p2(), second.p3(), second.p4() }) {
+            if (first.containsPoint(p))
+                intersects = true;
+        }
+
+        if (!intersects)
+            return false;
+
+        auto isTrailingSideOverlapping = (first.p1() - first.p2()).diagonalLength() + (second.p1() - second.p2()).diagonalLength() > (first.p1() - second.p2()).diagonalLength();
+        auto isLeadingSideOverlapping = (first.p3() - first.p4()).diagonalLength() + (second.p3() - second.p4()).diagonalLength() > (first.p3() - second.p4()).diagonalLength();
+
+        return isTrailingSideOverlapping && isLeadingSideOverlapping;
+    };
+
     auto currentQuad = current.quad();
-    if (!areCloseEnoughToCoalesce(currentQuad.p2(), nextQuad.p1()) || !areCloseEnoughToCoalesce(currentQuad.p3(), nextQuad.p4()))
-        return false;
 
     if (std::abs(rotatedBoundingRectWithMinimumAngleOfRotation(currentQuad).angleInRadians - rotatedBoundingRectWithMinimumAngleOfRotation(nextQuad).angleInRadians) > radiansPerDegreeFloat)
+        return false;
+
+    if ((!areCloseEnoughToCoalesce(currentQuad.p2(), nextQuad.p1()) || !areCloseEnoughToCoalesce(currentQuad.p3(), nextQuad.p4())) && !leadingAndTrailingEdgesOverlap(currentQuad, nextQuad) && !leadingAndTrailingEdgesOverlap(nextQuad, currentQuad))
         return false;
 
     currentQuad.setP2(nextQuad.p2());
@@ -2575,7 +2614,7 @@ Vector<SelectionGeometry> RenderObject::collectSelectionGeometries(const SimpleR
     IntRect interiorUnionRect;
     for (size_t i = 0; i < numberOfGeometries; ++i) {
         auto& currentGeometry = result.geometries[i];
-        if (currentGeometry.behavior() == SelectionRenderingBehavior::UseIndividualQuads && currentGeometry.isHorizontal()) {
+        if (currentGeometry.behavior() == SelectionRenderingBehavior::UseIndividualQuads) {
             if (currentGeometry.quad().isEmpty())
                 continue;
 

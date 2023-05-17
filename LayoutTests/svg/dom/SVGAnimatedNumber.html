@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -29,19 +29,18 @@ debug("Check assigning various valid and invalid values");
 shouldBe("feSpecularLightingElement.surfaceScale.baseVal = -1", "-1"); // Negative values are allowed from SVG DOM, but should lead to an error when rendering (disable the filter)
 shouldBe("feSpecularLightingElement.surfaceScale.baseVal = 300", "300");
 // ECMA-262, 9.3, "ToNumber"
-shouldBe("feSpecularLightingElement.surfaceScale.baseVal = 'aString'", "'aString'");
-shouldBe("feSpecularLightingElement.surfaceScale.baseVal", "NaN");
+shouldThrow("feSpecularLightingElement.surfaceScale.baseVal = 'aString'", "'TypeError: The provided value is non-finite'");
+shouldBe("feSpecularLightingElement.surfaceScale.baseVal", "300");
 shouldBe("feSpecularLightingElement.surfaceScale.baseVal = 0", "0");
-shouldBe("feSpecularLightingElement.surfaceScale.baseVal = feSpecularLightingElement", "feSpecularLightingElement");
-shouldBe("feSpecularLightingElement.surfaceScale.baseVal", "NaN");
-shouldBe("feSpecularLightingElement.surfaceScale.baseVal = 300", "300");
+shouldThrow("feSpecularLightingElement.surfaceScale.baseVal = feSpecularLightingElement", "'TypeError: The provided value is non-finite'");
+shouldBe("feSpecularLightingElement.surfaceScale.baseVal", "0");
+shouldBe("feSpecularLightingElement.surfaceScale.baseVal = 0", "0");
 
 debug("");
-debug("Check that the surfaceScale value remained 300");
-shouldBe("feSpecularLightingElement.surfaceScale.baseVal", "300");
+debug("Check that the surfaceScale value do not remain 300");
+shouldBe("feSpecularLightingElement.surfaceScale.baseVal", "0");
 
 successfullyParsed = true;
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

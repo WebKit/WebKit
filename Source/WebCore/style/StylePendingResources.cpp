@@ -32,10 +32,13 @@
 #include "CursorData.h"
 #include "CursorList.h"
 #include "Document.h"
-#include "RenderStyle.h"
+#include "FillLayer.h"
+#include "RenderStyleInlines.h"
 #include "SVGURIReference.h"
 #include "Settings.h"
+#include "ShapeValue.h"
 #include "StyleImage.h"
+#include "StyleReflection.h"
 #include "TransformFunctions.h"
 
 namespace WebCore {

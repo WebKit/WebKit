@@ -218,12 +218,12 @@ template<typename CharType> static std::optional<HashMap<String, std::pair<ItemO
             member = std::pair { WTFMove(value), WTFMove(*parameters) };
         }
         dictionary.set(key.toString(), WTFMove(member));
-        skipWhile<RFC7230::isWhitespace>(buffer);
+        skipWhile<isTabOrSpace>(buffer);
         if (buffer.atEnd())
             return dictionary;
         if (!skipExactly(buffer, ','))
             return std::nullopt;
-        skipWhile<RFC7230::isWhitespace>(buffer);
+        skipWhile<isTabOrSpace>(buffer);
         if (buffer.atEnd())
             return std::nullopt;
     }

@@ -3,7 +3,7 @@ include(VersioningUtils)
 
 WEBKIT_OPTION_BEGIN()
 
-SET_PROJECT_VERSION(2 41 1)
+SET_PROJECT_VERSION(2 41 4)
 
 # This is required because we use the DEPFILE argument to add_custom_command().
 # Remove after upgrading cmake_minimum_required() to 3.20.
@@ -233,14 +233,14 @@ EXPOSE_STRING_VARIABLE_TO_BUILD(WEBKITGTK_API_INFIX)
 EXPOSE_STRING_VARIABLE_TO_BUILD(WEBKITGTK_API_VERSION)
 
 if (WEBKITGTK_API_VERSION VERSION_EQUAL "4.0")
-    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 101 0 64)
-    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(JAVASCRIPTCORE 41 0 23)
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 102 0 65)
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(JAVASCRIPTCORE 41 3 23)
 elseif (WEBKITGTK_API_VERSION VERSION_EQUAL "4.1")
-    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 9 0 9)
-    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(JAVASCRIPTCORE 4 0 4)
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 10 0 10)
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(JAVASCRIPTCORE 4 3 4)
 elseif (WEBKITGTK_API_VERSION VERSION_EQUAL "6.0")
-    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 5 0 1)
-    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(JAVASCRIPTCORE 2 0 1)
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT 6 0 2)
+    CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(JAVASCRIPTCORE 2 3 1)
 else ()
     message(FATAL_ERROR "Unhandled API version")
 endif ()
@@ -385,8 +385,8 @@ if (USE_OPENGL_OR_ES)
     if (USE_GBM)
         # ANGLE-backed WebGL depends on DMABuf support, which at the moment is leveraged
         # through libgbm and libdrm dependencies. When libgbm is enabled, make
-        # libdrm a requirement and define the USE_LIBGBM and USE_TEXTURE_MAPPER_DMABUF
-        # macros. When not available, ANGLE will be used in slower software-rasterization mode.
+        # libdrm a requirement and define USE_TEXTURE_MAPPER_DMABUF macros.
+        # When not available, ANGLE will be used in slower software-rasterization mode.
         find_package(GBM)
         if (NOT GBM_FOUND)
             message(FATAL_ERROR "GBM is required for USE_GBM")
@@ -397,7 +397,6 @@ if (USE_OPENGL_OR_ES)
             message(FATAL_ERROR "libdrm is required for USE_GBM")
         endif ()
 
-        SET_AND_EXPOSE_TO_BUILD(USE_LIBGBM TRUE)
         SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER_DMABUF TRUE)
     endif ()
 endif ()

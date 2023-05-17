@@ -136,16 +136,8 @@ public:
     {
         return logicalLeftOffsetForLine(position, logicalLeftOffsetForContent(fragment), shouldIndentText, logicalHeight);
     }
-    LayoutUnit startOffsetForLineInFragment(LayoutUnit position, IndentTextOrNot shouldIndentText, RenderFragmentContainer* fragment, LayoutUnit logicalHeight = 0_lu) const
-    {
-        return style().isLeftToRightDirection() ? logicalLeftOffsetForLineInFragment(position, shouldIndentText, fragment, logicalHeight)
-            : logicalWidth() - logicalRightOffsetForLineInFragment(position, shouldIndentText, fragment, logicalHeight);
-    }
-    LayoutUnit endOffsetForLineInFragment(LayoutUnit position, IndentTextOrNot shouldIndentText, RenderFragmentContainer* fragment, LayoutUnit logicalHeight = 0_lu) const
-    {
-        return !style().isLeftToRightDirection() ? logicalLeftOffsetForLineInFragment(position, shouldIndentText, fragment, logicalHeight)
-            : logicalWidth() - logicalRightOffsetForLineInFragment(position, shouldIndentText, fragment, logicalHeight);
-    }
+    inline LayoutUnit startOffsetForLineInFragment(LayoutUnit position, IndentTextOrNot, RenderFragmentContainer*, LayoutUnit logicalHeight = 0_lu) const;
+    inline LayoutUnit endOffsetForLineInFragment(LayoutUnit position, IndentTextOrNot, RenderFragmentContainer*, LayoutUnit logicalHeight = 0_lu) const;
 
     LayoutUnit availableLogicalWidthForLine(LayoutUnit position, IndentTextOrNot shouldIndentText, LayoutUnit logicalHeight = 0_lu) const
     {
@@ -159,16 +151,8 @@ public:
     {
         return logicalLeftOffsetForLine(position, logicalLeftOffsetForContent(position), shouldIndentText, logicalHeight);
     }
-    LayoutUnit startOffsetForLine(LayoutUnit position, IndentTextOrNot shouldIndentText, LayoutUnit logicalHeight = 0_lu) const
-    {
-        return style().isLeftToRightDirection() ? logicalLeftOffsetForLine(position, shouldIndentText, logicalHeight)
-            : logicalWidth() - logicalRightOffsetForLine(position, shouldIndentText, logicalHeight);
-    }
-    LayoutUnit endOffsetForLine(LayoutUnit position, IndentTextOrNot shouldIndentText, LayoutUnit logicalHeight = 0_lu) const
-    {
-        return !style().isLeftToRightDirection() ? logicalLeftOffsetForLine(position, shouldIndentText, logicalHeight)
-            : logicalWidth() - logicalRightOffsetForLine(position, shouldIndentText, logicalHeight);
-    }
+    inline LayoutUnit startOffsetForLine(LayoutUnit position, IndentTextOrNot, LayoutUnit logicalHeight = 0_lu) const;
+    inline LayoutUnit endOffsetForLine(LayoutUnit position, IndentTextOrNot, LayoutUnit logicalHeight = 0_lu) const;
 
     LayoutUnit textIndentOffset() const;
 
@@ -190,10 +174,7 @@ public:
 
     RenderPtr<RenderBox> createAnonymousBoxWithSameTypeAs(const RenderBox&) const override;
 
-    static bool shouldSkipCreatingRunsForObject(RenderObject& obj)
-    {
-        return obj.isFloating() || (obj.isOutOfFlowPositioned() && !obj.style().isOriginalDisplayInlineType() && !obj.container()->isRenderInline());
-    }
+    static inline bool shouldSkipCreatingRunsForObject(RenderObject&);
 
     static TextRun constructTextRun(StringView, const RenderStyle&,
         ExpansionBehavior = ExpansionBehavior::defaultBehavior(), TextRunFlags = DefaultTextRunFlags);
@@ -237,7 +218,7 @@ public:
     enum ApplyLayoutDeltaMode { ApplyLayoutDelta, DoNotApplyLayoutDelta };
     LayoutUnit logicalWidthForChild(const RenderBox& child) const { return isHorizontalWritingMode() ? child.width() : child.height(); }
     LayoutUnit logicalHeightForChild(const RenderBox& child) const { return isHorizontalWritingMode() ? child.height() : child.width(); }
-    LayoutUnit logicalMarginBoxHeightForChild(const RenderBox& child) const { return isHorizontalWritingMode() ? child.marginBoxRect().height() : child.marginBoxRect().width(); }
+    inline LayoutUnit logicalMarginBoxHeightForChild(const RenderBox& child) const;
     LayoutSize logicalSizeForChild(const RenderBox& child) const { return isHorizontalWritingMode() ? child.size() : child.size().transposedSize(); }
     LayoutUnit logicalTopForChild(const RenderBox& child) const { return isHorizontalWritingMode() ? child.y() : child.x(); }
     LayoutUnit logicalLeftForChild(const RenderBox& child) const { return isHorizontalWritingMode() ? child.x() : child.y(); }
@@ -266,14 +247,8 @@ public:
     { 
         return std::max<LayoutUnit>(0, logicalRightOffsetForContent(fragment) - logicalLeftOffsetForContent(fragment));
     }
-    LayoutUnit startOffsetForContent(RenderFragmentContainer* fragment) const
-    {
-        return style().isLeftToRightDirection() ? logicalLeftOffsetForContent(fragment) : logicalWidth() - logicalRightOffsetForContent(fragment);
-    }
-    LayoutUnit endOffsetForContent(RenderFragmentContainer* fragment) const
-    {
-        return !style().isLeftToRightDirection() ? logicalLeftOffsetForContent(fragment) : logicalWidth() - logicalRightOffsetForContent(fragment);
-    }
+    inline LayoutUnit startOffsetForContent(RenderFragmentContainer*) const;
+    inline LayoutUnit endOffsetForContent(RenderFragmentContainer*) const;
     LayoutUnit logicalLeftOffsetForContent(LayoutUnit blockOffset) const
     {
         return logicalLeftOffsetForContent(fragmentAtBlockOffset(blockOffset));
@@ -286,18 +261,12 @@ public:
     {
         return availableLogicalWidthForContent(fragmentAtBlockOffset(blockOffset));
     }
-    LayoutUnit startOffsetForContent(LayoutUnit blockOffset) const
-    {
-        return startOffsetForContent(fragmentAtBlockOffset(blockOffset));
-    }
-    LayoutUnit endOffsetForContent(LayoutUnit blockOffset) const
-    {
-        return endOffsetForContent(fragmentAtBlockOffset(blockOffset));
-    }
-    LayoutUnit logicalLeftOffsetForContent() const { return isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop(); }
-    LayoutUnit logicalRightOffsetForContent() const { return logicalLeftOffsetForContent() + availableLogicalWidth(); }
-    LayoutUnit startOffsetForContent() const { return style().isLeftToRightDirection() ? logicalLeftOffsetForContent() : logicalWidth() - logicalRightOffsetForContent(); }
-    LayoutUnit endOffsetForContent() const { return !style().isLeftToRightDirection() ? logicalLeftOffsetForContent() : logicalWidth() - logicalRightOffsetForContent(); }
+    inline LayoutUnit startOffsetForContent(LayoutUnit blockOffset) const;
+    inline LayoutUnit endOffsetForContent(LayoutUnit blockOffset) const;
+    inline LayoutUnit logicalLeftOffsetForContent() const;
+    inline LayoutUnit logicalRightOffsetForContent() const;
+    inline LayoutUnit startOffsetForContent() const;
+    inline LayoutUnit endOffsetForContent() const;
 
     LayoutUnit logicalLeftSelectionOffset(RenderBlock& rootBlock, LayoutUnit position, const LogicalSelectionOffsetCaches&);
     LayoutUnit logicalRightSelectionOffset(RenderBlock& rootBlock, LayoutUnit position, const LogicalSelectionOffsetCaches&);

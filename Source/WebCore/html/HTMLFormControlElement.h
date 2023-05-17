@@ -46,7 +46,7 @@ public:
     bool matchesUserValidPseudoClass() const override { return ValidatedFormListedElement::matchesUserValidPseudoClass(); }
     bool matchesUserInvalidPseudoClass() const override { return ValidatedFormListedElement::matchesUserInvalidPseudoClass(); }
 
-    bool isDisabledFormControl() const final { return isDisabled(); }
+    bool isDisabledFormControl() const override { return isDisabled(); }
     bool supportsFocus() const override { return !isDisabled(); }
 
     WEBCORE_EXPORT String formEnctype() const;
@@ -128,8 +128,6 @@ protected:
     void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) override;
 
     void handlePopoverTargetAction() const;
-
-    void didChangeForm() override;
 
 private:
     void refFormAssociatedElement() const final { ref(); }

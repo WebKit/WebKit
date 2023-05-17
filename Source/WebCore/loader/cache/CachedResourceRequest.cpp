@@ -39,6 +39,7 @@
 #include "LocalFrame.h"
 #include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
+#include "OriginAccessPatterns.h"
 #include "SecurityPolicy.h"
 #include "ServiceWorkerRegistrationData.h"
 #include <wtf/NeverDestroyed.h>
@@ -293,7 +294,7 @@ void CachedResourceRequest::updateReferrerAndOriginHeaders(FrameLoader& frameLoa
     String outgoingReferrer = frameLoader.outgoingReferrer();
     if (m_resourceRequest.hasHTTPReferrer())
         outgoingReferrer = m_resourceRequest.httpReferrer();
-    updateRequestReferrer(m_resourceRequest, m_options.referrerPolicy, outgoingReferrer);
+    updateRequestReferrer(m_resourceRequest, m_options.referrerPolicy, outgoingReferrer, OriginAccessPatternsForWebProcess::singleton());
 
     if (!m_resourceRequest.httpOrigin().isEmpty())
         return;
@@ -304,7 +305,7 @@ void CachedResourceRequest::updateReferrerAndOriginHeaders(FrameLoader& frameLoa
     if (m_options.mode == FetchOptions::Mode::Cors)
         outgoingOrigin = actualOrigin->toString();
     else
-        outgoingOrigin = SecurityPolicy::generateOriginHeader(m_options.referrerPolicy, m_resourceRequest.url(), actualOrigin);
+        outgoingOrigin = SecurityPolicy::generateOriginHeader(m_options.referrerPolicy, m_resourceRequest.url(), actualOrigin, OriginAccessPatternsForWebProcess::singleton());
 
     FrameLoader::addHTTPOriginIfNeeded(m_resourceRequest, outgoingOrigin);
 }
@@ -327,7 +328,7 @@ bool isRequestCrossOrigin(SecurityOrigin* origin, const URL& requestURL, const R
     if (requestURL.protocolIsData() && options.sameOriginDataURLFlag == SameOriginDataURLFlag::Set)
         return false;
 
-    return !origin->canRequest(requestURL);
+    return !origin->canRequest(requestURL, OriginAccessPatternsForWebProcess::singleton());
 }
 
 void CachedResourceRequest::setDestinationIfNotSet(FetchOptions::Destination destination)

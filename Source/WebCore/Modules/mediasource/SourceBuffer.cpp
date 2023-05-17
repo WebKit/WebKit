@@ -594,7 +594,7 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(AppendResult result)
     monitorBufferingRate();
     m_private->reenqueueMediaIfNeeded(m_source->currentTime());
 
-    DEBUG_LOG(LOGIDENTIFIER, "buffered = ", m_private->buffered());
+    ALWAYS_LOG(LOGIDENTIFIER, "buffered = ", m_private->buffered(), ", totalBufferSize: ", m_private->totalTrackBufferSizeInBytes());
 }
 
 void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(int64_t error)

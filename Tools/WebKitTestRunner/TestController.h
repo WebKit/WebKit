@@ -143,7 +143,8 @@ public:
     String saltForOrigin(WKFrameRef, String);
     void getUserMediaInfoForOrigin(WKFrameRef, WKStringRef originKey, bool&, WKRetainPtr<WKStringRef>&);
     WKStringRef getUserMediaSaltForOrigin(WKFrameRef, WKStringRef originKey);
-    void setUserMediaPermission(bool);
+    void setCameraPermission(bool);
+    void setMicrophonePermission(bool);
     void resetUserMediaPermission();
     void setUserMediaPersistentPermissionForOrigin(bool, WKStringRef userMediaDocumentOriginString, WKStringRef topLevelDocumentOriginString);
     void handleUserMediaPermissionRequest(WKFrameRef, WKSecurityOriginRef, WKSecurityOriginRef, WKUserMediaPermissionRequestRef);
@@ -323,7 +324,7 @@ public:
     bool didReceiveServerRedirectForProvisionalNavigation() const { return m_didReceiveServerRedirectForProvisionalNavigation; }
     void clearDidReceiveServerRedirectForProvisionalNavigation() { m_didReceiveServerRedirectForProvisionalNavigation = false; }
 
-    void addMockMediaDevice(WKStringRef persistentID, WKStringRef label, WKStringRef type);
+    void addMockMediaDevice(WKStringRef persistentID, WKStringRef label, WKStringRef type, WKDictionaryRef properties);
     void clearMockMediaDevices();
     void removeMockMediaDevice(WKStringRef persistentID);
     void setMockMediaDeviceIsEphemeral(WKStringRef, bool);
@@ -664,7 +665,8 @@ private:
     PermissionRequestList m_userMediaPermissionRequests;
 
     bool m_isUserMediaPermissionSet { false };
-    bool m_isUserMediaPermissionAllowed { false };
+    bool m_isCameraPermissionAllowed { false };
+    bool m_isMicrophonePermissionAllowed { false };
 
     bool m_policyDelegateEnabled { false };
     bool m_policyDelegatePermissive { false };

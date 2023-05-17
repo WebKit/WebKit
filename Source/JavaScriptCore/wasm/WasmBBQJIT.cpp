@@ -321,11 +321,6 @@ private:
             }
         }
 
-        bool operator!=(Location other) const
-        {
-            return !(*this == other);
-        }
-
         Kind kind() const
         {
             return Kind(m_kind);
@@ -4215,9 +4210,24 @@ public:
                 // Fall through to general case.
             } else if (isPowerOfTwo(divisor)) {
                 if constexpr (IsMod) {
-                    Location originalResult = resultLocation;
-                    if constexpr (isSigned)
-                        resultLocation = Location::fromGPR(wasmScratchGPR);
+                    if constexpr (isSigned) {
+                        // This constructs an extra operand with log2(divisor) bits equal to the sign bit of the dividend. If the dividend
+                        // is positive, this is zero and adding it achieves nothing; but if the dividend is negative, this is equal to the
+                        // divisor minus one, which is the exact amount of bias we need to get the correct result. Computing this for both
+                        // positive and negative dividends lets us elide branching, but more importantly allows us to save a register by
+                        // not needing an extra multiplySub at the end.
+                        if constexpr (is32) {
+                            m_jit.rshift32(lhsLocation.asGPR(), TrustedImm32(31), wasmScratchGPR);
+                            m_jit.urshift32(wasmScratchGPR, TrustedImm32(32 - WTF::fastLog2(static_cast<unsigned>(divisor))), wasmScratchGPR);
+                            m_jit.add32(wasmScratchGPR, lhsLocation.asGPR(), resultLocation.asGPR());
+                        } else {
+                            m_jit.rshift64(lhsLocation.asGPR(), TrustedImm32(63), wasmScratchGPR);
+                            m_jit.urshift64(wasmScratchGPR, TrustedImm32(64 - WTF::fastLog2(static_cast<uint64_t>(divisor))), wasmScratchGPR);
+                            m_jit.add64(wasmScratchGPR, lhsLocation.asGPR(), resultLocation.asGPR());
+                        }
+
+                        lhsLocation = resultLocation;
+                    }
 
                     if constexpr (is32)
                         m_jit.and32(Imm32(static_cast<uint32_t>(divisor) - 1), lhsLocation.asGPR(), resultLocation.asGPR());
@@ -4225,33 +4235,36 @@ public:
                         m_jit.and64(TrustedImm64(static_cast<uint64_t>(divisor) - 1), lhsLocation.asGPR(), resultLocation.asGPR());
 
                     if constexpr (isSigned) {
-                        Jump isNonNegative = is32
-                            ? m_jit.branch32(RelationalCondition::GreaterThanOrEqual, lhsLocation.asGPR(), TrustedImm32(0))
-                            : m_jit.branch64(RelationalCondition::GreaterThanOrEqual, lhsLocation.asGPR(), TrustedImm64(0));
+                        // The extra operand we computed is still in wasmScratchGPR - now we can subtract it from the result to get the
+                        // correct answer.
                         if constexpr (is32)
-                            m_jit.neg32(wasmScratchGPR, wasmScratchGPR);
+                            m_jit.sub32(resultLocation.asGPR(), wasmScratchGPR, resultLocation.asGPR());
                         else
-                            m_jit.neg64(wasmScratchGPR, wasmScratchGPR);
-                        isNonNegative.link(&m_jit);
-                        m_jit.move(wasmScratchGPR, originalResult.asGPR());
+                            m_jit.sub64(resultLocation.asGPR(), wasmScratchGPR, resultLocation.asGPR());
                     }
                     return;
                 }
 
                 if constexpr (isSigned) {
-                    Jump isNonNegative = is32
-                        ? m_jit.branch32(RelationalCondition::GreaterThanOrEqual, lhsLocation.asGPR(), TrustedImm32(0))
-                        : m_jit.branch64(RelationalCondition::GreaterThanOrEqual, lhsLocation.asGPR(), TrustedImm64(0));
+                    // If we are doing signed division, we need to bias the dividend for negative numbers.
                     if constexpr (is32)
-                        m_jit.add32(Imm32(1), lhsLocation.asGPR(), lhsLocation.asGPR());
+                        m_jit.add32(TrustedImm32(static_cast<int32_t>(divisor) - 1), lhsLocation.asGPR(), wasmScratchGPR);
                     else
-                        m_jit.add64(TrustedImm32(1), lhsLocation.asGPR(), lhsLocation.asGPR());
-                    isNonNegative.link(&m_jit);
+                        m_jit.add64(TrustedImm64(divisor - 1), lhsLocation.asGPR(), wasmScratchGPR);
+
+                    // moveConditionally seems to be faster than a branch here, even if it's well predicted.
+                    if (is32)
+                        m_jit.moveConditionally32(RelationalCondition::GreaterThanOrEqual, lhsLocation.asGPR(), TrustedImm32(0), lhsLocation.asGPR(), wasmScratchGPR, wasmScratchGPR);
+                    else
+                        m_jit.moveConditionally64(RelationalCondition::GreaterThanOrEqual, lhsLocation.asGPR(), TrustedImm32(0), lhsLocation.asGPR(), wasmScratchGPR, wasmScratchGPR);
+                    lhsLocation = Location::fromGPR(wasmScratchGPR);
                 }
+
                 if constexpr (is32)
                     m_jit.rshift32(lhsLocation.asGPR(), m_jit.trustedImm32ForShift(Imm32(WTF::fastLog2(static_cast<unsigned>(divisor)))), resultLocation.asGPR());
                 else
-                    m_jit.rshift64(lhsLocation.asGPR(),  TrustedImm32(WTF::fastLog2(static_cast<unsigned>(divisor))), resultLocation.asGPR());
+                    m_jit.rshift64(lhsLocation.asGPR(), TrustedImm32(WTF::fastLog2(static_cast<uint64_t>(divisor))), resultLocation.asGPR());
+
                 return;
             }
             // TODO: try generating integer reciprocal instead.
@@ -5434,11 +5447,9 @@ public:
             "I32Popcnt", TypeKind::I32,
             BLOCK(Value::fromI32(__builtin_popcount(operand.asI32()))),
             BLOCK(
-#if CPU(X86_64)
                 if (m_jit.supportsCountPopulation())
                     m_jit.countPopulation32(operandLocation.asGPR(), resultLocation.asGPR());
                 else
-#endif
                     emitCCall(&operationPopcount32, Vector<Value> { operand }, TypeKind::I32, result);
             )
         )
@@ -5450,11 +5461,9 @@ public:
             "I64Popcnt", TypeKind::I64,
             BLOCK(Value::fromI64(__builtin_popcountll(operand.asI64()))),
             BLOCK(
-#if CPU(X86_64)
                 if (m_jit.supportsCountPopulation())
                     m_jit.countPopulation64(operandLocation.asGPR(), resultLocation.asGPR());
                 else
-#endif
                     emitCCall(&operationPopcount64, Vector<Value> { operand }, TypeKind::I32, result);
             )
         )
@@ -7049,18 +7058,41 @@ public:
         }
     }
 
-    void saveValuesAcrossCall(const CallInformation& callInfo)
+    template<size_t N>
+    void saveValuesAcrossCallAndPassArguments(const Vector<Value, N>& arguments, const CallInformation& callInfo, GPRReg gpScratch, FPRReg fpScratch)
     {
-        // Flush any values in caller-saved registers.
+        // First, we resolve all the locations of the passed arguments, before any spillage occurs. For constants,
+        // we store their normal values; for all other values, we store pinned values with their current location.
+        // We'll directly use these when passing parameters, since no other instructions we emit here should
+        // overwrite registers currently occupied by values.
+
+        Vector<Value, N> resolvedArguments;
+        resolvedArguments.reserveInitialCapacity(arguments.size());
+        for (unsigned i = 0; i < arguments.size(); i ++) {
+            if (arguments[i].isConst())
+                resolvedArguments.uncheckedAppend(arguments[i]);
+            else
+                resolvedArguments.uncheckedAppend(Value::pinned(arguments[i].type(), locationOf(arguments[i])));
+
+            // Like other value uses, we count this as a use here, and end the lifetimes of any temps we passed.
+            // This saves us the work of having to spill them to their canonical slots.
+            consume(arguments[i]);
+        }
+
+        // At this point in the program, argumentLocations doesn't represent the state of the register allocator.
+        // We need to be careful not to allocate any new registers before passing them to the function, since that
+        // could clobber the registers we assume still contain the argument values!
+
+        // Next, for all values currently still occupying a caller-saved register, we flush them to their canonical slot.
         for (Reg reg : m_callerSaves) {
             RegisterBinding binding = reg.isGPR() ? m_gprBindings[reg.gpr()] : m_fprBindings[reg.fpr()];
             if (!binding.toValue().isNone())
                 flushValue(binding.toValue());
         }
 
-        // Flush any values that overlap with parameter locations.
-        // FIXME: This is kind of a quick and dirty approach to what really should be a parallel move
-        // from argument to parameter locations, we may be able to avoid some stores.
+        // Additionally, we flush anything currently bound to a register we're going to use for parameter passing. I
+        // think these will be handled by the caller-save logic without additional effort, but it doesn't hurt to be
+        // careful.
         for (size_t i = 0; i < callInfo.params.size(); ++i) {
             Location paramLocation = Location::fromArgumentLocation(callInfo.params[i]);
             if (paramLocation.isRegister()) {
@@ -7069,6 +7101,13 @@ public:
                     flushValue(binding.toValue());
             }
         }
+
+        // Finally, we parallel-move arguments to the parameter locations.
+        Vector<Location, N> parameterLocations;
+        parameterLocations.reserveInitialCapacity(callInfo.params.size());
+        for (const auto& param : callInfo.params)
+            parameterLocations.uncheckedAppend(Location::fromArgumentLocation(param));
+        emitShuffle(resolvedArguments, parameterLocations, Location::fromGPR(gpScratch), Location::fromFPR(fpScratch));
     }
 
     void restoreValuesAfterCall(const CallInformation& callInfo)
@@ -7076,18 +7115,6 @@ public:
         UNUSED_PARAM(callInfo);
         // Caller-saved values shouldn't actually need to be restored here, the register allocator will restore them lazily
         // whenever they are next used.
-    }
-
-    template<size_t N>
-    void passParametersToCall(const Vector<Value, N>& arguments, const CallInformation& callInfo)
-    {
-        // Move arguments to parameter locations.
-        for (size_t i = 0; i < callInfo.params.size(); i ++) {
-            Location paramLocation = Location::fromArgumentLocation(callInfo.params[i]);
-            Value argument = arguments[i];
-            emitMove(argument, paramLocation);
-            consume(argument);
-        }
     }
 
     template<size_t N>
@@ -7135,10 +7162,7 @@ public:
 
         // Preserve caller-saved registers and other info
         prepareForExceptions();
-        saveValuesAcrossCall(callInfo);
-
-        // Move argument values to parameter locations
-        passParametersToCall(arguments, callInfo);
+        saveValuesAcrossCallAndPassArguments(arguments, callInfo, wasmScratchGPR, wasmScratchFPR);
 
         // Materialize address of native function and call register
         void* taggedFunctionPtr = tagCFunctionPtr<void*, OperationPtrTag>(function);
@@ -7164,10 +7188,7 @@ public:
 
         // Preserve caller-saved registers and other info
         prepareForExceptions();
-        saveValuesAcrossCall(callInfo);
-
-        // Move argument values to parameter locations
-        passParametersToCall(arguments, callInfo);
+        saveValuesAcrossCallAndPassArguments(arguments, callInfo, wasmScratchGPR, wasmScratchFPR);
 
         // Materialize address of native function and call register
         void* taggedFunctionPtr = tagCFunctionPtr<void*, OperationPtrTag>(function);
@@ -7231,10 +7252,7 @@ public:
 
         // Preserve caller-saved registers and other info
         prepareForExceptions();
-        saveValuesAcrossCall(callInfo);
-
-        // Move argument values to parameter locations
-        passParametersToCall(arguments, callInfo);
+        saveValuesAcrossCallAndPassArguments(arguments, callInfo, wasmScratchGPR, wasmScratchFPR);
 
         if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex)) {
             m_jit.move(TrustedImmPtr(Instance::offsetOfImportFunctionStub(functionIndex)), wasmScratchGPR);
@@ -7283,11 +7301,14 @@ public:
         // Since this can switch instance, we need to keep JSWebAssemblyInstance anchored in the stack.
         m_jit.storePtr(jsCalleeAnchor, Location::fromArgumentLocation(wasmCalleeInfo.thisArgument).asAddress());
 
-        // Safe to use across saveValues/passParameters since neither clobber the scratch GPR.
         m_jit.loadPtr(Address(calleeCode), wasmScratchGPR);
         prepareForExceptions();
-        saveValuesAcrossCall(wasmCalleeInfo);
-        passParametersToCall(arguments, wasmCalleeInfo);
+
+        // This is kind of weird! We can't use wasmScratchGPR here, since it stores the address of callee. But we know
+        // that the calleeCode GPR will never be used after this point, and that it can't be bound to any of our
+        // arguments. So we use it as the scratch GPR for passing the arguments instead.
+        saveValuesAcrossCallAndPassArguments(arguments, wasmCalleeInfo, calleeCode, wasmScratchFPR);
+
         m_jit.call(wasmScratchGPR, WasmEntryPtrTag);
         returnValuesFromCall(results, *signature.as<FunctionSignature>(), wasmCalleeInfo);
 
@@ -7629,7 +7650,24 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addSIMDLoadSplat(SIMDLaneOperation op, ExpressionType pointer, uint32_t uoffset, ExpressionType& result)
     {
-        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(Width::Width128));
+        Width width;
+        switch (op) {
+        case SIMDLaneOperation::LoadSplat8:
+            width = Width::Width8;
+            break;
+        case SIMDLaneOperation::LoadSplat16:
+            width = Width::Width16;
+            break;
+        case SIMDLaneOperation::LoadSplat32:
+            width = Width::Width32;
+            break;
+        case SIMDLaneOperation::LoadSplat64:
+            width = Width::Width64;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(width));
         Address address = materializePointer(pointerLocation, uoffset);
 
         result = topValue(TypeKind::V128);
@@ -7665,7 +7703,24 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addSIMDLoadLane(SIMDLaneOperation op, ExpressionType pointer, ExpressionType vector, uint32_t uoffset, uint8_t lane, ExpressionType& result)
     {
-        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(Width::Width128));
+        Width width;
+        switch (op) {
+        case SIMDLaneOperation::LoadLane8:
+            width = Width::Width8;
+            break;
+        case SIMDLaneOperation::LoadLane16:
+            width = Width::Width16;
+            break;
+        case SIMDLaneOperation::LoadLane32:
+            width = Width::Width32;
+            break;
+        case SIMDLaneOperation::LoadLane64:
+            width = Width::Width64;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(width));
         Address address = materializePointer(pointerLocation, uoffset);
 
         Location vectorLocation = loadIfNecessary(vector);
@@ -7699,7 +7754,24 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addSIMDStoreLane(SIMDLaneOperation op, ExpressionType pointer, ExpressionType vector, uint32_t uoffset, uint8_t lane)
     {
-        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(Width::Width128));
+        Width width;
+        switch (op) {
+        case SIMDLaneOperation::StoreLane8:
+            width = Width::Width8;
+            break;
+        case SIMDLaneOperation::StoreLane16:
+            width = Width::Width16;
+            break;
+        case SIMDLaneOperation::StoreLane32:
+            width = Width::Width32;
+            break;
+        case SIMDLaneOperation::StoreLane64:
+            width = Width::Width64;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(width));
         Address address = materializePointer(pointerLocation, uoffset);
 
         Location vectorLocation = loadIfNecessary(vector);
@@ -8814,7 +8886,7 @@ private:
     }
 
     template<size_t N, typename OverflowHandler>
-    void emitShuffle(Vector<Value, N, OverflowHandler>& srcVector, Vector<Location, N, OverflowHandler>& dstVector)
+    void emitShuffle(Vector<Value, N, OverflowHandler>& srcVector, Vector<Location, N, OverflowHandler>& dstVector, Location gpTemp, Location fpTemp)
     {
         ASSERT(srcVector.size() == dstVector.size());
 
@@ -8825,15 +8897,21 @@ private:
 
         // For multi-value return, a parallel move might be necessary. This is comparatively complex
         // and slow, so we limit it to this slow path.
-        ScratchScope<1, 1> scratches(*this);
-        Location gpTemp = Location::fromGPR(scratches.gpr(0));
-        Location fpTemp = Location::fromFPR(scratches.fpr(0));
         Vector<ShuffleStatus, N, OverflowHandler> statusVector(srcVector.size(), ShuffleStatus::ToMove);
-
         for (unsigned i = 0; i < srcVector.size(); i ++) {
             if (statusVector[i] == ShuffleStatus::ToMove)
                 emitShuffleMove(srcVector, dstVector, statusVector, i, gpTemp, fpTemp);
         }
+    }
+
+    template<size_t N, typename OverflowHandler>
+    void emitShuffle(Vector<Value, N, OverflowHandler>& srcVector, Vector<Location, N, OverflowHandler>& dstVector)
+    {
+        ScratchScope<1, 1> scratches(*this);
+        Location gpTemp = Location::fromGPR(scratches.gpr(0));
+        Location fpTemp = Location::fromFPR(scratches.fpr(0));
+
+        emitShuffle(srcVector, dstVector, gpTemp, fpTemp);
     }
 
     ControlData& currentControlData()

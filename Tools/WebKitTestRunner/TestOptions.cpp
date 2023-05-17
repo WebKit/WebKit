@@ -121,6 +121,7 @@ const TestFeatures& TestOptions::defaults()
             { "PageVisibilityBasedProcessSuppressionEnabled", false },
             { "PdfJSViewerEnabled", false },
             { "PluginsEnabled", true },
+            { "PushAPIEnabled", true },
             { "RequiresUserGestureForAudioPlayback", false },
             { "RequiresUserGestureForMediaPlayback", false },
             { "RequiresUserGestureForVideoPlayback", false },
@@ -186,6 +187,7 @@ const TestFeatures& TestOptions::defaults()
         };
         features.doubleTestRunnerFeatures = {
             { "contentInset.top", 0 },
+            { "obscuredInset.top", 0 },
             { "horizontalSystemMinimumLayoutMargin", 0 },
             { "deviceScaleFactor", 1 },
             { "viewHeight", 600 },
@@ -244,6 +246,7 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "useThreadedScrolling", TestHeaderKeyType::BoolTestRunner },
     
         { "contentInset.top", TestHeaderKeyType::DoubleTestRunner },
+        { "obscuredInset.top", TestHeaderKeyType::DoubleTestRunner },
         { "horizontalSystemMinimumLayoutMargin", TestHeaderKeyType::DoubleTestRunner },
         { "deviceScaleFactor", TestHeaderKeyType::DoubleTestRunner },
         { "viewHeight", TestHeaderKeyType::DoubleTestRunner },

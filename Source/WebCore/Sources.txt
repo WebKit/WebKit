@@ -461,6 +461,7 @@ Modules/webxr/XRInputSourceEvent.cpp
 Modules/webxr/XRInputSourcesChangeEvent.cpp
 Modules/webxr/XRReferenceSpaceEvent.cpp
 Modules/webxr/XRSessionEvent.cpp
+accessibility/AXGeometryManager.cpp
 accessibility/AXImage.cpp
 accessibility/AXLogger.cpp
 accessibility/AXObjectCache.cpp
@@ -608,6 +609,7 @@ bindings/js/JSKeyframeEffectCustom.cpp
 bindings/js/JSLazyEventListener.cpp
 bindings/js/JSLocalDOMWindowCustom.cpp
 bindings/js/JSLocationCustom.cpp
+bindings/js/JSMediaSessionCustom.cpp
 bindings/js/JSMediaStreamTrackCustom.cpp
 bindings/js/JSMessageChannelCustom.cpp
 bindings/js/JSMessageEventCustom.cpp
@@ -1257,6 +1259,7 @@ html/BaseDateAndTimeInputType.cpp
 html/BaseTextInputType.cpp
 html/ButtonInputType.cpp
 html/CanvasBase.cpp
+html/CanvasNoiseInjection.cpp
 html/CheckboxInputType.cpp
 html/ColorInputType.cpp
 html/CustomPaintCanvas.cpp
@@ -1855,12 +1858,12 @@ page/LocalFrameViewLayoutContext.cpp
 page/Location.cpp
 page/LoggedInStatus.cpp
 page/MemoryRelease.cpp
-page/ModalContainerObserver.cpp
 page/MouseEventWithHitTestResults.cpp
 page/Navigator.cpp
 page/NavigatorBase.cpp
 page/NavigatorIsLoggedIn.cpp
 page/OriginAccessEntry.cpp
+page/OriginAccessPatterns.cpp
 page/Page.cpp
 page/PageColorSampler.cpp
 page/PageConfiguration.cpp
@@ -2356,7 +2359,6 @@ platform/mediastream/RealtimeMediaSourceSupportedConstraints.cpp
 platform/mediastream/RealtimeOutgoingAudioSource.cpp
 platform/mediastream/RealtimeOutgoingVideoSource.cpp
 platform/mediastream/RealtimeVideoCaptureSource.cpp
-platform/mediastream/RealtimeVideoSource.cpp
 platform/mediastream/WebRTCProvider.cpp
 platform/mock/DeviceOrientationClientMock.cpp
 platform/mock/GeolocationClientMock.cpp
@@ -2437,8 +2439,10 @@ plugins/DOMPlugin.cpp
 plugins/DOMPluginArray.cpp
 plugins/PluginData.cpp
 plugins/PluginInfoProvider.cpp
+rendering/AccessibilityRegionContext.cpp
 rendering/AutoTableLayout.cpp
 rendering/BackgroundPainter.cpp
+rendering/BaselineAlignment.cpp
 rendering/BidiRun.cpp
 rendering/BorderEdge.cpp
 rendering/BorderPainter.cpp
@@ -2482,6 +2486,7 @@ rendering/OrderIterator.cpp
 rendering/PathOperation.cpp
 rendering/PointerEventsHitRules.cpp
 rendering/ReferencedSVGResources.cpp
+rendering/RegionContext.cpp
 rendering/RenderAttachment.cpp
 rendering/RenderBlock.cpp
 rendering/RenderBlockFlow.cpp
@@ -3391,6 +3396,7 @@ JSFontFaceSet.cpp
 JSFormDataEvent.cpp
 JSGPU.cpp
 JSGPUAdapter.cpp
+JSGPUAdapterInfo.cpp
 JSGPUAddressMode.cpp
 JSGPUAutoLayoutMode.cpp
 JSGPUBindGroup.cpp

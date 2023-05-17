@@ -31,7 +31,7 @@
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LengthFunctions.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 namespace Display {

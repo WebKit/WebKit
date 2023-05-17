@@ -78,7 +78,8 @@ static bool ranScript;
         return nil;
 
     return @{
-        @"ReferenceDate": _referenceDate
+        @"ReferenceDate": _referenceDate,
+        @"unused": [NSUUID UUID]
     };
 }
 

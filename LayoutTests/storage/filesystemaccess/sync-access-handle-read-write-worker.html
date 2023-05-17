@@ -4,6 +4,10 @@
 </head>
 <body>
 <script>
+if (window.testRunner) {
+	testRunner.setQuota(1099511627776); // 1 TB
+	testRunner.setAllowStorageQuotaIncrease(false);
+}
 worker = startWorker('resources/sync-access-handle-read-write.js');</script>
 </body>
 </html>

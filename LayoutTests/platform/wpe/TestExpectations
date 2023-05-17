@@ -401,54 +401,6 @@ imported/w3c/web-platform-tests/svg/painting/parsing/marker-end-computed.svg [ F
 imported/w3c/web-platform-tests/svg/painting/parsing/marker-mid-computed.svg [ Failure ]
 imported/w3c/web-platform-tests/svg/painting/parsing/marker-start-computed.svg [ Failure ]
 imported/w3c/web-platform-tests/svg/painting/parsing/stroke-computed.svg [ Failure ]
-imported/w3c/web-platform-tests/websockets/constructor/002.html [ Failure ]
-imported/w3c/web-platform-tests/websockets/constructor/002.html?wpt_flags=h2 [ Failure ]
-imported/w3c/web-platform-tests/websockets/constructor/002.html?wss [ Failure ]
-imported/w3c/web-platform-tests/websockets/constructor/004.html [ Failure ]
-imported/w3c/web-platform-tests/websockets/constructor/004.html?wpt_flags=h2 [ Failure ]
-imported/w3c/web-platform-tests/websockets/constructor/004.html?wss [ Failure ]
-imported/w3c/web-platform-tests/websockets/constructor/007.html [ Failure ]
-imported/w3c/web-platform-tests/websockets/constructor/007.html?wpt_flags=h2 [ Failure ]
-imported/w3c/web-platform-tests/websockets/constructor/007.html?wss [ Failure ]
-imported/w3c/web-platform-tests/websockets/constructor/010.html [ Failure ]
-imported/w3c/web-platform-tests/websockets/constructor/010.html?wss [ Failure ]
-imported/w3c/web-platform-tests/websockets/constructor/011.html [ Failure ]
-imported/w3c/web-platform-tests/websockets/constructor/011.html?wss [ Failure ]
-imported/w3c/web-platform-tests/websockets/constructor/021.html [ Failure ]
-imported/w3c/web-platform-tests/websockets/constructor/021.html?wpt_flags=h2 [ Failure ]
-imported/w3c/web-platform-tests/websockets/constructor/021.html?wss [ Failure ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-deleting.html [ Skip ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-deleting.html?wss [ Failure ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-basic.html [ Skip ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-basic.html?wss [ Failure ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-connecting.html [ Skip ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-connecting.html?wss [ Failure ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-multiple.html [ Skip ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-multiple.html?wss [ Failure ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-nested.html [ Skip ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-nested.html?wss [ Failure ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-return.html [ Skip ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-return.html?wss [ Failure ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/015.html [ Skip ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/015.html?wss [ Failure ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/017.html [ Failure ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/017.html?wss [ Failure ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/018.html [ Failure ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/018.html?wss [ Failure ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/019.html [ Skip ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/019.html?wss [ Failure ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/020.html [ Skip ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/020.html?wss [ Failure ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/readyState/003.html [ Skip ]
-imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/readyState/003.html?wss [ Failure ]
-imported/w3c/web-platform-tests/websockets/keeping-connection-open/001.html [ Skip ]
-imported/w3c/web-platform-tests/websockets/keeping-connection-open/001.html?wss [ Failure ]
-imported/w3c/web-platform-tests/websockets/opening-handshake/001.html [ Failure ]
-imported/w3c/web-platform-tests/websockets/opening-handshake/001.html?wss [ Failure ]
-imported/w3c/web-platform-tests/websockets/opening-handshake/003.html [ Skip ]
-imported/w3c/web-platform-tests/websockets/opening-handshake/003.html?wss [ Failure ]
-imported/w3c/web-platform-tests/websockets/security/001.html [ Failure ]
-imported/w3c/web-platform-tests/websockets/security/001.html?wss [ Failure ]
 imported/w3c/web-platform-tests/webxr/webxr_availability.http.sub.html [ Failure Pass ]
 imported/w3c/web-platform-tests/workers/SharedWorker_dataUrl.html [ Failure Pass ]
 imported/w3c/web-platform-tests/xhr/event-error-order.sub.html [ Failure ]
@@ -513,7 +465,6 @@ fast/url/user-visible [ Skip ]
 
 # platformLayerTreeAsText is only implemented for Cocoa ports.
 fast/harness/platform-layer-tree-as-text.html [ Skip ]
-model-element/model-element-graphics-layers-opacity.html [ Skip ]
 
 # ENABLE_DRAG_SUPPORT is OFF in WPE.
 fast/events/5056619.html [ Skip ]
@@ -617,6 +568,7 @@ fast/events/ondrop-text-html.html
 # WTR needs an implementation for eventSender.continuousMouseScrollBy
 # https://bugs.webkit.org/show_bug.cgi?id=69417
 fast/events/wheel/wheelevent-direction-inverted-from-device.html
+css3/scroll-snap/resnap-after-layout.html [ Skip ]
 
 # These are failures that will be enabled once the relevant parts of implementation land.
 webkit.org/b/133122 crypto/workers/subtle/aes-indexeddb.html [ Skip ]
@@ -667,9 +619,6 @@ webkit.org/b/200295 fast/visual-viewport/client-rects-relative-to-layout-viewpor
 
 # Inspector tests don't work with platform WebSockets API
 webkit.org/b/200162 http/tests/websocket/tests/hybi/inspector/ [ Skip ]
-
-# Server cookie not handled with platform WebSockets API
-webkit.org/b/200165 imported/w3c/web-platform-tests/websockets/cookies/004.html [ Failure ]
 
 webkit.org/b/206454 fast/events/mouse-cursor-change.html [ Failure ]
 webkit.org/b/206454 fast/events/mouse-cursor-no-mousemove.html [ Failure ]
@@ -767,6 +716,11 @@ webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/font-language-
 webkit.org/b/217369 fast/canvas/fill-text-with-font-features.html [ ImageOnlyFailure ]
 
 webkit.org/b/217370 fast/events/setDragImage-element-non-nullable.html [ Failure ]
+
+webkit.org/b/256310 imported/w3c/web-platform-tests/css/css-fonts/parsing/font-face-src-tech.html [ Skip ]
+
+# @font-face: missing integration between size-adjust and optical-size
+ webkit.org/b/256457 imported/w3c/web-platform-tests/css/css-fonts/variations/variable-opsz-size-adjust.html [ ImageOnlyFailure ]
 
 # WebXR
 webkit.org/b/225483 [ Release ] imported/w3c/web-platform-tests/webxr/events_input_source_recreation.https.html [ Pass ]
@@ -1315,6 +1269,8 @@ webkit.org/b/173419 fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.
 webkit.org/b/173419 fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/wheelevent-mousewheel-interaction.html [ Timeout Pass ]
 
+webkit.org/b/212202 fast/scrolling/sync-scroll-overscroll-behavior-unscrollable-iframe.html [ Failure ]
+
 webkit.org/b/186879 fast/events/open-window-from-another-frame.html [ Timeout ]
 webkit.org/b/186879 fast/events/popup-allowed-from-gesture-initiated-event.html [ Timeout ]
 webkit.org/b/186879 fast/events/popup-blocked-from-fake-user-gesture.html [ Timeout ]
@@ -1601,9 +1557,14 @@ webkit.org/b/236926 webrtc/vp8-then-h264-gpu-process-crash.html [ Timeout Pass ]
 
 ############ end of test failures related to GPU Process on by default
 
+webkit.org/b/256543 media/media-source/media-source-webm-configuration-change.html [ Failure ]
+webkit.org/b/256543 media/media-source/media-source-webm-configuration-vp9-header-color.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # UNSORTED Expectations. When in doubt, put it here.
 #////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/256225 imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-004.html [ ImageOnlyFailure ]
 
 # These tests require platform support.
 
@@ -1623,3 +1584,5 @@ webkit.org/b/238885 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_key
 webkit.org/b/238885 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker.html?6001-7000 [ Failure Timeout ]
 webkit.org/b/238885 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker.html?7001-8000 [ Failure Timeout ]
 webkit.org/b/238885 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker.html?8001-last [ Failure Timeout ]
+
+fast/canvas/offscreen-clipped.html [ Failure ]

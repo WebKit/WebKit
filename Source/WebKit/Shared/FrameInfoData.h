@@ -31,8 +31,11 @@
 
 namespace WebKit {
 
+enum class FrameType : bool { Local, Remote };
+
 struct FrameInfoData {
     bool isMainFrame { false };
+    FrameType frameType { FrameType::Local };
     WebCore::ResourceRequest request;
     WebCore::SecurityOriginData securityOrigin;
     String frameName;

@@ -193,11 +193,6 @@ public:
         return m_value == other.m_value;
     }
     
-    constexpr bool operator!=(Seconds other) const
-    {
-        return m_value != other.m_value;
-    }
-    
     constexpr bool operator<(Seconds other) const
     {
         return m_value < other.m_value;

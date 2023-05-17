@@ -1611,6 +1611,17 @@ llintOpWithReturn(op_is_cell_with_type, OpIsCellWithType, macro (size, get, disp
 end)
 
 
+llintOpWithReturn(op_has_structure_with_flags, OpHasStructureWithFlags, macro (size, get, dispatch, return)
+    getu(size, OpHasStructureWithFlags, m_flags, t0)
+    get(m_operand, t1)
+    loadConstantOrVariable(size, t1, t2)
+    loadStructureWithScratch(t2, t3, t1)
+    tinz Structure::m_bitField[t3], t0, t1
+    orq ValueFalse, t1
+    return(t1)
+end)
+
+
 llintOpWithReturn(op_is_object, OpIsObject, macro (size, get, dispatch, return)
     get(m_operand, t1)
     loadConstantOrVariable(size, t1, t0)
@@ -3454,6 +3465,54 @@ llintOpWithMetadata(op_enumerator_get_by_val, OpEnumeratorGetByVal, macro (size,
 
 .getSlowPath:
     callSlowPath(_slow_path_enumerator_get_by_val)
+    dispatch()
+end)
+
+llintOpWithMetadata(op_enumerator_put_by_val, OpEnumeratorPutByVal, macro (size, get, dispatch, metadata, return)
+    metadata(t5, t0)
+
+    loadVariable(get, m_mode, t0)
+
+    # FIXME: This should be orb but that doesn't exist for some reason... https://bugs.webkit.org/show_bug.cgi?id=229445
+    loadb OpEnumeratorPutByVal::Metadata::m_enumeratorMetadata[t5], t1
+    ori t0, t1
+    storeb t1, OpEnumeratorPutByVal::Metadata::m_enumeratorMetadata[t5]
+
+    bbneq t0, constexpr JSPropertyNameEnumerator::OwnStructureMode, .putSlowPath
+
+    get(m_base, t1)
+    loadConstantOrVariableCell(size, t1, t0, .putSlowPath)
+
+    loadVariable(get, m_enumerator, t1)
+    loadi JSPropertyNameEnumerator::m_cachedStructureID[t1], t2
+    bineq t2, JSCell::m_structureID[t0], .putSlowPath
+
+    structureIDToStructureWithScratch(t2, t3)
+    btinz Structure::m_bitField[t2], (constexpr Structure::s_isWatchingReplacementBits), .putSlowPath
+
+    get(m_value, t2)
+    loadConstantOrVariable(size, t2, t3)
+    loadVariable(get, m_index, t2)
+    loadi JSPropertyNameEnumerator::m_cachedInlineCapacity[t1], t1
+    biaeq t2, t1, .outOfLine
+
+    zxi2q t2, t2
+    storeq t3, sizeof JSObject[t0, t2, 8]
+    jmp .done
+
+.outOfLine:
+    subi t1, t2
+    loadp JSObject::m_butterfly[t0], t1
+    negi t2
+    sxi2q t2, t2
+    storeq t3, constexpr ((offsetInButterfly(firstOutOfLineOffset)) * sizeof(EncodedJSValue))[t1, t2, 8]
+
+.done:
+    writeBarrierOnCellAndValueWithReload(t0, t3, macro() end)
+    dispatch()
+
+.putSlowPath:
+    callSlowPath(_slow_path_enumerator_put_by_val)
     dispatch()
 end)
 

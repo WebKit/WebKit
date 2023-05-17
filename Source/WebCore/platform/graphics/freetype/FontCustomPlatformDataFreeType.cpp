@@ -22,6 +22,7 @@
 #include "config.h"
 #include "FontCustomPlatformData.h"
 
+#include "CSSFontFaceSrcValue.h"
 #include "CairoUtilities.h"
 #include "Font.h"
 #include "FontCacheFreeType.h"
@@ -38,21 +39,13 @@
 
 namespace WebCore {
 
-static void releaseCustomFontData(void* data)
-{
-    static_cast<FragmentedSharedBuffer*>(data)->deref();
-}
-
 static cairo_user_data_key_t freeTypeFaceKey;
 
-FontCustomPlatformData::FontCustomPlatformData(FT_Face freeTypeFace, FragmentedSharedBuffer& buffer)
+FontCustomPlatformData::FontCustomPlatformData(FT_Face freeTypeFace, FontPlatformData::CreationData&& data)
     : m_fontFace(adoptRef(cairo_ft_font_face_create_for_ft_face(freeTypeFace, FT_LOAD_DEFAULT)))
+    , creationData(WTFMove(data))
+    , m_renderingResourceIdentifier(RenderingResourceIdentifier::generate())
 {
-    buffer.ref(); // This is balanced by the buffer->deref() in releaseCustomFontData.
-    static cairo_user_data_key_t bufferKey;
-    cairo_font_face_set_user_data(m_fontFace.get(), &bufferKey, &buffer,
-         static_cast<cairo_destroy_func_t>(releaseCustomFontData));
-
     // Cairo doesn't do FreeType reference counting, so we need to ensure that when
     // this cairo_font_face_t is destroyed, it cleans up the FreeType face as well.
     cairo_font_face_set_user_data(m_fontFace.get(), &freeTypeFaceKey, freeTypeFace,
@@ -102,10 +95,10 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     }
 #endif
 
-    auto size = description.computedPixelSize();
+    auto size = description.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
     FontPlatformData platformData(m_fontFace.get(), WTFMove(pattern), size, freeTypeFace->face_flags & FT_FACE_FLAG_FIXED_WIDTH, bold, italic, description.orientation());
 
-    platformData.updateSizeWithFontSizeAdjust(description.fontSizeAdjust());
+    platformData.updateSizeWithFontSizeAdjust(description.fontSizeAdjust(), description.computedPixelSize());
     return platformData;
 }
 
@@ -138,7 +131,7 @@ static bool initializeFreeTypeLibrary(FT_Library& library)
     return true;
 }
 
-RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String&)
+RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String& itemInCollection)
 {
     static FT_Library library;
     if (!library && !initializeFreeTypeLibrary(library)) {
@@ -149,7 +142,8 @@ RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer
     FT_Face freeTypeFace;
     if (FT_New_Memory_Face(library, reinterpret_cast<const FT_Byte*>(buffer.data()), buffer.size(), 0, &freeTypeFace))
         return nullptr;
-    return adoptRef(new FontCustomPlatformData(freeTypeFace, buffer));
+    FontPlatformData::CreationData creationData = { buffer, itemInCollection };
+    return adoptRef(new FontCustomPlatformData(freeTypeFace, WTFMove(creationData)));
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)
@@ -167,7 +161,14 @@ bool FontCustomPlatformData::supportsFormat(const String& format)
         || equalLettersIgnoringASCIICase(format, "truetype-variations"_s)
         || equalLettersIgnoringASCIICase(format, "opentype-variations"_s)
 #endif
-        || equalLettersIgnoringASCIICase(format, "woff"_s);
+        || equalLettersIgnoringASCIICase(format, "woff"_s)
+        || equalLettersIgnoringASCIICase(format, "svg"_s);
+}
+
+bool FontCustomPlatformData::supportsTechnology(const FontTechnology&)
+{
+    // FIXME: define supported technologies for this platform (webkit.org/b/256310).
+    return true;
 }
 
 }

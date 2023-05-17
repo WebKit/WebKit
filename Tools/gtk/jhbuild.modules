@@ -9,7 +9,6 @@
     <dependencies>
       <dep package="avif"/>
       <dep package="cairo"/>
-      <dep package="fonts"/>
       <dep package="dicts"/>
       <dep package="fontconfig"/>
       <dep package="freetype6"/>
@@ -116,11 +115,6 @@
     <branch module="releases/pixman-${version}.tar.gz" version="0.40.0"
             repo="cairographics.org"
             hash="sha256:6d200dec3740d9ec4ec8d1180e25779c00bc749f94278c8b9021f5534db223fc"/>
-  </autotools>
-
-  <autotools id="fonts" supports-non-srcdir-builds="no"
-             skip-autogen="true">
-    <branch repo="github.com" module="WebKitGTK/webkitgtk-test-fonts.git" checkoutdir="webkitgtk-test-fonts" tag="0.0.8"/>
   </autotools>
 
   <meson id="dav1d">

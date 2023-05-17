@@ -280,7 +280,7 @@ FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings& varian
             features.set(fontFeatureTag("hist"), 1);
         
         if (fontFeatureValues) {
-            auto lookupTags = [] (const auto& name, const auto& tags) -> Span<const unsigned> {
+            auto lookupTags = [] (const auto& name, const auto& tags) -> std::span<const unsigned> {
                 if (name.isNull())
                     return { };
 

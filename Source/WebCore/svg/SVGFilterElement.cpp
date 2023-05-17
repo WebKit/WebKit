@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SVGFilterElement.h"
 
-#include "ElementName.h"
+#include "NodeName.h"
 #include "RenderSVGResourceFilter.h"
 #include "SVGElementInlines.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
@@ -67,23 +67,34 @@ void SVGFilterElement::attributeChanged(const QualifiedName& name, const AtomStr
 {
     SVGParsingError parseError = NoError;
 
-    if (name == SVGNames::filterUnitsAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::filterUnitsAttr: {
         SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(newValue);
         if (propertyValue > 0)
             m_filterUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
-    } else if (name == SVGNames::primitiveUnitsAttr) {
+        break;
+    }
+    case AttributeNames::primitiveUnitsAttr: {
         SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(newValue);
         if (propertyValue > 0)
             m_primitiveUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
-    } else if (name == SVGNames::xAttr)
+        break;
+    }
+    case AttributeNames::xAttr:
         m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
-    else if (name == SVGNames::yAttr)
+        break;
+    case AttributeNames::yAttr:
         m_y->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
-    else if (name == SVGNames::widthAttr)
+        break;
+    case AttributeNames::widthAttr:
         m_width->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
-    else if (name == SVGNames::heightAttr)
+        break;
+    case AttributeNames::heightAttr:
         m_height->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Height, newValue, parseError));
-
+        break;
+    default:
+        break;
+    }
     reportAttributeParsingError(parseError, name, newValue);
 
     SVGURIReference::parseAttribute(name, newValue);
@@ -128,7 +139,7 @@ bool SVGFilterElement::childShouldCreateRenderer(const Node& child) const
     if (!child.isSVGElement())
         return false;
 
-    switch (downcast<SVGElement>(child).tagQName().elementName()) {
+    switch (downcast<SVGElement>(child).elementName()) {
     case SVG::feBlend:
     case SVG::feColorMatrix:
     case SVG::feComponentTransfer:

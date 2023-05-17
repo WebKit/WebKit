@@ -220,21 +220,9 @@ namespace WTF {
     }
 
     template<typename T, typename U, typename V>
-        inline bool operator!=(const HashTableConstKeysIterator<T, U, V>& a, const HashTableConstKeysIterator<T, U, V>& b)
-    {
-        return a.m_impl != b.m_impl;
-    }
-
-    template<typename T, typename U, typename V>
         inline bool operator==(const HashTableConstValuesIterator<T, U, V>& a, const HashTableConstValuesIterator<T, U, V>& b)
     {
         return a.m_impl == b.m_impl;
-    }
-
-    template<typename T, typename U, typename V>
-        inline bool operator!=(const HashTableConstValuesIterator<T, U, V>& a, const HashTableConstValuesIterator<T, U, V>& b)
-    {
-        return a.m_impl != b.m_impl;
     }
 
     template<typename T, typename U, typename V>
@@ -244,21 +232,9 @@ namespace WTF {
     }
 
     template<typename T, typename U, typename V>
-        inline bool operator!=(const HashTableKeysIterator<T, U, V>& a, const HashTableKeysIterator<T, U, V>& b)
-    {
-        return a.m_impl != b.m_impl;
-    }
-
-    template<typename T, typename U, typename V>
         inline bool operator==(const HashTableValuesIterator<T, U, V>& a, const HashTableValuesIterator<T, U, V>& b)
     {
         return a.m_impl == b.m_impl;
-    }
-
-    template<typename T, typename U, typename V>
-        inline bool operator!=(const HashTableValuesIterator<T, U, V>& a, const HashTableValuesIterator<T, U, V>& b)
-    {
-        return a.m_impl != b.m_impl;
     }
 
 } // namespace WTF

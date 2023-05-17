@@ -381,15 +381,9 @@ inline bool Structure::isValid(JSGlobalObject* globalObject, StructureChain* cac
 
 inline void Structure::didReplaceProperty(PropertyOffset offset)
 {
-    if (LIKELY(!hasRareData()))
+    if (LIKELY(!isWatchingReplacement()))
         return;
-    auto* rareData = this->rareData();
-    if (LIKELY(rareData->m_replacementWatchpointSets.isNullStorage()))
-        return;
-    WatchpointSet* set = rareData->m_replacementWatchpointSets.get(offset);
-    if (LIKELY(!set))
-        return;
-    set->fireAll(vm(), "Property did get replaced");
+    firePropertyReplacementWatchpointSet(vm(), offset, "Property did get replaced");
 }
 
 inline WatchpointSet* Structure::propertyReplacementWatchpointSet(PropertyOffset offset)
@@ -469,6 +463,7 @@ inline void Structure::cacheSpecialProperty(JSGlobalObject* globalObject, VM& vm
 template<Structure::ShouldPin shouldPin, typename Func>
 inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned attributes, const Func& func)
 {
+    ASSERT(!isCompilationThread());
     PropertyTable* table = ensurePropertyTable(vm);
 
     GCSafeConcurrentJSLocker locker(m_lock, vm);
@@ -487,6 +482,11 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
     checkConsistency();
     if (attributes & PropertyAttribute::DontEnum || propertyName.isSymbol())
         setIsQuickPropertyAccessAllowedForEnumeration(false);
+    if (attributes & PropertyAttribute::DontDelete) {
+        setHasNonConfigurableProperties(true);
+        if (attributes & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessorOrValue)
+            setHasNonConfigurableReadOnlyOrGetterSetterProperties(true);
+    }
     if (propertyName == vm.propertyNames->underscoreProto)
         setHasUnderscoreProtoPropertyExcludingOriginalProto(true);
 
@@ -514,6 +514,7 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
 template<Structure::ShouldPin shouldPin, typename Func>
 inline PropertyOffset Structure::remove(VM& vm, PropertyName propertyName, const Func& func)
 {
+    ASSERT(!isCompilationThread());
     PropertyTable* table = ensurePropertyTable(vm);
     GCSafeConcurrentJSLocker locker(m_lock, vm);
 
@@ -555,6 +556,7 @@ inline PropertyOffset Structure::remove(VM& vm, PropertyName propertyName, const
 template<Structure::ShouldPin shouldPin, typename Func>
 inline PropertyOffset Structure::attributeChange(VM& vm, PropertyName propertyName, unsigned attributes, const Func& func)
 {
+    ASSERT(!isCompilationThread());
     PropertyTable* table = ensurePropertyTable(vm);
 
     GCSafeConcurrentJSLocker locker(m_lock, vm);
@@ -577,6 +579,11 @@ inline PropertyOffset Structure::attributeChange(VM& vm, PropertyName propertyNa
 
     if (attributes & PropertyAttribute::DontEnum)
         setIsQuickPropertyAccessAllowedForEnumeration(false);
+    if (attributes & PropertyAttribute::DontDelete) {
+        setHasNonConfigurableProperties(true);
+        if (attributes & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessorOrValue)
+            setHasNonConfigurableReadOnlyOrGetterSetterProperties(true);
+    }
     if (attributes & PropertyAttribute::ReadOnly)
         setContainsReadOnlyProperties();
 
@@ -608,6 +615,53 @@ inline PropertyOffset Structure::removePropertyWithoutTransition(VM& vm, Propert
 }
 
 template<typename Func>
+ALWAYS_INLINE auto Structure::addOrReplacePropertyWithoutTransition(VM& vm, PropertyName propertyName, unsigned newAttributes, const Func& func) -> decltype(auto)
+{
+    ASSERT(!isCompilationThread());
+    PropertyTable* table = ensurePropertyTable(vm);
+
+    auto rep = propertyName.uid();
+    auto findResult = table->find(rep);
+    if (findResult.offset != invalidOffset)
+        return std::tuple { findResult.offset, findResult.attributes, false };
+
+    GCSafeConcurrentJSLocker locker(m_lock, vm);
+
+    pin(locker, vm, table);
+
+    ASSERT(!JSC::isValidOffset(get(vm, propertyName)));
+
+    checkConsistency();
+    if (newAttributes & PropertyAttribute::DontEnum || propertyName.isSymbol())
+        setIsQuickPropertyAccessAllowedForEnumeration(false);
+    if (newAttributes & PropertyAttribute::DontDelete) {
+        setHasNonConfigurableProperties(true);
+        if (newAttributes & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessorOrValue)
+            setHasNonConfigurableReadOnlyOrGetterSetterProperties(true);
+    }
+    if (propertyName == vm.propertyNames->underscoreProto)
+        setHasUnderscoreProtoPropertyExcludingOriginalProto(true);
+
+    PropertyOffset newOffset = table->nextOffset(m_inlineCapacity);
+
+    m_propertyHash = m_propertyHash ^ rep->existingSymbolAwareHash();
+    m_seenProperties.add(CompactPtr<UniquedStringImpl>::encode(rep));
+
+    auto [offset, attributes, result] = table->addAfterFind(vm, PropertyTableEntry(rep, newOffset, newAttributes), WTFMove(findResult));
+    ASSERT_UNUSED(result, result);
+    ASSERT_UNUSED(offset, offset == newOffset);
+    UNUSED_VARIABLE(attributes);
+    auto newMaxOffset = std::max(newOffset, maxOffset());
+
+    func(locker, newOffset, newMaxOffset);
+
+    ASSERT(maxOffset() == newMaxOffset);
+
+    checkConsistency();
+    return std::tuple { newOffset, newAttributes, true };
+}
+
+template<typename Func>
 inline PropertyOffset Structure::attributeChangeWithoutTransition(VM& vm, PropertyName propertyName, unsigned attributes, const Func& func)
 {
     return attributeChange<ShouldPin::Yes>(vm, propertyName, attributes, func);
@@ -635,6 +689,14 @@ ALWAYS_INLINE void Structure::setPreviousID(VM& vm, Structure* structure)
         rareData()->setPreviousID(vm, structure);
     else
         m_previousOrRareData.set(vm, this, structure);
+}
+
+inline void Structure::pin(const AbstractLocker&, VM& vm, PropertyTable* table)
+{
+    setIsPinnedPropertyTable(true);
+    setPropertyTable(vm, table);
+    clearPreviousID();
+    m_transitionPropertyName = nullptr;
 }
 
 ALWAYS_INLINE bool Structure::shouldConvertToPolyProto(const Structure* a, const Structure* b)
@@ -773,6 +835,7 @@ ALWAYS_INLINE bool Structure::canPerformFastPropertyEnumeration() const
         return false;
     // FIXME: Indexed properties can be handled.
     // https://bugs.webkit.org/show_bug.cgi?id=185358
+
     if (hasIndexedProperties(indexingType()))
         return false;
     if (hasAnyKindOfGetterSetterProperties())

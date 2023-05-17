@@ -40,10 +40,6 @@ public:
     Ref<StyleTransformData> copy() const;
 
     bool operator==(const StyleTransformData&) const;
-    bool operator!=(const StyleTransformData& other) const
-    {
-        return !(*this == other);
-    }
     
     bool hasTransform() const { return operations.size(); }
 

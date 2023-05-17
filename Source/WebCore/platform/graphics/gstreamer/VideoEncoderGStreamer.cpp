@@ -210,6 +210,9 @@ String GStreamerInternalVideoEncoder::initialize(const VideoEncoder::Config& con
             gst_caps_set_simple(encoderCaps.get(), "profile", G_TYPE_STRING, profile, nullptr);
         // FIXME: Set level on caps too?
         UNUSED_VARIABLE(level);
+    } else if (m_codecName.startsWith("av01"_s)) {
+        // FIXME: parse codec parameters.
+        encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-av1"));
     } else
         return makeString("Unsupported outgoing video encoding: ", m_codecName);
 

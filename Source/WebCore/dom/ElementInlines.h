@@ -25,12 +25,11 @@
 
 #pragma once
 
-#include "Document.h"
 #include "DocumentInlines.h"
 #include "Element.h"
 #include "ElementData.h"
 #include "HTMLNames.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "StyleChange.h"
 
 namespace WebCore {

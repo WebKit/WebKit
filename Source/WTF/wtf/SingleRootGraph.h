@@ -60,11 +60,6 @@ public:
             && m_isRoot == other.m_isRoot;
     }
 
-    bool operator!=(const SingleRootGraphNode& other) const
-    {
-        return !(*this == other);
-    }
-
     explicit operator bool() const { return *this != SingleRootGraphNode(); }
 
     bool isRoot() const

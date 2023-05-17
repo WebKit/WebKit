@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,7 +109,6 @@ private:
         void handleAutoplayEvent(WebPageProxy&, WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
         void decidePolicyForNotificationPermissionRequest(WebPageProxy&, API::SecurityOrigin&, CompletionHandler<void(bool allowed)>&&) final;
         void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&&) final;
-        void decidePolicyForModalContainer(OptionSet<WebCore::ModalContainerControlType>, CompletionHandler<void(WebCore::ModalContainerDecision)>&&) final;
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         void mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData&, OptionSet<WebEventModifier>, API::Object*);
 #endif
@@ -159,10 +158,11 @@ private:
         RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) final;
         void didNotHandleTapAsClick(const WebCore::IntPoint&) final;
         void statusBarWasTapped() final;
+        bool setShouldKeepScreenAwake(bool) final;
 #endif // PLATFORM(IOS_FAMILY)
         PlatformViewController *presentingViewController() final;
 
-        NSDictionary *dataDetectionContext() final;
+        std::optional<double> dataDetectionReferenceDate() final;
 
 #if ENABLE(POINTER_LOCK)
         void requestPointerLock(WebPageProxy*) final;
@@ -264,6 +264,7 @@ private:
         bool webViewActionsForElementDefaultActions : 1;
         bool webViewDidNotHandleTapAsClickAtPoint : 1;
         bool webViewStatusBarWasTapped : 1;
+        bool webViewSetShouldKeepScreenAwake : 1;
 #endif
         bool presentingViewControllerForWebView : 1;
         bool dataDetectionContextForWebView : 1;
@@ -294,7 +295,6 @@ private:
 #endif
         bool webViewRequestNotificationPermissionForSecurityOriginDecisionHandler : 1;
         bool webViewRequestCookieConsentWithMoreInfoHandlerDecisionHandler : 1;
-        bool webViewDecidePolicyForModalContainerDecisionHandler : 1;
         bool webViewUpdatedAppBadge : 1;
         bool webViewUpdatedClientBadge : 1;
     } m_delegateMethods;

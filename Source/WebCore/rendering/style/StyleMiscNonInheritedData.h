@@ -58,7 +58,6 @@ public:
     ~StyleMiscNonInheritedData();
 
     bool operator==(const StyleMiscNonInheritedData&) const;
-    bool operator!=(const StyleMiscNonInheritedData& other) const { return !(*this == other); }
 
     bool hasOpacity() const { return opacity < 1; }
     bool hasFilters() const;
@@ -91,7 +90,7 @@ public:
     LengthPoint objectPosition;
     int order;
 
-    unsigned hasAttrContent : 1;
+    unsigned hasAttrContent : 1 { false };
     unsigned aspectRatioType : 2; // AspectRatioType
     unsigned appearance : appearanceBitWidth; // EAppearance
     unsigned effectiveAppearance : appearanceBitWidth; // EAppearance

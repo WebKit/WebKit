@@ -40,12 +40,10 @@
 namespace WebCore {
 
 class ColorInputType final : public BaseClickableWithKeyInputType, private ColorChooserClient {
-    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
-    explicit ColorInputType(HTMLInputElement& element)
-        : BaseClickableWithKeyInputType(Type::Color, element)
+    static Ref<ColorInputType> create(HTMLInputElement& element)
     {
-        ASSERT(needsShadowSubtree());
+        return adoptRef(*new ColorInputType(element));
     }
 
     Vector<Color> suggestedColors() const;
@@ -58,6 +56,12 @@ public:
     void detach() final;
 
 private:
+    explicit ColorInputType(HTMLInputElement& element)
+        : BaseClickableWithKeyInputType(Type::Color, element)
+    {
+        ASSERT(needsShadowSubtree());
+    }
+
     void didChooseColor(const Color&) final;
     void didEndChooser() final;
     IntRect elementRectRelativeToRootView() const final;

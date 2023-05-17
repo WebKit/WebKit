@@ -40,6 +40,10 @@ enum class PlatformVideoMatrixCoefficients : uint8_t {
     Bt2020NonconstantLuminance,
     Bt2020ConstantLuminance,
     Unspecified,
+
+    // Aliases for WebIDL bindings
+    Bt2020Ncl = Bt2020NonconstantLuminance,
+    Bt2020Cl = Bt2020ConstantLuminance,
 };
 
 } // namespace WebCore

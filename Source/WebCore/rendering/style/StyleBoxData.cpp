@@ -22,8 +22,8 @@
 #include "config.h"
 #include "StyleBoxData.h"
 
-#include "RenderStyle.h"
 #include "RenderStyleConstants.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 

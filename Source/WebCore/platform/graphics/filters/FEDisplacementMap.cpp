@@ -44,6 +44,14 @@ FEDisplacementMap::FEDisplacementMap(ChannelSelectorType xChannelSelector, Chann
 {
 }
 
+bool FEDisplacementMap::operator==(const FEDisplacementMap& other) const
+{
+    return FilterEffect::operator==(other)
+        && m_xChannelSelector == other.m_xChannelSelector
+        && m_yChannelSelector == other.m_yChannelSelector
+        && m_scale == other.m_scale;
+}
+
 bool FEDisplacementMap::setXChannelSelector(const ChannelSelectorType xChannelSelector)
 {
     if (m_xChannelSelector == xChannelSelector)
@@ -68,7 +76,7 @@ bool FEDisplacementMap::setScale(float scale)
     return true;
 }
 
-FloatRect FEDisplacementMap::calculateImageRect(const Filter& filter, Span<const FloatRect>, const FloatRect& primitiveSubregion) const
+FloatRect FEDisplacementMap::calculateImageRect(const Filter& filter, std::span<const FloatRect>, const FloatRect& primitiveSubregion) const
 {
     return filter.maxEffectRect(primitiveSubregion);
 }

@@ -42,7 +42,7 @@ class GstSpeechSynthesisWrapper {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(GstSpeechSynthesisWrapper);
 public:
-    explicit GstSpeechSynthesisWrapper(Ref<PlatformSpeechSynthesizer>&&);
+    explicit GstSpeechSynthesisWrapper(const PlatformSpeechSynthesizer&);
     ~GstSpeechSynthesisWrapper();
 
     void pause();
@@ -55,14 +55,14 @@ private:
     bool handleMessage(GstMessage*);
 
     RefPtr<PlatformSpeechSynthesisUtterance> m_utterance;
-    Ref<PlatformSpeechSynthesizer> m_platformSynthesizer;
+    const PlatformSpeechSynthesizer& m_platformSynthesizer;
     GRefPtr<GstElement> m_pipeline;
     GRefPtr<GstElement> m_src;
     GRefPtr<GstElement> m_volumeElement;
     GRefPtr<GstElement> m_pitchElement;
 };
 
-GstSpeechSynthesisWrapper::GstSpeechSynthesisWrapper(Ref<PlatformSpeechSynthesizer>&& synthesizer)
+GstSpeechSynthesisWrapper::GstSpeechSynthesisWrapper(const PlatformSpeechSynthesizer& synthesizer)
     : m_platformSynthesizer(synthesizer)
 {
     ensureGStreamerInitialized();
@@ -134,7 +134,7 @@ void GstSpeechSynthesisWrapper::pause()
     webkitGstSetElementStateSynchronously(m_pipeline.get(), GST_STATE_PAUSED, [this](GstMessage* message) -> bool {
         return handleMessage(message);
     });
-    m_platformSynthesizer->client().didPauseSpeaking(*m_utterance);
+    m_platformSynthesizer.client().didPauseSpeaking(*m_utterance);
 }
 
 void GstSpeechSynthesisWrapper::resume()
@@ -145,7 +145,7 @@ void GstSpeechSynthesisWrapper::resume()
     webkitGstSetElementStateSynchronously(m_pipeline.get(), GST_STATE_PLAYING, [this](GstMessage* message) -> bool {
         return handleMessage(message);
     });
-    m_platformSynthesizer->client().didResumeSpeaking(*m_utterance);
+    m_platformSynthesizer.client().didResumeSpeaking(*m_utterance);
 }
 
 void GstSpeechSynthesisWrapper::speakUtterance(RefPtr<PlatformSpeechSynthesisUtterance>&& utterance)
@@ -172,7 +172,7 @@ void GstSpeechSynthesisWrapper::speakUtterance(RefPtr<PlatformSpeechSynthesisUtt
         return handleMessage(message);
     });
 
-    m_platformSynthesizer->client().didStartSpeaking(*m_utterance);
+    m_platformSynthesizer.client().didStartSpeaking(*m_utterance);
 }
 
 void GstSpeechSynthesisWrapper::cancel()
@@ -183,7 +183,7 @@ void GstSpeechSynthesisWrapper::cancel()
     webkitGstSetElementStateSynchronously(m_pipeline.get(), GST_STATE_READY, [this](GstMessage* message) -> bool {
         return handleMessage(message);
     });
-    m_platformSynthesizer->client().didFinishSpeaking(*m_utterance);
+    m_platformSynthesizer.client().didFinishSpeaking(*m_utterance);
 }
 
 void GstSpeechSynthesisWrapper::resetState()
@@ -241,9 +241,9 @@ void PlatformSpeechSynthesizer::resume()
 void PlatformSpeechSynthesizer::speak(RefPtr<PlatformSpeechSynthesisUtterance>&& utterance)
 {
     if (!m_platformSpeechWrapper)
-        m_platformSpeechWrapper = makeUnique<GstSpeechSynthesisWrapper>(adoptRef(*this));
+        m_platformSpeechWrapper = makeUnique<GstSpeechSynthesisWrapper>(*this);
 
-    m_platformSpeechWrapper->speakUtterance(utterance.get());
+    m_platformSpeechWrapper->speakUtterance(WTFMove(utterance));
 }
 
 void PlatformSpeechSynthesizer::cancel()

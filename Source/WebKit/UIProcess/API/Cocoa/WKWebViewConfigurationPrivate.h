@@ -146,6 +146,9 @@ typedef NS_ENUM(NSUInteger, _WKContentSecurityPolicyModeForExtension) {
 
 @property (nonatomic, setter=_setAllowTestOnlyIPC:) BOOL _allowTestOnlyIPC WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+// Default value is YES on macOS and NO on iOS.
+@property (nonatomic, setter=_setDelaysWebProcessLaunchUntilFirstLoad:) BOOL _delaysWebProcessLaunchUntilFirstLoad WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 // The maximum Lab color difference allowed between two consecutive page top snapshots.
 // Expects 0 (disables page top color sampling entirely) or any positive number.
 @property (nonatomic, setter=_setSampledPageTopColorMaxDifference:) double _sampledPageTopColorMaxDifference WK_API_AVAILABLE(macos(12.0), ios(15.0));

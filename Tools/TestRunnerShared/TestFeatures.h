@@ -48,7 +48,6 @@ struct TestFeatures {
 };
 
 bool operator==(const TestFeatures&, const TestFeatures&);
-bool operator!=(const TestFeatures&, const TestFeatures&);
 
 void merge(TestFeatures& base, TestFeatures additional);
 

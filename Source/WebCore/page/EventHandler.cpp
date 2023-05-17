@@ -86,6 +86,7 @@
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
 #include "PluginDocument.h"
+#include "PointerCaptureController.h"
 #include "PointerEventTypeNames.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "Range.h"
@@ -398,6 +399,7 @@ void EventHandler::clear()
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
     m_touches.clear();
+    m_touchLastGlobalPositionAndDeltaMap.clear();
     m_firstTouchID = InvalidTouchIdentifier;
     m_touchEventTargetSubframe = nullptr;
 #endif
@@ -3295,6 +3297,12 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
 {
     Ref protectedFrame(m_frame);
 
+#if ENABLE(POINTER_LOCK)
+    // Context menus should not be handled while pointer is locked.
+    if (auto* page = m_frame.page(); !page || page->pointerLockController().isLocked())
+        return false;
+#endif
+
     RefPtr doc = m_frame.document();
     RefPtr view = m_frame.view();
     if (!view)
@@ -4725,7 +4733,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
     Ref protectedFrame(m_frame);
 
     // First build up the lists to use for the 'touches', 'targetTouches' and 'changedTouches' attributes
-    // in the JS event. See http://www.sitepen.com/blog/2008/07/10/touching-and-gesturing-on-the-iphone/
+    // in the JS event. See https://www.sitepen.com/blog/touching-and-gesturing-on-the-iphone/
     // for an overview of how these lists fit together.
 
     // Holds the complete set of touches on the screen and will be used as the 'touches' list in the JS event.
@@ -4758,7 +4766,8 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
             allTouchReleased = false;
     }
 
-    for (auto& point : points) {
+    for (unsigned index = 0; index < points.size(); index++) {
+        auto& point = points[index];
         PlatformTouchPoint::State pointState = point.state();
         LayoutPoint pagePoint = documentPointForWindowPoint(m_frame, point.pos());
 
@@ -4792,7 +4801,11 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 
         // Increment the platform touch id by 1 to avoid storing a key of 0 in the hashmap.
         unsigned touchPointTargetKey = point.id() + 1;
+#if PLATFORM(WPE)
+        bool pointerCancelled = false;
+#endif
         RefPtr<EventTarget> touchTarget;
+        RefPtr<EventTarget> pointerTarget;
         if (pointState == PlatformTouchPoint::TouchPressed) {
             HitTestResult result;
             if (freshTouchEvents) {
@@ -4823,6 +4836,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
                 continue;
             m_originatingTouchPointTargets.set(touchPointTargetKey, element);
             touchTarget = element;
+            pointerTarget = element;
         } else if (pointState == PlatformTouchPoint::TouchReleased || pointState == PlatformTouchPoint::TouchCancelled) {
             // No need to perform a hit-test since we only need to unset :hover and :active states.
             if (!shouldGesturesTriggerActive() && allTouchReleased)
@@ -4833,9 +4847,19 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
             // The target should be the original target for this touch, so get it from the hashmap. As it's a release or cancel
             // we also remove it from the map.
             touchTarget = m_originatingTouchPointTargets.take(touchPointTargetKey);
-        } else
+
+#if PLATFORM(WPE)
+            HitTestResult result = hitTestResultAtPoint(pagePoint, hitType | HitTestRequest::Type::AllowChildFrameContent);
+            pointerTarget = result.targetElement();
+            pointerCancelled = (pointerTarget != touchTarget);
+#endif
+        } else {
             // No hittest is performed on move or stationary, since the target is not allowed to change anyway.
             touchTarget = m_originatingTouchPointTargets.get(touchPointTargetKey);
+
+            HitTestResult result = hitTestResultAtPoint(pagePoint, hitType | HitTestRequest::Type::AllowChildFrameContent);
+            pointerTarget = result.targetElement();
+        }
 
         if (!is<Node>(touchTarget))
             continue;
@@ -4845,6 +4869,25 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         RefPtr targetFrame = document.frame();
         if (!targetFrame)
             continue;
+
+#if PLATFORM(WPE)
+        // FIXME: WPE currently does not send touch stationary events, so create a naive TouchReleased PlatformTouchPoint
+        // on release if the hit test result changed since the previous TouchPressed or TouchMoved
+        if (pointState == PlatformTouchPoint::TouchReleased && pointerCancelled) {
+            PlatformTouchEvent cancelEvent = event;
+            Vector<PlatformTouchPoint> cancelEventPoints = event.touchPoints();
+            cancelEventPoints.at(index) = PlatformTouchPoint(
+                point.id(), PlatformTouchPoint::State::TouchCancelled, point.screenPos(), point.pos());
+            cancelEvent.setTouchPoints(cancelEventPoints);
+            document.page()->pointerCaptureController().dispatchEventForTouchAtIndex(
+                *touchTarget, cancelEvent, index, !index, *document.windowProxy(), { 0, 0 });
+        }
+
+        // FIXME: Pass the touch delta for pointermove events by remembering the position per pointerID similar to
+        // Apple's m_touchLastGlobalPositionAndDeltaMap
+        document.page()->pointerCaptureController().dispatchEventForTouchAtIndex(
+            *pointerTarget, event, index, !index, *document.windowProxy(), { 0, 0 });
+#endif
 
         if (&m_frame != targetFrame) {
             // pagePoint should always be relative to the target elements containing frame.

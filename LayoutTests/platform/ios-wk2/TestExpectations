@@ -14,6 +14,7 @@ compositing/layer-creation/clipping-scope [ Pass ]
 contact-picker/contacts-select-after-dismissing-picker.html [ Pass ]
 contact-picker/contacts-select-while-presenting-picker.html [ Pass ]
 contact-picker/contacts-select.html [ Pass ]
+css3/scroll-snap/ios [ Pass ]
 fast/attachment/cocoa [ Pass ]
 fast/device-orientation [ Pass ]
 http/tests/app-privacy-report/ [ Pass ]
@@ -49,9 +50,6 @@ fast/repaint/placeholder-after-caps-lock-hidden.html [ Pass ]
 
 fast/visual-viewport/rubberbanding-viewport-rects.html [ Pass ]
 fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Pass ]
-
-model-element/model-element-contents-layer-updates-with-clipping.html [ Pass ]
-model-element/model-element-contents-layer-updates.html [ Pass ]
 
 # Pending SDK changes, re-skip these tests that are un-skipped above.
 fast/viewport/ios/viewport-fit-contain.html [ Skip ]
@@ -95,7 +93,7 @@ http/tests/paymentrequest/ApplePayModifier-recurringPaymentRequest.https.html [ 
 http/tests/paymentrequest/ApplePayModifier-total.https.html [ Skip ]
 http/tests/paymentrequest/ApplePayPaymentCompleteDetails-orderDetails.https.html [ Skip ]
 http/tests/paymentrequest/paymentmethodchange-couponCode.https.html [ Skip ]
-http/tests/paymentrequest/paymentrequest-applePayLaterMode.https.html [ Skip ]
+http/tests/paymentrequest/paymentrequest-applePayLaterAvailability.https.html [ Skip ]
 http/tests/paymentrequest/paymentrequest-couponCode.https.html [ Skip ]
 http/tests/paymentrequest/paymentrequest-shippingContactEditingMode.https.html [ Skip ]
 http/tests/paymentrequest/paymentrequest-supportsCouponCode.https.html [ Skip ]
@@ -966,6 +964,9 @@ editing/selection/select-out-of-floated-non-editable-11.html [ Skip ]
 editing/selection/select-out-of-floated-non-editable-12.html [ Skip ]
 css3/scroll-snap/scroll-snap-click-scrollbar-gutter.html [ Skip ]
 css3/scroll-snap/scroll-snap-wheel-event.html [ Skip ]
+css3/scroll-snap/scroll-snap-discrete-wheel-event-in-mainframe.html [ Skip ]
+css3/scroll-snap/scroll-snap-discrete-wheel-events-with-layout.html [ Skip ]
+css3/scroll-snap/resnap-after-layout.html [ Skip ]
 
 webkit.org/b/192088 media/no-fullscreen-when-hidden.html [ Failure Pass ]
 
@@ -1138,7 +1139,6 @@ compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-add.html [ ImageOnlyFailure ]
 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html [ ImageOnlyFailure ]
 css3/filters/backdrop/backdrop-filter-with-clip-path.html [ ImageOnlyFailure ]
-webkit.org/b/159275 fast/shrink-wrap/rect-shrink-wrap.html [ Pass ImageOnlyFailure  ]
 svg/animations/animate-linear-discrete-additive-b.svg [ ImageOnlyFailure ]
 svg/animations/animate-linear-discrete-additive-c.svg [ ImageOnlyFailure ]
 svg/animations/animate-linear-discrete-additive.svg [ ImageOnlyFailure ]
@@ -2009,8 +2009,6 @@ webkit.org/b/247632 imported/w3c/web-platform-tests/fetch/metadata/generated/win
 
 webkit.org/b/227998 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-network-error.sub.html [ Pass Failure ]
 
-webkit.org/b/227762 imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/document-with-fragment-valid.html [ Pass Failure ]
-
 webkit.org/b/231959 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-video.html [ Failure ]
 webkit.org/b/231959 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html [ Failure ]
 
@@ -2338,8 +2336,6 @@ webkit.org/b/245595 imported/blink/svg/canvas/canvas-draw-pattern-size.html [ Im
 
 webkit.org/b/245600 fast/attachment/attachment-wrapping-action.html [ ImageOnlyFailure ]
 
-webkit.org/b/245613 scrollingcoordinator/ios/fixed-in-frame-layer-reconcile-layer-position.html [ Pass Failure ]
-
 webkit.org/b/245686 fast/text/system-font-fallback.html [ ImageOnlyFailure ]
 
 webkit.org/b/245710 media/video-played-reset.html [ Pass Failure ]
@@ -2395,6 +2391,16 @@ webkit.org/b/243494 [ Debug ] compositing/layer-creation/scale-rotation-animatio
 # Early hints require network callbacks that are only present in macOS 12 / iOS 15 or greater.
 http/wpt/loading/early-hints [ Pass ]
 
+# Test timing out on iOS since its import.
+imported/w3c/web-platform-tests/dom/events/no-focus-events-at-clicking-editable-content-in-link.html [ Skip ]
+
 webkit.org/b/253533 imported/w3c/web-platform-tests/fetch/api/basic/status.h2.any.html [ Pass ]
 webkit.org/b/253533 imported/w3c/web-platform-tests/fetch/api/basic/status.h2.any.worker.html [ Pass ]
 webkit.org/b/253533 imported/w3c/web-platform-tests/xhr/status.h2.window.html [ Pass ]
+
+# Date-time inputs on iOS work differently.
+fast/forms/date/date-validity-badinput.html [ Skip ]
+fast/forms/datetimelocal/datetimelocal-validity-badinput.html [ Skip ]
+fast/forms/time/time-validity-badinput.html [ Skip ]
+
+webkit.org/b/256613 imported/w3c/web-platform-tests/screen-orientation/fullscreen-interactions.html [ DumpJSConsoleLogInStdErr ]

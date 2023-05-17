@@ -22,6 +22,7 @@
 #include "RenderCombineText.h"
 
 #include "RenderBlock.h"
+#include "RenderStyleInlines.h"
 #include "StyleInheritedData.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>

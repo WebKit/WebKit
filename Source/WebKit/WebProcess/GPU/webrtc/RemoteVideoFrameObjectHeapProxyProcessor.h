@@ -72,7 +72,7 @@ private:
 
     // Messages
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(const SharedMemory::Handle&);
+    void setSharedVideoFrameMemory(SharedMemory::Handle&&);
     void newVideoFrameBuffer(RemoteVideoFrameIdentifier, std::optional<SharedVideoFrame::Buffer>&&);
     void newConvertedVideoFrameBuffer(std::optional<SharedVideoFrame::Buffer>&&);
 

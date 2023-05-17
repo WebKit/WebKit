@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO)
 
 #include "ActiveDOMObject.h"
+#include "AudioSession.h"
 #include "AudioTrackClient.h"
 #include "AutoplayEvent.h"
 #include "CaptionUserPreferences.h"
@@ -205,7 +206,6 @@ public:
     MediaPlayer::VideoGravity videoFullscreenGravity() const { return m_videoFullscreenGravity; }
 #endif
 
-    void scheduleCheckPlaybackTargetCompatability();
     void checkPlaybackTargetCompatibility();
     void scheduleResolvePendingPlayPromises();
     void scheduleRejectPendingPlayPromises(Ref<DOMException>&&);
@@ -619,7 +619,8 @@ public:
     WEBCORE_EXPORT bool mediaPlayerRenderingCanBeAccelerated() final;
 
 #if USE(AUDIO_SESSION)
-    WEBCORE_EXPORT AudioSessionCategory categoryAtMostRecentPlayback() const { return m_categoryAtMostRecentPlayback; }
+    AudioSessionCategory categoryAtMostRecentPlayback() const { return m_categoryAtMostRecentPlayback; }
+    AudioSessionMode modeAtMostRecentPlayback() const { return m_modeAtMostRecentPlayback; }
 #endif
 
     void updateMediaPlayer(IntSize, bool);
@@ -836,8 +837,8 @@ private:
     void addPlayedRange(const MediaTime& start, const MediaTime& end);
     
     void scheduleTimeupdateEvent(bool periodicEvent);
-    virtual void scheduleResizeEvent() { }
-    virtual void scheduleResizeEventIfSizeChanged() { }
+    virtual void scheduleResizeEvent(const FloatSize&) { }
+    virtual void scheduleResizeEventIfSizeChanged(const FloatSize&) { }
 
     void selectMediaResource();
     void loadResource(const URL&, ContentType&, const String& keySystem);
@@ -1036,9 +1037,9 @@ private:
     Timer m_scanTimer;
     Timer m_playbackControlsManagerBehaviorRestrictionsTimer;
     Timer m_seekToPlaybackPositionEndedTimer;
+    Timer m_checkPlaybackTargetCompatibilityTimer;
     TaskCancellationGroup m_configureTextTracksTaskCancellationGroup;
     TaskCancellationGroup m_updateTextTracksTaskCancellationGroup;
-    TaskCancellationGroup m_checkPlaybackTargetCompatibilityTaskCancellationGroup;
     TaskCancellationGroup m_updateMediaStateTaskCancellationGroup;
     TaskCancellationGroup m_mediaEngineUpdatedTaskCancellationGroup;
     TaskCancellationGroup m_updatePlayStateTaskCancellationGroup;
@@ -1209,6 +1210,7 @@ private:
     AutoplayEventPlaybackState m_autoplayEventPlaybackState { AutoplayEventPlaybackState::None };
 
     String m_subtitleTrackLanguage;
+    std::optional<String> m_languageOfPrimaryAudioTrack;
     MediaTime m_lastTextTrackUpdateTime { -1, 1 };
 
     std::optional<CaptionUserPreferences::CaptionDisplayMode> m_captionDisplayMode;
@@ -1275,7 +1277,6 @@ private:
     MediaProducerMediaStateFlags m_mediaState;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    MonotonicTime m_currentPlaybackTargetIsWirelessEventFiredTime;
     bool m_hasPlaybackTargetAvailabilityListeners { false };
     bool m_failedToPlayToWirelessTarget { false };
     bool m_lastTargetAvailabilityEventState { false };
@@ -1295,6 +1296,7 @@ private:
 
 #if USE(AUDIO_SESSION)
     AudioSessionCategory m_categoryAtMostRecentPlayback;
+    AudioSessionMode m_modeAtMostRecentPlayback;
 #endif
     bool m_wasInterruptedForInvisibleAutoplay { false };
 

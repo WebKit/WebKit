@@ -37,6 +37,7 @@ namespace WebCore {
 class ElementInternals;
 class FormListedElement;
 class FormAssociatedElement;
+class HTMLFormControlElement;
 class HTMLFormElement;
 class VisibleSelection;
 
@@ -148,7 +149,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<Ref<ElementInternals>> attachInternals();
 
     void queuePopoverToggleEventTask(PopoverVisibilityState oldState, PopoverVisibilityState newState);
-    ExceptionOr<void> showPopover();
+    ExceptionOr<void> showPopover(const HTMLFormControlElement* = nullptr);
     ExceptionOr<void> hidePopover();
     ExceptionOr<void> hidePopoverInternal(FocusPreviousElement, FireEvents);
     ExceptionOr<void> togglePopover(std::optional<bool> force);
@@ -192,13 +193,6 @@ protected:
     void childrenChanged(const ChildChange&) override;
     void updateEffectiveDirectionalityOfDirAuto();
 
-    void checkAndPossiblyClosePopoverStack()
-    {
-        if (!document().settings().popoverAttributeEnabled() || !document().hasTopLayerElement())
-            return;
-        checkAndPossiblyClosePopoverStackInternal();
-    }
-
     using EventHandlerNameMap = HashMap<AtomStringImpl*, AtomString>;
     static const AtomString& eventNameForEventHandlerAttribute(const QualifiedName& attributeName, const EventHandlerNameMap&);
 
@@ -208,7 +202,7 @@ private:
     void mapLanguageAttributeToLocale(const AtomString&, MutableStyleProperties&);
 
     void dirAttributeChanged(const AtomString&);
-    void updateEffectiveDirectionality(TextDirection);
+    void updateEffectiveDirectionality(std::optional<TextDirection>);
     void adjustDirectionalityIfNeededAfterChildAttributeChanged(Element* child);
     void adjustDirectionalityIfNeededAfterChildrenChanged(Element* beforeChange, ChildChange::Type);
 
@@ -222,7 +216,6 @@ private:
     enum class UseCSSPXAsUnitType : bool { No, Yes };
     enum class IsMultiLength : bool { No, Yes };
     void addHTMLLengthToStyle(MutableStyleProperties&, CSSPropertyID, StringView value, AllowPercentage, UseCSSPXAsUnitType, IsMultiLength, AllowZeroValue = AllowZeroValue::Yes);
-    void checkAndPossiblyClosePopoverStackInternal();
 };
 
 inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document& document, ConstructionType type = CreateHTMLElement)

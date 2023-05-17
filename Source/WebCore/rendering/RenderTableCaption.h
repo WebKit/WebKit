@@ -33,23 +33,15 @@ public:
 
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
-    LayoutUnit containingBlockLogicalWidthForContent() const override;
-    
 private:
     bool isTableCaption() const override { return true; }
 
     void insertedIntoTree(IsInternalMove) override;
     void willBeRemovedFromTree(IsInternalMove) override;
+    LayoutUnit containingBlockLogicalWidthForContent() const final;
 
     RenderTable* table() const;
 };
-
-inline LayoutUnit RenderTableCaption::containingBlockLogicalWidthForContent() const
-{
-    if (auto* containingBlock = this->containingBlock())
-        return containingBlock->logicalWidth();
-    return { };
-}
 
 } // namespace WebCore
 

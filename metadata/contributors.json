@@ -831,7 +831,8 @@
       "name" : "Anne van Kesteren",
       "nicks" : [
          "annevk"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -1828,7 +1829,14 @@
       "nicks" : [
          "djg"
       ],
-      "status" : "committer"
+      "status" : "reviewer"
+   },
+   {
+      "emails" : [
+         "dtr_bugzilla@apple.com"
+      ],
+      "github" : "drobson1005",
+      "name" : "Dan Robson"
    },
    {
       "emails" : [
@@ -3359,6 +3367,13 @@
       "nicks" : [
          "rosca"
       ]
+   },
+   {
+      "emails" : [
+         "iagho@apple.com"
+      ],
+      "github" : "asiagho",
+      "name" : "Isi Agho"
    },
    {
       "emails" : [
@@ -5239,11 +5254,11 @@
    },
    {
       "emails" : [
-         "mcatanzaro@gnome.org",
          "mcatanzaro@redhat.com",
+         "mcatanzaro@gnome.org",
          "mcatanzaro@igalia.com"
       ],
-      "expertise" : "The WebKitGTK Port, Epiphany, Soup HTTP Backend",
+      "expertise" : "WebKitGTK, Epiphany",
       "github" : "mcatanzaro",
       "name" : "Michael Catanzaro",
       "nicks" : [
@@ -7287,7 +7302,8 @@
       "name" : "Vitaly Dyachkov",
       "nicks" : [
          "obyknovenius"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [

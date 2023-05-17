@@ -21,6 +21,7 @@
 #include "config.h"
 #include "FontCustomPlatformData.h"
 
+#include "CSSFontFaceSrcValue.h"
 #include "FontCreationContext.h"
 #include "FontDescription.h"
 #include "FontMemoryResource.h"
@@ -104,7 +105,14 @@ bool FontCustomPlatformData::supportsFormat(const String& format)
 #if USE(WOFF2)
         || equalLettersIgnoringASCIICase(format, "woff2"_s)
 #endif
-        || equalLettersIgnoringASCIICase(format, "woff"_s);
+        || equalLettersIgnoringASCIICase(format, "woff"_s)
+        || equalLettersIgnoringASCIICase(format, "svg"_s);
+}
+
+bool FontCustomPlatformData::supportsTechnology(const FontTechnology&)
+{
+    // FIXME: define supported technologies for this platform (webkit.org/b/256310).
+    return true;
 }
 
 }

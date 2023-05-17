@@ -30,6 +30,8 @@ class FEOffset : public FilterEffect {
 public:
     WEBCORE_EXPORT static Ref<FEOffset> create(float dx, float dy);
 
+    bool operator==(const FEOffset&) const;
+
     float dx() const { return m_dx; }
     bool setDx(float);
 
@@ -41,7 +43,9 @@ public:
 private:
     FEOffset(float dx, float dy);
 
-    FloatRect calculateImageRect(const Filter&, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
+    bool operator==(const FilterEffect& other) const override { return areEqual<FEOffset>(*this, other); }
+
+    FloatRect calculateImageRect(const Filter&, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
 
     bool resultIsAlphaImage(const FilterImageVector& inputs) const override;
 

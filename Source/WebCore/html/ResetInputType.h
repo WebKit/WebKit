@@ -35,14 +35,18 @@
 namespace WebCore {
 
 class ResetInputType final : public BaseButtonInputType {
-    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
+    static Ref<ResetInputType> create(HTMLInputElement& element)
+    {
+        return adoptRef(*new ResetInputType(element));
+    }
+
+private:
     explicit ResetInputType(HTMLInputElement& element)
         : BaseButtonInputType(Type::Reset, element)
     {
     }
 
-private:
     const AtomString& formControlType() const final;
     void handleDOMActivateEvent(Event&) final;
     String defaultValue() const final;

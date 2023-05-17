@@ -28,6 +28,7 @@
 
 #include "InlineFormattingContext.h"
 #include "LayoutBoxGeometry.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 namespace Layout {
@@ -35,27 +36,6 @@ namespace Layout {
 InlineFormattingQuirks::InlineFormattingQuirks(const InlineFormattingContext& inlineFormattingContext)
     : FormattingQuirks(inlineFormattingContext)
 {
-}
-
-bool InlineFormattingQuirks::shouldPreserveTrailingWhitespace(bool isInIntrinsicWidthMode, bool lineHasBidiContent, bool lineHasOverflow, bool lineEndWithLineBreak) const
-{
-    // Legacy line layout quirk: keep the trailing whitespace around when it is followed by a line break, unless the content overflows the line.
-    // This quirk however should not be applied when running intrinsic width computation.
-    // FIXME: webkit.org/b/233261
-    if (isInIntrinsicWidthMode || !layoutState().isInlineFormattingContextIntegration())
-        return false;
-    if (lineHasBidiContent)
-        return false;
-    if (lineHasOverflow)
-        return false;
-
-    auto isTextAlignRight = [&] {
-        auto textAlign = formattingContext().root().style().textAlign();
-        return textAlign == TextAlignMode::Right
-            || textAlign == TextAlignMode::WebKitRight
-            || textAlign == TextAlignMode::End;
-    };
-    return lineEndWithLineBreak && !isTextAlignRight();
 }
 
 bool InlineFormattingQuirks::trailingNonBreakingSpaceNeedsAdjustment(bool isInIntrinsicWidthMode, bool lineHasOverflow) const

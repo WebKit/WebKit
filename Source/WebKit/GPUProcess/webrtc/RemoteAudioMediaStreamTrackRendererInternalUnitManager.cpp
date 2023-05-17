@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -262,7 +262,7 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::captureUnitIs
 void RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::captureUnitHasStopped()
 {
     // Capture unit has stopped and audio will no longer be rendered through it so start the local unit.
-    if (m_isPlaying && !CoreAudioSharedUnit::unit().isSuspended())
+    if (m_isPlaying && !WebCore::CoreAudioSharedUnit::unit().isSuspended())
         m_localUnit->start();
 }
 

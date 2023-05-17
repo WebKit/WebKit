@@ -25,6 +25,7 @@
 #pragma once
 
 #include "CompositeOperation.h"
+#include "RenderStyle.h"
 #include "WebAnimationTypes.h"
 #include <wtf/Vector.h>
 #include <wtf/HashSet.h>
@@ -34,7 +35,6 @@
 namespace WebCore {
 
 class KeyframeEffect;
-class RenderStyle;
 class StyleProperties;
 class TimingFunction;
 
@@ -87,8 +87,7 @@ public:
     ~KeyframeList();
 
     KeyframeList& operator=(KeyframeList&&) = default;
-    bool operator==(const KeyframeList& o) const;
-    bool operator!=(const KeyframeList& o) const { return !(*this == o); }
+    bool operator==(const KeyframeList&) const;
 
     const AtomString& animationName() const { return m_animationName; }
     

@@ -125,6 +125,13 @@ bool GtkSettingsManager::overlayScrolling() const
     return overlayScrollingSetting ? true : false;
 }
 
+bool GtkSettingsManager::enableAnimations() const
+{
+    gboolean enableAnimationsSetting;
+    g_object_get(m_settings, "gtk-enable-animations", &enableAnimationsSetting, nullptr);
+    return enableAnimationsSetting ? true : false;
+}
+
 void GtkSettingsManager::settingsDidChange()
 {
     GtkSettingsState state;
@@ -173,6 +180,10 @@ void GtkSettingsManager::settingsDidChange()
     if (m_settingsState.overlayScrolling != overlayScrolling)
         m_settingsState.overlayScrolling = state.overlayScrolling = overlayScrolling;
 
+    auto enableAnimations = this->enableAnimations();
+    if (m_settingsState.enableAnimations != enableAnimations)
+        m_settingsState.enableAnimations = state.enableAnimations = enableAnimations;
+
     for (auto& processPool : WebProcessPool::allProcessPools())
         processPool->sendToAllProcesses(Messages::GtkSettingsManagerProxy::SettingsDidChange(state));
 }
@@ -195,6 +206,7 @@ GtkSettingsManager::GtkSettingsManager()
     m_settingsState.cursorBlinkTime = cursorBlinkTime();
     m_settingsState.primaryButtonWarpsSlider = primaryButtonWarpsSlider();
     m_settingsState.overlayScrolling = overlayScrolling();
+    m_settingsState.enableAnimations = enableAnimations();
 
     g_signal_connect_swapped(m_settings, "notify::gtk-theme-name", G_CALLBACK(settingsChangedCallback), this);
     g_signal_connect_swapped(m_settings, "notify::gtk-font-name", G_CALLBACK(settingsChangedCallback), this);
@@ -207,6 +219,7 @@ GtkSettingsManager::GtkSettingsManager()
     g_signal_connect_swapped(m_settings, "notify::gtk-cursor-blink-time", G_CALLBACK(settingsChangedCallback), this);
     g_signal_connect_swapped(m_settings, "notify::gtk-primary-button-warps-slider", G_CALLBACK(settingsChangedCallback), this);
     g_signal_connect_swapped(m_settings, "notify::gtk-overlay-scrolling", G_CALLBACK(settingsChangedCallback), this);
+    g_signal_connect_swapped(m_settings, "notify::gtk-enable-animations", G_CALLBACK(settingsChangedCallback), this);
 }
 
 } // namespace WebKit

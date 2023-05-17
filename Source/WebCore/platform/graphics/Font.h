@@ -61,7 +61,6 @@ namespace WebCore {
 class FontCache;
 class FontDescription;
 class GlyphPage;
-class FragmentedSharedBuffer;
 
 struct GlyphData;
 

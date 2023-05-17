@@ -52,7 +52,7 @@ TEST(WebKitLegacy, RenderedImageFromDOMNode)
     RetainPtr<RenderedImageFromDOMNodeFrameLoadDelegate> frameLoadDelegate = adoptNS([RenderedImageFromDOMNodeFrameLoadDelegate new]);
 
     [webView setFrameLoadDelegate:frameLoadDelegate.get()];
-    [[webView mainFrame] loadHTMLString:@"<p><span id=\"t1\" style=\"vertical-align: bottom;\">Span</span></p><p><span id=\"t2\">Span</span></p>" baseURL:[NSURL URLWithString:@"about:blank"]];
+    [[webView mainFrame] loadHTMLString:@"<p><span id=\"t1\" style=\"vertical-align: bottom;\">std::span</span></p><p><span id=\"t2\">std::span</span></p>" baseURL:[NSURL URLWithString:@"about:blank"]];
 
     Util::run(&didFinishLoad);
 

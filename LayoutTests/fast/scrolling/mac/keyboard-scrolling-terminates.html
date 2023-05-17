@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true EventHandlerDrivenSmoothKeyboardScrollingEnabled=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ScrollAnimatorEnabled=true ] -->
 <html>
 <head>
     <script src="../../../resources/ui-helper.js"></script>
@@ -11,7 +11,9 @@
         {
             if (window.eventSender) {
                 await UIHelper.startMonitoringWheelEvents();
-                eventSender.keyDown("downArrow");
+                await UIHelper.rawKeyDown("downArrow");
+                await UIHelper.renderingUpdate();
+                await UIHelper.rawKeyUp("downArrow");
 
                 await UIHelper.waitForScrollCompletion();
                 finishJSTest();

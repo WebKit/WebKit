@@ -38,6 +38,7 @@
 #include "TextGranularity.h"
 #include "Timer.h"
 #include <memory>
+#include <utility>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -220,7 +221,6 @@ public:
 
 #if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS)
     using TouchArray = Vector<RefPtr<Touch>>;
-    using EventTargetTouchMap = HashMap<EventTarget*, TouchArray*>;
     using EventTargetTouchArrayMap = HashMap<Ref<EventTarget>, std::unique_ptr<TouchArray>>;
 #endif
 
@@ -229,7 +229,9 @@ public:
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    bool dispatchTouchEvent(const PlatformTouchEvent&, const AtomString&, const EventTargetTouchMap&, float, float);
+    enum class InTouchEventHandling : bool { No, Yes };
+    enum class InMotion : bool { No, Yes };
+    void updateTouchLastGlobalPositionAndDelta(PointerID, const IntPoint&, InTouchEventHandling, InMotion);
     bool dispatchTouchEvent(const PlatformTouchEvent&, const AtomString&, const EventTargetTouchArrayMap&, float, float);
     bool dispatchSimulatedTouchEvent(IntPoint location);
     LocalFrame* touchEventTargetSubframe() const { return m_touchEventTargetSubframe.get(); }
@@ -655,6 +657,7 @@ private:
 
     TouchArray m_touches;
     RefPtr<LocalFrame> m_touchEventTargetSubframe;
+    HashMap<PointerID, std::pair<IntPoint, IntPoint>, WTF::IntHash<PointerID>, WTF::UnsignedWithZeroKeyHashTraits<PointerID>> m_touchLastGlobalPositionAndDeltaMap;
 #endif
 
 #if PLATFORM(COCOA)

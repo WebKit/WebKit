@@ -28,6 +28,7 @@
 #include "ReadableStreamSink.h"
 
 #include "DOMException.h"
+#include "JSDOMGlobalObject.h"
 #include "ReadableStream.h"
 #include "SharedBuffer.h"
 #include <JavaScriptCore/Uint8Array.h>
@@ -50,7 +51,7 @@ void ReadableStreamToSharedBufferSink::enqueue(const Ref<JSC::Uint8Array>& buffe
         return;
 
     if (m_callback) {
-        Span<const uint8_t> chunk { buffer->data(), buffer->byteLength() };
+        std::span<const uint8_t> chunk { buffer->data(), buffer->byteLength() };
         m_callback(&chunk);
     }
 }

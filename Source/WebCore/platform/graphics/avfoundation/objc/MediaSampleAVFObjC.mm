@@ -27,6 +27,7 @@
 #import "MediaSampleAVFObjC.h"
 
 #import "CVUtilities.h"
+#import "ISOTrackEncryptionBox.h"
 #import "PixelBuffer.h"
 #import "PixelBufferConformerCV.h"
 #import "ProcessIdentity.h"
@@ -51,32 +52,32 @@ namespace WebCore {
 MediaSampleAVFObjC::MediaSampleAVFObjC(RetainPtr<CMSampleBufferRef>&& sample)
     : m_sample(WTFMove(sample))
 {
-    initializeTimes();
+    commonInit();
 }
 
 MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample)
     : m_sample(sample)
 {
-    initializeTimes();
+    commonInit();
 }
 
 MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample, AtomString trackID)
     : m_sample(sample)
     , m_id(trackID)
 {
-    initializeTimes();
+    commonInit();
 }
 
 MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample, uint64_t trackID)
     : m_sample(sample)
     , m_id(AtomString::number(trackID))
 {
-    initializeTimes();
+    commonInit();
 }
 
 MediaSampleAVFObjC::~MediaSampleAVFObjC() = default;
 
-void MediaSampleAVFObjC::initializeTimes()
+void MediaSampleAVFObjC::commonInit()
 {
     auto presentationTime = PAL::CMSampleBufferGetOutputPresentationTimeStamp(m_sample.get());
     if (CMTIME_IS_INVALID(presentationTime))
@@ -90,6 +91,31 @@ void MediaSampleAVFObjC::initializeTimes()
     if (CMTIME_IS_INVALID(duration))
         duration = PAL::CMSampleBufferGetDuration(m_sample.get());
     m_duration = PAL::toMediaTime(duration);
+
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    auto getKeyIDs = [](CMFormatDescriptionRef description) -> Vector<Ref<SharedBuffer>> {
+        if (!description)
+            return { };
+        auto trackEncryptionData = static_cast<CFDataRef>(PAL::CMFormatDescriptionGetExtension(description, CFSTR("CommonEncryptionTrackEncryptionBox")));
+        if (!trackEncryptionData)
+            return { };
+
+        // AVStreamDataParser will attach the 'tenc' box to each sample, not including the leading
+        // size and boxType data. Extract the 'tenc' box and use that box to derive the sample's
+        // keyID.
+        auto length = CFDataGetLength(trackEncryptionData);
+        auto ptr = (void*)(CFDataGetBytePtr(trackEncryptionData));
+        auto destructorFunction = createSharedTask<void(void*)>([data = WTFMove(trackEncryptionData)] (void*) { UNUSED_PARAM(data); });
+        auto trackEncryptionDataBuffer = ArrayBuffer::create(JSC::ArrayBufferContents(ptr, length, std::nullopt, WTFMove(destructorFunction)));
+
+        ISOTrackEncryptionBox trackEncryptionBox;
+        auto trackEncryptionView = JSC::DataView::create(WTFMove(trackEncryptionDataBuffer), 0, length);
+        if (!trackEncryptionBox.parseWithoutTypeAndSize(trackEncryptionView))
+            return { };
+        return { SharedBuffer::create(trackEncryptionBox.defaultKID()) };
+    };
+    m_keyIDs = getKeyIDs(PAL::CMSampleBufferGetFormatDescription(m_sample.get()));
+#endif
 }
 
 MediaTime MediaSampleAVFObjC::presentationTime() const
@@ -109,7 +135,14 @@ MediaTime MediaSampleAVFObjC::duration() const
 
 size_t MediaSampleAVFObjC::sizeInBytes() const
 {
-    return PAL::CMSampleBufferGetTotalSampleSize(m_sample.get());
+    // Per sample overhead was calculated with `leaks` on a process
+    // with MallocStackLogging enabled. This value should be occasionally
+    // re-validated and updated when OS changes occurr.
+    constexpr size_t EstimatedCMSampleBufferOverhead = 1234;
+
+    return PAL::CMSampleBufferGetTotalSampleSize(m_sample.get())
+        + sizeof(MediaSampleAVFObjC)
+        + EstimatedCMSampleBufferOverhead;
 }
 
 PlatformSample MediaSampleAVFObjC::platformSample() const
@@ -172,6 +205,11 @@ MediaSample::SampleFlags MediaSampleAVFObjC::flags() const
 
     if (isCMSampleBufferNonDisplaying(m_sample.get()))
         returnValue |= MediaSample::IsNonDisplaying;
+
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    if (!m_keyIDs.isEmpty())
+        returnValue |= MediaSample::IsProtected;
+#endif
 
     return SampleFlags(returnValue);
 }

@@ -106,7 +106,7 @@ std::optional<WebCompiledContentRuleListData> WebCompiledContentRuleListData::de
     
     if (!*handle)
         return std::nullopt;
-    auto data = SharedMemory::map(**handle, SharedMemory::Protection::ReadOnly);
+    auto data = SharedMemory::map(WTFMove(**handle), SharedMemory::Protection::ReadOnly);
     if (!data)
         return std::nullopt;
     if (data->size() < ruleListDataSize(*topURLFiltersBytecodeOffset, *topURLFiltersBytecodeSize))

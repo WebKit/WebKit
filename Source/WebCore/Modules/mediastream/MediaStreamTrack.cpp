@@ -40,8 +40,10 @@
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "MediaConstraints.h"
+#include "MediaDevices.h"
 #include "MediaStream.h"
 #include "MediaStreamPrivate.h"
+#include "NavigatorMediaDevices.h"
 #include "NetworkingContext.h"
 #include "NotImplemented.h"
 #include "OverconstrainedError.h"
@@ -93,6 +95,13 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
 
     ASSERT(isMainThread());
     ASSERT(is<Document>(context));
+
+    auto& settings = m_private->settings();
+    if (settings.supportsGroupId()) {
+        auto* window = downcast<Document>(context).domWindow();
+        if (auto* mediaDevices = window ? NavigatorMediaDevices::mediaDevices(window->navigator()) : nullptr)
+            m_groupId = mediaDevices->hashedGroupId(settings.groupId());
+    }
 
     m_isInterrupted = m_private->source().interrupted();
     allCaptureTracks().add(this);
@@ -258,8 +267,8 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
         result.width = settings.width();
     if (settings.supportsHeight())
         result.height = settings.height();
-    if (settings.supportsAspectRatio() && settings.aspectRatio()) // FIXME: Why the check for zero here?
-        result.aspectRatio = settings.aspectRatio();
+    if (settings.supportsAspectRatio() && result.height && result.width)
+        result.aspectRatio = *result.width / static_cast<double>(*result.height);
     if (settings.supportsFrameRate())
         result.frameRate = settings.frameRate();
     if (settings.supportsFacingMode())
@@ -275,20 +284,18 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
     if (settings.supportsDeviceId())
         result.deviceId = settings.deviceId();
     if (settings.supportsGroupId())
-        result.groupId = settings.groupId();
+        result.groupId = m_groupId;
     if (settings.supportsDisplaySurface() && settings.displaySurface() != DisplaySurfaceType::Invalid)
         result.displaySurface = RealtimeMediaSourceSettings::displaySurface(settings.displaySurface());
     if (settings.supportsZoom())
         result.zoom = settings.zoom();
-
-    // FIXME: shouldn't this include logicalSurface?
 
     return result;
 }
 
 MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities() const
 {
-    auto result = toMediaTrackCapabilities(m_private->capabilities());
+    auto result = toMediaTrackCapabilities(m_private->capabilities(), m_groupId);
 
     auto settings = m_private->settings();
     if (settings.supportsDisplaySurface() && settings.displaySurface() != DisplaySurfaceType::Invalid)
@@ -505,7 +512,7 @@ void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    if (m_isCaptureTrack && m_private->source().captureDidFail())
+    if (m_isCaptureTrack && m_private->source().captureDidFail() && m_readyState != State::Ended)
         scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "A MediaStreamTrack ended due to a capture failure"_s);
 
     // http://w3c.github.io/mediacapture-main/#life-cycle

@@ -132,7 +132,6 @@ public:
     WebExtensionContextParameters parameters() const;
 
     bool operator==(const WebExtensionContext& other) const { return (this == &other); }
-    bool operator!=(const WebExtensionContext& other) const { return !(this == &other); }
 
     NSError *createError(Error, NSString *customLocalizedDescription = nil, NSError *underlyingError = nil);
 

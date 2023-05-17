@@ -86,11 +86,6 @@ public:
         return m_epoch == other.m_epoch;
     }
     
-    bool operator!=(const Epoch& other) const
-    {
-        return !(*this == other);
-    }
-    
     bool operator<(const Epoch& other) const
     {
         return m_epoch < other.m_epoch;

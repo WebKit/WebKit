@@ -28,12 +28,11 @@
 
 namespace WebCore {
 
-auto GPUDeviceLostInfo::reason() const -> Reason
+GPUDeviceLostReason GPUDeviceLostInfo::reason() const
 {
-    auto result = m_backing->reason();
-    if (!result)
-        return std::nullopt;
-    switch (*result) {
+    switch (m_backing->reason()) {
+    case PAL::WebGPU::DeviceLostReason::Unknown:
+        return GPUDeviceLostReason::Unknown;
     case PAL::WebGPU::DeviceLostReason::Destroyed:
         return GPUDeviceLostReason::Destroyed;
     }

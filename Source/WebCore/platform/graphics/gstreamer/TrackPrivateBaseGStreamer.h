@@ -27,6 +27,7 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
+#include "AbortableTaskQueue.h"
 #include "GStreamerCommon.h"
 #include "MainThreadNotifier.h"
 #include <gst/gst.h>
@@ -73,6 +74,11 @@ protected:
     void notifyTrackOfTagsChanged();
     void notifyTrackOfStreamChanged();
 
+    GstObject* objectForLogging() const;
+
+    virtual void tagsChanged(const GRefPtr<GstTagList>&) { }
+    virtual void capsChanged(const String&, const GRefPtr<GstCaps>&) { }
+
     enum MainThreadNotification {
         TagsChanged = 1 << 1,
         NewSample = 1 << 2,
@@ -89,6 +95,7 @@ protected:
     GRefPtr<GstStream> m_stream;
     unsigned long m_eventProbe { 0 };
     GRefPtr<GstCaps> m_initialCaps;
+    AbortableTaskQueue m_taskQueue;
 
 private:
     bool getLanguageCode(GstTagList* tags, AtomString& value);

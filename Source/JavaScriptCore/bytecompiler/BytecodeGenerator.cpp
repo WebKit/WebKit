@@ -345,7 +345,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
     , m_isBuiltinFunction(false)
-    , m_usesNonStrictEval(false)
+    , m_usesSloppyEval(false)
     , m_inTailPosition(false)
     , m_needsToUpdateArrowFunctionContext(programNode->usesArrowFunction() || programNode->usesEval())
     , m_ecmaMode(ECMAMode::fromBool(programNode->isStrictMode()))
@@ -390,7 +390,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
     , m_isBuiltinFunction(codeBlock->isBuiltinFunction())
-    , m_usesNonStrictEval(functionNode->usesEval() && !functionNode->isStrictMode())
+    , m_usesSloppyEval(functionNode->usesEval() && !functionNode->isStrictMode())
     // FIXME: We should be able to have tail call elimination with the profiler
     // enabled. This is currently not possible because the profiler expects
     // op_will_call / op_did_call pairs before and after a call, which are not
@@ -407,7 +407,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     pushPrivateAccessNames(parentPrivateNameEnvironment);
 
     SymbolTable* functionSymbolTable = SymbolTable::create(m_vm);
-    functionSymbolTable->setUsesNonStrictEval(m_usesNonStrictEval);
+    functionSymbolTable->setUsesSloppyEval(m_usesSloppyEval);
     int symbolTableConstantIndex = 0;
 
     m_cachedParentTDZ = parentScopeTDZVariables;
@@ -894,7 +894,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
     , m_isBuiltinFunction(false)
-    , m_usesNonStrictEval(evalNode->usesEval() && !evalNode->isStrictMode())
+    , m_usesSloppyEval(evalNode->usesEval() && !evalNode->isStrictMode())
     , m_inTailPosition(false)
     , m_needsToUpdateArrowFunctionContext(evalNode->usesArrowFunction() || evalNode->usesEval())
     , m_ecmaMode(ECMAMode::fromBool(evalNode->isStrictMode()))
@@ -957,7 +957,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
     , m_isBuiltinFunction(false)
-    , m_usesNonStrictEval(false)
+    , m_usesSloppyEval(false)
     , m_inTailPosition(false)
     , m_needsToUpdateArrowFunctionContext(moduleProgramNode->usesArrowFunction() || moduleProgramNode->usesEval())
     , m_ecmaMode(ECMAMode::strict())
@@ -965,7 +965,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
     ASSERT_UNUSED(parentScopeTDZVariables, !parentScopeTDZVariables);
 
     SymbolTable* moduleEnvironmentSymbolTable = SymbolTable::create(m_vm);
-    moduleEnvironmentSymbolTable->setUsesNonStrictEval(m_usesNonStrictEval);
+    moduleEnvironmentSymbolTable->setUsesSloppyEval(m_usesSloppyEval);
     moduleEnvironmentSymbolTable->setScopeType(SymbolTable::ScopeType::LexicalScope);
 
     bool shouldCaptureAllOfTheThings = shouldEmitDebugHooks() || usesEval();
@@ -2383,7 +2383,7 @@ Variable BytecodeGenerator::variable(const Identifier& property, ThisResolutionT
             continue;
         bool resultIsCallee = false;
         if (symbolTable->scopeType() == SymbolTable::ScopeType::FunctionNameScope) {
-            if (m_usesNonStrictEval) {
+            if (m_usesSloppyEval) {
                 // We don't know if an eval has introduced a "var" named the same thing as the function name scope variable name.
                 // We resort to dynamic lookup to answer this question.
                 Variable result = Variable(property);
@@ -2469,7 +2469,7 @@ ResolveType BytecodeGenerator::resolveType()
     for (unsigned i = m_lexicalScopeStack.size(); i--; ) {
         if (m_lexicalScopeStack[i].m_isWithScope)
             return Dynamic;
-        if (m_usesNonStrictEval && m_lexicalScopeStack[i].m_symbolTable->scopeType() == SymbolTable::ScopeType::FunctionNameScope) {
+        if (m_usesSloppyEval && m_lexicalScopeStack[i].m_symbolTable->scopeType() == SymbolTable::ScopeType::FunctionNameScope) {
             // We never want to assign to a FunctionNameScope. Returning Dynamic here achieves this goal.
             // If we aren't in non-strict eval mode, then NodesCodeGen needs to take care not to emit
             // a put_to_scope with the destination being the function name scope variable.
@@ -2477,7 +2477,7 @@ ResolveType BytecodeGenerator::resolveType()
         }
     }
 
-    if (m_usesNonStrictEval)
+    if (m_usesSloppyEval)
         return GlobalPropertyWithVarInjectionChecks;
     return GlobalProperty;
 }
@@ -2786,6 +2786,13 @@ RegisterID* BytecodeGenerator::emitGetPrototypeOf(RegisterID* dst, RegisterID* v
 
 RegisterID* BytecodeGenerator::emitPutByVal(RegisterID* base, RegisterID* property, RegisterID* value)
 {
+    for (size_t i = m_forInContextStack.size(); i--; ) {
+        ForInContext& context = m_forInContextStack[i].get();
+        if (context.local() != property)
+            continue;
+        return emitEnumeratorPutByVal(context, base, property, value);
+    }
+
     OpPutByVal::emit(this, base, property, value, ecmaMode());
     return value;
 }
@@ -2802,6 +2809,20 @@ RegisterID* BytecodeGenerator::emitPutByValWithECMAMode(RegisterID* base, Regist
     return value;
 }
 
+RegisterID* BytecodeGenerator::emitEnumeratorPutByVal(ForInContext& context, RegisterID* base, RegisterID* property, RegisterID* value)
+{
+#if USE(JSVALUE64)
+    // FIXME: We should have a better bytecode rewriter that can resize chunks.
+    OpEnumeratorPutByVal::emit<OpcodeSize::Wide32>(this, base, context.mode(), property, context.propertyOffset(), context.enumerator(), value, ecmaMode());
+    context.addPutInst(m_lastInstruction.offset(), property->index());
+    return value;
+#else
+    UNUSED_PARAM(context);
+    OpPutByVal::emit(this, base, property, value, ecmaMode());
+    return value;
+#endif
+}
+
 RegisterID* BytecodeGenerator::emitGetPrivateName(RegisterID* dst, RegisterID* base, RegisterID* property)
 {
     OpGetPrivateName::emit(this, dst, base, property);
@@ -2811,6 +2832,12 @@ RegisterID* BytecodeGenerator::emitGetPrivateName(RegisterID* dst, RegisterID* b
 RegisterID* BytecodeGenerator::emitHasPrivateName(RegisterID* dst, RegisterID* base, RegisterID* property)
 {
     OpHasPrivateName::emit(this, dst, base, property);
+    return dst;
+}
+
+RegisterID* BytecodeGenerator::emitHasStructureWithFlags(RegisterID* dst, RegisterID* src, unsigned flags)
+{
+    OpHasStructureWithFlags::emit(this, dst, src, flags);
     return dst;
 }
 
@@ -5413,6 +5440,27 @@ void ForInContext::finalize(BytecodeGenerator& generator, UnlinkedCodeBlockGener
 
     for (const auto& instTuple : m_inInsts)
         rewriteOp<OpEnumeratorInByVal, OpInByVal>(generator, instTuple);
+
+    for (const auto& instTuple : m_putInsts) {
+        unsigned instIndex = std::get<0>(instTuple);
+        int propertyRegIndex = std::get<1>(instTuple);
+        auto instruction = generator.m_writer.ref(instIndex);
+        auto end = instIndex + instruction->size();
+        ASSERT(instruction->isWide32());
+
+        generator.m_writer.seek(instIndex);
+
+        auto bytecode = instruction->as<OpEnumeratorPutByVal>();
+
+        generator.disablePeepholeOptimization();
+
+        static_assert(sizeof(OpPutByVal) <= sizeof(OpEnumeratorPutByVal));
+        OpPutByVal::emit(&generator, bytecode.m_base, VirtualRegister(propertyRegIndex), bytecode.m_value, bytecode.m_ecmaMode);
+
+        // 4. nop out the remaining bytes
+        while (generator.m_writer.position() < end)
+            OpNop::emit<OpcodeSize::Narrow>(&generator);
+    }
 
     for (const auto& hasOwnPropertyTuple : m_hasOwnPropertyJumpInsts) {
         static_assert(sizeof(OpJmp) <= sizeof(OpJneqPtr));

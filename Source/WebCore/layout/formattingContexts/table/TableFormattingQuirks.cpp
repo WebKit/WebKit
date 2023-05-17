@@ -30,6 +30,7 @@
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutElementBox.h"
 #include "LayoutState.h"
+#include "RenderStyleInlines.h"
 #include "TableFormattingContext.h"
 #include "TableGrid.h"
 
@@ -52,7 +53,7 @@ bool TableFormattingQuirks::shouldIgnoreChildContentVerticalMargin(const Element
         return false;
     if (!cellBox.hasInFlowChild())
         return false;
-    return cellBox.firstInFlowChild()->style().hasMarginBeforeQuirk() || cellBox.lastInFlowChild()->style().hasMarginAfterQuirk();
+    return cellBox.firstInFlowChild()->style().marginBefore().hasQuirk() || cellBox.lastInFlowChild()->style().marginAfter().hasQuirk();
 }
 
 LayoutUnit TableFormattingQuirks::heightValueOfNearestContainingBlockWithFixedHeight(const Box& layoutBox) const

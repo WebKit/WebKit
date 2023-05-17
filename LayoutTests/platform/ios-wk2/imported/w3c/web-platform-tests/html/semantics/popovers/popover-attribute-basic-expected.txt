@@ -34,31 +34,31 @@ PASS Changing a popover from auto to auto (via attr), and then manual during 'be
 PASS Changing a popover from auto to auto (via attr), and then invalid during 'beforetoggle' works
 PASS Changing a popover from auto to auto (via attr), and then null during 'beforetoggle' works
 PASS Changing a popover from auto to auto (via attr), and then undefined during 'beforetoggle' works
-FAIL Changing a popover from auto to manual (via attr), and then auto during 'beforetoggle' works assert_equals: Content attribute expected "auto" but got "manual"
+FAIL Changing a popover from auto to manual (via attr), and then auto during 'beforetoggle' works assert_false: A popover=auto should light-dismiss expected false got true
 PASS Changing a popover from auto to manual (via attr), and then manual during 'beforetoggle' works
-FAIL Changing a popover from auto to manual (via attr), and then invalid during 'beforetoggle' works assert_equals: Content attribute expected "invalid" but got "manual"
-FAIL Changing a popover from auto to manual (via attr), and then null during 'beforetoggle' works assert_equals: Content attribute expected "null" but got "manual"
-FAIL Changing a popover from auto to manual (via attr), and then undefined during 'beforetoggle' works assert_throws_dom: We should have removed the popover attribute, so showPopover should throw function "() => popover.showPopover()" did not throw
-FAIL Changing a popover from auto to invalid (via attr), and then auto during 'beforetoggle' works assert_equals: Content attribute expected "auto" but got "invalid"
-FAIL Changing a popover from auto to invalid (via attr), and then manual during 'beforetoggle' works assert_equals: Content attribute expected "manual" but got "invalid"
+PASS Changing a popover from auto to manual (via attr), and then invalid during 'beforetoggle' works
+PASS Changing a popover from auto to manual (via attr), and then null during 'beforetoggle' works
+PASS Changing a popover from auto to manual (via attr), and then undefined during 'beforetoggle' works
+FAIL Changing a popover from auto to invalid (via attr), and then auto during 'beforetoggle' works assert_false: A popover=auto should light-dismiss expected false got true
+PASS Changing a popover from auto to invalid (via attr), and then manual during 'beforetoggle' works
 PASS Changing a popover from auto to invalid (via attr), and then invalid during 'beforetoggle' works
-FAIL Changing a popover from auto to invalid (via attr), and then null during 'beforetoggle' works assert_equals: Content attribute expected "null" but got "invalid"
-FAIL Changing a popover from auto to invalid (via attr), and then undefined during 'beforetoggle' works assert_throws_dom: We should have removed the popover attribute, so showPopover should throw function "() => popover.showPopover()" did not throw
-FAIL Changing a popover from auto to null (via attr), and then auto during 'beforetoggle' works assert_equals: Content attribute expected "auto" but got "null"
-FAIL Changing a popover from auto to null (via attr), and then manual during 'beforetoggle' works assert_equals: Content attribute expected "manual" but got "null"
-FAIL Changing a popover from auto to null (via attr), and then invalid during 'beforetoggle' works assert_equals: Content attribute expected "invalid" but got "null"
+PASS Changing a popover from auto to invalid (via attr), and then null during 'beforetoggle' works
+PASS Changing a popover from auto to invalid (via attr), and then undefined during 'beforetoggle' works
+FAIL Changing a popover from auto to null (via attr), and then auto during 'beforetoggle' works assert_false: A popover=auto should light-dismiss expected false got true
+PASS Changing a popover from auto to null (via attr), and then manual during 'beforetoggle' works
+PASS Changing a popover from auto to null (via attr), and then invalid during 'beforetoggle' works
 PASS Changing a popover from auto to null (via attr), and then null during 'beforetoggle' works
-FAIL Changing a popover from auto to null (via attr), and then undefined during 'beforetoggle' works assert_throws_dom: We should have removed the popover attribute, so showPopover should throw function "() => popover.showPopover()" did not throw
-FAIL Changing a popover from auto to undefined (via attr), and then auto during 'beforetoggle' works assert_equals: Content attribute expected (string) "auto" but got (object) null
-FAIL Changing a popover from auto to undefined (via attr), and then manual during 'beforetoggle' works assert_equals: Content attribute expected (string) "manual" but got (object) null
-FAIL Changing a popover from auto to undefined (via attr), and then invalid during 'beforetoggle' works assert_equals: Content attribute expected (string) "invalid" but got (object) null
-FAIL Changing a popover from auto to undefined (via attr), and then null during 'beforetoggle' works assert_equals: Content attribute expected (string) "null" but got (object) null
+PASS Changing a popover from auto to null (via attr), and then undefined during 'beforetoggle' works
+FAIL Changing a popover from auto to undefined (via attr), and then auto during 'beforetoggle' works assert_false: A popover=auto should light-dismiss expected false got true
+PASS Changing a popover from auto to undefined (via attr), and then manual during 'beforetoggle' works
+PASS Changing a popover from auto to undefined (via attr), and then invalid during 'beforetoggle' works
+PASS Changing a popover from auto to undefined (via attr), and then null during 'beforetoggle' works
 PASS Changing a popover from auto to undefined (via attr), and then undefined during 'beforetoggle' works
 FAIL Changing a popover from manual to auto (via attr), and then auto during 'beforetoggle' works assert_false: A popover=auto should light-dismiss expected false got true
-FAIL Changing a popover from manual to auto (via attr), and then manual during 'beforetoggle' works assert_equals: Content attribute expected "manual" but got "auto"
-FAIL Changing a popover from manual to auto (via attr), and then invalid during 'beforetoggle' works assert_equals: Content attribute expected "invalid" but got "auto"
-FAIL Changing a popover from manual to auto (via attr), and then null during 'beforetoggle' works assert_equals: Content attribute expected "null" but got "auto"
-FAIL Changing a popover from manual to auto (via attr), and then undefined during 'beforetoggle' works assert_throws_dom: We should have removed the popover attribute, so showPopover should throw function "() => popover.showPopover()" did not throw
+PASS Changing a popover from manual to auto (via attr), and then manual during 'beforetoggle' works
+PASS Changing a popover from manual to auto (via attr), and then invalid during 'beforetoggle' works
+PASS Changing a popover from manual to auto (via attr), and then null during 'beforetoggle' works
+PASS Changing a popover from manual to auto (via attr), and then undefined during 'beforetoggle' works
 PASS Changing a popover from manual to manual (via attr), and then auto during 'beforetoggle' works
 PASS Changing a popover from manual to manual (via attr), and then manual during 'beforetoggle' works
 PASS Changing a popover from manual to manual (via attr), and then invalid during 'beforetoggle' works
@@ -74,41 +74,41 @@ PASS Changing a popover from manual to null (via attr), and then manual during '
 PASS Changing a popover from manual to null (via attr), and then invalid during 'beforetoggle' works
 PASS Changing a popover from manual to null (via attr), and then null during 'beforetoggle' works
 PASS Changing a popover from manual to null (via attr), and then undefined during 'beforetoggle' works
-FAIL Changing a popover from manual to undefined (via attr), and then auto during 'beforetoggle' works assert_equals: Content attribute expected (string) "auto" but got (object) null
-FAIL Changing a popover from manual to undefined (via attr), and then manual during 'beforetoggle' works assert_equals: Content attribute expected (string) "manual" but got (object) null
-FAIL Changing a popover from manual to undefined (via attr), and then invalid during 'beforetoggle' works assert_equals: Content attribute expected (string) "invalid" but got (object) null
-FAIL Changing a popover from manual to undefined (via attr), and then null during 'beforetoggle' works assert_equals: Content attribute expected (string) "null" but got (object) null
+FAIL Changing a popover from manual to undefined (via attr), and then auto during 'beforetoggle' works assert_false: A popover=auto should light-dismiss expected false got true
+PASS Changing a popover from manual to undefined (via attr), and then manual during 'beforetoggle' works
+PASS Changing a popover from manual to undefined (via attr), and then invalid during 'beforetoggle' works
+PASS Changing a popover from manual to undefined (via attr), and then null during 'beforetoggle' works
 PASS Changing a popover from manual to undefined (via attr), and then undefined during 'beforetoggle' works
 PASS Changing a popover from auto to auto (via idl), and then auto during 'beforetoggle' works
 PASS Changing a popover from auto to auto (via idl), and then manual during 'beforetoggle' works
 PASS Changing a popover from auto to auto (via idl), and then invalid during 'beforetoggle' works
 PASS Changing a popover from auto to auto (via idl), and then null during 'beforetoggle' works
 PASS Changing a popover from auto to auto (via idl), and then undefined during 'beforetoggle' works
-FAIL Changing a popover from auto to manual (via idl), and then auto during 'beforetoggle' works assert_equals: Content attribute expected "auto" but got "manual"
+FAIL Changing a popover from auto to manual (via idl), and then auto during 'beforetoggle' works assert_false: A popover=auto should light-dismiss expected false got true
 PASS Changing a popover from auto to manual (via idl), and then manual during 'beforetoggle' works
-FAIL Changing a popover from auto to manual (via idl), and then invalid during 'beforetoggle' works assert_equals: Content attribute expected "invalid" but got "manual"
-FAIL Changing a popover from auto to manual (via idl), and then null during 'beforetoggle' works assert_throws_dom: We should have removed the popover attribute, so showPopover should throw function "() => popover.showPopover()" did not throw
-FAIL Changing a popover from auto to manual (via idl), and then undefined during 'beforetoggle' works assert_throws_dom: We should have removed the popover attribute, so showPopover should throw function "() => popover.showPopover()" did not throw
-FAIL Changing a popover from auto to invalid (via idl), and then auto during 'beforetoggle' works assert_equals: Content attribute expected "auto" but got "invalid"
-FAIL Changing a popover from auto to invalid (via idl), and then manual during 'beforetoggle' works assert_equals: Content attribute expected "manual" but got "invalid"
+PASS Changing a popover from auto to manual (via idl), and then invalid during 'beforetoggle' works
+PASS Changing a popover from auto to manual (via idl), and then null during 'beforetoggle' works
+PASS Changing a popover from auto to manual (via idl), and then undefined during 'beforetoggle' works
+FAIL Changing a popover from auto to invalid (via idl), and then auto during 'beforetoggle' works assert_false: A popover=auto should light-dismiss expected false got true
+PASS Changing a popover from auto to invalid (via idl), and then manual during 'beforetoggle' works
 PASS Changing a popover from auto to invalid (via idl), and then invalid during 'beforetoggle' works
-FAIL Changing a popover from auto to invalid (via idl), and then null during 'beforetoggle' works assert_throws_dom: We should have removed the popover attribute, so showPopover should throw function "() => popover.showPopover()" did not throw
-FAIL Changing a popover from auto to invalid (via idl), and then undefined during 'beforetoggle' works assert_throws_dom: We should have removed the popover attribute, so showPopover should throw function "() => popover.showPopover()" did not throw
-FAIL Changing a popover from auto to null (via idl), and then auto during 'beforetoggle' works assert_equals: Content attribute expected (string) "auto" but got (object) null
-FAIL Changing a popover from auto to null (via idl), and then manual during 'beforetoggle' works assert_equals: Content attribute expected (string) "manual" but got (object) null
-FAIL Changing a popover from auto to null (via idl), and then invalid during 'beforetoggle' works assert_equals: Content attribute expected (string) "invalid" but got (object) null
+PASS Changing a popover from auto to invalid (via idl), and then null during 'beforetoggle' works
+PASS Changing a popover from auto to invalid (via idl), and then undefined during 'beforetoggle' works
+FAIL Changing a popover from auto to null (via idl), and then auto during 'beforetoggle' works assert_false: A popover=auto should light-dismiss expected false got true
+PASS Changing a popover from auto to null (via idl), and then manual during 'beforetoggle' works
+PASS Changing a popover from auto to null (via idl), and then invalid during 'beforetoggle' works
 PASS Changing a popover from auto to null (via idl), and then null during 'beforetoggle' works
 PASS Changing a popover from auto to null (via idl), and then undefined during 'beforetoggle' works
-FAIL Changing a popover from auto to undefined (via idl), and then auto during 'beforetoggle' works assert_equals: Content attribute expected (string) "auto" but got (object) null
-FAIL Changing a popover from auto to undefined (via idl), and then manual during 'beforetoggle' works assert_equals: Content attribute expected (string) "manual" but got (object) null
-FAIL Changing a popover from auto to undefined (via idl), and then invalid during 'beforetoggle' works assert_equals: Content attribute expected (string) "invalid" but got (object) null
+FAIL Changing a popover from auto to undefined (via idl), and then auto during 'beforetoggle' works assert_false: A popover=auto should light-dismiss expected false got true
+PASS Changing a popover from auto to undefined (via idl), and then manual during 'beforetoggle' works
+PASS Changing a popover from auto to undefined (via idl), and then invalid during 'beforetoggle' works
 PASS Changing a popover from auto to undefined (via idl), and then null during 'beforetoggle' works
 PASS Changing a popover from auto to undefined (via idl), and then undefined during 'beforetoggle' works
 FAIL Changing a popover from manual to auto (via idl), and then auto during 'beforetoggle' works assert_false: A popover=auto should light-dismiss expected false got true
-FAIL Changing a popover from manual to auto (via idl), and then manual during 'beforetoggle' works assert_equals: Content attribute expected "manual" but got "auto"
-FAIL Changing a popover from manual to auto (via idl), and then invalid during 'beforetoggle' works assert_equals: Content attribute expected "invalid" but got "auto"
-FAIL Changing a popover from manual to auto (via idl), and then null during 'beforetoggle' works assert_throws_dom: We should have removed the popover attribute, so showPopover should throw function "() => popover.showPopover()" did not throw
-FAIL Changing a popover from manual to auto (via idl), and then undefined during 'beforetoggle' works assert_throws_dom: We should have removed the popover attribute, so showPopover should throw function "() => popover.showPopover()" did not throw
+PASS Changing a popover from manual to auto (via idl), and then manual during 'beforetoggle' works
+PASS Changing a popover from manual to auto (via idl), and then invalid during 'beforetoggle' works
+PASS Changing a popover from manual to auto (via idl), and then null during 'beforetoggle' works
+PASS Changing a popover from manual to auto (via idl), and then undefined during 'beforetoggle' works
 PASS Changing a popover from manual to manual (via idl), and then auto during 'beforetoggle' works
 PASS Changing a popover from manual to manual (via idl), and then manual during 'beforetoggle' works
 PASS Changing a popover from manual to manual (via idl), and then invalid during 'beforetoggle' works
@@ -119,14 +119,14 @@ PASS Changing a popover from manual to invalid (via idl), and then manual during
 PASS Changing a popover from manual to invalid (via idl), and then invalid during 'beforetoggle' works
 PASS Changing a popover from manual to invalid (via idl), and then null during 'beforetoggle' works
 PASS Changing a popover from manual to invalid (via idl), and then undefined during 'beforetoggle' works
-FAIL Changing a popover from manual to null (via idl), and then auto during 'beforetoggle' works assert_equals: Content attribute expected (string) "auto" but got (object) null
-FAIL Changing a popover from manual to null (via idl), and then manual during 'beforetoggle' works assert_equals: Content attribute expected (string) "manual" but got (object) null
-FAIL Changing a popover from manual to null (via idl), and then invalid during 'beforetoggle' works assert_equals: Content attribute expected (string) "invalid" but got (object) null
+FAIL Changing a popover from manual to null (via idl), and then auto during 'beforetoggle' works assert_false: A popover=auto should light-dismiss expected false got true
+PASS Changing a popover from manual to null (via idl), and then manual during 'beforetoggle' works
+PASS Changing a popover from manual to null (via idl), and then invalid during 'beforetoggle' works
 PASS Changing a popover from manual to null (via idl), and then null during 'beforetoggle' works
 PASS Changing a popover from manual to null (via idl), and then undefined during 'beforetoggle' works
-FAIL Changing a popover from manual to undefined (via idl), and then auto during 'beforetoggle' works assert_equals: Content attribute expected (string) "auto" but got (object) null
-FAIL Changing a popover from manual to undefined (via idl), and then manual during 'beforetoggle' works assert_equals: Content attribute expected (string) "manual" but got (object) null
-FAIL Changing a popover from manual to undefined (via idl), and then invalid during 'beforetoggle' works assert_equals: Content attribute expected (string) "invalid" but got (object) null
+FAIL Changing a popover from manual to undefined (via idl), and then auto during 'beforetoggle' works assert_false: A popover=auto should light-dismiss expected false got true
+PASS Changing a popover from manual to undefined (via idl), and then manual during 'beforetoggle' works
+PASS Changing a popover from manual to undefined (via idl), and then invalid during 'beforetoggle' works
 PASS Changing a popover from manual to undefined (via idl), and then null during 'beforetoggle' works
 PASS Changing a popover from manual to undefined (via idl), and then undefined during 'beforetoggle' works
 

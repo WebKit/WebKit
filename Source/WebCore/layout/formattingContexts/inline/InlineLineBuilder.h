@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "BlockLayoutState.h"
 #include "FloatingContext.h"
 #include "FormattingConstraints.h"
 #include "InlineContentBreaker.h"
 #include "InlineFormattingState.h"
+#include "InlineLayoutState.h"
 #include "InlineLine.h"
 #include "InlineLineTypes.h"
 
@@ -41,18 +41,19 @@ struct LineCandidate;
 
 class LineBuilder {
 public:
-    LineBuilder(InlineFormattingContext&, BlockLayoutState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, std::optional<IntrinsicWidthMode> = std::nullopt);
-    LineBuilder(const InlineFormattingContext&, const InlineItems&, std::optional<IntrinsicWidthMode>);
+    LineBuilder(const InlineFormattingContext&, InlineLayoutState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, std::optional<IntrinsicWidthMode> = std::nullopt);
 
     struct LineInput {
         InlineItemRange needsLayoutRange;
         InlineRect initialLogicalRect;
     };
-    using FloatList = Vector<const InlineItem*>;
+    using PlacedFloatList = FloatingState::FloatList;
+    using SuspendedFloatList = Vector<const Box*>;
     struct LineContent {
         InlineItemRange committedRange;
         std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
-        FloatList suspendedFloats;
+        PlacedFloatList placedFloats;
+        SuspendedFloatList suspendedFloats;
         bool hasIntrusiveFloat { false };
         InlineLayoutUnit lineInitialLogicalLeftIncludingIntrusiveFloats { 0.f };
         InlineLayoutPoint lineLogicalTopLeft;
@@ -83,7 +84,8 @@ public:
         InlineItemRange committedRange;
         std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
         InlineLayoutUnit contentLogicalWidth { 0 };
-        FloatList placedFloats;
+        PlacedFloatList placedFloats;
+        SuspendedFloatList suspendedFloats;
     };
     IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, const std::optional<PreviousLine>&);
 
@@ -111,9 +113,8 @@ private:
         size_t partialTrailingContentLength { 0 };
         std::optional<InlineLayoutUnit> overflowLogicalWidth { };
     };
-    LayoutUnit adjustGeometryForInitialLetterIfNeeded(const Box& floatBox);
     enum MayOverConstrainLine : bool { No, Yes };
-    bool tryPlacingFloatBox(const InlineItem&, MayOverConstrainLine);
+    bool tryPlacingFloatBox(const Box&, MayOverConstrainLine);
     Result handleInlineContent(InlineContentBreaker&, const InlineItemRange& needsLayoutRange, const LineCandidate&);
     std::tuple<InlineRect, bool> lineBoxForCandidateInlineContent(const LineCandidate&) const;
     size_t rebuildLineWithInlineContent(const InlineItemRange& needsLayoutRange, const InlineItem& lastInlineItemToAdd);
@@ -122,6 +123,11 @@ private:
     void initialize(const InlineRect& initialLineLogicalRect, const UsedConstraints&, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>&);
     CommittedContent placeInlineContent(const InlineItemRange&);
     InlineItemRange close(const InlineItemRange& needsLayoutRange, const CommittedContent&);
+    struct InitialLetterOffsets {
+        LayoutUnit capHeightOffset;
+        LayoutUnit sunkenBelowFirstLineOffset;
+    };
+    std::optional<InitialLetterOffsets> adjustLineRectForInitialLetterIfApplicable(const Box& floatBox);
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;
     bool isLastLineWithInlineContent(const InlineItemRange& lineRange, size_t lastInlineItemIndex, bool hasPartialTrailingContent) const;
@@ -138,10 +144,10 @@ private:
     bool isFirstFormattedLine() const { return !m_previousLine.has_value(); }
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
-    InlineFormattingState* formattingState() { return m_inlineFormattingState; }
-    const BlockLayoutState* blockLayoutState() const { return m_blockLayoutState; }
-    FloatingState* floatingState() { return m_blockLayoutState ? &m_blockLayoutState->floatingState() : nullptr; }
-    const FloatingState* floatingState() const { return const_cast<LineBuilder&>(*this).floatingState(); }
+    InlineLayoutState& inlineLayoutState() const { return m_inlineLayoutState; }
+    BlockLayoutState& blockLayoutState() const { return inlineLayoutState().parentBlockLayoutState(); }
+    FloatingState& floatingState() { return blockLayoutState().floatingState(); }
+    const FloatingState& floatingState() const { return const_cast<LineBuilder&>(*this).floatingState(); }
     const ElementBox& root() const;
     const LayoutState& layoutState() const;
     const RenderStyle& rootStyle() const;
@@ -150,8 +156,7 @@ private:
     std::optional<PreviousLine> m_previousLine { };
     std::optional<IntrinsicWidthMode> m_intrinsicWidthMode;
     const InlineFormattingContext& m_inlineFormattingContext;
-    InlineFormattingState* m_inlineFormattingState { nullptr };
-    BlockLayoutState* m_blockLayoutState { nullptr };
+    InlineLayoutState& m_inlineLayoutState;
     std::optional<HorizontalConstraints> m_rootHorizontalConstraints;
 
     Line m_line;
@@ -160,8 +165,8 @@ private:
     InlineLayoutUnit m_lineMarginStart { 0.f };
     InlineLayoutUnit m_initialIntrusiveFloatsWidth { 0.f };
     const InlineItems& m_inlineItems;
-    FloatList m_placedFloats;
-    FloatList m_suspendedFloats;
+    PlacedFloatList m_placedFloats;
+    SuspendedFloatList m_suspendedFloats;
     std::optional<InlineTextItem> m_partialLeadingTextItem;
     std::optional<InlineLayoutUnit> m_overflowingLogicalWidth;
     Vector<const InlineItem*> m_wrapOpportunityList;

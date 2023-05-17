@@ -38,6 +38,7 @@
 #else
 static Class interactionRegionLayerClass() { return [CALayer class]; }
 static void configureLayerForInteractionRegion(CALayer *, NSString *) { }
+static void configureLayerAsGuard(CALayer *, NSString *) { }
 #endif
 
 namespace WebKit {
@@ -64,11 +65,6 @@ static NSString* interactionRegionGroupNameForRegion(const WebCore::InteractionR
     return makeString("WKInteractionRegion-"_s, interactionRegion.elementIdentifier.toUInt64());
 }
 
-static bool isInteractionLayer(CALayer *layer)
-{
-    return interactionRegionTypeForLayer(layer) == InteractionRegion::Type::Interaction;
-}
-
 static bool isAnyInteractionRegionLayer(CALayer *layer)
 {
     return !!interactionRegionTypeForLayer(layer);
@@ -76,13 +72,19 @@ static bool isAnyInteractionRegionLayer(CALayer *layer)
 
 static void setInteractionRegion(CALayer *layer, NSString *groupName)
 {
-    [layer setValue:@(static_cast<bool>(InteractionRegion::Type::Interaction)) forKey:interactionRegionTypeKey];
+    [layer setValue:@(static_cast<uint8_t>(InteractionRegion::Type::Interaction)) forKey:interactionRegionTypeKey];
     [layer setValue:groupName forKey:interactionRegionGroupNameKey];
 }
 
 static void setInteractionRegionOcclusion(CALayer *layer)
 {
-    [layer setValue:@(static_cast<bool>(InteractionRegion::Type::Occlusion)) forKey:interactionRegionTypeKey];
+    [layer setValue:@(static_cast<uint8_t>(InteractionRegion::Type::Occlusion)) forKey:interactionRegionTypeKey];
+}
+
+static void setInteractionRegionGuard(CALayer *layer, NSString *groupName)
+{
+    [layer setValue:@(static_cast<uint8_t>(InteractionRegion::Type::Guard)) forKey:interactionRegionTypeKey];
+    [layer setValue:groupName forKey:interactionRegionGroupNameKey];
 }
 
 static CACornerMask convertToCACornerMask(OptionSet<InteractionRegion::CornerMask> mask)
@@ -117,97 +119,91 @@ void updateLayersForInteractionRegions(CALayer *layer, RemoteLayerTreeHost& host
 {
     ASSERT(properties.changedProperties & LayerChange::EventRegionChanged);
 
-    HashMap<IntRect, CALayer *> existingOcclusionLayers;
-    HashMap<IntRect, CALayer *> existingInteractionLayers;
+    HashMap<std::pair<IntRect, InteractionRegion::Type>, CALayer *>existingLayers;
     for (CALayer *sublayer in layer.sublayers) {
-        if (!isAnyInteractionRegionLayer(sublayer))
-            break;
-
-        auto enclosingFrame = enclosingIntRect(sublayer.frame);
-        auto result = isInteractionLayer(sublayer) ? existingInteractionLayers.add(enclosingFrame, sublayer) : existingOcclusionLayers.add(enclosingFrame, sublayer);
-        ASSERT_UNUSED(result, result.isNewEntry);
+        if (auto type = interactionRegionTypeForLayer(sublayer)) {
+            auto result = existingLayers.add(std::make_pair(enclosingIntRect(sublayer.frame), *type), sublayer);
+            ASSERT_UNUSED(result, result.isNewEntry);
+        }
     }
 
     bool applyBackgroundColorForDebugging = [[NSUserDefaults standardUserDefaults] boolForKey:@"WKInteractionRegionDebugFill"];
 
     NSUInteger insertionPoint = 0;
     for (const WebCore::InteractionRegion& region : properties.eventRegion.interactionRegions()) {
-        IntRect rect = region.rectInLayerCoordinates;
         bool foundInPosition = false;
-        if (region.type == InteractionRegion::Type::Occlusion) {
-            RetainPtr<CALayer> occlusionLayer;
+        RetainPtr<CALayer> regionLayer;
+        IntRect rect = region.rectInLayerCoordinates;
+        auto key = std::make_pair(rect, region.type);
+        auto interactionRegionGroupName = interactionRegionGroupNameForRegion(region);
 
-            auto layerIterator = existingOcclusionLayers.find(rect);
-            if (layerIterator != existingOcclusionLayers.end()) {
-                occlusionLayer = layerIterator->value;
-                existingOcclusionLayers.remove(layerIterator);
-                if ([layer.sublayers objectAtIndex:insertionPoint] == occlusionLayer)
-                    foundInPosition = true;
-                else
-                    [occlusionLayer removeFromSuperlayer];
-            } else {
-                occlusionLayer = adoptNS([[CALayer alloc] init]);
-                [occlusionLayer setFrame:rect];
-                [occlusionLayer setHitTestsAsOpaque:YES];
-                setInteractionRegionOcclusion(occlusionLayer.get());
-                
-                if (applyBackgroundColorForDebugging) {
-                    [occlusionLayer setBorderColor:cachedCGColor({ WebCore::SRGBA<float>(1, 0, 0, .2) }).get()];
-                    [occlusionLayer setBorderWidth:6];
-                    [occlusionLayer setName:@"Occlusion"];
-                }
-            }
-            
-            if (!foundInPosition)
-                [layer insertSublayer:occlusionLayer.get() atIndex:insertionPoint];
-
-            insertionPoint++;
+        auto layerIterator = existingLayers.find(key);
+        if (layerIterator != existingLayers.end()) {
+            regionLayer = layerIterator->value;
+            existingLayers.remove(key);
+            if ([layer.sublayers objectAtIndex:insertionPoint] == regionLayer)
+                foundInPosition = true;
+            else
+                [regionLayer removeFromSuperlayer];
         } else {
-            
-            RetainPtr<CALayer> interactionLayer;
+            if (region.type == InteractionRegion::Type::Interaction)
+                regionLayer = adoptNS([[interactionRegionLayerClass() alloc] init]);
+            else
+                regionLayer = adoptNS([[CALayer alloc] init]);
 
-            auto interactionRegionGroupName = interactionRegionGroupNameForRegion(region);
+            [regionLayer setFrame:rect];
+            [regionLayer setHitTestsAsOpaque:YES];
 
-            auto layerIterator = existingInteractionLayers.find(rect);
-            if (layerIterator != existingInteractionLayers.end()) {
-                interactionLayer = layerIterator->value;
-                existingInteractionLayers.remove(layerIterator);
-                if ([layer.sublayers objectAtIndex:insertionPoint] == interactionLayer)
-                    foundInPosition = true;
-                else
-                    [interactionLayer removeFromSuperlayer];
-            } else {
-                interactionLayer = adoptNS([[interactionRegionLayerClass() alloc] init]);
-                [interactionLayer setFrame:rect];
-                [interactionLayer setHitTestsAsOpaque:YES];
-
-                setInteractionRegion(interactionLayer.get(), interactionRegionGroupName);
-                configureLayerForInteractionRegion(interactionLayer.get(), interactionRegionGroupName);
-
+            switch (region.type) {
+            case InteractionRegion::Type::Occlusion:
+                setInteractionRegionOcclusion(regionLayer.get());
                 if (applyBackgroundColorForDebugging) {
-                    [interactionLayer setBackgroundColor:cachedCGColor({ WebCore::SRGBA<float>(0, 1, 0, .2) }).get()];
-                    [interactionLayer setName:@"Interaction"];
+                    [regionLayer setBorderColor:cachedCGColor({ WebCore::SRGBA<float>(1, 0, 0, .2) }).get()];
+                    [regionLayer setBorderWidth:6];
+                    [regionLayer setName:@"Occlusion"];
                 }
+                break;
+            case InteractionRegion::Type::Guard:
+                setInteractionRegionGuard(regionLayer.get(), interactionRegionGroupName);
+                configureLayerAsGuard(regionLayer.get(), interactionRegionGroupName);
+                if (applyBackgroundColorForDebugging) {
+                    [regionLayer setBorderColor:cachedCGColor({ WebCore::SRGBA<float>(0, 0, 1, .2) }).get()];
+                    [regionLayer setBorderWidth:6];
+                    [regionLayer setName:@"Guard"];
+                }
+                break;
+            case InteractionRegion::Type::Interaction:
+                setInteractionRegion(regionLayer.get(), interactionRegionGroupName);
+                configureLayerForInteractionRegion(regionLayer.get(), interactionRegionGroupName);
+                if (applyBackgroundColorForDebugging) {
+                    [regionLayer setBackgroundColor:cachedCGColor({ WebCore::SRGBA<float>(0, 1, 0, .2) }).get()];
+                    [regionLayer setName:@"Interaction"];
+                }
+                break;
             }
-
-            if (![interactionRegionGroupName isEqualToString:interactionRegionGroupNameForLayer(interactionLayer.get())])
-                configureLayerForInteractionRegion(interactionLayer.get(), interactionRegionGroupName);
-
-            [interactionLayer setCornerRadius:region.borderRadius];
-            if (!region.maskedCorners.isEmpty())
-                [interactionLayer setMaskedCorners:convertToCACornerMask(region.maskedCorners)];
-
-            if (!foundInPosition)
-                [layer insertSublayer:interactionLayer.get() atIndex:insertionPoint];
-
-            insertionPoint++;
+            [layer insertSublayer:regionLayer.get() atIndex:insertionPoint];
         }
+
+        if (!foundInPosition)
+            [layer insertSublayer:regionLayer.get() atIndex:insertionPoint];
+
+        if (![interactionRegionGroupName isEqualToString:interactionRegionGroupNameForLayer(regionLayer.get())]) {
+            if (region.type == InteractionRegion::Type::Guard)
+                configureLayerAsGuard(regionLayer.get(), interactionRegionGroupName);
+            if (region.type == InteractionRegion::Type::Interaction)
+                configureLayerForInteractionRegion(regionLayer.get(), interactionRegionGroupName);
+        }
+
+        if (region.type == InteractionRegion::Type::Interaction) {
+            [regionLayer setCornerRadius:region.borderRadius];
+            if (!region.maskedCorners.isEmpty())
+                [regionLayer setMaskedCorners:convertToCACornerMask(region.maskedCorners)];
+        }
+
+        insertionPoint++;
     }
 
-    for (CALayer *sublayer : existingOcclusionLayers.values())
-        [sublayer removeFromSuperlayer];
-
-    for (CALayer *sublayer : existingInteractionLayers.values())
+    for (CALayer *sublayer : existingLayers.values())
         [sublayer removeFromSuperlayer];
 }
 

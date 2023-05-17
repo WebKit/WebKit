@@ -418,7 +418,6 @@ void StateManagerGL::forceUseProgram(GLuint program)
 
 void StateManagerGL::bindVertexArray(GLuint vao, VertexArrayStateGL *vaoState)
 {
-    ASSERT(vaoState);
     if (mVAO != vao)
     {
         ASSERT(!mFeatures.syncVertexArraysToDefault.enabled);

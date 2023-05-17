@@ -432,7 +432,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
             range:&customDataDetectorsRange];
         if (actionContext && customDataDetectorsRange) {
             detectedItem = { {
-                actionContext,
+                (WKDDActionContext *)actionContext,
                 { }, // FIXME: Seems like an empty rect isn't really OK.
                 makeSimpleRange(*core(customDataDetectorsRange))
             } };
@@ -475,7 +475,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     if (!PAL::isDataDetectorsFrameworkAvailable())
         return nil;
 
-    auto actionContext = adoptNS([PAL::allocDDActionContextInstance() init]);
+    auto actionContext = adoptNS([PAL::allocWKDDActionContextInstance() init]);
 
     if (!actionContext)
         return nil;

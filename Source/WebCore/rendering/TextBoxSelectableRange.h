@@ -33,6 +33,7 @@ struct TextBoxSelectableRange {
     const unsigned length;
     const unsigned additionalLengthAtEnd { 0 };
     const bool isLineBreak { false };
+    // FIXME: Consider holding onto the truncation position instead. See webkit.org/b/164999
     const std::optional<unsigned> truncation { };
 
     unsigned clamp(unsigned offset) const

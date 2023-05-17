@@ -233,7 +233,6 @@ public:
 
     // Comparison.
     bool operator==(const iterator& other) const { return m_iterator == other.m_iterator; }
-    bool operator!=(const iterator& other) const { return m_iterator != other.m_iterator; }
 
     operator const_iterator() const { return m_iterator; }
 
@@ -325,10 +324,6 @@ public:
     bool operator==(const const_iterator& other) const
     {
         return m_position == other.m_position;
-    }
-    bool operator!=(const const_iterator& other) const
-    {
-        return m_position != other.m_position;
     }
 
 private:

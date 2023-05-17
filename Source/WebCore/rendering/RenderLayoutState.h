@@ -43,9 +43,15 @@ class RenderLayoutState {
     WTF_MAKE_NONCOPYABLE(RenderLayoutState); WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    struct LeadingTrim {
+    struct TextBoxTrim {
         bool trimFirstFormattedLine { false };
         WeakPtr<const RenderBlockFlow> trimLastFormattedLineOnTarget;
+    };
+    struct LineClamp {
+        size_t maximumLineCount { 0 };
+        size_t currentLineCount { 0 };
+        std::optional<LayoutUnit> clampedContentLogicalHeight;
+        WeakPtr<const RenderBlockFlow> clampedRenderer;
     };
 
     RenderLayoutState()
@@ -56,9 +62,10 @@ public:
         , m_layoutDeltaXSaturated(false)
         , m_layoutDeltaYSaturated(false)
 #endif
+        , m_blockStartTrimming(Vector<bool>(0))
     {
     }
-    RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<size_t> maximumLineCountForLineClamp, std::optional<size_t> visibleLineCountForLineClamp, std::optional<LeadingTrim>);
+    RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<LineClamp>, std::optional<TextBoxTrim>);
     enum class IsPaginated : bool { No, Yes };
     explicit RenderLayoutState(RenderElement&, IsPaginated = IsPaginated::No);
 
@@ -94,22 +101,25 @@ public:
     bool layoutDeltaMatches(LayoutSize) const;
 #endif
 
-    bool hasLineClamp() const { return m_maximumLineCountForLineClamp.has_value(); }
-    void resetLineClamp();
-    void setMaximumLineCountForLineClamp(size_t maximumLineCount) { m_maximumLineCountForLineClamp = maximumLineCount; }
-    std::optional<size_t> maximumLineCountForLineClamp() { return m_maximumLineCountForLineClamp; }
-    void setVisibleLineCountForLineClamp(size_t visibleLineCount) { m_visibleLineCountForLineClamp = visibleLineCount; }
-    std::optional<size_t> visibleLineCountForLineClamp() const { return m_visibleLineCountForLineClamp; }
+    void setLineClamp(std::optional<LineClamp> lineClamp) { m_lineClamp = lineClamp; }
+    std::optional<LineClamp> lineClamp() const { return m_lineClamp; }
 
-    std::optional<LeadingTrim> leadingTrim() { return m_leadingTrim; }
-    bool hasLeadingTrimStart() const { return m_leadingTrim && m_leadingTrim->trimFirstFormattedLine; }
-    bool hasLeadingTrimEnd(const RenderBlockFlow& candidate) const { return m_leadingTrim && m_leadingTrim->trimLastFormattedLineOnTarget.get() == &candidate; }
+    std::optional<TextBoxTrim> textBoxTrim() { return m_textBoxTrim; }
+    bool hasTextBoxTrimStart() const { return m_textBoxTrim && m_textBoxTrim->trimFirstFormattedLine; }
+    bool hasTextBoxTrimEnd(const RenderBlockFlow& candidate) const { return m_textBoxTrim && m_textBoxTrim->trimLastFormattedLineOnTarget.get() == &candidate; }
 
-    void addLeadingTrimStart();
-    void removeLeadingTrimStart();
+    void addTextBoxTrimStart();
+    void removeTextBoxTrimStart();
 
-    void addLeadingTrimEnd(const RenderBlockFlow& targetInlineFormattingContext);
-    void resetLeadingTrim() { m_leadingTrim = { }; }
+    void addTextBoxTrimEnd(const RenderBlockFlow& targetInlineFormattingContext);
+    void resetTextBoxTrim() { m_textBoxTrim = { }; }
+
+    void pushBlockStartTrimming(bool blockStartTrimming) { m_blockStartTrimming.append(blockStartTrimming); }
+    std::optional<bool> blockStartTrimming() const { return m_blockStartTrimming.isEmpty() ? std::nullopt : std::optional(m_blockStartTrimming.last()); }
+    void popBlockStartTrimming() 
+    {
+        m_blockStartTrimming.removeLast(); 
+    }
 
 private:
     void computeOffsets(const RenderLayoutState& ancestor, RenderBox&, LayoutSize offset);
@@ -129,6 +139,8 @@ private:
     bool m_layoutDeltaXSaturated : 1;
     bool m_layoutDeltaYSaturated : 1;
 #endif
+    Vector<bool> m_blockStartTrimming;
+
     // The current line grid that we're snapping to and the offset of the start of the grid.
     WeakPtr<RenderBlockFlow> m_lineGrid;
 
@@ -151,9 +163,8 @@ private:
     LayoutSize m_pageOffset;
     LayoutSize m_lineGridOffset;
     LayoutSize m_lineGridPaginationOrigin;
-    std::optional<size_t> m_maximumLineCountForLineClamp;
-    std::optional<size_t> m_visibleLineCountForLineClamp;
-    std::optional<LeadingTrim> m_leadingTrim;
+    std::optional<LineClamp> m_lineClamp;
+    std::optional<TextBoxTrim> m_textBoxTrim;
 #if ASSERT_ENABLED
     RenderElement* m_renderer { nullptr };
 #endif
@@ -202,34 +213,28 @@ private:
     bool m_pushed { false };
 };
 
-inline void RenderLayoutState::addLeadingTrimStart()
+inline void RenderLayoutState::addTextBoxTrimStart()
 {
-    if (m_leadingTrim) {
-        m_leadingTrim->trimFirstFormattedLine = true;
+    if (m_textBoxTrim) {
+        m_textBoxTrim->trimFirstFormattedLine = true;
         return;
     }
-    m_leadingTrim = { true, { } };
+    m_textBoxTrim = { true, { } };
 }
 
-inline void RenderLayoutState::removeLeadingTrimStart()
+inline void RenderLayoutState::removeTextBoxTrimStart()
 {
-    ASSERT(m_leadingTrim && m_leadingTrim->trimFirstFormattedLine);
-    m_leadingTrim->trimFirstFormattedLine = false;
+    ASSERT(m_textBoxTrim && m_textBoxTrim->trimFirstFormattedLine);
+    m_textBoxTrim->trimFirstFormattedLine = false;
 }
 
-inline void RenderLayoutState::addLeadingTrimEnd(const RenderBlockFlow& targetInlineFormattingContext)
+inline void RenderLayoutState::addTextBoxTrimEnd(const RenderBlockFlow& targetInlineFormattingContext)
 {
-    if (m_leadingTrim) {
-        m_leadingTrim->trimLastFormattedLineOnTarget = &targetInlineFormattingContext;
+    if (m_textBoxTrim) {
+        m_textBoxTrim->trimLastFormattedLineOnTarget = &targetInlineFormattingContext;
         return;
     }
-    m_leadingTrim = { false, &targetInlineFormattingContext };
-}
-
-inline void RenderLayoutState::resetLineClamp()
-{
-    m_maximumLineCountForLineClamp = { };
-    m_visibleLineCountForLineClamp = { };
+    m_textBoxTrim = { false, &targetInlineFormattingContext };
 }
 
 } // namespace WebCore

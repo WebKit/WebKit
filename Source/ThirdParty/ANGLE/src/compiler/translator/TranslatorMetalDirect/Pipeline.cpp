@@ -83,8 +83,9 @@ bool Pipeline::uses(const TVariable &var) const
                 case TQualifier::EvqFragDepth:
                 case TQualifier::EvqSecondaryFragColorEXT:
                 case TQualifier::EvqSecondaryFragDataEXT:
-                case TQualifier::EvqSampleMask:
                     return true;
+                case TQualifier::EvqSampleMask:
+                    return var.symbolType() == SymbolType::AngleInternal;
                 default:
                     return false;
             }
@@ -102,7 +103,13 @@ bool Pipeline::uses(const TVariable &var) const
             switch (qualifier)
             {
                 case TQualifier::EvqGlobal:
+                case TQualifier::EvqSamplePosition:
                     return true;
+                case TQualifier::EvqSampleMaskIn:
+                case TQualifier::EvqSampleMask:
+                    return var.symbolType() == SymbolType::BuiltIn;
+                case TQualifier::EvqUniform:
+                    return var.name() == "gl_NumSamples";
                 default:
                     return false;
             }
@@ -122,7 +129,10 @@ bool Pipeline::uses(const TVariable &var) const
                 case TQualifier::EvqFragCoord:
                 case TQualifier::EvqPointCoord:
                 case TQualifier::EvqFrontFacing:
+                case TQualifier::EvqSampleID:
                     return true;
+                case TQualifier::EvqSampleMaskIn:
+                    return var.symbolType() == SymbolType::AngleInternal;
                 default:
                     return false;
             }

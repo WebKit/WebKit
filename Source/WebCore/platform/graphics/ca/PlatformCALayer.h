@@ -203,11 +203,9 @@ public:
     virtual void setContents(CFTypeRef) = 0;
     virtual void clearContents();
 
-    // The subclass will override one variant of both setDelegatedContentsFinishedEvent, setDelegatedContents.
+    // The client will override one of setDelegatedContents().
 
-    virtual void setDelegatedContentsFinishedEvent(const PlatformCALayerDelegatedContentsFinishedEvent&);
     virtual void setDelegatedContents(const PlatformCALayerDelegatedContents&);
-    virtual void setDelegatedContentsFinishedEvent(const PlatformCALayerInProcessDelegatedContentsFinishedEvent&);
     virtual void setDelegatedContents(const PlatformCALayerInProcessDelegatedContents&);
 
     virtual void setContentsRect(const FloatRect&) = 0;
@@ -310,7 +308,7 @@ public:
         
     // Functions allows us to share implementation across WebTiledLayer and WebLayer
     static RepaintRectList collectRectsToPaint(GraphicsContext&, PlatformCALayer*);
-    static void drawLayerContents(GraphicsContext&, PlatformCALayer*, RepaintRectList&, GraphicsLayerPaintBehavior);
+    static void drawLayerContents(GraphicsContext&, PlatformCALayer*, RepaintRectList&, OptionSet<GraphicsLayerPaintBehavior>);
     static void drawRepaintIndicator(GraphicsContext&, PlatformCALayer*, int repaintCount, Color customBackgroundColor = { });
     static CGRect frameForLayer(const PlatformLayer*);
 

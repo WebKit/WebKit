@@ -33,7 +33,7 @@
 #include "LayoutElementBox.h"
 #include "LayoutState.h"
 #include "LayoutUnit.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 namespace Layout {
@@ -74,9 +74,9 @@ UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::precomp
 
     auto nonCollapsedBefore = UsedVerticalMargin::PositiveAndNegativePair::Values { };
     if (nonCollapsedValues.before > 0)
-        nonCollapsedBefore = { nonCollapsedValues.before, { }, layoutBox.style().hasMarginBeforeQuirk() };
+        nonCollapsedBefore = { nonCollapsedValues.before, { }, layoutBox.style().marginBefore().hasQuirk() };
     else if (nonCollapsedValues.before < 0)
-        nonCollapsedBefore = { { }, nonCollapsedValues.before, layoutBox.style().hasMarginBeforeQuirk() };
+        nonCollapsedBefore = { { }, nonCollapsedValues.before, layoutBox.style().marginBefore().hasQuirk() };
 
     return computedPositiveAndNegativeMargin(collapsedMarginBefore, nonCollapsedBefore);
 }

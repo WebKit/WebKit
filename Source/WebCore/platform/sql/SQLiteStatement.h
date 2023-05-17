@@ -43,7 +43,7 @@ public:
     template<typename T, typename... Args>
     bool bind(T, Args&&...);
 
-    WEBCORE_EXPORT int bindBlob(int index, Span<const uint8_t>);
+    WEBCORE_EXPORT int bindBlob(int index, std::span<const uint8_t>);
     WEBCORE_EXPORT int bindBlob(int index, const String&);
     WEBCORE_EXPORT int bindText(int index, StringView);
     WEBCORE_EXPORT int bindInt(int index, int);
@@ -78,7 +78,7 @@ public:
     WEBCORE_EXPORT Vector<uint8_t> columnBlob(int col);
 
     // The returned Span stays valid until the next step() / reset() or destruction of the statement.
-    Span<const uint8_t> columnBlobAsSpan(int col);
+    std::span<const uint8_t> columnBlobAsSpan(int col);
 
     SQLiteDatabase& database() { return m_database; }
     
@@ -111,7 +111,7 @@ inline bool SQLiteStatement::bindImpl(int i, T first, Args&&... args)
 template<typename T>
 inline bool SQLiteStatement::bindImpl(int i, T value)
 {
-    if constexpr (std::is_convertible_v<T, Span<const uint8_t>>)
+    if constexpr (std::is_convertible_v<T, std::span<const uint8_t>>)
         return bindBlob(i, value) == SQLITE_OK;
     else if constexpr (std::is_convertible_v<T, StringView>)
         return bindText(i, value) == SQLITE_OK;

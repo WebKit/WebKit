@@ -266,7 +266,9 @@ void RemoteScrollingCoordinatorProxyIOS::adjustTargetContentOffsetForSnapping(CG
 
     if (shouldSnapForMainFrameScrolling(WebCore::ScrollEventAxis::Vertical)) {
         float potentialSnapPosition;
-        std::tie(potentialSnapPosition, m_currentVerticalSnapPointIndex) = closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis::Vertical, currentContentOffset.y + topInset, FloatPoint(*targetContentOffset), velocity.y);
+        FloatPoint projectedOffset { *targetContentOffset };
+        projectedOffset.move(0, topInset);
+        std::tie(potentialSnapPosition, m_currentVerticalSnapPointIndex) = closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis::Vertical, currentContentOffset.y + topInset, WTFMove(projectedOffset), velocity.y);
         if (m_currentVerticalSnapPointIndex)
             potentialSnapPosition -= topInset;
 
@@ -309,10 +311,11 @@ std::pair<float, std::optional<unsigned>> RemoteScrollingCoordinatorProxyIOS::cl
     auto* rootNode = scrollingTree()->rootNode();
     const auto& snapOffsetsInfo = rootNode->snapOffsetsInfo();
 
-    scrollDestination.scale(1.0 / webPageProxy().displayedContentScale());
-    float scaledCurrentScrollOffset = currentScrollOffset / webPageProxy().displayedContentScale();
+    auto zoomScale = [webPageProxy().cocoaView() scrollView].zoomScale;
+    scrollDestination.scale(1.0 / zoomScale);
+    float scaledCurrentScrollOffset = currentScrollOffset / zoomScale;
     auto [rawClosestSnapOffset, newIndex] = snapOffsetsInfo.closestSnapOffset(axis, rootNode->layoutViewport().size(), scrollDestination, velocity, scaledCurrentScrollOffset);
-    return std::make_pair(rawClosestSnapOffset * webPageProxy().displayedContentScale(), newIndex);
+    return std::make_pair(rawClosestSnapOffset * zoomScale, newIndex);
 }
 
 bool RemoteScrollingCoordinatorProxyIOS::hasActiveSnapPoint() const
@@ -346,13 +349,14 @@ CGPoint RemoteScrollingCoordinatorProxyIOS::nearestActiveContentInsetAdjustedSna
     auto& rootScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(*root);
     const auto& horizontal = rootScrollingNode.snapOffsetsInfo().horizontalSnapOffsets;
     const auto& vertical = rootScrollingNode.snapOffsetsInfo().verticalSnapOffsets;
+    auto zoomScale = [webPageProxy().cocoaView() scrollView].zoomScale;
 
     // The bounds checking with maxScrollOffsets is to ensure that we won't interfere with rubber-banding when scrolling to the edge of the page.
     if (!horizontal.isEmpty() && m_currentHorizontalSnapPointIndex && *m_currentHorizontalSnapPointIndex < horizontal.size())
-        activePoint.x = horizontal[*m_currentHorizontalSnapPointIndex].offset * webPageProxy().displayedContentScale();
+        activePoint.x = horizontal[*m_currentHorizontalSnapPointIndex].offset * zoomScale;
 
     if (!vertical.isEmpty() && m_currentVerticalSnapPointIndex && *m_currentVerticalSnapPointIndex < vertical.size()) {
-        float potentialSnapPosition = vertical[*m_currentVerticalSnapPointIndex].offset * webPageProxy().displayedContentScale();
+        float potentialSnapPosition = vertical[*m_currentVerticalSnapPointIndex].offset * zoomScale;
         potentialSnapPosition -= topInset;
         activePoint.y = potentialSnapPosition;
     }

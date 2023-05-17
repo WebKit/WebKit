@@ -61,7 +61,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(AcceleratedEffect);
 
 static AcceleratedEffectProperty acceleratedPropertyFromCSSProperty(AnimatableProperty property, const Settings& settings)
 {
-#if !defined(NDEBUG)
+#if ASSERT_ENABLED
     ASSERT(CSSPropertyAnimation::animationOfPropertyIsAccelerated(property, settings));
 #else
     UNUSED_PARAM(settings);

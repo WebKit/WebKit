@@ -123,11 +123,6 @@ struct ViewportArguments {
             && widthWasExplicit == other.widthWasExplicit;
     }
 
-    bool operator!=(const ViewportArguments& other) const
-    {
-        return !(*this == other);
-    }
-
 #if PLATFORM(GTK)
     // FIXME: We're going to keep this constant around until all embedders
     // refactor their code to no longer need it.

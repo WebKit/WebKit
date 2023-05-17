@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "GPUTextureFormat.h"
 #include <optional>
 #include <pal/graphics/WebGPU/WebGPUTexture.h>
 #include <wtf/Ref.h>
@@ -38,9 +39,9 @@ struct GPUTextureViewDescriptor;
 
 class GPUTexture : public RefCounted<GPUTexture> {
 public:
-    static Ref<GPUTexture> create(Ref<PAL::WebGPU::Texture>&& backing)
+    static Ref<GPUTexture> create(Ref<PAL::WebGPU::Texture>&& backing, GPUTextureFormat format)
     {
-        return adoptRef(*new GPUTexture(WTFMove(backing)));
+        return adoptRef(*new GPUTexture(WTFMove(backing), format));
     }
 
     String label() const;
@@ -52,14 +53,17 @@ public:
 
     PAL::WebGPU::Texture& backing() { return m_backing; }
     const PAL::WebGPU::Texture& backing() const { return m_backing; }
+    GPUTextureFormat format() const { return m_format; }
 
 private:
-    GPUTexture(Ref<PAL::WebGPU::Texture>&& backing)
+    GPUTexture(Ref<PAL::WebGPU::Texture>&& backing, GPUTextureFormat format)
         : m_backing(WTFMove(backing))
+        , m_format(format)
     {
     }
 
     Ref<PAL::WebGPU::Texture> m_backing;
+    GPUTextureFormat m_format;
 };
 
 }

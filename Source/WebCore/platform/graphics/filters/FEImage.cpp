@@ -43,7 +43,15 @@ FEImage::FEImage(SourceImage&& sourceImage, const FloatRect& sourceImageRect, co
 {
 }
 
-FloatRect FEImage::calculateImageRect(const Filter& filter, Span<const FloatRect>, const FloatRect& primitiveSubregion) const
+bool FEImage::operator==(const FEImage& other) const
+{
+    return FilterEffect::operator==(other)
+        && m_sourceImage == other.m_sourceImage
+        && m_sourceImageRect == other.m_sourceImageRect
+        && m_preserveAspectRatio == other.m_preserveAspectRatio;
+}
+
+FloatRect FEImage::calculateImageRect(const Filter& filter, std::span<const FloatRect>, const FloatRect& primitiveSubregion) const
 {
     if (m_sourceImage.nativeImageIfExists()) {
         auto imageRect = primitiveSubregion;

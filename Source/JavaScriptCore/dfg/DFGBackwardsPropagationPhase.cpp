@@ -451,7 +451,8 @@ private:
         }
 
         case EnumeratorGetByVal:
-        case GetByVal: {
+        case GetByVal:
+        case GetByValMegamorphic: {
             m_graph.varArgChild(node, 0)->mergeFlags(NodeBytecodeUsesAsValue);
             m_graph.varArgChild(node, 1)->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt | NodeBytecodeUsesAsArrayIndex);
             break;
@@ -494,8 +495,10 @@ private:
             break;
         }
 
+        case EnumeratorPutByVal:
         case PutByValDirect:
-        case PutByVal: {
+        case PutByVal:
+        case PutByValMegamorphic: {
             m_graph.varArgChild(node, 0)->mergeFlags(NodeBytecodeUsesAsValue);
             m_graph.varArgChild(node, 1)->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt | NodeBytecodeUsesAsArrayIndex);
             m_graph.varArgChild(node, 2)->mergeFlags(NodeBytecodeUsesAsValue);

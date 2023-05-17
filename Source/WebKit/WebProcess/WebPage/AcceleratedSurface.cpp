@@ -37,7 +37,7 @@
 #include "AcceleratedSurfaceLibWPE.h"
 #endif
 
-#if USE(GBM)
+#if PLATFORM(GTK) && USE(GBM)
 #include "AcceleratedSurfaceDMABuf.h"
 #endif
 
@@ -46,8 +46,9 @@ using namespace WebCore;
 
 std::unique_ptr<AcceleratedSurface> AcceleratedSurface::create(WebPage& webPage, Client& client)
 {
-#if USE(GBM)
-    if (PlatformDisplay::sharedDisplayForCompositing().type() == PlatformDisplay::Type::Headless)
+#if PLATFORM(GTK) && USE(GBM)
+    if (PlatformDisplay::sharedDisplayForCompositing().type() == PlatformDisplay::Type::GBM
+        || PlatformDisplay::sharedDisplayForCompositing().type() == PlatformDisplay::Type::Surfaceless)
         return AcceleratedSurfaceDMABuf::create(webPage, client);
 #endif
 #if PLATFORM(WAYLAND)

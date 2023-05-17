@@ -37,12 +37,16 @@
 #include "DisplayTextBox.h"
 #include "DisplayTree.h"
 #include "DisplayTreeBuilder.h"
+#include "FillLayer.h"
 #include "FloatPoint3D.h"
 #include "InlineDisplayLine.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutElementBox.h"
 #include "LayoutInitialContainingBlock.h"
+#include "LengthFunctions.h"
 #include "Logging.h"
+#include "RenderStyleInlines.h"
+#include "ShadowData.h"
 #include "TransformationMatrix.h"
 
 namespace WebCore {

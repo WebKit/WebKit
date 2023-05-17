@@ -237,6 +237,11 @@ enum class RenderingUpdateStep : uint32_t {
     PrepareCanvasesForDisplay       = 1 << 16,
     CaretAnimation                  = 1 << 17,
     FocusFixup                      = 1 << 18,
+    UpdateValidationMessagePositions= 1 << 19,
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    AccessibilityRegionUpdate       = 1 << 20,
+#endif
+    RestoreScrollPositionAndViewState = 1 << 21,
 };
 
 enum class LookalikeCharacterSanitizationTrigger : uint8_t {
@@ -260,6 +265,9 @@ constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
     RenderingUpdateStep::WheelEventMonitorCallbacks,
     RenderingUpdateStep::CursorUpdate,
     RenderingUpdateStep::EventRegionUpdate,
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    RenderingUpdateStep::AccessibilityRegionUpdate,
+#endif
     RenderingUpdateStep::PrepareCanvasesForDisplay,
     RenderingUpdateStep::CaretAnimation,
 };
@@ -287,6 +295,9 @@ public:
 
     WEBCORE_EXPORT explicit Page(PageConfiguration&&);
     WEBCORE_EXPORT ~Page();
+
+    // Utility pages (e.g. SVG image pages) don't have an identifier currently.
+    std::optional<PageIdentifier> identifier() const { return m_identifier; }
 
     WEBCORE_EXPORT uint64_t renderTreeSize() const;
 
@@ -564,6 +575,7 @@ public:
     WEBCORE_EXPORT void setPagination(const Pagination&);
 
     WEBCORE_EXPORT unsigned pageCount() const;
+    WEBCORE_EXPORT unsigned pageCountAssumingLayoutIsUpToDate() const;
 
     WEBCORE_EXPORT DiagnosticLoggingClient& diagnosticLoggingClient() const;
 
@@ -599,6 +611,10 @@ public:
     bool hasActiveApplePayAMSUISession() const { return m_activeApplePayAMSUIPaymentHandler; }
     bool startApplePayAMSUISession(Document&, ApplePayAMSUIPaymentHandler&, const ApplePayAMSUIRequest&);
     void abortApplePayAMSUISession(ApplePayAMSUIPaymentHandler&);
+#endif
+
+#if USE(SYSTEM_PREVIEW)
+    void handleSystemPreview(const URL&, const SystemPreviewInfo&);
 #endif
 
 #if ENABLE(WEB_AUTHN)
@@ -1006,6 +1022,9 @@ public:
     AttachmentElementClient* attachmentElementClient() { return m_attachmentElementClient.get(); }
 #endif
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    bool shouldUpdateAccessibilityRegions() const;
+#endif
     WEBCORE_EXPORT std::optional<AXTreeData> accessibilityTreeData() const;
 #if USE(ATSPI)
     AccessibilityRootAtspi* accessibilityRootObject() const { return m_accessibilityRootObject; }
@@ -1033,7 +1052,7 @@ public:
     void didFinishScrolling();
 
     const WeakHashSet<LocalFrame>& rootFrames() const { return m_rootFrames; }
-    void addRootFrame(LocalFrame& frame) { m_rootFrames.add(frame); }
+    WEBCORE_EXPORT void addRootFrame(LocalFrame&);
 
 private:
     struct Navigation {
@@ -1087,6 +1106,7 @@ private:
     void updateElementsWithTextRecognitionResults();
 #endif
 
+    std::optional<PageIdentifier> m_identifier;
     UniqueRef<Chrome> m_chrome;
     UniqueRef<DragCaretController> m_dragCaretController;
 
@@ -1110,11 +1130,11 @@ private:
 
     UniqueRef<BackForwardController> m_backForwardController;
     WeakHashSet<LocalFrame> m_rootFrames;
+    UniqueRef<EditorClient> m_editorClient;
     Ref<Frame> m_mainFrame;
 
     RefPtr<PluginData> m_pluginData;
 
-    UniqueRef<EditorClient> m_editorClient;
     std::unique_ptr<ValidationMessageClient> m_validationMessageClient;
     std::unique_ptr<DiagnosticLoggingClient> m_diagnosticLoggingClient;
     std::unique_ptr<PerformanceLoggingClient> m_performanceLoggingClient;
@@ -1373,6 +1393,9 @@ private:
     bool m_isServiceWorkerPage { false };
 
     MonotonicTime m_lastRenderingUpdateTimestamp;
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    MonotonicTime m_lastAccessibilityObjectRegionsUpdate;
+#endif
 
     Color m_underPageBackgroundColorOverride;
     std::optional<Color> m_sampledPageTopColor;

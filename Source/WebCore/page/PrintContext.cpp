@@ -28,6 +28,7 @@
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
+#include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"

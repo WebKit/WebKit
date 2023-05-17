@@ -29,6 +29,7 @@
 #include "HTMLParserIdioms.h"
 #include "HitTestResult.h"
 #include "LocalFrame.h"
+#include "NodeName.h"
 #include "Path.h"
 #include "RenderImage.h"
 #include "RenderView.h"
@@ -55,7 +56,8 @@ Ref<HTMLAreaElement> HTMLAreaElement::create(const QualifiedName& tagName, Docum
 
 void HTMLAreaElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == shapeAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::shapeAttr:
         if (equalLettersIgnoringASCIICase(newValue, "default"_s))
             m_shape = Default;
         else if (equalLettersIgnoringASCIICase(newValue, "circle"_s) || equalLettersIgnoringASCIICase(newValue, "circ"_s))
@@ -67,13 +69,18 @@ void HTMLAreaElement::attributeChanged(const QualifiedName& name, const AtomStri
             m_shape = Rect;
         }
         invalidateCachedRegion();
-    } else if (name == coordsAttr) {
+        break;
+    case AttributeNames::coordsAttr:
         m_coords = parseHTMLListOfOfFloatingPointNumberValues(newValue.string());
         invalidateCachedRegion();
-    } else if (name == altAttr) {
+        break;
+    case AttributeNames::altAttr:
         // Do nothing.
-    } else
+        break;
+    default:
         HTMLAnchorElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+        break;
+    }
 }
 
 void HTMLAreaElement::invalidateCachedRegion()

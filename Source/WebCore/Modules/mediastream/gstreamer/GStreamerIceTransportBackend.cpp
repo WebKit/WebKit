@@ -29,8 +29,8 @@
 
 namespace WebCore {
 
-GStreamerIceTransportBackend::GStreamerIceTransportBackend(const GRefPtr<GstWebRTCDTLSTransport>& transport)
-    : m_backend(transport)
+GStreamerIceTransportBackend::GStreamerIceTransportBackend(GRefPtr<GstWebRTCDTLSTransport>&& transport)
+    : m_backend(WTFMove(transport))
 {
     ASSERT(m_backend);
 

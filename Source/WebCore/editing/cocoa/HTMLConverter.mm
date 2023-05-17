@@ -261,6 +261,8 @@ private:
     RetainPtr<NSMutableAttributedString> _attrStr;
     RetainPtr<NSMutableDictionary> _documentAttrs;
     RetainPtr<NSURL> _baseURL;
+    RetainPtr<NSPresentationIntent> _topPresentationIntent;
+    NSInteger _topPresentationIntentIdentity;
     RetainPtr<NSMutableArray> _textLists;
     RetainPtr<NSMutableArray> _textBlocks;
     RetainPtr<NSMutableArray> _textTables;
@@ -305,7 +307,9 @@ private:
     void _addQuoteForElement(Element&, BOOL opening, NSInteger level);
     void _addValue(NSString *value, Element&);
     void _fillInBlock(NSTextBlock *block, Element&, PlatformColor *backgroundColor, CGFloat extraMargin, CGFloat extraPadding, BOOL isTable);
-    
+    void _enterBlockquote();
+    void _exitBlockquote();
+
     BOOL _enterElement(Element&, BOOL embedded);
     BOOL _processElement(Element&, NSInteger depth);
     void _exitElement(Element&, NSInteger depth, NSUInteger startIndex);
@@ -329,6 +333,8 @@ HTMLConverter::HTMLConverter(const SimpleRange& range)
     _attrStr = adoptNS([[NSMutableAttributedString alloc] init]);
     _documentAttrs = adoptNS([[NSMutableDictionary alloc] init]);
     _baseURL = nil;
+    _topPresentationIntent = nil;
+    _topPresentationIntentIdentity = 0;
     _textLists = adoptNS([[NSMutableArray alloc] init]);
     _textBlocks = adoptNS([[NSMutableArray alloc] init]);
     _textTables = adoptNS([[NSMutableArray alloc] init]);
@@ -1047,7 +1053,9 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
             heading = 5;
         else if (coreBlockElement.hasTagName(h6Tag))
             heading = 6;
-        bool isParagraph = coreBlockElement.hasTagName(pTag) || coreBlockElement.hasTagName(liTag) || heading;
+        else if (coreBlockElement.hasTagName(blockquoteTag) && _topPresentationIntent)
+            [attrs setObject:_topPresentationIntent.get() forKey:NSPresentationIntentAttributeName];
+        bool isParagraph = coreBlockElement.hasTagName(pTag) || coreBlockElement.hasTagName(liTag) || heading || coreBlockElement.hasTagName(blockquoteTag);
 
         String textAlign = _caches->propertyValueForNode(coreBlockElement, CSSPropertyTextAlign);
         if (textAlign.length()) {
@@ -1572,9 +1580,23 @@ void HTMLConverter::_processHeadElement(Element& element)
     }
 }
 
+void HTMLConverter::_enterBlockquote()
+{
+    _topPresentationIntent = [NSPresentationIntent blockQuoteIntentWithIdentity:++_topPresentationIntentIdentity nestedInsideIntent:_topPresentationIntent.get()];
+}
+
+void HTMLConverter::_exitBlockquote()
+{
+    if (_topPresentationIntent)
+        _topPresentationIntent = [_topPresentationIntent parentIntent];
+}
+
 BOOL HTMLConverter::_enterElement(Element& element, BOOL embedded)
 {
     String displayValue = _caches->propertyValueForNode(element, CSSPropertyDisplay);
+    if (element.hasTagName(blockquoteTag))
+        _enterBlockquote();
+
     if (element.hasTagName(headTag) && !embedded)
         _processHeadElement(element);
     else if (!m_userSelectNoneStateCache.nodeOnlyContainsUserSelectNone(element) && (!displayValue.length() || !(displayValue == noneAtom() || displayValue == "table-column"_s || displayValue == "table-column-group"_s))) {
@@ -2046,6 +2068,9 @@ void HTMLConverter::_exitElement(Element& element, NSInteger depth, NSUInteger s
             }
         }
     }
+
+    if (element.hasTagName(blockquoteTag))
+        _exitBlockquote();
 }
 
 void HTMLConverter::_processText(CharacterData& characterData)

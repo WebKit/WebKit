@@ -35,6 +35,12 @@ namespace WebKit {
 
 void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& parameters)
 {
+    auto alternativeServiceStorageDirectory = resolvedAlternativeServicesStorageDirectory();
+    SandboxExtension::Handle alternativeServiceStorageDirectoryExtensionHandle;
+    createHandleFromResolvedPathIfPossible(alternativeServiceStorageDirectory, alternativeServiceStorageDirectoryExtensionHandle);
+
+    parameters.networkSessionParameters.alternativeServiceDirectory = WTFMove(alternativeServiceStorageDirectory);
+    parameters.networkSessionParameters.alternativeServiceDirectoryExtensionHandle = WTFMove(alternativeServiceStorageDirectoryExtensionHandle);
     parameters.networkSessionParameters.cookiePersistentStorageFile = resolvedCookieStorageFile();
     parameters.networkSessionParameters.proxySettings = m_proxySettings;
 }

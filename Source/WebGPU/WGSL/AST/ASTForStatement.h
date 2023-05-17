@@ -31,23 +31,23 @@
 namespace WGSL::AST {
 
 class ForStatement final : public Statement {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(ForStatement);
 public:
-    ForStatement(SourceSpan span, Statement::Ptr&& initializer, Expression::Ptr&& test, Statement::Ptr&& update, CompoundStatement::Ref&& body)
+    NodeKind kind() const override;
+    Statement* maybeInitializer() { return m_initializer; }
+    Expression* maybeTest() { return m_test; }
+    Statement* maybeUpdate() { return m_update; }
+    CompoundStatement& body() { return m_body; }
+
+private:
+    ForStatement(SourceSpan span, Statement::Ptr initializer, Expression::Ptr test, Statement::Ptr update, CompoundStatement::Ref&& body)
         : Statement(span)
-        , m_initializer(WTFMove(initializer))
-        , m_test(WTFMove(test))
-        , m_update(WTFMove(update))
+        , m_initializer(initializer)
+        , m_test(test)
+        , m_update(update)
         , m_body(WTFMove(body))
     { }
 
-    NodeKind kind() const override;
-    Statement* maybeInitializer() { return m_initializer.get(); }
-    Expression* maybeTest() { return m_test.get(); }
-    Statement* maybeUpdate() { return m_update.get(); }
-    CompoundStatement& body() { return m_body.get(); }
-
-private:
     Statement::Ptr m_initializer;
     Expression::Ptr m_test;
     Statement::Ptr m_update;

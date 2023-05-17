@@ -91,8 +91,8 @@ inline void writeIntegerToBuffer(IntegerType integer, CharacterType* destination
         return writeIntegerToBufferImpl<CharacterType, uint8_t, PositiveNumber>(integer ? 1 : 0, destination);
     else if constexpr (std::is_signed_v<IntegerType>) {
         if (integer < 0)
-            return writeIntegerToBufferImpl<CharacterType, typename std::make_unsigned_t<IntegerType>, NegativeNumber>(-integer, destination);
-        return writeIntegerToBufferImpl<CharacterType, typename std::make_unsigned_t<IntegerType>, PositiveNumber>(integer, destination);
+            return writeIntegerToBufferImpl<CharacterType, typename std::make_unsigned_t<IntegerType>, NegativeNumber>(std::make_unsigned_t<IntegerType>(-integer), destination);
+        return writeIntegerToBufferImpl<CharacterType, typename std::make_unsigned_t<IntegerType>, PositiveNumber>(std::make_unsigned_t<IntegerType>(integer), destination);
     } else
         return writeIntegerToBufferImpl<CharacterType, IntegerType, PositiveNumber>(integer, destination);
 }
@@ -123,8 +123,8 @@ constexpr unsigned lengthOfIntegerAsString(IntegerType integer)
     }
     else if constexpr (std::is_signed_v<IntegerType>) {
         if (integer < 0)
-            return lengthOfIntegerAsStringImpl<typename std::make_unsigned_t<IntegerType>, NegativeNumber>(-integer);
-        return lengthOfIntegerAsStringImpl<typename std::make_unsigned_t<IntegerType>, PositiveNumber>(integer);
+            return lengthOfIntegerAsStringImpl<typename std::make_unsigned_t<IntegerType>, NegativeNumber>(std::make_unsigned_t<IntegerType>(-integer));
+        return lengthOfIntegerAsStringImpl<typename std::make_unsigned_t<IntegerType>, PositiveNumber>(std::make_unsigned_t<IntegerType>(integer));
     } else
         return lengthOfIntegerAsStringImpl<IntegerType, PositiveNumber>(integer);
 }

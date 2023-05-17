@@ -26,7 +26,7 @@
 
 #pragma once
 
-#if USE(LIBGBM)
+#if USE(GBM)
 
 #include "DMABufFormat.h"
 #include "DMABufObject.h"
@@ -60,7 +60,7 @@ public:
         Eight = 8
     };
 
-    GBMBufferSwapchain(BufferSwapchainSize);
+    explicit GBMBufferSwapchain(BufferSwapchainSize);
     ~GBMBufferSwapchain();
 
     struct BufferDescription {
@@ -134,4 +134,4 @@ private:
 
 } // namespace WebCore
 
-#endif // USE(LIBGBM)
+#endif // USE(GBM)

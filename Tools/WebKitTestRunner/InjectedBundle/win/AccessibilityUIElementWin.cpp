@@ -232,6 +232,12 @@ JSValueRef AccessibilityUIElement::columnHeaders() const
     return nullptr;
 }
 
+JSValueRef AccessibilityUIElement::selectedCells() const
+{
+    notImplemented();
+    return nullptr;
+}
+
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementAttributeValue(JSStringRef attribute) const
 {
     notImplemented();

@@ -80,11 +80,6 @@ public:
             return m_position == other.m_position;
         }
 
-        bool operator!=(const WeakHashSetConstIterator& other) const
-        {
-            return m_position != other.m_position;
-        }
-
     private:
         template <typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakHashSet;
 

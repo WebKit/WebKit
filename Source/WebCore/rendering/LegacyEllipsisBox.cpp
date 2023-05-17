@@ -28,6 +28,7 @@
 #include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
 #include "PaintInfo.h"
+#include "RenderElementInlines.h"
 #include "TextRun.h"
 #include <wtf/IsoMallocInlines.h>
 

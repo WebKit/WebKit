@@ -20,10 +20,14 @@
 
 #pragma once
 
+#include "RenderStyleInlines.h"
 #include "RenderText.h"
 #include "WordTrailingSpace.h"
 
 namespace WebCore {
+
+inline LayoutUnit RenderText::marginLeft() const { return minimumValueForLength(style().marginLeft(), 0); }
+inline LayoutUnit RenderText::marginRight() const { return minimumValueForLength(style().marginRight(), 0); }
 
 template <typename MeasureTextCallback>
 float RenderText::measureTextConsideringPossibleTrailingSpace(bool currentCharacterIsSpace, unsigned startIndex, unsigned wordLength, WordTrailingSpace& wordTrailingSpace, HashSet<const Font*>& fallbackFonts, MeasureTextCallback&& callback)

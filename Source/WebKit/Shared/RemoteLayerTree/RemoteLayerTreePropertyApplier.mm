@@ -257,10 +257,13 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     {
         auto* backingStore = properties.backingStoreProperties.get();
         if (backingStore && properties.backingStoreAttached) {
-            if (layerTreeNode)
+            std::optional<WebCore::RenderingResourceIdentifier> asyncContentsIdentifier;
+            if (layerTreeNode) {
                 backingStore->updateCachedBuffers(*layerTreeNode, layerContentsType);
+                asyncContentsIdentifier = layerTreeNode->asyncContentsIdentifier();
+            }
 
-            backingStore->applyBackingStoreToLayer(layer, layerContentsType, layerTreeHost->replayCGDisplayListsIntoBackingStore());
+            backingStore->applyBackingStoreToLayer(layer, layerContentsType, asyncContentsIdentifier, layerTreeHost->replayCGDisplayListsIntoBackingStore());
         } else
             [layer _web_clearContents];
     }
@@ -303,6 +306,9 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
     applyPropertiesToLayer(node.layer(), &node, layerTreeHost, properties, layerContentsType);
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     applyCommonPropertiesToLayer(node.interactionRegionsLayer(), properties);
+    // Replicate animations on the InteractionRegion layers, the LayerTreeHost only keeps track of the original animations.
+    if (properties.changedProperties & LayerChange::AnimationsChanged)
+        PlatformCAAnimationRemote::updateLayerAnimations(node.interactionRegionsLayer(), nullptr, properties.addedAnimations, properties.keysOfAnimationsToRemove);
     if (properties.changedProperties & LayerChange::EventRegionChanged)
         updateLayersForInteractionRegions(node.interactionRegionsLayer(), *layerTreeHost, properties);
 #endif

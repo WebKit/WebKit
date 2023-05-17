@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2015-2023 Apple, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,12 +86,12 @@ static Cookie::SameSitePolicy coreSameSitePolicy(NSHTTPCookieStringPolicy _Nulla
 {
     if (!policy)
         return Cookie::SameSitePolicy::None;
-    ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     if ([policy isEqualToString:NSHTTPCookieSameSiteLax])
         return Cookie::SameSitePolicy::Lax;
     if ([policy isEqualToString:NSHTTPCookieSameSiteStrict])
         return Cookie::SameSitePolicy::Strict;
-    ALLOW_NEW_API_WITHOUT_GUARDS_END
+ALLOW_NEW_API_WITHOUT_GUARDS_END
     ASSERT_NOT_REACHED();
     return Cookie::SameSitePolicy::None;
 }
@@ -101,12 +101,12 @@ static NSHTTPCookieStringPolicy _Nullable nsSameSitePolicy(Cookie::SameSitePolic
     switch (policy) {
     case Cookie::SameSitePolicy::None:
         return nil;
-    ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     case Cookie::SameSitePolicy::Lax:
         return NSHTTPCookieSameSiteLax;
     case Cookie::SameSitePolicy::Strict:
         return NSHTTPCookieSameSiteStrict;
-    ALLOW_NEW_API_WITHOUT_GUARDS_END
+ALLOW_NEW_API_WITHOUT_GUARDS_END
     }
 }
 
@@ -124,10 +124,10 @@ Cookie::Cookie(NSHTTPCookie *cookie)
     , commentURL { cookie.commentURL }
     , ports { portVectorFromList(cookie.portList) }
 {
-    ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     if ([cookie respondsToSelector:@selector(sameSitePolicy)])
         sameSite = coreSameSitePolicy(cookie.sameSitePolicy);
-    ALLOW_NEW_API_WITHOUT_GUARDS_END
+ALLOW_NEW_API_WITHOUT_GUARDS_END
 }
 
 Cookie::operator NSHTTPCookie * _Nullable () const

@@ -235,3 +235,135 @@ select
 |   <body>
 |     <math math>
 |       definitionURL=""
+
+#data
+<select><hr>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <hr>
+
+#data
+<select><option><hr>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|       <hr>
+
+#data
+<select><optgroup><option><hr>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <optgroup>
+|         <option>
+|       <hr>
+
+#data
+<select><optgroup><hr>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <optgroup>
+|       <hr>
+
+#data
+<select><option><optgroup><hr>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|       <optgroup>
+|       <hr>
+
+#data
+<table><tr><td><select><hr>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             <select>
+|               <hr>
+
+#data
+<table><tr><td><select><option><hr>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             <select>
+|               <option>
+|               <hr>
+
+#data
+<table><tr><td><select><optgroup><option><hr>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             <select>
+|               <optgroup>
+|                 <option>
+|               <hr>
+
+#data
+<table><tr><td><select><optgroup><hr>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             <select>
+|               <optgroup>
+|               <hr>
+
+#data
+<table><tr><td><select><option><optgroup><hr>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             <select>
+|               <option>
+|               <optgroup>
+|               <hr>

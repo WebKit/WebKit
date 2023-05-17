@@ -203,7 +203,30 @@ TEST_P(BufferDataTest, RepeatedDrawDynamicBug)
     EXPECT_GL_NO_ERROR();
 }
 
-class BufferSubDataTest : public ANGLETest<>
+using BufferSubDataTestParams = std::tuple<angle::PlatformParameters, bool>;
+
+std::string BufferSubDataTestPrint(
+    const ::testing::TestParamInfo<BufferSubDataTestParams> &paramsInfo)
+{
+    const BufferSubDataTestParams &params = paramsInfo.param;
+    std::ostringstream out;
+
+    out << std::get<0>(params) << "__";
+
+    const bool useCopySubData = std::get<1>(params);
+    if (useCopySubData)
+    {
+        out << "CopyBufferSubData";
+    }
+    else
+    {
+        out << "BufferSubData";
+    }
+
+    return out.str();
+}
+
+class BufferSubDataTest : public ANGLETest<BufferSubDataTestParams>
 {
   protected:
     BufferSubDataTest()
@@ -231,6 +254,28 @@ class BufferSubDataTest : public ANGLETest<>
         glDisable(GL_DEPTH_TEST);
 
         ASSERT_GL_NO_ERROR();
+    }
+
+    void updateBuffer(GLenum target, GLintptr offset, GLsizeiptr size, const void *data)
+    {
+        const bool useCopySubData = std::get<1>(GetParam());
+        if (!useCopySubData)
+        {
+            // If using glBufferSubData, directly upload data on the specified target (where the
+            // buffer is already bound)
+            glBufferSubData(target, offset, size, data);
+        }
+        else
+        {
+            // Otherwise copy through a temp buffer.  Use a non-zero offset for more coverage.
+            constexpr GLintptr kStagingOffset = 935;
+            GLBuffer staging;
+            glBindBuffer(GL_COPY_READ_BUFFER, staging);
+            glBufferData(GL_COPY_READ_BUFFER, offset + size + kStagingOffset * 3 / 2, nullptr,
+                         GL_STATIC_DRAW);
+            glBufferSubData(GL_COPY_READ_BUFFER, kStagingOffset, size, data);
+            glCopyBufferSubData(GL_COPY_READ_BUFFER, target, kStagingOffset, offset, size);
+        }
     }
 
     void testTearDown() override { glDeleteBuffers(1, &mBuffer); }
@@ -275,7 +320,7 @@ TEST_P(BufferSubDataTest, SmallIndexBufferUpdateAfterDraw)
     indexData[2] = 2;
     indexData[3] = 3;
     // Partial copy to trigger the buffer pool allocation
-    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint), 3 * sizeof(GLuint), &indexData[1]);
+    updateBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint), 3 * sizeof(GLuint), &indexData[1]);
     // Draw triangle with index (1, 2, 3).
     glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (const void *)sizeof(GLuint));
     // Update the index buffer again
@@ -283,7 +328,7 @@ TEST_P(BufferSubDataTest, SmallIndexBufferUpdateAfterDraw)
     indexData[1] = 0;
     indexData[2] = 2;
     glUniform4fv(colorUniformLocation, 1, kGreen.data());
-    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, 3 * sizeof(GLuint), &indexData[0]);
+    updateBuffer(GL_ELEMENT_ARRAY_BUFFER, 0, 3 * sizeof(GLuint), &indexData[0]);
     // Draw triangle with index (0, 2, 3), hope angle copy the last index 3 back.
     glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (const void *)sizeof(GLuint));
 
@@ -337,7 +382,7 @@ TEST_P(BufferSubDataTest, SmallVertexDataUpdateAfterDraw)
     glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
     // Update the vertex buffer data.
     // Partial copy to trigger the buffer pool allocation
-    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertexData2), vertexData2);
+    updateBuffer(GL_ARRAY_BUFFER, 0, sizeof(vertexData2), vertexData2);
     // Draw triangle with index (0,1,2).
     glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (const void *)sizeof(GLuint));
     // Verify pixel corners are green
@@ -1097,7 +1142,7 @@ TEST_P(BufferDataTestES3, BufferDataUnmap)
 
 // Ensures that mapping buffer with GL_MAP_INVALIDATE_BUFFER_BIT followed by glBufferSubData calls
 // works.  Regression test for the Vulkan backend where that flag caused use after free.
-TEST_P(BufferDataTestES3, MapInvalidateThenBufferSubData)
+TEST_P(BufferSubDataTest, MapInvalidateThenBufferSubData)
 {
     // http://anglebug.com/5984
     ANGLE_SKIP_TEST_IF(IsWindows() && IsOpenGL() && IsIntel());
@@ -1170,8 +1215,8 @@ void main()
 
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
 
-    // Update the buffer with glBufferSubData
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(kUpdateData2), kUpdateData2.data());
+    // Update the buffer with glBufferSubData or glCopyBufferSubData
+    updateBuffer(GL_UNIFORM_BUFFER, 0, sizeof(kUpdateData2), kUpdateData2.data());
     EXPECT_GL_NO_ERROR();
 
     // Verify that the buffer has the updated value.
@@ -1976,14 +2021,119 @@ TEST_P(BufferStorageTestES3Threaded, VertexBuffer)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that buffer self-copy works when buffer is used as UBO
+TEST_P(BufferDataTestES3, CopyBufferSubDataSelfDependency)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+out vec4 color;
+
+uniform UBO
+{
+    vec4 data[128];
+};
+
+void main()
+{
+    color = data[12];
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+
+    constexpr uint32_t kVec4Size   = 4 * sizeof(float);
+    constexpr uint32_t kUBOSize    = 128 * kVec4Size;
+    constexpr uint32_t kDataOffset = 12 * kVec4Size;
+
+    // Init data is 4 times the size of UBO as the buffer is created larger than the UBO throughout
+    // the test.
+    const std::vector<float> kInitData(kUBOSize, 123.45);
+
+    // Set up a throw-away buffer just to make buffer suballocations not use offset 0.
+    GLBuffer throwaway;
+    glBindBuffer(GL_UNIFORM_BUFFER, throwaway);
+    glBufferData(GL_UNIFORM_BUFFER, 1024, nullptr, GL_DYNAMIC_DRAW);
+
+    // Set up the buffer
+    GLBuffer buffer;
+    glBindBuffer(GL_UNIFORM_BUFFER, buffer);
+    glBufferData(GL_UNIFORM_BUFFER, kUBOSize * 2, kInitData.data(), GL_DYNAMIC_DRAW);
+
+    const std::vector<float> kColorData = {
+        0.75,
+        0.5,
+        0.25,
+        1.0,
+    };
+    glBufferSubData(GL_UNIFORM_BUFFER, kDataOffset, kVec4Size, kColorData.data());
+
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    // Use the buffer, then do a big self-copy
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, buffer, 0, kUBOSize);
+    glScissor(0, 0, w / 2, h / 2);
+    glEnable(GL_SCISSOR_TEST);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5);
+
+    // Duplicate the buffer in the second half
+    glCopyBufferSubData(GL_UNIFORM_BUFFER, GL_UNIFORM_BUFFER, 0, kUBOSize, kUBOSize);
+
+    // Draw again, making sure the copy succeeded.
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, buffer, kUBOSize, kUBOSize);
+    glScissor(w / 2, 0, w / 2, h / 2);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5);
+
+    // Do a small self-copy
+    constexpr uint32_t kCopySrcOffset = 4 * kVec4Size;
+    constexpr uint32_t kCopyDstOffset = (64 + 4) * kVec4Size;
+    glCopyBufferSubData(GL_UNIFORM_BUFFER, GL_UNIFORM_BUFFER, kCopySrcOffset, kCopyDstOffset,
+                        kDataOffset);
+
+    // color data was previously at [12], and is now available at [68 + 12 - 4]
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, buffer, kCopyDstOffset - kCopySrcOffset, kUBOSize);
+    glScissor(0, h / 2, w / 2, h / 2);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5);
+
+    // Validate results
+    EXPECT_PIXEL_NEAR(0, 0, 191, 127, 63, 255, 1);
+    EXPECT_PIXEL_NEAR(w / 2 + 1, 0, 191, 127, 63, 255, 1);
+    EXPECT_PIXEL_NEAR(0, h / 2 + 1, 191, 127, 63, 255, 1);
+    EXPECT_PIXEL_COLOR_EQ(w / 2 + 1, h / 2 + 1, GLColor::black);
+
+    // Do a big copy again, but this time the buffer is unused by the GPU
+    glCopyBufferSubData(GL_UNIFORM_BUFFER, GL_UNIFORM_BUFFER, kUBOSize, 0, kUBOSize);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, buffer, 0, kUBOSize);
+    glScissor(w / 2, h / 2, w / 2, h / 2);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5);
+    EXPECT_PIXEL_NEAR(w / 2 + 1, h / 2 + 1, 191, 127, 63, 255, 1);
+
+    // Do a small copy again, but this time the buffer is unused by the GPU
+    glCopyBufferSubData(GL_UNIFORM_BUFFER, GL_UNIFORM_BUFFER, kUBOSize + kCopySrcOffset,
+                        kCopyDstOffset, kDataOffset);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, buffer, kCopyDstOffset - kCopySrcOffset, kUBOSize);
+    glDisable(GL_SCISSOR_TEST);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5);
+    EXPECT_PIXEL_NEAR(0, 0, 191, 127, 63, 255, 1);
+
+    ASSERT_GL_NO_ERROR();
+}
+
 ANGLE_INSTANTIATE_TEST_ES2(BufferDataTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(BufferSubDataTest);
-ANGLE_INSTANTIATE_TEST_ES3_AND(BufferSubDataTest,
-                               ES3_VULKAN().enable(Feature::PreferCPUForBufferSubData));
+ANGLE_INSTANTIATE_TEST_COMBINE_1(BufferSubDataTest,
+                                 BufferSubDataTestPrint,
+                                 testing::Bool(),
+                                 ANGLE_ALL_TEST_PLATFORMS_ES3,
+                                 ES3_VULKAN().enable(Feature::PreferCPUForBufferSubData));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(BufferDataTestES3);
 ANGLE_INSTANTIATE_TEST_ES3_AND(BufferDataTestES3,
+                               ES3_VULKAN().enable(Feature::PreferCPUForBufferSubData),
                                ES3_METAL().enable(Feature::ForceBufferGPUStorage));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(BufferStorageTestES3);

@@ -129,7 +129,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
         return nullptr;
 
     auto& script = document.frame()->script();
-    if (!script.canExecuteScripts(AboutToCreateEventListener) || script.isPaused())
+    if (!script.canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToCreateEventListener) || script.isPaused())
         return nullptr;
 
     ASSERT_WITH_MESSAGE(document.settings().scriptMarkupEnabled(), "Scripting element attributes should have been stripped during parsing");
@@ -197,7 +197,7 @@ RefPtr<JSLazyEventListener> JSLazyEventListener::create(CreationArguments&& argu
     TextPosition position;
     URL sourceURL;
     if (auto* frame = arguments.document.frame()) {
-        if (!frame->script().canExecuteScripts(AboutToCreateEventListener))
+        if (!frame->script().canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToCreateEventListener))
             return nullptr;
         position = frame->script().eventHandlerPosition();
         sourceURL = arguments.document.url();

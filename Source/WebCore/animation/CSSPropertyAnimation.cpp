@@ -41,40 +41,33 @@
 #include "ColorBlending.h"
 #include "ComputedStyleExtractor.h"
 #include "ContentData.h"
-#include "CounterDirectives.h"
 #include "CustomPropertyRegistry.h"
 #include "Document.h"
 #include "FloatConversion.h"
 #include "FontCascade.h"
 #include "FontSelectionAlgorithm.h"
 #include "FontTaggedSettings.h"
-#include "GapLength.h"
 #include "GridPositionsResolver.h"
 #include "IdentityTransformOperation.h"
 #include "LengthPoint.h"
 #include "Logging.h"
 #include "Matrix3DTransformOperation.h"
 #include "MatrixTransformOperation.h"
-#include "OffsetRotation.h"
-#include "PathOperation.h"
 #include "QuotesData.h"
 #include "RenderBox.h"
-#include "RenderStyle.h"
+#include "RenderStyleSetters.h"
+#include "SVGRenderStyle.h"
 #include "Settings.h"
 #include "StyleCachedImage.h"
 #include "StyleCrossfadeImage.h"
 #include "StyleFilterImage.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
-#include "TabSize.h"
-#include "TextSpacing.h"
 #include <algorithm>
 #include <memory>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/PointerComparison.h>
-#include <wtf/RefCounted.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -167,7 +160,7 @@ static inline ShadowStyle blendFunc(ShadowStyle from, ShadowStyle to, const CSSP
     return result > 0 ? ShadowStyle::Normal : ShadowStyle::Inset;
 }
 
-static inline std::unique_ptr<ShadowData> blendFunc(const ShadowData* from, const ShadowData* to, const CSSPropertyBlendingContext& context)
+static inline std::unique_ptr<ShadowData> blendFunc(const ShadowData* from, const ShadowData* to, const RenderStyle& fromStyle, const RenderStyle& toStyle, const CSSPropertyBlendingContext& context)
 {
     ASSERT(from && to);
     ASSERT(from->style() == to->style());
@@ -177,7 +170,7 @@ static inline std::unique_ptr<ShadowData> blendFunc(const ShadowData* from, cons
         blend(from->spread(), to->spread(), context),
         blendFunc(from->style(), to->style(), context),
         from->isWebkitBoxShadow(),
-        blend(from->color(), to->color(), context));
+        blend(fromStyle.colorResolvingCurrentColor(from->color()), toStyle.colorResolvingCurrentColor(to->color()), context));
 }
 
 static inline TransformOperations blendFunc(const TransformOperations& from, const TransformOperations& to, const CSSPropertyBlendingContext& context)
@@ -543,29 +536,29 @@ static inline std::optional<FontSelectionValue> blendFunc(std::optional<FontSele
 
 static inline bool canInterpolate(const GridTrackList& from, const GridTrackList& to)
 {
-    if (from.size() != to.size())
+    if (from.list.size() != to.list.size())
         return false;
 
     size_t i = 0;
     auto visitor = WTF::makeVisitor([&](const GridTrackSize&) {
-        return std::holds_alternative<GridTrackSize>(to[i]);
+        return std::holds_alternative<GridTrackSize>(to.list[i]);
     }, [&](const Vector<String>&) {
-        return std::holds_alternative<Vector<String>>(to[i]);
+        return std::holds_alternative<Vector<String>>(to.list[i]);
     }, [&](const GridTrackEntryRepeat& repeat) {
-        if (!std::holds_alternative<GridTrackEntryRepeat>(to[i]))
+        if (!std::holds_alternative<GridTrackEntryRepeat>(to.list[i]))
             return false;
-        const auto& toEntry = std::get<GridTrackEntryRepeat>(to[i]);
+        const auto& toEntry = std::get<GridTrackEntryRepeat>(to.list[i]);
         return repeat.repeats == toEntry.repeats && repeat.list.size() == toEntry.list.size();
-    }, [&](const GridTrackEntryAutoRepeat&) {
+    }, [](const GridTrackEntryAutoRepeat&) {
         return false;
-    }, [&](const GridTrackEntrySubgrid&) {
+    }, [](const GridTrackEntrySubgrid&) {
         return false;
-    }, [&](const GridTrackEntryMasonry&) {
+    }, [](const GridTrackEntryMasonry&) {
         return false;
     });
 
-    for (i = 0; i < from.size(); i++) {
-        if (!std::visit(visitor, from[i]))
+    for (i = 0; i < from.list.size(); i++) {
+        if (!std::visit(visitor, from.list[i]))
             return false;
     }
 
@@ -633,33 +626,33 @@ static inline GridTrackList blendFunc(const GridTrackList& from, const GridTrack
     size_t i = 0;
 
     auto visitor = WTF::makeVisitor([&](const GridTrackSize& size) {
-        result.append(blendFunc(size, std::get<GridTrackSize>(to[i]), context));
+        result.list.append(blendFunc(size, std::get<GridTrackSize>(to.list[i]), context));
     }, [&](const Vector<String>& names) {
         if (context.progress < 0.5)
-            result.append(names);
+            result.list.append(names);
         else {
-            const Vector<String>& toNames = std::get<Vector<String>>(to[i]);
-            result.append(toNames);
+            const Vector<String>& toNames = std::get<Vector<String>>(to.list[i]);
+            result.list.append(toNames);
         }
     }, [&](const GridTrackEntryRepeat& repeatFrom) {
-        const auto& repeatTo = std::get<GridTrackEntryRepeat>(to[i]);
+        auto& repeatTo = std::get<GridTrackEntryRepeat>(to.list[i]);
         GridTrackEntryRepeat repeatResult;
         repeatResult.repeats = repeatFrom.repeats;
         repeatResult.list = blendFunc(repeatFrom.list, repeatTo.list, context);
-        result.append(WTFMove(repeatResult));
+        result.list.append(WTFMove(repeatResult));
     }, [&](const GridTrackEntryAutoRepeat& repeatFrom) {
-        const auto& repeatTo = std::get<GridTrackEntryAutoRepeat>(to[i]);
+        auto& repeatTo = std::get<GridTrackEntryAutoRepeat>(to.list[i]);
         GridTrackEntryAutoRepeat repeatResult;
         repeatResult.type = repeatFrom.type;
         repeatResult.list = blendFunc(repeatFrom.list, repeatTo.list, context);
-        result.append(WTFMove(repeatResult));
-    }, [&](const GridTrackEntrySubgrid&) {
-    }, [&](const GridTrackEntryMasonry&) {
+        result.list.append(WTFMove(repeatResult));
+    }, [](const GridTrackEntrySubgrid&) {
+    }, [](const GridTrackEntryMasonry&) {
     });
 
 
-    for (i = 0; i < from.size(); i++)
-        std::visit(visitor, from[i]);
+    for (i = 0; i < from.list.size(); i++)
+        std::visit(visitor, from.list[i]);
 
     return result;
 }
@@ -969,10 +962,10 @@ static bool canInterpolateLengthVariants(const GapLength& from, const GapLength&
     return canInterpolateLengths(from.length(), to.length(), isLengthPercentage);
 }
 
-class LengthPointPropertyWrapper : public PropertyWrapperGetter<LengthPoint> {
+class LengthPointPropertyWrapper : public PropertyWrapperGetter<const LengthPoint&> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    LengthPointPropertyWrapper(CSSPropertyID property, LengthPoint (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthPoint&&))
+    LengthPointPropertyWrapper(CSSPropertyID property, const LengthPoint& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthPoint))
         : PropertyWrapperGetter(property, getter)
         , m_setter(setter)
     {
@@ -992,7 +985,7 @@ private:
         (destination.*m_setter)(blendFunc(value(from), value(to), context));
     }
 
-    void (RenderStyle::*m_setter)(LengthPoint&&);
+    void (RenderStyle::*m_setter)(LengthPoint);
 };
 
 // This class extends LengthPointPropertyWrapper to accommodate `auto` value expressed as
@@ -1000,7 +993,7 @@ private:
 // offset-anchor and offset-position, which allows `auto`, and is expressed like so.
 class LengthPointOrAutoPropertyWrapper : public LengthPointPropertyWrapper {
 public:
-    LengthPointOrAutoPropertyWrapper(CSSPropertyID property, LengthPoint (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthPoint&&))
+    LengthPointOrAutoPropertyWrapper(CSSPropertyID property, const LengthPoint& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthPoint))
         : LengthPointPropertyWrapper(property, getter, setter)
     {
     }
@@ -1019,7 +1012,7 @@ private:
 
 class OffsetLengthPointWrapper final : public LengthPointOrAutoPropertyWrapper {
 public:
-    OffsetLengthPointWrapper(CSSPropertyID property, LengthPoint (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthPoint&&))
+    OffsetLengthPointWrapper(CSSPropertyID property, const LengthPoint& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthPoint))
         : LengthPointOrAutoPropertyWrapper(property, getter, setter)
     {
     }
@@ -1586,11 +1579,11 @@ private:
         int toLength = shadowListLength(toShadow);
 
         if (fromLength == toLength || (fromLength <= 1 && toLength <= 1)) {
-            (destination.*m_setter)(blendSimpleOrMatchedShadowLists(fromShadow, toShadow, context), false);
+            (destination.*m_setter)(blendSimpleOrMatchedShadowLists(fromShadow, toShadow, from, to, context), false);
             return;
         }
 
-        (destination.*m_setter)(blendMismatchedShadowLists(fromShadow, toShadow, fromLength, toLength, context), false);
+        (destination.*m_setter)(blendMismatchedShadowLists(fromShadow, toShadow, fromLength, toLength, from, to, context), false);
     }
 
 #if !LOG_DISABLED
@@ -1623,7 +1616,7 @@ private:
         return newShadowData;
     }
 
-    std::unique_ptr<ShadowData> blendSimpleOrMatchedShadowLists(const ShadowData* shadowA, const ShadowData* shadowB, const CSSPropertyBlendingContext& context) const
+    std::unique_ptr<ShadowData> blendSimpleOrMatchedShadowLists(const ShadowData* shadowA, const ShadowData* shadowB, const RenderStyle& styleA, const RenderStyle& styleB, const CSSPropertyBlendingContext& context) const
     {
         // from or to might be null in which case we don't want to do additivity, but do replace instead.
         if (shadowA && shadowB && context.compositeOperation == CompositeOperation::Add)
@@ -1636,7 +1629,7 @@ private:
             const ShadowData* srcShadow = shadowForBlending(shadowA, shadowB);
             const ShadowData* dstShadow = shadowForBlending(shadowB, shadowA);
 
-            std::unique_ptr<ShadowData> blendedShadow = blendFunc(srcShadow, dstShadow, context);
+            std::unique_ptr<ShadowData> blendedShadow = blendFunc(srcShadow, dstShadow, styleA, styleB, context);
             ShadowData* blendedShadowPtr = blendedShadow.get();
 
             if (!lastShadow)
@@ -1653,7 +1646,7 @@ private:
         return newShadowData;
     }
 
-    std::unique_ptr<ShadowData> blendMismatchedShadowLists(const ShadowData* shadowA, const ShadowData* shadowB, int fromLength, int toLength, const CSSPropertyBlendingContext& context) const
+    std::unique_ptr<ShadowData> blendMismatchedShadowLists(const ShadowData* shadowA, const ShadowData* shadowB, int fromLength, int toLength, const RenderStyle& styleA, const RenderStyle& styleB, const CSSPropertyBlendingContext& context) const
     {
         if (shadowA && shadowB && context.compositeOperation != CompositeOperation::Replace)
             return addShadowLists(shadowA, shadowB);
@@ -1682,7 +1675,7 @@ private:
             const ShadowData* srcShadow = shadowForBlending(fromShadow, toShadow);
             const ShadowData* dstShadow = shadowForBlending(toShadow, fromShadow);
 
-            std::unique_ptr<ShadowData> blendedShadow = blendFunc(srcShadow, dstShadow, context);
+            std::unique_ptr<ShadowData> blendedShadow = blendFunc(srcShadow, dstShadow, styleA, styleB, context);
             // Insert at the start of the list to preserve the order.
             blendedShadow->setNext(WTFMove(newShadowData));
             newShadowData = WTFMove(blendedShadow);
@@ -2492,7 +2485,7 @@ private:
         auto toStyleColor = (to.*m_getter)();
 
         // We don't animate when both are currentcolor
-        if (RenderStyle::isCurrentColor(fromStyleColor) && RenderStyle::isCurrentColor(toStyleColor))
+        if (fromStyleColor.isCurrentColor() && toStyleColor.isCurrentColor())
             return;
 
         auto fromColor = from.colorResolvingCurrentColor(fromStyleColor);
@@ -2592,7 +2585,7 @@ private:
             auto blendedAdjust = blendFunc(*from.fontSizeAdjust().value, *to.fontSizeAdjust().value, context);
 
             ASSERT(from.fontSizeAdjust().metric == to.fontSizeAdjust().metric);
-            return { to.fontSizeAdjust().metric, std::max(blendedAdjust, 0.0f) };
+            return { to.fontSizeAdjust().metric, false, std::max(blendedAdjust, 0.0f) };
         };
 
         destination.setFontSizeAdjust(blendedFontSizeAdjust());
@@ -3069,26 +3062,20 @@ public:
 
     bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
-        auto* aCounterDirectives = a.counterDirectives();
-        auto* bCounterDirectives = b.counterDirectives();
-
-        if (!aCounterDirectives && !bCounterDirectives)
-            return true;
-        if (aCounterDirectives && bCounterDirectives) {
-            if (aCounterDirectives->size() != bCounterDirectives->size())
+        auto& mapA = a.counterDirectives().map;
+        auto& mapB = b.counterDirectives().map;
+        if (mapA.size() != mapB.size())
+            return false;
+        for (auto& [key, aDirective] : mapA) {
+            auto it = mapB.find(key);
+            if (it == mapB.end())
                 return false;
-            for (auto& [key, aDirective] : *aCounterDirectives) {
-                auto it = bCounterDirectives->find(key);
-                if (it == bCounterDirectives->end())
-                    return false;
-                auto& bDirective = it->value;
-                if ((property() == CSSPropertyCounterIncrement && aDirective.incrementValue != bDirective.incrementValue)
-                    || (property() == CSSPropertyCounterReset && aDirective.resetValue != bDirective.resetValue))
-                    return false;
-            }
-            return true;
+            auto& bDirective = it->value;
+            if ((property() == CSSPropertyCounterIncrement && aDirective.incrementValue != bDirective.incrementValue)
+                || (property() == CSSPropertyCounterReset && aDirective.resetValue != bDirective.resetValue))
+                return false;
         }
-        return false;
+        return true;
     }
 
 #if !LOG_DISABLED
@@ -3104,21 +3091,16 @@ public:
         ASSERT(!context.progress || context.progress == 1);
 
         // Clear all existing values in the existing set of directives.
-        if (destination.counterDirectives()) {
-            for (auto& [key, directive] : destination.accessCounterDirectives()) {
-                if (property() == CSSPropertyCounterIncrement)
-                    directive.incrementValue = std::nullopt;
-                else
-                    directive.resetValue = std::nullopt;
-            }
+        for (auto& [key, directive] : destination.accessCounterDirectives().map) {
+            if (property() == CSSPropertyCounterIncrement)
+                directive.incrementValue = std::nullopt;
+            else
+                directive.resetValue = std::nullopt;
         }
 
         auto& style = context.progress ? to : from;
-        if (!style.counterDirectives())
-            return;
-
-        auto& targetDirectives = destination.accessCounterDirectives();
-        for (auto& [key, directive] : *style.counterDirectives()) {
+        auto& targetDirectives = destination.accessCounterDirectives().map;
+        for (auto& [key, directive] : style.counterDirectives().map) {
             auto updateDirective = [&](CounterDirectives& target, const CounterDirectives& source) {
                 if (property() == CSSPropertyCounterIncrement)
                     target.incrementValue = source.incrementValue;
@@ -3216,9 +3198,9 @@ public:
 
     bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
-        return a.implicitNamedGridColumnLines() == b.implicitNamedGridColumnLines()
-            && a.implicitNamedGridRowLines() == b.implicitNamedGridRowLines()
-            && a.namedGridArea() == b.namedGridArea()
+        return a.implicitNamedGridColumnLines().map == b.implicitNamedGridColumnLines().map
+            && a.implicitNamedGridRowLines().map == b.implicitNamedGridRowLines().map
+            && a.namedGridArea().map == b.namedGridArea().map
             && a.namedGridAreaRowCount() == b.namedGridAreaRowCount()
             && a.namedGridAreaColumnCount() == b.namedGridAreaColumnCount();
     }
@@ -3491,7 +3473,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new LengthVariantPropertyWrapper<LengthSize>(CSSPropertyBorderBottomLeftRadius, &RenderStyle::borderBottomLeftRadius, &RenderStyle::setBorderBottomLeftRadius),
         new LengthVariantPropertyWrapper<LengthSize>(CSSPropertyBorderBottomRightRadius, &RenderStyle::borderBottomRightRadius, &RenderStyle::setBorderBottomRightRadius),
         new PropertyWrapper<Visibility>(CSSPropertyVisibility, &RenderStyle::visibility, &RenderStyle::setVisibility),
-        new FloatPropertyWrapper(CSSPropertyZoom, &RenderStyle::zoom, &RenderStyle::setZoomWithoutReturnValue, FloatPropertyWrapper::ValueRange::Positive),
 
         new ClipWrapper,
 
@@ -3603,7 +3584,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<BoxSizing>(CSSPropertyBoxSizing, &RenderStyle::boxSizing, &RenderStyle::setBoxSizing),
         new DiscretePropertyWrapper<CaptionSide>(CSSPropertyCaptionSide, &RenderStyle::captionSide, &RenderStyle::setCaptionSide),
         new DiscretePropertyWrapper<Clear>(CSSPropertyClear, &RenderStyle::clear, &RenderStyle::setClear),
-        new DiscretePropertyWrapper<LeadingTrim>(CSSPropertyLeadingTrim, &RenderStyle::leadingTrim, &RenderStyle::setLeadingTrim),
+        new DiscretePropertyWrapper<TextBoxTrim>(CSSPropertyTextBoxTrim, &RenderStyle::textBoxTrim, &RenderStyle::setTextBoxTrim),
         new DiscretePropertyWrapper<PrintColorAdjust>(CSSPropertyPrintColorAdjust, &RenderStyle::printColorAdjust, &RenderStyle::setPrintColorAdjust),
         new DiscretePropertyWrapper<ColumnFill>(CSSPropertyColumnFill, &RenderStyle::columnFill, &RenderStyle::setColumnFill),
         new DiscretePropertyWrapper<BorderStyle>(CSSPropertyColumnRuleStyle, &RenderStyle::columnRuleStyle, &RenderStyle::setColumnRuleStyle),
@@ -3918,7 +3899,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyScrollSnapAlign:
         case CSSPropertyScrollSnapStop:
         case CSSPropertyScrollSnapType:
-        case CSSPropertyTextEdge:
+        case CSSPropertyTextBoxEdge:
         case CSSPropertySize:
         case CSSPropertySpeakAs:
         case CSSPropertyStrokeColor:
@@ -4002,6 +3983,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyWebkitUserDrag:
         case CSSPropertyWebkitUserModify:
         case CSSPropertyWebkitUserSelect:
+        case CSSPropertyZoom:
             continue;
         default:
             if (CSSProperty::isDescriptorOnly(property))
@@ -4051,7 +4033,7 @@ static std::optional<CSSCustomPropertyValue::SyntaxValue> blendSyntaxValues(cons
     if (std::holds_alternative<StyleColor>(from) && std::holds_alternative<StyleColor>(to)) {
         auto& fromStyleColor = std::get<StyleColor>(from);
         auto& toStyleColor = std::get<StyleColor>(to);
-        if (!RenderStyle::isCurrentColor(fromStyleColor) || !RenderStyle::isCurrentColor(toStyleColor))
+        if (!fromStyleColor.isCurrentColor() || !toStyleColor.isCurrentColor())
             return blendFunc(fromStyle.colorResolvingCurrentColor(fromStyleColor), toStyle.colorResolvingCurrentColor(toStyleColor), blendingContext);
     }
 

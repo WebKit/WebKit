@@ -7,6 +7,7 @@
     <canvas id="canvas"></canvas>
     <script>
         var image = new Image;
+        document.body.appendChild(image);
                 
         function drawFrame(expectedFrame) {
             return new Promise((resolve) => {
@@ -14,14 +15,15 @@
                 let context = canvas.getContext("2d");
                 context.drawImage(image, 0, 0, canvas.width, canvas.height);
                 shouldBe("internals.imageFrameIndex(image)", expectedFrame.toString());
-                setTimeout(() => {
+                // Wait for the next image frame to finish decoding before moving foreward.
+                image.addEventListener("webkitImageFrameReady", () => {
                     resolve(expectedFrame + 1);
-                }, 30);
+                }, { once : true });
             });
         }
 
-        function drawImage(frameCount, expectedFrame) {
-            let promise = drawFrame(expectedFrame);
+        function drawImage(frameCount) {
+            let promise = drawFrame(0);
             for (let frame = 1; frame < frameCount; ++frame) {
                 promise = promise.then((expectedFrame) => {
                     return drawFrame(expectedFrame);
@@ -34,13 +36,13 @@
             return new Promise((resolve) => {
                 image.onload = (() => {
                     if (window.internals) {
-                        internals.setImageFrameDecodingDuration(image, 0.020);
+                        internals.settings.setWebkitImageReadyEventEnabled(true);
                         internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
                     }
-                    drawImage(Math.ceil(frameCount / 2), 0).then(() => {
+                    drawImage(Math.ceil(frameCount / 2)).then(() => {
                         internals.resetImageAnimation(image);
                         debug("The animation of the image was reset.");
-                        drawImage(frameCount, 0).then(resolve);
+                        drawImage(frameCount).then(resolve);
                     });
                 });
                 image.src = src;

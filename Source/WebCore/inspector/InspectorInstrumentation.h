@@ -233,8 +233,9 @@ public:
     static void loaderDetachedFromFrame(LocalFrame&, DocumentLoader&);
     static void frameStartedLoading(LocalFrame&);
     static void frameStoppedLoading(LocalFrame&);
-    static void frameScheduledNavigation(LocalFrame&, Seconds delay);
-    static void frameClearedScheduledNavigation(LocalFrame&);
+    static void didCompleteRenderingFrame(LocalFrame&);
+    static void frameScheduledNavigation(Frame&, Seconds delay);
+    static void frameClearedScheduledNavigation(Frame&);
     static void accessibilitySettingsDidChange(Page&);
 #if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
     static void defaultAppearanceDidChange(Page&);
@@ -443,9 +444,10 @@ private:
     static void frameDocumentUpdatedImpl(InstrumentingAgents&, LocalFrame&);
     static void loaderDetachedFromFrameImpl(InstrumentingAgents&, DocumentLoader&);
     static void frameStartedLoadingImpl(InstrumentingAgents&, LocalFrame&);
+    static void didCompleteRenderingFrameImpl(InstrumentingAgents&);
     static void frameStoppedLoadingImpl(InstrumentingAgents&, LocalFrame&);
-    static void frameScheduledNavigationImpl(InstrumentingAgents&, LocalFrame&, Seconds delay);
-    static void frameClearedScheduledNavigationImpl(InstrumentingAgents&, LocalFrame&);
+    static void frameScheduledNavigationImpl(InstrumentingAgents&, Frame&, Seconds delay);
+    static void frameClearedScheduledNavigationImpl(InstrumentingAgents&, Frame&);
     static void accessibilitySettingsDidChangeImpl(InstrumentingAgents&);
 #if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
     static void defaultAppearanceDidChangeImpl(InstrumentingAgents&);
@@ -531,8 +533,8 @@ private:
     static InstrumentingAgents& instrumentingAgents(Page&);
     static InstrumentingAgents& instrumentingAgents(WorkerOrWorkletGlobalScope&);
 
-    static InstrumentingAgents* instrumentingAgents(const LocalFrame&);
-    static InstrumentingAgents* instrumentingAgents(const LocalFrame*);
+    static InstrumentingAgents* instrumentingAgents(const Frame&);
+    static InstrumentingAgents* instrumentingAgents(const Frame*);
     static InstrumentingAgents* instrumentingAgents(ScriptExecutionContext&);
     static InstrumentingAgents* instrumentingAgents(Document&);
     static InstrumentingAgents* instrumentingAgents(Document*);
@@ -1125,7 +1127,7 @@ inline void InspectorInstrumentation::didReceiveThreadableLoaderResponse(Documen
     if (auto* agents = instrumentingAgents(documentThreadableLoader.document()))
         didReceiveThreadableLoaderResponseImpl(*agents, documentThreadableLoader, identifier);
 }
-    
+
 inline void InspectorInstrumentation::didReceiveData(LocalFrame* frame, ResourceLoaderIdentifier identifier, const SharedBuffer* buffer, int encodedDataLength)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
@@ -1267,6 +1269,13 @@ inline void InspectorInstrumentation::frameStartedLoading(LocalFrame& frame)
         frameStartedLoadingImpl(*agents, frame);
 }
 
+inline void InspectorInstrumentation::didCompleteRenderingFrame(LocalFrame& frame)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (auto* agents = instrumentingAgents(frame))
+        didCompleteRenderingFrameImpl(*agents);
+}
+
 inline void InspectorInstrumentation::frameStoppedLoading(LocalFrame& frame)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
@@ -1274,14 +1283,14 @@ inline void InspectorInstrumentation::frameStoppedLoading(LocalFrame& frame)
         frameStoppedLoadingImpl(*agents, frame);
 }
 
-inline void InspectorInstrumentation::frameScheduledNavigation(LocalFrame& frame, Seconds delay)
+inline void InspectorInstrumentation::frameScheduledNavigation(Frame& frame, Seconds delay)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(frame))
         frameScheduledNavigationImpl(*agents, frame, delay);
 }
 
-inline void InspectorInstrumentation::frameClearedScheduledNavigation(LocalFrame& frame)
+inline void InspectorInstrumentation::frameClearedScheduledNavigation(Frame& frame)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(frame))
@@ -1729,12 +1738,12 @@ inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(Script
     return context ? instrumentingAgents(*context) : nullptr;
 }
 
-inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(const LocalFrame* frame)
+inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(const Frame* frame)
 {
     return frame ? instrumentingAgents(*frame) : nullptr;
 }
 
-inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(const LocalFrame& frame)
+inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(const Frame& frame)
 {
     return instrumentingAgents(frame.page());
 }

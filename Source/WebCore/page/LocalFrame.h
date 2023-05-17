@@ -30,7 +30,6 @@
 #include "AdjustViewSizeOrNot.h"
 #include "Document.h"
 #include "Frame.h"
-#include "PageIdentifier.h"
 #include "ScrollTypes.h"
 #include "UserScriptTypes.h"
 #include <wtf/HashSet.h>
@@ -87,7 +86,6 @@ class IntPoint;
 class IntRect;
 class IntSize;
 class LocalFrameView;
-class NavigationScheduler;
 class Node;
 class Page;
 class RenderLayer;
@@ -148,14 +146,11 @@ public:
     const EventHandler& eventHandler() const { return m_eventHandler; }
     const FrameLoader& loader() const { return m_loader.get(); }
     FrameLoader& loader() { return m_loader.get(); }
-    NavigationScheduler& navigationScheduler() const;
     FrameSelection& selection() { return document()->selection(); }
     const FrameSelection& selection() const { return document()->selection(); }
     ScriptController& script() { return m_script; }
     const ScriptController& script() const { return m_script; }
     void resetScript();
-
-    WEBCORE_EXPORT std::optional<PageIdentifier> pageID() const;
 
     WEBCORE_EXPORT RenderView* contentRenderer() const; // Root of the render tree for the document contained in this frame.
     WEBCORE_EXPORT RenderWidget* ownerRenderer() const; // Renderer for the element that contains this frame.
@@ -308,7 +303,6 @@ private:
     Vector<std::pair<Ref<DOMWrapperWorld>, UniqueRef<UserScript>>> m_userScriptsAwaitingNotification;
 
     UniqueRef<FrameLoader> m_loader;
-    mutable UniqueRef<NavigationScheduler> m_navigationScheduler;
 
     RefPtr<LocalFrameView> m_view;
     RefPtr<Document> m_doc;
@@ -347,16 +341,6 @@ private:
 
     UniqueRef<EventHandler> m_eventHandler;
 };
-
-using LocalFrame = LocalFrame;
-
-// FIXME: Remove after WebKitAdditions transitions to this change.
-#define WEBCORE_HAS_LOCAL_FRAME 1
-
-inline NavigationScheduler& LocalFrame::navigationScheduler() const
-{
-    return m_navigationScheduler.get();
-}
 
 inline LocalFrameView* LocalFrame::view() const
 {

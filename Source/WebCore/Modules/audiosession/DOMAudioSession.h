@@ -72,7 +72,7 @@ private:
     // InterruptionObserver
     void beginAudioSessionInterruption() final;
     void endAudioSessionInterruption(AudioSession::MayResume) final;
-    void activeStateChanged() final;
+    void audioSessionActiveStateChanged() final;
 
     void scheduleStateChangeEvent();
 

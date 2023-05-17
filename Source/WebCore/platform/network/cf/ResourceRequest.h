@@ -41,6 +41,8 @@ struct ResourceRequestPlatformData {
     RetainPtr<NSURLRequest> m_urlRequest;
     std::optional<bool> m_isAppInitiated;
     std::optional<ResourceRequestRequester> m_requester;
+    bool m_privacyProxyFailClosedForUnreachableNonMainHosts { false };
+    bool m_useNetworkConnectionIntegrity { false };
 };
 
 using ResourceRequestData = std::variant<ResourceRequestBase::RequestData, ResourceRequestPlatformData>;
@@ -73,30 +75,16 @@ public:
     ResourceRequest(ResourceRequestBase&& base
         , const String& cachePartition
         , bool hiddenFromInspector
-#if USE(SYSTEM_PREVIEW)
-        , const std::optional<SystemPreviewInfo>& systemPreviewInfo
-#endif
     )
         : ResourceRequestBase(WTFMove(base))
     {
         m_cachePartition = cachePartition;
         m_hiddenFromInspector = hiddenFromInspector;
-#if USE(SYSTEM_PREVIEW)
-        m_systemPreviewInfo = systemPreviewInfo;
-#endif
     }
 
-    ResourceRequest(ResourceRequestPlatformData&&, const String& cachePartition, bool hiddenFromInspector
-#if USE(SYSTEM_PREVIEW)
-    , const std::optional<SystemPreviewInfo>&
-#endif
-    );
+    ResourceRequest(ResourceRequestPlatformData&&, const String& cachePartition, bool hiddenFromInspector);
 
-    WEBCORE_EXPORT static ResourceRequest fromResourceRequestData(ResourceRequestData, const String& cachePartition, bool hiddenFromInspector
-#if USE(SYSTEM_PREVIEW)
-    , const std::optional<SystemPreviewInfo>&
-#endif
-    );
+    WEBCORE_EXPORT static ResourceRequest fromResourceRequestData(ResourceRequestData, const String& cachePartition, bool hiddenFromInspector);
 
     WEBCORE_EXPORT void updateFromDelegatePreservingOldProperties(const ResourceRequest&);
     

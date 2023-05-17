@@ -51,10 +51,10 @@ private:
     bool shouldSendWheelEventsToEventDispatcher() const final { return true; }
 
     // message handers
-    void update(uint64_t, const UpdateInfo&) override;
+    void update(uint64_t, UpdateInfo&&) override;
     void enterAcceleratedCompositingMode(uint64_t, const LayerTreeContext&) override;
 
-    void incorporateUpdate(const UpdateInfo&);
+    void incorporateUpdate(UpdateInfo&&);
     void discardBackingStore();
 
     uint64_t m_currentBackingStoreStateID { 0 };
@@ -62,5 +62,7 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_DRAWING_AREA_PROXY(DrawingAreaProxyWC, DrawingAreaType::WC)
 
 #endif // USE(GRAPHICS_LAYER_WC)

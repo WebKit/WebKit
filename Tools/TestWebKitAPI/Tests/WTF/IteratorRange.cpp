@@ -87,16 +87,20 @@ TEST(WTF_IteratorRange, MakeReversedRangeFromRange)
         EXPECT_EQ(value, expectedResults[index++]);
 }
 
+struct OneWayIterator {
+    int* ptr;
+
+    auto& operator*() const { return *ptr; }
+    void operator++() { ++ptr; }
+};
+
+bool operator==(const OneWayIterator& a, const OneWayIterator& b)
+{
+    return a.ptr == b.ptr;
+}
+
 TEST(WTF_IteratorRange, OneWayIterator)
 {
-    struct OneWayIterator {
-        int* ptr;
-
-        bool operator!=(const OneWayIterator& other) { return ptr != other.ptr; }
-        auto& operator*() const { return *ptr; }
-        void operator++() { ++ptr; }
-    };
-
     Vector<int> intVector { 10, 11, 12, 13 };
 
     auto range = IteratorRange { OneWayIterator { intVector.begin() }, OneWayIterator { intVector.end() } };

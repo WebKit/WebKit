@@ -50,7 +50,7 @@ static inline AffineTransform rotation(const FloatRect& boxRect, RotationDirecti
 
 class TextPainter {
 public:
-    TextPainter(GraphicsContext&, const FontCascade&);
+    TextPainter(GraphicsContext&, const FontCascade&, const RenderStyle&);
 
     void setStyle(const TextPaintStyle& textPaintStyle) { m_style = textPaintStyle; }
     void setShadow(const ShadowData* shadow) { m_shadow = shadow; }
@@ -96,6 +96,7 @@ private:
 
     GraphicsContext& m_context;
     const FontCascade& m_font;
+    const RenderStyle& m_renderStyle;
     TextPaintStyle m_style;
     AtomString m_emphasisMark;
     const ShadowData* m_shadow { nullptr };
@@ -115,7 +116,7 @@ inline void TextPainter::setEmphasisMark(const AtomString& mark, float offset, c
 
 class ShadowApplier {
 public:
-    ShadowApplier(GraphicsContext&, const ShadowData*, const FilterOperations* colorFilter, const FloatRect& textRect, bool lastShadowIterationShouldDrawText = true, bool opaque = false, FontOrientation = FontOrientation::Horizontal);
+    ShadowApplier(const RenderStyle&, GraphicsContext&, const ShadowData*, const FilterOperations* colorFilter, const FloatRect& textRect, bool lastShadowIterationShouldDrawText = true, bool opaque = false, FontOrientation = FontOrientation::Horizontal);
     FloatSize extraOffset() const { return m_extraOffset; }
     bool nothingToDraw() const { return m_nothingToDraw; }
     bool didSaveContext() const { return m_didSaveContext; }

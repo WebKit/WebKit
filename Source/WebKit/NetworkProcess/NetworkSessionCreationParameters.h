@@ -69,7 +69,7 @@ struct NetworkSessionCreationParameters {
     URL httpProxy;
     URL httpsProxy;
 #endif
-#if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
+#if HAVE(ALTERNATIVE_SERVICE)
     String alternativeServiceDirectory;
     SandboxExtension::Handle alternativeServiceDirectoryExtensionHandle;
 #endif
@@ -117,7 +117,7 @@ struct NetworkSessionCreationParameters {
 #endif
     bool isBlobRegistryTopOriginPartitioningEnabled { false };
 
-    UnifiedOriginStorageLevel unifiedOriginStorageLevel { UnifiedOriginStorageLevel::Basic };
+    UnifiedOriginStorageLevel unifiedOriginStorageLevel { UnifiedOriginStorageLevel::Standard };
     uint64_t perOriginStorageQuota;
     std::optional<double> originQuotaRatio;
     std::optional<double> totalQuotaRatio;

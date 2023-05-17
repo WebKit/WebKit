@@ -32,12 +32,25 @@ using JSC::DataView;
 
 namespace WebCore {
 
+bool ISOTrackEncryptionBox::parseWithoutTypeAndSize(DataView& view)
+{
+    // Clients may want to parse the contents of a `tenc` box without the
+    // leading size and name fields.
+    unsigned offset = 0;
+    return parseVersionAndFlags(view, offset) && parsePayload(view, offset);
+}
+
 bool ISOTrackEncryptionBox::parse(DataView& view, unsigned& offset)
 {
     // ISO/IEC 23001-7-2015 Section 8.2.2
     if (!ISOFullBox::parse(view, offset))
         return false;
 
+    return parsePayload(view, offset);
+}
+
+bool ISOTrackEncryptionBox::parsePayload(DataView& view, unsigned& offset)
+{
     // unsigned int(8) reserved = 0;
     offset += 1;
 

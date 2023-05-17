@@ -29,7 +29,7 @@
 #include "Color.h"
 #include "LayoutUnit.h"
 #include "RenderObject.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 
 namespace WebCore {
 

@@ -202,7 +202,7 @@ void XMLDocumentParser::end()
 
     if (isParsing())
         prepareToStopParsing();
-    document()->setReadyState(Document::Interactive);
+    document()->setReadyState(Document::ReadyState::Interactive);
     clearCurrentNodeStack();
     document()->finishedParsing();
 }

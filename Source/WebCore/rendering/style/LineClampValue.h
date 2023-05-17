@@ -30,32 +30,27 @@ namespace WebCore {
     
 class LineClampValue {
 public:
-    LineClampValue()
+    constexpr LineClampValue()
         : m_type(LineClamp::LineCount)
         , m_value(-1)
     {
     }
     
-    LineClampValue(int value, LineClamp type)
+    constexpr LineClampValue(int value, LineClamp type)
         : m_type(type)
         , m_value(value)
     {
     }
     
-    int value() const { return m_value; }
+    constexpr int value() const { return m_value; }
     
-    bool isPercentage() const { return m_type == LineClamp::Percentage; }
+    constexpr bool isPercentage() const { return m_type == LineClamp::Percentage; }
 
-    bool isNone() const { return m_value == -1; }
+    constexpr bool isNone() const { return m_value == -1; }
 
-    bool operator==(const LineClampValue& o) const
+    constexpr bool operator==(const LineClampValue& o) const
     {
         return value() == o.value() && isPercentage() == o.isPercentage();
-    }
-    
-    bool operator!=(const LineClampValue& o) const
-    {
-        return !(*this == o);
     }
     
 private:

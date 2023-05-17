@@ -60,30 +60,28 @@ public:
     enum Flag {
         Width = 1 << 0,
         Height = 1 << 1,
-        AspectRatio = 1 << 2,
-        FrameRate = 1 << 3,
-        FacingMode = 1 << 4,
-        Volume = 1 << 5,
-        SampleRate = 1 << 6,
-        SampleSize = 1 << 7,
-        EchoCancellation = 1 << 8,
-        DeviceId = 1 << 9,
-        GroupId = 1 << 10,
-        Label = 1 << 11,
-        DisplaySurface = 1 << 12,
-        LogicalSurface = 1 << 13,
-        Zoom = 1 << 14,
+        FrameRate = 1 << 2,
+        FacingMode = 1 << 3,
+        Volume = 1 << 4,
+        SampleRate = 1 << 5,
+        SampleSize = 1 << 6,
+        EchoCancellation = 1 << 7,
+        DeviceId = 1 << 8,
+        GroupId = 1 << 9,
+        Label = 1 << 10,
+        DisplaySurface = 1 << 11,
+        LogicalSurface = 1 << 12,
+        Zoom = 1 << 13,
     };
 
-    static constexpr OptionSet<Flag> allFlags() { return { Width, Height, AspectRatio, FrameRate, FacingMode, Volume, SampleRate, SampleSize, EchoCancellation, DeviceId, GroupId, Label, DisplaySurface, LogicalSurface, Zoom }; }
+    static constexpr OptionSet<Flag> allFlags() { return { Width, Height, FrameRate, FacingMode, Volume, SampleRate, SampleSize, EchoCancellation, DeviceId, GroupId, Label, DisplaySurface, LogicalSurface, Zoom }; }
 
     WEBCORE_EXPORT OptionSet<RealtimeMediaSourceSettings::Flag> difference(const RealtimeMediaSourceSettings&) const;
 
-    explicit RealtimeMediaSourceSettings() = default;
-    RealtimeMediaSourceSettings(uint32_t width, uint32_t height, float aspectRatio, float frameRate, VideoFacingMode facingMode, double volume, uint32_t sampleRate, uint32_t sampleSize, bool echoCancellation, AtomString&& deviceId, AtomString&& groupId, AtomString&& label, DisplaySurfaceType displaySurface, bool logicalSurface, double zoom, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
+    RealtimeMediaSourceSettings() = default;
+    RealtimeMediaSourceSettings(uint32_t width, uint32_t height, float frameRate, VideoFacingMode facingMode, double volume, uint32_t sampleRate, uint32_t sampleSize, bool echoCancellation, AtomString&& deviceId, String&& groupId, AtomString&& label, DisplaySurfaceType displaySurface, bool logicalSurface, double zoom, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
         : m_width(width)
         , m_height(height)
-        , m_aspectRatio(aspectRatio)
         , m_frameRate(frameRate)
         , m_facingMode(facingMode)
         , m_volume(volume)
@@ -109,8 +107,6 @@ public:
     void setHeight(uint32_t height) { m_height = height; }
 
     bool supportsAspectRatio() const { return m_supportedConstraints.supportsAspectRatio(); }
-    float aspectRatio() const { return m_aspectRatio; }
-    void setAspectRatio(float aspectRatio) { m_aspectRatio = aspectRatio; }
 
     bool supportsFrameRate() const { return m_supportedConstraints.supportsFrameRate(); }
     float frameRate() const { return m_frameRate; }
@@ -141,8 +137,8 @@ public:
     void setDeviceId(const AtomString& deviceId) { m_deviceId = deviceId; }
 
     bool supportsGroupId() const { return m_supportedConstraints.supportsGroupId(); }
-    const AtomString& groupId() const { return m_groupId; }
-    void setGroupId(const AtomString& groupId) { m_groupId = groupId; }
+    const String& groupId() const { return m_groupId; }
+    void setGroupId(const String& groupId) { m_groupId = groupId; }
 
     bool supportsDisplaySurface() const { return m_supportedConstraints.supportsDisplaySurface(); }
     DisplaySurfaceType displaySurface() const { return m_displaySurface; }
@@ -167,7 +163,6 @@ public:
 private:
     uint32_t m_width { 0 };
     uint32_t m_height { 0 };
-    float m_aspectRatio { 0 };
     float m_frameRate { 0 };
     VideoFacingMode m_facingMode { VideoFacingMode::Unknown };
     double m_volume { 0 };
@@ -176,7 +171,7 @@ private:
     bool m_echoCancellation { 0 };
 
     AtomString m_deviceId;
-    AtomString m_groupId;
+    String m_groupId;
     AtomString m_label;
 
     DisplaySurfaceType m_displaySurface { DisplaySurfaceType::Invalid };

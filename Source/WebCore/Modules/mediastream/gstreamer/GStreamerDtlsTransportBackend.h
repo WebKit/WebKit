@@ -28,11 +28,13 @@
 
 namespace WebCore {
 
-class GStreamerDtlsTransportBackend final : public RTCDtlsTransportBackend, public CanMakeWeakPtr<GStreamerDtlsTransportBackend, WeakPtrFactoryInitialization::Eager> {
+class GStreamerDtlsTransportBackendObserver;
+
+class GStreamerDtlsTransportBackend final : public RTCDtlsTransportBackend, public CanMakeWeakPtr<GStreamerDtlsTransportBackend> {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    explicit GStreamerDtlsTransportBackend(const GRefPtr<GstWebRTCDTLSTransport>&);
+    explicit GStreamerDtlsTransportBackend(GRefPtr<GstWebRTCDTLSTransport>&&);
     ~GStreamerDtlsTransportBackend();
 
 private:
@@ -42,10 +44,8 @@ private:
     void registerClient(Client&) final;
     void unregisterClient() final;
 
-    void stateChanged() const;
-
     GRefPtr<GstWebRTCDTLSTransport> m_backend;
-    WeakPtr<Client> m_client;
+    RefPtr<GStreamerDtlsTransportBackendObserver> m_observer;
 };
 
 } // namespace WebCore

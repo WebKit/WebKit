@@ -30,3 +30,6 @@
 - (NSDictionary *)detail;
 @end
 
+@interface NSHTTPURLResponse ()
++ (BOOL)isErrorStatusCode:(NSInteger)statusCode;
+@end

@@ -51,7 +51,6 @@ public:
     bool isSpringTimingFunction() const { return type() == Type::SpringFunction; }
 
     virtual bool operator==(const TimingFunction&) const = 0;
-    bool operator!=(const TimingFunction& other) const { return !(*this == other); }
 
     static ExceptionOr<RefPtr<TimingFunction>> createFromCSSText(const String&);
     static RefPtr<TimingFunction> createFromCSSValue(const CSSValue&);

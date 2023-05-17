@@ -14,9 +14,8 @@ layer at (0,0) size 800x600
           RenderBlock {HTML} at (0,0) size 300x150
             RenderBody {BODY} at (8,8) size 284x134
               RenderImage {IMG} at (0,0) size 250x50
-      RenderText {#text} at (304,176) size 4x18
-        text run at (304,176) width 4: " "
-      RenderBR {BR} at (308,176) size 0x18
-      RenderText {#text} at (0,194) size 398x18
-        text run at (0,194) width 398: "The above image will tell you success or failure - green or red"
-      RenderBR {BR} at (397,194) size 1x18
+      RenderText {#text} at (0,0) size 0x0
+      RenderBR {BR} at (304,176) size 0x18
+      RenderText {#text} at (0,190) size 398x18
+        text run at (0,190) width 398: "The above image will tell you success or failure - green or red"
+      RenderBR {BR} at (397,190) size 1x18

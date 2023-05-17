@@ -29,13 +29,14 @@
 #include "CSSToStyleMap.h"
 #include "CascadeLevel.h"
 #include "PropertyCascade.h"
-#include "RenderStyle.h"
 #include "RuleSet.h"
 #include "SelectorChecker.h"
 #include <wtf/Bitmap.h>
 
 namespace WebCore {
 
+class FilterOperations;
+class RenderStyle;
 class StyleImage;
 class StyleResolver;
 
@@ -68,18 +69,18 @@ public:
     const Document& document() const { return m_context.document.get(); }
     const Element* element() const { return m_context.element.get(); }
 
-    void setFontDescription(FontCascadeDescription&& fontDescription) { m_fontDirty |= m_style.setFontDescription(WTFMove(fontDescription)); }
+    inline void setFontDescription(FontCascadeDescription&&);
     void setFontSize(FontCascadeDescription&, float size);
-    void setZoom(float f) { m_fontDirty |= m_style.setZoom(f); }
-    void setEffectiveZoom(float f) { m_fontDirty |= m_style.setEffectiveZoom(f); }
-    void setWritingMode(WritingMode writingMode) { m_fontDirty |= m_style.setWritingMode(writingMode); }
-    void setTextOrientation(TextOrientation textOrientation) { m_fontDirty |= m_style.setTextOrientation(textOrientation); }
+    inline void setZoom(float);
+    inline void setEffectiveZoom(float);
+    inline void setWritingMode(WritingMode);
+    inline void setTextOrientation(TextOrientation);
 
     bool fontDirty() const { return m_fontDirty; }
     void setFontDirty() { m_fontDirty = true; }
 
-    const FontCascadeDescription& fontDescription() { return m_style.fontDescription(); }
-    const FontCascadeDescription& parentFontDescription() { return parentStyle().fontDescription(); }
+    inline const FontCascadeDescription& fontDescription();
+    inline const FontCascadeDescription& parentFontDescription();
 
     // FIXME: These are mutually exclusive, clean up the code to take that into account.
     bool applyPropertyToRegularStyle() const { return m_linkMatch != SelectorChecker::MatchVisited; }

@@ -30,6 +30,7 @@
 
 #import "LocalService.h"
 #import "Logging.h"
+#import "PageClient.h"
 #import "WKError.h"
 #import "WebAuthenticationRequestData.h"
 #import "WebPageProxy.h"
@@ -500,6 +501,8 @@ void WebAuthenticatorCoordinatorProxy::performRequest(RetainPtr<ASCCredentialReq
     }
 #endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #if PLATFORM(IOS)
+    requestContext.get().windowSceneIdentifier = m_webPageProxy.pageClient().sceneID();
+
     [m_proxy performAuthorizationRequestsForContext:requestContext.get() withCompletionHandler:makeBlockPtr([weakThis = WeakPtr { *this }, handler = WTFMove(handler)](id<ASCCredentialProtocol> credential, NSError *error) mutable {
         callOnMainRunLoop([weakThis, handler = WTFMove(handler), credential = retainPtr(credential), error = retainPtr(error)] () mutable {
 #elif PLATFORM(MAC)

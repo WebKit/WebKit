@@ -1,8 +1,90 @@
+async function waitForEvent(eventName, test, target, timeoutMs = 500) {
+  return new Promise((resolve, reject) => {
+    const timeoutCallback = test.step_timeout(() => {
+      reject(`No ${eventName} event received for target ${target}`);
+    }, timeoutMs);
+    target.addEventListener(eventName, (evt) => {
+      clearTimeout(timeoutCallback);
+      resolve(evt);
+    }, { once: true });
+  });
+}
+
+async function waitForScrollendEvent(test, target, timeoutMs = 500) {
+  return waitForEvent("scrollend", test, target, timeoutMs);
+}
+
+async function waitForOverscrollEvent(test, target, timeoutMs = 500) {
+  return waitForEvent("overscroll", test, target, timeoutMs);
+}
+
+async function waitForPointercancelEvent(test, target, timeoutMs = 500) {
+  return waitForEvent("pointercancel", test, target, timeoutMs);
+}
+
+// Resets the scroll position to (0,0).  If a scroll is required, then the
+// promise is not resolved until the scrollend event is received.
+async function waitForScrollReset(test, scroller, timeoutMs = 500) {
+  return new Promise(resolve => {
+    if (scroller.scrollTop == 0 &&
+        scroller.scrollLeft == 0) {
+      resolve();
+    } else {
+      const eventTarget =
+        scroller == document.scrollingElement ? document : scroller;
+      scroller.scrollTop = 0;
+      scroller.scrollLeft = 0;
+      waitForScrollendEvent(test, eventTarget, timeoutMs).then(resolve);
+    }
+  });
+}
+
+async function createScrollendPromiseForTarget(test,
+                                               target_div,
+                                               timeoutMs = 500) {
+  return waitForScrollendEvent(test, target_div, timeoutMs).then(evt => {
+    assert_false(evt.cancelable, 'Event is not cancelable');
+    assert_false(evt.bubbles, 'Event targeting element does not bubble');
+  });
+}
+
+function verifyNoScrollendOnDocument(test) {
+  const callback =
+      test.unreached_func("window got unexpected scrollend event.");
+  window.addEventListener('scrollend', callback);
+  test.add_cleanup(() => {
+    window.removeEventListener('scrollend', callback);
+  });
+}
+
+async function verifyScrollStopped(test, target_div) {
+  const unscaled_pause_time_in_ms = 100;
+  const x = target_div.scrollLeft;
+  const y = target_div.scrollTop;
+  return new Promise(resolve => {
+    test.step_timeout(() => {
+      assert_equals(target_div.scrollLeft, x);
+      assert_equals(target_div.scrollTop, y);
+      resolve();
+    }, unscaled_pause_time_in_ms);
+  });
+}
+
+async function resetTargetScrollState(test, target_div) {
+  if (target_div.scrollTop != 0 || target_div.scrollLeft != 0) {
+    target_div.scrollTop = 0;
+    target_div.scrollLeft = 0;
+    return waitForScrollendEvent(test, target_div);
+  }
+}
+
 const MAX_FRAME = 700;
 const MAX_UNCHANGED_FRAMES = 20;
 
 // Returns a promise that resolves when the given condition is met or rejects
 // after MAX_FRAME animation frames.
+// TODO(crbug.com/1400399): deprecate. We should not use frame based waits in
+// WPT as frame rates may vary greatly in different testing environments.
 function waitFor(condition, error_message = 'Reaches the maximum frames.') {
   return new Promise((resolve, reject) => {
     function tick(frames) {
@@ -19,6 +101,9 @@ function waitFor(condition, error_message = 'Reaches the maximum frames.') {
   });
 }
 
+// TODO(crbug.com/1400446): Test driver should defer sending events until the
+// browser is ready. Also the term compositor-commit is misleading as not all
+// user-agents use a compositor process.
 function waitForCompositorCommit() {
   return new Promise((resolve) => {
     // rAF twice.
@@ -28,6 +113,31 @@ function waitForCompositorCommit() {
   });
 }
 
+// Please don't remove this. This is necessary for chromium-based browsers.
+// This shouldn't be necessary if the test harness deferred running the tests
+// until after paint holding. This can be a no-op on user-agents that do not
+// have a separate compositor thread.
+async function waitForCompositorReady() {
+  const animation =
+      document.body.animate({ opacity: [ 1, 1 ] }, {duration: 1 });
+  return animation.finished;
+}
+
+function waitForNextFrame() {
+  const startTime = performance.now();
+  return new Promise(resolve => {
+    window.requestAnimationFrame((frameTime) => {
+      if (frameTime < startTime) {
+        window.requestAnimationFrame(resolve);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
+// TODO(crbug.com/1400399): Deprecate as frame rates may vary greatly in
+// different test environments.
 function waitForAnimationEnd(getValue) {
   var last_changed_frame = 0;
   var last_position = getValue();
@@ -51,6 +161,10 @@ function waitForAnimationEnd(getValue) {
 }
 
 // Scrolls in target according to move_path with pauses in between
+// The move_path should contains coordinates that are within target boundaries.
+// Keep in mind that 0,0 is the center of the target element and is also
+// the pointerDown position.
+// pointerUp() is fired after sequence of moves.
 function touchScrollInTargetSequentiallyWithPause(target, move_path, pause_time_in_ms = 100) {
   const test_driver_actions = new test_driver.Actions()
     .addPointer("pointer1", "touch")
@@ -69,7 +183,7 @@ function touchScrollInTargetSequentiallyWithPause(target, move_path, pause_time_
       y += step_y;
       test_driver_actions.pointerMove(x, y, {origin: target});
     }
-    test_driver_actions.pause(pause_time_in_ms);
+    test_driver_actions.pause(pause_time_in_ms); // To prevent inertial scroll
   }
 
   return test_driver_actions.pointerUp().send();
@@ -124,6 +238,8 @@ function mouseActionsInTarget(target, origin, delta, pause_time_in_ms = 100) {
 // Returns a promise that resolves when the given condition holds for 10
 // animation frames or rejects if the condition changes to false within 10
 // animation frames.
+// TODO(crbug.com/1400399): Deprecate as frame rates may very greatly in
+// different test environments.
 function conditionHolds(condition, error_message = 'Condition is not true anymore.') {
   const MAX_FRAME = 10;
   return new Promise((resolve, reject) => {
@@ -139,4 +255,24 @@ function conditionHolds(condition, error_message = 'Condition is not true anymor
     }
     tick(0);
   });
+}
+
+function scrollElementDown(element, scroll_amount) {
+  let x = 0;
+  let y = 0;
+  let delta_x = 0;
+  let delta_y = scroll_amount;
+  let actions = new test_driver.Actions()
+  .scroll(x, y, delta_x, delta_y, {origin: element});
+  return  actions.send();
+}
+
+function scrollElementLeft(element, scroll_amount) {
+  let x = 0;
+  let y = 0;
+  let delta_x = scroll_amount;
+  let delta_y = 0;
+  let actions = new test_driver.Actions()
+  .scroll(x, y, delta_x, delta_y, {origin: element});
+  return  actions.send();
 }

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 20px; }
+    a {
+        display: block;
+        width: 400px;
+        border: 1px black solid;
+        padding: 20px;
+        line-height: 25px;
+    }
+    a button {
+        float: right;
+        appearance: none;
+        background: gray;
+        border-radius: 6px;
+        border: none;
+        font-size: 18px;
+    }
+</style>
+<body>
+<a href="#">
+    Some text
+    <button>but also a button</button>
+</a>
+
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+};
+</script>
+</body>
+</html>

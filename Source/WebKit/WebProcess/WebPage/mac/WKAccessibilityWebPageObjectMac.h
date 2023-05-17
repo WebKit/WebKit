@@ -30,7 +30,9 @@
 
 @interface WKAccessibilityWebPageObject : WKAccessibilityWebPageObjectBase {
     RetainPtr<NSArray> m_attributeNames;
+    RetainPtr<NSArray> m_parameterizedAttributeNames;
 }
+
 - (NSPoint)convertScreenPointToRootView:(NSPoint)point;
 @end
 

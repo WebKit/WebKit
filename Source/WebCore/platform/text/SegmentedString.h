@@ -20,6 +20,7 @@
 #pragma once
 
 #include <wtf/Deque.h>
+#include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -33,6 +34,7 @@ public:
     SegmentedString() = default;
     SegmentedString(String&&);
     SegmentedString(const String&);
+    explicit SegmentedString(StringView);
 
     SegmentedString(SegmentedString&&) = delete;
     SegmentedString(const SegmentedString&) = delete;
@@ -83,6 +85,7 @@ private:
     struct Substring {
         Substring() = default;
         Substring(String&&);
+        explicit Substring(StringView);
 
         UChar currentCharacter() const;
         UChar currentCharacterPreIncrement();
@@ -90,13 +93,14 @@ private:
         unsigned numberOfCharactersConsumed() const;
         void appendTo(StringBuilder&) const;
 
-        String string;
+        String underlyingString; // Optional, may be null.
+        unsigned originalLength { 0 };
         unsigned length { 0 };
-        bool is8Bit;
         union {
             const LChar* currentCharacter8;
             const UChar* currentCharacter16;
         };
+        bool is8Bit;
         bool doNotExcludeLineNumbers { true };
     };
 
@@ -144,22 +148,36 @@ private:
     void (SegmentedString::*m_advanceAndUpdateLineNumberFunction)() { &SegmentedString::advanceEmpty };
 };
 
-inline SegmentedString::Substring::Substring(String&& passedString)
-    : string(WTFMove(passedString))
-    , length(string.length())
+inline SegmentedString::Substring::Substring(StringView passedStringView)
+    : originalLength(passedStringView.length())
+    , length(passedStringView.length())
 {
     if (length) {
-        is8Bit = string.impl()->is8Bit();
+        is8Bit = passedStringView.is8Bit();
         if (is8Bit)
-            currentCharacter8 = string.impl()->characters8();
+            currentCharacter8 = passedStringView.characters8();
         else
-            currentCharacter16 = string.impl()->characters16();
+            currentCharacter16 = passedStringView.characters16();
+    }
+}
+
+inline SegmentedString::Substring::Substring(String&& passedString)
+    : underlyingString(WTFMove(passedString))
+    , originalLength(underlyingString.length())
+    , length(underlyingString.length())
+{
+    if (length) {
+        is8Bit = underlyingString.impl()->is8Bit();
+        if (is8Bit)
+            currentCharacter8 = underlyingString.impl()->characters8();
+        else
+            currentCharacter16 = underlyingString.impl()->characters16();
     }
 }
 
 inline unsigned SegmentedString::Substring::numberOfCharactersConsumed() const
 {
-    return string.length() - length;
+    return originalLength - length;
 }
 
 ALWAYS_INLINE UChar SegmentedString::Substring::currentCharacter() const
@@ -172,6 +190,15 @@ ALWAYS_INLINE UChar SegmentedString::Substring::currentCharacterPreIncrement()
 {
     ASSERT(length);
     return is8Bit ? *++currentCharacter8 : *++currentCharacter16;
+}
+
+inline SegmentedString::SegmentedString(StringView stringView)
+    : m_currentSubstring(stringView)
+{
+    if (m_currentSubstring.length) {
+        m_currentCharacter = m_currentSubstring.currentCharacter();
+        updateAdvanceFunctionPointers();
+    }
 }
 
 inline SegmentedString::SegmentedString(String&& string)

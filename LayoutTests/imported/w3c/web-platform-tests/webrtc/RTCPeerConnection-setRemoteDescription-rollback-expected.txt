@@ -1,6 +1,7 @@
 
 PASS setRemoteDescription(rollback) in have-remote-offer state should revert to stable state
 PASS setRemoteDescription(rollback) from stable state should reject with InvalidStateError
+FAIL setRemoteDescription(rollback) after setting a local offer should reject with InvalidStateError assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS setRemoteDescription(rollback) should ignore invalid sdp content and succeed
 PASS local offer created before setRemoteDescription(remote offer) then rollback should still be usable
 PASS local offer created before setRemoteDescription(remote offer) with different transceiver level assignments then rollback should still be usable

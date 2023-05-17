@@ -87,11 +87,6 @@ public:
             && m_processIdentifier == other.m_processIdentifier;
     }
 
-    bool operator!=(const ProcessQualified& other) const
-    {
-        return !(*this == other);
-    }
-
     static ProcessQualified generate() { return { T::generate(), Process::identifier() }; }
 
     String toString() const { return makeString(m_processIdentifier.toUInt64(), '-', m_object.toUInt64()); }

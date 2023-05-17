@@ -42,7 +42,6 @@
 #include "NotImplemented.h"
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceSettings.h"
-#include "RealtimeVideoSource.h"
 #include "VideoFrame.h"
 #include <math.h>
 #include <wtf/UUID.h>
@@ -143,7 +142,8 @@ const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
 
         if (mockCamera()) {
             auto facingMode = std::get<MockCameraProperties>(m_device.properties).facingMode;
-            capabilities.addFacingMode(facingMode);
+            if (facingMode != VideoFacingMode::Unknown)
+                capabilities.addFacingMode(facingMode);
             capabilities.setDeviceId(hashedId());
             updateCapabilities(capabilities);
 
@@ -190,6 +190,8 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
         settings.setLogicalSurface(false);
     }
     settings.setDeviceId(hashedId());
+    settings.setGroupId(captureDevice().groupId());
+
     settings.setFrameRate(frameRate());
     auto size = this->size();
     if (mockCamera()) {
@@ -198,17 +200,18 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
     }
     settings.setWidth(size.width());
     settings.setHeight(size.height());
-    if (aspectRatio())
-        settings.setAspectRatio(aspectRatio());
 
     RealtimeMediaSourceSupportedConstraints supportedConstraints;
     supportedConstraints.setSupportsFrameRate(true);
     supportedConstraints.setSupportsWidth(true);
     supportedConstraints.setSupportsHeight(true);
-    supportedConstraints.setSupportsAspectRatio(true);
+    if (mockCamera())
+        supportedConstraints.setSupportsAspectRatio(true);
     supportedConstraints.setSupportsDeviceId(true);
+    supportedConstraints.setSupportsGroupId(true);
     if (mockCamera()) {
-        supportedConstraints.setSupportsFacingMode(true);
+        if (facingMode() != VideoFacingMode::Unknown)
+            supportedConstraints.setSupportsFacingMode(true);
         if (isZoomSupported(presets())) {
             supportedConstraints.setSupportsZoom(true);
             settings.setZoom(zoom());
@@ -538,7 +541,7 @@ void MockRealtimeVideoSource::orientationChanged(IntDegrees orientation)
 
 void MockRealtimeVideoSource::monitorOrientation(OrientationNotifier& notifier)
 {
-    if (!mockCamera())
+    if (!mockCamera() || std::get<MockCameraProperties>(m_device.properties).facingMode == VideoFacingMode::Unknown)
         return;
 
     notifier.addObserver(*this);

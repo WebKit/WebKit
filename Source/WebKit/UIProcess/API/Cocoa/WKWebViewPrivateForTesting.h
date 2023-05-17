@@ -135,6 +135,8 @@ struct WKAppPrivacyReportTestingData {
 
 - (void)_setConnectedToHardwareConsoleForTesting:(BOOL)connected;
 
+- (void)_setSystemPreviewCompletionHandlerForLoadTesting:(void(^)(bool))completionHandler;
+
 @end
 
 typedef NS_ENUM(NSInteger, _WKMediaSessionReadyState) {

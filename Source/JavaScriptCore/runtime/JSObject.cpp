@@ -859,6 +859,18 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
     return putInlineFast(globalObject, propertyName, value, slot);
 }
 
+static bool canDefinePropertyOnReceiverFast(VM& vm, JSObject* receiver, PropertyName propertyName)
+{
+    switch (receiver->type()) {
+    case ArrayType:
+        return propertyName != vm.propertyNames->length;
+    case JSFunctionType:
+        return propertyName != vm.propertyNames->length && propertyName != vm.propertyNames->name && propertyName != vm.propertyNames->prototype;
+    default:
+        return false;
+    }
+}
+
 static NEVER_INLINE bool definePropertyOnReceiverSlow(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, JSObject* receiver, bool shouldThrow)
 {
     VM& vm = globalObject->vm();
@@ -900,11 +912,11 @@ bool JSObject::definePropertyOnReceiver(JSGlobalObject* globalObject, PropertyNa
     if (!receiver)
         return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
     scope.release();
-    if (receiver->type() == PureForwardingProxyType)
-        receiver = jsCast<JSProxy*>(receiver)->target();
+    if (receiver->type() == GlobalProxyType)
+        receiver = jsCast<JSGlobalProxy*>(receiver)->target();
 
-    if (slot.isTaintedByOpaqueObject() || slot.context() == PutPropertySlot::ReflectSet) {
-        if (receiver->methodTable()->defineOwnProperty != JSObject::defineOwnProperty)
+    if (slot.isTaintedByOpaqueObject() || receiver->methodTable()->defineOwnProperty != JSObject::defineOwnProperty) {
+        if (!canDefinePropertyOnReceiverFast(vm, receiver, propertyName))
             return definePropertyOnReceiverSlow(globalObject, propertyName, value, receiver, slot.isStrictMode());
     }
 
@@ -2192,7 +2204,7 @@ bool JSObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Proper
 
     unsigned attributes;
 
-    if (!thisObject->staticPropertiesReified()) {
+    if (thisObject->hasNonReifiedStaticProperties()) {
         if (auto entry = thisObject->findPropertyHashEntry(propertyName)) {
             // If the static table contains a non-configurable (DontDelete) property then we can return early;
             // if there is a property in the storage array it too must be non-configurable (the language does
@@ -2669,8 +2681,14 @@ JSString* JSObject::toString(JSGlobalObject* globalObject) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue primitive = toPrimitive(globalObject, PreferString);
+
+    JSValue primitive = callToPrimitiveFunction<CachedSpecialPropertyKey::ToPrimitive>(globalObject, this, vm.propertyNames->toPrimitiveSymbol, PreferString);
     RETURN_IF_EXCEPTION(scope, jsEmptyString(vm));
+    if (LIKELY(!primitive)) {
+        primitive = ordinaryToPrimitive(globalObject, PreferString);
+        RETURN_IF_EXCEPTION(scope, jsEmptyString(vm));
+    }
+
     RELEASE_AND_RETURN(scope, primitive.toString(globalObject));
 }
 
@@ -4049,7 +4067,7 @@ JSValue JSObject::getMethod(JSGlobalObject* globalObject, CallData& callData, co
         return jsUndefined();
     }
 
-    callData = JSC::getCallData(method);
+    callData = JSC::getCallData(method.asCell());
     if (callData.type == CallData::Type::None) {
         throwVMTypeError(globalObject, scope, errorMessage);
         return jsUndefined();
@@ -4089,7 +4107,7 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, const RefPtr<UniquedStringImpl
 {
     unsigned i = 0;
     Structure* structure = this->structure();
-    if (!(structure->isDictionary() || (structure->transitionCountEstimate() + size) > Structure::s_maxTransitionLength || !structure->canPerformFastPropertyEnumeration() || (structure->transitionWatchpointSet().isBeingWatched() && structure->transitionWatchpointSet().isStillValid()))) {
+    if (!(structure->isDictionary() || (structure->transitionCountEstimate() + size) > Structure::s_maxTransitionLength || !structure->canPerformFastPropertyEnumeration())) {
         Vector<PropertyOffset, 16> offsets;
         offsets.reserveInitialCapacity(size);
 
@@ -4100,10 +4118,6 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, const RefPtr<UniquedStringImpl
             if (Structure* newStructure = Structure::addPropertyTransitionToExistingStructure(structure, propertyName, 0, offset)) {
                 structure = newStructure;
                 offsets.uncheckedAppend(offset);
-                // If we detect that this structure requires transition watchpoint firing, then we need to stop this batching and rest of the values
-                // should be put via generic way.
-                if (UNLIKELY(structure->transitionWatchpointSet().isBeingWatched() && structure->transitionWatchpointSet().isStillValid()))
-                    break;
                 continue;
             }
 
@@ -4112,10 +4126,13 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, const RefPtr<UniquedStringImpl
             if (offset != invalidOffset) {
                 structure->didReplaceProperty(offset);
                 offsets.uncheckedAppend(offset);
-                if (UNLIKELY(structure->transitionWatchpointSet().isBeingWatched() && structure->transitionWatchpointSet().isStillValid()))
-                    break;
                 continue;
             }
+
+            // If we detect that this structure requires transition watchpoint firing, then we need to stop this batching and rest of the values
+            // should be put via generic way.
+            if (UNLIKELY(structure->transitionWatchpointSet().isBeingWatched() && structure->transitionWatchpointSet().isStillValid()))
+                break;
 
             // It will go to the cacheable dictionary case. We stop the batching here and fall though to the generic case.
             // We break here before adding offset to offsets since this property itself should be put via generic path.
@@ -4147,12 +4164,37 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, const RefPtr<UniquedStringImpl
 
         // We fall through to the generic case and consume the rest of put operations if batching stopped in the middle.
         i = offsets.size();
+
+        if (mayBePrototype())
+            vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Add);
     }
 
     for (; i < size; ++i) {
         PutPropertySlot putPropertySlot(this, true);
         putOwnDataProperty(vm, properties[i].get(), JSValue::decode(values[i]), putPropertySlot);
     }
+}
+
+ASCIILiteral JSObject::putDirectToDictionaryWithoutExtensibility(VM& vm, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+{
+    unsigned currentAttributes;
+    Structure* structure = this->structure();
+    PropertyOffset offset = structure->get(vm, propertyName, currentAttributes);
+    if (offset != invalidOffset) {
+        if (currentAttributes & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessor)
+            return ReadonlyPropertyChangeError;
+
+        putDirectOffset(vm, offset, value);
+        structure->didReplaceProperty(offset);
+
+        // FIXME: Check attributes against PropertyAttribute::CustomAccessorOrValue. Changing GetterSetter should work w/o transition.
+        // https://bugs.webkit.org/show_bug.cgi?id=214342
+        ASSERT(!(currentAttributes & PropertyAttribute::AccessorOrCustomAccessorOrValue));
+        slot.setExistingProperty(this, offset);
+        return { };
+    }
+
+    return NonExtensibleObjectPropertyDefineError;
 }
 
 } // namespace JSC

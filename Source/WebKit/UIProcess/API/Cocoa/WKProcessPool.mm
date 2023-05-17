@@ -397,6 +397,15 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
     return NO;
 }
 
+- (BOOL)_isWebProcessSuspended:(pid_t)pid
+{
+    for (auto& process : _processPool->processes()) {
+        if (process->processIdentifier() == pid)
+            return process->throttler().isSuspended();
+    }
+    return NO;
+}
+
 - (void)_makeNextWebProcessLaunchFailForTesting
 {
     _processPool->setShouldMakeNextWebProcessLaunchFailForTesting(true);

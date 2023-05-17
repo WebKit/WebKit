@@ -79,13 +79,13 @@ protected:
     std::optional<IPC::StreamServerConnectionBuffer> m_maybeServer;
 };
 
-static void fill(Span<uint8_t> span)
+static void fill(std::span<uint8_t> span)
 {
     for (size_t i = 0; i < span.size(); ++i)
         span[i] = i;
 }
 
-static void expectFilled(Span<uint8_t> span)
+static void expectFilled(std::span<uint8_t> span)
 {
     size_t reportFailureCount = 5;
     for (size_t i = 0; i < span.size() && reportFailureCount; ++i) {

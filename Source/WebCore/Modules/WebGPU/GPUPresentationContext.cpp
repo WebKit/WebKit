@@ -45,7 +45,7 @@ RefPtr<GPUTexture> GPUPresentationContext::getCurrentTexture()
 {
     if (!m_currentTexture) {
         if (auto currentTexture = m_backing->getCurrentTexture())
-            m_currentTexture = GPUTexture::create(*currentTexture).ptr();
+            m_currentTexture = GPUTexture::create(*currentTexture, GPUTextureFormat::Bgra8unorm).ptr();
     }
 
     return m_currentTexture;

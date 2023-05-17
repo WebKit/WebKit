@@ -378,7 +378,7 @@ private:
 
     bool accessKeyAction(bool sendMouseEvents) final;
 
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = ModifiedDirectly) final;
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = AttributeModificationReason::Directly) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
     void parserDidSetAttributes() final;
@@ -425,7 +425,7 @@ private:
     void requiredStateChanged() final;
 
     void initializeInputType();
-    void updateType();
+    void updateType(const AtomString& typeAttributeValue);
     void runPostTypeUpdateTasks();
 
     void subtreeHasChanged() final;

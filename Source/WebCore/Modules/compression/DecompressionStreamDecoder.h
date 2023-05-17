@@ -63,6 +63,17 @@ public:
     }
 
 private:
+    bool didInflateFinish(int) const;
+    bool didInflateContainExtraBytes(int) const;
+
+    ExceptionOr<RefPtr<JSC::ArrayBuffer>> decompressZlib(const uint8_t* input, const size_t inputLength);
+    ExceptionOr<bool> initialize();
+
+    explicit DecompressionStreamDecoder(unsigned char format)
+        : m_format(static_cast<Formats::CompressionFormat>(format))
+    {
+        std::memset(&m_zstream, 0, sizeof(m_zstream));
+    }
 
     // When given an encoded input, it is difficult to guess the output size.
     // My approach here is starting from one page and growing at a linear rate of x2 until the input data
@@ -73,7 +84,7 @@ private:
     const size_t maxAllocationSize = 1073741824; // 1GB
     
     bool m_initialized { false };
-    bool m_finish { false };
+    bool m_didFinish { false };
     z_stream m_zstream;
 
     bool m_usingAppleCompressionFramework { false };
@@ -87,14 +98,5 @@ private:
 #endif
 
     Formats::CompressionFormat m_format;
-
-    ExceptionOr<RefPtr<JSC::ArrayBuffer>> decompressZlib(const uint8_t* input, const size_t inputLength);
-    ExceptionOr<bool> initialize();
-
-    explicit DecompressionStreamDecoder(unsigned char format) 
-        : m_format(static_cast<Formats::CompressionFormat>(format))
-    {
-        std::memset(&m_zstream, 0, sizeof(m_zstream));
-    }
 };
 } // namespace WebCore

@@ -79,6 +79,7 @@ private:
     Ref<WorkQueue> m_queue;
     HashMap<String, std::unique_ptr<HashSaltForOrigin>> m_deviceIdHashSaltForOrigins;
     bool m_isLoaded { false };
+    bool m_isClosed { false };
     Vector<CompletionHandler<void()>> m_pendingCompletionHandlers;
     const String m_deviceIdHashSaltStorageDirectory;
 };

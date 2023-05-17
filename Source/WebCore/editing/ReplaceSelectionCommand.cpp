@@ -41,8 +41,8 @@
 #include "Editing.h"
 #include "EditingBehavior.h"
 #include "ElementIteratorInlines.h"
-#include "ElementName.h"
 #include "EventNames.h"
+#include "FilterOperations.h"
 #include "FrameSelection.h"
 #include "HTMLBRElement.h"
 #include "HTMLBaseElement.h"
@@ -56,9 +56,11 @@
 #include "HTMLTitleElement.h"
 #include "LocalFrame.h"
 #include "NodeList.h"
+#include "NodeName.h"
 #include "NodeRenderStyle.h"
 #include "Position.h"
 #include "RenderInline.h"
+#include "RenderStyleInlines.h"
 #include "RenderText.h"
 #include "ScriptDisallowedScope.h"
 #include "ScriptElement.h"
@@ -441,8 +443,11 @@ inline void ReplaceSelectionCommand::InsertedNodes::willRemoveNode(Node* node)
         m_lastNodeInserted = nullptr;
     } else if (m_firstNodeInserted == node)
         m_firstNodeInserted = NodeTraversal::nextSkippingChildren(*m_firstNodeInserted);
-    else if (m_lastNodeInserted == node)
+    else if (m_lastNodeInserted == node) {
         m_lastNodeInserted = NodeTraversal::previousSkippingChildren(*m_lastNodeInserted);
+        if (!m_lastNodeInserted)
+            m_lastNodeInserted = m_firstNodeInserted;
+    }
 }
 
 inline void ReplaceSelectionCommand::InsertedNodes::didReplaceNode(Node* node, Node* newNode)
@@ -735,7 +740,7 @@ static bool isProhibitedParagraphChild(const QualifiedName& name)
     using namespace ElementNames;
 
     // https://dvcs.w3.org/hg/editing/raw-file/57abe6d3cb60/editing.html#prohibited-paragraph-child
-    switch (name.elementName()) {
+    switch (name.nodeName()) {
     case HTML::address:
     case HTML::article:
     case HTML::aside:
@@ -1805,6 +1810,21 @@ ReplacementFragment* ReplaceSelectionCommand::ensureReplacementFragment()
     return m_replacementFragment.get();
 }
 
+static bool fullySelectsEnclosingLink(const VisibleSelection& selection)
+{
+    auto start = selection.start();
+    auto end = selection.end();
+    RefPtr ancestor = commonInclusiveAncestor(start, end);
+    if (!ancestor)
+        return false;
+
+    RefPtr link = ancestor->enclosingLinkEventParentOrSelf();
+    if (!link)
+        return false;
+
+    return positionBeforeNode(link.get()).downstream().equals(start) && positionAfterNode(link.get()).upstream().equals(end);
+}
+
 // During simple pastes, where we're just pasting a text node into a run of text, we insert the text node
 // directly into the text node that holds the selection.  This is much faster than the generalized code in
 // ReplaceSelectionCommand, and works around <https://bugs.webkit.org/show_bug.cgi?id=6148> since we don't 
@@ -1821,6 +1841,9 @@ bool ReplaceSelectionCommand::performTrivialReplace(const ReplacementFragment& f
 
     // e.g. when "bar" is inserted after "foo" in <div><u>foo</u></div>, "bar" should not be underlined.
     if (nodeToSplitToAvoidPastingIntoInlineNodesWithStyle(endingSelection().start()))
+        return false;
+
+    if (fullySelectsEnclosingLink(endingSelection()))
         return false;
 
     RefPtr<Node> nodeAfterInsertionPos = endingSelection().end().downstream().anchorNode();

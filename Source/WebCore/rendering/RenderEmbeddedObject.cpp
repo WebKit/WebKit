@@ -48,6 +48,7 @@
 #include "Path.h"
 #include "PlatformMouseEvent.h"
 #include "PluginViewBase.h"
+#include "RenderBoxInlines.h"
 #include "RenderLayoutState.h"
 #include "RenderTheme.h"
 #include "RenderView.h"

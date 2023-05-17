@@ -43,7 +43,7 @@ InputDeviceInfo::InputDeviceInfo(CaptureDeviceWithCapabilities&& deviceWithCapab
 
 MediaTrackCapabilities InputDeviceInfo::getCapabilities() const
 {
-    return toMediaTrackCapabilities(m_capabilities);
+    return toMediaTrackCapabilities(m_capabilities, groupId());
 }
 
 } // namespace WebCore

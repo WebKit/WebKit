@@ -98,7 +98,7 @@ static Vector<bool> capabilityBooleanVector(RealtimeMediaSourceCapabilities::Ech
     return result;
 }
 
-MediaTrackCapabilities toMediaTrackCapabilities(const RealtimeMediaSourceCapabilities& capabilities)
+MediaTrackCapabilities toMediaTrackCapabilities(const RealtimeMediaSourceCapabilities& capabilities, const String& groupId)
 {
     MediaTrackCapabilities result;
     if (capabilities.supportsWidth())
@@ -122,7 +122,7 @@ MediaTrackCapabilities toMediaTrackCapabilities(const RealtimeMediaSourceCapabil
     if (capabilities.supportsDeviceId())
         result.deviceId = capabilities.deviceId();
     if (capabilities.supportsGroupId())
-        result.groupId = capabilities.groupId();
+        result.groupId = groupId;
     if (capabilities.supportsFocusDistance())
         result.focusDistance = capabilityDoubleRange(capabilities.focusDistance());
     if (capabilities.supportsZoom())

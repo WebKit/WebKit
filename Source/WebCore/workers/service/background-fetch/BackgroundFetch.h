@@ -57,7 +57,7 @@ public:
     BackgroundFetch(SWServerRegistration&, String&&, BackgroundFetchOptions&&, Ref<BackgroundFetchStore>&&, NotificationCallback&&, bool pausedFlag);
     ~BackgroundFetch();
 
-    static std::unique_ptr<BackgroundFetch> createFromStore(Span<const uint8_t>, SWServer&, Ref<BackgroundFetchStore>&&, NotificationCallback&&);
+    static std::unique_ptr<BackgroundFetch> createFromStore(std::span<const uint8_t>, SWServer&, Ref<BackgroundFetchStore>&&, NotificationCallback&&);
 
     String identifier() const { return m_identifier; }
     WEBCORE_EXPORT BackgroundFetchInformation information() const;

@@ -46,6 +46,7 @@ namespace Types {
     f(Void, "void") \
     f(Bool, "bool") \
     f(Sampler, "sampler") \
+    f(TextureExternal, "texture_external") \
 
 struct Primitive {
     enum Kind : uint8_t {

@@ -96,7 +96,7 @@ public:
     virtual bool layerTreeStateIsFrozen() const { return false; }
 
     virtual void updatePreferences(const WebPreferencesStore&) { }
-    virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) { }
+    virtual void mainFrameContentSizeChanged(WebCore::FrameIdentifier, const WebCore::IntSize&) { }
 
 #if PLATFORM(COCOA)
     virtual void setViewExposedRect(std::optional<WebCore::FloatRect>) = 0;
@@ -123,7 +123,8 @@ public:
 
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return nullptr; }
     virtual void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) = 0;
-    virtual void attachToInitialRootFrame(WebCore::FrameIdentifier) { }
+    virtual void addRootFrame(WebCore::FrameIdentifier) { }
+    // FIXME: Add a corresponding removeRootFrame.
     virtual void triggerRenderingUpdate() = 0;
 
     virtual void willStartRenderingUpdateDisplay();
@@ -138,7 +139,7 @@ public:
 
     virtual void tryMarkLayersVolatile(CompletionHandler<void(bool)>&&);
 
-    virtual void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) { }
+    virtual void attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, WebCore::GraphicsLayer*) { }
 
     virtual std::optional<WebCore::DestinationColorSpace> displayColorSpace() const { return { }; }
 
@@ -149,7 +150,7 @@ public:
 #endif
 
 #if USE(GRAPHICS_LAYER_WC)
-    virtual void updateGeometry(uint64_t, WebCore::IntSize) { };
+    virtual void updateGeometryWC(uint64_t, WebCore::IntSize) { };
 #endif
 
 #if USE(COORDINATED_GRAPHICS) || USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
@@ -157,6 +158,7 @@ public:
 #endif
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
+    virtual void updateGeometry(const WebCore::IntSize&, CompletionHandler<void()>&&) = 0;
     virtual void didChangeViewportAttributes(WebCore::ViewportAttributes&&) = 0;
     virtual void deviceOrPageScaleFactorChanged() = 0;
 #endif
@@ -201,6 +203,7 @@ private:
     virtual void updateBackingStoreState(uint64_t /*backingStoreStateID*/, bool /*respondImmediately*/, float /*deviceScaleFactor*/, const WebCore::IntSize& /*size*/,
                                          const WebCore::IntSize& /*scrollOffset*/) { }
     virtual void targetRefreshRateDidChange(unsigned /*rate*/) { }
+    virtual void setDeviceScaleFactor(float) { }
 #endif
     virtual void displayDidRefresh() { }
 

@@ -37,6 +37,7 @@
 #include "HTMLNames.h"
 #include "LoadableTextTrack.h"
 #include "Logging.h"
+#include "NodeName.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
 #include <wtf/text/CString.h>
@@ -105,17 +106,24 @@ void HTMLTrackElement::removedFromAncestor(RemovalType removalType, ContainerNod
 
 void HTMLTrackElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == srcAttr) {
-        scheduleLoad();
-
     // 4.8.10.12.3 Sourcing out-of-band text tracks
     // As the kind, label, and srclang attributes are set, changed, or removed, the text track must update accordingly...
-    } else if (name == kindAttr)
+    switch (name.nodeName()) {
+    case AttributeNames::srcAttr:
+        scheduleLoad();
+        break;
+    case AttributeNames::kindAttr:
         track().setKindKeywordIgnoringASCIICase(newValue.string());
-    else if (name == labelAttr)
+        break;
+    case AttributeNames::labelAttr:
         track().setLabel(newValue);
-    else if (name == srclangAttr)
+        break;
+    case AttributeNames::srclangAttr:
         track().setLanguage(newValue);
+        break;
+    default:
+        break;
+    }
 
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }

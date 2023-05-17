@@ -58,7 +58,6 @@ public:
                 return atEnd == other.atEnd;
             return index == other.index;
         }
-        bool operator!=(const ConstIterator& other) const { return !(*this == other); }
 
         ConstIterator& operator++()
         {

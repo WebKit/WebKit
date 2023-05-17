@@ -30,5 +30,5 @@
     [CEReactions=NotNeeded, Reflect=charoff] attribute DOMString chOff;
     [CEReactions=NotNeeded, Reflect] attribute DOMString vAlign;
     HTMLElement insertCell(optional long index = -1);
-    [CEReactions] undefined deleteCell(long index);
+    [CEReactions=Needed] undefined deleteCell(long index);
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -631,9 +631,9 @@ void ScrollbarsControllerMac::contentAreaWillPaint() const
     if ([m_scrollerImpPair overlayScrollerStateIsLocked])
         return;
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [m_scrollerImpPair contentAreaWillDraw];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 void ScrollbarsControllerMac::mouseEnteredContentArea()

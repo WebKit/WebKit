@@ -125,6 +125,17 @@
 }`, 'color is changed, new rule is ignored');
   });
 
+  test(() => {
+    const text = '.a { .b { color:black; } }';
+    document.getElementById('ss').innerHTML = text;
+    let [ss] = document.styleSheets;
+    ss.cssRules[0].cssRules[0].selectorText = '.c';
+    assert_equals(ss.cssRules[0].cssText,
+`.a {
+  .c { color: black; }
+}`, 'selector text is changed');
+  });
+
   // We cannot insert anything starting with an tag, as that would cause
   // the serialized rule not to parse back. Compounds starting with a tag
   // that are _not_ the first compound in a complex selector are OK, though,

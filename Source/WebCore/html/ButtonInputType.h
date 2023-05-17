@@ -35,14 +35,18 @@
 namespace WebCore {
 
 class ButtonInputType final : public BaseButtonInputType {
-    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
+    static Ref<ButtonInputType> create(HTMLInputElement& element)
+    {
+        return adoptRef(*new ButtonInputType(element));
+    }
+
+private:
     explicit ButtonInputType(HTMLInputElement& element)
         : BaseButtonInputType(Type::Button, element)
     {
     }
 
-private:
     const AtomString& formControlType() const final;
 };
 

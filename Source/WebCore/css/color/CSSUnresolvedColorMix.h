@@ -58,6 +58,5 @@ String serializationForCSS(const CSSUnresolvedColorMix&);
 StyleColor createStyleColor(const CSSUnresolvedColorMix&, const Document&, RenderStyle&, Style::ForVisitedLink);
 
 bool operator==(const CSSUnresolvedColorMix&, const CSSUnresolvedColorMix&);
-bool operator!=(const CSSUnresolvedColorMix&, const CSSUnresolvedColorMix&);
 
 } // namespace WebCore

@@ -29,6 +29,7 @@
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 
 #import "IntRect.h"
+#import "Logging.h"
 #import "MediaSelectionOption.h"
 #import "PlaybackSessionModel.h"
 #import "TimeRanges.h"
@@ -281,6 +282,23 @@ void PlaybackSessionInterfaceMac::updatePlaybackControlsManagerTiming(double cur
 }
 
 #endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+
+#if !RELEASE_LOG_DISABLED
+const void* PlaybackSessionInterfaceMac::logIdentifier() const
+{
+    return m_playbackSessionModel ? m_playbackSessionModel->logIdentifier() : nullptr;
+}
+
+const Logger* PlaybackSessionInterfaceMac::loggerPtr() const
+{
+    return m_playbackSessionModel ? m_playbackSessionModel->loggerPtr() : nullptr;
+}
+
+WTFLogChannel& PlaybackSessionInterfaceMac::logChannel() const
+{
+    return LogMedia;
+}
+#endif
 
 }
 

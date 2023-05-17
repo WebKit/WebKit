@@ -103,11 +103,6 @@ bool operator==(const DestinationColorSpace& a, const DestinationColorSpace& b)
 #endif
 }
 
-bool operator!=(const DestinationColorSpace& a, const DestinationColorSpace& b)
-{
-    return !(a == b);
-}
-
 std::optional<DestinationColorSpace> DestinationColorSpace::asRGB() const
 {
 #if USE(CG)

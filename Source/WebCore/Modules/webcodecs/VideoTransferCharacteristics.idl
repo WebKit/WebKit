@@ -26,5 +26,19 @@
 [Conditional=VIDEO] enum VideoTransferCharacteristics {
   "bt709",
   "smpte170m",
-  "iec61966-2-1"
+  "iec61966-2-1",
+  "gamma22curve",
+  "gamma28curve",
+  "smpte240m",
+  "linear",
+  "log",
+  "logSqrt",
+  "iec6196624",
+  "bt1361ExtendedColourGamut",
+  "bt2020_10bit",
+  "bt2020_12bit",
+  "pq",
+  "smpteSt4281",
+  "hlg",
+  "unspecified",
 };

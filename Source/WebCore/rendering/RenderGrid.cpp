@@ -33,7 +33,9 @@
 #include "GridPositionsResolver.h"
 #include "GridTrackSizingAlgorithm.h"
 #include "LayoutRepainter.h"
+#include "RenderBoxInlines.h"
 #include "RenderChildIterator.h"
+#include "RenderElementInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
 #include "RenderTreeBuilder.h"
@@ -130,14 +132,14 @@ bool RenderGrid::explicitGridDidResize(const RenderStyle& oldStyle) const
 
 bool RenderGrid::namedGridLinesDefinitionDidChange(const RenderStyle& oldStyle) const
 {
-    return oldStyle.namedGridRowLines() != style().namedGridRowLines()
-        || oldStyle.namedGridColumnLines() != style().namedGridColumnLines();
+    return oldStyle.namedGridRowLines().map != style().namedGridRowLines().map
+        || oldStyle.namedGridColumnLines().map != style().namedGridColumnLines().map;
 }
 
 bool RenderGrid::implicitGridLinesDefinitionDidChange(const RenderStyle& oldStyle) const
 {
-    return oldStyle.implicitNamedGridRowLines() != style().implicitNamedGridRowLines()
-        || oldStyle.implicitNamedGridColumnLines() != style().implicitNamedGridColumnLines();
+    return oldStyle.implicitNamedGridRowLines().map != style().implicitNamedGridRowLines().map
+        || oldStyle.implicitNamedGridColumnLines().map != style().implicitNamedGridColumnLines().map;
 }
 
 // This method optimizes the gutters computation by skiping the available size
@@ -425,9 +427,6 @@ void RenderGrid::layoutMasonry(bool relayoutChildren)
 
         LayoutUnit availableSpaceForColumns = availableLogicalWidth();
         placeItemsOnGrid(availableSpaceForColumns);
-        // Size in the masonry axis is the masonry content size
-        if (areMasonryColumns() && style().logicalWidth().isAuto())
-            setLogicalWidth(m_masonryLayout.gridContentSize() + borderAndPaddingLogicalWidth());
 
         m_trackSizingAlgorithm.setAvailableSpace(ForColumns, availableSpaceForColumns);
         performGridItemsPreLayout(m_trackSizingAlgorithm);
@@ -468,7 +467,7 @@ void RenderGrid::layoutMasonry(bool relayoutChildren)
             trackBasedLogicalHeight += size.value();
         else {
             if (areMasonryRows())
-                trackBasedLogicalHeight += m_masonryLayout.gridContentSize() + m_masonryLayout.gridGap();
+                trackBasedLogicalHeight += m_masonryLayout.gridContentSize();
             else
                 trackBasedLogicalHeight += m_trackSizingAlgorithm.computeTrackBasedSize();
         }
@@ -1563,6 +1562,16 @@ bool RenderGrid::aspectRatioPrefersInline(const RenderBox& child, bool blockFlow
     return !hasExplicitBlockStretch;
 }
 
+inline bool RenderGrid::allowedToStretchChildAlongColumnAxis(const RenderBox& child) const
+{
+    return alignSelfForChild(child).position() == ItemPosition::Stretch && hasAutoSizeInColumnAxis(child) && !hasAutoMarginsInColumnAxis(child);
+}
+
+inline bool RenderGrid::allowedToStretchChildAlongRowAxis(const RenderBox& child) const
+{
+    return justifySelfForChild(child).position() == ItemPosition::Stretch && hasAutoSizeInRowAxis(child) && !hasAutoMarginsInRowAxis(child);
+}
+
 // FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
 void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
 {
@@ -1726,7 +1735,7 @@ bool RenderGrid::isBaselineAlignmentForChild(const RenderBox& child, GridAxis ba
         return false;
     ItemPosition align = selfAlignmentForChild(baselineAxis, child).position();
     bool hasAutoMargins = baselineAxis == GridColumnAxis ? hasAutoMarginsInColumnAxis(child) : hasAutoMarginsInRowAxis(child);
-    bool isBaseline = allowed == FirstLine ? isFirstBaselinePosition(align) : isBaselinePosition(align);
+    bool isBaseline = allowed == AllowedBaseLine::FirstLine ? isFirstBaselinePosition(align) : isBaselinePosition(align);
     return isBaseline && !hasAutoMargins;
 }
 
@@ -1797,7 +1806,7 @@ WeakPtr<RenderBox> RenderGrid::getBaselineChild(ItemPosition alignment) const
         for (auto& child : cell) {
             ASSERT(child.get());
             // If an item participates in baseline alignment, we select such item.
-            if (isBaselineAlignmentForChild(*child, GridColumnAxis, FirstLine)) {
+            if (isBaselineAlignmentForChild(*child, GridColumnAxis, AllowedBaseLine::FirstLine)) {
                 // FIXME: self-baseline and content-baseline alignment not implemented yet.
                 baselineChild = child.get();
                 break;

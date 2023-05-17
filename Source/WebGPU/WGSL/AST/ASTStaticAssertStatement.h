@@ -31,17 +31,17 @@
 namespace WGSL::AST {
 
 class StaticAssertStatement final : public Statement {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(StaticAssertStatement);
 public:
+    NodeKind kind() const final;
+    Expression& expression() { return m_expression.get(); }
+
+private:
     StaticAssertStatement(SourceSpan span, Expression::Ref&& expression)
         : Statement(span)
         , m_expression(WTFMove(expression))
     { }
 
-    NodeKind kind() const final;
-    Expression& expression() { return m_expression.get(); }
-
-private:
     Expression::Ref m_expression;
 };
 

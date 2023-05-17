@@ -27,9 +27,11 @@
 #include "LayoutIntegrationCoverage.h"
 
 #include "DeprecatedGlobalSettings.h"
+#include "GapLength.h"
 #include "HTMLTextFormControlElement.h"
 #include "InlineWalker.h"
 #include "LayoutIntegrationLineLayout.h"
+#include "LineClampValue.h"
 #include "Logging.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
@@ -43,11 +45,14 @@
 #include "RenderListMarker.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderSVGBlock.h"
+#include "RenderStyleInlines.h"
 #include "RenderTable.h"
 #include "RenderTextControl.h"
 #include "RenderVTTCue.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "StyleContentAlignmentData.h"
+#include "StyleSelfAlignmentData.h"
 #include "TextUtil.h"
 #include <pal/Logging.h>
 #include <wtf/OptionSet.h>
@@ -471,6 +476,8 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
     if (!isSupportedRenderer(renderer) || !is<RenderBlockFlow>(renderer.parent()))
         return true;
     if (lineLayout.hasOutOfFlowContent())
+        return true;
+    if (rootBlockContainer.containsFloats())
         return true;
     if (lineLayout.contentNeedsVisualReordering() || (is<RenderText>(renderer) && Layout::TextUtil::containsStrongDirectionalityText(downcast<RenderText>(renderer).text()))) {
         // FIXME: InlineItemsBuilder needs some work to support paragraph level bidi handling.

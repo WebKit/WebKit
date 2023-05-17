@@ -119,12 +119,12 @@ String ClientConnection::bundleIdentifierFromAuditToken(audit_token_t audit_toke
 #if PLATFORM(MAC)
     LSSessionID sessionID = (LSSessionID)audit_token_to_asid(audit_token);
     auto auditTokenDataRef = adoptCF(CFDataCreate(kCFAllocatorDefault, (const UInt8 *)(&audit_token), sizeof(audit_token)));
-    CFTypeRef keys[] = { auditTokenDataRef.get() };
-    CFTypeRef values[] = { _kLSAuditTokenKey };
+    CFTypeRef keys[] = { _kLSAuditTokenKey };
+    CFTypeRef values[] = { auditTokenDataRef.get() };
     auto matchingAppsRef = adoptCF(_LSCopyMatchingApplicationsWithItems(sessionID, 1, keys, values));
     if (matchingAppsRef && CFArrayGetCount(matchingAppsRef.get())) {
-        auto asnRef = adoptCF((LSASNRef)CFArrayGetValueAtIndex(matchingAppsRef.get(), 0));
-        auto bundleIdentifierRef = adoptCF((CFStringRef)_LSCopyApplicationInformationItem(sessionID, asnRef.get(), kCFBundleIdentifierKey));
+        LSASNRef asnRef = (LSASNRef)CFArrayGetValueAtIndex(matchingAppsRef.get(), 0);
+        auto bundleIdentifierRef = adoptCF((CFStringRef)_LSCopyApplicationInformationItem(sessionID, asnRef, kCFBundleIdentifierKey));
         if (bundleIdentifierRef && CFStringGetLength(bundleIdentifierRef.get()))
             return bundleIdentifierRef.get();
     }

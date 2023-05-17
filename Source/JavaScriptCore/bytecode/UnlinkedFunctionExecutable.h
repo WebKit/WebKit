@@ -280,13 +280,13 @@ private:
     unsigned m_typeProfilingEndOffset;
     unsigned m_parameterCount : 31;
     unsigned m_privateBrandRequirement : 1;
-    unsigned m_features : bitWidthOfCodeFeatures;
-    unsigned m_constructorKind : 2;
+    CodeFeatures m_features : bitWidthOfCodeFeatures;
+    uint16_t m_constructorKind : 2;
     SourceParseMode m_sourceParseMode;
-    unsigned m_implementationVisibility : bitWidthOfImplementationVisibility;
-    unsigned m_lexicalScopeFeatures : bitWidthOfLexicalScopeFeatures;
-    unsigned m_functionMode : 2; // FunctionMode
-    unsigned m_derivedContextType: 2;
+    uint8_t m_implementationVisibility : bitWidthOfImplementationVisibility;
+    uint8_t m_lexicalScopeFeatures : bitWidthOfLexicalScopeFeatures;
+    uint8_t m_functionMode : 2; // FunctionMode
+    uint8_t m_derivedContextType : 2;
 
     union {
         WriteBarrier<UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForCall;
@@ -323,7 +323,7 @@ public:
     DECLARE_EXPORT_INFO;
 };
 
-#if COMPILER(CLANG) && !ASSERT_ENABLED
+#if !ASSERT_ENABLED
 static_assert(sizeof(UnlinkedFunctionExecutable) <= 96, "UnlinkedFunctionExecutable needs to be small");
 #endif
 

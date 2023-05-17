@@ -32,10 +32,33 @@
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, Vision)
 
-SOFT_LINK_CLASS_FOR_HEADER(PAL, VNImageRequestHandler)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, VNDetectBarcodesRequest)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, VNDetectFaceLandmarksRequest)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, VNImageRequestHandler)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, VNRecognizeTextRequest)
 
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyAztec, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyCodabar, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyCode39, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyCode39Checksum, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyCode39FullASCII, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyCode39FullASCIIChecksum, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyCode93, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyCode93i, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyCode128, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyDataMatrix, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyEAN8, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyEAN13, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyGS1DataBar, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyGS1DataBarExpanded, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyGS1DataBarLimited, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyI2of5, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyI2of5Checksum, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyITF14, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyMicroPDF417, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyMicroQR, NSString *);
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyPDF417, NSString *);
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyQR, NSString *);
-#define VNBarcodeSymbologyQR PAL::get_Vision_VNBarcodeSymbologyQR()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, Vision, VNBarcodeSymbologyUPCE, NSString *);
 
 #endif // HAVE(VISION)

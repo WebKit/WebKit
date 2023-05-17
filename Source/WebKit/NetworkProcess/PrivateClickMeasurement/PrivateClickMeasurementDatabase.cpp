@@ -109,7 +109,7 @@ const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& Databa
     return expectedTableAndIndexQueries;
 }
 
-Span<const ASCIILiteral> Database::sortedTables()
+std::span<const ASCIILiteral> Database::sortedTables()
 {
     static std::array sortedTables {
         "PCMObservedDomains"_s,

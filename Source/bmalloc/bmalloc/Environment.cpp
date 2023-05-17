@@ -59,6 +59,12 @@ int malloc_engaged_nano(void);
 
 namespace bmalloc {
 
+static bool isWebKitMallocForceEnabled()
+{
+    const char* value = getenv("WebKitMallocForceEnabled");
+    return value ? atoi(value) : false;
+}
+
 static bool isMallocEnvironmentVariableImplyingSystemMallocSet()
 {
     const char* list[] = {
@@ -82,6 +88,11 @@ static bool isMallocEnvironmentVariableImplyingSystemMallocSet()
         if (getenv(list[i]))
             return true;
     }
+
+    // FIXME: Remove this once lite logging works with memgraph capture (rdar://109283870).
+    const char* mallocStackLogging = getenv("MallocStackLogging");
+    if (mallocStackLogging && !strcmp(mallocStackLogging, "lite"))
+        return true;
 
     return false;
 }
@@ -162,6 +173,8 @@ Environment::Environment(const LockHolder&)
 
 bool Environment::computeIsDebugHeapEnabled()
 {
+    if (isWebKitMallocForceEnabled())
+        return false;
     if (isMallocEnvironmentVariableImplyingSystemMallocSet())
         return true;
     if (isLibgmallocEnabled())

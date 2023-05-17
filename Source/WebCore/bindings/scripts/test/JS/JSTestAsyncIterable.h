@@ -60,7 +60,7 @@ public:
 protected:
     JSTestAsyncIterable(JSC::Structure*, JSDOMGlobalObject&, Ref<TestAsyncIterable>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestAsyncIterableOwner final : public JSC::WeakHandleOwner {

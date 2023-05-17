@@ -30,21 +30,21 @@
 namespace WGSL::AST {
 
 class IndexAccessExpression final : public Expression {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(IndexAccessExpression);
 public:
+    NodeKind kind() const override;
+    Expression& base() { return m_base.get(); }
+    Expression& index() { return m_index.get(); }
+
+private:
     IndexAccessExpression(SourceSpan span, Expression::Ref&& base, Expression::Ref&& index)
         : Expression(span)
         , m_base(WTFMove(base))
         , m_index(WTFMove(index))
     { }
 
-    NodeKind kind() const override;
-    Expression& base() { return m_base.get(); }
-    Expression& index() { return m_index.get(); }
-
-private:
-    UniqueRef<Expression> m_base;
-    UniqueRef<Expression> m_index;
+    Expression::Ref m_base;
+    Expression::Ref m_index;
 };
 
 } // namespace WGSL::AST

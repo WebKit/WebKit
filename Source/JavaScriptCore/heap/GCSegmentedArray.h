@@ -132,11 +132,6 @@ public:
         return m_currentSegment == other.m_currentSegment && m_currentOffset == other.m_currentOffset;
     }
 
-    bool operator!=(const GCSegmentedArrayIterator& other) const
-    {
-        return !(*this == other);
-    }
-
     GCSegmentedArrayIterator& operator++()
     {
         ASSERT(m_currentSegment);

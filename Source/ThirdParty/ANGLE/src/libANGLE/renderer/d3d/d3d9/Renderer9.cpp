@@ -523,7 +523,7 @@ egl::ConfigSet Renderer9::generateConfigs()
                     egl::Config config;
                     config.renderTargetFormat = colorBufferInternalFormat;
                     config.depthStencilFormat = depthStencilBufferInternalFormat;
-                    config.bufferSize         = colorBufferFormatInfo.pixelBytes * 8;
+                    config.bufferSize         = colorBufferFormatInfo.getEGLConfigBufferSize();
                     config.redSize            = colorBufferFormatInfo.redBits;
                     config.greenSize          = colorBufferFormatInfo.greenBits;
                     config.blueSize           = colorBufferFormatInfo.blueBits;

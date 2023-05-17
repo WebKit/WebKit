@@ -551,7 +551,7 @@ void ScrollingEffectsController::scrollAnimationDidEnd(ScrollAnimation& animatio
 
     if (is<ScrollAnimationKeyboard>(animation)) {
         didStopKeyboardScrolling();
-        startDeferringWheelEventTestCompletion(WheelEventTestMonitor::ScrollAnimationInProgress);
+        stopDeferringWheelEventTestCompletion(WheelEventTestMonitor::ScrollAnimationInProgress);
         return;
     }
 

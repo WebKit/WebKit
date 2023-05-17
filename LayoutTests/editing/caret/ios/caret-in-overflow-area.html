@@ -34,7 +34,7 @@
             await UIHelper.activateAndWaitForInputSessionAt(25, 25);
 
             await UIHelper.tapAt(25, 400);
-            const caretRect = await UIHelper.getUICaretRect();
+            const caretRect = await UIHelper.getUICaretViewRect();
 
             document.querySelector("#caret-rect").textContent = rectToString(caretRect);
 

@@ -35,6 +35,7 @@ namespace JSC {
 class JSCell;
 class Structure;
 
+// In fact, it should be 7 bits. See PropertySlot and Structure definitions.
 using TransitionPropertyAttributes = uint8_t;
 
 // This must be 5 bits (less than 32).
@@ -192,11 +193,6 @@ class StructureTransitionTable {
             friend bool operator==(const Key& a, const Key& b)
             {
                 return a.m_encodedData == b.m_encodedData;
-            }
-
-            friend bool operator!=(const Key& a, const Key& b)
-            {
-                return a.m_encodedData != b.m_encodedData;
             }
 
         private:

@@ -37,7 +37,7 @@ enum TabSizeValueType {
 };
 
 struct TabSize {
-    TabSize(float numOrLength, TabSizeValueType isSpaces = SpaceValueType)
+    constexpr TabSize(float numOrLength, TabSizeValueType isSpaces = SpaceValueType)
         : m_value(numOrLength)
         , m_isSpaces(isSpaces)
     {
@@ -67,11 +67,6 @@ struct TabSize {
 inline bool operator==(const TabSize& a, const TabSize& b)
 {
     return (a.m_value == b.m_value) && (a.m_isSpaces == b.m_isSpaces);
-}
-
-inline bool operator!=(const TabSize& a, const TabSize& b)
-{
-    return !(a == b);
 }
 
 } // namespace WebCore

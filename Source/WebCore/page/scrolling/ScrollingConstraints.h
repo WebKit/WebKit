@@ -42,8 +42,6 @@ public:
             && layerPositionAtLastLayout() == other.layerPositionAtLastLayout();
     }
 
-    bool operator!=(const AbsolutePositionConstraints& other) const { return !(*this == other); }
-    
     FloatSize alignmentOffset() const { return m_alignmentOffset; }
     void setAlignmentOffset(FloatSize offset) { m_alignmentOffset = offset; }
 
@@ -116,8 +114,6 @@ public:
             && m_layerPositionAtLastLayout == other.m_layerPositionAtLastLayout;
     }
 
-    bool operator!=(const FixedPositionViewportConstraints& other) const { return !(*this == other); }
-
 private:
     ConstraintType constraintType() const override { return FixedPositionConstraint; };
 
@@ -181,8 +177,6 @@ public:
             && m_stickyOffsetAtLastLayout == other.m_stickyOffsetAtLastLayout
             && m_layerPositionAtLastLayout == other.m_layerPositionAtLastLayout;
     }
-
-    bool operator!=(const StickyPositionViewportConstraints& other) const { return !(*this == other); }
 
 private:
     ConstraintType constraintType() const override { return StickyPositionConstraint; };

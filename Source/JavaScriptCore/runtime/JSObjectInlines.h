@@ -222,7 +222,7 @@ inline bool JSObject::noSideEffectMayHaveNonIndexProperty(VM& vm, PropertyName p
         unsigned attributes;
         if (UNLIKELY(isValidOffset(structure.get(vm, propertyName, attributes))))
             return true;
-        if (TypeInfo::hasStaticPropertyTable(inlineTypeFlags) && !structure.staticPropertiesReified()) {
+        if (hasNonReifiedStaticProperties()) {
             for (auto* ancestorClass = object->classInfo(); ancestorClass; ancestorClass = ancestorClass->parentClass) {
                 if (auto* table = ancestorClass->staticPropHashTable; UNLIKELY(table && table->entry(propertyName)))
                     return true;
@@ -345,11 +345,11 @@ ALWAYS_INLINE bool JSObject::hasOwnProperty(JSGlobalObject* globalObject, unsign
 }
 
 template<JSObject::PutMode mode>
-ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes, PutPropertySlot& slot)
+ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSValue value, unsigned newAttributes, PutPropertySlot& slot)
 {
     ASSERT(value);
-    ASSERT(value.isGetterSetter() == !!(attributes & PropertyAttribute::Accessor));
-    ASSERT(value.isCustomGetterSetter() == !!(attributes & PropertyAttribute::CustomAccessorOrValue));
+    ASSERT(value.isGetterSetter() == !!(newAttributes & PropertyAttribute::Accessor));
+    ASSERT(value.isCustomGetterSetter() == !!(newAttributes & PropertyAttribute::CustomAccessorOrValue));
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
     ASSERT(!parseIndex(propertyName));
 
@@ -357,47 +357,64 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
     Structure* structure = structureID.decode();
     if (structure->isDictionary()) {
         ASSERT(!isCopyOnWrite(indexingMode()));
-        
-        unsigned currentAttributes;
-        PropertyOffset offset = structure->get(vm, propertyName, currentAttributes);
-        if (offset != invalidOffset) {
-            if (mode == PutModePut && (currentAttributes & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessor))
-                return ReadonlyPropertyChangeError;
+        if constexpr (mode == PutModePut) {
+            if (UNLIKELY(!isStructureExtensible()))
+                return putDirectToDictionaryWithoutExtensibility(vm, propertyName, value, slot);
+        }
+
+        auto [offset, attributes, isAdded] = structure->addOrReplacePropertyWithoutTransition(vm, propertyName, newAttributes, [&](const GCSafeConcurrentJSLocker&, PropertyOffset offset, PropertyOffset newMaxOffset) {
+            unsigned oldOutOfLineCapacity = structure->outOfLineCapacity();
+            unsigned newOutOfLineCapacity = Structure::outOfLineCapacity(newMaxOffset);
+            if (newOutOfLineCapacity != oldOutOfLineCapacity) {
+                Butterfly* butterfly = allocateMoreOutOfLineStorage(vm, oldOutOfLineCapacity, newOutOfLineCapacity);
+                nukeStructureAndSetButterfly(vm, structureID, butterfly);
+                structure->setMaxOffset(vm, newMaxOffset);
+                WTF::storeStoreFence();
+                setStructureIDDirectly(structureID);
+            } else
+                structure->setMaxOffset(vm, newMaxOffset);
+
+            // This assertion verifies that the concurrent GC won't read garbage if the concurrentGC
+            // is running at the same time we put without transitioning.
+            ASSERT_UNUSED(offset, !getDirect(offset) || !JSValue::encode(getDirect(offset)));
+        });
+
+        if (!isAdded) {
+            if constexpr (mode == PutModePut) {
+                if (UNLIKELY(attributes & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessor))
+                    return ReadonlyPropertyChangeError;
+            }
 
             putDirectOffset(vm, offset, value);
             structure->didReplaceProperty(offset);
 
             // FIXME: Check attributes against PropertyAttribute::CustomAccessorOrValue. Changing GetterSetter should work w/o transition.
             // https://bugs.webkit.org/show_bug.cgi?id=214342
-            if (mode == PutModeDefineOwnProperty && (attributes != currentAttributes || (attributes & PropertyAttribute::AccessorOrCustomAccessorOrValue))) {
+            if (mode == PutModeDefineOwnProperty && (newAttributes != attributes || (newAttributes & PropertyAttribute::AccessorOrCustomAccessorOrValue))) {
                 DeferredStructureTransitionWatchpointFire deferred(vm, structure);
-                setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, attributes, &deferred));
+                setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, newAttributes, &deferred));
                 if (UNLIKELY(mayBePrototype()))
                     vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Change);
             } else {
-                ASSERT(!(currentAttributes & PropertyAttribute::AccessorOrCustomAccessorOrValue));
+                ASSERT(!(attributes & PropertyAttribute::AccessorOrCustomAccessorOrValue));
                 slot.setExistingProperty(this, offset);
             }
-
             return { };
         }
 
-        if (mode == PutModePut && !isStructureExtensible())
-            return NonExtensibleObjectPropertyDefineError;
-
-        offset = prepareToPutDirectWithoutTransition(vm, propertyName, attributes, structureID, structure);
         validateOffset(offset);
         putDirectOffset(vm, offset, value);
         slot.setNewProperty(this, offset);
         if (attributes & PropertyAttribute::ReadOnly)
             this->structure()->setContainsReadOnlyProperties();
+        if (UNLIKELY(mayBePrototype()))
+            vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Add);
         return { };
     }
 
     PropertyOffset offset;
     size_t currentCapacity = this->structure()->outOfLineCapacity();
-    Structure* newStructure = Structure::addPropertyTransitionToExistingStructure(
-        structure, propertyName, attributes, offset);
+    Structure* newStructure = Structure::addPropertyTransitionToExistingStructure(structure, propertyName, newAttributes, offset);
     if (newStructure) {
         Butterfly* newButterfly = butterfly();
         if (currentCapacity != newStructure->outOfLineCapacity()) {
@@ -431,11 +448,11 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
 
         // FIXME: Check attributes against PropertyAttribute::CustomAccessorOrValue. Changing GetterSetter should work w/o transition.
         // https://bugs.webkit.org/show_bug.cgi?id=214342
-        if (mode == PutModeDefineOwnProperty && (attributes != currentAttributes || (attributes & PropertyAttribute::AccessorOrCustomAccessorOrValue))) {
+        if (mode == PutModeDefineOwnProperty && (newAttributes != currentAttributes || (newAttributes & PropertyAttribute::AccessorOrCustomAccessorOrValue))) {
             // We want the structure transition watchpoint to fire after this object has switched structure.
             // This allows adaptive watchpoints to observe if the new structure is the one we want.
             DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure);
-            setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, attributes, &deferredWatchpointFire));
+            setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, newAttributes, &deferredWatchpointFire));
             if (UNLIKELY(mayBePrototype()))
                 vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Change);
         } else {
@@ -446,13 +463,15 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
         return { };
     }
 
-    if (mode == PutModePut && !isStructureExtensible())
-        return NonExtensibleObjectPropertyDefineError;
+    if constexpr (mode == PutModePut) {
+        if (UNLIKELY(!isStructureExtensible()))
+            return NonExtensibleObjectPropertyDefineError;
+    }
     
     // We want the structure transition watchpoint to fire after this object has switched structure.
     // This allows adaptive watchpoints to observe if the new structure is the one we want.
     DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure);
-    newStructure = Structure::addNewPropertyTransition(vm, structure, propertyName, attributes, offset, slot.context(), &deferredWatchpointFire);
+    newStructure = Structure::addNewPropertyTransition(vm, structure, propertyName, newAttributes, offset, slot.context(), &deferredWatchpointFire);
     
     validateOffset(offset);
     ASSERT(newStructure->isValidOffset(offset));
@@ -470,7 +489,7 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
     putDirectOffset(vm, offset, value);
     setStructure(vm, newStructure);
     slot.setNewProperty(this, offset);
-    if (attributes & PropertyAttribute::ReadOnly)
+    if (newAttributes & PropertyAttribute::ReadOnly)
         newStructure->setContainsReadOnlyProperties();
     if (UNLIKELY(mayBePrototype()))
         vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Add);
@@ -827,7 +846,7 @@ inline void JSObject::setPrivateBrand(JSGlobalObject* globalObject, JSValue bran
 template<typename Functor>
 bool JSObject::fastForEachPropertyWithSideEffectFreeFunctor(VM& vm, const Functor& functor)
 {
-    if (!staticPropertiesReified())
+    if (hasNonReifiedStaticProperties())
         return false;
 
     Structure* structure = this->structure();
@@ -837,6 +856,16 @@ bool JSObject::fastForEachPropertyWithSideEffectFreeFunctor(VM& vm, const Functo
 
     structure->forEachProperty(vm, functor);
     return true;
+}
+
+ALWAYS_INLINE JSFinalObject* JSFinalObject::createDefaultEmptyObject(JSGlobalObject* globalObject)
+{
+    VM& vm = getVM(globalObject);
+    JSFinalObject* finalObject = new (NotNull, allocateCell<JSFinalObject>(vm, allocationSize(defaultInlineCapacity))) JSFinalObject(CreatingWellDefinedBuiltinCell, globalObject->objectStructureIDForObjectConstructor());
+    finalObject->finishCreation(vm);
+    ASSERT(globalObject->objectStructureForObjectConstructor()->id() == globalObject->objectStructureIDForObjectConstructor());
+    ASSERT(globalObject->objectStructureForObjectConstructor()->inlineCapacity() == defaultInlineCapacity);
+    return finalObject;
 }
 
 } // namespace JSC

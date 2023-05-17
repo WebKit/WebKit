@@ -29,7 +29,6 @@
 
 #pragma once
 
-#include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
 #include <wtf/text/WTFString.h>
 

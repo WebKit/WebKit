@@ -173,7 +173,7 @@ PlatformImagePtr RemoteImageDecoderAVF::createFrameImageAtIndex(size_t index, Su
 
         imageHandle->takeOwnershipOfMemory(MemoryLedger::Graphics);
 
-        if (auto bitmap = ShareableBitmap::create(*imageHandle))
+        if (auto bitmap = ShareableBitmap::create(WTFMove(*imageHandle)))
             m_frameImages.add(index, bitmap->makeCGImage());
     };
 

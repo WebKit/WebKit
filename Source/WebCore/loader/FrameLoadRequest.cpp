@@ -37,14 +37,13 @@
 
 namespace WebCore {
 
-FrameLoadRequest::FrameLoadRequest(Document& requester, SecurityOrigin& requesterSecurityOrigin, ResourceRequest&& resourceRequest, const AtomString& frameName, InitiatedByMainFrame initiatedByMainFrame, const AtomString& downloadAttribute, const SystemPreviewInfo& systemPreviewInfo)
+FrameLoadRequest::FrameLoadRequest(Document& requester, SecurityOrigin& requesterSecurityOrigin, ResourceRequest&& resourceRequest, const AtomString& frameName, InitiatedByMainFrame initiatedByMainFrame, const AtomString& downloadAttribute)
     : m_requester { requester }
     , m_requesterSecurityOrigin { requesterSecurityOrigin }
     , m_resourceRequest { WTFMove(resourceRequest) }
     , m_frameName { frameName }
     , m_downloadAttribute { downloadAttribute }
     , m_initiatedByMainFrame { initiatedByMainFrame }
-    , m_systemPreviewInfo { systemPreviewInfo }
 {
 }
 

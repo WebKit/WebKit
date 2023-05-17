@@ -62,5 +62,7 @@
 
     [Conditional=APPLE_PAY_DEFERRED_PAYMENTS] readonly attribute ApplePayDeferredPaymentRequest? deferredPaymentRequest;
 
-    [Conditional=APPLE_PAY_LATER_MODE] readonly attribute ApplePayLaterMode? applePayLaterMode;
+    [Conditional=APPLE_PAY_LATER_AVAILABILITY] readonly attribute ApplePayLaterAvailability? applePayLaterAvailability;
+
+    boolean installmentConfigurationReturnsNil();
 };

@@ -56,7 +56,6 @@ private:
     struct LonghandIteratorBase {
         void operator++() { ++index; }
         bool operator==(std::nullptr_t) const { return index >= serializer.length(); }
-        bool operator!=(std::nullptr_t) const { return !(*this == nullptr); }
         const ShorthandSerializer& serializer;
         unsigned index { 0 };
     };

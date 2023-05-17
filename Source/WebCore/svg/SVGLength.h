@@ -26,7 +26,6 @@
 #pragma once
 
 #include "SVGLengthContext.h"
-#include "SVGLengthValue.h"
 #include "SVGValueProperty.h"
 
 namespace WebCore {

@@ -85,6 +85,7 @@
 #import <WebCore/EditorClient.h>
 #import <WebCore/Element.h>
 #import <WebCore/ElementAncestorIteratorInlines.h>
+#import <WebCore/ElementAnimationContext.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/File.h>
 #import <WebCore/FloatQuad.h>
@@ -112,6 +113,7 @@
 #import <WebCore/HTMLVideoElement.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/HitTestResult.h>
+#import <WebCore/Image.h>
 #import <WebCore/ImageOverlay.h>
 #import <WebCore/InputMode.h>
 #import <WebCore/KeyboardEvent.h>
@@ -135,6 +137,7 @@
 #import <WebCore/Quirks.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderBlock.h>
+#import <WebCore/RenderBoxInlines.h>
 #import <WebCore/RenderImage.h>
 #import <WebCore/RenderLayer.h>
 #import <WebCore/RenderThemeIOS.h>
@@ -253,7 +256,7 @@ static void computeEditableRootHasContentAndPlainText(const VisibleSelection& se
     }
 
     auto* root = selection.rootEditableElement();
-    if (!root)
+    if (!root || editingIgnoresContent(*root))
         return;
 
     auto startInEditableRoot = firstPositionInNode(root);
@@ -360,7 +363,7 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
                 postLayoutData.selectedEditableImage = contextForElement(*imageElement);
         }
         // FIXME: We should disallow replace when the string contains only CJ characters.
-        postLayoutData.isReplaceAllowed = result.isContentEditable && !result.isInPasswordField && !selectedText.isAllSpecialCharacters<isHTMLSpace>();
+        postLayoutData.isReplaceAllowed = result.isContentEditable && !result.isInPasswordField && !selectedText.isAllSpecialCharacters<isASCIIWhitespace>();
     }
 
 #if USE(DICTATION_ALTERNATIVES)
@@ -2477,12 +2480,19 @@ void WebPage::prepareSelectionForContextMenuWithLocationInView(IntPoint point, C
     constexpr OptionSet hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
     if (!localMainFrame)
-        return;
+        return completionHandler(false, { });
     Ref frame = *localMainFrame;
     auto result = frame->eventHandler().hitTestResultAtPoint(point, hitType);
     RefPtr hitNode = result.innerNonSharedNode();
     if (!hitNode)
         return completionHandler(false, { });
+
+    if (RefPtr view = frame->view()) {
+        auto pointInContents = view->rootViewToContents(point);
+
+        if (frame->selection().contains(pointInContents))
+            return completionHandler(true, revealItemForCurrentSelection());
+    }
 
     auto sendEditorStateAndCallCompletionHandler = [this, completionHandler = WTFMove(completionHandler)](RevealItem&& item) mutable {
         layoutIfNeeded();
@@ -3010,9 +3020,6 @@ static void imagePositionInformation(WebPage& page, Element& element, const Inte
     info.imageMIMEType = image.mimeType();
     info.isAnimatedImage = image.isAnimated();
     info.isAnimating = image.isAnimating();
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-    info.canShowAnimationControls = page.corePage() && page.corePage()->settings().imageAnimationControlEnabled();
-#endif
     info.elementContainsImageOverlay = is<HTMLElement>(element) && ImageOverlay::hasOverlay(downcast<HTMLElement>(element));
 
     if (request.includeSnapshot || request.includeImageData)
@@ -3284,6 +3291,32 @@ static void populateCaretContext(const HitTestResult& hitTestResult, const Inter
     info.shouldNotUseIBeamInEditableContent = nodeShouldNotUseIBeam(node) || nodeShouldNotUseIBeam(deepPosition.computeNodeBeforePosition()) || nodeShouldNotUseIBeam(deepPosition.computeNodeAfterPosition());
 }
 
+static void animationPositionInformation(WebPage& page, const InteractionInformationRequest& request, const HitTestResult& hitTestResult, InteractionInformationAtPosition& info)
+{
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    info.canShowAnimationControls = page.corePage() && page.corePage()->settings().imageAnimationControlEnabled();
+    if (!request.gatherAnimations)
+        return;
+
+    for (const auto& node : hitTestResult.listBasedTestResult()) {
+        auto* element = dynamicDowncast<Element>(node.ptr());
+        if (!element)
+            continue;
+
+        auto rendererAndImage = imageRendererAndImage(*element);
+        if (!rendererAndImage || !rendererAndImage->second.isAnimated())
+            continue;
+
+        if (auto elementContext = page.contextForElement(*element))
+            info.animationsAtPoint.append({ WTFMove(*elementContext), rendererAndImage->second.isAnimating() });
+    }
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(request);
+    UNUSED_PARAM(info);
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+}
+
 InteractionInformationAtPosition WebPage::positionInformation(const InteractionInformationRequest& request)
 {
     InteractionInformationAtPosition info;
@@ -3311,6 +3344,12 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
     if (request.disallowUserAgentShadowContent)
         hitTestRequestTypes.add(HitTestRequest::Type::DisallowUserAgentShadowContent);
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    if (request.gatherAnimations) {
+        hitTestRequestTypes.add(HitTestRequest::Type::IncludeAllElementsUnderPoint);
+        hitTestRequestTypes.add(HitTestRequest::Type::CollectMultipleElements);
+    }
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
     auto& eventHandler = localMainFrame->eventHandler();
     auto hitTestResult = eventHandler.hitTestResultAtPoint(request.point, hitTestRequestTypes);
@@ -3359,6 +3398,7 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
             imagePositionInformation(*this, downcast<HTMLImageElement>(*hitTestNode), request, info);
     }
 
+    animationPositionInformation(*this, request, hitTestResult, info);
     selectionPositionInformation(*this, request, info);
 
     // Prevent the callout bar from showing when tapping on the datalist button.
@@ -3392,6 +3432,19 @@ void WebPage::startInteractionWithElementContextOrPosition(std::optional<WebCore
 void WebPage::stopInteraction()
 {
     m_interactionNode = nullptr;
+}
+
+static void handleAnimationActions(Element& element, uint32_t action)
+{
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    if (static_cast<SheetAction>(action) == SheetAction::PlayAnimation) {
+        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element))
+            imageElement->setAllowsAnimation(true);
+    } else if (static_cast<SheetAction>(action) == SheetAction::PauseAnimation) {
+        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element))
+            imageElement->setAllowsAnimation(false);
+    }
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 }
 
 void WebPage::performActionOnElement(uint32_t action, const String& authorizationToken, CompletionHandler<void()>&& completionHandler)
@@ -3445,15 +3498,15 @@ void WebPage::performActionOnElement(uint32_t action, const String& authorizatio
         send(Messages::WebPageProxy::SaveImageToLibrary(WTFMove(handle), authorizationToken));
     }
 
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-    if (static_cast<SheetAction>(action) == SheetAction::PlayAnimation) {
-        if (auto* imageElement = dynamicDowncast<HTMLImageElement>(element))
-            imageElement->setAllowsAnimation(true);
-    } else if (static_cast<SheetAction>(action) == SheetAction::PauseAnimation) {
-        if (auto* imageElement = dynamicDowncast<HTMLImageElement>(element))
-            imageElement->setAllowsAnimation(false);
+    handleAnimationActions(element, action);
+}
+
+void WebPage::performActionOnElements(uint32_t action, const Vector<WebCore::ElementContext>& elements)
+{
+    for (const auto& elementContext : elements) {
+        if (RefPtr element = elementForContext(elementContext))
+            handleAnimationActions(*element, action);
     }
-#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 }
 
 static inline RefPtr<Element> nextAssistableElement(Node* startNode, Page& page, bool isForward)
@@ -4483,7 +4536,7 @@ void WebPage::computePagesForPrintingiOS(WebCore::FrameIdentifier frameID, const
     reply(pageRects.size());
 }
 
-void WebPage::drawToImage(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, size_t pageCount, CompletionHandler<void(WebKit::ShareableBitmapHandle&&)>&& reply)
+void WebPage::drawToImage(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, size_t pageCount, CompletionHandler<void(WebKit::ShareableBitmap::Handle&&)>&& reply)
 {  
     Vector<WebCore::IntRect> pageRects;
     double totalScaleFactor;
@@ -4897,19 +4950,23 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
 
     auto characterRectsForRange = [](const SimpleRange& range, unsigned startOffset) {
         Vector<DocumentEditingContext::TextRectAndRange> rects;
-        CharacterIterator iterator { range };
         unsigned offsetSoFar = startOffset;
-        const int stride = 1;
-        while (!iterator.atEnd()) {
-            if (!iterator.text().isEmpty()) {
-                IntRect absoluteBoundingBox;
-                if (iterator.range().collapsed())
-                    absoluteBoundingBox = VisiblePosition(makeContainerOffsetPosition(iterator.range().start)).absoluteCaretBounds();
-                else
-                    absoluteBoundingBox = unionRectIgnoringZeroRects(RenderObject::absoluteTextRects(iterator.range(), RenderObject::BoundingRectBehavior::IgnoreEmptyTextSelections));
-                rects.append({ iterator.range().start.document().view()->contentsToRootView(absoluteBoundingBox), { offsetSoFar++, stride } });
+        for (TextIterator iterator { range }; !iterator.atEnd(); iterator.advance()) {
+            if (iterator.text().isEmpty())
+                continue;
+
+            Vector<IntRect> absoluteRects;
+            if (iterator.range().collapsed())
+                absoluteRects = { VisiblePosition(makeContainerOffsetPosition(iterator.range().start)).absoluteCaretBounds() };
+            else {
+                absoluteRects = RenderObject::absoluteTextRects(iterator.range(), {
+                    RenderObject::BoundingRectBehavior::IgnoreEmptyTextSelections,
+                    RenderObject::BoundingRectBehavior::ComputeIndividualCharacterRects,
+                });
             }
-            iterator.advance(stride);
+
+            for (auto& absoluteRect : absoluteRects)
+                rects.append({ iterator.range().start.document().view()->contentsToRootView(absoluteRect), { offsetSoFar++, 1 } });
         }
         return rects;
     };
@@ -4957,6 +5014,11 @@ void WebPage::setShouldRevealCurrentSelectionAfterInsertion(bool shouldRevealCur
 void WebPage::setScreenIsBeingCaptured(bool captured)
 {
     m_screenIsBeingCaptured = captured;
+}
+
+void WebPage::setInsertionPointColor(WebCore::Color color)
+{
+    RenderThemeIOS::setInsertionPointColor(color);
 }
 
 void WebPage::textInputContextsInRect(FloatRect searchRect, CompletionHandler<void(const Vector<ElementContext>&)>&& completionHandler)

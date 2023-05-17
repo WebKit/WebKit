@@ -32,8 +32,9 @@
 
 namespace WebCore {
 
-FilterFunction::FilterFunction(Type filterType)
-    : m_filterType(filterType)
+FilterFunction::FilterFunction(Type filterType, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
+    : RenderingResource(renderingResourceIdentifier)
+    , m_filterType(filterType)
 {
 }
 

@@ -278,7 +278,8 @@ static Ref<Frame> createMainFrame(Page& page, std::variant<UniqueRef<FrameLoader
 }
 
 Page::Page(PageConfiguration&& pageConfiguration)
-    : m_chrome(makeUniqueRef<Chrome>(*this, WTFMove(pageConfiguration.chromeClient)))
+    : m_identifier(pageConfiguration.identifier)
+    , m_chrome(makeUniqueRef<Chrome>(*this, WTFMove(pageConfiguration.chromeClient)))
     , m_dragCaretController(makeUniqueRef<DragCaretController>())
 #if ENABLE(DRAG_SUPPORT)
     , m_dragController(makeUniqueRef<DragController>(*this, WTFMove(pageConfiguration.dragClient)))
@@ -296,8 +297,8 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_settings(Settings::create(this))
     , m_progress(makeUniqueRef<ProgressTracker>(*this, WTFMove(pageConfiguration.progressTrackerClient)))
     , m_backForwardController(makeUniqueRef<BackForwardController>(*this, WTFMove(pageConfiguration.backForwardClient)))
-    , m_mainFrame(createMainFrame(*this, WTFMove(pageConfiguration.clientForMainFrame), pageConfiguration.mainFrameIdentifier))
     , m_editorClient(WTFMove(pageConfiguration.editorClient))
+    , m_mainFrame(createMainFrame(*this, WTFMove(pageConfiguration.clientForMainFrame), pageConfiguration.mainFrameIdentifier))
     , m_validationMessageClient(WTFMove(pageConfiguration.validationMessageClient))
     , m_diagnosticLoggingClient(WTFMove(pageConfiguration.diagnosticLoggingClient))
     , m_performanceLoggingClient(WTFMove(pageConfiguration.performanceLoggingClient))
@@ -1323,7 +1324,7 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
             view->setScrollPosition(origin);
 #if USE(COORDINATED_GRAPHICS)
         else
-            view->requestScrollPositionUpdate(origin);
+            view->requestScrollToPosition(origin);
 #endif
     }
 
@@ -1615,6 +1616,16 @@ unsigned Page::pageCount() const
     if (Document* document = localMainFrame ? localMainFrame->document() : nullptr)
         document->updateLayoutIgnorePendingStylesheets();
 
+    return pageCountAssumingLayoutIsUpToDate();
+}
+
+unsigned Page::pageCountAssumingLayoutIsUpToDate() const
+{
+    if (m_pagination.mode == Unpaginated)
+        return 0;
+
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
+    ASSERT(!localMainFrame || !localMainFrame->view() || !localMainFrame->view()->needsLayout());
     RenderView* contentRenderer = localMainFrame ? localMainFrame->contentRenderer() : nullptr;
     return contentRenderer ? contentRenderer->pageCount() : 0;
 }
@@ -1732,6 +1743,18 @@ void Page::updateRendering()
 
     layoutIfNeeded();
 
+    auto runProcessingStep = [&](RenderingUpdateStep step, const Function<void(Document&)>& perDocumentFunction) {
+        m_renderingUpdateRemainingSteps.last().remove(step);
+        forEachDocument(perDocumentFunction);
+    };
+
+    runProcessingStep(RenderingUpdateStep::RestoreScrollPositionAndViewState, [] (Document& document) {
+        RefPtr frame = document.frame();
+        if (!frame)
+            return;
+        frame->loader().restoreScrollPositionAndViewStateNowIfNeeded();
+    });
+
 #if ENABLE(ASYNC_SCROLLING)
     if (auto* scrollingCoordinator = this->scrollingCoordinator())
         scrollingCoordinator->willStartRenderingUpdate();
@@ -1743,11 +1766,6 @@ void Page::updateRendering()
         document.domWindow()->freezeNowTimestamp();
         initialDocuments.append(document);
     });
-
-    auto runProcessingStep = [&](RenderingUpdateStep step, const Function<void(Document&)>& perDocumentFunction) {
-        m_renderingUpdateRemainingSteps.last().remove(step);
-        forEachDocument(perDocumentFunction);
-    };
 
     runProcessingStep(RenderingUpdateStep::FlushAutofocusCandidates, [] (Document& document) {
         if (document.isTopDocument())
@@ -1807,6 +1825,10 @@ void Page::updateRendering()
             if (auto* page = image->internalPage())
                 page->isolatedUpdateRendering();
         }
+    });
+
+    runProcessingStep(RenderingUpdateStep::UpdateValidationMessagePositions, [] (Document& document) {
+        document.adjustValidationMessagePositions();
     });
 
     for (auto& document : initialDocuments) {
@@ -1912,6 +1934,16 @@ auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
     forEachDocument([] (Document& document) {
         document.updateEventRegions();
     });
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::AccessibilityRegionUpdate);
+    if (shouldUpdateAccessibilityRegions()) {
+        m_lastAccessibilityObjectRegionsUpdate = m_lastRenderingUpdateTimestamp;
+        forEachDocument([] (Document& document) {
+            document.updateAccessibilityObjectRegions();
+        });
+    }
+#endif
 
     DebugPageOverlays::doAfterUpdateRendering(*this);
 
@@ -2022,7 +2054,8 @@ void Page::didCompleteRenderingFrame()
 
     // FIXME: This is where we'd call requestPostAnimationFrame callbacks: webkit.org/b/249798.
     // FIXME: Run WindowEventLoop tasks from here: webkit.org/b/249684.
-    // FIXME: Drive InspectorFrameEnd from here; webkit.org/b/249796.
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame()))
+        InspectorInstrumentation::didCompleteRenderingFrame(*localMainFrame);
 }
 
 void Page::prioritizeVisibleResources()
@@ -2079,6 +2112,28 @@ void Page::setLoadSchedulingMode(LoadSchedulingMode mode)
 
     platformStrategies()->loaderStrategy()->setResourceLoadSchedulingMode(*this, m_loadSchedulingMode);
 }
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+bool Page::shouldUpdateAccessibilityRegions() const
+{
+    static constexpr Seconds updateInterval { 750_ms };
+    if (!AXObjectCache::accessibilityEnabled() || !AXObjectCache::isIsolatedTreeEnabled())
+        return false;
+
+    ASSERT(m_lastRenderingUpdateTimestamp >= m_lastAccessibilityObjectRegionsUpdate);
+    if ((m_lastRenderingUpdateTimestamp - m_lastAccessibilityObjectRegionsUpdate) < updateInterval) {
+        // We've already updated accessibility object rects recently, so skip this update and schedule another for later.
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
+        auto* mainDocument = localMainFrame ? localMainFrame->document() : nullptr;
+        // If accessibility is enabled and we have a main document, that document should have an AX object cache.
+        ASSERT(!mainDocument || mainDocument->existingAXObjectCache());
+        if (auto* topAxObjectCache = mainDocument ? mainDocument->existingAXObjectCache() : nullptr)
+            topAxObjectCache->scheduleObjectRegionsUpdate();
+        return false;
+    }
+    return true;
+}
+#endif
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void Page::setImageAnimationEnabled(bool enabled)
@@ -2199,7 +2254,7 @@ void Page::userStyleSheetLocationChanged()
     if (url.protocolIsData() && url.string().startsWith("data:text/css;charset=utf-8;base64,"_s)) {
         m_didLoadUserStyleSheet = true;
 
-        if (auto styleSheetAsUTF8 = base64Decode(PAL::decodeURLEscapeSequences(StringView(url.string()).substring(35)), Base64DecodeOptions::IgnoreSpacesAndNewLines))
+        if (auto styleSheetAsUTF8 = base64Decode(PAL::decodeURLEscapeSequences(StringView(url.string()).substring(35)), Base64DecodeMode::DefaultValidatePaddingAndIgnoreWhitespace))
             m_userStyleSheet = String::fromUTF8(styleSheetAsUTF8->data(), styleSheetAsUTF8->size());
     }
 
@@ -2554,10 +2609,8 @@ void Page::suspendAllMediaPlayback()
 MediaSessionGroupIdentifier Page::mediaSessionGroupIdentifier() const
 {
     if (!m_mediaSessionGroupIdentifier) {
-        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get())) {
-            if (auto identifier = localMainFrame->loader().pageID())
-                m_mediaSessionGroupIdentifier = ObjectIdentifier<MediaSessionGroupIdentifierType>(identifier->toUInt64());
-        }
+        if (auto identifier = this->identifier())
+            m_mediaSessionGroupIdentifier = ObjectIdentifier<MediaSessionGroupIdentifierType>(identifier->toUInt64());
     }
     return m_mediaSessionGroupIdentifier;
 }
@@ -3903,6 +3956,13 @@ void Page::abortApplePayAMSUISession(ApplePayAMSUIPaymentHandler& paymentHandler
 
 #endif // ENABLE(APPLE_PAY_AMS_UI)
 
+#if USE(SYSTEM_PREVIEW)
+void Page::handleSystemPreview(const URL& url, const SystemPreviewInfo& systemPreviewInfo)
+{
+    chrome().client().handleSystemPreview(url, systemPreviewInfo);
+}
+#endif
+
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 void Page::setMediaSessionCoordinator(Ref<MediaSessionCoordinatorPrivate>&& mediaSessionCoordinator)
 {
@@ -4113,6 +4173,11 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
     case RenderingUpdateStep::PrepareCanvasesForDisplay: ts << "PrepareCanvasesForDisplay"; break;
     case RenderingUpdateStep::CaretAnimation: ts << "CaretAnimation"; break;
     case RenderingUpdateStep::FocusFixup: ts << "FocusFixup"; break;
+    case RenderingUpdateStep::UpdateValidationMessagePositions: ts << "UpdateValidationMessagePositions"; break;
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    case RenderingUpdateStep::AccessibilityRegionUpdate: ts << "AccessibilityRegionUpdate"; break;
+#endif
+    case RenderingUpdateStep::RestoreScrollPositionAndViewState: ts << "RestoreScrollPositionAndViewState"; break;
     }
     return ts;
 }
@@ -4349,6 +4414,12 @@ void Page::didFinishScrolling()
 #if USE(APPKIT)
     editorClient().setCaretDecorationVisibility(true);
 #endif
+}
+
+void Page::addRootFrame(LocalFrame& frame)
+{
+    ASSERT(frame.isRootFrame());
+    m_rootFrames.add(frame);
 }
 
 void Page::reloadExecutionContextsForOrigin(const ClientOrigin& origin, std::optional<FrameIdentifier> triggeringFrame) const

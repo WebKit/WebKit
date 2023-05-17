@@ -61,8 +61,8 @@ public:
 
 protected:
     DECLARE_VISIT_CHILDREN;
-    void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSWebAssemblyInstance*);
-    WebAssemblyFunctionBase(VM&, NativeExecutable*, JSGlobalObject*, Structure*, WasmToWasmImportableFunction, RefPtr<const Wasm::RTT>);
+    void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name);
+    WebAssemblyFunctionBase(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSWebAssemblyInstance*, WasmToWasmImportableFunction, RefPtr<const Wasm::RTT>);
 
     WriteBarrier<JSWebAssemblyInstance> m_instance;
 

@@ -70,12 +70,12 @@ ProducerSharedCARingBuffer::Pair ProducerSharedCARingBuffer::allocate(const WebC
     auto bytesPerFrame = format.bytesPerFrame();
     auto numChannelStreams = format.numberOfChannelStreams();
 
-    auto checkedSizeForBuffers = computeSizeForBuffers(bytesPerFrame, frameCount, numChannelStreams);
-    if (checkedSizeForBuffers.hasOverflowed()) {
+    auto checkedSharedMemorySize = computeSizeForBuffers(bytesPerFrame, frameCount, numChannelStreams) + sizeof(TimeBoundsBuffer);
+    if (checkedSharedMemorySize.hasOverflowed()) {
         RELEASE_LOG_FAULT(Media, "ProducerSharedCARingBuffer::allocate: Overflowed when trying to compute the storage size");
         return { nullptr, { } };
     }
-    auto sharedMemory = SharedMemory::allocate(sizeof(TimeBoundsBuffer) + checkedSizeForBuffers.value());
+    auto sharedMemory = SharedMemory::allocate(checkedSharedMemorySize.value());
     if (!sharedMemory)
         return { nullptr, { } };
 

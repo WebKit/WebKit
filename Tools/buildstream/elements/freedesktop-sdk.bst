@@ -3,11 +3,9 @@ sources:
 - kind: git_tag
   url: gitlab_com:freedesktop-sdk/freedesktop-sdk.git
   track: 'release/22.08'
-  ref: freedesktop-sdk-22.08.7-86-g200f2128224a8811b5e73341f8f3382c2d7fd464
+  ref: freedesktop-sdk-22.08.11-24-g67b3605b402cffed2db0344f1da3a6acb5b6c914
 - kind: patch
   path: patches/fdo-0001-pipewire-base-Disable-AEC-module.patch
-- kind: patch
-  path: patches/fdo-0001-libnice-Bump-to-0.1.21.patch
 - kind: patch
   path: patches/fdo-0001-gst-plugins-bad-Add-support-Kate.patch
 - kind: patch
@@ -17,7 +15,7 @@ sources:
 - kind: patch
   path: patches/fdo-0004-gst-plugins-ugly-Enable-x264-encoder.patch
 - kind: patch
-  path: patches/fdo-0005-GStreamer-Bump-to-1.22.0.patch
+  path: patches/fdo-0005-GStreamer-Bump-to-1.22.2.patch
 - kind: patch
   path: patches/fdo-0006-gst-plugins-bad-Enable-soundtouch.patch
 config:

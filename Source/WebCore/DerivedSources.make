@@ -58,6 +58,7 @@ FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES = $(WebCore)/DerivedSources.make $(PLAT
 JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPU.idl \
     $(WebCore)/Modules/WebGPU/GPUAdapter.idl \
+    $(WebCore)/Modules/WebGPU/GPUAdapterInfo.idl \
     $(WebCore)/Modules/WebGPU/GPUAddressMode.idl \
     $(WebCore)/Modules/WebGPU/GPUAutoLayoutMode.idl \
     $(WebCore)/Modules/WebGPU/GPUBindGroup.idl \
@@ -231,7 +232,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/applepay/ApplePayInstallmentItemType.idl \
     $(WebCore)/Modules/applepay/ApplePayInstallmentRetailChannel.idl \
     $(WebCore)/Modules/applepay/ApplePayLineItem.idl \
-    $(WebCore)/Modules/applepay/ApplePayLaterMode.idl \
+    $(WebCore)/Modules/applepay/ApplePayLaterAvailability.idl \
     $(WebCore)/Modules/applepay/ApplePayMerchantCapability.idl \
     $(WebCore)/Modules/applepay/ApplePayPayment.idl \
     $(WebCore)/Modules/applepay/ApplePayPaymentAuthorizationResult.idl \
@@ -1693,8 +1694,6 @@ all : \
     CSSValueKeywords.h \
     ColorData.cpp \
     DOMJITAbstractHeapRepository.h \
-    ElementName.cpp \
-    ElementName.h \
     EventInterfaces.h \
     EventTargetInterfaces.h \
     HTMLElementFactory.cpp \
@@ -1712,6 +1711,8 @@ all : \
     LocalizableAdditions.strings.out \
     Namespace.cpp \
     Namespace.h \
+    NodeName.cpp \
+    NodeName.h \
     SVGElementFactory.cpp \
     SVGElementFactory.h \
     SVGElementTypeHelpers.h \
@@ -2184,7 +2185,7 @@ $(MATH_ML_GENERATED_PATTERNS) : $(WebCore)/dom/make_names.pl $(WebCore)/bindings
 
 # --------
 
-# TagName, ElementName, and Namespace enums
+# TagName, NodeName, and Namespace enums
 
 DOM_NAME_ENUM_DEPS = \
     $(WebCore)/dom/make_names.pl \
@@ -2223,15 +2224,15 @@ all : $(TAG_NAME_GENERATED_FILES)
 $(TAG_NAME_GENERATED_PATTERNS) : $(DOM_NAME_ENUM_DEPS)
 	$(PERL) $< --enum TagName $(DOM_NAME_ENUM_ARGUMENTS)
 
-ELEMENT_NAME_GENERATED_FILES = \
-    ElementName.cpp \
-    ElementName.h \
+NODE_NAME_GENERATED_FILES = \
+    NodeName.cpp \
+    NodeName.h \
 #
-ELEMENT_NAME_GENERATED_PATTERNS = $(subst .,%,$(ELEMENT_NAME_GENERATED_FILES))
+NODE_NAME_GENERATED_PATTERNS = $(subst .,%,$(NODE_NAME_GENERATED_FILES))
 
-all : $(ELEMENT_NAME_GENERATED_FILES)
-$(ELEMENT_NAME_GENERATED_PATTERNS) : $(DOM_NAME_ENUM_DEPS)
-	$(PERL) $< --enum ElementName $(DOM_NAME_ENUM_ARGUMENTS)
+all : $(NODE_NAME_GENERATED_FILES)
+$(NODE_NAME_GENERATED_PATTERNS) : $(DOM_NAME_ENUM_DEPS)
+	$(PERL) $< --enum NodeName $(DOM_NAME_ENUM_ARGUMENTS)
 
 NAMESPACE_GENERATED_FILES = \
     Namespace.cpp \

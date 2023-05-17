@@ -61,7 +61,6 @@ public:
     BytecodeIndex bytecodeIndex() const { return m_bytecodeIndex; }
     
     bool operator==(const Origin&) const;
-    bool operator!=(const Origin& other) const { return !(*this == other); }
     unsigned hash() const;
     
     bool isHashTableDeletedValue() const;

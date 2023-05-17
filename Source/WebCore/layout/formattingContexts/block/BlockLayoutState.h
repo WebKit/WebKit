@@ -36,36 +36,35 @@ class BlockFormattingContext;
 class BlockLayoutState {
 public:
     struct LineClamp {
-        size_t maximumNumberOfLines { 0 };
-        size_t numberOfVisibleLines { 0 };
-        bool isLineClampRootOverflowHidden { true };
+        size_t maximumLineCount { 0 };
+        size_t currentLineCount { 0 };
     };
-    enum class LeadingTrimSide : uint8_t {
+    enum class TextBoxTrimSide : uint8_t {
         Start = 1 << 0,
         End   = 1 << 1
     };
-    using LeadingTrim = OptionSet<LeadingTrimSide>;
-    BlockLayoutState(FloatingState&, std::optional<LineClamp> = { }, LeadingTrim = { }, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom = { });
+    using TextBoxTrim = OptionSet<TextBoxTrimSide>;
+    BlockLayoutState(FloatingState&, std::optional<LineClamp> = { }, TextBoxTrim = { }, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom = { });
 
     FloatingState& floatingState() { return m_floatingState; }
     const FloatingState& floatingState() const { return m_floatingState; }
 
     std::optional<LineClamp> lineClamp() const { return m_lineClamp; }
-    LeadingTrim leadingTrim() const { return m_leadingTrim; }
+    TextBoxTrim textBoxTrim() const { return m_textBoxTrim; }
 
     std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom() const { return m_intrusiveInitialLetterLogicalBottom; }
 
 private:
     FloatingState& m_floatingState;
     std::optional<LineClamp> m_lineClamp;
-    LeadingTrim m_leadingTrim;
+    TextBoxTrim m_textBoxTrim;
     std::optional<LayoutUnit> m_intrusiveInitialLetterLogicalBottom;
 };
 
-inline BlockLayoutState::BlockLayoutState(FloatingState& floatingState, std::optional<LineClamp> lineClamp, LeadingTrim leadingTrim, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom)
+inline BlockLayoutState::BlockLayoutState(FloatingState& floatingState, std::optional<LineClamp> lineClamp, TextBoxTrim textBoxTrim, std::optional<LayoutUnit> intrusiveInitialLetterLogicalBottom)
     : m_floatingState(floatingState)
     , m_lineClamp(lineClamp)
-    , m_leadingTrim(leadingTrim)
+    , m_textBoxTrim(textBoxTrim)
     , m_intrusiveInitialLetterLogicalBottom(intrusiveInitialLetterLogicalBottom)
 {
 }

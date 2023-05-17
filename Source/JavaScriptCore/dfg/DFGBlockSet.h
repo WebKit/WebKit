@@ -79,11 +79,6 @@ public:
             return m_index == other.m_index;
         }
         
-        bool operator!=(const iterator& other) const
-        {
-            return !(*this == other);
-        }
-        
     private:
         friend class BlockSet;
         

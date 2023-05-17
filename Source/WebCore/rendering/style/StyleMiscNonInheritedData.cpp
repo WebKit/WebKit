@@ -29,12 +29,15 @@
 #include "AnimationList.h"
 #include "ContentData.h"
 #include "FillLayer.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
+#include "ShadowData.h"
 #include "StyleDeprecatedFlexibleBoxData.h"
 #include "StyleFilterData.h"
 #include "StyleFlexibleBoxData.h"
 #include "StyleMultiColData.h"
 #include "StyleTransformData.h"
+#include "StyleVisitedLinkColorData.h"
+#include <wtf/PointerComparison.h>
 
 namespace WebCore {
 
@@ -49,11 +52,6 @@ StyleMiscNonInheritedData::StyleMiscNonInheritedData()
     , transform(StyleTransformData::create())
     , mask(FillLayer::create(FillLayerType::Mask))
     , visitedLinkColor(StyleVisitedLinkColorData::create())
-    // animations
-    // transitions
-    // content
-    // boxShadow
-    // altText
     , aspectRatioWidth(RenderStyle::initialAspectRatioWidth())
     , aspectRatioHeight(RenderStyle::initialAspectRatioHeight())
     , alignContent(RenderStyle::initialContentAlignment())
@@ -64,7 +62,6 @@ StyleMiscNonInheritedData::StyleMiscNonInheritedData()
     , justifySelf(RenderStyle::initialSelfAlignment())
     , objectPosition(RenderStyle::initialObjectPosition())
     , order(RenderStyle::initialOrder())
-    , hasAttrContent(false)
     , aspectRatioType(static_cast<unsigned>(RenderStyle::initialAspectRatioType()))
     , appearance(static_cast<unsigned>(RenderStyle::initialAppearance()))
     , effectiveAppearance(static_cast<unsigned>(RenderStyle::initialAppearance()))

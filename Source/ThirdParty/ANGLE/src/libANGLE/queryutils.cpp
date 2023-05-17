@@ -3801,7 +3801,6 @@ bool GetQueryParameterInfo(const State &glState,
         case GL_MAX_TRANSFORM_FEEDBACK_SEPARATE_COMPONENTS:
         case GL_UNPACK_IMAGE_HEIGHT:
         case GL_UNPACK_SKIP_IMAGES:
-        case GL_FRAGMENT_INTERPOLATION_OFFSET_BITS_OES:
         {
             *type      = GL_INT;
             *numParams = 1;
@@ -3830,12 +3829,30 @@ bool GetQueryParameterInfo(const State &glState,
         }
 
         case GL_MAX_TEXTURE_LOD_BIAS:
-        case GL_MIN_FRAGMENT_INTERPOLATION_OFFSET_OES:
-        case GL_MAX_FRAGMENT_INTERPOLATION_OFFSET_OES:
         {
             *type      = GL_FLOAT;
             *numParams = 1;
             return true;
+        }
+    }
+
+    if (extensions.shaderMultisampleInterpolationOES)
+    {
+        switch (pname)
+        {
+            case GL_MIN_FRAGMENT_INTERPOLATION_OFFSET_OES:
+            case GL_MAX_FRAGMENT_INTERPOLATION_OFFSET_OES:
+            {
+                *type      = GL_FLOAT;
+                *numParams = 1;
+                return true;
+            }
+            case GL_FRAGMENT_INTERPOLATION_OFFSET_BITS_OES:
+            {
+                *type      = GL_INT;
+                *numParams = 1;
+                return true;
+            }
         }
     }
 

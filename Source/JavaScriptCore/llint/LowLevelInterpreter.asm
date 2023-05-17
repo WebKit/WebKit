@@ -1844,14 +1844,16 @@ if not (C_LOOP or C_LOOP_WIN)
 end
 
 if ARM64E
-    # void* jitCagePtr(void* pointer, uintptr_t tag)
-    emit ".globl _jitCagePtr"
-    emit "_jitCagePtr:"
-        tagReturnAddress sp
-        leap _g_config, t2
-        jmp JSCConfigGateMapOffset + (constexpr Gate::jitCagePtr) * PtrSize[t2], NativeToJITGatePtrTag
-        global _jitCagePtrGateAfter
-        _jitCagePtrGateAfter:
+    if JIT_CAGE
+        # void* jitCagePtr(void* pointer, uintptr_t tag)
+        emit ".globl _jitCagePtr"
+        emit "_jitCagePtr:"
+            tagReturnAddress sp
+            leap _g_config, t2
+            jmp JSCConfigGateMapOffset + (constexpr Gate::jitCagePtr) * PtrSize[t2], NativeToJITGatePtrTag
+    end
+    global _jitCagePtrGateAfter
+    _jitCagePtrGateAfter:
         ret
 
     global _tailCallJSEntryTrampoline

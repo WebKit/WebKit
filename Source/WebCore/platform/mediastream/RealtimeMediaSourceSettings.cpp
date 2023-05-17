@@ -86,9 +86,6 @@ String RealtimeMediaSourceSettings::convertFlagsToString(const OptionSet<Realtim
         case RealtimeMediaSourceSettings::Height:
             builder.append("Height");
             break;
-        case RealtimeMediaSourceSettings::AspectRatio:
-            builder.append("AspectRatio");
-            break;
         case RealtimeMediaSourceSettings::FrameRate:
             builder.append("FrameRate");
             break;
@@ -140,8 +137,6 @@ OptionSet<RealtimeMediaSourceSettings::Flag> RealtimeMediaSourceSettings::differ
         difference.add(RealtimeMediaSourceSettings::Width);
     if (height() != that.height())
         difference.add(RealtimeMediaSourceSettings::Height);
-    if (aspectRatio() != that.aspectRatio())
-        difference.add(RealtimeMediaSourceSettings::AspectRatio);
     if (frameRate() != that.frameRate())
         difference.add(RealtimeMediaSourceSettings::FrameRate);
     if (facingMode() != that.facingMode())

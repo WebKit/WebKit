@@ -109,6 +109,9 @@ void ItemHandle::apply(GraphicsContext& context)
     case ItemType::ClipPath:
         get<ClipPath>().apply(context);
         return;
+    case ItemType::ResetClip:
+        get<ResetClip>().apply(context);
+        return;
     case ItemType::DrawFilteredImageBuffer:
         ASSERT_NOT_REACHED();
         return;
@@ -338,6 +341,9 @@ void ItemHandle::destroy()
     case ItemType::ClipToImageBuffer:
         static_assert(std::is_trivially_destructible<ClipToImageBuffer>::value);
         return;
+    case ItemType::ResetClip:
+        static_assert(std::is_trivially_destructible<ResetClip>::value);
+        return;
     case ItemType::ConcatenateCTM:
         static_assert(std::is_trivially_destructible<ConcatenateCTM>::value);
         return;
@@ -548,6 +554,8 @@ bool ItemHandle::safeCopy(ItemType itemType, ItemHandle destination) const
         return copyInto<ClipOut>(itemOffset, *this);
     case ItemType::ClipToImageBuffer:
         return copyInto<ClipToImageBuffer>(itemOffset, *this);
+    case ItemType::ResetClip:
+        return copyInto<ResetClip>(itemOffset, *this);
     case ItemType::ConcatenateCTM:
         return copyInto<ConcatenateCTM>(itemOffset, *this);
     case ItemType::DrawDotsForDocumentMarker:

@@ -145,13 +145,15 @@ JSWorkerGlobalScope::JSWorkerGlobalScope(VM& vm, Structure* structure, Ref<Worke
 {
 }
 
-void JSWorkerGlobalScope::finishCreation(VM& vm, JSProxy* proxy)
+static_assert(!std::is_base_of<ActiveDOMObject, WorkerGlobalScope>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
+
+#if ASSERT_ENABLED
+void JSWorkerGlobalScope::finishCreation(VM& vm, JSGlobalProxy* proxy)
 {
     Base::finishCreation(vm, proxy);
 
-    static_assert(!std::is_base_of<ActiveDOMObject, WorkerGlobalScope>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
-
 }
+#endif
 
 JSObject* JSWorkerGlobalScope::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {

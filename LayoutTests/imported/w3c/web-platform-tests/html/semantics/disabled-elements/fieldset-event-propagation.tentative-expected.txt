@@ -2,6 +2,6 @@
 hello world
 hello world
 
-FAIL Disabled fieldset elements should not prevent click event propagation. assert_true: The fieldset element should receive a click event. expected true got false
-FAIL Disabled fieldset elements should not block click events. assert_true: The parent of the fieldset should receive a click event. expected true got false
+PASS Disabled fieldset elements should not prevent click event propagation.
+PASS Disabled fieldset elements should not block click events.
 

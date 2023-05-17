@@ -213,6 +213,25 @@ String AccessibilityObject::helpTextAttributeValue() const
     return { };
 }
 
+AXTextMarkerRange AccessibilityObject::textMarkerRangeForNSRange(const NSRange& range) const
+{
+    if (range.location == NSNotFound)
+        return { };
+
+    if (!isTextControl())
+        return { visiblePositionForIndex(range.location), visiblePositionForIndex(range.location + range.length) };
+
+    if (range.location + range.length > text().length())
+        return { };
+
+    if (auto* cache = axObjectCache()) {
+        auto start = cache->characterOffsetForIndex(range.location, this);
+        auto end = cache->characterOffsetForIndex(range.location + range.length, this);
+        return cache->rangeForUnorderedCharacterOffsets(start, end);
+    }
+    return { };
+}
+
 // NSAttributedString support.
 
 #ifndef NSAttachmentCharacter
@@ -312,12 +331,13 @@ void attributedStringSetFont(NSMutableAttributedString *attributedString, CTFont
 static void attributedStringAppendWrapper(NSMutableAttributedString *attrString, WebAccessibilityObjectWrapper *wrapper)
 {
     const auto attachmentCharacter = static_cast<UniChar>(NSAttachmentCharacter);
-    [attrString appendAttributedString:[[NSMutableAttributedString alloc] initWithString:[NSString stringWithCharacters:&attachmentCharacter length:1]
+    [attrString appendAttributedString:adoptNS([[NSMutableAttributedString alloc] initWithString:[NSString stringWithCharacters:&attachmentCharacter length:1]
 #if PLATFORM(MAC)
-        attributes:@{ NSAccessibilityAttachmentTextAttribute : (__bridge id)adoptCF(NSAccessibilityCreateAXUIElementRef(wrapper)).get() }]];
+        attributes:@{ NSAccessibilityAttachmentTextAttribute : (__bridge id)adoptCF(NSAccessibilityCreateAXUIElementRef(wrapper)).get() }
 #else
-        attributes:@{ UIAccessibilityTokenAttachment : wrapper }]];
+        attributes:@{ UIAccessibilityTokenAttachment : wrapper }
 #endif
+    ]).get()];
 }
 
 RetainPtr<NSArray> AccessibilityObject::contentForRange(const SimpleRange& range, SpellCheck spellCheck) const

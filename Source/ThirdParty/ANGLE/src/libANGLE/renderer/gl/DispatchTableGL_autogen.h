@@ -807,6 +807,9 @@ class DispatchTableGL : angle::NonCopyable
     // GL_KHR_parallel_shader_compile
     PFNGLMAXSHADERCOMPILERTHREADSKHRPROC maxShaderCompilerThreadsKHR = nullptr;
 
+    // GL_MESA_framebuffer_flip_y
+    PFNGLFRAMEBUFFERPARAMETERIMESAPROC framebufferParameteriMESA = nullptr;
+
     // GL_NV_framebuffer_blit
     PFNGLBLITFRAMEBUFFERNVPROC blitFramebufferNV = nullptr;
 

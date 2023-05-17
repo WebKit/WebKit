@@ -100,6 +100,11 @@ WGPUDevice DowncastConvertToBackingContext::convertToBacking(const Device& devic
     return static_cast<const DeviceImpl&>(device).backing();
 }
 
+WGPUExternalTexture DowncastConvertToBackingContext::convertToBacking(const ExternalTexture& externalTexture)
+{
+    return static_cast<const ExternalTextureImpl&>(externalTexture).backing();
+}
+
 WGPUInstance DowncastConvertToBackingContext::convertToBacking(const GPU& gpu)
 {
     return static_cast<const GPUImpl&>(gpu).backing();

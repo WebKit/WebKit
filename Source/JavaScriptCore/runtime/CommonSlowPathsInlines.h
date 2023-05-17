@@ -194,4 +194,49 @@ ALWAYS_INLINE JSImmutableButterfly* trySpreadFast(JSGlobalObject* globalObject, 
     }
 }
 
+inline void opEnumeratorPutByVal(JSGlobalObject* globalObject, JSValue baseValue, JSValue propertyNameValue, JSValue value, ECMAMode ecmaMode, unsigned index, JSPropertyNameEnumerator::Flag mode, JSPropertyNameEnumerator* enumerator, ArrayProfile* arrayProfile = nullptr, uint8_t* enumeratorMetadata = nullptr)
+{
+    VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    switch (mode) {
+    case JSPropertyNameEnumerator::IndexedMode: {
+        if (arrayProfile && LIKELY(baseValue.isCell()))
+            arrayProfile->observeStructureID(baseValue.asCell()->structureID());
+        scope.release();
+        baseValue.putByIndex(globalObject, static_cast<unsigned>(index), value, ecmaMode.isStrict());
+        return;
+    }
+    case JSPropertyNameEnumerator::OwnStructureMode: {
+        if (LIKELY(baseValue.isCell()) && baseValue.asCell()->structureID() == enumerator->cachedStructureID() && !baseValue.asCell()->structure()->isWatchingReplacement()) {
+            // We'll only match the structure ID if the base is an object.
+            ASSERT(index < enumerator->endStructurePropertyIndex());
+            scope.release();
+            asObject(baseValue)->putDirectOffset(vm, index < enumerator->cachedInlineCapacity() ? index : index - enumerator->cachedInlineCapacity() + firstOutOfLineOffset, value);
+            return;
+        }
+        if (enumeratorMetadata)
+            *enumeratorMetadata |= static_cast<uint8_t>(JSPropertyNameEnumerator::HasSeenOwnStructureModeStructureMismatch);
+        FALLTHROUGH;
+    }
+
+    case JSPropertyNameEnumerator::GenericMode: {
+        if (arrayProfile && baseValue.isCell() && mode != JSPropertyNameEnumerator::OwnStructureMode)
+            arrayProfile->observeStructureID(baseValue.asCell()->structureID());
+        JSString* string = asString(propertyNameValue);
+        auto propertyName = string->toIdentifier(globalObject);
+        RETURN_IF_EXCEPTION(scope, void());
+        scope.release();
+        PutPropertySlot slot(baseValue, ecmaMode.isStrict());
+        baseValue.put(globalObject, propertyName, value, slot);
+        return;
+    }
+
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    };
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 }} // namespace JSC::CommonSlowPaths

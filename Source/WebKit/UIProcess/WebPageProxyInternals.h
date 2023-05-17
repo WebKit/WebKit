@@ -41,6 +41,7 @@
 #include "WebURLSchemeHandlerIdentifier.h"
 #include "WindowKind.h"
 #include <WebCore/PrivateClickMeasurement.h>
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
 #include <pal/HysteresisActivity.h>
 
@@ -211,6 +212,10 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     WebCore::IntRect visibleScrollerThumbRect;
     WebCore::PageIdentifier webPageID;
     WindowKind windowKind { WindowKind::Unparented };
+    PageAllowedToRunInTheBackgroundCounter::Token pageAllowedToRunInTheBackgroundToken;
+
+    HashMap<WebCore::RegistrableDomain, UniqueRef<SubframePageProxy>> domainToSubframePageProxyMap;
+    HashMap<WebCore::FrameIdentifier, WebCore::RegistrableDomain> frameIdentifierToDomainMap;
 
 #if ENABLE(APPLE_PAY)
     std::unique_ptr<WebPaymentCoordinatorProxy> paymentCoordinator;

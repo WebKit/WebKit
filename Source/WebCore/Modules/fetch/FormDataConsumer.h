@@ -42,7 +42,7 @@ class ScriptExecutionContext;
 class FormDataConsumer : public CanMakeWeakPtr<FormDataConsumer> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using Callback = Function<void(ExceptionOr<Span<const uint8_t>>)>;
+    using Callback = Function<void(ExceptionOr<std::span<const uint8_t>>)>;
     FormDataConsumer(const FormData&, ScriptExecutionContext&, Callback&&);
     WEBCORE_EXPORT ~FormDataConsumer();
 
@@ -53,7 +53,7 @@ private:
     void consumeFile(const String&);
     void consumeBlob(const URL&);
 
-    void consume(Span<const uint8_t>);
+    void consume(std::span<const uint8_t>);
     void read();
     void didFail(auto &&exception);
     bool isCancelled() { return !m_context; }

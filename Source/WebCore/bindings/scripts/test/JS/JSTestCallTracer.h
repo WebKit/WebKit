@@ -60,7 +60,7 @@ public:
 protected:
     JSTestCallTracer(JSC::Structure*, JSDOMGlobalObject&, Ref<TestCallTracer>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestCallTracerOwner final : public JSC::WeakHandleOwner {

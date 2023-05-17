@@ -31,17 +31,17 @@
 namespace WGSL::AST {
 
 class VariableStatement final : public Statement {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(VariableStatement);
 public:
+    NodeKind kind() const override;
+    Variable& variable() { return m_variable.get(); }
+
+private:
     VariableStatement(SourceSpan span, Variable::Ref&& variable)
         : Statement(span)
         , m_variable(WTFMove(variable))
     { }
 
-    NodeKind kind() const override;
-    Variable& variable() { return m_variable.get(); }
-
-private:
     Variable::Ref m_variable;
 };
 

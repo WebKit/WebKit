@@ -54,7 +54,7 @@ public:
     static bool isCaseSensitiveAttribute(const QualifiedName&);
 
 protected:
-    WEBCORE_EXPORT HTMLDocument(LocalFrame*, const Settings&, const URL&, ScriptExecutionContextIdentifier, DocumentClasses = { }, unsigned constructionFlags = 0);
+    WEBCORE_EXPORT HTMLDocument(LocalFrame*, const Settings&, const URL&, ScriptExecutionContextIdentifier, DocumentClasses = { }, OptionSet<ConstructionFlag> = { });
 
 private:
     bool isFrameSet() const final;
@@ -67,7 +67,7 @@ private:
 
 inline Ref<HTMLDocument> HTMLDocument::create(LocalFrame* frame, const Settings& settings, const URL& url, ScriptExecutionContextIdentifier identifier)
 {
-    auto document = adoptRef(*new HTMLDocument(frame, settings, url, identifier, { DocumentClass::HTML }, 0));
+    auto document = adoptRef(*new HTMLDocument(frame, settings, url, identifier, { DocumentClass::HTML }));
     document->addToContextsMap();
     return document;
 }

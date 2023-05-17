@@ -60,7 +60,7 @@ public:
 protected:
     JSTestInterfaceLeadingUnderscore(JSC::Structure*, JSDOMGlobalObject&, Ref<TestInterfaceLeadingUnderscore>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestInterfaceLeadingUnderscoreOwner final : public JSC::WeakHandleOwner {

@@ -31,6 +31,7 @@
 #include "InlineItem.h"
 #include "InlineTextItem.h"
 #include "LayoutElementBox.h"
+#include "RenderStyleInlines.h"
 #include "TextUtil.h"
 
 namespace WebCore {

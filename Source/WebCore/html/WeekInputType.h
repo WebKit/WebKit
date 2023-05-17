@@ -37,14 +37,18 @@
 namespace WebCore {
 
 class WeekInputType final : public BaseDateAndTimeInputType {
-    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
+    static Ref<WeekInputType> create(HTMLInputElement& element)
+    {
+        return adoptRef(*new WeekInputType(element));
+    }
+
+private:
     explicit WeekInputType(HTMLInputElement& element)
         : BaseDateAndTimeInputType(Type::Week, element)
     {
     }
 
-private:
     const AtomString& formControlType() const final;
     DateComponentsType dateType() const final;
     StepRange createStepRange(AnyStepHandling) const final;

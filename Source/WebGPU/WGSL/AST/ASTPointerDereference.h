@@ -30,17 +30,17 @@
 namespace WGSL::AST {
 
 class PointerDereferenceExpression final : public Expression {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(PointerDereferenceExpression);
 public:
+    NodeKind kind() const override;
+    Expression& target() { return m_target.get(); }
+
+private:
     PointerDereferenceExpression(SourceSpan span, Expression::Ref&& target)
         : Expression(span)
         , m_target(WTFMove(target))
     { }
 
-    NodeKind kind() const override;
-    Expression& target() { return m_target.get(); }
-
-private:
     Expression::Ref m_target;
 };
 

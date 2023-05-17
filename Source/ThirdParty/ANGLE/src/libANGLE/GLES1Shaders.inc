@@ -43,32 +43,32 @@
 // bool point_sprite_coord_replace
 // bool point_sprite_enabled
 // bool shade_model_flat
-// int texture_format[kMaxTexUnits];
-// int texture_env_mode[kMaxTexUnits];
-// int combine_rgb[kMaxTexUnits];
-// int combine_alpha[kMaxTexUnits];
-// int src0_rgb[kMaxTexUnits];
-// int src0_alpha[kMaxTexUnits];
-// int src1_rgb[kMaxTexUnits];
-// int src1_alpha[kMaxTexUnits];
-// int src2_rgb[kMaxTexUnits];
-// int src2_alpha[kMaxTexUnits];
-// int op0_rgb[kMaxTexUnits];
-// int op0_alpha[kMaxTexUnits];
-// int op1_rgb[kMaxTexUnits];
-// int op1_alpha[kMaxTexUnits];
-// int op2_rgb[kMaxTexUnits];
-// int op2_alpha[kMaxTexUnits];
-// int alpha_func;
-// int fog_mode;
+// uint texture_format[kMaxTexUnits];
+// uint texture_env_mode[kMaxTexUnits];
+// uint combine_rgb[kMaxTexUnits];
+// uint combine_alpha[kMaxTexUnits];
+// uint src0_rgb[kMaxTexUnits];
+// uint src0_alpha[kMaxTexUnits];
+// uint src1_rgb[kMaxTexUnits];
+// uint src1_alpha[kMaxTexUnits];
+// uint src2_rgb[kMaxTexUnits];
+// uint src2_alpha[kMaxTexUnits];
+// uint op0_rgb[kMaxTexUnits];
+// uint op0_alpha[kMaxTexUnits];
+// uint op1_rgb[kMaxTexUnits];
+// uint op1_alpha[kMaxTexUnits];
+// uint op2_rgb[kMaxTexUnits];
+// uint op2_alpha[kMaxTexUnits];
+// uint alpha_func;
+// uint fog_mode;
 
 constexpr char kGLES1TexUnitsDefine[] = R"(#define kTexUnits )";
 
 constexpr char kGLES1DrawVShaderHeader[] = R"(#version 300 es
 precision highp float;
 
-#define kMaxTexUnits 4
-#define kMaxLights   8
+#define kMaxTexUnits 4u
+#define kMaxLights   8u
 )";
 
 constexpr char kGLES1DrawVShader[] = R"(
@@ -77,16 +77,16 @@ in vec4 pos;
 in vec3 normal;
 in mediump vec4 color;
 in float pointsize;
-#if kTexUnits >= 1
+#if kTexUnits >= 1u
 in mediump vec4 texcoord0;
 #endif
-#if kTexUnits >= 2
+#if kTexUnits >= 2u
 in mediump vec4 texcoord1;
 #endif
-#if kTexUnits >= 3
+#if kTexUnits >= 3u
 in mediump vec4 texcoord2;
 #endif
-#if kTexUnits >= 4
+#if kTexUnits >= 4u
 in mediump vec4 texcoord3;
 #endif
 
@@ -134,16 +134,16 @@ out vec4 pos_varying;
 out vec3 normal_varying;
 out mediump vec4 color_varying;
 flat out mediump vec4 color_varying_flat;
-#if kTexUnits >= 1
+#if kTexUnits >= 1u
 out mediump vec3 texcoord0_varying;
 #endif
-#if kTexUnits >= 2
+#if kTexUnits >= 2u
 out mediump vec3 texcoord1_varying;
 #endif
-#if kTexUnits >= 3
+#if kTexUnits >= 3u
 out mediump vec3 texcoord2_varying;
 #endif
-#if kTexUnits >= 4
+#if kTexUnits >= 4u
 out mediump vec3 texcoord3_varying;
 #endif
 
@@ -165,7 +165,7 @@ mediump vec4 doLighting(mediump vec4 vertexColor)
 
     mediump vec4 lightingResult = material_emissive + materialAmbientActual * light_model_scene_ambient;
 
-    for (int i = 0; i < kMaxLights; i++)
+    for (uint i = 0u; i < kMaxLights; i++)
     {
 
         if (!light_enables[i])
@@ -280,7 +280,7 @@ mediump vec4 drawTexturePosition(int vertexId)
     return vec4(positionXY, draw_texture_coords.z, 1.0);
 }
 
-mediump vec3 drawTextureTexCoord(int vertexId, int textureUnit)
+mediump vec3 drawTextureTexCoord(int vertexId, uint textureUnit)
 {
     // The texture is drawn in the XY plane, so Z is 0.
     mediump vec2 texCropPos = draw_texture_normalized_crop_rect[textureUnit].xy;
@@ -351,17 +351,17 @@ void main()
 
         gl_PointSize = pointsize;
 
-#if kTexUnits >= 1
-        texcoord0_varying = drawTextureTexCoord(vertexId, 0);
+#if kTexUnits >= 1u
+        texcoord0_varying = drawTextureTexCoord(vertexId, 0u);
 #endif
-#if kTexUnits >= 2
-        texcoord1_varying = drawTextureTexCoord(vertexId, 1);
+#if kTexUnits >= 2u
+        texcoord1_varying = drawTextureTexCoord(vertexId, 1u);
 #endif
-#if kTexUnits >= 3
-        texcoord2_varying = drawTextureTexCoord(vertexId, 2);
+#if kTexUnits >= 3u
+        texcoord2_varying = drawTextureTexCoord(vertexId, 2u);
 #endif
-#if kTexUnits >= 4
-        texcoord3_varying = drawTextureTexCoord(vertexId, 3);
+#if kTexUnits >= 4u
+        texcoord3_varying = drawTextureTexCoord(vertexId, 3u);
 #endif
     }
     else
@@ -385,16 +385,16 @@ void main()
             gl_PointSize = pointsize;
         }
 
-#if kTexUnits >= 1
+#if kTexUnits >= 1u
         texcoord0_varying = (texture_matrix[0] * texcoord0).xyz;
 #endif
-#if kTexUnits >= 2
+#if kTexUnits >= 2u
         texcoord1_varying = (texture_matrix[1] * texcoord1).xyz;
 #endif
-#if kTexUnits >= 3
+#if kTexUnits >= 3u
         texcoord2_varying = (texture_matrix[2] * texcoord2).xyz;
 #endif
-#if kTexUnits >= 4
+#if kTexUnits >= 4u
         texcoord3_varying = (texture_matrix[3] * texcoord3).xyz;
 #endif
     }
@@ -419,52 +419,52 @@ constexpr char kGLES1DrawFShaderVersion[] = R"(#version 300 es
 constexpr char kGLES1DrawFShaderHeader[] = R"(precision highp float;
 
 // Defines for GL constants
-#define kMaxTexUnits                         4
-#define kMaxClipPlanes                       6
+#define kMaxTexUnits                         4u
+#define kMaxClipPlanes                       6u
 
-#define kModulate                       0x2100
-#define kDecal                          0x2101
-#define kCombine                        0x8570
-#define kReplace                        0x1E01
-#define kBlend                          0x0BE2
-#define kAdd                            0x0104
+#define kModulate                       0x2100u
+#define kDecal                          0x2101u
+#define kCombine                        0x8570u
+#define kReplace                        0x1E01u
+#define kBlend                          0x0BE2u
+#define kAdd                            0x0104u
 
-#define kAddSigned                      0x8574
-#define kInterpolate                    0x8575
-#define kSubtract                       0x84E7
-#define kDot3Rgb                        0x86AE
-#define kDot3Rgba                       0x86AF
+#define kAddSigned                      0x8574u
+#define kInterpolate                    0x8575u
+#define kSubtract                       0x84E7u
+#define kDot3Rgb                        0x86AEu
+#define kDot3Rgba                       0x86AFu
 
-#define kAlpha                          0x1906
-#define kRGB                            0x1907
-#define kRGBA                           0x1908
-#define kLuminance                      0x1909
-#define kLuminanceAlpha                 0x190A
+#define kAlpha                          0x1906u
+#define kRGB                            0x1907u
+#define kRGBA                           0x1908u
+#define kLuminance                      0x1909u
+#define kLuminanceAlpha                 0x190Au
 
-#define kTexture                        0x1702
-#define kConstant                       0x8576
-#define kPrimaryColor                   0x8577
-#define kPrevious                       0x8578
+#define kTexture                        0x1702u
+#define kConstant                       0x8576u
+#define kPrimaryColor                   0x8577u
+#define kPrevious                       0x8578u
 
-#define kSrcColor                       0x0300
-#define kOneMinusSrcColor               0x0301
-#define kSrcAlpha                       0x0302
-#define kOneMinusSrcAlpha               0x0303
+#define kSrcColor                       0x0300u
+#define kOneMinusSrcColor               0x0301u
+#define kSrcAlpha                       0x0302u
+#define kOneMinusSrcAlpha               0x0303u
 
-#define kLinear                         0x2601
-#define kExp                            0x0800
-#define kExp2                           0x0801
+#define kLinear                         0x2601u
+#define kExp                            0x0800u
+#define kExp2                           0x0801u
 
-#define kNever                          0x0200
-#define kLess                           0x0201
-#define kEqual                          0x0202
-#define kLequal                         0x0203
-#define kGreater                        0x0204
-#define kNotequal                       0x0205
-#define kGequal                         0x0206
-#define kAlways                         0x0207
-#define kZero                              0x0
-#define kOne                               0x1
+#define kNever                          0x0200u
+#define kLess                           0x0201u
+#define kEqual                          0x0202u
+#define kLequal                         0x0203u
+#define kGreater                        0x0204u
+#define kNotequal                       0x0205u
+#define kGequal                         0x0206u
+#define kAlways                         0x0207u
+#define kZero                              0x0u
+#define kOne                               0x1u
 
 #define kAnd                            0u
 #define kAndInverted                    1u
@@ -513,16 +513,16 @@ in vec4 pos_varying;
 in vec3 normal_varying;
 in mediump vec4 color_varying;
 flat in mediump vec4 color_varying_flat;
-#if kTexUnits >= 1
+#if kTexUnits >= 1u
 in mediump vec3 texcoord0_varying;
 #endif
-#if kTexUnits >= 2
+#if kTexUnits >= 2u
 in mediump vec3 texcoord1_varying;
 #endif
-#if kTexUnits >= 3
+#if kTexUnits >= 3u
 in mediump vec3 texcoord2_varying;
 #endif
-#if kTexUnits >= 4
+#if kTexUnits >= 4u
 in mediump vec3 texcoord3_varying;
 #endif
 
@@ -608,7 +608,7 @@ bool doClipPlaneTest()
 {
     bool res = true;
 
-    for (int i = 0; i < kMaxClipPlanes; i++)
+    for (uint i = 0u; i < kMaxClipPlanes; i++)
     {
         if (clip_plane_enables[i])
         {
@@ -739,19 +739,19 @@ mediump vec4 applyLogicOp(mediump vec4 currentFragment)
 
 constexpr char kGLES1DrawFShaderMultitexturing[] = R"(
 
-bool isTextureUnitEnabled(int unit)
+bool isTextureUnitEnabled(uint unit)
 {
     return enable_texture_2d[unit] || enable_texture_cube_map[unit];
 }
 
-mediump vec4 getTextureColor(int unit)
+mediump vec4 getTextureColor(uint unit)
 {
     mediump vec4 res;
 
     switch (unit)
     {
-#if kTexUnits >= 1
-        case 0:
+#if kTexUnits >= 1u
+        case 0u:
             if (enable_texture_2d[0])
             {
                 res = texture(tex_sampler0, texcoord0_varying.xy);
@@ -762,8 +762,8 @@ mediump vec4 getTextureColor(int unit)
             }
             break;
 #endif
-#if kTexUnits >= 2
-        case 1:
+#if kTexUnits >= 2u
+        case 1u:
             if (enable_texture_2d[1])
             {
                 res = texture(tex_sampler1, texcoord1_varying.xy);
@@ -774,8 +774,8 @@ mediump vec4 getTextureColor(int unit)
             }
             break;
 #endif
-#if kTexUnits >= 3
-        case 2:
+#if kTexUnits >= 3u
+        case 2u:
             if (enable_texture_2d[2])
             {
                 res = texture(tex_sampler2, texcoord2_varying.xy);
@@ -786,8 +786,8 @@ mediump vec4 getTextureColor(int unit)
             }
             break;
 #endif
-#if kTexUnits >= 4
-        case 3:
+#if kTexUnits >= 4u
+        case 3u:
             if (enable_texture_2d[3])
             {
                 res = texture(tex_sampler3, texcoord3_varying.xy);
@@ -806,31 +806,31 @@ mediump vec4 getTextureColor(int unit)
     return res;
 }
 
-mediump vec4 getPointSpriteTextureColor(int unit)
+mediump vec4 getPointSpriteTextureColor(uint unit)
 {
     mediump vec4 res;
 
     switch (unit)
     {
-        case 0:
+        case 0u:
             if (enable_texture_2d[0])
             {
                 res = texture(tex_sampler0, gl_PointCoord.xy);
             }
             break;
-        case 1:
+        case 1u:
             if (enable_texture_2d[1])
             {
                 res = texture(tex_sampler1, gl_PointCoord.xy);
             }
             break;
-        case 2:
+        case 2u:
             if (enable_texture_2d[2])
             {
                 res = texture(tex_sampler2, gl_PointCoord.xy);
             }
             break;
-        case 3:
+        case 3u:
             if (enable_texture_2d[3])
             {
                 res = texture(tex_sampler3, gl_PointCoord.xy);
@@ -843,8 +843,8 @@ mediump vec4 getPointSpriteTextureColor(int unit)
     return res;
 }
 
-mediump vec3 textureCombineSrcnOpnRgb(int srcnRgb,
-                                      int opnRgb,
+mediump vec3 textureCombineSrcnOpnRgb(uint srcnRgb,
+                                      uint opnRgb,
                                       mediump vec4 textureEnvColor,
                                       mediump vec4 vertexColor,
                                       mediump vec4 texturePrevColor,
@@ -893,8 +893,8 @@ mediump vec3 textureCombineSrcnOpnRgb(int srcnRgb,
     return res;
 }
 
-mediump float textureCombineSrcnOpnAlpha(int srcn,
-                                         int opn,
+mediump float textureCombineSrcnOpnAlpha(uint srcn,
+                                         uint opn,
                                          mediump vec4 textureEnvColor,
                                          mediump vec4 vertexColor,
                                          mediump vec4 texturePrevColor,
@@ -937,20 +937,20 @@ mediump float textureCombineSrcnOpnAlpha(int srcn,
     return res;
 }
 
-mediump vec4 textureCombine(int combineRgb,
-                            int combineAlpha,
-                            int src0Rgb,
-                            int src0Alpha,
-                            int src1Rgb,
-                            int src1Alpha,
-                            int src2Rgb,
-                            int src2Alpha,
-                            int op0Rgb,
-                            int op0Alpha,
-                            int op1Rgb,
-                            int op1Alpha,
-                            int op2Rgb,
-                            int op2Alpha,
+mediump vec4 textureCombine(uint combineRgb,
+                            uint combineAlpha,
+                            uint src0Rgb,
+                            uint src0Alpha,
+                            uint src1Rgb,
+                            uint src1Alpha,
+                            uint src2Rgb,
+                            uint src2Alpha,
+                            uint op0Rgb,
+                            uint op0Alpha,
+                            uint op1Rgb,
+                            uint op1Alpha,
+                            uint op2Rgb,
+                            uint op2Alpha,
                             mediump vec4 textureEnvColor,
                             mediump float rgbScale,
                             mediump float alphaScale,
@@ -1066,23 +1066,23 @@ mediump vec4 textureCombine(int combineRgb,
     }
 }
 
-mediump vec4 textureFunction(int unit,
-                             int texFormat,
-                             int envMode,
-                             int combineRgb,
-                             int combineAlpha,
-                             int src0Rgb,
-                             int src0Alpha,
-                             int src1Rgb,
-                             int src1Alpha,
-                             int src2Rgb,
-                             int src2Alpha,
-                             int op0Rgb,
-                             int op0Alpha,
-                             int op1Rgb,
-                             int op1Alpha,
-                             int op2Rgb,
-                             int op2Alpha,
+mediump vec4 textureFunction(uint unit,
+                             uint texFormat,
+                             uint envMode,
+                             uint combineRgb,
+                             uint combineAlpha,
+                             uint src0Rgb,
+                             uint src0Alpha,
+                             uint src1Rgb,
+                             uint src1Alpha,
+                             uint src2Rgb,
+                             uint src2Alpha,
+                             uint op0Rgb,
+                             uint op0Alpha,
+                             uint op1Rgb,
+                             uint op1Alpha,
+                             uint op2Rgb,
+                             uint op2Alpha,
                              mediump vec4 textureEnvColor,
                              mediump float rgbScale,
                              mediump float alphaScale,
@@ -1243,7 +1243,7 @@ void main()
 
     mediump vec4 texturePrevColor = currentFragment;
 
-    for (int i = 0; i < kTexUnits; i++)
+    for (uint i = 0u; i < kTexUnits; i++)
     {
         mediump vec4 textureColor;
 

@@ -42,10 +42,10 @@ struct ClientKeys {
 };
 
 // Decrypts a push payload encoded with the aes128gcm Content-Encoding as described in RFC8291.
-WEBCORE_EXPORT std::optional<Vector<uint8_t>> decryptAES128GCMPayload(const ClientKeys&, Span<const uint8_t> payload);
+WEBCORE_EXPORT std::optional<Vector<uint8_t>> decryptAES128GCMPayload(const ClientKeys&, std::span<const uint8_t> payload);
 
 // Decrypts a push payload encoded with the aesgcm Content-Encoding as described in draft-ietf-webpush-encryption-04.
-WEBCORE_EXPORT std::optional<Vector<uint8_t>> decryptAESGCMPayload(const ClientKeys&, Span<const uint8_t> serverP256DHPublicKey, Span<const uint8_t> salt, Span<const uint8_t> payload);
+WEBCORE_EXPORT std::optional<Vector<uint8_t>> decryptAESGCMPayload(const ClientKeys&, std::span<const uint8_t> serverP256DHPublicKey, std::span<const uint8_t> salt, std::span<const uint8_t> payload);
 
 } // namespace WebCore::PushCrypto
 

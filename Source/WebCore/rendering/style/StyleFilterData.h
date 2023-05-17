@@ -37,10 +37,6 @@ public:
     Ref<StyleFilterData> copy() const;
 
     bool operator==(const StyleFilterData&) const;
-    bool operator!=(const StyleFilterData& o) const
-    {
-        return !(*this == o);
-    }
 
     FilterOperations operations;
 

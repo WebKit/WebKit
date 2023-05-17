@@ -1,0 +1,10 @@
+This test ensures that the aria-activedescendant of a display:contents menu is considered selected.
+
+PASS: accessibilityController.accessibleElementById('item1').isSelected === true
+PASS: accessibilityController.accessibleElementById('item2').isSelected === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Menu item 1
+Menu item 2

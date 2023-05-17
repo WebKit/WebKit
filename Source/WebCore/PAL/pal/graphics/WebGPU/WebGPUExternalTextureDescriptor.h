@@ -28,10 +28,14 @@
 #include "WebGPUObjectDescriptorBase.h"
 #include "WebGPUPredefinedColorSpace.h"
 
+typedef struct __CVBuffer* CVPixelBufferRef;
+
 namespace PAL::WebGPU {
 
 struct ExternalTextureDescriptor : public ObjectDescriptorBase {
+    uint64_t mediaIdentifier { 0 };
     PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
+    CVPixelBufferRef pixelBuffer { nullptr };
 };
 
 } // namespace PAL::WebGPU

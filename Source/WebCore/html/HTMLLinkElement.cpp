@@ -54,6 +54,7 @@
 #include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
 #include "MouseEvent.h"
+#include "NodeName.h"
 #include "Page.h"
 #include "ParsedContentType.h"
 #include "RenderStyle.h"
@@ -161,7 +162,8 @@ void HTMLLinkElement::setDisabledState(bool disabled)
 
 void HTMLLinkElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    if (name == relAttr) {
+    switch (name.nodeName()) {
+    case AttributeNames::relAttr: {
         auto parsedRel = LinkRelAttribute(document(), newValue);
         auto didMutateRel = parsedRel != m_relAttribute;
         m_relAttribute = WTFMove(parsedRel);
@@ -169,30 +171,28 @@ void HTMLLinkElement::attributeChanged(const QualifiedName& name, const AtomStri
             m_relList->associatedAttributeValueChanged(newValue);
         if (didMutateRel)
             process();
-        return;
+        break;
     }
-    if (name == hrefAttr) {
+    case AttributeNames::hrefAttr: {
         URL url = getNonEmptyURLAttribute(hrefAttr);
         if (url == m_url)
             return;
         m_url = WTFMove(url);
         process();
-        return;
+        break;
     }
-    if (name == typeAttr) {
+    case AttributeNames::typeAttr:
         if (newValue == m_type)
             return;
         m_type = newValue;
         process();
-        return;
-    }
-    if (name == sizesAttr) {
+        break;
+    case AttributeNames::sizesAttr:
         if (m_sizes)
             m_sizes->associatedAttributeValueChanged(newValue);
         process();
-        return;
-    }
-    if (name == mediaAttr) {
+        break;
+    case AttributeNames::mediaAttr: {
         auto media = newValue.string().convertToASCIILowercase();
         if (media == m_media)
             return;
@@ -200,18 +200,19 @@ void HTMLLinkElement::attributeChanged(const QualifiedName& name, const AtomStri
         process();
         if (m_sheet && !isDisabled())
             m_styleScope->didChangeActiveStyleSheetCandidates();
-        return;
+        break;
     }
-    if (name == disabledAttr) {
+    case AttributeNames::disabledAttr:
         setDisabledState(!newValue.isNull());
-        return;
-    }
-    if (name == titleAttr) {
+        break;
+    case AttributeNames::titleAttr:
         if (m_sheet && !isInShadowTree())
             m_sheet->setTitle(newValue);
-        return;
+        break;
+    default:
+        HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+        break;
     }
-    HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 bool HTMLLinkElement::shouldLoadLink()
@@ -693,7 +694,7 @@ String HTMLLinkElement::fetchPriorityForBindings() const
 
 RequestPriority HTMLLinkElement::fetchPriorityHint() const
 {
-    if (document().settings().priorityHintsEnabled())
+    if (document().settings().fetchPriorityEnabled())
         return parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto);
     return RequestPriority::Auto;
 }

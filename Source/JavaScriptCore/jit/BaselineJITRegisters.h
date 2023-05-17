@@ -318,6 +318,20 @@ namespace PutByVal {
     }
 }
 
+#if USE(JSVALUE64)
+namespace EnumeratorPutByVal {
+    // We rely on using the same registers when linking a CodeBlock and initializing registers
+    // for a PutByVal StubInfo.
+    static constexpr JSValueRegs baseJSR { PutByVal::baseJSR };
+    static constexpr JSValueRegs propertyJSR { PutByVal::propertyJSR };
+    static constexpr JSValueRegs valueJSR { PutByVal::valueJSR };
+    static constexpr GPRReg profileGPR { PutByVal::profileGPR };
+    static constexpr GPRReg stubInfoGPR { PutByVal::stubInfoGPR };
+    static constexpr GPRReg scratch1 { GPRInfo::regT5 };
+    static_assert(noOverlap(baseJSR, propertyJSR, valueJSR, stubInfoGPR, scratch1));
+}
+#endif
+
 namespace InById {
     constexpr JSValueRegs baseJSR { GetById::baseJSR };
     constexpr JSValueRegs resultJSR { JSRInfo::returnValueJSR };

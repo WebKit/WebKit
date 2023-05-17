@@ -7,9 +7,8 @@ layer at (0,0) size 785x600
       RenderText {#text} at (243,229) size 4x18
         text run at (243,229) width 4: " "
       RenderBlock {DIV} at (267,21) size 202x202 [border: (1px solid #000000)]
-      RenderText {#text} at (489,229) size 4x18
-        text run at (489,229) width 4: " "
-      RenderBR {BR} at (493,229) size 0x18
+      RenderText {#text} at (0,0) size 0x0
+      RenderBR {BR} at (489,229) size 0x18
       RenderBlock {DIV} at (21,267) size 202x202 [border: (1px solid #000000)]
       RenderText {#text} at (243,475) size 4x18
         text run at (243,475) width 4: " "

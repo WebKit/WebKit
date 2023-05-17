@@ -33,6 +33,8 @@
 #include "RenderRubyRun.h"
 
 #include "InlineIteratorLineBox.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderRuby.h"
 #include "RenderRubyBase.h"
 #include "RenderRubyText.h"

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -599,16 +599,6 @@ void EmptyChromeClient::requestCookieConsent(CompletionHandler<void(CookieConsen
     completion(CookieConsentDecisionResult::NotSupported);
 }
 
-void EmptyChromeClient::classifyModalContainerControls(Vector<String>&&, CompletionHandler<void(Vector<ModalContainerControlType>&&)>&& completion)
-{
-    completion({ });
-}
-
-void EmptyChromeClient::decidePolicyForModalContainer(OptionSet<ModalContainerControlType>, CompletionHandler<void(ModalContainerDecision)>&& completion)
-{
-    completion(ModalContainerDecision::Show);
-}
-
 void EmptyFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String&, PolicyCheckIdentifier, FramePolicyFunction&&)
 {
 }
@@ -639,11 +629,6 @@ RefPtr<LocalFrame> EmptyFrameLoaderClient::createFrame(const AtomString&, HTMLFr
 RefPtr<Widget> EmptyFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool)
 {
     return nullptr;
-}
-
-std::optional<PageIdentifier> EmptyFrameLoaderClient::pageID() const
-{
-    return std::nullopt;
 }
 
 bool EmptyFrameLoaderClient::hasWebView() const
@@ -1080,6 +1065,12 @@ RemoteAXObjectRef EmptyFrameLoaderClient::accessibilityRemoteObject()
     return nullptr;
 }
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+void EmptyFrameLoaderClient::setAXIsolatedTreeRoot(WebCore::AXCoreObject*)
+{
+}
+#endif
+
 void EmptyFrameLoaderClient::willCacheResponse(DocumentLoader*, ResourceLoaderIdentifier, NSCachedURLResponse *response, CompletionHandler<void(NSCachedURLResponse *)>&& completionHandler) const
 {
     completionHandler(response);
@@ -1189,9 +1180,10 @@ public:
     RefPtr<ThreadableWebSocketChannel> createWebSocketChannel(Document&, WebSocketChannelClient&) final { return nullptr; }
 };
 
-PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
+PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier> identifier, PAL::SessionID sessionID)
 {
     PageConfiguration pageConfiguration {
+        identifier,
         sessionID,
         makeUniqueRef<EmptyEditorClient>(),
         adoptRef(*new EmptySocketProvider),

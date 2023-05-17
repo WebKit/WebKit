@@ -127,8 +127,10 @@ FOR_EACH_JSC_PTRTAG(JSC_DECLARE_PTRTAG)
 #pragma warning(pop)
 #endif
 
+#if CPU(ARM64E)
 JS_EXPORT_PRIVATE PtrTagCallerType callerType(PtrTag);
 JS_EXPORT_PRIVATE PtrTagCalleeType calleeType(PtrTag);
+#endif
 
 template<PtrTag tag, PtrTagCalleeType calleeType, PtrTagCallerType callerType, typename PtrType>
 ALWAYS_INLINE static PtrType tagJSCCodePtrImpl(PtrType ptr)

@@ -30,6 +30,11 @@
 
 namespace WebCore {
 
+Ref<MeterPart> MeterPart::create()
+{
+    return adoptRef(*new MeterPart(GaugeRegion::EvenLessGood, 0, 0, 0));
+}
+
 Ref<MeterPart> MeterPart::create(GaugeRegion gaugeRegion, double value, double minimum, double maximum)
 {
     return adoptRef(*new MeterPart(gaugeRegion, value, minimum, maximum));

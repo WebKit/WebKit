@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: drawArrays: no buffer is bound to enabled attribute
-PASS. You didn't crash.
-

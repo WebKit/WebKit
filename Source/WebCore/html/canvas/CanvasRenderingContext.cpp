@@ -36,6 +36,7 @@
 #include "HTMLVideoElement.h"
 #include "Image.h"
 #include "ImageBitmap.h"
+#include "OriginAccessPatterns.h"
 #include "PixelFormat.h"
 #include "SVGImageElement.h"
 #include "SecurityOrigin.h"
@@ -167,7 +168,7 @@ bool CanvasRenderingContext::taintsOrigin(const ImageBitmap* imageBitmap)
 
 bool CanvasRenderingContext::taintsOrigin(const URL& url)
 {
-    return !url.protocolIsData() && !m_canvas.securityOrigin()->canRequest(url);
+    return !url.protocolIsData() && !m_canvas.securityOrigin()->canRequest(url, OriginAccessPatternsForWebProcess::singleton());
 }
 
 void CanvasRenderingContext::checkOrigin(const URL& url)

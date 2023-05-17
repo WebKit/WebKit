@@ -635,6 +635,19 @@ bool PlaybackSessionModelMediaElement::isPictureInPictureActive() const
     return (m_mediaElement->fullscreenMode() & HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture;
 }
 
+#if !RELEASE_LOG_DISABLED
+const void* PlaybackSessionModelMediaElement::logIdentifier() const
+{
+    return m_mediaElement ? m_mediaElement->logIdentifier() : nullptr;
+}
+
+const Logger* PlaybackSessionModelMediaElement::loggerPtr() const
+{
+    return m_mediaElement ? &m_mediaElement->logger() : nullptr;
+}
+#endif
+
+
 }
 
 #endif

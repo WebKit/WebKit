@@ -39,18 +39,17 @@ struct BoundaryPoint {
 };
 
 bool operator==(const BoundaryPoint&, const BoundaryPoint&);
-bool operator!=(const BoundaryPoint&, const BoundaryPoint&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const BoundaryPoint&);
 
-template<TreeType = Tree> PartialOrdering treeOrder(const BoundaryPoint&, const BoundaryPoint&);
+template<TreeType = Tree> std::partial_ordering treeOrder(const BoundaryPoint&, const BoundaryPoint&);
 
 WEBCORE_EXPORT std::optional<BoundaryPoint> makeBoundaryPointBeforeNode(Node&);
 WEBCORE_EXPORT std::optional<BoundaryPoint> makeBoundaryPointAfterNode(Node&);
 BoundaryPoint makeBoundaryPointBeforeNodeContents(Node&);
 BoundaryPoint makeBoundaryPointAfterNodeContents(Node&);
 
-WEBCORE_EXPORT PartialOrdering treeOrderForTesting(TreeType, const BoundaryPoint&, const BoundaryPoint&);
+WEBCORE_EXPORT std::partial_ordering treeOrderForTesting(TreeType, const BoundaryPoint&, const BoundaryPoint&);
 
 inline BoundaryPoint::BoundaryPoint(Ref<Node>&& container, unsigned offset)
     : container(WTFMove(container))
@@ -66,11 +65,6 @@ inline Document& BoundaryPoint::document() const
 inline bool operator==(const BoundaryPoint& a, const BoundaryPoint& b)
 {
     return a.container.ptr() == b.container.ptr() && a.offset == b.offset;
-}
-
-inline bool operator!=(const BoundaryPoint& a, const BoundaryPoint& b)
-{
-    return !(a == b);
 }
 
 inline BoundaryPoint makeBoundaryPointBeforeNodeContents(Node& node)

@@ -28,6 +28,7 @@ messages -> GPUProcess LegacyReceiver {
     CreateGPUConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID, IPC::Connection::Handle connectionHandle, struct WebKit::GPUProcessConnectionParameters parameters) -> () AllowedWhenWaitingForSyncReply
     
     UpdateGPUProcessPreferences(struct WebKit::GPUProcessPreferences preferences)
+    UpdateSandboxAccess(Vector<WebKit::SandboxExtension::Handle> extensions);
 
     PrepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime) -> ()
     ProcessDidResume()
@@ -38,7 +39,6 @@ messages -> GPUProcess LegacyReceiver {
 #if ENABLE(MEDIA_STREAM)
     SetMockCaptureDevicesEnabled(bool isEnabled)
     SetOrientationForMediaCapture(WebCore::IntDegrees orientation);
-    UpdateSandboxAccess(Vector<WebKit::SandboxExtension::Handle> extensions);
     UpdateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier processID) -> ()
     UpdateCaptureOrigin(WebCore::SecurityOriginData originData, WebCore::ProcessIdentifier processID)
     AddMockMediaDevice(struct WebCore::MockMediaDevice device)
@@ -64,7 +64,7 @@ messages -> GPUProcess LegacyReceiver {
 #endif
 
 #if ENABLE(VIDEO)
-    RequestBitmapImageForCurrentTime(WebCore::ProcessIdentifier processIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier) -> (WebKit::ShareableBitmapHandle handle)
+    RequestBitmapImageForCurrentTime(WebCore::ProcessIdentifier processIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier) -> (WebKit::ShareableBitmap::Handle handle)
 #endif
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
@@ -82,6 +82,8 @@ messages -> GPUProcess LegacyReceiver {
 #if HAVE(POWERLOG_TASK_MODE_QUERY)
     EnablePowerLogging(WebKit::SandboxExtension::Handle handle)
 #endif
+
+    UserPreferredLanguagesChanged(Vector<String> languages)
 
     WebProcessConnectionCountForTesting() -> (uint64_t count)
 }

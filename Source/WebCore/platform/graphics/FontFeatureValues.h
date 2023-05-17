@@ -69,11 +69,6 @@ public:
             && m_annotation == other.annotation();
     }
     
-    bool operator!=(const FontFeatureValues& other) const
-    {
-        return !(other == *this);
-    }
-    
     const Tags& styleset() const
     {
         return m_styleset;

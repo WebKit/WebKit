@@ -443,8 +443,13 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "SetUserMediaPermission")) {
-        TestController::singleton().setUserMediaPermission(booleanValue(messageBody));
+    if (WKStringIsEqualToUTF8CString(messageName, "SetCameraPermission")) {
+        TestController::singleton().setCameraPermission(booleanValue(messageBody));
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetMicrophonePermission")) {
+        TestController::singleton().setMicrophonePermission(booleanValue(messageBody));
         return;
     }
 
@@ -1006,7 +1011,8 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         auto persistentID = stringValue(messageBodyDictionary, "PersistentID");
         auto label = stringValue(messageBodyDictionary, "Label");
         auto type = stringValue(messageBodyDictionary, "Type");
-        TestController::singleton().addMockMediaDevice(persistentID, label, type);
+        auto properties = dictionaryValue(value(messageBodyDictionary, "Properties"));
+        TestController::singleton().addMockMediaDevice(persistentID, label, type, properties);
         return nullptr;
     }
 
@@ -1755,10 +1761,10 @@ void TestInvocation::dumpPrivateClickMeasurement()
 
 void TestInvocation::initializeWaitToDumpWatchdogTimerIfNeeded()
 {
-    if (m_waitToDumpWatchdogTimer.isActive())
+    if (m_waitToDumpWatchdogTimer.isActive() || m_timeout == TestController::noTimeout)
         return;
 
-    m_waitToDumpWatchdogTimer.startOneShot(m_timeout);
+    m_waitToDumpWatchdogTimer.startOneShot(m_timeout > 0_s ? m_timeout : TestController::defaultShortTimeout);
 }
 
 void TestInvocation::invalidateWaitToDumpWatchdogTimer()

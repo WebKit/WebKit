@@ -26,22 +26,23 @@
 #pragma once
 
 #include "ASTAttribute.h"
+#include "ASTBuilder.h"
 #include "ASTExpression.h"
 
 namespace WGSL::AST {
 
 class SizeAttribute final : public Attribute {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(SizeAttribute);
 public:
+    NodeKind kind() const override;
+    Expression& size() { return m_size.get(); }
+
+private:
     SizeAttribute(SourceSpan span, Expression::Ref&& size)
         : Attribute(span)
         , m_size(WTFMove(size))
     { }
 
-    NodeKind kind() const override;
-    Expression& size() { return m_size.get(); }
-
-private:
     Expression::Ref m_size;
 };
 

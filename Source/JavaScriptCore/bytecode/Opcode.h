@@ -152,6 +152,7 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSetCon
     macro(OpEnumeratorNext) \
     macro(OpEnumeratorGetByVal) \
     macro(OpEnumeratorInByVal) \
+    macro(OpEnumeratorPutByVal) \
     macro(OpEnumeratorHasOwnProperty) \
     macro(OpNewArrayWithSpecies) \
     FOR_EACH_OPCODE_WITH_CALL_LINK_INFO(macro) \

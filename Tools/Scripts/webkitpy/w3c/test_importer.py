@@ -340,7 +340,7 @@ class TestImporter(object):
                     # Skip it since, the corresponding reference test should have a link to this file
                     continue
 
-                if 'reference' in test_info.keys():
+                if 'match_reference' in test_info.keys() or 'mismatch_reference' in test_info.keys():
                     reftests += 1
                     total_tests += 1
                     test_basename = self.filesystem.basename(test_info['test'])
@@ -350,12 +350,16 @@ class TestImporter(object):
                     # directly rather than relying  on a naming convention.
                     # Using a naming convention creates duplicate copies of the
                     # reference files.
-                    ref_file = self.filesystem.splitext(test_basename)[0] + '-expected'
-                    if 'type' in test_info and test_info['type'] == 'mismatch':
-                        ref_file += '-mismatch'
-                    ref_file += self.filesystem.splitext(test_info['reference'])[1]
+                    if 'match_reference' in test_info.keys():
+                        ref_file = self.filesystem.splitext(test_basename)[0] + '-expected'
+                        ref_file += self.filesystem.splitext(test_info['match_reference'])[1]
+                        copy_list.append({'src': test_info['match_reference'], 'dest': ref_file, 'reference_support_info': test_info['match_reference_support_info']})
 
-                    copy_list.append({'src': test_info['reference'], 'dest': ref_file, 'reference_support_info': test_info['reference_support_info']})
+                    if 'mismatch_reference' in test_info.keys():
+                        ref_file = self.filesystem.splitext(test_basename)[0] + '-expected-mismatch'
+                        ref_file += self.filesystem.splitext(test_info['mismatch_reference'])[1]
+                        copy_list.append({'src': test_info['mismatch_reference'], 'dest': ref_file, 'reference_support_info': test_info['mismatch_reference_support_info']})
+
                     copy_list.append({'src': test_info['test'], 'dest': filename})
 
                 elif 'jstest' in test_info.keys():

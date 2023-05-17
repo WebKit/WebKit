@@ -59,20 +59,20 @@ WGSL_AST_UNARYOP_IMPL
 void printInternal(PrintStream&, UnaryOperation);
 
 class UnaryExpression final : public Expression {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(UnaryExpression);
 public:
+    NodeKind kind() const final;
+    Expression& expression() { return m_expression.get(); }
+    UnaryOperation operation() const { return m_operation; }
+
+private:
     UnaryExpression(SourceSpan span, Expression::Ref&& expression, UnaryOperation operation)
         : Expression(span)
         , m_expression(WTFMove(expression))
         , m_operation(operation)
     { }
 
-    NodeKind kind() const final;
-    Expression& expression() { return m_expression.get(); }
-    UnaryOperation operation() const { return m_operation; }
-
-private:
-    UniqueRef<Expression> m_expression;
+    Expression::Ref m_expression;
     UnaryOperation m_operation;
 };
 

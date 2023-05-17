@@ -99,7 +99,7 @@ IntRect RemoteFrameView::windowClipRect() const
     return { };
 }
 
-void RemoteFrameView::paintContents(GraphicsContext&, const IntRect&, SecurityOriginPaintPolicy, EventRegionContext*)
+void RemoteFrameView::paintContents(GraphicsContext&, const IntRect&, SecurityOriginPaintPolicy, RegionContext*)
 {
 }
 

@@ -47,6 +47,11 @@ public:
     {
         return m_state.forNode(node);
     }
+
+    ALWAYS_INLINE AbstractValue& forTupleNode(NodeFlowProjection node, unsigned index)
+    {
+        return m_state.forTupleNode(node, index);
+    }
     
     ALWAYS_INLINE AbstractValue& forNode(Edge edge)
     {
@@ -119,6 +124,11 @@ public:
         makeHeapTopForNode(edge.node());
     }
     
+    bool hasClearedAbstractState(NodeFlowProjection node)
+    {
+        return m_state.hasClearedAbstractState(node);
+    }
+
     bool needsTypeCheck(Node* node, SpeculatedType typesPassedThrough)
     {
         return !forNode(node).isType(typesPassedThrough);

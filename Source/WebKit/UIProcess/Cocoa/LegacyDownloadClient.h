@@ -26,7 +26,6 @@
 #pragma once
 
 #import "APIDownloadClient.h"
-#import "ProcessThrottler.h"
 #import "WKFoundation.h"
 #import <wtf/WeakObjCPtr.h>
 
@@ -58,16 +57,7 @@ private:
     void didCreateDestination(DownloadProxy&, const String&) final;
     void processDidCrash(DownloadProxy&) final;
 
-#if USE(SYSTEM_PREVIEW)
-    void takeActivityToken(DownloadProxy&);
-    void releaseActivityTokenIfNecessary(DownloadProxy&);
-#endif
-
     WeakObjCPtr<id <_WKDownloadDelegate>> m_delegate;
-
-#if PLATFORM(IOS_FAMILY) && USE(SYSTEM_PREVIEW)
-    std::unique_ptr<ProcessThrottler::BackgroundActivity> m_activity;
-#endif
 
     struct {
         bool downloadDidStart : 1;            

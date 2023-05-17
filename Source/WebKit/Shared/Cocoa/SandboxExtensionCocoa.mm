@@ -336,7 +336,7 @@ auto SandboxExtension::createHandleForMachLookup(ASCIILiteral service, std::opti
     return WTFMove(handle);
 }
 
-auto SandboxExtension::createHandlesForMachLookup(Span<const ASCIILiteral> services, std::optional<audit_token_t> auditToken, MachBootstrapOptions machBootstrapOptions, OptionSet<Flags> flags) -> Vector<Handle>
+auto SandboxExtension::createHandlesForMachLookup(std::span<const ASCIILiteral> services, std::optional<audit_token_t> auditToken, MachBootstrapOptions machBootstrapOptions, OptionSet<Flags> flags) -> Vector<Handle>
 {
     auto handles = createHandlesForResources(services, [auditToken, flags] (ASCIILiteral service) -> std::optional<Handle> {
         // Note that createHandleForMachLookup() may return null if the process has just crashed.
@@ -384,7 +384,7 @@ auto SandboxExtension::createHandleForIOKitClassExtension(ASCIILiteral ioKitClas
     return WTFMove(handle);
 }
 
-auto SandboxExtension::createHandlesForIOKitClassExtensions(Span<const ASCIILiteral> iokitClasses, std::optional<audit_token_t> auditToken, OptionSet<Flags> flags) -> Vector<Handle>
+auto SandboxExtension::createHandlesForIOKitClassExtensions(std::span<const ASCIILiteral> iokitClasses, std::optional<audit_token_t> auditToken, OptionSet<Flags> flags) -> Vector<Handle>
 {
     return createHandlesForResources(iokitClasses, [auditToken, flags] (ASCIILiteral iokitClass) {
         auto handle = createHandleForIOKitClassExtension(iokitClass, auditToken, flags);

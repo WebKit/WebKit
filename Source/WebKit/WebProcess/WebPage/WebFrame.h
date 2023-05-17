@@ -28,8 +28,6 @@
 #include "APIObject.h"
 #include "DownloadID.h"
 #include "IdentifierTypes.h"
-#include "MessageReceiver.h"
-#include "MessageSender.h"
 #include "PolicyDecision.h"
 #include "ShareableBitmap.h"
 #include "TransactionID.h"
@@ -41,6 +39,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/HitTestRequest.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
+#include <WebCore/NetworkConnectionIntegrity.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -73,13 +72,13 @@ class InjectedBundleScriptWorld;
 class WebImage;
 class WebPage;
 struct FrameInfoData;
+struct FrameTreeNodeData;
 struct WebsitePoliciesData;
 
-class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame>, public IPC::MessageReceiver, public IPC::MessageSender {
+class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame>, public CanMakeWeakPtr<WebFrame> {
 public:
-    static Ref<WebFrame> create(WebPage& page) { return adoptRef(*new WebFrame(page)); }
+    static Ref<WebFrame> create(WebPage& page, WebCore::FrameIdentifier frameID) { return adoptRef(*new WebFrame(page, frameID)); }
     static Ref<WebFrame> createSubframe(WebPage&, WebFrame& parent, const AtomString& frameName, WebCore::HTMLFrameOwnerElement&);
-    static Ref<WebFrame> createLocalSubframeHostedInAnotherProcess(WebPage&, WebFrame& parent, WebCore::FrameIdentifier, WebCore::LayerHostingContextIdentifier);
     static Ref<WebFrame> createRemoteSubframe(WebPage&, WebFrame& parent, WebCore::FrameIdentifier, WebCore::ProcessIdentifier);
     ~WebFrame();
 
@@ -87,6 +86,7 @@ public:
 
     // Called when the FrameLoaderClient (and therefore the WebCore::Frame) is being torn down.
     void invalidate();
+    ScopeExit<Function<void()>> makeInvalidator();
 
     WebPage* page() const;
 
@@ -95,7 +95,10 @@ public:
     WebCore::RemoteFrame* coreRemoteFrame() const;
     WebCore::Frame* coreAbstractFrame() const;
 
+    void transitionToLocal(WebCore::LayerHostingContextIdentifier);
+
     FrameInfoData info() const;
+    FrameTreeNodeData frameTreeData() const;
     void getFrameInfo(CompletionHandler<void(FrameInfoData&&)>&&);
 
     WebCore::FrameIdentifier frameID() const;
@@ -219,17 +222,13 @@ public:
     std::optional<NavigatingToAppBoundDomain> isTopFrameNavigatingToAppBoundDomain() const;
 #endif
 
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
-
     Markable<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier() { return m_layerHostingContextIdentifier; }
 
+    OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy() const;
 private:
-    WebFrame(WebPage&);
+    WebFrame(WebPage&, WebCore::FrameIdentifier);
 
     void setLayerHostingContextIdentifier(WebCore::LayerHostingContextIdentifier identifier) { m_layerHostingContextIdentifier = identifier; }
-
-    IPC::Connection* messageSenderConnection() const final;
-    uint64_t messageSenderDestinationID() const final;
 
     WeakPtr<WebCore::Frame> m_coreFrame;
     WeakPtr<WebPage> m_page;
@@ -246,7 +245,7 @@ private:
 
     WeakPtr<LoadListener> m_loadListener;
 
-    WebCore::FrameIdentifier m_frameID;
+    const WebCore::FrameIdentifier m_frameID;
 
 #if PLATFORM(IOS_FAMILY)
     TransactionID m_firstLayerTreeTransactionIDAfterDidCommitLoad;

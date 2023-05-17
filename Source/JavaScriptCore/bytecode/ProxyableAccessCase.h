@@ -38,10 +38,10 @@ public:
     friend class InlineCacheCompiler;
 
     static Ref<AccessCase> create(VM&, JSCell*, AccessType, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(),
-        bool viaProxy = false, WatchpointSet* additionalSet = nullptr, RefPtr<PolyProtoAccessChain>&& = nullptr);
+        bool viaGlobalProxy = false, WatchpointSet* additionalSet = nullptr, RefPtr<PolyProtoAccessChain>&& = nullptr);
 
 protected:
-    ProxyableAccessCase(VM&, JSCell*, AccessType, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, bool viaProxy, WatchpointSet* additionalSet, RefPtr<PolyProtoAccessChain>&&);
+    ProxyableAccessCase(VM&, JSCell*, AccessType, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, bool viaGlobalProxy, WatchpointSet* additionalSet, RefPtr<PolyProtoAccessChain>&&);
 
     WatchpointSet* additionalSetImpl() const { return m_additionalSet.get(); }
     void dumpImpl(PrintStream&, CommaPrinter&, Indenter&) const;

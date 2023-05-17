@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Igalia S.L. All rights reserved.
+# Copyright (C) 2019, 2023 Igalia S.L. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -29,27 +29,20 @@ from webkitpy.benchmark_runner.browser_driver.linux_browser_driver import LinuxB
 
 class CogBrowserDriver(LinuxBrowserDriver):
     browser_name = 'cog'
-    process_search_list = ['cog']
+    process_search_list = ['Tools/Scripts/run-minibrowser', 'cog']
 
+    # If you want to execute Cog with a specific platform plugin (drm, wayland, etc)
+    # Then set the environment variables COG_PLATFORM_NAME and COG_PLATFORM_PARAMS
     def launch_url(self, url, options, browser_build_path, browser_path):
-        self._browser_arguments = [url]
-        super(CogBrowserDriver, self).launch_url(url, options,
-                                                 browser_build_path,
-                                                 browser_path)
+        self._default_browser_arguments = []
+        if self.process_name.endswith('run-minibrowser'):
+            self._default_browser_arguments.append('--wpe')
+        self._default_browser_arguments.append(url)
+        super(CogBrowserDriver, self).launch_url(url, options, browser_build_path, browser_path)
 
     def launch_driver(self, url, options, browser_build_path):
         raise ValueError("Browser {browser} is not available with webdriver".format(browser=self.browser_name))
 
-
-class CogFdoBrowserDriver(LinuxBrowserDriver):
-    browser_name = 'cog-fdo'
-    process_search_list = ['cog']
-
-    def launch_url(self, url, options, browser_build_path, browser_path):
-        self._browser_arguments = ['--platform=fdo', url]
-        super(CogFdoBrowserDriver, self).launch_url(url, options,
-                                                    browser_build_path,
-                                                    browser_path)
-
-    def launch_driver(self, url, options, browser_build_path):
-        raise ValueError("Browser {browser} is not available with webdriver".format(browser=self.browser_name))
+    def prepare_env(self, config):
+        super(CogBrowserDriver, self).prepare_env(config)
+        self._test_environ['WPE_BROWSER'] = 'cog'

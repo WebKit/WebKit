@@ -1,0 +1,22 @@
+<style>
+  .clamped {
+    font-family: Ahem;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+</style>
+<body>
+  <div class="clamped">
+    <span id="test">TEST</span>
+    <div>FAIL</div>
+  </div>
+</body>
+<script>
+  if (window.testRunner) testRunner.waitUntilDone();
+  setTimeout(() => {
+    document.getElementById("test").innerHTML = "TEST<br />CASE";
+    if (window.testRunner) testRunner.notifyDone();
+  }, 0);
+</script>

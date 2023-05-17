@@ -1,0 +1,3 @@
+
+FAIL MediaStreamTrack transfer to iframe promise_test: Unhandled rejection with value: object "InvalidAccessError: getDisplayMedia must be called from a user gesture handler."
+

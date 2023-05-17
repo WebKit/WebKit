@@ -138,7 +138,6 @@ private:
     HashSet<WebCore::ClientOrigin> getAllOrigins();
     Vector<WebsiteData::Entry> fetchDataFromDisk(OptionSet<WebsiteDataType>, ShouldComputeSize);
     HashSet<WebCore::ClientOrigin> deleteDataOnDisk(OptionSet<WebsiteDataType>, WallTime, const Function<bool(const WebCore::ClientOrigin&)>&);
-    bool evictDataByTopOrigin(const WebCore::SecurityOriginData&);
 #if PLATFORM(IOS_FAMILY)
     void includeOriginInBackupIfNecessary(OriginStorageManager&);
 #endif
@@ -173,7 +172,7 @@ private:
     void disconnectFromStorageArea(IPC::Connection&, StorageAreaIdentifier);
     void cloneSessionStorageNamespace(StorageNamespaceIdentifier, StorageNamespaceIdentifier);
     void setItem(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, String&& key, String&& value, String&& urlString, CompletionHandler<void(bool, HashMap<String, String>&&)>&&);
-    void removeItem(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, String&& key, String&& urlString, CompletionHandler<void()>&&);
+    void removeItem(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, String&& key, String&& urlString, CompletionHandler<void(bool, HashMap<String, String>&&)>&&);
     void clear(IPC::Connection&, StorageAreaIdentifier, StorageAreaImplIdentifier, String&& urlString, CompletionHandler<void()>&&);
 
     // Message handlers for IndexedDB.
@@ -228,8 +227,11 @@ private:
     WallTime lastModificationTimeForOrigin(const WebCore::ClientOrigin&, OriginStorageManager&) const;
     void updateLastModificationTimeForOrigin(const WebCore::ClientOrigin&);
     void schedulePerformEviction();
+    bool persistedInternal(const WebCore::ClientOrigin&);
+    String persistedFilePath(const WebCore::ClientOrigin&);
     struct AccessRecord {
         bool isActive { false };
+        std::optional<bool> isPersisted;
         uint64_t usage { 0 };
         WallTime lastAccessTime;
         Vector<WebCore::SecurityOriginData> clientOrigins;

@@ -57,6 +57,8 @@ WK_EXPORT void WKPageConfigurationSetWebsiteDataStore(WKPageConfigurationRef con
 WK_EXPORT void WKPageConfigurationSetInitialCapitalizationEnabled(WKPageConfigurationRef configuration, bool enabled);
 WK_EXPORT void WKPageConfigurationSetBackgroundCPULimit(WKPageConfigurationRef configuration, double cpuLimit); // Terminates process if it uses more than CPU limit over an extended period of time while in the background.
 
+WK_EXPORT void WKPageConfigurationSetAllowTestOnlyIPC(WKPageConfigurationRef configuration, bool allowTestOnlyIPC);
+
 #ifdef __cplusplus
 }
 #endif

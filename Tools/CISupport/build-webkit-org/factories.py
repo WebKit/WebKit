@@ -198,6 +198,8 @@ class TestJSCFactory(Factory):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
         self.addStep(DownloadBuiltProduct())
         self.addStep(ExtractBuiltProduct())
+        if platform == 'wincairo':
+            self.addStep(InstallWinCairoDependencies())
         self.addStep(RunJavaScriptCoreTests())
 
 

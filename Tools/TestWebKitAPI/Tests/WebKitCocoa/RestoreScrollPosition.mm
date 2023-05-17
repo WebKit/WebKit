@@ -32,18 +32,6 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 
-#if PLATFORM(IOS_FAMILY)
-@interface RestoreScrollPositionWithLargeContentInsetWebView : TestWKWebView
-@end
-
-@implementation RestoreScrollPositionWithLargeContentInsetWebView
-- (UIEdgeInsets)safeAreaInsets
-{
-    return UIEdgeInsetsMake(141, 0, 0, 0);
-}
-@end
-#endif
-
 namespace TestWebKitAPI {
 
 #if PLATFORM(IOS_FAMILY)
@@ -52,7 +40,8 @@ TEST(RestoreScrollPositionTests, RestoreScrollPositionWithLargeContentInset)
 {
     auto topInset = 1165;
 
-    auto webView = adoptNS([[RestoreScrollPositionWithLargeContentInsetWebView alloc] initWithFrame:CGRectMake(0, 0, 375, 1024)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 375, 1024)]);
+    [webView setOverrideSafeAreaInset:UIEdgeInsetsMake(141, 0, 0, 0)];
     
     [webView synchronouslyLoadTestPageNamed:@"simple-tall"];
     

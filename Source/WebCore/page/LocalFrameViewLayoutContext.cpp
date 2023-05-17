@@ -34,6 +34,7 @@
 #include "Logging.h"
 #include "RenderElement.h"
 #include "RenderLayoutState.h"
+#include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
@@ -44,7 +45,7 @@
 #include "LayoutState.h"
 #include "LayoutTreeBuilder.h"
 #include "RenderDescendantIterator.h"
-
+#include "RenderStyleInlines.h"
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/text/TextStream.h>
@@ -78,7 +79,7 @@ void LocalFrameViewLayoutContext::layoutUsingFormattingContext()
             descendant.clearNeedsLayout();
         renderView.clearNeedsLayout();
     }
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree(*m_layoutState, renderView);
 #endif
 }
@@ -155,7 +156,7 @@ private:
 LocalFrameViewLayoutContext::LocalFrameViewLayoutContext(LocalFrameView& frameView)
     : m_frameView(frameView)
     , m_layoutTimer(*this, &LocalFrameViewLayoutContext::layoutTimerFired)
-    , m_asynchronousTasksTimer(*this, &LocalFrameViewLayoutContext::runAsynchronousTasks)
+    , m_postLayoutTaskTimer(*this, &LocalFrameViewLayoutContext::runPostLayoutTasks)
 {
 }
 
@@ -191,7 +192,7 @@ void LocalFrameViewLayoutContext::layout()
 void LocalFrameViewLayoutContext::performLayout()
 {
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!frame().document()->inRenderTreeUpdate());
-    ASSERT(LayoutDisallowedScope::isLayoutAllowed());
+    RELEASE_ASSERT(LayoutDisallowedScope::isLayoutAllowed());
     ASSERT(!view().isPainting());
     ASSERT(frame().view() == &view());
     ASSERT(frame().document());
@@ -204,6 +205,7 @@ void LocalFrameViewLayoutContext::performLayout()
 
     LayoutScope layoutScope(*this);
     TraceScope tracingScope(LayoutStart, LayoutEnd);
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     InspectorInstrumentation::willLayout(downcast<LocalFrame>(view().frame()));
     WeakPtr<RenderElement> layoutRoot;
     
@@ -223,8 +225,8 @@ void LocalFrameViewLayoutContext::performLayout()
 
         if (!frame().document()->isResolvingContainerQueriesForSelfOrAncestor()) {
             // If this is a new top-level layout and there are any remaining tasks from the previous layout, finish them now.
-            if (!isLayoutNested() && m_asynchronousTasksTimer.isActive())
-                runAsynchronousTasks();
+            if (!isLayoutNested() && m_postLayoutTaskTimer.isActive())
+                runPostLayoutTasks();
 
             updateStyleForLayout();
         }
@@ -244,6 +246,7 @@ void LocalFrameViewLayoutContext::performLayout()
     {
         SetForScope layoutPhase(m_layoutPhase, LayoutPhase::InRenderTreeLayout);
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+        LayoutDisallowedScope layoutDisallowedScope(LayoutDisallowedScope::Reason::ReentrancyAvoidance);
         SubtreeLayoutStateMaintainer subtreeLayoutStateMaintainer(subtreeLayoutRoot());
         RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
 #ifndef NDEBUG
@@ -259,6 +262,7 @@ void LocalFrameViewLayoutContext::performLayout()
     }
     {
         SetForScope layoutPhase(m_layoutPhase, LayoutPhase::InViewSizeAdjust);
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         if (is<RenderView>(layoutRoot) && !renderView()->printing()) {
             // This is to protect m_needsFullRepaint's value when layout() is getting re-entered through adjustViewSize().
             SetForScope needsFullRepaint(m_needsFullRepaint);
@@ -283,44 +287,44 @@ void LocalFrameViewLayoutContext::performLayout()
 
 void LocalFrameViewLayoutContext::runOrScheduleAsynchronousTasks()
 {
-    if (m_asynchronousTasksTimer.isActive())
+    if (m_postLayoutTaskTimer.isActive())
         return;
 
     if (frame().document()->isResolvingContainerQueries()) {
         // We are doing layout from style resolution to resolve container queries.
-        m_asynchronousTasksTimer.startOneShot(0_s);
+        m_postLayoutTaskTimer.startOneShot(0_s);
         return;
     }
 
     // If we are already in performPostLayoutTasks(), defer post layout tasks until after we return
     // to avoid re-entrancy.
     if (m_inAsynchronousTasks) {
-        m_asynchronousTasksTimer.startOneShot(0_s);
+        m_postLayoutTaskTimer.startOneShot(0_s);
         return;
     }
 
-    runAsynchronousTasks();
+    runPostLayoutTasks();
     if (needsLayout()) {
-        // If runAsynchronousTasks() made us layout again, let's defer the tasks until after we return.
-        m_asynchronousTasksTimer.startOneShot(0_s);
+        // If runPostLayoutTasks() made us layout again, let's defer the tasks until after we return.
+        m_postLayoutTaskTimer.startOneShot(0_s);
         layout();
     }
 }
 
-void LocalFrameViewLayoutContext::runAsynchronousTasks()
+void LocalFrameViewLayoutContext::runPostLayoutTasks()
 {
-    m_asynchronousTasksTimer.stop();
+    m_postLayoutTaskTimer.stop();
     if (m_inAsynchronousTasks)
         return;
     SetForScope inAsynchronousTasks(m_inAsynchronousTasks, true);
     view().performPostLayoutTasks();
 }
 
-void LocalFrameViewLayoutContext::flushAsynchronousTasks()
+void LocalFrameViewLayoutContext::flushPostLayoutTasks()
 {
-    if (!m_asynchronousTasksTimer.isActive())
+    if (!m_postLayoutTaskTimer.isActive())
         return;
-    runAsynchronousTasks();
+    runPostLayoutTasks();
 }
 
 void LocalFrameViewLayoutContext::reset()
@@ -331,7 +335,7 @@ void LocalFrameViewLayoutContext::reset()
     m_layoutSchedulingIsEnabled = true;
     m_layoutTimer.stop();
     m_firstLayout = true;
-    m_asynchronousTasksTimer.stop();
+    m_postLayoutTaskTimer.stop();
     m_needsFullRepaint = true;
 }
 
@@ -402,8 +406,8 @@ void LocalFrameViewLayoutContext::scheduleLayout()
 
 void LocalFrameViewLayoutContext::unscheduleLayout()
 {
-    if (m_asynchronousTasksTimer.isActive())
-        m_asynchronousTasksTimer.stop();
+    if (m_postLayoutTaskTimer.isActive())
+        m_postLayoutTaskTimer.stop();
 
     if (!m_layoutTimer.isActive())
         return;
@@ -501,9 +505,6 @@ bool LocalFrameViewLayoutContext::canPerformLayout() const
     if (isInRenderTreeLayout())
         return false;
 
-    if (layoutDisallowed())
-        return false;
-
     if (view().isPainting())
         return false;
 
@@ -538,6 +539,7 @@ void LocalFrameViewLayoutContext::applyTextSizingIfNeeded(RenderElement& layoutR
 
 void LocalFrameViewLayoutContext::updateStyleForLayout()
 {
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     Document& document = *frame().document();
 
     // FIXME: This shouldn't be necessary, but see rdar://problem/36670246.
@@ -612,9 +614,8 @@ bool LocalFrameViewLayoutContext::pushLayoutState(RenderBox& renderer, const Lay
             , offset
             , pageHeight
             , pageHeightChanged
-            , layoutState ? layoutState->maximumLineCountForLineClamp() : std::nullopt
-            , layoutState ? layoutState->visibleLineCountForLineClamp() : std::nullopt
-            , layoutState ? layoutState->leadingTrim() : RenderLayoutState::LeadingTrim()));
+            , layoutState ? layoutState->lineClamp() : std::nullopt
+            , layoutState ? layoutState->textBoxTrim() : RenderLayoutState::TextBoxTrim()));
         return true;
     }
     return false;
@@ -622,7 +623,20 @@ bool LocalFrameViewLayoutContext::pushLayoutState(RenderBox& renderer, const Lay
     
 void LocalFrameViewLayoutContext::popLayoutState()
 {
+    if (!layoutState())
+        return;
+
+    auto currentLineClamp = layoutState()->lineClamp();
+
     m_layoutStateStack.removeLast();
+
+    if (currentLineClamp) {
+        // Propagates the current line clamp state to the parent.
+        if (auto* layoutState = this->layoutState(); layoutState && layoutState->lineClamp()) {
+            ASSERT(layoutState->lineClamp()->maximumLineCount == currentLineClamp->maximumLineCount);
+            layoutState->setLineClamp(currentLineClamp);
+        }
+    }
 }
 
 #ifndef NDEBUG

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +45,7 @@
 
 #if ENABLE(ACCESSIBILITY) && PLATFORM(MAC)
 
+#import "PlatformScreen.h"
 #import "WebAccessibilityObjectWrapperMac.h"
 #import "Widget.h"
 
@@ -73,9 +74,14 @@ void AccessibilityObject::overrideAttachmentParent(AXCoreObject* parent)
         parentWrapper = parent->wrapper();
     }
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[wrapper() attachmentView] accessibilitySetOverrideValue:parentWrapper forAttribute:NSAccessibilityParentAttribute];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
+}
+
+FloatRect AccessibilityObject::primaryScreenRect() const
+{
+    return screenRectForPrimaryScreen();
 }
 
 FloatRect AccessibilityObject::convertRectToPlatformSpace(const FloatRect& rect, AccessibilityConversionSpace space) const
@@ -89,9 +95,9 @@ FloatRect AccessibilityObject::convertRectToPlatformSpace(const FloatRect& rect,
 
         NSRect nsRect = NSRectFromCGRect(cgRect);
         NSView *view = frameView->documentView();
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         nsRect = [[view window] convertRectToScreen:[view convertRect:nsRect toView:nil]];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
         return NSRectToCGRect(nsRect);
     }
 
@@ -112,11 +118,11 @@ bool AccessibilityObject::accessibilityIgnoreAttachment() const
     if (isAttachment() && (widget = widgetForAttachmentView()) && widget->isFrameView())
         return true;
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     id attachmentView = widget ? NSAccessibilityUnignoredDescendant(widget->platformWidget()) : nil;
     if (attachmentView)
         return [attachmentView accessibilityIsIgnored];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     // Attachments are ignored by default (unless we determine that we should expose them).
     return true;
@@ -193,10 +199,10 @@ String AccessibilityObject::subrolePlatformString() const
 
     if (isAttachment()) {
         NSView* attachView = [wrapper() attachmentView];
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([[attachView accessibilityAttributeNames] containsObject:NSAccessibilitySubroleAttribute])
             return [attachView accessibilityAttributeValue:NSAccessibilitySubroleAttribute];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     if (isMeter())
@@ -503,13 +509,6 @@ String AccessibilityObject::rolePlatformDescription() const
     return String();
 }
 
-AXTextMarkerRangeRef AccessibilityObject::textMarkerRangeForNSRange(const NSRange& range) const
-{
-    return textMarkerRangeFromVisiblePositions(axObjectCache(),
-        visiblePositionForIndex(range.location),
-        visiblePositionForIndex(range.location + range.length));
-}
-
 // NSAttributedString support.
 
 static void attributedStringSetColor(NSMutableAttributedString *attrString, NSString *attribute, NSColor *color, const NSRange& range)
@@ -670,7 +669,7 @@ static void attributedStringSetElement(NSMutableAttributedString *attrString, NS
         [attrString addAttribute:attribute value:(__bridge id)axElement.get() range:range];
 }
 
-static void attributedStringSetSpelling(NSMutableAttributedString *attrString, Node* node, StringView text, const NSRange& range)
+void attributedStringSetSpelling(NSMutableAttributedString *attrString, Node* node, StringView text, const NSRange& range)
 {
     ASSERT(node);
 

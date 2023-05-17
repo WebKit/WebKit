@@ -115,7 +115,6 @@ public:
         std::optional<int> sampleSize;
         std::optional<bool> echoCancellation;
         String displaySurface;
-        std::optional<bool> logicalSurface;
         String deviceId;
         String groupId;
         std::optional<double> zoom;
@@ -198,6 +197,7 @@ private:
 
     MediaTrackConstraints m_constraints;
 
+    String m_groupId;
     State m_readyState { State::Live };
     bool m_muted { false };
     bool m_ended { false };

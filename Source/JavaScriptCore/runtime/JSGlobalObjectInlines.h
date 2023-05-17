@@ -219,6 +219,8 @@ inline JSFunction* JSGlobalObject::stringProtoSubstringFunction() const { return
 inline JSFunction* JSGlobalObject::performProxyObjectHasFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectHas)); }
 inline JSFunction* JSGlobalObject::performProxyObjectGetFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectGet)); }
 inline JSFunction* JSGlobalObject::performProxyObjectGetFunctionConcurrently() const { return linkTimeConstantConcurrently<JSFunction*>(LinkTimeConstant::performProxyObjectGet); }
+inline JSFunction* JSGlobalObject::performProxyObjectGetByValFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectGetByVal)); }
+inline JSFunction* JSGlobalObject::performProxyObjectGetByValFunctionConcurrently() const { return linkTimeConstantConcurrently<JSFunction*>(LinkTimeConstant::performProxyObjectGetByVal); }
 inline JSFunction* JSGlobalObject::performProxyObjectSetSloppyFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectSetSloppy)); }
 inline JSFunction* JSGlobalObject::performProxyObjectSetSloppyFunctionConcurrently() const { return linkTimeConstantConcurrently<JSFunction*>(LinkTimeConstant::performProxyObjectSetSloppy); }
 inline JSFunction* JSGlobalObject::performProxyObjectSetStrictFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectSetStrict)); }

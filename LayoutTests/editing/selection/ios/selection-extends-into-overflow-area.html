@@ -35,7 +35,7 @@
             await UIHelper.callFunctionAndWaitForEvent(() => UIHelper.doubleTapElement(target), document, "selectionchange");
             await UIHelper.ensurePresentationUpdate();
             let rectsString = "";
-            for (let rect of await UIHelper.getUISelectionRects())
+            for (let rect of await UIHelper.getUISelectionViewRects())
                 rectsString += rectToString(rect) + ' ';
 
             document.querySelector("#selection-rects").textContent = rectsString;

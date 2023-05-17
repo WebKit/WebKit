@@ -44,6 +44,9 @@
 #include "LocalFrameView.h"
 #include "Path.h"
 #include "RenderBlock.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderFragmentContainer.h"
 #include "RenderInline.h"
@@ -314,6 +317,8 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
 #endif
     if (paintInfo.paintBehavior.contains(PaintBehavior::Snapshotting))
         return DecodingMode::Synchronous;
+    if (paintInfo.paintBehavior.contains(PaintBehavior::ForceSynchronousImageDecode))
+        return DecodingMode::Synchronous;
     if (is<HTMLImageElement>(element())) {
         auto decodingMode = downcast<HTMLImageElement>(*element()).decodingMode();
         if (decodingMode == DecodingMode::Asynchronous)
@@ -329,7 +334,7 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
         return DecodingMode::Synchronous;
     if (!bitmapImage.canUseAsyncDecodingForLargeImages())
         return DecodingMode::Synchronous;
-    if (paintInfo.paintBehavior.contains(PaintBehavior::TileFirstPaint))
+    if (paintInfo.paintBehavior.contains(PaintBehavior::DefaultAsynchronousImageDecode))
         return DecodingMode::Asynchronous;
     // FIXME: isVisibleInViewport() is not cheap. Find a way to make this condition faster.
     if (!isVisibleInViewport())
@@ -935,6 +940,11 @@ void RenderBoxModelObject::applyTransform(TransformationMatrix&, const RenderSty
     // applyTransform() is only used through RenderLayer*, which only invokes this for RenderBox derived renderers, thus not for
     // RenderInline/RenderLineBreak - the other two renderers that inherit from RenderBoxModelObject.
     ASSERT_NOT_REACHED();
+}
+
+bool RenderBoxModelObject::requiresLayer() const
+{
+    return isDocumentElementRenderer() || isPositioned() || createsGroup() || hasTransformRelatedProperty() || hasHiddenBackface() || hasReflection();
 }
 
 } // namespace WebCore

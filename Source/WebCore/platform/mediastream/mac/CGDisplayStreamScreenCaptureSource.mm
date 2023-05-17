@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -132,7 +132,7 @@ RetainPtr<CGDisplayStreamRef> CGDisplayStreamScreenCaptureSource::createDisplayS
     ASSERT(frameRate());
     ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "frame rate ", frameRate(), ", size ", width, "x", height);
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSDictionary* streamOptions = @{
         (__bridge NSString *)kCGDisplayStreamMinimumFrameTime : @(1 / frameRate()),
         (__bridge NSString *)kCGDisplayStreamQueueDepth : @(screenQueueMaximumLength),
@@ -141,7 +141,7 @@ RetainPtr<CGDisplayStreamRef> CGDisplayStreamScreenCaptureSource::createDisplayS
     };
 
     auto stream = adoptCF(CGDisplayStreamCreateWithDispatchQueue(m_displayID, width, height, preferedPixelBufferFormat(), (__bridge CFDictionaryRef)streamOptions, captureQueue(), frameAvailableHandler()));
-    ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_DECLARATIONS_END
     return stream;
 }
 

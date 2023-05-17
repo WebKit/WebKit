@@ -67,6 +67,8 @@ public:
 
     void callActionHandler(const MediaSessionActionDetails&, DOMPromiseDeferred<void>&&);
 
+    template <typename Visitor> void visitActionHandlers(Visitor&) const;
+
     ExceptionOr<void> setPositionState(std::optional<MediaPositionState>&&);
     std::optional<MediaPositionState> positionState() const { return m_positionState; }
 
@@ -88,7 +90,8 @@ public:
     ExceptionOr<void> setPlaylist(ScriptExecutionContext&, Vector<RefPtr<MediaMetadata>>&&);
 #endif
 
-    bool hasActiveActionHandlers() const { return !m_actionHandlers.isEmpty(); }
+    bool hasActiveActionHandlers() const;
+
     enum class TriggerGestureIndicator {
         No,
         Yes,
@@ -135,6 +138,7 @@ private:
     const char* activeDOMObjectName() const final { return "MediaSession"; }
     void suspend(ReasonForSuspension) final;
     void stop() final;
+    bool virtualHasPendingActivity() const final;
 
     WeakPtr<Navigator> m_navigator;
     RefPtr<MediaMetadata> m_metadata;
@@ -142,7 +146,7 @@ private:
     std::optional<MediaPositionState> m_positionState;
     std::optional<double> m_lastReportedPosition;
     MonotonicTime m_timeAtLastPositionUpdate;
-    HashMap<MediaSessionAction, RefPtr<MediaSessionActionHandler>, IntHash<MediaSessionAction>, WTF::StrongEnumHashTraits<MediaSessionAction>> m_actionHandlers;
+    HashMap<MediaSessionAction, RefPtr<MediaSessionActionHandler>, IntHash<MediaSessionAction>, WTF::StrongEnumHashTraits<MediaSessionAction>> m_actionHandlers WTF_GUARDED_BY_LOCK(m_actionHandlersLock);
     RefPtr<const Logger> m_logger;
     const void* m_logIdentifier;
 
@@ -156,10 +160,27 @@ private:
 #if ENABLE(MEDIA_SESSION_PLAYLIST)
     Vector<Ref<MediaMetadata>> m_playlist;
 #endif
+    mutable Lock m_actionHandlersLock;
 };
 
 String convertEnumerationToString(MediaSessionPlaybackState);
 String convertEnumerationToString(MediaSessionAction);
+
+inline bool MediaSession::hasActiveActionHandlers() const
+{
+    Locker lock { m_actionHandlersLock };
+    return !m_actionHandlers.isEmpty();
+}
+
+template <typename Visitor>
+void MediaSession::visitActionHandlers(Visitor& visitor) const
+{
+    Locker lock { m_actionHandlersLock };
+    for (auto& actionHandler : m_actionHandlers) {
+        if (actionHandler.value)
+            actionHandler.value->visitJSFunction(visitor);
+    }
+}
 
 }
 

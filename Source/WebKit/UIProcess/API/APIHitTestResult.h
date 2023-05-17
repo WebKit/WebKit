@@ -30,8 +30,6 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
-OBJC_CLASS DDActionContext;
-
 namespace IPC {
 class Decoder;
 class Encoder;

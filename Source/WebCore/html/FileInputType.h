@@ -45,9 +45,12 @@ class FileList;
 class Icon;
 
 class FileInputType final : public BaseClickableWithKeyInputType, private FileChooserClient, private FileIconLoaderClient, public CanMakeWeakPtr<FileInputType> {
-    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
-    explicit FileInputType(HTMLInputElement&);
+    static Ref<FileInputType> create(HTMLInputElement& element)
+    {
+        return adoptRef(*new FileInputType(element));
+    }
+
     virtual ~FileInputType();
 
     String firstElementPathForInputValue() const; // Checked first, before internal storage or the value attribute.
@@ -59,6 +62,8 @@ public:
     bool valueMissing(const String&) const final;
 
 private:
+    explicit FileInputType(HTMLInputElement&);
+
     const AtomString& formControlType() const final;
     FormControlState saveFormControlState() const final;
     void restoreFormControlState(const FormControlState&) final;

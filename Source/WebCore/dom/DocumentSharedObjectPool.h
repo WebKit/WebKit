@@ -39,7 +39,7 @@ class ShareableElementData;
 class DocumentSharedObjectPool {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Ref<ShareableElementData> cachedShareableElementDataWithAttributes(Span<const Attribute>);
+    Ref<ShareableElementData> cachedShareableElementDataWithAttributes(std::span<const Attribute>);
 
 private:
     struct ShareableElementDataHash;

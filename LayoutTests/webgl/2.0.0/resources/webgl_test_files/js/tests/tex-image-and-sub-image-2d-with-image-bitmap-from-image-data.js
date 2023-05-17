@@ -51,12 +51,12 @@ function generateTest(internalFormat, pixelFormat, pixelType, prologue, resource
 
         var imageData = new ImageData(new Uint8ClampedArray(
                                       [255, 0, 0, 255,
-                                      255, 0, 0, 0,
+                                      255, 0, 0, 128,
                                       0, 255, 0, 255,
-                                      0, 255, 0, 0]),
+                                      0, 255, 0, 128]),
                                       2, 2);
 
-        runImageBitmapTest(imageData, 0, internalFormat, pixelFormat, pixelType, gl, tiu, wtu, false)
+        runImageBitmapTest(imageData, 0.5, internalFormat, pixelFormat, pixelType, gl, tiu, wtu, false)
         .then(() => {
             finishTest();
         });

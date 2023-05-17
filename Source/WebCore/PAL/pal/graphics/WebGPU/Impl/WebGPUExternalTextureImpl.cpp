@@ -29,12 +29,15 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUConvertToBackingContext.h"
+#include "WebGPUExternalTextureDescriptor.h"
 #include <WebGPU/WebGPUExt.h>
 
 namespace PAL::WebGPU {
 
-ExternalTextureImpl::ExternalTextureImpl(ConvertToBackingContext& convertToBackingContext)
+ExternalTextureImpl::ExternalTextureImpl(WGPUExternalTexture externalTexture, const ExternalTextureDescriptor& descriptor, ConvertToBackingContext& convertToBackingContext)
     : m_convertToBackingContext(convertToBackingContext)
+    , m_backing(externalTexture)
+    , m_colorSpace(descriptor.colorSpace)
 {
 }
 

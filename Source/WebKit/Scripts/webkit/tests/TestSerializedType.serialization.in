@@ -147,11 +147,12 @@ headers: "CommonHeader.h"
 #endif
 
 headers: "CommonHeader.h"
-[CustomHeader] class Namesapce::CommonClass {
+[CustomHeader] class Namespace::CommonClass {
     int value;
 }
 
 headers: "CommonHeader.h"
-[CustomHeader] class Namesapce::AnotherCommonClass {
+[CustomHeader, RefCounted] class Namespace::AnotherCommonClass {
     int value;
+    [NotSerialized] double notSerialized;
 }

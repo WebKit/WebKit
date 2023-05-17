@@ -128,7 +128,6 @@ public:
     bool operator!() const { return !m_ptr; }
 
     bool operator==(const FunctionPtr& other) const { return m_ptr == other.m_ptr; }
-    bool operator!=(const FunctionPtr& other) const { return m_ptr != other.m_ptr; }
 
     FunctionPtr& operator=(Ptr ptr)
     {

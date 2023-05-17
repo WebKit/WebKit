@@ -26,25 +26,41 @@
 #include "config.h"
 #include "SubframePageProxy.h"
 
+#include "APIWebsitePolicies.h"
+#include "DrawingAreaProxy.h"
+#include "FrameInfoData.h"
+#include "HandleMessage.h"
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
+#include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
 
 namespace WebKit {
 
-SubframePageProxy::SubframePageProxy(WebFrameProxy& frame, WebPageProxy& page, WebProcessProxy& process)
+SubframePageProxy::SubframePageProxy(WebPageProxy& page, WebProcessProxy& process, bool isInSameProcessAsMainFrame)
     : m_webPageID(page.webPageID())
     , m_process(process)
-    , m_frame(frame)
     , m_page(page)
+    , m_isInSameProcessAsMainFrame(isInSameProcessAsMainFrame)
 {
-    m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
+    if (!m_isInSameProcessAsMainFrame)
+        m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
+
+    auto* drawingArea = page.drawingArea();
+    auto parameters = page.creationParameters(m_process, *drawingArea);
+    parameters.subframeProcessFrameTreeCreationParameters = page.frameTreeCreationParameters();
+    parameters.isProcessSwap = true; // FIXME: This should be a parameter to creationParameters rather than doctoring up the parameters afterwards.
+    parameters.topContentInset = 0;
+    m_process->send(Messages::WebProcess::CreateWebPage(m_webPageID, parameters), 0);
+    m_process->addVisitedLinkStoreUser(page.visitedLinkStore(), page.identifier());
+    drawingArea->attachToProvisionalFrameProcess(m_process);
 }
 
 SubframePageProxy::~SubframePageProxy()
 {
-    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
+    if (!m_isInSameProcessAsMainFrame)
+        m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
 }
 
 IPC::Connection* SubframePageProxy::messageSenderConnection() const
@@ -59,12 +75,42 @@ uint64_t SubframePageProxy::messageSenderDestinationID() const
 
 void SubframePageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    // FIXME: This needs to be handled correctly in a way that doesn't cause assertions or crashes..
+    if (decoder.messageName() == Messages::WebPageProxy::DidCreateContextInWebProcessForVisibilityPropagation::name())
+        return;
+#endif
+
     // FIXME: Removing this will be necessary to getting layout tests to work with site isolation.
     if (decoder.messageName() == Messages::WebPageProxy::HandleMessage::name())
         return;
 
+    if (decoder.messageName() == Messages::WebPageProxy::DecidePolicyForResponse::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::DecidePolicyForResponse>(connection, decoder, this, &SubframePageProxy::decidePolicyForResponse);
+        return;
+    }
+
+    if (decoder.messageName() == Messages::WebPageProxy::DidCommitLoadForFrame::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::DidCommitLoadForFrame>(connection, decoder, this, &SubframePageProxy::didCommitLoadForFrame);
+        return;
+    }
+
     if (m_page)
         m_page->didReceiveMessage(connection, decoder);
+}
+
+void SubframePageProxy::decidePolicyForResponse(WebCore::FrameIdentifier frameID, FrameInfoData&& frameInfo, WebCore::PolicyCheckIdentifier identifier, uint64_t navigationID, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, uint64_t listenerID)
+{
+    if (m_page)
+        m_page->decidePolicyForResponseShared(m_process.copyRef(), m_page->webPageID(), frameID, WTFMove(frameInfo), identifier, navigationID, response, request, canShowMIMEType, downloadAttribute, listenerID);
+}
+
+void SubframePageProxy::didCommitLoadForFrame(WebCore::FrameIdentifier frameID, FrameInfoData&& frameInfo, WebCore::ResourceRequest&& request, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType frameLoadType, const WebCore::CertificateInfo& certificateInfo, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent hasInsecureContent, WebCore::MouseEventPolicy mouseEventPolicy, const UserData& userData)
+{
+    m_process->didCommitProvisionalLoad();
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (frame)
+        frame->commitProvisionalFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData); // Will delete |this|.
 }
 
 bool SubframePageProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)

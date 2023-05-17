@@ -220,10 +220,6 @@ public:
     const AtomString& fontSize() { return m_applyFontSize; }
 
     bool operator==(const StyleChange&);
-    bool operator!=(const StyleChange& other)
-    {
-        return !(*this == other);
-    }
 
 private:
     void extractTextStyles(Document&, MutableStyleProperties&, bool shouldUseFixedFontDefaultSize);

@@ -68,7 +68,7 @@ public:
     float updateScaleFactor { 0 };
 
     // The handle of the shareable bitmap containing the updates. Will be null if there are no updates.
-    ShareableBitmapHandle bitmapHandle;
+    ShareableBitmap::Handle bitmapHandle;
 
     // The offset in the bitmap where the rendered contents are.
     WebCore::IntPoint bitmapOffset;

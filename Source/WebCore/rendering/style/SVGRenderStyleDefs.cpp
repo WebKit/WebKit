@@ -29,7 +29,7 @@
 #include "config.h"
 #include "SVGRenderStyleDefs.h"
 
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "SVGRenderStyle.h"
 #include <wtf/PointerComparison.h>
 #include <wtf/text/TextStream.h>
@@ -86,7 +86,7 @@ StyleStrokeData::StyleStrokeData()
     , visitedLinkPaintColor(SVGRenderStyle::initialStrokePaintColor())
     , paintUri(SVGRenderStyle::initialStrokePaintUri())
     , visitedLinkPaintUri(SVGRenderStyle::initialStrokePaintUri())
-    , dashOffset(RenderStyle::initialZeroLength())
+    , dashOffset(RenderStyle::zeroLength())
     , dashArray(SVGRenderStyle::initialStrokeDashArray())
     , paintType(SVGRenderStyle::initialStrokePaintType())
     , visitedLinkPaintType(SVGRenderStyle::initialStrokePaintType())
@@ -260,13 +260,13 @@ bool StyleInheritedResourceData::operator==(const StyleInheritedResourceData& ot
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleLayoutData);
 
 StyleLayoutData::StyleLayoutData()
-    : cx(RenderStyle::initialZeroLength())
-    , cy(RenderStyle::initialZeroLength())
-    , r(RenderStyle::initialZeroLength())
+    : cx(RenderStyle::zeroLength())
+    , cy(RenderStyle::zeroLength())
+    , r(RenderStyle::zeroLength())
     , rx(RenderStyle::initialRadius())
     , ry(RenderStyle::initialRadius())
-    , x(RenderStyle::initialZeroLength())
-    , y(RenderStyle::initialZeroLength())
+    , x(RenderStyle::zeroLength())
+    , y(RenderStyle::zeroLength())
 {
 }
 

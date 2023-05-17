@@ -41,7 +41,7 @@ enum class DownloadableBinaryFontAllowedTypes: uint8_t {
     None
 };
 
-bool isFontBinaryAllowed(Span<const uint8_t>, DownloadableBinaryFontAllowedTypes);
+bool isFontBinaryAllowed(std::span<const uint8_t>, DownloadableBinaryFontAllowedTypes);
 bool isFontBinaryAllowed(const void*, size_t, DownloadableBinaryFontAllowedTypes);
 
 } // namespace WebCore

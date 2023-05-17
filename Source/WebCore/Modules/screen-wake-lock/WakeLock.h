@@ -49,6 +49,8 @@ private:
     explicit WakeLock(Document*);
 
     Document* document();
+
+    bool m_wasPreviouslyAuthorizedDueToTransientActivation { false };
 };
 
 } // namespace WebCore

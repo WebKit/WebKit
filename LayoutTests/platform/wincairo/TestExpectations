@@ -437,7 +437,12 @@ webgl/tex-2d-video-no-change-wrap.html [ Skip ]
 fast/harness/platform-layer-tree-as-text.html [ Skip ]
 
 # OffscreenCanvas isn't supported yet
-fast/canvas/offscreen-giant-transfer-to-imagebitmap.html [ Failure ]
+fast/canvas/offscreen-backing-store-attached.html [ Skip ]
+fast/canvas/offscreen-border.html [ Skip ]
+fast/canvas/offscreen-clipped.html [ Skip ]
+fast/canvas/offscreen-enabled.html [ Skip ]
+fast/canvas/offscreen-giant-transfer-to-imagebitmap.html [ Skip ]
+fast/canvas/offscreen-scaling.html [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # These areas are not implemented well on WinCairo
@@ -634,7 +639,7 @@ fast/canvas/toDataURL-supportedTypes.html [ Failure ] # [ Skip ]
 fast/canvas/canvas-toDataURL-case-insensitive-mimetype.html [ Failure ] # [ Skip ]
 
 # resizeTO, resizeBy
-fast/images/animated-gif-window-resizing.html [ Timeout ]
+fast/images/animated-gif-window-resizing.html [ Skip ] # Timeout
 
 http/wpt/css/css-images-4/conic-gradient-parsing.html [ Pass ]
 fast/gradients/conic-repeating.html [ Pass ]
@@ -826,6 +831,8 @@ http/tests/cache-storage [ Skip ]
 http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
 http/tests/canvas/color-fonts [ Skip ]
 
+http/wpt/clear-site-data/partitioning.html [ Skip ] # Not supported yet. This test is slow.
+
 http/tests/contentdispositionattachmentsandbox [ Skip ]
 http/tests/contentfiltering [ Skip ]
 
@@ -862,6 +869,7 @@ http/tests/inspector/network/xhr-response-body.html [ Failure ]
 http/tests/inspector/network/intercept-request-main-resource.html [ Skip ] # Timeout
 
 http/tests/inspector/network/copy-as-fetch.html [ Pass Failure ]
+http/tests/inspector/network/resource-mime-type.html [ Pass Failure ]
 
 http/tests/loading/hidpi-preload-picture-sizes.html [ Failure ]
 http/tests/loading/oauth.html [ Failure ]
@@ -928,13 +936,66 @@ http/tests/resourceLoadStatistics/ping-to-prevalent-resource.html [ Failure ]
 http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion.html [ Failure ]
 http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction.html [ Failure ]
 
-# All timing out
-http/tests/security [ Skip ]
-http/tests/security/401-logout/401-logout.py [ Pass ]
-http/tests/security/cookies/third-party-cookie-blocking.html [ Pass ]
-http/tests/security/cookies/third-party-cookie-blocking-redirect.html [ Pass ]
-http/tests/security/cookies/third-party-cookie-blocking-user-action.html [ Pass ]
-http/tests/security/cookies/third-party-cookie-blocking-xslt.xml [ Pass ]
+http/tests/security/XFrameOptions/x-frame-options-cached.html [ Skip ] # Crash
+http/tests/security/XFrameOptions/x-frame-options-deny.html [ Skip ] # Failure
+http/tests/security/XFrameOptions/x-frame-options-multiple-headers-conflict.html [ Skip ] # Failure
+http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-deny.html [ Skip ] # Failure
+http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html [ Skip ] # Failure
+http/tests/security/bypassing-cors-checks-for-extension-urls.html [ Skip ] # Failure
+http/tests/security/canvas-remote-read-remote-video-allowed-anonymous.html [ Skip ] # Failure
+http/tests/security/canvas-remote-read-remote-video-allowed-redirect.html [ Skip ] # Crash
+http/tests/security/canvas-remote-read-remote-video-allowed-with-credentials.html [ Skip ] # Failure
+http/tests/security/canvas-remote-read-remote-video-blocked-no-crossorigin.html [ Skip ] # Crash
+http/tests/security/canvas-remote-read-remote-video-hls.html [ Skip ] # Timeout
+http/tests/security/canvas-remote-read-remote-video-redirect.html [ Skip ] # Crash
+http/tests/security/clipboard/copy-paste-html-across-origin-sanitizes-html.html [ Skip ] # Failure
+http/tests/security/clipboard/copy-paste-html-across-origin-strips-mso-list.html [ Skip ] # Failure
+http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html [ Skip ] # Failure
+http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-in-same-origin.html [ Skip ] # Failure
+http/tests/security/clipboard/copy-paste-url-across-origin-sanitizes-url.html [ Skip ] # Failure
+
+http/tests/security/contentSecurityPolicy [ Skip ] # Failure
+
+http/tests/security/cookie-module-import-propagate.html [ Skip ] # Failure
+http/tests/security/cookie-module-import.html [ Skip ] # Failure
+http/tests/security/cookie-module-propagate.html [ Skip ] # Failure
+http/tests/security/cookie-module.html [ Skip ] # Failure
+http/tests/security/credentials-from-different-domains.html [ Skip ] # Failure
+http/tests/security/credentials-main-resource.html [ Skip ] # Failure
+http/tests/security/cross-frame-access-put.html [ Skip ] # Failure
+http/tests/security/css-mask-image-credentials.html [ Skip ] # ImageOnlyFailure
+http/tests/security/dataTransfer-set-data-file-url.html [ Skip ] # Failure
+http/tests/security/drag-drop-same-unique-origin.html [ Skip ] # Failure
+http/tests/security/drag-over-remote-content-iframe.html [ Skip ] # Failure
+http/tests/security/frame-loading-via-document-write-async-delegates.html [ Skip ] # Failure
+http/tests/security/frame-loading-via-document-write.html [ Skip ] # Failure
+http/tests/security/inactive-document-with-empty-security-origin.html [ Skip ] # Timeout
+http/tests/security/isolatedWorld/cross-origin-xhr.html [ Skip ] # Timeout
+http/tests/security/local-CSS-from-remote.html [ Skip ] # Failure
+http/tests/security/local-JavaScript-from-remote.html [ Skip ] # Failure
+http/tests/security/local-iFrame-from-remote.html [ Skip ] # Failure
+http/tests/security/local-image-from-remote.html [ Skip ] # Failure
+http/tests/security/local-user-CSS-from-remote.html [ Skip ] # Failure
+http/tests/security/local-video-poster-from-remote.html [ Skip ] # Failure
+http/tests/security/local-video-source-from-remote.html [ Skip ] # Failure
+http/tests/security/local-video-src-from-remote.html [ Skip ] # Failure
+http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Skip ] # Failure
+http/tests/security/module-no-mime-type.html [ Skip ] # Failure
+http/tests/security/sync-xhr-partition.html [ Skip ] # Failure
+http/tests/security/video-cross-origin-accessfailure.html [ Skip ] # Failure
+http/tests/security/video-cross-origin-accesssameorigin.html [ Skip ] # Timeout on Buildbot
+http/tests/security/video-cross-origin-caching.html [ Skip ] # Timeout
+http/tests/security/video-cross-origin-readback.html [ Skip ] # Failure
+http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-redirect.html [ Skip ] # Timeout
+http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html [ Skip ] # Timeout
+http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin-redirect.html [ Skip ] # Timeout
+http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html [ Skip ] # Timeout
+http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml [ Skip ] # Failure
+http/tests/security/xss-DENIED-xsl-external-entity.xml [ Skip ] # Failure
+
+webkit.org/b/255747 http/tests/security/canvas-remote-read-remote-video-localhost.html [ Skip ] # Crash
+webkit.org/b/255748 http/tests/security/navigate-when-restoring-cached-page.html [ Skip ] # Crash
+webkit.org/b/255748 http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Skip ] # Crash
 
 http/tests/ssl/media-stream [ Skip ]
 
@@ -998,8 +1059,9 @@ webkit.org/b/192406 http/tests/inspector/network/resource-security-connection.ht
 webkit.org/b/191498 http/tests/inspector/network/resource-security-certificate.html [ Pass ]
 webkit.org/b/191498 http/tests/inspector/network/getSerializedCertificate.html [ Pass ]
 
+http/wpt/service-workers/mac [ Skip ]
+
 http/wpt/service-workers/fetchEvent.https.html [ Pass Failure ]
-http/wpt/service-workers/mac/throttleable.https.html [ Failure ]
 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Pass Failure ]
 http/wpt/service-workers/service-worker-spinning-activate.https.html [ Pass Failure ]
 http/wpt/service-workers/service-worker-spinning-message.https.html [ Pass Failure ]
@@ -1047,7 +1109,6 @@ http/tests/workers/service/service-worker-download-body.https.html [ Failure ]
 http/tests/workers/service/service-worker-download-stream.https.html [ Failure ]
 http/tests/workers/service/serviceworker-websocket.https.html [ Failure ]
 http/tests/workers/service/shownotification-denied.html [ Failure ]
-http/wpt/clear-site-data/partitioning.html [ Failure ]
 http/wpt/push-api/pushManager.any.html [ Failure ]
 http/wpt/push-api/pushManager.any.serviceworker.html [ Failure ]
 http/wpt/service-workers/fetch-service-worker-preload-download-through-direct-preload.https.html [ Failure ]
@@ -1406,7 +1467,7 @@ webkit.org/b/199186 fonts/use-typo-metrics-1.html [ Skip ]
 
 webkit.org/b/227189 fast/forms/checkbox-and-pseudo.html [ Skip ] # Require expect file for dumped render tree.
 
-webkit.org/b/238491 fast/editing/apply-relative-font-style-change-crash-004.html [ Crash ]
+webkit.org/b/238491 fast/editing/apply-relative-font-style-change-crash-004.html [ Skip ] # Crash
 
 webkit.org/b/238644 fast/events/mouse-click-events.html [ Skip ]
 
@@ -1423,7 +1484,35 @@ fast/borders [ Skip ]
 fast/cookies [ Skip ]
 fast/encoding [ Skip ]
 fast/files [ Skip ]
-fast/flexbox [ Skip ]
+
+fast/flexbox/001.html [ Skip ] # Failure
+fast/flexbox/002.html [ Skip ] # Failure
+fast/flexbox/003.html [ Skip ] # Failure
+fast/flexbox/004.html [ Skip ] # Failure
+fast/flexbox/005.html [ Skip ] # Failure
+fast/flexbox/006.html [ Skip ] # Failure
+fast/flexbox/007.html [ Skip ] # Failure
+fast/flexbox/008.html [ Skip ] # Failure
+fast/flexbox/009.html [ Skip ] # Failure
+fast/flexbox/010.html [ Skip ] # Failure
+fast/flexbox/011.html [ Skip ] # Failure
+fast/flexbox/012.html [ Skip ] # Failure
+fast/flexbox/013.html [ Skip ] # Failure
+fast/flexbox/014.html [ Skip ] # Failure
+fast/flexbox/015.html [ Skip ] # Failure
+fast/flexbox/016.html [ Skip ] # Failure
+fast/flexbox/017.html [ Skip ] # Failure
+fast/flexbox/018.html [ Skip ] # Failure
+fast/flexbox/019.html [ Skip ] # Failure
+fast/flexbox/020.html [ Skip ] # Failure
+fast/flexbox/022.html [ Skip ] # Failure
+fast/flexbox/023.html [ Skip ] # Failure
+fast/flexbox/024.html [ Skip ] # Failure
+fast/flexbox/025.html [ Skip ] # Failure
+fast/flexbox/026.html [ Skip ] # Failure
+fast/flexbox/clear-overflow-before-scroll-update.html [ Skip ] # Failure
+fast/flexbox/line-clamp-with-anchor-content-only.html [ Skip ] # ImageOnlyFailure
+
 fast/forms/001.html [ Skip ]
 fast/forms/003.html [ Skip ]
 fast/forms/004.html [ Skip ]
@@ -1651,10 +1740,54 @@ fast/forms/validation-message-maxLength.html [ Skip ]
 fast/forms/validation-message-minimum-font-size.html [ Skip ]
 fast/forms/validation-messages.html [ Skip ]
 fast/forms/visual-hebrew-text-field.html [ Skip ]
+
 fast/frames [ Skip ]
 fast/hidpi [ Skip ]
 fast/history [ Skip ]
-fast/images [ Skip ]
+
+fast/images/animated-avif.html [ Skip ] # Timeout
+fast/images/animated-gif-iframe-webkit-transform.html [ Skip ] # Timeout
+fast/images/animated-gif-webkit-transform.html [ Skip ] # Timeout
+fast/images/animated-gif-with-offsets.html [ Skip ] # Failure
+fast/images/animated-gif-zooming.html [ Skip ] # Timeout
+fast/images/animated-image-mp4-crash.html [ Skip ] # Timeout
+fast/images/animated-image-mp4.html [ Skip ] # Timeout
+fast/images/animated-png.html [ Skip ] # ImageOnlyFailure
+fast/images/async-image-background-image-repeated.html [ Skip ] # Timeout
+fast/images/async-image-body-background-image.html [ Skip ] # Timeout
+fast/images/async-image-multiple-clients-repaint.html [ Skip ] # Timeout
+fast/images/avif-as-image.html [ Skip ] # ImageOnlyFailure
+fast/images/avif-heif-container-as-image.html [ Skip ] # ImageOnlyFailure
+fast/images/avif-image-decoding.html [ Skip ] # Failure
+fast/images/avif-image-document.html [ Skip ] # ImageOnlyFailure
+fast/images/decode-animated-image.html [ Skip ] # ImageOnlyFailure
+fast/images/displaced-non-cached-pdf.html [ Skip ] # ImageOnlyFailure
+fast/images/embed-image.html [ Skip ] # Failure
+fast/images/exif-orientation-border-image.html [ Skip ] # ImageOnlyFailure
+fast/images/favicon-as-image.html [ Skip ] # Failure
+fast/images/hidpi-image-position-on-device-pixels-with-border-radius.html [ Skip ] # ImageOnlyFailure
+fast/images/image-in-map.html [ Skip ] # Failure
+fast/images/image-map-anchor-children.html [ Skip ] # Failure
+fast/images/image-map-outline-in-positioned-container.html [ Skip ] # ImageOnlyFailure
+fast/images/image-map-outline-with-paint-root-offset.html [ Skip ] # ImageOnlyFailure
+fast/images/image-map-outline-with-scale-transform.html [ Skip ] # ImageOnlyFailure
+fast/images/imagemap-circle-focus-ring.html [ Skip ] # Failure
+fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html [ Skip ] # Failure
+fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html [ Skip ] # Failure
+fast/images/imagemap-focus-ring-outline-color.html [ Skip ] # Failure
+fast/images/imagemap-focus-ring-zero-outline-width.html [ Skip ] # Failure
+fast/images/imagemap-focus-ring-zoom.html [ Skip ] # Failure
+fast/images/imagemap-focus-ring.html [ Skip ] # Failure
+fast/images/imagemap-polygon-focus-ring.html [ Skip ] # Failure
+fast/images/low-memory-decode.html [ Skip ] # Timeout
+fast/images/missing-content-image-crash.html [ Skip ] # Failure
+fast/images/object-image.html [ Skip ] # Failure
+fast/images/pdf-as-image-landscape.html [ Skip ] # Failure
+fast/images/pdf-as-image-with-annotations.html [ Skip ] # ImageOnlyFailure
+fast/images/pdf-in-canvas.html [ Skip ] # Timeout
+fast/images/pixel-crack-image-background-webkit-transform-scale.html [ Skip ] # Failure
+fast/images/sprite-sheet-image-draw.html [ Skip ] # Timeout
+
 fast/inline [ Skip ]
 fast/invalid [ Skip ]
 fast/layers [ Skip ]
@@ -1687,36 +1820,31 @@ fast/xpath [ Skip ]
 fast/xsl [ Skip ]
 fullscreen [ Skip ]
 html5lib [ Skip ]
-http/wpt/2dcontext [ Skip ]
 http/wpt/audio-output [ Skip ]
 http/wpt/beacon [ Skip ]
 http/wpt/cache-storage [ Skip ]
-http/wpt/common [ Skip ]
 http/wpt/credential-management [ Skip ]
 http/wpt/cross-origin-opener-policy [ Skip ]
 http/wpt/cross-origin-resource-policy [ Skip ]
 http/wpt/crypto [ Skip ]
-http/wpt/css [ Skip ]
-http/wpt/cssom [ Skip ]
+http/wpt/css/css-highlight-api [ Skip ]
 http/wpt/entries-api [ Skip ]
 http/wpt/geometry [ Skip ]
-http/wpt/html [ Skip ]
-http/wpt/images [ Skip ]
-http/wpt/loading [ Skip ]
+
+http/wpt/loading/redirect-headers.html [ Skip ] # Failure
+
 http/wpt/mediarecorder [ Skip ]
 http/wpt/notifications [ Skip ]
 http/wpt/offscreen-canvas [ Skip ]
 http/wpt/prefetch [ Skip ]
 http/wpt/preload [ Skip ]
 http/wpt/resource-timing [ Skip ]
-http/wpt/resources [ Skip ]
 http/wpt/selection-live-range [ Skip ]
 http/wpt/webaudio [ Skip ]
 http/wpt/webauthn [ Skip ]
 http/wpt/webcodecs [ Skip ]
 http/wpt/webrtc [ Skip ]
 http/wpt/webxr [ Skip ]
-http/wpt/workers [ Skip ]
 imported/blink [ Skip ]
 imported/mozilla [ Skip ]
 imported/w3c/IndexedDB-private-browsing [ Skip ]
@@ -1949,7 +2077,6 @@ fast/events/domactivate-sets-underlying-click-event-as-handled.html [ Skip ] # F
 fast/events/dropzone-004.html [ Failure ]
 fast/events/dropzone-005.html [ Failure ]
 fast/events/fire-mousedown-while-pressing-mouse-button.html [ Failure ]
-fast/events/focus-label-legend-elements-with-tab.html [ Failure ]
 fast/events/frame-tab-focus.html [ Failure ]
 fast/events/ime-composition-events-001.html [ Failure ]
 fast/events/ime-compositionend-on-selection-change.html [ Failure ]
@@ -2538,7 +2665,6 @@ transforms/3d/point-mapping/3d-point-mapping-2.html [ Failure ]
 fast/css/focus-ring-continuations.html [ Failure ]
 
 editing/selection/shift-click-live-range.html [ Failure ]
-fast/canvas/offscreen-enabled.html [ Failure ]
 
 animations/no-style-recalc-during-accelerated-animation.html [ Failure ]
 editing/deleting/delete-ligature-003.html [ Failure ]
@@ -2681,5 +2807,3 @@ fast/css/scrollbar-dynamic-style-change.html [ ImageOnlyFailure ]
 fast/dynamic/out-of-flow-counter-do-not-update.html [ ImageOnlyFailure ]
 
 webkit.org/b/253868 js/ShadowRealm-iframe-detach.html [ Timeout Pass ]
-
-fast/canvas/offscreen-scaling.html [ ImageOnlyFailure ]

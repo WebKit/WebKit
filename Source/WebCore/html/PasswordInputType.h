@@ -35,14 +35,18 @@
 namespace WebCore {
 
 class PasswordInputType final : public BaseTextInputType {
-    template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
+    static Ref<PasswordInputType> create(HTMLInputElement& element)
+    {
+        return adoptRef(*new PasswordInputType(element));
+    }
+
+private:
     explicit PasswordInputType(HTMLInputElement& element)
         : BaseTextInputType(Type::Password, element)
     {
     }
 
-private:
     const AtomString& formControlType() const final;
     bool shouldSaveAndRestoreFormControlState() const final;
     FormControlState saveFormControlState() const final;

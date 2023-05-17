@@ -99,7 +99,7 @@ public:
 
     void clearDOMGuardedObjects() const;
 
-    JSC::JSProxy& proxy() const { ASSERT(m_proxy); return *m_proxy.get(); }
+    JSC::JSGlobalProxy& proxy() const { ASSERT(m_proxy); return *m_proxy.get(); }
 
     JSC::JSFunction* createCrossOriginFunction(JSC::JSGlobalObject*, JSC::PropertyName, JSC::NativeFunction, unsigned length);
     JSC::GetterSetter* createCrossOriginGetterSetter(JSC::JSGlobalObject*, JSC::PropertyName, JSC::GetValueFunc, JSC::PutValueFunc);
@@ -139,7 +139,7 @@ protected:
     Ref<DOMWrapperWorld> m_world;
     uint8_t m_worldIsNormal;
     Lock m_gcLock;
-    JSC::WriteBarrier<JSC::JSProxy> m_proxy;
+    JSC::WriteBarrier<JSC::JSGlobalProxy> m_proxy;
 
 private:
     void addBuiltinGlobals(JSC::VM&);

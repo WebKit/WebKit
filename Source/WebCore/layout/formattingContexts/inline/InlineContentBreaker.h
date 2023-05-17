@@ -27,9 +27,11 @@
 
 #include "FormattingConstraints.h"
 #include "LayoutUnits.h"
-#include "RenderStyle.h"
 
 namespace WebCore {
+
+class RenderStyle;
+
 namespace Layout {
 
 class InlineItem;

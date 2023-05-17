@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "HTMLTreeBuilder.h"
+#include "HTMLConstructionSite.h"
 
 #include "Comment.h"
 #include "CustomElementRegistry.h"
@@ -46,10 +46,12 @@
 #include "HTMLPictureElement.h"
 #include "HTMLScriptElement.h"
 #include "HTMLTemplateElement.h"
+#include "HTMLTreeBuilder.h"
 #include "HTMLUnknownElement.h"
 #include "JSCustomElementInterface.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "NodeName.h"
 #include "NotImplemented.h"
 #include "SVGElementInlines.h"
 #include "Settings.h"
@@ -667,7 +669,16 @@ void HTMLConstructionSite::insertTextNode(const String& characters)
     // FIXME: Splitting text nodes into smaller chunks contradicts HTML5 spec, but is currently necessary
     // for performance, see <https://bugs.webkit.org/show_bug.cgi?id=55898>.
 
-    RefPtr<Node> previousChild = task.nextChild ? task.nextChild->previousSibling() : task.parent->lastChild();
+    RefPtr<Node> previousChild;
+    if (task.nextChild)
+        previousChild = task.nextChild->previousSibling();
+    else {
+        if (auto templateParent = dynamicDowncast<HTMLTemplateElement>(task.parent.get()); UNLIKELY(templateParent)) {
+            auto parentNode = templateParent->contentIfAvailable();
+            previousChild = parentNode ? parentNode->lastChild() : nullptr;
+        } else
+            previousChild = task.parent->lastChild();
+    }
     if (auto* previousTextChild = dynamicDowncast<Text>(previousChild.get()); previousTextChild && previousTextChild->length() < lengthLimit) {
         // FIXME: We're only supposed to append to this text node if it was the last text node inserted by the parser.
         unsigned proposedBreakIndex = std::min(characters.length(), lengthLimit - previousTextChild->length());
@@ -729,7 +740,7 @@ static inline QualifiedName qualifiedNameForTag(AtomHTMLToken& token, const Atom
     auto nodeNamespace = findNamespace(namespaceURI);
     auto elementName = elementNameForTag(nodeNamespace, token.tagName());
     if (LIKELY(elementName != ElementName::Unknown))
-        return qualifiedNameForElement(elementName);
+        return qualifiedNameForNodeName(elementName);
     return { nullAtom(), token.name(), namespaceURI, nodeNamespace, elementName };
 }
 
@@ -737,7 +748,7 @@ static inline QualifiedName qualifiedNameForHTMLTag(const AtomHTMLToken& token)
 {
     auto elementName = elementNameForTag(Namespace::HTML, token.tagName());
     if (LIKELY(elementName != ElementName::Unknown))
-        return qualifiedNameForElement(elementName);
+        return qualifiedNameForNodeName(elementName);
     return { nullAtom(), token.name(), xhtmlNamespaceURI, Namespace::HTML, elementName };
 }
 
@@ -820,7 +831,7 @@ Ref<HTMLElement> HTMLConstructionSite::createHTMLElement(AtomHTMLToken& token)
 HTMLStackItem HTMLConstructionSite::createElementFromSavedToken(const HTMLStackItem& item)
 {
     // NOTE: Moving from item -> token -> item copies the Attribute vector twice!
-    auto tagName = tagNameForElement(item.elementName());
+    auto tagName = tagNameForElementName(item.elementName());
     AtomHTMLToken fakeToken(HTMLToken::Type::StartTag, tagName, item.localName(), Vector<Attribute>(item.attributes()));
     ASSERT(item.namespaceURI() == HTMLNames::xhtmlNamespaceURI);
     ASSERT(isFormattingTag(tagName));

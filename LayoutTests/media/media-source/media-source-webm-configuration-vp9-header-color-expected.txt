@@ -1,0 +1,11 @@
+
+TEST("content/test-vp9-profile0-stripped-manifest.json")
+EXPECTED (video.videoTracks[0].configuration.colorSpace.matrix == 'bt709') OK
+EXPECTED (video.videoTracks[0].configuration.colorSpace.primaries == 'bt709') OK
+EXPECTED (video.videoTracks[0].configuration.colorSpace.transfer == 'bt709') OK
+TEST("content/test-vp9-profile2-stripped-manifest.json")
+EXPECTED (video.videoTracks[0].configuration.colorSpace.matrix == 'bt2020-ncl') OK
+EXPECTED (video.videoTracks[0].configuration.colorSpace.primaries == 'bt2020') OK
+EXPECTED (video.videoTracks[0].configuration.colorSpace.transfer == 'bt2020_10bit') OK
+END OF TEST
+

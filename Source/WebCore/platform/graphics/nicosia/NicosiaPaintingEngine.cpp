@@ -31,29 +31,28 @@
 
 #include "NicosiaPaintingEngineBasic.h"
 #include "NicosiaPaintingEngineThreaded.h"
+#include <wtf/NumberOfCores.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace Nicosia {
 
 std::unique_ptr<PaintingEngine> PaintingEngine::create()
 {
-#if (ENABLE(DEVELOPER_MODE) && PLATFORM(WPE)) || USE(GTK4)
-#if USE(GTK4)
-    unsigned numThreads = 1;
+#if PLATFORM(WPE) || USE(GTK4)
+    unsigned numThreads = std::max(1, std::min(8, WTF::numberOfProcessorCores() / 2));
 #else
     unsigned numThreads = 0;
 #endif
     if (const char* numThreadsEnv = getenv("WEBKIT_NICOSIA_PAINTING_THREADS")) {
-        if (sscanf(numThreadsEnv, "%u", &numThreads) == 1) {
-            if (numThreads > 8) {
-                WTFLogAlways("The number of Nicosia painting threads is not between 1 and 8. Using the default value 4\n");
-                numThreads = 4;
-            }
-        }
+        auto newValue = parseInteger<unsigned>(StringView::fromLatin1(numThreadsEnv));
+        if (newValue && *newValue <= 8)
+            numThreads = *newValue;
+        else
+            WTFLogAlways("The number of Nicosia painting threads is not between 0 and 8. Using the default value %u\n", numThreads);
     }
 
     if (numThreads)
         return std::unique_ptr<PaintingEngine>(new PaintingEngineThreaded(numThreads));
-#endif
 
     return std::unique_ptr<PaintingEngine>(new PaintingEngineBasic);
 }

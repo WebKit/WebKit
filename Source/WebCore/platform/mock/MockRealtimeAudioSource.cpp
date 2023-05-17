@@ -92,6 +92,7 @@ const RealtimeMediaSourceSettings& MockRealtimeAudioSource::settings()
     if (!m_currentSettings) {
         RealtimeMediaSourceSettings settings;
         settings.setDeviceId(hashedId());
+        settings.setGroupId(captureDevice().groupId());
         settings.setVolume(volume());
         settings.setEchoCancellation(echoCancellation());
         settings.setSampleRate(sampleRate());
@@ -99,6 +100,7 @@ const RealtimeMediaSourceSettings& MockRealtimeAudioSource::settings()
 
         RealtimeMediaSourceSupportedConstraints supportedConstraints;
         supportedConstraints.setSupportsDeviceId(true);
+        supportedConstraints.setSupportsGroupId(true);
         supportedConstraints.setSupportsVolume(true);
         supportedConstraints.setSupportsEchoCancellation(true);
         supportedConstraints.setSupportsSampleRate(true);
@@ -143,6 +145,7 @@ void MockRealtimeAudioSource::startProducingData()
 #if PLATFORM(IOS_FAMILY)
     PlatformMediaSessionManager::sharedManager().sessionCanProduceAudioChanged();
     ASSERT(AudioSession::sharedSession().category() == AudioSession::CategoryType::PlayAndRecord);
+    ASSERT(AudioSession::sharedSession().mode() == AudioSession::Mode::VideoChat);
 #endif
 
     if (!sampleRate())

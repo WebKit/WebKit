@@ -36,6 +36,8 @@ class FEMorphology : public FilterEffect {
 public:
     WEBCORE_EXPORT static Ref<FEMorphology> create(MorphologyOperatorType, float radiusX, float radiusY);
 
+    bool operator==(const FEMorphology&) const;
+
     MorphologyOperatorType morphologyOperator() const { return m_type; }
     bool setMorphologyOperator(MorphologyOperatorType);
 
@@ -48,7 +50,9 @@ public:
 private:
     FEMorphology(MorphologyOperatorType, float radiusX, float radiusY);
 
-    FloatRect calculateImageRect(const Filter&, Span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
+    bool operator==(const FilterEffect& other) const override { return areEqual<FEMorphology>(*this, other); }
+
+    FloatRect calculateImageRect(const Filter&, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
 
     bool resultIsAlphaImage(const FilterImageVector& inputs) const override;
 

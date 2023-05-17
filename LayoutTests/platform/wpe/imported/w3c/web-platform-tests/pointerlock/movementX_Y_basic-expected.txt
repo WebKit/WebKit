@@ -12,8 +12,8 @@ X	Y
 screen_init:	400	300
 screen_last:	390	310
 screen_delta:	-10	10
-movement_sum:	NaN	NaN
-movement:	undefined	undefined
+movement_sum:	0	0
+movement:	0	0
 
-FAIL Test that movementX/Y = eNow.screenX/Y-ePrevious.screenX/Y. assert_equals: movementX = screen_delta expected (number) -10 but got (undefined) undefined
+FAIL Test that movementX/Y = eNow.screenX/Y-ePrevious.screenX/Y. assert_equals: movementX = screen_delta expected -10 but got 0
 

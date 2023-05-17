@@ -831,6 +831,12 @@ void InspectorInstrumentation::frameStartedLoadingImpl(InstrumentingAgents& inst
         inspectorPageAgent->frameStartedLoading(frame);
 }
 
+void InspectorInstrumentation::didCompleteRenderingFrameImpl(InstrumentingAgents& instrumentingAgents)
+{
+    if (auto* timelineAgent = instrumentingAgents.enabledTimelineAgent())
+        timelineAgent->didCompleteRenderingFrame();
+}
+
 void InspectorInstrumentation::frameStoppedLoadingImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame)
 {
     if (frame.isMainFrame()) {
@@ -842,13 +848,13 @@ void InspectorInstrumentation::frameStoppedLoadingImpl(InstrumentingAgents& inst
         inspectorPageAgent->frameStoppedLoading(frame);
 }
 
-void InspectorInstrumentation::frameScheduledNavigationImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame, Seconds delay)
+void InspectorInstrumentation::frameScheduledNavigationImpl(InstrumentingAgents& instrumentingAgents, Frame& frame, Seconds delay)
 {
     if (auto* inspectorPageAgent = instrumentingAgents.enabledPageAgent())
         inspectorPageAgent->frameScheduledNavigation(frame, delay);
 }
 
-void InspectorInstrumentation::frameClearedScheduledNavigationImpl(InstrumentingAgents& instrumentingAgents, LocalFrame& frame)
+void InspectorInstrumentation::frameClearedScheduledNavigationImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
 {
     if (auto* inspectorPageAgent = instrumentingAgents.enabledPageAgent())
         inspectorPageAgent->frameClearedScheduledNavigation(frame);

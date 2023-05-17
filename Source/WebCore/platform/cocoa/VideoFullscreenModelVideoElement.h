@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,9 +74,16 @@ public:
     FloatSize videoDimensions() const override { return m_videoDimensions; }
     bool hasVideo() const override { return m_hasVideo; }
 
-    WEBCORE_EXPORT void setVideoInlineSizeFenced(const FloatSize&, const WTF::MachSendRight&);
+    WEBCORE_EXPORT void setVideoSizeFenced(const FloatSize&, const WTF::MachSendRight&);
 
     WEBCORE_EXPORT void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&&) override;
+
+#if !RELEASE_LOG_DISABLED
+    const Logger* loggerPtr() const override;
+    WEBCORE_EXPORT const void* logIdentifier() const override;
+    const char* logClassName() const { return "VideoFullscreenModelVideoElement"; }
+    WTFLogChannel& logChannel() const;
+#endif
 
 protected:
     WEBCORE_EXPORT VideoFullscreenModelVideoElement();
@@ -92,7 +99,7 @@ private:
     void willExitPictureInPicture() override;
     void didExitPictureInPicture() override;
 
-    static Span<const AtomString> observedEventNames();
+    static std::span<const AtomString> observedEventNames();
     const AtomString& eventNameAll();
 
     RefPtr<HTMLVideoElement> m_videoElement;

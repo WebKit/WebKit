@@ -11,6 +11,11 @@
     <div role="tab" aria-label="second" aria-selected="true">2</div>
     <div role="tab" aria-label="third">3</div>
   </div>
+  <div role="tablist" id="tablist-with-display-contents" tabindex="0" style="display:contents">
+    <div role="tab" aria-label="first">1</div>
+    <div role="tab" aria-label="second" aria-selected="true" style="display:contents">2</div>
+    <div role="tab" aria-label="third">3</div>
+  </div>
   <div role="tree" id="tree" aria-multiselectable="true" tabindex="0">
     <div role="treeitem" aria-label="first" aria-selected="true">1</div>
     <div role="treeitem" aria-label="second">2</div>
@@ -59,6 +64,7 @@
     description("This tests that items with aria-selected are reported as selected children of the parent container.");
     if (window.accessibilityController) {
         selectedChildInfo(window.accessibilityController.accessibleElementById("tablist"));
+        selectedChildInfo(window.accessibilityController.accessibleElementById("tablist-with-display-contents"));
         selectedChildInfo(window.accessibilityController.accessibleElementById("tree"));
         selectedChildInfo(window.accessibilityController.accessibleElementById("grid"));
         selectedChildInfo(window.accessibilityController.accessibleElementById("treegrid"));

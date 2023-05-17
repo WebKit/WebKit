@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ASTAttribute.h"
+#include "ASTAttribute.h"
 #include "ASTDeclaration.h"
 #include "ASTExpression.h"
 #include "ASTIdentifier.h"
@@ -42,36 +43,36 @@ enum class VariableFlavor : uint8_t {
 };
 
 class Variable final : public Declaration {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(Variable);
 public:
-    using Ref = UniqueRef<Variable>;
-    using List = UniqueRefVector<Variable>;
-
-    Variable(SourceSpan span, VariableFlavor flavor, Identifier&& name, TypeName::Ptr&& type, Expression::Ptr&& initializer)
-        : Variable(span, flavor, WTFMove(name), { }, WTFMove(type), WTFMove(initializer), { })
-    { }
-
-    Variable(SourceSpan span, VariableFlavor flavor, Identifier&& name, VariableQualifier::Ptr&& qualifier, TypeName::Ptr&& type, Expression::Ptr&& initializer, Attribute::List&& attributes)
-        : Declaration(span)
-        , m_name(WTFMove(name))
-        , m_attributes(WTFMove(attributes))
-        , m_qualifier(WTFMove(qualifier))
-        , m_type(WTFMove(type))
-        , m_initializer(WTFMove(initializer))
-        , m_flavor(flavor)
-    {
-        ASSERT(m_type || m_initializer);
-    }
+    using Ref = std::reference_wrapper<Variable>;
+    using List = ReferenceWrapperVector<Variable>;
 
     NodeKind kind() const override;
     VariableFlavor flavor() const { return m_flavor; };
     Identifier& name() { return m_name; }
     Attribute::List& attributes() { return m_attributes; }
-    VariableQualifier* maybeQualifier() { return m_qualifier.get(); }
-    TypeName* maybeTypeName() { return m_type.get(); }
-    Expression* maybeInitializer() { return m_initializer.get(); }
+    VariableQualifier* maybeQualifier() { return m_qualifier; }
+    TypeName* maybeTypeName() { return m_type; }
+    Expression* maybeInitializer() { return m_initializer; }
 
 private:
+    Variable(SourceSpan span, VariableFlavor flavor, Identifier&& name, TypeName::Ptr type, Expression::Ptr initializer)
+        : Variable(span, flavor, WTFMove(name), { }, type, initializer, { })
+    { }
+
+    Variable(SourceSpan span, VariableFlavor flavor, Identifier&& name, VariableQualifier::Ptr qualifier, TypeName::Ptr type, Expression::Ptr initializer, Attribute::List&& attributes)
+        : Declaration(span)
+        , m_name(WTFMove(name))
+        , m_attributes(WTFMove(attributes))
+        , m_qualifier(qualifier)
+        , m_type(type)
+        , m_initializer(initializer)
+        , m_flavor(flavor)
+    {
+        ASSERT(m_type || m_initializer);
+    }
+
     Identifier m_name;
     Attribute::List m_attributes;
     // Each of the following may be null

@@ -125,14 +125,7 @@ JSTestNamedDeleterThrowingException::JSTestNamedDeleterThrowingException(Structu
 {
 }
 
-void JSTestNamedDeleterThrowingException::finishCreation(VM& vm)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-
-    static_assert(!std::is_base_of<ActiveDOMObject, TestNamedDeleterThrowingException>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
-
-}
+static_assert(!std::is_base_of<ActiveDOMObject, TestNamedDeleterThrowingException>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
 JSObject* JSTestNamedDeleterThrowingException::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)
 {

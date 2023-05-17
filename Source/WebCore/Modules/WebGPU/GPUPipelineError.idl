@@ -29,7 +29,7 @@
     Exposed=(Window),
     SecureContext,
     Serializable,
-    EnabledBySetting=WebGPU
+    EnabledBySetting=WebGPUEnabled
 ]
 interface GPUPipelineError : DOMException {
     constructor(DOMString message, GPUPipelineErrorInit options);

@@ -106,3 +106,11 @@ bool WKNotificationGetIsPersistent(WKNotificationRef notification)
 {
     return toImpl(notification)->isPersistentNotification();
 }
+
+WKNotificationAlert WKNotificationGetAlert(WKNotificationRef notification)
+{
+    auto silent = toImpl(notification)->data().silent;
+    if (silent == std::nullopt)
+        return kWKNotificationAlertDefault;
+    return *silent ? kWKNotificationAlertSilent : kWKNotificationAlertEnabled;
+}

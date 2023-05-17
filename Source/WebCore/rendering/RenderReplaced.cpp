@@ -36,14 +36,17 @@
 #include "HighlightData.h"
 #include "HighlightRegister.h"
 #include "InlineIteratorBox.h"
-#include "InlineIteratorLineBox.h"
+#include "InlineIteratorLineBoxInlines.h"
 #include "LayoutRepainter.h"
 #include "LineSelection.h"
 #include "LocalFrame.h"
 #include "RenderBlock.h"
+#include "RenderBoxInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderImage.h"
 #include "RenderLayer.h"
+#include "RenderStyleInlines.h"
 #include "RenderTheme.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
@@ -53,6 +56,7 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
 #include <wtf/TypeCasts.h>
+
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderReplaced);
@@ -217,8 +221,13 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         if (visibleToHitTesting()) {
             auto borderRect = LayoutRect(adjustedPaintOffset, size());
             auto borderRegion = approximateAsRegion(style().getRoundedBorderFor(borderRect));
-            paintInfo.eventRegionContext->unite(borderRegion, *this, style());
+            paintInfo.eventRegionContext()->unite(borderRegion, *this, style());
         }
+        return;
+    }
+
+    if (paintInfo.phase == PaintPhase::Accessibility) {
+        paintInfo.accessibilityRegionContext()->takeBounds(*this, adjustedPaintOffset);
         return;
     }
 
@@ -311,7 +320,8 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
         && paintInfo.phase != PaintPhase::SelfOutline
         && paintInfo.phase != PaintPhase::Selection
         && paintInfo.phase != PaintPhase::Mask
-        && paintInfo.phase != PaintPhase::EventRegion)
+        && paintInfo.phase != PaintPhase::EventRegion
+        && paintInfo.phase != PaintPhase::Accessibility)
         return false;
 
     if (!paintInfo.shouldPaintWithinRoot(*this))
@@ -836,6 +846,16 @@ bool RenderReplaced::needsPreferredWidthsRecalculation() const
 {
     // If the height is a percentage and the width is auto, then the containingBlocks's height changing can cause this node to change it's preferred width because it maintains aspect ratio.
     return (hasRelativeLogicalHeight() || (isGridItem() && hasStretchedLogicalHeight())) && style().logicalWidth().isAuto();
+}
+
+LayoutSize RenderReplaced::intrinsicSize() const
+{
+    LayoutSize size = m_intrinsicSize;
+    if (isHorizontalWritingMode() ? shouldApplySizeOrInlineSizeContainment() : shouldApplySizeContainment())
+        size.setWidth(explicitIntrinsicInnerWidth().value_or(0));
+    if (isHorizontalWritingMode() ? shouldApplySizeContainment() : shouldApplySizeOrInlineSizeContainment())
+        size.setHeight(explicitIntrinsicInnerHeight().value_or(0));
+    return size;
 }
 
 }

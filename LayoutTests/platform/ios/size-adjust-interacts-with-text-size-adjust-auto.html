@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="mismatch" href="size-adjust-interacts-with-text-size-adjust-auto-notref.html">
+<title>Tests -webkit-text-size-adjust (auto value) interaction with @font-face size-adjust.</title>
+<style>
+@font-face {
+  font-family: adjusted-font;
+  src: local(Times);
+  size-adjust: 200%;
+}
+span {
+  font-size: 60px;
+}
+.ffsa {
+  font-family: adjusted-font;
+}
+.tsa {
+    -webkit-text-size-adjust: 200%;
+}
+</style>
+
+<div>
+  <span class="ffsa tsa">x</span>
+</div>

@@ -53,6 +53,13 @@ static String defaultCookieJarPath()
 #endif
 }
 
+static String alternativeServicesStorageFile(const String& alternativeServicesDirectory)
+{
+    static constexpr auto defaultFileName = "altsvc-cache.txt"_s;
+
+    return FileSystem::pathByAppendingComponent(alternativeServicesDirectory, defaultFileName);
+}
+
 static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& session, const URL& firstParty, const URL& url, bool forHTTPHeader, IncludeSecureCookies includeSecureCookies)
 {
     StringBuilder cookies;
@@ -77,11 +84,15 @@ static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& se
     return { cookies.toString(), didAccessSecureCookies };
 }
 
-NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID)
+NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, const String& alternativeServicesDirectory)
     : m_sessionID(sessionID)
     // :memory: creates in-memory database, see https://www.sqlite.org/inmemorydb.html
     , m_cookieDatabase(makeUniqueRef<CookieJarDB>(sessionID.isEphemeral() ? ":memory:"_s : defaultCookieJarPath()))
 {
+    if (!alternativeServicesDirectory.isEmpty()) {
+        FileSystem::makeAllDirectories(alternativeServicesDirectory);
+        CurlContext::singleton().setAlternativeServicesStorageFile(alternativeServicesStorageFile(alternativeServicesDirectory));
+    }
 }
 
 NetworkStorageSession::~NetworkStorageSession()
@@ -230,6 +241,11 @@ std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(con
 void NetworkStorageSession::setProxySettings(const CurlProxySettings& proxySettings)
 {
     CurlContext::singleton().setProxySettings(proxySettings);
+}
+
+void NetworkStorageSession::clearAlternativeServices()
+{
+    CurlContext::singleton().clearAlternativeServicesStorageFile();
 }
 
 } // namespace WebCore

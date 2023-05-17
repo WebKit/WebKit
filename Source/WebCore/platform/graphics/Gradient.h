@@ -108,6 +108,8 @@ public:
 private:
     Gradient(Data&&, ColorInterpolationMethod, GradientSpreadMethod, GradientColorStops&&, std::optional<RenderingResourceIdentifier>);
 
+    bool isGradient() const final { return true; }
+
     void stopsChanged();
 
     Data m_data;
@@ -124,3 +126,7 @@ private:
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Gradient&);
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Gradient)
+    static bool isType(const WebCore::RenderingResource& renderingResource) { return renderingResource.isGradient(); }
+SPECIALIZE_TYPE_TRAITS_END()

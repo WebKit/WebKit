@@ -80,6 +80,14 @@
 #include <wtf/NeverDestroyed.h>
 #endif
 
+#if USE(EGL) && USE(GBM)
+#include "GBMDevice.h"
+#include <xf86drm.h>
+#ifndef EGL_DRM_RENDER_NODE_FILE_EXT
+#define EGL_DRM_RENDER_NODE_FILE_EXT 0x3377
+#endif
+#endif
+
 #if USE(ATSPI)
 #include <wtf/glib/GUniquePtr.h>
 #endif
@@ -208,16 +216,26 @@ PlatformDisplay::PlatformDisplay(GdkDisplay* display)
 void PlatformDisplay::sharedDisplayDidClose()
 {
 #if USE(EGL)
-    clearSharingGLContext();
+    terminateEGLDisplay();
 #endif
+}
+#endif
+
+#if USE(EGL)
+static HashSet<PlatformDisplay*>& eglDisplays()
+{
+    static NeverDestroyed<HashSet<PlatformDisplay*>> displays;
+    return displays;
 }
 #endif
 
 PlatformDisplay::~PlatformDisplay()
 {
-#if USE(EGL) && !PLATFORM(WIN)
-    ASSERT(m_eglDisplay == EGL_NO_DISPLAY);
+#if USE(EGL)
+    if (m_eglDisplay != EGL_NO_DISPLAY && eglDisplays().remove(this))
+        terminateEGLDisplay();
 #endif
+
 #if PLATFORM(GTK)
     if (m_sharedDisplay)
         g_signal_handlers_disconnect_by_data(m_sharedDisplay.get(), this);
@@ -241,12 +259,6 @@ void PlatformDisplay::clearSharingGLContext()
 #endif
 
 #if USE(EGL)
-static HashSet<PlatformDisplay*>& eglDisplays()
-{
-    static NeverDestroyed<HashSet<PlatformDisplay*>> displays;
-    return displays;
-}
-
 EGLDisplay PlatformDisplay::eglDisplay() const
 {
     if (!m_eglDisplayInitialized)
@@ -308,6 +320,9 @@ void PlatformDisplay::initializeEGLDisplay()
         m_eglExtensions.EXT_image_dma_buf_import_modifiers = findExtension("EGL_EXT_image_dma_buf_import_modifiers"_s);
     }
 
+    if (!m_eglDisplayOwned)
+        return;
+
     eglDisplays().add(this);
 
 #if !PLATFORM(WIN)
@@ -342,8 +357,11 @@ void PlatformDisplay::terminateEGLDisplay()
     ASSERT(m_eglDisplayInitialized);
     if (m_eglDisplay == EGL_NO_DISPLAY)
         return;
-    eglMakeCurrent(m_eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-    eglTerminate(m_eglDisplay);
+
+    if (m_eglDisplayOwned) {
+        eglMakeCurrent(m_eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        eglTerminate(m_eglDisplay);
+    }
     m_eglDisplay = EGL_NO_DISPLAY;
 }
 
@@ -401,6 +419,94 @@ bool PlatformDisplay::destroyEGLImage(EGLImage image) const
     return false;
 #endif
 }
+
+#if USE(GBM)
+EGLDeviceEXT PlatformDisplay::eglDevice()
+{
+    if (!GLContext::isExtensionSupported(eglQueryString(nullptr, EGL_EXTENSIONS), "EGL_EXT_device_query"))
+        return nullptr;
+
+    if (!m_eglDisplayInitialized)
+        const_cast<PlatformDisplay*>(this)->initializeEGLDisplay();
+
+    EGLDeviceEXT eglDevice;
+    if (eglQueryDisplayAttribEXT(m_eglDisplay, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&eglDevice)))
+        return eglDevice;
+
+    return nullptr;
+}
+
+const String& PlatformDisplay::drmDeviceFile()
+{
+    if (!m_drmDeviceFile.has_value()) {
+        if (EGLDeviceEXT device = eglDevice()) {
+            if (GLContext::isExtensionSupported(eglQueryDeviceStringEXT(device, EGL_EXTENSIONS), "EGL_EXT_device_drm")) {
+                m_drmDeviceFile = String::fromUTF8(eglQueryDeviceStringEXT(device, EGL_DRM_DEVICE_FILE_EXT));
+                return m_drmDeviceFile.value();
+            }
+        }
+        m_drmDeviceFile = String();
+    }
+
+    return m_drmDeviceFile.value();
+}
+
+static String drmRenderNodeFromPrimaryDeviceFile(const String& primaryDeviceFile)
+{
+    if (primaryDeviceFile.isEmpty())
+        return { };
+
+    drmDevicePtr devices[64];
+    memset(devices, 0, sizeof(devices));
+
+    int numDevices = drmGetDevices2(0, devices, std::size(devices));
+    if (numDevices <= 0)
+        return { };
+
+    String renderNodeDeviceFile;
+    for (int i = 0; i < numDevices; ++i) {
+        drmDevice* device = devices[i];
+        if (!(device->available_nodes & (1 << DRM_NODE_PRIMARY | 1 << DRM_NODE_RENDER)))
+            continue;
+
+        if (String::fromUTF8(device->nodes[DRM_NODE_PRIMARY]) == primaryDeviceFile) {
+            renderNodeDeviceFile = String::fromUTF8(device->nodes[DRM_NODE_RENDER]);
+            break;
+        }
+    }
+    drmFreeDevices(devices, numDevices);
+
+    return renderNodeDeviceFile;
+}
+
+const String& PlatformDisplay::drmRenderNodeFile()
+{
+    if (!m_drmRenderNodeFile.has_value()) {
+        if (EGLDeviceEXT device = eglDevice()) {
+            if (GLContext::isExtensionSupported(eglQueryDeviceStringEXT(device, EGL_EXTENSIONS), "EGL_EXT_device_drm_render_node")) {
+                m_drmRenderNodeFile = String::fromUTF8(eglQueryDeviceStringEXT(device, EGL_DRM_RENDER_NODE_FILE_EXT));
+                return m_drmRenderNodeFile.value();
+            }
+
+            // If EGL_EXT_device_drm_render_node is not present, try to get the render node using DRM API.
+            m_drmRenderNodeFile = drmRenderNodeFromPrimaryDeviceFile(drmDeviceFile());
+        } else
+            m_drmRenderNodeFile = String();
+    }
+
+    return m_drmRenderNodeFile.value();
+}
+
+struct gbm_device* PlatformDisplay::gbmDevice()
+{
+    auto& device = GBMDevice::singleton();
+    if (!device.isInitialized()) {
+        const char* envDeviceFile = getenv("WEBKIT_WEB_RENDER_DEVICE_FILE");
+        device.initialize(envDeviceFile && *envDeviceFile ? String::fromUTF8(envDeviceFile) : drmRenderNodeFile());
+    }
+    return device.device();
+}
+#endif
 
 #endif // USE(EGL)
 

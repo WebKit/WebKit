@@ -60,7 +60,7 @@ public:
 protected:
     JSTestGenerateIsReachable(JSC::Structure*, JSDOMGlobalObject&, Ref<TestGenerateIsReachable>&&);
 
-    void finishCreation(JSC::VM&);
+    DECLARE_DEFAULT_FINISH_CREATION;
 };
 
 class JSTestGenerateIsReachableOwner final : public JSC::WeakHandleOwner {

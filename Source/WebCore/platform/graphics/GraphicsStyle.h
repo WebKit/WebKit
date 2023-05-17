@@ -49,11 +49,6 @@ inline bool operator==(const GraphicsDropShadow& a, const GraphicsDropShadow& b)
     return a.offset == b.offset && a.radius == b.radius && a.color == b.color;
 }
 
-inline bool operator!=(const GraphicsDropShadow& a, const GraphicsDropShadow& b)
-{
-    return !(a == b);
-}
-
 struct GraphicsGaussianBlur {
     FloatSize radius;
 
@@ -66,11 +61,6 @@ inline bool operator==(const GraphicsGaussianBlur& a, const GraphicsGaussianBlur
     return a.radius == b.radius;
 }
 
-inline bool operator!=(const GraphicsGaussianBlur& a, const GraphicsGaussianBlur& b)
-{
-    return !(a == b);
-}
-
 struct GraphicsColorMatrix {
     std::array<float, 20> values;
 
@@ -81,11 +71,6 @@ struct GraphicsColorMatrix {
 inline bool operator==(const GraphicsColorMatrix& a, const GraphicsColorMatrix& b)
 {
     return a.values == b.values;
-}
-
-inline bool operator!=(const GraphicsColorMatrix& a, const GraphicsColorMatrix& b)
-{
-    return !(a == b);
 }
 
 using GraphicsStyle = std::variant<

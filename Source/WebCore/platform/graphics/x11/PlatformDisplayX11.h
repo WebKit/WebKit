@@ -63,6 +63,9 @@ private:
     Type type() const override { return PlatformDisplay::Type::X11; }
 
 #if USE(EGL)
+#if PLATFORM(GTK)
+    EGLDisplay gtkEGLDisplay() override;
+#endif
     void initializeEGLDisplay() override;
 #endif
 

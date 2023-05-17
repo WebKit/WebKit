@@ -32,7 +32,8 @@ namespace WebCore {
 enum class GraphicsContextGLSimulatedEventForTesting {
     ContextChange,
     GPUStatusFailure,
-    Timeout
+    Timeout,
+    DisplayBufferAllocationFailure
 };
 
 } // namespace WebCore

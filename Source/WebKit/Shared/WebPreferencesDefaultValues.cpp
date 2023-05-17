@@ -30,6 +30,7 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
+#include <wtf/NumberOfCores.h>
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
@@ -204,10 +205,15 @@ bool defaultMediaSessionCoordinatorEnabled()
 
 bool defaultRunningBoardThrottlingEnabled()
 {
+#if PLATFORM(MAC)
+    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::RunningBoardThrottling);
+    return newSDK;
+#else
     return false;
+#endif
 }
 
-bool defaultShouldDropSuspendedAssertionAfterDelay()
+bool defaultShouldDropNearSuspendedAssertionAfterDelay()
 {
 #if PLATFORM(COCOA)
     static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::FullySuspendsBackgroundContent);
@@ -215,6 +221,16 @@ bool defaultShouldDropSuspendedAssertionAfterDelay()
 #else
     return false;
 #endif
+}
+
+bool defaultLiveRangeSelectionEnabled()
+{
+#if PLATFORM(IOS_FAMILY)
+    static bool enableForAllApps = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::LiveRangeSelectionEnabledForAllApps);
+    if (!enableForAllApps && WebCore::IOSApplication::isGmail())
+        return false;
+#endif
+    return true;
 }
 
 bool defaultShowModalDialogEnabled()
@@ -243,7 +259,7 @@ bool defaultShouldEnableScreenOrientationAPI()
 #if PLATFORM(MAC)
     return true;
 #elif PLATFORM(IOS_FAMILY)
-    static bool shouldEnableScreenOrientationAPI = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ScreenOrientationAPIEnabled);
+    static bool shouldEnableScreenOrientationAPI = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ScreenOrientationAPIEnabled) || IOSApplication::isHoYoLAB();
     return shouldEnableScreenOrientationAPI;
 #else
     return false;
@@ -266,6 +282,24 @@ bool defaultPopoverAttributeEnabled()
 #else
     return false;
 #endif
+}
+
+bool defaultUseGPUProcessForDOMRenderingEnabled()
+{
+#if ENABLE(GPU_PROCESS_BY_DEFAULT) && ENABLE(GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)
+#if PLATFORM(MAC)
+    static bool haveSufficientCores = WTF::numberOfPhysicalProcessorCores() >= 4;
+    return haveSufficientCores;
+#else
+    return true;
+#endif
+#endif
+
+#if USE(GRAPHICS_LAYER_WC)
+    return true;
+#endif
+
+    return false;
 }
 
 } // namespace WebKit

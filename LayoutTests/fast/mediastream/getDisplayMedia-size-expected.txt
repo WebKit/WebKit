@@ -2,6 +2,6 @@
 
 PASS Ensure getDisplayMedia size can be reduced with applyConstraints
 PASS Ensure getDisplayMedia size can be increased with applyConstraints
-FAIL original source should stay at a small size assert_equals: expected 640 but got 320
-FAIL original source should stay at a big size assert_equals: expected 640 but got 1280
+PASS original source should stay at a small size
+PASS original source should stay at a big size
 

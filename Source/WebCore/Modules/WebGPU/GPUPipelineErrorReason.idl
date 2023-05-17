@@ -26,7 +26,7 @@
 // https://gpuweb.github.io/gpuweb/#gpupipelineerrorreason
 
 [
-    EnabledBySetting=WebGPU
+    EnabledBySetting=WebGPUEnabled
 ]
 enum GPUPipelineErrorReason {
     "validation",

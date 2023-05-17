@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "RealtimeMediaSourceCapabilities.h"
+#include "RealtimeMediaSourceCenter.h"
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
@@ -42,10 +43,10 @@ class CaptureDevice;
 class CoreAudioCaptureSource;
 class PlatformAudioData;
 
-class BaseAudioSharedUnit : public CanMakeWeakPtr<BaseAudioSharedUnit, WeakPtrFactoryInitialization::Eager> {
+class BaseAudioSharedUnit : public RealtimeMediaSourceCenter::Observer {
 public:
     BaseAudioSharedUnit();
-    virtual ~BaseAudioSharedUnit() = default;
+    virtual ~BaseAudioSharedUnit();
 
     void startProducingData();
     void stopProducingData();
@@ -79,7 +80,6 @@ public:
     virtual CapabilityValueOrRange sampleRateCapacities() const = 0;
     virtual int actualSampleRate() const { return sampleRate(); }
 
-    void devicesChanged(const Vector<CaptureDevice>&);
     void whenAudioCaptureUnitIsNotRunning(Function<void()>&&);
     bool isRenderingAudio() const { return m_isRenderingAudio; }
     bool hasClients() const { return !m_clients.isEmpty(); }
@@ -118,6 +118,9 @@ protected:
 
 private:
     OSStatus startUnit();
+
+    // RealtimeMediaSourceCenter::Observer
+    void devicesChanged() final;
 
     bool m_enableEchoCancellation { true };
     double m_volume { 1 };

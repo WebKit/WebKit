@@ -38,7 +38,6 @@ public:
     ~StyleVisitedLinkColorData();
 
     bool operator==(const StyleVisitedLinkColorData&) const;
-    bool operator!=(const StyleVisitedLinkColorData& other) const { return !(*this == other); }
 
     StyleColor background;
     StyleColor borderLeft;

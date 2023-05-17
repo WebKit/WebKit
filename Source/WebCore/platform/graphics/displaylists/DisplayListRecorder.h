@@ -85,6 +85,7 @@ protected:
     virtual void recordSetLineJoin(LineJoin) = 0;
     virtual void recordSetMiterLimit(float) = 0;
     virtual void recordClearShadow() = 0;
+    virtual void recordResetClip() = 0;
     virtual void recordClip(const FloatRect&) = 0;
     virtual void recordClipOut(const FloatRect&) = 0;
     virtual void recordClipToImageBuffer(ImageBuffer&, const FloatRect& destinationRect) = 0;
@@ -151,6 +152,7 @@ protected:
     virtual bool recordResourceUse(Font&) = 0;
     virtual bool recordResourceUse(DecomposedGlyphs&) = 0;
     virtual bool recordResourceUse(Gradient&) = 0;
+    virtual bool recordResourceUse(Filter&) = 0;
 
     struct ContextState {
         GraphicsContextState state;
@@ -265,6 +267,7 @@ private:
     WEBCORE_EXPORT void beginTransparencyLayer(float opacity) final;
     WEBCORE_EXPORT void endTransparencyLayer() final;
 
+    WEBCORE_EXPORT void resetClip() final;
     WEBCORE_EXPORT void clip(const FloatRect&) final;
     WEBCORE_EXPORT void clipOut(const FloatRect&) final;
     WEBCORE_EXPORT void clipOut(const Path&) final;
@@ -291,6 +294,7 @@ private:
     float m_initialScale { 1 };
     DestinationColorSpace m_colorSpace;
     const DrawGlyphsMode m_drawGlyphsMode { DrawGlyphsMode::Normal };
+    const FloatRect m_initialClip;
 };
 
 } // namespace DisplayList

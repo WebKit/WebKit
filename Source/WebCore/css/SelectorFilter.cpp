@@ -29,7 +29,7 @@
 #include "config.h"
 #include "SelectorFilter.h"
 
-#include "CSSSelector.h"
+#include "CSSSelectorList.h"
 #include "CommonAtomStrings.h"
 #include "ElementInlines.h"
 #include "HTMLNames.h"

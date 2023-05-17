@@ -97,6 +97,9 @@ private:
 
     void recursiveNodeWillBeRemoved(ScrollingStateNode&);
     void willRemoveNode(ScrollingStateNode&);
+    
+    bool isValid() const;
+    void traverse(const ScrollingStateNode&, const Function<void(const ScrollingStateNode&)>&) const;
 
     AsyncScrollingCoordinator* m_scrollingCoordinator;
     // Contains all the nodes we know about (those in the m_rootStateNode tree, and in m_unparentedNodes subtrees).

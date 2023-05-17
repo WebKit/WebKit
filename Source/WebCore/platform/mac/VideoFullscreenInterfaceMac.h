@@ -102,6 +102,13 @@ public:
 
     std::optional<MediaPlayerIdentifier> playerIdentifier() const { return m_playerIdentifier; }
 
+#if !RELEASE_LOG_DISABLED
+    const void* logIdentifier() const;
+    const Logger* loggerPtr() const;
+    const char* logClassName() const { return "VideoFullscreenInterfaceMac"; };
+    WTFLogChannel& logChannel() const;
+#endif
+
 private:
     WEBCORE_EXPORT VideoFullscreenInterfaceMac(PlaybackSessionInterfaceMac&);
     Ref<PlaybackSessionInterfaceMac> m_playbackSessionInterface;

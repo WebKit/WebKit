@@ -47,6 +47,12 @@ Optional<std::string> GetTempDirectory();
 Optional<std::string> CreateTemporaryFileInDirectory(const std::string &directory);
 Optional<std::string> CreateTemporaryFile();
 
+#if defined(ANGLE_PLATFORM_POSIX)
+// Same as CreateTemporaryFileInDirectory(), but allows for supplying an extension.
+Optional<std::string> CreateTemporaryFileInDirectoryWithExtension(const std::string &directory,
+                                                                  const std::string &extension);
+#endif
+
 // Get absolute time in seconds.  Use this function to get an absolute time with an unknown origin.
 double GetCurrentSystemTime();
 // Get CPU time for current process in seconds.

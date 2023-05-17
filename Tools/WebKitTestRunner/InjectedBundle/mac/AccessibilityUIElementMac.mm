@@ -425,6 +425,16 @@ JSValueRef AccessibilityUIElement::rowHeaders() const
     END_AX_OBJC_EXCEPTIONS
 }
 
+JSValueRef AccessibilityUIElement::selectedCells() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto value = attributeValue(NSAccessibilitySelectedCellsAttribute);
+    if ([value isKindOfClass:[NSArray class]])
+        return makeJSArray(makeVector<RefPtr<AccessibilityUIElement>>(value.get()));
+    END_AX_OBJC_EXCEPTIONS
+    return nullptr;
+}
+
 JSValueRef AccessibilityUIElement::columnHeaders() const
 {
     BEGIN_AX_OBJC_EXCEPTIONS

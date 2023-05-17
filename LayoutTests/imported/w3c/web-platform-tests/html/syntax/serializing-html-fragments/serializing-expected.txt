@@ -24,7 +24,7 @@ PASS innerHTML 21 <xmp><&></xmp>
 PASS innerHTML 22 <iframe><&></iframe>
 PASS innerHTML 23 <noembed><&></noembed>
 PASS innerHTML 24 <noframes><&></noframes>
-FAIL innerHTML 25 <noscript><&></noscript> assert_equals: expected "<noscript><&></noscript>" but got "<noscript>&lt;&amp;&gt;</noscript>"
+PASS innerHTML 25 <noscript><&></noscript>
 PASS innerHTML 26 <!--data-->
 PASS innerHTML 27 <a><b><c></c></b><d>e</d><f><g>h</g></f></a>
 PASS innerHTML 28
@@ -53,7 +53,7 @@ PASS outerHTML 21 <span><xmp><&></xmp></span>
 PASS outerHTML 22 <span><iframe><&></iframe></span>
 PASS outerHTML 23 <span><noembed><&></noembed></span>
 PASS outerHTML 24 <span><noframes><&></noframes></span>
-FAIL outerHTML 25 <span><noscript><&></noscript></span> assert_equals: expected "<span><noscript><&></noscript></span>" but got "<span><noscript>&lt;&amp;&gt;</noscript></span>"
+PASS outerHTML 25 <span><noscript><&></noscript></span>
 PASS outerHTML 26 <span><!--data--></span>
 PASS outerHTML 27 <span><a><b><c></c></b><d>e</d><f><g>h</g></f></a></span>
 PASS outerHTML 28 <span b="c"></span>

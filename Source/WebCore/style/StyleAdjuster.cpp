@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -33,7 +33,6 @@
 #include "CSSFontSelector.h"
 #include "DOMTokenList.h"
 #include "ElementInlines.h"
-#include "ElementName.h"
 #include "EventNames.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDialogElement.h"
@@ -48,11 +47,11 @@
 #include "LocalDOMWindow.h"
 #include "LocalFrameView.h"
 #include "MathMLElement.h"
-#include "ModalContainerObserver.h"
+#include "NodeName.h"
 #include "Page.h"
 #include "Quirks.h"
 #include "RenderBox.h"
-#include "RenderStyle.h"
+#include "RenderStyleSetters.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "SVGElement.h"
@@ -62,8 +61,10 @@
 #include "SVGURIReference.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "StyleSelfAlignmentData.h"
 #include "StyleUpdate.h"
 #include "Text.h"
+#include "TouchAction.h"
 #include "WebAnimationTypes.h"
 #include <wtf/RobinHoodHashSet.h>
 
@@ -408,9 +409,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             || style.clipPath()
             || style.boxReflect()
             || style.hasFilter()
-#if ENABLE(FILTERS_LEVEL_2)
             || style.hasBackdropFilter()
-#endif
             || style.hasBlendMode()
             || style.hasIsolation()
             || style.position() == PositionType::Sticky
@@ -536,9 +535,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             || style.hasFilter()
             || style.hasIsolation()
             || style.hasMask()
-#if ENABLE(FILTERS_LEVEL_2)
             || style.hasBackdropFilter()
-#endif
             || style.hasBlendMode();
         style.setTransformStyleForcedToFlat(forceToFlat);
     }
@@ -583,17 +580,16 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 
         style.setEventListenerRegionTypes(computeEventListenerRegionTypes(m_document, style, *m_element, m_parentStyle.eventListenerRegionTypes()));
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+        // Every element will automatically get an interaction region which is not useful, ignoring the `cursor: pointer;` on the body.
+        if (is<HTMLBodyElement>(*m_element) && style.cursor() == CursorType::Pointer && style.eventListenerRegionTypes().contains(EventListenerRegionType::MouseClick))
+            style.setCursor(CursorType::Auto);
+#endif
+
 #if ENABLE(TEXT_AUTOSIZING)
         if (m_document.settings().textAutosizingUsesIdempotentMode())
             adjustForTextAutosizing(style, *m_element);
 #endif
-
-        if (auto observer = m_element->document().modalContainerObserverIfExists()) {
-            if (observer->shouldHide(*m_element))
-                style.setDisplay(DisplayType::None);
-            if (observer->shouldMakeVerticallyScrollable(*m_element))
-                style.setOverflowY(Overflow::Auto);
-        }
     }
 
     if (style.contentVisibility() == ContentVisibility::Hidden)
@@ -619,7 +615,7 @@ static bool hasEffectiveDisplayNoneForDisplayContents(const Element& element)
         return false;
 
     // https://drafts.csswg.org/css-display-3/#unbox-html
-    switch (element.tagQName().elementName()) {
+    switch (element.elementName()) {
     case HTML::br:
     case HTML::wbr:
     case HTML::meter:

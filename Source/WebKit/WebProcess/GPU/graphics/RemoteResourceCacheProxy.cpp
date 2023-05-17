@@ -44,19 +44,22 @@ RemoteResourceCacheProxy::RemoteResourceCacheProxy(RemoteRenderingBackendProxy& 
 
 RemoteResourceCacheProxy::~RemoteResourceCacheProxy()
 {
-    clearNativeImageMap();
     clearImageBufferBackends();
-    clearDecomposedGlyphsMap();
-    clearGradientMap();
+    clearRenderingResourceMap();
 }
 
 void RemoteResourceCacheProxy::clear()
 {
-    clearNativeImageMap();
     clearImageBufferBackends();
     m_imageBuffers.clear();
-    clearDecomposedGlyphsMap();
-    clearGradientMap();
+    clearRenderingResourceMap();
+}
+
+unsigned RemoteResourceCacheProxy::imagesCount() const
+{
+    return std::count_if(m_renderingResources.begin(), m_renderingResources.end(), [](const auto& keyValuePair) {
+        return is<NativeImage>(keyValuePair.value.get());
+    });
 }
 
 void RemoteResourceCacheProxy::cacheImageBuffer(RemoteImageBufferProxy& imageBuffer)
@@ -86,13 +89,19 @@ void RemoteResourceCacheProxy::forgetImageBuffer(RenderingResourceIdentifier ide
     ASSERT_UNUSED(success, success);
 }
 
+NativeImage* RemoteResourceCacheProxy::cachedNativeImage(RenderingResourceIdentifier identifier) const
+{
+    auto renderingResource = m_renderingResources.get(identifier);
+    return dynamicDowncast<NativeImage>(renderingResource.get().get());
+}
+
 void RemoteResourceCacheProxy::recordImageBufferUse(WebCore::ImageBuffer& imageBuffer)
 {
     auto iterator = m_imageBuffers.find(imageBuffer.renderingResourceIdentifier());
     ASSERT_UNUSED(iterator, iterator != m_imageBuffers.end());
 }
 
-inline static std::optional<ShareableBitmapHandle> createShareableBitmapFromNativeImage(NativeImage& image)
+inline static std::optional<ShareableBitmap::Handle> createShareableBitmapFromNativeImage(NativeImage& image)
 {
     RefPtr<ShareableBitmap> bitmap;
     PlatformImagePtr platformImage;
@@ -124,12 +133,35 @@ inline static std::optional<ShareableBitmapHandle> createShareableBitmapFromNati
     return handle;
 }
 
+void RemoteResourceCacheProxy::recordDecomposedGlyphsUse(DecomposedGlyphs& decomposedGlyphs)
+{
+    if (m_renderingResources.add(decomposedGlyphs.renderingResourceIdentifier(), decomposedGlyphs).isNewEntry) {
+        decomposedGlyphs.addObserver(*this);
+        m_remoteRenderingBackendProxy.cacheDecomposedGlyphs(decomposedGlyphs);
+    }
+}
+
+void RemoteResourceCacheProxy::recordGradientUse(Gradient& gradient)
+{
+    if (m_renderingResources.add(gradient.renderingResourceIdentifier(), gradient).isNewEntry) {
+        gradient.addObserver(*this);
+        m_remoteRenderingBackendProxy.cacheGradient(gradient);
+    }
+}
+
+void RemoteResourceCacheProxy::recordFilterUse(Filter& filter)
+{
+    if (m_renderingResources.add(filter.renderingResourceIdentifier(), filter).isNewEntry) {
+        filter.addObserver(*this);
+        m_remoteRenderingBackendProxy.cacheFilter(filter);
+    }
+}
+
 void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
 {
     WebProcess::singleton().deferNonVisibleProcessEarlyMemoryCleanupTimer();
 
-    auto iterator = m_nativeImages.find(image.renderingResourceIdentifier());
-    if (iterator != m_nativeImages.end())
+    if (cachedNativeImage(image.renderingResourceIdentifier()))
         return;
 
     auto handle = createShareableBitmapFromNativeImage(image);
@@ -143,14 +175,14 @@ void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
         return;
     }
 
-    m_nativeImages.add(image.renderingResourceIdentifier(), image);
+    m_renderingResources.add(image.renderingResourceIdentifier(), image);
 
     // Set itself as an observer to NativeImage, so releaseNativeImage()
     // gets called when NativeImage is being deleleted.
     image.addObserver(*this);
 
     // Tell the GPU process to cache this resource.
-    m_remoteRenderingBackendProxy.cacheNativeImage(*handle, image.renderingResourceIdentifier());
+    m_remoteRenderingBackendProxy.cacheNativeImage(WTFMove(*handle), image.renderingResourceIdentifier());
 }
 
 void RemoteResourceCacheProxy::recordFontUse(Font& font)
@@ -191,36 +223,30 @@ void RemoteResourceCacheProxy::recordFontCustomPlatformDataUse(const FontCustomP
     }
 }
 
-void RemoteResourceCacheProxy::recordDecomposedGlyphsUse(DecomposedGlyphs& decomposedGlyphs)
-{
-    if (m_decomposedGlyphs.add(decomposedGlyphs.renderingResourceIdentifier(), decomposedGlyphs).isNewEntry) {
-        decomposedGlyphs.addObserver(*this);
-        m_remoteRenderingBackendProxy.cacheDecomposedGlyphs(decomposedGlyphs);
-    }
-}
-
-void RemoteResourceCacheProxy::recordGradientUse(Gradient& gradient)
-{
-    if (m_gradients.add(gradient.renderingResourceIdentifier(), gradient).isNewEntry) {
-        gradient.addObserver(*this);
-        m_remoteRenderingBackendProxy.cacheGradient(gradient);
-    }
-}
-
 void RemoteResourceCacheProxy::releaseRenderingResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    bool removed = m_nativeImages.remove(renderingResourceIdentifier)
-        || m_decomposedGlyphs.remove(renderingResourceIdentifier)
-        || m_gradients.remove(renderingResourceIdentifier);
+    bool removed = m_renderingResources.remove(renderingResourceIdentifier);
     RELEASE_ASSERT(removed);
     m_remoteRenderingBackendProxy.releaseRenderingResource(renderingResourceIdentifier);
 }
 
+void RemoteResourceCacheProxy::clearRenderingResourceMap()
+{
+    for (auto& renderingResource : m_renderingResources.values())
+        renderingResource.get()->removeObserver(*this);
+    m_renderingResources.clear();
+}
+
 void RemoteResourceCacheProxy::clearNativeImageMap()
 {
-    for (auto& nativeImage : m_nativeImages.values())
-        nativeImage.get()->removeObserver(*this);
-    m_nativeImages.clear();
+    m_renderingResources.removeIf([&] (auto& keyValuePair) {
+        if (!is<NativeImage>(keyValuePair.value.get()))
+            return false;
+
+        auto& nativeImage = downcast<NativeImage>(*keyValuePair.value.get());
+        nativeImage.removeObserver(*this);
+        return true;
+    });
 }
 
 void RemoteResourceCacheProxy::prepareForNextRenderingUpdate()
@@ -250,20 +276,6 @@ void RemoteResourceCacheProxy::clearImageBufferBackends()
             continue;
         imageBuffer->clearBackend();
     }
-}
-
-void RemoteResourceCacheProxy::clearDecomposedGlyphsMap()
-{
-    for (auto& decomposedGlyphs : m_decomposedGlyphs.values())
-        decomposedGlyphs.get()->removeObserver(*this);
-    m_decomposedGlyphs.clear();
-}
-
-void RemoteResourceCacheProxy::clearGradientMap()
-{
-    for (auto& gradients : m_gradients.values())
-        gradients.get()->removeObserver(*this);
-    m_gradients.clear();
 }
 
 void RemoteResourceCacheProxy::finalizeRenderingUpdateForFonts()
@@ -314,27 +326,25 @@ void RemoteResourceCacheProxy::didPaintLayers()
 
 void RemoteResourceCacheProxy::remoteResourceCacheWasDestroyed()
 {
-    clearNativeImageMap();
-    clearFontMap();
-    clearFontCustomPlatformDataMap();
     clearImageBufferBackends();
-    clearDecomposedGlyphsMap();
-    clearGradientMap();
 
     for (auto& imageBuffer : m_imageBuffers.values()) {
         if (!imageBuffer)
             continue;
         m_remoteRenderingBackendProxy.createRemoteImageBuffer(*imageBuffer);
     }
+
+    clearRenderingResourceMap();
+    clearFontMap();
+    clearFontCustomPlatformDataMap();
 }
 
 void RemoteResourceCacheProxy::releaseMemory()
 {
-    clearNativeImageMap();
+    clearRenderingResourceMap();
     clearFontMap();
     clearFontCustomPlatformDataMap();
-    clearDecomposedGlyphsMap();
-    clearGradientMap();
+
     m_remoteRenderingBackendProxy.releaseAllRemoteResources();
 }
 

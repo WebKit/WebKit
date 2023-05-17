@@ -94,11 +94,6 @@ public:
     const String& destinationFilename() const { return m_destinationFilename; }
     void setDestinationFilename(const String& d) { m_destinationFilename = d; }
 
-#if USE(SYSTEM_PREVIEW)
-    bool isSystemPreviewDownload() const { return request().isSystemPreview(); }
-    WebCore::SystemPreviewInfo systemPreviewDownloadInfo() const { RELEASE_ASSERT(request().systemPreviewInfo().has_value()); return *request().systemPreviewInfo(); }
-#endif
-
 #if PLATFORM(COCOA)
     void publishProgress(const URL&);
     void setProgress(NSProgress *progress) { m_progress = progress; }

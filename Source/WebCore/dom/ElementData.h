@@ -50,7 +50,6 @@ public:
     AttributeConstIterator& operator++() { ++m_offset; return *this; }
 
     bool operator==(const AttributeConstIterator& other) const { return m_offset == other.m_offset; }
-    bool operator!=(const AttributeConstIterator& other) const { return !(*this == other); }
 
 private:
     const Attribute* m_array;
@@ -189,9 +188,9 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ShareableElementData);
 class ShareableElementData : public ElementData {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ShareableElementData);
 public:
-    static Ref<ShareableElementData> createWithAttributes(Span<const Attribute>);
+    static Ref<ShareableElementData> createWithAttributes(std::span<const Attribute>);
 
-    explicit ShareableElementData(Span<const Attribute>);
+    explicit ShareableElementData(std::span<const Attribute>);
     explicit ShareableElementData(const UniqueElementData&);
     ~ShareableElementData();
 

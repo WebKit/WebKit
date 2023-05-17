@@ -30,17 +30,17 @@
 namespace WGSL::AST {
 
 class BoolLiteral final : public Expression {
-    WTF_MAKE_FAST_ALLOCATED;
+    WGSL_AST_BUILDER_NODE(BoolLiteral);
 public:
+    NodeKind kind() const override;
+    bool value() const { return m_value; }
+
+private:
     BoolLiteral(SourceSpan span, bool value)
         : Expression(span)
         , m_value(value)
     { }
 
-    NodeKind kind() const override;
-    bool value() const { return m_value; }
-
-private:
     bool m_value;
 };
 

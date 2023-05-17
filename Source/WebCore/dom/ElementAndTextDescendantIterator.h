@@ -47,7 +47,6 @@ public:
     const Node* operator->() const;
 
     bool operator==(const ElementAndTextDescendantIterator& other) const;
-    bool operator!=(const ElementAndTextDescendantIterator& other) const;
 
     bool operator!() const { return !m_depth; }
     explicit operator bool() const { return m_depth; }
@@ -287,11 +286,6 @@ inline bool ElementAndTextDescendantIterator::operator==(const ElementAndTextDes
 {
     ASSERT(!m_assertions.domTreeHasMutated());
     return m_current == other.m_current || (!m_depth && !other.m_depth);
-}
-
-inline bool ElementAndTextDescendantIterator::operator!=(const ElementAndTextDescendantIterator& other) const
-{
-    return !(*this == other);
 }
 
 // ElementAndTextDescendantRange
