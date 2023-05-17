@@ -94,17 +94,22 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
     CVReturn status1 = CVMetalTextureCacheCreateTextureFromImage(nullptr, m_coreVideoTextureCache.get(), pixelBuffer, nullptr, MTLPixelFormatR8Unorm, CVPixelBufferGetWidthOfPlane(pixelBuffer, 0), CVPixelBufferGetHeightOfPlane(pixelBuffer, 0), 0, &plane0);
     CVReturn status2 = CVMetalTextureCacheCreateTextureFromImage(nullptr, m_coreVideoTextureCache.get(), pixelBuffer, nullptr, MTLPixelFormatRG8Unorm, CVPixelBufferGetWidthOfPlane(pixelBuffer, 1), CVPixelBufferGetHeightOfPlane(pixelBuffer, 1), 1, &plane1);
 
-    Boolean isFlipped = false;
+    float lowerLeft[2];
+    float lowerRight[2];
+    float upperRight[2];
+    float upperLeft[2];
 
     if (status1 == kCVReturnSuccess) {
         mtlTexture0 = CVMetalTextureGetTexture(plane0);
-        isFlipped = CVMetalTextureIsFlipped(plane0);
+        CVMetalTextureGetCleanTexCoords(plane0, lowerLeft, lowerRight, upperRight, upperLeft);
+    } else {
+        if (plane1)
+            CFRelease(plane1);
+        return { };
     }
 
-    if (status2 == kCVReturnSuccess) {
+    if (status2 == kCVReturnSuccess)
         mtlTexture1 = CVMetalTextureGetTexture(plane1);
-        ASSERT(isFlipped == CVMetalTextureIsFlipped(plane1));
-    }
 
     m_defaultQueue->onSubmittedWorkDone([plane0, plane1](WGPUQueueWorkDoneStatus) {
         if (plane0)
@@ -114,11 +119,11 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
             CFRelease(plane1);
     });
 
-    simd::float3x2 uvRemappingMatrix;
-    if (isFlipped)
-        uvRemappingMatrix = simd::make_float2(1.f, 1.f);
-    else
-        uvRemappingMatrix = simd::float3x2(simd::make_float2(1.f, 0.f), simd::make_float2(0.f, -1.f), simd::make_float2(0.f, 1.f));
+    float Ax = 1.f / (upperRight[0] - lowerLeft[0]);
+    float Bx = -Ax * lowerLeft[0];
+    float Ay = 1.f / (upperLeft[1] - lowerRight[1]);
+    float By = -Ay * lowerRight[1];
+    simd::float3x2 uvRemappingMatrix = simd::float3x2(simd::make_float2(Ax, 0.f), simd::make_float2(0.f, Ay), simd::make_float2(Bx, By));
     simd::float4x3 colorSpaceConversionMatrix = colorSpaceConversionMatrixForPixelBuffer(pixelBuffer);
 
     return { mtlTexture0, mtlTexture1, uvRemappingMatrix, colorSpaceConversionMatrix };
