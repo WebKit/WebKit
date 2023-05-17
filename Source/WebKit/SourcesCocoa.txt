@@ -672,7 +672,7 @@ WebProcess/WebCoreSupport/WebValidationMessageClient.cpp
 
 WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm
 WebProcess/WebCoreSupport/ios/WebEditorClientIOS.mm
-WebProcess/WebCoreSupport/ios/WebFrameLoaderClientIOS.mm
+WebProcess/WebCoreSupport/ios/WebLocalFrameLoaderClientIOS.mm
 WebProcess/WebCoreSupport/ios/WebPreviewLoaderClient.cpp
 
 WebProcess/WebCoreSupport/mac/WebAlternativeTextClient.cpp

@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/FrameLoaderClient.h>
+#import <WebCore/LocalFrameLoaderClient.h>
 #import <WebCore/Timer.h>
 #import <wtf/Forward.h>
 #import <wtf/HashMap.h>
@@ -57,7 +57,7 @@ class ResourceRequest;
 class SharedBuffer;
 }
 
-class WebFrameLoaderClient : public WebCore::FrameLoaderClient, public CanMakeWeakPtr<WebFrameLoaderClient> {
+class WebFrameLoaderClient : public WebCore::LocalFrameLoaderClient, public CanMakeWeakPtr<WebFrameLoaderClient> {
 public:
     explicit WebFrameLoaderClient(WebFrame* = nullptr);
     ~WebFrameLoaderClient();

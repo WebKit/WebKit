@@ -37,7 +37,7 @@
 #include "WebDocumentLoader.h"
 #include "WebErrors.h"
 #include "WebFrame.h"
-#include "WebFrameLoaderClient.h"
+#include "WebLocalFrameLoaderClient.h"
 #include "WebPage.h"
 #include "WebPageInlines.h"
 #include "WebPageProxyMessages.h"
@@ -184,7 +184,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     auto& frameLoaderClient = frameLoader->client();
 
     WebResourceLoader::TrackingParameters trackingParameters;
-    if (auto* webFrameLoaderClient = toWebFrameLoaderClient(frameLoaderClient))
+    if (auto* webFrameLoaderClient = toWebLocalFrameLoaderClient(frameLoaderClient))
         trackingParameters.webPageProxyID = valueOrDefault(webFrameLoaderClient->webPageProxyID());
     else if (is<RemoteWorkerFrameLoaderClient>(frameLoaderClient))
         trackingParameters.webPageProxyID = downcast<RemoteWorkerFrameLoaderClient>(frameLoaderClient).webPageProxyID();
@@ -263,7 +263,7 @@ bool WebLoaderStrategy::tryLoadingUsingURLSchemeHandler(ResourceLoader& resource
     RefPtr<WebPage> webPage;
     RefPtr<WebFrame> webFrame;
 
-    if (auto* webFrameLoaderClient = toWebFrameLoaderClient(resourceLoader.frameLoader()->client())) {
+    if (auto* webFrameLoaderClient = toWebLocalFrameLoaderClient(resourceLoader.frameLoader()->client())) {
         webFrame = &webFrameLoaderClient->webFrame();
         webPage = webFrame->page();
     } else if (auto* workerFrameLoaderClient = dynamicDowncast<RemoteWorkerFrameLoaderClient>(resourceLoader.frameLoader()->client())) {
@@ -313,7 +313,7 @@ static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadPara
         return;
 
     // When loading the main frame, we need to get allowPrivacyProxy from the same DocumentLoader that
-    // WebFrameLoaderClient::applyToDocumentLoader stored the value on. Otherwise, we need to get the
+    // WebLocalFrameLoaderClient::applyToDocumentLoader stored the value on. Otherwise, we need to get the
     // value from the main frame's current DocumentLoader.
 
     auto* localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame());
@@ -428,7 +428,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         loadParameters.crossOriginEmbedderPolicy = *resourceLoader.options().crossOriginEmbedderPolicy;
     
 #if ENABLE(APP_BOUND_DOMAINS) || ENABLE(CONTENT_EXTENSIONS)
-    auto* webFrameLoaderClient = frame ? toWebFrameLoaderClient(frame->loader().client()) : nullptr;
+    auto* webFrameLoaderClient = frame ? toWebLocalFrameLoaderClient(frame->loader().client()) : nullptr;
     auto* webFrame = webFrameLoaderClient ? &webFrameLoaderClient->webFrame() : nullptr;
 #endif
 
@@ -671,7 +671,7 @@ WebLoaderStrategy::SyncLoadResult WebLoaderStrategy::loadDataURLSynchronously(co
 
 std::optional<WebLoaderStrategy::SyncLoadResult> WebLoaderStrategy::tryLoadingSynchronouslyUsingURLSchemeHandler(FrameLoader& frameLoader, WebCore::ResourceLoaderIdentifier identifier, const ResourceRequest& request)
 {
-    auto* webFrameLoaderClient = toWebFrameLoaderClient(frameLoader.client());
+    auto* webFrameLoaderClient = toWebLocalFrameLoaderClient(frameLoader.client());
     auto* webFrame = webFrameLoaderClient ? &webFrameLoaderClient->webFrame() : nullptr;
     auto* webPage = webFrame ? webFrame->page() : nullptr;
     if (!webPage)
@@ -691,7 +691,7 @@ std::optional<WebLoaderStrategy::SyncLoadResult> WebLoaderStrategy::tryLoadingSy
 
 void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, WebCore::ResourceLoaderIdentifier resourceLoadIdentifier, const ResourceRequest& request, ClientCredentialPolicy clientCredentialPolicy,  const FetchOptions& options, const HTTPHeaderMap& originalRequestHeaders, ResourceError& error, ResourceResponse& response, Vector<uint8_t>& data)
 {
-    auto* webFrameLoaderClient = toWebFrameLoaderClient(frameLoader.client());
+    auto* webFrameLoaderClient = toWebLocalFrameLoaderClient(frameLoader.client());
     auto* webFrame = webFrameLoaderClient ? &webFrameLoaderClient->webFrame() : nullptr;
     auto* webPage = webFrame ? webFrame->page() : nullptr;
     auto* page = webPage ? webPage->corePage() : nullptr;
@@ -862,7 +862,7 @@ void WebLoaderStrategy::didFinishPingLoad(WebCore::ResourceLoaderIdentifier ping
 
 void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const URL& url, StoredCredentialsPolicy storedCredentialsPolicy, ShouldPreconnectAsFirstParty shouldPreconnectAsFirstParty, PreconnectCompletionHandler&& completionHandler)
 {
-    auto* webFrameLoaderClient = toWebFrameLoaderClient(frameLoader.client());
+    auto* webFrameLoaderClient = toWebLocalFrameLoaderClient(frameLoader.client());
     if (!webFrameLoaderClient) {
         if (completionHandler)
             completionHandler(internalError(url));

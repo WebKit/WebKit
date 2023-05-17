@@ -47,12 +47,12 @@ WebFrameNetworkingContext::WebFrameNetworkingContext(WebFrame* frame)
 {
 }
 
-WebFrameLoaderClient* WebFrameNetworkingContext::webFrameLoaderClient() const
+WebLocalFrameLoaderClient* WebFrameNetworkingContext::webFrameLoaderClient() const
 {
     if (!frame())
         return nullptr;
 
-    return toWebFrameLoaderClient(frame()->loader().client());
+    return toWebLocalFrameLoaderClient(frame()->loader().client());
 }
 
 #if PLATFORM(WIN)

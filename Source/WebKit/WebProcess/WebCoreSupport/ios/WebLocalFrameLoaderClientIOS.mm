@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WebFrameLoaderClient.h"
+#import "WebLocalFrameLoaderClient.h"
 
 #import "WebFrame.h"
 #import "WebPage.h"
@@ -48,24 +48,24 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebFrameLoaderClient::didRestoreFrameHierarchyForCachedFrame()
+void WebLocalFrameLoaderClient::didRestoreFrameHierarchyForCachedFrame()
 {
     notImplemented();
 }
 
-bool WebFrameLoaderClient::forceLayoutOnRestoreFromBackForwardCache()
+bool WebLocalFrameLoaderClient::forceLayoutOnRestoreFromBackForwardCache()
 {
     return false;
 }
 
-RetainPtr<CFDictionaryRef> WebFrameLoaderClient::connectionProperties(DocumentLoader*, WebCore::ResourceLoaderIdentifier)
+RetainPtr<CFDictionaryRef> WebLocalFrameLoaderClient::connectionProperties(DocumentLoader*, WebCore::ResourceLoaderIdentifier)
 {
     notImplemented();
     return nullptr;
 }
 
 #if USE(QUICK_LOOK)
-RefPtr<LegacyPreviewLoaderClient> WebFrameLoaderClient::createPreviewLoaderClient(const String& fileName, const String& uti)
+RefPtr<LegacyPreviewLoaderClient> WebLocalFrameLoaderClient::createPreviewLoaderClient(const String& fileName, const String& uti)
 {
     if (!m_frame->isMainFrame())
         return nullptr;

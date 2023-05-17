@@ -54,7 +54,6 @@
 #include "FocusController.h"
 #include "FrameDestructionObserver.h"
 #include "FrameLoader.h"
-#include "FrameLoaderClient.h"
 #include "FrameSelection.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
@@ -70,6 +69,7 @@
 #include "JSNode.h"
 #include "JSWindowProxy.h"
 #include "LocalDOMWindow.h"
+#include "LocalFrameLoaderClient.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "Navigator.h"
@@ -148,7 +148,7 @@ static inline float parentTextZoomFactor(LocalFrame* frame)
     return parent->textZoomFactor();
 }
 
-LocalFrame::LocalFrame(Page& page, UniqueRef<FrameLoaderClient>&& frameLoaderClient, FrameIdentifier identifier, HTMLFrameOwnerElement* ownerElement, Frame* parent)
+LocalFrame::LocalFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& frameLoaderClient, FrameIdentifier identifier, HTMLFrameOwnerElement* ownerElement, Frame* parent)
     : Frame(page, identifier, FrameType::Local, ownerElement, parent)
     , m_loader(makeUniqueRef<FrameLoader>(*this, WTFMove(frameLoaderClient)))
     , m_script(makeUniqueRef<ScriptController>(*this))
@@ -179,17 +179,17 @@ void LocalFrame::init()
     m_loader->init();
 }
 
-Ref<LocalFrame> LocalFrame::createMainFrame(Page& page, UniqueRef<FrameLoaderClient>&& client, FrameIdentifier identifier)
+Ref<LocalFrame> LocalFrame::createMainFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& client, FrameIdentifier identifier)
 {
     return adoptRef(*new LocalFrame(page, WTFMove(client), identifier, nullptr, nullptr));
 }
 
-Ref<LocalFrame> LocalFrame::createSubframe(Page& page, UniqueRef<FrameLoaderClient>&& client, FrameIdentifier identifier, HTMLFrameOwnerElement& ownerElement)
+Ref<LocalFrame> LocalFrame::createSubframe(Page& page, UniqueRef<LocalFrameLoaderClient>&& client, FrameIdentifier identifier, HTMLFrameOwnerElement& ownerElement)
 {
     return adoptRef(*new LocalFrame(page, WTFMove(client), identifier, &ownerElement, ownerElement.document().frame()));
 }
 
-Ref<LocalFrame> LocalFrame::createSubframeHostedInAnotherProcess(Page& page, UniqueRef<FrameLoaderClient>&& client, FrameIdentifier identifier, Frame& parent)
+Ref<LocalFrame> LocalFrame::createSubframeHostedInAnotherProcess(Page& page, UniqueRef<LocalFrameLoaderClient>&& client, FrameIdentifier identifier, Frame& parent)
 {
     return adoptRef(*new LocalFrame(page, WTFMove(client), identifier, nullptr, &parent));
 }

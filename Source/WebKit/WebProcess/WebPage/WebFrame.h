@@ -32,13 +32,13 @@
 #include "ShareableBitmap.h"
 #include "TransactionID.h"
 #include "WKBase.h"
-#include "WebFrameLoaderClient.h"
+#include "WebLocalFrameLoaderClient.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/JSBase.h>
-#include <WebCore/FrameLoaderClient.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/HitTestRequest.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
+#include <WebCore/LocalFrameLoaderClient.h>
 #include <WebCore/NetworkConnectionIntegrity.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/Forward.h>
@@ -213,7 +213,7 @@ public:
     void setFirstLayerTreeTransactionIDAfterDidCommitLoad(TransactionID transactionID) { m_firstLayerTreeTransactionIDAfterDidCommitLoad = transactionID; }
 #endif
 
-    WebFrameLoaderClient* frameLoaderClient() const;
+    WebLocalFrameLoaderClient* frameLoaderClient() const;
 
 #if ENABLE(APP_BOUND_DOMAINS)
     bool shouldEnableInAppBrowserPrivacyProtections();

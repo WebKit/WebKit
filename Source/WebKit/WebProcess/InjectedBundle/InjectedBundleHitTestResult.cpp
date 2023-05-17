@@ -28,8 +28,8 @@
 
 #include "InjectedBundleNodeHandle.h"
 #include "WebFrame.h"
-#include "WebFrameLoaderClient.h"
 #include "WebImage.h"
+#include "WebLocalFrameLoaderClient.h"
 #include <WebCore/BitmapImage.h>
 #include <WebCore/Document.h>
 #include <WebCore/Element.h>

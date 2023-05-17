@@ -37,12 +37,12 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "FrameLoader.h"
-#include "FrameLoaderClient.h"
 #include "FrameLoaderStateMachine.h"
 #include "FrameTree.h"
 #include "HTMLObjectElement.h"
 #include "HistoryItem.h"
 #include "LocalFrame.h"
+#include "LocalFrameLoaderClient.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "Page.h"
@@ -155,7 +155,7 @@ void FrameLoader::HistoryController::restoreScrollPositionAndViewState()
     m_frame.loader().client().restoreViewState();
 
 #if !PLATFORM(IOS_FAMILY)
-    // Don't restore scroll point on iOS as FrameLoaderClient::restoreViewState() does that.
+    // Don't restore scroll point on iOS as LocalFrameLoaderClient::restoreViewState() does that.
     if (view && !view->wasScrolledByUser()) {
         view->scrollToFocusedElementImmediatelyIfNeeded();
 

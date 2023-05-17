@@ -68,7 +68,6 @@
 #include "FocusController.h"
 #include "FontCache.h"
 #include "FrameLoader.h"
-#include "FrameLoaderClient.h"
 #include "FrameSelection.h"
 #include "FrameTree.h"
 #include "FullscreenManager.h"
@@ -90,6 +89,7 @@
 #include "LayoutDisallowedScope.h"
 #include "LegacySchemeRegistry.h"
 #include "LoaderStrategy.h"
+#include "LocalFrameLoaderClient.h"
 #include "LocalFrameView.h"
 #include "LogInitialization.h"
 #include "Logging.h"
@@ -266,9 +266,9 @@ static constexpr OptionSet<ActivityState> pageInitialActivityState()
     return { ActivityState::IsVisible, ActivityState::IsInWindow };
 }
 
-static Ref<Frame> createMainFrame(Page& page, std::variant<UniqueRef<FrameLoaderClient>, PageConfiguration::RemoteMainFrameCreationParameters>&& frameCreationParameter, FrameIdentifier identifier)
+static Ref<Frame> createMainFrame(Page& page, std::variant<UniqueRef<LocalFrameLoaderClient>, PageConfiguration::RemoteMainFrameCreationParameters>&& frameCreationParameter, FrameIdentifier identifier)
 {
-    return switchOn(WTFMove(frameCreationParameter), [&] (UniqueRef<FrameLoaderClient>&& localFrameClient) -> Ref<Frame> {
+    return switchOn(WTFMove(frameCreationParameter), [&] (UniqueRef<LocalFrameLoaderClient>&& localFrameClient) -> Ref<Frame> {
         auto localFrame = LocalFrame::createMainFrame(page, WTFMove(localFrameClient), identifier);
         page.addRootFrame(localFrame.get());
         return localFrame;

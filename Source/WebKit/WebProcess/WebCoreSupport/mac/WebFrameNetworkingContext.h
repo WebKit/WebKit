@@ -42,7 +42,7 @@ public:
     // FIXME: remove platform-specific code.
     static void ensureWebsiteDataStoreSession(const WebsiteDataStoreParameters&);
 
-    WebFrameLoaderClient* webFrameLoaderClient() const;
+    WebLocalFrameLoaderClient* webFrameLoaderClient() const;
 
 private:
     WebFrameNetworkingContext(WebFrame* frame)

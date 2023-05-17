@@ -50,12 +50,12 @@
 #include <WebCore/FocusController.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoader.h>
-#include <WebCore/FrameLoaderClient.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/HostWindow.h>
 #include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameLoaderClient.h>
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MouseEvent.h>

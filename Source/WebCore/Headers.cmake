@@ -1183,7 +1183,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/FormSubmission.h
     loader/FrameLoadRequest.h
     loader/FrameLoader.h
-    loader/FrameLoaderClient.h
     loader/FrameLoaderStateMachine.h
     loader/FrameLoaderTypes.h
     loader/FrameNetworkingContext.h
@@ -1195,6 +1194,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/LinkLoaderClient.h
     loader/LoadSchedulingMode.h
     loader/LoaderStrategy.h
+    loader/LocalFrameLoaderClient.h
     loader/MediaResourceLoader.h
     loader/MixedContentChecker.h
     loader/NavigationAction.h

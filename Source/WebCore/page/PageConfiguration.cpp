@@ -40,8 +40,8 @@
 #include "DiagnosticLoggingClient.h"
 #include "DragClient.h"
 #include "EditorClient.h"
-#include "FrameLoaderClient.h"
 #include "InspectorClient.h"
+#include "LocalFrameLoaderClient.h"
 #include "MediaRecorderProvider.h"
 #include "ModelPlayerProvider.h"
 #include "PerformanceLoggingClient.h"
@@ -82,7 +82,7 @@ PageConfiguration::PageConfiguration(
     Ref<BackForwardClient>&& backForwardClient,
     Ref<CookieJar>&& cookieJar,
     UniqueRef<ProgressTrackerClient>&& progressTrackerClient,
-    std::variant<UniqueRef<FrameLoaderClient>, RemoteMainFrameCreationParameters>&& clientForMainFrame,
+    std::variant<UniqueRef<LocalFrameLoaderClient>, RemoteMainFrameCreationParameters>&& clientForMainFrame,
     FrameIdentifier mainFrameIdentifier,
     UniqueRef<SpeechRecognitionProvider>&& speechRecognitionProvider,
     UniqueRef<MediaRecorderProvider>&& mediaRecorderProvider,

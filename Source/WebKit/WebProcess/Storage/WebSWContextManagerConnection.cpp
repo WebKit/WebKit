@@ -45,7 +45,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseProvider.h"
 #include "WebDocumentLoader.h"
-#include "WebFrameLoaderClient.h"
+#include "WebLocalFrameLoaderClient.h"
 #include "WebMessagePortChannelProvider.h"
 #include "WebNotificationClient.h"
 #include "WebPage.h"
@@ -176,7 +176,7 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
         auto loaderClientForMainFrame = makeUniqueRef<RemoteWorkerFrameLoaderClient>(m_webPageProxyID, m_pageID, effectiveUserAgent);
         if (contextData.serviceWorkerPageIdentifier)
             loaderClientForMainFrame->setServiceWorkerPageIdentifier(*contextData.serviceWorkerPageIdentifier);
-        pageConfiguration.clientForMainFrame = UniqueRef<WebCore::FrameLoaderClient>(WTFMove(loaderClientForMainFrame));
+        pageConfiguration.clientForMainFrame = UniqueRef<WebCore::LocalFrameLoaderClient>(WTFMove(loaderClientForMainFrame));
 
 #if !RELEASE_LOG_DISABLED
         auto serviceWorkerIdentifier = contextData.serviceWorkerIdentifier;

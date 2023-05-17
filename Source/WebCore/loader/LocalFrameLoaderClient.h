@@ -109,7 +109,7 @@ struct StringWithDirection;
 
 typedef Function<void (PolicyAction, PolicyCheckIdentifier)> FramePolicyFunction;
 
-class WEBCORE_EXPORT FrameLoaderClient {
+class WEBCORE_EXPORT LocalFrameLoaderClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     // An inline function cannot be the first non-abstract virtual function declared
@@ -118,7 +118,7 @@ public:
     // don't want to do it in WebKit.
     virtual bool hasHTMLView() const;
 
-    virtual ~FrameLoaderClient() = default;
+    virtual ~LocalFrameLoaderClient() = default;
 
     virtual bool hasWebView() const = 0; // mainly for assertions
 

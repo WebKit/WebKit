@@ -28,7 +28,7 @@
 
 #include "InjectedBundleScriptWorld.h"
 #include "WebFrame.h"
-#include "WebFrameLoaderClient.h"
+#include "WebLocalFrameLoaderClient.h"
 #include <WebCore/DOMWindowExtension.h>
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/FrameLoader.h>

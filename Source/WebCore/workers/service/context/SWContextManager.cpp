@@ -27,7 +27,7 @@
 #include "SWContextManager.h"
 
 #if ENABLE(SERVICE_WORKER)
-#include "FrameLoaderClient.h"
+#include "LocalFrameLoaderClient.h"
 #include "Logging.h"
 #include "MessageWithMessagePorts.h"
 #include "ServiceWorkerGlobalScope.h"

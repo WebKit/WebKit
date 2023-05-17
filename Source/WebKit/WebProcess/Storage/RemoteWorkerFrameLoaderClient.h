@@ -58,5 +58,5 @@ private:
 } // namespace WebKit
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::RemoteWorkerFrameLoaderClient)
-    static bool isType(const WebCore::FrameLoaderClient& frameLoaderClient) { return frameLoaderClient.isRemoteWorkerFrameLoaderClient(); }
+    static bool isType(const WebCore::LocalFrameLoaderClient& frameLoaderClient) { return frameLoaderClient.isRemoteWorkerFrameLoaderClient(); }
 SPECIALIZE_TYPE_TRAITS_END()

@@ -92,7 +92,6 @@
 #import <WebCore/FocusController.h>
 #import <WebCore/FontCache.h>
 #import <WebCore/FontCacheCoreText.h>
-#import <WebCore/FrameLoaderClient.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/HTMLAreaElement.h>
 #import <WebCore/HTMLAttachmentElement.h>
@@ -119,6 +118,7 @@
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LibWebRTCProvider.h>
 #import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameLoaderClient.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/MediaSessionManagerIOS.h>
 #import <WebCore/Node.h>

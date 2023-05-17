@@ -36,9 +36,9 @@
 #include "WebProcess.h"
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
-#include <WebCore/FrameLoaderClient.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/LocalFrame.h>
+#include <WebCore/LocalFrameLoaderClient.h>
 #include <WebCore/Page.h>
 
 namespace WebKit {

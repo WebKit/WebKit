@@ -28,7 +28,7 @@
 #include "SameDocumentNavigationType.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/FrameIdentifier.h>
-#include <WebCore/FrameLoaderClient.h>
+#include <WebCore/LocalFrameLoaderClient.h>
 #include <pal/SessionID.h>
 #include <wtf/Scope.h>
 
@@ -38,10 +38,10 @@ class PluginView;
 class WebFrame;
 struct WebsitePoliciesData;
     
-class WebFrameLoaderClient final : public WebCore::FrameLoaderClient {
+class WebLocalFrameLoaderClient final : public WebCore::LocalFrameLoaderClient {
 public:
-    explicit WebFrameLoaderClient(Ref<WebFrame>&&, ScopeExit<Function<void()>>&&);
-    ~WebFrameLoaderClient();
+    explicit WebLocalFrameLoaderClient(Ref<WebFrame>&&, ScopeExit<Function<void()>>&&);
+    ~WebLocalFrameLoaderClient();
 
     WebFrame& webFrame() const { return m_frame.get(); }
 
@@ -309,14 +309,14 @@ private:
 };
 
 // As long as EmptyFrameLoaderClient exists in WebCore, this can return nullptr.
-inline WebFrameLoaderClient* toWebFrameLoaderClient(WebCore::FrameLoaderClient& client)
+inline WebLocalFrameLoaderClient* toWebLocalFrameLoaderClient(WebCore::LocalFrameLoaderClient& client)
 {
-    return client.isEmptyFrameLoaderClient() ? nullptr : static_cast<WebFrameLoaderClient*>(&client);
+    return client.isEmptyFrameLoaderClient() ? nullptr : static_cast<WebLocalFrameLoaderClient*>(&client);
 }
 
-inline const WebFrameLoaderClient* toWebFrameLoaderClient(const WebCore::FrameLoaderClient& client)
+inline const WebLocalFrameLoaderClient* toWebLocalFrameLoaderClient(const WebCore::LocalFrameLoaderClient& client)
 {
-    return client.isEmptyFrameLoaderClient() ? nullptr : static_cast<const WebFrameLoaderClient*>(&client);
+    return client.isEmptyFrameLoaderClient() ? nullptr : static_cast<const WebLocalFrameLoaderClient*>(&client);
 }
 
 } // namespace WebKit

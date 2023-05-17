@@ -30,7 +30,7 @@
 #import "ResourceLoader.h"
 
 #import "FrameLoader.h"
-#import "FrameLoaderClient.h"
+#import "LocalFrameLoaderClient.h"
 #import <wtf/CompletionHandler.h>
 
 namespace WebCore {

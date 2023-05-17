@@ -269,7 +269,7 @@ WebFrame *kit(WebCore::LocalFrame* frame)
     if (!frame)
         return nil;
 
-    WebCore::FrameLoaderClient& frameLoaderClient = frame->loader().client();
+    auto& frameLoaderClient = frame->loader().client();
     if (frameLoaderClient.isEmptyFrameLoaderClient())
         return nil;
 

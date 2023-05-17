@@ -76,7 +76,6 @@ class EventHandler;
 class FloatSize;
 class FrameDestructionObserver;
 class FrameLoader;
-class FrameLoaderClient;
 class FrameSelection;
 class HTMLFrameOwnerElement;
 class HTMLTableCellElement;
@@ -85,6 +84,7 @@ class ImageBuffer;
 class IntPoint;
 class IntRect;
 class IntSize;
+class LocalFrameLoaderClient;
 class LocalFrameView;
 class Node;
 class Page;
@@ -113,9 +113,9 @@ using NodeQualifier = Function<Node* (const HitTestResult&, Node* terminationNod
 
 class LocalFrame final : public Frame {
 public:
-    WEBCORE_EXPORT static Ref<LocalFrame> createMainFrame(Page&, UniqueRef<FrameLoaderClient>&&, FrameIdentifier);
-    WEBCORE_EXPORT static Ref<LocalFrame> createSubframe(Page&, UniqueRef<FrameLoaderClient>&&, FrameIdentifier, HTMLFrameOwnerElement&);
-    WEBCORE_EXPORT static Ref<LocalFrame> createSubframeHostedInAnotherProcess(Page&, UniqueRef<FrameLoaderClient>&&, FrameIdentifier, Frame& parent);
+    WEBCORE_EXPORT static Ref<LocalFrame> createMainFrame(Page&, UniqueRef<LocalFrameLoaderClient>&&, FrameIdentifier);
+    WEBCORE_EXPORT static Ref<LocalFrame> createSubframe(Page&, UniqueRef<LocalFrameLoaderClient>&&, FrameIdentifier, HTMLFrameOwnerElement&);
+    WEBCORE_EXPORT static Ref<LocalFrame> createSubframeHostedInAnotherProcess(Page&, UniqueRef<LocalFrameLoaderClient>&&, FrameIdentifier, Frame& parent);
 
     WEBCORE_EXPORT void init();
 #if PLATFORM(IOS_FAMILY)
@@ -288,7 +288,7 @@ public:
 private:
     friend class NavigationDisabler;
 
-    LocalFrame(Page&, UniqueRef<FrameLoaderClient>&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame* parent);
+    LocalFrame(Page&, UniqueRef<LocalFrameLoaderClient>&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame* parent);
 
     void dropChildren();
 

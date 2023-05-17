@@ -47,7 +47,6 @@
 #import <WebCore/Editor.h>
 #import <WebCore/ElementInlines.h>
 #import <WebCore/FrameLoader.h>
-#import <WebCore/FrameLoaderClient.h>
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/HTMLFormControlElement.h>
 #import <WebCore/HTMLFormElement.h>
@@ -55,6 +54,7 @@
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HTMLTableCellElement.h>
 #import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameLoaderClient.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/NodeTraversal.h>
 #import <WebCore/Range.h>

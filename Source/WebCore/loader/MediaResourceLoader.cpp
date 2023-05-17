@@ -36,8 +36,8 @@
 #include "Document.h"
 #include "Element.h"
 #include "FrameDestructionObserverInlines.h"
-#include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
+#include "LocalFrameLoaderClient.h"
 #include "SecurityOrigin.h"
 #include <wtf/NeverDestroyed.h>
 

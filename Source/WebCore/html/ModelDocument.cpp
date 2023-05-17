@@ -32,7 +32,6 @@
 #include "DocumentLoader.h"
 #include "EventNames.h"
 #include "FrameLoader.h"
-#include "FrameLoaderClient.h"
 #include "HTMLBodyElement.h"
 #include "HTMLHeadElement.h"
 #include "HTMLHtmlElement.h"
@@ -41,6 +40,7 @@
 #include "HTMLNames.h"
 #include "HTMLSourceElement.h"
 #include "HTMLStyleElement.h"
+#include "LocalFrameLoaderClient.h"
 #include "RawDataDocumentParser.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringBuilder.h>

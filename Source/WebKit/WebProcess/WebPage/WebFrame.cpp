@@ -131,7 +131,7 @@ Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const At
     auto frameID = WebCore::FrameIdentifier::generate();
     auto frame = create(page, frameID);
     ASSERT(page.corePage());
-    auto coreFrame = LocalFrame::createSubframe(*page.corePage(), makeUniqueRef<WebFrameLoaderClient>(frame.get(), frame->makeInvalidator()), frameID, ownerElement);
+    auto coreFrame = LocalFrame::createSubframe(*page.corePage(), makeUniqueRef<WebLocalFrameLoaderClient>(frame.get(), frame->makeInvalidator()), frameID, ownerElement);
     frame->m_coreFrame = coreFrame.get();
 
     page.send(Messages::WebPageProxy::DidCreateSubframe(parent.frameID(), coreFrame->frameID()));
@@ -167,10 +167,10 @@ WebFrame::WebFrame(WebPage& page, WebCore::FrameIdentifier frameID)
     WebProcess::singleton().addWebFrame(m_frameID, this);
 }
 
-WebFrameLoaderClient* WebFrame::frameLoaderClient() const
+WebLocalFrameLoaderClient* WebFrame::frameLoaderClient() const
 {
     auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
-    return localFrame ? static_cast<WebFrameLoaderClient*>(&localFrame->loader().client()) : nullptr;
+    return localFrame ? static_cast<WebLocalFrameLoaderClient*>(&localFrame->loader().client()) : nullptr;
 }
 
 WebFrame::~WebFrame()
@@ -200,10 +200,10 @@ WebPage* WebFrame::page() const
 WebFrame* WebFrame::fromCoreFrame(const Frame& frame)
 {
     if (auto* localFrame = dynamicDowncast<LocalFrame>(frame)) {
-        auto* webFrameLoaderClient = toWebFrameLoaderClient(localFrame->loader().client());
-        if (!webFrameLoaderClient)
+        auto* webLocalFrameLoaderClient = toWebLocalFrameLoaderClient(localFrame->loader().client());
+        if (!webLocalFrameLoaderClient)
             return nullptr;
-        return &webFrameLoaderClient->webFrame();
+        return &webLocalFrameLoaderClient->webFrame();
     }
     if (auto* remoteFrame = dynamicDowncast<RemoteFrame>(frame)) {
         auto& client = static_cast<const WebRemoteFrameClient&>(remoteFrame->client());
@@ -413,7 +413,7 @@ void WebFrame::transitionToLocal(WebCore::LayerHostingContextIdentifier layerHos
     remoteFrame->disconnectOwnerElement();
     auto invalidator = static_cast<WebRemoteFrameClient&>(remoteFrame->client()).takeFrameInvalidator();
 
-    auto localFrame = LocalFrame::createSubframeHostedInAnotherProcess(*corePage, makeUniqueRef<WebFrameLoaderClient>(*this, WTFMove(invalidator)), m_frameID, *parent);
+    auto localFrame = LocalFrame::createSubframeHostedInAnotherProcess(*corePage, makeUniqueRef<WebLocalFrameLoaderClient>(*this, WTFMove(invalidator)), m_frameID, *parent);
     m_coreFrame = localFrame.ptr();
     localFrame->init();
 

@@ -100,7 +100,6 @@
 #include "WebFoundTextRange.h"
 #include "WebFoundTextRangeController.h"
 #include "WebFrame.h"
-#include "WebFrameLoaderClient.h"
 #include "WebFullScreenManager.h"
 #include "WebFullScreenManagerMessages.h"
 #include "WebGamepadProvider.h"
@@ -113,6 +112,7 @@
 #include "WebInspectorUIMessages.h"
 #include "WebKeyboardEvent.h"
 #include "WebLoaderStrategy.h"
+#include "WebLocalFrameLoaderClient.h"
 #include "WebMediaKeyStorageManager.h"
 #include "WebMediaKeySystemClient.h"
 #include "WebMediaStrategy.h"
@@ -500,11 +500,11 @@ static Vector<UserContentURLPattern> parseAndAllowAccessToCORSDisablingPatterns(
     return parsedPatterns;
 }
 
-static std::variant<UniqueRef<FrameLoaderClient>, PageConfiguration::RemoteMainFrameCreationParameters> clientForMainFrame(Ref<WebFrame>&& mainFrame, std::optional<WebCore::ProcessIdentifier> remoteProcessIdentifier)
+static std::variant<UniqueRef<LocalFrameLoaderClient>, PageConfiguration::RemoteMainFrameCreationParameters> clientForMainFrame(Ref<WebFrame>&& mainFrame, std::optional<WebCore::ProcessIdentifier> remoteProcessIdentifier)
 {
     auto invalidator = mainFrame->makeInvalidator();
     if (!remoteProcessIdentifier)
-        return UniqueRef<WebCore::FrameLoaderClient>(makeUniqueRef<WebFrameLoaderClient>(WTFMove(mainFrame), WTFMove(invalidator)));
+        return UniqueRef<WebCore::LocalFrameLoaderClient>(makeUniqueRef<WebLocalFrameLoaderClient>(WTFMove(mainFrame), WTFMove(invalidator)));
 
     return PageConfiguration::RemoteMainFrameCreationParameters { UniqueRef<RemoteFrameClient>(makeUniqueRef<WebRemoteFrameClient>(WTFMove(mainFrame), WTFMove(invalidator))), remoteProcessIdentifier.value() };
 }
@@ -5581,7 +5581,7 @@ void WebPage::restoreSelectionInFocusedEditableElement()
 bool WebPage::mainFrameHasCustomContentProvider() const
 {
     if (auto* frame = dynamicDowncast<LocalFrame>(mainFrame())) {
-        WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader().client());
+        auto* webFrameLoaderClient = toWebLocalFrameLoaderClient(frame->loader().client());
         ASSERT(webFrameLoaderClient);
         return webFrameLoaderClient->frameHasCustomContentProvider();
     }
@@ -7693,7 +7693,7 @@ void WebPage::didGetLoadDecisionForIcon(bool decision, CallbackID loadIdentifier
 void WebPage::setUseIconLoadingClient(bool useIconLoadingClient)
 {
     if (auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame()))
-        static_cast<WebFrameLoaderClient&>(localMainFrame->loader().client()).setUseIconLoadingClient(useIconLoadingClient);
+        static_cast<WebLocalFrameLoaderClient&>(localMainFrame->loader().client()).setUseIconLoadingClient(useIconLoadingClient);
 }
 
 WebURLSchemeHandlerProxy* WebPage::urlSchemeHandlerForScheme(StringView scheme)
