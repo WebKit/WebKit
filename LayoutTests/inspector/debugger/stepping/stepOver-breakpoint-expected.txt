@@ -1,0 +1,45 @@
+Checking pause locations when stepping with "stepOver".
+
+
+== Running test suite: Debugger.stepOver
+-- Running test case: Debugger.stepOver.Breakpoint.Condition.Falsy
+PAUSED (debugger-statement)
+PAUSE AT testInnerFunction:9:5
+      5    <script>
+      6
+      7    function testInnerFunction() {
+ ->   8        |debugger;
+      9        function alpha() {
+     10            debugger;
+     11        }
+
+PAUSE AT testInnerFunction:13:5
+      9        function alpha() {
+     10            debugger;
+     11        }
+ ->  12        |alpha();
+     13        function beta() {
+     14            let x = 42;
+     15        }
+
+PASS: Should evaluate condition.
+PAUSE AT testInnerFunction:17:5
+     13        function beta() {
+     14            let x = 42;
+     15        }
+ ->  16        |beta();
+     17    }
+     18
+     19    function test()
+
+PAUSE AT testInnerFunction:18:2
+     14            let x = 42;
+     15        }
+     16        beta();
+ ->  17    }|
+     18
+     19    function test()
+     20    {
+
+RESUMED
+

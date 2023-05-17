@@ -294,7 +294,8 @@ private:
     void updateCallFrame(JSC::JSGlobalObject*, JSC::CallFrame*, CallFrameUpdateAction);
     void updateCallFrameInternal(JSC::CallFrame*);
     void pauseIfNeeded(JSC::JSGlobalObject*);
-    void clearNextPauseState();
+    void resetImmediatePauseState();
+    void resetEventualPauseState();
 
     enum SteppingMode {
         SteppingModeDisabled,
