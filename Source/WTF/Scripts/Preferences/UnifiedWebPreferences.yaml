@@ -84,6 +84,20 @@ AVFoundationEnabled:
       "PLATFORM(WATCHOS)": false
       default: true
 
+AbortSignalAnyOperationEnabled:
+  type: bool
+  category: dom
+  status: preview
+  humanReadableName: "AbortSignal.any() API"
+  humanReadableDescription: "Enable AbortSignal.any() API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 AcceleratedCompositingEnabled:
   type: bool
   status: embedder

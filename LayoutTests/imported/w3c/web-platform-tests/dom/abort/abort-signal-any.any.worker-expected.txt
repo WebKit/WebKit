@@ -1,12 +1,12 @@
 
-FAIL AbortSignal.any() works with an empty array of signals signalInterface.any is not a function. (In 'signalInterface.any([])', 'signalInterface.any' is undefined)
-FAIL AbortSignal.any() follows a single signal (using AbortController) signalInterface.any is not a function. (In 'signalInterface.any([signal])', 'signalInterface.any' is undefined)
-FAIL AbortSignal.any() follows multiple signals (using AbortController) signalInterface.any is not a function. (In 'signalInterface.any(controllers.map(c => c.signal))', 'signalInterface.any' is undefined)
-FAIL AbortSignal.any() returns an aborted signal if passed an aborted signal (using AbortController) signalInterface.any is not a function. (In 'signalInterface.any(controllers.map(c => c.signal))', 'signalInterface.any' is undefined)
-FAIL AbortSignal.any() can be passed the same signal more than once (using AbortController) signalInterface.any is not a function. (In 'signalInterface.any([controller.signal, controller.signal])', 'signalInterface.any' is undefined)
-FAIL AbortSignal.any() uses the first instance of a duplicate signal (using AbortController) signalInterface.any is not a function. (In 'signalInterface.any([controller1.signal, controller2.signal, controller1.signal])', 'signalInterface.any' is undefined)
-FAIL AbortSignal.any() signals are composable (using AbortController) signalInterface.any is not a function. (In 'signalInterface.any([controllers[0].signal, controllers[1].signal])', 'signalInterface.any' is undefined)
-FAIL AbortSignal.any() works with signals returned by AbortSignal.timeout() (using AbortController) signalInterface.any is not a function. (In 'signalInterface.any([controller.signal, timeoutSignal])', 'signalInterface.any' is undefined)
-FAIL AbortSignal.any() works with intermediate signals (using AbortController) signalInterface.any is not a function. (In 'signalInterface.any([controller.signal])', 'signalInterface.any' is undefined)
-FAIL Abort events for AbortSignal.any() signals fire in the right order (using AbortController) signalInterface.any is not a function. (In 'signalInterface.any([controller.signal])', 'signalInterface.any' is undefined)
+PASS AbortSignal.any() works with an empty array of signals
+PASS AbortSignal.any() follows a single signal (using AbortController)
+PASS AbortSignal.any() follows multiple signals (using AbortController)
+PASS AbortSignal.any() returns an aborted signal if passed an aborted signal (using AbortController)
+PASS AbortSignal.any() can be passed the same signal more than once (using AbortController)
+PASS AbortSignal.any() uses the first instance of a duplicate signal (using AbortController)
+PASS AbortSignal.any() signals are composable (using AbortController)
+PASS AbortSignal.any() works with signals returned by AbortSignal.timeout() (using AbortController)
+PASS AbortSignal.any() works with intermediate signals (using AbortController)
+PASS Abort events for AbortSignal.any() signals fire in the right order (using AbortController)
 

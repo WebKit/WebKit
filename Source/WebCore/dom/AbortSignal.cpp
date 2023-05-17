@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -76,6 +76,23 @@ Ref<AbortSignal> AbortSignal::timeout(ScriptExecutionContext& context, uint64_t 
     return signal;
 }
 
+Ref<AbortSignal> AbortSignal::any(ScriptExecutionContext& context, const Vector<RefPtr<AbortSignal>>& signals)
+{
+    auto resultSignal = adoptRef(*new AbortSignal(&context));
+
+    auto abortedSignalIndex = signals.findIf([](auto& signal) { return signal->aborted(); });
+    if (abortedSignalIndex != notFound) {
+        resultSignal->signalAbort(signals[abortedSignalIndex]->reason().getValue());
+        return resultSignal;
+    }
+
+    resultSignal->markAsDependent();
+    for (auto& signal : signals)
+        resultSignal->addSourceSignal(*signal);
+
+    return resultSignal;
+}
+
 AbortSignal::AbortSignal(ScriptExecutionContext* context, Aborted aborted, JSC::JSValue reason)
     : ContextDestructionObserver(context)
     , m_reason(reason)
@@ -86,6 +103,24 @@ AbortSignal::AbortSignal(ScriptExecutionContext* context, Aborted aborted, JSC::
 
 AbortSignal::~AbortSignal() = default;
 
+void AbortSignal::addSourceSignal(AbortSignal& signal)
+{
+    if (signal.isDependent()) {
+        for (auto& sourceSignal : signal.sourceSignals())
+            addSourceSignal(sourceSignal);
+        return;
+    }
+    ASSERT(!signal.aborted());
+    ASSERT(signal.sourceSignals().isEmptyIgnoringNullReferences());
+    m_sourceSignals.add(signal);
+    signal.addDependentSignal(*this);
+}
+
+void AbortSignal::addDependentSignal(AbortSignal& signal)
+{
+    m_dependentSignals.add(signal);
+}
+
 // https://dom.spec.whatwg.org/#abortsignal-signal-abort
 void AbortSignal::signalAbort(JSC::JSValue reason)
 {
@@ -95,6 +130,7 @@ void AbortSignal::signalAbort(JSC::JSValue reason)
     
     // 2. Set signal’s aborted flag.
     m_aborted = true;
+    m_sourceSignals.clear();
 
     // FIXME: This code is wrong: we should emit a write-barrier. Otherwise, GC can collect it.
     // https://bugs.webkit.org/show_bug.cgi?id=236353
@@ -108,6 +144,9 @@ void AbortSignal::signalAbort(JSC::JSValue reason)
 
     // 5. Fire an event named abort at signal.
     dispatchEvent(Event::create(eventNames().abortEvent, Event::CanBubble::No, Event::IsCancelable::No));
+
+    for (auto& dependentSignal : std::exchange(m_dependentSignals, { }))
+        Ref { dependentSignal }->signalAbort(reason);
 }
 
 // https://dom.spec.whatwg.org/#abortsignal-follow
