@@ -666,13 +666,6 @@
 (deny sysctl-read (with no-report)
     (sysctl-name "vm.task_no_footprint_for_debug"))
 
-#if HAVE(SANDBOX_STATE_FLAGS)
-(with-filter (require-not (state-flag "WebContentProcessLaunched"))
-    (allow sysctl-read (sysctl-name "vm.malloc_ranges"))) ;; <rdar://problem/105161083>
-#else
-(allow sysctl-read (sysctl-name "vm.malloc_ranges")) ;; <rdar://problem/105161083>
-#endif
-
 (allow sysctl-write
     (sysctl-name
         "kern.tcsm_enable"))
@@ -2122,10 +2115,6 @@
                 (mach-bootstrap-message-numbers)))))
 #endif
 
-(define (kernel-mig-routine-only-in-use-during-launch)
-    (kernel-mig-routine
-        (when (defined? 'mach_vm_range_create) mach_vm_range_create))) ;; <rdar://105161083>
-
 (define (kernel-mig-routines-common) (kernel-mig-routine
     _mach_make_memory_entry
     host_get_io_master
@@ -2204,13 +2193,7 @@
             (with-filter (require-not (lockdown-mode))
                 (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
 
-            (allow mach-message-send (kernel-mig-routines-common))
-                
-#if HAVE(SANDBOX_STATE_FLAGS)
-            (with-filter (require-not (state-flag "WebContentProcessLaunched"))
-                (allow mach-message-send (kernel-mig-routine-only-in-use-during-launch)))
-#endif
-        )))
+            (allow mach-message-send (kernel-mig-routines-common)))))
 
 (define (syscall-mach-common) (machtrap-number
     MSC__kernelrpc_mach_port_allocate_trap

@@ -283,8 +283,7 @@
         "kern.ostype"
         "kern.osversion" ;; Needed by WebKit and ASL logging.
         "kern.tcsm_available" ;; Needed for IndexedDB support.
-        "kern.tcsm_enable"
-        "vm.malloc_ranges") ;; <rdar://problem/105161083>
+        "kern.tcsm_enable")
     (sysctl-name-prefix "kern.proc.pid.")
     (sysctl-name-prefix "net.routetable"))
 
@@ -756,7 +755,6 @@
                 mach_port_request_notification
                 mach_port_set_attributes
                 mach_vm_copy
-                (when (defined? 'mach_vm_range_create) mach_vm_range_create) ;; <rdar://105161083>
                 mach_vm_map_external
                 mach_vm_remap_external
                 semaphore_create
