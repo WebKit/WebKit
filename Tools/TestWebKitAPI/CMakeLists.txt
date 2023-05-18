@@ -201,6 +201,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/NowPlayingInfoTests.cpp
         Tests/WebCore/ParsedContentRange.cpp
         Tests/WebCore/PublicSuffix.cpp
+        Tests/WebCore/RenderStyleChange.cpp
         Tests/WebCore/SecurityOrigin.cpp
         Tests/WebCore/SharedBuffer.cpp
         Tests/WebCore/SharedBufferTest.cpp

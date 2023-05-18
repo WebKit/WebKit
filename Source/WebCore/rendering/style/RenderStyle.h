@@ -288,7 +288,7 @@ public:
 
     static RenderStyle& defaultStyle();
 
-    static RenderStyle create();
+    WEBCORE_EXPORT static RenderStyle create();
     static std::unique_ptr<RenderStyle> createPtr();
     static std::unique_ptr<RenderStyle> createPtrWithRegisteredInitialValues(const Style::CustomPropertyRegistry&);
 
@@ -1159,7 +1159,7 @@ public:
     void setClear(Clear v) { m_nonInheritedFlags.clear = static_cast<unsigned>(v); }
     void setTableLayout(TableLayoutType v) { m_nonInheritedFlags.tableLayout = static_cast<unsigned>(v); }
 
-    bool setFontDescription(FontCascadeDescription&&);
+    WEBCORE_EXPORT bool setFontDescription(FontCascadeDescription&&);
 
     // Only used for blending font sizes when animating, for MathML anonymous blocks, and for text autosizing.
     void setFontSize(float);

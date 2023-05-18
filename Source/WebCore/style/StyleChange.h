@@ -40,7 +40,7 @@ enum class Change : uint8_t {
     Renderer
 };
 
-Change determineChange(const RenderStyle&, const RenderStyle&);
+WEBCORE_EXPORT Change determineChange(const RenderStyle&, const RenderStyle&);
 
 }
 }
