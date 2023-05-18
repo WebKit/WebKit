@@ -82,7 +82,7 @@ Value NumericOp::evaluate() const
     double rightVal;
 
     {
-        SetForScope<EvaluationContext> contextForScope(Expression::evaluationContext(), clonedContext);
+        SetForScope contextForScope(Expression::evaluationContext(), clonedContext);
         rightVal = subexpression(1).evaluate().toNumber();
     }
 
@@ -211,7 +211,7 @@ Value EqTestOp::evaluate() const
 
     Value lhs(subexpression(0).evaluate());
     Value rhs = [&] {
-        SetForScope<EvaluationContext> contextForScope(Expression::evaluationContext(), clonedContext);
+        SetForScope contextForScope(Expression::evaluationContext(), clonedContext);
         return subexpression(1).evaluate();
     }();
 
@@ -240,7 +240,7 @@ Value LogicalOp::evaluate() const
     if (lhsBool == shortCircuitOn())
         return lhsBool;
 
-    SetForScope<EvaluationContext> contextForScope(Expression::evaluationContext(), clonedContext);
+    SetForScope contextForScope(Expression::evaluationContext(), clonedContext);
     return subexpression(1).evaluate().toBoolean();
 }
 
@@ -255,7 +255,7 @@ Value Union::evaluate() const
     EvaluationContext clonedContext(Expression::evaluationContext());
     Value lhsResult = subexpression(0).evaluate();
     Value rhsResult = [&] {
-        SetForScope<EvaluationContext> contextForScope(Expression::evaluationContext(), clonedContext);
+        SetForScope contextForScope(Expression::evaluationContext(), clonedContext);
         return subexpression(1).evaluate();
     }();
     Expression::evaluationContext().hadTypeConversionError |= clonedContext.hadTypeConversionError;
@@ -281,7 +281,12 @@ Value Union::evaluate() const
 
 bool evaluatePredicate(const Expression& expression)
 {
-    Value result(expression.evaluate());
+    EvaluationContext clonedContext(Expression::evaluationContext());
+    Value result = [&] {
+        SetForScope contextForScope(Expression::evaluationContext(), clonedContext);
+        return expression.evaluate();
+    }();
+    Expression::evaluationContext().hadTypeConversionError |= clonedContext.hadTypeConversionError;
 
     // foo[3] means foo[position()=3]
     if (result.isNumber())
