@@ -25,31 +25,22 @@
 
 #pragma once
 
-#include "MessageReceiver.h"
-#include "MessageSender.h"
-#include "UserData.h"
-#include "VisitedLinkStore.h"
 #include "WebPageProxyIdentifier.h"
-#include <WebCore/CertificateInfo.h>
-#include <WebCore/DocumentLoader.h>
-#include <WebCore/FrameIdentifier.h>
-#include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class ResourceRequest;
-class ResourceResponse;
 }
 
 namespace WebKit {
 
+class VisitedLinkStore;
 class WebFrameProxy;
 class WebProcessProxy;
-struct FrameInfoData;
 
-class ProvisionalFrameProxy : public IPC::MessageReceiver, public IPC::MessageSender {
+class ProvisionalFrameProxy : public CanMakeWeakPtr<ProvisionalFrameProxy> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ProvisionalFrameProxy(WebFrameProxy&, Ref<WebProcessProxy>&&, const WebCore::ResourceRequest&);
@@ -60,14 +51,6 @@ public:
     WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
 
 private:
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-
-    void decidePolicyForResponse(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, uint64_t listenerID);
-    void didCommitLoadForFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
-
-    IPC::Connection* messageSenderConnection() const final;
-    uint64_t messageSenderDestinationID() const final;
-
     CheckedRef<WebFrameProxy> m_frame;
     Ref<WebProcessProxy> m_process;
     Ref<VisitedLinkStore> m_visitedLinkStore;

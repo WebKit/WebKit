@@ -5586,11 +5586,11 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
     PageClientProtector protector(pageClient());
 
     RefPtr frame = WebFrameProxy::webFrame(frameID);
+    MESSAGE_CHECK(m_process, frame);
     if (frame->provisionalFrame()) {
         frame->commitProvisionalFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, wasPrivateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);
         return;
     }
-    MESSAGE_CHECK(m_process, frame);
 
     WEBPAGEPROXY_RELEASE_LOG(Loading, "didCommitLoadForFrame: frameID=%" PRIu64 ", isMainFrame=%d", frameID.object().toUInt64(), frame->isMainFrame());
 
