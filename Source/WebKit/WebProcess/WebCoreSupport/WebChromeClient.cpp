@@ -1261,6 +1261,11 @@ FloatSize WebChromeClient::overrideScreenSize() const
 
 #endif
 
+FloatSize WebChromeClient::screenSizeForHeadlessMode(const LocalFrame& frame, FloatSize defaultSize) const
+{
+    return m_page.screenSizeForHeadlessMode(frame, defaultSize);
+}
+
 void WebChromeClient::dispatchDisabledAdaptationsDidChange(const OptionSet<DisabledAdaptations>& disabledAdaptations) const
 {
     m_page.disabledAdaptationsDidChange(disabledAdaptations);

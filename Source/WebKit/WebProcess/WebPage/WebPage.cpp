@@ -2660,6 +2660,15 @@ void WebPage::viewportPropertiesDidChange(const ViewportArguments& viewportArgum
 #endif
 }
 
+#if !PLATFORM(IOS_FAMILY)
+
+FloatSize WebPage::screenSizeForHeadlessMode(const LocalFrame& frame, FloatSize defaultSize) const
+{
+    return frame.view() ? FloatSize { frame.view()->unobscuredContentRectIncludingScrollbars().size() } : defaultSize;
+}
+
+#endif // !PLATFORM(IOS_FAMILY)
+
 void WebPage::listenForLayoutMilestones(OptionSet<WebCore::LayoutMilestone> milestones)
 {
     if (!m_page)

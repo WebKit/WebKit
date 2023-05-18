@@ -1052,29 +1052,19 @@ FloatSize LocalFrame::screenSize() const
     if (!m_overrideScreenSize.isEmpty())
         return m_overrideScreenSize;
 
-    auto sizeForHeadlessMode = [&]() -> std::optional<IntSize> {
-        RefPtr document = this->document();
-        if (!document)
-            return std::nullopt;
+    auto defaultSize = screenRect(view()).size();
+    RefPtr document = this->document();
+    if (!document)
+        return defaultSize;
 
-        RefPtr loader = document->loader();
-        if (!loader || !loader->isLoadingInHeadlessMode())
-            return std::nullopt;
+    RefPtr loader = document->loader();
+    if (!loader || !loader->isLoadingInHeadlessMode())
+        return defaultSize;
 
-        RefPtr window = this->window();
-        if (!window)
-            return std::nullopt;
+    if (auto* page = this->page())
+        return page->chrome().client().screenSizeForHeadlessMode(*this, defaultSize);
 
-        IntSize size { window->innerWidth(), window->innerHeight() };
-        if (auto* page = this->page())
-            size.scale(page->pageScaleFactor());
-        return size;
-    }();
-
-    if (sizeForHeadlessMode)
-        return *sizeForHeadlessMode;
-
-    return screenRect(view()).size();
+    return defaultSize;
 }
 
 void LocalFrame::setOverrideScreenSize(FloatSize&& screenSize)

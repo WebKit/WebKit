@@ -52,6 +52,7 @@
 #import "TextCheckingControllerProxy.h"
 #import "UIKitSPI.h"
 #import "UserData.h"
+#import "UserInterfaceIdiom.h"
 #import "ViewGestureGeometryCollector.h"
 #import "VisibleContentRectUpdateInfo.h"
 #import "WKAccessibilityWebPageObjectIOS.h"
@@ -5151,6 +5152,25 @@ void WebPage::animationDidFinishForElement(const WebCore::Element& animatedEleme
     RefPtr endContainer = selection.end().containerNode();
     if (startContainer != endContainer)
         scheduleEditorStateUpdateForStartOrEndContainerNodeIfNeeded(endContainer.get());
+}
+
+FloatSize WebPage::screenSizeForHeadlessMode(const LocalFrame&, FloatSize defaultSize) const
+{
+    if (!currentUserInterfaceIdiomIsSmallScreen())
+        return m_viewportConfiguration.minimumLayoutSize();
+
+    static constexpr std::array fixedSizes {
+        FloatSize { 320,  568 },
+        FloatSize { 375,  667 },
+        FloatSize { 414,  736 },
+    };
+
+    for (auto fixedSize : fixedSizes) {
+        if (defaultSize.width() <= fixedSize.width())
+            return fixedSize;
+    }
+
+    return std::get<std::tuple_size_v<decltype(fixedSizes)> - 1>(fixedSizes);
 }
 
 } // namespace WebKit
