@@ -15,7 +15,7 @@
   }
 
   const testRules = [
-    `.foo {\n  & { color: green; }\n}`, // 🐰
+    `.foo {\n  & { color: green; }\n}`,
     // nesting should not mess with single line comment legacy special case
     [`.foo { //color: red; color: green; }`,`.foo { color: green; }`],
     `.foo {\n  &.bar { color: green; }\n}`,

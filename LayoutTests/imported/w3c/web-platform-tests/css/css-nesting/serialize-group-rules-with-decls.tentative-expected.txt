@@ -1,7 +1,7 @@
 
 PASS Serialization of declarations in group rules
-FAIL Serialization of declarations in group rules 1 assert_equals: expected "div {\n  @supports selector(&) {\n  color: red; background-color: green;\n  &:hover { color: navy; }\n}\n}" but got "div {\n  @supports selector(&) {\ncolor: red; background-color: green;\n  &:hover { color: navy; }\n}\n}"
-FAIL Serialization of declarations in group rules 2 assert_equals: expected "div {\n  @media screen {\n  &.cls { color: red; }\n  & { color: red; }\n}\n}" but got "div {\n  @media screen {\ncolor: red;\n  &.cls { color: red; }\n}\n}"
+PASS Serialization of declarations in group rules 1
+PASS Serialization of declarations in group rules 2
 PASS Serialization of declarations in group rules 3
 PASS Serialization of declarations in group rules 4
 

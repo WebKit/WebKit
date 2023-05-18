@@ -140,7 +140,7 @@ void CSSGroupingRule::appendCSSTextForItems(StringBuilder& builder) const
         return;
     }
 
-    builder.append('\n', static_cast<StringView>(decls), static_cast<StringView>(rules), "\n}");
+    builder.append('\n', "  ", static_cast<StringView>(decls), static_cast<StringView>(rules), "\n}");
     return;
 }
 
@@ -149,16 +149,19 @@ void CSSGroupingRule::cssTextForDeclsAndRules(StringBuilder& decls, StringBuilde
     auto& childRules = m_groupRule->childRules();
     for (unsigned index = 0 ; index < childRules.size() ; index++) {
         // We put the declarations at the upper level when the rule:
-        // - is a style rule
+        // - is the first rule
         // - has just "&" as original selector
         // - has no child rules
-        auto childRule = childRules[index];
-        ASSERT(childRule);
-        if (childRule->isStyleRuleWithNesting()) {
-            auto& nestedStyleRule = downcast<StyleRuleWithNesting>(*childRule);
-            if (nestedStyleRule.originalSelectorList().hasOnlyNestingSelector() && nestedStyleRule.nestedRules().isEmpty()) {
-                decls.append(nestedStyleRule.properties().asText());
-                continue;
+        if (!index) {
+            // It's the first rule.
+            auto childRule = childRules[index];
+            ASSERT(childRule);
+            if (childRule->isStyleRuleWithNesting()) {
+                auto& nestedStyleRule = downcast<StyleRuleWithNesting>(*childRule);
+                if (nestedStyleRule.originalSelectorList().hasOnlyNestingSelector() && nestedStyleRule.nestedRules().isEmpty()) {
+                    decls.append(nestedStyleRule.properties().asText());
+                    continue;
+                }
             }
         }
         // Otherwise we print the child rule
