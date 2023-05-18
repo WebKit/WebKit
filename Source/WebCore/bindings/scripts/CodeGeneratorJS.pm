@@ -5306,7 +5306,7 @@ sub GenerateForEachEventHandlerContentAttribute
     push(@$outputArray, "{\n");
     push(@$outputArray, "    static constexpr std::pair<decltype(HTMLNames::altAttr)&, const AtomString EventNames::*> table[] = {\n");
     foreach my $attribute (@{$interface->attributes}) {
-        if ($attribute->type->name eq "EventHandler" && (!defined $eventHandlerExtendedAttributeName || $attribute->extendedAttributes->{$eventHandlerExtendedAttributeName})) {
+        if ($codeGenerator->IsEventHandlerType($attribute->type) && (!defined $eventHandlerExtendedAttributeName || $attribute->extendedAttributes->{$eventHandlerExtendedAttributeName})) {
             my $attributeName = $attribute->name;
             my $eventName = EventHandlerAttributeShortEventName($attribute);
             push(@$outputArray, "        { HTMLNames::${attributeName}Attr, &EventNames::${eventName} },\n");
@@ -5330,7 +5330,7 @@ sub GenerateAttributeGetterBodyDefinition
 
     my $needSecurityCheck = $interface->extendedAttributes->{CheckSecurity} && !$attribute->extendedAttributes->{DoNotCheckSecurity} && !$attribute->extendedAttributes->{DoNotCheckSecurityOnGetter};
     my $hasCustomGetter = HasCustomGetter($attribute);
-    my $isEventHandler = $attribute->type->name eq "EventHandler";
+    my $isEventHandler = $codeGenerator->IsEventHandlerType($attribute->type);
     my $isConstructor = $codeGenerator->IsConstructorType($attribute->type);
 
     my $needThrowScope = $needSecurityCheck || (!$hasCustomGetter && !$isEventHandler && !$isConstructor);
@@ -5505,7 +5505,7 @@ sub GenerateAttributeSetterBodyDefinition
 
     my $needSecurityCheck = $interface->extendedAttributes->{CheckSecurity} && !$attribute->extendedAttributes->{DoNotCheckSecurity} && !$attribute->extendedAttributes->{DoNotCheckSecurityOnSetter};
     my $hasCustomSetter = HasCustomSetter($attribute);
-    my $isEventHandler = $attribute->type->name eq "EventHandler";
+    my $isEventHandler = $codeGenerator->IsEventHandlerType($attribute->type);
     my $isReplaceable = $attribute->extendedAttributes->{Replaceable};
     my $isLegacyLenientSetter = $attribute->extendedAttributes->{LegacyLenientSetter};
 
@@ -5538,17 +5538,12 @@ sub GenerateAttributeSetterBodyDefinition
         push(@$outputArray, "    thisObject.set${implSetterFunctionName}(lexicalGlobalObject, value);\n");
         push(@$outputArray, "    return true;\n");
     } elsif ($isEventHandler) {
-        AddToImplIncludes("JSEventListener.h", $conditional);
+        my $setter = $attribute->extendedAttributes->{WindowEventHandler} ? "setWindowEventHandlerAttribute" : "setEventHandlerAttribute";
+        my $eventListenerType = $attribute->type->name eq "OnErrorEventHandler" && (IsDOMGlobalObject($interface) || $attribute->extendedAttributes->{WindowEventHandler}) ? "JSErrorHandler" : "JSEventListener";
         my $eventName = EventHandlerAttributeEventName($attribute);
-        # FIXME: Find a way to do this special case without hardcoding the class and attribute names here.
-        if (($interface->type->name eq "LocalDOMWindow" or $interface->type->name eq "WorkerGlobalScope") and $attribute->name eq "onerror") {
-            AddToImplIncludes("JSErrorHandler.h", $conditional);
-            push(@$outputArray, "    setEventHandlerAttribute<JSErrorHandler>(thisObject.wrapped(), ${eventName}, value, thisObject);\n");
-        } else {
-            AddToImplIncludes("JSEventListener.h", $conditional);
-            my $setter = $attribute->extendedAttributes->{WindowEventHandler} ? "setWindowEventHandlerAttribute" : "setEventHandlerAttribute";
-            push(@$outputArray, "    $setter<JSEventListener>(thisObject.wrapped(), ${eventName}, value, thisObject);\n");
-        }
+
+        AddToImplIncludes("${eventListenerType}.h", $conditional);
+        push(@$outputArray, "    ${setter}<${eventListenerType}>(thisObject.wrapped(), ${eventName}, value, thisObject);\n");
         push(@$outputArray, "    vm.writeBarrier(&thisObject, value);\n");
         push(@$outputArray, "    ensureStillAliveHere(value);\n\n");
         push(@$outputArray, "    return true;\n");

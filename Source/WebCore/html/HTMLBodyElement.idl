@@ -30,7 +30,7 @@
     [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString vLink;
 
     [WindowEventHandler] attribute EventHandler onblur;
-    [WindowEventHandler] attribute EventHandler onerror;
+    [WindowEventHandler] attribute OnErrorEventHandler onerror;
     [WindowEventHandler] attribute EventHandler onfocus;
     [WindowEventHandler] attribute EventHandler onload;
     [WindowEventHandler] attribute EventHandler onresize;

@@ -35,8 +35,7 @@
     readonly attribute WorkerNavigator navigator;
     undefined importScripts(USVString... urls);
 
-    // FIXME: The spec 'onerror' should be of type 'OnErrorEventHandler'.
-    attribute EventHandler onerror;
+    attribute OnErrorEventHandler onerror;
     // FIXME: Implement 'onlanguagechange'.
     // attribute EventHandler onlanguagechange;
     attribute EventHandler onoffline;

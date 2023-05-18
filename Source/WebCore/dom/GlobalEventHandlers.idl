@@ -56,8 +56,7 @@ interface mixin GlobalEventHandlers {
     attribute EventHandler ondurationchange;
     attribute EventHandler onemptied;
     attribute EventHandler onended;
-    // FIXME: The spec 'onerror' should be of type 'OnErrorEventHandler'.
-    attribute EventHandler onerror;
+    attribute OnErrorEventHandler onerror;
     attribute EventHandler onfocus;
     attribute EventHandler onformdata;
     attribute EventHandler oninput;
