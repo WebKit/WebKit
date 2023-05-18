@@ -6371,10 +6371,6 @@ webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shad
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-002.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-003.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/css/css-backgrounds/color-mix-currentcolor-border-repaint-parent.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-backgrounds/color-mix-currentcolor-border-repaint.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-backgrounds/currentcolor-border-repaint-parent.html [ Skip ]
-
 # Flaky test that sometimes passes and sometimes fails.
 imported/w3c/web-platform-tests/screen-orientation/nested-documents.html [ Pass Failure ]
 

@@ -58,11 +58,11 @@ bool StyleBackgroundData::isEquivalentForPainting(const StyleBackgroundData& oth
 {
     if (background != other.background || color != other.color)
         return false;
-    if (currentColorDiffers && color.isCurrentColor())
+    if (currentColorDiffers && color.containsCurrentColor())
         return false;
     if (!outline.isVisible() && !other.outline.isVisible())
         return true;
-    if (currentColorDiffers && outline.color().isCurrentColor())
+    if (currentColorDiffers && outline.color().containsCurrentColor())
         return false;
     return outline == other.outline;
 }
