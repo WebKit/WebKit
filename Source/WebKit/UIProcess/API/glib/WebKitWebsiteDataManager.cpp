@@ -45,25 +45,18 @@ using namespace WebKit;
 
 /**
  * WebKitWebsiteDataManager:
- * @See_also: #WebKitWebContext, #WebKitWebsiteData
+ * @See_also: #WebKitWebsiteData
  *
  * Manages data stored locally by web sites.
  *
  * You can use WebKitWebsiteDataManager to configure the local directories
  * where website data will be stored. Use #WebKitWebsiteDataManager:base-data-directory
  * and #WebKitWebsiteDataManager:base-cache-directory set a common base directory for all
- * website data and caches. The newly created WebKitWebsiteDataManager must be passed as
- * a construct property to a #WebKitWebContext; you can use webkit_web_context_new_with_website_data_manager()
- * to create a new #WebKitWebContext with a WebKitWebsiteDataManager.
- * If you don't want to set any specific configuration, you don't need to create
- * a WebKitWebsiteDataManager: the #WebKitWebContext will create a WebKitWebsiteDataManager
- * with the default configuration. To get the WebKitWebsiteDataManager of a #WebKitWebContext,
- * you can use webkit_web_context_get_website_data_manager().
+ * website data and caches.
  *
- * A WebKitWebsiteDataManager can also be ephemeral, in which case all the directory configuration
+ * A WebKitWebsiteDataManager can be ephemeral, in which case all the directory configuration
  * is not needed because website data will never persist. You can create an ephemeral WebKitWebsiteDataManager
- * with webkit_website_data_manager_new_ephemeral() and pass the ephemeral WebKitWebsiteDataManager to
- * a #WebKitWebContext, or simply use webkit_web_context_new_ephemeral().
+ * with webkit_website_data_manager_new_ephemeral().
  *
  * WebKitWebsiteDataManager can also be used to fetch website data, remove data
  * stored by particular websites, or clear data for all websites modified since a given
