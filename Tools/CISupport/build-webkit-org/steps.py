@@ -1254,7 +1254,7 @@ class UploadTestResults(transfer.FileUpload):
         transfer.FileUpload.__init__(self, **kwargs)
 
 
-class TransferToS3(master.MasterShellCommand):
+class TransferToS3(master.MasterShellCommandNewStyle):
     name = "transfer-to-s3"
     description = ["transferring to s3"]
     descriptionDone = ["transferred to s3"]
@@ -1269,22 +1269,21 @@ class TransferToS3(master.MasterShellCommand):
         kwargs['command'] = self.command
         kwargs['logEnviron'] = False
         self.terminate_build = terminate_build
-        master.MasterShellCommand.__init__(self, **kwargs)
+        super().__init__(**kwargs)
 
-    def start(self):
-        return master.MasterShellCommand.start(self)
+    @defer.inlineCallbacks
+    def run(self):
+        rc = yield super().run()
 
-    def finished(self, result):
-        rc = master.MasterShellCommand.finished(self, result)
         if self.terminate_build and self.getProperty('user_provided_git_hash'):
             self.build.buildFinished([f"Uploaded archive with hash {self.getProperty('user_provided_git_hash', '')[:8]}"], SUCCESS)
-        return rc
+        defer.returnValue(rc)
 
     def doStepIf(self, step):
         return CURRENT_HOSTNAME == BUILD_WEBKIT_HOSTNAME
 
 
-class ExtractTestResults(master.MasterShellCommand):
+class ExtractTestResults(master.MasterShellCommandNewStyle):
     name = 'extract-test-results'
     descriptionDone = ['Extracted test results']
     renderables = ['resultDirectory', 'zipFile']
@@ -1295,7 +1294,7 @@ class ExtractTestResults(master.MasterShellCommand):
         self.zipFile = Interpolate('public_html/results/%(prop:buildername)s/%(prop:archive_revision)s (%(prop:buildnumber)s).zip')
         self.resultDirectory = Interpolate('public_html/results/%(prop:buildername)s/%(prop:archive_revision)s (%(prop:buildnumber)s)')
         kwargs['command'] = ['unzip', '-q', '-o', self.zipFile, '-d', self.resultDirectory]
-        master.MasterShellCommand.__init__(self, **kwargs)
+        super().__init__(**kwargs)
 
     def resultDirectoryURL(self):
         self.setProperty('result_directory', self.resultDirectory)
@@ -1305,9 +1304,11 @@ class ExtractTestResults(master.MasterShellCommand):
         self.addURL("view layout test results", self.resultDirectoryURL() + "results.html")
         self.addURL("view dashboard test results", self.resultDirectoryURL() + "dashboard-layout-test-results/results.html")
 
-    def finished(self, result):
+    @defer.inlineCallbacks
+    def run(self):
+        rc = yield super().run()
         self.addCustomURLs()
-        return master.MasterShellCommand.finished(self, result)
+        defer.returnValue(rc)
 
 
 class PrintConfiguration(steps.ShellSequence):
@@ -1378,15 +1379,14 @@ class PrintConfiguration(steps.ShellSequence):
         return {'step': configuration}
 
 
-
-class SetPermissions(master.MasterShellCommand):
+class SetPermissions(master.MasterShellCommandNewStyle):
     name = 'set-permissions'
 
     def __init__(self, **kwargs):
         resultDirectory = Interpolate('%(prop:result_directory)s')
         kwargs['command'] = ['chmod', 'a+rx', resultDirectory]
         kwargs['logEnviron'] = False
-        master.MasterShellCommand.__init__(self, **kwargs)
+        super().__init__(**kwargs)
 
 
 class ShowIdentifier(shell.ShellCommand):
