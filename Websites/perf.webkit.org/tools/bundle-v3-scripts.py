@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # Copyright (C) 2013, 2015, 2016 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -51,15 +51,15 @@ def main(argv):
 
                 bundled_script += script_content
 
-    jsmin = subprocess.Popen(['python', os.path.join(tools_dir, 'jsmin.py')], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-    minified_script = jsmin.communicate(input=bundled_script)[0]
+    jsmin = subprocess.Popen(['python3', os.path.join(tools_dir, 'jsmin.py')], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    minified_script = jsmin.communicate(input=bundled_script.encode())[0]
 
     new_size = float(len(minified_script))
     old_size = float(len(bundled_script))
-    print '%d -> %d (%.1f%%)' % (old_size, new_size, new_size / old_size * 100)
+    print('%d -> %d (%.1f%%)' % (old_size, new_size, new_size / old_size * 100))
 
     with open(os.path.join(public_v3_dir, 'bundled-scripts.js'), 'w') as bundled_file:
-        bundled_file.write(minified_script)
+        bundled_file.write(minified_script.decode())
 
 
 def compress_template(match):
