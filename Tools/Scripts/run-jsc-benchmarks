@@ -3133,7 +3133,7 @@ begin
   }
   
   if $vms.empty?
-    quickFail("Please specify at least on configuraiton on the command line.",
+    quickFail("Please specify at least one configuration on the command line.",
               "Insufficient arguments")
   end
   
