@@ -669,21 +669,33 @@ static void attributedStringSetElement(NSMutableAttributedString *attrString, NS
         [attrString addAttribute:attribute value:(__bridge id)axElement.get() range:range];
 }
 
-void attributedStringSetSpelling(NSMutableAttributedString *attrString, Node* node, StringView text, const NSRange& range)
+static bool shouldHaveAnySpellCheckAttribute(Node& node)
 {
-    ASSERT(node);
-
     // If this node is not inside editable content, do not run the spell checker on the text.
-    if (!node->document().axObjectCache()->rootAXEditableElement(node))
+    return node.document().axObjectCache()->rootAXEditableElement(&node);
+}
+
+void attributedStringSetNeedsSpellCheck(NSMutableAttributedString *attributedString, Node& node)
+{
+    if (!shouldHaveAnySpellCheckAttribute(node))
         return;
 
-    if (unifiedTextCheckerEnabled(node->document().frame())) {
+    // Inform the AT that we want it to spell-check for us by setting AXDidSpellCheck to @NO.
+    attributedStringSetNumber(attributedString, AXDidSpellCheckAttribute, @NO, NSMakeRange(0, attributedString.length));
+}
+
+void attributedStringSetSpelling(NSMutableAttributedString *attrString, Node& node, StringView text, const NSRange& range)
+{
+    if (!shouldHaveAnySpellCheckAttribute(node))
+        return;
+
+    if (unifiedTextCheckerEnabled(node.document().frame())) {
         // Check the spelling directly since document->markersForNode() does not store the misspelled marking when the cursor is in a word.
-        auto* checker = node->document().editor().textChecker();
+        auto* checker = node.document().editor().textChecker();
 
         // checkTextOfParagraph is the only spelling/grammar checker implemented in WK1 and WK2
         Vector<TextCheckingResult> results;
-        checkTextOfParagraph(*checker, text, TextCheckingType::Spelling, results, node->document().frame()->selection().selection());
+        checkTextOfParagraph(*checker, text, TextCheckingType::Spelling, results, node.document().frame()->selection().selection());
         for (const auto& result : results) {
             attributedStringSetNumber(attrString, NSAccessibilityMisspelledTextAttribute, @YES, NSMakeRange(result.range.location + range.location, result.range.length));
             attributedStringSetNumber(attrString, NSAccessibilityMarkedMisspelledTextAttribute, @YES, NSMakeRange(result.range.location + range.location, result.range.length));
@@ -695,7 +707,7 @@ void attributedStringSetSpelling(NSMutableAttributedString *attrString, Node* no
     for (unsigned current = 0; current < text.length(); ) {
         int misspellingLocation = -1;
         int misspellingLength = 0;
-        node->document().editor().textChecker()->checkSpellingOfString(text.substring(current), &misspellingLocation, &misspellingLength);
+        node.document().editor().textChecker()->checkSpellingOfString(text.substring(current), &misspellingLocation, &misspellingLength);
         if (misspellingLocation < 0 || !misspellingLength)
             break;
 
@@ -727,8 +739,12 @@ RetainPtr<NSAttributedString> attributedStringCreate(Node* node, StringView text
     attributedStringSetExpandedText(result.get(), renderer.get(), range);
     attributedStringSetElement(result.get(), NSAccessibilityLinkTextAttribute, AccessibilityObject::anchorElementForNode(node), range);
     // Do spelling last because it tends to break up the range.
-    if (spellCheck == AXCoreObject::SpellCheck::Yes)
-        attributedStringSetSpelling(result.get(), node, text, range);
+    if (spellCheck == AXCoreObject::SpellCheck::Yes) {
+        if (AXObjectCache::shouldSpellCheck())
+            attributedStringSetSpelling(result.get(), *node, text, range);
+        else
+            attributedStringSetNeedsSpellCheck(result.get(), *node);
+    }
 
     return result;
 }

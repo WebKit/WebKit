@@ -547,6 +547,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     m_textInputController = TextInputController::create();
 #if ENABLE(ACCESSIBILITY)
     m_accessibilityController = AccessibilityController::create();
+    m_accessibilityController->setForceDeferredSpellChecking(false);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     m_accessibilityController->setIsolatedTreeMode(m_accessibilityIsolatedTreeMode);
 #endif

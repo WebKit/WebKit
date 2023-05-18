@@ -228,6 +228,13 @@ public:
 
     WEBCORE_EXPORT static void enableAccessibility();
     WEBCORE_EXPORT static void disableAccessibility();
+    static bool forceDeferredSpellChecking() { return gForceDeferredSpellChecking; }
+    WEBCORE_EXPORT static void setForceDeferredSpellChecking(bool);
+#if PLATFORM(MAC)
+    static bool shouldSpellCheck();
+#else
+    static bool shouldSpellCheck() { return true; }
+#endif
 
     WEBCORE_EXPORT AccessibilityObject* focusedObjectForPage(const Page*);
 
@@ -586,9 +593,11 @@ private:
 #if ENABLE(ACCESSIBILITY)
     WEBCORE_EXPORT static bool gAccessibilityEnabled;
     WEBCORE_EXPORT static bool gAccessibilityEnhancedUserInterfaceEnabled;
+    static bool gForceDeferredSpellChecking;
 #else
-    static constexpr bool gAccessibilityEnabled = false;
-    static constexpr bool gAccessibilityEnhancedUserInterfaceEnabled = false;
+    static constexpr bool gAccessibilityEnabled { false };
+    static constexpr bool gAccessibilityEnhancedUserInterfaceEnabled { false };
+    static constexpr bool gForceDeferredSpellChecking { false };
 #endif
 
     HashSet<AXID> m_idsInUse;
@@ -679,6 +688,7 @@ inline AXCoreObject* AXObjectCache::rootObject() { return nullptr; }
 inline AccessibilityObject* AXObjectCache::rootObjectForFrame(LocalFrame*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::focusedObjectForPage(const Page*) { return nullptr; }
 inline void AXObjectCache::enableAccessibility() { }
+inline void setForceDeferredSpellChecking(bool) { }
 inline void AXObjectCache::disableAccessibility() { }
 inline void AXObjectCache::setEnhancedUserInterfaceAccessibility(bool) { }
 inline bool nodeHasRole(Node*, StringView) { return false; }

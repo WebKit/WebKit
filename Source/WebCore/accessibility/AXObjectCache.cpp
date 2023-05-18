@@ -200,6 +200,7 @@ void AccessibilityReplacedText::postTextStateChangeNotification(AXObjectCache* c
 
 bool AXObjectCache::gAccessibilityEnabled = false;
 bool AXObjectCache::gAccessibilityEnhancedUserInterfaceEnabled = false;
+bool AXObjectCache::gForceDeferredSpellChecking = false;
 
 void AXObjectCache::enableAccessibility()
 {
@@ -210,6 +211,11 @@ void AXObjectCache::enableAccessibility()
 void AXObjectCache::disableAccessibility()
 {
     gAccessibilityEnabled = false;
+}
+
+void AXObjectCache::setForceDeferredSpellChecking(bool shouldForce)
+{
+    gForceDeferredSpellChecking = shouldForce;
 }
 
 void AXObjectCache::setEnhancedUserInterfaceAccessibility(bool flag)

@@ -29,6 +29,7 @@
     undefined enableEnhancedAccessibility(boolean enable);
     readonly attribute boolean enhancedAccessibilityEnabled;
     undefined setIsolatedTreeMode(boolean enable);
+    undefined setForceDeferredSpellChecking(boolean shouldForce);
     undefined setRetainedElement(AccessibilityUIElement axElement);
     AccessibilityUIElement retainedElement();
 

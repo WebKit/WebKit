@@ -203,22 +203,19 @@ RetainPtr<NSAttributedString> AXIsolatedObject::attributedStringForTextMarkerRan
     auto resultRange = NSMakeRange(0, result.length);
     // The AttributedString is cached with spelling info. If the caller does not request spelling info, we have to remove it before returning.
     if (spellCheck == SpellCheck::No) {
+        [result removeAttribute:AXDidSpellCheckAttribute range:resultRange];
         [result removeAttribute:NSAccessibilityMisspelledTextAttribute range:resultRange];
         [result removeAttribute:NSAccessibilityMarkedMisspelledTextAttribute range:resultRange];
-        return result;
-    }
-
-    // For any nsRange different from the full range, remove exissting spell check attribute and spell check the text.
-    auto fullRange = NSMakeRange(0, [attributedText length]);
-    if (!NSEqualRanges(*nsRange, fullRange)) {
-        [result removeAttribute:NSAccessibilityMisspelledTextAttribute range:resultRange];
-        [result removeAttribute:NSAccessibilityMarkedMisspelledTextAttribute range:resultRange];
-        // FIXME: pull attributedStringSetSpelling off the main thread.
+    } else if (AXObjectCache::shouldSpellCheck()) {
+        // For ITM, we should only ever eagerly spellcheck for testing purposes.
+        ASSERT(_AXGetClientForCurrentRequestUntrusted() == kAXClientTypeWebKitTesting);
+        // We're going to spellcheck, so remove AXDidSpellCheck: NO.
+        [result removeAttribute:AXDidSpellCheckAttribute range:resultRange];
         performFunctionOnMainThreadAndWait([result = retainPtr(result), &resultRange] (AccessibilityObject* axObject) {
-            attributedStringSetSpelling(result.get(), axObject->node(), String { [result string] }, resultRange);
+            if (auto* node = axObject->node())
+                attributedStringSetSpelling(result.get(), *node, String { [result string] }, resultRange);
         });
     }
-
     return result;
 }
 

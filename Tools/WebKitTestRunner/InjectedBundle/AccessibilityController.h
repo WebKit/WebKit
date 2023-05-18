@@ -60,6 +60,7 @@ public:
     bool enhancedAccessibilityEnabled();
 
     void setIsolatedTreeMode(bool);
+    void setForceDeferredSpellChecking(bool);
 
     JSRetainPtr<JSStringRef> platformName();
 

@@ -814,6 +814,8 @@ accessibility/mac/date-input-increment-decrement.html [ Skip ]
 accessibility/display-contents-dynamically-added-children.html [ Skip ]
 accessibility/display-contents-aria-owns.html [ Skip ]
 
+accessibility/mac/lazy-spellchecking.html [ Skip ]
+
 # DOM paste access requests are not implemented in WebKit1.
 editing/async-clipboard/clipboard-change-data-while-reading.html [ Skip ]
 editing/async-clipboard/clipboard-do-not-read-text-from-platform-if-text-changes.html [ Skip ]
