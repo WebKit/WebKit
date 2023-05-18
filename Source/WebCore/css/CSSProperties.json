@@ -9289,6 +9289,16 @@
                 "url": "https://drafts.csswg.org/css-scroll-snap-1/#propdef-scroll-snap-stop"
             }
         },
+        "scrollbar-width": {
+            "codegen-properties": {
+                "parser-grammar": "auto | thin | none",
+                "settings-flag": "cssScrollbarWidthEnabled"
+            },
+            "specification": {
+                "category": "css-scrollbars",
+                "url": "https://drafts.csswg.org/css-scrollbars/#scrollbar-width"
+            }
+        },
         "shape-outside": {
             "codegen-properties": {
                 "aliases": [
@@ -10207,6 +10217,11 @@
             "shortname": "CSS Scroll Snap",
             "longname": "CSS Scroll Snap Module",
             "url": "https://www.w3.org/TR/css-scroll-snap-1/"
+        },
+        "css-scrollbars": {
+            "shortname": "CSS Scrollbars",
+            "longname": "CSS Scrollbars Styling Module",
+            "url": "https://www.w3.org/TR/css-scrollbars-1/"
         },
         "css-shapes": {
             "shortname": "CSS Shapes",

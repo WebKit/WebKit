@@ -1,12 +1,12 @@
 
-FAIL Can set 'scrollbar-width' to CSS-wide keywords: initial Invalid property scrollbar-width
-FAIL Can set 'scrollbar-width' to CSS-wide keywords: inherit Invalid property scrollbar-width
-FAIL Can set 'scrollbar-width' to CSS-wide keywords: unset Invalid property scrollbar-width
-FAIL Can set 'scrollbar-width' to CSS-wide keywords: revert Invalid property scrollbar-width
-FAIL Can set 'scrollbar-width' to var() references:  var(--A) Invalid property scrollbar-width
-FAIL Can set 'scrollbar-width' to the 'auto' keyword: auto Invalid property scrollbar-width
-FAIL Can set 'scrollbar-width' to the 'thin' keyword: thin Invalid property scrollbar-width
-FAIL Can set 'scrollbar-width' to the 'none' keyword: none Invalid property scrollbar-width
+PASS Can set 'scrollbar-width' to CSS-wide keywords: initial
+PASS Can set 'scrollbar-width' to CSS-wide keywords: inherit
+PASS Can set 'scrollbar-width' to CSS-wide keywords: unset
+PASS Can set 'scrollbar-width' to CSS-wide keywords: revert
+PASS Can set 'scrollbar-width' to var() references:  var(--A)
+PASS Can set 'scrollbar-width' to the 'auto' keyword: auto
+PASS Can set 'scrollbar-width' to the 'thin' keyword: thin
+PASS Can set 'scrollbar-width' to the 'none' keyword: none
 PASS Setting 'scrollbar-width' to a length: 0px throws TypeError
 PASS Setting 'scrollbar-width' to a length: -3.14em throws TypeError
 PASS Setting 'scrollbar-width' to a length: 3.14cm throws TypeError

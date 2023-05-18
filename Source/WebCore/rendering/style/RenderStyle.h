@@ -182,6 +182,7 @@ enum class Resize : uint8_t;
 enum class RubyPosition : uint8_t;
 enum class SVGPaintType : uint8_t;
 enum class ScrollSnapStop : bool;
+enum class ScrollbarWidth : uint8_t;
 enum class SpeakAs : uint8_t;
 enum class StyleAppearance : uint8_t;
 enum class StyleDifference : uint8_t;
@@ -962,6 +963,8 @@ public:
     const ScrollSnapAlign& scrollSnapAlign() const;
     ScrollSnapStop scrollSnapStop() const;
 
+    ScrollbarWidth scrollbarWidth() const;
+
 #if ENABLE(TOUCH_EVENTS)
     inline StyleColor tapHighlightColor() const;
 #endif
@@ -1506,6 +1509,8 @@ public:
     void setScrollSnapAlign(const ScrollSnapAlign&);
     void setScrollSnapStop(ScrollSnapStop);
 
+    void setScrollbarWidth(ScrollbarWidth);
+
 #if ENABLE(TOUCH_EVENTS)
     inline void setTapHighlightColor(const StyleColor&);
 #endif
@@ -1935,6 +1940,8 @@ public:
     static ScrollSnapType initialScrollSnapType();
     static ScrollSnapAlign initialScrollSnapAlign();
     static ScrollSnapStop initialScrollSnapStop();
+
+    static ScrollbarWidth initialScrollbarWidth();
 
 #if ENABLE(APPLE_PAY)
     static constexpr ApplePayButtonStyle initialApplePayButtonStyle();
