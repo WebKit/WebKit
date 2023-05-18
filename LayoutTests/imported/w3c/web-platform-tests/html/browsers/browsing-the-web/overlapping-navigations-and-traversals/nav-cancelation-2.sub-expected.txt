@@ -1,0 +1,7 @@
+Blocked access to external URL http://www1.localhost:8800/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/resources/nav-cancelation-2-helper.html
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT grandparent cancels a pending navigation in a cross-origin grandchild Test timed out
+

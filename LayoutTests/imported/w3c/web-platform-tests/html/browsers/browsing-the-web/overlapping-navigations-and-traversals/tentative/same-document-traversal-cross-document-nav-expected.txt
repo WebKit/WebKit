@@ -1,3 +1,0 @@
-
-PASS same-document traversals are not canceled by cross-document navigations
-
