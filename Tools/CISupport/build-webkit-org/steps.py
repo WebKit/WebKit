@@ -160,7 +160,7 @@ class CheckOutSource(git.Git):
         defer.returnValue(rc)
 
 
-class CleanUpGitIndexLock(shell.ShellCommand):
+class CleanUpGitIndexLock(shell.ShellCommandNewStyle):
     name = 'clean-git-index-lock'
     command = ['rm', '-f', '.git/index.lock']
     descriptionDone = ['Deleted .git/index.lock']
@@ -168,19 +168,19 @@ class CleanUpGitIndexLock(shell.ShellCommand):
     def __init__(self, **kwargs):
         super(CleanUpGitIndexLock, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
 
-    def start(self):
+    @defer.inlineCallbacks
+    def run(self):
         platform = self.getProperty('platform', '*')
         if platform == 'wincairo':
             self.command = ['del', r'.git\index.lock']
 
-        return shell.ShellCommand.start(self)
+        rc = yield super().run()
+        if rc != SUCCESS:
+            self.build.buildFinished(['Git issue, retrying build'], RETRY)
+        defer.returnValue(rc)
 
-    def evaluateCommand(self, cmd):
-        self.build.buildFinished(['Git issue, retrying build'], RETRY)
-        return super(CleanUpGitIndexLock, self).evaluateCommand(cmd)
 
-
-class CheckOutSpecificRevision(shell.ShellCommand):
+class CheckOutSpecificRevision(shell.ShellCommandNewStyle):
     name = 'checkout-specific-revision'
     descriptionDone = ['Checked out required revision']
     flunkOnFailure = True
@@ -195,9 +195,9 @@ class CheckOutSpecificRevision(shell.ShellCommand):
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
 
-    def start(self):
-        self.setCommand(['git', 'checkout', self.getProperty('user_provided_git_hash')])
-        return shell.ShellCommand.start(self)
+    def run(self):
+        self.command = ['git', 'checkout', self.getProperty('user_provided_git_hash')]
+        return super().run()
 
 
 class InstallWin32Dependencies(shell.Compile):
@@ -213,7 +213,7 @@ class KillOldProcesses(shell.Compile):
     command = ["python3", "Tools/CISupport/kill-old-processes", "buildbot"]
 
 
-class PruneCoreSymbolicationdCacheIfTooLarge(shell.ShellCommand):
+class PruneCoreSymbolicationdCacheIfTooLarge(shell.ShellCommandNewStyle):
     name = "prune-coresymbolicationd-cache-if-too-large"
     description = ["pruning coresymbolicationd cache to < 10GB"]
     descriptionDone = ["pruned coresymbolicationd cache"]
@@ -263,7 +263,7 @@ class DeleteStaleBuildFiles(shell.Compile):
         return shell.Compile.start(self)
 
 
-class InstallWinCairoDependencies(shell.ShellCommand):
+class InstallWinCairoDependencies(shell.ShellCommandNewStyle):
     name = 'wincairo-requirements'
     description = ['updating wincairo dependencies']
     descriptionDone = ['updated wincairo dependencies']
@@ -271,7 +271,7 @@ class InstallWinCairoDependencies(shell.ShellCommand):
     haltOnFailure = True
 
 
-class InstallGtkDependencies(shell.ShellCommand):
+class InstallGtkDependencies(shell.ShellCommandNewStyle):
     name = "jhbuild"
     description = ["updating gtk dependencies"]
     descriptionDone = ["updated gtk dependencies"]
@@ -279,7 +279,7 @@ class InstallGtkDependencies(shell.ShellCommand):
     haltOnFailure = True
 
 
-class InstallWpeDependencies(shell.ShellCommand):
+class InstallWpeDependencies(shell.ShellCommandNewStyle):
     name = "jhbuild"
     description = ["updating wpe dependencies"]
     descriptionDone = ["updated wpe dependencies"]
@@ -379,7 +379,7 @@ class CompileWebKit(shell.Compile):
         log.addStdout(message)
 
     def evaluateCommand(self, cmd):
-        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+        rc = super().evaluateCommand(cmd)
         if rc in (SUCCESS, WARNINGS) and self.getProperty('user_provided_git_hash'):
             self.build.addStepsAfterCurrentStep([ArchiveMinifiedBuiltProduct(), UploadMinifiedBuiltProduct(), TransferToS3(terminate_build=True)])
         return rc
@@ -397,7 +397,7 @@ class CompileJSCOnly(CompileWebKit):
     command = ["perl", "Tools/Scripts/build-jsc", WithProperties("--%(configuration)s")]
 
 
-class InstallBuiltProduct(shell.ShellCommand):
+class InstallBuiltProduct(shell.ShellCommandNewStyle):
     name = 'install-built-product'
     description = ['Installing Built Product']
     descriptionDone = ['Installed Built Product']
@@ -405,7 +405,7 @@ class InstallBuiltProduct(shell.ShellCommand):
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
 
 
-class ArchiveBuiltProduct(shell.ShellCommand):
+class ArchiveBuiltProduct(shell.ShellCommandNewStyle):
     command = ["python3", "Tools/CISupport/built-product-archive",
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "archive"]
     name = "archive-built-product"
@@ -421,7 +421,7 @@ class ArchiveMinifiedBuiltProduct(ArchiveBuiltProduct):
 
 
 # UploadBuiltProductViaSftp() is still unused. Check HOWTO_config_SFTP_uploads.md about how to enable it.
-class UploadBuiltProductViaSftp(shell.ShellCommand):
+class UploadBuiltProductViaSftp(shell.ShellCommandNewStyle):
     command = ["python3", "Tools/CISupport/Shared/transfer-archive-via-sftp",
                "--remote-config-file", "../../remote-built-product-upload-config.json",
                "--user-name", WithProperties("%(buildername)s"),
@@ -434,7 +434,7 @@ class UploadBuiltProductViaSftp(shell.ShellCommand):
     haltOnFailure = True
 
 
-class UploadMiniBrowserBundleViaSftp(shell.ShellCommand):
+class UploadMiniBrowserBundleViaSftp(shell.ShellCommandNewStyle):
     command = ["python3", "Tools/CISupport/Shared/transfer-archive-via-sftp",
                "--remote-config-file", "../../remote-minibrowser-bundle-upload-config.json",
                "--remote-file", WithProperties("MiniBrowser_%(fullPlatform)s_%(archive_revision)s.zip"),
@@ -445,7 +445,7 @@ class UploadMiniBrowserBundleViaSftp(shell.ShellCommand):
     haltOnFailure = False
 
 
-class UploadJSCBundleViaSftp(shell.ShellCommand):
+class UploadJSCBundleViaSftp(shell.ShellCommandNewStyle):
     command = ["python3", "Tools/CISupport/Shared/transfer-archive-via-sftp",
                "--remote-config-file", "../../remote-jsc-bundle-upload-config.json",
                "--remote-file", WithProperties("%(archive_revision)s.zip"),
@@ -456,7 +456,7 @@ class UploadJSCBundleViaSftp(shell.ShellCommand):
     haltOnFailure = False
 
 
-class GenerateJSCBundle(shell.ShellCommand):
+class GenerateJSCBundle(shell.ShellCommandNewStyle):
     command = ["Tools/Scripts/generate-bundle", "--builder-name", WithProperties("%(buildername)s"),
                "--bundle=jsc", "--syslibs=bundle-all", WithProperties("--platform=%(fullPlatform)s"),
                WithProperties("--%(configuration)s"), WithProperties("--revision=%(archive_revision)s")]
@@ -465,14 +465,15 @@ class GenerateJSCBundle(shell.ShellCommand):
     descriptionDone = ["generated jsc bundle"]
     haltOnFailure = False
 
-    def evaluateCommand(self, cmd):
-        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+    @defer.inlineCallbacks
+    def run(self):
+        rc = yield super().run()
         if rc in (SUCCESS, WARNINGS):
             self.build.addStepsAfterCurrentStep([UploadJSCBundleViaSftp()])
-        return rc
+        defer.returnValue(rc)
 
 
-class GenerateMiniBrowserBundle(shell.ShellCommand):
+class GenerateMiniBrowserBundle(shell.ShellCommandNewStyle):
     command = ["Tools/Scripts/generate-bundle", "--builder-name", WithProperties("%(buildername)s"),
                "--bundle=MiniBrowser", WithProperties("--platform=%(fullPlatform)s"),
                WithProperties("--%(configuration)s"), WithProperties("--revision=%(archive_revision)s")]
@@ -481,14 +482,15 @@ class GenerateMiniBrowserBundle(shell.ShellCommand):
     descriptionDone = ["generated minibrowser bundle"]
     haltOnFailure = False
 
-    def evaluateCommand(self, cmd):
-        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+    @defer.inlineCallbacks
+    def run(self):
+        rc = yield super().run()
         if rc in (SUCCESS, WARNINGS):
             self.build.addStepsAfterCurrentStep([UploadMiniBrowserBundleViaSftp()])
-        return rc
+        defer.returnValue(rc)
 
 
-class ExtractBuiltProduct(shell.ShellCommand):
+class ExtractBuiltProduct(shell.ShellCommandNewStyle):
     command = ["python3", "Tools/CISupport/built-product-archive",
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "extract"]
     name = "extract-built-product"
@@ -517,7 +519,7 @@ class UploadMinifiedBuiltProduct(UploadBuiltProduct):
     masterdest = WithProperties("archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/minified-%(archive_revision)s.zip")
 
 
-class DownloadBuiltProduct(shell.ShellCommand):
+class DownloadBuiltProduct(shell.ShellCommandNewStyle):
     command = ["python3", "Tools/CISupport/download-built-product",
         WithProperties("--platform=%(platform)s"), WithProperties("--%(configuration)s"),
         WithProperties(S3URL + "archives.webkit.org/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(archive_revision)s.zip")]
@@ -527,19 +529,18 @@ class DownloadBuiltProduct(shell.ShellCommand):
     haltOnFailure = False
     flunkOnFailure = False
 
-    def start(self):
+    @defer.inlineCallbacks
+    def run(self):
         # Only try to download from S3 on the official deployment <https://webkit.org/b/230006>
-        if CURRENT_HOSTNAME == BUILD_WEBKIT_HOSTNAME:
-            return shell.ShellCommand.start(self)
-        self.build.addStepsAfterCurrentStep([DownloadBuiltProductFromMaster()])
-        self.finished(SKIPPED)
-        return defer.succeed(None)
+        if CURRENT_HOSTNAME != BUILD_WEBKIT_HOSTNAME:
+            self.build.addStepsAfterCurrentStep([DownloadBuiltProductFromMaster()])
+            self.finished(SKIPPED)
+            defer.returnValue(SUCCESS)
 
-    def evaluateCommand(self, cmd):
-        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+        rc = yield super().run()
         if rc == FAILURE:
             self.build.addStepsAfterCurrentStep([DownloadBuiltProductFromMaster()])
-        return rc
+        defer.returnValue(rc)
 
 
 class DownloadBuiltProductFromMaster(transfer.FileDownload):
@@ -1233,7 +1234,7 @@ class RunBenchmarkTests(shell.Test):
         return [self.name]
 
 
-class ArchiveTestResults(shell.ShellCommand):
+class ArchiveTestResults(shell.ShellCommandNewStyle):
     command = ["python3", "Tools/CISupport/test-result-archive",
                WithProperties("--platform=%(platform)s"), WithProperties("--%(configuration)s"), "archive"]
     name = "archive-test-results"
@@ -1389,24 +1390,23 @@ class SetPermissions(master.MasterShellCommandNewStyle):
         super().__init__(**kwargs)
 
 
-class ShowIdentifier(shell.ShellCommand):
+class ShowIdentifier(shell.ShellCommandNewStyle):
     name = 'show-identifier'
     identifier_re = '^Identifier: (.*)$'
     flunkOnFailure = False
     haltOnFailure = False
 
     def __init__(self, **kwargs):
-        shell.ShellCommand.__init__(self, timeout=10 * 60, logEnviron=False, **kwargs)
+        super().__init__(timeout=10 * 60, logEnviron=False, **kwargs)
 
-    def start(self):
+    @defer.inlineCallbacks
+    def run(self):
         self.log_observer = logobserver.BufferLogObserver()
         self.addLogObserver('stdio', self.log_observer)
         revision = self.getProperty('user_provided_git_hash', None) or self.getProperty('got_revision')
-        self.setCommand(['python3', 'Tools/Scripts/git-webkit', 'find', revision])
-        return shell.ShellCommand.start(self)
+        self.command = ['python3', 'Tools/Scripts/git-webkit', 'find', revision]
 
-    def evaluateCommand(self, cmd):
-        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+        rc = yield super().run()
         if rc != SUCCESS:
             return rc
 
@@ -1445,7 +1445,7 @@ class ShowIdentifier(shell.ShellCommand):
     def getResultSummary(self):
         if self.results != SUCCESS:
             return {u'step': u'Failed to find identifier'}
-        return shell.ShellCommand.getResultSummary(self)
+        return super().getResultSummary()
 
     def hideStepIf(self, results, step):
         return results == SUCCESS
