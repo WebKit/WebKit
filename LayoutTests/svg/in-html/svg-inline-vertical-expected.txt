@@ -1,0 +1,4 @@
+
+PASS Test size calculation in vertical writing mode (1)
+PASS Test size calculation in vertical writing mode (2)
+

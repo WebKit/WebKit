@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2007, 2008, 2009 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2009 Google, Inc.
+ * Copyright (C) 2009-2015 Google, Inc.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -93,6 +93,9 @@ void LegacyRenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicS
     intrinsicSize.setWidth(floatValueForLength(svgSVGElement().intrinsicWidth(), 0));
     intrinsicSize.setHeight(floatValueForLength(svgSVGElement().intrinsicHeight(), 0));
 
+    if (!isHorizontalWritingMode())
+        intrinsicSize = intrinsicSize.transposedSize();
+
     if (style().aspectRatioType() == AspectRatioType::Ratio) {
         intrinsicRatio = FloatSize::narrowPrecision(style().aspectRatioLogicalWidth(), style().aspectRatioLogicalHeight()); 
         return;
@@ -110,6 +113,8 @@ void LegacyRenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicS
         if (!viewBoxSize.isEmpty()) {
             // The viewBox can only yield an intrinsic ratio, not an intrinsic size.
             intrinsicRatioValue = { viewBoxSize.width(), viewBoxSize.height() };
+            if (!isHorizontalWritingMode())
+                intrinsicRatioValue = 1 / intrinsicRatio;
         }
     }
 
