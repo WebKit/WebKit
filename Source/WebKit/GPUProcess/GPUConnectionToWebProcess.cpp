@@ -629,6 +629,42 @@ RemoteRenderingBackend* GPUConnectionToWebProcess::remoteRenderingBackend(Render
     return it->value.get();
 }
 
+#if ENABLE(VIDEO)
+void GPUConnectionToWebProcess::performWithMediaPlayerOnMainThread(MediaPlayerIdentifier identifier, Function<void(MediaPlayer&)>&& callback)
+{
+    callOnMainRunLoopAndWait([&, gpuConnectionToWebProcess = Ref { *this }, identifier] {
+        if (auto player = gpuConnectionToWebProcess->remoteMediaPlayerManagerProxy().mediaPlayer(identifier))
+            callback(*player);
+    });
+}
+#endif
+
+void GPUConnectionToWebProcess::createRemoteGPU(WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle&& connectionHandle)
+{
+    auto it = m_remoteRenderingBackendMap.find(renderingBackendIdentifier);
+    if (it == m_remoteRenderingBackendMap.end())
+        return;
+    auto* renderingBackend = it->value.get();
+
+    auto addResult = m_remoteGPUMap.ensure(identifier, [&] {
+        return IPC::ScopedActiveMessageReceiveQueue { RemoteGPU::create([this] (MediaPlayerIdentifier identifier, Function<void(MediaPlayer&)>&& callback) mutable {
+            this->performWithMediaPlayerOnMainThread(identifier, WTFMove(callback));
+        }, identifier, *this, *renderingBackend, WTFMove(connectionHandle)) };
+    });
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+}
+
+void GPUConnectionToWebProcess::releaseRemoteGPU(WebGPUIdentifier identifier)
+{
+    bool result = m_remoteGPUMap.remove(identifier);
+    ASSERT_UNUSED(result, result);
+    if (m_remoteGPUMap.isEmpty()) {
+        ensureOnMainRunLoop([gpuProcess = Ref { gpuProcess() }] {
+            gpuProcess->tryExitIfUnusedAndUnderMemoryPressure();
+        });
+    }
+}
+
 void GPUConnectionToWebProcess::clearNowPlayingInfo()
 {
     m_isActiveNowPlayingProcess = false;

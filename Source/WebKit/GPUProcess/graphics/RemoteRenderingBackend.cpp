@@ -30,7 +30,6 @@
 
 #include "BufferIdentifierSet.h"
 #include "GPUConnectionToWebProcess.h"
-#include "GPUProcess.h"
 #include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "PlatformImageBufferShareableBackend.h"
@@ -607,43 +606,12 @@ void RemoteRenderingBackend::finalizeRenderingUpdate(RenderingUpdateID rendering
     send(Messages::RemoteRenderingBackendProxy::DidFinalizeRenderingUpdate(renderingUpdateID), m_renderingBackendIdentifier);
 }
 
-#if ENABLE(VIDEO)
-void RemoteRenderingBackend::performWithMediaPlayerOnMainThread(MediaPlayerIdentifier identifier, Function<void(MediaPlayer&)>&& callback)
-{
-    callOnMainRunLoopAndWait([&, gpuConnectionToWebProcess = m_gpuConnectionToWebProcess, identifier] {
-        if (auto player = gpuConnectionToWebProcess->remoteMediaPlayerManagerProxy().mediaPlayer(identifier))
-            callback(*player);
-    });
-}
-#endif
-
 void RemoteRenderingBackend::lowMemoryHandler(Critical, Synchronous)
 {
     ASSERT(isMainRunLoop());
 #if HAVE(IOSURFACE)
     m_ioSurfacePool->discardAllSurfaces();
 #endif
-}
-
-void RemoteRenderingBackend::createRemoteGPU(WebGPUIdentifier identifier, IPC::StreamServerConnection::Handle&& connectionHandle)
-{
-    auto addResult = m_remoteGPUMap.ensure(identifier, [&] {
-        return IPC::ScopedActiveMessageReceiveQueue { RemoteGPU::create([this] (MediaPlayerIdentifier identifier, Function<void(MediaPlayer&)>&& callback) mutable {
-            this->performWithMediaPlayerOnMainThread(identifier, WTFMove(callback));
-        }, identifier, WTFMove(connectionHandle)) };
-    });
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
-}
-
-void RemoteRenderingBackend::releaseRemoteGPU(WebGPUIdentifier identifier)
-{
-    bool result = m_remoteGPUMap.remove(identifier);
-    ASSERT_UNUSED(result, result);
-    if (m_remoteGPUMap.isEmpty()) {
-        ensureOnMainRunLoop([connectionToWebProcess = m_gpuConnectionToWebProcess] {
-            connectionToWebProcess->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
-        });
-    }
 }
 
 void RemoteRenderingBackend::createRemoteBarcodeDetector(ShapeDetectionIdentifier identifier, const WebCore::ShapeDetection::BarcodeDetectorOptions& barcodeDetectorOptions)

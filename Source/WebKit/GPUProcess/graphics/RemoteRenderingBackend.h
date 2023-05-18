@@ -34,7 +34,6 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "QualifiedRenderingResourceIdentifier.h"
-#include "RemoteGPU.h"
 #include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteResourceCache.h"
 #include "RemoteSerializedImageBufferIdentifier.h"
@@ -46,7 +45,6 @@
 #include "StreamConnectionWorkQueue.h"
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnection.h"
-#include "WebGPUIdentifier.h"
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/ProcessIdentity.h>
 #include <wtf/HashMap.h>
@@ -102,9 +100,6 @@ public:
     void dispatch(Function<void()>&&);
 
     IPC::StreamServerConnection& streamConnection() const { return m_streamConnection.get(); }
-#if ENABLE(VIDEO)
-    void performWithMediaPlayerOnMainThread(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&);
-#endif
 
     void lowMemoryHandler(WTF::Critical, WTF::Synchronous);
 
@@ -165,9 +160,6 @@ private:
     void prepareLayerBuffersForDisplay(const PrepareBackingStoreBuffersInputData&, PrepareBackingStoreBuffersOutputData&);
 #endif
 
-    void createRemoteGPU(WebGPUIdentifier, IPC::StreamServerConnection::Handle&&);
-    void releaseRemoteGPU(WebGPUIdentifier);
-
     void createRemoteBarcodeDetector(ShapeDetectionIdentifier, const WebCore::ShapeDetection::BarcodeDetectorOptions&);
     void releaseRemoteBarcodeDetector(ShapeDetectionIdentifier);
     void getRemoteBarcodeDetectorSupportedFormats(CompletionHandler<void(Vector<WebCore::ShapeDetection::BarcodeFormat>&&)>&&);
@@ -190,10 +182,6 @@ private:
 #endif
 
     HashMap<QualifiedRenderingResourceIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteDisplayListRecorder>> m_remoteDisplayLists WTF_GUARDED_BY_CAPABILITY(workQueue());
-
-    using RemoteGPUMap = HashMap<WebGPUIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteGPU>>;
-    RemoteGPUMap m_remoteGPUMap;
-
     Ref<ShapeDetection::ObjectHeap> m_shapeDetectionObjectHeap;
 };
 
