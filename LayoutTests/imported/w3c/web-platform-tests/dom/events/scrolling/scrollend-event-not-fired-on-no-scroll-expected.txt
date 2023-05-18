@@ -1,0 +1,8 @@
+target
+doc
+
+FAIL No scroll via wheel on div shouldn't fire scrollend. promise_test: Unhandled rejection with value: object "Error: Unknown source type "wheel"."
+PASS No scroll via keys on div shouldn't fire scrollend.
+FAIL No scroll via wheel on document shouldn't fire scrollend. promise_test: Unhandled rejection with value: object "Error: Unknown source type "wheel"."
+PASS No scroll via keys on document shouldn't fire scrollend.
+

@@ -6344,6 +6344,9 @@ webkit.org/b/242658 http/tests/media/user-gesture-preserved-across-xmlhttpreques
 # This test is crashing in debug since its import.
 webkit.org/b/256847 [ Debug ] imported/w3c/web-platform-tests/dom/events/preventDefault-during-activation-behavior.html [ Skip ]
 
+# Test has been timing out since its import.
+imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-handler-content-attributes.html [ Skip ]
+
 # Recent WPT update
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-fixed-inside-transform-1.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-local-hidden.html [ ImageOnlyFailure ]
