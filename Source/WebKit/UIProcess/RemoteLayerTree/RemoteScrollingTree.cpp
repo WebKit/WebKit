@@ -199,7 +199,7 @@ void RemoteScrollingTree::deferWheelEventTestCompletionForReason(ScrollingNodeID
 {
     ASSERT(isMainRunLoop());
 
-    if (!m_scrollingCoordinatorProxy)
+    if (!m_scrollingCoordinatorProxy || !isMonitoringWheelEvents())
         return;
 
     m_scrollingCoordinatorProxy->deferWheelEventTestCompletionForReason(nodeID, reason);
@@ -209,7 +209,7 @@ void RemoteScrollingTree::removeWheelEventTestCompletionDeferralForReason(Scroll
 {
     ASSERT(isMainRunLoop());
 
-    if (!m_scrollingCoordinatorProxy)
+    if (!m_scrollingCoordinatorProxy || !isMonitoringWheelEvents())
         return;
 
     m_scrollingCoordinatorProxy->removeWheelEventTestCompletionDeferralForReason(nodeID, reason);

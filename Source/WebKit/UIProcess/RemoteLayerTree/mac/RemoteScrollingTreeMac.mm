@@ -323,6 +323,9 @@ WheelEventHandlingResult RemoteScrollingTreeMac::handleWheelEventAfterDefaultHan
 
 void RemoteScrollingTreeMac::deferWheelEventTestCompletionForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
 {
+    if (!isMonitoringWheelEvents())
+        return;
+
     RunLoop::main().dispatch([strongThis = Ref { *this }, nodeID, reason] {
         if (auto* scrollingCoordinatorProxy = strongThis->scrollingCoordinatorProxy())
             scrollingCoordinatorProxy->deferWheelEventTestCompletionForReason(nodeID, reason);
@@ -331,6 +334,9 @@ void RemoteScrollingTreeMac::deferWheelEventTestCompletionForReason(ScrollingNod
 
 void RemoteScrollingTreeMac::removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
 {
+    if (!isMonitoringWheelEvents())
+        return;
+
     RunLoop::main().dispatch([strongThis = Ref { *this }, nodeID, reason] {
         if (auto* scrollingCoordinatorProxy = strongThis->scrollingCoordinatorProxy())
             scrollingCoordinatorProxy->removeWheelEventTestCompletionDeferralForReason(nodeID, reason);
