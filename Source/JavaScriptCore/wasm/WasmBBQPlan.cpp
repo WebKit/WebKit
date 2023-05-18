@@ -61,6 +61,17 @@ BBQPlan::BBQPlan(VM& vm, Ref<ModuleInformation> moduleInformation, uint32_t func
     dataLogLnIf(WasmBBQPlanInternal::verbose, "Starting BBQ plan for ", functionIndex);
 }
 
+FunctionAllowlist& BBQPlan::ensureGlobalBBQAllowlist()
+{
+    static LazyNeverDestroyed<FunctionAllowlist> bbqAllowlist;
+    static std::once_flag initializeAllowlistFlag;
+    std::call_once(initializeAllowlistFlag, [] {
+        const char* functionAllowlistFile = Options::bbqAllowlist();
+        bbqAllowlist.construct(functionAllowlistFile);
+    });
+    return bbqAllowlist;
+}
+
 bool BBQPlan::planGeneratesLoopOSREntrypoints(const ModuleInformation& moduleInformation)
 {
     if constexpr (is32Bit())

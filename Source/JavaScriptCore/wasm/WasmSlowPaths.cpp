@@ -97,12 +97,14 @@ extern "C" void wasm_log_crash(CallFrame*, Wasm::Instance* instance)
 inline bool shouldJIT(Wasm::LLIntCallee* callee, RequiredWasmJIT requiredJIT = RequiredWasmJIT::Any)
 {
     if (requiredJIT == RequiredWasmJIT::OMG) {
-        if (!Options::useOMGJIT())
+        if (!Options::useOMGJIT() || !Wasm::OMGPlan::ensureGlobalOMGAllowlist().containsWasmFunction(callee->functionIndex()))
             return false;
     } else {
-        if (Options::wasmLLIntTiersUpToBBQ() && !Options::useBBQJIT())
+        if (Options::wasmLLIntTiersUpToBBQ()
+            && (!Options::useBBQJIT() || !Wasm::BBQPlan::ensureGlobalBBQAllowlist().containsWasmFunction(callee->functionIndex())))
             return false;
-        if (!Options::wasmLLIntTiersUpToBBQ() && !Options::useOMGJIT())
+        if (!Options::wasmLLIntTiersUpToBBQ()
+            && (!Options::useOMGJIT() || !Wasm::OMGPlan::ensureGlobalOMGAllowlist().containsWasmFunction(callee->functionIndex())))
             return false;
     }
     if (!Options::wasmFunctionIndexRangeToCompile().isInRange(callee->functionIndex()))
@@ -145,9 +147,9 @@ inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, Wasm::Instance
     if (compile) {
         uint32_t functionIndex = callee->functionIndex();
         RefPtr<Wasm::Plan> plan;
-        if (Options::wasmLLIntTiersUpToBBQ())
+        if (Options::wasmLLIntTiersUpToBBQ() && Wasm::BBQPlan::ensureGlobalBBQAllowlist().containsWasmFunction(functionIndex))
             plan = adoptRef(*new Wasm::BBQPlan(instance->vm(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, callee->hasExceptionHandlers(), instance->calleeGroup(), Wasm::Plan::dontFinalize()));
-        else
+        else // No need to check OMG allow list: if we didn't want to compile this function, shouldJIT should have returned false.
             plan = adoptRef(*new Wasm::OMGPlan(instance->vm(), Ref<Wasm::Module>(instance->module()), functionIndex, callee->hasExceptionHandlers(), instance->memory()->mode(), Wasm::Plan::dontFinalize()));
 
         Wasm::ensureWorklist().enqueue(*plan);

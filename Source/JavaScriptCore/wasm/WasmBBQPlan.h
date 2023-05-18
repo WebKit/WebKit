@@ -32,6 +32,7 @@
 #include "WasmEntryPlan.h"
 #include "WasmModuleInformation.h"
 #include "WasmTierUpCount.h"
+#include "tools/FunctionAllowlist.h"
 #include <wtf/Bag.h>
 #include <wtf/Function.h>
 #include <wtf/SharedTask.h>
@@ -75,6 +76,7 @@ public:
         return Base::parseAndValidateModule(m_source.data(), m_source.size());
     }
 
+    static FunctionAllowlist& ensureGlobalBBQAllowlist();
     static bool planGeneratesLoopOSREntrypoints(const ModuleInformation&);
 
 private:

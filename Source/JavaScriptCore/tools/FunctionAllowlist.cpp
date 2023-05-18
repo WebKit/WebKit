@@ -100,6 +100,14 @@ bool FunctionAllowlist::shouldDumpWasmFunction(uint32_t index) const
 {
     if (!m_hasActiveAllowlist)
         return false;
+    return containsWasmFunction(index);
+}
+
+bool FunctionAllowlist::containsWasmFunction(uint32_t index) const
+{
+    if (!m_hasActiveAllowlist)
+        return true;
+
     if (m_entries.isEmpty())
         return false;
     return m_entries.contains(String::number(index));

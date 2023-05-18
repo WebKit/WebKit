@@ -263,7 +263,7 @@ static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& c
 
 inline bool shouldJIT(unsigned functionIndex)
 {
-    if (!Options::useOMGJIT())
+    if (!Options::useOMGJIT() || !OMGPlan::ensureGlobalOMGAllowlist().containsWasmFunction(functionIndex))
         return false;
     if (!Options::wasmFunctionIndexRangeToCompile().isInRange(functionIndex))
         return false;

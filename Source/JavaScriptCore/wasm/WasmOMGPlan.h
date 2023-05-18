@@ -30,6 +30,7 @@
 #include "WasmContext.h"
 #include "WasmModule.h"
 #include "WasmPlan.h"
+#include "tools/FunctionAllowlist.h"
 
 namespace JSC {
 
@@ -44,6 +45,7 @@ public:
     bool hasWork() const final { return !m_completed; }
     void work(CompilationEffort) final;
     bool multiThreaded() const final { return false; }
+    static FunctionAllowlist& ensureGlobalOMGAllowlist();
 
     // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.
     OMGPlan(VM&, Ref<Module>&&, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, MemoryMode, CompletionTask&&);
