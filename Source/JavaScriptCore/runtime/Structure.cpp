@@ -1039,10 +1039,9 @@ void Structure::startWatchingPropertyForReplacements(VM& vm, PropertyName proper
     startWatchingPropertyForReplacements(vm, get(vm, propertyName));
 }
 
-void Structure::didCachePropertyReplacement(VM& vm, PropertyOffset offset)
+void Structure::didReplacePropertySlow(PropertyOffset offset)
 {
-    RELEASE_ASSERT(isValidOffset(offset));
-    firePropertyReplacementWatchpointSet(vm, offset, "Did cache property replacement");
+    firePropertyReplacementWatchpointSet(vm(), offset, "Property did get replaced");
 }
 
 void Structure::startWatchingInternalProperties(VM& vm)

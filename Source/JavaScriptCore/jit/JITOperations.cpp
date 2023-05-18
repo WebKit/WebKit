@@ -858,8 +858,10 @@ ALWAYS_INLINE static void putByIdMegamorphic(JSGlobalObject* globalObject, VM& v
 
     Structure* newStructure = baseObject->structure();
     if (slot.type() == PutPropertySlot::ExistingProperty) {
-        if (LIKELY(oldStructure == newStructure && !oldStructure->isWatchingReplacement() && slot.cachedOffset() <= MegamorphicCache::maxOffset))
+        if (LIKELY(oldStructure == newStructure && slot.cachedOffset() <= MegamorphicCache::maxOffset)) {
+            oldStructure->didCachePropertyReplacement(vm, slot.cachedOffset()); // Ensure invalidating watchpoint set.
             vm.megamorphicCache()->initAsReplace(StructureID::encode(oldStructure), uid, slot.cachedOffset());
+        }
         return;
     }
 
@@ -1521,9 +1523,10 @@ ALWAYS_INLINE static void putByValMegamorphic(JSGlobalObject* globalObject, VM& 
 
     Structure* newStructure = baseObject->structure();
     if (slot.type() == PutPropertySlot::ExistingProperty) {
-        // dataLogLn(MegamorphicCache::storeCachePrimaryMask & MegamorphicCache::storeCachePrimaryHash(StructureID::encode(oldStructure), uid), " ", JSValue(oldStructure));
-        if (LIKELY(oldStructure == newStructure && !oldStructure->isWatchingReplacement() && slot.cachedOffset() <= MegamorphicCache::maxOffset))
+        if (LIKELY(oldStructure == newStructure && slot.cachedOffset() <= MegamorphicCache::maxOffset)) {
+            oldStructure->didCachePropertyReplacement(vm, slot.cachedOffset()); // Ensure invalidating watchpoint set.
             vm.megamorphicCache()->initAsReplace(StructureID::encode(oldStructure), uid, slot.cachedOffset());
+        }
         return;
     }
 

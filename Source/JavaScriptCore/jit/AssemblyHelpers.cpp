@@ -595,13 +595,8 @@ AssemblyHelpers::JumpList AssemblyHelpers::storeMegamorphicProperty(VM& vm, GPRR
 
     // We only support non-allocating transition. This means we do not need to nuke Structure* for transition here.
     store32(scratch4GPR, Address(baseGPR, JSCell::structureIDOffset()));
-    auto store = jump();
 
     replaceCase.link(this);
-    emitNonNullDecodeZeroExtendedStructureID(scratch1GPR, scratch4GPR);
-    slowCases.append(branchTest32(NonZero, Address(scratch4GPR, Structure::bitFieldOffset()), TrustedImm32(Structure::s_isWatchingReplacementBits)));
-
-    store.link(this);
     storeProperty(JSValueRegs { valueGPR }, baseGPR, scratch2GPR, scratch3GPR);
     auto done = jump();
 

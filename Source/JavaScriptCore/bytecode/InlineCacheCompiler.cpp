@@ -2860,6 +2860,12 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                     allAreSimpleReplaceOrTransition = false;
                     break;
                 }
+                if (accessCase->type() == AccessCase::Transition) {
+                    if (accessCase->newStructure()->outOfLineCapacity() != accessCase->structure()->outOfLineCapacity()) {
+                        allAreSimpleReplaceOrTransition = false;
+                        break;
+                    }
+                }
             }
 
             // Currently, we do not apply megamorphic cache for "length" property since Array#length and String#length are too common.
@@ -2897,6 +2903,12 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                 if (!canUseMegamorphicPutFastPath(accessCase->structure())) {
                     allAreSimpleReplaceOrTransition = false;
                     break;
+                }
+                if (accessCase->type() == AccessCase::Transition) {
+                    if (accessCase->newStructure()->outOfLineCapacity() != accessCase->structure()->outOfLineCapacity()) {
+                        allAreSimpleReplaceOrTransition = false;
+                        break;
+                    }
                 }
             }
 
