@@ -29,6 +29,7 @@
         F_ADDFILESIGS_RETURN
         F_CHECK_LV
         F_GETPATH
+        F_GETPROTECTIONCLASS
         F_SETFD
         F_SETFL
         F_SETNOSIGPIPE))

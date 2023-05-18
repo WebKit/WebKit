@@ -40,6 +40,7 @@
         F_CHECK_LV
         F_GETFL
         F_GETPATH
+        F_GETPROTECTIONCLASS
         F_GETSIGSINFO
         F_NOCACHE
         F_SETFD
