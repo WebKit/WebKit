@@ -1204,8 +1204,6 @@ OptionSet<DragSourceAction> EventHandler::updateDragSourceActionsAllowed() const
 
 HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, OptionSet<HitTestRequest::Type> hitType) const
 {
-    ASSERT(!hitType.contains(HitTestRequest::Type::CollectMultipleElements));
-
     Ref protectedFrame { m_frame };
 
     // We always send hitTestResultAtPoint to the main frame if we have one,
