@@ -4523,15 +4523,17 @@ bool ByteCodeParser::handleConstantFunction(
     if (function->classInfo() == StringConstructor::info()) {
         insertChecks();
         
-        Node* resultNode;
-        
+        Node* argumentNode;
         if (argumentCountIncludingThis <= 1)
-            resultNode = jsConstant(m_vm->smallStrings.emptyString());
+            argumentNode = jsConstant(m_vm->smallStrings.emptyString());
         else
-            resultNode = addToGraph(CallStringConstructor, get(virtualRegisterForArgumentIncludingThis(1, registerOffset)));
+            argumentNode = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
         
+        Node* resultNode;
         if (kind == CodeForConstruct)
-            resultNode = addToGraph(NewStringObject, OpInfo(m_graph.registerStructure(function->globalObject()->stringObjectStructure())), resultNode);
+            resultNode = addToGraph(NewStringObject, OpInfo(m_graph.registerStructure(function->globalObject()->stringObjectStructure())), addToGraph(ToString, argumentNode));
+        else
+            resultNode = addToGraph(CallStringConstructor, argumentNode);
         
         set(result, resultNode);
         return true;
