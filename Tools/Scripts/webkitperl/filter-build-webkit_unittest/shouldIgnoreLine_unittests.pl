@@ -32,6 +32,12 @@ use English;
 use FindBin;
 use Test::More;
 use lib File::Spec->catdir($FindBin::Bin, "..");
+
+if ($^O eq 'MSWin32') {
+    plan skip_all => 'filter-build-webkit fails to load on Windows.';
+    exit 0;    
+}
+
 require "filter-build-webkit";
 
 FilterBuildWebKit->import(qw(shouldIgnoreLine));
