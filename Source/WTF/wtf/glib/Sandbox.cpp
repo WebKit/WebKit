@@ -36,10 +36,33 @@ bool isInsideFlatpak()
     return returnValue;
 }
 
-bool isInsideContainer()
+bool isInsideUnsupportedContainer()
 {
-    static bool returnValue = g_file_test("/run/.containerenv", G_FILE_TEST_EXISTS);
-    return returnValue;
+    static bool inContainer = g_file_test("/run/.containerenv", G_FILE_TEST_EXISTS);
+    static int supportedContainer = -1;
+
+    // Being in a container does not mean sub-containers cannot work. It depends upon various details such as
+    // docker vs podman, which permissions are given, is it privileged or unprivileged, and are unprivileged user namespaces enabled.
+    // So this just does a basic test of if `bwrap` runs successfully.
+    if (inContainer && supportedContainer == -1) {
+        const char* bwrapArgs[] = {
+            BWRAP_EXECUTABLE,
+            "--ro-bind", "/", "/",
+            "--proc", "/proc",
+            "--dev", "/dev",
+            "--unshare-all",
+            "true",
+            nullptr
+        };
+        int waitStatus = 0;
+        gboolean spawnSucceeded = g_spawn_sync(nullptr, const_cast<char**>(bwrapArgs), nullptr,
+            G_SPAWN_STDERR_TO_DEV_NULL, nullptr, nullptr, nullptr, nullptr, &waitStatus, nullptr);
+        supportedContainer = spawnSucceeded && g_spawn_check_wait_status(waitStatus, nullptr);
+        if (!supportedContainer)
+            WTFLogAlways("Bubblewrap does not work inside of this container, sandboxing will be disabled.");
+    }
+
+    return inContainer && !supportedContainer;
 }
 
 bool isInsideSnap()
