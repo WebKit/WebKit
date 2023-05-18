@@ -43,44 +43,6 @@ TextBoxIterator TextBox::nextTextBox() const
     return TextBoxIterator(*this).traverseNextTextBox();
 }
 
-LayoutRect TextBox::selectionRect(unsigned rangeStart, unsigned rangeEnd) const
-{
-    if (is<SVGInlineTextBox>(legacyInlineBox()))
-        return downcast<SVGInlineTextBox>(*legacyInlineBox()).localSelectionRect(rangeStart, rangeEnd);
-
-    bool isCaretCase = rangeStart == rangeEnd;
-
-    auto [clampedStart, clampedEnd] = selectableRange().clamp(rangeStart, rangeEnd);
-
-    if (clampedStart >= clampedEnd) {
-        if (isCaretCase) {
-            // handle unitary range, e.g.: representing caret position
-            bool isCaretWithinTextBox = rangeStart >= start() && rangeStart < end();
-            // For last text box in a InlineTextBox chain, we allow the caret to move to a position 'after' the end of the last text box.
-            bool isCaretWithinLastTextBox = rangeStart >= start() && rangeStart <= end();
-
-            auto itEnd = TextBoxRange(TextBoxIterator(*this)).end();
-            auto isLastTextBox = nextTextBox() == itEnd;
-
-            if ((isLastTextBox && !isCaretWithinLastTextBox) || (!isLastTextBox && !isCaretWithinTextBox))
-                return { };
-        } else {
-            bool isRangeWithinTextBox = (rangeStart >= start() && rangeStart <= end());
-            if (!isRangeWithinTextBox)
-                return { };
-        }
-    }
-
-    auto lineSelectionRect = LineSelection::logicalRect(*lineBox());
-    auto selectionRect = LayoutRect { logicalLeftIgnoringInlineDirection(), lineSelectionRect.y(), logicalWidth(), lineSelectionRect.height() };
-
-    auto textRun = this->textRun();
-    if (clampedStart || clampedEnd != textRun.length())
-        fontCascade().adjustSelectionRectForText(textRun, selectionRect, clampedStart, clampedEnd);
-
-    return snappedSelectionRect(selectionRect, logicalRightIgnoringInlineDirection(), lineSelectionRect.y(), lineSelectionRect.height(), isHorizontal());
-}
-
 unsigned TextBox::offsetForPosition(float x, bool includePartialGlyphs) const
 {
     if (isLineBreak())

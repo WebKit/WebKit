@@ -195,6 +195,44 @@ String capitalize(const String& string, UChar previousCharacter)
     return result == string ? string : result.toString();
 }
 
+static LayoutRect selectionRectForTextBox(const InlineIterator::TextBox& textBox, unsigned rangeStart, unsigned rangeEnd)
+{
+    if (is<SVGInlineTextBox>(textBox.legacyInlineBox()))
+        return downcast<SVGInlineTextBox>(*textBox.legacyInlineBox()).localSelectionRect(rangeStart, rangeEnd);
+
+    bool isCaretCase = rangeStart == rangeEnd;
+
+    auto [clampedStart, clampedEnd] = textBox.selectableRange().clamp(rangeStart, rangeEnd);
+
+    if (clampedStart >= clampedEnd) {
+        if (isCaretCase) {
+            // handle unitary range, e.g.: representing caret position
+            bool isCaretWithinTextBox = rangeStart >= textBox.start() && rangeStart < textBox.end();
+            // For last text box in a InlineTextBox chain, we allow the caret to move to a position 'after' the end of the last text box.
+            bool isCaretWithinLastTextBox = rangeStart >= textBox.start() && rangeStart <= textBox.end();
+
+            auto itEnd = InlineIterator::TextBoxRange { InlineIterator::TextBoxIterator(textBox) }.end();
+            auto isLastTextBox = textBox.nextTextBox() == itEnd;
+
+            if ((isLastTextBox && !isCaretWithinLastTextBox) || (!isLastTextBox && !isCaretWithinTextBox))
+                return { };
+        } else {
+            bool isRangeWithinTextBox = (rangeStart >= textBox.start() && rangeStart <= textBox.end());
+            if (!isRangeWithinTextBox)
+                return { };
+        }
+    }
+
+    auto lineSelectionRect = LineSelection::logicalRect(*textBox.lineBox());
+    auto selectionRect = LayoutRect { textBox.logicalLeftIgnoringInlineDirection(), lineSelectionRect.y(), textBox.logicalWidth(), lineSelectionRect.height() };
+
+    auto textRun = textBox.textRun();
+    if (clampedStart || clampedEnd != textRun.length())
+        textBox.fontCascade().adjustSelectionRectForText(textRun, selectionRect, clampedStart, clampedEnd);
+
+    return snappedSelectionRect(selectionRect, textBox.logicalRightIgnoringInlineDirection(), lineSelectionRect.y(), lineSelectionRect.height(), textBox.isHorizontal());
+}
+
 inline RenderText::RenderText(Node& node, const String& text)
     : RenderObject(node)
     , m_isAllASCII(text.impl()->isAllASCII())
@@ -349,31 +387,31 @@ Vector<IntRect> RenderText::absoluteRectsForRange(unsigned start, unsigned end, 
 // Full annotations are added in this class.
 void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, unsigned start, unsigned end)
 {
-    for (auto run = InlineIterator::firstTextBoxFor(*this); run; run = run.traverseNextTextBox()) {
+    for (auto textBox = InlineIterator::firstTextBoxFor(*this); textBox; textBox = textBox.traverseNextTextBox()) {
         LayoutRect rect;
-        if (start <= run->start() && run->end() <= end)
-            rect = run->selectionRect(start, end);
+        if (start <= textBox->start() && textBox->end() <= end)
+            rect = selectionRectForTextBox(*textBox, start, end);
         else {
-            unsigned realEnd = std::min(run->end(), end);
-            rect = run->selectionRect(start, realEnd);
+            unsigned realEnd = std::min(textBox->end(), end);
+            rect = selectionRectForTextBox(*textBox, start, realEnd);
             if (rect.isEmpty())
                 continue;
         }
 
-        if (run->lineBox()->isFirstAfterPageBreak()) {
-            if (run->isHorizontal())
-                rect.shiftYEdgeTo(run->lineBox()->logicalTop());
+        if (textBox->lineBox()->isFirstAfterPageBreak()) {
+            if (textBox->isHorizontal())
+                rect.shiftYEdgeTo(textBox->lineBox()->logicalTop());
             else
-                rect.shiftXEdgeTo(run->lineBox()->logicalTop());
+                rect.shiftXEdgeTo(textBox->lineBox()->logicalTop());
         }
 
         RenderBlock* containingBlock = this->containingBlock();
         // Map rect, extended left to leftOffset, and right to rightOffset, through transforms to get minX and maxX.
         LogicalSelectionOffsetCaches cache(*containingBlock);
-        LayoutUnit leftOffset = containingBlock->logicalLeftSelectionOffset(*containingBlock, LayoutUnit(run->logicalTop()), cache);
-        LayoutUnit rightOffset = containingBlock->logicalRightSelectionOffset(*containingBlock, LayoutUnit(run->logicalTop()), cache);
+        LayoutUnit leftOffset = containingBlock->logicalLeftSelectionOffset(*containingBlock, LayoutUnit(textBox->logicalTop()), cache);
+        LayoutUnit rightOffset = containingBlock->logicalRightSelectionOffset(*containingBlock, LayoutUnit(textBox->logicalTop()), cache);
         LayoutRect extentsRect = rect;
-        if (run->isHorizontal()) {
+        if (textBox->isHorizontal()) {
             extentsRect.setX(leftOffset);
             extentsRect.setWidth(rightOffset - leftOffset);
         } else {
@@ -381,19 +419,19 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
             extentsRect.setHeight(rightOffset - leftOffset);
         }
         extentsRect = localToAbsoluteQuad(FloatRect(extentsRect)).enclosingBoundingBox();
-        if (!run->isHorizontal())
+        if (!textBox->isHorizontal())
             extentsRect = extentsRect.transposedRect();
-        bool isFirstOnLine = !run->previousOnLine();
-        bool isLastOnLine = !run->nextOnLine();
+        bool isFirstOnLine = !textBox->previousOnLine();
+        bool isLastOnLine = !textBox->nextOnLine();
         if (containingBlock->isRubyBase() || containingBlock->isRubyText())
             isLastOnLine = !containingBlock->containingBlock()->inlineBoxWrapper()->nextOnLineExists();
 
-        bool containsStart = run->start() <= start && run->end() >= start;
-        bool containsEnd = run->start() <= end && run->end() >= end;
+        bool containsStart = textBox->start() <= start && textBox->end() >= start;
+        bool containsEnd = textBox->start() <= end && textBox->end() >= end;
 
         bool isFixed = false;
         auto absoluteQuad = localToAbsoluteQuad(FloatRect(rect), UseTransforms, &isFixed);
-        bool boxIsHorizontal = !is<SVGInlineTextBox>(run->legacyInlineBox()) ? run->isHorizontal() : !style().isVerticalWritingMode();
+        bool boxIsHorizontal = !is<SVGInlineTextBox>(textBox->legacyInlineBox()) ? textBox->isHorizontal() : !style().isVerticalWritingMode();
         // If the containing block is an inline element, we want to check the inlineBoxWrapper orientation
         // to determine the orientation of the block. In this case we also use the inlineBoxWrapper to
         // determine if the element is the last on the line.
@@ -404,26 +442,26 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
             }
         }
 
-        rects.append(SelectionGeometry(absoluteQuad, HTMLElement::selectionRenderingBehavior(textNode()), run->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, run->isLineBreak(), isFirstOnLine, isLastOnLine, containsStart, containsEnd, boxIsHorizontal, isFixed, containingBlock->isRubyText(), view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
+        rects.append(SelectionGeometry(absoluteQuad, HTMLElement::selectionRenderingBehavior(textNode()), textBox->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, textBox->isLineBreak(), isFirstOnLine, isLastOnLine, containsStart, containsEnd, boxIsHorizontal, isFixed, containingBlock->isRubyText(), view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
     }
 }
 #endif
 
-static FloatRect boundariesForTextRun(const InlineIterator::TextBox& run)
+static FloatRect boundariesForTextBox(const InlineIterator::TextBox& textBox)
 {
-    if (is<SVGInlineTextBox>(run.legacyInlineBox()))
-        return downcast<SVGInlineTextBox>(*run.legacyInlineBox()).calculateBoundaries();
+    if (is<SVGInlineTextBox>(textBox.legacyInlineBox()))
+        return downcast<SVGInlineTextBox>(*textBox.legacyInlineBox()).calculateBoundaries();
 
-    return run.visualRectIgnoringBlockDirection();
+    return textBox.visualRectIgnoringBlockDirection();
 }
 
-static std::optional<IntRect> ellipsisRectForTextRun(const InlineIterator::TextBox& run, unsigned start, unsigned end)
+static std::optional<IntRect> ellipsisRectForTextBox(const InlineIterator::TextBox& textBox, unsigned start, unsigned end)
 {
-    auto lineBox = run.lineBox();
+    auto lineBox = textBox.lineBox();
     if (!lineBox->hasEllipsis())
         return { };
 
-    auto selectableRange = run.selectableRange();
+    auto selectableRange = textBox.selectableRange();
     if (!selectableRange.truncation)
         return { };
 
@@ -444,12 +482,12 @@ enum class ClippingOption { NoClipping, ClipToEllipsis };
 static Vector<FloatQuad> collectAbsoluteQuads(const RenderText& textRenderer, bool* wasFixed, ClippingOption clipping)
 {
     Vector<FloatQuad> quads;
-    for (auto& run : InlineIterator::textBoxesFor(textRenderer)) {
-        auto boundaries = boundariesForTextRun(run);
+    for (auto& textBox : InlineIterator::textBoxesFor(textRenderer)) {
+        auto boundaries = boundariesForTextBox(textBox);
 
         // Shorten the width of this text box if it ends in an ellipsis.
         if (clipping == ClippingOption::ClipToEllipsis) {
-            if (auto ellipsisRect = ellipsisRectForTextRun(run, 0, textRenderer.text().length())) {
+            if (auto ellipsisRect = ellipsisRectForTextBox(textBox, 0, textRenderer.text().length())) {
                 if (textRenderer.style().isHorizontalWritingMode())
                     boundaries.setWidth(ellipsisRect->maxX() - boundaries.x());
                 else
@@ -472,16 +510,16 @@ void RenderText::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
     quads.appendVector(collectAbsoluteQuads(*this, wasFixed, ClippingOption::NoClipping));
 }
 
-static FloatRect localQuadForTextRun(const InlineIterator::TextBox& run, unsigned start, unsigned end, bool useSelectionHeight)
+static FloatRect localQuadForTextBox(const InlineIterator::TextBox& textBox, unsigned start, unsigned end, bool useSelectionHeight)
 {
-    LayoutRect boxSelectionRect = run.selectionRect(start, end);
+    LayoutRect boxSelectionRect = selectionRectForTextBox(textBox, start, end);
     if (!boxSelectionRect.height())
         return { };
     if (useSelectionHeight)
         return boxSelectionRect;
 
-    auto rect = run.visualRectIgnoringBlockDirection();
-    if (run.isHorizontal()) {
+    auto rect = textBox.visualRectIgnoringBlockDirection();
+    if (textBox.isHorizontal()) {
         boxSelectionRect.setHeight(rect.height());
         boxSelectionRect.setY(rect.y());
     } else {
@@ -537,19 +575,19 @@ Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end
     end = std::min(std::max(caretMinOffset, end), caretMaxOffset);
 
     Vector<FloatQuad> quads;
-    for (auto& run : InlineIterator::textBoxesFor(*this)) {
-        if (ignoreEmptyTextSelections && !run.selectableRange().intersects(start, end))
+    for (auto& textBox : InlineIterator::textBoxesFor(*this)) {
+        if (ignoreEmptyTextSelections && !textBox.selectableRange().intersects(start, end))
             continue;
 
         if (computeIndividualCharacterRects) {
-            auto rects = characterRects(run, start, end);
+            auto rects = characterRects(textBox, start, end);
             if (!quads.tryReserveCapacity(quads.size() + rects.size()))
                 continue;
 
             if (!useSelectionHeight) {
                 for (auto& rect : rects) {
-                    auto visualRect = run.visualRectIgnoringBlockDirection();
-                    if (run.isHorizontal()) {
+                    auto visualRect = textBox.visualRectIgnoringBlockDirection();
+                    if (textBox.isHorizontal()) {
                         rect.setHeight(visualRect.height());
                         rect.setY(visualRect.y());
                     } else {
@@ -566,12 +604,12 @@ Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end
             continue;
         }
 
-        if (start <= run.start() && run.end() <= end) {
-            auto boundaries = boundariesForTextRun(run);
+        if (start <= textBox.start() && textBox.end() <= end) {
+            auto boundaries = boundariesForTextBox(textBox);
 
             if (useSelectionHeight) {
-                LayoutRect selectionRect = run.selectionRect(start, end);
-                if (run.isHorizontal()) {
+                LayoutRect selectionRect = selectionRectForTextBox(textBox, start, end);
+                if (textBox.isHorizontal()) {
                     boundaries.setHeight(selectionRect.height());
                     boundaries.setY(selectionRect.y());
                 } else {
@@ -582,7 +620,7 @@ Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end
             quads.append(localToAbsoluteQuad(boundaries, UseTransforms, wasFixed));
             continue;
         }
-        FloatRect rect = localQuadForTextRun(run, start, end, useSelectionHeight);
+        FloatRect rect = localQuadForTextBox(textBox, start, end, useSelectionHeight);
         if (!rect.isZero())
             quads.append(localToAbsoluteQuad(rect, UseTransforms, wasFixed));
     }
@@ -1777,10 +1815,10 @@ LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerM
 
     LayoutRect resultRect;
 
-    for (auto& run : InlineIterator::textBoxesFor(*this)) {
+    for (auto& textBox : InlineIterator::textBoxesFor(*this)) {
         LayoutRect rect;
-        rect.unite(run.selectionRect(startOffset, endOffset));
-        rect.unite(ellipsisRectForTextRun(run, startOffset, endOffset).value_or(IntRect { }));
+        rect.unite(selectionRectForTextBox(textBox, startOffset, endOffset));
+        rect.unite(ellipsisRectForTextBox(textBox, startOffset, endOffset).value_or(IntRect { }));
         if (rect.isEmpty())
             continue;
 
