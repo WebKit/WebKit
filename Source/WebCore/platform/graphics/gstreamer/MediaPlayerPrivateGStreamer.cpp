@@ -1283,16 +1283,6 @@ GstElement* MediaPlayerPrivateGStreamer::createAudioSink()
 #endif
 }
 
-GstElement* MediaPlayerPrivateGStreamer::audioSink() const
-{
-    if (!m_pipeline)
-        return nullptr;
-
-    GstElement* sink;
-    g_object_get(m_pipeline.get(), "audio-sink", &sink, nullptr);
-    return sink;
-}
-
 bool MediaPlayerPrivateGStreamer::isMediaStreamPlayer() const
 {
 #if ENABLE(MEDIA_STREAM)
