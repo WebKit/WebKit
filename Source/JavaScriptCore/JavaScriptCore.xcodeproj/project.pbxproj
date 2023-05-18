@@ -11562,6 +11562,7 @@
 				53609F9021DFFA9C008FA60A /* Check .xcfilelists */,
 				6577FFC6276AC8D20011AEC8 /* Create Symlink to Alt Root Path */,
 				DD9C4CC52A05D4FB00D52E2E /* Fix up SDKROOT path in TAPI filelists (install only) */,
+				DDA8F1542A15BEEA00BE8D11 /* Work around rdar://109484516 */,
 			);
 			buildRules = (
 				DD284676291A27C90009A61D /* PBXBuildRule */,
@@ -11945,6 +11946,25 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "for ((i=0; i<${SCRIPT_INPUT_FILE_COUNT}; i++)); do\n    eval input=\"\\${SCRIPT_INPUT_FILE_$i}\"\n    eval output=\"\\${SCRIPT_OUTPUT_FILE_$i}\"\n    sed -e \"s;<SDKROOT>;${SDKROOT};\" \"${input}\" > \"${output}\"\ndone\n";
+		};
+		DDA8F1542A15BEEA00BE8D11 /* Work around rdar://109484516 */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Work around rdar://109484516";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/worked_around_109484516",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "rm -vf \"${OBJROOT}/EagerLinkingTBDs/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}/${CONTENTS_FOLDER_PATH}/${EXECUTABLE_PREFIX}${PRODUCT_NAME}${EXECUTABLE_VARIANT_SUFFIX}.tbd\" &&\ntouch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 		E1AC2E2C20F7B95800B0897D /* Unlock Keychain */ = {
 			isa = PBXShellScriptBuildPhase;
