@@ -1215,6 +1215,15 @@ private:
             break;
         }
 
+        case PutByValMegamorphic: {
+            Edge& child1 = m_graph.varArgChild(node, 0);
+            Edge& child2 = m_graph.varArgChild(node, 1);
+            node->setArrayMode(ArrayMode(Array::Generic, node->arrayMode().action()));
+            fixEdge<CellUse>(child1);
+            fixEdge<StringUse>(child2);
+            break;
+        }
+
         case PutByValDirect:
         case PutByVal:
         case PutByValAlias: {
@@ -1257,7 +1266,7 @@ private:
             default:
                 break;
             }
-            
+
             blessArrayOperation(child1, child2, m_graph.varArgChild(node, 3));
             
             switch (node->arrayMode().modeForPut().type()) {
@@ -1980,6 +1989,10 @@ private:
         }
 
         case GetByIdWithThisMegamorphic:
+            fixEdge<CellUse>(node->child1());
+            break;
+
+        case PutByIdMegamorphic:
             fixEdge<CellUse>(node->child1());
             break;
 

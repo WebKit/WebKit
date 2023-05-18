@@ -1178,7 +1178,7 @@ public:
     {
         m_map.encode(encoder, symbolTable.m_map);
         m_maxScopeOffset = symbolTable.m_maxScopeOffset;
-        m_usesNonStrictEval = symbolTable.m_usesNonStrictEval;
+        m_usesSloppyEval = symbolTable.m_usesSloppyEval;
         m_nestedLexicalScope = symbolTable.m_nestedLexicalScope;
         m_scopeType = symbolTable.m_scopeType;
         m_arguments.encode(encoder, symbolTable.m_arguments.get());
@@ -1190,7 +1190,7 @@ public:
         SymbolTable* symbolTable = SymbolTable::create(decoder.vm());
         m_map.decode(decoder, symbolTable->m_map);
         symbolTable->m_maxScopeOffset = m_maxScopeOffset;
-        symbolTable->m_usesNonStrictEval = m_usesNonStrictEval;
+        symbolTable->m_usesSloppyEval = m_usesSloppyEval;
         symbolTable->m_nestedLexicalScope = m_nestedLexicalScope;
         symbolTable->m_scopeType = m_scopeType;
         ScopedArgumentsTable* scopedArgumentsTable = m_arguments.decode(decoder);
@@ -1207,7 +1207,7 @@ public:
 private:
     CachedHashMap<CachedRefPtr<CachedUniquedStringImpl>, CachedSymbolTableEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, SymbolTableIndexHashTraits> m_map;
     ScopeOffset m_maxScopeOffset;
-    unsigned m_usesNonStrictEval : 1;
+    unsigned m_usesSloppyEval : 1;
     unsigned m_nestedLexicalScope : 1;
     unsigned m_scopeType : 3;
     CachedPtr<CachedScopedArgumentsTable> m_arguments;

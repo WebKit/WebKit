@@ -321,6 +321,7 @@ bool doesGC(Graph& graph, Node* node)
     case PutById:
     case PutByIdDirect:
     case PutByIdFlush:
+    case PutByIdMegamorphic:
     case PutByIdWithThis:
     case PutByValWithThis:
     case PutDynamicVar:
@@ -532,6 +533,7 @@ bool doesGC(Graph& graph, Node* node)
     case PutByValDirect:
     case PutByVal:
     case PutByValAlias:
+    case PutByValMegamorphic:
         if (!graph.m_plan.isFTL()) {
             switch (node->arrayMode().modeForPut().type()) {
             case Array::Int8Array:

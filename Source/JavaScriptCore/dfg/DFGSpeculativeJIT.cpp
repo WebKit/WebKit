@@ -2830,7 +2830,7 @@ void SpeculativeJIT::compileContiguousPutByVal(Node* node)
             slowCase, this,
             node->ecmaMode().isStrict() ?
                 (node->op() == PutByValDirect ? operationPutByValDirectBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsStrict) :
-                (node->op() == PutByValDirect ? operationPutByValDirectBeyondArrayBoundsNonStrict : operationPutByValBeyondArrayBoundsNonStrict),
+                (node->op() == PutByValDirect ? operationPutByValDirectBeyondArrayBoundsSloppy : operationPutByValBeyondArrayBoundsSloppy),
             NoResult, LinkableConstant::globalObject(*this, node), baseReg, propertyReg, valueRegs));
     }
 
@@ -2905,7 +2905,7 @@ void SpeculativeJIT::compileDoublePutByVal(Node* node)
                 slowCase, this,
                 node->ecmaMode().isStrict() ?
                     (node->op() == PutByValDirect ? operationPutDoubleByValDirectBeyondArrayBoundsStrict : operationPutDoubleByValBeyondArrayBoundsStrict) :
-                    (node->op() == PutByValDirect ? operationPutDoubleByValDirectBeyondArrayBoundsNonStrict : operationPutDoubleByValBeyondArrayBoundsNonStrict),
+                    (node->op() == PutByValDirect ? operationPutDoubleByValDirectBeyondArrayBoundsSloppy : operationPutDoubleByValBeyondArrayBoundsSloppy),
                 NoResult, LinkableConstant::globalObject(*this, node), baseReg, propertyReg, valueReg));
     }
 
@@ -2964,9 +2964,9 @@ void SpeculativeJIT::compilePutByVal(Node* node)
 
             flushRegisters();
             if (node->op() == PutByValDirect)
-                callOperation(node->ecmaMode().isStrict() ? operationPutByValDirectStrict : operationPutByValDirectNonStrict, LinkableConstant::globalObject(*this, node), baseRegs, propertyRegs, valueRegs);
+                callOperation(node->ecmaMode().isStrict() ? operationPutByValDirectStrict : operationPutByValDirectSloppy, LinkableConstant::globalObject(*this, node), baseRegs, propertyRegs, valueRegs);
             else
-                callOperation(node->ecmaMode().isStrict() ? operationPutByValStrict : operationPutByValNonStrict, LinkableConstant::globalObject(*this, node), baseRegs, propertyRegs, valueRegs);
+                callOperation(node->ecmaMode().isStrict() ? operationPutByValStrict : operationPutByValSloppy, LinkableConstant::globalObject(*this, node), baseRegs, propertyRegs, valueRegs);
             exceptionCheck();
 
             noResult(node);
@@ -2995,13 +2995,12 @@ void SpeculativeJIT::compilePutByVal(Node* node)
         CallSiteIndex callSite = recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
         RegisterSetBuilder usedRegisters = this->usedRegisters();
         bool isDirect = node->op() == PutByValDirect;
-        PutKind putKind = isDirect ? PutKind::Direct : PutKind::NotDirect;
         ECMAMode ecmaMode = node->ecmaMode();
 
         auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
         JITPutByValGenerator gen(
-            codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, AccessType::PutByVal, usedRegisters,
-            baseRegs, propertyRegs, valueRegs, InvalidGPRReg, stubInfoGPR, putKind, ecmaMode, PrivateFieldPutKind::none());
+            codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, isDirect ? (ecmaMode.isStrict() ? AccessType::PutByValDirectStrict : AccessType::PutByValDirectSloppy) : (ecmaMode.isStrict() ? AccessType::PutByValStrict : AccessType::PutByValSloppy), usedRegisters,
+            baseRegs, propertyRegs, valueRegs, InvalidGPRReg, stubInfoGPR, ecmaMode);
 
         std::visit([&](auto* stubInfo) {
             if (m_state.forNode(child2).isType(SpecString))
@@ -3015,7 +3014,7 @@ void SpeculativeJIT::compilePutByVal(Node* node)
         JumpList slowCases;
 
         std::unique_ptr<SlowPathGenerator> slowPath;
-        auto operation = isDirect ? (ecmaMode.isStrict() ? operationDirectPutByValStrictOptimize : operationDirectPutByValNonStrictOptimize) : (ecmaMode.isStrict() ? operationPutByValStrictOptimize : operationPutByValNonStrictOptimize);
+        auto operation = isDirect ? (ecmaMode.isStrict() ? operationDirectPutByValStrictOptimize : operationDirectPutByValSloppyOptimize) : (ecmaMode.isStrict() ? operationPutByValStrictOptimize : operationPutByValSloppyOptimize);
         if (m_graph.m_plan.isUnlinked()) {
             gen.generateDFGDataICFastPath(*this, stubInfoConstant.index(), stubInfoGPR);
             gen.m_unlinkedStubInfoConstantIndex = stubInfoConstant.index();
@@ -3118,7 +3117,7 @@ void SpeculativeJIT::compilePutByVal(Node* node)
                 slowCases, this,
                 node->ecmaMode().isStrict() ?
                     (node->op() == PutByValDirect ? operationPutByValDirectBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsStrict) :
-                    (node->op() == PutByValDirect ? operationPutByValDirectBeyondArrayBoundsNonStrict : operationPutByValBeyondArrayBoundsNonStrict),
+                    (node->op() == PutByValDirect ? operationPutByValDirectBeyondArrayBoundsSloppy : operationPutByValBeyondArrayBoundsSloppy),
                 NoResult, LinkableConstant::globalObject(*this, node), baseReg, propertyReg, valueRegs));
         }
 
@@ -4244,7 +4243,7 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(Node* node, TypedArrayType 
             slowPathCases, this,
             node->ecmaMode().isStrict() ?
                 (node->op() == PutByValDirect ? operationPutByValDirectStrict : operationPutByValStrict) :
-                (node->op() == PutByValDirect ? operationPutByValDirectNonStrict : operationPutByValNonStrict),
+                (node->op() == PutByValDirect ? operationPutByValDirectSloppy : operationPutByValSloppy),
 #if USE(JSVALUE64)
             NoResult, LinkableConstant::globalObject(*this, node), baseReg, propertyReg, valueGPR));
 #else // not USE(JSVALUE64)
@@ -4568,7 +4567,7 @@ void SpeculativeJIT::compilePutByValForCellWithString(Node* node)
     callOperation(
         node->ecmaMode().isStrict() ?
             (node->op() == PutByValDirect ? operationPutByValDirectCellStringStrict : operationPutByValCellStringStrict) :
-            (node->op() == PutByValDirect ? operationPutByValDirectCellStringNonStrict : operationPutByValCellStringNonStrict),
+            (node->op() == PutByValDirect ? operationPutByValDirectCellStringSloppy : operationPutByValCellStringSloppy),
         LinkableConstant::globalObject(*this, node), arg1GPR, arg2GPR, arg3Regs);
     exceptionCheck();
 
@@ -4591,7 +4590,7 @@ void SpeculativeJIT::compilePutByValForCellWithSymbol(Node* node)
     callOperation(
         node->ecmaMode().isStrict()
             ? (node->op() == PutByValDirect ? operationPutByValDirectCellSymbolStrict : operationPutByValCellSymbolStrict)
-            : (node->op() == PutByValDirect ? operationPutByValDirectCellSymbolNonStrict : operationPutByValCellSymbolNonStrict),
+            : (node->op() == PutByValDirect ? operationPutByValDirectCellSymbolSloppy : operationPutByValCellSymbolSloppy),
         LinkableConstant::globalObject(*this, node), arg1GPR, arg2GPR, arg3Regs);
     exceptionCheck();
 
@@ -4648,8 +4647,8 @@ void SpeculativeJIT::compilePutPrivateName(Node* node)
 
     auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
     JITPutByValGenerator gen(
-        codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, AccessType::PutPrivateName, usedRegisters,
-        JSValueRegs::payloadOnly(baseGPR), JSValueRegs::payloadOnly(propertyGPR), valueRegs, InvalidGPRReg, stubInfoGPR, PutKind::Direct, ECMAMode::sloppy(), node->privateFieldPutKind());
+        codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, node->privateFieldPutKind().isDefine() ? AccessType::DefinePrivateNameByVal : AccessType::SetPrivateNameByVal, usedRegisters,
+        JSValueRegs::payloadOnly(baseGPR), JSValueRegs::payloadOnly(propertyGPR), valueRegs, InvalidGPRReg, stubInfoGPR, ECMAMode::sloppy());
 
     std::visit([&](auto* stubInfo) {
         stubInfo->propertyIsSymbol = true;
@@ -4702,8 +4701,7 @@ void SpeculativeJIT::compilePutPrivateNameById(Node* node)
 
     // We emit property check during DFG generation, so we don't need
     // to check it here.
-    auto putKind = node->privateFieldPutKind().isDefine() ? PutKind::DirectPrivateFieldDefine : PutKind::DirectPrivateFieldSet;
-    cachedPutById(node, node->origin.semantic, baseGPR, valueRegs, stubInfoGPR, scratchGPR, scratch2GPR, node->cacheableIdentifier(), putKind, ECMAMode::strict());
+    cachedPutById(node, node->origin.semantic, baseGPR, valueRegs, stubInfoGPR, scratchGPR, scratch2GPR, node->cacheableIdentifier(), node->privateFieldPutKind().isDefine() ? AccessType::DefinePrivateNameById : AccessType::SetPrivateNameById, ECMAMode::strict());
 
     noResult(node);
 }
@@ -13492,7 +13490,7 @@ void SpeculativeJIT::compilePutDynamicVar(Node* node)
     JSValueRegs valueRegs = value.jsValueRegs();
 
     flushRegisters();
-    callOperation(node->ecmaMode().isStrict() ? operationPutDynamicVarStrict : operationPutDynamicVarNonStrict, LinkableConstant::globalObject(*this, node), scopeGPR, valueRegs, TrustedImmPtr(identifierUID(node->identifierNumber())), node->getPutInfo());
+    callOperation(node->ecmaMode().isStrict() ? operationPutDynamicVarStrict : operationPutDynamicVarSloppy, LinkableConstant::globalObject(*this, node), scopeGPR, valueRegs, TrustedImmPtr(identifierUID(node->identifierNumber())), node->getPutInfo());
     exceptionCheck();
     noResult(node);
 }
@@ -14647,7 +14645,7 @@ void SpeculativeJIT::compilePutByIdFlush(Node* node)
     GPRReg scratchGPR = scratch.gpr();
     flushRegisters();
 
-    cachedPutById(node, node->origin.semantic, baseGPR, valueRegs, stubInfoGPR, scratchGPR, scratch2GPR, node->cacheableIdentifier(), PutKind::NotDirect, node->ecmaMode(), Jump(), DontSpill);
+    cachedPutById(node, node->origin.semantic, baseGPR, valueRegs, stubInfoGPR, scratchGPR, scratch2GPR, node->cacheableIdentifier(), node->ecmaMode().isStrict() ? AccessType::PutByIdStrict : AccessType::PutByIdSloppy, node->ecmaMode(), Jump(), DontSpill);
 
     noResult(node);
 }
@@ -14672,7 +14670,7 @@ void SpeculativeJIT::compilePutById(Node* node)
     JSValueRegs valueRegs = value.jsValueRegs();
     GPRReg scratchGPR = scratch.gpr();
 
-    cachedPutById(node, node->origin.semantic, baseGPR, valueRegs, stubInfoGPR, scratchGPR, scratch2GPR, node->cacheableIdentifier(), PutKind::NotDirect, node->ecmaMode());
+    cachedPutById(node, node->origin.semantic, baseGPR, valueRegs, stubInfoGPR, scratchGPR, scratch2GPR, node->cacheableIdentifier(), node->ecmaMode().isStrict() ? AccessType::PutByIdStrict : AccessType::PutByIdSloppy, node->ecmaMode());
 
     noResult(node);
 }
@@ -14697,7 +14695,7 @@ void SpeculativeJIT::compilePutByIdDirect(Node* node)
     JSValueRegs valueRegs = value.jsValueRegs();
     GPRReg scratchGPR = scratch.gpr();
 
-    cachedPutById(node, node->origin.semantic, baseGPR, valueRegs, stubInfoGPR, scratchGPR, scratch2GPR, node->cacheableIdentifier(), PutKind::Direct, node->ecmaMode());
+    cachedPutById(node, node->origin.semantic, baseGPR, valueRegs, stubInfoGPR, scratchGPR, scratch2GPR, node->cacheableIdentifier(), node->ecmaMode().isStrict() ? AccessType::PutByIdDirectStrict : AccessType::PutByIdDirectSloppy, node->ecmaMode());
 
     noResult(node);
 }
@@ -16473,7 +16471,7 @@ void SpeculativeJIT::compileProfileType(Node* node)
     noResult(node);
 }
 
-void SpeculativeJIT::cachedPutById(Node* node, CodeOrigin codeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg stubInfoGPR, GPRReg scratchGPR, GPRReg scratch2GPR, CacheableIdentifier identifier, PutKind putKind, ECMAMode ecmaMode, Jump slowPathTarget, SpillRegistersMode spillMode)
+void SpeculativeJIT::cachedPutById(Node* node, CodeOrigin codeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg stubInfoGPR, GPRReg scratchGPR, GPRReg scratch2GPR, CacheableIdentifier identifier, AccessType accessType, ECMAMode ecmaMode, Jump slowPathTarget, SpillRegistersMode spillMode)
 {
     RegisterSetBuilder usedRegisters = this->usedRegisters();
     if (spillMode == DontSpill) {
@@ -16492,7 +16490,7 @@ void SpeculativeJIT::cachedPutById(Node* node, CodeOrigin codeOrigin, GPRReg bas
     JITPutByIdGenerator gen(
         codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
         JSValueRegs::payloadOnly(baseGPR), valueRegs, stubInfoGPR,
-        scratchGPR, ecmaMode, putKind);
+        scratchGPR, ecmaMode, accessType);
 
     JumpList slowCases;
     if (slowPathTarget.isSet())

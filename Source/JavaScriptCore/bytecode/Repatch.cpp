@@ -191,32 +191,6 @@ CodePtr<JSEntryPtrTag> jsToWasmICCodePtr(CodeSpecializationKind kind, JSObject* 
 
 #if ENABLE(JIT)
 
-static CodePtr<CFunctionPtrTag> retagOperationWithValidation(CodePtr<OperationPtrTag> operation)
-{
-    JSC_RETURN_RETAGGED_OPERATION_WITH_VALIDATION(operation);
-}
-
-static CodePtr<CFunctionPtrTag> retagCallTargetWithValidation(CodeLocationCall<JSInternalPtrTag> call)
-{
-    JSC_RETURN_RETAGGED_CALL_TARGET_WITH_VALIDATION(call);
-}
-
-static CodePtr<CFunctionPtrTag> readPutICCallTarget(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
-{
-    if (codeBlock->useDataIC())
-        return retagOperationWithValidation(stubInfo.m_slowOperation);
-    CodeLocationCall<JSInternalPtrTag> call = stubInfo.m_slowPathCallLocation;
-#if ENABLE(FTL_JIT)
-    if (codeBlock->jitType() == JITType::FTLJIT) {
-        CodePtr<JITThunkPtrTag> target = MacroAssembler::readCallTarget<JITThunkPtrTag>(call);
-        return retagOperationWithValidation(codeBlock->vm().ftlThunks->keyForSlowPathCallThunk(target).callTarget());
-    }
-#else
-    UNUSED_PARAM(codeBlock);
-#endif // ENABLE(FTL_JIT)
-    return retagCallTargetWithValidation(call);
-}
-
 void ftlThunkAwareRepatchCall(CodeBlock* codeBlock, CodeLocationCall<JSInternalPtrTag> call, CodePtr<CFunctionPtrTag> newCalleeFunction)
 {
 #if ENABLE(FTL_JIT)
@@ -789,99 +763,80 @@ void repatchArrayGetByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JS
         repatchSlowPathCall(codeBlock, stubInfo, appropriateGetByFunction(kind));
 }
 
-static CodePtr<CFunctionPtrTag> appropriateGenericPutByFunction(const PutPropertySlot &slot, PutByKind putByKind, PutKind putKind)
+static CodePtr<CFunctionPtrTag> appropriateGenericPutByFunction(PutByKind putByKind)
 {
     switch (putByKind) {
-    case PutByKind::ById: {
-        switch (putKind) {
-        case PutKind::NotDirect:
-            if (slot.isStrictMode())
-                return operationPutByIdStrict;
-            return operationPutByIdNonStrict;
-        case PutKind::Direct:
-            if (slot.isStrictMode())
-                return operationPutByIdDirectStrict;
-            return operationPutByIdDirectNonStrict;
-        case PutKind::DirectPrivateFieldDefine:
-            ASSERT(slot.isStrictMode());
-            return operationPutByIdDefinePrivateFieldStrict;
-        case PutKind::DirectPrivateFieldSet:
-            ASSERT(slot.isStrictMode());
-            return operationPutByIdSetPrivateFieldStrict;
-        }
-        break;
-    }
-    case PutByKind::ByVal: {
-        switch (putKind) {
-        case PutKind::NotDirect:
-            if (slot.isStrictMode())
-                return operationPutByValStrictGeneric;
-            return operationPutByValNonStrictGeneric;
-        case PutKind::Direct:
-            if (slot.isStrictMode())
-                return operationDirectPutByValStrictGeneric;
-            return operationDirectPutByValNonStrictGeneric;
-        case PutKind::DirectPrivateFieldDefine:
-            ASSERT(slot.isStrictMode());
-            return operationPutByValDefinePrivateFieldGeneric;
-        case PutKind::DirectPrivateFieldSet:
-            ASSERT(slot.isStrictMode());
-            return operationPutByValSetPrivateFieldGeneric;
-        }
-        break;
-    }
+    case PutByKind::ByIdStrict:
+        return operationPutByIdStrict;
+    case PutByKind::ByIdSloppy:
+        return operationPutByIdSloppy;
+    case PutByKind::ByIdDirectStrict:
+        return operationPutByIdDirectStrict;
+    case PutByKind::ByIdDirectSloppy:
+        return operationPutByIdDirectSloppy;
+    case PutByKind::DefinePrivateNameById:
+        return operationPutByIdDefinePrivateFieldStrict;
+    case PutByKind::SetPrivateNameById:
+        return operationPutByIdSetPrivateFieldStrict;
+    case PutByKind::ByValStrict:
+        return operationPutByValStrictGeneric;
+    case PutByKind::ByValSloppy:
+        return operationPutByValSloppyGeneric;
+    case PutByKind::ByValDirectStrict:
+        return operationDirectPutByValStrictGeneric;
+    case PutByKind::ByValDirectSloppy:
+        return operationDirectPutByValSloppyGeneric;
+    case PutByKind::DefinePrivateNameByVal:
+        return operationPutByValDefinePrivateFieldGeneric;
+    case PutByKind::SetPrivateNameByVal:
+        return operationPutByValSetPrivateFieldGeneric;
     }
     // Make win port compiler happy
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;
 }
 
-static CodePtr<CFunctionPtrTag> appropriateOptimizingPutByFunction(const PutPropertySlot &slot, PutByKind putByKind, PutKind putKind)
+// Mainly used to transition from megamorphic case to generic case.
+void repatchPutBySlowPathCall(CodeBlock* codeBlock, StructureStubInfo& stubInfo, PutByKind kind)
+{
+    resetPutBy(codeBlock, stubInfo, kind);
+    repatchSlowPathCall(codeBlock, stubInfo, appropriateGenericPutByFunction(kind));
+}
+
+static CodePtr<CFunctionPtrTag> appropriateOptimizingPutByFunction(PutByKind putByKind)
 {
     switch (putByKind) {
-    case PutByKind::ById:
-        switch (putKind) {
-        case PutKind::NotDirect:
-            if (slot.isStrictMode())
-                return operationPutByIdStrictOptimize;
-            return operationPutByIdNonStrictOptimize;
-        case PutKind::Direct:
-            if (slot.isStrictMode())
-                return operationPutByIdDirectStrictOptimize;
-            return operationPutByIdDirectNonStrictOptimize;
-        case PutKind::DirectPrivateFieldDefine:
-            ASSERT(slot.isStrictMode());
-            return operationPutByIdDefinePrivateFieldStrictOptimize;
-        case PutKind::DirectPrivateFieldSet:
-            ASSERT(slot.isStrictMode());
-            return operationPutByIdSetPrivateFieldStrictOptimize;
-        }
-        break;
-    case PutByKind::ByVal:
-        switch (putKind) {
-        case PutKind::NotDirect:
-            if (slot.isStrictMode())
-                return operationPutByValStrictOptimize;
-            return operationPutByValNonStrictOptimize;
-        case PutKind::Direct:
-            if (slot.isStrictMode())
-                return operationDirectPutByValStrictOptimize;
-            return operationDirectPutByValNonStrictOptimize;
-        case PutKind::DirectPrivateFieldDefine:
-            ASSERT(slot.isStrictMode());
-            return operationPutByValDefinePrivateFieldOptimize;
-        case PutKind::DirectPrivateFieldSet:
-            ASSERT(slot.isStrictMode());
-            return operationPutByValSetPrivateFieldOptimize;
-        }
-        break;
+    case PutByKind::ByIdStrict:
+        return operationPutByIdStrictOptimize;
+    case PutByKind::ByIdSloppy:
+        return operationPutByIdSloppyOptimize;
+    case PutByKind::ByIdDirectStrict:
+        return operationPutByIdDirectStrictOptimize;
+    case PutByKind::ByIdDirectSloppy:
+        return operationPutByIdDirectSloppyOptimize;
+    case PutByKind::DefinePrivateNameById:
+        return operationPutByIdDefinePrivateFieldStrictOptimize;
+    case PutByKind::SetPrivateNameById:
+        return operationPutByIdSetPrivateFieldStrictOptimize;
+    case PutByKind::ByValStrict:
+        return operationPutByValStrictOptimize;
+    case PutByKind::ByValSloppy:
+        return operationPutByValSloppyOptimize;
+    case PutByKind::ByValDirectStrict:
+        return operationDirectPutByValStrictOptimize;
+    case PutByKind::ByValDirectSloppy:
+        return operationDirectPutByValSloppyOptimize;
+    case PutByKind::DefinePrivateNameByVal:
+        return operationPutByValDefinePrivateFieldOptimize;
+    case PutByKind::SetPrivateNameByVal:
+        return operationPutByValSetPrivateFieldOptimize;
     }
     // Make win port compiler happy
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;
 }
 
-static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue baseValue, Structure* oldStructure, CacheableIdentifier propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutByKind putByKind, PutKind putKind)
+static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue baseValue, Structure* oldStructure, CacheableIdentifier propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutByKind putByKind)
 {
     VM& vm = globalObject->vm();
     AccessGenerationResult result;
@@ -928,8 +883,24 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
                 return GiveUpOnCache;
         }
 
-        if (isGlobalProxy && (putKind == PutKind::DirectPrivateFieldSet || putKind == PutKind::DirectPrivateFieldDefine))
-            return GiveUpOnCache;
+        if (isGlobalProxy) {
+            switch (putByKind) {
+            case PutByKind::DefinePrivateNameById:
+            case PutByKind::DefinePrivateNameByVal:
+            case PutByKind::SetPrivateNameById:
+            case PutByKind::SetPrivateNameByVal:
+                return GiveUpOnCache;
+            case PutByKind::ByIdStrict:
+            case PutByKind::ByIdSloppy:
+            case PutByKind::ByValStrict:
+            case PutByKind::ByValSloppy:
+            case PutByKind::ByIdDirectStrict:
+            case PutByKind::ByIdDirectSloppy:
+            case PutByKind::ByValDirectStrict:
+            case PutByKind::ByValDirectSloppy:
+                break;
+            }
+        }
 
         RefPtr<AccessCase> newCase;
 
@@ -953,7 +924,7 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
                     bool generatedCodeInline = InlineAccess::generateSelfPropertyReplace(codeBlock, stubInfo, oldStructure, slot.cachedOffset());
                     if (generatedCodeInline) {
                         LOG_IC((ICEvent::PutBySelfPatch, oldStructure->classInfoForCells(), ident, slot.base() == baseValue));
-                        repatchSlowPathCall(codeBlock, stubInfo, appropriateOptimizingPutByFunction(slot, putByKind, putKind));
+                        repatchSlowPathCall(codeBlock, stubInfo, appropriateOptimizingPutByFunction(putByKind));
                         stubInfo.initPutByIdReplace(locker, codeBlock, oldStructure, slot.cachedOffset(), propertyName);
                         return RetryCacheLater;
                     }
@@ -995,7 +966,11 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
                 
                 RefPtr<PolyProtoAccessChain> prototypeAccessChain;
                 ObjectPropertyConditionSet conditionSet;
-                if (putKind == PutKind::NotDirect) {
+                switch (putByKind) {
+                case PutByKind::ByIdStrict:
+                case PutByKind::ByIdSloppy:
+                case PutByKind::ByValStrict:
+                case PutByKind::ByValSloppy: {
                     auto cacheStatus = prepareChainForCaching(globalObject, baseCell, propertyName.uid(), nullptr);
                     if (!cacheStatus)
                         return GiveUpOnCache;
@@ -1011,13 +986,23 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
                         if (!conditionSet.isValid())
                             return GiveUpOnCache;
                     }
+                    break;
                 }
-
-                if (putKind == PutKind::DirectPrivateFieldDefine) {
+                case PutByKind::DefinePrivateNameById:
+                case PutByKind::DefinePrivateNameByVal: {
                     ASSERT(ident.isPrivateName());
                     conditionSet = generateConditionsForPropertyMiss(vm, codeBlock, globalObject, newStructure, ident.impl());
                     if (!conditionSet.isValid())
                         return GiveUpOnCache;
+                    break;
+                }
+                case PutByKind::ByIdDirectStrict:
+                case PutByKind::ByIdDirectSloppy:
+                case PutByKind::ByValDirectStrict:
+                case PutByKind::ByValDirectSloppy:
+                case PutByKind::SetPrivateNameById:
+                case PutByKind::SetPrivateNameByVal:
+                    break;
                 }
 
                 newCase = AccessCase::createTransition(vm, codeBlock, propertyName, offset, oldStructure, newStructure, conditionSet, WTFMove(prototypeAccessChain), stubInfo);
@@ -1109,18 +1094,46 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
 
     fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
 
+    if (result.generatedMegamorphicCode())
+        return PromoteToMegamorphic;
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
-void repatchPutBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue baseValue, Structure* oldStructure, CacheableIdentifier propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutByKind putByKind, PutKind putKind)
+void repatchPutBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue baseValue, Structure* oldStructure, CacheableIdentifier propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutByKind putByKind)
 {
     SuperSamplerScope superSamplerScope(false);
     
-    if (tryCachePutBy(globalObject, codeBlock, baseValue, oldStructure, propertyName, slot, stubInfo, putByKind, putKind) == GiveUpOnCache)
-        repatchSlowPathCall(codeBlock, stubInfo, appropriateGenericPutByFunction(slot, putByKind, putKind));
+    switch (tryCachePutBy(globalObject, codeBlock, baseValue, oldStructure, propertyName, slot, stubInfo, putByKind)) {
+    case PromoteToMegamorphic: {
+        switch (putByKind) {
+        case PutByKind::ByIdStrict:
+            repatchSlowPathCall(codeBlock, stubInfo, operationPutByIdMegamorphicStrict);
+            break;
+        case PutByKind::ByIdSloppy:
+            repatchSlowPathCall(codeBlock, stubInfo, operationPutByIdMegamorphicSloppy);
+            break;
+        case PutByKind::ByValStrict:
+            repatchSlowPathCall(codeBlock, stubInfo, operationPutByValMegamorphicStrict);
+            break;
+        case PutByKind::ByValSloppy:
+            repatchSlowPathCall(codeBlock, stubInfo, operationPutByValMegamorphicSloppy);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
+    }
+    case GiveUpOnCache:
+        repatchSlowPathCall(codeBlock, stubInfo, appropriateGenericPutByFunction(putByKind));
+        break;
+    case RetryCacheLater:
+    case AttemptToCache:
+        break;
+    }
 }
 
-static InlineCacheAction tryCacheArrayPutByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue baseValue, JSValue index, StructureStubInfo& stubInfo, PutKind)
+static InlineCacheAction tryCacheArrayPutByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue baseValue, JSValue index, StructureStubInfo& stubInfo)
 {
     if (!baseValue.isCell())
         return GiveUpOnCache;
@@ -1213,10 +1226,10 @@ static InlineCacheAction tryCacheArrayPutByVal(JSGlobalObject* globalObject, Cod
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
-void repatchArrayPutByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue base, JSValue index, StructureStubInfo& stubInfo, PutKind putKind, ECMAMode ecmaMode)
+void repatchArrayPutByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue base, JSValue index, StructureStubInfo& stubInfo, PutByKind putByKind)
 {
-    if (tryCacheArrayPutByVal(globalObject, codeBlock, base, index, stubInfo, putKind) == GiveUpOnCache)
-        repatchSlowPathCall(codeBlock, stubInfo, putKind == PutKind::Direct ? (ecmaMode.isStrict() ? operationDirectPutByValStrictGeneric : operationDirectPutByValNonStrictGeneric) : (ecmaMode.isStrict() ? operationPutByValStrictGeneric : operationPutByValNonStrictGeneric));
+    if (tryCacheArrayPutByVal(globalObject, codeBlock, base, index, stubInfo) == GiveUpOnCache)
+        repatchSlowPathCall(codeBlock, stubInfo, appropriateGenericPutByFunction(putByKind));
 }
 
 static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, DeletePropertySlot& slot, JSValue baseValue, Structure* oldStructure, CacheableIdentifier propertyName, StructureStubInfo& stubInfo, DelByKind, ECMAMode ecmaMode)
@@ -2110,52 +2123,60 @@ void resetPutBy(CodeBlock* codeBlock, StructureStubInfo& stubInfo, PutByKind kin
 {
     CodePtr<CFunctionPtrTag> optimizedFunction;
     switch (kind) {
-    case PutByKind::ById: {
-        using FunctionType = decltype(&operationPutByIdDirectStrictOptimize);
-        FunctionType unoptimizedFunction = reinterpret_cast<FunctionType>(readPutICCallTarget(codeBlock, stubInfo).taggedPtr());
-        if (unoptimizedFunction == operationPutByIdStrict || unoptimizedFunction == operationPutByIdStrictOptimize)
-            optimizedFunction = operationPutByIdStrictOptimize;
-        else if (unoptimizedFunction == operationPutByIdNonStrict || unoptimizedFunction == operationPutByIdNonStrictOptimize)
-            optimizedFunction = operationPutByIdNonStrictOptimize;
-        else if (unoptimizedFunction == operationPutByIdDirectStrict || unoptimizedFunction == operationPutByIdDirectStrictOptimize)
-            optimizedFunction = operationPutByIdDirectStrictOptimize;
-        else if (unoptimizedFunction == operationPutByIdSetPrivateFieldStrict || unoptimizedFunction == operationPutByIdSetPrivateFieldStrictOptimize)
-            optimizedFunction = operationPutByIdSetPrivateFieldStrictOptimize;
-        else if (unoptimizedFunction == operationPutByIdDefinePrivateFieldStrict || unoptimizedFunction == operationPutByIdDefinePrivateFieldStrictOptimize)
-            optimizedFunction = operationPutByIdDefinePrivateFieldStrictOptimize;
-        else {
-            ASSERT(unoptimizedFunction == operationPutByIdDirectNonStrict || unoptimizedFunction == operationPutByIdDirectNonStrictOptimize);
-            optimizedFunction = operationPutByIdDirectNonStrictOptimize;
-        }
+    case PutByKind::ByIdStrict:
+        optimizedFunction = operationPutByIdStrictOptimize;
         break;
-    }
-    case PutByKind::ByVal: {
-        using FunctionType = decltype(&operationPutByValStrictOptimize);
-        FunctionType unoptimizedFunction = reinterpret_cast<FunctionType>(readPutICCallTarget(codeBlock, stubInfo).taggedPtr());
-        if (unoptimizedFunction == operationPutByValStrictGeneric || unoptimizedFunction == operationPutByValStrictOptimize)
-            optimizedFunction = operationPutByValStrictOptimize;
-        else if (unoptimizedFunction == operationPutByValNonStrictGeneric || unoptimizedFunction == operationPutByValNonStrictOptimize)
-            optimizedFunction = operationPutByValNonStrictOptimize;
-        else if (unoptimizedFunction == operationDirectPutByValStrictGeneric || unoptimizedFunction == operationDirectPutByValStrictOptimize)
-            optimizedFunction = operationDirectPutByValStrictOptimize;
-        else if (unoptimizedFunction == operationPutByValDefinePrivateFieldGeneric || unoptimizedFunction == operationPutByValDefinePrivateFieldOptimize)
-            optimizedFunction = operationPutByValDefinePrivateFieldOptimize;
-        else if (unoptimizedFunction == operationPutByValSetPrivateFieldGeneric || unoptimizedFunction == operationPutByValSetPrivateFieldOptimize)
-            optimizedFunction = operationPutByValSetPrivateFieldOptimize;
-        else {
-            ASSERT(unoptimizedFunction == operationDirectPutByValNonStrictGeneric || unoptimizedFunction == operationDirectPutByValNonStrictOptimize);
-            optimizedFunction = operationDirectPutByValNonStrictOptimize;
-        }
+    case PutByKind::ByIdSloppy:
+        optimizedFunction = operationPutByIdSloppyOptimize;
         break;
-    }
+    case PutByKind::ByIdDirectStrict:
+        optimizedFunction = operationPutByIdDirectStrictOptimize;
+        break;
+    case PutByKind::ByIdDirectSloppy:
+        optimizedFunction = operationPutByIdDirectSloppyOptimize;
+        break;
+    case PutByKind::DefinePrivateNameById:
+        optimizedFunction = operationPutByIdDefinePrivateFieldStrictOptimize;
+        break;
+    case PutByKind::SetPrivateNameById:
+        optimizedFunction = operationPutByIdSetPrivateFieldStrictOptimize;
+        break;
+    case PutByKind::ByValStrict:
+        optimizedFunction = operationPutByValStrictOptimize;
+        break;
+    case PutByKind::ByValSloppy:
+        optimizedFunction = operationPutByValSloppyOptimize;
+        break;
+    case PutByKind::ByValDirectStrict:
+        optimizedFunction = operationDirectPutByValStrictOptimize;
+        break;
+    case PutByKind::ByValDirectSloppy:
+        optimizedFunction = operationDirectPutByValSloppyOptimize;
+        break;
+    case PutByKind::DefinePrivateNameByVal:
+        optimizedFunction = operationPutByValDefinePrivateFieldOptimize;
+        break;
+    case PutByKind::SetPrivateNameByVal:
+        optimizedFunction = operationPutByValSetPrivateFieldOptimize;
+        break;
     }
 
     repatchSlowPathCall(codeBlock, stubInfo, optimizedFunction);
     switch (kind) {
-    case PutByKind::ById:
+    case PutByKind::ByIdStrict:
+    case PutByKind::ByIdSloppy:
+    case PutByKind::ByIdDirectStrict:
+    case PutByKind::ByIdDirectSloppy:
+    case PutByKind::DefinePrivateNameById:
+    case PutByKind::SetPrivateNameById:
         InlineAccess::resetStubAsJumpInAccess(codeBlock, stubInfo);
         break;
-    case PutByKind::ByVal:
+    case PutByKind::ByValStrict:
+    case PutByKind::ByValSloppy:
+    case PutByKind::ByValDirectStrict:
+    case PutByKind::ByValDirectSloppy:
+    case PutByKind::DefinePrivateNameByVal:
+    case PutByKind::SetPrivateNameByVal:
         InlineAccess::resetStubAsJumpInAccessNotUsingInlineAccess(codeBlock, stubInfo);
         break;
     }

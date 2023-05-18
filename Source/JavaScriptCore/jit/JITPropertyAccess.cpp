@@ -368,12 +368,14 @@ void JIT::emit_op_put_by_val(const JSInstruction* currentInstruction)
 
     emitArrayProfilingSiteWithCell(bytecode, baseJSR.payloadGPR(), /* scratchGPR: */ stubInfoGPR);
 
-    PutKind putKind = std::is_same_v<Op, OpPutByValDirect> ? PutKind::Direct : PutKind::NotDirect;
     ECMAMode ecmaMode = this->ecmaMode(bytecode);
+    bool isDirect = std::is_same_v<Op, OpPutByValDirect>;
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
     JITPutByValGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::PutByVal, RegisterSetBuilder::stubUnavailableRegisters(),
-        baseJSR, propertyJSR, valueJSR, profileGPR, stubInfoGPR, putKind, ecmaMode, PrivateFieldPutKind::none());
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
+        isDirect ? (ecmaMode.isStrict() ? AccessType::PutByValDirectStrict : AccessType::PutByValDirectSloppy) : (ecmaMode.isStrict() ? AccessType::PutByValStrict : AccessType::PutByValSloppy),
+        RegisterSetBuilder::stubUnavailableRegisters(),
+        baseJSR, propertyJSR, valueJSR, profileGPR, stubInfoGPR, ecmaMode);
     if (isOperandConstantInt(property))
         stubInfo->propertyIsInt32 = true;
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
@@ -487,8 +489,8 @@ void JIT::emit_op_put_private_name(const JSInstruction* currentInstruction)
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
     JITPutByValGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::PutPrivateName, RegisterSetBuilder::stubUnavailableRegisters(),
-        baseJSR, propertyJSR, valueJSR, InvalidGPRReg, stubInfoGPR, PutKind::Direct, ECMAMode::sloppy(), bytecode.m_putKind);
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), bytecode.m_putKind.isDefine() ? AccessType::DefinePrivateNameByVal : AccessType::SetPrivateNameByVal, RegisterSetBuilder::stubUnavailableRegisters(),
+        baseJSR, propertyJSR, valueJSR, InvalidGPRReg, stubInfoGPR, ECMAMode::sloppy());
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 
     gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
@@ -1155,6 +1157,7 @@ void JIT::emit_op_put_by_id(const JSInstruction* currentInstruction)
     VirtualRegister baseVReg = bytecode.m_base;
     VirtualRegister valueVReg = bytecode.m_value;
     bool direct = bytecode.m_flags.isDirect();
+    ECMAMode ecmaMode = this->ecmaMode(bytecode);
     const Identifier* ident = &(m_unlinkedCodeBlock->identifier(bytecode.m_property));
 
     // In order to be able to patch both the Structure, and the object offset, we store one pointer,
@@ -1174,8 +1177,7 @@ void JIT::emit_op_put_by_id(const JSInstruction* currentInstruction)
     JITPutByIdGenerator gen(
         nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSetBuilder::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident),
-        baseJSR, valueJSR, stubInfoGPR, scratchGPR, ecmaMode(bytecode),
-        direct ? PutKind::Direct : PutKind::NotDirect);
+        baseJSR, valueJSR, stubInfoGPR, scratchGPR, ecmaMode, direct ? (ecmaMode.isStrict() ? AccessType::PutByIdDirectStrict : AccessType::PutByIdDirectSloppy) : (ecmaMode.isStrict() ? AccessType::PutByIdStrict : AccessType::PutByIdSloppy));
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
 
     gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
@@ -2571,8 +2573,8 @@ void JIT::emit_op_enumerator_put_by_val(const JSInstruction* currentInstruction)
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
     ECMAMode ecmaMode = bytecode.m_ecmaMode;
     JITPutByValGenerator gen(
-        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::PutByVal, RegisterSetBuilder::stubUnavailableRegisters(),
-        JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), profileGPR, stubInfoGPR, PutKind::NotDirect, ecmaMode, PrivateFieldPutKind::none());
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), ecmaMode.isStrict() ? AccessType::PutByValStrict : AccessType::PutByValSloppy, RegisterSetBuilder::stubUnavailableRegisters(),
+        JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), profileGPR, stubInfoGPR, ecmaMode);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     stubInfo->isEnumerator = true;
 

@@ -5043,7 +5043,7 @@ void ByteCodeParser::handleGetById(
         }
 #if USE(JSVALUE64)
         if (type == AccessType::GetById) {
-            if (getByStatus.isMegamorphic()) {
+            if (getByStatus.isMegamorphic() && canUseMegamorphicGetById(*m_vm, identifier.uid())) {
                 set(destination, addToGraph(GetByIdMegamorphic, OpInfo(identifier), OpInfo(prediction), base));
                 return;
             }
@@ -5430,7 +5430,7 @@ void ByteCodeParser::emitPutById(
     if (isDirect)
         addToGraph(PutByIdDirect, OpInfo(identifier), OpInfo(ecmaMode), base, value);
     else
-        addToGraph(putByStatus.makesCalls() ? PutByIdFlush : PutById, OpInfo(identifier), OpInfo(ecmaMode), base, value);
+        addToGraph((putByStatus.isMegamorphic() && canUseMegamorphicPutById(*m_vm, identifier.uid())) ? PutByIdMegamorphic : putByStatus.makesCalls() ? PutByIdFlush : PutById, OpInfo(identifier), OpInfo(ecmaMode), base, value);
 }
 
 void ByteCodeParser::handlePutById(
@@ -7097,7 +7097,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             GetByStatus getByStatus = GetByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin());
 
-            set(bytecode.m_dst, addToGraph(getByStatus.isMegamorphic() ? GetByIdWithThisMegamorphic : GetByIdWithThis, OpInfo(CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid)), OpInfo(prediction), base, thisValue));
+            set(bytecode.m_dst, addToGraph(getByStatus.isMegamorphic() && canUseMegamorphicGetById(*m_vm, uid) ? GetByIdWithThisMegamorphic : GetByIdWithThis, OpInfo(CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid)), OpInfo(prediction), base, thisValue));
 
             NEXT_OPCODE(op_get_by_id_with_this);
         }
@@ -9513,9 +9513,9 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, BytecodeIndex osrExitInde
         addVarArgChild(value);
         addVarArgChild(nullptr); // Leave room for property storage.
         addVarArgChild(nullptr); // Leave room for length.
-        Node* putByVal = addToGraph(Node::VarArg, isDirect ? PutByValDirect : PutByVal, OpInfo(arrayMode.asWord()), OpInfo(bytecode.m_ecmaMode));
+        Node* putByVal = addToGraph(Node::VarArg, isDirect ? PutByValDirect : status.isMegamorphic() ? PutByValMegamorphic : PutByVal, OpInfo(arrayMode.asWord()), OpInfo(bytecode.m_ecmaMode));
         m_exitOK = false; // PutByVal and PutByValDirect must be treated as if they clobber exit state, since FixupPhase may make them generic.
-        if (status.observedStructureStubInfoSlowPath())
+        if (!status.isMegamorphic() && status.observedStructureStubInfoSlowPath())
             m_graph.m_slowPutByVal.add(putByVal);
     }
 }

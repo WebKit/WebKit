@@ -1329,6 +1329,74 @@ void InlineCacheCompiler::generateWithGuard(AccessCase& accessCase, CCallHelpers
         return;
     }
 
+    case AccessCase::StoreMegamorphic: {
+#if USE(JSVALUE64)
+        ASSERT(!accessCase.viaGlobalProxy());
+        CCallHelpers::JumpList failAndRepatch;
+        auto* uid = accessCase.m_identifier.uid();
+
+        auto allocator = makeDefaultScratchAllocator(scratchGPR);
+        GPRReg scratch2GPR = allocator.allocateScratchGPR();
+        GPRReg scratch3GPR = allocator.allocateScratchGPR();
+        GPRReg scratch4GPR = allocator.allocateScratchGPR();
+
+        ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+
+        auto slowCases = jit.storeMegamorphicProperty(vm, baseGPR, InvalidGPRReg, uid, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR, scratch4GPR);
+
+        allocator.restoreReusedRegistersByPopping(jit, preservedState);
+        succeed();
+
+        if (allocator.didReuseRegisters()) {
+            slowCases.link(&jit);
+            allocator.restoreReusedRegistersByPopping(jit, preservedState);
+            m_failAndRepatch.append(jit.jump());
+        } else
+            m_failAndRepatch.append(slowCases);
+#endif
+        return;
+    }
+
+    case AccessCase::IndexedMegamorphicStore: {
+#if USE(JSVALUE64)
+        ASSERT(!accessCase.viaGlobalProxy());
+
+        CCallHelpers::JumpList slowCases;
+
+        auto allocator = makeDefaultScratchAllocator(scratchGPR);
+        GPRReg scratch2GPR = allocator.allocateScratchGPR();
+        GPRReg scratch3GPR = allocator.allocateScratchGPR();
+        GPRReg scratch4GPR = allocator.allocateScratchGPR();
+        GPRReg scratch5GPR = allocator.allocateScratchGPR();
+
+        ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+
+        CCallHelpers::JumpList notString;
+        GPRReg propertyGPR = m_stubInfo->propertyGPR();
+        if (!m_stubInfo->propertyIsString) {
+            slowCases.append(jit.branchIfNotCell(propertyGPR));
+            slowCases.append(jit.branchIfNotString(propertyGPR));
+        }
+
+        jit.loadPtr(CCallHelpers::Address(propertyGPR, JSString::offsetOfValue()), scratch5GPR);
+        slowCases.append(jit.branchIfRopeStringImpl(scratch5GPR));
+        slowCases.append(jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch5GPR, StringImpl::flagsOffset()), CCallHelpers::TrustedImm32(StringImpl::flagIsAtom())));
+
+        slowCases.append(jit.storeMegamorphicProperty(vm, baseGPR, scratch5GPR, nullptr, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR, scratch4GPR));
+
+        allocator.restoreReusedRegistersByPopping(jit, preservedState);
+        succeed();
+
+        if (allocator.didReuseRegisters()) {
+            slowCases.link(&jit);
+            allocator.restoreReusedRegistersByPopping(jit, preservedState);
+            m_failAndRepatch.append(jit.jump());
+        } else
+            m_failAndRepatch.append(slowCases);
+#endif
+        return;
+    }
+
     default:
         emitDefaultGuard();
         break;
@@ -2099,8 +2167,10 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
     case AccessCase::ProxyObjectStore:
     case AccessCase::InstanceOfGeneric:
     case AccessCase::LoadMegamorphic:
+    case AccessCase::StoreMegamorphic:
     case AccessCase::IndexedProxyObjectLoad:
     case AccessCase::IndexedMegamorphicLoad:
+    case AccessCase::IndexedMegamorphicStore:
     case AccessCase::IndexedInt32Load:
     case AccessCase::IndexedDoubleLoad:
     case AccessCase::IndexedContiguousLoad:
@@ -2623,6 +2693,18 @@ static void commit(const GCSafeConcurrentJSLocker&, VM& vm, std::unique_ptr<Watc
     }
 }
 
+static inline bool canUseMegamorphicPutFastPath(Structure* structure)
+{
+    while (true) {
+        if (structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto() || structure->typeInfo().overridesGetPrototype() || structure->typeInfo().overridesPut() || structure->hasPolyProto())
+            return false;
+        JSValue prototype = structure->storedPrototype();
+        if (prototype.isNull())
+            return true;
+        structure = asObject(prototype)->structure();
+    }
+}
+
 AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSLocker& locker, PolymorphicAccess& poly, CodeBlock* codeBlock)
 {
     SuperSamplerScope superSamplerScope(false);
@@ -2695,16 +2777,22 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
             auto identifier = cases.last()->m_identifier;
             bool allAreSimpleLoadOrMiss = true;
             for (auto& accessCase : cases) {
-                if (accessCase->type() != AccessCase::Load && accessCase->type() != AccessCase::Miss)
+                if (accessCase->type() != AccessCase::Load && accessCase->type() != AccessCase::Miss) {
                     allAreSimpleLoadOrMiss = false;
-                if (accessCase->usesPolyProto())
+                    break;
+                }
+                if (accessCase->usesPolyProto()) {
                     allAreSimpleLoadOrMiss = false;
-                if (accessCase->viaGlobalProxy())
+                    break;
+                }
+                if (accessCase->viaGlobalProxy()) {
                     allAreSimpleLoadOrMiss = false;
+                    break;
+                }
             }
 
             // Currently, we do not apply megamorphic cache for "length" property since Array#length and String#length are too common.
-            if (identifier.uid() == vm().propertyNames->length || identifier.uid() == vm().propertyNames->name || identifier.uid() == vm().propertyNames->prototype)
+            if (!canUseMegamorphicGetById(vm(), identifier.uid()))
                 allAreSimpleLoadOrMiss = false;
 
 #if USE(JSVALUE32_64)
@@ -2723,12 +2811,18 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
         case AccessType::GetByValWithThis: {
             bool allAreSimpleLoadOrMiss = true;
             for (auto& accessCase : cases) {
-                if (accessCase->type() != AccessCase::Load && accessCase->type() != AccessCase::Miss)
+                if (accessCase->type() != AccessCase::Load && accessCase->type() != AccessCase::Miss) {
                     allAreSimpleLoadOrMiss = false;
-                if (accessCase->usesPolyProto())
+                    break;
+                }
+                if (accessCase->usesPolyProto()) {
                     allAreSimpleLoadOrMiss = false;
-                if (accessCase->viaGlobalProxy())
+                    break;
+                }
+                if (accessCase->viaGlobalProxy()) {
                     allAreSimpleLoadOrMiss = false;
+                    break;
+                }
             }
 
 #if USE(JSVALUE32_64)
@@ -2741,6 +2835,79 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
                 while (!cases.isEmpty())
                     poly.m_list.append(cases.takeLast());
                 cases.append(AccessCase::create(vm(), codeBlock, AccessCase::IndexedMegamorphicLoad, nullptr));
+                generatedMegamorphicCode = true;
+            }
+            break;
+        }
+        case AccessType::PutByIdStrict:
+        case AccessType::PutByIdSloppy: {
+            auto identifier = cases.last()->m_identifier;
+            bool allAreSimpleReplaceOrTransition = true;
+            for (auto& accessCase : cases) {
+                if (accessCase->type() != AccessCase::Replace && accessCase->type() != AccessCase::Transition) {
+                    allAreSimpleReplaceOrTransition = false;
+                    break;
+                }
+                if (accessCase->usesPolyProto()) {
+                    allAreSimpleReplaceOrTransition = false;
+                    break;
+                }
+                if (accessCase->viaGlobalProxy()) {
+                    allAreSimpleReplaceOrTransition = false;
+                    break;
+                }
+                if (!canUseMegamorphicPutFastPath(accessCase->structure())) {
+                    allAreSimpleReplaceOrTransition = false;
+                    break;
+                }
+            }
+
+            // Currently, we do not apply megamorphic cache for "length" property since Array#length and String#length are too common.
+            if (!canUseMegamorphicPutById(vm(), identifier.uid()))
+                allAreSimpleReplaceOrTransition = false;
+
+#if USE(JSVALUE32_64)
+            allAreSimpleReplaceOrTransition = false;
+#endif
+
+            if (allAreSimpleReplaceOrTransition) {
+                while (!cases.isEmpty())
+                    poly.m_list.append(cases.takeLast());
+                cases.append(AccessCase::create(vm(), codeBlock, AccessCase::StoreMegamorphic, identifier));
+                generatedMegamorphicCode = true;
+            }
+            break;
+        }
+        case AccessType::PutByValStrict:
+        case AccessType::PutByValSloppy: {
+            bool allAreSimpleReplaceOrTransition = true;
+            for (auto& accessCase : cases) {
+                if (accessCase->type() != AccessCase::Replace && accessCase->type() != AccessCase::Transition) {
+                    allAreSimpleReplaceOrTransition = false;
+                    break;
+                }
+                if (accessCase->usesPolyProto()) {
+                    allAreSimpleReplaceOrTransition = false;
+                    break;
+                }
+                if (accessCase->viaGlobalProxy()) {
+                    allAreSimpleReplaceOrTransition = false;
+                    break;
+                }
+                if (!canUseMegamorphicPutFastPath(accessCase->structure())) {
+                    allAreSimpleReplaceOrTransition = false;
+                    break;
+                }
+            }
+
+#if USE(JSVALUE32_64)
+            allAreSimpleReplaceOrTransition = false;
+#endif
+
+            if (allAreSimpleReplaceOrTransition) {
+                while (!cases.isEmpty())
+                    poly.m_list.append(cases.takeLast());
+                cases.append(AccessCase::create(vm(), codeBlock, AccessCase::IndexedMegamorphicStore, nullptr));
                 generatedMegamorphicCode = true;
             }
             break;

@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-enum ParserMode : uint8_t { StrictJSON, NonStrictJSON, JSONP };
+enum ParserMode : uint8_t { StrictJSON, SloppyJSON, JSONP };
 
 enum JSONPPathEntryType : uint8_t {
     JSONPPathEntryTypeDeclareVar, // var pathEntryName = JSON

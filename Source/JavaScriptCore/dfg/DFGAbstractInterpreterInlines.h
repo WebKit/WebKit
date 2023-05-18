@@ -2425,7 +2425,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                         JSString* string = asString(constant);
                         if (CacheableIdentifier::isCacheableIdentifierCell(string) && !parseIndex(CacheableIdentifier::createFromCell(string).uid())) {
                             m_state.setShouldTryConstantFolding(true);
-                            didFoldClobberWorld();
+                            clobberWorld(); // Regardless of folding (to PutById etc.), we still clobber world.
                             makeHeapTopForNode(node);
                             break;
                         }
@@ -2592,14 +2592,31 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             
     case PutByValDirect:
     case PutByVal:
-    case PutByValAlias: {
+    case PutByValAlias:
+    case PutByValMegamorphic: {
         switch (node->arrayMode().modeForPut().type()) {
         case Array::ForceExit:
             m_state.setIsValid(false);
             break;
-        case Array::Generic:
+        case Array::Generic: {
+            if (node->op() == PutByVal || node->op() == PutByValMegamorphic) {
+                if (m_graph.child(node, 0).useKind() == CellUse && m_graph.child(node, 1).useKind() == StringUse) {
+                    AbstractValue& property = forNode(m_graph.child(node, 1));
+                    if (JSValue constant = property.value()) {
+                        if (constant.isString()) {
+                            JSString* string = asString(constant);
+                            if (CacheableIdentifier::isCacheableIdentifierCell(string) && !parseIndex(CacheableIdentifier::createFromCell(string).uid())) {
+                                m_state.setShouldTryConstantFolding(true);
+                                clobberWorld(); // Regardless of folding (to PutById etc.), we still clobber world.
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
             clobberWorld();
             break;
+        }
         case Array::Int32:
             if (node->arrayMode().isOutOfBounds())
                 clobberWorld();
@@ -4427,6 +4444,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case PutPrivateNameById:
     case PutById:
+    case PutByIdMegamorphic:
     case PutByIdFlush:
     case PutByIdDirect: {
         AbstractValue& value = forNode(node->child1());

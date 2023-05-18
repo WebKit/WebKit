@@ -518,6 +518,7 @@ public:
     void convertToIdentityOn(Node*);
 
     void convertToGetByIdMaybeMegamorphic(Graph&, CacheableIdentifier);
+    void convertToPutByIdMaybeMegamorphic(Graph&, CacheableIdentifier);
 
     bool mustGenerate() const
     {
@@ -667,7 +668,7 @@ public:
     
     void convertToPutByOffset(StorageAccessData& data, Edge storage, Edge base)
     {
-        ASSERT(m_op == PutById || m_op == PutByIdDirect || m_op == PutByIdFlush || m_op == MultiPutByOffset || m_op == PutPrivateNameById);
+        ASSERT(m_op == PutById || m_op == PutByIdDirect || m_op == PutByIdFlush || m_op == MultiPutByOffset || m_op == PutPrivateNameById || m_op == PutByIdMegamorphic);
         m_opInfo = &data;
         children.setChild3(children.child2());
         children.setChild2(base);
@@ -677,7 +678,7 @@ public:
     
     void convertToMultiPutByOffset(MultiPutByOffsetData* data)
     {
-        ASSERT(m_op == PutById || m_op == PutByIdDirect || m_op == PutByIdFlush || m_op == PutPrivateNameById);
+        ASSERT(m_op == PutById || m_op == PutByIdDirect || m_op == PutByIdFlush || m_op == PutPrivateNameById || m_op == PutByIdMegamorphic);
         m_opInfo = data;
         m_op = MultiPutByOffset;
     }
@@ -1147,6 +1148,7 @@ public:
         case PutById:
         case PutByIdFlush:
         case PutByIdDirect:
+        case PutByIdMegamorphic:
         case PutByIdWithThis:
         case PutPrivateNameById:
             return true;
@@ -2100,6 +2102,7 @@ public:
         case PutByValDirect:
         case PutByVal:
         case PutByValAlias:
+        case PutByValMegamorphic:
         case AtomicsAdd:
         case AtomicsAnd:
         case AtomicsCompareExchange:
@@ -2135,6 +2138,7 @@ public:
         case PutByValDirect:
         case PutByVal:
         case PutByValAlias:
+        case PutByValMegamorphic:
             return 3;
         case AtomicsAdd:
         case AtomicsAnd:
@@ -2433,6 +2437,7 @@ public:
         case PutByValDirect:
         case PutByVal:
         case PutByValAlias:
+        case PutByValMegamorphic:
         case EnumeratorPutByVal:
         case GetByVal:
         case GetByValMegamorphic:
@@ -2501,9 +2506,11 @@ public:
         case PutById:
         case PutByIdDirect:
         case PutByIdFlush:
+        case PutByIdMegamorphic:
         case PutByIdWithThis:
         case PutByVal:
         case PutByValAlias:
+        case PutByValMegamorphic:
         case PutByValDirect:
         case PutByValWithThis:
         case EnumeratorPutByVal:
@@ -2528,9 +2535,11 @@ public:
         case PutById:
         case PutByIdDirect:
         case PutByIdFlush:
+        case PutByIdMegamorphic:
         case PutByIdWithThis:
         case PutByVal:
         case PutByValAlias:
+        case PutByValMegamorphic:
         case PutByValDirect:
         case EnumeratorPutByVal:
         case PutDynamicVar:

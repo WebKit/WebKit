@@ -30,7 +30,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(RegExpObject);
 const ClassInfo RegExpObject::s_info = { "RegExp"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RegExpObject) };
 
 static JSC_DECLARE_CUSTOM_SETTER(regExpObjectSetLastIndexStrict);
-static JSC_DECLARE_CUSTOM_SETTER(regExpObjectSetLastIndexNonStrict);
+static JSC_DECLARE_CUSTOM_SETTER(regExpObjectSetLastIndexSloppy);
 
 RegExpObject::RegExpObject(VM& vm, Structure* structure, RegExp* regExp, bool areLegacyFeaturesEnabled)
     : JSNonFinalObject(vm, structure)
@@ -128,7 +128,7 @@ JSC_DEFINE_CUSTOM_SETTER(regExpObjectSetLastIndexStrict, (JSGlobalObject* global
     return jsCast<RegExpObject*>(JSValue::decode(thisValue))->setLastIndex(globalObject, JSValue::decode(value), true);
 }
 
-JSC_DEFINE_CUSTOM_SETTER(regExpObjectSetLastIndexNonStrict, (JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value, PropertyName))
+JSC_DEFINE_CUSTOM_SETTER(regExpObjectSetLastIndexSloppy, (JSGlobalObject* globalObject, EncodedJSValue thisValue, EncodedJSValue value, PropertyName))
 {
     return jsCast<RegExpObject*>(JSValue::decode(thisValue))->setLastIndex(globalObject, JSValue::decode(value), false);
 }
@@ -150,7 +150,7 @@ bool RegExpObject::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName 
         RETURN_IF_EXCEPTION(scope, false);
         slot.setCustomValue(thisObject, slot.isStrictMode()
             ? regExpObjectSetLastIndexStrict
-            : regExpObjectSetLastIndexNonStrict);
+            : regExpObjectSetLastIndexSloppy);
         return result;
     }
     RELEASE_AND_RETURN(scope, Base::put(cell, globalObject, propertyName, value, slot));

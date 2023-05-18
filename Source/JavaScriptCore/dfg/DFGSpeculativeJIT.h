@@ -38,7 +38,6 @@
 #include "DFGSilentRegisterSavePlan.h"
 #include "JITMathIC.h"
 #include "JITOperations.h"
-#include "PutKind.h"
 #include "SpillRegistersMode.h"
 #include "StructureStubInfo.h"
 #include "ValueRecovery.h"
@@ -698,7 +697,7 @@ public:
     void compileCheckDetached(Node*);
 
     void cachedGetById(Node*, CodeOrigin, JSValueRegs base, JSValueRegs result, GPRReg stubInfoGPR, GPRReg scratchGPR, CacheableIdentifier, JITCompiler::Jump slowPathTarget, SpillRegistersMode, AccessType);
-    void cachedPutById(Node*, CodeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg stubInfoGPR, GPRReg scratchGPR, GPRReg scratch2GPR, CacheableIdentifier, PutKind, ECMAMode, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
+    void cachedPutById(Node*, CodeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg stubInfoGPR, GPRReg scratchGPR, GPRReg scratch2GPR, CacheableIdentifier, AccessType, ECMAMode, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
 
 #if USE(JSVALUE64)
     void cachedGetById(Node*, CodeOrigin, GPRReg baseGPR, GPRReg resultGPR, GPRReg stubInfoGPR, GPRReg scratchGPR, CacheableIdentifier, JITCompiler::Jump slowPathTarget, SpillRegistersMode, AccessType);
@@ -1374,6 +1373,7 @@ public:
     }
     
     void compilePutByVal(Node*);
+    void compilePutByValMegamorphic(Node*);
 
     // We use a scopedLambda to placate register allocation validation.
     enum class CanUseFlush : bool { No, Yes };
@@ -1586,6 +1586,7 @@ public:
     void compilePutById(Node*);
     void compilePutByIdDirect(Node*);
     void compilePutByIdWithThis(Node*);
+    void compilePutByIdMegamorphic(Node*);
     void compileGetPropertyEnumerator(Node*);
     void compileGetExecutable(Node*);
     void compileGetGetter(Node*);

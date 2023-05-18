@@ -339,6 +339,7 @@ inline CapabilityLevel canCompile(Node* node)
     case PutById:
     case PutByIdDirect:
     case PutByIdFlush:
+    case PutByIdMegamorphic:
     case PutByIdWithThis:
     case PutGetterById:
     case PutSetterById:
@@ -417,6 +418,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetByValWithThisMegamorphic:
     case PutByVal:
     case PutByValAlias:
+    case PutByValMegamorphic:
     case PutByValDirect:
     case PutByValWithThis:
     case PutPrivateName:
