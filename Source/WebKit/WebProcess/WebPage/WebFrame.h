@@ -95,7 +95,7 @@ public:
     WebCore::RemoteFrame* coreRemoteFrame() const;
     WebCore::Frame* coreAbstractFrame() const;
 
-    void transitionToLocal(WebCore::LayerHostingContextIdentifier);
+    void transitionToLocal(std::optional<WebCore::LayerHostingContextIdentifier> = std::nullopt);
 
     FrameInfoData info() const;
     FrameTreeNodeData frameTreeData() const;

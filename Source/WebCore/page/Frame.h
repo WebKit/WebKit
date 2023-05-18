@@ -37,6 +37,7 @@ namespace WebCore {
 
 class DOMWindow;
 class FrameView;
+class FrameLoadRequest;
 class HTMLFrameOwnerElement;
 class NavigationScheduler;
 class Page;
@@ -70,6 +71,7 @@ public:
 
     virtual void frameDetached() = 0;
     virtual bool preventsParentFromBeingComplete() const = 0;
+    virtual void changeLocation(FrameLoadRequest&&) = 0;
 
 protected:
     Frame(Page&, FrameIdentifier, FrameType, HTMLFrameOwnerElement*, Frame* parent);

@@ -85,6 +85,11 @@ bool RemoteFrame::preventsParentFromBeingComplete() const
     return m_preventsParentFromBeingComplete;
 }
 
+void RemoteFrame::changeLocation(FrameLoadRequest&& request)
+{
+    m_client->changeLocation(WTFMove(request));
+}
+
 FrameView* RemoteFrame::virtualView() const
 {
     return m_view.get();

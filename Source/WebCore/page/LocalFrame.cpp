@@ -323,6 +323,11 @@ bool LocalFrame::preventsParentFromBeingComplete() const
     return !m_loader->isComplete() && (!ownerElement() || !ownerElement()->isLazyLoadObserverActive());
 }
 
+void LocalFrame::changeLocation(FrameLoadRequest&& request)
+{
+    loader().changeLocation(WTFMove(request));
+}
+
 void LocalFrame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsReason reason)
 {
     if (!page() || !m_doc || !m_doc->renderView())

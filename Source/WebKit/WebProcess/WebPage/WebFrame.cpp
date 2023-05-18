@@ -389,7 +389,7 @@ void WebFrame::didCommitLoadInAnotherProcess(WebCore::LayerHostingContextIdentif
     ownerElement->scheduleInvalidateStyleAndLayerComposition();
 }
 
-void WebFrame::transitionToLocal(WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier)
+void WebFrame::transitionToLocal(std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
 {
     RefPtr remoteFrame = coreRemoteFrame();
     if (!remoteFrame) {
@@ -417,7 +417,8 @@ void WebFrame::transitionToLocal(WebCore::LayerHostingContextIdentifier layerHos
     m_coreFrame = localFrame.ptr();
     localFrame->init();
 
-    setLayerHostingContextIdentifier(layerHostingContextIdentifier);
+    if (layerHostingContextIdentifier)
+        setLayerHostingContextIdentifier(*layerHostingContextIdentifier);
     if (localFrame->isRootFrame())
         corePage->addRootFrame(localFrame.get());
 

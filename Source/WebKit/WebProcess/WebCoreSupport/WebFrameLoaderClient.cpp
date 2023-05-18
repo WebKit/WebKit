@@ -106,18 +106,17 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
             originatingPageID = webPage->webPageProxyIdentifier();
     }
 
+    // FIXME: Move all this DocumentLoader stuff to the caller, pass in the results.
     RefPtr coreFrame = m_frame->coreFrame();
-    if (!coreFrame)
-        return function(PolicyAction::Ignore, requestIdentifier);
 
-    WebDocumentLoader* documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().policyDocumentLoader());
+    WebDocumentLoader* documentLoader = coreFrame ? static_cast<WebDocumentLoader*>(coreFrame->loader().policyDocumentLoader()) : nullptr;
     if (!documentLoader) {
         // FIXME: When we receive a redirect after the navigation policy has been decided for the initial request,
         // the provisional load's DocumentLoader needs to receive navigation policy decisions. We need a better model for this state.
-        documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().provisionalDocumentLoader());
+        documentLoader = coreFrame ? static_cast<WebDocumentLoader*>(coreFrame->loader().provisionalDocumentLoader()) : nullptr;
     }
     if (!documentLoader)
-        documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().documentLoader());
+        documentLoader = coreFrame ? static_cast<WebDocumentLoader*>(coreFrame->loader().documentLoader()) : nullptr;
 
     auto& mouseEventData = navigationAction.mouseEventData();
     NavigationActionData navigationActionData {
@@ -135,14 +134,14 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         navigationAction.treatAsSameOriginNavigation(),
         navigationAction.hasOpenedFrames(),
         navigationAction.openedByDOMWithOpener(),
-        !!coreFrame->loader().opener(), /* hasOpener */
+        coreFrame && !!coreFrame->loader().opener(), /* hasOpener */
         requester.securityOrigin->data(),
         navigationAction.targetBackForwardItemIdentifier(),
         navigationAction.sourceBackForwardItemIdentifier(),
         navigationAction.lockHistory(),
         navigationAction.lockBackForwardList(),
-        documentLoader->clientRedirectSourceForHistory(),
-        coreFrame->loader().effectiveSandboxFlags(),
+        documentLoader ? documentLoader->clientRedirectSourceForHistory() : String(),
+        coreFrame ? coreFrame->loader().effectiveSandboxFlags() : SandboxFlags(),
         navigationAction.privateClickMeasurement(),
         requestingFrame ? requestingFrame->networkConnectionIntegrityPolicy() : OptionSet<NetworkConnectionIntegrity> { },
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
@@ -152,7 +151,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
 
     // Notify the UIProcess.
     if (policyDecisionMode == PolicyDecisionMode::Synchronous) {
-        auto sendResult = webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationActionSync(m_frame->frameID(), m_frame->isMainFrame(), m_frame->info(), requestIdentifier, documentLoader->navigationID(), navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }, redirectResponse));
+        auto sendResult = webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationActionSync(m_frame->frameID(), m_frame->isMainFrame(), m_frame->info(), requestIdentifier, documentLoader ? documentLoader->navigationID() : 0, navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }, redirectResponse));
         if (!sendResult) {
             WebFrameLoaderClient_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because of failing to send sync IPC");
             m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { requestIdentifier });
@@ -166,7 +165,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     }
 
     ASSERT(policyDecisionMode == PolicyDecisionMode::Asynchronous);
-    if (!webPage->send(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(m_frame->frameID(), m_frame->info(), requestIdentifier, documentLoader->navigationID(), navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }, redirectResponse, listenerID))) {
+    if (!webPage->send(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(m_frame->frameID(), m_frame->info(), requestIdentifier, documentLoader ? documentLoader->navigationID() : 0, navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }, redirectResponse, listenerID))) {
         WebFrameLoaderClient_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because of failing to send async IPC");
         m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { requestIdentifier });
     }

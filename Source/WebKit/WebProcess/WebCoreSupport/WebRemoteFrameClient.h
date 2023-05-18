@@ -46,6 +46,7 @@ private:
     void frameDetached() final;
     void sizeDidChange(WebCore::IntSize) final;
     void postMessageToRemote(WebCore::ProcessIdentifier, WebCore::FrameIdentifier, std::optional<WebCore::SecurityOriginData>, const WebCore::MessageWithMessagePorts&) final;
+    void changeLocation(WebCore::FrameLoadRequest&&) final;
 
     ScopeExit<Function<void()>> m_frameInvalidator;
 };
