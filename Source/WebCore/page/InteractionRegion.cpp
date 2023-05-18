@@ -236,9 +236,9 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     bool detectedHoverRules = false;
     if (!hasPointer) {
         // The hover check can be expensive (it may end up doing selector matching), so we only run it on some elements.
-        bool hasVisualEdges = !renderer.style().borderAndBackgroundEqual(RenderStyle::defaultStyle());
+        bool hasVisibleBoxDecorations = renderer.hasVisibleBoxDecorations();
         bool nonScrollable = !renderer.hasPotentiallyScrollableOverflow();
-        if (hasVisualEdges && nonScrollable)
+        if (hasVisibleBoxDecorations && nonScrollable)
             detectedHoverRules = elementMatchesHoverRules(*matchedElement);
     }
 
@@ -294,12 +294,12 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
         }
     }
 
-    bool hasNoVisualEdges = regionRenderer.style().borderAndBackgroundEqual(RenderStyle::defaultStyle());
-    if (isInlineNonBlock && hasNoVisualEdges)
-        bounds.inflate(regionRenderer.document().settings().interactionRegionInlinePadding());
-
-    if (hasNoVisualEdges)
+    if (!regionRenderer.hasVisibleBoxDecorations() && !renderer.hasVisibleBoxDecorations()) {
+        // We can safely tweak the bounds and radius without causing visual mismatch.
         borderRadius = std::max<float>(borderRadius, regionRenderer.document().settings().interactionRegionMinimumCornerRadius());
+        if (isInlineNonBlock)
+            bounds.inflate(regionRenderer.document().settings().interactionRegionInlinePadding());
+    }
 
     return { {
         InteractionRegion::Type::Interaction,
