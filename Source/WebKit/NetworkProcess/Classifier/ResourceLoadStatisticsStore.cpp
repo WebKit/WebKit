@@ -532,7 +532,16 @@ void ResourceLoadStatisticsStore::debugLogDomainsInBatches(const char* action, c
 
 bool ResourceLoadStatisticsStore::shouldExemptFromWebsiteDataDeletion(const RegistrableDomain& domain) const
 {
-    return !domain.isEmpty() && (domain == m_standaloneApplicationDomain || m_appBoundDomains.contains(domain) || m_managedDomains.contains(domain));
+    return !domain.isEmpty() && domainsExemptFromWebsiteDataDeletion().contains(domain);
+}
+
+HashSet<RegistrableDomain> ResourceLoadStatisticsStore::domainsExemptFromWebsiteDataDeletion() const
+{
+    auto result = m_appBoundDomains.unionWith(m_managedDomains);
+    if (!m_standaloneApplicationDomain.isEmpty())
+        result.add(m_standaloneApplicationDomain);
+
+    return result;
 }
 
 } // namespace WebKit

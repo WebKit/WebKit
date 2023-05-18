@@ -620,6 +620,19 @@ void NetworkProcess::registrableDomainsWithLastAccessedTime(PAL::SessionID sessi
     completionHandler(std::nullopt);
 }
 
+void NetworkProcess::registrableDomainsExemptFromWebsiteDataDeletion(PAL::SessionID sessionID, CompletionHandler<void(HashSet<RegistrableDomain>)>&& completionHandler)
+{
+#if ENABLE(TRACKING_PREVENTION)
+    if (auto* session = networkSession(sessionID)) {
+        if (auto* resourceLoadStatistics = session->resourceLoadStatistics()) {
+            resourceLoadStatistics->registrableDomainsExemptFromWebsiteDataDeletion(WTFMove(completionHandler));
+            return;
+        }
+    }
+#endif
+    completionHandler({ });
+}
+
 #if ENABLE(TRACKING_PREVENTION)
 void NetworkProcess::dumpResourceLoadStatistics(PAL::SessionID sessionID, CompletionHandler<void(String)>&& completionHandler)
 {

@@ -1451,6 +1451,25 @@ void WebResourceLoadStatisticsStore::registrableDomainsWithLastAccessedTime(Comp
     });
 }
 
+void WebResourceLoadStatisticsStore::registrableDomainsExemptFromWebsiteDataDeletion(CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (isEphemeral()) {
+        completionHandler({ });
+        return;
+    }
+
+    postTask([this, completionHandler = WTFMove(completionHandler)]() mutable {
+        HashSet<RegistrableDomain> result;
+        if (m_statisticsStore)
+            result = m_statisticsStore->domainsExemptFromWebsiteDataDeletion();
+        postTaskReply([result = crossThreadCopy(WTFMove(result)), completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler(WTFMove(result));
+        });
+    });
+}
+
 void WebResourceLoadStatisticsStore::deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&& domainsToDeleteAndRestrictWebsiteDataFor, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
