@@ -471,3 +471,7 @@ testRegExp(/[[\u{0250}-\u{3373}a]&&[\q{\u{3373}}]]/v, "\u{0250}", null);
 testRegExp(/[[\u{0250}-\u{3373}a]&&[\q{\u{3373}}]]/v, "\u{1813}", null);
 testRegExp(/[[\u{0250}-\u{3373}a]&&[\q{\u{3373}}]]/v, "\u{3373}", ["\u{3373}"]);
 testRegExp(/[[]a]/v, "a", ["a"]);
+testRegExp(/[\p{ASCII}--[a-z]][\.!]/v, "TEST!", ["T!"]);
+
+// Test 226
+testRegExp(/[ab][c--c]/v, "a", null);
