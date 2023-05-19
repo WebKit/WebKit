@@ -43,12 +43,15 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *, CGFloat initialFontSize, c
 - (void)selectRow:(NSInteger)rowIndex inComponent:(NSInteger)componentIndex extendingSelection:(BOOL)extendingSelection;
 - (BOOL)selectFormAccessoryHasCheckedItemAtRow:(long)rowIndex;
 @property (nonatomic, readonly) NSString *selectFormPopoverTitle;
+@property (nonatomic, readonly) NSArray<NSString *> *menuItemTitles;
 @end
 
 @protocol WKSelectTesting
 @optional
 - (void)selectRow:(NSInteger)rowIndex inComponent:(NSInteger)componentIndex extendingSelection:(BOOL)extendingSelection;
 - (BOOL)selectFormAccessoryHasCheckedItemAtRow:(long)rowIndex;
+
+- (NSArray<NSString *> *)menuItemTitles;
 @end
 
 #endif // PLATFORM(IOS_FAMILY)

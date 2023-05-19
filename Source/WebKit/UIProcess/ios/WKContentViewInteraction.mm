@@ -11848,7 +11848,13 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
             return @{ userInterfaceItem: @[] };
         return @{ userInterfaceItem: [_fileUploadPanel currentAvailableActionTitles] };
     }
-    
+
+    if ([userInterfaceItem isEqualToString:@"selectMenu"]) {
+        if (auto *menuItemTitles = [self.selectControl menuItemTitles])
+            return @{ userInterfaceItem: menuItemTitles };
+        return @{ userInterfaceItem: @[] };
+    }
+
     return nil;
 }
 

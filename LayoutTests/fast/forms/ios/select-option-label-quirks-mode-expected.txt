@@ -1,0 +1,12 @@
+This test verifies that an option's label attribute is not used as the corresponding menu item's title in quirks mode.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS select.value is "Option 1 Text"
+PASS areArraysEqual(items, ["Option 1 Text", "", "Option 3 Text"]) is true
+PASS select.value is "Option 2 Value"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1016,6 +1016,18 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static selectMenuItems()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+            (function() {
+                uiController.didShowContextMenuCallback = function() {
+                    uiController.uiScriptComplete(JSON.stringify(uiController.contentsOfUserInterfaceItem('selectMenu')));
+                };
+            })();`, result => resolve(JSON.parse(result).selectMenu));
+        });
+    }
+
     static setSelectedColorForColorPicker(red, green, blue)
     {
         const selectColorScript = `uiController.setSelectedColorForColorPicker(${red}, ${green}, ${blue})`;

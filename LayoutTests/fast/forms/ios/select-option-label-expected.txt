@@ -1,0 +1,12 @@
+This test verifies that an option's label attribute is used as the corresponding menu item's title.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS select.value is "Option 1 Text"
+PASS areArraysEqual(items, ["Option 1 Text", "Option 2 Label", "Option 3 Label"]) is true
+PASS select.value is "Option 2 Value"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
