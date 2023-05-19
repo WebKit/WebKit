@@ -215,6 +215,10 @@ private:
                         if (!addend->hasInt() || !filter(addend))
                             break;
                         int64_t addendConst = addend->asInt();
+                        if (Air::Arg::isValidImmForm(addendConst))
+                            break;
+                        if (addendConst != INT64_MIN && Air::Arg::isValidImmForm(-addendConst))
+                            break;
                         Value* bestAddend = findBestConstant(
                             [&] (Value* candidateAddend) -> bool {
                                 if (candidateAddend->type() != addend->type())
