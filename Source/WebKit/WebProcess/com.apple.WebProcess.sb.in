@@ -2095,7 +2095,7 @@
 #if HAVE(SANDBOX_STATE_FLAGS)
 (allow mach-bootstrap
     (apply-message-filter
-        (deny mach-message-send (with no-report)
+        (deny mach-message-send (with no-report))
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)
         (with-filter (extension "com.apple.webkit.mach-bootstrap")
             (allow mach-message-send (mach-bootstrap-message-numbers-post-launch)))
