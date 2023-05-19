@@ -386,6 +386,8 @@ void RemoteLayerTreeEventDispatcher::stopDisplayLinkObserver()
 
 void RemoteLayerTreeEventDispatcher::didRefreshDisplay(PlatformDisplayID displayID)
 {
+    auto traceScope = TraceScope { ScrollingThreadDisplayDidRefreshStart, ScrollingThreadDisplayDidRefreshEnd, displayID };
+
     ASSERT(ScrollingThread::isCurrentThread());
 
     auto scrollingTree = this->scrollingTree();
@@ -483,6 +485,8 @@ void RemoteLayerTreeEventDispatcher::waitForRenderingUpdateCompletionOrTimeout()
 
 void RemoteLayerTreeEventDispatcher::mainThreadDisplayDidRefresh(PlatformDisplayID)
 {
+    tracePoint(ScrollingThreadRenderUpdateSyncStart);
+
     // Wait for the scrolling thread to acquire m_scrollingTreeLock. This ensures that any pending wheel events are processed.
     BinarySemaphore semaphore;
     ScrollingThread::dispatch([protectedThis = Ref { *this }, &semaphore]() {
