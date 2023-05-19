@@ -7460,6 +7460,54 @@ public:
     {
         Location valueLocation;
         if (value.isConst()) {
+            auto moveZeroToVector = [&] () -> PartialResult {
+                result = topValue(TypeKind::V128);
+                Location resultLocation = allocate(result);
+                m_jit.moveZeroToVector(resultLocation.asFPR());
+                LOG_INSTRUCTION("VectorSplat", lane, value, valueLocation, RESULT(result));
+                return { };
+            };
+
+            auto moveOnesToVector = [&] () -> PartialResult {
+                result = topValue(TypeKind::V128);
+                Location resultLocation = allocate(result);
+#if CPU(X86_64)
+                m_jit.compareIntegerVector(RelationalCondition::Equal, SIMDInfo { SIMDLane::i32x4, SIMDSignMode::Unsigned }, resultLocation.asFPR(), resultLocation.asFPR(), resultLocation.asFPR(), wasmScratchFPR);
+#else
+                m_jit.compareIntegerVector(RelationalCondition::Equal, SIMDInfo { SIMDLane::i32x4, SIMDSignMode::Unsigned }, resultLocation.asFPR(), resultLocation.asFPR(), resultLocation.asFPR());
+#endif
+                LOG_INSTRUCTION("VectorSplat", lane, value, valueLocation, RESULT(result));
+                return { };
+            };
+
+            switch (lane) {
+            case SIMDLane::i8x16:
+            case SIMDLane::i16x8:
+            case SIMDLane::i32x4:
+            case SIMDLane::f32x4: {
+                // In theory someone could encode only the bottom bits for the i8x16/i16x8 cases but that would
+                // require more bytes in the wasm encoding than just encoding 0/-1, so we don't worry about that.
+                if (!value.asI32())
+                    return moveZeroToVector();
+                if (value.asI32() == -1)
+                    return moveOnesToVector();
+                break;
+            }
+            case SIMDLane::i64x2:
+            case SIMDLane::f64x2: {
+                if (!value.asI64())
+                    return moveZeroToVector();
+                if (value.asI64() == -1)
+                    return moveOnesToVector();
+                break;
+            }
+
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+
+            }
+
             if (value.isFloat()) {
                 ScratchScope<0, 1> scratches(*this);
                 valueLocation = Location::fromFPR(scratches.fpr(0));
