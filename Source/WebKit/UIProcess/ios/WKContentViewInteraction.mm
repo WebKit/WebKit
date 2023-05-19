@@ -5371,6 +5371,9 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
 
 - (void)accessoryDone
 {
+    if ([_webView _resetFocusPreservationCount])
+        RELEASE_LOG_ERROR(ViewState, "Keyboard dismissed with nonzero focus preservation count; check for unbalanced calls to -_incrementFocusPreservationCount");
+
     [self stopRelinquishingFirstResponderToFocusedElement];
     [self endEditingAndUpdateFocusAppearanceWithReason:EndEditingReasonAccessoryDone];
     _page->setIsShowingInputViewForFocusedElement(false);
@@ -7204,6 +7207,8 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 - (void)_elementDidBlur
 {
     SetForScope isBlurringFocusedElementForScope { _isBlurringFocusedElement, YES };
+
+    [_webView _resetFocusPreservationCount];
 
     [self _endEditing];
 

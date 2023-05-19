@@ -257,9 +257,9 @@ static WebCore::IntDegrees deviceOrientationForUIInterfaceOrientation(UIInterfac
         --_focusPreservationCount;
 }
 
-- (void)_resetFocusPreservationCount
+- (NSUInteger)_resetFocusPreservationCount
 {
-    _focusPreservationCount = 0;
+    return std::exchange(_focusPreservationCount, 0);
 }
 
 - (BOOL)_isRetainingActiveFocusedState
