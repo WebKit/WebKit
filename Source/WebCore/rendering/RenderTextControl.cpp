@@ -115,8 +115,12 @@ RenderBox::LogicalExtentComputedValues RenderTextControl::computeLogicalHeight(L
         logicalHeight = computeControlLogicalHeight(innerTextBox->lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes), nonContentHeight);
 
         // We are able to have a horizontal scrollbar if the overflow style is scroll, or if its auto and there's no word wrap.
-        if ((isHorizontalWritingMode() && (style().overflowX() == Overflow::Scroll ||  (style().overflowX() == Overflow::Auto && innerText->renderer()->style().overflowWrap() == OverflowWrap::Normal)))
-            || (!isHorizontalWritingMode() && (style().overflowY() == Overflow::Scroll ||  (style().overflowY() == Overflow::Auto && innerText->renderer()->style().overflowWrap() == OverflowWrap::Normal))))
+        auto shouldIncludeScrollbarHeight = [&] {
+            auto& style = this->style();
+            auto isHorizontalWritingMode = this->isHorizontalWritingMode();
+            return (isHorizontalWritingMode && style.overflowX() == Overflow::Scroll) || (!isHorizontalWritingMode && style.overflowY() == Overflow::Scroll);
+        };
+        if (shouldIncludeScrollbarHeight())
             logicalHeight += scrollbarThickness();
         
         // FIXME: The logical height of the inner text box should have been added
