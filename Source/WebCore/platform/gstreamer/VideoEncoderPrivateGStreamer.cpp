@@ -125,7 +125,7 @@ public:
         return encoders;
     }
 
-    static void registerEncoder(EncoderId id, const char* name, const char* parserName, const char* caps, const char* encodedFormat,
+    static void registerEncoder(EncoderId id, const char* name, const char* parserName, const char* capsString, const char* encodedFormatString,
         SetupFunc&& setupEncoder, const char* bitratePropertyName, SetBitrateFunc&& setBitrate, const char* keyframeIntervalPropertyName, SetBitrateModeFunc&& setBitrateMode, SetLatencyModeFunc&& setLatency)
     {
         auto encoderFactory = adoptGRef(gst_element_factory_find(name));
@@ -147,12 +147,21 @@ public:
             }
         }
 
+        auto caps = adoptGRef(gst_caps_from_string(capsString));
+        GST_MINI_OBJECT_FLAG_SET(caps.get(), GST_MINI_OBJECT_FLAG_MAY_BE_LEAKED);
+
+        GRefPtr<GstCaps> encodedFormat;
+        if (encodedFormatString) {
+            encodedFormat = adoptGRef(gst_caps_from_string(encodedFormatString));
+            GST_MINI_OBJECT_FLAG_SET(encodedFormat.get(), GST_MINI_OBJECT_FLAG_MAY_BE_LEAKED);
+        }
+
         singleton().emplace(std::make_pair(id, EncoderDefinition {
-            .caps = adoptGRef(gst_caps_from_string(caps)),
+            .caps = WTFMove(caps),
             .name = name,
             .parserName = parserName,
             .factory = WTFMove(encoderFactory),
-            .encodedFormat = encodedFormat ? adoptGRef(gst_caps_from_string(encodedFormat)) : nullptr,
+            .encodedFormat = WTFMove(encodedFormat),
             .setBitrate = WTFMove(setBitrate),
             .setupEncoder = WTFMove(setupEncoder),
             .setBitrateMode = WTFMove(setBitrateMode),
