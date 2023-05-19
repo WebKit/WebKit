@@ -926,26 +926,30 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
 
 void SWServer::runServiceWorkerIfNecessary(ServiceWorkerIdentifier identifier, RunServiceWorkerCallback&& callback)
 {
-    auto* worker = workerByID(identifier);
+    RefPtr worker = workerByID(identifier);
     if (!worker) {
         callback(nullptr);
         return;
     }
+    runServiceWorkerIfNecessary(*worker, WTFMove(callback));
+}
 
-    auto* contextConnection = worker->contextConnection();
-    if (worker->isRunning()) {
+void SWServer::runServiceWorkerIfNecessary(SWServerWorker& worker, RunServiceWorkerCallback&& callback)
+{
+    auto* contextConnection = worker.contextConnection();
+    if (worker.isRunning()) {
         ASSERT(contextConnection);
         callback(contextConnection);
         return;
     }
     
-    if (worker->state() == ServiceWorkerState::Redundant) {
+    if (worker.state() == ServiceWorkerState::Redundant) {
         callback(nullptr);
         return;
     }
 
-    if (worker->isTerminating()) {
-        worker->whenTerminated([this, weakThis = WeakPtr { *this }, identifier, callback = WTFMove(callback)]() mutable {
+    if (worker.isTerminating()) {
+        worker.whenTerminated([this, weakThis = WeakPtr { *this }, identifier = worker.identifier(), callback = WTFMove(callback)]() mutable {
             if (!weakThis)
                 return callback(nullptr);
             runServiceWorkerIfNecessary(identifier, WTFMove(callback));
@@ -954,42 +958,46 @@ void SWServer::runServiceWorkerIfNecessary(ServiceWorkerIdentifier identifier, R
     }
 
     if (!contextConnection) {
-        auto& serviceWorkerRunRequestsForOrigin = m_serviceWorkerRunRequests.ensure(worker->registrableDomain(), [] {
+        auto& serviceWorkerRunRequestsForOrigin = m_serviceWorkerRunRequests.ensure(worker.registrableDomain(), [] {
             return HashMap<ServiceWorkerIdentifier, Vector<RunServiceWorkerCallback>> { };
         }).iterator->value;
-        serviceWorkerRunRequestsForOrigin.ensure(identifier, [&] {
+        serviceWorkerRunRequestsForOrigin.ensure(worker.identifier(), [&] {
             return Vector<RunServiceWorkerCallback> { };
         }).iterator->value.append(WTFMove(callback));
 
-        createContextConnection(worker->registrableDomain(), worker->serviceWorkerPageIdentifier());
+        createContextConnection(worker.registrableDomain(), worker.serviceWorkerPageIdentifier());
         return;
     }
 
-    bool success = runServiceWorker(identifier);
+    bool success = runServiceWorker(worker.identifier());
     callback(success ? contextConnection : nullptr);
 }
 
 bool SWServer::runServiceWorker(ServiceWorkerIdentifier identifier)
 {
-    auto* worker = workerByID(identifier);
+    RefPtr worker = workerByID(identifier);
     if (!worker)
         return false;
 
-    // If the registration for a worker has been removed then the request to run
-    // the worker is moot.
-    if (!worker->registration())
+    return runServiceWorker(*worker);
+}
+
+bool SWServer::runServiceWorker(SWServerWorker& worker)
+{
+    // If the registration for a worker has been removed then the request to run the worker is moot.
+    if (!worker.registration())
         return false;
 
-    ASSERT(!worker->isTerminating());
-    ASSERT(!m_runningOrTerminatingWorkers.contains(identifier));
-    m_runningOrTerminatingWorkers.add(identifier, *worker);
+    ASSERT(!worker.isTerminating());
+    ASSERT(!m_runningOrTerminatingWorkers.contains(worker.identifier()));
+    m_runningOrTerminatingWorkers.add(worker.identifier(), worker);
 
-    worker->setState(SWServerWorker::State::Running);
+    worker.setState(SWServerWorker::State::Running);
 
-    auto* contextConnection = worker->contextConnection();
+    auto* contextConnection = worker.contextConnection();
     ASSERT(contextConnection);
 
-    contextConnection->installServiceWorkerContext(worker->contextData(), worker->data(), worker->userAgent(), worker->workerThreadMode());
+    contextConnection->installServiceWorkerContext(worker.contextData(), worker.data(), worker.userAgent(), worker.workerThreadMode());
 
     return true;
 }
@@ -1035,16 +1043,17 @@ void SWServer::fireInstallEvent(SWServerWorker& worker)
     contextConnection->fireInstallEvent(worker.identifier());
 }
 
-void SWServer::fireActivateEvent(SWServerWorker& worker)
+void SWServer::runServiceWorkerAndFireActivateEvent(SWServerWorker& worker)
 {
-    auto* contextConnection = worker.contextConnection();
-    if (!contextConnection) {
-        RELEASE_LOG_ERROR(ServiceWorker, "Request to fire activate event on a worker whose context connection does not exist");
-        return;
-    }
+    runServiceWorkerIfNecessary(worker, [identifier = worker.identifier()](auto* contextConnection) {
+        if (!contextConnection) {
+            RELEASE_LOG_ERROR(ServiceWorker, "Request to fire activate event on a worker whose context connection does not exist");
+            return;
+        }
 
-    RELEASE_LOG(ServiceWorker, "%p - SWServer::fireActivateEvent on worker %llu", this, worker.identifier().toUInt64());
-    contextConnection->fireActivateEvent(worker.identifier());
+        RELEASE_LOG(ServiceWorker, "SWServer::runServiceWorkerAndFireActivateEvent on worker %llu", identifier.toUInt64());
+        contextConnection->fireActivateEvent(identifier);
+    });
 }
 
 void SWServer::addConnection(std::unique_ptr<Connection>&& connection)

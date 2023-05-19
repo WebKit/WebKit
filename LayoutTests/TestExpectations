@@ -1023,6 +1023,9 @@ webkit.org/b/248735 http/wpt/service-workers/fetch-service-worker-preload.https.
 webkit.org/b/248743 http/wpt/service-workers/fetch-service-worker-preload-download.https.html [ Pass Failure ]
 webkit.org/b/248743 http/wpt/service-workers/file-upload.html [ Pass Failure ]
 
+# Test file
+http/wpt/service-workers/changing-service-worker-lengthy-worker.py [ Skip ]
+
 [ Debug ] http/tests/workers/worker-messageport-2.html [ Slow ]
 
 # Skip workers tests that are timing out or are SharedWorker related only

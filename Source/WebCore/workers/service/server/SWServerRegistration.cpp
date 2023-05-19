@@ -315,11 +315,10 @@ void SWServerRegistration::activate()
     // - Invoke Notify Controller Change algorithm with client as the argument.
     notifyClientsOfControllerChange();
 
-    // FIXME: Invoke Run Service Worker algorithm with activeWorker as the argument.
-
+    // Invoke Run Service Worker algorithm with activeWorker as the argument.
     // Queue a task to fire the activate event.
     ASSERT(activeWorker());
-    m_server.fireActivateEvent(*activeWorker());
+    m_server.runServiceWorkerAndFireActivateEvent(*activeWorker());
 }
 
 // https://w3c.github.io/ServiceWorker/#activate (post activate event steps).
