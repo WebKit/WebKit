@@ -746,9 +746,7 @@ enum class EmptyCell : bool {
 
 enum class CaptionSide : uint8_t {
     Top,
-    Bottom,
-    Left,
-    Right
+    Bottom
 };
 
 enum class ListStylePosition : bool {

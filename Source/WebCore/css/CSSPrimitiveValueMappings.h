@@ -560,7 +560,7 @@ template<> constexpr BoxOrient fromCSSValueID(CSSValueID valueID)
 }
 
 #define TYPE CaptionSide
-#define FOR_EACH(CASE) CASE(Left) CASE(Right) CASE(Top) CASE(Bottom)
+#define FOR_EACH(CASE) CASE(Top) CASE(Bottom)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH

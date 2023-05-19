@@ -224,8 +224,6 @@ TextStream& operator<<(TextStream& ts, CaptionSide side)
     switch (side) {
     case CaptionSide::Top: ts << "top"; break;
     case CaptionSide::Bottom: ts << "bottom"; break;
-    case CaptionSide::Left: ts << "left"; break;
-    case CaptionSide::Right: ts << "right"; break;
     }
     return ts;
 }

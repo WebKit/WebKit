@@ -3071,8 +3071,6 @@
         "caption-side": {
             "inherited": true,
             "values": [
-                "left",
-                "right",
                 "top",
                 "bottom",
                 {

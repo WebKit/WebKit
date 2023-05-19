@@ -1,6 +1,6 @@
 
 PASS e.style['caption-side'] = "auto" should not set the property value
-FAIL e.style['caption-side'] = "left" should not set the property value assert_equals: expected "" but got "left"
-FAIL e.style['caption-side'] = "right" should not set the property value assert_equals: expected "" but got "right"
+PASS e.style['caption-side'] = "left" should not set the property value
+PASS e.style['caption-side'] = "right" should not set the property value
 PASS e.style['caption-side'] = "top bottom" should not set the property value
 
