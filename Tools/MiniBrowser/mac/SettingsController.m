@@ -226,17 +226,27 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 {
     return @[
         @{
-            @"label" : @"Safari 13.1",
+            @"label" : @"Safari 16.4",
             @"identifier" : @"safari",
-            @"userAgent" : @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.4 Safari/605.1.15"
+            @"userAgent" : @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Safari/605.1.15"
         },
         @{
             @"label" : @"-",
         },
         @{
-            @"label" : @"Safari—iOS 13.4—iPhone",
+            @"label" : @"Safari—iOS 16.4—iPhone",
             @"identifier" : @"iphone-safari",
-            @"userAgent" : @"Mozilla/5.0 (iPhone; CPU iPhone OS 13_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1 Mobile/15E148 Safari/604.1"
+            @"userAgent" : @"Mozilla/5.0 (iPhone; CPU iPhone OS 16_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Mobile/15E148 Safari/604.1"
+        },
+        @{
+            @"label" : @"Safari—iPadOS 16.4—iPad mini",
+            @"identifier" : @"ipad-mini-safari",
+            @"userAgent" : @"Mozilla/5.0 (iPad; CPU iPhone OS 16_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Mobile/15E148 Safari/604.1"
+        },
+        @{
+            @"label" : @"Safari—iPadOS 16.4—iPad",
+            @"identifier" : @"ipad-safari",
+            @"userAgent" : @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Safari/605.1.15"
         },
         @{
             @"label" : @"-",
@@ -244,12 +254,12 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
         @{
             @"label" : @"Firefox—macOS",
             @"identifier" : @"firefox",
-            @"userAgent" : @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:70.0) Gecko/20100101 Firefox/70.0"
+            @"userAgent" : @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/109.0"
         },
         @{
             @"label" : @"Firefox—Windows",
             @"identifier" : @"windows-firefox",
-            @"userAgent" : @"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:54.0) Gecko/20100101 Firefox/71.0"
+            @"userAgent" : @"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0"
         },
         @{
             @"label" : @"-",
@@ -257,17 +267,30 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
         @{
             @"label" : @"Chrome—macOS",
             @"identifier" : @"chrome",
-            @"userAgent" : @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36"
+            @"userAgent" : @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
         },
         @{
             @"label" : @"Chrome—Windows",
             @"identifier" : @"windows-chrome",
-            @"userAgent" : @"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36"
+            @"userAgent" : @"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
         },
         @{
             @"label" : @"Chrome—Android",
             @"identifier" : @"android-chrome",
-            @"userAgent" : @"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36"
+            @"userAgent" : @"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
+        },
+        @{
+            @"label" : @"-",
+        },
+        @{
+            @"label" : @"Edge—macOS",
+            @"identifier" : @"edge",
+            @"userAgent" : @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.41"
+        },
+        @{
+            @"label" : @"Edge—Windows",
+            @"identifier" : @"windows-edge",
+            @"userAgent" : @"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.41"
         },
     ];
 }
