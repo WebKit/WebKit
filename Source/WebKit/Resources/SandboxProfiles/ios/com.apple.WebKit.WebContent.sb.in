@@ -1294,7 +1294,7 @@
 #if HAVE(SANDBOX_STATE_FLAGS)
 (allow mach-bootstrap
     (apply-message-filter
-        (deny mach-message-send)
+        (deny mach-message-send (with no-report))
 #if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 170000)
         (with-filter (extension "com.apple.webkit.mach-bootstrap")
             (allow mach-message-send (mach-bootstrap-message-numbers-post-launch)))
