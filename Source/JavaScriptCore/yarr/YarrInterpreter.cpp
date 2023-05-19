@@ -1024,7 +1024,9 @@ public:
         case QuantifierType::Greedy:
             if (backTrack->matchAmount) {
                 --backTrack->matchAmount;
-                input.rewind(backTrack->backReferenceSize);
+                if (term.matchDirection() == Backward)
+                    return input.checkInput(matchEnd - matchBegin);
+                input.rewind(matchEnd - matchBegin);
                 return true;
             }
             break;
