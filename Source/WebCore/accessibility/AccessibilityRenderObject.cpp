@@ -1469,7 +1469,7 @@ void AccessibilityRenderObject::setSelectedTextRange(PlainTextRange&& range)
         auto end = visiblePositionForIndexUsingCharacterIterator(node, range.start + range.length);
         if (!contains<ComposedTree>(*elementRange, makeBoundaryPoint(end)))
             end = makeContainerOffsetPosition(elementRange->start);
-        m_renderer->frame().selection().setSelection(VisibleSelection(start, end), FrameSelection::defaultSetSelectionOptions(UserTriggered));
+        m_renderer->frame().selection().setSelection(VisibleSelection(start, end), FrameSelection::defaultSetSelectionOptions(UserTriggered::Yes));
     }
 
     clearTextSelectionIntent(axObjectCache());
@@ -1662,7 +1662,7 @@ VisiblePositionRange AccessibilityRenderObject::visiblePositionRangeForLine(unsi
     // The resulting selection in that case will be a caret at position.
     FrameSelection selection;
     selection.setSelection(position);
-    selection.modify(FrameSelection::AlterationExtend, SelectionDirection::Right, TextGranularity::LineBoundary);
+    selection.modify(FrameSelection::Alteration::Extend, SelectionDirection::Right, TextGranularity::LineBoundary);
     return selection.selection();
 }
 
@@ -1835,12 +1835,12 @@ void AccessibilityRenderObject::setSelectedVisiblePositionRange(const VisiblePos
                     start = makeContainerOffsetPosition(elementRange->start);
             }
 
-            m_renderer->frame().selection().moveTo(start, UserTriggered);
+            m_renderer->frame().selection().moveTo(start, UserTriggered::Yes);
         } else {
             setTextSelectionIntent(axObjectCache(), AXTextStateChangeTypeSelectionExtend);
 
             VisibleSelection newSelection = VisibleSelection(range.start, range.end);
-            m_renderer->frame().selection().setSelection(newSelection, FrameSelection::defaultSetSelectionOptions(UserTriggered));
+            m_renderer->frame().selection().setSelection(newSelection, FrameSelection::defaultSetSelectionOptions(UserTriggered::Yes));
         }
     }
 

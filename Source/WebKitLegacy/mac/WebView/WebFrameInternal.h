@@ -161,7 +161,7 @@ WebView *getWebView(WebFrame *webFrame);
 #endif
 
 #if !PLATFORM(IOS_FAMILY)
-- (DOMRange *)_rangeByAlteringCurrentSelection:(WebCore::FrameSelection::EAlteration)alteration direction:(WebCore::SelectionDirection)direction granularity:(WebCore::TextGranularity)granularity;
+- (DOMRange *)_rangeByAlteringCurrentSelection:(WebCore::FrameSelection::Alteration)alteration direction:(WebCore::SelectionDirection)direction granularity:(WebCore::TextGranularity)granularity;
 #endif
 
 - (NSRange)_convertToNSRange:(const WebCore::SimpleRange&)range;

@@ -268,22 +268,22 @@ void TemporarySelectionChange::setSelection(const VisibleSelection& selection, I
     auto options = FrameSelection::defaultSetSelectionOptions();
 
     if (m_options & TemporarySelectionOption::UserTriggered)
-        options.add(FrameSelection::IsUserTriggered);
+        options.add(FrameSelection::SetSelectionOption::IsUserTriggered);
 
     if (m_options & TemporarySelectionOption::DoNotSetFocus)
-        options.add(FrameSelection::DoNotSetFocus);
+        options.add(FrameSelection::SetSelectionOption::DoNotSetFocus);
 
     if (isTemporarySelection == IsTemporarySelection::Yes) {
         if (m_options & TemporarySelectionOption::RevealSelection)
-            options.add(FrameSelection::RevealSelection);
+            options.add(FrameSelection::SetSelectionOption::RevealSelection);
         if (m_options & TemporarySelectionOption::DelegateMainFrameScroll)
-            options.add(FrameSelection::DelegateMainFrameScroll);
+            options.add(FrameSelection::SetSelectionOption::DelegateMainFrameScroll);
         if (m_options & TemporarySelectionOption::SmoothScroll)
-            options.add(FrameSelection::SmoothScroll);
+            options.add(FrameSelection::SetSelectionOption::SmoothScroll);
         if (m_options & TemporarySelectionOption::RevealSelectionBounds)
-            options.add(FrameSelection::RevealSelectionBounds);
+            options.add(FrameSelection::SetSelectionOption::RevealSelectionBounds);
         if (m_options & TemporarySelectionOption::ForceCenterScroll)
-            options.add(FrameSelection::ForceCenterScroll);
+            options.add(FrameSelection::SetSelectionOption::ForceCenterScroll);
     }
 
     m_document->selection().setSelection(selection, options);
@@ -1205,7 +1205,7 @@ void Editor::appliedEditing(CompositeEditCommand& command)
         // Don't clear the typing style with this selection change. We do those things elsewhere if necessary.
         OptionSet<FrameSelection::SetSelectionOption> options;
         if (command.isDictationCommand())
-            options.add(FrameSelection::DictationTriggered);
+            options.add(FrameSelection::SetSelectionOption::DictationTriggered);
 
         changeSelectionAfterCommand(newSelection, options);
     }
@@ -3068,7 +3068,7 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
         } else {
             // If this fails for any reason, the fallback is to go one position beyond the last replacement
             m_document.selection().moveTo(m_document.selection().selection().end());
-            m_document.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Forward, TextGranularity::CharacterGranularity);
+            m_document.selection().modify(FrameSelection::Alteration::Move, SelectionDirection::Forward, TextGranularity::CharacterGranularity);
         }
     }
 }
@@ -3255,7 +3255,7 @@ void Editor::setIgnoreSelectionChanges(bool ignore, RevealSelection shouldReveal
         respondToChangedSelection(m_document.selection().selection(), { });
 #endif
     if (!ignore && shouldRevealExistingSelection == RevealSelection::Yes)
-        revealSelectionAfterEditingOperation(ScrollAlignment::alignToEdgeIfNeeded, RevealExtent);
+        revealSelectionAfterEditingOperation(ScrollAlignment::alignToEdgeIfNeeded, RevealExtentOption::RevealExtent);
 }
 
 std::optional<SimpleRange> Editor::compositionRange() const
@@ -3448,7 +3448,7 @@ RefPtr<TextPlaceholderElement> Editor::insertTextPlaceholder(const IntSize& size
     if (!placeholder->parentNode())
         return nullptr;
 
-    m_document.selection().setSelection(VisibleSelection { positionInParentBeforeNode(placeholder.ptr()) }, FrameSelection::defaultSetSelectionOptions(UserTriggered));
+    m_document.selection().setSelection(VisibleSelection { positionInParentBeforeNode(placeholder.ptr()) }, FrameSelection::defaultSetSelectionOptions(UserTriggered::Yes));
 
     return placeholder;
 }
@@ -3469,7 +3469,7 @@ void Editor::removeTextPlaceholder(TextPlaceholderElement& placeholder)
 
     // To match the Legacy WebKit implementation, set the text insertion point to be before where the placeholder use to be.
     if (m_document.selection().isFocusedAndActive() && document->focusedElement() == savedRootEditableElement)
-        m_document.selection().setSelection(VisibleSelection { savedPositionBeforePlaceholder }, FrameSelection::defaultSetSelectionOptions(UserTriggered));
+        m_document.selection().setSelection(VisibleSelection { savedPositionBeforePlaceholder }, FrameSelection::defaultSetSelectionOptions(UserTriggered::Yes));
 }
 
 static inline void collapseCaretWidth(IntRect& rect)
@@ -3791,8 +3791,8 @@ void Editor::respondToChangedSelection(const VisibleSelection&, OptionSet<FrameS
         return;
 
     // Don't check spelling and grammar if the change of selection is triggered by spelling correction itself.
-    m_editorUIUpdateTimerShouldCheckSpellingAndGrammar = options.contains(FrameSelection::CloseTyping) && !options.contains(FrameSelection::SpellCorrectionTriggered);
-    m_editorUIUpdateTimerWasTriggeredByDictation = options.contains(FrameSelection::DictationTriggered);
+    m_editorUIUpdateTimerShouldCheckSpellingAndGrammar = options.contains(FrameSelection::SetSelectionOption::CloseTyping) && !options.contains(FrameSelection::SetSelectionOption::SpellCorrectionTriggered);
+    m_editorUIUpdateTimerWasTriggeredByDictation = options.contains(FrameSelection::SetSelectionOption::DictationTriggered);
     scheduleEditorUIUpdate();
 }
 

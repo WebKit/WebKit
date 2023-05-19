@@ -434,7 +434,7 @@ void EventHandler::nodeWillBeRemoved(Node& nodeToBeRemoved)
 static void setSelectionIfNeeded(FrameSelection& selection, const VisibleSelection& newSelection)
 {
     if (selection.selection() != newSelection && selection.shouldChangeSelection(newSelection))
-        selection.setSelection(newSelection, FrameSelection::defaultSetSelectionOptions(UserTriggered));
+        selection.setSelection(newSelection, FrameSelection::defaultSetSelectionOptions(UserTriggered::Yes));
 }
 
 static inline bool dispatchSelectStart(Node* node)
@@ -3837,7 +3837,7 @@ static void setInitialKeyboardSelection(LocalFrame& frame, SelectionDirection di
     }
 
     AXTextStateChangeIntent intent(AXTextStateChangeTypeSelectionMove, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown, false });
-    selection.setSelection(visiblePosition, FrameSelection::defaultSetSelectionOptions(UserTriggered), intent);
+    selection.setSelection(visiblePosition, FrameSelection::defaultSetSelectionOptions(UserTriggered::Yes), intent);
 }
 
 static void handleKeyboardSelectionMovement(LocalFrame& frame, KeyboardEvent& event)
@@ -3848,7 +3848,7 @@ static void handleKeyboardSelectionMovement(LocalFrame& frame, KeyboardEvent& ev
     bool isOptioned = event.getModifierState("Alt"_s);
     bool isSelection = !selection.isNone();
 
-    FrameSelection::EAlteration alternation = event.getModifierState("Shift"_s) ? FrameSelection::AlterationExtend : FrameSelection::AlterationMove;
+    FrameSelection::Alteration alternation = event.getModifierState("Shift"_s) ? FrameSelection::Alteration::Extend : FrameSelection::Alteration::Move;
     SelectionDirection direction = SelectionDirection::Forward;
     TextGranularity granularity = TextGranularity::CharacterGranularity;
 
@@ -3878,7 +3878,7 @@ static void handleKeyboardSelectionMovement(LocalFrame& frame, KeyboardEvent& ev
     }
 
     if (isSelection)
-        selection.modify(alternation, direction, granularity, UserTriggered);
+        selection.modify(alternation, direction, granularity, UserTriggered::Yes);
     else
         setInitialKeyboardSelection(frame, direction);
 

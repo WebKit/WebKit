@@ -606,47 +606,47 @@ static bool executeMakeTextWritingDirectionRightToLeft(LocalFrame& frame, Event*
 
 static bool executeMoveBackward(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Backward, TextGranularity::CharacterGranularity, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Move, SelectionDirection::Backward, TextGranularity::CharacterGranularity, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveBackwardAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationExtend, SelectionDirection::Backward, TextGranularity::CharacterGranularity, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Extend, SelectionDirection::Backward, TextGranularity::CharacterGranularity, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveDown(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    return frame.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Forward, TextGranularity::LineGranularity, UserTriggered);
+    return frame.selection().modify(FrameSelection::Alteration::Move, SelectionDirection::Forward, TextGranularity::LineGranularity, UserTriggered::Yes);
 }
 
 static bool executeMoveDownAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationExtend, SelectionDirection::Forward, TextGranularity::LineGranularity, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Extend, SelectionDirection::Forward, TextGranularity::LineGranularity, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveForward(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Forward, TextGranularity::CharacterGranularity, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Move, SelectionDirection::Forward, TextGranularity::CharacterGranularity, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveForwardAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationExtend, SelectionDirection::Forward, TextGranularity::CharacterGranularity, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Extend, SelectionDirection::Forward, TextGranularity::CharacterGranularity, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveLeft(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    return frame.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Left, TextGranularity::CharacterGranularity, UserTriggered);
+    return frame.selection().modify(FrameSelection::Alteration::Move, SelectionDirection::Left, TextGranularity::CharacterGranularity, UserTriggered::Yes);
 }
 
 static bool executeMoveLeftAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationExtend, SelectionDirection::Left, TextGranularity::CharacterGranularity, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Extend, SelectionDirection::Left, TextGranularity::CharacterGranularity, UserTriggered::Yes);
     return true;
 }
 
@@ -655,8 +655,8 @@ static bool executeMovePageDown(LocalFrame& frame, Event*, EditorCommandSource, 
     unsigned distance = verticalScrollDistance(frame);
     if (!distance)
         return false;
-    return frame.selection().modify(FrameSelection::AlterationMove, distance, FrameSelection::DirectionDown,
-        UserTriggered, FrameSelection::AlignCursorOnScrollAlways);
+    return frame.selection().modify(FrameSelection::Alteration::Move, distance, FrameSelection::DirectionDown,
+        UserTriggered::Yes, FrameSelection::CursorAlignOnScroll::Always);
 }
 
 static bool executeMovePageDownAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
@@ -664,8 +664,8 @@ static bool executeMovePageDownAndModifySelection(LocalFrame& frame, Event*, Edi
     unsigned distance = verticalScrollDistance(frame);
     if (!distance)
         return false;
-    return frame.selection().modify(FrameSelection::AlterationExtend, distance, FrameSelection::DirectionDown,
-        UserTriggered, FrameSelection::AlignCursorOnScrollAlways);
+    return frame.selection().modify(FrameSelection::Alteration::Extend, distance, FrameSelection::DirectionDown,
+        UserTriggered::Yes, FrameSelection::CursorAlignOnScroll::Always);
 }
 
 static bool executeMovePageUp(LocalFrame& frame, Event*, EditorCommandSource, const String&)
@@ -673,8 +673,8 @@ static bool executeMovePageUp(LocalFrame& frame, Event*, EditorCommandSource, co
     unsigned distance = verticalScrollDistance(frame);
     if (!distance)
         return false;
-    return frame.selection().modify(FrameSelection::AlterationMove, distance, FrameSelection::DirectionUp,
-        UserTriggered, FrameSelection::AlignCursorOnScrollAlways);
+    return frame.selection().modify(FrameSelection::Alteration::Move, distance, FrameSelection::DirectionUp,
+        UserTriggered::Yes, FrameSelection::CursorAlignOnScroll::Always);
 }
 
 static bool executeMovePageUpAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
@@ -682,209 +682,209 @@ static bool executeMovePageUpAndModifySelection(LocalFrame& frame, Event*, Edito
     unsigned distance = verticalScrollDistance(frame);
     if (!distance)
         return false;
-    return frame.selection().modify(FrameSelection::AlterationExtend, distance, FrameSelection::DirectionUp,
-        UserTriggered, FrameSelection::AlignCursorOnScrollAlways);
+    return frame.selection().modify(FrameSelection::Alteration::Extend, distance, FrameSelection::DirectionUp,
+        UserTriggered::Yes, FrameSelection::CursorAlignOnScroll::Always);
 }
 
 static bool executeMoveRight(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    return frame.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Right, TextGranularity::CharacterGranularity, UserTriggered);
+    return frame.selection().modify(FrameSelection::Alteration::Move, SelectionDirection::Right, TextGranularity::CharacterGranularity, UserTriggered::Yes);
 }
 
 static bool executeMoveRightAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationExtend, SelectionDirection::Right, TextGranularity::CharacterGranularity, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Extend, SelectionDirection::Right, TextGranularity::CharacterGranularity, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveToBeginningOfDocument(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Backward, TextGranularity::DocumentBoundary, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Move, SelectionDirection::Backward, TextGranularity::DocumentBoundary, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveToBeginningOfDocumentAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationExtend, SelectionDirection::Backward, TextGranularity::DocumentBoundary, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Extend, SelectionDirection::Backward, TextGranularity::DocumentBoundary, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveToBeginningOfLine(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Backward, TextGranularity::LineBoundary, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Move, SelectionDirection::Backward, TextGranularity::LineBoundary, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveToBeginningOfLineAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationExtend, SelectionDirection::Backward, TextGranularity::LineBoundary, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Extend, SelectionDirection::Backward, TextGranularity::LineBoundary, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveToBeginningOfParagraph(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Backward, TextGranularity::ParagraphBoundary, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Move, SelectionDirection::Backward, TextGranularity::ParagraphBoundary, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveToBeginningOfParagraphAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationExtend, SelectionDirection::Backward, TextGranularity::ParagraphBoundary, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Extend, SelectionDirection::Backward, TextGranularity::ParagraphBoundary, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveToBeginningOfSentence(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Backward, TextGranularity::SentenceBoundary, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Move, SelectionDirection::Backward, TextGranularity::SentenceBoundary, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveToBeginningOfSentenceAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationExtend, SelectionDirection::Backward, TextGranularity::SentenceBoundary, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Extend, SelectionDirection::Backward, TextGranularity::SentenceBoundary, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveToEndOfDocument(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Forward, TextGranularity::DocumentBoundary, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Move, SelectionDirection::Forward, TextGranularity::DocumentBoundary, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveToEndOfDocumentAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationExtend, SelectionDirection::Forward, TextGranularity::DocumentBoundary, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Extend, SelectionDirection::Forward, TextGranularity::DocumentBoundary, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveToEndOfSentence(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Forward, TextGranularity::SentenceBoundary, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Move, SelectionDirection::Forward, TextGranularity::SentenceBoundary, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveToEndOfSentenceAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationExtend, SelectionDirection::Forward, TextGranularity::SentenceBoundary, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Extend, SelectionDirection::Forward, TextGranularity::SentenceBoundary, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveToEndOfLine(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Forward, TextGranularity::LineBoundary, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Move, SelectionDirection::Forward, TextGranularity::LineBoundary, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveToEndOfLineAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationExtend, SelectionDirection::Forward, TextGranularity::LineBoundary, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Extend, SelectionDirection::Forward, TextGranularity::LineBoundary, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveToEndOfParagraph(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Forward, TextGranularity::ParagraphBoundary, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Move, SelectionDirection::Forward, TextGranularity::ParagraphBoundary, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveToEndOfParagraphAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationExtend, SelectionDirection::Forward, TextGranularity::ParagraphBoundary, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Extend, SelectionDirection::Forward, TextGranularity::ParagraphBoundary, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveParagraphBackwardAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationExtend, SelectionDirection::Backward, TextGranularity::ParagraphGranularity, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Extend, SelectionDirection::Backward, TextGranularity::ParagraphGranularity, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveParagraphForwardAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationExtend, SelectionDirection::Forward, TextGranularity::ParagraphGranularity, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Extend, SelectionDirection::Forward, TextGranularity::ParagraphGranularity, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveUp(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    return frame.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Backward, TextGranularity::LineGranularity, UserTriggered);
+    return frame.selection().modify(FrameSelection::Alteration::Move, SelectionDirection::Backward, TextGranularity::LineGranularity, UserTriggered::Yes);
 }
 
 static bool executeMoveUpAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationExtend, SelectionDirection::Backward, TextGranularity::LineGranularity, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Extend, SelectionDirection::Backward, TextGranularity::LineGranularity, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveWordBackward(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Backward, TextGranularity::WordGranularity, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Move, SelectionDirection::Backward, TextGranularity::WordGranularity, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveWordBackwardAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationExtend, SelectionDirection::Backward, TextGranularity::WordGranularity, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Extend, SelectionDirection::Backward, TextGranularity::WordGranularity, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveWordForward(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Forward, TextGranularity::WordGranularity, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Move, SelectionDirection::Forward, TextGranularity::WordGranularity, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveWordForwardAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationExtend, SelectionDirection::Forward, TextGranularity::WordGranularity, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Extend, SelectionDirection::Forward, TextGranularity::WordGranularity, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveWordLeft(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Left, TextGranularity::WordGranularity, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Move, SelectionDirection::Left, TextGranularity::WordGranularity, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveWordLeftAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationExtend, SelectionDirection::Left, TextGranularity::WordGranularity, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Extend, SelectionDirection::Left, TextGranularity::WordGranularity, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveWordRight(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Right, TextGranularity::WordGranularity, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Move, SelectionDirection::Right, TextGranularity::WordGranularity, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveWordRightAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationExtend, SelectionDirection::Right, TextGranularity::WordGranularity, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Extend, SelectionDirection::Right, TextGranularity::WordGranularity, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveToLeftEndOfLine(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Left, TextGranularity::LineBoundary, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Move, SelectionDirection::Left, TextGranularity::LineBoundary, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveToLeftEndOfLineAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationExtend, SelectionDirection::Left, TextGranularity::LineBoundary, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Extend, SelectionDirection::Left, TextGranularity::LineBoundary, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveToRightEndOfLine(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Right, TextGranularity::LineBoundary, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Move, SelectionDirection::Right, TextGranularity::LineBoundary, UserTriggered::Yes);
     return true;
 }
 
 static bool executeMoveToRightEndOfLineAndModifySelection(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    frame.selection().modify(FrameSelection::AlterationExtend, SelectionDirection::Right, TextGranularity::LineBoundary, UserTriggered);
+    frame.selection().modify(FrameSelection::Alteration::Extend, SelectionDirection::Right, TextGranularity::LineBoundary, UserTriggered::Yes);
     return true;
 }
 

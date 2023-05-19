@@ -664,7 +664,7 @@ void WebPage::replaceImageForRemoveBackground(const ElementContext& elementConte
         }
     }
 
-    constexpr auto restoreSelectionOptions = FrameSelection::defaultSetSelectionOptions(UserTriggered);
+    constexpr auto restoreSelectionOptions = FrameSelection::defaultSetSelectionOptions(UserTriggered::Yes);
     if (!originalSelection.isNoneOrOrphaned()) {
         frame->selection().setSelection(originalSelection, restoreSelectionOptions);
         return;

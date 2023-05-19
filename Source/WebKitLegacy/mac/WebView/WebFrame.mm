@@ -775,7 +775,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #if !PLATFORM(IOS_FAMILY)
-- (DOMRange *)_rangeByAlteringCurrentSelection:(WebCore::FrameSelection::EAlteration)alteration direction:(WebCore::SelectionDirection)direction granularity:(WebCore::TextGranularity)granularity
+- (DOMRange *)_rangeByAlteringCurrentSelection:(WebCore::FrameSelection::Alteration)alteration direction:(WebCore::SelectionDirection)direction granularity:(WebCore::TextGranularity)granularity
 {
     if (_private->coreFrame->selection().isNone())
         return nil;
@@ -1302,7 +1302,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 - (void)revealSelectionAtExtent:(BOOL)revealExtent
 {
     WebCore::LocalFrame *frame = core(self);
-    WebCore::RevealExtentOption revealExtentOption = revealExtent ? WebCore::RevealExtent : WebCore::DoNotRevealExtent;
+    WebCore::RevealExtentOption revealExtentOption = revealExtent ? WebCore::RevealExtentOption::RevealExtent : WebCore::RevealExtentOption::DoNotRevealExtent;
     frame->selection().revealSelection(WebCore::SelectionRevealMode::Reveal, WebCore::ScrollAlignment::alignToEdgeIfNeeded, revealExtentOption);
 }
 
@@ -1445,7 +1445,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
         frame.page()->chrome().focusNSView(documentView);
 
     auto coreCloseTyping = closeTyping ? FrameSelection::ShouldCloseTyping::Yes : FrameSelection::ShouldCloseTyping::No;
-    auto coreUserTriggered = userTriggered ? UserTriggered : NotUserTriggered;
+    auto coreUserTriggered = userTriggered ? UserTriggered::Yes : UserTriggered::No;
     frame.selection().setSelectedRange(makeSimpleRange(core(range)), core(affinity), coreCloseTyping, coreUserTriggered);
     if (!closeTyping)
         frame.editor().ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping();
@@ -1590,7 +1590,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     auto& coreElement = *core(element);
     unsigned startOffset = range.location;
     unsigned endOffset = NSMaxRange(range);
-    frame->selection().setSelection(WebCore::VisibleSelection { WebCore::SimpleRange { { coreElement, startOffset }, { coreElement, endOffset } } }, { WebCore::FrameSelection::FireSelectEvent });
+    frame->selection().setSelection(WebCore::VisibleSelection { WebCore::SimpleRange { { coreElement, startOffset }, { coreElement, endOffset } } }, { WebCore::FrameSelection::SetSelectionOption::FireSelectEvent });
 }
 
 - (DOMRange *)markedTextDOMRange
