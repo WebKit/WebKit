@@ -42,6 +42,15 @@ unsigned SymbolImpl::nextHashForSymbol()
     return s_nextHashForSymbol;
 }
 
+Ref<SymbolImpl> SymbolImpl::createStatic(StringImpl& rep)
+{
+    auto result = create(rep);
+    result->hash();
+    result->cost();
+    result->m_refCount |= s_refCountFlagIsStaticString;
+    return result;
+}
+
 Ref<SymbolImpl> SymbolImpl::create(StringImpl& rep)
 {
     auto* ownerRep = (rep.bufferOwnership() == BufferSubstring) ? rep.substringBuffer() : &rep;
@@ -54,6 +63,14 @@ Ref<SymbolImpl> SymbolImpl::create(StringImpl& rep)
 Ref<SymbolImpl> SymbolImpl::createNullSymbol()
 {
     return adoptRef(*new SymbolImpl);
+}
+
+Ref<PrivateSymbolImpl> PrivateSymbolImpl::createStatic(StringImpl& rep)
+{
+    auto result = create(rep);
+    result->hash();
+    result->m_refCount |= s_refCountFlagIsStaticString;
+    return result;
 }
 
 Ref<PrivateSymbolImpl> PrivateSymbolImpl::create(StringImpl& rep)

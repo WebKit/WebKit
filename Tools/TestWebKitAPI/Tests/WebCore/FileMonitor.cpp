@@ -42,16 +42,15 @@
 using namespace WebCore;
 
 namespace TestWebKitAPI {
-    
-const String FileMonitorTestData("This is a test"_s);
-const String FileMonitorRevisedData("This is some changed text for the test"_s);
-const String FileMonitorSecondRevisedData("This is some changed text for the test"_s);
 
 class FileMonitorTest : public testing::Test {
 public:
     void SetUp() override
     {
         WTF::initializeMainThread();
+        const String FileMonitorTestData("This is a test"_s);
+        const String FileMonitorRevisedData("This is some changed text for the test"_s);
+        const String FileMonitorSecondRevisedData("This is some changed text for the test"_s);
         
         // create temp file
         FileSystem::PlatformFileHandle handle;
@@ -122,6 +121,10 @@ TEST_F(FileMonitorTest, DetectChange)
 
     WTF::initializeMainThread();
 
+    const String FileMonitorTestData("This is a test"_s);
+    const String FileMonitorRevisedData("This is some changed text for the test"_s);
+    const String FileMonitorSecondRevisedData("This is some changed text for the test"_s);
+
     auto testQueue = WorkQueue::create("Test Work Queue");
 
     auto monitor = makeUnique<FileMonitor>(tempFilePath(), testQueue.copyRef(), [] (FileMonitor::FileChangeType type) {
@@ -136,7 +139,7 @@ TEST_F(FileMonitorTest, DetectChange)
         }
     });
 
-    testQueue->dispatch([this] () mutable {
+    testQueue->dispatch([=, this] () mutable {
         String fileContents = readContentsOfFile(tempFilePath());
         EXPECT_STREQ(FileMonitorTestData.utf8().data(), fileContents.utf8().data());
 
@@ -163,6 +166,9 @@ TEST_F(FileMonitorTest, DetectMultipleChanges)
     EXPECT_TRUE(FileSystem::fileExists(tempFilePath()));
 
     WTF::initializeMainThread();
+    const String FileMonitorTestData("This is a test"_s);
+    const String FileMonitorRevisedData("This is some changed text for the test"_s);
+    const String FileMonitorSecondRevisedData("This is some changed text for the test"_s);
 
     auto testQueue = WorkQueue::create("Test Work Queue");
 
@@ -178,7 +184,7 @@ TEST_F(FileMonitorTest, DetectMultipleChanges)
         }
     });
     
-    testQueue->dispatch([this] () mutable {
+    testQueue->dispatch([=, this] () mutable {
         String fileContents = readContentsOfFile(tempFilePath());
         EXPECT_STREQ(FileMonitorTestData.utf8().data(), fileContents.utf8().data());
 
@@ -199,7 +205,7 @@ TEST_F(FileMonitorTest, DetectMultipleChanges)
 
     resetTestState();
 
-    testQueue->dispatch([this] () mutable {
+    testQueue->dispatch([=, this] () mutable {
         auto secondCommand = createCommand(tempFilePath(), FileMonitorSecondRevisedData);
         auto rc = system(secondCommand.utf8().data());
         ASSERT_NE(rc, -1);
@@ -258,6 +264,9 @@ TEST_F(FileMonitorTest, DetectChangeAndThenDelete)
     EXPECT_TRUE(FileSystem::fileExists(tempFilePath()));
 
     WTF::initializeMainThread();
+    const String FileMonitorTestData("This is a test"_s);
+    const String FileMonitorRevisedData("This is some changed text for the test"_s);
+    const String FileMonitorSecondRevisedData("This is some changed text for the test"_s);
 
     auto testQueue = WorkQueue::create("Test Work Queue");
 
@@ -273,7 +282,7 @@ TEST_F(FileMonitorTest, DetectChangeAndThenDelete)
         }
     });
 
-    testQueue->dispatch([this] () mutable {
+    testQueue->dispatch([=, this] () mutable {
         String fileContents = readContentsOfFile(tempFilePath());
         EXPECT_STREQ(FileMonitorTestData.utf8().data(), fileContents.utf8().data());
 
@@ -312,6 +321,10 @@ TEST_F(FileMonitorTest, DetectDeleteButNotSubsequentChange)
 
     WTF::initializeMainThread();
 
+    const String FileMonitorTestData("This is a test"_s);
+    const String FileMonitorRevisedData("This is some changed text for the test"_s);
+    const String FileMonitorSecondRevisedData("This is some changed text for the test"_s);
+
     auto testQueue = WorkQueue::create("Test Work Queue");
 
     auto monitor = makeUnique<FileMonitor>(tempFilePath(), testQueue.copyRef(), [] (FileMonitor::FileChangeType type) {
@@ -340,7 +353,7 @@ TEST_F(FileMonitorTest, DetectDeleteButNotSubsequentChange)
 
     resetTestState();
 
-    testQueue->dispatch([this] () mutable {
+    testQueue->dispatch([=, this] () mutable {
         EXPECT_FALSE(FileSystem::fileExists(tempFilePath()));
 
         auto handle = FileSystem::openFile(tempFilePath(), FileSystem::FileOpenMode::Truncate);

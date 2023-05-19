@@ -37,30 +37,47 @@
 namespace JSC {
 namespace Symbols {
 
-#define INITIALIZE_BUILTIN_STATIC_SYMBOLS(name) SymbolImpl::StaticSymbolImpl name##Symbol { "Symbol." #name };
-JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(INITIALIZE_BUILTIN_STATIC_SYMBOLS)
+#define DEFINE_BUILTIN_STATIC_SYMBOLS(name) LazyNeverDestroyed<SymbolImpl*> name##Symbol;
+    JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(DEFINE_BUILTIN_STATIC_SYMBOLS)
+#undef DEFINE_BUILTIN_STATIC_SYMBOLS
+
+LazyNeverDestroyed<SymbolImpl*> intlLegacyConstructedSymbol;
+
+#define DEFINE_BUILTIN_PRIVATE_NAMES(name) LazyNeverDestroyed<SymbolImpl*> name##PrivateName;
+    JSC_FOREACH_BUILTIN_FUNCTION_NAME(DEFINE_BUILTIN_PRIVATE_NAMES)
+    JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(DEFINE_BUILTIN_PRIVATE_NAMES)
+#undef DEFINE_BUILTIN_PRIVATE_NAMES
+
+LazyNeverDestroyed<SymbolImpl*> dollarVMPrivateName;
+LazyNeverDestroyed<SymbolImpl*> polyProtoPrivateName;
+
+void initializeStaticSymbols()
+{
+#define INITIALIZE_BUILTIN_STATIC_SYMBOLS(name) name##Symbol.construct(&SymbolImpl::createStatic("Symbol." #name, sizeof("Symbol." #name) / sizeof(char) - 1).leakRef());
+    JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(INITIALIZE_BUILTIN_STATIC_SYMBOLS)
 #undef INITIALIZE_BUILTIN_STATIC_SYMBOLS
 
-SymbolImpl::StaticSymbolImpl intlLegacyConstructedSymbol { "IntlLegacyConstructedSymbol" };
+    intlLegacyConstructedSymbol.construct(&SymbolImpl::createStatic("IntlLegacyConstructedSymbol", sizeof("IntlLegacyConstructedSymbol") / sizeof(char) - 1).leakRef());
 
-#define INITIALIZE_BUILTIN_PRIVATE_NAMES(name) SymbolImpl::StaticSymbolImpl name##PrivateName { #name, SymbolImpl::s_flagIsPrivate };
-JSC_FOREACH_BUILTIN_FUNCTION_NAME(INITIALIZE_BUILTIN_PRIVATE_NAMES)
-JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_BUILTIN_PRIVATE_NAMES)
+#define INITIALIZE_BUILTIN_PRIVATE_NAMES(name) name##PrivateName.construct(&PrivateSymbolImpl::createStatic(#name, sizeof(#name) / sizeof(char) - 1).leakRef());
+    JSC_FOREACH_BUILTIN_FUNCTION_NAME(INITIALIZE_BUILTIN_PRIVATE_NAMES)
+    JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_BUILTIN_PRIVATE_NAMES)
 #undef INITIALIZE_BUILTIN_PRIVATE_NAMES
 
-SymbolImpl::StaticSymbolImpl dollarVMPrivateName { "$vm", SymbolImpl::s_flagIsPrivate };
-SymbolImpl::StaticSymbolImpl polyProtoPrivateName { "PolyProto", SymbolImpl::s_flagIsPrivate };
+    dollarVMPrivateName.construct(&PrivateSymbolImpl::createStatic("$vm", "$vm"_s.length()).leakRef());
+    polyProtoPrivateName.construct(&PrivateSymbolImpl::createStatic("PolyProto",  "PolyProto"_s.length()).leakRef());
+}
 
 } // namespace Symbols
 
 #define INITIALIZE_BUILTIN_NAMES_IN_JSC(name) , m_##name(JSC::Identifier::fromString(vm, #name ""_s))
 #define INITIALIZE_BUILTIN_SYMBOLS_IN_JSC(name) \
-    , m_##name##Symbol(JSC::Identifier::fromUid(vm, &static_cast<SymbolImpl&>(JSC::Symbols::name##Symbol))) \
+    , m_##name##Symbol(JSC::Identifier::fromUid(vm, JSC::Symbols::name##Symbol.get())) \
     , m_##name##SymbolPrivateIdentifier(JSC::Identifier::fromString(vm, #name ""_s))
 
 #define INITIALIZE_PUBLIC_TO_PRIVATE_ENTRY(name) \
     do { \
-        SymbolImpl* symbol = &static_cast<SymbolImpl&>(JSC::Symbols::name##PrivateName); \
+        SymbolImpl* symbol = JSC::Symbols::name##PrivateName.get(); \
         checkPublicToPrivateMapConsistency(symbol); \
         m_privateNameSet.add(symbol); \
     } while (0);
@@ -78,10 +95,10 @@ BuiltinNames::BuiltinNames(VM& vm, CommonIdentifiers* commonIdentifiers)
     JSC_FOREACH_BUILTIN_FUNCTION_NAME(INITIALIZE_BUILTIN_NAMES_IN_JSC)
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_BUILTIN_NAMES_IN_JSC)
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(INITIALIZE_BUILTIN_SYMBOLS_IN_JSC)
-    , m_intlLegacyConstructedSymbol(JSC::Identifier::fromUid(vm, &static_cast<SymbolImpl&>(Symbols::intlLegacyConstructedSymbol)))
+    , m_intlLegacyConstructedSymbol(JSC::Identifier::fromUid(vm, Symbols::intlLegacyConstructedSymbol.get()))
     , m_dollarVMName(Identifier::fromString(vm, "$vm"_s))
-    , m_dollarVMPrivateName(Identifier::fromUid(vm, &static_cast<SymbolImpl&>(Symbols::dollarVMPrivateName)))
-    , m_polyProtoPrivateName(Identifier::fromUid(vm, &static_cast<SymbolImpl&>(Symbols::polyProtoPrivateName)))
+    , m_dollarVMPrivateName(Identifier::fromUid(vm, Symbols::dollarVMPrivateName.get()))
+    , m_polyProtoPrivateName(Identifier::fromUid(vm, Symbols::polyProtoPrivateName.get()))
 {
     JSC_FOREACH_BUILTIN_FUNCTION_NAME(INITIALIZE_PUBLIC_TO_PRIVATE_ENTRY)
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_PUBLIC_TO_PRIVATE_ENTRY)
