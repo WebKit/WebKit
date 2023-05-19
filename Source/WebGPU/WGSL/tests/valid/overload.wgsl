@@ -366,6 +366,88 @@ fn testBitwise()
   }
 }
 
+// 7.6. Logical Expressions (https://gpuweb.github.io/gpuweb/wgsl/#logical-expr)
+
+fn testLogicalNegation()
+{
+    // [].(Bool) => Bool,
+    _ = !true;
+    _ = !false;
+
+    // [N].(Vector[Bool, N]) => Vector[Bool, N],
+    _ = !vec2(true);
+    _ = !vec3(true);
+    _ = !vec4(true);
+    _ = !vec2(false);
+    _ = !vec3(false);
+    _ = !vec4(false);
+}
+
+fn testShortCircuitingOr()
+{
+    // [].(Bool, Bool) => Bool,
+    _ = false || false;
+    _ = true || false;
+    _ = false || true;
+    _ = true || true;
+}
+
+fn testShortCircuitingAnd()
+{
+    // [].(Bool, Bool) => Bool,
+    _ = false && false;
+    _ = true && false;
+    _ = false && true;
+    _ = true && true;
+}
+
+fn testLogicalOr()
+{
+    // [].(Bool, Bool) => Bool,
+    _ = false | false;
+    _ = true | false;
+    _ = false | true;
+    _ = true | true;
+
+    // [N].(Vector[Bool, N], Vector[Bool, N]) => Vector[Bool, N],
+    _ = vec2(false) | vec2(false);
+    _ = vec2( true) | vec2(false);
+    _ = vec2(false) | vec2( true);
+    _ = vec2( true) | vec2( true);
+    _ = vec3(false) | vec3(false);
+    _ = vec3( true) | vec3(false);
+    _ = vec3(false) | vec3( true);
+    _ = vec3( true) | vec3( true);
+    _ = vec4(false) | vec4(false);
+    _ = vec4( true) | vec4(false);
+    _ = vec4(false) | vec4( true);
+    _ = vec4( true) | vec4( true);
+}
+
+fn testLogicalAnd()
+{
+    // [].(Bool, Bool) => Bool,
+    _ = false & false;
+    _ = true & false;
+    _ = false & true;
+    _ = true & true;
+
+    // [N].(Vector[Bool, N], Vector[Bool, N]) => Vector[Bool, N],
+    _ = vec2(false) & vec2(false);
+    _ = vec2( true) & vec2(false);
+    _ = vec2(false) & vec2( true);
+    _ = vec2( true) & vec2( true);
+    _ = vec3(false) & vec3(false);
+    _ = vec3( true) & vec3(false);
+    _ = vec3(false) & vec3( true);
+    _ = vec3( true) & vec3( true);
+    _ = vec4(false) & vec4(false);
+    _ = vec4( true) & vec4(false);
+    _ = vec4(false) & vec4( true);
+    _ = vec4( true) & vec4( true);
+}
+
+
 // 17.3. Logical Built-in Functions (https://www.w3.org/TR/WGSL/#logical-builtin-functions)
 
 // 17.3.1

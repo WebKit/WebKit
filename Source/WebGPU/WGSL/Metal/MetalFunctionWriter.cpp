@@ -590,10 +590,12 @@ void FunctionDefinitionWriter::visit(AST::UnaryExpression& unary)
     case AST::UnaryOperation::Negate:
         m_stringBuilder.append("-");
         break;
+    case AST::UnaryOperation::Not:
+        m_stringBuilder.append("!");
+        break;
 
     case AST::UnaryOperation::AddressOf:
     case AST::UnaryOperation::Dereference:
-    case AST::UnaryOperation::Not:
         // FIXME: Implement these
         RELEASE_ASSERT_NOT_REACHED();
         break;
@@ -670,9 +672,10 @@ void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
         break;
 
     case AST::BinaryOperation::ShortCircuitAnd:
+        m_stringBuilder.append(" && ");
+        break;
     case AST::BinaryOperation::ShortCircuitOr:
-        // FIXME: Implement these
-        RELEASE_ASSERT_NOT_REACHED();
+        m_stringBuilder.append(" || ");
         break;
     }
     visit(binary.rightExpression());

@@ -146,6 +146,31 @@ operator :vec4, {
     end
 end
 
+# 7.6. Logical Expressions (https://gpuweb.github.io/gpuweb/wgsl/#logical-expr)
+
+operator :!, {
+    [].(Bool) => Bool,
+    [N].(Vector[Bool, N]) => Vector[Bool, N],
+}
+
+operator :'||', {
+    [].(Bool, Bool) => Bool,
+}
+
+operator :'&&', {
+    [].(Bool, Bool) => Bool,
+}
+
+operator :'|', {
+    [].(Bool, Bool) => Bool,
+    [N].(Vector[Bool, N], Vector[Bool, N]) => Vector[Bool, N],
+}
+
+operator :'&', {
+    [].(Bool, Bool) => Bool,
+    [N].(Vector[Bool, N], Vector[Bool, N]) => Vector[Bool, N],
+}
+
 # 17.3. Logical Built-in Functions (https://www.w3.org/TR/WGSL/#logical-builtin-functions)
 
 # 17.3.1 & 17.3.2
