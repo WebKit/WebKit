@@ -102,7 +102,6 @@ private:
     void inferred(Type*);
     bool unify(Type*, Type*) WARN_UNUSED_RETURN;
     bool isBottom(Type*) const;
-    std::optional<unsigned> extractInteger(AST::Expression&);
 
     template<typename CallArguments>
     Type* chooseOverload(const char*, const SourceSpan&, const String&, CallArguments&& valueArguments, const Vector<Type*>& typeArguments);
@@ -583,21 +582,6 @@ void TypeChecker::visit(AST::ReferenceTypeName&)
 }
 
 // Private helpers
-std::optional<unsigned> TypeChecker::extractInteger(AST::Expression& expression)
-{
-    switch (expression.kind()) {
-    case AST::NodeKind::AbstractIntegerLiteral:
-        return { static_cast<unsigned>(downcast<AST::AbstractIntegerLiteral>(expression).value()) };
-    case AST::NodeKind::Unsigned32Literal:
-        return { static_cast<unsigned>(downcast<AST::Unsigned32Literal>(expression).value()) };
-    case AST::NodeKind::Signed32Literal:
-        return { static_cast<unsigned>(downcast<AST::Signed32Literal>(expression).value()) };
-    default:
-        // FIXME: handle constants and overrides
-        return std::nullopt;
-    }
-}
-
 void TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::FieldAccessExpression& access)
 {
     const auto& fieldName = access.fieldName().id();

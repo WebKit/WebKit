@@ -37,6 +37,10 @@ public:
     Expression* maybeY() { return m_y; }
     Expression* maybeZ() { return m_z; }
 
+    const Expression& x() const { return m_x.get(); }
+    const Expression* maybeY() const { return m_y; }
+    const Expression* maybeZ() const { return m_z; }
+
 private:
     WorkgroupSizeAttribute(SourceSpan span, Expression::Ref&& x, Expression::Ptr maybeY, Expression::Ptr maybeZ)
         : Attribute(span)
