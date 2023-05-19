@@ -345,51 +345,85 @@ set(BUILTINS_GENERATOR_SCRIPTS
     ${JavaScriptCore_SCRIPTS_DIR}/lazywriter.py
 )
 
-set(JavaScriptCore_BUILTINS_SOURCES
-    ${JAVASCRIPTCORE_DIR}/builtins/AsyncFromSyncIteratorPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/ArrayConstructor.js
-    ${JAVASCRIPTCORE_DIR}/builtins/ArrayIteratorPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/ArrayPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/AsyncFunctionPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/AsyncIteratorPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/AsyncGeneratorPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/DatePrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/FunctionPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/GeneratorPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/GlobalObject.js
-    ${JAVASCRIPTCORE_DIR}/builtins/GlobalOperations.js
-    ${JAVASCRIPTCORE_DIR}/builtins/InternalPromiseConstructor.js
-    ${JAVASCRIPTCORE_DIR}/builtins/IteratorHelpers.js
-    ${JAVASCRIPTCORE_DIR}/builtins/IteratorPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/MapIteratorPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/MapPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/ModuleLoader.js
-    ${JAVASCRIPTCORE_DIR}/builtins/NumberConstructor.js
-    ${JAVASCRIPTCORE_DIR}/builtins/ObjectConstructor.js
-    ${JAVASCRIPTCORE_DIR}/builtins/PromiseConstructor.js
-    ${JAVASCRIPTCORE_DIR}/builtins/PromiseOperations.js
-    ${JAVASCRIPTCORE_DIR}/builtins/PromisePrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/ProxyHelpers.js
-    ${JAVASCRIPTCORE_DIR}/builtins/ReflectObject.js
-    ${JAVASCRIPTCORE_DIR}/builtins/RegExpPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/RegExpStringIteratorPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/SetIteratorPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/SetPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/ShadowRealmPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/StringConstructor.js
-    ${JAVASCRIPTCORE_DIR}/builtins/StringIteratorPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/StringPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/TypedArrayConstructor.js
-    ${JAVASCRIPTCORE_DIR}/builtins/TypedArrayPrototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/WebAssembly.js
-    ${JAVASCRIPTCORE_DIR}/inspector/InjectedScriptSource.js
+set(JavaScriptCore_BUILTINS_SOURCE_NAMES
+    builtins/ArrayConstructor.js
+    builtins/ArrayIteratorPrototype.js
+    builtins/ArrayPrototype.js
+    builtins/AsyncFromSyncIteratorPrototype.js
+    builtins/AsyncFunctionPrototype.js
+    builtins/AsyncGeneratorPrototype.js
+    builtins/AsyncIteratorPrototype.js
+    builtins/DatePrototype.js
+    builtins/FunctionPrototype.js
+    builtins/GeneratorPrototype.js
+    builtins/GlobalObject.js
+    builtins/GlobalOperations.js
+    builtins/InternalPromiseConstructor.js
+    builtins/IteratorHelpers.js
+    builtins/IteratorPrototype.js
+    builtins/MapIteratorPrototype.js
+    builtins/MapPrototype.js
+    builtins/ModuleLoader.js
+    builtins/NumberConstructor.js
+    builtins/ObjectConstructor.js
+    builtins/PromiseConstructor.js
+    builtins/PromiseOperations.js
+    builtins/PromisePrototype.js
+    builtins/ProxyHelpers.js
+    builtins/ReflectObject.js
+    builtins/RegExpPrototype.js
+    builtins/RegExpStringIteratorPrototype.js
+    builtins/SetIteratorPrototype.js
+    builtins/SetPrototype.js
+    builtins/ShadowRealmPrototype.js
+    builtins/StringConstructor.js
+    builtins/StringIteratorPrototype.js
+    builtins/StringPrototype.js
+    builtins/TypedArrayConstructor.js
+    builtins/TypedArrayPrototype.js
+    builtins/WebAssembly.js
+
+    inspector/InjectedScriptSource.js
 )
+
+set(JavaScriptCore_BUILTINS_SOURCES)
+set(JavaScriptCore_PREPROCESSED_BUILTINS_SOURCES)
+file(MAKE_DIRECTORY ${JavaScriptCore_DERIVED_SOURCES_DIR}/preprocessed)
+foreach (_file ${JavaScriptCore_BUILTINS_SOURCE_NAMES})
+    get_filename_component(_directory ${_file} DIRECTORY)
+    file(MAKE_DIRECTORY ${JavaScriptCore_DERIVED_SOURCES_DIR}/preprocessed/${_directory})
+    if (MSVC)
+        add_custom_command(
+            OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/preprocessed/${_file}
+            MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/${_file}
+            DEPENDS ${WTF_INTERFACE_DEPENDENCIES} ${JAVASCRIPTCORE_DIR}/builtins/JSCBuiltinConfig.h
+            COMMAND ${CMAKE_C_COMPILER} /P /EP /FI${JAVASCRIPTCORE_DIR}/builtins/JSCBuiltinConfig.h /I${WTF_FRAMEWORK_HEADERS_DIR} /I${bmalloc_FRAMEWORK_HEADERS_DIR} ${JAVASCRIPTCORE_DIR}/${_file} /Fi${JavaScriptCore_DERIVED_SOURCES_DIR}/preprocessed/${_file}
+            VERBATIM)
+    else ()
+        add_custom_command(
+            OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/preprocessed/${_file}
+            MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/${_file}
+            DEPENDS ${WTF_INTERFACE_DEPENDENCIES} ${JAVASCRIPTCORE_DIR}/builtins/JSCBuiltinConfig.h
+            COMMAND cat ${JAVASCRIPTCORE_DIR}/${_file} | ${CMAKE_C_COMPILER} -E -P -w -include ${JAVASCRIPTCORE_DIR}/builtins/JSCBuiltinConfig.h -I ${WTF_FRAMEWORK_HEADERS_DIR} -I ${bmalloc_FRAMEWORK_HEADERS_DIR} - > ${JavaScriptCore_DERIVED_SOURCES_DIR}/preprocessed/${_file}
+            VERBATIM)
+    endif ()
+    WEBKIT_ADD_SOURCE_DEPENDENCIES(${JAVASCRIPTCORE_DIR}/${_file} ${JavaScriptCore_DERIVED_SOURCES_DIR}/preprocessed/${_file})
+    list(APPEND JavaScriptCore_BUILTINS_SOURCES ${JAVASCRIPTCORE_DIR}/${_file})
+    list(APPEND JavaScriptCore_PREPROCESSED_BUILTINS_SOURCES ${JavaScriptCore_DERIVED_SOURCES_DIR}/preprocessed/${_file})
+endforeach ()
+
+add_custom_command(OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/preprocessed/JSCBuiltinLicense.js
+    MAIN_DEPENDENCY ${JavaScriptCore_SCRIPTS_DIR}/collect-copyright-comments.py
+    DEPENDS ${WTF_INTERFACE_DEPENDENCIES} ${JavaScriptCore_BUILTINS_SOURCES} ${BUILTINS_GENERATOR_SCRIPTS}
+    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/collect-copyright-comments.py ${JavaScriptCore_BUILTINS_SOURCES} --output ${JavaScriptCore_DERIVED_SOURCES_DIR}/preprocessed/JSCBuiltinLicense.js
+    VERBATIM)
+WEBKIT_ADD_SOURCE_DEPENDENCIES(${JavaScriptCore_DERIVED_SOURCES_DIR}/preprocessed/JSCBuiltinLicense.js ${JavaScriptCore_BUILTINS_SOURCES})
 
 add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCBuiltins.cpp ${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCBuiltins.h
     MAIN_DEPENDENCY ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py
-    DEPENDS ${JavaScriptCore_BUILTINS_SOURCES} ${BUILTINS_GENERATOR_SCRIPTS}
-    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py --framework JavaScriptCore --output-directory ${JavaScriptCore_DERIVED_SOURCES_DIR} --combined ${JavaScriptCore_BUILTINS_SOURCES}
+    DEPENDS ${JavaScriptCore_PREPROCESSED_BUILTINS_SOURCES} ${BUILTINS_GENERATOR_SCRIPTS} ${JavaScriptCore_DERIVED_SOURCES_DIR}/preprocessed/JSCBuiltinLicense.js
+    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py --framework JavaScriptCore --output-directory ${JavaScriptCore_DERIVED_SOURCES_DIR} --copyright ${JavaScriptCore_DERIVED_SOURCES_DIR}/preprocessed/JSCBuiltinLicense.js --combined ${JavaScriptCore_PREPROCESSED_BUILTINS_SOURCES}
     VERBATIM)
 add_custom_target(JSCBuiltins DEPENDS "${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCBuiltins.h")
 

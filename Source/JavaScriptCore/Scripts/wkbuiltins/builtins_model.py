@@ -187,10 +187,11 @@ class BuiltinFunction:
 
 
 class BuiltinsCollection:
-    def __init__(self, framework_name):
+    def __init__(self, framework_name, copyright):
         self._copyright_lines = set()
         self.objects = []
         self.framework = Framework.fromString(framework_name)
+        self.copyright = copyright
         log.debug("Created new Builtins collection.")
 
     def parse_builtins_file(self, filename, text):
@@ -266,7 +267,10 @@ class BuiltinsCollection:
     # Private methods.
 
     def _parse_copyright_lines(self, text):
-        licenseBlock = multilineCommentRegExp.findall(text)[0]
+        licenseBlocks = multilineCommentRegExp.findall(text)
+        if len(licenseBlocks) == 0 and self.copyright:
+            return []
+        licenseBlock = licenseBlocks[0]
         licenseBlock = licenseBlock[:licenseBlock.index("Redistribution")]
 
         copyrightLines = [Templates.DefaultCopyright]

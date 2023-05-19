@@ -1904,6 +1904,7 @@
 		E38DB2E727F588F80027BD3F /* ScriptExecutableInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E38DB2E627F588F70027BD3F /* ScriptExecutableInlines.h */; };
 		E38E8790254B978400F6F9E4 /* JSDateMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9788FC221471AD0C0068CE2D /* JSDateMath.cpp */; };
 		E38F091A288D35CF009FD386 /* ObjectAdaptiveStructureWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E38F0919288D35CF009FD386 /* ObjectAdaptiveStructureWatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E38F9C2129349C3E0022AD96 /* JSCBuiltinConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = E38F9C2029349C230022AD96 /* JSCBuiltinConfig.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E39006212208BFC4001019CF /* SubspaceAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = E39006202208BFC3001019CF /* SubspaceAccess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E392E6F824D25FA600B20767 /* B3BottomTupleValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E392E6F624D25FA600B20767 /* B3BottomTupleValue.cpp */; };
 		E392E6F924D25FA900B20767 /* B3BottomTupleValue.h in Headers */ = {isa = PBXBuildFile; fileRef = E392E6F724D25FA600B20767 /* B3BottomTupleValue.h */; };
@@ -5408,6 +5409,7 @@
 		E38D060D1F8E814100649CF2 /* JSScriptFetchParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScriptFetchParameters.cpp; sourceTree = "<group>"; };
 		E38DB2E627F588F70027BD3F /* ScriptExecutableInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptExecutableInlines.h; sourceTree = "<group>"; };
 		E38F0919288D35CF009FD386 /* ObjectAdaptiveStructureWatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectAdaptiveStructureWatchpoint.h; sourceTree = "<group>"; };
+		E38F9C2029349C230022AD96 /* JSCBuiltinConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCBuiltinConfig.h; sourceTree = "<group>"; };
 		E39006202208BFC3001019CF /* SubspaceAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubspaceAccess.h; sourceTree = "<group>"; };
 		E3915C062309682900CB2561 /* WasmContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmContext.cpp; sourceTree = "<group>"; };
 		E392E6F624D25FA600B20767 /* B3BottomTupleValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3BottomTupleValue.cpp; path = b3/B3BottomTupleValue.cpp; sourceTree = "<group>"; };
@@ -5500,6 +5502,44 @@
 		E3F23A7C1ECF13E500978D99 /* SnippetParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnippetParams.h; sourceTree = "<group>"; };
 		E3F23A7D1ECF13E500978D99 /* SnippetReg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnippetReg.h; sourceTree = "<group>"; };
 		E3F23A7E1ECF13E500978D99 /* SnippetSlowPathCalls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnippetSlowPathCalls.h; sourceTree = "<group>"; };
+		E3F7F0C3293320410025D091 /* InjectedScriptSource.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = InjectedScriptSource.js; sourceTree = "<group>"; };
+		E3F7F0C5293320410025D091 /* MapPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = MapPrototype.js; sourceTree = "<group>"; };
+		E3F7F0C6293320410025D091 /* GeneratorPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = GeneratorPrototype.js; sourceTree = "<group>"; };
+		E3F7F0C7293320410025D091 /* AsyncGeneratorPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = AsyncGeneratorPrototype.js; sourceTree = "<group>"; };
+		E3F7F0C8293320410025D091 /* TypedArrayPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = TypedArrayPrototype.js; sourceTree = "<group>"; };
+		E3F7F0C9293320410025D091 /* RegExpPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = RegExpPrototype.js; sourceTree = "<group>"; };
+		E3F7F0CA293320410025D091 /* IteratorPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = IteratorPrototype.js; sourceTree = "<group>"; };
+		E3F7F0CB293320410025D091 /* ProxyHelpers.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ProxyHelpers.js; sourceTree = "<group>"; };
+		E3F7F0CC293320410025D091 /* TypedArrayConstructor.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = TypedArrayConstructor.js; sourceTree = "<group>"; };
+		E3F7F0CD293320410025D091 /* ArrayIteratorPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ArrayIteratorPrototype.js; sourceTree = "<group>"; };
+		E3F7F0CE293320410025D091 /* AsyncFromSyncIteratorPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = AsyncFromSyncIteratorPrototype.js; sourceTree = "<group>"; };
+		E3F7F0CF293320410025D091 /* StringIteratorPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = StringIteratorPrototype.js; sourceTree = "<group>"; };
+		E3F7F0D0293320410025D091 /* MapIteratorPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = MapIteratorPrototype.js; sourceTree = "<group>"; };
+		E3F7F0D1293320410025D091 /* FunctionPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = FunctionPrototype.js; sourceTree = "<group>"; };
+		E3F7F0D2293320410025D091 /* PromisePrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = PromisePrototype.js; sourceTree = "<group>"; };
+		E3F7F0D3293320410025D091 /* GlobalObject.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = GlobalObject.js; sourceTree = "<group>"; };
+		E3F7F0D4293320410025D091 /* ShadowRealmPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ShadowRealmPrototype.js; sourceTree = "<group>"; };
+		E3F7F0D5293320410025D091 /* ReflectObject.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ReflectObject.js; sourceTree = "<group>"; };
+		E3F7F0D6293320410025D091 /* PromiseOperations.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = PromiseOperations.js; sourceTree = "<group>"; };
+		E3F7F0D7293320410025D091 /* RegExpStringIteratorPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = RegExpStringIteratorPrototype.js; sourceTree = "<group>"; };
+		E3F7F0D8293320410025D091 /* DatePrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = DatePrototype.js; sourceTree = "<group>"; };
+		E3F7F0D9293320410025D091 /* PromiseConstructor.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = PromiseConstructor.js; sourceTree = "<group>"; };
+		E3F7F0DA293320410025D091 /* StringConstructor.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = StringConstructor.js; sourceTree = "<group>"; };
+		E3F7F0DB293320410025D091 /* AsyncFunctionPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = AsyncFunctionPrototype.js; sourceTree = "<group>"; };
+		E3F7F0DC293320410025D091 /* ModuleLoader.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ModuleLoader.js; sourceTree = "<group>"; };
+		E3F7F0DD293320410025D091 /* StringPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = StringPrototype.js; sourceTree = "<group>"; };
+		E3F7F0DE293320410025D091 /* NumberConstructor.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = NumberConstructor.js; sourceTree = "<group>"; };
+		E3F7F0DF293320410025D091 /* AsyncIteratorPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = AsyncIteratorPrototype.js; sourceTree = "<group>"; };
+		E3F7F0E0293320410025D091 /* ArrayConstructor.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ArrayConstructor.js; sourceTree = "<group>"; };
+		E3F7F0E1293320410025D091 /* SetPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = SetPrototype.js; sourceTree = "<group>"; };
+		E3F7F0E2293320410025D091 /* InternalPromiseConstructor.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = InternalPromiseConstructor.js; sourceTree = "<group>"; };
+		E3F7F0E3293320410025D091 /* IteratorHelpers.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = IteratorHelpers.js; sourceTree = "<group>"; };
+		E3F7F0E4293320410025D091 /* WebAssembly.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = WebAssembly.js; sourceTree = "<group>"; };
+		E3F7F0E5293320410025D091 /* SetIteratorPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = SetIteratorPrototype.js; sourceTree = "<group>"; };
+		E3F7F0E6293320410025D091 /* GlobalOperations.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = GlobalOperations.js; sourceTree = "<group>"; };
+		E3F7F0E7293320410025D091 /* ObjectConstructor.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ObjectConstructor.js; sourceTree = "<group>"; };
+		E3F7F0E8293320410025D091 /* ArrayPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ArrayPrototype.js; sourceTree = "<group>"; };
+		E3F7F0E9293320410025D091 /* JSCBuiltinLicense.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = JSCBuiltinLicense.js; sourceTree = "<group>"; };
 		E3FB853822F36674008F90ED /* WasmCalleeRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmCalleeRegistry.h; sourceTree = "<group>"; };
 		E3FB853922F36674008F90ED /* WasmCalleeRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmCalleeRegistry.cpp; sourceTree = "<group>"; };
 		E3FC25102256ECF400583518 /* DoublePredictionFuzzerAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DoublePredictionFuzzerAgent.cpp; sourceTree = "<group>"; };
@@ -7235,6 +7275,7 @@
 			isa = PBXGroup;
 			children = (
 				535C24651F789389006EC40E /* inspector */,
+				E3F7F0C1293320410025D091 /* preprocessed */,
 				536B30861F71C5380037FC33 /* unified-sources */,
 				535C24671F7894A2006EC40E /* yarr */,
 				0F6183321C45F35C0072450B /* AirOpcode.h */,
@@ -9339,6 +9380,7 @@
 				E33F50881B844A1A00413856 /* InternalPromiseConstructor.js */,
 				534D9BF92363C55D0054524D /* IteratorHelpers.js */,
 				7CF9BC5B1B65D9A3009DB1EF /* IteratorPrototype.js */,
+				E38F9C2029349C230022AD96 /* JSCBuiltinConfig.h */,
 				534D9BFA2363C55D0054524D /* MapIteratorPrototype.js */,
 				7035587C1C418419004BD7BF /* MapPrototype.js */,
 				E30677971B8BC6F5003F87F0 /* ModuleLoader.js */,
@@ -9569,6 +9611,67 @@
 			);
 			name = Zydis;
 			path = disassembler/zydis/Zydis;
+			sourceTree = "<group>";
+		};
+		E3F7F0C1293320410025D091 /* preprocessed */ = {
+			isa = PBXGroup;
+			children = (
+				E3F7F0C4293320410025D091 /* builtins */,
+				E3F7F0C2293320410025D091 /* inspector */,
+				E3F7F0E9293320410025D091 /* JSCBuiltinLicense.js */,
+			);
+			path = preprocessed;
+			sourceTree = "<group>";
+		};
+		E3F7F0C2293320410025D091 /* inspector */ = {
+			isa = PBXGroup;
+			children = (
+				E3F7F0C3293320410025D091 /* InjectedScriptSource.js */,
+			);
+			path = inspector;
+			sourceTree = "<group>";
+		};
+		E3F7F0C4293320410025D091 /* builtins */ = {
+			isa = PBXGroup;
+			children = (
+				E3F7F0E0293320410025D091 /* ArrayConstructor.js */,
+				E3F7F0CD293320410025D091 /* ArrayIteratorPrototype.js */,
+				E3F7F0E8293320410025D091 /* ArrayPrototype.js */,
+				E3F7F0CE293320410025D091 /* AsyncFromSyncIteratorPrototype.js */,
+				E3F7F0DB293320410025D091 /* AsyncFunctionPrototype.js */,
+				E3F7F0C7293320410025D091 /* AsyncGeneratorPrototype.js */,
+				E3F7F0DF293320410025D091 /* AsyncIteratorPrototype.js */,
+				E3F7F0D8293320410025D091 /* DatePrototype.js */,
+				E3F7F0D1293320410025D091 /* FunctionPrototype.js */,
+				E3F7F0C6293320410025D091 /* GeneratorPrototype.js */,
+				E3F7F0D3293320410025D091 /* GlobalObject.js */,
+				E3F7F0E6293320410025D091 /* GlobalOperations.js */,
+				E3F7F0E2293320410025D091 /* InternalPromiseConstructor.js */,
+				E3F7F0E3293320410025D091 /* IteratorHelpers.js */,
+				E3F7F0CA293320410025D091 /* IteratorPrototype.js */,
+				E3F7F0D0293320410025D091 /* MapIteratorPrototype.js */,
+				E3F7F0C5293320410025D091 /* MapPrototype.js */,
+				E3F7F0DC293320410025D091 /* ModuleLoader.js */,
+				E3F7F0DE293320410025D091 /* NumberConstructor.js */,
+				E3F7F0E7293320410025D091 /* ObjectConstructor.js */,
+				E3F7F0D9293320410025D091 /* PromiseConstructor.js */,
+				E3F7F0D6293320410025D091 /* PromiseOperations.js */,
+				E3F7F0D2293320410025D091 /* PromisePrototype.js */,
+				E3F7F0CB293320410025D091 /* ProxyHelpers.js */,
+				E3F7F0D5293320410025D091 /* ReflectObject.js */,
+				E3F7F0C9293320410025D091 /* RegExpPrototype.js */,
+				E3F7F0D7293320410025D091 /* RegExpStringIteratorPrototype.js */,
+				E3F7F0E5293320410025D091 /* SetIteratorPrototype.js */,
+				E3F7F0E1293320410025D091 /* SetPrototype.js */,
+				E3F7F0D4293320410025D091 /* ShadowRealmPrototype.js */,
+				E3F7F0DA293320410025D091 /* StringConstructor.js */,
+				E3F7F0CF293320410025D091 /* StringIteratorPrototype.js */,
+				E3F7F0DD293320410025D091 /* StringPrototype.js */,
+				E3F7F0CC293320410025D091 /* TypedArrayConstructor.js */,
+				E3F7F0C8293320410025D091 /* TypedArrayPrototype.js */,
+				E3F7F0E4293320410025D091 /* WebAssembly.js */,
+			);
+			path = builtins;
 			sourceTree = "<group>";
 		};
 		E3FF752D1D9CE9EA00C7E16D /* domjit */ = {
@@ -10626,6 +10729,7 @@
 				BC18C41C0E16F5CD00B34460 /* JSCallbackObjectFunctions.h in Headers */,
 				657CF45919BF6662004ACBF2 /* JSCallee.h in Headers */,
 				53B601EC2034B8C5006BE667 /* JSCast.h in Headers */,
+				E38F9C2129349C3E0022AD96 /* JSCBuiltinConfig.h in Headers */,
 				A7D801A91880D6A80026C39B /* JSCBuiltins.h in Headers */,
 				DD28467B291A35120009A61D /* JSCBytecodeCacheVersion.h in Headers */,
 				FE48BD4423245E9300F136D0 /* JSCConfig.h in Headers */,

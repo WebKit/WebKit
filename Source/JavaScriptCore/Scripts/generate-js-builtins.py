@@ -61,11 +61,12 @@ def generate_bindings_for_builtins_files(builtins_files=[],
                                          combined_output=False,
                                          generate_only_wrapper_files=False,
                                          framework_name="",
-                                         force_output=False):
+                                         force_output=False,
+                                         copyright=None):
 
     generators = []
 
-    model = BuiltinsCollection(framework_name=framework_name)
+    model = BuiltinsCollection(framework_name=framework_name, copyright=copyright)
 
     for filepath in builtins_files:
         with do_open(filepath, "r") as file:
@@ -136,6 +137,7 @@ if __name__ == '__main__':
     cli_parser.add_option("--framework", type="choice", choices=allowed_framework_names, help="Destination framework for generated files.")
     cli_parser.add_option("--force", action="store_true", help="Force output of generated scripts, even if nothing changed.")
     cli_parser.add_option("--combined", action="store_true", help="Produce one .h/.cpp file instead of producing one per builtin object.")
+    cli_parser.add_option("--copyright", action="store", type="string", dest="copyright", help="Additional JS file having copyright comments.")
     cli_parser.add_option("--wrappers-only", action="store_true", help="Produce .h/.cpp wrapper files to ease integration of the builtins.")
     cli_parser.add_option("-v", "--debug", action="store_true", help="Log extra output for debugging the generator itself.")
     cli_parser.add_option("-t", "--test", action="store_true", help="Enable test mode.")
@@ -155,6 +157,9 @@ if __name__ == '__main__':
         for filepath in os.listdir(arg_options.input_directory):
             input_filepaths.append(os.path.join(arg_options.input_directory, filepath))
 
+    if arg_options.copyright:
+        input_filepaths.append(arg_options.copyright)
+
     input_filepaths = sorted([name for name in input_filepaths if fnmatch.fnmatch(name, '*.js')])
 
     options = {
@@ -164,6 +169,7 @@ if __name__ == '__main__':
         'generate_only_wrapper_files': arg_options.wrappers_only,
         'force_output': arg_options.force,
         'concatenate_output': arg_options.test,
+        'copyright': arg_options.copyright,
     }
 
     log.debug("Generating code for builtins.")

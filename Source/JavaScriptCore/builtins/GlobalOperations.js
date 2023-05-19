@@ -24,8 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// @internal
-
 @linkTimeConstant
 function toIntegerOrInfinity(target)
 {
