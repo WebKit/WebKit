@@ -46,7 +46,7 @@ public:
 
 private:
     WebFrameNetworkingContext(WebFrame* frame)
-        : WebCore::FrameNetworkingContext(frame->coreFrame())
+        : WebCore::FrameNetworkingContext(frame->coreLocalFrame())
     {
     }
 

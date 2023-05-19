@@ -496,7 +496,7 @@ void WebChromeClient::closeWindow()
     m_page.corePage()->setGroupName(String());
 
     auto& frame = m_page.mainWebFrame();
-    if (auto* coreFrame = frame.coreFrame())
+    if (auto* coreFrame = frame.coreLocalFrame())
         coreFrame->loader().stopForUserCancel();
 
     m_page.sendClose();

@@ -81,7 +81,7 @@ void WebRemoteFrameClient::changeLocation(WebCore::FrameLoadRequest&& request)
         if (policyAction != PolicyAction::Use)
             return;
         protectedFrame->transitionToLocal();
-        protectedFrame->coreAbstractFrame()->changeLocation(WTFMove(request));
+        protectedFrame->coreFrame()->changeLocation(WTFMove(request));
     });
 }
 

@@ -38,7 +38,7 @@ WK_EXPORT PDFDocument *WKBundlePageGetPDFDocumentInFrame(WKBundlePageRef, WKBund
     UNUSED_PARAM(frame);
     return nil;
 #else
-    auto* pluginView = WebKit::WebPage::pluginViewForFrame(WebKit::toImpl(frame)->coreFrame());
+    auto* pluginView = WebKit::WebPage::pluginViewForFrame(WebKit::toImpl(frame)->coreLocalFrame());
     if (!pluginView)
         return nil;
 

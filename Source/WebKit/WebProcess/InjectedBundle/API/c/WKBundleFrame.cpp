@@ -73,7 +73,7 @@ WKURLRef WKBundleFrameCopyProvisionalURL(WKBundleFrameRef frameRef)
 
 WKFrameLoadState WKBundleFrameGetFrameLoadState(WKBundleFrameRef frameRef)
 {
-    auto* coreFrame = WebKit::toImpl(frameRef)->coreFrame();
+    auto* coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
     if (!coreFrame)
         return kWKFrameLoadStateFinished;
 
@@ -147,7 +147,7 @@ WKBundlePageRef WKBundleFrameGetPage(WKBundleFrameRef frameRef)
 
 void WKBundleFrameClearOpener(WKBundleFrameRef frameRef)
 {
-    auto* coreFrame = WebKit::toImpl(frameRef)->coreFrame();
+    auto* coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
     if (coreFrame)
         coreFrame->loader().setOpener(0);
 }
@@ -260,7 +260,7 @@ WKDataRef WKBundleFrameCopyWebArchiveFilteringSubframes(WKBundleFrameRef frameRe
 
 bool WKBundleFrameCallShouldCloseOnWebView(WKBundleFrameRef frameRef)
 {
-    auto* coreFrame = WebKit::toImpl(frameRef)->coreFrame();
+    auto* coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
     if (!coreFrame)
         return true;
 
@@ -274,7 +274,7 @@ WKBundleHitTestResultRef WKBundleFrameCreateHitTestResult(WKBundleFrameRef frame
 
 WKSecurityOriginRef WKBundleFrameCopySecurityOrigin(WKBundleFrameRef frameRef)
 {
-    auto* coreFrame = WebKit::toImpl(frameRef)->coreFrame();
+    auto* coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
     if (!coreFrame)
         return 0;
 
@@ -283,7 +283,7 @@ WKSecurityOriginRef WKBundleFrameCopySecurityOrigin(WKBundleFrameRef frameRef)
 
 void WKBundleFrameFocus(WKBundleFrameRef frameRef)
 {
-    RefPtr coreFrame = WebKit::toImpl(frameRef)->coreFrame();
+    RefPtr coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
     if (!coreFrame)
         return;
 
@@ -292,7 +292,7 @@ void WKBundleFrameFocus(WKBundleFrameRef frameRef)
 
 void _WKBundleFrameGenerateTestReport(WKBundleFrameRef frameRef, WKStringRef message, WKStringRef group)
 {
-    RefPtr coreFrame = WebKit::toImpl(frameRef)->coreFrame();
+    RefPtr coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
     if (!coreFrame)
         return;
 

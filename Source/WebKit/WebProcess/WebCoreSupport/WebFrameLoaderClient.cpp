@@ -107,7 +107,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     }
 
     // FIXME: Move all this DocumentLoader stuff to the caller, pass in the results.
-    RefPtr coreFrame = m_frame->coreFrame();
+    RefPtr coreFrame = m_frame->coreLocalFrame();
 
     WebDocumentLoader* documentLoader = coreFrame ? static_cast<WebDocumentLoader*>(coreFrame->loader().policyDocumentLoader()) : nullptr;
     if (!documentLoader) {

@@ -1236,7 +1236,7 @@ void WebPage::cancelPotentialTapInFrame(WebFrame& frame)
 
     if (m_potentialTapNode) {
         auto* potentialTapFrame = m_potentialTapNode->document().frame();
-        if (potentialTapFrame && !potentialTapFrame->tree().isDescendantOf(frame.coreFrame()))
+        if (potentialTapFrame && !potentialTapFrame->tree().isDescendantOf(frame.coreLocalFrame()))
             return;
     }
 
@@ -4017,7 +4017,7 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
         return;
     }
 
-    auto* document = frame->coreFrame()->document();
+    auto* document = frame->coreLocalFrame()->document();
     if (document->isImageDocument())
         m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::imageDocumentParameters());
     else if (document->isTextDocument())
@@ -4099,7 +4099,7 @@ void WebPage::shrinkToFitContent(ZoomToInitialScale zoomToInitialScale)
     if (m_viewportConfiguration.canIgnoreScalingConstraints())
         return;
 
-    RefPtr mainFrame = m_mainFrame->coreFrame();
+    RefPtr mainFrame = m_mainFrame->coreLocalFrame();
     if (!mainFrame)
         return;
 
@@ -4644,7 +4644,7 @@ String WebPage::platformUserAgent(const URL&) const
     if (!m_page->settings().needsSiteSpecificQuirks())
         return String();
 
-    auto* mainFrame = m_mainFrame->coreFrame();
+    auto* mainFrame = m_mainFrame->coreLocalFrame();
     if (!mainFrame) {
         // FIXME: Add a user agent for loads from iframe processes.
         return { };

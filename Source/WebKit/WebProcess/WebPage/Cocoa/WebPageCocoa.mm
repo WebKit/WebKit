@@ -405,7 +405,7 @@ void WebPage::updateMockAccessibilityElementAfterCommittingLoad()
 
 RetainPtr<CFDataRef> WebPage::pdfSnapshotAtSize(IntRect rect, IntSize bitmapSize, SnapshotOptions options)
 {
-    auto* coreFrame = m_mainFrame->coreFrame();
+    auto* coreFrame = m_mainFrame->coreLocalFrame();
     if (!coreFrame)
         return nullptr;
 
@@ -577,7 +577,7 @@ void WebPage::getPDFFirstPageSize(WebCore::FrameIdentifier frameID, CompletionHa
     if (!webFrame)
         return completionHandler({ });
 
-    auto* pluginView = pluginViewForFrame(webFrame->coreFrame());
+    auto* pluginView = pluginViewForFrame(webFrame->coreLocalFrame());
     if (!pluginView)
         return completionHandler({ });
     

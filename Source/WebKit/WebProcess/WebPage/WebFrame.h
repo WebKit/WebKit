@@ -91,9 +91,9 @@ public:
     WebPage* page() const;
 
     static WebFrame* fromCoreFrame(const WebCore::Frame&);
-    WebCore::LocalFrame* coreFrame() const;
+    WebCore::LocalFrame* coreLocalFrame() const;
     WebCore::RemoteFrame* coreRemoteFrame() const;
-    WebCore::Frame* coreAbstractFrame() const;
+    WebCore::Frame* coreFrame() const;
 
     void transitionToLocal(std::optional<WebCore::LayerHostingContextIdentifier> = std::nullopt);
 

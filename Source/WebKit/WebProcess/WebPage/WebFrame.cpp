@@ -148,8 +148,8 @@ Ref<WebFrame> WebFrame::createRemoteSubframe(WebPage& page, WebFrame& parent, We
     auto frame = create(page, frameID);
     auto client = makeUniqueRef<WebRemoteFrameClient>(frame.copyRef(), frame->makeInvalidator());
     RELEASE_ASSERT(page.corePage());
-    RELEASE_ASSERT(parent.coreAbstractFrame());
-    auto coreFrame = RemoteFrame::createSubframe(*page.corePage(), WTFMove(client), frameID, *parent.coreAbstractFrame(), remoteProcessIdentifier);
+    RELEASE_ASSERT(parent.coreFrame());
+    auto coreFrame = RemoteFrame::createSubframe(*page.corePage(), WTFMove(client), frameID, *parent.coreFrame(), remoteProcessIdentifier);
     frame->m_coreFrame = coreFrame.get();
 
     // FIXME: Pass in a name and call FrameTree::setName here.
@@ -212,7 +212,7 @@ WebFrame* WebFrame::fromCoreFrame(const Frame& frame)
     return nullptr;
 }
 
-WebCore::LocalFrame* WebFrame::coreFrame() const
+WebCore::LocalFrame* WebFrame::coreLocalFrame() const
 {
     return dynamicDowncast<LocalFrame>(m_coreFrame.get());
 }
@@ -222,8 +222,7 @@ WebCore::RemoteFrame* WebFrame::coreRemoteFrame() const
     return dynamicDowncast<RemoteFrame>(m_coreFrame.get());
 }
 
-// FIXME: Remove coreRemoteFrame and replace coreFrame with this.
-WebCore::Frame* WebFrame::coreAbstractFrame() const
+WebCore::Frame* WebFrame::coreFrame() const
 {
     return m_coreFrame.get();
 }
@@ -234,7 +233,7 @@ FrameInfoData WebFrame::info() const
 
     FrameInfoData info {
         isMainFrame(),
-        is<WebCore::LocalFrame>(coreAbstractFrame()) ? FrameType::Local : FrameType::Remote,
+        is<WebCore::LocalFrame>(coreFrame()) ? FrameType::Local : FrameType::Remote,
         // FIXME: This should use the full request.
         ResourceRequest(url()),
         SecurityOriginData::fromFrame(dynamicDowncast<LocalFrame>(m_coreFrame.get())),
@@ -1088,7 +1087,7 @@ void WebFrame::documentLoaderDetached(uint64_t navigationID)
 #if PLATFORM(COCOA)
 RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void* context)
 {
-    auto archive = LegacyWebArchive::create(*coreFrame()->document(), [this, callback, context](auto& frame) -> bool {
+    auto archive = LegacyWebArchive::create(*coreLocalFrame()->document(), [this, callback, context](auto& frame) -> bool {
         if (!callback)
             return true;
 
@@ -1107,7 +1106,7 @@ RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void
 
 RefPtr<WebImage> WebFrame::createSelectionSnapshot() const
 {
-    auto snapshot = snapshotSelection(*coreFrame(), { { WebCore::SnapshotFlags::ForceBlackText, WebCore::SnapshotFlags::Shareable }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
+    auto snapshot = snapshotSelection(*coreLocalFrame(), { { WebCore::SnapshotFlags::ForceBlackText, WebCore::SnapshotFlags::Shareable }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
     if (!snapshot)
         return nullptr;
 
@@ -1146,7 +1145,7 @@ std::optional<NavigatingToAppBoundDomain> WebFrame::isTopFrameNavigatingToAppBou
 
 OptionSet<WebCore::NetworkConnectionIntegrity> WebFrame::networkConnectionIntegrityPolicy() const
 {
-    auto* coreFrame = this->coreFrame();
+    auto* coreFrame = this->coreLocalFrame();
     if (!coreFrame)
         return { };
 

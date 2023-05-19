@@ -2925,7 +2925,7 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
 
 void inject(WebPage& webPage, WebFrame& webFrame, WebCore::DOMWrapperWorld& world)
 {
-    auto* globalObject = webFrame.coreFrame()->script().globalObject(world);
+    auto* globalObject = webFrame.coreLocalFrame()->script().globalObject(world);
 
     auto& vm = globalObject->vm();
     JSC::JSLockHolder lock(vm);

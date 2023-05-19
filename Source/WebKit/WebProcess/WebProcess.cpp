@@ -1384,10 +1384,10 @@ void WebProcess::remotePostMessage(WebCore::FrameIdentifier identifier, std::opt
     if (!webFrame)
         return;
 
-    if (!webFrame->coreFrame())
+    if (!webFrame->coreLocalFrame())
         return;
 
-    auto* domWindow = webFrame->coreFrame()->window();
+    auto* domWindow = webFrame->coreLocalFrame()->window();
     if (!domWindow)
         return;
 

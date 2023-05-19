@@ -154,7 +154,7 @@ IntRect InjectedBundleHitTestResult::imageRect() const
     if (!webFrame)
         return imageRect;
     
-    auto* coreFrame = webFrame->coreFrame();
+    auto* coreFrame = webFrame->coreLocalFrame();
     if (!coreFrame)
         return imageRect;
     
