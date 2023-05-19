@@ -170,7 +170,7 @@ class EmptyChromeClient : public ChromeClient {
     void attachRootGraphicsLayer(LocalFrame&, GraphicsLayer*) final { }
     void attachViewOverlayGraphicsLayer(GraphicsLayer*) final { }
     void setNeedsOneShotDrawingSynchronization() final { }
-    void triggerRenderingUpdate() final { }
+    void triggerRenderingUpdate(bool) final { }
 
 #if PLATFORM(WIN)
     void setLastSetCursorToCurrentCursor() final { }

@@ -130,7 +130,7 @@ void RenderingUpdateScheduler::displayRefreshFired()
     clearScheduled();
     
     if (m_page.chrome().client().shouldTriggerRenderingUpdate(m_rescheduledRenderingUpdateCount)) {
-        triggerRenderingUpdate();
+        triggerRenderingUpdate(true);
         m_rescheduledRenderingUpdateCount = 0;
     } else {
         scheduleRenderingUpdate();
@@ -143,9 +143,9 @@ void RenderingUpdateScheduler::triggerRenderingUpdateForTesting()
     triggerRenderingUpdate();
 }
 
-void RenderingUpdateScheduler::triggerRenderingUpdate()
+void RenderingUpdateScheduler::triggerRenderingUpdate(bool forDisplayDidRefresh)
 {
-    m_page.chrome().client().triggerRenderingUpdate();
+    m_page.chrome().client().triggerRenderingUpdate(forDisplayDidRefresh);
 }
 
 }

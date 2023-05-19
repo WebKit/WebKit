@@ -300,12 +300,15 @@ void RemoteLayerTreeDrawingArea::startRenderingUpdateTimer()
     m_updateRenderingTimer.startOneShot(0_s);
 }
 
-void RemoteLayerTreeDrawingArea::triggerRenderingUpdate()
+void RemoteLayerTreeDrawingArea::triggerRenderingUpdate(bool forDisplayDidRefresh)
 {
     if (m_isRenderingSuspended) {
         m_hasDeferredRenderingUpdate = true;
         return;
     }
+
+    if (forDisplayDidRefresh)
+        m_displayDidRefreshTriggeredRendering = true;
 
     startRenderingUpdateTimer();
 }
@@ -397,7 +400,8 @@ void RemoteLayerTreeDrawingArea::updateRendering()
         transactions.uncheckedAppend({ WTFMove(layerTransaction), WTFMove(scrollingTransaction) });
     }
 
-    Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree message(transactions);
+    Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree message(transactions, m_displayDidRefreshTriggeredRendering);
+    m_displayDidRefreshTriggeredRendering = false;
     auto commitEncoder = makeUniqueRef<IPC::Encoder>(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::name(), m_identifier.toUInt64());
     commitEncoder.get() << WTFMove(message).arguments();
 

@@ -933,7 +933,7 @@ void WebChromeClient::setNeedsOneShotDrawingSynchronization()
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void WebChromeClient::triggerRenderingUpdate()
+void WebChromeClient::triggerRenderingUpdate(bool)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_webView _scheduleUpdateRendering];

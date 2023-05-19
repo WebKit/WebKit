@@ -152,8 +152,14 @@ void RemoteLayerTreeDrawingAreaProxy::willCommitLayerTree(TransactionID transact
     m_pendingLayerTreeTransactionID = transactionID;
 }
 
-void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connection, const Vector<std::pair<RemoteLayerTreeTransaction, RemoteScrollingCoordinatorTransaction>>& transactions)
+void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connection, const Vector<std::pair<RemoteLayerTreeTransaction, RemoteScrollingCoordinatorTransaction>>& transactions, bool wasTriggeredByDisplayDidRefresh)
 {
+    // If this commit wasn't triggered by displayDidRefresh, then
+    // it can't be considered 'missed', so overwrite a potential
+    // 'MissedCommit' state.
+    if (!wasTriggeredByDisplayDidRefresh)
+        m_didUpdateMessageState = NeedsDidUpdate;
+
     for (auto& transaction : transactions)
         commitLayerTreeTransaction(connection, transaction.first, transaction.second);
 }

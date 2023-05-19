@@ -50,7 +50,7 @@ private:
     void setNeedsDisplayInRect(const WebCore::IntRect&) override;
     void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) override;
     void forceRepaintAsync(WebPage&, CompletionHandler<void()>&&) override;
-    void triggerRenderingUpdate() override;
+    void triggerRenderingUpdate(bool forDisplayDidRefresh = false) override;
     void didChangeViewportAttributes(WebCore::ViewportAttributes&&) override { }
     void deviceOrPageScaleFactorChanged() override { }
     void setLayerTreeStateIsFrozen(bool) override;

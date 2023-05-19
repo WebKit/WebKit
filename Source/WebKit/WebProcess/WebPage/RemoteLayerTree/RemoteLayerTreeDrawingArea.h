@@ -72,7 +72,7 @@ private:
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) override;
     void addRootFrame(WebCore::FrameIdentifier) final;
-    void triggerRenderingUpdate() override;
+    void triggerRenderingUpdate(bool forDisplayDidRefresh = false) override;
     void attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, WebCore::GraphicsLayer*) override;
 
     void dispatchAfterEnsuringDrawing(IPC::AsyncReplyID) final;
@@ -164,6 +164,8 @@ private:
     bool m_isRenderingSuspended { false };
     bool m_hasDeferredRenderingUpdate { false };
     bool m_inUpdateRendering { false };
+    bool m_displayDidRefreshTriggeredRendering { false };
+
 
     bool m_waitingForBackingStoreSwap { false };
     bool m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap { false };

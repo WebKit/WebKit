@@ -355,7 +355,7 @@ void DrawingAreaCoordinatedGraphics::setRootCompositingLayer(WebCore::Frame&, Gr
     enterAcceleratedCompositingMode(graphicsLayer);
 }
 
-void DrawingAreaCoordinatedGraphics::triggerRenderingUpdate()
+void DrawingAreaCoordinatedGraphics::triggerRenderingUpdate(bool)
 {
     if (m_layerTreeStateIsFrozen)
         return;

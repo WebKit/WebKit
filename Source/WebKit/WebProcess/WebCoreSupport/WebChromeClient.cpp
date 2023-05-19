@@ -1073,10 +1073,10 @@ bool WebChromeClient::shouldTriggerRenderingUpdate(unsigned rescheduledRendering
     return m_page.shouldTriggerRenderingUpdate(rescheduledRenderingUpdateCount);
 }
 
-void WebChromeClient::triggerRenderingUpdate()
+void WebChromeClient::triggerRenderingUpdate(bool forDisplayDidRefresh)
 {
     if (m_page.drawingArea())
-        m_page.drawingArea()->triggerRenderingUpdate();
+        m_page.drawingArea()->triggerRenderingUpdate(forDisplayDidRefresh);
 }
 
 unsigned WebChromeClient::remoteImagesCountForTesting() const

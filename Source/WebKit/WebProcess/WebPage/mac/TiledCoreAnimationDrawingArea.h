@@ -65,7 +65,7 @@ private:
     void setLayerTreeStateIsFrozen(bool) override;
     bool layerTreeStateIsFrozen() const override;
     void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) override;
-    void triggerRenderingUpdate() override;
+    void triggerRenderingUpdate(bool forDisplayDidRefresh = false) override;
 
     void updatePreferences(const WebPreferencesStore&) override;
     void mainFrameContentSizeChanged(WebCore::FrameIdentifier, const WebCore::IntSize&) override;

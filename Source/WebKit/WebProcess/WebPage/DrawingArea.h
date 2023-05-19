@@ -125,7 +125,7 @@ public:
     virtual void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) = 0;
     virtual void addRootFrame(WebCore::FrameIdentifier) { }
     // FIXME: Add a corresponding removeRootFrame.
-    virtual void triggerRenderingUpdate() = 0;
+    virtual void triggerRenderingUpdate(bool forDisplayDidRefresh = false) = 0;
 
     virtual void willStartRenderingUpdateDisplay();
     virtual void didCompleteRenderingUpdateDisplay();

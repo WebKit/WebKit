@@ -223,7 +223,7 @@ bool TiledCoreAnimationDrawingArea::layerTreeStateIsFrozen() const
     return m_layerTreeStateIsFrozen;
 }
 
-void TiledCoreAnimationDrawingArea::triggerRenderingUpdate()
+void TiledCoreAnimationDrawingArea::triggerRenderingUpdate(bool)
 {
     if (m_layerTreeStateIsFrozen)
         return;

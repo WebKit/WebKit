@@ -71,7 +71,7 @@ private:
 
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) override;
-    void triggerRenderingUpdate() override;
+    void triggerRenderingUpdate(bool forDisplayDidRefresh = false) override;
 
 #if USE(COORDINATED_GRAPHICS) || USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
     void layerHostDidFlushLayers() override;

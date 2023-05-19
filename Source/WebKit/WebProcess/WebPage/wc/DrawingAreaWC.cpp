@@ -182,7 +182,7 @@ void DrawingAreaWC::forceRepaintAsync(WebPage&, CompletionHandler<void()>&& comp
     setNeedsDisplay();
 }
 
-void DrawingAreaWC::triggerRenderingUpdate()
+void DrawingAreaWC::triggerRenderingUpdate(bool)
 {
     if (m_isRenderingSuspended || m_waitDidUpdate) {
         m_hasDeferredRenderingUpdate = true;

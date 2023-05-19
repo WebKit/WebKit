@@ -61,7 +61,7 @@ private:
     void startTimer(Seconds);
     void clearScheduled();
 
-    void triggerRenderingUpdate();
+    void triggerRenderingUpdate(bool forDisplayDidRefresh = false);
 
     Page& m_page;
     std::unique_ptr<Timer> m_refreshTimer;
