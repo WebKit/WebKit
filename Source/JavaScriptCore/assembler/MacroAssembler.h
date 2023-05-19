@@ -1632,12 +1632,20 @@ public:
 #if CPU(X86_64) || CPU(RISCV64)
     void moveFloat(Imm32 imm, FPRegisterID dest)
     {
+        if (!imm.asTrustedImm32().m_value) {
+            moveZeroToFloat(dest);
+            return;
+        }
         move(imm, scratchRegister());
         move32ToFloat(scratchRegister(), dest);
     }
 
     void moveDouble(Imm64 imm, FPRegisterID dest)
     {
+        if (!imm.asTrustedImm64().m_value) {
+            moveZeroToDouble(dest);
+            return;
+        }
         move(imm, scratchRegister());
         move64ToDouble(scratchRegister(), dest);
     }
@@ -1646,12 +1654,20 @@ public:
 #if CPU(ARM64)
     void moveFloat(Imm32 imm, FPRegisterID dest)
     {
+        if (!imm.asTrustedImm32().m_value) {
+            moveZeroToFloat(dest);
+            return;
+        }
         move(imm, getCachedMemoryTempRegisterIDAndInvalidate());
         move32ToFloat(getCachedMemoryTempRegisterIDAndInvalidate(), dest);
     }
 
     void moveDouble(Imm64 imm, FPRegisterID dest)
     {
+        if (!imm.asTrustedImm64().m_value) {
+            moveZeroToDouble(dest);
+            return;
+        }
         move(imm, getCachedMemoryTempRegisterIDAndInvalidate());
         move64ToDouble(getCachedMemoryTempRegisterIDAndInvalidate(), dest);
     }
