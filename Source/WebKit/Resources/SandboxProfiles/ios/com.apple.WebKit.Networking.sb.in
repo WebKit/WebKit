@@ -57,7 +57,9 @@
 (allow socket-option-get
     (require-all
         (socket-option-level SOL_SOCKET)
-        (socket-option-name SO_NREAD)))
+        (socket-option-name
+            SO_NREAD
+            SO_SNDBUF)))
 
 (allow socket-option-get
     (require-all
@@ -73,6 +75,7 @@
     (require-all
         (socket-option-level SOL_SOCKET)
         (socket-option-name
+            SO_MARK_KNOWN_TRACKER
             SO_NECP_LISTENUUID
             SO_NOSIGPIPE
             SO_RCVBUF

@@ -80,18 +80,23 @@
         (socket-option-name
             SO_DELEGATED
             SO_DELEGATED_UUID
+            SO_MARK_KNOWN_TRACKER
             SO_NECP_ATTRIBUTES
             SO_NECP_CLIENTUUID
             SO_NECP_LISTENUUID
             SO_NOSIGPIPE
             SO_RCVBUF
             SO_REUSEADDR
-            SO_REUSEPORT)))
+            SO_REUSEPORT
+            SO_SNDLOWAT)))
 
 (allow socket-option-get
     (require-all
         (socket-option-level SOL_SOCKET)
-        (socket-option-name SO_ERROR SO_NREAD)))
+        (socket-option-name
+            SO_ERROR
+            SO_NREAD
+            SO_SNDBUF)))
 
 (allow socket-option-set
     (require-all
