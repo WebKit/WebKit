@@ -238,6 +238,12 @@ void FunctionDefinitionWriter::visit(AST::Attribute& attribute)
 
 void FunctionDefinitionWriter::visit(AST::BuiltinAttribute& builtin)
 {
+    // Built-in attributes are only valid for parameters. If a struct member originally
+    // had a built-in attribute it must have already been hoisted into a parameter, but
+    // we keep the original struct so we can reconstruct it.
+    if (m_structRole.has_value())
+        return;
+
     // FIXME: we should replace this with something more efficient, like a trie
     static constexpr std::pair<ComparableASCIILiteral, ASCIILiteral> builtinMappings[] {
         { "frag_depth", "depth(any)"_s },
