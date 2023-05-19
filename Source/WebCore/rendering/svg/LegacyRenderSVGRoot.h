@@ -87,9 +87,6 @@ private:
 
     const AffineTransform& localToParentTransform() const override;
 
-    bool fillContains(const FloatPoint&) const;
-    bool strokeContains(const FloatPoint&) const;
-
     FloatRect objectBoundingBox() const override { return m_objectBoundingBox; }
     FloatRect strokeBoundingBox() const override { return m_strokeBoundingBox; }
     FloatRect repaintRectInLocalCoordinates() const override { return m_repaintBoundingBox; }

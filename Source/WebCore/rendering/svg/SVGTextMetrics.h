@@ -52,13 +52,6 @@ public:
         {
         }
 
-        bool operator==(const Glyph& other)
-        {
-            return isValid == other.isValid
-                && name == other.name
-                && unicodeString == other.unicodeString;
-        }
-
         bool isValid;
         String name;
         String unicodeString;

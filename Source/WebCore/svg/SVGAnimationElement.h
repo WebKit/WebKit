@@ -95,8 +95,6 @@ protected:
     String byValue() const;
     String fromValue() const;
 
-    String targetAttributeBaseValue();
-
     // from SVGSMILElement
     void startedActiveInterval() override;
     void updateAnimation(float percent, unsigned repeat) override;
