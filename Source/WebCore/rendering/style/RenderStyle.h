@@ -222,6 +222,7 @@ enum class UserSelect : uint8_t;
 enum class VerticalAlign : uint8_t;
 enum class Visibility : uint8_t;
 enum class WhiteSpace : uint8_t;
+enum class WhiteSpaceCollapse : uint8_t;
 enum class WordBreak : uint8_t;
 enum class WritingMode : uint8_t;
 
@@ -572,6 +573,8 @@ public:
     inline bool isCollapsibleWhiteSpace(UChar) const;
     inline bool breakOnlyAfterWhiteSpace() const;
     inline bool breakWords() const;
+
+    WhiteSpaceCollapse whiteSpaceCollapse() const { return static_cast<WhiteSpaceCollapse>(m_inheritedFlags.whiteSpaceCollapse); }
 
     inline FillRepeatXY backgroundRepeat() const;
     inline FillAttachment backgroundAttachment() const;
@@ -1219,6 +1222,7 @@ public:
 #endif
 
     void setWhiteSpace(WhiteSpace v) { m_inheritedFlags.whiteSpace = static_cast<unsigned>(v); }
+    void setWhiteSpaceCollapse(WhiteSpaceCollapse v) { m_inheritedFlags.whiteSpaceCollapse = static_cast<unsigned>(v); }
 
     void setWordSpacing(Length&&);
 
@@ -1773,6 +1777,7 @@ public:
     static constexpr OptionSet<TextTransform> initialTextTransform();
     static constexpr Visibility initialVisibility();
     static constexpr WhiteSpace initialWhiteSpace();
+    static constexpr WhiteSpaceCollapse initialWhiteSpaceCollapse();
     static float initialHorizontalBorderSpacing() { return 0; }
     static float initialVerticalBorderSpacing() { return 0; }
     static constexpr CursorType initialCursor();
@@ -2168,7 +2173,8 @@ private:
 #endif
         unsigned direction : 1; // TextDirection
         unsigned whiteSpace : 3; // WhiteSpace
-        // 38 bits
+        unsigned whiteSpaceCollapse : 3; // WhiteSpaceCollapse
+        // 33 bits
         unsigned borderCollapse : 1; // BorderCollapse
         unsigned boxDirection : 1; // BoxDirection
 
@@ -2178,16 +2184,16 @@ private:
         unsigned pointerEvents : 4; // PointerEvents
         unsigned insideLink : 2; // InsideLink
         unsigned insideDefaultButton : 1;
-        // 49 bits
+        // 44 bits
 
         // CSS Text Layout Module Level 3: Vertical writing support
         unsigned writingMode : 2; // WritingMode
-        // 51 bits
+        // 46 bits
 
 #if ENABLE(TEXT_AUTOSIZING)
         unsigned autosizeStatus : 5;
 #endif
-        // 56 bits
+        // 51 bits
     };
 
     // This constructor is used to implement the replace operation.

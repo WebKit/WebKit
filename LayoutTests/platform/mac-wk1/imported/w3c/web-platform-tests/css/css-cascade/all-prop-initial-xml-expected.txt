@@ -341,6 +341,7 @@ PASS vector-effect
 PASS vertical-align
 PASS visibility
 PASS white-space
+PASS white-space-collapse
 PASS widows
 PASS width
 PASS will-change

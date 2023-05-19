@@ -27,6 +27,8 @@ PASS Property text-wrap has initial value wrap
 PASS Property text-wrap inherits
 PASS Property white-space has initial value normal
 PASS Property white-space inherits
+PASS Property white-space-collapse has initial value collapse
+PASS Property white-space-collapse inherits
 PASS Property word-break has initial value normal
 PASS Property word-break inherits
 PASS Property word-spacing has initial value 0px

@@ -1,6 +1,6 @@
 
-FAIL Property white-space-collapse value 'collapse' assert_true: white-space-collapse doesn't seem to be supported in the computed style expected true got false
-FAIL Property white-space-collapse value 'preserve' assert_true: white-space-collapse doesn't seem to be supported in the computed style expected true got false
-FAIL Property white-space-collapse value 'preserve-breaks' assert_true: white-space-collapse doesn't seem to be supported in the computed style expected true got false
-FAIL Property white-space-collapse value 'break-spaces' assert_true: white-space-collapse doesn't seem to be supported in the computed style expected true got false
+PASS Property white-space-collapse value 'collapse'
+PASS Property white-space-collapse value 'preserve'
+PASS Property white-space-collapse value 'preserve-breaks'
+PASS Property white-space-collapse value 'break-spaces'
 

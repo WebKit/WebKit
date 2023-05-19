@@ -1429,6 +1429,12 @@ const gCSSProperties2 = {
       { type: 'discrete', options: [ [ 'pre', 'nowrap' ] ] }
     ]
   },
+  'white-space-collapse': {
+    // https://drafts.csswg.org/css-text-4/#propdef-white-space-collapse
+    types: [
+      { type: 'discrete', options: [ [ 'collapse', 'preserve' ] ] }
+    ]
+  },
   'width': {
     // https://drafts.csswg.org/css21/visudet.html#propdef-width
     types: [

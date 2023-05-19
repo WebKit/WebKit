@@ -1389,6 +1389,12 @@ template<> constexpr WhiteSpace fromCSSValueID(CSSValueID valueID)
     return WhiteSpace::Normal;
 }
 
+#define TYPE WhiteSpaceCollapse
+#define FOR_EACH(CASE) CASE(Collapse) CASE(Discard) CASE(Preserve) CASE(PreserveBreaks) CASE(PreserveSpaces) CASE(BreakSpaces)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
+
 #define TYPE WordBreak
 #define FOR_EACH(CASE) CASE(Normal) CASE(BreakAll) CASE(KeepAll) CASE(BreakWord)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS

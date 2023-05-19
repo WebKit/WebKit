@@ -3715,6 +3715,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return createConvertingToCSSValueID(style.visibility());
     case CSSPropertyWhiteSpace:
         return createConvertingToCSSValueID(style.whiteSpace());
+    case CSSPropertyWhiteSpaceCollapse:
+        return createConvertingToCSSValueID(style.whiteSpaceCollapse());
     case CSSPropertyWidows:
         if (style.hasAutoWidows())
             return CSSPrimitiveValue::create(CSSValueAuto);
