@@ -27,7 +27,6 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "DisplayListRecorderFlushIdentifier.h"
 #include "GPUProcessConnection.h"
 #include "IPCSemaphore.h"
 #include "ImageBufferBackendHandle.h"
@@ -49,7 +48,6 @@
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
-#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 
@@ -160,8 +158,6 @@ public:
 
     SerialFunctionDispatcher& dispatcher() { return m_dispatcher; }
 
-    void addPendingFlush(RemoteImageBufferProxyFlushState&, IPC::Semaphore&&, DisplayListRecorderFlushIdentifier);
-
 private:
     explicit RemoteRenderingBackendProxy(const RemoteRenderingBackendCreationParameters&, SerialFunctionDispatcher&);
 
@@ -205,7 +201,6 @@ private:
 
     RenderingUpdateID m_renderingUpdateID;
     RenderingUpdateID m_didRenderingUpdateID;
-    Ref<WorkQueue> m_flushWorkQueue;
 };
 
 } // namespace WebKit

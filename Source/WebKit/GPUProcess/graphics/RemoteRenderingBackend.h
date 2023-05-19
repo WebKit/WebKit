@@ -28,7 +28,6 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "Connection.h"
-#include "DisplayListRecorderFlushIdentifier.h"
 #include "ImageBufferBackendHandle.h"
 #include "MarkSurfacesAsVolatileRequestIdentifier.h"
 #include "MessageReceiver.h"

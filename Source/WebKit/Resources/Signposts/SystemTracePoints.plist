@@ -535,6 +535,30 @@
                  <string>12015</string>
                  <key>CodeEnd</key>
                  <string>12016</string>
+                 <key>ArgNamesBegin</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Flush ID</string>
+                 </dict>
+                 <key>ArgValueTypesBegin</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Hex</string>
+                 </dict>
+                 <key>ArgNamesEnd</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Flush ID</string>
+                     <key>Arg2</key>
+                     <string>Was Completed/Discarded</string>
+                 </dict>
+                 <key>ArgValueTypesEnd</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Hex</string>
+                     <key>Arg2</key>
+                     <string>Decimal</string>
+                 </dict>
              </dict>
              <dict>
                  <key>Name</key>
