@@ -68,6 +68,9 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     cairo_scaled_font_t* scaledFont = font.platformData().scaledFont();
     double syntheticBoldOffset = font.syntheticBoldOffset();
 
+    if (!font.allowsAntialiasing())
+        fontSmoothingMode = FontSmoothingMode::NoSmoothing;
+
     ASSERT(context.hasPlatformContext());
     auto& state = context.state();
     Cairo::drawGlyphs(*context.platformContext(), Cairo::FillSource(state), Cairo::StrokeSource(state),
