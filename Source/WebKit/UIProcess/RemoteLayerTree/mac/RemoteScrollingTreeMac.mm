@@ -128,6 +128,11 @@ Ref<ScrollingTreeNode> RemoteScrollingTreeMac::createScrollingTreeNode(Scrolling
 void RemoteScrollingTreeMac::didCommitTree()
 {
     ASSERT(isMainRunLoop());
+    ASSERT(m_treeLock.isLocked());
+
+    if (m_nodesWithPendingScrollAnimations.isEmpty())
+        return;
+
     ScrollingThread::dispatch([protectedThis = Ref { *this }]() {
         Locker treeLocker { protectedThis->m_treeLock };
         protectedThis->startPendingScrollAnimations();

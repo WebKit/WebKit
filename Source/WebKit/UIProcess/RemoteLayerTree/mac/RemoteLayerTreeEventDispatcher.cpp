@@ -73,6 +73,9 @@ private:
         if (!eventDispatcher)
             return;
 
+        if (!eventDispatcher->scrollingTreeWasRecentlyActive())
+            return;
+
         ScrollingThread::dispatch([dispatcher = Ref { *eventDispatcher }, displayID] {
             dispatcher->didRefreshDisplay(displayID);
         });
@@ -483,8 +486,20 @@ void RemoteLayerTreeEventDispatcher::waitForRenderingUpdateCompletionOrTimeout()
         tracePoint(ScrollingThreadRenderUpdateSyncEnd);
 }
 
+bool RemoteLayerTreeEventDispatcher::scrollingTreeWasRecentlyActive()
+{
+    auto scrollingTree = this->scrollingTree();
+    if (!scrollingTree)
+        return false;
+
+    return scrollingTree->hasRecentActivity();
+}
+
 void RemoteLayerTreeEventDispatcher::mainThreadDisplayDidRefresh(PlatformDisplayID)
 {
+    if (!scrollingTreeWasRecentlyActive())
+        return;
+
     tracePoint(ScrollingThreadRenderUpdateSyncStart);
 
     // Wait for the scrolling thread to acquire m_scrollingTreeLock. This ensures that any pending wheel events are processed.

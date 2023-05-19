@@ -381,11 +381,6 @@ void ThreadedScrollingTree::unlockLayersForHitTesting()
     m_layerHitTestMutex.unlock();
 }
 
-bool ThreadedScrollingTree::scrollingThreadIsActive()
-{
-    return hasProcessedWheelEventsRecently() || hasNodeWithActiveScrollAnimations();
-}
-
 void ThreadedScrollingTree::didScheduleRenderingUpdate()
 {
     m_renderingUpdateWasScheduled = true;
@@ -397,7 +392,7 @@ void ThreadedScrollingTree::willStartRenderingUpdate()
 
     m_renderingUpdateWasScheduled = false;
 
-    if (!scrollingThreadIsActive())
+    if (!hasRecentActivity())
         return;
 
     tracePoint(ScrollingThreadRenderUpdateSyncStart);
@@ -536,7 +531,7 @@ void ThreadedScrollingTree::displayDidRefreshOnScrollingThread()
 
 void ThreadedScrollingTree::displayDidRefresh(PlatformDisplayID displayID)
 {
-    bool scrollingThreadIsActive = this->scrollingThreadIsActive();
+    bool scrollingThreadIsActive = hasRecentActivity();
 
     // We're on the EventDispatcher thread or in the ThreadedCompositor thread here.
     tracePoint(ScrollingTreeDisplayDidRefresh, displayID, scrollingThreadIsActive);
