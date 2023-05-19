@@ -1214,10 +1214,14 @@ public:
     virtual PlatformWidget platformWidget() const = 0;
     virtual Widget* widgetForAttachmentView() const = 0;
 
+    // FIXME: Remove the following methods from the AXCoreObject interface and instead use methods such as axScrollView() if needed.
     virtual Page* page() const = 0;
     virtual Document* document() const = 0;
     virtual LocalFrameView* documentFrameView() const = 0;
     virtual ScrollView* scrollView() const = 0;
+    // Should eliminate the need for exposing scrollView().
+    AXCoreObject* axScrollView() const;
+
     virtual String language() const = 0;
     // 1-based, to match the aria-level spec.
     virtual unsigned hierarchicalLevel() const = 0;
@@ -1995,6 +1999,13 @@ inline bool AXCoreObject::isDescendantOfObject(const AXCoreObject* axObject) con
 inline bool AXCoreObject::isAncestorOfObject(const AXCoreObject* axObject) const
 {
     return axObject && (this == axObject || axObject->isDescendantOfObject(this));
+}
+
+inline AXCoreObject* AXCoreObject::axScrollView() const
+{
+    return Accessibility::findAncestor(*this, true, [] (const auto& ancestor) {
+        return ancestor.isScrollView();
+    });
 }
 
 // Logging helpers.
