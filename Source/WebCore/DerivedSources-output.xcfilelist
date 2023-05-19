@@ -377,8 +377,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSHSL.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSHSL.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSHWB.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSHWB.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSImportRule+Layer.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSImportRule+Layer.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSImportRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSImportRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSKeyframeRule.cpp

@@ -977,7 +977,6 @@ $(PROJECT_DIR)/css/CSSFontFaceRule.idl
 $(PROJECT_DIR)/css/CSSFontFeatureValuesRule.idl
 $(PROJECT_DIR)/css/CSSFontPaletteValuesRule.idl
 $(PROJECT_DIR)/css/CSSGroupingRule.idl
-$(PROJECT_DIR)/css/CSSImportRule+Layer.idl
 $(PROJECT_DIR)/css/CSSImportRule.idl
 $(PROJECT_DIR)/css/CSSKeyframeRule.idl
 $(PROJECT_DIR)/css/CSSKeyframesRule.idl
