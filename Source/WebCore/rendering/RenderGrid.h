@@ -158,7 +158,8 @@ private:
 
     std::unique_ptr<OrderedTrackIndexSet> computeEmptyTracksForAutoRepeat(GridTrackSizingDirection) const;
 
-    void performGridItemsPreLayout(const GridTrackSizingAlgorithm&) const;
+    enum class ShouldUpdateGridAreaLogicalSize : bool { No, Yes };
+    void performGridItemsPreLayout(const GridTrackSizingAlgorithm&, const ShouldUpdateGridAreaLogicalSize) const;
 
     void placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidth);
     void populateExplicitGridAndOrderIterator();
