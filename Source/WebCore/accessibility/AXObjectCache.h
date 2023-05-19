@@ -688,7 +688,7 @@ inline AXCoreObject* AXObjectCache::rootObject() { return nullptr; }
 inline AccessibilityObject* AXObjectCache::rootObjectForFrame(LocalFrame*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::focusedObjectForPage(const Page*) { return nullptr; }
 inline void AXObjectCache::enableAccessibility() { }
-inline void setForceDeferredSpellChecking(bool) { }
+inline void AXObjectCache::setForceDeferredSpellChecking(bool) { }
 inline void AXObjectCache::disableAccessibility() { }
 inline void AXObjectCache::setEnhancedUserInterfaceAccessibility(bool) { }
 inline bool nodeHasRole(Node*, StringView) { return false; }
