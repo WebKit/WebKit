@@ -154,7 +154,6 @@ public:
     bool shouldEnableFontLoadingAPIQuirk() const;
     bool needsVideoShouldMaintainAspectRatioQuirk() const;
 
-    bool shouldDisableLazyImageLoadingQuirk() const;
     bool shouldDisableLazyIframeLoadingQuirk() const;
 
     bool shouldDisableFetchMetadata() const;
@@ -221,7 +220,6 @@ private:
 #if PLATFORM(IOS_FAMILY)
     mutable std::optional<bool> m_shouldNavigatorPluginsBeEmpty;
 #endif
-    mutable std::optional<bool> m_shouldDisableLazyImageLoadingQuirk;
     mutable std::optional<bool> m_shouldDisableLazyIframeLoadingQuirk;
 #if PLATFORM(COCOA)
     mutable std::optional<bool> m_shouldAdvertiseSupportForHLSSubtitleTypes;

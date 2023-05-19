@@ -9652,11 +9652,6 @@ void Document::sendReportToEndpoints(const URL& baseURL, const Vector<String>& e
     }
 }
 
-bool Document::lazyImageLoadingEnabled() const
-{
-    return m_settings->lazyImageLoadingEnabled() && !m_quirks->shouldDisableLazyImageLoadingQuirk();
-}
-
 void Document::addElementWithLangAttrMatchingDocumentElement(Element& element)
 {
     m_elementsWithLangAttrMatchingDocumentElement.add(element);

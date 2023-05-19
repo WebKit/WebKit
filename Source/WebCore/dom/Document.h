@@ -1771,9 +1771,6 @@ public:
     void sendReportToEndpoints(const URL& baseURL, const Vector<String>& endpointURIs, const Vector<String>& endpointTokens, Ref<FormData>&& report, ViolationReportType) final;
     String httpUserAgent() const final;
 
-    // This should be used over the settings lazy loading image flag due to a quirk, which may occur causing website images to fail to load properly.
-    bool lazyImageLoadingEnabled() const;
-
 #if ENABLE(DOM_AUDIO_SESSION)
     void setAudioSessionType(DOMAudioSessionType type) { m_audioSessionType = type; }
     DOMAudioSessionType audioSessionType() const { return m_audioSessionType; }
