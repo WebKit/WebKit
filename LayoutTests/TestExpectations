@@ -4878,12 +4878,6 @@ webanimations/translate-property-and-translate-animation-with-delay-on-forced-la
 
 # CSS containment tests that fail
 imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-bfc-floats-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-style-ol-ordinal-pseudo-reversed.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-style-ol-ordinal-pseudo.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-style-ol-ordinal-reversed.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-style-ol-ordinal-start-reversed.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-style-ol-ordinal-start.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-style-ol-ordinal.html [ ImageOnlyFailure ]
 # forced layout
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-035.html [ Skip ]
 # c-v: auto
