@@ -68,6 +68,8 @@ public:
 
     RefPtr<StyleImage> createStyleImage(Style::BuilderState&) const;
 
+    bool isLoadedFromOpaqueSource() const { return m_loadedFromOpaqueSource == LoadedFromOpaqueSource::Yes; }
+
 private:
     CSSImageValue();
     CSSImageValue(ResolvedURL&&, LoadedFromOpaqueSource, AtomString&&);

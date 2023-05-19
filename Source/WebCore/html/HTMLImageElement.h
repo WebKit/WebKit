@@ -171,6 +171,7 @@ public:
     void setFetchPriorityForBindings(const AtomString&);
     String fetchPriorityForBindings() const;
     RequestPriority fetchPriorityHint() const;
+    bool originClean(const SecurityOrigin&) const;
 
 protected:
     constexpr static auto CreateHTMLImageElement = CreateHTMLElement | NodeFlag::HasCustomStyleResolveCallbacks;
