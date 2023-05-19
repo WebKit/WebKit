@@ -34,6 +34,8 @@ namespace WebCore {
 
 void UserActionElementSet::clear()
 {
+    for (auto iterator = m_elements.begin(); iterator != m_elements.end(); ++iterator)
+        iterator->key->setUserActionElement(false);
     m_elements.clear();
 }
 
