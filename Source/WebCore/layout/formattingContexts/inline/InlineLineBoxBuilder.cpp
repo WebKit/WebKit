@@ -443,7 +443,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
                 lineBox.parentInlineBox(run).setHasContent();
             }
 
-            if (listMarkerBox.isListMarkerOutside())
+            if (run.isListMarkerOutside())
                 m_outsideListMarkers.append(index);
 
             auto atomicInlineLevelBox = InlineLevelBox::createAtomicInlineLevelBox(listMarkerBox, style, logicalLeft, formattingContext().geometryForBox(listMarkerBox).borderBoxWidth());
@@ -706,9 +706,8 @@ void LineBoxBuilder::adjustOutsideListMarkersPosition(LineBox& lineBox)
     auto rootInlineBoxOffsetFromContentBoxOrIntrusiveFloat = lineBoxOffset + rootInlineBoxLogicalLeft;
     for (auto listMarkerBoxIndex : m_outsideListMarkers) {
         auto& listMarkerRun = lineContent().runs[listMarkerBoxIndex];
-        ASSERT(listMarkerRun.isListMarker());
+        ASSERT(listMarkerRun.isListMarkerOutside());
         auto& listMarkerBox = downcast<ElementBox>(listMarkerRun.layoutBox());
-        ASSERT(listMarkerBox.isListMarkerOutside());
         auto& listMarkerInlineLevelBox = lineBox.inlineLevelBoxFor(listMarkerRun);
         // Move it to the logical left of the line box (from the logical left of the root inline box).
         auto listMarkerInitialOffsetFromRootInlineBox = listMarkerInlineLevelBox.logicalLeft() - rootInlineBoxOffsetFromContentBoxOrIntrusiveFloat;

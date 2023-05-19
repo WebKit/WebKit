@@ -186,7 +186,7 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& current, const Inli
         return endsWithSoftWrapOpportunity(currentInlineTextItem, nextInlineTextItem);
     }
     if (current.layoutBox().isListMarkerBox() || next.layoutBox().isListMarkerBox())
-        return false;
+        return true;
     if (current.isBox() || next.isBox()) {
         // [text][inline box start][inline box end][inline box] (text<span></span><img>) : there's a soft wrap opportunity between the [text] and [img].
         // The line breaking behavior of a replaced element or other atomic inline is equivalent to an ideographic character.
@@ -1174,7 +1174,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
     // While the floats are not considered to be on the line, they make the line contentful for line breaking.
     auto [adjustedLineForCandidateContent, candidateContentIsConstrainedByFloat] = lineBoxForCandidateInlineContent(lineCandidate);
     auto availableWidthForCandidateContent = availableWidth(inlineContent, m_line, adjustedLineForCandidateContent.width());
-    auto lineIsConsideredContentful = m_line.hasContent() || m_lineIsConstrainedByFloat || candidateContentIsConstrainedByFloat;
+    auto lineIsConsideredContentful = m_line.hasContentOrListMarker() || m_lineIsConstrainedByFloat || candidateContentIsConstrainedByFloat;
     auto lineStatus = InlineContentBreaker::LineStatus {
         m_line.contentLogicalRight(),
         availableWidthForCandidateContent,
@@ -1194,7 +1194,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
             // We are keeping this content on the line but we need to check if we could have wrapped here
             // in order to be able to revert back to this position if needed.
             // Let's just ignore cases like collapsed leading whitespace for now.
-            if (lineCandidate.inlineContent.hasTrailingSoftWrapOpportunity() && m_line.hasContent()) {
+            if (lineCandidate.inlineContent.hasTrailingSoftWrapOpportunity() && m_line.hasContentOrListMarker()) {
                 auto& trailingRun = candidateRuns.last();
                 auto& trailingInlineItem = trailingRun.inlineItem;
 
