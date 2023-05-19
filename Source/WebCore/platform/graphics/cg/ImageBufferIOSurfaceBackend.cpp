@@ -196,11 +196,11 @@ RefPtr<NativeImage> ImageBufferIOSurfaceBackend::sinkIntoNativeImage()
     return NativeImage::create(IOSurface::sinkIntoImage(WTFMove(m_surface), WTFMove(m_platformContext)));
 }
 
-RefPtr<PixelBuffer> ImageBufferIOSurfaceBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator)
+void ImageBufferIOSurfaceBackend::getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination)
 {
     const_cast<ImageBufferIOSurfaceBackend*>(this)->prepareForExternalRead();
     IOSurface::Locker lock(*m_surface);
-    return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, lock.surfaceBaseAddress(), allocator);
+    ImageBufferBackend::getPixelBuffer(srcRect, lock.surfaceBaseAddress(), destination);
 }
 
 void ImageBufferIOSurfaceBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)

@@ -72,7 +72,7 @@ private:
     WebCore::VolatilityState volatilityState() const final;
     void setVolatilityState(WebCore::VolatilityState) final;
     void transferToNewContext(const WebCore::ImageBufferCreationContext&) final;
-    RefPtr<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat&, const WebCore::IntRect&, const WebCore::ImageBufferAllocator&) final;
+    void getPixelBuffer(const WebCore::IntRect&, WebCore::PixelBuffer&) final;
     void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect&, const WebCore::IntPoint&, WebCore::AlphaPremultiplication) final;
 
     std::unique_ptr<WebCore::IOSurface> m_surface;

@@ -65,7 +65,7 @@ protected:
     RefPtr<NativeImage> copyNativeImageForDrawing(GraphicsContext&) override;
     RefPtr<NativeImage> sinkIntoNativeImage() override;
 
-    RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&, const ImageBufferAllocator&) override;
+    void getPixelBuffer(const IntRect&, PixelBuffer&) override;
     void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
 
     bool isInUse() const override;
