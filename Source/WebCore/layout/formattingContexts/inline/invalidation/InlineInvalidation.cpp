@@ -369,7 +369,7 @@ bool InlineInvalidation::textWillBeRemoved(const InlineTextBox& damagedInlineTex
         return false;
 
     auto damagedLine = leadingInlineItemPositionByDamagedBox({ damagedInlineTextBox, offset.value_or(0), DamagedContent::Type::Removal }, m_inlineItems, displayBoxes());
-    updateInlineDamage(!damagedLine ? InlineDamage::Type::Invalid : InlineDamage::Type::NeedsContentUpdateAndLineLayout, damagedLine, ShouldApplyRangeLayout::Yes);
+    updateInlineDamage(!damagedLine ? InlineDamage::Type::Invalid : InlineDamage::Type::NeedsContentUpdateAndLineLayout, damagedLine, ShouldApplyRangeLayout::No);
     return damagedLine.has_value();
 }
 
