@@ -28,6 +28,7 @@
 
 #if USE(GBM)
 #include "AcceleratedBackingStoreDMABufMessages.h"
+#include "AcceleratedSurfaceDMABufMessages.h"
 #include "ShareableBitmap.h"
 #include "WebPage.h"
 #include "WebProcess.h"
@@ -241,12 +242,16 @@ void AcceleratedSurfaceDMABuf::RenderTargetSHMImage::swap()
 
 void AcceleratedSurfaceDMABuf::didCreateGLContext()
 {
+    WebProcess::singleton().parentProcessConnection()->addMessageReceiver(RunLoop::current(), *this, Messages::AcceleratedSurfaceDMABuf::messageReceiverName(), m_webPage.identifier().toUInt64());
+
     glGenFramebuffers(1, &m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 }
 
 void AcceleratedSurfaceDMABuf::willDestroyGLContext()
 {
+    WebProcess::singleton().parentProcessConnection()->removeMessageReceiver(Messages::AcceleratedSurfaceDMABuf::messageReceiverName(), m_webPage.identifier().toUInt64());
+
     m_target = nullptr;
 
     if (m_fbo) {
@@ -287,18 +292,14 @@ void AcceleratedSurfaceDMABuf::didRenderFrame()
     glFlush();
 
     m_target->didRenderFrame();
-    WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::AcceleratedBackingStoreDMABuf::Frame(), [this, weakThis = WeakPtr { *this }, runLoop = Ref { RunLoop::current() }]() mutable {
-        // FIXME: it would be great if there was an option to send replies to the current run loop directly.
-        runLoop->dispatch([this, weakThis = WTFMove(weakThis)] {
-            if (!weakThis)
-                return;
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Frame(), m_webPage.identifier());
+}
 
-            if (m_target)
-                m_target->swap();
-
-            m_client.frameComplete();
-        });
-    }, m_webPage.identifier());
+void AcceleratedSurfaceDMABuf::frameDone()
+{
+    if (m_target)
+        m_target->swap();
+    m_client.frameComplete();
 }
 
 } // namespace WebKit

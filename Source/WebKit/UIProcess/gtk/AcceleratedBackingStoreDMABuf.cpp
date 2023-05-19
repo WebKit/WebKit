@@ -28,6 +28,7 @@
 
 #if USE(GBM)
 #include "AcceleratedBackingStoreDMABufMessages.h"
+#include "AcceleratedSurfaceDMABufMessages.h"
 #include "LayerTreeContext.h"
 #include "ShareableBitmap.h"
 #include "WebPageProxy.h"
@@ -354,8 +355,13 @@ std::unique_ptr<AcceleratedBackingStoreDMABuf::RenderSource> AcceleratedBackingS
     return makeUnique<Texture>(m_gdkGLContext.get(), m_surface.backFD, m_surface.frontFD, m_surface.size, m_surface.format, m_surface.offset, m_surface.stride, m_surface.modifier, m_webPage.deviceScaleFactor());
 }
 
-void AcceleratedBackingStoreDMABuf::frame(CompletionHandler<void()>&& completionHandler)
+void AcceleratedBackingStoreDMABuf::frame()
 {
+    ASSERT(!m_frameCompletionHandler);
+    m_frameCompletionHandler = [this] {
+        m_webPage.process().send(Messages::AcceleratedSurfaceDMABuf::FrameDone(), m_surface.id);
+    };
+
     if (m_pendingSource)
         m_committedSource = WTFMove(m_pendingSource);
 
@@ -365,13 +371,17 @@ void AcceleratedBackingStoreDMABuf::frame(CompletionHandler<void()>&& completion
         std::swap(m_surface.backFD, m_surface.frontFD);
 
     if (!m_committedSource || !m_committedSource->swap()) {
-        completionHandler();
+        frameDone();
         return;
     }
 
-    ASSERT(!m_frameCompletionHandler);
-    m_frameCompletionHandler = WTFMove(completionHandler);
     gtk_widget_queue_draw(m_webPage.viewWidget());
+}
+
+void AcceleratedBackingStoreDMABuf::frameDone()
+{
+    if (auto completionHandler = std::exchange(m_frameCompletionHandler, nullptr))
+        completionHandler();
 }
 
 void AcceleratedBackingStoreDMABuf::realize()
@@ -440,8 +450,7 @@ void AcceleratedBackingStoreDMABuf::update(const LayerTreeContext& context)
         return;
 
     if (m_surface.id) {
-        if (auto completionHandler = std::exchange(m_frameCompletionHandler, nullptr))
-            completionHandler();
+        frameDone();
         m_webPage.process().removeMessageReceiver(Messages::AcceleratedBackingStoreDMABuf::messageReceiverName(), m_surface.id);
     }
 
@@ -457,8 +466,7 @@ void AcceleratedBackingStoreDMABuf::snapshot(GtkSnapshot* gtkSnapshot)
         return;
 
     m_committedSource->snapshot(gtkSnapshot);
-    if (auto completionHandler = std::exchange(m_frameCompletionHandler, nullptr))
-        completionHandler();
+    frameDone();
 }
 #else
 bool AcceleratedBackingStoreDMABuf::paint(cairo_t* cr, const WebCore::IntRect& clipRect)
@@ -467,8 +475,7 @@ bool AcceleratedBackingStoreDMABuf::paint(cairo_t* cr, const WebCore::IntRect& c
         return false;
 
     m_committedSource->paint(m_webPage.viewWidget(), cr, clipRect);
-    if (auto completionHandler = std::exchange(m_frameCompletionHandler, nullptr))
-        completionHandler();
+    frameDone();
 
     return true;
 }
