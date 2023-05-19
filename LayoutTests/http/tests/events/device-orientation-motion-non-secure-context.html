@@ -16,7 +16,7 @@ internals.setConsoleMessageListener((message) => {
 
 function runDeviceMotionTest()
 {
-    if (!window.DeviceMotionEvent) {
+    if (!window.DeviceMotionEvent || !DeviceMotionEvent.requestPermission) {
         console.log("Device Motion API is not supported");
         finishJSTest();
         return;
@@ -34,7 +34,7 @@ function runDeviceMotionTest()
 
 function runDeviceOrientationTest()
 {
-    if (!window.DeviceOrientationEvent) {
+    if (!window.DeviceOrientationEvent || !DeviceOrientationEvent.requestPermission) {
         console.log("Device Orientation API is not supported");
         runDeviceMotionTest();
         return;

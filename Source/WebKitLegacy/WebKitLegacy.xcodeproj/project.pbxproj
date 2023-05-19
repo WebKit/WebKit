@@ -130,8 +130,6 @@
 		51FDC4D30B0AF5C100F84EB3 /* WebHistoryItemPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FDC4D20B0AF5C100F84EB3 /* WebHistoryItemPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5241ADF50B1BC48A004012BD /* WebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 5241ADF30B1BC48A004012BD /* WebCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5241ADF60B1BC48A004012BD /* WebCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5241ADF40B1BC48A004012BD /* WebCache.mm */; };
-		598AD91A1201CEC900ABAE4E /* WebDeviceOrientationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 598AD9191201CEC900ABAE4E /* WebDeviceOrientationClient.h */; };
-		598AD91E1201CECF00ABAE4E /* WebDeviceOrientationClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 598AD91D1201CECF00ABAE4E /* WebDeviceOrientationClient.mm */; };
 		598AD9201201CF0700ABAE4E /* WebDeviceOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = 598AD91F1201CF0700ABAE4E /* WebDeviceOrientation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		598AD9221201CF1000ABAE4E /* WebDeviceOrientation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 598AD9211201CF1000ABAE4E /* WebDeviceOrientation.mm */; };
 		598AD9241201CF1900ABAE4E /* WebDeviceOrientationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 598AD9231201CF1900ABAE4E /* WebDeviceOrientationInternal.h */; };
@@ -839,8 +837,6 @@
 		51FDC4D20B0AF5C100F84EB3 /* WebHistoryItemPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryItemPrivate.h; sourceTree = "<group>"; };
 		5241ADF30B1BC48A004012BD /* WebCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCache.h; sourceTree = "<group>"; };
 		5241ADF40B1BC48A004012BD /* WebCache.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCache.mm; sourceTree = "<group>"; };
-		598AD9191201CEC900ABAE4E /* WebDeviceOrientationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationClient.h; sourceTree = "<group>"; };
-		598AD91D1201CECF00ABAE4E /* WebDeviceOrientationClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDeviceOrientationClient.mm; sourceTree = "<group>"; };
 		598AD91F1201CF0700ABAE4E /* WebDeviceOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientation.h; sourceTree = "<group>"; };
 		598AD9211201CF1000ABAE4E /* WebDeviceOrientation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDeviceOrientation.mm; sourceTree = "<group>"; };
 		598AD9231201CF1900ABAE4E /* WebDeviceOrientationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationInternal.h; sourceTree = "<group>"; };
@@ -2526,8 +2522,6 @@
 				065AD5A10B0C32C7005A2B1D /* WebContextMenuClient.h */,
 				065AD5A20B0C32C7005A2B1D /* WebContextMenuClient.mm */,
 				E13E782B1E5A7365001849D1 /* WebCreateFragmentInternal.h */,
-				598AD9191201CEC900ABAE4E /* WebDeviceOrientationClient.h */,
-				598AD91D1201CECF00ABAE4E /* WebDeviceOrientationClient.mm */,
 				A70936AD0B5608DC00CDB48E /* WebDragClient.h */,
 				A70936AE0B5608DC00CDB48E /* WebDragClient.mm */,
 				4BF99F8E0AE050BC00815C2B /* WebEditorClient.h */,
@@ -2897,7 +2891,6 @@
 				A10C1D1E18202F9C0036883A /* WebDefaultUIKitDelegate.h in Headers */,
 				BC542C420FD7766F00D8AB5D /* WebDelegateImplementationCaching.h in Headers */,
 				598AD9201201CF0700ABAE4E /* WebDeviceOrientation.h in Headers */,
-				598AD91A1201CEC900ABAE4E /* WebDeviceOrientationClient.h in Headers */,
 				598AD9241201CF1900ABAE4E /* WebDeviceOrientationInternal.h in Headers */,
 				598ADA461202275000ABAE4E /* WebDeviceOrientationProvider.h in Headers */,
 				598AD9261201CF2500ABAE4E /* WebDeviceOrientationProviderMock.h in Headers */,
@@ -3436,7 +3429,6 @@
 				A10C1D1F18202F9C0036883A /* WebDefaultUIKitDelegate.m in Sources */,
 				BC542C430FD7766F00D8AB5D /* WebDelegateImplementationCaching.mm in Sources */,
 				598AD9221201CF1000ABAE4E /* WebDeviceOrientation.mm in Sources */,
-				598AD91E1201CECF00ABAE4E /* WebDeviceOrientationClient.mm in Sources */,
 				598AD9281201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm in Sources */,
 				65FFB7FD0AD0B7D30048CD05 /* WebDocumentLoaderMac.mm in Sources */,
 				E15663190FB61C1F00C199CA /* WebDownload.mm in Sources */,

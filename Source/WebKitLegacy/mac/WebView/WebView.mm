@@ -56,7 +56,6 @@
 #import "WebDefaultPolicyDelegate.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebDelegateImplementationCaching.h"
-#import "WebDeviceOrientationClient.h"
 #import "WebDeviceOrientationProvider.h"
 #import "WebDocument.h"
 #import "WebDocumentInternal.h"
@@ -1556,9 +1555,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
 #if ENABLE(NOTIFICATIONS)
     WebCore::provideNotification(_private->page, new WebNotificationClient(self));
-#endif
-#if ENABLE(DEVICE_ORIENTATION) && !PLATFORM(IOS_FAMILY)
-    WebCore::provideDeviceOrientationTo(*_private->page, *new WebDeviceOrientationClient(self));
 #endif
 #if ENABLE(ENCRYPTED_MEDIA)
     WebCore::provideMediaKeySystemTo(*_private->page, *new WebMediaKeySystemClient());
