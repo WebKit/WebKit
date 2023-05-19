@@ -1,0 +1,19 @@
+
+RUN(source = new ManagedMediaSource())
+RUN(video.src = URL.createObjectURL(source))
+RUN(video.disableRemotePlayback = true)
+RUN(sourceOpenAllowed = true)
+EVENT(sourceopen)
+EVENT(sourceopen)
+RUN(sourceOpenAllowed = false)
+RUN(video.disableRemotePlayback = false)
+RUN(source = new ManagedMediaSource())
+RUN(video.src = URL.createObjectURL(source))
+RUN(sourceElement = document.createElement("source"))
+RUN(sourceElement.src = "http://foo.com/playlist.m3u8")
+RUN(sourceElement.type = "application/vnd.apple.mpegurl")
+RUN(video.appendChild(sourceElement))
+RUN(sourceOpenAllowed = true)
+EVENT(sourceopen)
+END OF TEST
+

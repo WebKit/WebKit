@@ -3926,6 +3926,21 @@ ManagedMediaSourceLowThreshold:
     WebCore:
       default: 10
 
+ManagedMediaSourceNeedsAirPlay:
+  type: bool
+  status: stable
+  category: media
+  humanReadableName: "Managed Media Source Requires AirPlay source"
+  humanReadableDescription: "Managed Media Source Requires AirPlay source"
+  condition: ENABLE(MANAGED_MEDIA_SOURCE) && ENABLE(MEDIA_SOURCE) && ENABLE(WIRELESS_PLAYBACK_TARGET)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: WebKit::defaultManagedMediaSourceNeedsAirPlay()
+    WebCore:
+      default: false
+
 MarkedTextInputEnabled:
   type: bool
   status: embedder

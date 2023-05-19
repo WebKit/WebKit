@@ -1,7 +1,7 @@
 <!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true MediaSourceEnabled=true ] -->
 <html>
 <head>
-    <title>managedmediasource-streaming</title>
+    <title>managedmediasource-airplay</title>
     <script src="../../media/media-source/media-source-loader.js"></script>
     <script src="../../media/video-test.js"></script>
     <script src="../../media/utilities.js"></script>
@@ -9,7 +9,8 @@
     var loader;
     var source;
     var sourceBuffer;
-    var ended = false;
+    var sourceElement;
+    var sourceOpenAllowed = false;
 
     function loaderPromise(loader) {
         return new Promise((resolve, reject) => {
@@ -32,35 +33,39 @@
 
             waitFor(video, 'error').then(failTest);
 
-            video.disableRemotePlayback = true;
-            source = new ManagedMediaSource();
+            run('source = new ManagedMediaSource()');
             run('video.src = URL.createObjectURL(source)');
 
-            await Promise.all([ waitFor(source, 'sourceopen'), waitFor(source, 'startstreaming')]);
-
-            run('sourceBuffer = source.addSourceBuffer(loader.type())');
-
-            run('sourceBuffer.appendBuffer(loader.initSegment())');
-            await waitFor(sourceBuffer, 'update');
-            run('source.duration = 0.1');
-            await waitFor(video, 'durationchange');
-
-            // The endstreaming event shouldn't be fired even if we have appended data past the element's duration
-            // unless the mediasource is ended.
-            waitFor(source, 'endstreaming').then(() => {
-                if (!ended)
-                    failTest();
-                else
-                    endTest();
+            waitFor(source, 'sourceopen').then(() => {
+                if (!sourceOpenAllowed)
+                    failTest()
             });
 
-            do {
-                sourceBuffer.appendBuffer(loader.mediaSegment(0));
-                await once(sourceBuffer, 'update');
-                sourceBuffer.timestampOffset = sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1);
-            } while (source.duration <= 5);
-            run('ended = true');
-            run('source.endOfStream()');
+            await sleepFor(100);
+            run('video.disableRemotePlayback = true');
+            run('sourceOpenAllowed = true');
+
+            await waitFor(source, 'sourceopen');
+            run('sourceOpenAllowed = false');
+
+            run('video.disableRemotePlayback = false');
+
+            run('source = new ManagedMediaSource()');
+            waitFor(source, 'sourceopen').then(() => {
+                if (!sourceOpenAllowed)
+                    failTest()
+                endTest();
+            });
+
+            run('video.src = URL.createObjectURL(source)');
+            await sleepFor(100);
+
+            run('sourceElement = document.createElement("source")');
+            run('sourceElement.src = "http://foo.com/playlist.m3u8"');
+            run('sourceElement.type = "application/vnd.apple.mpegurl"');
+            run('video.appendChild(sourceElement)');
+            run('sourceOpenAllowed = true');
+
         } catch (e) {
             failTest(`Caught exception: "${e}"`);
         }

@@ -93,6 +93,7 @@ webkit.org/b/231635 [ Release ] editing/selection/ios/scroll-to-reveal-selection
 media/picture-in-picture [ Pass ]
 media/remove-video-element-in-pip-from-document.html [ Pass ]
 
+media/media-source/media-managedmse-airplay.html [ Fail ] # This test must fail on all platform but iPhone.
 http/tests/media/media-source/mediasource-rvfc.html [ Pass ]
 
 webkit.org/b/228622 [ Debug ] accessibility/ios-simulator/scroll-in-overflow-div.html [ Crash ]

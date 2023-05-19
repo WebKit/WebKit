@@ -22,6 +22,7 @@
       function loadVideo()
       {
           video = document.getElementById('test-video');
+          video.disableRemotePlayback = true;
           request = new XMLHttpRequest();
           request.responseType = 'arraybuffer';
           request.open('GET', isMP4Supported() ? 'test-mse.mp4' : isWebMVP9Supported() ? 'test-mse.webm' : 'test-mse-audio.webm', true);

@@ -78,6 +78,9 @@ bool defaultMediaSourceEnabled();
 
 #if ENABLE(MANAGED_MEDIA_SOURCE) && ENABLE(MEDIA_SOURCE)
 bool defaultManagedMediaSourceEnabled();
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+bool defaultManagedMediaSourceNeedsAirPlay();
+#endif
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)

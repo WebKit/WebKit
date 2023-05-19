@@ -450,7 +450,10 @@ public:
     void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) override;
     void setShouldPlayToPlaybackTarget(bool) override;
     void playbackTargetPickerWasDismissed() override;
+    bool hasWirelessPlaybackTargetAlternative() const;
+    bool isWirelessPlaybackTargetDisabled() const;
 #endif
+
     bool isPlayingToWirelessPlaybackTarget() const override { return m_isPlayingToWirelessTarget; };
     void setIsPlayingToWirelessTarget(bool);
     bool webkitCurrentPlaybackTargetIsWireless() const;
@@ -507,7 +510,7 @@ public:
 #endif
 
     using HTMLMediaElementEnums::InvalidURLAction;
-    bool isSafeToLoadURL(const URL&, InvalidURLAction);
+    bool isSafeToLoadURL(const URL&, InvalidURLAction, bool shouldLog = true) const;
 
     const String& mediaGroup() const;
     void setMediaGroup(const String&);

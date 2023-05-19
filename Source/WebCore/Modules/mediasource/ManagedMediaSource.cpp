@@ -167,5 +167,17 @@ void ManagedMediaSource::streamingTimerFired()
     notifyElementUpdateMediaState();
 }
 
+bool ManagedMediaSource::isOpen() const
+{
+#if !ENABLE(WIRELESS_PLAYBACK_TARGET)
+    return MediaSource::isOpen();
+#else
+    return MediaSource::isOpen()
+        && (!mediaElement()->document().settings().managedMediaSourceNeedsAirPlay()
+            || mediaElement()->isWirelessPlaybackTargetDisabled()
+            || mediaElement()->hasWirelessPlaybackTargetAlternative());
+#endif
+}
+
 }
 #endif
