@@ -1,0 +1,76 @@
+TD and box sizing
+
+TD defaults to box-sizing: content-box. How does box-sizing affect final TD size?
+Auto table layout
+Percent cells ignore box-sizing, it is always border-box.
+Fixed cells respect box-sizing.
+Fixed table layout
+Percent cells respect box sizing when computing cell width from assignable width.
+Percent cells ignore box sizing when computing grid max from cell width.
+Table-layout: auto
+
+TD width:%
+
+content-box, C0:50%/100 C1:Auto Percent gets resolved to compute grid max size. C0 max_width is max_width + 2 padding = 100 + 2*20 = 140 Table width is 1/50%*140 + 3*padding = 280+30 = 310
+50%/100	Auto
+border-box, C0:50%/100 C1:Auto Same test as above, but box-sizing is border-box.
+50%/100	Auto
+content-box, C0:80%/100 C1:Auto Percent gets resolved to compute final cell size from assignable width. C0 border box width is 500 * 80%
+80%/100	Auto
+border-box, C0:80%/100 C1:Auto Same as above, but border-box
+80%/100	Auto
+TD width:fixed
+
+content-box, C0:100/Auto C1:100/Auto Tests whether box-sizing affects how percentages are computed. C0 max_width is max_width + 2 padding = 100 + 2*20 = 140 Table width is 1/50%*140 + 3*padding = 280+30 = 310
+100	100
+border-box, C0:100/Auto C1:100/Auto Same test as above, but box-sizing is border-box.
+100	100
+TD height: fixed
+
+content-box, C0 height:100px
+100 height
+border-box, C0 height:100px
+100 height
+Table-layout: fixed
+
+TD width:%
+
+content-box, C0:50%/100 C1:Auto Percent gets resolved to compute grid max size. C0 max_width is max_width + 2 padding = 100 + 2*20 = 140 Table width is 1/50%*140 + 3*padding = 280+30 = 310
+50%/100	Auto
+border-box, C0:50%/100 C1:Auto Same test as above, but box-sizing is border-box.
+50%/100	Auto
+content-box, C0:60%/100 C1:Auto Percent gets resolved to compute final cell size from assignable width. Assignable width is 530 - 3*10 = 500 C0 content box width is 500 * 60% + 40px padding = 340 C1 is 500 - 340 = 160
+Legacy/Edge treat %ge TD as border box, and end up with 300px
+60%/100	Auto
+border-box, C0:60%/100 C1:Auto Same as above, but border-box
+80%/100	Auto
+TD width:fixed
+
+content-box, C0:100/Auto C1:100/Auto Tests whether box-sizing affects how percentages are computed. C0 max_width is max_width + 2 padding = 100 + 2*20 = 140 Table width is 1/50%*140 + 3*padding = 280+30 = 310
+100	100
+border-box, C0:100/Auto C1:100/Auto Same test as above, but box-sizing is border-box.
+100	100
+
+PASS table 1
+PASS table 2
+PASS table 3
+PASS table 4
+PASS table 5
+PASS table 6
+PASS table 7
+PASS table 8
+PASS table 9
+PASS table 10
+FAIL table 11 assert_equals:
+<table style="table-layout:fixed;width:530px" data-expected-width="530">
+  <tbody><tr>
+    <td style="width:60%;box-sizing:content-box" data-expected-width="340">
+      <div style="width:100px">60%/100</div></td>
+    <td data-expected-width="160">Auto</td>
+  </tr>
+</tbody></table>
+width expected 340 but got 300
+PASS table 12
+PASS table 13
+PASS table 14
+

@@ -1,0 +1,37 @@
+
+FAIL tbody 1 assert_equals:
+<tbody class="outline" data-expected-height="100">
+    <tr>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
+height expected 100 but got 120
+FAIL tbody 2 assert_equals:
+<tbody class="outline" data-expected-height="150">
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr></tr>
+    <tr></tr>
+  </tbody>
+height expected 150 but got 160
+FAIL tbody 3 assert_equals:
+<tbody class="outline" data-expected-height="100">
+    <tr>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
+height expected 100 but got 110
+FAIL tfoot tr 4 assert_equals:
+<tr style="outline: 2px dashed black" data-expected-width="210" data-expected-height="100">
+      <td></td>
+      <td></td>
+    </tr>
+width expected 210 but got 230
+

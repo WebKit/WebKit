@@ -1,0 +1,101 @@
+Compute column computed widths from assignable table width
+
+Test design
+
+All examples have border-spacing:8, td.padding:0
+Table css sizing
+
+Table: 50px; C0:100/50/100 C1:100/50/100 When table.css_width is < columns.css_width, column.min_width is lower limit.
+5050	5025
+Table: 300px; C0:100/100/200 C1:100/90/115 When table.css_width is > columns.css_width , how is the conflict resolved? table.css_width wins
+100100	9025
+Content sizings: min|max|fit|fill-available
+
+table width:min-content; C0:Auto/50/100 C1:100/50/75 C2:20%/50/75
+Edge treats as max-content.
+auto	fixed	percent
+table width:max-content; C0:Auto/50/100 C1:100/50/75 C2:20%/50/75 Each column gets maximum width. C0: 100 C1:100 C2: 75 max-content does not allow for assignable size to be influenced by inverse percent. Table size is 275 + 32 = 307 If percent influenced table size, table size would have been 407
+5050	5025	5025
+table width:fit-content; C0:Auto/50/100 C1:100/50/75 C2:20%/50/75 Percent column determines assignable table width, which gets distributed to all columns. Assignable width from %: 20%=75, 100%=375
+auto	fixed	percent
+table width:-webkit-fill-available; C0:Auto/50/100 C1:100/50/75 C2:20%/50/75
+Edge treats as fit-content
+auto	fixed	percent
+Auto columns distribution
+
+Assi:300px C0: Auto/75/75 C1:Auto/25/25 Non-empty auto cells get surplus width proportionally to their max width. Guess3: 100. Guess4: 300, diff 200, fixed priority. C0: 75 + 75/100*200 = 225 C1: 25 + 25/100*200 = 75
+75	25
+Assignable:300px C0: Auto/75/75 C1:Auto/13/25 C2:Auto/0/0 Empty cells get nothing if there are non-empty auto cells. Guess3: 100, Guess4: 300; diff 200, fixed priority. C0: 75 + 75/100*200 = 225 C1: 25 + 25/100*200 = 75; C2: 0
+75	1312	
+Guess 0: Auto(min), Fixed(min), Percentage(min) to Guess 1.
+
+Assi: 1px; C0:Auto/50/100 C1:100/50/100 C2:50%/50/100 All columns get minimum width. Guess0: 150 C0: 50, C1:50, C2: 50
+5050	5050	5050
+Assi: 160px; C0:Auto/50/100 C1:100/50/100 C2:50%/50/100 %ge column grows. Guess0: 150, Guess1: 180; diff 10. C0: 50, C1:50, C2: 50 + 10 * 10/10 = 60
+5050	5050	5050
+Assi: 210px; C0:Auto/50/100 C1:100/50/100 C2:30%/50/100 C3:30%/50/100 2 %ge columns grow evenly. Guess 0: 200, Guess 1: 240, diff 10 C2: 50 + 10 * 70/140 C3: 50 + 10 * 70/140
+5050	5050	5050	5050
+Assi: 220px; C0:Auto/50/100 C1:100/50/100 C2:25%/50/100 C3:40%50/100 %ge columns grow in proportion to increase from previous guess. Guess 0: 200. C2[G1] = .25*220 = 55 C3[G1] = .4 * 220 = 88 Guess 1: 100 + 55 + 88 = 243 diff = 220 - 200 = 20. C2 grew 5, C3 grew 38, total grew 43. C2: 50 + 20 *5/43 = 52.32; C3: 50 + 20 * 38 / 43 = 67.67
+50 50	5050	5050	5050
+Guess 1 to Guess 2: Auto(min), Percentage(%max) to Fixed(min => max)
+
+These tests are non-intuitive to evaluate. When table size increases betwee Guess 1 and 2, although the standard says that fixed columns are growing, %ge columns grow too because their max width depends on table width.
+Assi:166, C0:Auto/50/100 C1:100/50/100 C2:40%/50/100 Edge example, Guess 1 %ge cell has grown to the max. C2: grows to .4*165 = 66.4, table is 166.4+32 = 198.4
+5050	5050	5050
+Assi:216, C0:Auto/50/100 C1:100/50/100 C2:40%/50 %ge cell grows to the max, the rest goes to fixed. Guess 1 size is 50 + 50 + (.4*216=>86.4) = 186.4 Guess 2 size is 50 + 100 + 86.4 = 236 Assi - Guess1 = 29.6; C2 = 50 + 29.6 * 50/50 = 79.6
+5050	5050	5050
+Guess 2 to Guess 3: Percentage(%max), Fixed(max), Auto(min=>max)
+
+Assi:300 Guess 2 size is 50 + 100 + .4*300 = 270 Guess 3 size is 100 + 100 + 120 = 320 Assi - Guess2 = 30, C0 = 50 + 30 = 80
+5050	5050	5050
+Guess3 to Guess4, Auto(max), Percentage(%max), Fixed(max) grow first available Auto|Fixed|Percent
+
+Assi: 500, C0:Auto, C1: Fixed, C2: Percent Guess 3 is 100 + 100 + .4 * 500 = 400 C0 gets the 100
+5050	5050	5050
+Assi: 500, C0:Fixed, C1: Fixed, C2: Percent Guess 3 is 100 + 100 + .4 * 500 = 400, 100 to be redistributed Fixed cells, C0 and C1 get 50 each.
+5050	5050	5050
+Assi: 700, C0:10%/40, C1: 20%/50, C2: 40%/50 Percentage cells only. Compute columns as %ge of total width: C0: 700*10/70, C1: 700*20/70 C2: 700*40/70
+40	50	50
+Assi: 600, C0:10%/40, C1: 20%/50, C2: 40%/50, C3: 100%/50 Percentage cells only. Over 100% columns get their percentage truncated.
+40	50	50	50
+C0:20%/60, C1:Auto/50. Tests table max width from single cell.
+60	50
+C0:10%/70, C1:Auto/50. Table limited to 1px. Tests that single cell specifies max width, not min width.
+60	50
+C0:10%/70 border 10px, C1:Auto/50. Cell border padding do not affect max width.
+60	50
+
+PASS table 1
+PASS table 2
+PASS table 3
+PASS table 4
+FAIL table 5 assert_equals:
+<table style="width:fit-content" data-expected-width="407">
+  <tbody><tr>
+    <td data-expected-width="200">
+      <div style="width:50px">au</div><div style="width:50px">to</div></td>
+    <td style="width:100px" data-expected-width="100">
+      <div style="width:50px">fix</div><div style="width:25px">ed</div></td>
+    <td style="width:20%" data-expected-width="75">
+      <div style="width:50px">per</div><div style="width:25px">cent</div></td>
+  </tr>
+</tbody></table>
+width expected 407 but got 307
+PASS table 6
+PASS table 7
+PASS table 8
+PASS table 9
+PASS table 10
+PASS table 11
+PASS table 12
+PASS table 13
+PASS table 14
+PASS table 15
+PASS table 16
+PASS table 17
+PASS table 18
+PASS table 19
+PASS table 20
+PASS table 21
+PASS table 22
+

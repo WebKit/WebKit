@@ -1,0 +1,11 @@
+Width Distribution
+
+"Distribution Algorithm"
+
+Tests the first step that all cells get their min content guess which is that of their min content Spec Text
+
+
+PASS The box should be 300px since that is the size of the content
+PASS The first cell is 100px wide due to its content's size
+PASS The first cell is 200px wide due to its content's size
+

@@ -1,0 +1,35 @@
+HTML5 Table Formatting algorithm (row/column grid computation)
+
+Verifies how browsers deal with implicit tracks from which no cell does originate
+
+This should be a 100px by 100px blue square:
+The table grid is 1x1, so the table is not empty and follows step 3A of the table layout algorithm (which adds anonymous cell boxes)
+
+The consecutive tracks were merged together because they are not all defined explicitely by a table-column or a table-row, and share the same set of cells
+
+Two 25px border-spacing causes the addition of 50px (track is 50x50)
+
+This should be a 100px by 100px blue square:
+The table grid is 1x1, so the table is not empty and follows step 3A of the table layout algorithm (which adds anonymous cell boxes)
+
+The consecutive tracks were merged together because they are not all defined explicitely by a table-column or a table-row, and share the same set of cells
+
+Two 25px border-spacing causes the addition of 50px (track is 50x50)
+
+This should be a 75px by 75px blue square:
+The table grid is 2x2, so the table is not empty and follows step 3A of the table layout algorithm (which adds anonymous cell boxes)
+
+The consecutive tracks were not merged together because they are all defined explicitely by a table-column or a table-row
+
+Three 25px border-spacing causes the addition of 75px (tracks are 0x0)
+
+This should be a 100px by 100px blue square:
+The table grid is 2x2, so the table is not empty and follows step 3A of the table layout algorithm (which adds anonymous cell boxes)
+
+The consecutive tracks were not merged together because they are all defined explicitely by a table-column or a table-row
+
+Three 25px border-spacing causes the addition of 75px (tracks are 12.5x12.5)
+
+
+PASS Control test for table-cell padding and border-spacing, etc (width)
+

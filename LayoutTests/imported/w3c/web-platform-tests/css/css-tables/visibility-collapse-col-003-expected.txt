@@ -1,0 +1,16 @@
+Visibility collapse
+
+Spec
+Setting a column to visibility:collapse changes table width but not height.
+
+row 1	
+row 2	
+row 3	
+Second table is identical to first except right column has been collapsed. Visibility:collapse is applied on col, not colgroup.
+row 1	
+row 2	
+row 3	
+
+PASS col visibility:collapse doesn't change table height
+FAIL col visibility:collapse changes table width assert_equals: col visibility:collapse changes table width expected 116 but got 222
+

@@ -149,6 +149,7 @@
     "web-platform-tests/css/css-shapes/test-plan/index.html": "skip",
     "web-platform-tests/css/css-sizing/aspect-ratio": "import",
     "web-platform-tests/css/css-sizing/contain-intrinsic-size": "import",
+    "web-platform-tests/css/css-tables": "import",
     "web-platform-tests/css/css-text": "import",
     "web-platform-tests/css/css-text/text-transform/math": "import",
     "web-platform-tests/css/css-transforms": "import",

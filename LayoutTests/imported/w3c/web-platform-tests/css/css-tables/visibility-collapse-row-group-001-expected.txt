@@ -1,0 +1,19 @@
+Visibility collapse
+
+Spec
+Collapsing a row group but making its rows visible should still result in a collapsed row group.
+
+row 1	
+row 2	
+row 3	
+When row group is collapsed, visible rows within the row group are still collapsed and therefore invisible.
+row 1	
+row 2	
+row 3	
+
+PASS row group visibility:collapse doesn't change table width
+FAIL row group visibility:collapse changes table height assert_equals: row group visibility:collapse changes table height expected 116 but got 328
+FAIL the first row should be collapsed assert_equals: the first row should be collapsed expected 0 but got 106
+FAIL the second row should be collapsed assert_equals: the second row should be collapsed expected 0 but got 106
+PASS the third row stays the same
+

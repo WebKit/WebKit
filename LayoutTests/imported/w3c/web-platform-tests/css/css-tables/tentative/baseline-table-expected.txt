@@ -1,0 +1,109 @@
+<TABLE> baseline tests
+
+Empty table's baseline is bottom of table's border box.
+
+Xp
+Empty body's baseline is bottom of table's border box.
+
+Xp
+Empty row's baseline is center of the row.
+
+Xp
+First row defines baseline even if empty.
+
+Xp 1,0
+Cell's baseline defined row's baseline only if cell is vertical-align:baseline.
+
+Xp Xp
+Xp Xp
+Table's vertical-align: top.
+
+Xp
+Table's vertical-align: middle.
+
+Xp
+Table's vertical-align: bottom.
+
+Xp
+Table's top/middle/bottom combined.
+
+Xp
+Two rows empty, 1st row has css height.
+
+Xp
+First row empty with css height, 2 row has content,
+
+Xp X
+Empty rowspanned cells should not set baseline. This test might not be per-spec, distribution of empty cells over empty rows differs between browsers.
+
+Xp 		 pX
+Block level table inside inline block does not produce a baseline.
+
+Xp
+Xp Xp   X
+X
+  X
+Anonymous tables should not generate baselines
+
+Xp   > 
+ 
+
+PASS .container 1
+PASS .container 2
+FAIL .container 3 assert_equals:
+<div class="container">
+  Xp<table data-offset-y="25">
+    <tbody>
+      <tr></tr>
+    </tbody>
+  </table>
+</div>
+offsetTop expected 25 but got 10
+FAIL .container 4 assert_equals:
+<div class="container">
+  Xp<table style="font: 12px fixed" data-offset-y="25">
+    <tbody>
+      <tr></tr>
+      <tr><td>1,0</td></tr>
+    </tbody>
+  </table>
+</div>
+offsetTop expected 25 but got 0
+PASS .container 5
+PASS .container 6
+PASS .container 7
+PASS .container 8
+PASS .container 9
+PASS .container 10
+FAIL .container 11 assert_equals:
+<div class="container">
+  Xp<table data-offset-y="25" data-expected-height="50">
+    <tbody><tr style="height:20px"></tr>
+    <tr></tr>
+  </tbody></table>
+</div>
+offsetTop expected 25 but got 0
+FAIL .container 12 assert_equals:
+<div class="container">
+  Xp<table data-offset-y="25" data-expected-height="68">
+    <tbody><tr style="height:20px"></tr>
+    <tr><td style="font-size:10px">X</td></tr>
+  </tbody></table>
+</div>
+offsetTop expected 25 but got 0
+FAIL .container 13 assert_equals:
+<div class="container">
+  Xp<table>
+    <tbody><tr>
+      <td rowspan="2" style="height:80px"></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+    </tr>
+  </tbody></table><div style="display:inline-block" data-offset-y="15">pX</div>
+</div>
+offsetTop expected 15 but got 78
+PASS .container 14
+PASS .container 15
+

@@ -2519,3 +2519,6 @@ webkit.org/b/255228 [ Monterey+ ] imported/w3c/web-platform-tests/html/semantics
 
 # Discrete wheel events don't trigger scroll snapping on the root in WK1
 webkit.org/b/255498 css3/scroll-snap/scroll-snap-discrete-wheel-event-in-mainframe.html [ Skip ]
+
+# test failing only on mac-wk1 after importing wpt css/css-tables
+imported/w3c/web-platform-tests/css/css-tables/collapsed-border-positioned-tr-td.html [ ImageOnlyFailure ]

@@ -1,0 +1,4 @@
+
+PASS Property caption-side value 'top'
+PASS Property caption-side value 'bottom'
+

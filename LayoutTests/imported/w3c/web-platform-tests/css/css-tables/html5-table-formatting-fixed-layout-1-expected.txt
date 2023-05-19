@@ -1,0 +1,15 @@
+HTML5 Table Formatting algorithm and Fixed Layout (row/column grid computation)
+
+Verifies how browsers deal with implicit tracks from which no cell does originate in fixed mode
+
+This should be a 100px by 50px blue rectangle:
+The table grid is 1x3, so the table is not empty and follows step 3A of the table layout algorithm
+
+The consecutive columns were merged not together because the table-layout is fixed, but consecutive rows were.
+
+Each track has a 0px breadth; the table width (respect. height) comes from 4x (respect. 2x) 25px-wide border spacings
+
+
+FAIL Redundant columns of fixed-layout tables are not being merged assert_equals: expected 100 but got 50
+PASS Redundant rows of fixed-layout tables are not being merged
+

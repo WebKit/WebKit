@@ -1,0 +1,20 @@
+Fixed Layout
+
+Checks whether fixed layout is implemented properly (width is not definite)
+
+This should be a 100px-wide blue square:
+Table-layout:fixed does not apply to width:auto tables
+
+This should be a 100px-wide blue square:
+Table-layout:fixed does not apply to width:max-content tables
+
+This should be a 100px-wide blue square:
+Table-layout:fixed does apply to width:min-content/fit-content tables
+
+
+PASS Table-layout:fixed is not applied when width is auto
+PASS Table-layout:fixed reports fixed when width is auto
+PASS Table-layout:fixed is not applied when width is max-content
+PASS Table-layout:fixed reports fixed when width is max-content
+FAIL Table-layout:fixed is applied when width is min-content assert_equals: expected 100 but got 0
+

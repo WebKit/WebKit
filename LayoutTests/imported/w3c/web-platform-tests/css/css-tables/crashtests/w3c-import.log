@@ -1,0 +1,39 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/caption-with-multicol-table-cell.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/col_span_dynamic_crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/dialog-table-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/dynamic-recompute-baseline.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/dynamic_col_width_crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/dynamic_table_layout_crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/empty-tbody-after-tall-section-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/empty_cells_crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/empty_table_with_cols.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/expression_width_crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/inline-splitting-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/large-border-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/large-col-widths.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/legacy_ng_mix_crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/move-oof-inside-section-row-with-borders.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/negative-section-distribution.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/negative_caption_margin.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/orthogonal-cell-borders.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/orthogonal-cell-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/table-column-display-change-chrome-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/textarea-intrinsic-size-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/uninitialized_read_crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/vertical_percentage_crash.html

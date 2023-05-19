@@ -1,0 +1,72 @@
+Table minmax
+
+How do different layout algorithms deal with table with an infinite max width?`
+
+  <table>
+    <td style="width:100%"><div style="width:30px">100%</div></td>
+    <td><div style="width:100px">100px</div></td>
+  </table>
+Block layout clamps the max width, but flex/grid/table layouts do not. What happens?
+Block layout
+100%	100px
+sibling
+Block layout with floats
+What about this?
+100%	100px sibling
+Table layout
+100%	50px50px
+sibling
+Flex layout 1 1 auto
+Edge is wider than flexbox
+100%	50px50px
+40px
+Flex layout 0 0 auto
+100%	50px50px
+auto
+Empty table sizes
+
+Completely empty table
+Completely empty table with min-content width
+Completely empty table with max-content width
+Completely empty table with width/height
+Empty table with border spacing
+Edge has width
+Table with just tbody and border spacing
+Chrome Legacy has width and 1/2 height. Edge has width. Proposal: make table empty.
+Table with tbody, tr, and border spacing
+Edge has height, 1/2 width. Chrome Legacy has width/height. Proposal: make table empty.
+Empty table with borders
+Edge has width 30, height 20
+Empty table with padding
+Edge has width 30, height 20
+Empty table with caption
+caption
+
+PASS table 1
+PASS table 2
+PASS table 3
+PASS table 4
+PASS table 5
+PASS table 6
+PASS table 7
+PASS table 8
+PASS table 9
+PASS table 10
+PASS table 11
+FAIL table 12 assert_equals:
+<table style="border-spacing: 10px 10px;" data-expected-height="0" data-expected-width="0">
+  <tbody>
+  </tbody>
+</table>
+width expected 0 but got 20
+FAIL table 13 assert_equals:
+<table style="border-spacing: 10px 10px;" data-expected-height="0" data-expected-width="0">
+  <tbody>
+    <tr></tr>
+  </tbody>
+</table>
+width expected 0 but got 20
+PASS table 14
+PASS table 15
+PASS table 16
+
