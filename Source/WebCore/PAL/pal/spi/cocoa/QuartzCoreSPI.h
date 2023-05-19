@@ -226,6 +226,10 @@ typedef enum {
 #endif
 @end
 
+@interface CATransaction ()
++ (void)setDisableImplicitTransactionMainThreadAssert:(BOOL)flag;
+@end
+
 WTF_EXTERN_C_BEGIN
 
 // FIXME: Declare these functions even when USE(APPLE_INTERNAL_SDK) is true once we can fix <rdar://problem/26584828> in a better way.

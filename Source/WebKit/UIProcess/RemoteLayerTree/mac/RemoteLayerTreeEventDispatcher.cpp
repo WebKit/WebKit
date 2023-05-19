@@ -205,7 +205,6 @@ void RemoteLayerTreeEventDispatcher::scrollingThreadHandleWheelEvent(const WebWh
         return;
 
     auto locker = RemoteLayerTreeHitTestLocker { *scrollingTree };
-    auto transaction = RemoteScrollingTreeTransactionHolder { *scrollingTree };
 
     auto platformWheelEvent = platform(webWheelEvent);
     auto processingSteps = determineWheelEventProcessing(platformWheelEvent, rubberBandableEdges);

@@ -52,6 +52,11 @@ Ref<RemoteScrollingTree> RemoteScrollingTree::create(RemoteScrollingCoordinatorP
 RemoteScrollingTreeMac::RemoteScrollingTreeMac(RemoteScrollingCoordinatorProxy& scrollingCoordinator)
     : RemoteScrollingTree(scrollingCoordinator)
 {
+    ASSERT(isMainRunLoop());
+    ScrollingThread::dispatch([protectedThis = Ref { *this }]() {
+        if ([CATransaction instancesRespondToSelector:@selector(setDisableImplicitTransactionMainThreadAssert:)])
+            [CATransaction setDisableImplicitTransactionMainThreadAssert:YES];
+    });
 }
 
 RemoteScrollingTreeMac::~RemoteScrollingTreeMac() = default;
@@ -351,19 +356,6 @@ void RemoteScrollingTreeMac::lockLayersForHitTesting()
 void RemoteScrollingTreeMac::unlockLayersForHitTesting()
 {
     m_layerHitTestMutex.unlock();
-}
-
-
-void RemoteScrollingTreeMac::beginTransactionOnScrollingThread()
-{
-    ASSERT(ScrollingThread::isCurrentThread());
-    [CATransaction begin];
-}
-
-void RemoteScrollingTreeMac::commitTransactionOnScrollingThread()
-{
-    ASSERT(ScrollingThread::isCurrentThread());
-    [CATransaction commit];
 }
 
 static ScrollingNodeID scrollingNodeIDForLayer(CALayer *layer)

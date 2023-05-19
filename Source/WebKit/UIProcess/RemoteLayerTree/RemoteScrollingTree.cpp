@@ -227,7 +227,6 @@ void RemoteScrollingTree::tryToApplyLayerPositions()
     if (m_hasNodesWithSynchronousScrollingReasons)
         return;
 
-    auto transaction = RemoteScrollingTreeTransactionHolder { *this };
     applyLayerPositionsInternal();
 }
 
