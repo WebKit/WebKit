@@ -173,8 +173,10 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
         unsigned alignment = 0;
         unsigned size = 0;
         unsigned paddingID = 0;
+        bool shouldPack = structDecl.role() == AST::StructureRole::UserDefined;
         const auto& addPadding = [&](unsigned paddingSize) {
-            m_stringBuilder.append(m_indent, "uint8_t __padding", ++paddingID, "[", String::number(paddingSize), "]; \n");
+            if (shouldPack)
+                m_stringBuilder.append(m_indent, "uint8_t __padding", ++paddingID, "[", String::number(paddingSize), "]; \n");
         };
 
         for (auto& member : structDecl.members()) {
@@ -272,7 +274,7 @@ void FunctionDefinitionWriter::visit(AST::BuiltinAttribute& builtin)
     // Built-in attributes are only valid for parameters. If a struct member originally
     // had a built-in attribute it must have already been hoisted into a parameter, but
     // we keep the original struct so we can reconstruct it.
-    if (m_structRole.has_value())
+    if (m_structRole.has_value() && *m_structRole != AST::StructureRole::VertexOutput)
         return;
 
     // FIXME: we should replace this with something more efficient, like a trie
@@ -405,7 +407,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
         },
         [&](const Vector& vector) {
             auto* primitive = std::get_if<Primitive>(vector.element);
-            if (primitive && m_structRole.has_value()) {
+            if (primitive && m_structRole.has_value() && *m_structRole == AST::StructureRole::UserDefined) {
                 switch (primitive->kind) {
                 case Types::Primitive::AbstractInt:
                 case Types::Primitive::I32:
