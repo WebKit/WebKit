@@ -206,8 +206,6 @@ bool CSSSelectorParser::supportsComplexSelector(CSSParserTokenRange range, const
     // @supports requires that all arguments parse.
     parser.m_disableForgivingParsing = true;
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=215635
-    // Unknown css selector combinator is not addressed correctly in |CSSSelectorParser::consumeComplexSelector|.
     std::unique_ptr<CSSParserSelector> parserSelector;
     if (isNestedContext == CSSParserEnum::IsNestedContext::Yes)
         parserSelector = parser.consumeNestedComplexSelector(range);
@@ -601,15 +599,16 @@ bool CSSSelectorParser::consumeName(CSSParserTokenRange& range, AtomString& name
 
     if (range.peek().type() != DelimiterToken || range.peek().delimiter() != '|')
         return true;
-    range.consume();
 
     namespacePrefix = name;
-    const CSSParserToken& nameToken = range.consume();
-    if (nameToken.type() == IdentToken) {
-        name = nameToken.value().toAtomString();
-    } else if (nameToken.type() == DelimiterToken && nameToken.delimiter() == '*')
+    if (range.peek(1).type() == IdentToken) {
+        range.consume();
+        name = range.consume().value().toAtomString();
+    } else if (range.peek(1).type() == DelimiterToken && range.peek(1).delimiter() == '*') {
+        range.consume();
+        range.consume();
         name = starAtom();
-    else {
+    } else {
         name = nullAtom();
         namespacePrefix = nullAtom();
         return false;
