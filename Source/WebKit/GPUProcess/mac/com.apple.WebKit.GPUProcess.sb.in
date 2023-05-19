@@ -88,6 +88,8 @@
 (deny nvram-get (with no-report))
 #endif // USE(SANDBOX_VERSION_3)
 
+(deny (with no-report) necp-client-open)
+
 ;;;
 ;;; The following rules were originally contained in 'system.sb'. We are duplicating them here so we can
 ;;; remove unneeded sandbox extensions.
