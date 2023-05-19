@@ -34,6 +34,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Nonmovable.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Packed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -147,16 +148,13 @@ struct StringStats {
 
 class STRING_IMPL_ALIGNMENT StringImplShape {
     WTF_MAKE_NONCOPYABLE(StringImplShape);
+    WTF_MAKE_NONMOVABLE(StringImplShape);
 public:
     static constexpr unsigned MaxLength = std::numeric_limits<int32_t>::max();
 
 protected:
     StringImplShape(unsigned refCount, unsigned length, const LChar*, unsigned hashAndFlags);
     StringImplShape(unsigned refCount, unsigned length, const UChar*, unsigned hashAndFlags);
-
-    enum ConstructWithConstExprTag { ConstructWithConstExpr };
-    template<unsigned characterCount> constexpr StringImplShape(unsigned refCount, unsigned length, const char (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag);
-    template<unsigned characterCount> constexpr StringImplShape(unsigned refCount, unsigned length, const char16_t (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag);
 
     unsigned m_refCount;
     unsigned m_length;
@@ -244,6 +242,9 @@ private:
     StringImpl(const UChar*, unsigned length, ConstructWithoutCopyingTag);
     StringImpl(const LChar*, unsigned length, ConstructWithoutCopyingTag);
 
+    enum ConstructEmptyTag { ConstructEmpty };
+    StringImpl(ConstructEmptyTag);
+
     // Used to create new strings that are a substring of an existing StringImpl (BufferSubstring).
     StringImpl(const LChar*, unsigned length, Ref<StringImpl>&&);
     StringImpl(const UChar*, unsigned length, Ref<StringImpl>&&);
@@ -280,6 +281,38 @@ public:
         ASSERT(charactersAreAllASCII(bitwise_cast<const LChar*>(characters), length));
         return createStaticStringImpl(bitwise_cast<const LChar*>(characters), length);
     }
+
+    // Used to construct static strings, which have an special refCount that can never hit zero.
+    // This means that the static string will never be destroyed, which is important because
+    // static strings will be shared across threads & ref-counted in a non-threadsafe manner.
+    //
+    // In order to be thread safe, we also need to ensure that the rest of
+    // the fields are never mutated by threads. We have this guarantee because:
+    //
+    // 1. m_length is only set on construction and never mutated thereafter.
+    //
+    // 2. m_data8 and m_data16 are only set on construction and never mutated thereafter.
+    //    We also know that a StringImpl never changes from 8 bit to 16 bit because there
+    //    is no way to set/clear the s_hashFlag8BitBuffer flag other than at construction.
+    //
+    // 3. m_hashAndFlags will not be mutated by different threads because:
+    //
+    //    a. This constructor calls StringImpl::cost() early, so it will return early when called again.
+    //       This means static StringImpl costs are not counted. But since there should only
+    //       be a finite set of static StringImpls, their cost can be aggregated into a single
+    //       system cost if needed.
+    //    b. setIsAtom() is never called on a static StringImpl.
+    //       setIsAtom() asserts !isStatic().
+    //    c. setHash() is never called on a static StringImpl.
+    //       This constructor sets the hash on construction.
+    //       StringImpl::hash() only sets a new hash iff !hasHash().
+    //       Additionally, StringImpl::setHash() asserts hasHash() and !isStatic().
+    static Ref<StringImpl> createStaticStringImplWithoutCopying(const char* characters, unsigned length)
+    {
+        ASSERT(charactersAreAllASCII(bitwise_cast<const LChar*>(characters), length));
+        return createStaticStringImplWithoutCopying(bitwise_cast<const LChar*>(characters), length);
+    }
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> createStaticStringImplWithoutCopying(const LChar*, unsigned length);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createStaticStringImpl(const LChar*, unsigned length);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createStaticStringImpl(const UChar*, unsigned length);
 
@@ -369,43 +402,16 @@ public:
     void ref();
     void deref();
 
-    class StaticStringImpl : private StringImplShape {
-        WTF_MAKE_NONCOPYABLE(StaticStringImpl);
-    public:
-        // Used to construct static strings, which have an special refCount that can never hit zero.
-        // This means that the static string will never be destroyed, which is important because
-        // static strings will be shared across threads & ref-counted in a non-threadsafe manner.
-        //
-        // In order to make StaticStringImpl thread safe, we also need to ensure that the rest of
-        // the fields are never mutated by threads. We have this guarantee because:
-        //
-        // 1. m_length is only set on construction and never mutated thereafter.
-        //
-        // 2. m_data8 and m_data16 are only set on construction and never mutated thereafter.
-        //    We also know that a StringImpl never changes from 8 bit to 16 bit because there
-        //    is no way to set/clear the s_hashFlag8BitBuffer flag other than at construction.
-        //
-        // 3. m_hashAndFlags will not be mutated by different threads because:
-        //
-        //    a. StaticStringImpl's constructor sets the s_hashFlagDidReportCost flag to ensure
-        //       that StringImpl::cost() returns early.
-        //       This means StaticStringImpl costs are not counted. But since there should only
-        //       be a finite set of StaticStringImpls, their cost can be aggregated into a single
-        //       system cost if needed.
-        //    b. setIsAtom() is never called on a StaticStringImpl.
-        //       setIsAtom() asserts !isStatic().
-        //    c. setHash() is never called on a StaticStringImpl.
-        //       StaticStringImpl's constructor sets the hash on construction.
-        //       StringImpl::hash() only sets a new hash iff !hasHash().
-        //       Additionally, StringImpl::setHash() asserts hasHash() and !isStatic().
+    WTF_EXPORT_PRIVATE static LazyNeverDestroyed<Ref<StringImpl>> s_empty;
+    ALWAYS_INLINE static StringImpl* empty()
+    {
+        return &s_empty.get().get();
+    }
 
-        template<unsigned characterCount> explicit constexpr StaticStringImpl(const char (&characters)[characterCount], StringKind = StringNormal);
-        template<unsigned characterCount> explicit constexpr StaticStringImpl(const char16_t (&characters)[characterCount], StringKind = StringNormal);
-        operator StringImpl&();
-    };
-
-    WTF_EXPORT_PRIVATE static StaticStringImpl s_emptyAtomString;
-    ALWAYS_INLINE static StringImpl* empty() { return reinterpret_cast<StringImpl*>(&s_emptyAtomString); }
+    ALWAYS_INLINE static void initializeEmptyString()
+    {
+        s_empty.construct(adoptRef(*new StringImpl(ConstructEmpty)));
+    }
 
     // FIXME: Do these functions really belong in StringImpl?
     template<typename CharacterType> static void copyCharacters(CharacterType* destination, const CharacterType* source, unsigned length);
@@ -554,10 +560,6 @@ public:
     void assertHashIsCorrect() const;
 };
 
-using StaticStringImpl = StringImpl::StaticStringImpl;
-
-static_assert(sizeof(StringImpl) == sizeof(StaticStringImpl));
-
 template<typename CharacterType>
 struct HashTranslatorCharBuffer {
     const CharacterType* characters;
@@ -578,17 +580,6 @@ struct HashTranslatorCharBuffer {
     {
     }
 };
-
-#if ASSERT_ENABLED
-
-// StringImpls created from StaticStringImpl will ASSERT in the generic ValueCheck<T>::checkConsistency
-// as they are not allocated by fastMalloc. We don't currently have any way to detect that case
-// so we ignore the consistency check for all StringImpl*.
-template<> struct ValueCheck<StringImpl*> {
-    static void checkConsistency(const StringImpl*) { }
-};
-
-#endif // ASSERT_ENABLED
 
 WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const StringImpl*);
 WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const LChar*);
@@ -644,8 +635,7 @@ template<> struct DefaultHash<PackedPtr<StringImpl>>;
 template<> struct DefaultHash<CompactPtr<StringImpl>>;
 
 #define MAKE_STATIC_STRING_IMPL(characters) ([] { \
-        static StaticStringImpl impl(characters); \
-        return &impl; \
+        return &StringImpl::createStaticStringImplWithoutCopying(characters ""_s, (characters ""_s).length()).get(); \
     }())
 
 template<> ALWAYS_INLINE Ref<StringImpl> StringImpl::constructInternal<LChar>(StringImpl& string, unsigned length)
@@ -824,22 +814,6 @@ inline StringImplShape::StringImplShape(unsigned refCount, unsigned length, cons
 {
 }
 
-template<unsigned characterCount> constexpr StringImplShape::StringImplShape(unsigned refCount, unsigned length, const char (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag)
-    : m_refCount(refCount)
-    , m_length(length)
-    , m_data8Char(characters)
-    , m_hashAndFlags(hashAndFlags)
-{
-}
-
-template<unsigned characterCount> constexpr StringImplShape::StringImplShape(unsigned refCount, unsigned length, const char16_t (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag)
-    : m_refCount(refCount)
-    , m_length(length)
-    , m_data16Char(characters)
-    , m_hashAndFlags(hashAndFlags)
-{
-}
-
 inline Ref<StringImpl> StringImpl::isolatedCopy() const
 {
     if (!requiresCopy()) {
@@ -939,6 +913,14 @@ inline StringImpl::StringImpl(const LChar* characters, unsigned length, Construc
     ASSERT(m_length);
 
     STRING_STATS_ADD_8BIT_STRING(m_length);
+}
+
+inline StringImpl::StringImpl(ConstructEmptyTag)
+    : StringImplShape(s_refCountFlagIsStaticString, 0, bitwise_cast<const LChar*>(""), s_hashFlag8BitBuffer | StringAtom | s_hashFlagDidReportCost | (StringHasher::computeLiteralHashAndMaskTop8Bits("") << s_flagCount))
+{
+    ASSERT(m_data8);
+    ASSERT(!s_empty.isConstructed());
+    assertHashIsCorrect();
 }
 
 template<typename Malloc>
@@ -1059,12 +1041,10 @@ inline size_t StringImpl::cost() const
     if (bufferOwnership() == BufferSubstring)
         return substringBuffer()->cost();
 
-    // Note: we must not alter the m_hashAndFlags field in instances of StaticStringImpl.
-    // We ensure this by pre-setting the s_hashFlagDidReportCost bit in all instances of
-    // StaticStringImpl. As a result, StaticStringImpl instances will always return a cost of
-    // 0 here and avoid modifying m_hashAndFlags.
     if (m_hashAndFlags & s_hashFlagDidReportCost)
         return 0;
+
+    ASSERT(!isStatic());
 
     m_hashAndFlags |= s_hashFlagDidReportCost;
     size_t result = m_length;
@@ -1353,23 +1333,6 @@ inline void StringImpl::assertHashIsCorrect() const
     ASSERT(existingHash() == StringHasher::computeHashAndMaskTop8Bits(characters8(), length()));
 }
 
-template<unsigned characterCount> constexpr StringImpl::StaticStringImpl::StaticStringImpl(const char (&characters)[characterCount], StringKind stringKind)
-    : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
-        s_hashFlag8BitBuffer | s_hashFlagDidReportCost | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
-{
-}
-
-template<unsigned characterCount> constexpr StringImpl::StaticStringImpl::StaticStringImpl(const char16_t (&characters)[characterCount], StringKind stringKind)
-    : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
-        s_hashFlagDidReportCost | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
-{
-}
-
-inline StringImpl::StaticStringImpl::operator StringImpl&()
-{
-    return *reinterpret_cast<StringImpl*>(this);
-}
-
 inline bool equalIgnoringASCIICase(const StringImpl& a, const StringImpl& b)
 {
     return equalIgnoringASCIICaseCommon(a, b);
@@ -1556,7 +1519,6 @@ inline Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8Conversio
 
 } // namespace WTF
 
-using WTF::StaticStringImpl;
 using WTF::StringImpl;
 using WTF::equal;
 using WTF::isUnicodeWhitespace;

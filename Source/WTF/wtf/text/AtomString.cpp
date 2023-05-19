@@ -32,8 +32,17 @@
 
 namespace WTF {
 
-const StaticAtomString nullAtomData { nullptr };
-const StaticAtomString emptyAtomData { &StringImpl::s_emptyAtomString };
+static LazyNeverDestroyed<AtomString> s_emptyAtom;
+static LazyNeverDestroyed<AtomString> s_nullAtom;
+
+const AtomString& nullAtom() { return s_nullAtom.get(); }
+const AtomString& emptyAtom() { return s_emptyAtom.get(); }
+
+void AtomString::initializeStrings()
+{
+    s_emptyAtom.construct(StringImpl::empty());
+    s_nullAtom.construct(static_cast<StringImpl*>(nullptr));
+}
 
 template<AtomString::CaseConvertType type>
 ALWAYS_INLINE AtomString AtomString::convertASCIICase() const

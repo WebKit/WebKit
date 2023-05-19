@@ -374,13 +374,6 @@ static inline Ref<AtomStringImpl> addStatic(const StringImpl& base)
     return addStatic(locker, stringTable(), base);
 }
 
-RefPtr<AtomStringImpl> AtomStringImpl::add(const StaticStringImpl* string)
-{
-    auto s = reinterpret_cast<const StringImpl*>(string);
-    ASSERT(s->isStatic());
-    return addStatic(*s);
-}
-
 Ref<AtomStringImpl> AtomStringImpl::addSlowCase(StringImpl& string)
 {
     // This check is necessary for null symbols.

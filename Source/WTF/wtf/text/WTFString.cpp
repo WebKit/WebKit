@@ -39,6 +39,19 @@ namespace WTF {
 
 using namespace Unicode;
 
+static LazyNeverDestroyed<AtomString> s_emptyString;
+static LazyNeverDestroyed<AtomString> s_nullString;
+
+const String& nullString() { return s_nullString.get(); }
+const String& emptyString() { return s_emptyString.get(); }
+
+void String::initializeStrings()
+{
+    StringImpl::initializeEmptyString();
+    s_emptyString.construct(StringImpl::empty());
+    s_nullString.construct(static_cast<StringImpl*>(nullptr));
+}
+
 // Construct a string with UTF-16 data.
 String::String(const UChar* characters, unsigned length)
     : m_impl(characters ? RefPtr { StringImpl::create(characters, length) } : nullptr)
@@ -607,9 +620,6 @@ float charactersToFloat(const UChar* data, size_t length, size_t& parsedLength)
     // FIXME: This will return ok even when the string fits into a double but not a float.
     return static_cast<float>(toDoubleType<UChar, TrailingJunkPolicy::Allow>(data, length, nullptr, parsedLength));
 }
-
-const StaticString nullStringData { nullptr };
-const StaticString emptyStringData { &StringImpl::s_emptyAtomString };
 
 } // namespace WTF
 

@@ -189,7 +189,7 @@ const FontRanges& FontCascadeFonts::realizeFallbackRangesAt(const FontCascadeDes
     if (!index) {
         fontRanges = realizeNextFallback(description, m_lastRealizedFallbackIndex, m_fontSelector.get());
         if (fontRanges.isNull() && m_fontSelector)
-            fontRanges = m_fontSelector->fontRangesForFamily(description, familyNamesData->at(FamilyNamesIndex::StandardFamily));
+            fontRanges = m_fontSelector->fontRangesForFamily(description, familyNames->at(FamilyNamesIndex::StandardFamily));
         if (fontRanges.isNull())
             fontRanges = FontRanges(FontCache::forCurrentThread().lastResortFallbackFont(description));
         return fontRanges;

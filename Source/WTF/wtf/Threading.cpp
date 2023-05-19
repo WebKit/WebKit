@@ -473,6 +473,8 @@ void initialize()
         Config::initialize();
         Gigacage::ensureSmallHeap();
         Gigacage::ensureGigacage();
+        String::initializeStrings();
+        AtomString::initializeStrings();
         Config::AssertNotFrozenScope assertScope;
 #if !HAVE(FAST_TLS) && !OS(WINDOWS)
         Thread::initializeTLSKey();

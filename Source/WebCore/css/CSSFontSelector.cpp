@@ -77,15 +77,9 @@ CSSFontSelector::CSSFontSelector(ScriptExecutionContext& context)
     , m_uniqueId(++fontSelectorId)
     , m_version(0)
 {
-    if (is<Document>(context)) {
-        m_fontFamilyNames.reserveInitialCapacity(familyNames->size());
-        for (auto& familyName : familyNames.get())
-            m_fontFamilyNames.uncheckedConstructAndAppend(familyName);
-    } else {
-        m_fontFamilyNames.reserveInitialCapacity(familyNamesData->size());
-        for (auto& familyName : familyNamesData.get())
-            m_fontFamilyNames.uncheckedAppend(familyName);
-    }
+    m_fontFamilyNames.reserveInitialCapacity(familyNames->size());
+    for (auto& familyName : familyNames.get())
+        m_fontFamilyNames.uncheckedConstructAndAppend(familyName);
 
     FontCache::forCurrentThread().addClient(*this);
     m_cssFontFaceSet->addFontModifiedObserver(m_fontModifiedObserver);

@@ -33,10 +33,6 @@
 #include <wtf/RawPtrTraits.h>
 #include <wtf/StdLibExtras.h>
 
-#if OS(DARWIN)
-#include <mach/vm_param.h>
-#endif
-
 namespace WTF {
 
 template <typename T>
@@ -221,7 +217,14 @@ public:
         return a.m_ptr == b.m_ptr;
     }
 
-    StorageType storage() const { return m_ptr; }
+    template<typename U>
+    friend bool operator!=(const CompactPtr& a, const CompactPtr<U>& b)
+    {
+        return a.m_ptr != b.m_ptr;
+    }
+
+    const StorageType& storage() const { return m_ptr; }
+    StorageType& storage() { return m_ptr; }
 
 private:
     template <typename X>
