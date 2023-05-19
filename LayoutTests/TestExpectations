@@ -5992,7 +5992,6 @@ imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.http
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/clear-site-data/navigation-insecure.html [ Skip ]
 imported/w3c/web-platform-tests/clear-site-data/resource.html [ Skip ]
-imported/w3c/web-platform-tests/clear-site-data/storage.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/inheritance/history-iframe.sub.html [ Skip ]
 imported/w3c/web-platform-tests/cookies/domain/domain-attribute-idn-host.sub.https.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-font-loading/font-face-reject.html [ Skip ]

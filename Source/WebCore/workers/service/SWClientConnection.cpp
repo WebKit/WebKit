@@ -260,31 +260,34 @@ void SWClientConnection::updateBackgroundFetchRegistration(const BackgroundFetch
     });
 }
 
-static void updateController(ScriptExecutionContext& context, ServiceWorkerData&& newController)
+static void updateController(ScriptExecutionContext& context, const std::optional<ServiceWorkerData>& newController)
 {
-    context.setActiveServiceWorker(ServiceWorker::getOrCreate(context, WTFMove(newController)));
+    if (newController)
+        context.setActiveServiceWorker(ServiceWorker::getOrCreate(context, ServiceWorkerData { *newController }));
+    else
+        context.setActiveServiceWorker(nullptr);
     if (auto* container = context.serviceWorkerContainer())
         container->queueTaskToDispatchControllerChangeEvent();
 }
 
-void SWClientConnection::notifyClientsOfControllerChange(const HashSet<ScriptExecutionContextIdentifier>& contextIdentifiers, ServiceWorkerData&& newController)
+void SWClientConnection::notifyClientsOfControllerChange(const HashSet<ScriptExecutionContextIdentifier>& contextIdentifiers, std::optional<ServiceWorkerData>&& newController)
 {
     ASSERT(isMainThread());
     ASSERT(!contextIdentifiers.isEmpty());
 
     for (auto& clientIdentifier : contextIdentifiers) {
         if (auto* document = Document::allDocumentsMap().get(clientIdentifier)) {
-            updateController(*document, ServiceWorkerData { newController });
+            updateController(*document, newController);
             continue;
         }
-        bool wasDispatched = ScriptExecutionContext::postTaskTo(clientIdentifier, [newController = newController.isolatedCopy()](auto& context) mutable {
-            updateController(context, WTFMove(newController));
+        bool wasDispatched = ScriptExecutionContext::postTaskTo(clientIdentifier, [newController = crossThreadCopy(newController)](auto& context) mutable {
+            updateController(context, newController);
         });
         if (wasDispatched)
             continue;
         if (auto* sharedWorker = SharedWorkerThreadProxy::byIdentifier(clientIdentifier)) {
-            sharedWorker->thread().runLoop().postTask([newController = newController.isolatedCopy()] (auto& context) mutable {
-                updateController(context, WTFMove(newController));
+            sharedWorker->thread().runLoop().postTask([newController = crossThreadCopy(newController)] (auto& context) mutable {
+                updateController(context, newController);
             });
             continue;
         }

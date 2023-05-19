@@ -199,11 +199,10 @@ void SWServerRegistration::removeClientUsingRegistration(const ScriptExecutionCo
 // https://w3c.github.io/ServiceWorker/#notify-controller-change
 void SWServerRegistration::notifyClientsOfControllerChange()
 {
-    ASSERT(activeWorker());
-
+    std::optional<ServiceWorkerData> newController = activeWorker() ? std::optional { activeWorker()->data() } : std::nullopt;
     for (auto& item : m_clientsUsingRegistration) {
         if (auto* connection = m_server.connection(item.key))
-            connection->notifyClientsOfControllerChange(item.value, activeWorker()->data());
+            connection->notifyClientsOfControllerChange(item.value, newController);
     }
 }
 
@@ -261,6 +260,8 @@ void SWServerRegistration::clear()
         updateWorkerState(*waitingWorker, ServiceWorkerState::Redundant);
     if (activeWorker)
         updateWorkerState(*activeWorker, ServiceWorkerState::Redundant);
+
+    notifyClientsOfControllerChange();
 
     // Remove scope to registration map[scopeString].
     m_server.removeRegistration(identifier());
