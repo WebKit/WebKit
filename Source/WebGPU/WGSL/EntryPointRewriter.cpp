@@ -100,27 +100,23 @@ void EntryPointRewriter::rewrite()
 
     collectParameters();
     checkReturnType();
-
-    // nothing to rewrite
-    if (m_parameters.isEmpty()) {
-        appendBuiltins();
-        return;
-    }
-
-    constructInputStruct();
     appendBuiltins();
 
-    // add parameter to builtins: ${structName} : ${structType}
-    auto& type = m_shaderModule.astBuilder().construct<AST::NamedTypeName>(SourceSpan::empty(), AST::Identifier::make(m_structTypeName));
-    type.m_resolvedType = m_structType;
-    auto& parameter = m_shaderModule.astBuilder().construct<AST::Parameter>(
-        SourceSpan::empty(),
-        AST::Identifier::make(m_structParameterName),
-        type,
-        AST::Attribute::List { },
-        AST::ParameterRole::StageIn
-    );
-    m_shaderModule.append(m_function.parameters(), parameter);
+    if (!m_parameters.isEmpty()) {
+        constructInputStruct();
+
+        // add parameter to builtins: ${structName} : ${structType}
+        auto& type = m_shaderModule.astBuilder().construct<AST::NamedTypeName>(SourceSpan::empty(), AST::Identifier::make(m_structTypeName));
+        type.m_resolvedType = m_structType;
+        auto& parameter = m_shaderModule.astBuilder().construct<AST::Parameter>(
+            SourceSpan::empty(),
+            AST::Identifier::make(m_structParameterName),
+            type,
+            AST::Attribute::List { },
+            AST::ParameterRole::StageIn
+        );
+        m_shaderModule.append(m_function.parameters(), parameter);
+    }
 
     while (m_materializations.size())
         m_shaderModule.insert(m_function.body().statements(), 0, m_materializations.takeLast());
