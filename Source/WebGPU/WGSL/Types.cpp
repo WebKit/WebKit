@@ -27,7 +27,9 @@
 #include "Types.h"
 
 #include "ASTStructure.h"
+#include <wtf/StdLibExtras.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/text/StringHash.h>
 
 namespace WGSL {
 
@@ -187,6 +189,112 @@ String Type::toString() const
     StringPrintStream out;
     dump(out);
     return out.toString();
+}
+
+// https://gpuweb.github.io/gpuweb/wgsl/#alignment-and-size
+unsigned Type::size() const
+{
+    return WTF::switchOn(*this,
+        [&](const Primitive& primitive) -> unsigned {
+            switch (primitive.kind) {
+            case Types::Primitive::F32:
+            case Types::Primitive::I32:
+            case Types::Primitive::U32:
+                return 4;
+            case Types::Primitive::Bool:
+            case Types::Primitive::Void:
+            case Types::Primitive::AbstractInt:
+            case Types::Primitive::AbstractFloat:
+            case Types::Primitive::Sampler:
+            case Types::Primitive::TextureExternal:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        },
+        [&](const Vector& vector) -> unsigned {
+            return vector.element->size() * vector.size;
+        },
+        [&](const Matrix& matrix) -> unsigned {
+            // The size of the matrix is computed as: sizeof(array<vecR<T>, C>)
+            // sizeof(vecR<T>)
+            auto rowSize = matrix.rows * matrix.element->size();
+            // sizeof(array<vecR<T>, C>)
+            auto rowAlignment = (matrix.rows == 2 ? 2 : 4) * matrix.element->alignment();
+            return matrix.columns * WTF::roundUpToMultipleOf(rowAlignment, rowSize);
+        },
+        [&](const Array& array) -> unsigned {
+            ASSERT(array.size.has_value());
+            return *array.size * WTF::roundUpToMultipleOf(array.element->alignment(), array.element->size());
+        },
+        [&](const Struct& structure) -> unsigned {
+            unsigned alignment = 0;
+            unsigned size = 0;
+            for (auto& [_, field] : structure.fields) {
+                auto fieldAlignment = field->alignment();
+                alignment = std::max(alignment, fieldAlignment);
+                size = WTF::roundUpToMultipleOf(fieldAlignment, size);
+                size += field->size();
+            }
+            return WTF::roundUpToMultipleOf(alignment, size);
+        },
+        [&](const Function&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Bottom&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Texture&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        });
+}
+
+unsigned Type::alignment() const
+{
+    return WTF::switchOn(*this,
+        [&](const Primitive& primitive) -> unsigned {
+            switch (primitive.kind) {
+            case Types::Primitive::F32:
+            case Types::Primitive::I32:
+            case Types::Primitive::U32:
+                return 4;
+            case Types::Primitive::Bool:
+            case Types::Primitive::Void:
+            case Types::Primitive::AbstractInt:
+            case Types::Primitive::AbstractFloat:
+            case Types::Primitive::Sampler:
+            case Types::Primitive::TextureExternal:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        },
+        [&](const Vector& vector) -> unsigned {
+            auto elementAlignment = vector.element->alignment();
+            if (vector.size == 2)
+                return 2 * elementAlignment;
+            return 4 * elementAlignment;
+        },
+        [&](const Matrix& matrix) -> unsigned {
+            auto elementAlignment = matrix.element->alignment();
+            if (matrix.rows == 2)
+                return 2 * elementAlignment;
+            return 4 * elementAlignment;
+        },
+        [&](const Array& array) -> unsigned {
+            return array.element->alignment();
+        },
+        [&](const Struct& structure) -> unsigned {
+            unsigned alignment = 0;
+            for (auto& [_, field] : structure.fields)
+                alignment = std::max(alignment, field->alignment());
+            return alignment;
+        },
+        [&](const Function&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Bottom&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Texture&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
+        });
 }
 
 } // namespace WGSL
