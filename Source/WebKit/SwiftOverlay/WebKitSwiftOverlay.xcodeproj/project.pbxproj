@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		516A9BFB2A00A626006C9125 /* WebKitSwiftOverlayAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516A9BF92A00A626006C9125 /* WebKitSwiftOverlayAdditions.swift */; };
 		7D20070C22F4EB72008DF640 /* libswiftWebKit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D20067522F2652E008DF640 /* libswiftWebKit.dylib */; };
 		7D20071B22F4ECCA008DF640 /* libswiftWebKit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D20068722F26721008DF640 /* libswiftWebKit.dylib */; };
 		B3A5D38F23F78F5400B17727 /* WebKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A5D38823F78F5400B17727 /* WebKitTests.swift */; };
@@ -38,7 +37,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		516A9BF92A00A626006C9125 /* WebKitSwiftOverlayAdditions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WebKitSwiftOverlayAdditions.swift; path = usr/local/include/WebKitAdditions/WebKitSwiftOverlayAdditions.swift; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D20067522F2652E008DF640 /* libswiftWebKit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libswiftWebKit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D20068722F26721008DF640 /* libswiftWebKit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libswiftWebKit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D20070722F4EB72008DF640 /* WebKitSwiftOverlayTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WebKitSwiftOverlayTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -96,7 +94,6 @@
 				B3A5D39923F790E100B17727 /* install-swiftmodules.sh */,
 				B3B8FEEE2502BAA0006172CA /* ObjectiveCBlockConversions.swift */,
 				B3A5D39123F790DB00B17727 /* WebKitSwiftOverlay.swift */,
-				516A9BF92A00A626006C9125 /* WebKitSwiftOverlayAdditions.swift */,
 			);
 			name = "Swift Overlay";
 			path = SwiftOverlay;
@@ -357,7 +354,6 @@
 			files = (
 				B3B8FEEF2502BAA0006172CA /* ObjectiveCBlockConversions.swift in Sources */,
 				B3A5D39223F790DB00B17727 /* WebKitSwiftOverlay.swift in Sources */,
-				516A9BFA2A00A626006C9125 /* WebKitSwiftOverlayAdditions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -367,7 +363,6 @@
 			files = (
 				B3B8FEF02502BAA0006172CA /* ObjectiveCBlockConversions.swift in Sources */,
 				B3A5D39323F790DB00B17727 /* WebKitSwiftOverlay.swift in Sources */,
-				516A9BFB2A00A626006C9125 /* WebKitSwiftOverlayAdditions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
