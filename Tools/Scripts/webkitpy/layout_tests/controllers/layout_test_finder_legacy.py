@@ -145,11 +145,11 @@ class LayoutTestFinder(object):
                 if first_line.strip() == TEMPLATED_TEST_HEADER:
                     variants = []
                     for line in iter(opened_file.readline, ''):
-                        results = re.match(r'<!--\s*META:\s*variant=([?|#]\S+)\s*-->', line)
+                        results = re.match(r'<!--\s*META:\s*variant=(\S*)\s*-->', line)
                         if not results:
                             continue
                         variant = results.group(1)
-                        if variant:
+                        if self._is_valid_variant(variant):
                             variants.append(variant)
                     if variants:
                         for variant in variants:
@@ -179,7 +179,9 @@ class LayoutTestFinder(object):
                             end_index = start_index
                             while line[end_index] not in end_chars:
                                 end_index += 1
-                            variants.append(line[start_index:end_index])
+                            variant = line[start_index:end_index]
+                            if self._is_valid_variant(variant):
+                                variants.append(line[start_index:end_index])
                         except IndexError:
                             continue
                     if len(variants):
@@ -192,6 +194,9 @@ class LayoutTestFinder(object):
                 expanded.append(f)
                 continue
         return expanded
+
+    def _is_valid_variant(self, variant):
+        return variant == "" or (len(variant) > 1 and variant[0] in ("?", "#")) and variant != "?#"
 
     def _real_tests(self, paths):
         # When collecting test cases, skip these directories
