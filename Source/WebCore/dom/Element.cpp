@@ -629,7 +629,7 @@ Ref<Attr> Element::detachAttribute(unsigned index)
     else
         attrNode = Attr::create(document(), attribute.name(), attribute.value());
 
-    removeAttributeInternal(index, NotInSynchronizationOfLazyAttribute);
+    removeAttributeInternal(index, InSynchronizationOfLazyAttribute::No);
     return attrNode.releaseNonNull();
 }
 
@@ -642,7 +642,7 @@ bool Element::removeAttribute(const QualifiedName& name)
     if (index == ElementData::attributeNotFound)
         return false;
 
-    removeAttributeInternal(index, NotInSynchronizationOfLazyAttribute);
+    removeAttributeInternal(index, InSynchronizationOfLazyAttribute::No);
     return true;
 }
 
@@ -1929,14 +1929,14 @@ ExceptionOr<bool> Element::toggleAttribute(const AtomString& qualifiedName, std:
     unsigned index = elementData() ? elementData()->findAttributeIndexByName(caseAdjustedQualifiedName, false) : ElementData::attributeNotFound;
     if (index == ElementData::attributeNotFound) {
         if (!force || *force) {
-            setAttributeInternal(index, QualifiedName { nullAtom(), caseAdjustedQualifiedName, nullAtom() }, emptyAtom(), NotInSynchronizationOfLazyAttribute);
+            setAttributeInternal(index, QualifiedName { nullAtom(), caseAdjustedQualifiedName, nullAtom() }, emptyAtom(), InSynchronizationOfLazyAttribute::No);
             return true;
         }
         return false;
     }
 
     if (!force || !*force) {
-        removeAttributeInternal(index, NotInSynchronizationOfLazyAttribute);
+        removeAttributeInternal(index, InSynchronizationOfLazyAttribute::No);
         return false;
     }
     return true;
@@ -1951,7 +1951,7 @@ ExceptionOr<void> Element::setAttribute(const AtomString& qualifiedName, const A
     auto caseAdjustedQualifiedName = shouldIgnoreAttributeCase(*this) ? qualifiedName.convertToASCIILowercase() : qualifiedName;
     unsigned index = elementData() ? elementData()->findAttributeIndexByName(caseAdjustedQualifiedName, false) : ElementData::attributeNotFound;
     auto name = index != ElementData::attributeNotFound ? attributeAt(index).name() : QualifiedName { nullAtom(), caseAdjustedQualifiedName, nullAtom() };
-    setAttributeInternal(index, name, value, NotInSynchronizationOfLazyAttribute);
+    setAttributeInternal(index, name, value, InSynchronizationOfLazyAttribute::No);
 
     return { };
 }
@@ -1960,29 +1960,29 @@ void Element::setAttribute(const QualifiedName& name, const AtomString& value)
 {
     synchronizeAttribute(name);
     unsigned index = elementData() ? elementData()->findAttributeIndexByName(name) : ElementData::attributeNotFound;
-    setAttributeInternal(index, name, value, NotInSynchronizationOfLazyAttribute);
+    setAttributeInternal(index, name, value, InSynchronizationOfLazyAttribute::No);
 }
 
 void Element::setAttributeWithoutOverwriting(const QualifiedName& name, const AtomString& value)
 {
     synchronizeAttribute(name);
     if (!elementData() || elementData()->findAttributeIndexByName(name) == ElementData::attributeNotFound)
-        addAttributeInternal(name, value, NotInSynchronizationOfLazyAttribute);
+        addAttributeInternal(name, value, InSynchronizationOfLazyAttribute::No);
 }
 
 void Element::setAttributeWithoutSynchronization(const QualifiedName& name, const AtomString& value)
 {
     unsigned index = elementData() ? elementData()->findAttributeIndexByName(name) : ElementData::attributeNotFound;
-    setAttributeInternal(index, name, value, NotInSynchronizationOfLazyAttribute);
+    setAttributeInternal(index, name, value, InSynchronizationOfLazyAttribute::No);
 }
 
 void Element::setSynchronizedLazyAttribute(const QualifiedName& name, const AtomString& value)
 {
     unsigned index = elementData() ? elementData()->findAttributeIndexByName(name) : ElementData::attributeNotFound;
-    setAttributeInternal(index, name, value, InSynchronizationOfLazyAttribute);
+    setAttributeInternal(index, name, value, InSynchronizationOfLazyAttribute::Yes);
 }
 
-inline void Element::setAttributeInternal(unsigned index, const QualifiedName& name, const AtomString& newValue, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
+inline void Element::setAttributeInternal(unsigned index, const QualifiedName& name, const AtomString& newValue, InSynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
 {
     ASSERT_WITH_MESSAGE(refCount() || parentNode(), "Attribute must not be set on an element before adoptRef");
 
@@ -1997,7 +1997,7 @@ inline void Element::setAttributeInternal(unsigned index, const QualifiedName& n
         return;
     }
 
-    if (inSynchronizationOfLazyAttribute) {
+    if (inSynchronizationOfLazyAttribute == InSynchronizationOfLazyAttribute::Yes) {
         ensureUniqueElementData().attributeAt(index).setValue(newValue);
         return;
     }
@@ -3207,7 +3207,7 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNode(Attr& attrNode)
 
     if (existingAttributeIndex == ElementData::attributeNotFound) {
         attachAttributeNodeIfNeeded(attrNode);
-        setAttributeInternal(elementData.findAttributeIndexByName(attrNode.qualifiedName()), attrNode.qualifiedName(), attrNodeValue, NotInSynchronizationOfLazyAttribute);
+        setAttributeInternal(elementData.findAttributeIndexByName(attrNode.qualifiedName()), attrNode.qualifiedName(), attrNodeValue, InSynchronizationOfLazyAttribute::No);
     } else {
         const Attribute& attribute = attributeAt(existingAttributeIndex);
         if (oldAttrNode)
@@ -3218,10 +3218,10 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNode(Attr& attrNode)
         attachAttributeNodeIfNeeded(attrNode);
 
         if (attribute.name().matches(attrNode.qualifiedName()))
-            setAttributeInternal(existingAttributeIndex, attrNode.qualifiedName(), attrNodeValue, NotInSynchronizationOfLazyAttribute);
+            setAttributeInternal(existingAttributeIndex, attrNode.qualifiedName(), attrNodeValue, InSynchronizationOfLazyAttribute::No);
         else {
-            removeAttributeInternal(existingAttributeIndex, NotInSynchronizationOfLazyAttribute);
-            setAttributeInternal(ensureUniqueElementData().findAttributeIndexByName(attrNode.qualifiedName()), attrNode.qualifiedName(), attrNodeValue, NotInSynchronizationOfLazyAttribute);
+            removeAttributeInternal(existingAttributeIndex, InSynchronizationOfLazyAttribute::No);
+            setAttributeInternal(ensureUniqueElementData().findAttributeIndexByName(attrNode.qualifiedName()), attrNode.qualifiedName(), attrNodeValue, InSynchronizationOfLazyAttribute::No);
         }
     }
 
@@ -3259,7 +3259,7 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNodeNS(Attr& attrNode)
     }
 
     attachAttributeNodeIfNeeded(attrNode);
-    setAttributeInternal(index, attrNode.qualifiedName(), attrNodeValue, NotInSynchronizationOfLazyAttribute);
+    setAttributeInternal(index, attrNode.qualifiedName(), attrNodeValue, InSynchronizationOfLazyAttribute::No);
 
     return oldAttrNode;
 }
@@ -3283,7 +3283,7 @@ ExceptionOr<Ref<Attr>> Element::removeAttributeNode(Attr& attr)
     Ref<Attr> oldAttrNode { attr };
 
     detachAttrNodeFromElementWithValue(&attr, m_elementData->attributeAt(existingAttributeIndex).value());
-    removeAttributeInternal(existingAttributeIndex, NotInSynchronizationOfLazyAttribute);
+    removeAttributeInternal(existingAttributeIndex, InSynchronizationOfLazyAttribute::No);
 
     return oldAttrNode;
 }
@@ -3308,7 +3308,7 @@ ExceptionOr<void> Element::setAttributeNS(const AtomString& namespaceURI, const 
     return { };
 }
 
-void Element::removeAttributeInternal(unsigned index, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
+void Element::removeAttributeInternal(unsigned index, InSynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(index < attributeCount());
 
@@ -3320,7 +3320,7 @@ void Element::removeAttributeInternal(unsigned index, SynchronizationOfLazyAttri
     if (RefPtr<Attr> attrNode = attrIfExists(name))
         detachAttrNodeFromElementWithValue(attrNode.get(), elementData.attributeAt(index).value());
 
-    if (inSynchronizationOfLazyAttribute) {
+    if (inSynchronizationOfLazyAttribute == InSynchronizationOfLazyAttribute::Yes) {
         elementData.removeAttribute(index);
         return;
     }
@@ -3335,9 +3335,9 @@ void Element::removeAttributeInternal(unsigned index, SynchronizationOfLazyAttri
     didRemoveAttribute(name, valueBeingRemoved);
 }
 
-void Element::addAttributeInternal(const QualifiedName& name, const AtomString& value, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
+void Element::addAttributeInternal(const QualifiedName& name, const AtomString& value, InSynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
 {
-    if (inSynchronizationOfLazyAttribute) {
+    if (inSynchronizationOfLazyAttribute == InSynchronizationOfLazyAttribute::Yes) {
         ensureUniqueElementData().addAttribute(name, value);
         return;
     }
@@ -3363,7 +3363,7 @@ bool Element::removeAttribute(const AtomString& qualifiedName)
         return false;
     }
 
-    removeAttributeInternal(index, NotInSynchronizationOfLazyAttribute);
+    removeAttributeInternal(index, InSynchronizationOfLazyAttribute::No);
     return true;
 }
 
