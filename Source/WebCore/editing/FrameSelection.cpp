@@ -104,7 +104,7 @@ CaretBase::CaretBase(CaretVisibility visibility)
 }
 
 DragCaretController::DragCaretController()
-    : CaretBase(Visible)
+    : CaretBase(CaretVisibility::Visible)
 {
 }
 
@@ -195,7 +195,7 @@ FrameSelection::FrameSelection(Document* document)
     // Caret blinking (blinks | does not blink)
     setCaretVisible(activeAndFocused);
 #else
-    setCaretVisibility(activeAndFocused ? Visible : Hidden, ShouldUpdateAppearance::No);
+    setCaretVisibility(activeAndFocused ? CaretVisibility::Visible : CaretVisibility::Hidden, ShouldUpdateAppearance::No);
 #endif
 }
 
@@ -905,10 +905,10 @@ VisiblePosition FrameSelection::modifyExtendingForward(TextGranularity granulari
         pos = nextSentencePosition(pos);
         break;
     case TextGranularity::LineGranularity:
-        pos = nextLinePosition(pos, lineDirectionPointForBlockDirectionNavigation(Extent));
+        pos = nextLinePosition(pos, lineDirectionPointForBlockDirectionNavigation(PositionType::Extent));
         break;
     case TextGranularity::ParagraphGranularity:
-        pos = nextParagraphPosition(pos, lineDirectionPointForBlockDirectionNavigation(Extent));
+        pos = nextParagraphPosition(pos, lineDirectionPointForBlockDirectionNavigation(PositionType::Extent));
         break;
     case TextGranularity::DocumentGranularity:
         ASSERT_NOT_REACHED();
@@ -1016,11 +1016,11 @@ VisiblePosition FrameSelection::modifyMovingForward(TextGranularity granularity,
         // to leave the selection at that line start (no need to call nextLinePosition!)
         pos = currentPosition;
         if (!isRange() || !isStartOfLine(pos))
-            pos = nextLinePosition(pos, lineDirectionPointForBlockDirectionNavigation(Start));
+            pos = nextLinePosition(pos, lineDirectionPointForBlockDirectionNavigation(PositionType::Start));
         break;
     }
     case TextGranularity::ParagraphGranularity:
-        pos = nextParagraphPosition(currentPosition, lineDirectionPointForBlockDirectionNavigation(Start));
+        pos = nextParagraphPosition(currentPosition, lineDirectionPointForBlockDirectionNavigation(PositionType::Start));
         break;
     case TextGranularity::DocumentGranularity:
         ASSERT_NOT_REACHED();
@@ -1122,10 +1122,10 @@ VisiblePosition FrameSelection::modifyExtendingBackward(TextGranularity granular
         pos = previousSentencePosition(pos);
         break;
     case TextGranularity::LineGranularity:
-        pos = previousLinePosition(pos, lineDirectionPointForBlockDirectionNavigation(Extent));
+        pos = previousLinePosition(pos, lineDirectionPointForBlockDirectionNavigation(PositionType::Extent));
         break;
     case TextGranularity::ParagraphGranularity:
-        pos = previousParagraphPosition(pos, lineDirectionPointForBlockDirectionNavigation(Extent));
+        pos = previousParagraphPosition(pos, lineDirectionPointForBlockDirectionNavigation(PositionType::Extent));
         break;
     case TextGranularity::SentenceBoundary:
         pos = startOfSentence(startForPlatform());
@@ -1228,10 +1228,10 @@ VisiblePosition FrameSelection::modifyMovingBackward(TextGranularity granularity
         pos = previousSentencePosition(currentPosition);
         break;
     case TextGranularity::LineGranularity:
-        pos = previousLinePosition(currentPosition, lineDirectionPointForBlockDirectionNavigation(Start));
+        pos = previousLinePosition(currentPosition, lineDirectionPointForBlockDirectionNavigation(PositionType::Start));
         break;
     case TextGranularity::ParagraphGranularity:
-        pos = previousParagraphPosition(currentPosition, lineDirectionPointForBlockDirectionNavigation(Start));
+        pos = previousParagraphPosition(currentPosition, lineDirectionPointForBlockDirectionNavigation(PositionType::Start));
         break;
     case TextGranularity::SentenceBoundary:
         pos = startOfSentence(currentPosition);
@@ -1483,7 +1483,7 @@ bool FrameSelection::modify(Alteration alter, SelectionDirection direction, Text
     // Setting a selection will clear it, so save it to possibly restore later.
     // Note: the Start position type is arbitrary because it is unused, it would be
     // the requested position type if there were no xPosForVerticalArrowNavigation set.
-    LayoutUnit x = lineDirectionPointForBlockDirectionNavigation(Start);
+    LayoutUnit x = lineDirectionPointForBlockDirectionNavigation(PositionType::Start);
     m_selection.setIsDirectional(shouldAlwaysUseDirectionalSelection(m_document.get()) || alter == Alteration::Extend);
 
     switch (alter) {
@@ -1555,19 +1555,19 @@ bool FrameSelection::modify(Alteration alter, unsigned verticalDistance, Vertica
             return false;
     }
 
-    willBeModified(alter, direction == DirectionUp ? SelectionDirection::Backward : SelectionDirection::Forward);
+    willBeModified(alter, direction == VerticalDirection::Up ? SelectionDirection::Backward : SelectionDirection::Forward);
 
     VisiblePosition pos;
     LayoutUnit xPos;
     switch (alter) {
     case Alteration::Move:
-        pos = VisiblePosition(direction == DirectionUp ? m_selection.start() : m_selection.end(), m_selection.affinity());
-        xPos = lineDirectionPointForBlockDirectionNavigation(direction == DirectionUp ? Start : End);
-        m_selection.setAffinity(direction == DirectionUp ? Affinity::Upstream : Affinity::Downstream);
+        pos = VisiblePosition(direction == VerticalDirection::Up ? m_selection.start() : m_selection.end(), m_selection.affinity());
+        xPos = lineDirectionPointForBlockDirectionNavigation(direction == VerticalDirection::Up ? PositionType::Start : PositionType::End);
+        m_selection.setAffinity(direction == VerticalDirection::Up ? Affinity::Upstream : Affinity::Downstream);
         break;
     case Alteration::Extend:
         pos = VisiblePosition(m_selection.extent(), m_selection.affinity());
-        xPos = lineDirectionPointForBlockDirectionNavigation(Extent);
+        xPos = lineDirectionPointForBlockDirectionNavigation(PositionType::Extent);
         m_selection.setAffinity(Affinity::Downstream);
         break;
     }
@@ -1575,14 +1575,14 @@ bool FrameSelection::modify(Alteration alter, unsigned verticalDistance, Vertica
     int startY;
     if (!absoluteCaretY(pos, startY))
         return false;
-    if (direction == DirectionUp)
+    if (direction == VerticalDirection::Up)
         startY = -startY;
     int lastY = startY;
 
     VisiblePosition result;
     VisiblePosition next;
     for (VisiblePosition p = pos; ; p = next) {
-        if (direction == DirectionUp)
+        if (direction == VerticalDirection::Up)
             next = previousLinePosition(p, xPos);
         else
             next = nextLinePosition(p, xPos);
@@ -1592,7 +1592,7 @@ bool FrameSelection::modify(Alteration alter, unsigned verticalDistance, Vertica
         int nextY;
         if (!absoluteCaretY(next, nextY))
             break;
-        if (direction == DirectionUp)
+        if (direction == VerticalDirection::Up)
             nextY = -nextY;
         if (nextY - startY > static_cast<int>(verticalDistance))
             break;
@@ -1630,13 +1630,13 @@ LayoutUnit FrameSelection::lineDirectionPointForBlockDirectionNavigation(Positio
     // FIXME: Can we use visibleStart/End/Extent?
     Position position;
     switch (type) {
-    case Start:
+    case PositionType::Start:
         position = m_selection.start();
         break;
-    case End:
+    case PositionType::End:
         position = m_selection.end();
         break;
-    case Extent:
+    case PositionType::Extent:
         position = m_selection.extent();
         break;
     }
@@ -1912,7 +1912,7 @@ void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const Lay
 {
 #if ENABLE(TEXT_CARET)
     auto caretPresentationProperties = caretAnimator ? caretAnimator->presentationProperties() : CaretAnimator::PresentationProperties();
-    if (m_caretVisibility == Hidden || caretPresentationProperties.blinkState == CaretAnimator::PresentationProperties::BlinkState::Off)
+    if (m_caretVisibility == CaretVisibility::Hidden || caretPresentationProperties.blinkState == CaretAnimator::PresentationProperties::BlinkState::Off)
         return;
 
     auto drawingRect = localCaretRectWithoutUpdate();
@@ -2168,7 +2168,7 @@ void FrameSelection::focusedOrActiveStateChanged()
     // Caret appears in the active frame.
     if (activeAndFocused)
         setSelectionFromNone();
-    setCaretVisibility(activeAndFocused ? Visible : Hidden, ShouldUpdateAppearance::Yes);
+    setCaretVisibility(activeAndFocused ? CaretVisibility::Visible : CaretVisibility::Hidden, ShouldUpdateAppearance::Yes);
 #endif
 }
 

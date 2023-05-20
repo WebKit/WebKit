@@ -655,7 +655,7 @@ static bool executeMovePageDown(LocalFrame& frame, Event*, EditorCommandSource, 
     unsigned distance = verticalScrollDistance(frame);
     if (!distance)
         return false;
-    return frame.selection().modify(FrameSelection::Alteration::Move, distance, FrameSelection::DirectionDown,
+    return frame.selection().modify(FrameSelection::Alteration::Move, distance, FrameSelection::VerticalDirection::Down,
         UserTriggered::Yes, FrameSelection::CursorAlignOnScroll::Always);
 }
 
@@ -664,7 +664,7 @@ static bool executeMovePageDownAndModifySelection(LocalFrame& frame, Event*, Edi
     unsigned distance = verticalScrollDistance(frame);
     if (!distance)
         return false;
-    return frame.selection().modify(FrameSelection::Alteration::Extend, distance, FrameSelection::DirectionDown,
+    return frame.selection().modify(FrameSelection::Alteration::Extend, distance, FrameSelection::VerticalDirection::Down,
         UserTriggered::Yes, FrameSelection::CursorAlignOnScroll::Always);
 }
 
@@ -673,7 +673,7 @@ static bool executeMovePageUp(LocalFrame& frame, Event*, EditorCommandSource, co
     unsigned distance = verticalScrollDistance(frame);
     if (!distance)
         return false;
-    return frame.selection().modify(FrameSelection::Alteration::Move, distance, FrameSelection::DirectionUp,
+    return frame.selection().modify(FrameSelection::Alteration::Move, distance, FrameSelection::VerticalDirection::Up,
         UserTriggered::Yes, FrameSelection::CursorAlignOnScroll::Always);
 }
 
@@ -682,7 +682,7 @@ static bool executeMovePageUpAndModifySelection(LocalFrame& frame, Event*, Edito
     unsigned distance = verticalScrollDistance(frame);
     if (!distance)
         return false;
-    return frame.selection().modify(FrameSelection::Alteration::Extend, distance, FrameSelection::DirectionUp,
+    return frame.selection().modify(FrameSelection::Alteration::Extend, distance, FrameSelection::VerticalDirection::Up,
         UserTriggered::Yes, FrameSelection::CursorAlignOnScroll::Always);
 }
 

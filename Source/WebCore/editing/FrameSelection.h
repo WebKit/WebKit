@@ -60,8 +60,8 @@ class CaretBase {
 public:
     WEBCORE_EXPORT static Color computeCaretColor(const RenderStyle& elementStyle, const Node*);
 protected:
-    enum CaretVisibility { Visible, Hidden };
-    explicit CaretBase(CaretVisibility = Hidden);
+    enum class CaretVisibility : bool { Visible, Hidden };
+    explicit CaretBase(CaretVisibility = CaretVisibility::Hidden);
 
     void invalidateCaretRect(Node*, bool caretRectChanged = false, CaretAnimator* = nullptr);
     void clearCaretRect();
@@ -75,7 +75,7 @@ protected:
     void setCaretRectNeedsUpdate() { m_caretRectNeedsUpdate = true; }
 
     void setCaretVisibility(CaretVisibility visibility) { m_caretVisibility = visibility; }
-    bool caretIsVisible() const { return m_caretVisibility == Visible; }
+    bool caretIsVisible() const { return m_caretVisibility == CaretVisibility::Visible; }
     CaretVisibility caretVisibility() const { return m_caretVisibility; }
 
 private:
@@ -164,7 +164,7 @@ public:
     WEBCORE_EXPORT bool contains(const LayoutPoint&) const;
 
     WEBCORE_EXPORT bool modify(Alteration, SelectionDirection, TextGranularity, UserTriggered = UserTriggered::No);
-    enum VerticalDirection { DirectionUp, DirectionDown };
+    enum class VerticalDirection : bool { Up, Down };
     bool modify(Alteration, unsigned verticalDistance, VerticalDirection, UserTriggered = UserTriggered::No, CursorAlignOnScroll = CursorAlignOnScroll::IfNeeded);
 
     TextGranularity granularity() const { return m_granularity; }
@@ -195,7 +195,7 @@ public:
     void nodeWillBeRemoved(Node&);
     void textWasReplaced(CharacterData&, unsigned offset, unsigned oldLength, unsigned newLength);
 
-    void setCaretVisible(bool caretIsVisible) { setCaretVisibility(caretIsVisible ? Visible : Hidden, ShouldUpdateAppearance::Yes); }
+    void setCaretVisible(bool caretIsVisible) { setCaretVisibility(caretIsVisible ? CaretVisibility::Visible : CaretVisibility::Hidden, ShouldUpdateAppearance::Yes); }
     void paintCaret(GraphicsContext&, const LayoutPoint&, const LayoutRect& clipRect);
 
     // Used to suspend caret blinking while the mouse is down.
@@ -248,7 +248,7 @@ public:
     enum class ClipToVisibleContent : bool { No, Yes };
     WEBCORE_EXPORT FloatRect selectionBounds(ClipToVisibleContent = ClipToVisibleContent::Yes);
 
-    enum class TextRectangleHeight { TextHeight, SelectionHeight };
+    enum class TextRectangleHeight : bool { TextHeight, SelectionHeight };
     WEBCORE_EXPORT void getClippedVisibleTextRectangles(Vector<FloatRect>&, TextRectangleHeight = TextRectangleHeight::SelectionHeight) const;
 
     WEBCORE_EXPORT HTMLFormElement* currentForm() const;
@@ -298,7 +298,7 @@ private:
     VisiblePosition modifyMovingLeft(TextGranularity, bool* reachedBoundary = nullptr);
     VisiblePosition modifyMovingBackward(TextGranularity, bool* reachedBoundary = nullptr);
 
-    enum PositionType : uint8_t { Start, End, Extent };
+    enum class PositionType : uint8_t { Start, End, Extent };
     LayoutUnit lineDirectionPointForBlockDirectionNavigation(PositionType);
 
     AXTextStateChangeIntent textSelectionIntent(Alteration, SelectionDirection, TextGranularity);
