@@ -41,6 +41,7 @@
 #include "CallFrameShuffler.h"
 #include "ClonedArguments.h"
 #include "DFGAbstractInterpreterInlines.h"
+#include "DFGCFAPhase.h"
 #include "DFGCapabilities.h"
 #include "DFGClobberize.h"
 #include "DFGDoesGC.h"
@@ -166,8 +167,9 @@ public:
         , m_state(state.graph)
         , m_interpreter(state.graph, m_state)
     {
-        if (Options::validateAbstractInterpreterState()) {
-            performLivenessAnalysis(m_graph);
+        if (UNLIKELY(Options::validateAbstractInterpreterState())) {
+            performGraphPackingAndLivenessAnalysis(m_graph);
+            performCFA(m_graph);
 
             // We only use node liveness here, not combined liveness, as we only track
             // AI state for live nodes.
@@ -615,7 +617,7 @@ private:
                 continue;
             if (node->op() == CheckInBoundsInt52)
                 continue;
-            if (node->op() == EnumeratorNextUpdateIndexAndMode) {
+            if (node->isTuple()) {
                 ASSERT(m_interpreter.hasClearedAbstractState(node));
                 continue;
             }
@@ -726,7 +728,7 @@ private:
         m_interpreter.startExecuting();
         m_interpreter.executeKnownEdgeTypes(m_node);
 
-        if (Options::validateAbstractInterpreterState())
+        if (UNLIKELY(Options::validateAbstractInterpreterState()))
             validateAIState(m_node);
 
         if constexpr (validateDFGDoesGC) {

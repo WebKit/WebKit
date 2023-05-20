@@ -88,7 +88,6 @@ public:
     
     ALWAYS_INLINE void clearForNode(NodeFlowProjection node)
     {
-        ASSERT(!node->isTuple());
         AbstractValue& value = m_abstractValues.at(node);
         value.clear();
         value.m_effectEpoch = m_effectEpoch;

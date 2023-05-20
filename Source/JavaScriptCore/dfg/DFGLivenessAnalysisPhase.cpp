@@ -185,10 +185,12 @@ private:
 
 } // anonymous namespace
 
-bool performLivenessAnalysis(Graph& graph)
+bool performGraphPackingAndLivenessAnalysis(Graph& graph)
 {
     graph.packNodeIndices();
-
+#ifndef NDEBUG
+    graph.clearAbstractValues();
+#endif
     return runPhase<LivenessAnalysisPhase>(graph);
 }
 

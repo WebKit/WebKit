@@ -34,7 +34,7 @@ class Graph;
 
 // Computes BasicBlock::ssa->liveAtHead/liveAtTail.
 
-bool performLivenessAnalysis(Graph&);
+bool performGraphPackingAndLivenessAnalysis(Graph&);
 
 } } // namespace JSC::DFG
 

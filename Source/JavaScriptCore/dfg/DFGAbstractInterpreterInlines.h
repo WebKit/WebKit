@@ -4614,6 +4614,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
         }
         m_state.setNonCellTypeForTupleNode(node, 0, SpecInt32Only);
+        clearForNode(node);
         break;
     }
 
