@@ -1258,6 +1258,10 @@ private:
             setPrediction(SpecString);
             break;
         }
+        case MakeAtomString: {
+            setPrediction(SpecStringIdent);
+            break;
+        }
         case NewStringObject: {
             setPrediction(SpecStringObject);
             break;

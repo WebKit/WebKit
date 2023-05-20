@@ -282,6 +282,7 @@ public:
                     }
                     break;
                 case MakeRope:
+                case MakeAtomString:
                 case ValueAdd:
                 case ValueSub:
                 case ValueMul:

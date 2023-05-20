@@ -1099,7 +1099,8 @@ private:
                 FALLTHROUGH;
             }
 
-            case MakeRope: {
+            case MakeRope:
+            case MakeAtomString: {
                 for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
                     Edge& edge = node->children.child(i);
                     if (!edge)
@@ -1122,8 +1123,10 @@ private:
 
                 if (!node->child2()) {
                     ASSERT(!node->child3());
-                    node->convertToIdentity();
-                    changed = true;
+                    if (node->op() != MakeAtomString) {
+                        node->convertToIdentity();
+                        changed = true;
+                    }
                 }
                 break;
             }

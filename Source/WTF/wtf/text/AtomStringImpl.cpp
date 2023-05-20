@@ -191,6 +191,17 @@ RefPtr<AtomStringImpl> AtomStringImpl::add(const UChar* characters, unsigned len
     return addToStringTable<UCharBuffer, UCharBufferTranslator>(buffer);
 }
 
+RefPtr<AtomStringImpl> AtomStringImpl::add(HashTranslatorCharBuffer<UChar>& buffer)
+{
+    if (!buffer.characters)
+        return nullptr;
+
+    if (!buffer.length)
+        return static_cast<AtomStringImpl*>(StringImpl::empty());
+
+    return addToStringTable<UCharBuffer, UCharBufferTranslator>(buffer);
+}
+
 struct SubstringLocation {
     StringImpl* baseString;
     unsigned start;
@@ -294,6 +305,17 @@ struct BufferFromStaticDataTranslator {
         location = pointer;
     }
 };
+
+RefPtr<AtomStringImpl> AtomStringImpl::add(HashTranslatorCharBuffer<LChar>& buffer)
+{
+    if (!buffer.characters)
+        return nullptr;
+
+    if (!buffer.length)
+        return static_cast<AtomStringImpl*>(StringImpl::empty());
+
+    return addToStringTable<LCharBuffer, LCharBufferTranslator>(buffer);
+}
 
 RefPtr<AtomStringImpl> AtomStringImpl::add(const LChar* characters, unsigned length)
 {

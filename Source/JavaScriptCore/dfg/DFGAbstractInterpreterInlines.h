@@ -923,7 +923,29 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setForNode(node, m_vm.stringStructure.get());
         break;
     }
-            
+
+    case MakeAtomString: {
+        unsigned numberOfRemovedChildren = 0;
+        for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
+            Edge& edge = node->children.child(i);
+            if (!edge)
+                break;
+            JSValue childConstant = m_state.forNode(edge).value();
+            if (!childConstant)
+                continue;
+            if (!childConstant.isString())
+                continue;
+            if (asString(childConstant)->length())
+                continue;
+            ++numberOfRemovedChildren;
+        }
+
+        if (numberOfRemovedChildren)
+            m_state.setShouldTryConstantFolding(true);
+        setTypeForNode(node, SpecStringIdent);
+        break;
+    }
+
     case ArithSub: {
         JSValue left = forNode(node->child1()).value();
         JSValue right = forNode(node->child2()).value();

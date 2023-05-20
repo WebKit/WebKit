@@ -481,6 +481,27 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToPrecision, (JSGlobalObject* globalObje
     return JSValue::encode(jsString(vm, String::numberToStringFixedPrecision(x, significantFigures, KeepTrailingZeros)));
 }
 
+JSString* NumericStrings::addJSString(VM& vm, int i)
+{
+    if (static_cast<unsigned>(i) < cacheSize) {
+        auto& entry = lookupSmallString(static_cast<unsigned>(i));
+        if (entry.jsString)
+            return entry.jsString;
+        entry.jsString = jsNontrivialString(vm, entry.value);
+        return entry.jsString;
+    }
+    auto& entry = lookup(i);
+    if (i != entry.key || entry.value.isNull()) {
+        entry.key = i;
+        entry.value = String::number(i);
+    } else {
+        if (entry.jsString)
+            return entry.jsString;
+    }
+    entry.jsString = jsNontrivialString(vm, entry.value);
+    return entry.jsString;
+}
+
 static ALWAYS_INLINE JSString* int32ToStringInternal(VM& vm, int32_t value, int32_t radix)
 {
     ASSERT(!(radix < 2 || radix > 36));
@@ -492,7 +513,7 @@ static ALWAYS_INLINE JSString* int32ToStringInternal(VM& vm, int32_t value, int3
     }
 
     if (radix == 10)
-        return jsNontrivialString(vm, vm.numericStrings.add(value));
+        return vm.numericStrings.addJSString(vm, value);
 
     return jsNontrivialString(vm, toStringWithRadixInternal(value, radix));
 

@@ -2181,6 +2181,8 @@ void Heap::finalize()
 
     if (m_lastCollectionScope && m_lastCollectionScope.value() == CollectionScope::Full)
         vm().jsonAtomStringCache.clear();
+    vm().keyAtomStringCache.clear();
+    vm().numericStrings.clearOnGarbageCollection();
 
     m_possiblyAccessedStringsFromConcurrentThreads.clear();
 

@@ -1138,6 +1138,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSWeakMapInlines.h
     runtime/JSWithScope.h
     runtime/JSWrapperObject.h
+    runtime/KeyAtomStringCache.h
+    runtime/KeyAtomStringCacheInlines.h
     runtime/LazyClassStructure.h
     runtime/LazyProperty.h
     runtime/LeafExecutable.h

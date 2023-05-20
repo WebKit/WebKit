@@ -1276,6 +1276,9 @@ private:
         case MakeRope:
             compileMakeRope();
             break;
+        case MakeAtomString:
+            compileMakeAtomString();
+            break;
         case StringCharAt:
             compileStringCharAt();
             break;
@@ -9734,6 +9737,38 @@ IGNORE_CLANG_WARNINGS_END
         
         m_out.appendTo(continuation, lastNext);
         setJSValue(m_out.phi(Int64, fastResult, emptyResult, slowResult));
+    }
+
+    void compileMakeAtomString()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        LValue strings[3] { nullptr, nullptr, nullptr };
+        unsigned numberOfStrings;
+        strings[0] = lowCell(m_node->child1());
+        if (m_node->child2()) {
+            strings[1] = lowCell(m_node->child2());
+            if (m_node->child3()) {
+                strings[2] = lowCell(m_node->child3());
+                numberOfStrings = 3;
+            } else
+                numberOfStrings = 2;
+        } else
+            numberOfStrings = 1;
+
+        switch (numberOfStrings) {
+        case 1:
+            setJSValue(vmCall(pointerType(), operationMakeAtomString1, weakPointer(globalObject), strings[0]));
+            break;
+        case 2:
+            setJSValue(vmCall(pointerType(), operationMakeAtomString2, weakPointer(globalObject), strings[0], strings[1]));
+            break;
+        case 3:
+            setJSValue(vmCall(pointerType(), operationMakeAtomString3, weakPointer(globalObject), strings[0], strings[1], strings[2]));
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
     }
     
     LValue compileStringCharAtImpl()

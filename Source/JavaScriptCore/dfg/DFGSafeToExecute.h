@@ -282,6 +282,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case StrCat:
     case CallStringConstructor:
     case MakeRope:
+    case MakeAtomString:
     case GetFromArguments:
     case GetArgument:
     case StringFromCharCode:

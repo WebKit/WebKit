@@ -394,6 +394,7 @@ private:
         }
 
         case MakeRope:
+        case MakeAtomString:
         case StrCat: {
             String leftString = m_node->child1()->tryGetString(m_graph);
             if (!leftString)
@@ -1107,6 +1108,46 @@ private:
                 break;
             }
             m_node->convertToLazyJSConstant(m_graph, LazyJSValue::newString(m_graph, string.substring(start, end - start)));
+            break;
+        }
+
+        case GetByVal:
+        case GetByValMegamorphic: {
+            Edge& baseEdge = m_graph.child(m_node, 0);
+            Edge& keyEdge = m_graph.child(m_node, 1);
+            if (baseEdge.useKind() == ObjectUse && m_node->arrayMode().type() == Array::Generic) {
+                if (keyEdge->op() == MakeRope) {
+                    keyEdge->setOp(MakeAtomString);
+                    m_changed = true;
+                }
+            }
+            break;
+        }
+
+        case PutByVal:
+        case PutByValDirect:
+        case PutByValAlias:
+        case PutByValMegamorphic: {
+            Edge& baseEdge = m_graph.child(m_node, 0);
+            Edge& keyEdge = m_graph.child(m_node, 1);
+            if ((baseEdge.useKind() == CellUse || baseEdge.useKind() == KnownCellUse) && m_node->arrayMode().type() == Array::Generic) {
+                if (keyEdge->op() == MakeRope) {
+                    keyEdge->setOp(MakeAtomString);
+                    m_changed = true;
+                }
+            }
+            break;
+        }
+
+        case InByVal: {
+            Edge& baseEdge = m_graph.child(m_node, 0);
+            Edge& keyEdge = m_graph.child(m_node, 1);
+            if (baseEdge.useKind() == CellUse) {
+                if (keyEdge->op() == MakeRope) {
+                    keyEdge->setOp(MakeAtomString);
+                    m_changed = true;
+                }
+            }
             break;
         }
 

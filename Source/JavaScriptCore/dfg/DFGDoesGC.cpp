@@ -392,6 +392,7 @@ bool doesGC(Graph& graph, Node* node)
     case NewStringObject:
     case NewSymbol:
     case MakeRope:
+    case MakeAtomString:
     case NewFunction:
     case NewGeneratorFunction:
     case NewAsyncGeneratorFunction:

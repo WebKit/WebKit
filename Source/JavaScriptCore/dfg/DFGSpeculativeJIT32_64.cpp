@@ -2410,6 +2410,10 @@ void SpeculativeJIT::compile(Node* node)
         compileMakeRope(node);
         break;
 
+    case MakeAtomString:
+        compileMakeAtomString(node);
+        break;
+
     case ArithSub:
         compileArithSub(node);
         break;

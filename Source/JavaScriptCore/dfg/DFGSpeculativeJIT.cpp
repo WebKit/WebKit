@@ -16857,6 +16857,48 @@ void SpeculativeJIT::compileMakeRope(Node* node)
 #endif
 }
 
+void SpeculativeJIT::compileMakeAtomString(Node* node)
+{
+    SpeculateCellOperand op1(this, node->child1());
+    SpeculateCellOperand op2(this, node->child2());
+    SpeculateCellOperand op3(this, node->child3());
+    GPRReg opGPRs[3] { InvalidGPRReg, InvalidGPRReg, InvalidGPRReg };
+    unsigned numOpGPRs;
+    opGPRs[0] = op1.gpr();
+    if (node->child2()) {
+        opGPRs[1] = op2.gpr();
+        if (node->child3()) {
+            opGPRs[2] = op3.gpr();
+            numOpGPRs = 3;
+        } else
+            numOpGPRs = 2;
+    } else
+        numOpGPRs = 1;
+
+    flushRegisters();
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+    switch (numOpGPRs) {
+    case 1:
+        callOperation(operationMakeAtomString1, resultGPR, LinkableConstant::globalObject(*this, node), opGPRs[0]);
+        exceptionCheck();
+        break;
+    case 2:
+        callOperation(operationMakeAtomString2, resultGPR, LinkableConstant::globalObject(*this, node), opGPRs[0], opGPRs[1]);
+        exceptionCheck();
+        break;
+    case 3:
+        callOperation(operationMakeAtomString3, resultGPR, LinkableConstant::globalObject(*this, node), opGPRs[0], opGPRs[1], opGPRs[2]);
+        exceptionCheck();
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    cellResult(resultGPR, node);
+}
+
 void SpeculativeJIT::compileEnumeratorGetByVal(Node* node)
 {
     Edge baseEdge = m_graph.varArgChild(node, 0);

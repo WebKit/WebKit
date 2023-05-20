@@ -1894,6 +1894,8 @@
 		E379006628F8F4E100206FD8 /* DFGValidateUnlinked.h in Headers */ = {isa = PBXBuildFile; fileRef = E379006428F8F4E100206FD8 /* DFGValidateUnlinked.h */; };
 		E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = E3794E741B77EB97005543AE /* ModuleAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E379B59029834EC5007C4C0E /* SIMDShuffle.h in Headers */ = {isa = PBXBuildFile; fileRef = E379B58F29834EC5007C4C0E /* SIMDShuffle.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E37F44C72A13088000E56D8D /* KeyAtomStringCacheInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E37F44C52A13088000E56D8D /* KeyAtomStringCacheInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E37F44C82A13088000E56D8D /* KeyAtomStringCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E37F44C62A13088000E56D8D /* KeyAtomStringCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E383500A2390D93B0036316D /* WasmGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = E38350092390D9370036316D /* WasmGlobal.h */; };
 		E3850B15226ED641009ABF9C /* DFGMinifiedIDInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3850B14226ED63E009ABF9C /* DFGMinifiedIDInlines.h */; };
 		E38652E3237CA0C900E1D5EE /* BlockDirectoryBits.h in Headers */ = {isa = PBXBuildFile; fileRef = E38652E2237CA0C800E1D5EE /* BlockDirectoryBits.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5388,6 +5390,8 @@
 		E3794E741B77EB97005543AE /* ModuleAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleAnalyzer.h; sourceTree = "<group>"; };
 		E379B58F29834EC5007C4C0E /* SIMDShuffle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SIMDShuffle.h; sourceTree = "<group>"; };
 		E37CFB2D22F27C57009A7B38 /* WasmCompilationMode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmCompilationMode.cpp; sourceTree = "<group>"; };
+		E37F44C52A13088000E56D8D /* KeyAtomStringCacheInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyAtomStringCacheInlines.h; sourceTree = "<group>"; };
+		E37F44C62A13088000E56D8D /* KeyAtomStringCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyAtomStringCache.h; sourceTree = "<group>"; };
 		E380A76B1DCD7195000F89E6 /* MacroAssemblerHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerHelpers.h; sourceTree = "<group>"; };
 		E380D66B1F19249D00A59095 /* BuiltinNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltinNames.cpp; sourceTree = "<group>"; };
 		E38350082390D9370036316D /* WasmGlobal.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmGlobal.cpp; sourceTree = "<group>"; };
@@ -8065,6 +8069,8 @@
 				1442566015EDE98D0066A49B /* JSWithScope.h */,
 				65C7A1710A8EAACB00FA37EA /* JSWrapperObject.cpp */,
 				65C7A1720A8EAACB00FA37EA /* JSWrapperObject.h */,
+				E37F44C62A13088000E56D8D /* KeyAtomStringCache.h */,
+				E37F44C52A13088000E56D8D /* KeyAtomStringCacheInlines.h */,
 				DCF3D5641CD29468003D5C65 /* LazyClassStructure.cpp */,
 				DCF3D5651CD29468003D5C65 /* LazyClassStructure.h */,
 				DCF3D5661CD29468003D5C65 /* LazyClassStructureInlines.h */,
@@ -10792,6 +10798,8 @@
 				86E3C619167BABEE006D760A /* JSWrapperMap.h in Headers */,
 				BC18C42E0E16F5CD00B34460 /* JSWrapperObject.h in Headers */,
 				BCFD8C930EEB2EE700283848 /* JumpTable.h in Headers */,
+				E37F44C82A13088000E56D8D /* KeyAtomStringCache.h in Headers */,
+				E37F44C72A13088000E56D8D /* KeyAtomStringCacheInlines.h in Headers */,
 				A72FFD64139985A800E5365A /* KeywordLookup.h in Headers */,
 				969A072A0ED1CE6900F1F681 /* Label.h in Headers */,
 				960097A60EBABB58007A7297 /* LabelScope.h in Headers */,

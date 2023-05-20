@@ -42,6 +42,10 @@ public:
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(const LChar*, unsigned length);
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(const UChar*, unsigned length);
     ALWAYS_INLINE static RefPtr<AtomStringImpl> add(const char* s, unsigned length) { return add(reinterpret_cast<const LChar*>(s), length); }
+
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(HashTranslatorCharBuffer<LChar>&);
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(HashTranslatorCharBuffer<UChar>&);
+
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(StringImpl*, unsigned offset, unsigned length);
     ALWAYS_INLINE static RefPtr<AtomStringImpl> add(StringImpl* string)
     {

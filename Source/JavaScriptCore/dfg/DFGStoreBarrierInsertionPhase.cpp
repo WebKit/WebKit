@@ -390,6 +390,7 @@ private:
             case MaterializeNewObject:
             case MaterializeCreateActivation:
             case MakeRope:
+            case MakeAtomString:
             case CreateActivation:
             case CreateDirectArguments:
             case CreateScopedArguments:

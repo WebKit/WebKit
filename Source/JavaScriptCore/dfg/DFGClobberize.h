@@ -251,6 +251,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case BooleanToNumber:
     case FiatInt52:
     case MakeRope:
+    case MakeAtomString:
     case StrCat:
     case ValueToInt32:
     case GetExecutable:
