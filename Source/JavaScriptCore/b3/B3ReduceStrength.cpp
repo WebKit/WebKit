@@ -876,17 +876,66 @@ private:
                     replaceWithNew<Value>(Neg, m_value->origin(), m_value->child(0));
                     break;
                 }
-                
-                // Turn this: Mul(value, constant)
-                // Into this: Shl(value, log2(constant))
-                if (hasOneBitSet(factor)) {
-                    unsigned shiftAmount = WTF::fastLog2(static_cast<uint64_t>(factor));
-                    replaceWithNewValue(
-                        m_proc.add<Value>(
-                            Shl, m_value->origin(), m_value->child(0),
-                            m_insertionSet.insert<Const32Value>(
-                                m_index, m_value->origin(), shiftAmount)));
+
+                auto convertWithFactor = [&](uint64_t factor) -> Value* {
+                    // Turn this: Mul(value, constant)
+                    // Into this: Shl(value, log2(constant))
+                    if (hasOneBitSet(factor)) {
+                        unsigned shiftAmount = WTF::fastLog2(static_cast<uint64_t>(factor));
+                        return m_proc.add<Value>(
+                                Shl, m_value->origin(), m_value->child(0),
+                                m_insertionSet.insert<Const32Value>(
+                                    m_index, m_value->origin(), shiftAmount));
+                    }
+
+                    // Turn this: Mul(value, 1**n + 1)
+                    // Into this: Add(Shl(value, n), value)
+                    if (hasOneBitSet(static_cast<uint64_t>(factor) - 1)) {
+                        unsigned shiftAmount = WTF::fastLog2(static_cast<uint64_t>(factor - 1));
+                        return m_proc.add<Value>(
+                                Add, m_value->origin(), m_insertionSet.insert<Value>(m_index,
+                                    Shl, m_value->origin(), m_value->child(0),
+                                    m_insertionSet.insert<Const32Value>(
+                                        m_index, m_value->origin(), shiftAmount)),
+                                m_value->child(0));
+                    }
+
+                    // Turn this: Mul(value, 1**n - 1)
+                    // Into this: Sub(Shl(value, n), value)
+                    if (hasOneBitSet(static_cast<uint64_t>(factor) + 1)) {
+                        unsigned shiftAmount = WTF::fastLog2(static_cast<uint64_t>(factor + 1));
+                        return m_proc.add<Value>(
+                                Sub, m_value->origin(), m_insertionSet.insert<Value>(m_index,
+                                    Shl, m_value->origin(), m_value->child(0),
+                                    m_insertionSet.insert<Const32Value>(
+                                        m_index, m_value->origin(), shiftAmount)),
+                                m_value->child(0));
+                    }
+
+                    return nullptr;
+                };
+
+                if (Value* result = convertWithFactor(static_cast<uint64_t>(factor))) {
+                    replaceWithNewValue(result);
                     break;
+                }
+
+                // Turn this: Mul(value, (constant) ** n)
+                // Into this: Shl(Add(Shl(value, i), value), n)
+                // We reduce strength one-level here.
+                unsigned outerShiftAmount = std::countr_zero(static_cast<uint64_t>(factor));
+                if (outerShiftAmount != 0) {
+                    uint64_t reducedFactor = static_cast<uint64_t>(factor) >> outerShiftAmount;
+                    if (Value* reducedResult = convertWithFactor(reducedFactor)) {
+                        m_insertionSet.insertValue(m_index, reducedResult);
+                        replaceWithNewValue(
+                            m_proc.add<Value>(
+                                Shl, m_value->origin(),
+                                reducedResult,
+                                m_insertionSet.insert<Const32Value>(
+                                    m_index, m_value->origin(), outerShiftAmount)));
+                        break;
+                    }
                 }
             } else if (m_value->child(1)->hasDouble()) {
                 double factor = m_value->child(1)->asDouble();
