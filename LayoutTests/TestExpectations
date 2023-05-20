@@ -4696,7 +4696,6 @@ webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/li-value-rever
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-004.html [ ImageOnlyFailure ]
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-005.html [ ImageOnlyFailure ]
 
-webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/change-intrinsic-width.html [ ImageOnlyFailure ]
 webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-balance-003.html [ ImageOnlyFailure ]
 webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/multicol-list-item-002.html [ ImageOnlyFailure ]
 webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/nested-with-too-tall-line.html [ ImageOnlyFailure ]
