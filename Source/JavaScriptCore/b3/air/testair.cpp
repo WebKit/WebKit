@@ -1675,7 +1675,7 @@ void testX86VMULSD()
     root->append(MoveDouble, nullptr, Tmp(FPRInfo::argumentFPR2), Tmp(FPRInfo::returnValueFPR));
     root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
 
-    CHECK(compileAndRun<double>(proc, 2.4, 4.2, pureNaN()) == 2.4 * 4.2);
+    CHECK(compileAndRun<double>(proc, 2.4, 4.2, PNaN) == 2.4 * 4.2);
 }
 
 void testX86VMULSDDestRex()
@@ -1688,7 +1688,7 @@ void testX86VMULSDDestRex()
     root->append(MoveDouble, nullptr, Tmp(X86Registers::xmm15), Tmp(FPRInfo::returnValueFPR));
     root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
 
-    CHECK(compileAndRun<double>(proc, 2.4, 4.2, pureNaN()) == 2.4 * 4.2);
+    CHECK(compileAndRun<double>(proc, 2.4, 4.2, PNaN) == 2.4 * 4.2);
 }
 
 void testX86VMULSDOp1DestRex()
@@ -1702,7 +1702,7 @@ void testX86VMULSDOp1DestRex()
     root->append(MoveDouble, nullptr, Tmp(X86Registers::xmm15), Tmp(FPRInfo::returnValueFPR));
     root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
 
-    CHECK(compileAndRun<double>(proc, 2.4, 4.2, pureNaN()) == 2.4 * 4.2);
+    CHECK(compileAndRun<double>(proc, 2.4, 4.2, PNaN) == 2.4 * 4.2);
 }
 
 void testX86VMULSDOp2DestRex()
@@ -1716,7 +1716,7 @@ void testX86VMULSDOp2DestRex()
     root->append(MoveDouble, nullptr, Tmp(X86Registers::xmm15), Tmp(FPRInfo::returnValueFPR));
     root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
 
-    CHECK(compileAndRun<double>(proc, 2.4, 4.2, pureNaN()) == 2.4 * 4.2);
+    CHECK(compileAndRun<double>(proc, 2.4, 4.2, PNaN) == 2.4 * 4.2);
 }
 
 void testX86VMULSDOpsDestRex()
@@ -1731,7 +1731,7 @@ void testX86VMULSDOpsDestRex()
     root->append(MoveDouble, nullptr, Tmp(X86Registers::xmm15), Tmp(FPRInfo::returnValueFPR));
     root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
 
-    CHECK(compileAndRun<double>(proc, 2.4, 4.2, pureNaN()) == 2.4 * 4.2);
+    CHECK(compileAndRun<double>(proc, 2.4, 4.2, PNaN) == 2.4 * 4.2);
 }
 
 void testX86VMULSDAddr()
@@ -1745,7 +1745,7 @@ void testX86VMULSDAddr()
     root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
 
     double secondArg = 4.2;
-    CHECK(compileAndRun<double>(proc, 2.4, &secondArg + 2, pureNaN()) == 2.4 * 4.2);
+    CHECK(compileAndRun<double>(proc, 2.4, &secondArg + 2, PNaN) == 2.4 * 4.2);
 }
 
 void testX86VMULSDAddrOpRexAddr()
@@ -1760,7 +1760,7 @@ void testX86VMULSDAddrOpRexAddr()
     root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
 
     double secondArg = 4.2;
-    CHECK(compileAndRun<double>(proc, 2.4, &secondArg + 2, pureNaN()) == 2.4 * 4.2);
+    CHECK(compileAndRun<double>(proc, 2.4, &secondArg + 2, PNaN) == 2.4 * 4.2);
 }
 
 void testX86VMULSDDestRexAddr()
@@ -1774,7 +1774,7 @@ void testX86VMULSDDestRexAddr()
     root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
 
     double secondArg = 4.2;
-    CHECK(compileAndRun<double>(proc, 2.4, &secondArg - 2, pureNaN()) == 2.4 * 4.2);
+    CHECK(compileAndRun<double>(proc, 2.4, &secondArg - 2, PNaN) == 2.4 * 4.2);
 }
 
 void testX86VMULSDRegOpDestRexAddr()
@@ -1789,7 +1789,7 @@ void testX86VMULSDRegOpDestRexAddr()
     root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
 
     double secondArg = 4.2;
-    CHECK(compileAndRun<double>(proc, 2.4, &secondArg, pureNaN()) == 2.4 * 4.2);
+    CHECK(compileAndRun<double>(proc, 2.4, &secondArg, PNaN) == 2.4 * 4.2);
 }
 
 void testX86VMULSDAddrOpDestRexAddr()
@@ -1804,7 +1804,7 @@ void testX86VMULSDAddrOpDestRexAddr()
     root->append(RetDouble, nullptr, Tmp(FPRInfo::returnValueFPR));
 
     double secondArg = 4.2;
-    CHECK(compileAndRun<double>(proc, 2.4, &secondArg - 1, pureNaN()) == 2.4 * 4.2);
+    CHECK(compileAndRun<double>(proc, 2.4, &secondArg - 1, PNaN) == 2.4 * 4.2);
 }
 
 void testX86VMULSDBaseNeedsRex()
@@ -1820,7 +1820,7 @@ void testX86VMULSDBaseNeedsRex()
 
     double secondArg = 4.2;
     uint64_t index = 8;
-    CHECK(compileAndRun<double>(proc, 2.4, &secondArg - 1, index, pureNaN()) == 2.4 * 4.2);
+    CHECK(compileAndRun<double>(proc, 2.4, &secondArg - 1, index, PNaN) == 2.4 * 4.2);
 }
 
 void testX86VMULSDIndexNeedsRex()
@@ -1836,7 +1836,7 @@ void testX86VMULSDIndexNeedsRex()
 
     double secondArg = 4.2;
     uint64_t index = - 8;
-    CHECK(compileAndRun<double>(proc, 2.4, &secondArg + 1, index, pureNaN()) == 2.4 * 4.2);
+    CHECK(compileAndRun<double>(proc, 2.4, &secondArg + 1, index, PNaN) == 2.4 * 4.2);
 }
 
 void testX86VMULSDBaseIndexNeedRex()
@@ -1853,7 +1853,7 @@ void testX86VMULSDBaseIndexNeedRex()
 
     double secondArg = 4.2;
     uint64_t index = 16;
-    CHECK(compileAndRun<double>(proc, 2.4, &secondArg - 2, index, pureNaN()) == 2.4 * 4.2);
+    CHECK(compileAndRun<double>(proc, 2.4, &secondArg - 2, index, PNaN) == 2.4 * 4.2);
 }
 #endif // #if CPU(X86) || CPU(X86_64)
 

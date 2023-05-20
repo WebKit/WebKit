@@ -56,7 +56,7 @@ void marshallJSResult(CCallHelpers& jit, const TypeDefinition& typeDefinition, c
             jit.convertFloatToDouble(src.fpr(), src.fpr());
             FALLTHROUGH;
         case TypeKind::F64: {
-            jit.moveTrustedValue(jsNumber(pureNaN()), dst);
+            jit.moveTrustedValue(jsNumber(PNaN), dst);
             auto isNaN = jit.branchIfNaN(src.fpr());
 #if USE(JSVALUE64)
             jit.boxDouble(src.fpr(), dst, DoNotHaveTagRegisters);
