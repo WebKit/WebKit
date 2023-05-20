@@ -13,5 +13,5 @@ PASS adding specified width, in presence of specified viewBox
 PASS modifiying specified viewBox, in presence of specified width
 PASS removing specified width, in presence of specified viewBox
 PASS adding specified height, in presence of specified viewBox
-FAIL modifiying specified viewBox, in presence of specified height assert_equals: checking width. expected 50 but got 80
+PASS modifiying specified viewBox, in presence of specified height
 

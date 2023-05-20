@@ -191,6 +191,7 @@ bool RenderSVGRoot::updateLayoutSizeIfNeeded()
     auto previousSize = size();
     updateLogicalWidth();
     updateLogicalHeight();
+    setNeedsLayoutIfNeededAfterIntrinsicSizeChange();
     return selfNeedsLayout() || previousSize != size();
 }
 

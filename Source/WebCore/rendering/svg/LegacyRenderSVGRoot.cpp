@@ -212,6 +212,7 @@ void LegacyRenderSVGRoot::layout()
 
     repainter.repaintAfterLayout();
 
+    setNeedsLayoutIfNeededAfterIntrinsicSizeChange();
     clearNeedsLayout();
 }
 
