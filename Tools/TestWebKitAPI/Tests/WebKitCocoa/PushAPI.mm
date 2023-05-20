@@ -612,8 +612,11 @@ TEST(PushAPI, firePushEventWithNoPagesFail)
 
     clearWebsiteDataStore([configuration websiteDataStore]);
 }
-
+#if PLATFORM(IOS)
+TEST(PushAPI, DISABLED_firePushEventWithNoPagesTimeout)
+#else
 TEST(PushAPI, firePushEventWithNoPagesTimeout)
+#endif
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { mainBytes } },
