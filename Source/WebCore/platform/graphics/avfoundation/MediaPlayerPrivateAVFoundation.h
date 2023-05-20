@@ -272,6 +272,8 @@ protected:
     virtual void updateVideoLayerGravity() = 0;
     virtual void resolvedURLChanged() = 0;
 
+    virtual bool isHLS() const { return false; }
+
     static bool isUnsupportedMIMEType(const String&);
     static const HashSet<String, ASCIICaseInsensitiveHash>& staticMIMETypeList();
 

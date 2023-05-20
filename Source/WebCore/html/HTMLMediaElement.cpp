@@ -4148,6 +4148,24 @@ void HTMLMediaElement::pauseInternal()
     updatePlayState();
 }
 
+bool HTMLMediaElement::hasMediaSource() const
+{
+#if ENABLE(MEDIA_SOURCE)
+    return m_mediaSource;
+#else
+    return false;
+#endif
+}
+
+bool HTMLMediaElement::hasManagedMediaSource() const
+{
+#if ENABLE(MANAGED_MEDIA_SOURCE)
+    return is<ManagedMediaSource>(m_mediaSource);
+#else
+    return false;
+#endif
+}
+
 #if ENABLE(MEDIA_SOURCE)
 
 void HTMLMediaElement::detachMediaSource()

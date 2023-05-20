@@ -1958,6 +1958,9 @@ MediaPlayerPrivateAVFoundation::AssetStatus MediaPlayerPrivateAVFoundationObjC::
             return MediaPlayerAVAssetStatusLoading;
     }
 
+    if (!m_cachedAssetIsHLS)
+        m_cachedAssetIsHLS = [[m_avAsset variants] count] > 0;
+
     if (!m_cachedAssetIsPlayable)
         m_cachedAssetIsPlayable = [[m_avAsset valueForKey:@"playable"] boolValue] || containsDisabledTracks();
 
@@ -3900,6 +3903,7 @@ NSArray* assetMetadataKeyNames()
         @"tracks",
         @"availableMediaCharacteristicsWithMediaSelectionOptions",
         @"availableChapterLocales",
+        @"variants",
     nil];
     return keys;
 }

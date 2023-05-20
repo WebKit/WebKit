@@ -969,6 +969,9 @@ private:
     void hardwareMutedStateDidChange(const AudioSession&) final;
 #endif
 
+    bool hasMediaSource() const;
+    bool hasManagedMediaSource() const;
+
     bool processingUserGestureForMedia() const;
 
     bool effectiveMuted() const;

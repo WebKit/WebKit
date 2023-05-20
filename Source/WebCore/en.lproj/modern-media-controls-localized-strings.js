@@ -40,4 +40,11 @@ var UIStrings = {
     "Unmute": "Unmute",
     "Video Controls": "Video Controls",
     "Viewport": "Viewport",
+    "file": "File",
+    "hls": "HLS",
+    "media-source": "Media Source",
+    "managed-media-source": "Managed Media Source",
+    "media-stream": "Media Stream",
+    "live-stream": "Live Stream",
+    "stored-stream": "Stored Stream",
 };

@@ -29,6 +29,16 @@ enum DeviceType {
     "tvout"
 };
 
+enum SourceType {
+    "file",
+    "hls",
+    "media-source",
+    "managed-media-source",
+    "media-stream",
+    "live-stream",
+    "stored-stream",
+};
+
 [
     Conditional=MEDIA_CONTROLS_SCRIPT,
     LegacyNoInterfaceObject,
@@ -62,6 +72,8 @@ enum DeviceType {
     undefined exitedFullscreen();
 
     DOMString generateUUID();
+
+    readonly attribute SourceType? sourceType;
 
     [Conditional=MODERN_MEDIA_CONTROLS] readonly attribute DOMString shadowRootCSSText;
     [Conditional=MODERN_MEDIA_CONTROLS] DOMString base64StringForIconNameAndType(DOMString iconName, DOMString iconType);

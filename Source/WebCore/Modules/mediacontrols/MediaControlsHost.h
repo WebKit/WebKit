@@ -105,6 +105,18 @@ public:
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 #endif // ENABLE(MODERN_MEDIA_CONTROLS)
 
+    enum class SourceType : uint8_t {
+        File,
+        HLS,
+        MediaSource,
+        ManagedMediaSource,
+        MediaStream,
+        LiveStream,
+        StoredStream,
+    };
+
+    std::optional<SourceType> sourceType() const;
+
 private:
     explicit MediaControlsHost(HTMLMediaElement&);
 

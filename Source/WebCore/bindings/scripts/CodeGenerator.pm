@@ -986,6 +986,7 @@ sub WK_ucfirst
     $ret =~ s/Pq/PQ/ if $ret =~ /^Pq$/;
     $ret =~ s/Hlg/HLG/ if $ret =~ /^Hlg/;
     $ret =~ s/Ios/iOS/ if $ret =~ /^Ios/;
+    $ret =~ s/Hls/HLS/ if $ret =~ /^Hls/;
 
     return $ret;
 }

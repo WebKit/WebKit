@@ -235,6 +235,7 @@ class MediaController
             let valueElement = rowElement.appendChild(document.createElement("td"));
             return valueElement;
         }
+        let sourceValueElement = createRow(UIString("Source"));
         let viewportValueElement = createRow(UIString("Viewport"));
         let framesValueElement = createRow(UIString("Frames"));
         let resolutionValueElement = createRow(UIString("Resolution"));
@@ -250,6 +251,7 @@ class MediaController
             let videoTrackConfiguration = videoTrack.configuration;
             let videoColorSpace = videoTrackConfiguration?.colorSpace;
 
+            sourceValueElement.textContent = UIString(this.host.sourceType ?? "none");
             viewportValueElement.textContent = UIString("%s\u00d7%s", this.controls.width, this.controls.height) + (window.devicePixelRatio !== 1 ? " " + UIString("(%s)", UIString("%s\u00d7", window.devicePixelRatio)) : "");
             framesValueElement.textContent = UIString("%s dropped of %s", quality.droppedVideoFrames, quality.totalVideoFrames);
             resolutionValueElement.textContent = UIString("%s\u00d7%s", videoTrackConfiguration?.width, videoTrackConfiguration?.height) + " " + UIString("(%s)", UIString("%sfps", Math.round(videoTrackConfiguration?.framerate * 1000) / 1000));

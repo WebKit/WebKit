@@ -223,6 +223,8 @@ private:
     void sizeChanged() final;
     void resolvedURLChanged() final;
 
+    bool isHLS() const { return m_cachedAssetIsHLS.value_or(false); }
+
     bool hasAvailableVideoFrame() const final;
 
     void createContextVideoRenderer() final;
@@ -465,6 +467,7 @@ private:
     mutable bool m_cachedTracksAreLoaded { false };
     mutable std::optional<bool> m_cachedAssetIsPlayable;
     mutable std::optional<bool> m_cachedTracksArePlayable;
+    mutable std::optional<bool> m_cachedAssetIsHLS;
     bool m_muted { false };
     bool m_shouldObserveTimeControlStatus { false };
     mutable std::optional<bool> m_tracksArePlayable;
