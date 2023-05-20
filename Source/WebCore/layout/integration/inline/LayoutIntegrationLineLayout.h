@@ -76,6 +76,7 @@ public:
 
     static bool isEnabled();
     static bool canUseFor(const RenderBlockFlow&);
+    static bool canUseForPreferredWidthComputation(const RenderBlockFlow&);
     static bool canUseForAfterStyleChange(const RenderBlockFlow&, StyleDifference);
     static bool canUseForAfterInlineBoxStyleChange(const RenderInline&, StyleDifference);
     static bool shouldInvalidateLineLayoutPathAfterContentChange(const RenderBlockFlow& parent, const RenderObject& rendererWithNewContent, const LineLayout&);

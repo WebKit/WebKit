@@ -462,6 +462,21 @@ bool canUseForLineLayoutAfterStyleChange(const RenderBlockFlow& blockContainer, 
     return canUseForLineLayout(blockContainer);
 }
 
+bool canUseForPreferredWidthComputation(const RenderBlockFlow& blockContainer)
+{
+    for (auto walker = InlineWalker(blockContainer); !walker.atEnd(); walker.advance()) {
+        auto& renderer = *walker.current();
+        if (renderer.isText())
+            continue;
+        if (is<RenderLineBreak>(renderer))
+            continue;
+        if (is<RenderInline>(renderer))
+            continue;
+        return false;
+    }
+    return true;
+}
+
 bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlockContainer, const RenderObject& renderer, const LineLayout& lineLayout, TypeOfChangeForInvalidation typeOfChange)
 {
     auto isSupportedRenderer = [](auto& renderer) {
