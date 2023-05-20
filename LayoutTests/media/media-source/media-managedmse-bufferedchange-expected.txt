@@ -2,6 +2,8 @@
 RUN(video.src = URL.createObjectURL(source))
 EVENT(sourceopen)
 RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+EXPECTED (sourceBuffer.__proto__ == '[object ManagedSourceBuffer]') OK
+EXPECTED (sourceBuffer.onbufferedchange !== undefined == 'true') OK
 RUN(sourceBuffer.appendBuffer(loader.initSegment()))
 EVENT(update)
 Append a media segment.

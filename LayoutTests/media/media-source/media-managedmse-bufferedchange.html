@@ -35,6 +35,9 @@
             waitFor(video, 'error').then(failTest);
 
             run('sourceBuffer = source.addSourceBuffer(loader.type())');
+            testExpected('sourceBuffer.__proto__', ManagedSourceBuffer.prototype);
+            testExpected('sourceBuffer.onbufferedchange !== undefined', true);
+
             run('sourceBuffer.appendBuffer(loader.initSegment())');
             await waitFor(sourceBuffer, 'update');
 
