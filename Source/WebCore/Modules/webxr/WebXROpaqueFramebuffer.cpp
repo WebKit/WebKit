@@ -233,7 +233,7 @@ void WebXROpaqueFramebuffer::endFrame()
 #if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
     if (m_completionEvent) {
         auto gCGL = static_cast<GraphicsContextGLCocoa*>(&gl);
-        auto completionSync = gCGL->createSyncWithSharedEvent(m_completionEvent, m_renderingFrameIndex);
+        auto completionSync = gCGL->createSyncWithSharedEvent(m_completionEvent.get(), m_renderingFrameIndex);
         ASSERT(completionSync);
         constexpr uint64_t kTimeout = 1'000'000'000; // 1 second
         gCGL->clientWaitSyncWithFlush(completionSync, kTimeout);
