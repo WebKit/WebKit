@@ -4023,6 +4023,7 @@ public:
 
     Jump branchAdd64(RelationalCondition cond, TrustedImm32 imm, RegisterID dest)
     {
+        // This is not supporting -imm.m_value UInt12. Thus we are not listing BranchAdd64 RelCond, Imm, Tmp in AirOpcode.opcodes.
         ASSERT(isUInt12(imm.m_value));
         m_assembler.add<64, S>(dest, dest, UInt12(imm.m_value));
         return Jump(makeBranch(cond));
@@ -4175,11 +4176,11 @@ public:
 
     Jump branchSub64(RelationalCondition cond, TrustedImm32 imm, RegisterID dest)
     {
+        // This is not supporting -imm.m_value UInt12. Thus we are not listing BranchSub64 RelCond, Imm, Tmp in AirOpcode.opcodes.
         ASSERT(isUInt12(imm.m_value));
         m_assembler.sub<64, S>(dest, dest, UInt12(imm.m_value));
         return Jump(makeBranch(cond));
     }
-
 
     // Jumps, calls, returns
 
