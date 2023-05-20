@@ -27,8 +27,10 @@
 #include "CaretRectComputation.h"
 
 #include "Editing.h"
+#include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBox.h"
+#include "InlineIteratorTextBoxInlines.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LineSelection.h"
 #include "RenderBlockFlow.h"
@@ -189,10 +191,27 @@ static LayoutRect computeCaretRectForText(const InlineBoxAndOffset& boxAndOffset
         return { };
 
     auto& textBox = downcast<InlineIterator::TextBoxIterator>(boxAndOffset.box);
-    auto lineBox = textBox->lineBox();
 
-    float position = textBox->positionForOffset(boxAndOffset.offset);
-    return computeCaretRectForLinePosition(lineBox, position, caretRectMode);
+    auto positionForOffset = [&](auto offset) {
+        ASSERT(offset >= textBox->start());
+        ASSERT(offset <= textBox->end());
+
+        if (textBox->isLineBreak())
+            return textBox->logicalLeftIgnoringInlineDirection();
+
+        auto [startOffset, endOffset] = [&] {
+            if (textBox->direction() == TextDirection::RTL)
+                return std::pair { textBox->selectableRange().clamp(offset), textBox->length() };
+            return std::pair { 0u, textBox->selectableRange().clamp(offset) };
+        }();
+
+        auto selectionRect = LayoutRect { textBox->logicalLeftIgnoringInlineDirection(), 0, 0, 0 };
+        auto textRun = textBox->textRun(InlineIterator::TextRunMode::Editing);
+        textBox->fontCascade().adjustSelectionRectForText(textRun, selectionRect, startOffset, endOffset);
+        return snapRectToDevicePixelsWithWritingDirection(selectionRect, textBox->renderer().document().deviceScaleFactor(), textRun.ltr()).maxX();
+    };
+
+    return computeCaretRectForLinePosition(textBox->lineBox(), positionForOffset(boxAndOffset.offset), caretRectMode);
 }
 
 static LayoutRect computeCaretRectForLineBreak(const InlineBoxAndOffset& boxAndOffset, CaretRectMode caretRectMode)

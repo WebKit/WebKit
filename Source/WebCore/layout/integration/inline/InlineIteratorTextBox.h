@@ -44,7 +44,6 @@ public:
     unsigned length() const;
 
     unsigned offsetForPosition(float x, bool includePartialGlyphs = true) const;
-    float positionForOffset(unsigned) const;
 
     TextBoxSelectableRange selectableRange() const;
 

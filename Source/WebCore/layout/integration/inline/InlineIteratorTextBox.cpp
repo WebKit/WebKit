@@ -54,27 +54,6 @@ unsigned TextBox::offsetForPosition(float x, bool includePartialGlyphs) const
     return fontCascade().offsetForPosition(textRun(TextRunMode::Editing), x - logicalLeftIgnoringInlineDirection(), includePartialGlyphs);
 }
 
-float TextBox::positionForOffset(unsigned offset) const
-{
-    ASSERT(offset >= start());
-    ASSERT(offset <= end());
-
-    if (isLineBreak())
-        return logicalLeftIgnoringInlineDirection();
-
-    auto [startOffset, endOffset] = [&] {
-        if (direction() == TextDirection::RTL)
-            return std::pair { selectableRange().clamp(offset), length() };
-        return std::pair { 0u, selectableRange().clamp(offset) };
-    }();
-
-    auto selectionRect = LayoutRect(logicalLeftIgnoringInlineDirection(), 0, 0, 0);
-    
-    auto textRun = this->textRun(TextRunMode::Editing);
-    fontCascade().adjustSelectionRectForText(textRun, selectionRect, startOffset, endOffset);
-    return snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()).maxX();
-}
-
 bool TextBox::isCombinedText() const
 {
     auto& renderer = this->renderer();
