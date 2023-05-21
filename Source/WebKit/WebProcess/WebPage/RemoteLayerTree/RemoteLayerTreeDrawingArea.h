@@ -58,6 +58,8 @@ public:
     TransactionID nextTransactionID() const { return m_currentTransactionID.next(); }
     TransactionID lastCommittedTransactionID() const { return m_currentTransactionID; }
 
+    bool displayDidRefreshIsPending() const { return m_waitingForBackingStoreSwap; }
+
 protected:
     void updateRendering();
 
