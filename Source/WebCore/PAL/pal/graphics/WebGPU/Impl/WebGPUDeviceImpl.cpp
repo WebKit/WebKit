@@ -349,7 +349,7 @@ Ref<ComputePipeline> DeviceImpl::createComputePipeline(const ComputePipelineDesc
 }
 
 template <typename T>
-static auto convertToBacking(const RenderPipelineDescriptor& descriptor, ConvertToBackingContext& convertToBackingContext, T&& callback)
+static auto convertToBacking(const RenderPipelineDescriptor& descriptor, bool depthClipControlIsEnabled, ConvertToBackingContext& convertToBackingContext, T&& callback)
 {
     auto label = descriptor.label.utf8();
 
@@ -494,10 +494,11 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, Convert
     WGPUPrimitiveDepthClipControl depthClipControl = {
         .chain = {
             nullptr,
-            WGPUSType_PrimitiveDepthClipControl
+            WGPUSType_PrimitiveDepthClipControl,
         },
-        .unclippedDepth = true
+        .unclippedDepth = descriptor.primitive && descriptor.primitive->unclippedDepth,
     };
+
     WGPURenderPipelineDescriptor backingDescriptor {
         nullptr,
         label.data(),
@@ -510,7 +511,7 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, Convert
             static_cast<uint32_t>(backingBuffers.size()),
             backingBuffers.data(),
         }, {
-            descriptor.primitive && descriptor.primitive->unclippedDepth ? &depthClipControl.chain : nullptr,
+            descriptor.primitive && depthClipControlIsEnabled ? &depthClipControl.chain : nullptr,
             descriptor.primitive ? convertToBackingContext.convertToBacking(descriptor.primitive->topology) : WGPUPrimitiveTopology_PointList,
             descriptor.primitive && descriptor.primitive->stripIndexFormat ? convertToBackingContext.convertToBacking(*descriptor.primitive->stripIndexFormat) : WGPUIndexFormat_Undefined,
             descriptor.primitive ? convertToBackingContext.convertToBacking(descriptor.primitive->frontFace) : WGPUFrontFace_CCW,
@@ -530,7 +531,8 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, Convert
 
 Ref<RenderPipeline> DeviceImpl::createRenderPipeline(const RenderPipelineDescriptor& descriptor)
 {
-    return convertToBacking(descriptor, m_convertToBackingContext, [this] (const WGPURenderPipelineDescriptor& backingDescriptor) {
+    bool depthClipControlIsEnabled = wgpuDeviceHasFeature(m_backing, WGPUFeatureName_DepthClipControl);
+    return convertToBacking(descriptor, depthClipControlIsEnabled, m_convertToBackingContext, [this] (const WGPURenderPipelineDescriptor& backingDescriptor) {
         return RenderPipelineImpl::create(wgpuDeviceCreateRenderPipeline(m_backing, &backingDescriptor), m_convertToBackingContext);
     });
 }
@@ -549,7 +551,8 @@ void DeviceImpl::createComputePipelineAsync(const ComputePipelineDescriptor& des
 
 void DeviceImpl::createRenderPipelineAsync(const RenderPipelineDescriptor& descriptor, CompletionHandler<void(RefPtr<RenderPipeline>&&)>&& callback)
 {
-    convertToBacking(descriptor, m_convertToBackingContext, [this, callback = WTFMove(callback)] (const WGPURenderPipelineDescriptor& backingDescriptor) mutable {
+    bool depthClipControlIsEnabled = wgpuDeviceHasFeature(m_backing, WGPUFeatureName_DepthClipControl);
+    convertToBacking(descriptor, depthClipControlIsEnabled, m_convertToBackingContext, [this, callback = WTFMove(callback)] (const WGPURenderPipelineDescriptor& backingDescriptor) mutable {
         wgpuDeviceCreateRenderPipelineAsyncWithBlock(m_backing, &backingDescriptor, makeBlockPtr([convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback)](WGPUCreatePipelineAsyncStatus status, WGPURenderPipeline pipeline, const char*) mutable {
             if (status == WGPUCreatePipelineAsyncStatus_Success)
                 callback(RenderPipelineImpl::create(pipeline, convertToBackingContext));
