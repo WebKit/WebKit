@@ -164,6 +164,12 @@ bool LineLayout::canUseFor(const RenderBlockFlow& flow)
     return canUseForLineLayout(flow);
 }
 
+bool LineLayout::canUseForPreferredWidthComputation(const RenderBlockFlow& flow)
+{
+    ASSERT(isEnabled());
+    return LayoutIntegration::canUseForPreferredWidthComputation(flow);
+}
+
 bool LineLayout::canUseForAfterStyleChange(const RenderBlockFlow& flow, StyleDifference diff)
 {
     ASSERT(isEnabled());

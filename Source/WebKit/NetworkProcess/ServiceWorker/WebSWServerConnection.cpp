@@ -157,7 +157,7 @@ void WebSWServerConnection::setRegistrationUpdateViaCache(ServiceWorkerRegistrat
     send(Messages::WebSWClientConnection::SetRegistrationUpdateViaCache(identifier, updateViaCache));
 }
 
-void WebSWServerConnection::notifyClientsOfControllerChange(const HashSet<ScriptExecutionContextIdentifier>& contextIdentifiers, const ServiceWorkerData& newController)
+void WebSWServerConnection::notifyClientsOfControllerChange(const HashSet<ScriptExecutionContextIdentifier>& contextIdentifiers, const std::optional<ServiceWorkerData>& newController)
 {
     send(Messages::WebSWClientConnection::NotifyClientsOfControllerChange(contextIdentifiers, newController));
 }

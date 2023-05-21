@@ -63,7 +63,7 @@ public:
 
     RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) final;
 
-    RefPtr<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& outputFormat, const WebCore::IntRect&, const WebCore::ImageBufferAllocator&) final;
+    void getPixelBuffer(const WebCore::IntRect&, WebCore::PixelBuffer&) final;
     void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) final;
 
 private:

@@ -1,0 +1,14 @@
+Visibility hidden
+
+Spec
+Setting cells to visibility:hidden doesn't change table height or width.
+
+row 1	
+row 2	
+Bottom table is identical to top except row 1's cells has been hidden.
+row 2	
+
+PASS row visibility:hidden doesn't change table width
+PASS row visibility:hidden doesn't change table height
+PASS Table height is 222px
+

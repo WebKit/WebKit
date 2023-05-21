@@ -1,0 +1,3 @@
+
+PASS Create WebSocket - Close the Connection - close() - return close code is 1005 - Connection should be closed
+

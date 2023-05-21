@@ -848,7 +848,8 @@ void Debugger::breakProgram(RefPtr<Breakpoint>&& specialBreakpoint)
 
 void Debugger::continueProgram()
 {
-    clearNextPauseState();
+    resetImmediatePauseState();
+    resetEventualPauseState();
     m_deferredBreakpoints.clear();
 
     if (!m_isPaused)
@@ -980,7 +981,12 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
     if (!pauseNow)
         return;
 
-    clearNextPauseState();
+    resetImmediatePauseState();
+
+    // Don't clear the `m_pauseOnCallFrame` if we've not hit it yet, as we may have encountered a breakpoint that won't pause.
+    bool atDesiredCallFrame = !m_pauseOnCallFrame || m_pauseOnCallFrame == m_currentCallFrame;
+    if (atDesiredCallFrame)
+        resetEventualPauseState();
 
     // Make sure we are not going to pause again on breakpoint actions by
     // reseting the pause state before executing any breakpoint actions.
@@ -1052,6 +1058,10 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
 
     if (!m_blackboxBreakpointEvaluations && shouldDeferPause())
         return;
+
+    // Clear `m_pauseOnCallFrame` as we're actually pausing at this point.
+    if (!atDesiredCallFrame)
+        resetEventualPauseState();
 
     {
         auto reason = m_reasonForPause;
@@ -1293,19 +1303,24 @@ void Debugger::didExecuteProgram(CallFrame* callFrame)
 
     // Do not continue stepping into an unknown future program.
     if (!m_currentCallFrame) {
-        clearNextPauseState();
+        resetImmediatePauseState();
+        resetEventualPauseState();
         m_deferredBreakpoints.clear();
     }
 }
 
-void Debugger::clearNextPauseState()
+void Debugger::resetImmediatePauseState()
 {
-    m_pauseOnCallFrame = nullptr;
     m_pauseAtNextOpportunity = false;
-    m_pauseOnStepNext = false;
-    m_pauseOnStepOut = false;
     m_afterBlackboxedScript = false;
     m_specialBreakpoint = nullptr;
+}
+
+void Debugger::resetEventualPauseState()
+{
+    m_pauseOnCallFrame = nullptr;
+    m_pauseOnStepNext = false;
+    m_pauseOnStepOut = false;
 }
 
 void Debugger::didReachDebuggerStatement(CallFrame* callFrame)

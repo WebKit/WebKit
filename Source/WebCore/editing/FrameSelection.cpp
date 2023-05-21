@@ -104,7 +104,7 @@ CaretBase::CaretBase(CaretVisibility visibility)
 }
 
 DragCaretController::DragCaretController()
-    : CaretBase(Visible)
+    : CaretBase(CaretVisibility::Visible)
 {
 }
 
@@ -195,7 +195,7 @@ FrameSelection::FrameSelection(Document* document)
     // Caret blinking (blinks | does not blink)
     setCaretVisible(activeAndFocused);
 #else
-    setCaretVisibility(activeAndFocused ? Visible : Hidden, ShouldUpdateAppearance::No);
+    setCaretVisibility(activeAndFocused ? CaretVisibility::Visible : CaretVisibility::Hidden, ShouldUpdateAppearance::No);
 #endif
 }
 
@@ -207,24 +207,24 @@ Element* FrameSelection::rootEditableElementOrDocumentElement() const
     return selectionRoot ? selectionRoot : m_document->documentElement();
 }
 
-void FrameSelection::moveTo(const VisiblePosition& position, EUserTriggered userTriggered, CursorAlignOnScroll align)
+void FrameSelection::moveTo(const VisiblePosition& position, UserTriggered userTriggered, CursorAlignOnScroll align)
 {
     setSelection(VisibleSelection(position.deepEquivalent(), position.deepEquivalent(), position.affinity(), m_selection.isDirectional()),
         defaultSetSelectionOptions(userTriggered), AXTextStateChangeIntent(), align);
 }
 
-void FrameSelection::moveTo(const VisiblePosition& base, const VisiblePosition& extent, EUserTriggered userTriggered)
+void FrameSelection::moveTo(const VisiblePosition& base, const VisiblePosition& extent, UserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;
     setSelection(VisibleSelection(base.deepEquivalent(), extent.deepEquivalent(), base.affinity(), selectionHasDirection), defaultSetSelectionOptions(userTriggered));
 }
 
-void FrameSelection::moveTo(const Position& position, Affinity affinity, EUserTriggered userTriggered)
+void FrameSelection::moveTo(const Position& position, Affinity affinity, UserTriggered userTriggered)
 {
     setSelection(VisibleSelection(position, affinity, m_selection.isDirectional()), defaultSetSelectionOptions(userTriggered));
 }
 
-void FrameSelection::moveTo(const Position& base, const Position& extent, Affinity affinity, EUserTriggered userTriggered)
+void FrameSelection::moveTo(const Position& base, const Position& extent, Affinity affinity, UserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;
     setSelection(VisibleSelection(base, extent, affinity, selectionHasDirection), defaultSetSelectionOptions(userTriggered));
@@ -238,18 +238,18 @@ void FrameSelection::moveWithoutValidationTo(const Position& base, const Positio
     AXTextStateChangeIntent newIntent = intent.type == AXTextStateChangeTypeUnknown ? AXTextStateChangeIntent(AXTextStateChangeTypeSelectionMove, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown, false }) : intent;
     auto options = defaultSetSelectionOptions();
     if (!shouldSetFocus)
-        options.add(DoNotSetFocus);
+        options.add(SetSelectionOption::DoNotSetFocus);
     switch (revealMode) {
     case SelectionRevealMode::DoNotReveal:
         break;
     case SelectionRevealMode::Reveal:
-        options.add(RevealSelection);
+        options.add(SetSelectionOption::RevealSelection);
         break;
     case SelectionRevealMode::RevealUpToMainFrame:
-        options.add(RevealSelectionUpToMainFrame);
+        options.add(SetSelectionOption::RevealSelectionUpToMainFrame);
         break;
     case SelectionRevealMode::DelegateMainFrameScroll:
-        options.add(DelegateMainFrameScroll);
+        options.add(SetSelectionOption::DelegateMainFrameScroll);
         break;
     }
     setSelection(newSelection, options, newIntent);
@@ -341,13 +341,13 @@ void FrameSelection::setSelectionByMouseIfDifferent(const VisibleSelection& pass
         intent = AXTextStateChangeIntent(AXTextStateChangeTypeSelectionMove, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown, false });
     else
         intent = AXTextStateChangeIntent();
-    setSelection(newSelection, defaultSetSelectionOptions() | FireSelectEvent, intent, AlignCursorOnScrollIfNeeded, granularity);
+    setSelection(newSelection, defaultSetSelectionOptions() | SetSelectionOption::FireSelectEvent, intent, CursorAlignOnScroll::IfNeeded, granularity);
 }
 
 bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelection& newSelectionPossiblyWithoutDirection, OptionSet<SetSelectionOption> options, CursorAlignOnScroll align, TextGranularity granularity)
 {
-    bool closeTyping = options.contains(CloseTyping);
-    bool shouldClearTypingStyle = options.contains(ClearTypingStyle);
+    bool closeTyping = options.contains(SetSelectionOption::CloseTyping);
+    bool shouldClearTypingStyle = options.contains(SetSelectionOption::ClearTypingStyle);
 
     VisibleSelection newSelection = newSelectionPossiblyWithoutDirection;
     if (shouldAlwaysUseDirectionalSelection(m_document.get()))
@@ -410,14 +410,14 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
 
     // Selection offsets should increase when LF is inserted before the caret in InsertLineBreakCommand. See <https://webkit.org/b/56061>.
     if (HTMLTextFormControlElement* textControl = enclosingTextFormControl(newSelection.start()))
-        textControl->selectionChanged(options.contains(FireSelectEvent));
+        textControl->selectionChanged(options.contains(SetSelectionOption::FireSelectEvent));
 
     if (!willMutateSelection)
         return false;
 
     setCaretRectNeedsUpdate();
 
-    if (!newSelection.isNone() && !(options & DoNotSetFocus)) {
+    if (!newSelection.isNone() && !(options & SetSelectionOption::DoNotSetFocus)) {
         auto* oldFocusedElement = m_document->focusedElement();
         setFocusedElementIfNeeded();
         if (!m_document->frame())
@@ -447,15 +447,15 @@ void FrameSelection::setSelection(const VisibleSelection& selection, OptionSet<S
     if (!setSelectionWithoutUpdatingAppearance(selection, options, align, granularity))
         return;
 
-    if (options & RevealSelectionUpToMainFrame)
+    if (options & SetSelectionOption::RevealSelectionUpToMainFrame)
         m_selectionRevealMode = SelectionRevealMode::RevealUpToMainFrame;
-    else if (options & RevealSelection)
+    else if (options & SetSelectionOption::RevealSelection)
         m_selectionRevealMode = SelectionRevealMode::Reveal;
-    else if (options & DelegateMainFrameScroll)
+    else if (options & SetSelectionOption::DelegateMainFrameScroll)
         m_selectionRevealMode = SelectionRevealMode::DelegateMainFrameScroll;
     else
         m_selectionRevealMode = SelectionRevealMode::DoNotReveal;
-    m_alwaysAlignCursorOnScrollWhenRevealingSelection = align == AlignCursorOnScrollAlways;
+    m_alwaysAlignCursorOnScrollWhenRevealingSelection = align == CursorAlignOnScroll::Always;
 
     m_selectionRevealIntent = intent;
     m_pendingSelectionUpdate = true;
@@ -467,12 +467,14 @@ void FrameSelection::setSelection(const VisibleSelection& selection, OptionSet<S
     if (frameView && frameView->layoutContext().isLayoutPending())
         return;
 
-    if (!(options & IsUserTriggered))
+    if (!(options & SetSelectionOption::IsUserTriggered))
         return;
 
-    updateAndRevealSelection(intent, options.contains(SmoothScroll) ? ScrollBehavior::Smooth : ScrollBehavior::Instant, options.contains(RevealSelectionBounds) ? RevealExtentOption::DoNotRevealExtent : RevealExtentOption::RevealExtent, options.contains(ForceCenterScroll) ? ForceCenterScrollOption::ForceCenterScroll : ForceCenterScrollOption::DoNotForceCenterScroll);
+    updateAndRevealSelection(intent, options.contains(SetSelectionOption::SmoothScroll) ? ScrollBehavior::Smooth : ScrollBehavior::Instant,
+        options.contains(SetSelectionOption::RevealSelectionBounds) ? RevealExtentOption::DoNotRevealExtent : RevealExtentOption::RevealExtent,
+        options.contains(SetSelectionOption::ForceCenterScroll) ? ForceCenterScroll::Yes : ForceCenterScroll::No);
 
-    if (options & IsUserTriggered) {
+    if (options & SetSelectionOption::IsUserTriggered) {
         if (auto* client = protectedDocument->editor().client())
             client->didEndUserTriggeredSelectionChanges();
     }
@@ -503,7 +505,7 @@ void FrameSelection::setNeedsSelectionUpdate(RevealSelectionAfterUpdate revealMo
         view->selection().clear();
 }
 
-void FrameSelection::updateAndRevealSelection(const AXTextStateChangeIntent& intent, ScrollBehavior scrollBehavior, RevealExtentOption revealExtent, ForceCenterScrollOption forceCenterScroll)
+void FrameSelection::updateAndRevealSelection(const AXTextStateChangeIntent& intent, ScrollBehavior scrollBehavior, RevealExtentOption revealExtent, ForceCenterScroll forceCenterScroll)
 {
     if (!m_pendingSelectionUpdate)
         return;
@@ -520,7 +522,7 @@ void FrameSelection::updateAndRevealSelection(const AXTextStateChangeIntent& int
         else
             alignment = m_alwaysAlignCursorOnScrollWhenRevealingSelection ? ScrollAlignment::alignTopAlways : ScrollAlignment::alignToEdgeIfNeeded;
         
-        if (forceCenterScroll == ForceCenterScrollOption::ForceCenterScroll)
+        if (forceCenterScroll == ForceCenterScroll::Yes)
             alignment = ScrollAlignment::alignCenterAlways;
 
         revealSelection(m_selectionRevealMode, alignment, revealExtent, scrollBehavior);
@@ -658,7 +660,7 @@ void FrameSelection::respondToNodeModification(Node& node, bool anchorRemoved, b
     }
 
     if (clearDOMTreeSelection)
-        setSelection(VisibleSelection(), DoNotSetFocus);
+        setSelection(VisibleSelection(), SetSelectionOption::DoNotSetFocus);
 }
 
 static void updatePositionAfterAdoptingTextReplacement(Position& position, CharacterData& node, unsigned offset, unsigned oldLength, unsigned newLength)
@@ -715,7 +717,7 @@ void FrameSelection::textWasReplaced(CharacterData& node, unsigned offset, unsig
         else
             newSelection.setWithoutValidation(start, end);
 
-        setSelection(newSelection, DoNotSetFocus);
+        setSelection(newSelection, SetSelectionOption::DoNotSetFocus);
     }
 }
 
@@ -745,9 +747,9 @@ static bool selectionIsOrphanedOrBelongsToWrongDocument(const VisibleSelection& 
     return document && documentOfSelection && document != documentOfSelection;
 }
 
-void FrameSelection::willBeModified(EAlteration alter, SelectionDirection direction)
+void FrameSelection::willBeModified(Alteration alter, SelectionDirection direction)
 {
-    if (alter != AlterationExtend)
+    if (alter != Alteration::Extend)
         return;
 
     Position start = m_selection.start();
@@ -903,10 +905,10 @@ VisiblePosition FrameSelection::modifyExtendingForward(TextGranularity granulari
         pos = nextSentencePosition(pos);
         break;
     case TextGranularity::LineGranularity:
-        pos = nextLinePosition(pos, lineDirectionPointForBlockDirectionNavigation(Extent));
+        pos = nextLinePosition(pos, lineDirectionPointForBlockDirectionNavigation(PositionType::Extent));
         break;
     case TextGranularity::ParagraphGranularity:
-        pos = nextParagraphPosition(pos, lineDirectionPointForBlockDirectionNavigation(Extent));
+        pos = nextParagraphPosition(pos, lineDirectionPointForBlockDirectionNavigation(PositionType::Extent));
         break;
     case TextGranularity::DocumentGranularity:
         ASSERT_NOT_REACHED();
@@ -1014,11 +1016,11 @@ VisiblePosition FrameSelection::modifyMovingForward(TextGranularity granularity,
         // to leave the selection at that line start (no need to call nextLinePosition!)
         pos = currentPosition;
         if (!isRange() || !isStartOfLine(pos))
-            pos = nextLinePosition(pos, lineDirectionPointForBlockDirectionNavigation(Start));
+            pos = nextLinePosition(pos, lineDirectionPointForBlockDirectionNavigation(PositionType::Start));
         break;
     }
     case TextGranularity::ParagraphGranularity:
-        pos = nextParagraphPosition(currentPosition, lineDirectionPointForBlockDirectionNavigation(Start));
+        pos = nextParagraphPosition(currentPosition, lineDirectionPointForBlockDirectionNavigation(PositionType::Start));
         break;
     case TextGranularity::DocumentGranularity:
         ASSERT_NOT_REACHED();
@@ -1120,10 +1122,10 @@ VisiblePosition FrameSelection::modifyExtendingBackward(TextGranularity granular
         pos = previousSentencePosition(pos);
         break;
     case TextGranularity::LineGranularity:
-        pos = previousLinePosition(pos, lineDirectionPointForBlockDirectionNavigation(Extent));
+        pos = previousLinePosition(pos, lineDirectionPointForBlockDirectionNavigation(PositionType::Extent));
         break;
     case TextGranularity::ParagraphGranularity:
-        pos = previousParagraphPosition(pos, lineDirectionPointForBlockDirectionNavigation(Extent));
+        pos = previousParagraphPosition(pos, lineDirectionPointForBlockDirectionNavigation(PositionType::Extent));
         break;
     case TextGranularity::SentenceBoundary:
         pos = startOfSentence(startForPlatform());
@@ -1226,10 +1228,10 @@ VisiblePosition FrameSelection::modifyMovingBackward(TextGranularity granularity
         pos = previousSentencePosition(currentPosition);
         break;
     case TextGranularity::LineGranularity:
-        pos = previousLinePosition(currentPosition, lineDirectionPointForBlockDirectionNavigation(Start));
+        pos = previousLinePosition(currentPosition, lineDirectionPointForBlockDirectionNavigation(PositionType::Start));
         break;
     case TextGranularity::ParagraphGranularity:
-        pos = previousParagraphPosition(currentPosition, lineDirectionPointForBlockDirectionNavigation(Start));
+        pos = previousParagraphPosition(currentPosition, lineDirectionPointForBlockDirectionNavigation(PositionType::Start));
         break;
     case TextGranularity::SentenceBoundary:
         pos = startOfSentence(currentPosition);
@@ -1273,11 +1275,11 @@ static bool isBoundary(TextGranularity granularity)
     return granularity == TextGranularity::LineBoundary || granularity == TextGranularity::ParagraphBoundary || granularity == TextGranularity::DocumentBoundary;
 }
 
-AXTextStateChangeIntent FrameSelection::textSelectionIntent(EAlteration alter, SelectionDirection direction, TextGranularity granularity)
+AXTextStateChangeIntent FrameSelection::textSelectionIntent(Alteration alter, SelectionDirection direction, TextGranularity granularity)
 {
     AXTextStateChangeIntent intent = AXTextStateChangeIntent();
     bool flip = false;
-    if (alter == FrameSelection::AlterationMove) {
+    if (alter == FrameSelection::Alteration::Move) {
         intent.type = AXTextStateChangeTypeSelectionMove;
         flip = isRange() && directionOfSelection() == TextDirection::RTL;
     } else
@@ -1403,12 +1405,12 @@ static AXTextSelection textSelectionWithDirectionAndGranularity(SelectionDirecti
     return { intentDirection, intentGranularity, false };
 }
 
-bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, TextGranularity granularity, EUserTriggered userTriggered)
+bool FrameSelection::modify(Alteration alter, SelectionDirection direction, TextGranularity granularity, UserTriggered userTriggered)
 {
-    if (userTriggered == UserTriggered) {
+    if (userTriggered == UserTriggered::Yes) {
         FrameSelection trialFrameSelection;
         trialFrameSelection.setSelection(m_selection);
-        trialFrameSelection.modify(alter, direction, granularity, NotUserTriggered);
+        trialFrameSelection.modify(alter, direction, granularity, UserTriggered::No);
 
         bool change = shouldChangeSelection(trialFrameSelection.selection());
         if (!change)
@@ -1434,32 +1436,32 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
     VisiblePosition position;
     switch (direction) {
     case SelectionDirection::Right:
-        if (alter == AlterationMove)
+        if (alter == Alteration::Move)
             position = modifyMovingRight(granularity, &reachedBoundary);
         else
             position = modifyExtendingRight(granularity);
         break;
     case SelectionDirection::Forward:
-        if (alter == AlterationExtend)
+        if (alter == Alteration::Extend)
             position = modifyExtendingForward(granularity);
         else
             position = modifyMovingForward(granularity, &reachedBoundary);
         break;
     case SelectionDirection::Left:
-        if (alter == AlterationMove)
+        if (alter == Alteration::Move)
             position = modifyMovingLeft(granularity, &reachedBoundary);
         else
             position = modifyExtendingLeft(granularity);
         break;
     case SelectionDirection::Backward:
-        if (alter == AlterationExtend)
+        if (alter == Alteration::Extend)
             position = modifyExtendingBackward(granularity);
         else
             position = modifyMovingBackward(granularity, &reachedBoundary);
         break;
     }
 
-    if (reachedBoundary && !isRange() && userTriggered == UserTriggered && m_document && AXObjectCache::accessibilityEnabled()) {
+    if (reachedBoundary && !isRange() && userTriggered == UserTriggered::Yes && m_document && AXObjectCache::accessibilityEnabled()) {
         notifyAccessibilityForSelectionChange({ AXTextStateChangeTypeSelectionBoundary, textSelectionWithDirectionAndGranularity(direction, granularity) });
         return true;
     }
@@ -1468,7 +1470,7 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
         return false;
 
     if (m_document && isSpatialNavigationEnabled(m_document->frame())) {
-        if (!wasRange && alter == AlterationMove && position == originalStartPosition)
+        if (!wasRange && alter == Alteration::Move && position == originalStartPosition)
             return false;
     }
 
@@ -1481,14 +1483,14 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
     // Setting a selection will clear it, so save it to possibly restore later.
     // Note: the Start position type is arbitrary because it is unused, it would be
     // the requested position type if there were no xPosForVerticalArrowNavigation set.
-    LayoutUnit x = lineDirectionPointForBlockDirectionNavigation(Start);
-    m_selection.setIsDirectional(shouldAlwaysUseDirectionalSelection(m_document.get()) || alter == AlterationExtend);
+    LayoutUnit x = lineDirectionPointForBlockDirectionNavigation(PositionType::Start);
+    m_selection.setIsDirectional(shouldAlwaysUseDirectionalSelection(m_document.get()) || alter == Alteration::Extend);
 
     switch (alter) {
-    case AlterationMove:
+    case Alteration::Move:
         moveTo(position, userTriggered);
         break;
-    case AlterationExtend:
+    case Alteration::Extend:
 
         if (!m_selection.isCaret()
             && (granularity == TextGranularity::WordGranularity || granularity == TextGranularity::ParagraphGranularity || granularity == TextGranularity::LineGranularity)
@@ -1520,7 +1522,7 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
     if (granularity == TextGranularity::LineGranularity || granularity == TextGranularity::ParagraphGranularity)
         m_xPosForVerticalArrowNavigation = x;
 
-    if (userTriggered == UserTriggered)
+    if (userTriggered == UserTriggered::Yes)
         m_granularity = TextGranularity::CharacterGranularity;
 
     setCaretRectNeedsUpdate();
@@ -1538,34 +1540,34 @@ static bool absoluteCaretY(const VisiblePosition& c, int& y)
     return true;
 }
 
-bool FrameSelection::modify(EAlteration alter, unsigned verticalDistance, VerticalDirection direction, EUserTriggered userTriggered, CursorAlignOnScroll align)
+bool FrameSelection::modify(Alteration alter, unsigned verticalDistance, VerticalDirection direction, UserTriggered userTriggered, CursorAlignOnScroll align)
 {
     if (!verticalDistance)
         return false;
 
-    if (userTriggered == UserTriggered) {
+    if (userTriggered == UserTriggered::Yes) {
         FrameSelection trialFrameSelection;
         trialFrameSelection.setSelection(m_selection);
-        trialFrameSelection.modify(alter, verticalDistance, direction, NotUserTriggered);
+        trialFrameSelection.modify(alter, verticalDistance, direction, UserTriggered::No);
 
         bool change = shouldChangeSelection(trialFrameSelection.selection());
         if (!change)
             return false;
     }
 
-    willBeModified(alter, direction == DirectionUp ? SelectionDirection::Backward : SelectionDirection::Forward);
+    willBeModified(alter, direction == VerticalDirection::Up ? SelectionDirection::Backward : SelectionDirection::Forward);
 
     VisiblePosition pos;
     LayoutUnit xPos;
     switch (alter) {
-    case AlterationMove:
-        pos = VisiblePosition(direction == DirectionUp ? m_selection.start() : m_selection.end(), m_selection.affinity());
-        xPos = lineDirectionPointForBlockDirectionNavigation(direction == DirectionUp ? Start : End);
-        m_selection.setAffinity(direction == DirectionUp ? Affinity::Upstream : Affinity::Downstream);
+    case Alteration::Move:
+        pos = VisiblePosition(direction == VerticalDirection::Up ? m_selection.start() : m_selection.end(), m_selection.affinity());
+        xPos = lineDirectionPointForBlockDirectionNavigation(direction == VerticalDirection::Up ? PositionType::Start : PositionType::End);
+        m_selection.setAffinity(direction == VerticalDirection::Up ? Affinity::Upstream : Affinity::Downstream);
         break;
-    case AlterationExtend:
+    case Alteration::Extend:
         pos = VisiblePosition(m_selection.extent(), m_selection.affinity());
-        xPos = lineDirectionPointForBlockDirectionNavigation(Extent);
+        xPos = lineDirectionPointForBlockDirectionNavigation(PositionType::Extent);
         m_selection.setAffinity(Affinity::Downstream);
         break;
     }
@@ -1573,14 +1575,14 @@ bool FrameSelection::modify(EAlteration alter, unsigned verticalDistance, Vertic
     int startY;
     if (!absoluteCaretY(pos, startY))
         return false;
-    if (direction == DirectionUp)
+    if (direction == VerticalDirection::Up)
         startY = -startY;
     int lastY = startY;
 
     VisiblePosition result;
     VisiblePosition next;
     for (VisiblePosition p = pos; ; p = next) {
-        if (direction == DirectionUp)
+        if (direction == VerticalDirection::Up)
             next = previousLinePosition(p, xPos);
         else
             next = nextLinePosition(p, xPos);
@@ -1590,7 +1592,7 @@ bool FrameSelection::modify(EAlteration alter, unsigned verticalDistance, Vertic
         int nextY;
         if (!absoluteCaretY(next, nextY))
             break;
-        if (direction == DirectionUp)
+        if (direction == VerticalDirection::Up)
             nextY = -nextY;
         if (nextY - startY > static_cast<int>(verticalDistance))
             break;
@@ -1604,18 +1606,18 @@ bool FrameSelection::modify(EAlteration alter, unsigned verticalDistance, Vertic
         return false;
 
     switch (alter) {
-    case AlterationMove:
+    case Alteration::Move:
         moveTo(result, userTriggered, align);
         break;
-    case AlterationExtend:
+    case Alteration::Extend:
         setExtent(result, userTriggered);
         break;
     }
 
-    if (userTriggered == UserTriggered)
+    if (userTriggered == UserTriggered::Yes)
         m_granularity = TextGranularity::CharacterGranularity;
 
-    m_selection.setIsDirectional(shouldAlwaysUseDirectionalSelection(m_document.get()) || alter == AlterationExtend);
+    m_selection.setIsDirectional(shouldAlwaysUseDirectionalSelection(m_document.get()) || alter == Alteration::Extend);
 
     return true;
 }
@@ -1628,13 +1630,13 @@ LayoutUnit FrameSelection::lineDirectionPointForBlockDirectionNavigation(Positio
     // FIXME: Can we use visibleStart/End/Extent?
     Position position;
     switch (type) {
-    case Start:
+    case PositionType::Start:
         position = m_selection.start();
         break;
-    case End:
+    case PositionType::End:
         position = m_selection.end();
         break;
-    case Extent:
+    case PositionType::Extent:
         position = m_selection.extent();
         break;
     }
@@ -1672,12 +1674,12 @@ void FrameSelection::willBeRemovedFromFrame()
     if (auto* view = m_document->renderView())
         view->selection().clear();
 
-    setSelectionWithoutUpdatingAppearance(VisibleSelection(), defaultSetSelectionOptions(), AlignCursorOnScrollIfNeeded, TextGranularity::CharacterGranularity);
+    setSelectionWithoutUpdatingAppearance(VisibleSelection(), defaultSetSelectionOptions(), CursorAlignOnScroll::IfNeeded, TextGranularity::CharacterGranularity);
     m_previousCaretNode = nullptr;
     m_typingStyle = nullptr;
 }
 
-void FrameSelection::setStart(const VisiblePosition& position, EUserTriggered trigger)
+void FrameSelection::setStart(const VisiblePosition& position, UserTriggered trigger)
 {
     if (m_selection.isBaseFirst())
         setBase(position, trigger);
@@ -1685,7 +1687,7 @@ void FrameSelection::setStart(const VisiblePosition& position, EUserTriggered tr
         setExtent(position, trigger);
 }
 
-void FrameSelection::setEnd(const VisiblePosition& position, EUserTriggered trigger)
+void FrameSelection::setEnd(const VisiblePosition& position, UserTriggered trigger)
 {
     if (m_selection.isBaseFirst())
         setExtent(position, trigger);
@@ -1693,25 +1695,25 @@ void FrameSelection::setEnd(const VisiblePosition& position, EUserTriggered trig
         setBase(position, trigger);
 }
 
-void FrameSelection::setBase(const VisiblePosition& position, EUserTriggered userTriggered)
+void FrameSelection::setBase(const VisiblePosition& position, UserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;
     setSelection(VisibleSelection(position.deepEquivalent(), m_selection.extent(), position.affinity(), selectionHasDirection), defaultSetSelectionOptions(userTriggered));
 }
 
-void FrameSelection::setExtent(const VisiblePosition& position, EUserTriggered userTriggered)
+void FrameSelection::setExtent(const VisiblePosition& position, UserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;
     setSelection(VisibleSelection(m_selection.base(), position.deepEquivalent(), position.affinity(), selectionHasDirection), defaultSetSelectionOptions(userTriggered));
 }
 
-void FrameSelection::setBase(const Position& position, Affinity affinity, EUserTriggered userTriggered)
+void FrameSelection::setBase(const Position& position, Affinity affinity, UserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;
     setSelection(VisibleSelection(position, m_selection.extent(), affinity, selectionHasDirection), defaultSetSelectionOptions(userTriggered));
 }
 
-void FrameSelection::setExtent(const Position& position, Affinity affinity, EUserTriggered userTriggered)
+void FrameSelection::setExtent(const Position& position, Affinity affinity, UserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;
     setSelection(VisibleSelection(m_selection.base(), position, affinity, selectionHasDirection), defaultSetSelectionOptions(userTriggered));
@@ -1910,7 +1912,7 @@ void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const Lay
 {
 #if ENABLE(TEXT_CARET)
     auto caretPresentationProperties = caretAnimator ? caretAnimator->presentationProperties() : CaretAnimator::PresentationProperties();
-    if (m_caretVisibility == Hidden || caretPresentationProperties.blinkState == CaretAnimator::PresentationProperties::BlinkState::Off)
+    if (m_caretVisibility == CaretVisibility::Hidden || caretPresentationProperties.blinkState == CaretAnimator::PresentationProperties::BlinkState::Off)
         return;
 
     auto drawingRect = localCaretRectWithoutUpdate();
@@ -2106,11 +2108,11 @@ void FrameSelection::selectAll()
     VisibleSelection newSelection(VisibleSelection::selectionFromContentsOfNode(root.get()));
     if (!newSelection.isOrphan() && shouldChangeSelection(newSelection)) {
         AXTextStateChangeIntent intent(AXTextStateChangeTypeSelectionExtend, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityAll, false });
-        setSelection(newSelection, defaultSetSelectionOptions() | FireSelectEvent, intent);
+        setSelection(newSelection, defaultSetSelectionOptions() | SetSelectionOption::FireSelectEvent, intent);
     }
 }
 
-bool FrameSelection::setSelectedRange(const std::optional<SimpleRange>& range, Affinity affinity, ShouldCloseTyping closeTyping, EUserTriggered userTriggered)
+bool FrameSelection::setSelectedRange(const std::optional<SimpleRange>& range, Affinity affinity, ShouldCloseTyping closeTyping, UserTriggered userTriggered)
 {
     if (!range)
         return false;
@@ -2126,11 +2128,11 @@ bool FrameSelection::setSelectedRange(const std::optional<SimpleRange>& range, A
         return false;
 #endif
 
-    OptionSet<SetSelectionOption> selectionOptions {  ClearTypingStyle };
+    OptionSet<SetSelectionOption> selectionOptions { SetSelectionOption::ClearTypingStyle };
     if (closeTyping == ShouldCloseTyping::Yes)
-        selectionOptions.add(CloseTyping);
+        selectionOptions.add(SetSelectionOption::CloseTyping);
 
-    if (userTriggered == UserTriggered) {
+    if (userTriggered == UserTriggered::Yes) {
         FrameSelection trialFrameSelection;
 
         trialFrameSelection.setSelection(newSelection, selectionOptions);
@@ -2138,7 +2140,7 @@ bool FrameSelection::setSelectedRange(const std::optional<SimpleRange>& range, A
         if (!shouldChangeSelection(trialFrameSelection.selection()))
             return false;
 
-        selectionOptions.add(IsUserTriggered);
+        selectionOptions.add(SetSelectionOption::IsUserTriggered);
     }
 
     setSelection(newSelection, selectionOptions);
@@ -2166,7 +2168,7 @@ void FrameSelection::focusedOrActiveStateChanged()
     // Caret appears in the active frame.
     if (activeAndFocused)
         setSelectionFromNone();
-    setCaretVisibility(activeAndFocused ? Visible : Hidden, ShouldUpdateAppearance::Yes);
+    setCaretVisibility(activeAndFocused ? CaretVisibility::Visible : CaretVisibility::Hidden, ShouldUpdateAppearance::Yes);
 #endif
 }
 
@@ -2506,7 +2508,7 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
     if (isCaret())
         rect = absoluteCaretBounds(&insideFixed);
     else
-        rect = revealExtentOption == RevealExtent ? VisiblePosition(m_selection.extent()).absoluteCaretBounds() : enclosingIntRect(selectionBounds(ClipToVisibleContent::No));
+        rect = revealExtentOption == RevealExtentOption::RevealExtent ? VisiblePosition(m_selection.extent()).absoluteCaretBounds() : enclosingIntRect(selectionBounds(ClipToVisibleContent::No));
 
     Position start = m_selection.start();
     ASSERT(start.deprecatedNode());
@@ -2686,12 +2688,12 @@ bool FrameSelection::selectionAtWordStart() const
 
 std::optional<SimpleRange> FrameSelection::rangeByMovingCurrentSelection(int amount) const
 {
-    return rangeByAlteringCurrentSelection(AlterationMove, amount);
+    return rangeByAlteringCurrentSelection(Alteration::Move, amount);
 }
 
 std::optional<SimpleRange> FrameSelection::rangeByExtendingCurrentSelection(int amount) const
 {
-    return rangeByAlteringCurrentSelection(AlterationExtend, amount);
+    return rangeByAlteringCurrentSelection(Alteration::Extend, amount);
 }
 
 VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const VisibleSelection& selection)
@@ -2722,11 +2724,11 @@ VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const Vis
     // This has the effect of selecting the word on the line (which is
     // what we want, rather than selecting past the end of the line).
     if (isEndOfParagraph(endVisiblePosBeforeExpansion) && !isStartOfParagraph(endVisiblePosBeforeExpansion))
-        frameSelection.modify(FrameSelection::AlterationMove, SelectionDirection::Backward, TextGranularity::CharacterGranularity);
+        frameSelection.modify(FrameSelection::Alteration::Move, SelectionDirection::Backward, TextGranularity::CharacterGranularity);
 
     VisibleSelection newSelection = frameSelection.selection();
     newSelection.expandUsingGranularity(TextGranularity::WordGranularity);
-    frameSelection.setSelection(newSelection, defaultSetSelectionOptions(), AXTextStateChangeIntent(), AlignCursorOnScrollIfNeeded, frameSelection.granularity());
+    frameSelection.setSelection(newSelection, defaultSetSelectionOptions(), AXTextStateChangeIntent(), CursorAlignOnScroll::IfNeeded, frameSelection.granularity());
 
     Position startPos(frameSelection.selection().start());
     Position endPos(frameSelection.selection().end());
@@ -2775,7 +2777,7 @@ VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const Vis
             return VisibleSelection();
         }
         frameSelection.moveTo(startVisiblePos);
-        frameSelection.modify(FrameSelection::AlterationExtend, SelectionDirection::Backward, TextGranularity::WordGranularity);
+        frameSelection.modify(FrameSelection::Alteration::Extend, SelectionDirection::Backward, TextGranularity::WordGranularity);
         startPos = frameSelection.selection().start();
         endPos = frameSelection.selection().end();
         startVisiblePos = VisiblePosition(startPos);
@@ -2831,7 +2833,7 @@ bool FrameSelection::selectionAtSentenceStart() const
     return true;
 }
 
-std::optional<SimpleRange> FrameSelection::rangeByAlteringCurrentSelection(EAlteration alteration, int amount) const
+std::optional<SimpleRange> FrameSelection::rangeByAlteringCurrentSelection(Alteration alteration, int amount) const
 {
     if (m_selection.isNone())
         return std::nullopt;

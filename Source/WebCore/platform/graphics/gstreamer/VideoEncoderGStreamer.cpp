@@ -179,7 +179,7 @@ GStreamerInternalVideoEncoder::GStreamerInternalVideoEncoder(const String& codec
         GST_TRACE_OBJECT(m_harness->element(), "Notifying encoded%s frame", isKeyFrame ? " key" : "");
         GstMappedBuffer encodedImage(outputBuffer.get(), GST_MAP_READ);
         VideoEncoder::EncodedFrame encodedFrame {
-            Vector<uint8_t> { Span<const uint8_t> { encodedImage.data(), encodedImage.size() } },
+            Vector<uint8_t> { std::span<const uint8_t> { encodedImage.data(), encodedImage.size() } },
             isKeyFrame, m_timestamp, m_duration
         };
 

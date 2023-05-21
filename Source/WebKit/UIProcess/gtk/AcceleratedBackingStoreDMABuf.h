@@ -67,7 +67,8 @@ private:
 
     void configure(WTF::UnixFileDescriptor&&, WTF::UnixFileDescriptor&&, const WebCore::IntSize&, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier);
     void configureSHM(ShareableBitmapHandle&&, ShareableBitmapHandle&&);
-    void frame(CompletionHandler<void()>&&);
+    void frame();
+    void frameDone();
     void ensureGLContext();
 
 #if USE(GTK4)

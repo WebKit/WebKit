@@ -259,7 +259,7 @@ void NetworkLoad::notifyDidReceiveResponse(ResourceResponse&& response, Negotiat
 #if PLATFORM(COCOA)
         auto token = m_networkProcess->sourceApplicationAuditToken();
         if (token)
-            auditToken = asBytes(std::span<unsigned> { token->val });
+            auditToken = std::as_bytes(std::span<unsigned> { token->val });
 #endif
 
         response.includeCertificateInfo(auditToken);

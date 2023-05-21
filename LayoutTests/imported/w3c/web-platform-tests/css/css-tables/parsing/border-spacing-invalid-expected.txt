@@ -1,0 +1,6 @@
+
+PASS e.style['border-spacing'] = "10%" should not set the property value
+PASS e.style['border-spacing'] = "-20px" should not set the property value
+PASS e.style['border-spacing'] = "30" should not set the property value
+PASS e.style['border-spacing'] = "40px 50px 60px" should not set the property value
+

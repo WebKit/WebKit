@@ -51,7 +51,7 @@ public:
 
     bool isEmpty() const { return m_resourceRequest.isEmpty(); }
 
-    Document& requester();
+    WEBCORE_EXPORT Document& requester();
     const SecurityOrigin& requesterSecurityOrigin() const;
 
     ResourceRequest& resourceRequest() { return m_resourceRequest; }

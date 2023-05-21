@@ -766,7 +766,6 @@ public:
 
     inline bool shouldMaskURLForBindings(const URL&) const;
     inline const URL& maskedURLForBindingsIfNeeded(const URL&) const;
-    static StaticStringImpl& maskedURLStringForBindings();
     static const URL& maskedURLForBindings();
 
     WEBCORE_EXPORT String userAgent(const URL&) const final;
@@ -1770,9 +1769,6 @@ public:
     void notifyReportObservers(Ref<Report>&&) final;
     void sendReportToEndpoints(const URL& baseURL, const Vector<String>& endpointURIs, const Vector<String>& endpointTokens, Ref<FormData>&& report, ViolationReportType) final;
     String httpUserAgent() const final;
-
-    // This should be used over the settings lazy loading image flag due to a quirk, which may occur causing website images to fail to load properly.
-    bool lazyImageLoadingEnabled() const;
 
 #if ENABLE(DOM_AUDIO_SESSION)
     void setAudioSessionType(DOMAudioSessionType type) { m_audioSessionType = type; }

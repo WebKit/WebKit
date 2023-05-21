@@ -1,0 +1,12 @@
+
+PASS Property border-collapse has initial value separate
+PASS Property border-collapse inherits
+PASS Property border-spacing has initial value 0px 0px
+PASS Property border-spacing inherits
+PASS Property caption-side has initial value top
+PASS Property caption-side inherits
+PASS Property empty-cells has initial value show
+PASS Property empty-cells inherits
+PASS Property table-layout has initial value auto
+PASS Property table-layout does not inherit
+

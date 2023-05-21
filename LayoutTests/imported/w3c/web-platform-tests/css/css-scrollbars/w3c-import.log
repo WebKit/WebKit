@@ -1,0 +1,54 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/auto-scrollbar-inline-children.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/multicol-in-orthogonal-writing-mode-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-keywords.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbars-chrome-bug-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbars-chrome-bug-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/scrollbars-chrome-bug-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/textarea-scrollbar-width-none-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/textarea-scrollbar-width-none-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/textarea-scrollbar-width-none.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/transparent-on-root-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/transparent-on-root-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/transparent-on-root.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/viewport-scrollbar-body-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/viewport-scrollbar-body-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/viewport-scrollbar-body.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/viewport-scrollbar-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/viewport-scrollbar-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scrollbars/viewport-scrollbar.html

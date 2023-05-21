@@ -79,7 +79,6 @@ private:
     bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override;
 
     AffineTransform localTransform() const override { return m_localTransform; }
-    void calculateImageViewport();
 
     bool m_needsBoundariesUpdate : 1;
     bool m_needsTransformUpdate : 1;

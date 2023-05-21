@@ -192,9 +192,10 @@ static std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCre
         auto response = AuthenticatorAssertionResponse::create(toArrayBuffer(attributes[(id)kSecAttrApplicationLabel]), WTFMove(userHandle), String(username), (__bridge SecAccessControlRef)attributes[(id)kSecAttrAccessControl], AuthenticatorAttachment::Platform);
 
         auto group = groupForAttributes(attributes);
-        if (!group.isNull())
+        if (!group.isNull()) {
             response->setGroup(group);
-        if ([[attributes allKeys] containsObject:bridge_cast(kSecAttrSynchronizable)])
+            response->setSynchronizable(true);
+        } else if ([[attributes allKeys] containsObject:bridge_cast(kSecAttrSynchronizable)])
             response->setSynchronizable([attributes[(id)kSecAttrSynchronizable] isEqual:@YES]);
         it = responseMap.find(CBOR(fido::kDisplayNameMapKey));
         if (it != responseMap.end() && it->second.isString())

@@ -191,6 +191,17 @@ RefPtr<AtomStringImpl> AtomStringImpl::add(const UChar* characters, unsigned len
     return addToStringTable<UCharBuffer, UCharBufferTranslator>(buffer);
 }
 
+RefPtr<AtomStringImpl> AtomStringImpl::add(HashTranslatorCharBuffer<UChar>& buffer)
+{
+    if (!buffer.characters)
+        return nullptr;
+
+    if (!buffer.length)
+        return static_cast<AtomStringImpl*>(StringImpl::empty());
+
+    return addToStringTable<UCharBuffer, UCharBufferTranslator>(buffer);
+}
+
 struct SubstringLocation {
     StringImpl* baseString;
     unsigned start;
@@ -295,6 +306,17 @@ struct BufferFromStaticDataTranslator {
     }
 };
 
+RefPtr<AtomStringImpl> AtomStringImpl::add(HashTranslatorCharBuffer<LChar>& buffer)
+{
+    if (!buffer.characters)
+        return nullptr;
+
+    if (!buffer.length)
+        return static_cast<AtomStringImpl*>(StringImpl::empty());
+
+    return addToStringTable<LCharBuffer, LCharBufferTranslator>(buffer);
+}
+
 RefPtr<AtomStringImpl> AtomStringImpl::add(const LChar* characters, unsigned length)
 {
     if (!characters)
@@ -350,13 +372,6 @@ static inline Ref<AtomStringImpl> addStatic(const StringImpl& base)
 {
     AtomStringTableLocker locker;
     return addStatic(locker, stringTable(), base);
-}
-
-RefPtr<AtomStringImpl> AtomStringImpl::add(const StaticStringImpl* string)
-{
-    auto s = reinterpret_cast<const StringImpl*>(string);
-    ASSERT(s->isStatic());
-    return addStatic(*s);
 }
 
 Ref<AtomStringImpl> AtomStringImpl::addSlowCase(StringImpl& string)

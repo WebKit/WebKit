@@ -129,6 +129,8 @@ struct Type : public std::variant<
         >::variant;
     void dump(PrintStream&) const;
     String toString() const;
+    unsigned size() const;
+    unsigned alignment() const;
 };
 
 using ConversionRank = Markable<unsigned, IntegralMarkableTraits<unsigned, std::numeric_limits<unsigned>::max()>>;

@@ -25,7 +25,7 @@
 
 WI.FindBanner = class FindBanner extends WI.NavigationItem
 {
-    constructor(delegate, className, alwaysShowing = false)
+    constructor(delegate, {alwaysShowing, className} = {})
     {
         super();
 

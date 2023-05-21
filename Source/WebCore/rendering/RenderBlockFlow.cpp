@@ -4957,24 +4957,10 @@ bool RenderBlockFlow::tryComputePreferredWidthsUsingModernPath(LayoutUnit& minLo
 
     computeAndSetLineLayoutPath();
 
-    // FIXME: Pass the replaced and inline block constrainst to IFC.
-    auto canUseModernPathForPreferredWidthComputation = [&] {
-        if (lineLayoutPath() != ModernPath)
-            return false;
-        for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
-            auto& renderer = *walker.current();
-            if (renderer.isText())
-                continue;
-            if (is<RenderLineBreak>(renderer))
-                continue;
-            if (is<RenderInline>(renderer))
-                continue;
-            return false;
-        }
-        return true;
-    };
+    if (lineLayoutPath() != ModernPath)
+        return false;
 
-    if (!canUseModernPathForPreferredWidthComputation())
+    if (!LayoutIntegration::LineLayout::canUseForPreferredWidthComputation(*this))
         return false;
 
     if (!modernLineLayout())

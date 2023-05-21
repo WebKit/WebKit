@@ -3369,7 +3369,8 @@ enum class WebCore::MediaPlayerMovieLoadType : uint8_t {
     Unknown,
     Download,
     StoredStream,
-    LiveStream
+    LiveStream,
+    HttpLiveStream
 };
 
 enum class WebCore::MediaPlayerPreload : uint8_t {

@@ -119,7 +119,7 @@ public:
         virtual void fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier) = 0;
         virtual void setRegistrationLastUpdateTime(ServiceWorkerRegistrationIdentifier, WallTime) = 0;
         virtual void setRegistrationUpdateViaCache(ServiceWorkerRegistrationIdentifier, ServiceWorkerUpdateViaCache) = 0;
-        virtual void notifyClientsOfControllerChange(const HashSet<ScriptExecutionContextIdentifier>& contextIdentifiers, const ServiceWorkerData& newController) = 0;
+        virtual void notifyClientsOfControllerChange(const HashSet<ScriptExecutionContextIdentifier>& contextIdentifiers, const std::optional<ServiceWorkerData>& newController) = 0;
         virtual void postMessageToServiceWorkerClient(ScriptExecutionContextIdentifier, const MessageWithMessagePorts&, ServiceWorkerIdentifier, const String& sourceOrigin) = 0;
         virtual void focusServiceWorkerClient(ScriptExecutionContextIdentifier, CompletionHandler<void(std::optional<ServiceWorkerClientData>&&)>&&) = 0;
         virtual void updateBackgroundFetchRegistration(const BackgroundFetchInformation&) = 0;
@@ -182,7 +182,7 @@ public:
 
     void updateWorker(const ServiceWorkerJobDataIdentifier&, const std::optional<ProcessIdentifier>&, SWServerRegistration&, const URL&, const ScriptBuffer&, const CertificateInfo&, const ContentSecurityPolicyResponseHeaders&, const CrossOriginEmbedderPolicy&, const String& referrerPolicy, WorkerType, MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>&&, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier);
     void fireInstallEvent(SWServerWorker&);
-    void fireActivateEvent(SWServerWorker&);
+    void runServiceWorkerAndFireActivateEvent(SWServerWorker&);
 
     WEBCORE_EXPORT SWServerWorker* workerByID(ServiceWorkerIdentifier) const;
     WEBCORE_EXPORT std::optional<ServiceWorkerClientData> serviceWorkerClientWithOriginByID(const ClientOrigin&, const ScriptExecutionContextIdentifier&) const;
@@ -308,7 +308,9 @@ private:
     void clearInternal(Function<bool(const ServiceWorkerRegistrationKey&)>&& matches, CompletionHandler<void()>&&);
 
     WEBCORE_EXPORT SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL);
+    void runServiceWorkerIfNecessary(SWServerWorker&, RunServiceWorkerCallback&&);
     bool runServiceWorker(ServiceWorkerIdentifier);
+    bool runServiceWorker(SWServerWorker&);
 
     void tryInstallContextData(const std::optional<ProcessIdentifier>&, ServiceWorkerContextData&&);
     void installContextData(const ServiceWorkerContextData&);

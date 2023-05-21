@@ -383,7 +383,13 @@ inline void Structure::didReplaceProperty(PropertyOffset offset)
 {
     if (LIKELY(!isWatchingReplacement()))
         return;
-    firePropertyReplacementWatchpointSet(vm(), offset, "Property did get replaced");
+    didReplacePropertySlow(offset);
+}
+
+inline void Structure::didCachePropertyReplacement(VM& vm, PropertyOffset offset)
+{
+    ASSERT(isValidOffset(offset));
+    firePropertyReplacementWatchpointSet(vm, offset, "Did cache property replacement");
 }
 
 inline WatchpointSet* Structure::propertyReplacementWatchpointSet(PropertyOffset offset)

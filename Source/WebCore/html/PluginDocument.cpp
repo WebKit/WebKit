@@ -27,12 +27,12 @@
 
 #include "DocumentLoader.h"
 #include "FrameLoader.h"
-#include "FrameLoaderClient.h"
 #include "HTMLBodyElement.h"
 #include "HTMLEmbedElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
 #include "LocalFrame.h"
+#include "LocalFrameLoaderClient.h"
 #include "LocalFrameView.h"
 #include "PluginViewBase.h"
 #include "RawDataDocumentParser.h"

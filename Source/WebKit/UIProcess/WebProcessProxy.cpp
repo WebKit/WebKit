@@ -2362,6 +2362,25 @@ void WebProcessProxy::systemBeep()
 
 void WebProcessProxy::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Vector<NotificationData>&&)>&& callback)
 {
+    if (websiteDataStore()->hasClientGetDisplayedNotifications()) {
+        auto callbackHandlingTags = [tag, callback = WTFMove(callback)] (Vector<NotificationData>&& notifications) mutable {
+            if (tag.isEmpty()) {
+                callback(WTFMove(notifications));
+                return;
+            }
+
+            Vector<NotificationData> filteredNotifications;
+            for (auto& notification : notifications) {
+                if (tag == notification.tag)
+                    filteredNotifications.append(notification);
+            }
+
+            callback(WTFMove(filteredNotifications));
+        };
+        websiteDataStore()->getNotifications(registrationURL, WTFMove(callbackHandlingTags));
+        return;
+    }
+
     WebNotificationManagerProxy::sharedServiceWorkerManager().getNotifications(registrationURL, tag, sessionID(), WTFMove(callback));
 }
 

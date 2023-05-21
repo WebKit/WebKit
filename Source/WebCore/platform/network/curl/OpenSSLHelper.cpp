@@ -301,14 +301,14 @@ static void getSubjectAltName(const X509* x509, Vector<String>& dnsNames, Vector
             if (value->d.iPAddress->length == 4)
                 ipAddresses.append(makeString(data[0], ".", data[1], ".", data[2], ".", data[3]));
             else if (value->d.iPAddress->length == 16) {
-                Span<uint8_t, 16> dataSpan { data, 16 };
+                std::span<uint8_t, 16> dataSpan { data, 16 };
                 ipAddresses.append(canonicalizeIPv6Address(dataSpan));
             }
         }
     }
 }
 
-String canonicalizeIPv6Address(Span<uint8_t, 16> data)
+String canonicalizeIPv6Address(std::span<uint8_t, 16> data)
 {
     bool compressCurrentSection = false;
     size_t maxZeros = 0;

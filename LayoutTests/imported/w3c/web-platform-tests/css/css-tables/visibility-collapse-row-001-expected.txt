@@ -1,0 +1,13 @@
+Visibility collapse
+
+Spec
+Setting a row to visibility:collapse changes table height but not width.
+
+row 1	
+row 2	
+Bottom table is identical to top except row 1 has been collapsed.
+row 2	
+
+PASS row visibility:collapse doesn't change table width, unlike display:none
+FAIL row visibility:collapse changes table height, unlike visibility:hidden assert_equals: expected 116 but got 222
+

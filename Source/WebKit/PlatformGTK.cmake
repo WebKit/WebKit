@@ -59,6 +59,8 @@ list(APPEND WebKit_MESSAGES_IN_FILES
 if (USE_GBM)
     list(APPEND WebKit_MESSAGES_IN_FILES
         UIProcess/gtk/AcceleratedBackingStoreDMABuf
+
+        WebProcess/WebPage/gtk/AcceleratedSurfaceDMABuf
     )
 endif ()
 

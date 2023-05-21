@@ -707,6 +707,9 @@ Move32 U:G:32, ZD:G:32
     x86: Imm, Tmp as zeroExtend32ToWord
     x86 armv7: Imm, Addr as store32
     x86: Imm, Index as store32
+    arm64: ZeroReg, Tmp as move
+    arm64: ZeroReg, Addr as store32
+    arm64: ZeroReg, Index as store32
 
 arm64: MoveWithIncrement32 UD:G:32, ZD:G:32
     PreIndex, Tmp as load32
@@ -832,6 +835,8 @@ Store8 U:G:8, D:G:8
     Tmp, Addr
     x86: Imm, Index
     x86: Imm, Addr
+    arm64: ZeroReg, Addr
+    arm64: ZeroReg, Index
 
 arm64: StoreRel8 U:G:8, D:G:8 /effects
     Tmp, SimpleAddr
@@ -862,6 +867,8 @@ Store16 U:G:16, D:G:16
     Tmp, Addr
     x86: Imm, Index
     x86: Imm, Addr
+    arm64: ZeroReg, Addr
+    arm64: ZeroReg, Index
 
 arm64: StoreRel16 U:G:16, D:G:16 /effects
     Tmp, SimpleAddr

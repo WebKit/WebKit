@@ -147,7 +147,7 @@
 
 - (NSString *)_securityOrigin
 {
-    auto* coreFrame = _frame->coreFrame();
+    auto* coreFrame = _frame->coreLocalFrame();
     if (!coreFrame)
         return nil;
     return coreFrame->document()->securityOrigin().toString();
@@ -167,12 +167,12 @@ static RetainPtr<NSArray> collectIcons(WebCore::LocalFrame* frame, OptionSet<Web
 
 - (NSArray *)appleTouchIconURLs
 {
-    return collectIcons(_frame->coreFrame(), { WebCore::LinkIconType::TouchIcon, WebCore::LinkIconType::TouchPrecomposedIcon }).autorelease();
+    return collectIcons(_frame->coreLocalFrame(), { WebCore::LinkIconType::TouchIcon, WebCore::LinkIconType::TouchPrecomposedIcon }).autorelease();
 }
 
 - (NSArray *)faviconURLs
 {
-    return collectIcons(_frame->coreFrame(), WebCore::LinkIconType::Favicon).autorelease();
+    return collectIcons(_frame->coreLocalFrame(), WebCore::LinkIconType::Favicon).autorelease();
 }
 
 - (WKWebProcessPlugInFrame *)_parentFrame

@@ -38,4 +38,6 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 @property (nonatomic, readonly, copy) NSString *identifier;
 @property (nonatomic, readonly, copy) NSDictionary *userInfo;
 @property (nonatomic, readonly) _WKNotificationAlert alert;
+
+- (NSDictionary *)dictionaryRepresentation;
 @end

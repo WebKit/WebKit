@@ -51,7 +51,8 @@ enum class MediaPlayerMovieLoadType : uint8_t {
     Unknown,
     Download,
     StoredStream,
-    LiveStream
+    LiveStream,
+    HttpLiveStream,
 };
 
 enum class MediaPlayerPreload : uint8_t {

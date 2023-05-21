@@ -2301,6 +2301,30 @@ public:
         store16(dataTempRegister, address);
     }
 
+    void store16(TrustedImm32 imm, Address address)
+    {
+        TrustedImm32 imm16(static_cast<int16_t>(imm.m_value));
+        if (!imm16.m_value) {
+            store16(ARM64Registers::zr, address);
+            return;
+        }
+
+        move(imm16, getCachedDataTempRegisterIDAndInvalidate());
+        store16(dataTempRegister, address);
+    }
+
+    void store16(TrustedImm32 imm, BaseIndex address)
+    {
+        TrustedImm32 imm16(static_cast<int16_t>(imm.m_value));
+        if (!imm16.m_value) {
+            store16(ARM64Registers::zr, address);
+            return;
+        }
+
+        move(imm16, getCachedDataTempRegisterIDAndInvalidate());
+        store16(dataTempRegister, address);
+    }
+
     void store8(RegisterID src, BaseIndex address)
     {
         if (address.scale == TimesOne) {
@@ -2343,6 +2367,18 @@ public:
     }
 
     void store8(TrustedImm32 imm, Address address)
+    {
+        TrustedImm32 imm8(static_cast<int8_t>(imm.m_value));
+        if (!imm8.m_value) {
+            store8(ARM64Registers::zr, address);
+            return;
+        }
+
+        move(imm8, getCachedDataTempRegisterIDAndInvalidate());
+        store8(dataTempRegister, address);
+    }
+
+    void store8(TrustedImm32 imm, BaseIndex address)
     {
         TrustedImm32 imm8(static_cast<int8_t>(imm.m_value));
         if (!imm8.m_value) {
@@ -3987,6 +4023,7 @@ public:
 
     Jump branchAdd64(RelationalCondition cond, TrustedImm32 imm, RegisterID dest)
     {
+        // This is not supporting -imm.m_value UInt12. Thus we are not listing BranchAdd64 RelCond, Imm, Tmp in AirOpcode.opcodes.
         ASSERT(isUInt12(imm.m_value));
         m_assembler.add<64, S>(dest, dest, UInt12(imm.m_value));
         return Jump(makeBranch(cond));
@@ -4139,11 +4176,11 @@ public:
 
     Jump branchSub64(RelationalCondition cond, TrustedImm32 imm, RegisterID dest)
     {
+        // This is not supporting -imm.m_value UInt12. Thus we are not listing BranchSub64 RelCond, Imm, Tmp in AirOpcode.opcodes.
         ASSERT(isUInt12(imm.m_value));
         m_assembler.sub<64, S>(dest, dest, UInt12(imm.m_value));
         return Jump(makeBranch(cond));
     }
-
 
     // Jumps, calls, returns
 

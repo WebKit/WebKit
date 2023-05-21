@@ -1,5 +1,4 @@
-//@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
-//@ skip
+
 // Failure:
 // Exception: Did not throw exception, expected CompileError
 //
@@ -94,28 +93,6 @@ load("wasm-module-builder.js");
   let module = new WebAssembly.Module(builder.toBuffer());
   let instance = new WebAssembly.Instance(module);
   assertEquals(instance.exports.main(1, 2), 1);
-})();
-
-(function MultiBlockUnreachableTypeErrorTest() {
-  // print(arguments.callee.name);
-  let builder = new WasmModuleBuilder();
-  let sig_il_v = builder.addType(makeSig([], [kWasmI32, kWasmI64]));
-
-  builder.addFunction("main", kSig_i_v)
-    .addBody([
-      kExprBlock, sig_il_v,
-      kExprI32Const, 1,
-      kExprI64Const, 1,
-      kExprBr, 0,
-      kExprI64Const, 1,
-      kExprI32Const, 1,
-      // Wrong order: expect i32, i64.
-      kExprEnd,
-      kExprDrop])
-    .exportAs("main");
-
-  assertThrows(() => new WebAssembly.Module(builder.toBuffer()),
-      WebAssembly.CompileError, /expected type i64, found i32.const/);
 })();
 
 (function MultiLoopResultTest() {
@@ -318,7 +295,7 @@ load("wasm-module-builder.js");
       kExprEnd]);
 
   assertThrows(() => new WebAssembly.Module(builder.toBuffer()),
-      WebAssembly.CompileError, /expected i32, got i64/);
+      WebAssembly.CompileError, /I64 is not a I32/);
 })();
 
 (function MultiResultTest() {
@@ -556,15 +533,15 @@ load("wasm-module-builder.js");
   assertEquals(instance.exports.main(1, 2), [1, 2]);
 
   instance = new WebAssembly.Instance(module, { 'imports' : { 'f' : drop_first } });
-  assertThrows(() => instance.exports.main(1, 2), TypeError, "multi-return length mismatch");
+  assertThrows(() => instance.exports.main(1, 2), TypeError, "Incorrect number of values returned to Wasm from JS");
   instance = new WebAssembly.Instance(module, { 'imports' : { 'f' : repeat } });
-  assertThrows(() => instance.exports.main(1, 2), TypeError, "multi-return length mismatch");
+  assertThrows(() => instance.exports.main(1, 2), TypeError, "Incorrect number of values returned to Wasm from JS");
   instance = new WebAssembly.Instance(module, { 'imports' : { 'f' : proxy_throw } });
   assertThrows(() => instance.exports.main(1, 2), Error, "abc");
   instance = new WebAssembly.Instance(module, { 'imports' : { 'f' : not_receiver } });
-  assertThrows(() => instance.exports.main(1, 2), TypeError, /not iterable/);
+  assertThrows(() => instance.exports.main(1, 2), TypeError, /Type error/);
   instance = new WebAssembly.Instance(module, { 'imports' : { 'f' : not_iterable } });
-  assertThrows(() => instance.exports.main(1, 2), TypeError, /not iterable/);
+  assertThrows(() => instance.exports.main(1, 2), TypeError, /Type error/);
   instance = new WebAssembly.Instance(module, { 'imports' : { 'f' : generator_throw } });
   assertThrows(() => instance.exports.main(1, 2), Error, "def");
 })();

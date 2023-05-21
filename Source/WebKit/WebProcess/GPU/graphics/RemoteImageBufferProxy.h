@@ -39,7 +39,7 @@
 namespace WebKit {
 
 class RemoteRenderingBackendProxy;
-class RemoteImageBufferProxyFlushState;
+class RemoteImageBufferProxyFlushFence;
 
 class RemoteImageBufferProxy : public WebCore::ImageBuffer {
     friend class RemoteSerializedImageBufferProxy;
@@ -61,8 +61,6 @@ public:
 
     ~RemoteImageBufferProxy();
 
-    DisplayListRecorderFlushIdentifier lastSentFlushIdentifier() const { return m_sentFlushIdentifier; }
-
     WebCore::ImageBufferBackend* ensureBackendCreated() const final;
 
     void clearBackend();
@@ -73,8 +71,6 @@ public:
 
 private:
     RemoteImageBufferProxy(const WebCore::ImageBufferBackend::Parameters&, const WebCore::ImageBufferBackend::Info&, RemoteRenderingBackendProxy&, std::unique_ptr<WebCore::ImageBufferBackend>&& = nullptr, WebCore::RenderingResourceIdentifier = WebCore::RenderingResourceIdentifier::generate());
-
-    bool hasPendingFlush() const;
 
     RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const final;
     RefPtr<WebCore::NativeImage> copyNativeImageForDrawing(WebCore::GraphicsContext&) const final;
@@ -105,27 +101,10 @@ private:
 
     void assertDispatcherIsCurrent() const;
 
-    DisplayListRecorderFlushIdentifier m_sentFlushIdentifier;
-    Ref<RemoteImageBufferProxyFlushState> m_flushState;
+    RefPtr<RemoteImageBufferProxyFlushFence> m_pendingFlush;
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     RemoteDisplayListRecorderProxy m_remoteDisplayList;
     bool m_needsFlush { false };
-};
-
-class RemoteImageBufferProxyFlushState : public ThreadSafeRefCounted<RemoteImageBufferProxyFlushState> {
-    WTF_MAKE_NONCOPYABLE(RemoteImageBufferProxyFlushState);
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    RemoteImageBufferProxyFlushState() = default;
-    void waitForDidFlush(DisplayListRecorderFlushIdentifier, Seconds timeout);
-    void markCompletedFlush(DisplayListRecorderFlushIdentifier);
-    void cancel();
-    DisplayListRecorderFlushIdentifier identifierForCompletedFlush() const;
-
-private:
-    mutable Lock m_lock;
-    Condition m_condition;
-    DisplayListRecorderFlushIdentifier m_identifier WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 class RemoteSerializedImageBufferProxy : public WebCore::SerializedImageBuffer {

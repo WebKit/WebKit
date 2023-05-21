@@ -110,7 +110,7 @@ class WebKitFrameWrapper final: public FrameDestructionObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WebKitFrameWrapper(WebFrame& webFrame)
-        : FrameDestructionObserver(webFrame.coreFrame())
+        : FrameDestructionObserver(webFrame.coreLocalFrame())
         , m_webkitFrame(adoptGRef(webkitFrameCreate(&webFrame)))
     {
     }
@@ -193,7 +193,7 @@ private:
         if (!webKitFrame && !frame.isMainFrame())
             return;
 
-        const auto uri = getDocumentLoaderURL(frame.coreFrame()->loader().provisionalDocumentLoader());
+        const auto uri = getDocumentLoaderURL(frame.coreLocalFrame()->loader().provisionalDocumentLoader());
 
         if (webKitFrame)
             webkitFrameSetURI(webKitFrame, uri);
@@ -208,7 +208,7 @@ private:
         if (!webKitFrame && !frame.isMainFrame())
             return;
 
-        const auto uri = getDocumentLoaderURL(frame.coreFrame()->loader().provisionalDocumentLoader());
+        const auto uri = getDocumentLoaderURL(frame.coreLocalFrame()->loader().provisionalDocumentLoader());
 
         if (webKitFrame)
             webkitFrameSetURI(webKitFrame, uri);
@@ -223,7 +223,7 @@ private:
         if (!webKitFrame && !frame.isMainFrame())
             return;
 
-        const auto uri = frame.coreFrame()->document()->url().string().utf8();
+        const auto uri = frame.coreLocalFrame()->document()->url().string().utf8();
 
         if (webKitFrame)
             webkitFrameSetURI(webKitFrame, uri);
@@ -238,7 +238,7 @@ private:
         if (!webKitFrame && !frame.isMainFrame())
             return;
 
-        const auto uri = getDocumentLoaderURL(frame.coreFrame()->loader().documentLoader());
+        const auto uri = getDocumentLoaderURL(frame.coreLocalFrame()->loader().documentLoader());
 
         if (webKitFrame)
             webkitFrameSetURI(webKitFrame, uri);

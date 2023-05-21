@@ -453,6 +453,7 @@ namespace JSC { namespace DFG {
     macro(FunctionToString, NodeResultJS) \
     macro(FunctionBind, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(MakeRope, NodeResultJS) \
+    macro(MakeAtomString, NodeResultJS) \
     macro(InByVal, NodeResultBoolean | NodeMustGenerate) \
     macro(InById, NodeResultBoolean | NodeMustGenerate) \
     macro(HasPrivateName, NodeResultBoolean | NodeMustGenerate) \

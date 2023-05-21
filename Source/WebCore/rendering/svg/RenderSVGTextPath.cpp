@@ -90,14 +90,4 @@ const SVGLengthValue& RenderSVGTextPath::startOffset() const
     return textPathElement().startOffset();
 }
 
-bool RenderSVGTextPath::exactAlignment() const
-{
-    return textPathElement().spacing() == SVGTextPathSpacingExact;
-}
-
-bool RenderSVGTextPath::stretchMethod() const
-{
-    return textPathElement().method() == SVGTextPathMethodStretch;
-}
-
 }

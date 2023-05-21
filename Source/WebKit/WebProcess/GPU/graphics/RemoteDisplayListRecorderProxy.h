@@ -27,7 +27,6 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "DisplayListRecorderFlushIdentifier.h"
 #include "SharedVideoFrame.h"
 #include <WebCore/DisplayListRecorder.h>
 #include <WebCore/DrawGlyphsRecorder.h>

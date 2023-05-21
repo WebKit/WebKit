@@ -62,7 +62,7 @@ struct AuthenticatorResponseData {
 template<class Encoder>
 static void encodeArrayBuffer(Encoder& encoder, const ArrayBuffer& buffer)
 {
-    encoder << makeSpan(reinterpret_cast<const uint8_t*>(buffer.data()), buffer.byteLength());
+    encoder << std::span(reinterpret_cast<const uint8_t*>(buffer.data()), buffer.byteLength());
 }
 
 template<class Decoder>

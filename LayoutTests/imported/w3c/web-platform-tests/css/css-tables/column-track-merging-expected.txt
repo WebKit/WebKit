@@ -1,0 +1,150 @@
+Column merging investigation
+
+Empty columns is a column that has no originating cells
+Table standard discusses this under "track merging".
+
+Do empty columns get coalesced?
+How does this interact with table-layout:fixed, table width
+Is there a difference between columns defined by COL, vs TD.colspan? Yes!
+Do COLs with specified width get merged?
+Compatibility
+
+Edge17 has a bug where width of a colspanned cell always includes cell width + width of border spacing. It should be max(cell width, border spacing)
+Safari matches Chrome Legacy. TD-originated columns are always merged.
+Firefox follows the standard, but has a few bugs.
+TD merging
+
+Auto table, and TD.colspan=10
+  FF/Chrome Legacy/Safari: Standard. Tracks merge.
+  Edge17: Tracks do not merge. Wide cell is 180px (9 * border spacing)
+auto
+Auto table(400px), and TD.colspan=10
+  FF/Chrome Legacy/Safari/Edge17: Standard. Tracks merge. Colspan cell grows because it is unconstrained.
+auto 400px
+Auto table(130px), and TD.colspan=10
+  FF/Chrome Legacy/Safari: Standard. Tracks merge. Colspan cell shrinks to min width becuase it is unconstrained.
+  Edge17: Non-compliant, buggy. Wide cell too wide, narrow cell disappears.
+auto 130px
+Fixed(400px) table, and TD.colspan=10
+  Chrome/Safari: Non-compliant. Tracks merge. Cells are the same size, fixed algo distributes extra width evenly.
+  Firefox: Standard.
+  Edge17: Standard, buggy. Wide cell too wide. Edge's bug is that it computes max width as (width + border_spacing) instead of max(width, border_spacing).
+fixed 400px
+Fixed(130px) table, and TD.colspan=10
+  Chrome/Safari: Non-compliant.Tracks merge, cells same size.
+  Firefox: Standard + buggy. Table does not grow.
+  Edge17: Standard + buggy. Wide cell too wide.
+fixed 130px
+COL merging. Same tests with COL span=10 replacing TD
+
+Auto table
+  FF/Chrome Legacy/Safari, Edge17: Standard. wide cell is 50px, tracks do merge.
+auto
+Auto table(400px)
+  FF/Chrome Legacy/Safari, Edge17: Standard. Both cells grow the same because unconstrained.
+auto 400px
+Auto table(130px)
+  FF/Chrome Legacy/Safari, Edge17: Standard. Both cells shrink.
+auto 130px
+Fixed(400px) table
+  Chrome/Safari,Firefox: Standard.
+  Edge17: Buggy. Fixed cells grow to fill table.
+fixed 400px
+Fixed(130px) table
+  Chrome/Safari: Standard, very buggy. Non-collapsed columns shrink to single border spacing.
+  Firefox: Standard.
+  Edge17: Non-compliant, collapses columns.
+fixed 130px
+COL merging when COL has specified width.
+
+Chrome Legacy/Edge17/Safari: non-compliant, merge COLs with specified widths.
+Firefox: Standard, unless COL width is 0px. Buggy, does not include border-spacing around columns.
+Auto table, COL width 30px.
+  Chrome Legacy/Edge17/Safari: non-compliant, merge.
+  Firefox: Standard, buggy. does not include border-spacing around columns.
+auto col 30px
+Auto table, COL width 5%.
+  Chrome Legacy/Edge17/Safari: non-compliant, merge.
+  Firefox: Standard, buggy. does not include border-spacing around columns.
+auto col 10%
+Auto table, COL width 0px.
+  Everyone: merges COL
+auto col 0px
+
+PASS main table 1
+PASS main table 2
+PASS main table 3
+FAIL main table 4 assert_equals:
+<table id="td_fixed" style="table-layout:fixed; width: 400px" data-expected-width="400">
+<caption>fixed 400px</caption>
+<tbody><tr>
+  <td colspan="10" data-expected-width="180"></td>
+  <td></td>
+</tr>
+<tr>
+  <td colspan="10"></td>
+  <td></td>
+</tr>
+</tbody></table>
+width expected 180 but got 160
+FAIL main table 5 assert_equals:
+<table id="td_fixed" style="table-layout:fixed; width: 130px" data-expected-width="310">
+<caption>fixed 130px</caption>
+<tbody><tr>
+  <td colspan="10" data-expected-width="180"></td>
+  <td></td>
+</tr>
+<tr>
+  <td colspan="10"></td>
+  <td></td>
+</tr>
+</tbody></table>
+width expected 310 but got 180
+PASS main table 6
+PASS main table 7
+PASS main table 8
+PASS main table 9
+FAIL main table 10 assert_equals:
+<table id="col_fixed_130" style="table-layout:fixed; width: 130px" data-expected-width="340">
+<colgroup><col span="10">
+</colgroup><caption>fixed 130px</caption>
+<tbody><tr>
+  <td data-expected-width="50"></td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+</tr>
+</tbody></table>
+width expected 340 but got 200
+FAIL main table 11 assert_equals:
+<table id="col_auto" data-expected-width="580">
+<caption>auto col 30px</caption>
+<colgroup><col span="10" style="width:30px">
+</colgroup><tbody><tr>
+  <td data-expected-width="50"></td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+</tr>
+</tbody></table>
+width expected 580 but got 180
+FAIL main table 12 assert_equals:
+<table id="col_auto" data-expected-width="640">
+<caption>auto col 10%</caption>
+<colgroup><col span="5" style="width:10%">
+</colgroup><tbody><tr>
+  <td data-expected-width="100"></td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+</tr>
+</tbody></table>
+width expected 640 but got 180
+PASS main table 13
+

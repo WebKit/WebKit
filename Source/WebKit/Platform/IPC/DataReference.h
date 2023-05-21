@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/Span.h>
+#include <span>
 
 namespace IPC {
 

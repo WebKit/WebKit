@@ -1281,13 +1281,13 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<Styl
         return true;
 
 
-    if (m_nonInheritedData.ptr() != other.m_nonInheritedData.ptr()) {
-        if (m_nonInheritedData->backgroundData.ptr() != other.m_nonInheritedData->backgroundData.ptr()) {
+    if (currentColorDiffers || m_nonInheritedData.ptr() != other.m_nonInheritedData.ptr()) {
+        if (currentColorDiffers || m_nonInheritedData->backgroundData.ptr() != other.m_nonInheritedData->backgroundData.ptr()) {
             if (!m_nonInheritedData->backgroundData->isEquivalentForPainting(*other.m_nonInheritedData->backgroundData, currentColorDiffers))
                 return true;
         }
 
-        if (m_nonInheritedData->surroundData.ptr() != other.m_nonInheritedData->surroundData.ptr()) {
+        if (currentColorDiffers || m_nonInheritedData->surroundData.ptr() != other.m_nonInheritedData->surroundData.ptr()) {
             if (!m_nonInheritedData->surroundData->border.isEquivalentForPainting(other.m_nonInheritedData->surroundData->border, currentColorDiffers))
                 return true;
         }
@@ -2872,6 +2872,11 @@ ScrollSnapStop RenderStyle::initialScrollSnapStop()
     return ScrollSnapStop::Normal;
 }
 
+ScrollbarWidth RenderStyle::initialScrollbarWidth()
+{
+    return ScrollbarWidth::Auto;
+}
+
 const ScrollSnapType RenderStyle::scrollSnapType() const
 {
     return m_nonInheritedData->rareData->scrollSnapType;
@@ -2887,6 +2892,11 @@ ScrollSnapStop RenderStyle::scrollSnapStop() const
     return m_nonInheritedData->rareData->scrollSnapStop;
 }
 
+ScrollbarWidth RenderStyle::scrollbarWidth() const
+{
+    return m_nonInheritedData->rareData->scrollbarWidth;
+}
+
 void RenderStyle::setScrollSnapType(const ScrollSnapType type)
 {
     SET_NESTED_VAR(m_nonInheritedData, rareData, scrollSnapType, type);
@@ -2900,6 +2910,11 @@ void RenderStyle::setScrollSnapAlign(const ScrollSnapAlign& alignment)
 void RenderStyle::setScrollSnapStop(const ScrollSnapStop stop)
 {
     SET_NESTED_VAR(m_nonInheritedData, rareData, scrollSnapStop, stop);
+}
+
+void RenderStyle::setScrollbarWidth(const ScrollbarWidth width)
+{
+    SET_NESTED_VAR(m_nonInheritedData, rareData, scrollbarWidth, width);
 }
 
 bool RenderStyle::hasSnapPosition() const

@@ -880,6 +880,11 @@ PlatformDisplayID ScrollingTree::displayID()
     return m_treeState.displayID;
 }
 
+bool ScrollingTree::hasRecentActivity()
+{
+    return hasProcessedWheelEventsRecently() || hasNodeWithActiveScrollAnimations();
+}
+
 bool ScrollingTree::hasProcessedWheelEventsRecently()
 {
     Locker locker { m_lastWheelEventTimeLock };

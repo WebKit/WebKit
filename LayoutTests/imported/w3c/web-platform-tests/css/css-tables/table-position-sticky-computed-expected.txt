@@ -1,0 +1,8 @@
+Test
+
+PASS Computed value of position:sticky on THEAD
+PASS Computed value of position:sticky on TBODY
+PASS Computed value of position:sticky on TR
+PASS Computed value of position:sticky on TD
+PASS Computed value of position:sticky on TFOOT
+

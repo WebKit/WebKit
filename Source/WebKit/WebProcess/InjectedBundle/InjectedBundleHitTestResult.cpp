@@ -28,8 +28,8 @@
 
 #include "InjectedBundleNodeHandle.h"
 #include "WebFrame.h"
-#include "WebFrameLoaderClient.h"
 #include "WebImage.h"
+#include "WebLocalFrameLoaderClient.h"
 #include <WebCore/BitmapImage.h>
 #include <WebCore/Document.h>
 #include <WebCore/Element.h>
@@ -154,7 +154,7 @@ IntRect InjectedBundleHitTestResult::imageRect() const
     if (!webFrame)
         return imageRect;
     
-    auto* coreFrame = webFrame->coreFrame();
+    auto* coreFrame = webFrame->coreLocalFrame();
     if (!coreFrame)
         return imageRect;
     

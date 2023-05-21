@@ -1,5 +1,11 @@
-Pattern Attribute
+pattern attribute
 
 
-PASS pattern attribute support on input element
+PASS basic <input pattern> support
+PASS <input pattern> is Unicode code point-aware
+PASS <input pattern> supports Unicode property escape syntax
+PASS <input pattern> supports Unicode property escape syntax for properties of strings
+PASS <input pattern> supports set difference syntax
+PASS <input pattern> supports string literal syntax
+PASS <input pattern> enables the RegExp v flag
 

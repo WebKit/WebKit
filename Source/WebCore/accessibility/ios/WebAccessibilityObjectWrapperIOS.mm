@@ -2119,9 +2119,9 @@ static RenderObject* rendererForView(WAKView* view)
     // That should be the beginning of this element (range.start). However, if the cursor is already within the 
     // range of this element (the cursor is represented by selection), then the cursor does not need to move.
     if (frameSelection.isNone() && (selection.visibleStart() < range.start || selection.visibleEnd() > range.end))
-        frameSelection.moveTo(range.start, UserTriggered);
+        frameSelection.moveTo(range.start, UserTriggered::Yes);
     
-    frameSelection.modify(FrameSelection::AlterationExtend, (increase) ? SelectionDirection::Right : SelectionDirection::Left, granularity, UserTriggered);
+    frameSelection.modify(FrameSelection::Alteration::Extend, (increase) ? SelectionDirection::Right : SelectionDirection::Left, granularity, UserTriggered::Yes);
 }
 
 - (void)accessibilityIncreaseSelection:(TextGranularity)granularity
@@ -2156,8 +2156,8 @@ static RenderObject* rendererForView(WAKView* view)
     if (visiblePosition.isNull())
         return;
 
-    FrameSelection& frameSelection = self.axBackingObject->document()->frame()->selection();
-    frameSelection.moveTo(visiblePosition, UserTriggered);
+    auto& frameSelection = self.axBackingObject->document()->frame()->selection();
+    frameSelection.moveTo(visiblePosition, UserTriggered::Yes);
 }
 
 - (void)accessibilityIncrement

@@ -1,0 +1,23 @@
+
+
+FAIL .table 1 assert_equals:
+<table class="table" data-expected-width="208" data-offset-x="-8">
+    <tbody><tr>
+      <td class="cell">
+        <div></div>
+      </td>
+    </tr>
+  </tbody></table>
+offsetLeft expected -8 but got 150
+FAIL .table 2 assert_equals:
+<table class="table horizontal" data-expected-width="208" data-offset-x="-8">
+    <tbody><tr>
+      <td class="cell">
+        <div></div>
+      </td>
+    </tr>
+  </tbody></table>
+offsetLeft expected -8 but got 150
+PASS .table 3
+PASS .table 4
+

@@ -501,7 +501,7 @@ private:
     // object's payload. Conservatively this means that the stack region doesn't get stored to.
     void eliminateCandidatesThatInterfere()
     {
-        performLivenessAnalysis(m_graph);
+        performGraphPackingAndLivenessAnalysis(m_graph);
         m_graph.initializeNodeOwners();
         CombinedLiveness combinedLiveness(m_graph);
 

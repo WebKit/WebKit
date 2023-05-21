@@ -36,14 +36,13 @@ namespace TestWebKitAPI {
 
 constexpr uint32_t min6BitValue { 0 };
 
-const URL webKitURL { "https://webkit.org"_s };
-const URL exampleURL { "https://example.com"_s };
-const URL emptyURL { };
-
 // Positive test cases.
 
 TEST(PrivateClickMeasurement, WellKnownURLs)
 {
+    const URL webKitURL { "https://webkit.org"_s };
+    const URL exampleURL { "https://example.com"_s };
+    const URL emptyURL { };
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(min6BitValue), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { min6BitValue, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(min6BitValue), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
@@ -55,6 +54,9 @@ TEST(PrivateClickMeasurement, WellKnownURLs)
 
 TEST(PrivateClickMeasurement, ValidMinValues)
 {
+    const URL webKitURL { "https://webkit.org"_s };
+    const URL exampleURL { "https://example.com"_s };
+    const URL emptyURL { };
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(min6BitValue), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { min6BitValue, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(min6BitValue), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
@@ -63,6 +65,9 @@ TEST(PrivateClickMeasurement, ValidMinValues)
 
 TEST(PrivateClickMeasurement, ValidMidValues)
 {
+    const URL webKitURL { "https://webkit.org"_s };
+    const URL exampleURL { "https://example.com"_s };
+    const URL emptyURL { };
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID((uint32_t)192), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { (uint32_t)9, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue((uint32_t)22), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
@@ -71,6 +76,9 @@ TEST(PrivateClickMeasurement, ValidMidValues)
 
 TEST(PrivateClickMeasurement, ValidMaxValues)
 {
+    const URL webKitURL { "https://webkit.org"_s };
+    const URL exampleURL { "https://example.com"_s };
+    const URL emptyURL { };
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { WebCore::PCM::AttributionTriggerData::MaxEntropy, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(WebCore::PCM::AttributionTriggerData::Priority::MaxEntropy), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
@@ -79,6 +87,9 @@ TEST(PrivateClickMeasurement, ValidMaxValues)
 
 TEST(PrivateClickMeasurement, EarliestTimeToSendAttributionMinimumDelay)
 {
+    const URL webKitURL { "https://webkit.org"_s };
+    const URL exampleURL { "https://example.com"_s };
+    const URL emptyURL { };
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
     auto now = WallTime::now();
     attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { WebCore::PCM::AttributionTriggerData::MaxEntropy, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(WebCore::PCM::AttributionTriggerData::Priority::MaxEntropy), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
@@ -134,6 +145,9 @@ TEST(PrivateClickMeasurement, ValidSourceNonce)
 
 TEST(PrivateClickMeasurement, InvalidSourceHost)
 {
+    const URL webKitURL { "https://webkit.org"_s };
+    const URL exampleURL { "https://example.com"_s };
+    const URL emptyURL { };
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { emptyURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { WebCore::PCM::AttributionTriggerData::MaxEntropy, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(WebCore::PCM::AttributionTriggerData::Priority::MaxEntropy), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
@@ -143,6 +157,9 @@ TEST(PrivateClickMeasurement, InvalidSourceHost)
 
 TEST(PrivateClickMeasurement, InvalidDestinationHost)
 {
+    const URL webKitURL { "https://webkit.org"_s };
+    const URL exampleURL { "https://example.com"_s };
+    const URL emptyURL { };
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { emptyURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { WebCore::PCM::AttributionTriggerData::MaxEntropy, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(WebCore::PCM::AttributionTriggerData::Priority::MaxEntropy), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
@@ -152,6 +169,9 @@ TEST(PrivateClickMeasurement, InvalidDestinationHost)
 
 TEST(PrivateClickMeasurement, AttributionTriggerData)
 {
+    const URL webKitURL { "https://webkit.org"_s };
+    const URL exampleURL { "https://example.com"_s };
+    const URL emptyURL { };
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { (WebCore::PCM::AttributionTriggerData::MaxEntropy + 1), WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(WebCore::PCM::AttributionTriggerData::Priority::MaxEntropy), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
@@ -161,6 +181,9 @@ TEST(PrivateClickMeasurement, AttributionTriggerData)
 
 TEST(PrivateClickMeasurement, InvalidPriority)
 {
+    const URL webKitURL { "https://webkit.org"_s };
+    const URL exampleURL { "https://example.com"_s };
+    const URL emptyURL { };
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { WebCore::PCM::AttributionTriggerData::MaxEntropy, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(WebCore::PCM::AttributionTriggerData::Priority::MaxEntropy + 1), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
@@ -170,6 +193,9 @@ TEST(PrivateClickMeasurement, InvalidPriority)
 
 TEST(PrivateClickMeasurement, InvalidMissingConversion)
 {
+    const URL webKitURL { "https://webkit.org"_s };
+    const URL exampleURL { "https://example.com"_s };
+    const URL emptyURL { };
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
 
     ASSERT_TRUE(attribution.attributionReportClickSourceURL().isEmpty());

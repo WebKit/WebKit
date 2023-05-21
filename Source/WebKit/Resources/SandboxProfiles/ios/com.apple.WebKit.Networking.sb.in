@@ -57,7 +57,9 @@
 (allow socket-option-get
     (require-all
         (socket-option-level SOL_SOCKET)
-        (socket-option-name SO_NREAD)))
+        (socket-option-name
+            SO_NREAD
+            SO_SNDBUF)))
 
 (allow socket-option-get
     (require-all
@@ -73,6 +75,7 @@
     (require-all
         (socket-option-level SOL_SOCKET)
         (socket-option-name
+            SO_MARK_KNOWN_TRACKER
             SO_NECP_LISTENUUID
             SO_NOSIGPIPE
             SO_RCVBUF
@@ -573,7 +576,8 @@
         "kern.osversion"
         "kern.secure_kernel"
         "kern.version"
-        "vm.footprint_suspend")
+        "vm.footprint_suspend"
+        "vm.malloc_ranges") ;; <rdar://problem/105161083>
     (sysctl-name-prefix "kern.proc.pid.")
 )
 
@@ -936,6 +940,7 @@
                 mach_port_set_attributes
                 mach_vm_copy
                 mach_vm_map_external
+                (when (defined? 'mach_vm_range_create) mach_vm_range_create) ;; <rdar://105161083>
                 mach_vm_remap_external
                 semaphore_create
                 semaphore_destroy

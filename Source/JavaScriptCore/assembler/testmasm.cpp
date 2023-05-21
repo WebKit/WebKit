@@ -5488,6 +5488,115 @@ void testLoadBaseIndex()
     }
 }
 
+void testStoreImmediateAddress()
+{
+#if CPU(ARM64) || CPU(X86_64)
+    // store64
+    for (auto imm : int64Operands()) {
+        {
+            auto test = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.store64(CCallHelpers::TrustedImm64(imm), CCallHelpers::Address(GPRInfo::argumentGPR0, -16));
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            uint64_t array[] = { 1, 2, 3, 4, 5, };
+            invoke<void>(test, array + 3);
+            CHECK_EQ(array[1], static_cast<uint64_t>(imm));
+        }
+        {
+            auto test = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.store64(CCallHelpers::TrustedImm64(imm), CCallHelpers::Address(GPRInfo::argumentGPR0, 16));
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            uint64_t array[] = { 1, 2, 3, 4, 5, };
+            invoke<void>(test, array);
+            CHECK_EQ(array[2], static_cast<uint64_t>(imm));
+        }
+    }
+
+    // store32
+    for (auto imm : int32Operands()) {
+        {
+            auto test = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.store32(CCallHelpers::TrustedImm32(imm), CCallHelpers::Address(GPRInfo::argumentGPR0, -8));
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            uint32_t array[] = { 1, 2, 3, 4, 5, };
+            invoke<void>(test, array + 3);
+            CHECK_EQ(array[1], static_cast<uint32_t>(imm));
+        }
+        {
+            auto test = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.store32(CCallHelpers::TrustedImm32(imm), CCallHelpers::Address(GPRInfo::argumentGPR0, 8));
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            uint32_t array[] = { 1, 2, 3, 4, 5, };
+            invoke<void>(test, array);
+            CHECK_EQ(array[2], static_cast<uint32_t>(imm));
+        }
+    }
+
+    // store16
+    for (auto imm : int16Operands()) {
+        {
+            auto test = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.store16(CCallHelpers::TrustedImm32(imm), CCallHelpers::Address(GPRInfo::argumentGPR0, -4));
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            uint16_t array[] = { 1, 2, 3, 4, 5, };
+            invoke<void>(test, array + 3);
+            CHECK_EQ(array[1], static_cast<uint16_t>(imm));
+        }
+        {
+            auto test = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.store16(CCallHelpers::TrustedImm32(imm), CCallHelpers::Address(GPRInfo::argumentGPR0, 4));
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            uint16_t array[] = { 1, 2, 3, 4, static_cast<uint16_t>(-1), };
+            invoke<void>(test, array);
+            CHECK_EQ(array[2], static_cast<uint16_t>(imm));
+        }
+    }
+
+    // store8
+    for (auto imm : int8Operands()) {
+        {
+            auto test = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.store8(CCallHelpers::TrustedImm32(imm), CCallHelpers::Address(GPRInfo::argumentGPR0, -2));
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            uint8_t array[] = { 1, 2, 3, 4, 5, };
+            invoke<void>(test, array + 3);
+            CHECK_EQ(array[1], static_cast<uint8_t>(imm));
+        }
+        {
+            auto test = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.store8(CCallHelpers::TrustedImm32(imm), CCallHelpers::Address(GPRInfo::argumentGPR0, 2));
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            uint8_t array[] = { 1, 2, 3, 4, static_cast<uint8_t>(-1), };
+            invoke<void>(test, array);
+            CHECK_EQ(array[2], static_cast<uint8_t>(imm));
+        }
+    }
+#endif
+}
+
 void testStoreBaseIndex()
 {
 #if CPU(ARM64) || CPU(X86_64) || CPU(RISCV64)
@@ -5655,6 +5764,115 @@ void testStoreBaseIndex()
         invoke<void>(test, array, static_cast<UCPURegister>(3), 42.0f);
         CHECK_EQ(array[4], 42.0f);
     }
+}
+
+void testStoreImmediateBaseIndex()
+{
+#if CPU(ARM64) || CPU(X86_64)
+    // store64
+    for (auto imm : int64Operands()) {
+        {
+            auto test = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.store64(CCallHelpers::TrustedImm64(imm), CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::TimesEight, -8));
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            uint64_t array[] = { 1, 2, 3, 4, 5, };
+            invoke<void>(test, array, 3);
+            CHECK_EQ(array[2], static_cast<uint64_t>(imm));
+        }
+        {
+            auto test = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.store64(CCallHelpers::TrustedImm64(imm), CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::TimesEight, 8));
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            uint64_t array[] = { 1, 2, 3, 4, 5, };
+            invoke<void>(test, array, 3);
+            CHECK_EQ(array[4], static_cast<uint64_t>(imm));
+        }
+    }
+
+    // store32
+    for (auto imm : int32Operands()) {
+        {
+            auto test = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.store32(CCallHelpers::TrustedImm32(imm), CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::TimesFour, -4));
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            uint32_t array[] = { 1, 2, 3, 4, 5, };
+            invoke<void>(test, array, 3);
+            CHECK_EQ(array[2], static_cast<uint32_t>(imm));
+        }
+        {
+            auto test = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.store32(CCallHelpers::TrustedImm32(imm), CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::TimesFour, 4));
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            uint32_t array[] = { 1, 2, 3, 4, 5, };
+            invoke<void>(test, array, 3);
+            CHECK_EQ(array[4], static_cast<uint32_t>(imm));
+        }
+    }
+
+    // store16
+    for (auto imm : int16Operands()) {
+        {
+            auto test = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.store16(CCallHelpers::TrustedImm32(imm), CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::TimesTwo, -2));
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            uint16_t array[] = { 1, 2, 3, 4, 5, };
+            invoke<void>(test, array, 3);
+            CHECK_EQ(array[2], static_cast<uint16_t>(imm));
+        }
+        {
+            auto test = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.store16(CCallHelpers::TrustedImm32(imm), CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::TimesTwo, 2));
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            uint16_t array[] = { 1, 2, 3, 4, static_cast<uint16_t>(-1), };
+            invoke<void>(test, array, 3);
+            CHECK_EQ(array[4], static_cast<uint16_t>(imm));
+        }
+    }
+
+    // store8
+    for (auto imm : int8Operands()) {
+        {
+            auto test = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.store8(CCallHelpers::TrustedImm32(imm), CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::TimesOne, -1));
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            uint8_t array[] = { 1, 2, 3, 4, 5, };
+            invoke<void>(test, array, 3);
+            CHECK_EQ(array[2], static_cast<uint8_t>(imm));
+        }
+        {
+            auto test = compile([=](CCallHelpers& jit) {
+                emitFunctionPrologue(jit);
+                jit.store8(CCallHelpers::TrustedImm32(imm), CCallHelpers::BaseIndex(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, CCallHelpers::TimesOne, 1));
+                emitFunctionEpilogue(jit);
+                jit.ret();
+            });
+            uint8_t array[] = { 1, 2, 3, 4, static_cast<uint8_t>(-1), };
+            invoke<void>(test, array, 3);
+            CHECK_EQ(array[4], static_cast<uint8_t>(imm));
+        }
+    }
+#endif
 }
 
 static void testCagePreservesPACFailureBit()
@@ -6025,7 +6243,9 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testMoveDoubleConditionally32());
     RUN(testMoveDoubleConditionally64());
     RUN(testLoadBaseIndex());
+    RUN(testStoreImmediateAddress());
     RUN(testStoreBaseIndex());
+    RUN(testStoreImmediateBaseIndex());
 
     RUN(testCagePreservesPACFailureBit());
 

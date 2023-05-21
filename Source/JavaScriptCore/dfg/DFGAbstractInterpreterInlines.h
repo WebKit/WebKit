@@ -923,7 +923,29 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setForNode(node, m_vm.stringStructure.get());
         break;
     }
-            
+
+    case MakeAtomString: {
+        unsigned numberOfRemovedChildren = 0;
+        for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
+            Edge& edge = node->children.child(i);
+            if (!edge)
+                break;
+            JSValue childConstant = m_state.forNode(edge).value();
+            if (!childConstant)
+                continue;
+            if (!childConstant.isString())
+                continue;
+            if (asString(childConstant)->length())
+                continue;
+            ++numberOfRemovedChildren;
+        }
+
+        if (numberOfRemovedChildren)
+            m_state.setShouldTryConstantFolding(true);
+        setTypeForNode(node, SpecStringIdent);
+        break;
+    }
+
     case ArithSub: {
         JSValue left = forNode(node->child1()).value();
         JSValue right = forNode(node->child2()).value();
@@ -2425,7 +2447,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                         JSString* string = asString(constant);
                         if (CacheableIdentifier::isCacheableIdentifierCell(string) && !parseIndex(CacheableIdentifier::createFromCell(string).uid())) {
                             m_state.setShouldTryConstantFolding(true);
-                            didFoldClobberWorld();
+                            clobberWorld(); // Regardless of folding (to PutById etc.), we still clobber world.
                             makeHeapTopForNode(node);
                             break;
                         }
@@ -2600,14 +2622,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         case Array::Generic: {
             if (node->op() == PutByVal || node->op() == PutByValMegamorphic) {
-                if (m_graph.child(node, 0).useKind() == CellUse) {
+                if (m_graph.child(node, 0).useKind() == CellUse && m_graph.child(node, 1).useKind() == StringUse) {
                     AbstractValue& property = forNode(m_graph.child(node, 1));
                     if (JSValue constant = property.value()) {
                         if (constant.isString()) {
                             JSString* string = asString(constant);
                             if (CacheableIdentifier::isCacheableIdentifierCell(string) && !parseIndex(CacheableIdentifier::createFromCell(string).uid())) {
                                 m_state.setShouldTryConstantFolding(true);
-                                didFoldClobberWorld();
+                                clobberWorld(); // Regardless of folding (to PutById etc.), we still clobber world.
                                 break;
                             }
                         }
@@ -4614,6 +4636,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
         }
         m_state.setNonCellTypeForTupleNode(node, 0, SpecInt32Only);
+        clearForNode(node);
         break;
     }
 

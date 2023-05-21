@@ -599,10 +599,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }];
 }
 
+#if !HAVE(UIKIT_WEBKIT_INTERNALS)
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
     return UIStatusBarStyleLightContent;
 }
+#endif
 
 - (BOOL)prefersStatusBarHidden
 {

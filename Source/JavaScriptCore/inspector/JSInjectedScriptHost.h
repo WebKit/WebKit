@@ -76,6 +76,7 @@ public:
     JSC::JSValue getOwnPrivatePropertyDescriptors(JSC::JSGlobalObject*, JSC::CallFrame*);
     JSC::JSValue getInternalProperties(JSC::JSGlobalObject*, JSC::CallFrame*);
     JSC::JSValue proxyTargetValue(JSC::CallFrame*);
+    JSC::JSValue weakRefTargetValue(JSC::JSGlobalObject*, JSC::CallFrame*);
     JSC::JSValue weakMapSize(JSC::JSGlobalObject*, JSC::CallFrame*);
     JSC::JSValue weakMapEntries(JSC::JSGlobalObject*, JSC::CallFrame*);
     JSC::JSValue weakSetSize(JSC::JSGlobalObject*, JSC::CallFrame*);

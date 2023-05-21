@@ -32,6 +32,9 @@
 #if PLATFORM(COCOA)
 #include <wtf/NumberOfCores.h>
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#if PLATFORM(IOS_FAMILY)
+#include "UserInterfaceIdiom.h"
+#endif
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
@@ -181,6 +184,17 @@ bool defaultManagedMediaSourceEnabled()
     // Enable everywhere that MediaSource is enabled
     return defaultMediaSourceEnabled();
 #elif PLATFORM(MAC)
+    return true;
+#else
+    return false;
+#endif
+}
+#endif
+
+#if ENABLE(MANAGED_MEDIA_SOURCE) && ENABLE(MEDIA_SOURCE) && ENABLE(WIRELESS_PLAYBACK_TARGET)
+bool defaultManagedMediaSourceNeedsAirPlay()
+{
+#if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
     return true;
 #else
     return false;

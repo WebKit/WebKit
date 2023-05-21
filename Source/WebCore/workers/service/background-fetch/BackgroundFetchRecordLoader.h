@@ -27,7 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include <wtf/Span.h>
+#include <span>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

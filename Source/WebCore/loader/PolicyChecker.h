@@ -30,7 +30,7 @@
 #pragma once
 
 #include "FrameLoader.h"
-#include "FrameLoaderClient.h"
+#include "LocalFrameLoaderClient.h"
 #include "ResourceRequest.h"
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>

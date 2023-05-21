@@ -2807,3 +2807,6 @@ fast/css/scrollbar-dynamic-style-change.html [ ImageOnlyFailure ]
 fast/dynamic/out-of-flow-counter-do-not-update.html [ ImageOnlyFailure ]
 
 webkit.org/b/253868 js/ShadowRealm-iframe-detach.html [ Timeout Pass ]
+
+fast/css/tab-size.html [ ImageOnlyFailure ]
+fast/images/image-alt-text-vertical.html [ ImageOnlyFailure ]

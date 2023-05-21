@@ -1195,6 +1195,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/LinkLoaderClient.h
     loader/LoadSchedulingMode.h
     loader/LoaderStrategy.h
+    loader/LocalFrameLoaderClient.h
     loader/MediaResourceLoader.h
     loader/MixedContentChecker.h
     loader/NavigationAction.h

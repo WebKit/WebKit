@@ -237,6 +237,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ObjectToString:
     case ReflectOwnKeys:
     case MakeRope:
+    case MakeAtomString:
     case NewArrayWithSize:
     case NewArrayWithSpecies:
     case TryGetById:

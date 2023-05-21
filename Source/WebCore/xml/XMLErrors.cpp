@@ -86,7 +86,7 @@ static inline Ref<Element> createXHTMLParserErrorHeader(Document& document, Stri
     Ref<Element> reportElement = document.createElement(QualifiedName(nullAtom(), "parsererror"_s, xhtmlNamespaceURI), true);
 
     Attribute reportAttribute(styleAttr, "display: block; white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black"_s);
-    reportElement->parserSetAttributes(makeSpan(&reportAttribute, 1));
+    reportElement->parserSetAttributes(std::span(&reportAttribute, 1));
 
     auto h3 = HTMLHeadingElement::create(h3Tag, document);
     reportElement->parserAppendChild(h3);
@@ -94,7 +94,7 @@ static inline Ref<Element> createXHTMLParserErrorHeader(Document& document, Stri
 
     auto fixed = HTMLDivElement::create(document);
     Attribute fixedAttribute(styleAttr, "font-family:monospace;font-size:12px"_s);
-    fixed->parserSetAttributes(makeSpan(&fixedAttribute, 1));
+    fixed->parserSetAttributes(std::span(&fixedAttribute, 1));
     reportElement->parserAppendChild(fixed);
 
     fixed->parserAppendChild(Text::create(document, WTFMove(errorMessages)));
@@ -146,7 +146,7 @@ void XMLErrors::insertErrorMessageBlock()
     if (m_document.transformSourceDocument()) {
         Attribute attribute(styleAttr, "white-space: normal"_s);
         auto paragraph = HTMLParagraphElement::create(m_document);
-        paragraph->parserSetAttributes(makeSpan(&attribute, 1));
+        paragraph->parserSetAttributes(std::span(&attribute, 1));
         paragraph->parserAppendChild(m_document.createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."_s));
         reportElement->parserAppendChild(paragraph);
     }

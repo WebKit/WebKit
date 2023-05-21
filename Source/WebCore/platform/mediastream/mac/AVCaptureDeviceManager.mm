@@ -62,10 +62,10 @@ namespace WebCore {
 void AVCaptureDeviceManager::computeCaptureDevices(CompletionHandler<void()>&& callback)
 {
     if (!m_isInitialized) {
-        refreshCaptureDevices([this, callback = WTFMove(callback)]() mutable {
+        refreshCaptureDevicesInternal([this, callback = WTFMove(callback)]() mutable {
             m_isInitialized = true;
             callback();
-        });
+        }, ShouldSetUserPreferredCamera::Yes);
         return;
     }
     callback();
@@ -208,9 +208,11 @@ Vector<CaptureDevice> AVCaptureDeviceManager::retrieveCaptureDevices()
     return deviceList;
 }
 
-void AVCaptureDeviceManager::refreshCaptureDevices(CompletionHandler<void()>&& callback)
+void AVCaptureDeviceManager::refreshCaptureDevicesInternal(CompletionHandler<void()>&& callback, ShouldSetUserPreferredCamera shouldSetUserPreferredCamera)
 {
-    m_dispatchQueue->dispatch([this, callback = WTFMove(callback)]() mutable {
+    m_dispatchQueue->dispatch([this, callback = WTFMove(callback), shouldSetUserPreferredCamera]() mutable {
+        if (shouldSetUserPreferredCamera == ShouldSetUserPreferredCamera::Yes)
+            setUserPreferredCamera();
         RunLoop::main().dispatch([this, callback = WTFMove(callback), deviceList = crossThreadCopy(retrieveCaptureDevices())]() mutable {
             bool deviceHasChanged = m_devices.size() != deviceList.size();
             if (!deviceHasChanged) {
@@ -258,6 +260,21 @@ AVCaptureDeviceManager::~AVCaptureDeviceManager()
         [device removeObserver:m_objcObserver.get() forKeyPath:@"suspended"];
     [PAL::getAVCaptureDeviceClass() removeObserver:m_objcObserver.get() forKeyPath:@"systemPreferredCamera"];
     [PAL::getAVCaptureDeviceDiscoverySessionClass() removeObserver:m_objcObserver.get() forKeyPath:@"devices"];
+}
+
+void AVCaptureDeviceManager::setUserPreferredCamera()
+{
+#if PLATFORM(IOS_FAMILY)
+    if ([PAL::getAVCaptureDeviceClass() respondsToSelector:@selector(setUserPreferredCamera:)]) {
+        auto currentDevices = currentCameras();
+        for (AVCaptureDevice *platformDevice in currentDevices.get()) {
+            if (isVideoDevice(platformDevice) && [platformDevice position] == AVCaptureDevicePositionFront) {
+                [PAL::getAVCaptureDeviceClass() setUserPreferredCamera:platformDevice];
+                break;
+            }
+        }
+    }
+#endif
 }
 
 void AVCaptureDeviceManager::registerForDeviceNotifications()

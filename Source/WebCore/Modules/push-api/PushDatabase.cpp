@@ -348,7 +348,7 @@ static std::span<const uint8_t> uuidToSpan(const std::optional<UUID>& uuid)
         // because calling sqlite3_bind_blob with a nullptr causes a SQL NULL to be stored in the
         // column rather than a zero-length blob.
         static const uint8_t junk = 0;
-        return makeSpan(&junk, static_cast<size_t>(0));
+        return std::span(&junk, static_cast<size_t>(0));
     }
 
     return uuid->toSpan();

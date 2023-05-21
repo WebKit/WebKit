@@ -53,6 +53,7 @@
 #include "JSStringIterator.h"
 #include "JSTypedArrays.h"
 #include "JSWeakMap.h"
+#include "JSWeakObjectRef.h"
 #include "JSWeakSet.h"
 #include "MarkedSpaceInlines.h"
 #include "ObjectConstructor.h"
@@ -198,6 +199,8 @@ JSValue JSInjectedScriptHost::subtype(JSGlobalObject* globalObject, CallFrame* c
             return jsNontrivialString(vm, "regexp"_s);
         if (object->inherits<ProxyObject>())
             return jsNontrivialString(vm, "proxy"_s);
+        if (object->inherits<JSWeakObjectRef>())
+            return jsNontrivialString(vm, "weakref"_s);
 
         if (object->inherits<JSMap>())
             return jsNontrivialString(vm, "map"_s);
@@ -396,6 +399,16 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
         return array;
     }
 
+    if (JSWeakObjectRef* weakRef = jsDynamicCast<JSWeakObjectRef*>(value)) {
+        unsigned index = 0;
+        JSArray* array = constructEmptyArray(globalObject, nullptr, 1);
+        RETURN_IF_EXCEPTION(scope, JSValue());
+        auto* target = weakRef->deref(vm);
+        array->putDirectIndex(globalObject, index++, constructInternalProperty(globalObject, "target"_s, target ? target : jsUndefined()));
+        RETURN_IF_EXCEPTION(scope, JSValue());
+        return array;
+    }
+
     if (JSObject* iteratorObject = jsDynamicCast<JSObject*>(value)) {
         auto toString = [&] (IterationKind kind) {
             switch (kind) {
@@ -479,6 +492,23 @@ JSValue JSInjectedScriptHost::proxyTargetValue(CallFrame* callFrame)
         target = proxy->target();
 
     return target;
+}
+
+JSValue JSInjectedScriptHost::weakRefTargetValue(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    if (callFrame->argumentCount() < 1)
+        return jsUndefined();
+
+    JSValue value = callFrame->uncheckedArgument(0);
+    JSWeakObjectRef* weakRef = jsDynamicCast<JSWeakObjectRef*>(value);
+    if (!weakRef)
+        return jsUndefined();
+
+    VM& vm = globalObject->vm();
+    JSCell* target = weakRef->deref(vm);
+    while (JSWeakObjectRef* weakRef = jsDynamicCast<JSWeakObjectRef*>(target))
+        target = weakRef->deref(vm);
+    return target ? target : jsUndefined();
 }
 
 JSValue JSInjectedScriptHost::weakMapSize(JSGlobalObject*, CallFrame* callFrame)

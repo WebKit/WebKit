@@ -29,6 +29,7 @@
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationDecisionListener.h"
 #include "BackgroundFetchChange.h"
+#include <WebCore/NotificationData.h>
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {
@@ -71,6 +72,13 @@ public:
     virtual HashMap<WTF::String, bool> notificationPermissions()
     {
         return { };
+    }
+
+    virtual bool hasGetDisplayedNotifications() const { return false; }
+
+    virtual void getDisplayedNotifications(const WebCore::SecurityOriginData&, CompletionHandler<void(Vector<WebCore::NotificationData>&&)>&& completionHandler)
+    {
+        completionHandler({ });
     }
 
     virtual void workerUpdatedAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t>)

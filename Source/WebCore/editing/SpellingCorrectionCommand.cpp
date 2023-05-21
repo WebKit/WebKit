@@ -111,7 +111,7 @@ void SpellingCorrectionCommand::doApply()
     if (!document().selection().shouldChangeSelection(m_selectionToBeCorrected))
         return;
 
-    applyCommandToComposite(SetSelectionCommand::create(m_selectionToBeCorrected, FrameSelection::defaultSetSelectionOptions() | FrameSelection::SpellCorrectionTriggered));
+    applyCommandToComposite(SetSelectionCommand::create(m_selectionToBeCorrected, FrameSelection::defaultSetSelectionOptions() | FrameSelection::SetSelectionOption::SpellCorrectionTriggered));
 #if USE(AUTOCORRECTION_PANEL)
     applyCommandToComposite(SpellingCorrectionRecordUndoCommand::create(document(), m_corrected, m_correction));
 #endif

@@ -1,0 +1,115 @@
+Col width
+
+how does col width interact with td widths to produce final column width?
+Inputs are colgroup/col widths, and td widths.
+td widths merge, then merge again with col to produce column widths.
+Output is column min/max/percent w0dths.
+Colgroup/col has css min_width, css max_width, css percent.
+TD has intrinsic minmax, css width, css percent width, css max width, css min width
+Initial cell assignment
+
+Unconstrained single TD, table-layout:auto td.min = minmax.min td.max = minmax.max
+minmin
+maxmax
+Unconstrained single TD, table-layout:fixed td.min = 0 td.max = minmax.max
+minmin
+maxmax
+Constrained single TD, table-layout:auto td.min = minmax.min td.max = max(minmax.min, css.width)
+maxmax
+maxmax
+min
+minmin
+minmin
+TD/TD merging
+
+TD merging only happens in auto, in fixed only 1st row gets measured
+Two unconstrained TDs, table-layout:auto or fixed td.min = max(C0.min, C1.min). always 0 in fixed layout. td.max = max(C0.max, C1.max)
+automax
+autoauto
+automax
+autoauto
+Unconstrained (UN) and constrained (CON) TD td.min = max(UN.min, CON.min) td.max = max(UN.min, CON.max)
+Chrome Legacy and Edge fail this test. They do not limit unconstrained maximum: td.max = max(UN.max, CON.max).
+min
+min
+max
+maxmax
+Two percent TDs td.percent = max(C1.percent, C2.percent) td.max = max(C1.max, C2.max) td.min = max(C1.min, C2.min)
+60	auto
+50	auto
+COL/TD merging
+
+col auto td auto column.min = td.min column.max = td.max
+auto
+col fixed td auto column.min = td.min column.max = max(col[px], td.min)
+auto
+110110
+min
+col % td auto column.min = td.min column.max = max(td.max, col.max) column.percent = col[%]
+auto	40
+auto	
+auto	30
+col auto td percent column.min = td.min column.max = td.max column.percent = td.percent
+auto	10
+col fixed td percent column.min = td.min column.max = max(td.max, col.max) column.percent = td.percent
+50	50
+50	50
+col percent td percent column.min = td.min column.max = max(td.max, col.max) column.percent = max(td.percent, col.percent)
+100	200
+100	200
+col auto td fixed column.min = td.min column.max = td.max
+100
+col fixed td fixed column.min = td.min column.max = max(td.max, col.max)
+100
+100
+col percent td fixed column.min = td.min column.percent = col.percent column.max = max(td.max, col.max)
+100	200
+10	200
+col fixed td fixed inside table-layout:fixed constrained columns take precedence in fixed layout.
+100	200
+col percent td fixed inside table-layout:fixed constrained columns take precedence in fixed layout.
+150	150
+
+PASS table 1
+PASS table 2
+PASS table 3
+PASS table 4
+PASS table 5
+PASS table 6
+PASS table 7
+PASS table 8
+PASS table 9
+PASS table 10
+PASS table 11
+PASS table 12
+FAIL table 13 assert_equals:
+<table data-expected-width="66">
+  <tbody><tr>
+    <td style="width:50px" data-expected-width="50"><div style="width:20px">max</div></td>
+  </tr>
+  <tr>
+    <td><div style="width:40px">max</div><div style="width:40px">max</div></td>
+  </tr>
+</tbody></table>
+width expected 66 but got 96
+PASS table 14
+PASS table 15
+PASS table 16
+PASS table 17
+PASS table 18
+PASS table 19
+PASS table 20
+PASS table 21
+PASS table 22
+PASS table 23
+PASS table 24
+PASS table 25
+PASS table 26
+PASS table 27
+PASS table 28
+PASS table 29
+PASS table 30
+PASS table 31
+PASS table 32
+PASS table 33
+

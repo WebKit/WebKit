@@ -1,0 +1,16 @@
+Visibility collapse
+
+Spec
+Setting a rowspan to visibility:collapse doesn't change height or width in this case.
+
+Month	Savings	Savings for holiday!
+January	$100	$50
+February	$80
+Collapsing a spanning row does not change table height in this case.
+Month	Savings	Savings for holiday!
+January	$100	
+February	$80
+
+PASS spanning row visibility:collapse doesn't change table width
+PASS spanning row visibility:collapse doesn't change height in this case
+

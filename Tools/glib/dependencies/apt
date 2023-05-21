@@ -111,6 +111,9 @@ PACKAGES=(
     git-svn
     subversion
 
+    # These are dependencies necessary for using git-webkit.
+    python3-dev
+
     # These are GStreamer plugins needed to play different media files.
     gstreamer1.0-gl
     gstreamer1.0-libav

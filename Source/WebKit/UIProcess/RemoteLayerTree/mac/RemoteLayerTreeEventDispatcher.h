@@ -110,6 +110,8 @@ private:
     void scheduleDelayedRenderingUpdateDetectionTimer(Seconds delay);
     void delayedRenderingUpdateDetectionTimerFired();
 
+    bool scrollingTreeWasRecentlyActive();
+
     void waitForRenderingUpdateCompletionOrTimeout() WTF_REQUIRES_LOCK(m_scrollingTreeLock);
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)

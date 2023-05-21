@@ -229,6 +229,9 @@ private:
     void schedulePerformEviction();
     bool persistedInternal(const WebCore::ClientOrigin&);
     String persistedFilePath(const WebCore::ClientOrigin&);
+    void fetchRegistrableDomainsForPersist();
+    void didFetchRegistrableDomainsForPersist(HashSet<WebCore::RegistrableDomain>&&);
+    bool persistOrigin(const WebCore::ClientOrigin&);
     struct AccessRecord {
         bool isActive { false };
         std::optional<bool> isPersisted;
@@ -266,6 +269,9 @@ private:
     UnifiedOriginStorageLevel m_unifiedOriginStorageLevel;
     IPC::Connection::UniqueID m_parentConnection;
     HashMap<IPC::Connection::UniqueID, HashSet<String>> m_temporaryBlobPathsByConnection WTF_GUARDED_BY_CAPABILITY(workQueue());
+    using OriginPersistCompletionHandler = std::pair<WebCore::ClientOrigin, CompletionHandler<void(bool)>>;
+    Vector<OriginPersistCompletionHandler> m_persistCompletionHandlers WTF_GUARDED_BY_CAPABILITY(workQueue());
+    std::optional<HashSet<WebCore::RegistrableDomain>> m_domainsExemptFromEviction WTF_GUARDED_BY_CAPABILITY(workQueue());
 #if PLATFORM(IOS_FAMILY)
     Seconds m_backupExclusionPeriod;
 #endif

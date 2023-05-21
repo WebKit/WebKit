@@ -1,0 +1,125 @@
+Fixed tables: Compute column computed widths from assignable table width
+
+auto columns have a min width of 0. Max width still gets computed.
+percent columns have a min width of 0.
+fixed column.min_width is css width. It never changes.
+fixed column.max_width is max(cells.max_width, css width).
+colspan header cells distribute
+max_width evenly between columns.
+do not distribute min width
+percentage evenly between columns
+Is table treated as fixed?
+
+table width:auto is not treated as fixed.
+200	min
+table width:px is treated as fixed.
+200	min
+table width:min-content is treated as fixed.
+200	min
+Fixed only
+
+Table: 50px; C0:100/50/100 C1:100/50/75 When table.css_width is < columns.css_width, how is the conflict resolved? columns.css_width wins
+5050	5025
+Table: 300px; C0:100/100/200 C1:100/90/115 When table.css_width is > columns.css_width , how is the conflict resolved? table.css_width wins
+100100	9025
+Table: 300px; C0:100/50/50 C1:100/100/100 Fixed cells must grow, but their min widths differ. Fixed cells grow in proportion to their css width.
+50	100
+Table: 50px; C0:100/50/50 C1:100/100/100 What happens when column.min_width > column.css_width column.css_width wins over column.min_width.
+Table: 1px. What happens to min_width when multiple cells specify css_width of the same column? 1st cell wins.
+200
+150
+Auto only
+
+Width is distributed evenly
+Colspan distribution
+
+Table: 1px Does column.min_width change with colspan distribution from later rows to first row? No
+Table: 632px Does column.percent change with colspan distribution? No.
+auto
+Colspan header cells
+
+Fixed/percentage colspan cells get distributed evenly.
+Auto cells
+Assignable: 400px Fixed header cells with colspan. Columns divded evenly
+Legacy Chrome is slightly off, something about spacing and wide cells.
+108	208
+1	1	1	1
+Assignable: 400px, C0:40% C1:20% C2:40% Percentage header cells with colspan C0 splits into C0.0 and C0.1, 16px each with 20% C1 splits into C1.0 and C1.1, 6px each with 10% Assignable width is 400, everyone gets according to percent. 80/80/40/40/160.
+Firefox is slightly off, with C2 taking 6px more. Unknown what math is used to get this answer.
+Auto	Auto	Auto	Auto	Auto
+Assignable: 1px, C0 Auto/100 colspan=2 , C1 100/Auto Auto header cells with colspan, table is min width min_width does not get redistributed.
+100	100
+x	x	x
+Assignable: 200; C0: colspan:2 Auto C1:colspan 8 Auto Auto colspan cells, and nothing else. Tricky because this means that internally table has to represent 8 cells, and wide cells that span beyond table width are usually truncated. C0: 20*2+8=48, C1: 20*8 + 7*8=216
+Percentage only
+
+Assignable: 100px;columns add to 100%, auto width Columns are exact percentage size.
+50%	30%	20%
+Assignable: 100px;columns add to 50%, auto width Columns grow proportional to percent.
+25%	15%	10%
+Assignable: 100px;columns add to 50%, with min width Min width is ignored.
+50	50	50
+Assignable: 100px;columns add to 1000% Columns are scaled so they add up to 100%
+50	50	50
+Percentage/auto/fixed mix
+
+Assignable: 100px;C0:50% C1:100px C2: Auto C0, C1 get assigned values, C2 fills the rest.
+50%	30px	
+Assignable: 100px;C0:50% C1:50px Clean split
+50%	50px
+Assignable: 100px;C0:20% C1:60% C2:60px Overconstrained: widths add up to 140. Fixed widths get distributed first, percentage takes the rest.
+20%	60%	60px
+Fixed 0-width columns
+
+Fixed 0-width columns are an exception. They are treated as a mix of fixed and auto columns.
+If there are only zero-width columns, width is distibuted evenly.
+If there are any fixed,percentage, or auto columns, 0-width columns do not grow.
+Assignable: 100px;C0:0-width, C1:0-width All 0-width columns grow.
+0	0
+Assignable: 100px;C0:0-width, C1:auto 0-width column does not grow.
+0	0
+Assignable: 100px;C0:0-width, C1:50px 0-width column does not grow.
+0	0
+Assignable: 100px;C0:0-width, C1:50% 0-width column does not grow.
+0	0
+
+PASS table 1
+PASS table 2
+PASS table 3
+PASS table 4
+PASS table 5
+PASS table 6
+PASS table 7
+PASS table 8
+PASS table 9
+PASS table 10
+PASS table 11
+FAIL table 12 assert_equals:
+<table style="width:calc(600px + 40px)" data-expected-width="640">
+  <tbody><tr>
+    <td colspan="2" style="width:108px" data-expected-width="208">108</td>
+    <td colspan="2" style="width:208px" data-expected-width="408">208</td>
+  </tr>
+  <tr>
+    <td data-expected-width="100">1</td>
+    <td>1</td>
+    <td data-expected-width="200">1</td>
+    <td>1</td>
+  </tr>
+</tbody></table>
+width expected 208 but got 213
+PASS table 13
+PASS table 14
+PASS table 15
+PASS table 16
+PASS table 17
+PASS table 18
+PASS table 19
+PASS table 20
+PASS table 21
+PASS table 22
+PASS table 23
+PASS table 24
+PASS table 25
+PASS table 26
+

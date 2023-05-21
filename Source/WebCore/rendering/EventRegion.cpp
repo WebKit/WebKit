@@ -175,7 +175,7 @@ void EventRegionContext::uniteInteractionRegions(const Region& region, RenderObj
 
 bool EventRegionContext::shouldConsolidateInteractionRegion(IntRect bounds, RenderObject& renderer)
 {
-    if (!renderer.style().borderAndBackgroundEqual(RenderStyle::defaultStyle()))
+    if (renderer.hasVisibleBoxDecorations())
         return false;
 
     for (auto& ancestor : ancestorsOfType<RenderElement>(renderer)) {
@@ -206,7 +206,7 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(IntRect bounds, Rend
         }
 
         // If we find a border / background, stop the search.
-        if (!ancestor.style().borderAndBackgroundEqual(RenderStyle::defaultStyle()))
+        if (ancestor.hasVisibleBoxDecorations())
             return false;
     }
 

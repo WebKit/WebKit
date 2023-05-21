@@ -130,7 +130,7 @@ template<typename CharacterType> static void base64EncodeInternal(std::span<cons
 
 template<typename CharacterType> static void base64EncodeInternal(std::span<const std::byte> input, std::span<CharacterType> destinationDataBuffer, Base64EncodeMode mode)
 {
-    base64EncodeInternal(makeSpan(reinterpret_cast<const uint8_t*>(input.data()), input.size()), destinationDataBuffer, mode);
+    base64EncodeInternal(std::span(reinterpret_cast<const uint8_t*>(input.data()), input.size()), destinationDataBuffer, mode);
 }
 
 static Vector<uint8_t> base64EncodeInternal(std::span<const std::byte> input, Base64EncodeMode mode)
@@ -140,7 +140,7 @@ static Vector<uint8_t> base64EncodeInternal(std::span<const std::byte> input, Ba
         return { };
 
     Vector<uint8_t> destinationVector(destinationLength);
-    base64EncodeInternal(input, makeSpan(destinationVector), mode);
+    base64EncodeInternal(input, std::span(destinationVector), mode);
     return destinationVector;
 }
 
@@ -256,15 +256,15 @@ std::optional<Vector<uint8_t>> base64Decode(std::span<const std::byte> input, Ba
 {
     if (input.size() > std::numeric_limits<unsigned>::max())
         return std::nullopt;
-    return base64DecodeInternal(makeSpan(reinterpret_cast<const uint8_t*>(input.data()), input.size()), mode);
+    return base64DecodeInternal(std::span(reinterpret_cast<const uint8_t*>(input.data()), input.size()), mode);
 }
 
 std::optional<Vector<uint8_t>> base64Decode(StringView input, Base64DecodeMode mode)
 {
     unsigned length = input.length();
     if (!length || input.is8Bit())
-        return base64DecodeInternal(makeSpan(input.characters8(), length), mode);
-    return base64DecodeInternal(makeSpan(input.characters16(), length), mode);
+        return base64DecodeInternal(std::span(input.characters8(), length), mode);
+    return base64DecodeInternal(std::span(input.characters16(), length), mode);
 }
 
 } // namespace WTF

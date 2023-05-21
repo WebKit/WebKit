@@ -306,12 +306,7 @@
         (global-name "com.apple.frontboard.systemappservices")                 ; -[UIViewServiceInterface _createProcessAssertion] -> SBSProcessIDForDisplayIdentifier()
     )
 
-#if ENABLE(CARENDERSERVER_BLOCKING_IN_WEBCONTENT)
-(allow mach-lookup
-    (require-all
-        (extension "com.apple.webkit.extension.mach")
-        (global-name "com.apple.CARenderServer")))
-#else
+#if !ENABLE(CARENDERSERVER_BLOCKING_IN_WEBCONTENT)
     (with-filter (require-not (state-flag "EnableExperimentalSandbox"))
         (allow mach-lookup (with report) (with telemetry-backtrace) (global-name "com.apple.CARenderServer")))
 #endif
@@ -470,6 +465,10 @@
     (require-all
         (extension-class "com.apple.app-sandbox.read-write" "com.apple.app-sandbox.read")
         (extension "com.apple.fileprovider.read-write")))
+
+(deny mach-lookup (with no-report) (global-name
+    "com.apple.logd"
+    "com.apple.logd.events"))
 
 (with-filter (require-not (state-flag "DisableLogging"))
     (allow mach-lookup (global-name
@@ -717,6 +716,13 @@
 
 (deny sysctl-read (with no-report)
     (sysctl-name "vm.task_no_footprint_for_debug"))
+
+#if HAVE(SANDBOX_STATE_FLAGS)
+(with-filter (require-not (state-flag "WebContentProcessLaunched"))
+    (allow sysctl-read (sysctl-name "vm.malloc_ranges"))) ;; <rdar://problem/105161083>
+#else
+(allow sysctl-read (sysctl-name "vm.malloc_ranges")) ;; <rdar://problem/105161083>
+#endif
 
 (allow iokit-get-properties
     (iokit-property "AAPL,DisplayPipe")
@@ -1283,7 +1289,7 @@
 #if HAVE(SANDBOX_STATE_FLAGS)
 (allow mach-bootstrap
     (apply-message-filter
-        (deny mach-message-send)
+        (deny mach-message-send (with no-report))
 #if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 170000)
         (with-filter (extension "com.apple.webkit.mach-bootstrap")
             (allow mach-message-send (mach-bootstrap-message-numbers-post-launch)))
@@ -1385,6 +1391,7 @@
         host_get_special_port
         host_info
         io_server_version
+        (when (defined? 'mach_vm_range_create) mach_vm_range_create) ;; <rdar://105161083>
         task_restartable_ranges_register
         task_set_special_port))
 

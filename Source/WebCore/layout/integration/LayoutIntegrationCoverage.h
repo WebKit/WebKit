@@ -107,6 +107,7 @@ enum class AvoidanceReason : uint64_t {
 bool canUseForLineLayout(const RenderBlockFlow&);
 bool canUseForLineLayoutAfterStyleChange(const RenderBlockFlow&, StyleDifference);
 bool canUseForLineLayoutAfterInlineBoxStyleChange(const RenderInline&, StyleDifference);
+bool canUseForPreferredWidthComputation(const RenderBlockFlow&);
 enum class TypeOfChangeForInvalidation : uint8_t {
     NodeInsertion,
     NodeRemoval,

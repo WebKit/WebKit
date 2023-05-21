@@ -54,7 +54,7 @@ private:
 
     RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) final;
 
-    RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&, const ImageBufferAllocator&) final;
+    void getPixelBuffer(const IntRect&, PixelBuffer&) final;
     void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) final;
 
     void* m_data;

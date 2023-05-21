@@ -1,0 +1,15 @@
+Fixed layout tables with excess width and no auto columns
+
+FF/Edge give excess only to fixed columns, in proportion to their relative widths. This is what the spec dictates.
+Chrome (62) gives excess to ALL columns, in proportion to their contribution to total width.
+
+FAIL #theTable 1 assert_equals:
+<table id="theTable">
+  <tbody><tr>
+    <td data-expected-width="180"></td>
+    <td data-expected-width="90"></td>
+    <td data-expected-width="30"></td>
+  </tr>
+</tbody></table>
+width expected 180 but got 100
+

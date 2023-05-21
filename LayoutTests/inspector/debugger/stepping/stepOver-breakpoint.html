@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../resources/log-pause-location.js"></script>
+<script>
+
+function testInnerFunction() {
+    debugger;
+    function alpha() {
+        debugger;
+    }
+    alpha();
+    function beta() {
+        let x = 42;
+    }
+    beta();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.stepOver");
+
+    let handleCallFramesDidChange = null;
+
+    // Always step-over when call frames change.
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+        if (!WI.debuggerManager.activeCallFrame)
+            return;
+        logPauseLocation();
+        handleCallFramesDidChange?.();
+        WI.debuggerManager.stepOver();
+    });
+
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+        InspectorTest.log(`PAUSED (${WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target).pauseReason})`);
+    });
+
+    suite.addTestCase({
+        name: "Debugger.stepOver.Breakpoint.Condition.Falsy",
+        description: "Stepping should continue after hitting a breakpoint that does not pause.",
+        async test() {
+            WI.debuggerManager.debuggerStatementsBreakpoint.disabled = false;
+
+            handleCallFramesDidChange = function() {
+                WI.debuggerManager.debuggerStatementsBreakpoint.condition = "TestPage.addResult(`PASS: Should evaluate condition.`)";
+            };
+
+            await Promise.all([
+                InspectorTest.evaluateInPage(`setTimeout(testInnerFunction)`),
+                WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed),
+            ]);
+
+            InspectorTest.log("RESUMED");
+
+            handleCallFramesDidChange = null;
+
+            WI.debuggerManager.debuggerStatementsBreakpoint.condition = "";
+        },
+    });
+
+    loadMainPageContent().then(() => {
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Checking pause locations when stepping with "stepOver".</p>
+</body>
+</html>

@@ -35,6 +35,7 @@
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "UserMediaProcessManager.h"
 #import "ViewGestureController.h"
+#import "WKContentViewInteraction.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
@@ -494,6 +495,14 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 - (void)_didDismissContextMenu
 {
     // For subclasses to override.
+}
+
+- (void)_resetInteraction
+{
+#if PLATFORM(IOS_FAMILY)
+    [_contentView cleanUpInteraction];
+    [_contentView setUpInteraction];
+#endif
 }
 
 - (void)_didPresentContactPicker

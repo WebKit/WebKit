@@ -1023,6 +1023,9 @@ webkit.org/b/248735 http/wpt/service-workers/fetch-service-worker-preload.https.
 webkit.org/b/248743 http/wpt/service-workers/fetch-service-worker-preload-download.https.html [ Pass Failure ]
 webkit.org/b/248743 http/wpt/service-workers/file-upload.html [ Pass Failure ]
 
+# Test file
+http/wpt/service-workers/changing-service-worker-lengthy-worker.py [ Skip ]
+
 [ Debug ] http/tests/workers/worker-messageport-2.html [ Slow ]
 
 # Skip workers tests that are timing out or are SharedWorker related only
@@ -4676,9 +4679,6 @@ webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/tiled-conic-g
 
 webkit.org/b/149828 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-mask-image.html [ ImageOnlyFailure ]
 
-webkit.org/b/254390 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-negative-resolution-rendering-2.html [ ImageOnlyFailure ]
-webkit.org/b/254390 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-negative-resolution-rendering.html [ ImageOnlyFailure ]
-
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/change-list-descendant-display.html [ ImageOnlyFailure ]
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/counter-set-001.html [ ImageOnlyFailure ]
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/inline-block-list.html [ ImageOnlyFailure ]
@@ -4693,7 +4693,6 @@ webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/li-value-rever
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-004.html [ ImageOnlyFailure ]
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-005.html [ ImageOnlyFailure ]
 
-webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/change-intrinsic-width.html [ ImageOnlyFailure ]
 webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-balance-003.html [ ImageOnlyFailure ]
 webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/multicol-list-item-002.html [ ImageOnlyFailure ]
 webkit.org/b/214458 imported/w3c/web-platform-tests/css/css-multicol/nested-with-too-tall-line.html [ ImageOnlyFailure ]
@@ -4875,12 +4874,6 @@ webanimations/translate-property-and-translate-animation-with-delay-on-forced-la
 
 # CSS containment tests that fail
 imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-bfc-floats-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-style-ol-ordinal-pseudo-reversed.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-style-ol-ordinal-pseudo.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-style-ol-ordinal-reversed.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-style-ol-ordinal-start-reversed.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-style-ol-ordinal-start.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-style-ol-ordinal.html [ ImageOnlyFailure ]
 # forced layout
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-035.html [ Skip ]
 # c-v: auto
@@ -5989,7 +5982,6 @@ imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.http
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-OAEP.https.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/clear-site-data/navigation-insecure.html [ Skip ]
 imported/w3c/web-platform-tests/clear-site-data/resource.html [ Skip ]
-imported/w3c/web-platform-tests/clear-site-data/storage.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/inheritance/history-iframe.sub.html [ Skip ]
 imported/w3c/web-platform-tests/cookies/domain/domain-attribute-idn-host.sub.https.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-font-loading/font-face-reject.html [ Skip ]
@@ -6335,10 +6327,19 @@ imported/w3c/web-platform-tests/css/css-ruby/ruby-whitespace-002.html [ ImageOnl
 imported/w3c/web-platform-tests/css/css-ruby/ruby-with-floats-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-with-floats-003.html [ ImageOnlyFailure ]
 
+# These tests are trying to use a WPT domain that are infrastructure doesn't support.
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-submit-cross-frame-crossorigin.sub.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-submit-popup-crossorigin.sub.html [ Skip ]
+
 webkit.org/b/242658 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Slow Pass Failure ]
 
-# This test is crashing in debug since its import.
+# These tests are crashing in debug since its import.
 webkit.org/b/256847 [ Debug ] imported/w3c/web-platform-tests/dom/events/preventDefault-during-activation-behavior.html [ Skip ]
+webkit.org/b/256976 [ Debug ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/cross-document-traversal-same-document-nav.html [ Skip ]
+webkit.org/b/256976 [ Debug ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/same-document-nav-cross-document-traversal.html [ Skip ]
+
+# Test has been timing out since its import.
+imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-handler-content-attributes.html [ Skip ]
 
 # Recent WPT update
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-fixed-inside-transform-1.html [ ImageOnlyFailure ]
@@ -6362,9 +6363,63 @@ webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shad
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-002.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-003.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/css/css-backgrounds/color-mix-currentcolor-border-repaint-parent.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-backgrounds/color-mix-currentcolor-border-repaint.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-backgrounds/currentcolor-border-repaint-parent.html [ Skip ]
-
 # Flaky test that sometimes passes and sometimes fails.
 imported/w3c/web-platform-tests/screen-orientation/nested-documents.html [ Pass Failure ]
+
+# Skipping scrollbar-color tests until the feature gets implemented. webkit.org/b/231590
+imported/w3c/web-platform-tests/css/css-scrollbars/transparent-on-root.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/viewport-scrollbar.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/viewport-scrollbar-body.html [ Skip ]
+
+# These tests rely on dynamic scrollbar styling which isn't implemented yet. webkit.org/b/211219
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-001.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-002.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-003.html [ Skip ]
+
+# This test relies on textarea resize handle showing without a scrollbar which isn't implemented yet. webkit.org/b/253310
+imported/w3c/web-platform-tests/css/css-scrollbars/textarea-scrollbar-width-none.html [ Skip ]
+
+# Imported WPT css-tables which are crashing or fails.
+imported/w3c/web-platform-tests/css/css-tables/auto-layout-calc-width-001.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-tables/fixed-layout-calc-width-001.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-tables/calc-percent-plus-0px-auto.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-tables/calc-percent-plus-0px-fixed.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-tables/col-definite-max-size-001.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-tables/col-definite-size-001.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-tables/absolute-tables-007.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/absolute-tables-011.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/absolute-tables-015.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/anonymous-table-ws-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/box-shadow-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/col-definite-min-size-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/colspan-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/colspan-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/colspan-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/fixup-dynamic-anonymous-inline-table-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/fixup-dynamic-anonymous-inline-table-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/fixup-dynamic-anonymous-inline-table-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/fixup-dynamic-anonymous-table-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/height-distribution/extra-height-given-to-all-row-groups-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/height-distribution/extra-height-given-to-all-row-groups-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/height-distribution/percentage-sizing-of-table-cell-children-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/height-distribution/percentage-sizing-of-table-cell-children-006.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/min-max-size-table-content-box.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/percent-height-overflow-auto-in-restricted-block-size-cell.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/rules-groups.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/table-cell-baseline-static-position.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/table-has-box-sizing-border-box-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/tentative/paint/background-image-column-collapsed.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/tentative/paint/background-image-column.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/tentative/paint/background-image-row-collapsed.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/tentative/paint/background-image-row.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/tentative/paint/collapsed-border-large-cell.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/tentative/paint/overflow-hidden-table.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/tentative/section-no-tbody-fixed-distribution.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/tentative/section-no-tbody-percent-distribution.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/visibility-collapse-border-spacing.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/visibility-collapse-colspan-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/visibility-collapse-rowspan-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/whitespace-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/zero-rowspan-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/zero-rowspan-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-tables/html5-table-formatting-fixed-layout-1.html [ Pass Failure ]

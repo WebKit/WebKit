@@ -1311,6 +1311,9 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
     {
         console.assert(target.type === WI.TargetType.Worker || target.type === WI.TargetType.ServiceWorker);
 
+        if (this._workerTargetTreeElementMap.has(target))
+            return;
+
         let targetTreeElement = new WI.WorkerTreeElement(target);
         this._workerTargetTreeElementMap.set(target, targetTreeElement);
 
@@ -2379,6 +2382,14 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             }
         }
 
+        for (let target of WI.targets) {
+            if (target !== WI.pageTarget) {
+                this._addWorkerTargetWithMainResource(target);
+                this._addBreakpointsForSourceCode(target.mainResource);
+                this._addIssuesForSourceCode(target.mainResource);
+            }
+        }
+
         for (let script of WI.debuggerManager.knownNonResourceScripts) {
             this._addScript(script);
 
@@ -2614,14 +2625,18 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         let newDebuggerTreeElement = null;
         if (debuggerObject instanceof WI.JavaScriptBreakpoint) {
             oldDebuggerTreeElement = this._breakpointsTreeOutline.findTreeElement(debuggerObject);
-            if (oldDebuggerTreeElement)
-                wasSelected = oldDebuggerTreeElement.selected;
+            if (!oldDebuggerTreeElement)
+                return;
+
+            wasSelected = oldDebuggerTreeElement.selected;
 
             newDebuggerTreeElement = this._addBreakpoint(debuggerObject);
         } else if (debuggerObject instanceof WI.IssueMessage) {
             oldDebuggerTreeElement = this._resourcesTreeOutline.findTreeElement(debuggerObject);
-            if (oldDebuggerTreeElement)
-                wasSelected = oldDebuggerTreeElement.selected;
+            if (!oldDebuggerTreeElement)
+                return;
+
+            wasSelected = oldDebuggerTreeElement.selected;
 
             newDebuggerTreeElement = this._addIssue(debuggerObject);
         }

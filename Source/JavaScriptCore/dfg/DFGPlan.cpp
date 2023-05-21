@@ -375,7 +375,7 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         
         RUN_PHASE(performConstantHoisting);
         RUN_PHASE(performGlobalCSE);
-        RUN_PHASE(performLivenessAnalysis);
+        RUN_PHASE(performGraphPackingAndLivenessAnalysis);
         RUN_PHASE(performCFA);
         RUN_PHASE(performConstantFolding);
         RUN_PHASE(performCFGSimplification);
@@ -391,7 +391,7 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         if (changed) {
             // State-at-tail and state-at-head will be invalid if we did strength reduction since
             // it might increase live ranges.
-            RUN_PHASE(performLivenessAnalysis);
+            RUN_PHASE(performGraphPackingAndLivenessAnalysis);
             RUN_PHASE(performCFA);
             RUN_PHASE(performConstantFolding);
             RUN_PHASE(performCFGSimplification);
@@ -402,7 +402,7 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         // wrong with running LICM earlier, if we wanted to put other CFG transforms above this point.
         // Alternatively, we could run loop pre-header creation after SSA conversion - but if we did that
         // then we'd need to do some simple SSA fix-up.
-        RUN_PHASE(performLivenessAnalysis);
+        RUN_PHASE(performGraphPackingAndLivenessAnalysis);
         RUN_PHASE(performCFA);
         RUN_PHASE(performLICM);
 
@@ -413,7 +413,7 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         // by IntegerRangeOptimization.
         //
         // Ideally, the dependencies should be explicit. See https://bugs.webkit.org/show_bug.cgi?id=157534.
-        RUN_PHASE(performLivenessAnalysis);
+        RUN_PHASE(performGraphPackingAndLivenessAnalysis);
         RUN_PHASE(performIntegerRangeOptimization);
         
         RUN_PHASE(performCleanUp);
@@ -424,14 +424,14 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         // about code motion assumes that it's OK to insert GC points in random places.
         dfg.m_fixpointState = FixpointConverged;
 
-        RUN_PHASE(performLivenessAnalysis);
+        RUN_PHASE(performGraphPackingAndLivenessAnalysis);
         RUN_PHASE(performCFA);
         RUN_PHASE(performGlobalStoreBarrierInsertion);
         RUN_PHASE(performStoreBarrierClustering);
         RUN_PHASE(performCleanUp);
         RUN_PHASE(performDCE); // We rely on this to kill dead code that won't be recognized as dead by B3.
         RUN_PHASE(performStackLayout);
-        RUN_PHASE(performLivenessAnalysis);
+        RUN_PHASE(performGraphPackingAndLivenessAnalysis);
         RUN_PHASE(performOSRAvailabilityAnalysis);
         
         if (FTL::canCompile(dfg) == FTL::CannotCompile) {

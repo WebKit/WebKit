@@ -120,7 +120,7 @@ public:
     WEBCORE_EXPORT void convertToLuminanceMask();
     virtual void transformToColorSpace(const DestinationColorSpace&) { }
 
-    virtual RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&, const ImageBufferAllocator& = ImageBufferAllocator()) = 0;
+    virtual void getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination) = 0;
     virtual void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) = 0;
 
     virtual bool copyToPlatformTexture(GraphicsContextGL&, GCGLenum, PlatformGLObject, GCGLenum, bool, bool) { return false; }
@@ -156,11 +156,6 @@ public:
 
     const Parameters& parameters() { return m_parameters; }
 
-protected:
-    WEBCORE_EXPORT ImageBufferBackend(const Parameters&);
-
-    virtual unsigned bytesPerRow() const = 0;
-
     template<typename T>
     T toBackendCoordinates(T t) const
     {
@@ -169,6 +164,12 @@ protected:
             t.scale(resolutionScale());
         return t;
     }
+
+protected:
+    WEBCORE_EXPORT ImageBufferBackend(const Parameters&);
+
+    virtual unsigned bytesPerRow() const = 0;
+
 
     IntSize logicalSize() const { return IntSize(m_parameters.logicalSize); }
     float resolutionScale() const { return m_parameters.resolutionScale; }
@@ -179,8 +180,8 @@ protected:
     IntRect logicalRect() const { return IntRect(IntPoint::zero(), logicalSize()); };
     IntRect backendRect() const { return IntRect(IntPoint::zero(), backendSize()); };
 
-    WEBCORE_EXPORT RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, void* data, const ImageBufferAllocator&);
-    WEBCORE_EXPORT void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat, void* data);
+    WEBCORE_EXPORT void getPixelBuffer(const IntRect& srcRect, void* data, PixelBuffer& destination);
+    WEBCORE_EXPORT void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat, void* destination);
 
     Parameters m_parameters;
 };

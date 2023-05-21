@@ -194,6 +194,7 @@ public:
 
     virtual Vector<RegistrableDomain> allDomains() const = 0;
     virtual HashMap<RegistrableDomain, WallTime> allDomainsWithLastAccessedTime() const = 0;
+    HashSet<RegistrableDomain> domainsExemptFromWebsiteDataDeletion() const;
 
     void didCreateNetworkProcess();
 

@@ -80,18 +80,23 @@
         (socket-option-name
             SO_DELEGATED
             SO_DELEGATED_UUID
+            SO_MARK_KNOWN_TRACKER
             SO_NECP_ATTRIBUTES
             SO_NECP_CLIENTUUID
             SO_NECP_LISTENUUID
             SO_NOSIGPIPE
             SO_RCVBUF
             SO_REUSEADDR
-            SO_REUSEPORT)))
+            SO_REUSEPORT
+            SO_SNDLOWAT)))
 
 (allow socket-option-get
     (require-all
         (socket-option-level SOL_SOCKET)
-        (socket-option-name SO_ERROR SO_NREAD)))
+        (socket-option-name
+            SO_ERROR
+            SO_NREAD
+            SO_SNDBUF)))
 
 (allow socket-option-set
     (require-all
@@ -283,7 +288,8 @@
         "kern.ostype"
         "kern.osversion" ;; Needed by WebKit and ASL logging.
         "kern.tcsm_available" ;; Needed for IndexedDB support.
-        "kern.tcsm_enable")
+        "kern.tcsm_enable"
+        "vm.malloc_ranges") ;; <rdar://problem/105161083>
     (sysctl-name-prefix "kern.proc.pid.")
     (sysctl-name-prefix "net.routetable"))
 
@@ -755,6 +761,9 @@
                 mach_port_request_notification
                 mach_port_set_attributes
                 mach_vm_copy
+#if HAVE(MACH_RANGE_CREATE)
+                (when (defined? 'mach_vm_range_create) mach_vm_range_create) ;; <rdar://105161083>
+#endif
                 mach_vm_map_external
                 mach_vm_remap_external
                 semaphore_create

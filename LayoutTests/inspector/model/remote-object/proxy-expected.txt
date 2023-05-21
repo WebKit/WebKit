@@ -1,0 +1,59 @@
+
+-----------------------------------------------------
+EXPRESSION: new Proxy({x:1, y:1}, {handler: true})
+{
+  "_type": "object",
+  "_subtype": "proxy",
+  "_objectId": "<filtered>",
+  "_description": "Proxy",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "proxy",
+    "_description": "Proxy",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "x",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "y",
+        "_type": "number",
+        "_value": "1"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new Proxy(new Proxy({foo:1, bar:1}, {}), {})
+{
+  "_type": "object",
+  "_subtype": "proxy",
+  "_objectId": "<filtered>",
+  "_description": "Proxy",
+  "_preview": {
+    "_type": "object",
+    "_subtype": "proxy",
+    "_description": "Proxy",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_name": "foo",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "bar",
+        "_type": "number",
+        "_value": "1"
+      }
+    ],
+    "_entries": null
+  }
+}
+

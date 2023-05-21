@@ -527,7 +527,7 @@ def webkit_ipc_make_gcglspan_conversion(expr : cpp_expr, type : cpp_type_contain
     pointer_cast_type = type.get_contained_type().get_pointer_type()
     element_type = type.get_contained_type()
     if type.is_dynamic_span():
-        return cpp_expr(type, f"makeSpan(reinterpret_cast<{str(pointer_cast_type)}>({str(expr)}.data()), {str(expr)}.size())")
+        return cpp_expr(type, f"std::span(reinterpret_cast<{str(pointer_cast_type)}>({str(expr)}.data()), {str(expr)}.size())")
 
     assert(type.is_span())
     return cpp_expr(type, f"Span<{element_type}, {str(type.get_arity())}> {{ reinterpret_cast<{str(pointer_cast_type)}>({str(expr)}.data()), {str(type.get_arity())} }}")

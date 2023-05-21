@@ -41,6 +41,7 @@
                     break;
             }
 
+            video.disableRemotePlayback = true;
             source = new ManagedMediaSource();
             run('video.src = URL.createObjectURL(source)');
             await waitFor(source, 'sourceopen');

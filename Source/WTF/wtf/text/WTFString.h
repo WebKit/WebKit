@@ -81,9 +81,6 @@ public:
     String(Ref<AtomStringImpl>&&);
     String(RefPtr<AtomStringImpl>&&);
 
-    String(StaticStringImpl&);
-    String(StaticStringImpl*);
-
     // Construct a string from a constant string literal.
     String(ASCIILiteral);
 
@@ -325,6 +322,9 @@ private:
     WTF_EXPORT_PRIVATE explicit String(const char* characters);
 
     RefPtr<StringImpl> m_impl;
+
+public:
+    static void initializeStrings();
 };
 
 static_assert(sizeof(String) == sizeof(void*), "String should effectively be a pointer to a StringImpl, and efficient to pass by value");
@@ -359,20 +359,8 @@ WTF_EXPORT_PRIVATE int codePointCompare(const String&, const String&);
 bool codePointCompareLessThan(const String&, const String&);
 
 // Shared global empty and null string.
-struct StaticString {
-    constexpr StaticString(StringImpl::StaticStringImpl* pointer)
-        : m_pointer(pointer)
-    {
-    }
-
-    StringImpl::StaticStringImpl* m_pointer;
-};
-static_assert(sizeof(String) == sizeof(StaticString), "String and StaticString must be the same size!");
-extern WTF_EXPORT_PRIVATE const StaticString nullStringData;
-extern WTF_EXPORT_PRIVATE const StaticString emptyStringData;
-
-inline const String& nullString() { return *reinterpret_cast<const String*>(&nullStringData); }
-inline const String& emptyString() { return *reinterpret_cast<const String*>(&emptyStringData); }
+WTF_EXPORT_PRIVATE const String& nullString();
+WTF_EXPORT_PRIVATE const String& emptyString();
 
 template<typename> struct DefaultHash;
 template<> struct DefaultHash<String>;
@@ -426,16 +414,6 @@ inline String::String(Ref<AtomStringImpl>&& string)
 
 inline String::String(RefPtr<AtomStringImpl>&& string)
     : m_impl(WTFMove(string))
-{
-}
-
-inline String::String(StaticStringImpl& string)
-    : m_impl(reinterpret_cast<StringImpl*>(&string))
-{
-}
-
-inline String::String(StaticStringImpl* string)
-    : m_impl(reinterpret_cast<StringImpl*>(string))
 {
 }
 
@@ -528,7 +506,7 @@ inline Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8Conversio
 {
     if (!m_impl) {
         constexpr const char* emptyString = "";
-        return function(makeSpan(emptyString, emptyString));
+        return function(std::span(emptyString, emptyString));
     }
     return m_impl->tryGetUTF8(function, mode);
 }

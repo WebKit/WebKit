@@ -211,7 +211,7 @@ private:
                 m_fetchPriorityHint = parseEnumerationFromString<RequestPriority>(attributeValue.toString()).value_or(RequestPriority::Auto);
                 break;
             }
-            if (m_document.lazyImageLoadingEnabled()) {
+            if (m_document.settings().lazyImageLoadingEnabled()) {
                 if (match(attributeName, loadingAttr) && m_lazyloadAttribute.isNull()) {
                     m_lazyloadAttribute = attributeValue.toString();
                     break;

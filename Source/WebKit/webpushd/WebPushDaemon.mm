@@ -38,10 +38,10 @@
 #import <WebCore/PushPermissionState.h>
 #import <WebCore/SecurityOriginData.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
+#import <span>
 #import <wtf/CompletionHandler.h>
 #import <wtf/HexNumber.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/Span.h>
 #import <wtf/URL.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/spi/darwin/XPCSPI.h>

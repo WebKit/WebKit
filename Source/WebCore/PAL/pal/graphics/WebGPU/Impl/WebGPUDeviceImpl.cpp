@@ -518,8 +518,8 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, Convert
         },
         descriptor.depthStencil ? &depthStencilState : nullptr, {
             nullptr,
-            descriptor.multisample ? descriptor.multisample->count : 0,
-            descriptor.multisample ? descriptor.multisample->mask : 0,
+            descriptor.multisample ? descriptor.multisample->count : 1,
+            descriptor.multisample ? descriptor.multisample->mask : 0xFFFFFFFFU,
             descriptor.multisample ? descriptor.multisample->alphaToCoverageEnabled : false,
         },
         descriptor.fragment ? &fragmentState : nullptr,

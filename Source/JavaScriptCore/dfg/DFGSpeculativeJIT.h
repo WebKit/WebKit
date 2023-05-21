@@ -1437,6 +1437,7 @@ public:
     void compileValueSub(Node*);
     void compileArithAdd(Node*);
     void compileMakeRope(Node*);
+    void compileMakeAtomString(Node*);
     void compileArithAbs(Node*);
     void compileArithClz32(Node*);
     void compileArithSub(Node*);

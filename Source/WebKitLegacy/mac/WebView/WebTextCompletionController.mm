@@ -174,7 +174,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         // Get preceeding word stem
         WebFrame *frame = [_htmlView _frame];
         DOMRange *selection = kit(core(frame)->selection().selection().toNormalizedRange());
-        DOMRange *wholeWord = [frame _rangeByAlteringCurrentSelection:FrameSelection::AlterationExtend
+        DOMRange *wholeWord = [frame _rangeByAlteringCurrentSelection:FrameSelection::Alteration::Extend
             direction:SelectionDirection::Backward granularity:TextGranularity::WordGranularity];
         DOMRange *prefix = [wholeWord cloneRange];
         [prefix setEnd:[selection startContainer] offset:[selection startOffset]];

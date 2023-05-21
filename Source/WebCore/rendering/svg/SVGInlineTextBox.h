@@ -41,9 +41,6 @@ public:
     float virtualLogicalHeight() const override { return m_logicalHeight; }
     void setLogicalHeight(float height) { m_logicalHeight = height; }
 
-    int selectionTop() { return top(); }
-    int selectionHeight() { return static_cast<int>(ceilf(m_logicalHeight)); }
-
     void paintSelectionBackground(PaintInfo&);
     void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
     LayoutRect localSelectionRect(unsigned startPosition, unsigned endPosition) const override;

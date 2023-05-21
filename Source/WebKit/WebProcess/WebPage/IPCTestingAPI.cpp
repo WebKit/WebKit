@@ -1884,7 +1884,7 @@ static bool encodeTypedArray(IPC::Encoder& encoder, JSContextRef context, JSValu
     if (!data.buffer)
         return false;
 
-    encoder.encodeSpan(makeSpan(reinterpret_cast<const uint8_t*>(data.buffer), data.length));
+    encoder.encodeSpan(std::span(reinterpret_cast<const uint8_t*>(data.buffer), data.length));
     return true;
 }
 
@@ -2925,7 +2925,7 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
 
 void inject(WebPage& webPage, WebFrame& webFrame, WebCore::DOMWrapperWorld& world)
 {
-    auto* globalObject = webFrame.coreFrame()->script().globalObject(world);
+    auto* globalObject = webFrame.coreLocalFrame()->script().globalObject(world);
 
     auto& vm = globalObject->vm();
     JSC::JSLockHolder lock(vm);

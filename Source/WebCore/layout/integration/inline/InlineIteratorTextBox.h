@@ -44,10 +44,8 @@ public:
     unsigned length() const;
 
     unsigned offsetForPosition(float x, bool includePartialGlyphs = true) const;
-    float positionForOffset(unsigned) const;
 
     TextBoxSelectableRange selectableRange() const;
-    LayoutRect selectionRect(unsigned start, unsigned end) const;
 
     bool isCombinedText() const;
     const FontCascade& fontCascade() const;

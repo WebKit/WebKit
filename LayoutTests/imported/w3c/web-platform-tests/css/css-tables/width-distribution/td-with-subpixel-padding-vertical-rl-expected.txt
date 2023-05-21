@@ -1,0 +1,9 @@
+Passes if each column (logical row) has two blue squares.
+ 	
+ 	
+ 	
+ 	
+ 	
+
+PASS td-with-subpixel-padding-vertical-rl
+

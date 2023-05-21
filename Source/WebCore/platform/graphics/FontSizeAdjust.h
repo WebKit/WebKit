@@ -56,7 +56,8 @@ struct FontSizeAdjust {
         ChWidth,
         IcWidth,
         IcHeight
-    } metric;
+    };
+    Metric metric { Metric::ExHeight };
     bool isFromFont { false };
     Markable<float, FloatMarkableTraits> value { };
 };

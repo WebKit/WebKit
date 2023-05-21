@@ -227,7 +227,7 @@ void AlternativeTextController::respondToUnappliedSpellCorrection(const VisibleS
     RefPtr protector(m_document.frame());
     m_document.updateLayout();
 
-    m_document.selection().setSelection(selectionOfCorrected, FrameSelection::defaultSetSelectionOptions() | FrameSelection::SpellCorrectionTriggered);
+    m_document.selection().setSelection(selectionOfCorrected, FrameSelection::defaultSetSelectionOptions() | FrameSelection::SetSelectionOption::SpellCorrectionTriggered);
     auto range = m_document.selection().selection().firstRange();
     if (!range)
         return;

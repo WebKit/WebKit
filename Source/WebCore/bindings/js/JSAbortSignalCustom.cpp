@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2019-2022 Apple Inc. All rights reserved.
+* Copyright (C) 2019-2023 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -42,10 +42,17 @@ bool JSAbortSignalOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> ha
         return true;
     }
 
-    if (abortSignal.hasAbortEventListener() && abortSignal.hasActiveTimeoutTimer()) {
-        if (UNLIKELY(reason))
-            *reason = "Has Active Abort Listener";
-        return true;
+    if (abortSignal.hasAbortEventListener()) {
+        if (abortSignal.hasActiveTimeoutTimer()) {
+            if (UNLIKELY(reason))
+                *reason = "Has Timeout And Abort Event Listener";
+            return true;
+        }
+        if (!abortSignal.sourceSignals().isEmptyIgnoringNullReferences()) {
+            if (UNLIKELY(reason))
+                *reason = "Has Source Signals And Abort Event Listener";
+            return true;
+        }
     }
 
     return containsWebCoreOpaqueRoot(visitor, abortSignal);

@@ -1,0 +1,16 @@
+Visibility hidden
+
+Spec
+Setting a column of cells to visibility:hidden.
+
+row 1	
+row 2	
+row 3	
+Bottom table is identical to top except right column's cells are hidden.
+row 1	
+row 2	
+row 3	
+
+PASS visibility:hidden doesn't change table height
+PASS visibility:hidden doesn't change table width
+

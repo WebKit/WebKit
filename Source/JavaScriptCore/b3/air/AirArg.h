@@ -1269,8 +1269,13 @@ public:
     {
         if (isX86())
             return B3::isRepresentableAs<int32_t>(value);
-        if (isARM64())
-            return isUInt12(value);
+        if (isARM64()) {
+            if (isUInt12(value))
+                return true;
+            if (value == INT64_MIN)
+                return isUInt12(INT64_MIN);
+            return isUInt12(-value);
+        }
         if (isARM_THUMB2())
             return isValidARMThumb2Immediate(value);
         return false;

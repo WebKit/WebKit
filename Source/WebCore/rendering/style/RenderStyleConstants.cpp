@@ -224,8 +224,6 @@ TextStream& operator<<(TextStream& ts, CaptionSide side)
     switch (side) {
     case CaptionSide::Top: ts << "top"; break;
     case CaptionSide::Bottom: ts << "bottom"; break;
-    case CaptionSide::Left: ts << "left"; break;
-    case CaptionSide::Right: ts << "right"; break;
     }
     return ts;
 }
@@ -942,6 +940,16 @@ TextStream& operator<<(TextStream& ts, ScrollSnapStop stop)
     switch (stop) {
     case ScrollSnapStop::Normal: ts << "normal"; break;
     case ScrollSnapStop::Always: ts << "always"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, ScrollbarWidth width)
+{
+    switch (width) {
+    case ScrollbarWidth::Auto: ts << "auto"; break;
+    case ScrollbarWidth::Thin: ts << "thin"; break;
+    case ScrollbarWidth::None: ts << "none"; break;
     }
     return ts;
 }

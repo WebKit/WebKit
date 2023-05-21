@@ -96,7 +96,6 @@ set(TestWTF_SOURCES
     Tests/WTF/ScopedLambda.cpp
     Tests/WTF/SentinelLinkedList.cpp
     Tests/WTF/SetForScope.cpp
-    Tests/WTF/Span.cpp
     Tests/WTF/StackTraceTest.cpp
     Tests/WTF/StdLibExtras.cpp
     Tests/WTF/StringBuilder.cpp
@@ -202,6 +201,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/NowPlayingInfoTests.cpp
         Tests/WebCore/ParsedContentRange.cpp
         Tests/WebCore/PublicSuffix.cpp
+        Tests/WebCore/RenderStyleChange.cpp
         Tests/WebCore/SecurityOrigin.cpp
         Tests/WebCore/SharedBuffer.cpp
         Tests/WebCore/SharedBufferTest.cpp

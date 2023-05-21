@@ -52,6 +52,11 @@ Ref<RemoteScrollingTree> RemoteScrollingTree::create(RemoteScrollingCoordinatorP
 RemoteScrollingTreeMac::RemoteScrollingTreeMac(RemoteScrollingCoordinatorProxy& scrollingCoordinator)
     : RemoteScrollingTree(scrollingCoordinator)
 {
+    ASSERT(isMainRunLoop());
+    ScrollingThread::dispatch([protectedThis = Ref { *this }]() {
+        if ([CATransaction instancesRespondToSelector:@selector(setDisableImplicitTransactionMainThreadAssert:)])
+            [CATransaction setDisableImplicitTransactionMainThreadAssert:YES];
+    });
 }
 
 RemoteScrollingTreeMac::~RemoteScrollingTreeMac() = default;
@@ -123,6 +128,11 @@ Ref<ScrollingTreeNode> RemoteScrollingTreeMac::createScrollingTreeNode(Scrolling
 void RemoteScrollingTreeMac::didCommitTree()
 {
     ASSERT(isMainRunLoop());
+    ASSERT(m_treeLock.isLocked());
+
+    if (m_nodesWithPendingScrollAnimations.isEmpty())
+        return;
+
     ScrollingThread::dispatch([protectedThis = Ref { *this }]() {
         Locker treeLocker { protectedThis->m_treeLock };
         protectedThis->startPendingScrollAnimations();
@@ -323,6 +333,9 @@ WheelEventHandlingResult RemoteScrollingTreeMac::handleWheelEventAfterDefaultHan
 
 void RemoteScrollingTreeMac::deferWheelEventTestCompletionForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
 {
+    if (!isMonitoringWheelEvents())
+        return;
+
     RunLoop::main().dispatch([strongThis = Ref { *this }, nodeID, reason] {
         if (auto* scrollingCoordinatorProxy = strongThis->scrollingCoordinatorProxy())
             scrollingCoordinatorProxy->deferWheelEventTestCompletionForReason(nodeID, reason);
@@ -331,6 +344,9 @@ void RemoteScrollingTreeMac::deferWheelEventTestCompletionForReason(ScrollingNod
 
 void RemoteScrollingTreeMac::removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID nodeID, WheelEventTestMonitor::DeferReason reason)
 {
+    if (!isMonitoringWheelEvents())
+        return;
+
     RunLoop::main().dispatch([strongThis = Ref { *this }, nodeID, reason] {
         if (auto* scrollingCoordinatorProxy = strongThis->scrollingCoordinatorProxy())
             scrollingCoordinatorProxy->removeWheelEventTestCompletionDeferralForReason(nodeID, reason);
@@ -345,19 +361,6 @@ void RemoteScrollingTreeMac::lockLayersForHitTesting()
 void RemoteScrollingTreeMac::unlockLayersForHitTesting()
 {
     m_layerHitTestMutex.unlock();
-}
-
-
-void RemoteScrollingTreeMac::beginTransactionOnScrollingThread()
-{
-    ASSERT(ScrollingThread::isCurrentThread());
-    [CATransaction begin];
-}
-
-void RemoteScrollingTreeMac::commitTransactionOnScrollingThread()
-{
-    ASSERT(ScrollingThread::isCurrentThread());
-    [CATransaction commit];
 }
 
 static ScrollingNodeID scrollingNodeIDForLayer(CALayer *layer)

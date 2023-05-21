@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WebFrame.h"
+#include "WebFrameLoaderClient.h"
 #include <WebCore/MessageWithMessagePorts.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RemoteFrameClient.h>
@@ -34,20 +35,19 @@
 
 namespace WebKit {
 
-class WebRemoteFrameClient final : public WebCore::RemoteFrameClient {
+class WebRemoteFrameClient final : public WebCore::RemoteFrameClient, public WebFrameLoaderClient {
 public:
     explicit WebRemoteFrameClient(Ref<WebFrame>&&, ScopeExit<Function<void()>>&& frameInvalidator);
     ~WebRemoteFrameClient();
 
-    WebFrame& webFrame() const { return m_frame.get(); }
     ScopeExit<Function<void()>> takeFrameInvalidator() { return WTFMove(m_frameInvalidator); }
 
 private:
     void frameDetached() final;
     void sizeDidChange(WebCore::IntSize) final;
     void postMessageToRemote(WebCore::ProcessIdentifier, WebCore::FrameIdentifier, std::optional<WebCore::SecurityOriginData>, const WebCore::MessageWithMessagePorts&) final;
+    void changeLocation(WebCore::FrameLoadRequest&&) final;
 
-    Ref<WebFrame> m_frame;
     ScopeExit<Function<void()>> m_frameInvalidator;
 };
 

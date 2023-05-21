@@ -610,6 +610,7 @@ bindings/js/JSLazyEventListener.cpp
 bindings/js/JSLocalDOMWindowCustom.cpp
 bindings/js/JSLocationCustom.cpp
 bindings/js/JSMediaSessionCustom.cpp
+bindings/js/JSMediaSourceCustom.cpp
 bindings/js/JSMediaStreamTrackCustom.cpp
 bindings/js/JSMessageChannelCustom.cpp
 bindings/js/JSMessageEventCustom.cpp
@@ -644,6 +645,7 @@ bindings/js/JSSVGViewSpecCustom.cpp
 bindings/js/JSServiceWorkerClientCustom.cpp
 bindings/js/JSServiceWorkerGlobalScopeCustom.cpp
 bindings/js/JSShadowRootCustom.cpp
+bindings/js/JSSourceBufferCustom.cpp
 bindings/js/JSStaticRangeCustom.cpp
 bindings/js/JSStyleSheetCustom.cpp
 bindings/js/JSTextCustom.cpp

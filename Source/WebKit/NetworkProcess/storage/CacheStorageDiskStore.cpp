@@ -280,7 +280,7 @@ static std::optional<StoredRecordInformation> readRecordInfoFromFileData(const F
     if (buffer.isEmpty())
         return std::nullopt;
 
-    auto fileData = makeSpan(buffer.data(), buffer.size());
+    auto fileData = std::span(buffer.data(), buffer.size());
     auto metaData = decodeRecordMetaData(fileData);
     if (!metaData)
         return std::nullopt;
@@ -314,7 +314,7 @@ std::optional<CacheStorageRecord> CacheStorageDiskStore::readRecordFromFileData(
         if (bodyOffset + bodySize != buffer.size())
             return std::nullopt;
 
-        auto bodyData = makeSpan(buffer.data() + bodyOffset, bodySize);
+        auto bodyData = std::span(buffer.data() + bodyOffset, bodySize);
         if (storedInfo->metaData.bodyHash != computeSHA1(bodyData, m_salt))
             return std::nullopt;
 
@@ -324,7 +324,7 @@ std::optional<CacheStorageRecord> CacheStorageDiskStore::readRecordFromFileData(
             return std::nullopt;
 
         auto sharedBuffer = WebCore::SharedBuffer::create(blobBuffer.data(), blobBuffer.size());
-        auto bodyData = makeSpan(sharedBuffer->data(), sharedBuffer->size());
+        auto bodyData = std::span(sharedBuffer->data(), sharedBuffer->size());
         if (storedInfo->metaData.bodyHash != computeSHA1(bodyData, m_salt))
             return std::nullopt;
 
@@ -535,12 +535,12 @@ void CacheStorageDiskStore::writeRecords(Vector<CacheStorageRecord>&& records, W
             auto recordBlobData = recordBlobDatas[index];
             FileSystem::makeAllDirectories(FileSystem::parentPath(recordFile));
             if (!recordBlobData.isEmpty())  {
-                if (FileSystem::overwriteEntireFile(recordBlobFilePath(recordFile), makeSpan(recordBlobData.data(), recordBlobData.size())) == -1) {
+                if (FileSystem::overwriteEntireFile(recordBlobFilePath(recordFile), std::span(recordBlobData.data(), recordBlobData.size())) == -1) {
                     result = false;
                     continue;
                 }
             }
-            if (FileSystem::overwriteEntireFile(recordFile, makeSpan(recordData.data(), recordData.size())) == -1)
+            if (FileSystem::overwriteEntireFile(recordFile, std::span(recordData.data(), recordData.size())) == -1)
                 result = false;
         }
 

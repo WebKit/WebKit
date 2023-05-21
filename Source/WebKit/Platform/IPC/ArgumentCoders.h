@@ -77,7 +77,7 @@ template<typename T, size_t Extent> struct ArgumentCoder<std::span<T, Extent>> {
     {
         static_assert(Extent, "Can't encode a fixed size of 0");
 
-        if constexpr (Extent == WTF::dynamic_extent) {
+        if constexpr (Extent == std::dynamic_extent) {
             size_t size = span.size();
             encoder << size;
             if (!size)
@@ -92,7 +92,7 @@ template<typename T, size_t Extent> struct ArgumentCoder<std::span<T, Extent>> {
         static_assert(Extent, "Can't decode a fixed size of 0");
 
         size_t size = Extent;
-        if constexpr (Extent == WTF::dynamic_extent) {
+        if constexpr (Extent == std::dynamic_extent) {
             auto decodedSize = decoder.template decode<size_t>();
             if (!decodedSize)
                 return std::nullopt;
@@ -106,7 +106,7 @@ template<typename T, size_t Extent> struct ArgumentCoder<std::span<T, Extent>> {
         if (!data.data() || data.size() != size)
             return std::nullopt;
 
-        if constexpr (Extent == WTF::dynamic_extent)
+        if constexpr (Extent == std::dynamic_extent)
             return data;
         else
             return std::span<T, Extent> { data.data(), Extent };
@@ -129,7 +129,7 @@ struct ArgumentCoder<ArrayReferenceTuple<Types...>> {
         if (UNLIKELY(!size))
             return;
 
-        (..., encoder.encodeSpan(makeSpan(arrayReference.template data<Indices>(), size)));
+        (..., encoder.encodeSpan(std::span(arrayReference.template data<Indices>(), size)));
     }
 
     template<typename Decoder>
@@ -773,7 +773,7 @@ template<> struct ArgumentCoder<StringView> {
 template<> struct ArgumentCoder<SHA1::Digest> {
     static void encode(Encoder& encoder, const SHA1::Digest& digest)
     {
-        encoder.encodeSpan(makeSpan(digest.data(), digest.size()));
+        encoder.encodeSpan(std::span(digest.data(), digest.size()));
     }
 
     static std::optional<SHA1::Digest> decode(Decoder& decoder)

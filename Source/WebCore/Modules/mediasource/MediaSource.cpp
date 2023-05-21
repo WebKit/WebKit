@@ -149,6 +149,8 @@ void MediaSource::setPrivateAndOpen(Ref<MediaSourcePrivate>&& mediaSourcePrivate
     // 2. Set the readyState attribute to "open".
     // 3. Queue a task to fire a simple event named sourceopen at the MediaSource.
     setReadyState(ReadyState::Open);
+    if (!isOpen())
+        m_openDeferred = true;
 
     // 4. Continue the resource fetch algorithm by running the remaining "Otherwise (mode is local)" steps,
     // with these clarifications:
@@ -935,17 +937,17 @@ bool MediaSource::isTypeSupported(ScriptExecutionContext& context, const String&
 
 bool MediaSource::isOpen() const
 {
-    return readyState() == ReadyState::Open;
+    return m_readyState == ReadyState::Open;
 }
 
 bool MediaSource::isClosed() const
 {
-    return readyState() == ReadyState::Closed;
+    return m_readyState == ReadyState::Closed || m_openDeferred;
 }
 
 bool MediaSource::isEnded() const
 {
-    return readyState() == ReadyState::Ended;
+    return m_readyState == ReadyState::Ended;
 }
 
 void MediaSource::detachFromElement(HTMLMediaElement& element)
@@ -1007,6 +1009,19 @@ void MediaSource::openIfInEndedState()
         sourceBuffer->setMediaSourceEnded(false);
 }
 
+void MediaSource::openIfDeferredOpen()
+{
+    if (!m_openDeferred)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    if (!isOpen())
+        return;
+    m_openDeferred = false;
+    onReadyStateChange(ReadyState::Closed, ReadyState::Open);
+}
+
 bool MediaSource::virtualHasPendingActivity() const
 {
     return m_private || m_associatedRegistryCount;
@@ -1027,6 +1042,11 @@ const char* MediaSource::activeDOMObjectName() const
     return "MediaSource";
 }
 
+MediaSource::ReadyState MediaSource::readyState() const
+{
+    return m_openDeferred ? ReadyState::Closed : m_readyState;
+}
+
 void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
 {
     ALWAYS_LOG(LOGIDENTIFIER, "old state = ", oldState, ", new state = ", newState);
@@ -1037,6 +1057,10 @@ void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
     if (isOpen()) {
         scheduleEvent(eventNames().sourceopenEvent);
         monitorSourceBuffers();
+        return;
+    }
+    if (oldState == ReadyState::Closed && newState == ReadyState::Open) {
+        // The sourceopen event got suspended due to lack of suitability. Abort
         return;
     }
 

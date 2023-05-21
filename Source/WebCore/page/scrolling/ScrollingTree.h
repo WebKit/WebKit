@@ -203,6 +203,8 @@ public:
     void setIsMonitoringWheelEvents(bool b) { m_isMonitoringWheelEvents = b; }
     bool inCommitTreeState() const { return m_inCommitTreeState; }
 
+    WEBCORE_EXPORT bool hasRecentActivity();
+
     void scrollBySimulatingWheelEventForTesting(ScrollingNodeID, FloatSize);
 
     virtual void lockLayersForHitTesting() { }

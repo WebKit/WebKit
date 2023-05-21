@@ -52,7 +52,6 @@
 #import "ElementInlines.h"
 #import "Font.h"
 #import "FontCascade.h"
-#import "FrameLoaderClient.h"
 #import "FrameSelection.h"
 #import "HTMLAnchorElement.h"
 #import "HTMLAreaElement.h"
@@ -61,6 +60,7 @@
 #import "HTMLInputElement.h"
 #import "HTMLNames.h"
 #import "LocalFrame.h"
+#import "LocalFrameLoaderClient.h"
 #import "LocalizedStrings.h"
 #import "Page.h"
 #import "PluginDocument.h"
@@ -1476,7 +1476,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return backingObject->remoteParentObject();
 }
 
-- (id)windowElement:(NSString*)attributeName
+- (id)windowElement:(NSString *)attributeName
 {
     if (id remoteParent = self.remoteAccessibilityParentObject) {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -1484,16 +1484,8 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
-    return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
-        auto* backingObject = protectedSelf.get().axBackingObject;
-        if (!backingObject)
-            return nil;
-
-        if (auto* fv = backingObject->documentFrameView())
-            return [fv->platformWidget() window];
-
-        return nil;
-    });
+    RefPtr axScrollView = self.axBackingObject->axScrollView();
+    return axScrollView ? [axScrollView->platformWidget() window] : nil;
 }
 
 // FIXME: split up this function in a better way.

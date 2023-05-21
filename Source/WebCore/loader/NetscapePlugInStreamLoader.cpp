@@ -31,7 +31,7 @@
 
 #include "DocumentLoader.h"
 #include "FrameLoader.h"
-#include "FrameLoaderClient.h"
+#include "LocalFrameLoaderClient.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 

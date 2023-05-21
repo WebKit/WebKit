@@ -104,9 +104,9 @@ RefPtr<NativeImage> ImageBufferCairoSurfaceBackend::cairoSurfaceCoerceToImage()
     return copyNativeImage(copyBehavior);
 }
 
-RefPtr<PixelBuffer> ImageBufferCairoSurfaceBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator)
+void ImageBufferCairoSurfaceBackend::getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination)
 {
-    return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, cairo_image_surface_get_data(m_surface.get()), allocator);
+    ImageBufferBackend::getPixelBuffer(srcRect, cairo_image_surface_get_data(m_surface.get()), destination);
 }
 
 void ImageBufferCairoSurfaceBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)

@@ -1,0 +1,78 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true MediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>managedmediasource-airplay</title>
+    <script src="../../media/media-source/media-source-loader.js"></script>
+    <script src="../../media/video-test.js"></script>
+    <script src="../../media/utilities.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var sourceElement;
+    var sourceOpenAllowed = false;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+
+            let manifests = [ 'content/test-opus-manifest.json', 'content/test-vorbis-manifest.json', 'content/test-48khz-manifest.json', 'content/test-xhe-aac-manifest.json' ];
+            for (const manifest of manifests) {
+                loader = new MediaSourceLoader(manifest);
+                await loaderPromise(loader);
+                if (ManagedMediaSource.isTypeSupported(loader.type()))
+                    break;
+            }
+
+            waitFor(video, 'error').then(failTest);
+
+            run('source = new ManagedMediaSource()');
+            run('video.src = URL.createObjectURL(source)');
+
+            waitFor(source, 'sourceopen').then(() => {
+                if (!sourceOpenAllowed)
+                    failTest()
+            });
+
+            await sleepFor(100);
+            run('video.disableRemotePlayback = true');
+            run('sourceOpenAllowed = true');
+
+            await waitFor(source, 'sourceopen');
+            run('sourceOpenAllowed = false');
+
+            run('video.disableRemotePlayback = false');
+
+            run('source = new ManagedMediaSource()');
+            waitFor(source, 'sourceopen').then(() => {
+                if (!sourceOpenAllowed)
+                    failTest()
+                endTest();
+            });
+
+            run('video.src = URL.createObjectURL(source)');
+            await sleepFor(100);
+
+            run('sourceElement = document.createElement("source")');
+            run('sourceElement.src = "http://foo.com/playlist.m3u8"');
+            run('sourceElement.type = "application/vnd.apple.mpegurl"');
+            run('video.appendChild(sourceElement)');
+            run('sourceOpenAllowed = true');
+
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

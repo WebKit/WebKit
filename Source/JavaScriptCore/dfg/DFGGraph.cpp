@@ -685,6 +685,11 @@ void Graph::packNodeIndices()
     m_nodes.packIndices();
 }
 
+void Graph::clearAbstractValues()
+{
+    m_abstractValuesCache->clear();
+}
+
 void Graph::dethread()
 {
     if (m_form == LoadStore || m_form == SSA)

@@ -70,6 +70,11 @@ void AccessibilityController::setIsolatedTreeMode(bool flag)
 #endif
 }
 
+void AccessibilityController::setForceDeferredSpellChecking(bool shouldForce)
+{
+    WKAccessibilitySetForceDeferredSpellChecking(shouldForce);
+}
+
 void AccessibilityController::makeWindowObject(JSContextRef context)
 {
     setGlobalObjectProperty(context, "accessibilityController", this);

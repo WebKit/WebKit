@@ -3074,6 +3074,7 @@ private:
         case InvalidationPoint:
         case GetWebAssemblyInstanceExports:
         case NewBoundFunction:
+        case MakeAtomString:
             break;
 #else // not ASSERT_ENABLED
         default:

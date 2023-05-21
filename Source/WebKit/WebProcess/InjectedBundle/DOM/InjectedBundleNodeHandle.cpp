@@ -29,8 +29,8 @@
 #include "InjectedBundleRangeHandle.h"
 #include "ShareableBitmap.h"
 #include "WebFrame.h"
-#include "WebFrameLoaderClient.h"
 #include "WebImage.h"
+#include "WebLocalFrameLoaderClient.h"
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/Document.h>
 #include <WebCore/FrameLoader.h>

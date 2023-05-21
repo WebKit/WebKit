@@ -170,10 +170,19 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
     m_stringBuilder.append(m_indent, "struct ", structDecl.name(), " {\n");
     {
         IndentationScope scope(m_indent);
+        unsigned alignment = 0;
+        unsigned size = 0;
+        unsigned paddingID = 0;
+        bool shouldPack = structDecl.role() == AST::StructureRole::UserDefined;
+        const auto& addPadding = [&](unsigned paddingSize) {
+            if (shouldPack)
+                m_stringBuilder.append(m_indent, "uint8_t __padding", ++paddingID, "[", String::number(paddingSize), "]; \n");
+        };
+
         for (auto& member : structDecl.members()) {
+            auto& name = member.name();
             auto* type = member.type().resolvedType();
             if (auto* primitive = std::get_if<Types::Primitive>(type); primitive && primitive->kind == Types::Primitive::TextureExternal) {
-                auto& name = member.name();
                 m_stringBuilder.append(m_indent, "texture2d<half> ", name, "_FirstPlane;\n");
                 m_stringBuilder.append(m_indent, "texture2d<half> ", name, "_SecondPlane;\n");
                 m_stringBuilder.append(m_indent, "float3x2 ", name, "_UVRemapMatrix;\n");
@@ -181,9 +190,23 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
                 continue;
             }
 
+            auto fieldSize = type->size();
+            auto fieldAlignment = type->alignment();
+            unsigned explicitSize = fieldSize;
+            for (auto &attribute : member.attributes()) {
+                if (is<AST::SizeAttribute>(attribute))
+                    explicitSize = *AST::extractInteger(downcast<AST::SizeAttribute>(attribute).size());
+                else if (is<AST::AlignAttribute>(attribute))
+                    fieldAlignment = *AST::extractInteger(downcast<AST::AlignAttribute>(attribute).alignment());
+            }
+
+            unsigned offset = WTF::roundUpToMultipleOf(fieldAlignment, size);
+            if (offset != size)
+                addPadding(offset - size);
+
             m_stringBuilder.append(m_indent);
             visit(member.type());
-            m_stringBuilder.append(" ", member.name());
+            m_stringBuilder.append(" ", name);
             if (m_suffix.has_value()) {
                 m_stringBuilder.append(*m_suffix);
                 m_suffix.reset();
@@ -193,7 +216,17 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
                 visit(attribute);
             }
             m_stringBuilder.append(";\n");
+
+            if (explicitSize != fieldSize)
+                addPadding(explicitSize - fieldSize);
+
+            alignment = std::max(alignment, fieldAlignment);
+            size = offset + explicitSize;
         }
+
+        auto finalSize = WTF::roundUpToMultipleOf(alignment, size);
+        if (finalSize != size)
+            addPadding(finalSize - size);
     }
     m_stringBuilder.append(m_indent, "};\n\n");
     m_structRole = std::nullopt;
@@ -238,6 +271,12 @@ void FunctionDefinitionWriter::visit(AST::Attribute& attribute)
 
 void FunctionDefinitionWriter::visit(AST::BuiltinAttribute& builtin)
 {
+    // Built-in attributes are only valid for parameters. If a struct member originally
+    // had a built-in attribute it must have already been hoisted into a parameter, but
+    // we keep the original struct so we can reconstruct it.
+    if (m_structRole.has_value() && *m_structRole != AST::StructureRole::VertexOutput)
+        return;
+
     // FIXME: we should replace this with something more efficient, like a trie
     static constexpr std::pair<ComparableASCIILiteral, ASCIILiteral> builtinMappings[] {
         { "frag_depth", "depth(any)"_s },
@@ -367,6 +406,27 @@ void FunctionDefinitionWriter::visit(const Type* type)
             }
         },
         [&](const Vector& vector) {
+            auto* primitive = std::get_if<Primitive>(vector.element);
+            if (primitive && m_structRole.has_value() && *m_structRole == AST::StructureRole::UserDefined) {
+                switch (primitive->kind) {
+                case Types::Primitive::AbstractInt:
+                case Types::Primitive::I32:
+                    m_stringBuilder.append("packed_int", String::number(vector.size));
+                    return;
+                case Types::Primitive::U32:
+                    m_stringBuilder.append("packed_uint", String::number(vector.size));
+                    return;
+                case Types::Primitive::AbstractFloat:
+                case Types::Primitive::F32:
+                    m_stringBuilder.append("packed_float", String::number(vector.size));
+                    return;
+                case Types::Primitive::Bool:
+                case Types::Primitive::Void:
+                case Types::Primitive::Sampler:
+                case Types::Primitive::TextureExternal:
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+            }
             m_stringBuilder.append("vec<");
             visit(vector.element);
             m_stringBuilder.append(", ", vector.size, ">");
@@ -584,10 +644,12 @@ void FunctionDefinitionWriter::visit(AST::UnaryExpression& unary)
     case AST::UnaryOperation::Negate:
         m_stringBuilder.append("-");
         break;
+    case AST::UnaryOperation::Not:
+        m_stringBuilder.append("!");
+        break;
 
     case AST::UnaryOperation::AddressOf:
     case AST::UnaryOperation::Dereference:
-    case AST::UnaryOperation::Not:
         // FIXME: Implement these
         RELEASE_ASSERT_NOT_REACHED();
         break;
@@ -664,9 +726,10 @@ void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
         break;
 
     case AST::BinaryOperation::ShortCircuitAnd:
+        m_stringBuilder.append(" && ");
+        break;
     case AST::BinaryOperation::ShortCircuitOr:
-        // FIXME: Implement these
-        RELEASE_ASSERT_NOT_REACHED();
+        m_stringBuilder.append(" || ");
         break;
     }
     visit(binary.rightExpression());

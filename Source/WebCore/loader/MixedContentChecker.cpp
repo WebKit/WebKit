@@ -34,8 +34,8 @@
 #include "Document.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
-#include "FrameLoaderClient.h"
 #include "LocalFrame.h"
+#include "LocalFrameLoaderClient.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include <wtf/text/CString.h>

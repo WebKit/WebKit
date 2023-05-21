@@ -1,0 +1,4 @@
+
+FAIL traversals in the same (back) direction: coalesced assert_equals: first load event must be going back (hash) expected "" but got "#2"
+FAIL traversals in the same (forward) direction: coalesced assert_equals: first load event must be going forward (hash) expected "#3" but got ""
+

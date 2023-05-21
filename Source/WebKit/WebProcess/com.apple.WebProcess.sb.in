@@ -666,6 +666,13 @@
 (deny sysctl-read (with no-report)
     (sysctl-name "vm.task_no_footprint_for_debug"))
 
+#if HAVE(SANDBOX_STATE_FLAGS)
+(with-filter (require-not (state-flag "WebContentProcessLaunched"))
+    (allow sysctl-read (sysctl-name "vm.malloc_ranges"))) ;; <rdar://problem/105161083>
+#else
+(allow sysctl-read (sysctl-name "vm.malloc_ranges")) ;; <rdar://problem/105161083>
+#endif
+
 (allow sysctl-write
     (sysctl-name
         "kern.tcsm_enable"))
@@ -1455,13 +1462,6 @@
         (xpc-service-name "com.apple.MTLCompilerService")
     )
 )
-;; This is just for logging. Remove when GPU process is enabled by default.
-(allow mach-lookup
-    (require-all
-        (require-not (extension "com.apple.webkit.extension.mach"))
-        (xpc-service-name "com.apple.MTLCompilerService")
-    )
-)
 
 (deny mach-lookup (with no-report)
     (global-name "com.apple.CoreServices.coreservicesd")
@@ -2095,7 +2095,7 @@
 #if HAVE(SANDBOX_STATE_FLAGS)
 (allow mach-bootstrap
     (apply-message-filter
-        (deny mach-message-send)
+        (deny mach-message-send (with no-report))
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)
         (with-filter (extension "com.apple.webkit.mach-bootstrap")
             (allow mach-message-send (mach-bootstrap-message-numbers-post-launch)))
@@ -2113,6 +2113,12 @@
             (deny xpc-message-send)
             (allow xpc-message-send
                 (mach-bootstrap-message-numbers)))))
+#endif
+
+#if HAVE(MACH_RANGE_CREATE)
+(define (kernel-mig-routine-only-in-use-during-launch)
+    (kernel-mig-routine
+        (when (defined? 'mach_vm_range_create) mach_vm_range_create))) ;; <rdar://105161083>
 #endif
 
 (define (kernel-mig-routines-common) (kernel-mig-routine
@@ -2193,7 +2199,13 @@
             (with-filter (require-not (lockdown-mode))
                 (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
 
-            (allow mach-message-send (kernel-mig-routines-common)))))
+            (allow mach-message-send (kernel-mig-routines-common))
+                
+#if HAVE(SANDBOX_STATE_FLAGS) && HAVE(MACH_RANGE_CREATE)
+            (with-filter (require-not (state-flag "WebContentProcessLaunched"))
+                (allow mach-message-send (kernel-mig-routine-only-in-use-during-launch)))
+#endif
+        )))
 
 (define (syscall-mach-common) (machtrap-number
     MSC__kernelrpc_mach_port_allocate_trap

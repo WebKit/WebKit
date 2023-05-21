@@ -150,7 +150,8 @@
         "security.mac.sandbox.sentinel"
         "kern.tcsm_enable"
         "kern.tcsm_available"
-        "vm.footprint_suspend")
+        "vm.footprint_suspend"
+        "vm.malloc_ranges") ;; <rdar://problem/105161083>
     (sysctl-name-prefix "net.routetable")
     (sysctl-name-prefix "hw.optional.") ;; <rdar://problem/71462790>
     (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76783596>

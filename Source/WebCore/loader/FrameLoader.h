@@ -68,9 +68,9 @@ class Frame;
 class FormState;
 class FormSubmission;
 class FrameLoadRequest;
-class FrameLoaderClient;
 class FrameNetworkingContext;
 class HistoryItem;
+class LocalFrameLoaderClient;
 class NavigationAction;
 class NetworkingContext;
 class Node;
@@ -100,7 +100,7 @@ class FrameLoader final {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(FrameLoader);
 public:
-    FrameLoader(LocalFrame&, UniqueRef<FrameLoaderClient>&&);
+    FrameLoader(LocalFrame&, UniqueRef<LocalFrameLoaderClient>&&);
     ~FrameLoader();
 
     WEBCORE_EXPORT void init();
@@ -217,8 +217,8 @@ public:
     static void addHTTPOriginIfNeeded(ResourceRequest&, const String& origin);
     static void addSameSiteInfoToRequestIfNeeded(ResourceRequest&, const Document* initiator = nullptr);
 
-    const FrameLoaderClient& client() const { return m_client.get(); }
-    FrameLoaderClient& client() { return m_client.get(); }
+    const LocalFrameLoaderClient& client() const { return m_client.get(); }
+    LocalFrameLoaderClient& client() { return m_client.get(); }
 
     WEBCORE_EXPORT FrameIdentifier frameID() const;
 
@@ -441,7 +441,7 @@ private:
     bool hasOpenedFrames() const;
 
     LocalFrame& m_frame;
-    UniqueRef<FrameLoaderClient> m_client;
+    UniqueRef<LocalFrameLoaderClient> m_client;
 
     const std::unique_ptr<PolicyChecker> m_policyChecker;
     const std::unique_ptr<HistoryController> m_history;

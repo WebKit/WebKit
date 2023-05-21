@@ -1,0 +1,9 @@
+Visibility collapse
+
+Spec
+Setting a spanning column to visibility:collapse changes table width but not height. The middle column has been collapsed.
+
+
+PASS col visibility:collapse doesn't change table height
+FAIL col visibility:collapse changes table width assert_equals: col visibility:collapse changes table width expected 20 but got 30
+

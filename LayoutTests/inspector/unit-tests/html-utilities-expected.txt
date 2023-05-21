@@ -1,0 +1,8 @@
+
+== Running test suite: HTMLUtilities
+-- Running test case: HTMLCollection.prototype.indexOf
+PASS: Should find the right index for the first child.
+PASS: Should find the right index for the second child.
+PASS: Should find the right index for the third child.
+PASS: Should not find an index for something not in the collection.
+

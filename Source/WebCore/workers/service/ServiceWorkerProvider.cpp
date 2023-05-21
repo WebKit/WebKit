@@ -30,9 +30,9 @@
 
 #include "Document.h"
 #include "FrameLoader.h"
-#include "FrameLoaderClient.h"
 #include "LegacySchemeRegistry.h"
 #include "LocalFrame.h"
+#include "LocalFrameLoaderClient.h"
 #include "Page.h"
 #include "SWClientConnection.h"
 

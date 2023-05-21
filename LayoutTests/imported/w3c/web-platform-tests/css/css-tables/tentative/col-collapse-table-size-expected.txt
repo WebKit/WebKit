@@ -1,0 +1,26 @@
+CONSOLE MESSAGE: No valid data-* attributes found in selector list : main table
+Interactions between <COL> visiblity:collapse, and table inline size
+
+What happens to the table size when column collapses? Should the space taken up by the table remain the same, but the table iteslf should shrink?
+
+Hovering over tables will turn off column collapsing
+
+Tables to the right are absolutely positioned
+absolute, right:0
+caption
+absolute, right:0
+Inline tables
+
+caption
+ after
+td	 after
+Table as a flex item
+
+td	
+
+PASS main table 1
+PASS main table 2
+PASS main table 3
+PASS main table 4
+PASS main table 5
+

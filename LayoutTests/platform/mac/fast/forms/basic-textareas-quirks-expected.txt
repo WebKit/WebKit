@@ -1,7 +1,7 @@
-layer at (0,0) size 785x1033
+layer at (0,0) size 785x1018
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1033
-  RenderBlock {HTML} at (0,0) size 785x1033
+layer at (0,0) size 785x1018
+  RenderBlock {HTML} at (0,0) size 785x1018
     RenderBody {BODY} at (8,8) size 769x584
       RenderBlock (floating) {DIV} at (0,0) size 352x789 [border: (1px solid #FF0000)]
         RenderBlock (anonymous) at (1,1) size 350x14
@@ -100,7 +100,7 @@ layer at (0,0) size 785x1033
             text run at (1,46) width 14: "A "
           RenderText {#text} at (70,46) size 14x17
             text run at (70,46) width 14: " B"
-      RenderBlock (floating) {DIV} at (352,0) size 352x1025 [border: (1px solid #FF0000)]
+      RenderBlock (floating) {DIV} at (352,0) size 352x1010 [border: (1px solid #FF0000)]
         RenderBlock (anonymous) at (1,1) size 350x14
           RenderText {#text} at (0,-2) size 110x17
             text run at (0,-2) width 110: "style=\"width:60px\""
@@ -200,25 +200,25 @@ layer at (0,0) size 785x1033
         RenderBlock (anonymous) at (1,856) size 350x14
           RenderText {#text} at (0,-2) size 64x17
             text run at (0,-2) width 64: "wrap=\"off\""
-        RenderBlock {DIV} at (1,870) size 352x52 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,35) size 14x17
-            text run at (1,35) width 14: "A "
-          RenderText {#text} at (175,35) size 14x17
-            text run at (175,35) width 5: " "
-            text run at (179,35) width 10: "B"
-        RenderBlock (anonymous) at (1,922) size 350x14
-          RenderText {#text} at (0,-2) size 73x17
-            text run at (0,-2) width 73: "wrap=\"hard\""
-        RenderBlock {DIV} at (1,936) size 352x37 [border: (1px solid #FF0000)]
+        RenderBlock {DIV} at (1,870) size 352x37 [border: (1px solid #FF0000)]
           RenderText {#text} at (1,20) size 14x17
             text run at (1,20) width 14: "A "
           RenderText {#text} at (175,20) size 14x17
             text run at (175,20) width 5: " "
             text run at (179,20) width 10: "B"
-        RenderBlock (anonymous) at (1,973) size 350x14
+        RenderBlock (anonymous) at (1,907) size 350x14
+          RenderText {#text} at (0,-2) size 73x17
+            text run at (0,-2) width 73: "wrap=\"hard\""
+        RenderBlock {DIV} at (1,921) size 352x37 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,20) size 14x17
+            text run at (1,20) width 14: "A "
+          RenderText {#text} at (175,20) size 14x17
+            text run at (175,20) width 5: " "
+            text run at (179,20) width 10: "B"
+        RenderBlock (anonymous) at (1,958) size 350x14
           RenderText {#text} at (0,-2) size 69x17
             text run at (0,-2) width 69: "wrap=\"soft\""
-        RenderBlock {DIV} at (1,987) size 352x37 [border: (1px solid #FF0000)]
+        RenderBlock {DIV} at (1,972) size 352x37 [border: (1px solid #FF0000)]
           RenderText {#text} at (1,20) size 14x17
             text run at (1,20) width 14: "A "
           RenderText {#text} at (175,20) size 14x17
@@ -666,8 +666,8 @@ layer at (376,800) size 60x60 clip at (377,801) size 43x58 scrollHeight 173
         text run at (0,143) width 37: "nopqrs"
         text run at (0,156) width 17: "tuv"
         text run at (16,156) width 4: " "
-layer at (376,879) size 161x47 clip at (377,880) size 144x30 scrollWidth 186 scrollHeight 212
-  RenderTextControl {TEXTAREA} at (14,1) size 162x47 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (376,879) size 161x32 clip at (377,880) size 144x15 scrollWidth 186 scrollHeight 212
+  RenderTextControl {TEXTAREA} at (14,1) size 162x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 140x208
       RenderText {#text} at (0,0) size 185x195
         text run at (0,0) width 4: " "
@@ -701,7 +701,7 @@ layer at (376,879) size 161x47 clip at (377,880) size 144x30 scrollWidth 186 scr
         text run at (0,182) width 185: "This is a text area with wrap=\"soft\""
         text run at (184,182) width 1: " "
       RenderBR {BR} at (0,195) size 0x13
-layer at (376,945) size 161x32 clip at (377,946) size 144x30 scrollHeight 394
+layer at (376,930) size 161x32 clip at (377,931) size 144x30 scrollHeight 394
   RenderTextControl {TEXTAREA} at (14,1) size 162x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 140x390
       RenderText {#text} at (0,0) size 121x377
@@ -764,7 +764,7 @@ layer at (376,945) size 161x32 clip at (377,946) size 144x30 scrollHeight 394
         text run at (0,364) width 64: "wrap=\"soft\""
         text run at (63,364) width 1: " "
       RenderBR {BR} at (0,377) size 0x13
-layer at (376,996) size 161x32 clip at (377,997) size 144x30 scrollHeight 394
+layer at (376,981) size 161x32 clip at (377,982) size 144x30 scrollHeight 394
   RenderTextControl {TEXTAREA} at (14,1) size 162x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 140x390
       RenderText {#text} at (0,0) size 121x377

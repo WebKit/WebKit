@@ -687,7 +687,7 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
     [m_containerLayer addSublayer:m_contentLayer.get()];
     [m_containerLayer addSublayer:m_scrollCornerLayer.get()];
     if ([m_pdfLayerController respondsToSelector:@selector(setDeviceColorSpace:)])
-        [m_pdfLayerController setDeviceColorSpace:screenColorSpace(m_frame->coreFrame()->view()).platformColorSpace()];
+        [m_pdfLayerController setDeviceColorSpace:screenColorSpace(m_frame->coreLocalFrame()->view()).platformColorSpace()];
     
     if ([getPDFLayerControllerClass() respondsToSelector:@selector(setUseIOSurfaceForTiles:)])
         [getPDFLayerControllerClass() setUseIOSurfaceForTiles:false];
@@ -1019,7 +1019,7 @@ void PDFPlugin::getResourceBytesAtPosition(size_t count, off_t position, Complet
 
     if (!m_frame)
         return;
-    auto* coreFrame = m_frame->coreFrame();
+    auto* coreFrame = m_frame->coreLocalFrame();
     if (!coreFrame)
         return;
 
@@ -1350,7 +1350,7 @@ void PDFPlugin::updateScrollbars()
         m_verticalScrollbar->setFrameRect(scrollbarRect);
     }
 
-    auto* frameView = m_frame ? m_frame->coreFrame()->view() : nullptr;
+    auto* frameView = m_frame ? m_frame->coreLocalFrame()->view() : nullptr;
     if (!frameView)
         return;
 
@@ -1395,7 +1395,7 @@ Ref<Scrollbar> PDFPlugin::createScrollbar(ScrollbarOrientation orientation)
     }
     didAddScrollbar(widget.ptr(), orientation);
 
-    if (auto* frame = m_frame ? m_frame->coreFrame() : nullptr) {
+    if (auto* frame = m_frame ? m_frame->coreLocalFrame() : nullptr) {
         if (auto* page = frame->page()) {
             if (page->isMonitoringWheelEvents())
                 scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
@@ -1492,7 +1492,7 @@ IntRect PDFPlugin::scrollableAreaBoundingBox(bool*) const
 
 bool PDFPlugin::isActive() const
 {
-    if (auto* coreFrame = m_frame ? m_frame->coreFrame() : nullptr) {
+    if (auto* coreFrame = m_frame ? m_frame->coreLocalFrame() : nullptr) {
         if (auto* page = coreFrame->page())
             return page->focusController().isActive();
     }
@@ -1502,7 +1502,7 @@ bool PDFPlugin::isActive() const
 
 bool PDFPlugin::forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const
 {
-    if (auto* coreFrame = m_frame ? m_frame->coreFrame() : nullptr) {
+    if (auto* coreFrame = m_frame ? m_frame->coreLocalFrame() : nullptr) {
         if (auto* page = coreFrame->page())
             return page->settings().scrollingPerformanceTestingEnabled();
     }
@@ -1603,7 +1603,7 @@ JSValueRef PDFPlugin::jsPDFDocPrint(JSContextRef ctx, JSObjectRef function, JSOb
     if (!frame)
         return JSValueMakeUndefined(ctx);
 
-    auto* coreFrame = frame->coreFrame();
+    auto* coreFrame = frame->coreLocalFrame();
     if (!coreFrame)
         return JSValueMakeUndefined(ctx);
 
@@ -1817,7 +1817,7 @@ void PDFPlugin::attemptToUnlockPDF(const String& password)
 float PDFPlugin::deviceScaleFactor() const
 {
     if (m_frame) {
-        if (auto* coreFrame = m_frame->coreFrame()) {
+        if (auto* coreFrame = m_frame->coreLocalFrame()) {
             if (auto* page = coreFrame->page())
                 return page->deviceScaleFactor();
         }
@@ -1877,9 +1877,9 @@ void PDFPlugin::setView(PluginView& view)
 
 void PDFPlugin::willDetachRenderer()
 {
-    if (!m_frame || !m_frame->coreFrame())
+    if (!m_frame || !m_frame->coreLocalFrame())
         return;
-    if (auto* frameView = m_frame->coreFrame()->view())
+    if (auto* frameView = m_frame->coreLocalFrame()->view())
         frameView->removeScrollableArea(this);
 }
 
@@ -1903,7 +1903,7 @@ void PDFPlugin::destroy()
 
     m_pdfLayerController.get().delegate = 0;
 
-    if (auto* frameView = m_frame && m_frame->coreFrame() ? m_frame->coreFrame()->view() : nullptr)
+    if (auto* frameView = m_frame && m_frame->coreLocalFrame() ? m_frame->coreLocalFrame()->view() : nullptr)
         frameView->removeScrollableArea(this);
 
     m_activeAnnotation = nullptr;
@@ -1932,7 +1932,7 @@ void PDFPlugin::updateControlTints(GraphicsContext& graphicsContext)
 void PDFPlugin::paintControlForLayerInContext(CALayer *layer, CGContextRef context)
 {
 #if PLATFORM(MAC)
-    auto* page = m_frame && m_frame->coreFrame() ? m_frame->coreFrame()->page() : nullptr;
+    auto* page = m_frame && m_frame->coreLocalFrame() ? m_frame->coreLocalFrame()->page() : nullptr;
     if (!page)
         return;
     LocalDefaultSystemAppearance localAppearance(page->useDarkAppearance());
@@ -2021,7 +2021,7 @@ IntPoint PDFPlugin::convertFromRootViewToPDFView(const IntPoint& point) const
 FloatRect PDFPlugin::convertFromPDFViewToScreen(const FloatRect& rect) const
 {
     return WebCore::Accessibility::retrieveValueFromMainThread<WebCore::FloatRect>([&] () -> WebCore::FloatRect {
-        auto* coreFrame = m_frame ? m_frame->coreFrame() : nullptr;
+        auto* coreFrame = m_frame ? m_frame->coreLocalFrame() : nullptr;
         if (!coreFrame)
             return { };
         auto* frameView = coreFrame->view();
@@ -2040,13 +2040,13 @@ FloatRect PDFPlugin::convertFromPDFViewToScreen(const FloatRect& rect) const
 IntRect PDFPlugin::boundsOnScreen() const
 {
     return WebCore::Accessibility::retrieveValueFromMainThread<WebCore::IntRect>([&] () -> WebCore::IntRect {
-        auto* frameView = m_frame ? m_frame->coreFrame()->view() : nullptr;
+        auto* frameView = m_frame ? m_frame->coreLocalFrame()->view() : nullptr;
         if (!frameView)
             return { };
 
         FloatRect bounds = FloatRect(FloatPoint(), size());
         FloatRect rectInRootViewCoordinates = valueOrDefault(m_rootViewToPluginTransform.inverse()).mapRect(bounds);
-        auto* page = m_frame->coreFrame()->page();
+        auto* page = m_frame->coreLocalFrame()->page();
         if (!page)
             return { };
         return page->chrome().rootViewToScreen(enclosingIntRect(rectInRootViewCoordinates));
@@ -2289,7 +2289,7 @@ bool PDFPlugin::handleMouseLeaveEvent(const WebMouseEvent&)
     
 bool PDFPlugin::showContextMenuAtPoint(const IntPoint& point)
 {
-    auto* frameView = m_frame ? m_frame->coreFrame()->view() : nullptr;
+    auto* frameView = m_frame ? m_frame->coreLocalFrame()->view() : nullptr;
     if (!frameView)
         return false;
     IntPoint contentsPoint = frameView->contentsToRootView(point);
@@ -2299,12 +2299,12 @@ bool PDFPlugin::showContextMenuAtPoint(const IntPoint& point)
 
 bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
 {
-    if (!m_frame || !m_frame->coreFrame())
+    if (!m_frame || !m_frame->coreLocalFrame())
         return false;
     auto* webPage = m_frame->page();
     if (!webPage)
         return false;
-    auto* frameView = m_frame->coreFrame()->view();
+    auto* frameView = m_frame->coreLocalFrame()->view();
     if (!frameView)
         return false;
 
@@ -2416,9 +2416,9 @@ bool PDFPlugin::isFullFramePlugin() const
 {
     // <object> or <embed> plugins will appear to be in their parent frame, so we have to
     // check whether our frame's widget is exactly our PluginView.
-    if (!m_frame || !m_frame->coreFrame())
+    if (!m_frame || !m_frame->coreLocalFrame())
         return false;
-    auto* document = m_frame->coreFrame()->document();
+    auto* document = m_frame->coreLocalFrame()->document();
     if (!document)
         return false;
     return document->isPluginDocument() && static_cast<PluginDocument*>(document)->pluginWidget() == m_view;
@@ -2435,7 +2435,7 @@ void PDFPlugin::clickedLink(NSURL *url)
     if (coreURL.protocolIsJavaScript())
         return;
 
-    auto* frame = m_frame ? m_frame->coreFrame() : nullptr;
+    auto* frame = m_frame ? m_frame->coreLocalFrame() : nullptr;
     if (!frame)
         return;
 
@@ -2531,7 +2531,7 @@ void PDFPlugin::openWithPreview(CompletionHandler<void(const String&, FrameInfoD
 void PDFPlugin::writeItemsToPasteboard(NSString *pasteboardName, NSArray *items, NSArray *types)
 {
     auto pasteboardTypes = makeVector<String>(types);
-    auto pageIdentifier = m_frame && m_frame->coreFrame() ? m_frame->coreFrame()->pageID() : std::nullopt;
+    auto pageIdentifier = m_frame && m_frame->coreLocalFrame() ? m_frame->coreLocalFrame()->pageID() : std::nullopt;
 
     auto& webProcess = WebProcess::singleton();
     webProcess.parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardTypes(pasteboardName, pasteboardTypes, pageIdentifier), 0);
@@ -2692,7 +2692,7 @@ void PDFPlugin::notifySelectionChanged(PDFSelection *)
 {
     if (!m_frame || !m_frame->page())
         return;
-    m_frame->page()->didChangeSelection(*m_frame->coreFrame());
+    m_frame->page()->didChangeSelection(*m_frame->coreLocalFrame());
 }
 
 static const WebCore::Cursor& coreCursor(PDFLayerControllerCursorType type)
@@ -2829,9 +2829,9 @@ static NSRect rectInViewSpaceForRectInLayoutSpace(PDFLayerController* pdfLayerCo
     
 WebCore::AXObjectCache* PDFPlugin::axObjectCache() const
 {
-    if (!m_frame || !m_frame->coreFrame() || !m_frame->coreFrame()->document())
+    if (!m_frame || !m_frame->coreLocalFrame() || !m_frame->coreLocalFrame()->document())
         return nullptr;
-    return m_frame->coreFrame()->document()->axObjectCache();
+    return m_frame->coreLocalFrame()->document()->axObjectCache();
 }
 
 WebCore::FloatRect PDFPlugin::rectForSelectionInRootView(PDFSelection *selection) const

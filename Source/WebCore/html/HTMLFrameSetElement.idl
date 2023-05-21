@@ -25,7 +25,7 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString rows;
 
     [WindowEventHandler] attribute EventHandler onblur;
-    [WindowEventHandler] attribute EventHandler onerror;
+    [WindowEventHandler] attribute OnErrorEventHandler onerror;
     [WindowEventHandler] attribute EventHandler onfocus;
     [WindowEventHandler] attribute EventHandler onload;
     [WindowEventHandler] attribute EventHandler onresize;

@@ -32,7 +32,7 @@
 namespace WebKit {
 
 class WebFrame;
-class WebFrameLoaderClient;
+class WebLocalFrameLoaderClient;
 struct WebsiteDataStoreParameters;
 
 class WebFrameNetworkingContext : public WebCore::FrameNetworkingContext {
@@ -45,7 +45,7 @@ public:
     static void ensurePrivateBrowsingSession(WebsiteDataStoreParameters&&);
     static void ensureWebsiteDataStoreSession(const WebsiteDataStoreParameters&);
 
-    WebFrameLoaderClient* webFrameLoaderClient() const;
+    WebLocalFrameLoaderClient* webFrameLoaderClient() const;
 
 private:
     WebFrameNetworkingContext(WebFrame*);

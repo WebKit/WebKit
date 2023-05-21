@@ -29,14 +29,15 @@
 #include "MessageSenderInlines.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
-
+#include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameTree.h>
+#include <WebCore/PolicyChecker.h>
 #include <WebCore/RemoteFrame.h>
 
 namespace WebKit {
 
 WebRemoteFrameClient::WebRemoteFrameClient(Ref<WebFrame>&& frame, ScopeExit<Function<void()>>&& frameInvalidator)
-    : m_frame(WTFMove(frame))
+    : WebFrameLoaderClient(WTFMove(frame))
     , m_frameInvalidator(WTFMove(frameInvalidator))
 {
 }
@@ -66,6 +67,22 @@ void WebRemoteFrameClient::sizeDidChange(WebCore::IntSize size)
 void WebRemoteFrameClient::postMessageToRemote(WebCore::ProcessIdentifier processIdentifier, WebCore::FrameIdentifier identifier, std::optional<WebCore::SecurityOriginData> target, const WebCore::MessageWithMessagePorts& message)
 {
     WebProcess::singleton().send(Messages::WebProcessProxy::PostMessageToRemote(processIdentifier, identifier, target, message), 0);
+}
+
+void WebRemoteFrameClient::changeLocation(WebCore::FrameLoadRequest&& request)
+{
+    // FIXME: FrameLoadRequest and NavigationAction can probably be refactored to share more.
+    WebCore::NavigationAction action(request.requester(), request.resourceRequest(), request.initiatedByMainFrame());
+    // FIXME: action.request and request are probably duplicate information.
+    // FIXME: PolicyCheckIdentifier should probably be pushed to another layer.
+    // FIXME: Get more parameters correct and add tests for each one.
+    dispatchDecidePolicyForNavigationAction(action, action.resourceRequest(), WebCore::ResourceResponse(), nullptr, WebCore::PolicyDecisionMode::Asynchronous, WebCore::PolicyCheckIdentifier::generate(), [protectedFrame = Ref { m_frame }, request = WTFMove(request)] (PolicyAction policyAction, PolicyCheckIdentifier responseIdentifier) mutable {
+        // FIXME: Check responseIdentifier.
+        if (policyAction != PolicyAction::Use)
+            return;
+        protectedFrame->transitionToLocal();
+        protectedFrame->coreFrame()->changeLocation(WTFMove(request));
+    });
 }
 
 }

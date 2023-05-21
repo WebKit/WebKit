@@ -505,7 +505,8 @@ static int setupSeccomp()
     struct scmp_arg_cmp cloneArg = SCMP_A0(SCMP_CMP_MASKED_EQ, CLONE_NEWUSER, CLONE_NEWUSER);
 #endif
 
-    struct scmp_arg_cmp ttyArg = SCMP_A1(SCMP_CMP_MASKED_EQ, 0xFFFFFFFFu, TIOCSTI);
+    struct scmp_arg_cmp tiocstiArg = SCMP_A1(SCMP_CMP_MASKED_EQ, 0xFFFFFFFFu, TIOCSTI);
+    struct scmp_arg_cmp tioclinuxArg = SCMP_A1(SCMP_CMP_MASKED_EQ, 0xFFFFFFFFu, TIOCLINUX);
     struct {
         int scall;
         int errnum;
@@ -546,7 +547,11 @@ static int setupSeccomp()
         { SCMP_SYS(clone), EPERM, &cloneArg },
 
         // Don't allow faking input to the controlling tty (CVE-2017-5226)
-        { SCMP_SYS(ioctl), EPERM, &ttyArg },
+        { SCMP_SYS(ioctl), EPERM, &tiocstiArg },
+        // In the unlikely event that the controlling tty is a Linux virtual
+        // console (/dev/tty2 or similar), copy/paste operations have an effect
+        // similar to TIOCSTI (CVE-2023-28100).
+        { SCMP_SYS(ioctl), EPERM, &tioclinuxArg },
 
         // seccomp can't look into clone3()'s struct clone_args to check whether
         // the flags are OK, so we have no choice but to block clone3().

@@ -113,7 +113,7 @@ int SQLiteStatement::bindBlob(int index, const String& text)
     else
         characters = upconvertedCharacters;
 
-    return bindBlob(index, makeSpan(reinterpret_cast<const uint8_t*>(characters), text.length() * sizeof(UChar)));
+    return bindBlob(index, std::span(reinterpret_cast<const uint8_t*>(characters), text.length() * sizeof(UChar)));
 }
 
 int SQLiteStatement::bindText(int index, StringView text)

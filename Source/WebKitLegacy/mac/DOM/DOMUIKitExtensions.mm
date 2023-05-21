@@ -95,7 +95,7 @@ using WebCore::VisiblePosition;
     }
 
     for (UInt32 i = 0; i < amount; i++)
-        frameSelection.modify(WebCore::FrameSelection::AlterationMove, (WebCore::SelectionDirection)direction, granularity);
+        frameSelection.modify(WebCore::FrameSelection::Alteration::Move, (WebCore::SelectionDirection)direction, granularity);
 
     Position start = frameSelection.selection().start().parentAnchoredEquivalent();
     Position end = frameSelection.selection().end().parentAnchoredEquivalent();
@@ -113,7 +113,7 @@ using WebCore::VisiblePosition;
     frameSelection.setSelection(makeSimpleRange(range));
 
     for (UInt32 i = 0; i < amount; i++)
-        frameSelection.modify(WebCore::FrameSelection::AlterationExtend, (WebCore::SelectionDirection)direction, WebCore::TextGranularity::CharacterGranularity);
+        frameSelection.modify(WebCore::FrameSelection::Alteration::Extend, (WebCore::SelectionDirection)direction, WebCore::TextGranularity::CharacterGranularity);
 
     Position start = frameSelection.selection().start().parentAnchoredEquivalent();
     Position end = frameSelection.selection().end().parentAnchoredEquivalent();

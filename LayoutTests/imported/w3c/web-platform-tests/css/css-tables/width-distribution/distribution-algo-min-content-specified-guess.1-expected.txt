@@ -1,0 +1,10 @@
+Width Distribution
+
+"Distribution Algorithm - min-content-specified guess"
+
+Tests that the size of the column as the spec states that if the cell is constrained then the Spec Text
+
+Cell 2
+
+PASS The box should be 75px due to its min-content size.
+

@@ -45,6 +45,7 @@
 #include "JSDateMath.h"
 #include "JSLock.h"
 #include "JSONAtomStringCache.h"
+#include "KeyAtomStringCache.h"
 #include "Microtask.h"
 #include "NativeFunction.h"
 #include "NumericStrings.h"
@@ -562,6 +563,7 @@ public:
     Ref<StringImpl> lastAtomizedIdentifierStringImpl { *StringImpl::empty() };
     Ref<AtomStringImpl> lastAtomizedIdentifierAtomStringImpl { *static_cast<AtomStringImpl*>(StringImpl::empty()) };
     JSONAtomStringCache jsonAtomStringCache;
+    KeyAtomStringCache keyAtomStringCache;
 
     AtomStringTable* atomStringTable() const { return m_atomStringTable; }
     WTF::SymbolRegistry& symbolRegistry() { return m_symbolRegistry; }

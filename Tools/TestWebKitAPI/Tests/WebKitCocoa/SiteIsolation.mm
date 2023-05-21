@@ -480,7 +480,7 @@ TEST(SiteIsolation, ParentNavigatingCrossOriginIframeToSameOrigin)
     [navigationDelegate allowAnyTLSCertificate];
 
     auto configuration = server.httpsProxyConfiguration();
-    // FIXME: call enableSiteIsolation to make this actually use site isolation.
+    enableSiteIsolation(configuration);
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
     webView.get().navigationDelegate = navigationDelegate.get();
@@ -500,6 +500,17 @@ TEST(SiteIsolation, ParentNavigatingCrossOriginIframeToSameOrigin)
         done = true;
     }];
     Util::run(&done);
+
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s,
+            { { "https://example.com"_s } }
+        },
+        // FIXME: This process should be torn down when the iframe navigates back to example.com.
+        // Its iframe should be transitioned to remote, and the count of local frames going to 0 should remove the SubframePageProxy.
+        { RemoteFrame,
+            { { "https://webkit.org"_s } }
+        },
+    });
 }
 
 TEST(SiteIsolation, IframeNavigatesSelfWithoutChangingOrigin)

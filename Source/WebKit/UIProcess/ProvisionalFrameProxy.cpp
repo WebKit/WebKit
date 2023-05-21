@@ -84,21 +84,4 @@ ProvisionalFrameProxy::~ProvisionalFrameProxy()
     m_process->removeProvisionalFrameProxy(*this);
 }
 
-void ProvisionalFrameProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
-{
-    if (auto* page = m_frame->page())
-        page->didReceiveMessage(connection, decoder);
-}
-
-IPC::Connection* ProvisionalFrameProxy::messageSenderConnection() const
-{
-    return m_process->connection();
-}
-
-uint64_t ProvisionalFrameProxy::messageSenderDestinationID() const
-{
-    // FIXME: This identifier was generated in another process and can collide with identifiers in this frame's process.
-    return m_frame->frameID().object().toUInt64();
-}
-
 }

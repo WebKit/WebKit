@@ -93,7 +93,10 @@ JSString* asString(JSValue);
 // JSRopeString [   ID      ][  header  ][   1st fiber         xyz][  length  ][2nd lower32][2nd upper16][3rd lower16][3rd upper32]
 //                                                               ^
 //                                            x:(is8Bit),y:(isSubstring),z:(isRope) bit flags
-class JSString : public JSCell {
+
+class alignas(16) JSString : public JSCell {
+    WTF_MAKE_NONCOPYABLE(JSString);
+    WTF_MAKE_NONMOVABLE(JSString);
 public:
     friend class JIT;
     friend class VM;
@@ -109,6 +112,8 @@ public:
     // Do we really need InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero?
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=212958
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | StructureIsImmortal | OverridesToThis | OverridesPut;
+
+    static constexpr uint8_t numberOfLowerTierCells = 0;
 
     static constexpr bool needsDestruction = true;
     static ALWAYS_INLINE void destroy(JSCell* cell)
@@ -131,6 +136,8 @@ public:
     static_assert(MaxLength == String::MaxLength);
 
     static constexpr uintptr_t isRopeInPointer = 0x1;
+
+    static constexpr unsigned maxLengthForOnStackResolve = 2048;
 
 private:
     String& uninitializedValueInternal() const
@@ -287,12 +294,17 @@ private:
     friend JSString* jsSubstring(VM&, JSGlobalObject*, JSString*, unsigned, unsigned);
     friend JSString* jsSubstringOfResolved(VM&, GCDeferralContext*, JSString*, unsigned, unsigned);
     friend JSString* jsOwnedString(VM&, const String&);
+    friend JSString* jsAtomString(JSGlobalObject*, VM&, JSString*);
+    friend JSString* jsAtomString(JSGlobalObject*, VM&, JSString*, JSString*);
+    friend JSString* jsAtomString(JSGlobalObject*, VM&, JSString*, JSString*, JSString*);
 };
 
 // NOTE: This class cannot override JSString's destructor. JSString's destructor is called directly
 // from JSStringSubspace::
 class JSRopeString final : public JSString {
     friend class JSString;
+    WTF_MAKE_NONCOPYABLE(JSRopeString);
+    WTF_MAKE_NONMOVABLE(JSRopeString);
 public:
     template<typename, SubspaceAccess>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
@@ -596,7 +608,13 @@ public:
     // The rope value will remain a null string in that case.
     JS_EXPORT_PRIVATE const String& resolveRope(JSGlobalObject* nullOrGlobalObjectForOOM) const;
 
+    template<typename Fibers, typename CharacterType>
+    static void resolveToBuffer(Fibers*, CharacterType* buffer, unsigned length);
+
 private:
+    template<typename Fibers, typename CharacterType>
+    static void resolveToBufferSlow(Fibers*, CharacterType* buffer, unsigned length);
+
     static JSRopeString* create(VM& vm, JSString* s1, JSString* s2)
     {
         JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm)) JSRopeString(vm, s1, s2);
@@ -628,7 +646,6 @@ private:
     template<typename Function> const String& resolveRopeWithFunction(JSGlobalObject* nullOrGlobalObjectForOOM, Function&&) const;
     JS_EXPORT_PRIVATE AtomString resolveRopeToAtomString(JSGlobalObject*) const;
     JS_EXPORT_PRIVATE RefPtr<AtomStringImpl> resolveRopeToExistingAtomString(JSGlobalObject*) const;
-    template<typename CharacterType> NEVER_INLINE void resolveRopeSlowCase(CharacterType*) const;
     template<typename CharacterType> void resolveRopeInternalNoSubstring(CharacterType*) const;
     Identifier toIdentifier(JSGlobalObject*) const;
     void outOfMemory(JSGlobalObject* nullOrGlobalObjectForOOM) const;
@@ -716,6 +733,9 @@ private:
     JS_EXPORT_PRIVATE void iterRope(jsstring_iterator*) const;
     NEVER_INLINE void iterRopeSlowCase(jsstring_iterator*) const;
     void iterRopeInternalNoSubstring(jsstring_iterator*) const;
+    friend JSString* jsAtomString(JSGlobalObject*, VM&, JSString*);
+    friend JSString* jsAtomString(JSGlobalObject*, VM&, JSString*, JSString*);
+    friend JSString* jsAtomString(JSGlobalObject*, VM&, JSString*, JSString*, JSString*);
 };
 
 JS_EXPORT_PRIVATE JSString* jsStringWithCacheSlowCase(VM&, StringImpl&);

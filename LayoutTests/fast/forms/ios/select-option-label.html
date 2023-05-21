@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+    </head>
+<body>
+<select id="select">
+    <option>Option 1 Text</option>
+    <option label="Option 2 Label" value="Option 2 Value"></option>
+    <option label="Option 3 Label">Option 3 Text</option>
+</select>
+</body>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that an option's label attribute is used as the corresponding menu item's title.");
+
+    shouldBeEqualToString("select.value", "Option 1 Text");
+    await UIHelper.activateElement(select);
+
+    items = await UIHelper.selectMenuItems();
+    shouldBeTrue("areArraysEqual(items, " + '["Option 1 Text", "Option 2 Label", "Option 3 Label"]' + ")");
+
+    await UIHelper.selectFormAccessoryPickerRow(1);
+    await UIHelper.waitForContextMenuToHide();
+    shouldBeEqualToString("select.value", "Option 2 Value");
+
+    finishJSTest();
+});
+</script>
+</html>

@@ -43,51 +43,68 @@
 
 namespace WebKit {
 
-RefPtr<RemoteGPUProxy> RemoteGPUProxy::create(Ref<IPC::StreamClientConnection>&& remoteRenderingBackendStreamClientConnection, RenderingBackendIdentifier renderingBackendIdentifier, WebGPU::ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackend)
+RefPtr<RemoteGPUProxy> RemoteGPUProxy::create(GPUProcessConnection& gpuProcessConnection, WebGPU::ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, RenderingBackendIdentifier renderingBackend)
 {
     constexpr size_t connectionBufferSizeLog2 = 21;
     auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(connectionBufferSizeLog2);
     if (!clientConnection)
         return nullptr;
-    auto remoteGPUProxy = adoptRef(new RemoteGPUProxy(WTFMove(remoteRenderingBackendStreamClientConnection), clientConnection.releaseNonNull(), renderingBackendIdentifier, convertToBackingContext, identifier));
+    auto remoteGPUProxy = adoptRef(new RemoteGPUProxy(gpuProcessConnection, clientConnection.releaseNonNull(), convertToBackingContext, identifier));
     remoteGPUProxy->initializeIPC(WTFMove(serverConnectionHandle), renderingBackend);
     return remoteGPUProxy;
 }
 
 
-RemoteGPUProxy::RemoteGPUProxy(Ref<IPC::StreamClientConnection>&& remoteRenderingBackendStreamClientConnection, Ref<IPC::StreamClientConnection>&& streamConnectionForGPU, RenderingBackendIdentifier renderingBackendIdentifier, WebGPU::ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+RemoteGPUProxy::RemoteGPUProxy(GPUProcessConnection& gpuProcessConnection, Ref<IPC::StreamClientConnection> clientConnection, WebGPU::ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
-    , m_remoteRenderingBackendStreamClientConnection(WTFMove(remoteRenderingBackendStreamClientConnection))
-    , m_streamConnectionForGPU(WTFMove(streamConnectionForGPU))
-    , m_renderingBackendIdentifier(renderingBackendIdentifier)
+    , m_gpuProcessConnection(&gpuProcessConnection)
+    , m_streamConnection(WTFMove(clientConnection))
 {
 }
 
 RemoteGPUProxy::~RemoteGPUProxy()
 {
-    m_streamConnectionForGPU->invalidate();
-    m_remoteRenderingBackendStreamClientConnection->send(Messages::RemoteRenderingBackend::ReleaseRemoteGPU(m_backing), m_renderingBackendIdentifier, Seconds::infinity());
-}
-
-void RemoteGPUProxy::didClose(IPC::Connection&)
-{
-    m_lost = true;
+    disconnectGpuProcessIfNeeded();
 }
 
 void RemoteGPUProxy::initializeIPC(IPC::StreamServerConnection::Handle&& serverConnectionHandle, RenderingBackendIdentifier renderingBackend)
 {
-    m_remoteRenderingBackendStreamClientConnection->send(Messages::RemoteRenderingBackend::CreateRemoteGPU(m_backing, WTFMove(serverConnectionHandle)), m_renderingBackendIdentifier, Seconds::infinity());
-    m_streamConnectionForGPU->open(*this);
+    m_gpuProcessConnection->addClient(*this);
+    m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateRemoteGPU(m_backing, renderingBackend, WTFMove(serverConnectionHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    m_streamConnection->open(*this);
     // TODO: We must wait until initialized, because at the moment we cannot receive IPC messages
     // during wait while in synchronous stream send. Should be fixed as part of https://bugs.webkit.org/show_bug.cgi?id=217211.
     waitUntilInitialized();
 }
 
+void RemoteGPUProxy::disconnectGpuProcessIfNeeded()
+{
+    if (m_gpuProcessConnection) {
+        m_streamConnection->invalidate();
+        m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::ReleaseRemoteGPU(m_backing), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+        m_gpuProcessConnection = nullptr;
+    }
+}
+
+void RemoteGPUProxy::gpuProcessConnectionDidClose(GPUProcessConnection& connection)
+{
+    ASSERT(m_gpuProcessConnection);
+    ASSERT(&connection == m_gpuProcessConnection);
+    abandonGPUProcess();
+}
+
+void RemoteGPUProxy::abandonGPUProcess()
+{
+    m_streamConnection->invalidate();
+    m_gpuProcessConnection = nullptr;
+    m_lost = true;
+}
+
 void RemoteGPUProxy::wasCreated(bool didSucceed, IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore)
 {
     ASSERT(!m_didInitialize);
-    m_streamConnectionForGPU->setSemaphores(WTFMove(wakeUpSemaphore), WTFMove(clientWaitSemaphore));
+    m_streamConnection->setSemaphores(WTFMove(wakeUpSemaphore), WTFMove(clientWaitSemaphore));
     m_didInitialize = true;
     m_lost = !didSucceed;
 }
@@ -96,7 +113,7 @@ void RemoteGPUProxy::waitUntilInitialized()
 {
     if (m_didInitialize)
         return;
-    if (m_streamConnectionForGPU->waitForAndDispatchImmediately<Messages::RemoteGPUProxy::WasCreated>(m_backing, defaultSendTimeout))
+    if (m_streamConnection->waitForAndDispatchImmediately<Messages::RemoteGPUProxy::WasCreated>(m_backing, defaultSendTimeout))
         return;
     m_lost = true;
 }

@@ -1,0 +1,41 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/baseline-table.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/baseline-td.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/caption.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/col-collapse-table-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/colgroup-col.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/colspan-redistribution.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/column-widths.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/element-sizing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/position-sticky-container.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/rowspan-height-redistribution.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/section-no-tbody-fixed-distribution-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/section-no-tbody-fixed-distribution.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/section-no-tbody-percent-distribution-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/section-no-tbody-percent-distribution.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/table-fixed-minmax.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/table-height-redistribution.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/table-minmax.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/table-quirks.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/table-width-redistribution-fixed-padding.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/table-width-redistribution-fixed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/table-width-redistribution.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/tbody-height-redistribution.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/td-box-sizing-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/td-box-sizing-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/tentative/td-box-sizing-003.html

@@ -386,41 +386,6 @@ RenderingMode GraphicsContextCairo::renderingMode() const
     return Cairo::State::isAcceleratedContext(*platformContext()) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
 }
 
-void GraphicsContextCairo::drawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& point, FontSmoothingMode fontSmoothing)
-{
-    if (!font.platformData().size())
-        return;
-
-    auto xOffset = point.x();
-    Vector<cairo_glyph_t> cairoGlyphs(numGlyphs);
-    {
-        auto yOffset = point.y();
-        for (size_t i = 0; i < numGlyphs; ++i) {
-            cairoGlyphs[i] = { glyphs[i], xOffset, yOffset };
-            xOffset += advances[i].width();
-            yOffset += advances[i].height();
-        }
-    }
-
-    cairo_scaled_font_t* scaledFont = font.platformData().scaledFont();
-    double syntheticBoldOffset = font.syntheticBoldOffset();
-
-    if (!font.allowsAntialiasing())
-        fontSmoothing = FontSmoothingMode::NoSmoothing;
-
-    auto& state = this->state();
-    Cairo::drawGlyphs(*this, Cairo::FillSource(state), Cairo::StrokeSource(state),
-        Cairo::ShadowState(state), point, scaledFont, syntheticBoldOffset, cairoGlyphs, xOffset,
-        state.textDrawingMode(), state.strokeThickness(), state.dropShadow().offset, state.dropShadow().color,
-        fontSmoothing);
-}
-
-void GraphicsContextCairo::drawDecomposedGlyphs(const Font& font, const DecomposedGlyphs& decomposedGlyphs)
-{
-    auto positionedGlyphs = decomposedGlyphs.positionedGlyphs();
-    return drawGlyphs(font, positionedGlyphs.glyphs.data(), positionedGlyphs.advances.data(), positionedGlyphs.glyphs.size(), positionedGlyphs.localAnchor, positionedGlyphs.smoothingMode);
-}
-
 cairo_t* GraphicsContextCairo::cr() const
 {
     return m_cr.get();

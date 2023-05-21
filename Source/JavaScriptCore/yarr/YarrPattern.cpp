@@ -1239,6 +1239,7 @@ public:
         }
 
         auto newCharacterClass = m_currentCharacterClassConstructor->charClass();
+        m_currentCharacterClassConstructor->reset();
         auto hasStrings = newCharacterClass->hasStrings();
 
         if (!m_invertCharacterClass && newCharacterClass.get()->m_anyCharacter) {

@@ -72,7 +72,8 @@ public:
     void addedToRegistry();
     void removedFromRegistry();
     void openIfInEndedState();
-    bool isOpen() const;
+    void openIfDeferredOpen();
+    virtual bool isOpen() const;
     bool isClosed() const;
     bool isEnded() const;
     void sourceBufferDidChangeActiveState(SourceBuffer&, bool);
@@ -96,7 +97,7 @@ public:
     MediaTime currentTime() const;
 
     enum class ReadyState { Closed, Open, Ended };
-    ReadyState readyState() const { return m_readyState; }
+    ReadyState readyState() const;
     ExceptionOr<void> endOfStream(std::optional<EndOfStreamError>);
 
     HTMLMediaElement* mediaElement() const { return m_mediaElement.get(); }
@@ -179,6 +180,7 @@ private:
     MediaTime m_duration;
     MediaTime m_pendingSeekTime;
     ReadyState m_readyState { ReadyState::Closed };
+    bool m_openDeferred { false };
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier { nullptr };

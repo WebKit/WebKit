@@ -83,6 +83,8 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
     WGSL::Reflection::Compute computeInformation = std::get<WGSL::Reflection::Compute>(entryPointInformation.typedEntryPoint);
 
     auto function = createFunction(library, entryPointInformation, descriptor.compute.constantCount, descriptor.compute.constants, label);
+    if (!function)
+        return ComputePipeline::createInvalid(*this);
 
     MTLComputePipelineReflection *reflection;
     bool hasBindGroups = pipelineLayout.numberOfBindGroupLayouts() > 0;

@@ -611,7 +611,7 @@ private:
 
     void quoteFragmentForPasting(DocumentFragment&);
 
-    void revealSelectionAfterEditingOperation(const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded, RevealExtentOption = DoNotRevealExtent);
+    void revealSelectionAfterEditingOperation(const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded, RevealExtentOption = RevealExtentOption::DoNotRevealExtent);
     std::optional<SimpleRange> markMisspellingsOrBadGrammar(const VisibleSelection&, bool checkSpelling);
     OptionSet<TextCheckingType> resolveTextCheckingTypeMask(const Node& rootEditableElement, OptionSet<TextCheckingType>);
 

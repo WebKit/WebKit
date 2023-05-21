@@ -711,6 +711,9 @@ MediaPlayer::MovieLoadType MediaPlayerPrivateAVFoundation::movieLoadType() const
     if (!metaDataAvailable() || assetStatus() == MediaPlayerAVAssetStatusUnknown)
         return MediaPlayer::MovieLoadType::Unknown;
 
+    if (isHLS())
+        return MediaPlayer::MovieLoadType::HttpLiveStream;
+
     if (isLiveStream())
         return MediaPlayer::MovieLoadType::LiveStream;
 

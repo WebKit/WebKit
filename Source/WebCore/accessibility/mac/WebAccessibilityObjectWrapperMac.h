@@ -116,6 +116,7 @@ extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 #define AXPreviousParagraphStartTextMarkerForTextMarkerAttribute @"AXPreviousParagraphStartTextMarkerForTextMarker"
 
 // Other ranges:
+#define AXDidSpellCheckAttribute @"AXDidSpellCheck"
 #define AXMisspellingTextMarkerRangeAttribute @"AXMisspellingTextMarkerRange"
 #define AXSelectedTextMarkerRangeAttribute @"AXSelectedTextMarkerRange"
 #define AXStyleTextMarkerRangeForTextMarkerAttribute @"AXStyleTextMarkerRangeForTextMarker"

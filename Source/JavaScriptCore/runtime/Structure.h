@@ -785,7 +785,7 @@ public:
     }
     void startWatchingPropertyForReplacements(VM&, PropertyName);
     WatchpointSet* propertyReplacementWatchpointSet(PropertyOffset);
-    JS_EXPORT_PRIVATE WatchpointSet* firePropertyReplacementWatchpointSet(VM&, PropertyOffset, const char* reason);
+    WatchpointSet* firePropertyReplacementWatchpointSet(VM&, PropertyOffset, const char* reason);
 
     void didReplaceProperty(PropertyOffset);
     void didCachePropertyReplacement(VM&, PropertyOffset);
@@ -822,6 +822,8 @@ public:
     DECLARE_EXPORT_INFO;
 
 private:
+    JS_EXPORT_PRIVATE void didReplacePropertySlow(PropertyOffset);
+
     typedef enum { 
         NoneDictionaryKind = 0,
         CachedDictionaryKind = 1,

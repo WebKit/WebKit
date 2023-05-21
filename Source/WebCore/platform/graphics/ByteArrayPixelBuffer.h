@@ -59,7 +59,7 @@ template<class Encoder> void ByteArrayPixelBuffer::encode(Encoder& encoder) cons
 
     encoder << m_format;
     encoder << m_size;
-    encoder << makeSpan(m_data->data(), m_data->byteLength());
+    encoder << std::span(m_data->data(), m_data->byteLength());
 }
 
 template<class Decoder> std::optional<Ref<ByteArrayPixelBuffer>> ByteArrayPixelBuffer::decode(Decoder& decoder)

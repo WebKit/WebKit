@@ -50,9 +50,6 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
     MoveToSerializedBuffer(WebCore::RenderingResourceIdentifier sourceImageBuffer, WebKit::RemoteSerializedImageBufferWriteReference destination)
     MoveToImageBuffer(WebKit::RemoteSerializedImageBufferWriteReference source, WebCore::RenderingResourceIdentifier destinationImageBuffer)
 
-    CreateRemoteGPU(WebKit::WebGPUIdentifier identifier, IPC::StreamServerConnection::Handle serverConnection) AllowedWhenWaitingForSyncReply NotStreamEncodable
-    ReleaseRemoteGPU(WebKit::WebGPUIdentifier identifier) AllowedWhenWaitingForSyncReply
-
     CreateRemoteBarcodeDetector(WebKit::ShapeDetectionIdentifier identifier, WebCore::ShapeDetection::BarcodeDetectorOptions barcodeDetectorOptions) AllowedWhenWaitingForSyncReply
     ReleaseRemoteBarcodeDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply
     GetRemoteBarcodeDetectorSupportedFormats() -> (Vector<WebCore::ShapeDetection::BarcodeFormat> formats) Async

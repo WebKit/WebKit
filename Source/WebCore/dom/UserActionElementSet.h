@@ -55,6 +55,7 @@ public:
     void setHasFocusWithin(Element& element, bool enable) { setFlags(element, enable, Flag::HasFocusWithin); }
 
     void clearActiveAndHovered(Element& element) { clearFlags(element, { Flag::IsActive, Flag::InActiveChain, Flag::IsHovered }); }
+    void clearAllForElement(Element& element) { clearFlags(element, { Flag::IsActive, Flag::InActiveChain, Flag::IsHovered, Flag::IsFocused, Flag::IsBeingDragged, Flag::HasFocusVisible, Flag::HasFocusWithin }); }
 
     void clear();
 

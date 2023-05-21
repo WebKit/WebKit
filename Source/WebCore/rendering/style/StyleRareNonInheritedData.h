@@ -170,6 +170,8 @@ public:
     ScrollSnapAlign scrollSnapAlign;
     ScrollSnapStop scrollSnapStop { ScrollSnapStop::Normal };
 
+    ScrollbarWidth scrollbarWidth { ScrollbarWidth::Auto };
+
     float zoom;
 
     std::optional<Length> blockStepSize;

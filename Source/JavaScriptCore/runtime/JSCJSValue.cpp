@@ -30,6 +30,7 @@
 #include "JSBigInt.h"
 #include "JSCInlines.h"
 #include "NumberObject.h"
+#include "NumberPrototype.h"
 #include "ParseInt.h"
 #include "TypeError.h"
 
@@ -379,14 +380,10 @@ JSString* JSValue::toStringSlowCase(JSGlobalObject* globalObject, bool returnEmp
     };
     
     ASSERT(!isString());
-    if (isInt32()) {
-        auto integer = asInt32();
-        if (static_cast<unsigned>(integer) <= 9)
-            return vm.smallStrings.singleCharacterString(integer + '0');
-        return jsNontrivialString(vm, vm.numericStrings.add(integer));
-    }
+    if (isInt32())
+        return int32ToString(vm, asInt32(), 10);
     if (isDouble())
-        return jsString(vm, vm.numericStrings.add(asDouble()));
+        return JSC::numberToString(vm, asDouble(), 10);
     if (isTrue())
         return vm.smallStrings.trueString();
     if (isFalse())
@@ -396,12 +393,8 @@ JSString* JSValue::toStringSlowCase(JSGlobalObject* globalObject, bool returnEmp
     if (isUndefined())
         return vm.smallStrings.undefinedString();
 #if USE(BIGINT32)
-    if (isBigInt32()) {
-        auto integer = bigInt32AsInt32();
-        if (static_cast<unsigned>(integer) <= 9)
-            return vm.smallStrings.singleCharacterString(integer + '0');
-        return jsNontrivialString(vm, vm.numericStrings.add(integer));
-    }
+    if (isBigInt32())
+        return int32ToString(vm, bigInt32AsInt32(), 10);
 #endif
     JSString* returnString = asCell()->toStringInline(globalObject);
     RETURN_IF_EXCEPTION(scope, errorValue());

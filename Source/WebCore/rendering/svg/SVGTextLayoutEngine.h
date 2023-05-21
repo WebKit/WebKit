@@ -48,7 +48,6 @@ public:
     SVGTextLayoutEngine(Vector<SVGTextLayoutAttributes*>&);
 
     Vector<SVGTextLayoutAttributes*>& layoutAttributes() { return m_layoutAttributes; }
-    SVGTextChunkBuilder& chunkLayoutBuilder() { return m_chunkLayoutBuilder; }
 
     void beginTextPathLayout(RenderSVGTextPath&, SVGTextLayoutEngine& lineLayout);
     void endTextPathLayout();

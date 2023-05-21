@@ -237,6 +237,7 @@ public:
     unsigned maxNodeCount() const { return m_nodes.size(); }
     Node* nodeAt(unsigned index) const { return m_nodes[index]; }
     void packNodeIndices();
+    void clearAbstractValues();
 
     void dethread();
     

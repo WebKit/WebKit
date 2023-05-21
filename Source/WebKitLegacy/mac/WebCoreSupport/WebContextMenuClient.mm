@@ -217,7 +217,7 @@ RetainPtr<NSImage> WebContextMenuClient::imageForCurrentSharingServicePickerItem
         return nil;
 
     auto oldSelection = localFrame->selection().selection();
-    localFrame->selection().setSelection(*makeRangeSelectingNode(*node), FrameSelection::DoNotSetFocus);
+    localFrame->selection().setSelection(*makeRangeSelectingNode(*node), FrameSelection::SetSelectionOption::DoNotSetFocus);
 
     auto oldPaintBehavior = frameView->paintBehavior();
     frameView->setPaintBehavior(PaintBehavior::SelectionOnly);

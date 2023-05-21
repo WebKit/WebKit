@@ -663,11 +663,6 @@ SMILTime SVGSMILElement::elapsed() const
     return m_timeContainer ? m_timeContainer->elapsed() : 0;
 }
 
-bool SVGSMILElement::isInactive() const
-{
-     return m_activeState == Inactive;
-}
-
 bool SVGSMILElement::isFrozen() const
 {
     return m_activeState == Frozen;

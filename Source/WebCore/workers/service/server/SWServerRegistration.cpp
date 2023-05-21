@@ -199,11 +199,10 @@ void SWServerRegistration::removeClientUsingRegistration(const ScriptExecutionCo
 // https://w3c.github.io/ServiceWorker/#notify-controller-change
 void SWServerRegistration::notifyClientsOfControllerChange()
 {
-    ASSERT(activeWorker());
-
+    std::optional<ServiceWorkerData> newController = activeWorker() ? std::optional { activeWorker()->data() } : std::nullopt;
     for (auto& item : m_clientsUsingRegistration) {
         if (auto* connection = m_server.connection(item.key))
-            connection->notifyClientsOfControllerChange(item.value, activeWorker()->data());
+            connection->notifyClientsOfControllerChange(item.value, newController);
     }
 }
 
@@ -262,6 +261,8 @@ void SWServerRegistration::clear()
     if (activeWorker)
         updateWorkerState(*activeWorker, ServiceWorkerState::Redundant);
 
+    notifyClientsOfControllerChange();
+
     // Remove scope to registration map[scopeString].
     m_server.removeRegistration(identifier());
 }
@@ -315,11 +316,10 @@ void SWServerRegistration::activate()
     // - Invoke Notify Controller Change algorithm with client as the argument.
     notifyClientsOfControllerChange();
 
-    // FIXME: Invoke Run Service Worker algorithm with activeWorker as the argument.
-
+    // Invoke Run Service Worker algorithm with activeWorker as the argument.
     // Queue a task to fire the activate event.
     ASSERT(activeWorker());
-    m_server.fireActivateEvent(*activeWorker());
+    m_server.runServiceWorkerAndFireActivateEvent(*activeWorker());
 }
 
 // https://w3c.github.io/ServiceWorker/#activate (post activate event steps).

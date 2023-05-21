@@ -221,6 +221,21 @@ String JSFunction::name(VM& vm)
     return identifier.string();
 }
 
+String JSFunction::nameWithoutGC(VM& vm)
+{
+    DisallowGC disallowGC;
+    if (isHostFunction()) {
+        if (this->inherits<JSBoundFunction>())
+            return jsCast<JSBoundFunction*>(this)->nameStringWithoutGC(vm);
+        NativeExecutable* executable = jsCast<NativeExecutable*>(this->executable());
+        return executable->name();
+    }
+    const Identifier identifier = jsExecutable()->name();
+    if (identifier == vm.propertyNames->starDefaultPrivateName)
+        return emptyString();
+    return identifier.string();
+}
+
 String JSFunction::displayName(VM& vm)
 {
     JSValue displayName = getDirect(vm, vm.propertyNames->displayName);
@@ -505,7 +520,7 @@ String getCalculatedDisplayName(VM& vm, JSObject* object)
     }
 
     if (auto* function = jsDynamicCast<JSFunction*>(object)) {
-        const String actualName = function->name(vm);
+        String actualName = function->nameWithoutGC(vm);
         if (!actualName.isEmpty() || function->isHostOrBuiltinFunction())
             return actualName;
 
@@ -513,7 +528,6 @@ String getCalculatedDisplayName(VM& vm, JSObject* object)
     }
     if (auto* function = jsDynamicCast<InternalFunction*>(object))
         return function->name();
-
 
     return emptyString();
 }

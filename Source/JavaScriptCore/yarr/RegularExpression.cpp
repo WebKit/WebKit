@@ -50,7 +50,7 @@ private:
 
     std::unique_ptr<BytecodePattern> compile(StringView patternString, OptionSet<Flags> flags)
     {
-        ASSERT(!(flags - OptionSet<Flags> { Flags::IgnoreCase, Flags::Multiline, Flags::Unicode }));
+        ASSERT(!(flags - OptionSet<Flags> { Flags::IgnoreCase, Flags::Multiline, Flags::UnicodeSets }));
 
         YarrPattern pattern(patternString, flags, m_constructionErrorCode);
         if (hasError(m_constructionErrorCode)) {

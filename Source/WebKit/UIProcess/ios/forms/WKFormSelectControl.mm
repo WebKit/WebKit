@@ -121,6 +121,13 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSiz
         && [id<WKSelectTesting>(self.control) selectFormAccessoryHasCheckedItemAtRow:rowIndex];
 }
 
+- (NSArray<NSString *> *)menuItemTitles
+{
+    if ([self.control respondsToSelector:@selector(menuItemTitles)])
+        return [id<WKSelectTesting>(self.control) menuItemTitles];
+    return nil;
+}
+
 @end
 
 #endif  // PLATFORM(IOS_FAMILY)

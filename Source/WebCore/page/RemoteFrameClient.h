@@ -39,6 +39,7 @@ public:
     virtual void frameDetached() = 0;
     virtual void sizeDidChange(IntSize) = 0;
     virtual void postMessageToRemote(ProcessIdentifier, FrameIdentifier, std::optional<SecurityOriginData>, const MessageWithMessagePorts&) = 0;
+    virtual void changeLocation(WebCore::FrameLoadRequest&&) = 0;
     virtual ~RemoteFrameClient() { }
 };
 

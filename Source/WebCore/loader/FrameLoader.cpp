@@ -67,7 +67,6 @@
 #include "FormState.h"
 #include "FormSubmission.h"
 #include "FrameLoadRequest.h"
-#include "FrameLoaderClient.h"
 #include "FrameNetworkingContext.h"
 #include "FrameTree.h"
 #include "GCController.h"
@@ -88,6 +87,7 @@
 #include "LoaderStrategy.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "LocalFrameLoaderClient.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "MemoryCache.h"
@@ -314,7 +314,7 @@ private:
     bool m_inProgress;
 };
 
-FrameLoader::FrameLoader(LocalFrame& frame, UniqueRef<FrameLoaderClient>&& client)
+FrameLoader::FrameLoader(LocalFrame& frame, UniqueRef<LocalFrameLoaderClient>&& client)
     : m_frame(frame)
     , m_client(WTFMove(client))
     , m_policyChecker(makeUnique<PolicyChecker>(frame))
@@ -1228,7 +1228,7 @@ void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stat
         && !m_frame.document()->securityOrigin().isSameOriginAs(parentFrame->document()->securityOrigin()))
         m_frame.ownerElement()->dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
-    // FrameLoaderClient::didFinishLoad() tells the internal load delegate the load finished with no error
+    // LocalFrameLoaderClient::didFinishLoad() tells the internal load delegate the load finished with no error
     m_client->didFinishLoad();
 }
 
@@ -4332,7 +4332,7 @@ void FrameLoader::clearTestingOverrides()
     m_isStrictRawResourceValidationPolicyDisabledForTesting = false;
 }
 
-bool FrameLoaderClient::hasHTMLView() const
+bool LocalFrameLoaderClient::hasHTMLView() const
 {
     return true;
 }

@@ -43,8 +43,7 @@
 
     z-index: var(--z-index-header);
 
-    --find-banner-outer-child-margin: 8px;
-    --find-banner-input-margin-start: 6px;
+    --find-banner-inline-space: 6px;
 }
 
 .find-banner.showing {
@@ -67,14 +66,6 @@
     transition-timing-function: ease-out;
 }
 
-.find-banner > :first-child {
-    margin-inline-start: var(--find-banner-outer-child-margin) !important;
-}
-
-.find-banner > :last-child {
-    margin-inline-end: var(--find-banner-outer-child-margin) !important;
-}
-
 .find-banner > input[type="search"] {
     width: 30vw;
     min-width: 143px;
@@ -82,7 +73,7 @@
     height: 19px;
     margin-top: 1px;
     margin-bottom: 1px;
-    margin-inline: var(--find-banner-input-margin-start) -1px;
+    margin-inline: 0 -1px;
     vertical-align: top;
     background-color: white;
     border: 1px solid var(--border-color);
@@ -110,7 +101,7 @@ body[dir=rtl] .find-banner > input[type="search"] {
 .find-banner > button {
     margin: 1px 4px;
 
-    padding-inline: 6px;
+    padding-inline: var(--find-banner-inline-space);
 
     appearance: none;
 
@@ -208,7 +199,7 @@ body[dir=rtl] .find-banner > button.segmented.next-result:active:not(:disabled) 
 
 .find-banner > button.segmented {
     min-width: 22px;
-    padding: 3px 6px 2px;
+    padding: 3px var(--find-banner-inline-space) 2px;
 }
 
 .find-banner > button.segmented > .glyph {
@@ -217,57 +208,11 @@ body[dir=rtl] .find-banner > button.segmented.next-result:active:not(:disabled) 
 }
 
 .find-banner > label {
-    margin: 0 6px;
     line-height: 21px;
 }
 
-.find-banner.console-find-banner {
-    position: relative;
-    top: auto;
-    border: 0;
-}
-
-body .find-banner.console-find-banner {
-    flex-wrap: nowrap;
-}
-
-.find-banner.console-find-banner > input[type="search"] {
-    padding-top: 0;
-    outline: none;
-    border: 1px solid var(--border-color);
-
-    --console-find-banner-search-box-border-radius-start: 3px;
-    --console-find-banner-search-box-border-radius-end: 0;
-}
-
-body[dir=ltr] .find-banner.console-find-banner > input[type="search"] {
-    border-top-left-radius: var(--console-find-banner-search-box-border-radius-start);
-    border-bottom-left-radius: var(--console-find-banner-search-box-border-radius-start);
-    border-top-right-radius: var(--console-find-banner-search-box-border-radius-end);
-    border-bottom-right-radius: var(--console-find-banner-search-box-border-radius-end);
-}
-
-body[dir=rtl] .find-banner.console-find-banner > input[type="search"] {
-    border-top-left-radius: var(--console-find-banner-search-box-border-radius-end);
-    border-bottom-left-radius: var(--console-find-banner-search-box-border-radius-end);
-    border-top-right-radius: var(--console-find-banner-search-box-border-radius-start);
-    border-bottom-right-radius: var(--console-find-banner-search-box-border-radius-start);
-}
-
-.find-banner.console-find-banner > :is(input[type="search"], button) {
-    background-color: inherit;
-    height: 22px;
-}
-
-.find-banner.console-find-banner > input[type="search"]::-webkit-textfield-decoration-container {
-    margin-inline-start: 4px;
-}
-
-.find-banner.console-find-banner > input[type="search"]:focus,
-.find-banner.console-find-banner > input[type="search"]:focus ~ button,
-.find-banner.console-find-banner > input[type="search"]:not(:placeholder-shown),
-.find-banner.console-find-banner > input[type="search"]:not(:placeholder-shown) ~ button {
-    background-color: var(--background-color);
+.find-banner > label:not(:empty) {
+    margin-inline-end: var(--find-banner-inline-space);
 }
 
 @media (prefers-color-scheme: dark) {

@@ -722,7 +722,7 @@ private:
 
             case PutByVal:
             case PutByValMegamorphic: {
-                if (m_graph.child(node, 0).useKind() == CellUse) {
+                if ((m_graph.child(node, 0).useKind() == CellUse && m_graph.child(node, 1).useKind() == StringUse) && node->arrayMode().modeForPut().type() == Array::Generic) {
                     AbstractValue& property = m_state.forNode(m_graph.child(node, 1));
                     if (JSValue constant = property.value()) {
                         if (constant.isString()) {
@@ -733,6 +733,7 @@ private:
                                 m_graph.freezeStrong(string);
                                 m_graph.identifiers().ensure(const_cast<UniquedStringImpl*>(static_cast<const UniquedStringImpl*>(impl)));
                                 m_insertionSet.insertCheck(indexInBlock, node->origin, m_graph.child(node, 0));
+                                m_insertionSet.insertCheck(indexInBlock, node->origin, m_graph.child(node, 1));
                                 node->convertToPutByIdMaybeMegamorphic(m_graph, CacheableIdentifier::createFromCell(string));
                                 changed = true;
                                 break;
@@ -1098,7 +1099,8 @@ private:
                 FALLTHROUGH;
             }
 
-            case MakeRope: {
+            case MakeRope:
+            case MakeAtomString: {
                 for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
                     Edge& edge = node->children.child(i);
                     if (!edge)
@@ -1121,8 +1123,10 @@ private:
 
                 if (!node->child2()) {
                     ASSERT(!node->child3());
-                    node->convertToIdentity();
-                    changed = true;
+                    if (node->op() != MakeAtomString) {
+                        node->convertToIdentity();
+                        changed = true;
+                    }
                 }
                 break;
             }

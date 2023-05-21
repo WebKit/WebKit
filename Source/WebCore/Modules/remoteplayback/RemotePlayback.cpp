@@ -94,9 +94,7 @@ void RemotePlayback::watchAvailability(Ref<RemotePlaybackAvailabilityCallback>&&
 
         // 3. If the disableRemotePlayback attribute is present for the media element, reject the promise with
         //    InvalidStateError and abort all the remaining steps.
-        if (!m_mediaElement
-            || m_mediaElement->hasAttributeWithoutSynchronization(HTMLNames::webkitwirelessvideoplaybackdisabledAttr)
-            || m_mediaElement->hasAttributeWithoutSynchronization(HTMLNames::disableremoteplaybackAttr)) {
+        if (!m_mediaElement || m_mediaElement->isWirelessPlaybackTargetDisabled()) {
             ERROR_LOG(identifier, "promise rejected, remote playback disabled");
             promise->reject(InvalidStateError);
             return;
@@ -156,9 +154,7 @@ void RemotePlayback::cancelWatchAvailability(std::optional<int32_t> id, Ref<Defe
             return;
         // 3. If the disableRemotePlayback attribute is present for the media element, reject promise with
         //    InvalidStateError and abort all the remaining steps.
-        if (!m_mediaElement
-            || m_mediaElement->hasAttributeWithoutSynchronization(HTMLNames::webkitwirelessvideoplaybackdisabledAttr)
-            || m_mediaElement->hasAttributeWithoutSynchronization(HTMLNames::disableremoteplaybackAttr)) {
+        if (!m_mediaElement || m_mediaElement->isWirelessPlaybackTargetDisabled()) {
             ERROR_LOG(identifier, "promise rejected, remote playback disabled");
             promise->reject(InvalidStateError);
             return;
@@ -207,9 +203,7 @@ void RemotePlayback::prompt(Ref<DeferredPromise>&& promise)
 
         // 3. If the disableRemotePlayback attribute is present for the media element, reject the promise with
         //    InvalidStateError and abort all the remaining steps.
-        if (!m_mediaElement
-            || m_mediaElement->hasAttributeWithoutSynchronization(HTMLNames::webkitwirelessvideoplaybackdisabledAttr)
-            || m_mediaElement->hasAttributeWithoutSynchronization(HTMLNames::disableremoteplaybackAttr)) {
+        if (!m_mediaElement || m_mediaElement->isWirelessPlaybackTargetDisabled()) {
             ERROR_LOG(identifier, "promise rejected, remote playback disabled");
             promise->reject(InvalidStateError);
             return;

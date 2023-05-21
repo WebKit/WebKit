@@ -1,0 +1,3 @@
+
+PASS Send binary data on a WebSocket - Blob - Connection should be closed
+

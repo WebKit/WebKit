@@ -182,6 +182,7 @@ enum class Resize : uint8_t;
 enum class RubyPosition : uint8_t;
 enum class SVGPaintType : uint8_t;
 enum class ScrollSnapStop : bool;
+enum class ScrollbarWidth : uint8_t;
 enum class SpeakAs : uint8_t;
 enum class StyleAppearance : uint8_t;
 enum class StyleDifference : uint8_t;
@@ -288,7 +289,7 @@ public:
 
     static RenderStyle& defaultStyle();
 
-    static RenderStyle create();
+    WEBCORE_EXPORT static RenderStyle create();
     static std::unique_ptr<RenderStyle> createPtr();
     static std::unique_ptr<RenderStyle> createPtrWithRegisteredInitialValues(const Style::CustomPropertyRegistry&);
 
@@ -962,6 +963,8 @@ public:
     const ScrollSnapAlign& scrollSnapAlign() const;
     ScrollSnapStop scrollSnapStop() const;
 
+    ScrollbarWidth scrollbarWidth() const;
+
 #if ENABLE(TOUCH_EVENTS)
     inline StyleColor tapHighlightColor() const;
 #endif
@@ -1159,7 +1162,7 @@ public:
     void setClear(Clear v) { m_nonInheritedFlags.clear = static_cast<unsigned>(v); }
     void setTableLayout(TableLayoutType v) { m_nonInheritedFlags.tableLayout = static_cast<unsigned>(v); }
 
-    bool setFontDescription(FontCascadeDescription&&);
+    WEBCORE_EXPORT bool setFontDescription(FontCascadeDescription&&);
 
     // Only used for blending font sizes when animating, for MathML anonymous blocks, and for text autosizing.
     void setFontSize(float);
@@ -1505,6 +1508,8 @@ public:
     void setScrollSnapType(ScrollSnapType);
     void setScrollSnapAlign(const ScrollSnapAlign&);
     void setScrollSnapStop(ScrollSnapStop);
+
+    void setScrollbarWidth(ScrollbarWidth);
 
 #if ENABLE(TOUCH_EVENTS)
     inline void setTapHighlightColor(const StyleColor&);
@@ -1935,6 +1940,8 @@ public:
     static ScrollSnapType initialScrollSnapType();
     static ScrollSnapAlign initialScrollSnapAlign();
     static ScrollSnapStop initialScrollSnapStop();
+
+    static ScrollbarWidth initialScrollbarWidth();
 
 #if ENABLE(APPLE_PAY)
     static constexpr ApplePayButtonStyle initialApplePayButtonStyle();

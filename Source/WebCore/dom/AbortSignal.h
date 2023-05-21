@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include <wtf/Function.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakListHashSet.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -47,6 +48,7 @@ public:
 
     static Ref<AbortSignal> abort(JSDOMGlobalObject&, ScriptExecutionContext&, JSC::JSValue reason);
     static Ref<AbortSignal> timeout(ScriptExecutionContext&, uint64_t milliseconds);
+    static Ref<AbortSignal> any(ScriptExecutionContext&, const Vector<RefPtr<AbortSignal>>&);
 
     static uint32_t addAbortAlgorithmToSignal(AbortSignal&, Ref<AbortAlgorithm>&&);
     static void removeAbortAlgorithmFromSignal(AbortSignal&, uint32_t algorithmIdentifier);
@@ -71,11 +73,20 @@ public:
 
     void throwIfAborted(JSC::JSGlobalObject&);
 
+    using AbortSignalSet = WeakListHashSet<AbortSignal, WeakPtrImplWithEventTargetData>;
+    const AbortSignalSet& sourceSignals() const { return m_sourceSignals; }
+    AbortSignalSet& sourceSignals() { return m_sourceSignals; }
+
 private:
     enum class Aborted : bool { No, Yes };
     explicit AbortSignal(ScriptExecutionContext*, Aborted = Aborted::No, JSC::JSValue reason = JSC::jsUndefined());
 
     void setHasActiveTimeoutTimer(bool hasActiveTimeoutTimer) { m_hasActiveTimeoutTimer = hasActiveTimeoutTimer; }
+
+    bool isDependent() const { return m_isDependent; }
+    void markAsDependent() { m_isDependent = true; }
+    void addSourceSignal(AbortSignal&);
+    void addDependentSignal(AbortSignal&);
 
     // EventTarget.
     EventTargetInterface eventTargetInterface() const final { return AbortSignalEventTargetInterfaceType; }
@@ -86,11 +97,14 @@ private:
     
     Vector<std::pair<uint32_t, Algorithm>> m_algorithms;
     WeakPtr<AbortSignal, WeakPtrImplWithEventTargetData> m_followingSignal;
+    AbortSignalSet m_sourceSignals;
+    AbortSignalSet m_dependentSignals;
     JSValueInWrappedObject m_reason;
     uint32_t m_algorithmIdentifier { 0 };
     bool m_aborted { false };
     bool m_hasActiveTimeoutTimer { false };
     bool m_hasAbortEventListener { false };
+    bool m_isDependent { false };
 };
 
 WebCoreOpaqueRoot root(AbortSignal*);

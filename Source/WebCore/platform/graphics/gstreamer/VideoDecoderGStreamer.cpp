@@ -48,7 +48,7 @@ public:
     ~GStreamerInternalVideoDecoder() = default;
 
     void postTask(Function<void()>&& task) { m_postTaskCallback(WTFMove(task)); }
-    void decode(Span<const uint8_t>, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration,  VideoDecoder::DecodeCallback&&);
+    void decode(std::span<const uint8_t>, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration,  VideoDecoder::DecodeCallback&&);
     void flush(Function<void()>&&);
     void close() { m_isClosed = true; }
 
@@ -179,7 +179,7 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
     m_harness->start(WTFMove(inputCaps));
 }
 
-void GStreamerInternalVideoDecoder::decode(Span<const uint8_t> frameData, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration, VideoDecoder::DecodeCallback&& callback)
+void GStreamerInternalVideoDecoder::decode(std::span<const uint8_t> frameData, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration, VideoDecoder::DecodeCallback&& callback)
 {
     GST_DEBUG_OBJECT(m_harness->element(), "Decoding%s frame", isKeyFrame ? " key" : "");
 

@@ -1,0 +1,3 @@
+
+PASS Create WebSocket - Close the Connection - readyState should be in CLOSING state just before onclose is called
+

@@ -522,7 +522,7 @@ void RemoteDisplayListRecorder::transformToColorSpace(const WebCore::Destination
 #if ENABLE(VIDEO)
 void RemoteDisplayListRecorder::paintFrameForMedia(MediaPlayerIdentifier identifier, const FloatRect& destination)
 {
-    m_renderingBackend->performWithMediaPlayerOnMainThread(identifier, [imageBuffer = RefPtr { m_imageBuffer.get() }, destination](MediaPlayer& player) {
+    m_renderingBackend->gpuConnectionToWebProcess().performWithMediaPlayerOnMainThread(identifier, [imageBuffer = RefPtr { m_imageBuffer.get() }, destination](MediaPlayer& player) {
         // It is currently not safe to call paintFrameForMedia() off the main thread.
         imageBuffer->context().paintFrameForMedia(player, destination);
     });

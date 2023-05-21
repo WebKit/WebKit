@@ -30,9 +30,9 @@
 
 #import "DocumentLoader.h"
 #import "FrameLoader.h"
-#import "FrameLoaderClient.h"
 #import "LegacyPreviewLoaderClient.h"
 #import "LocalFrame.h"
+#import "LocalFrameLoaderClient.h"
 #import "Logging.h"
 #import "PreviewConverter.h"
 #import "QuickLook.h"

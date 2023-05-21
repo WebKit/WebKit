@@ -52,6 +52,7 @@
 #include <WebCore/UniqueIDBDatabaseConnection.h>
 #include <WebCore/UniqueIDBDatabaseTransaction.h>
 #include <pal/crypto/CryptoDigest.h>
+#include <wtf/Span.h>
 #include <wtf/SuspendableWorkQueue.h>
 #include <wtf/text/Base64.h>
 
@@ -258,6 +259,8 @@ void NetworkStorageManager::close(CompletionHandler<void()>&& completionHandler)
 
         m_originStorageManagers.clear();
         m_fileSystemStorageHandleRegistry = nullptr;
+        for (auto&& completionHandler : std::exchange(m_persistCompletionHandlers, { }))
+            completionHandler.second(false);
 
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler();
@@ -614,6 +617,55 @@ void NetworkStorageManager::persisted(const WebCore::ClientOrigin& origin, Compl
     completionHandler(persistedInternal(origin));
 }
 
+void NetworkStorageManager::fetchRegistrableDomainsForPersist()
+{
+    ASSERT(RunLoop::isMain());
+
+    if (!m_process)
+        return didFetchRegistrableDomainsForPersist({ });
+
+    m_process->registrableDomainsExemptFromWebsiteDataDeletion(m_sessionID, [weakThis = ThreadSafeWeakPtr { *this }](auto&& domains) mutable {
+        if (auto strongThis = weakThis.get())
+            strongThis->didFetchRegistrableDomainsForPersist(WTFMove(domains));
+    });
+}
+
+void NetworkStorageManager::didFetchRegistrableDomainsForPersist(HashSet<WebCore::RegistrableDomain>&& domains)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (m_closed)
+        return;
+
+    m_queue->dispatch([this, weakThis = ThreadSafeWeakPtr { *this }, domains = crossThreadCopy(WTFMove(domains))]() mutable {
+        assertIsCurrent(workQueue());
+
+        auto strongThis = weakThis.get();
+        if (!strongThis)
+            return;
+
+        m_domainsExemptFromEviction = WTFMove(domains);
+        for (auto&& [origin, completionHandler] : std::exchange(m_persistCompletionHandlers, { }))
+            completionHandler(persistOrigin(origin));
+    });
+}
+
+bool NetworkStorageManager::persistOrigin(const WebCore::ClientOrigin& origin)
+{
+    assertIsCurrent(workQueue());
+    ASSERT(m_domainsExemptFromEviction);
+
+    if (!m_domainsExemptFromEviction->contains(origin.clientRegistrableDomain())) {
+        auto persistedFile = persistedFilePath(origin);
+        if (!persistedFile.isEmpty())
+            FileSystem::deleteFile(persistedFile);
+        return false;
+    }
+
+    FileSystem::overwriteEntireFile(persistedFilePath(origin), Span<uint8_t> { });
+    return true;
+}
+
 void NetworkStorageManager::persist(const WebCore::ClientOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
@@ -624,8 +676,14 @@ void NetworkStorageManager::persist(const WebCore::ClientOrigin& origin, Complet
     if (persistedFilePath(origin).isEmpty())
         return completionHandler(false);
 
-    // FIXME: add heuristics to decide if origin can be persisted and write persited file if it can.
-    return completionHandler(false);
+    if (m_domainsExemptFromEviction)
+        return completionHandler(persistOrigin(origin));
+
+    m_persistCompletionHandlers.append({ origin, WTFMove(completionHandler) });
+    RunLoop::main().dispatch([weakThis = ThreadSafeWeakPtr { *this }]() mutable {
+        if (auto strongThis = weakThis.get())
+            strongThis->fetchRegistrableDomainsForPersist();
+    });
 }
 
 void NetworkStorageManager::estimate(const WebCore::ClientOrigin& origin, CompletionHandler<void(std::optional<WebCore::StorageEstimate>)>&& completionHandler)

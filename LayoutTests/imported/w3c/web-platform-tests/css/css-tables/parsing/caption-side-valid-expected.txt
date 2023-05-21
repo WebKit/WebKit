@@ -1,0 +1,4 @@
+
+PASS e.style['caption-side'] = "top" should set the property value
+PASS e.style['caption-side'] = "bottom" should set the property value
+

@@ -40,11 +40,11 @@ bool BaseTextInputType::patternMismatch(const String& value) const
     // FIXME: We should execute RegExp parser first to check validity instead of creating an actual RegularExpression.
     // https://bugs.webkit.org/show_bug.cgi?id=183361
     const AtomString& rawPattern = element()->attributeWithoutSynchronization(patternAttr);
-    if (rawPattern.isNull() || value.isEmpty() || !JSC::Yarr::RegularExpression(rawPattern, { JSC::Yarr::Flags::Unicode }).isValid())
+    if (rawPattern.isNull() || value.isEmpty() || !JSC::Yarr::RegularExpression(rawPattern, { JSC::Yarr::Flags::UnicodeSets }).isValid())
         return false;
 
     String pattern = makeString("^(?:", rawPattern, ")$");
-    JSC::Yarr::RegularExpression regex(pattern, { JSC::Yarr::Flags::Unicode });
+    JSC::Yarr::RegularExpression regex(pattern, { JSC::Yarr::Flags::UnicodeSets });
     auto valuePatternMismatch = [&regex](auto& value) {
         int matchLength = 0;
         int valueLength = value.length();

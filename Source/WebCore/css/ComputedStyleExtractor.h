@@ -20,8 +20,8 @@
 
 #pragma once
 
+#include <span>
 #include <wtf/RefPtr.h>
-#include <wtf/Span.h>
 
 namespace WebCore {
 

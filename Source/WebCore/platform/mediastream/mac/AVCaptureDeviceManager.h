@@ -50,7 +50,7 @@ class AVCaptureDeviceManager final : public CaptureDeviceManager {
 public:
     static AVCaptureDeviceManager& singleton();
 
-    void refreshCaptureDevices(CompletionHandler<void()>&& = [] { });
+    void refreshCaptureDevices() { refreshCaptureDevicesInternal([] { }, ShouldSetUserPreferredCamera::No); };
 
 private:
     static bool isAvailable();
@@ -65,6 +65,10 @@ private:
     void updateCachedAVCaptureDevices();
     Vector<CaptureDevice> retrieveCaptureDevices();
     RetainPtr<NSArray> currentCameras();
+
+    enum class ShouldSetUserPreferredCamera : bool { No, Yes };
+    void refreshCaptureDevicesInternal(CompletionHandler<void()>&&, ShouldSetUserPreferredCamera);
+    void setUserPreferredCamera();
 
     RetainPtr<WebCoreAVCaptureDeviceManagerObserver> m_objcObserver;
     Vector<CaptureDevice> m_devices;

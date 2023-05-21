@@ -54,13 +54,13 @@
 #include "EmptyBadgeClient.h"
 #include "EmptyFrameLoaderClient.h"
 #include "FormState.h"
-#include "FrameLoaderClient.h"
 #include "FrameNetworkingContext.h"
 #include "HTMLFormElement.h"
 #include "HistoryItem.h"
 #include "IDBConnectionToServer.h"
 #include "InspectorClient.h"
 #include "LocalFrame.h"
+#include "LocalFrameLoaderClient.h"
 #include "MediaRecorderPrivate.h"
 #include "MediaRecorderProvider.h"
 #include "ModalContainerTypes.h"
@@ -1193,7 +1193,7 @@ PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier
         adoptRef(*new EmptyBackForwardClient),
         CookieJar::create(adoptRef(*new EmptyStorageSessionProvider)),
         makeUniqueRef<EmptyProgressTrackerClient>(),
-        UniqueRef<FrameLoaderClient>(makeUniqueRef<EmptyFrameLoaderClient>()),
+        UniqueRef<LocalFrameLoaderClient>(makeUniqueRef<EmptyFrameLoaderClient>()),
         FrameIdentifier::generate(),
         makeUniqueRef<DummySpeechRecognitionProvider>(),
         makeUniqueRef<EmptyMediaRecorderProvider>(),

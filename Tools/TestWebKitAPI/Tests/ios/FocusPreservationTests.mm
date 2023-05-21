@@ -74,6 +74,24 @@ TEST(FocusPreservationTests, PreserveAndRestoreFocus)
     EXPECT_TRUE([webView becomeFirstResponder]);
 }
 
+TEST(FocusPreservationTests, UserCanDismissInputViewRegardlessOfFocusPreservationCount)
+{
+    bool inputFocused = false;
+    auto [webView, delegate] = webViewForTestingFocusPreservation([&inputFocused] (id<_WKFocusedElementInfo>) {
+        inputFocused = true;
+    });
+
+    [webView evaluateJavaScript:@"document.querySelector('input').focus()" completionHandler:nil];
+    Util::run(&inputFocused);
+
+    [[webView textInputContentView] _preserveFocusWithToken:NSUUID.UUID destructively:YES];
+    // Simulates a user tapping on the Done button above the keyboard.
+    [webView dismissFormAccessoryView];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"document.activeElement == document.querySelector('input')"] boolValue]);
+}
+
 // FIXME: Re-enable this test once rdar://60644908 is resolved
 TEST(FocusPreservationTests, DISABLED_ChangingFocusedNodeResetsFocusPreservationState)
 {

@@ -28,7 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "BackgroundFetch.h"
-#include <wtf/Span.h>
+#include <span>
 
 namespace WebCore {
 

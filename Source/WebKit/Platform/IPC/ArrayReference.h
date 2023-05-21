@@ -26,11 +26,11 @@
 #pragma once
 
 #include <limits>
-#include <wtf/Span.h>
+#include <span>
 #include <wtf/Vector.h>
 
 namespace IPC {
 
-template <typename T, size_t Extent = WTF::dynamic_extent> using ArrayReference = std::span<const T, Extent>;
+template <typename T, size_t Extent = std::dynamic_extent> using ArrayReference = std::span<const T, Extent>;
 
 } // namespace IPC

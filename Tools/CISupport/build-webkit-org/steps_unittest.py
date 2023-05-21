@@ -523,6 +523,7 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tearDownBuildStep()
 
+    @defer.inlineCallbacks
     def test_success(self):
         self.setupStep(ShowIdentifier())
         self.setProperty('got_revision', 'd3f2b739b65eda1eeb651991a3554dfaeebdfe0b')
@@ -531,13 +532,13 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
                         timeout=600,
                         logEnviron=False,
                         command=['python3', 'Tools/Scripts/git-webkit', 'find', 'd3f2b739b65eda1eeb651991a3554dfaeebdfe0b']) +
-            ExpectShell.log('stdio', stdout='Identifier: 233939@main') +
+            ExpectShell.log('stdio', stdout='Identifier: 233939@main\n') +
             0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Identifier: 233939@main')
-        rc = self.runStep()
+        rc = yield self.runStep()
         self.assertEqual(self.getProperty('identifier'), '233939@main')
-        return rc
+        defer.returnValue(rc)
 
     def test_failure(self):
         self.setupStep(ShowIdentifier())

@@ -857,7 +857,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/css/CSSFontPaletteValuesRule.idl \
     $(WebCore)/css/CSSGroupingRule.idl \
     $(WebCore)/css/CSSImportRule.idl \
-    $(WebCore)/css/CSSImportRule+Layer.idl \
     $(WebCore)/css/CSSLayerBlockRule.idl \
     $(WebCore)/css/CSSLayerStatementRule.idl \
     $(WebCore)/css/CSSKeyframeRule.idl \
@@ -2097,7 +2096,7 @@ all : $(XML_NS_NAMES_FILES)
 
 $(XML_NS_NAMES_FILES_PATTERNS) : $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/xml/xmlnsattrs.in
 	$(PERL) $< --attrs $(WebCore)/xml/xmlnsattrs.in
-	
+
 XML_NAMES_FILES = XMLNames.cpp XMLNames.h
 XML_NAMES_FILES_PATTERNS = $(subst .,%,$(XML_NAMES_FILES))
 

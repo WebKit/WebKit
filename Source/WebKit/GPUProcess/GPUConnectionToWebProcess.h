@@ -32,12 +32,14 @@
 #include "MessageReceiverMap.h"
 #include "RemoteAudioHardwareListenerIdentifier.h"
 #include "RemoteAudioSessionIdentifier.h"
+#include "RemoteGPU.h"
 #include "RemoteImageBuffer.h"
 #include "RemoteRemoteCommandListenerIdentifier.h"
 #include "RemoteSerializedImageBufferIdentifier.h"
 #include "RenderingBackendIdentifier.h"
 #include "ScopedActiveMessageReceiveQueue.h"
 #include "ThreadSafeObjectHeap.h"
+#include "WebGPUIdentifier.h"
 #include <WebCore/IntDegrees.h>
 #include <WebCore/LibWebRTCEnumTraits.h>
 #include <WebCore/NowPlayingManager.h>
@@ -225,6 +227,10 @@ public:
     const std::optional<audit_token_t>& presentingApplicationAuditToken() const { return m_presentingApplicationAuditToken; }
 #endif
 
+#if ENABLE(VIDEO)
+    void performWithMediaPlayerOnMainThread(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&);
+#endif
+
 private:
     GPUConnectionToWebProcess(GPUProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&);
 
@@ -247,6 +253,9 @@ private:
     void createGraphicsContextGL(WebCore::GraphicsContextGLAttributes, GraphicsContextGLIdentifier, RenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
     void releaseGraphicsContextGL(GraphicsContextGLIdentifier);
 #endif
+
+    void createRemoteGPU(WebGPUIdentifier, RenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
+    void releaseRemoteGPU(WebGPUIdentifier);
 
     void clearNowPlayingInfo();
     void setNowPlayingInfo(WebCore::NowPlayingInfo&&);
@@ -351,6 +360,8 @@ private:
     RemoteGraphicsContextGLMap m_remoteGraphicsContextGLMap;
 #endif
     ThreadSafeObjectHeap<RemoteSerializedImageBufferIdentifier, RefPtr<RemoteImageBuffer>> m_remoteSerializedImageBufferObjectHeap;
+    using RemoteGPUMap = HashMap<WebGPUIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteGPU>>;
+    RemoteGPUMap m_remoteGPUMap;
 #if ENABLE(ENCRYPTED_MEDIA)
     std::unique_ptr<RemoteCDMFactoryProxy> m_cdmFactoryProxy;
 #endif

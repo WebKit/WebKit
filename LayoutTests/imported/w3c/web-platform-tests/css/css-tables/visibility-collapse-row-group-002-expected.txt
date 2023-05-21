@@ -1,0 +1,14 @@
+Visibility collapse
+
+Spec
+Setting row group to visibility:collapse changes table height but not width.
+
+row 1	
+row 2	
+row 3	
+Bottom table is identical to top except row group of first two rows has been collapsed.
+row 3	
+
+PASS row group visibility:collapse doesn't change table width
+FAIL row group visibility:collapse changes table height assert_equals: row group visibility:collapse changes table height expected 116 but got 328
+

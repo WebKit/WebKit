@@ -142,9 +142,9 @@ RefPtr<NativeImage> ImageBufferCGBitmapBackend::copyNativeImage(BackingStoreCopy
     return nullptr;
 }
 
-RefPtr<PixelBuffer> ImageBufferCGBitmapBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator)
+void ImageBufferCGBitmapBackend::getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination)
 {
-    return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, m_data, allocator);
+    ImageBufferBackend::getPixelBuffer(srcRect, m_data, destination);
 }
 
 void ImageBufferCGBitmapBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)

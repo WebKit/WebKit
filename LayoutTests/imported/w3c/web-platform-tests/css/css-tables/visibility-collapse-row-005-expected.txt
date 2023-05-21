@@ -1,0 +1,10 @@
+Visibility collapse and overflow
+
+Collapsed row should not contribute to overflow
+
+Collapsed section should not contribute to overflow
+
+
+FAIL collapsed row should not contribute to overflow assert_equals: expected 100 but got 150
+FAIL collapsed section should not contribute to overflow assert_equals: expected 50 but got 150
+

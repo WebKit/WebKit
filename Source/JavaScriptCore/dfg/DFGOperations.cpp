@@ -3080,6 +3080,33 @@ JSC_DEFINE_JIT_OPERATION(operationStrCat3, JSString*, (JSGlobalObject* globalObj
     RELEASE_AND_RETURN(scope, jsString(globalObject, str1, str2, str3));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationMakeAtomString1, JSString*, (JSGlobalObject* globalObject, JSString* a))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    return jsAtomString(globalObject, vm, a);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationMakeAtomString2, JSString*, (JSGlobalObject* globalObject, JSString* a, JSString* b))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    return jsAtomString(globalObject, vm, a, b);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationMakeAtomString3, JSString*, (JSGlobalObject* globalObject, JSString* a, JSString* b, JSString* c))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    return jsAtomString(globalObject, vm, a, b, c);
+}
+
 JSC_DEFINE_JIT_OPERATION(operationFindSwitchImmTargetForDouble, char*, (VM* vmPointer, EncodedJSValue encodedValue, size_t tableIndex, int32_t min))
 {
     VM& vm = *vmPointer;

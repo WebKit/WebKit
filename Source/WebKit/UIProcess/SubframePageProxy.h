@@ -62,7 +62,7 @@ struct FrameInfoData;
 class SubframePageProxy : public IPC::MessageReceiver, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SubframePageProxy(WebPageProxy&, WebProcessProxy&, bool isInSameProcessAsMainFrame);
+    SubframePageProxy(WebPageProxy&, WebProcessProxy&);
     ~SubframePageProxy();
 
     WebProcessProxy& process() { return m_process.get(); }
@@ -78,9 +78,6 @@ private:
     WebCore::PageIdentifier m_webPageID;
     Ref<WebProcessProxy> m_process;
     WeakPtr<WebPageProxy> m_page;
-
-    // FIXME: We shouldn't make a SubframePageProxy for frames in the same process as the main frame.
-    const bool m_isInSameProcessAsMainFrame { false };
 };
 
 }

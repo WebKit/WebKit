@@ -28,7 +28,7 @@
 
 #include "InjectedBundleScriptWorld.h"
 #include "WebFrame.h"
-#include "WebFrameLoaderClient.h"
+#include "WebLocalFrameLoaderClient.h"
 #include <WebCore/DOMWindowExtension.h>
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/FrameLoader.h>
@@ -58,7 +58,7 @@ InjectedBundleDOMWindowExtension* InjectedBundleDOMWindowExtension::get(DOMWindo
 }
 
 InjectedBundleDOMWindowExtension::InjectedBundleDOMWindowExtension(WebFrame* frame, InjectedBundleScriptWorld* world)
-    : m_coreExtension(DOMWindowExtension::create(frame->coreFrame() ? frame->coreFrame()->window() : nullptr, world->coreWorld()))
+    : m_coreExtension(DOMWindowExtension::create(frame->coreLocalFrame() ? frame->coreLocalFrame()->window() : nullptr, world->coreWorld()))
 {
     allExtensions().add(m_coreExtension.get(), this);
 }

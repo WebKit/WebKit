@@ -583,7 +583,7 @@ void WebPage::requestAcceptsFirstMouse(int eventNumber, const WebKit::WebMouseEv
 
 void WebPage::setTopOverhangImage(WebImage* image)
 {
-    auto* frameView = m_mainFrame->coreFrame()->view();
+    auto* frameView = m_mainFrame->coreLocalFrame()->view();
     if (!frameView)
         return;
 
@@ -602,7 +602,7 @@ void WebPage::setTopOverhangImage(WebImage* image)
 
 void WebPage::setBottomOverhangImage(WebImage* image)
 {
-    auto* frameView = m_mainFrame->coreFrame()->view();
+    auto* frameView = m_mainFrame->coreLocalFrame()->view();
     if (!frameView)
         return;
 
@@ -641,7 +641,7 @@ void WebPage::computePagesForPrintingPDFDocument(WebCore::FrameIdentifier frameI
 {
     ASSERT(resultPageRects.isEmpty());
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
-    auto* coreFrame = frame ? frame->coreFrame() : nullptr;
+    auto* coreFrame = frame ? frame->coreLocalFrame() : nullptr;
     RetainPtr<PDFDocument> pdfDocument = coreFrame ? pdfDocumentForPrintingFrame(coreFrame) : 0;
     if ([pdfDocument allowsPrinting]) {
         NSUInteger pageCount = [pdfDocument pageCount];

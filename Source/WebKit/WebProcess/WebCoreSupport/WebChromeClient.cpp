@@ -54,11 +54,11 @@
 #include "WebDataListSuggestionPicker.h"
 #include "WebDateTimeChooser.h"
 #include "WebFrame.h"
-#include "WebFrameLoaderClient.h"
 #include "WebFullScreenManager.h"
 #include "WebGPUDowncastConvertToBackingContext.h"
 #include "WebHitTestResultData.h"
 #include "WebImage.h"
+#include "WebLocalFrameLoaderClient.h"
 #include "WebOpenPanelResultListener.h"
 #include "WebPage.h"
 #include "WebPageCreationParameters.h"
@@ -496,7 +496,7 @@ void WebChromeClient::closeWindow()
     m_page.corePage()->setGroupName(String());
 
     auto& frame = m_page.mainWebFrame();
-    if (auto* coreFrame = frame.coreFrame())
+    if (auto* coreFrame = frame.coreLocalFrame())
         coreFrame->loader().stopForUserCancel();
 
     m_page.sendClose();
@@ -987,8 +987,7 @@ RefPtr<GraphicsContextGL> WebChromeClient::createGraphicsContextGL(const Graphic
 RefPtr<PAL::WebGPU::GPU> WebChromeClient::createGPUForWebGPU() const
 {
 #if ENABLE(GPU_PROCESS)
-    auto& remoteRenderingBackendProxy = m_page.ensureRemoteRenderingBackendProxy();
-    return RemoteGPUProxy::create(remoteRenderingBackendProxy.streamConnection(), remoteRenderingBackendProxy.renderingBackendIdentifier(), WebGPU::DowncastConvertToBackingContext::create(), WebGPUIdentifier::generate(), m_page.ensureRemoteRenderingBackendProxy().ensureBackendCreated());
+    return RemoteGPUProxy::create(WebProcess::singleton().ensureGPUProcessConnection(), WebGPU::DowncastConvertToBackingContext::create(), WebGPUIdentifier::generate(), m_page.ensureRemoteRenderingBackendProxy().ensureBackendCreated());
 #elif HAVE(WEBGPU_IMPLEMENTATION)
     return PAL::WebGPU::create([](PAL::WebGPU::WorkItem&& workItem) {
         callOnMainRunLoop(WTFMove(workItem));
@@ -1261,6 +1260,11 @@ FloatSize WebChromeClient::overrideScreenSize() const
 }
 
 #endif
+
+FloatSize WebChromeClient::screenSizeForHeadlessMode(const LocalFrame& frame, FloatSize defaultSize) const
+{
+    return m_page.screenSizeForHeadlessMode(frame, defaultSize);
+}
 
 void WebChromeClient::dispatchDisabledAdaptationsDidChange(const OptionSet<DisabledAdaptations>& disabledAdaptations) const
 {

@@ -36,7 +36,7 @@ class Manifest {
             return await RemoteAPI.getJSON('/data/manifest.json');
         } catch(error) {
             if (error != 404)
-                throw `Failed to fetch manifest.json with ${error}`
+                throw `Failed to fetch manifest.json with ${error}`;
             return await RemoteAPI.getJSON('/api/manifest/');
         }
     }

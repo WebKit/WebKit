@@ -172,11 +172,6 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
             ],
         )
 
-    def test_find_platform_specific(self):
-        finder = self.finder
-        tests = [t.test_path for t in finder.find_tests_by_path(['http/test.html'])]
-        self.assertEqual(tests, [])
-
     def test_find_platform_specific_directory(self):
         finder = self.finder
         tests = [t.test_path for t in finder.find_tests_by_path(['platform-specific-dir'])]
@@ -186,8 +181,12 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
         with_star = [t.test_path for t in finder.find_tests_by_path(['platform-specific-dir/*'])]
         self.assertEqual(tests, with_star)
 
-    def test_find_directory_includes_platform_specific(self):
-        # contrast with test_find_platform_specific above
+    def test_find_file_excludes_platform_specific(self):
+        finder = self.finder
+        tests = [t.test_path for t in finder.find_tests_by_path(['http/test.html'])]
+        self.assertEqual(tests, [])
+
+    def test_find_directory_excludes_platform_specific(self):
         finder = self.finder
         tests = [t.test_path for t in finder.find_tests_by_path(['http'])]
         self.assertEqual(
@@ -196,7 +195,6 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
                 'http/tests/passes/image.html',
                 'http/tests/passes/text.html',
                 'http/tests/ssl/text.html',
-                'platform/test-mac-leopard/http/test.html',
             ],
         )
 
@@ -319,7 +317,39 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
         tests_found = [t.test_path for t in finder.find_tests_by_path(tests_to_find)]
         self.assertEqual(tests_to_find, tests_found)
 
-    def test_find_template_variants(self):
+    def test_find_template_variants_meta(self):
+        find_paths = ["web-platform-tests"]
+        finder = self.finder
+
+        path = finder._port.layout_tests_dir() + "/web-platform-tests/variant_test.html"
+
+        finder._filesystem.maybe_make_directory(finder._filesystem.dirname(path))
+        finder._filesystem.write_text_file(path, """<!doctype html>
+<meta name="variant" content="">
+<meta name="variant" content="?">
+<meta name="variant" content="?1-10">
+<meta name="variant" content="?11-20">
+<meta name="variant" content="#">
+<meta name="variant" content="#a-m">
+<meta name="variant" content="#n-z">
+<meta name="variant" content="?#">
+<meta name="variant" content="?1#a">
+<meta name="variant" content="nonsense">
+        """)
+        tests_found = [t.test_path for t in finder.find_tests_by_path(find_paths)]
+        self.assertEqual(
+            [
+                "web-platform-tests/variant_test.html",
+                "web-platform-tests/variant_test.html?1-10",
+                "web-platform-tests/variant_test.html?11-20",
+                "web-platform-tests/variant_test.html#a-m",
+                "web-platform-tests/variant_test.html#n-z",
+                "web-platform-tests/variant_test.html?1#a",
+            ],
+            tests_found,
+        )
+
+    def test_find_template_variants_comment(self):
         find_paths = ["web-platform-tests"]
         finder = self.finder
 
@@ -327,11 +357,29 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
 
         finder._filesystem.maybe_make_directory(finder._filesystem.dirname(path))
         finder._filesystem.write_text_file(path, """<!-- This file is required for WebKit test infrastructure to run the templated test -->
+<!-- META: variant= -->
+<!-- META: variant=? -->
 <!-- META: variant=?1-10 -->
 <!-- META: variant=?11-20 -->
+<!-- META: variant=# -->
+<!-- META: variant=#a-m -->
+<!-- META: variant=#n-z -->
+<!-- META: variant=?# -->
+<!-- META: variant=?1#a -->
+<!-- META: variant=nonsense -->
         """)
         tests_found = [t.test_path for t in finder.find_tests_by_path(find_paths)]
-        self.assertEqual(['web-platform-tests/variant_test.any.html?1-10', 'web-platform-tests/variant_test.any.html?11-20'], tests_found)
+        self.assertEqual(
+            [
+                "web-platform-tests/variant_test.any.html",
+                "web-platform-tests/variant_test.any.html?1-10",
+                "web-platform-tests/variant_test.any.html?11-20",
+                "web-platform-tests/variant_test.any.html#a-m",
+                "web-platform-tests/variant_test.any.html#n-z",
+                "web-platform-tests/variant_test.any.html?1#a",
+            ],
+            tests_found,
+        )
 
     def test_preserves_order_directories(self):
         tests_to_find = ['http/tests/ssl', 'http/tests/passes']

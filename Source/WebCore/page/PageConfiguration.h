@@ -63,8 +63,8 @@ class DatabaseProvider;
 class DiagnosticLoggingClient;
 class DragClient;
 class EditorClient;
-class FrameLoaderClient;
 class InspectorClient;
+class LocalFrameLoaderClient;
 class MediaRecorderProvider;
 class ModelPlayerProvider;
 class PaymentCoordinatorClient;
@@ -105,7 +105,7 @@ public:
         Ref<BackForwardClient>&&,
         Ref<CookieJar>&&,
         UniqueRef<ProgressTrackerClient>&&,
-        std::variant<UniqueRef<FrameLoaderClient>, RemoteMainFrameCreationParameters>&&,
+        std::variant<UniqueRef<LocalFrameLoaderClient>, RemoteMainFrameCreationParameters>&&,
         FrameIdentifier mainFrameIdentifier,
         UniqueRef<SpeechRecognitionProvider>&&,
         UniqueRef<MediaRecorderProvider>&&,
@@ -154,7 +154,7 @@ public:
     Ref<CookieJar> cookieJar;
     std::unique_ptr<ValidationMessageClient> validationMessageClient;
 
-    std::variant<UniqueRef<FrameLoaderClient>, RemoteMainFrameCreationParameters> clientForMainFrame;
+    std::variant<UniqueRef<LocalFrameLoaderClient>, RemoteMainFrameCreationParameters> clientForMainFrame;
 
     FrameIdentifier mainFrameIdentifier;
     std::unique_ptr<DiagnosticLoggingClient> diagnosticLoggingClient;

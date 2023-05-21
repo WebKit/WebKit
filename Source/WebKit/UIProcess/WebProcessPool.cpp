@@ -1858,7 +1858,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
     if (!frame.isMainFrame() && page.preferences().siteIsolationEnabled()) {
         RegistrableDomain navigationDomain(navigation.currentRequest().url());
         if (!navigationDomain.isEmpty() && navigationDomain != mainFrameDomain) {
-            auto subFramePageProxy = makeUniqueRef<SubframePageProxy>(page, process, frame.isMainFrame());
+            auto subFramePageProxy = makeUniqueRef<SubframePageProxy>(page, process);
             page.addSubframePageProxyForFrameID(frame.frameID(), navigationDomain, WTFMove(subFramePageProxy));
         }
     }

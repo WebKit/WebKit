@@ -350,7 +350,7 @@ void Editor::replaceNodeFromPasteboard(Node& node, const String& pasteboardName,
         return;
 
     Ref protectedDocument = m_document;
-    m_document.selection().setSelection({ *range }, FrameSelection::DoNotSetFocus);
+    m_document.selection().setSelection({ *range }, FrameSelection::SetSelectionOption::DoNotSetFocus);
 
     Pasteboard pasteboard(PagePasteboardContext::create(m_document.pageID()), pasteboardName);
     if (!m_document.selection().selection().isContentRichlyEditable()) {

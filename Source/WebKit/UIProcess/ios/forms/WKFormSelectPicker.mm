@@ -740,6 +740,27 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return NO;
 }
 
+- (NSArray<NSString *> *)menuItemTitles
+{
+#if USE(UICONTEXTMENU)
+    NSMutableArray<NSString *> *itemTitles = [NSMutableArray array];
+    for (UIMenuElement *menuElement in [_selectMenu children]) {
+        if (auto *action = dynamic_objc_cast<UIAction>(menuElement)) {
+            [itemTitles addObject:action.title];
+            continue;
+        }
+
+        if (auto *menu = dynamic_objc_cast<UIMenu>(menuElement)) {
+            for (UIMenuElement *groupedMenuElement in [menu children])
+                [itemTitles addObject:groupedMenuElement.title];
+        }
+    }
+    return itemTitles;
+#else
+    return nil;
+#endif
+}
+
 @end
 
 @interface WKSelectPickerGroupHeaderView : UIView

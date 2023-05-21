@@ -38,14 +38,12 @@
 
 namespace WebKit {
 
-SubframePageProxy::SubframePageProxy(WebPageProxy& page, WebProcessProxy& process, bool isInSameProcessAsMainFrame)
+SubframePageProxy::SubframePageProxy(WebPageProxy& page, WebProcessProxy& process)
     : m_webPageID(page.webPageID())
     , m_process(process)
     , m_page(page)
-    , m_isInSameProcessAsMainFrame(isInSameProcessAsMainFrame)
 {
-    if (!m_isInSameProcessAsMainFrame)
-        m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
+    m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
 
     auto* drawingArea = page.drawingArea();
     auto parameters = page.creationParameters(m_process, *drawingArea);
@@ -59,8 +57,7 @@ SubframePageProxy::SubframePageProxy(WebPageProxy& page, WebProcessProxy& proces
 
 SubframePageProxy::~SubframePageProxy()
 {
-    if (!m_isInSameProcessAsMainFrame)
-        m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
+    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
 }
 
 IPC::Connection* SubframePageProxy::messageSenderConnection() const

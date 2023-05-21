@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "FrameLoaderClient.h"
+#include "LocalFrameLoaderClient.h"
 
 namespace WebCore {
 
-class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
+class WEBCORE_EXPORT EmptyFrameLoaderClient : public LocalFrameLoaderClient {
 private:
     Ref<DocumentLoader> createDocumentLoader(const ResourceRequest&, const SubstituteData&) override;
 

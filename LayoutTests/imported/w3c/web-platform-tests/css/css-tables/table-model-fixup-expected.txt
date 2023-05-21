@@ -1,0 +1,44 @@
+Table fixup
+
+Check that missing elements are being created properly
+
+This should be a 100px by 100px blue square:
+1.1. Children of a table-column are treated as if they had display: none.
+
+This should be a 100px by 100px blue square:
+1.2. Children of a table-column-group which are not a table-column are treated as if they had display: none.
+
+This should be a 100px by 100px blue square:
+2.1. An anonymous table-row box must be generated around each sequence of consecutive children of a table-root box which are not proper table child boxes.
+
+This should read as "1\t2\t3\n   x":
+2.2. An anonymous table-row box must be generated around each sequence of consecutive children of a table-row-grouping box which are not table-row boxes.
+
+1	23
+x
+This should read as "1\n1\t2":
+2.1. and 2.2. happens before 2.3.
+
+1	12
+This should read as "1\t2":
+3.2. An anonymous table or inline-table box must be generated around each sequence of consecutive proper table child box which are misparented
+
+1
+2
+This should read as "A B":
+1.4. Anonymous inline boxes which contains only white space and are between two immediate siblings *each* of which is a table-non-root element, are treated as if they had display: none.
+
+AB
+
+PASS 1.1. Children of a table-column are treated as if they had display: none.
+PASS 1.2. Children of a table-column-group which are not a table-column are treated as if they had display: none.
+PASS 2.1. An anonymous table-row box must be generated around each sequence of consecutive children of a table-root box which are not proper table child boxes. (1/2)
+PASS 2.1. An anonymous table-row box must be generated around each sequence of consecutive children of a table-root box which are not proper table child boxes. (2/2)
+PASS 2.2. An anonymous table-row box must be generated around each sequence of consecutive children of a table-row-grouping box which are not table-row boxes. (1/3)
+PASS 2.2. An anonymous table-row box must be generated around each sequence of consecutive children of a table-row-grouping box which are not table-row boxes. (2/3)
+PASS 2.2. An anonymous table-row box must be generated around each sequence of consecutive children of a table-row-grouping box which are not table-row boxes. (3/3)
+PASS 2.3 happens after 2.1. and 2.2. (1/2)
+PASS 2.3 happens after 2.1. and 2.2. (2/2)
+PASS 3.2. An anonymous table or inline-table box must be generated around each sequence of consecutive proper table child box which are misparented
+FAIL 1.4. Anonymous inline boxes which contains only white space and are between two immediate siblings *each* of which is a table-non-root element, are treated as if they had display: none. assert_equals: expected true but got false
+

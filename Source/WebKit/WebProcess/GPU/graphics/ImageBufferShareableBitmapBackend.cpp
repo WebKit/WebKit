@@ -144,9 +144,9 @@ RefPtr<NativeImage> ImageBufferShareableBitmapBackend::copyNativeImage(BackingSt
     return NativeImage::create(m_bitmap->createPlatformImage(copyBehavior));
 }
 
-RefPtr<PixelBuffer> ImageBufferShareableBitmapBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator)
+void ImageBufferShareableBitmapBackend::getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination)
 {
-    return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, m_bitmap->data(), allocator);
+    ImageBufferBackend::getPixelBuffer(srcRect, m_bitmap->data(), destination);
 }
 
 void ImageBufferShareableBitmapBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat)

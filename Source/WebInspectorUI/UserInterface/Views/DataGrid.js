@@ -25,7 +25,7 @@
 
 WI.DataGrid = class DataGrid extends WI.View
 {
-    constructor(columnsData, {editCallback, copyCallback, deleteCallback, preferredColumnOrder} = {})
+    constructor(columnsData, {beforeEditCallback, afterEditCallback, copyCallback, deleteCallback, preferredColumnOrder} = {})
     {
         super();
 
@@ -110,9 +110,10 @@ WI.DataGrid = class DataGrid extends WI.View
 
         // FIXME: Add a createCallback which is different from editCallback and has different
         // behavior when creating a new node.
-        if (editCallback) {
+        if (afterEditCallback) {
             this._dataTableElement.addEventListener("dblclick", this._ondblclick.bind(this), false);
-            this._editCallback = editCallback;
+            this._beforeEditCallback = beforeEditCallback;
+            this._afterEditCallback = afterEditCallback;
         }
 
         if (copyCallback)
@@ -436,7 +437,7 @@ WI.DataGrid = class DataGrid extends WI.View
 
     startEditingNode(node)
     {
-        console.assert(this._editCallback);
+        console.assert(this._afterEditCallback);
         if (this._editing || this._editingNode)
             return;
 
@@ -576,6 +577,8 @@ WI.DataGrid = class DataGrid extends WI.View
         this._editingNode = node;
         this._editingNode.select();
 
+        this._beforeEditCallback?.(node, this.orderedColumns[columnIndex]);
+
         var element = this._editingNode.element.children[columnIndex];
         WI.startEditing(element, this._startEditingConfig(element));
 
@@ -584,8 +587,8 @@ WI.DataGrid = class DataGrid extends WI.View
 
     _startEditing(target)
     {
-        let element = target.closest("td");
-        if (!element)
+        let cell = target.closest("td");
+        if (!cell)
             return;
 
         let node = this.dataGridNodeFromNode(target);
@@ -603,7 +606,13 @@ WI.DataGrid = class DataGrid extends WI.View
         if (this._editingNode.isPlaceholderNode)
             return this._startEditingNodeAtColumnIndex(this._editingNode, 0);
 
+        let columnIndex = this._editingNode.element.children.indexOf(cell);
+
+        this._beforeEditCallback?.(node, this.orderedColumns[columnIndex]);
+
         this._editing = true;
+
+        let element = this._editingNode.element.children[columnIndex];
         WI.startEditing(element, this._startEditingConfig(element));
 
         window.getSelection().setBaseAndExtent(element, 0, element, 1);
@@ -661,7 +670,7 @@ WI.DataGrid = class DataGrid extends WI.View
 
         this._editingCancelled(element);
 
-        this._editCallback(currentEditingNode, columnIdentifier, textBeforeEditing, newText, moveDirection);
+        this._afterEditCallback(currentEditingNode, columnIdentifier, textBeforeEditing, newText, moveDirection);
 
         var textDidChange = textBeforeEditing.trim() !== newText.trim();
         moveToNextCell.call(this, textDidChange);
@@ -1457,7 +1466,7 @@ WI.DataGrid = class DataGrid extends WI.View
                     this._deleteCallback(this.selectedNode);
                 }
             } else if (isEnterKey(event)) {
-                if (this._editCallback) {
+                if (this._afterEditCallback) {
                     handled = true;
                     this._startEditing(this.selectedNode.element.children[0]);
                 }
@@ -1725,7 +1734,7 @@ WI.DataGrid = class DataGrid extends WI.View
                 contextMenu.appendItem(WI.UIString("Copy Row"), this._copyRow.bind(this, gridNode));
                 contextMenu.appendItem(WI.UIString("Copy Table"), this._copyTable.bind(this));
 
-                if (this.dataGrid._editCallback) {
+                if (this.dataGrid._afterEditCallback) {
                     if (gridNode === this.placeholderNode)
                         contextMenu.appendItem(WI.UIString("Add New"), this._startEditing.bind(this, event.target));
                     else if (gridNode.editable) {

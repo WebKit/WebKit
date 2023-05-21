@@ -655,6 +655,13 @@ void AXObjectCache::platformPerformDeferredCacheUpdate()
 {
 }
 
+bool AXObjectCache::shouldSpellCheck()
+{
+    // The only AT that we know can handle deferred spellchecking is VoiceOver.
+    auto client = _AXGetClientForCurrentRequestUntrusted();
+    return client != kAXClientTypeVoiceOver && UNLIKELY(!forceDeferredSpellChecking());
+}
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 bool AXObjectCache::clientSupportsIsolatedTree()
 {

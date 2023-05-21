@@ -35,7 +35,6 @@
 namespace WebCore {
 
 class Document;
-class FrameLoaderClient;
 class HTMLFrameOwnerElement;
 class HTMLMediaElement;
 class HTMLPlugInImageElement;

@@ -32,6 +32,7 @@
 
             waitFor(video, 'error').then(failTest);
 
+            video.disableRemotePlayback = true;
             source = new ManagedMediaSource();
             run('video.src = URL.createObjectURL(source)');
 

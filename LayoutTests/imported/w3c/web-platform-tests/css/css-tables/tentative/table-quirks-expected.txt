@@ -1,0 +1,23 @@
+Tables in quirks mode proposals
+
+The table cell height box sizing quirk
+100 height
+100 height
+The table cell nowrap minimum width calculation quirk
+Chrome Legacy, Edge, Safari fail, only FF gets it correct.Proposal: deprecate the quirk
+nowrap nowrap nowrap nowrap
+The text decoration doesnâ€™t propagate into tables quirk
+decoration
+The collapsing table quirk
+Chrome Legacy/Edge/Safari ignore the quirk, FF does not. Proposal: depreciate the quirk
+The table cell width calculation quirk
+
+
+PASS decoration does not propagate into table
+PASS table 1
+PASS table 2
+PASS table 3
+PASS table 4
+PASS table 5
+PASS table 6
+

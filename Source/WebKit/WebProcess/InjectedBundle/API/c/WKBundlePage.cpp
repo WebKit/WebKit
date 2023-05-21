@@ -328,6 +328,11 @@ bool WKAccessibilityCanUseSecondaryAXThread(WKBundlePageRef pageRef)
 #endif
 }
 
+void WKAccessibilitySetForceDeferredSpellChecking(bool shouldForce)
+{
+    WebCore::AXObjectCache::setForceDeferredSpellChecking(shouldForce);
+}
+
 void WKAccessibilityEnableEnhancedAccessibility(bool enable)
 {
 #if ENABLE(ACCESSIBILITY)

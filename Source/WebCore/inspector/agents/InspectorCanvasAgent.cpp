@@ -51,6 +51,7 @@
 #include "JSExecState.h"
 #include "LocalFrame.h"
 #include "Path2D.h"
+#include "PlaceholderRenderingContext.h"
 #include "StringAdaptors.h"
 #include "WebGL2RenderingContext.h"
 #include "WebGLBuffer.h"
@@ -140,6 +141,10 @@ Protocol::ErrorStringOr<void> InspectorCanvasAgent::enable()
     {
         Locker locker { CanvasRenderingContext::instancesLock() };
         for (auto* context : CanvasRenderingContext::instances()) {
+#if ENABLE(OFFSCREEN_CANVAS)
+            if (is<PlaceholderRenderingContext>(context))
+                continue;
+#endif
             if (existsInCurrentPage(context->canvasBase().scriptExecutionContext()))
                 bindCanvas(*context, false);
         }

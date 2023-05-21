@@ -106,7 +106,14 @@ public:
     ALWAYS_INLINE const T& at(unsigned nodeIndex, NodeFlowProjection::Kind kind) const { return const_cast<FlowMap*>(this)->at(nodeIndex, kind); }
     ALWAYS_INLINE const T& at(Node* node, NodeFlowProjection::Kind kind) const { return const_cast<FlowMap*>(this)->at(node, kind); }
     ALWAYS_INLINE const T& at(NodeFlowProjection projection) const { return const_cast<FlowMap*>(this)->at(projection); }
-    
+
+    ALWAYS_INLINE void clear()
+    {
+        m_map.clear();
+        m_shadowMap.clear();
+        resize();
+    }
+
 private:
     Graph& m_graph;
     Vector<T, 0, UnsafeVectorOverflow> m_map;

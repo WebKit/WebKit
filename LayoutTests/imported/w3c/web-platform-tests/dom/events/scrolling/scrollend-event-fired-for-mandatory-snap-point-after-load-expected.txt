@@ -1,0 +1,17 @@
+scrollend + mandatory scroll snap test
+
+Page 1
+
+Page 2
+
+Page 3
+
+Page A
+
+Page B
+
+Page C
+
+
+FAIL scrollend event fired after load for mandatory snap point promise_test: Unhandled rejection with value: "No scrollend event received for target [object HTMLDivElement]"
+

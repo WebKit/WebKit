@@ -328,7 +328,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
         statusTextEditorElement.className = "editor status-text";
         this._statusTextCodeMirror = this._createEditor(statusTextEditorElement, {value: valueData.statusText || "", placeholder: placeholderData.statusText});
 
-        let editCallback = () => {};
+        let afterEditCallback = () => {}; // We must provide a callback in order to enable builtin editing support.
         let deleteCallback = (node) => {
             if (node === contentTypeDataGridNode)
                 return;
@@ -352,7 +352,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             },
         };
 
-        this._headersDataGrid = new WI.DataGrid(columns, {editCallback, deleteCallback});
+        this._headersDataGrid = new WI.DataGrid(columns, {afterEditCallback, deleteCallback});
         this._headersDataGrid.inline = true;
         this._headersDataGrid.variableHeightRows = true;
         this._headersDataGrid.copyTextDelimiter = ": ";

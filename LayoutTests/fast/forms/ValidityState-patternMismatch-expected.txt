@@ -7,7 +7,7 @@ PASS patternMismatchFor("simple") is false
 PASS patternMismatchFor("no-pattern-and-no-value") is false
 PASS patternMismatchFor("ip-address") is false
 PASS patternMismatchFor("email-address") is false
-PASS patternMismatchFor("wrong-email-address") is true
+PASS patternMismatchFor("wrong-email-address") is false
 PASS patternMismatchFor("match-1") is false
 PASS patternMismatchFor("match-2") is false
 PASS patternMismatchFor("match-3") is false

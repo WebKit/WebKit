@@ -27,10 +27,10 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include <span>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
 #include <wtf/Ref.h>
-#include <wtf/Span.h>
 
 namespace WebCore {
 
