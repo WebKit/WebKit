@@ -315,6 +315,39 @@ JSString* JSBoundFunction::nameSlow(VM& vm)
     return terminal;
 }
 
+String JSBoundFunction::nameStringWithoutGCSlow(VM& vm)
+{
+    DisallowGC disallowGC;
+    unsigned nestingCount = 0;
+    JSObject* cursor = m_targetFunction.get();
+    String terminal;
+    while (true) {
+        ASSERT(cursor->inherits<JSFunction>()); // If this is not JSFunction, we eagerly materialized the name.
+        if (!cursor->inherits<JSBoundFunction>()) {
+            terminal = jsCast<JSFunction*>(cursor)->nameWithoutGC(vm);
+            break;
+        }
+        ++nestingCount;
+        JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(cursor);
+        if (boundFunction->nameMayBeNull()) {
+            terminal = boundFunction->nameStringWithoutGC(vm);
+            break;
+        }
+        cursor = boundFunction->targetFunction();
+    }
+
+    if (!nestingCount)
+        return terminal;
+
+    StringBuilder builder(StringBuilder::OverflowHandler::RecordOverflow);
+    for (unsigned i = 0; i < nestingCount; ++i)
+        builder.append("bound "_s);
+    builder.append(WTFMove(terminal));
+    if (builder.hasOverflowed())
+        return emptyString();
+    return builder.toString();
+}
+
 double JSBoundFunction::lengthSlow(VM& vm)
 {
     double length = 0;

@@ -73,6 +73,15 @@ public:
         bool allocationAllowed = false;
         return m_nameMayBeNull->tryGetValue(allocationAllowed);
     }
+    String nameStringWithoutGC(VM& vm)
+    {
+        if (m_nameMayBeNull) {
+            ASSERT(!m_nameMayBeNull->isRope());
+            bool allocationAllowed = false;
+            return m_nameMayBeNull->tryGetValue(allocationAllowed);
+        }
+        return nameStringWithoutGCSlow(vm);
+    }
 
     double length(VM& vm)
     {
@@ -131,6 +140,7 @@ private:
     JSString* nameSlow(VM&);
     double lengthSlow(VM&);
     bool canConstructSlow();
+    String nameStringWithoutGCSlow(VM&);
 
     DECLARE_DEFAULT_FINISH_CREATION;
     DECLARE_VISIT_CHILDREN;
