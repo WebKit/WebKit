@@ -1398,11 +1398,7 @@ JSC_DEFINE_HOST_FUNCTION(functionAtob, (JSGlobalObject* globalObject, CallFrame*
     if (!callFrame->argumentCount())
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Missing input for atob."_s)));
 
-    JSValue jsValue = callFrame->argument(0);
-    if (jsValue.isUndefined())
-        return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Invalid character in argument for atob."_s)));
-
-    auto* string = jsValue.toString(globalObject);
+    auto* string = callFrame->uncheckedArgument(0).toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     String encodedString = string->value(globalObject);
@@ -1425,7 +1421,7 @@ JSC_DEFINE_HOST_FUNCTION(functionBtoa, (JSGlobalObject* globalObject, CallFrame*
     if (!callFrame->argumentCount())
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Missing input for btoa."_s)));
 
-    auto* string = callFrame->argument(0).toString(globalObject);
+    auto* string = callFrame->uncheckedArgument(0).toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     String stringToEncode = string->value(globalObject);
