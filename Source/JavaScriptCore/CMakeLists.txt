@@ -980,6 +980,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/CellSize.h
     runtime/ClassInfo.h
     runtime/CodeCache.h
+    parser/Parser.h
+    parser/ModuleScopeData.h
     runtime/CodeSpecializationKind.h
     runtime/CommonIdentifiers.h
     runtime/CompilationResult.h
