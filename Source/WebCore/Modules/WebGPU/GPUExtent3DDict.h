@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,9 +51,9 @@ using GPUExtent3D = std::variant<Vector<GPUIntegerCoordinate>, GPUExtent3DDict>;
 
 inline PAL::WebGPU::Extent3D convertToBacking(const GPUExtent3D& extent3D)
 {
-    return WTF::switchOn(extent3D, [] (const Vector<GPUIntegerCoordinate>& vector) -> PAL::WebGPU::Extent3D {
+    return WTF::switchOn(extent3D, [](const Vector<GPUIntegerCoordinate>& vector) -> PAL::WebGPU::Extent3D {
         return vector;
-    }, [] (const GPUExtent3DDict& extent3D) -> PAL::WebGPU::Extent3D {
+    }, [](const GPUExtent3DDict& extent3D) -> PAL::WebGPU::Extent3D {
         return extent3D.convertToBacking();
     });
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ struct GPUVertexBufferLayout {
         return {
             arrayStride,
             WebCore::convertToBacking(stepMode),
-            attributes.map([] (auto& attribute) {
+            attributes.map([](auto& attribute) {
                 return attribute.convertToBacking();
             }),
         };

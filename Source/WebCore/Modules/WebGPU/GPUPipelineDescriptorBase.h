@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,9 +41,9 @@ using GPULayoutMode = std::variant<
 
 static PAL::WebGPU::PipelineLayout& convertPipelineLayoutToBacking(const GPULayoutMode& layout, const Ref<GPUPipelineLayout>& autoLayout)
 {
-    return *WTF::switchOn(layout, [] (auto pipelineLayout) {
+    return *WTF::switchOn(layout, [](auto pipelineLayout) {
         return &pipelineLayout->backing();
-    }, [&autoLayout] (GPUAutoLayoutMode) {
+    }, [&autoLayout](GPUAutoLayoutMode) {
         return &autoLayout->backing();
     });
 }

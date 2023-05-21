@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,7 +71,8 @@ void GPUBuffer::mapAsync(GPUMapModeFlags mode, std::optional<GPUSize64> offset, 
         m_mapState = GPUBufferMapState::Pending;
 
     m_pendingMapPromise = promise;
-    m_backing->mapAsync(convertMapModeFlagsToBacking(mode), offset.value_or(0), size, [promise = WTFMove(promise), protectedThis = Ref { *this }] (bool success) mutable {
+    // FIXME: Should this capture a weak pointer to |this| instead?
+    m_backing->mapAsync(convertMapModeFlagsToBacking(mode), offset.value_or(0), size, [promise = WTFMove(promise), protectedThis = Ref { *this }](bool success) mutable {
         if (!protectedThis->m_pendingMapPromise)
             return;
 

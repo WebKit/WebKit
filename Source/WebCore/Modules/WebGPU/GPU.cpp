@@ -55,7 +55,7 @@ struct GPU::PendingRequestAdapterArguments {
 
 void GPU::requestAdapter(const std::optional<GPURequestAdapterOptions>& options, RequestAdapterPromise&& promise)
 {
-    m_backing->requestAdapter(convertToBacking(options), [promise = WTFMove(promise)] (RefPtr<PAL::WebGPU::Adapter>&& adapter) mutable {
+    m_backing->requestAdapter(convertToBacking(options), [promise = WTFMove(promise)](RefPtr<PAL::WebGPU::Adapter>&& adapter) mutable {
         if (!adapter) {
             promise.resolve(nullptr);
             return;

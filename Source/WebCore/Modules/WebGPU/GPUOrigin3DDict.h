@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,9 +51,9 @@ using GPUOrigin3D = std::variant<Vector<GPUIntegerCoordinate>, GPUOrigin3DDict>;
 
 inline PAL::WebGPU::Origin3D convertToBacking(const GPUOrigin3D& origin3D)
 {
-    return WTF::switchOn(origin3D, [] (const Vector<GPUIntegerCoordinate>& vector) -> PAL::WebGPU::Origin3D {
+    return WTF::switchOn(origin3D, [](const Vector<GPUIntegerCoordinate>& vector) -> PAL::WebGPU::Origin3D {
         return vector;
-    }, [] (const GPUOrigin3DDict& origin3D) -> PAL::WebGPU::Origin3D {
+    }, [](const GPUOrigin3DDict& origin3D) -> PAL::WebGPU::Origin3D {
         return origin3D.convertToBacking();
     });
 }

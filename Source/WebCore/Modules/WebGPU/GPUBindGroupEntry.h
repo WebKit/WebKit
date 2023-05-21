@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,15 +40,15 @@ using GPUBindingResource = std::variant<RefPtr<GPUSampler>, RefPtr<GPUTextureVie
 
 inline PAL::WebGPU::BindingResource convertToBacking(const GPUBindingResource& bindingResource)
 {
-    return WTF::switchOn(bindingResource, [] (const RefPtr<GPUSampler>& sampler) -> PAL::WebGPU::BindingResource {
+    return WTF::switchOn(bindingResource, [](const RefPtr<GPUSampler>& sampler) -> PAL::WebGPU::BindingResource {
         ASSERT(sampler);
         return sampler->backing();
-    }, [] (const RefPtr<GPUTextureView>& textureView) -> PAL::WebGPU::BindingResource {
+    }, [](const RefPtr<GPUTextureView>& textureView) -> PAL::WebGPU::BindingResource {
         ASSERT(textureView);
         return textureView->backing();
-    }, [] (const GPUBufferBinding& bufferBinding) -> PAL::WebGPU::BindingResource {
+    }, [](const GPUBufferBinding& bufferBinding) -> PAL::WebGPU::BindingResource {
         return bufferBinding.convertToBacking();
-    }, [] (const RefPtr<GPUExternalTexture>& externalTexture) -> PAL::WebGPU::BindingResource {
+    }, [](const RefPtr<GPUExternalTexture>& externalTexture) -> PAL::WebGPU::BindingResource {
         ASSERT(externalTexture);
         return externalTexture->backing();
     });
