@@ -52,11 +52,10 @@ public:
     static constexpr RenderingMode renderingMode = RenderingMode::Accelerated;
 
     IOSurface* surface();
-    GraphicsContext& context() override;
     void flushContext() override;
 
 protected:
-    CGContextRef ensurePlatformContext();
+    CGContextRef ensurePlatformContext() final;
     // Returns true if flush happened.
     bool flushContextDraws();
     IntSize backendSize() const override;
@@ -69,7 +68,6 @@ protected:
     void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
 
     bool isInUse() const override;
-    void releaseGraphicsContext() override;
 
     bool setVolatile() final;
     SetNonVolatileResult setNonVolatile() final;
@@ -90,7 +88,6 @@ protected:
     RetainPtr<CGImageRef> createImageReference();
 
     std::unique_ptr<IOSurface> m_surface;
-    RetainPtr<CGContextRef> m_platformContext;
     const PlatformDisplayID m_displayID;
     bool m_mayHaveOutstandingBackingStoreReferences { false };
     VolatilityState m_volatilityState { VolatilityState::NonVolatile };

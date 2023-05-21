@@ -36,6 +36,7 @@
 #include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "MIMETypeRegistry.h"
+#include "NullGraphicsContext.h"
 #include "PlatformImageBuffer.h"
 #include "ProcessCapabilities.h"
 #include <wtf/text/Base64.h>
@@ -104,7 +105,10 @@ ImageBuffer::ImageBuffer(const ImageBufferBackend::Parameters& parameters, const
 {
 }
 
-ImageBuffer::~ImageBuffer() = default;
+ImageBuffer::~ImageBuffer()
+{
+    releaseGraphicsContext();
+}
 
 bool ImageBuffer::sizeNeedsClamping(const FloatSize& size)
 {
@@ -247,11 +251,20 @@ GraphicsContext& ImageBuffer::context() const
 {
     ASSERT(m_backend);
     ASSERT(volatilityState() == VolatilityState::NonVolatile);
-    return m_backend->context();
+    if (UNLIKELY(!m_context)) {
+        m_context = m_backend->createContext();
+        ASSERT(m_context);
+        if (UNLIKELY(!m_context))
+            m_context = makeUnique<NullGraphicsContext>();
+        m_context->setCTM(m_backendInfo.baseTransform);
+    }
+    return *m_context;
 }
 
 void ImageBuffer::flushDrawingContext()
 {
+    if (UNLIKELY(!m_context))
+        return;
     // FIXME: this will be removed and flushDrawingContext will be renamed as flushContext().
     // The direct backend context flush is not part of ImageBuffer abstraction semantics,
     // rather implementation detail of the ImageBufferBackends that need separate management
@@ -537,8 +550,10 @@ bool ImageBuffer::isInUse() const
 
 void ImageBuffer::releaseGraphicsContext()
 {
-    if (auto* backend = ensureBackendCreated())
-        return backend->releaseGraphicsContext();
+    if (!m_context)
+        return;
+    m_context = nullptr;
+    backend()->contextReleased();
 }
 
 bool ImageBuffer::setVolatile()

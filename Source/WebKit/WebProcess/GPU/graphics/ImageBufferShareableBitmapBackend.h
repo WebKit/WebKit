@@ -27,7 +27,7 @@
 
 #include "ImageBufferBackendHandleSharing.h"
 #include <WebCore/ImageBuffer.h>
-#include <WebCore/PlatformImageBufferBackend.h>
+#include <WebCore/ImageBufferBackend.h>
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -38,7 +38,7 @@ namespace WebKit {
 
 class ShareableBitmap;
 
-class ImageBufferShareableBitmapBackend final : public WebCore::PlatformImageBufferBackend, public ImageBufferBackendHandleSharing {
+class ImageBufferShareableBitmapBackend final : public WebCore::ImageBufferBackend, public ImageBufferBackendHandleSharing {
     WTF_MAKE_ISO_ALLOCATED(ImageBufferShareableBitmapBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferShareableBitmapBackend);
 
@@ -50,9 +50,10 @@ public:
     static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const Parameters&, const WebCore::ImageBufferCreationContext&);
     static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const Parameters&, ImageBufferBackendHandle);
 
-    ImageBufferShareableBitmapBackend(const Parameters&, Ref<ShareableBitmap>&&, std::unique_ptr<WebCore::GraphicsContext>&&);
+    ImageBufferShareableBitmapBackend(const Parameters&, Ref<ShareableBitmap>&&);
 
-    WebCore::GraphicsContext& context() final { return *m_context; }
+    std::unique_ptr<WebCore::GraphicsContext> createContext() final;
+
     WebCore::IntSize backendSize() const final;
 
     ImageBufferBackendHandle createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const final;
@@ -70,10 +71,8 @@ private:
     unsigned bytesPerRow() const final;
 
     ImageBufferBackendSharing* toBackendSharing() final { return this; }
-    void releaseGraphicsContext() final { /* Do nothing. This is only relevant for IOSurface backends */ }
 
     Ref<ShareableBitmap> m_bitmap;
-    std::unique_ptr<WebCore::GraphicsContext> m_context;
 };
 
 } // namespace WebKit

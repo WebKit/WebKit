@@ -32,6 +32,7 @@
 #include "ProcessIdentity.h"
 #include "RenderingMode.h"
 #include "RenderingResourceIdentifier.h"
+#include <memory>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -231,6 +232,7 @@ protected:
     ImageBufferBackend::Info m_backendInfo;
     std::unique_ptr<ImageBufferBackend> m_backend;
     RenderingResourceIdentifier m_renderingResourceIdentifier;
+    mutable std::unique_ptr<GraphicsContext> m_context;
 };
 
 class SerializedImageBuffer {

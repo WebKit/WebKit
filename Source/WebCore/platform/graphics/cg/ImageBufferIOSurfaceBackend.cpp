@@ -98,29 +98,19 @@ std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create
 ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& parameters, std::unique_ptr<IOSurface> surface, RetainPtr<CGContextRef> platformContext, PlatformDisplayID displayID, IOSurfacePool* ioSurfacePool)
     : ImageBufferCGBackend(parameters)
     , m_surface(WTFMove(surface))
-    , m_platformContext(WTFMove(platformContext))
     , m_displayID(displayID)
     , m_ioSurfacePool(ioSurfacePool)
 {
     ASSERT(m_surface);
     ASSERT(!m_surface->isVolatile());
+    m_platformContext = WTFMove(platformContext);
 }
 
 ImageBufferIOSurfaceBackend::~ImageBufferIOSurfaceBackend()
 {
     ensureNativeImagesHaveCopiedBackingStore();
-    releaseGraphicsContext();
+    contextReleased();
     IOSurface::moveToPool(WTFMove(m_surface), m_ioSurfacePool.get());
-}
-
-
-GraphicsContext& ImageBufferIOSurfaceBackend::context()
-{
-    if (!m_context) {
-        m_context = makeUnique<GraphicsContextCG>(ensurePlatformContext());
-        applyBaseTransform(*m_context);
-    }
-    return *m_context;
 }
 
 void ImageBufferIOSurfaceBackend::flushContext()
@@ -219,12 +209,6 @@ IOSurface* ImageBufferIOSurfaceBackend::surface()
 bool ImageBufferIOSurfaceBackend::isInUse() const
 {
     return m_surface->isInUse();
-}
-
-void ImageBufferIOSurfaceBackend::releaseGraphicsContext()
-{
-    m_context = nullptr;
-    m_platformContext = nullptr;
 }
 
 bool ImageBufferIOSurfaceBackend::setVolatile()

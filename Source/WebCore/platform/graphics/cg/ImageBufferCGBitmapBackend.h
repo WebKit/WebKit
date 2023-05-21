@@ -44,11 +44,9 @@ public:
 
     static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, const ImageBufferCreationContext&);
 
-    GraphicsContext& context() final;
-
 private:
-    ImageBufferCGBitmapBackend(const Parameters&, void* data, RetainPtr<CGDataProviderRef>&&, std::unique_ptr<GraphicsContextCG>&&);
-
+    ImageBufferCGBitmapBackend(const Parameters&, void* data, RetainPtr<CGDataProviderRef>&&, RetainPtr<CGContextRef>);
+    CGContextRef ensurePlatformContext() final;
     IntSize backendSize() const final;
     unsigned bytesPerRow() const final;
 

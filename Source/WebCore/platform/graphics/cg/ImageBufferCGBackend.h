@@ -41,14 +41,17 @@ public:
     static unsigned calculateBytesPerRow(const IntSize& backendSize);
     static constexpr bool isOriginAtBottomLeftCorner = true;
 
+    std::unique_ptr<GraphicsContext> createContext() final;
+    void contextReleased() final;
+
 protected:
     using ImageBufferBackend::ImageBufferBackend;
-    void applyBaseTransform(GraphicsContextCG&) const;
 
     std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() override;
+    virtual CGContextRef ensurePlatformContext() = 0;
 
-    bool originAtBottomLeftCorner() const override;
-    mutable std::unique_ptr<GraphicsContextCG> m_context;
+    GraphicsContextCG* m_context { nullptr };
+    RetainPtr<CGContextRef> m_platformContext;
 };
 
 } // namespace WebCore
