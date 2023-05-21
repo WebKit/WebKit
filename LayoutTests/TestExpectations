@@ -4679,9 +4679,6 @@ webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/tiled-conic-g
 
 webkit.org/b/149828 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-mask-image.html [ ImageOnlyFailure ]
 
-webkit.org/b/254390 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-negative-resolution-rendering-2.html [ ImageOnlyFailure ]
-webkit.org/b/254390 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-negative-resolution-rendering.html [ ImageOnlyFailure ]
-
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/change-list-descendant-display.html [ ImageOnlyFailure ]
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/counter-set-001.html [ ImageOnlyFailure ]
 webkit.org/b/214457 imported/w3c/web-platform-tests/css/css-lists/inline-block-list.html [ ImageOnlyFailure ]

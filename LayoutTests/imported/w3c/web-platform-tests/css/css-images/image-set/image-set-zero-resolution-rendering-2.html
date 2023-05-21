@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<link rel="match" href="reference/blank-ref.html">
+<meta name="assert" content="image-set rendering with zero resolution">
+<style>
+#test {
+    background-image: url("/images/green.png");
+    background-image: image-set(url("/images/red.png") calc(0dppx * -1));
+    width: 100px;
+    height: 100px;
+}
+</style>
+<div id="test"></div>
+

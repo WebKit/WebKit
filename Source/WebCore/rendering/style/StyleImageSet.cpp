@@ -96,7 +96,8 @@ ImageWithScale StyleImageSet::bestImageForScaleFactor()
         result = image;
     }
 
-    if (!result.image)
+    ASSERT(result.scaleFactor >= 0);
+    if (!result.image || !result.scaleFactor)
         result = ImageWithScale { StyleInvalidImage::create(), 1, String() };
 
     return result;

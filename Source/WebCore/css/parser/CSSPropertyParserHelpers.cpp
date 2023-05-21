@@ -4468,12 +4468,13 @@ static RefPtr<CSSImageSetOptionValue> consumeImageSetOption(CSSParserTokenRange&
 
     // Optional resolution and type in any order.
     for (size_t i = 0; i < 2 && !range.atEnd(); ++i) {
-        if (auto optionalArgument = consumeMetaConsumer<ImageSetResolutionOrTypeConsumer>(range, { }, { }, { }, { }, { })) {
+        if (auto optionalArgument = consumeMetaConsumer<ImageSetResolutionOrTypeConsumer>(range, { }, ValueRange::NonNegative, { }, { }, { })) {
             if ((resolution && optionalArgument->isResolution()) || (type && optionalArgument->isString()))
                 return nullptr;
 
             if (optionalArgument->isResolution()) {
-                if (optionalArgument->floatValue() <= 0)
+                // ValueRange only clamps calc() expressions so we still need to check for negative "raw" resolutions (e.g. -2x) which are invalid.
+                if (optionalArgument->floatValue() < 0)
                     return nullptr;
                 resolution = optionalArgument;
                 result->setResolution(optionalArgument.releaseNonNull());
