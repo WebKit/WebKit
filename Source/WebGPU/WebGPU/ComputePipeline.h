@@ -28,6 +28,8 @@
 #import "BindGroupLayout.h"
 
 #import <wtf/FastMalloc.h>
+#import <wtf/HashMap.h>
+#import <wtf/HashTraits.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 
@@ -81,7 +83,7 @@ private:
 #endif
     const PipelineLayout *m_pipelineLayout { nullptr };
     const Ref<Device> m_device;
-    HashMap<uint32_t, Ref<BindGroupLayout>> m_cachedBindGroupLayouts;
+    HashMap<uint32_t, Ref<BindGroupLayout>, WTF::DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_cachedBindGroupLayouts;
     const MTLSize m_threadsPerThreadgroup;
 };
 

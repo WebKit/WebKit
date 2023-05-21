@@ -138,7 +138,7 @@ RefPtr<BindGroupLayout> ComputePipeline::getBindGroupLayout(uint32_t groupIndex)
     if (m_pipelineLayout)
         return const_cast<BindGroupLayout*>(&m_pipelineLayout->bindGroupLayout(groupIndex));
 
-    auto it = m_cachedBindGroupLayouts.find(groupIndex + 1);
+    auto it = m_cachedBindGroupLayouts.find(groupIndex);
     if (it != m_cachedBindGroupLayouts.end())
         return it->value.ptr();
 
@@ -159,7 +159,7 @@ RefPtr<BindGroupLayout> ComputePipeline::getBindGroupLayout(uint32_t groupIndex)
     bindGroupLayoutDescriptor.entryCount = entries.size();
     bindGroupLayoutDescriptor.entries = entries.size() ? &entries[0] : nullptr;
     auto bindGroupLayout = m_device->createBindGroupLayout(bindGroupLayoutDescriptor);
-    m_cachedBindGroupLayouts.add(groupIndex + 1, bindGroupLayout);
+    m_cachedBindGroupLayouts.add(groupIndex, bindGroupLayout);
 
     return bindGroupLayout.ptr();
 #else
