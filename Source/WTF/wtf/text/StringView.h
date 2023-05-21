@@ -146,7 +146,6 @@ public:
 
     template<typename MatchedCharacterPredicate>
     StringView stripLeadingAndTrailingMatchedCharacters(const MatchedCharacterPredicate&) const;
-    WTF_EXPORT_PRIVATE StringView stripWhiteSpace() const;
 
     class SplitResult;
     SplitResult split(UChar) const;

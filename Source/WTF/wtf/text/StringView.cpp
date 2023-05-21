@@ -366,11 +366,6 @@ bool equalRespectingNullity(StringView a, StringView b)
     return equalCommon(a, b);
 }
 
-StringView StringView::stripWhiteSpace() const
-{
-    return stripLeadingAndTrailingMatchedCharacters(isUnicodeCompatibleASCIIWhitespace<UChar>);
-}
-
 size_t StringView::reverseFind(StringView matchString, unsigned start) const
 {
     if (isNull())

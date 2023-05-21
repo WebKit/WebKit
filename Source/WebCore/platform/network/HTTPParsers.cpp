@@ -343,12 +343,12 @@ StringView filenameFromHTTPContentDisposition(StringView value)
         if (valueStartPos == notFound)
             continue;
 
-        auto key = keyValuePair.left(valueStartPos).stripWhiteSpace();
+        auto key = keyValuePair.left(valueStartPos).stripLeadingAndTrailingMatchedCharacters(isUnicodeCompatibleASCIIWhitespace<UChar>);
 
         if (key.isEmpty() || key != "filename"_s)
             continue;
 
-        auto value = keyValuePair.substring(valueStartPos + 1).stripWhiteSpace();
+        auto value = keyValuePair.substring(valueStartPos + 1).stripLeadingAndTrailingMatchedCharacters(isUnicodeCompatibleASCIIWhitespace<UChar>);
 
         // Remove quotes if there are any
         if (value.length() > 1 && value[0] == '\"')
@@ -564,7 +564,7 @@ XFrameOptionsDisposition parseXFrameOptionsHeader(StringView header)
         return result;
 
     for (auto currentHeader : header.splitAllowingEmptyEntries(',')) {
-        currentHeader = currentHeader.stripWhiteSpace();
+        currentHeader = currentHeader.stripLeadingAndTrailingMatchedCharacters(isUnicodeCompatibleASCIIWhitespace<UChar>);
         XFrameOptionsDisposition currentValue = XFrameOptionsDisposition::None;
         if (equalLettersIgnoringASCIICase(currentHeader, "deny"_s))
             currentValue = XFrameOptionsDisposition::Deny;
@@ -839,7 +839,7 @@ bool isForbiddenHeader(const String& name, StringView value)
         return true;
     if (equalLettersIgnoringASCIICase(name, "x-http-method-override"_s) || equalLettersIgnoringASCIICase(name, "x-http-method"_s) || equalLettersIgnoringASCIICase(name, "x-method-override"_s)) {
         for (auto methodValue : StringView(value).split(',')) {
-            auto method = methodValue.stripWhiteSpace();
+            auto method = methodValue.stripLeadingAndTrailingMatchedCharacters(isUnicodeCompatibleASCIIWhitespace<UChar>);
             if (isForbiddenMethod(method))
                 return true;
         }

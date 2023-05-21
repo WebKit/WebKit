@@ -318,7 +318,7 @@ SMILTime SVGSMILElement::parseOffsetValue(StringView data)
 {
     bool ok;
     double result = 0;
-    auto parse = data.stripWhiteSpace();
+    auto parse = data.stripLeadingAndTrailingMatchedCharacters(isUnicodeCompatibleASCIIWhitespace<UChar>);
     if (parse.endsWith('h'))
         result = parse.left(parse.length() - 1).toDouble(ok) * 60 * 60;
     else if (parse.endsWith("min"_s))
@@ -339,7 +339,7 @@ SMILTime SVGSMILElement::parseClockValue(StringView data)
     if (data.isNull())
         return SMILTime::unresolved();
 
-    auto parse = data.stripWhiteSpace();
+    auto parse = data.stripLeadingAndTrailingMatchedCharacters(isUnicodeCompatibleASCIIWhitespace<UChar>);
     if (parse == indefiniteAtom())
         return SMILTime::indefinite();
 
@@ -372,7 +372,7 @@ static void sortTimeList(Vector<SMILTimeWithOrigin>& timeList)
     
 bool SVGSMILElement::parseCondition(StringView value, BeginOrEnd beginOrEnd)
 {
-    auto parseString = value.stripWhiteSpace();
+    auto parseString = value.stripLeadingAndTrailingMatchedCharacters(isUnicodeCompatibleASCIIWhitespace<UChar>);
     
     double sign = 1.;
     size_t pos = parseString.find('+');
@@ -386,8 +386,8 @@ bool SVGSMILElement::parseCondition(StringView value, BeginOrEnd beginOrEnd)
     if (pos == notFound)
         conditionString = parseString;
     else {
-        conditionString = parseString.left(pos).stripWhiteSpace();
-        auto offsetString = parseString.substring(pos + 1).stripWhiteSpace();
+        conditionString = parseString.left(pos).stripLeadingAndTrailingMatchedCharacters(isUnicodeCompatibleASCIIWhitespace<UChar>);
+        auto offsetString = parseString.substring(pos + 1).stripLeadingAndTrailingMatchedCharacters(isUnicodeCompatibleASCIIWhitespace<UChar>);
         offset = parseOffsetValue(offsetString);
         if (offset.isUnresolved())
             return false;

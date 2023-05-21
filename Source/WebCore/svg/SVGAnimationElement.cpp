@@ -65,7 +65,7 @@ static Vector<float> parseKeyTimes(StringView value, bool verifyOrder)
     Vector<float> result;
 
     for (auto keyTime : keyTimes) {
-        keyTime = keyTime.stripWhiteSpace();
+        keyTime = keyTime.stripLeadingAndTrailingMatchedCharacters(isUnicodeCompatibleASCIIWhitespace<UChar>);
 
         bool ok;
         float time = keyTime.toFloat(ok);
