@@ -42,15 +42,24 @@ public:
     
     void finishCreation(VM&);
     DECLARE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE);
-    
-    void* wrappedObject() { return m_wrappedObject; }
+
+#if JSC_OBJC_API_ENABLED
+    id wrappedObject() { return m_wrappedObject; }
+    void setWrappedObject(id);
+#else
     void setWrappedObject(void*);
+    void* wrappedObject() { return m_wrappedObject; }
+#endif
 
 protected:
     JSAPIWrapperObject(VM&, Structure*);
 
 private:
+#if JSC_OBJC_API_ENABLED
+    id m_wrappedObject { nil };
+#else
     void* m_wrappedObject { nullptr };
+#endif
 };
 
 } // namespace JSC

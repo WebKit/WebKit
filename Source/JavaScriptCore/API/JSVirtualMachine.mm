@@ -131,10 +131,10 @@ static NSMapTable *wrapperCache() WTF_REQUIRES_LOCK(wrapperCacheMutex)
 static id getInternalObjcObject(id object)
 {
     if ([object isKindOfClass:[JSManagedValue class]]) {
-        JSValue* value = [static_cast<JSManagedValue *>(object) value];
+        JSValue *value = (static_cast<JSManagedValue *>(object)).value;
         if (!value)
             return nil;
-        id temp = tryUnwrapObjcObject([value.context JSGlobalContextRef], [value JSValueRef]);
+        id temp = tryUnwrapObjcObject(value.context.JSGlobalContextRef, value.JSValueRef);
         if (temp)
             return temp;
         return object;
@@ -142,7 +142,7 @@ static id getInternalObjcObject(id object)
     
     if ([object isKindOfClass:[JSValue class]]) {
         JSValue *value = static_cast<JSValue *>(object);
-        object = tryUnwrapObjcObject([value.context JSGlobalContextRef], [value JSValueRef]);
+        object = tryUnwrapObjcObject(value.context.JSGlobalContextRef, value.JSValueRef);
     }
 
     return object;
@@ -220,7 +220,7 @@ static id getInternalObjcObject(id object)
         if (count == 1)
             NSMapRemove(ownedObjects, (__bridge void*)object);
 
-        if (![ownedObjects count]) {
+        if (!ownedObjects.count) {
             [m_externalObjectGraph removeObjectForKey:owner];
             [m_externalRememberedSet removeObjectForKey:owner];
         }
@@ -312,7 +312,7 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *virtualMachine)
 
 @end
 
-static void scanExternalObjectGraph(JSC::VM& vm, JSC::AbstractSlotVisitor& visitor, void* root, bool lockAcquired)
+void scanExternalObjectGraph(JSC::VM& vm, JSC::AbstractSlotVisitor& visitor, id root, bool lockAcquired /* = false */)
 {
     @autoreleasepool {
         JSVirtualMachine *virtualMachine = [JSVMWrapperCache wrapperForJSContextGroupRef:toRef(&vm)];
@@ -320,18 +320,18 @@ static void scanExternalObjectGraph(JSC::VM& vm, JSC::AbstractSlotVisitor& visit
             return;
         NSMapTable *externalObjectGraph = [virtualMachine externalObjectGraph];
         Lock& externalDataMutex = [virtualMachine externalDataMutex];
-        Vector<void*> stack;
+        Vector<id> stack;
         stack.append(root);
-        while (!stack.isEmpty()) {
-            void* nextRoot = stack.last();
+        do {
+            id nextRoot = stack.last();
             stack.removeLast();
-            if (!visitor.addOpaqueRoot(nextRoot))
+            if (!visitor.addOpaqueRoot((__bridge void*)nextRoot))
                 continue;
 
             auto appendOwnedObjects = [&] {
-                NSMapTable *ownedObjects = [externalObjectGraph objectForKey:(__bridge id)nextRoot];
+                NSMapTable *ownedObjects = [externalObjectGraph objectForKey:nextRoot];
                 for (id ownedObject in ownedObjects)
-                    stack.append((__bridge void*)ownedObject);
+                    stack.append(ownedObject);
             };
 
             if (lockAcquired)
@@ -340,14 +340,8 @@ static void scanExternalObjectGraph(JSC::VM& vm, JSC::AbstractSlotVisitor& visit
                 Locker locker { externalDataMutex };
                 appendOwnedObjects();
             }
-        }
+        } while (!stack.isEmpty());
     }
-}
-
-void scanExternalObjectGraph(JSC::VM& vm, JSC::AbstractSlotVisitor& visitor, void* root)
-{
-    bool lockAcquired = false;
-    scanExternalObjectGraph(vm, visitor, root, lockAcquired);
 }
 
 void scanExternalRememberedSet(JSC::VM& vm, JSC::AbstractSlotVisitor& visitor)
@@ -362,9 +356,8 @@ void scanExternalRememberedSet(JSC::VM& vm, JSC::AbstractSlotVisitor& visitor)
         NSMapTable *externalRememberedSet = [virtualMachine externalRememberedSet];
         for (id key in externalRememberedSet) {
             NSMapTable *ownedObjects = [externalObjectGraph objectForKey:key];
-            bool lockAcquired = true;
             for (id ownedObject in ownedObjects)
-                scanExternalObjectGraph(vm, visitor, (__bridge void*)ownedObject, lockAcquired);
+                scanExternalObjectGraph(vm, visitor, ownedObject, true); // Lock is aquired.
         }
         [externalRememberedSet removeAllObjects];
     }

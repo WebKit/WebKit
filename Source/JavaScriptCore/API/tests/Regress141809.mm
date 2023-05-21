@@ -118,9 +118,9 @@ void runRegress141809()
             TestClassC* obj = [[TestClassC alloc] init];
             resultBeforeGC = [dumpPrototypes callWithArguments:@[obj]];
         }
-        
-        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
-        
+
+        JSSynchronousGarbageCollectForDebugging(context.JSGlobalContextRef);
+
         @autoreleasepool {
             TestClassC* obj = [[TestClassC alloc] init];
             JSValue* resultAfterGC = [dumpPrototypes callWithArguments:@[obj]];

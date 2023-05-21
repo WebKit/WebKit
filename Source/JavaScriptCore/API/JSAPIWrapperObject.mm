@@ -52,7 +52,7 @@ void JSAPIWrapperObjectHandleOwner::finalize(JSC::Handle<JSC::Unknown> handle, v
     if (!wrapperObject->wrappedObject())
         return;
 
-    JSC::Heap::heap(wrapperObject)->releaseSoon(adoptNS(static_cast<id>(wrapperObject->wrappedObject())));
+    JSC::Heap::heap(wrapperObject)->releaseSoon(adoptNS(wrapperObject->wrappedObject()));
     JSC::WeakSet::deallocate(JSC::WeakImpl::asWeakImpl(handle.slot()));
 }
 
@@ -118,11 +118,11 @@ void JSAPIWrapperObject::finishCreation(VM& vm)
     Base::finishCreation(vm);
     WeakSet::allocate(this, jsAPIWrapperObjectHandleOwner(), 0); // Balanced in JSAPIWrapperObjectHandleOwner::finalize.
 }
-    
-void JSAPIWrapperObject::setWrappedObject(void* wrappedObject)
+
+void JSAPIWrapperObject::setWrappedObject(id wrappedObject)
 {
     ASSERT(!m_wrappedObject);
-    m_wrappedObject = [static_cast<id>(wrappedObject) retain];
+    m_wrappedObject = retainPtr(wrappedObject).get();
 }
 
 template<typename Visitor>
@@ -131,7 +131,7 @@ void JSAPIWrapperObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     JSAPIWrapperObject* thisObject = JSC::jsCast<JSAPIWrapperObject*>(cell);
     Base::visitChildren(cell, visitor);
 
-    void* wrappedObject = thisObject->wrappedObject();
+    id wrappedObject = thisObject->wrappedObject();
     if (wrappedObject)
         scanExternalObjectGraph(visitor.vm(), visitor, wrappedObject);
 }

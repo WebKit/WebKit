@@ -144,7 +144,7 @@ extern "C" void checkResult(NSString *description, bool passed);
     context[@"NSString"] = [NSString class];
     context[@"myString"] = @"YES";
     JSValue *value = [context evaluateScript:@"myString.boolValue()"];
-    checkResult(@"Dynamically generated JSExport-ed protocols are ignored", [value isUndefined] && !!context.exception);
+    checkResult(@"Dynamically generated JSExport-ed protocols are ignored", value.isUndefined && !!context.exception);
 }
 
 + (void)classNamePrefixedWithUnderscoreTest
@@ -199,7 +199,7 @@ static void wrapperForNSObjectisObject()
         context.exception = nil;
 
         context[@"A"] = NSObject.class;
-        checkResult(@"Should not throw an exception when wrapping NSObject and Object has been changed", ![context exception]);
+        checkResult(@"Should not throw an exception when wrapping NSObject and Object has been changed", !context.exception);
     }
 }
 

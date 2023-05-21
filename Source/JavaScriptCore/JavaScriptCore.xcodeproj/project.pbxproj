@@ -1052,8 +1052,8 @@
 		536B318E1F71C5990037FC33 /* UnifiedSource128.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536B31091F71C5380037FC33 /* UnifiedSource128.cpp */; };
 		536B318F1F71C5990037FC33 /* UnifiedSource114.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536B310A1F71C5380037FC33 /* UnifiedSource114.cpp */; };
 		536B31901F71C5990037FC33 /* UnifiedSource100.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536B310B1F71C5380037FC33 /* UnifiedSource100.cpp */; };
-		536B319A1F735E780037FC33 /* UnifiedSource1-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 536B31981F735E5C0037FC33 /* UnifiedSource1-mm.mm */; };
-		536B319B1F735E780037FC33 /* UnifiedSource2-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 536B31961F735E5B0037FC33 /* UnifiedSource2-mm.mm */; };
+		536B319A1F735E780037FC33 /* UnifiedSource1-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 536B31981F735E5C0037FC33 /* UnifiedSource1-mm.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		536B319B1F735E780037FC33 /* UnifiedSource2-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 536B31961F735E5B0037FC33 /* UnifiedSource2-mm.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		536B319C1F735E7D0037FC33 /* UnifiedSource134.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536B31971F735E5B0037FC33 /* UnifiedSource134.cpp */; };
 		536B319D1F735E7D0037FC33 /* UnifiedSource135.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536B31991F735E5D0037FC33 /* UnifiedSource135.cpp */; };
 		5370806B1FE232DF00299E44 /* JSArrayBufferView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B66BB17B6B5AB00A7AE3F /* JSArrayBufferView.h */; };
@@ -12834,6 +12834,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 			};
 			name = Debug;
 		};
@@ -12841,6 +12842,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 			};
 			name = Release;
 		};
@@ -12849,6 +12851,7 @@
 			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
 				BUILD_VARIANTS = normal;
+				CLANG_ENABLE_OBJC_ARC = YES;
 			};
 			name = Production;
 		};
@@ -12856,6 +12859,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 			};
 			name = Debug;
 		};
@@ -12863,6 +12867,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 			};
 			name = Release;
 		};
@@ -12870,6 +12875,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 			};
 			name = Production;
 		};
@@ -13229,6 +13235,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 			};
 			name = Profiling;
 		};
@@ -13258,6 +13265,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 			};
 			name = Profiling;
 		};

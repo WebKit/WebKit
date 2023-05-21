@@ -30,37 +30,37 @@
 class ObjCGeneratorTemplates:
 
     HeaderPrelude = (
-    """#import <Foundation/Foundation.h>
+        """#import <Foundation/Foundation.h>
 
 ${includes}
 """)
 
     HeaderPostlude = (
-    """
+        """
 ${includes}
 """)
 
     TypeConversionsHeaderPrelude = (
-    """${includes}
+        """${includes}
 
 namespace Inspector {""")
 
     TypeConversionsHeaderPostlude = (
-    """} // namespace Inspector
+        """} // namespace Inspector
 """)
 
     GenericHeaderPrelude = (
-    """${includes}""")
+        """${includes}""")
 
     GenericHeaderPostlude = (
-    """""")
+        """""")
 
     TypeConversionsHeaderStandard = (
-    """template<typename ObjCEnumType>
+        """template<typename ObjCEnumType>
 std::optional<ObjCEnumType> fromProtocolString(const String& value);""")
 
     BackendDispatcherHeaderPrelude = (
-    """${includes}
+        """${includes}
 
 ${forwardDeclarations}
 
@@ -68,11 +68,11 @@ namespace Inspector {
 """)
 
     BackendDispatcherHeaderPostlude = (
-    """} // namespace Inspector
+        """} // namespace Inspector
 """)
 
     BackendDispatcherImplementationPrelude = (
-    """#import "config.h"
+        """#import "config.h"
 #import ${primaryInclude}
 
 ${secondaryIncludes}
@@ -80,28 +80,28 @@ ${secondaryIncludes}
 namespace Inspector {""")
 
     BackendDispatcherImplementationPostlude = (
-    """} // namespace Inspector
+        """} // namespace Inspector
 """)
 
     ImplementationPrelude = (
-    """#import ${primaryInclude}
+        """#import ${primaryInclude}
 
 ${secondaryIncludes}
 
 using namespace Inspector;""")
 
     ImplementationPostlude = (
-    """""")
+        """""")
 
     BackendDispatcherHeaderDomainHandlerInterfaceDeclaration = (
-    """class Alternate${domainName}BackendDispatcher : public AlternateBackendDispatcher {
+        """class Alternate${domainName}BackendDispatcher : public AlternateBackendDispatcher {
 public:
     virtual ~Alternate${domainName}BackendDispatcher() { }
 ${commandDeclarations}
 };""")
 
     BackendDispatcherHeaderDomainHandlerObjCDeclaration = (
-    """class ObjCInspector${domainName}BackendDispatcher final : public Alternate${domainName}BackendDispatcher {
+        """class ObjCInspector${domainName}BackendDispatcher final : public Alternate${domainName}BackendDispatcher {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ObjCInspector${domainName}BackendDispatcher(id<${objcPrefix}${domainName}DomainHandler> handler) { m_delegate = handler; }
@@ -111,7 +111,7 @@ private:
 };""")
 
     BackendDispatcherHeaderDomainHandlerImplementation = (
-    """void ObjCInspector${domainName}BackendDispatcher::${commandName}(${parameters})
+        """void ObjCInspector${domainName}BackendDispatcher::${commandName}(${parameters})
 {
     if (!${respondsToSelector}) {
         backendDispatcher()->reportProtocolError(protocol_requestId, BackendDispatcher::MethodNotFound, "'${domainName}.${commandName}' was not found"_s);
@@ -130,13 +130,13 @@ ${invocation}
 }""")
 
     ConfigurationCommandProperty = (
-    """@property (nonatomic, retain, setter=set${domainName}Handler:) id<${objcPrefix}${domainName}DomainHandler> ${variableNamePrefix}Handler;""")
+        """@property (nonatomic, strong, setter=set${domainName}Handler:) id<${objcPrefix}${domainName}DomainHandler> ${variableNamePrefix}Handler;""")
 
     ConfigurationEventProperty = (
-    """@property (nonatomic, readonly) ${objcPrefix}${domainName}DomainEventDispatcher *${variableNamePrefix}EventDispatcher;""")
+        """@property (nonatomic, readonly) ${objcPrefix}${domainName}DomainEventDispatcher *${variableNamePrefix}EventDispatcher;""")
 
     ConfigurationCommandPropertyImplementation = (
-    """- (void)set${domainName}Handler:(id<${objcPrefix}${domainName}DomainHandler>)handler
+        """- (void)set${domainName}Handler:(id<${objcPrefix}${domainName}DomainHandler>)handler
 {
     if (handler == _${variableNamePrefix}Handler)
         return;
@@ -154,7 +154,7 @@ ${invocation}
 }""")
 
     ConfigurationGetterImplementation = (
-    """- (${objcPrefix}${domainName}DomainEventDispatcher *)${variableNamePrefix}EventDispatcher
+        """- (${objcPrefix}${domainName}DomainEventDispatcher *)${variableNamePrefix}EventDispatcher
 {
     if (!_${variableNamePrefix}EventDispatcher)
         _${variableNamePrefix}EventDispatcher = adoptNS([[${objcPrefix}${domainName}DomainEventDispatcher alloc] initWithController:_controller]);

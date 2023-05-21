@@ -93,7 +93,7 @@ extern "C" void checkResult(NSString *, bool);
 @end
 
 @protocol TestObject <JSExport>
-- (id)init;
+- (instancetype)init;
 @property int variable;
 @property (readonly) int six;
 @property CGPoint point;
@@ -109,14 +109,14 @@ JSExportAs(testArgumentTypes,
 
 @interface TestObject : ParentObject <TestObject>
 @property int six;
-+ (id)testObject;
++ (instancetype)testObject;
 @end
 
 @implementation TestObject
 @synthesize variable;
 @synthesize six;
 @synthesize point;
-+ (id)testObject
++ (instancetype)testObject
 {
     return [[TestObject alloc] init];
 }
@@ -130,7 +130,7 @@ JSExportAs(testArgumentTypes,
 }
 - (NSString *)testArgumentTypesWithInt:(int)i double:(double)d boolean:(BOOL)b string:(NSString *)s number:(NSNumber *)n array:(NSArray *)a dictionary:(NSDictionary *)o
 {
-    return [NSString stringWithFormat:@"%d,%g,%d,%@,%d,%@,%@", i, d, b==YES?true:false,s,[n intValue],a[1],o[@"x"]];
+    return [NSString stringWithFormat:@"%d,%g,%d,%@,%d,%@,%@", i, d, b == YES ? true : false, s, n.intValue, a[1], o[@"x"]];
 }
 - (void)callback:(JSValue *)function
 {
@@ -145,7 +145,7 @@ JSExportAs(testArgumentTypes,
 bool testXYZTested = false;
 
 @protocol TextXYZ <JSExport>
-- (id)initWithString:(NSString*)string;
+- (instancetype)initWithString:(NSString *)string;
 @property int x;
 @property (readonly) int y;
 @property (assign) JSValue *onclick;
@@ -167,7 +167,7 @@ bool testXYZTested = false;
 @synthesize x;
 @synthesize y;
 @synthesize z;
-- (id)initWithString:(NSString*)string
+- (instancetype)initWithString:(NSString *)string
 {
     self = [super init];
     if (!self)
@@ -193,18 +193,18 @@ bool testXYZTested = false;
 }
 - (JSValue *)weakOnclick
 {
-    return [m_weakOnclickHandler value];
+    return m_weakOnclickHandler.value;
 }
 - (JSValue *)onclick
 {
-    return [m_onclickHandler value];
+    return m_onclickHandler.value;
 }
 - (void)click
 {
     if (!m_onclickHandler)
         return;
 
-    JSValue *function = [m_onclickHandler value];
+    JSValue *function = m_onclickHandler.value;
     [function callWithArguments:@[]];
 }
 @end
@@ -226,13 +226,13 @@ bool testXYZTested = false;
     RetainPtr<JSVirtualMachine> m_sharedVirtualMachine;
 }
 
-- (id)initWithVirtualMachine:(JSVirtualMachine *)virtualMachine
+- (instancetype)initWithVirtualMachine:(JSVirtualMachine *)virtualMachine
 {
     self = [super init];
     if (!self)
         return nil;
 
-    m_children = [[NSMutableArray alloc] initWithCapacity:0];
+    m_children = [[NSMutableArray alloc] init];
     m_sharedVirtualMachine = virtualMachine;
 
     return self;
@@ -246,21 +246,21 @@ bool testXYZTested = false;
 
 - (NSUInteger)numberOfChildren
 {
-    return [m_children count];
+    return m_children.count;
 }
 
 - (TinyDOMNode *)childAtIndex:(NSUInteger)index
 {
-    if (index >= [m_children count])
+    if (index >= m_children.count)
         return nil;
-    return [m_children objectAtIndex:index];
+    return m_children[index];
 }
 
 - (void)removeChildAtIndex:(NSUInteger)index
 {
-    if (index >= [m_children count])
+    if (index >= m_children.count)
         return;
-    [m_sharedVirtualMachine removeManagedReference:[m_children objectAtIndex:index] withOwner:self];
+    [m_sharedVirtualMachine removeManagedReference:m_children[index] withOwner:self];
     [m_children removeObjectAtIndex:index];
 }
 
@@ -274,7 +274,7 @@ bool testXYZTested = false;
 @implementation JSCollection {
     NSMutableDictionary *_dict;
 }
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     if (!self)
@@ -287,37 +287,37 @@ bool testXYZTested = false;
 
 - (void)setValue:(JSValue *)value forKey:(NSString *)key
 {
-    JSManagedValue *oldManagedValue = [_dict objectForKey:key];
+    JSManagedValue *oldManagedValue = _dict[key];
     if (oldManagedValue) {
-        JSValue* oldValue = [oldManagedValue value];
+        JSValue *oldValue = oldManagedValue.value;
         if (oldValue)
             [oldValue.context.virtualMachine removeManagedReference:oldManagedValue withOwner:self];
     }
     JSManagedValue *managedValue = [JSManagedValue managedValueWithValue:value];
     [value.context.virtualMachine addManagedReference:managedValue withOwner:self];
-    [_dict setObject:managedValue forKey:key];
+    _dict[key] = managedValue;
 }
 
 - (JSValue *)valueForKey:(NSString *)key
 {
-    JSManagedValue *managedValue = [_dict objectForKey:key];
+    JSManagedValue *managedValue = _dict[key];
     if (!managedValue)
         return nil;
-    return [managedValue value];
+    return managedValue.value;
 }
 @end
 
 @protocol InitA <JSExport>
-- (id)initWithA:(int)a;
+- (instancetype)initWithA:(int)a;
 - (int)initialize;
 @end
 
 @protocol InitB <JSExport>
-- (id)initWithA:(int)a b:(int)b;
+- (instancetype)initWithA:(int)a b:(int)b;
 @end
 
 @protocol InitC <JSExport>
-- (id)_init;
+- (instancetype)_init;
 @end
 
 @interface ClassA : NSObject<InitA>
@@ -333,17 +333,17 @@ bool testXYZTested = false;
 @end
 
 @interface ClassD : NSObject<InitA>
-- (id)initWithA:(int)a;
+- (instancetype)initWithA:(int)a;
 @end
 
 @interface ClassE : ClassD
-- (id)initWithA:(int)a;
+- (instancetype)initWithA:(int)a;
 @end
 
 @implementation ClassA {
     int _a;
 }
-- (id)initWithA:(int)a
+- (instancetype)initWithA:(int)a
 {
     self = [super init];
     if (!self)
@@ -362,7 +362,7 @@ bool testXYZTested = false;
 @implementation ClassB {
     int _b;
 }
-- (id)initWithA:(int)a b:(int)b
+- (instancetype)initWithA:(int)a b:(int)b
 {
     self = [super initWithA:a];
     if (!self)
@@ -377,11 +377,11 @@ bool testXYZTested = false;
 @implementation ClassC {
     int _c;
 }
-- (id)initWithA:(int)a
+- (instancetype)initWithA:(int)a
 {
     return [self initWithA:a b:0];
 }
-- (id)initWithA:(int)a b:(int)b
+- (instancetype)initWithA:(int)a b:(int)b
 {
     self = [super initWithA:a b:b];
     if (!self)
@@ -394,14 +394,14 @@ bool testXYZTested = false;
 @end
 
 @implementation ClassCPrime
-- (id)initWithA:(int)a
+- (instancetype)initWithA:(int)a
 {
     self = [super initWithA:a b:0];
     if (!self)
         return nil;
     return self;
 }
-- (id)_init
+- (instancetype)_init
 {
     return [self initWithA:42];
 }
@@ -409,7 +409,7 @@ bool testXYZTested = false;
 
 @implementation ClassD
 
-- (id)initWithA:(int)a
+- (instancetype)initWithA:(int)a
 {
     self = nil;
     return [[ClassE alloc] initWithA:a];
@@ -424,7 +424,7 @@ bool testXYZTested = false;
     int _a;
 }
 
-- (id)initWithA:(int)a
+- (instancetype)initWithA:(int)a
 {
     self = [super init];
     if (!self)
@@ -445,7 +445,7 @@ static bool evilAllocationObjectWasDealloced = false;
 @implementation EvilAllocationObject {
     JSContext *m_context;
 }
-- (id)initWithContext:(JSContext *)context
+- (instancetype)initWithContext:(JSContext *)context
 {
     self = [super init];
     if (!self)
@@ -477,7 +477,7 @@ static bool evilAllocationObjectWasDealloced = false;
             return sum; \
         })()"];
 
-    JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+    JSSynchronousGarbageCollectForDebugging(context.JSGlobalContextRef);
     return result;
 }
 @end
@@ -529,7 +529,7 @@ static void* multiVMThreadMain(void* okPtr)
         NSLog(@"Did not find \"array\" variable.\n");
         ok = false;
     }
-    JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+    JSSynchronousGarbageCollectForDebugging(context.JSGlobalContextRef);
     return nullptr;
 }
 
@@ -593,7 +593,7 @@ static void testObjectiveCAPIMain()
 
     @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
-        checkResult(@"Promise is exposed", ![context[@"Promise"] isUndefined]);
+        checkResult(@"Promise is exposed", !(context[@"Promise"]).isUndefined);
         JSValue *result = [context evaluateScript:@"typeof Promise"];
         checkResult(@"typeof Promise is 'function'", result.isString && [result isEqualToObject:@"function"]);
     }
@@ -705,7 +705,7 @@ static void testObjectiveCAPIMain()
         JSValue *object = [JSValue valueWithNewObjectInContext:context];
         NSObject *objCObject = [[NSObject alloc] init];
         JSValue *result = object[objCObject];
-        checkResult(@"getting a non-convertable object should return undefined", [result isUndefined]);
+        checkResult(@"getting a non-convertable object should return undefined", result.isUndefined);
         object[objCObject] = @(1);
         result = object[objCObject];
         checkResult(@"getting a non-convertable object should return the stored value", [result toUInt32] == 1);
@@ -726,7 +726,7 @@ static void testObjectiveCAPIMain()
                 JSValue *value = [JSContext currentThis][@"object"][@"value"];
                 [[JSContext currentThis][@"object"] deleteProperty:@"value"];
                 result[@"value"] = value;
-                result[@"done"] = [JSValue valueWithBool:[value isUndefined] inContext:context];
+                result[@"done"] = [JSValue valueWithBool:value.isUndefined inContext:context];
                 return result;
             };
             return result;
@@ -734,7 +734,7 @@ static void testObjectiveCAPIMain()
 
 
         JSValue *count = [context evaluateScript:@"let count = 0; for (let v of object) { if (v !== 1) throw new Error(); count++; } count;"];
-        checkResult(@"iterator should not throw", ![context exception]);
+        checkResult(@"iterator should not throw", !context.exception);
         checkResult(@"iteration count should be 1", [count toUInt32] == 1);
     }
 
@@ -754,7 +754,7 @@ static void testObjectiveCAPIMain()
             [myPrivateProperties setValue:[JSValue valueWithNullInContext:context] forKey:@"definitely_null"];
             [myPrivateProperties setValue:[JSValue valueWithUndefinedInContext:context] forKey:@"not_sure_if_undefined"];
 
-            JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+            JSSynchronousGarbageCollectForDebugging(context.JSGlobalContextRef);
 
             JSValue *isHam = [myPrivateProperties valueForKey:@"is_ham"];
             JSValue *message = [myPrivateProperties valueForKey:@"message"];
@@ -785,7 +785,7 @@ static void testObjectiveCAPIMain()
             JSValue *jsCollection = [JSValue valueWithObject:collection inContext:context];
             JSManagedValue *weakCollection = [JSManagedValue managedValueWithValue:jsCollection andOwner:rootObject];
             [context.virtualMachine addManagedReference:weakCollection withOwner:message];
-            JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+            JSSynchronousGarbageCollectForDebugging(context.JSGlobalContextRef);
         }
     }
 
@@ -862,7 +862,7 @@ static void testObjectiveCAPIMain()
         };
         NSURL *url = [NSURL fileURLWithPath:@"/foo/bar.js" isDirectory:NO];
         [context evaluateScript:@"!@#$%^&*() THIS IS NOT VALID JAVASCRIPT SYNTAX !@#$%^&*()" withSourceURL:url];
-        checkResult(@"evaluateScript:withSourceURL: exception has expected sourceURL", [exceptionSourceURL isEqualToString:[url absoluteString]]);
+        checkResult(@"evaluateScript:withSourceURL: exception has expected sourceURL", [exceptionSourceURL isEqualToString:url.absoluteString]);
     }
 
     @autoreleasepool {
@@ -918,23 +918,23 @@ static void testObjectiveCAPIMain()
     @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];        
         JSValue *array = [JSValue valueWithNewArrayInContext:context];
-        checkResult(@"arrayLengthEmpty", [[array[@"length"] toNumber] unsignedIntegerValue] == 0);
+        checkResult(@"arrayLengthEmpty", ![array[@"length"] toNumber].unsignedIntegerValue);
         JSValue *value1 = [JSValue valueWithInt32:42 inContext:context];
         JSValue *value2 = [JSValue valueWithInt32:24 inContext:context];
         NSUInteger lowIndex = 5;
         NSUInteger maxLength = UINT_MAX;
 
         [array setValue:value1 atIndex:lowIndex];
-        checkResult(@"array.length after put to low index", [[array[@"length"] toNumber] unsignedIntegerValue] == (lowIndex + 1));
+        checkResult(@"array.length after put to low index", [array[@"length"] toNumber].unsignedIntegerValue == (lowIndex + 1));
 
         [array setValue:value1 atIndex:(maxLength - 1)];
-        checkResult(@"array.length after put to maxLength - 1", [[array[@"length"] toNumber] unsignedIntegerValue] == maxLength);
+        checkResult(@"array.length after put to maxLength - 1", [array[@"length"] toNumber].unsignedIntegerValue == maxLength);
 
         [array setValue:value2 atIndex:maxLength];
-        checkResult(@"array.length after put to maxLength", [[array[@"length"] toNumber] unsignedIntegerValue] == maxLength);
+        checkResult(@"array.length after put to maxLength", [array[@"length"] toNumber].unsignedIntegerValue == maxLength);
 
         [array setValue:value2 atIndex:(maxLength + 1)];
-        checkResult(@"array.length after put to maxLength + 1", [[array[@"length"] toNumber] unsignedIntegerValue] == maxLength);
+        checkResult(@"array.length after put to maxLength + 1", [array[@"length"] toNumber].unsignedIntegerValue == maxLength);
 
         if (sizeof(NSUInteger) == 8)
             checkResult(@"valueAtIndex:0 is undefined", [array valueAtIndex:0].isUndefined);
@@ -992,10 +992,10 @@ static void testObjectiveCAPIMain()
         JSContext *context = [[JSContext alloc] init];
         context[@"concatenate"] = ^{
             NSArray *arguments = [JSContext currentArguments];
-            if (![arguments count])
+            if (!arguments.count)
                 return @"";
             NSString *message = [arguments[0] description];
-            for (NSUInteger index = 1; index < [arguments count]; ++index)
+            for (NSUInteger index = 1; index < arguments.count; ++index)
                 message = [NSString stringWithFormat:@"%@ %@", message, arguments[index]];
             return message;
         };
@@ -1006,7 +1006,7 @@ static void testObjectiveCAPIMain()
     @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
         context[@"foo"] = @YES;
-        checkResult(@"@YES is boolean", [context[@"foo"] isBoolean]);
+        checkResult(@"@YES is boolean", (context[@"foo"]).isBoolean);
         JSValue *result = [context evaluateScript:@"typeof foo"];
         checkResult(@"@YES is boolean", [result isEqualToObject:@"boolean"]);
     }
@@ -1197,8 +1197,8 @@ static void testObjectiveCAPIMain()
             [context evaluateScript:@"var constructor = Object.getPrototypeOf(testObject).constructor; constructor.prototype = undefined;"];
             [context evaluateScript:@"testObject = undefined"];
         }
-        
-        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+
+        JSSynchronousGarbageCollectForDebugging(context.JSGlobalContextRef);
 
         @autoreleasepool {
             context[@"testObject"] = testObject;
@@ -1230,7 +1230,7 @@ static void testObjectiveCAPIMain()
             checkResult(@"Event handler onclick", [result toBool]);
         }
 
-        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+        JSSynchronousGarbageCollectForDebugging(context.JSGlobalContextRef);
 
         @autoreleasepool {
             JSValue *result = [context evaluateScript:@"testXYZ.onclick"];
@@ -1250,7 +1250,7 @@ static void testObjectiveCAPIMain()
             "];
         }
 
-        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+        JSSynchronousGarbageCollectForDebugging(context.JSGlobalContextRef);
 
         @autoreleasepool {
             [testXYZ click];
@@ -1282,7 +1282,7 @@ static void testObjectiveCAPIMain()
             [context evaluateScript:@"getLastNodeInChain(root).myCustomProperty = 42;"];
         }
 
-        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+        JSSynchronousGarbageCollectForDebugging(context.JSGlobalContextRef);
 
         JSValue *myCustomProperty = [context evaluateScript:@"getLastNodeInChain(root).myCustomProperty"];
         checkResult(@"My custom property == 42", myCustomProperty.isNumber && [myCustomProperty toInt32] == 42);
@@ -1314,7 +1314,7 @@ static void testObjectiveCAPIMain()
             [root removeChildAtIndex:0];
         }
 
-        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+        JSSynchronousGarbageCollectForDebugging(context.JSGlobalContextRef);
 
         JSValue *myCustomProperty = [context evaluateScript:@"getLastNodeInChain(root).myCustomProperty"];
         checkResult(@"duplicate calls to addManagedReference don't cause things to die", myCustomProperty.isNumber && [myCustomProperty toInt32] == 42);
@@ -1324,7 +1324,7 @@ static void testObjectiveCAPIMain()
         JSContext *context = [[JSContext alloc] init];
         JSValue *o = [JSValue valueWithNewObjectInContext:context];
         o[@"foo"] = @"foo";
-        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+        JSSynchronousGarbageCollectForDebugging(context.JSGlobalContextRef);
 
         checkResult(@"JSValue correctly protected its internal value", [[o[@"foo"] toString] isEqualToString:@"foo"]);
     }
@@ -1348,7 +1348,7 @@ static void testObjectiveCAPIMain()
                 [array addObject:managedObject];
             }
         }
-        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+        JSSynchronousGarbageCollectForDebugging(context.JSGlobalContextRef);
         for (unsigned i = 0; i < count; ++i)
             [context.virtualMachine addManagedReference:array[i] withOwner:array];
     }
@@ -1374,24 +1374,24 @@ static void testObjectiveCAPIMain()
             managedValue = [JSManagedValue managedValueWithValue:object andOwner:testObject];
             [context.virtualMachine addManagedReference:managedValue withOwner:testObject];
         }
-        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+        JSSynchronousGarbageCollectForDebugging(context.JSGlobalContextRef);
     }
 
     @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
         context[@"MyClass"] = ^{
             JSValue *newThis = [JSValue valueWithNewObjectInContext:[JSContext currentContext]];
-            JSGlobalContextRef contextRef = [[JSContext currentContext] JSGlobalContextRef];
-            JSObjectRef newThisRef = JSValueToObject(contextRef, [newThis JSValueRef], NULL);
-            JSObjectSetPrototype(contextRef, newThisRef, [[JSContext currentContext][@"MyClass"][@"prototype"] JSValueRef]);
+            JSGlobalContextRef contextRef = [JSContext currentContext].JSGlobalContextRef;
+            JSObjectRef newThisRef = JSValueToObject(contextRef, newThis.JSValueRef, NULL);
+            JSObjectSetPrototype(contextRef, newThisRef, ([JSContext currentContext][@"MyClass"][@"prototype"]).JSValueRef);
             return newThis;
         };
 
         context[@"MyOtherClass"] = ^{
             JSValue *newThis = [JSValue valueWithNewObjectInContext:[JSContext currentContext]];
-            JSGlobalContextRef contextRef = [[JSContext currentContext] JSGlobalContextRef];
-            JSObjectRef newThisRef = JSValueToObject(contextRef, [newThis JSValueRef], NULL);
-            JSObjectSetPrototype(contextRef, newThisRef, [[JSContext currentContext][@"MyOtherClass"][@"prototype"] JSValueRef]);
+            JSGlobalContextRef contextRef = [JSContext currentContext].JSGlobalContextRef;
+            JSObjectRef newThisRef = JSValueToObject(contextRef, newThis.JSValueRef, NULL);
+            JSObjectSetPrototype(contextRef, newThisRef, ([JSContext currentContext][@"MyOtherClass"][@"prototype"]).JSValueRef);
             return newThis;
         };
 
@@ -1445,9 +1445,9 @@ static void testObjectiveCAPIMain()
 
             context[@"TestConstructor"] = ^{
                 JSValue *newThis = [JSValue valueWithNewObjectInContext:[JSContext currentContext]];
-                JSGlobalContextRef contextRef = [[JSContext currentContext] JSGlobalContextRef];
-                JSObjectRef newThisRef = JSValueToObject(contextRef, [newThis JSValueRef], NULL);
-                JSObjectSetPrototype(contextRef, newThisRef, [[JSContext currentCallee][@"prototype"] JSValueRef]);
+                JSGlobalContextRef contextRef = [JSContext currentContext].JSGlobalContextRef;
+                JSObjectRef newThisRef = JSValueToObject(contextRef, newThis.JSValueRef, NULL);
+                JSObjectSetPrototype(contextRef, newThisRef, ([JSContext currentCallee][@"prototype"]).JSValueRef);
                 return newThis;
             };
             checkResult(@"(new TestConstructor) instanceof TestConstructor", [context evaluateScript:@"(new TestConstructor) instanceof TestConstructor"]);
@@ -1576,7 +1576,7 @@ static void testObjectiveCAPIMain()
         @autoreleasepool {
             context[@"root"] = root;
         }
-        JSSynchronousEdenCollectForDebugging([context JSGlobalContextRef]);
+        JSSynchronousEdenCollectForDebugging(context.JSGlobalContextRef);
 
         // Create a new Obj-C object only reachable via the external object graph
         // through the object we already scanned during the EdenCollection.
@@ -1593,10 +1593,10 @@ static void testObjectiveCAPIMain()
         }
 
         // Force another EdenCollection. It should rescan the new part of the external object graph.
-        JSSynchronousEdenCollectForDebugging([context JSGlobalContextRef]);
-        
+        JSSynchronousEdenCollectForDebugging(context.JSGlobalContextRef);
+
         // Check that the managed JSValue is still alive.
-        checkResult(@"EdenCollection doesn't reclaim new managed values", [managedJSObject value] != nil);
+        checkResult(@"EdenCollection doesn't reclaim new managed values", managedJSObject.value != nil);
     }
 
     @autoreleasepool {
@@ -1605,7 +1605,7 @@ static void testObjectiveCAPIMain()
         pthread_t threadID;
         pthread_create(&threadID, NULL, &threadMain, (__bridge void*)context);
         pthread_join(threadID, nullptr);
-        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+        JSSynchronousGarbageCollectForDebugging(context.JSGlobalContextRef);
 
         checkResult(@"Did not crash after entering the VM from another thread", true);
     }
@@ -1660,7 +1660,6 @@ static void checkNegativeNSIntegers()
     [context evaluateScript:jsID];
     JSValue *jsFunction = context[@"getContainerNumber"];
     JSValue *result = [jsFunction callWithArguments:@[]];
-    
     checkResult(@"Negative number maintained its original value", [[result toString] isEqualToString:@"-1"]);
 }
 
@@ -1673,27 +1672,42 @@ enum class Resolution {
 
 static void promiseWithExecutor(Resolution resolution)
 {
+    NSLog(@"1");
     @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
-
+            NSLog(@"2");
         __block JSValue *resolveCallback;
         __block JSValue *rejectCallback;
         JSValue *promise = [JSValue valueWithNewPromiseInContext:context fromExecutor:^(JSValue *resolve, JSValue *reject) {
+                        NSLog(@"3");
             if (resolution == Resolution::ResolveEager)
+            {
+                                        NSLog(@"4");
                 [resolve callWithArguments:@[@YES]];
+                NSLog(@"5");
+            }
+            
             if (resolution == Resolution::RejectEager)
+            {
+                                NSLog(@"6");
                 [reject callWithArguments:@[@YES]];
+            }
             resolveCallback = resolve;
             rejectCallback = reject;
         }];
 
+                        NSLog(@"7");
         __block bool valueWasResolvedTrue = false;
         __block bool valueWasRejectedTrue = false;
         [promise invokeMethod:@"then" withArguments:@[
-            ^(JSValue *value) { valueWasResolvedTrue = [value isBoolean] && [value toBool]; },
-            ^(JSValue *value) { valueWasRejectedTrue = [value isBoolean] && [value toBool]; },
+            ^(JSValue *value) { 
+                        NSLog(@"8"); valueWasResolvedTrue = value.isBoolean && [value toBool]; },
+            ^(JSValue *value) { 
+                        NSLog(@"9"); valueWasRejectedTrue = value.isBoolean && [value toBool]; },
         ]];
 
+
+                        NSLog(@"10");
         switch (resolution) {
         case Resolution::ResolveEager:
             checkResult(@"ResolveEager should have set resolve early.", valueWasResolvedTrue && !valueWasRejectedTrue);
@@ -1710,10 +1724,14 @@ static void promiseWithExecutor(Resolution resolution)
         valueWasRejectedTrue = false;
 
         // Run script to make sure reactions don't happen again
+                                NSLog(@"11");
         [context evaluateScript:@"{ };"];
 
-        if (resolution == Resolution::ResolveLate)
+        if (resolution == Resolution::ResolveLate) {
+                                            NSLog(@"12");
             [resolveCallback callWithArguments:@[@YES]];
+                                            NSLog(@"13");
+        }
         if (resolution == Resolution::RejectLate)
             [rejectCallback callWithArguments:@[@YES]];
 
@@ -1743,7 +1761,6 @@ static void promiseRejectOnJSException()
 
         __block bool reasonWasObject = false;
         [promise invokeMethod:@"catch" withArguments:@[^(JSValue *reason) { reasonWasObject = [reason isObject]; }]];
-
         checkResult(@"Setting an exception in executor causes the promise to be rejected", reasonWasObject);
 
         promise = [JSValue valueWithNewPromiseInContext:context fromExecutor:^(JSValue *, JSValue *) {
@@ -1763,10 +1780,10 @@ static void promiseCreateResolved()
     @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
 
-        JSValue *promise = [JSValue valueWithNewPromiseResolvedWithResult:[NSNull null] inContext:context];
+        JSValue *promise = [JSValue valueWithNewPromiseResolvedWithResult:NSNull.null inContext:context];
         __block bool calledWithNull = false;
         [promise invokeMethod:@"then" withArguments:@[
-            ^(JSValue *result) { calledWithNull = [result isNull]; }
+            ^(JSValue *result) { calledWithNull = result.isNull; }
         ]];
 
         checkResult(@"ResolvedPromise should actually resolve the promise", calledWithNull);
@@ -1778,11 +1795,11 @@ static void promiseCreateRejected()
     @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
 
-        JSValue *promise = [JSValue valueWithNewPromiseRejectedWithReason:[NSNull null] inContext:context];
+        JSValue *promise = [JSValue valueWithNewPromiseRejectedWithReason:NSNull.null inContext:context];
         __block bool calledWithNull = false;
         [promise invokeMethod:@"then" withArguments:@[
-            [NSNull null],
-            ^(JSValue *result) { calledWithNull = [result isNull]; }
+            NSNull.null,
+            ^(JSValue *result) { calledWithNull = result.isNull; }
         ]];
 
         checkResult(@"RejectedPromise should actually reject the promise", calledWithNull);
@@ -1805,7 +1822,7 @@ static void parallelPromiseResolveTest()
             thread = Thread::create("async thread", ^() {
                 startedThreadPtr->store(true);
                 while (!shouldResolveSoonPtr->load()) { }
-                [resolve callWithArguments:@[[NSNull null]]];
+                [resolve callWithArguments:@[ NSNull.null ]];
             });
 
         }];
@@ -1818,7 +1835,7 @@ static void parallelPromiseResolveTest()
 
         __block bool calledWithNull = false;
         [promise invokeMethod:@"then" withArguments:@[
-            ^(JSValue *result) { calledWithNull = [result isNull]; }
+            ^(JSValue *result) { calledWithNull = result.isNull; }
         ]];
 
         checkResult(@"Promise should be resolved", calledWithNull);
@@ -1906,14 +1923,14 @@ static void testFetch()
                     withSource:@"import \"../foo.js\"; export let exp = null;"
                     andSourceURL:[NSURL fileURLWithPath:@"/directory/bar.js"] 
                     andBytecodeCache:nil
-                    inVirtualMachine:[context virtualMachine]
+                    inVirtualMachine:context.virtualMachine
                     error:nil]]];
             } else if ([identifier isEqualToObject:@"file:///foo.js"]) {
                 [resolve callWithArguments:@[[JSScript scriptOfType:kJSScriptTypeModule 
                     withSource:@"globalThis.ran = null;"
                     andSourceURL:[NSURL fileURLWithPath:@"/foo.js"] 
                     andBytecodeCache:nil
-                    inVirtualMachine:[context virtualMachine]
+                    inVirtualMachine:context.virtualMachine
                     error:nil]]];
             } else
                 [reject callWithArguments:@[[JSValue valueWithNewErrorFromMessage:@"Weird path" inContext:context]]];
@@ -1938,14 +1955,14 @@ static void testFetchWithTwoCycle()
                     withSource:@"import { n } from \"../foo.js\"; export let exp = n;"
                     andSourceURL:[NSURL fileURLWithPath:@"/directory/bar.js"] 
                     andBytecodeCache:nil
-                    inVirtualMachine:[context virtualMachine]
+                    inVirtualMachine:context.virtualMachine
                     error:nil]]];
             } else if ([identifier isEqualToObject:@"file:///foo.js"]) {
                 [resolve callWithArguments:@[[JSScript scriptOfType:kJSScriptTypeModule 
                     withSource:@"import \"./directory/bar.js\"; globalThis.ran = null; export let n = null;"
                     andSourceURL:[NSURL fileURLWithPath:@"/foo.js"]
                     andBytecodeCache:nil
-                    inVirtualMachine:[context virtualMachine]
+                    inVirtualMachine:context.virtualMachine
                     error:nil]]];
             } else
                 [reject callWithArguments:@[[JSValue valueWithNewErrorFromMessage:@"Weird path" inContext:context]]];
@@ -1969,21 +1986,21 @@ static void testFetchWithThreeCycle()
                     withSource:@"import { n } from \"../foo.js\"; export let foo = n;"
                     andSourceURL:[NSURL fileURLWithPath:@"/directory/bar.js"] 
                     andBytecodeCache:nil
-                    inVirtualMachine:[context virtualMachine]
+                    inVirtualMachine:context.virtualMachine
                     error:nil]]];
             } else if ([identifier isEqualToObject:@"file:///foo.js"]) {
                 [resolve callWithArguments:@[[JSScript scriptOfType:kJSScriptTypeModule 
                     withSource:@"import \"./otherDirectory/baz.js\"; export let n = null;"
                     andSourceURL:[NSURL fileURLWithPath:@"/foo.js"] 
                     andBytecodeCache:nil
-                    inVirtualMachine:[context virtualMachine]
+                    inVirtualMachine:context.virtualMachine
                     error:nil]]];
             } else if ([identifier isEqualToObject:@"file:///otherDirectory/baz.js"]) {
                 [resolve callWithArguments:@[[JSScript scriptOfType:kJSScriptTypeModule 
                     withSource:@"import { foo } from \"../directory/bar.js\"; globalThis.ran = null; export let exp = foo;"
                     andSourceURL:[NSURL fileURLWithPath:@"/otherDirectory/baz.js"] 
                     andBytecodeCache:nil
-                    inVirtualMachine:[context virtualMachine]
+                    inVirtualMachine:context.virtualMachine
                     error:nil]]];
             } else
                 [reject callWithArguments:@[[JSValue valueWithNewErrorFromMessage:@"Weird path" inContext:context]]];
@@ -2008,7 +2025,7 @@ static void testLoaderResolvesAbsoluteScriptURL()
                     withSource:@"export let exp = null; globalThis.ran = null;"
                     andSourceURL:[NSURL fileURLWithPath:@"/directory/bar.js"] 
                     andBytecodeCache:nil
-                    inVirtualMachine:[context virtualMachine]
+                    inVirtualMachine:context.virtualMachine
                     error:nil]]];
             } else
                 [reject callWithArguments:@[[JSValue valueWithNewErrorFromMessage:@"Weird path" inContext:context]]];
@@ -2060,7 +2077,7 @@ static void testImportModuleTwice()
                 withSource:@"ran++; export let exp = 1;"
                 andSourceURL:[NSURL fileURLWithPath:@"/baz.js"]
                 andBytecodeCache:nil
-                inVirtualMachine:[context virtualMachine]
+                inVirtualMachine:context.virtualMachine
                 error:nil]]];
         }];
         context.moduleLoaderDelegate = context;
@@ -2137,11 +2154,11 @@ static void testModuleBytecodeCache()
         auto block = ^(JSContext *context, JSValue *identifier, JSValue *resolve, JSValue *reject) {
             JSC::Options::forceDiskCache() = true;
             JSScript *script = nil;
-            if ([identifier isEqualToObject:[fooFakePath absoluteString]])
+            if ([identifier isEqualToObject:fooFakePath.absoluteString])
                 script = [JSScript scriptOfType:kJSScriptTypeModule memoryMappedFromASCIIFile:fooPath withSourceURL:fooFakePath andBytecodeCache:fooCachePath inVirtualMachine:context.virtualMachine error:nil];
-            else if ([identifier isEqualToObject:[barFakePath absoluteString]])
+            else if ([identifier isEqualToObject:barFakePath.absoluteString])
                 script = [JSScript scriptOfType:kJSScriptTypeModule memoryMappedFromASCIIFile:barPath withSourceURL:barFakePath andBytecodeCache:barCachePath inVirtualMachine:context.virtualMachine error:nil];
-            else if ([identifier isEqualToObject:[bazFakePath absoluteString]])
+            else if ([identifier isEqualToObject:bazFakePath.absoluteString])
                 script = [JSScript scriptOfType:kJSScriptTypeModule memoryMappedFromASCIIFile:bazPath withSourceURL:bazFakePath andBytecodeCache:bazCachePath inVirtualMachine:context.virtualMachine error:nil];
 
             if (script) {
@@ -2188,7 +2205,7 @@ static void testProgramBytecodeCache()
         JSValue *result = [context evaluateJSScript:script];
         RELEASE_ASSERT(result);
         RELEASE_ASSERT([result isNumber]);
-        checkResult(@"result of cached program is 40+42", [[result toNumber] intValue] == 40 + 42);
+        checkResult(@"result of cached program is 40+42", [result toNumber].intValue == 40 + 42);
         JSC::Options::forceDiskCache() = false;
 
         NSFileManager* fileManager = [NSFileManager defaultManager];
@@ -2209,7 +2226,7 @@ static void testBytecodeCacheWithSyntaxError(JSScriptType type)
         if ([script cacheBytecodeWithError:&error])
             CRASH();
         RELEASE_ASSERT(error);
-        checkResult(@"Got error when trying to cache bytecode for a script with a syntax error.", [[error description] containsString:@"Unable to generate bytecode for this JSScript because"]);
+        checkResult(@"Got error when trying to cache bytecode for a script with a syntax error.", [error.description containsString:@"Unable to generate bytecode for this JSScript because"]);
     }
 }
 
@@ -2232,7 +2249,7 @@ static void testBytecodeCacheWithSameCacheFileAndDifferentScript(bool forceDiskC
         JSValue *result = [context evaluateJSScript:script];
         RELEASE_ASSERT(result);
         RELEASE_ASSERT([result isNumber]);
-        checkResult(@"Expected 82 as result", [[result toNumber] intValue] == 82);
+        checkResult(@"Expected 82 as result", [result toNumber].intValue == 82);
     }
 
     @autoreleasepool {
@@ -2248,7 +2265,7 @@ static void testBytecodeCacheWithSameCacheFileAndDifferentScript(bool forceDiskC
         JSValue *result = [context evaluateJSScript:script];
         RELEASE_ASSERT(result);
         RELEASE_ASSERT([result isNumber]);
-        checkResult(@"Expected 30 as result", [[result toNumber] intValue] == 30);
+        checkResult(@"Expected 30 as result", [result toNumber].intValue == 30);
     }
 
     JSC::Options::forceDiskCache() = false;
@@ -2270,12 +2287,12 @@ static void testProgramJSScriptException()
         context.exceptionHandler = ^(JSContext *, JSValue *exception) {
             handledException = true;
             RELEASE_ASSERT([exception isNumber]);
-            checkResult(@"Program JSScript with exception should have the exception value be 42.", [[exception toNumber] intValue] == 42);
+            checkResult(@"Program JSScript with exception should have the exception value be 42.", [exception toNumber].intValue == 42);
         };
 
         JSValue *result = [context evaluateJSScript:script];
         RELEASE_ASSERT(result);
-        checkResult(@"Program JSScript with exception should return undefined.", [result isUndefined]);
+        checkResult(@"Program JSScript with exception should return undefined.", result.isUndefined);
         checkResult(@"Program JSScript with exception should call exception handler.", handledException);
     }
 }
@@ -2301,13 +2318,13 @@ static void testCacheFileFailsWhenItsAlreadyCached()
         RELEASE_ASSERT(script);
         NSError* error = nil;
         checkResult(@"Should not be able to cache the second time because the cache is already present", ![script cacheBytecodeWithError:&error]);
-        checkResult(@"Correct error message should be set", [[error description] containsString:@"Cache for JSScript is already non-empty. Can not override it."]);
+        checkResult(@"Correct error message should be set", [error.description containsString:@"Cache for JSScript is already non-empty. Can not override it."]);
 
         JSContext* context = [[JSContext alloc] initWithVirtualMachine:vm];
         JSC::Options::forceDiskCache() = true;
         JSValue *result = [context evaluateJSScript:script];
         RELEASE_ASSERT(result);
-        checkResult(@"Result should be 42", [result isNumber] && [result toInt32] == 42);
+        checkResult(@"Result should be 42", result.isNumber && [result toInt32] == 42);
         JSC::Options::forceDiskCache() = false;
     }
 
@@ -2322,7 +2339,7 @@ static void testCanCacheManyFilesWithTheSameVM()
     NSMutableArray *scripts = [[NSMutableArray alloc] init];
 
     for (unsigned i = 0; i < 10000; ++i)
-        [cachePaths addObject:cacheFileInDataVault([NSString stringWithFormat:@"cache-%d.cache", i])];
+        [cachePaths addObject:cacheFileInDataVault([NSString stringWithFormat:@"cache-%u.cache", i])];
 
     JSVirtualMachine *vm = [[JSVirtualMachine alloc] init];
     bool cachedAll = true;
@@ -2345,7 +2362,7 @@ static void testCanCacheManyFilesWithTheSameVM()
         @autoreleasepool {
             JSValue *result = [context evaluateJSScript:script];
             RELEASE_ASSERT(result);
-            all42 &= [result isNumber] && [result toInt32] == 42;
+            all42 &= result.isNumber && [result toInt32] == 42;
         }
     }
     checkResult(@"All scripts returned 42", all42);
@@ -2375,7 +2392,7 @@ static void testIsUsingBytecodeCacheAccessor()
         JSC::Options::forceDiskCache() = true;
         JSValue *result = [context evaluateJSScript:script];
         JSC::Options::forceDiskCache() = false;
-        checkResult(@"Result should be 1337", [result isNumber] && [result toInt32] == 1337);
+        checkResult(@"Result should be 1337", result.isNumber && [result toInt32] == 1337);
     }
 
     @autoreleasepool {
@@ -2385,7 +2402,7 @@ static void testIsUsingBytecodeCacheAccessor()
         RELEASE_ASSERT(script);
         checkResult(@"Should be using the bytecode cache", [script isUsingBytecodeCache]);
         JSValue *result = [context evaluateJSScript:script];
-        checkResult(@"Result should be 1337", [result isNumber] && [result toInt32] == 1337);
+        checkResult(@"Result should be 1337", result.isNumber && [result toInt32] == 1337);
     }
 
     NSFileManager* fileManager = [NSFileManager defaultManager];
@@ -2473,22 +2490,22 @@ static NSURL *resolvePathToScripts()
 
 - (JSScript *)fetchModuleScript:(NSString *)relativePath
 {
-    auto *filePath = [NSURL URLWithString:relativePath relativeToURL:resolvePathToScripts()];
-    if (auto *script = [self findScriptForKey:[filePath absoluteString]])
+    NSURL *filePath = [NSURL URLWithString:relativePath relativeToURL:resolvePathToScripts()];
+    if (auto *script = [self findScriptForKey:filePath.absoluteString])
         return script;
     NSError *error;
-    auto *result = [JSScript scriptOfType:kJSScriptTypeModule memoryMappedFromASCIIFile:filePath withSourceURL:filePath andBytecodeCache:nil inVirtualMachine:[self virtualMachine] error:&error];
+    auto *result = [JSScript scriptOfType:kJSScriptTypeModule memoryMappedFromASCIIFile:filePath withSourceURL:filePath andBytecodeCache:nil inVirtualMachine:self.virtualMachine error:&error];
     if (!result) {
         NSLog(@"%@\n", error);
         CRASH();
     }
-    [m_keyToScript setObject:result forKey:[filePath absoluteString]];
+    m_keyToScript[filePath.absoluteString] = result;
     return result;
 }
 
 - (JSScript *)findScriptForKey:(NSString *)key
 {
-    return [m_keyToScript objectForKey:key];
+    return m_keyToScript[key];
 }
 
 - (void)context:(JSContext *)context fetchModuleForIdentifier:(JSValue *)identifier withResolveHandler:(JSValue *)resolve andRejectHandler:(JSValue *)reject
@@ -2507,7 +2524,7 @@ static NSURL *resolvePathToScripts()
         inVirtualMachine:context.virtualMachine
         error:nil];
     if (script) {
-        [m_keyToScript setObject:script forKey:[identifier toString]];
+        m_keyToScript[[identifier toString]] = script;
         [resolve callWithArguments:@[script]];
     } else
         [reject callWithArguments:@[[JSValue valueWithNewErrorFromMessage:@"Unable to create Script" inContext:context]]];
@@ -2596,7 +2613,7 @@ static void testLoadBasicFile()
     UNUSED_PARAM(reject);
 
     NSURL *filePath = [NSURL URLWithString:[identifier toString]];
-    NSString *pathString = [filePath absoluteString];
+    NSString *pathString = filePath.absoluteString;
     if ([pathString containsString:@"basic.js"] || [pathString containsString:@"foo.js"]) {
         auto *script = [JSScript scriptOfType:kJSScriptTypeModule memoryMappedFromASCIIFile:filePath withSourceURL:filePath andBytecodeCache:nil inVirtualMachine:context.virtualMachine error:nil];
         RELEASE_ASSERT(script);
@@ -2635,7 +2652,7 @@ static void testJSScriptURL()
 
         __block bool wasRejected = false;
         [result2 invokeMethod:@"catch" withArguments:@[^(JSValue *reason) {
-            wasRejected = [reason isObject];
+            wasRejected = reason.isObject;
             RELEASE_ASSERT([[reason toString] containsString:@"The same JSScript was provided for two different identifiers"]);
         }]];
 
@@ -2657,15 +2674,15 @@ static void testDependenciesArray()
             checkResult(@"module ran successfully", false);
         }]];
 
-        checkResult(@"looking up the entry script should find the same script again.", [context findScriptForKey:[entryScript.sourceURL absoluteString]] == entryScript);
+        checkResult(@"looking up the entry script should find the same script again.", [context findScriptForKey:entryScript.sourceURL.absoluteString] == entryScript);
 
         auto *deps = [context dependencyIdentifiersForModuleJSScript:entryScript];
 
-        checkResult(@"deps should be an array", [deps isArray]);
+        checkResult(@"deps should be an array", deps.isArray);
         checkResult(@"deps should have two entries", [deps[@"length"] isEqualToObject:@(2)]);
 
-        checkResult(@"first dependency should be foo.js", [[[[context fetchModuleScript:@"./dependencyListTests/foo.js"] sourceURL] absoluteString] isEqual:[deps[@(0)] toString]]);
-        checkResult(@"second dependency should be bar.js", [[[[context fetchModuleScript:@"./dependencyListTests/bar.js"] sourceURL] absoluteString] isEqual:[deps[@(1)] toString]]);
+        checkResult(@"first dependency should be foo.js", [[context fetchModuleScript:@"./dependencyListTests/foo.js"].sourceURL.absoluteString isEqual:[deps[@(0)] toString]]);
+        checkResult(@"second dependency should be bar.js", [[context fetchModuleScript:@"./dependencyListTests/bar.js"].sourceURL.absoluteString isEqual:[deps[@(1)] toString]]);
     }
 }
 
@@ -2684,8 +2701,8 @@ static void testDependenciesEvaluationError()
         }]];
 
         auto *deps = [context dependencyIdentifiersForModuleJSScript:entryScript];
-        checkResult(@"deps should be an Array", [deps isArray]);
-        checkResult(@"first dependency should be foo.js", [[[[context fetchModuleScript:@"./dependencyListTests/foo.js"] sourceURL] absoluteString] isEqual:[deps[@(0)] toString]]);
+        checkResult(@"deps should be an Array", deps.isArray);
+        checkResult(@"first dependency should be foo.js", [[context fetchModuleScript:@"./dependencyListTests/foo.js"].sourceURL.absoluteString isEqual:[deps[@(0)] toString]]);
     }
 }
 
@@ -2704,7 +2721,7 @@ static void testDependenciesSyntaxError()
         }]];
 
         auto *deps = [context dependencyIdentifiersForModuleJSScript:entryScript];
-        checkResult(@"deps should be undefined", [deps isUndefined]);
+        checkResult(@"deps should be undefined", deps.isUndefined);
         checkResult(@"there should be a pending exception on the context", context.exception);
     }
 }
@@ -2724,7 +2741,7 @@ static void testDependenciesBadImportId()
         }]];
 
         auto *deps = [context dependencyIdentifiersForModuleJSScript:entryScript];
-        checkResult(@"deps should be undefined", [deps isUndefined]);
+        checkResult(@"deps should be undefined", deps.isUndefined);
         checkResult(@"there should be a pending exception on the context", context.exception);
     }
 }
@@ -2744,7 +2761,7 @@ static void testDependenciesMissingImport()
         }]];
 
         auto *deps = [context dependencyIdentifiersForModuleJSScript:entryScript];
-        checkResult(@"deps should be undefined", [deps isUndefined]);
+        checkResult(@"deps should be undefined", deps.isUndefined);
         checkResult(@"there should be a pending exception on the context", context.exception);
     }
 }

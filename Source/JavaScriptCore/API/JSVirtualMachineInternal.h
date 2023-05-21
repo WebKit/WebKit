@@ -54,7 +54,7 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *);
 
 #endif // defined(__OBJC__)
 
-void scanExternalObjectGraph(JSC::VM&, JSC::AbstractSlotVisitor&, void* root);
+void scanExternalObjectGraph(JSC::VM&, JSC::AbstractSlotVisitor&, id root, bool lockAcquired = false);
 void scanExternalRememberedSet(JSC::VM&, JSC::AbstractSlotVisitor&);
 
 #endif // JSC_OBJC_API_ENABLED
