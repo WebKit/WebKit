@@ -4259,11 +4259,6 @@ void AccessibilityObject::setIsIgnoredFromParentDataForChild(AccessibilityObject
     if (!child)
         return;
 
-    if (child->parentObject() != this) {
-        child->clearIsIgnoredFromParentData();
-        return;
-    }
-
     AccessibilityIsIgnoredFromParentData result = AccessibilityIsIgnoredFromParentData(this);
     if (!m_isIgnoredFromParentData.isNull()) {
         result.isAXHidden = (m_isIgnoredFromParentData.isAXHidden || equalLettersIgnoringASCIICase(child->getAttribute(aria_hiddenAttr), "true"_s)) && !child->isFocused();
