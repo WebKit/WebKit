@@ -1894,7 +1894,7 @@ public:
 
     void zeroExtend16To32(RegisterID src, RegisterID dest)
     {
-        m_assembler.uxth<32>(dest, src);
+        and32(TrustedImm32(0xffff), src, dest);
     }
 
     void signExtend16To32(RegisterID src, RegisterID dest)
@@ -1904,7 +1904,7 @@ public:
 
     void zeroExtend16To64(RegisterID src, RegisterID dest)
     {
-        m_assembler.uxth<64>(dest, src);
+        and64(TrustedImm64(0xffff), src, dest);
     }
 
     void signExtend16To64(RegisterID src, RegisterID dest)
@@ -1981,7 +1981,7 @@ public:
 
     void zeroExtend8To32(RegisterID src, RegisterID dest)
     {
-        m_assembler.uxtb<32>(dest, src);
+        and32(TrustedImm32(0xff), src, dest);
     }
 
     void signExtend8To32(RegisterID src, RegisterID dest)
@@ -1991,7 +1991,7 @@ public:
 
     void zeroExtend8To64(RegisterID src, RegisterID dest)
     {
-        m_assembler.uxtb<64>(dest, src);
+        and64(TrustedImm64(0xff), src, dest);
     }
 
     void signExtend8To64(RegisterID src, RegisterID dest)
@@ -3315,7 +3315,7 @@ public:
 
     void zeroExtend32ToWord(RegisterID src, RegisterID dest)
     {
-        m_assembler.uxtw(dest, src);
+        and64(TrustedImm64(0xffffffffU), src, dest);
     }
 
     void moveConditionally32(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID src, RegisterID dest)
