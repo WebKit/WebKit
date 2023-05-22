@@ -282,6 +282,7 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
     resolveAndAddPseudoElementStyle(PseudoId::Before);
     resolveAndAddPseudoElementStyle(PseudoId::After);
     resolveAndAddPseudoElementStyle(PseudoId::Backdrop);
+    resolveAndAddPseudoElementStyle(PseudoId::Scrollbar);
 
 #if ENABLE(TOUCH_ACTION_REGIONS)
     // FIXME: Track this exactly.
@@ -336,7 +337,8 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
     bool alwaysNeedsPseudoElement = resolvedStyle->style->hasAnimationsOrTransitions()
         || element.hasKeyframeEffects(pseudoId)
         || pseudoId == PseudoId::FirstLine
-        || pseudoId == PseudoId::FirstLetter;
+        || pseudoId == PseudoId::FirstLetter
+        || pseudoId == PseudoId::Scrollbar;
     if (!alwaysNeedsPseudoElement && !pseudoElementRendererIsNeeded(resolvedStyle->style.get()))
         return { };
 
