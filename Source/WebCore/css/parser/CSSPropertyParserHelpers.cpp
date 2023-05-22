@@ -837,11 +837,18 @@ struct ImageSetTypeCSSPrimitiveValueKnownTokenTypeFunctionConsumer {
     static RefPtr<CSSPrimitiveValue> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
     {
         ASSERT(range.peek().type() == FunctionToken);
-        if (range.peek().functionId() != CSSValueType || range.peek(1).type() != StringToken)
+        if (range.peek().functionId() != CSSValueType)
             return nullptr;
 
-        auto typeArg = consumeFunction(range);
-        return consumeString(typeArg);
+        auto rangeCopy = range;
+        auto typeArg = consumeFunction(rangeCopy);
+        auto result = consumeString(typeArg);
+
+        if (!result || !typeArg.atEnd())
+            return nullptr;
+
+        range = rangeCopy;
+        return result;
     }
 };
 
