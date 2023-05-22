@@ -72,7 +72,7 @@ class FileLock(object):
 
         if self.USE_EXLOCK and self.timeout:
             with Timeout(
-                seconds=self.timeout,
+                seconds=self.timeout, patch=False,
                 handler=OSError(errno.EAGAIN, "Resource temporarily unavailable: '{}'".format(self.path)),
             ):
                 self._descriptor = os.open(self.path, os.O_CREAT | os.O_WRONLY | os.O_EXLOCK)

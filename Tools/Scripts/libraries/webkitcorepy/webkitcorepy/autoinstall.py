@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -31,12 +31,14 @@ import shutil
 import sys
 import tarfile
 import tempfile
+import time
 import zipfile
 
 from collections import defaultdict
 from logging import NullHandler
 from webkitcorepy import log
 from webkitcorepy.version import Version
+from webkitcorepy.file_lock import FileLock
 
 if sys.version_info > (3, 0):
     from html.parser import HTMLParser
@@ -78,6 +80,7 @@ class SimplyPypiIndexPageParser(HTMLParser):
 
 
 class Package(object):
+
     class Archive(object):
         def __init__(self, name, link, version, extension=None):
             self.name = name
@@ -285,116 +288,126 @@ class Package(object):
         for dependency in self.implicit_deps:
             AutoInstall.install(dependency)
 
-        if not self.archives():
-            raise ValueError('No archives for {}-{} found'.format(self.pypi_name, self.version))
-        archive = self.archives()[-1]
+        with FileLock(os.path.join(AutoInstall.directory, AutoInstall.LOCK_FILE), timeout=AutoInstall.LOCKFILE_TIMEOUT):
+            # Re-load our manifest, in case another process is using this autoinstall location.
+            # Another process running in parallel to this one is likely to be installing the same packages.
+            try:
+                with open(os.path.join(AutoInstall.directory, AutoInstall.MANIFEST_JSON), 'r') as file:
+                    AutoInstall.manifest.update(json.load(file))
+                if self.is_cached():
+                    return
+            except (IOError, OSError, ValueError):
+                pass
 
-        try:
-            install_location = AutoInstall.directory
-            shutil.rmtree(self.location, ignore_errors=True)
+            if not self.archives():
+                raise ValueError('No archives for {}-{} found'.format(self.pypi_name, self.version))
+            archive = self.archives()[-1]
 
-            AutoInstall.log('Downloading {}...'.format(archive))
-            archive.download()
+            try:
+                shutil.rmtree(self.location, ignore_errors=True)
 
-            temp_location = os.path.join(tempfile.gettempdir(), '{}-{}'.format(self.name, os.getpid()))
-            archive.unpack(temp_location)
+                AutoInstall.log('Downloading {}...'.format(archive))
+                archive.download()
 
-            for candidate in os.listdir(temp_location):
-                candidate = os.path.join(temp_location, candidate)
-                if not os.path.exists(os.path.join(candidate, 'setup.py')):
-                    # If a package has a setup.cfg, we can just lay down a dummy setup.py and let setuptools handle the rest
-                    if os.path.exists(os.path.join(candidate, 'setup.cfg')):
-                        with open(os.path.join(candidate, 'setup.py'), 'w') as setup_py:
-                            setup_py.write('from setuptools import setup\n')
-                            setup_py.write('if __name__ == "__main__":\n')
-                            setup_py.write('    setup()\n')
-                    else:
-                        continue
+                temp_location = os.path.join(tempfile.gettempdir(), '{}-{}'.format(self.name, os.getpid()))
+                archive.unpack(temp_location)
 
-                AutoInstall.log('Installing {}...'.format(archive))
+                for candidate in os.listdir(temp_location):
+                    candidate = os.path.join(temp_location, candidate)
+                    if not os.path.exists(os.path.join(candidate, 'setup.py')):
+                        # If a package has a setup.cfg, we can just lay down a dummy setup.py and let setuptools handle the rest
+                        if os.path.exists(os.path.join(candidate, 'setup.cfg')):
+                            with open(os.path.join(candidate, 'setup.py'), 'w') as setup_py:
+                                setup_py.write('from setuptools import setup\n')
+                                setup_py.write('if __name__ == "__main__":\n')
+                                setup_py.write('    setup()\n')
+                        else:
+                            continue
 
-                if self.slow_install:
-                    AutoInstall.log('{} is known to be slow to install'.format(archive))
+                    AutoInstall.log('Installing {}...'.format(archive))
 
-                root_location = "/" if not sys.platform.startswith('win') else "{}/".format(os.path.splitdrive(os.path.abspath(install_location))[0])
+                    if self.slow_install:
+                        AutoInstall.log('{} is known to be slow to install'.format(archive))
 
-                log_location = os.path.join(temp_location, 'log.txt')
-                try:
-                    with open(log_location, 'w') as setup_log:
-                        subprocess.check_call(
-                            [
-                                os.environ.get('AUTOINSTALL_PYTHON_EXECUTABLE', sys.executable),
-                                os.path.join(candidate, 'setup.py'),
-                                'install',
-                                '--home={}'.format(install_location),
-                                '--root={}'.format(root_location),
-                                '--prefix=',
-                                '--install-lib={}'.format(install_location),
-                                '--install-scripts={}'.format(os.path.join(install_location, 'bin')),
-                                '--install-data={}'.format(os.path.join(install_location, 'data')),
-                                '--install-headers={}'.format(os.path.join(install_location, 'headers')),
-                            ],
-                            cwd=candidate,
-                            env=dict(
-                                HTTP_PROXY=os.environ.get('HTTP_PROXY', ''),
-                                HTTPS_PROXY=os.environ.get('HTTPS_PROXY', ''),
-                                PATH=os.environ.get('PATH', ''),
-                                PATHEXT=os.environ.get('PATHEXT', ''),
-                                PYTHONPATH=install_location,
-                                SYSTEMROOT=os.environ.get('SYSTEMROOT', ''),
-                            ) if not sys.platform.startswith('win')
-                            else dict(
-                                # Windows setuptools needs environment from vcvars
-                                os.environ,
-                                PYTHONPATH=install_location,
-                            ),
-                            stdout=setup_log,
-                            stderr=setup_log,
-                        )
+                    root_location = "/" if not sys.platform.startswith('win') else "{}/".format(os.path.splitdrive(os.path.abspath(AutoInstall.directory))[0])
 
-                except subprocess.CalledProcessError:
-                    with open(log_location, 'r') as setup_log:
-                        for line in setup_log.readlines():
-                            sys.stderr.write(line)
-                    raise
+                    log_location = os.path.join(temp_location, 'log.txt')
+                    try:
+                        with open(log_location, 'w') as setup_log:
+                            subprocess.check_call(
+                                [
+                                    os.environ.get('AUTOINSTALL_PYTHON_EXECUTABLE', sys.executable),
+                                    os.path.join(candidate, 'setup.py'),
+                                    'install',
+                                    '--home={}'.format(AutoInstall.directory),
+                                    '--root={}'.format(root_location),
+                                    '--prefix=',
+                                    '--install-lib={}'.format(AutoInstall.directory),
+                                    '--install-scripts={}'.format(os.path.join(AutoInstall.directory, 'bin')),
+                                    '--install-data={}'.format(os.path.join(AutoInstall.directory, 'data')),
+                                    '--install-headers={}'.format(os.path.join(AutoInstall.directory, 'headers')),
+                                ],
+                                cwd=candidate,
+                                env=dict(
+                                    HTTP_PROXY=os.environ.get('HTTP_PROXY', ''),
+                                    HTTPS_PROXY=os.environ.get('HTTPS_PROXY', ''),
+                                    PATH=os.environ.get('PATH', ''),
+                                    PATHEXT=os.environ.get('PATHEXT', ''),
+                                    PYTHONPATH=AutoInstall.directory,
+                                    SYSTEMROOT=os.environ.get('SYSTEMROOT', ''),
+                                ) if not sys.platform.startswith('win')
+                                else dict(
+                                    # Windows setuptools needs environment from vcvars
+                                    os.environ,
+                                    PYTHONPATH=AutoInstall.directory,
+                                ),
+                                stdout=setup_log,
+                                stderr=setup_log,
+                            )
 
-                # If we have a package inside another package (like zope.interface), the top-level package needs an __init__.py
-                location = os.path.join(AutoInstall.directory, self.name.split('.')[0])
-                if os.path.isdir(location) and '__init__.py' not in os.listdir(location):
-                    with open(os.path.join(location, '__init__.py'), 'w') as init:
-                        init.write('\n')
+                    except subprocess.CalledProcessError:
+                        with open(log_location, 'r') as setup_log:
+                            for line in setup_log.readlines():
+                                sys.stderr.write(line)
+                        raise
 
-                break
-            else:
-                # We might not need setup.py at all, check if we have dist-info and the library in the temporary location
-                to_be_moved = os.listdir(temp_location)
-                if self.name not in to_be_moved and any(element.endswith('.dist-info') for element in to_be_moved):
-                    raise OSError('Cannot install {}, could not find setup.py'.format(self.name))
-                for directory in to_be_moved:
-                    shutil.rmtree(os.path.join(install_location, directory), ignore_errors=True)
-                    shutil.move(os.path.join(temp_location, directory), install_location)
+                    # If we have a package inside another package (like zope.interface), the top-level package needs an __init__.py
+                    location = os.path.join(AutoInstall.directory, self.name.split('.')[0])
+                    if os.path.isdir(location) and '__init__.py' not in os.listdir(location):
+                        with open(os.path.join(location, '__init__.py'), 'w') as init:
+                            init.write('\n')
 
-            self.do_post_install(temp_location)
+                    break
+                else:
+                    # We might not need setup.py at all, check if we have dist-info and the library in the temporary location
+                    to_be_moved = os.listdir(temp_location)
+                    if self.name not in to_be_moved and any(element.endswith('.dist-info') for element in to_be_moved):
+                        raise OSError('Cannot install {}, could not find setup.py'.format(self.name))
+                    for directory in to_be_moved:
+                        shutil.rmtree(os.path.join(AutoInstall.directory, directory), ignore_errors=True)
+                        shutil.move(os.path.join(temp_location, directory), AutoInstall.directory)
 
-            os.remove(archive.path)
-            shutil.rmtree(temp_location, ignore_errors=True)
+                self.do_post_install(temp_location)
 
-            AutoInstall.userspace_should_own(install_location)
+                os.remove(archive.path)
+                shutil.rmtree(temp_location, ignore_errors=True)
 
-            AutoInstall.manifest[self.name] = {
-                'index': AutoInstall.index,
-                'version': str(archive.version),
-            }
+                AutoInstall.userspace_should_own(AutoInstall.directory)
 
-            manifest = os.path.join(AutoInstall.directory, 'manifest.json')
-            with open(manifest, 'w') as file:
-                json.dump(AutoInstall.manifest, file, indent=4)
-            AutoInstall.userspace_should_own(manifest)
+                AutoInstall.manifest[self.name] = {
+                    'index': AutoInstall.index,
+                    'version': str(archive.version),
+                }
 
-            AutoInstall.log('Installed {}!'.format(archive))
-        except Exception:
-            AutoInstall.log('Failed to install {}!'.format(archive), level=logging.CRITICAL)
-            raise
+                manifest = os.path.join(AutoInstall.directory, AutoInstall.MANIFEST_JSON)
+                with open(manifest, 'w') as file:
+                    json.dump(AutoInstall.manifest, file, indent=4)
+                AutoInstall.userspace_should_own(manifest)
+
+                AutoInstall.log('Installed {}!'.format(archive))
+            except Exception:
+                AutoInstall.log('Failed to install {}!'.format(archive), level=logging.CRITICAL)
+                raise
 
 
 def _default_pypi_index():
@@ -410,6 +423,9 @@ def _default_pypi_index():
 
 
 class AutoInstall(object):
+    LOCKFILE_TIMEOUT = 5 * 60
+    MANIFEST_JSON = 'manifest.json'
+    LOCK_FILE = 'autoinstall.lock'
     DISABLE_ENV_VAR = 'DISABLE_WEBKITCOREPY_AUTOINSTALLER'
     CA_CERT_PATH_ENV_VAR = 'AUTOINSTALL_CA_CERT_PATH'
 
@@ -499,7 +515,7 @@ class AutoInstall(object):
             cls.userspace_should_own(creation_root)
 
         try:
-            with open(os.path.join(directory, 'manifest.json'), 'r') as file:
+            with open(os.path.join(directory, cls.MANIFEST_JSON), 'r') as file:
                 cls.manifest = json.load(file)
         except (IOError, OSError, ValueError):
             pass
