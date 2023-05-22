@@ -306,7 +306,10 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::Element
     }
 
     gst_plugin_feature_list_free(candidates);
-    if (!isSupported)
+    // Valid `selectedFactory` ends up stored in the scanner singleton.
+    if (isSupported)
+        GST_OBJECT_FLAG_SET(selectedFactory.get(), GST_OBJECT_FLAG_MAY_BE_LEAKED);
+    else
         selectedFactory.clear();
 
     GST_LOG("Lookup result for %s matching caps %" GST_PTR_FORMAT " : isSupported=%s, isUsingHardware=%s", elementFactoryTypeToString(factoryType), caps.get(), boolForPrinting(isSupported), boolForPrinting(isUsingHardware));
