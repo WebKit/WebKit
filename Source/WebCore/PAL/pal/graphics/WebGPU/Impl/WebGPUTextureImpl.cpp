@@ -69,7 +69,7 @@ Ref<TextureView> TextureImpl::createView(const std::optional<TextureViewDescript
         nullptr,
         label.data(),
         descriptor && descriptor->format ? m_convertToBackingContext->convertToBacking(*descriptor->format) : m_convertToBackingContext->convertToBacking(m_format),
-        ([&] () -> WGPUTextureViewDimension {
+        ([&]() -> WGPUTextureViewDimension {
             if (descriptor && descriptor->dimension)
                 return m_convertToBackingContext->convertToBacking(*descriptor->dimension);
             switch (m_dimension) {

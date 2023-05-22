@@ -60,8 +60,8 @@ QueueImpl::~QueueImpl()
 
 void QueueImpl::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commandBuffers)
 {
-    auto backingCommandBuffers = commandBuffers.map([this] (auto commandBuffer) {
-        return m_convertToBackingContext->convertToBacking(commandBuffer);
+    auto backingCommandBuffers = commandBuffers.map([&convertToBackingContext = m_convertToBackingContext.get()](auto commandBuffer) {
+        return convertToBackingContext.convertToBacking(commandBuffer);
     });
 
     wgpuQueueSubmit(m_backing, backingCommandBuffers.size(), backingCommandBuffers.data());

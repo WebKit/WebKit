@@ -99,7 +99,7 @@ Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width
         m_renderBuffersWereRecreatedCallback(static_cast<CFArrayRef>(renderBuffers));
     }
 
-    return m_renderBuffers.map([] (const auto& renderBuffer) {
+    return m_renderBuffers.map([](const auto& renderBuffer) {
         return MachSendRight::adopt(IOSurfaceCreateMachPort(renderBuffer.get()));
     });
 }

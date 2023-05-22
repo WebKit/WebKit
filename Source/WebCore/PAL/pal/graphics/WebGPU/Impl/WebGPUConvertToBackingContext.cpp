@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -783,14 +783,14 @@ WGPUTextureUsageFlags ConvertToBackingContext::convertTextureUsageFlagsToBacking
 
 WGPUColor ConvertToBackingContext::convertToBacking(const Color& color)
 {
-    return WTF::switchOn(color, [] (const Vector<double>& vector) {
+    return WTF::switchOn(color, [](const Vector<double>& vector) {
         return WGPUColor {
             vector.size() > 0 ? vector[0] : 0,
             vector.size() > 1 ? vector[1] : 0,
             vector.size() > 2 ? vector[2] : 0,
             vector.size() > 3 ? vector[3] : 0,
         };
-    }, [] (const ColorDict& color) {
+    }, [](const ColorDict& color) {
         return WGPUColor {
             color.r,
             color.g,
@@ -802,13 +802,13 @@ WGPUColor ConvertToBackingContext::convertToBacking(const Color& color)
 
 WGPUExtent3D ConvertToBackingContext::convertToBacking(const Extent3D& extent3D)
 {
-    return WTF::switchOn(extent3D, [] (const Vector<IntegerCoordinate>& vector) {
+    return WTF::switchOn(extent3D, [](const Vector<IntegerCoordinate>& vector) {
         return WGPUExtent3D {
             vector.size() > 0 ? vector[0] : 1,
             vector.size() > 1 ? vector[1] : 1,
             vector.size() > 2 ? vector[2] : 1,
         };
-    }, [] (const Extent3DDict& extent) {
+    }, [](const Extent3DDict& extent) {
         return WGPUExtent3D {
             extent.width,
             extent.height,
@@ -819,13 +819,13 @@ WGPUExtent3D ConvertToBackingContext::convertToBacking(const Extent3D& extent3D)
 
 WGPUOrigin3D ConvertToBackingContext::convertToBacking(const Origin2D& origin2D)
 {
-    return WTF::switchOn(origin2D, [] (const Vector<IntegerCoordinate>& vector) {
+    return WTF::switchOn(origin2D, [](const Vector<IntegerCoordinate>& vector) {
         return WGPUOrigin3D {
             vector.size() > 0 ? vector[0] : 0,
             vector.size() > 1 ? vector[1] : 0,
             0,
         };
-    }, [] (const Origin2DDict& origin) {
+    }, [](const Origin2DDict& origin) {
         return WGPUOrigin3D {
             origin.x,
             origin.y,
@@ -836,13 +836,13 @@ WGPUOrigin3D ConvertToBackingContext::convertToBacking(const Origin2D& origin2D)
 
 WGPUOrigin3D ConvertToBackingContext::convertToBacking(const Origin3D& origin3D)
 {
-    return WTF::switchOn(origin3D, [] (const Vector<IntegerCoordinate>& vector) {
+    return WTF::switchOn(origin3D, [](const Vector<IntegerCoordinate>& vector) {
         return WGPUOrigin3D {
             vector.size() > 0 ? vector[0] : 0,
             vector.size() > 1 ? vector[1] : 0,
             vector.size() > 2 ? vector[2] : 0,
         };
-    }, [] (const Origin3DDict& origin) {
+    }, [](const Origin3DDict& origin) {
         return WGPUOrigin3D {
             origin.x,
             origin.y,

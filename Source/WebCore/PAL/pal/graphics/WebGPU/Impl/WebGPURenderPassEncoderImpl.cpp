@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -158,8 +158,8 @@ void RenderPassEncoderImpl::endOcclusionQuery()
 
 void RenderPassEncoderImpl::executeBundles(Vector<std::reference_wrapper<RenderBundle>>&& renderBundles)
 {
-    auto backingBundles = renderBundles.map([this] (auto renderBundle) {
-        return m_convertToBackingContext->convertToBacking(renderBundle.get());
+    auto backingBundles = renderBundles.map([&convertToBackingContext = m_convertToBackingContext.get()](auto renderBundle) {
+        return convertToBackingContext.convertToBacking(renderBundle.get());
     });
 
     wgpuRenderPassEncoderExecuteBundles(m_backing, backingBundles.size(), backingBundles.data());
