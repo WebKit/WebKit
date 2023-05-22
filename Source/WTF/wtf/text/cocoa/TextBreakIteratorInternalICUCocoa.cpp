@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,18 +31,17 @@ namespace WTF {
 // Buffer sized to hold ASCII locale ID strings up to 32 characters long.
 using LocaleIDBuffer = std::array<char, 33>;
 
-static std::variant<TextBreakIteratorICU, TextBreakIteratorPlatform> mapModeToBackingIterator(StringView string, TextBreakIterator::Mode mode, const AtomString& locale)
+TextBreakIterator::Backing TextBreakIterator::mapModeToBackingIterator(StringView string, TextBreakIterator::Mode mode, const AtomString& locale)
 {
-    switch (mode) {
-    case TextBreakIterator::Mode::Line:
-        return TextBreakIteratorICU(string, TextBreakIteratorICU::Mode::Line, locale.string().utf8().data());
-    case TextBreakIterator::Mode::Caret:
+    return switchOn(mode, [string, &locale](TextBreakIterator::LineMode lineMode) -> TextBreakIterator::Backing {
+        return TextBreakIteratorICU(string, TextBreakIteratorICU::LineMode { lineMode.behavior }, locale);
+    }, [string, &locale](TextBreakIterator::CaretMode) -> TextBreakIterator::Backing {
         return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::ComposedCharacter, locale);
-    case TextBreakIterator::Mode::Delete:
+    }, [string, &locale](TextBreakIterator::DeleteMode) -> TextBreakIterator::Backing {
         return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::BackwardDeletion, locale);
-    case TextBreakIterator::Mode::Character:
+    }, [string, &locale](TextBreakIterator::CharacterMode) -> TextBreakIterator::Backing {
         return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::ComposedCharacter, locale);
-    }
+    });
 }
 
 TextBreakIterator::TextBreakIterator(StringView string, Mode mode, const AtomString& locale)

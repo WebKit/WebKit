@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,16 +23,25 @@
 #include <unicode/ubrk.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/icu/UTextProviderLatin1.h>
+#include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace WTF {
 
 class TextBreakIteratorICU {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum class Mode {
-        Line,
-        Character,
+    struct LineMode {
+        enum class Behavior: uint8_t {
+            Default,
+            Loose,
+            Normal,
+            Strict,
+        };
+        Behavior behavior;
     };
+    struct CharacterMode {
+    };
+    using Mode = std::variant<LineMode, CharacterMode>;
 
     void set8BitText(const LChar* buffer, unsigned length)
     {
@@ -52,30 +61,27 @@ public:
         utext_close(text);
     }
 
-    TextBreakIteratorICU(StringView string, Mode mode, const char *locale)
+    TextBreakIteratorICU(StringView string, Mode mode, const AtomString& locale)
     {
-        UBreakIteratorType type;
-        switch (mode) {
-        case Mode::Line:
-            type = UBRK_LINE;
-            break;
-        case Mode::Character:
-            type = UBRK_CHARACTER;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            type = UBRK_CHARACTER;
-            break;
-        }
+        auto type = switchOn(mode, [](LineMode) {
+            return UBRK_LINE;
+        }, [](CharacterMode) {
+            return UBRK_CHARACTER;
+        });
 
         bool requiresSet8BitText = string.is8Bit();
 
         const UChar *text = requiresSet8BitText ? nullptr : string.characters16();
         int32_t textLength = requiresSet8BitText ? 0 : string.length();
 
-        // FIXME: Handle weak / normal / strict line breaking.
+        auto localeWithOptionalBreakKeyword = switchOn(mode, [&locale](LineMode lineMode) {
+            return makeLocaleWithBreakKeyword(locale, lineMode.behavior);
+        }, [&locale](CharacterMode) {
+            return locale;
+        });
+
         UErrorCode status = U_ZERO_ERROR;
-        m_iterator = ubrk_open(type, locale, text, textLength, &status);
+        m_iterator = ubrk_open(type, localeWithOptionalBreakKeyword.string().utf8().data(), text, textLength, &status);
         ASSERT(U_SUCCESS(status));
 
         if (requiresSet8BitText)
@@ -141,6 +147,56 @@ public:
     }
 
 private:
+    friend class LineBreakIteratorPool;
+
+    // This is temporarily duplicated from LineBreakIteratorPool.
+    // Eventually, LineBreakIteratorPool will be replaced with TextBreakIteratorCache,
+    // and this won't be duplicated any more.
+    static AtomString makeLocaleWithBreakKeyword(const AtomString& locale, LineMode::Behavior behavior)
+    {
+        if (behavior == LineMode::Behavior::Default)
+            return locale;
+
+        // The uloc functions model locales as char*, so we have to downconvert our AtomString.
+        auto utf8Locale = locale.string().utf8();
+        if (!utf8Locale.length())
+            return locale;
+        Vector<char> scratchBuffer(utf8Locale.length() + 11, 0);
+        memcpy(scratchBuffer.data(), utf8Locale.data(), utf8Locale.length());
+
+        const char* keywordValue = nullptr;
+        switch (behavior) {
+        case LineMode::Behavior::Default:
+            // nullptr will cause any existing values to be removed.
+            ASSERT_NOT_REACHED();
+            break;
+        case LineMode::Behavior::Loose:
+            keywordValue = "loose";
+            break;
+        case LineMode::Behavior::Normal:
+            keywordValue = "normal";
+            break;
+        case LineMode::Behavior::Strict:
+            keywordValue = "strict";
+            break;
+        }
+
+        UErrorCode status = U_ZERO_ERROR;
+        int32_t lengthNeeded = uloc_setKeywordValue("lb", keywordValue, scratchBuffer.data(), scratchBuffer.size(), &status);
+        if (U_SUCCESS(status))
+            return AtomString::fromUTF8(scratchBuffer.data(), lengthNeeded);
+        if (needsToGrowToProduceBuffer(status)) {
+            scratchBuffer.grow(lengthNeeded + 1);
+            memset(scratchBuffer.data() + utf8Locale.length(), 0, scratchBuffer.size() - utf8Locale.length());
+            status = U_ZERO_ERROR;
+            int32_t lengthNeeded2 = uloc_setKeywordValue("lb", keywordValue, scratchBuffer.data(), scratchBuffer.size(), &status);
+            if (!U_SUCCESS(status) || lengthNeeded != lengthNeeded2)
+                return locale;
+            return AtomString::fromUTF8(scratchBuffer.data(), lengthNeeded);
+        }
+        return locale;
+    }
+
     UBreakIterator* m_iterator;
 };
 

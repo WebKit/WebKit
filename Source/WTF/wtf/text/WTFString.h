@@ -1,6 +1,6 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -564,6 +564,11 @@ inline namespace StringLiterals {
 inline String operator"" _str(const char* characters, size_t)
 {
     return ASCIILiteral::fromLiteralUnsafe(characters);
+}
+
+inline String operator"" _str(const UChar* characters, size_t length)
+{
+    return String(characters, length);
 }
 
 } // inline StringLiterals

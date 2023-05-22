@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Lars Knoll <lars@trolltech.com>
- * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -46,12 +46,21 @@ class TextBreakIteratorCache;
 class TextBreakIterator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum class Mode {
-        Line,
-        Caret,
-        Delete,
-        Character
+    struct LineMode {
+        using Behavior = TextBreakIteratorICU::LineMode::Behavior;
+        Behavior behavior;
+        bool operator==(const LineMode&) const = default;
     };
+    struct CaretMode {
+        bool operator==(const CaretMode&) const = default;
+    };
+    struct DeleteMode {
+        bool operator==(const DeleteMode&) const = default;
+    };
+    struct CharacterMode {
+        bool operator==(const CharacterMode&) const = default;
+    };
+    using Mode = std::variant<LineMode, CaretMode, DeleteMode, CharacterMode>;
 
     TextBreakIterator() = delete;
     TextBreakIterator(const TextBreakIterator&) = delete;
@@ -83,6 +92,10 @@ public:
 private:
     friend class TextBreakIteratorCache;
 
+    using Backing = std::variant<TextBreakIteratorICU, TextBreakIteratorPlatform>;
+
+    static Backing mapModeToBackingIterator(StringView, TextBreakIterator::Mode, const AtomString& locale);
+
     // Use CachedTextBreakIterator instead of constructing one of these directly.
     WTF_EXPORT_PRIVATE TextBreakIterator(StringView, Mode, const AtomString& locale);
 
@@ -103,7 +116,7 @@ private:
         return m_locale;
     }
 
-    std::variant<TextBreakIteratorICU, TextBreakIteratorPlatform> m_backing;
+    Backing m_backing;
     Mode m_mode;
     AtomString m_locale;
 };
@@ -145,9 +158,7 @@ private:
             m_unused.remove(0);
     }
 
-    TextBreakIteratorCache()
-    {
-    }
+    TextBreakIteratorCache() = default;
 
     static constexpr int capacity = 2;
     // FIXME: Break this up into different Vectors per mode.
@@ -195,7 +206,7 @@ private:
 
 // Note: The returned iterator is good only until you get another iterator, with the exception of acquireLineBreakIterator.
 
-enum class LineBreakIteratorMode { Default, Loose, Normal, Strict };
+using LineBreakIteratorMode = TextBreakIteratorICU::LineMode::Behavior;
 
 WTF_EXPORT_PRIVATE UBreakIterator* wordBreakIterator(StringView);
 WTF_EXPORT_PRIVATE UBreakIterator* sentenceBreakIterator(StringView);
@@ -290,7 +301,7 @@ public:
             m_cachedPriorContextLength = priorContextLength;
         } else if (priorContext != m_cachedPriorContext || priorContextLength != m_cachedPriorContextLength) {
             resetStringAndReleaseIterator(m_stringView, m_locale, m_mode);
-            return this->get(priorContextLength);
+            return get(priorContextLength);
         }
         return m_iterator;
     }

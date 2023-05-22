@@ -1,6 +1,6 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -41,23 +41,19 @@ TextBreakIteratorCache& TextBreakIteratorCache::singleton()
     return cache.get();
 }
 
-#if !PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
+#if !PLATFORM(COCOA)
 
-static std::variant<TextBreakIteratorICU, TextBreakIteratorPlatform> mapModeToBackingIterator(StringView string, TextBreakIterator::Mode mode, const AtomString& locale)
+TextBreakIterator::Backing TextBreakIterator::mapModeToBackingIterator(StringView string, TextBreakIterator::Mode mode, const AtomString& locale)
 {
-    switch (mode) {
-    case TextBreakIterator::Mode::Line:
-        return TextBreakIteratorICU(string, TextBreakIteratorICU::Mode::Line, locale.string().utf8().data());
-    case TextBreakIterator::Mode::Caret:
-        return TextBreakIteratorICU(string, TextBreakIteratorICU::Mode::Character, locale.string().utf8().data());
-    case TextBreakIterator::Mode::Delete:
-        return TextBreakIteratorICU(string, TextBreakIteratorICU::Mode::Character, locale.string().utf8().data());
-    case TextBreakIterator::Mode::Character:
-        return TextBreakIteratorICU(string, TextBreakIteratorICU::Mode::Character, locale.string().utf8().data());
-    default:
-        ASSERT_NOT_REACHED();
-        return TextBreakIteratorICU(string, TextBreakIteratorICU::Mode::Character, locale.string().utf8().data());
-    }
+    return switchOn(mode, [string, &locale](TextBreakIterator::LineMode lineMode) -> TextBreakIterator::Backing {
+        return TextBreakIteratorICU(string, TextBreakIteratorICU::LineMode { lineMode.behavior }, locale);
+    }, [string, &locale](TextBreakIterator::CaretMode) -> TextBreakIterator::Backing {
+        return TextBreakIteratorICU(string, TextBreakIteratorICU::CharacterMode { }, locale);
+    }, [string, &locale](TextBreakIterator::DeleteMode) -> TextBreakIterator::Backing {
+        return TextBreakIteratorICU(string, TextBreakIteratorICU::CharacterMode { }, locale);
+    }, [string, &locale](TextBreakIterator::CharacterMode) -> TextBreakIterator::Backing {
+        return TextBreakIteratorICU(string, TextBreakIteratorICU::CharacterMode { }, locale);
+    });
 }
 
 TextBreakIterator::TextBreakIterator(StringView string, Mode mode, const AtomString& locale)

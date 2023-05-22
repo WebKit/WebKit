@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -141,6 +141,26 @@ TEST(WTF, TextBreakIteratorNumCodeUnitsInGraphemeClusters)
     EXPECT_EQ(4U, numCodeUnitsInGraphemeClusters(makeUTF16({ 'g', 0x308, 'b', 'c' }), 3));
     EXPECT_EQ(4U, numCodeUnitsInGraphemeClusters(makeUTF16({ 'g', 0x308, 'b', 'c' }), 4));
     EXPECT_EQ(4U, numCodeUnitsInGraphemeClusters(makeUTF16({ 'g', 0x308, 'b', 'c' }), 5));
+}
+
+TEST(WTF, TextBreakIteratorBehaviors)
+{
+    {
+        auto string = u"ぁぁ"_str;
+        auto locale = AtomString("ja"_str);
+        CachedTextBreakIterator strictIterator({ string }, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Strict }, locale);
+        EXPECT_EQ(strictIterator.following(0), 2);
+        CachedTextBreakIterator looseIterator({ string }, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Loose }, locale);
+        EXPECT_EQ(looseIterator.following(0), 1);
+    }
+    {
+        auto string = u"中〜"_str;
+        auto locale = AtomString("zh-Hans"_str);
+        CachedTextBreakIterator strictIterator({ string }, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Strict }, locale);
+        EXPECT_EQ(strictIterator.following(0), 2);
+        CachedTextBreakIterator looseIterator({ string }, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Loose }, locale);
+        EXPECT_EQ(looseIterator.following(0), 1);
+    }
 }
 
 } // namespace TestWebKitAPI
