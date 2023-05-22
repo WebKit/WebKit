@@ -181,6 +181,24 @@ private:
     return targetVideoFrame;
 }
 
+// Sometimes the `frame` returned by CA will differ from the value assigned
+// by a extremely small amount, but a larger amount than can be accounted for
+// by `areEssentiallyEqual`. Because setting self.videoSublayer.frame will
+// cause layoutSublayers to be called again, this small difference can cause
+// a loop of endless -layoutSublayers/-resolveBounds iterations. Define a
+// constant value to use for a custom `areEssentiallyEqual` where we will
+// bail out of -resolveBounds if the _targetVideoFrame is essentially equal
+// to the current video frame.
+static bool areFramesEssentiallyEqualWithTolerance(const FloatRect& a, const FloatRect& b)
+{
+    static constexpr double frameValueDeltaTolerance { 0.01 };
+    FloatRect delta { FloatPoint { a.location() - b.location() }, a.size() - b.size() };
+    return abs(delta.x()) < frameValueDeltaTolerance
+        && abs(delta.y()) < frameValueDeltaTolerance
+        && abs(delta.width()) < frameValueDeltaTolerance
+        && abs(delta.height()) < frameValueDeltaTolerance;
+};
+
 - (void)layoutSublayers
 {
     if ([_videoSublayer superlayer] != self) {
@@ -220,6 +238,13 @@ private:
         return;
     }
 
+    // CALayer -frame will take the -position, -bounds, and -affineTransform into account,
+    // so bail out if the current -frame is essentially equal to the targetVideoFrame.
+    if (areFramesEssentiallyEqualWithTolerance(self.videoSublayer.frame, targetVideoFrame)) {
+        OBJC_DEBUG_LOG(OBJC_LOGIDENTIFIER, "targetVideoFrame (", _targetVideoFrame.size(), ") is essentially equal to videoSublayer.frame, bailing");
+        return;
+    }
+
     CGAffineTransform transform = CGAffineTransformMakeScale(targetVideoFrame.width() / sourceVideoFrame.width(), targetVideoFrame.height() / sourceVideoFrame.height());
 
     [CATransaction begin];
@@ -247,7 +272,7 @@ private:
         return;
     }
 
-    if (CGRectEqualToRect(self.videoSublayer.bounds, _targetVideoFrame) && CGAffineTransformIsIdentity([_videoSublayer affineTransform])) {
+    if (areFramesEssentiallyEqualWithTolerance(self.videoSublayer.frame, _targetVideoFrame) && CGAffineTransformIsIdentity([_videoSublayer affineTransform])) {
         OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, "targetVideoFrame (", _targetVideoFrame.size(), ") is equal to videoSublayer.bounds, and affineTransform is identity, bailing");
         return;
     }
