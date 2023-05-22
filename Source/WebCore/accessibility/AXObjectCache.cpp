@@ -848,20 +848,20 @@ RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree()
 
     // A new isolated tree needs to be created. Initialize the GeometryManager primary screen rect to be ready when needed.
     m_geometryManager->initializePrimaryScreenRect();
+    // Schedule a paint to cache the rects for the objects in this new isolated tree.
+    scheduleObjectRegionsUpdate(true /* scheduleImmediately */);
 
     // This method can be called as the result of a client request. Since creating the isolated tree can take long,
     // especially for large documents, for real clients we build a temporary "empty" isolated tree consisting only of the ScrollView and the WebArea objects.
     // Then we schedule building the entire isolated tree on a Timer.
     // For test clients, LayoutTests or XCTests, build the whole isolated tree.
-    if (!isTestClient()) {
+    if (LIKELY(!isTestClient())) {
         tree = AXIsolatedTree::createEmpty(*this);
         if (!m_buildIsolatedTreeTimer.isActive())
             m_buildIsolatedTreeTimer.startOneShot(0_s);
     } else
         tree = AXIsolatedTree::create(*this);
     setIsolatedTreeRoot(tree->rootNode().get());
-    // Schedule a paint to cache the rects for the objects in this new isolated tree.
-    scheduleObjectRegionsUpdate(true /* scheduleImmediately */);
 
     AXObjectCache::initializeSecondaryAXThread();
 
@@ -878,7 +878,10 @@ void AXObjectCache::buildIsolatedTree()
     auto tree = AXIsolatedTree::create(*this);
     setIsolatedTreeRoot(tree->rootNode().get());
 
-    postPlatformNotification(tree->rootNode().get(), AXNotification::AXLoadComplete);
+    if (RefPtr webArea = rootWebArea()) {
+        postPlatformNotification(webArea.get(), AXNotification::AXLoadComplete);
+        postPlatformNotification(webArea.get(), AXNotification::AXFocusedUIElementChanged);
+    }
 }
 
 AXCoreObject* AXObjectCache::isolatedTreeRootObject()

@@ -99,8 +99,11 @@ void AXIsolatedTree::createEmptyContent(AccessibilityObject& axRoot)
     auto appends = resolveAppends();
 
     // Set the ScreenRelativePosition for the objects so that there is no need to hit the main thread on client's request.
-    for (auto& append : appends)
+    for (auto& append : appends) {
         append.isolatedObject->setProperty(AXPropertyName::ScreenRelativePosition, axRoot.screenRelativePosition());
+        if (append.isolatedObject->isWebArea())
+            setFocusedNodeID(append.isolatedObject->objectID());
+    }
 
     // Queue the appends to be performed on the AX thread.
     queueAppendsAndRemovals(WTFMove(appends), { });
