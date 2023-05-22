@@ -66,6 +66,8 @@ bool ISOFairPlayStreamingKeyRequestInfoBox::parse(JSC::DataView& view, unsigned&
     localOffset += m_keyID.capacity();
 
     m_keyID.resize(m_keyID.capacity());
+    if (keyID->byteLength() < m_keyID.capacity())
+        return false;
     memcpy(m_keyID.data(), keyID->data(), m_keyID.capacity());
 
     offset = localOffset;
@@ -96,6 +98,8 @@ bool ISOFairPlayStreamingKeyAssetIdBox::parse(JSC::DataView& view, unsigned& off
     localOffset += dataSize;
 
     m_data.resize(dataSize);
+    if (parsedData->byteLength() < dataSize)
+        return false;
     memcpy(m_data.data(), parsedData->data(), dataSize);
     offset = localOffset;
     return true;
@@ -125,6 +129,8 @@ bool ISOFairPlayStreamingKeyContextBox::parse(JSC::DataView& view, unsigned& off
     localOffset += dataSize;
 
     m_data.resize(dataSize);
+    if (parsedData->byteLength() < dataSize)
+        return false;
     memcpy(m_data.data(), parsedData->data(), dataSize);
     offset = localOffset;
     return true;
