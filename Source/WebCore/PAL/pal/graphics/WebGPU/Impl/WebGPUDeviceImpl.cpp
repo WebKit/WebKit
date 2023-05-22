@@ -512,7 +512,7 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, bool de
             backingBuffers.data(),
         }, {
             descriptor.primitive && depthClipControlIsEnabled ? &depthClipControl.chain : nullptr,
-            descriptor.primitive ? convertToBackingContext.convertToBacking(descriptor.primitive->topology) : WGPUPrimitiveTopology_PointList,
+            descriptor.primitive ? convertToBackingContext.convertToBacking(descriptor.primitive->topology) : WGPUPrimitiveTopology_TriangleList,
             descriptor.primitive && descriptor.primitive->stripIndexFormat ? convertToBackingContext.convertToBacking(*descriptor.primitive->stripIndexFormat) : WGPUIndexFormat_Undefined,
             descriptor.primitive ? convertToBackingContext.convertToBacking(descriptor.primitive->frontFace) : WGPUFrontFace_CCW,
             descriptor.primitive ? convertToBackingContext.convertToBacking(descriptor.primitive->cullMode) : WGPUCullMode_None,
