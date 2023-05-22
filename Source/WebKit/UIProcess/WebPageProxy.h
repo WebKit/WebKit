@@ -2155,7 +2155,8 @@ public:
 #endif
 
     SubframePageProxy* subpageFrameProxyForRegistrableDomain(WebCore::RegistrableDomain) const;
-    SubframePageProxy* subframePageProxyForFrameID(WebCore::FrameIdentifier) const;
+    void addSubframePageProxy(WebCore::RegistrableDomain, UniqueRef<SubframePageProxy>&&);
+
     void createRemoteSubframesInOtherProcesses(WebFrameProxy&);
 
     void requestImageBitmap(const WebCore::ElementContext&, CompletionHandler<void(ShareableBitmapHandle&&, const String& sourceMIMEType)>&&);
@@ -2245,7 +2246,6 @@ public:
 #endif
 
     WebPopupMenuProxyClient& popupMenuClient();
-    void addSubframePageProxyForFrameID(WebCore::FrameIdentifier, WebCore::RegistrableDomain, UniqueRef<SubframePageProxy>&&);
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);

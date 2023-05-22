@@ -5254,7 +5254,12 @@ void WebPageProxy::updateRemoteFrameSize(WebCore::FrameIdentifier frameID, WebCo
 {
     if (!drawingArea())
         return;
-    auto* subframePageProxy = subframePageProxyForFrameID(frameID);
+    auto* frame = WebFrameProxy::webFrame(frameID);
+    if (!frame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    auto* subframePageProxy = internals().domainToSubframePageProxyMap.get(RegistrableDomain(frame->url()));
     if (!subframePageProxy)
         return;
     subframePageProxy->send(Messages::WebPage::UpdateFrameSize(frameID, size));
@@ -5744,15 +5749,6 @@ void WebPageProxy::didFinishDocumentLoadForFrame(FrameIdentifier frameID, uint64
     }
 }
 
-SubframePageProxy* WebPageProxy::subframePageProxyForFrameID(WebCore::FrameIdentifier identifier) const
-{
-    auto& internals = this->internals();
-    auto domainIterator = internals.frameIdentifierToDomainMap.find(identifier);
-    if (domainIterator == internals.frameIdentifierToDomainMap.end())
-        return nullptr;
-    return internals.domainToSubframePageProxyMap.get(domainIterator->value);
-}
-
 void WebPageProxy::createRemoteSubframesInOtherProcesses(WebFrameProxy& newFrame)
 {
     if (!m_preferences->siteIsolationEnabled())
@@ -5808,7 +5804,8 @@ void WebPageProxy::didFinishLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 
         frame->didFinishLoad();
 
-        auto* subframePageProxy = subframePageProxyForFrameID(frameID);
+        auto* subframePageProxy = internals().domainToSubframePageProxyMap.get(RegistrableDomain(frame->url()));
+
         if (subframePageProxy && frame->parentFrame())
             frame->parentFrame()->process().send(Messages::WebPage::DidFinishLoadInAnotherProcess(frameID), webPageID());
 
@@ -12525,12 +12522,11 @@ void WebPageProxy::generateTestReport(const String& message, const String& group
     send(Messages::WebPage::GenerateTestReport(message, group));
 }
 
-void WebPageProxy::addSubframePageProxyForFrameID(WebCore::FrameIdentifier frameID, WebCore::RegistrableDomain domain, UniqueRef<SubframePageProxy>&& subframePageProxy)
+void WebPageProxy::addSubframePageProxy(WebCore::RegistrableDomain domain, UniqueRef<SubframePageProxy>&& subframePageProxy)
 {
     // FIXME: Add a corresponding remove call.
     auto& internals = this->internals();
     internals.domainToSubframePageProxyMap.add(domain, WTFMove(subframePageProxy));
-    internals.frameIdentifierToDomainMap.add(frameID, domain);
 }
 
 SubframePageProxy* WebPageProxy::subpageFrameProxyForRegistrableDomain(WebCore::RegistrableDomain domain) const
