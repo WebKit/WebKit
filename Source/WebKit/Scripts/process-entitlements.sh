@@ -478,7 +478,7 @@ function ios_family_process_network_entitlements()
     plistbuddy Add :com.apple.private.tcc.manager.check-by-audit-token:1 string kTCCServiceUserTracking
 
     plistbuddy Add :com.apple.private.appstored array
-    plistbuddy Add :com.apple.private.appstored:0 string InstallAttribution
+    plistbuddy Add :com.apple.private.appstored:0 string InstallWebAttribution
 
     plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.Networking
     plistbuddy Add :com.apple.symptom_analytics.configure bool YES

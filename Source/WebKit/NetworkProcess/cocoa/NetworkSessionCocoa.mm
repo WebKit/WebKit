@@ -2030,7 +2030,9 @@ void NetworkSessionCocoa::donateToSKAdNetwork(WebCore::PrivateClickMeasurement&&
     config.get().sourceWebRegistrableDomain = pcm.sourceSite().registrableDomain.string();
     config.get().version = @"4.0";
     config.get().attributionContext = AttributionTypeDefault;
-    [[ASDInstallAttribution sharedInstance] addInstallWebAttributionParamsWithConfig:config.get() completionHandler:^(NSError *) { }];
+#if HAVE(ASD_INSTALL_WEB_ATTRIBUTION_SERVICE)
+    [[ASDInstallWebAttributionService sharedInstance] addInstallWebAttributionParamsWithConfig:config.get() completionHandler:^(NSError *) { }];
+#endif
 #endif
 
     if (!m_privateClickMeasurementDebugModeEnabled)
