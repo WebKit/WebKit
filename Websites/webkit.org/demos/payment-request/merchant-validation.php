@@ -91,7 +91,7 @@ $curlOptions = array(
 $curlConnection = curl_init();
 curl_setopt_array($curlConnection, $curlOptions);
 if (!$result = curl_exec($curlConnection))
-    die('An error occurred when connecting to the validation URL.'));
+    die('An error occurred when connecting to the validation URL.');
 
 curl_close($curlConnection);
 
