@@ -1872,7 +1872,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                 GstElement* element = GST_ELEMENT(GST_MESSAGE_SRC(message));
                 if (GST_OBJECT_FLAG_IS_SET(element, GST_ELEMENT_FLAG_SINK)) {
                     const gchar* klassStr = gst_element_get_metadata(element, "klass");
-                    if (strstr(klass_str, "Sink") && strstr(klass_str, "Audio"))
+                    if (strstr(klassStr, "Sink") && strstr(klassStr, "Audio"))
                         m_audioSink = element;
                 }
             }
