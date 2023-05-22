@@ -494,7 +494,8 @@ ExceptionOr<void> CSSStyleSheet::replaceSync(String&& text)
     RuleMutationScope mutationScope(this, RuleReplace);
     m_contents->clearRules();
     for (auto& childRuleWrapper : m_childRuleCSSOMWrappers)
-        childRuleWrapper->setParentStyleSheet(nullptr);
+        if (childRuleWrapper)
+            childRuleWrapper->setParentStyleSheet(nullptr);
     m_childRuleCSSOMWrappers.clear();
 
     m_contents->parseString(WTFMove(text));
