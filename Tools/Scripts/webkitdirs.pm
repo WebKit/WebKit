@@ -987,11 +987,7 @@ sub determineConfigurationForVisualStudio
 
 sub usesPerConfigurationBuildDirectory
 {
-    # [Gtk] We don't have Release/Debug configurations in straight
-    # autotool builds (non build-webkit). In this case and if
-    # WEBKIT_OUTPUTDIR exist, use that as our configuration dir. This will
-    # allows us to run run-webkit-tests without using build-webkit.
-    return $ENV{"WEBKIT_OUTPUTDIR"} && isGtk();
+    return (defined $ENV{"WEBKIT_OUTPUTDIR"});
 }
 
 sub determineConfigurationProductDir
