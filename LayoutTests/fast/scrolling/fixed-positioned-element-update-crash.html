@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+ <style>
+ #container {
+   display: inline-block;
+   height: 100px;
+ }
+ #sticky {
+   position: sticky;
+   writing-mode: tb;
+   overflow-x: overlay;
+ }
+ #fixed {
+   position: fixed;
+   display: inline-block;
+ }
+ </style>
+ <div id="container">
+   <span>
+     <div id="sticky"></div>
+   </span>
+ </div>
+ <div id="fixed"></div>
+ <custom style="transform: scale(2)" id="custom"></foo>
+ <script>
+   if (window.testRunner) {
+     testRunner.waitUntilDone();
+     testRunner.dumpAsText();
+   }
+   onload = () => {
+     requestAnimationFrame(() => {
+       custom.style.setProperty("-webkit-mask-box-image", "url(about:blank)");
+       requestAnimationFrame(() => {
+         custom.style.width = "5px";
+         requestAnimationFrame(() => {
+           document.body.innerHTML = "PASS if no crashes.";
+           if (window.testRunner)
+             testRunner.notifyDone();
+         });
+       });
+     });
+   };
+ </script>
