@@ -5671,15 +5671,6 @@ void Internals::simulateEventForWebGLContext(SimulatedWebGLContextEvent event, W
     context.simulateEventForTesting(contextEvent);
 }
 
-bool Internals::hasLowAndHighPowerGPUs()
-{
-#if PLATFORM(MAC)
-    return WebCore::hasLowAndHighPowerGPUs();
-#else
-    return false;
-#endif
-}
-
 Internals::RequestedGPU Internals::requestedGPU(WebGLRenderingContext& context)
 {
     UNUSED_PARAM(context);
@@ -5698,20 +5689,6 @@ Internals::RequestedGPU Internals::requestedGPU(WebGLRenderingContext& context)
     }
 
     return RequestedGPU::Default;
-}
-
-bool Internals::requestedMetal(WebGLRenderingContext& context)
-{
-    UNUSED_PARAM(context);
-#if PLATFORM(COCOA)
-    if (auto optionalAttributes = context.getContextAttributes()) {
-        auto attributes = *optionalAttributes;
-
-        return attributes.useMetal;
-    }
-#endif
-
-    return false;
 }
 #endif
 
@@ -7037,13 +7014,6 @@ ExceptionOr<void> Internals::setDocumentAutoplayPolicy(Document& document, Inter
 
     return { };
 }
-
-#if ENABLE(WEBGL) && !PLATFORM(COCOA)
-bool Internals::platformSupportsMetal(bool)
-{
-    return false;
-}
-#endif
 
 void Internals::retainTextIteratorForDocumentContent()
 {

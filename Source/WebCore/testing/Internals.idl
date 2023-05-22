@@ -961,10 +961,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined setSpeculativeTilingDelayDisabledForTesting(boolean disabled);
 
     [Conditional=WEBGL] undefined simulateEventForWebGLContext(SimulatedWebGLContextEvent event, WebGLRenderingContext context);
-    [Conditional=WEBGL] boolean hasLowAndHighPowerGPUs();
     [Conditional=WEBGL] RequestedGPU requestedGPU(WebGLRenderingContext context);
-    [Conditional=WEBGL] boolean requestedMetal(WebGLRenderingContext context);
-    [Conditional=WEBGL] boolean platformSupportsMetal(boolean isWebGL2);
 
     undefined setPageVisibility(boolean isVisible);
     undefined setPageIsFocused(boolean isFocused);

@@ -3839,7 +3839,6 @@ imported/w3c/web-platform-tests/css/css-fonts/font-weight-normal-001.xht [ Image
 
 # These tests are currently only relevant on older OSes. They should be removed once Metal is
 # the only backend on Cocoa WebKit.
-webgl/webgl-metal-disabled.html [ Skip ]
 webgl/webgl-via-metal-flag-off.html [ Skip ]
 
 # webkit.org/b/203763 2019 WebGL test gardening: These tests pass in Safari and the conformance suite, but timeout in TestRunner and MiniBrowser.
