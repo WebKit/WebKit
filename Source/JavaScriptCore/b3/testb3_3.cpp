@@ -3735,7 +3735,7 @@ static double negativeZero()
     return -zero();
 }
 
-void addArgTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
+void addArgTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& tasks)
 {
     RUN(testAddArg(111));
     RUN(testAddArgs(1, 1));
@@ -3990,7 +3990,7 @@ void addArgTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN_BINARY(testSubArgsFloatWithEffectfulDoubleConversion, floatingPointOperands<float>(), floatingPointOperands<float>());
 }
 
-void addCallTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
+void addCallTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& tasks)
 {
     RUN(testCallSimple(1, 2));
     RUN(testCallRare(1, 2));
@@ -4014,7 +4014,7 @@ void addCallTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN(testCallFunctionWithHellaFloatArguments());
 }
 
-void addShrTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
+void addShrTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& tasks)
 {
     RUN(testSShrArgs(1, 0));
     RUN(testSShrArgs(1, 1));

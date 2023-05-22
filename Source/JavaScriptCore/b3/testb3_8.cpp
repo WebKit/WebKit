@@ -750,7 +750,7 @@ void testAtomicXchg(B3::Opcode opcode)
     }
 }
 
-void addAtomicTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
+void addAtomicTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& tasks)
 {
     RUN(testAtomicWeakCAS<int8_t>());
     RUN(testAtomicWeakCAS<int16_t>());
@@ -885,7 +885,7 @@ void testLoad(B3::Type type, T value)
     return testLoad<T>(type, Load, value);
 }
 
-void addLoadTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
+void addLoadTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& tasks)
 {
     RUN(testLoad(Int32, 60));
     RUN(testLoad(Int32, -60));

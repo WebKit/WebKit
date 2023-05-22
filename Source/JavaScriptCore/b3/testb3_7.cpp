@@ -1894,7 +1894,7 @@ static void tupleNestedLoop(int32_t first, double second)
     CHECK_EQ(compileAndRun<double>(proc, first, second), first + second);
 }
 
-void addTupleTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
+void addTupleTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& tasks)
 {
     RUN_BINARY(testSimpleTuplePair, int32Operands(), int64Operands());
     RUN_BINARY(testSimpleTuplePairUnused, int32Operands(), int64Operands());

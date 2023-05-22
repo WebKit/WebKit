@@ -2915,7 +2915,7 @@ void testPatchpointAnyImm(ValueRep rep)
     CHECK(compileAndRun<int>(proc, 1) == 43);
 }
 
-void addSExtTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
+void addSExtTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& tasks)
 {
     RUN(testSExt8(0));
     RUN(testSExt8(1));
