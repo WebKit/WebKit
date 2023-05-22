@@ -227,6 +227,22 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
         auto finalSize = WTF::roundUpToMultipleOf(alignment, size);
         if (finalSize != size)
             addPadding(finalSize - size);
+
+        if (structDecl.role() == AST::StructureRole::VertexOutput) {
+            m_stringBuilder.append("\n");
+            m_stringBuilder.append(m_indent, "template<typename T>\n");
+            m_stringBuilder.append(m_indent, structDecl.name(), "(const thread T& other)\n");
+            {
+                IndentationScope scope(m_indent);
+                char prefix = ':';
+                for (auto& member : structDecl.members()) {
+                    auto& name = member.name();
+                    m_stringBuilder.append(m_indent, prefix, " ", name, "(other.", name, ")\n");
+                    prefix = ',';
+                }
+            }
+            m_stringBuilder.append(m_indent, "{ }\n");
+        }
     }
     m_stringBuilder.append(m_indent, "};\n\n");
     m_structRole = std::nullopt;

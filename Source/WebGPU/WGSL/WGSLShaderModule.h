@@ -80,7 +80,7 @@ public:
     }
 
     template<typename CurrentType, typename ReplacementType>
-    void replace(CurrentType& current, ReplacementType& replacement)
+    std::enable_if_t<sizeof(CurrentType) < sizeof(ReplacementType), void> replace(CurrentType& current, ReplacementType& replacement)
     {
         m_replacements.append([&current, currentCopy = current]() mutable {
             bitwise_cast<AST::IdentityExpression*>(&current)->~IdentityExpression();
@@ -89,6 +89,18 @@ public:
 
         current.~CurrentType();
         new (&current) AST::IdentityExpression(replacement.span(), replacement);
+    }
+
+    template<typename CurrentType, typename ReplacementType>
+    std::enable_if_t<sizeof(CurrentType) >= sizeof(ReplacementType), void> replace(CurrentType& current, ReplacementType& replacement)
+    {
+        m_replacements.append([&current, currentCopy = current]() mutable {
+            bitwise_cast<ReplacementType*>(&current)->~ReplacementType();
+            new (bitwise_cast<void*>(&current)) CurrentType(WTFMove(currentCopy));
+        });
+
+        current.~CurrentType();
+        new (bitwise_cast<void*>(&current)) ReplacementType(replacement);
     }
 
     template<typename T, size_t size>
