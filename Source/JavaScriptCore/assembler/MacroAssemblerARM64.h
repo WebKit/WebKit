@@ -3318,6 +3318,11 @@ public:
         and64(TrustedImm64(0xffffffffU), src, dest);
     }
 
+    void zeroExtend48ToWord(RegisterID src, RegisterID dest)
+    {
+        m_assembler.ubfx<64>(dest, src, 0, 48);
+    }
+
     void moveConditionally32(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID src, RegisterID dest)
     {
         m_assembler.cmp<32>(left, right);
