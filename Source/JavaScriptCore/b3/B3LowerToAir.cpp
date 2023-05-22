@@ -3544,31 +3544,60 @@ private:
             Value* left = m_value->child(0);
             Value* right = m_value->child(1);
 
-            // UBFIZ Pattern: d = (n & mask) << lsb 
+            // UBFIZ Pattern: d = (n & mask) << lsb
             // Where: mask = (1 << width) - 1
             auto tryAppendUBFIZ = [&] () -> bool {
                 Air::Opcode opcode = opcodeForType(InsertUnsignedBitfieldInZero32, InsertUnsignedBitfieldInZero64, m_value->type());
                 if (!isValidForm(opcode, Arg::Tmp, Arg::Imm, Arg::Imm, Arg::Tmp))
                     return false;
-                if (left->opcode() != BitAnd)
+                if (!imm(right) || right->asInt() < 0)
                     return false;
-
-                Value* nValue = left->child(0);
-                Value* maskValue = left->child(1);
-                if (m_locked.contains(nValue) || !maskValue->hasInt() || !imm(right) || right->asInt() < 0) 
+                if (!canBeInternal(left))
                     return false;
-
                 uint64_t lsb = right->asInt();
-                uint64_t mask = maskValue->asInt();
-                if (!mask || mask & (mask + 1))
-                    return false;
-                uint64_t width = WTF::bitCount(mask);
-                uint64_t datasize = opcode == InsertUnsignedBitfieldInZero32 ? 32 : 64;
-                if (lsb + width > datasize)
-                    return false;
 
-                append(opcode, tmp(nValue), imm(right), imm(width), tmp(m_value));
-                return true;
+                auto doAppend = [&](Value* nValue, uint64_t mask) -> bool {
+                    if (m_locked.contains(nValue))
+                        return false;
+
+                    if (!mask || mask & (mask + 1))
+                        return false;
+
+                    uint64_t width = WTF::bitCount(mask);
+                    uint64_t datasize = opcode == InsertUnsignedBitfieldInZero32 ? 32 : 64;
+                    if (lsb + width > datasize)
+                        return false;
+
+                    append(opcode, tmp(nValue), imm(right), imm(width), tmp(m_value));
+                    return true;
+                };
+
+                if (left->opcode() == BitAnd) {
+                    Value* nValue = left->child(0);
+                    Value* maskValue = left->child(1);
+                    if (!maskValue->hasInt())
+                        return false;
+                    uint64_t mask = maskValue->asInt();
+                    if (doAppend(nValue, mask)) {
+                        commitInternal(left);
+                        return true;
+                    }
+                    return false;
+                }
+
+                if (left->opcode() == ZExt32 && left->child(0)->opcode() == Trunc && canBeInternal(left->child(0))) {
+                    Value* nValue = left->child(0)->child(0);
+                    uint64_t mask = 0xffffffffULL;
+                    if (doAppend(nValue, mask)) {
+                        commitInternal(left->child(0));
+                        commitInternal(left);
+                        return true;
+                    }
+                    return false;
+                }
+
+                return false;
+
             };
 
             if (tryAppendUBFIZ())
