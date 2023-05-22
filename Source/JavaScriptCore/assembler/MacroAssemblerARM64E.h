@@ -119,7 +119,7 @@ public:
 
     ALWAYS_INLINE void untagArrayPtr(RegisterID length, RegisterID target, bool validateAuth, RegisterID scratch)
     {
-        validateAuth = validateAuth && g_jscConfig.canUseFPAC;
+        validateAuth = validateAuth && !g_jscConfig.canUseFPAC;
         if (validateAuth) {
             ASSERT(scratch != InvalidGPRReg);
             move(target, scratch);
@@ -139,7 +139,7 @@ public:
 
     ALWAYS_INLINE void untagArrayPtrLength64(Address length, RegisterID target, bool validateAuth)
     {
-        validateAuth = validateAuth && g_jscConfig.canUseFPAC;
+        validateAuth = validateAuth && !g_jscConfig.canUseFPAC;
         auto lengthGPR = getCachedDataTempRegisterIDAndInvalidate();
         load64(length, lengthGPR);
         auto scratch = validateAuth ? getCachedMemoryTempRegisterIDAndInvalidate() : InvalidGPRReg; 
