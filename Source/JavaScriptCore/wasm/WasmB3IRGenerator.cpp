@@ -1095,7 +1095,7 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, OptimizingJITCallee&
         stackOverflowCheck->appendSomeRegister(instanceValue());
         stackOverflowCheck->appendSomeRegister(framePointer());
         stackOverflowCheck->clobber(RegisterSetBuilder::macroClobberedGPRs());
-        stackOverflowCheck->numGPScratchRegisters = 2;
+        stackOverflowCheck->numGPScratchRegisters = 0;
         stackOverflowCheck->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             const Checked<int32_t> wasmFrameSize = params.proc().frameSize();
             const Checked<int32_t> wasmTailCallFrameSize = -m_tailCallStackOffsetFromFP;
@@ -1136,16 +1136,7 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, OptimizingJITCallee&
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 GPRReg contextInstance = params[0].gpr();
                 GPRReg fp = params[1].gpr();
-                GPRReg scratch1 = params.gpScratch(0);
-                GPRReg scratch2 = params.gpScratch(1);
-
-                jit.loadPtr(CCallHelpers::Address(contextInstance, Instance::offsetOfVM()), scratch2);
-                jit.loadPtr(CCallHelpers::Address(scratch2, VM::offsetOfSoftStackLimit()), scratch2);
-                jit.addPtr(CCallHelpers::TrustedImm32(-checkSize), fp, scratch1);
-                MacroAssembler::JumpList overflow;
-                if (UNLIKELY(needUnderflowCheck))
-                    overflow.append(jit.branchPtr(CCallHelpers::Above, scratch1, fp));
-                overflow.append(jit.branchPtr(CCallHelpers::Below, scratch1, scratch2));
+                CCallHelpers::JumpList overflow = jit.checkWasmStackOverflow(contextInstance, CCallHelpers::TrustedImm32(checkSize), fp);
                 jit.addLinkTask([overflow] (LinkBuffer& linkBuffer) {
                     linkBuffer.link(overflow, CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(throwStackOverflowFromWasmThunkGenerator).code()));
                 });

@@ -2037,6 +2037,12 @@ public:
 #endif
     }
 
+#if ENABLE(WEBASSEMBLY)
+#if CPU(ARM64) || CPU(X86_64) || CPU(RISCV64)
+    JumpList checkWasmStackOverflow(GPRReg instanceGPR, TrustedImm32, GPRReg framePointerGPR);
+#endif
+#endif
+
 protected:
     void copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(GPRReg calleeSavesBuffer);
 
