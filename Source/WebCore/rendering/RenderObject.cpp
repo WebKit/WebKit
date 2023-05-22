@@ -918,7 +918,7 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
     // Issue repaint on the renderer with outline: auto.
     for (const auto* renderer = this; renderer; renderer = renderer->parent()) {
         const auto* originalRenderer = renderer;
-        if (is<RenderMultiColumnSet>(renderer->previousSibling())) {
+        if (is<RenderMultiColumnSet>(renderer->previousSibling()) && !renderer->isLegend()) {
             auto previousMultiColumnSet = downcast<RenderMultiColumnSet>(renderer->previousSibling());
             auto enclosingMultiColumnFlow = previousMultiColumnSet->multiColumnFlow();
             auto& previousMultiColumnSetBox = downcast<RenderBox>(*renderer);
