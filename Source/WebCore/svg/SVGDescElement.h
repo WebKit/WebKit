@@ -29,8 +29,6 @@ class SVGDescElement final : public SVGElement {
 public:
     static Ref<SVGDescElement> create(const QualifiedName&, Document&);
 
-    String description() const;
-
 private:
     SVGDescElement(const QualifiedName&, Document&);
 
