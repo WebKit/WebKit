@@ -40,8 +40,6 @@ div#attachment-container {
     border-radius: 8px;
     font: caption;
     pointer-events: none;
-    /* user-select: none; */
-    /* -webkit-user-select: none; */
 }
 
 div#attachment-container::selection {
@@ -66,6 +64,8 @@ div#attachment-preview-area {
     gap: 0;
     align-items: center;
     justify-items: center;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 attachment#attachment-preview {
@@ -126,6 +126,8 @@ div#attachment-information-area {
     display: grid;
     gap: 0;
     align-items: center;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 div#attachment-information-block {
