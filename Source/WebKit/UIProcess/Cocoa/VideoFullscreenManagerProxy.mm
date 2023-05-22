@@ -662,8 +662,9 @@ RetainPtr<WKLayerHostView> VideoFullscreenManagerProxy::createLayerHostViewWithI
 
         [view layer].masksToBounds = NO;
         [view layer].name = @"WKLayerHostView layer";
+        [view layer].frame = CGRectMake(0, 0, initialSize.width(), initialSize.height());
     }
-    [view layer].frame = CGRectMake(0, 0, initialSize.width(), initialSize.height());
+
     [view setContextID:videoLayerID];
 
     interface->setupCaptionsLayer([view layer], initialSize);
