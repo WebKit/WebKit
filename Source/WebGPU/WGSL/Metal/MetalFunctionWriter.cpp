@@ -623,8 +623,17 @@ void FunctionDefinitionWriter::visit(AST::CallExpression& call)
             return;
         }
 
+        static constexpr std::pair<ComparableASCIILiteral, ASCIILiteral> baseTypesMappings[] {
+            { "f32", "float"_s },
+            { "i32", "int"_s },
+            { "u32", "unsigned"_s }
+        };
+        static constexpr SortedArrayMap baseTypes { baseTypesMappings };
+
         if (AST::ParameterizedTypeName::stringViewToKind(targetName).has_value())
             visit(call.inferredType());
+        else if (auto mappedName = baseTypes.get(targetName))
+            m_stringBuilder.append(mappedName);
         else
             m_stringBuilder.append(targetName);
         visitArguments(this, call);

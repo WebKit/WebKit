@@ -1198,6 +1198,14 @@ Result<AST::Expression::Ref> Parser<Lexer>::parsePrimaryExpression()
         }
         RETURN_ARENA_NODE(IdentifierExpression, WTFMove(ident));
     }
+    case TokenType::KeywordI32:
+    case TokenType::KeywordU32:
+    case TokenType::KeywordF32:
+    case TokenType::KeywordBool: {
+        PARSE(type, TypeName);
+        PARSE(arguments, ArgumentExpressionList);
+        RETURN_ARENA_NODE(CallExpression, WTFMove(type), WTFMove(arguments));
+    }
     case TokenType::KeywordArray: {
         PARSE(arrayType, ArrayType);
         PARSE(arguments, ArgumentExpressionList);
