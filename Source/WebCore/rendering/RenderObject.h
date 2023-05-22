@@ -201,6 +201,7 @@ public:
 
     bool isRenderElement() const { return !isText(); }
     bool isRenderReplaced() const;
+    bool isRenderReplacedOrAttachment() const;
     bool isBoxModelObject() const;
     bool isRenderBlock() const;
     bool isRenderBlockFlow() const;

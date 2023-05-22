@@ -74,6 +74,8 @@ static Layout::Box::ElementAttributes elementAttributes(const RenderElement& ren
             return Layout::Box::NodeType::ListMarker;
         if (is<RenderReplaced>(renderer))
             return is<RenderImage>(renderer) ? Layout::Box::NodeType::Image : Layout::Box::NodeType::ReplacedElement;
+        if (renderer.isAttachment())
+            return Layout::Box::NodeType::ReplacedElement;
         if (is<RenderLineBreak>(renderer))
             return downcast<RenderLineBreak>(renderer).isWBR() ? Layout::Box::NodeType::WordBreakOpportunity : Layout::Box::NodeType::LineBreak;
         return Layout::Box::NodeType::GenericElement;

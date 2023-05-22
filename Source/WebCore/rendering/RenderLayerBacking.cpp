@@ -2883,7 +2883,7 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer(PaintedContentsInfo& 
     if (hasBackingSharingLayers())
         return false;
 
-    if (renderer().isRenderReplaced() && !isCompositedPlugin(renderer()))
+    if (renderer().isRenderReplacedOrAttachment() && !isCompositedPlugin(renderer()))
         return false;
 
     if (renderer().isTextControl())

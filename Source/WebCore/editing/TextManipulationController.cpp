@@ -188,7 +188,7 @@ public:
         CurrentContent content = { m_node.copyRef(), m_text ? m_text.value() : Vector<String> { }, !!m_text };
         if (content.node) {
             if (auto* renderer = content.node->renderer()) {
-                if (renderer->isRenderReplaced()) {
+                if (renderer->isRenderReplacedOrAttachment()) {
                     content.isTextContent = false;
                     content.isReplacedContent = true;
                 }

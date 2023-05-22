@@ -221,7 +221,7 @@ bool RenderObject::isBlockContainer() const
         || display == DisplayType::FlowRoot
         || display == DisplayType::ListItem
         || display == DisplayType::TableCell
-        || display == DisplayType::TableCaption) && !isRenderReplaced();
+        || display == DisplayType::TableCaption) && !isRenderReplacedOrAttachment();
 }
 
 void RenderObject::setFragmentedFlowStateIncludingDescendants(FragmentedFlowState state, SkipDescendentFragmentedFlow skipDescendentFragmentedFlow)

@@ -5346,7 +5346,7 @@ bool RenderLayer::isVisuallyNonEmpty(PaintedContentRequest* request) const
     if (!hasVisibleContent() || !renderer().style().opacity())
         return false;
 
-    if (renderer().isRenderReplaced() || (m_scrollableArea && m_scrollableArea->hasOverflowControls())) {
+    if (renderer().isRenderReplacedOrAttachment() || (m_scrollableArea && m_scrollableArea->hasOverflowControls())) {
         if (!request)
             return true;
 
