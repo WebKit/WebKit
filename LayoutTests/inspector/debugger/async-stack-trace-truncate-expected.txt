@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Reached 1 million iterations
 Tests for truncating async stack traces that exceed the maximum async stack trace depth.
 
 
@@ -44,4 +45,9 @@ ASYNC CALL STACK:
 3: [P] Global Code
 PASS: Async stack trace should not be truncated.
 -- Running test teardown.
+
+-- Running test case: AsyncStackTrace.CheckDeeplyNestedDoesNotCrash
+Performing deeply nested microtask.
+Clearing console.
+Running GC.
 

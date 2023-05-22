@@ -55,6 +55,7 @@ public:
     bool truncated() const { return m_truncated; }
 
     const RefPtr<AsyncStackTrace>& parentStackTrace() const { return m_parentStackTrace; }
+    void removeParentStackTrace();
 
     const ScriptCallFrame* firstNonNativeCallFrame() const;
 
