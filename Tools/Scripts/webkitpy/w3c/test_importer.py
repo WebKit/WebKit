@@ -183,11 +183,6 @@ class TestImporter(object):
         self._tests_options = json.loads(self.filesystem.read_text_file(self._tests_options_json_path)) if self.filesystem.exists(self._tests_options_json_path) else None
         self._slow_tests = []
 
-        if self.options.clean_destination_directory and self._test_resource_files:
-            self._test_resource_files["files"] = []
-            if self._tests_options:
-                self.remove_slow_from_w3c_tests_options()
-
         self.globalToSuffixes = {
             'window': ('html',),
             'worker': ('worker.html', 'serviceworker.html', 'sharedworker.html'),
@@ -212,6 +207,12 @@ class TestImporter(object):
         if self.options.clean_destination_directory:
             for test_path in test_paths:
                 self.clean_destination_directory(test_path)
+            if self._test_resource_files:
+                test_paths_tuple = tuple(test_paths)
+                self._test_resource_files["files"] = [t for t in self._test_resource_files["files"]
+                                                      if not t.startswith(test_paths_tuple)]
+                if self._tests_options:
+                    self.remove_slow_from_w3c_tests_options(test_paths_tuple)
 
         self.import_tests()
 
@@ -602,9 +603,9 @@ class TestImporter(object):
         for prefixed_value in sorted(total_prefixed_property_values, key=lambda p: total_prefixed_property_values[p]):
             _log.info('  %s: %s', prefixed_value, total_prefixed_property_values[prefixed_value])
 
-        if self._potential_test_resource_files and self._test_resource_files:
+        if self._test_resource_files:
             # FIXME: We should check that actual tests are not in the test_resource_files list
-            should_update_json_file = False
+            should_update_json_file = self.options.clean_destination_directory
             files = self._test_resource_files["files"]
             for full_path in self._potential_test_resource_files:
                 resource_file_path = self.filesystem.relpath(full_path, self.source_directory)
@@ -647,13 +648,19 @@ class TestImporter(object):
         if should_update:
             self.filesystem.write_text_file(self._tests_options_json_path, json.dumps(self._tests_options, sort_keys=True, indent=4).replace(' \n', '\n'))
 
-    def remove_slow_from_w3c_tests_options(self):
+    def remove_slow_from_w3c_tests_options(self, test_paths):
+        full_test_paths = tuple(self.filesystem.join(self.tests_w3c_relative_path, test_path) for test_path in test_paths)
+
+        to_remove = set()
         for test_path in self._tests_options.keys():
-            if self.tests_w3c_relative_path in test_path:
+            if self.tests_w3c_relative_path in test_path and test_path.startswith(full_test_paths):
                 options = self._tests_options[test_path]
                 options.remove('slow')
                 if not options:
-                    self._tests_options.pop(test_path)
+                    to_remove.add(test_path)
+
+        for old in to_remove:
+            del self._tests_options[old]
 
     def remove_deleted_files(self, import_directory, new_file_list):
         """ Reads an import log in |import_directory|, compares it to the |new_file_list|, and removes files not in the new list."""
