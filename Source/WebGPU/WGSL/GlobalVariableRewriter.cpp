@@ -54,12 +54,6 @@ public:
     void visit(AST::IdentifierExpression&) override;
 
 private:
-    template<typename Value>
-    using IndexMap = HashMap<unsigned, Value, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
-
-    using IndexSet = HashSet<unsigned, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
-    using UsedGlobals = IndexMap<IndexSet>;
-
     struct Global {
         struct Resource {
             unsigned group;
@@ -68,6 +62,18 @@ private:
 
         std::optional<Resource> resource;
         AST::Variable* declaration;
+    };
+
+    template<typename Value>
+    using IndexMap = HashMap<unsigned, Value, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
+
+    using IndexSet = HashSet<unsigned, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
+    using UsedResources = IndexMap<IndexSet>;
+    using UsedPrivateGlobals = Vector<Global*>;
+
+    struct UsedGlobals {
+        UsedResources resources;
+        UsedPrivateGlobals privateGlobals;
     };
 
     static AST::Identifier argumentBufferParameterName(unsigned group);
@@ -80,8 +86,9 @@ private:
     void visitEntryPoint(AST::Function&, AST::StageAttribute::Stage, PipelineLayout&);
     UsedGlobals determineUsedGlobals(PipelineLayout&, AST::StageAttribute::Stage);
     void usesOverride(AST::Variable&);
-    void insertStructs(const UsedGlobals&);
-    void insertParameters(AST::Function&, const UsedGlobals&);
+    void insertStructs(const UsedResources&);
+    void insertParameters(AST::Function&, const UsedResources&);
+    void insertLocalDefinitions(AST::Function&, const UsedPrivateGlobals&);
 
     CallGraph& m_callGraph;
     PrepareResult& m_result;
@@ -187,9 +194,9 @@ void RewriteGlobalVariables::visitEntryPoint(AST::Function& function, AST::Stage
         return;
 
     auto usedGlobals = determineUsedGlobals(pipelineLayout, stage);
-    insertStructs(usedGlobals);
-    // FIXME: not all globals are parameters
-    insertParameters(function, usedGlobals);
+    insertStructs(usedGlobals.resources);
+    insertParameters(function, usedGlobals.resources);
+    insertLocalDefinitions(function, usedGlobals.privateGlobals);
 }
 
 
@@ -207,8 +214,10 @@ auto RewriteGlobalVariables::determineUsedGlobals(PipelineLayout& pipelineLayout
             break;
         case AST::VariableFlavor::Var:
         case AST::VariableFlavor::Let:
-            if (!global.resource.has_value())
+            if (!global.resource.has_value()) {
+                usedGlobals.privateGlobals.append(&global);
                 continue;
+            }
             break;
         case AST::VariableFlavor::Const:
             // Constants must be resolved at an earlier phase
@@ -216,7 +225,7 @@ auto RewriteGlobalVariables::determineUsedGlobals(PipelineLayout& pipelineLayout
         }
 
         auto group = global.resource->group;
-        auto result = usedGlobals.add(group, IndexSet());
+        auto result = usedGlobals.resources.add(group, IndexSet());
         result.iterator->value.add(global.resource->binding);
 
         if (pipelineLayout.bindGroupLayouts.size() <= group)
@@ -281,17 +290,17 @@ void RewriteGlobalVariables::usesOverride(AST::Variable& variable)
     m_entryPointInformation->specializationConstants.add(variable.name(), Reflection::SpecializationConstant { String(), constantType });
 }
 
-void RewriteGlobalVariables::insertStructs(const UsedGlobals& usedGlobals)
+void RewriteGlobalVariables::insertStructs(const UsedResources& usedResources)
 {
     for (auto& groupBinding : m_groupBindingMap) {
         unsigned group = groupBinding.key;
 
-        auto usedGlobal = usedGlobals.find(group);
-        if (usedGlobal == usedGlobals.end())
+        auto usedResource = usedResources.find(group);
+        if (usedResource == usedResources.end())
             continue;
 
         const auto& bindingGlobalMap = groupBinding.value;
-        const IndexSet& usedBindings = usedGlobal->value;
+        const IndexSet& usedBindings = usedResource->value;
 
         AST::Identifier structName = argumentBufferStructName(group);
         AST::StructureMember::List structMembers;
@@ -356,10 +365,10 @@ void RewriteGlobalVariables::insertStructs(const UsedGlobals& usedGlobals)
     }
 }
 
-void RewriteGlobalVariables::insertParameters(AST::Function& function, const UsedGlobals& usedGlobals)
+void RewriteGlobalVariables::insertParameters(AST::Function& function, const UsedResources& usedResources)
 {
     auto span = function.span();
-    for (auto& it : usedGlobals) {
+    for (auto& it : usedResources) {
         unsigned group = it.key;
         auto& type = m_callGraph.ast().astBuilder().construct<AST::NamedTypeName>(span, argumentBufferStructName(group));
         type.m_resolvedType = m_structTypes.get(group);
@@ -372,6 +381,17 @@ void RewriteGlobalVariables::insertParameters(AST::Function& function, const Use
             },
             AST::ParameterRole::BindGroup
         ));
+    }
+}
+
+void RewriteGlobalVariables::insertLocalDefinitions(AST::Function& function, const UsedPrivateGlobals& usedPrivateGlobals)
+{
+    for (auto* global : usedPrivateGlobals) {
+        auto& variableStatement = m_callGraph.ast().astBuilder().construct<AST::VariableStatement>(
+            SourceSpan::empty(),
+            *global->declaration
+        );
+        m_callGraph.ast().insert(function.body().statements(), 0, std::reference_wrapper<AST::Statement>(variableStatement));
     }
 }
 
