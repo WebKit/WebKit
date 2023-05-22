@@ -343,10 +343,6 @@ void WebFrame::didCommitLoadInAnotherProcess(WebCore::LayerHostingContextIdentif
     }
 
     RefPtr parent = coreFrame->tree().parent();
-    if (!parent) {
-        // FIXME: This shouldn't be hit but currently is in a SiteIsolation API test. Investigate and fix.
-        return;
-    }
 
     auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(coreFrame.get());
     if (!localFrame) {
@@ -361,19 +357,22 @@ void WebFrame::didCommitLoadInAnotherProcess(WebCore::LayerHostingContextIdentif
     }
 
     RefPtr ownerElement = coreFrame->ownerElement();
-    if (!ownerElement) {
-        // FIXME: This shouldn't be reached but is after finishing a SiteIsolation API test. Investigate and fix.
-        return;
-    }
 
     auto invalidator = frameLoaderClient->takeFrameInvalidator();
     auto* ownerRenderer = localFrame->ownerRenderer();
     localFrame->setView(nullptr);
 
-    parent->tree().removeChild(*coreFrame);
-    coreFrame->disconnectOwnerElement();
+    if (parent)
+        parent->tree().removeChild(*coreFrame);
+    if (ownerElement)
+        coreFrame->disconnectOwnerElement();
     auto client = makeUniqueRef<WebRemoteFrameClient>(*this, WTFMove(invalidator));
-    auto newFrame = WebCore::RemoteFrame::createSubframeWithContentsInAnotherProcess(*corePage, WTFMove(client), m_frameID, *ownerElement, layerHostingContextIdentifier, remoteProcessIdentifier);
+    auto newFrame = ownerElement
+        ? WebCore::RemoteFrame::createSubframeWithContentsInAnotherProcess(*corePage, WTFMove(client), m_frameID, *ownerElement, layerHostingContextIdentifier, remoteProcessIdentifier)
+        : parent
+            ? WebCore::RemoteFrame::createSubframe(*corePage, WTFMove(client), m_frameID, *parent, remoteProcessIdentifier)
+            : WebCore::RemoteFrame::createMainFrame(*corePage, WTFMove(client), m_frameID, remoteProcessIdentifier);
+
     auto remoteFrameView = WebCore::RemoteFrameView::create(newFrame);
     // FIXME: We need a corresponding setView(nullptr) during teardown to break the ref cycle.
     newFrame->setView(remoteFrameView.ptr());
@@ -383,9 +382,10 @@ void WebFrame::didCommitLoadInAnotherProcess(WebCore::LayerHostingContextIdentif
     m_coreFrame = newFrame.get();
 
     // FIXME: This is also done in the WebCore::Frame constructor. Move one to make this more symmetric.
-    ownerElement->setContentFrame(*m_coreFrame);
-
-    ownerElement->scheduleInvalidateStyleAndLayerComposition();
+    if (ownerElement) {
+        ownerElement->setContentFrame(*m_coreFrame);
+        ownerElement->scheduleInvalidateStyleAndLayerComposition();
+    }
 }
 
 void WebFrame::transitionToLocal(std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)

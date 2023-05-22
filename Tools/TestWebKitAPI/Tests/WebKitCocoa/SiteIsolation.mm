@@ -506,9 +506,9 @@ TEST(SiteIsolation, ParentNavigatingCrossOriginIframeToSameOrigin)
             { { "https://example.com"_s } }
         },
         // FIXME: This process should be torn down when the iframe navigates back to example.com.
-        // Its iframe should be transitioned to remote, and the count of local frames going to 0 should remove the SubframePageProxy.
+        // The count of local frames going to 0 should remove the SubframePageProxy.
         { RemoteFrame,
-            { { "https://webkit.org"_s } }
+            { { RemoteFrame } }
         },
     });
 }
