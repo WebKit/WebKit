@@ -705,7 +705,7 @@ class RTCStatsCollectorTest : public ::testing::Test {
     ExampleStatsGraph graph;
 
     // codec (send)
-    graph.send_codec_id = "RTCCodec_VideoMid_Outbound_1";
+    graph.send_codec_id = "RTCCodec_RTCTransport_TransportName_1_Send_1";
     cricket::VideoMediaInfo video_media_info;
     RtpCodecParameters send_codec;
     send_codec.payload_type = 1;
@@ -713,7 +713,7 @@ class RTCStatsCollectorTest : public ::testing::Test {
     video_media_info.send_codecs.insert(
         std::make_pair(send_codec.payload_type, send_codec));
     // codec (recv)
-    graph.recv_codec_id = "RTCCodec_VideoMid_Inbound_2";
+    graph.recv_codec_id = "RTCCodec_RTCTransport_TransportName_1_Recv_2";
     RtpCodecParameters recv_codec;
     recv_codec.payload_type = 2;
     recv_codec.clock_rate = 0;
@@ -806,7 +806,7 @@ class RTCStatsCollectorTest : public ::testing::Test {
     ExampleStatsGraph graph;
 
     // codec (send)
-    graph.send_codec_id = "RTCCodec_VoiceMid_Outbound_1";
+    graph.send_codec_id = "RTCCodec_RTCTransport_TransportName_1_Send_1";
     cricket::VoiceMediaInfo media_info;
     RtpCodecParameters send_codec;
     send_codec.payload_type = 1;
@@ -814,7 +814,7 @@ class RTCStatsCollectorTest : public ::testing::Test {
     media_info.send_codecs.insert(
         std::make_pair(send_codec.payload_type, send_codec));
     // codec (recv)
-    graph.recv_codec_id = "RTCCodec_VoiceMid_Inbound_2";
+    graph.recv_codec_id = "RTCCodec_RTCTransport_TransportName_1_Recv_2";
     RtpCodecParameters recv_codec;
     recv_codec.payload_type = 2;
     recv_codec.clock_rate = 0;
@@ -1011,6 +1011,82 @@ TEST_F(RTCStatsCollectorTest, CollectRTCCertificateStatsSingle) {
   ExpectReportContainsCertificateInfo(report, *remote_certinfo);
 }
 
+// These SSRC collisions are legal.
+TEST_F(RTCStatsCollectorTest, ValidSsrcCollisionDoesNotCrash) {
+  // BUNDLE audio/video inbound/outbound. Unique SSRCs needed within the BUNDLE.
+  cricket::VoiceMediaInfo mid1_info;
+  mid1_info.receivers.emplace_back();
+  mid1_info.receivers[0].add_ssrc(1);
+  mid1_info.senders.emplace_back();
+  mid1_info.senders[0].add_ssrc(2);
+  pc_->AddVoiceChannel("Mid1", "Transport1", mid1_info);
+  cricket::VideoMediaInfo mid2_info;
+  mid2_info.receivers.emplace_back();
+  mid2_info.receivers[0].add_ssrc(3);
+  mid2_info.senders.emplace_back();
+  mid2_info.senders[0].add_ssrc(4);
+  pc_->AddVideoChannel("Mid2", "Transport1", mid2_info);
+  // Now create a second BUNDLE group with SSRCs colliding with the first group
+  // (but again no collisions within the group).
+  cricket::VoiceMediaInfo mid3_info;
+  mid3_info.receivers.emplace_back();
+  mid3_info.receivers[0].add_ssrc(1);
+  mid3_info.senders.emplace_back();
+  mid3_info.senders[0].add_ssrc(2);
+  pc_->AddVoiceChannel("Mid3", "Transport2", mid3_info);
+  cricket::VideoMediaInfo mid4_info;
+  mid4_info.receivers.emplace_back();
+  mid4_info.receivers[0].add_ssrc(3);
+  mid4_info.senders.emplace_back();
+  mid4_info.senders[0].add_ssrc(4);
+  pc_->AddVideoChannel("Mid4", "Transport2", mid4_info);
+
+  // This should not crash (https://crbug.com/1361612).
+  rtc::scoped_refptr<const RTCStatsReport> report = stats_->GetStatsReport();
+  auto inbound_rtps = report->GetStatsOfType<RTCInboundRTPStreamStats>();
+  auto outbound_rtps = report->GetStatsOfType<RTCOutboundRTPStreamStats>();
+  // TODO(https://crbug.com/webrtc/14443): When valid SSRC collisions are
+  // handled correctly, we should expect to see 4 of each type of object here.
+  EXPECT_EQ(inbound_rtps.size(), 2u);
+  EXPECT_EQ(outbound_rtps.size(), 2u);
+}
+
+// These SSRC collisions are illegal, so it is not clear if this setup can
+// happen even when talking to a malicious endpoint, but simulate illegal SSRC
+// collisions just to make sure we don't crash in even the most extreme cases.
+TEST_F(RTCStatsCollectorTest, InvalidSsrcCollisionDoesNotCrash) {
+  // One SSRC to rule them all.
+  cricket::VoiceMediaInfo mid1_info;
+  mid1_info.receivers.emplace_back();
+  mid1_info.receivers[0].add_ssrc(1);
+  mid1_info.senders.emplace_back();
+  mid1_info.senders[0].add_ssrc(1);
+  pc_->AddVoiceChannel("Mid1", "BundledTransport", mid1_info);
+  cricket::VideoMediaInfo mid2_info;
+  mid2_info.receivers.emplace_back();
+  mid2_info.receivers[0].add_ssrc(1);
+  mid2_info.senders.emplace_back();
+  mid2_info.senders[0].add_ssrc(1);
+  pc_->AddVideoChannel("Mid2", "BundledTransport", mid2_info);
+  cricket::VoiceMediaInfo mid3_info;
+  mid3_info.receivers.emplace_back();
+  mid3_info.receivers[0].add_ssrc(1);
+  mid3_info.senders.emplace_back();
+  mid3_info.senders[0].add_ssrc(1);
+  pc_->AddVoiceChannel("Mid3", "BundledTransport", mid3_info);
+  cricket::VideoMediaInfo mid4_info;
+  mid4_info.receivers.emplace_back();
+  mid4_info.receivers[0].add_ssrc(1);
+  mid4_info.senders.emplace_back();
+  mid4_info.senders[0].add_ssrc(1);
+  pc_->AddVideoChannel("Mid4", "BundledTransport", mid4_info);
+
+  // This should not crash (https://crbug.com/1361612).
+  stats_->GetStatsReport();
+  // Because this setup is illegal, there is no "right answer" to how the report
+  // should look. We only care about not crashing.
+}
+
 TEST_F(RTCStatsCollectorTest, CollectRTCCodecStats) {
   // Audio
   cricket::VoiceMediaInfo voice_media_info;
@@ -1062,8 +1138,9 @@ TEST_F(RTCStatsCollectorTest, CollectRTCCodecStats) {
 
   rtc::scoped_refptr<const RTCStatsReport> report = stats_->GetStatsReport();
 
-  RTCCodecStats expected_inbound_audio_codec("RTCCodec_AudioMid_Inbound_1",
-                                             report->timestamp_us());
+  RTCCodecStats expected_inbound_audio_codec(
+      "RTCCodec_RTCTransport_TransportName_1_Recv_1_minptime=10;useinbandfec=1",
+      report->timestamp_us());
   expected_inbound_audio_codec.payload_type = 1;
   expected_inbound_audio_codec.mime_type = "audio/opus";
   expected_inbound_audio_codec.clock_rate = 1337;
@@ -1071,16 +1148,18 @@ TEST_F(RTCStatsCollectorTest, CollectRTCCodecStats) {
   expected_inbound_audio_codec.sdp_fmtp_line = "minptime=10;useinbandfec=1";
   expected_inbound_audio_codec.transport_id = "RTCTransport_TransportName_1";
 
-  RTCCodecStats expected_outbound_audio_codec("RTCCodec_AudioMid_Outbound_2",
-                                              report->timestamp_us());
+  RTCCodecStats expected_outbound_audio_codec(
+      "RTCCodec_RTCTransport_TransportName_1_Send_2", report->timestamp_us());
   expected_outbound_audio_codec.payload_type = 2;
   expected_outbound_audio_codec.mime_type = "audio/isac";
   expected_outbound_audio_codec.clock_rate = 1338;
   expected_outbound_audio_codec.channels = 2;
   expected_outbound_audio_codec.transport_id = "RTCTransport_TransportName_1";
 
-  RTCCodecStats expected_inbound_video_codec("RTCCodec_VideoMid_Inbound_3",
-                                             report->timestamp_us());
+  RTCCodecStats expected_inbound_video_codec(
+      "RTCCodec_RTCTransport_TransportName_1_Recv_3_level-asymmetry-allowed=1;"
+      "packetization-mode=1;profile-level-id=42001f",
+      report->timestamp_us());
   expected_inbound_video_codec.payload_type = 3;
   expected_inbound_video_codec.mime_type = "video/H264";
   expected_inbound_video_codec.clock_rate = 1339;
@@ -1088,8 +1167,8 @@ TEST_F(RTCStatsCollectorTest, CollectRTCCodecStats) {
       "level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42001f";
   expected_inbound_video_codec.transport_id = "RTCTransport_TransportName_1";
 
-  RTCCodecStats expected_outbound_video_codec("RTCCodec_VideoMid_Outbound_4",
-                                              report->timestamp_us());
+  RTCCodecStats expected_outbound_video_codec(
+      "RTCCodec_RTCTransport_TransportName_1_Send_4", report->timestamp_us());
   expected_outbound_video_codec.payload_type = 4;
   expected_outbound_video_codec.mime_type = "video/VP8";
   expected_outbound_video_codec.clock_rate = 1340;
@@ -1114,6 +1193,117 @@ TEST_F(RTCStatsCollectorTest, CollectRTCCodecStats) {
   EXPECT_EQ(expected_outbound_video_codec,
             report->Get(expected_outbound_video_codec.id())
                 ->cast_to<RTCCodecStats>());
+}
+
+TEST_F(RTCStatsCollectorTest, CodecStatsAreCollectedPerTransport) {
+  // PT=10
+  RtpCodecParameters outbound_codec_pt10;
+  outbound_codec_pt10.payload_type = 10;
+  outbound_codec_pt10.kind = cricket::MEDIA_TYPE_VIDEO;
+  outbound_codec_pt10.name = "VP8";
+  outbound_codec_pt10.clock_rate = 9000;
+
+  // PT=11
+  RtpCodecParameters outbound_codec_pt11;
+  outbound_codec_pt11.payload_type = 11;
+  outbound_codec_pt11.kind = cricket::MEDIA_TYPE_VIDEO;
+  outbound_codec_pt11.name = "VP8";
+  outbound_codec_pt11.clock_rate = 9000;
+
+  cricket::VideoMediaInfo info_pt10;
+  info_pt10.send_codecs.insert(
+      std::make_pair(outbound_codec_pt10.payload_type, outbound_codec_pt10));
+  cricket::VideoMediaInfo info_pt11;
+  info_pt11.send_codecs.insert(
+      std::make_pair(outbound_codec_pt11.payload_type, outbound_codec_pt11));
+  cricket::VideoMediaInfo info_pt10_pt11;
+  info_pt10_pt11.send_codecs.insert(
+      std::make_pair(outbound_codec_pt10.payload_type, outbound_codec_pt10));
+  info_pt10_pt11.send_codecs.insert(
+      std::make_pair(outbound_codec_pt11.payload_type, outbound_codec_pt11));
+
+  // First two mids contain subsets, the third one contains all PTs.
+  pc_->AddVideoChannel("Mid1", "FirstTransport", info_pt10);
+  pc_->AddVideoChannel("Mid2", "FirstTransport", info_pt11);
+  pc_->AddVideoChannel("Mid3", "FirstTransport", info_pt10_pt11);
+
+  // There should be no duplicate codecs because all codec references are on the
+  // same transport.
+  rtc::scoped_refptr<const RTCStatsReport> report = stats_->GetStatsReport();
+  auto codec_stats = report->GetStatsOfType<RTCCodecStats>();
+  EXPECT_EQ(codec_stats.size(), 2u);
+
+  // If a second transport is added with the same PT information, this does
+  // count as different codec objects.
+  pc_->AddVideoChannel("Mid4", "SecondTransport", info_pt10_pt11);
+  stats_->stats_collector()->ClearCachedStatsReport();
+  report = stats_->GetStatsReport();
+  codec_stats = report->GetStatsOfType<RTCCodecStats>();
+  EXPECT_EQ(codec_stats.size(), 4u);
+}
+
+TEST_F(RTCStatsCollectorTest, SamePayloadTypeButDifferentFmtpLines) {
+  // PT=111, useinbandfec=0
+  RtpCodecParameters inbound_codec_pt111_nofec;
+  inbound_codec_pt111_nofec.payload_type = 111;
+  inbound_codec_pt111_nofec.kind = cricket::MEDIA_TYPE_AUDIO;
+  inbound_codec_pt111_nofec.name = "opus";
+  inbound_codec_pt111_nofec.clock_rate = 48000;
+  inbound_codec_pt111_nofec.parameters.insert(
+      std::make_pair("useinbandfec", "0"));
+
+  // PT=111, useinbandfec=1
+  RtpCodecParameters inbound_codec_pt111_fec;
+  inbound_codec_pt111_fec.payload_type = 111;
+  inbound_codec_pt111_fec.kind = cricket::MEDIA_TYPE_AUDIO;
+  inbound_codec_pt111_fec.name = "opus";
+  inbound_codec_pt111_fec.clock_rate = 48000;
+  inbound_codec_pt111_fec.parameters.insert(
+      std::make_pair("useinbandfec", "1"));
+
+  cricket::VideoMediaInfo info_nofec;
+  info_nofec.send_codecs.insert(std::make_pair(
+      inbound_codec_pt111_nofec.payload_type, inbound_codec_pt111_nofec));
+  cricket::VideoMediaInfo info_fec;
+  info_fec.send_codecs.insert(std::make_pair(
+      inbound_codec_pt111_fec.payload_type, inbound_codec_pt111_fec));
+
+  // First two mids contain subsets, the third one contains all PTs.
+  pc_->AddVideoChannel("Mid1", "BundledTransport", info_nofec);
+  pc_->AddVideoChannel("Mid2", "BundledTransport", info_fec);
+
+  // Despite having the same PT we should see two codec stats because their FMTP
+  // lines are different.
+  rtc::scoped_refptr<const RTCStatsReport> report = stats_->GetStatsReport();
+  auto codec_stats = report->GetStatsOfType<RTCCodecStats>();
+  EXPECT_EQ(codec_stats.size(), 2u);
+
+  // Adding more m= sections that does have the same FMTP lines does not result
+  // in duplicates.
+  pc_->AddVideoChannel("Mid3", "BundledTransport", info_nofec);
+  pc_->AddVideoChannel("Mid4", "BundledTransport", info_fec);
+  stats_->stats_collector()->ClearCachedStatsReport();
+  report = stats_->GetStatsReport();
+  codec_stats = report->GetStatsOfType<RTCCodecStats>();
+  EXPECT_EQ(codec_stats.size(), 2u);
+
+  // Same FMTP line but a different PT does count as a new codec.
+  // PT=112, useinbandfec=1
+  RtpCodecParameters inbound_codec_pt112_fec;
+  inbound_codec_pt112_fec.payload_type = 112;
+  inbound_codec_pt112_fec.kind = cricket::MEDIA_TYPE_AUDIO;
+  inbound_codec_pt112_fec.name = "opus";
+  inbound_codec_pt112_fec.clock_rate = 48000;
+  inbound_codec_pt112_fec.parameters.insert(
+      std::make_pair("useinbandfec", "1"));
+  cricket::VideoMediaInfo info_fec_pt112;
+  info_fec_pt112.send_codecs.insert(std::make_pair(
+      inbound_codec_pt112_fec.payload_type, inbound_codec_pt112_fec));
+  pc_->AddVideoChannel("Mid5", "BundledTransport", info_fec_pt112);
+  stats_->stats_collector()->ClearCachedStatsReport();
+  report = stats_->GetStatsReport();
+  codec_stats = report->GetStatsOfType<RTCCodecStats>();
+  EXPECT_EQ(codec_stats.size(), 3u);
 }
 
 TEST_F(RTCStatsCollectorTest, CollectRTCCertificateStatsMultiple) {
@@ -2102,7 +2292,7 @@ TEST_F(RTCStatsCollectorTest, CollectRTCInboundRTPStreamStats_Audio) {
   expected_audio.mid = "AudioMid";
   expected_audio.track_id = stats_of_track_type[0]->id();
   expected_audio.transport_id = "RTCTransport_TransportName_1";
-  expected_audio.codec_id = "RTCCodec_AudioMid_Inbound_42";
+  expected_audio.codec_id = "RTCCodec_RTCTransport_TransportName_1_Recv_42";
   expected_audio.packets_received = 2;
   expected_audio.nack_count = 5;
   expected_audio.fec_packets_discarded = 5566;
@@ -2222,7 +2412,7 @@ TEST_F(RTCStatsCollectorTest, CollectRTCInboundRTPStreamStats_Video) {
   expected_video.mid = "VideoMid";
   expected_video.track_id = IdForType<RTCMediaStreamTrackStats>(report.get());
   expected_video.transport_id = "RTCTransport_TransportName_1";
-  expected_video.codec_id = "RTCCodec_VideoMid_Inbound_42";
+  expected_video.codec_id = "RTCCodec_RTCTransport_TransportName_1_Recv_42";
   expected_video.fir_count = 5;
   expected_video.pli_count = 6;
   expected_video.nack_count = 7;
@@ -2322,7 +2512,7 @@ TEST_F(RTCStatsCollectorTest, CollectRTCOutboundRTPStreamStats_Audio) {
   expected_audio.kind = "audio";
   expected_audio.track_id = IdForType<RTCMediaStreamTrackStats>(report.get());
   expected_audio.transport_id = "RTCTransport_TransportName_1";
-  expected_audio.codec_id = "RTCCodec_AudioMid_Outbound_42";
+  expected_audio.codec_id = "RTCCodec_RTCTransport_TransportName_1_Send_42";
   expected_audio.packets_sent = 2;
   expected_audio.retransmitted_packets_sent = 20;
   expected_audio.bytes_sent = 3;
@@ -2412,7 +2602,7 @@ TEST_F(RTCStatsCollectorTest, CollectRTCOutboundRTPStreamStats_Video) {
   expected_video.kind = "video";
   expected_video.track_id = stats_of_track_type[0]->id();
   expected_video.transport_id = "RTCTransport_TransportName_1";
-  expected_video.codec_id = "RTCCodec_VideoMid_Outbound_42";
+  expected_video.codec_id = "RTCCodec_RTCTransport_TransportName_1_Send_42";
   expected_video.fir_count = 2;
   expected_video.pli_count = 3;
   expected_video.nack_count = 4;
@@ -2756,7 +2946,7 @@ TEST_F(RTCStatsCollectorTest, CollectNoStreamRTCOutboundRTPStreamStats_Audio) {
   expected_audio.kind = "audio";
   expected_audio.track_id = IdForType<RTCMediaStreamTrackStats>(report.get());
   expected_audio.transport_id = "RTCTransport_TransportName_1";
-  expected_audio.codec_id = "RTCCodec_AudioMid_Outbound_42";
+  expected_audio.codec_id = "RTCCodec_RTCTransport_TransportName_1_Send_42";
   expected_audio.packets_sent = 2;
   expected_audio.retransmitted_packets_sent = 20;
   expected_audio.bytes_sent = 3;
