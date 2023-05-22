@@ -77,23 +77,10 @@ static void initializeCFPrefs()
 #endif // ENABLE(CFPREFS_DIRECT_MODE)
 }
 
-#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-static void blockLogdInSandbox()
-{
-    audit_token_t auditToken = { 0 };
-    mach_msg_type_number_t info_size = TASK_AUDIT_TOKEN_COUNT;
-    if (KERN_SUCCESS == task_info(mach_task_self(), TASK_AUDIT_TOKEN, reinterpret_cast<integer_t *>(&auditToken), &info_size))
-        sandbox_enable_state_flag("DisableLogging", auditToken);
-}
-#endif
-
 static void initializeLogd(bool disableLogging)
 {
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
     if (disableLogging) {
-#if PLATFORM(IOS_FAMILY)
-        blockLogdInSandbox();
-#endif
         os_trace_set_mode(OS_TRACE_MODE_OFF);
         return;
     }
@@ -182,7 +169,7 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
             if (fd != -1)
                 dup2(fd, STDERR_FILENO);
 
-            WorkQueue::main().dispatchSync([initializerFunctionPtr, event = OSObjectPtr<xpc_object_t>(event), retainedPeerConnection, disableLogging] {
+            WorkQueue::main().dispatchSync([initializerFunctionPtr, event = OSObjectPtr<xpc_object_t>(event), retainedPeerConnection] {
                 WTF::initializeMainThread();
 
                 initializeCFPrefs();
@@ -190,13 +177,6 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                 initializerFunctionPtr(retainedPeerConnection.get(), event.get());
 
                 setAppleLanguagesPreference();
-
-#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT) && PLATFORM(MAC)
-                if (disableLogging)
-                    blockLogdInSandbox();
-#else
-                UNUSED_PARAM(disableLogging);
-#endif
             });
 
             return;

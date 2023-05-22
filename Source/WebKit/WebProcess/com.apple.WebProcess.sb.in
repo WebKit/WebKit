@@ -1405,8 +1405,8 @@
         (extension "com.apple.webkit.extension.mach")
         (global-name "com.apple.trustd.agent")))
 
-#if HAVE(SANDBOX_STATE_FLAGS)
-(with-filter (require-not (state-flag "DisableLogging"))
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+(with-filter (system-attribute apple-internal)
     (allow mach-lookup (global-name
         "com.apple.logd"
         "com.apple.logd.events")))

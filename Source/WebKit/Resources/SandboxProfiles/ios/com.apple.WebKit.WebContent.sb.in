@@ -466,14 +466,16 @@
         (extension-class "com.apple.app-sandbox.read-write" "com.apple.app-sandbox.read")
         (extension "com.apple.fileprovider.read-write")))
 
-(deny mach-lookup (with no-report) (global-name
-    "com.apple.logd"
-    "com.apple.logd.events"))
-
-(with-filter (require-not (state-flag "DisableLogging"))
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+(with-filter (system-attribute apple-internal)
     (allow mach-lookup (global-name
         "com.apple.logd"
         "com.apple.logd.events")))
+#else
+(allow mach-lookup (global-name
+    "com.apple.logd"
+    "com.apple.logd.events"))
+#endif
 
 (deny mach-lookup (with no-report)
     (global-name "com.apple.distributed_notifications@1v3"))
