@@ -39,6 +39,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-linear-gradient-rendering.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-negative-resolution-rendering-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-negative-resolution-rendering-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-negative-resolution-rendering-3-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-negative-resolution-rendering-3.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-negative-resolution-rendering-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-negative-resolution-rendering.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-no-res-rendering-2-expected.html
@@ -83,3 +85,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-type-unsupported-rendering.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-unordered-res-rendering-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-unordered-res-rendering.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-zero-resolution-rendering-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-zero-resolution-rendering-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-zero-resolution-rendering-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-zero-resolution-rendering.html

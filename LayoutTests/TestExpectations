@@ -3355,6 +3355,8 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 
 imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic.html [ ImageOnlyFailure ]
 
+imported/w3c/web-platform-tests/css/css-images/image-set/image-set-type-first-match-rendering.html [ ImageOnlyFailure ]
+
 webkit.org/b/187773 http/tests/webAPIStatistics [ Skip ]
 
 # This is fallout from turning Web Animations on.
