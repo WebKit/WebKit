@@ -83,6 +83,9 @@ private:
     RetainPtr<NSString> _videoGravity;
     RetainPtr<NSString> _previousVideoGravity;
     std::unique_ptr<WebAVPlayerLayerFullscreenModelClient> _fullscreenModelClient;
+#if !RELEASE_LOG_DISABLED
+    const void* _logIdentifier;
+#endif
 }
 
 - (instancetype)init
@@ -127,6 +130,9 @@ private:
         _fullscreenModel->addClient(*_fullscreenModelClient);
 
     self.videoDimensions = _fullscreenModel->videoDimensions();
+#if !RELEASE_LOG_DISABLED
+    _logIdentifier = _fullscreenModel ? _fullscreenModel->nextChildIdentifier() : nullptr;
+#endif
 }
 
 - (AVPlayerController *)playerController
@@ -358,9 +364,7 @@ static bool areFramesEssentiallyEqualWithTolerance(const FloatRect& a, const Flo
 @implementation WebAVPlayerLayer (Logging)
 - (const void*)logIdentifier
 {
-    if (_fullscreenModel)
-        return _fullscreenModel->logIdentifier();
-    return nullptr;
+    return _logIdentifier;
 }
 
 - (const Logger*)loggerPtr

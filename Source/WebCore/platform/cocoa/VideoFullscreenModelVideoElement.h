@@ -79,8 +79,9 @@ public:
     WEBCORE_EXPORT void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&&) override;
 
 #if !RELEASE_LOG_DISABLED
-    const Logger* loggerPtr() const override;
-    WEBCORE_EXPORT const void* logIdentifier() const override;
+    const Logger* loggerPtr() const final;
+    WEBCORE_EXPORT const void* logIdentifier() const final;
+    WEBCORE_EXPORT const void* nextChildIdentifier() const final;
     const char* logClassName() const { return "VideoFullscreenModelVideoElement"; }
     WTFLogChannel& logChannel() const;
 #endif
@@ -112,6 +113,10 @@ private:
     Vector<RefPtr<TextTrack>> m_legibleTracksForMenu;
     Vector<RefPtr<AudioTrack>> m_audioTracksForMenu;
     std::optional<MediaPlayerIdentifier> m_playerIdentifier;
+
+#if !RELEASE_LOG_DISABLED
+    mutable uint64_t m_childIdentifierSeed { 0 };
+#endif
 };
 
 }

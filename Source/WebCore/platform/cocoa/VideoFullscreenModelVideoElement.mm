@@ -338,6 +338,11 @@ const void* VideoFullscreenModelVideoElement::logIdentifier() const
     return m_videoElement ? m_videoElement->logIdentifier() : nullptr;
 }
 
+const void* VideoFullscreenModelVideoElement::nextChildIdentifier() const
+{
+    return LoggerHelper::childLogIdentifier(logIdentifier(), ++m_childIdentifierSeed);
+}
+
 WTFLogChannel& VideoFullscreenModelVideoElement::logChannel() const
 {
     return LogFullscreen;

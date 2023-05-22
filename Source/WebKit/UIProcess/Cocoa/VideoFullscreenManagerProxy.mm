@@ -381,6 +381,11 @@ const void* VideoFullscreenModelContext::logIdentifier() const
     return m_playbackSessionModel->logIdentifier();
 }
 
+const void* VideoFullscreenModelContext::nextChildIdentifier() const
+{
+    return LoggerHelper::childLogIdentifier(m_playbackSessionModel->logIdentifier(), ++m_childIdentifierSeed);
+}
+
 const Logger* VideoFullscreenModelContext::loggerPtr() const
 {
     return m_playbackSessionModel->loggerPtr();

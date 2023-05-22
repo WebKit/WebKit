@@ -133,8 +133,9 @@ private:
     void fullscreenMayReturnToInline() final;
 
 #if !RELEASE_LOG_DISABLED
-    const void* logIdentifier() const override;
-    const Logger* loggerPtr() const override;
+    const void* logIdentifier() const final;
+    const void* nextChildIdentifier() const final;
+    const Logger* loggerPtr() const final;
 
     const char* logClassName() const { return "VideoFullscreenModelContext"; };
     WTFLogChannel& logChannel() const;
@@ -153,6 +154,10 @@ private:
     HashSet<WebCore::VideoFullscreenModelClient*> m_clients;
     WebCore::FloatSize m_videoDimensions;
     bool m_hasVideo { false };
+
+#if !RELEASE_LOG_DISABLED
+    mutable uint64_t m_childIdentifierSeed { 0 };
+#endif
 };
 
 class VideoFullscreenManagerProxy : public RefCounted<VideoFullscreenManagerProxy>, private IPC::MessageReceiver {
