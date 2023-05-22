@@ -39,7 +39,8 @@ void SVGAnimatedProperty::commitPropertyChange(SVGProperty*)
 {
     if (!m_contextElement)
         return;
-    m_contextElement->commitPropertyChange(*this);
+    RefPtr protectedContextElement = m_contextElement;
+    protectedContextElement->commitPropertyChange(*this);
 }
 
 }
