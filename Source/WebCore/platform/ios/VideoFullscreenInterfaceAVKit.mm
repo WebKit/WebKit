@@ -1319,10 +1319,10 @@ void VideoFullscreenInterfaceAVKit::doSetup()
         m_playerLayerView = adoptNS([allocWebAVPlayerLayerViewInstance() init]);
     [m_playerLayerView setHidden:[playerController() isExternalPlaybackActive]];
     [m_playerLayerView setBackgroundColor:clearUIColor()];
+    [m_playerLayerView setVideoView:m_videoView.get()];
 
     if (!m_currentMode.hasPictureInPicture() && !m_changingStandbyOnly) {
         ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Moving videoView to fullscreen WebAVPlayerLayerView");
-        [m_playerLayerView setVideoView:m_videoView.get()];
         [m_playerLayerView addSubview:m_videoView.get()];
     }
 
