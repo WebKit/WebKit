@@ -894,11 +894,7 @@ public:
 
     void attachNodeIterator(NodeIterator&);
     void detachNodeIterator(NodeIterator&);
-    void moveNodeIteratorsToNewDocument(Node& node, Document& newDocument)
-    {
-        if (!m_nodeIterators.isEmpty())
-            moveNodeIteratorsToNewDocumentSlowCase(node, newDocument);
-    }
+    void moveNodeIteratorsToNewDocument(Node&, Document&);
 
     void attachRange(Range&);
     void detachRange(Range&);
@@ -1842,8 +1838,6 @@ private:
     void invalidateAccessKeyCacheSlowCase();
     void buildAccessKeyCache();
 
-    void moveNodeIteratorsToNewDocumentSlowCase(Node&, Document&);
-
     void intersectionObserversInitialUpdateTimerFired();
 
     void loadEventDelayTimerFired();
@@ -1961,7 +1955,7 @@ private:
 
     mutable String m_uniqueIdentifier;
 
-    HashSet<NodeIterator*> m_nodeIterators;
+    WeakHashSet<NodeIterator> m_nodeIterators;
     WeakHashSet<Range> m_ranges;
 
     std::unique_ptr<Style::Scope> m_styleScope;
