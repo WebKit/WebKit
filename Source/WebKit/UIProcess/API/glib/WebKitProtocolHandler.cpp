@@ -32,6 +32,7 @@
 #include <epoxy/gl.h>
 #include <gio/gio.h>
 #include <wtf/URL.h>
+#include <wtf/WorkQueue.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -333,8 +334,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 
 #if USE(EGL)
         if (uiProcessContextIsEGL()) {
-            auto glContext = GLContext::createOffscreen(PlatformDisplay::sharedDisplay());
-            glContext->makeContextCurrent();
+            GLContext::ScopedGLContext glContext(GLContext::createOffscreen(PlatformDisplay::sharedDisplay()));
             addEGLInfo(hardwareAccelerationObject);
         }
 #endif // USE(EGL)
@@ -362,16 +362,23 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
             if (platformDisplay)
                 addTableRow(hardwareAccelerationObject, "Platform"_s, String::fromUTF8(platformDisplay->type() == PlatformDisplay::Type::GBM ? "GBM"_s : "Surfaceless"_s));
 
-            auto glContext = GLContext::createOffscreen(platformDisplay ? *platformDisplay : PlatformDisplay::sharedDisplay());
-            glContext->makeContextCurrent();
-            addEGLInfo(hardwareAccelerationObject);
+            if (uiProcessContextIsEGL()) {
+                GLContext::ScopedGLContext glContext(GLContext::createOffscreen(platformDisplay ? *platformDisplay : PlatformDisplay::sharedDisplay()));
+                addEGLInfo(hardwareAccelerationObject);
+            } else {
+                // Create the context in a different thread to ensure it doesn't affect any current context in the main thread.
+                WorkQueue::create("GPU handler EGL context")->dispatchSync([&] {
+                    auto glContext = GLContext::createOffscreen(platformDisplay ? *platformDisplay : PlatformDisplay::sharedDisplay());
+                    glContext->makeContextCurrent();
+                    addEGLInfo(hardwareAccelerationObject);
+                });
+            }
 
             stopTable();
             jsonObject->setObject("Hardware Acceleration Information (Render process)"_s, WTFMove(hardwareAccelerationObject));
 
             if (platformDisplay) {
                 // Clear the contexts used by the display before it's destroyed.
-                glContext = nullptr;
                 platformDisplay->clearSharingGLContext();
             }
         }

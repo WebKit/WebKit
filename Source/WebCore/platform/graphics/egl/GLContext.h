@@ -131,6 +131,21 @@ public:
     WEBCORE_EXPORT void swapBuffers();
     GCGLContext platformContext() const;
 
+    class ScopedGLContext {
+        WTF_MAKE_NONCOPYABLE(ScopedGLContext);
+    public:
+        explicit ScopedGLContext(std::unique_ptr<GLContext>&&);
+        ~ScopedGLContext();
+    private:
+        struct {
+            EGLDisplay display { nullptr };
+            EGLContext context { nullptr };
+            EGLSurface readSurface { nullptr };
+            EGLSurface drawSurface { nullptr };
+        } m_previous;
+        std::unique_ptr<GLContext> m_context;
+    };
+
 private:
     static EGLContext createContextForEGLVersion(PlatformDisplay&, EGLConfig, EGLContext);
 

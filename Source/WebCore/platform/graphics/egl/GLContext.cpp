@@ -640,6 +640,25 @@ unsigned GLContext::version()
     return m_version;
 }
 
+GLContext::ScopedGLContext::ScopedGLContext(std::unique_ptr<GLContext>&& context)
+    : m_context(WTFMove(context))
+{
+    m_previous.context = eglGetCurrentContext();
+    if (m_previous.context) {
+        m_previous.display = eglGetCurrentDisplay();
+        m_previous.readSurface = eglGetCurrentSurface(EGL_READ);
+        m_previous.drawSurface = eglGetCurrentSurface(EGL_DRAW);
+    }
+    m_context->makeContextCurrent();
+}
+
+GLContext::ScopedGLContext::~ScopedGLContext()
+{
+    m_context = nullptr;
+    if (m_previous.context)
+        eglMakeCurrent(m_previous.display, m_previous.drawSurface, m_previous.readSurface, m_previous.context);
+}
+
 } // namespace WebCore
 
 #endif // USE(EGL)
