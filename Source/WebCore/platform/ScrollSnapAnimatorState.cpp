@@ -128,12 +128,16 @@ HashSet<ElementIdentifier> ScrollSnapAnimatorState::currentlySnappedBoxes(const 
     HashSet<ElementIdentifier> snappedBoxIDs;
         
     for (auto offset : horizontalOffsets) {
+        if (!offset.snapTargetID)
+            continue;
         snappedBoxIDs.add(offset.snapTargetID);
         for (auto i : offset.snapAreaIndices)
             snappedBoxIDs.add(m_snapOffsetsInfo.snapAreasIDs[i]);
     }
     
     for (auto offset : verticalOffsets) {
+        if (!offset.snapTargetID)
+            continue;
         snappedBoxIDs.add(offset.snapTargetID);
         for (auto i : offset.snapAreaIndices)
             snappedBoxIDs.add(m_snapOffsetsInfo.snapAreasIDs[i]);
