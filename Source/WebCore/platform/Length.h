@@ -152,7 +152,6 @@ private:
 Length blend(const Length& from, const Length& to, const BlendingContext&);
 Length blend(const Length& from, const Length& to, const BlendingContext&, ValueRange);
 
-UniqueArray<Length> newCoordsArray(const String&, int& length);
 UniqueArray<Length> newLengthArray(const String&, int& length);
 
 inline Length::Length(LengthType type)

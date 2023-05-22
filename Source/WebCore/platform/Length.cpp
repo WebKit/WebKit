@@ -88,38 +88,6 @@ static unsigned countCharacter(StringImpl& string, UChar character)
     return count;
 }
 
-UniqueArray<Length> newCoordsArray(const String& string, int& len)
-{
-    unsigned length = string.length();
-    LChar* spacifiedCharacters;
-    auto str = StringImpl::createUninitialized(length, spacifiedCharacters);
-    for (unsigned i = 0; i < length; i++) {
-        UChar cc = string[i];
-        if (cc > '9' || (cc < '0' && cc != '-' && cc != '*' && cc != '.'))
-            spacifiedCharacters[i] = ' ';
-        else
-            spacifiedCharacters[i] = cc;
-    }
-    str = str->simplifyWhiteSpace();
-
-    len = countCharacter(str, ' ') + 1;
-    auto r = makeUniqueArray<Length>(len);
-
-    int i = 0;
-    unsigned pos = 0;
-    size_t pos2;
-
-    while ((pos2 = str->find(' ', pos)) != notFound) {
-        r[i++] = parseLength(str->characters16() + pos, pos2 - pos);
-        pos = pos2+1;
-    }
-    r[i] = parseLength(str->characters16() + pos, str->length() - pos);
-
-    ASSERT(i == len - 1);
-
-    return r;
-}
-
 UniqueArray<Length> newLengthArray(const String& string, int& len)
 {
     RefPtr<StringImpl> str = string.impl()->simplifyWhiteSpace();
