@@ -2240,6 +2240,12 @@ VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point, const Re
     while (lastCandidateBox && !isChildHitTestCandidate(*lastCandidateBox, fragment, pointInLogicalContents))
         lastCandidateBox = lastCandidateBox->previousSiblingBox();
 
+    if (style().effectiveUserSelect() == UserSelect::All) {
+        FloatSize deltaToTopLeft { pointInLogicalContents.x().toFloat(), pointInLogicalContents.y().toFloat() };
+        FloatSize deltaToBottomRight { (pointInLogicalContents.x() - logicalWidth()).toFloat(), (pointInLogicalContents.y() - logicalHeight()).toFloat() };
+        return { deltaToTopLeft.diagonalLengthSquared() < deltaToBottomRight.diagonalLengthSquared() ? positionBeforeNode(element()) : positionAfterNode(element()) };
+    }
+
     bool blocksAreFlipped = style().isFlippedBlocksWritingMode();
     if (lastCandidateBox) {
         if (pointInLogicalContents.y() > logicalTopForChild(*lastCandidateBox)

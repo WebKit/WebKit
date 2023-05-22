@@ -40,8 +40,8 @@ div#attachment-container {
     border-radius: 8px;
     font: caption;
     pointer-events: none;
-    user-select: none;
-    -webkit-user-select: none;
+    /* user-select: none; */
+    /* -webkit-user-select: none; */
 }
 
 div#attachment-container::selection {
