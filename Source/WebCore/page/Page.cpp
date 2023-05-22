@@ -1974,6 +1974,9 @@ void Page::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags
 {
     for (auto& rootFrame : m_rootFrames)
         finalizeRenderingUpdateForRootFrame(rootFrame, flags);
+
+    ASSERT(m_renderingUpdateRemainingSteps.last().isEmpty());
+    renderingUpdateCompleted();
 }
 
 void Page::finalizeRenderingUpdateForRootFrame(LocalFrame& rootFrame, OptionSet<FinalizeRenderingUpdateFlags> flags)
@@ -2003,9 +2006,6 @@ void Page::finalizeRenderingUpdateForRootFrame(LocalFrame& rootFrame, OptionSet<
         scrollingCoordinator->didCompleteRenderingUpdate();
     }
 #endif
-
-    ASSERT(m_renderingUpdateRemainingSteps.last().isEmpty());
-    renderingUpdateCompleted();
 }
 
 void Page::renderingUpdateCompleted()
