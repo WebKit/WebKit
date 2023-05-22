@@ -1,0 +1,25 @@
+<style>
+  body {
+    transition-duration: 100ms;
+    tab-size: calc((1svmin - 1px) / 0);
+  }
+  span {
+    margin-inline: 10000px;
+  }
+</style>
+<script>
+  onload = () => {
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    document.styleSheets[0].insertRule(`body { transform: scale3d(-1, 0, 0); }`);
+    for (let i = 0; i < 1000; i++) {
+      document.body.offsetTop;
+      document.body.append('a');
+    }
+  };
+</script>
+<span></span>
+<body>
+  <p>PASS if no crash</p>
+</body>
+
