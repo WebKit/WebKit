@@ -620,8 +620,7 @@ Decimal::AlignedOperands Decimal::alignOperands(const Decimal& lhs, const Decima
 }
 
 // Round toward positive infinity.
-// Note: Mac ports defines ceil(x) as wtf_ceil(x), so we can't use name "ceil" here.
-Decimal Decimal::ceiling() const
+Decimal Decimal::ceil() const
 {
     if (isSpecial())
         return *this;
@@ -915,7 +914,7 @@ Decimal Decimal::nan()
 Decimal Decimal::remainder(const Decimal& rhs) const
 {
     const Decimal quotient = *this / rhs;
-    return quotient.isSpecial() ? quotient : *this - (quotient.isNegative() ? quotient.ceiling() : quotient.floor()) * rhs;
+    return quotient.isSpecial() ? quotient : *this - (quotient.isNegative() ? quotient.ceil() : quotient.floor()) * rhs;
 }
 
 Decimal Decimal::round() const
