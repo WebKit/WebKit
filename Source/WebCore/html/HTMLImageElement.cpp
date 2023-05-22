@@ -1050,7 +1050,6 @@ Ref<Element> HTMLImageElement::cloneElementWithoutAttributesAndChildren(Document
 #endif
     return clone;
 }
-
 void HTMLImageElement::setFetchPriorityForBindings(const AtomString& value)
 {
     setAttributeWithoutSynchronization(fetchpriorityAttr, value);
@@ -1066,6 +1065,32 @@ RequestPriority HTMLImageElement::fetchPriorityHint() const
     if (document().settings().fetchPriorityEnabled())
         return parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto);
     return RequestPriority::Auto;
+}
+
+bool HTMLImageElement::originClean(const SecurityOrigin& origin) const
+{
+    UNUSED_PARAM(origin);
+
+    auto* cachedImage = this->cachedImage();
+    if (!cachedImage)
+        return true;
+
+    RefPtr image = cachedImage->image();
+    if (!image)
+        return true;
+
+    if (image->sourceURL().protocolIsData())
+        return true;
+
+    if (image->renderingTaintsOrigin())
+        return false;
+
+    if (cachedImage->isCORSCrossOrigin())
+        return false;
+
+    ASSERT(cachedImage->origin());
+    ASSERT(origin.toString() == cachedImage->origin()->toString());
+    return true;
 }
 
 }
