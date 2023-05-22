@@ -70,7 +70,6 @@ static WebPlatformTouchPoint::TouchPointState convertTouchPhase(UITouchPhase tou
     }
 }
 
-#if defined UI_WEB_TOUCH_EVENT_HAS_STYLUS_DATA && UI_WEB_TOUCH_EVENT_HAS_STYLUS_DATA
 static WebPlatformTouchPoint::TouchType convertTouchType(UIWebTouchPointType touchType)
 {
     switch (touchType) {
@@ -83,11 +82,19 @@ static WebPlatformTouchPoint::TouchType convertTouchType(UIWebTouchPointType tou
         return WebPlatformTouchPoint::TouchType::Direct;
     }
 }
-#endif
 
 static inline WebCore::IntPoint positionForCGPoint(CGPoint position)
 {
     return WebCore::IntPoint(position);
+}
+
+static CGFloat radiusForTouchPoint(const _UIWebTouchPoint& touchPoint)
+{
+#if ENABLE(FIXED_IOS_TOUCH_POINT_RADIUS)
+    return 12.1;
+#else
+    return touchPoint.majorRadiusInScreenCoordinates;
+#endif
 }
 
 Vector<WebPlatformTouchPoint> NativeWebTouchEvent::extractWebTouchPoint(const _UIWebTouchEvent* event)
@@ -103,15 +110,14 @@ Vector<WebPlatformTouchPoint> NativeWebTouchEvent::extractWebTouchPoint(const _U
         WebPlatformTouchPoint::TouchPointState phase = convertTouchPhase(touchPoint.phase);
         WebPlatformTouchPoint platformTouchPoint = WebPlatformTouchPoint(identifier, location, phase);
 #if ENABLE(IOS_TOUCH_EVENTS)
-        platformTouchPoint.setRadiusX(touchPoint.majorRadiusInScreenCoordinates);
-        platformTouchPoint.setRadiusY(touchPoint.majorRadiusInScreenCoordinates);
+        auto radius = radiusForTouchPoint(touchPoint);
+        platformTouchPoint.setRadiusX(radius);
+        platformTouchPoint.setRadiusY(radius);
         platformTouchPoint.setRotationAngle(0); // Not available in _UIWebTouchEvent yet.
         platformTouchPoint.setForce(touchPoint.force);
-#if defined UI_WEB_TOUCH_EVENT_HAS_STYLUS_DATA && UI_WEB_TOUCH_EVENT_HAS_STYLUS_DATA
         platformTouchPoint.setAltitudeAngle(touchPoint.altitudeAngle);
         platformTouchPoint.setAzimuthAngle(touchPoint.azimuthAngle);
         platformTouchPoint.setTouchType(convertTouchType(touchPoint.touchType));
-#endif
 #endif
         touchPointList.uncheckedAppend(platformTouchPoint);
     }
@@ -123,11 +129,7 @@ NativeWebTouchEvent::NativeWebTouchEvent(const _UIWebTouchEvent* event, UIKeyMod
         { webEventTypeForUIWebTouchEventType(event->type), webEventModifierFlags(flags), WallTime::fromRawSeconds(event->timestamp) },
         extractWebTouchPoint(event),
         positionForCGPoint(event->locationInDocumentCoordinates),
-#if defined UI_WEB_TOUCH_EVENT_HAS_IS_POTENTIAL_TAP && UI_WEB_TOUCH_EVENT_HAS_IS_POTENTIAL_TAP
         event->isPotentialTap,
-#else
-        true,
-#endif
         event->inJavaScriptGesture,
         event->scale,
         event->rotation)
