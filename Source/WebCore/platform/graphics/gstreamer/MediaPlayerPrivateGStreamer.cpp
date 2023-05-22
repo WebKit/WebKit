@@ -2296,9 +2296,15 @@ void MediaPlayerPrivateGStreamer::configureElementPlatformQuirks(GstElement* ele
 #endif
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(REALTEK)
-    if (m_streamPrivate && g_object_class_find_property(G_OBJECT_GET_CLASS(element), "media-tunnel")) {
-        GST_INFO_OBJECT(pipeline(), "Enable 'immediate-output' in rtkaudiosink");
-        g_object_set(element, "media-tunnel", FALSE, "audio-service", TRUE, "lowdelay-sync-mode", TRUE, nullptr);
+    if (m_streamPrivate) {
+        if (gstObjectHasProperty(element, "media-tunnel")) {
+            GST_INFO_OBJECT(pipeline(), "Enable 'immediate-output' in rtkaudiosink");
+            g_object_set(element, "media-tunnel", FALSE, "audio-service", TRUE, "lowdelay-sync-mode", TRUE, nullptr);
+        }
+        if (gstObjectHasProperty(element, "lowdelay-mode")) {
+            GST_INFO_OBJECT(pipeline(), "Enable 'lowdelay-mode' in rtk omx decoder");
+            g_object_set(element, "lowdelay-mode", TRUE, nullptr);
+        }
     }
 #endif
 }
