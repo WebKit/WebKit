@@ -95,6 +95,8 @@ struct WKAppPrivacyReportTestingData {
 @property (nonatomic, setter=_setScrollingUpdatesDisabledForTesting:) BOOL _scrollingUpdatesDisabledForTesting;
 @property (nonatomic, readonly) NSString *_scrollingTreeAsText;
 
+@property (nonatomic, readonly) pid_t _networkProcessIdentifier;
+
 @property (nonatomic, readonly) unsigned long _countOfUpdatesWithLayerChanges;
 
 - (void)_processWillSuspendForTesting:(void (^)(void))completionHandler;

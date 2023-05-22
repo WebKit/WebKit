@@ -304,6 +304,25 @@ bool WebLoaderStrategy::tryLoadingUsingPDFJSHandler(ResourceLoader& resourceLoad
 }
 #endif
 
+static RefPtr<DocumentLoader> policySourceDocumentLoaderForFrame(const LocalFrame& frame, bool isMainFrameNavigation = false)
+{
+    RefPtr mainFrame = dynamicDowncast<LocalFrame>(frame.mainFrame());
+    if (!mainFrame)
+        return { };
+
+    RefPtr mainFrameDocumentLoader = mainFrame->loader().policyDocumentLoader();
+    if (!mainFrameDocumentLoader)
+        mainFrameDocumentLoader = mainFrame->loader().provisionalDocumentLoader();
+    if (!mainFrameDocumentLoader || !isMainFrameNavigation)
+        mainFrameDocumentLoader = mainFrame->loader().documentLoader();
+
+    RefPtr policySourceDocumentLoader = mainFrameDocumentLoader;
+    if (policySourceDocumentLoader && !policySourceDocumentLoader->request().url().hasSpecialScheme() && frame.document()->url().protocolIsInHTTPFamily())
+        policySourceDocumentLoader = frame.loader().documentLoader();
+
+    return policySourceDocumentLoader;
+}
+
 static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadParameters& parameters, bool isMainFrameNavigation = false)
 {
     parameters.crossOriginAccessControlCheckEnabled = CrossOriginAccessControlCheckDisabler::singleton().crossOriginAccessControlCheckEnabled();
@@ -316,20 +335,11 @@ static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadPara
     // WebLocalFrameLoaderClient::applyToDocumentLoader stored the value on. Otherwise, we need to get the
     // value from the main frame's current DocumentLoader.
 
-    auto* localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame());
-    if (!localFrame)
+    RefPtr mainFrame = dynamicDowncast<LocalFrame>(frame->mainFrame());
+    if (!mainFrame)
         return;
 
-    auto& mainFrame = *localFrame;
-    auto* mainFrameDocumentLoader = mainFrame.loader().policyDocumentLoader();
-    if (!mainFrameDocumentLoader)
-        mainFrameDocumentLoader = mainFrame.loader().provisionalDocumentLoader();
-    if (!mainFrameDocumentLoader || !isMainFrameNavigation)
-        mainFrameDocumentLoader = mainFrame.loader().documentLoader();
-
-    auto* policySourceDocumentLoader = mainFrameDocumentLoader;
-    if (policySourceDocumentLoader && !policySourceDocumentLoader->request().url().hasSpecialScheme() && frame->document()->url().protocolIsInHTTPFamily())
-        policySourceDocumentLoader = frame->loader().documentLoader();
+    RefPtr policySourceDocumentLoader = policySourceDocumentLoaderForFrame(*frame, isMainFrameNavigation);
 
     parameters.allowPrivacyProxy = policySourceDocumentLoader ? policySourceDocumentLoader->allowPrivacyProxy() : true;
 
@@ -356,7 +366,7 @@ static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadPara
     parameters.networkConnectionIntegrityPolicy = networkConnectionIntegrityPolicy;
 
     if (isMainFrameNavigation)
-        parameters.linkPreconnectEarlyHintsEnabled = mainFrame.settings().linkPreconnectEarlyHintsEnabled();
+        parameters.linkPreconnectEarlyHintsEnabled = mainFrame->settings().linkPreconnectEarlyHintsEnabled();
 }
 
 void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceLoader, const ResourceRequest& request, const WebResourceLoader::TrackingParameters& trackingParameters, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Seconds maximumBufferingTime)
@@ -922,6 +932,8 @@ void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage
 #if ENABLE(APP_BOUND_DOMAINS)
     parameters.isNavigatingToAppBoundDomain = webFrame.isTopFrameNavigatingToAppBoundDomain();
 #endif
+    if (RefPtr loader = policySourceDocumentLoaderForFrame(*webFrame.coreLocalFrame()))
+        parameters.networkConnectionIntegrityPolicy = loader->networkConnectionIntegrityPolicy();
 
     std::optional<WebCore::ResourceLoaderIdentifier> preconnectionIdentifier;
     if (completionHandler) {

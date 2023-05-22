@@ -291,6 +291,11 @@ void HTTPServer::respondWithOK(Connection connection)
     });
 }
 
+size_t HTTPServer::totalConnections() const
+{
+    return m_requestData->connections.size();
+}
+
 size_t HTTPServer::totalRequests() const
 {
     return m_requestData->requestCount;
