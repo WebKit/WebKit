@@ -22,7 +22,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-div#attachment-container {
+span#attachment-container {
     display: grid;
     gap: 0;
 #if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
@@ -42,7 +42,7 @@ div#attachment-container {
     pointer-events: none;
 }
 
-div#attachment-container::selection {
+span#attachment-container::selection {
     background-color: -apple-system-selected-content-background;
 }
 
