@@ -1625,7 +1625,7 @@ String AccessibilityObject::stringForRange(const SimpleRange& range) const
         if (it.text().length()) {
             // Add a textual representation for list marker text.
             // Don't add list marker text for new line character.
-            if (it.text().length() != 1 || !isSpaceOrNewline(it.text()[0])) {
+            if (it.text().length() != 1 || !deprecatedIsSpaceOrNewline(it.text()[0])) {
                 // FIXME: Seems like the position should be based on it.range(), not range.
                 builder.append(listMarkerTextForNodeAndPosition(it.node(), VisiblePosition(makeDeprecatedLegacyPosition(range.start))));
             }

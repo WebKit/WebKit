@@ -104,7 +104,7 @@ static inline bool isPunctuationForFirstLetter(UChar32 c)
 
 static inline bool shouldSkipForFirstLetter(UChar32 c)
 {
-    return isSpaceOrNewline(c) || c == noBreakSpace || isPunctuationForFirstLetter(c);
+    return deprecatedIsSpaceOrNewline(c) || c == noBreakSpace || isPunctuationForFirstLetter(c);
 }
 
 static bool supportsFirstLetter(RenderBlock& block)

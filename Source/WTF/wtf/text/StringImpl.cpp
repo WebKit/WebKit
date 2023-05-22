@@ -754,7 +754,7 @@ template<typename CodeUnitPredicate> inline Ref<StringImpl> StringImpl::stripMat
 
 Ref<StringImpl> StringImpl::stripWhiteSpace()
 {
-    return stripMatchedCharacters(isSpaceOrNewline);
+    return stripMatchedCharacters(deprecatedIsSpaceOrNewline);
 }
 
 Ref<StringImpl> StringImpl::stripLeadingAndTrailingCharacters(CodeUnitMatchFunction predicate)
@@ -801,8 +801,8 @@ template<typename CharacterType, class UCharPredicate> inline Ref<StringImpl> St
 Ref<StringImpl> StringImpl::simplifyWhiteSpace()
 {
     if (is8Bit())
-        return StringImpl::simplifyMatchedCharactersToSpace<LChar>(isSpaceOrNewline);
-    return StringImpl::simplifyMatchedCharactersToSpace<UChar>(isSpaceOrNewline);
+        return StringImpl::simplifyMatchedCharactersToSpace<LChar>(deprecatedIsSpaceOrNewline);
+    return StringImpl::simplifyMatchedCharactersToSpace<UChar>(deprecatedIsSpaceOrNewline);
 }
 
 Ref<StringImpl> StringImpl::simplifyWhiteSpace(CodeUnitMatchFunction isWhiteSpace)

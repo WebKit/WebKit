@@ -115,7 +115,7 @@ TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *analysis)
                     return !isFirstLine && !searchLocation;
 
                 auto textBeforeMatch = StringView(lineText).substring(searchLocation, matchLocation - searchLocation);
-                return !textBeforeMatch.isEmpty() && isSpaceOrNewline(textBeforeMatch[0]);
+                return !textBeforeMatch.isEmpty() && deprecatedIsSpaceOrNewline(textBeforeMatch[0]);
             })();
 
             searchLocation = matchLocation + childText.length();

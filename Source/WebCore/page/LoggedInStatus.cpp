@@ -54,7 +54,7 @@ ExceptionOr<UniqueRef<LoggedInStatus>> LoggedInStatus::create(const RegistrableD
         return Exception { SyntaxError, makeString("IsLoggedIn usernames cannot be longer than ", UsernameMaxLength) };
 
     auto spaceOrNewline = username.find([](UChar ch) {
-        return isSpaceOrNewline(ch);
+        return deprecatedIsSpaceOrNewline(ch);
     });
     if (spaceOrNewline != notFound)
         return Exception { InvalidCharacterError, "IsLoggedIn usernames cannot contain whitespace or newlines."_s };

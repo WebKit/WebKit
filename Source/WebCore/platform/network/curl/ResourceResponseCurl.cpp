@@ -131,20 +131,20 @@ void ResourceResponse::appendHTTPHeaderField(const String& header)
 
 void ResourceResponse::setStatusLine(StringView header)
 {
-    auto statusLine = header.stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline);
+    auto statusLine = header.stripLeadingAndTrailingMatchedCharacters(deprecatedIsSpaceOrNewline);
 
     auto httpVersionEndPosition = statusLine.find(' ');
     auto statusCodeEndPosition = notFound;
 
     // Extract the http version
     if (httpVersionEndPosition != notFound) {
-        statusLine = statusLine.substring(httpVersionEndPosition + 1).stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline);
+        statusLine = statusLine.substring(httpVersionEndPosition + 1).stripLeadingAndTrailingMatchedCharacters(deprecatedIsSpaceOrNewline);
         statusCodeEndPosition = statusLine.find(' ');
     }
 
     // Extract the http status text
     if (statusCodeEndPosition != notFound) {
-        auto statusText = statusLine.substring(statusCodeEndPosition + 1).stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline);
+        auto statusText = statusLine.substring(statusCodeEndPosition + 1).stripLeadingAndTrailingMatchedCharacters(deprecatedIsSpaceOrNewline);
         setHTTPStatusText(statusText.toAtomString());
     }
 }

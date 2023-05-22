@@ -477,14 +477,14 @@ void StyleSheetHandler::observeProperty(unsigned startOffset, unsigned endOffset
         ++endOffset;
     
     ASSERT(startOffset < endOffset);
-    StringView propertyString = StringView(m_parsedText).substring(startOffset, endOffset - startOffset).stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline);
+    StringView propertyString = StringView(m_parsedText).substring(startOffset, endOffset - startOffset).stripLeadingAndTrailingMatchedCharacters(deprecatedIsSpaceOrNewline);
     if (propertyString.endsWith(';'))
         propertyString = propertyString.left(propertyString.length() - 1);
     size_t colonIndex = propertyString.find(':');
     ASSERT(colonIndex != notFound);
 
-    String name = propertyString.left(colonIndex).stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline).toString();
-    String value = propertyString.substring(colonIndex + 1, propertyString.length()).stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline).toString();
+    String name = propertyString.left(colonIndex).stripLeadingAndTrailingMatchedCharacters(deprecatedIsSpaceOrNewline).toString();
+    String value = propertyString.substring(colonIndex + 1, propertyString.length()).stripLeadingAndTrailingMatchedCharacters(deprecatedIsSpaceOrNewline).toString();
     
     // FIXME-NEWPARSER: The property range is relative to the declaration start offset, but no
     // good reason for it, and it complicates fixUnparsedProperties.
@@ -509,7 +509,7 @@ void StyleSheetHandler::observeComment(unsigned startOffset, unsigned endOffset)
     // Require well-formed comments.
     if (!commentTextView.endsWith("*/"_s))
         return;
-    commentTextView = commentTextView.left(commentTextView.length() - 2).stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline);
+    commentTextView = commentTextView.left(commentTextView.length() - 2).stripLeadingAndTrailingMatchedCharacters(deprecatedIsSpaceOrNewline);
     if (commentTextView.isEmpty())
         return;
 

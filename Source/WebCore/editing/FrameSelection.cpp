@@ -2681,7 +2681,7 @@ bool FrameSelection::selectionAtWordStart() const
         if (isStartOfParagraph(position))
             return previousCount != 1;
         if (UChar c = position.characterAfter())
-            return isSpaceOrNewline(c) || c == noBreakSpace || (u_ispunct(c) && c != ',' && c != '-' && c != '\'');
+            return deprecatedIsSpaceOrNewline(c) || c == noBreakSpace || (u_ispunct(c) && c != ',' && c != '-' && c != '\'');
     }
     return true;
 }
@@ -2714,7 +2714,7 @@ VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const Vis
 
     if (isEndOfParagraph(endVisiblePosBeforeExpansion)) {
         UChar c(endVisiblePosBeforeExpansion.characterBefore());
-        if (isSpaceOrNewline(c) || c == noBreakSpace) {
+        if (deprecatedIsSpaceOrNewline(c) || c == noBreakSpace) {
             // End of paragraph with space.
             return VisibleSelection();
         }
@@ -2757,7 +2757,7 @@ VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const Vis
             return VisibleSelection();
         }
         UChar c(previous.characterAfter());
-        if (isSpaceOrNewline(c) || c == noBreakSpace) {
+        if (deprecatedIsSpaceOrNewline(c) || c == noBreakSpace) {
             // Space at end of line
             return VisibleSelection();
         }
@@ -2772,7 +2772,7 @@ VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const Vis
             return VisibleSelection();
         }
         UChar c(previous.characterAfter());
-        if (isSpaceOrNewline(c) || c == noBreakSpace) {
+        if (deprecatedIsSpaceOrNewline(c) || c == noBreakSpace) {
             // Space at end of line
             return VisibleSelection();
         }
@@ -2792,7 +2792,7 @@ VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const Vis
     while (endVisiblePos != startVisiblePos) {
         VisiblePosition previous(endVisiblePos.previous());
         UChar c(previous.characterAfter());
-        if (!isSpaceOrNewline(c) && c != noBreakSpace)
+        if (!deprecatedIsSpaceOrNewline(c) && c != noBreakSpace)
             break;
         endVisiblePos = previous;
     }
@@ -2824,7 +2824,7 @@ bool FrameSelection::selectionAtSentenceStart() const
         if (isStartOfParagraph(position))
             return previousCount != 1 && (previousCount != 2 || !sawSpace);
         if (auto c = position.characterAfter()) {
-            if (isSpaceOrNewline(c) || c == noBreakSpace)
+            if (deprecatedIsSpaceOrNewline(c) || c == noBreakSpace)
                 sawSpace = true;
             else
                 return c == '.' || c == '!' || c == '?';

@@ -225,7 +225,7 @@ void TypingCommand::updateSelectionIfDifferentFromCurrentSelection(TypingCommand
 void TypingCommand::insertText(Document& document, const String& text, Options options, TextCompositionType composition)
 {
     if (!text.isEmpty())
-        document.editor().updateMarkersForWordsAffectedByEditing(isSpaceOrNewline(text[0]));
+        document.editor().updateMarkersForWordsAffectedByEditing(deprecatedIsSpaceOrNewline(text[0]));
     
     insertText(document, text, document.selection().selection(), options, composition);
 }
@@ -471,7 +471,7 @@ void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
         UChar32 c = previous.characterAfter();
         // FIXME: VisiblePosition::characterAfter() and characterBefore() do not emit newlines the same
         // way as TextIterator, so we do an isEndOfParagraph check here.
-        if (isSpaceOrNewline(c) || c == noBreakSpace || isEndOfParagraph(previous)) {
+        if (deprecatedIsSpaceOrNewline(c) || c == noBreakSpace || isEndOfParagraph(previous)) {
             startWordSide = RightWordIfOnBoundary;
         }
         VisiblePosition p1 = startOfWord(previous, startWordSide);

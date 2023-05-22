@@ -404,9 +404,9 @@ float LegacyInlineFlowBox::placeBoxRangeInInlineDirection(LegacyInlineBox* first
             auto& textBox = downcast<LegacyInlineTextBox>(*child);
             RenderText& renderText = textBox.renderer();
             if (renderText.text().length()) {
-                if (needsWordSpacing && isSpaceOrNewline(renderText.characterAt(textBox.start())))
+                if (needsWordSpacing && deprecatedIsSpaceOrNewline(renderText.characterAt(textBox.start())))
                     logicalLeft += textBox.lineStyle().fontCascade().wordSpacing();
-                needsWordSpacing = !isSpaceOrNewline(renderText.characterAt(textBox.end() - 1));
+                needsWordSpacing = !deprecatedIsSpaceOrNewline(renderText.characterAt(textBox.end() - 1));
             }
             textBox.setLogicalLeft(logicalLeft);
             if (knownToHaveNoOverflow())

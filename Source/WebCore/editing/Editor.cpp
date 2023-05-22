@@ -1356,8 +1356,8 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
 
     // FIXME: Should pass false to updateMarkersForWordsAffectedByEditing() to not remove markers if
     // a leading or trailing no-break space is being inserted. See <https://webkit.org/b/212098>.
-    bool isStartOfNewWord = isSpaceOrNewline(selection.visibleStart().characterBefore());
-    updateMarkersForWordsAffectedByEditing(isSpaceOrNewline(text[0]) || isStartOfNewWord);
+    bool isStartOfNewWord = deprecatedIsSpaceOrNewline(selection.visibleStart().characterBefore());
+    updateMarkersForWordsAffectedByEditing(deprecatedIsSpaceOrNewline(text[0]) || isStartOfNewWord);
 
     bool shouldConsiderApplyingAutocorrection = false;
     if (text == " "_s || text == "\t"_s)
@@ -3908,7 +3908,7 @@ void Editor::editorUIUpdateTimerFired()
             UChar32 c = newStart.characterBefore();
             // FIXME: VisiblePosition::characterAfter() and characterBefore() do not emit newlines the same
             // way as TextIterator, so we do an isStartOfParagraph check here.
-            if (isSpaceOrNewline(c) || c == noBreakSpace || isStartOfParagraph(newStart)) {
+            if (deprecatedIsSpaceOrNewline(c) || c == noBreakSpace || isStartOfParagraph(newStart)) {
                 startWordSide = RightWordIfOnBoundary;
             }
             newAdjacentWords = VisibleSelection(startOfWord(newStart, startWordSide), endOfWord(newStart, RightWordIfOnBoundary));

@@ -105,7 +105,7 @@ static String sanitizeFilename(const String& filename)
 
     // Strip leading/trailing whitespaces, path separators and dots
     auto result = filename.stripLeadingAndTrailingCharacters([](UChar character) -> bool {
-        return isSpaceOrNewline(character) || character == '/' || character == '\\' || character == '.';
+        return deprecatedIsSpaceOrNewline(character) || character == '/' || character == '\\' || character == '.';
     });
 
     if (result.isEmpty())

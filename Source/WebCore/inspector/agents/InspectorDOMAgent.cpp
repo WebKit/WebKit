@@ -807,7 +807,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::setAttributesAsText(Protocol::D
             return makeUnexpected(errorString);
     }
 
-    if (!foundOriginalAttribute && name.find(isNotSpaceOrNewline) != notFound) {
+    if (!foundOriginalAttribute && name.find(deprecatedIsNotSpaceOrNewline) != notFound) {
         if (!m_domEditor->removeAttribute(*element, AtomString { name }, errorString))
             return makeUnexpected(errorString);
     }

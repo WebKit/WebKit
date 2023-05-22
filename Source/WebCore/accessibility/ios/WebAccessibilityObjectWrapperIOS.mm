@@ -1113,7 +1113,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
         // https://bugs.webkit.org/show_bug.cgi?id=223492
         return self.axBackingObject->isKeyboardFocusable()
             && [self accessibilityElementCount] == 0
-            && self.axBackingObject->descriptionAttributeValue().find(isNotSpaceOrNewline) != notFound;
+            && self.axBackingObject->descriptionAttributeValue().find(deprecatedIsNotSpaceOrNewline) != notFound;
     case AccessibilityRole::Ignored:
     case AccessibilityRole::Presentational:
     case AccessibilityRole::Unknown:

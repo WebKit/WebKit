@@ -47,7 +47,7 @@ static String stripLeadingWhiteSpace(const String& string)
     unsigned length = string.length();
     unsigned i;
     for (i = 0; i < length; ++i) {
-        if (string[i] != noBreakSpace && !isSpaceOrNewline(string[i]))
+        if (string[i] != noBreakSpace && !deprecatedIsSpaceOrNewline(string[i]))
             break;
     }
     return string.substring(i, length - i);

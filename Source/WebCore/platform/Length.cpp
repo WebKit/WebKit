@@ -47,7 +47,7 @@ static Length parseLength(const UChar* data, unsigned length)
         return Length(1, LengthType::Relative);
 
     unsigned i = 0;
-    while (i < length && isSpaceOrNewline(data[i]))
+    while (i < length && deprecatedIsSpaceOrNewline(data[i]))
         ++i;
     if (i < length && (data[i] == '+' || data[i] == '-'))
         ++i;
@@ -59,7 +59,7 @@ static Length parseLength(const UChar* data, unsigned length)
     unsigned doubleLength = i;
 
     // IE quirk: Skip whitespace between the number and the % character (20 % => 20%).
-    while (i < length && isSpaceOrNewline(data[i]))
+    while (i < length && deprecatedIsSpaceOrNewline(data[i]))
         ++i;
 
     bool ok;

@@ -197,7 +197,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
     Editor& editor = frame.editor();
     editor.setIsGettingDictionaryPopupInfo(true);
 
-    if (plainText(range).find(isNotSpaceOrNewline) == notFound) {
+    if (plainText(range).find(deprecatedIsNotSpaceOrNewline) == notFound) {
         editor.setIsGettingDictionaryPopupInfo(false);
         return { };
     }

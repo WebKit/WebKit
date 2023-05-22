@@ -1528,7 +1528,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (BOOL)spaceFollowsWordInRange:(DOMRange *)range
 {
-    return range && isSpaceOrNewline(WebCore::VisiblePosition(makeDeprecatedLegacyPosition(makeSimpleRange(core(range))->end)).characterAfter());
+    return range && deprecatedIsSpaceOrNewline(WebCore::VisiblePosition(makeDeprecatedLegacyPosition(makeSimpleRange(core(range))->end)).characterAfter());
 }
 
 - (NSArray *)wordsInCurrentParagraph

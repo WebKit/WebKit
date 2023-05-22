@@ -939,11 +939,11 @@ BidiRun* LegacyLineLayout::computeInlineDirectionPositionsForSegment(LegacyRootI
                 computeExpansionOpportunities(m_flow, textBox, previousRun, run->next(), renderText.stringView(run->m_start, run->m_stop), run->box()->direction());
 
             if (unsigned length = renderText.text().length()) {
-                if (!run->m_start && needsWordSpacing && isSpaceOrNewline(renderText.characterAt(run->m_start)))
+                if (!run->m_start && needsWordSpacing && deprecatedIsSpaceOrNewline(renderText.characterAt(run->m_start)))
                     contentWidth += lineStyle(*renderText.parent(), lineInfo).fontCascade().wordSpacing();
                 // run->m_start == run->m_stop should only be true iff the run is a replaced run for bidi: isolate.
                 ASSERT(run->m_stop > 0 || run->m_start == run->m_stop);
-                needsWordSpacing = run->m_stop == length && !isSpaceOrNewline(renderText.characterAt(run->m_stop - 1));
+                needsWordSpacing = run->m_stop == length && !deprecatedIsSpaceOrNewline(renderText.characterAt(run->m_stop - 1));
             }
             auto currentLogicalLeftPosition = logicalSpacingForInlineTextBoxes.get(&textBox) + contentWidth;
             setLogicalWidthForTextRun(lineBox, run, renderText, currentLogicalLeftPosition, lineInfo, textBoxDataMap, verticalPositionCache, wordMeasurements);

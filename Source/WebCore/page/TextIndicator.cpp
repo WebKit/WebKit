@@ -243,7 +243,7 @@ static bool containsOnlyWhiteSpaceText(const SimpleRange& range)
         if (!is<RenderText>(node.renderer()))
             return false;
     }
-    return plainTextReplacingNoBreakSpace(range).find(isNotSpaceOrNewline) == notFound;
+    return plainTextReplacingNoBreakSpace(range).find(deprecatedIsNotSpaceOrNewline) == notFound;
 }
 
 static bool initializeIndicator(TextIndicatorData& data, LocalFrame& frame, const SimpleRange& range, FloatSize margin, bool indicatesCurrentSelection)

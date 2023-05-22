@@ -71,7 +71,7 @@ void RenderMathMLFenced::updateFromElement()
     if (!separators.isNull()) {
         StringBuilder characters;
         for (unsigned i = 0; i < separators.length(); i++) {
-            if (!isSpaceOrNewline(separators[i]))
+            if (!deprecatedIsSpaceOrNewline(separators[i]))
                 characters.append(separators[i]);
         }
         m_separators = !characters.length() ? 0 : characters.toString().impl();

@@ -620,12 +620,13 @@ template<size_t inlineCapacity> bool equalIgnoringNullity(const Vector<UChar, in
 template<typename CharacterType1, typename CharacterType2> int codePointCompare(const CharacterType1*, unsigned length1, const CharacterType2*, unsigned length2);
 int codePointCompare(const StringImpl*, const StringImpl*);
 
-// FIXME: Should rename this to make clear it uses the Unicode definition of whitespace.
-// Most WebKit callers don't want that would use isUnicodeCompatibleASCIIWhitespace or isASCIIWhitespace instead.
-bool isSpaceOrNewline(UChar32);
-bool isNotSpaceOrNewline(UChar32);
-// FIXME: rdar://99002825 (Investigate if isSpaceOrNewline should be including 0xA0 non-breaking space in check.)
+// Deprecated as this excludes U+0085 and U+00A0 which are part of Unicode's White_Space definition:
+// https://www.unicode.org/Public/UCD/latest/ucd/PropList.txt
+bool deprecatedIsSpaceOrNewline(UChar32);
 bool isUnicodeWhitespace(UChar32);
+
+// Inverse of deprecatedIsSpaceOrNewline for predicates
+bool deprecatedIsNotSpaceOrNewline(UChar32);
 
 // StringHash is the default hash for StringImpl* and RefPtr<StringImpl>
 template<typename> struct DefaultHash;
@@ -780,21 +781,22 @@ inline int codePointCompare(const StringImpl* string1, const StringImpl* string2
     return codePointCompare(string1->characters16(), string1->length(), string2->characters16(), string2->length());
 }
 
-inline bool isSpaceOrNewline(UChar32 character)
+inline bool deprecatedIsSpaceOrNewline(UChar32 character)
 {
-    // Use isUnicodeCompatibleASCIIWhitespace() for all Latin-1 characters. This will include newlines, which aren't included in Unicode DirWS.
+    // Use isUnicodeCompatibleASCIIWhitespace() for all Latin-1 characters, which is incorrect as it
+    // excludes U+0085 and U+00A0.
     return isLatin1(character) ? isUnicodeCompatibleASCIIWhitespace(character) : u_charDirection(character) == U_WHITE_SPACE_NEUTRAL;
 }
 
-inline bool isNotSpaceOrNewline(UChar32 character)
-{
-    return !isSpaceOrNewline(character);
-}
-
-// FIXME: For LChar, isUnicodeCompatibleASCIIWhitespace(character) || character == noBreakSpace would be enough
+// FIXME: For LChar, isUnicodeCompatibleASCIIWhitespace(character) || character == 0x0085 || character == noBreakSpace would be enough
 inline bool isUnicodeWhitespace(UChar32 character)
 {
     return isASCII(character) ? isUnicodeCompatibleASCIIWhitespace(character) : u_isUWhiteSpace(character);
+}
+
+inline bool deprecatedIsNotSpaceOrNewline(UChar32 character)
+{
+    return !deprecatedIsSpaceOrNewline(character);
 }
 
 inline StringImplShape::StringImplShape(unsigned refCount, unsigned length, const LChar* data8, unsigned hashAndFlags)
@@ -1520,6 +1522,6 @@ inline Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8Conversio
 
 using WTF::StringImpl;
 using WTF::equal;
-using WTF::isNotSpaceOrNewline;
-using WTF::isSpaceOrNewline;
+using WTF::deprecatedIsSpaceOrNewline;
 using WTF::isUnicodeWhitespace;
+using WTF::deprecatedIsNotSpaceOrNewline;
