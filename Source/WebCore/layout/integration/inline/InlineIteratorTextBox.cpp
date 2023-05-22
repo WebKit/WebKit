@@ -30,7 +30,6 @@
 #include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBoxInlines.h"
 #include "LayoutIntegrationLineLayout.h"
-#include "LineSelection.h"
 #include "RenderCombineText.h"
 #include "RenderStyleInlines.h"
 #include "SVGInlineTextBox.h"
@@ -41,17 +40,6 @@ namespace InlineIterator {
 TextBoxIterator TextBox::nextTextBox() const
 {
     return TextBoxIterator(*this).traverseNextTextBox();
-}
-
-unsigned TextBox::offsetForPosition(float x, bool includePartialGlyphs) const
-{
-    if (isLineBreak())
-        return 0;
-    if (x - logicalLeftIgnoringInlineDirection() > logicalWidth())
-        return isLeftToRightDirection() ? length() : 0;
-    if (x - logicalLeftIgnoringInlineDirection() < 0)
-        return isLeftToRightDirection() ? 0 : length();
-    return fontCascade().offsetForPosition(textRun(TextRunMode::Editing), x - logicalLeftIgnoringInlineDirection(), includePartialGlyphs);
 }
 
 bool TextBox::isCombinedText() const

@@ -43,8 +43,6 @@ public:
     unsigned end() const;
     unsigned length() const;
 
-    unsigned offsetForPosition(float x, bool includePartialGlyphs = true) const;
-
     TextBoxSelectableRange selectableRange() const;
 
     bool isCombinedText() const;
