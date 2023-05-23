@@ -1,45 +1,46 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <link rel="help" href="https://html.spec.whatwg.org/multipage/interaction.html#activation-triggering-input-event">
-  <script src="/resources/testharness.js"></script>
-  <script src="/resources/testharnessreport.js"></script>
-  <script src="/resources/testdriver.js"></script>
-  <script src="/resources/testdriver-vendor.js"></script>
-  <script src="resources/utils.js"></script>
-</head>
-<body onload="runTests()">
-  <h1>Test for click activation trigger</h1>
-  <p>Tests user activation from a mouse click.</p>
-  <ol id="instructions">
-    <li>Click anywhere in the document.
-  </ol>
+  <head>
+    <title>Tests user activation from a mouse click</title>
+    <link
+      rel="help"
+      href="https://html.spec.whatwg.org/multipage/interaction.html#activation-triggering-input-event"
+    />
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <script src="/resources/testdriver.js"></script>
+    <script src="/resources/testdriver-vendor.js"></script>
+    <script src="resources/utils.js"></script>
+  </head>
+  <body>
+    <h1>Just a h1</h1>
+  </body>
   <script>
-  function runTests() {
     promise_test(async () => {
+      const mousedown_event = getEvent("mousedown");
+      const mouseup_event = getEvent("mouseup");
+      const click_event = getEvent("click");
 
-        let mousedown_event = getEvent('mousedown');
-        let mouseup_event = getEvent('mouseup');
-        let click_event = getEvent('click');
+      await test_driver.click(document.querySelector("h1"));
 
-        await test_driver.click(document.body);
+      await mousedown_event;
+      assert_true(
+        navigator.userActivation.isActive,
+        "mousedown event should result in activation"
+      );
+      await consumeTransientActivation();
 
-        await mousedown_event;
-        let consumed = await consumeTransientActivation();
-        assert_true(consumed,
-                    "mousedown event should result in activation");
+      await mouseup_event;
+      assert_false(
+        navigator.userActivation.isActive,
+        "mouseup should have no activation after mousedown consumption"
+      );
 
-        await mouseup_event;
-        consumed = await consumeTransientActivation();
-        assert_false(consumed,
-                     "mouseup should have no activation after mousedown consumption");
-
-        await click_event;
-        consumed = await consumeTransientActivation();
-        assert_false(consumed,
-                     "click should have no activation after mousedown consumption");
+      await click_event;
+      assert_false(
+        navigator.userActivation.isActive,
+        "click should have no activation after mousedown consumption"
+      );
     }, "Activation through left-click mouse event");
-  }
   </script>
-</body>
 </html>

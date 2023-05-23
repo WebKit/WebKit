@@ -1,29 +1,37 @@
 <!DOCTYPE html>
-<body style="background: yellow;">
-  <script>
-    window.top.postMessage(JSON.stringify({
-        "type": "child-one-loaded",
-        "isActive": navigator.userActivation.isActive,
-        "hasBeenActive": navigator.userActivation.hasBeenActive
-    }), "*");
-
-    window.addEventListener("click", event => {
-        window.top.postMessage(JSON.stringify({
-            "type": "child-one-clicked",
-            "isActive": navigator.userActivation.isActive,
-            "hasBeenActive": navigator.userActivation.hasBeenActive
-        }), "*");
-    });
-
-    window.addEventListener("message", event => {
-        var msg = JSON.parse(event.data);
-        if (msg.type == "report") {
-            window.top.postMessage(JSON.stringify({
-                "type": "child-one-report",
-                "isActive": navigator.userActivation.isActive,
-                "hasBeenActive": navigator.userActivation.hasBeenActive
-            }), "*");
-        }
-    });
-  </script>
+<body style="background: yellow">
+  <h2>Child 1....</h2>
 </body>
+<script>
+  window.addEventListener("click", (event) => {
+    window.top.postMessage(
+      JSON.stringify({
+        type: "child-one-clicked",
+        isActive: navigator.userActivation.isActive,
+        hasBeenActive: navigator.userActivation.hasBeenActive,
+      }),
+      "*"
+    );
+  });
+
+  window.addEventListener("message", (event) => {
+    const { type } = JSON.parse(event.data);
+    if (["report", "child-one-report"].includes(type)) {
+      const response = JSON.stringify({
+        type: "child-one-report",
+        isActive: navigator.userActivation.isActive,
+        hasBeenActive: navigator.userActivation.hasBeenActive,
+      });
+      window.top.postMessage(response, "*");
+    }
+  });
+
+  window.top.postMessage(
+    JSON.stringify({
+      type: "child-one-loaded",
+      isActive: navigator.userActivation.isActive,
+      hasBeenActive: navigator.userActivation.hasBeenActive,
+    }),
+    "*"
+  );
+</script>

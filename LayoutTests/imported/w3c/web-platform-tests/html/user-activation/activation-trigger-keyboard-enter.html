@@ -1,47 +1,49 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <link rel="help" href="https://html.spec.whatwg.org/multipage/interaction.html#activation-triggering-input-event">
-  <script src="/resources/testharness.js"></script>
-  <script src="/resources/testharnessreport.js"></script>
-  <script src="/resources/testdriver.js"></script>
-  <script src="/resources/testdriver-vendor.js"></script>
-  <script src="resources/utils.js"></script>
-</head>
-<body onload="runTests()">
-  <h1>Test for keyboard activation trigger for ENTER key</h1>
-  <p>Tests user activation from a ENTER keyboard event.</p>
-  <input type="text" autofocus />
-  <ol id="instructions">
-    <li>Press ENTER key.
-  </ol>
+  <meta charset="utf-8" />
+  <title>Test for keyboard activation trigger for ENTER key</title>
+  <head>
+    <link
+      rel="help"
+      href="https://html.spec.whatwg.org/multipage/interaction.html#activation-triggering-input-event"
+    />
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <script src="/resources/testdriver.js"></script>
+    <script src="/resources/testdriver-vendor.js"></script>
+    <script src="resources/utils.js"></script>
+  </head>
+  <body>
+    <input type="text" autofocus />
+  </body>
   <script>
-  function runTests() {
     promise_test(async () => {
-        const ENTER_KEY = '\uE007';
+      const ENTER_KEY = "\uE007";
 
-        let keydown_event = getEvent('keydown');
-        let keypress_event = getEvent('keypress');
-        let keyup_event = getEvent('keyup');
+      const keydown_event = getEvent("keydown");
+      const keypress_event = getEvent("keypress");
+      const keyup_event = getEvent("keyup");
 
-        await test_driver.send_keys(document.body, ENTER_KEY);
+      await test_driver.send_keys(document.body, ENTER_KEY);
 
-        await keydown_event;
-        let consumed = await consumeTransientActivation();
-        assert_true(consumed,
-                    "ENTER keydown event should result in activation");
+      await keydown_event;
+      assert_true(
+        navigator.userActivation.isActive,
+        "ENTER keydown event should result in activation"
+      );
+      await consumeTransientActivation();
 
-        await keypress_event;
-        consumed = await consumeTransientActivation();
-        assert_false(consumed,
-                     "ENTER keypress should have no activation after keydown consumption");
+      await keypress_event;
+      assert_false(
+        navigator.userActivation.isActive,
+        "ENTER keypress should have no activation after keydown consumption"
+      );
 
-        await keyup_event;
-        consumed = await consumeTransientActivation();
-        assert_false(consumed,
-                     "ENTER keyup should have no activation after keydown consumption");
+      await keyup_event;
+      assert_false(
+        navigator.userActivation.isActive,
+        "ENTER keyup should have no activation after keydown consumption"
+      );
     }, "Activation through ENTER keyboard event");
-  }
   </script>
-</body>
 </html>
