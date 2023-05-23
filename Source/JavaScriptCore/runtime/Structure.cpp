@@ -1431,6 +1431,19 @@ bool ClassInfo::hasStaticSetterOrReadonlyProperties() const
     return false;
 }
 
+bool ClassInfo::hasStaticReadOnlyOrGetterSetterProperty(UniquedStringImpl* uid) const
+{
+    for (const ClassInfo* ci = this; ci; ci = ci->parentClass) {
+        if (const HashTable* table = ci->staticPropHashTable) {
+            if (!table->hasSetterOrReadonlyProperties)
+                continue;
+            if (const HashTableValue* entry = table->entry(uid))
+                return entry->attributes() & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessorOrValue;
+        }
+    }
+    return false;
+}
+
 void Structure::setCachedPropertyNameEnumerator(VM& vm, JSPropertyNameEnumerator* enumerator, StructureChain* chain)
 {
     ASSERT(typeInfo().isObject());

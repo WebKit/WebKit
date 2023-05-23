@@ -7412,8 +7412,10 @@ sub GenerateHashTableValueArray
         } elsif ("@$specials[$i]" =~ m/ConstantInteger/) {
             $typeTag = "Constant";
             $hasSecondValue = 0;
+            $hasSetter = "true";
         } elsif ("@$specials[$i]" =~ m/DOMJITAttribute/) {
             $typeTag = "DOMJITAttribute";
+            $hasSetter = "true";
         } else {
             $typeTag = "GetterSetter";
             $hasSetter = "true";
