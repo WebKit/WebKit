@@ -81,6 +81,7 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displa
 
     m_compositor = ThreadedCompositor::create(*this, *this, m_displayID, scaledSize, scaleFactor, paintFlags);
     m_layerTreeContext.contextID = m_surface->surfaceID();
+    m_surface->didCreateCompositingRunLoop(m_compositor->compositingRunLoop());
 
     didChangeViewport();
 }
@@ -89,6 +90,7 @@ LayerTreeHost::~LayerTreeHost()
 {
     cancelPendingLayerFlush();
 
+    m_surface->willDestroyCompositingRunLoop();
     m_coordinator.invalidate();
     m_compositor->invalidate();
     m_surface = nullptr;

@@ -80,6 +80,8 @@ public:
     void suspend();
     void resume();
 
+    RunLoop& compositingRunLoop() const { return m_compositingRunLoop->runLoop(); }
+
 private:
     ThreadedCompositor(Client&, ThreadedDisplayRefreshMonitor::Client&, WebCore::PlatformDisplayID, const WebCore::IntSize&, float scaleFactor, WebCore::TextureMapper::PaintFlags);
 

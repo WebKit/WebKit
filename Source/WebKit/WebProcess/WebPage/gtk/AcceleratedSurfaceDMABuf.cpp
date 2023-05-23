@@ -240,18 +240,24 @@ void AcceleratedSurfaceDMABuf::RenderTargetSHMImage::swap()
     RenderTarget::swap();
 }
 
+void AcceleratedSurfaceDMABuf::didCreateCompositingRunLoop(RunLoop& runLoop)
+{
+    WebProcess::singleton().parentProcessConnection()->addMessageReceiver(runLoop, *this, Messages::AcceleratedSurfaceDMABuf::messageReceiverName(), m_webPage.identifier().toUInt64());
+}
+
+void AcceleratedSurfaceDMABuf::willDestroyCompositingRunLoop()
+{
+    WebProcess::singleton().parentProcessConnection()->removeMessageReceiver(Messages::AcceleratedSurfaceDMABuf::messageReceiverName(), m_webPage.identifier().toUInt64());
+}
+
 void AcceleratedSurfaceDMABuf::didCreateGLContext()
 {
-    WebProcess::singleton().parentProcessConnection()->addMessageReceiver(RunLoop::current(), *this, Messages::AcceleratedSurfaceDMABuf::messageReceiverName(), m_webPage.identifier().toUInt64());
-
     glGenFramebuffers(1, &m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 }
 
 void AcceleratedSurfaceDMABuf::willDestroyGLContext()
 {
-    WebProcess::singleton().parentProcessConnection()->removeMessageReceiver(Messages::AcceleratedSurfaceDMABuf::messageReceiverName(), m_webPage.identifier().toUInt64());
-
     m_target = nullptr;
 
     if (m_fbo) {

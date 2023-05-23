@@ -60,6 +60,8 @@ public:
 
     void updateCompleted(LockHolder&);
 
+    RunLoop& runLoop() const { return m_runLoop.get(); }
+
 private:
     enum class UpdateState {
         Idle,
