@@ -15,4 +15,5 @@ PASS e.style['color'] = "hwb(120 30% 50% / none)" should set the property value
 PASS e.style['color'] = "hwb(120 30% 50% / 0)" should set the property value
 PASS e.style['color'] = "hwb(none 100% 50% / none)" should set the property value
 PASS e.style['color'] = "hwb(0 100% 50% / 0)" should set the property value
+FAIL e.style['color'] = "hwb(320deg 30% 40%)" should set the property value assert_equals: serialization should be canonical expected "rgb(153, 77, 128)" but got "rgb(153, 77, 127)"
 
