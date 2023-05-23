@@ -54,7 +54,7 @@ protected:
     { }
 
 private:
-    const Type* m_inferredType;
+    const Type* m_inferredType { nullptr };
 };
 
 } // namespace AST

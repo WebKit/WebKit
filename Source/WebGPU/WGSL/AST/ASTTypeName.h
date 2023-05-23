@@ -55,7 +55,7 @@ protected:
     { }
 
 private:
-    const Type* m_resolvedType;
+    const Type* m_resolvedType { nullptr };
 };
 
 class ArrayTypeName : public TypeName {
