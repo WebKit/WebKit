@@ -193,3 +193,7 @@ testRegExp(/(?<=(?:\1|b)(aa))./, "aaaax", ["x", "aa"]);
 testRegExp(/(?<=(?:\2|b)(?<=\1(a))(aa))./, "aaaax", ["x", "a", "aa"]);
 testRegExp(/(?<=((?:\3|b))(?<=\2(a))(aa))./, "aaaax", ["x", "aa", "a", "aa"]);
 testRegExp(/((?:(?<f>\w))(?<f>.)(a*c)?)*/, "aabbbccc", ["aabbbcc","bcc","b","c","c"], { f: "c" });
+testRegExp(/(?<A>)|(?<A>)*\k<A>/, "", ["", "", undefined], { A: "" });
+
+// Test 31
+testRegExp(/(?:(?<A>a)|(?<A>b)*)\k<A>/, "bb", ["bb",undefined,"b"], { A: "b" });
