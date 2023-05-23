@@ -27,6 +27,7 @@
 #include "cmakeconfig.h"
 #endif
 #include "MainWindow.h"
+#include <JavaScriptCore/JSRemoteInspectorServer.h>
 #include <WebKit/WKRunLoop.h>
 #include <dlfcn.h>
 #include <toolkitten/Application.h>
@@ -50,13 +51,12 @@ __attribute__((constructor(110)))
 static void initialize()
 {
     loadLibraryOrExit("PosixWebKit");
-    setenv_np("WebInspectorServerPort", "868", 1);
 
     loadLibraryOrExit(ICU_LOAD_AT);
     loadLibraryOrExit(PNG_LOAD_AT);
 #if defined(JPEG_LOAD_AT)
     loadLibraryOrExit(JPEG_LOAD_AT);
-#endif 
+#endif
 #if defined(WebP_LOAD_AT)
     loadLibraryOrExit(WebP_LOAD_AT);
 #endif
@@ -80,6 +80,8 @@ static void initialize()
 #if defined (USE_WPE_BACKEND_PLAYSTATION) && USE_WPE_BACKEND_PLAYSTATION
     wpe_playstation_process_provider_register_backend();
 #endif
+
+    JSRemoteInspectorServerStart(nullptr, 868);
 }
 
 class ApplicationClient : public Application::Client {
