@@ -2448,7 +2448,7 @@ sub shouldUseFlatpak()
         return 0;
     }
 
-    if (defined $ENV{'WEBKIT_JHBUILD'} && $ENV{'WEBKIT_JHBUILD'}) {
+    if ((defined $ENV{'WEBKIT_JHBUILD'} && $ENV{'WEBKIT_JHBUILD'}) or defined $ENV{'WKDEV_SDK'}) {
         return 0;
     }
 
