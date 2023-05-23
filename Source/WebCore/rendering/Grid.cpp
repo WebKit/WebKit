@@ -194,7 +194,7 @@ GridSpan Grid::gridItemSpanIgnoringCollapsedTracks(const RenderBox& gridItem, Gr
     unsigned currentLine = span.startLine() - 1;
 
     while (currentLine && isEmptyAutoRepeatTrack(direction, currentLine))
-        currentLine--; 
+        currentLine--;
     if (currentLine)
         return GridSpan::translatedDefiniteGridSpan(currentLine + 1, span.integerSpan());
 
@@ -237,17 +237,22 @@ GridIterator::GridIterator(const Grid& grid, GridTrackSizingDirection direction,
     , m_columnIndex((direction == ForColumns) ? fixedTrackIndex : varyingTrackIndex)
     , m_childIndex(0)
 {
-    ASSERT(m_grid.numTracks(ForRows));
-    ASSERT(m_grid.numTracks(ForColumns));
-    ASSERT(m_rowIndex < m_grid.numTracks(ForRows));
-    ASSERT(m_columnIndex < m_grid.numTracks(ForColumns));
+    if (m_grid.maxRows()) {
+        ASSERT(m_grid.numTracks(ForRows));
+        ASSERT(m_rowIndex < m_grid.numTracks(ForRows));
+    }
+    if (m_grid.maxColumns()) {
+        ASSERT(m_grid.numTracks(ForColumns));
+        ASSERT(m_columnIndex < m_grid.numTracks(ForColumns));
+    }
 }
 
 RenderBox* GridIterator::nextGridItem()
 {
-    ASSERT(m_grid.numTracks(ForRows));
-    ASSERT(m_grid.numTracks(ForColumns));
-
+    if (m_grid.maxRows())
+        ASSERT(m_grid.numTracks(ForRows));
+    if (m_grid.maxColumns())
+        ASSERT(m_grid.numTracks(ForColumns));
     unsigned& varyingTrackIndex = (m_direction == ForColumns) ? m_rowIndex : m_columnIndex;
     const unsigned endOfVaryingTrackIndex = (m_direction == ForColumns) ? m_grid.numTracks(ForRows) : m_grid.numTracks(ForColumns);
     for (; varyingTrackIndex < endOfVaryingTrackIndex; ++varyingTrackIndex) {
@@ -262,9 +267,10 @@ RenderBox* GridIterator::nextGridItem()
 
 bool GridIterator::isEmptyAreaEnough(unsigned rowSpan, unsigned columnSpan) const
 {
-    ASSERT(m_grid.numTracks(ForRows));
-    ASSERT(m_grid.numTracks(ForColumns));
-
+    if (m_grid.maxRows())
+        ASSERT(m_grid.numTracks(ForRows));
+    if (m_grid.maxColumns())
+        ASSERT(m_grid.numTracks(ForColumns));
     // Ignore cells outside current grid as we will grow it later if needed.
     unsigned maxRows = std::min<unsigned>(m_rowIndex + rowSpan, m_grid.numTracks(ForRows));
     unsigned maxColumns = std::min<unsigned>(m_columnIndex + columnSpan, m_grid.numTracks(ForColumns));
@@ -283,8 +289,10 @@ bool GridIterator::isEmptyAreaEnough(unsigned rowSpan, unsigned columnSpan) cons
 
 std::unique_ptr<GridArea> GridIterator::nextEmptyGridArea(unsigned fixedTrackSpan, unsigned varyingTrackSpan)
 {
-    ASSERT(m_grid.numTracks(ForRows));
-    ASSERT(m_grid.numTracks(ForColumns));
+    if (m_grid.maxRows())
+        ASSERT(m_grid.numTracks(ForRows));
+    if (m_grid.maxColumns())
+        ASSERT(m_grid.numTracks(ForColumns));
     ASSERT(fixedTrackSpan >= 1);
     ASSERT(varyingTrackSpan >= 1);
 
