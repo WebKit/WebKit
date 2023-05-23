@@ -49,6 +49,7 @@ enum class PropertyAttribute : unsigned {
     CustomAccessorOrValue = CustomAccessor | CustomValue,
     AccessorOrCustomAccessorOrValue = Accessor | CustomAccessor | CustomValue,
     ReadOnlyOrAccessorOrCustomAccessor = ReadOnly | Accessor | CustomAccessor,
+    ReadOnlyOrAccessorOrCustomAccessorOrValue = ReadOnly | Accessor | CustomAccessor | CustomValue,
 
     // Things that are used by static hashtables are not in the attributes byte in PropertyTableEntry.
     Function          = 1 << 8,  // property is a function - only used by static hashtables
