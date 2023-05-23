@@ -107,7 +107,7 @@ bool XPCServiceInitializerDelegate::getProcessIdentifier(WebCore::ProcessIdentif
 
 bool XPCServiceInitializerDelegate::getClientProcessName(String& clientProcessName)
 {
-    clientProcessName = String::fromLatin1(xpc_dictionary_get_string(m_initializerMessage, "ui-process-name"));
+    clientProcessName = String::fromUTF8(xpc_dictionary_get_string(m_initializerMessage, "ui-process-name"));
     return !clientProcessName.isEmpty();
 }
 
