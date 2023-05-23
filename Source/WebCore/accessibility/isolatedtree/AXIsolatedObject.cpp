@@ -143,8 +143,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::SupportsPressAction, object.supportsPressAction());
     setProperty(AXPropertyName::IsGrabbed, object.isGrabbed());
     setObjectProperty(AXPropertyName::TitleUIElement, object.titleUIElement());
-    setObjectProperty(AXPropertyName::VerticalScrollBar, object.scrollBar(AccessibilityOrientation::Vertical));
-    setObjectProperty(AXPropertyName::HorizontalScrollBar, object.scrollBar(AccessibilityOrientation::Horizontal));
     setProperty(AXPropertyName::PlaceholderValue, object.placeholderValue().isolatedCopy());
     setProperty(AXPropertyName::ExpandedTextValue, object.expandedTextValue().isolatedCopy());
     setProperty(AXPropertyName::SupportsExpandedTextValue, object.supportsExpandedTextValue());
@@ -174,7 +172,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     std::optional frame = geometryManager ? geometryManager->paintRectForID(object.objectID()) : std::nullopt;
     if (frame)
         setProperty(AXPropertyName::RelativeFrame, WTFMove(*frame));
-    else if (object.isScrollView() || object.isWebArea() || object.isScrollbar()) {
+    else if (object.isScrollView() || object.isWebArea()) {
         // The GeometryManager does not have a relative frame for the ScrollView or the WebArea yet. We need to get it from the live object so that we don't need to hit the main thread in the case a request comes in while the whole isolated tree is being built.
         setProperty(AXPropertyName::RelativeFrame, enclosingIntRect(object.relativeFrame()));
     } else if (!object.renderer() && object.node() && is<AccessibilityNodeObject>(object)) {
@@ -319,9 +317,13 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
         setProperty(AXPropertyName::DocumentEncoding, object.documentEncoding().isolatedCopy());
     }
 
-    // We only expose document links in web area objects.
-    if (object.isWebArea())
+    if (object.isScrollView()) {
+        setObjectProperty(AXPropertyName::VerticalScrollBar, object.scrollBar(AccessibilityOrientation::Vertical));
+        setObjectProperty(AXPropertyName::HorizontalScrollBar, object.scrollBar(AccessibilityOrientation::Horizontal));
+    } else if (object.isWebArea()) {
+        // We only expose document links in web area objects.
         setObjectVectorProperty(AXPropertyName::DocumentLinks, object.documentLinks());
+    }
 
     if (object.isWidget())
         setProperty(AXPropertyName::IsWidget, true);

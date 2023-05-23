@@ -2008,16 +2008,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attributeName isEqualToString:NSAccessibilityHorizontalScrollBarAttribute]) {
-        AXCoreObject* scrollBar = backingObject->scrollBar(AccessibilityOrientation::Horizontal);
-        if (scrollBar)
-            return scrollBar->wrapper();
-        return nil;
+        RefPtr scrollBar = backingObject->scrollBar(AccessibilityOrientation::Horizontal);
+        return scrollBar ? scrollBar->wrapper() : nil;
     }
+
     if ([attributeName isEqualToString:NSAccessibilityVerticalScrollBarAttribute]) {
-        AXCoreObject* scrollBar = backingObject->scrollBar(AccessibilityOrientation::Vertical);
-        if (scrollBar)
-            return scrollBar->wrapper();
-        return nil;
+        RefPtr scrollBar = backingObject->scrollBar(AccessibilityOrientation::Vertical);
+        return scrollBar ? scrollBar->wrapper() : nil;
     }
 
     if ([attributeName isEqualToString:NSAccessibilitySortDirectionAttribute]) {
