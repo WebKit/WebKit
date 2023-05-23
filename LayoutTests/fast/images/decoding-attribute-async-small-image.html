@@ -5,12 +5,6 @@
         function loadImage(image, src) {
             return new Promise((resolve) => {
                 image.onload = (() => {
-                    // Move the image to a new separate layer.
-                    var box = document.createElement("div");
-                    box.style.willChange = "transform";
-                    box.appendChild(image);
-                    document.body.appendChild(box);
-
                     if (window.internals && window.testRunner) {
                         // Force layout and display so the image gets drawn.
                         document.body.offsetHeight;
