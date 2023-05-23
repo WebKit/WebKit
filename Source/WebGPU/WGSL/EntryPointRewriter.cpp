@@ -157,9 +157,10 @@ void EntryPointRewriter::checkReturnType()
         return;
 
     if (auto* maybeReturnType = m_function.maybeReturnType()) {
-        ASSERT(is<AST::NamedTypeName>(*maybeReturnType));
-        auto& namedTypeName = downcast<AST::NamedTypeName>(*maybeReturnType);
+        if (!is<AST::NamedTypeName>(*maybeReturnType))
+            return;
 
+        auto& namedTypeName = downcast<AST::NamedTypeName>(*maybeReturnType);
         if (auto* structType = std::get_if<Types::Struct>(namedTypeName.resolvedType())) {
             ASSERT(structType->structure.role() == AST::StructureRole::UserDefined);
 
