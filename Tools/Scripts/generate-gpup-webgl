@@ -91,7 +91,7 @@ context_messages_template = (
 messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
     void Reshape(int32_t width, int32_t height)
 #if PLATFORM(COCOA)
-    void PrepareForDisplay() -> (MachSendRight displayBuffer) Synchronous NotStreamEncodableReply
+    void PrepareForDisplay(IPC::Semaphore finishedFence) -> (MachSendRight displayBuffer) Synchronous NotStreamEncodable NotStreamEncodableReply
 #endif
 #if USE(GRAPHICS_LAYER_WC)
     void PrepareForDisplay() -> (std::optional<WebKit::WCContentBufferIdentifier> contentBuffer) Synchronous
@@ -233,9 +233,9 @@ class cpp_type_container(cpp_type):
     def is_container(self) -> bool:
         return True
     def is_span(self) -> bool:
-        return self.container_name == "Span"
+        return self.container_name == "std::span"
     def is_dynamic_span(self) -> bool:
-        return (self.container_name == "Span" and self.arity is None) or self.container_name == "GCGLSpanTuple"
+        return (self.container_name == "std::span" and self.arity is None) or self.container_name == "GCGLSpanTuple"
     def get_container_name(self):
         return self.container_name
     def get_arity(self) -> Optional[int]:
@@ -530,7 +530,7 @@ def webkit_ipc_make_gcglspan_conversion(expr : cpp_expr, type : cpp_type_contain
         return cpp_expr(type, f"std::span(reinterpret_cast<{str(pointer_cast_type)}>({str(expr)}.data()), {str(expr)}.size())")
 
     assert(type.is_span())
-    return cpp_expr(type, f"Span<{element_type}, {str(type.get_arity())}> {{ reinterpret_cast<{str(pointer_cast_type)}>({str(expr)}.data()), {str(type.get_arity())} }}")
+    return cpp_expr(type, f"std::span<{element_type}, {str(type.get_arity())}> {{ reinterpret_cast<{str(pointer_cast_type)}>({str(expr)}.data()), {str(type.get_arity())} }}")
 
 # See messages.py function_parameter_type
 webkit_ipc_builtin_types = set(
