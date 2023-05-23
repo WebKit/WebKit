@@ -1238,6 +1238,20 @@ CSSScrollAnchoringEnabled:
     WebCore:
       default: false
 
+CSSScrollbarGutterEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS scrollbar-gutter property"
+  humanReadableDescription: "Enable scrollbar-gutter CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSScrollbarWidthEnabled:
   type: bool
   status: testable
