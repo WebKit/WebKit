@@ -50,6 +50,7 @@ public:
     virtual void platformColorsDidChange() { };
 
     bool userPrefersReducedMotion() const final;
+    bool userPrefersContrast() const final;
 
     void setAccentColor(const Color&);
     Color accentColor();
@@ -68,11 +69,14 @@ private:
 
 #if PLATFORM(GTK)
     void refreshGtkSettings();
-#endif
+#endif // PLATFORM(GTK)
 
     Color m_accentColor { SRGBA<uint8_t> { 52, 132, 228 } };
 
     bool m_prefersReducedMotion { false };
+#if !USE(GTK4)
+    bool m_prefersContrast { false };
+#endif
 };
 
 } // namespace WebCore

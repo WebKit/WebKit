@@ -514,7 +514,7 @@ const FeatureSchema& prefersContrast()
                 case ForcedAccessibilityValue::Off:
                     return false;
                 case ForcedAccessibilityValue::System:
-#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY) || PLATFORM(GTK)
                     return Theme::singleton().userPrefersContrast();
 #else
                     return false;

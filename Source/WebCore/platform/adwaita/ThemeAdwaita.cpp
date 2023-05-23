@@ -38,6 +38,7 @@
 
 #if PLATFORM(GTK)
 #include <gtk/gtk.h>
+#include <wtf/glib/GUniquePtr.h>
 #endif
 
 namespace WebCore {
@@ -96,8 +97,14 @@ ThemeAdwaita::ThemeAdwaita()
         g_signal_connect_swapped(G_OBJECT(settings), "notify::gtk-enable-animations", G_CALLBACK(+[](ThemeAdwaita* theme, GParamSpec*, GObject*) {
             theme->refreshGtkSettings();
         }), this);
+#if !USE(GTK4)
+        g_signal_connect_swapped(G_OBJECT(settings), "notify::gtk-theme-name", G_CALLBACK(+[](ThemeAdwaita* theme, GParamSpec*, GObject*) {
+            theme->refreshGtkSettings();
+        }), this);
+#endif // !USE(GTK4)
     }
-#endif
+
+#endif // PLATFORM(GTK)
 }
 
 #if PLATFORM(GTK)
@@ -108,10 +115,20 @@ void ThemeAdwaita::refreshGtkSettings()
         gboolean enableAnimations;
         g_object_get(settings, "gtk-enable-animations", &enableAnimations, nullptr);
         m_prefersReducedMotion = !enableAnimations;
+
+        // For high contrast in GTK3 we can rely on the theme name and be accurate most of the time.
+        // However whether or not high-contrast is enabled is also stored in GSettings/xdg-desktop-portal.
+        // We could rely on libadwaita, dynamically, to re-use its logic but, no matter how we do it, the setting
+        // has to be proxied over from the UI process different than how GtkSettings is.
+#if !USE(GTK4)
+        GUniqueOutPtr<char> gtkThemeName;
+        g_object_get(settings, "gtk-theme-name", &gtkThemeName.outPtr(), nullptr);
+        m_prefersContrast = !g_strcmp0(gtkThemeName.get(), "HighContrast") || !g_strcmp0(gtkThemeName.get(), "HighContrastInverse");
+#endif // !USE(GTK4)
     }
 }
 
-#endif
+#endif // PLATFORM(GTK)
 
 Color ThemeAdwaita::focusColor(const Color& accentColor)
 {
@@ -581,6 +598,15 @@ Color ThemeAdwaita::accentColor()
 bool ThemeAdwaita::userPrefersReducedMotion() const
 {
     return m_prefersReducedMotion;
+}
+
+bool ThemeAdwaita::userPrefersContrast() const
+{
+#if !USE(GTK4)
+    return m_prefersContrast;
+#else
+    return false;
+#endif
 }
 
 } // namespace WebCore
