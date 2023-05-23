@@ -40,6 +40,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 #if PLATFORM(WIN)
 #include "AccessibilityObjectWrapperWin.h"
@@ -832,7 +833,7 @@ struct AccessibilityIsIgnoredFromParentData {
     bool isNull() const { return !parent; }
 };
 
-class AXCoreObject : public ThreadSafeRefCounted<AXCoreObject> {
+class AXCoreObject : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AXCoreObject> {
 public:
     virtual ~AXCoreObject() = default;
 

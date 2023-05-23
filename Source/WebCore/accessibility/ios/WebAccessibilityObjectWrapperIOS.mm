@@ -254,7 +254,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 
 - (WebCore::AccessibilityObject *)axBackingObject
 {
-    return m_axObject;
+    return m_axObject.get();
 }
 
 - (void)detach
