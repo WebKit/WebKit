@@ -311,34 +311,47 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
     }
 
     // Large image case.
+    // Some document types force synchronous decoding.
 #if PLATFORM(IOS_FAMILY)
     if (IOSApplication::isIBooksStorytime())
         return DecodingMode::Synchronous;
 #endif
+    if (document().isImageDocument())
+        return DecodingMode::Synchronous;
+
+    // A PaintBehavior may force synchronous decoding.
     if (paintInfo.paintBehavior.contains(PaintBehavior::Snapshotting))
         return DecodingMode::Synchronous;
     if (paintInfo.paintBehavior.contains(PaintBehavior::ForceSynchronousImageDecode))
         return DecodingMode::Synchronous;
+
+    // <img decoding="sync"> forces synchronous decoding.
     if (is<HTMLImageElement>(element())) {
-        auto decodingMode = downcast<HTMLImageElement>(*element()).decodingMode();
-        if (decodingMode == DecodingMode::Asynchronous)
-            return DecodingMode::Asynchronous;
-        if (decodingMode == DecodingMode::Synchronous)
+        if (downcast<HTMLImageElement>(*element()).decodingMode() == DecodingMode::Synchronous)
             return DecodingMode::Synchronous;
     }
+
+    // Layout tests may force asynchronous decoding.
     if (bitmapImage.isLargeImageAsyncDecodingEnabledForTesting())
         return DecodingMode::Asynchronous;
-    if (document().isImageDocument())
-        return DecodingMode::Synchronous;
-    if (!settings().largeImageAsyncDecodingEnabled())
-        return DecodingMode::Synchronous;
-    if (!bitmapImage.canUseAsyncDecodingForLargeImages())
-        return DecodingMode::Synchronous;
-    if (paintInfo.paintBehavior.contains(PaintBehavior::DefaultAsynchronousImageDecode))
+
+    // Not first paint, so we have to avoid flickering anyway.
+    if (!paintInfo.paintBehavior.contains(PaintBehavior::DefaultAsynchronousImageDecode)) {
+        // FIXME: isVisibleInViewport() is not cheap. Find a way to make this condition faster.
+        if (isVisibleInViewport())
+            return DecodingMode::Synchronous;
+    }
+
+    // <img decoding="async"> forces asynchronous decoding.
+    if (is<HTMLImageElement>(element())) {
+        if (downcast<HTMLImageElement>(*element()).decodingMode() == DecodingMode::Asynchronous)
+            return DecodingMode::Asynchronous;
+    }
+
+    // Resepect the web preferences key: largeImageAsyncDecodingEnabled.
+    if (settings().largeImageAsyncDecodingEnabled() && bitmapImage.canUseAsyncDecodingForLargeImages())
         return DecodingMode::Asynchronous;
-    // FIXME: isVisibleInViewport() is not cheap. Find a way to make this condition faster.
-    if (!isVisibleInViewport())
-        return DecodingMode::Asynchronous;
+
     return DecodingMode::Synchronous;
 }
 
