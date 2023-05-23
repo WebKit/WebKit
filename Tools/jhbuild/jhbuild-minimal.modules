@@ -9,13 +9,15 @@
     <dependencies>
       <dep package="wpebackend-fdo"/>
       <dep package="icu"/>
-      <dep package="libsoup"/>
       <dep package="manette"/>
       <dep package="libvpx"/>
       <dep package="glib"/>
       <dep package="glib-networking"/>
       <dep package="atk"/>
       <dep package="at-spi2-atk"/>
+      <if condition-unset="USE_SOUP2">
+        <dep package="libsoup3"/>
+      </if>
     </dependencies>
   </metamodule>
 
@@ -23,13 +25,15 @@
     <dependencies>
       <dep package="wpebackend-fdo"/>
       <dep package="icu"/>
-      <dep package="libsoup"/>
       <dep package="openxr"/>
       <dep package="libvpx"/>
       <dep package="glib"/>
       <dep package="glib-networking"/>
       <dep package="atk"/>
       <dep package="at-spi2-atk"/>
+      <if condition-unset="USE_SOUP2">
+        <dep package="libsoup3"/>
+      </if>
     </dependencies>
   </metamodule>
 
@@ -103,18 +107,21 @@
     </branch>
   </autotools>
 
-  <!-- libsoup >= 2.69 required for SameSite cookie support -->
-  <meson id="libsoup" mesonargs="-Dintrospection=disabled -Dgssapi=disabled -Dvapi=disabled -Dtests=false">
-    <pkg-config>libsoup-2.4.pc</pkg-config>
-    <dependencies>
-      <dep package="libpsl"/>
-    </dependencies>
-    <branch module="/sources/libsoup/2.69/libsoup-${version}.tar.xz" version="2.69.90"
-            repo="download.gnome.org"
-            hash="sha256:8ed18092cfb27d870a7c7c45992f3a216bd22dd6fd6d2c9fbf1adc2d6957cab8">
-    <patch file="libsoup-lower-glib-dependency-to-2.38.patch" strip="1"/>
-    </branch>
-  </meson>
+  <if condition-unset="USE_SOUP2">
+    <meson id="libsoup3" mesonargs="-Dgssapi=disabled -Dvapi=disabled -Dntlm=disabled -Dsysprof=disabled -Dautobahn=disabled -Dpkcs11_tests=disabled">
+      <pkg-config>libsoup-3.0.pc</pkg-config>
+      <dependencies>
+        <dep package="glib"/>
+        <dep package="glib-networking"/>
+        <dep package="libpsl"/>
+      </dependencies>
+      <branch module="/sources/libsoup/3.2/libsoup-${version}.tar.xz"
+              version="3.2.2"
+              repo="download.gnome.org"
+              hash="sha256:83673c685b910fb7d39f1f28eee5afbefb71c05798fc350ac3bf1b885e1efaa1">
+      </branch>
+    </meson>
+  </if>
 
   <autotools id="libpsl" autogenargs="--enable-runtime=libicu --enable-builtin=libicu">
     <pkg-config>libpsl.pc</pkg-config>

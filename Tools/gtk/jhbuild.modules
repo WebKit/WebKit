@@ -20,7 +20,6 @@
       <dep package="glib-networking"/>
       <dep package="adwaita-icon-theme"/>
       <dep package="icu"/>
-      <dep package="libsoup"/>
       <dep package="atk"/>
       <dep package="webkit-gstreamer-testing-dependencies"/>
       <dep package="pango"/>
@@ -42,6 +41,9 @@
       </if>
       <if condition-set="macos">
           <dep package="gsettings-desktop-schemas"/>
+      </if>
+      <if condition-unset="USE_SOUP2">
+        <dep package="libsoup3"/>
       </if>
     </dependencies>
   </metamodule>
@@ -246,19 +248,21 @@
             hash="sha256:f8fd0aeb66252dfcc638f14d9be1e2362fdaf2ca86bde0444ff4d5cc961b560f"/>
   </autotools>
 
-  <meson id="libsoup" mesonargs="-Dintrospection=disabled -Dgssapi=disabled -Dvapi=disabled">
-    <if condition-set="macos">
-      <mesonargs value="-Dtls_check=false"/>
-    </if>
-    <dependencies>
-      <dep package="glib-networking"/>
-      <dep package="libpsl"/>
-    </dependencies>
-    <branch module="/sources/libsoup/2.71/libsoup-${version}.tar.xz" version="2.71.0"
-            repo="download.gnome.org"
-            hash="sha256:88e24fad72d16e1cb692c8782688dbee4bf44151efb0d9ed25b14f3849d9896e">
-    </branch>
-  </meson>
+  <if condition-unset="USE_SOUP2">
+    <meson id="libsoup3" mesonargs="-Dgssapi=disabled -Dvapi=disabled -Dntlm=disabled -Dsysprof=disabled -Dautobahn=disabled -Dpkcs11_tests=disabled">
+      <pkg-config>libsoup-3.0.pc</pkg-config>
+      <dependencies>
+        <dep package="glib"/>
+        <dep package="glib-networking"/>
+        <dep package="libpsl"/>
+      </dependencies>
+      <branch module="/sources/libsoup/3.2/libsoup-${version}.tar.xz"
+              version="3.2.2"
+              repo="download.gnome.org"
+              hash="sha256:83673c685b910fb7d39f1f28eee5afbefb71c05798fc350ac3bf1b885e1efaa1">
+      </branch>
+    </meson>
+  </if>
 
   <autotools id="fontconfig"
              autogenargs="--enable-libxml2 --disable-docs"
