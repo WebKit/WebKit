@@ -1275,9 +1275,13 @@ private:
             case '-': {
                 ParseState state = saveState();
                 consume();
+                if (atEndOfPattern()) {
+                    m_errorCode = ErrorCode::CharacterClassUnmatched;
+                    return;
+                }
                 if (peek() == '-') {
                     consume();
-                    if (peek() == '-') {
+                    if (atEndOfPattern() || peek() == '-') {
                         m_errorCode = ErrorCode::InvalidClassSetCharacter;
                         return;
                     }
@@ -1292,9 +1296,13 @@ private:
             case '&': {
                 ParseState state = saveState();
                 consume();
+                if (atEndOfPattern()) {
+                    m_errorCode = ErrorCode::CharacterClassUnmatched;
+                    return;
+                }
                 if (peek() == '&') {
                     consume();
-                    if (peek() == '&') {
+                    if (atEndOfPattern() || peek() == '&') {
                         m_errorCode = ErrorCode::InvalidClassSetCharacter;
                         return;
                     }
