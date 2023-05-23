@@ -62,7 +62,9 @@ private:
     void recordClearShadow() final;
     void recordResetClip() final;
     void recordClip(const FloatRect&) final;
+    void recordClipRoundedRect(const FloatRoundedRect&) final;
     void recordClipOut(const FloatRect&) final;
+    void recordClipOutRoundedRect(const FloatRoundedRect&) final;
     void recordClipToImageBuffer(ImageBuffer&, const FloatRect& destinationRect) final;
     void recordClipOutToPath(const Path&) final;
     void recordClipPath(const Path&, WindRule) final;

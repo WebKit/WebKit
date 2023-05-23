@@ -87,7 +87,9 @@ protected:
     virtual void recordClearShadow() = 0;
     virtual void recordResetClip() = 0;
     virtual void recordClip(const FloatRect&) = 0;
+    virtual void recordClipRoundedRect(const FloatRoundedRect&) = 0;
     virtual void recordClipOut(const FloatRect&) = 0;
+    virtual void recordClipOutRoundedRect(const FloatRoundedRect&) = 0;
     virtual void recordClipToImageBuffer(ImageBuffer&, const FloatRect& destinationRect) = 0;
     virtual void recordClipOutToPath(const Path&) = 0;
     virtual void recordClipPath(const Path&, WindRule) = 0;
@@ -268,10 +270,15 @@ private:
     WEBCORE_EXPORT void endTransparencyLayer() final;
 
     WEBCORE_EXPORT void resetClip() final;
+
     WEBCORE_EXPORT void clip(const FloatRect&) final;
+    WEBCORE_EXPORT void clipRoundedRect(const FloatRoundedRect&) final;
+    WEBCORE_EXPORT void clipPath(const Path&, WindRule) final;
+
     WEBCORE_EXPORT void clipOut(const FloatRect&) final;
     WEBCORE_EXPORT void clipOut(const Path&) final;
-    WEBCORE_EXPORT void clipPath(const Path&, WindRule) final;
+    WEBCORE_EXPORT void clipOutRoundedRect(const FloatRoundedRect&) final;
+
     WEBCORE_EXPORT IntRect clipBounds() const final;
     WEBCORE_EXPORT void clipToImageBuffer(ImageBuffer&, const FloatRect&) final;
 

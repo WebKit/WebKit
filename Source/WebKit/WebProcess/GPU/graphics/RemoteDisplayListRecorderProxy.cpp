@@ -61,7 +61,7 @@ void RemoteDisplayListRecorderProxy::convertToLuminanceMask()
     send(Messages::RemoteDisplayListRecorder::ConvertToLuminanceMask());
 }
 
-void RemoteDisplayListRecorderProxy::transformToColorSpace(const WebCore::DestinationColorSpace& colorSpace)
+void RemoteDisplayListRecorderProxy::transformToColorSpace(const DestinationColorSpace& colorSpace)
 {
     send(Messages::RemoteDisplayListRecorder::TransformToColorSpace(colorSpace));
 }
@@ -176,9 +176,19 @@ void RemoteDisplayListRecorderProxy::recordClip(const FloatRect& rect)
     send(Messages::RemoteDisplayListRecorder::Clip(rect));
 }
 
+void RemoteDisplayListRecorderProxy::recordClipRoundedRect(const FloatRoundedRect& rect)
+{
+    send(Messages::RemoteDisplayListRecorder::ClipRoundedRect(rect));
+}
+
 void RemoteDisplayListRecorderProxy::recordClipOut(const FloatRect& rect)
 {
     send(Messages::RemoteDisplayListRecorder::ClipOut(rect));
+}
+
+void RemoteDisplayListRecorderProxy::recordClipOutRoundedRect(const FloatRoundedRect& rect)
+{
+    send(Messages::RemoteDisplayListRecorder::ClipOutRoundedRect(rect));
 }
 
 void RemoteDisplayListRecorderProxy::recordClipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destinationRect)

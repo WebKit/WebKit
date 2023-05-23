@@ -40,7 +40,9 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     SetMiterLimit(float limit) StreamBatched
     ClearShadow()
     Clip(WebCore::FloatRect rect)
+    ClipRoundedRect(WebCore::FloatRoundedRect rect)
     ClipOut(WebCore::FloatRect rect)
+    ClipOutRoundedRect(WebCore::FloatRoundedRect rect)
     ClipToImageBuffer(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, WebCore::FloatRect destinationRect)
     ClipOutToPath(WebCore::Path path)
     ClipPath(WebCore::Path path, enum:bool WebCore::WindRule windRule)

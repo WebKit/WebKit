@@ -128,9 +128,19 @@ void Clip::apply(GraphicsContext& context) const
     context.clip(m_rect);
 }
 
+void ClipRoundedRect::apply(GraphicsContext& context) const
+{
+    context.clipRoundedRect(m_rect);
+}
+
 void ClipOut::apply(GraphicsContext& context) const
 {
     context.clipOut(m_rect);
+}
+
+void ClipOutRoundedRect::apply(GraphicsContext& context) const
+{
+    context.clipOutRoundedRect(m_rect);
 }
 
 void ClipToImageBuffer::apply(GraphicsContext& context, WebCore::ImageBuffer& imageBuffer) const
@@ -474,7 +484,9 @@ TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::SetLineJoin: ts << "set-line-join"; break;
     case ItemType::SetMiterLimit: ts << "set-miter-limit"; break;
     case ItemType::Clip: ts << "clip"; break;
+    case ItemType::ClipRoundedRect: ts << "clip-rounded-rect"; break;
     case ItemType::ClipOut: ts << "clip-out"; break;
+    case ItemType::ClipOutRoundedRect: ts << "clip-out-rounded-rect"; break;
     case ItemType::ClipToImageBuffer: ts << "clip-to-image-buffer"; break;
     case ItemType::ClipOutToPath: ts << "clip-out-to-path"; break;
     case ItemType::ClipPath: ts << "clip-path"; break;
@@ -606,7 +618,17 @@ void dumpItem(TextStream& ts, const Clip& item, OptionSet<AsTextFlag>)
     ts.dumpProperty("rect", item.rect());
 }
 
+void dumpItem(TextStream& ts, const ClipRoundedRect& item, OptionSet<AsTextFlag>)
+{
+    ts.dumpProperty("rect", item.rect());
+}
+
 void dumpItem(TextStream& ts, const ClipOut& item, OptionSet<AsTextFlag>)
+{
+    ts.dumpProperty("rect", item.rect());
+}
+
+void dumpItem(TextStream& ts, const ClipOutRoundedRect& item, OptionSet<AsTextFlag>)
 {
     ts.dumpProperty("rect", item.rect());
 }
@@ -930,8 +952,14 @@ void dumpItemHandle(TextStream& ts, const ItemHandle& item, OptionSet<AsTextFlag
     case ItemType::Clip:
         dumpItem(ts, item.get<Clip>(), flags);
         break;
+    case ItemType::ClipRoundedRect:
+        dumpItem(ts, item.get<ClipRoundedRect>(), flags);
+        break;
     case ItemType::ClipOut:
         dumpItem(ts, item.get<ClipOut>(), flags);
+        break;
+    case ItemType::ClipOutRoundedRect:
+        dumpItem(ts, item.get<ClipOutRoundedRect>(), flags);
         break;
     case ItemType::ClipToImageBuffer:
         dumpItem(ts, item.get<ClipToImageBuffer>(), flags);

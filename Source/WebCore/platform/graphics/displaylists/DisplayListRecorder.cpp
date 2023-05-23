@@ -558,10 +558,23 @@ void Recorder::clip(const FloatRect& rect)
     recordClip(rect);
 }
 
+void Recorder::clipRoundedRect(const FloatRoundedRect& rect)
+{
+    appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
+    currentState().clipBounds.intersect(currentState().ctm.mapRect(rect.rect()));
+    recordClipRoundedRect(rect);
+}
+
 void Recorder::clipOut(const FloatRect& rect)
 {
     appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
     recordClipOut(rect);
+}
+
+void Recorder::clipOutRoundedRect(const FloatRoundedRect& rect)
+{
+    appendStateChangeItemIfNecessary(); // Conservative: we do not know if the clip application might use state such as antialiasing.
+    recordClipOutRoundedRect(rect);
 }
 
 void Recorder::clipOut(const Path& path)

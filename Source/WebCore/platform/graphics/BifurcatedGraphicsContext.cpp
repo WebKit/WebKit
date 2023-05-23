@@ -265,10 +265,26 @@ void BifurcatedGraphicsContext::clip(const FloatRect& rect)
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
+void BifurcatedGraphicsContext::clipRoundedRect(const FloatRoundedRect& rect)
+{
+    m_primaryContext.clipRoundedRect(rect);
+    m_secondaryContext.clipRoundedRect(rect);
+
+    VERIFY_STATE_SYNCHRONIZATION();
+}
+
 void BifurcatedGraphicsContext::clipOut(const FloatRect& rect)
 {
     m_primaryContext.clipOut(rect);
     m_secondaryContext.clipOut(rect);
+
+    VERIFY_STATE_SYNCHRONIZATION();
+}
+
+void BifurcatedGraphicsContext::clipOutRoundedRect(const FloatRoundedRect& rect)
+{
+    m_primaryContext.clipOutRoundedRect(rect);
+    m_secondaryContext.clipOutRoundedRect(rect);
 
     VERIFY_STATE_SYNCHRONIZATION();
 }

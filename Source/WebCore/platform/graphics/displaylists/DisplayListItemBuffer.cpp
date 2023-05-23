@@ -97,8 +97,14 @@ void ItemHandle::apply(GraphicsContext& context)
     case ItemType::Clip:
         get<Clip>().apply(context);
         return;
+    case ItemType::ClipRoundedRect:
+        get<ClipRoundedRect>().apply(context);
+        return;
     case ItemType::ClipOut:
         get<ClipOut>().apply(context);
+        return;
+    case ItemType::ClipOutRoundedRect:
+        get<ClipOutRoundedRect>().apply(context);
         return;
     case ItemType::ClipToImageBuffer:
         ASSERT_NOT_REACHED();
@@ -335,8 +341,14 @@ void ItemHandle::destroy()
     case ItemType::Clip:
         static_assert(std::is_trivially_destructible<Clip>::value);
         return;
+    case ItemType::ClipRoundedRect:
+        static_assert(std::is_trivially_destructible<ClipRoundedRect>::value);
+        return;
     case ItemType::ClipOut:
         static_assert(std::is_trivially_destructible<ClipOut>::value);
+        return;
+    case ItemType::ClipOutRoundedRect:
+        static_assert(std::is_trivially_destructible<ClipOutRoundedRect>::value);
         return;
     case ItemType::ClipToImageBuffer:
         static_assert(std::is_trivially_destructible<ClipToImageBuffer>::value);
@@ -550,8 +562,12 @@ bool ItemHandle::safeCopy(ItemType itemType, ItemHandle destination) const
         return copyInto<ClearShadow>(itemOffset, *this);
     case ItemType::Clip:
         return copyInto<Clip>(itemOffset, *this);
+    case ItemType::ClipRoundedRect:
+        return copyInto<ClipRoundedRect>(itemOffset, *this);
     case ItemType::ClipOut:
         return copyInto<ClipOut>(itemOffset, *this);
+    case ItemType::ClipOutRoundedRect:
+        return copyInto<ClipOutRoundedRect>(itemOffset, *this);
     case ItemType::ClipToImageBuffer:
         return copyInto<ClipToImageBuffer>(itemOffset, *this);
     case ItemType::ResetClip:

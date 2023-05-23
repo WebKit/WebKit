@@ -79,7 +79,9 @@ private:
     void recordSetMiterLimit(float) final;
     void recordClearShadow() final;
     void recordClip(const WebCore::FloatRect&) final;
+    void recordClipRoundedRect(const WebCore::FloatRoundedRect&) final;
     void recordClipOut(const WebCore::FloatRect&) final;
+    void recordClipOutRoundedRect(const WebCore::FloatRoundedRect&) final;
     void recordClipToImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect& destinationRect) final;
     void recordClipOutToPath(const WebCore::Path&) final;
     void recordClipPath(const WebCore::Path&, WebCore::WindRule) final;

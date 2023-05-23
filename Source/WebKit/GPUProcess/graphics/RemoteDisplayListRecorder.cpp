@@ -192,9 +192,19 @@ void RemoteDisplayListRecorder::clip(const FloatRect& rect)
     handleItem(DisplayList::Clip(rect));
 }
 
+void RemoteDisplayListRecorder::clipRoundedRect(const FloatRoundedRect& rect)
+{
+    handleItem(DisplayList::ClipRoundedRect(rect));
+}
+
 void RemoteDisplayListRecorder::clipOut(const FloatRect& rect)
 {
     handleItem(DisplayList::ClipOut(rect));
+}
+
+void RemoteDisplayListRecorder::clipOutRoundedRect(const FloatRoundedRect& rect)
+{
+    handleItem(DisplayList::ClipOutRoundedRect(rect));
 }
 
 void RemoteDisplayListRecorder::clipToImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const WebCore::FloatRect& destinationRect)

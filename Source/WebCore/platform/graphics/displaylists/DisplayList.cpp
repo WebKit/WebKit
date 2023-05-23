@@ -215,8 +215,12 @@ void DisplayList::append(ItemHandle item)
         return append<ClearShadow>(item.get<ClearShadow>());
     case ItemType::Clip:
         return append<Clip>(item.get<Clip>());
+    case ItemType::ClipRoundedRect:
+        return append<ClipRoundedRect>(item.get<ClipRoundedRect>());
     case ItemType::ClipOut:
         return append<ClipOut>(item.get<ClipOut>());
+    case ItemType::ClipOutRoundedRect:
+        return append<ClipOutRoundedRect>(item.get<ClipOutRoundedRect>());
     case ItemType::ClipToImageBuffer:
         return append<ClipToImageBuffer>(item.get<ClipToImageBuffer>());
     case ItemType::ClipOutToPath:
