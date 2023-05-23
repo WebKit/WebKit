@@ -35,7 +35,7 @@ namespace WGSL::AST {
 class Identifier : public Node {
     WTF_FORBID_HEAP_ALLOCATION;
 public:
-    static Identifier make(String& id) { return { SourceSpan::empty(), String(id) }; }
+    static Identifier make(const String& id) { return { SourceSpan::empty(), String(id) }; }
     static Identifier make(String&& id) { return { SourceSpan::empty(), WTFMove(id) }; }
     static Identifier makeWithSpan(SourceSpan span, String&& id) { return { WTFMove(span), WTFMove(id) }; }
     static Identifier makeWithSpan(SourceSpan span, StringView id) { return { WTFMove(span), id }; }

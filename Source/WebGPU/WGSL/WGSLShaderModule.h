@@ -60,6 +60,10 @@ public:
     TypeStore& types() { return m_types; }
     AST::Builder& astBuilder() { return m_astBuilder; }
 
+    bool usesExternalTextures() const { return m_usesExternalTextures; }
+    void setUsesExternalTextures() { m_usesExternalTextures = true; }
+    void clearUsesExternalTextures() { m_usesExternalTextures = false; }
+
     template<typename T>
     std::enable_if_t<std::is_base_of_v<AST::Node, T>, void> replace(T* current, T&& replacement)
     {
@@ -143,6 +147,7 @@ public:
 
 private:
     String m_source;
+    bool m_usesExternalTextures { false };
     Configuration m_configuration;
     AST::Directive::List m_directives;
     AST::Function::List m_functions;

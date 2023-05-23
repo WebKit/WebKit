@@ -35,7 +35,7 @@ namespace WGSL {
 
 namespace Metal {
 
-static constexpr bool dumpMetalCode = false;
+static constexpr bool dumpMetalCode = true;
 
 static StringView metalCodePrologue()
 {

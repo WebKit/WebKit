@@ -115,6 +115,18 @@ private:
 
 void FunctionDefinitionWriter::write()
 {
+    if (m_callGraph.ast().usesExternalTextures()) {
+        m_callGraph.ast().clearUsesExternalTextures();
+        m_stringBuilder.append("struct texture_external {\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "texture2d<half> FirstPlane;\n");
+            m_stringBuilder.append(m_indent, "texture2d<half> SecondPlane;\n");
+            m_stringBuilder.append(m_indent, "float3x2 UVRemapMatrix;\n");
+            m_stringBuilder.append(m_indent, "float4x3 ColorSpaceConversionMatrix;\n");
+        }
+        m_stringBuilder.append("};\n\n");
+    }
     for (auto& structure : m_callGraph.ast().structures())
         visit(structure);
     for (auto& variable : m_callGraph.ast().variables())
@@ -186,10 +198,10 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
             auto& name = member.name();
             auto* type = member.type().resolvedType();
             if (auto* primitive = std::get_if<Types::Primitive>(type); primitive && primitive->kind == Types::Primitive::TextureExternal) {
-                m_stringBuilder.append(m_indent, "texture2d<half> ", name, "_FirstPlane;\n");
-                m_stringBuilder.append(m_indent, "texture2d<half> ", name, "_SecondPlane;\n");
-                m_stringBuilder.append(m_indent, "float3x2 ", name, "_UVRemapMatrix;\n");
-                m_stringBuilder.append(m_indent, "float4x3 ", name, "_ColorSpaceConversionMatrix;\n");
+                m_stringBuilder.append(m_indent, "texture2d<half> __", name, "_FirstPlane;\n");
+                m_stringBuilder.append(m_indent, "texture2d<half> __", name, "_SecondPlane;\n");
+                m_stringBuilder.append(m_indent, "float3x2 __", name, "_UVRemapMatrix;\n");
+                m_stringBuilder.append(m_indent, "float4x3 __", name, "_ColorSpaceConversionMatrix;\n");
                 continue;
             }
 
@@ -279,9 +291,23 @@ void FunctionDefinitionWriter::visitGlobal(AST::Variable& variable)
 
 void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
 {
-    if (variable.maybeTypeName())
+    if (variable.maybeTypeName()) {
+        auto* type = variable.maybeTypeName()->resolvedType();
+        if (auto* primitive = std::get_if<Types::Primitive>(type); primitive && primitive->kind == Types::Primitive::TextureExternal) {
+            ASSERT(variable.maybeInitializer());
+            m_stringBuilder.append("texture_external ", variable.name(), " { ");
+            visit(*variable.maybeInitializer());
+            m_stringBuilder.append("_FirstPlane, ");
+            visit(*variable.maybeInitializer());
+            m_stringBuilder.append("_SecondPlane, ");
+            visit(*variable.maybeInitializer());
+            m_stringBuilder.append("_UVRemapMatrix, ");
+            visit(*variable.maybeInitializer());
+            m_stringBuilder.append("_ColorSpaceConversionMatrix }");
+            return;
+        }
         visit(*variable.maybeTypeName());
-    else {
+    } else {
         ASSERT(variable.maybeInitializer());
         const Type* inferredType = variable.maybeInitializer()->inferredType();
         visit(inferredType);
@@ -429,9 +455,9 @@ void FunctionDefinitionWriter::visit(const Type* type)
             case Types::Primitive::Sampler:
                 m_stringBuilder.append(*type);
                 break;
-
             case Types::Primitive::TextureExternal:
-                RELEASE_ASSERT_NOT_REACHED();
+                m_stringBuilder.append("texture_external");
+                break;
             }
         },
         [&](const Vector& vector) {
@@ -616,21 +642,21 @@ void FunctionDefinitionWriter::visit(AST::CallExpression& call)
                     {
                         writer->stringBuilder().append(writer->indent(), "auto __coords = (");
                         writer->visit(texture);
-                        writer->stringBuilder().append("_UVRemapMatrix * float3(");
+                        writer->stringBuilder().append(".UVRemapMatrix * float3(");
                         writer->visit(coordinates);
                         writer->stringBuilder().append(", 1)).xy;\n");
                     }
                     {
                         writer->stringBuilder().append(writer->indent(), "auto __y = float(");
                         writer->visit(texture);
-                        writer->stringBuilder().append("_FirstPlane.sample(");
+                        writer->stringBuilder().append(".FirstPlane.sample(");
                         writer->visit(sampler);
                         writer->stringBuilder().append(", __coords).r);\n");
                     }
                     {
                         writer->stringBuilder().append(writer->indent(), "auto __cbcr = float2(");
                         writer->visit(texture);
-                        writer->stringBuilder().append("_SecondPlane.sample(");
+                        writer->stringBuilder().append(".SecondPlane.sample(");
                         writer->visit(sampler);
                         writer->stringBuilder().append(", __coords).rg);\n");
                     }
@@ -638,7 +664,7 @@ void FunctionDefinitionWriter::visit(AST::CallExpression& call)
                     {
                         writer->stringBuilder().append(writer->indent(), "float4(");
                         writer->visit(texture);
-                        writer->stringBuilder().append("_ColorSpaceConversionMatrix * float4(__ycbcr, 1), 1);\n");
+                        writer->stringBuilder().append(".ColorSpaceConversionMatrix * float4(__ycbcr, 1), 1);\n");
                     }
                 }
                 writer->stringBuilder().append(writer->indent(), "})");

@@ -67,8 +67,7 @@ private:
     template<typename Value>
     using IndexMap = HashMap<unsigned, Value, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
 
-    using IndexSet = HashSet<unsigned, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
-    using UsedResources = IndexMap<IndexSet>;
+    using UsedResources = IndexMap<IndexMap<Global*>>;
     using UsedPrivateGlobals = Vector<Global*>;
 
     struct UsedGlobals {
@@ -88,7 +87,9 @@ private:
     void usesOverride(AST::Variable&);
     void insertStructs(const UsedResources&);
     void insertParameters(AST::Function&, const UsedResources&);
+    void insertMaterializations(AST::Function&, const UsedResources&);
     void insertLocalDefinitions(AST::Function&, const UsedPrivateGlobals&);
+    bool shouldBeReference(const Type*) const;
 
     CallGraph& m_callGraph;
     PrepareResult& m_result;
@@ -134,16 +135,7 @@ void RewriteGlobalVariables::visit(AST::Variable& variable)
 
 void RewriteGlobalVariables::visit(AST::IdentifierExpression& identifier)
 {
-    String name = identifier.identifier();
-    if (Global* global = read(name)) {
-        if (auto resource = global->resource) {
-            if (auto* primitive = std::get_if<Types::Primitive>(identifier.inferredType()); primitive && primitive->kind == Types::Primitive::TextureExternal)
-                name = makeString("__"_s, WTFMove(name));
-            auto& base = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(identifier.span(), argumentBufferParameterName(resource->group));
-            auto& structureAccess = m_callGraph.ast().astBuilder().construct<AST::FieldAccessExpression>(identifier.span(), base, AST::Identifier::make(WTFMove(name)));
-            m_callGraph.ast().replace(identifier, structureAccess);
-        }
-    }
+    read(identifier.identifier());
 }
 
 void RewriteGlobalVariables::collectGlobals()
@@ -196,6 +188,7 @@ void RewriteGlobalVariables::visitEntryPoint(AST::Function& function, AST::Stage
     auto usedGlobals = determineUsedGlobals(pipelineLayout, stage);
     insertStructs(usedGlobals.resources);
     insertParameters(function, usedGlobals.resources);
+    insertMaterializations(function, usedGlobals.resources);
     insertLocalDefinitions(function, usedGlobals.privateGlobals);
 }
 
@@ -225,8 +218,8 @@ auto RewriteGlobalVariables::determineUsedGlobals(PipelineLayout& pipelineLayout
         }
 
         auto group = global.resource->group;
-        auto result = usedGlobals.resources.add(group, IndexSet());
-        result.iterator->value.add(global.resource->binding);
+        auto result = usedGlobals.resources.add(group, IndexMap<Global*>());
+        result.iterator->value.add(global.resource->binding, &global);
 
         if (pipelineLayout.bindGroupLayouts.size() <= group)
             pipelineLayout.bindGroupLayouts.grow(group + 1);
@@ -300,7 +293,7 @@ void RewriteGlobalVariables::insertStructs(const UsedResources& usedResources)
             continue;
 
         const auto& bindingGlobalMap = groupBinding.value;
-        const IndexSet& usedBindings = usedResource->value;
+        const IndexMap<Global*>& usedBindings = usedResource->value;
 
         AST::Identifier structName = argumentBufferStructName(group);
         AST::StructureMember::List structMembers;
@@ -312,41 +305,16 @@ void RewriteGlobalVariables::insertStructs(const UsedResources& usedResources)
             ASSERT(global->declaration->maybeTypeName());
             auto span = global->declaration->span();
 
-            auto* type = global->declaration->maybeTypeName()->resolvedType();
-            bool shouldBeReference = true;
-            String name = global->declaration->name();
-            if (std::get_if<Types::Texture>(type))
-                shouldBeReference = false;
-            else if (auto* primitive = std::get_if<Types::Primitive>(type)) {
-                if (primitive->kind == Types::Primitive::Sampler)
-                    shouldBeReference = false;
-                else if (primitive->kind == Types::Primitive::TextureExternal) {
-                    // Since we'll use the texture_external variable's name to construct
-                    // the names of the argument buffer's fields, we have to make sure
-                    // that there won't be a naming collision. We do so by prefixing the
-                    // variable's name with `__`, which is not valid according to the
-                    // grammar, so the user can't have another variable with this name.
-                    //
-                    // e.g. @group(0) @binding(0) var t : texture_external;
-                    //
-                    // From `t` we will derive `t_FirstPlane`, `t_SecondPlane`, etc.
-                    // which could colid with user-defined variables. By converting
-                    // it to `__t_FirstPlane` there is no such risk.
-                    shouldBeReference = false;
-                    name = makeString("__"_s, WTFMove(name));
-                }
-            }
-
             AST::TypeName::Ref memberType = *global->declaration->maybeTypeName();
-            if (shouldBeReference) {
-                auto* type = memberType.get().resolvedType();
+            auto* type = memberType.get().resolvedType();
+            if (shouldBeReference(type)) {
                 memberType = m_callGraph.ast().astBuilder().construct<AST::ReferenceTypeName>(span, WTFMove(memberType));
                 // FIXME: we need to be able to represent reference types in the type system
                 memberType.get().m_resolvedType = type;
             }
             structMembers.append(m_callGraph.ast().astBuilder().construct<AST::StructureMember>(
                 span,
-                AST::Identifier::make(WTFMove(name)),
+                AST::Identifier::make(global->declaration->name()),
                 WTFMove(memberType),
                 AST::Attribute::List {
                     m_callGraph.ast().astBuilder().construct<AST::BindingAttribute>(span, binding)
@@ -384,6 +352,57 @@ void RewriteGlobalVariables::insertParameters(AST::Function& function, const Use
     }
 }
 
+void RewriteGlobalVariables::insertMaterializations(AST::Function& function, const UsedResources& usedResources)
+{
+    auto span = function.span();
+    for (auto& [group, bindings] : usedResources) {
+        auto& argument = m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(
+            span,
+            AST::Identifier::make(argumentBufferParameterName(group))
+        );
+
+        for (auto& [_, global] : bindings) {
+            auto& name = global->declaration->name();
+            String fieldName = name;
+            AST::TypeName::Ref typeName = *global->declaration->maybeTypeName();
+            auto* type = typeName.get().resolvedType();
+            if (auto* primitive = std::get_if<Types::Primitive>(type); primitive && primitive->kind == Types::Primitive::TextureExternal) {
+                fieldName = makeString("__", name);
+                m_callGraph.ast().setUsesExternalTextures();
+            }
+
+            auto& access = m_callGraph.ast().astBuilder().construct<AST::FieldAccessExpression>(
+                SourceSpan::empty(),
+                argument,
+                AST::Identifier::make(WTFMove(fieldName))
+            );
+
+            if (shouldBeReference(type)) {
+                typeName = m_callGraph.ast().astBuilder().construct<AST::ReferenceTypeName>(
+                    SourceSpan::empty(),
+                    WTFMove(typeName)
+                );
+                typeName.get().m_resolvedType = type;
+            }
+
+            auto& variable = m_callGraph.ast().astBuilder().construct<AST::VariableStatement>(
+                SourceSpan::empty(),
+                m_callGraph.ast().astBuilder().construct<AST::Variable>(
+                    SourceSpan::empty(),
+                    AST::VariableFlavor::Let,
+                    AST::Identifier::make(name),
+                    nullptr,
+                    &typeName.get(),
+                    &access,
+                    AST::Attribute::List { }
+                )
+            );
+
+            m_callGraph.ast().insert(function.body().statements(), 0, AST::Statement::Ref(variable));
+        }
+    }
+}
+
 void RewriteGlobalVariables::insertLocalDefinitions(AST::Function& function, const UsedPrivateGlobals& usedPrivateGlobals)
 {
     for (auto* global : usedPrivateGlobals) {
@@ -394,6 +413,20 @@ void RewriteGlobalVariables::insertLocalDefinitions(AST::Function& function, con
         m_callGraph.ast().insert(function.body().statements(), 0, std::reference_wrapper<AST::Statement>(variableStatement));
     }
 }
+
+bool RewriteGlobalVariables::shouldBeReference(const Type* type) const
+{
+    if (std::get_if<Types::Texture>(type))
+        return false;
+
+    if (auto* primitive = std::get_if<Types::Primitive>(type)) {
+        if (primitive->kind == Types::Primitive::Sampler)
+            return false;
+    }
+
+    return true;
+}
+
 
 void RewriteGlobalVariables::def(const String& name)
 {
