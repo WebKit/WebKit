@@ -227,7 +227,15 @@ class TimeControl extends LayoutItem
         let durationOrRemainingTimeLabel = this._durationOrRemainingTimeLabel();
 
         const scrubberMargin = this.computedValueForStylePropertyInPx("--scrubber-margin");
-        this.scrubber.x = (this._loading ? this.activityIndicator.width : this.elapsedTimeLabel.width) + scrubberMargin;
+
+        this.scrubber.x = (() => {
+            if (this._loading)
+                return this.activityIndicator.width + scrubberMargin;
+            if (this._timeLabelsDisplayOnScrubberSide && this.elapsedTimeLabel.visible)
+                return this.elapsedTimeLabel.width + scrubberMargin;
+            return 0;
+        })();
+
         this.scrubber.width = (() => {
             if (this._timeLabelsDisplayOnScrubberSide)
                 return this.width - this.scrubber.x - scrubberMargin - durationOrRemainingTimeLabel.width;
