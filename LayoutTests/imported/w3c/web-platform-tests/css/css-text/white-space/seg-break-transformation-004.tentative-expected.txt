@@ -1,0 +1,27 @@
+
+FAIL linebreak only ₩２４ assert_equals: expected 73 but got 80
+FAIL spaces linebreak ₩２４ assert_equals: expected 73 but got 80
+FAIL linebreak spaces ₩２４ assert_equals: expected 73 but got 80
+FAIL spaces linebreak spaces ₩２４ assert_equals: expected 73 but got 80
+FAIL multiple linebreaks ₩２４ assert_equals: expected 73 but got 80
+FAIL multiple linebreaks + spaces ₩２４ assert_equals: expected 73 but got 80
+FAIL linebreak only ２４₩ assert_equals: expected 73 but got 80
+FAIL spaces linebreak ２４₩ assert_equals: expected 73 but got 80
+FAIL linebreak spaces ２４₩ assert_equals: expected 73 but got 80
+FAIL spaces linebreak spaces ２４₩ assert_equals: expected 73 but got 80
+FAIL multiple linebreaks ２４₩ assert_equals: expected 73 but got 80
+FAIL multiple linebreaks + spaces ２４₩ assert_equals: expected 73 but got 80
+₩ ２４
+₩ ２４
+₩ ２４
+₩ ２４
+₩ ２４
+₩ ２４
+₩２４
+２４ ₩
+２４ ₩
+２４ ₩
+２４ ₩
+２４ ₩
+２４ ₩
+２４₩

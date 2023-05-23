@@ -1,0 +1,8 @@
+12345 678
+12345 678
+12345 678
+
+PASS Preserved trailing spaces in inline boxes should hang
+PASS Preserved trailing spaces in inline boxes should hang 1
+PASS Preserved trailing spaces in inline boxes should hang 2
+

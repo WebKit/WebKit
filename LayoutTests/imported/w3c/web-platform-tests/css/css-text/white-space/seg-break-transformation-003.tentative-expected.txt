@@ -1,0 +1,14 @@
+
+FAIL linebreak only assert_equals: expected 48 but got 55
+FAIL spaces linebreak assert_equals: expected 48 but got 55
+FAIL linebreak spaces assert_equals: expected 48 but got 55
+FAIL spaces linebreak spaces assert_equals: expected 48 but got 55
+FAIL multiple linebreaks assert_equals: expected 48 but got 55
+FAIL multiple linebreaks + spaces assert_equals: expected 48 but got 55
+ﾊﾝ ｶｸ
+ﾊﾝ ｶｸ
+ﾊﾝ ｶｸ
+ﾊﾝ ｶｸ
+ﾊﾝ ｶｸ
+ﾊﾝ ｶｸ
+ﾊﾝｶｸ

@@ -787,6 +787,12 @@ webkit.org/b/229389 imported/w3c/web-platform-tests/css/css-text/white-space/con
 webkit.org/b/229389 imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-09E.html [ ImageOnlyFailure ]
 webkit.org/b/229389 imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-09F.html [ ImageOnlyFailure ]
 
+webkit.org/b/257149 imported/w3c/web-platform-tests/css/css-text/white-space/eol-spaces-bidi-002.html [ Failure ]
+webkit.org/b/257149 imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-001.tentative.html [ Failure ]
+webkit.org/b/257149 imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-004.tentative.html [ Failure ]
+webkit.org/b/257149 imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-016.tentative.html [ Failure ]
+webkit.org/b/257149 imported/w3c/web-platform-tests/css/css-text/white-space/seg-break-transformation-017.tentative.html [ Failure ]
+
 webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/font-palette-13.html [ ImageOnlyFailure ]
 webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/font-palette-16.html [ ImageOnlyFailure ]
 webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/font-palette-17.html [ ImageOnlyFailure ]

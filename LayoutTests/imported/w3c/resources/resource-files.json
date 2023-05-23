@@ -2857,6 +2857,7 @@
         "web-platform-tests/css/css-text/text-justify/text-justify-none-001-ref.html",
         "web-platform-tests/css/css-text/text-transform/math/text-transform-math-auto-001-ref.html",
         "web-platform-tests/css/css-text/text-transform/math/text-transform-math-auto-002-ref.html",
+        "web-platform-tests/css/css-text/white-space/lone-cr-001-ref.html",
         "web-platform-tests/css/css-text/word-break/word-break-001.html",
         "web-platform-tests/css/css-text/word-break/word-break-002.html",
         "web-platform-tests/css/css-text/word-break/word-break-003.html",
