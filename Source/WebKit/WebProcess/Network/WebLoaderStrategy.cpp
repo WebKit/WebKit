@@ -310,13 +310,10 @@ static RefPtr<DocumentLoader> policySourceDocumentLoaderForFrame(const LocalFram
     if (!mainFrame)
         return { };
 
-    RefPtr mainFrameDocumentLoader = mainFrame->loader().policyDocumentLoader();
-    if (!mainFrameDocumentLoader)
-        mainFrameDocumentLoader = mainFrame->loader().provisionalDocumentLoader();
-    if (!mainFrameDocumentLoader || !isMainFrameNavigation)
-        mainFrameDocumentLoader = mainFrame->loader().documentLoader();
+    auto canIncludeCurrentDocumentLoader = isMainFrameNavigation ? WebDocumentLoader::CanIncludeCurrentDocumentLoader::No : WebDocumentLoader::CanIncludeCurrentDocumentLoader::Yes;
+    RefPtr<DocumentLoader> mainFrameDocumentLoader = WebDocumentLoader::loaderForWebsitePolicies(*mainFrame, canIncludeCurrentDocumentLoader);
 
-    RefPtr policySourceDocumentLoader = mainFrameDocumentLoader;
+    auto policySourceDocumentLoader = mainFrameDocumentLoader;
     if (policySourceDocumentLoader && !policySourceDocumentLoader->request().url().hasSpecialScheme() && frame.document()->url().protocolIsInHTTPFamily())
         policySourceDocumentLoader = frame.loader().documentLoader();
 

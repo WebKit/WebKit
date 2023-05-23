@@ -973,11 +973,8 @@ void WebLocalFrameLoaderClient::applyToDocumentLoader(WebsitePoliciesData&& webs
     auto* coreFrame = m_frame->coreLocalFrame();
     if (!coreFrame)
         return;
-    WebDocumentLoader* documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().policyDocumentLoader());
-    if (!documentLoader)
-        documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().provisionalDocumentLoader());
-    if (!documentLoader)
-        documentLoader = static_cast<WebDocumentLoader*>(coreFrame->loader().documentLoader());
+
+    RefPtr documentLoader = WebDocumentLoader::loaderForWebsitePolicies(*coreFrame);
     if (!documentLoader)
         return;
 

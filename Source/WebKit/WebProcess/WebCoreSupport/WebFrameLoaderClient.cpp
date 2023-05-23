@@ -109,14 +109,11 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     // FIXME: Move all this DocumentLoader stuff to the caller, pass in the results.
     RefPtr coreFrame = m_frame->coreLocalFrame();
 
-    WebDocumentLoader* documentLoader = coreFrame ? static_cast<WebDocumentLoader*>(coreFrame->loader().policyDocumentLoader()) : nullptr;
-    if (!documentLoader) {
-        // FIXME: When we receive a redirect after the navigation policy has been decided for the initial request,
-        // the provisional load's DocumentLoader needs to receive navigation policy decisions. We need a better model for this state.
-        documentLoader = coreFrame ? static_cast<WebDocumentLoader*>(coreFrame->loader().provisionalDocumentLoader()) : nullptr;
-    }
-    if (!documentLoader)
-        documentLoader = coreFrame ? static_cast<WebDocumentLoader*>(coreFrame->loader().documentLoader()) : nullptr;
+    // FIXME: When we receive a redirect after the navigation policy has been decided for the initial request,
+    // the provisional load's DocumentLoader needs to receive navigation policy decisions. We need a better model for this state.
+    RefPtr<WebDocumentLoader> documentLoader;
+    if (coreFrame)
+        documentLoader = WebDocumentLoader::loaderForWebsitePolicies(*coreFrame);
 
     auto& mouseEventData = navigationAction.mouseEventData();
     NavigationActionData navigationActionData {
