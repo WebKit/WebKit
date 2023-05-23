@@ -1260,6 +1260,9 @@ RefPtr<API::Navigation> WebPageProxy::launchProcessForReload()
     send(Messages::WebPage::GoToBackForwardItem(navigation->navigationID(), m_backForwardList->currentItem()->itemID(), FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No, std::nullopt, m_lastNavigationWasAppInitiated, std::nullopt, topPrivatelyControlledDomain));
     m_process->startResponsivenessTimer();
 
+    if (shouldForceForegroundPriorityForClientNavigation())
+        navigation->setClientNavigationActivity(process().throttler().foregroundActivity("Client reload"_s));
+
     return navigation;
 }
 
@@ -1952,6 +1955,9 @@ RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> op
     m_process->markProcessAsRecentlyUsed();
     send(Messages::WebPage::Reload(navigation->navigationID(), options, sandboxExtensionHandle));
     m_process->startResponsivenessTimer();
+
+    if (shouldForceForegroundPriorityForClientNavigation())
+        navigation->setClientNavigationActivity(process().throttler().foregroundActivity("Client reload"_s));
 
 #if ENABLE(SPEECH_SYNTHESIS)
     resetSpeechSynthesizer();
