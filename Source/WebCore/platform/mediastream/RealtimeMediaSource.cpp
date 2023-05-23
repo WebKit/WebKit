@@ -306,6 +306,7 @@ static RefPtr<VideoFrame> adaptVideoFrame(VideoFrameAdaptor& adaptor, VideoFrame
 
 IntSize RealtimeMediaSource::computeResizedVideoFrameSize(IntSize desiredSize, IntSize actualSize)
 {
+    ASSERT(!actualSize.isEmpty());
     if (desiredSize.width() && !desiredSize.height())
         return { desiredSize.width(), desiredSize.width() * actualSize.height() / actualSize.width() };
     if (desiredSize.height() && !desiredSize.width())

@@ -395,6 +395,9 @@ bool AVVideoCaptureSource::prefersPreset(const VideoPreset& preset)
 void AVVideoCaptureSource::setFrameRateAndZoomWithPreset(double requestedFrameRate, double requestedZoom, std::optional<VideoPreset>&& preset)
 {
     m_currentPreset = WTFMove(preset);
+    if (m_currentPreset)
+        setIntrinsicSize({ m_currentPreset->size().width(), m_currentPreset->size().height() });
+
     m_currentFrameRate = requestedFrameRate;
     m_currentZoom = m_zoomScaleFactor * requestedZoom;
 
