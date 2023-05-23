@@ -3880,9 +3880,9 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         return nil;
     auto typingAttributes = _page->editorState().postLayoutData->typingAttributes;
     CTFontSymbolicTraits symbolicTraits = 0;
-    if (typingAttributes & WebKit::AttributeBold)
+    if (typingAttributes.contains(WebKit::TypingAttribute::Bold))
         symbolicTraits |= kCTFontBoldTrait;
-    if (typingAttributes & WebKit::AttributeItalics)
+    if (typingAttributes.contains(WebKit::TypingAttribute::Italics))
         symbolicTraits |= kCTFontTraitItalic;
 
     // We chose a random font family and size.
@@ -3896,7 +3896,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     if (font)
         [result setObject:(id)font.get() forKey:NSFontAttributeName];
     
-    if (typingAttributes & WebKit::AttributeUnderline)
+    if (typingAttributes.contains(WebKit::TypingAttribute::Underline))
         [result setObject:@(NSUnderlineStyleSingle) forKey:NSUnderlineStyleAttributeName];
 
     return result;

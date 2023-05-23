@@ -495,37 +495,37 @@ void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState&
     if (result.isContentEditable) {
         if (auto editingStyle = EditingStyle::styleAtSelectionStart(selection)) {
             if (editingStyle->hasStyle(CSSPropertyFontWeight, "bold"_s))
-                postLayoutData.typingAttributes |= AttributeBold;
+                postLayoutData.typingAttributes.add(TypingAttribute::Bold);
 
             if (editingStyle->hasStyle(CSSPropertyFontStyle, "italic"_s) || editingStyle->hasStyle(CSSPropertyFontStyle, "oblique"_s))
-                postLayoutData.typingAttributes |= AttributeItalics;
+                postLayoutData.typingAttributes.add(TypingAttribute::Italics);
 
             if (editingStyle->hasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline"_s))
-                postLayoutData.typingAttributes |= AttributeUnderline;
+                postLayoutData.typingAttributes.add(TypingAttribute::Underline);
 
             if (auto* styleProperties = editingStyle->style()) {
                 bool isLeftToRight = styleProperties->propertyAsValueID(CSSPropertyDirection) == CSSValueLtr;
                 switch (styleProperties->propertyAsValueID(CSSPropertyTextAlign).value_or(CSSValueInvalid)) {
                 case CSSValueRight:
                 case CSSValueWebkitRight:
-                    postLayoutData.textAlignment = RightAlignment;
+                    postLayoutData.textAlignment = TextAlignment::Right;
                     break;
                 case CSSValueLeft:
                 case CSSValueWebkitLeft:
-                    postLayoutData.textAlignment = LeftAlignment;
+                    postLayoutData.textAlignment = TextAlignment::Left;
                     break;
                 case CSSValueCenter:
                 case CSSValueWebkitCenter:
-                    postLayoutData.textAlignment = CenterAlignment;
+                    postLayoutData.textAlignment = TextAlignment::Center;
                     break;
                 case CSSValueJustify:
-                    postLayoutData.textAlignment = JustifiedAlignment;
+                    postLayoutData.textAlignment = TextAlignment::Justified;
                     break;
                 case CSSValueStart:
-                    postLayoutData.textAlignment = isLeftToRight ? LeftAlignment : RightAlignment;
+                    postLayoutData.textAlignment = isLeftToRight ? TextAlignment::Left : TextAlignment::Right;
                     break;
                 case CSSValueEnd:
-                    postLayoutData.textAlignment = isLeftToRight ? RightAlignment : LeftAlignment;
+                    postLayoutData.textAlignment = isLeftToRight ? TextAlignment::Right : TextAlignment::Left;
                     break;
                 default:
                     break;
@@ -537,9 +537,9 @@ void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState&
 
         if (auto* enclosingListElement = enclosingList(selection.start().containerNode())) {
             if (is<HTMLUListElement>(*enclosingListElement))
-                postLayoutData.enclosingListType = UnorderedList;
+                postLayoutData.enclosingListType = ListType::UnorderedList;
             else if (is<HTMLOListElement>(*enclosingListElement))
-                postLayoutData.enclosingListType = OrderedList;
+                postLayoutData.enclosingListType = ListType::OrderedList;
             else
                 ASSERT_NOT_REACHED();
         }

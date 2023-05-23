@@ -123,13 +123,13 @@ void webkitEditorStateChanged(WebKitEditorState* editorState, const EditorState&
 
     unsigned typingAttributes = WEBKIT_EDITOR_TYPING_ATTRIBUTE_NONE;
     const auto& postLayoutData = *newState.postLayoutData;
-    if (postLayoutData.typingAttributes & AttributeBold)
+    if (postLayoutData.typingAttributes.contains(WebKit::TypingAttribute::Bold))
         typingAttributes |= WEBKIT_EDITOR_TYPING_ATTRIBUTE_BOLD;
-    if (postLayoutData.typingAttributes & AttributeItalics)
+    if (postLayoutData.typingAttributes.contains(WebKit::TypingAttribute::Italics))
         typingAttributes |= WEBKIT_EDITOR_TYPING_ATTRIBUTE_ITALIC;
-    if (postLayoutData.typingAttributes & AttributeUnderline)
+    if (postLayoutData.typingAttributes.contains(WebKit::TypingAttribute::Underline))
         typingAttributes |= WEBKIT_EDITOR_TYPING_ATTRIBUTE_UNDERLINE;
-    if (postLayoutData.typingAttributes & AttributeStrikeThrough)
+    if (postLayoutData.typingAttributes.contains(WebKit::TypingAttribute::StrikeThrough))
         typingAttributes |= WEBKIT_EDITOR_TYPING_ATTRIBUTE_STRIKETHROUGH;
 
     webkitEditorStateSetTypingAttributes(editorState, typingAttributes);

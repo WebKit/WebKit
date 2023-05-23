@@ -126,22 +126,22 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
     const Editor& editor = frame.editor();
     if (selection.isRange()) {
         if (editor.selectionHasStyle(CSSPropertyFontWeight, "bold"_s) == TriState::True)
-            postLayoutData.typingAttributes |= AttributeBold;
+            postLayoutData.typingAttributes.add(TypingAttribute::Bold);
         if (editor.selectionHasStyle(CSSPropertyFontStyle, "italic"_s) == TriState::True)
-            postLayoutData.typingAttributes |= AttributeItalics;
+            postLayoutData.typingAttributes.add(TypingAttribute::Italics);
         if (editor.selectionHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline"_s) == TriState::True)
-            postLayoutData.typingAttributes |= AttributeUnderline;
+            postLayoutData.typingAttributes.add(TypingAttribute::Underline);
         if (editor.selectionHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "line-through"_s) == TriState::True)
-            postLayoutData.typingAttributes |= AttributeStrikeThrough;
+            postLayoutData.typingAttributes.add(TypingAttribute::StrikeThrough);
     } else if (selection.isCaret()) {
         if (editor.selectionStartHasStyle(CSSPropertyFontWeight, "bold"_s))
-            postLayoutData.typingAttributes |= AttributeBold;
+            postLayoutData.typingAttributes.add(TypingAttribute::Bold);
         if (editor.selectionStartHasStyle(CSSPropertyFontStyle, "italic"_s))
-            postLayoutData.typingAttributes |= AttributeItalics;
+            postLayoutData.typingAttributes.add(TypingAttribute::Italics);
         if (editor.selectionStartHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline"_s))
-            postLayoutData.typingAttributes |= AttributeUnderline;
+            postLayoutData.typingAttributes.add(TypingAttribute::Underline);
         if (editor.selectionStartHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "line-through"_s))
-            postLayoutData.typingAttributes |= AttributeStrikeThrough;
+            postLayoutData.typingAttributes.add(TypingAttribute::StrikeThrough);
     }
 #endif
 

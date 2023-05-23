@@ -723,9 +723,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         // There is no "remove list" edit command, but InsertOrderedList and InsertUnorderedList both
         // behave as toggles, so we can invoke the appropriate edit command depending on our _currentListType
         // to remove an existing list. We don't have to do anything if _currentListType is NoList.
-        if (_currentListType == WebKit::OrderedList)
+        if (_currentListType == WebKit::ListType::OrderedList)
             _webViewImpl->page().executeEditCommand(@"InsertOrderedList", @"");
-        else if (_currentListType == WebKit::UnorderedList)
+        else if (_currentListType == WebKit::ListType::UnorderedList)
             _webViewImpl->page().executeEditCommand(@"InsertUnorderedList", @"");
         break;
     case unorderedListSegment:
@@ -743,13 +743,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     NSSegmentedControl *insertListControl = (NSSegmentedControl *)self.view;
     switch (listType) {
-    case WebKit::NoList:
+    case WebKit::ListType::None:
         [insertListControl setSelected:YES forSegment:noListSegment];
         break;
-    case WebKit::OrderedList:
+    case WebKit::ListType::OrderedList:
         [insertListControl setSelected:YES forSegment:orderedListSegment];
         break;
-    case WebKit::UnorderedList:
+    case WebKit::ListType::UnorderedList:
         [insertListControl setSelected:YES forSegment:unorderedListSegment];
         break;
     }
@@ -5719,15 +5719,15 @@ NSTouchBar *WebViewImpl::textTouchBar() const
 static NSTextAlignment nsTextAlignmentFromTextAlignment(TextAlignment textAlignment)
 {
     switch (textAlignment) {
-    case NoAlignment:
+    case TextAlignment::Natural:
         return NSTextAlignmentNatural;
-    case LeftAlignment:
+    case TextAlignment::Left:
         return NSTextAlignmentLeft;
-    case RightAlignment:
+    case TextAlignment::Right:
         return NSTextAlignmentRight;
-    case CenterAlignment:
+    case TextAlignment::Center:
         return NSTextAlignmentCenter;
-    case JustifiedAlignment:
+    case TextAlignment::Justified:
         return NSTextAlignmentJustified;
     }
     ASSERT_NOT_REACHED();
@@ -5800,9 +5800,9 @@ void WebViewImpl::updateTextTouchBar()
     if (isRichlyEditableForTouchBar()) {
         const EditorState& editorState = m_page->editorState();
         if (editorState.hasPostLayoutData()) {
-            [m_textTouchBarItemController setTextIsBold:(bool)(m_page->editorState().postLayoutData->typingAttributes & AttributeBold)];
-            [m_textTouchBarItemController setTextIsItalic:(bool)(m_page->editorState().postLayoutData->typingAttributes & AttributeItalics)];
-            [m_textTouchBarItemController setTextIsUnderlined:(bool)(m_page->editorState().postLayoutData->typingAttributes & AttributeUnderline)];
+            [m_textTouchBarItemController setTextIsBold:(m_page->editorState().postLayoutData->typingAttributes.contains(TypingAttribute::Bold))];
+            [m_textTouchBarItemController setTextIsItalic:(m_page->editorState().postLayoutData->typingAttributes.contains(TypingAttribute::Italics))];
+            [m_textTouchBarItemController setTextIsUnderlined:(m_page->editorState().postLayoutData->typingAttributes.contains(TypingAttribute::Underline))];
             [m_textTouchBarItemController setTextColor:cocoaColor(editorState.postLayoutData->textColor).get()];
             [[m_textTouchBarItemController textListTouchBarViewController] setCurrentListType:(ListType)m_page->editorState().postLayoutData->enclosingListType];
             [m_textTouchBarItemController setCurrentTextAlignment:nsTextAlignmentFromTextAlignment((TextAlignment)editorState.postLayoutData->textAlignment)];
