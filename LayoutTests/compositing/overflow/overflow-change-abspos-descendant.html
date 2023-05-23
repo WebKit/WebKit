@@ -1,0 +1,42 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<style>
+    html, div {
+      display: flex;
+    }
+    section {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+    }
+    div {
+      resize: both;
+      column-count: 1;
+    }
+    :first-child {
+      -webkit-box-reflect: left;
+    }
+    :nth-child(3) {
+      overflow-y: scroll;
+    }
+  </style>
+  <script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    window.addEventListener('load', () => {
+        let div0 = document.createElement('div');
+        document.documentElement.append(div0);
+        let div1 = document.createElement('p');
+        div1.append(document.createElement('section'));
+        document.body.offsetTop;
+        div0.append(div1);
+        document.documentElement.prepend(document.createElement('h1'));
+    }, false);
+  </script>
+</head>
+<body>
+<p>This test passes if it does not crash.</p>
+</body>
+</html>
