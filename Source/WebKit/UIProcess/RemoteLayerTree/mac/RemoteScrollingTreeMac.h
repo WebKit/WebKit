@@ -55,7 +55,7 @@ private:
     OptionSet<WebCore::EventListenerRegionType> eventListenerRegionTypesForPoint(WebCore::FloatPoint) const override;
 #endif
 
-    void didCommitTree() override;
+    void didCommitTree() override WTF_REQUIRES_LOCK(m_treeLock);
 
     void scrollingTreeNodeDidScroll(WebCore::ScrollingTreeScrollingNode&, WebCore::ScrollingLayerPositionAction) override;
     void scrollingTreeNodeDidStopAnimatedScroll(WebCore::ScrollingTreeScrollingNode&) override;
