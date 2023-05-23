@@ -217,19 +217,19 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
                         return { };
                     };
                     if (auto runToBreakAfter = trailingRunIndex())
-                        return Result { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { *runToBreakAfter, { } } };
+                        return Result { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { *runToBreakAfter, { }, { } } };
                     return Result { Result::Action::Keep, IsEndOfLine::Yes };
                 }
 
                 auto firstCharacterWidth = TextUtil::width(inlineTextItem, leadingTextRun.style.fontCascade(), inlineTextItem.start(), inlineTextItem.start() + firstCharacterLength, lineStatus.contentLogicalRight);
-                return Result { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { leadingTextRunIndex, PartialRun { firstCharacterLength, firstCharacterWidth } } };
+                return Result { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { leadingTextRunIndex, PartialRun { firstCharacterLength, firstCharacterWidth }, { } } };
             }
             if (trailingContent->overflows && lineStatus.hasContent) {
                 // We managed to break a run with overflow but the line already has content. Let's wrap it to the next line.
                 return Result { Result::Action::Wrap, IsEndOfLine::Yes };
             }
             // Either we managed to break with no overflow or the line is empty.
-            auto trailingPartialContent = Result::PartialTrailingContent { overflowingContent.breakingPosition->runIndex, trailingContent->partialRun };
+            auto trailingPartialContent = Result::PartialTrailingContent { overflowingContent.breakingPosition->runIndex, trailingContent->partialRun, trailingContent->hyphenWidth };
             return Result { Result::Action::Break, IsEndOfLine::Yes, trailingPartialContent };
         };
         if (auto result = tryBreakingContentWithText())
@@ -585,7 +585,7 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
                     ASSERT(!trailingInlineBoxEndIndex || *trailingInlineBoxEndIndex <= overflowingRunIndex);
                     return trailingInlineBoxEndIndex.value_or(index);
                 };
-                return OverflowingTextContent::BreakingPosition { trailingRunIndex(), OverflowingTextContent::BreakingPosition::TrailingContent { false, std::nullopt } };
+                return OverflowingTextContent::BreakingPosition { trailingRunIndex(), OverflowingTextContent::BreakingPosition::TrailingContent { false } };
             }
             return OverflowingTextContent::BreakingPosition { index, OverflowingTextContent::BreakingPosition::TrailingContent { false, partialRun } };
         }
@@ -622,6 +622,71 @@ std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> In
         nextContentWidth += run.logicalWidth;
     }
     return { };
+}
+
+std::optional<InlineContentBreaker::OverflowingTextContent::BreakingPosition> InlineContentBreaker::tryHyphenationAcrossOverflowingInlineTextItems(const LineStatus& lineStatus, const ContinuousContent::RunList& runs, size_t overflowingRunIndex) const
+{
+    if (runs.size() == 1)
+        return { };
+
+    auto& style = runs.first().inlineItem.style();
+    if (!wordBreakBehavior(style, lineStatus.hasWrapOpportunityAtPreviousPosition).contains(WordBreakRule::AtHyphenationOpportunities))
+        return { };
+
+    // 1. concatenate adjacent text content
+    // 2. find the last hyphen location before the overflowing position
+    // 3. find the inline text item where the hyphen location is and compute the partial run width
+    auto content = StringBuilder { };
+    size_t overflowingRunStartPosition = 0;
+    for (size_t index = 0; index < runs.size(); ++index) {
+        auto& inlineItem = runs[index].inlineItem;
+        // FIXME: Maybe content across inline boxes should be hyphenated as well.
+        if (inlineItem.style().fontCascade() != style.fontCascade() || !inlineItem.isText())
+            return { };
+
+        auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
+        if (inlineTextItem.isWhitespace())
+            return { };
+        content.append(inlineTextItem.inlineTextBox().content().substring(inlineTextItem.start(), inlineTextItem.length()));
+        overflowingRunStartPosition += index < overflowingRunIndex ? inlineTextItem.length() : 0;
+    }
+    // Only non-whitespace text runs with same style.
+    auto& fontCascade = style.fontCascade();
+    auto hyphenWidth = InlineLayoutUnit { fontCascade.width(TextRun { StringView { style.hyphenString() } }) };
+    auto availableWidthExcludingHyphen = lineStatus.availableWidth - hyphenWidth;
+    if (availableWidthExcludingHyphen <= 0 || !enoughWidthForHyphenation(availableWidthExcludingHyphen, fontCascade.pixelSize()))
+        return { };
+
+    auto& overflowingRun = runs[overflowingRunIndex];
+    // Make sure we always hyphenate before the overflow.
+    auto overflowPositionWithHyphen = TextUtil::breakWord(downcast<InlineTextItem>(overflowingRun.inlineItem), fontCascade, overflowingRun.logicalWidth, availableWidthExcludingHyphen, lineStatus.contentLogicalRight).length;
+    auto hyphenLocation = hyphenPosition(content, overflowingRunStartPosition + overflowPositionWithHyphen, style);
+    if (!hyphenLocation)
+        return { };
+
+    // hyphenLocation must be in or before the overflowing run.
+    ASSERT(*hyphenLocation <= overflowingRunStartPosition + overflowPositionWithHyphen);
+    auto hyphenLocationWithinInlineTextItem = *hyphenLocation;
+    size_t hyphenatedRunIndex = 0;
+    for (; hyphenatedRunIndex <= overflowingRunIndex; ++hyphenatedRunIndex) {
+        auto& inlineTextItem = downcast<InlineTextItem>(runs[hyphenatedRunIndex].inlineItem);
+        if (inlineTextItem.length() >= hyphenLocationWithinInlineTextItem)
+            break;
+        hyphenLocationWithinInlineTextItem -= inlineTextItem.length();
+    }
+    auto& hyphenatedlineTextItem = downcast<InlineTextItem>(runs[hyphenatedRunIndex].inlineItem);
+    if (hyphenLocationWithinInlineTextItem > hyphenatedlineTextItem.length()) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    // Hyphen may be right at the run (end) boundary.
+    auto partialRun = std::optional<InlineContentBreaker::PartialRun> { };
+    if (hyphenLocationWithinInlineTextItem < hyphenatedlineTextItem.length()) {
+        auto trailingPartialRunWidthWithHyphen = TextUtil::width(hyphenatedlineTextItem, fontCascade, hyphenatedlineTextItem.start(), hyphenatedlineTextItem.start() + hyphenLocationWithinInlineTextItem, lineStatus.contentLogicalRight);
+        partialRun = { hyphenLocationWithinInlineTextItem, trailingPartialRunWidthWithHyphen, hyphenWidth };
+    }
+    return OverflowingTextContent::BreakingPosition { hyphenatedRunIndex, OverflowingTextContent::BreakingPosition::TrailingContent { false, partialRun, hyphenWidth } };
 }
 
 InlineContentBreaker::OverflowingTextContent InlineContentBreaker::processOverflowingContentWithText(const ContinuousContent& continuousContent, const LineStatus& lineStatus) const
@@ -668,6 +733,9 @@ InlineContentBreaker::OverflowingTextContent InlineContentBreaker::processOverfl
         if (auto breakingPosition = tryBreakingPreviousNonOverflowingRuns(lineStatus, runs, overflowingRunIndex, nonOverflowingContentWidth))
             return { overflowingRunIndex, breakingPosition };
     }
+
+    if (auto breakingPosition = tryHyphenationAcrossOverflowingInlineTextItems(lineStatus, runs, overflowingRunIndex))
+        return { overflowingRunIndex, breakingPosition };
 
     // At this point we know that there's no breakable run all the way to the overflowing run.
     // Now we need to check if any run after the overflowing content can break.

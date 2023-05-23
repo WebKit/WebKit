@@ -1301,6 +1301,8 @@ void LineBuilder::commitPartialContent(const InlineContentBreaker::ContinuousCon
             }
             // The partial run is the last content to commit.
             m_line.append(run.inlineItem, run.style, run.logicalWidth);
+            if (auto hyphenWidth = partialTrailingContent.hyphenWidth)
+                m_line.addTrailingHyphen(*hyphenWidth);
             return;
         }
         m_line.append(run.inlineItem, run.style, run.logicalWidth);
