@@ -91,13 +91,9 @@ void URLKeepingBlobAlive::unregisterBlobURLHandleIfNecessary()
         ThreadableBlobRegistry::unregisterBlobURLHandle(m_url);
 }
 
-URLKeepingBlobAlive URLKeepingBlobAlive::isolatedCopy() const &
+URLKeepingBlobAlive URLKeepingBlobAlive::isolatedCopy() const
 {
     return { m_url.isolatedCopy(), m_topOrigin.isolatedCopy() };
 }
 
-URLKeepingBlobAlive URLKeepingBlobAlive::isolatedCopy() &&
-{
-    return { WTFMove(m_url).isolatedCopy(), WTFMove(m_topOrigin).isolatedCopy() };
-}
 } // namespace WebCore

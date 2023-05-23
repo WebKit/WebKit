@@ -49,8 +49,8 @@ public:
 
     void clear();
 
-    URLKeepingBlobAlive WARN_UNUSED_RETURN isolatedCopy() const &;
-    URLKeepingBlobAlive WARN_UNUSED_RETURN isolatedCopy() &&;
+    // We do not introduce a && version since it might break the register/unregister balance.
+    WEBCORE_EXPORT URLKeepingBlobAlive WARN_UNUSED_RETURN isolatedCopy() const;
 
 private:
     void registerBlobURLHandleIfNecessary();
