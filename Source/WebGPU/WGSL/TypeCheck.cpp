@@ -204,10 +204,16 @@ void TypeChecker::visit(AST::Variable& variable)
 
 void TypeChecker::visit(AST::Function& function)
 {
-    // FIXME: allocate and build function type fromp parameters and return type
+    Vector<Type*> parameters;
+    Type* result;
+    parameters.reserveInitialCapacity(function.parameters().size());
+    for (auto& parameter : function.parameters())
+        parameters.append(resolve(parameter.typeName()));
     if (function.maybeReturnType())
-        resolve(*function.maybeReturnType());
-    Type* functionType = nullptr;
+        result = resolve(*function.maybeReturnType());
+    else
+        result = m_types.voidType();
+    Type* functionType = m_types.functionType(WTFMove(parameters), result);
     introduceVariable(function.name(), functionType);
 }
 

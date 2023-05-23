@@ -189,6 +189,11 @@ Type* TypeStore::textureType(Type* elementType, Texture::Kind kind)
     return type;
 }
 
+Type* TypeStore::functionType(WTF::Vector<Type*>&& parameters, Type* result)
+{
+    return allocateType<Function>(WTFMove(parameters), result);
+}
+
 template<typename TypeKind, typename... Arguments>
 Type* TypeStore::allocateType(Arguments&&... arguments)
 {

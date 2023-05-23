@@ -63,9 +63,16 @@ void Type::dump(PrintStream& out) const
         [&](const Struct& structure) {
             out.print(structure.structure.name());
         },
-        [&](const Function&) {
-            // FIXME: implement this
-            ASSERT_NOT_REACHED();
+        [&](const Function& function) {
+            out.print("(");
+            bool first = true;
+            for (auto* parameter : function.parameters) {
+                if (!first)
+                    out.print(", ");
+                first = false;
+                out.print(*parameter);
+            }
+            out.print(") -> ", *function.result);
         },
         [&](const Bottom&) {
             // Bottom is an implementation detail and should never leak, but we

@@ -481,7 +481,6 @@ void FunctionDefinitionWriter::visit(const Type* type)
             m_stringBuilder.append(structure.structure.name());
         },
         [&](const Function&) {
-            // FIXME: implement this
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Bottom&) {

@@ -100,6 +100,8 @@ struct Struct {
 };
 
 struct Function {
+    WTF::Vector<Type*> parameters;
+    Type* result;
 };
 
 struct Bottom {
