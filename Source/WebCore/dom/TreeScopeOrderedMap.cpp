@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -162,7 +163,7 @@ Element* TreeScopeOrderedMap::getElementByName(const AtomStringImpl& key, const 
 HTMLMapElement* TreeScopeOrderedMap::getElementByMapName(const AtomStringImpl& key, const TreeScope& scope) const
 {
     return downcast<HTMLMapElement>(get(key, scope, [] (const AtomStringImpl& key, const Element& element) {
-        return is<HTMLMapElement>(element) && downcast<HTMLMapElement>(element).getName().impl() == &key;
+        return is<HTMLMapElement>(element) && (downcast<HTMLMapElement>(element).getName().impl() == &key || downcast<HTMLMapElement>(element).getIdAttribute().impl() == &key);
     }));
 }
 

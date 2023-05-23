@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -88,22 +89,22 @@ void HTMLMapElement::attributeChanged(const QualifiedName& name, const AtomStrin
 {
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    // FIXME: This logic seems wrong for XML documents.
-    // Either the id or name will be used depending on the order the attributes are parsed.
-
+    // To return the first image that matches usemap on name or id attributes, we
+    // need to track their values in the TreeScope.
+    // https://html.spec.whatwg.org/multipage/image-maps.html#image-map-processing-model
     if (name == HTMLNames::idAttr || name == HTMLNames::nameAttr) {
         if (name == HTMLNames::idAttr) {
             // Call base class so that hasID bit gets set.
             HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-            if (document().isHTMLDocument())
-                return;
         }
         if (isInTreeScope())
             treeScope().removeImageMap(*this);
         AtomString mapName = newValue;
         if (mapName[0] == '#')
             mapName = StringView(mapName).substring(1).toAtomString();
-        m_name = WTFMove(mapName);
+        // mapName is the parsed name attribute value that is not empty.
+        if (!mapName.isEmpty() && name == HTMLNames::nameAttr)
+            m_name = WTFMove(mapName);
         if (isInTreeScope())
             treeScope().addImageMap(*this);
     }

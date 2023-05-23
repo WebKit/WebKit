@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2011 Google Inc. All Rights Reserved.
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Google Inc. All Rights Reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -239,11 +239,15 @@ Element* TreeScope::ancestorElementInThisScope(Element* element) const
 void TreeScope::addImageMap(HTMLMapElement& imageMap)
 {
     AtomStringImpl* name = imageMap.getName().impl();
-    if (!name)
+    AtomStringImpl* id = imageMap.getIdAttribute().impl();
+    if (!name && !id)
         return;
     if (!m_imageMapsByName)
         m_imageMapsByName = makeUnique<TreeScopeOrderedMap>();
-    m_imageMapsByName->add(*name, imageMap, *this);
+    if (name)
+        m_imageMapsByName->add(*name, imageMap, *this);
+    if (id)
+        m_imageMapsByName->add(*id, imageMap, *this);
 }
 
 void TreeScope::removeImageMap(HTMLMapElement& imageMap)
@@ -251,15 +255,20 @@ void TreeScope::removeImageMap(HTMLMapElement& imageMap)
     if (!m_imageMapsByName)
         return;
     AtomStringImpl* name = imageMap.getName().impl();
-    if (!name)
-        return;
-    m_imageMapsByName->remove(*name, imageMap);
+    AtomStringImpl* id = imageMap.getIdAttribute().impl();
+    if (name)
+        m_imageMapsByName->remove(*name, imageMap);
+    if (id)
+        m_imageMapsByName->remove(*id, imageMap);
 }
 
 HTMLMapElement* TreeScope::getImageMap(const AtomString& name) const
 {
-    if (!m_imageMapsByName || !name.impl())
+    if (!m_imageMapsByName)
         return nullptr;
+    if (name.isEmpty())
+        return nullptr;
+
     return m_imageMapsByName->getElementByMapName(*name.impl(), *this);
 }
 
