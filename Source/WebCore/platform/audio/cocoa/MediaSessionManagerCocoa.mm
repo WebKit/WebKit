@@ -45,6 +45,7 @@
 #import <wtf/MathExtras.h>
 
 #import "MediaRemoteSoftLink.h"
+#include <pal/cocoa/AVFoundationSoftLink.h>
 
 static const size_t kLowPowerVideoBufferSize = 4096;
 
@@ -242,6 +243,20 @@ void MediaSessionManagerCocoa::beginInterruption(PlatformMediaSession::Interrupt
 void MediaSessionManagerCocoa::prepareToSendUserMediaPermissionRequest()
 {
     providePresentingApplicationPIDIfNecessary();
+}
+
+String MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(MediaPlayer::PitchCorrectionAlgorithm pitchCorrectionAlgorithm, bool preservesPitch, double rate)
+{
+    if (!preservesPitch || !rate || rate == 1.)
+        return AVAudioTimePitchAlgorithmVarispeed;
+
+    switch (pitchCorrectionAlgorithm) {
+    case MediaPlayer::PitchCorrectionAlgorithm::BestAllAround:
+    case MediaPlayer::PitchCorrectionAlgorithm::BestForMusic:
+        return AVAudioTimePitchAlgorithmSpectral;
+    case MediaPlayer::PitchCorrectionAlgorithm::BestForSpeech:
+        return AVAudioTimePitchAlgorithmTimeDomain;
+    }
 }
 
 void MediaSessionManagerCocoa::scheduleSessionStatusUpdate()

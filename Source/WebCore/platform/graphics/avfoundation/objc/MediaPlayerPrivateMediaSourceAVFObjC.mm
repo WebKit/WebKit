@@ -615,6 +615,11 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setRateDouble(double rate)
 {
     // AVSampleBufferRenderSynchronizer does not support negative rate yet.
     m_rate = std::max<double>(rate, 0);
+
+    auto algorithm = MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(m_player->pitchCorrectionAlgorithm(), m_player->preservesPitch(), m_rate);
+    for (const auto& key : m_sampleBufferAudioRendererMap.keys())
+        [(__bridge AVSampleBufferAudioRenderer *)key.get() setAudioTimePitchAlgorithm:algorithm];
+
     if (shouldBePlaying())
         [m_synchronizer setRate:m_rate];
 }
@@ -632,7 +637,7 @@ double MediaPlayerPrivateMediaSourceAVFObjC::effectiveRate() const
 void MediaPlayerPrivateMediaSourceAVFObjC::setPreservesPitch(bool preservesPitch)
 {
     ALWAYS_LOG(LOGIDENTIFIER, preservesPitch);
-    NSString *algorithm = preservesPitch ? AVAudioTimePitchAlgorithmSpectral : AVAudioTimePitchAlgorithmVarispeed;
+    auto algorithm = MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(m_player->pitchCorrectionAlgorithm(), preservesPitch, m_rate);
     for (const auto& key : m_sampleBufferAudioRendererMap.keys())
         [(__bridge AVSampleBufferAudioRenderer *)key.get() setAudioTimePitchAlgorithm:algorithm];
 }
@@ -1287,7 +1292,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     [audioRenderer setMuted:m_player->muted()];
     [audioRenderer setVolume:m_player->volume()];
-    [audioRenderer setAudioTimePitchAlgorithm:(m_player->preservesPitch() ? AVAudioTimePitchAlgorithmSpectral : AVAudioTimePitchAlgorithmVarispeed)];
+    auto algorithm = MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(m_player->pitchCorrectionAlgorithm(), m_player->preservesPitch(), m_rate);
+    [audioRenderer setAudioTimePitchAlgorithm:algorithm];
 #if PLATFORM(MAC)
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     if ([audioRenderer respondsToSelector:@selector(setIsUnaccompaniedByVisuals:)])

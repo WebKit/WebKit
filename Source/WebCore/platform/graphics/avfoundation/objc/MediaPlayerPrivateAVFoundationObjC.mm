@@ -1159,20 +1159,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
     setDelayCallbacks(false);
 }
 
-static NSString* audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(MediaPlayer::PitchCorrectionAlgorithm pitchCorrectionAlgorithm, bool preservesPitch, double rate)
-{
-    if (!preservesPitch || !rate || rate == 1.)
-        return AVAudioTimePitchAlgorithmVarispeed;
-
-    switch (pitchCorrectionAlgorithm) {
-    case MediaPlayer::PitchCorrectionAlgorithm::BestAllAround:
-    case MediaPlayer::PitchCorrectionAlgorithm::BestForMusic:
-        return AVAudioTimePitchAlgorithmSpectral;
-    case MediaPlayer::PitchCorrectionAlgorithm::BestForSpeech:
-        return AVAudioTimePitchAlgorithmTimeDomain;
-    }
-}
-
 void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
 {
     if (m_avPlayerItem)
@@ -1195,7 +1181,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
         [m_avPlayerItem addObserver:m_objcObserver.get() forKeyPath:keyName options:options context:(void *)MediaPlayerAVFoundationObservationContextPlayerItem];
     }
 
-    [m_avPlayerItem setAudioTimePitchAlgorithm:audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player()->pitchCorrectionAlgorithm(), player()->preservesPitch(), m_requestedRate)];
+    [m_avPlayerItem setAudioTimePitchAlgorithm:MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player()->pitchCorrectionAlgorithm(), player()->preservesPitch(), m_requestedRate)];
 
 #if HAVE(AVFOUNDATION_INTERSTITIAL_EVENTS)
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
@@ -1655,7 +1641,7 @@ void MediaPlayerPrivateAVFoundationObjC::setPlayerRate(double rate, std::optiona
 {
     setDelayCallbacks(true);
 
-    [m_avPlayerItem setAudioTimePitchAlgorithm:audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player()->pitchCorrectionAlgorithm(), player()->preservesPitch(), m_requestedRate)];
+    [m_avPlayerItem setAudioTimePitchAlgorithm:MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player()->pitchCorrectionAlgorithm(), player()->preservesPitch(), m_requestedRate)];
 
     setShouldObserveTimeControlStatus(false);
 
@@ -1723,13 +1709,13 @@ double MediaPlayerPrivateAVFoundationObjC::liveUpdateInterval() const
 void MediaPlayerPrivateAVFoundationObjC::setPreservesPitch(bool preservesPitch)
 {
     if (m_avPlayerItem)
-        [m_avPlayerItem setAudioTimePitchAlgorithm:audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player()->pitchCorrectionAlgorithm(), preservesPitch, m_requestedRate)];
+        [m_avPlayerItem setAudioTimePitchAlgorithm:MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player()->pitchCorrectionAlgorithm(), preservesPitch, m_requestedRate)];
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setPitchCorrectionAlgorithm(MediaPlayer::PitchCorrectionAlgorithm pitchCorrectionAlgorithm)
 {
     if (m_avPlayerItem)
-        [m_avPlayerItem setAudioTimePitchAlgorithm:audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(pitchCorrectionAlgorithm, player()->preservesPitch(), m_requestedRate)];
+        [m_avPlayerItem setAudioTimePitchAlgorithm:MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(pitchCorrectionAlgorithm, player()->preservesPitch(), m_requestedRate)];
 }
 
 const PlatformTimeRanges& MediaPlayerPrivateAVFoundationObjC::platformBufferedTimeRanges() const
