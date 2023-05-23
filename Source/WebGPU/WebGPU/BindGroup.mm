@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -139,6 +139,9 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
     if (descriptor.nextInChain)
         return BindGroup::createInvalid(*this);
 
+    // FIXME: We have to validate that the bind group is compatible with the bind group layout.
+    // Otherwise, we are in crazytown.
+
     constexpr ShaderStage stages[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute };
     constexpr size_t stageCount = std::size(stages);
     ShaderStageArray<NSUInteger> bindingIndexForStage = std::array<NSUInteger, stageCount>();
@@ -157,21 +160,30 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
         [argumentEncoder[stage] setArgumentBuffer:argumentBuffer[stage] offset:0];
     }
 
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=257190 The bind group layout determines the layout of what gets put into the bind group.
+    // We should probably iterate over the bind group layout here, rather than the bind group.
+    // For each entry in the bind group layout, we should find the corresponding member of the bind group, and then process it.
     for (uint32_t i = 0, entryCount = descriptor.entryCount; i < entryCount; ++i) {
         const WGPUBindGroupEntry& entry = descriptor.entries[i];
 
         WGPUExternalTexture wgpuExternalTexture = nullptr;
         if (entry.nextInChain) {
-            if (entry.nextInChain->sType != static_cast<WGPUSType>(WGPUSTypeExtended_BindGroupEntryExternalTexture))
+            if (entry.nextInChain->sType != static_cast<WGPUSType>(WGPUSTypeExtended_BindGroupEntryExternalTexture)) {
+                generateAValidationError("Unknown chain object in WGPUBindGroupEntry"_s);
                 return BindGroup::createInvalid(*this);
+            }
+            if (entry.nextInChain->next) {
+                generateAValidationError("Unknown chain object in WGPUBindGroupEntry"_s);
+                return BindGroup::createInvalid(*this);
+            }
 
-            wgpuExternalTexture = reinterpret_cast<WGPUBindGroupExternalTextureEntry *>(const_cast<WGPUChainedStruct*>(entry.nextInChain))->externalTexture;
+            wgpuExternalTexture = reinterpret_cast<const WGPUBindGroupExternalTextureEntry*>(entry.nextInChain)->externalTexture;
         }
 
         bool bufferIsPresent = WebGPU::bufferIsPresent(entry);
         bool samplerIsPresent = WebGPU::samplerIsPresent(entry);
         bool textureViewIsPresent = WebGPU::textureViewIsPresent(entry);
-        bool externalTextureIsPresent = !!wgpuExternalTexture;
+        bool externalTextureIsPresent = static_cast<bool>(wgpuExternalTexture);
         if (bufferIsPresent + samplerIsPresent + textureViewIsPresent + externalTextureIsPresent != 1)
             return BindGroup::createInvalid(*this);
 
@@ -206,10 +218,10 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                 if (textureData.texture1)
                     resources.append({ textureData.texture1, MTLResourceUsageRead, metalRenderStage(stage) });
 
-                simd::float3x2* uvRemapAddress =  (simd::float3x2*)[argumentEncoder[stage] constantDataAtIndex:index++];
+                auto* uvRemapAddress = static_cast<simd::float3x2*>([argumentEncoder[stage] constantDataAtIndex:index++]);
                 *uvRemapAddress = textureData.uvRemappingMatrix;
 
-                simd::float4x3* cscMatrixAddress =  (simd::float4x3*)[argumentEncoder[stage] constantDataAtIndex:index++];
+                auto* cscMatrixAddress = static_cast<simd::float4x3*>([argumentEncoder[stage] constantDataAtIndex:index++]);
                 *cscMatrixAddress = textureData.colorSpaceConversionMatrix;
             }
         }

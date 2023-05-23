@@ -68,7 +68,7 @@ public:
     virtual bool isPresentationContextCoreAnimation() const { return false; }
 
 protected:
-    PresentationContext();
+    explicit PresentationContext();
 };
 
 } // namespace WebGPU

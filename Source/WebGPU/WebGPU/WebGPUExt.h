@@ -62,6 +62,7 @@ typedef enum WGPUSTypeExtended {
     WGPUSTypeExtended_InstanceCocoaDescriptor = 0x151BBC00, // Random
     WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking = 0x017E9710, // Random
     WGPUSTypeExtended_BindGroupEntryExternalTexture = 0xF7A6EBF9, // Random
+    WGPUSTypeExtended_BindGroupLayoutEntryExternalTexture = 0x645C3DAA, // Random
     WGPUSTypeExtended_Force32 = 0x7FFFFFFF
 } WGPUSTypeExtended;
 
@@ -84,6 +85,15 @@ typedef struct WGPUSurfaceDescriptorCocoaCustomSurface {
     WGPUChainedStruct chain;
     WGPUCompositorIntegrationRegisterBlockCallback compositorIntegrationRegister;
 } WGPUSurfaceDescriptorCocoaCustomSurface;
+
+typedef struct WGPUExternalTextureBindingLayout {
+    WGPUChainedStruct const * nextInChain;
+} WGPUExternalTextureBindingLayout;
+
+typedef struct WGPUExternalTextureBindGroupLayoutEntry {
+    WGPUChainedStruct chain;
+    WGPUExternalTextureBindingLayout externalTexture;
+} WGPUExternalTextureBindGroupLayoutEntry;
 
 typedef struct WGPUBindGroupExternalTextureEntry {
     WGPUChainedStruct chain;

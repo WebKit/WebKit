@@ -110,7 +110,6 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUTextureBindingL
     if (texture.nextInChain)
         return nil;
 
-    UNUSED_PARAM(texture);
     auto descriptor = [MTLArgumentDescriptor new];
     descriptor.dataType = MTLDataTypeTexture;
 #if USE(METAL_ARGUMENT_ACCESS_ENUMS)
@@ -133,10 +132,33 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUStorageTextureB
     if (storageTexture.nextInChain)
         return nil;
 
-    UNUSED_PARAM(storageTexture);
     auto descriptor = [MTLArgumentDescriptor new];
     descriptor.dataType = MTLDataTypeTexture;
     // FIXME: Implement this.
+    return descriptor;
+}
+
+bool BindGroupLayout::isPresent(const WGPUExternalTextureBindingLayout&)
+{
+    return true;
+}
+
+static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUExternalTextureBindingLayout& externalTexture)
+{
+    if (externalTexture.nextInChain)
+        return nil;
+
+    // FIXME: Implement this properly.
+    // External textures have a bunch of information included in them, not just a single texture.
+    auto descriptor = [MTLArgumentDescriptor new];
+    descriptor.dataType = MTLDataTypeTexture;
+#if USE(METAL_ARGUMENT_ACCESS_ENUMS)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    descriptor.access = MTLArgumentAccessReadOnly;
+ALLOW_DEPRECATED_DECLARATIONS_END
+#else
+    descriptor.access = MTLBindingAccessReadOnly;
+#endif
     return descriptor;
 }
 
@@ -165,24 +187,47 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
     for (size_t i = 0; i < stageCount; ++i)
         arguments[i] = [NSMutableArray arrayWithCapacity:descriptor.entryCount];
 
-    Vector<WGPUBindGroupLayoutEntry> bindGroupLayoutEntries;
-    bindGroupLayoutEntries.resize(descriptor.entryCount);
+    Vector<BindGroupLayout::Entry> bindGroupLayoutEntries;
+    bindGroupLayoutEntries.reserveInitialCapacity(descriptor.entryCount);
     for (uint32_t i = 0; i < descriptor.entryCount; ++i) {
         const WGPUBindGroupLayoutEntry& entry = descriptor.entries[i];
-        if (entry.nextInChain)
-            return BindGroupLayout::createInvalid(*this);
+        if (entry.nextInChain) {
+            if (entry.nextInChain->sType != static_cast<WGPUSType>(WGPUSTypeExtended_BindGroupLayoutEntryExternalTexture))
+                return BindGroupLayout::createInvalid(*this);
+            if (entry.nextInChain->next)
+                return BindGroupLayout::createInvalid(*this);
+        }
 
         shaderStageForBinding.add(entry.binding + 1, entry.visibility);
         MTLArgumentDescriptor *descriptor = nil;
 
-        if (BindGroupLayout::isPresent(entry.buffer))
-            descriptor = createArgumentDescriptor(entry.buffer);
-        else if (BindGroupLayout::isPresent(entry.sampler))
-            descriptor = createArgumentDescriptor(entry.sampler);
-        else if (BindGroupLayout::isPresent(entry.texture))
-            descriptor = createArgumentDescriptor(entry.texture);
-        else if (BindGroupLayout::isPresent(entry.storageTexture))
-            descriptor = createArgumentDescriptor(entry.storageTexture);
+        BindGroupLayout::Entry::BindingLayout bindingLayout;
+        auto processBindingLayout = [&](const auto& type) {
+            if (!BindGroupLayout::isPresent(type))
+                return true;
+            if (descriptor)
+                return false;
+            descriptor = createArgumentDescriptor(type);
+            if (!descriptor)
+                return false;
+            bindingLayout = type;
+            return true;
+        };
+        if (!processBindingLayout(entry.buffer))
+            return BindGroupLayout::createInvalid(*this);
+        if (!processBindingLayout(entry.sampler))
+            return BindGroupLayout::createInvalid(*this);
+        if (!processBindingLayout(entry.texture))
+            return BindGroupLayout::createInvalid(*this);
+        if (!processBindingLayout(entry.storageTexture))
+            return BindGroupLayout::createInvalid(*this);
+        if (entry.nextInChain) {
+            const WGPUExternalTextureBindGroupLayoutEntry& externalTextureEntry = *reinterpret_cast<const WGPUExternalTextureBindGroupLayoutEntry*>(entry.nextInChain);
+            ASSERT(externalTextureEntry.chain.sType == static_cast<WGPUSType>(WGPUSTypeExtended_BindGroupLayoutEntryExternalTexture));
+            processBindingLayout(entry.storageTexture);
+            if (!processBindingLayout(externalTextureEntry.externalTexture))
+                return BindGroupLayout::createInvalid(*this);
+        }
 
         if (!descriptor)
             return BindGroupLayout::createInvalid(*this);
@@ -192,7 +237,11 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
                 addDescriptor(arguments[stage], descriptor);
         }
 
-        bindGroupLayoutEntries[i] = entry;
+        bindGroupLayoutEntries.uncheckedAppend({
+            entry.binding,
+            entry.visibility,
+            WTFMove(bindingLayout),
+        });
     }
 
     auto label = fromAPI(descriptor.label);
@@ -207,7 +256,7 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
     return BindGroupLayout::create(WTFMove(shaderStageForBinding), argumentEncoders[0], argumentEncoders[1], argumentEncoders[2], WTFMove(bindGroupLayoutEntries));
 }
 
-BindGroupLayout::BindGroupLayout(HashMap<uint32_t, WGPUShaderStageFlags>&& shaderStageForBinding, id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, Vector<WGPUBindGroupLayoutEntry>&& bindGroupLayoutEntries)
+BindGroupLayout::BindGroupLayout(HashMap<uint32_t, WGPUShaderStageFlags>&& shaderStageForBinding, id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, Vector<Entry>&& bindGroupLayoutEntries)
     : m_shaderStageForBinding(WTFMove(shaderStageForBinding))
     , m_vertexArgumentEncoder(vertexArgumentEncoder)
     , m_fragmentArgumentEncoder(fragmentArgumentEncoder)
@@ -216,9 +265,7 @@ BindGroupLayout::BindGroupLayout(HashMap<uint32_t, WGPUShaderStageFlags>&& shade
 {
 }
 
-BindGroupLayout::BindGroupLayout()
-{
-}
+BindGroupLayout::BindGroupLayout() = default;
 
 BindGroupLayout::~BindGroupLayout() = default;
 
@@ -279,11 +326,6 @@ WGPUBindGroupLayoutEntry BindGroupLayout::createEntryFromStructMember(MTLStructM
     return entry;
 }
 #endif // HAVE(METAL_BUFFER_BINDING_REFLECTION)
-
-const Vector<WGPUBindGroupLayoutEntry>& BindGroupLayout::entries() const
-{
-    return m_bindGroupLayoutEntries;
-}
 
 } // namespace WebGPU
 

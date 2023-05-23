@@ -479,8 +479,9 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
     auto mtlCullMode = cullMode(descriptor.primitive.cullMode);
 
     MTLRenderPipelineReflection *reflection;
-    id<MTLRenderPipelineState> renderPipelineState = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor options: pipelineLayout ? MTLPipelineOptionNone : MTLPipelineOptionArgumentInfo reflection:&reflection error:nil];
-    if (!renderPipelineState)
+    NSError *error = nil;
+    id<MTLRenderPipelineState> renderPipelineState = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor options:pipelineLayout ? MTLPipelineOptionNone : MTLPipelineOptionArgumentInfo reflection:&reflection error:&error];
+    if (error || !renderPipelineState)
         return RenderPipeline::createInvalid(*this);
 
     return RenderPipeline::create(renderPipelineState, mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, mtlDepthClipMode, depthStencilDescriptor, reflection, pipelineLayout, *this);
@@ -555,15 +556,14 @@ RefPtr<BindGroupLayout> RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
     WGPUBindGroupLayoutDescriptor bindGroupLayoutDescriptor = { };
     bindGroupLayoutDescriptor.label = "getBindGroup() generated layout";
     bindGroupLayoutDescriptor.entryCount = entries.size();
-    bindGroupLayoutDescriptor.entries = entries.size() ? &entries[0] : nullptr;
+    bindGroupLayoutDescriptor.entries = entries.size() ? entries.data() : nullptr;
     auto bindGroupLayout = m_device->createBindGroupLayout(bindGroupLayoutDescriptor);
     m_cachedBindGroupLayouts.add(groupIndex, bindGroupLayout);
 
     return WebGPU::releaseToAPI(WTFMove(bindGroupLayout));
 #else
     UNUSED_PARAM(groupIndex);
-    // FIXME: Return an invalid object instead of nullptr.
-    return nullptr;
+    return BindGroupLayout::createInvalid(m_device);
 #endif
 }
 

@@ -175,31 +175,45 @@ Ref<BindGroupLayout> DeviceImpl::createBindGroupLayout(const BindGroupLayoutDesc
 {
     auto label = descriptor.label.utf8();
 
-    auto backingEntries = descriptor.entries.map([&convertToBackingContext = m_convertToBackingContext.get()](const auto& entry) {
-        return WGPUBindGroupLayoutEntry {
-            nullptr,
-            entry.binding,
-            convertToBackingContext.convertShaderStageFlagsToBacking(entry.visibility), {
+    auto backingExternalTextureEntries = descriptor.entries.map([](const auto&) {
+        return WGPUExternalTextureBindGroupLayoutEntry {
+            {
                 nullptr,
-                entry.buffer ? convertToBackingContext.convertToBacking(entry.buffer->type) : WGPUBufferBindingType_Undefined,
+                static_cast<WGPUSType>(WGPUSTypeExtended_BindGroupLayoutEntryExternalTexture),
+            }, {
+                nullptr,
+            },
+        };
+    });
+
+    Vector<WGPUBindGroupLayoutEntry> backingEntries;
+    backingEntries.reserveInitialCapacity(descriptor.entries.size());
+    for (size_t i = 0; i < descriptor.entries.size(); ++i) {
+        const auto& entry = descriptor.entries[i];
+        backingEntries.uncheckedAppend({
+            entry.externalTexture ? &backingExternalTextureEntries[i].chain : nullptr,
+            entry.binding,
+            m_convertToBackingContext->convertShaderStageFlagsToBacking(entry.visibility), {
+                nullptr,
+                entry.buffer ? m_convertToBackingContext->convertToBacking(entry.buffer->type) : WGPUBufferBindingType_Undefined,
                 entry.buffer ? entry.buffer->hasDynamicOffset : false,
                 entry.buffer ? entry.buffer->minBindingSize : 0,
             }, {
                 nullptr,
-                entry.sampler ? convertToBackingContext.convertToBacking(entry.sampler->type) : WGPUSamplerBindingType_Undefined,
+                entry.sampler ? m_convertToBackingContext->convertToBacking(entry.sampler->type) : WGPUSamplerBindingType_Undefined,
             }, {
                 nullptr,
-                entry.texture ? convertToBackingContext.convertToBacking(entry.texture->sampleType) : (entry.externalTexture ? WGPUTextureSampleType_Float : WGPUTextureSampleType_Undefined),
-                entry.texture ? convertToBackingContext.convertToBacking(entry.texture->viewDimension) : (entry.externalTexture ? WGPUTextureViewDimension_2D : WGPUTextureViewDimension_Undefined),
+                entry.texture ? m_convertToBackingContext->convertToBacking(entry.texture->sampleType) : WGPUTextureSampleType_Undefined,
+                entry.texture ? m_convertToBackingContext->convertToBacking(entry.texture->viewDimension) : WGPUTextureViewDimension_Undefined,
                 entry.texture ? entry.texture->multisampled : false,
             }, {
                 nullptr,
-                entry.storageTexture ? convertToBackingContext.convertToBacking(entry.storageTexture->access) : WGPUStorageTextureAccess_Undefined,
-                entry.storageTexture ? convertToBackingContext.convertToBacking(entry.storageTexture->format) : WGPUTextureFormat_Undefined,
-                entry.storageTexture ? convertToBackingContext.convertToBacking(entry.storageTexture->viewDimension) : WGPUTextureViewDimension_Undefined,
+                entry.storageTexture ? m_convertToBackingContext->convertToBacking(entry.storageTexture->access) : WGPUStorageTextureAccess_Undefined,
+                entry.storageTexture ? m_convertToBackingContext->convertToBacking(entry.storageTexture->format) : WGPUTextureFormat_Undefined,
+                entry.storageTexture ? m_convertToBackingContext->convertToBacking(entry.storageTexture->viewDimension) : WGPUTextureViewDimension_Undefined,
             },
-        };
-    });
+        });
+    }
 
     WGPUBindGroupLayoutDescriptor backingDescriptor {
         nullptr,
