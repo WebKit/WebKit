@@ -125,6 +125,9 @@ void FunctionDefinitionWriter::write()
 
 void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
 {
+    for (auto& callee : m_callGraph.callees(functionDefinition))
+        visit(*callee.target);
+
     // FIXME: visit return attributes
     for (auto& attribute : functionDefinition.attributes()) {
         checkErrorAndVisit(attribute);

@@ -52,6 +52,7 @@ public:
 
     ShaderModule& ast() const { return m_ast; }
     const Vector<EntryPoint>& entrypoints() const { return m_entrypoints; }
+    const Vector<Callee>& callees(AST::Function& function) const { return m_calleeMap.find(&function)->value; }
 
 private:
     CallGraph(ShaderModule&);
@@ -59,7 +60,7 @@ private:
     ShaderModule& m_ast;
     Vector<EntryPoint> m_entrypoints;
     HashMap<String, AST::Function*> m_functionsByName;
-    HashMap<AST::Function*, Vector<Callee>> m_callees;
+    HashMap<AST::Function*, Vector<Callee>> m_calleeMap;
 };
 
 CallGraph buildCallGraph(ShaderModule&, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts);
