@@ -31,7 +31,7 @@
 #include "GraphicsContextCG.h"
 #include "MIMETypeRegistry.h"
 #include "PixelBuffer.h"
-#include "UTIUtilities.h"
+#include "UTIRegistry.h"
 #include <ImageIO/ImageIO.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/ScopedLambda.h>
@@ -52,54 +52,13 @@ uint8_t verifyImageBufferIsBigEnough(const void* buffer, size_t bufferSize)
     return *(uint8_t*)lastByte;
 }
 
-CFStringRef jpegUTI()
-{
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-#if PLATFORM(IOS_FAMILY)
-    static const CFStringRef kUTTypeJPEG = CFSTR("public.jpeg");
-#endif
-    return kUTTypeJPEG;
-ALLOW_DEPRECATED_DECLARATIONS_END
-}
-
-RetainPtr<CFStringRef> utiFromImageBufferMIMEType(const String& mimeType)
-{
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    // FIXME: Why doesn't iOS use the CoreServices version?
-#if PLATFORM(MAC)
-    return UTIFromMIMEType(mimeType).createCFString();
-#else
-    // FIXME: Add Windows support for all the supported UTIs when a way to convert from MIMEType to UTI reliably is found.
-    // For now, only support PNG, JPEG, and GIF. See <rdar://problem/6095286>.
-    static CFStringRef kUTTypePNG;
-    static CFStringRef kUTTypeGIF;
-
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        kUTTypePNG = CFSTR("public.png");
-        kUTTypeGIF = CFSTR("com.compuserve.gif");
-    });
-
-    if (equalLettersIgnoringASCIICase(mimeType, "image/png"_s))
-        return kUTTypePNG;
-    if (equalLettersIgnoringASCIICase(mimeType, "image/jpeg"_s) || equalLettersIgnoringASCIICase(mimeType, "image/jpg"_s))
-        return jpegUTI();
-    if (equalLettersIgnoringASCIICase(mimeType, "image/gif"_s))
-        return kUTTypeGIF;
-
-    ASSERT_NOT_REACHED();
-    return kUTTypePNG;
-#endif
-ALLOW_DEPRECATED_DECLARATIONS_END
-}
-
 static bool encode(CGImageRef image, const String& mimeType, std::optional<double> quality, const ScopedLambda<PutBytesCallback>& function)
 {
     if (!image)
         return false;
 
-    auto destinationUTI = utiFromImageBufferMIMEType(mimeType);
-    if (!destinationUTI)
+    auto destinationUTI = imageTypeForMIMEType(mimeType);
+    if (destinationUTI.isEmpty())
         return false;
 
     CGDataConsumerCallbacks callbacks {
@@ -111,10 +70,10 @@ static bool encode(CGImageRef image, const String& mimeType, std::optional<doubl
     };
 
     auto consumer = adoptCF(CGDataConsumerCreate(const_cast<ScopedLambda<PutBytesCallback>*>(&function), &callbacks));
-    auto destination = adoptCF(CGImageDestinationCreateWithDataConsumer(consumer.get(), destinationUTI.get(), 1, nullptr));
+    auto destination = adoptCF(CGImageDestinationCreateWithDataConsumer(consumer.get(), destinationUTI.createCFString().get(), 1, nullptr));
     
     auto imageProperties = [&] () -> RetainPtr<CFDictionaryRef> {
-        if (CFEqual(destinationUTI.get(), jpegUTI()) && quality && *quality >= 0.0 && *quality <= 1.0) {
+        if (MIMETypeRegistry::isJPEGMIMEType(mimeType) && quality && *quality >= 0.0 && *quality <= 1.0) {
             // Apply the compression quality to the JPEG image destination.
             quality = std::max(*quality, 0.0001); // FIXME: Remove once BigSur is unsupported (rdar://80446736)
             auto compressionQuality = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &*quality));
@@ -137,8 +96,6 @@ static bool encode(const PixelBuffer& source, const String& mimeType, std::optio
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
-    auto destinationUTI = utiFromImageBufferMIMEType(mimeType);
-
     CGImageAlphaInfo dataAlphaInfo = kCGImageAlphaLast;
     
     auto data = source.bytes();
@@ -146,7 +103,7 @@ static bool encode(const PixelBuffer& source, const String& mimeType, std::optio
 
     Vector<uint8_t> premultipliedData;
 
-    if (CFEqual(destinationUTI.get(), jpegUTI())) {
+    if (MIMETypeRegistry::isJPEGMIMEType(mimeType)) {
         // FIXME: Use PixelBufferConversion for this once it supports RGBX.
 
         // JPEGs don't have an alpha channel, so we have to manually composite on top of black.
