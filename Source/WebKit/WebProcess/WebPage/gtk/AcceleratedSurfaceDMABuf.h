@@ -63,7 +63,7 @@ public:
     void didRenderFrame() override;
 
     void didCreateCompositingRunLoop(WTF::RunLoop&) override;
-    void willDestroyCompositingRunLoop();
+    void willDestroyCompositingRunLoop() override;
 
 private:
     AcceleratedSurfaceDMABuf(WebPage&, Client&);
