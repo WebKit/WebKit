@@ -175,8 +175,8 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
         unsigned paddingID = 0;
         bool shouldPack = structDecl.role() == AST::StructureRole::UserDefined;
         const auto& addPadding = [&](unsigned paddingSize) {
-            if (shouldPack)
-                m_stringBuilder.append(m_indent, "uint8_t __padding", ++paddingID, "[", String::number(paddingSize), "]; \n");
+            ASSERT(shouldPack);
+            m_stringBuilder.append(m_indent, "uint8_t __padding", ++paddingID, "[", String::number(paddingSize), "]; \n");
         };
 
         for (auto& member : structDecl.members()) {
@@ -190,19 +190,25 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
                 continue;
             }
 
-            auto fieldSize = type->size();
-            auto fieldAlignment = type->alignment();
-            unsigned explicitSize = fieldSize;
-            for (auto &attribute : member.attributes()) {
-                if (is<AST::SizeAttribute>(attribute))
-                    explicitSize = *AST::extractInteger(downcast<AST::SizeAttribute>(attribute).size());
-                else if (is<AST::AlignAttribute>(attribute))
-                    fieldAlignment = *AST::extractInteger(downcast<AST::AlignAttribute>(attribute).alignment());
-            }
+            unsigned fieldSize = 0;
+            unsigned explicitSize = 0;
+            unsigned fieldAlignment = 0;
+            unsigned offset = 0;
+            if (shouldPack) {
+                fieldSize = type->size();
+                fieldAlignment = type->alignment();
+                explicitSize = fieldSize;
+                for (auto &attribute : member.attributes()) {
+                    if (is<AST::SizeAttribute>(attribute))
+                        explicitSize = *AST::extractInteger(downcast<AST::SizeAttribute>(attribute).size());
+                    else if (is<AST::AlignAttribute>(attribute))
+                        fieldAlignment = *AST::extractInteger(downcast<AST::AlignAttribute>(attribute).alignment());
+                }
 
-            unsigned offset = WTF::roundUpToMultipleOf(fieldAlignment, size);
-            if (offset != size)
-                addPadding(offset - size);
+                offset = WTF::roundUpToMultipleOf(fieldAlignment, size);
+                if (offset != size)
+                    addPadding(offset - size);
+            }
 
             m_stringBuilder.append(m_indent);
             visit(member.type());
@@ -217,16 +223,20 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
             }
             m_stringBuilder.append(";\n");
 
-            if (explicitSize != fieldSize)
-                addPadding(explicitSize - fieldSize);
+            if (shouldPack) {
+                if (explicitSize != fieldSize)
+                    addPadding(explicitSize - fieldSize);
 
-            alignment = std::max(alignment, fieldAlignment);
-            size = offset + explicitSize;
+                alignment = std::max(alignment, fieldAlignment);
+                size = offset + explicitSize;
+            }
         }
 
-        auto finalSize = WTF::roundUpToMultipleOf(alignment, size);
-        if (finalSize != size)
-            addPadding(finalSize - size);
+        if (shouldPack) {
+            auto finalSize = WTF::roundUpToMultipleOf(alignment, size);
+            if (finalSize != size)
+                addPadding(finalSize - size);
+        }
 
         if (structDecl.role() == AST::StructureRole::VertexOutput) {
             m_stringBuilder.append("\n");
