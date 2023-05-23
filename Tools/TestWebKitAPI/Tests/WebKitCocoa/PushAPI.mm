@@ -642,19 +642,23 @@ TEST(PushAPI, firePushEventWithNoPagesTimeout)
 
     expectedMessage = "Ready"_s;
 
+    fprintf(stderr, "totot1\n");
     @autoreleasepool {
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
         [webView loadRequest:server.request()];
         TestWebKitAPI::Util::run(&done);
     }
 
+    fprintf(stderr, "totot2\n");
     terminateNetworkProcessWhileRegistrationIsStored(configuration.get());
 
     // Push event for service worker without any related page, should timeout so fail.
     pushMessageProcessed = false;
     pushMessageSuccessful = false;
     NSString *message = @"Timeless Potatoes";
+    fprintf(stderr, "totot3\n");
     [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
+        fprintf(stderr, "totot3.1\n");
         pushMessageSuccessful = result;
         pushMessageProcessed = true;
     }];
@@ -662,6 +666,7 @@ TEST(PushAPI, firePushEventWithNoPagesTimeout)
     EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
 
     TestWebKitAPI::Util::run(&pushMessageProcessed);
+    fprintf(stderr, "totot4\n");
     EXPECT_FALSE(pushMessageSuccessful);
     EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return ![[configuration websiteDataStore] _hasServiceWorkerBackgroundActivityForTesting]; }));
 

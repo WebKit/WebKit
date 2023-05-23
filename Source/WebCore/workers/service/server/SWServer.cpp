@@ -1384,7 +1384,7 @@ void SWServer::getAllOrigins(CompletionHandler<void(HashSet<ClientOrigin>&&)>&& 
 
 void SWServer::addContextConnection(SWServerToContextConnection& connection)
 {
-    RELEASE_LOG(ServiceWorker, "SWServer::addContextConnection");
+    RELEASE_LOG(ServiceWorker, "SWServer::addContextConnection %llu", connection.identifier().toUInt64());
 
     ASSERT(!m_contextConnections.contains(connection.registrableDomain()));
 
@@ -1395,7 +1395,7 @@ void SWServer::addContextConnection(SWServerToContextConnection& connection)
 
 void SWServer::removeContextConnection(SWServerToContextConnection& connection)
 {
-    RELEASE_LOG(ServiceWorker, "SWServer::removeContextConnection");
+    RELEASE_LOG(ServiceWorker, "SWServer::removeContextConnection %llu", connection.identifier().toUInt64());
 
     auto registrableDomain = connection.registrableDomain();
     auto serviceWorkerPageIdentifier = connection.serviceWorkerPageIdentifier();
@@ -1651,6 +1651,8 @@ void SWServer::fireFunctionalEvent(SWServerRegistration& registration, Completio
     }
 
     // FIXME: we should check whether we can skip the event and if skipping do a soft-update.
+
+    RELEASE_LOG(ServiceWorker, "SWServer::fireFunctionalEvent serviceWorkerID=%llu, state=%hhu", worker->identifier().toUInt64(), worker->state());
 
     worker->whenActivated([this, weakThis = WeakPtr { *this }, callback = WTFMove(callback), registrationIdentifier = registration.identifier(), serviceWorkerIdentifier = worker->identifier()](bool success) mutable {
         if (!weakThis) {
