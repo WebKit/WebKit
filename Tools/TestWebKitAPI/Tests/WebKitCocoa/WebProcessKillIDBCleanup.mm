@@ -51,7 +51,12 @@
 
 @end
 
+// FIXME when rdar://109725221 is resolved
+#if PLATFORM(IOS)
+TEST(IndexedDB, DISABLED_WebProcessKillIDBCleanup)
+#else
 TEST(IndexedDB, WebProcessKillIDBCleanup)
+#endif
 {
     RetainPtr<IndexedDBWebProcessKillMessageHandler> handler = adoptNS([[IndexedDBWebProcessKillMessageHandler alloc] init]);
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -88,7 +93,12 @@ TEST(IndexedDB, WebProcessKillIDBCleanup)
     EXPECT_WK_STREQ(@"Second WebView Transaction Started", string6.get());
 }
 
+// FIXME when rdar://109725221 is resolved
+#if PLATFORM(IOS)
+TEST(IndexedDB, DISABLED_KillWebProcessWithOpenConnection)
+#else
 TEST(IndexedDB, KillWebProcessWithOpenConnection)
+#endif
 {
     auto handler = adoptNS([[IndexedDBWebProcessKillMessageHandler alloc] init]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

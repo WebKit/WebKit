@@ -51,7 +51,12 @@
 
 @end
 
+// FIXME when rdar://109725221 is resolved
+#if PLATFORM(IOS)
+TEST(IndexedDB, DISABLED_StoreBlobThenRemoveData)
+#else
 TEST(IndexedDB, StoreBlobThenRemoveData)
+#endif
 {
     auto handler = adoptNS([[StoreBlobMessageHandler alloc] init]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -131,7 +136,12 @@ TEST(IndexedDB, StoreBlobThenRemoveData)
     TestWebKitAPI::Util::run(&readyToContinue);
 }
 
+// FIXME when rdar://109725221 is resolved
+#if PLATFORM(IOS)
+TEST(IndexedDB, DISABLED_StoreBlobThenDeleteDatabase)
+#else
 TEST(IndexedDB, StoreBlobThenDeleteDatabase)
+#endif
 {
     auto handler = adoptNS([[StoreBlobMessageHandler alloc] init]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

@@ -56,7 +56,12 @@ static bool masterKeyCalled = false;
 
 namespace TestWebKitAPI {
 
+// FIXME when rdar://109725221 is resolved
+#if PLATFORM(IOS)
+TEST(WebKit, DISABLED_WebCryptoNilMasterKey)
+#else
 TEST(WebKit, WebCryptoNilMasterKey)
+#endif
 {
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"navigation-client-default-crypto" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 

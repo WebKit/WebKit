@@ -518,7 +518,12 @@ static void terminateNetworkProcessWhileRegistrationIsStored(WKWebViewConfigurat
     [configuration.websiteDataStore _terminateNetworkProcess];
 }
 
+// FIXME when rdar://109725221 is resolved
+#if PLATFORM(IOS)
+TEST(PushAPI, DISABLED_firePushEventWithNoPagesSuccessful)
+#else
 TEST(PushAPI, firePushEventWithNoPagesSuccessful)
+#endif
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { mainBytes } },
@@ -566,7 +571,12 @@ TEST(PushAPI, firePushEventWithNoPagesSuccessful)
     clearWebsiteDataStore([configuration websiteDataStore]);
 }
 
+// FIXME when rdar://109725221 is resolved
+#if PLATFORM(IOS)
+TEST(PushAPI, DISABLED_firePushEventWithNoPagesFail)
+#else
 TEST(PushAPI, firePushEventWithNoPagesFail)
+#endif
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { mainBytes } },

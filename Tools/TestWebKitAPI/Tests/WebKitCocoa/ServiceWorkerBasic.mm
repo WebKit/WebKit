@@ -2296,7 +2296,12 @@ static void runTest(ResponseType responseType)
     EXPECT_TRUE(isTestServerTrust(webView.get().serverTrust));
 }
 
+// FIXME when rdar://109725221 is resolved
+#if PLATFORM(IOS)
+TEST(ServiceWorkers, DISABLED_ServerTrust)
+#else
 TEST(ServiceWorkers, ServerTrust)
+#endif
 {
     runTest(ResponseType::Synthetic);
     runTest(ResponseType::Cached);
@@ -2376,7 +2381,12 @@ TEST(ServiceWorkers, ChangeOfServerCertificate)
     }
 }
 
+// FIXME when rdar://109725221 is resolved
+#if PLATFORM(IOS)
+TEST(ServiceWorkers, DISABLED_ClearDOMCacheAlsoIncludesServiceWorkerRegistrations)
+#else
 TEST(ServiceWorkers, ClearDOMCacheAlsoIncludesServiceWorkerRegistrations)
+#endif
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 

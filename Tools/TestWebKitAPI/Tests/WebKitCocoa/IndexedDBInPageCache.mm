@@ -51,7 +51,12 @@
 
 @end
 
+// FIXME when rdar://109725221 is resolved
+#if PLATFORM(IOS)
+TEST(IndexedDB, DISABLED_IndexedDBInPageCache)
+#else
 TEST(IndexedDB, IndexedDBInPageCache)
+#endif
 {
     auto handler = adoptNS([[IndexedDBInPageCacheMessageHandler alloc] init]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

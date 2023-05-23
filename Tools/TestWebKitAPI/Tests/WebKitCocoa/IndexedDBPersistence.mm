@@ -56,7 +56,12 @@
 
 @end
 
+// FIXME when rdar://109725221 is resolved
+#if PLATFORM(IOS)
+TEST(IndexedDB, DISABLED_IndexedDBPersistence)
+#else
 TEST(IndexedDB, IndexedDBPersistence)
+#endif
 {
     RetainPtr<IndexedDBMessageHandler> handler = adoptNS([[IndexedDBMessageHandler alloc] init]);
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -247,7 +252,12 @@ static void loadThirdPartyPageInWebView(WKWebView *webView, NSString *expectedRe
     EXPECT_WK_STREQ(expectedResult, (NSString *)[getNextMessage() body]);
 }
 
+// FIXME when rdar://109725221 is resolved
+#if PLATFORM(IOS)
+TEST(IndexedDB, DISABLED_IndexedDBThirdPartyFrameHasAccess)
+#else
 TEST(IndexedDB, IndexedDBThirdPartyFrameHasAccess)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto handler = adoptNS([[IndexedDBMessageHandler alloc] init]);
@@ -276,7 +286,12 @@ TEST(IndexedDB, IndexedDBThirdPartyFrameHasAccess)
     loadThirdPartyPageInWebView(thirdWebView.get(), @"database is created - put item success");
 }
 
+// FIXME when rdar://109725221 is resolved
+#if PLATFORM(IOS)
+TEST(IndexedDB, DISABLED_IndexedDBThirdPartyDataRemoval)
+#else
 TEST(IndexedDB, IndexedDBThirdPartyDataRemoval)
+#endif
 {
     auto websiteDataTypes = adoptNS([[NSSet alloc] initWithArray:@[WKWebsiteDataTypeIndexedDBDatabases]]);
     readyToContinue = false;
@@ -326,7 +341,12 @@ TEST(IndexedDB, IndexedDBThirdPartyDataRemoval)
     loadThirdPartyPageInWebView(thirdWebView.get(), @"database is created - put item success");
 }
 
+// FIXME when rdar://109725221 is resolved
+#if PLATFORM(IOS)
+TEST(IndexedDB, DISABLED_IndexedDBThirdPartyStorageLayout)
+#else
 TEST(IndexedDB, IndexedDBThirdPartyStorageLayout)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     NSString *databaseHash = WebCore::SQLiteFileSystem::computeHashForFileName("IndexedDBThirdPartyFrameHasAccess"_s);
@@ -475,7 +495,12 @@ static const char* workerFrameBytes = R"TESTRESOURCE(
 </script>
 )TESTRESOURCE";
 
+// FIXME when rdar://109725221 is resolved
+#if PLATFORM(IOS)
+TEST(IndexedDB, DISABLED_IndexedDBThirdPartyWorkerHasAccess)
+#else
 TEST(IndexedDB, IndexedDBThirdPartyWorkerHasAccess)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto handler = adoptNS([[IndexedDBMessageHandler alloc] init]);
@@ -553,7 +578,12 @@ indexedDB.databases().then(postDatabases);
 </script>
 )TESTRESOURCE";
 
+// FIXME when rdar://109725221 is resolved
+#if PLATFORM(IOS)
+TEST(IndexedDB, DISABLED_IndexedDBGetDatabases)
+#else
 TEST(IndexedDB, IndexedDBGetDatabases)
+#endif
 {
     readyToContinue = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[NSSet setWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil] modifiedSince:[NSDate distantPast] completionHandler:^() {

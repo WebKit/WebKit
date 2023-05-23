@@ -53,7 +53,12 @@
 
 @end
 
+// FIXME when rdar://109725221 is resolved
+#if PLATFORM(IOS)
+TEST(IndexedDB, DISABLED_IndexedDBTempFileSize)
+#else
 TEST(IndexedDB, IndexedDBTempFileSize)
+#endif
 {
     auto handler = adoptNS([[IndexedDBFileSizeMessageHandler alloc] init]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
