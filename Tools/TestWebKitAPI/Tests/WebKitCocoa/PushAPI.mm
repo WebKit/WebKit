@@ -450,7 +450,7 @@ TEST(PushAPI, testSilentFlag)
     pushMessageProcessed = false;
     [webView callAsyncJavaScript:@(getPersistentNotificationsScript) arguments:@{ @"theMessage" : @"getAllNotifications" } inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(error);
-        EXPECT_TRUE([result isEqualToString:@"nothing false nothingTag true true somethingTag false false somethingTag "]);
+        EXPECT_TRUE([result isEqualToString:@"nothing null nothingTag true true somethingTag false false somethingTag "]);
         pushMessageProcessed = true;
     }];
     TestWebKitAPI::Util::run(&pushMessageProcessed);
@@ -460,7 +460,7 @@ TEST(PushAPI, testSilentFlag)
     // but the results should be the same as not specifying a tag at all like in the previous test.
     [webView callAsyncJavaScript:@(getPersistentNotificationsScript) arguments:@{ @"theMessage" : @"" } inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(error);
-        EXPECT_TRUE([result isEqualToString:@"nothing false nothingTag true true somethingTag false false somethingTag "]);
+        EXPECT_TRUE([result isEqualToString:@"nothing null nothingTag true true somethingTag false false somethingTag "]);
         pushMessageProcessed = true;
     }];
     TestWebKitAPI::Util::run(&pushMessageProcessed);
@@ -468,7 +468,7 @@ TEST(PushAPI, testSilentFlag)
     pushMessageProcessed = false;
     [webView callAsyncJavaScript:@(getPersistentNotificationsScript) arguments:@{ @"theMessage" : @"nothingTag" } inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(error);
-        EXPECT_TRUE([result isEqualToString:@"nothing false nothingTag "]);
+        EXPECT_TRUE([result isEqualToString:@"nothing null nothingTag "]);
         pushMessageProcessed = true;
     }];
     TestWebKitAPI::Util::run(&pushMessageProcessed);

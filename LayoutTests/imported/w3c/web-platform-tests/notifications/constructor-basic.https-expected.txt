@@ -1,3 +1,5 @@
 
 PASS Called the notification constructor with one argument.
+PASS Constructing a notification without a NotificationOptions defaults to null.
+PASS constructing a notification with a NotificationOptions dictionary correctly sets and reflects the silent attribute.
 

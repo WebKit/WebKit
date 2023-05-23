@@ -88,7 +88,7 @@ public:
     const String& tag() const { return m_tag; }
     const URL& icon() const { return m_icon; }
     JSC::JSValue dataForBindings(JSC::JSGlobalObject&);
-    bool silent() const { return m_silent == std::nullopt ? false : *m_silent; }
+    std::optional<bool> silent() const { return m_silent; }
 
     TextDirection direction() const { return m_direction == Direction::Rtl ? TextDirection::RTL : TextDirection::LTR; }
 

@@ -37,7 +37,7 @@
     // VibratePattern vibrate;
     // EpochTimeStamp timestamp;
     // boolean renotify = false;
-    boolean? silent;
+    boolean? silent = null;
     // boolean requireInteraction = false;
     any data = null;
     // sequence<NotificationAction> actions = [];
