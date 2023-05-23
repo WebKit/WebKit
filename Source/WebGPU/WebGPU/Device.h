@@ -111,6 +111,7 @@ public:
 
     void generateAValidationError(String&& message);
     void generateAnOutOfMemoryError(String&& message);
+    void generateAnInternalError(String&& message);
 
     Instance& instance() const { return m_adapter->instance(); }
     bool hasUnifiedMemory() const { return m_device.hasUnifiedMemory; }

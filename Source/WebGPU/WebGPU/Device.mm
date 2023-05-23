@@ -287,6 +287,25 @@ void Device::generateAnOutOfMemoryError(String&& message)
     }
 }
 
+void Device::generateAnInternalError(String&& message)
+{
+    // https://gpuweb.github.io/gpuweb/#abstract-opdef-generate-an-internal-error
+
+    auto* scope = currentErrorScope(WGPUErrorFilter_Internal);
+
+    if (scope) {
+        if (!scope->error)
+            scope->error = Error { WGPUErrorType_Internal, WTFMove(message) };
+        return;
+    }
+
+    if (m_uncapturedErrorCallback) {
+        instance().scheduleWork([protectedThis = Ref { *this }, message = WTFMove(message)]() mutable {
+            protectedThis->m_uncapturedErrorCallback(WGPUErrorType_Internal, WTFMove(message));
+        });
+    }
+}
+
 uint32_t Device::maxBuffersPlusVertexBuffersForVertexStage() const
 {
     // FIXME: use value in HardwareCapabilities from https://github.com/gpuweb/gpuweb/issues/2749
