@@ -83,9 +83,8 @@ namespace ax = WebCore::Accessibility;
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (!isMainRunLoop()) {
-        Locker lock { m_cacheLock };
-        if (m_isolatedTreeRoot)
-            return m_isolatedTreeRoot->wrapper();
+        if (RefPtr root = m_isolatedTreeRoot.get())
+            return root->wrapper();
     }
 #endif
 
@@ -143,8 +142,7 @@ namespace ax = WebCore::Accessibility;
 - (void)setIsolatedTreeRoot:(NakedPtr<WebCore::AXCoreObject>)root
 {
     ASSERT(isMainRunLoop());
-    Locker locker { m_cacheLock };
-    m_isolatedTreeRoot = root;
+    m_isolatedTreeRoot = root.get();
 }
 #endif
 

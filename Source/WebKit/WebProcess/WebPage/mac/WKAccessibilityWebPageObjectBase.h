@@ -43,7 +43,7 @@ class AXCoreObject;
     Lock m_cacheLock;
     WebCore::FloatPoint m_position WTF_GUARDED_BY_LOCK(m_cacheLock);
     WebCore::IntSize m_size WTF_GUARDED_BY_LOCK(m_cacheLock);
-    NakedPtr<WebCore::AXCoreObject> m_isolatedTreeRoot WTF_GUARDED_BY_LOCK(m_cacheLock);
+    ThreadSafeWeakPtr<WebCore::AXCoreObject> m_isolatedTreeRoot;
 #endif
     RetainPtr<id> m_parent;
     bool m_hasMainFramePlugin;
