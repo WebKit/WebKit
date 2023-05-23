@@ -261,7 +261,7 @@ LayoutUnit RenderFlexibleBox::baselinePosition(FontBaseline, bool, LineDirection
 
 std::optional<LayoutUnit> RenderFlexibleBox::firstLineBaseline() const
 {
-    if (isWritingModeRoot() || !m_numberOfInFlowChildrenOnFirstLine || shouldApplyLayoutContainment())
+    if ((isWritingModeRoot() && !isFlexItem()) || !m_numberOfInFlowChildrenOnFirstLine || shouldApplyLayoutContainment())
         return std::optional<LayoutUnit>();
     RenderBox* baselineChild = getBaselineChild(ItemPosition::Baseline);
     
@@ -1493,11 +1493,22 @@ bool RenderFlexibleBox::updateAutoMarginsInCrossAxis(RenderBox& child, LayoutUni
 
 LayoutUnit RenderFlexibleBox::marginBoxAscentForChild(const RenderBox& child)
 {
-    auto ascent = alignmentForChild(child) == ItemPosition::LastBaseline ? child.lastLineBaseline() : child.firstLineBaseline();
     auto isHorizontalFlow = this->isHorizontalFlow();
     auto direction = isHorizontalFlow ? HorizontalLine : VerticalLine;
+    if (crossAxisIsPhysicalWidth() == child.isHorizontalWritingMode())
+        return synthesizedBaseline(child, style(), direction, BorderBox) + flowAwareMarginBeforeForChild(child);
+    auto ascent = alignmentForChild(child) == ItemPosition::LastBaseline ? child.lastLineBaseline() : child.firstLineBaseline();
     if (!ascent)
         return synthesizedBaseline(child, style(), direction, BorderBox) + flowAwareMarginBeforeForChild(child);
+
+    // In either of these cases we require a translation of the ascent because it
+    // was computed in a different coordinate space from the flex container's.
+    // The first scenario below can occur when the flex container has column flex
+    // specified and is in horizontal writing-mode with a vertical-rl flex item *or*
+    // when they are both vertical and the child is flipped blocks.
+    if ((!style().isFlippedBlocksWritingMode() && child.style().isFlippedBlocksWritingMode()) || (style().isFlippedBlocksWritingMode() && child.style().writingMode() == WritingMode::LeftToRight))
+        ascent = child.logicalHeight() - ascent.value();
+
     if (isHorizontalFlow ? child.isScrollContainerY() : child.isScrollContainerX())
         return std::clamp(*ascent, 0_lu, crossAxisExtentForChild(child)) + flowAwareMarginBeforeForChild(child);
     return *ascent + flowAwareMarginBeforeForChild(child);;
