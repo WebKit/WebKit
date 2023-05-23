@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All right reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -277,7 +278,7 @@ std::pair<float, float> RenderRubyRun::startAndEndOverhang(bool forFirstLine) co
 
 void RenderRubyRun::updatePriorContextFromCachedBreakIterator(LazyLineBreakIterator& iterator) const
 {
-    iterator.setPriorContext(m_lastCharacter, m_secondToLastCharacter);
+    iterator.priorContext().set({ m_secondToLastCharacter, m_lastCharacter });
 }
 
 bool RenderRubyRun::canBreakBefore(const LazyLineBreakIterator& iterator) const

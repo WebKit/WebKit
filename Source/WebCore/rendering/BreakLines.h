@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2007, 2010, 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -89,9 +89,9 @@ inline unsigned nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, 
 {
     std::optional<unsigned> nextBreak;
 
-    CharacterType lastLastCharacter = startPosition > 1 ? string[startPosition - 2] : static_cast<CharacterType>(lazyBreakIterator.secondToLastCharacter());
-    CharacterType lastCharacter = startPosition > 0 ? string[startPosition - 1] : static_cast<CharacterType>(lazyBreakIterator.lastCharacter());
-    unsigned priorContextLength = lazyBreakIterator.priorContextLength();
+    CharacterType lastLastCharacter = startPosition > 1 ? string[startPosition - 2] : static_cast<CharacterType>(lazyBreakIterator.priorContext().secondToLastCharacter());
+    CharacterType lastCharacter = startPosition > 0 ? string[startPosition - 1] : static_cast<CharacterType>(lazyBreakIterator.priorContext().lastCharacter());
+    unsigned priorContextLength = lazyBreakIterator.priorContext().length();
     for (unsigned i = startPosition; i < length; i++) {
         CharacterType character = string[i];
 
@@ -102,7 +102,7 @@ inline unsigned nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, 
             if (!nextBreak || nextBreak.value() < i) {
                 // Don't break if positioned at start of primary context and there is no prior context.
                 if (i || priorContextLength) {
-                    UBreakIterator* breakIterator = lazyBreakIterator.get(priorContextLength);
+                    UBreakIterator* breakIterator = lazyBreakIterator.get();
                     if (breakIterator) {
                         int candidate = ubrk_following(breakIterator, i - 1 + priorContextLength);
                         if (candidate == UBRK_DONE)

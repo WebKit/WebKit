@@ -163,4 +163,21 @@ TEST(WTF, TextBreakIteratorBehaviors)
     }
 }
 
+TEST(WTF, LazyLineBreakIteratorPriorContext)
+{
+    LazyLineBreakIterator::PriorContext priorContext;
+    EXPECT_EQ(0U, priorContext.length());
+    priorContext.set({ 'a', 'b' });
+    EXPECT_EQ(2U, priorContext.length());
+    LazyLineBreakIterator::PriorContext priorContext2;
+    EXPECT_FALSE(priorContext == priorContext2);
+    priorContext2.set({ 'a', 'b' });
+    EXPECT_TRUE(priorContext == priorContext2);
+    EXPECT_EQ('a', priorContext.characters()[0]);
+    priorContext.set({ '\0', 'b' });
+    EXPECT_EQ('b', priorContext.characters()[0]);
+    priorContext.reset();
+    EXPECT_EQ(0U, priorContext.length());
+}
+
 } // namespace TestWebKitAPI

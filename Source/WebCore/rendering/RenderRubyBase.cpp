@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All right reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -91,7 +92,7 @@ void RenderRubyBase::cachePriorCharactersIfNeeded(const LazyLineBreakIterator& l
 {
     auto* run = rubyRun();
     if (run)
-        run->setCachedPriorCharacters(lineBreakIterator.lastCharacter(), lineBreakIterator.secondToLastCharacter());
+        run->setCachedPriorCharacters(lineBreakIterator.priorContext().lastCharacter(), lineBreakIterator.priorContext().secondToLastCharacter());
 }
 
 bool RenderRubyBase::isEmptyOrHasInFlowContent() const

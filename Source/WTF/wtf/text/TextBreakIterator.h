@@ -218,20 +218,76 @@ void closeLineBreakIterator(UBreakIterator*&);
 
 WTF_EXPORT_PRIVATE bool isWordTextBreak(UBreakIterator*);
 
+// FIXME: This should be named "CachedTextBreakIteratorFactory" or "CachedTextBreakIteratorContext".
+// The purpose of this class is to hold the parameters of the CachedTextBreakIterator() constructor,
+// so we can create one lazily when it's needed.
 class LazyLineBreakIterator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    LazyLineBreakIterator()
-    {
-        resetPriorContext();
-    }
+    class PriorContext {
+    public:
+        static constexpr size_t Length = 2;
+
+        PriorContext()
+        {
+            reset();
+        }
+
+        UChar lastCharacter() const
+        {
+            static_assert(Length >= 1);
+            return m_priorContext[m_priorContext.size() - 1];
+        }
+
+        UChar secondToLastCharacter() const
+        {
+            static_assert(Length >= 2);
+            return m_priorContext[m_priorContext.size() - 2];
+        }
+
+        void set(std::array<UChar, Length>&& newPriorContext)
+        {
+            m_priorContext = WTFMove(newPriorContext);
+        }
+
+        void update(UChar last)
+        {
+            for (size_t i = 0; i < m_priorContext.size() - 1; ++i)
+                m_priorContext[i] = m_priorContext[i + 1];
+            m_priorContext[m_priorContext.size() - 1] = last;
+        }
+
+        void reset()
+        {
+            std::fill(std::begin(m_priorContext), std::end(m_priorContext), 0);
+        }
+
+        unsigned length() const
+        {
+            unsigned result = 0;
+            for (auto iterator = std::rbegin(m_priorContext); iterator != std::rend(m_priorContext) && *iterator; ++iterator)
+                ++result;
+            return result;
+        }
+
+        const UChar* characters() const
+        {
+            return m_priorContext.data() + (m_priorContext.size() - length());
+        }
+
+        bool operator==(const PriorContext& other) const = default;
+
+    private:
+        std::array<UChar, Length> m_priorContext;
+    };
+
+    LazyLineBreakIterator() = default;
 
     explicit LazyLineBreakIterator(StringView stringView, const AtomString& locale = AtomString(), LineBreakIteratorMode mode = LineBreakIteratorMode::Default)
         : m_stringView(stringView)
         , m_locale(locale)
         , m_mode(mode)
     {
-        resetPriorContext();
     }
 
     ~LazyLineBreakIterator()
@@ -243,65 +299,15 @@ public:
     StringView stringView() const { return m_stringView; }
     LineBreakIteratorMode mode() const { return m_mode; }
 
-    UChar lastCharacter() const
+    UBreakIterator* get()
     {
-        static_assert(priorContextCapacity == 2, "UBreakIterator unexpected prior context length");
-        return m_priorContext[1];
-    }
-
-    UChar secondToLastCharacter() const
-    {
-        static_assert(priorContextCapacity == 2, "UBreakIterator unexpected prior context length");
-        return m_priorContext[0];
-    }
-
-    void setPriorContext(UChar last, UChar secondToLast)
-    {
-        static_assert(priorContextCapacity == 2, "UBreakIterator unexpected prior context length");
-        m_priorContext[0] = secondToLast;
-        m_priorContext[1] = last;
-    }
-
-    void updatePriorContext(UChar last)
-    {
-        static_assert(priorContextCapacity == 2, "UBreakIterator unexpected prior context length");
-        m_priorContext[0] = m_priorContext[1];
-        m_priorContext[1] = last;
-    }
-
-    void resetPriorContext()
-    {
-        static_assert(priorContextCapacity == 2, "UBreakIterator unexpected prior context length");
-        m_priorContext[0] = 0;
-        m_priorContext[1] = 0;
-    }
-
-    unsigned priorContextLength() const
-    {
-        unsigned priorContextLength = 0;
-        static_assert(priorContextCapacity == 2, "UBreakIterator unexpected prior context length");
-        if (m_priorContext[1]) {
-            ++priorContextLength;
-            if (m_priorContext[0])
-                ++priorContextLength;
-        }
-        return priorContextLength;
-    }
-
-    // Obtain text break iterator, possibly previously cached, where this iterator is (or has been)
-    // initialized to use the previously stored string as the primary breaking context and using
-    // previously stored prior context if non-empty.
-    UBreakIterator* get(unsigned priorContextLength)
-    {
-        ASSERT(priorContextLength <= priorContextCapacity);
-        const UChar* priorContext = priorContextLength ? &m_priorContext[priorContextCapacity - priorContextLength] : nullptr;
+        const UChar* priorContext = m_priorContext.characters();
         if (!m_iterator) {
-            m_iterator = acquireLineBreakIterator(m_stringView, m_locale, priorContext, priorContextLength, m_mode);
+            m_iterator = acquireLineBreakIterator(m_stringView, m_locale, priorContext, m_priorContext.length(), m_mode);
             m_cachedPriorContext = priorContext;
-            m_cachedPriorContextLength = priorContextLength;
-        } else if (priorContext != m_cachedPriorContext || priorContextLength != m_cachedPriorContextLength) {
+        } else if (priorContext != m_cachedPriorContext) {
             resetStringAndReleaseIterator(m_stringView, m_locale, m_mode);
-            return get(priorContextLength);
+            return get();
         }
         return m_iterator;
     }
@@ -315,18 +321,25 @@ public:
         m_iterator = nullptr;
         m_cachedPriorContext = nullptr;
         m_mode = mode;
-        m_cachedPriorContextLength = 0;
+    }
+
+    const PriorContext& priorContext() const
+    {
+        return m_priorContext;
+    }
+
+    PriorContext& priorContext()
+    {
+        return m_priorContext;
     }
 
 private:
-    static constexpr unsigned priorContextCapacity = 2;
     StringView m_stringView;
     AtomString m_locale;
     UBreakIterator* m_iterator { nullptr };
     const UChar* m_cachedPriorContext { nullptr };
     LineBreakIteratorMode m_mode { LineBreakIteratorMode::Default };
-    unsigned m_cachedPriorContextLength { 0 };
-    UChar m_priorContext[priorContextCapacity];
+    PriorContext m_priorContext;
 };
 
 // Iterates over "extended grapheme clusters", as defined in UAX #29.

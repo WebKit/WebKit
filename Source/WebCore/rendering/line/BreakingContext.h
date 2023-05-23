@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003-2022 Apple Inc. All right reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All right reserved.
  * Copyright (C) 2010-2015 Google Inc. All rights reserved.
  * Copyright (C) 2013 ChangSeok Oh <shivamidow@gmail.com>
  * Copyright (C) 2013 Adobe Systems Inc. All right reserved.
@@ -362,7 +362,7 @@ inline void BreakingContext::handleOutOfFlowPositioned(Vector<RenderBox*>& posit
         m_appliedStartWidth = true;
     }
     // Reset prior line break context characters.
-    m_renderTextInfo.lineBreakIterator.resetPriorContext();
+    m_renderTextInfo.lineBreakIterator.priorContext().reset();
 }
 
 inline void BreakingContext::handleFloat()
@@ -400,7 +400,7 @@ inline void BreakingContext::handleFloat()
     } else
         m_floatsFitOnLine = false;
     // Update prior line break context characters, using U+FFFD (OBJECT REPLACEMENT CHARACTER) for floating element.
-    m_renderTextInfo.lineBreakIterator.updatePriorContext(replacementCharacter);
+    m_renderTextInfo.lineBreakIterator.priorContext().update(replacementCharacter);
 }
 
 // This is currently just used for list markers and inline flows that have line boxes. Neither should
@@ -506,8 +506,8 @@ inline void BreakingContext::handleReplaced()
         downcast<RenderRubyRun>(replacedBox).updatePriorContextFromCachedBreakIterator(m_renderTextInfo.lineBreakIterator);
     } else {
         // Update prior line break context characters, using U+FFFD (OBJECT REPLACEMENT CHARACTER) for replaced element.
-        m_renderTextInfo.lineBreakIterator.updatePriorContext(replacementCharacter);
-    }    
+        m_renderTextInfo.lineBreakIterator.priorContext().update(replacementCharacter);
+    }
 }
 
 inline float firstPositiveWidth(const WordMeasurements& wordMeasurements)
@@ -722,9 +722,9 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     HashSet<const Font*> fallbackFonts;
     m_hasFormerOpportunity = false;
     bool canBreakMidWord = breakWords || breakAll;
-    UChar lastCharacterFromPreviousRenderText = m_renderTextInfo.lineBreakIterator.lastCharacter();
-    UChar lastCharacter = m_renderTextInfo.lineBreakIterator.lastCharacter();
-    UChar secondToLastCharacter = m_renderTextInfo.lineBreakIterator.secondToLastCharacter();
+    UChar lastCharacterFromPreviousRenderText = m_renderTextInfo.lineBreakIterator.priorContext().lastCharacter();
+    UChar lastCharacter = m_renderTextInfo.lineBreakIterator.priorContext().lastCharacter();
+    UChar secondToLastCharacter = m_renderTextInfo.lineBreakIterator.priorContext().secondToLastCharacter();
     // Non-zero only when kerning is enabled and TextLayout isn't used, in which case we measure
     // words with their trailing space, then subtract its width.
     TextLayout* textLayout = m_renderTextInfo.layout.get();
@@ -1025,7 +1025,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
         nextCharacter(c, lastCharacter, secondToLastCharacter);
     }
 
-    m_renderTextInfo.lineBreakIterator.setPriorContext(lastCharacter, secondToLastCharacter);
+    m_renderTextInfo.lineBreakIterator.priorContext().set({ secondToLastCharacter, lastCharacter });
 
     wordMeasurements.grow(wordMeasurements.size() + 1);
     WordMeasurement& wordMeasurement = wordMeasurements.last();

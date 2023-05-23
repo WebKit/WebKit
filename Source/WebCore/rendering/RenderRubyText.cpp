@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -99,9 +99,9 @@ bool RenderRubyText::canBreakBefore(const LazyLineBreakIterator& iterator) const
     // FIXME: It would be nice to improve this so that it isn't just hard-coded, but lookahead in this
     // case is particularly problematic.
 
-    if (!iterator.priorContextLength())
+    if (!iterator.priorContext().length())
         return true;
-    UChar ch = iterator.lastCharacter();
+    UChar ch = iterator.priorContext().lastCharacter();
     ULineBreak lineBreak = (ULineBreak)u_getIntPropertyValue(ch, UCHAR_LINE_BREAK);
     // UNICODE LINE BREAKING ALGORITHM
     // http://www.unicode.org/reports/tr14/
