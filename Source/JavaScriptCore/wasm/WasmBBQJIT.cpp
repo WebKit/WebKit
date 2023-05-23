@@ -780,15 +780,17 @@ public:
             };
 
             const auto& functionSignature = signature->as<FunctionSignature>();
-            auto gprSetCopy = generator.m_validGPRs;
-            auto fprSetCopy = generator.m_validFPRs;
             if (!isAnyCatch(*this)) {
+                auto gprSetCopy = generator.m_validGPRs;
+                auto fprSetCopy = generator.m_validFPRs;
+                // We intentionally exclude GPRInfo::nonPreservedNonArgumentGPR1 from argument locations. See explanation in addIf and emitIndirectCall.
+                gprSetCopy.remove(GPRInfo::nonPreservedNonArgumentGPR1);
                 for (unsigned i = 0; i < functionSignature->argumentCount(); ++i)
                     m_argumentLocations.append(allocateArgumentOrResult(generator, functionSignature->argumentType(i).kind, i, gprSetCopy, fprSetCopy));
             }
 
-            gprSetCopy = generator.m_validGPRs;
-            fprSetCopy = generator.m_validFPRs;
+            auto gprSetCopy = generator.m_validGPRs;
+            auto fprSetCopy = generator.m_validFPRs;
             for (unsigned i = 0; i < functionSignature->returnCount(); ++i)
                 m_resultLocations.append(allocateArgumentOrResult(generator, functionSignature->returnType(i).kind, i, gprSetCopy, fprSetCopy));
         }
@@ -6419,7 +6421,14 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addIf(Value condition, BlockSignature signature, Stack& enclosingStack, ControlData& result, Stack& newStack)
     {
-        Location conditionLocation = Location::fromGPR(wasmScratchGPR);
+        // Here, we cannot use wasmScratchGPR since it is used for shuffling in flushAndSingleExit.
+        // We cannot use ScratchScope here too since the allocated scratch register can be used for argument locations.
+        // We intentionally exclude GPRInfo::nonPreservedNonArgumentGPR1 for argument locations. This ensures that GPRInfo::nonPreservedNonArgumentGPR1
+        // will not be overridden over flushAndSingleExit.
+        static_assert(wasmScratchGPR == GPRInfo::nonPreservedNonArgumentGPR0);
+        clobber(GPRInfo::nonPreservedNonArgumentGPR1);
+        ScratchScope<0, 0> scratches(*this, Location::fromGPR(GPRInfo::nonPreservedNonArgumentGPR1));
+        Location conditionLocation = Location::fromGPR(GPRInfo::nonPreservedNonArgumentGPR1);
         if (!condition.isConst())
             emitMove(condition, conditionLocation);
         consume(condition);
@@ -6437,7 +6446,7 @@ public:
         if (condition.isConst() && !condition.asI32())
             result.setIfBranch(m_jit.jump()); // Emit direct branch if we know the condition is false.
         else if (!condition.isConst()) // Otherwise, we only emit a branch at all if we don't know the condition statically.
-            result.setIfBranch(m_jit.branchTest32(ResultCondition::Zero, wasmScratchGPR, wasmScratchGPR));
+            result.setIfBranch(m_jit.branchTest32(ResultCondition::Zero, GPRInfo::nonPreservedNonArgumentGPR1));
         return { };
     }
 
@@ -7059,7 +7068,7 @@ public:
     }
 
     template<size_t N>
-    void saveValuesAcrossCallAndPassArguments(const Vector<Value, N>& arguments, const CallInformation& callInfo, GPRReg gpScratch, FPRReg fpScratch)
+    void saveValuesAcrossCallAndPassArguments(const Vector<Value, N>& arguments, const CallInformation& callInfo)
     {
         // First, we resolve all the locations of the passed arguments, before any spillage occurs. For constants,
         // we store their normal values; for all other values, we store pinned values with their current location.
@@ -7107,7 +7116,7 @@ public:
         parameterLocations.reserveInitialCapacity(callInfo.params.size());
         for (const auto& param : callInfo.params)
             parameterLocations.uncheckedAppend(Location::fromArgumentLocation(param));
-        emitShuffle(resolvedArguments, parameterLocations, Location::fromGPR(gpScratch), Location::fromFPR(fpScratch));
+        emitShuffle(resolvedArguments, parameterLocations);
     }
 
     void restoreValuesAfterCall(const CallInformation& callInfo)
@@ -7162,7 +7171,7 @@ public:
 
         // Preserve caller-saved registers and other info
         prepareForExceptions();
-        saveValuesAcrossCallAndPassArguments(arguments, callInfo, wasmScratchGPR, wasmScratchFPR);
+        saveValuesAcrossCallAndPassArguments(arguments, callInfo);
 
         // Materialize address of native function and call register
         void* taggedFunctionPtr = tagCFunctionPtr<void*, OperationPtrTag>(function);
@@ -7188,7 +7197,7 @@ public:
 
         // Preserve caller-saved registers and other info
         prepareForExceptions();
-        saveValuesAcrossCallAndPassArguments(arguments, callInfo, wasmScratchGPR, wasmScratchFPR);
+        saveValuesAcrossCallAndPassArguments(arguments, callInfo);
 
         // Materialize address of native function and call register
         void* taggedFunctionPtr = tagCFunctionPtr<void*, OperationPtrTag>(function);
@@ -7252,7 +7261,7 @@ public:
 
         // Preserve caller-saved registers and other info
         prepareForExceptions();
-        saveValuesAcrossCallAndPassArguments(arguments, callInfo, wasmScratchGPR, wasmScratchFPR);
+        saveValuesAcrossCallAndPassArguments(arguments, callInfo);
 
         if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex)) {
             m_jit.move(TrustedImmPtr(Instance::offsetOfImportFunctionStub(functionIndex)), wasmScratchGPR);
@@ -7285,6 +7294,7 @@ public:
         // TODO: Support tail calls
         UNUSED_PARAM(jsCalleeAnchor);
         RELEASE_ASSERT(callType == CallType::Call);
+        ASSERT(calleeCode == GPRInfo::nonPreservedNonArgumentGPR1);
 
         const auto& callingConvention = wasmCallingConvention();
         CallInformation wasmCalleeInfo = callingConvention.callInformationFor(signature, CallRole::Caller);
@@ -7301,15 +7311,13 @@ public:
         // Since this can switch instance, we need to keep JSWebAssemblyInstance anchored in the stack.
         m_jit.storePtr(jsCalleeAnchor, Location::fromArgumentLocation(wasmCalleeInfo.thisArgument).asAddress());
 
-        m_jit.loadPtr(Address(calleeCode), wasmScratchGPR);
+        m_jit.loadPtr(Address(calleeCode), calleeCode);
         prepareForExceptions();
+        saveValuesAcrossCallAndPassArguments(arguments, wasmCalleeInfo); // Keep in mind that this clobbers wasmScratchGPR and wasmScratchFPR.
 
-        // This is kind of weird! We can't use wasmScratchGPR here, since it stores the address of callee. But we know
-        // that the calleeCode GPR will never be used after this point, and that it can't be bound to any of our
-        // arguments. So we use it as the scratch GPR for passing the arguments instead.
-        saveValuesAcrossCallAndPassArguments(arguments, wasmCalleeInfo, calleeCode, wasmScratchFPR);
-
-        m_jit.call(wasmScratchGPR, WasmEntryPtrTag);
+        // Why can we still call calleeCode after saveValuesAcrossCallAndPassArguments? This is because we ensured that calleeCode is GPRInfo::nonPreservedNonArgumentGPR1,
+        // and any argument locations will not include GPRInfo::nonPreservedNonArgumentGPR1.
+        m_jit.call(calleeCode, WasmEntryPtrTag);
         returnValuesFromCall(results, *signature.as<FunctionSignature>(), wasmCalleeInfo);
 
         // The call could have been to another WebAssembly instance, and / or could have modified our Memory.
@@ -7327,69 +7335,76 @@ public:
         ASSERT(m_info.tables[tableIndex].type() == TableElementType::Funcref);
 
         Location calleeIndexLocation;
-        GPRReg calleeInstance, calleeCode, jsCalleeAnchor;
+        GPRReg calleeInstance;
+        GPRReg calleeCode;
+        GPRReg jsCalleeAnchor;
 
         {
-            ScratchScope<3, 0> scratches(*this);
+            clobber(GPRInfo::nonPreservedNonArgumentGPR1);
+            ScratchScope<0, 0> calleeCodeScratch(*this, Location::fromGPR(GPRInfo::nonPreservedNonArgumentGPR1));
+            calleeCode = GPRInfo::nonPreservedNonArgumentGPR1;
+            ASSERT(calleeCode == GPRInfo::nonPreservedNonArgumentGPR1);
 
-            if (calleeIndex.isConst())
-                emitMoveConst(calleeIndex, calleeIndexLocation = Location::fromGPR(scratches.gpr(2)));
-            else
-                calleeIndexLocation = loadIfNecessary(calleeIndex);
+            {
+                ScratchScope<2, 0> scratches(*this);
 
-            GPRReg callableFunctionBufferLength = scratches.gpr(0);
-            GPRReg callableFunctionBuffer = scratches.gpr(1);
-
-            ASSERT(tableIndex < m_info.tableCount());
-
-            int numImportFunctions = m_info.importFunctionCount();
-            m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfTablePtr(numImportFunctions, tableIndex)), callableFunctionBufferLength);
-            auto& tableInformation = m_info.table(tableIndex);
-            if (tableInformation.maximum() && tableInformation.maximum().value() == tableInformation.initial()) {
-                if (!tableInformation.isImport())
-                    m_jit.addPtr(TrustedImm32(FuncRefTable::offsetOfFunctionsForFixedSizedTable()), callableFunctionBufferLength, callableFunctionBuffer);
+                if (calleeIndex.isConst())
+                    emitMoveConst(calleeIndex, calleeIndexLocation = Location::fromGPR(scratches.gpr(1)));
                 else
+                    calleeIndexLocation = loadIfNecessary(calleeIndex);
+
+                GPRReg callableFunctionBufferLength = calleeCode;
+                GPRReg callableFunctionBuffer = scratches.gpr(0);
+
+                ASSERT(tableIndex < m_info.tableCount());
+
+                int numImportFunctions = m_info.importFunctionCount();
+                m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfTablePtr(numImportFunctions, tableIndex)), callableFunctionBufferLength);
+                auto& tableInformation = m_info.table(tableIndex);
+                if (tableInformation.maximum() && tableInformation.maximum().value() == tableInformation.initial()) {
+                    if (!tableInformation.isImport())
+                        m_jit.addPtr(TrustedImm32(FuncRefTable::offsetOfFunctionsForFixedSizedTable()), callableFunctionBufferLength, callableFunctionBuffer);
+                    else
+                        m_jit.loadPtr(Address(callableFunctionBufferLength, FuncRefTable::offsetOfFunctions()), callableFunctionBuffer);
+                    m_jit.move(TrustedImm32(tableInformation.initial()), callableFunctionBufferLength);
+                } else {
                     m_jit.loadPtr(Address(callableFunctionBufferLength, FuncRefTable::offsetOfFunctions()), callableFunctionBuffer);
-                m_jit.move(TrustedImm32(tableInformation.initial()), callableFunctionBufferLength);
-            } else {
-                m_jit.loadPtr(Address(callableFunctionBufferLength, FuncRefTable::offsetOfFunctions()), callableFunctionBuffer);
-                m_jit.load32(Address(callableFunctionBufferLength, FuncRefTable::offsetOfLength()), callableFunctionBufferLength);
+                    m_jit.load32(Address(callableFunctionBufferLength, FuncRefTable::offsetOfLength()), callableFunctionBufferLength);
+                }
+                ASSERT(calleeIndexLocation.isGPR());
+                m_jit.zeroExtend32ToWord(calleeIndexLocation.asGPR(), calleeIndexLocation.asGPR());
+
+                consume(calleeIndex);
+
+                // Check the index we are looking for is valid.
+                throwExceptionIf(ExceptionType::OutOfBoundsCallIndirect, m_jit.branch32(RelationalCondition::AboveOrEqual, calleeIndexLocation.asGPR(), callableFunctionBufferLength));
+
+                // Neither callableFunctionBuffer nor callableFunctionBufferLength are used before any of these
+                // are def'd below, so we can reuse the registers and save some pressure.
+                calleeInstance = scratches.gpr(0);
+                jsCalleeAnchor = scratches.gpr(1);
+
+                static_assert(sizeof(TypeIndex) == sizeof(void*));
+                GPRReg calleeSignatureIndex = wasmScratchGPR;
+
+                // Compute the offset in the table index space we are looking for.
+                m_jit.move(TrustedImmPtr(sizeof(FuncRefTable::Function)), calleeSignatureIndex);
+                m_jit.mul64(calleeIndexLocation.asGPR(), calleeSignatureIndex);
+                m_jit.addPtr(callableFunctionBuffer, calleeSignatureIndex);
+
+                // FIXME: This seems wasteful to do two checks just for a nicer error message.
+                // We should move just to use a single branch and then figure out what
+                // error to use in the exception handler.
+
+                m_jit.loadPtr(Address(calleeSignatureIndex, FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation()), calleeCode); // Pointer to callee code.
+                m_jit.loadPtr(Address(calleeSignatureIndex, FuncRefTable::Function::offsetOfInstance()), calleeInstance);
+                m_jit.loadPtr(Address(calleeSignatureIndex, FuncRefTable::Function::offsetOfValue()), jsCalleeAnchor);
+                m_jit.loadPtr(Address(calleeSignatureIndex, FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfSignatureIndex()), calleeSignatureIndex);
+
+                throwExceptionIf(ExceptionType::NullTableEntry, m_jit.branchTestPtr(ResultCondition::Zero, calleeSignatureIndex, calleeSignatureIndex));
+                throwExceptionIf(ExceptionType::BadSignature, m_jit.branchPtr(RelationalCondition::NotEqual, calleeSignatureIndex, TrustedImmPtr(TypeInformation::get(originalSignature))));
             }
-            ASSERT(calleeIndexLocation.isGPR());
-            m_jit.zeroExtend32ToWord(calleeIndexLocation.asGPR(), calleeIndexLocation.asGPR());
-
-            consume(calleeIndex);
-
-            // Check the index we are looking for is valid.
-            throwExceptionIf(ExceptionType::OutOfBoundsCallIndirect, m_jit.branch32(RelationalCondition::AboveOrEqual, calleeIndexLocation.asGPR(), callableFunctionBufferLength));
-
-            // Neither callableFunctionBuffer nor callableFunctionBufferLength are used before any of these
-            // are def'd below, so we can reuse the registers and save some pressure.
-            calleeCode = scratches.gpr(0);
-            calleeInstance = scratches.gpr(1);
-            jsCalleeAnchor = scratches.gpr(2);
-
-            static_assert(sizeof(TypeIndex) == sizeof(void*));
-            GPRReg calleeSignatureIndex = wasmScratchGPR;
-
-            // Compute the offset in the table index space we are looking for.
-            m_jit.move(TrustedImmPtr(sizeof(FuncRefTable::Function)), calleeSignatureIndex);
-            m_jit.mul64(calleeIndexLocation.asGPR(), calleeSignatureIndex);
-            m_jit.addPtr(callableFunctionBuffer, calleeSignatureIndex);
-
-            // FIXME: This seems wasteful to do two checks just for a nicer error message.
-            // We should move just to use a single branch and then figure out what
-            // error to use in the exception handler.
-
-            m_jit.loadPtr(Address(calleeSignatureIndex, FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation()), calleeCode); // Pointer to callee code.
-            m_jit.loadPtr(Address(calleeSignatureIndex, FuncRefTable::Function::offsetOfInstance()), calleeInstance);
-            m_jit.loadPtr(Address(calleeSignatureIndex, FuncRefTable::Function::offsetOfValue()), jsCalleeAnchor);
-            m_jit.loadPtr(Address(calleeSignatureIndex, FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfSignatureIndex()), calleeSignatureIndex);
-
-            throwExceptionIf(ExceptionType::NullTableEntry, m_jit.branchTestPtr(ResultCondition::Zero, calleeSignatureIndex, calleeSignatureIndex));
-            throwExceptionIf(ExceptionType::BadSignature, m_jit.branchPtr(RelationalCondition::NotEqual, calleeSignatureIndex, TrustedImmPtr(TypeInformation::get(originalSignature))));
         }
-
         emitIndirectCall("CallIndirect", calleeIndex, calleeInstance, calleeCode, jsCalleeAnchor, signature, args, results, callType);
         return { };
     }
@@ -8902,7 +8917,7 @@ private:
     };
 
     template<size_t N, typename OverflowHandler>
-    void emitShuffleMove(Vector<Value, N, OverflowHandler>& srcVector, Vector<Location, N, OverflowHandler>& dstVector, Vector<ShuffleStatus, N, OverflowHandler>& statusVector, unsigned index, Location gpTemp, Location fpTemp)
+    void emitShuffleMove(Vector<Value, N, OverflowHandler>& srcVector, Vector<Location, N, OverflowHandler>& dstVector, Vector<ShuffleStatus, N, OverflowHandler>& statusVector, unsigned index)
     {
         Location srcLocation = locationOf(srcVector[index]);
         Location dst = dstVector[index];
@@ -8916,10 +8931,10 @@ private:
             if (locationOf(srcVector[i]) == dst) {
                 switch (statusVector[i]) {
                 case ShuffleStatus::ToMove:
-                    emitShuffleMove(srcVector, dstVector, statusVector, i, gpTemp, fpTemp);
+                    emitShuffleMove(srcVector, dstVector, statusVector, i);
                     break;
                 case ShuffleStatus::BeingMoved: {
-                    Location temp = srcVector[i].isFloat() ? fpTemp : gpTemp;
+                    Location temp = srcVector[i].isFloat() ? Location::fromFPR(wasmScratchFPR) : Location::fromGPR(wasmScratchGPR);
                     emitMove(srcVector[i], temp);
                     srcVector[i] = Value::pinned(srcVector[i].type(), temp);
                     break;
@@ -8934,7 +8949,7 @@ private:
     }
 
     template<size_t N, typename OverflowHandler>
-    void emitShuffle(Vector<Value, N, OverflowHandler>& srcVector, Vector<Location, N, OverflowHandler>& dstVector, Location gpTemp, Location fpTemp)
+    void emitShuffle(Vector<Value, N, OverflowHandler>& srcVector, Vector<Location, N, OverflowHandler>& dstVector)
     {
         ASSERT(srcVector.size() == dstVector.size());
 
@@ -8948,18 +8963,8 @@ private:
         Vector<ShuffleStatus, N, OverflowHandler> statusVector(srcVector.size(), ShuffleStatus::ToMove);
         for (unsigned i = 0; i < srcVector.size(); i ++) {
             if (statusVector[i] == ShuffleStatus::ToMove)
-                emitShuffleMove(srcVector, dstVector, statusVector, i, gpTemp, fpTemp);
+                emitShuffleMove(srcVector, dstVector, statusVector, i);
         }
-    }
-
-    template<size_t N, typename OverflowHandler>
-    void emitShuffle(Vector<Value, N, OverflowHandler>& srcVector, Vector<Location, N, OverflowHandler>& dstVector)
-    {
-        ScratchScope<1, 1> scratches(*this);
-        Location gpTemp = Location::fromGPR(scratches.gpr(0));
-        Location fpTemp = Location::fromFPR(scratches.fpr(0));
-
-        emitShuffle(srcVector, dstVector, gpTemp, fpTemp);
     }
 
     ControlData& currentControlData()
