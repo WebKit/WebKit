@@ -58,18 +58,14 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUBufferBindingLa
     case WGPUBufferBindingType_Uniform:
     case WGPUBufferBindingType_ReadOnlyStorage:
 #if USE(METAL_ARGUMENT_ACCESS_ENUMS)
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         descriptor.access = MTLArgumentAccessReadOnly;
-ALLOW_DEPRECATED_DECLARATIONS_END
 #else
         descriptor.access = MTLBindingAccessReadOnly;
 #endif
         break;
     case WGPUBufferBindingType_Storage:
 #if USE(METAL_ARGUMENT_ACCESS_ENUMS)
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         descriptor.access = MTLArgumentAccessReadWrite;
-ALLOW_DEPRECATED_DECLARATIONS_END
 #else
         descriptor.access = MTLBindingAccessReadWrite;
 #endif
@@ -96,9 +92,7 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUSamplerBindingL
     auto descriptor = [MTLArgumentDescriptor new];
     descriptor.dataType = MTLDataTypeSampler;
 #if USE(METAL_ARGUMENT_ACCESS_ENUMS)
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     descriptor.access = MTLArgumentAccessReadOnly;
-ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     descriptor.access = MTLBindingAccessReadOnly;
 #endif
@@ -120,9 +114,7 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUTextureBindingL
     auto descriptor = [MTLArgumentDescriptor new];
     descriptor.dataType = MTLDataTypeTexture;
 #if USE(METAL_ARGUMENT_ACCESS_ENUMS)
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     descriptor.access = MTLArgumentAccessReadOnly;
-ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     descriptor.access = MTLBindingAccessReadOnly;
 #endif
