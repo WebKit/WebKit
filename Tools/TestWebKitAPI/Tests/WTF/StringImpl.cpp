@@ -615,11 +615,11 @@ TEST(WTF, StringImplNullSymbolToAtomString)
     ASSERT_TRUE(result2);
 }
 
-static StringImpl* staticString = MAKE_STATIC_STRING_IMPL("Cocoa");
+static StringImpl::StaticStringImpl staticString {"Cocoa"};
 
 TEST(WTF, StringImplStaticToAtomString)
 {
-    StringImpl& original = *staticString;
+    StringImpl& original = staticString;
     ASSERT_FALSE(original.isSymbol());
     ASSERT_FALSE(original.isAtom());
     ASSERT_TRUE(original.isStatic());
@@ -732,6 +732,23 @@ TEST(WTF, DynamicStaticStringImpl)
     String hello2 = StringImpl::createStaticStringImpl("hello", 5);
 
     doStaticStringImplTests(StaticStringImplTestSet::DynamicallyAllocatedImpl, hello, world, longer, hello2);
+}
+
+static SymbolImpl::StaticSymbolImpl staticSymbol {"Cocoa"};
+static SymbolImpl::StaticSymbolImpl staticPrivateSymbol {"Cocoa", SymbolImpl::s_flagIsPrivate };
+
+TEST(WTF, StaticSymbolImpl)
+{
+    auto& symbol = static_cast<SymbolImpl&>(staticSymbol);
+    ASSERT_TRUE(symbol.isSymbol());
+    ASSERT_FALSE(symbol.isPrivate());
+}
+
+TEST(WTF, StaticPrivateSymbolImpl)
+{
+    auto& symbol = static_cast<SymbolImpl&>(staticPrivateSymbol);
+    ASSERT_TRUE(symbol.isSymbol());
+    ASSERT_TRUE(symbol.isPrivate());
 }
 
 TEST(WTF, ExternalStringImplCreate8bit)

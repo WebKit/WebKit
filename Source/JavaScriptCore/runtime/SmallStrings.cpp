@@ -31,13 +31,6 @@
 
 namespace JSC {
 
-namespace SmallString {
-#define DEFINE_STATIC_STRING_IMPL(name, _) \
-    LazyNeverDestroyed<StringImpl*> s_##name;
-FOREACH_JS_STATIC_STRING_IMPL(DEFINE_STATIC_STRING_IMPL)
-#undef DEFINE_STATIC_STRING_IMPL
-};
-
 SmallStrings::SmallStrings()
 {
     static_assert(singleCharacterStringCount == sizeof(m_singleCharacterStrings) / sizeof(m_singleCharacterStrings[0]), "characters count is in sync with class usage");

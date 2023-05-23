@@ -223,13 +223,11 @@ int XPCServiceMain(int, const char**)
             }
         }
 #endif
-        const char* webKitBundleVersion = xpc_dictionary_get_string(bootstrap.get(), "WebKitBundleVersion");
-        const char* expectedBundleVersion = [[NSBundle bundleWithIdentifier:@"com.apple.WebKit"].infoDictionary[(__bridge NSString *)kCFBundleVersionKey] cStringUsingEncoding:NSISOLatin1StringEncoding];
-        if (!webKitBundleVersion || !expectedBundleVersion || strncmp(webKitBundleVersion, expectedBundleVersion, strlen(expectedBundleVersion))) {
-            const int msgLen = strlen("WebKit framework version mismatch: %s != %s\n") + strlen(webKitBundleVersion) + strlen(expectedBundleVersion);
-            char* msg = (char*) malloc(sizeof(char) * msgLen);
-            snprintf(msg, msgLen, "WebKit framework version mismatch: %s != %s\n", webKitBundleVersion, expectedBundleVersion);
-            logAndSetCrashLogMessage(msg);
+        auto webKitBundleVersion = String::fromLatin1(xpc_dictionary_get_string(bootstrap.get(), "WebKitBundleVersion"));
+        String expectedBundleVersion = [NSBundle bundleWithIdentifier:@"com.apple.WebKit"].infoDictionary[(__bridge NSString *)kCFBundleVersionKey];
+        if (!webKitBundleVersion.isNull() && !expectedBundleVersion.isNull() && webKitBundleVersion != expectedBundleVersion) {
+            auto errorMessage = makeString("WebKit framework version mismatch: ", webKitBundleVersion, " != ", expectedBundleVersion);
+            logAndSetCrashLogMessage(errorMessage.utf8().data());
             crashDueWebKitFrameworkVersionMismatch();
         }
 #endif

@@ -29,7 +29,6 @@
 #import "APIArray.h"
 #import "Logging.h"
 #import "WKNSArray.h"
-#import "WebKit2Initialize.h"
 #import "WebPreferences.h"
 #import "_WKFeatureInternal.h"
 #import <WebCore/SecurityOrigin.h>
@@ -565,14 +564,12 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
 
 + (NSArray<_WKFeature *> *)_features
 {
-    WebKit::InitializeWebKit2();
     auto features = WebKit::WebPreferences::features();
     return wrapper(API::Array::create(WTFMove(features)));
 }
 
 + (NSArray<_WKFeature *> *)_internalDebugFeatures
 {
-    WebKit::InitializeWebKit2();
     auto features = WebKit::WebPreferences::internalDebugFeatures();
     return wrapper(API::Array::create(WTFMove(features)));
 }
@@ -589,7 +586,6 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
 
 + (NSArray<_WKExperimentalFeature *> *)_experimentalFeatures
 {
-    WebKit::InitializeWebKit2();
     auto features = WebKit::WebPreferences::experimentalFeatures();
     return wrapper(API::Array::create(WTFMove(features)));
 }

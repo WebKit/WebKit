@@ -30,7 +30,6 @@
 #include "InitializeThreading.h"
 
 #include "AssemblyComments.h"
-#include "BuiltinNames.h"
 #include "ExecutableAllocator.h"
 #include "JITOperationList.h"
 #include "JSCConfig.h"
@@ -92,8 +91,6 @@ void initialize()
             StructureAlignedMemoryAllocator::initializeStructureAddressSpace();
         }
         Options::finalize();
-        SmallString::initializeJSStaticStrings();
-        Symbols::initializeStaticSymbols();
 
 #if !USE(SYSTEM_MALLOC)
 #if BUSE(LIBPAS)

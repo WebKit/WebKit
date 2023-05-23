@@ -31,22 +31,7 @@
 
 #if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 #include <mach/mach_vm.h>
-#include <mach/vm_param.h>
 #endif
-
-#if CPU(ADDRESS64)
-#if CPU(ARM64) && OS(DARWIN)
-#if MACH_VM_MAX_ADDRESS_RAW < (1ULL << 36)
-#define HAVE_36BIT_ADDRESS 1
-#else
-#define HAVE_36BIT_ADDRESS 0
-#endif // MACH_VM_MAX_ADDRESS_RAW < (1ULL << 36)
-#else
-#define HAVE_36BIT_ADDRESS 0
-#endif // CPU(ARM64) && OS(DARWIN)
-#else
-#define HAVE_36BIT_ADDRESS 0
-#endif // CPU(ADDRESS64)
 
 WTF_EXTERN_C_BEGIN
 

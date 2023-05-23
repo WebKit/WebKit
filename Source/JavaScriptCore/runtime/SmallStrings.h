@@ -28,7 +28,6 @@
 #include "CollectionScope.h"
 #include "TypeofType.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/text/StringImpl.h>
 
 #define JSC_COMMON_STRINGS_EACH_NAME(macro) \
     macro(default) \
@@ -49,30 +48,6 @@ class StringImpl;
 }
 
 namespace JSC {
-
-namespace SmallString {
-#define FOREACH_JS_STATIC_STRING_IMPL(macro) \
-    macro(baseConstructorString, "(function () { })") \
-    macro(derivedConstructorString, "(function (...args) { super(...args); })") \
-    macro(terminationErrorString, "JavaScript execution terminated.")
-
-#define DECLARE_STATIC_STRING_IMPL(name, characters) \
-    extern LazyNeverDestroyed<StringImpl*> s_##name; \
-    inline StringImpl* name() \
-    { \
-        return s_##name.get(); \
-    }
-FOREACH_JS_STATIC_STRING_IMPL(DECLARE_STATIC_STRING_IMPL)
-#undef DECLARE_STATIC_STRING_IMPL
-
-#define INITIALIZE_STRING(name, characters) \
-    s_##name.construct(&StringImpl::createStaticStringImplWithoutCopying(characters ""_s, (characters ""_s).length()).leakRef());
-inline void initializeJSStaticStrings()
-{
-    FOREACH_JS_STATIC_STRING_IMPL(INITIALIZE_STRING)
-}
-#undef INITIALIZE_STRING
-}
 
 class VM;
 class JSString;

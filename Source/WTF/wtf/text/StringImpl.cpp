@@ -108,6 +108,8 @@ void StringStats::printStats()
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringImpl);
 
+StringImpl::StaticStringImpl StringImpl::s_emptyAtomString("", StringImpl::StringAtom);
+
 StringImpl::~StringImpl()
 {
     ASSERT(!isStatic());
@@ -271,25 +273,12 @@ Ref<StringImpl> StringImpl::create(const LChar* characters, unsigned length)
     return createInternal(characters, length);
 }
 
-Ref<StringImpl> StringImpl::createStaticStringImplWithoutCopying(const LChar* characters, unsigned length)
-{
-    ASSERT(length);
-    if (!length)
-        return *empty();
-    Ref<StringImpl> result = adoptRef(*new StringImpl(characters, length, ConstructWithoutCopying));
-    result->hash();
-    result->cost();
-    result->m_refCount |= s_refCountFlagIsStaticString;
-    return result;
-}
-
 Ref<StringImpl> StringImpl::createStaticStringImpl(const LChar* characters, unsigned length)
 {
     if (!length)
         return *empty();
     Ref<StringImpl> result = createInternal(characters, length);
     result->hash();
-    result->cost();
     result->m_refCount |= s_refCountFlagIsStaticString;
     return result;
 }
@@ -300,7 +289,6 @@ Ref<StringImpl> StringImpl::createStaticStringImpl(const UChar* characters, unsi
         return *empty();
     Ref<StringImpl> result = create8BitIfPossible(characters, length);
     result->hash();
-    result->cost();
     result->m_refCount |= s_refCountFlagIsStaticString;
     return result;
 }
@@ -1673,7 +1661,5 @@ bool equalIgnoringNullity(const UChar* a, size_t aLength, StringImpl* b)
     }
     return equal(a, b->characters16(), b->length());
 }
-
-LazyNeverDestroyed<Ref<StringImpl>> StringImpl::s_empty;
 
 } // namespace WTF

@@ -92,10 +92,7 @@ JSString* asString(JSValue);
 // JSRopeString [   ID      ][  header  ][   1st fiber         xyz][  length  ][2nd lower32][2nd upper16][3rd lower16][3rd upper32]
 //                                                               ^
 //                                            x:(is8Bit),y:(isSubstring),z:(isRope) bit flags
-
-class alignas(16) JSString : public JSCell {
-    WTF_MAKE_NONCOPYABLE(JSString);
-    WTF_MAKE_NONMOVABLE(JSString);
+class JSString : public JSCell {
 public:
     friend class JIT;
     friend class VM;
@@ -111,8 +108,6 @@ public:
     // Do we really need InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero?
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=212958
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | StructureIsImmortal | OverridesToThis | OverridesPut;
-
-    static constexpr uint8_t numberOfLowerTierCells = 0;
 
     static constexpr bool needsDestruction = true;
     static ALWAYS_INLINE void destroy(JSCell* cell)
@@ -296,8 +291,6 @@ private:
 // from JSStringSubspace::
 class JSRopeString final : public JSString {
     friend class JSString;
-    WTF_MAKE_NONCOPYABLE(JSRopeString);
-    WTF_MAKE_NONMOVABLE(JSRopeString);
 public:
     template<typename, SubspaceAccess>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
