@@ -36,6 +36,7 @@ bool isInsideFlatpak()
     return returnValue;
 }
 
+#if ENABLE(BUBBLEWRAP_SANDBOX)
 bool isInsideUnsupportedContainer()
 {
     static bool inContainer = g_file_test("/run/.containerenv", G_FILE_TEST_EXISTS);
@@ -64,6 +65,7 @@ bool isInsideUnsupportedContainer()
 
     return inContainer && !supportedContainer;
 }
+#endif
 
 bool isInsideSnap()
 {
