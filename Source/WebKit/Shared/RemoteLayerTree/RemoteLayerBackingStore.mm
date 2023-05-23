@@ -211,6 +211,8 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
     encoder << m_backBuffer;
     encoder << m_secondaryBackBuffer;
 
+    encoder << m_previouslyPaintedRect;
+
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     std::optional<ImageBufferBackendHandle> displayListHandle;
     if (m_displayListBuffer)
@@ -238,6 +240,9 @@ bool RemoteLayerBackingStoreProperties::decode(IPC::Decoder& decoder, RemoteLaye
         return false;
 
     if (!decoder.decode(result.m_secondaryBackBufferIdentifier))
+        return false;
+
+    if (!decoder.decode(result.m_paintedRect))
         return false;
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
@@ -736,6 +741,15 @@ void RemoteLayerBackingStoreProperties::applyBackingStoreToLayer(CALayer *layer,
 #endif
 
     layer.contents = contents.get();
+    if ([CALayer instancesRespondToSelector:@selector(contentsDirtyRect)]) {
+        if (m_paintedRect) {
+            CGRect dirty = *m_paintedRect;
+            FloatRect painted = *m_paintedRect;
+            painted.scale(layer.contentsScale);
+            layer.contentsDirtyRect = dirty;
+        } else
+            layer.contentsDirtyRect = CGRectNull;
+    }
 }
 
 void RemoteLayerBackingStoreProperties::updateCachedBuffers(RemoteLayerTreeNode& node, LayerContentsType contentsType)

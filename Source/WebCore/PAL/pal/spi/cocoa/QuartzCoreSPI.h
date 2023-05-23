@@ -224,6 +224,7 @@ typedef enum {
 #if HAVE(CALAYER_USES_WEBKIT_BEHAVIOR)
 @property BOOL usesWebKitBehavior;
 #endif
+@property CGRect contentsDirtyRect;
 @end
 
 @interface CATransaction ()

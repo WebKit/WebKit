@@ -259,6 +259,8 @@ private:
     std::optional<WebCore::RenderingResourceIdentifier> m_backBufferIdentifier;
     std::optional<WebCore::RenderingResourceIdentifier> m_secondaryBackBufferIdentifier;
 
+    std::optional<WebCore::IntRect> m_paintedRect;
+
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     std::optional<ImageBufferBackendHandle> m_displayListBufferHandle;
 #endif
