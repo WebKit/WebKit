@@ -2155,7 +2155,8 @@ public:
 #endif
 
     SubframePageProxy* subpageFrameProxyForRegistrableDomain(WebCore::RegistrableDomain) const;
-    void addSubframePageProxy(WebCore::RegistrableDomain, UniqueRef<SubframePageProxy>&&);
+    void addSubframePageProxy(const WebCore::RegistrableDomain&, Ref<SubframePageProxy>&&);
+    void removeSubpageFrameProxyIfUnused(const WebCore::RegistrableDomain&);
 
     void createRemoteSubframesInOtherProcesses(WebFrameProxy&);
 

@@ -59,15 +59,16 @@ class WebProcessProxy;
 
 struct FrameInfoData;
 
-class SubframePageProxy : public IPC::MessageReceiver, public IPC::MessageSender {
+class SubframePageProxy : public RefCounted<SubframePageProxy>, public IPC::MessageReceiver, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SubframePageProxy(WebPageProxy&, WebProcessProxy&);
+    static Ref<SubframePageProxy> create(WebPageProxy& page, WebProcessProxy& process) { return adoptRef(*new SubframePageProxy(page, process)); }
     ~SubframePageProxy();
 
     WebProcessProxy& process() { return m_process.get(); }
 
 private:
+    SubframePageProxy(WebPageProxy&, WebProcessProxy&);
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);

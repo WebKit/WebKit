@@ -5259,7 +5259,7 @@ void WebPageProxy::updateRemoteFrameSize(WebCore::FrameIdentifier frameID, WebCo
         ASSERT_NOT_REACHED();
         return;
     }
-    auto* subframePageProxy = internals().domainToSubframePageProxyMap.get(RegistrableDomain(frame->url()));
+    auto subframePageProxy = internals().domainToSubframePageProxyMap.get(RegistrableDomain(frame->url()));
     if (!subframePageProxy)
         return;
     subframePageProxy->send(Messages::WebPage::UpdateFrameSize(frameID, size));
@@ -5804,7 +5804,7 @@ void WebPageProxy::didFinishLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 
         frame->didFinishLoad();
 
-        auto* subframePageProxy = internals().domainToSubframePageProxyMap.get(RegistrableDomain(frame->url()));
+        auto subframePageProxy = internals().domainToSubframePageProxyMap.get(RegistrableDomain(frame->url()));
 
         if (subframePageProxy && frame->parentFrame())
             frame->parentFrame()->process().send(Messages::WebPage::DidFinishLoadInAnotherProcess(frameID), webPageID());
@@ -12522,16 +12522,22 @@ void WebPageProxy::generateTestReport(const String& message, const String& group
     send(Messages::WebPage::GenerateTestReport(message, group));
 }
 
-void WebPageProxy::addSubframePageProxy(WebCore::RegistrableDomain domain, UniqueRef<SubframePageProxy>&& subframePageProxy)
+void WebPageProxy::addSubframePageProxy(const WebCore::RegistrableDomain& domain, Ref<SubframePageProxy>&& subframePageProxy)
 {
-    // FIXME: Add a corresponding remove call.
-    auto& internals = this->internals();
-    internals.domainToSubframePageProxyMap.add(domain, WTFMove(subframePageProxy));
+    internals().domainToSubframePageProxyMap.add(domain, WTFMove(subframePageProxy));
+}
+
+void WebPageProxy::removeSubpageFrameProxyIfUnused(const WebCore::RegistrableDomain& domain)
+{
+    auto& map = internals().domainToSubframePageProxyMap;
+    auto it = map.find(domain);
+    if (it != map.end() && !it->value)
+        map.remove(it);
 }
 
 SubframePageProxy* WebPageProxy::subpageFrameProxyForRegistrableDomain(WebCore::RegistrableDomain domain) const
 {
-    return internals().domainToSubframePageProxyMap.get(domain);
+    return internals().domainToSubframePageProxyMap.get(domain).get();
 }
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)

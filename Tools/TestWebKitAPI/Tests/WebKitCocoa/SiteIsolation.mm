@@ -504,12 +504,7 @@ TEST(SiteIsolation, ParentNavigatingCrossOriginIframeToSameOrigin)
     checkFrameTreesInProcesses(webView.get(), {
         { "https://example.com"_s,
             { { "https://example.com"_s } }
-        },
-        // FIXME: This process should be torn down when the iframe navigates back to example.com.
-        // The count of local frames going to 0 should remove the SubframePageProxy.
-        { RemoteFrame,
-            { { RemoteFrame } }
-        },
+        }
     });
 }
 

@@ -55,6 +55,7 @@ namespace WebKit {
 
 class ProvisionalFrameProxy;
 class SafeBrowsingWarning;
+class SubframePageProxy;
 class UserData;
 class WebFramePolicyListenerProxy;
 class WebPageProxy;
@@ -152,6 +153,7 @@ public:
     void swapToProcess(Ref<WebProcessProxy>&&, const WebCore::ResourceRequest&);
 
     void commitProvisionalFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
+    void setSubframePageProxy(SubframePageProxy&);
 
     void getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&&);
     FrameTreeCreationParameters frameTreeCreationParameters() const;
@@ -180,6 +182,7 @@ private:
     ListHashSet<Ref<WebFrameProxy>> m_childFrames;
     WeakPtr<WebFrameProxy> m_parentFrame;
     std::unique_ptr<ProvisionalFrameProxy> m_provisionalFrame;
+    RefPtr<SubframePageProxy> m_subframePageProxy;
 #if ENABLE(CONTENT_FILTERING)
     WebCore::ContentFilterUnblockHandler m_contentFilterUnblockHandler;
 #endif

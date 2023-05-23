@@ -387,13 +387,23 @@ void WebFrameProxy::swapToProcess(Ref<WebProcessProxy>&& process, const WebCore:
 
 void WebFrameProxy::commitProvisionalFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType frameLoadType, const WebCore::CertificateInfo& certificateInfo, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent hasInsecureContent, WebCore::MouseEventPolicy mouseEventPolicy, const UserData& userData)
 {
+    ASSERT(m_page);
     if (m_provisionalFrame) {
         m_provisionalFrame->process().provisionalFrameCommitted(*this);
         m_process->send(Messages::WebPage::DidCommitLoadInAnotherProcess(frameID, m_provisionalFrame->layerHostingContextIdentifier(), m_provisionalFrame->process().coreProcessIdentifier()), m_page->webPageID());
         m_process = std::exchange(m_provisionalFrame, nullptr)->process();
+        m_provisionalFrame = nullptr;
+
+        RegistrableDomain oldDomain(url());
+        m_subframePageProxy = m_page->subpageFrameProxyForRegistrableDomain(RegistrableDomain(request.url()));
+        m_page->removeSubpageFrameProxyIfUnused(oldDomain);
     }
-    if (m_page)
-        m_page->didCommitLoadForFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);
+    m_page->didCommitLoadForFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);
+}
+
+void WebFrameProxy::setSubframePageProxy(SubframePageProxy& subframePageProxy)
+{
+    m_subframePageProxy = &subframePageProxy;
 }
 
 void WebFrameProxy::getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&& completionHandler)
