@@ -109,7 +109,7 @@ void CanvasBase::makeRenderingResultsAvailable()
 {
     if (auto* context = renderingContext()) {
         context->paintRenderingResultsToCanvas();
-        if (auto noiseInjectionHashSalt = scriptExecutionContext() ? scriptExecutionContext()->noiseInjectionHashSalt() : std::nullopt)
+        if (auto noiseInjectionHashSalt = shouldInjectNoiseBeforeReadback() ? scriptExecutionContext()->noiseInjectionHashSalt() : std::nullopt)
             m_canvasNoiseInjection.postProcessDirtyCanvasBuffer(buffer(), *noiseInjectionHashSalt);
     }
 }
@@ -375,12 +375,12 @@ RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer(bool usesDisplayListDrawing,
 bool CanvasBase::shouldInjectNoiseBeforeReadback() const
 {
     // Note, every early-return resulting from this check potentially leaks this state. This is a risk that we're accepting right now.
-    return scriptExecutionContext() && scriptExecutionContext()->noiseInjectionHashSalt();
+    return m_imageBuffer && scriptExecutionContext() && scriptExecutionContext()->noiseInjectionHashSalt();
 }
 
 bool CanvasBase::postProcessPixelBufferResults(Ref<PixelBuffer>&& pixelBuffer) const
 {
-    if (auto noiseInjectionHashSalt = scriptExecutionContext() ? scriptExecutionContext()->noiseInjectionHashSalt() : std::nullopt)
+    if (auto noiseInjectionHashSalt = shouldInjectNoiseBeforeReadback() ? scriptExecutionContext()->noiseInjectionHashSalt() : std::nullopt)
         return m_canvasNoiseInjection.postProcessPixelBufferResults(std::forward<Ref<PixelBuffer>>(pixelBuffer), *noiseInjectionHashSalt);
     return false;
 }
