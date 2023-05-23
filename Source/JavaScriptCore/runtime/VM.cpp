@@ -1240,6 +1240,8 @@ void VM::didExhaustMicrotaskQueue()
                 continue;
 
             callPromiseRejectionCallback(promise);
+            if (UNLIKELY(hasPendingTerminationException()))
+                return;
         }
     } while (!m_aboutToBeNotifiedRejectedPromises.isEmpty());
 }
@@ -1258,10 +1260,14 @@ void VM::drainMicrotasks()
             while (!m_microtaskQueue.isEmpty()) {
                 auto task = m_microtaskQueue.dequeue();
                 task.run();
+                if (UNLIKELY(hasPendingTerminationException()))
+                    return;
                 if (m_onEachMicrotaskTick)
                     m_onEachMicrotaskTick(*this);
             }
             didExhaustMicrotaskQueue();
+            if (UNLIKELY(hasPendingTerminationException()))
+                return;
         } while (!m_microtaskQueue.isEmpty());
     }
     finalizeSynchronousJSExecution();
