@@ -1,0 +1,25 @@
+Testing application of kerning to CJK text
+
+default
+YeYeYeYeãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£
+font-kerning: none;
+YeYeYeYeãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£
+font-kerning: normal;
+YeYeYeYeãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£
+font-feature-settings:"palt" 0; font-kerning: normal;
+YeYeYeYeãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£
+font-feature-settings:"palt" 1; font-kerning: normal;
+YeYeYeYeãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£
+font-feature-settings:"palt" 1; font-kerning: none;
+YeYeYeYeãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£
+
+PASS expected match: .kernON .latin vs .paltOFFkernON .latin
+FAIL expected match: .kernON .latin vs .paltONkernON .latin assert_equals: expected 245 but got 230
+PASS expected match: .kernOFF .latin vs .paltONkernOFF .latin
+FAIL expected match: .kernON .cjk vs .paltONkernON .cjk assert_equals: expected 337 but got 385
+PASS expected match: .default .cjk vs .kernOFF .cjk
+PASS expected mismatch: .kernOFF .latin vs .kernON .latin
+FAIL expected mismatch: .kernOFF .cjk vs .kernON .cjk assert_not_equals: got disallowed value 385
+PASS expected mismatch: .paltOFFkernON .cjk vs .paltONkernON .cjk
+PASS .default .latin matches one of [.kernON .latin, .kernOFF .latin]
+

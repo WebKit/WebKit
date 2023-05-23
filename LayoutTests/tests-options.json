@@ -2147,6 +2147,9 @@
     "imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-state-changed.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/css-fonts/discrete-no-interpolation.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display.html": [
         "slow"
     ],

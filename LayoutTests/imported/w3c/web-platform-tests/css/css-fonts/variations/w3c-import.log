@@ -31,6 +31,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-2a.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-2b-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-2b.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-2c-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-2c.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-3-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-3-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-3.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-stretch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-style-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-style-parsing.html
@@ -43,6 +48,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-weight-metrics-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-weight-metrics.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-weight-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/slnt-backslant-variable-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/slnt-backslant-variable-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/slnt-backslant-variable.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/slnt-variable-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/slnt-variable-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/slnt-variable.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-box-font-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-box-font-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/variable-box-font.html

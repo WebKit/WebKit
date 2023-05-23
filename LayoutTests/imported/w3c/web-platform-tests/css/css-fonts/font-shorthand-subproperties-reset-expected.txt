@@ -1,0 +1,13 @@
+
+PASS Property font-size-adjust should be reset to its initial value.
+PASS Property font-kerning should be reset to its initial value.
+PASS Property font-variant-caps should be reset to its initial value.
+PASS Property font-variant-ligatures should be reset to its initial value.
+PASS Property font-variant-position should be reset to its initial value.
+PASS Property font-variant-numeric should be reset to its initial value.
+PASS Property font-variant-alternates should be reset to its initial value.
+PASS Property font-variant-east-asian should be reset to its initial value.
+PASS Property font-feature-settings should be reset to its initial value.
+PASS Property font-optical-sizing should be reset to its initial value.
+PASS Property font-variation-settings should be reset to its initial value.
+
