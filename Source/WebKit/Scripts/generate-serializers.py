@@ -36,7 +36,6 @@ import sys
 # CustomMemberLayout - member memory layout doesn't match serialization layout, so don't static_assert that the members are in order.
 # LegacyPopulateFromEmptyConstructor - instead of calling a constructor with the members, call the empty constructor then insert the members one at a time.
 # OptionSet - for enum classes, instead of only allowing deserialization of the exact values, allow deserialization of any bit combination of the values.
-# NoForwardDeclaration - this type cannot be forward declared and its header needs to be included in generated header.
 #
 # Supported member attributes:
 #
@@ -63,7 +62,6 @@ class SerializedType(object):
         self.nested = False
         self.members_are_subclasses = False
         self.custom_member_layout = False
-        self.no_forward_declaration_header = None
         if attributes is not None:
             for attribute in attributes.split(', '):
                 if '=' in attribute:
@@ -74,8 +72,6 @@ class SerializedType(object):
                         self.create_using = value
                     if key == 'Alias':
                         self.alias = value
-                    if key == 'NoForwardDeclaration':
-                        self.no_forward_declaration_header = value
                 else:
                     if attribute == 'Nested':
                         self.nested = True
@@ -259,29 +255,13 @@ def alias_struct_or_class(alias):
     return match.groups()[0]
 
 
-def generate_headers_for_header(serialized_types):
-    fixed_headers = set({'<wtf/ArgumentCoder.h>', '<wtf/OptionSet.h>', '<wtf/Ref.h>'})
-    type_headers = set()
-    for type in serialized_types:
-        if type.no_forward_declaration_header is not None:
-            type_headers.add(type.no_forward_declaration_header)
-
-    headers = []
-    for header in fixed_headers.union(type_headers):
-        headers.append(ConditionalHeader(header, None))
-
-    headers.sort()
-    return headers
-
-
 def generate_header(serialized_types, serialized_enums):
     result = []
     result.append(_license_header)
     result.append('#pragma once')
     result.append('')
-    headers = generate_headers_for_header(serialized_types)
-    for header in headers:
-        result.append('#include ' + header.header)
+    for header in ['<wtf/ArgumentCoder.h>', '<wtf/OptionSet.h>', '<wtf/Ref.h>']:
+        result.append('#include ' + header)
 
     result.append('')
     for enum in serialized_enums:
@@ -296,7 +276,7 @@ def generate_header(serialized_types, serialized_enums):
         if enum.condition is not None:
             result.append('#endif')
     for type in serialized_types:
-        if type.nested or type.no_forward_declaration_header is not None:
+        if type.nested:
             continue
         if type.condition is not None:
             result.append('#if ' + type.condition)
@@ -538,6 +518,13 @@ def generate_impl(serialized_types, serialized_enums, headers):
     result.append('#include "config.h"')
     result.append('#include "GeneratedSerializers.h"')
     result.append('')
+    for header in headers:
+        if header.condition is not None:
+            result.append('#if ' + header.condition)
+        result.append('#include ' + header.header)
+        if header.condition is not None:
+            result.append('#endif')
+    result.append('')
     result.append('template<size_t...> struct MembersInCorrectOrder;')
     result.append('template<size_t onlyOffset> struct MembersInCorrectOrder<onlyOffset> { static constexpr bool value = true; };')
     result.append('template<size_t firstOffset, size_t secondOffset, size_t... remainingOffsets> struct MembersInCorrectOrder<firstOffset, secondOffset, remainingOffsets...> {')
@@ -578,12 +565,6 @@ def generate_impl(serialized_types, serialized_enums, headers):
     result.append('#if COMPILER(GCC)')
     result.append('IGNORE_WARNINGS_BEGIN("invalid-offsetof")')
     result.append('#endif')
-    for header in headers:
-        if header.condition is not None:
-            result.append('#if ' + header.condition)
-        result.append('#include ' + header.header)
-        if header.condition is not None:
-            result.append('#endif')
     result.append('')
     result.append('namespace IPC {')
     result.append('')
@@ -824,7 +805,7 @@ def parse_serialized_types(file, file_name):
                 serialized_enums.append(SerializedEnum(namespace, name, underlying_type, members, type_condition, attributes))
             else:
                 serialized_types.append(SerializedType(struct_or_class, namespace, name, parent_class_name, members, type_condition, attributes, metadata))
-                if namespace is not None and (attributes is None or 'CustomHeader' not in attributes and 'Nested' not in attributes and 'NoForwardDeclaration' not in attributes):
+                if namespace is not None and (attributes is None or ('CustomHeader' not in attributes and 'Nested' not in attributes)):
                     if namespace == 'WebKit':
                         headers.append(ConditionalHeader('"' + name + '.h"', type_condition))
                     elif namespace == 'WTF':

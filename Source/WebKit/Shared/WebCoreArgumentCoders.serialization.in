@@ -2450,7 +2450,7 @@ class WebCore::ResourceResponse : WebCore::ResourceResponseBase {
 }
 
 header: <WebCore/ResourceResponseBase.h>
-[CustomHeader, NoForwardDeclaration=<WebCore/ResourceResponseBase.h>] struct WebCore::ResourceResponseBase::CrossThreadData {
+[Nested] struct WebCore::ResourceResponseBase::CrossThreadData {
     URL url;
     String mimeType;
     long long expectedContentLength;

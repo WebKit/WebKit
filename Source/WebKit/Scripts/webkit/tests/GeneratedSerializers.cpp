@@ -25,6 +25,30 @@
 #include "config.h"
 #include "GeneratedSerializers.h"
 
+#include "CommonHeader.h"
+#if ENABLE(TEST_FEATURE)
+#include "CommonHeader.h"
+#endif
+#if ENABLE(TEST_FEATURE)
+#include "FirstMemberType.h"
+#endif
+#include "HeaderWithoutCondition"
+#if ENABLE(TEST_FEATURE)
+#include "SecondMemberType.h"
+#endif
+#if ENABLE(TEST_FEATURE)
+#include "StructHeader.h"
+#endif
+#include <Namespace/EmptyConstructorNullable.h>
+#include <Namespace/EmptyConstructorStruct.h>
+#include <Namespace/ReturnRefClass.h>
+#include <WebCore/FloatBoxExtent.h>
+#include <WebCore/InheritanceGrandchild.h>
+#include <WebCore/InheritsFrom.h>
+#include <WebCore/TimingFunction.h>
+#include <wtf/CreateUsingClass.h>
+#include <wtf/Seconds.h>
+
 template<size_t...> struct MembersInCorrectOrder;
 template<size_t onlyOffset> struct MembersInCorrectOrder<onlyOffset> { static constexpr bool value = true; };
 template<size_t firstOffset, size_t secondOffset, size_t... remainingOffsets> struct MembersInCorrectOrder<firstOffset, secondOffset, remainingOffsets...> {
@@ -63,29 +87,6 @@ template<> struct VirtualTableAndRefCountOverhead<false, false> { };
 #if COMPILER(GCC)
 IGNORE_WARNINGS_BEGIN("invalid-offsetof")
 #endif
-#include "CommonHeader.h"
-#if ENABLE(TEST_FEATURE)
-#include "CommonHeader.h"
-#endif
-#if ENABLE(TEST_FEATURE)
-#include "FirstMemberType.h"
-#endif
-#include "HeaderWithoutCondition"
-#if ENABLE(TEST_FEATURE)
-#include "SecondMemberType.h"
-#endif
-#if ENABLE(TEST_FEATURE)
-#include "StructHeader.h"
-#endif
-#include <Namespace/EmptyConstructorNullable.h>
-#include <Namespace/EmptyConstructorStruct.h>
-#include <Namespace/ReturnRefClass.h>
-#include <WebCore/FloatBoxExtent.h>
-#include <WebCore/InheritanceGrandchild.h>
-#include <WebCore/InheritsFrom.h>
-#include <WebCore/TimingFunction.h>
-#include <wtf/CreateUsingClass.h>
-#include <wtf/Seconds.h>
 
 namespace IPC {
 
