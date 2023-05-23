@@ -5,8 +5,8 @@ layer at (0,0) size 800x84
     RenderBody {BODY} at (8,16) size 784x52
       RenderBlock {DIV} at (0,0) size 784x52
         RenderBlock {P} at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 228x17
-            text run at (0,0) width 228: "there should be more text below this"
+          RenderText {#text} at (0,0) size 233x17
+            text run at (0,0) width 233: "there should be more text below this"
         RenderBlock {P} at (0,34) size 784x18
-          RenderText {#text} at (0,0) size 163x17
-            text run at (0,0) width 163: "PASS if this text is visible"
+          RenderText {#text} at (0,0) size 167x17
+            text run at (0,0) width 167: "PASS if this text is visible"

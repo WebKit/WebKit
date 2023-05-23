@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 575x17
-          text run at (0,0) width 575: "The following select elements should all be rendered on the left, with their text left justified."
+        RenderText {#text} at (0,0) size 591x17
+          text run at (0,0) width 591: "The following select elements should all be rendered on the left, with their text left justified."
       RenderBlock (anonymous) at (0,34) size 784x150
         RenderMenuList {SELECT} at (0,0) size 300x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 298x28

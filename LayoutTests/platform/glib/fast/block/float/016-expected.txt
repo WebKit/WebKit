@@ -9,11 +9,11 @@ layer at (0,0) size 800x510
             RenderBlock {b} at (0,0) size 160x70 [border: none (40px solid #00000000) (69px solid #CCCCCC) (40px solid #00000000)]
             RenderBlock {b} at (0,70) size 160x70 [border: (69px solid #CCCCCC) (40px solid #00000000) none (40px solid #00000000)]
             RenderBlock {span} at (8,61) size 144x19 [color=#000000]
-              RenderInline {abbr} at (0,0) size 35x17
-                RenderText {#text} at (18,0) size 35x17
-                  text run at (18,0) width 35: "CSS"
-              RenderText {#text} at (52,0) size 74x17
-                text run at (52,0) width 74: " examples"
+              RenderInline {abbr} at (0,0) size 33x17
+                RenderText {#text} at (19,0) size 33x17
+                  text run at (19,0) width 33: "CSS"
+              RenderText {#text} at (51,0) size 74x17
+                text run at (51,0) width 74: " examples"
         RenderListItem {li} at (0,119) size 247x72
           RenderBlock {a} at (0,0) size 160x139 [color=#CCCCCC]
             RenderBlock {b} at (0,0) size 160x70 [border: none (40px solid #00000000) (69px solid #CCCCCC) (40px solid #00000000)]
@@ -43,18 +43,18 @@ layer at (0,0) size 800x510
             RenderBlock {span} at (8,61) size 144x19 [color=#000000]
               RenderText {#text} at (0,0) size 52x17
                 text run at (0,0) width 52: "simple "
-              RenderInline {abbr} at (0,0) size 56x17
-                RenderText {#text} at (51,0) size 56x17
-                  text run at (51,0) width 56: "XHTML"
-              RenderText {#text} at (106,0) size 38x17
-                text run at (106,0) width 38: " tests"
+              RenderInline {abbr} at (0,0) size 55x17
+                RenderText {#text} at (51,0) size 55x17
+                  text run at (51,0) width 55: "XHTML"
+              RenderText {#text} at (105,0) size 39x17
+                text run at (105,0) width 39: " tests"
         RenderListItem {li} at (246,261) size 161x72
           RenderBlock {a} at (0,0) size 160x139 [color=#CCCCCC]
             RenderBlock {b} at (0,0) size 160x70 [border: none (40px solid #00000000) (69px solid #CCCCCC) (40px solid #00000000)]
             RenderBlock {b} at (0,70) size 160x70 [border: (69px solid #CCCCCC) (40px solid #00000000) none (40px solid #00000000)]
             RenderBlock {span} at (8,61) size 144x19 [color=#000000]
-              RenderText {#text} at (37,0) size 70x17
-                text run at (37,0) width 70: "entrances"
+              RenderText {#text} at (36,0) size 72x17
+                text run at (36,0) width 72: "entrances"
         RenderListItem {li} at (0,332) size 284x72
           RenderBlock {a} at (123,0) size 161x139 [color=#CCCCCC]
             RenderBlock {b} at (0,0) size 160x70 [border: none (40px solid #00000000) (69px solid #CCCCCC) (40px solid #00000000)]
@@ -63,5 +63,5 @@ layer at (0,0) size 800x510
               RenderText {#text} at (59,0) size 26x17
                 text run at (59,0) width 26: "exit"
       RenderBlock {p} at (0,403) size 784x83
-        RenderText {#text} at (328,32) size 128x17
-          text run at (328,32) width 128: "Ceci n'est pas Flash."
+        RenderText {#text} at (327,32) size 130x17
+          text run at (327,32) width 130: "Ceci n'est pas Flash."

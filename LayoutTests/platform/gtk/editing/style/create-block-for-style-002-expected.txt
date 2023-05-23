@@ -11,15 +11,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x82 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 729x53
-          text run at (14,14) width 729: "Should see \"bar\" centered in its own red box, with a left-aligned \"foo\" line "
-          text run at (14,41) width 408: "above and a left-aligned \"baz\" line below."
+        RenderText {#text} at (14,14) size 721x53
+          text run at (14,14) width 721: "Should see \"bar\" centered in its own red box, with a left-aligned \"foo\" line "
+          text run at (14,41) width 402: "above and a left-aligned \"baz\" line below."
       RenderBlock {DIV} at (0,106) size 784x109
         RenderBlock {DIV} at (0,0) size 784x109 [border: (2px solid #FF0000)]
           RenderBlock (anonymous) at (14,14) size 756x27
             RenderText {#text} at (0,0) size 32x26
               text run at (0,0) width 32: "foo"
-            RenderBR {BR} at (32,0) size 0x26
+            RenderBR {BR} at (31,0) size 1x26
           RenderBlock {DIV} at (14,41) size 756x27
             RenderText {#text} at (362,0) size 32x26
               text run at (362,0) width 32: "bar"

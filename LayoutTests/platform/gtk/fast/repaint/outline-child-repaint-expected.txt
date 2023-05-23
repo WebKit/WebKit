@@ -4,20 +4,20 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 151x17
-          text run at (0,0) width 151: "This is a repaint test for "
-        RenderInline {I} at (0,0) size 578x17
-          RenderInline {A} at (0,0) size 307x17 [color=#0000EE]
-            RenderText {#text} at (151,0) size 307x17
-              text run at (151,0) width 307: "https://bugs.webkit.org/show_bug.cgi?id=22159"
-          RenderText {#text} at (457,0) size 272x17
-            text run at (457,0) width 5: " "
-            text run at (461,0) width 268: "Repaint issue with outlines in child objects"
-        RenderText {#text} at (728,0) size 5x17
-          text run at (728,0) width 5: "."
+        RenderText {#text} at (0,0) size 156x17
+          text run at (0,0) width 156: "This is a repaint test for "
+        RenderInline {I} at (0,0) size 590x17
+          RenderInline {A} at (0,0) size 312x17 [color=#0000EE]
+            RenderText {#text} at (155,0) size 312x17
+              text run at (155,0) width 312: "https://bugs.webkit.org/show_bug.cgi?id=22159"
+          RenderText {#text} at (466,0) size 279x17
+            text run at (466,0) width 5: " "
+            text run at (470,0) width 275: "Repaint issue with outlines in child objects"
+        RenderText {#text} at (744,0) size 5x17
+          text run at (744,0) width 5: "."
       RenderBlock {P} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 322x17
-          text run at (0,0) width 322: "If the test passes, you should not see any red below"
+        RenderText {#text} at (0,0) size 328x17
+          text run at (0,0) width 328: "If the test passes, you should not see any red below"
 layer at (8,76) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,68) size 784x2 [border: (1px inset #000000)]
 layer at (0,240) size 220x50

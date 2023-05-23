@@ -28,10 +28,10 @@ FAIL Removing child from valid msubsup assert_approx_equals: block position (chi
 FAIL Adding child to valid msubsup assert_approx_equals: block position (child 0) expected 0 +/- 1 but got 26
 PASS Removing extra child from msubsup
 PASS Adding missing children to mroot
-FAIL Removing child from valid mroot assert_approx_equals: inline position (child 0) expected 0 +/- 1 but got 18.546875
-FAIL Adding child to valid mroot assert_approx_equals: inline position (child 0) expected 0 +/- 1 but got 18.546875
+FAIL Removing child from valid mroot assert_approx_equals: inline position (child 0) expected 0 +/- 1 but got 18.859375
+FAIL Adding child to valid mroot assert_approx_equals: inline position (child 0) expected 0 +/- 1 but got 18.859375
 PASS Removing extra child from mroot
-FAIL Removing children from msqrt assert_approx_equals: inline size expected 13 +/- 1 but got 16
+FAIL Removing children from msqrt assert_approx_equals: inline size expected 13.3125 +/- 1 but got 16
 PASS Adding children to msqrt
 PASS Removing children from mpadded
 PASS Adding children to mpadded

@@ -27,12 +27,12 @@ FAIL document.getElementById("hasP").offsetTop should be 24. Was 20.
 PASS document.getElementById("columnThatShouldNotBeRendered").offsetTop is 0
 
 Tests for offsetWidth:
-PASS document.getElementById("productNo").parentNode.offsetWidth is 183
-PASS document.getElementById("productNo").offsetWidth is 89
+FAIL document.getElementById("productNo").parentNode.offsetWidth should be 182. Was 183.
+PASS document.getElementById("productNo").offsetWidth is 88
 PASS document.getElementById("productName").offsetWidth is 90
-PASS document.getElementById("hasMAndHasNAndHasO").offsetWidth is 155
-PASS document.getElementById("hasMAndHasN").offsetWidth is 103
-PASS document.getElementById("hasO").offsetWidth is 48
+PASS document.getElementById("hasMAndHasNAndHasO").offsetWidth is 157
+PASS document.getElementById("hasMAndHasN").offsetWidth is 104
+PASS document.getElementById("hasO").offsetWidth is 49
 PASS document.getElementById("hasP").offsetWidth is 46
 PASS document.getElementById("columnThatShouldNotBeRendered").offsetWidth is 0
 
@@ -69,12 +69,12 @@ PASS document.getElementById("hasP").offsetTop is 19
 PASS document.getElementById("columnThatShouldNotBeRendered").offsetTop is 0
 
 Tests for offsetWidth:
-PASS document.getElementById("productNo").parentNode.offsetWidth is 175
-PASS document.getElementById("productNo").offsetWidth is 87
+FAIL document.getElementById("productNo").parentNode.offsetWidth should be 174. Was 175.
+PASS document.getElementById("productNo").offsetWidth is 86
 PASS document.getElementById("productName").offsetWidth is 88
-PASS document.getElementById("hasMAndHasNAndHasO").offsetWidth is 141
-PASS document.getElementById("hasMAndHasN").offsetWidth is 95
-PASS document.getElementById("hasO").offsetWidth is 46
+PASS document.getElementById("hasMAndHasNAndHasO").offsetWidth is 143
+PASS document.getElementById("hasMAndHasN").offsetWidth is 96
+PASS document.getElementById("hasO").offsetWidth is 47
 PASS document.getElementById("hasP").offsetWidth is 44
 PASS document.getElementById("columnThatShouldNotBeRendered").offsetWidth is 0
 

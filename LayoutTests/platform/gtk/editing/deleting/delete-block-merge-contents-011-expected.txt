@@ -17,6 +17,6 @@ layer at (0,0) size 800x600
             RenderBR {BR} at (42,0) size 1x26
             RenderBR {BR} at (0,27) size 0x26
           RenderBlock (anonymous) at (0,81) size 756x27
-            RenderText {#text} at (0,0) size 57x26
-              text run at (0,0) width 57: "Three"
+            RenderText {#text} at (0,0) size 56x26
+              text run at (0,0) width 56: "Three"
 caret: position 1 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of body

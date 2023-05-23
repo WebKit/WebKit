@@ -4,23 +4,23 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x584
       RenderBlock {P} at (0,59) size 800x54
-        RenderText {#text} at (0,0) size 207x17
-          text run at (0,0) width 207: "This tests for regressions against "
-        RenderInline {I} at (0,0) size 789x35
-          RenderText {#text} at (207,0) size 789x35
-            text run at (207,0) width 448: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5921 Hit-testing text "
-            text run at (654,0) width 135: "in overflows does not"
-            text run at (0,18) width 167: "take scrolling into account"
-        RenderText {#text} at (166,18) size 764x35
-          text run at (166,18) width 83: " by scrolling "
-          text run at (248,18) width 409: "the above text all the way to the right, clicking the last letter, and "
-          text run at (656,18) width 108: "verifying that the"
-          text run at (0,36) width 291: "correct caret position is reported to the editing "
-          text run at (291,36) width 56: "delegate."
-layer at (0,0) size 210x33 clip at (0,0) size 210x18 scrollX 33 scrollWidth 243
+        RenderText {#text} at (0,0) size 213x17
+          text run at (0,0) width 213: "This tests for regressions against "
+        RenderInline {I} at (0,0) size 782x35
+          RenderText {#text} at (212,0) size 782x35
+            text run at (212,0) width 458: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5921 Hit-testing text "
+            text run at (669,0) width 113: "in overflows does"
+            text run at (0,18) width 195: "not take scrolling into account"
+        RenderText {#text} at (194,18) size 785x35
+          text run at (194,18) width 85: " by scrolling "
+          text run at (278,18) width 420: "the above text all the way to the right, clicking the last letter, and "
+          text run at (697,18) width 88: "verifying that"
+          text run at (0,36) width 323: "the correct caret position is reported to the editing "
+          text run at (323,36) width 58: "delegate."
+layer at (0,0) size 210x33 clip at (0,0) size 210x18 scrollX 39 scrollWidth 249
   RenderBlock {DIV} at (0,0) size 210x33
-    RenderText {#text} at (0,0) size 243x17
-      text run at (0,0) width 243: "Seals and caribou live in the arctic, too"
+    RenderText {#text} at (0,0) size 249x17
+      text run at (0,0) width 249: "Seals and caribou live in the arctic, too"
 layer at (0,41) size 800x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,41) size 800x2 [border: (1px inset #000000)]
 caret: position 40 of child 0 {#text} of child 1 {DIV} of body

@@ -20,9 +20,9 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 144x53
           RenderText {#text} at (14,14) size 11x26
             text run at (14,14) width 11: "a"
-          RenderInline {SPAN} at (0,0) size 133x26
-            RenderText {#text} at (25,14) size 133x26
-              text run at (25,14) width 133: "\x{9}\x{9}\x{9}"
+          RenderInline {SPAN} at (0,0) size 134x26
+            RenderText {#text} at (24,14) size 134x26
+              text run at (24,14) width 134: "\x{9}\x{9}\x{9}"
           RenderBR {BR} at (158,14) size 0x26
           RenderText {#text} at (14,41) size 23x26
             text run at (14,41) width 23: "xz"

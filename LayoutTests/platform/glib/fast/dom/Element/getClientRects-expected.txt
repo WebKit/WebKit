@@ -17,7 +17,7 @@ Client bounding rects for #6
 Known failure. Skipping.
 
 Client bounding rects for #7
-FAIL testRects.length should be 11. Was 10.
+PASS testRects.length is 11
 
 Client bounding rects for #8
 PASS testRects.length is 1

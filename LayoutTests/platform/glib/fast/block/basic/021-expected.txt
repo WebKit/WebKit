@@ -9,11 +9,11 @@ layer at (0,0) size 800x136
             text run at (0,0) width 46: "Yellow"
         RenderBlock {DIV} at (3,21) size 778x72 [border: (3px solid #0000FF)]
           RenderBlock (anonymous) at (3,3) size 772x18
-            RenderText {#text} at (0,0) size 30x17
-              text run at (0,0) width 30: "Blue"
+            RenderText {#text} at (0,0) size 31x17
+              text run at (0,0) width 31: "Blue"
           RenderBlock {DIV} at (3,21) size 772x24 [border: (3px solid #008000)]
-            RenderText {#text} at (3,3) size 39x17
-              text run at (3,3) width 39: "Green"
+            RenderText {#text} at (3,3) size 40x17
+              text run at (3,3) width 40: "Green"
           RenderBlock {DIV} at (3,45) size 772x24 [border: (3px solid #FF0000)]
             RenderText {#text} at (3,3) size 26x17
               text run at (3,3) width 26: "Red"

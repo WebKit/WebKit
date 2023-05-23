@@ -21,16 +21,16 @@ FAIL width and height properties on mpadded assert_approx_equals: width expected
 FAIL inline-size and block-size properties on mpadded assert_approx_equals: width expected 600 +/- 1 but got 0
 FAIL width and height properties on mphantom assert_approx_equals: width expected 500 +/- 1 but got 0
 FAIL inline-size and block-size properties on mphantom assert_approx_equals: width expected 600 +/- 1 but got 0
-FAIL width and height properties on mroot assert_approx_equals: width expected 500 +/- 1 but got 8.546875
-FAIL inline-size and block-size properties on mroot assert_approx_equals: width expected 600 +/- 1 but got 8.546875
+FAIL width and height properties on mroot assert_approx_equals: width expected 500 +/- 1 but got 8.859375
+FAIL inline-size and block-size properties on mroot assert_approx_equals: width expected 600 +/- 1 but got 8.859375
 FAIL width and height properties on mrow assert_approx_equals: width expected 500 +/- 1 but got 0
 FAIL inline-size and block-size properties on mrow assert_approx_equals: width expected 600 +/- 1 but got 0
 PASS width and height properties on ms
 PASS inline-size and block-size properties on ms
 FAIL width and height properties on mspace assert_approx_equals: width expected 500 +/- 1 but got 0
 FAIL inline-size and block-size properties on mspace assert_approx_equals: width expected 600 +/- 1 but got 0
-FAIL width and height properties on msqrt assert_approx_equals: width expected 500 +/- 1 but got 13
-FAIL inline-size and block-size properties on msqrt assert_approx_equals: width expected 600 +/- 1 but got 13
+FAIL width and height properties on msqrt assert_approx_equals: width expected 500 +/- 1 but got 13.3125
+FAIL inline-size and block-size properties on msqrt assert_approx_equals: width expected 600 +/- 1 but got 13.3125
 FAIL width and height properties on mstyle assert_approx_equals: width expected 500 +/- 1 but got 0
 FAIL inline-size and block-size properties on mstyle assert_approx_equals: width expected 600 +/- 1 but got 0
 FAIL width and height properties on msub assert_approx_equals: width expected 500 +/- 1 but got 0.890625

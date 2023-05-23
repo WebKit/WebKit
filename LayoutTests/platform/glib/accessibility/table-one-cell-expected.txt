@@ -5,7 +5,7 @@ AXRole: AXParagraph
 AXParent: AXWebArea
 AXChildren: 1
 AXPosition: { 11.0000, 11.0000 }
-AXSize: { 132.000, 90.0000 }
+AXSize: { 135.000, 90.0000 }
 AXTitle:
 AXDescription:
 AXValue: Pick Your Location!<\n>Get specific content for your area.<\n><obj><\n>

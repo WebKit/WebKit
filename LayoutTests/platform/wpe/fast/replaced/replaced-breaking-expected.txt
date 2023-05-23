@@ -10,35 +10,35 @@ layer at (0,0) size 800x600
         RenderImage {IMG} at (1,49) size 27x27 [border: (1px solid #000000)]
         RenderImage {IMG} at (1,76) size 27x27 [border: (1px solid #000000)]
         RenderText {#text} at (0,0) size 0x0
-        RenderButton {INPUT} at (1,103) size 48x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 32x18
-            RenderText at (0,0) size 32x17
-              text run at (0,0) width 32: "input"
-        RenderButton {INPUT} at (1,130) size 48x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 32x18
-            RenderText at (0,0) size 32x17
-              text run at (0,0) width 32: "input"
+        RenderButton {INPUT} at (1,103) size 49x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 33x18
+            RenderText at (0,0) size 33x17
+              text run at (0,0) width 33: "input"
+        RenderButton {INPUT} at (1,130) size 49x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 33x18
+            RenderText at (0,0) size 33x17
+              text run at (0,0) width 33: "input"
         RenderText {#text} at (0,0) size 0x0
-        RenderButton {BUTTON} at (1,157) size 56x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 40x18
-            RenderText {#text} at (0,0) size 40x17
-              text run at (0,0) width 40: "button"
-        RenderButton {BUTTON} at (1,184) size 56x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 40x18
-            RenderText {#text} at (0,0) size 40x17
-              text run at (0,0) width 40: "button"
+        RenderButton {BUTTON} at (1,157) size 57x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 41x18
+            RenderText {#text} at (0,0) size 41x17
+              text run at (0,0) width 41: "button"
+        RenderButton {BUTTON} at (1,184) size 57x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 41x18
+            RenderText {#text} at (0,0) size 41x17
+              text run at (0,0) width 41: "button"
         RenderText {#text} at (0,0) size 0x0
-        RenderMenuList {SELECT} at (1,211) size 63x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 61x28
-            RenderText at (5,5) size 35x17
-              text run at (5,5) width 35: "select"
-        RenderMenuList {SELECT} at (1,241) size 63x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 61x28
-            RenderText at (5,5) size 35x17
-              text run at (5,5) width 35: "select"
+        RenderMenuList {SELECT} at (1,211) size 65x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 63x28
+            RenderText at (5,5) size 37x17
+              text run at (5,5) width 37: "select"
+        RenderMenuList {SELECT} at (1,241) size 65x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 63x28
+            RenderText at (5,5) size 37x17
+              text run at (5,5) width 37: "select"
         RenderText {#text} at (0,0) size 0x0
-        RenderListBox {SELECT} at (1,271) size 56x55 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
-        RenderListBox {SELECT} at (1,326) size 56x55 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (1,271) size 58x55 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderListBox {SELECT} at (1,326) size 58x55 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderText {#text} at (0,0) size 0x0
         RenderBlock {INPUT} at (3,384) size 12x12
         RenderBlock {INPUT} at (3,402) size 12x12

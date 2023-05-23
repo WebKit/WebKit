@@ -4,26 +4,26 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 212x17
-          text run at (0,0) width 212: "This tests for a regression against "
-        RenderInline {I} at (0,0) size 772x35
-          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
-            RenderText {#text} at (212,0) size 348x17
-              text run at (212,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6888"
-          RenderText {#text} at (559,0) size 772x35
-            text run at (559,0) width 213: " Collapsed borders appear on the"
-            text run at (0,18) width 290: "wrong side or on the wrong cell in RTL tables"
-        RenderText {#text} at (289,18) size 5x17
-          text run at (289,18) width 5: "."
+        RenderText {#text} at (0,0) size 218x17
+          text run at (0,0) width 218: "This tests for a regression against "
+        RenderInline {I} at (0,0) size 763x35
+          RenderInline {A} at (0,0) size 354x17 [color=#0000EE]
+            RenderText {#text} at (217,0) size 354x17
+              text run at (217,0) width 354: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6888"
+          RenderText {#text} at (570,0) size 763x35
+            text run at (570,0) width 193: " Collapsed borders appear on"
+            text run at (0,18) width 317: "the wrong side or on the wrong cell in RTL tables"
+        RenderText {#text} at (316,18) size 5x17
+          text run at (316,18) width 5: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 365x17
-          text run at (0,0) width 365: "The RTL table should be a mirror image of the LTR table."
+        RenderText {#text} at (0,0) size 371x17
+          text run at (0,0) width 371: "The RTL table should be a mirror image of the LTR table."
       RenderTable {TABLE} at (0,96) size 133x74
         RenderTableSection {TBODY} at (0,0) size 133x74
           RenderTableRow {TR} at (0,0) size 133x26
             RenderTableCell {TD} at (0,0) size 67x26 [border: none (1px solid #000000) none] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (17,4) size 32x17
-                text run at (17,4) width 32: "RTL"
+              RenderText {#text} at (18,4) size 30x17
+                text run at (18,4) width 30: "RTL"
             RenderTableCell {TD} at (67,0) size 66x26 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (18,4) size 30x17
                 text run at (18,4) width 30: "LTR"

@@ -39,29 +39,29 @@ layer at (0,0) size 800x600
         [filter="BlendDarken"] RenderSVGResourceFilter {filter} at (30,75) size 120x10
       RenderSVGRect {rect} at (150,440) size 600x50 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=88.00] [width=120.00] [height=10.00]
         [filter="BlendLighten"] RenderSVGResourceFilter {filter} at (30,88) size 120x10
-      RenderSVGContainer {g} at (25,53) size 125x430
+      RenderSVGContainer {g} at (25,53) size 123x430
         RenderSVGText {text} at (5,10) size 22x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 22x8
-            chunk 1 text run 1 at (5.00,17.00) startOffset 0 endOffset 6 width 21.60: "Normal"
+            chunk 1 text run 1 at (5.00,17.00) startOffset 0 endOffset 6 width 21.38: "Normal"
         RenderSVGText {text} at (5,23) size 25x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 25x8
-            chunk 1 text run 1 at (5.00,30.00) startOffset 0 endOffset 8 width 25.00: "Multiply"
+            chunk 1 text run 1 at (5.00,30.00) startOffset 0 endOffset 8 width 24.50: "Multiply"
         RenderSVGText {text} at (5,36) size 25x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 25x8
-            chunk 1 text run 1 at (5.00,43.00) startOffset 0 endOffset 8 width 25.00: "Multiply"
+            chunk 1 text run 1 at (5.00,43.00) startOffset 0 endOffset 8 width 24.50: "Multiply"
         RenderSVGText {text} at (5,49) size 25x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 25x8
-            chunk 1 text run 1 at (5.00,56.00) startOffset 0 endOffset 8 width 25.00: "Multiply"
+            chunk 1 text run 1 at (5.00,56.00) startOffset 0 endOffset 8 width 24.50: "Multiply"
         RenderSVGText {text} at (5,62) size 20x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 20x8
-            chunk 1 text run 1 at (5.00,69.00) startOffset 0 endOffset 6 width 19.40: "Screen"
+            chunk 1 text run 1 at (5.00,69.00) startOffset 0 endOffset 6 width 19.04: "Screen"
         RenderSVGText {text} at (5,75) size 21x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 21x8
-            chunk 1 text run 1 at (5.00,82.00) startOffset 0 endOffset 6 width 21.00: "Darken"
-        RenderSVGText {text} at (5,88) size 23x9 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 23x8
-            chunk 1 text run 1 at (5.00,95.00) startOffset 0 endOffset 7 width 22.20: "Lighten"
+            chunk 1 text run 1 at (5.00,82.00) startOffset 0 endOffset 6 width 20.60: "Darken"
+        RenderSVGText {text} at (5,88) size 22x9 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 22x8
+            chunk 1 text run 1 at (5.00,95.00) startOffset 0 endOffset 7 width 21.77: "Lighten"
     RenderSVGText {text} at (3,101) size 80x14 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 80x14
-        chunk 1 text run 1 at (3.00,112.00) startOffset 0 endOffset 16 width 79.20: "$Revision: 1.8 $"
+        chunk 1 text run 1 at (3.00,112.00) startOffset 0 endOffset 16 width 79.00: "$Revision: 1.8 $"
     RenderSVGRect {rect} at (3,3) size 794x594 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [x=1.00] [y=1.00] [width=158.00] [height=118.00]

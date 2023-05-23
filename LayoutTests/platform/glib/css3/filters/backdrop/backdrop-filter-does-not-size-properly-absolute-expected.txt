@@ -9,7 +9,7 @@ foo foobar
       (children 1
         (GraphicsLayer
           (position 8.00 8.00)
-          (bounds 341.00 318.00)
+          (bounds 342.00 318.00)
           (drawsContent 1)
           (backdrop layer 0.00, 0.00 100.00 x 200.00)
         )

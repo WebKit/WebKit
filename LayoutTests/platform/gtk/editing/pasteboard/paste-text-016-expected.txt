@@ -27,31 +27,31 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 96x17
-          text run at (0,0) width 96: "Fixes this bug: "
-        RenderInline {A} at (0,0) size 167x17 [color=#0000EE]
-          RenderText {#text} at (96,0) size 167x17
-            text run at (96,0) width 167: "<rdar://problem/3927554>"
-        RenderText {#text} at (263,0) size 385x17
-          text run at (263,0) width 385: " REGRESSION (Mail): Paste inserts content in wrong place "
-        RenderBR {BR} at (648,0) size 0x17
-        RenderText {#text} at (0,18) size 378x17
-          text run at (0,18) width 378: "***TEST*** line should be second, following the first line."
+        RenderText {#text} at (0,0) size 99x17
+          text run at (0,0) width 99: "Fixes this bug: "
+        RenderInline {A} at (0,0) size 172x17 [color=#0000EE]
+          RenderText {#text} at (98,0) size 172x17
+            text run at (98,0) width 172: "<rdar://problem/3927554>"
+        RenderText {#text} at (269,0) size 390x17
+          text run at (269,0) width 390: " REGRESSION (Mail): Paste inserts content in wrong place "
+        RenderBR {BR} at (658,0) size 1x17
+        RenderText {#text} at (0,18) size 384x17
+          text run at (0,18) width 384: "***TEST*** line should be second, following the first line."
       RenderBlock {DIV} at (0,36) size 784x12
       RenderBlock {DIV} at (0,48) size 784x217
         RenderBlock {DIV} at (0,0) size 784x217 [border: (2px solid #FF0000)]
           RenderBlock {P} at (14,14) size 756x27
-            RenderText {#text} at (0,0) size 319x26
-              text run at (0,0) width 319: "Should be first line of document."
-            RenderBR {BR} at (318,0) size 1x26
+            RenderText {#text} at (0,0) size 316x26
+              text run at (0,0) width 316: "Should be first line of document."
+            RenderBR {BR} at (315,0) size 1x26
           RenderBlock {P} at (14,41) size 756x27
             RenderText {#text} at (0,0) size 130x26
               text run at (0,0) width 130: "***TEST***"
           RenderBlock {DIV} at (14,68) size 756x27
             RenderBR {BR} at (0,0) size 0x26
           RenderBlock {P} at (14,95) size 756x27
-            RenderText {#text} at (0,0) size 128x26
-              text run at (0,0) width 128: "Another line."
+            RenderText {#text} at (0,0) size 127x26
+              text run at (0,0) width 127: "Another line."
           RenderBlock {P} at (14,122) size 756x0
           RenderBlock (anonymous) at (14,122) size 756x27
             RenderText {#text} at (0,0) size 6x26

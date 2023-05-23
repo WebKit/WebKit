@@ -6,7 +6,7 @@ layer at (0,0) size 800x244
       RenderBlock (anonymous) at (0,0) size 784x36
         RenderText {#text} at (0,0) size 39x17
           text run at (0,0) width 39: "BAD:"
-        RenderBR {BR} at (39,0) size 0x17
+        RenderBR {BR} at (38,0) size 1x17
         RenderBR {BR} at (0,18) size 0x17
       RenderBlock {CENTER} at (0,36) size 784x60
         RenderTable {TABLE} at (0,0) size 784x60 [border: (5px outset #808080)]
@@ -22,9 +22,9 @@ layer at (0,0) size 800x244
       RenderBlock (anonymous) at (0,96) size 784x72
         RenderBR {BR} at (0,0) size 0x17
         RenderBR {BR} at (0,18) size 0x17
-        RenderText {#text} at (0,36) size 52x17
-          text run at (0,36) width 52: "GOOD:"
-        RenderBR {BR} at (52,36) size 0x17
+        RenderText {#text} at (0,36) size 51x17
+          text run at (0,36) width 51: "GOOD:"
+        RenderBR {BR} at (50,36) size 1x17
         RenderBR {BR} at (0,54) size 0x17
       RenderBlock {CENTER} at (0,168) size 784x60
         RenderTable {TABLE} at (0,0) size 784x60 [border: (5px outset #808080)]

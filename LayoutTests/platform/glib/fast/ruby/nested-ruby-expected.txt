@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         RenderRuby (inline) {RUBY} at (0,0) size 88x17
           RenderRubyRun (anonymous) at (0,10) size 88x28
             RenderRubyText {RT} at (0,-10) size 88x10
-              RenderText {#text} at (14,0) size 60x10
-                text run at (14,0) width 60: "K\x{14D}kakukid\x{14D}tai"
+              RenderText {#text} at (17,0) size 54x10
+                text run at (17,0) width 54: "K\x{14D}kakukid\x{14D}tai"
             RenderRubyBase (anonymous) at (0,0) size 88x28
               RenderRuby (inline) {RUBY} at (0,0) size 88x17
                 RenderRubyRun (anonymous) at (0,10) size 18x18

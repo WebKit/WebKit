@@ -4,22 +4,22 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 212x17
-          text run at (0,0) width 212: "This tests for a regression against "
-        RenderInline {I} at (0,0) size 765x35
-          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
-            RenderText {#text} at (212,0) size 348x17
-              text run at (212,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5868"
-          RenderText {#text} at (559,0) size 765x35
-            text run at (559,0) width 5: " "
-            text run at (563,0) width 202: "Crash on HP.com with ToT and"
-            text run at (0,18) width 311: "Safari 2.0.2 in khtml::RenderContainer::detach()"
-        RenderText {#text} at (311,18) size 4x17
-          text run at (311,18) width 4: "."
+        RenderText {#text} at (0,0) size 218x17
+          text run at (0,0) width 218: "This tests for a regression against "
+        RenderInline {I} at (0,0) size 776x35
+          RenderInline {A} at (0,0) size 354x17 [color=#0000EE]
+            RenderText {#text} at (217,0) size 354x17
+              text run at (217,0) width 354: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5868"
+          RenderText {#text} at (570,0) size 776x35
+            text run at (570,0) width 5: " "
+            text run at (574,0) width 202: "Crash on HP.com with ToT and"
+            text run at (0,18) width 317: "Safari 2.0.2 in khtml::RenderContainer::detach()"
+        RenderText {#text} at (316,18) size 5x17
+          text run at (316,18) width 5: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 723x17
-          text run at (0,0) width 404: "There should be two 100x100 squares stacked vertically below. "
-          text run at (403,0) width 320: "The green square should be above the blue square."
+        RenderText {#text} at (0,0) size 733x17
+          text run at (0,0) width 410: "There should be two 100x100 squares stacked vertically below. "
+          text run at (409,0) width 324: "The green square should be above the blue square."
       RenderTable {TABLE} at (0,96) size 104x204
         RenderTableSection {TBODY} at (0,0) size 104x204
           RenderTableRow (anonymous) at (0,2) size 104x200

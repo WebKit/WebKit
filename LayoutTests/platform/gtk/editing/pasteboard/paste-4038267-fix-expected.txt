@@ -16,25 +16,25 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x260 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x81
-          RenderText {#text} at (0,0) size 59x26
-            text run at (0,0) width 59: "Tests:"
-          RenderBR {BR} at (58,0) size 1x26
+          RenderText {#text} at (0,0) size 60x26
+            text run at (0,0) width 60: "Tests:"
+          RenderBR {BR} at (59,0) size 1x26
           RenderText {#text} at (0,27) size 113x26
             text run at (0,27) width 113: "Bug fix for "
-          RenderInline {A} at (0,0) size 261x26 [color=#0000EE]
-            RenderText {#text} at (112,27) size 261x26
-              text run at (112,27) width 261: "<rdar://problem/4038267>"
-          RenderText {#text} at (372,27) size 747x53
-            text run at (372,27) width 375: " REGRESSION (Mail): Crash copying"
-            text run at (0,54) width 287: "and pasting end of paragraph."
+          RenderInline {A} at (0,0) size 257x26 [color=#0000EE]
+            RenderText {#text} at (112,27) size 258x26
+              text run at (112,27) width 258: "<rdar://problem/4038267>"
+          RenderText {#text} at (369,27) size 743x53
+            text run at (369,27) width 374: " REGRESSION (Mail): Crash copying"
+            text run at (0,54) width 285: "and pasting end of paragraph."
         RenderBlock {DIV} at (14,111) size 756x135
           RenderBlock (anonymous) at (0,0) size 756x81
-            RenderText {#text} at (0,0) size 183x26
-              text run at (0,0) width 183: "Expected Results:"
-            RenderBR {BR} at (182,0) size 1x26
-            RenderText {#text} at (0,27) size 732x53
-              text run at (0,27) width 732: "Should see this content in the red box below (insertion point must be on the"
-              text run at (0,54) width 308: "second line, right before \"bar\"):"
+            RenderText {#text} at (0,0) size 184x26
+              text run at (0,0) width 184: "Expected Results:"
+            RenderBR {BR} at (183,0) size 1x26
+            RenderText {#text} at (0,27) size 726x53
+              text run at (0,27) width 726: "Should see this content in the red box below (insertion point must be on the"
+              text run at (0,54) width 305: "second line, right before \"bar\"):"
           RenderBlock {DIV} at (0,81) size 756x27
             RenderText {#text} at (0,0) size 32x26
               text run at (0,0) width 32: "foo"

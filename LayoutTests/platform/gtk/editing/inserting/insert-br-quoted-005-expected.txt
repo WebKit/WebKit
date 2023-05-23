@@ -18,21 +18,21 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 277x26
             text run at (0,0) width 277: "Splitting Mail blockquotes."
         RenderBlock {DIV} at (0,27) size 784x81
-          RenderText {#text} at (0,0) size 183x26
-            text run at (0,0) width 183: "Expected Results:"
-          RenderBR {BR} at (182,0) size 1x26
-          RenderText {#text} at (0,27) size 370x17
-            text run at (0,27) width 370: "Two blockquotes, with an unquoted blank line in between."
-          RenderBR {BR} at (369,27) size 1x17
-          RenderText {#text} at (0,45) size 403x17
-            text run at (0,45) width 403: "The first blockquote contains two lines, the second one is blank."
-          RenderBR {BR} at (403,45) size 0x17
-          RenderText {#text} at (0,63) size 312x17
-            text run at (0,63) width 312: "The second blockquote is a single non-blank line."
+          RenderText {#text} at (0,0) size 184x26
+            text run at (0,0) width 184: "Expected Results:"
+          RenderBR {BR} at (183,0) size 1x26
+          RenderText {#text} at (0,27) size 374x17
+            text run at (0,27) width 374: "Two blockquotes, with an unquoted blank line in between."
+          RenderBR {BR} at (373,27) size 1x17
+          RenderText {#text} at (0,45) size 411x17
+            text run at (0,45) width 411: "The first blockquote contains two lines, the second one is blank."
+          RenderBR {BR} at (410,45) size 1x17
+          RenderText {#text} at (0,63) size 318x17
+            text run at (0,63) width 318: "The second blockquote is a single non-blank line."
       RenderBlock {DIV} at (0,108) size 784x219 [border: (2px solid #FF0000)]
         RenderBlock (anonymous) at (14,14) size 756x27
-          RenderText {#text} at (0,0) size 120x26
-            text run at (0,0) width 120: "My citation:"
+          RenderText {#text} at (0,0) size 118x26
+            text run at (0,0) width 118: "My citation:"
         RenderBlock {DIV} at (14,65) size 756x140
           RenderBlock {BLOCKQUOTE} at (40,0) size 676x58 [border: (2px solid #0000FF)]
             RenderBlock {DIV} at (2,2) size 672x27

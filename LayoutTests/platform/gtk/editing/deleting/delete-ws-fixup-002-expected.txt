@@ -42,31 +42,31 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 751x35
-          text run at (0,0) width 259: "This testcase demonstrates a bug (9441). "
-          text run at (259,0) width 446: "When 'as' is deleted, there should be a space before and after the caret. "
-          text run at (705,0) width 46: "Editing"
-          text run at (0,18) width 531: "produces a tree that should result in two spaces, but for some reason it isn't rendered."
+        RenderText {#text} at (0,0) size 766x35
+          text run at (0,0) width 265: "This testcase demonstrates a bug (9441). "
+          text run at (264,0) width 455: "When 'as' is deleted, there should be a space before and after the caret. "
+          text run at (718,0) width 48: "Editing"
+          text run at (0,18) width 543: "produces a tree that should result in two spaces, but for some reason it isn't rendered."
       RenderBlock {DIV} at (0,52) size 784x82 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 741x53
-          RenderText {#text} at (14,14) size 97x26
-            text run at (14,14) width 97: "in Liberty"
-          RenderInline {I} at (0,0) size 118x26
-            RenderText {#text} at (110,14) size 118x26
-              text run at (110,14) width 22: "F "
-              text run at (131,14) width 97: "and seven"
-          RenderText {#text} at (227,14) size 64x26
-            text run at (227,14) width 64: " years "
+        RenderInline {SPAN} at (0,0) size 734x53
+          RenderText {#text} at (14,14) size 96x26
+            text run at (14,14) width 96: "in Liberty"
+          RenderInline {I} at (0,0) size 117x26
+            RenderText {#text} at (109,14) size 117x26
+              text run at (109,14) width 21: "F "
+              text run at (129,14) width 97: "and seven"
+          RenderText {#text} at (225,14) size 63x26
+            text run at (225,14) width 63: " years "
           RenderInline {B} at (0,0) size 7x26
-            RenderText {#text} at (290,14) size 7x26
-              text run at (290,14) width 7: " "
-          RenderText {#text} at (296,14) size 741x53
-            text run at (296,14) width 111: "our fathers "
-            text run at (406,14) width 349: "f upon this continent, a new nation, "
-            text run at (14,41) width 105: "conceived "
-            text run at (118,41) width 7: " "
-            text run at (124,41) width 7: " "
-            text run at (130,41) width 115: " in Liberty, "
-            text run at (244,41) width 387: "and dedicated to the proposition that all"
+            RenderText {#text} at (287,14) size 7x26
+              text run at (287,14) width 7: " "
+          RenderText {#text} at (293,14) size 734x53
+            text run at (293,14) width 111: "our fathers "
+            text run at (403,14) width 345: "f upon this continent, a new nation, "
+            text run at (14,41) width 104: "conceived "
+            text run at (117,41) width 7: " "
+            text run at (123,41) width 7: " "
+            text run at (129,41) width 113: " in Liberty, "
+            text run at (241,41) width 380: "and dedicated to the proposition that all"
         RenderText {#text} at (0,0) size 0x0
 caret: position 7 of child 2 {#text} of child 1 {SPAN} of child 3 {DIV} of body

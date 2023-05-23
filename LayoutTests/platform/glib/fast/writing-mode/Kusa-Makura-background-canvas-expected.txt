@@ -1,19 +1,19 @@
-layer at (0,0) size 4748x585
+layer at (0,0) size 4763x585
   RenderView at (0,0) size 800x585
-layer at (-3948,0) size 4748x585 backgroundClip at (0,0) size 4748x585 clip at (0,0) size 4748x585
-  RenderBlock {html} at (0,0) size 4749x585
-    RenderBlock {parsererror} at (16,16) size 547x137 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
-      RenderBlock {h3} at (18,20) size 511x23
-        RenderText {#text} at (0,0) size 324x21
-          text run at (0,0) width 324: "This page contains the following errors:"
-      RenderBlock {div} at (18,61) size 511x15
-        RenderText {#text} at (0,0) size 511x14
-          text run at (0,0) width 511: "error on line 62 at column 1671: Extra content at the end of the document"
-          text run at (510,0) width 1: " "
-      RenderBlock {h3} at (18,94) size 511x23
-        RenderText {#text} at (0,0) size 427x21
-          text run at (0,0) width 427: "Below is a rendering of the page up to the first error."
-    RenderBody {body} at (621,46) size 4069x493
+layer at (-3963,0) size 4763x585 backgroundClip at (0,0) size 4763x585 clip at (0,0) size 4763x585
+  RenderBlock {html} at (0,0) size 4764x585
+    RenderBlock {parsererror} at (16,16) size 562x137 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+      RenderBlock {h3} at (18,20) size 526x23
+        RenderText {#text} at (0,0) size 323x21
+          text run at (0,0) width 323: "This page contains the following errors:"
+      RenderBlock {div} at (18,61) size 526x15
+        RenderText {#text} at (0,0) size 526x14
+          text run at (0,0) width 526: "error on line 62 at column 1671: Extra content at the end of the document"
+          text run at (525,0) width 1: " "
+      RenderBlock {h3} at (18,94) size 526x23
+        RenderText {#text} at (0,0) size 425x21
+          text run at (0,0) width 425: "Below is a rendering of the page up to the first error."
+    RenderBody {body} at (636,46) size 4069x493
       RenderBlock {h1} at (0,0) size 48x492
         RenderText {#text} at (6,0) size 36x66
           text run at (6,0) width 66: "\x{8349}\x{6795}"
@@ -1830,21 +1830,21 @@ layer at (-3948,0) size 4748x585 backgroundClip at (0,0) size 4748x585 clip at (
             text run at (2187,0) width 304: "\x{305F}\x{3002}\x{305D}\x{306E}\x{4E8C}\x{4E09}\x{53E5}\x{306E}\x{306A}\x{304B}\x{306B}\x{3053}\x{3093}\x{306A}\x{306E}\x{304C}\x{3042}\x{308B}\x{3002}"
           RenderBR {br} at (2187,304) size 17x0
         RenderBlock {div} at (2205,32) size 90x460
-          RenderText {#text} at (0,0) size 17x188
-            text run at (0,0) width 188: "\x{3000}\x{3000}We look before and after"
-          RenderBR {br} at (0,187) size 17x1
-          RenderText {#text} at (18,0) size 17x222
-            text run at (18,0) width 222: "\x{3000}\x{3000}\x{3000}\x{3000}And pine for what is not:"
-          RenderBR {br} at (18,222) size 17x0
-          RenderText {#text} at (36,0) size 17x170
-            text run at (36,0) width 170: "\x{3000}\x{3000}Our sincerest laughter"
-          RenderBR {br} at (36,170) size 17x0
-          RenderText {#text} at (54,0) size 17x230
-            text run at (54,0) width 230: "\x{3000}\x{3000}\x{3000}\x{3000}With some pain is fraught;"
-          RenderBR {br} at (54,229) size 17x1
-          RenderText {#text} at (72,0) size 17x355
-            text run at (72,0) width 355: "Our sweetest songs are those that tell of saddest thought."
-          RenderBR {br} at (72,355) size 17x0
+          RenderText {#text} at (0,0) size 17x191
+            text run at (0,0) width 191: "\x{3000}\x{3000}We look before and after"
+          RenderBR {br} at (0,190) size 17x1
+          RenderText {#text} at (18,0) size 17x225
+            text run at (18,0) width 225: "\x{3000}\x{3000}\x{3000}\x{3000}And pine for what is not:"
+          RenderBR {br} at (18,224) size 17x1
+          RenderText {#text} at (36,0) size 17x174
+            text run at (36,0) width 174: "\x{3000}\x{3000}Our sincerest laughter"
+          RenderBR {br} at (36,173) size 17x1
+          RenderText {#text} at (54,0) size 17x234
+            text run at (54,0) width 234: "\x{3000}\x{3000}\x{3000}\x{3000}With some pain is fraught;"
+          RenderBR {br} at (54,233) size 17x1
+          RenderText {#text} at (72,0) size 17x363
+            text run at (72,0) width 363: "Our sweetest songs are those that tell of saddest thought."
+          RenderBR {br} at (72,362) size 17x1
         RenderBlock (anonymous) at (2295,0) size 1648x492
           RenderText {#text} at (10,0) size 17x112
             text run at (10,0) width 112: "\x{300C}\x{524D}\x{3092}\x{307F}\x{3066}\x{306F}\x{3001}"
