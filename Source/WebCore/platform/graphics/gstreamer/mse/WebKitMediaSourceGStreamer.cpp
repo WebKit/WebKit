@@ -622,6 +622,7 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
         GstClockTime pipelineStreamTime;
         gst_element_query_position(findPipeline(GRefPtr<GstElement>(GST_ELEMENT(stream->source))).get(), GST_FORMAT_TIME,
             reinterpret_cast<gint64*>(&pipelineStreamTime));
+        GST_DEBUG_OBJECT(stream->source, "pipelineStreamTime from position query: %" GST_TIME_FORMAT, GST_TIME_ARGS(pipelineStreamTime));
         // GST_CLOCK_TIME_NONE is returned when the pipeline is not yet pre-rolled (e.g. just after a seek). In this case
         // we don't need to adjust the segment though, as running time has not advanced.
         if (GST_CLOCK_TIME_IS_VALID(pipelineStreamTime)) {

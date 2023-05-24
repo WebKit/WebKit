@@ -26,7 +26,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
 
         Modules/webaudio/MediaStreamAudioSourceGStreamer.cpp
 
-        platform/graphics/gstreamer/AppSinkWorkaround.cpp
+        platform/graphics/gstreamer/GStreamerSinksWorkarounds.cpp
         platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp
         platform/graphics/gstreamer/DMABufVideoSinkGStreamer.cpp
         platform/graphics/gstreamer/GLVideoSinkGStreamer.cpp

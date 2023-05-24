@@ -27,6 +27,7 @@
 
 typedef struct _WebKitVideoSink WebKitVideoSink;
 struct WebKitWebSrc;
+typedef struct _GstBaseSink GstBaseSink;
 
 #if USE(GSTREAMER_GL)
 typedef struct _GstGLDisplay GstGLDisplay;
@@ -59,6 +60,10 @@ template<> void derefGPtr<GstMiniObject>(GstMiniObject* ptr);
 template<> GRefPtr<GstElement> adoptGRef(GstElement* ptr);
 template<> GstElement* refGPtr<GstElement>(GstElement* ptr);
 template<> void derefGPtr<GstElement>(GstElement* ptr);
+
+template<> GRefPtr<GstBaseSink> adoptGRef(GstBaseSink* ptr);
+template<> GstBaseSink* refGPtr<GstBaseSink>(GstBaseSink* ptr);
+template<> void derefGPtr<GstBaseSink>(GstBaseSink* ptr);
 
 template<> GRefPtr<GstPad> adoptGRef(GstPad* ptr);
 template<> GstPad* refGPtr<GstPad>(GstPad* ptr);

@@ -506,6 +506,26 @@ template <> void derefGPtr<WebKitVideoSink>(WebKitVideoSink* ptr)
         gst_object_unref(GST_OBJECT(ptr));
 }
 
+template <> GRefPtr<GstBaseSink> adoptGRef(GstBaseSink* ptr)
+{
+    ASSERT(!ptr || !g_object_is_floating(ptr));
+    return GRefPtr<GstBaseSink>(ptr, GRefPtrAdopt);
+}
+
+template <> GstBaseSink* refGPtr<GstBaseSink>(GstBaseSink* ptr)
+{
+    if (ptr)
+        gst_object_ref_sink(GST_OBJECT(ptr));
+
+    return ptr;
+}
+
+template <> void derefGPtr<GstBaseSink>(GstBaseSink* ptr)
+{
+    if (ptr)
+        gst_object_unref(GST_OBJECT(ptr));
+}
+
 template <> GRefPtr<WebKitWebSrc> adoptGRef(WebKitWebSrc* ptr)
 {
     ASSERT(!ptr || !g_object_is_floating(ptr));
