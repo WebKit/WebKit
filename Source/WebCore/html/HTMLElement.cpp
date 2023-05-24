@@ -270,11 +270,9 @@ void HTMLElement::collectPresentationalHintsForAttribute(const QualifiedName& na
         addPropertyToPresentationalHintStyle(style, CSSPropertyDisplay, CSSValueNone);
         break;
     case AttributeNames::draggableAttr:
-        if (equalLettersIgnoringASCIICase(value, "true"_s)) {
+        if (equalLettersIgnoringASCIICase(value, "true"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitUserDrag, CSSValueElement);
-            if (!isDraggableIgnoringAttributes())
-                addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitUserSelect, CSSValueNone);
-        } else if (equalLettersIgnoringASCIICase(value, "false"_s))
+        else if (equalLettersIgnoringASCIICase(value, "false"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitUserDrag, CSSValueNone);
         break;
     case AttributeNames::dirAttr:
