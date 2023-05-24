@@ -2804,10 +2804,14 @@ webgl/2.0.0/conformance/context/context-eviction-with-garbage-collection.html [ 
 webkit.org/b/208022 http/tests/history/back-to-post.py [ Pass Failure Timeout ]
 
 webgl/2.0.y/conformance/context/premultiplyalpha-test.html [ Failure ]
-fast/css/scrollbar-dynamic-style-change.html [ ImageOnlyFailure ]
 fast/dynamic/out-of-flow-counter-do-not-update.html [ ImageOnlyFailure ]
 
 webkit.org/b/253868 js/ShadowRealm-iframe-detach.html [ Timeout Pass ]
 
 fast/css/tab-size.html [ ImageOnlyFailure ]
 fast/images/image-alt-text-vertical.html [ ImageOnlyFailure ]
+
+webkit.org/b/177687 http/tests/inspector/network/resource-sizes-memory-cache.html [ Pass Failure ]
+
+webkit.org/b/257279 [ Debug ] fast/body-propagation/background-image/007-xhtml.xhtml [ Crash Pass ]
+webkit.org/b/257279 [ Debug ] fast/body-propagation/background-image/008-xhtml.xhtml [ Crash Pass ]
