@@ -55,12 +55,10 @@ AccessibilityTable* AccessibilityARIAGridCell::parentTable() const
     // ARIA gridcells may have multiple levels of unignored ancestors that are not the parent table,
     // including rows and interactive rowgroups. In addition, poorly-formed grids may contain elements
     // which pass the tests for inclusion.
-    for (auto* parent = parentObjectUnignored(); parent; parent = parent->parentObjectUnignored()) {
-        if (is<AccessibilityTable>(*parent) && downcast<AccessibilityTable>(*parent).isExposable())
-            return downcast<AccessibilityTable>(parent);
-    }
-
-    return nullptr;
+    return dynamicDowncast<AccessibilityTable>(Accessibility::findAncestor<AccessibilityObject>(*this, false, [] (const auto& ancestor) {
+        auto* ancestorTable = dynamicDowncast<AccessibilityTable>(ancestor);
+        return ancestorTable && ancestorTable->isExposable() && !ancestorTable->accessibilityIsIgnored();
+    }));
 }
     
 std::pair<unsigned, unsigned> AccessibilityARIAGridCell::rowIndexRange() const
