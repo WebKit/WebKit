@@ -174,8 +174,11 @@ void ServiceWorkerFetchTask::startFetch()
         if (auto identifier = m_loader.parameters().options.clientIdentifier)
             clientIdentifier = identifier->toString();
     }
+    String resultingClientIdentifier;
+    if (auto& identifier = m_loader.parameters().options.resultingClientIdentifier)
+        resultingClientIdentifier = identifier->toString();
 
-    bool isSent = sendToServiceWorker(Messages::WebSWContextManagerConnection::StartFetch { m_serverConnectionIdentifier, m_serviceWorkerIdentifier, m_fetchIdentifier, request, options, IPC::FormDataReference { m_currentRequest.httpBody() }, referrer, m_preloader && m_preloader->isServiceWorkerNavigationPreloadEnabled(), clientIdentifier, m_loader.resultingClientIdentifier() });
+    bool isSent = sendToServiceWorker(Messages::WebSWContextManagerConnection::StartFetch { m_serverConnectionIdentifier, m_serviceWorkerIdentifier, m_fetchIdentifier, request, options, IPC::FormDataReference { m_currentRequest.httpBody() }, referrer, m_preloader && m_preloader->isServiceWorkerNavigationPreloadEnabled(), clientIdentifier, resultingClientIdentifier });
     ASSERT_UNUSED(isSent, isSent);
 }
 
