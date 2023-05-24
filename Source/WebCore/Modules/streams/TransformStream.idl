@@ -26,11 +26,12 @@
 [
     EnabledBySetting=TransformStreamAPIEnabled,
     Exposed=*,
-    JSBuiltin,
+    JSCustomMarkFunction,
     PrivateIdentifier,
-    PublicIdentifier
+    PublicIdentifier,
+    SkipVTableValidation
 ] interface TransformStream {
-    constructor(optional object transformer, optional QueuingStrategy writableStrategy, optional QueuingStrategy readableStrategy);
+    [CallWith=CurrentGlobalObject] constructor(optional object transformer, optional object writableStrategy, optional object readableStrategy);
     readonly attribute ReadableStream readable;
     readonly attribute WritableStream writable;
 };

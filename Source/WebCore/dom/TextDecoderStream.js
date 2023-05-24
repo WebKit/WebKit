@@ -64,8 +64,10 @@ function initializeTextDecoderStream()
         return @Promise.@resolve();
     };
 
-    const transform = @createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorithm);
+    const [transform, readable, writable] = @createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorithm);
     @putByIdDirectPrivate(this, "textDecoderStreamTransform", transform);
+    @putByIdDirectPrivate(this, "readable", readable);
+    @putByIdDirectPrivate(this, "writable", writable);
 
     const fatal = !!options.fatal;
     const ignoreBOM = !!options.ignoreBOM;
@@ -121,7 +123,7 @@ function readable()
     if (!transform)
         throw @makeThisTypeError("TextDecoderStream", "readable");
 
-    return @getByIdDirectPrivate(transform, "readable");
+    return @getByIdDirectPrivate(this, "readable");
 }
 
 @getter
@@ -133,5 +135,5 @@ function writable()
     if (!transform)
         throw @makeThisTypeError("TextDecoderStream", "writable");
 
-    return @getByIdDirectPrivate(transform, "writable");
+    return @getByIdDirectPrivate(this, "writable");
 }

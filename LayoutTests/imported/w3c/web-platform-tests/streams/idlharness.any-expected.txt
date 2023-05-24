@@ -182,7 +182,7 @@ PASS TransformStream interface: existence and properties of interface prototype 
 PASS TransformStream interface: existence and properties of interface prototype object's "constructor" property
 PASS TransformStream interface: existence and properties of interface prototype object's @@unscopables property
 PASS TransformStream interface: attribute readable
-FAIL TransformStream interface: attribute writable assert_equals: getter must have the name 'get writable' expected "get writable" but got "writable"
+PASS TransformStream interface: attribute writable
 PASS TransformStream must be primary interface of new TransformStream()
 PASS Stringification of new TransformStream()
 PASS TransformStream interface: new TransformStream() must inherit property "readable" with the proper type
