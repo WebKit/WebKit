@@ -98,6 +98,7 @@ public:
 
     void addObserver(CanvasObserver&);
     void removeObserver(CanvasObserver&);
+    bool hasObserver(CanvasObserver&) const;
     void notifyObserversCanvasChanged(const std::optional<FloatRect>&);
     void notifyObserversCanvasResized();
     void notifyObserversCanvasDestroyed(); // Must be called in destruction before clearing m_context.

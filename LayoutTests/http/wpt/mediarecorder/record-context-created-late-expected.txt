@@ -1,0 +1,3 @@
+
+PASS Verify late canvas context creation does not break recording
+

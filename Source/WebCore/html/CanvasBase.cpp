@@ -195,6 +195,11 @@ void CanvasBase::removeObserver(CanvasObserver& observer)
         InspectorInstrumentation::didChangeCSSCanvasClientNodes(*this);
 }
 
+bool CanvasBase::hasObserver(CanvasObserver& observer) const
+{
+    return m_observers.contains(observer);
+}
+
 void CanvasBase::notifyObserversCanvasChanged(const std::optional<FloatRect>& rect)
 {
     for (auto& observer : m_observers)

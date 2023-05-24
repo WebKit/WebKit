@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+    <title>MediaRecorder context created late</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="500" height="500"></canvas>
+<script>
+promise_test(async (t) => {
+    const stream = canvas.captureStream(25);
+    const mediaRecorder = new MediaRecorder(stream)
+    mediaRecorder.start(10);
+
+    setTimeout(() => {
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = 'green';
+        ctx.fillRect(10, 10, 150, 100);
+    }, 100);
+
+    return new Promise((resolve, reject) => {
+        mediaRecorder.ondataavailable = (event) => {
+            if (event.data.size > 0)
+                resolve();
+        };
+        setTimeout(() => reject("no blob with data"), 5000);
+    });
+}, "Verify late canvas context creation does not break recording");
+</script>
+</body>
+</html>
