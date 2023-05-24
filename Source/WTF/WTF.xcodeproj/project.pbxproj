@@ -837,6 +837,7 @@
 		FE1E2C3B2240C06600F6B729 /* PtrTag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE1E2C392240C05400F6B729 /* PtrTag.cpp */; };
 		FE1E2C42224187C600F6B729 /* PlatformRegisters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE1E2C41224187C600F6B729 /* PlatformRegisters.cpp */; };
 		FE35D09227DC5ECC009DFA5B /* StackCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE35D09127DC5ECC009DFA5B /* StackCheck.cpp */; };
+		FE6997E129D241630078B9C6 /* AbortWithReasonSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6997E029D241630078B9C6 /* AbortWithReasonSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE7ACFEF285DC2F9007FC8E9 /* RawHex.h in Headers */ = {isa = PBXBuildFile; fileRef = FE7ACFEE285DC2F8007FC8E9 /* RawHex.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE9B8B1A28B1453D0088C6E1 /* CodePtr.h in Headers */ = {isa = PBXBuildFile; fileRef = FE9B8B1928B1453D0088C6E1 /* CodePtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE9B8B1E28B1B1C70088C6E1 /* CodePtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE9B8B1D28B1B1C60088C6E1 /* CodePtr.cpp */; };
@@ -1767,6 +1768,7 @@
 		FE1E2C41224187C600F6B729 /* PlatformRegisters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformRegisters.cpp; sourceTree = "<group>"; };
 		FE35D09127DC5ECC009DFA5B /* StackCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackCheck.cpp; sourceTree = "<group>"; };
 		FE3842342325CC80009DD445 /* ResourceUsage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceUsage.h; sourceTree = "<group>"; };
+		FE6997E029D241630078B9C6 /* AbortWithReasonSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbortWithReasonSPI.h; sourceTree = "<group>"; };
 		FE7497E4208FFCAA0003565B /* PtrTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PtrTag.h; sourceTree = "<group>"; };
 		FE7ACFEE285DC2F8007FC8E9 /* RawHex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawHex.h; sourceTree = "<group>"; };
 		FE8225301B2A1E5B00BA68FD /* NakedPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NakedPtr.h; sourceTree = "<group>"; };
@@ -2834,6 +2836,7 @@
 		DDF306CF27C08654006A526F /* darwin */ = {
 			isa = PBXGroup;
 			children = (
+				FE6997E029D241630078B9C6 /* AbortWithReasonSPI.h */,
 				DDF306D727C08654006A526F /* CodeSignSPI.h */,
 				DDF306D527C08654006A526F /* DataVaultSPI.h */,
 				DDF306D327C08654006A526F /* DispatchSPI.h */,
@@ -2914,6 +2917,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FE6997E129D241630078B9C6 /* AbortWithReasonSPI.h in Headers */,
 				E3B8E6032961EA7600A8AEE3 /* AccessibleAddress.h in Headers */,
 				DD3DC8FA27A4BF8E007E5B61 /* AggregateLogger.h in Headers */,
 				DD3DC96027A4BF8E007E5B61 /* Algorithms.h in Headers */,

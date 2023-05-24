@@ -47,6 +47,10 @@
 #include <stdlib.h>
 #include <wtf/ExportMacros.h>
 
+#if OS(DARWIN)
+#include <wtf/spi/darwin/AbortWithReasonSPI.h>
+#endif
+
 #if USE(OS_LOG)
 #include <os/log.h>
 #endif
@@ -67,10 +71,6 @@ extern "C" void _ReadWriteBarrier(void);
 #endif
 #include <intrin.h>
 #endif
-#endif
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <sys/reason.h>
 #endif
 
 /* ASSERT_ENABLED is defined in PlatformEnable.h. */
@@ -822,7 +822,7 @@ inline void compilerFenceForCrash()
 
 #endif /* __cplusplus */
 
-#if USE(APPLE_INTERNAL_SDK)
+#if OS(DARWIN)
 #define CRASH_WITH_EXTRA_SECURITY_IMPLICATION_AND_INFO(abortReason, abortMsg, ...) do { \
         if (g_wtfConfig.useSpecialAbortForExtraSecurityImplications) \
             abort_with_reason(OS_REASON_WEBKIT, abortReason, abortMsg, OS_REASON_FLAG_SECURITY_SENSITIVE); \
