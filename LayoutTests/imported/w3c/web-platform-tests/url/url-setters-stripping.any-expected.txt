@@ -241,12 +241,12 @@ PASS Setting username with trailing U+001F (wpt++:)
 PASS Setting password with leading U+001F (wpt++:)
 PASS Setting password with middle U+001F (wpt++:)
 PASS Setting password with trailing U+001F (wpt++:)
-FAIL Setting host with leading U+001F (wpt++:) assert_equals: property expected "%1Ftest:8000" but got "host:8000"
-FAIL Setting hostname with leading U+001F (wpt++:) assert_equals: property expected "%1Ftest" but got "host"
-FAIL Setting host with middle U+001F (wpt++:) assert_equals: property expected "te%1Fst:8000" but got "host:8000"
-FAIL Setting hostname with middle U+001F (wpt++:) assert_equals: property expected "te%1Fst" but got "host"
-FAIL Setting host with trailing U+001F (wpt++:) assert_equals: property expected "test%1F:8000" but got "host:8000"
-FAIL Setting hostname with trailing U+001F (wpt++:) assert_equals: property expected "test%1F" but got "host"
+PASS Setting host with leading U+001F (wpt++:)
+PASS Setting hostname with leading U+001F (wpt++:)
+PASS Setting host with middle U+001F (wpt++:)
+PASS Setting hostname with middle U+001F (wpt++:)
+PASS Setting host with trailing U+001F (wpt++:)
+PASS Setting hostname with trailing U+001F (wpt++:)
 PASS Setting port with leading U+001F (wpt++:)
 PASS Setting port with middle U+001F (wpt++:)
 PASS Setting port with trailing U+001F (wpt++:)

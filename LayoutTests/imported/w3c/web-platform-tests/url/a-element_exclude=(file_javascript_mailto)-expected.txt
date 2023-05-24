@@ -433,7 +433,7 @@ PASS Parsing: <http://ho%5Dst/> against <about:blank>
 PASS Parsing: <http://ho%7Cst/> against <about:blank>
 PASS Parsing: <http://ho%7Fst/> against <about:blank>
 PASS Parsing: <http://!"$&'()*+,-.;=_`{}~/> against <about:blank>
-FAIL Parsing: <sc://!"$%&'()*+,-.;=_`{}~/> against <about:blank> assert_equals: href expected "sc://%01%02%03%04%05%06%07%08%0B%0C%0E%0F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F%7F!\"$%&'()*+,-.;=_`{}~/" but got "sc://\x01\x02\x03\x04\x05\x06\x07\b\v\f\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f!\"$%&'()*+,-.;=_`{}~/"
+PASS Parsing: <sc://!"$%&'()*+,-.;=_`{}~/> against <about:blank>
 PASS Parsing: <ftp://example.com%80/> against <about:blank>
 PASS Parsing: <ftp://example.com%A0/> against <about:blank>
 PASS Parsing: <https://example.com%80/> against <about:blank>

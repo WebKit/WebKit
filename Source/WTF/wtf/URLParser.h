@@ -120,7 +120,7 @@ private:
     template<typename CharacterType> std::optional<LCharBuffer> domainToASCII(StringImpl&, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
     template<typename CharacterType> LCharBuffer percentDecode(const LChar*, size_t, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
     static LCharBuffer percentDecode(const LChar*, size_t);
-    static bool hasForbiddenHostCodePoint(const LCharBuffer&);
+    bool hasForbiddenHostCodePoint(const LCharBuffer&);
     void percentEncodeByte(uint8_t);
     void appendToASCIIBuffer(UChar32);
     void appendToASCIIBuffer(const char*, size_t);
@@ -151,6 +151,8 @@ private:
 
     enum class URLPart;
     template<typename CharacterType> void copyURLPartsUntil(const URL& base, URLPart, const CodePointIterator<CharacterType>&, const URLTextEncoding*&);
+    template<typename CharacterType> bool isForbiddenHostCodePoint(CharacterType);
+    template<typename CharacterType> bool isForbiddenDomainCodePoint(CharacterType);
     static size_t urlLengthUntilPart(const URL&, URLPart);
     void popPath();
     bool shouldPopPath(unsigned);

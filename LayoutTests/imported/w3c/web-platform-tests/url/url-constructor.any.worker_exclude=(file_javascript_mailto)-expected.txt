@@ -432,7 +432,7 @@ PASS Parsing: <http://ho%5Dst/> without base
 PASS Parsing: <http://ho%7Cst/> without base
 PASS Parsing: <http://ho%7Fst/> without base
 PASS Parsing: <http://!"$&'()*+,-.;=_`{}~/> without base
-FAIL Parsing: <sc://!"$%&'()*+,-.;=_`{}~/> without base "sc://!"$%&'()*+,-.;=_`{}~/" cannot be parsed as a URL.
+PASS Parsing: <sc://!"$%&'()*+,-.;=_`{}~/> without base
 PASS Parsing: <ftp://example.com%80/> without base
 PASS Parsing: <ftp://example.com%A0/> without base
 PASS Parsing: <https://example.com%80/> without base

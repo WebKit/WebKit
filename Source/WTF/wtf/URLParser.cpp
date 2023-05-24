@@ -56,50 +56,51 @@ enum URLCharacterClass {
     UserInfo = 0x1,
     Default = 0x2,
     ForbiddenHost = 0x4,
-    QueryPercent = 0x8,
-    SlashQuestionOrHash = 0x10,
-    ValidScheme = 0x20,
+    ForbiddenDomain = 0x8,
+    QueryPercent = 0x10,
+    SlashQuestionOrHash = 0x20,
+    ValidScheme = 0x40,
 };
 
 static const uint8_t characterClassTable[256] = {
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x0
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x1
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x2
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x3
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x4
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x5
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x6
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x7
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x8
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x9
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0xA
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0xB
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0xC
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0xD
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0xE
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0xF
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x10
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x11
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x12
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x13
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x14
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x15
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x16
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x17
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x18
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x19
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x1A
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x1B
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x1C
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x1D
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x1E
-    UserInfo | Default | QueryPercent | ForbiddenHost, // 0x1F
-    UserInfo | Default | QueryPercent | ForbiddenHost, // ' '
+    UserInfo | Default | QueryPercent | ForbiddenHost | ForbiddenDomain, // 0x0
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x1
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x2
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x3
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x4
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x5
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x6
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x7
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x8
+    UserInfo | Default | QueryPercent | ForbiddenHost | ForbiddenDomain, // 0x9
+    UserInfo | Default | QueryPercent | ForbiddenHost | ForbiddenDomain, // 0xA
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0xB
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0xC
+    UserInfo | Default | QueryPercent | ForbiddenHost | ForbiddenDomain, // 0xD
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0xE
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0xF
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x10
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x11
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x12
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x13
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x14
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x15
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x16
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x17
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x18
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x19
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x1A
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x1B
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x1C
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x1D
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x1E
+    UserInfo | Default | QueryPercent | ForbiddenDomain, // 0x1F
+    UserInfo | Default | QueryPercent | ForbiddenHost | ForbiddenDomain, // ' '
     0, // '!'
     UserInfo | Default | QueryPercent, // '"'
-    UserInfo | Default | QueryPercent | SlashQuestionOrHash | ForbiddenHost, // '#'
+    UserInfo | Default | QueryPercent | SlashQuestionOrHash | ForbiddenHost | ForbiddenDomain, // '#'
     0, // '$'
-    ForbiddenHost, // '%'
+    ForbiddenDomain, // '%'
     0, // '&'
     0, // '\''
     0, // '('
@@ -109,7 +110,7 @@ static const uint8_t characterClassTable[256] = {
     0, // ','
     ValidScheme, // '-'
     ValidScheme, // '.'
-    UserInfo | SlashQuestionOrHash | ForbiddenHost, // '/'
+    UserInfo | SlashQuestionOrHash | ForbiddenHost | ForbiddenDomain, // '/'
     ValidScheme, // '0'
     ValidScheme, // '1'
     ValidScheme, // '2'
@@ -120,13 +121,13 @@ static const uint8_t characterClassTable[256] = {
     ValidScheme, // '7'
     ValidScheme, // '8'
     ValidScheme, // '9'
-    UserInfo | ForbiddenHost, // ':'
+    UserInfo | ForbiddenHost | ForbiddenDomain, // ':'
     UserInfo, // ';'
-    UserInfo | Default | QueryPercent | ForbiddenHost, // '<'
+    UserInfo | Default | QueryPercent | ForbiddenHost | ForbiddenDomain, // '<'
     UserInfo, // '='
-    UserInfo | Default | QueryPercent | ForbiddenHost, // '>'
-    UserInfo | Default | SlashQuestionOrHash | ForbiddenHost, // '?'
-    UserInfo | ForbiddenHost, // '@'
+    UserInfo | Default | QueryPercent | ForbiddenHost | ForbiddenDomain, // '>'
+    UserInfo | Default | SlashQuestionOrHash | ForbiddenHost | ForbiddenDomain, // '?'
+    UserInfo | ForbiddenHost | ForbiddenDomain, // '@'
     ValidScheme, // 'A'
     ValidScheme, // 'B'
     ValidScheme, // 'C'
@@ -153,10 +154,10 @@ static const uint8_t characterClassTable[256] = {
     ValidScheme, // 'X'
     ValidScheme, // 'Y'
     ValidScheme, // 'Z'
-    UserInfo | ForbiddenHost, // '['
-    UserInfo | SlashQuestionOrHash | ForbiddenHost, // '\\'
-    UserInfo | ForbiddenHost, // ']'
-    UserInfo | ForbiddenHost, // '^'
+    UserInfo | ForbiddenHost | ForbiddenDomain, // '['
+    UserInfo | SlashQuestionOrHash | ForbiddenHost | ForbiddenDomain, // '\\'
+    UserInfo | ForbiddenHost | ForbiddenDomain, // ']'
+    UserInfo | ForbiddenHost | ForbiddenDomain, // '^'
     0, // '_'
     UserInfo | Default, // '`'
     ValidScheme, // 'a'
@@ -186,10 +187,10 @@ static const uint8_t characterClassTable[256] = {
     ValidScheme, // 'y'
     ValidScheme, // 'z'
     UserInfo | Default, // '{'
-    UserInfo | ForbiddenHost, // '|'
+    UserInfo | ForbiddenHost | ForbiddenDomain, // '|'
     UserInfo | Default, // '}'
     0, // '~'
-    QueryPercent | ForbiddenHost, // 0x7F
+    QueryPercent | ForbiddenDomain, // 0x7F
     QueryPercent, // 0x80
     QueryPercent, // 0x81
     QueryPercent, // 0x82
@@ -330,7 +331,21 @@ template<typename CharacterType> ALWAYS_INLINE static bool isInUserInfoEncodeSet
 template<typename CharacterType> ALWAYS_INLINE static bool isPercentOrNonASCII(CharacterType character) { return !isASCII(character) || character == '%'; }
 template<typename CharacterType> ALWAYS_INLINE static bool isSlashQuestionOrHash(CharacterType character) { return character <= '\\' && characterClassTable[character] & SlashQuestionOrHash; }
 template<typename CharacterType> ALWAYS_INLINE static bool isValidSchemeCharacter(CharacterType character) { return character <= 'z' && characterClassTable[character] & ValidScheme; }
-template<typename CharacterType> ALWAYS_INLINE static bool isForbiddenHostCodePoint(CharacterType character) { return character <= 0x7F && characterClassTable[character] & ForbiddenHost; }
+
+template<typename CharacterType>
+ALWAYS_INLINE bool URLParser::isForbiddenHostCodePoint(CharacterType character)
+{
+    ASSERT(!m_urlIsSpecial);
+    return character <= 0x7F && characterClassTable[character] & ForbiddenHost;
+}
+
+template<typename CharacterType>
+ALWAYS_INLINE bool URLParser::isForbiddenDomainCodePoint(CharacterType character)
+{
+    ASSERT(m_urlIsSpecial);
+    return character <= 0x7F && characterClassTable[character] & ForbiddenDomain;
+}
+
 ALWAYS_INLINE static bool shouldPercentEncodeQueryByte(uint8_t byte, const bool& urlIsSpecial)
 {
     if (characterClassTable[byte] & QueryPercent)
@@ -2568,7 +2583,7 @@ template<typename CharacterType> std::optional<URLParser::LCharBuffer> URLParser
 bool URLParser::hasForbiddenHostCodePoint(const URLParser::LCharBuffer& asciiDomain)
 {
     for (size_t i = 0; i < asciiDomain.size(); ++i) {
-        if (isForbiddenHostCodePoint(asciiDomain[i]))
+        if (isForbiddenDomainCodePoint(asciiDomain[i]))
             return true;
     }
     return false;
@@ -2779,7 +2794,7 @@ auto URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator) -> H
                 continue;
             if (*iterator == ':')
                 break;
-            if (isForbiddenHostCodePoint(*iterator))
+            if (isForbiddenDomainCodePoint(*iterator))
                 return HostParsingResult::InvalidHost;
         }
         auto address = parseIPv4Host(hostIterator, CodePointIterator<CharacterType>(hostIterator, iterator));
