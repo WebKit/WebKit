@@ -22,6 +22,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/line-clamp-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/max-lines-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/max-lines-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/overflow-clip-margin-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/overflow-clip-margin.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/overflow-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/overflow-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/overflow-valid.html

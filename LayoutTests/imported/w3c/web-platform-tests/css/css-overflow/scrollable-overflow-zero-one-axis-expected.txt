@@ -1,0 +1,20 @@
+
+PASS .scroll 1
+FAIL .scroll 2 assert_equals:
+<div class="scroll zero-w" data-expected-scroll-width="100">
+  <div class="zero-h"></div>
+</div>
+scrollWidth expected 100 but got -15
+PASS .scroll 3
+FAIL .scroll 4 assert_equals:
+<div class="scroll zero-w flex-col" data-expected-scroll-width="100">
+  <div class="zero-h"></div>
+</div>
+scrollWidth expected 100 but got 1
+PASS .scroll 5
+FAIL .scroll 6 assert_equals:
+<div class="scroll zero-w grid" data-expected-scroll-width="100">
+  <div class="zero-h"></div>
+</div>
+scrollWidth expected 100 but got 1
+

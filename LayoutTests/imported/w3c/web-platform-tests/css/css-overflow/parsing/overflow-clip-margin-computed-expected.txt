@@ -1,0 +1,16 @@
+
+FAIL Property overflow-clip-margin value '0px' assert_true: overflow-clip-margin doesn't seem to be supported in the computed style expected true got false
+FAIL Property overflow-clip-margin value '10px' assert_true: overflow-clip-margin doesn't seem to be supported in the computed style expected true got false
+FAIL Property overflow-clip-margin value 'content-box' assert_true: overflow-clip-margin doesn't seem to be supported in the computed style expected true got false
+FAIL Property overflow-clip-margin value 'content-box 0px' assert_true: overflow-clip-margin doesn't seem to be supported in the computed style expected true got false
+FAIL Property overflow-clip-margin value 'content-box 10px' assert_true: overflow-clip-margin doesn't seem to be supported in the computed style expected true got false
+FAIL Property overflow-clip-margin value '10px content-box' assert_true: overflow-clip-margin doesn't seem to be supported in the computed style expected true got false
+FAIL Property overflow-clip-margin value 'padding-box' assert_true: overflow-clip-margin doesn't seem to be supported in the computed style expected true got false
+FAIL Property overflow-clip-margin value 'padding-box 0px' assert_true: overflow-clip-margin doesn't seem to be supported in the computed style expected true got false
+FAIL Property overflow-clip-margin value 'padding-box 10px' assert_true: overflow-clip-margin doesn't seem to be supported in the computed style expected true got false
+FAIL Property overflow-clip-margin value '10px padding-box' assert_true: overflow-clip-margin doesn't seem to be supported in the computed style expected true got false
+FAIL Property overflow-clip-margin value 'border-box' assert_true: overflow-clip-margin doesn't seem to be supported in the computed style expected true got false
+FAIL Property overflow-clip-margin value 'border-box 0px' assert_true: overflow-clip-margin doesn't seem to be supported in the computed style expected true got false
+FAIL Property overflow-clip-margin value 'border-box 10px' assert_true: overflow-clip-margin doesn't seem to be supported in the computed style expected true got false
+FAIL Property overflow-clip-margin value '10px border-box' assert_true: overflow-clip-margin doesn't seem to be supported in the computed style expected true got false
+
