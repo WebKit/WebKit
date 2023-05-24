@@ -1930,6 +1930,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     networkSessionParameters.perOriginStorageQuota = perOriginStorageQuota();
     networkSessionParameters.originQuotaRatio = originQuotaRatio();
     networkSessionParameters.totalQuotaRatio = m_configuration->totalQuotaRatio();
+    networkSessionParameters.standardVolumeCapacity = m_configuration->standardVolumeCapacity();
     networkSessionParameters.volumeCapacityOverride = m_configuration->volumeCapacityOverride();
     networkSessionParameters.localStorageDirectory = resolvedLocalStorageDirectory();
     createHandleFromResolvedPathIfPossible(networkSessionParameters.localStorageDirectory, networkSessionParameters.localStorageDirectoryExtensionHandle);

@@ -39,7 +39,7 @@ public:
     using IncreaseQuotaFunction = Function<void(QuotaIncreaseRequestIdentifier, uint64_t currentQuota, uint64_t currentUsage, uint64_t requestedIncrease)>;
     using NotifySpaceGrantedFunction = Function<void(uint64_t)>;
     static Ref<OriginQuotaManager> create(uint64_t quota, uint64_t standardReportedQuota, GetUsageFunction&&, IncreaseQuotaFunction&& = { }, NotifySpaceGrantedFunction&& = { });
-    uint64_t reportedQuota() const;
+    uint64_t reportedQuota();
     uint64_t usage();
     enum class Decision : bool { Deny, Grant };
     using RequestCallback = CompletionHandler<void(Decision)>;

@@ -72,6 +72,9 @@ public:
     std::optional<double> totalQuotaRatio() const { return m_totalQuotaRatio; }
     void setTotalQuotaRatio(std::optional<double> ratio) { m_totalQuotaRatio = ratio; }
 
+    std::optional<uint64_t> standardVolumeCapacity() const { return m_standardVolumeCapacity; }
+    void setStandardVolumeCapacity(std::optional<uint64_t> capacity) { m_standardVolumeCapacity = capacity; }
+
     std::optional<uint64_t> volumeCapacityOverride() const { return m_volumeCapacityOverride; }
     void setVolumeCapacityOverride(std::optional<uint64_t> capacity) { m_volumeCapacityOverride = capacity; }
 
@@ -258,6 +261,7 @@ private:
     uint64_t m_perOriginStorageQuota;
     std::optional<double> m_originQuotaRatio;
     std::optional<double> m_totalQuotaRatio;
+    std::optional<uint64_t> m_standardVolumeCapacity;
     std::optional<uint64_t> m_volumeCapacityOverride;
     String m_networkCacheDirectory;
     String m_applicationCacheDirectory;

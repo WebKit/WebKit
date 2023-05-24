@@ -54,6 +54,7 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 @property (nonatomic) NSUInteger perOriginStorageQuota WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 @property (nonatomic, nullable, copy) NSNumber *originQuotaRatio WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, nullable, copy) NSNumber *totalQuotaRatio WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, nullable, copy) NSNumber *standardVolumeCapacity WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, nullable, copy) NSString *boundInterfaceIdentifier WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 @property (nonatomic) BOOL allowsCellularAccess WK_API_AVAILABLE(macos(10.15.4), ios(14.0));
 @property (nonatomic) BOOL legacyTLSEnabled WK_API_AVAILABLE(macos(10.15.4), ios(13.4));

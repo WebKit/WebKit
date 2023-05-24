@@ -385,6 +385,15 @@ public:
     static String defaultJavaScriptConfigurationDirectory(const String& baseDataDirectory = nullString());
 
     static constexpr uint64_t defaultPerOriginQuota() { return 1000 * MB; }
+    static constexpr uint64_t defaultStandardVolumeCapacity() {
+#if PLATFORM(MAC)
+        return 128 * GB;
+#elif PLATFORM(IOS)
+        return 64 * GB;
+#else
+        return 16 * GB;
+#endif
+    }
     static std::optional<double> defaultOriginQuotaRatio();
     static std::optional<double> defaultTotalQuotaRatio();
     static UnifiedOriginStorageLevel defaultUnifiedOriginStorageLevel();

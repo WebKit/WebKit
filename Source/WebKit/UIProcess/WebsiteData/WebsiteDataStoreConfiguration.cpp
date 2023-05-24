@@ -38,6 +38,7 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPers
     , m_perOriginStorageQuota(WebsiteDataStore::defaultPerOriginQuota())
     , m_originQuotaRatio(WebsiteDataStore::defaultOriginQuotaRatio())
     , m_totalQuotaRatio(WebsiteDataStore::defaultTotalQuotaRatio())
+    , m_standardVolumeCapacity(WebsiteDataStore::defaultStandardVolumeCapacity())
 {
     if (isPersistent == IsPersistent::Yes && shouldInitializePaths == ShouldInitializePaths::Yes) {
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -66,6 +67,7 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const UUID& identif
     , m_perOriginStorageQuota(WebsiteDataStore::defaultPerOriginQuota())
     , m_originQuotaRatio(WebsiteDataStore::defaultOriginQuotaRatio())
     , m_totalQuotaRatio(WebsiteDataStore::defaultTotalQuotaRatio())
+    , m_standardVolumeCapacity(WebsiteDataStore::defaultStandardVolumeCapacity())
 #if PLATFORM(IOS)
     , m_pcmMachServiceName("com.apple.webkit.adattributiond.service"_s)
 #endif
@@ -86,6 +88,7 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const String& baseC
     , m_perOriginStorageQuota(WebsiteDataStore::defaultPerOriginQuota())
     , m_originQuotaRatio(WebsiteDataStore::defaultOriginQuotaRatio())
     , m_totalQuotaRatio(WebsiteDataStore::defaultTotalQuotaRatio())
+    , m_standardVolumeCapacity(WebsiteDataStore::defaultStandardVolumeCapacity())
 {
     initializePaths();
 }
@@ -134,6 +137,7 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
     copy->m_perOriginStorageQuota = this->m_perOriginStorageQuota;
     copy->m_originQuotaRatio = this->m_originQuotaRatio;
     copy->m_totalQuotaRatio = this->m_totalQuotaRatio;
+    copy->m_standardVolumeCapacity = this->m_standardVolumeCapacity;
     copy->m_volumeCapacityOverride = this->m_volumeCapacityOverride;
     copy->m_networkCacheDirectory = this->m_networkCacheDirectory;
     copy->m_applicationCacheDirectory = this->m_applicationCacheDirectory;

@@ -121,6 +121,7 @@ struct NetworkSessionCreationParameters {
     uint64_t perOriginStorageQuota;
     std::optional<double> originQuotaRatio;
     std::optional<double> totalQuotaRatio;
+    std::optional<uint64_t> standardVolumeCapacity;
     std::optional<uint64_t> volumeCapacityOverride;
     String localStorageDirectory;
     SandboxExtension::Handle localStorageDirectoryExtensionHandle;
