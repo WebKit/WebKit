@@ -166,9 +166,6 @@ webkit.org/b/237820 accessibility/native-text-control-attributed-string.html [ T
 # Animations
 webkit.org/b/232745 fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Timeout ]
 
-# Complex Text Path: Tests passing with --complex-text
-webkit.org/b/215355 fonts/ligature.html [ ImageOnlyFailure ]
-
 # CSS counter styles
 webkit.org/b/223412 imported/w3c/web-platform-tests/css/css-counter-styles/lower-greek/css3-counter-styles-028.html [ ImageOnlyFailure ]
 webkit.org/b/223412 imported/w3c/web-platform-tests/css/css-counter-styles/lower-roman/css3-counter-styles-019.html [ ImageOnlyFailure ]
