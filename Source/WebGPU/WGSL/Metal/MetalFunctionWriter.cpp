@@ -197,7 +197,7 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
         for (auto& member : structDecl.members()) {
             auto& name = member.name();
             auto* type = member.type().resolvedType();
-            if (auto* primitive = std::get_if<Types::Primitive>(type); primitive && primitive->kind == Types::Primitive::TextureExternal) {
+            if (isPrimitiveReference(type, Types::Primitive::TextureExternal)) {
                 m_stringBuilder.append(m_indent, "texture2d<float> __", name, "_FirstPlane;\n");
                 m_stringBuilder.append(m_indent, "texture2d<float> __", name, "_SecondPlane;\n");
                 m_stringBuilder.append(m_indent, "float3x2 __", name, "_UVRemapMatrix;\n");
@@ -293,7 +293,7 @@ void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
 {
     if (variable.maybeTypeName()) {
         auto* type = variable.maybeTypeName()->resolvedType();
-        if (auto* primitive = std::get_if<Types::Primitive>(type); primitive && primitive->kind == Types::Primitive::TextureExternal) {
+        if (isPrimitiveReference(type, Types::Primitive::TextureExternal)) {
             ASSERT(variable.maybeInitializer());
             m_stringBuilder.append("texture_external ", variable.name(), " { ");
             visit(*variable.maybeInitializer());
@@ -418,16 +418,6 @@ void FunctionDefinitionWriter::visit(AST::WorkgroupSizeAttribute&)
 // Types
 void FunctionDefinitionWriter::visit(AST::TypeName& type)
 {
-    // FIXME:Remove this when the type checker is aware of reference types
-    if (is<AST::ReferenceTypeName>(type)) {
-        // FIXME: We can't assume this will always be device. The ReferenceType should
-        // have knowledge about the memory region
-        m_stringBuilder.append("device ");
-        visit(downcast<AST::ReferenceTypeName>(type).type());
-        m_stringBuilder.append("&");
-        return;
-    }
-
     visit(type.resolvedType());
 }
 
@@ -504,12 +494,6 @@ void FunctionDefinitionWriter::visit(const Type* type)
         [&](const Struct& structure) {
             m_stringBuilder.append(structure.structure.name());
         },
-        [&](const Function&) {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const Bottom&) {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
         [&](const Texture& texture) {
             const char* type;
             const char* mode = "sample";
@@ -556,6 +540,38 @@ void FunctionDefinitionWriter::visit(const Type* type)
             m_stringBuilder.append(type, "<");
             visit(texture.element);
             m_stringBuilder.append(", access::", mode, ">");
+        },
+        [&](const Reference& reference) {
+            if (reference.accessMode == AccessMode::Read)
+                m_stringBuilder.append("const ");
+            switch (reference.addressSpace) {
+            case AddressSpace::Function:
+                m_stringBuilder.append("thread");
+                break;
+            case AddressSpace::Private:
+                m_stringBuilder.append("private");
+                break;
+            case AddressSpace::Workgroup:
+                m_stringBuilder.append("threadgroup");
+                break;
+            case AddressSpace::Uniform:
+                m_stringBuilder.append("constant");
+                break;
+            case AddressSpace::Storage:
+                m_stringBuilder.append("device");
+                break;
+            case AddressSpace::Handle:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            m_stringBuilder.append(" ");
+            visit(reference.element);
+            m_stringBuilder.append("&");
+        },
+        [&](const Function&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Bottom&) {
+            RELEASE_ASSERT_NOT_REACHED();
         });
 }
 

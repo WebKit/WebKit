@@ -194,6 +194,12 @@ Type* TypeStore::functionType(WTF::Vector<Type*>&& parameters, Type* result)
     return allocateType<Function>(WTFMove(parameters), result);
 }
 
+Type* TypeStore::referenceType(AddressSpace addressSpace, Type* element, AccessMode accessMode)
+{
+    // FIXME: do we need to cache reference types?
+    return allocateType<Reference>(addressSpace, accessMode, element);
+}
+
 template<typename TypeKind, typename... Arguments>
 Type* TypeStore::allocateType(Arguments&&... arguments)
 {

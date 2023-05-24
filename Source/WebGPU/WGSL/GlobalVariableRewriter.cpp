@@ -132,7 +132,8 @@ void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
                 SourceSpan::empty(),
                 WTFMove(typeName)
             );
-            typeName.get().m_resolvedType = type;
+            // FIXME: use const Type* everywhere
+            typeName.get().m_resolvedType = m_callGraph.ast().types().referenceType(AddressSpace::Function, const_cast<Type*>(type), AccessMode::ReadWrite);
         }
         m_callGraph.ast().append(callee.target->parameters(), m_callGraph.ast().astBuilder().construct<AST::Parameter>(
             SourceSpan::empty(),
@@ -345,8 +346,8 @@ void RewriteGlobalVariables::insertStructs(const UsedResources& usedResources)
             auto* type = memberType.get().resolvedType();
             if (shouldBeReference(type)) {
                 memberType = m_callGraph.ast().astBuilder().construct<AST::ReferenceTypeName>(span, WTFMove(memberType));
-                // FIXME: we need to be able to represent reference types in the type system
-                memberType.get().m_resolvedType = type;
+                // FIXME: use const Type* everywhere
+                memberType.get().m_resolvedType = m_callGraph.ast().types().referenceType(AddressSpace::Uniform, const_cast<Type*>(type), AccessMode::Read);
             }
             structMembers.append(m_callGraph.ast().astBuilder().construct<AST::StructureMember>(
                 span,
@@ -418,7 +419,8 @@ void RewriteGlobalVariables::insertMaterializations(AST::Function& function, con
                     SourceSpan::empty(),
                     WTFMove(typeName)
                 );
-                typeName.get().m_resolvedType = type;
+                // FIXME: use const Type* everywhere
+                typeName.get().m_resolvedType = m_callGraph.ast().types().referenceType(AddressSpace::Uniform, const_cast<Type*>(type), AccessMode::Read);
             }
 
             auto& variable = m_callGraph.ast().astBuilder().construct<AST::VariableStatement>(

@@ -62,6 +62,7 @@ public:
     Type* matrixType(Type*, uint8_t columns, uint8_t rows);
     Type* textureType(Type*, Types::Texture::Kind);
     Type* functionType(Vector<Type*>&&, Type*);
+    Type* referenceType(AddressSpace, Type*, AccessMode);
 
     Type* constructType(AST::ParameterizedTypeName::Base, Type*);
 
