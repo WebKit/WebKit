@@ -605,7 +605,7 @@
 (allow process-codesigning-status*)
 #endif
 
-(deny sysctl*)
+(deny sysctl-read (with no-report) (with telemetry))
 (allow sysctl-read
     (sysctl-name
         "hw.activecpu" ;; <rdar://problem/56795575>
@@ -663,9 +663,6 @@
     (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76783596>
 )
 
-(deny sysctl-read (with no-report)
-    (sysctl-name "vm.task_no_footprint_for_debug"))
-
 #if HAVE(SANDBOX_STATE_FLAGS)
 (with-filter (require-not (state-flag "WebContentProcessLaunched"))
     (allow sysctl-read (sysctl-name "vm.malloc_ranges"))) ;; <rdar://problem/105161083>
@@ -673,6 +670,7 @@
 (allow sysctl-read (sysctl-name "vm.malloc_ranges")) ;; <rdar://problem/105161083>
 #endif
 
+(deny sysctl-write (with no-report) (with telemetry))
 (allow sysctl-write
     (sysctl-name
         "kern.tcsm_enable"))
