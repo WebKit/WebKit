@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LLIntSlowPaths.h"
 
+#include "AbortReason.h"
 #include "ArrayConstructor.h"
 #include "BaselineJITPlan.h"
 #include "BytecodeGenerator.h"
@@ -70,6 +71,10 @@
 #include "VMTrapsInlines.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StringPrintStream.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <sys/reason.h>
+#endif
 
 namespace JSC { namespace LLInt {
 
@@ -2613,11 +2618,10 @@ extern "C" void llint_write_barrier_slow(CallFrame* callFrame, JSCell* cell)
     vm.writeBarrier(cell);
 }
 
-extern "C" UGPRPair llint_check_vm_entry_permission(VM* vm, ProtoCallFrame*)
+extern "C" UGPRPair llint_check_vm_entry_permission(VM*, ProtoCallFrame*)
 {
-    ASSERT_UNUSED(vm, vm->disallowVMEntryCount);
-    if (Options::crashOnDisallowedVMEntry())
-        CRASH();
+    if (Options::crashOnDisallowedVMEntry() || g_jscConfig.vmEntryDisallowed)
+        CRASH_WITH_EXTRA_SECURITY_IMPLICATION_AND_INFO(VMEntryDisallowed, "VM entry disallowed"_s);
 
     // Else return, and let doVMEntry return undefined.
     return encodeResult(nullptr, nullptr);

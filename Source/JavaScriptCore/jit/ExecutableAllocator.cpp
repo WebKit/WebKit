@@ -1327,6 +1327,8 @@ namespace JSC {
 static ExecutableAllocator* globalExecutableAllocatorToWorkAroundLeaks = nullptr;
 void ExecutableAllocator::initialize()
 {
+    if (g_jscConfig.jitDisabled)
+        return;
     g_jscConfig.executableAllocator = new ExecutableAllocator;
     globalExecutableAllocatorToWorkAroundLeaks = g_jscConfig.executableAllocator;
 }

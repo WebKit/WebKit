@@ -29,6 +29,7 @@
 #include "config.h"
 #include "VM.h"
 
+#include "AbortReason.h"
 #include "AccessCase.h"
 #include "AggregateError.h"
 #include "ArgList.h"
@@ -218,8 +219,8 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     , m_builtinExecutables(makeUnique<BuiltinExecutables>(*this))
     , m_syncWaiter(adoptRef(*new Waiter(this)))
 {
-    if (UNLIKELY(vmCreationShouldCrash))
-        CRASH_WITH_INFO(0x4242424220202020, 0xbadbeef0badbeef, 0x1234123412341234, 0x1337133713371337);
+    if (UNLIKELY(vmCreationShouldCrash || g_jscConfig.vmCreationDisallowed))
+        CRASH_WITH_EXTRA_SECURITY_IMPLICATION_AND_INFO(VMCreationDisallowed, "VM creation disallowed"_s, 0x4242424220202020, 0xbadbeef0badbeef, 0x1234123412341234, 0x1337133713371337);
 
     VMInspector::instance().add(this);
 
