@@ -83,6 +83,7 @@ private:
 
     void collectGlobals();
     void visitEntryPoint(AST::Function&, AST::StageAttribute::Stage, PipelineLayout&);
+    void visitCallee(const CallGraph::Callee&);
     UsedGlobals determineUsedGlobals(PipelineLayout&, AST::StageAttribute::Stage);
     void usesOverride(AST::Variable&);
     void insertStructs(const UsedResources&);
@@ -116,15 +117,50 @@ void RewriteGlobalVariables::run()
     }
 }
 
+void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
+{
+    visit(*callee.target);
+
+    for (auto& read : m_reads) {
+        auto it = m_globals.find(read);
+        RELEASE_ASSERT(it != m_globals.end());
+        auto& global = it->value;
+        AST::TypeName::Ref typeName = *global.declaration->maybeTypeName();
+        auto* type = typeName.get().resolvedType();
+        if (shouldBeReference(type)) {
+            typeName = m_callGraph.ast().astBuilder().construct<AST::ReferenceTypeName>(
+                SourceSpan::empty(),
+                WTFMove(typeName)
+            );
+            typeName.get().m_resolvedType = type;
+        }
+        m_callGraph.ast().append(callee.target->parameters(), m_callGraph.ast().astBuilder().construct<AST::Parameter>(
+            SourceSpan::empty(),
+            AST::Identifier::make(read),
+            WTFMove(typeName),
+            AST::Attribute::List { },
+            AST::ParameterRole::UserDefined
+        ));
+
+        for (auto& call : callee.callSites) {
+            m_callGraph.ast().append(call->arguments(), m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(
+                SourceSpan::empty(),
+                AST::Identifier::make(read)
+            ));
+        }
+    }
+}
+
 void RewriteGlobalVariables::visit(AST::Function& function)
 {
-    // FIXME: visit callee once we have any
-
     for (auto& parameter : function.parameters())
         def(parameter.name());
 
     // FIXME: detect when we shadow a global that a callee needs
     AST::Visitor::visit(function.body());
+
+    for (auto& callee : m_callGraph.callees(function))
+        visitCallee(callee);
 }
 
 void RewriteGlobalVariables::visit(AST::Variable& variable)
