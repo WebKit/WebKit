@@ -87,7 +87,7 @@ double Value::toNumber() const
         case NumberValue:
             return m_number;
         case StringValue: {
-            const String& str = m_data->string.simplifyWhiteSpace();
+            const String& str = m_data->string.simplifyWhiteSpace(deprecatedIsSpaceOrNewline);
 
             // String::toDouble() supports exponential notation, which is not allowed in XPath.
             unsigned len = str.length();

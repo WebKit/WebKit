@@ -437,8 +437,7 @@ public:
 
     Ref<StringImpl> foldCase();
 
-    WTF_EXPORT_PRIVATE Ref<StringImpl> simplifyWhiteSpace();
-    Ref<StringImpl> simplifyWhiteSpace(CodeUnitMatchFunction);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> simplifyWhiteSpace(CodeUnitMatchFunction);
 
     WTF_EXPORT_PRIVATE Ref<StringImpl> stripLeadingAndTrailingCharacters(CodeUnitMatchFunction);
     template<typename Predicate> Ref<StringImpl> removeCharacters(const Predicate&);

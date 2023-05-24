@@ -41,7 +41,7 @@ Ref<SVGDescElement> SVGDescElement::create(const QualifiedName& tagName, Documen
 
 String SVGDescElement::description() const
 {
-    return textContent().simplifyWhiteSpace();
+    return textContent().simplifyWhiteSpace(deprecatedIsSpaceOrNewline);
 }
 
 }

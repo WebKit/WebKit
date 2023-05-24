@@ -781,13 +781,6 @@ template<typename CharacterType, class UCharPredicate> inline Ref<StringImpl> St
     return adopt(WTFMove(data));
 }
 
-Ref<StringImpl> StringImpl::simplifyWhiteSpace()
-{
-    if (is8Bit())
-        return StringImpl::simplifyMatchedCharactersToSpace<LChar>(deprecatedIsSpaceOrNewline);
-    return StringImpl::simplifyMatchedCharactersToSpace<UChar>(deprecatedIsSpaceOrNewline);
-}
-
 Ref<StringImpl> StringImpl::simplifyWhiteSpace(CodeUnitMatchFunction isWhiteSpace)
 {
     if (is8Bit())

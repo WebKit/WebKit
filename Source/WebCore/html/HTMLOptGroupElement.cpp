@@ -125,7 +125,7 @@ String HTMLOptGroupElement::groupLabelText() const
     // In WinIE, leading and trailing whitespace is ignored in options and optgroups. We match this behavior.
     itemText = itemText.stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
     // We want to collapse our whitespace too.  This will match other browsers.
-    itemText = itemText.simplifyWhiteSpace();
+    itemText = itemText.simplifyWhiteSpace(deprecatedIsSpaceOrNewline);
         
     return itemText;
 }

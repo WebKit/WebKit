@@ -2444,7 +2444,7 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
         if (axObject->accessibleNameDerivesFromContent())
             text = axObject->textUnderElement(AccessibilityTextUnderElementMode(AccessibilityTextUnderElementMode::TextUnderElementModeIncludeNameFromContentsChildren, true, labelledbyNode));
     } else
-        text = (element ? element->innerText() : node->textContent()).simplifyWhiteSpace();
+        text = (element ? element->innerText() : node->textContent()).simplifyWhiteSpace(deprecatedIsSpaceOrNewline);
 
     if (!text.isEmpty())
         return text;

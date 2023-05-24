@@ -90,7 +90,7 @@ static unsigned countCharacter(StringImpl& string, UChar character)
 
 UniqueArray<Length> newLengthArray(const String& string, int& len)
 {
-    RefPtr<StringImpl> str = string.impl()->simplifyWhiteSpace();
+    RefPtr<StringImpl> str = string.impl()->simplifyWhiteSpace(deprecatedIsSpaceOrNewline);
     if (!str->length()) {
         len = 1;
         return nullptr;
