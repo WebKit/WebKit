@@ -575,6 +575,7 @@ public:
     inline bool breakWords() const;
 
     WhiteSpaceCollapse whiteSpaceCollapse() const { return static_cast<WhiteSpaceCollapse>(m_inheritedFlags.whiteSpaceCollapse); }
+    TextWrap textWrap() const { return static_cast<TextWrap>(m_inheritedFlags.textWrap); }
 
     inline FillRepeatXY backgroundRepeat() const;
     inline FillAttachment backgroundAttachment() const;
@@ -795,7 +796,6 @@ public:
     WEBCORE_EXPORT UserSelect effectiveUserSelect() const;
     inline UserSelect userSelect() const;
     inline TextOverflow textOverflow() const;
-    inline TextWrap textWrap() const;
     inline WordBreak wordBreak() const;
     inline OverflowWrap overflowWrap() const;
     inline NBSPMode nbspMode() const;
@@ -1223,6 +1223,7 @@ public:
 
     void setWhiteSpace(WhiteSpace v) { m_inheritedFlags.whiteSpace = static_cast<unsigned>(v); }
     void setWhiteSpaceCollapse(WhiteSpaceCollapse v) { m_inheritedFlags.whiteSpaceCollapse = static_cast<unsigned>(v); }
+    void setTextWrap(TextWrap v) { m_inheritedFlags.textWrap = static_cast<unsigned>(v); }
 
     void setWordSpacing(Length&&);
 
@@ -1395,7 +1396,6 @@ public:
     inline void setUserDrag(UserDrag);
     inline void setUserSelect(UserSelect);
     inline void setTextOverflow(TextOverflow);
-    inline void setTextWrap(TextWrap);
     inline void setWordBreak(WordBreak);
     inline void setOverflowWrap(OverflowWrap);
     inline void setNBSPMode(NBSPMode);
@@ -2174,7 +2174,8 @@ private:
         unsigned direction : 1; // TextDirection
         unsigned whiteSpace : 3; // WhiteSpace
         unsigned whiteSpaceCollapse : 3; // WhiteSpaceCollapse
-        // 33 bits
+        unsigned textWrap : 3; // TextWrap
+        // 36 bits
         unsigned borderCollapse : 1; // BorderCollapse
         unsigned boxDirection : 1; // BoxDirection
 
@@ -2184,16 +2185,16 @@ private:
         unsigned pointerEvents : 4; // PointerEvents
         unsigned insideLink : 2; // InsideLink
         unsigned insideDefaultButton : 1;
-        // 44 bits
+        // 47 bits
 
         // CSS Text Layout Module Level 3: Vertical writing support
         unsigned writingMode : 2; // WritingMode
-        // 46 bits
+        // 49 bits
 
 #if ENABLE(TEXT_AUTOSIZING)
         unsigned autosizeStatus : 5;
 #endif
-        // 51 bits
+        // 54 bits
     };
 
     // This constructor is used to implement the replace operation.

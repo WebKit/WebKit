@@ -672,7 +672,6 @@ inline float RenderStyle::textStrokeWidth() const { return m_rareInheritedData->
 inline OptionSet<TextTransform> RenderStyle::textTransform() const { return OptionSet<TextTransform>::fromRaw(m_inheritedFlags.textTransform); }
 inline TextUnderlineOffset RenderStyle::textUnderlineOffset() const { return m_rareInheritedData->textUnderlineOffset; }
 inline TextUnderlinePosition RenderStyle::textUnderlinePosition() const { return static_cast<TextUnderlinePosition>(m_rareInheritedData->textUnderlinePosition); }
-inline TextWrap RenderStyle::textWrap() const { return static_cast<TextWrap>(m_rareInheritedData->textWrap); }
 inline TextZoom RenderStyle::textZoom() const { return static_cast<TextZoom>(m_rareInheritedData->textZoom); }
 inline const Length& RenderStyle::top() const { return m_nonInheritedData->surroundData->offset.top(); }
 inline OptionSet<TouchAction> RenderStyle::touchActions() const { return m_nonInheritedData->rareData->touchActions; }
@@ -792,6 +791,7 @@ inline bool RenderStyle::InheritedFlags::operator==(const InheritedFlags& other)
         && direction == other.direction
         && whiteSpace == other.whiteSpace
         && whiteSpaceCollapse == other.whiteSpaceCollapse
+        && textWrap == other.textWrap
         && borderCollapse == other.borderCollapse
         && boxDirection == other.boxDirection
         && rtlOrdering == other.rtlOrdering
