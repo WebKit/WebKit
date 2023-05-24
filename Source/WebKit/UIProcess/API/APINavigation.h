@@ -77,29 +77,29 @@ struct SubstituteData {
 class Navigation : public ObjectImpl<Object::Type::Navigation> {
     WTF_MAKE_NONCOPYABLE(Navigation);
 public:
-    static Ref<Navigation> create(WebKit::WebNavigationState& state, WebKit::WebBackForwardListItem* currentAndTargetItem)
+    static Ref<Navigation> create(WebKit::WebNavigationState& state, WebCore::ProcessIdentifier processID, WebKit::WebBackForwardListItem* currentAndTargetItem)
     {
-        return adoptRef(*new Navigation(state, currentAndTargetItem));
+        return adoptRef(*new Navigation(state, processID, currentAndTargetItem));
     }
 
-    static Ref<Navigation> create(WebKit::WebNavigationState& state, WebKit::WebBackForwardListItem& targetItem, WebKit::WebBackForwardListItem* fromItem, WebCore::FrameLoadType backForwardFrameLoadType)
+    static Ref<Navigation> create(WebKit::WebNavigationState& state, WebCore::ProcessIdentifier processID, WebKit::WebBackForwardListItem& targetItem, WebKit::WebBackForwardListItem* fromItem, WebCore::FrameLoadType backForwardFrameLoadType)
     {
-        return adoptRef(*new Navigation(state, targetItem, fromItem, backForwardFrameLoadType));
+        return adoptRef(*new Navigation(state, processID, targetItem, fromItem, backForwardFrameLoadType));
     }
 
-    static Ref<Navigation> create(WebKit::WebNavigationState& state, WebCore::ResourceRequest&& request, WebKit::WebBackForwardListItem* fromItem)
+    static Ref<Navigation> create(WebKit::WebNavigationState& state, WebCore::ProcessIdentifier processID, WebCore::ResourceRequest&& request, WebKit::WebBackForwardListItem* fromItem)
     {
-        return adoptRef(*new Navigation(state, WTFMove(request), fromItem));
+        return adoptRef(*new Navigation(state, processID, WTFMove(request), fromItem));
     }
 
-    static Ref<Navigation> create(WebKit::WebNavigationState& state, std::unique_ptr<SubstituteData>&& substituteData)
+    static Ref<Navigation> create(WebKit::WebNavigationState& state, WebCore::ProcessIdentifier processID, std::unique_ptr<SubstituteData>&& substituteData)
     {
-        return adoptRef(*new Navigation(state, WTFMove(substituteData)));
+        return adoptRef(*new Navigation(state, processID, WTFMove(substituteData)));
     }
 
-    static Ref<Navigation> create(WebKit::WebNavigationState& state, WebCore::ResourceRequest&& simulatedRequest, std::unique_ptr<SubstituteData>&& substituteData, WebKit::WebBackForwardListItem* fromItem)
+    static Ref<Navigation> create(WebKit::WebNavigationState& state, WebCore::ProcessIdentifier processID, WebCore::ResourceRequest&& simulatedRequest, std::unique_ptr<SubstituteData>&& substituteData, WebKit::WebBackForwardListItem* fromItem)
     {
-        return adoptRef(*new Navigation(state, WTFMove(simulatedRequest), WTFMove(substituteData), fromItem));
+        return adoptRef(*new Navigation(state, processID, WTFMove(simulatedRequest), WTFMove(substituteData), fromItem));
     }
 
     virtual ~Navigation();
@@ -170,15 +170,19 @@ public:
     void setOriginatorNetworkConnectionIntegrityPolicy(OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy) { m_originatorNetworkConnectionIntegrityPolicy = networkConnectionIntegrityPolicy; }
     OptionSet<WebCore::NetworkConnectionIntegrity> originatorNetworkConnectionIntegrityPolicy() const { return m_originatorNetworkConnectionIntegrityPolicy; }
 
+    WebCore::ProcessIdentifier processID() const { return m_processID; }
+    void setProcessID(WebCore::ProcessIdentifier processID) { m_processID = processID; }
+
 private:
-    explicit Navigation(WebKit::WebNavigationState&);
-    Navigation(WebKit::WebNavigationState&, WebKit::WebBackForwardListItem*);
-    Navigation(WebKit::WebNavigationState&, WebCore::ResourceRequest&&, WebKit::WebBackForwardListItem* fromItem);
-    Navigation(WebKit::WebNavigationState&, WebKit::WebBackForwardListItem& targetItem, WebKit::WebBackForwardListItem* fromItem, WebCore::FrameLoadType);
-    Navigation(WebKit::WebNavigationState&, std::unique_ptr<SubstituteData>&&);
-    Navigation(WebKit::WebNavigationState&, WebCore::ResourceRequest&&, std::unique_ptr<SubstituteData>&&, WebKit::WebBackForwardListItem* fromItem);
+    Navigation(WebKit::WebNavigationState&, WebCore::ProcessIdentifier);
+    Navigation(WebKit::WebNavigationState&, WebCore::ProcessIdentifier, WebKit::WebBackForwardListItem*);
+    Navigation(WebKit::WebNavigationState&, WebCore::ProcessIdentifier, WebCore::ResourceRequest&&, WebKit::WebBackForwardListItem* fromItem);
+    Navigation(WebKit::WebNavigationState&, WebCore::ProcessIdentifier, WebKit::WebBackForwardListItem& targetItem, WebKit::WebBackForwardListItem* fromItem, WebCore::FrameLoadType);
+    Navigation(WebKit::WebNavigationState&, WebCore::ProcessIdentifier, std::unique_ptr<SubstituteData>&&);
+    Navigation(WebKit::WebNavigationState&, WebCore::ProcessIdentifier, WebCore::ResourceRequest&&, std::unique_ptr<SubstituteData>&&, WebKit::WebBackForwardListItem* fromItem);
 
     uint64_t m_navigationID;
+    WebCore::ProcessIdentifier m_processID;
     WebCore::ResourceRequest m_originalRequest;
     WebCore::ResourceRequest m_currentRequest;
     std::optional<WebCore::ProcessIdentifier> m_currentRequestProcessIdentifier;

@@ -48,7 +48,7 @@ private:
 
     void detachFromFrame() override;
 
-    uint64_t m_navigationID;
+    uint64_t m_navigationID { 0 };
 };
 
 } // namespace WebKit

@@ -74,7 +74,6 @@ static const MessageNameSet& messageNamesToIgnoreWhileSuspended()
         messageNames.get().add(IPC::MessageName::WebPageProxy_DidChangeMainDocument);
         messageNames.get().add(IPC::MessageName::WebPageProxy_DidChangeProgress);
         messageNames.get().add(IPC::MessageName::WebPageProxy_DidCommitLoadForFrame);
-        messageNames.get().add(IPC::MessageName::WebPageProxy_DidDestroyNavigation);
         messageNames.get().add(IPC::MessageName::WebPageProxy_DidFinishDocumentLoadForFrame);
         messageNames.get().add(IPC::MessageName::WebPageProxy_DidFinishProgress);
         messageNames.get().add(IPC::MessageName::WebPageProxy_DidFirstLayoutForFrame);
@@ -113,7 +112,7 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&
 #endif
 {
     allSuspendedPages().add(this);
-    m_process->incrementSuspendedPageCount();
+    m_process->addSuspendedPageProxy(*this);
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
 
     m_suspensionTimeoutTimer.startOneShot(suspensionTimeout);
@@ -139,7 +138,12 @@ SuspendedPageProxy::~SuspendedPageProxy()
             m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
     }
 
-    m_process->decrementSuspendedPageCount();
+    m_process->removeSuspendedPageProxy(*this);
+}
+
+void SuspendedPageProxy::didDestroyNavigation(uint64_t navigationID)
+{
+    m_page.didDestroyNavigationShared(m_process.copyRef(), navigationID);
 }
 
 WebBackForwardCache& SuspendedPageProxy::backForwardCache() const
@@ -243,7 +247,7 @@ void SuspendedPageProxy::suspensionTimedOut()
     backForwardCache().removeEntry(*this); // Will destroy |this|.
 }
 
-void SuspendedPageProxy::didReceiveMessage(IPC::Connection&, IPC::Decoder& decoder)
+void SuspendedPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     ASSERT(decoder.messageReceiverName() == Messages::WebPageProxy::messageReceiverName());
 
@@ -254,6 +258,11 @@ void SuspendedPageProxy::didReceiveMessage(IPC::Connection&, IPC::Decoder& decod
 
     if (decoder.messageName() == Messages::WebPageProxy::DidFailToSuspendAfterProcessSwap::name()) {
         didProcessRequestToSuspend(SuspensionState::FailedToSuspend);
+        return;
+    }
+
+    if (decoder.messageName() == Messages::WebPageProxy::DidDestroyNavigation::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::DidDestroyNavigation>(connection, decoder, this, &SuspendedPageProxy::didDestroyNavigation);
         return;
     }
 

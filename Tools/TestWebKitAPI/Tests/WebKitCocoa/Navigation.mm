@@ -1747,3 +1747,54 @@ TEST(WKNavigation, HTTPSOnlyWithHTTPRedirect)
     EXPECT_FALSE(finishedSuccessfully);
     EXPECT_EQ(loadCount, 21);
 }
+
+TEST(WKNavigation, LeakCheck)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "/example"_s, { "hi"_s } },
+        { "/webkit"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    [storeConfiguration setAllowsHSTSWithUntrustedRootCertificate:YES];
+    auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [viewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+
+    __block __weak WKNavigation *gLastNavigation = nil;
+
+    __block bool done = false;
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+    delegate.get().didStartProvisionalNavigation = ^(WKWebView *, WKNavigation *navigation) {
+        gLastNavigation = navigation;
+    };
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *navigation) {
+        EXPECT_EQ(gLastNavigation, navigation);
+        done = true;
+    };
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:viewConfiguration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    __weak WKNavigation *navigationToExample;
+    @autoreleasepool {
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+        Util::run(&done);
+        navigationToExample = gLastNavigation;
+
+        auto examplePID = [webView _webProcessIdentifier];
+
+        done = false;
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/webkit"]]];
+        Util::run(&done);
+
+        EXPECT_NE(examplePID, [webView _webProcessIdentifier]);
+        EXPECT_NE(gLastNavigation, navigationToExample);
+
+        [webView _clearBackForwardCache];
+    }
+
+    while (navigationToExample)
+        Util::spinRunLoop();
+}

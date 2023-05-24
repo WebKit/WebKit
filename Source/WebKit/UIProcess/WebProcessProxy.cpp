@@ -378,7 +378,7 @@ void WebProcessProxy::setIsInProcessCache(bool value, WillShutDown willShutDown)
     WEBPROCESSPROXY_RELEASE_LOG(Process, "setIsInProcessCache(%d)", value);
     if (value) {
         RELEASE_ASSERT(m_pageMap.isEmpty());
-        RELEASE_ASSERT(!m_suspendedPageCount);
+        RELEASE_ASSERT(m_suspendedPages.isEmptyIgnoringNullReferences());
         RELEASE_ASSERT(m_provisionalPages.isEmptyIgnoringNullReferences());
         m_previouslyApprovedFilePaths.clear();
     }
@@ -456,8 +456,10 @@ void WebProcessProxy::removeProvisionalPageProxy(ProvisionalPageProxy& provision
     ASSERT(m_provisionalPages.contains(provisionalPage));
     m_provisionalPages.remove(provisionalPage);
     updateRegistrationWithDataStore();
-    if (m_provisionalPages.isEmptyIgnoringNullReferences())
+    if (m_provisionalPages.isEmptyIgnoringNullReferences()) {
+        reportProcessDisassociatedWithPageIfNecessary(provisionalPage.page().identifier());
         maybeShutDown();
+    }
 }
 
 void WebProcessProxy::addProvisionalFrameProxy(ProvisionalFrameProxy& provisionalFrame)
@@ -784,6 +786,8 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
     ASSERT_UNUSED(removedPage, removedPage == &webPage);
     removedPage = globalPageMap().take(webPage.identifier());
     ASSERT_UNUSED(removedPage, removedPage == &webPage);
+
+    reportProcessDisassociatedWithPageIfNecessary(webPage.identifier());
 
     if (endsUsingDataStore == EndsUsingDataStore::Yes)
         m_processPool->pageEndUsingWebsiteDataStore(webPage.identifier(), webPage.websiteDataStore());
@@ -1397,12 +1401,12 @@ bool WebProcessProxy::canTerminateAuxiliaryProcess()
 {
     if (!m_pageMap.isEmpty()
         || !m_frameMap.isEmpty()
-        || m_suspendedPageCount
+        || !m_suspendedPages.isEmptyIgnoringNullReferences()
         || !m_provisionalPages.isEmptyIgnoringNullReferences()
         || !m_provisionalFrames.isEmptyIgnoringNullReferences()
         || m_isInProcessCache
         || m_shutdownPreventingScopeCounter.value()) {
-        WEBPROCESSPROXY_RELEASE_LOG(Process, "canTerminateAuxiliaryProcess: returns false (pageCount=%u, provisionalPageCount=%u, m_suspendedPageCount=%u, m_isInProcessCache=%d, m_shutdownPreventingScopeCounter=%lu)", m_pageMap.size(), m_provisionalPages.computeSize(), m_suspendedPageCount, m_isInProcessCache, m_shutdownPreventingScopeCounter.value());
+        WEBPROCESSPROXY_RELEASE_LOG(Process, "canTerminateAuxiliaryProcess: returns false (pageCount=%u, provisionalPageCount=%u, suspendedPageCount=%u, m_isInProcessCache=%d, m_shutdownPreventingScopeCounter=%lu)", m_pageMap.size(), m_provisionalPages.computeSize(), m_suspendedPages.computeSize(), m_isInProcessCache, m_shutdownPreventingScopeCounter.value());
         return false;
     }
 
@@ -1980,23 +1984,50 @@ void WebProcessProxy::didStartProvisionalLoadForMainFrame(const URL& url)
     m_registrableDomain = WTFMove(registrableDomain);
 }
 
-void WebProcessProxy::incrementSuspendedPageCount()
+void WebProcessProxy::addSuspendedPageProxy(SuspendedPageProxy& suspendedPage)
 {
-    ++m_suspendedPageCount;
-    WEBPROCESSPROXY_RELEASE_LOG(Process, "incrementSuspendedPageCount: m_suspendedPageCount=%u", m_suspendedPageCount);
-    if (m_suspendedPageCount == 1)
+    m_suspendedPages.add(suspendedPage);
+    auto suspendedPageCount = this->suspendedPageCount();
+    WEBPROCESSPROXY_RELEASE_LOG(Process, "addSuspendedPageProxy: suspendedPageCount=%u", suspendedPageCount);
+    if (suspendedPageCount == 1)
         send(Messages::WebProcess::SetHasSuspendedPageProxy(true), 0);
 }
 
-void WebProcessProxy::decrementSuspendedPageCount()
+void WebProcessProxy::removeSuspendedPageProxy(SuspendedPageProxy& suspendedPage)
 {
-    ASSERT(m_suspendedPageCount);
-    --m_suspendedPageCount;
-    WEBPROCESSPROXY_RELEASE_LOG(Process, "decrementSuspendedPageCount: m_suspendedPageCount=%u", m_suspendedPageCount);
-    if (!m_suspendedPageCount) {
+    ASSERT(m_suspendedPages.contains(suspendedPage));
+    m_suspendedPages.remove(suspendedPage);
+    auto suspendedPageCount = this->suspendedPageCount();
+    WEBPROCESSPROXY_RELEASE_LOG(Process, "removeSuspendedPageProxy: suspendedPageCount=%u", suspendedPageCount);
+    if (!suspendedPageCount) {
+        reportProcessDisassociatedWithPageIfNecessary(suspendedPage.page().identifier());
         send(Messages::WebProcess::SetHasSuspendedPageProxy(false), 0);
         maybeShutDown();
     }
+}
+
+void WebProcessProxy::reportProcessDisassociatedWithPageIfNecessary(WebPageProxyIdentifier pageID)
+{
+    if (isAssociatedWithPage(pageID))
+        return;
+
+    if (auto page = webPage(pageID))
+        page->processIsNoLongerAssociatedWithPage(*this);
+}
+
+bool WebProcessProxy::isAssociatedWithPage(WebPageProxyIdentifier pageID) const
+{
+    if (m_pageMap.contains(pageID))
+        return true;
+    for (auto& provisionalPage : m_provisionalPages) {
+        if (provisionalPage.page().identifier() == pageID)
+            return true;
+    }
+    for (auto& suspendedPage : m_suspendedPages) {
+        if (suspendedPage.page().identifier() == pageID)
+            return true;
+    }
+    return false;
 }
 
 WebProcessPool* WebProcessProxy::processPoolIfExists() const

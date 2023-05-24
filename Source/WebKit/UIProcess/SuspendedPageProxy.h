@@ -91,6 +91,7 @@ private:
     void suspensionTimedOut();
 
     void close();
+    void didDestroyNavigation(uint64_t navigationID);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

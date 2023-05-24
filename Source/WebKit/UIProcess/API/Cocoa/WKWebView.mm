@@ -89,6 +89,7 @@
 #import "WKWebViewMac.h"
 #import "WKWebpagePreferencesInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
+#import "WebBackForwardCache.h"
 #import "WebBackForwardList.h"
 #import "WebFrameProxy.h"
 #import "WebFullScreenManagerProxy.h"
@@ -3083,6 +3084,12 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 {
     THROW_IF_SUSPENDED;
     _page->launchInitialProcessIfNecessary();
+}
+
+- (void)_clearBackForwardCache
+{
+    THROW_IF_SUSPENDED;
+    _page->process().processPool().backForwardCache().removeEntriesForPage(*_page);
 }
 
 + (BOOL)_handlesSafeBrowsing

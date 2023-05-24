@@ -35,16 +35,13 @@ using namespace WebCore;
 
 WebDocumentLoader::WebDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
     : DocumentLoader(request, substituteData)
-    , m_navigationID(0)
 {
 }
 
 void WebDocumentLoader::detachFromFrame()
 {
-    if (m_navigationID)
-        WebFrame::fromCoreFrame(*frame())->documentLoaderDetached(m_navigationID);
-
-    m_navigationID = 0;
+    if (auto navigationID = std::exchange(m_navigationID, 0))
+        WebFrame::fromCoreFrame(*frame())->documentLoaderDetached(navigationID);
 
     DocumentLoader::detachFromFrame();
 }

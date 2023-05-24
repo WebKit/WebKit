@@ -41,45 +41,45 @@ WebNavigationState::~WebNavigationState()
 {
 }
 
-Ref<API::Navigation> WebNavigationState::createLoadRequestNavigation(ResourceRequest&& request, WebBackForwardListItem* currentItem)
+Ref<API::Navigation> WebNavigationState::createLoadRequestNavigation(WebCore::ProcessIdentifier processID, ResourceRequest&& request, WebBackForwardListItem* currentItem)
 {
-    auto navigation = API::Navigation::create(*this, WTFMove(request), currentItem);
+    auto navigation = API::Navigation::create(*this, processID, WTFMove(request), currentItem);
 
     m_navigations.set(navigation->navigationID(), navigation.ptr());
 
     return navigation;
 }
 
-Ref<API::Navigation> WebNavigationState::createBackForwardNavigation(WebBackForwardListItem& targetItem, WebBackForwardListItem* currentItem, FrameLoadType frameLoadType)
+Ref<API::Navigation> WebNavigationState::createBackForwardNavigation(WebCore::ProcessIdentifier processID, WebBackForwardListItem& targetItem, WebBackForwardListItem* currentItem, FrameLoadType frameLoadType)
 {
-    auto navigation = API::Navigation::create(*this, targetItem, currentItem, frameLoadType);
+    auto navigation = API::Navigation::create(*this, processID, targetItem, currentItem, frameLoadType);
 
     m_navigations.set(navigation->navigationID(), navigation.ptr());
 
     return navigation;
 }
 
-Ref<API::Navigation> WebNavigationState::createReloadNavigation(WebBackForwardListItem* currentAndTargetItem)
+Ref<API::Navigation> WebNavigationState::createReloadNavigation(WebCore::ProcessIdentifier processID, WebBackForwardListItem* currentAndTargetItem)
 {
-    auto navigation = API::Navigation::create(*this, currentAndTargetItem);
+    auto navigation = API::Navigation::create(*this, processID, currentAndTargetItem);
 
     m_navigations.set(navigation->navigationID(), navigation.ptr());
 
     return navigation;
 }
 
-Ref<API::Navigation> WebNavigationState::createLoadDataNavigation(std::unique_ptr<API::SubstituteData>&& substituteData)
+Ref<API::Navigation> WebNavigationState::createLoadDataNavigation(WebCore::ProcessIdentifier processID, std::unique_ptr<API::SubstituteData>&& substituteData)
 {
-    auto navigation = API::Navigation::create(*this, WTFMove(substituteData));
+    auto navigation = API::Navigation::create(*this, processID, WTFMove(substituteData));
 
     m_navigations.set(navigation->navigationID(), navigation.ptr());
 
     return navigation;
 }
 
-Ref<API::Navigation> WebNavigationState::createSimulatedLoadWithDataNavigation(WebCore::ResourceRequest&& request, std::unique_ptr<API::SubstituteData>&& substituteData, WebBackForwardListItem* currentItem)
+Ref<API::Navigation> WebNavigationState::createSimulatedLoadWithDataNavigation(WebCore::ProcessIdentifier processID, WebCore::ResourceRequest&& request, std::unique_ptr<API::SubstituteData>&& substituteData, WebBackForwardListItem* currentItem)
 {
-    auto navigation = API::Navigation::create(*this, WTFMove(request), WTFMove(substituteData), currentItem);
+    auto navigation = API::Navigation::create(*this, processID, WTFMove(request), WTFMove(substituteData), currentItem);
 
     m_navigations.set(navigation->navigationID(), navigation.ptr());
 
@@ -102,16 +102,28 @@ RefPtr<API::Navigation> WebNavigationState::takeNavigation(uint64_t navigationID
     return m_navigations.take(navigationID);
 }
 
-void WebNavigationState::didDestroyNavigation(uint64_t navigationID)
+void WebNavigationState::didDestroyNavigation(WebCore::ProcessIdentifier processID, uint64_t navigationID)
 {
     ASSERT(navigationID);
-
-    m_navigations.remove(navigationID);
+    auto it = m_navigations.find(navigationID);
+    if (it != m_navigations.end() && (*it).value->processID() == processID)
+        m_navigations.remove(it);
 }
 
 void WebNavigationState::clearAllNavigations()
 {
     m_navigations.clear();
+}
+
+void WebNavigationState::clearNavigationsFromProcess(WebCore::ProcessIdentifier processID)
+{
+    Vector<uint64_t> navigationIDsToRemove;
+    for (auto& navigation : m_navigations.values()) {
+        if (navigation->processID() == processID)
+            navigationIDsToRemove.append(navigation->navigationID());
+    }
+    for (auto navigationID : navigationIDsToRemove)
+        m_navigations.remove(navigationID);
 }
 
 } // namespace WebKit
