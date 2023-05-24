@@ -45,6 +45,7 @@
 
 namespace WebKit {
 
+class RemoteGraphicsContextGLInitializationState;
 #if ENABLE(VIDEO)
 class RemoteVideoFrameObjectHeapProxy;
 #endif
@@ -70,6 +71,7 @@ public:
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { }
 
     // WebCore::GraphicsContextGL overrides.
+    std::tuple<GCGLenum, GCGLenum> externalImageTextureBindingPoint() final;
     void reshape(int width, int height) final;
     void setContextVisibility(bool) final;
     bool isGLES2Compliant() const final;
@@ -395,11 +397,11 @@ private:
 #endif
     void initializeIPC(IPC::StreamServerConnection::Handle&&, RemoteRenderingBackendProxy&);
     // Messages to be received.
-    void wasCreated(bool didSucceed, IPC::Semaphore&&, IPC::Semaphore&&, String&& availableExtensions, String&& requestedExtensions);
+    void wasCreated(IPC::Semaphore&&, IPC::Semaphore&&, std::optional<RemoteGraphicsContextGLInitializationState>&&);
     void wasLost();
     void wasChanged();
 
-    void initialize(const String& availableExtensions, const String& requestableExtensions);
+    void initialize(const RemoteGraphicsContextGLInitializationState&);
     void waitUntilInitialized();
     void disconnectGpuProcessIfNeeded();
     void abandonGpuProcess();
@@ -418,6 +420,8 @@ private:
 #if ENABLE(VIDEO)
     Ref<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
 #endif
+    GCGLenum m_externalImageTarget { 0 };
+    GCGLenum m_externalImageBindingQuery { 0 };
 };
 
 // The GCGL types map to following WebKit IPC types. The list is used by generate-gpup-webgl script.

@@ -100,8 +100,7 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     auto bufferHeight = static_cast<uint32_t>(size.height());
 
     auto gCGL = static_cast<GraphicsContextGLCocoa*>(m_context.graphicsContextGL());
-    GCGLenum textureTarget = gCGL->drawingBufferTextureTarget();
-    GCGLenum textureTargetBinding = gCGL->drawingBufferTextureTargetQueryForDrawingTarget(textureTarget);
+    auto [textureTarget, textureTargetBinding] = gl.externalImageTextureBindingPoint();
 #else
     GCGLenum textureTarget = GL::TEXTURE_2D;
     GCGLenum textureTargetBinding = GL::TEXTURE_BINDING_2D;

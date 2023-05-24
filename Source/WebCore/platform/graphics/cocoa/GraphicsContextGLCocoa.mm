@@ -247,6 +247,21 @@ IOSurface* GraphicsContextGLCocoa::displayBufferSurface()
     return displayBuffer().surface.get();
 }
 
+std::tuple<GCGLenum, GCGLenum> GraphicsContextGLCocoa::externalImageTextureBindingPoint()
+{
+    if (m_drawingBufferTextureTarget == -1)
+        EGL_GetConfigAttrib(platformDisplay(), platformConfig(), EGL_BIND_TO_TEXTURE_TARGET_ANGLE, &m_drawingBufferTextureTarget);
+
+    switch (m_drawingBufferTextureTarget) {
+    case EGL_TEXTURE_2D:
+        return std::make_tuple(TEXTURE_2D, TEXTURE_BINDING_2D);
+    case EGL_TEXTURE_RECTANGLE_ANGLE:
+        return std::make_tuple(TEXTURE_RECTANGLE_ARB, TEXTURE_BINDING_RECTANGLE_ARB);
+    }
+    ASSERT_WITH_MESSAGE(false, "Invalid enum returned from EGL_GetConfigAttrib");
+    return std::make_tuple(0, 0);
+}
+
 bool GraphicsContextGLCocoa::platformInitializeContext()
 {
     GraphicsContextGLAttributes attributes = contextAttributes();
@@ -612,8 +627,8 @@ bool GraphicsContextGLCocoa::bindNextDrawingBuffer()
         buffer = { WTFMove(surface), pbuffer };
     }
 
-    GCGLenum textureTarget = drawingBufferTextureTarget();
-    ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(textureTarget), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
+    auto [textureTarget, textureBinding] = drawingBufferTextureBindingPoint();
+    ScopedRestoreTextureBinding restoreBinding(textureBinding, textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
     GL_BindTexture(textureTarget, m_texture);
     if (!EGL_BindTexImage(m_displayObj, buffer.pbuffer, EGL_BACK_BUFFER)) {
         EGL_DestroySurface(m_displayObj, buffer.pbuffer);
@@ -811,8 +826,8 @@ RefPtr<PixelBuffer> GraphicsContextGLCocoa::readCompositedResults()
     // out of an IOSurface in such a way that drawing the NativeImage would be guaranteed leave
     // the IOSurface be unrefenced after the draw call finishes.
     ScopedTexture texture;
-    GCGLenum textureTarget = drawingBufferTextureTarget();
-    ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(drawingBufferTextureTarget()), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
+    auto [textureTarget, textureBinding] = drawingBufferTextureBindingPoint();
+    ScopedRestoreTextureBinding restoreBinding(textureBinding, textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
     GL_BindTexture(textureTarget, texture);
     if (!EGL_BindTexImage(m_displayObj, buffer.pbuffer, EGL_BACK_BUFFER))
         return nullptr;

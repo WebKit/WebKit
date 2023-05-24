@@ -114,34 +114,14 @@ bool GraphicsContextGLANGLE::platformInitialize()
 
 GCGLenum GraphicsContextGLANGLE::drawingBufferTextureTarget()
 {
-#if !PLATFORM(COCOA)
-    m_drawingBufferTextureTarget = EGL_TEXTURE_2D;
-#else
-    if (m_drawingBufferTextureTarget == -1)
-        EGL_GetConfigAttrib(platformDisplay(), platformConfig(), EGL_BIND_TO_TEXTURE_TARGET_ANGLE, &m_drawingBufferTextureTarget);
-#endif
-
-    switch (m_drawingBufferTextureTarget) {
-    case EGL_TEXTURE_2D:
-        return TEXTURE_2D;
-    case EGL_TEXTURE_RECTANGLE_ANGLE:
-        return TEXTURE_RECTANGLE_ARB;
-
-    }
-    ASSERT_WITH_MESSAGE(false, "Invalid enum returned from EGL_GetConfigAttrib");
-    return 0;
+    auto [textureTarget, _] = externalImageTextureBindingPoint();
+    UNUSED_VARIABLE(_);
+    return textureTarget;
 }
 
-GCGLenum GraphicsContextGLANGLE::drawingBufferTextureTargetQueryForDrawingTarget(GCGLenum drawingTarget)
+std::tuple<GCGLenum, GCGLenum> GraphicsContextGLANGLE::drawingBufferTextureBindingPoint()
 {
-    switch (drawingTarget) {
-    case TEXTURE_2D:
-        return TEXTURE_BINDING_2D;
-    case TEXTURE_RECTANGLE_ARB:
-        return TEXTURE_BINDING_RECTANGLE_ARB;
-    }
-    ASSERT_WITH_MESSAGE(false, "Invalid drawing target");
-    return -1;
+    return externalImageTextureBindingPoint();
 }
 
 GCGLint GraphicsContextGLANGLE::EGLDrawingBufferTextureTargetForDrawingTarget(GCGLenum drawingTarget)

@@ -4434,6 +4434,7 @@
 		3AB0C59229C8162200141B5E /* NetworkQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkQuotaManager.h; sourceTree = "<group>"; };
 		3AC4C04529D35D1500402716 /* WebSWRegistrationStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSWRegistrationStore.h; sourceTree = "<group>"; };
 		3AC4C04629D35D1B00402716 /* ServiceWorker */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ServiceWorker; sourceTree = "<group>"; };
+		3AC6E5242A1C59AE0059F092 /* RemoteGraphicsContextGLInitializationState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGLInitializationState.h; sourceTree = "<group>"; };
 		3AE104BD29CBC8BA00661165 /* OriginQuotaManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OriginQuotaManager.cpp; sourceTree = "<group>"; };
 		3AE104BE29CBC8BB00661165 /* OriginQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OriginQuotaManager.h; sourceTree = "<group>"; };
 		3CAECB5E27465AE300AB78D0 /* UnifiedSource113.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnifiedSource113.cpp; sourceTree = "<group>"; };
@@ -10954,6 +10955,7 @@
 				7B904168254AFEA7006EEB8C /* RemoteGraphicsContextGL.messages.in */,
 				7BE72668257680EF00E85D98 /* RemoteGraphicsContextGLCocoa.cpp */,
 				7B90416D2550108C006EEB8C /* RemoteGraphicsContextGLFunctionsGenerated.h */,
+				3AC6E5242A1C59AE0059F092 /* RemoteGraphicsContextGLInitializationState.h */,
 				72440D33287CCC0500FADBC4 /* RemoteImageBuffer.cpp */,
 				55AD09422408A02E00DE4D2F /* RemoteImageBuffer.h */,
 				72A87BBB287678A700289098 /* RemoteRenderingBackend.cpp */,

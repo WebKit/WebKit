@@ -355,9 +355,9 @@ bool GraphicsContextGLTextureMapperANGLE::reshapeDrawingBuffer()
     const int width = size.width();
     const int height = size.height();
     GLuint colorFormat = attrs.alpha ? GL_RGBA : GL_RGB;
-    GLenum textureTarget = drawingBufferTextureTarget();
+    auto [textureTarget, textureBinding] = drawingBufferTextureBindingPoint();
     GLuint internalColorFormat = textureTarget == GL_TEXTURE_2D ? colorFormat : m_internalColorFormat;
-    ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(textureTarget), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
+    ScopedRestoreTextureBinding restoreBinding(textureBinding, textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
 
     GL_BindTexture(textureTarget, m_compositorTexture);
     GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);

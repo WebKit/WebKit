@@ -44,8 +44,9 @@ public:
     GCGLDisplay platformDisplay() const;
     GCGLConfig platformConfig() const;
     GCGLenum drawingBufferTextureTarget();
-    static GCGLenum drawingBufferTextureTargetQueryForDrawingTarget(GCGLenum drawingTarget);
+    std::tuple<GCGLenum, GCGLenum> drawingBufferTextureBindingPoint();
     static GCGLint EGLDrawingBufferTextureTargetForDrawingTarget(GCGLenum drawingTarget);
+
     enum class ReleaseThreadResourceBehavior {
         // Releases current context after GraphicsContextGLANGLE calls done in the thread.
         ReleaseCurrentContext,

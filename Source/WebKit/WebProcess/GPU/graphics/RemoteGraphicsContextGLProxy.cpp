@@ -30,6 +30,7 @@
 
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcessConnection.h"
+#include "RemoteGraphicsContextGLInitializationState.h"
 #include "RemoteGraphicsContextGLMessages.h"
 #include "RemoteGraphicsContextGLProxyMessages.h"
 #include "RemoteRenderingBackendProxy.h"
@@ -170,12 +171,22 @@ bool RemoteGraphicsContextGLProxy::isExtensionEnabled(const String& name)
     return m_availableExtensions.contains(name) || m_enabledExtensions.contains(name);
 }
 
-void RemoteGraphicsContextGLProxy::initialize(const String& availableExtensions, const String& requestableExtensions)
+void RemoteGraphicsContextGLProxy::initialize(const RemoteGraphicsContextGLInitializationState& initializationState)
 {
-    for (auto extension : StringView(availableExtensions).split(' '))
+    for (auto extension : StringView(initializationState.availableExtensions).split(' '))
         m_availableExtensions.add(extension.toString());
-    for (auto extension : StringView(requestableExtensions).split(' '))
+    for (auto extension : StringView(initializationState.requestableExtensions).split(' '))
         m_requestableExtensions.add(extension.toString());
+    m_externalImageTarget = initializationState.externalImageTarget;
+    m_externalImageBindingQuery = initializationState.externalImageBindingQuery;
+}
+
+std::tuple<GCGLenum, GCGLenum> RemoteGraphicsContextGLProxy::externalImageTextureBindingPoint()
+{
+    if (isContextLost())
+        return std::make_tuple(0, 0);
+
+    return std::make_tuple(m_externalImageTarget, m_externalImageBindingQuery);
 }
 
 void RemoteGraphicsContextGLProxy::reshape(int width, int height)
@@ -422,18 +433,18 @@ void RemoteGraphicsContextGLProxy::multiDrawElementsInstancedBaseVertexBaseInsta
     }
 }
 
-void RemoteGraphicsContextGLProxy::wasCreated(bool didSucceed, IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore, String&& availableExtensions, String&& requestedExtensions)
+void RemoteGraphicsContextGLProxy::wasCreated(IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore, std::optional<RemoteGraphicsContextGLInitializationState>&& initializationState)
 {
     if (isContextLost())
         return;
-    if (!didSucceed) {
+    if (!initializationState) {
         markContextLost();
         return;
     }
     ASSERT(!m_didInitialize);
     m_streamConnection->setSemaphores(WTFMove(wakeUpSemaphore), WTFMove(clientWaitSemaphore));
     m_didInitialize = true;
-    initialize(availableExtensions, requestedExtensions);
+    initialize(initializationState.value());
 }
 
 void RemoteGraphicsContextGLProxy::wasLost()
