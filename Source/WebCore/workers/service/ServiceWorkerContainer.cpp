@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -443,6 +443,8 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
                 notifyRegistrationIsSettled(iterator->value);
                 m_ongoingSettledRegistrations.remove(iterator);
             });
+            if (UNLIKELY(promise->needsAbort()))
+                return;
         }
 
         promise->resolve<IDLInterface<ServiceWorkerRegistration>>(WTFMove(registration));
@@ -452,13 +454,25 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
 void ServiceWorkerContainer::postMessage(MessageWithMessagePorts&& message, ServiceWorkerData&& sourceData, String&& sourceOrigin)
 {
     auto& context = *scriptExecutionContext();
+    if (UNLIKELY(context.isJSExecutionForbidden()))
+        return;
+
     auto* globalObject = context.globalObject();
     if (!globalObject)
         return;
 
+    auto& vm = globalObject->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
     MessageEventSource source = RefPtr<ServiceWorker> { ServiceWorker::getOrCreate(context, WTFMove(sourceData)) };
 
     auto messageEvent = MessageEvent::create(*globalObject, message.message.releaseNonNull(), sourceOrigin, { }, WTFMove(source), MessagePort::entanglePorts(context, WTFMove(message.transferredPorts)));
+    if (UNLIKELY(scope.exception())) {
+        // Currently, we assume that the only way we can get here is if we have a termination.
+        RELEASE_ASSERT(vm.hasPendingTerminationException());
+        return;
+    }
+
     if (m_shouldDeferMessageEvents)
         m_deferredMessageEvents.append(WTFMove(messageEvent));
     else {

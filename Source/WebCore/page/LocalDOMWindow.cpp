@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -933,11 +933,20 @@ void LocalDOMWindow::processPostMessage(JSC::JSGlobalObject& lexicalGlobalObject
         if (!globalObject)
             return;
 
+        auto& vm = globalObject->vm();
+        auto scope = DECLARE_CATCH_SCOPE(vm);
+
         UserGestureIndicator userGestureIndicator(userGestureToForward);
         InspectorInstrumentation::willDispatchPostMessage(frame, postMessageIdentifier);
 
         auto ports = MessagePort::entanglePorts(*document(), WTFMove(message.transferredPorts));
         auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), sourceOrigin, { }, incumbentWindowProxy ? std::make_optional(MessageEventSource(WTFMove(incumbentWindowProxy))) : std::nullopt, WTFMove(ports));
+        if (UNLIKELY(scope.exception())) {
+            // Currently, we assume that the only way we can get here is if we have a termination.
+            RELEASE_ASSERT(vm.hasPendingTerminationException());
+            return;
+        }
+
         dispatchEvent(event.event);
 
         InspectorInstrumentation::didDispatchPostMessage(frame, postMessageIdentifier);

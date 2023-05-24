@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -278,6 +278,9 @@ void MessagePort::dispatchMessages()
             return;
 
         ASSERT(context->isContextThread());
+        auto* globalObject = context->globalObject();
+        auto& vm = globalObject->vm();
+        auto scope = DECLARE_CATCH_SCOPE(vm);
 
         bool contextIsWorker = is<WorkerGlobalScope>(*context);
         for (auto& message : messages) {
@@ -286,7 +289,12 @@ void MessagePort::dispatchMessages()
                 return;
 
             auto ports = MessagePort::entanglePorts(*context, WTFMove(message.transferredPorts));
-            auto event = MessageEvent::create(*context->globalObject(), message.message.releaseNonNull(), { }, { }, { }, WTFMove(ports));
+            auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), { }, { }, { }, WTFMove(ports));
+            if (UNLIKELY(scope.exception())) {
+                // Currently, we assume that the only way we can get here is if we have a termination.
+                RELEASE_ASSERT(vm.hasPendingTerminationException());
+                return;
+            }
 
             // Per specification, each MessagePort object has a task source called the port message queue.
             queueTaskKeepingObjectAlive(*this, TaskSource::PostedMessageQueue, [this, event = WTFMove(event)] {
