@@ -49,7 +49,7 @@ class StreamConnectionWorkQueue;
 //   void didReceiveStreamMessage(StreamServerConnection&, Decoder&);
 //
 // The StreamServerConnection does not trust the StreamClientConnection.
-class StreamServerConnection final : public ThreadSafeRefCounted<StreamServerConnection>, private MessageReceiveQueue {
+class StreamServerConnection final : public ThreadSafeRefCounted<StreamServerConnection>, private MessageReceiveQueue, private Connection::Client {
     WTF_MAKE_NONCOPYABLE(StreamServerConnection);
 public:
     using AsyncReplyID = Connection::AsyncReplyID;
@@ -59,7 +59,7 @@ public:
         void encode(Encoder&) const;
         static std::optional<Handle> decode(Decoder&);
     };
-    static Ref<StreamServerConnection> create(Handle&&, StreamConnectionWorkQueue&);
+    static Ref<StreamServerConnection> create(Handle&&);
     ~StreamServerConnection() final;
 
     void startReceivingMessages(StreamMessageReceiver&, ReceiverName, uint64_t destinationID);
@@ -74,7 +74,7 @@ public:
     };
     DispatchResult dispatchStreamMessages(size_t messageLimit);
 
-    void open();
+    void open(StreamConnectionWorkQueue&);
     void invalidate();
     template<typename T> bool send(T&& message, const ObjectIdentifierGenericBase& destinationID);
 
@@ -87,17 +87,24 @@ public:
     Semaphore& clientWaitSemaphore() { return m_clientWaitSemaphore; }
 
 private:
-    StreamServerConnection(Ref<Connection>, StreamServerConnectionBuffer&&, StreamConnectionWorkQueue&);
+    StreamServerConnection(Ref<Connection>, StreamServerConnectionBuffer&&);
 
     // MessageReceiveQueue
     void enqueueMessage(Connection&, std::unique_ptr<Decoder>&&) final;
+
+    // Connection::Client
+    void didReceiveMessage(Connection&, Decoder&) final;
+    bool didReceiveSyncMessage(Connection&, Decoder&, UniqueRef<Encoder>&) final;
+    void didClose(Connection&) final;
+    void didReceiveInvalidMessage(Connection&, MessageName) final;
+
     bool processSetStreamDestinationID(Decoder&&, RefPtr<StreamMessageReceiver>& currentReceiver);
     bool dispatchStreamMessage(Decoder&&, StreamMessageReceiver&);
     bool dispatchOutOfStreamMessage(Decoder&&);
 
     using WakeUpClient = StreamServerConnectionBuffer::WakeUpClient;
     Ref<IPC::Connection> m_connection;
-    StreamConnectionWorkQueue& m_workQueue;
+    RefPtr<StreamConnectionWorkQueue> m_workQueue;
     StreamServerConnectionBuffer m_buffer;
 
     Lock m_outOfStreamMessagesLock;
@@ -109,7 +116,6 @@ private:
     ReceiversMap m_receivers WTF_GUARDED_BY_LOCK(m_receiversLock);
     uint64_t m_currentDestinationID { 0 };
     Semaphore m_clientWaitSemaphore;
-    bool m_isOpen { false };
 
     friend class StreamConnectionWorkQueue;
 };

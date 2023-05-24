@@ -45,9 +45,14 @@ StreamConnectionWorkQueue::~StreamConnectionWorkQueue()
 
 void StreamConnectionWorkQueue::dispatch(WTF::Function<void()>&& function)
 {
-    ASSERT(!m_shouldQuit); // Re-entering during shutdown not supported.
     {
         Locker locker { m_lock };
+        // Currently stream IPC::Connection::Client::didClose is delivered after
+        // scheduling the work queue stop. This is ignored, as the client function
+        // is not used at the moment. Later on, the closure signal should be set synchronously,
+        // not dispatched as a function.
+        if (m_shouldQuit)
+            return;
         m_functions.append(WTFMove(function));
         if (!m_shouldQuit && !m_processingThread) {
             startProcessingThread();
@@ -61,7 +66,8 @@ void StreamConnectionWorkQueue::addStreamConnection(StreamServerConnection& conn
 {
     {
         Locker locker { m_lock };
-        m_connections.add(connection);
+        ASSERT(m_connections.findIf([&connection](StreamServerConnection& other) { return &other == &connection; }) == notFound); // NOLINT
+        m_connections.append(connection);
         if (!m_shouldQuit && !m_processingThread) {
             startProcessingThread();
             return;
@@ -74,7 +80,10 @@ void StreamConnectionWorkQueue::removeStreamConnection(StreamServerConnection& c
 {
     {
         Locker locker { m_lock };
-        m_connections.remove(connection);
+        bool didRemove = m_connections.removeFirstMatching([&connection](StreamServerConnection& other) {
+            return &other == &connection;
+        });
+        ASSERT_UNUSED(didRemove, didRemove);
     }
     wakeUp();
 }
@@ -86,8 +95,8 @@ void StreamConnectionWorkQueue::stopAndWaitForCompletion(WTF::Function<void()>&&
         Locker locker { m_lock };
         m_cleanupFunction = WTFMove(cleanupFunction);
         processingThread = m_processingThread;
+        m_shouldQuit = true;
     }
-    m_shouldQuit = true;
     if (!processingThread)
         return;
     ASSERT(Thread::current().uid() != processingThread->uid());
@@ -145,7 +154,7 @@ void StreamConnectionWorkQueue::processStreams()
         {
             Locker locker { m_lock };
             functions.swap(m_functions);
-            connections = copyToVector(m_connections.values());
+            connections = m_connections;
         }
         for (auto& function : functions)
             WTFMove(function)();
@@ -164,4 +173,5 @@ void StreamConnectionWorkQueue::assertIsCurrent() const
     WTF::assertIsCurrent(*m_processingThread);
 }
 #endif
+
 }

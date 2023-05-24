@@ -30,13 +30,13 @@
 #include <atomic>
 #include <wtf/Deque.h>
 #include <wtf/FunctionDispatcher.h>
-#include <wtf/HashCountedSet.h>
 #include <wtf/Lock.h>
 #include <wtf/Threading.h>
+#include <wtf/Vector.h>
 
 namespace IPC {
 
-class WTF_CAPABILITY("is current") StreamConnectionWorkQueue final : public FunctionDispatcher, public ThreadSafeRefCounted<StreamConnectionWorkQueue> {
+class WTF_CAPABILITY("is current") StreamConnectionWorkQueue final : public SerialFunctionDispatcher, public ThreadSafeRefCounted<StreamConnectionWorkQueue> {
 public:
     static Ref<StreamConnectionWorkQueue> create(const char* name)
     {
@@ -47,19 +47,19 @@ public:
     ~StreamConnectionWorkQueue();
     void addStreamConnection(StreamServerConnection&);
     void removeStreamConnection(StreamServerConnection&);
-
-    void dispatch(WTF::Function<void()>&&) final;
     void stopAndWaitForCompletion(WTF::Function<void()>&& cleanupFunction = nullptr);
-
     void wakeUp();
-
     Semaphore& wakeUpSemaphore();
+
+    // SerialFunctionDispatcher
+    void dispatch(WTF::Function<void()>&&) final;
+#if ASSERT_ENABLED
+    void assertIsCurrent() const final;
+#endif
+
 private:
     void startProcessingThread() WTF_REQUIRES_LOCK(m_lock);
     void processStreams();
-#if ASSERT_ENABLED
-    void assertIsCurrent() const;
-#endif
 
     const char* const m_name;
 
@@ -70,7 +70,7 @@ private:
     RefPtr<Thread> m_processingThread WTF_GUARDED_BY_LOCK(m_lock);
     Deque<Function<void()>> m_functions WTF_GUARDED_BY_LOCK(m_lock);
     WTF::Function<void()> m_cleanupFunction WTF_GUARDED_BY_LOCK(m_lock);
-    HashCountedSet<Ref<StreamServerConnection>> m_connections WTF_GUARDED_BY_LOCK(m_lock);
+    Vector<Ref<StreamServerConnection>> m_connections WTF_GUARDED_BY_LOCK(m_lock);
     friend void assertIsCurrent(const StreamConnectionWorkQueue&);
 };
 
