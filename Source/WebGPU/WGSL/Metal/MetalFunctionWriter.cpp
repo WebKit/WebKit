@@ -394,21 +394,19 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
     if (m_structRole.has_value()) {
         auto role = *m_structRole;
         switch (role) {
-        case AST::StructureRole::UserDefined:
-            break;
         case AST::StructureRole::VertexOutput:
         case AST::StructureRole::FragmentInput:
             m_stringBuilder.append("[[user(loc", location.location(), ")]]");
             return;
         case AST::StructureRole::BindGroup:
+        case AST::StructureRole::UserDefined:
+        case AST::StructureRole::ComputeInput:
             return;
         case AST::StructureRole::VertexInput:
-        case AST::StructureRole::ComputeInput:
-            // FIXME: not sure if these should actually be attributes or not
+            m_stringBuilder.append("[[attribute(", location.location(), ")]]");
             break;
         }
     }
-    m_stringBuilder.append("[[attribute(", location.location(), ")]]");
 }
 
 void FunctionDefinitionWriter::visit(AST::WorkgroupSizeAttribute&)
