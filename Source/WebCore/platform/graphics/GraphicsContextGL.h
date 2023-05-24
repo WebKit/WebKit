@@ -86,6 +86,7 @@ protected:
 
 #define DECLARE_GCGL_OWNED(ClassName) \
 struct GCGLOwned##ClassName : public GCGLOwned { \
+    void adopt(GraphicsContextGL& gl, PlatformGLObject object); \
     void ensure(GraphicsContextGL& gl); \
     void release(GraphicsContextGL& gl); \
 }
@@ -1657,6 +1658,12 @@ inline GCGLOwned::~GCGLOwned()
 }
 
 #define IMPLEMENT_GCGL_OWNED(ClassName) \
+inline void GCGLOwned##ClassName::adopt(GraphicsContextGL& gl, PlatformGLObject object) \
+{ \
+    if (m_object) \
+        gl.delete##ClassName(m_object); \
+    m_object = object; \
+} \
 inline void GCGLOwned##ClassName::ensure(GraphicsContextGL& gl) \
 { \
     if (!m_object) \
@@ -1665,9 +1672,7 @@ inline void GCGLOwned##ClassName::ensure(GraphicsContextGL& gl) \
 \
 inline void GCGLOwned##ClassName::release(GraphicsContextGL& gl) \
 { \
-    if (m_object) \
-        gl.delete##ClassName(m_object); \
-    m_object = 0; \
+    adopt(gl, 0); \
 }
 
 IMPLEMENT_GCGL_OWNED(Framebuffer)

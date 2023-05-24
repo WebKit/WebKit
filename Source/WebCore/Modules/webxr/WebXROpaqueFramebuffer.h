@@ -66,6 +66,11 @@ private:
     WebXROpaqueFramebuffer(PlatformXR::LayerHandle, Ref<WebGLFramebuffer>&&, WebGLRenderingContextBase&, Attributes&&, uint32_t width, uint32_t height);
 
     bool setupFramebuffer();
+    PlatformGLObject allocateRenderbufferStorage(GraphicsContextGL&, GCGLsizei, GCGLenum, GCGLsizei, GCGLsizei);
+    PlatformGLObject allocateColorStorage(GraphicsContextGL&, GCGLsizei, GCGLsizei, GCGLsizei);
+    std::tuple<PlatformGLObject, PlatformGLObject> allocateDepthStencilStorage(GraphicsContextGL&, GCGLsizei, GCGLsizei, GCGLsizei);
+    void bindColor(GraphicsContextGL&, PlatformGLObject);
+    void bindDepthStencil(GraphicsContextGL&, PlatformGLObject, PlatformGLObject);
 
     PlatformXR::LayerHandle m_handle;
     Ref<WebGLFramebuffer> m_framebuffer;
@@ -77,7 +82,6 @@ private:
     GCGLOwnedRenderbuffer m_stencilBuffer;
     GCGLOwnedRenderbuffer m_multisampleColorBuffer;
     GCGLOwnedFramebuffer m_resolvedFBO;
-    GCGLint m_sampleCount { 0 };
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
     GCGLOwnedTexture m_opaqueTexture;
     void* m_ioSurfaceTextureHandle { nullptr };
