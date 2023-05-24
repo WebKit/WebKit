@@ -1359,15 +1359,19 @@ int AccessibilityRenderObject::layoutCount() const
     return downcast<RenderView>(*m_renderer).frameView().layoutContext().layoutCount();
 }
 
-PlainTextRange AccessibilityRenderObject::documentBasedSelectedTextRange() const
+CharacterRange AccessibilityRenderObject::documentBasedSelectedTextRange() const
 {
     auto selectedVisiblePositionRange = this->selectedVisiblePositionRange();
     if (selectedVisiblePositionRange.isNull())
         return { };
 
     int start = indexForVisiblePosition(selectedVisiblePositionRange.start);
+    if (start < 0)
+        start = 0;
     int end = indexForVisiblePosition(selectedVisiblePositionRange.end);
-    return PlainTextRange(start, end - start);
+    if (end < 0)
+        end = 0;
+    return { static_cast<unsigned>(start), static_cast<unsigned>(end - start) };
 }
 
 String AccessibilityRenderObject::selectedText() const
@@ -1385,7 +1389,7 @@ String AccessibilityRenderObject::selectedText() const
     return doAXStringForRange(documentBasedSelectedTextRange());
 }
 
-PlainTextRange AccessibilityRenderObject::selectedTextRange() const
+CharacterRange AccessibilityRenderObject::selectedTextRange() const
 {
     ASSERT(isTextControl());
 
@@ -1395,7 +1399,7 @@ PlainTextRange AccessibilityRenderObject::selectedTextRange() const
     // Use the text control native range if it's a native object.
     if (isNativeTextControl()) {
         auto& textControl = downcast<RenderTextControl>(*m_renderer).textFormControlElement();
-        return PlainTextRange(textControl.selectionStart(), textControl.selectionEnd() - textControl.selectionStart());
+        return { textControl.selectionStart(), textControl.selectionEnd() - textControl.selectionStart() };
     }
 
     return documentBasedSelectedTextRange();
@@ -1448,7 +1452,7 @@ static void clearTextSelectionIntent(AXObjectCache* cache)
     cache->setIsSynchronizingSelection(false);
 }
 
-void AccessibilityRenderObject::setSelectedTextRange(PlainTextRange&& range)
+void AccessibilityRenderObject::setSelectedTextRange(CharacterRange&& range)
 {
     setTextSelectionIntent(axObjectCache(), range.length ? AXTextStateChangeTypeSelectionExtend : AXTextStateChangeTypeSelectionMove);
 
@@ -1458,15 +1462,15 @@ void AccessibilityRenderObject::setSelectedTextRange(PlainTextRange&& range)
 
     if (isNativeTextControl()) {
         HTMLTextFormControlElement& textControl = downcast<RenderTextControl>(*m_renderer).textFormControlElement();
-        textControl.setSelectionRange(range.start, range.start + range.length);
+        textControl.setSelectionRange(range.location, range.location + range.length);
     } else if (m_renderer) {
         ASSERT(node());
         auto& node = *this->node();
         auto elementRange = simpleRange();
-        auto start = visiblePositionForIndexUsingCharacterIterator(node, range.start);
+        auto start = visiblePositionForIndexUsingCharacterIterator(node, range.location);
         if (!contains<ComposedTree>(*elementRange, makeBoundaryPoint(start)))
             start = makeContainerOffsetPosition(elementRange->start);
-        auto end = visiblePositionForIndexUsingCharacterIterator(node, range.start + range.length);
+        auto end = visiblePositionForIndexUsingCharacterIterator(node, range.location + range.length);
         if (!contains<ComposedTree>(*elementRange, makeBoundaryPoint(end)))
             end = makeContainerOffsetPosition(elementRange->start);
         m_renderer->frame().selection().setSelection(VisibleSelection(start, end), FrameSelection::defaultSetSelectionOptions(UserTriggered::Yes));
@@ -1968,7 +1972,7 @@ static bool isHardLineBreak(const VisiblePosition& position)
 
 // Given a line number, the range of characters of the text associated with this accessibility
 // object that contains the line number.
-PlainTextRange AccessibilityRenderObject::doAXRangeForLine(unsigned lineNumber) const
+CharacterRange AccessibilityRenderObject::doAXRangeForLine(unsigned lineNumber) const
 {
     if (!isTextControl())
         return { };
@@ -2000,47 +2004,41 @@ PlainTextRange AccessibilityRenderObject::doAXRangeForLine(unsigned lineNumber) 
 // The composed character range in the text associated with this accessibility object that
 // is specified by the given index value. This parameterized attribute returns the complete
 // range of characters (including surrogate pairs of multi-byte glyphs) at the given index.
-PlainTextRange AccessibilityRenderObject::doAXRangeForIndex(unsigned index) const
+CharacterRange AccessibilityRenderObject::doAXRangeForIndex(unsigned index) const
 {
     if (!isTextControl())
-        return PlainTextRange();
-    
+        return { };
+
     String elementText = text();
     if (!elementText.length() || index > elementText.length() - 1)
-        return PlainTextRange();
-    
-    return PlainTextRange(index, 1);
+        return { };
+    return { index, 1 };
 }
 
 // A substring of the text associated with this accessibility object that is
 // specified by the given character range.
-String AccessibilityRenderObject::doAXStringForRange(const PlainTextRange& range) const
+String AccessibilityRenderObject::doAXStringForRange(const CharacterRange& range) const
 {
-    if (!range.length)
-        return String();
-    
-    if (!isTextControl())
-        return String();
-    
-    String elementText = isSecureField() ? secureFieldValue() : text();
-    return elementText.substring(range.start, range.length);
+    if (!range.length || !isTextControl())
+        return { };
+    return text().substring(range.location, range.length);
 }
 
 // The bounding rectangle of the text associated with this accessibility object that is
 // specified by the given range. This is the bounding rectangle a sighted user would see
 // on the display screen, in pixels.
-IntRect AccessibilityRenderObject::doAXBoundsForRange(const PlainTextRange& range) const
+IntRect AccessibilityRenderObject::doAXBoundsForRange(const CharacterRange& range) const
 {
     if (allowsTextRanges())
         return boundsForVisiblePositionRange(visiblePositionRangeForRange(range));
     return IntRect();
 }
 
-IntRect AccessibilityRenderObject::doAXBoundsForRangeUsingCharacterOffset(const PlainTextRange& characterRange) const
+IntRect AccessibilityRenderObject::doAXBoundsForRangeUsingCharacterOffset(const CharacterRange& characterRange) const
 {
     if (!allowsTextRanges())
         return { };
-    auto range = rangeForPlainTextRange(characterRange);
+    auto range = rangeForCharacterRange(characterRange);
     if (!range)
         return { };
     return boundsForRange(*range);

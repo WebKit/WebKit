@@ -100,7 +100,7 @@ public:
     RenderTextControl* textControl() const;
     
     URL url() const override;
-    PlainTextRange selectedTextRange() const override;
+    CharacterRange selectedTextRange() const override;
     int insertionPointLineNumber() const override;
     String stringValue() const override;
     String helpText() const override;
@@ -113,7 +113,7 @@ public:
     AccessibilityChildrenVector documentLinks() override;
     LocalFrameView* documentFrameView() const override;
 
-    void setSelectedTextRange(PlainTextRange&&) override;
+    void setSelectedTextRange(CharacterRange&&) override;
     bool setValue(const String&) override;
 
     void addChildren() override;
@@ -133,12 +133,12 @@ public:
     VisiblePosition visiblePositionForIndex(int) const override;
     int indexForVisiblePosition(const VisiblePosition&) const override;
 
-    PlainTextRange doAXRangeForLine(unsigned) const override;
-    PlainTextRange doAXRangeForIndex(unsigned) const override;
+    CharacterRange doAXRangeForLine(unsigned) const override;
+    CharacterRange doAXRangeForIndex(unsigned) const override;
     
-    String doAXStringForRange(const PlainTextRange&) const override;
-    IntRect doAXBoundsForRange(const PlainTextRange&) const override;
-    IntRect doAXBoundsForRangeUsingCharacterOffset(const PlainTextRange&) const override;
+    String doAXStringForRange(const CharacterRange&) const override;
+    IntRect doAXBoundsForRange(const CharacterRange&) const override;
+    IntRect doAXBoundsForRangeUsingCharacterOffset(const CharacterRange&) const override;
     
     String secureFieldValue() const override;
     void titleElementText(Vector<AccessibilityText>&) const override;
@@ -164,7 +164,7 @@ protected:
 private:
     bool isAccessibilityRenderObject() const final { return true; }
     bool isAllowedChildOfTree() const;
-    PlainTextRange documentBasedSelectedTextRange() const;
+    CharacterRange documentBasedSelectedTextRange() const;
     Element* rootEditableElementForPosition(const Position&) const;
     bool nodeIsTextControl(const Node*) const;
     Path elementPath() const override;

@@ -1517,29 +1517,29 @@ VisiblePositionRange AccessibilityObject::styleRangeForPosition(const VisiblePos
 }
 
 // NOTE: Consider providing this utility method as AX API
-VisiblePositionRange AccessibilityObject::visiblePositionRangeForRange(const PlainTextRange& range) const
+VisiblePositionRange AccessibilityObject::visiblePositionRangeForRange(const CharacterRange& range) const
 {
-    unsigned textLength = getLengthForTextRange();
-    if (range.start + range.length > textLength)
+    if (range.location + range.length > getLengthForTextRange())
         return { };
 
-    auto startPosition = visiblePositionForIndex(range.start);
+    auto startPosition = visiblePositionForIndex(range.location);
     startPosition.setAffinity(Affinity::Downstream);
-    return { startPosition, visiblePositionForIndex(range.start + range.length) };
+    return { startPosition, visiblePositionForIndex(range.location + range.length) };
 }
 
-std::optional<SimpleRange> AccessibilityObject::rangeForPlainTextRange(const PlainTextRange& range) const
+std::optional<SimpleRange> AccessibilityObject::rangeForCharacterRange(const CharacterRange& range) const
 {
     unsigned textLength = getLengthForTextRange();
-    if (range.start + range.length > textLength)
+    if (range.location + range.length > textLength)
         return std::nullopt;
+
     // Avoid setting selection to uneditable parent node in FrameSelection::setSelectedRange. See webkit.org/b/206093.
-    if (range.isNull() && !textLength)
+    if (!range.location && !range.length && !textLength)
         return std::nullopt;
-    
-    if (AXObjectCache* cache = axObjectCache()) {
-        CharacterOffset start = cache->characterOffsetForIndex(range.start, this);
-        CharacterOffset end = cache->characterOffsetForIndex(range.start + range.length, this);
+
+    if (auto* cache = axObjectCache()) {
+        auto start = cache->characterOffsetForIndex(range.location, this);
+        auto end = cache->characterOffsetForIndex(range.location + range.length, this);
         return cache->rangeForUnorderedCharacterOffsets(start, end);
     }
     return std::nullopt;
@@ -1869,14 +1869,14 @@ int AccessibilityObject::lineForPosition(const VisiblePosition& visiblePos) cons
 #endif
 
 // NOTE: Consider providing this utility method as AX API
-PlainTextRange AccessibilityObject::plainTextRangeForVisiblePositionRange(const VisiblePositionRange& positionRange) const
+CharacterRange AccessibilityObject::plainTextRangeForVisiblePositionRange(const VisiblePositionRange& positionRange) const
 {
     int index1 = index(positionRange.start);
     int index2 = index(positionRange.end);
     if (index1 < 0 || index2 < 0 || index1 > index2)
-        return PlainTextRange();
+        return { };
 
-    return PlainTextRange(index1, index2 - index1);
+    return CharacterRange(index1, index2 - index1);
 }
 
 // The composed character range in the text associated with this accessibility object that
@@ -1885,18 +1885,17 @@ PlainTextRange AccessibilityObject::plainTextRangeForVisiblePositionRange(const 
 // screen coordinates.
 // NOTE: This varies from AppKit when the point is below the last line. AppKit returns an
 // an error in that case. We return textControl->text().length(), 1. Does this matter?
-PlainTextRange AccessibilityObject::doAXRangeForPosition(const IntPoint& point) const
+CharacterRange AccessibilityObject::characterRangeForPoint(const IntPoint& point) const
 {
     int i = index(visiblePositionForPoint(point));
     if (i < 0)
-        return PlainTextRange();
-
-    return PlainTextRange(i, 1);
+        return { };
+    return { static_cast<uint64_t>(i), 1 };
 }
 
 // Given a character index, the range of text associated with this accessibility object
 // over which the style in effect at that character index applies.
-PlainTextRange AccessibilityObject::doAXStyleRangeForIndex(unsigned index) const
+CharacterRange AccessibilityObject::doAXStyleRangeForIndex(unsigned index) const
 {
     VisiblePositionRange range = styleRangeForPosition(visiblePositionForIndex(index, false));
     return plainTextRangeForVisiblePositionRange(range);
@@ -2386,7 +2385,7 @@ int AccessibilityObject::getIntegralAttribute(const QualifiedName& attributeName
     return parseHTMLInteger(getAttribute(attributeName)).value_or(0);
 }
 
-bool AccessibilityObject::replaceTextInRange(const String& replacementString, const PlainTextRange& range)
+bool AccessibilityObject::replaceTextInRange(const String& replacementString, const CharacterRange& range)
 {
     // If this is being called on the web area, redirect it to be on the body, which will have a renderer associated with it.
     if (is<Document>(node())) {
@@ -2404,17 +2403,17 @@ bool AccessibilityObject::replaceTextInRange(const String& replacementString, co
     // Also only do this when the field is in editing mode.
     auto& frame = renderer()->frame();
     if (element.shouldUseInputMethod()) {
-        frame.selection().setSelectedRange(rangeForPlainTextRange(range), Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes);
+        frame.selection().setSelectedRange(rangeForCharacterRange(range), Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes);
         frame.editor().replaceSelectionWithText(replacementString, Editor::SelectReplacement::No, Editor::SmartReplace::No);
         return true;
     }
     
     if (is<HTMLInputElement>(element)) {
-        downcast<HTMLInputElement>(element).setRangeText(replacementString, range.start, range.length, emptyString());
+        downcast<HTMLInputElement>(element).setRangeText(replacementString, range.location, range.length, emptyString());
         return true;
     }
     if (is<HTMLTextAreaElement>(element)) {
-        downcast<HTMLTextAreaElement>(element).setRangeText(replacementString, range.start, range.length, emptyString());
+        downcast<HTMLTextAreaElement>(element).setRangeText(replacementString, range.location, range.length, emptyString());
         return true;
     }
 
@@ -2965,7 +2964,7 @@ std::optional<String> AccessibilityObject::textContent() const
 
     std::optional<SimpleRange> range;
     if (isTextControl())
-        range = rangeForPlainTextRange({ 0, text().length() });
+        range = rangeForCharacterRange({ 0, text().length() });
     else
         range = simpleRange();
     if (range)

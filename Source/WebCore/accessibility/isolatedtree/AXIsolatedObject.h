@@ -341,16 +341,16 @@ private:
     bool preventKeyboardDOMEventDispatch() const override { return boolAttributeValue(AXPropertyName::PreventKeyboardDOMEventDispatch); }
 #endif
 
-    // PlainTextRange support.
-    PlainTextRange selectedTextRange() const override;
+    // CharacterRange support.
+    CharacterRange selectedTextRange() const override;
     int insertionPointLineNumber() const override;
-    PlainTextRange doAXRangeForLine(unsigned) const override;
-    String doAXStringForRange(const PlainTextRange&) const override;
-    PlainTextRange doAXRangeForPosition(const IntPoint&) const override;
-    PlainTextRange doAXRangeForIndex(unsigned) const override;
-    PlainTextRange doAXStyleRangeForIndex(unsigned) const override;
-    IntRect doAXBoundsForRangeUsingCharacterOffset(const PlainTextRange&) const override;
-    IntRect doAXBoundsForRange(const PlainTextRange&) const override;
+    CharacterRange doAXRangeForLine(unsigned) const override;
+    String doAXStringForRange(const CharacterRange&) const override;
+    CharacterRange characterRangeForPoint(const IntPoint&) const override;
+    CharacterRange doAXRangeForIndex(unsigned) const override;
+    CharacterRange doAXStyleRangeForIndex(unsigned) const override;
+    IntRect doAXBoundsForRangeUsingCharacterOffset(const CharacterRange&) const override;
+    IntRect doAXBoundsForRange(const CharacterRange&) const override;
     unsigned doAXLineForIndex(unsigned) override;
 
     VisibleSelection selection() const override;
@@ -372,9 +372,9 @@ private:
     VisiblePositionRange sentenceForPosition(const VisiblePosition&) const override;
     VisiblePositionRange paragraphForPosition(const VisiblePosition&) const override;
     VisiblePositionRange styleRangeForPosition(const VisiblePosition&) const override;
-    VisiblePositionRange visiblePositionRangeForRange(const PlainTextRange&) const override;
+    VisiblePositionRange visiblePositionRangeForRange(const CharacterRange&) const override;
     VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const override;
-    std::optional<SimpleRange> rangeForPlainTextRange(const PlainTextRange&) const override;
+    std::optional<SimpleRange> rangeForCharacterRange(const CharacterRange&) const override;
 #if PLATFORM(COCOA)
     AXTextMarkerRange textMarkerRangeForNSRange(const NSRange&) const override;
 #endif
@@ -403,7 +403,7 @@ private:
     void setSelectedRows(AccessibilityChildrenVector&&) override;
     void setFocused(bool) override;
     void setSelectedText(const String&) override;
-    void setSelectedTextRange(PlainTextRange&&) override;
+    void setSelectedTextRange(CharacterRange&&) override;
     bool setValue(const String&) override;
     void setValueIgnoringResult(const String&) final;
 #if PLATFORM(MAC)
@@ -422,8 +422,8 @@ private:
     void performDismissActionIgnoringResult() final;
     void scrollToMakeVisible() const override;
     void scrollToMakeVisibleWithSubFocus(IntRect&&) const override;
-    void scrollToGlobalPoint(IntPoint&&) const final;
-    bool replaceTextInRange(const String&, const PlainTextRange&) override;
+    void scrollToGlobalPoint(IntPoint&&) const override;
+    bool replaceTextInRange(const String&, const CharacterRange&) override;
     bool insertText(const String&) override;
     bool press() override;
 

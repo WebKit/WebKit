@@ -43,7 +43,7 @@ void AXIsolatedObject::initializePlatformProperties(const Ref<const Accessibilit
     if (object->hasAttributedText()) {
         std::optional<SimpleRange> range;
         if (isTextControl())
-            range = rangeForPlainTextRange({ 0, object->text().length() });
+            range = rangeForCharacterRange({ 0, object->text().length() });
         else
             range = object->simpleRange();
         if (range) {

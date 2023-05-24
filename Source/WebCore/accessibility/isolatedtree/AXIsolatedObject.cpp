@@ -705,7 +705,7 @@ void AXIsolatedObject::setSelectedText(const String& value)
     });
 }
 
-void AXIsolatedObject::setSelectedTextRange(PlainTextRange&& range)
+void AXIsolatedObject::setSelectedTextRange(CharacterRange&& range)
 {
     performFunctionOnMainThread([range = WTFMove(range)] (auto* object) mutable {
         object->setSelectedTextRange(WTFMove(range));
@@ -988,11 +988,11 @@ std::optional<SimpleRange> AXIsolatedObject::visibleCharacterRange() const
     return axObject ? axObject->visibleCharacterRange() : std::nullopt;
 }
 
-std::optional<SimpleRange> AXIsolatedObject::rangeForPlainTextRange(const PlainTextRange& axRange) const
+std::optional<SimpleRange> AXIsolatedObject::rangeForCharacterRange(const CharacterRange& axRange) const
 {
     ASSERT(isMainThread());
     auto* axObject = associatedAXObject();
-    return axObject ? axObject->rangeForPlainTextRange(axRange) : std::nullopt;
+    return axObject ? axObject->rangeForCharacterRange(axRange) : std::nullopt;
 }
 
 String AXIsolatedObject::stringForRange(const SimpleRange& range) const
@@ -1177,7 +1177,7 @@ FloatRect AXIsolatedObject::convertFrameToSpace(const FloatRect& rect, Accessibi
     });
 }
 
-bool AXIsolatedObject::replaceTextInRange(const String& replacementText, const PlainTextRange& textRange)
+bool AXIsolatedObject::replaceTextInRange(const String& replacementText, const CharacterRange& textRange)
 {
     return Accessibility::retrieveValueFromMainThread<bool>([text = replacementText.isolatedCopy(), &textRange, this] () -> bool {
         if (auto* axObject = associatedAXObject())
@@ -1244,12 +1244,12 @@ bool AXIsolatedObject::isNativeTextControl() const
     return false;
 }
 
-PlainTextRange AXIsolatedObject::selectedTextRange() const
+CharacterRange AXIsolatedObject::selectedTextRange() const
 {
     if (shouldReturnEmptySelectedText())
         return { };
 
-    return Accessibility::retrieveValueFromMainThread<PlainTextRange>([this] () -> PlainTextRange {
+    return Accessibility::retrieveValueFromMainThread<CharacterRange>([this] () -> CharacterRange {
         if (auto* object = associatedAXObject())
             return object->selectedTextRange();
         return { };
@@ -1278,16 +1278,16 @@ String AXIsolatedObject::identifierAttribute() const
 #endif
 }
 
-PlainTextRange AXIsolatedObject::doAXRangeForLine(unsigned lineIndex) const
+CharacterRange AXIsolatedObject::doAXRangeForLine(unsigned lineIndex) const
 {
-    return Accessibility::retrieveValueFromMainThread<PlainTextRange>([&lineIndex, this] () -> PlainTextRange {
+    return Accessibility::retrieveValueFromMainThread<CharacterRange>([&lineIndex, this] () -> CharacterRange {
         if (auto* object = associatedAXObject())
             return object->doAXRangeForLine(lineIndex);
         return { };
     });
 }
 
-String AXIsolatedObject::doAXStringForRange(const PlainTextRange& axRange) const
+String AXIsolatedObject::doAXStringForRange(const CharacterRange& axRange) const
 {
     return Accessibility::retrieveValueFromMainThread<String>([&axRange, this] () -> String {
         if (auto* object = associatedAXObject())
@@ -1296,34 +1296,34 @@ String AXIsolatedObject::doAXStringForRange(const PlainTextRange& axRange) const
     });
 }
 
-PlainTextRange AXIsolatedObject::doAXRangeForPosition(const IntPoint& point) const
+CharacterRange AXIsolatedObject::characterRangeForPoint(const IntPoint& point) const
 {
-    return Accessibility::retrieveValueFromMainThread<PlainTextRange>([&point, this] () -> PlainTextRange {
+    return Accessibility::retrieveValueFromMainThread<CharacterRange>([&point, this] () -> CharacterRange {
         if (auto* object = associatedAXObject())
-            return object->doAXRangeForPosition(point);
+            return object->characterRangeForPoint(point);
         return { };
     });
 }
 
-PlainTextRange AXIsolatedObject::doAXRangeForIndex(unsigned index) const
+CharacterRange AXIsolatedObject::doAXRangeForIndex(unsigned index) const
 {
-    return Accessibility::retrieveValueFromMainThread<PlainTextRange>([&index, this] () -> PlainTextRange {
+    return Accessibility::retrieveValueFromMainThread<CharacterRange>([&index, this] () -> CharacterRange {
         if (auto* object = associatedAXObject())
             return object->doAXRangeForIndex(index);
         return { };
     });
 }
 
-PlainTextRange AXIsolatedObject::doAXStyleRangeForIndex(unsigned index) const
+CharacterRange AXIsolatedObject::doAXStyleRangeForIndex(unsigned index) const
 {
-    return Accessibility::retrieveValueFromMainThread<PlainTextRange>([&index, this] () -> PlainTextRange {
+    return Accessibility::retrieveValueFromMainThread<CharacterRange>([&index, this] () -> CharacterRange {
         if (auto* object = associatedAXObject())
             return object->doAXStyleRangeForIndex(index);
         return { };
     });
 }
 
-IntRect AXIsolatedObject::doAXBoundsForRange(const PlainTextRange& axRange) const
+IntRect AXIsolatedObject::doAXBoundsForRange(const CharacterRange& axRange) const
 {
     return Accessibility::retrieveValueFromMainThread<IntRect>([&axRange, this] () -> IntRect {
         if (auto* object = associatedAXObject())
@@ -1332,7 +1332,7 @@ IntRect AXIsolatedObject::doAXBoundsForRange(const PlainTextRange& axRange) cons
     });
 }
 
-IntRect AXIsolatedObject::doAXBoundsForRangeUsingCharacterOffset(const PlainTextRange& axRange) const
+IntRect AXIsolatedObject::doAXBoundsForRangeUsingCharacterOffset(const CharacterRange& axRange) const
 {
     return Accessibility::retrieveValueFromMainThread<IntRect>([&axRange, this] () -> IntRect {
         if (auto* object = associatedAXObject())
@@ -1473,7 +1473,7 @@ VisiblePositionRange AXIsolatedObject::styleRangeForPosition(const VisiblePositi
     return axObject ? axObject->styleRangeForPosition(position) : VisiblePositionRange();
 }
 
-VisiblePositionRange AXIsolatedObject::visiblePositionRangeForRange(const PlainTextRange& plainTextRange) const
+VisiblePositionRange AXIsolatedObject::visiblePositionRangeForRange(const CharacterRange& plainTextRange) const
 {
     ASSERT(isMainThread());
     auto* axObject = associatedAXObject();

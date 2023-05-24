@@ -555,7 +555,7 @@ IntRect AccessibilityObjectAtspi::boundsForRange(unsigned utf16Offset, unsigned 
     if (!m_coreObject)
         return { };
 
-    auto extents = m_coreObject->doAXBoundsForRange(PlainTextRange(utf16Offset, length));
+    auto extents = m_coreObject->doAXBoundsForRange(CharacterRange(utf16Offset, length));
 
     auto* frameView = m_coreObject->documentFrameView();
     if (!frameView)
@@ -703,7 +703,7 @@ void AccessibilityObjectAtspi::setSelectedRange(unsigned utf16Offset, unsigned l
     if (!m_coreObject)
         return;
 
-    auto range = m_coreObject->visiblePositionRangeForRange(PlainTextRange(utf16Offset, length));
+    auto range = m_coreObject->visiblePositionRangeForRange(CharacterRange(utf16Offset, length));
     m_coreObject->setSelectedVisiblePositionRange(range);
 }
 
@@ -959,7 +959,7 @@ bool AccessibilityObjectAtspi::scrollToMakeVisible(int startOffset, int endOffse
     if (!m_coreObject->renderer())
         return true;
 
-    IntRect rect = m_coreObject->doAXBoundsForRange(PlainTextRange(utf16StartOffset, utf16EndOffset - utf16StartOffset));
+    IntRect rect = m_coreObject->doAXBoundsForRange(CharacterRange(utf16StartOffset, utf16EndOffset - utf16StartOffset));
 
     if (m_coreObject->isScrollView()) {
         if (auto* parent = m_coreObject->parentObject())
@@ -1023,7 +1023,7 @@ bool AccessibilityObjectAtspi::scrollToPoint(int startOffset, int endOffset, Ats
             point = frameView->contentsToWindow(frameView->screenToContents(point));
     }
 
-    IntRect rect = m_coreObject->doAXBoundsForRange(PlainTextRange(utf16StartOffset, utf16EndOffset - utf16StartOffset));
+    IntRect rect = m_coreObject->doAXBoundsForRange(CharacterRange(utf16StartOffset, utf16EndOffset - utf16StartOffset));
     point.move(-rect.x(), -rect.y());
     m_coreObject->scrollToGlobalPoint(WTFMove(point));
     return true;

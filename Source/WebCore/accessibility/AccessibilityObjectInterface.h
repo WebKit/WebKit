@@ -90,6 +90,7 @@ class RenderObject;
 class ScrollView;
 
 struct AccessibilityText;
+struct CharacterRange;
 struct ScrollRectToVisibleOptions;
 
 enum AXIDType { };
@@ -760,25 +761,6 @@ struct AccessibilityTextUnderElementMode {
     { }
 };
 
-// FIXME: Merge this with CharacterRange (by deleting this and using CharacterRange instead).
-struct PlainTextRange {
-    unsigned start { 0 };
-    unsigned length { 0 };
-
-    PlainTextRange() = default;
-
-    PlainTextRange(unsigned s, unsigned l)
-        : start(s)
-        , length(l)
-    { }
-
-#if PLATFORM(COCOA)
-    PlainTextRange(NSRange);
-#endif
-
-    bool isNull() const { return !start && !length; }
-};
-
 enum class AccessibilityVisiblePositionForBounds {
     First,
     Last,
@@ -1199,7 +1181,7 @@ public:
     virtual bool supportsPath() const = 0;
 
     bool shouldReturnEmptySelectedText() const { return isSecureField(); }
-    virtual PlainTextRange selectedTextRange() const = 0;
+    virtual CharacterRange selectedTextRange() const = 0;
     virtual int insertionPointLineNumber() const = 0;
 
     virtual URL url() const = 0;
@@ -1230,10 +1212,10 @@ public:
     
     virtual void setFocused(bool) = 0;
     virtual void setSelectedText(const String&) = 0;
-    virtual void setSelectedTextRange(PlainTextRange&&) = 0;
+    virtual void setSelectedTextRange(CharacterRange&&) = 0;
     virtual bool setValue(const String&) = 0;
     virtual void setValueIgnoringResult(const String&) = 0;
-    virtual bool replaceTextInRange(const String&, const PlainTextRange&) = 0;
+    virtual bool replaceTextInRange(const String&, const CharacterRange&) = 0;
     virtual bool insertText(const String&) = 0;
 
     virtual bool setValue(float) = 0;
@@ -1282,11 +1264,11 @@ public:
     virtual VisiblePositionRange sentenceForPosition(const VisiblePosition&) const = 0;
     virtual VisiblePositionRange paragraphForPosition(const VisiblePosition&) const = 0;
     virtual VisiblePositionRange styleRangeForPosition(const VisiblePosition&) const = 0;
-    virtual VisiblePositionRange visiblePositionRangeForRange(const PlainTextRange&) const = 0;
+    virtual VisiblePositionRange visiblePositionRangeForRange(const CharacterRange&) const = 0;
     virtual VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const = 0;
     virtual VisiblePositionRange selectedVisiblePositionRange() const = 0;
 
-    virtual std::optional<SimpleRange> rangeForPlainTextRange(const PlainTextRange&) const = 0;
+    virtual std::optional<SimpleRange> rangeForCharacterRange(const CharacterRange&) const = 0;
 #if PLATFORM(COCOA)
     virtual AXTextMarkerRange textMarkerRangeForNSRange(const NSRange&) const = 0;
 #endif
@@ -1309,14 +1291,14 @@ public:
 
     virtual int lineForPosition(const VisiblePosition&) const = 0;
 
-    virtual PlainTextRange doAXRangeForLine(unsigned) const = 0;
-    virtual PlainTextRange doAXRangeForPosition(const IntPoint&) const = 0;
-    virtual PlainTextRange doAXRangeForIndex(unsigned) const = 0;
-    virtual PlainTextRange doAXStyleRangeForIndex(unsigned) const = 0;
+    virtual CharacterRange doAXRangeForLine(unsigned) const = 0;
+    virtual CharacterRange characterRangeForPoint(const IntPoint&) const = 0;
+    virtual CharacterRange doAXRangeForIndex(unsigned) const = 0;
+    virtual CharacterRange doAXStyleRangeForIndex(unsigned) const = 0;
 
-    virtual String doAXStringForRange(const PlainTextRange&) const = 0;
-    virtual IntRect doAXBoundsForRange(const PlainTextRange&) const = 0;
-    virtual IntRect doAXBoundsForRangeUsingCharacterOffset(const PlainTextRange&) const = 0;
+    virtual String doAXStringForRange(const CharacterRange&) const = 0;
+    virtual IntRect doAXBoundsForRange(const CharacterRange&) const = 0;
+    virtual IntRect doAXBoundsForRangeUsingCharacterOffset(const CharacterRange&) const = 0;
 
     virtual unsigned doAXLineForIndex(unsigned) = 0;
 

@@ -1624,10 +1624,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
                 return nil;
             return (NSString*)selectedText;
         }
-        if ([attributeName isEqualToString: NSAccessibilitySelectedTextRangeAttribute]) {
-            PlainTextRange textRange = backingObject->selectedTextRange();
-            return [NSValue valueWithRange:NSMakeRange(textRange.start, textRange.length)];
-        }
+
+        if ([attributeName isEqualToString:NSAccessibilitySelectedTextRangeAttribute])
+            return [NSValue valueWithRange:backingObject->selectedTextRange()];
+
         if ([attributeName isEqualToString:NSAccessibilityInsertionPointLineNumberAttribute]) {
             int lineNumber = backingObject->insertionPointLineNumber();
             return lineNumber >= 0 ? @(lineNumber) : nil;
@@ -2630,7 +2630,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (BOOL)accessibilityReplaceRange:(NSRange)range withText:(NSString *)string
 {
     auto* backingObject = self.updateObjectBackingStore;
-    return backingObject ? backingObject->replaceTextInRange(String(string), PlainTextRange(range)) : NO;
+    return backingObject ? backingObject->replaceTextInRange(String(string), range) : NO;
 }
 
 - (BOOL)accessibilityInsertText:(NSString *)text
@@ -2712,7 +2712,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if ([attributeName isEqualToString:NSAccessibilitySelectedTextAttribute])
             backingObject->setSelectedText(string);
         else if ([attributeName isEqualToString:NSAccessibilitySelectedTextRangeAttribute])
-            backingObject->setSelectedTextRange(PlainTextRange(range.location, range.length));
+            backingObject->setSelectedTextRange(range);
     } else if ([attributeName isEqualToString:NSAccessibilityDisclosingAttribute] || [attributeName isEqualToString:NSAccessibilityExpandedAttribute])
         backingObject->setIsExpanded([number boolValue]);
     else if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute]) {
@@ -3342,10 +3342,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:NSAccessibilityStringForRangeParameterizedAttribute]) {
-        if (backingObject->isTextControl()) {
-            PlainTextRange plainTextRange = PlainTextRange(range.location, range.length);
-            return backingObject->doAXStringForRange(plainTextRange);
-        }
+        if (backingObject->isTextControl())
+            return backingObject->doAXStringForRange(range);
 
         return Accessibility::retrieveValueFromMainThread<String>([&range, protectedSelf = retainPtr(self)] () -> String {
             auto* backingObject = protectedSelf.get().axBackingObject;
@@ -3558,34 +3556,33 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return @(lineNumber);
         }
 
-        if ([attribute isEqualToString: (NSString *)kAXRangeForLineParameterizedAttribute]) {
-            PlainTextRange textRange = backingObject->doAXRangeForLine([number intValue]);
-            return [NSValue valueWithRange: NSMakeRange(textRange.start, textRange.length)];
+        if ([attribute isEqualToString:(NSString *)kAXRangeForLineParameterizedAttribute]) {
+            auto textRange = backingObject->doAXRangeForLine([number intValue]);
+            return [NSValue valueWithRange:textRange];
         }
 
-        if ([attribute isEqualToString: (NSString*)kAXStringForRangeParameterizedAttribute]) {
-            PlainTextRange plainTextRange = PlainTextRange(range.location, range.length);
-            return rangeSet ? (id)(backingObject->doAXStringForRange(plainTextRange)) : nil;
-        }
+        if ([attribute isEqualToString:(NSString *)kAXStringForRangeParameterizedAttribute])
+            return rangeSet ? (id)backingObject->doAXStringForRange(range) : nil;
 
-        if ([attribute isEqualToString: (NSString*)kAXRangeForPositionParameterizedAttribute]) {
+        if ([attribute isEqualToString:(NSString *)kAXRangeForPositionParameterizedAttribute]) {
             if (!pointSet)
                 return nil;
-            IntPoint webCorePoint = IntPoint(point);
-            PlainTextRange textRange = backingObject->doAXRangeForPosition(webCorePoint);
-            return [NSValue valueWithRange: NSMakeRange(textRange.start, textRange.length)];
+
+            auto webCorePoint = IntPoint(point);
+            auto textRange = backingObject->characterRangeForPoint(webCorePoint);
+            return [NSValue valueWithRange:textRange];
         }
 
-        if ([attribute isEqualToString: (NSString*)kAXRangeForIndexParameterizedAttribute]) {
-            PlainTextRange textRange = backingObject->doAXRangeForIndex([number intValue]);
-            return [NSValue valueWithRange: NSMakeRange(textRange.start, textRange.length)];
+        if ([attribute isEqualToString:(NSString *)kAXRangeForIndexParameterizedAttribute]) {
+            auto textRange = backingObject->doAXRangeForIndex([number intValue]);
+            return [NSValue valueWithRange:textRange];
         }
 
-        if ([attribute isEqualToString: (NSString*)kAXBoundsForRangeParameterizedAttribute]) {
+        if ([attribute isEqualToString:(NSString *)kAXBoundsForRangeParameterizedAttribute]) {
             if (!rangeSet)
                 return nil;
-            PlainTextRange plainTextRange = PlainTextRange(range.location, range.length);
-            auto bounds = FloatRect(backingObject->doAXBoundsForRangeUsingCharacterOffset(plainTextRange));
+
+            auto bounds = FloatRect(backingObject->doAXBoundsForRangeUsingCharacterOffset(range));
             NSRect rect = [self convertRectToSpace:bounds space:AccessibilityConversionSpace::Screen];
             return [NSValue valueWithRect:rect];
         }
@@ -3596,9 +3593,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if ([attribute isEqualToString:(NSString *)kAXAttributedStringForRangeParameterizedAttribute])
             return rangeSet ? [self attributedStringForNSRange:range] : nil;
 
-        if ([attribute isEqualToString: (NSString*)kAXStyleRangeForIndexParameterizedAttribute]) {
-            PlainTextRange textRange = backingObject->doAXStyleRangeForIndex([number intValue]);
-            return [NSValue valueWithRange: NSMakeRange(textRange.start, textRange.length)];
+        if ([attribute isEqualToString:(NSString *)kAXStyleRangeForIndexParameterizedAttribute]) {
+            auto textRange = backingObject->doAXStyleRangeForIndex([number intValue]);
+            return [NSValue valueWithRange:textRange];
         }
     }
 
