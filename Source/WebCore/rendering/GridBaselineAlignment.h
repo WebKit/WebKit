@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-// This is the class that implements the Baseline Alignment logic, using internally the BaselineContext and
+// This is the class that implements the Baseline Alignment logic, using internally the BaselineAlignmentState and
 // BaselineGroup classes.
 //
 // The first phase is to collect the items that will participate in baseline alignment together. During this
@@ -74,12 +74,12 @@ private:
     bool isOrthogonalChildForBaseline(const RenderBox&) const;
     bool isParallelToBaselineAxisForChild(const RenderBox&, GridAxis) const;
 
-    typedef HashMap<unsigned, std::unique_ptr<BaselineContext>, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> BaselineContextsMap;
+    typedef HashMap<unsigned, std::unique_ptr<BaselineAlignmentState>, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> BaselineAlignmentStateMap;
 
     // Grid Container's WritingMode, used to determine grid item's orthogonality.
     WritingMode m_blockFlow;
-    BaselineContextsMap m_rowAxisAlignmentContext;
-    BaselineContextsMap m_colAxisAlignmentContext;
+    BaselineAlignmentStateMap m_rowAxisBaselineAlignmentStates;
+    BaselineAlignmentStateMap m_colAxisBaselineAlignmentStates;
 };
 
 } // namespace WebCore

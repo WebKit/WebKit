@@ -76,19 +76,19 @@ bool BaselineGroup::isCompatible(WritingMode childBlockFlow, ItemPosition childP
     return ((m_blockFlow == childBlockFlow || isOrthogonalBlockFlow(childBlockFlow)) && m_preference == childPreference) || (isOppositeBlockFlow(childBlockFlow) && m_preference != childPreference);
 }
 
-BaselineContext::BaselineContext(const RenderBox& child, ItemPosition preference, LayoutUnit ascent)
+BaselineAlignmentState::BaselineAlignmentState(const RenderBox& child, ItemPosition preference, LayoutUnit ascent)
 {
     ASSERT(isBaselinePosition(preference));
     updateSharedGroup(child, preference, ascent);
 }
 
-const BaselineGroup& BaselineContext::sharedGroup(const RenderBox& child, ItemPosition preference) const
+const BaselineGroup& BaselineAlignmentState::sharedGroup(const RenderBox& child, ItemPosition preference) const
 {
     ASSERT(isBaselinePosition(preference));
-    return const_cast<BaselineContext*>(this)->findCompatibleSharedGroup(child, preference);
+    return const_cast<BaselineAlignmentState*>(this)->findCompatibleSharedGroup(child, preference);
 }
 
-void BaselineContext::updateSharedGroup(const RenderBox& child, ItemPosition preference, LayoutUnit ascent)
+void BaselineAlignmentState::updateSharedGroup(const RenderBox& child, ItemPosition preference, LayoutUnit ascent)
 {
     ASSERT(isBaselinePosition(preference));
     BaselineGroup& group = findCompatibleSharedGroup(child, preference);
@@ -97,7 +97,7 @@ void BaselineContext::updateSharedGroup(const RenderBox& child, ItemPosition pre
 
 // FIXME: Properly implement baseline-group compatibility.
 // See https://github.com/w3c/csswg-drafts/issues/721
-BaselineGroup& BaselineContext::findCompatibleSharedGroup(const RenderBox& child, ItemPosition preference)
+BaselineGroup& BaselineAlignmentState::findCompatibleSharedGroup(const RenderBox& child, ItemPosition preference)
 {
     WritingMode blockDirection = child.style().writingMode();
     for (auto& group : m_sharedGroups) {
