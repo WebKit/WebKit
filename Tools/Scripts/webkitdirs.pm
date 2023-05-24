@@ -40,7 +40,7 @@ use Digest::MD5 qw(md5_hex);
 use FindBin;
 use File::Basename;
 use File::Find;
-use File::Glob qw(bsd_glob);
+use File::Glob qw(bsd_glob GLOB_TILDE);
 use File::Path qw(make_path mkpath rmtree);
 use File::Spec;
 use File::Temp qw(tempdir);
@@ -412,7 +412,16 @@ sub determineBaseProductDir
             $baseProductDir = $1 if $baseProductDir =~ /SYMROOT\s*=\s*\"(.*?)\";/s;
         }
 
-        undef $baseProductDir unless $baseProductDir =~ /^\//;
+        # Expand tilde in pathnames for compatibility
+        # (https://bugs.webkit.org/show_bug.cgi?id=249442).
+        ($baseProductDir) = bsd_glob($baseProductDir, GLOB_TILDE) if defined($baseProductDir);
+
+        if (defined($baseProductDir) && $baseProductDir !~ /^\//) {
+            # webkitdirs can be run from arbitrary directories, so any
+            # user-specified build directory must be absolute.
+            print STDERR "Ignoring Xcode application-wide build directory \"$baseProductDir\" because it's not an absolute path.\n";
+            undef $baseProductDir;
+        }
     }
 
     if (!defined($baseProductDir)) { # Port-specific checks failed, use default
