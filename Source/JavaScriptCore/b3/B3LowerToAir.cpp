@@ -2875,7 +2875,11 @@ private:
                 if (incrementArg) {
                     append(relaxedMoveForType(address->type()), tmp(address->child(0)), tmp(address));
                     append(opcode, incrementArg, tmp(memory));
-                    m_locked.add(address);
+                    // Since `MoveWithIncrement` increments `address` by `offset` internally,
+                    // I think we should `commitInternal(address)` in case other pattern
+                    // matching optimization related to `address` might happen. If so, we
+                    // might compute `Add(base, offset)` internally twice.
+                    commitInternal(address);
                     return true;
                 }
                 return false;
@@ -3777,7 +3781,11 @@ private:
                 if (incrementArg) {
                     append(relaxedMoveForType(address->type()), tmp(base1), tmp(address));
                     append(opcode, tmp(value), incrementArg);
-                    m_locked.add(address);
+                    // Since `MoveWithIncrement` increments `address` by `offset` internally,
+                    // I think we should `commitInternal(address)` in case other pattern
+                    // matching optimization related to `address` might happen. If so, we
+                    // might compute `Add(base, offset)` internally twice.
+                    commitInternal(address);
                     return true;
                 }
                 return false;
