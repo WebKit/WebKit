@@ -562,7 +562,15 @@ static void encodeSecureCodingInternal(Encoder& encoder, id <NSObject, NSSecureC
 #if ENABLE(DATA_DETECTION)
     if (PAL::isDataDetectorsCoreFrameworkAvailable() && [object isKindOfClass:PAL::getDDScannerResultClass()])
         [delegate setRewriteMutableString:YES];
-#endif
+#if PLATFORM(MAC)
+    if (PAL::isDataDetectorsFrameworkAvailable() && [object isKindOfClass:PAL::getWKDDActionContextClass()])
+        [delegate setRewriteMutableString:YES];
+#endif // PLATFORM(MAC)
+#endif // ENABLE(DATA_DETECTION)
+#if ENABLE(REVEAL)
+    if (PAL::isRevealCoreFrameworkAvailable() && [object isKindOfClass:PAL::getRVItemClass()])
+        [delegate setRewriteMutableString:YES];
+#endif // ENABLE(REVEAL)
 
     if ([object isKindOfClass:NSTextAttachment.class]) {
         [delegate setRewriteMutableData:YES];
